@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="ch.elexis.abrechnungKategorie"
+            class="ch.elexis.base.ch.ebanking.esr.ESRView"
+            id="elexis-ebanking-schweiz.ESRView"
+            name="ESR (old)"/>
+      <view
+            category="ch.elexis.abrechnungKategorie"
+            class="ch.elexis.base.ch.ebanking.esr.ESRView2"
+            id="ch.elexis.banking.ESRView2"
+            name="ESR Tabelle (old)">
+      </view>
+      <view
+            category="ch.elexis.abrechnungKategorie"
+            class="ch.elexis.base.ch.ebanking.ESRView"
+            id="ch.elexis.ebanking_ch.ESRView"
+            name="ESR"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="ch.elexis.ebanking_ch.command.loadESRFile"
+            name="load ESR file">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.ebanking_ch.ESRView">
+         <command
+               commandId="ch.elexis.ebanking_ch.command.loadESRFile"
+               label=" "
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="ch.elexis.base.ch.ebanking.command.LoadESRFileHandler"
+            commandId="ch.elexis.ebanking_ch.command.loadESRFile">
+      </handler>
+   </extension>
+
+</plugin>

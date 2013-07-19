@@ -1,0 +1,83 @@
+% *******************************************************************************
+% * Copyright (c) 2008-2009 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich
+% *
+% *  $Id: elexis-labortarif-ch2009.tex 141 2009-06-24 09:43:41Z  $
+% *******************************************************************************
+
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\makeindex
+
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\begin{document}
+\title{Elexis Plugin für den Schweizer Labortarif 2009 (EAL2009)}
+\author{Gerry Weirich}
+\maketitle
+\section{Einführung}
+Per 1.7.2009 tritt die EAL2009 in Kraft. Diese beinhaltet nebst geänderten Preisen auch eine neue Struktur und eine Reihe von Zuschlägen. Es war darum notwendig, nicht nur ein Datenupdate, sondern auch eine neue Verwaltung dieser Daten zu implementieren. Dies wird von dem hier vorliegenden Plugin gemacht. 
+
+\medskip
+
+Um den Tarif EAL2009 anzuwenden, müssen Sie also erstens das Plugin installieren, und zweitens die eigentlichen Tarifdaten dazu importieren. Drittens können Sie -optional- den alten Tarif aus den Verrechnungs-Views ausblenden. Das Vorgehen wird in diesem Dokument erklärt; wenden Sie sich bitte ggf. an Ihren Elexis-Supporter.
+
+\section{Installation und Konfiguration}
+
+ \subsection{Vorbereitung}
+ Machen Sie unbedingt ein Backup Ihrer Datenbank, bevor Sie dieses Plugin installieren. Machen Sie die Installation, wenn Sie Ruhe und eine Stunde Zeit haben, also nicht während der Praxis. Beenden Sie alle Elexis-Instanzen im Netzwerk. Die Installation des Plugins muss auf jeder Elexis-Instanz separat durchgeführt werden, der Import der Stammdaten aber nur einmal auf irgendeiner Station.
+ 
+ \medskip
+ 
+ Sie benötigen die EAL in Excel-Form, wie Sie sie vom BAG herunterladen können 
+ 
+
+{\small http://www.bag.admin.ch/themen/krankenversicherung/00263/00264/04185/index.html?lang=de}
+
+Achtung: Die Tabelle muss für Elexis im Excel-97-Format sein. Die vom BAG ist manchmal im Excel-2000-Format gespeichert. Am besten öffnen Sie die Tabelle anch dem Download zunächst in Excel oder OpenOffice Calc und speichern sie dann explizit als Excel97.
+
+ 
+ 
+\subsection{Installation}
+Die Installation erfolgt wie üblich durch Kopieren des Plugins in den 'plugins'-Ordner von Elexis. Beim ersten Start legt das Plugin die benötigte Tabelle an. Gehen Sie dann auf die Leistungen-Perspektive und wählen Sie dort den Reiter 'Labortarif EAL 2009'. Im View-Menü dieses Reiters ist der Punkt import zu finden. Wählen Sie diesen und Ihre vorhin heruntergeladene EAL im Excel97-Format. Starten Sie Elexis dann neu. Bei den anderen Arbeitsstationen müssen Sie nur das Plugin installieren.
+
+\subsection{Konfiguration}
+Unter \textsc{Datei-Einstellungen-Abrechnungssysteme} finden Sie neu den Punkt 'Labortarif 2009'. geben Sie hier den korrekten Taxpunktwert ein (Zur Zeit 1.0). Die Checkboxen im unteren Bereich sind bei der freien Version funktionslos und dienen bei der Medelexis-Version dazu, nur diejenigen Positionen einzublenden, die Sie auch verrechnen dürfen.
+
+\subsection{Verwendung}
+Die Verwendung ist gleich wie alle anderen Tarif-Plugins; es bindet sich in die Verrechnen-View ein. Bei Auswahl eines Codes werden autmatisch die entsrechenden Präsenz- Übergangs und sonstigen Zuschläge hinzugefügt.
+Beachten Sie bitte, dass die neuen Tarifpositionen erst ab dem 1.7. gültig sind (Massgebend ist das Datum der Konsultation). Wenn Sie sie schon vorher einsetzen, gibt Elexis eine Warnung aus.
+
+\subsection{Ausblenden des alten Labortarifs}
+Ab dem 1.7.2009 ist der alte Labortarif nicht mehr gültig. Sie sollten ihn trotzdem in Elexis belassen, damit frühere Verrechnungen noch korrekt angezeigt und ggf. geändert werden können. Sie können aber, um versehentliches Verrechnen des alten Tarifs zu vermeiden und mehr Übersicht zu erreichen, den alten Code ausblenden:
+\begin{itemize}
+\item Editieren Sie im Plugin elexis-arzttarife.schweiz die Datei 'plugin.xml'. Machen Sie sicherheitshalber zuerst eine Kopie, denn wenn Sie einen Fehler machen, wird das Plugin nicht mehr funktionieren.
+\item Suchen Sie das Element \verb|<extension point="ch.elexis.Verrechnungscode">| auf.
+\item Entfernen Sie dort das Unterelement 
+
+\verb|<Leistung ... name="Laborleistung"/>|. Sie können es auch einfach auskommentieren, so dass es nachher so aussieht:
+
+     \verb|<!-- Leistung ... name="Laborleistung"/ -->|.
+\item Suchen Sie dann das Element \verb|<extension point="org.eclipse.ui.preferencePages">| auf, und entfernen (bzw. auskommentieren) Sie dort das Unterelement
+
+     \verb| <page ... name="Labortarif"/>|
+\end{itemize}
+
+Beim nächsten Programmstart wird dann der alte Labortarif nicht mehr angezeigt. Die ab 1.7.2009 vetriebenen Elexis-Versionen und -updates werden den alten Tarif standardmässig nicht mehr anzeigen.
+
+
+\end{document} 

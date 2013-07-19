@@ -1,0 +1,19 @@
+﻿"Ziffer";"Text";"TP";"Preis";"Bemerkungen"
+7301;"Sitzungspauschale für allgemeine Physiotherapie (z.B. Bewegungstherapie, Massage und Kombinationen mit Therapien der Ziffer 7320)";4800;"N/A";
+7311;"Sitzungspauschale für aufwendige Bewegungstherapie";7700;"N/A";
+7312;"Sitzungspauschale für manuelle Lymphdrainage";7700;"N/A";
+7313;"Sitzungspauschale für Hippotherapie";7700;"N/A";
+7320;"Sitzungspauschale für Elektro- und Thermotherapie / Instruktion bei Gerätevermietung";1000;"N/A";
+7330;"Sitzungspauschale für Gruppentherapie";2500;"N/A";
+7340;"Sitzungspauschale für Medizinische Trainingstherapie (MTT)";2200;"N/A";
+7350;"Zuschlagsposition für die erste Behandlung eines Patienten";2400;"N/A";
+7351;"Zuschlagsposition für die Behandlung chronisch behinderter Kinder";3000;"N/A";
+7352;"Zuschlagsposition für die Benutzung des Gehbads / Schwimmbads";1900;"N/A";
+7353;"Zuschlagsposition für die Benutzung der Infrastruktur bei Hippotherapie";6700;"N/A";
+7354;"Pauschale für die Weg- / Zeitentschädigung ";3400;"N/A";
+7401;"Besitzstandwahrer: Sitzungspauschale für allgemeine Physiotherapie z.B. Bewegungstherapie, Massage und / oder Kombinationen mit Therapien der Ziffer 7420";2400;"N/A";
+7412;"Besitzstandwahrer: Sitzungspauschale für Lymphdrainage (entsprechende Zusatzausbildung wird vorausgesetzt)";3800;"N/A";
+7420;"Besitzstandwahrer: Sitzungspauschale für Elektro- und Thermotherapie / Instruktion bei Gerätevermietung";1000;"N/A";
+7452;"Besitzstandwahrer: Zuschlagsposition für die Benutzung des Gehbads / Schwimmbads";1900;"N/A";
+7454;"Besitzstandwahrer: Pauschale für Weg- / Zeitentschädigung ";2300;"N/A";
+

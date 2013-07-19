@@ -1,0 +1,8 @@
+2.0.4 - Initial version
+2.0.5 - M. Descher - 23. March 2012
+	- Fix MiGelArticle Constructor to include Klasse in respective database entry
+	- Several replacements of strings with string constants
+2.0.6 - M. Descher - 29. May 2012
+	- Modifications for empty Pharmacode vs EAN import problem, cf. Ticket #918
+	- Several replacements of strings with string constants in MedikamentImporter
+	- Fixed meaningleass updated elements increment when on non-import

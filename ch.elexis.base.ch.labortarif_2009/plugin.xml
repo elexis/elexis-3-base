@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.elexis.base.ch.labortarif_2009.ui.Preferences"
+            id="ch.elexis.labortarif2009.prefs"
+            name="%Labortarif2009">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="ch.elexis.base.ch.labortarif_2009.data.Labor2009Factory">
+      </Factory>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.Verrechnungscode">
+      <Leistung
+            CodeDetailDisplay="ch.elexis.base.ch.labortarif_2009.ui.DetailDisplay"
+            CodeSelectorFactory="ch.elexis.base.ch.labortarif_2009.ui.Labor2009Selector"
+            ElementFactory="ch.elexis.base.ch.labortarif_2009.data.Labor2009Factory"
+            ImporterClass="ch.elexis.base.ch.labortarif_2009.data.Importer"
+            OptifierClass="ch.elexis.base.ch.labortarif_2009.data.Optifier"
+            name="%Labortarif2009">
+      </Leistung>
+   </extension>
+
+</plugin>

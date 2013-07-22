@@ -66,7 +66,8 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-import com.sun.istack.internal.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ESRView extends ViewPart implements IActivationListener {
 	CommonViewer cv;
@@ -78,7 +79,7 @@ public class ESRView extends ViewPart implements IActivationListener {
 	private Action loadESRFile;
 	private ViewMenus menus;
 	private ESRSelectionListener esrl;
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
 		ElexisEvent.EVENT_USER_CHANGED) {

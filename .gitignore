@@ -1,6 +1,10 @@
 *.class
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.ear
+rebel.xml
+bin/
+target/
+jetty.log

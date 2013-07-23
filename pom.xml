@@ -19,7 +19,7 @@
     <module>ch.elexis.base.ch.ebanking</module>
     <module>ch.elexis.base.ch.feature</module>
     <module>ch.elexis.base.ch.labortarif_2009</module>
-    <!--module>ch.elexis.base.ch.p2site</module-->
+    <module>ch.elexis.base.ch.p2site</module>
   </modules>
   <repositories>
     <repository>

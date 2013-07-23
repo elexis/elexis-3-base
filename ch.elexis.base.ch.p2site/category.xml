@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/ch.elexis.base.ch.feature_3.0.0.qualifier.jar" id="ch.elexis.base.ch.feature" version="3.0.0.qualifier">
+      <category name="elexis_3_base"/>
+   </feature>
+   <category-def name="elexis_3_base" label="elexis_3_base">
+      <description>
+         ALPHA Version of upcoming Elexis 3. See also https://github.com/elexis/elexis-3-base
+      </description>
+   </category-def>
+</site>

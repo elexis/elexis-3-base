@@ -6,7 +6,7 @@
       provider-name="elexis.info">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      Basis-System für die Unterstützung des Schweizer Gesundheitswesens in Elexis.
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -44,5 +44,11 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="ch.elexis.base.ch.diagnosecodes"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

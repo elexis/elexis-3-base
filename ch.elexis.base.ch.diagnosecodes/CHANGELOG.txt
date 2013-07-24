@@ -1,0 +1,5 @@
+Initial versions - unknown
+
+2.0.3 - M. Descher / MEDEVIT - 12.4.2012
+	- Adapted LazyTreeLoader and Content Provider for direct search in ICD10 Tree
+	- Minor refactorings

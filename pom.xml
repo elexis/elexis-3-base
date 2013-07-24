@@ -19,6 +19,8 @@
     <module>ch.elexis.base.ch.ebanking</module>
     <module>ch.elexis.base.ch.feature</module>
     <module>ch.elexis.base.ch.labortarif_2009</module>
+    <module>ch.elexis.base.ch.diagnosecodes</module>
+    <module>ch.elexis.base.ch.medikamente.bag</module>
     <module>ch.elexis.base.p2site</module>
   </modules>
   <repositories>

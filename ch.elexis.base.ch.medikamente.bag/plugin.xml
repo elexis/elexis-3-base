@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            class="ch.elexis.base.ch.medikamente.bag.views.AddMenuToKompendium"
+            locationURI="toolbar:ch.elexis.Kompendium">
+      </menuContribution>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="ch.elexis.base.ch.medikamente.bag.data.BAGMediFactory"
+            name="BAG-Medikamente">
+      </Factory>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.Verrechnungscode">
+      <Artikel
+            CodeDetailDisplay="ch.elexis.base.ch.medikamente.bag.views.BAGMediDetailDisplay"
+            CodeSelectorFactory="ch.elexis.base.ch.medikamente.bag.views.BAGMediSelector"
+            ElementFactory="ch.elexis.base.ch.medikamente.bag.data.BAGMediFactory"
+            ImporterClass="ch.elexis.base.ch.medikamente.bag.data.BAGMediImporter"
+            name="Medikamente BAG">
+      </Artikel>
+   </extension>
+
+</plugin>

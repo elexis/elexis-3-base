@@ -26,8 +26,8 @@
 </modules>
 <repositories>
   <repository>
-    <id>elexis.3.snapshot</id>
-    <url>http://download.elexis.info/elexis.3.snapshot</url>
+    <id>elexis.3.core.snapshot</id>
+    <url>http://download.elexis.info/elexis.3.core.snapshot/</url>
     <layout>p2</layout>
   </repository>
 </repositories>

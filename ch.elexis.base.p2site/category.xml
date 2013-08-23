@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <feature url="features/ch.elexis.base.ch.feature.source_3.0.0.qualifier.jar" id="ch.elexis.base.ch.feature.source" version="3.0.0.qualifier">
+      <category name="basepackages"/>
+   </feature>
    <feature url="features/ch.elexis.base.ch.feature_3.0.0.qualifier.jar" id="ch.elexis.base.ch.feature" version="3.0.0.qualifier">
       <category name="basepackages"/>
+   </feature>
+   <feature url="features/ch.elexis.base.textplugin.feature.source_3.0.0.qualifier.jar" id="ch.elexis.base.textplugin.feature.source" version="3.0.0.qualifier">
+      <category name="documentmanagement"/>
    </feature>
    <feature url="features/ch.elexis.base.textplugin.feature_3.0.0.qualifier.jar" id="ch.elexis.base.textplugin.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>

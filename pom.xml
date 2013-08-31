@@ -9,6 +9,8 @@
     <tycho-extras.version>0.18.0</tycho-extras.version>
     <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
+    <repo_name>elexis.3.base</repo_name>
+    <repo_variant>snapshot</repo_variant>
   </properties>
   <packaging>pom</packaging>
   <modules>

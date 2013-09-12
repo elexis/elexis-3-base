@@ -94,7 +94,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		);
 		if (!version.exists()) {
 			String filepath =
-				PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator
+				PlatformHelper.getBasePath("ch.elexis.base.ch.arzttarife") + File.separator
 					+ "createDB.script";
 			Stm stm = j.getStatement();
 			try {

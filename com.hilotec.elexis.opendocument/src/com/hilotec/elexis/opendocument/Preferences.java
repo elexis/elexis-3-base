@@ -6,9 +6,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.Hub;
-import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.elexis.preferences.inputs.MultilineFieldEditor;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.inputs.MultilineFieldEditor;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
@@ -17,7 +17,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String P_EDITARGS = BASE + "editargs";
 	public static final String P_PRINTARGS = BASE + "printargs";
 	
-	SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.localCfg);
+	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.localCfg);
 	
 	public Preferences(){
 		super(GRID);

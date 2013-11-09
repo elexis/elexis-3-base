@@ -75,14 +75,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.data.Patient;
-import ch.elexis.text.ITextPlugin;
-import ch.elexis.text.ReplaceCallback;
-import ch.elexis.util.PlatformHelper;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.Patient;
+import ch.elexis.core.ui.text.ITextPlugin;
+import ch.elexis.core.data.interfaces.text.ReplaceCallback;
+import ch.elexis.core.data.util.PlatformHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 public class TextPlugin implements ITextPlugin {
@@ -326,8 +326,8 @@ public class TextPlugin implements ITextPlugin {
 		
 		odtSync();
 		
-		String editor = Hub.localCfg.get(Preferences.P_EDITOR, "");
-		String argstr = Hub.localCfg.get(Preferences.P_EDITARGS, "");
+		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, "");
+		String argstr = CoreHub.localCfg.get(Preferences.P_EDITARGS, "");
 		String baseName = "open_odf.sh";
 		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0)
 			baseName = "open_odf.bat";
@@ -386,7 +386,7 @@ public class TextPlugin implements ITextPlugin {
 		
 		odtSync();
 		
-		FileDialog fd = new FileDialog(Desk.getTopShell(), SWT.OPEN);
+		FileDialog fd = new FileDialog(UiDesk.getTopShell(), SWT.OPEN);
 		fd.setFilterExtensions(new String[] {
 			"*.odt"
 		});
@@ -415,8 +415,8 @@ public class TextPlugin implements ITextPlugin {
 		}
 		
 		odtSync();
-		String editor = Hub.localCfg.get(Preferences.P_EDITOR, "oowriter");
-		String argstr = Hub.localCfg.get(Preferences.P_PRINTARGS, "");
+		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, "oowriter");
+		String argstr = CoreHub.localCfg.get(Preferences.P_PRINTARGS, "");
 		String args[] = (editor + "\n" + argstr + "\n" + file.getAbsolutePath()).split("\n");
 		ProcessBuilder pb = new ProcessBuilder(args);
 		
@@ -1299,6 +1299,12 @@ public class TextPlugin implements ITextPlugin {
 	public boolean isDirectOutput(){
 		// TODO: Make sure that false is what we want here...
 		return false;
+	}
+
+	@Override
+	public void setParameter(Parameter parameter){
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

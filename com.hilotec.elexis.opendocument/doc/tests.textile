@@ -1,0 +1,9 @@
+* readme.textile durcharbeiten
+* Ein Dokument öffnen, zu einen anderen Patienten wechseln (muss möglich sein, ohne dass ein Dialog kommt)
+* Rechnung/Briefe öffnen & drucken (Drucken geht bei MSWord nur via Macro)
+* Text-Anwendung ist schon offen wenn Brief geöffnet wird
+* Mehrere Elexis-Instanzen fordern öffnen/drucken verschiedener Dokumente an
+* Mehrere Elexis-Instanzen fordern öffnen des gleichen Dokuments an
+* Druck mehrerer Rechnung soll flott gehen
+* Unter LibreOffice sollte das leicht gehen. Für Parameter siehe [[http://manpages.ubuntu.com/manpages/oneiric/man1/openoffice.1.html]]
+** Evtl ODF-Dokument in Elexis → PDF wandeln, z.B. via fop

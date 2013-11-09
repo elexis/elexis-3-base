@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="ch.elexis.Text">
+      <Texterweiterung Klasse="com.hilotec.elexis.opendocument.TextPlugin" name="Hilotec-OpenDocument"/>
+   </extension>
+   <extension point="org.eclipse.ui.preferencePages">
+      <page class="com.hilotec.elexis.opendocument.Preferences"
+            id="com.hilotec.elexis.ooo"
+            name="Hilotec-OpenDocument" />
+ 	</extension>
+</plugin>

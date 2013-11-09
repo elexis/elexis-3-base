@@ -1,0 +1,24 @@
+- Moeglichen Platzhalter fuer Tabelle in tabellenzeile, sodass diese Zeile
+    wiederholt wird.
+    
+- Es gibt anscheinend Fälle, wo das fuser nicht richtig funktioniert unter Linux 
+und er nur noch wartet obwohl Libreoffic das Dokument schon lange freigegeben hat.
+Gemäss strace hockt das Script in in einem futex drin und der einzige Prozess der das ODF gemäss lsof 
+noch offen hat ist das Script selber! Komisch.
+Dann muss Elexis neu gestartet werden.
+Oder müsste man dem Benutzer die Möglichkeit geben das Script abzubrechen?
+
+- Fehlermeldung beim wiederholten Öffnen eines zweiten Dokument verbessert.
+In diesem Fall kann ich jedoch nicht unterscheiden, ob der Dialog via Doppelklick in Briefauswahl 
+oder via ODF-Textplugin aufgerufen wird.
+
+Beim Aufruf aus der Briefauswahl wird dann ein leerer Brief erstellt. Hier muss das Interface zwischen 
+Textview und externem Plugin noch verbessert werden (aber nicht mehr für 2.1.7.1).
+
+Ebenso gibt es meiner Meinung nach gibt es beim Zusammenspiel der ch.elexis/TextView und eines externen
+Text-Plugins noch Probleme, welche eine Änderung der ITextPlugin bedingen, da das ODF-Dokument und die
+TextView nicht immer die gleiche Ansicht haben, ob ein Dokument noch geöffnet ist oder nicht und das 
+externe Text-Plug-In diese Information nicht mitbekommt. 
+Bei den Text-Plugins, welche eine Eclipse-View für das Dokument besitzen dürfte dies kein Problem 
+darstellen, da sie ja mitbekommen, wenn der Anwender das Dokument speichert oder schliesst.
+

@@ -102,6 +102,7 @@ public class RnPrintView2 extends ViewPart {
 				return false;
 			}
 		});
+		text.getPlugin().setParameter(ITextPlugin.Parameter.NOUI);
 	}
 	
 	private void createBrief(final String template, final Kontakt adressat){
@@ -620,7 +621,8 @@ public class RnPrintView2 extends ViewPart {
 			
 			cursor = print(cursor, tp, false, footer.toString());
 			cursor = print(cursor, tp, true, "\n Total\t\t\t"); //$NON-NLS-1$
-			// set amount of tabs needed according to amount, use 8 as font is bold
+			// set amount of tabs needed according to amount, use 8 as font is
+			// bold
 			String amount = mDue.getAmountAsString();
 			String tabs = "\t\t";
 			if (amount.length() > 8)

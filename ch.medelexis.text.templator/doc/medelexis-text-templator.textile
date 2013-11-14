@@ -1,0 +1,84 @@
+h1. Medelexis Text Templator
+
+h2. Sinn und Zweck
+
+Das Elexis Textsystem ist zwar recht flexibel und Leistungsfähig, hat dafür aber auch den Nachteil, nicht unter allen Betriebssystemen gleichermassen gut zu funktionieren (Beispiele: Mac OXS und Ubuntu/Gnome).
+
+Dieses Plugin ersetzt das Standard-Textsystem gegen ein schablonenbasiertes Konzept, welches unter allen Betriebssystemen funktioniert, dafür aber etwas weniger flexibel ist.
+Anstatt OpenOffice direkt ins Elexis-Fenster einzubinden, werden hier Schablonen von vorhandenen bzw. vorher erstellten Dokumenten verwendet, durch Ersetzen von definierten Textstellen gezielt verändert und wieder abgespeichert, so dass sie anschliessend halbautomatisch wieder vom dafür geeigneten systemeigenen Programm weiterverarbeitet werden können. Die Konfiguration ist somit jetzt ein zweistufiger Prozess: Für jedes Dokument muss eine Vorlage und ein Übersetzungsschema erstellt werden. S. weiter unten unter Konfiguration. Somit spielt weder die Textverarbeitung noch das Zielsystem eine Rolle. Das Konzept sollte mit Microsoft Word ebenso funktionieren können, wie mit MacWrite oder KNotepad, oder eben mit OpenOffice. Das einzige was man braucht, ist ein passender Schablonenprozessor.  
+
+h2. Konfiguration
+
+Stellen Sie unter Datei-Einstellungen-Textverarbeitung "Medelexis Text Templator" ein. Sie brauchen kein NOAText und keinen OOWrapper, wenn Sie aber diese ebenfalls installiert haben, sollten Sie darauf achten, das hier wirklich Medelexis Templator ausgewählt ist.
+
+!bild1a.png!
+
+Sie benötigen für jeden Dokumenttyp folgende Elemente:
+
+h3. 1) Eine Schablone 
+
+Diese ist das "fast fertige" Dolument im Format des Zielsystems: 
+!bild1.png!
+Wie Sie sehen, sieht diese Schablone recht ähnlich aus, wie die gewohnte Elexis-Druckvorlage, aber es gibt keine Elexis-spezifischen Platzhalter mehr. Stattdessen gibt es in doppelte geschweifte Klammern eingeschlossene Platzhalter, die Sie beliebig benennen dürfen. Erstellen Sie die Schablone einfach als Text mit Ihrem Textprogramm. An den Stellen, wo Elexis etwas einsetzen soll, setzen Sie in doppelte geschweifte Klammern gesetzte (beliebige) Begriffe, wie hier im Beispiel {{datum}} usw. (Für Mac-User: Die geschweiften Klammern finden Sie it ALT-8 und ALT-9). *Wichtig*: Speichern Sie diese Schablone dann als Text in dem Verzeichnis ab, welches Sie als Basisverzeichnis konfiguriert haben:
+
+!bild3.png!
+
+h3. 2) Eine Prozessoranweisung
+
+Diese beschreibt, wie Elexis die Schablone befüllen soll:
+ 
+!bild2.png!
+
+Die Prozessoranweisung übernimmt die Rolle der bisherigen Dokumentvorlagen, und hier finden Sie auch die Elexis-Platzhalter wieder. Beispielsweise besagt die Zeile @<field name="datum">[Datum.heute]</field>@, dass der Prozessor den starren Platzhalter {{datum}} in der Schablone gegen den Inhalt der Elexis-Variablen [Datum.heute] zum Zeitpunkt des Druckens ersetzen soll. Sie können eine solche XML-Prozessoranweisung nach Elexis importieren (Im Textfenster Dreiecksmenü rechts und "Text importieren", und dann als Vorlage oder Systemvorlage speichern. Wenn Sie eine solche Dokumentvorlage in Elexis ansehen ("Vorlage öffnen"), dann sehen Sie etwas in der Art wie hier:
+ 
+!bild4.png!
+
+Dies ist nichts anderes als der Inhalt obiger XML-Datei, etwas benutzerfreundlicher präsentiert. Sie können auch von diesem Fenster aus Prozessoranweisungen erstellen, wenn Sie nicht direkt XML schreiben wollen. Wählen Sie zunächst im View-Menü (Dreieck rechts oben) "Neues Dokument". Wählen Sie dann die Schablone aus, für die dieser Prozessor sein soll.  Wählen Sie dann für jede {{Variable}} in der Schablone den Button "Feld hinzufügen"  und geben Sie den Namen der {{Variablen}} ohne die Klammern ein, welche ersetzt werden soll.
+ 
+h3. 3) Einen Schablonenprozessor.
+
+Dieser ist das Bindeglied zwischen Elexis und dem Zielformat. Zur Zeit existiert nur ein Prozessor für OpenOffice-Dokumente. Ein solcher Prozessor ist aber bei Kenntnis des Zielformats sehr einfach zu implementieren. Wählen Sie in der Prozessoranweisung den Prozessor aus. Falls nur ein Prozessor im System vorhanden ist (Hier der "OpenOffice-Prozessor"), wird dieser gleich vorgewählt.
+ 
+ 
+h3. Ausgabekommando
+
+Schliesslich müssen Sie dem Prozessor noch mitteilen, mit welchem Befehl er die erzeugten Dateien ausgeben kann. 
+!bild7.png!
+
+Dieses Beispiel würde das Dokument direkt ausdrucken. Wenn Sie das nicht möchten, können Sie das -p weglassen. 
+ 
+
+h2. Zusammenfassung Konfiguration:
+
+Sie müssen also für jeden Dokumenttyp sowohl eine Schablone als auch eine Prozessoranweisung erstellen. Unter Datei-Einstellungen-Textverarbeitung müssen Sie dem System mitteilen, dass es den Medelexis-Textprozessor verwenden soll, sie müssen ihm mitteilen, wo es die Schablonen findet und wie es das externe Textprogramm starten kann, welches die Dokumente ausgeben kann.
+ 
+h2. Anwendung
+
+Wenn die Konfiguration einmal erledigt ist, ist die Anwendung leicht. Wenn Sie ein Dokument zum Drucker schicken, erscheint zunächst wieder die Vorlagen-View, aber bereits mit abgefüllten Feldern:
+!bild5.png!
+
+Wenn Sie dann das Druckersymbol links oben klicken, wird der von Ihnen definierte Ausgabebefehl aufgerufen, der das externe Programm startet, das den fertigen Text ausgeben kann:
+!bild6.png!
+Sie könnten hier auch irgendwas anderes machen. Der Ausgabebefehl kann ja ein beliebiges Programm sein, das irgendetwas mit dem Dokument macht. Es könnte zum Beispiel das Dokument verschlüsseln und an Ihre Apotheke mailen oder sowas. 
+
+h2. Einschränkungen
+
+* Man kann mit diesem System bisher keine Rechnungen drucken.
+
+* Die Vorlagen dieses Plugins sind *nicht* kompatibel mit den Vorlagen des Standard-Textplugins! Man kann also pro Computer nur entweder das eine oder das andere Textsystem verwenden. Hingegen ist es möglich, am selben Server Clients mit beiden Textsystemen einzusetzen.
+
+h2. Technischer Hintergrund
+
+"Wieso geht das jetzt auf dem Mac?"
+Im Gegensatz zum Standard-Textplugin versuchen wir hier nicht, die Vorlagen in und mit OpenOffice zu bearbeiten. Vielmehr erstellen wir aus einer Schablone und einem Prozessor ein fertiges OpenOffice- *Dokument* und fordern OpenOffice dann nur noch auf, dieses fertige Dokument zu laden. Das ist eine Standardaufgabe, welche unter allen Betriebssystemen funktioniert.
+
+h3. Gemischter Betrieb mit NoaText-Clients und Templator-Clients
+
+Wie weiter oben schon geschrieben, sind die Vorlagen- und Textformate der verschiedenen Plugins nicht kompatibel. Sie können also nicht eine Dokumentvorlage eines NoaText-Clients auf einem Templator-Client verwenden und umgekehrt. Schlimmer noch: Auch die erstellten Dokumente lassen sich nicht austauschen, da Templator nur die ausgefüllte Prozessoranweisung speichert, NoaText aber das ganze Dokument.
+Immerhin kann man gleichnamige Vorlagen auf verschiedenen Arbeitsstationen unterschiedlichen Quelldateien zuordnen. Unter Einstellungen-Textverbarbeitung-Dokumentvorlagen können Sie eine Suffix angeben, die für Vorlagen dieser Station gelten soll:
+
+!bild8.png!
+
+Wenn also auf diesem Computer eine Vorlage namens "Rezept" angefordert wird, dann wird die Vorlage "Rezept_macbook" geliefert, wenn vorhanden (ansonsten die Vorlage "Rezept". Wenn Sie also Windows-Clients mit NOAText und Mac-Clients mit Medelexis-Templator im selben Netz betreiben, dann können Sie z.B. für jede Vorlage, die Sie auf dem Mac verwenden wollen, eine Prozessoranweisung mit dem Namen der Vorlage und der Suffix _macbook erstellen. Auf den Windows-Maschinen wird ann weiterhin die "alte" Vorlage "Rezept" geladen, auf den Mac-Clients die Templator-Prozessanweisung.
+
+ 

@@ -49,6 +49,13 @@ public class ElexisTextPlugin implements ITextPlugin {
 		tempInstance = this;
 	}
 	
+	@SuppressWarnings("unused")
+	private Parameter textParameter = null;
+	
+	public void setParameter(Parameter parameter){
+		textParameter = parameter;
+	}
+	
 	public boolean clear(){
 		if (editor != null) {
 			editor.page.clear();

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.medelexis.text.templator.feature"
+      label="Textplugin auf Template-Basis (Mac Kompatibel)"
+      version="3.0.0.qualifier"
+      provider-name="ch.medelexis">
+
+   <description url="https://github.com/elexis/elexis/wiki/ch.medelexis.text.templator.feature">
+      Templator-System für das Verwenden von OpenOffice unter Mac. Öffnet das zu verwendende Dokument in einem separaten Fenster.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="ch.medelexis.text.templator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

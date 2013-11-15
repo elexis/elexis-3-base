@@ -22,8 +22,6 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.rgw.tools.TimeTool;
 
-
-
 public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 	private CommonViewer commonViewer;
 	private StructuredViewer viewer;

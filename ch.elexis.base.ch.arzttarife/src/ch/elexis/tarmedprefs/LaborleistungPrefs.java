@@ -20,7 +20,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 
-
 public class LaborleistungPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	@Override

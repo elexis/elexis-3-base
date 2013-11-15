@@ -26,8 +26,6 @@ import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.data.LaborLeistung;
 
-
-
 public class LaborleistungDetailDisplay implements IDetailDisplay {
 	Form form;
 	FormToolkit tk = UiDesk.getToolkit();

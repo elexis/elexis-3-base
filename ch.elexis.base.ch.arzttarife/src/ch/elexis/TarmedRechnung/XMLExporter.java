@@ -103,7 +103,6 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.XMLTool;
 
-
 /**
  * Exportiert eine Elexis-Rechnung im XML 4.0 Format von xmldata.ch Bitte KEINE Änderungen an dieser
  * Klasse durchführen. Senden Sie Verbesserungsvorschläge oder Wünsche als Mail oder direkt als
@@ -1064,8 +1063,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element provider = new Element("provider", ns); // 11080 -> 11800 //$NON-NLS-1$
 		// 11802
-		provider.setAttribute(ATTR_EAN_PARTY,
-			TarmedRequirements.getEAN(actMandant)); // 11802
+		provider.setAttribute(ATTR_EAN_PARTY, TarmedRequirements.getEAN(actMandant)); // 11802
 		provider.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString //$NON-NLS-1$
 		// ("KSK"));
 		// // 11803
@@ -1235,7 +1233,8 @@ public class XMLExporter implements IRnOutputter {
 						"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 			}
 			boolean bAHVValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true) && (bAHVValid == false)) {
+			if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
+				&& (bAHVValid == false)) {
 				rn.reject(REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_AHVInvalid);
 			} else {
 				versicherung.setAttribute("ssn", ahv); //$NON-NLS-1$

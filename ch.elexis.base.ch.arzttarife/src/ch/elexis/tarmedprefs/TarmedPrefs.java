@@ -23,7 +23,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.data.TarmedLeistung;
 
-
 public class TarmedPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	@Override

@@ -118,7 +118,7 @@ public class TarmedImporter extends ImporterPage {
 			mdbDB = Database.open(file, true, Database.DEFAULT_AUTO_SYNC);
 			cachedDbTables = mdbDB.getTableNames();
 		} catch (IOException e) {
-			//System.out.println("Failed to open access file " + file);
+			// System.out.println("Failed to open access file " + file);
 			e.printStackTrace();
 			return Status.CANCEL_STATUS;
 		}

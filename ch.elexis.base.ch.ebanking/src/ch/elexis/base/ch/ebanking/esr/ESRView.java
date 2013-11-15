@@ -276,9 +276,8 @@ public class ESRView extends ViewPart implements IActivationListener {
 											if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
 												if (rec.getTyp()
 													.equals(ESRRecord.MODE.Summenrecord)) {
-													log.info(
-														Messages.ESRView_ESR_finished
-															+ rec.getBetrag());
+													log.info(Messages.ESRView_ESR_finished
+														+ rec.getBetrag());
 												} else if ((rec.getTyp()
 													.equals(ESRRecord.MODE.Storno_edv))
 													|| (rec.getTyp()

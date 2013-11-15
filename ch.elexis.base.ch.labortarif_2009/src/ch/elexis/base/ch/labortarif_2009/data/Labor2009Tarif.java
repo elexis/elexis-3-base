@@ -18,7 +18,6 @@ import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-
 public class Labor2009Tarif extends UiVerrechenbarAdapter {
 	public static final String FLD_GUELTIG_BIS = "GueltigBis";
 	public static final String FLD_GUELTIG_VON = "GueltigVon";

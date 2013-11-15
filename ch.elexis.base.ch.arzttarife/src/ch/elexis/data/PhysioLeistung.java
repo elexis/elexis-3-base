@@ -135,9 +135,9 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	public IOptifier getOptifier(){
 		return noObligationOptifier;
 	}
-
+	
 	@Override
-	public List<Object> getActions(Object context) {
+	public List<Object> getActions(Object context){
 		// TODO Auto-generated method stub
 		return null;
 	}

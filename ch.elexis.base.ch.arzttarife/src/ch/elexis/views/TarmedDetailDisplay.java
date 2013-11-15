@@ -32,7 +32,6 @@ import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.data.TarmedLeistung;
 import ch.rgw.tools.TimeTool;
 
-
 public class TarmedDetailDisplay implements IDetailDisplay {
 	private FormToolkit tk;
 	private ScrolledForm form;

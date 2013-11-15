@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Composite;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.ui.text.ITextPlugin;
 
-
 public class ElexisTextPlugin implements ITextPlugin {
 	
 	private ElexisEditor editor;

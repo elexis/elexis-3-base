@@ -26,8 +26,6 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.TarmedLeistung;
 
-
-
 public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
 	ReadOnceTreeLoader tdl;

@@ -19,7 +19,6 @@ import ch.elexis.base.ch.labortarif_2009.data.Labor2009Tarif;
 import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 
-
 public class Labor2009ContentProvider implements ICommonViewerContentProvider {
 	
 	public Object[] getElements(Object inputElement){

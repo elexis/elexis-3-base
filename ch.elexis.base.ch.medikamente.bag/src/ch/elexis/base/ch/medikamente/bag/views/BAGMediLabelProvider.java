@@ -67,7 +67,7 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements ITable
 			if (art.isLagerartikel()) {
 				int trigger =
 					CoreHub.globalCfg.get(Preferences.INVENTORY_ORDER_TRIGGER,
-							Preferences.INVENTORY_ORDER_TRIGGER_DEFAULT);
+						Preferences.INVENTORY_ORDER_TRIGGER_DEFAULT);
 				
 				int ist = art.getIstbestand();
 				int min = art.getMinbestand();

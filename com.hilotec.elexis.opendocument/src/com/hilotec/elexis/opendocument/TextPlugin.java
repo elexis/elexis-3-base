@@ -1300,7 +1300,7 @@ public class TextPlugin implements ITextPlugin {
 		// TODO: Make sure that false is what we want here...
 		return false;
 	}
-
+	
 	@Override
 	public void setParameter(Parameter parameter){
 		// TODO Auto-generated method stub

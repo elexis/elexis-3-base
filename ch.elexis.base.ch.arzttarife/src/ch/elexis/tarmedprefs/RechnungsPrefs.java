@@ -59,8 +59,6 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.TrustCenters;
 import ch.rgw.tools.StringTool;
 
-
-
 public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	// indices for cbESROCRFontWeight
@@ -284,7 +282,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		// bills electronically
 		bBillsElec = new Button(ret, SWT.CHECK);
 		bBillsElec.setText("Bills electronically");
-		bBillsElec.setSelection(CoreHub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY, false));
+		bBillsElec.setSelection(CoreHub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY,
+			false));
 		bBillsElec.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -569,9 +568,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		String normalFontName =
 			CoreHub.localCfg.get(ESR.ESR_NORMAL_FONT_NAME, ESR.ESR_NORMAL_FONT_NAME_DEFAULT);
 		int normalFontSize =
-				CoreHub.localCfg.get(ESR.ESR_NORMAL_FONT_SIZE, ESR.ESR_NORMAL_FONT_SIZE_DEFAULT);
-		String ocrFontName = CoreHub.localCfg.get(ESR.ESR_OCR_FONT_NAME, ESR.ESR_OCR_FONT_NAME_DEFAULT);
-		int ocrFontSize = CoreHub.localCfg.get(ESR.ESR_OCR_FONT_SIZE, ESR.ESR_OCR_FONT_SIZE_DEFAULT);
+			CoreHub.localCfg.get(ESR.ESR_NORMAL_FONT_SIZE, ESR.ESR_NORMAL_FONT_SIZE_DEFAULT);
+		String ocrFontName =
+			CoreHub.localCfg.get(ESR.ESR_OCR_FONT_NAME, ESR.ESR_OCR_FONT_NAME_DEFAULT);
+		int ocrFontSize =
+			CoreHub.localCfg.get(ESR.ESR_OCR_FONT_SIZE, ESR.ESR_OCR_FONT_SIZE_DEFAULT);
 		
 		tESRNormalFontName.setText(normalFontName);
 		tESRNormalFontSize.setText(new Integer(normalFontSize).toString());
@@ -579,7 +580,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		tESROCRFontSize.setText(new Integer(ocrFontSize).toString());
 		
 		int ocrFontWeight =
-				CoreHub.localCfg.get(ESR.ESR_OCR_FONT_WEIGHT, ESR.ESR_OCR_FONT_WEIGHT_DEFAULT);
+			CoreHub.localCfg.get(ESR.ESR_OCR_FONT_WEIGHT, ESR.ESR_OCR_FONT_WEIGHT_DEFAULT);
 		int index;
 		switch (ocrFontWeight) {
 		case SWT.MIN:
@@ -597,13 +598,17 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cbESROCRFontWeight.select(index);
 		
 		int printerCorrectionX =
-				CoreHub.localCfg.get(ESR.ESR_PRINTER_CORRECTION_X, ESR.ESR_PRINTER_CORRECTION_X_DEFAULT);
+			CoreHub.localCfg
+				.get(ESR.ESR_PRINTER_CORRECTION_X, ESR.ESR_PRINTER_CORRECTION_X_DEFAULT);
 		int printerCorrectionY =
-				CoreHub.localCfg.get(ESR.ESR_PRINTER_CORRECTION_Y, ESR.ESR_PRINTER_CORRECTION_Y_DEFAULT);
+			CoreHub.localCfg
+				.get(ESR.ESR_PRINTER_CORRECTION_Y, ESR.ESR_PRINTER_CORRECTION_Y_DEFAULT);
 		int printerBaseCorrectionX =
-				CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_X, ESR.ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
+			CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_X,
+				ESR.ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
 		int printerBaseCorrectionY =
-				CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_Y, ESR.ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
+			CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_Y,
+				ESR.ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
 		
 		tESRPrinterCorrectionX.setText(new Integer(printerCorrectionX).toString());
 		tESRPrinterCorrectionY.setText(new Integer(printerCorrectionY).toString());

@@ -170,7 +170,7 @@ public class TarmedOptifier implements IOptifier {
 							}
 						}
 					}
-
+					
 					if (check.getCode().equals("00.0750") || check.getCode().equals("00.0010")) {
 						String excludeCode = null;
 						if (check.getCode().equals("00.0010")) {
@@ -214,8 +214,8 @@ public class TarmedOptifier implements IOptifier {
 							switch (Integer.parseInt(f[4].trim())) {
 							case 7: // Pro Sitzung
 								if (check.getCode().equals("00.0020")) {
-									if (CoreHub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY,
-										false)) {
+									if (CoreHub.mandantCfg.get(
+										PreferenceConstants.BILL_ELECTRONICALLY, false)) {
 										break;
 									}
 								}

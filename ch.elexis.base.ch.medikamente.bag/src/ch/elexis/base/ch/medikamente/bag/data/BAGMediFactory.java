@@ -52,6 +52,7 @@ public class BAGMediFactory extends PersistentObjectFactory {
 	}
 	
 	public static ImageDescriptor loadImageDescriptor(final String path){
-		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.base.ch.medikamente.bag", path);
+		return AbstractUIPlugin
+			.imageDescriptorFromPlugin("ch.elexis.base.ch.medikamente.bag", path);
 	}
 }

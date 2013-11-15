@@ -27,7 +27,6 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.TarmedLeistung;
 import ch.rgw.tools.Money;
 
-
 public class TarmedDetailDialog extends Dialog {
 	Verrechnet v;
 	TarmedDetailDisplay td;

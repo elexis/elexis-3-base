@@ -20,7 +20,6 @@ import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
-
 public class Validator {
 	
 	public Result<Rechnung> checkBill(final XMLExporter xp, final Result<Rechnung> res){

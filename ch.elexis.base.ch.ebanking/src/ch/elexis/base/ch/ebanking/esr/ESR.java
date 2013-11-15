@@ -190,7 +190,7 @@ public class ESR {
 	/** X-Offset der ESR-Codierzeile */
 	public int getESRLineX(){
 		int printerCorrectionX =
-				CoreHub.localCfg.get(ESR_PRINTER_CORRECTION_X, ESR_PRINTER_CORRECTION_X_DEFAULT);
+			CoreHub.localCfg.get(ESR_PRINTER_CORRECTION_X, ESR_PRINTER_CORRECTION_X_DEFAULT);
 		
 		return 59 + printerCorrectionX;
 	}
@@ -198,7 +198,7 @@ public class ESR {
 	/** Y-Offset der ESR-Codierzeile */
 	public int getESRLineY(){
 		int printerCorrectionY =
-				CoreHub.localCfg.get(ESR_PRINTER_CORRECTION_Y, ESR_PRINTER_CORRECTION_Y_DEFAULT);
+			CoreHub.localCfg.get(ESR_PRINTER_CORRECTION_Y, ESR_PRINTER_CORRECTION_Y_DEFAULT);
 		
 		return 192 + 85 + printerCorrectionY;
 	}
@@ -244,9 +244,9 @@ public class ESR {
 		// Girozettel
 		int wAdresse = 55; // Breite des Adressfeldes (unabhängig von Offsets)
 		int manualYOffsetESR =
-				CoreHub.localCfg.get(ESR_PRINTER_BASE_OFFSET_Y, ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
+			CoreHub.localCfg.get(ESR_PRINTER_BASE_OFFSET_Y, ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
 		int manualXOffsetESR =
-				CoreHub.localCfg.get(ESR_PRINTER_BASE_OFFSET_X, ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
+			CoreHub.localCfg.get(ESR_PRINTER_BASE_OFFSET_X, ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
 		
 		ITextPlugin p = text.getPlugin();
 		String fontName = CoreHub.localCfg.get(ESR_NORMAL_FONT_NAME, ESR_NORMAL_FONT_NAME_DEFAULT);

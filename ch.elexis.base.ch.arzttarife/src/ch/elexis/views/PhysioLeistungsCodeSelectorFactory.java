@@ -26,8 +26,6 @@ import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.PhysioLeistung;
 import ch.rgw.tools.IFilter;
 
-
-
 public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 	Query<PhysioLeistung> qbe;
 	

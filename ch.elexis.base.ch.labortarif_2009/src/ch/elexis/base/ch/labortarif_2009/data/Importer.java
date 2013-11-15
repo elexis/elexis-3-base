@@ -99,7 +99,7 @@ public class Importer extends ImporterPage {
 			
 			private void setValidFromDate(){
 				validFrom.set(validDate.getYear(), validDate.getMonth(), validDate.getDay());
-				//System.out.println("VALID FROM: " + validFrom.toString(TimeTool.DATE_COMPACT));
+				// System.out.println("VALID FROM: " + validFrom.toString(TimeTool.DATE_COMPACT));
 			}
 		});
 		validDate.setDate(validFrom.get(TimeTool.YEAR), validFrom.get(TimeTool.MONTH),

@@ -25,7 +25,6 @@ import ch.elexis.core.data.RnStatus.REJECTCODE;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
-
 /**
  * Class to deal with mdinvoiceresponses
  * (http://www.forum-datenaustausch.ch/mdinvoiceresponse_xml4.00_v1.1_d.pdf)

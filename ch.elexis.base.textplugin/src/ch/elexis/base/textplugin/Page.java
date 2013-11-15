@@ -49,21 +49,21 @@ import org.eclipse.swt.widgets.TableItem;
 public class Page extends EStyledText implements MouseListener, MouseMoveListener, KeyListener,
 		VerifyListener, PaintObjectListener {
 	
-	private boolean altDown;	
-	private boolean mouseDown;	
-	private Point mouseScreenLoc;	
-	private Point mouseWidgetLoc;	
-	protected List<TextBox> textBoxes;	
-	private int state;	
-	private boolean highlight;	
-	private final List<Integer> offsets;	
-	private final List<Control> controls;	
-	private final static int STATE_NONE = 0;	
-	private final static int STATE_MOVE = 1;	
-	private final static int STATE_RESIZE_LEFT = 2;	
-	private final static int STATE_RESIZE_RIGHT = 3;	
-	private final static int STATE_RESIZE_UP = 4;	
-	private final static int STATE_RESIZE_DOWN = 5;	
+	private boolean altDown;
+	private boolean mouseDown;
+	private Point mouseScreenLoc;
+	private Point mouseWidgetLoc;
+	protected List<TextBox> textBoxes;
+	private int state;
+	private boolean highlight;
+	private final List<Integer> offsets;
+	private final List<Control> controls;
+	private final static int STATE_NONE = 0;
+	private final static int STATE_MOVE = 1;
+	private final static int STATE_RESIZE_LEFT = 2;
+	private final static int STATE_RESIZE_RIGHT = 3;
+	private final static int STATE_RESIZE_UP = 4;
+	private final static int STATE_RESIZE_DOWN = 5;
 	private static final int MARGIN = 1;
 	
 	public Page(final Composite parent, final ElexisEditor editor){

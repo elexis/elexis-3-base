@@ -41,7 +41,6 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.RFE;
 
-
 public class RFEView extends ViewPart {
 	Table longTable, shortTable, mediumTable;
 	CTabFolder tabs;

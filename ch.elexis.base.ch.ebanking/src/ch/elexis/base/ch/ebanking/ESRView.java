@@ -51,8 +51,6 @@ import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.model.IPersistentObject;
 import ch.rgw.tools.TimeTool;
 
-
-
 public class ESRView extends ViewPart {
 	public static final String ID = "ch.elexis.ebanking_ch.ESRView"; //$NON-NLS-1$
 	private Table table;

@@ -33,7 +33,6 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
-
 public class LoadESRFileHandler extends AbstractHandler implements IElementUpdater {
 	
 	public static final String COMMAND_ID = "ch.elexis.ebanking_ch.command.loadESRFile";
@@ -63,8 +62,8 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 									monitor.worked(1);
 									if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
 										if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
-											log.info(
-												Messages.ESRView_ESR_finished + rec.getBetrag());
+											log.info(Messages.ESRView_ESR_finished
+												+ rec.getBetrag());
 										} else if ((rec.getTyp().equals(ESRRecord.MODE.Storno_edv))
 											|| (rec.getTyp().equals(ESRRecord.MODE.Storno_Schalter))) {
 											Rechnung rn = rec.getRechnung();

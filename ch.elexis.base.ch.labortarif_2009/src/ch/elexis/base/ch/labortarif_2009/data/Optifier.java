@@ -30,7 +30,8 @@ public class Optifier implements IOptifier {
 	 * Add and recalculate the various possible amendments
 	 */
 	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons){
-		boolean bOptify = CoreHub.userCfg.get(ch.elexis.core.constants.Preferences.LEISTUNGSCODES_OPTIFY, true);
+		boolean bOptify =
+			CoreHub.userCfg.get(ch.elexis.core.constants.Preferences.LEISTUNGSCODES_OPTIFY, true);
 		if (code instanceof Labor2009Tarif) {
 			// Gültigkeit gemäss Datum prüfen
 			if (bOptify) {
@@ -69,7 +70,7 @@ public class Optifier implements IOptifier {
 			TimeTool deadline = CoreHub.globalCfg.getDate(Preferences.OPTIMIZE_ADDITION_DEADLINE);
 			if (deadline == null)
 				deadline = new TimeTool(Preferences.OPTIMIZE_ADDITION_INITDEADLINE);
-
+			
 			if (date.isBefore(new TimeTool("01.07.2009"))) { //$NON-NLS-1$
 				return new Result<Object>(SEVERITY.WARNING, 3, "Code not yet valid", null, false); //$NON-NLS-1$
 			}
@@ -157,7 +158,9 @@ public class Optifier implements IOptifier {
 				} else {
 					if (date.isAfterOrEqual(deadline)) {
 						v4708.delete();
-						return new Result<Object>(SEVERITY.WARNING, 2,
+						return new Result<Object>(
+							SEVERITY.WARNING,
+							2,
 							"4708.00 only until " + deadline.toString(TimeTool.DATE_GER), null, false); //$NON-NLS-1$
 					}
 				}

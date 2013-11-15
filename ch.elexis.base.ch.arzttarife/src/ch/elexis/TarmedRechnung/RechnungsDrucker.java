@@ -46,7 +46,6 @@ import ch.elexis.views.RnPrintView2;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
-
 public class RechnungsDrucker implements IRnOutputter {
 	// Mandant actMandant;
 	TarmedACL ta = TarmedACL.getInstance();

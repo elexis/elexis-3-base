@@ -26,7 +26,6 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.LaborLeistung;
 
-
 public class LaborleistungCodeSelectorFactory extends CodeSelectorFactory {
 	// private AbstractDataLoaderJob dataloader;
 	private ViewerConfigurer vc;

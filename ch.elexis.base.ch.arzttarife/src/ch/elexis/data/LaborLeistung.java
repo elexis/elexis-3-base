@@ -137,9 +137,9 @@ public class LaborLeistung extends VerrechenbarAdapter {
 		}
 		return ret;
 	}
-
+	
 	@Override
-	public List<Object> getActions(Object context) {
+	public List<Object> getActions(Object context){
 		// TODO Auto-generated method stub
 		return null;
 	}

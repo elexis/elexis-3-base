@@ -33,7 +33,6 @@ import ch.rgw.tools.IFilter;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
-
 public class BagMediContentProvider extends FlatDataLoader {
 	PreparedStatement psSubst, psNotes, psMedi;
 	private List<String> ids;

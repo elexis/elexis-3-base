@@ -19,7 +19,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 
-
 public class PhysioPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String TP_ID = "Physio"; //$NON-NLS-1$
 	

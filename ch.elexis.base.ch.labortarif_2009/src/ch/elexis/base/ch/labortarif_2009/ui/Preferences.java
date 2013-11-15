@@ -49,9 +49,9 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	public static final String OPTIMIZE = "abrechnung/labor2009/optify"; //$NON-NLS-1$
 	public static final String OPTIMIZE_ADDITION_DEADLINE =
 		"abrechnung/labor2009/optify/addition/deadline"; //$NON-NLS-1$
-
+	
 	public static final String OPTIMIZE_ADDITION_INITDEADLINE = "30.06.2013"; //$NON-NLS-1$
-
+	
 	int langdef = 0;
 	Settings cfg = CoreHub.mandantCfg;
 	LinkedList<Button> buttons = new LinkedList<Button>();
@@ -119,16 +119,17 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 					time.set(TimeTool.MINUTE, 59);
 					time.set(TimeTool.SECOND, 59);
 					CoreHub.globalCfg.set(OPTIMIZE_ADDITION_DEADLINE, time);
-					//System.out.println(time.toString(TimeTool.DATE_GER));
+					// System.out.println(time.toString(TimeTool.DATE_GER));
 				}
 			}
+			
 			public void focusGained(FocusEvent e){}
 		});
 		TimeTool deadline = CoreHub.globalCfg.getDate(OPTIMIZE_ADDITION_DEADLINE);
 		if (deadline == null)
 			deadline = new TimeTool(OPTIMIZE_ADDITION_INITDEADLINE);
 		dpc.setDate(deadline.getTime());
-
+		
 		return ret;
 	}
 	

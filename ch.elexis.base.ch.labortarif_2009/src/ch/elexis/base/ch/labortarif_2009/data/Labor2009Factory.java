@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
 import ch.elexis.core.data.PersistentObject;
 import ch.elexis.core.data.PersistentObjectFactory;
 
-
 public class Labor2009Factory extends PersistentObjectFactory {
 	
 	public PersistentObject createFromString(String code){

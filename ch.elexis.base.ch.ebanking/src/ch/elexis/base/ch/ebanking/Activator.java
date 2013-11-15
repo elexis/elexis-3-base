@@ -21,7 +21,8 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		UIJob job = new UIJob("InitCommandsWorkaround") {
 			
-			public IStatus runInUIThread(@SuppressWarnings("unused") IProgressMonitor monitor){
+			public IStatus runInUIThread(@SuppressWarnings("unused")
+			IProgressMonitor monitor){
 				
 				ICommandService commandService =
 					(ICommandService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()

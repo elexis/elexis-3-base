@@ -218,6 +218,7 @@ public class XMLExporter implements IRnOutputter {
 	public static final String ATTR_AMOUNT_PREPAID = "amount_prepaid"; //$NON-NLS-1$
 	public static final String ELEMENT_BALANCE = "balance"; //$NON-NLS-1$
 	public static final String ELEMENT_INVOICE = "invoice"; //$NON-NLS-1$
+	public static final String ELEMENT_ANNULMENT = "annulment"; //$NON-NLS-1$
 	public static final Namespace ns = Namespace.getNamespace(ELEMENT_INVOICE,
 		"http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
 	public static final String FIELDNAME_TIMESTAMPXML = "TimeStampXML"; //$NON-NLS-1$
@@ -437,6 +438,12 @@ public class XMLExporter implements IRnOutputter {
 					negate(balance, ATTR_AMOUNT_OBLIGATIONS);
 					balance.setAttribute(ATTR_AMOUNT_DUE, StringConstants.DOUBLE_ZERO);
 					balance.setAttribute(ATTR_AMOUNT_PREPAID, StringConstants.DOUBLE_ZERO);
+					
+					// change the purpose if a payant element is present
+					Element payant = invoice.getChild(ELEMENT_TIERS_PAYANT, ns);
+					if (payant != null) {
+						payant.setAttribute("purpose", ELEMENT_ANNULMENT); //$NON-NLS-1$
+					}
 				}
 				
 				checkXML(ret, dest, rn, doVerify);
@@ -659,14 +666,11 @@ public class XMLExporter implements IRnOutputter {
 				continue;
 			}
 			TimeTool tt = new TimeTool(b.getDatum());
-			// //System.out.println(tt.toString(TimeTool.DATE_GER));
 			if (tt.isBefore(ttFirst)) { // make validator happy
 				ttFirst.set(tt);
-				// //System.out.println(ttFirst.toString(TimeTool.DATE_GER));
 			}
 			if (tt.isAfter(ttLast)) { // make validator even happier
 				ttLast.set(tt);
-				// //System.out.println(ttLast.toString(TimeTool.DATE_GER));
 			}
 			String dateShort = tt.toString(TimeTool.DATE_COMPACT);
 			String dateForTarmed = makeTarmedDatum(b.getDatum());
@@ -704,15 +708,14 @@ public class XMLExporter implements IRnOutputter {
 					double secondaryScale = vv.getSecondaryScaleFactor();
 					
 					double tlTl, tlAL, mult;
+					mult = tl.getVKMultiplikator(tt, actFall);
 					if ((arzl != null && !arzl.isEmpty()) && (tecl != null && !tecl.isEmpty())) {
 						tlTl = Double.parseDouble(tecl);
-						mult = PersistentObject.checkZeroDouble(vv.get(VK_SCALE)); // Taxpunkt
 						tlAL = Double.parseDouble(arzl);
 						
 					} else {
 						tlTl = tl.getTL();
 						tlAL = tl.getAL();
-						mult = tl.getVKMultiplikator(tt, actFall);
 					}
 					// build monetary values of this TarmedLeistung
 					Money mAL =
@@ -1043,7 +1046,6 @@ public class XMLExporter implements IRnOutputter {
 			// to simplify things for now we do no accept modifications
 			eTiers.setAttribute("invoice_modification", "false"); // 11262 //$NON-NLS-1$ //$NON-NLS-2$
 			eTiers.setAttribute("purpose", ELEMENT_INVOICE); // 11265 //$NON-NLS-1$
-			// TODO Storno / anulment
 		}
 		
 		Element biller = new Element("biller", ns); // 11070 -> 11400 //$NON-NLS-1$

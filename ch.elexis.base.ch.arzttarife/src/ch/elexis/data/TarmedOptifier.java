@@ -119,6 +119,29 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 			Verrechnet check = null;
+			// Korrekter Fall Typ prüfen, und ggf. den code ändern
+			if (tc.getCode().matches("39.002[01]") || tc.getCode().matches("39.001[0156]")) {
+				String gesetz = kons.getFall().getRequiredString("Gesetz");
+
+				if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0011")) {
+					return this.add(TarmedLeistung.getFromCode("39.0010"), kons);
+				} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0010")) {
+					return this.add(TarmedLeistung.getFromCode("39.0011"), kons);
+				}
+				
+				if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0016")) {
+					return this.add(TarmedLeistung.getFromCode("39.0015"), kons);
+				} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0015")) {
+					return this.add(TarmedLeistung.getFromCode("39.0016"), kons);
+				}
+
+				if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0021")) {
+					return this.add(TarmedLeistung.getFromCode("39.0020"), kons);
+				} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0020")) {
+					return this.add(TarmedLeistung.getFromCode("39.0021"), kons);
+				}
+			}
+
 			// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann
 			// nur Zahl erhöhen.
 			for (Verrechnet v : lst) {

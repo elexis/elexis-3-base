@@ -11,7 +11,7 @@
  * 
  *******************************************************************************/
 
-package ch.elexis.base.ch.artikel.data;
+package ch.elexis.artikel_ch.data;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,11 +26,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
-import ch.elexis.core.data.Artikel;
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Artikel;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.rgw.tools.Log;
 
 /**

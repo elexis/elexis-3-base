@@ -14,7 +14,7 @@
    <extension
          point="ch.elexis.core.data.PersistentReference">
       <Factory
-            Class="ch.elexis.base.ch.diagnosecodes.DiagnoseCodeFactory"
+            Class="ch.elexis.data.DiagnoseCodeFactory"
             name="%DiagnosecodesSchweiz">
       </Factory>
    </extension>
@@ -23,14 +23,14 @@
       <Diagnosesystem
             CodeDetailDisplay="ch.elexis.base.ch.diagnosecodes.views.ICDDetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.diagnosecodes.views.ICDCodeSelectorFactory"
-            ElementFactory="ch.elexis.base.ch.diagnosecodes.DiagnoseCodeFactory"
-            ImporterClass="ch.elexis.base.ch.diagnosecodes.ICDImporter"
+            ElementFactory="ch.elexis.data.DiagnoseCodeFactory"
+            ImporterClass="ch.elexis.data.ICDImporter"
             name="%ICD10deutsch">
       </Diagnosesystem>
       <Diagnosesystem
             CodeDetailDisplay="ch.elexis.base.ch.diagnosecodes.views.TICodeDetail"
             CodeSelectorFactory="ch.elexis.base.ch.diagnosecodes.views.TICodeSelectorFactory"
-            ElementFactory="ch.elexis.base.ch.diagnosecodes.DiagnoseCodeFactory"
+            ElementFactory="ch.elexis.data.DiagnoseCodeFactory"
             name="%TessinerCodes">
       </Diagnosesystem>
    </extension>

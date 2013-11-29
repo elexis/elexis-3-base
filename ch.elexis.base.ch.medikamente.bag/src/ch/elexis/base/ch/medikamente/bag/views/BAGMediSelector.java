@@ -18,10 +18,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.base.ch.medikamente.bag.data.BAGMedi;
-import ch.elexis.base.ch.medikamente.bag.data.BAGMediFactory;
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
@@ -31,6 +27,10 @@ import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.artikel.ArtikelContextMenu;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
+import ch.elexis.medikamente.bag.data.BAGMedi;
+import ch.elexis.medikamente.bag.data.BAGMediFactory;
 
 public class BAGMediSelector extends CodeSelectorFactory {
 	public static final String FIELD_NAME = "Name";

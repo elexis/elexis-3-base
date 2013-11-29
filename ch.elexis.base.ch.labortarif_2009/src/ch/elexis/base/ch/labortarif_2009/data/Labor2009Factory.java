@@ -14,8 +14,8 @@ package ch.elexis.base.ch.labortarif_2009.data;
 
 import java.lang.reflect.Method;
 
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.PersistentObjectFactory;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.PersistentObjectFactory;
 
 public class Labor2009Factory extends PersistentObjectFactory {
 	

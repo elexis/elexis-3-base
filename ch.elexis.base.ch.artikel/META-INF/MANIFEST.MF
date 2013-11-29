@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.0.0"
-Export-Package: ch.elexis.base.ch.artikel.data,
+Export-Package: ch.elexis.artikel_ch.data,
  ch.elexis.base.ch.artikel.views
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import ch.elexis.core.data.Patient;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
@@ -30,6 +29,7 @@ import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Patient;
 import ch.medelexis.templator.ui.Preferences;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.StringTool;

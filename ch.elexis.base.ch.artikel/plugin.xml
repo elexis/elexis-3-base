@@ -14,7 +14,7 @@
    <extension
          point="ch.elexis.core.data.PersistentReference">
       <Factory
-            Class="ch.elexis.base.ch.artikel.data.ArtikelFactory"
+            Class="ch.elexis.artikel_ch.data.ArtikelFactory"
             name="Artikel Schweiz">
       </Factory>
    </extension>
@@ -23,21 +23,21 @@
       <Artikel
             CodeDetailDisplay="ch.elexis.base.ch.artikel.views.MedicalDetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.artikel.views.MedicalSelector"
-            ElementFactory="ch.elexis.base.ch.artikel.data.ArtikelFactory"
+            ElementFactory="ch.elexis.artikel_ch.data.ArtikelFactory"
             name="Medical">
       </Artikel>
       <Artikel
             CodeDetailDisplay="ch.elexis.base.ch.artikel.views.MedikamentDetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.artikel.views.MedikamentSelector"
-            ElementFactory="ch.elexis.base.ch.artikel.data.ArtikelFactory"
-            ImporterClass="ch.elexis.base.ch.artikel.data.MedikamentImporter"
+            ElementFactory="ch.elexis.artikel_ch.data.ArtikelFactory"
+            ImporterClass="ch.elexis.artikel_ch.data.MedikamentImporter"
             name="Medikament">
       </Artikel>
       <Artikel
             CodeDetailDisplay="ch.elexis.base.ch.artikel.views.MiGelDetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.artikel.views.MiGelSelector"
-            ElementFactory="ch.elexis.base.ch.artikel.data.ArtikelFactory"
-            ImporterClass="ch.elexis.base.ch.artikel.data.MiGelImporter"
+            ElementFactory="ch.elexis.artikel_ch.data.ArtikelFactory"
+            ImporterClass="ch.elexis.artikel_ch.data.MiGelImporter"
             name="MiGeL">
       </Artikel>
    </extension>

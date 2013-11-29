@@ -11,10 +11,10 @@
  *******************************************************************************/
 package ch.elexis.base.ch.labortarif_2009.data;
 
-import ch.elexis.core.data.Fall;
-import ch.elexis.core.data.Xid;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Xid;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 

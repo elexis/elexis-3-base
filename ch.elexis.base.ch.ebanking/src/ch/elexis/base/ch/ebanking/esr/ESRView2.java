@@ -34,9 +34,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Query;
-import ch.elexis.core.data.Rechnung;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.admin.ACE;
 import ch.elexis.core.data.admin.AccessControlDefaults;
@@ -52,6 +49,9 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
+import ch.elexis.data.Rechnung;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 

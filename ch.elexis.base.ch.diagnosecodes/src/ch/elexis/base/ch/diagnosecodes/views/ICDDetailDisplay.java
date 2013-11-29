@@ -22,10 +22,10 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-import ch.elexis.base.ch.diagnosecodes.ICD10;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import ch.elexis.data.ICD10;
 
 public class ICDDetailDisplay implements IDetailDisplay {
 	FormToolkit tk = UiDesk.getToolkit();

@@ -11,11 +11,11 @@
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
-import ch.elexis.core.data.Fall;
-import ch.elexis.core.data.Kontakt;
-import ch.elexis.core.data.Person;
-import ch.elexis.core.data.Xid;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Person;
 import ch.elexis.data.TrustCenters;
+import ch.elexis.data.Xid;
 import ch.rgw.tools.StringTool;
 
 public class TarmedRequirements {

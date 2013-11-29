@@ -12,7 +12,7 @@
    <extension
          point="ch.elexis.core.data.PersistentReference">
       <Factory
-            Class="ch.elexis.base.ch.medikamente.bag.data.BAGMediFactory"
+            Class="ch.elexis.medikamente.bag.data.BAGMediFactory"
             name="BAG-Medikamente">
       </Factory>
    </extension>
@@ -21,8 +21,8 @@
       <Artikel
             CodeDetailDisplay="ch.elexis.base.ch.medikamente.bag.views.BAGMediDetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.medikamente.bag.views.BAGMediSelector"
-            ElementFactory="ch.elexis.base.ch.medikamente.bag.data.BAGMediFactory"
-            ImporterClass="ch.elexis.base.ch.medikamente.bag.data.BAGMediImporter"
+            ElementFactory="ch.elexis.medikamente.bag.data.BAGMediFactory"
+            ImporterClass="ch.elexis.medikamente.bag.data.BAGMediImporter"
             name="Medikamente BAG">
       </Artikel>
    </extension>

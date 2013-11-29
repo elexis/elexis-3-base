@@ -12,10 +12,10 @@
 
 package ch.elexis.TarmedRechnung;
 
-import ch.elexis.core.data.Fall;
-import ch.elexis.core.data.Kontakt;
-import ch.elexis.core.data.Rechnung;
-import ch.elexis.core.data.RnStatus;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;

@@ -10,8 +10,8 @@ import org.eclipse.swt.graphics.Image;
 
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.Messages;
-import ch.elexis.core.data.Rechnung;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.data.Rechnung;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 

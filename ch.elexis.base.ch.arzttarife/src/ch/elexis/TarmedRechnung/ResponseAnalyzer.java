@@ -20,8 +20,8 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 
-import ch.elexis.core.data.Rechnung;
-import ch.elexis.core.data.RnStatus.REJECTCODE;
+import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus.REJECTCODE;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 

@@ -9,11 +9,11 @@
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
-package ch.elexis.base.ch.artikel.data;
+package ch.elexis.artikel_ch.data;
 
 import java.util.Map;
 
-import ch.elexis.core.data.Artikel;
+import ch.elexis.data.Artikel;
 
 public class Medikament extends Artikel {
 	

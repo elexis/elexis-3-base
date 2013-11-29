@@ -14,7 +14,6 @@ package ch.elexis.views;
 
 import org.eclipse.swt.SWT;
 
-import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.actions.ReadOnceTreeLoader;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
@@ -24,6 +23,7 @@ import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import ch.elexis.data.Query;
 import ch.elexis.data.TarmedLeistung;
 
 public class TarmedCodeSelectorFactory extends CodeSelectorFactory {

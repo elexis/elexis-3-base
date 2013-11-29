@@ -14,12 +14,12 @@ package ch.elexis.base.ch.labortarif_2009.data;
 import java.util.List;
 
 import ch.elexis.base.ch.labortarif_2009.ui.Preferences;
-import ch.elexis.core.data.Konsultation;
-import ch.elexis.core.data.Query;
-import ch.elexis.core.data.Verrechnet;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Query;
+import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;

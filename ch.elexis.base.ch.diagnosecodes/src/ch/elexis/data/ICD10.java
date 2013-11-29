@@ -11,16 +11,16 @@
  *    
  *******************************************************************************/
 
-package ch.elexis.base.ch.diagnosecodes;
+package ch.elexis.data;
 
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Verrechnet;
 import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 

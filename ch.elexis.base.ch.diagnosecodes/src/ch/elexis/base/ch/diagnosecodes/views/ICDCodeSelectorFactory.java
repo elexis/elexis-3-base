@@ -15,14 +15,14 @@ package ch.elexis.base.ch.diagnosecodes.views;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.base.ch.diagnosecodes.ICD10;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.actions.JobPool;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import ch.elexis.data.ICD10;
+import ch.elexis.data.Query;
 
 public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 	ICD10LazyTreeLoader dataloader;

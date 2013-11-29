@@ -14,8 +14,8 @@ package ch.elexis.base.ch.artikel.views;
 
 import org.eclipse.swt.SWT;
 
-import ch.elexis.base.ch.artikel.data.ArtikelFactory;
-import ch.elexis.base.ch.artikel.data.MiGelArtikel;
+import ch.elexis.artikel_ch.data.ArtikelFactory;
+import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.base.ch.artikel.model.MigelLoader;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;

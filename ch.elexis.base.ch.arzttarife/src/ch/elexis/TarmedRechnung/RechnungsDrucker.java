@@ -33,14 +33,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
-import ch.elexis.core.data.Fall;
-import ch.elexis.core.data.Rechnung;
-import ch.elexis.core.data.RnStatus;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.views.RnPrintView2;
 import ch.rgw.tools.ExHandler;

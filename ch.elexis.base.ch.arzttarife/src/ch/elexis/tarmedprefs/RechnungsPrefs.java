@@ -45,18 +45,18 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.base.ch.ebanking.esr.ESR;
-import ch.elexis.core.data.Kontakt;
-import ch.elexis.core.data.Mandant;
-import ch.elexis.core.data.Organisation;
-import ch.elexis.core.data.Query;
-import ch.elexis.core.data.Xid;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktExtDialog;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.Organisation;
+import ch.elexis.data.Query;
 import ch.elexis.data.TrustCenters;
+import ch.elexis.data.Xid;
 import ch.rgw.tools.StringTool;
 
 public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferencePage {

@@ -9,15 +9,15 @@
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
-package ch.elexis.base.ch.medikamente.bag.data;
+package ch.elexis.medikamente.bag.data;
 
 import java.lang.reflect.Method;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.PersistentObjectFactory;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.PersistentObjectFactory;
 
 public class BAGMediFactory extends PersistentObjectFactory {
 	

@@ -13,16 +13,16 @@ package ch.elexis.base.ch.artikel.views;
 
 import org.eclipse.swt.SWT;
 
-import ch.elexis.base.ch.artikel.data.ArtikelFactory;
-import ch.elexis.base.ch.artikel.data.Medical;
+import ch.elexis.artikel_ch.data.ArtikelFactory;
+import ch.elexis.artikel_ch.data.Medical;
 import ch.elexis.base.ch.artikel.model.MedicalLoader;
-import ch.elexis.core.data.Artikel;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.artikel.ArtikelContextMenu;
 import ch.elexis.core.ui.views.artikel.ArtikelLabelProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import ch.elexis.data.Artikel;
 
 public class MedicalSelector extends CodeSelectorFactory {
 	/*

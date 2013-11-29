@@ -11,10 +11,10 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
-import ch.elexis.core.data.Rechnung;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.data.Rechnung;
 
 /**
  * Eigentlich nur zur Demonstration, dass ein Selectionlistener auch unabhängig von einer View

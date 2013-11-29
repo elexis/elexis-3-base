@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *******************************************************************************/
-package ch.elexis.base.ch.medikamente.bag.data;
+package ch.elexis.medikamente.bag.data;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import ch.elexis.core.data.Artikel;
-import ch.elexis.core.data.Kontakt;
-import ch.elexis.core.data.Organisation;
-import ch.elexis.core.data.Query;
-import ch.elexis.core.data.Xid;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.data.Artikel;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Organisation;
+import ch.elexis.data.Query;
+import ch.elexis.data.Xid;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;

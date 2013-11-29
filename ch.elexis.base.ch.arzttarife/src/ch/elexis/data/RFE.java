@@ -13,9 +13,9 @@ package ch.elexis.data;
 import java.util.HashMap;
 import java.util.List;
 
-import ch.elexis.core.data.Konsultation;
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Query;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 
 public class RFE extends PersistentObject {
 	public static final String Version = "0.1.0";

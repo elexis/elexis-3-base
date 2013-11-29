@@ -16,8 +16,8 @@ import java.util.HashMap;
 import org.eclipse.jface.viewers.Viewer;
 
 import ch.elexis.base.ch.labortarif_2009.data.Labor2009Tarif;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
+import ch.elexis.data.Query;
 
 public class Labor2009ContentProvider implements ICommonViewerContentProvider {
 	

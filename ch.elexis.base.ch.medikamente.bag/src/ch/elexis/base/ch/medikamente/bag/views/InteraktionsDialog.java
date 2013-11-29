@@ -29,11 +29,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.base.ch.medikamente.bag.data.BAGMedi;
-import ch.elexis.base.ch.medikamente.bag.data.Interaction;
-import ch.elexis.base.ch.medikamente.bag.data.Substance;
 import ch.elexis.core.ui.util.ListDisplay;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.medikamente.bag.data.BAGMedi;
+import ch.elexis.medikamente.bag.data.Interaction;
+import ch.elexis.medikamente.bag.data.Substance;
 
 public class InteraktionsDialog extends TitleAreaDialog {
 	BAGMedi medi;

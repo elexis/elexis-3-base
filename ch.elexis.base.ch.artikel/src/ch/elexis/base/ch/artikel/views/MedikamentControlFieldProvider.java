@@ -23,9 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 
-import ch.elexis.base.ch.artikel.data.Medikament;
-import ch.elexis.core.data.Konsultation;
-import ch.elexis.core.data.Query;
+import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.actions.ScannerEvents;
 import ch.elexis.core.ui.text.ElexisText;
@@ -33,6 +31,8 @@ import ch.elexis.core.ui.util.IScannerListener;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.views.KonsDetailView;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Query;
 
 public class MedikamentControlFieldProvider extends DefaultControlFieldProvider implements
 		IScannerListener {

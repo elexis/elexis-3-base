@@ -12,10 +12,10 @@
 
 package ch.elexis.base.ch.artikel.model;
 
-import ch.elexis.base.ch.artikel.data.MiGelArtikel;
-import ch.elexis.core.data.Query;
+import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.data.Query;
 
 public class MigelLoader extends FlatDataLoader {
 	public MigelLoader(CommonViewer cv){

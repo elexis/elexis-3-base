@@ -12,11 +12,11 @@ package ch.elexis.data;
 
 import java.util.List;
 
-import ch.elexis.core.data.Fall;
-import ch.elexis.core.data.VerrechenbarAdapter;
-import ch.elexis.core.data.Xid;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.optifier.NoObligationOptifier;
+import ch.elexis.data.Fall;
+import ch.elexis.data.VerrechenbarAdapter;
+import ch.elexis.data.Xid;
 import ch.rgw.tools.TimeTool;
 
 /**

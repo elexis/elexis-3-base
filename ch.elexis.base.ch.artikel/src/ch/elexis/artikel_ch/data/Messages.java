@@ -9,7 +9,7 @@
  *    Gerry Weirich - initial implementation
  *    
  *******************************************************************************/
-package ch.elexis.base.ch.artikel.data;
+package ch.elexis.artikel_ch.data;
 
 import org.eclipse.osgi.util.NLS;
 

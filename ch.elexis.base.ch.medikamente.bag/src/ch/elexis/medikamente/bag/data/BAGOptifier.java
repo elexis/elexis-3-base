@@ -9,14 +9,14 @@
  *    G. Weirich - initial implementation
  *******************************************************************************/
 
-package ch.elexis.base.ch.medikamente.bag.data;
+package ch.elexis.medikamente.bag.data;
 
 import java.util.List;
 
-import ch.elexis.core.data.Konsultation;
-import ch.elexis.core.data.Verrechnet;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.Result;
 
 public class BAGOptifier implements IOptifier {

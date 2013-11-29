@@ -9,12 +9,12 @@
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
-package ch.elexis.base.ch.artikel.data;
+package ch.elexis.artikel_ch.data;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ch.elexis.core.data.Artikel;
+import ch.elexis.data.Artikel;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 

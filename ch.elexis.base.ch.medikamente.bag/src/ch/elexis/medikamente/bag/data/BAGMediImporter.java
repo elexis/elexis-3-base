@@ -10,7 +10,7 @@
  * 
  *******************************************************************************/
 
-package ch.elexis.base.ch.medikamente.bag.data;
+package ch.elexis.medikamente.bag.data;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -24,13 +24,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
-import ch.elexis.core.data.Artikel;
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.ui.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Artikel;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 

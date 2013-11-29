@@ -12,8 +12,6 @@ package ch.elexis.views;
 
 import org.eclipse.swt.SWT;
 
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.actions.PersistentObjectLoader;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
@@ -23,7 +21,9 @@ import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PhysioLeistung;
+import ch.elexis.data.Query;
 import ch.rgw.tools.IFilter;
 
 public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {

@@ -38,10 +38,6 @@ import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.ESRRecordDialog;
 import ch.elexis.base.ch.ebanking.esr.Messages;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.Anwender;
-import ch.elexis.core.data.Patient;
-import ch.elexis.core.data.Query;
-import ch.elexis.core.data.Rechnung;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.admin.ACE;
 import ch.elexis.core.data.admin.AccessControlDefaults;
@@ -49,6 +45,10 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.model.IPersistentObject;
+import ch.elexis.data.Anwender;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Query;
+import ch.elexis.data.Rechnung;
 import ch.rgw.tools.TimeTool;
 
 public class ESRView extends ViewPart {

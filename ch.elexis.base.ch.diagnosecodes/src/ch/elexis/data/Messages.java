@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
-package ch.elexis.base.ch.diagnosecodes;
+package ch.elexis.data;
 
 import org.eclipse.osgi.util.NLS;
 

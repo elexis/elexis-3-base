@@ -10,15 +10,15 @@
  *    
  *******************************************************************************/
 
-package ch.elexis.base.ch.medikamente.bag.data;
+package ch.elexis.medikamente.bag.data;
 
 import java.util.List;
 
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;

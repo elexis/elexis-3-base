@@ -10,7 +10,7 @@
  *    
  *******************************************************************************/
 
-package ch.elexis.base.ch.diagnosecodes;
+package ch.elexis.data;
 
 import java.io.BufferedReader;
 import java.io.File;

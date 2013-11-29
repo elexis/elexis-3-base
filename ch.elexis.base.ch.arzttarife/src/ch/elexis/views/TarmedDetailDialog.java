@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.elexis.core.data.Verrechnet;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.TarmedLeistung;
+import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.Money;
 
 public class TarmedDetailDialog extends Dialog {

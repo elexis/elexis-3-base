@@ -78,11 +78,11 @@ import org.w3c.dom.Text;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.Patient;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 
 public class TextPlugin implements ITextPlugin {

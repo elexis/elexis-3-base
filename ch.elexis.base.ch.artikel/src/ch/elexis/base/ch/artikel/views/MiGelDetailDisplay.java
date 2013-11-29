@@ -22,7 +22,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-import ch.elexis.base.ch.artikel.data.MiGelArtikel;
+import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.SWTHelper;

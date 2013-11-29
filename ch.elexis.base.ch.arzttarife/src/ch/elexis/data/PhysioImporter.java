@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
 import au.com.bytecode.opencsv.CSVReader;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.util.ImporterPage;
+import ch.elexis.data.Query;
 
 public class PhysioImporter extends ImporterPage {
 	

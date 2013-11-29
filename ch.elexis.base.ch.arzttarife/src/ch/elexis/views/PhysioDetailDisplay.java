@@ -18,11 +18,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-import ch.elexis.core.data.PersistentObject;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PhysioLeistung;
 
 public class PhysioDetailDisplay implements IDetailDisplay {

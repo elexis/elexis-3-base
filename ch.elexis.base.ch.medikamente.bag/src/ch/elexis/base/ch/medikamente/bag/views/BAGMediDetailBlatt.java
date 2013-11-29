@@ -27,12 +27,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-import ch.elexis.base.ch.medikamente.bag.data.BAGMedi;
-import ch.elexis.base.ch.medikamente.bag.data.Interaction;
-import ch.elexis.base.ch.medikamente.bag.data.Substance;
-import ch.elexis.core.data.Artikel;
-import ch.elexis.core.data.Kontakt;
-import ch.elexis.core.data.PersistentObject;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
@@ -43,6 +37,12 @@ import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.util.LabeledInputField.InputData.Typ;
 import ch.elexis.core.ui.util.ListDisplay;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Artikel;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.medikamente.bag.data.BAGMedi;
+import ch.elexis.medikamente.bag.data.Interaction;
+import ch.elexis.medikamente.bag.data.Substance;
 import ch.rgw.tools.StringTool;
 
 public class BAGMediDetailBlatt extends Composite {

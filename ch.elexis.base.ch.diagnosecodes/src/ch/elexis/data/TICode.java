@@ -10,16 +10,16 @@
  * 
  *******************************************************************************/
 
-package ch.elexis.base.ch.diagnosecodes;
+package ch.elexis.data;
 
 import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Verrechnet;
 import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Verrechnet;
 
 /**
  * Die Tessinercodes werden nicht in der Datenbank vorgehalten, sondern sind aus Effizientgründen

@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core.ui.importer.div;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0"
-Export-Package: ch.elexis.base.ch.medikamente.bag.data
+Export-Package: ch.elexis.medikamente.bag.data
 Import-Package: org.jdom,
  org.jdom.input,
  org.jdom.xpath,

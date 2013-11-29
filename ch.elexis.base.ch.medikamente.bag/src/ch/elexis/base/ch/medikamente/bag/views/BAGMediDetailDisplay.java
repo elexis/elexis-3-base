@@ -14,8 +14,8 @@ package ch.elexis.base.ch.medikamente.bag.views;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 
-import ch.elexis.base.ch.medikamente.bag.data.BAGMedi;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import ch.elexis.medikamente.bag.data.BAGMedi;
 
 public class BAGMediDetailDisplay implements IDetailDisplay {
 	BAGMediDetailBlatt blatt;

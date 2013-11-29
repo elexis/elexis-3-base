@@ -14,8 +14,6 @@ package ch.elexis.views;
 
 import org.eclipse.swt.SWT;
 
-import ch.elexis.core.data.PersistentObject;
-import ch.elexis.core.data.Query;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.actions.PersistentObjectLoader;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -25,6 +23,8 @@ import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.LaborLeistung;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 
 public class LaborleistungCodeSelectorFactory extends CodeSelectorFactory {
 	// private AbstractDataLoaderJob dataloader;

@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
-import ch.elexis.core.data.Rechnung;
+import ch.elexis.data.Rechnung;
 import ch.rgw.tools.Money;
 
 public class FilterSearchField extends ViewerFilter {

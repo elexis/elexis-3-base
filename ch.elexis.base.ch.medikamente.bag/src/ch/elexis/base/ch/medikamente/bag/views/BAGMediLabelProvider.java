@@ -18,14 +18,14 @@ import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
-import ch.elexis.base.ch.medikamente.bag.data.BAGMedi;
-import ch.elexis.base.ch.medikamente.bag.data.Substance;
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.Artikel;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
+import ch.elexis.data.Artikel;
+import ch.elexis.medikamente.bag.data.BAGMedi;
+import ch.elexis.medikamente.bag.data.Substance;
 import ch.rgw.tools.StringTool;
 
 public class BAGMediLabelProvider extends DefaultLabelProvider implements ITableColorProvider {

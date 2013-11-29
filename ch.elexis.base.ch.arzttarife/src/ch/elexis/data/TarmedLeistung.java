@@ -22,17 +22,17 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 
-import ch.elexis.core.data.Fall;
-import ch.elexis.core.data.Mandant;
-import ch.elexis.core.data.Query;
-import ch.elexis.core.data.Verrechnet;
-import ch.elexis.core.data.Xid;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.Query;
+import ch.elexis.data.Verrechnet;
+import ch.elexis.data.Xid;
 import ch.elexis.views.TarmedDetailDialog;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.IFilter;

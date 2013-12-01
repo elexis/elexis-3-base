@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Iatrix Erweiterungen zu Elexis
+Bundle-SymbolicName: org.iatrix; singleton:=true
+Bundle-Version: 2.0.3
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis.core;bundle-version="0.0.2",
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.elexis,
+ org.eclipse.ui.forms,
+ ch.elexis.icpc,
+ ch.rgw.utility,
+ org.eclipse.core.expressions;bundle-version="3.4.100",
+ ch.elexis.externe_dokumente;bundle-version="2.0.4"
+Eclipse-AutoStart: true
+Bundle-Vendor: iatrix.org
+Bundle-ClassPath: .,
+ ktable_2.1.3.jar,
+ icons/
+Bundle-Activator: org.iatrix.IatrixActivator

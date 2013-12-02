@@ -18,8 +18,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.iatrix.Iatrix;
 
-import ch.elexis.Hub;
-import ch.elexis.preferences.SettingsPreferenceStore;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 /**
  * Settings for KG Iatrix
@@ -31,7 +31,7 @@ public class KGIatrixPreferences extends FieldEditorPreferencePage implements
 	
 	public KGIatrixPreferences(){
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(Hub.userCfg));
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.userCfg));
 		setDescription("Einstellungen für KG Iatrix");
 	}
 	
@@ -49,13 +49,13 @@ public class KGIatrixPreferences extends FieldEditorPreferencePage implements
 		
 		String value;
 		
-		value = Hub.userCfg.get(Iatrix.CFG_AUTO_SAVE_PERIOD, null);
+		value = CoreHub.userCfg.get(Iatrix.CFG_AUTO_SAVE_PERIOD, null);
 		if (value == null) {
-			Hub.userCfg.set(Iatrix.CFG_AUTO_SAVE_PERIOD, Iatrix.CFG_AUTO_SAVE_PERIOD_DEFAULT);
+			CoreHub.userCfg.set(Iatrix.CFG_AUTO_SAVE_PERIOD, Iatrix.CFG_AUTO_SAVE_PERIOD_DEFAULT);
 		}
-		value = Hub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE, null);
+		value = CoreHub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE, null);
 		if (value == null) {
-			Hub.userCfg.set(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
+			CoreHub.userCfg.set(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
 				Iatrix.CFG_CODE_SELECTION_AUTOCLOSE_DEFAULT);
 		}
 	}
@@ -63,7 +63,7 @@ public class KGIatrixPreferences extends FieldEditorPreferencePage implements
 	@Override
 	public boolean performOk(){
 		if (super.performOk()) {
-			Hub.userCfg.flush();
+			CoreHub.userCfg.flush();
 			return true;
 		}
 		return false;

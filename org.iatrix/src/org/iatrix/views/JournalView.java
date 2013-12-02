@@ -11,10 +11,10 @@
 
 package org.iatrix.views;
 
-import static ch.elexis.actions.ElexisEvent.EVENT_DELETE;
-import static ch.elexis.actions.ElexisEvent.EVENT_DESELECTED;
-import static ch.elexis.actions.ElexisEvent.EVENT_SELECTED;
-import static ch.elexis.actions.ElexisEvent.EVENT_UPDATE;
+import static ch.elexis.core.data.events.ElexisEvent.EVENT_DELETE;
+import static ch.elexis.core.data.events.ElexisEvent.EVENT_DESELECTED;
+import static ch.elexis.core.data.events.ElexisEvent.EVENT_SELECTED;
+import static ch.elexis.core.data.events.ElexisEvent.EVENT_UPDATE;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -102,24 +102,24 @@ import org.iatrix.data.Problem;
 import org.iatrix.dialogs.ChooseKonsRevisionDialog;
 import org.iatrix.widgets.KonsListDisplay;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
-import ch.elexis.actions.CodeSelectorHandler;
-import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
-import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
-import ch.elexis.actions.Heartbeat.HeartListener;
-import ch.elexis.actions.ICodeSelectorTarget;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.actions.CodeSelectorHandler;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.ui.actions.GlobalActions;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.core.data.events.Heartbeat.HeartListener;;
+import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.ISticker;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
-import ch.elexis.data.IDiagnose;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
@@ -140,18 +140,18 @@ import ch.elexis.extdoc.util.Email;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.Episode;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.text.EnhancedTextField;
-import ch.elexis.text.model.Samdas;
-import ch.elexis.util.Extensions;
-import ch.elexis.util.IKonsExtension;
-import ch.elexis.util.Log;
-import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ViewMenus;
-import ch.elexis.views.PatientDetailView2;
-import ch.elexis.views.codesystems.DiagnosenView;
-import ch.elexis.views.codesystems.LeistungenView;
-import ch.elexis.views.rechnung.AccountView;
-import ch.elexis.views.rechnung.BillSummary;
+import ch.elexis.core.ui.text.EnhancedTextField;
+import ch.elexis.core.text.model.Samdas;
+import ch.elexis.core.data.util.Extensions;
+import ch.elexis.core.ui.util.IKonsExtension;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.PatientDetailView2;
+import ch.elexis.core.ui.views.codesystems.DiagnosenView;
+import ch.elexis.core.ui.views.codesystems.LeistungenView;
+import ch.elexis.core.ui.views.rechnung.AccountView;
+import ch.elexis.core.ui.views.rechnung.BillSummary;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -389,7 +389,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		EVENT_UPDATE | EVENT_DESELECTED) {
 		
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			switch (ev.getType()) {
 			case EVENT_UPDATE:
 				// problem change may affect current problems list and consultation
@@ -410,7 +410,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		Konsultation.class, EVENT_DELETE | EVENT_UPDATE | EVENT_SELECTED | EVENT_DESELECTED) {
 		
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			Konsultation k = (Konsultation) ev.getObject();
 			switch (ev.getType()) {
 			case EVENT_UPDATE:
@@ -441,7 +441,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private final ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(Fall.class,
 		ElexisEvent.EVENT_SELECTED) {
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			Fall fall = (Fall) ev.getObject();
 			Patient patient = fall.getPatient();
 			
@@ -472,7 +472,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 				Patient selectedPatient = (Patient) ev.getObject();
 				
@@ -540,7 +540,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
 		ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			adaptMenus();
 		}
 		
@@ -565,7 +565,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						problem.addDiagnose(diagnose);
 						IatrixEventHelper.updateProblem(problem);
 						
-						if (Hub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
+						if (CoreHub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
 							Iatrix.CFG_CODE_SELECTION_AUTOCLOSE_DEFAULT)) {
 							// re-activate this view
 							try {
@@ -610,7 +610,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						// tell other viewers that something has changed
 						IatrixEventHelper.updateProblem(problem);
 						
-						if (Hub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
+						if (CoreHub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
 							Iatrix.CFG_CODE_SELECTION_AUTOCLOSE_DEFAULT)) {
 							// re-activate this view
 							try {
@@ -642,7 +642,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			
 			public void codeSelected(PersistentObject po){
 				if (po instanceof IVerrechenbar) {
-					if (Hub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
+					if (CoreHub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
 						SWTHelper.alert("Fehlende Rechte",
 							"Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
 					} else {
@@ -654,7 +654,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 								SWTHelper
 									.alert("Diese Verrechnung ist ungültig", result.toString());
 							} else {
-								if (Hub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
+								if (CoreHub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
 									Iatrix.CFG_CODE_SELECTION_AUTOCLOSE_DEFAULT)) {
 									// re-activate this view
 									try {
@@ -681,7 +681,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		
 		parent.setLayout(new FillLayout());
 		
-		tk = Desk.getToolkit();
+		tk = UiDesk.getToolkit();
 		form = tk.createForm(parent);
 		Composite formBody = form.getBody();
 		
@@ -744,7 +744,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		
 		stickerLabel = tk.createLabel(patInfoArea, "");
 		gd = SWTHelper.getFillGridData(1, true, 1, false);
-		sticker = Desk.getImage(Desk.IMG_MANN);
+		sticker = UiDesk.getImage(Desk.IMG_MANN);
 		stickerLabel.setImage(sticker);
 		stickerLabel.setLayoutData(gd);
 		stickerLabel.setToolTipText("Sticker des Patienten");
@@ -824,7 +824,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		
 		makeActions();
 		menus = new ViewMenus(getViewSite());
-		if (Hub.acl.request(AccessControlDefaults.AC_PURGE)) {
+		if (CoreHub.acl.request(AccessControlDefaults.AC_PURGE)) {
 			menus.createMenu(addKonsultationAction, GlobalActions.redateAction, addProblemAction,
 				GlobalActions.delKonsAction, delProblemAction, exportToClipboardAction,
 				sendEmailAction, versionFwdAction, versionBackAction, chooseVersionAction,
@@ -1204,7 +1204,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				String drp = (String) event.data;
 				String[] dl = drp.split(",");
 				for (String obj : dl) {
-					PersistentObject dropped = Hub.poFactory.createFromString(obj);
+					PersistentObject dropped = CoreHub.poFactory.createFromString(obj);
 					
 					// we don't yet support dropping to the problemsKTable
 				}
@@ -1606,7 +1606,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				String drp = (String) event.data;
 				String[] dl = drp.split(",");
 				for (String obj : dl) {
-					PersistentObject dropped = Hub.poFactory.createFromString(obj);
+					PersistentObject dropped = CoreHub.poFactory.createFromString(obj);
 					if (dropped instanceof Problem) {
 						Problem problem = (Problem) dropped;
 						problem.addToKonsultation(actKons);
@@ -1649,9 +1649,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				String drp = (String) event.data;
 				String[] dl = drp.split(",");
 				for (String obj : dl) {
-					PersistentObject dropped = Hub.poFactory.createFromString(obj);
+					PersistentObject dropped = CoreHub.poFactory.createFromString(obj);
 					if (dropped instanceof IVerrechenbar) {
-						if (Hub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
+						if (CoreHub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
 							SWTHelper.alert("Fehlende Rechte",
 								"Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
 						} else {
@@ -1809,7 +1809,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 		
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		qbe.add("MandantID", "=", Hub.actMandant.getId());
+		qbe.add("MandantID", "=", CoreHub.actMandant.getId());
 		qbe.add("Datum", "=", today.toString(TimeTool.DATE_COMPACT));
 		
 		qbe.startGroup();
@@ -1861,11 +1861,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	
 	public void adaptMenus(){
 		verrechnungViewer.getTable().getMenu()
-			.setEnabled(Hub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN));
+			.setEnabled(CoreHub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN));
 		
 		// TODO this belongs to GlobalActions itself (action creator)
-		GlobalActions.delKonsAction.setEnabled(Hub.acl.request(AccessControlDefaults.KONS_DELETE));
-		GlobalActions.neueKonsAction.setEnabled(Hub.acl.request(AccessControlDefaults.KONS_CREATE));
+		GlobalActions.delKonsAction.setEnabled(CoreHub.acl.request(AccessControlDefaults.KONS_DELETE));
+		GlobalActions.neueKonsAction.setEnabled(CoreHub.acl.request(AccessControlDefaults.KONS_CREATE));
 	}
 	
 	private void makeActions(){
@@ -2086,7 +2086,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		
 		saveAction = new Action("Eintrag sichern") {
 			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DISK));
+				setImageDescriptor(Images..IMG_DISK.getImageDescriptor());
 				setToolTipText("Text explizit speichern");
 			}
 			
@@ -2326,9 +2326,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				setKonsultation(kons, false);
 			}
 			
-			Hub.heart.addListener(this);
+			CoreHub.heart.addListener(this);
 		} else {
-			Hub.heart.removeListener(this);
+			CoreHub.heart.removeListener(this);
 			
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem, eeli_fall,
 				eeli_pat, eeli_user);
@@ -2422,21 +2422,21 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	}
 	
 	/**
-	 * Return the auto-save time period interval, as configured in Hub.userCfg
+	 * Return the auto-save time period interval, as configured in CoreHub.userCfg
 	 * 
 	 * @return the calculated period interval, or 1 if there are invalid configuration values, or 0
 	 *         if autos-save is disabled
 	 */
 	private int getKonsTextSaverPeriod(){
 		int timePeriod =
-			Hub.userCfg.get(Iatrix.CFG_AUTO_SAVE_PERIOD, Iatrix.CFG_AUTO_SAVE_PERIOD_DEFAULT);
+			CoreHub.userCfg.get(Iatrix.CFG_AUTO_SAVE_PERIOD, Iatrix.CFG_AUTO_SAVE_PERIOD_DEFAULT);
 		if (timePeriod == 0) {
 			// no auto-save
 			return 0;
 		}
 		
 		log.log("TimePeriod: " + timePeriod, Log.DEBUGMSG);
-		int heartbeatInterval = Hub.localCfg.get(PreferenceConstants.ABL_HEARTRATE, 30);
+		int heartbeatInterval = CoreHub.localCfg.get(PreferenceConstants.ABL_HEARTRATE, 30);
 		if (heartbeatInterval > 0 && timePeriod >= heartbeatInterval) {
 			int period = timePeriod / heartbeatInterval;
 			if (period > 0) {
@@ -2625,7 +2625,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			} else {
 				// no diagnosis, warn error
 				text = "Keine Diagnosen";
-				image = Desk.getImage(Desk.IMG_ACHTUNG);
+				image = UiDesk.getImage(Desk.IMG_ACHTUNG);
 			}
 		}
 		
@@ -2648,7 +2648,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	
 	private void setRemarkAndSticker(){
 		String text = "";
-		sticker = Desk.getImage(Desk.IMG_MANN);
+		sticker = UiDesk.getImage(Desk.IMG_MANN);
 		
 		if (actPatient != null) {
 			text = actPatient.getBemerkung();
@@ -2658,9 +2658,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				sticker = im;
 			} else {
 				if (actPatient.getGeschlecht().equals(Person.MALE)) {
-					sticker = Desk.getImage(Desk.IMG_MANN);
+					sticker = UiDesk.getImage(Desk.IMG_MANN);
 				} else {
-					sticker = Desk.getImage(Desk.IMG_FRAU);
+					sticker = UiDesk.getImage(Desk.IMG_FRAU);
 				}
 			}
 		}
@@ -2799,7 +2799,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					}
 				}
 				hlMandant.setText(sb.toString());
-				hlMandant.setEnabled(Hub.acl.request(AccessControlDefaults.KONS_REASSIGN));
+				hlMandant.setEnabled(CoreHub.acl.request(AccessControlDefaults.KONS_REASSIGN));
 			}
 			
 			reloadFaelle(actKons);
@@ -2997,9 +2997,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			switch (columnIndex) {
 			case STATUS:
 				if (problem.getStatus() == Episode.ACTIVE) {
-					return Desk.getImage(Iatrix.IMG_ACTIVE);
+					return UiDesk.getImage(Iatrix.IMG_ACTIVE);
 				} else {
-					return Desk.getImage(Iatrix.IMG_INACTIVE);
+					return UiDesk.getImage(Iatrix.IMG_INACTIVE);
 				}
 			default:
 				return null;
@@ -3297,7 +3297,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			clipboardText = output.toString();
 		}
 		
-		Clipboard clipboard = new Clipboard(Desk.getDisplay());
+		Clipboard clipboard = new Clipboard(UiDesk.getDisplay());
 		TextTransfer textTransfer = TextTransfer.getInstance();
 		Transfer[] transfers = new Transfer[] {
 			textTransfer
@@ -3546,7 +3546,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			int colIndex = col - getFixedHeaderColumnCount();
 			if (colIndex >= 0 && colIndex < COLUMN_TEXT.length) {
 				int width =
-					Hub.localCfg.get(COLUMN_CFG_KEY[colIndex], DEFAULT_COLUMN_WIDTH[colIndex]);
+					CoreHub.localCfg.get(COLUMN_CFG_KEY[colIndex], DEFAULT_COLUMN_WIDTH[colIndex]);
 				return width;
 			} else {
 				// invalid column
@@ -3625,7 +3625,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			// store new column with in localCfg
 			int colIndex = col - getFixedHeaderColumnCount();
 			if (colIndex >= 0 && colIndex < COLUMN_TEXT.length) {
-				Hub.localCfg.set(COLUMN_CFG_KEY[colIndex], width);
+				CoreHub.localCfg.set(COLUMN_CFG_KEY[colIndex], width);
 			}
 		}
 		
@@ -3730,9 +3730,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						 */
 					case STATUS:
 						if (problem.getStatus() == Episode.ACTIVE) {
-							return Desk.getImage(Iatrix.IMG_ACTIVE);
+							return UiDesk.getImage(Iatrix.IMG_ACTIVE);
 						} else {
-							return Desk.getImage(Iatrix.IMG_INACTIVE);
+							return UiDesk.getImage(Iatrix.IMG_INACTIVE);
 						}
 					default:
 						return "";
@@ -4610,8 +4610,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// remove old lock
 		removeKonsTextLock();
 		
-		if (actKons != null && Hub.actUser != null) {
-			konsTextLock = new KonsTextLock(actKons, Hub.actUser);
+		if (actKons != null && CoreHub.actUser != null) {
+			konsTextLock = new KonsTextLock(actKons, CoreHub.actUser);
 		} else {
 			konsTextLock = null;
 		}

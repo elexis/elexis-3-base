@@ -23,10 +23,10 @@ import org.eclipse.ui.IViewSite;
 import org.iatrix.actions.IatrixEventHelper;
 import org.iatrix.data.Problem;
 
-import ch.elexis.Desk;
-import ch.elexis.StringConstants;
-import ch.elexis.actions.CodeSelectorHandler;
-import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.ui.actions.CodeSelectorHandler;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Artikel;
@@ -36,12 +36,12 @@ import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
 import ch.elexis.dialogs.MediDetailDialog;
 import ch.elexis.util.ListDisplay;
-import ch.elexis.util.PersistentObjectDragSource;
-import ch.elexis.util.PersistentObjectDropTarget;
-import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ViewMenus;
-import ch.elexis.views.RezeptBlatt;
-import ch.elexis.views.codesystems.LeistungenView;
+import ch.elexis.core.ui.util.PersistentObjectDragSource;
+import ch.elexis.core.ui.util.PersistentObjectDropTarget;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.RezeptBlatt;
+import ch.elexis.core.ui.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -307,7 +307,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
 				.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
 				{
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+					setImageDescriptor(Images..IMG_EDIT.getImageDescriptor());
 					setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
 				}
 				
@@ -325,7 +325,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
 				.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
 				{
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
+					setImageDescriptor(Images..IMG_REMOVEITEM.getImageDescriptor());
 					setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
 				}
 				
@@ -344,7 +344,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, Messages
 				.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
 				{
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+					setImageDescriptor(Images..IMG_DELETE.getImageDescriptor());
 					setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
 				}
 				

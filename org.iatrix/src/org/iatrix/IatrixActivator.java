@@ -17,7 +17,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.iatrix.data.Problem;
 import org.osgi.framework.BundleContext;
 
-import ch.elexis.Desk;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.Episode;
 
@@ -37,8 +37,8 @@ public class IatrixActivator extends AbstractUIPlugin {
 	public IatrixActivator(){
 		instance = this;
 		
-		Desk.getImageRegistry().put(Iatrix.IMG_ACTIVE, getImageDescriptor("icons/active.png"));
-		Desk.getImageRegistry().put(Iatrix.IMG_INACTIVE, getImageDescriptor("icons/inactive.png"));
+		UiDesk.getImageRegistry().put(Iatrix.IMG_ACTIVE, getImageDescriptor("icons/active.png"));
+		UiDesk.getImageRegistry().put(Iatrix.IMG_INACTIVE, getImageDescriptor("icons/inactive.png"));
 	}
 	
 	/*

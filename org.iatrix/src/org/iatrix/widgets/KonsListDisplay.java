@@ -29,18 +29,18 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.iatrix.Iatrix;
 
-import ch.elexis.Hub;
-import ch.elexis.actions.BackgroundJob;
-import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
-import ch.elexis.actions.ObjectFilterRegistry;
-import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.actions.BackgroundJob;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.ui.actions.ObjectFilterRegistry;
+import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 
 /**
  * Anzeige der vergangenen Konsultationen inkl. Verrechnung. Der Patient wird ueber die Methode
@@ -71,7 +71,7 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 	private final ElexisEventListenerImpl eeli_kons =
 		new ElexisEventListenerImpl(Konsultation.class, ElexisEvent.EVENT_RELOAD) {
 			@Override
-			public void runInUi(ElexisEvent ev){
+			public void run(ElexisEvent ev){
 				if (patient != null) {
 					dataLoader.invalidate();
 					dataLoader.schedule();
@@ -245,7 +245,7 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 				monitor.worked(1);
 				
 				int maxShownConsultations =
-					Hub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CONSULTATIONS,
+					CoreHub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CONSULTATIONS,
 						Iatrix.CFG_MAX_SHOWN_CONSULTATIONS_DEFAULT);
 				
 				if (preview && konsList.size() > PREVIEW_COUNT) {
@@ -282,7 +282,7 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 				// convert Konsultation objects to KonsData objects
 				
 				int maxShownCharges =
-					Hub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CHARGES,
+					CoreHub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CHARGES,
 						Iatrix.CFG_MAX_SHOWN_CHARGES_DEFAULT);
 				int i = 0; // counter for maximally shown charges
 				for (Konsultation k : konsList) {

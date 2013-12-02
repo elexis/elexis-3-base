@@ -20,15 +20,15 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 
-import ch.elexis.Hub;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.IDiagnose;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
-import ch.elexis.util.Log;
+import ch.elexis.core.ui.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;

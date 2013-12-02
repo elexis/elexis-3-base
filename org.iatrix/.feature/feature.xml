@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.iatrix/.feature"
+      label="TODO: Feature for org.iatrix/.feature"
+      version="3.0.0.qualifier"
+      provider-name="ch.elexis">
+
+   <description url="http://wiki.elexis.info/org.iatrix/.feature">
+      TODO: Feature for org.iatrix/.feature
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [TODO: Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [TODO: Enter License Description here.]
+   </license>
+
+   <plugin
+         id="org.iatrix/.feature"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

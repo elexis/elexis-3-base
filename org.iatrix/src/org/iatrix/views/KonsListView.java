@@ -23,12 +23,12 @@ import org.eclipse.ui.part.ViewPart;
 import org.iatrix.Iatrix;
 import org.iatrix.widgets.KonsListDisplay;
 
-import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
-import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.ui.actions.GlobalActions;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Patient;
 
 /**
@@ -49,7 +49,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 	
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 				showAllChargesAction.setChecked(false);
 				showAllConsultationsAction.setChecked(false);

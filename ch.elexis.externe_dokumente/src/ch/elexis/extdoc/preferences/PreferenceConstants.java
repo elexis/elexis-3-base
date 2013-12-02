@@ -13,7 +13,7 @@
 
 package ch.elexis.extdoc.preferences;
 
-import ch.elexis.Hub;
+import ch.elexis.core.data.activator.CoreHub;
 
 public class PreferenceConstants {
 	// retour kompatibel
@@ -38,8 +38,8 @@ public class PreferenceConstants {
 		PathElement(String prefsName, String prefsBaseDirName){
 			prefName = prefsName;
 			prefBaseDir = prefsBaseDirName;
-			name = Hub.localCfg.get(prefName, ""); //$NON-NLS-1$
-			baseDir = Hub.localCfg.get(prefsBaseDirName, ""); //$NON-NLS-1$
+			name = CoreHub.localCfg.get(prefName, ""); //$NON-NLS-1$
+			baseDir = CoreHub.localCfg.get(prefsBaseDirName, ""); //$NON-NLS-1$
 		}
 	}
 	
@@ -56,10 +56,10 @@ public class PreferenceConstants {
 	
 	public static String[] getActiveBasePaths(){
 		String[] paths = new String[4];
-		paths[0] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD1, ""); //$NON-NLS-1$
-		paths[1] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD2, ""); //$NON-NLS-1$
-		paths[2] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD3, ""); //$NON-NLS-1$
-		paths[3] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD4, ""); //$NON-NLS-1$
+		paths[0] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, ""); //$NON-NLS-1$
+		paths[1] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD2, ""); //$NON-NLS-1$
+		paths[2] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD3, ""); //$NON-NLS-1$
+		paths[3] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD4, ""); //$NON-NLS-1$
 		for (int j = 0; j < paths.length; j++)
 			if (!pathIsSelected(j))
 				paths[j] = null;
@@ -70,7 +70,7 @@ public class PreferenceConstants {
 	
 	private static void ensureValueLoaded(){
 		if (selected == -1)
-			selected = Integer.parseInt(Hub.userCfg.get(PreferenceConstants.SELECTED_PATHS, "0")); //$NON-NLS-1$	
+			selected = Integer.parseInt(CoreHub.userCfg.get(PreferenceConstants.SELECTED_PATHS, "0")); //$NON-NLS-1$	
 	}
 	
 	/***
@@ -90,7 +90,7 @@ public class PreferenceConstants {
 	
 	public static void saveSelected(){
 		ensureValueLoaded();
-		Hub.userCfg.set(PreferenceConstants.SELECTED_PATHS, Integer.toString(selected));
+		CoreHub.userCfg.set(PreferenceConstants.SELECTED_PATHS, Integer.toString(selected));
 		
 	}
 	

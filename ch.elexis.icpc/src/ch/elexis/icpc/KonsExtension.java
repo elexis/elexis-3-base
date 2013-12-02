@@ -37,7 +37,7 @@ public class KonsExtension implements IKonsExtension {
 	}
 	
 	public boolean doLayout(final StyleRange n, final String provider, final String id){
-		n.background = UiDesk.getColor(Desk.COL_GREEN);
+		n.background = UiUiDesk.getColor(Desk.COL_GREEN);
 		return true;
 	}
 	

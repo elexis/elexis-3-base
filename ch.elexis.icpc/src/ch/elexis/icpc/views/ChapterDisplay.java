@@ -41,7 +41,7 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 
 public class ChapterDisplay extends Composite {
 	private static final String UC2_HEADING = "ICPCChapter/";
-	FormToolkit tk = UiDesk.getToolkit();
+	FormToolkit tk = UiUiDesk.getToolkit();
 	ScrolledForm fLeft;
 	String chapter;
 	ExpandableComposite[] ec;

@@ -25,7 +25,7 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
-	// private static FormToolkit tk=UiDesk.getToolkit();
+	// private static FormToolkit tk=UiUiDesk.getToolkit();
 	/**
 	 * The constructor
 	 */

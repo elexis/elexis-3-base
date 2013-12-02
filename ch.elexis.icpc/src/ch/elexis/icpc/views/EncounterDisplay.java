@@ -52,7 +52,7 @@ public class EncounterDisplay extends Composite {
 	
 	public EncounterDisplay(Composite parent){
 		super(parent, SWT.NONE);
-		form = UiDesk.getToolkit().createForm(this);
+		form = UiUiDesk.getToolkit().createForm(this);
 		setLayout(new GridLayout());
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();

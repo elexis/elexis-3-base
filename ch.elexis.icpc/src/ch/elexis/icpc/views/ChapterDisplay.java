@@ -41,7 +41,7 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 
 public class ChapterDisplay extends Composite {
 	private static final String UC2_HEADING = "ICPCChapter/";
-	FormToolkit tk = UiUiDesk.getToolkit();
+	FormToolkit tk = UiDesk.getToolkit();
 	ScrolledForm fLeft;
 	String chapter;
 	ExpandableComposite[] ec;
@@ -66,7 +66,7 @@ public class ChapterDisplay extends Composite {
 			String c = IcpcCode.components[i];
 			ec[i] = tk.createExpandableComposite(cLeft, ExpandableComposite.TWISTIE);
 			ec[i].setText(c);
-			UserSettings2.setExpandedState(ec[i], UC2_HEADING + c.substring(0, 1));
+// TODO:			UserSettings2.setExpandedState(ec[i], UC2_HEADING + c.substring(0, 1));
 			Composite inlay = new Composite(ec[i], SWT.NONE);
 			inlay.setLayout(new FillLayout());
 			CommonViewer cv = new CommonViewer();
@@ -108,8 +108,8 @@ public class ChapterDisplay extends Composite {
 						CommonViewer cv = (CommonViewer) src.getData();
 						cv.notify(CommonViewer.Message.update);
 					}
-					UserSettings2.saveExpandedState(UC2_HEADING + src.getText().substring(0, 1),
-						e.getState());
+					// TODO:					UserSettings2..saveExpandedState(UC2_HEADING + src.getText().substring(0, 1),
+					// TODO:						e.getState());
 				}
 				
 				public void expansionStateChanged(ExpansionEvent e){

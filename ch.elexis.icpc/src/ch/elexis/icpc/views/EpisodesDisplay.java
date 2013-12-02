@@ -51,7 +51,7 @@ public class EpisodesDisplay extends Composite {
 	public EpisodesDisplay(final Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
-		form = UiUiDesk.getToolkit().createScrolledForm(this);
+		form = UiDesk.getToolkit().createScrolledForm(this);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
@@ -179,10 +179,10 @@ public class EpisodesDisplay extends Composite {
 			if (element instanceof Episode) {
 				Episode e = (Episode) element;
 				if (e.getStatus() == Episode.INACTIVE) {
-					return UiUiDesk.getColor(Desk.COL_LIGHTGREY);
+					return UiDesk.getColor(UiDesk.COL_LIGHTGREY);
 				}
 			}
-			return UiUiDesk.getColor(Desk.COL_BLACK);
+			return UiDesk.getColor(UiDesk.COL_BLACK);
 		}
 		
 	}

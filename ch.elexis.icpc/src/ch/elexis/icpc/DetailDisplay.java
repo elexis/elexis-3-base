@@ -26,7 +26,7 @@ import ch.elexis.core.ui.views.IDetailDisplay;
 
 public class DetailDisplay implements IDetailDisplay {
 	Text tLang, tICD, tCriteria, tInclude, tExclude, tConsider, tNote;
-	FormToolkit tk = UiUiDesk.getToolkit();
+	FormToolkit tk = UiDesk.getToolkit();
 	Form form;
 	
 	public Composite createDisplay(Composite parent, IViewSite site){

@@ -16,17 +16,17 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
+import ch.elexis.core.ui.contacts.views.PatientenListeView;
+import ch.elexis.core.ui.laboratory.views.LaborView;
+import ch.elexis.core.ui.medication.views.DauerMediView;
 import ch.elexis.core.ui.views.AUF2;
 import ch.elexis.core.ui.views.AUFZeugnis;
-import ch.elexis.core.ui.views.DauerMediView;
 import ch.elexis.core.ui.views.FaelleView;
 import ch.elexis.core.ui.views.FallDetailView;
 import ch.elexis.core.ui.views.KompendiumView;
 import ch.elexis.core.ui.views.KonsDetailView;
 import ch.elexis.core.ui.views.KonsListe;
-import ch.elexis.core.ui.views.LaborView;
 import ch.elexis.core.ui.views.PatHeuteView;
-import ch.elexis.core.ui.views.PatientenListeView;
 import ch.elexis.core.ui.views.ReminderView;
 import ch.elexis.core.ui.views.RezeptBlatt;
 import ch.elexis.core.ui.views.RezepteView;
@@ -69,7 +69,7 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		bfr.addView(AUF2.ID);
 		bfr.addView(RezepteView.ID);
 		
-		layout.addFastView(PatientenListeView.ID);
+		// TODO:layout.addFastView(PatientenListeView.ID);
 		layout.addFastView(DiagnosenView.ID);
 		layout.addFastView(LeistungenView.ID);
 		

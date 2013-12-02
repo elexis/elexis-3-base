@@ -61,7 +61,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	}
 	
 	public static void initialize(){
-		Desk.syncExec(new Runnable() {
+		UiDesk.syncExec(new Runnable() {
 			
 			public void run(){
 				createOrModifyTable(createDB);
@@ -220,6 +220,12 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	}
 	
 	public List<IAction> getActions(Verrechnet kontext){
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Object> getActions(Object context){
 		// TODO Auto-generated method stub
 		return null;
 	}

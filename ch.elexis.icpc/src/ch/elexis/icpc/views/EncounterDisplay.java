@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 
+import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
@@ -52,7 +53,7 @@ public class EncounterDisplay extends Composite {
 	
 	public EncounterDisplay(Composite parent){
 		super(parent, SWT.NONE);
-		form = UiUiDesk.getToolkit().createForm(this);
+		form = UiDesk.getToolkit().createForm(this);
 		setLayout(new GridLayout());
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();

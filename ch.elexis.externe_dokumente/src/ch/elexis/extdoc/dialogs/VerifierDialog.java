@@ -35,10 +35,12 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.application.Desk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.actions.BackgroundJob;
 import ch.elexis.core.ui.actions.JobPool;
 import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Patient;
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
@@ -177,7 +179,7 @@ public class VerifierDialog extends TitleAreaDialog {
 		public Image getColumnImage(Object obj, int index){
 			switch (index) {
 			case STATUS_COLUMN:
-				return UiDesk.getImage(Desk.IMG_FEHLER);
+				return Images.IMG_FEHLER.getImage();
 			case NAME_COLUMN:
 				return getImage(obj);
 			}

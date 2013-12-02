@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
-package ch.elexis.base.ch.labortarif_2009.data;
+package ch.elexis.labortarif2009.data;
 
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;

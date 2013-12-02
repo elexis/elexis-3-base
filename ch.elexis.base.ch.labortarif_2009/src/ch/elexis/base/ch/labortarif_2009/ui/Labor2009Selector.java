@@ -14,7 +14,6 @@ package ch.elexis.base.ch.labortarif_2009.ui;
 
 import org.eclipse.swt.SWT;
 
-import ch.elexis.base.ch.labortarif_2009.data.Labor2009Tarif;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
@@ -24,6 +23,7 @@ import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.labortarif2009.data.Labor2009Tarif;
 
 public class Labor2009Selector extends CodeSelectorFactory {
 	CommonViewer cv;

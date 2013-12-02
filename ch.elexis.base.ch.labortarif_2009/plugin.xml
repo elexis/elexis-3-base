@@ -13,7 +13,7 @@
    <extension
          point="ch.elexis.core.data.PersistentReference">
       <Factory
-            Class="ch.elexis.base.ch.labortarif_2009.data.Labor2009Factory">
+            Class="ch.elexis.labortarif2009.data.Labor2009Factory">
       </Factory>
    </extension>
    <extension
@@ -21,9 +21,9 @@
       <Leistung
             CodeDetailDisplay="ch.elexis.base.ch.labortarif_2009.ui.DetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.labortarif_2009.ui.Labor2009Selector"
-            ElementFactory="ch.elexis.base.ch.labortarif_2009.data.Labor2009Factory"
-            ImporterClass="ch.elexis.base.ch.labortarif_2009.data.Importer"
-            OptifierClass="ch.elexis.base.ch.labortarif_2009.data.Optifier"
+            ElementFactory="ch.elexis.labortarif2009.data.Labor2009Factory"
+            ImporterClass="ch.elexis.labortarif2009.data.Importer"
+            OptifierClass="ch.elexis.labortarif2009.data.Optifier"
             name="%Labortarif2009">
       </Leistung>
    </extension>

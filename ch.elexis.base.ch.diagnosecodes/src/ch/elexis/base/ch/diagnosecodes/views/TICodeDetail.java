@@ -20,10 +20,10 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import ch.elexis.base.ch.diagnosecodes_schweiz.Messages;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
-import ch.elexis.data.Messages;
 import ch.elexis.data.TICode;
 
 public class TICodeDetail implements IDetailDisplay {

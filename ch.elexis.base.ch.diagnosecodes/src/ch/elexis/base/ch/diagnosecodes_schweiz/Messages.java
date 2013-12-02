@@ -9,12 +9,12 @@
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
-package ch.elexis.data;
+package ch.elexis.base.ch.diagnosecodes_schweiz;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.base.ch.diagnosecodes.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "ch.elexis.base.ch.diagnosecodes_schweiz.messages"; //$NON-NLS-1$
 	
 	public static String TICode_other;
 	

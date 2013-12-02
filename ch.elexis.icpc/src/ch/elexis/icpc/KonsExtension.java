@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 
-import ch.elexis.Desk;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.data.IDiagnose;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Konsultation;
-import ch.elexis.text.EnhancedTextField;
-import ch.elexis.text.IRichTextDisplay;
-import ch.elexis.util.IKonsExtension;
+import ch.elexis.core.ui.text.EnhancedTextField;
+import ch.elexis.core.ui.text.IRichTextDisplay;
+import ch.elexis.core.ui.util.IKonsExtension;
 
 public class KonsExtension implements IKonsExtension {
 	IRichTextDisplay mine;
@@ -37,7 +37,7 @@ public class KonsExtension implements IKonsExtension {
 	}
 	
 	public boolean doLayout(final StyleRange n, final String provider, final String id){
-		n.background = Desk.getColor(Desk.COL_GREEN);
+		n.background = UiDesk.getColor(Desk.COL_GREEN);
 		return true;
 	}
 	

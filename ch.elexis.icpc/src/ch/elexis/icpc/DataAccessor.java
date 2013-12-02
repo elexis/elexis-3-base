@@ -24,7 +24,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.util.IDataAccess;
+import ch.elexis.core.data.interfaces.IDataAccess;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;

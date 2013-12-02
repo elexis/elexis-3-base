@@ -20,13 +20,13 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import ch.elexis.Desk;
-import ch.elexis.util.SWTHelper;
-import ch.elexis.views.IDetailDisplay;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.IDetailDisplay;
 
 public class DetailDisplay implements IDetailDisplay {
 	Text tLang, tICD, tCriteria, tInclude, tExclude, tConsider, tNote;
-	FormToolkit tk = Desk.getToolkit();
+	FormToolkit tk = UiDesk.getToolkit();
 	Form form;
 	
 	public Composite createDisplay(Composite parent, IViewSite site){

@@ -16,15 +16,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
-import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Encounter;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class EncounterView extends ViewPart implements IActivationListener {
 	public static final String ID = "ch.elexis.icpc.encounterView";
@@ -34,7 +34,7 @@ public class EncounterView extends ViewPart implements IActivationListener {
 		ElexisEvent.EVENT_SELECTED) {
 		
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			display.setEncounter(null);
 		}
 		
@@ -43,7 +43,7 @@ public class EncounterView extends ViewPart implements IActivationListener {
 	private final ElexisEventListenerImpl eeli_enc = new ElexisEventListenerImpl(Encounter.class,
 		ElexisEvent.EVENT_SELECTED) {
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			display.setEncounter((Encounter) ev.getObject());
 		}
 	};

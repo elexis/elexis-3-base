@@ -2,7 +2,7 @@
 <?eclipse version="3.1"?>
 <plugin>
    <extension
-         point="ch.elexis.Diagnosecode">
+         point="ch.elexis.core.ui.Diagnosecode">
       <Diagnosesystem
             CodeDetailDisplay="ch.elexis.icpc.DetailDisplay"
             CodeSelectorFactory="ch.elexis.icpc.CodeSelectorFactory"
@@ -11,13 +11,13 @@
             name="ICPC2"/>
    </extension>
    <extension
-         point="ch.elexis.PersistentReference">
+         point="ch.elexis.core.data.PersistentReference">
       <Factory
             Class="ch.elexis.icpc.IcpcFactory"
             name="IcpcFactory"/>
    </extension>
    <extension
-         point="ch.elexis.DataAccess">
+         point="ch.elexis.core.data.DataAccess">
       <DataAccess
             class="ch.elexis.icpc.DataAccessor"
             name="ICPC">
@@ -59,13 +59,13 @@
             name="ICPC "/>
    </extension>
    <extension
-         point="ch.elexis.KonsExtension">
+         point="ch.elexis.core.ui.KonsExtension">
       <Link
             KonsExtension="ch.elexis.icpc.KonsExtension"
             name="ICPC"/>
    </extension>
    <extension
-         point="ch.elexis.Sidebar">
+         point="ch.elexis.core.ui.Sidebar">
       <Perspektive
             ID="ch.elexis.icpc.perspective"
             name="ICPC-2"/>

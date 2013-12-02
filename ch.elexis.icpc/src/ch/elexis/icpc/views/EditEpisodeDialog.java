@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.Desk;
-import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 import ch.elexis.icpc.Episode;
 import ch.elexis.icpc.Messages;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class EditEpisodeDialog extends TitleAreaDialog {
 	private static final int ACTIVE_INDEX = 0;
@@ -124,7 +124,7 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 		}
 		setMessage(Messages.EpisodeEditDialog_EnterData);
 		
-		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
+		setTitleImage(Images.IMG_LOGO48.getImage());
 	}
 	
 	@Override

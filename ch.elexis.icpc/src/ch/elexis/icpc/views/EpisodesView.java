@@ -19,21 +19,21 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.Desk;
-import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
-import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
-import ch.elexis.actions.ObjectFilterRegistry;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.actions.ObjectFilterRegistry;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Episode;
 import ch.elexis.icpc.KonsFilter;
-import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ViewMenus;
-import ch.elexis.util.ViewMenus.IMenuPopulator;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.util.ViewMenus.IMenuPopulator;
 
 public class EpisodesView extends ViewPart implements IActivationListener {
 	public static final String ID = "ch.elexis.icpc.episodesView";
@@ -62,7 +62,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		ElexisEvent.EVENT_SELECTED) {
 		
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			display.setPatient((Patient) ev.getObject());
 		}
 		
@@ -71,7 +71,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 	private ElexisEventListenerImpl eeli_episode = new ElexisEventListenerImpl(Episode.class,
 		ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_UPDATE) {
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void run(ElexisEvent ev){
 			Episode ep = (Episode) ev.getObject();
 			switch (ev.getType()) {
 			case ElexisEvent.EVENT_SELECTED:
@@ -153,7 +153,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		addEpisodeAction = new Action("Neues Problem") {
 			{
 				setToolTipText("Eine neues Problem erstellen");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
+				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 			}
 			
 			@Override
@@ -167,7 +167,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		removeEpisodeAction = new Action("Problem löschen") {
 			{
 				setToolTipText("Das gewählte Problem unwiderruflich löschen");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 			}
 			
 			@Override
@@ -183,7 +183,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		removeDiagnosesAction = new Action("Diagnosen entfernen") {
 			{
 				setToolTipText("Entfernt die Verknüpfungen mit Diagnosen");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
+				setImageDescriptor(Images.IMG_REMOVEITEM.getImageDescriptor());
 			}
 			
 			@Override
@@ -199,7 +199,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		editEpisodeAction = new Action("Problem bearbeiten") {
 			{
 				setToolTipText("Titel des Problems ändern");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 			}
 			
 			@Override
@@ -233,7 +233,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		konsFilterAction = new Action("Konsultationen filtern", Action.AS_CHECK_BOX) {
 			{
 				setToolTipText("Konsultationslisten auf markiertes Problem begrenzen");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
+				setImageDescriptor(Images.IMG_FILTER.getImageDescriptor());
 			}
 			
 			@Override

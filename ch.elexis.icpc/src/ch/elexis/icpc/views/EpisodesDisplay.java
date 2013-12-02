@@ -31,17 +31,17 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-import ch.elexis.Desk;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.data.IDiagnose;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.Episode;
-import ch.elexis.util.PersistentObjectDragSource;
-import ch.elexis.util.PersistentObjectDropTarget;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.PersistentObjectDragSource;
+import ch.elexis.core.ui.util.PersistentObjectDropTarget;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class EpisodesDisplay extends Composite {
 	ScrolledForm form;
@@ -51,7 +51,7 @@ public class EpisodesDisplay extends Composite {
 	public EpisodesDisplay(final Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
-		form = Desk.getToolkit().createScrolledForm(this);
+		form = UiDesk.getToolkit().createScrolledForm(this);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
@@ -179,10 +179,10 @@ public class EpisodesDisplay extends Composite {
 			if (element instanceof Episode) {
 				Episode e = (Episode) element;
 				if (e.getStatus() == Episode.INACTIVE) {
-					return Desk.getColor(Desk.COL_LIGHTGREY);
+					return UiDesk.getColor(Desk.COL_LIGHTGREY);
 				}
 			}
-			return Desk.getColor(Desk.COL_BLACK);
+			return UiDesk.getColor(Desk.COL_BLACK);
 		}
 		
 	}

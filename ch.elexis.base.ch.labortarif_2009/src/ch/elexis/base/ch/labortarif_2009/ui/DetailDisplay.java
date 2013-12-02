@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 
-import ch.elexis.base.ch.labortarif_2009.data.Labor2009Tarif;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.selectors.DisplayPanel;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
@@ -25,6 +24,7 @@ import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.labortarif2009.data.Labor2009Tarif;
 
 public class DetailDisplay implements IDetailDisplay {
 	Form form;

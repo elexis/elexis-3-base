@@ -14,7 +14,7 @@ package ch.elexis.artikel_ch.data;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.base.ch.artikel.data.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "ch.elexis.artikel_ch.data.messages"; //$NON-NLS-1$
 	public static String Medikament_CodeSystemNameMedicaments;
 	public static String MedikamentImporter_BadFileFormat;
 	public static String MedikamentImporter_BadPharmaCode;

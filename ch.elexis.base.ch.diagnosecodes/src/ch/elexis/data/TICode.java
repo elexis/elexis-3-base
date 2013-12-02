@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 
+import ch.elexis.base.ch.diagnosecodes_schweiz.Messages;
 import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;

@@ -29,13 +29,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.base.ch.labortarif_2009.data.Importer;
-import ch.elexis.base.ch.labortarif_2009.data.Labor2009Tarif;
-import ch.elexis.base.ch.labortarif_2009.data.Importer.Fachspec;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.labortarif2009.data.Importer;
+import ch.elexis.labortarif2009.data.Importer.Fachspec;
+import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;

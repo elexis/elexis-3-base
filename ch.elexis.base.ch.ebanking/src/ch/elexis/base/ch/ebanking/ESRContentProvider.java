@@ -11,9 +11,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.admin.ACE;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.admin.ACE;
 import ch.elexis.core.ui.Hub;
 import ch.rgw.tools.Money;
 

@@ -14,7 +14,7 @@ package ch.elexis.base.ch.labortarif_2009.ui;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import ch.elexis.base.ch.labortarif_2009.data.Labor2009Tarif;
+import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.rgw.tools.TimeTool;
 
 public class Labor2009CodeTextValidFilter extends ViewerFilter {

@@ -49,18 +49,19 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
-import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
-import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -86,7 +87,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	static final int SORTMODE_TITLE = 1;
 	
 	private static final String SORTMODE_DEF = "omnivore/sortmode"; //$NON-NLS-1$
-	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class,
+	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
 		ElexisEvent.EVENT_SELECTED) {
 		
 		@Override
@@ -96,11 +97,11 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		
 	};
 	
-	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
+	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
 		ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
 		public void runInUi(ElexisEvent ev){
-			String[] defsort = Hub.userCfg.get(SORTMODE_DEF, "0,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
+			String[] defsort = CoreHub.userCfg.get(SORTMODE_DEF, "0,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				sortMode = Integer.parseInt(defsort[0]);
 			} catch (NumberFormatException e) {
@@ -199,7 +200,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 				}
 				sortMode = SORTMODE_TITLE;
 			}
-			Hub.userCfg.set(SORTMODE_DEF, Integer.toString(sortMode) + "," //$NON-NLS-1$
+			CoreHub.userCfg.set(SORTMODE_DEF, Integer.toString(sortMode) + "," //$NON-NLS-1$
 				+ (bReverse ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
 			viewer.refresh();
 		}
@@ -314,7 +315,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		importAction = new Action(Messages.OmnivoreView_importActionCaption) {
 			{
 				setToolTipText(Messages.OmnivoreView_importActionToolTip);
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
+				setImageDescriptor(Images.IMG_IMPORT.getImageDescriptor());
 			}
 			
 			public void run(){
@@ -330,7 +331,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		deleteAction = new Action(Messages.OmnivoreView_deleteActionCaption) {
 			{
 				setToolTipText(Messages.OmnivoreView_deleteActionToolTip);
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 			}
 			
 			public void run(){
@@ -349,7 +350,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		editAction = new Action(Messages.OmnivoreView_editActionCaption) {
 			{
 				setToolTipText(Messages.OmnivoreView_editActionTooltip);
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 			}
 			
 			public void run(){

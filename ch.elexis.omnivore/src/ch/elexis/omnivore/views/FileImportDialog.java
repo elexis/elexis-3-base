@@ -17,9 +17,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-import ch.elexis.Hub;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.omnivore.data.DocHandle;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.Hub;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class FileImportDialog extends TitleAreaDialog {
 	String file;

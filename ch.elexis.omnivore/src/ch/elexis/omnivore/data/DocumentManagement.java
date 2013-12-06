@@ -15,11 +15,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.elexis.ElexisException;
+import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.services.IDocumentManager;
-import ch.elexis.text.IOpaqueDocument;
+import ch.elexis.core.data.services.IDocumentManager;
+import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.rgw.tools.RegexpFilter;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;

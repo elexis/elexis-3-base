@@ -27,11 +27,11 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.Hub;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.omnivore.preferences.Messages;
-import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.constants.UiPreferenceConstants;
+import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.util.SWTHelper;
 
 //FIXME: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.
 //FIXME: We want a layout that will use all the available space, auto re-size input fields etc., have nested elements, and still NOT result in "dialog has invalid data" error messages.
@@ -103,7 +103,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public PreferencePage(){
 		super(GRID);
 
-		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 		setDescription(Messages.Omnivore_jsPREF_omnivore_js);
 	}
 	
@@ -317,7 +317,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		//FIXME: Funktionalität, damit man bei Apply sieht, wenn der Wert für PREF_MAX_FILENAME_LENGTH irgendwo geclampt wird. Im Moment geht das nicht, weil das zurückschreiben der Werte aus den Editorfeldern ohne meine Kontrolle abläuft, weil ich auch die Editorfelder im Moment garnicht für mich zugreifbar mache (wenn ich mich nicht irre). Somit erscheint ein geclampter oder auf default gesetzter Wert erst beim nächsten Öffnen des Dialogs. Oder: Deshalb: nur get...() liefert den geclampten Wert (weil diese Funktion das clamping macht); in den Einstellungen steht er jedoch trotzdem noch >max oder <min drin.
 		super.performApply();
 				
-		Hub.localCfg.flush();
+		CoreHub.localCfg.flush();
 	}
 	
 	//----------------------------------------------------------------------------
@@ -333,7 +333,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	   */
 	
 	  public static String getOmnivore_jsTemp_Filename_Element(String element_key,String element_data) {
-		IPreferenceStore preferenceStore=new SettingsPreferenceStore(Hub.localCfg);
+		IPreferenceStore preferenceStore=new SettingsPreferenceStore(CoreHub.localCfg);
 		return getOmnivore_jsTemp_Filename_Element(preferenceStore, element_key, element_data);
 	  }	
 	  
@@ -479,7 +479,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	   */
 	
 	  public static Integer getOmnivore_jsMax_Filename_Length() {
-		IPreferenceStore preferenceStore=new SettingsPreferenceStore(Hub.localCfg);
+		IPreferenceStore preferenceStore=new SettingsPreferenceStore(CoreHub.localCfg);
 		return getOmnivore_jsMax_Filename_Length(preferenceStore);
 	  }	
 	  
@@ -538,7 +538,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		  if (PREF_SRC_PATTERN[i].equals("")) {
 			PREF_SRC_PATTERN[i]=PREFERENCE_BRANCH + PREFERENCE_SRC_PATTERN + i.toString().trim(); //$NON-NLS-1$
 		  }		  
-		  return Hub.localCfg.get(PREF_SRC_PATTERN[i],"").trim();
+		  return CoreHub.localCfg.get(PREF_SRC_PATTERN[i],"").trim();
 	  }	
 
 	  //----------------------------------------------------------------------------
@@ -561,7 +561,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		  if (PREF_DEST_DIR[i].equals("")) {
 			  PREF_DEST_DIR[i]=PREFERENCE_BRANCH + PREFERENCE_DEST_DIR + i.toString().trim(); //$NON-NLS-1$
 		  }		  
-		  return Hub.localCfg.get(PREF_DEST_DIR[i],"").trim();
+		  return CoreHub.localCfg.get(PREF_DEST_DIR[i],"").trim();
 	  }	
 
 

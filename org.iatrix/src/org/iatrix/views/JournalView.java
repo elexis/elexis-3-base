@@ -103,24 +103,30 @@ import org.iatrix.dialogs.ChooseKonsRevisionDialog;
 import org.iatrix.widgets.KonsListDisplay;
 
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.application.Desk;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher.IActivationListener;
-import ch.elexis.core.data.events.Heartbeat.HeartListener;;
+import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
-import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.core.data.ISticker;
+import ch.elexis.core.ui.contacts.views.PatientDetailView2;
+import ch.elexis.core.ui.dialogs.KontaktSelektor;
+import ch.elexis.core.ui.dialogs.MediDetailDialog;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
 import ch.elexis.core.data.interfaces.IDiagnose;
-import ch.elexis.data.IVerrechenbar;
+import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -134,20 +140,18 @@ import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.Sticker;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.dialogs.KontaktSelektor;
-import ch.elexis.dialogs.MediDetailDialog;
 import ch.elexis.extdoc.util.Email;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.Episode;
-import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.core.ui.text.EnhancedTextField;
+import ch.elexis.core.model.ISticker;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.ui.util.IKonsExtension;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
-import ch.elexis.core.ui.views.PatientDetailView2;
 import ch.elexis.core.ui.views.codesystems.DiagnosenView;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
 import ch.elexis.core.ui.views.rechnung.AccountView;
@@ -385,7 +389,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 	}
 	
-	private final ElexisEventListenerImpl eeli_problem = new ElexisEventListenerImpl(Episode.class,
+	private final ElexisEventListener eeli_problem = new ElexisUiEventListenerImpl(Episode.class,
 		EVENT_UPDATE | EVENT_DESELECTED) {
 		
 		@Override
@@ -406,7 +410,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 	};
 	
-	private final ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(
+	private final ElexisEventListener eeli_kons = new ElexisUiEventListenerImpl(
 		Konsultation.class, EVENT_DELETE | EVENT_UPDATE | EVENT_SELECTED | EVENT_DESELECTED) {
 		
 		@Override
@@ -438,7 +442,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		
 	};
 	
-	private final ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(Fall.class,
+	private final ElexisEventListener eeli_fall = new ElexisUiEventListenerImpl(Fall.class,
 		ElexisEvent.EVENT_SELECTED) {
 		@Override
 		public void run(ElexisEvent ev){
@@ -469,10 +473,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			
 		}
 	};
-	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
+	private final ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
 		
 		@Override
-		public void run(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev){
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 				Patient selectedPatient = (Patient) ev.getObject();
 				
@@ -537,10 +541,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		
 	};
 	
-	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
+	private final ElexisEventListener eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
 		ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
-		public void run(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev){
 			adaptMenus();
 		}
 		
@@ -744,7 +748,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		
 		stickerLabel = tk.createLabel(patInfoArea, "");
 		gd = SWTHelper.getFillGridData(1, true, 1, false);
-		sticker = UiDesk.getImage(Desk.IMG_MANN);
+		sticker = Images.IMG_MANN.getImage();
 		stickerLabel.setImage(sticker);
 		stickerLabel.setLayoutData(gd);
 		stickerLabel.setToolTipText("Sticker des Patienten");
@@ -1285,8 +1289,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				Fall actFall = actKons.getFall();
 				if (!nFall.getId().equals(actFall.getId())) {
 					MessageDialog msd =
-						new MessageDialog(getViewSite().getShell(), "Fallzuordnung ändern", Desk
-							.getImage(Desk.IMG_LOGO48), "Möchten Sie diese Behandlung vom Fall:\n'"
+						new MessageDialog(getViewSite().getShell(), "Fallzuordnung ändern", Images.IMG_LOGO.getImage(), "Möchten Sie diese Behandlung vom Fall:\n'"
 							+ actFall.getLabel() + "' zum Fall:\n'" + nFall.getLabel()
 							+ "' transferieren?", MessageDialog.QUESTION, new String[] {
 							"Ja", "Nein"
@@ -2086,7 +2089,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		
 		saveAction = new Action("Eintrag sichern") {
 			{
-				setImageDescriptor(Images..IMG_DISK.getImageDescriptor());
+				setImageDescriptor(Images.IMG_DISK.getImageDescriptor());
 				setToolTipText("Text explizit speichern");
 			}
 			
@@ -2350,10 +2353,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 		
 		heartbeatActive = true;
-		
-		heartbeatProblem();
-		heartbeatKonsultation();
-		heartbeatSaveKonsText();
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+        		heartbeatProblem();
+        		heartbeatKonsultation();
+        		heartbeatSaveKonsText();
+            }
+         });		
 		
 		heartbeatActive = false;
 	}
@@ -2436,7 +2442,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 		
 		log.log("TimePeriod: " + timePeriod, Log.DEBUGMSG);
-		int heartbeatInterval = CoreHub.localCfg.get(PreferenceConstants.ABL_HEARTRATE, 30);
+		int heartbeatInterval = CoreHub.localCfg.get(ch.elexis.core.constants.Preferences.ABL_HEARTRATE, 30);
 		if (heartbeatInterval > 0 && timePeriod >= heartbeatInterval) {
 			int period = timePeriod / heartbeatInterval;
 			if (period > 0) {
@@ -2625,7 +2631,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			} else {
 				// no diagnosis, warn error
 				text = "Keine Diagnosen";
-				image = UiDesk.getImage(Desk.IMG_ACHTUNG);
+				image = Images.IMG_ACHTUNG.getImage();
 			}
 		}
 		
@@ -2648,21 +2654,18 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	
 	private void setRemarkAndSticker(){
 		String text = "";
-		sticker = UiDesk.getImage(Desk.IMG_MANN);
+		sticker = Images.IMG_MANN.getImage();
 		
 		if (actPatient != null) {
 			text = actPatient.getBemerkung();
 			ISticker et = actPatient.getSticker();
-			Image im = null;
-			if (et != null && (im = ((Sticker) et).getImage()) != null) {
-				sticker = im;
-			} else {
+			// TODO: HowTo get image of sticker??
+			
 				if (actPatient.getGeschlecht().equals(Person.MALE)) {
-					sticker = UiDesk.getImage(Desk.IMG_MANN);
+					sticker = Images.IMG_MANN.getImage();
 				} else {
-					sticker = UiDesk.getImage(Desk.IMG_FRAU);
+					sticker = Images.IMG_FRAU.getImage();
 				}
-			}
 		}
 		
 		stickerLabel.setImage(sticker);

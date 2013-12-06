@@ -17,7 +17,11 @@ Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
  ch.elexis.icpc,
  ch.rgw.utility,
  org.eclipse.core.expressions;bundle-version="3.4.100",
- ch.elexis.externe_dokumente;bundle-version="2.0.4"
+ ch.elexis.externe_dokumente;bundle-version="2.0.4",
+ org.jdom;bundle-version="1.1.0",
+ ch.elexis.core.ui.contacts,
+ ch.elexis.base.ch.arzttarife,
+ ch.elexis.core.application
 Eclipse-AutoStart: true
 Bundle-Vendor: iatrix.org
 Bundle-ClassPath: .,ktable_2.1.3.jar,icons/

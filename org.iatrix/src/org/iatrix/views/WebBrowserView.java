@@ -25,6 +25,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -69,7 +70,7 @@ public class WebBrowserView extends ViewPart implements ISaveablePart2 {
 	private void makeActions(){
 		newViewAction = new Action("Neues Fenster") {
 			{
-				setImageDescriptor(Images..IMG_ADDITEM.getImageDescriptor());
+				setImageDescriptor(Images.IMG_ADDITEM.getImageDescriptor());
 				setToolTipText("Ein neues Fenster öffnen");
 			}
 			
@@ -86,7 +87,7 @@ public class WebBrowserView extends ViewPart implements ISaveablePart2 {
 		
 		editLocationAction = new Action("Adresse ändern") {
 			{
-				setImageDescriptor(Images..IMG_EDIT.getImageDescriptor());
+				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setToolTipText("Die Adresse der gewünschten Website angeben");
 			}
 			
@@ -105,7 +106,7 @@ public class WebBrowserView extends ViewPart implements ISaveablePart2 {
 		
 		editTitleAction = new Action("Titel ändern") {
 			{
-				setImageDescriptor(Images..IMG_EDIT.getImageDescriptor());
+				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setToolTipText("Den Titel dieser View angeben");
 			}
 			

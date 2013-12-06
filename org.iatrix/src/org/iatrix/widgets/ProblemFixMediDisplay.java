@@ -26,16 +26,17 @@ import org.iatrix.data.Problem;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.actions.RestrictedAction;
+import ch.elexis.core.ui.actions.RestrictedAction;
+import ch.elexis.core.ui.dialogs.MediDetailDialog;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
-import ch.elexis.dialogs.MediDetailDialog;
-import ch.elexis.util.ListDisplay;
+import ch.elexis.core.ui.util.ListDisplay;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -307,7 +308,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
 				.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
 				{
-					setImageDescriptor(Images..IMG_EDIT.getImageDescriptor());
+					setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 					setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
 				}
 				
@@ -325,7 +326,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
 				.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
 				{
-					setImageDescriptor(Images..IMG_REMOVEITEM.getImageDescriptor());
+					setImageDescriptor(Images.IMG_REMOVEITEM.getImageDescriptor());
 					setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
 				}
 				
@@ -344,7 +345,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, Messages
 				.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
 				{
-					setImageDescriptor(Images..IMG_DELETE.getImageDescriptor());
+					setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 					setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
 				}
 				

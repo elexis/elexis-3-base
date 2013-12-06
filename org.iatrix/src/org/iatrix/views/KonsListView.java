@@ -28,7 +28,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.data.Patient;
 
 /**
@@ -36,7 +36,6 @@ import ch.elexis.data.Patient;
  * 
  * @author danlutz
  */
-
 public class KonsListView extends ViewPart implements IActivationListener, ISaveablePart2 {
 	public static final String ID = "org.iatrix.views.KonsListView";
 	

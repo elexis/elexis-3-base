@@ -36,8 +36,7 @@ import org.iatrix.data.Problem;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.IVerrechenbar;
-import ch.elexis.data.Konsultation;
+import ch.elexis.core.data.interfaces.IVerrechenbar;import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.core.ui.util.Log;
@@ -85,9 +84,7 @@ public class KonsListComposite {
 				}
 				
 				Verrechnet verrechnet = (Verrechnet) element;
-				String name = verrechnet.getText();
-				
-				// TODO replace with verrechnet.getNickname();
+				String name = verrechnet.getText();				
 				IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
 				if (verrechenbar != null) {
 					String vClass = verrechenbar.getClass().getName();

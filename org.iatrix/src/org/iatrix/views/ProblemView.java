@@ -59,7 +59,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;

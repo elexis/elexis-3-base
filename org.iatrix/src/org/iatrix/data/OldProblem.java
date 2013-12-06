@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;

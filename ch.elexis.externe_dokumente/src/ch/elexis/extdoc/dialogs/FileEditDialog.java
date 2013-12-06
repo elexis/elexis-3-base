@@ -128,7 +128,7 @@ public class FileEditDialog extends TitleAreaDialog {
 		setMessage(Messages.ExterneDokumente_rename_or_change_date);
 		setTitle(Messages.FileEditDialog_file_properties);
 		getShell().setText(Messages.FileEditDialog_file_properties);
-		setTitleImage(Images.IMG_LOGO48.getImage());
+		setTitleImage(Images.IMG_LOGO.getImage());
 	}
 	
 	@Override

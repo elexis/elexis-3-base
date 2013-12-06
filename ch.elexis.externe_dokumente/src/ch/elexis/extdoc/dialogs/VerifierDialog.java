@@ -314,6 +314,6 @@ public class VerifierDialog extends TitleAreaDialog {
 		setMessage(Messages.ExterneDokumente_verify_files_Belong_to_patient);
 		setTitle(Messages.ExterneDokumente_verify_files);
 		getShell().setText(Messages.ExterneDokumente_verify_files);
-		setTitleImage(Images.IMG_LOGO48.getImage());
+		setTitleImage(Images.IMG_LOGO.getImage());
 	}
 }

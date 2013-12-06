@@ -19,6 +19,7 @@ import org.junit.Test;
 import ch.elexis.data.Patient;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
 import ch.elexis.extdoc.util.MatchPatientToPath;
+import ch.elexis.core.data.activator.CoreHub;
 
 public class Test_externe_dokumente {
 	private static Patient helena;
@@ -92,18 +93,18 @@ public class Test_externe_dokumente {
 		}
 		saved = new String[4];
 		String Invalid = "Invalid";
-		saved[0] = ch.elexis.Hub.localCfg.get(PreferenceConstants.BASIS_PFAD1, Invalid);
-		saved[1] = ch.elexis.Hub.localCfg.get(PreferenceConstants.BASIS_PFAD2, Invalid);
-		saved[2] = ch.elexis.Hub.localCfg.get(PreferenceConstants.BASIS_PFAD3, Invalid);
-		saved[3] = ch.elexis.Hub.localCfg.get(PreferenceConstants.BASIS_PFAD4, Invalid);
+		saved[0] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, Invalid);
+		saved[1] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD2, Invalid);
+		saved[2] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD3, Invalid);
+		saved[3] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD4, Invalid);
 	}
 	
 	@AfterClass
 	public static void restoreLast(){
-		ch.elexis.Hub.localCfg.set(PreferenceConstants.BASIS_PFAD1, saved[0]);
-		ch.elexis.Hub.localCfg.set(PreferenceConstants.BASIS_PFAD2, saved[1]);
-		ch.elexis.Hub.localCfg.set(PreferenceConstants.BASIS_PFAD3, saved[2]);
-		ch.elexis.Hub.localCfg.set(PreferenceConstants.BASIS_PFAD4, saved[3]);
+		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD1, saved[0]);
+		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD2, saved[1]);
+		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD3, saved[2]);
+		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD4, saved[3]);
 		
 	}
 	
@@ -118,10 +119,10 @@ public class Test_externe_dokumente {
 		test1.mkdirs();
 		test2.mkdirs();
 		test3.mkdirs();
-		ch.elexis.Hub.localCfg.set(PreferenceConstants.BASIS_PFAD1, testPfad_1);
-		ch.elexis.Hub.localCfg.set(PreferenceConstants.BASIS_PFAD2, testPfad_2);
-		ch.elexis.Hub.localCfg.set(PreferenceConstants.BASIS_PFAD3, testPfad_3);
-		ch.elexis.Hub.userCfg.set(PreferenceConstants.SELECTED_PATHS, "7");
+		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD1, testPfad_1);
+		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD2, testPfad_2);
+		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD3, testPfad_3);
+		CoreHub.userCfg.set(PreferenceConstants.SELECTED_PATHS, "7");
 		
 		PreferenceConstants.PathElement[] prefElems = PreferenceConstants.getPrefenceElements();
 		base_1 = prefElems[0].baseDir;

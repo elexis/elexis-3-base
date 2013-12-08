@@ -8,3 +8,6 @@ rebel.xml
 bin/
 target/
 jetty.log
+# You shoudl not add include jar/zip files 
+*.jar
+*.zip

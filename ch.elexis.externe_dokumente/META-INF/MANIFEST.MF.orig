@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Externe Dokumente
+Bundle-SymbolicName: ch.elexis.externe_dokumente;singleton:=true
+Bundle-Version: 2.0.3
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.rgw.utility
+Bundle-Vendor: iatrix.org
+Import-Package: org.slf4j

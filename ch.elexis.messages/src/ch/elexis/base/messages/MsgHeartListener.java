@@ -10,7 +10,7 @@
  *    
  *******************************************************************************/
 
-package ch.elexis.messages;
+package ch.elexis.base.messages;
 
 import java.util.List;
 import ch.elexis.core.data.activator.CoreHub;

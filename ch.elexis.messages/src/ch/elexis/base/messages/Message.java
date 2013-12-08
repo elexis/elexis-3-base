@@ -11,7 +11,7 @@
  * $Id: Message.java 5182 2009-02-24 15:47:09Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.messages;
+package ch.elexis.base.messages;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Anwender;

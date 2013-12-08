@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Nachrichten plugin
-Bundle-SymbolicName: ch.elexis.messages;singleton:=true
+Bundle-SymbolicName: ch.elexis.base.messages;singleton:=true
 Bundle-Version: 3.0.0.qualifier
-Bundle-Activator: ch.elexis.messages.Activator
+Bundle-Activator: ch.elexis.base.messages.Activator
 Bundle-Vendor: elexis.ch
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -16,5 +16,5 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: ch.elexis.messages
+Export-Package: ch.elexis.base.messages
 

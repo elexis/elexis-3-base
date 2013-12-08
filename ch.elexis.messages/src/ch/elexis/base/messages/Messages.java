@@ -1,4 +1,4 @@
-package ch.elexis.messages;
+package ch.elexis.base.messages;
 
 import org.eclipse.osgi.util.NLS;
 

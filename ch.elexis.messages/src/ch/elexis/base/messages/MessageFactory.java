@@ -11,7 +11,7 @@
  * $Id: MessageFactory.java 4937 2009-01-13 17:47:02Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.messages;
+package ch.elexis.base.messages;
 
 import java.lang.reflect.Method;
 

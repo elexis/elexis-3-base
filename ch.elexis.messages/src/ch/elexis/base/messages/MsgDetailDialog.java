@@ -11,7 +11,7 @@
  * $Id: MsgDetailDialog.java 4937 2009-01-13 17:47:02Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.messages;
+package ch.elexis.base.messages;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

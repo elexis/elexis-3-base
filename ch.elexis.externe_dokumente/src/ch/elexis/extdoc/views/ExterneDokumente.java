@@ -17,13 +17,8 @@ package ch.elexis.extdoc.views;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,6 +57,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -78,14 +74,12 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.actions.BackgroundJob;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.JobPool;
 import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -95,11 +89,12 @@ import ch.elexis.extdoc.dialogs.VerifierDialog;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
 import ch.elexis.extdoc.util.ListFiles;
 import ch.elexis.extdoc.util.MatchPatientToPath;
-import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
-import ch.elexis.extdoc.util.Email;;
+import ch.elexis.extdoc.util.Email;
+
+;
 
 /**
  * Diese Ansicht zeigt externe Dokumente an. Die Dokumente liegen in einem Verzeichnis im
@@ -152,10 +147,9 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	
 	private static Logger logger = null;
 	
-	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class,
+	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
 		ElexisEvent.EVENT_SELECTED) {
-		@Override
-		public void run(ElexisEvent ev){
+		public void run(final ElexisEvent ev){
 			actPatient = (Patient) ev.getObject();
 			actMandant = CoreHub.actMandant;
 			refresh();
@@ -604,14 +598,15 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				}
 				String inhalt = Email.getEmailPreface(actPatient);
 				inhalt += "\n\n\nMedikation: \n" + actPatient.getMedikation();
-				inhalt += "\nAlle Konsultationen\n" + Email.getAllKonsultations(actPatient) + "\n\n";
+				inhalt +=
+					"\nAlle Konsultationen\n" + Email.getAllKonsultations(actPatient) + "\n\n";
 				Email.openMailApplication("", // No default to address
 					null, inhalt, attachements);
 			}
 		};
 		sendMailAction.setText(Messages.ExterneDokumente_sendEmail);
 		sendMailAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
-				"rsc/mail.png"));
+			"rsc/mail.png"));
 		sendMailAction.setToolTipText(Messages.ExterneDokumente_sendEmailTip);
 		openFolderAction = new Action() {
 			public void run(){
@@ -629,8 +624,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 		};
 		openFolderAction.setText(Messages.ExterneDokumente_openFolder);
-		openFolderAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.iatrix",
-				"rsc/folder.png"));
+		openFolderAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
+			"org.iatrix", "rsc/folder.png"));
 		openFolderAction.setToolTipText(Messages.ExterneDokumente_openFolderTip);
 		
 		openAction = new Action() {
@@ -649,7 +644,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		openAction.setText(Messages.ExterneDokumente_open);
 		openAction.setToolTipText(Messages.ExterneDokumente_OpenFileTip);
 		openAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
-				"rsc/open.gif"));
+			"rsc/open.gif"));
 		doubleClickAction = new Action() {
 			public void run(){
 				openAction.run();
@@ -671,7 +666,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		editAction.setToolTipText(Messages.ExterneDokumente_rename_or_change_date);
 		editAction.setActionDefinitionId(GlobalActions.PROPERTIES_COMMAND);
 		editAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
-				"rsc/plaf/modern/icons/edit.png"));
+			"rsc/plaf/modern/icons/edit.png"));
 		GlobalActions.registerActionHandler(this, editAction);
 		
 		deleteAction = new Action() {

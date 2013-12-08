@@ -22,7 +22,7 @@
             Class="ch.elexis.omnivore.data.DocHandleFactory"
             name="Omnivore"/>
    </extension>
-   <!--extension
+   <extension
          point="ch.elexis.ServiceRegistry">
       <Service
             actor="ch.elexis.omnivore.data.DocumentManagement"
@@ -30,7 +30,7 @@
             name="DocumentManagement"
             value="1">
       </Service>
-   </extension-->
+   </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ch.elexis.externe_dokumente test fragment
+Bundle-SymbolicName: ch.elexis.externe_dokumente_test
+Bundle-Version: 2.0.0
+Bundle-Vendor: elexis.ch
+Fragment-Host: ch.elexis.externe_dokumente;bundle-version="2.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit;bundle-version="4.8.0"
+Import-Package: ch.elexis.data
+Bundle-ClassPath: .,
+ lib/commons-io-2.1.jar

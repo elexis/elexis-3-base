@@ -27,6 +27,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 import ch.elexis.icpc.Episode;
 import ch.elexis.icpc.Messages;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class EditEpisodeDialog extends TitleAreaDialog {
@@ -124,7 +125,7 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 		}
 		setMessage(Messages.EpisodeEditDialog_EnterData);
 		
-		setTitleImage(Images.IMG_LOGO48.getImage());
+		setTitleImage(Images.IMG_LOGO.getImage());
 	}
 	
 	@Override

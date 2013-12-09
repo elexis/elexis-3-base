@@ -31,7 +31,7 @@ import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.IcpcCode;
-import ch.elexis.core.ui.contacts.preferences.UserSettings2;
+import ch.elexis.core.ui.settings.UserSettings;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.viewers.CommonContentProviderAdapter;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -66,7 +66,7 @@ public class ChapterDisplay extends Composite {
 			String c = IcpcCode.components[i];
 			ec[i] = tk.createExpandableComposite(cLeft, ExpandableComposite.TWISTIE);
 			ec[i].setText(c);
-			UserSettings2.setExpandedState(ec[i], UC2_HEADING + c.substring(0, 1));
+			UserSettings.setExpandedState(ec[i], UC2_HEADING + c.substring(0, 1));
 			Composite inlay = new Composite(ec[i], SWT.NONE);
 			inlay.setLayout(new FillLayout());
 			CommonViewer cv = new CommonViewer();
@@ -108,7 +108,7 @@ public class ChapterDisplay extends Composite {
 						CommonViewer cv = (CommonViewer) src.getData();
 						cv.notify(CommonViewer.Message.update);
 					}
-					UserSettings2.saveExpandedState(UC2_HEADING + src.getText().substring(0, 1),
+					UserSettings.saveExpandedState(UC2_HEADING + src.getText().substring(0, 1),
 						e.getState());
 				}
 				

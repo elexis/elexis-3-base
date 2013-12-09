@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 
+import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Encounter;

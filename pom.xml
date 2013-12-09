@@ -24,6 +24,8 @@
     <module>ch.elexis.base.p2site</module>
     <module>ch.elexis.base.textplugin</module>
     <module>ch.elexis.base.textplugin.feature</module>
+    <module>ch.elexis.icpc</module>
+    <module>ch.elexis.icpc.feature</module>
     <module>ch.medelexis.text.templator</module>
     <module>ch.medelexis.text.templator.feature</module>
     <module>com.hilotec.elexis.opendocument</module>

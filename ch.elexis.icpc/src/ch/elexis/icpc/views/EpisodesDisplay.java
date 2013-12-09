@@ -179,10 +179,10 @@ public class EpisodesDisplay extends Composite {
 			if (element instanceof Episode) {
 				Episode e = (Episode) element;
 				if (e.getStatus() == Episode.INACTIVE) {
-					return UiDesk.getColor(Desk.COL_LIGHTGREY);
+					return UiDesk.getColor(UiDesk.COL_LIGHTGREY);
 				}
 			}
-			return UiDesk.getColor(Desk.COL_BLACK);
+			return UiDesk.getColor(UiDesk.COL_BLACK);
 		}
 		
 	}

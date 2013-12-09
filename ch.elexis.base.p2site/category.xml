@@ -12,6 +12,9 @@
    <feature url="features/ch.elexis.base.textplugin.feature_3.0.0.qualifier.jar" id="ch.elexis.base.textplugin.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
+   <feature url="features/ch.elexis.icpc.feature_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <feature url="features/ch.medelexis.text.templator.feature.source_3.0.0.qualifier.jar" id="ch.medelexis.text.templator.feature.source" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
@@ -26,4 +29,14 @@
    </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung"/>
+   <category-def name="dataexchange" label="Datenaustausch"/>
+   <category-def name="finances" label="Finanzen"/>
+   <category-def name="labinterfaces" label="Geräteanbindung"/>
+   <category-def name="clinicrecordkeeping" label="KG-Führung"/>
+   <category-def name="clinical_helpers" label="Klinische Hilfsmittel"/>
+   <category-def name="laborexchanges" label="Laboranbindung"/>
+   <category-def name="organisation" label="Organisation"/>
+   <category-def name="divers" label="Sonstige"/>
+   <category-def name="statistics" label="Statistik"/>
+   <category-def name="support" label="Zusätze/Support"/>
 </site>

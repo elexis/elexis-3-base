@@ -18,15 +18,15 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 import ch.elexis.core.ui.views.AUF2;
 import ch.elexis.core.ui.views.AUFZeugnis;
-import ch.elexis.core.ui.views.DauerMediView;
+import ch.elexis.core.ui.medication.views.DauerMediView;
 import ch.elexis.core.ui.views.FaelleView;
 import ch.elexis.core.ui.views.FallDetailView;
 import ch.elexis.core.ui.views.KompendiumView;
 import ch.elexis.core.ui.views.KonsDetailView;
 import ch.elexis.core.ui.views.KonsListe;
-import ch.elexis.core.ui.views.LaborView;
 import ch.elexis.core.ui.views.PatHeuteView;
-import ch.elexis.core.ui.views.PatientenListeView;
+import ch.elexis.core.ui.laboratory.views.LaborView;
+import ch.elexis.core.ui.constants.UiResourceConstants;
 import ch.elexis.core.ui.views.ReminderView;
 import ch.elexis.core.ui.views.RezeptBlatt;
 import ch.elexis.core.ui.views.RezepteView;
@@ -50,7 +50,7 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		IFolderLayout untenlinks =
 			layout.createFolder("untenlinks", IPageLayout.BOTTOM, 0.4f, EpisodesView.ID);
 		untenlinks.addView(FaelleView.ID);
-		untenlinks.addView(DauerMediView.ID);
+		untenlinks.addView(ch.elexis.core.ui.medication.views.DauerMediView.ID);
 		// layout.addView(FaelleView.ID, IPageLayout.BOTTOM, 0.5f, EpisodesView.ID);
 		IFolderLayout untenrechts =
 			layout.createFolder("untenrechts", IPageLayout.BOTTOM, 0.3f, "obenrechts");
@@ -69,14 +69,14 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		bfr.addView(AUF2.ID);
 		bfr.addView(RezepteView.ID);
 		
-		layout.addFastView(PatientenListeView.ID);
+		layout.addFastView(UiResourceConstants.PatientenListeView_ID);
 		layout.addFastView(DiagnosenView.ID);
 		layout.addFastView(LeistungenView.ID);
 		
 		layout.addShowViewShortcut(EpisodesView.ID);
 		layout.addShowViewShortcut(EncounterView.ID);
 		layout.addShowViewShortcut(KonsDetailView.ID);
-		layout.addShowViewShortcut(LaborView.ID);
+//		layout.addShowViewShortcut(LaborView.ID);
 		layout.addShowViewShortcut(KonsListe.ID);
 		layout.addShowViewShortcut(ReminderView.ID);
 		layout.addShowViewShortcut(DauerMediView.ID);

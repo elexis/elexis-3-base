@@ -34,17 +34,17 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
-import ch.elexis.actions.BackgroundJob;
-import ch.elexis.actions.JobPool;
-import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.actions.BackgroundJob;
+import ch.elexis.core.ui.actions.JobPool;
+import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.data.Patient;
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
 import ch.elexis.extdoc.util.ListFiles;
 import ch.elexis.extdoc.util.MatchPatientToPath;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.elexis.extdoc.util.*;
 
@@ -177,7 +177,7 @@ public class VerifierDialog extends TitleAreaDialog {
 		public Image getColumnImage(Object obj, int index){
 			switch (index) {
 			case STATUS_COLUMN:
-				return Desk.getImage(Desk.IMG_FEHLER);
+				return UiUiDesk.getImage(Desk.IMG_FEHLER);
 			case NAME_COLUMN:
 				return getImage(obj);
 			}
@@ -312,6 +312,6 @@ public class VerifierDialog extends TitleAreaDialog {
 		setMessage(Messages.ExterneDokumente_verify_files_Belong_to_patient);
 		setTitle(Messages.ExterneDokumente_verify_files);
 		getShell().setText(Messages.ExterneDokumente_verify_files);
-		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
+		setTitleImage(Images.IMG_LOGO.getImage());
 	}
 }

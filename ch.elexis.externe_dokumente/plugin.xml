@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.extdoc.views.ExterneDokumente"
+            id="ch.elexis.views.ExterneDokumente"
+            name="Externe Dokumente"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.extdoc.preferences.ExterneDokumente"
+            id="ch.elexis.externe_dokumente.preferences"
+            name="Externe Dokumente"/>
+   </extension>
+
+</plugin>

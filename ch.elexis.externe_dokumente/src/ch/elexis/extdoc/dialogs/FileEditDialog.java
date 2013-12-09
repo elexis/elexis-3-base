@@ -26,8 +26,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-import ch.elexis.Desk;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.elexis.extdoc.Messages;
@@ -127,7 +127,7 @@ public class FileEditDialog extends TitleAreaDialog {
 		setMessage(Messages.ExterneDokumente_rename_or_change_date);
 		setTitle(Messages.FileEditDialog_file_properties);
 		getShell().setText(Messages.FileEditDialog_file_properties);
-		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
+		setTitleImage(Images.IMG_LOGO.getImage());
 	}
 	
 	@Override

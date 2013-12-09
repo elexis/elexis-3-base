@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.Hub;
-import ch.elexis.preferences.SettingsPreferenceStore;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.extdoc.Messages;
 
 
@@ -35,7 +35,7 @@ public class ExterneDokumente extends FieldEditorPreferencePage implements IWork
 	
 	public ExterneDokumente(){
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 		setDescription(Messages.ExterneDokumente_externe_dokumente);
 	}
 	
@@ -71,6 +71,6 @@ public class ExterneDokumente extends FieldEditorPreferencePage implements IWork
 	}
 	
 	public void init(IWorkbench workbench){
-		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));		
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));		
 	}
 }

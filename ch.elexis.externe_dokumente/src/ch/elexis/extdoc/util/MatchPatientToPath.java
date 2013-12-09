@@ -23,7 +23,7 @@ import ch.elexis.data.Query;
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.dialogs.MoveIntoSubDirsDialog;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
-import ch.elexis.util.Log;
+import ch.elexis.core.ui.util.Log;
 
 /***
  * 
@@ -219,7 +219,7 @@ public class MatchPatientToPath {
 	
 	public static String getSubDirPath(Patient pat){
 		String s =
-			ch.elexis.Hub.localCfg.get(PreferenceConstants.BASIS_PFAD1, "") + File.separatorChar //$NON-NLS-1$
+			ch.elexis.CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, "") + File.separatorChar //$NON-NLS-1$
 				+ basenameMustBeginWith(pat.getName(), pat.getVorname());
 		return s;
 	}

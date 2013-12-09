@@ -74,16 +74,16 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.Hub;
-import ch.elexis.actions.BackgroundJob;
-import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
-import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.JobPool;
-import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
-import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.actions.BackgroundJob;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.actions.GlobalActions;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.JobPool;
+import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
+import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
@@ -95,8 +95,8 @@ import ch.elexis.extdoc.dialogs.VerifierDialog;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
 import ch.elexis.extdoc.util.ListFiles;
 import ch.elexis.extdoc.util.MatchPatientToPath;
-import ch.elexis.text.model.Samdas;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.text.model.Samdas;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.elexis.extdoc.util.Email;;
@@ -152,12 +152,12 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	
 	private static Logger logger = null;
 	
-	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class,
+	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
 		ElexisEvent.EVENT_SELECTED) {
 		@Override
 		public void runInUi(ElexisEvent ev){
 			actPatient = (Patient) ev.getObject();
-			actMandant = Hub.actMandant;
+			actMandant = CoreHub.actMandant;
 			refresh();
 		}
 	};

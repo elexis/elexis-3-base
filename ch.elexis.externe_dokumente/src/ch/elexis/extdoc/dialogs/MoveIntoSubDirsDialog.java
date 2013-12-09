@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.util.MatchPatientToPath;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class MoveIntoSubDirsDialog extends Action {
 	private static Logger logger = null;

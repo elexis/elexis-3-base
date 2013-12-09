@@ -27,13 +27,13 @@ import org.eclipse.swt.program.Program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
-import ch.elexis.text.model.Samdas;
+import ch.elexis.core.text.model.Samdas;
 import ch.rgw.tools.TimeTool;
 
 @SuppressWarnings("deprecation")
@@ -61,7 +61,7 @@ public class Email {
 	 */
 	
 	public static void saveTextToClipboard(String body){
-		Clipboard clipboard = new Clipboard(Desk.getDisplay());
+		Clipboard clipboard = new Clipboard(UiUiDesk.getDisplay());
 		TextTransfer textTransfer = TextTransfer.getInstance();
 		clipboard.setContents(new Object[] {
 			body
@@ -140,9 +140,9 @@ public class Email {
 		logger = LoggerFactory.getLogger("ch.elexis.extdoc");
 		
 		if (subject == null)
-			subject = Hub.localCfg.get(PreferenceConstants.CONCERNS, "Überweisung");
+			subject = CoreHub.localCfg.get(PreferenceConstants.CONCERNS, "Überweisung");
 		// quote for programs with white spaces in file
-		String app = Hub.localCfg.get(PreferenceConstants.EMAIL_PROGRAM, "mailto:");
+		String app = CoreHub.localCfg.get(PreferenceConstants.EMAIL_PROGRAM, "mailto:");
 		String params = "";
 		try {
 			if (app.toLowerCase().indexOf("outlook") >= 0) {

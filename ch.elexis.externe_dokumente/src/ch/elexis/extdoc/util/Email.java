@@ -61,7 +61,7 @@ public class Email {
 	 */
 	
 	public static void saveTextToClipboard(String body){
-		Clipboard clipboard = new Clipboard(UiUiDesk.getDisplay());
+		Clipboard clipboard = new Clipboard(UiDesk.getDisplay());
 		TextTransfer textTransfer = TextTransfer.getInstance();
 		clipboard.setContents(new Object[] {
 			body

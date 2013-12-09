@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;

@@ -26,6 +26,9 @@
     <module>ch.elexis.base.textplugin.feature</module>
     <module>ch.elexis.icpc</module>
     <module>ch.elexis.icpc.feature</module>
+    <module>ch.elexis.externe_dokumente</module>
+    <module>ch.elexis.externe_dokumente.feature</module>
+    <module>ch.elexis.externe_dokumente.tests</module>
     <module>ch.medelexis.text.templator</module>
     <module>ch.medelexis.text.templator.feature</module>
     <module>com.hilotec.elexis.opendocument</module>
@@ -37,7 +40,18 @@
       <url>http://download.elexis.info/elexis.3.core/${repo_variant}/</url>
       <layout>p2</layout>
     </repository>
-		<repository>
+    <!--repository>
+      <id>my_local_mirror</id>
+      <url>file:///opt/mirror.4.elexis/target/repository/</url>
+      <layout>p2</layout>
+    </repository-->
+    <repository>
+      <id>mirror.4.elexis.${repo_variant}</id>
+      <url>http://download.elexis.info/mirror.4.elexis/${repo_variant}/</url>
+      <layout>p2</layout>
+    </repository>
+
+  <repository>
       <id>elexis.3rdparty.libraries</id>
 			<url>http://download.elexis.info/elexis.3rdparty.libraries/</url>
       <layout>p2</layout>

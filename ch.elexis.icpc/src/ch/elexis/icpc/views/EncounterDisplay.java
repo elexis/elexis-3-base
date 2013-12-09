@@ -25,14 +25,14 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
-import ch.elexis.actions.CodeSelectorHandler;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.IcpcCode;
-import ch.elexis.util.PersistentObjectDropTarget;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.PersistentObjectDropTarget;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
 /**
@@ -52,7 +52,7 @@ public class EncounterDisplay extends Composite {
 	
 	public EncounterDisplay(Composite parent){
 		super(parent, SWT.NONE);
-		form = Desk.getToolkit().createForm(this);
+		form = UiDesk.getToolkit().createForm(this);
 		setLayout(new GridLayout());
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();

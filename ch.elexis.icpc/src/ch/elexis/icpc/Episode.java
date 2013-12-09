@@ -16,9 +16,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import ch.elexis.Hub;
-import ch.elexis.StringConstants;
-import ch.elexis.data.IDiagnose;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -179,7 +179,7 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 		List<String[]> res = getList("DiagLink", null);
 		List<IDiagnose> ret = new ArrayList<IDiagnose>(res.size());
 		for (String[] diag : res) {
-			IDiagnose id = (IDiagnose) Hub.poFactory.createFromString(diag[0]);
+			IDiagnose id = (IDiagnose) CoreHub.poFactory.createFromString(diag[0]);
 			if (id != null) {
 				ret.add(id);
 			}

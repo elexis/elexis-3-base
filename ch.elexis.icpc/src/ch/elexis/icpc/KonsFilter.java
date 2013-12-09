@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IFilter;
 
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ObjectFilterRegistry.IObjectFilterProvider;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.actions.ObjectFilterRegistry.IObjectFilterProvider;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.views.EpisodesView;

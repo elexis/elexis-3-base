@@ -26,22 +26,22 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
-import ch.elexis.Desk;
-import ch.elexis.actions.CodeSelectorHandler;
-import ch.elexis.actions.ICodeSelectorTarget;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.actions.CodeSelectorHandler;
+import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.IcpcCode;
-import ch.elexis.preferences.UserSettings2;
-import ch.elexis.util.SWTHelper;
-import ch.elexis.util.viewers.CommonContentProviderAdapter;
-import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.DefaultLabelProvider;
-import ch.elexis.util.viewers.SimpleWidgetProvider;
-import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.contacts.preferences.UserSettings2;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.viewers.CommonContentProviderAdapter;
+import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
+import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 
 public class ChapterDisplay extends Composite {
 	private static final String UC2_HEADING = "ICPCChapter/";
-	FormToolkit tk = Desk.getToolkit();
+	FormToolkit tk = UiDesk.getToolkit();
 	ScrolledForm fLeft;
 	String chapter;
 	ExpandableComposite[] ec;

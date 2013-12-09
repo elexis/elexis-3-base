@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.icpc.IcpcCode;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class ICPCCodesView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.codesView";

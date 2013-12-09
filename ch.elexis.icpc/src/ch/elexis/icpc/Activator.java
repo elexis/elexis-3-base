@@ -15,7 +15,7 @@ package ch.elexis.icpc;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import ch.elexis.util.Log;
+import ch.elexis.core.ui.util.Log;
 
 public class Activator extends AbstractUIPlugin {
 	
@@ -25,7 +25,7 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
-	// private static FormToolkit tk=Desk.getToolkit();
+	// private static FormToolkit tk=UiDesk.getToolkit();
 	/**
 	 * The constructor
 	 */

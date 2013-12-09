@@ -29,8 +29,8 @@ import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
 
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.ImporterPage;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.ImporterPage;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;

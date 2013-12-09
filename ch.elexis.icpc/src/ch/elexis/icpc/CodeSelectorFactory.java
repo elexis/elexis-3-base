@@ -19,14 +19,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.DefaultControlFieldProvider;
-import ch.elexis.util.viewers.SimpleWidgetProvider;
-import ch.elexis.util.viewers.ViewerConfigurer;
-import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
+import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.rgw.tools.Tree;
 
-public class CodeSelectorFactory extends ch.elexis.views.codesystems.CodeSelectorFactory {
+public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.CodeSelectorFactory {
 	
 	public CodeSelectorFactory(){
 		// TODO Auto-generated constructor stub

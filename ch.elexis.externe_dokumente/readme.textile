@@ -1,0 +1,53 @@
+h1. Externe Dokumente
+
+h2. Konvention
+
+Externe Dokumente werden gefunden, wenn sie
+* In einem der 4 in den Voreinstellungen "Externe Dokumnte" angegebenen Ordner zu finden sind.
+* Alle Patienten in einem Verzeichnis (Varaltet, und führt bei vielen > 10'000 Dokumenten) zu langen Wartezeiten
+* *Neu ab 2.1.7:* Ein Unterverzeichnis pro Patient gemäss Schema: Name(maximal 6 Zeichen) Vorname Geburtsdatum (z.B. "Meier Hans-Martin 1999-12-31"
+* Die Dateinamen folgen folgendem Schema
+** Die ersten 6 Zeichen des Nachnamens. Falls kürzer, mit Leerzeichen aufgefüllt
+** Der Vorname (nur der erste, falls es mehrere gibt)
+** Einem Leerzeichen
+** Der weiteren Bezeichnung, z.B. befund_ks_2010_10_31.pdf
+Also z.B. für den Patienten Karl May wäre "May   Karl Untersuchung 2010.10.30.pdf" ein gültiger Name.
+
+Alle alten Dateien werden weiterhin gefunden. Sie können mit Hilfe des Befehls "In Unterordner verschieben" in Unterordner abgelegt werden. Das Ablegen in Unterordner ist besonders unter Windows empfehlenswert, wenn mehr als 10'000 Dokumente vorhanden sind.
+
+Falls Dateien zu mehr als einem Patienten gehören können (gleicher Name und Vorname) bleiben sie im Ordner und müssen manuell in den richtigen Unterordner verschoben werden.
+
+Falls beim Patienten (noch) kein GEburtsdatum bekannt ist, wird als Geburtsdatum der 11.11.1111 angenommen werden. Nach der Korrektur des Geburtsdatums musss der Unterodner manuell umbenannt werden!
+
+h2. Verbesserungen ab 2.1.7
+
+** Tooltips im Eigenschaften-Dialog für Konvention des Dateinamens
+** Tooltips im Eigenschaften-Dialog zum Ändern des Dateidatums
+** Mit einem Klick auf die Reiter kann nach Datum oder Dateiname sortiert und die Suchrichtung geändert werden
+
+
+h2. Anwendung
+
+Siehe "Iatrix:ExterneDokumnte":http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/ExterneDokumente
+Mit einem Klick auf die Reiter kann nach Datum oder Dateiname sortiert und die Suchrichtung geändert werden
+
+
+h2. Dateien in Unterordner verschieben
+
+In jedem der gewünschten Verzeichnisse das Ruby-Script move_into_subdirectories.rb aufrufen.
+Menu-Befehl
+
+h1. Tests
+
+JUnit-Test für Dateikonventionen.
+
+Sobald GUI-Tests für einzelne Plug-Ins möglich sind, sollten natürlich auch einige Tests dort gefahren werden.
+
+
+h1. Offene Fragen/Verbesserungsmöglichkeiten
+
+* Umwandlung der (obsoleten) Background-Jobs von views/ExterneDokumente und VerifierDialog in Eclipse-Background-Jobs analog zu MoveIntoSubDirsDialog. 
+* Soll im Eigenschaft-Dialog der Verzeichnisname angezeigt werden?
+* Soll im Eigenschaft-Dialog die Datei in ein anders Verzeichnis verschoben werden können?
+* Soll bei der Auflistung eine Hinweis (z.B. 1,2,3) erscheinen, in welchem der Ordner die Datei ist?
+* Gibt es noch mehr Grenzfälle

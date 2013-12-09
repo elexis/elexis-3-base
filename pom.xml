@@ -40,9 +40,14 @@
       <url>http://download.elexis.info/elexis.3.core/${repo_variant}/</url>
       <layout>p2</layout>
     </repository>
-    <repository>
+    <!--repository>
       <id>my_local_mirror</id>
       <url>file:///opt/mirror.4.elexis/target/repository/</url>
+      <layout>p2</layout>
+    </repository-->
+    <repository>
+      <id>mirror.4.elexis.${repo_variant}</id>
+      <url>http://download.elexis.info/mirror.4.elexis/${repo_variant}/</url>
       <layout>p2</layout>
     </repository>
 

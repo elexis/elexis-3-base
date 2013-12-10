@@ -52,23 +52,23 @@ import org.iatrix.actions.IatrixEventHelper;
 import org.iatrix.data.Problem;
 import org.iatrix.widgets.ProblemFixMediDisplay;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
-import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
-import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
-import ch.elexis.data.IDiagnose;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.actions.GlobalActions;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Episode;
-import ch.elexis.util.Log;
-import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ViewMenus;
-import ch.elexis.views.codesystems.DiagnosenView;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.codesystems.DiagnosenView;
 import ch.rgw.tools.ExHandler;
 
 /**
@@ -106,8 +106,8 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 	
 	private ViewMenus menus;
 	
-	private final ElexisEventListenerImpl eeli_problem =
-		new ElexisEventListenerImpl(Episode.class, ElexisEvent.EVENT_SELECTED
+	private final ElexisUiEventListenerImpl eeli_problem =
+		new ElexisUiEventListenerImpl(Episode.class, ElexisEvent.EVENT_SELECTED
 			| ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_UPDATE) {
 			
 			@Override
@@ -139,8 +139,8 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 			}
 		};
 	
-	private final ElexisEventListenerImpl eeli_patient =
-		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED
+	private final ElexisUiEventListenerImpl eeli_patient =
+		new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED
 			| ElexisEvent.EVENT_DESELECTED) {
 			
 			@Override
@@ -345,7 +345,7 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 				String drp = (String) event.data;
 				String[] dl = drp.split(",");
 				for (String obj : dl) {
-					PersistentObject dropped = Hub.poFactory.createFromString(obj);
+					PersistentObject dropped = CoreHub.poFactory.createFromString(obj);
 					if (dropped instanceof IDiagnose) {
 						IDiagnose diagnose = (IDiagnose) dropped;
 						actProblem.addDiagnose(diagnose);

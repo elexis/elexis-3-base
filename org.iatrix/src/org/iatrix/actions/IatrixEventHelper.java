@@ -11,7 +11,7 @@ package org.iatrix.actions;
 
 import org.iatrix.data.Problem;
 
-import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.icpc.Episode;
 
 public class IatrixEventHelper {

@@ -27,9 +27,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.iatrix.widgets.EnhancedTextFieldRO;
 
-import ch.elexis.Desk;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Konsultation;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.VersionedResource.ResourceItem;
 
@@ -175,7 +175,7 @@ public class ChooseKonsRevisionDialog extends TitleAreaDialog {
 		setMessage("Text-Version wählen");
 		setTitle("Wählen Sie die gewünschte Version aus.");
 		getShell().setText("Text-Version wählen");
-		setTitleImage(Desk.getImage(Desk.IMG_LOGO48)); //$NON-NLS-1$
+		setTitleImage(Images.IMG_LOGO.getImage()); //$NON-NLS-1$
 	}
 	
 	@Override

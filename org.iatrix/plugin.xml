@@ -33,7 +33,7 @@
       </view>
    </extension>
    <extension
-         point="ch.elexis.PersistentReference">
+         point="ch.elexis.core.data.PersistentReference">
       <Factory
             Class="org.iatrix.data.ProblemFactory"
             name="Problem"/>

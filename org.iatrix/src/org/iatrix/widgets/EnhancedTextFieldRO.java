@@ -28,8 +28,8 @@ import org.jdom.Document;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import ch.elexis.text.model.Samdas;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.text.model.Samdas;
+import ch.elexis.core.ui.util.SWTHelper;
 
 /**
  * Ein StyledText mit erweiterten Eigenschaften. Kann XML-Dokumente von SAmDaS-Typ lesen. Aus

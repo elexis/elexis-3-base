@@ -17,7 +17,7 @@ import org.iatrix.data.Problem;
 
 import ch.elexis.data.Konsultation;
 import ch.elexis.icpc.Encounter;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 
 /**
  * Utilitiy methods for views

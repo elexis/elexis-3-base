@@ -17,7 +17,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.iatrix.data.Problem;
 import org.osgi.framework.BundleContext;
 
-import ch.elexis.Desk;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.Episode;
 

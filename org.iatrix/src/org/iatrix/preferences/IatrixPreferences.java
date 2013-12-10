@@ -17,8 +17,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.iatrix.Iatrix;
 
-import ch.elexis.Hub;
-import ch.elexis.preferences.SettingsPreferenceStore;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 /**
  * Settings for Iatrix
@@ -30,7 +30,7 @@ public class IatrixPreferences extends FieldEditorPreferencePage implements
 	
 	public IatrixPreferences(){
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(Hub.globalCfg));
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
 		setDescription("Iatrix");
 	}
 	
@@ -48,14 +48,14 @@ public class IatrixPreferences extends FieldEditorPreferencePage implements
 		
 		String value;
 		
-		value = Hub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CHARGES, null);
+		value = CoreHub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CHARGES, null);
 		if (value == null) {
-			Hub.globalCfg.set(Iatrix.CFG_MAX_SHOWN_CHARGES, Iatrix.CFG_MAX_SHOWN_CHARGES_DEFAULT);
+			CoreHub.globalCfg.set(Iatrix.CFG_MAX_SHOWN_CHARGES, Iatrix.CFG_MAX_SHOWN_CHARGES_DEFAULT);
 		}
 		
-		value = Hub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CONSULTATIONS, null);
+		value = CoreHub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CONSULTATIONS, null);
 		if (value == null) {
-			Hub.globalCfg.set(Iatrix.CFG_MAX_SHOWN_CONSULTATIONS,
+			CoreHub.globalCfg.set(Iatrix.CFG_MAX_SHOWN_CONSULTATIONS,
 				Iatrix.CFG_MAX_SHOWN_CONSULTATIONS_DEFAULT);
 		}
 	}
@@ -63,7 +63,7 @@ public class IatrixPreferences extends FieldEditorPreferencePage implements
 	@Override
 	public boolean performOk(){
 		if (super.performOk()) {
-			Hub.globalCfg.flush();
+			CoreHub.globalCfg.flush();
 			return true;
 		}
 		return false;

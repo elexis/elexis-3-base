@@ -18,10 +18,10 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 
-import ch.elexis.Hub;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Artikel;
-import ch.elexis.data.IDiagnose;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -29,8 +29,8 @@ import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.Episode;
-import ch.elexis.util.Log;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -168,7 +168,7 @@ public class Problem extends Episode {
 	 * @return
 	 */
 	private static void init(){
-		String version = Hub.globalCfg.get(IATRIX_VERSION_KEY, null);
+		String version = CoreHub.globalCfg.get(IATRIX_VERSION_KEY, null);
 		if (version == null) {
 			// tables don't yet exist or pre 0.2.0
 			// get old-style version object
@@ -183,8 +183,8 @@ public class Problem extends Episode {
 						return;
 					}
 					version = IATRIX_DB_VERSION;
-					Hub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION);
-					Hub.globalCfg.flush();
+					CoreHub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION);
+					CoreHub.globalCfg.flush();
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 				}
@@ -193,8 +193,8 @@ public class Problem extends Episode {
 				
 				convertOldProblemsToEpisodes();
 				version = IATRIX_DB_VERSION_PRE_ENCOUNTERS;
-				Hub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION_PRE_ENCOUNTERS);
-				Hub.globalCfg.flush();
+				CoreHub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION_PRE_ENCOUNTERS);
+				CoreHub.globalCfg.flush();
 			}
 		}
 		
@@ -220,8 +220,8 @@ public class Problem extends Episode {
 								+ "Informationen zum Problem sind in der Log-Datei zu finden.");
 				} else {
 					// success
-					Hub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION_ENCOUNTERS);
-					Hub.globalCfg.flush();
+					CoreHub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION_ENCOUNTERS);
+					CoreHub.globalCfg.flush();
 					SWTHelper.showInfo("Aktualisierung DB Iatrix",
 						"DB Iatrix wurde fertig aktualisiert. Sie können nun arbeiten.");
 				}
@@ -370,7 +370,7 @@ public class Problem extends Episode {
 						sb.append("::");
 						sb.append(code);
 						try {
-							PersistentObject dg = Hub.poFactory.createFromString(sb.toString());
+							PersistentObject dg = CoreHub.poFactory.createFromString(sb.toString());
 							if (dg instanceof IDiagnose) {
 								diagnose = (IDiagnose) dg;
 							}
@@ -440,7 +440,7 @@ public class Problem extends Episode {
 	 */
 	public boolean remove(boolean force){
 		if (true || (force == true)
-			&& (Hub.acl.request(AccessControlDefaults.DELETE_FORCED) == true)) {
+			&& (CoreHub.acl.request(AccessControlDefaults.DELETE_FORCED) == true)) {
 			// TODO verknuepfte Daten loeschen falls vorhanden
 			// TODO Sicherstellen, dass Problem von allen Konsulationen entfernt wird.
 			ExHandler.handle(new Exception("Alle Probleme von Konsulationen entfernen"));
@@ -768,7 +768,7 @@ public class Problem extends Episode {
 		 * rs2=stm2.query("SELECT DG_CODE,KLASSE FROM DIAGNOSEN WHERE ID="+JdbcLink.wrap(dgID));
 		 * if(rs2.next()){ sb.setLength(0); sb.append(rs2.getString(2)).append("::");
 		 * sb.append(rs2.getString(1)); try{ PersistentObject
-		 * dg=Hub.poFactory.createFromString(sb.toString()); if(dg!=null){ ret.add((IDiagnose)dg); }
+		 * dg=CoreHub.poFactory.createFromString(sb.toString()); if(dg!=null){ ret.add((IDiagnose)dg); }
 		 * }catch(Exception ex){ log.log("Fehlerhafter Diagnosecode "+sb.toString(),Log.ERRORS); } }
 		 * rs2.close(); j.releaseStatement(stm2); } rs1.close(); }catch(Exception ex){
 		 * ExHandler.handle(ex); log.log(ex.getMessage(),Log.ERRORS); } finally{

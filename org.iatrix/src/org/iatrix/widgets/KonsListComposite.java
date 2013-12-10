@@ -34,13 +34,13 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.iatrix.data.Problem;
 
-import ch.elexis.Hub;
-import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.data.IVerrechenbar;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.util.Log;
+import ch.elexis.core.ui.util.Log;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
@@ -130,7 +130,7 @@ public class KonsListComposite {
 			public void widgetSelected(SelectionEvent event){
 				int sashX = event.x;
 				currentSashXPercentLeft = absoluteToPercent(composite.getSize().x, sashX);
-				Hub.localCfg.set(CFG_SASH_X_PERCENT_LEFT, currentSashXPercentLeft);
+				CoreHub.localCfg.set(CFG_SASH_X_PERCENT_LEFT, currentSashXPercentLeft);
 				composite.layout();
 			}
 		});
@@ -142,7 +142,7 @@ public class KonsListComposite {
 			public void widgetSelected(SelectionEvent event){
 				int sashX = event.x;
 				currentSashXPercentRight = absoluteToPercent(composite.getSize().x, sashX);
-				Hub.localCfg.set(CFG_SASH_X_PERCENT_RIGHT, currentSashXPercentRight);
+				CoreHub.localCfg.set(CFG_SASH_X_PERCENT_RIGHT, currentSashXPercentRight);
 				composite.layout();
 			}
 		});
@@ -502,7 +502,7 @@ public class KonsListComposite {
 			} else {
 				// not yet set
 				
-				int cfgSashXPercentLeft = Hub.localCfg.get(CFG_SASH_X_PERCENT_LEFT, SASH_X_NOTSET);
+				int cfgSashXPercentLeft = CoreHub.localCfg.get(CFG_SASH_X_PERCENT_LEFT, SASH_X_NOTSET);
 				if (cfgSashXPercentLeft != SASH_X_NOTSET && cfgSashXPercentLeft < 100) {
 					sashXLeft = percentToAbsolute(width, cfgSashXPercentLeft);
 				} else {
@@ -518,7 +518,7 @@ public class KonsListComposite {
 				// not yet set
 				
 				int cfgSashXPercentRight =
-					Hub.localCfg.get(CFG_SASH_X_PERCENT_RIGHT, SASH_X_NOTSET);
+					CoreHub.localCfg.get(CFG_SASH_X_PERCENT_RIGHT, SASH_X_NOTSET);
 				if (cfgSashXPercentRight != SASH_X_NOTSET && cfgSashXPercentRight < 100) {
 					sashXRight = percentToAbsolute(width, cfgSashXPercentRight);
 				} else {

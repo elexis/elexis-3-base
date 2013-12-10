@@ -35,6 +35,8 @@
     <module>ch.medelexis.text.templator.feature</module>
     <module>com.hilotec.elexis.opendocument</module>
     <module>com.hilotec.elexis.opendocument.feature</module>
+    <module>org.iatrix</module>
+    <module>org.iatrix.feature</module>
   </modules>
   <repositories>
     <repository>

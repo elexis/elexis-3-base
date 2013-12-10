@@ -25,6 +25,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;

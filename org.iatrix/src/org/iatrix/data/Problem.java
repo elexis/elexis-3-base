@@ -439,8 +439,7 @@ public class Problem extends Episode {
 	 * @return false wenn das Problem nicht gelöscht werden konnte.
 	 */
 	public boolean remove(boolean force){
-		if (true || (force == true)
-			&& (CoreHub.acl.request(AccessControlDefaults.DELETE_FORCED) == true)) {
+		if ((CoreHub.acl.request(AccessControlDefaults.DELETE_FORCED) == true)) {
 			// TODO verknuepfte Daten loeschen falls vorhanden
 			// TODO Sicherstellen, dass Problem von allen Konsulationen entfernt wird.
 			ExHandler.handle(new Exception("Alle Probleme von Konsulationen entfernen"));

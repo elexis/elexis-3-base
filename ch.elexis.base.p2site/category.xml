@@ -42,6 +42,12 @@
    <feature url="features/com.hilotec.elexis.opendocument.feature_3.0.0.qualifier.jar" id="com.hilotec.elexis.opendocument.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
+   <feature url="features/org.iatrix.feature.source_3.0.0.qualifier.jar" id="org.iatrix.feature.source" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/org.iatrix.feature_3.0.0.qualifier.jar" id="org.iatrix.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung"/>
    <category-def name="dataexchange" label="Datenaustausch"/>

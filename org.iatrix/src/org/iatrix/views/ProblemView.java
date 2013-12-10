@@ -56,7 +56,7 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
@@ -106,12 +106,12 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 	
 	private ViewMenus menus;
 	
-	private final ElexisUiEventListenerImpl eeli_problem =
-		new ElexisUiEventListenerImpl(Episode.class, ElexisEvent.EVENT_SELECTED
+	private final ElexisEventListenerImpl eeli_problem =
+		new ElexisEventListenerImpl(Episode.class, ElexisEvent.EVENT_SELECTED
 			| ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_UPDATE) {
 			
 			@Override
-			public void runInUi(ElexisEvent ev){
+			public void run(ElexisEvent ev){
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 					PersistentObject obj = ev.getObject();
 					if (obj instanceof Episode) {
@@ -139,12 +139,12 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 			}
 		};
 	
-	private final ElexisUiEventListenerImpl eeli_patient =
-		new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED
+	private final ElexisEventListenerImpl eeli_patient =
+		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED
 			| ElexisEvent.EVENT_DESELECTED) {
 			
 			@Override
-			public void runInUi(ElexisEvent ev){
+			public void run(ElexisEvent ev){
 				// make sure the current problem belongs to the newly selected patient
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 					PersistentObject obj = ev.getObject();
@@ -179,7 +179,7 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 		Composite main = new Composite(parent, SWT.NONE);
 		main.setLayout(new FillLayout());
 		
-		tk = Desk.getToolkit();
+		tk = UiDesk.getToolkit();
 		form = tk.createScrolledForm(main);
 		form.getBody().setLayout(new GridLayout(1, true));
 		

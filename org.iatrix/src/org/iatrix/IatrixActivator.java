@@ -37,8 +37,8 @@ public class IatrixActivator extends AbstractUIPlugin {
 	public IatrixActivator(){
 		instance = this;
 		
-		Desk.getImageRegistry().put(Iatrix.IMG_ACTIVE, getImageDescriptor("icons/active.png"));
-		Desk.getImageRegistry().put(Iatrix.IMG_INACTIVE, getImageDescriptor("icons/inactive.png"));
+		UiDesk.getImageRegistry().put(Iatrix.IMG_ACTIVE, getImageDescriptor("icons/active.png"));
+		UiDesk.getImageRegistry().put(Iatrix.IMG_INACTIVE, getImageDescriptor("icons/inactive.png"));
 	}
 	
 	/*

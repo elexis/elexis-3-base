@@ -1,12 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2007-2010, Praxis Dr. med. Peter Schönbucher and Medelexis AG
+ * Copyright (c) 2007-2013, D. Lutz and Elexis.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- * All rights reserved.
- * This code must not be used without permission of the copyright holder.
  * Contributors:
- *    D. Lutz - Initial implementation
+ *     D. Lutz - initial API and implementation
  * 
- *******************************************************************************/
+ * Sponsors:
+ *     Dr. Peter Schönbucher, Luzern
+ ******************************************************************************/
 package org.iatrix.actions;
 
 import org.iatrix.data.Problem;

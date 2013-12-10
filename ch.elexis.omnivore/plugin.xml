@@ -23,15 +23,6 @@
             name="Omnivore"/>
    </extension>
    <extension
-         point="ch.elexis.ServiceRegistry">
-      <Service
-            actor="ch.elexis.omnivore.data.DocumentManagement"
-            description="Omnivore"
-            name="DocumentManagement"
-            value="1">
-      </Service>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="ch.elexis.preferences.transporters"
@@ -39,6 +30,15 @@
             id="ch.elexis.omnivore_js.Preferences"
             name="Omnivore_js · Version 1.4.4 · 2013-04-11 · joerg.sigle@jsigle.com · www.jsigle.com">
       </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.ServiceRegistry">
+      <Service
+            actor="ch.elexis.omnivore.data.DocumentManagement"
+            description="Omnivore"
+            name="DocumentManagement"
+            value="1">
+      </Service>
    </extension>
 
 </plugin>

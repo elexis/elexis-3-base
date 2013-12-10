@@ -15,8 +15,20 @@
    <feature url="features/ch.elexis.externe_dokumente.feature_3.0.0.qualifier.jar" id="ch.elexis.externe_dokumente.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
+   <feature url="features/ch.elexis.externe_dokumente.feature.source_3.0.0.qualifier.jar" id="ch.elexis.externe_dokumente.feature.source" version="3.0.0.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.icpc.feature.source_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature.source" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <feature url="features/ch.elexis.icpc.feature_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.omnivore.feature.source_3.0.0.qualifier.jar" id="ch.elexis.omnivore.feature.source" version="3.0.0.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.omnivore.feature_3.0.0.qualifier.jar" id="ch.elexis.omnivore.feature" version="3.0.0.qualifier">
+      <category name="documentmanagement"/>
    </feature>
    <feature url="features/ch.medelexis.text.templator.feature.source_3.0.0.qualifier.jar" id="ch.medelexis.text.templator.feature.source" version="3.0.0.qualifier">
       <category name="documentmanagement"/>

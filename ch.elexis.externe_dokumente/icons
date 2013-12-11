@@ -1,0 +1,136 @@
+# HG changeset patch
+# User Niklaus Giger <niklaus.giger@member.fsf.org>
+# Date 1380878473 -7200
+# Branch 2.1.7
+# Node ID e09d79e864899a813880ac735bb47f4813f724df
+# Parent  2dd2291342f265109e37de26e3b56ee25ac3e344
+Added icons. Better email preface.
+
+diff --git a/ch.elexis.externe_dokumente/META-INF/MANIFEST.MF b/ch.elexis.externe_dokumente/META-INF/MANIFEST.MF
+--- a/ch.elexis.externe_dokumente/META-INF/MANIFEST.MF
++++ b/ch.elexis.externe_dokumente/META-INF/MANIFEST.MF
+@@ -2,7 +2,7 @@
+ Bundle-ManifestVersion: 2
+ Bundle-Name: Externe Dokumente
+ Bundle-SymbolicName: ch.elexis.externe_dokumente;singleton:=true
+-Bundle-Version: 2.0.4
++Bundle-Version: 2.0.5
+ Bundle-Localization: plugin
+ Require-Bundle: ch.elexis,
+  org.eclipse.core.runtime,
+diff --git a/ch.elexis.externe_dokumente/src/ch/elexis/extdoc/util/Email.java b/ch.elexis.externe_dokumente/src/ch/elexis/extdoc/util/Email.java
+--- a/ch.elexis.externe_dokumente/src/ch/elexis/extdoc/util/Email.java
++++ b/ch.elexis.externe_dokumente/src/ch/elexis/extdoc/util/Email.java
+@@ -80,23 +80,27 @@
+ 	 * 
+ 	 * TODO: Should be moved somewhere to the elexis-core
+ 	 */
++	public static String getEmailPreface(Patient patient){
++		StringBuilder sb = new StringBuilder();
++		String s; 
++		sb.append(patient.getName() + " ");
++		sb.append(patient.getVorname() + " ");
++		sb.append(patient.getPostAnschrift(false)+ " ");
++		sb.append(patient.get(Patient.FLD_PHONE1) + " ");
++		sb.append(patient.getNatel() + " ");
++		sb.append(patient.getMailAddress() + " ");
++		return sb.toString();
++	}
++	/**
++	 * Helper function to get all consultations of a given patients.
++	 * 
++	 * Copied from private function ch.elexis.util.AllDataAccessor to avoid a new version of the
++	 * elexis core in 2.1.7
++	 * 
++	 * TODO: Should be moved somewhere to the elexis-core
++	 */
+ 	public static String getAllKonsultations(Patient patient){
+ 		StringBuilder sb = new StringBuilder();
+-		
+-		TimeTool date = new TimeTool();
+-		
+-		for (Fall fall : patient.getFaelle()) {
+-			for (Konsultation kons : fall.getBehandlungen(true)) {
+-				date.set(kons.getDatum());
+-				sb.append(date.toString(TimeTool.DATE_GER));
+-				sb.append("\n"); //$NON-NLS-1$
+-				
+-				@SuppressWarnings("deprecation")
+-				Samdas samdas = new Samdas(kons.getEintrag().getHead());
+-				sb.append(samdas.getRecordText());
+-				sb.append("\n"); //$NON-NLS-1$
+-			}
+-		}
+ 		return sb.toString();
+ 	}
+ 	
+diff --git a/ch.elexis.externe_dokumente/src/ch/elexis/extdoc/views/ExterneDokumente.java b/ch.elexis.externe_dokumente/src/ch/elexis/extdoc/views/ExterneDokumente.java
+--- a/ch.elexis.externe_dokumente/src/ch/elexis/extdoc/views/ExterneDokumente.java
++++ b/ch.elexis.externe_dokumente/src/ch/elexis/extdoc/views/ExterneDokumente.java
+@@ -70,6 +70,7 @@
+ import org.eclipse.ui.IWorkbenchActionConstants;
+ import org.eclipse.ui.PlatformUI;
+ import org.eclipse.ui.part.ViewPart;
++import org.eclipse.ui.plugin.AbstractUIPlugin;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ 
+@@ -601,14 +602,16 @@
+ 						}
+ 					}
+ 				}
+-				String inhalt = "\n\n\n";
+-				inhalt += "Medikation: \n" + actPatient.getMedikation();
++				String inhalt = Email.getEmailPreface(actPatient);
++				inhalt += "\n\n\nMedikation: \n" + actPatient.getMedikation();
+ 				inhalt += "\nAlle Konsultationen\n" + Email.getAllKonsultations(actPatient) + "\n\n";
+ 				Email.openMailApplication("", // No default to address
+ 					null, inhalt, attachements);
+ 			}
+ 		};
+ 		sendMailAction.setText(Messages.ExterneDokumente_sendEmail);
++		sendMailAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
++				"rsc/mail.png"));
+ 		sendMailAction.setToolTipText(Messages.ExterneDokumente_sendEmailTip);
+ 		openFolderAction = new Action() {
+ 			public void run(){
+@@ -626,6 +629,8 @@
+ 			}
+ 		};
+ 		openFolderAction.setText(Messages.ExterneDokumente_openFolder);
++		openFolderAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.iatrix",
++				"rsc/folder.png"));
+ 		openFolderAction.setToolTipText(Messages.ExterneDokumente_openFolderTip);
+ 		
+ 		openAction = new Action() {
+@@ -643,7 +648,8 @@
+ 		};
+ 		openAction.setText(Messages.ExterneDokumente_open);
+ 		openAction.setToolTipText(Messages.ExterneDokumente_OpenFileTip);
+-		
++		openAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
++				"rsc/open.gif"));
+ 		doubleClickAction = new Action() {
+ 			public void run(){
+ 				openAction.run();
+@@ -664,6 +670,8 @@
+ 		editAction.setText(Messages.ExterneDokumente_propeties);
+ 		editAction.setToolTipText(Messages.ExterneDokumente_rename_or_change_date);
+ 		editAction.setActionDefinitionId(GlobalActions.PROPERTIES_COMMAND);
++		editAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
++				"rsc/plaf/modern/icons/edit.png"));
+ 		GlobalActions.registerActionHandler(this, editAction);
+ 		
+ 		deleteAction = new Action() {
+diff --git a/ch.elexis.laborimport.bioanalytica/src/ch/elexis/laborimport/bioanalytica/HL7.java b/ch.elexis.laborimport.bioanalytica/src/ch/elexis/laborimport/bioanalytica/HL7.java
+--- a/ch.elexis.laborimport.bioanalytica/src/ch/elexis/laborimport/bioanalytica/HL7.java
++++ b/ch.elexis.laborimport.bioanalytica/src/ch/elexis/laborimport/bioanalytica/HL7.java
+@@ -253,7 +253,7 @@
+ 			qbe.add("Kuerzel", "=", labID);
+ 			qbe.endGroup();
+ 			List<Labor> list = qbe.execute();
+-			if (list.size() != 1) {
++			if (list.size() < 1) {
+ 				labor = new Labor(labName, "Labor " + labName);
+ 			} else {
+ 				labor = list.get(0);

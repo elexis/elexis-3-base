@@ -16,5 +16,6 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: ch.elexis.base.messages
+Export-Package: ch.elexis.base.messages,
+ ch.elexis.messages
 

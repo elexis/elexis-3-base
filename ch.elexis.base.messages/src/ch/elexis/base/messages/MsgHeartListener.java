@@ -13,11 +13,13 @@
 package ch.elexis.base.messages;
 
 import java.util.List;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Query;
+import ch.elexis.messages.Message;
 
 public class MsgHeartListener implements HeartListener {
 	boolean bSkip;

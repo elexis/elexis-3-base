@@ -10,7 +10,7 @@
  *    
  *******************************************************************************/
 
-package ch.elexis.base.messages;
+package ch.elexis.messages;
 
 import java.lang.reflect.Method;
 

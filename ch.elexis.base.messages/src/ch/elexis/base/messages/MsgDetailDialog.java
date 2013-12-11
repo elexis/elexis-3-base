@@ -31,6 +31,7 @@ import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Reminder;
+import ch.elexis.messages.Message;
 import ch.rgw.tools.TimeTool;
 
 public class MsgDetailDialog extends Dialog {

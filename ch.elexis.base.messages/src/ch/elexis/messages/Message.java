@@ -10,7 +10,7 @@
  *    
  *******************************************************************************/
 
-package ch.elexis.base.messages;
+package ch.elexis.messages;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Anwender;

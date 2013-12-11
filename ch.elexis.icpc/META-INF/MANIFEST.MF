@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Plugin für ICPC 2
+Bundle-SymbolicName: ch.elexis.icpc;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
+ ch.elexis.core.data;bundle-version="3.0.0",
+ ch.elexis.core.ui;bundle-version="3.0.0",
+ ch.elexis.core.ui.icons;bundle-version="3.0.0",
+ ch.elexis.core.ui.importer.div;bundle-version="3.0.0",
+ ch.rgw.utility,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ com.healthmarketscience.jackcess,
+ ch.elexis.core.ui.medication,
+ ch.elexis.core.ui.laboratory,
+ ch.elexis.core.ui.contacts
+Eclipse-LazyStart: false
+Bundle-Activator: ch.elexis.icpc.Activator
+Export-Package: ch.elexis.icpc; uses:="org.eclipse.core.runtime,  ch.rgw.tools,  ch.elexis.actions,  ch.elexis.util,  ch.elexis.data,  ch.elexis.views.codesystems,  ch.elexis.icpc.views,  org.eclipse.ui,  org.eclipse.swt.custom,  org.eclipse.ui.plugin,  org.eclipse.ui.forms.widgets,  org.eclipse.osgi.util,  ch.elexis.text,  ch.elexis.views,  ch.elexis.util.viewers,  org.eclipse.jface.viewers,  org.osgi.framework,  org.eclipse.swt.widgets"
+Created-By: Buildr
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="ch.elexis.messages.MessageFactory"
+            name="Messages">
+      </Factory>
+   </extension>
+	<extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="ch.elexis.base.messages.ActionSet"
+            label="Message sender"
+            visible="true">
+         <action
+               class="ch.elexis.base.messages.MessageDelegate"
+               icon="icons/balloon.png"
+               id="ch.elexis.base.message.show"
+               label="Sende Nachricht"
+               style="push"
+               toolbarPath="MessageGroup"
+               tooltip="Nachricht senden"/>
+      </actionSet>
+   </extension>
+ <extension
+       point="org.eclipse.ui.startup">
+    <startup
+          class="ch.elexis.base.messages.Activator">
+    </startup>
+ </extension>
+</plugin>

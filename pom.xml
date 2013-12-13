@@ -34,6 +34,8 @@
   <module>ch.elexis.externe_dokumente.tests</module>
   <module>ch.elexis.omnivore</module>
   <module>ch.elexis.omnivore.feature</module>
+  <module>ch.elexis.privatrechnung</module>
+  <module>ch.elexis.privatrechnung.feature</module>
   <module>ch.medelexis.text.templator</module>
   <module>ch.medelexis.text.templator.feature</module>
   <module>com.hilotec.elexis.opendocument</module>

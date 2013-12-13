@@ -29,6 +29,8 @@
   <module>ch.elexis.base.textplugin.feature</module>
   <module>ch.elexis.icpc</module>
   <module>ch.elexis.icpc.feature</module>
+  <module>ch.elexis.connect.reflotron.v2</module>
+  <module>ch.elexis.connect.reflotron.v2.feature</module>
   <module>ch.elexis.externe_dokumente</module>
   <module>ch.elexis.externe_dokumente.feature</module>
   <module>ch.elexis.externe_dokumente.tests</module>

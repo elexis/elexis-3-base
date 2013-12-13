@@ -12,6 +12,12 @@
    <feature url="features/ch.elexis.base.textplugin.feature_3.0.0.qualifier.jar" id="ch.elexis.base.textplugin.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
+   <feature url="features/ch.elexis.connect.reflotron.v2.feature_3.0.0.qualifier.jar" id="ch.elexis.connect.reflotron.v2.feature" version="3.0.0.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/ch.elexis.connect.reflotron.v2.feature.source_3.0.0.qualifier.jar" id="ch.elexis.connect.reflotron.v2.feature.source" version="3.0.0.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
    <feature url="features/ch.elexis.externe_dokumente.feature_3.0.0.qualifier.jar" id="ch.elexis.externe_dokumente.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>

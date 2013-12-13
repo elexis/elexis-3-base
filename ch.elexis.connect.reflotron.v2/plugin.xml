@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.LaborDatenImport">
+      <Importer
+            ToolbarAction="ch.elexis.connect.reflotron.ReflotronSprintAction"
+            name="Roche Reflotron Sprint">
+      </Importer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.connect.reflotron.Preferences"
+            id="ch.elexis.connect.reflotron.preferences"
+            name="Roche Reflotron Sprint">
+      </page>
+   </extension>
+
+</plugin>

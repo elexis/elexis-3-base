@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Roche Reflotron Laborgeräteanbindung V2
+Bundle-SymbolicName: ch.elexis.connect.reflotron.v2;singleton:=true
+Bundle-Version: 2.2.3
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.elexis,
+ ch.elexis.importer.div,
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="0.0.2"
+Bundle-Vendor: elexis.ch

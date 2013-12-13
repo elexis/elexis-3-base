@@ -30,14 +30,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
-import ch.elexis.Hub;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.ResultAdapter;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
@@ -69,28 +69,28 @@ public class RechnungsDrucker implements IRnOutputter {
 		new Label(ret, SWT.NONE).setText("Formatvorlage für Rechnung (ESR-Seite)");
 		final Text tVorlageESR = new Text(ret, SWT.BORDER);
 		tVorlageESR.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tVorlageESR.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, ""));
+		tVorlageESR.setText(CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateESR, ""));
 		tVorlageESR.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(final FocusEvent ev){
 				templateESR = tVorlageESR.getText();
-				Hub.globalCfg.set(PreferenceConstants.cfgTemplateESR, templateESR);
+				CoreHub.globalCfg.set(PreferenceConstants.cfgTemplateESR, templateESR);
 			}
 		});
 		new Label(ret, SWT.NONE).setText("Formatvorlage für Rechnung (Folgeseiten)");
 		final Text tVorlageRn = new Text(ret, SWT.BORDER);
 		tVorlageRn.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tVorlageRn.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, ""));
+		tVorlageRn.setText(CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateBill, ""));
 		tVorlageRn.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(final FocusEvent ev){
 				templateBill = tVorlageRn.getText();
-				Hub.globalCfg.set(PreferenceConstants.cfgTemplateBill, templateBill);
+				CoreHub.globalCfg.set(PreferenceConstants.cfgTemplateBill, templateBill);
 			}
 		});
-		tVorlageESR.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR,
+		tVorlageESR.setText(CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateESR,
 			"privatrechnung_ESR"));
-		tVorlageRn.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill,
+		tVorlageRn.setText(CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateBill,
 			"privatrechnung_S2"));
 		return ret;
 	}

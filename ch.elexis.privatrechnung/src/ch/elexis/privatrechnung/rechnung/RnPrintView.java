@@ -23,8 +23,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.Hub;
-import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.banking.ESR;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
@@ -36,7 +36,7 @@ import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.elexis.privatrechnung.rechnung.RnPrintView.VatRateSum.VatRateElement;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
@@ -84,10 +84,10 @@ public class RnPrintView extends ViewPart {
 		nf.setMaximumFractionDigits(2);
 		
 		if (templateBill == null) {
-			templateBill = Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, "");
+			templateBill = CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateBill, "");
 		}
 		if (templateESR == null) {
-			templateESR = Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, "");
+			templateESR = CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateESR, "");
 		}
 		
 		Result<Rechnung> ret = new Result<Rechnung>();
@@ -184,20 +184,20 @@ public class RnPrintView extends ViewPart {
 				SWT.LEFT);
 		tc.getPlugin().setStyle(SWT.NORMAL);
 		
-		String toPrinter = Hub.localCfg.get("Drucker/A4/Name", null);
+		String toPrinter = CoreHub.localCfg.get("Drucker/A4/Name", null);
 		tc.getPlugin().print(toPrinter, null, false);
 		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());
 		fillFields();
 		ESR esr =
-			new ESR(Hub.globalCfg.get(PreferenceConstants.esrIdentity, ""), Hub.globalCfg.get(
+			new ESR(CoreHub.globalCfg.get(PreferenceConstants.esrIdentity, ""), CoreHub.globalCfg.get(
 				PreferenceConstants.esrUser, ""), rn.getRnId(), 27);
-		Kontakt bank = Kontakt.load(Hub.globalCfg.get(PreferenceConstants.cfgBank, ""));
+		Kontakt bank = Kontakt.load(CoreHub.globalCfg.get(PreferenceConstants.cfgBank, ""));
 		if (!bank.isValid()) {
 			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 		}
 		esr.printBESR(bank, adressat, rn.getMandant(), sum.getCentsAsString(), tc);
 		tc.replace("\\[Leistungen\\]", sum.getAmountAsString());
-		tc.getPlugin().print(Hub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
+		tc.getPlugin().print(CoreHub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
 		return ret;
 	}
 	

@@ -18,11 +18,11 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-import ch.elexis.Desk;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.privatrechnung.data.Leistung;
 import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.LabeledInputField.InputData;
-import ch.elexis.views.IDetailDisplay;
+import ch.elexis.core.ui.views.IDetailDisplay;
 
 /**
  * An IDetailDisplay must be able to create and manage a form that can display detailed information

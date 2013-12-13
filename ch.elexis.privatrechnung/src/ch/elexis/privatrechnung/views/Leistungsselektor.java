@@ -15,16 +15,16 @@ package ch.elexis.privatrechnung.views;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.actions.JobPool;
+import ch.elexis.core.ui.actions.JobPool;
 import ch.elexis.actions.LazyTreeLoader;
 import ch.elexis.data.Query;
 import ch.elexis.privatrechnung.data.Leistung;
-import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.DefaultControlFieldProvider;
-import ch.elexis.util.viewers.SimpleWidgetProvider;
-import ch.elexis.util.viewers.TreeContentProvider;
-import ch.elexis.util.viewers.ViewerConfigurer;
-import ch.elexis.views.codesystems.CodeSelectorFactory;
+import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
+import ch.elexis.core.ui.util.viewers.TreeContentProvider;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 /**
  * This is the Composite that lets the user select codes and drag them into the billing-field. It

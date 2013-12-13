@@ -17,8 +17,8 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.Hub;
-import ch.elexis.preferences.SettingsPreferenceStore;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.preferences.inputs.KontaktFieldEditor;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.rgw.io.Settings;
@@ -29,8 +29,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	public Preferences(){
 		super(GRID);
-		// cfg=Hub.globalCfg.getBranch(PreferenceConstants.cfgBase, true);
-		cfg = Hub.globalCfg;
+		// cfg=CoreHub.globalCfg.getBranch(PreferenceConstants.cfgBase, true);
+		cfg = CoreHub.globalCfg;
 		setPreferenceStore(new SettingsPreferenceStore(cfg));
 	}
 	
@@ -40,7 +40,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.cfgTemplateBill, "Vorlage ohne ESR",
 			getFieldEditorParent()));
-		addField(new KontaktFieldEditor(Hub.globalCfg, PreferenceConstants.cfgBank, "Bank",
+		addField(new KontaktFieldEditor(CoreHub.globalCfg, PreferenceConstants.cfgBank, "Bank",
 			getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.esrIdentity, "ESR-Teilnehmernummer",
 			getFieldEditorParent()));
@@ -56,7 +56,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	@Override
 	public boolean performOk(){
 		if (super.performOk()) {
-			Hub.globalCfg.flush();
+			CoreHub.globalCfg.flush();
 			return true;
 		}
 		return false;

@@ -21,7 +21,7 @@
       </page>
    </extension>
    <extension
-         point="ch.elexis.PersistentReference">
+         point="ch.elexis.core.data.PersistentReference">
       <Factory
             Class="ch.elexis.privatrechnung.data.LeistungsFactory"
             name="Privatrechnung">

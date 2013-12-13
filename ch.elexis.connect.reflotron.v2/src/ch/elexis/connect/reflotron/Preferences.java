@@ -19,7 +19,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.importer.div.rs232.Connection;
-import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
@@ -43,7 +42,6 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	
 	@Override
 	protected Control createContents(final Composite parent){
-		CoreHub.log.log("Start von createContents", Log.DEBUGMSG); //$NON-NLS-1$
 		String[] param = CoreHub.localCfg.get(PARAMS, "9600,8,n,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Composite ret = new Composite(parent, SWT.NONE);

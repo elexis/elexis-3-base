@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -25,15 +26,18 @@ import ch.elexis.data.Query;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.rs232.AbstractConnection;
 import ch.elexis.core.ui.importer.div.rs232.AbstractConnection.ComPortListener;
-import ch.elexis.core.ui.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class ReflotronSprintAction extends Action implements ComPortListener {
 	
 	AbstractConnection _ctrl;
 	Labor _myLab;
-	Logger _rs232log;
-	Log _elexislog = Log.get("ReflotronSprintAction");
+	DeviceLogger _rs232log;
+	private Logger logger = LoggerFactory.getLogger("ReflotronSprintAction");
 	Thread msgDialogThread;
 	Patient selectedPatient;
 	boolean background = false;
@@ -61,15 +65,15 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		
 		if (CoreHub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
 			try {
-				_rs232log = new Logger(System.getProperty("user.home") + File.separator + "elexis" //$NON-NLS-1$ //$NON-NLS-2$
+				_rs232log = new DeviceLogger(System.getProperty("user.home") + File.separator + "elexis" //$NON-NLS-1$ //$NON-NLS-2$
 					+ File.separator + "reflotron.log"); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
 				SWTHelper.showError(Messages.getString("ReflotronSprintAction.LogError.Title"), //$NON-NLS-1$
 					Messages.getString("ReflotronSprintAction.LogError.Text")); //$NON-NLS-1$
-				_rs232log = new Logger();
+				_rs232log = new DeviceLogger();
 			}
 		} else {
-			_rs232log = new Logger(false);
+			_rs232log = new DeviceLogger(false);
 		}
 		
 		background = CoreHub.localCfg.get(Preferences.BACKGROUND, "n").equalsIgnoreCase("y");
@@ -115,7 +119,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	 * Eine Standard-Fehlermeldung asynchron im UI-Thread zeigen
 	 */
 	private static void showError(final String title, final String message){
-		Desk.getDisplay().asyncExec(new Runnable() {
+		UiDesk.getDisplay().asyncExec(new Runnable() {
 			
 			public void run(){
 				Shell shell = UiDesk.getTopShell();
@@ -157,7 +161,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	 * @param probe
 	 */
 	private void processProbe(final Probe probe){
-		Desk.getDisplay().syncExec(new Runnable() {
+		UiDesk.getDisplay().syncExec(new Runnable() {
 			
 			public void run(){
 				selectedPatient = ElexisEventDispatcher.getSelectedPatient();
@@ -175,7 +179,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 						MessageFormat.format("patName={0}; resultat={1}; hint={2}, zusatztext={3}",
 							patName, probe.getResultat(), probe.getHint(), probe.getZusatztext());
 					System.out.println(text);
-					_elexislog.log(text, Log.INFOS);
+					logger.info(text);
 					
 					// Suchkriterium für Patientenzuordnung
 					Query<Patient> patQuery = new Query<Patient>(Patient.class);
@@ -242,13 +246,13 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 					}
 					
 					if (showSelectionDialog) {
-						Desk.getDisplay().syncExec(new Runnable() {
+						UiDesk.getDisplay().syncExec(new Runnable() {
 							public void run(){
 								// TODO: Filter vorname/name in KontaktSelektor
 								// einbauen
 								KontaktSelektor ksl =
 									new KontaktSelektor(
-										CoreHub.getActiveShell(),
+										Hub.getActiveShell(),
 										Patient.class,
 										Messages.getString("ReflotronSprintAction.Patient.Title"), Messages //$NON-NLS-1$
 											.getString("ReflotronSprintAction.Patient.Text"), Patient.DEFAULT_SORT); //$NON-NLS-1$
@@ -303,7 +307,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				Probe probe = new Probe(strArray);
 				processProbe(probe);
 			} else {
-				if (content != null && content.length() > 0) {
+				if (content.length() > 0) {
 					showError(
 						"Reflotron", Messages.getString("ReflotronSprintAction.IncompleteDataRecordMsg") + content + Messages.getString("ReflotronSprintAction.ResendMsg")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}

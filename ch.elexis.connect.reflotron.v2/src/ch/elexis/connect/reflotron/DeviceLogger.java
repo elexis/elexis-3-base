@@ -8,18 +8,18 @@ import java.io.PrintStream;
 
 import ch.rgw.tools.TimeTool;
 
-public class Logger {
+public class DeviceLogger {
 	PrintStream _log;
 	
-	public Logger(){
+	public DeviceLogger(){
 		_log = System.out;
 	}
 	
-	public Logger(String filename) throws FileNotFoundException{
+	public DeviceLogger(String filename) throws FileNotFoundException{
 		_log = new PrintStream(new FileOutputStream(filename, true));
 	}
 	
-	public Logger(boolean enable){
+	public DeviceLogger(boolean enable){
 		if (enable) {
 			_log = System.out;
 		} else {

@@ -20,8 +20,8 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.privatrechnung.data.Leistung;
-import ch.elexis.util.LabeledInputField;
-import ch.elexis.util.LabeledInputField.InputData;
+import ch.elexis.core.ui.util.LabeledInputField;
+import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
 
 /**
@@ -65,7 +65,7 @@ public class Leistungsdetail implements IDetailDisplay {
 	 * to simplify our work.
 	 */
 	public Composite createDisplay(Composite parent, IViewSite site){
-		form = Desk.getToolkit().createForm(parent);
+		form = UiDesk.getToolkit().createForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
 		

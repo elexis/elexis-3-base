@@ -23,12 +23,11 @@ import org.eclipse.swt.widgets.Composite;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.importers.ExcelWrapper;
+import ch.elexis.core.ui.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.Log;
-import ch.elexis.util.ResultAdapter;
+import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;

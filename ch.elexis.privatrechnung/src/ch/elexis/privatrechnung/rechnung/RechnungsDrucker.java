@@ -35,8 +35,8 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
-import ch.elexis.util.IRnOutputter;
-import ch.elexis.util.ResultAdapter;
+import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
@@ -174,6 +174,12 @@ public class RechnungsDrucker implements IRnOutputter {
 	
 	public void saveComposite(){
 		// Nothing
+	}
+
+	@Override
+	public Object createSettingsControl(Object parent){
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

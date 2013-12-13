@@ -2,7 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="ch.elexis.Verrechnungscode">
+         point="ch.elexis.core.ui.Verrechnungscode">
       <Leistung
             CodeDetailDisplay="ch.elexis.privatrechnung.views.Leistungsdetail"
             CodeSelectorFactory="ch.elexis.privatrechnung.views.Leistungsselektor"
@@ -28,7 +28,7 @@
       </Factory>
    </extension>
    <extension
-         point="ch.elexis.RechnungsManager">
+         point="ch.elexis.core.ui.RechnungsManager">
       <Rechnung
             name="Privatrechnung"
             outputter="ch.elexis.privatrechnung.rechnung.RechnungsDrucker">

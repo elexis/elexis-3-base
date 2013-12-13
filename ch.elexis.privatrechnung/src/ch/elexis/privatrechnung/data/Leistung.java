@@ -12,11 +12,14 @@
 
 package ch.elexis.privatrechnung.data;
 
+import java.util.List;
+
 import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.VerrechenbarAdapter;
 import ch.elexis.data.Xid;
-import ch.elexis.util.IOptifier;
+import ch.elexis.core.data.interfaces.IOptifier;
+import ch.elexis.core.ui.optifier.NoObligationOptifier;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -257,5 +260,11 @@ public class Leistung extends VerrechenbarAdapter {
 	@Override
 	public IOptifier getOptifier(){
 		return noObligationOptifier;
+	}
+
+	@Override
+	public List<Object> getActions(Object context){
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

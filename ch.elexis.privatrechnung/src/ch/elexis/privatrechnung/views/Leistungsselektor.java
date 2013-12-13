@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 
 import ch.elexis.core.ui.actions.JobPool;
-import ch.elexis.actions.LazyTreeLoader;
+import ch.elexis.core.ui.actions.LazyTreeLoader;
 import ch.elexis.data.Query;
 import ch.elexis.privatrechnung.data.Leistung;
 import ch.elexis.core.ui.util.viewers.CommonViewer;

@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
-import ch.elexis.preferences.inputs.KontaktFieldEditor;
+import ch.elexis.core.ui.preferences.inputs.KontaktFieldEditor;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.rgw.io.Settings;
 

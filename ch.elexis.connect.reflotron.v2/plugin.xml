@@ -2,7 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="ch.elexis.LaborDatenImport">
+         point="ch.elexis.core.ui.LaborDatenImport">
       <Importer
             ToolbarAction="ch.elexis.connect.reflotron.ReflotronSprintAction"
             name="Roche Reflotron Sprint">

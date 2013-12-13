@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.connect.reflotron.v2.feature"
+      label="TODO: Feature for ch.elexis.connect.reflotron.v2"
+      version="3.0.0.qualifier"
+      provider-name="ch.elexis">
+
+  <description url="http://wiki.elexis.info/ch.elexis.connect.reflotron.v2.feature">
+      TODO: Feature for ch.elexis.connect.reflotron.v2
+  </description>
+
+  <copyright url="http://www.example.com/copyright">
+      [TODO: Enter Copyright Description here.]
+  </copyright>
+
+  <license url="http://www.example.com/license">
+      [TODO: Enter License Description here.]
+  </license>
+
+  <plugin
+        id="ch.elexis.connect.reflotron.v2"
+        download-size="0"
+        install-size="0"
+        version="0.0.0"
+        unpack="false"/>
+
+</feature>
+  

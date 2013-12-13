@@ -5,8 +5,8 @@ import gnu.io.SerialPortEvent;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ch.elexis.rs232.AbstractConnection;
-import ch.elexis.util.Log;
+import ch.elexis.core.ui.importer.div.rs232.AbstractConnection;
+import ch.elexis.core.ui.util.Log;
 
 public class ReflotronConnection extends AbstractConnection {
 	private static final int STX = 0x02;

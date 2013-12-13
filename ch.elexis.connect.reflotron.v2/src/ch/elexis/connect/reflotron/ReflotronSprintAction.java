@@ -13,20 +13,20 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
-import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.connect.reflotron.packages.PackageException;
 import ch.elexis.connect.reflotron.packages.Probe;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.dialogs.KontaktSelektor;
-import ch.elexis.rs232.AbstractConnection;
-import ch.elexis.rs232.AbstractConnection.ComPortListener;
-import ch.elexis.util.Log;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.ui.dialogs.KontaktSelektor;
+import ch.elexis.core.ui.importer.div.rs232.AbstractConnection;
+import ch.elexis.core.ui.importer.div.rs232.AbstractConnection.ComPortListener;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class ReflotronSprintAction extends Action implements ComPortListener {
 	
@@ -54,12 +54,12 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		}
 		_ctrl =
 			new ReflotronConnection(Messages.getString("ReflotronSprintAction.ConnectionName"), //$NON-NLS-1$
-				Hub.localCfg.get(Preferences.PORT,
-					Messages.getString("ReflotronSprintAction.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
+				CoreHub.localCfg.get(Preferences.PORT,
+					Messages.getString("ReflotronSprintAction.DefaultPort")), CoreHub.localCfg.get( //$NON-NLS-1$
 					Preferences.PARAMS, Messages.getString("ReflotronSprintAction.DefaultParams")), //$NON-NLS-1$
 				this);
 		
-		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (CoreHub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				_rs232log = new Logger(System.getProperty("user.home") + File.separator + "elexis" //$NON-NLS-1$ //$NON-NLS-2$
 					+ File.separator + "reflotron.log"); //$NON-NLS-1$
@@ -72,7 +72,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			_rs232log = new Logger(false);
 		}
 		
-		background = Hub.localCfg.get(Preferences.BACKGROUND, "n").equalsIgnoreCase("y");
+		background = CoreHub.localCfg.get(Preferences.BACKGROUND, "n").equalsIgnoreCase("y");
 	}
 	
 	@Override
@@ -83,7 +83,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			String msg = _ctrl.connect();
 			if (msg == null) {
 				String timeoutStr =
-					Hub.localCfg.get(Preferences.TIMEOUT,
+					CoreHub.localCfg.get(Preferences.TIMEOUT,
 						Messages.getString("ReflotronSprintAction.DefaultTimeout")); //$NON-NLS-1$
 				int timeout = 20;
 				try {
@@ -93,7 +93,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				}
 				_ctrl
 					.awaitFrame(
-						Desk.getTopShell(),
+						UiDesk.getTopShell(),
 						Messages.getString("ReflotronSprintAction.WaitMsg"), 1, 4, 0, timeout, background, true); //$NON-NLS-1$
 				return;
 			} else {
@@ -118,7 +118,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		Desk.getDisplay().asyncExec(new Runnable() {
 			
 			public void run(){
-				Shell shell = Desk.getTopShell();
+				Shell shell = UiDesk.getTopShell();
 				MessageDialog.openError(shell, title, message);
 			}
 		});
@@ -231,7 +231,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 						probe.getResultat(), warning);
 				
 				boolean ok =
-					MessageDialog.openConfirm(Desk.getTopShell(),
+					MessageDialog.openConfirm(UiDesk.getTopShell(),
 						Messages.getString("ReflotronSprintAction.DeviceName"), text); //$NON-NLS-1$
 				if (ok) {
 					boolean showSelectionDialog = false;
@@ -248,7 +248,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 								// einbauen
 								KontaktSelektor ksl =
 									new KontaktSelektor(
-										Hub.getActiveShell(),
+										CoreHub.getActiveShell(),
 										Patient.class,
 										Messages.getString("ReflotronSprintAction.Patient.Title"), Messages //$NON-NLS-1$
 											.getString("ReflotronSprintAction.Patient.Text"), Patient.DEFAULT_SORT); //$NON-NLS-1$
@@ -288,7 +288,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	 */
 	public void gotData(final AbstractConnection connection, final byte[] data){
 		String encoding =
-			Hub.localCfg.get(Preferences.ENCODING, Charset.defaultCharset().displayName());
+			CoreHub.localCfg.get(Preferences.ENCODING, Charset.defaultCharset().displayName());
 		String content = null;
 		try {
 			content = new String(data, encoding);

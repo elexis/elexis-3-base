@@ -16,11 +16,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.Hub;
-import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.elexis.rs232.Connection;
-import ch.elexis.util.Log;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.importer.div.rs232.Connection;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -38,13 +38,13 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	
 	public Preferences(){
 		super(Messages.getString("ReflotronSprintAction.ButtonName")); //$NON-NLS-1$
-		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
 	
 	@Override
 	protected Control createContents(final Composite parent){
-		Hub.log.log("Start von createContents", Log.DEBUGMSG); //$NON-NLS-1$
-		String[] param = Hub.localCfg.get(PARAMS, "9600,8,n,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
+		CoreHub.log.log("Start von createContents", Log.DEBUGMSG); //$NON-NLS-1$
+		String[] param = CoreHub.localCfg.get(PARAMS, "9600,8,n,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
@@ -55,7 +55,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		lblPorts.setLayoutData(new GridData(SWT.NONE));
 		ports = new Combo(ret, SWT.SINGLE);
 		ports.setItems(Connection.getComPorts());
-		ports.setText(Hub.localCfg.get(PORT,
+		ports.setText(CoreHub.localCfg.get(PORT,
 			Messages.getString("ReflotronSprintAction.DefaultPort"))); //$NON-NLS-1$
 		
 		Label lblEncoding = new Label(ret, SWT.NONE);
@@ -70,7 +70,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 			i++;
 		}
 		encoding.setItems(charsetArray);
-		encoding.setText(Hub.localCfg.get(ENCODING, Charset.defaultCharset().displayName()));
+		encoding.setText(CoreHub.localCfg.get(ENCODING, Charset.defaultCharset().displayName()));
 		
 		Label lblSpeed = new Label(ret, SWT.NONE);
 		lblSpeed.setText(Messages.getString("Preferences.Baud")); //$NON-NLS-1$
@@ -102,17 +102,17 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		lblTimeout.setText(Messages.getString("Preferences.Timeout")); //$NON-NLS-1$
 		lblTimeout.setLayoutData(new GridData(SWT.NONE));
 		String timeoutStr =
-			Hub.localCfg.get(TIMEOUT, Messages.getString("ReflotronSprintAction.DefaultTimeout")); //$NON-NLS-1$
+			CoreHub.localCfg.get(TIMEOUT, Messages.getString("ReflotronSprintAction.DefaultTimeout")); //$NON-NLS-1$
 		timeout = new Text(ret, SWT.BORDER);
 		timeout.setText(timeoutStr);
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Backgroundprocess")); //$NON-NLS-1$
 		background = new Button(ret, SWT.CHECK);
-		background.setSelection(Hub.localCfg.get(BACKGROUND, "n").equalsIgnoreCase("y")); //$NON-NLS-1$ //$NON-NLS-2$
+		background.setSelection(CoreHub.localCfg.get(BACKGROUND, "n").equalsIgnoreCase("y")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Log")); //$NON-NLS-1$
 		log = new Button(ret, SWT.CHECK);
-		log.setSelection(Hub.localCfg.get(LOG, "n").equalsIgnoreCase("y")); //$NON-NLS-1$ //$NON-NLS-2$
+		log.setSelection(CoreHub.localCfg.get(LOG, "n").equalsIgnoreCase("y")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		return ret;
 	}
@@ -128,13 +128,13 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		sb.append(speed.getText()).append(",").append(data.getText()).append( //$NON-NLS-1$
 			",").append(parity.getSelection() ? "y" : "n").append(",") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			.append(stop.getText());
-		Hub.localCfg.set(PARAMS, sb.toString());
-		Hub.localCfg.set(PORT, ports.getText());
-		Hub.localCfg.set(ENCODING, encoding.getText());
-		Hub.localCfg.set(TIMEOUT, timeout.getText());
-		Hub.localCfg.set(LOG, log.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
-		Hub.localCfg.set(BACKGROUND, background.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
-		Hub.localCfg.flush();
+		CoreHub.localCfg.set(PARAMS, sb.toString());
+		CoreHub.localCfg.set(PORT, ports.getText());
+		CoreHub.localCfg.set(ENCODING, encoding.getText());
+		CoreHub.localCfg.set(TIMEOUT, timeout.getText());
+		CoreHub.localCfg.set(LOG, log.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
+		CoreHub.localCfg.set(BACKGROUND, background.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
+		CoreHub.localCfg.flush();
 		return super.performOk();
 	}
 }

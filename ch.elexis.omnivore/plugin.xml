@@ -26,9 +26,9 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="ch.elexis.preferences.transporters"
-            class="ch.elexis.omnivore.preferences.PreferencePage"
-            id="ch.elexis.omnivore_js.Preferences"
-            name="Omnivore_js · Version 1.4.4 · 2013-04-11 · joerg.sigle@jsigle.com · www.jsigle.com">
+            class="ch.elexis.omnivore.views.Preferences"
+            id="ch.elexis.omnivore.Preferences"
+            name="Omnivore">
       </page>
    </extension>
    <extension

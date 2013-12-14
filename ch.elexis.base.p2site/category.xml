@@ -12,6 +12,12 @@
    <feature url="features/ch.elexis.base.textplugin.feature_3.0.0.qualifier.jar" id="ch.elexis.base.textplugin.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
+   <feature url="features/ch.elexis.connect.reflotron.v2.feature_3.0.0.qualifier.jar" id="ch.elexis.connect.reflotron.v2.feature" version="3.0.0.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/ch.elexis.connect.reflotron.v2.feature.source_3.0.0.qualifier.jar" id="ch.elexis.connect.reflotron.v2.feature.source" version="3.0.0.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
    <feature url="features/ch.elexis.externe_dokumente.feature_3.0.0.qualifier.jar" id="ch.elexis.externe_dokumente.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
@@ -28,6 +34,12 @@
       <category name="documentmanagement"/>
    </feature>
    <feature url="features/ch.elexis.omnivore.feature_3.0.0.qualifier.jar" id="ch.elexis.omnivore.feature" version="3.0.0.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.privatrechnung.feature.source_3.0.0.qualifier.jar" id="ch.elexis.privatrechnung.feature.source" version="3.0.0.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.privatrechnung.feature_3.0.0.qualifier.jar" id="ch.elexis.privatrechnung.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
    <feature url="features/ch.medelexis.text.templator.feature.source_3.0.0.qualifier.jar" id="ch.medelexis.text.templator.feature.source" version="3.0.0.qualifier">
@@ -47,6 +59,9 @@
    </feature>
    <feature url="features/org.iatrix.feature_3.0.0.qualifier.jar" id="org.iatrix.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.base.messages.feature_3.0.0.qualifier.jar" id="ch.elexis.base.messages.feature" version="3.0.0.qualifier">
+      <category name="organisation"/>
    </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung"/>

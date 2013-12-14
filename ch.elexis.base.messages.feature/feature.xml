@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.base.messages.feature"
+      label="Elexis-Nachrichten-Plugin"
+      version="3.0.0.qualifier"
+      provider-name="elexis.info">
+
+   <description url="http://wiki.elexis.info/ch.elexis.messages">
+      Dieses Plugin ermöglicht eine einfache Nachrichtenübermittlung
+zwischen verschiedenen Mitarbeitern.
+   </description>
+
+   <copyright>
+      Copyright (c) 2007 - 2013, G. Weirich and Elexis
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.elexis.base.messages"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

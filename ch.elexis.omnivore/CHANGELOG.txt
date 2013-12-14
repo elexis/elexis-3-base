@@ -1,8 +1,35 @@
 3.0.0 14.12.2013 Niklaus Giger
- *  Change ch.elexis.omnivore to ease integration of some feature from Omnivore-plus/direct which
+  Attention: configuration is lost when migrating from old omnivore or omnivore-plus/direct
+
+  - Added this CHANGELOG.txt
+  - Simplified usage PREF_MAX_FILENAME_LENGTH via use of IntegerFieldEditor instead of StringFieldEditor. Set visible default
+  - TODO: - Update user documentation http://wiki.elexis.info/Ch.elexis.omnivore
+            s.a. http://www.elexis.ch/jp/content/view/106/76/
+            and merge with http://wiki.elexis.info/Ch.elexis.omnivoredirect
+          - Merge messages from views and data. Eliminate entries with same content.
+
+3.0.0 14.12.2013 Niklaus Giger ported (with permission from Gerry Weirich) the following features from omnivore-plus into omnivore
+----------------------------------------------------------------------------------------------------
+    2.0.7 - 05.11.2013 - N. Giger
+      Added changes by Antoine Kaufmann for
+        - Möglichkeit das Datum zu ändern
+        - Flache Ansicht statt der Baumansicht
+        - Suche
+        - Sortieren nach Kategorie
+        - Exportieren des .data-Packages (für Schnittstelle zum OpenDocument-Plugin)
+      
+    2.0.6 - 18.4.2012 - M. Descher
+      - Fix for missing default category (if no category is defined, default is used)
+      - Ensure that a requested category is available (by creating it if necessary)
+      - Trying to import something without a patient selected does not throw an Exception anymore
+----------------------------------------------------------------------------------------------------
+
+3.0.0 14.12.2013 Niklaus Giger
+
+- Change ch.elexis.omnivore to ease integration of some feature from Omnivore-plus/direct which
    are under the EPL (as confirmed by Gerry Weirich)
- ** Moved preferences/PreferencePage.java -> views/Preferences.java as in  Omnivore-plus/direct
- ** Renamed identifieres with _js to to general Elexsi conventions
+ -- Moved preferences/PreferencePage.java -> views/Preferences.java as in  Omnivore-plus/direct
+ -- Renamed identifieres with _js to to general Elexsi conventions
  
 1.4.4 28.4.2013 Anpassungen von Jörg Sigle in Omnivore 
 bequemer und schneller Dokumentenimport ohne vermeidbare Zwischenschritte:

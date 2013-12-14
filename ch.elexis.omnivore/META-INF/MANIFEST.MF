@@ -21,4 +21,5 @@ Bundle-Vendor: elexis.ch, jsigle.com
 Import-Package: org.slf4j
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: ch.elexis.omnivore.data
 

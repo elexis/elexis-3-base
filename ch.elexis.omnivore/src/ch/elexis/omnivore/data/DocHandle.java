@@ -19,9 +19,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
-
-import java.security.SecureRandom;		//Omnivore_js: To generate random string for unique_temp_ID
-import java.math.BigInteger;						//Omnivore_js: To generate random string for unique_temp_ID
+import java.security.SecureRandom;		//Omnivore: To generate random string for unique_temp_ID
+import java.math.BigInteger;						//Omnivore: To generate random string for unique_temp_ID
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.program.Program;
@@ -33,14 +32,13 @@ import ch.elexis.core.exceptions.PersistenceException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.omnivore.views.FileImportDialog;
+import ch.elexis.omnivore.views.Preferences;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
-
-import ch.elexis.omnivore.preferences.PreferencePage;
 
 
 
@@ -169,24 +167,24 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
   			//Make the temporary filename configurable
 			StringBuffer configured_temp_filename=new StringBuffer();
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("constant1",""));
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("constant1",""));
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("PID",getPatient().getKuerzel()));	//getPatient() liefert in etwa: ch.elexis.com@1234567; getPatient().getId() eine DB-ID; getPatient().getKuerzel() die Patientennummer.
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("PID",getPatient().getKuerzel()));	//getPatient() liefert in etwa: ch.elexis.com@1234567; getPatient().getId() eine DB-ID; getPatient().getKuerzel() die Patientennummer.
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("fn",getPatient().getName()));
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("fn",getPatient().getName()));
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("gn",getPatient().getVorname()));
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("gn",getPatient().getVorname()));
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dob",getPatient().getGeburtsdatum()));
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dob",getPatient().getGeburtsdatum()));
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dt",getTitle()));				//not more than 80 characters, laut javadoc
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dt",getTitle()));				//not more than 80 characters, laut javadoc
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dk",getKeywords()));
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dk",getKeywords()));
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			//Da könnten auch noch Felder wie die Document Create Time etc. rein - siehe auch unten, die Methoden getPatient() etc.
 			
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dguid",getGUID()));
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dguid",getGUID()));
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			
 			//N.B.: We may NOT REALLY assume for sure that another filename, derived from a createTempFile() result, where the random portion would be moved forward in the name, may also be guaranteed unique!
@@ -200,15 +198,15 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			//So we should ... possibly really add some random portion; or use any other property of the file in that filename (recommendation: e.g. like in AnyQuest Server :-)  )
 			
 			//Ganz notfalls naoch ein Feld mit der Uhrzeit machen... oder die Temp-ID je nach eingestellten num_digits aus den clockticks speisen. Und das File mit try createn, notfalls wiederholen mit anderem clocktick - dann ist das so gut wie ein createTempFile().
-			//For now, I compute my own random portion - by creating a random BigInteger with a sufficient number of bits to represent  PreferencePage.nOmnivore_jsPREF_cotf_element_digits_max decimal digits.
+			//For now, I compute my own random portion - by creating a random BigInteger with a sufficient number of bits to represent  PreferencePage.nPreferences_cotf_element_digits_max decimal digits.
 			//And I accept the low chance of getting an existing random part, i.e. I don't check the file is already there.
 			
 			SecureRandom random = new SecureRandom();
-			int  needed_bits = (int) Math.round(Math.ceil(Math.log(PreferencePage.nOmnivore_jsPREF_cotf_element_digits_max)/Math.log(2)));
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("random",new BigInteger(needed_bits , random).toString() ));
+			int  needed_bits = (int) Math.round(Math.ceil(Math.log(Preferences.nPreferences_cotf_element_digits_max)/Math.log(2)));
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("random",new BigInteger(needed_bits , random).toString() ));
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			
-			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("constant2",""));
+			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("constant2",""));
 			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			
 			File temp;
@@ -226,7 +224,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				temp.createNewFile();
 			}
 			else {
-				//if special rules for the filename are not configured, then generate it simply as before Omnivore_js Version 1.4.4
+				//if special rules for the filename are not configured, then generate it simply as before Omnivore Version 1.4.4
 				temp = File.createTempFile("omni_", "_vore." + ext); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
@@ -283,13 +281,13 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 
 		//FIXME: Warum ist es eigentlich so, dass nur 80 Zeichen funktionieren? Notfalls könnte ja auch Omnivore das Umbenennen veranlassen, und den Namen einfach (oder interaktiv) kürzen, statt eine Fehlermeldung auszugeben...
 		
-		//From Omnivore version 1.4.2 to Omnivore_js version 1.4.3,
+		//From Omnivore version 1.4.2 to Omnivore version 1.4.3,
 		//I changed the fixed limit from 255 for the last part of the filename to a configurable one with default 80 chars. 
 		//Linux and MacOS may be able to handle longer filenames,
 		//but we observed and verified that Windows 7 64-bit would not import files with names longer than 80 chars.
 		//Also, put the filename length check *before* displaying the file import dialog.
 		//Otherwise, users would have to type in a bunch of text first, and learn only afterwards, that that would be discarded.
-	    Integer maxOmnivoreFilenameLength=ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsMax_Filename_Length();
+	    Integer maxOmnivoreFilenameLength=ch.elexis.omnivore.views.Preferences.getOmnivoreMax_Filename_Length();
 
 	    String nam = file.getName();
 		if (nam.length() > maxOmnivoreFilenameLength) {																											//The checked limit is now configurable.
@@ -320,7 +318,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				return;
 			}
 			
-			//Now, process all defined rules for automatic archiving of imported documents, as configured in omnivore_js preferences.
+			//Now, process all defined rules for automatic archiving of imported documents, as configured in omnivore preferences.
 
 			//Anything will be done *only* when SrcPattern and DestDir are both at least defined strings.
 			//A rule, where both SrcPattern and DestDir are empty strings, will be ignored and have no effect. Especially, it will not stop further rules from being evaluated.
@@ -337,9 +335,9 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			//Every file will only be handled by the first matching rule.
 			
 			try	{
-				for (Integer i=0;i<ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsnRulesForAutoArchiving();i++) {
-					String SrcPattern =ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsRuleForAutoArchivingSrcPattern(i);
-					String DestDir = ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsRuleForAutoArchivingDestDir(i);
+				for (Integer i=0;i<ch.elexis.omnivore.views.Preferences.getOmnivorenRulesForAutoArchiving();i++) {
+					String SrcPattern =ch.elexis.omnivore.views.Preferences.getOmnivoreRuleForAutoArchivingSrcPattern(i);
+					String DestDir = ch.elexis.omnivore.views.Preferences.getOmnivoreRuleForAutoArchivingDestDir(i);
 				
 					if ((SrcPattern != null) && (DestDir != null) && ( (SrcPattern != "" || DestDir != ""))) {
 						//Unter win für Dateien vom Explorer hineingezogen liefern getAbsolutePath und getAbsoluteFile dasselbe - jeweils laufwerk+path+dateiname.
@@ -402,11 +400,11 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 							//So I'll provide a separate error message for that case.
 							if (NewFile.isDirectory()) {
 								log.debug("NewFile.isDirectory==true; renaming not attempted");	
-								SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,MessageFormat.format(Messages.DocHandle_jsMoveErrorDestIsDir,DestDir,file.getName()));
+								SWTHelper.showError(Messages.DocHandleMoveErrorCaption,MessageFormat.format(Messages.DocHandleMoveErrorDestIsDir,DestDir,file.getName()));
 							} else {					
 								if (NewFile.isFile()) {
 									log.debug("NewFile.isFile==true; renaming not attempted");	
-									SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,MessageFormat.format(Messages.DocHandle_jsMoveErrorDestIsFile,DestDir,file.getName()));
+									SWTHelper.showError(Messages.DocHandleMoveErrorCaption,MessageFormat.format(Messages.DocHandleMoveErrorDestIsFile,DestDir,file.getName()));
 								} else {
 									log.debug("renaming incoming file to: "+NewFile.getAbsolutePath());
 								
@@ -417,7 +415,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 										log.debug("renaming attempted, but returned false.");
 										log.debug("However, I may probably have observed this after successful moves?! So I won't show an error dialog here. js");	
 										log.debug("So I won't show an error dialog here; if a real exception occured, that would suffice to trigger it.");	
-										//SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,Messages.DocHandle_jsMoveError);
+										//SWTHelper.showError(Messages.DocHandleMoveErrorCaption,Messages.DocHandleMoveError);
 									}
 								}
 							}
@@ -434,8 +432,8 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				} //for i... 
 			} catch (Throwable throwable) {
 					ExHandler.handle(throwable);
-					SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,
-						Messages.DocHandle_jsMoveError);
+					SWTHelper.showError(Messages.DocHandleMoveErrorCaption,
+						Messages.DocHandleMoveError);
 			}
 		
 		}

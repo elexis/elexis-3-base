@@ -28,10 +28,10 @@ public class Messages extends NLS {
 	public static String DocHandle_pleaseSelectPatient;
 	public static String DocHandle_readErrorCaption;
 	public static String DocHandle_readErrorMessage;
-	public static String DocHandle_jsMoveErrorCaption;
-	public static String DocHandle_jsMoveError;
-	public static String DocHandle_jsMoveErrorDestIsDir;
-	public static String DocHandle_jsMoveErrorDestIsFile;
+	public static String DocHandleMoveErrorCaption;
+	public static String DocHandleMoveError;
+	public static String DocHandleMoveErrorDestIsDir;
+	public static String DocHandleMoveErrorDestIsFile;
 	
 	static {
 		// initialize resource bundle

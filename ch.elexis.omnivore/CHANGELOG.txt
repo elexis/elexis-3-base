@@ -1,0 +1,20 @@
+3.0.0 14.12.2013 Niklaus Giger
+ *  Change ch.elexis.omnivore to ease integration of some feature from Omnivore-plus/direct which
+   are under the EPL (as confirmed by Gerry Weirich)
+ ** Moved preferences/PreferencePage.java -> views/Preferences.java as in  Omnivore-plus/direct
+ ** Renamed identifieres with _js to to general Elexsi conventions
+ 
+1.4.4 28.4.2013 Anpassungen von Jörg Sigle in Omnivore 
+bequemer und schneller Dokumentenimport ohne vermeidbare Zwischenschritte:
+
+    Hilfreiche Meldung, wenn Namen importierter Dateien zu lang sind.
+    regelbasiertes automatisches Wegarchivieren importierter Dateien.
+    Automatisches Entfernen von Whitespace in Titel und Stichworten bei Import und Bearbeiten.
+
+Bequemer und schneller e-Mail-Versand ohne vermeidbare Zwischenschritte:
+
+    Konfigurierbare sinnvolle Dateinamen für Temporärdateien.
+    Direktes drag & drop aus Omnivore_js heraus nach Thunderbird und Outlook.
+
+(Siehe auch Beiträge im Elexis-Forum, Beratung zu automatischer e-Mail Verschlüsselung auf Anfrage)
+

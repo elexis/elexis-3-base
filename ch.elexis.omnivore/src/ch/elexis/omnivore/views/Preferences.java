@@ -11,8 +11,9 @@
  *    
  *******************************************************************************/
 
-package ch.elexis.omnivore.preferences;
+package ch.elexis.omnivore.views;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -28,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.omnivore.preferences.Messages;
+import ch.elexis.omnivore.views.Messages;
 import ch.elexis.core.ui.constants.UiPreferenceConstants;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -37,18 +38,24 @@ import ch.elexis.core.ui.util.SWTHelper;
 //FIXME: We want a layout that will use all the available space, auto re-size input fields etc., have nested elements, and still NOT result in "dialog has invalid data" error messages.
 //FIXME: Maybe we must add PREFERENCE_BRANCH to some editor element add etc. commands, to ensure the parameters are store.
 
-public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	public static final String PREFBASE = "plugins/omnivore"; //$NON-NLS-1$
+	public static final String STOREFS = PREFBASE + "/store_in_fs"; //$NON-NLS-1$
+	public static final String BASEPATH = PREFBASE + "/basepath"; //$NON-NLS-1$
+	// public static final String DEFAULTSCANNER = PREFBASE + "/default_scanner";
+	public static final String CATEGORIES = PREFBASE + "/categories"; //$NON-NLS-1$
+	public static final String DATE_MODIFIABLE = PREFBASE + "/date_modifiable"; //$NON-NLS-1$
 	private static Logger log = LoggerFactory.getLogger("ch.elexis.omnivore.PreferencePage"); //$NON-NLS-1$
-	public static final String PREFERENCE_BRANCH = "plugins/omnivore_js/"; //$NON-NLS-1$
+	public static final String PREFERENCE_BRANCH = "plugins/omnivore/"; //$NON-NLS-1$
 	public static final String PREFERENCE_SRC_PATTERN = "src_pattern"; //$NON-NLS-1$
 	public static final String PREFERENCE_DEST_DIR = "dest_dir"; //$NON-NLS-1$
 
 	//The following setting is used in ch.elexis.omnivore.data/DocHandle.java.
 	//Linux and MacOS may be able to handle longer filenames, but we observed that Windows 7 64-bit will not import files with names longer than 80 chars.
 	//So I make this setting configurable. Including a safe default and limits that a user cannot exceed.
-	public static final Integer Omnivore_jsMax_Filename_Length_Min=12;	
-	public static final Integer Omnivore_jsMax_Filename_Length_Default=80;
-	public static final Integer Omnivore_jsMax_Filename_Length_Max=255;
+	public static final Integer OmnivoreMax_Filename_Length_Min=12;	
+	public static final Integer OmnivoreMax_Filename_Length_Default=80;
+	public static final Integer OmnivoreMax_Filename_Length_Max=255;
 	public static final String PREF_MAX_FILENAME_LENGTH= PREFERENCE_BRANCH+"max_filename_length";
 	//For automatic archiving of incoming files:
 	//Here is a comfortable way to specify how many rules shall be available:
@@ -73,38 +80,38 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	//Note: The DocHandle.getTitle() javadoc says that a document title in omnivore may contain 80 chars.
 	//To enable users to copy that in full, I allow for a max of 80 chars to be specified as num_digits for *any* element.
 	//Using all elements to that extent will return filename that's vastly too long, but that will probably be handled elsewhere.
-	public static final Integer nOmnivore_jsPREF_cotf_element_digits_max=80;
+	public static final Integer nPreferences_cotf_element_digits_max=80;
 	public static final String PREFERENCE_COTF="cotf_";
 	public static final String[] PREFERENCE_cotf_elements={"constant1","PID", "fn", "gn", "dob", "dt", "dk", "dguid", "random", "constant2"};
 	public static final String[] PREFERENCE_cotf_parameters={"fill_leading_char", "num_digits", "add_trailing_char"};
 	//The following unwanted characters, and all below codePoint=32  will be cleaned in advance.
-	//Please see the getOmnivore_jsTemp_Filename_Element for details.
+	//Please see the getOmnivoreTemp_Filename_Element for details.
 				static final String cotf_unwanted_chars="\\/:*?()+,;\"'´`"; 
 	//Dank Eclipse's mglw. etwas übermässiger "Optimierung" werden externalisierte Strings nun als Felder von Messges angesprochen -
 	//und nicht mehr wie zuvor über einen als String übergebenen key. Insofern muss ich wohl zu den obigen Arrays korrespondierende Arrays
-	//vorab erstellen, welche die jeweils zugehörigen Strings aus omnivore_js.Messages dann in eine definierte Reihenfolge bringen,
+	//vorab erstellen, welche die jeweils zugehörigen Strings aus omnivore.Messages dann in eine definierte Reihenfolge bringen,
 	//in der ich sie unten auch wieder gerne erhalten würde. Einfach per Programm at runtime die keys generieren scheint nicht so leicht zu gehen.
 	public static final String[] PREFERENCE_cotf_elements_messages={
-		Messages.Omnivore_jsPREF_cotf_constant1, 
-		Messages.Omnivore_jsPREF_cotf_pid, 
-		Messages.Omnivore_jsPREF_cotf_fn, 
-		Messages.Omnivore_jsPREF_cotf_gn, 
-		Messages.Omnivore_jsPREF_cotf_dob, 
-		Messages.Omnivore_jsPREF_cotf_dt, 
-		Messages.Omnivore_jsPREF_cotf_dk, 
-		Messages.Omnivore_jsPREF_cotf_dguid, 
-		Messages.Omnivore_jsPREF_cotf_random, 
-		Messages.Omnivore_jsPREF_cotf_constant2};
+		Messages.Preferences_cotf_constant1, 
+		Messages.Preferences_cotf_pid, 
+		Messages.Preferences_cotf_fn, 
+		Messages.Preferences_cotf_gn, 
+		Messages.Preferences_cotf_dob, 
+		Messages.Preferences_cotf_dt, 
+		Messages.Preferences_cotf_dk, 
+		Messages.Preferences_cotf_dguid, 
+		Messages.Preferences_cotf_random, 
+		Messages.Preferences_cotf_constant2};
 	public static final String[] PREFERENCE_cotf_parameters_messages={
-		Messages.Omnivore_jsPREF_cotf_fill_lead_char, 
-		Messages.Omnivore_jsPREF_cotf_num_digits, 
-		Messages.Omnivore_jsPREF_cotf_add_trail_char};
+		Messages.Preferences_cotf_fill_lead_char, 
+		Messages.Preferences_cotf_num_digits, 
+		Messages.Preferences_cotf_add_trail_char};
 	
-	public PreferencePage(){
+	public Preferences(){
 		super(GRID);
 
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
-		setDescription(Messages.Omnivore_jsPREF_omnivore_js);
+		setDescription(Messages.Preferences_omnivore);
 	}
 	
 	@Override
@@ -168,7 +175,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			gGeneralOptionsGridLayoutData.horizontalAlignment=GridData.FILL;
 			gGeneralOptions.setLayoutData(gGeneralOptionsGridLayoutData);
 			
-			addField(new StringFieldEditor(PREF_MAX_FILENAME_LENGTH, Messages.Omnivore_jsPREF_MAX_FILENAME_LENGTH, gGeneralOptions));
+			addField(new StringFieldEditor(PREF_MAX_FILENAME_LENGTH, Messages.Preferences_MAX_FILENAME_LENGTH, gGeneralOptions));
 				
 		//---
 			
@@ -177,7 +184,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		//First, we define a new group (that will visually appear as an outlined box) and give it a header like setText("Regel i");
 		//Then, within this group, we add one StringFieldEditor for the search pattern to be matched, and a DirectoryFieldEditor for the auto archiving target to be used.
 			
-		Integer nAutoArchiveRules=getOmnivore_jsnRulesForAutoArchiving();
+		Integer nAutoArchiveRules=getOmnivorenRulesForAutoArchiving();
 		
 		Group gAutoArchiveRules = new Group(gAllOmnivorePrefs, SWT.NONE);
 		//Group gAutoArchiveRules = new Group(getFieldEditorParent(), SWT.NONE);
@@ -193,17 +200,17 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			gAutoArchiveRulesGridLayoutData.horizontalAlignment=GridData.FILL;
 			gAutoArchiveRules.setLayoutData(gAutoArchiveRulesGridLayoutData);
 		
-			gAutoArchiveRules.setText(Messages.Omnivore_jsPREF_automatic_archiving_of_processed_files);
+			gAutoArchiveRules.setText(Messages.Preferences_automatic_archiving_of_processed_files);
 				
 			for (int i=0;i<nAutoArchiveRules;i++) {
 
 				//Just to check whether the loop is actually used, even if nothing appears in the preference dialog:
-				log.debug(PREF_SRC_PATTERN[i]+" : "+Messages.Omnivore_jsPREF_SRC_PATTERN);
-				log.debug(PREF_DEST_DIR[i]+" : "+Messages.Omnivore_jsPREF_DEST_DIR);
+				log.debug(PREF_SRC_PATTERN[i]+" : "+Messages.Preferences_SRC_PATTERN);
+				log.debug(PREF_DEST_DIR[i]+" : "+Messages.Preferences_DEST_DIR);
 
 				//Simplified version: All auto Archive rules are directly located in the AutoArchiveRules group.
-				//addField(new StringFieldEditor(PREF_SRC_PATTERN[i], Messages.Omnivore_jsPREF_SRC_PATTERN, gAutoArchiveRules));
-				//addField(new DirectoryFieldEditor(PREF_DEST_DIR[i], Messages.Omnivore_jsPREF_DEST_DIR, gAutoArchiveRules));
+				//addField(new StringFieldEditor(PREF_SRC_PATTERN[i], Messages.Preferences_SRC_PATTERN, gAutoArchiveRules));
+				//addField(new DirectoryFieldEditor(PREF_DEST_DIR[i], Messages.Preferences_DEST_DIR, gAutoArchiveRules));
 
 				//Correct version: Each AutoArchiveRule-Set is located in a group for that Rule.
 				//This only works when I use the GridLayout/GridData approach, but not when I use the SWTHelper.getFillGridData() approach.
@@ -222,10 +229,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				gAutoArchiveRule.setLayoutData(gAutoArchiveRuleGridLayoutData);
 
 				//Cave: The labels show 1-based rule numbers, although the actual array indizes are 0 based. 
-				gAutoArchiveRule.setText(Messages.Omnivore_jsPREF_Rule+" "+(i+1));	//The brackets are needed, or the string representations of i and 1 will both be added...
+				gAutoArchiveRule.setText(Messages.Preferences_Rule+" "+(i+1));	//The brackets are needed, or the string representations of i and 1 will both be added...
 							
-				addField(new StringFieldEditor(PREF_SRC_PATTERN[i], Messages.Omnivore_jsPREF_SRC_PATTERN, gAutoArchiveRule));
-				addField(new DirectoryFieldEditor(PREF_DEST_DIR[i], Messages.Omnivore_jsPREF_DEST_DIR, gAutoArchiveRule));
+				addField(new StringFieldEditor(PREF_SRC_PATTERN[i], Messages.Preferences_SRC_PATTERN, gAutoArchiveRule));
+				addField(new DirectoryFieldEditor(PREF_DEST_DIR[i], Messages.Preferences_DEST_DIR, gAutoArchiveRule));
 			}
   			
 			//---
@@ -265,7 +272,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			gCotfRulesGridLayoutData.horizontalAlignment=GridData.FILL;
 			gCotfRules.setLayoutData(gCotfRulesGridLayoutData);
 			
-			gCotfRules.setText(Messages.Omnivore_jsPREF_construction_of_temporary_filename);
+			gCotfRules.setText(Messages.Preferences_construction_of_temporary_filename);
 						
 			for (int i=0;i<nCotfRules;i++) {
  
@@ -284,7 +291,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				gCotfRule.setLayoutData(gCotfRuleGridLayoutData);
 				
 				//Das hier geht leider nicht so einfach:
-				//gCotfRule.setText(getObject("Messages.Omnivore_jsPREF_cotf_"+PREFERENCE_cotf_elements[i]));
+				//gCotfRule.setText(getObject("Messages.Preferences_cotf_"+PREFERENCE_cotf_elements[i]));
 				gCotfRule.setText(PREFERENCE_cotf_elements_messages[i]);	
 				
 				if (PREFERENCE_cotf_elements[i].contains("constant")) {
@@ -304,7 +311,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public void init(IWorkbench workbench){
 		//For automatic archiving of incoming files:
 		//construct the keys to the elexis preference store from a fixed header plus rule number:
-		for (Integer i=0;i<getOmnivore_jsnRulesForAutoArchiving();i++) {
+		for (Integer i=0;i<getOmnivorenRulesForAutoArchiving();i++) {
 			PREF_SRC_PATTERN[i]=PREFERENCE_BRANCH + PREFERENCE_SRC_PATTERN + i.toString().trim(); //$NON-NLS-1$	//If this source pattern is found in the filename...
 			PREF_DEST_DIR[i]= PREFERENCE_BRANCH + PREFERENCE_DEST_DIR + i.toString().trim(); //$NON-NLS-1$					//the incoming file will be archived here after having been read
 		}
@@ -320,6 +327,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		CoreHub.localCfg.flush();
 	}
 	
+	public static boolean getDateModifiable() {
+		return CoreHub.localCfg.get(DATE_MODIFIABLE, false);
+	}
+	
 	//----------------------------------------------------------------------------
 	  /**
 	   * Accepts some data to turn into a temporary filename element, and returns a formatted temporary filename element, observing current settings from the preference store, also observing default settings and min/max settings for that parameter
@@ -332,36 +343,36 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	   * @author Joerg Sigle
 	   */
 	
-	  public static String getOmnivore_jsTemp_Filename_Element(String element_key,String element_data) {
+	  public static String getOmnivoreTemp_Filename_Element(String element_key,String element_data) {
 		IPreferenceStore preferenceStore=new SettingsPreferenceStore(CoreHub.localCfg);
-		return getOmnivore_jsTemp_Filename_Element(preferenceStore, element_key, element_data);
+		return getOmnivoreTemp_Filename_Element(preferenceStore, element_key, element_data);
 	  }	
 	  
-	  public static String getOmnivore_jsTemp_Filename_Element(IPreferenceStore preferenceStore,String element_key,String element_data) {
+	  public static String getOmnivoreTemp_Filename_Element(IPreferenceStore preferenceStore,String element_key,String element_data) {
 		    
-		  log.debug("getOmnivore_jsTemp_Filename_Element: element_key=<"+element_key+">");
+		  log.debug("getOmnivoreTemp_Filename_Element: element_key=<"+element_key+">");
 		  
 		  StringBuffer element_data_processed=new StringBuffer();
 		  Integer nCotfRules=PREFERENCE_cotf_elements.length;
 		   for (int i=0;i<nCotfRules;i++) {
 				
-			   log.debug("getOmnivore_jsTemp_Filename_Element: PREFERENCE_cotf_elements["+i+"]=<"+PREFERENCE_cotf_elements[i]+">");
+			   log.debug("getOmnivoreTemp_Filename_Element: PREFERENCE_cotf_elements["+i+"]=<"+PREFERENCE_cotf_elements[i]+">");
 
 			   if (PREFERENCE_cotf_elements[i].equals(element_key))	 {
 				
-				   log.debug("getOmnivore_jsTemp_Filename_Element: Match!");
+				   log.debug("getOmnivoreTemp_Filename_Element: Match!");
 				   
 				   if (element_key.contains("constant")) {
 					   String constant=preferenceStore.getString(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[1]).trim();
 
-					   log.debug("getOmnivore_jsTemp_Filename_Element: returning constant=<"+constant+">");
+					   log.debug("getOmnivoreTemp_Filename_Element: returning constant=<"+constant+">");
 
 					   return constant;
 				   }
 				   else {
 						//Shall we return ANY digits at all for this element, and later on: shall we cut down or extend the processed string to some defined number of digits?
 						String snum_digits=preferenceStore.getString(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[1]).trim();
-						log.debug("getOmnivore_jsTemp_Filename_Element: snum_digits=<"+snum_digits+">");
+						log.debug("getOmnivoreTemp_Filename_Element: snum_digits=<"+snum_digits+">");
 
 						//If the num_digits for this element is empty, then return an empty result - the element is disabled.
 						if (snum_digits.isEmpty()) {
@@ -382,14 +393,14 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 							return "";
 						}
 						
-						if (num_digits>nOmnivore_jsPREF_cotf_element_digits_max) {
-							num_digits=nOmnivore_jsPREF_cotf_element_digits_max;
+						if (num_digits>nPreferences_cotf_element_digits_max) {
+							num_digits=nPreferences_cotf_element_digits_max;
 						}
-						log.debug("getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
+						log.debug("getOmnivoreTemp_Filename_Element: num_digits=<"+num_digits+">");
 						
 						//Start with the passed element_data string
 						String element_data_incoming=element_data.trim();
-						log.debug("getOmnivore_jsTemp_Filename_Element: element_data_incoming=<"+element_data_incoming+">");
+						log.debug("getOmnivoreTemp_Filename_Element: element_data_incoming=<"+element_data_incoming+">");
 						
 						//Remove all characters that shall not appear in the generated filename
 						//Ich verwende kein replaceAll, weil dessen Implementation diverse erforderliche Escapes offenbar nicht erlaubt.
@@ -407,7 +418,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 						}												
 						String element_data_processed5=(element_data_clean.toString().trim());
 						
-						log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed5=<"+element_data_processed5+">");
+						log.debug("getOmnivoreTemp_Filename_Element: element_data_processed5=<"+element_data_processed5+">");
 						
 						//filter out some special unwanted strings from the title that may have entered while importing and partially renaming files
 						String element_data_processed4=element_data_processed5.replaceAll("_noa[0-9]+\056[a-zA-Z0-9]{0,3}","");					//remove filename remainders like _noa635253160443574060.doc 
@@ -415,49 +426,49 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 						String element_data_processed2=element_data_processed3.replaceAll("_omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}","");	//remove filename remainders like _omni_635253160443574060_vore.pdf
 						String element_data_processed1=element_data_processed2.replaceAll("omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}","");		//remove filename remainders like omni_635253160443574060_vore.pdf
 						 
-						log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed1=<"+element_data_processed1+">");
+						log.debug("getOmnivoreTemp_Filename_Element: element_data_processed1=<"+element_data_processed1+">");
 						
 						//Limit the length of the result if it exceeds the specified or predefined max number of digits
 						if (element_data_processed1.length()>num_digits) {
 							element_data_processed1=element_data_processed1.substring(0,num_digits);
 						}
 						
-						log.debug("getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
+						log.debug("getOmnivoreTemp_Filename_Element: num_digits=<"+num_digits+">");
 						
 						//If a leading fill character is given, and the length of the result is below the specified max_number of digits, then fill it up.
 						//Note: We could also check whether the num_digits has been given. Instead, I use the default max num of digits if not.
 						String lead_fill_char=preferenceStore.getString(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[0]).trim();
 						
-						log.debug("getOmnivore_jsTemp_Filename_Element: lead_fill_char=<"+lead_fill_char+">");
+						log.debug("getOmnivoreTemp_Filename_Element: lead_fill_char=<"+lead_fill_char+">");
 						
 						if ((lead_fill_char != null) && (lead_fill_char.length()>0) && (element_data_processed1.length()<num_digits)) {
 							lead_fill_char=lead_fill_char.substring(0,1);
 							
-							log.debug("getOmnivore_jsTemp_Filename_Element: lead_fill_char=<"+lead_fill_char+">");
-							log.debug("getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
-							log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed1.length()=<"+element_data_processed1.length()+">");
-							log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed1=<"+element_data_processed1+">");
+							log.debug("getOmnivoreTemp_Filename_Element: lead_fill_char=<"+lead_fill_char+">");
+							log.debug("getOmnivoreTemp_Filename_Element: num_digits=<"+num_digits+">");
+							log.debug("getOmnivoreTemp_Filename_Element: element_data_processed1.length()=<"+element_data_processed1.length()+">");
+							log.debug("getOmnivoreTemp_Filename_Element: element_data_processed1=<"+element_data_processed1+">");
 							
 							for (int n=element_data_processed1.length();n<=num_digits;n++) {
 								element_data_processed.append(lead_fill_char);
-								log.debug("getOmnivore_jsTemp_Filename_Element: n, element_data_processed="+n+", <"+element_data_processed+">");
+								log.debug("getOmnivoreTemp_Filename_Element: n, element_data_processed="+n+", <"+element_data_processed+">");
 							}				
 						}
 						element_data_processed.append(element_data_processed1);
 						
-						log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed=<"+element_data_processed+">");
+						log.debug("getOmnivoreTemp_Filename_Element: element_data_processed=<"+element_data_processed+">");
 						
 						
 						//If an add trailing character is given, add one (typically, this would be a space or an underscore)
 						String add_trail_char=preferenceStore.getString(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[2]).trim();
 
-						log.debug("getOmnivore_jsTemp_Filename_Element: add_trail_char=<"+add_trail_char+">");
+						log.debug("getOmnivoreTemp_Filename_Element: add_trail_char=<"+add_trail_char+">");
 						
 						if ((add_trail_char != null) && (add_trail_char.length()>0)) {
 							add_trail_char=add_trail_char.substring(0,1);
-							log.debug("getOmnivore_jsTemp_Filename_Element: add_trail_char=<"+add_trail_char+">");
+							log.debug("getOmnivoreTemp_Filename_Element: add_trail_char=<"+add_trail_char+">");
 							element_data_processed.append(add_trail_char);			
-							log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed=<"+element_data_processed+">");
+							log.debug("getOmnivoreTemp_Filename_Element: element_data_processed=<"+element_data_processed+">");
 						} 			
 					}
 				   
@@ -478,23 +489,23 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	   * @author Joerg Sigle
 	   */
 	
-	  public static Integer getOmnivore_jsMax_Filename_Length() {
+	  public static Integer getOmnivoreMax_Filename_Length() {
 		IPreferenceStore preferenceStore=new SettingsPreferenceStore(CoreHub.localCfg);
-		return getOmnivore_jsMax_Filename_Length(preferenceStore);
+		return getOmnivoreMax_Filename_Length(preferenceStore);
 	  }	
 	  
-	  public static Integer getOmnivore_jsMax_Filename_Length(IPreferenceStore preferenceStore) {
+	  public static Integer getOmnivoreMax_Filename_Length(IPreferenceStore preferenceStore) {
 			
-		Integer Omnivore_jsMax_Filename_Length=Omnivore_jsMax_Filename_Length_Default;		//Start by establishing a valid default setting
+		Integer OmnivoreMax_Filename_Length=OmnivoreMax_Filename_Length_Default;		//Start by establishing a valid default setting
 		try {
-			Omnivore_jsMax_Filename_Length=Integer.parseInt(preferenceStore.getString(PREF_MAX_FILENAME_LENGTH).trim());  //20130325js max filename length before error message is shown is now configurable
+			OmnivoreMax_Filename_Length=Integer.parseInt(preferenceStore.getString(PREF_MAX_FILENAME_LENGTH).trim());  //20130325js max filename length before error message is shown is now configurable
 		} catch (Throwable throwable) {
 		    //do not consume
 		}
-		if (Omnivore_jsMax_Filename_Length<Omnivore_jsMax_Filename_Length_Min) {Omnivore_jsMax_Filename_Length=Omnivore_jsMax_Filename_Length_Min;};
-		if (Omnivore_jsMax_Filename_Length>Omnivore_jsMax_Filename_Length_Max) {Omnivore_jsMax_Filename_Length=Omnivore_jsMax_Filename_Length_Max;};
+		if (OmnivoreMax_Filename_Length<OmnivoreMax_Filename_Length_Min) {OmnivoreMax_Filename_Length=OmnivoreMax_Filename_Length_Min;};
+		if (OmnivoreMax_Filename_Length>OmnivoreMax_Filename_Length_Max) {OmnivoreMax_Filename_Length=OmnivoreMax_Filename_Length_Max;};
 		
-		return Omnivore_jsMax_Filename_Length;
+		return OmnivoreMax_Filename_Length;
 	  }
 
 		//----------------------------------------------------------------------------
@@ -504,7 +515,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	   * @author Joerg Sigle
 	   */
 	
-	  public static Integer getOmnivore_jsnRulesForAutoArchiving() {
+	  public static Integer getOmnivorenRulesForAutoArchiving() {
 			//For automatic archiving of incoming files:
 			//The smaller number of entries available for Src and Dest determines
 			//how many rule editing field pairs are provided on the actual preferences page, and processed later on.
@@ -529,8 +540,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	   * @author Joerg Sigle
 	   */
 	
-	  public static String getOmnivore_jsRuleForAutoArchivingSrcPattern(Integer i) {
-		  if ((i<0) || (i>=getOmnivore_jsnRulesForAutoArchiving())) {
+	  public static String getOmnivoreRuleForAutoArchivingSrcPattern(Integer i) {
+		  if ((i<0) || (i>=getOmnivorenRulesForAutoArchiving())) {
 			  return null;
 		  }
 		  
@@ -552,8 +563,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	   * @author Joerg Sigle
 	   */
 	
-	  public static String getOmnivore_jsRuleForAutoArchivingDestDir(Integer i) {
-		  if ((i<0) || (i>=getOmnivore_jsnRulesForAutoArchiving())) {
+	  public static String getOmnivoreRuleForAutoArchivingDestDir(Integer i) {
+		  if ((i<0) || (i>=getOmnivorenRulesForAutoArchiving())) {
 			  return null;
 		  }
 		  

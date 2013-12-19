@@ -144,7 +144,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 	}
 	
-	public File getStorageFile(boolean force) {
+	public File getStorageFile(boolean force){
 		if (force || CoreHub.localCfg.get(Preferences.STOREFS, false)) {
 			String pathname = CoreHub.localCfg.get(Preferences.BASEPATH, null);
 			if (pathname != null) {
@@ -156,7 +156,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 						subdir.mkdir();
 					}
 					File file = new File(subdir, getId() + "." //$NON-NLS-1$
-							+ FileTool.getExtension(get(FLD_MIMETYPE)));
+						+ FileTool.getExtension(get(FLD_MIMETYPE)));
 					return file;
 				}
 			}
@@ -164,88 +164,90 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 		return null;
 	}
-
-    /** 
-     * Creates a new omnivore document.
-     * Adds it to the defaultCategory if doc does not provide one
-     *
-     * @param doc document
+	
+	/**
+	 * Creates a new omnivore document. Adds it to the defaultCategory if doc does not provide one
+	 * 
+	 * @param doc
+	 *            document
 	 */
-	public DocHandle(IOpaqueDocument doc) throws ElexisException {
+	public DocHandle(IOpaqueDocument doc) throws ElexisException{
 		create(doc.getGUID());
-
+		
 		String category = doc.getCategory();
 		if (category == null || category.length() < 1) {
 			category = DocHandle.getDefaultCategory().getCategoryName();
 		} else {
 			DocHandle.ensureCategoryAvailability(category);
 		}
-		set(new String[] { FLD_CAT, FLD_PATID, FLD_DATE, FLD_TITLE,
-				FLD_KEYWORDS, FLD_MIMETYPE }, category, doc.getPatient()
-				.getId(), doc.getCreationDate(), doc.getTitle(),
-				doc.getKeywords(), doc.getMimeType());
+		set(new String[] {
+			FLD_CAT, FLD_PATID, FLD_DATE, FLD_TITLE, FLD_KEYWORDS, FLD_MIMETYPE
+		}, category, doc.getPatient().getId(), doc.getCreationDate(), doc.getTitle(),
+			doc.getKeywords(), doc.getMimeType());
 		store(doc.getContentsAsBytes());
-
+		
 	}
-
-    /** 
-     * Creates a new omnivore document.
-     *
-     * @param category Category. If null, adds it to the defaultCategory
-     * @param doc the document to add
-     * @param pat document belongs to this patient
-     * @param title 
-     * @param mime MIME-type, e.g. pdf
-     * @param keyw keywords
+	
+	/**
+	 * Creates a new omnivore document.
+	 * 
+	 * @param category
+	 *            Category. If null, adds it to the defaultCategory
+	 * @param doc
+	 *            the document to add
+	 * @param pat
+	 *            document belongs to this patient
+	 * @param title
+	 * @param mime
+	 *            MIME-type, e.g. pdf
+	 * @param keyw
+	 *            keywords
 	 */
-	public DocHandle(String category, byte[] doc, Patient pat, String title,
-			String mime, String keyw) {
+	public DocHandle(String category, byte[] doc, Patient pat, String title, String mime,
+		String keyw){
 		if ((doc == null) || (doc.length == 0)) {
 			SWTHelper.showError(Messages.DocHandle_documentErrorCaption,
-					Messages.DocHandle_documentErrorText1);
+				Messages.DocHandle_documentErrorText1);
 			return;
 		}
 		create(null);
-
+		
 		if (category == null || category.length() < 1) {
 			category = DocHandle.getDefaultCategory().getCategoryName();
 		} else {
 			DocHandle.ensureCategoryAvailability(category);
 		}
-		set(new String[] { FLD_CAT, FLD_PATID, FLD_DATE, FLD_TITLE,
-				FLD_KEYWORDS, FLD_MIMETYPE }, category, pat.getId(),
-				new TimeTool().toString(TimeTool.DATE_GER), title, keyw, mime);
+		set(new String[] {
+			FLD_CAT, FLD_PATID, FLD_DATE, FLD_TITLE, FLD_KEYWORDS, FLD_MIMETYPE
+		}, category, pat.getId(), new TimeTool().toString(TimeTool.DATE_GER), title, keyw, mime);
 		store(doc);
 	}
-
-	private void store(byte[] doc) {
+	
+	private void store(byte[] doc){
 		File file = getStorageFile(false);
 		if (file == null) {
 			try {
 				setBinary(FLD_DOC, doc);
 			} catch (PersistenceException pe) {
-				SWTHelper.showError(
-						Messages.DocHandle_documentErrorCaption,
-						Messages.DocHandle_documentErrorText2 + "; "
-								+ pe.getMessage());
+				SWTHelper.showError(Messages.DocHandle_documentErrorCaption,
+					Messages.DocHandle_documentErrorText2 + "; " + pe.getMessage());
 				delete();
 			}
 		} else {
 			try {
-				BufferedOutputStream bout = new BufferedOutputStream(
-						new FileOutputStream(file));
+				BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(file));
 				bout.write(doc);
 				bout.close();
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				SWTHelper.showError(
-						"write error", Messages.DocHandle_writeErrorHeading, //$NON-NLS-1$
-						"Konnte die Datei " + file.getAbsolutePath()
-								+ " nicht schreiben." + ex.getMessage());
+				SWTHelper.showError("write error", Messages.DocHandle_writeErrorHeading, //$NON-NLS-1$
+					"Konnte die Datei " + file.getAbsolutePath() + " nicht schreiben."
+						+ ex.getMessage());
 				delete();
 			}
 		}
 	}
+	
 	/**
 	 * We need a default category as a fallback for invalid or not defined categories.
 	 * 
@@ -549,7 +551,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 	}
 	
-	public String getMimetype() {
+	public String getMimetype(){
 		return get(FLD_MIMETYPE);
 	}
 	
@@ -564,11 +566,11 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	
 	protected DocHandle(){}
 	
-	public boolean storeExternal(String filename) {
+	public boolean storeExternal(String filename){
 		byte[] b = getContents();
 		if (b == null) {
 			SWTHelper.showError(Messages.DocHandle_readErrorCaption,
-					Messages.DocHandle_readErrorText);
+				Messages.DocHandle_readErrorText);
 			return false;
 		}
 		try {
@@ -579,7 +581,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		} catch (IOException ios) {
 			ExHandler.handle(ios);
 			SWTHelper.showError(Messages.DocHandle_writeErrorCaption,
-					Messages.DocHandle_writeErrorCaption, ios.getMessage());
+				Messages.DocHandle_writeErrorCaption, ios.getMessage());
 			return false;
 		}
 	}
@@ -611,7 +613,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		// Also, put the filename length check *before* displaying the file import dialog.
 		// Otherwise, users would have to type in a bunch of text first, and learn only afterwards,
 // that that would be discarded.
-		Integer maxOmnivoreFilenameLength = 
+		Integer maxOmnivoreFilenameLength =
 			ch.elexis.omnivore.views.Preferences.getOmnivoreMax_Filename_Length();
 		
 		String nam = file.getName();
@@ -776,12 +778,14 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 								if (NewFile.isFile()) {
 									log.debug("NewFile.isFile==true; renaming not attempted");
 									SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
-										MessageFormat.format(Messages.DocHandle_MoveErrorDestIsFile,
-											DestDir, file.getName()));
+										MessageFormat.format(
+											Messages.DocHandle_MoveErrorDestIsFile, DestDir,
+											file.getName()));
 								} else {
 									log.debug("renaming incoming file to: "
 										+ NewFile.getAbsolutePath());
-									if (Files.move(file.toPath(), NewFile.toPath(), REPLACE_EXISTING) != null) {
+									if (Files.move(file.toPath(), NewFile.toPath(),
+										REPLACE_EXISTING) != null) {
 										log.debug("renaming ok");
 										// do nothing, everything worked out fine
 									} else {
@@ -810,8 +814,8 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				} // for i...
 			} catch (Throwable throwable) {
 				ExHandler.handle(throwable);
-				SWTHelper
-					.showError(Messages.DocHandle_MoveErrorCaption, Messages.DocHandle_MoveError);
+				SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
+					Messages.DocHandle_MoveError);
 			}
 			
 		}
@@ -826,16 +830,16 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		return checkNull(get("Keywords")); //$NON-NLS-1$
 	}
 	
-	public String getDate() {
+	public String getDate(){
 		return get(FLD_DATE);
 	}
 	
-	public void setDate(Date d) {
+	public void setDate(Date d){
 		TimeTool tt = new TimeTool();
 		tt.setTime(d);
 		set(FLD_DATE, tt.toString(TimeTool.DATE_GER));
 	}
-
+	
 	private void configError(){
 		SWTHelper.showError("config error", Messages.DocHandle_configErrorCaption, //$NON-NLS-1$
 			Messages.DocHandle_configErrorText);

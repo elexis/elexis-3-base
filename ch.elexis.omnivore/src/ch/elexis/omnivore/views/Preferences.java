@@ -20,7 +20,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -28,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.omnivore.views.Messages;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 //FIXME: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.
@@ -166,7 +167,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		gOmnivorePrefsGridLayoutData.horizontalAlignment = GridData.FILL;
 		
 		gAllOmnivorePrefs.setLayoutData(gOmnivorePrefsGridLayoutData);
-		Group gGeneralOptions = new Group(gAllOmnivorePrefs, SWT.NONE);		
+		Group gGeneralOptions = new Group(gAllOmnivorePrefs, SWT.NONE);
 		GridData gGeneralOptionsGridLayoutData = new GridData();
 		gGeneralOptionsGridLayoutData.grabExcessHorizontalSpace = true;
 		gGeneralOptionsGridLayoutData.horizontalAlignment = GridData.FILL;
@@ -186,12 +187,13 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		gPathForMaxChars.setLayout(new FillLayout());
 		IPreferenceStore preferenceStore = new SettingsPreferenceStore(CoreHub.localCfg);
 		preferenceStore.setDefault(PREF_MAX_FILENAME_LENGTH, OmnivoreMax_Filename_Length_Default);
-		IntegerFieldEditor maxCharsEditor = new IntegerFieldEditor(PREF_MAX_FILENAME_LENGTH,
-			Messages.Preferences_MAX_FILENAME_LENGTH, gPathForMaxChars);
-		maxCharsEditor.setValidRange(OmnivoreMax_Filename_Length_Min, OmnivoreMax_Filename_Length_Max);
+		IntegerFieldEditor maxCharsEditor =
+			new IntegerFieldEditor(PREF_MAX_FILENAME_LENGTH,
+				Messages.Preferences_MAX_FILENAME_LENGTH, gPathForMaxChars);
+		maxCharsEditor.setValidRange(OmnivoreMax_Filename_Length_Min,
+			OmnivoreMax_Filename_Length_Max);
 		addField(maxCharsEditor);
 		
-
 		// ---
 		
 		// For automatic archiving of incoming files:

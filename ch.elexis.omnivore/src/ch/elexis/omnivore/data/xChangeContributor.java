@@ -15,18 +15,18 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.FileUtility;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
 import ch.elexis.core.ui.exchange.IExchangeContributor;
 import ch.elexis.core.ui.exchange.XChangeContainer;
 import ch.elexis.core.ui.exchange.elements.DocumentElement;
 import ch.elexis.core.ui.exchange.elements.MedicalElement;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.rgw.tools.MimeTool;
 
 public class xChangeContributor implements IExchangeContributor {
 	
 	public xChangeContributor(){
-	// TODO Auto-generated constructor stub
+		// TODO Auto-generated constructor stub
 	}
 	
 	public void exportHook(MedicalElement me){
@@ -64,14 +64,14 @@ public class xChangeContributor implements IExchangeContributor {
 	}
 	
 	public void importHook(XChangeContainer container, PersistentObject context){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void setInitializationData(IConfigurationElement arg0, String arg1, Object arg2)
 		throws CoreException{
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public boolean init(MedicalElement me, boolean bExport){

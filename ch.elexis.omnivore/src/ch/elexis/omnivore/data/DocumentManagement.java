@@ -16,11 +16,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
+import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.core.data.services.IDocumentManager;
-import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.rgw.tools.RegexpFilter;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -72,8 +72,8 @@ public class DocumentManagement implements IDocumentManager {
 		}
 		if (keywordMatch != null) {
 			if (keywordMatch.matches("/.+/")) { //$NON-NLS-1$
-				qbe.addPostQueryFilter(new RegexpFilter(keywordMatch.substring(1, keywordMatch
-					.length() - 1)));
+				qbe.addPostQueryFilter(new RegexpFilter(keywordMatch.substring(1,
+					keywordMatch.length() - 1)));
 			} else {
 				qbe.add(DocHandle.FLD_KEYWORDS, Query.LIKE, "%" + keywordMatch + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -81,8 +81,8 @@ public class DocumentManagement implements IDocumentManager {
 		
 		if (categoryMatch != null) {
 			if (categoryMatch.matches("/.+/")) { //$NON-NLS-1$
-				qbe.addPostQueryFilter(new RegexpFilter(categoryMatch.substring(1, categoryMatch
-					.length() - 1)));
+				qbe.addPostQueryFilter(new RegexpFilter(categoryMatch.substring(1,
+					categoryMatch.length() - 1)));
 			} else {
 				qbe.add(DocHandle.FLD_CAT, Query.EQUALS, categoryMatch);
 			}

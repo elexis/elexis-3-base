@@ -21,7 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+
 import static java.nio.file.StandardCopyOption.*;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -545,6 +547,10 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			ExHandler.handle(ex);
 			SWTHelper.showError(Messages.DocHandle_execError, ex.getMessage());
 		}
+	}
+	
+	public String getMimetype() {
+		return get(FLD_MIMETYPE);
 	}
 	
 	@Override

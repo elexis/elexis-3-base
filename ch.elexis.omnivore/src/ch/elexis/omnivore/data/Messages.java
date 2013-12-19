@@ -15,6 +15,12 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "ch.elexis.omnivore.data.messages"; //$NON-NLS-1$
+	public static String DocHandle_documentErrorText1 = null;
+	public static String DocHandle_configErrorCaption;
+	public static String DocHandle_readErrorHeading;
+	public static String DocHandle_configErrorText;
+	public static String DocHandle_versionConflictCaption;
+	public static String DocHandle_versionConflictText;
 	public static String DocHandle_cantReadCaption;
 	public static String DocHandle_cantReadMessage;
 	public static String DocHandle_dataNotWritten;
@@ -28,10 +34,17 @@ public class Messages extends NLS {
 	public static String DocHandle_pleaseSelectPatient;
 	public static String DocHandle_readErrorCaption;
 	public static String DocHandle_readErrorMessage;
-	public static String DocHandle_jsMoveErrorCaption;
-	public static String DocHandle_jsMoveError;
-	public static String DocHandle_jsMoveErrorDestIsDir;
-	public static String DocHandle_jsMoveErrorDestIsFile;
+	public static String DocHandle_MoveErrorCaption;
+	public static String DocHandle_MoveError;
+	public static String DocHandle_MoveErrorDestIsDir;
+	public static String DocHandle_MoveErrorDestIsFile;
+	public static String DocHandle_writeErrorHeading;
+	public static String DocumentManagement_contentsMatchNotSupported;
+	public static String DocHandle_documentErrorCaption;
+	public static String DocHandle_documentErrorText2;
+	public static String DocHandle_readErrorText;
+	public static String DocHandle_writeErrorCaption;
+	public static String xChangeContributor_thisIsAnOmnivoreDoc;
 	
 	static {
 		// initialize resource bundle

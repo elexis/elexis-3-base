@@ -32,13 +32,34 @@
       </page>
    </extension>
    <extension
+         point="ch.elexis.core.ui.Transporter">
+      <Transporter
+            AcceptableTypes="ch.elexis.omnivore.data.DocHandle"
+            id="ch.elexis.omnivore-plus"
+            name="Omnivore plus"
+            type="*"
+            xChangeContribution="ch.elexis.omnivore.data.xChangeContributor">
+      </Transporter>
+   </extension>
+   <extension
          point="ch.elexis.core.data.ServiceRegistry">
       <Service
+            actor="ch.elexis.exchange.TwainAccess"
+            description="Omnivore direct scanning service"
+            name="ScannerService"
+            value="-1000">
+      </Service>
+      <Service
+            actor="ch.elexis.omnivore.data.ScanToPDF"
+            description="Retrieves a document from the scanner and stores it in a pdf"
+            name="ScanToPDFService"
+            value="-1000">
+      </Service>
+      <Service
             actor="ch.elexis.omnivore.data.DocumentManagement"
-            description="Omnivore"
+            description="Omnivore plus"
             name="DocumentManagement"
-            value="1">
+            value="90">
       </Service>
    </extension>
-
 </plugin>

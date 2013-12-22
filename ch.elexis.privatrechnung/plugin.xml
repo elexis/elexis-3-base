@@ -28,7 +28,7 @@
       </Factory>
    </extension>
    <extension
-         point="ch.elexis.core.ui.RechnungsManager">
+         point="ch.elexis.core.data.RechnungsManager">
       <Rechnung
             name="Privatrechnung"
             outputter="ch.elexis.privatrechnung.rechnung.RechnungsDrucker">

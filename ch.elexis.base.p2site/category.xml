@@ -66,6 +66,7 @@
    <feature url="features/ch.elexis.base.befunde.feature_3.0.0.qualifier.jar" id="ch.elexis.base.befunde.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature url="features/ch.elexis.base.konsextension.bildanzeige.feature_3.0.0.qualifier.jar" id="ch.elexis.base.konsextension.bildanzeige.feature" version="3.0.0.qualifier"/>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung"/>
    <category-def name="dataexchange" label="Datenaustausch"/>

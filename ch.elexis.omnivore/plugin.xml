@@ -32,7 +32,7 @@
       </page>
    </extension>
    <extension
-         point="ch.elexis.core.ui.ServiceRegistry">
+         point="ch.elexis.core.data.ServiceRegistry">
       <Service
             actor="ch.elexis.omnivore.data.DocumentManagement"
             description="Omnivore"

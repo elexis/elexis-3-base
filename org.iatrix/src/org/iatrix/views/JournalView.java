@@ -119,6 +119,7 @@ import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
+import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
 import ch.elexis.core.ui.contacts.views.PatientDetailView2;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.dialogs.MediDetailDialog;
@@ -1426,7 +1427,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		text = new EnhancedTextField(konsultationTextComposite);
 		hXrefs = new Hashtable<String, IKonsExtension>();
 		List<IKonsExtension> xrefs =
-			Extensions.getClasses("ch.elexis.KonsExtension", "KonsExtension");
+			Extensions.getClasses(ExtensionPointConstantsUi.KONSEXTENSION, "KonsExtension");
 		for (IKonsExtension x : xrefs) {
 			String provider = x.connect(text);
 			hXrefs.put(provider, x);

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.base.konsextension.privatnotizen.feature"
+      label="Privatnotizen für Konsultation"
+      version="3.0.0.qualifier"
+      provider-name="elexis.ch">
+
+   <description>
+      This plugin allows to integrate hidden notes into a consultation text
+   </description>
+
+   <copyright>
+      Copyright (c) 2007 - 2013, G. Weirich and Elexis
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.elexis.base.konsextension.privatnotizen"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

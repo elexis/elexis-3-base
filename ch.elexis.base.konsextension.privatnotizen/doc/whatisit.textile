@@ -1,0 +1,3 @@
+h1. Elexis Privatnotizen
+
+This plugin allows to integrate hidden notes into a consultation text

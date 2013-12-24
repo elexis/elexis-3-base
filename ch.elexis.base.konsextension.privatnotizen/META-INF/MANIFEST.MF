@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Plugin für Privatnotizen in KG-Einträgen
+Bundle-SymbolicName: ch.elexis.base.konsextension.privatnotizen;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Activator: ch.elexis.base.konsextension.privatnotizen.Activator
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ ch.elexis.core.data;bundle-version="3.0.0",
+ ch.elexis.core.ui;bundle-version="3.0.0",
+ ch.elexis.core.ui.icons;bundle-version="3.0.0",
+ org.eclipse.jface,
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="3.0.0"
+Eclipse-LazyStart: true
+Created-By: Buildr
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+

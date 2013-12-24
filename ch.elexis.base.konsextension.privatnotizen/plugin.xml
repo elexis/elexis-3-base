@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<!--/*******************************************************************************
+	 * Copyright (c) 2006, G. Weirich and Elexis
+	 * All rights reserved. This program and the accompanying materials
+	 * are made available under the terms of the Eclipse Public License v1.0
+	 * which accompanies this distribution, and is available at
+	 * http://www.eclipse.org/legal/epl-v10.html
+	 *
+	 * Contributors:
+	 *    G. Weirich - initial implementation
+	 *    
+	 *  $Id: plugin.xml 808 2006-08-28 04:54:26Z rgw_ch $
+	 *******************************************************************************/
+
+	-->
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.KonsExtension">
+      <Link
+            KonsExtension="ch.elexis.base.konsextension.privatnotizen.KonsExtension"
+            name="elexis-privatnotizen"/>
+   </extension>
+
+</plugin>

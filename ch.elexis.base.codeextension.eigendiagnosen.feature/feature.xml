@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.base.codeextension.eigendiagnosen.feature"
+      label="Eigendiagnosen definieren"
+      version="3.0.0.qualifier"
+      provider-name="elexis.ch">
+
+   <description url="http://wiki.elexis.info/Ch.elexis.eigendiagnosen">
+      Dieses Plugin ermöglicht die Entwicklung und Einbindung von eigenen bzw. nicht als eigene Plugins erhältlichen Diagnosesystemen. Das Plugin ist dabei bewusst offen gehalten, ermöglicht also nicht nur medizinische Diagnosen, sondern jede Art von Dienstleistsgründen zu erfassen.
+   </description>
+
+   <copyright>
+      Copyright (c) 2007 - 2013, G. Weirich and Elexis
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.elexis.base.codeextension.eigendiagnosen"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

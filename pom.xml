@@ -24,6 +24,8 @@
   <module>ch.elexis.base.ch.labortarif_2009</module>
   <module>ch.elexis.base.ch.diagnosecodes</module>
   <module>ch.elexis.base.ch.medikamente.bag</module>
+  <module>ch.elexis.base.konsextension.bildanzeige</module>
+  <module>ch.elexis.base.konsextension.bildanzeige.feature</module>
   <module>ch.elexis.base.konsextension.privatnotizen</module>
   <module>ch.elexis.base.konsextension.privatnotizen.feature</module>
   <module>ch.elexis.base.messages</module>

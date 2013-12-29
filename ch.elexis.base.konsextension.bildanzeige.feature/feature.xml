@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.base.konsextension.bildanzeige.feature"
+      label="Bildanzeige in Konsultation"
+      version="3.0.0.qualifier"
+      provider-name="elexis.ch">
+
+   <description>
+      Einbinden von Fotos und anderen Bildern in den Konsultationstext.
+   </description>
+
+   <copyright>
+      Copyright (c) 2007 - 2013, G. Weirich and Elexis
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.elexis.base.konsextension.bildanzeige"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"
+         unpack="false"/>
+
+</feature>

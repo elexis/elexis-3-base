@@ -15,6 +15,9 @@
 </properties>
 <packaging>pom</packaging>
 <modules>
+  <module>at.medevit.elexis.loinc</module>
+  <module>at.medevit.elexis.loinc.ui</module>
+  <module>at.medevit.elexis.loinc.feature</module>
   <module>ch.elexis.base.befunde</module>
   <module>ch.elexis.base.befunde.feature</module>
   <module>ch.elexis.base.ch.artikel</module>

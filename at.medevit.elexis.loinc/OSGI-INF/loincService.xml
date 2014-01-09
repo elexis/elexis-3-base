@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="at.medevit.elexis.loinc.service">
+   <implementation class="at.medevit.elexis.loinc.model.impl.LoincCodeService"/>
+   <service>
+      <provide interface="at.medevit.elexis.loinc.model.ILoincCodeService"/>
+   </service>
+</scr:component>

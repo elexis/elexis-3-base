@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.Genericcode">
+      <Codesystem
+            CodeDetailDisplay="at.medevit.elexis.loinc.ui.parts.LoincCodeDetailDisplay"
+            CodeSelectorFactory="at.medevit.elexis.loinc.ui.parts.LoincCodeSelectorFactory"
+            ElementFactory="at.medevit.elexis.loinc.model.LoincCodeFactory"
+            ImporterClass="at.medevit.elexis.loinc.ui.importer.LoincCodeCsvImporter"
+            name="at.medevit.elexis.loinc.ui.Codesystem">
+      </Codesystem>
+   </extension>
+
+</plugin>

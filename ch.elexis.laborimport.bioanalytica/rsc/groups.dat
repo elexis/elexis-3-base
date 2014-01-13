@@ -1,0 +1,24 @@
+# Groups used by lab Bioanalytica
+#
+# Format:
+# <Key>;<Name>
+#
+# Empty and comment (#) lines are ignored
+# White space doesn't matter.
+
+A2;Allergie 2
+AL;Allergie
+E2;Ejakulat 2
+EJ;Ejakulat
+GE;Gerinnung
+GN;Genetik
+HA;Hämatologie
+HR;Haar
+KC;Klinische Chemie
+KO;Konsultation
+PU;Punktat
+RE;Verrechnungsanalysen
+SE;Serologie
+ST;Stuhl
+UR;Urin
+ZY;Zytologie

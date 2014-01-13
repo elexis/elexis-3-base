@@ -1,0 +1,3182 @@
+# Codes used by lab Bioanalytica
+#
+# Format:
+# <Order>;<Code>;<Group Key>[;<Name>]
+#
+# Empty and comment (#) lines are ignored
+# White space only matters for indentation of the Name.
+
+00010;aboyä;A2;  - A. boydii
+00020;afuä;A2;  - A. fumigatus
+00030;apulä;A2;  - A. pullulans
+00040;claä;A2;  - Cladosporium 
+00050;ecp;A2;ECP (e)
+00060;ecp1;A2;ECP
+00070;fusä;A2;  - Fusarium
+00080;humiä;A2;  - Befeuchter
+00090;i1g2;A2;IgG  Bienengift
+00100;i1g3;A2;IgG  Bienengift (e)
+00110;i3g2;A2;IgG  Wespengift
+00120;i3g3;A2;IgG  Wespengift (e)
+00130;ige;A2;IgE (Immunglobulin E)
+00140;mfaä;A2;  - M. faeni
+00150;papaä;A2;  - Papagei
+00160;pcaä;A2;  - P. casei
+00170;ras1n;A2;Allergiescreen
+00180;ras1p;A2;Allergiescreen
+00190;ras1q;A2;ras1 Allergiescreen
+00200;rcal1;A2;  Hausstaubmilbe (D. pteron.)
+00210;rcal10;A2;  Birkenpollen
+00220;rcal11;A2;  Haselnuss
+00230;rcal12;A2;  Eiklar
+00240;rcal13;A2;  Milch
+00250;rcal14;A2;  Kabeljau (Dorsch)
+00260;rcal15;A2;  Weizenmehl
+00270;rcal16;A2;  Sojabohne
+00280;rcal17;A2;  Erdnuss
+00290;rcal18;A2;  Apfel
+00300;rcal19;A2;  Karotte
+00310;rcal2;A2;  Hausstaubmilbe (D. farinae)
+00320;rcal20;A2;  Latex
+00330;rcal3;A2;  Aspergillus spp.
+00340;rcal4;A2;  Cladosporium herbarum
+00350;rcal5;A2;  Pferdeepithelien
+00360;rcal6;A2;  Hundeepithelien
+00370;rcal7;A2;  Katzenepithelien
+00380;rcal8;A2;  Lieschgras
+00390;rcal9;A2;  Beifusspollen
+00400;rcla1;A2;  Hausstaubmilbe (D. pteron.)
+00410;rcla10;A2;  Birkenpollen
+00420;rcla11;A2;  Eiklar
+00430;rcla12;A2;  Milch
+00440;rcla13;A2;  Kabeljau (Dorsch)
+00450;rcla14;A2;  Weizenmehl
+00460;rcla15;A2;  Reis
+00470;rcla16;A2;  Sojabohne
+00480;rcla17;A2;  Erdnuss
+00490;rcla18;A2;  Kartoffel
+00500;rcla19;A2;  Apfel
+00510;rcla2;A2;  Hausstaubmilbe (D. farinae)
+00520;rcla20;A2;  Karotte
+00530;rcla3;A2;  Aspergillus spp.
+00540;rcla4;A2;  Cladosporium herbarum
+00550;rcla5;A2;  Pferdeepithelien
+00560;rcla6;A2;  Hundeepithelien
+00570;rcla7;A2;  Katzenepithelien
+00580;rcla8;A2;  Lieschgras
+00590;rcla9;A2;  Beifusspollen
+00600;rcli1;A2;  Hausstaubmilbe (D. pteron.)
+00610;rcli10;A2;  Kaninchenepithelien
+00620;rcli11;A2;  Meerschweinchenepithelien
+00630;rcli12;A2;  Hamsterepithelien
+00640;rcli13;A2;  Federnmischung
+00650;rcli14;A2;  Wegerichpollen
+00660;rcli15;A2;  Roggenpollen
+00670;rcli16;A2;  Lieschgras
+00680;rcli17;A2;  Beifusspollen
+00690;rcli18;A2;  Birkenpollen
+00700;rcli19;A2;  Haselpollen
+00710;rcli2;A2;  Hausstaubmilbe (D. farinae)
+00720;rcli20;A2;  Erlenpollen
+00730;rcli3;A2;  Aspergillus spp.
+00740;rcli4;A2;  Cladosporium herbarum
+00750;rcli5;A2;  Alternaria tenuis
+00760;rcli6;A2;  Penicillium notatum
+00770;rcli7;A2;  Pferdeepithelien
+00780;rcli8;A2;  Hundeepithelien
+00790;rcli9;A2;  Katzenepithelien
+00800;rcln1;A2;  Eigelb
+00810;rcln10;A2;  Haselnuss
+00820;rcln11;A2;  Erdnuss
+00830;rcln12;A2;  Walnuss
+00840;rcln13;A2;  Pfirsich
+00850;rcln14;A2;  Sellerie
+00860;rcln15;A2;  Tomate
+00870;rcln16;A2;  Kartoffel
+00880;rcln17;A2;  Apfel
+00890;rcln18;A2;  Karotte
+00900;rcln19;A2;  Kabeljau (Dorsch)
+00910;rcln2;A2;  Eiklar
+00920;rcln20;A2;  Krabbe
+00930;rcln3;A2;  Milch
+00940;rcln4;A2;  Kasein
+00950;rcln5;A2;  Sesam
+00960;rcln6;A2;  Weizenmehl
+00970;rcln7;A2;  Roggenmehl
+00980;rcln8;A2;  Soja
+00990;rcln9;A2;  Mandel
+01000;rcsi1;A2;  Hausstaubmilbe (D. pteron.)
+01010;rcsi10;A2;  Meerschweinchenepithelien
+01020;rcsi11;A2;  Hamsterepithelien
+01030;rcsi12;A2;  Roggenpollen
+01040;rcsi13;A2;  Lieschgras
+01050;rcsi14;A2;  Wegerichpollen
+01060;rcsi15;A2;  Glaskraut
+01070;rcsi16;A2;  Beifusspollen
+01080;rcsi17;A2;  Esche
+01090;rcsi18;A2;  Birkenpollen
+01100;rcsi19;A2;  Haselpollen
+01110;rcsi2;A2;  Hausstaubmilbe (D. farinae)
+01120;rcsi20;A2;  Latex
+01130;rcsi3;A2;  Aspergillus spp.
+01140;rcsi4;A2;  Cladosporium herbarum
+01150;rcsi5;A2;  Alternaria tenuis
+01160;rcsi6;A2;  Penicillium notatum
+01170;rcsi7;A2;  Pferdeepithelien
+01180;rcsi8;A2;  Hundeepithelien
+01190;rcsi9;A2;  Katzenepithelien
+01200;tauä;A2;  - Taube
+01210;tviä;A2;  - T. viridis
+01220;tvuä;A2;  - T. vulgari
+00010;i1g;AL;IgG  Bienengift (e)
+00020;i1g1;AL;IgG  Bienengift (e)
+00030;i2g;AL;IgG  Hornissengift (e)
+00040;i2g1;AL;IgG  Hornissengift (e)
+00050;i3g;AL;IgG  Wespengift (e)
+00060;i3g1;AL;IgG  Wespengift (e)
+00070;ltt;AL;Lymph.-transformationstest (e)
+00080;rc1;AL;Penicillin G c1
+00090;rc2;AL;Penicillin V c2
+00100;rc204;AL;IgE Gold c204 (e)
+00110;rc206;AL;ACTH
+00120;rc207e;AL;IgE Acet.salicylsäure c207 (e)
+00130;rc207g;AL;IgG Acetylsalicylsäure (e)
+00140;rc209e;AL;IgE Paracetamol c209 (e)
+00150;rc209g;AL;IgG Paracetamol (e)
+00160;rc231;AL;IgE Articain (e)
+00170;rc231g;AL;IgG Articain (e)
+00180;rc232;AL;IgE Lidocain (e)
+00190;rc232g;AL;IgG Lidocain (e)
+00200;rc272;AL;Weinsäure E334 (e)
+00210;rc299e;AL;IgE Heparin c299 (e)
+00220;rc299g;AL;IgG Heparin (e)
+00230;rc2g;AL;IgG Penicillin V c2 (e)
+00240;rc312;AL;IgE Lactose c312 (e)
+00250;rc332;AL;IgE Brom c332 (e)
+00260;rc470;AL;Lecithin E322 (e)
+00270;rc5;AL;Ampicillin c5 (e)
+00280;rc6;AL;Amoxycillin c6 (e)
+00290;rc602;AL;IgE Aluminium  c602 (e)
+00300;rc604;AL;Ammoniumpersulfat c 604 (e)
+00310;rc605;AL;Blei c605 (e)
+00320;rc616e;AL;IgE Jod c616 (e)
+00330;rc616g;AL;IgG Jod (e)
+00340;rc628;AL;IgE Nickel c628 (e)
+00350;rc633;AL;Epoxyharze c633 (e)
+00360;rc635;AL;Quecksilber c635 (e)
+00370;rc7;AL;Cefaclor c7 (e)
+00380;rc70;AL;Insulin (Schwein)
+00390;rc71;AL;Insulin (Rind)
+00400;rc717;AL;IgE Glutamat (E621-625, e)
+00410;rc73;AL;Insulin (human)
+00420;rc74;AL;Gelatine c 74 (e)
+00430;rcann;AL;IgE  Cannabis sativa (e)
+00440;rd1;AL;Dermatoph. pteron. d1
+00450;rd2;AL;Dermatoph. farinae d2
+00460;rd201;AL;Blomia tropicalis
+00470;rd3;AL;microceras
+00480;rd70;AL;Acarus siro d70 (e)
+00490;rd71;AL;Lepidoglyphus destructor d71 (e)
+00500;rd72;AL;Tyrophagus putrescentiae d72 (e)
+00510;rd73;AL;G. domesticus d73 (e)
+00520;rd74;AL;Euroglyphus maynei d74 (e)
+00530;re1;AL;Katzenschuppen e1
+00540;re2;AL;Hundeepithel e2 (e)
+00550;re201;AL;Kanarienvogelfedern e201 (e)
+00560;re202;AL;Rentierepithelien
+00570;re203;AL;Nerzepithelien
+00580;re204;AL;Rinderserumalbumin (BSA)
+00590;re205;AL;Pferdeserum
+00600;re206;AL;Kaninchenserum
+00610;re208;AL;Chinchilla  e208 (e)
+00620;re209;AL;Wuestenspringmaus
+00630;re210;AL;Fuchs
+00640;re211;AL;Kaninchenurinprotein
+00650;re212;AL;Schweine-Urinprotein e212 (e)
+00660;re213;AL;Papageienfedern e213 (e)
+00670;re214;AL;Finkenfedern e214 (e)
+00680;re215;AL;Taubenfedern  e215 (e)
+00690;re216;AL;Hirschepithelien
+00700;re217;AL;Frettchen
+00710;re218;AL;Hühner-Kot e218 (e)
+00720;re219;AL;Hühner-Serumprotein e219 (e)
+00730;re3;AL;Pferdeschuppen e3
+00740;re4;AL;Rinderepithelien e4
+00750;re5;AL;Hundeschuppen e5
+00760;re6;AL;Meerschweinchenepithel e6
+00770;re7;AL;Taubenkot e7 (e)
+00780;re70;AL;Gänsefedern e70 (e)
+00790;re71;AL;Maeuseepithel e71 (e)
+00800;re72;AL;Mäuseurinprotein e72 (e)
+00810;re73;AL;Rattenepithelien e73 (e)
+00820;re74;AL;Rattenurinprotein
+00830;re75;AL;Rattenserumprotein
+00840;re76;AL;Mäuseserumprotein e76 (e)
+00850;re77;AL;Wellensittichkot e77 (e)
+00860;re78;AL;Wellensittichfedern e78 (e)
+00870;re79;AL;Wellensittich-Protein e79 (e)
+00880;re80;AL;Ziegenepithelien e80 (e)
+00890;re81;AL;Schafepithelien e81 (e)
+00900;re82;AL;Kaninchenepithelien e82 (e)
+00910;re83;AL;Schweineepithelien e83 (e)
+00920;re84;AL;Hamsterepithelien e84 (e)
+00930;re85;AL;Hühnerfedern e85 (e)
+00940;re86;AL;Entenfedern e86 (e)
+00950;re87;AL;Ratte e87 (e)
+00960;re88;AL;Maus e88 (e)
+00970;re89;AL;Truthahnfedern
+00980;rex1;AL;Tierepithelien ex1
+00990;rex2;AL;e1,e5,e6,e87,e88
+01000;rex70;AL;Nagetiere ex70
+01010;rex71;AL;Geflügelfedern ex71 (e)
+01020;rex72;AL;Käfigvögel ex72 (e).
+01030;rex73;AL;Federnmischung ex73 (e)
+01040;rf1;AL;Eiklar f1
+01050;rf10;AL;Sesamschrot f10
+01060;rf11;AL;Buchweizenmehl f11
+01070;rf12;AL;Erbse f12 (e)
+01080;rf13;AL;Erdnuß f13
+01090;rf14;AL;Sojabohne f14
+01100;rf15;AL;Weiße Bohne (e)
+01110;rf17;AL;Haselnuss f17
+01120;rf18;AL;Paranuß f18 (e)
+01130;rf2;AL;Milcheiweiss f2
+01140;rf20;AL;Mandel f20 (e)
+01150;rf201;AL;Pekan-Nuß
+01160;rf202;AL;Cashew-Nuß f202 (e)
+01170;rf203;AL;Pistazie f203 (e)
+01180;rf204;AL;Forelle f204 (e)
+01190;rf205;AL;Hering
+01200;rf206;AL;Makrele
+01210;rf207;AL;Venusmuschel f207 (e)
+01220;rf208;AL;Zitrone f208 (e)
+01230;rf209;AL;Grapefruit f209 (e)
+01240;rf210;AL;Ananas f210 (e)
+01250;rf211;AL;Brombeere
+01260;rf212;AL;Champignon f212 (e)
+01270;rf213;AL;Kaninchenfleisch
+01280;rf214;AL;Spinat f 214 (e)
+01290;rf215;AL;Kopfsalat f215 (e)
+01300;rf216;AL;Kohl f216 (e)
+01310;rf217;AL;Rosenkohl
+01320;rf218;AL;Paprika f218
+01330;rf219;AL;Fenchelsamen
+01340;rf220;AL;Zimt f220 (e)
+01350;rf221;AL;Kaffee f221 (e)
+01360;rf222;AL;Tee f222 (e)
+01370;rf223;AL;Hirsesamen
+01380;rf224;AL;Mohnsamen
+01390;rf225;AL;Kürbis f225 (e)
+01400;rf226;AL;Kuerbissamen
+01410;rf227;AL;Zuckerruebensamen
+01420;rf228;AL;Milchpulver
+01430;rf23;AL;Krabbe f23 (e)
+01440;rf231;AL;Milch,gekocht f231 (e)
+01450;rf232;AL;Ovalbumin
+01460;rf233;AL;Ovomucoid
+01470;rf234;AL;Vanille f234 (e)
+01480;rf235;AL;Linsen  f235 (e)
+01490;rf236;AL;Molke f236 (e)
+01500;rf237;AL;Aprikose f237 (e)
+01510;rf238;AL;Seezunge f238 (e)
+01520;rf24;AL;Garnele f24 (e)
+01530;rf242;AL;Kirsche f242 (e)
+01540;rf243;AL;f26,f27,f83
+01550;rf244;AL;Gurke
+01560;rf245;AL;Eimischung f1, f75 (e)
+01570;rf246;AL;Guar
+01580;rf247;AL;Honig f247 (e)
+01590;rf25;AL;Tomate f25
+01600;rf251;AL;Fischmischung f251 (e)
+01610;rf253;AL;Pinienkerne f253 (e)
+01620;rf254;AL;Scholle f254 (e)
+01630;rf255;AL;Pflaume f255 (e)
+01640;rf256;AL;Walnuss f256 (e)
+01650;rf258;AL;IgE Tintenfisch f 258 (e)
+01660;rf259;AL;Weintraube f259 (e)
+01670;rf26;AL;Schweinefleisch f26 (e)
+01680;rf260;AL;Broccoli
+01690;rf261;AL;Spargel f 261 (e)
+01700;rf262;AL;Aubergine (e)
+01710;rf263;AL;Pfeffer grün f263 (e)
+01720;rf264;AL;Aal
+01730;rf265;AL;Kuemmel
+01740;rf266;AL;Muskatbluete
+01750;rf267;AL;Kardamon
+01760;rf268;AL;Gewuerznelke f268 (e)
+01770;rf269;AL;Basilikum f269 (e)
+01780;rf27;AL;Rindfleisch f27
+01790;rf270;AL;Ingwer f270 (e)
+01800;rf271;AL;Anis f271 (e)
+01810;rf272;AL;Estragon
+01820;rf273;AL;Thymian
+01830;rf274;AL;Majoran
+01840;rf275;AL;Liebstoeckel f275 (e)
+01850;rf276;AL;Fenchel, frisch
+01860;rf277;AL;Dill f277 (e)
+01870;rf278;AL;Lorbeerblatt
+01880;rf279;AL;Chillipfeffer f279 (e)
+01890;rf280;AL;IgE Pfeffer schwarz f280 (e)
+01900;rf281;AL;Curry f281 (e)
+01910;rf282;AL;Muskatnuss f282
+01920;rf283;AL;Oregano f283 (e)
+01930;rf284;AL;Truthahnfleisch f284 (e)
+01940;rf285;AL;Elchfleisch
+01950;rf286;AL;Stutenmilch
+01960;rf287;AL;Rote Bohnen
+01970;rf288;AL;Milchpulver
+01980;rf289;AL;Dattel f289 (e)
+01990;rf290;AL;Auster f290 (e)
+02000;rf291;AL;Blumenkohl f291 (e)
+02010;rf292;AL;Guave
+02020;rf293;AL;Papaya
+02030;rf294;AL;IgE Passionsfrucht f294 (e)
+02040;rf295;AL;Sternfrucht
+02050;rf296;AL;Johannisbrot
+02060;rf297;AL;Gummi arabicum f297 (e)
+02070;rf298;AL;Dragant f298 (e)
+02080;rf299;AL;Esskastanie f299 (e)
+02090;rf3;AL;Fisch (Dorsch) f3
+02100;rf300;AL;Ziegenmilch f300 (e)
+02110;rf301;AL;Kakifrucht
+02120;rf302;AL;Mandarine f302 (e)
+02130;rf303;AL;Heilbutt f303 (e)
+02140;rf304;AL;Languste f304 (e)
+02150;rf306;AL;Limone
+02160;rf307;AL;Seehecht f307 (e)
+02170;rf308;AL;Sardine f308 (e)
+02180;rf309;AL;Kichererbse f309 (e)
+02190;rf31;AL;Karotte f31
+02200;rf310;AL;Lathyrus sativus
+02210;rf315;AL;Grüne Bohne f315 (e)
+02220;rf317;AL;Koriander f317 (e)
+02230;rf324;AL;Hopfen f324 (e)
+02240;rf325;AL;Schafsmilch f325 (e)
+02250;rf328;AL;Feige f328 (e)
+02260;rf329;AL;Wassermelone f329 (e)
+02270;rf33;AL;Orange f33 (e)
+02280;rf331;AL;Safran f331 (e)
+02290;rf335;AL;Lupinensamen f335 (e)
+02300;rf343;AL;Himbeere f343 (e)
+02310;rf348;AL;Lychee f348 (e)
+02320;rf35;AL;Kartoffel f35 (e)
+02330;rf36;AL;Kokosnuss f36 (e)
+02340;rf37;AL;Miesmuschel f37 (e)
+02350;rf4;AL;Weizenmehl f4
+02360;rf40;AL;Thunfisch f40 (e)
+02370;rf41;AL;Lachs f41 (e)
+02380;rf416;AL;Omega-5-Gliadin f416 (e)
+02390;rf44;AL;Erdbeere f44
+02400;rf45;AL;Hefe (S. cerevisiae) f45 (e)
+02410;rf47;AL;Knoblauch f47 (e)
+02420;rf48;AL;Zwiebel f48 (e)
+02430;rf49;AL;Grüner Apfel f49 (e)
+02440;rf5;AL;Roggenmehl f5
+02450;rf50;AL;Span. Makrele
+02460;rf501;AL;Dinkel f501 (e)
+02470;rf51;AL;Bambussprosse
+02480;rf52;AL;Schokolade f52 (e)
+02490;rf54;AL;Suesskartoffel
+02500;rf55;AL;Rispenhirse f55 (e)
+02510;rf56;AL;Kolbenhirse f56 (e)
+02520;rf57;AL;Japanische Hirse f57 (e)
+02530;rf58;AL;Tintenfisch (Pazifik) f58 (e)
+02540;rf59;AL;Oktopus f59 (e)
+02550;rf6;AL;Gerstenmehl f6
+02560;rf60;AL;Bastardmakrele
+02570;rf61;AL;Sardine (Pazifik)
+02580;rf7;AL;Hafermehl f7
+02590;rf75;AL;Eigelb f75 (e)
+02600;rf76;AL;a-Lactalbumin f76
+02610;rf76g;AL;IgG a-Lactalbumin (e)
+02620;rf77;AL;b-Lactoglobulin f77
+02630;rf77g;AL;IgG Lactoglobulin (e)
+02640;rf78;AL;Casein f78
+02650;rf78g;AL;IgG Casein (e)
+02660;rf79;AL;Gluten f79
+02670;rf8;AL;Maismehl f8
+02680;rf80;AL;Hummer f80 (e)
+02690;rf81;AL;Hartkäse r81 (e)
+02700;rf82;AL;Schimmelkaese f82 (e)
+02710;rf83;AL;Hühnerfleisch f83 (e)
+02720;rf84;AL;Kiwi f84 (e)
+02730;rf85;AL;Sellerie f85
+02740;rf86;AL;Petersilie f86 (e)
+02750;rf87;AL;Melone f87 (e)
+02760;rf88;AL;Hammelfleisch f88 (e)
+02770;rf89;AL;IgE Senf f89 (e)
+02780;rf9;AL;Reis f9 (e)
+02790;rf90;AL;Malz f90 (e)
+02800;rf91;AL;Mango f91 (e)
+02810;rf92;AL;Banane f92 (e)
+02820;rf93;AL;Kakao f93 (e)
+02830;rf94;AL;Birne f94 (e)
+02840;rf95;AL;Pfirsich f95 (e)
+02850;rf96;AL;Avocado f96 (e)
+02860;rf999;AL;IgE Rhabarber (e)
+02870;rfx1;AL;Nussmischung fx1
+02880;rfx10;AL;f26,f27,f75,f83,f284
+02890;rfx11;AL;f8,f12,f15,f31,f260
+02900;rfx12;AL;f5,f9,f35,f212,f225
+02910;rfx13;AL;Gemüsemischung fx13 (e)
+02920;rfx14;AL;Gemüsemischung fx14 (e)
+02930;rfx15;AL;f33,f49,f92,f95
+02940;rfx16;AL;f44,f94,f208,f210
+02950;rfx17;AL;Obstmischung fx17 (e)
+02960;rfx18;AL;f12,f13,f14
+02970;rfx19;AL;Nahrungsmittel fx19 (e)
+02980;rfx2;AL;Meeresfrüchte fx2
+02990;rfx20;AL;Nahrungsmittelmischung fx20 (e)
+03000;rfx21;AL;Obstmischung 5 fx21 (e)
+03010;rfx22;AL;Nussmischung fx22 (e)
+03020;rfx23;AL;Fleischmischung fx23
+03030;rfx29;AL;Zitrusfrüchte fx29 (e)
+03040;rfx3;AL;Getreide fx3
+03050;rfx5;AL;Kindernahrung fx5
+03060;rfx7;AL;Nahrungsmittelmischung fx7
+03070;rfx70;AL;Gewürzmischung fx70 (e)
+03080;rfx71;AL;f265,f266,f267,f268
+03090;rfx72;AL;Gewürzmischung fx72 (e)
+03100;rfx74;AL;Fischmischung fx74 (e)
+03110;rfx8;AL;Nahrungsmittel 2 fx8 (e)
+03120;rfx9;AL;Nahrungsmittel 3 fx9 (e)
+03130;rg1;AL;Ruchgras g1
+03140;rg10;AL;Sorgho
+03150;rg11;AL;Trespe
+03160;rg12;AL;Roggen g12
+03170;rg13;AL;Wolliges Honiggras g13
+03180;rg14;AL;Hafer
+03190;rg15;AL;Weizen g15 (e)
+03200;rg16;AL;Wiesenfuchsschwanz
+03210;rg17;AL;Bahiagras
+03220;rg2;AL;Hundszahngras g2 (e)
+03230;rg201;AL;Gerste
+03240;rg202;AL;Mais g202 (e)
+03250;rg203;AL;Distichlis spicata
+03260;rg204;AL;Glatthafer
+03270;rg213;AL;rPhl p1/p5  g213 (e)
+03280;rg2131;AL;rPhl p1     g213 (e)
+03290;rg2135;AL;rPhl p5     g213 (e)
+03300;rg214;AL;rPhl p12    g214 (e)
+03310;rg2147;AL;rPhl p7     g214 (e)
+03320;rg214b;AL;rPhl p7/p12 g214(e)
+03330;rg3;AL;Knaeuelgras g3
+03340;rg4;AL;Wiesenschwingel g4
+03350;rg5;AL;Lolch (Weidelgras) g5
+03360;rg6;AL;Lieschgras g6
+03370;rg7;AL;Schilf (Reet) g7
+03380;rg70;AL;Haargerste
+03390;rg71;AL;Canary-Grass
+03400;rg8;AL;Wiesenrispengras g8
+03410;rg9;AL;Wei~es Strau~gras
+03420;rgx1;AL;Gräser früh gx1
+03430;rgx2;AL;g2,g5,g6,g8,g10,g17
+03440;rgx3;AL;g1,g5,g6,g12,g13
+03450;rgx4;AL;Gräser spät gx4
+03460;rh1;AL;Greer Labs. Inc.
+03470;rh2;AL;Hollister-Stier Labs
+03480;rh3;AL;Bencard
+03490;rh4;AL;Allergopharma
+03500;rhx2;AL;h2,d1,d2,i6
+03510;ri1;AL;IgE  Bienengift i1
+03520;ri2;AL;D. maculata i2 (e)
+03530;ri201;AL;Pferdebremse i201 (e)
+03540;ri202;AL;Ruesselkaefer
+03550;ri203;AL;Mehlmotte
+03560;ri204;AL;Rinderbremse i204 (e)
+03570;ri205;AL;IgE  Hummelgift i205 (e)
+03580;ri3;AL;IgE  Wespengift i3
+03590;ri4;AL;Papierwespe i4 (e)
+03600;ri5;AL;Gelbwespe i5 (e)
+03610;ri6;AL;Kuechenschabe
+03620;ri7;AL;IgE  Hummelgift i7 (e)
+03630;ri70;AL;Feuerameise i70 (e)
+03640;ri71;AL;Stechmücke i71 (e)
+03650;ri72;AL;Sudanfliege
+03660;ri73;AL;Rote Mueckenlarve i73 (e)
+03670;ri75;AL;Hornissengift, europ. i75 (e)
+03680;ri76;AL;Trogoderma angustum
+03690;ri8;AL;Motte
+03700;rk020;AL;Schafwolle bearbeitet k020 (e)
+03710;rk021;AL;Schafwolle unbearbeitet k021 (e)
+03720;rk035;AL;Fichte k035 (e)
+03730;rk036;AL;Kiefer k036 (e)
+03740;rk044;AL;Tanne k044 (e)
+03750;rk07;AL;Heustaub k07 (e)
+03760;rk201;AL;Papain
+03770;rk202;AL;Bromelin k202 (e)
+03780;rk203;AL;Phospholipase k203 (e)
+03790;rk204;AL;IgE Maxatase k204 (e)
+03800;rk205;AL;IgE Alkalase k205 (e)
+03810;rk206;AL;IgE Savinase k206 (e)
+03820;rk208;AL;Lysozym k208 (e)
+03830;rk209;AL;Hexahydrophthalsaeureanhydrid
+03840;rk210;AL;Malaiensaeureanhydrid k210 (e)
+03850;rk211;AL;M-tetrahydrophthalsäureanhydrid
+03860;rk212;AL;Abachi-Holzstaub k212 (e)
+03870;rk70;AL;Gruene Kaffeebohne
+03880;rk71;AL;Rizinusbohne
+03890;rk72;AL;Isphagula
+03900;rk73;AL;Wildseide k73 (e)
+03910;rk74;AL;Naturseide k74 (e)
+03920;rk75;AL;Isocyanat TDI k75
+03930;rk76;AL;Isocyanat MDI k76
+03940;rk77;AL;Isocyanat HDI k77
+03950;rk78;AL;Aethylenoxid k78 (e)
+03960;rk79;AL;Phthalsäureanhydrid rk79 (e)
+03970;rk80;AL;Formalin k80
+03980;rk81;AL;Ficus spp. k81
+03990;rk82;AL;Latex k82
+04000;rk83;AL;Baumwollsamen k83 (e)
+04010;rk84;AL;Sonnenblumensamen
+04020;rk85;AL;Chloramin T
+04030;rk86;AL;Trimelitsäure-Anhydrid k86 (e)
+04040;rk87;AL;a-Amylase k87
+04050;rkx04;AL;Weichhölzer kx04 (e)
+04060;rkx05;AL;Harthölzer  kx05 (e)
+04070;rl030;AL;Hanf l030 (e)
+04080;rl043e;AL;IgE Alcacyl l043 (e)
+04090;rl043g;AL;IgG Alcacyl (e)
+04100;rl079e;AL;IgE Coffein l079 (e)
+04110;rl079g;AL;IgG Koffein (e)
+04120;rl090e;AL;IgE Dextromethorphan l090 (e)
+04130;rl090g;AL;IgG Dextromethorphan (e)
+04140;rl295;AL;Carotinoide l295 (e)
+04150;rl457;AL;Betanin E162 (e)
+04160;rl461;AL;Zitronensäure E330 (e)
+04170;rl645;AL;IgE Thiopental (e)
+04180;rl645g;AL;IgG Thiopental (e)
+04190;rl805;AL;Xanthophylle E161 (e)
+04200;rl818;AL;IgE Acetazolamid (e)
+04210;rl818g;AL;IgG Acetazolamid (e)
+04220;rm1;AL;Penicillium notatum m1
+04230;rm14;AL;purpurascens
+04240;rm15;AL;Trichodema viride
+04250;rm16;AL;Curvalaria lunata
+04260;rm2;AL;Cladosporium herbarum m2
+04270;rm201;AL;Ustilago nuda
+04280;rm202;AL;acremonium
+04290;rm203;AL;Trichosporon pullans
+04300;rm204;AL;Ulocladium chartarum
+04310;rm205;AL;Trichophytum rubrum
+04320;rm207;AL;Aspergillus niger m207 (e)
+04330;rm211;AL;Tr.mentagr.interdig.m211 (e)
+04340;rm3;AL;Aspergillus fumigatus m3 (e)
+04350;rm3g;AL;IgG Aspergillus fumigatus
+04360;rm4;AL;Mucor racemosus
+04370;rm44;AL;Bäckerhefe m44 (e)
+04380;rm5;AL;Candida albicans
+04390;rm6;AL;Alternaria alternata m6
+04400;rm7;AL;Botrytis cinerea
+04410;rm70;AL;Pityrosporum orbiculare m70 (e)
+04420;rm8;AL;halodes
+04430;rm9;AL;Fusarium moniliforme m9 (e)
+04440;rmx1;AL;Schimmelpilze mx1
+04450;rmx2;AL;Schimmelpilzmischung mx2 (e)
+04460;ro1;AL;Baumwolle o1 (e)
+04470;ro201;AL;Tabakblätter o201 (e)
+04480;ro202;AL;Fischfutter, A.salina o202 (e)
+04490;ro203;AL;Fischfutter, Tetramin o203 (e)
+04500;ro207;AL;Fischfutter, Daphnia o207 (e)
+04510;ro211;AL;Mehlwurm o211 (e)
+04520;ro70;AL;Spermaflüssigkeit o70 (e)
+04530;rp1;AL;Ascaris
+04540;rp2;AL;Echinococcus
+04550;rp4;AL;Anisakis p4 (e)
+04560;rpax1;AL;Tierschuppen/ Federn pax1 (e)
+04570;rpax2;AL;Milben / Insekten pax2 (e)
+04580;rpax3;AL;Pollen/ Schimmelpilze pax3 (e)
+04590;rpax4;AL;f4,f14,k87,Reiskäfer
+04600;rpax5;AL;Chemikalien pax5 (e)
+04610;rpax6;AL;Desinfektionsmittel pax6 (e)
+04620;rrx1;AL;Inhalationsscreen saisonal
+04630;rrx2;AL;Inhalationsscreen perenneal
+04640;rsx1;AL;Allergie-Screen (Inhalation)
+04650;rt1;AL;Ahorn t1
+04660;rt10;AL;Walnuss t10
+04670;rt11;AL;Platane
+04680;rt12;AL;Salweide t12
+04690;rt14;AL;Pappel t14
+04700;rt15;AL;Esche t15 (e)
+04710;rt16;AL;Weymouthkiefer rt16 (e)
+04720;rt17;AL;Japan. Zeder
+04730;rt18;AL;Eukalyptus
+04740;rt19;AL;Mimose
+04750;rt2;AL;Grau-Erle t2
+04760;rt20;AL;Mesquite
+04770;rt201;AL;Fichte t201 (e)
+04780;rt203;AL;Rosskastanie t 203 (e)
+04790;rt205;AL;Holunder
+04800;rt206;AL;Esskastanie t206 (e)
+04810;rt207;AL;Douglasie
+04820;rt208;AL;Linde t208 (e)
+04830;rt209;AL;Hainbuche
+04840;rt21;AL;Melaleuca Baum
+04850;rt210;AL;Liguster
+04860;rt211;AL;Liquidambar styraciflua
+04870;rt212;AL;Zeder t212 (e)
+04880;rt2151;AL;rBet v1    Rt215 (e)
+04890;rt22;AL;Hickory - Baum
+04900;rt221;AL;rBet v2/4 t221 (e)
+04910;rt2212;AL;rBet v2    t221 (e)
+04920;rt2214;AL;rBet v4    t221 (e)
+04930;rt23;AL;Zypresse t23 (e)
+04940;rt3;AL;Birke t3
+04950;rt4;AL;Hasel t4
+04960;rt5;AL;Buche t5
+04970;rt6;AL;Sadebaum (Juni.sab.)
+04980;rt7;AL;Eiche t7
+04990;rt70;AL;Maulbeerbaum
+05000;rt72;AL;Palme
+05010;rt73;AL;Pinie t73 (e)
+05020;rt8;AL;Ulme t8
+05030;rt9;AL;Olive t9 (e)
+05040;rtx1;AL;Bäume früh (tx1)
+05050;rtx2;AL;Bäume spät (tx2)
+05060;rtx3;AL;t6,t7,t8,t14,t20
+05070;rtx4;AL;t7,t8,t11,t12,t14
+05080;rtx5;AL;Bäume früh tx5
+05090;rtx6;AL;Bäume spät tx6
+05100;rtx7;AL;t12,t16,t18,t19,t21
+05110;rtx8;AL;t1,t3,t4,t7,t11
+05120;rtx9;AL;t2,t3,t4,t7,t12
+05130;rw1;AL;Beifussblättrige Ambrosie w1
+05140;rw10;AL;Weisser Gänsefuss w10
+05150;rw11;AL;Salzkraut w11
+05160;rw12;AL;Goldrute w12 (e)
+05170;rw13;AL;Spitzklette
+05180;rw14;AL;Fuchsschwanz
+05190;rw15;AL;Melde
+05200;rw16;AL;Iva cillata
+05210;rw17;AL;Feuerbusch
+05220;rw18;AL;Sauerampfer
+05230;rw19;AL;Glaskraut, aufrechtes w19 (e)
+05240;rw2;AL;Ausdauernde Ambrosie w2 (e)
+05250;rw20;AL;Brennessel
+05260;rw203;AL;Rapspollen
+05270;rw204;AL;Sonnenblume w204
+05280;rw206;AL;Kamille
+05290;rw207;AL;Lupine  w207 (e)
+05300;rw208;AL;Lucopodium
+05310;rw21;AL;Glaskraut, P. jud. w21
+05320;rw210;AL;Zuckerruebe
+05330;rw22;AL;Chrysantheme w22 (e)
+05340;rw3;AL;Dreilappige Ambrosie w3 (e)
+05350;rw30;AL;Tulpe w30 (e)
+05360;rw4;AL;(falsche Ambrosie)
+05370;rw5;AL;Wermut
+05380;rw6;AL;Beifuss w6
+05390;rw7;AL;Margerite w7 (e)
+05400;rw8;AL;Löwenzahn w8 (e)
+05410;rw9;AL;Spitzwegerich w9
+05420;rwx1;AL;Kräuter wx1
+05430;rwx2;AL;w2,w6,w9,w10,w15
+05440;rwx209;AL;Ambrosien wx209 (e)
+05450;rwx3;AL;w6,w9,w10,w12,w20
+05460;rwx5;AL;w1,w6,w7,w8,w12
+05470;rwx6;AL;w9,w10,w11,w18
+05480;rwx7;AL;w7,w8,w9,w10,w12
+05490;ry276;AL;Johannisbeere y276 (e)
+05500;ry277;AL;Preiselbeere y277 (e)
+05510;rz11g;AL;IgG Taubenkot (e)
+05520;rz49g;AL;IgG Taubenfedern (e)
+00010;sperv;E2;Spermien nach Vasektomie
+00010;aglu;EJ;Alpha-Glucosidase (Seminalplasma)(e)
+00020;ausseh;EJ;Aussehen
+00030;baktsp;EJ;Bakterien
+00040;beweg;EJ;Progressiv bewegl. Spermien
+00050;beweg2;EJ;Progressiv bewegl. Spermien nach 2 h
+00060;ecsper;EJ;Erythrozyten
+00070;entnah;EJ;Ejakulation am
+00080;epispe;EJ;Epithelzellen
+00090;fruc;EJ;Fructose (Seminalplasma) (e)
+00100;immot;EJ;  Immotil
+00110;konzej;EJ;Spermien pro Ejakulat
+00120;konzml;EJ;Spermienkonzentration
+00130;kopf;EJ;  Kopf
+00140;lcsper;EJ;Leukozyten
+00150;makzei;EJ;Makroskop. Beurteilung nach
+00160;mikzei;EJ;Mikroskop. Beurteilung nach
+00170;mittel;EJ;  Mittelstück
+00180;motabn;EJ;Progressive-Motilitätsabnahme
+00190;norma1;EJ;Normale Formen
+00200;normal;EJ;Normale Formen
+00210;nprogb;EJ;  Nichtprogressiv
+00220;patho1;EJ;Pathologische Formen
+00230;pathol;EJ;Pathologische Formen
+00240;phsper;EJ;pH im Seminalplasma
+00250;progb;EJ;  Progressiv
+00260;schwan;EJ;  Flagelle
+00270;spbeur;EJ;Beurteilung
+00280;spmar;EJ;Anti-Sperma-AK MAR
+00290;spmar1;EJ;Anti-Sperma-AK MAR
+00300;taper;EJ;  Tapering-Formen
+00310;tote;EJ;Tote Spermien (Eosintest)
+00320;unbewe;EJ;Unbewegliche Spermien
+00330;viskos;EJ;Viskosität
+00340;volspe;EJ;Ejakulat-Volumen
+00350;zellen;EJ;Spermatogenesezellen
+00360;zisp;EJ;Zink (e)
+00010;a2ap;GE;alpha2-Antiplasmin (e)
+00020;acardg;GE;Anti-Cardiolipin IgG (e)
+00030;acardm;GE;Anti-Cardiolipin IgM (e)
+00040;acla;GE;Anti-Cardiolipin IgA (e)
+00050;acla1;GE;  Anti-Cardiolipin IgA
+00060;aclg;GE;Anti-Cardiolipin IgG (e)
+00070;aclg1;GE;  Anti-Cardiolipin IgG
+00080;aclm;GE;Anti-Cardiolipin IgM (e)
+00090;aclm1;GE;  Anti-Cardiolipin IgM
+00100;af8;GE;anti-Faktor VIII Ak (e)
+00110;apc1;GE;  APC 1
+00120;apc2;GE;  APC 2
+00130;apcr;GE;APC-Resistenz (e)
+00140;at3a;GE;Antithrombin III funkt.
+00150;at3a1;GE;Antithrombin III funkt. (e)
+00160;at3a2;GE;Antithrombin III funkt. (e)
+00170;b2gp1;GE;beta2-GP I Ak (e)
+00180;b2gp1a;GE;  beta2-GP I IgA
+00190;b2gp1g;GE;  beta2-GP I IgG
+00200;b2gp1m;GE;  beta2-GP I IgM
+00210;blutz;GE;Blutungszeit
+00220;ddim;GE;D-Dimer
+00230;ddim1;GE;D-Dimer
+00240;ddim2;GE;D-Dimer
+00250;f10;GE;Faktor X (e)
+00260;f11;GE;Faktor XI-Aktivität (e)
+00270;f111;GE;Faktor XI-Aktivität (e)
+00280;f12;GE;Faktor XII-Aktivität (e)
+00290;f13;GE;Faktor XIII (e)
+00300;f131;GE;Faktor XIII (e)
+00310;f2;GE;Faktor II (e)
+00320;f5;GE;Faktor V (e)
+00330;f51;GE;Faktor V (e)
+00340;f7;GE;Faktor VII (e)
+00350;f8;GE;Faktor VIII-Aktivität (e)
+00360;f81;GE;Faktor VIII-Aktivität (e)
+00370;f82;GE;Faktor VIII-Aktivität (e)
+00380;f9;GE;Faktor IX-Aktivität (e)
+00390;f91;GE;Faktor IX-Aktivität (e)
+00400;fib;GE;Fibrinogen
+00410;fibksl;GE;QC Fibrinogen KSL
+00420;fibs;GE;Fibrinogen (nach Schulz) (e)
+00430;fvw2n;GE;vWF Typ 2 Normandy (e)
+00440;fvwa;GE;v.Willebrand rel.Ag (e)
+00450;fvwa1;GE;v.Willebrand rel.Ag (e)
+00460;fvwbi;GE;vWF Kollagenbind.aktivität(e)
+00470;fvwmm;GE;vWF Multimere (e)
+00480;fvwr;GE;v.Willebrand Rist.-CoF (e)
+00490;fvwr1;GE;v.Willebrand Rist.-CoF (e)
+00500;gerz;GE;Gerinnungszeit
+00510;hcyst;GE;Homocystein
+00520;hemm;GE;Hemmkörper intrin.Syst. (e)
+00530;hepca;GE;Heparin Cof. II Akt. (e)
+00540;hepxa;GE;Heparin, Anti Xa-Aktiv. (e)
+00550;inr;GE;INR
+00560;luako;GE;Lupus Anticoagulans (e)
+00570;pai;GE;Plasminogen Akt. Inhib. (e)
+00580;paim;GE;PAI Mutation (e)
+00590;pfaa;GE;PFA - ADP
+00600;pfae;GE;PFA - Epinephrin
+00610;plasm;GE;Plasminogen (e)
+00620;proca;GE;Protein C funkt.
+00630;proca1;GE;Protein C funkt. (e)
+00640;prsf;GE;Protein S frei (e)
+00650;prsf1;GE;Protein S frei (e)
+00660;prsfa;GE;Protein S frei funkt. (e)
+00670;prsg;GE;Protein S gesamt (e)
+00680;prsg1;GE;Protein S gesamt (e)
+00690;ptt;GE;PTT (Part. Thrombopl.zeit)
+00700;q;GE;Quick (Prothrombinzeit)
+00710;tat;GE;TAT Thrombin-AT III Komplex (e)
+00720;tz1;GE;Thrombinzeit I
+00730;tz2;GE;Thrombinzeit II
+00010;a149p;GN;  Aldolase B (A149P4)
+00020;a174d;GN;  Aldolase B (A174D)
+00030;alleII;GN;  Allel
+00040;allel;GN;  Allel
+00050;bbup;GN;B. burgdorferi DNA (PCR)
+00060;bhep;GN;Bartonella henselae DNA
+00070;c282y;GN;C282Y-Allel
+00080;cfp;GN;Cystische Fibrose Genotyp (e)
+00090;chorh;GN;Chorea Huntington (e)
+00100;cy2c19;GN;Cytochrom P450 2C19 Genotyp (e)
+00110;cyp2d6;GN;Cytochrom P450 2D6 Genotyp (e)
+00120;del4e4;GN;  Aldolase B (del4E4)
+00130;drplap;GN;DRPLA (e)
+00140;f2m;GN;Faktor II Mutation (G20210A)
+00150;f5l;GN;Faktor V Leiden Mutation
+00160;fap;GN;Friedreich-Ataxie (e)
+00170;fmfp;GN;Fam. Mittelmeerfieber(e)
+00180;fshdp;GN;Fazioscapulohum.Muskeldystr. (e)
+00190;fxp;GN;Fragiles X - Syndrom (e)
+00200;h63d;GN;H63D-Allel
+00210;hbpatp;GN;(Hämo)Globingen-Analyse (e)
+00220;hächro;GN;Mutationsnachweis (e)
+00230;jak2;GN;JAK2-Mutation (e)
+00240;meup;GN;M. Gilbert-Meulengracht (e)
+00250;mthfr;GN;MTHFR Homocystein (C677T) (e)
+00260;n334k;GN;  Aldolase B (N334K)
+00270;plial;GN;  Allel
+00280;plip;GN;Primäre Laktoseintoleranz
+00290;prawp;GN;Prader-Willi-Syndrom (e)
+00300;spsp;GN;Spastische Spinalparalyse (e)
+00310;tpmt2;GN;  TPMT*2
+00320;tpmt3a;GN;  TPMT*3A
+00330;tpmt3b;GN;  TPMT*3B
+00340;tpmt3c;GN;  TPMT*3C
+00350;tpmta;GN;  TPMT-Aktivität
+00360;twhp;GN;Tropheryma whipplei DNA
+00370;urosp;GN;Urosynthase-Mutationsnachweis (e)
+00380;zölp;GN;Zöliakie (Genetische Veranlagung) (e
+00010;abaso;HA;  Basophile
+00020;abasoa;HA;  Basophile abs.
+00030;abeurt;HA;Beurteilung
+00040;aeos;HA;  Eosinophile
+00050;aeosa;HA;  Eosinophile abs.
+00060;akanto;HA;Akanthozyten
+00070;aksp;HA;AK-Spezifität 1 (e)
+00080;aksp1;HA;AK-Spezifität 2 (e)
+00090;aksp2;HA;AK-Spezifität 3 (e)
+00100;aksp3;HA;AK-Spezifität 4 (e)
+00110;aksp4;HA;AK-Spezifität 5 (e)
+00120;alcp;HA;Alkal. Leukozyten-Phosph.
+00130;alympa;HA;  Lymphozyten abs.
+00140;alymph;HA;  Lymphozyten
+00150;amono;HA;  Monozyten
+00160;amonoa;HA;  Monozyten abs.
+00170;aneut;HA;  Neutrophile
+00180;aneuta;HA;  Neutrophile abs.
+00190;aniso;HA;Anisozytose
+00200;anistc;HA;Anisozytose
+00210;anulo;HA;Anulozyten
+00220;atc;HA;Anti-Thrombozyten Ak (e)
+00230;atcab;HA;Beurteilung Tc-Ak
+00240;atcag;HA;anti-Tc-Ak  gebunden
+00250;atcaz;HA;anti-Tc Ak  zirkulierend
+00260;atypz;HA;  "Atypische Zellen"
+00270;basecb;HA;  Basophile Erythroblasten
+00280;baso;HA;  Basophile
+00290;basop;HA;  Basophile
+00300;baspu;HA;Basophile Punktierung
+00310;bcr;HA;BCR-ABL (p210) (e)
+00320;beuror;HA;  Beurteilung
+00330;blast;HA;  "Blasten"
+00340;blaste;HA;  "Blasten"
+00350;blgr;HA;Blutgruppe
+00360;blgrs;HA;Blutgruppe
+00370;c1656a;HA;NK-Lymphozyten (CD16+,CD56+)
+00380;c1656r;HA;NK-Lymphozyten (CD16+,CD56+)
+00390;cd19a;HA;B-Lymphozyten (CD19+)
+00400;cd19r;HA;B-Lymphozyten (CD19+)
+00410;cd38;HA;CD38 (e)
+00420;cd3a;HA;Lymphozyten (CD3+)
+00430;cd3r;HA;Lymphozyten (CD3+)
+00440;cd4;HA;Lymphozytensubtypisierung(e)
+00450;cd43a;HA;Lymphozyten (CD3+, CD4+)
+00460;cd43r;HA;Lymphozyten (CD3+, CD4+)
+00470;cd45a;HA;Lymphozyten (CD45+)
+00480;cd45r;HA;Lymphozyten (CD45+)
+00490;cd48q;HA;Ratio CD4 / CD8
+00500;cd83a;HA;Lymphozyten (CD3+, CD8+)
+00510;cd83r;HA;Lymphozyten (CD3+, CD8+)
+00520;cohb;HA;  CO-Hämoglobin
+00530;cood;HA;DAT (Coombs dir.) polyspez.
+00540;cood1;HA;DAT (Coombs dir.) polyspez.
+00550;cood1k;HA;DAT (Coombs direkt) (Kreuze)
+00560;coodk;HA;DAT (Coombs direkt) (Kreuze)
+00570;coodm;HA;DAT (Coombs dir.) monospez.
+00580;coodma;HA;  IgA
+00590;coodmc;HA;  C3c
+00600;coodmd;HA;  C3d
+00610;coodmg;HA;  IgG
+00620;coodmm;HA;  IgM
+00630;coodpm;HA;Coombs direkt poly/mono (e)
+00640;coods;HA;DAT (Coombs dir.) polyspez.
+00650;coodsk;HA;DAT (Coombs direkt) (Kreuze)
+00660;cooi;HA;AK-Suchtest (Coombs ind.)
+00670;cooie;HA;Coombs ind. mit Enzym
+00010;cooisr;HA
+00680;cooit2;HA;Titer AK 2
+00690;cooit3;HA;Titer AK 3
+00700;cooiti;HA;Titer AK 1
+00710;dola;HA;Donath-Landsteiner Ak (e)
+00720;ec;HA;Erythrozyten
+00730;ec1;HA;Erythrozyten-Konzentrat
+00740;ec2;HA;Erythrozyten-Konzentrat
+00750;ec3;HA;Erythrozyten-Konzentrat
+00760;ec4;HA;Erythrozyten-Konzentrat
+00770;ec5;HA;Erythrozyten-Konzentrat
+00780;ec6;HA;Erythrozyten-Konzentrat
+00790;ec7;HA;Erythrozyten-Konzentrat
+00800;ec8;HA;Erythrozyten-Konzentrat
+00810;ecag;HA;Ec-Antigenbestimmung
+00820;ecal;HA;Ec-Allo-Antikörper (Verrechnung)
+00830;ecblas;HA;  Erythroblasten
+00840;ece1;HA;Erythrozyten-Konzentrat
+00850;ece2;HA;Erythrozyten-Konzentrat
+00860;ece3;HA;Erythrozyten-Konzentrat
+00870;ece4;HA;Erythrozyten-Konzentrat
+00880;ecel;HA;Erythrocyten-Ak Elution (e)
+00890;ecere1;HA;Erythrozyten-Konzentrat
+00900;ecere2;HA;Erythrozyten-Konzentrat
+00910;ecere3;HA;Erythrozyten-Konzentrat
+00920;ecere4;HA;Erythrozyten-Konzentrat
+00930;ecret1;HA;Erythrozyten-Konzentrat
+00940;ecret2;HA;Erythrozyten-Konzentrat
+00950;ecret3;HA;Erythrozyten-Konzentrat
+00960;ecret4;HA;Erythrozyten-Konzentrat
+00970;ecret5;HA;Erythrozyten-Konzentrat
+00980;ecret6;HA;Erythrozyten-Konzentrat
+00990;ecret7;HA;Erythrozyten-Konzentrat
+01000;ecret8;HA;Erythrozyten-Konzentrat
+01010;eier;HA;Eierschalenformen
+01020;eos;HA;  Eosinophile
+01030;eosp;HA;  Eosinophile
+00020;erypoe;HA
+00030;exbeur;HA
+01040;exon2;HA;Exon 2 (Verrechnung)
+01050;exon35;HA;Exon 3,5 (Verrechnung)
+01060;fettge;HA;Fettgehalt
+01070;fgp1;HA;Frisch gefrorenes Plasma
+01080;fgp2;HA;Frisch gefrorenes Plasma
+01090;fgp3;HA;Frisch gefrorenes Plasma
+01100;fgp4;HA;Frisch gefrorenes Plasma
+01110;fgp5;HA;Frisch gefrorenes Plasma
+01120;fgp6;HA;Frisch gefrorenes Plasma
+01130;fgp7;HA;Frisch gefrorenes Plasma
+01140;fgp8;HA;Frisch gefrorenes Plasma
+01150;fgpe1;HA;Frisch gefrorenes Plasma
+01160;fgpe2;HA;Frisch gefrorenes Plasma
+01170;fgpe3;HA;Frisch gefrorenes Plasma
+01180;fgpe4;HA;Frisch gefrorenes Plasma
+01190;fgper1;HA;Frisch gefrorenes Plasma
+01200;fgper2;HA;Frisch gefrorenes Plasma
+01210;fgper3;HA;Frisch gefrorenes Plasma
+01220;fgper4;HA;Frisch gefrorenes Plasma
+01230;fgpre1;HA;Frisch gefrorenes Plasma
+01240;fgpre2;HA;Frisch gefrorenes Plasma
+01250;fgpre3;HA;Frisch gefrorenes Plasma
+01260;fgpre4;HA;Frisch gefrorenes Plasma
+01270;fgpre5;HA;Frisch gefrorenes Plasma
+01280;fgpre6;HA;Frisch gefrorenes Plasma
+01290;fgpre7;HA;Frisch gefrorenes Plasma
+01300;fgpre8;HA;Frisch gefrorenes Plasma
+01310;flt3;HA;FLT3-ITD (e)
+01320;fragme;HA;Fragmentozyten
+01330;frhb;HA;Freies Hämoglobin, Plasma (e)
+01340;g6pdh;HA;Glucose-6-Ph-Dehydrogenase (e)
+01350;g6pdl;HA;Glucose-6-PDH qual. (e)
+00040;gbb;HA
+01360;gewmz;HA;  Gewebsmastzellen
+01370;grfein;HA;Granula fein
+01380;grgrob;HA;Granula grob
+01390;grmitt;HA;Granula mittelgrob
+01400;gump;HA;  Gumprechtsche Schollen
+01410;hb;HA;Hämoglobin
+01420;hbea2;HA;  Hämoglobin A2
+01430;hbeah;HA;  Abnormes Hämoglobin
+01440;hbeah%;HA;  Anteil abnormes Hämoglobin
+01450;hbebe;HA;Beurteilung
+01460;hbeec;HA;  Erythrozyten
+01470;hbef;HA;  Hämoglobin F
+01480;hbeh;HA;  Hämoglobin H
+01490;hbehb;HA;  Hämoglobin
+01500;hbela2;HA;  Hämoglobin A2
+01510;hbelan;HA;  Anormales Hämoglobin
+01520;hbelf;HA;  Hämoglobin F
+01530;hbelg6;HA;  Glucose-6-PDH qualitativ
+01540;hbelpy;HA;  Pyruvat-kinase
+01550;hbemcv;HA;  MCV
+01560;hbesi;HA;  Sichelzelltest
+01570;hbf;HA;Hämoglobin-F quantitativ (e)
+01580;hbh;HA;  HbH - Innenkörper
+01590;hbret;HA;Hb-Gehalt im Retikulozyt
+01600;hein;HA;Heinz' Innenkörper (e)
+01610;hema;HA;HemaVisions-Test (e)
+01620;hit;HA;HIT-Abklärung
+01630;hit1;HA;HIT-Abklärung (e)
+01640;hk;HA;Hämatokrit
+01650;hla;HA;HLA - B 27 (e)
+01660;hlaag1;HA;HLA-Ag, einzeln, 1.
+01670;hlaag2;HA;HLA-Ag, 2.
+01680;hlab51;HA;HLA - B 51 (e)
+01690;hlaty;HA;HLA-Typisierung (e)
+01700;hlatyn;HA;HLA-Typ II DQ (e)
+01710;hlatyt;HA;HLA-Typisierung (A, B, DR) (e)
+01720;howell;HA;Howell Jolly
+01730;hypo;HA;Hypochrom
+01740;inteis;HA;  Interstitielles Eisen
+01750;ipkm;HA;Immunphänotypisierung (Knochenmark)
+01760;kellag;HA;Kell-Antigen
+01770;kmbeur;HA;Knochenmarkbeurteilung
+00050;kno;HA
+01780;kpykno;HA;Kerne pyknotisch
+01790;kx;HA;KX ( für H*3 QC)
+01800;ky;HA;KY ( für H*3 QC)
+01810;kälte;HA;Kälteagglutinin-Nachweis(e)
+01820;kälte1;HA;Kälteagglutinine (e)
+01830;lc;HA;Leukozyten
+01840;lc1;HA;Leukozyten
+01850;lckor;HA;Leukozyten korrigiert
+01860;lckor1;HA;Leukozyten korrigiert
+01870;leuty;HA;Leukozytentypisierung (e)
+01880;lyip;HA;Lymph.-Immunphänotyp (e)
+01890;lymph;HA;  Lymphozyten
+01900;lymphz;HA;  Lymph./lymphoide Z.
+00060;lympoe;HA
+01910;lädier;HA;Lädierte Zellen
+01920;ma;HA;Malaria-Plasmodien
+01930;makrop;HA;  Makrophagen, Histiozyten
+01940;makroz;HA;Makrozytose
+01950;malp;HA;Malaria (Genomnachweis) (e)
+01960;mch;HA;  MCH
+01970;mchc;HA;  MCHC
+01980;mcv;HA;  MCV
+01990;mcvret;HA;MCV Retikulozyten
+02000;megakz;HA;  Megakaryozyten
+02010;megalo;HA;Megalozyten
+02020;meta;HA;  Metamyelozyten
+02030;metamz;HA;  Metamyelozyten
+02040;methb;HA;Met-Hämoglobin (e)
+02050;methb1;HA;  Met-Hämoglobin
+02060;mikro;HA;Mikrozytose
+02070;mono;HA;  Monozyten
+02080;monoz;HA;  Monozyten
+02090;myebla;HA;  Myeloblasten
+02100;myeery;HA;Myelopoese:Erythropoese
+02110;myelo;HA;  Myelozyten
+02120;myelob;HA;  Myeloblasten
+02130;myeloz;HA;  Myelozyten
+00070;myepoe;HA
+02140;ogbb;HA;Ohne GBB
+02150;omdiff;HA;Mdiff ohne Verrechnung
+00080;osmre;HA
+02160;ovalo;HA;Ovalozyten
+02170;oxyecb;HA;  Oxyphile Erythroblasten
+02180;plasma;HA;  Plasmazellen
+02190;plasmz;HA;  Plasmazellen
+02200;pnh;HA;GPI-verankerte Proteine (PNH) (e)
+02210;poik;HA;Poikilozytose
+02220;polecb;HA;  Polychrom. Erythroblasten
+02230;poly;HA;Polychromasie
+02240;proecb;HA;  Proerythroblasten
+02250;promye;HA;  Promyelozyten
+02260;promyz;HA;  Promyelozyten
+02270;qual;HA;MATERIALQUALITÄT
+02280;reakt;HA;  Reaktive Lymphozyten
+00090;res;HA
+02290;rethe;HA;  Hb-Gehalt im Reti
+02300;reti;HA;Retikulozyten
+02310;retiab;HA;  Retikulozyten absolut
+02320;retiko;HA;  Retikulozyten korrigiert
+02330;rety;HA;  ret-y (-> Hb-Gehalt im Reti)
+02340;rhes;HA;Rhesus
+02350;rhess;HA;Rhesus
+02360;rhph;HA;Rhesus Phänotyp
+02370;rhphr;HA;Rhesus Phänotyp Rechnungsanalyse
+02380;riesen;HA;Riesenplättchen
+02390;ringsi;HA;  Ringsideroblasten
+00100;rot;HA
+02400;sclier;HA;Basophile Schlieren
+02410;seg;HA;  Neutr. segmentkernig
+02420;segk;HA;  Segmentkernige Neutroph.
+02430;sichz;HA;Sichelzelltest
+02440;sidero;HA;  Sideroblasten
+02450;sr;HA;Senkung nach 1 Std.
+02460;stab;HA;  Neutr. stabkernig
+02470;stabhb;HA;  Stabilität des Hb
+02480;stabk;HA;  Stabkernige Neutrophile
+02490;stam;HA;Stammzellkulturen (e)
+02500;stomat;HA;Stomatozyten
+02510;target;HA;Targetzellen
+02520;tc;HA;Thrombozyten
+02530;tc1;HA;Thrombozyten-Konzentrat
+00110;tcmorp;HA
+02540;tcret1;HA;Thrombozyten-Konzentrat
+02550;tear;HA;Tear Drops
+00120;thrpoe;HA
+02560;totecp;HA;Total Erythropoese
+02570;totmyp;HA;Total Myelopoese
+02580;vakuol;HA;Vakuolen
+02590;vt1;HA;Verträglichkeitsprüfung
+02600;vt2;HA;Verträglichkeitsprüfung
+02610;vt3;HA;Verträglichkeitsprüfung
+02620;vt4;HA;Verträglichkeitsprüfung
+02630;vt5;HA;Verträglichkeitsprüfung
+02640;vt6;HA;Verträglichkeitsprüfung
+02650;vt7;HA;Verträglichkeitsprüfung
+02660;vt8;HA;Verträglichkeitsprüfung
+00130;weiss;HA
+02670;zellge;HA;ZELLGEHALT
+02680;überse;HA;Kerne übersegmentiert
+00010;arseh;HR;Arsen (e)
+00020;becgh;HR;Benzoylecgonin (e)
+00030;bleih;HR;Blei (e)
+00040;cocah;HR;Cocain (e)
+00050;thalh;HR;Thallium (e)
+00010;11dcop;KC;11-Desoxycort. (Comp. S) supp. (e)
+00020;11dcor;KC;11-Desoxycortisol(e)
+00030;11dcos;KC;11-Desoxycortisol stim.(e)
+00040;125oh;KC;1,25-OH Cholecalciferol(e)
+00050;125oh1;KC;1,25-OH Cholecalciferol(e)
+00060;17pro;KC;17-OH-Progesteron(e)
+00070;17pro1;KC;17-OH-Progesteron (e)
+00080;17pro2;KC;17-OH-Progesteron (e)
+00090;17prs;KC;17-OH-Prog. stim.(e)
+00100;17prs2;KC;17-OH-Prog. stim. 2.Probe (e)
+00110;17prsu;KC;17-OH-Progesteron supp.(e)
+00120;25oh;KC;25-OH-Cholecalciferol(e)
+00130;25oh1;KC;25-OH-Cholecalciferol (e)
+00140;25oh2;KC;25-OH-Cholecalciferol (e)
+00150;25oh3;KC;25-OH-Cholecalciferol (e)
+00160;25oh4;KC;25-OH-Cholecalciferol (e)
+00170;25oh5;KC;25-OH-Cholecalciferol
+00180;5nukl;KC;5-Nukleotidase (e)
+00190;9ohris;KC;9-OH-Risperidon (e)
+00200;a1a;KC;Alpha-1-Antitrypsin
+00210;a1aph;KC;alpha-1-AT Phänotyp(e)
+00220;a21oh;KC;AK gegen 21-Hydroxylase (e)
+00230;a68kd;KC;Anti-68 kD Ag (hsp70)
+00240;aacr;KC;AK gegen Acetylch.-Rez.(e)
+00250;aakt;KC;Ak gegen Aktin (e)
+00260;aampy;KC;  Anti-Amphiphysin
+00270;abas;KC;AK gegen Basalmembran (e)
+00280;abas1;KC;AK gegen glom. Basalmembran (e)
+00290;abpia;KC;anti-BPI IgA (e)
+00300;abpig;KC;Anti-BPI IgG (e)
+00310;accp;KC;anti-CCP IgG (e)
+00320;accp1;KC;anti-CCP IgG
+00330;accp2;KC;anti-CCP IgG
+00340;ace;KC;Angiotensin-Conv.-Enzym (e)
+00350;ace2;KC;Angiotensin-Conv.-Enz.(e)
+00360;acen;KC;ENA Centromer
+00370;acen1;KC;  Centromer
+00380;acet;KC;Paracetamol (Acetaminophen)(e)
+00390;achro;KC;Ak gegen Chromatin (e)
+00400;acth;KC;ACTH(e)
+00410;acth1;KC;ACTH(e)
+00420;acthp;KC;ACTH supprimiert(e)
+00430;acths;KC;ACTH stimuliert(e)
+00440;acths2;KC;ACTH stimuliert 2. Probe(e)
+00450;acv2;KC;  Anti-CV2
+00460;adbl11;KC;Adrenalin
+00470;adbll2;KC;Adrenalin
+00480;adh;KC;ADH (antidiur. Hormon) (e)
+00490;adh1;KC;ADH (antidiur. Hormon) (e)
+00500;adns;KC;Anti-DNS (nativ)
+00510;adns1;KC;  Anti-dsDNS (nativ)
+00520;adnsn;KC;Anti-DNS (nativ, quant.) (e)
+00530;adrbl;KC;Adrenalin
+00540;adrbl1;KC;Adrenalin, liegend
+00550;adrbl2;KC;Adrenalin, 2.Probe
+00560;adrbl3;KC;Adrenalin, 3.Probe
+00570;adrbl4;KC;Adrenalin, 4.Probe
+00580;adrbs;KC;Adrenalin
+00590;aelas;KC;anti-Elastase (e)
+00600;aend;KC;Endomysium IgA-AK (e)
+00610;aepi;KC;AK gegen Epidermis(e)
+00620;aepo;KC;Anti-Erythropoietin Ak (e)
+00630;afil;KC;Anti-Filaggrin Ak (e)
+00640;afp;KC;Alpha-1-Fetoprotein
+00650;afpa;KC;Alpha-1-Fetoprotein
+00660;agad;KC;Anti-GAD Ak(e)
+00670;agad1;KC;Anti-GAD Ak (Diabetes) (e)
+00680;agadn;KC;Anti-GAD Ak (Stiff man) (e)
+00690;agd1a;KC;Ig  Anti-Gangliosid GD1a (e)
+00700;aglia;KC;Gliadin IgA-AK (e)
+00710;aglia1;KC;Gliadin IgA-AK
+00720;aglia2;KC;Gliadin IgA-AK
+00730;aglig;KC;Gliadin IgG-AK (e)
+00740;aglig1;KC;Gliadin IgG-AK
+00750;aglig2;KC;Gliadin IgG-AK
+00760;aglm;KC;AK gegen glatte Muskul. (e)
+00770;aglm1;KC;AK gegen glatte Muskul. (e)
+00780;aglus;KC;Alpha-Galactosidase (e)
+00790;agm1;KC;IgG  Anti-Gangliosid GM1 (e)
+00800;agm12;KC;Ig  Anti-Gangliosid GM1 (e)
+00810;agm1m;KC;IgM  Anti-Gangliosid GM1 (e)
+00820;agm2;KC;Ig  Anti-Gangliosid GM2 (e)
+00830;agq1b;KC;IgG  Gangliosid GQ1b (e)
+00840;agq1b2;KC;Ig  Gangliosid GQ1b (e)
+00850;ahaut;KC;anti-Haut Ak (e)
+00860;ahem;KC;AK gegen Herzmuskulatur(e)
+00870;ahist;KC;Ak gegen Histone(e)
+00880;ahu;KC;Anti-Hu Ak(e)
+00890;ahu1;KC;  Anti-Hu Ak (ANNA-1)
+00900;aia2;KC;Anti-IA2 Ak (e)
+00910;aiga;KC;Anti-IgA Antikörper (e)
+00920;ainf;KC;Ak gegen Intrinsic Factor(e)
+00930;ainfq;KC;Ak gegen IF, quant. (e)
+00940;ainfq1;KC;Ak gegen IF, quant. (e)
+00950;ains;KC;AK gegen Insulin IgG (e)
+00960;ains1;KC;AK gegen Insulin IgG (e)
+00970;ajo1q;KC;Anti-JO 1 (e)
+00980;akath;KC;anti-Kathepsin (e)
+00990;aker;KC;Anti-Keratin-AK (e)
+01000;akg;KC;AK gegen ....
+01010;aknor;KC;Anti-Knorpelsubstanz Ak (e)
+01020;alakf;KC;anti-Laktoferrin (e)
+01030;alb;KC;  Albumin
+01040;alb1;KC;  Albumin
+01050;alben;KC;Albendazol (e)
+01060;albi;KC;    Alter + Biochemie
+01070;albint;KC;    Alter + Biochemie + NT
+01080;albu;KC;Albumin
+01090;ald;KC;Aldosteron(e)
+01100;ald1;KC;Aldosteron (e)
+01110;ald2;KC;Aldosteron (e)
+01120;ald3;KC;Aldosteron (e)
+01130;ald4;KC;Aldosteron (e)
+01140;ald5;KC;Aldosteron (e)
+01150;aldo;KC;Aldolase(e)
+01160;aldo1;KC;Aldolase (e)
+01170;alds;KC;Aldosteron stimulier(e)
+01180;alds1;KC;Aldosteron stimulier(e)
+01190;alkm;KC;Ak gegen LKM (e)
+01200;alko;KC;Aethylalkohol(e)
+01210;alp;KC;Alkalische Phosphatase
+01220;alph11;KC;  Alpha-1-Globulin
+01230;alph21;KC;  Alpha-2-Globulin
+01240;alpha1;KC;  Alpha-1-Globulin
+01250;alpha2;KC;  Alpha-2-Globulin
+01260;alphli;KC;  alpha-Lipoproteine
+01270;alpk;KC;knochenspez. AP, Masse (e)
+01280;alpka;KC;knochenspez. AP, Akt. (e)
+01290;alpr;KC;Alprazolam (e)
+01300;alreq;KC;Aldosteron/Renin-Ratio
+01310;alt;KC;    Alter allein
+01320;alter;KC;  Alter
+01330;altmut;KC;    Alter der Mutter am Termin
+01340;alu;KC;Aluminium (e)
+01350;am;KC;Amylase
+01360;am1;KC;Amylase gesamt (e)
+01370;ama;KC;  Anti-Ma
+01380;amag;KC;AK gegen Magenbelegzellen (e)
+01390;amagq;KC;Ak gegen Magenbelegz.,quant (e)
+01400;amagz;KC;Anti-MAG Ak (e)
+01410;amagz1;KC;Anti-MAG Ak (e)
+01420;amelp;KC;Amylase-Elektrophorese (e)
+01430;ami;KC;Amikacin (e)
+01440;amikp;KC;Amikacin, Peakspiegel (e)
+01450;amikr;KC;Ak gegen Mikrosomen
+01460;amikr1;KC;Ak gegen Mikrosomen
+01470;amikr2;KC;Ak gegen TPO (Mikrosomen)
+01480;amikt;KC;Amikacin, Talspiegel (e)
+01490;amim2;KC;Ak gegen Mitochondr. M2 (e)
+01500;amim4;KC;Ak gegen Mitochondr. M4(e)
+01510;amim9;KC;Ak gegen Mitochondr. M9(e)
+01520;amino;KC;Aminosäurenchromatogramm (e)
+01530;amio;KC;Amiodaron (e)
+01540;amio1;KC;Amiodaron (e)
+01550;amiodq;KC;Amiodaron/Desethylamio.-Quot.
+01560;amioq;KC;Amio-/Desamiodaron-Quot.
+01570;amis1;KC;Amisulprid (Solian) (e)
+01580;amisul;KC;Amisulprid (Solian) (e)
+01590;amit;KC;AK gegen Mitochondrien (e)
+01600;amitr;KC;Amitriptylin (e)
+01610;amitr1;KC;Amitriptylin (e)
+01620;amno;KC;  Ami-/+ Nortriptylin (e)
+01630;amo;KC;Ammoniak
+01640;amo1;KC;Ammoniak (e)
+01650;amusk;KC;anti-MuSK (e)
+01660;amye;KC;  Ak gegen Myelin
+01670;ana;KC;Antinukleäre AK
+01680;ana1;KC;Antinukleäre AK
+01690;anai;KC;Antinukleäre Ak (IF) (e)
+01700;anai1;KC;Antinukleäre Ak (IF) (e)
+01710;anai2;KC;Antinukleäre Ak (IF)
+01720;anca;KC;ANCA (Anti-Neutro.Cytopl.Ak)(e)
+01730;ancac;KC;C-ANCA (PR3)
+01740;ancac1;KC;C-ANCA (PR3)
+01750;ancap;KC;P-ANCA (Myeloperox.)
+01760;ancap1;KC;P-ANCA (Myeloperox.)
+01770;and;KC;Androstendion (e)
+01780;and1;KC;Androstendion (e)
+01790;aneb;KC;AK gegen Nebennierenrinde(e)
+01800;aneb1;KC;AK gegen Nebennierenrinde(e)
+01810;angap;KC;Anionen-Lücke
+01820;aovar;KC;Ak gegen Ovar (e)
+01830;apan;KC;AK gegen Pankreasinselzellen(e)
+01840;apane;KC;AK gegen exokrines Pankreas (e)
+01850;apar;KC;AK gegen Parotis(e)
+01860;apoa;KC;Apo-Lipoprotein-A1
+01870;apoa1;KC;Apo-Lipoprotein-A1 (e)
+01880;apob;KC;Apo-Lipoprotein-B
+01890;apob1;KC;Apo-Lipoprotein-B (e)
+01900;apoe;KC;Apolipoprotein E Genotyp (e)
+01910;aqum;KC;AK gegen quergestr. Muskulatur(e)
+01920;aqum1;KC;AK gegen quergestr. Muskulatur(e)
+01930;archiv;KC;Sero Archivierung
+01940;ari;KC;  Anti-Ri (ANNA-2)
+01950;arib;KC;Anti-ribosom. P-prot. (e)
+01960;arip;KC;Aripiprazol (e)
+01970;arpp;KC;Ak gegen ribosom.P-Protein (e)
+01980;arsen;KC;Arsen (e)
+01990;asca;KC;IgA S. cerevisiae (e)
+02000;ascg;KC;IgG S. cerevisiae (e)
+02010;asdna;KC;Anti-Streptok. DNAse B (e)
+02020;asla;KC;Ak gegen SLA (e)
+02030;asla1;KC;Ak gegen SLA (e)
+02040;aspa;KC;Anti-Sperma-AK (e)
+02050;aspa1;KC;Anti-Sperma-AK (e)
+02060;aspa2;KC;Anti-Sperma-AK (e)
+02070;aspa3;KC;Anti-Sperma-AK (e)
+02080;ast;KC;Antistreptolysin-O (AST)
+02090;ast1;KC;Antistreptolysin-O (AST)
+02100;asta;KC;Antistaphylolysin (e)
+02110;asta1;KC;Antistaphylolysin (e)
+02120;asti;KC;Antistreptolysin-O (AST)
+02130;athyg;KC;Ak gegen Thyreoglobulin
+02140;athyg1;KC;Ak gegen Thyreoglobulin
+02150;athyg2;KC;Ak gegen Thyreoglobulin
+02160;atiti;KC;AK gegen Titin(e)
+02170;atr;KC;  Anti-Tr
+02180;atshr;KC;AK gegen TSH-Rezeptor (TSI)(e)
+02190;atshr1;KC;AK gegen TSH-Rezeptor (TSI)(e)
+02200;atshr2;KC;AK gegen TSH-Rezeptor (TSI)(e)
+02210;attg;KC;Ak gegen t-Transglutaminase (e)
+02220;attg1;KC;t-Transglutaminase IgA-Ak
+02230;attg2;KC;t-Transglutaminase IgA-Ak
+02240;attgg;KC;t-Transglutaminase IgG Ak
+02250;avgcc;KC;Anti-VGCC (Ca-Kanal) (e)
+02260;ayo;KC;  Anti-Yo (PCA-1)
+02270;azns;KC;Anti-ZNS Ak (e)
+02280;b12;KC;Vitamin B12
+02290;b2m;KC;Beta-2-Mikroglobulin
+02300;b2m1;KC;Beta-2-Mikroglobulin
+02310;b2tra;KC;Beta-2-Transferrin (e)
+02320;basx;KC;  Basenexzess
+02330;bcaro;KC;beta-Carotin (e)
+02340;bcaro1;KC;beta-Carotin(e)
+02350;bdi;KC;Bilirubin, konjugiert
+02360;beh;KC;  Behensäure
+02370;benzs;KC;Benzodiazepine (e)
+02380;beso;KC;Besondere Analyse
+02390;beta;KC;  Beta-Globulin
+02400;beta1;KC;  Beta-Globulin
+02410;betli;KC;  beta-Lipoproteine
+02420;bg;KC;Bilirubin, gesamt
+02430;bi;KC;Bilirubin, unkonjugiert
+02440;bik;KC;  Bikarbonat
+02450;biks;KC;Bikarbonat
+02460;biot;KC;Biotin (e)
+02470;blei;KC;Blei (e)
+02480;bnp;KC;BNP (Brain Natriur. Pept.)(e)
+02490;bnpmat;KC;EP:10, S:1000
+02500;bp3;KC;IGF-BP 3 (e)
+02510;broma;KC;Bromazepam (Lexotanil)(e)
+02520;btest;KC;Testosteron bioverfüg.
+02530;btest1;KC;Testosteron bioverfüg.
+02540;c125;KC;CA 125
+02550;c153;KC;CA 15-3
+02560;c1531;KC;CA 15-3
+02570;c199;KC;CA 19-9
+02580;c1991;KC;CA 19-9
+02590;c1ei;KC;C1-Esterase Inhibitor Konz.(e)
+02600;c1eif;KC;C1-Esterase Inhibitor funkt.(e)
+02610;c1q;KC;C1q (e)
+02620;c2;KC;Komplement C2 (e)
+02630;c24cq;KC;  Verhältnis C24/C22
+02640;c26cq;KC;  Verhältnis C26/C22
+02650;c3;KC;Komplement C3
+02660;c4;KC;Komplement C4
+02670;c41;KC;Komplement C4
+02680;c50;KC;CA 50 (e)
+02690;c501;KC;CA 50 (e)
+02700;c724;KC;CA 72-4 (e)
+02710;c7241;KC;CA 72-4 (e)
+02720;c7242;KC;CA 72-4 (e)
+02730;ca;KC;Calcium
+02740;cad;KC;Cadmium (e)
+02750;cada;KC;CADASIL - Mutationsanalyse (e)
+02760;cai;KC;Calcium, ionisiert(e)
+02770;cakor;KC;Calcium, korrigiert
+02780;calc;KC;Calcitonin basal (e)
+02790;calc1;KC;Calcitonin basal (e)
+02800;calc2;KC;Calcitonin basal (e)
+02810;calc3;KC;Calcitonin basal (e)
+02820;calcs;KC;Calcitonin stimuliert (e)
+02830;calcs2;KC;Calcitonin stimuliert 2 (e)
+02840;canns;KC;Cannabis, Serum (e)
+02850;carba;KC;Carbamazepin
+02860;caw;KC;Gesamtkomplement,altern.Weg (e)
+02870;cdt;KC;CDT (HPLC)
+02880;cdtant;KC;  CDT-Anteil
+02890;cdtec;KC;CDT (Carboh.-def.Transf.)
+02900;cdtec1;KC;CDT (Carboh.-def.Transf.)
+02910;cdtges;KC;  Transferrin Gesamt
+02920;cdthp;KC;CDT (HPLC) (e)
+02930;cea;KC;CEA
+02940;cg;KC;Chemogramm gezielt
+02950;ch1;KC;Cholinesterase (e)
+02960;che;KC;Cholinesterase (e)
+02970;che1;KC;Cholinesterase (e)
+02980;che2;KC;Cholinesterase (e)
+02990;che3;KC;Cholinesterase
+03000;chem10;KC;Chemogramm 10 HMO
+03010;chlor;KC;Chlorprothixen (e)
+03020;cho;KC;Cholesterin
+03030;chohq;KC;Cholesterin/HDL-Quot.
+03040;chroga;KC;Chromogranin A (e)
+03050;chrom;KC;Chrom (e)
+03060;chrom1;KC;Chrom (e)
+03070;chroma;KC;Chromogranin A (e)
+03080;chylo;KC;  Chylomikronen(e)
+03090;ciclo;KC;Ciclosporin A (monokl.)(e)
+03100;cita;KC;Citalopram (e)
+03110;ck;KC;CK (Creatin-Kinase)
+03120;ck1e;KC;  CK (gesamt)
+03130;ckbb;KC;  CK-BB (Hirn)(e)
+03140;ckbb1;KC;  CK-BB (Hirn)
+03150;ckelb;KC;  Beurteilung
+03160;ckmb;KC;  CK-MB (Herzmuskel)(e)
+03170;ckmb%;KC;Prozent von CK
+03180;ckmb1;KC;  CK-MB (Herzmuskel)
+03190;ckmb1e;KC;  CK-MB (Aktivität)
+03200;ckmb2;KC;CK-MB
+03210;ckmbm;KC;CK-MB (Masse)
+03220;ckmbme;KC;  CK-MB (Masse)
+03230;ckmm;KC;  CK-MM (Skelettmuskel)(e)
+03240;ckmm1;KC;  CK-MM (Skelettmuskel)
+03250;ckw;KC;Gesamtkomplement (klass. Weg)(e)
+03260;ckw1;KC;Gesamtkomplement,klass.Weg (e)
+03270;cl;KC;Chlorid
+03280;cl+dcl;KC;Clomipramin+Des. Clomip. (e)
+03290;clac3;KC;Calcitonin basal (e)
+03300;clob;KC;Clobazam(e)
+03310;clomi;KC;Clomipramin (e)
+03320;clon;KC;Clonazepam (e)
+03330;cloz;KC;Clozapin (e)
+03340;cloz1;KC;Clozapin (e)
+03350;cloz2;KC;Clozapin (e)
+03360;cloz3;KC;Clozapin (e)
+03370;cmtp;KC;Charcot-Marie-Tooth HSMN (e)
+03380;co57;KC;Co-57 Ausscheidung
+03390;co578q;KC;Co-57/Co-58 Quotient
+03400;co58;KC; o-58 Auscheidung
+03410;cocas;KC;Cocain (e)
+03420;coen10;KC;Coenzym Q10 (Ubichinon 50) (e)
+03430;coeru;KC;Coeruloplasmin (e)
+03440;coeru1;KC;Coeruloplasmin (e)
+03450;colsp1;KC;Cortisol stim. (1 ug), Speichel
+03460;copb1;KC;Coproporphyrine I
+03470;copb3;KC;Coproporphyrine III
+03480;cora;KC;Cortisol 16 - 20 Uhr
+03490;corlds;KC;Cortisol stim. (1 ug low dose)
+03500;corlsp;KC;Cortisol stim. (1 ug), Speichel
+03510;corm;KC;Cortisol 7 - 9 Uhr
+03520;corp;KC;Cortisol supprimiert
+03530;corp2;KC;Cortisol supprimiert
+03540;cors;KC;Cortisol stimuliert
+03550;cors2;KC;Cortisol stimuliert 2. Probe
+03560;cors3;KC;Cortisol stimuliert 3. Probe
+03570;corsm;KC;Cortisol morgends (Speichel)
+03580;corsp;KC;Cortisol, 23.00 Uhr (Speichel)
+03590;corsp1;KC;Cortisol (Speichel), 1.Probe
+03600;corsp2;KC;Cortisol (Speichel), 2.Probe
+03610;corsp3;KC;Cortisol (Speichel), 3.Probe
+03620;corsp4;KC;Cortisol (Speichel), 4.Probe
+03630;corsp5;KC;Cortisol (Speichel), 5.Probe
+03640;corsp6;KC;Cortisol (Speichel), 6.Probe
+03650;corsp7;KC;Cortisol (Speichel), 7.Probe
+03660;corsp8;KC;Cortisol (Speichel), 8.Probe
+03670;cotis;KC;Cotinin (e)
+03680;cpep;KC;C-Peptid
+03690;cpepa;KC;C-Peptid
+03700;cpepp;KC;C-Peptid supprimiert
+03710;cpepq;KC;C-Peptid/Glukose-Quotient
+03720;cpepqa;KC;C-Peptid/Glukose-Quotient (ACHEF)
+03730;cpeps;KC;C-Peptid stimuliert
+03740;crp;KC;C-reaktives Protein
+03750;crps;KC;hs-CRP (hochsensitiv)
+03760;ctx;KC;CTX (e)
+03770;cu;KC;Kupfer(e)
+03780;cu1;KC;Kupfer (e)
+03790;cu2;KC;Kupfer (e)
+03800;cu3;KC;Kupfer (e)
+03810;cyfra;KC;CYFRA 21-1 (e)
+03820;cystc;KC;Cystatin C (e)
+03830;da2;KC;Diaminooxidase (e)
+03840;damio;KC;Desethyl-Amiodaron (e)
+03850;dao;KC;Diaminooxidase (e)
+03860;dao1;KC;Diaminooxidase (e)
+03870;dao2;KC;Diaminooxidase (e)
+03880;dao3;KC;Diaminooxidase (e)
+03890;dclomi;KC;Desmethyl-Clomipramin (e)
+03900;dflura;KC;Desalkyl-Flurazepam(e)
+03910;dhea;KC;Dehydroepiandrosteron (e)
+03920;dhea1;KC;Dehydroepiandrosteron (e)
+03930;dhea2;KC;Dehydroepiandrosteron (e)
+03940;dheast;KC;Dehydroepiandrosteron stim.(e)
+03950;dheasu;KC;DHEA supprimiert (e)
+03960;dheau1;KC;DHEA supprimiert (e)
+03970;dhess1;KC;DHEA-Sulfat stimuliert
+03980;dhest1;KC;Dehydroepiandrosteron stim.(e)
+03990;dhesu;KC;Dehydroepiandrosteron-Sulfat(e)
+04000;dhesu1;KC;Dehydroepiandrosteron-Sulfat
+04010;dhesu2;KC;DHEA-Sulfat
+04020;dhesus;KC;DHEA-Sulfat stimuliert (e)
+04030;dht;KC;Dihydrotestosteron (e)
+04040;diaz;KC;Diazepam (e)
+04050;diaz1;KC;Diazepam (e)
+04060;diben;KC;Dibenzepin (e)
+04070;dibu;KC;Dibucainzahl (e)
+04080;dig;KC;Digoxin
+04090;digi;KC;Digitoxin (e)
+04100;diät;KC;Diät seit
+04110;dmclo1;KC;Desmethyl-Clozapin (e)
+04120;dmclo2;KC;Desmethyl-Clozapin (e)
+04130;dmclob;KC;N-Desmethylclobazam
+04140;dmcloz;KC;Desmethyl-Clozapin (e)
+04150;dmirta;KC;Desmethylmirtazapin (e)
+04160;dmsert;KC;Desmethylsertralin
+04170;dopbl;KC;Dopamin(e)
+04180;dopbs;KC;Dopamin(e)
+04190;dulox;KC;Duloxetin  (e)
+04200;edat;KC;  Entnahmedatum
+04210;elpbe;KC;  Kurvenverlauf
+04220;ena;KC;ENA-Autoantikörper
+04230;entn;KC;  Entnahme
+04240;epo;KC;Erythropoietin (e)
+04250;epo1;KC;Erythropoietin (e)
+04260;escita;KC;Escitalopram (e)
+04270;etho;KC;Ethosuximid (e)
+04280;ewc;KC;Extrawasch-Integra
+04290;ezeit;KC;  Entnahmezeit
+04300;fe;KC;Eisen
+04310;fe2;KC;Eisen 2. Probe
+04320;fe3;KC;Eisen 3. Probe
+04330;feb;KC;Transferrin-Sättigung
+04340;febio;KC;Eisen (Lebergewebe) (e)
+04350;febiop;KC;Eisen (Lebergewebe) (e)
+04360;fer;KC;Ferritin
+04370;ffa;KC;Frei Fettsäuren (e)
+04380;fleca;KC;Flecainid (e)
+04390;fluni;KC;Flunitrazepam (Rohypnol) (e)
+04400;flunor;KC;Fluoxetin+Norfluoxetin (e)
+04410;fluo;KC;Fluor (e)
+04420;fluox;KC;Fluoxetin (e)
+04430;fluox1;KC;Fluoxetin (e)
+04440;flup;KC;Flupentixol (e)
+04450;flura;KC;Flurazepam (Dalmadorm) (e)
+04460;fluvo;KC;Fluvoxamin (e)
+04470;fluvo1;KC;Fluvoxamin (e)
+04480;flüed;KC;Dr. Flüeler
+04490;fol;KC;Folsäure
+04500;fol1;KC;Folsäure
+04510;fole;KC;Folsäure in Erythrozyten
+04520;fole1;KC;Folsäure in Erythrozyten
+04530;folec;KC;Gemessener Wert Centaur
+04540;frat;KC;Friedreich-Ataxie, GAA Repeat (e)
+04550;frtri;KC;    Frühere Trisomie
+04560;fruam;KC;Fructosamin (e)
+04570;fruam1;KC;Fructosamin (e)
+04580;fruam2;KC;Fructosamin (e)
+04590;fsh;KC;FSH (Follitropin)
+04600;fshs;KC;FSH (stimuliert)
+04610;fshs2;KC;FSH (stim.) 2.Probe
+04620;ft3;KC;Freies T3 (FT3) (e)
+04630;ft31;KC;Freies T3 (FT3)
+04640;ft4;KC;Freies Thyroxin (FT4)
+04650;galls;KC;Gallensäuren (e)
+04660;galls1;KC;Gallensäuren (e)
+04670;gamma;KC;  Gamma-Globulin
+04680;gamma1;KC;  Gamma-Globulin
+04690;gape;KC;Gabapentin (Neurontin) (e)
+04700;gast;KC;Gastrin (e)
+04710;gast1;KC;Gastrin (e)
+04720;gast2;KC;Gastrin (e)
+04730;gast2s;KC;Gastrin, stimuliert (e)
+04740;gastr;KC;Gastrin (Serum) (e)
+04750;genta;KC;Gentamycin (e)
+04760;gentam;KC;Gentamycin (e)
+04770;gentp;KC;Gentamycin (Peakspiegel) (e)
+04780;gentp1;KC;Gentamycin (Peakspiegel) (e)
+04790;gentt;KC;Gentamycin (Talspiegel) (e)
+04800;gentt1;KC;Gentamycin (Talspiegel) (e)
+04810;getp1m;KC;Gentamycin (Peakspiegel) (e)
+04820;gett1m;KC;Gentamycin (Talspiegel) (e)
+04830;gewi;KC;    Gewicht
+04840;gewic;KC;  Gewicht
+04850;gfr;KC;GFR, berechnet (Cockroft-Gault)
+04860;gfrw;KC;GFR berechnet (Cockroft-Gault)
+04870;gfrx;KC;GFR Triageanalyse Mann / Frau
+04880;ggt;KC;Gamma-GT
+04890;ggt1;KC;Gamma-GT
+04900;ghb;KC;GHB (Gammahydroxybuttersäure) (e)
+04910;gl;KC;Glukose
+04920;gl0;KC;  Glukose nüchtern
+04930;gl01;KC;  Glukose nüchtern
+04940;gl0n;KC;  Glukose nüchtern
+04950;gl11;KC;  Glukose 11.00 Uhr
+04960;gl120;KC;  Glukose nach 120 Min.
+04970;gl1201;KC;  Glukose nach 120 Min.
+04980;gl120n;KC;  Glukose nach 120 Min.
+04990;gl16;KC;  Glukose 16.30 Uhr
+05000;gl180n;KC;  Glukose nach 180 Min.
+05010;gl60;KC;  Glukose nach 60 Min.
+05020;gl601;KC;  Glukose nach 60 Min.
+05030;gl60n;KC;  Glukose nach 60 Min.
+05040;gl60os;KC;  Glukose 60 Min.
+05050;gl7;KC;  Glukose nüchtern
+05060;glbeb;KC;Beurteilung:
+05070;glbeos;KC;  Glukose nüchtern
+05080;glcpe;KC;  Glukose
+05090;glcpep;KC;  Glukose
+05100;glcpes;KC;  Glukose
+05110;gldh;KC;GLDH (e)
+05120;gll120;KC;  Glukose nach 120 min.
+05130;gllb0;KC;  Glukose nüchtern
+05140;gllb30;KC;  Glukose nach 30 min.
+05150;gllb60;KC;  Glukose nach 60 min.
+05160;gllb90;KC;  Glukose nach 90 min.
+05170;gllbbe;KC;Beurteilung:
+05180;gllsy;KC;Klin. Symptome
+05190;glpo;KC;Glukose postprandial
+05200;glspep;KC;  Glukose
+05210;gluka;KC;Glukagon (e)
+05220;gluka1;KC;Glukagon (e)
+05230;glur0;KC;  Glukose nüchtern (Urin)
+05240;glur2;KC;  Glukose nach 2h
+05250;got;KC;GOT (ASAT)
+05260;gpt;KC;GPT (ALAT)
+05270;grafk;KC;Regelanalyse GRAFK ssi1
+05280;hal;KC;Haloperidol (e)
+05290;halr;KC;reduziertes Haloperidol (e)
+05300;hapto;KC;Haptoglobin
+05310;hast;KC;Harnstoff
+05320;hastd;KC;Harnstoff
+05330;hba1c;KC;HbA1c
+05340;hba1c1;KC;HbA1c (IFCC)
+05350;hba1c2;KC;HbA1c (DCCT)
+05360;hbdh;KC;HBDH (e)
+05370;hcbpo;KC;Heptacarboxyporphyrin
+05380;hcg;KC;ß-HCG
+05390;hcga;KC;  ß-HCG
+05400;hdl;KC;HDL-Cholesterin
+05410;hem1;KC;Hem 1
+05420;hem2;KC;Hem 2
+05430;her2;KC;HER2/neu (erbB2)(e)
+05440;heros;KC;Heroin (6-Acetylmorphin) (e)
+05450;hex;KC;  Hexacosansäure
+05460;hormab;KC;Hormonstatus
+05470;hpl;KC;HPL (e)
+05480;hss;KC;Harnsäure
+05490;htg;KC;Thyreoglobulin (e)
+05500;htg1;KC;Thyreoglobulin (e)
+05510;htg2;KC;Thyreoglobulin
+05520;hxcpo;KC;Hexacarboxyporphyrin
+05530;hya;KC;Hyaluronat (e)
+05540;hydr;KC;9-OH-Risperidon (e)
+05550;iabdm;KC;    insulinabh. DM
+05560;ifix;KC;Beurteilung
+05570;iga;KC;IgA (Immunglobulin A)
+05580;igaki;KC;  IgA
+05590;igas;KC;IgA im Speichel
+05600;igbp3;KC;IGF-BP 3 (e)
+05610;igd;KC;IgD (e)
+05620;igd1;KC;IgD (e)
+05630;igei;KC;IgE (Immunglobulin E)
+05640;igf1;KC;IGF-1 (Somatomedin C) (e)
+05650;igf11;KC;IGF-1 (Somatomedin C) (e)
+05660;igf12;KC;IGF-1 (Somatomedin C) (e)
+05670;igf1p2;KC;IGF-1 supprimiert 2 (e)
+05680;igf1sp;KC;IGF-1 supprimiert (e)
+05690;igg;KC;IgG (Immunglobulin G)
+05700;igg1;KC;  IgG1
+05710;igg2;KC;  IgG2
+05720;igg2pb;KC;IgG2-Bindung Polysaccharid-Ag (e)
+05730;igg3;KC;  IgG3
+05740;igg4;KC;  IgG4
+05750;iggi;KC;IgG (Immunglobulin G)
+05760;iggki;KC;  IgG
+05770;iggsk;KC;Spez. IgG-Subklassen (e)
+05780;iggsv;KC;IgG Serum Liquorproteinprofil
+05790;igm;KC;IgM (Immunglobulin M)
+05800;igmki;KC;  IgM
+05810;il6;KC;Interleukin 6 (e)
+05820;inhi;KC;Inhibin A (e)
+05830;inhib;KC;Inhibin B (e)
+05840;ins;KC;Insulin (e)
+05850;ins1;KC;Insulin (e)
+05860;ins2;KC;Insulin (e)
+05870;ins3;KC;Insulin (e)
+05880;intap;KC;  Intest-AP
+05890;inte;KC;    Interpretation
+05900;intev;KC;  Intest. Variante
+05910;intoxs;KC;Intoxikation unbek. Substanz (e)
+05920;itra;KC;Itraconazol (e)
+05930;jo1;KC;ENA Jo-1
+05940;jo11;KC;  Jo-1
+05950;k;KC;Kalium
+05960;kalar;KC;  kappa/lambda Ratio
+05970;kapps;KC;  Leichtketten Typ kappa
+05980;kapps2;KC;  Leichtketten Typ kappa
+05990;karnif;KC;L-Karnitin, frei (e)
+06000;karnig;KC;L-Karnitin, gesamt (e)
+06010;karyo;KC;Karyotyp
+06020;kep;KC;Levetiracetam (Keppra) (e)
+06030;kepp;KC;Keppra (Levetiracetam)(e)
+06040;keta;KC;Nordazepam (e)
+06050;knoap;KC;  Knochen-AP
+06060;kre;KC;Kreatinin
+06070;kreae;KC;Kreatin im Ec (e)
+06080;kreat;KC;Kreatin (e)
+06090;kryo;KC;Kryoglobuline gesamt (e)
+06100;kryoa;KC;  Klasse IgA
+06110;kryog;KC;  Klasse IgG
+06120;kryol;KC;Kryoglobuline, qual. (e)
+06130;kryom;KC;  Klasse IgM
+06140;kryot;KC;Kryoglobulin Typ
+06150;lak;KC;Laktat
+06160;lambs;KC;  Leichtketten Typ lambda
+06170;lambs2;KC;  Leichtketten Typ lambda
+06180;lami;KC;Lamictal (e)
+06190;lami1;KC;Lamictal (e)
+06200;lami2;KC;Lamictal (e)
+06210;lap;KC;LAP (Leucin Aryl Amidase)(e)
+06220;lap1;KC;LAP(Leucin Aryl Amidase)(e)
+06230;lap2;KC;LAP (Leucin Aryl Amidase)(e)
+06240;ldh;KC;LDH (Lactat-Dehydrogenase)
+06250;ldh1;KC;LDH (Lactat-Dehydrogenase)
+06260;ldhel;KC;LDH-Isoenzyme (e)
+06270;ldl;KC;LDL-Cholesterin
+06280;ldl1;KC;LDL-Cholesterin
+06290;lebap;KC;  Leber-AP
+06300;lepti2;KC;Leptin (e)
+06310;leptin;KC;Leptin (e)
+06320;levo;KC;Levomepromazin (Nozinan) (e)
+06330;levo1;KC;Levomepromazin (Nozinan) (e)
+06340;lh;KC;LH (Lutropin)
+06350;lhfsq;KC;LH/FSH - Quotient
+06360;lhon;KC;Leber'sche Optikusatrophie (e)
+06370;lhs;KC;LH (stimuliert)
+06380;lhs2;KC;LH (stim.) 2.Probe
+06390;li;KC;Lithium
+06400;lip;KC;Lipase
+06410;lip1;KC;Lipase
+06420;lipel1;KC;Lipidelektrophorese (e)
+06430;lipelb;KC;  Beurteilung
+06440;lora;KC;Lorazepam (e)
+06450;lpa;KC;Lp(a) (e)
+06460;lysen;KC;Lysosomale Enzyme (e)
+06470;lyso;KC;Lysozym (e)
+06480;lyso1;KC;Lysozym (e)
+06490;makap;KC;  Makro-AP
+06500;mapro;KC;Maprotilin (e)
+06510;mapro1;KC;Maprotilin (e)
+06520;mca;KC;MCA (e)
+06530;mca2;KC;MCA (e)
+06540;mcpp;KC;  m-CPP (Hauptmetabolit)
+06550;mdsp;KC;Myotone Dystrophie Steinert (e)
+06560;mebe;KC;Mebendazol (Vermox) (e)
+06570;meph;KC;Mephenaminsäure (e)
+06580;mesu;KC;Mesuximid (Petinutin) (e)
+06590;metaf1;KC;  freie Metanephrine
+06600;metan3;KC;  Metanephrine gesamt
+06610;methp;KC;Methylphenidat (e)
+06620;methpu;KC;Methylphenidat (e)
+06630;metma;KC;Methylmalonsäure (e)
+06640;metma1;KC;Methylmalonsäure (e)
+06650;metma2;KC;Methylmalonsäure (e)
+06660;metmau;KC;Methylmalonsäure im Urin  (e)
+06670;metx;KC;Methotrexat (e)
+06680;mety1;KC;  Methoxytyramine gesamt
+06690;metyf1;KC;  freie Methoxytyramine
+06700;mg;KC;Magnesium
+06710;mgec;KC;Magnesium in Erythrozyten (e)
+06720;mgec1;KC;Magnesium in Erythrozyten (e)
+06730;mian;KC;Mianserin (Tolvon) (e)
+06740;mirta;KC;Mirtazapin (e)
+06750;mirta1;KC;Mirtazapin (e)
+06760;mmpn;KC;Methylmercaptopurinnukleotide (e)
+06770;mn;KC;Mangan (e)
+06780;mn1;KC;Mangan (e)
+06790;moclo;KC;Moclobemid (Aurorix) (e)
+06800;moclo1;KC;Moclobemid (Aurorix) (e)
+06810;mor3gl;KC;Morphin-3-Glucuronid (e)
+06820;mor6gl;KC;Morphin-6-Glucuronid (e)
+06830;mors;KC;Morphin (e)
+06840;mplgl;KC;  = mittlere Plasma-Glukose
+06850;mpnu;KC;Mercaptopurinnukleotide (e)
+06860;myc;KC;Mycophenolat (e)
+06870;mych;KC;Y-chromos.Mikrodeletionen (e)
+06880;mydys;KC;Myotone Dystrophie Steinert (e)
+06890;myog;KC;Myoglobin (e)
+06900;myog1;KC;Myoglobin
+06910;myos;KC;Myoglobin
+06920;myos1;KC;Myoglobin
+06930;na;KC;Natrium
+06940;nackt;KC;    Nackentransparenz
+06950;nefa;KC;Nefazodon (e)
+06960;netilp;KC;Netilmycin, Peak (e)
+06970;netilt;KC;Netilmycin, Tal (e)
+06980;niac;KC;Niacin (e)
+06990;nis;KC;Nickel (e)
+07000;nmeta3;KC;  Normetanephrin gesamt
+07010;nmetf1;KC;  freie Normetanephrine
+07020;nobl11;KC;Noradrenalin
+07030;nobll2;KC;Noradrenalin
+07040;noflu1;KC;Norfluoxetin (e)
+07050;nofluo;KC;Norfluoxetin (e)
+07060;norbl;KC;Noradrenalin
+07070;norbl1;KC;Noradrenalin, liegend
+07080;norbl2;KC;Noradrenalin, 2.Probe
+07090;norbl3;KC;Noradrenalin, 3.Probe
+07100;norbl4;KC;Noradrenalin, 4.Probe
+07110;norbs;KC;Noradrenalin (e)
+07120;norcl;KC;  Norclozapin (e)
+07130;nord;KC;Nordazepam (e)
+07140;nort;KC;  Nortriptylin (e)
+07150;nse;KC;Neuronen spez. Enolase (e)
+07160;nse1;KC;Neuronen spez. Enolase (e)
+07170;o2s1;KC;O2-Sättigung 1. Probe
+07180;o2s10;KC;O2-Sättigung 10.Probe
+07190;o2s11;KC;O2-Sättigung 11.Probe
+07200;o2s12;KC;O2-Sättigung 12.Probe
+07210;o2s13;KC;O2-Sättigung 13.Probe
+07220;o2s2;KC;O2-Sättigung 2. Probe
+07230;o2s3;KC;O2-Sättigung 3. Probe
+07240;o2s4;KC;O2-Sättigung 4. Probe
+07250;o2s5;KC;O2-Sättigung 5. Probe
+07260;o2s6;KC;O2-Sättigung 6. Probe
+07270;o2s7;KC;O2-Sättigung 7. Probe
+07280;o2s8;KC;O2-Sättigung 8. Probe
+07290;o2s9;KC;O2-Sättigung 9. Probe
+07300;o2sät;KC;  O2-Sättigung
+07310;odesm;KC;O-Desmethylvenlafaxin (e)
+07320;oed;KC;Oestradiol (17-Beta)
+07330;oeds;KC;Oestradiol stimuliert
+07340;oest;KC;Oestron(E1) (e)
+07350;oet;KC;Oestriol (e)
+07360;oet1;KC;Oestriol (e)
+07370;ogtt;KC;Oraler Glukosetoleranztest
+07380;olan;KC;Olanzapin (e)
+07390;olan1;KC;Olanzapin (e)
+07400;opi;KC;Opiate (e)
+07410;oro;KC;Alpha-1-saures-Glykoprotein (e)
+07420;osmo;KC;Osmolalität (berechn.)
+07430;osmog;KC;Osmolalität gemessen (e)
+07440;osteo;KC;Osteocalcin (e)
+07450;osteo1;KC;Osteocalcin (e)
+07460;oxaz;KC;Oxazepam (e)
+07470;oxca;KC;Oxcarbazepin (e)
+07480;oxcar;KC;Monohydr.-Oxcarbazepin (e)
+07490;oxyp;KC;Oxypurinol (HPLC) (e)
+07500;p1np;KC;Prokollagen 1-N-Propeptid (e)
+07510;p3np;KC;Prokollagen III (PIIINP) (e)
+07520;pam;KC;Pankreas-Amylase
+07530;pam1;KC;Pankreas-Amylase
+07540;pant;KC;Pantothensäure (Vit. B5) (e)
+07550;pappa;KC;  PAPP-A
+07560;para;KC;Parathormon
+07570;parox;KC;Paroxetin (e)
+07580;parox1;KC;Paroxetin (e)
+07590;pbnp;KC;Pro-BNP (Serum)
+07600;pbnpe;KC;Pro-BNP (EDTA-Plasma)
+07610;pcbpo;KC;Pentacarboxyporphyrin
+07620;pco2;KC;  pCO2
+07630;penfl;KC;Penfluridol (e)
+07640;ph;KC;Phosphat
+07650;phb;KC;  pH-Wert
+07660;pheal;KC;Phenylalanin (e)
+07670;pheno;KC;Phenobarbital
+07680;pheny;KC;Phenytoin
+07690;phenyi;KC;Phenytoin
+07700;phy;KC;  Phytansäure
+07710;pmp22;KC;PMP22-Deletion (HNPP) (e)
+07720;po2;KC;  pO2
+07730;porfm;KC;Ferrochelatase-Mutation (e)
+07740;pp;KC;Pankreatisches Polypeptid (e)
+07750;prega;KC;Pregabalin (e)
+07760;primi;KC;Primidon
+07770;primi1;KC;Primidon
+07780;primi2;KC;Primidon (e)
+07790;pro;KC;Prolaktin
+07800;pro1;KC;Prolaktin
+07810;pro2;KC;Prolaktin 2. Probe
+07820;pro21;KC;Prolaktin 2. Probe
+07830;procal;KC;Procalcitonin (e)
+07840;prog;KC;Progesteron
+07850;prop2q;KC;Quotient Prolaktin vor/nach PEG
+07860;propa;KC;Propafenon (e)
+07870;prope2;KC;Prolaktin 2. (nach Fällung)
+07880;propeg;KC;Prolaktin (nach Fällung)
+07890;propeq;KC;Quotient Prolaktin vor/nach PEG
+07900;propes;KC;Prolaktin st.(nach Fällung)
+07910;propsq;KC;Quotient Prolaktin vor/nach PEG
+07920;pros;KC;Prolaktin stimuliert
+07930;prot;KC;Protein total
+07940;prpof;KC;Protoporphyrin frei
+07950;prpozi;KC;Zink Protoporphyrin
+07960;präal;KC;Präalbumin (e)
+07970;präal1;KC;Präalbumin (e)
+07980;präbe;KC;  Präbeta-Lipoproteine
+07990;psa;KC;PSA (Prostata-spez. Ag)
+08000;psac;KC;PSA komplexiert
+08010;psaf;KC;PSA frei
+08020;psaq;KC;PSA-Quotient
+08030;pyru;KC;Pyruvat (e)
+08040;quec;KC;Quecksilber Scananalyse
+08050;queck;KC;Quecksilber (e)
+08060;queck1;KC;Quecksilber (e)
+08070;quet;KC;Quetiapin (e)
+08080;rebox;KC;Reboxetin (Edronax) (e)
+08090;rebox1;KC;Reboxetin (Edronax) (e)
+08100;redsu;KC;Reduzierte Substanzen (e)
+08110;ren;KC;Renin (e)
+08120;ren1;KC;Renin (e)
+08130;ren2;KC;Renin, aktiv (e)
+08140;rens;KC;Renin stimuliert (e)
+08150;rf;KC;Rheumafaktor
+08160;risp;KC;Risperidon + 9-OH-Risperidon
+08170;risp1;KC;Risperidon (e)
+08180;risp2;KC;Risperidon + 9-OH-Risperidon
+08190;rnp;KC;ENA U1-snRNP
+08200;rnp1;KC;  U1-snRNP
+08210;s100;KC;S-100 (e)
+08220;salic;KC;Salicylate
+08230;sama;KC;Serum-Amyloid A (e)
+08240;sap;KC;Saure Phosphatase (total)
+08250;sap1;KC;Saure Phosphatase (total)
+08260;scca;KC;SCCA (e)
+08270;scca1;KC;SCCA (e)
+08280;scl70;KC;ENA Scl-70
+08290;scl701;KC;  Scl-70
+08300;scwe;KC;Schwefel (e)
+08310;sel;KC;Selen (e)
+08320;sel1;KC;Selen (e)
+08330;sel2;KC;Selen (e)
+08340;sel3;KC;Selen (e)
+08350;sele;KC;Selen im Erythrozyt (e)
+08360;serdms;KC;Sertralin/Desmethylsertralin
+08370;sero;KC;Serotonin (e)
+08380;sero1;KC;Serotonin (e)
+08390;sero2;KC;Serotonin (e)
+08400;sero3;KC;Serotonin (Serum, e)
+08410;sero4;KC;Serotonin (EDTA-Plasma, e)
+08420;sero5;KC;Serotonin (Serum, e)
+08430;sert;KC;Sertralin (e)
+08440;sert1;KC;Sertralin (e)
+08450;serumv;KC;Serumverdünnungsfaktor
+08460;shbg;KC;SHBG
+08470;shbg1;KC;SHBG
+08480;shmif;KC;  mit Intrinsic Factor
+08490;shoif;KC;  ohne Intrinsic Factor
+08500;shy;KC;Saure Hydrolasen, Serum + Lc (e)
+08510;sil;KC;Silizium (e)
+08520;sil2r;KC;sIL-2 Rezeptor
+08530;silde;KC;Sildenafil (Viagra) (e)
+08540;silh;KC;Silizium (Haare, e)
+08550;siro;KC;Sirolimus (e)
+08560;sirol;KC;Sirolimus  (e)
+08570;skp;KC;Saure Knochen-Phosphatase
+08580;skp1;KC;Saure Knochen-Phosphatase
+08590;sm;KC;ENA Sm
+08600;sm1;KC;  Sm
+08610;spp;KC;Saure Prostata-Phosphatase
+08620;spp1;KC;Saure Prostata-Phosphatase
+08630;spth;KC;Tartrat-hemmbare Fraktion
+08640;spuha;KC;Spurenelemente (Haare) (e)
+08650;ssa;KC;ENA SS-A/Ro
+08660;ssa1;KC;  SS-A/Ro
+08670;ssb;KC;ENA SS-B/La
+08680;ssb1;KC;  SS-B/La
+08690;ssw;KC;    Schwangerschaftswoche
+08700;stfr;KC;löslicher Transferrinrezeptor
+08710;sucht;KC;Suchtstoffe HPLC (e)
+08720;sulh;KC;Sulfonylharnstoffe (e)
+08730;sult;KC;Sultiam (Ospolot) (e)
+08740;synac;KC;Synacthen-Stimulation
+08750;t3;KC;Trijodthyronin (T3)
+08760;t31;KC;Trijodthyronin (T3) (e)
+08770;t4;KC;Thyroxin T4 (e)
+08780;t41;KC;Thyroxin T4 (e)
+08790;t42;KC;Thyroxin T4 (e)
+08800;tacro;KC;Tacrolimus (e)
+08810;taup;KC;Tau-Protein (e)
+08820;tbg;KC;Thyroxin bindendes Globulin
+08830;teico;KC;Teicoplanin  (e)
+08840;tema;KC;Temazepam (e)
+08850;test;KC;Testosteron total (morgens)
+08860;testc;KC;Testo Centaur
+08870;testf;KC;Testosteron frei (e)
+08880;testf1;KC;Testosteron frei (e)
+08890;testf2;KC;Testosteron frei (e)
+08900;testf3;KC;Testosteron frei (e)
+08910;testf4;KC;Testosteron frei (e)
+08920;testfb;KC;Testosteron frei (berechnet)
+08930;testfs;KC;Testosteron frei (stimuliert) (e)
+08940;testp;KC;Testosteron total supp.
+08950;tests;KC;Testosteron total stim.
+08960;tet;KC;  Tetracosansäure
+08970;thal;KC;Thallium (e)
+08980;theo;KC;Theophyllin (e)
+08990;thiog;KC;Thioguaninnukleotid (e)
+09000;tia;KC;Tiagabin (e)
+09010;tnfa;KC;TNF-alpha (e)
+09020;tobr;KC;Tobramycin (e)
+09030;tobrp;KC;Tobramycin (Peakspiegel)
+09040;tobrt;KC;Tobramycin (Talspiegel)
+09050;topir;KC;Topiramat (e)
+09060;tps;KC;TPS (Tiss.polyp.spec.Ag) (e)
+09070;tr;KC;Trypsin (e)
+09080;tr1;KC;Trypsin (e)
+09090;tra;KC;Transferrin
+09100;trama;KC;Tramadol (e)
+09110;trazo;KC;Trazodon (e)
+09120;trazo1;KC;Trazodon (e)
+09130;trco13;KC;Transcobalamin I, III (e)
+09140;trco2;KC;Transcobalamin II (e)
+09150;tri;KC;Triglyceride
+09160;trian;KC;Tricyclische Antidepressiva (e)
+09170;trica;KC;Trichloräthanol (e)
+09180;trimi;KC;Trimipramin (Surmontil) (e)
+09190;trimi1;KC;Trimipramin (Surmontil) (e)
+09200;tripl;KC;Triple-Screen (e)
+09210;trop;KC;Troponin T (e)
+09220;trop1;KC;Troponin T
+09230;tropi;KC;Troponin I
+09240;tryp;KC;Tryptase
+09250;tsh;KC;TSH basal
+09260;tshs;KC;TSH nach TRF
+09270;tstfs1;KC;Testosteron frei (stimuliert) (e)
+09280;turn;KC;Karyotyp Turner Syndrom X0 (e)
+09290;tyro;KC;Tyrosin (e)
+09300;unbs;KC;Unbekannte Substanz (e)
+09310;urdyt;KC;Gal-1-Ph-Uridyltransferase (e)
+09320;urob;KC;Uroporphyrin
+09330;urosb;KC;Urosynthase (e)
+09340;val;KC;Valproat
+09350;val1;KC;Valproat
+09360;vancp;KC;Vancomycin (Peak) (e)
+09370;vancpm;KC;Vancomycin (Peak) (e)
+09380;vanct;KC;Vancomycin (Tal) (e)
+09390;vanctm;KC;Vancomycin (Tal) (e)
+09400;vb1ec;KC;Vit. B1 (Transketolase-Akt.) (e)
+09410;venla;KC;Venlafaxin (e)
+09420;venla1;KC;Venlafaxin (e)
+09430;venod;KC;Venlafaxin+O-Desmethylvenlaf.(e)
+09440;vfmed;KC;  Vielfaches des Median
+09450;vfmedp;KC;  Vielfaches des Median
+09460;viga;KC;Vigabatrin (Sabril) (e)
+09470;vip;KC;VIP Vasoakt.intest.Pep. (e)
+09480;viskse;KC;Serumviskosität (e)
+09490;vita;KC;Vitamin A (e)
+09500;vita1;KC;Vitamin A (e)
+09510;vita2;KC;Vitamin A (e)
+09520;vitb1;KC;Vitamin B1 (Thiamin) (e)
+09530;vitb11;KC;Vitamin B1 (Thiamin) (e)
+09540;vitb2;KC;Vitamin B2 (Riboflavin) (e)
+09550;vitb21;KC;Vitamin B2 (Riboflavin) (e)
+09560;vitb6;KC;Vitamin B6 (e)
+09570;vitb61;KC;Vitamin B6 (e)
+09580;vitc;KC;Vitamin C (e)
+09590;vitc1;KC;Vitamin C (e)
+09600;vitc2;KC;Vitamin C (e)
+09610;vitc3;KC;Vitamin C (e)
+09620;vite;KC;Vitamin E (e)
+09630;vite1;KC;Vitamin E (e)
+09640;vitk;KC;Vitamin K (e)
+09650;vori;KC;Voriconazol (e)
+09660;wh;KC;Somatotropin basal (e)
+09670;wh1;KC;Somatotropin basal (e)
+09680;wh2;KC;Somatotropin basal (e)
+09690;wh3;KC;Somatotropin basal (e)
+09700;whp;KC;Somatotropin supprimiert (e)
+09710;whp2;KC;Somatotropin supprimiert 2.Wert (e)
+09720;whp3;KC;Somatotropin supprimiert 3.Wert (e)
+09730;whp4;KC;Somatotropin supprimiert 4.Wert (e)
+09740;whs;KC;Somatotropin stimuliert (e)
+09750;whs2;KC;Somatotropin stimuliert 2.Wert (e)
+09760;whs3;KC;Somatotropin stimuliert 3.Wert (e)
+09770;whs4;KC;Somatotropin stimuliert 4.Wert (e)
+09780;wr;KC;Waaler-Rose (Rh-F)
+09790;xyl25;KC;  Belastung mit
+09800;xyls;KC;  Xylose (Serum) (e)
+09810;xylu;KC;  Xylose (Urin) (e)
+09820;zi;KC;Zink
+09830;zi1;KC;Zink (e)
+09840;zie;KC;Zink im Erythrozyt (e)
+09850;zikg;KC;Immunkomplexe IgG (e)
+09860;ziko;KC;C1q-Immunkomplexe (e)
+09870;zipr;KC;Ziprasidon, Zeldox(R) (e)
+09880;zolp;KC;Zolpidem (e)
+09890;zuclo;KC;Zuclopenthixol (e)
+09900;zuclo1;KC;Zuclopenthixol (e)
+09910;üblf;KC;Überlangkettige Fettsäuren (e)
+00010;kons1;KO;Aerztliche Konsultation, erste 5 Min
+00010;aampyl;PU;  Anti-Amphiphysin
+00020;abaspc;PU;  Basophile
+00030;accpp1;PU;anti-CCP IgG
+00040;accpp2;PU;anti-CCP IgG
+00050;accppu;PU;anti-CCP IgG (e)
+00060;acel;PU;Angiotensin-Conv.-Enzym (e)
+00070;advtl;PU;KBR  Adenoviren
+00080;aeospc;PU;  Eosinophile
+00090;ahempc;PU;AK gegen Herzmuskulatur(e)
+00100;ahu1l;PU;  Anti-Hu Ak (ANNA-1)
+00110;albpu;PU;Albumin
+00120;alppu;PU;Alkalische Phosphatase
+00130;alympc;PU;  Lymphozyten
+00140;amonpc;PU;  Monozyten
+00150;ampu;PU;Amylase
+00160;amyel;PU;  Ak gegen Myelin
+00170;anapc;PU;Antinukleäre AK
+00180;anapu;PU;ANA (Punktat)
+00190;andpu;PU;Andere Analyse Punktat
+00200;aneupc;PU;  Neutrophile
+00210;apatkp;PU;Apatit-Kristalle
+00220;aril;PU;  Anti-Ri (ANNA-2)
+00230;art;PU;Punktatort
+00240;artg;PU;Gelenkspunktat
+00250;astpc;PU;Antistreptolysin-O (AST)
+00260;astpu;PU;Antistreptolysin-O (AST)
+00270;ayol;PU;  Anti-Yo (PCA-1)
+00280;aznsl;PU;Anti-ZNS Ak (e)
+00290;bbug;PU;IgG B. burgd.(intrathek.,e)
+00300;bbug1l;PU;IgG B. burgdorferi
+00310;bbum;PU;IgM B. burgd.(intrathek.,e)
+00320;bbum1l;PU;IgM B. burgdorferi
+00330;bgpu;PU;Bilirubin, gesamt
+00340;c3pu;PU;Komplement C3
+00350;c4pu;PU;Komplement C4
+00360;capkrp;PU;Ca-Pyrophosphat-Kristalle
+00370;chopc;PU;Cholesterin
+00380;chopu;PU;Cholesterin
+00390;ckmmpc;PU;CK-MB (Masse)
+00400;ckpc;PU;CK (Creatin-Kinase)
+00410;crppc;PU;C-reaktives Protein
+00420;ebvpli;PU;Epstein-B. Virus DNA (PCR)(e)
+00430;ecpc;PU;Erythrozyten
+00440;ecpu;PU;Erythrozyten
+00450;ecpu/g;PU;Erythrozyten
+00460;entpli;PU;Enterovirus DNA (PCR) (e)
+00470;enttl;PU;KBR  Enteroviren (Echo/Cox)
+00480;farbel;PU;Aussehen (Farbe)
+00490;fsmgl;PU;IgG  FSME (e)
+00500;fsmglq;PU;     Li/Se-Quot.
+00510;glpu;PU;Glukose
+00520;gotpc;PU;GOT (ASAT)
+00530;gptpc;PU;GPT (ALAT)
+00540;hastpu;PU;Harnstoff
+00550;hbpc;PU;Hämoglobin
+00560;hbpu;PU;Hämoglobin
+00570;hivpnl;PU;HIV 1 RNA quant.(Liquor, e)
+00580;hkpc;PU;Hämatokrit
+00590;hkpu;PU;Hämatokrit
+00600;hsskrp;PU;Harnsäure-Kristalle
+00610;hsspc;PU;Harnsäure
+00620;hsspu;PU;Harnsäure
+00630;hsvegl;PU;IgG Herpes simplex 1/2 (e)
+00640;hsvglq;PU;     Li/Se-Quot.
+00650;hsvp;PU;Herpes simplex Virus PCR
+00660;hsvtl;PU;KBR  Herpes simplex (HSV)
+00670;iggl;PU;IgG (Immunglobulin G) (e)
+00680;krepu;PU;Kreatinin
+00690;krist;PU;Kristalle
+00700;lakl;PU;Laktat (Liquor)
+00710;lakpc;PU;Laktat
+00720;lakpu;PU;Laktat
+00730;lcmono;PU;  Mononukleäre Leukozyten
+00740;lcpc;PU;Leukozyten
+00750;lcpoly;PU;  Polynukleäre Leukozyten
+00760;lcpu;PU;Leukozyten
+00770;lcpu/g;PU;Leukozyten
+00780;ldhpc;PU;LDH (Lactat-Dehydrogenase)
+00790;ldhpu;PU;LDH
+00800;lialbq;PU;Albumin-Quotient
+00810;lialbu;PU;Albumin
+00820;liec;PU;Erythrozyten
+00830;ligluc;PU;Glukose
+00840;lilak;PU;Laktat (Liquor)
+00850;lilc;PU;Leukozyten
+00860;limono;PU;  Mononukleäre Zellen
+00870;lipoly;PU;  Polynukleäre Zellen
+00880;lippu;PU;Lipase
+00890;lipro1;PU;Protein
+00900;liprot;PU;Protein (gemessen)
+00910;lmopli;PU;Listeria monocyt. DNA (e)
+00920;makro;PU;Aussehen
+00930;masg1l;PU;IgG  Masern
+00940;masg2l;PU;IgG  Masern (e)
+00950;masglq;PU;     Li/Se-Quot.
+00960;mastl;PU;KBR  Masern
+00970;mumg1l;PU;IgG  Mumps
+00980;mumg2l;PU;IgG  Mumps (e)
+00990;mumglq;PU;     Li/Se-Quot.
+01000;mumtl;PU;KBR  Mumps
+01010;napu;PU;Natrium
+01020;naurkr;PU;Na-Urat-Kristalle
+01030;p1433;PU;Protein 14-3-3 (e)
+01040;pampu;PU;Pankreas-Amylase
+01050;phbpc;PU;pH-Wert
+01060;phpu;PU;pH
+01070;polyv;PU;Polyoma-Virus sp. (e)
+01080;propl;PU;Protein Profil Liquor (e)
+01090;protpc;PU;Protein total
+01100;prtpu;PU;Protein
+01110;quecsn;PU;Quecksilber nach Kauen (e)
+01120;quecsv;PU;Quecksilber vor Kauen (e)
+01130;rfpc;PU;Rheumafaktor
+01140;rfpu;PU;Rheumafaktoren
+01150;rubgl;PU;IgG  Rubella
+01160;spezpu;PU;Spezifisches Gewicht
+01170;tcpc;PU;Thrombozyten
+01180;tgogl;PU;IgG  Toxoplasmose
+01190;transp;PU;Transparenz
+01200;tripu;PU;Triglyceride
+01210;viskpu;PU;Viskosität
+01220;vzvgl;PU;IgG  Varizella-Zoster Virus
+01230;vzvgl1;PU;IgG  Varizella-Zoster Virus (e)
+01240;vzvglq;PU;     Li/Se-Quot.
+01250;vzvm4l;PU;IgM  Varizella-Zoster Virus (e)
+01260;vzvp;PU;VZV PCR (e)
+01270;wrpc;PU;Waaler-Rose (Rh-F)
+01280;wrpu;PU;Waaler-Rose
+00010;bior;RE;Bioresonanz WÜSTM
+00020;bt;RE;Bearbeitungstaxe
+00010;abst;SE;Abstrich von
+00020;advg;SE;IgG Adenoviren (e)
+00030;advm;SE;IgM Adenoviren (e)
+00040;advt;SE;KBR  Adenoviren
+00050;afl;SE;Aspergillus flavus
+00060;afu;SE;Aspergillus fumigatus
+00070;ang;SE;Angiostrongylus Ak (e)
+00080;ani;SE;Aspergillus nidulans
+00090;anig;SE;Aspergillus niger
+00100;arbg;SE;IgG  Arboviren (e)
+00110;arbm;SE;IgM  Arboviren (e)
+00120;aspag;SE;Aspergillus Ag (Galactomannan) (e)
+00130;aspt;SE;Aspergillus Ak (e)
+00140;ate;SE;Aspergillus terreus
+00150;babd;SE;IF   Babebiose diverg. (e)
+00160;babm;SE;IF  Babebiose microti (e)
+00170;bbubg;SE;IgG  B. burgdorferi WB
+00180;bbubm;SE;IgM  B. burgdorferi WB
+00190;bbuet;SE;EIA  B. burgdorferi (IgG/M)
+00200;bbug1;SE;IgG B. burgdorferi
+00210;bbuim;SE;IF  B. burgdorferi IgM
+00220;bbukt;SE;KBR  B. burgdorferi
+00230;bbum1;SE;IgM B. burgdorferi
+00240;bdet;SE;Blastomyces dermatitis (e)
+00250;bdit;SE;IF  Babesia divergens (e)
+00260;bheg;SE;IgG Bartonella henselae (e)
+00270;bheg1;SE;IgG Barton. henselae (e)
+00280;bhem;SE;IgM Barton. henselae (e)
+00290;blasd;SE;Blastomyces dermatitis (e)
+00300;bmit;SE;IF  Babesia microti (e)
+00310;bpea;SE;IgA  B. pertussis
+00320;bpea1;SE;IgA  B. pertussis (e)
+00330;bpea2;SE;IgA  B. pertussis (e)
+00340;bpea3;SE;IgA  B. pertussis (e)
+00350;bpeg;SE;IgG  B. pertussis
+00360;bpeg1;SE;IgG  B. pertussis (e)
+00370;bpeg2;SE;IgG  B. pertussis (e)
+00380;bpeg3;SE;IgG  B. pertussis (e)
+00390;bpem;SE;IgM  B. pertussis
+00400;bpem1;SE;IgM  B. pertussis (e)
+00410;bpem2;SE;IgM  B. pertussis (e)
+00420;bpem3;SE;IgM  B. pertussis (e)
+00430;bpet;SE;KBR  B. pertussis
+00440;bquan;SE;  Quantitative Angabe
+00450;bquan1;SE;  Quantitative Angabe
+00460;bqug;SE;IgG Bartonella quintana (e)
+00470;bqum;SE;IgM Bartonella quintana (e)
+00480;brukt;SE;KBR  Brucella species (e)
+00490;bruut;SE;Agg  Brucella species
+00500;calag1;SE;IEP  C. alb. Polysacch. Ag(e)
+00510;calag2;SE;IEP  C. albicans Protein Ag(e)
+00520;calt;SE;IHA Candida albicans (e)
+00530;canaha;SE;IHA Candida albicans (e)
+00540;cbu1g;SE;IgG C. burnetii Phase 1 (e)
+00550;cbu2g;SE;C. burnetii Ak Phase 2 (e)
+00560;cbua;SE;IgA  C. burnetii (Q-Fieber)
+00570;cbum;SE;IgM  C. burnetii (Q-Fieber)
+00580;cbut;SE;KBR  C. burnetii (Q-Fieber)
+00590;cdig;SE;anti C. diphtheriae IgG (e)
+00600;cdit;SE;C. diphtheriae Ak (e)
+00610;cfet;SE;KBR  Campylobacter fetus
+00620;cfet1;SE;KBR  Campylobacter fetus (e)
+00630;chiut;SE;Chikungunya-Virus Ak (e)
+00640;cimt;SE;Coccidioides immitis (e)
+00650;cjet;SE;KBR  Campylobacter jejuni
+00660;cjet1;SE;KBR  Campylobacter jejuni
+00670;cmvav;SE;IgG  CMV Avidität (e)
+00680;cmvg;SE;IgG  Zytomegalievirus
+00690;cmvg1;SE;IgG  Zytomegalievirus
+00700;cmvm;SE;IgM  Zytomegalievirus
+00710;cmvm1;SE;IgM  Zytomegalievirus
+00720;cmvmc;SE;IgM  CMV Bestätigung (e)
+00730;cmvp;SE;Zytomegalievirus DNA (PCR) (e)
+00740;cmvpn;SE;CMV DNA, quant. (PCR) (e)
+00750;cneag;SE;C. neoformans Antigen
+00760;cneagp;SE;C. neoformans Antigen
+00770;cobaa;SE;IgA Coxsackie A und B (e)
+00780;cocci;SE;Coccidioides immitis (e)
+00790;cox6t;SE;KBR  Coxsackie B 1-6
+00800;cox9t;SE;KBR  Coxsackie-Virus A9
+00810;coxb1;SE;Coxsackie B 1
+00820;coxb2;SE;Coxsackie B 2
+00830;coxb3;SE;Coxsackie B 3
+00840;coxb4;SE;Coxsackie B 4
+00850;coxb5;SE;Coxsackie B 5
+00860;coxb6;SE;Coxsackie B 6
+00870;cpna;SE;IgA  Chlamydia pneumoniae
+00880;cpna1;SE;IgA  Chlamydia pneumoniae
+00890;cpnaq;SE;  Quantitative Angabe
+00900;cpng;SE;IgG  Chlamydia pneumoniae
+00910;cpng1;SE;IgG  Chlamydia pneumoniae
+00920;cpngq;SE;  Quantitative Angabe
+00930;cpnm;SE;IgM  Chlamydia pneumoniae
+00940;cpnmq;SE;  Quantitative Angabe
+00950;cpsa;SE;IgA  Chlamydia psittaci
+00960;cpsa1;SE;IgA  Chlamydia psittaci
+00970;cpsaq;SE;  Quantitative Angabe
+00980;cpsg;SE;IgG  Chlamydia psittaci
+00990;cpsg1;SE;IgG  Chlamydia psittaci
+01000;cpsgq;SE;  Quantitative Angabe
+01010;cpsm;SE;IgM  Chlamydia psittaci
+01020;cpsmq;SE;  Quantitative Angabe
+01030;cquan;SE;  Quantitative Angabe
+01040;cquas;SE;  Quantitative Angabe
+01050;cquas1;SE;  Quantitative Angabe
+01060;cquas2;SE;  Quantitative Angabe
+01070;cteg;SE;IgG  C. tetani(e)
+01080;cteg1;SE;IgG  C. tetani(e)
+01090;ctra;SE;IgA  Chlamydia trachomatis
+01100;ctra1;SE;IgA  Chlamydia trachomatis
+01110;ctrag2;SE;IEP  C. tropicalis Protein Ag(e)
+01120;ctraq;SE;  Quantitative Angabe
+01130;ctrg;SE;IgG  Chlamydia trachomatis
+01140;ctrg1;SE;IgG  Chlamydia trachomatis
+01150;ctrgq;SE;  Quantitative Angabe
+01160;ctrl;SE;Chla. trachomatis DNA (LCR)
+01170;ctrl1;SE;Chla. trachomatis DNA (e)
+01180;ctrm;SE;IgM  Chlamydia trachomatis
+01190;ctrmq;SE;  Quantitative Angabe
+01200;ctrp;SE;Chla. trachomatis DNA (PCR)(e)
+01210;deng;SE;IgG  Dengue-Virus (e)
+01220;deng1;SE;IgG  Dengue-Virus (e)
+01230;denm;SE;IgM  Dengue-Virus (e)
+01240;denm1;SE;IgM  Dengue-Virus (e)
+01250;dent;SE;Dengue-Virus Ak (gesamt)(e)
+01260;eb138a;SE;       p138 (Early Ag) IgA
+01270;eb138g;SE;       p138 (Early Ag) IgG
+01280;eb138m;SE;       p138 (Early Ag) IgM
+01290;ebv18a;SE;       p18 (VCA) IgA
+01300;ebv18g;SE;       p18 (VCA) IgG
+01310;ebv18m;SE;       p18 (VCA) IgM
+01320;ebv23a;SE;       p23 (VCA) IgA
+01330;ebv23g;SE;       p23 (VCA) IgG
+01340;ebv23m;SE;       p23 (VCA) IgM
+01350;ebv54a;SE;       p54 (Early Ag) IgA
+01360;ebv54g;SE;       p54 (Early Ag) IgG
+01370;ebv54m;SE;       p54 (Early Ag) IgM
+01380;ebvba;SE;IgA  EBV Western Blot
+01390;ebvbg;SE;IgG  EBV Western Blot
+01400;ebvbm;SE;IgM  EBV Western Blot
+01410;ebveb;SE;       EBNA 1 IgG
+01420;ebveba;SE;       EBNA 1 IgA
+01430;ebvebm;SE;       EBNA 1 IgM
+01440;ebveg;SE;IgG  EBV (EBNA 1)
+01450;ebveg1;SE;IgG  EBV (EBNA 1)
+01460;ebvp;SE;Epstein-B. Virus DNA (PCR)(e)
+01470;ebvrg;SE;IgG  EBV (Early Antigen)(e)
+01480;ebvrm;SE;IgM  EBV (Early Antigen)(e)
+01490;ebvut;SE;Heteroph. Ak (Mononukleose)
+01500;ebvva;SE;IgA  Epstein-B. Virus (VCA)
+01510;ebvvg;SE;IgG  Epstein-B. Virus (VCA)
+01520;ebvvg1;SE;IgG  Epstein-B. Virus (VCA)
+01530;ebvvm;SE;IgM  Epstein-B. Virus (VCA)
+01540;ebvvm1;SE;IgM  Epstein-B. Virus (VCA)
+01550;echot;SE;KBR  Echovirus-Pool
+01560;egret;SE;EIA  E. granulosus (e)
+01570;egrit;SE;IF  E. granulosus (e)
+01580;egrut;SE;IHA  E. granulosus (e)
+01590;ehiet;SE;EIA  Amöbiasis (e)
+01600;ehiet2;SE;EIA  Amöbiasis (e)
+01610;ehiit;SE;IF Amöbiasis (gesamt)(e)
+01620;ehiit1;SE;IF Amöbiasis (gesamt)(e)
+01630;ehikt;SE;KBR  Amöbiasis(e)
+01640;ehrgg;SE;IgG  Ehrlichiose gran. (e)
+01650;ehrgm;SE;IgM  Ehrlichiose gran. (e)
+01660;ehrgt;SE;Ehrlichiose, granulozytär (e)
+01670;ehrmt;SE;Ehrlichiose, monozytär (e)
+01680;emut;SE;EIA  E. multilocularis (e)
+01690;emutx;SE;EIA  E. multilocularis, Best. (e)
+01700;entg;SE;IgG  Enteroviren (e)
+01710;entm;SE;IgM  Enteroviren (e)
+01720;entt;SE;KBR  Enteroviren (Echo/Cox)
+01730;fheet;SE;EIA  Fasciolose (e)
+01740;fheit;SE;IF   Fasciolose (e)
+01750;filet;SE;EIA  Filariose (e)
+01760;filit;SE;IF  Filariose (e)
+01770;flaem;SE;IgM Flavi-Virus (e)
+01780;fsmg;SE;IgG  FSME
+01790;fsmg1;SE;IgG  FSME
+01800;fsmg2;SE;IgG  FSME
+01810;fsmg3;SE;IgG  FSME (e)
+01820;fsmgv;SE;IgG  FSME (verd. Serum)
+01830;fsmm;SE;IgM  FSME
+01840;fsmm1;SE;IgM  FSME
+01850;fsmm2;SE;IgM  FSME
+01860;fsmm3;SE;IgM  FSME (e)
+01870;fsmt;SE;KBR  FSME
+01880;ftut;SE;AGG  F. tularensis (e)
+01890;gelt;SE;Gelbfieber Ak (gesamt) (e)
+01900;gna;SE;Gnathostoma Ak (e)
+01910;hang;SE;IgG  Hantaviren (e)
+01920;hanm;SE;IgM  Hantaviren (e)
+01930;havm;SE;IgM  Hepatitis A
+01940;havm1;SE;IgM  Hepatitis A
+01950;havp;SE;Hepatitis A RNA (PCR) (e)
+01960;havt;SE;Hepatitis A Ak (gesamt)
+01970;havt1;SE;Hepatitis A Ak (gesamt)
+01980;hbcm;SE;Hepatitis B-c IgM
+01990;hbcm1;SE;Hepatitis B-c IgM
+02000;hbct;SE;Hepatitis B-c Ak (gesamt)
+02010;hbctq;SE;Hepatitis B-c Ak
+02020;hbctqn;SE;Hepatitis B-c Ak (gesamt)
+02030;hbctqp;SE;Hepatitis B-c Ak (gesamt)
+02040;hbeag;SE;Hepatitis B-e Ag
+02050;hbeag1;SE;Hepatitis B-e Ag
+02060;hbeg;SE;Hepatitis B-e Ak
+02070;hbegn;SE;Hepatitis B-e Ak
+02080;hbegp;SE;Hepatitis B-e Ak
+02090;hbegq;SE;Hepatitis B-e Ak
+02100;hbsag;SE;Hepatitis B-s Antigen
+02110;hbsagn;SE;HBs Ag nach Neutralisation
+02120;hbsagp;SE;Hepatitis B-s Antigen
+02130;hbsagq;SE;  Quantitative Angabe
+02140;hbsaq1;SE;  Quantitative Angabe
+02150;hbst;SE;Hepatitis B-s Ak
+02160;hbst1;SE;Hepatitis B-s Ak
+02170;hbst2;SE;Hepatitis B-s Ak
+02180;hbsti;SE;Hepatitis B-s Ak (Imm.)
+02190;hbvh;SE;Hepatitis B Hybridisierung (e)
+02200;hbvpl;SE;Hepatitis B PCR qual. (e)
+02210;hbvpn;SE;Hepatitis B PCR quant. (e)
+02220;hcat;SE;ID  Histopl. capsulatum
+02230;hcv100;SE;  Anti-HCV C100
+02240;hcv22;SE;  Anti-HCV C22
+02250;hcv33;SE;  Anti-HCV C33
+02260;hcvb;SE;HCV Ak (Bestätigung) (e)
+02270;hcvc1;SE;  Anti-HCV C1
+02280;hcvc2;SE;  Anti-HCV C2
+02290;hcvce;SE;HCV Centaur in Evaluation
+02300;hcve2;SE;  Anti-HCV E2
+02310;hcvgq;SE;HCV Ak (quant.) (e)
+02320;hcvns3;SE;  Anti-HCV NS3
+02330;hcvns4;SE;  Anti-HCV NS4
+02340;hcvns5;SE;  Anti-HCV NS5
+02350;hcvpg;SE;Hepatitis C Genotyp (e)
+02360;hcvpl;SE;HCV RNA, qual. (PCR) (e)
+02370;hcvpn;SE;HCV RNA, quant. (PCR) (e)
+02380;hcvsod;SE;  Anti-HCV SOD
+02390;hcvstr;SE;  Streptavidinbande
+02400;hcvt;SE;Hepatitis C Ak (3.Gen.)
+02410;hcvt1;SE;Hepatitis C Ak
+02420;hdvg;SE;Hepatitis D Ak (gesamt) (e)
+02430;hevg;SE;IgG  Hepatitis E (e)
+02440;hevt;SE;Hepatitis E Ak (e)
+02450;hgvp;SE;Hepatitis G PCR (e)
+02460;hhv6g;SE;IgG  Hum. Herpes Virus 6 (e)
+02470;hhv6m;SE;IgM  Hum. Herpes Virus 6 (e)
+02480;hhv6p;SE;Humanes Herpes Vir. 6 (PCR)(e)
+02490;hing;SE;IgG  H. influenzae Typ B (e)
+02500;hiv105;SE;  Anti-sgp105 (env2)
+02510;hiv120;SE;  Anti-sgp120 (env)
+02520;hiv2pn;SE;HIV-2-PCR quant. (e)
+02530;hiv36;SE;  Anti-gp36 (env2)
+02540;hiv41;SE;  Anti-gp41 (env)
+02550;hivag;SE;HIV p24 Antigen (e)
+02560;hivag1;SE;HIV p24 Antigen, quant.
+02570;hivag2;SE;HIV p24 Antigen
+02580;hivag3;SE;HIV p24 Antigen
+02590;hivagn;SE;HIV p24 Antigen, quant. (e)
+02600;hivb;SE;HIV 1,2 Western Blot (e)
+02610;hivce;SE;HIV Centaur in Evaluation
+02620;hivcee;SE;HIV Combi Test Elecsys Evaluation
+02630;hivd;SE;HIV Screening (Ak + p24 Ag)
+02640;hivd1;SE;HIV Screening (Ak), quant.
+02650;hivd2;SE;HIV Screening (Ak)
+02660;hivd3;SE;HIV Screening (Ak)
+02670;hivd4;SE;HIV Screening (Ak + p24 Ag)
+02680;hivd5;SE;HIV Screening (Ak + p24 Ag)
+02690;hivde;SE;HIV Screening (Ak+Ag) (e)
+02700;hivp17;SE;  Anti-p17 (gag)
+02710;hivp24;SE;  Anti-p24 (gag)
+02720;hivp31;SE;  Anti-p31 (pol)
+02730;hivpl;SE;HIV 1 RNA (PCR), qual. (e)
+02740;hivpn;SE;HIV 1 RNA (PCR), quant.(e)
+02750;hivrp;SE;HIV-Resistenztestung Phänot. (e)
+02760;hivt;SE;HIV Antikörper (Screening)
+02770;hivts;SE;HIV-Screening (Antikörper)
+02780;hivyd;SE;HIV Screening (Ak + p24 Ag)
+02790;hpya;SE;IgA  H. pylori
+02800;hpyeg;SE;IgG  H.pylori (e)
+02810;hpyg;SE;IgG  H.pylori
+02820;hpyg1;SE;IgG  H.pylori
+02830;hpyt;SE;Helicob. pylori (Gesamt-Ak)
+02840;hsv1g;SE;IgG Herpes simplex Typ 1 (e)
+02850;hsv2g;SE;IgG Herpes simplex Typ 2 (e)
+02860;hsva;SE;IgA Herpes simplex (HSV)
+02870;hsveg;SE;IgG Herpes simplex 1/2 (e)
+02880;hsveg1;SE;IgG Herpes simplex 1/2 (e)
+02890;hsvem;SE;IgM Herpes simplex 1/2 (e)
+02900;hsvem1;SE;IgM Herpes simplex 1/2 (e)
+02910;hsvm;SE;IgM  Herpes simplex (HSV)
+02920;hsvt;SE;KBR  Herpes simplex (HSV)
+02930;htlv1;SE;HTLV I Antikörper (e)
+02940;htlv1g;SE;IgG  HTLV-1 (e)
+02950;htlv2;SE;HTLV II Antikörper (e)
+02960;i2nagr;SE;  Nachweisgrenze
+02970;i2quan;SE;  Quantitative Angabe
+02980;igesq;SE;IgE  semiquantitativ
+02990;inat;SE;KBR  Influenza A
+03000;inbt;SE;KBR  Influenza B
+03010;infaa;SE;IgA Influenza A
+03020;infag;SE;IgG Influenza A
+03030;infba;SE;IgA Influenza B
+03040;infbg;SE;IgG Influenza B
+03050;iquan;SE;  Quantitative Angabe
+00010;leerz;SE
+03060;leit;SE;Leishmaniasis Ak (gesamt) (e)
+03070;leput;SE;Agg  Leptospira species (e)
+03080;lgrt;SE;KBR  Lepto. grippo. (e)
+03090;lict;SE;KBR  Lept. ictero. (e)
+03100;lm1h;SE;  Typ 1 H
+03110;lm1o;SE;  Typ 1 O
+03120;lm4bh;SE;  Typ 4b H
+03130;lm4bo;SE;  Typ 4b O
+03140;lmo1h;SE;  L.monocyt. 1H
+03150;lmo1o;SE;  L.monocyt. 1O
+03160;lmo4bh;SE;  L.monocyt. 4b H
+03170;lmo4bo;SE;  L.monocyt. 4b O
+03180;lmoat;SE;L. monocytogenes (e)
+03190;lmokt;SE;  L. monocytogenes KBR
+03200;lnpng;SE;IgG  Legionella non pneumophila (e)
+03210;lnpt;SE;L. non-pneumo. Ak (gesamt) (e)
+03220;lpng;SE;IgG  Legionella pneumophila (e)
+03230;lpng1;SE;IgG  Legionella pneumophila (e)
+03240;lpnp;SE;Legionel. pneumophila (PCR) (e)
+03250;malet;SE;EIA  Malaria Ak (gesamt) (e)
+03260;malit;SE;IF   Malaria Ak (gesamt) (e)
+03270;masg;SE;IgG  Masern (e)
+03280;masg1;SE;IgG  Masern
+03290;masg2;SE;IgG  Masern (e)
+03300;masg3;SE;IgG  Masern (e)
+03310;masgv;SE;IgG  Masern (verd. Serum)
+03320;masm;SE;IgM  Masern
+03330;masm1;SE;IgM  Masern (e)
+03340;mast;SE;KBR  Masern
+03350;mater;SE;Probenmaterial
+03360;mo;SE;mo
+03370;mpneg;SE;IgG Mycoplasma pneumoniae (e)
+03380;mpnem;SE;IgM Mycoplasma pneumoniae (e)
+03390;mpnp;SE;M. pneumoniae DNA (PCR) (e)
+03400;mpnt;SE;KBR  Mykoplasma pneumoniae
+03410;mumg;SE;IgG  Mumps (e)
+03420;mumg1;SE;IgG  Mumps
+03430;mumg2;SE;IgG  Mumps (e)
+03440;mumg3;SE;IgG  Mumps (e)
+03450;mumgv;SE;IgG  Mumps (verd. Serum)
+03460;mumm;SE;IgM  Mumps
+03470;mumm1;SE;IgM  Mumps (e)
+03480;mumt;SE;KBR  Mumps
+03490;nagr;SE;  Nachweisgrenze
+03500;nagr1;SE;  Nachweisgrenze
+03510;nagr2;SE;  Nachweisgrenze
+03520;nagr3;SE;  Nachweisgrenze
+03530;ngol;SE;Neis. gonorrhoeae DNA (LCR)
+03540;ngol1;SE;Neis. gonorrhoeae DNA (e)
+03550;ngop;SE;Neis. gonorrhoeae DNA (PCR) (e)
+03560;ngot;SE;KBR  Gonokokken (e)
+03570;ngot1;SE;KBR  Gonokokken (e)
+03580;ocg1g;SE;  OspC B.garinii 1 IgG
+03590;ocg1m;SE;  OspC B.garinii 1 IgM
+03600;ocg2g;SE;  OspC B.garinii 2 IgG
+03610;ocg2m;SE;  OspC B.garinii 2 IgM
+03620;ocsag;SE;  OspC B.ss /afzelii IgG
+03630;ocsam;SE;  OspC B.ss /afzelii IgM
+03640;ospag;SE;  OspA IgG
+03650;ospam;SE;  OspA IgM
+03660;ospcg;SE;  OspC IgG
+03670;ospcm;SE;  OspC IgM
+03680;ovot;SE;Onchocerca volvulus Ak (e)
+03690;p100g;SE;  p100 IgG
+03700;p100m;SE;  p100 IgM
+03710;p18g;SE;  p18 IgG
+03720;p18m;SE;  p18 IgM
+03730;p39g;SE;  p39 IgG
+03740;p39m;SE;  p39 IgM
+03750;p41g;SE;  p41 IgG (Flagellin)
+03760;p41iag;SE;  p41 int.(B.afzelii) IgG
+03770;p41iam;SE;  p41 int.(B.afzelii) IgM
+03780;p41igg;SE;  p41 int.(B.garinii) IgG
+03790;p41igm;SE;  p41 int.(B.garinii) IgM
+03800;p41m;SE;  p41 IgM (Flagellin)
+03810;par1t;SE;KBR  Parainfluenza 1
+03820;par1t1;SE;KBR  Parainfluenza 1 (e)
+03830;par2t;SE;KBR  Parainfluenza 2
+03840;par2t1;SE;KBR  Parainfluenza 2 (e)
+03850;par3t;SE;KBR  Parainfluenza 3
+03860;par3t1;SE;KBR  Parainfluenza 3 (e)
+03870;pb19eg;SE;IgG  Parvovirus B19 (e)
+03880;pb19em;SE;IgM  Parvovirus B19 (e)
+03890;pb19g;SE;IgG  Parvovirus B19
+03900;pb19m;SE;IgM  Parvovirus B19
+03910;pb19p;SE;Parvovirus B19 DNA (PCR) (e)
+03920;pneg;SE;IgG  Pneumokokken (e)
+03930;pol1;SE;Poliovirus 1 Ak (e)
+03940;pol2;SE;Poliovirus 2 Ak (e)
+03950;pol3;SE;Poliovirus 3 Ak (e)
+03960;qf1g;SE;C. burnetii Ak Phase 1 (e)
+03970;qf2g;SE;IgG  C. burnetii Phase 2 (e)
+03980;rcog;SE;IgG  Rick. conorii (e)
+03990;rcog1;SE;IgG  Rick. conorii (e)
+04000;rcom;SE;IgM  Rick. conorii (e)
+04010;rcom1;SE;IgM  Rick. conorii (e)
+04020;rifit;SE;Rift-Valley-Virus Ak (e)
+04030;rmog;SE;IgG Rick. mooseri (e)
+04040;rmom;SE;IgM Rick. mooseri (e)
+04050;rott;SE;KBR  Rotavirus
+04060;rsvg;SE;IgG Resp. Syncytial Virus (e)
+04070;rsvm;SE;IgM Resp. Syncytial Virus (e)
+04080;rsvt;SE;KBR  Resp. Syncytial Virus
+04090;rubav;SE;IgG  Rubella Avidität (e)
+04100;rubg;SE;IgG  Rubella
+04110;rubg1;SE;IgG  Rubella
+04120;rubm;SE;IgM  Rubella
+04130;rubm1;SE;IgM  Rubella
+04140;rubms;SE;IgM  Rubella (e)
+04150;sciee;SE;EIA  Schistosoma Ei-Ag (e)
+04160;sciet;SE;EIA  Schistosomiasis (e)
+04170;sciet1;SE;EIA  Schistosoma Adult Ag (e)
+04180;sciit;SE;IF  Schistosomiasis (e)
+04190;senu;SE;Salm. enteritidis H Ak
+04200;sflt;SE;KBR  Shigellen (S.flexneri) (e)
+04210;spaau;SE;Salm. paratyphi A, O Ak
+04220;spabu;SE;Salm. paratyphi B, O Ak
+04230;spacu;SE;Salm. paratyphi C, O Ak
+04240;spahu;SE;Salm. paratyphi H Ak
+04250;spaou;SE;Salm. paratyphi O Ak
+04260;sstt;SE;EIA  Strongyloidose (e)
+04270;styhu;SE;Salm. typhi H Ak
+04280;stymu;SE;Salm. typhimurium H Ak
+04290;styou;SE;Salm. typhi O Ak
+04300;styou1;SE;Salm. typhi O Ak
+04310;tbrt;SE;Afr. Trypanosomiasis (ges.) (e)
+04320;tcrt;SE;Ame. Trypanosomiasis (ges.) (e)
+04330;tgoa;SE;IgA  Toxoplasmose
+04340;tgoav;SE;IgG  Toxopl. Avidität (e)
+04350;tgoav1;SE;IgG  Toxopl. Avidität
+04360;tgog;SE;IgG  Toxoplasmose
+04370;tgog1;SE;IgG  Toxoplasmose
+04380;tgog2;SE;IgG  Toxoplasmose (Bestät.)
+04390;tgog3;SE;IgG  Toxoplasmose (e)
+04400;tgog4;SE;IgG  Toxoplasmose
+04410;tgog5;SE;IgG  Toxoplasmose
+04420;tgog6;SE;IgG  Toxoplasmose (e)
+04430;tgogel;SE;TOXO IgG Elecsys Evaluation
+04440;tgogp;SE;IgG  Toxoplasmose, Vorserum
+04450;tgogp1;SE;IgG  Toxoplasmose, Vorserum
+04460;tgogp2;SE;IgG  Toxoplasmose, Vorserum
+04470;tgoia;SE;IgA  Toxoplasmose (Bestät.)
+04480;tgoim;SE;IgM  Toxoplasmose
+04490;tgoim1;SE;IgM  Toxoplasmose
+04500;tgokv;SE;Kongenit. Toxopl. Verlauf (e)
+04510;tgom;SE;IgM  Toxoplasmose
+04520;tgom1;SE;IgM  Toxoplasmose
+04530;tgom2;SE;IgM  Toxoplasmose
+04540;tgomel;SE;TOXO IgM Elecsys Evaluation
+04550;tgomp;SE;IgM  Toxoplasmose, Vorserum
+04560;tgomp1;SE;IgM  Toxoplasmose, Vorserum
+04570;tgomp2;SE;IgM  Toxoplasmose, Vorserum
+04580;tgop;SE;Toxoplasma gondii DNA (PCR) (e)
+04590;tgopr;SE;Kongenitale Toxopl. Kind (e)
+04600;tgoprm;SE;Kongenitale Toxopl. Mutter (e)
+04610;tgoxm;SE;IgM  Toxoplasmose Best. (e)
+04620;tmpam;SE;  TmpA
+04630;tol;SE;Tollwut (Immunität) (e)
+04640;toxe;SE;IgE  Toxocarose (e)
+04650;toxt;SE;EIA  Toxocarose (e)
+04660;tp15m;SE;  Tp 15
+04670;tp47m;SE;  TP 47
+04680;tpabm;SE;Treponema pall. IgM (WB) (e)
+04690;tpag;SE;IgG  Lues (Syphilis) (e)
+04700;tpait;SE;FTA-Abs Ig Lues (Syphilis) (e)
+04710;tpam;SE;IgM  Lues (Syphilis)
+04720;tpam1;SE;IgM  Lues (Syphilis) (e)
+04730;tpat;SE;Lues-Screening (IgG/M)
+04740;tpha;SE;TPHA  Lues (Screening) (e)
+04750;tsot;SE;EIA  Zystizerkose (T. sol.)
+04760;tspit;SE;IF  Trichinellose (e)
+04770;tspt;SE;EIA  Trichinellose (e)
+04780;urinar;SE;Probenmaterial
+04790;vdrl;SE;VDRL  Lues (Cardiolipin)
+04800;vdrln;SE;VDRL  Lues quant.
+04810;vlseg;SE;  VlsE IgG
+04820;vlsem;SE;  VlsE IgM
+04830;vzva;SE;IgA  Varizella-Zoster Virus
+04840;vzva1;SE;IgA  Varizella-Zoster Virus
+04850;vzva2;SE;IgA  Varizella-Zoster Virus (e)
+04860;vzvg;SE;IgG  Varizella-Zoster Virus
+04870;vzvg1;SE;IgG  Varizella-Zoster Virus
+04880;vzvg2;SE;IgG  Varizella-Zoster Virus (e)
+04890;vzvgv;SE;IgG  VZV (verdünntes Serum)
+04900;vzvm;SE;IgM  Varizella-Zoster Virus
+04910;vzvm1;SE;IgM  Varizella-Zoster Virus
+04920;vzvm2;SE;IgM  Varizella-Zoster Virus
+04930;vzvm3;SE;IgM  Varizella-Zoster Virus
+04940;vzvm4;SE;IgM  Varizella-Zoster Virus (e)
+04950;vzvmc;SE;IgM  VZV Konfirmation (e)
+04960;vzvt;SE;KBR  Varizella-Zoster Virus
+04970;wbaag;SE;Wuchereria bancrofti Antigen (e)
+04980;wenip;SE;West Nile Virus RNA (e)
+04990;wnig;SE;IgG West Nile Virus (e)
+05000;wnim;SE;IgM West Nile Virus (e)
+05010;yeno3;SE;AGG  Yers. enterocolitica O3 (e)
+05020;yeno9;SE;AGG  Yers. enterocolitica O9 (e)
+05030;yent;SE;KBR  Yers. enterocolitica
+05040;ypst;SE;KBR  Yers. pseudotubercul.
+05050;ypst1;SE;AGG  Yers. pseudotubercul. (e)
+00010;a1akon;ST; Konzentration
+00020;a1atro;ST; Trockenanteil
+00030;calpr;ST;Calprotectin (e)
+00040;chymo;ST;Chymotrypsin (e)
+00050;chymo1;ST;Chymotrypsin(e)
+00060;cop3s;ST;Koproporphyrin III (e)
+00070;fett;ST;  Neutralfett
+00080;fettg;ST;  Fettgehalt
+00090;fettgg;ST;  Fettgehalt absolut
+00100;fetts;ST;  Ausscheidung pro Tag
+00110;klinik;ST;Klinische Angaben
+00120;ks;ST;Kalium im Stuhl (e)
+00130;muange;ST;  Muskelfasern angedaut
+00140;muguve;ST;  Muskelfasern gut verdaut
+00150;muunve;ST;  Muskelfasern unverdaut
+00160;nadeln;ST;  Fettsäurenadeln
+00170;nas;ST;Natrium im Stuhl (e)
+00180;okbl;ST;Okkultes Blut
+00190;okbl2;ST;Okkultes Blut 2
+00200;okbl3;ST;Okkultes Blut 3
+00210;pelas;ST;Pankreatische Elastase (e)
+00220;phst1;ST;pH (1. Probe)
+00230;phst2;ST;pH (2. Probe)
+00240;porst;ST;Koproporphyrin 1 (e)
+00250;props;ST;Protoporphyrin (e)
+00260;quecs;ST;Quecksilber im Stuhl (e)
+00270;smenge;ST;  Nativstuhlmenge
+00280;ssamm;ST;  Sammeldauer
+00290;stärke;ST;  Stärke
+00010;17k241;UR;17-Ketosteroide (/Tag)
+00020;17k242;UR;17-Ketosteroide (/Tag)
+00030;17ke24;UR;17-Ketosteroide(/Tag)
+00040;17ket;UR;17-Ketosteroide(e)
+00050;17oh24;UR;17-OH-Corticosteroide (/Tag)
+00060;17ohc;UR;17-OH-Corticosteroide(e)
+00070;5oh241;UR;5-OH-Indolessigsäure (/Tag)
+00080;5ohi24;UR;5-OH-Indolessigsäure (/Tag)
+00090;5ohin;UR;5-OH-Indolessigsäure(e)
+00100;5ohiqu;UR;5-OH-IES/Kreatinin-Quotient
+00110;5ohqu1;UR;5-OH-IES/Kreatinin-Quotient
+00120;adr;UR;Adrenalin(e)
+00130;adr24;UR;Adrenalin (/Tag)
+00140;adr241;UR;Adrenalin (/Tag)
+00150;adrqu;UR;Adrenalin/Kreat.-Quotient
+00160;adrqu1;UR;Adrenalin/Kreat.-Quotient
+00170;albq;UR;Albumin-/Kreatinin-Quot.
+00180;albuu;UR;  Albumin
+00190;ald24;UR;Aldosteron (/Tag)
+00200;ald241;UR;Aldosteron (/Tag)
+00210;ald242;UR;Aldosteron (/Tag)
+00220;aldu;UR;Aldosteron(e)
+00230;alph1u;UR;  Alpha-1-Globulin
+00240;alph2u;UR;  Alpha-2-Globulin
+00250;aluu;UR;Aluminium (e)
+00260;am24;UR;Amylase (/Tag)
+00270;amph;UR;Amphetamine
+00280;amphc;UR;  Amphetamin
+00290;amphos;UR;Amorphe Phosphate
+00300;amphqu;UR;Amphetamine/Kreat.-Quotient
+00310;amu;UR;Amylase (e)
+00320;amuq;UR;Amylase/Krea-Quotient
+00330;amurat;UR;Amorphe Urate
+00340;anzahl;UR;Anzahl
+00350;argu;UR;  Arginin
+00360;asu;UR;Aminosäuren, qual. (e)
+00370;b2mu;UR;Beta-2-Mikroglobulin
+00380;b2mu2;UR;Beta-2-Mikroglobulin
+00390;bakt;UR;Bakterien
+00400;barb;UR;Barbiturate (e)
+00410;barb1;UR;Barbiturate(e)
+00420;barb2;UR;Barbiturate
+00430;benz;UR;Benzodiazepine (e)
+00440;benz1;UR;Benzodiazepine
+00450;benzqu;UR;Benzodiazepine/Kreat.-Quotient
+00460;betau;UR;  Beta-Globulin
+00470;bleiu;UR;Blei (e)
+00480;ca24;UR;Calcium (/Tag)
+00490;cadu;UR;Cadmium (e)
+00500;cann;UR;Cannabis
+00510;cannb;UR;Cannabis (chrom. Bestätigung) (e)
+00520;cannqu;UR;Cannabis/Kreat.-Quotient
+00530;caoxal;UR;Calcium-Oxalate
+00540;caoxdi;UR;Weddellit-Stein (e)
+00550;caoxmo;UR;Whewellit-Stein (e)
+00560;carapa;UR;Carbonat Apatit Stein (e)
+00570;cau;UR;Calcium
+00580;cauq;UR;Calcium / Krea-Quotient
+00590;chro24;UR;Chrom (e)
+00600;chromu;UR;Chrom (e)
+00610;cit241;UR;Citrat (/Tag)
+00620;citr24;UR;Citrat (/Tag)
+00630;citru;UR;Citrat (e)
+00640;citru1;UR;Citrat (e)
+00650;citruq;UR;Citrat/Krea-Quotient (e)
+00660;cl24;UR;Chlorid (/Tag)
+00670;clu;UR;Chlorid
+00680;coca;UR;Cocain
+00690;cocaqu;UR;Cocain/Kreat.-Quotient
+00700;code;UR;Codeine (e)
+00710;cop1qu;UR;Copro. I/Kreat.-Quotient
+00720;cop241;UR;Coproporphyrine I (/Tag)
+00730;cop243;UR;Coproporphyrine III (/Tag)
+00740;cop3qu;UR;Copro. III/Kreat.-Quotient
+00750;copro1;UR;Coproporphyrine I(e)
+00760;copro3;UR;Coproporphyrine III(e)
+00770;cor241;UR;Cortisol frei (/Tag)
+00780;cor242;UR;Cortisol frei (/Tag)
+00790;corf24;UR;Cortisol frei (/Tag)
+00800;corfu;UR;Cortisol frei (e)
+00810;coti;UR;Cotinine (e)
+00820;coti2;UR;Cotinine (e)
+00830;cotiq;UR;Cotinin/Krea-Quotient
+00840;ctxqu;UR;CTX/Kreat.Quotient (e)
+00850;cu24;UR;Kupfer (/Tag)
+00860;cu241;UR;Kupfer (/Tag)
+00870;cu242;UR;Kupfer (/Tag)
+00880;cuu;UR;Kupfer(e)
+00890;cuu1;UR;Kupfer (e)
+00900;cuu2;UR;Kupfer (e)
+00910;cuu3;UR;Kupfer (e)
+00920;cuu4;UR;Kupfer (e)
+00930;cystu;UR;  Cystin
+00940;dals;UR;Delta-Aminolävulinsäure (e)
+00950;dals24;UR;Delta-Aminolävulinsäure (/Tag)
+00960;dalsqu;UR;Delta-ALS/Kreat.-Quotient
+00970;diur;UR;Diuretika - Screening
+00980;dop;UR;Dopamin (e)
+00990;dop24;UR;Dopamin (/Tag)
+01000;dop241;UR;Dopamin (/Tag)
+01010;dopqu;UR;Dopamin/Kreat.-Quotient
+01020;dopqu1;UR;Dopamin/Kreat.-Quotient
+01030;dpyri;UR;Desoxypyridinolin/Kreat.
+01040;dpyri1;UR;Desoxypyridinolin/Kreat.
+01050;elpbeu;UR;  Beurteilung
+01060;feu;UR;Eisen
+01070;form;UR;Form
+01080;gammau;UR;  Gamma-Globulin
+01090;gewich;UR;Gewicht
+01100;glu;UR;Glukose
+01110;glu24;UR;Glukose (/Tag)
+01120;glusu;UR;  Glutarsäure
+01130;granz;UR;Granulierte Zylinder
+01140;hastu;UR;Harnstoff
+01150;hepp24;UR;Heptacarboxyporphyrin(/Tag)
+01160;heppor;UR;Heptacarboxyporphyrin (e)
+01170;heppqu;UR;Heptacarb./Kreat.-Quotient
+01180;hero;UR;Heroin (6-Acetylmorphin) (e)
+01190;hexp24;UR;Hexacarboxyporphyrin (/Tag)
+01200;hexpor;UR;Hexacarboxyporphyrin (e)
+01210;hexpqu;UR;Hexacarb./Kreat.-Quotient
+01220;hipsu;UR;  Hippursäure
+01230;histu;UR;Histamin (e)
+01240;hom241;UR;Homovanillinsäure (/Tag)
+01250;homo;UR;Homovanillinsäure (e)
+01260;homo24;UR;Homovanillinsäure (/Tag)
+01270;homoqu;UR;Homovan./Kreatinin-Quotient
+01280;homqu1;UR;Homovan./Kreatinin-Quotient
+01290;hs24;UR;Harnstoff (/Tag)
+01300;hsidu;UR;Hämosiderin
+01310;hss24;UR;Harnsäure (/Tag)
+01320;hsskri;UR;Harnsäurekristalle
+01330;hssu;UR;Harnsäure
+01340;hsu;UR;Harnstoff
+01350;hyaliz;UR;Hyaline Zylinder
+01360;ifixu;UR;Beurteilung
+01370;inhu;UR;Isoniazid (e)
+01380;intoxu;UR;Intoxikation unbek. Substanz (e)
+01390;jodu;UR;Jod (e)
+01400;jodu24;UR;Jod (/Tag)
+01410;joduq;UR;Jod-/Kreatinin-Quotient
+01420;k24;UR;Kalium (/Tag)
+01430;kappu;UR;Kappa-Leichtketten (e)
+01440;kappu1;UR;Kappa-Leichtketten (e)
+01450;kre24;UR;Kreatinin (/Tag)
+01460;krecl;UR;Kreatinin-Clearance
+01470;kreu;UR;Kreatinin
+01480;kreuex;UR;Kreatinin
+01490;kreuq1;UR;  Kreatinin
+01500;kreuq2;UR;  Kreatinin
+01510;ku;UR;Kalium
+01520;lambu;UR;Lambda-Leichtketten (e)
+01530;lambu1;UR;Lambda-Leichtketten (e)
+01540;lax;UR;Laxantien (e)
+01550;lpnag;UR;Legionella AG
+01560;lsd;UR;LSD (e)
+01570;lysu;UR;  Lysin
+01580;mdmac;UR;  Ecstasy (MDMA)
+01590;melau;UR;Melanin (e)
+01600;menge;UR;Urinmenge
+01610;menge2;UR;Menge
+01620;met241;UR;Metanephrine (/Tag)
+01630;met242;UR;Metanephrine (/Tag)
+01640;meta24;UR;Metanephrine (/Tag)
+01650;metamc;UR;  Metamphetamin
+01660;metan;UR;Metanephrine (e)
+01670;metan1;UR;Metanephrine (e)
+01680;metan2;UR;Metanephrine (e)
+01690;metaqu;UR;Metanephrin/Kreat-Quot.
+01700;meth;UR;Methadon
+01710;methh;UR;Methadon (HPLC) (e)
+01720;methm;UR;EDPP (Methadon-Metabolit) (e)
+01730;methqu;UR;Methadon/Kreat.-Quotient
+01740;metqu1;UR;Metanephrin/Kreat-Quot.
+01750;metqu2;UR;Metanephrin/Kreat-Quot.
+01760;mg24;UR;Magnesium (/Tag)
+01770;mgu;UR;Magnesium
+01780;mic24;UR;Albumin (/Tag)
+01790;micro;UR;Albumin
+01800;microi;UR;Albumin
+01810;micsam;UR;Albumin (/Sammelzeit)
+01820;morp;UR;Morphin
+01830;morphb;UR;Morphin  (chrom. Bestätigung) (e)
+01840;morpqu;UR;Morphine/Kreat.-Quotient
+01850;myou;UR;Myoglobin (e)
+01860;myou1;UR;Myoglobin (e)
+01870;na24;UR;Natrium (/Tag)
+01880;nau;UR;Natrium
+01890;niu;UR;Nickel (e)
+01900;nme241;UR;Normetanephrin (/Tag)
+01910;nme242;UR;Normetanephrin (/Tag)
+01920;nmequ1;UR;Normetanephrin/Kreat-Quot.
+01930;nmequ2;UR;Normetanephrin/Kreat-Quot.
+01940;nmet24;UR;Normetanephrin (/Tag)
+01950;nmeta;UR;Normetanephrin (e)
+01960;nmeta1;UR;Normetanephrin (e)
+01970;nmeta2;UR;Normetanephrin (e)
+01980;nmetqu;UR;Normetanephrin/Kreat-Quot.
+01990;nor;UR;Noradrenalin (e)
+02000;nor24;UR;Noradrenalin (/Tag)
+02010;nor241;UR;Noradrenalin (/Tag)
+02020;norqu;UR;Noradr./Kreat.-Quotient
+02030;norqu1;UR;Noradr./Kreat.-Quotient
+02040;ntx;UR;N-Telopeptide (NTx) (e)
+02050;ntx1;UR;N-Telopeptide (NTx) (e)
+02060;oberfl;UR;Oberfläche
+02070;orgu;UR;Organische Säuren
+02080;orniu;UR;  Ornithin
+02090;osmoo;UR;Osmolalität (osmometrisch,e)
+02100;osmu;UR;Osmolalität (berechnet)
+02110;osmug;UR;Osmolalität gemessen (e)
+02120;ox24;UR;Oxalat (/Tag)
+02130;ox241;UR;Oxalat (/Tag)
+02140;oxq;UR;Oxalat/Kreatinin-Quot
+02150;oxu;UR;Oxalat (e)
+02160;oxu1;UR;Oxalat (e)
+02170;pamu;UR;Pankreas-Amylase
+02180;pamuq;UR;Pankreas-Amyl./Krea-Quot.
+02190;pent24;UR;Pentacarboxyporphyrin(/Tag)
+02200;pentpo;UR;Pentacarboxyporphyrin (e)
+02210;pentqu;UR;Pentacarb./Kreat.-Quotient
+02220;ph24;UR;Phosphat (/Tag)
+02230;phu;UR;Phosphat
+02240;platep;UR;Plattenepithelzellen
+02250;porb;UR;Porphobilinogen (e)
+02260;porb24;UR;Porphobilinogen (/Tag)
+02270;porbqu;UR;PBG/Kreatinin-Quotient
+02280;propu;UR;Protein Profil (e)
+02290;prot24;UR;Protein (/Tag)
+02300;protq;UR;Protein-/Kreatinin-Quot.
+02310;protu;UR;Protein
+02320;pyri;UR;Pyridinolin/Kreat.
+02330;pyri1;UR;Pyridinolin/Kreat.
+02340;quecu;UR;Quecksilber (e)
+02350;quecu1;UR;  Quecksilber vor DMPS
+02360;quecu2;UR;  Quecksilber nach DMPS
+02370;quequ;UR;  Quecksilber/Kreat.-Quotient
+02380;quequ1;UR;  Quecksilber/Kreat.-Quotient
+02390;quequ2;UR;  Quecksilber/Kreat.-Quotient
+02400;queu11;UR;  Quecksilber vor DMPS
+02410;rifa;UR;Rifampicin
+02420;rundep;UR;Rundepithelzellen
+02430;samm;UR;Sammelzeit
+02440;schlei;UR;Schleim
+02450;sildeu;UR;Sildenafil (Viagra) (e)
+02460;spont;UR;Art
+02470;sst;UR;Schwangerschaftstest
+02480;triau;UR;Tricycl. Antidepressiva (e)
+02490;tripph;UR;Tripelphosphate
+02500;urop;UR;Uroporphyrine (e)
+02510;urop24;UR;Uroporphyrin (/Tag)
+02520;uropqu;UR;Urop./Kreat.-Quotient
+02530;usbili;UR;Bilirubin
+02540;usblut;UR;Blut
+02550;usec;UR;Erythrozyten
+02560;usecgl;UR;Glomeruläre Erythrozyten
+02570;usgluc;UR;Glucose
+02580;usketo;UR;Ketonkörper
+02590;uslc;UR;Leukozyten
+02600;uslcq;UR;Leukozyten
+02610;usnitr;UR;Nitrite
+02620;usph;UR;pH
+02630;usprot;UR;Eiweiss
+02640;usspez;UR;Spezifisches Gewicht
+02650;usurob;UR;Urobilinogen
+02660;vms;UR;Vanillinmandelsäure (e)
+02670;vms24;UR;Vanillinmandelsäure (/Tag)
+02680;vmsqu;UR;VMS/Kreatinin-Quotient
+02690;vmsqu1;UR;VMS/Kreatinin-Quotient
+02700;wiliau;UR;Albumin
+02710;zitsu;UR;  Zitronensäure
+02720;zusamm;UR;Konkrement-Typisierung
+02730;zusatz;UR;Zusatz
+00010;abst2;ZY;Abstrich 2
+00020;abstr2;ZY;Abstrich von
+00030;abstri;ZY;Abstrich von
+00040;altec;ZY;Erythrozyten alt
+00050;altec2;ZY;Erythrozyten alt
+00060;ande2;ZY;Andere Zellen
+00070;ander;ZY;Andere Zellen
+00080;ander2;ZY;Andere Zellen
+00090;andere;ZY;Andere Zellen
+00100;anzot;ZY;Anzahl Objektträger
+00110;arzbe;ZY;Befundung, ärztlicher Bericht Zyto
+00010;atyp2;ZY
+00120;atypi2;ZY;Atypische Zellen
+00020;atypis;ZY
+00030;atypiz;ZY
+00130;baktz;ZY;Bakterien
+00140;baktz2;ZY;Bakterien
+00150;basal;ZY;Basalzellen
+00160;basal2;ZY;Basalzellen
+00170;beschr;ZY;Beschreibung zytolog. Bild
+00040;beso2;ZY
+00050;beson;ZY
+00180;beson2;ZY;Besondere Befunde
+00060;besond;ZY
+00190;beurtz;ZY;Beurteilung
+00200;binde;ZY;Bindegewebszellen
+00210;binde2;ZY;Bindegewebszellen
+00220;calbi2;ZY;Candida albicans
+00230;calbic;ZY;Hefen
+00240;canal2;ZY;Candida albicans
+00250;canalb;ZY;Hefen
+00070;cin;ZY
+00260;cin1;ZY;CIN-Klassifikation
+00080;cin2;ZY
+00270;detri2;ZY;Detrius
+00280;detriu;ZY;Detritus
+00290;doede2;ZY;Döderlein
+00300;doeder;ZY;Döderlein
+00310;dünn;ZY;Dünnschichtpräparat
+00320;ecalt;ZY;Erythrozyten alt
+00330;ecalt2;ZY;Erythrozyten alt
+00340;ecfri2;ZY;Erythrozyten frisch
+00350;ecfris;ZY;Erythrozyten frisch
+00090;egzbe;ZY
+00100;egzbe2;ZY
+00360;endom2;ZY;Endometriumzellen
+00370;endome;ZY;Endometriumzellen
+00380;eosin2;ZY;Eosinophile Granulozyten
+00390;eosino;ZY;Eosinophile Granulozyten
+00400;fettz;ZY;Fettzellen
+00410;fettz2;ZY;Fettzellen
+00420;flimm;ZY;Flimmerepithelien
+00430;flimm2;ZY;Flimmerepithelien
+00440;friec2;ZY;Erythrozyten frisch
+00450;frisec;ZY;Erythrozyten frisch
+00460;granu2;ZY;Neutrophile Granulozyten
+00470;granul;ZY;Neutrophile Granulozyten
+00110;gynzb2;ZY
+00120;gynzbe;ZY
+00480;histi2;ZY;Histiozyten/Makrophagen
+00490;histio;ZY;Histiozyten/Makrophagen
+00500;hpv16;ZY;  HPV high risk
+00510;hpv6;ZY;  HPV low risk
+00520;hpvpg;ZY;HPV Genotyp (e)
+00530;hsvz;ZY;Herpes simplex 1/2 Viren
+00540;inter2;ZY;Intermediärzellen
+00550;interm;ZY;Intermediärzellen
+00560;klpla2;ZY;Kernlose Plattenepithelien
+00570;klplat;ZY;Kernlose Plattenepithelien
+00580;kollo2;ZY;Kolloid
+00590;kolloi;ZY;Kolloid
+00600;kubisz;ZY;Kubische Zellen
+00610;kubiz2;ZY;Kubische Zellen
+00620;lymph2;ZY;Lymphozyten
+00630;lympho;ZY;Lymphozyten
+00640;mat;ZY;Material
+00650;mat2;ZY;Material
+00660;mate;ZY;Material
+00670;meso;ZY;Mesothelien
+00680;meso2;ZY;Mesothelien
+00690;nekro2;ZY;Nekrose
+00700;nekros;ZY;Nekrose
+00710;neutr2;ZY;Neutrophile Granulozyten
+00720;neutro;ZY;Neutrophile Granulozyten
+00130;pap;ZY
+00730;pap1;ZY;PAP-Klassifikation
+00140;pap2;ZY
+00740;parab2;ZY;Parabasalzellen
+00750;paraba;ZY;Parabasalzellen
+00760;plasz;ZY;Plasmazellen
+00770;plasz2;ZY;Plasmazellen
+00780;plat;ZY;Plattenepithelien
+00790;plat2;ZY;Plattenepithelien
+00800;platk2;ZY;Kernlose Plattenepithelzellen
+00810;platok;ZY;Kernlose Plattenepithelzellen
+00820;qualz;ZY;Ausstrichqualität
+00830;scaum2;ZY;Schaumzellen
+00840;schaum;ZY;Schaumzellen
+00850;scle2;ZY;Schleim
+00860;sclei;ZY;Schleim
+00870;sclei2;ZY;Schleim
+00880;scleim;ZY;Schleim
+00890;sclezy;ZY;Schleimbildende Zylinderzellen
+00900;sclzy2;ZY;Schleimbildende Zylinderzellen
+00910;sfär;ZY;Schnellfärbung Zytologie
+00150;someg2;ZY
+00160;somme2;ZY
+00170;sommeg;ZY
+00180;sommer;ZY
+00920;supfi2;ZY;Superfizialzellen
+00930;supfiz;ZY;Superfizialzellen
+00940;trich;ZY;Trichomonaden
+00950;trich2;ZY;Trichomonaden
+00960;umwan2;ZY;Zellen Umwandlungszone
+00970;umwand;ZY;Zellen Umwandlungszone
+00980;uroth2;ZY;Urothelien
+00990;urothe;ZY;Urothelien
+01000;zbakt;ZY;Bakterien
+01010;zbakt2;ZY;Bakterien
+01020;zeos;ZY;Eosinophile Granulozyten
+01030;zeos2;ZY;Eosinophile Granulozyten
+01040;zhist;ZY;Histiozyten
+01050;zhist2;ZY;Histiozyten
+01060;zlymp2;ZY;Lymphozyten
+01070;zlymph;ZY;Lymphozyten
+01080;zmakr2;ZY;Makrophagen
+01090;zmakro;ZY;Makrophagen
+01100;zplas2;ZY;Plasmazellen
+01110;zplasm;ZY;Plasmazellen
+01120;zusäp;ZY;Zusätzliches Präparat, pro 2
+01130;zyli2;ZY;Zylinderzellen
+01140;zylin;ZY;Zylinderzellen
+01150;zylin2;ZY;Zylinderzellen
+01160;zylind;ZY;Zylinderzellen
+01170;zytol2;ZY;Zytolyse
+01180;zytoly;ZY;Zytolyse

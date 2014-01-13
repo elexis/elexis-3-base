@@ -43,6 +43,8 @@
   <module>ch.elexis.externe_dokumente</module>
   <module>ch.elexis.externe_dokumente.feature</module>
   <module>ch.elexis.externe_dokumente.tests</module>
+  <module>ch.elexis.laborimport.bioanalytica</module>
+  <module>ch.elexis.laborimport.bioanalytica.feature</module>
   <module>ch.elexis.omnivore</module>
   <module>ch.elexis.omnivore.feature</module>
   <module>ch.elexis.privatrechnung</module>

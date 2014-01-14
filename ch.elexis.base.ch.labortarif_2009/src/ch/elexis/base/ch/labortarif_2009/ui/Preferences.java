@@ -80,15 +80,17 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		group.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		group.setLayout(new GridLayout());
 		String[] olddef = cfg.getStringArray(FACHDEF);
-		for (Fachspec spec : specs) {
-			Button b = new Button(group, SWT.CHECK);
-			b.setText(spec.name);
-			b.setData(SPECNUM, spec.code);
-			b.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			if (olddef != null && StringTool.getIndex(olddef, Integer.toString(spec.code)) != -1) {
-				b.setSelection(true);
+		if(specs!=null) {
+			for (Fachspec spec : specs) {
+				Button b = new Button(group, SWT.CHECK);
+				b.setText(spec.name);
+				b.setData(SPECNUM, spec.code);
+				b.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+				if (olddef != null && StringTool.getIndex(olddef, Integer.toString(spec.code)) != -1) {
+					b.setSelection(true);
+				}
+				buttons.add(b);
 			}
-			buttons.add(b);
 		}
 		
 		Group groupOptify = new Group(ret, SWT.NONE);

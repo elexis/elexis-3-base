@@ -4,7 +4,7 @@ Bundle-Name: Communication utilities for elexis
 Bundle-SymbolicName: ch.ngiger.utilities.comm;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: Niklaus Giger
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: ch.rgw.utility,
  slf4j.api,
  ch.elexis.core.data

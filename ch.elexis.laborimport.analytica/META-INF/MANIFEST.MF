@@ -15,3 +15,4 @@ Require-Bundle: ch.rgw.utility,
  slf4j.api
 Bundle-ClassPath: .
 Export-Package: ch.elexis.laborimport.analytica
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

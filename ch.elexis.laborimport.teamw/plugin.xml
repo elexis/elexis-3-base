@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<!--
+		(c) 2007 by G. Weirich
+		All rights reserved
+		$Id: plugin.xml 116 2007-06-07 07:06:44Z gerry $
+	-->
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.laborimport.teamw.PreferencePage"
+            id="ch.elexis.laborimport.teamw.prefs"
+            name="Team-W Import"/>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            Class="ch.elexis.laborimport.teamw.Importer"
+            name="Laborimport TeamW">
+      </Importer>
+   </extension>
+
+</plugin>

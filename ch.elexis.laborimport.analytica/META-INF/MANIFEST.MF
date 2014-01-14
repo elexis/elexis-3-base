@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Plugin für Import Laborwerte Analytica
 Bundle-SymbolicName: ch.elexis.laborimport.analytica;singleton:=true
 Bundle-Version: 3.0.0.qualifier
-Bundle-Vendor: elexis.ch
+Bundle-Vendor: elexis.info
 Require-Bundle: ch.rgw.utility,
  org.eclipse.core.runtime,
  org.eclipse.ui,

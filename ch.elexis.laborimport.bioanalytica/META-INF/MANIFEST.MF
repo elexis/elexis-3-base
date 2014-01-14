@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Laborimport Bioanalytica HL7
 Bundle-SymbolicName: ch.elexis.laborimport.bioanalytica;singleton:=true
 Bundle-Version: 3.0.0.qualifier
-Bundle-Vendor: elexis.ch
+Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,

@@ -47,6 +47,8 @@
   <module>ch.ngiger.utilities.comm</module>
   <module>ch.elexis.laborimport.analytica</module>
   <module>ch.elexis.laborimport.analytica.feature</module>
+  <module>ch.elexis.laborimport.teamw</module>
+  <module>ch.elexis.laborimport.teamw.feature</module>
   <module>ch.elexis.omnivore</module>
   <module>ch.elexis.omnivore.feature</module>
   <module>ch.elexis.privatrechnung</module>

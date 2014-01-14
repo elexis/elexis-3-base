@@ -1,0 +1,1044 @@
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+logicalmkup
+\end_modules
+\language ngerman
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\leftmargin 1cm
+\topmargin 1.5cm
+\rightmargin 1cm
+\bottommargin 1.5cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Section*
+Aufsetzen von OpenVPN auf einem Redhat-Server
+\end_layout
+
+\begin_layout Section
+Voraussetzungen
+\end_layout
+
+\begin_layout Standard
+Benutzer-Namen und Passwort für RedHat-Server sind bekannt.
+ Benutzer muss z.B.
+ via sudo Zugriff mit System-Rechten haben.
+\end_layout
+
+\begin_layout Section
+Installation auf einem RedHat Server (5.4)
+\end_layout
+
+\begin_layout Standard
+Die meisten Informationen kommen von: http://www.packtpub.com/article/installing-o
+penvpn-on-linux-and-unix-systems-1
+\end_layout
+
+\begin_layout Standard
+Folgende Befehle als root ausführen:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+wget http://www.fedorafaq.org/samples/yum.conf
+\end_layout
+
+\begin_layout Plain Layout
+
+rpm -Uvh http://www.fedorafaq.org/yum
+\end_layout
+
+\begin_layout Plain Layout
+
+yum install openvpn
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Einfacher Test, ob es läuft oder nicht
+\end_layout
+
+\begin_layout Standard
+S.a.
+ http://www.openvpn.net/index.php/open-source/documentation/miscellaneous/78-static
+-key-mini-howto.html
+\end_layout
+
+\begin_layout Standard
+Achtung: Damit kann auf dem Server jedoch nur 1 Client laufen!
+\end_layout
+
+\begin_layout Standard
+Generate a static key:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cd /etc/openvpn && openvpn --genkey --secret elexis_test_labo.key
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Copy the static key to both client and server, over a pre-existing secure
+ channel.
+ Server configuration file /etc/openvpn/elexis_test_labo.conf
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+# Konfiguration einfacher OpenVPN Test-Server fuer elexis
+\end_layout
+
+\begin_layout Plain Layout
+
+# Server-Seite
+\end_layout
+
+\begin_layout Plain Layout
+
+dev tun
+\end_layout
+
+\begin_layout Plain Layout
+
+ifconfig 10.87.53.102   10.87.53.101 
+\end_layout
+
+\begin_layout Plain Layout
+
+secret elexis_test_labo.key
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Danach kann man lokal testen, mit Hilfe von sftp 100.87.0.53.101
+\end_layout
+
+\begin_layout Standard
+Client configuration file Pfad-Zu-Installation-Von-OpenVPN/etc/openvpn/elexis_te
+st_arzt.ovpn (ovpn ist für Windows-Clients, für *nux-Clients muss die *.ovpn-Datei
+ nach *.conf umbenannt werden)
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+# Konfiguration einfacher OpenVPN Test-Server fuer Labor
+\end_layout
+
+\begin_layout Plain Layout
+
+# Client
+\end_layout
+
+\begin_layout Plain Layout
+
+dev tun
+\end_layout
+
+\begin_layout Plain Layout
+
+remote 62.202.1.152
+\end_layout
+
+\begin_layout Plain Layout
+
+#
+\end_layout
+
+\begin_layout Plain Layout
+
+#        Client (Arzt) ->       Server (Labo)
+\end_layout
+
+\begin_layout Plain Layout
+
+ifconfig 10.87.53.102   10.87.53.101
+\end_layout
+
+\begin_layout Plain Layout
+
+secret Labor_test_1.key
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Firewall-Einstellungen wurde so geändert, dass sie auf dem Port 1194 sowohl
+ UDP als auch TCP in beide Richtung zulassen.
+\end_layout
+
+\begin_layout Standard
+Falls auf dem Client alles gut läuft, können die geöffneten Dienste (FTP)
+ auf dem Server 10.87.53.101 benutzt werden.
+\end_layout
+
+\begin_layout Subsection
+Anpassungen für mehrere Clients
+\end_layout
+
+\begin_layout Standard
+Dazu müssen auf dem Server Schlüssel generiert werden.
+ Die Schlüssel für den Server müssen nur einmal generiert werden.
+ Dazu dient folgendes Script
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},showstringspaces=false"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#! /bin/bash 
+\end_layout
+
+\begin_layout Plain Layout
+
+# 2010-04-10 Niklaus Giger 
+\end_layout
+
+\begin_layout Plain Layout
+
+# Die Dateien /etc/openvpn/vars und /etc/openvpn/server.conf anpassen.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+# Dann diese Datei als root ausführen 
+\end_layout
+
+\begin_layout Plain Layout
+
+rm -rf /etc/openvpn/easy-rsa 
+\end_layout
+
+\begin_layout Plain Layout
+
+mkdir  /etc/openvpn/easy-rsa 
+\end_layout
+
+\begin_layout Plain Layout
+
+cp -rp /usr/src/redhat/BUILD/openvpn-2.1.1/easy-rsa/2.0/* /etc/openvpn/easy-rsa
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+rm -rf /etc/openvpn/easy-rsa/vars 
+\end_layout
+
+\begin_layout Plain Layout
+
+cd /etc/openvpn/easy-rsa 
+\end_layout
+
+\begin_layout Plain Layout
+
+.
+ /etc/openvpn/vars 
+\end_layout
+
+\begin_layout Plain Layout
+
+/etc/openvpn/easy-rsa/clean-all 
+\end_layout
+
+\begin_layout Plain Layout
+
+# Hier sollte bei ein paar Fragen nur noch okay geklickt werden müssen 
+\end_layout
+
+\begin_layout Plain Layout
+
+/etc/openvpn/easy-rsa/build-ca --batch 
+\end_layout
+
+\begin_layout Plain Layout
+
+# Den Server-Key erstellen
+\end_layout
+
+\begin_layout Plain Layout
+
+/etc/openvpn/easy-rsa/build-key-server  --batch server 
+\end_layout
+
+\begin_layout Plain Layout
+
+# Der nächste Befehl kann auch auf einer schnellen Maschine mehrere Minuten
+ dauern 
+\end_layout
+
+\begin_layout Plain Layout
+
+/etc/openvpn/easy-rsa/build-dh 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Folgendes Script muss jeweils pro neuen Clients ausgeführt werden.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,showstringspaces=false"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#! /bin/bash
+\end_layout
+
+\begin_layout Plain Layout
+
+# 2010-06-10 Niklaus Giger
+\end_layout
+
+\begin_layout Plain Layout
+
+#
+\end_layout
+
+\begin_layout Plain Layout
+
+# *.key-Dateien sollten geheim gehalten werden.
+ Müssen aber
+\end_layout
+
+\begin_layout Plain Layout
+
+#       wegen der Windows-Clients world-readable sein.
+\end_layout
+
+\begin_layout Plain Layout
+
+# *.crt und *.pem-Dateien sind öffentlich
+\end_layout
+
+\begin_layout Plain Layout
+
+# Am besten keine Leerzeichen beim Kundenamen haben.
+\end_layout
+
+\begin_layout Plain Layout
+
+#
+\end_layout
+
+\begin_layout Plain Layout
+
+KundenName="client3"
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+# Hier noch ihre Parameter beim UserAdd hinzufügen
+\end_layout
+
+\begin_layout Plain Layout
+
+# Habe mal -m zum Erstellen des Home-Verzeichnisses genommen
+\end_layout
+
+\begin_layout Plain Layout
+
+#------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+/usr/sbin/useradd --create-home  $KundenName
+\end_layout
+
+\begin_layout Plain Layout
+
+# passwd $KundenName ??
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+# Ab hier sollte es nichts mehr zum Andern geben
+\end_layout
+
+\begin_layout Plain Layout
+
+#------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Dann diese Datei als root ausführen
+\end_layout
+
+\begin_layout Plain Layout
+
+cd /etc/openvpn/easy-rsa
+\end_layout
+
+\begin_layout Plain Layout
+
+.
+ /etc/openvpn/vars
+\end_layout
+
+\begin_layout Plain Layout
+
+#Jetzt noch den ersten Test-Clients erstellen
+\end_layout
+
+\begin_layout Plain Layout
+
+/etc/openvpn/easy-rsa/build-key --batch $KundenName
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# What follows is a so called Here document (or variable) of bash
+\end_layout
+
+\begin_layout Plain Layout
+
+confFile=$(cat <<EndOfVar
+\end_layout
+
+\begin_layout Plain Layout
+
+##############################################
+\end_layout
+
+\begin_layout Plain Layout
+
+# Config-File for Labor OpenVPN          #
+\end_layout
+
+\begin_layout Plain Layout
+
+##############################################
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+client
+\end_layout
+
+\begin_layout Plain Layout
+
+dev tun
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Windows needs the TAP-Win32 adapter name
+\end_layout
+
+\begin_layout Plain Layout
+
+# from the Network Connections panel
+\end_layout
+
+\begin_layout Plain Layout
+
+# if you have more than one.
+  On XP SP2,
+\end_layout
+
+\begin_layout Plain Layout
+
+# you may need to disable the firewall
+\end_layout
+
+\begin_layout Plain Layout
+
+# for the TAP adapter.
+\end_layout
+
+\begin_layout Plain Layout
+
+;dev-node MyTap
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+proto udp
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+remote 172.23.45.1 1194
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Keep trying indefinitely to resolve the
+\end_layout
+
+\begin_layout Plain Layout
+
+# host name of the OpenVPN server.
+  Very useful
+\end_layout
+
+\begin_layout Plain Layout
+
+# on machines which are not permanently connected
+\end_layout
+
+\begin_layout Plain Layout
+
+# to the internet such as laptops.
+\end_layout
+
+\begin_layout Plain Layout
+
+resolv-retry infinite
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+nobind
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Try to preserve some state across restarts.
+\end_layout
+
+\begin_layout Plain Layout
+
+persist-key
+\end_layout
+
+\begin_layout Plain Layout
+
+persist-tun
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ca   Labor-ca.crt
+\end_layout
+
+\begin_layout Plain Layout
+
+cert $KundenName.crt
+\end_layout
+
+\begin_layout Plain Layout
+
+key  $KundenName.key
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ns-cert-type server
+\end_layout
+
+\begin_layout Plain Layout
+
+comp-lzo
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Set log file verbosity.
+\end_layout
+
+\begin_layout Plain Layout
+
+verb 3
+\end_layout
+
+\begin_layout Plain Layout
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+# Silence repeating messages
+\end_layout
+
+\begin_layout Plain Layout
+
+mute 20
+\end_layout
+
+\begin_layout Plain Layout
+
+mute-replay-warnings
+\end_layout
+
+\begin_layout Plain Layout
+
+EndOfVar)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+echo "$confFile" > /etc/openvpn/keys/$KundenName.ovpn
+\end_layout
+
+\begin_layout Plain Layout
+
+unix2dos /etc/openvpn/keys/$KundenName.ovpn
+\end_layout
+
+\begin_layout Plain Layout
+
+chown $KundenName /etc/openvpn/keys/$KundenName.*
+\end_layout
+
+\begin_layout Plain Layout
+
+cp /etc/openvpn/keys/ca.crt /home/$KundenName/Labor-ca.crt
+\end_layout
+
+\begin_layout Plain Layout
+
+cp /etc/openvpn/keys/$KundenName.crt /home/$KundenName
+\end_layout
+
+\begin_layout Plain Layout
+
+cp /etc/openvpn/keys/$KundenName.key /home/$KundenName
+\end_layout
+
+\begin_layout Plain Layout
+
+chown $KundenName /home/$KundenName/$KundenName.*
+\end_layout
+
+\begin_layout Plain Layout
+
+echo "$confFile" > /home/$KundenName/$KundenName.ovpn
+\end_layout
+
+\begin_layout Plain Layout
+
+echo /home/$KundeName/$KundenName.ovpn
+\end_layout
+
+\begin_layout Plain Layout
+
+echo "Created config/key-files for $KundenName in /home/$KundenName"
+\end_layout
+
+\begin_layout Plain Layout
+
+ls -l /home/$KundenName
+\end_layout
+
+\begin_layout Plain Layout
+
+echo $clientConf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Für *nux-Clients muss die *.ovpn-Datei nach *.conf umbenannt werden.
+\end_layout
+
+\begin_layout Standard
+Zum Testen auf dem Client openvpn starten.
+ Etwa folgendes sollte im Log zu sehen sein:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\small},breaklines=true,showstringspaces=false"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 OpenVPN 2.1.1 i686-pc-mingw32 [SSL] [LZO2] [PKCS11]
+ built on Dec 11 2009 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 NOTE: OpenVPN 2.1 requires '--script-security 2'
+ or higher to call user-defined scripts or executables 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 LZO compression initialized Sun Apr 11 12:01:41
+ 2010 Control Channel MTU parms [ L:1542 D:138 EF:38 EB:0 ET:0 EL:0 ] 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 Data Channel MTU parms [ L:1542 D:1450 EF:42 EB:135
+ ET:0 EL:0 AF:3/1 ] 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 Local Options hash (VER=V4): '41690919' 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 Expected Remote Options hash (VER=V4): '530fdded'
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 Socket Buffers: R=[8192->8192] S=[8192->8192] 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 UDPv4 link local: [undef] 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 UDPv4 link remote: 172.25.1.134:1194 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:41 2010 TLS: Initial packet from 172.25.1.134:1194, sid=74d0481d
+ b9c0622a 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 VERIFY OK: depth=1, /C=CH/ST=ZH/L=Zuerich/O=Labor/CN=La
+bor_CA/emailAddress=ihr.administrator@Labor.ch 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 VERIFY OK: nsCertType=SERVER 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 VERIFY OK: depth=0, /C=CH/ST=ZH/L=Zuerich/O=Labor/CN=se
+rver/emailAddress=ihr.administrator@Labor.ch 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 Data Channel Encrypt: Cipher 'BF-CBC' initialized
+ with 128 bit key 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 Data Channel Encrypt: Using 160 bit message hash
+ 'SHA1' for HMAC authentication 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 Data Channel Decrypt: Cipher 'BF-CBC' initialized
+ with 128 bit key 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 Data Channel Decrypt: Using 160 bit message hash
+ 'SHA1' for HMAC authentication 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 Control Channel: TLSv1, cipher TLSv1/SSLv3 DHE-RSA-AES2
+56-SHA, 1024 bit RSA 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:42 2010 [server] Peer Connection Initiated with 172.25.1.134:1194
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 SENT CONTROL [server]: 'PUSH_REQUEST' (status=1)
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 PUSH: Received control message: 'PUSH_REPLY,route
+ 172.23.45.1,topology net30,ifconfig 172.23.45.14 172.23.45.13' 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 OPTIONS IMPORT: --ifconfig/up options modified
+ S
+\end_layout
+
+\begin_layout Plain Layout
+
+un Apr 11 12:01:44 2010 OPTIONS IMPORT: route options modified 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 ROUTE default_gateway=192.168.102.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 TAP-WIN32 device [LAN-Verbindung 3] opened: 
+\backslash
+
+\backslash
+.
+\backslash
+Global
+\backslash
+{CD34DAE6-E684-4EC2-91A5-3FFAA13C25F3}.tap 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 TAP-Win32 Driver Version 9.6 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 TAP-Win32 MTU=1500 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 Notified TAP-Win32 driver to set a DHCP IP/netmask
+ of 172.23.45.14/255.255.255.252 on interface {CD34DAE6-E684-4EC2-91A5-3FFAA13C25F3}
+ [DHCP-serv: 172.23.45.13, lease-time: 31536000] 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:44 2010 Successful ARP Flush on interface [17] {CD34DAE6-E684-4
+EC2-91A5-3FFAA13C25F3} 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:49 2010 TEST ROUTES: 1/1 succeeded len=1 ret=1 a=0 u/d=up
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:49 2010 C:
+\backslash
+WINDOWS
+\backslash
+system32
+\backslash
+route.exe ADD 172.23.45.1 MASK 255.255.255.255 172.23.45.13 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:49 2010 ROUTE: CreateIpForwardEntry succeeded with dwForwardMet
+ric1=30 and dwForwardType=4 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:49 2010 Route addition via IPAPI succeeded [adaptive] 
+\end_layout
+
+\begin_layout Plain Layout
+
+Sun Apr 11 12:01:49 2010 Initialization Sequence Completed 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Testumgebung
+\end_layout
+
+\begin_layout Standard
+RedHat 30-Tag-Lizenz, RedHat 5.4-DVD (2.6 GB) runtergeladen und auf MacBookPro
+ via KVM/virt-manager installiert.
+\end_layout
+
+\begin_layout Itemize
+1855755 30-day Unsupported Evaluation Red Hat Enterprise Linux (Up to 2
+ Sockets) 
+\end_layout
+
+\begin_layout Itemize
+03/29/2010 04/27/2010 Info zur Verlängerung 
+\end_layout
+
+\begin_layout Itemize
+RHN 363fcca9327b83cc
+\end_layout
+
+\end_body
+\end_document

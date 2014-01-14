@@ -33,7 +33,6 @@
   <module>ch.elexis.base.konsextension.privatnotizen.feature</module>
   <module>ch.elexis.base.messages</module>
   <module>ch.elexis.base.messages.feature</module>
-  <module>ch.elexis.base.p2site</module>
   <module>ch.elexis.base.textplugin</module>
   <module>ch.elexis.base.textplugin.feature</module>
   <module>ch.elexis.icpc</module>
@@ -45,6 +44,9 @@
   <module>ch.elexis.externe_dokumente.tests</module>
   <module>ch.elexis.laborimport.bioanalytica</module>
   <module>ch.elexis.laborimport.bioanalytica.feature</module>
+  <module>ch.ngiger.utilities.comm</module>
+  <module>ch.elexis.laborimport.analytica</module>
+  <module>ch.elexis.laborimport.analytica.feature</module>
   <module>ch.elexis.omnivore</module>
   <module>ch.elexis.omnivore.feature</module>
   <module>ch.elexis.privatrechnung</module>
@@ -55,6 +57,7 @@
   <module>com.hilotec.elexis.opendocument.feature</module>
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
+  <module>ch.elexis.base.p2site</module>
 </modules>
 <repositories>
   <repository>

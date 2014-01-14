@@ -75,6 +75,9 @@
    <feature url="features/ch.elexis.laborimport.bioanalytica.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.bioanalytica.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
+   <feature url="features/ch.elexis.laborimport.analytica.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.analytica.feature" version="3.0.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung"/>
    <category-def name="dataexchange" label="Datenaustausch"/>

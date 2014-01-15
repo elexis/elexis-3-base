@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.connect.afinion.Preferences"
+            id="ch.elexis.connect.afinion.preferences"
+            name="Afinion AS100 Analyzer">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            ToolbarAction="ch.elexis.connect.afinion.AfinionAS100Action"
+            name="Afinion AS100 Analyzer">
+      </Importer>
+   </extension>
+
+</plugin>

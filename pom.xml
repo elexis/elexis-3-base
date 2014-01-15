@@ -39,6 +39,8 @@
   <module>ch.elexis.icpc.feature</module>
   <module>ch.elexis.connect.reflotron.v2</module>
   <module>ch.elexis.connect.reflotron.v2.feature</module>
+  <module>ch.elexis.connect.afinion</module>
+  <module>ch.elexis.connect.afinion.feature</module>
   <module>ch.elexis.externe_dokumente</module>
   <module>ch.elexis.externe_dokumente.feature</module>
   <module>ch.elexis.externe_dokumente.tests</module>

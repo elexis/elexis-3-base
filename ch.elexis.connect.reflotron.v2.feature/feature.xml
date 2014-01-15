@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.connect.reflotron.v2.feature"
-      label="TODO: Feature for ch.elexis.connect.reflotron.v2"
+      label="Roche Reflotron Laborgeräteanbindung V2"
       version="3.0.0.qualifier"
-      provider-name="ch.elexis">
+      provider-name="elexis.info">
 
-  <description url="http://wiki.elexis.info/ch.elexis.connect.reflotron.v2.feature">
+   <description url="http://wiki.elexis.info/ch.elexis.connect.reflotron.v2.feature">
       TODO: Feature for ch.elexis.connect.reflotron.v2
-  </description>
+   </description>
 
-  <copyright url="http://www.example.com/copyright">
+   <copyright url="http://www.example.com/copyright">
       [TODO: Enter Copyright Description here.]
-  </copyright>
+   </copyright>
 
-  <license url="http://www.example.com/license">
+   <license url="http://www.example.com/license">
       [TODO: Enter License Description here.]
-  </license>
+   </license>
 
-  <plugin
-        id="ch.elexis.connect.reflotron.v2"
-        download-size="0"
-        install-size="0"
-        version="0.0.0"
-        unpack="false"/>
+   <plugin
+         id="ch.elexis.connect.reflotron.v2"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
-  

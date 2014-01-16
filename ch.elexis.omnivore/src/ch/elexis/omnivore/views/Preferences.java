@@ -20,7 +20,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -28,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.omnivore.views.Messages;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 //FIXME: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.
@@ -52,7 +53,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	// So I make this setting configurable. Including a safe default and limits that a user cannot
 	// exceed.
 	public static final Integer OmnivoreMax_Filename_Length_Min = 12;
-	public static final Integer OmnivoreMax_Filename_Length_Default = 80;
+	public static final Integer OmnivoreMax_Filename_Length_Default = 120;
 	public static final Integer OmnivoreMax_Filename_Length_Max = 255;
 	public static final String PREF_MAX_FILENAME_LENGTH = PREFBASE + "/max_filename_length";
 	

@@ -114,8 +114,10 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			if (vi.isOlder(DBVERSION)) {
 				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
 					try {
-						getConnection().exec("ALTER TABLE " + TABLENAME //$NON-NLS-1$
-							+ " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$
+						String statement = "ALTER TABLE " + TABLENAME //$NON-NLS-1$
+							+ " ADD IF NOT EXISTS deleted CHAR(1) default '0';"; //$NON-NLS-1$
+						System.out.println(statement);
+						getConnection().exec(statement);
 					} finally {
 						System.out.println("Finally");
 						// do nothing. Field is probably already present;

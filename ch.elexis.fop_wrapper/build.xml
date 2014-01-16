@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: build.xml 631 2006-08-01 13:55:35Z rgw_ch $
+-->
+<project name="elexis-fop_wrapper" default="all">
+	<property name="sourcedir" value="${source}/fop-wrapper/"/>
+	<property name="plugindir" value="${dist}/plugins/ch.elexis.fop_wrapper_${version}"/>
+	
+	<target name="all">
+		
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
+			 <property name="copydest" value="${plugindir}"/>
+			 <property name="copysrc" value="${sourcedir}"/>
+		</ant>
+		<tstamp/>
+		<zip basedir="${plugindir}" destfile="${updatefiles}/ch.elexis.fop_wrapper_${version}.${DSTAMP}.zip"/>
+	</target>
+</project>

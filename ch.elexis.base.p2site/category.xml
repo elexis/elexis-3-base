@@ -81,6 +81,7 @@
    <feature url="features/ch.elexis.laborimport.teamw.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.teamw.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
+   <bundle id="ch.elexis.fop_wrapper" version="3.0.0.qualifier"/>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung"/>
    <category-def name="dataexchange" label="Datenaustausch"/>

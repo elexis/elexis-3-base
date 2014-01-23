@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="at.medevit.ch.artikelstamm.elexis.common.ui.preferences.ArtikelstammPreferencePage"
+            id="at.medevit.ch.artikelstamm.elexis.common.ui.preferences.ArtikelstammPreferencePage"
+            name="Artikelstamm">
+      </page>
+   </extension>
+
+ <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="at.medevit.ch.artikelstamm.elexis.common.ui.decorator.ArtikelstammDecorator"
+            id="at.medevit.ch.artikelstamm.ui.ArtikelstammDecorator"
+            label="ArtikelstammDecorator"
+            lightweight="true"
+            objectClass="at.medevit.ch.artikelstamm.ui.IArtikelstammItem"
+            state="true">
+      </decorator>
+   </extension>
+ <extension
+       point="ch.elexis.core.data.PersistentReference">
+    <Factory
+          Class="ch.artikelstamm.elexis.common.ArtikelstammPOFactory">
+    </Factory>
+ </extension>
+</plugin>

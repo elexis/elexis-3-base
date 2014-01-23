@@ -1,0 +1,13 @@
+h1. Elexis Artikelstamm Format User Interface Components
+
+__Copyright 2013, MEDEVIT <office@medevit.at>__ 
+
+This plug-in provides all user interface requirements for the Artikelstamm elements as provided by @at.medevit.ch.artikelstamm@.
+
+h2. Sponsor
+
+The development of this plugin was sponsored by Dr. med. Franz Marty, "Medizinisches Zentrum, gleis d":http://www.mez-chur.com/ 
+
+h2. Version
+
+Version 3.0.0 is adapted 1.0.7 from https://github.com/col-panic/elexis

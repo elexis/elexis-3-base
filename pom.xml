@@ -15,9 +15,14 @@
 </properties>
 <packaging>pom</packaging>
 <modules>
+  <module>at.medevit.atc_codes</module>
   <module>at.medevit.elexis.loinc</module>
   <module>at.medevit.elexis.loinc.ui</module>
   <module>at.medevit.elexis.loinc.feature</module>
+  <module>at.medevit.ch.artikelstamm.elexis.common</module>
+  <module>at.medevit.ch.artikelstamm.elexis.open</module>
+  <module>at.medevit.ch.artikelstamm.ui</module>
+  <module>at.medevit.ch.artikelstamm/</module>
   <module>ch.elexis.base.befunde</module>
   <module>ch.elexis.base.befunde.feature</module>
   <module>ch.elexis.base.ch.artikel</module>
@@ -72,9 +77,9 @@
     <layout>p2</layout>
   </repository>
   <!--repository>
-  <id>my_local_mirror</id>
-  <url>file:///opt/mirror.4.elexis/target/repository/</url>
-  <layout>p2</layout>
+<id>my_local_mirror</id>
+<url>file:///opt/mirror.4.elexis/target/repository/</url>
+<layout>p2</layout>
 </repository-->
   <repository>
     <id>mirror.4.elexis.${repo_variant}</id>
@@ -173,8 +178,8 @@
     <plugins>
       <plugin>
         <!-- we want to ensure that the bin directory created by the Eclipse gets cleaned, too. 
-     Without it Maven would put two versions of each class file into the jars
-     -->
+Without it Maven would put two versions of each class file into the jars
+-->
         <artifactId>maven-clean-plugin </artifactId>
         <version>2.5</version>
         <configuration>

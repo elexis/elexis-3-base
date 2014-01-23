@@ -1,0 +1,18 @@
+h1. Elexis Artikelstamm Elexis 2.1 Integration Basis
+
+__Copyright 2013, MEDEVIT <office@medevit.at>__ 
+
+Dieses Plug-In bildet die Basis für die Artikelstamm Integration in "Elexis 2.1":http://www.elexis.ch, es stell für sich
+alleine noch keine vollständige Integration dar, sondern führt nur in Zusammenarbeit mit einem weiteren Plug-In zu einer
+anwendbaren Integration.
+
+Hierbei existieren zwei verschiedene Integrations-Plug-Ins:
+
+* @at.medevit.ch.artikelstamm.elexisv21.open@  Die Open-Source Variante
+* @at.medevit.ch.artikelstamm.elexisv21.medelexis@ Die kommerzielle Variante mit erweiterter Funktionalität
+
+Die Open-Source Variante ist komplett frei zur Verwendung. Informationen dazu, die aktuelle Dokumentation zu diesem Format, sowie aktuelle Datensätze sind unter "Elexis Artikelstamm Information":http://artikelstamm.elexis.info zu finden.
+
+h2. Sponsor
+
+The development of this plugin was sponsored by Dr. med. Franz Marty, "Medizinisches Zentrum, gleis d":http://www.mez-chur.com/ 

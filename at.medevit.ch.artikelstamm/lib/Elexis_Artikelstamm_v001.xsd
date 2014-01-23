@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2013 MEDEVIT.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Public License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/legal/epl-v10.html
+  
+  Contributors:
+      MEDEVIT <office@medevit.at> - initial API and implementation
+-->
+<xs:schema targetNamespace="http://elexis.ch/Elexis_Artikelstamm_v001" elementFormDefault="qualified" attributeFormDefault="unqualified" version="001" id="Elexis_Artikelstamm_v001" xmlns="http://elexis.ch/Elexis_Artikelstamm_v001" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="ARTIKELSTAMM">
+    <xs:annotation>
+      <xs:documentation xml:lang="EN">Information on medicaments</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+    	<xs:sequence>
+    		<xs:element name="ITEM" minOccurs="0"
+    			maxOccurs="unbounded">
+    			<xs:complexType>
+    				<xs:annotation>
+    					<xs:documentation>
+    						Packungsgröße verrechnet, also Anzahl der
+    						beinhalteten Elemente (bspw. 100 Tabletten)
+    					</xs:documentation>
+    				</xs:annotation>
+    				<xs:sequence>
+
+    					<xs:element name="GTIN" nillable="false">
+    						<xs:annotation>
+    							<xs:documentation xml:lang="EN">
+    								Reference number (GTIN = Global
+    								trade item number)
+    							</xs:documentation>
+    						</xs:annotation>
+    						<xs:simpleType>
+    							<xs:restriction base="xs:string">
+
+    							</xs:restriction>
+    						</xs:simpleType>
+    					</xs:element>
+    					<xs:element name="PHAR" nillable="false"
+    						minOccurs="0" maxOccurs="1">
+    						<xs:annotation>
+    							<xs:documentation xml:lang="EN">
+    								Pharmacode
+    							</xs:documentation>
+    						</xs:annotation>
+    						<xs:simpleType>
+    							<xs:restriction base="xs:integer" />
+    						</xs:simpleType>
+    					</xs:element>
+
+
+                            <xs:element name="SWISSMEDIC_NO" minOccurs="0" maxOccurs="1">
+                                <xs:simpleType><xs:restriction base="xs:string"></xs:restriction></xs:simpleType>
+                            </xs:element>
+                            <xs:element name="DSCR" nillable="false">
+    						<xs:annotation>
+    							<xs:documentation xml:lang="EN">
+    								Product description, e.g. Adalat
+    								retard Tabletten 20 mg
+    							</xs:documentation>
+    						</xs:annotation>
+    						<xs:simpleType>
+    							<xs:restriction base="xs:string">
+    								<xs:maxLength value="50" />
+    							</xs:restriction>
+    						</xs:simpleType>
+    					</xs:element>
+    					<xs:element name="ADDSCR" nillable="false">
+    						<xs:annotation>
+    							<xs:documentation xml:lang="EN">
+    								Additional description. e.g. 30 Stk
+    							</xs:documentation>
+    						</xs:annotation>
+    						<xs:simpleType>
+    							<xs:restriction base="xs:string">
+    								<xs:maxLength value="50" />
+    							</xs:restriction>
+    						</xs:simpleType>
+    					</xs:element>
+    					<xs:element name="ATC" nillable="false"
+    						maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation xml:lang="EN">
+    								ATC Code beinhaltet Information ob
+    								Item ein Impfstoff ist. Dies ist der
+    								Fall wenn der ATC Code mit J07
+    								startet.
+    							</xs:documentation>
+    						</xs:annotation>
+    						<xs:simpleType>
+    							<xs:restriction base="xs:string">
+    								<xs:maxLength value="7" />
+    							</xs:restriction>
+    						</xs:simpleType>
+    					</xs:element>
+    					<xs:element name="COMP" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation xml:lang="EN">
+    								Manufacturer
+    							</xs:documentation>
+    						</xs:annotation>
+    						<xs:complexType>
+    							<xs:sequence>
+    								<xs:element name="NAME"
+    									minOccurs="0" maxOccurs="1">
+    									<xs:annotation>
+    										<xs:documentation>
+    											CompanyName
+    										</xs:documentation>
+    									</xs:annotation>
+    									<xs:simpleType>
+    										<xs:restriction
+    											base="xs:string">
+    											<xs:maxLength
+    												value="101" />
+    										</xs:restriction>
+    									</xs:simpleType>
+    								</xs:element>
+    								<xs:element name="GLN"
+    									nillable="false" minOccurs="0" maxOccurs="1">
+    									<xs:annotation>
+    										<xs:documentation
+    											xml:lang="EN">
+    											Company GLN
+    										</xs:documentation>
+    									</xs:annotation>
+    									<xs:simpleType>
+    										<xs:restriction
+    											base="xs:string">
+    											<xs:maxLength
+    												value="13" />
+    										</xs:restriction>
+    									</xs:simpleType>
+    								</xs:element>
+    							</xs:sequence>
+    						</xs:complexType>
+    					</xs:element>
+    					<xs:element name="PEXF" type="xs:double"
+    						minOccurs="0" maxOccurs="1">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Exfactorypreis in Franken und Rappen
+    								(exkl. MWSt)
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="PPUB" type="xs:double"
+    						minOccurs="0" maxOccurs="1">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Publikumspreis in Franken und Rappen
+    								(inkl.MWSt)
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="PKG_SIZE" type="xs:int"
+    						maxOccurs="1" minOccurs="0">
+    					</xs:element>
+    					<xs:element name="SL_ENTRY" type="xs:boolean"
+    						minOccurs="0" maxOccurs="1">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Item ist in der Spezialitätenliste
+    								(SL) eingetragen
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="IKSCAT" maxOccurs="1"
+    						minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Abgabekategorie
+    							</xs:documentation>
+    						</xs:annotation>
+
+    						<xs:simpleType>
+    							<xs:annotation>
+    								<xs:documentation>
+    									Abgabekategorie, A-E A:
+    									verschärft rezeptpflichtig B:
+    									Rezeptpflichtig C: erhältlich in
+    									Apotheken ohne Rezept D:
+    									erhältlich in Apotheken und
+    									Drogerien E: keine
+    									Kategorisierung
+    								</xs:documentation>
+    							</xs:annotation>
+    							<xs:restriction base="xs:string">
+    								<xs:enumeration value="A"></xs:enumeration>
+    								<xs:enumeration value="B"></xs:enumeration>
+    								<xs:enumeration value="C"></xs:enumeration>
+    								<xs:enumeration value="D"></xs:enumeration>
+    								<xs:enumeration value="E"></xs:enumeration>
+    							</xs:restriction>
+    						</xs:simpleType>
+    					</xs:element>
+    					<xs:element name="LIMITATION" type="xs:boolean"
+    						maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Limitation
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="LIMITATION_PTS" type="xs:int"
+    						maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Limitationspunkte
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="LIMITATION_TEXT"
+    						type="xs:string" maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Limitationstext
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="GENERIC_TYPE" maxOccurs="1"
+    						minOccurs="0">
+
+    						<xs:simpleType>
+    							<xs:annotation>
+    								<xs:documentation>
+    									O Original G Generikum
+    								</xs:documentation>
+    							</xs:annotation>
+    							<xs:restriction base="xs:string">
+    								<xs:enumeration value="O"></xs:enumeration>
+    								<xs:enumeration value="G"></xs:enumeration>
+    							</xs:restriction>
+    						</xs:simpleType>
+    					</xs:element>
+    					<xs:element name="HAS_GENERIC" type="xs:boolean"
+    						maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Generikum zu diesem Produkt
+    								vorhanden ja/nein
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="LPPV" type="xs:boolean"
+    						maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Ist eingetragen in Liste
+    								pharmazeutischer Präparate mit
+    								spezieller Verwendung (LPPV)
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+
+    					<xs:element name="DEDUCTIBLE" type="xs:int"
+    						maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Selbstbehalt für SL-Produkte in
+    								prozent
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="NARCOTIC" type="xs:boolean"
+    						maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Produkt ist Betäubungsmittel ja/nein
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+    					<xs:element name="NARCOTIC_CAS" type="xs:string"
+    						maxOccurs="1" minOccurs="0">
+    						<xs:annotation>
+    							<xs:documentation>
+    								Wenn Betäubungsmittel (NARCOTIC ==
+    								true) dann CAS Register Nummer des
+    								Artikels
+    							</xs:documentation>
+    						</xs:annotation>
+    					</xs:element>
+
+
+    				</xs:sequence>
+
+
+
+    			</xs:complexType>
+    		</xs:element>
+
+    	</xs:sequence>
+    	<xs:attribute name="CREATION_DATETIME" type="xs:dateTime"
+    		use="required">
+    		<xs:annotation>
+    			<xs:documentation>
+    				Erstellungszeitpunkt dieses Datensatzes
+    			</xs:documentation>
+    		</xs:annotation>
+    	</xs:attribute>
+
+    	<xs:attribute name="LANG" type="xs:string"></xs:attribute>
+    	<xs:attribute name="MONTH" type="xs:int">
+    		<xs:annotation>
+    			<xs:documentation>
+    				Monatszuordnung dieses Datensatzes
+    			</xs:documentation>
+    		</xs:annotation>
+    	</xs:attribute>
+    	<xs:attribute name="YEAR" type="xs:int">
+    		<xs:annotation>
+    			<xs:documentation>
+    				Jahreszuordnung dieses Datensatzes
+    			</xs:documentation>
+    		</xs:annotation>
+    	</xs:attribute>
+    	<xs:attribute name="CUMUL_VER" type="xs:int" use="required">
+    		<xs:annotation>
+    			<xs:documentation>
+    				Cummulated version identification of the dataset.
+    				This value provides an incrementing integer to
+    				compare validity of versions, it is calculated as
+    				follows:
+
+    				(year-2013)*12+month, e.g. for march 2014 =
+    				((2014-2013)*12)+3=15
+    			</xs:documentation>
+    		</xs:annotation>
+    	</xs:attribute>
+    	<xs:attribute name="TYPE" use="required">
+    		<xs:annotation>
+    			<xs:documentation>
+    				The type of items contained in this dataset: P -
+    				harma N - on Pharma
+    			</xs:documentation>
+    		</xs:annotation>
+    		<xs:simpleType>
+    			<xs:restriction base="xs:string">
+    				<xs:enumeration value="P"></xs:enumeration>
+    				<xs:enumeration value="N"></xs:enumeration>
+
+    			</xs:restriction>
+    		</xs:simpleType>
+    	</xs:attribute>
+    	<xs:attribute name="DATA_QUALITY" type="xs:int">
+    		<xs:annotation>
+    			<xs:documentation>Value describing the completeness of the dataset; currently used to determine the dataset type as described in http://artikelstamm.elexis.info
+1: v1
+2: v1b
+3: v2
+if not defined or not valid, this value is set to 0</xs:documentation>
+    		</xs:annotation></xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+
+</xs:schema>

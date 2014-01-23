@@ -1,0 +1,18 @@
+h1. Elexis Artikelstamm Format
+
+__Copyright 2014, MEDEVIT <office@medevit.at>__ 
+
+*Elexis Artikelstamm Format*  
+
+Das Elexis Artikelstamm Format ist das Standard-Artikelaustausch Format, welches im Rahmen einer erweiterten
+Analyse in Zusammenarbeit von "Medelexis":http://www.medelexis.ch , Dr. Franz Marty und MEDEVIT entwickelt wurde.
+
+Es existiert sowohl eine reine Open-Source als auch eine kommerzielle unterstützung für dieses Datenformat. Informationen dazu, die aktuelle Dokumentation zu diesem Format, sowie aktuelle Datensätze sind unter "Elexis Artikelstamm Information":http://artikelstamm.elexis.info zu finden.
+
+h2. Sponsor
+
+The development of this plugin was sponsored by Dr. med. Franz Marty, "Medizinisches Zentrum, gleis d":http://www.mez-chur.com/ 
+
+h2. Version
+
+Version 3.0.0 is adapted 1.0.3 from https://github.com/col-panic/elexis

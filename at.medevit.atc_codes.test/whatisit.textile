@@ -1,0 +1,17 @@
+h1. ATC code information service - test fragment
+
+__Copyright 2013, MEDEVIT <office@medevit.at>__ 
+
+*This bundle provides the tests and serialization data generation for at.medevit.atc_codes*  
+
+In order to build a current version of @ATCCodesMap.ser@ one must proceed as follows:
+
+
+# Copy the current ATC files into @src/at.medevit.atc_codes.internal@ 
+# Set the correct names to the files within @at.medevit.atc_codes.internal.ATCCodesTest@
+# Execute the launch configuration @ATCCodesTest.launch@
+# Copy the generated @ATCCodesMap.ser@  into the @at.medevit.atc_codes@  bundle into the package @at.medevit.atc_codes.internal@ 
+
+h2. Sponsor
+
+The development of this plugin was sponsored by Dr. med. Franz Marty, "Medizinisches Zentrum, gleis d":http://www.mez-chur.com/ 

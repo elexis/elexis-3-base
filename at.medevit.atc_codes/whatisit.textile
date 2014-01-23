@@ -1,0 +1,19 @@
+h1. ATC code information service
+
+__Copyright 2013, MEDEVIT <office@medevit.at>__ 
+
+*This bundle provides a service for resolving ATC codes.*  
+
+
+The ATC data itself is located within @at.medevit.atc_codes.internal.ATCCodesMap.ser@  and 
+is generated out of the official ATC code XML files. 
+
+The original files are NOT enclosed as they must not be distributed due to license restrictions.
+
+@ATCCodesMap.ser@  can be generated using the fragment @at.medevit.atc_codes.test@ .
+
+**Current Version**  ATC Codes Dataset 2013
+
+h2. Sponsor
+
+The development of this plugin was sponsored by Dr. med. Franz Marty, "Medizinisches Zentrum, gleis d":http://www.mez-chur.com/ 

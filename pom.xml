@@ -105,6 +105,14 @@
           <goals>
             <goal>source-feature</goal>
           </goals>
+          <configuration>
+            <excludes>
+              <plugin id="org.apache.xerces" />
+              <plugin id="javax.xml" />
+              <plugin id="org.apache.xml.resolver" />
+              <plugin id="org.apache.xml.serializer" />
+            </excludes>
+          </configuration>
         </execution>
       </executions>
     </plugin>

@@ -29,6 +29,7 @@
   <module>ch.elexis.base.ch.arzttarife</module>
   <module>ch.elexis.base.ch.ebanking</module>
   <module>ch.elexis.base.ch.feature</module>
+  <module>ch.elexis.base.ch.legacy.feature</module>
   <module>ch.elexis.base.ch.labortarif_2009</module>
   <module>ch.elexis.base.ch.diagnosecodes</module>
   <module>ch.elexis.base.ch.medikamente.bag</module>
@@ -107,10 +108,10 @@
           </goals>
           <configuration>
             <excludes>
-              <plugin id="org.apache.xerces" />
-              <plugin id="javax.xml" />
-              <plugin id="org.apache.xml.resolver" />
-              <plugin id="org.apache.xml.serializer" />
+              <plugin id="org.apache.xerces"/>
+              <plugin id="javax.xml"/>
+              <plugin id="org.apache.xml.resolver"/>
+              <plugin id="org.apache.xml.serializer"/>
             </excludes>
           </configuration>
         </execution>

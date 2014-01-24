@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.base.ch.legacy"
+      label="Elexis Swiss OpenSource Feature Legacy Plugins"
+      version="3.0.0.qualifier"
+      provider-name="elexis.info">
+
+   <description url="http://www.example.com/description">
+      Basis-System für die Unterstützung des Schweizer Gesundheitswesens
+in Elexis. Dieses Feature beinhaltet ältere Plug-Ins welche aus Kompatibilitätsgründen
+weiter geführt werden. Neuen Anwendern wird die Verwendung nicht empfohlen.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="ch.elexis.base.ch.artikel"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.base.ch.medikamente.bag"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

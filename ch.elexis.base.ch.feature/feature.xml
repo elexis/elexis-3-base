@@ -37,13 +37,6 @@
          unpack="false"/>
 
    <plugin
-         id="ch.elexis.base.ch.artikel"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="ch.elexis.base.ch.labortarif_2009"
          download-size="0"
          install-size="0"
@@ -55,13 +48,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="ch.elexis.base.ch.medikamente.bag"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="at.medevit.ch.artikelstamm"

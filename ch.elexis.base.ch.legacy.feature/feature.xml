@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="ch.elexis.base.ch.legacy"
+      id="ch.elexis.base.ch.legacy.feature"
       label="Elexis Swiss OpenSource Feature Legacy Plugins"
       version="3.0.0.qualifier"
       provider-name="elexis.info">

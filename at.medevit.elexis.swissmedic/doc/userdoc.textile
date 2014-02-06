@@ -1,0 +1,28 @@
+h1<. Arzneimittel-Fachinformation AIPS in Elexis
+
+_Bezeichnung:_ Arzneimittel-Fachinformation AIPS
+_Author:_ Thomas Huster <huster@medevit.at>
+_Version:_ 3.0.0, 07.02.2014
+_Beschreibung:_ 'Arzneimittel-Fachinformation AIPS’ bietet eine Arzneimittel-Fachinformation Suche.
+
+h2<. 1. Einführung
+
+Das Bundesverwaltungsgericht-Urteil vom 17. Juni 2011 hielt fest, dass die Verpflichtung, Fach- und Patienteninformation von behördlich zugelassenen Medikamenten bei Privaten zu publizieren (Documed) einen Eingriff in die Wirtschaftsfreiheit darstellt. Es sei nicht einzusehen, weshalb 'Swissmedic' nicht selber publiziere.
+
+Swissmedic, die Schweizerische Zulassungs- und Aufsichtsbehörde für Heilmittel, stellte deshalb ab 1.1.2013 die Fach- und Patienteninformation im Web zur Verfügung, ab 1.7.2013 kann diese Fachinformtation mit einem Link direkt
+aufgerufen werden.
+
+Das Arzneimittelkompendium, die bisherige Quelle, kann vermehrt die Fachinformationen nicht mehr direkt zur Verfügung stellen und leitet in diesen Fällen auf die Swissmedic-Website weiter. Die Swissmedic wird so zur einzigen
+vollständigen Sammlung der Fach- und Patienteninformation für behördlich zugelassene Medikamente. 
+
+Elexis kann deshalb neu auch auf die behördlichersseits zur Verfügung gestellten Fachinformationen zugreifen können.
+
+h2<. 2. Funktionen
+
+h4<. 2.1 Absetzen der Anfrage
+
+Das Absetzen der Anfrage ist mit einem Klick möglich. Es das in der Fixmedikation ausgewählte Medikamente dei der Anfrage übermittelt.
+
+*Die Fachinformation Suche kann aus dem Menu der Fix-Medikation angestossen werden.*
+
+p=. !images/FixmedikationAufruf.png!

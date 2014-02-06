@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.dauermedikationview">
+         <command
+               commandId="at.medevit.elexis.swissmedic.search"
+               icon="rsc/swissmedic-logo.png"
+               label="Swissmedic suchen ..."
+               style="push"
+               tooltip="Medikamenteninteraktion prüfen ...">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.swissmedic.SwissmedicSearchHandler"
+            description="Swissmedic suchen ..."
+            id="at.medevit.elexis.swissmedic.search"
+            name="Swissmedic suchen ...">
+      </command>
+   </extension>
+
+</plugin>

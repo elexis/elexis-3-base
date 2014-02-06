@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.dauermedikationview">
+         <command
+               commandId="at.medevit.elexis.epha.interactions.ephasearch"
+               icon="rsc/pill_exclamation.png"
+               label="Medikamenteninteraktion prüfen ..."
+               style="push"
+               tooltip="Medikamenteninteraktion prüfen ...">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.epha.interactions.utils.EphaSearchHandler"
+            description="Medikamenteninteraktion prüfen ..."
+            id="at.medevit.elexis.epha.interactions.ephasearch"
+            name="Medikamenteninteraktion prüfen ...">
+      </command>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.KonsExtension">
+      <Link
+            KonsExtension="at.medevit.elexis.epha.interactions.EphaSearchAction"
+            name="at.medevit.elexis.epha.interactions">
+      </Link>
+   </extension>
+
+</plugin>

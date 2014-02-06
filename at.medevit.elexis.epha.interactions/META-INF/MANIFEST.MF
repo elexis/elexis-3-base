@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Epha Interactions
+Bundle-SymbolicName: at.medevit.elexis.epha.interactions;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Activator: at.medevit.elexis.epha.interactions.Activator
+Bundle-Vendor: medevit.at
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.rgw.utility;bundle-version="2.0.8",
+ ch.elexis.core.ui,
+ ch.elexis.core.data
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

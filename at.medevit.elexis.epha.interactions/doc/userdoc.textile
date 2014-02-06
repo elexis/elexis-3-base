@@ -1,0 +1,34 @@
+h1<. Interaktions-Check Basis in Elexis
+
+_Bezeichnung:_  Interaktions-Check Basis 
+_Author:_ Thomas Huster <huster@medevit.at>
+_Version:_ 1.0.0, 22.12.2012
+_Beschreibung:_ Der 'Interaktions-Check Basis’ bietet eine Anbindung an den Epha Web-Service.
+
+h2<. 1. Einführung
+
+Die Patienten werden zunehmend älter und leiden immer öfter an mehreren Erkrankungen (Polymorbidität). Die medikamentösen Therapie-Möglichkeiten werden laufend erweitert, die Anzahl der therapeutischen Wirkstoffe und
+konfektionierten Medikamente nimmt entsprechend zu. Dies hat zur Folge, dass Patienten immer häufiger mehrere Dauermedikamente einnehmen (Polymedikation) und bei akuten Erkrankungen zusätzliche Medikamente verschrieben bekommen.
+
+Mit ansteigender Anzahl verordneter Medikamente steigt das Risiko von Medikamenten-Interaktionen mit unerwünschten oder gefährlichen Nebenwirkungen exponential. Muss ein Patient mehr als 3 Wirkstoffe regelmässig einnehmen wird
+die Überprüfung der Medikamenten-Interaktionen (Interaktions-Check) entsprechend aufwändig. Im praktischen Alltag sollte die Medikamenteninteraktion während der Praxissprechstunde beim Verordnen schnell geprüft werden können. Dies ist nur mit elektronischer Hilfe möglich.
+
+Der Hausarzt braucht im praktischen Alltag eine Antwort zu Medikamenteninteraktionen während der Konsultation beim Verordnen. Um dies zu erreichen muss das Absetzen einer Interaktions-Anfrage auf einfache Art möglich sein (ein Klick) und die Darstellung des Resultates sollte leicht lesbar, am besten grafisch und synoptisch erfolgen. Idealerweise würde bei allfälligen Interaktions-Problemen vom antwortenden Service eine medikamentöse Alternativ-Therapie angeboten.
+
+h2<. 2. Anbieter der Interaktions-Informationen
+
+Epha ist ein 'spin-off' des Pharmakologischen und Toxikologischen Institutes der Universität Zürich. Die Firma will sich als Spezialist für Dienstleistungen rund um die Medikamentenabgabe und Verschreibung/Rezeptierung profilieren. Unter anderem bieten sie einen Interaktions-Check mit guter Visualisierung. Die Interaktions-Informationen stammen aus dem Institut, die Empfehlungen sind praxisnah und als OpenSoruce zur Verfügung erhältlich.
+
+h2<. 3. Funktionen
+
+h4<. 3.1 Absetzen der Anfrage
+
+Das Absetzen der Anfrage ist mit einem Klick möglich. Es werden nur die als Fixmedikation deklarierten Medikamente dei der Anfrage übermittelt.
+
+*Der Interaktionscheck kann aus dem Fliesstext der Konsultation via Rechstklick angestossen werden.*
+
+p=. !images/KonsultationAufruf.png!
+
+*Der Interaktionscheck kann aus dem Menu der Fix-Medikation angestossen werden.*
+
+p=. !images/FixmedikationAufruf.png!

@@ -1,0 +1,28 @@
+h1<. Web Links in Elexis
+
+_Bezeichnung:_  Web Links 
+_Author:_ Thomas Huster <huster@medevit.at>
+_Version:_ 1.0.0, 14.08.2013
+_Beschreibung:_ Das 'Web Links’ plugin bietet die möglichkeit konfigurierbare Webseiten direkt aus der Konsultation aufzurufen.
+
+h2<. 1. Einführung
+
+Für den Decision-Support in Elexis ist es oft nötig eine Webseite mit Informationen zur aktuellen Konsultation aufzurufen. Dieses Plugin ermöglicht es den Namen des Eintrags im Kontextmenü der Konsultation, und die aufzurufende Webseite frei zu konfigurieren.
+
+h2<. 2. Funktionen
+
+h4<. 2.1 Konfiguration
+
+Ist das Plugin installiert, können auf der Einstellungsseite unter _Datei > Einstellungen > Web Links_ die einzelnen Links konfiguriert werden. Dabei können folgende Platzhalter verwendet werden.
+
+* [text.selection]
+
+p=. !images/Preferences.png!
+
+h4<. 2.2 Aufruf
+
+Das Absetzen der Anfrage ist mit einem Klick möglich.
+
+*Der Aufruf kann aus dem Fliesstext der Konsultation via Rechstklick angestossen werden.*
+
+p=. !images/KonsultationAufruf.png!

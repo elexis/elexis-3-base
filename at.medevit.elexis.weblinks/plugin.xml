@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.onlineservices"
+            class="at.medevit.elexis.weblinks.preferences.WebLinkPreferencePage"
+            id="at.medevit.elexis.decisionsupport.generic.preferences"
+            name="Weblinks">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.KonsExtension">
+      <Link
+            KonsExtension="at.medevit.elexis.weblinks.extension.WebLinkKonsExtension"
+            name="at.medevit.elexis.weblinks">
+      </Link>
+   </extension>
+
+</plugin>

@@ -87,6 +87,9 @@
    <feature url="features/ch.elexis.base.ch.legacy.feature_3.0.0.qualifier.jar" id="ch.elexis.base.ch.legacy.feature" version="3.0.0.qualifier">
       <category name="basepackages"/>
    </feature>
+   <feature url="features/at.medevit.elexis.decision.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.decision.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung"/>
    <category-def name="dataexchange" label="Datenaustausch"/>

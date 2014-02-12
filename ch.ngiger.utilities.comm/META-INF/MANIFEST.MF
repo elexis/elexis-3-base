@@ -6,8 +6,8 @@ Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: Niklaus Giger
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: ch.rgw.utility,
- slf4j.api,
- ch.elexis.core.data
+ ch.elexis.core.data,
+ org.slf4j.api
 Bundle-ClassPath: lib/commons-net-1.4.1.jar,
  .
 Import-Package: org.eclipse.swt.program

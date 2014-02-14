@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.icpc.feature"
-      label="TODO: Feature for ch.elexis.icpc"
+      label="Unterstützt ICPC-2 (ohne Daten)"
       version="3.0.0.qualifier"
       provider-name="ch.elexis">
 
-  <description url="http://wiki.elexis.info/ch.elexis.icpc.feature">
-      TODO: Feature for ch.elexis.icpc
+  <description>
+ICPC-2, die *I*nternational *C*lassification of *P*rimary *C*are ist ein Codierungswerkzeug für die Bedürfnise der Grundversorger und versucht deren Tätigkeit besser abzubilden, als dies mit Codierungssystemen wie ICD-10 möglich ist.
+
+Der Ansatz des Hausarztes ist meist ‘Grundzentriert’ und nicht ‘Diagnosezentriert’: Die erste Frage ist ‘Warum kommt der Patient?’ Dementsprechend kommen hier oft Bezeichnungen zur Anwendung, die in bekannten Codesystemen wie ICD-10 oder CHOP nicht gut codiert werden können (‘Unwohlsein’, oder ‘Angst vor Krebs’ etc.). ICPC erlaubt also die Abbildung der Tätigkeit des Hausarztes und ist darum ein geeignetes Werkzeug, um sowohl abrechnungsstatistische als auch wissenschaftliche Daten dieser Tätigkeit zu erheben. Gleichzeitig ist ICPC nach einer gewissen Eingewöhnungszeit auch sehr einfach in der Anwendung – Die Codierung ist viel weniger zeitraubend, als mit ICD-10, da der Code weniger umfangreich und stärker ‘Grundzentriert’ ist, wie wir unten weiter ausführen werden.
+
+ICPC ist lizenzpflichtig. Inhaber der Lizenz für die Schweiz ist die Schweizerische Gesellschaft für Allgemeinmedizin (SGAM). Man kann sich dort gegen eine Gebühr registrieren lassen und erhält dann eine Datenbank mit der aktuellen Codeversion. Näheres s. http://www.icpc.ch. In Elexis ist nur die Infrastruktur vorhanden, um diese Datenbank einzulesen. Die Daten selbst muss der interessierte Anwender selbst besorgen.
   </description>
 
-  <copyright url="http://www.example.com/copyright">
-      [TODO: Enter Copyright Description here.]
-  </copyright>
+   <copyright url="http://elexis.info/de_contributers.html">
+     Gerry Weirich, 2007-2013 und viele andere
+   </copyright>
 
-  <license url="http://www.example.com/license">
-      [TODO: Enter License Description here.]
-  </license>
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
 
   <plugin
         id="ch.elexis.icpc"

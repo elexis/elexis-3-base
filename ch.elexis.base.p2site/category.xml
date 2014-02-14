@@ -91,11 +91,20 @@
       <category name="clinicrecordkeeping"/>
    </feature>
    <category-def name="basepackages" label="Basispakete"/>
-   <category-def name="documentmanagement" label="Dokumentenverwaltung"/>
+   <category-def name="documentmanagement" label="Dokumentenverwaltung">
+      <description>
+         Elexis bietet verschiedene Plug-Ins zur Anbindung an eine Textverarbeitung an. Hinweise zur Auswahl finden Sie unter http://wiki.elexis.info/Auswahl.Text_Plugins.
+      </description>
+   </category-def>
    <category-def name="dataexchange" label="Datenaustausch"/>
    <category-def name="finances" label="Finanzen"/>
    <category-def name="labinterfaces" label="Geräteanbindung"/>
-   <category-def name="clinicrecordkeeping" label="KG-Führung"/>
+
+   <category-def name="clinicrecordkeeping" label="KG-Führung">
+      <description>
+         Elexis bietet verschiedene Plug-Ins für die Führung der Krankengeschichte an. Hinweise zur Auswahl finden Sie unter http://wiki.elexis.info/Auswahl.Krankengeschichte.
+      </description>
+   </category-def>
    <category-def name="clinical_helpers" label="Klinische Hilfsmittel"/>
    <category-def name="laborexchanges" label="Laboranbindung"/>
    <category-def name="organisation" label="Organisation"/>

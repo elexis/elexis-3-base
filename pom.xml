@@ -113,6 +113,9 @@
           <configuration>
             <excludes>
               <plugin id="org.apache.xerces"/>
+              <plugin id="de.kupzog.ktable"/>
+              <plugin id="xerces.Impl"/>
+              <plugin id="xml-apis"/>
               <plugin id="javax.xml"/>
               <plugin id="org.apache.xml.resolver"/>
               <plugin id="org.apache.xml.serializer"/>

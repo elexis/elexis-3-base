@@ -5,12 +5,12 @@
       version="3.0.0.qualifier"
       provider-name="elexis.ch">
 
-   <description>
-      This plugin allows to integrate hidden notes into a consultation text
+  <description>
+      This plugin allows to integrate hidden notes into a consultation text. Mehr Info unter http://wiki.elexis.info/ch.elexis.base.konsextension.privatnotizen
    </description>
 
-   <copyright>
-      Copyright (c) 2007 - 2013, G. Weirich and Elexis
+   <copyright url="http://elexis.info/de_contributers.html">
+     Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

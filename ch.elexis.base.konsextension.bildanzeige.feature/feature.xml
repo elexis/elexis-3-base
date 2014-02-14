@@ -5,12 +5,12 @@
       version="3.0.0.qualifier"
       provider-name="elexis.ch">
 
-   <description>
-      Einbinden von Fotos und anderen Bildern in den Konsultationstext.
+  <description>
+      Einbinden von Fotos und anderen Bildern in den Konsultationstext. Mehr Info unter http://wiki.elexis.info/ch.elexis.base.konsextension.bildanzeige
    </description>
 
-   <copyright>
-      Copyright (c) 2007 - 2013, G. Weirich and Elexis
+   <copyright url="http://elexis.info/de_contributers.html">
+     Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

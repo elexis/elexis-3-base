@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.omnivore.feature"
-      label="TODO: Feature for ch.elexis.omnivore"
+      label="omnivore: Ein einfaches Archiv für Dokumente (fast) aller Art"
       version="3.0.0.qualifier"
       provider-name="ch.elexis">
 
-  <description url="http://wiki.elexis.info/ch.elexis.omnivore.feature">
-      TODO: Feature for ch.elexis.omnivore
+  <description>
+    Ein einfaches Archiv für Dokumente (fast) aller Art. Mehr Info unter http://wiki.elexis.info/ch.elexis.omnivore
   </description>
 
-  <copyright url="http://www.example.com/copyright">
-      [TODO: Enter Copyright Description here.]
-  </copyright>
+   <copyright url="http://elexis.info/de_contributers.html">
+     Gerry Weirich, 2007-2013 und viele andere
+   </copyright>
 
-  <license url="http://www.example.com/license">
-      [TODO: Enter License Description here.]
-  </license>
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
 
   <plugin
         id="ch.elexis.omnivore"

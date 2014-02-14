@@ -6,16 +6,16 @@
       provider-name="elexis.info"
       plugin="ch.elexis.base.ch.feature.branding">
 
-   <description url="http://www.example.com/description">
-      Basis-System für die Unterstützung des Schweizer Gesundheitswesens in Elexis.
+   <description>
+      Basis-System für die Unterstützung des Schweizer Gesundheitswesens in Elexis. Mehr Info unter http://wiki.elexis.info/ch.elexis.base.ch
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://elexis.info/de_contributers.html">
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
    </license>
 
    <includes

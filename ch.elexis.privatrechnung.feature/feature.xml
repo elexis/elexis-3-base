@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.privatrechnung.feature"
-      label="TODO: Feature for ch.elexis.privatrechnung"
+      label="Privatrechnung: Einbindung von eigenen Tarifsystemen."
       version="3.0.0.qualifier"
       provider-name="ch.elexis">
 
-   <description url="http://wiki.elexis.info/Ch.elexis.privatrechnung">
-      Dieses Plugin ermöglicht die Entwicklung und Einbindung von eigenen bzw. nicht als eigene Plugins erhältlichen Tarifsystemen. Das Plugin ist dabei ebwusst offen gehalten, ermöglicht also nicht nur Arztrechnungen, sondern jede Art von Dienstleistungen zu verrechnen.
-Vorbereitung
+   <description>
+      Dieses Plugin ermöglicht die Entwicklung und Einbindung von eigenen bzw. nicht als eigene Plugins erhältlichen Tarifsystemen. Das Plugin ist dabei bewusst offen gehalten, ermöglicht also nicht nur Arztrechnungen, sondern jede Art von Dienstleistungen zu verrechnen.
+Vorbereitung. Mehr Info unter http://wiki.elexis.info/ch.elexis.privatrechnung
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [TODO: Enter Copyright Description here.]
+   <copyright url="http://elexis.info/de_contributers.html">
+     Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [TODO: Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
    </license>
 
    <plugin

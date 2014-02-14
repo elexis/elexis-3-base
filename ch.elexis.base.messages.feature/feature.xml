@@ -5,13 +5,12 @@
       version="3.0.0.qualifier"
       provider-name="elexis.info">
 
-   <description url="http://wiki.elexis.info/ch.elexis.messages">
-      Dieses Plugin ermöglicht eine einfache Nachrichtenübermittlung
-zwischen verschiedenen Mitarbeitern.
+   <description>
+      Dieses Plugin ermöglicht eine einfache Nachrichtenübermittlung zwischen verschiedenen Mitarbeitern. Mehr Info unter http://wiki.elexis.info/ch.elexis.messages
    </description>
 
-   <copyright>
-      Copyright (c) 2007 - 2013, G. Weirich and Elexis
+   <copyright url="http://elexis.info/de_contributers.html">
+     Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

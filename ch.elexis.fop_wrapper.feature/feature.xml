@@ -5,12 +5,12 @@
       version="3.0.0.qualifier"
       provider-name="elexis.info">
 
-  <description>
+   <description>
       Basisfunktionen für Elexis zum Erstellen von PDFs (Bibliothek).
-  </description>
+   </description>
 
-    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+   <copyright url="http://elexis.info/de_contributers.html">
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -47,6 +47,13 @@
 
    <plugin
          id="org.apache.xml.serializer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.logging"
          download-size="0"
          install-size="0"
          version="0.0.0"

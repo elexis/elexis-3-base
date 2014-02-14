@@ -117,6 +117,7 @@
               <plugin id="xerces.Impl"/>
               <plugin id="xml-apis"/>
               <plugin id="javax.xml"/>
+              <plugin id="org.apache.commons.logging"/>
               <plugin id="org.apache.xml.resolver"/>
               <plugin id="org.apache.xml.serializer"/>
             </excludes>

@@ -52,12 +52,6 @@ import ch.elexis.core.exceptions.PersistenceException;
 import ch.elexis.core.ui.importer.div.importers.AccessWrapper;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Leistungsblock;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
-import ch.elexis.data.Verrechnet;
 import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
@@ -301,7 +295,7 @@ public class TarmedImporter extends ImporterPage {
 					stmCached.query(String.format(
 						"SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE=%s AND LNR=%s", ImportPrefix,
 						lang, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
-				validResults = getValidValueMaps(rsub, validFrom);
+				validResults = getAllValueMaps(rsub);
 				if (!validResults.isEmpty()) {
 					Map<String, String> row = getLatestMap(validResults);
 					kurz = row.get("BEZ_255"); //$NON-NLS-1$
@@ -748,6 +742,41 @@ public class TarmedImporter extends ImporterPage {
 				// add map to list of matching maps
 				ret.add(valuesMap);
 			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Get a List of Maps containing the rows of the ResultSet with a matching valid date
+	 * information. This is needed as we can not make constraints on a date represented as string in
+	 * the db.
+	 * 
+	 * @param input
+	 * @param validFrom
+	 * @return
+	 * @throws SQLException
+	 */
+	private List<Map<String, String>> getAllValueMaps(ResultSet input) throws Exception{
+		List<Map<String, String>> ret = new ArrayList<Map<String, String>>();
+		
+		// build list of column names
+		ArrayList<String> headers = new ArrayList<String>();
+		ResultSetMetaData meta = input.getMetaData();
+		int metaLength = meta.getColumnCount();
+		for (int i = 1; i <= metaLength; i++) {
+			headers.add(meta.getColumnName(i));
+		}
+		
+		// find rows with matching valid date information
+		while (input.next()) {
+			HashMap<String, String> valuesMap = new HashMap<String, String>();
+			// put all the columns with values into valuesMap
+			for (String columnName : headers) {
+				String value = convert(input, columnName);
+				valuesMap.put(columnName, value);
+			}
+			// add map to list of matching maps
+			ret.add(valuesMap);
 		}
 		return ret;
 	}

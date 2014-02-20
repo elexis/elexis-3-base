@@ -92,8 +92,8 @@
     <layout>p2</layout>
   </repository>
   <repository>
-    <id>elexis.3rdparty.libraries</id>
-    <url>http://download.elexis.info/elexis.3rdparty.libraries/</url>
+    <id>elexis.3.3rdparty.libraries</id>
+    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/${repo_variant}</url>
     <layout>p2</layout>
   </repository>
 </repositories>

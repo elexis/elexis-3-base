@@ -90,6 +90,9 @@
    <feature url="features/at.medevit.elexis.decision.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.decision.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature url="features/ch.elexis.global_inbox.feature_3.0.0.qualifier.jar" id="ch.elexis.global_inbox.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>
@@ -99,7 +102,6 @@
    <category-def name="dataexchange" label="Datenaustausch"/>
    <category-def name="finances" label="Finanzen"/>
    <category-def name="labinterfaces" label="Geräteanbindung"/>
-
    <category-def name="clinicrecordkeeping" label="KG-Führung">
       <description>
          Elexis bietet verschiedene Plug-Ins für die Führung der Krankengeschichte an. Hinweise zur Auswahl finden Sie unter http://wiki.elexis.info/Auswahl.Krankengeschichte.

@@ -47,6 +47,8 @@
   <module>ch.elexis.base.textplugin.feature</module>
   <module>ch.elexis.fop_wrapper</module>
   <module>ch.elexis.fop_wrapper.feature</module>
+  <module>ch.elexis.global_inbox</module>
+  <module>ch.elexis.global_inbox.feature</module>
   <module>ch.elexis.icpc</module>
   <module>ch.elexis.icpc.feature</module>
   <module>ch.elexis.connect.reflotron.v2</module>

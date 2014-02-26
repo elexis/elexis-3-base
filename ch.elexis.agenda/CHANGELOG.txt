@@ -1,0 +1,28 @@
+2.1.4 - Original Version - G. Weirich
+2.1.5 - 12.1.2012 - M. Descher
+	- Update auf ical4j 1.0.1, siehe Ticket 730
+2.1.5.1 - 6.7.2012 - M. Descher
+	- Fix for wrong ui presentation of search field in Linux due to missing LayoutData
+2.1.5.2	- 25.7.2012 - M. Descher
+	- Fix forr erroneuos synchronizatino of weekdays view selection and weekday presentation in Weekdays view -> see #999
+2.1.6 - July 2012 - M. Descher
+	- Fix for null pointer bug
+	- Implement variable day start presentation -> see #1001
+	- show current zoom state in selection menu
+2.1.7 - July 2012 - M. Descher
+	- Formal modification of reserved times -> see #1087
+	- Check whether a reserved time clashes with an appointment -> see #1087
+	- Wochentage view now refreshes on focus
+2.1.7.1 - 31. July 2012 - M. Descher
+	- fixed update of Tagesgrenzen for days with appointment only -> see #1087
+2.1.7.2 - 31. July 2012 - M. Descher
+	- dynamic adaptation of font size for appointment labels -> see #696
+2.1.7.3 - 8. August 2012 - M. Descher
+	- termine view now sorts by date
+2.1.7.4 - 28. August 2012 - M. Descher
+	- [1001] fix for wrong parsing of tagesgrenzen
+2.1.7.5 - 29. August 2012 - M. Descher
+	- [1087] wrong adaption of Sperrzeiten
+2.1.7.6 - 14. Nov 2012 - M. Descher
+	- [1220] Bereich wird bei grafischer Agenda nicht korrekt gesetzt
+2.1.8.0-Bug1214dev - Recurring Date Development Branch - M. Descher

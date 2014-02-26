@@ -93,6 +93,9 @@
    <feature url="features/ch.elexis.global_inbox.feature_3.0.0.qualifier.jar" id="ch.elexis.global_inbox.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature url="features/ch.elexis.agenda.feature_3.0.0.qualifier.jar" id="ch.elexis.agenda.feature" version="3.0.0.qualifier">
+      <category name="organisation"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

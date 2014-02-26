@@ -27,6 +27,8 @@
   <module>at.medevit.ch.artikelstamm.elexis.open</module>
   <module>at.medevit.ch.artikelstamm.ui</module>
   <module>at.medevit.ch.artikelstamm/</module>
+  <module>ch.elexis.agenda</module>
+  <module>ch.elexis.agenda.feature</module>
   <module>ch.elexis.base.befunde</module>
   <module>ch.elexis.base.befunde.feature</module>
   <module>ch.elexis.base.ch.artikel</module>

@@ -229,7 +229,7 @@ Without it Maven would put two versions of each class file into the jars
           <compilerArguments>
             <inlineJSR/>
             <enableJavadoc/>
-            <encoding>ISO-8859-1</encoding>
+            <!-- Removed due to bug #2105 <encoding>ISO-8859-1</encoding> -->
           </compilerArguments>
         </configuration>
       </plugin>

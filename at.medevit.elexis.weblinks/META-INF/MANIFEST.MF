@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.ui,
  ch.rgw.utility;bundle-version="2.0.9",
  ch.elexis.core.ui,
  ch.elexis.core.data
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

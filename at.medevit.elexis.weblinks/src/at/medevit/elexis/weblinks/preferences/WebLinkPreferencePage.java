@@ -49,7 +49,7 @@ public class WebLinkPreferencePage extends PreferencePage implements IWorkbenchP
 		prefAreaComposite.setLayout(new GridLayout());
 
 		Button addBtn = new Button(prefAreaComposite, SWT.PUSH);
-		addBtn.setText("Web Link hinzufügen");
+		addBtn.setText(Messages.WebLinkPreferencePage_0);
 		addBtn.addSelectionListener(new SelectionListener() {
 			
 			@Override

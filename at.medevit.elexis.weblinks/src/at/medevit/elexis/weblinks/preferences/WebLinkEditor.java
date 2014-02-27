@@ -49,7 +49,7 @@ public class WebLinkEditor extends Composite {
 			}
 		});
 		webLinkText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		webLinkText.setMessage("Name");
+		webLinkText.setMessage(Messages.WebLinkEditor_0);
 		
 		webLinkLink = new Text(this, SWT.BORDER);
 		webLinkLink.setText(element.getLink());
@@ -59,10 +59,10 @@ public class WebLinkEditor extends Composite {
 			}
 		});
 		webLinkLink.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		webLinkLink.setMessage("Link");
+		webLinkLink.setMessage(Messages.WebLinkEditor_1);
 
 		removeButton = new Button(this, SWT.PUSH);
-		removeButton.setText("löschen");
+		removeButton.setText(Messages.WebLinkEditor_2);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){

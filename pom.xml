@@ -78,6 +78,8 @@
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
   <module>ch.elexis.base.p2site</module>
+  <module>ch.unibe.iam.scg.archie</module>
+  <module>ch.unibe.iam.scg.archie.feature</module>
 </modules>
 <repositories>
   <repository>

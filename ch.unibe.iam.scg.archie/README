@@ -1,0 +1,26 @@
+ARCHIE
+======
+
+Archie is a statistics plugin for Elexis that provides a small framework for 
+other developers to easily add new statistical analyses. This is done by 
+implementing their own plugins and hooking into the main Archie application by 
+using it's extension points.
+
+DEVELOPERS
+==========
+
+- Dennis Schenk, d.schenk@students.unibe.ch
+- Peter Siska, psiska@students.unibe.ch
+
+3RD PARTY RESOURCES
+===================
+
+Some of the icons used in this project are subject to the author's licence. 
+
+Pivoke icons were taken from http://www.pinvoke.com and are distributed under
+the Creative Commons Attribution 3.0 Unported license as seen here 
+http://creativecommons.org/licenses/by/3.0/.
+
+FamFam's Silk icons were downloaded from http://www.famfamfam.com/lab/icons/silk/
+and are being distributed under the Creative Commons Attribution 2.5 Generic license. 
+Details of this license are here http://creativecommons.org/licenses/by/2.5/.

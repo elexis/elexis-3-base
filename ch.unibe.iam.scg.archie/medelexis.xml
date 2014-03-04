@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service:service category="feature" id="ch.unibe.iam.scg.archie" name="Archie" provider="info@designchuchi.ch" type="Statistik" version="1.1" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+  <service:description>Basismodul für verschiedene Statistikfunktionen</service:description>
+</service:service>

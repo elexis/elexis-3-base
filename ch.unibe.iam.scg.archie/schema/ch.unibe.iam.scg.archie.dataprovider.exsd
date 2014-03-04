@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="ch.unibe.iam.scg.archie" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="ch.unibe.iam.scg.archie" id="dataprovider" name="Archie Data Provider"/>
+      </appinfo>
+      <documentation>
+         All queries which should be displayed in the statistics framework have to register at this extension point. A query class has to be dervied from ch.unibe.iam.scg.archie.model.AbstractDataProvider
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="DataProvider"/>
+            <element ref="category" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A fully qualified identifier of the target extension point.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  An optional identifier of the extension instance.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  An optional name of the extension instance.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="DataProvider">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A fully qualified name of the class that extends &lt;samp&gt;ch.unibe.iam.scg.archie.model.AbstractDataProvider&lt;/samp&gt;.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="ch.unibe.iam.scg.archie.model.AbstractDataProvider:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A human readable name, will be shown in the list of extensions.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  An optional attribute that points to a category element. This is used as a prefix in the data provider list. Each referenced category must be declared in a corresponding category element.
+&lt;p&gt;
+Since 0.9.2
+&lt;/p&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="ch.unibe.iam.scg.archie.dataprovider/category/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="category">
+      <annotation>
+         <documentation>
+            An optional category name which is used in the data provider list as a prefix for all providers with the same category.
+&lt;p&gt;
+Since 0.9.2
+&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  A translatable name that will be used in the list of data providers for this category
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         The following is an example of the extension point: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point=&quot;ch.unibe.iam.scg.archie.dataprovider&quot;&gt; 
+      &lt;category 
+         id=&quot;com.xyz.dataprovider.XYZCategory&quot; 
+         name=&quot;XYZ&quot;/&gt; 
+      &lt;DataProvider 
+         id=&quot;com.xyz.dataprovider.XYZProvider&quot; 
+         name=&quot;XYZ Provider&quot; 
+         category=&quot;com.xyz.dataprovider.XYZCategory&quot; 
+         class=&quot;com.xyz.dataprovider.XYZProvider&quot;/&gt;
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a 
+fully qualified name of the class that extends 
+&lt;samp&gt;ch.unibe.iam.scg.model.AbstractDataProvider&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         Archie distribution should include a sample plugin with the ID &lt;samp&gt;ch.unibe.iam.scg.archie.samples&lt;/samp&gt; containing sample code as well as sample implementations of data providers as well as the dataprovider extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         /*******************************************************************************
+ * Copyright (c) 2008 Dennis Schenk, Peter Siska.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Dennis Schenk - initial implementation
+ *     Peter Siska  - initial implementation
+ *******************************************************************************/
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,59 @@
+CHANGELOG
+=========
+
+0.7
+---
+
+- Initial implementation
+
+0.8
+---
+
+- Minor code refactorings
+- Refactored dashboard composites and messages
+
+- Fixed date bugs in dashboard charts
+
+- Added on-demand chart creation in dashboard
+- Added actions instead of buttons for dashboard functions
+
+
+0.8.1
+-----
+
+- Fixed bug where the dataset would not be sorted along with
+  the table on the selection page in the chart builder wizard
+- Fixed bug where exported filenames would have no filetype attached.
+
+- Added copy selected items command. Items from the main view's 
+  table can now be copied into the clipboard.
+  
+- Removed the private "size" variable from an AbstractDatProvider.
+  Only used while running the job and thus does not need to be an object variable.
+  Pay attention to this when implementing your data providers.
+  
+0.9
+---
+
+- AbstractFieldComposite now return proper values according to their type.
+
+- Code cleanup, Javadoc enhancements.
+ 
+0.9.1
+-----
+
+- Fixed a bug where classes in dataset that do not directly implement 
+  the "Comparable" interface would be compared by their "toString" method.
+  
+   
+0.9.2
+-----
+
+- Added a "category" element to the extension point definition. This way
+  implementing plugins can define categories to group providers in the 
+  provider list in the UI. The category is used as a prefix for the providers
+  in that list.
+
+- Fixed bug where DB queries in the dashboard returned false total values.
+- Fixed bug where changing mandate / user would leave the chart creation button
+  in dashboard inactive.

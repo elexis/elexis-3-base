@@ -96,6 +96,9 @@
    <feature url="features/ch.elexis.agenda.feature_3.0.0.qualifier.jar" id="ch.elexis.agenda.feature" version="3.0.0.qualifier">
       <category name="organisation"/>
    </feature>
+   <feature url="features/ch.unibe.iam.scg.archie.feature_3.0.0.qualifier.jar" id="ch.unibe.iam.scg.archie.feature" version="3.0.0.qualifier">
+      <category name="statistics"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

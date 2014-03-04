@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<fragment>  
+   <extension point="ch.unibe.iam.scg.archie.dataprovider">
+      <DataProvider
+            category="ch.unibe.iam.scg.archie.samples.ProviderCategory"
+            class="ch.unibe.iam.scg.archie.samples.ConsultationStats"
+            name="Consultation Satistics">
+      </DataProvider>
+      <DataProvider
+            category="ch.unibe.iam.scg.archie.samples.ProviderCategory"
+            class="ch.unibe.iam.scg.archie.samples.UserOverview"
+            name="System User Overview">
+      </DataProvider>
+      <DataProvider
+            category="ch.unibe.iam.scg.archie.samples.ProviderCategory"
+            class="ch.unibe.iam.scg.archie.samples.PatientsCostsIncomeProfits"
+            name="Patients Costs, Income And Profits">
+      </DataProvider>
+      <DataProvider
+            category="ch.unibe.iam.scg.archie.samples.ProviderCategory"
+            class="ch.unibe.iam.scg.archie.samples.ConsultationTimeStats"
+            name="Consultation Time">
+      </DataProvider>
+      <DataProvider
+            category="ch.unibe.iam.scg.archie.samples.ProviderCategory"
+            class="ch.unibe.iam.scg.archie.samples.DiagnoseStats"
+            name="Diagnoses">
+      </DataProvider>
+      <DataProvider
+            category="ch.unibe.iam.scg.archie.samples.ProviderCategory"
+            class="ch.unibe.iam.scg.archie.samples.PrescriptionsOverview"
+            name="Prescriptions Overview">
+      </DataProvider>
+      <DataProvider
+            category="ch.unibe.iam.scg.archie.samples.ProviderCategory"
+            class="ch.unibe.iam.scg.archie.samples.ServiceStats"
+            name="Services Overview">
+      </DataProvider>
+      <category
+            id="ch.unibe.iam.scg.archie.samples.ProviderCategory"
+            name="Samples">
+      </category>
+   </extension>
+</fragment>

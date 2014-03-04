@@ -1,0 +1,24 @@
+ARCHIE SAMPLES
+==============
+
+Archie is a statistical plugin for Elexis that provides a small framework for 
+other developers to easily add new statistical analyses. This is done by 
+implementing their own plugins and hooking into the main Archie application by 
+using it's extension points.
+
+This eclipse fragment is an addition to Archie and provides sample statistics
+plugin. Following statistics can be created with this sample fragment:
+
+- Consultation
+- Consultation vs. Time
+- Diagnose
+- Patients vs. Cost and Income
+- Prescriptions
+- Services
+- User Overview
+
+DEVELOPERS
+==========
+
+- Dennis Schenk, d.schenk@students.unibe.ch
+- Peter Siska, psiska@students.unibe.ch

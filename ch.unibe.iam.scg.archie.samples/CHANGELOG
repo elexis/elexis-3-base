@@ -1,0 +1,38 @@
+ARCHIE SAMPLES - CHANGELOG
+==========================
+
+0.7
+---
+
+- Initial implementation
+
+0.8
+---
+
+- Converted from plugin to fragment
+- Minor refactorings
+
+- Added Person wrapper class
+- Added custom label provider for person entries
+- Added service statistics
+
+0.8.1
+-----
+
+- Fixed counting services in service statistics.
+
+- Added entries / per user in UserOverview statistics.
+
+- The private "size" variable from an AbstractDatProvider was removed
+  in the model in 0.8.1. Adapted all statistics accordingly.
+  
+0.9
+---
+
+- Code cleanup, Javadoc enhancements.
+
+  
+0.9.2
+-----
+
+- Added a default category for all sample providers called "Samples".

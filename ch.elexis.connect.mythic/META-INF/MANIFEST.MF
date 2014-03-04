@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Connector for Mythic 18 Analyzer
+Bundle-SymbolicName: ch.elexis.connect.mythic;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: elexis.info
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ ch.rgw.utility,
+ ch.elexis.core.ui.importer.div,
+ ch.elexis.core.ui;bundle-version="3.0.0",
+ ch.elexis.core.data;bundle-version="3.0.0"

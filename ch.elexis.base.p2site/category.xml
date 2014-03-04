@@ -99,6 +99,9 @@
    <feature url="features/ch.unibe.iam.scg.archie.feature_3.0.0.qualifier.jar" id="ch.unibe.iam.scg.archie.feature" version="3.0.0.qualifier">
       <category name="statistics"/>
    </feature>
+   <feature url="features/ch.elexis.connect.mythic.feature_3.0.0.qualifier.jar" id="ch.elexis.connect.mythic.feature" version="3.0.0.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

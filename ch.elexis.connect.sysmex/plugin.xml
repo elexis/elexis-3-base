@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            ToolbarAction="ch.elexis.connect.sysmex.SysmexAction"
+            name="Sysmex">
+      </Importer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.connect.sysmex.Preferences"
+            id="ch.elexis.connect.sysmex.preferences"
+            name="Sysmex">
+      </page>
+   </extension>
+
+</plugin>

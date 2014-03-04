@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sysmex Laborgeräteanbindung
+Bundle-SymbolicName: ch.elexis.connect.sysmex;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="0.0.2",
+ ch.elexis.core.ui,
+ ch.elexis.core.data,
+ ch.elexis.core.ui.importer.div
+Bundle-Vendor: elexis.info

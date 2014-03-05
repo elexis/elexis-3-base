@@ -1,0 +1,3 @@
+h1. WZW-Statistik
+
+This tool helps the physician to survive a Santésuisse-WZW-trial by providing the necessary statistical info

@@ -117,6 +117,9 @@
    <feature url="features/ch.elexis.notes.feature_3.0.0.qualifier.jar" id="ch.elexis.notes.feature" version="3.0.0.qualifier">
       <category name="organisation"/>
    </feature>
+   <feature url="features/ch.elexis.archie.wzw.feature_3.0.0.qualifier.jar" id="ch.elexis.archie.wzw.feature" version="3.0.0.qualifier">
+      <category name="statistics"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: WZW-Statistiken
+Bundle-SymbolicName: ch.elexis.archie.wzw;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: elexis.info
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: ch.elexis.base.ch.artikel,
+ ch.elexis.base.ch.arzttarife,
+ ch.elexis.base.ch.labortarif_2009,
+ ch.elexis.base.ch.medikamente.bag,
+ ch.elexis.core.data,
+ ch.elexis.core.ui,
+ ch.elexis.base.ch.diagnosecodes,
+ ch.unibe.iam.scg.archie,
+ org.eclipse.core.runtime;bundle-version="3.7.0",
+ ch.elexis.core,
+ ch.rgw.utility
+

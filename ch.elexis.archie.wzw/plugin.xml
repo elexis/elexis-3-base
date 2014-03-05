@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.unibe.iam.scg.archie.dataprovider">
+      <category
+            id="ch.elexis.archie.wzw.category"
+            name="WZW Statistiken">
+      </category>
+      <DataProvider
+            category="ch.elexis.archie.wzw.category"
+            class="ch.elexis.archie.wzw.PatientenHitlist"
+            name="Patienten Hitliste">
+      </DataProvider>
+      <DataProvider
+            category="ch.elexis.archie.wzw.category"
+            class="ch.elexis.archie.wzw.AlleLeistungen"
+            name="Tarif-Hitliste">
+      </DataProvider>
+      <DataProvider
+            category="ch.elexis.archie.wzw.category"
+            class="ch.elexis.archie.wzw.AlleLeistungenRoh"
+            name="Alle Leistungen Roh">
+      </DataProvider>
+   </extension>
+
+</plugin>

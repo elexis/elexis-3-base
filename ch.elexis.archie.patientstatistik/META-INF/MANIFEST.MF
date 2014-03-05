@@ -5,14 +5,13 @@ Bundle-SymbolicName: ch.elexis.archie.patientstatistik;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: ch.unibe.iam.scg.archie;bundle-version="3.0.0",
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.forms,
- ch.rgw.utility;bundle-version="2.0.0",
  org.eclipse.swt,
  org.eclipse.ui,
- ch.elexis.core;bundle-version="0.0.2",
- ch.elexis.core.data,
- ch.elexis.core.ui,
- ch.elexis.core.application,
- ch.elexis.core.ui.icons
+ ch.elexis.core;bundle-version="3.0.0",
+ ch.unibe.iam.scg.archie;bundle-version="3.0.0",
+ ch.rgw.utility;bundle-version="3.0.0",
+ ch.elexis.core.data;bundle-version="3.0.0",
+ ch.elexis.core.ui;bundle-version="3.0.0",
+ ch.elexis.core.ui.icons;bundle-version="3.0.0"

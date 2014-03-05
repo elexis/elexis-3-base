@@ -53,6 +53,8 @@
   <module>ch.elexis.global_inbox.feature</module>
   <module>ch.elexis.icpc</module>
   <module>ch.elexis.icpc.feature</module>
+  <module>ch.elexis.notes</module>
+  <module>ch.elexis.notes.feature</module>
   <module>ch.elexis.connect.reflotron.v2</module>
   <module>ch.elexis.connect.reflotron.v2.feature</module>
   <module>ch.elexis.connect.afinion</module>

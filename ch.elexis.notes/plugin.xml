@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+<extension
+         point="org.eclipse.ui.perspectives">
+ <perspective
+            class="ch.elexis.notes.NotesPerspective"
+            icon="icons/notebook.gif"
+            id="ch.elexis.SchwarzesBrett"
+            name="%elexis.bbsPerspective"/>
+            </extension>
+            
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.notes.NotesView"
+            icon="icons/notebook.gif"
+            id="ch.elexis.notes.view"
+            name="%notes"/>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="ch.elexis.notes.NoteFactory"
+            name="NotesFactory"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.notes.Preferences"
+            id="Preferences"
+            name="%notes">
+      </page>
+   </extension>
+
+</plugin>

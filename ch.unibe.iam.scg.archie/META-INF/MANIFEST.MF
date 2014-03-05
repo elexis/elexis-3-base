@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.ui,
  jfree.chart-swt
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.unibe.iam.scg.archie.ArchieActivator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: ch.unibe.iam.scg.archie.annotations,
  ch.unibe.iam.scg.archie.model,
  ch.unibe.iam.scg.archie.ui,

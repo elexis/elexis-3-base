@@ -7,7 +7,7 @@
             class="ch.elexis.notes.NotesPerspective"
             icon="icons/notebook.gif"
             id="ch.elexis.SchwarzesBrett"
-            name="%elexis.bbsPerspective"/>
+            name="%notes"/>
             </extension>
             
    <extension

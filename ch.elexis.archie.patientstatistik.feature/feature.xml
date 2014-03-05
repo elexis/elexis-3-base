@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="ch.medshare.connect.abacusjunior.feature"
-      label="Abacus Junior Laborgerätanbindung"
+      id="ch.elexis.archie.patientstatistik.feature"
+      label="Patientenstatistik für Archie"
       version="3.0.0.qualifier"
-      provider-name="medshare.ch">
+      provider-name="elexis.info">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -18,7 +18,7 @@
    </license>
 
    <plugin
-         id="ch.medshare.connect.abacusjunior"
+         id="ch.elexis.archie.patientstatistik"
          download-size="0"
          install-size="0"
          version="0.0.0"

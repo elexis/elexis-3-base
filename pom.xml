@@ -86,6 +86,8 @@
   <module>ch.elexis.base.p2site</module>
   <module>ch.unibe.iam.scg.archie</module>
   <module>ch.unibe.iam.scg.archie.feature</module>
+  <module>ch.elexis.archie.patientstatistik</module>
+  <module>ch.elexis.archie.patientstatistik.feature</module>
 </modules>
 <repositories>
   <repository>

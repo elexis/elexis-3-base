@@ -111,6 +111,9 @@
    <feature url="features/ch.medshare.connect.abacusjunior.feature_3.0.0.qualifier.jar" id="ch.medshare.connect.abacusjunior.feature" version="3.0.0.qualifier">
       <category name="labinterfaces"/>
    </feature>
+   <feature url="features/ch.elexis.archie.patientstatistik.feature_3.0.0.qualifier.jar" id="ch.elexis.archie.patientstatistik.feature" version="3.0.0.qualifier">
+      <category name="statistics"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

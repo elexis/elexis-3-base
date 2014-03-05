@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.equinox.common,
  com.ibm.icu,
  at.medevit.ch.artikelstamm;bundle-version="1.0.0";visibility:=reexport,
- at.medevit.atc_codes;bundle-version="1.0.0";resolution:=optional
+ at.medevit.atc_codes;bundle-version="1.0.0"
 Export-Package: at.medevit.ch.artikelstamm.ui,
  org.eclipse.wb.swt
 Bundle-ActivationPolicy: lazy

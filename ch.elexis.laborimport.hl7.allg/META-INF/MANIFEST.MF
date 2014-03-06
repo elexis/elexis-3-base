@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Universal HL7-Import
+Bundle-SymbolicName: ch.elexis.laborimport.hl7.allg;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: elexis.info
+Require-Bundle: org.eclipse.ui,
+ ch.rgw.utility,
+ ch.elexis.core.ui.importer.div,
+ ch.elexis.core.ui.icons,
+ ch.elexis.core.data,
+ ch.elexis.core.ui

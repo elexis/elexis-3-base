@@ -70,6 +70,8 @@
   <module>ch.elexis.externe_dokumente.tests</module>
   <module>ch.elexis.laborimport.bioanalytica</module>
   <module>ch.elexis.laborimport.bioanalytica.feature</module>
+  <module>ch.elexis.laborimport.hl7.allg</module>
+  <module>ch.elexis.laborimport.hl7.allg.feature</module>
   <module>ch.ngiger.utilities.comm</module>
   <module>ch.elexis.laborimport.analytica</module>
   <module>ch.elexis.laborimport.analytica.feature</module>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            ToolbarAction="ch.elexis.laborimport.hl7.universal.Importer"
+            name="HL7-Dateien">
+      </Importer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.laborimport.hl7.universal.Preferences"
+            id="ch.elexis.laborimport.hl7.preferences"
+            name="HL7 Dateien">
+      </page>
+   </extension>
+
+</plugin>

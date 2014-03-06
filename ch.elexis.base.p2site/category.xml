@@ -126,6 +126,9 @@
    <feature url="features/ch.elexis.laborimport.hl7.allg.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.hl7.allg.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
+   <feature url="features/waelti.statistics.feature_3.0.0.qualifier.jar" id="waelti.statistics.feature" version="3.0.0.qualifier">
+      <category name="statistics"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Medi Etikette
+Bundle-SymbolicName: at.medevit.elexis.medietikette;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Activator: at.medevit.elexis.medietikette.Activator
+Bundle-Vendor: medevit.at
+Require-Bundle: org.eclipse.core.runtime,
+ ch.rgw.utility,
+ org.eclipse.ui,
+ ch.elexis.base.ch.diagnosecodes,
+ ch.elexis.core.ui,
+ ch.elexis.core.data,
+ ch.elexis.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

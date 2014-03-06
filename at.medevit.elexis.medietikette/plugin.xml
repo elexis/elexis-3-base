@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.data.DataAccess">
+      <DataAccess
+            class="at.medevit.elexis.medietikette.data.DataAccessor"
+            name="Medietikette">
+      </DataAccess>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.Rezepte">
+         <command
+               commandId="at.medevit.medelexis.medietikette.PrintMediEtiketteUi"
+               label="Etikette drucken"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <instanceof
+                        value="ch.elexis.data.Prescription">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.Konsdetail.VerrechnungsDisplay">
+         <command
+               commandId="at.medevit.medelexis.medietikette.PrintMediEtiketteUi"
+               label="Etikette drucken"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     operator="and">
+                  <instanceof
+                        value="ch.elexis.data.Verrechnet">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.medietikette.command.PrintMediEtiketteUi"
+            id="at.medevit.medelexis.medietikette.PrintMediEtiketteUi"
+            name="Etikette drucken">
+      </command>
+   </extension>
+
+</plugin>

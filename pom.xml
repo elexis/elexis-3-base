@@ -92,6 +92,8 @@
   <module>ch.elexis.archie.wzw.feature</module>
   <module>ch.elexis.archie.patientstatistik</module>
   <module>ch.elexis.archie.patientstatistik.feature</module>
+  <module>at.medevit.elexis.medietikette</module>
+  <module>at.medevit.elexis.medietikette.feature</module>
 </modules>
 <repositories>
   <repository>

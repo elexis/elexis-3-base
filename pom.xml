@@ -100,6 +100,8 @@
   <module>at.medevit.elexis.medietikette.feature</module>
   <module>waelti.statistics</module>
   <module>waelti.statistics.feature</module>
+  <module>ch.docbox.elexis</module>
+  <module>ch.docbox.elexis.feature</module>
 </modules>
 <repositories>
   <repository>

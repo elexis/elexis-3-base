@@ -135,6 +135,9 @@
    <feature url="features/ch.docbox.elexis.feature_3.0.0.qualifier.jar" id="ch.docbox.elexis.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature url="features/ch.elexis.laborimport_labtop.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport_labtop.feature" version="3.0.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Laborimport labtop HL7
+Bundle-SymbolicName: ch.elexis.laborimport_labtop;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: elexis.info
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ ch.rgw.utility,
+ ch.elexis.core.ui,
+ ch.elexis.core.ui.importer.div,
+ ch.elexis.core.data
+Bundle-ClassPath: .

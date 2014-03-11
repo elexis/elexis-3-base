@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<queries>
+	<query title="Alle patienten">
+		<from table="Core:Patient" as="pat" />
+		<cols>
+			<col name="id" source="pat.ID" />
+			<col name="alter" source="pat.Alter" />
+			<col name="name" source="pat.Name" />
+			<col name="vorname" source="pat.Vorname" />
+		</cols>
+		<where>
+			<and>
+				<greaterthan a="[alter]" b="30" />
+			</and>
+		</where>
+	</query>
+
+	<query title="Alle status">
+		<from table="Messwert:status" as="stat" />
+		<join table="Core:Patient" as="pat" type="inner">
+			<equal a="[stat.Patient]" b="[pat.ID]" />
+		</join>
+		<cols>
+			<col name="patient" source="stat.patient" />
+			<col name="name"    source="pat.Name" />
+			<col name="vorname" source="pat.Vorname" />
+			<col name="gewicht" source="stat.gewicht" />
+			<col name="groesse" source="stat.groesse" />
+		</cols>
+	</query>
+
+	<query title="Selfjoin">
+		<from table="Core:Patient" as="pat" />
+		<join table="Core:Patient" as="pat2" type="inner">
+			<and>
+				<equal a="[pat.Name]" b="[pat2.Name]" />
+				<lessthan a="[pat.PatCode]" b="[pat2.PatCode]" />
+			</and>
+		</join>
+		<cols>
+			<col name="patient" source="pat.PatCode" />
+			<col name="name" source="pat.Name" />
+			<col name="vn1" source="pat.Vorname" />
+			<col name="vn2" source="pat2.Vorname" />
+		</cols>
+	</query>
+	<query title="Alle Faelle">
+		<from table="Core:Fall" as="fall" />
+		<cols>
+			<col name="nummer" source="fall.FallNummer" />
+			<col name="Bezeichnung"    source="fall.Bezeichnung" />
+			<col name="Grund" source="fall.Grund" />
+			<col name="Datum" source="fall.DatumVon" />
+			<col name="Garant" source="fall.GarantID" />
+		</cols>
+	</query>
+	<query title="Alle Konsultationen">
+		<from table="Core:Konsultation" as="kons" />
+		<cols>
+			<col name="fall" source="kons.FallID" />
+			<col name="datum"    source="kons.Datum" />
+			<col name="eintrag" source="kons.Eintrag" />
+			<col name="kosten" source="kons.Kosten" />
+		</cols>
+	</query>
+
+</queries>

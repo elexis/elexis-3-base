@@ -1,0 +1,165 @@
+%/*******************************************************************************
+% * Copyright (c) 2009, A. Kaufmann and Elexis
+% * All rights reserved. This program and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    A. Kaufmann - initial implementation 
+% *    
+% * $Id: MesswertBase.java 5386 2009-06-23 11:34:17Z rgw_ch $
+% *******************************************************************************/
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage[german]{babel}
+\usepackage[]{hyperref}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage[pdftex]{graphicx}
+
+\lstset{extendedchars=false}
+
+\title{Hilotec-Pluginstatistiken}
+\author{Antoine Kaufmann}
+
+\begin{document}
+\maketitle
+\section{Einführung}
+Dieses Plugin dient dazu statistische Auswertungen und Exporte mit
+Patientendaten durchzuführen. Dazu wird die IDataAccess-Schnittstelle benutzt,
+die von diversen Elexis-Plugins benutzt wird, wie beispielsweise vom
+Befunde- oder vom Hilotec-Messwerte-Plugin, wofür dieses Plugin primär
+entwickelt wurde. Dabei wird auf das Statistikplugin «Archie» aufgesetzt,
+welches die Möglichkeit bietet Diagramme zu generieren, und Daten als CSV zu
+exportieren. Welche Daten benutzt werden, wird mit einer XML-Datei beschrieben.
+Darin können mehrere Datenquellen mit Namen eingerichtet werden. In der
+XML-Konfigurationsdatei kann die Auswahl der Daten nach beliebigen Kriterien
+eingeschränkt werden.
+
+\section{Voraussetzungen}
+\begin{itemize}
+    \item Elexis 2.0
+    \item Archie trunk-Version
+\end{itemize}
+
+\section{Konfiguration}
+Wie oben bereits erwähnt, geschieht die Konfiguration der Datenquellen(Abfragen
+oder Englisch «query») über eine XML-Konfigurationsdatei. Diese befindet sich im
+Be\-nutz\-er\-da\-ten\-ver\-zei\-chnis:
+\begin{description}
+    \item[Windows:] \texttt{C:\textbackslash
+                                Dokumente und Einstellungen\textbackslash
+                                Benutzer\textbackslash Elexis\textbackslash
+                                statistiken.xml}
+    \item[Linux:] \texttt{/home/benutzer/elexis/statistik.xml}
+    % TODO: Mac?
+\end{description}
+
+In dieser XML-Datei können die einzelnen Abfragen im Root-Element
+\texttt{queries} mit \texttt{query}-Elementen definiert werden.
+Zu jeder Abfrage muss eine Liste mit den ge\-wün\-schten Feldern angegeben
+werden, und optional kann die Menge der Datensätzen mit beliebigen Bedingungen
+eingeschränkt werden. Die XML-Konfiguration könnte bei\-spiels\-wei\-se
+fol\-gen\-der\-ma\-ssen aussehen:
+\begin{lstlisting}
+<?xml version="1.0"?>
+<queries>
+  <query title="Aelter als 30, Bluthochdruck">
+    <cols>
+      <col name="alter" source="Patient.Alter" />
+      <col name="name" source="Patient.Name" />
+      <col name="vorname" source="Patient.Vorname" />
+      <col name="bdvorher"
+        source="Messwerte:Patient:firstsince=[startdatum]:\
+        status.bddia" /> 
+      <col name="bdnacher"
+        source="Messwerte:Patient:lastbefore=[enddatum]:\
+        status.bddia" />
+    </cols>
+    <where>
+      <and>
+        <greaterthan a="[alter]" b="30" />
+        <greaterthan a="[bdvorher]" b="120" />
+      </and>
+    </where>
+  </query>
+</queries>
+\end{lstlisting}
+\textbf{Hinweis:} Bitte beachten Sie, dass die Zeilen mit
+\texttt{\textbackslash} am Ende nur aus Darstellungsgründen umgebrochen wurden,
+und in der Konfigurationsdatei unbedingt am Stück und ohne Leerzeichen stehen
+müssen.
+
+Auf den ersten Blick sieht diese Konfigurationsdatei womöglich etwas kompliziert
+aus, da die IDataAccess-Identifier (also der Teil mit
+\texttt{Messwerte:Patient...}) manchmal etwas lang werden. Die Idee, die
+dahinter steckt, ist aber einfach. Für genauere In\-for\-ma\-tio\-nen zur
+IDataAccess-Schnittstelle kann das Elexis-Handbuch und die Dokumentation des
+jeweiligen Plugins zu Rate gezogen werden. Im Folgenden wird genauer auf die
+Mög\-lich\-kei\-ten beim Erstellen von Abfragen
+eingegangen.
+
+\subsection{Spaltenliste}
+Die Spaltenliste besteht nur aus \texttt{col}-Elementen mit zwei Attributen. Das
+erste Attribut \texttt{name} ist glechzeitig Spaltenbeschriftung und interne
+Bezeichung für die Spalte(zum Beispiel für die where-Bedingungen), während mit
+dem zweiten Attribut \texttt{source} ein IDataAccess-Identifier angegeben werden
+muss, der angibt, wo die Daten für die Spalte hergenommen werden sollen. Im
+Gegensatz zu den IDataAccess-Platzhaltern, wie sie in Briefen und Dokumenten
+angegeben werden können, dürfen sie hier nicht in eckigen Klammern
+eingeschlossen werden.
+
+Was aber in dem Source-Attribut in eckigen Klammern angegeben werden kann, sind
+Abfrageparameter. Dies wird auch oben im Beispiell benutzt, um den Datumsbereich
+einzuschränken(\texttt{[startdatum]} bei \texttt{firstsince} und
+\texttt{[enddatum]} bei \texttt{lastbefore}\footnote{Für genauere Informationen
+dazu, bitte die \texttt{hilotec-messwerte}-Dokumentation konsultieren}). Im
+Moment stehen nur \texttt{startdatum} und \texttt{enddatum} als Parameter für
+die Abfragen zur Verfügung. Die Werte dieser Parameter werden durch die beiden
+Datumsfelder in der Archie-View gesetzt.
+
+
+\subsection{Bedingungen}
+Um die Menge der ausgegebenen Datensätze einzuschränken, können mit dem
+\texttt{where}-Element Bedingungen angegeben werden, die angeben welche
+Datensätze miteinbezogen werden sollen, und welche nicht. Dabei können Abfragen
+aus den folgenden Vergleichs-Operatoren zusammengebaut werden:
+\begin{description}
+  \item[equal] Vergleicht Attribut \texttt{a} mit Atttribut \texttt{b} und ist
+               wahr, wenn die beiden Werte übereinstimmen.
+  \item[greaterthan] Vergleicht Attribut \texttt{a} mit Atttribut \texttt{b} und
+                     ist wahr wenn \texttt{a} grösser ist als \texttt{b}.
+  \item[lessthan] Vergleicht Attribut \texttt{a} mit Atttribut \texttt{b} und
+                  ist wahr wenn \texttt{a} kleiner ist als \texttt{b}.
+\end{description}
+In den Attributen der Operatoren kann auf Werte in Spalten zugegriffen werden,
+indem Platzhalter in der Form \texttt{[spaltenname]} benutzt werden.
+
+Weiter stehen auch die üblichen Logischen Operatoren zur Verfügung:
+\begin{description}
+  \item[not] Negiert den Wahrheitswert des Unterelements, muss genau ein
+             Unterelement haben.
+  \item[and] Ist genau dann wahr, wenn alle Unterelemente wahr sind, oder keine
+             Unterelemente vorhanden sind. Es können beliebig viele
+             Unterelemente angegeben werden.
+  \item[or] Ist wahr, wenn mindestens ein Unterelement wahr ist. Es können
+            beliebig viele Unterelemente angegeben werden.
+\end{description}
+Damit können beliebig verschachtelte Bedingungen entworfen werden.
+
+
+\section{Verwendung}
+Die Verwendung des Plugins ist relativ selbsterklärend. Wenn es geladen ist,
+erscheint in der Statistikliste von Archie eine weitere Statistik mit dem Titel
+«Pluginstatistiken», diese muss ausgewählt werden. Sobald das geschehen ist,
+erscheint im Parameterfenster von Archie eine Dropdown-Liste mit den vorhandenen
+Abfragen. Dort muss die ge\-wünsch\-te Statistik ausgewählt werden, und in den
+beiden Datumsfelder müssen ggf. noch die gewünschten Werte eingefüllt werden.
+Sobald die Daten zusammengesucht wurde, ist alles weitere Sache von Archie. Hier
+können die Daten dann beispielsweise mit Archies Exportfunktion als CSV
+exportiert werden.
+
+\end{document}

@@ -138,6 +138,9 @@
    <feature url="features/ch.elexis.laborimport_labtop.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport_labtop.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
+   <feature url="features/com.hilotec.elexis.kgview.feature_3.0.0.qualifier.jar" id="com.hilotec.elexis.kgview.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

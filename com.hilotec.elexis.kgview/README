@@ -1,0 +1,13 @@
+Plugin fuer eine etwas strukturiertere Erfassung der KG. Die Daten dafuer
+werden wo moeglich in die Elexis-Felder gespeichert (bei den Feldern pro
+Patient, die im Patientenblatt schon vorhanden sind), der Rest (die
+Textfelder und Zeit pro Konsultation werden in einer separaten Tabelle
+abgelegt (dadurch fehlt aber Momentan noch die "Revisionsverwaltung", der
+Eintraege).
+
+Der Teil mit der Medikamentenkarte benutzt die Elexis-Interne Fixmedikation,
+funktioniert aber Momentan nur mit Medikamenten die in der Favoriten-
+Medikamentenliste enthalten sind (verknuepfen aber auch nur auf normale
+Elexis Artikel).
+Die Medikamentenkarte sollte in Zukunft wohl als eigenes Plugin entwickelt
+werden.

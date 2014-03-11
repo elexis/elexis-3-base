@@ -1,0 +1,3 @@
+- Groessere Konsultationsueberschriften in ArchivKG
+- Multiline für Zweck in Medikarte
+- Eventuell konfigurierbare Spaltenbreiten fuer medikarte

@@ -89,6 +89,8 @@
   <module>ch.medelexis.text.templator.feature</module>
   <module>com.hilotec.elexis.opendocument</module>
   <module>com.hilotec.elexis.opendocument.feature</module>
+  <module>com.hilotec.elexis.kgview</module>
+  <module>com.hilotec.elexis.kgview.feature</module>
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
   <module>ch.elexis.base.p2site</module>

@@ -55,6 +55,8 @@
   <module>ch.elexis.icpc.feature</module>
   <module>ch.elexis.laborimport_labtop</module>
   <module>ch.elexis.laborimport_labtop.feature</module>
+  <module>ch.elexis.laborimport_lg1</module>
+  <module>ch.elexis.laborimport_lg1.feature</module>
   <module>ch.elexis.notes</module>
   <module>ch.elexis.notes.feature</module>
   <module>ch.elexis.connect.reflotron.v2</module>

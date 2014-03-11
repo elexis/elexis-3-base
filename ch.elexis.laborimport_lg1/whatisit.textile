@@ -1,0 +1,2 @@
+Copyright 2010 (c) Niklaus Giger <niklaus.giger@member.fsf.org>
+Automatically generated. See Laborimport-Template/whatisit.textile

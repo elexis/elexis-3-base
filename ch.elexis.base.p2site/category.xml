@@ -144,6 +144,12 @@
    <feature url="features/ch.elexis.laborimport_lg1.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport_lg1.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
+   <feature url="features/com.hilotec.elexis.pluginstatistiken.feature_3.0.0.qualifier.jar" id="com.hilotec.elexis.pluginstatistiken.feature" version="3.0.0.qualifier">
+      <category name="statistics"/>
+   </feature>
+   <feature url="features/com.hilotec.elexis.messwerte.v2.feature_3.0.0.qualifier.jar" id="com.hilotec.elexis.messwerte.v2.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

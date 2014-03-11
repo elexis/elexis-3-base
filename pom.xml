@@ -93,6 +93,8 @@
   <module>com.hilotec.elexis.opendocument.feature</module>
   <module>com.hilotec.elexis.kgview</module>
   <module>com.hilotec.elexis.kgview.feature</module>
+  <module>com.hilotec.elexis.messwerte.v2</module>
+  <module>com.hilotec.elexis.messwerte.v2.feature</module>
   <module>com.hilotec.elexis.pluginstatistiken</module>
   <module>com.hilotec.elexis.pluginstatistiken.feature</module>
   <module>org.iatrix</module>

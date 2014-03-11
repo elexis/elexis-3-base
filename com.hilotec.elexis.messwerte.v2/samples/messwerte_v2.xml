@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<datatypes>
+	<datatype name="status" title="Status">
+		<numfield name="groesse" title="Grösse" unit="m" default="1.70" formatpattern="0.00"/>
+		<numfield name="gewicht" title="Gewicht" unit="kg" />
+		<calcfield name="bmi" title="BMI" places="2">
+			<var name="gewicht" source="gewicht" />
+			<var name="groesse" source="groesse" />
+			<formula interpreter="beanshell">
+				return Math.round(gewicht/(groesse*groesse)*10)/10.0;
+			</formula>
+		</calcfield>
+		<design>
+			<panel type="grid">
+				<attribute name="columns" value="1" />
+				<panel type="display">
+					<attribute name="url" value="http://www.elexis.ch" />
+					<attribute name="size" value="600,150" />
+				</panel>
+				<panel type="grid">
+					<attribute name="columns" value="3" />
+					<panel type="field">
+						<attribute name="ref" value="groesse" />
+						<attribute name="validpattern" value="[0-9\\.]*" />
+						<attribute name="invalidmessage"
+						value="Es sind nur Zahlen und der Dezimalpunkt zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="gewicht" />
+						<attribute name="validpattern" value="[0-9\\.]*" />
+						<attribute name="invalidmessage"
+						value="Es sind nur Zahlen und der Dezimalpunkt zulässig" />
+
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="bmi" />
+					</panel>
+				</panel>
+			</panel>
+		</design>
+	</datatype>
+	<datatype name="ident_basis" title="Identifikation und Basisinfo">
+		<counterfield name="number" title="Nr." countermode="global_counter" formatpattern="#,000" />
+		<strfield name="erheber" title="Erheberin" />
+		<numfield name="idpat" title="ID Pat" formatpattern="#0000" />
+		<calcfield name="patname" title="Name">
+			<formula interpreter="beanshell">
+				return actPatient.getName() + " " + actPatient.getVorname();
+			</formula>
+		</calcfield>
+		<design>
+			<panel type="grid">
+				<attribute name="columns" value="1" />
+				<panel type="display">
+					<attribute name="url" value="http://www.elexis.ch" />
+					<attribute name="size" value="600,150" />
+				</panel>
+				<panel type="grid">
+					<attribute name="columns" value="2" />
+					<panel type="field">
+						<attribute name="ref" value="number" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="erheber" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="idpat" />
+						<attribute name="validpattern" value="[0-9][0-9][0-9][0-9]" />
+						<attribute name="invalidmessage" value="Es ist nur eine vierstellige ganze Zahl zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="patname" />
+					</panel>
+				</panel>
+			</panel>
+		</design>
+	</datatype>
+</datatypes>

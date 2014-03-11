@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="com.hilotec.elexis.messwerte.v2.views.MessungenUebersichtV21"
+            id="com.hilotec.elexis.messwerte.v2.messwerteUebersichtV21"
+            name="Hilotec Messwerte V2.1">
+      </view>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="com.hilotec.elexis.messwerte.v2.data.MessungFactory"
+            name="MessungFactory">
+      </Factory>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.DataAccess">
+      <DataAccess
+            class="com.hilotec.elexis.messwerte.v2.data.DataAccessor"
+            name="Messwerte">
+      </DataAccess>
+   </extension>
+   <extension
+         point="com.hilotec.elexis.pluginstatistiken.Datenquelle">
+      <Datenquelle
+            class="com.hilotec.elexis.messwerte.v2.data.PluginstatistikenDatenquelle"
+            name="Messwerte">
+      </Datenquelle>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.hilotec.elexis.messwerte.v2.views.Preferences"
+            id="com.hilotec.elexis.messwerte.v2.preferences"
+            name="Hilotec Messwerte">
+      </page>
+   </extension>
+</plugin>
+

@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- ********************************************************
+Beispiel Konfiguration für Hilotec Messwerte V2
+
+History:
+10.02.2012: Tony Schaller, medshare GmbH (Fallbeispiel für Anleitung in Anlehnung an die Konfiguration von Dr. Seidenberg)
+
+******************************************************** -->
+<datatypes>
+	<!-- ********************************************************************************
+	Rubrik Vitaldaten
+	********************************************************************************  -->
+	<datatype name="vitalsigns" title="VD" description="Vitaldaten" >
+		<numfield name="groesse" title="Grösse" unit="m" formatpattern="0.00" default="0" >
+			<formula interpreter="beanshell">
+				return ch.elexis.util.ScriptUtil.loadDataFromPlugin("Messwerte:Patient:last:vitalsigns.groesse");
+			</formula>
+		</numfield>
+		<numfield name="gewicht" title="Gewicht" unit="kg" formatpattern="0.0" />
+		<calcfield name="bmi" title="BMI" places="2" lowAlert="1" lowWarning="18.5" highWarning="25" highAlert="30" >
+			<var name="gewicht" source="gewicht" />
+			<var name="groesse" source="groesse" />
+			<formula interpreter="beanshell">
+				return
+				Math.round(gewicht/(groesse*groesse)*10)/10.0;
+			</formula>
+		</calcfield>
+		<numfield name="bdsys" title="Systolischer Blutdruck" unit="mm Hg" places ="0" />
+		<numfield name="bddia" title="Diastolischer Blutdruck" unit="mm Hg" places ="0" />
+		<numfield name="hfreq" title="Herzfrequenz" unit="1/Min" places ="0" />
+		<numfield name="bumf" title="Bauchumfang" unit="cm" places ="0" />
+		<numfield name="humf" title="Hüftumfang" unit="cm" places ="0" />
+		<numfield name="temp" title="Temperatur" unit="°C" formatpattern="0.0" />
+		<design>
+			<panel type="plain">
+				<!-- Das display panel ist nur dafür da, dass wir die Breite bestimmen können
+				und die Spalten die Breite auch tatsächlich ausnutzen -->
+				<panel type="display">
+					<attribute name="url" value="dummy.jpg" />
+					<attribute name="size" value="600,0" />
+				</panel>
+				<panel type="grid">
+					<attribute name="columns" value="3" />
+					<panel type="field">
+						<attribute name="ref" value="groesse" />
+						<attribute name="editable" value="true" />
+						<attribute name="validpattern" value="[0-9\\.]*" />
+						<attribute name="invalidmessage" value="Es sind nur Zahlen und der Dezimalpunkt zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="gewicht" />
+						<attribute name="validpattern" value="[0-9\\.]*" />
+						<attribute name="invalidmessage"
+						value="Es sind nur Zahlen und der Dezimalpunkt zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="false" />
+						<attribute name="ref" value="bmi" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="bdsys" />
+						<attribute name="validpattern" value="[0-9]*" />
+						<attribute name="invalidmessage" value="Es sind nur ganze Zahlen zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="bddia" />
+						<attribute name="validpattern" value="[0-9]*" />
+						<attribute name="invalidmessage" value="Es sind nur ganze Zahlen zulässig" />
+						<attribute name="size" value="30,-1" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="hfreq" />
+						<attribute name="validpattern" value="[0-9]*" />
+						<attribute name="invalidmessage" value="Es sind nur ganze Zahlen zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="bumf" />
+						<attribute name="validpattern" value="[0-9]*" />
+						<attribute name="invalidmessage" value="Es sind nur ganze Zahlen zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="humf" />
+						<attribute name="validpattern" value="[0-9]*" />
+						<attribute name="invalidmessage" value="Es sind nur ganze Zahlen zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="temp" />
+						<attribute name="validpattern" value="[0-9\\.]*" />
+						<attribute name="invalidmessage" value="Es sind nur Zahlen und der Dezimalpunkt zulässig" />
+					</panel>
+				</panel>
+			</panel>
+		</design>
+	</datatype>
+	<!-- ********************************************************************************
+	Rubrik Diverses
+	********************************************************************************  -->
+	<datatype name="div" title="Diverses" description="Illustration weiterer XML Konfigurationen">
+		<counterfield name="number" title="Messung Nr." countermode="global_counter" startvalue="1" formatpattern="000,000" />
+		<boolfield name="herzger" title="Herzgeräusch" />
+		<datefield name="nachkontr" title="Nachkontrolle geplant am">
+			<formula interpreter="beanshell">
+				ch.rgw.tools.TimeTool timetool = new  ch.rgw.tools.TimeTool();
+				timetool.addDays(7);
+				return new java.text.SimpleDateFormat("dd.MM.yyyy").format(timetool.getTime());
+			</formula>
+		</datefield>
+		<datafield name="vitalsigndate" title="Referenzierte Vitaldatenerhebung" type="vitalsigns" />
+		<enumfield name="position" title="Position" default="1">
+			<option value="1" title="sitzend" />
+			<option value="2" title="liegend" />
+		</enumfield>
+		<strfield name="findings" title="Befund" lines="3"/>
+		<scalefield name="arbfaeh" title="Arbeitsfähigkeit" min="0" max="5" default="5" />
+		<design>
+			<panel type="plain">
+				<panel type="display">
+					<attribute name="url" value="dummy.jpg" />
+					<attribute name="size" value="600,0" />
+					<panel type="label">
+						<attribute name="text" value="Diese Sammlung von Messwerten wurde nicht zu medizinischen Zwecken erstellt." />
+					</panel>
+					<panel type="label">
+						<attribute name="text" value="Sie dient lediglich der Illustration der Konfigurationsmöglichkeiten des Hilotec Messwerte V2 Plugins." />
+					</panel>
+				</panel>
+				<panel type="grid">
+					<attribute name="columns" value="3" />
+					<panel type="display">
+						<attribute name="url" value="dummy.jpg" />
+						<attribute name="size" value="200,0" />
+					</panel>
+					<panel type="display">
+						<attribute name="url" value="dummy.jpg" />
+						<attribute name="size" value="200,0" />
+					</panel>
+					<panel type="display">
+						<attribute name="url" value="dummy.jpg" />
+						<attribute name="size" value="200,0" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="number" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="herzger" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="nachkontr" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="vitalsigndate" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="position" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="findings" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="arbfaeh" />
+					</panel>
+				</panel>
+			</panel>
+		</design>
+	</datatype>
+</datatypes>

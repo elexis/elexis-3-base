@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<datatypes>
+	<datatype name="tc1" title="Testcase 1" description="Default Values für alle Datentypen">
+		<boolfield name="tc1_bool_true" title="Bool default true" default="true" />
+		<boolfield name="tc1_bool_false" title="Bool default false" default="false" />
+		<calcfield name="tc1_calc_error" title="Calc default error" default="error" >
+			<formula interpreter="beanshell">
+				return 1/0;
+			</formula>
+		</calcfield>
+		<datefield name="tc1_date_20120129" title="Date default 29.01.2012" default="2012-01-29" />
+		<enumfield name="tc1_enum_BE" title="Enum default BE" default="2">
+			<option value="0" title="keine Angaben" />
+			<option value="1" title="ZH" />
+			<option value="2" title="BE" />
+			<option value="3" title="LU" />
+			<option value="32" title="anderes Ausland" />
+		</enumfield>
+		<numfield name="tc1_num_324" title="Num default 3.24" unit="mm" formatpattern="0.00" default="3.24" />
+		<scalefield name="tc1_scale_17" title="Scale default 17" min="0" max="100" default="17" />
+		<strfield name="tc1_str_hilotec" title="Str default Hilotec" default="Hilotec" />
+		<design>
+			<panel type="grid">
+				<attribute name="columns" value="1" />
+				<panel type="field">
+					<attribute name="ref" value="tc1_bool_true" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc1_bool_false" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc1_calc_error" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc1_data_hilotec" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc1_date_20120129" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc1_enum_BE" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc1_num_324" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc1_scale_17" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc1_str_hilotec" />
+				</panel>
+			</panel>
+		</design>
+	</datatype>
+	<datatype name="tc2" title="Testcase 2" description="Berechnete Default Values für alle Datentypen">
+		<boolfield name="tc2_bool" title="Bool formula" default="false">
+			<formula interpreter="beanshell">
+				return true;
+			</formula>
+		</boolfield>
+		<calcfield name="tc2_calc" title="Calc formula" default="error" >
+			<formula interpreter="beanshell">
+				return 5*30;
+			</formula>
+		</calcfield>
+		<datefield name="tc2_date" title="Date formula yesterday" default="2012-01-29" >
+			<formula interpreter="beanshell">
+				ch.rgw.tools.TimeTool yesterday = new  ch.rgw.tools.TimeTool();
+				yesterday.addDays(-1);
+				return new java.text.SimpleDateFormat("dd.MM.yyyy").format(yesterday.getTime());
+			</formula>
+		</datefield >
+		<enumfield name="tc2_enum" title="Enum formula LU" default="2">
+			<formula interpreter="beanshell">
+				return 3;
+			</formula>
+			<option value="0" title="keine Angaben" />
+			<option value="1" title="ZH" />
+			<option value="2" title="BE" />
+			<option value="3" title="LU" />
+			<option value="32" title="anderes Ausland" />
+		</enumfield>
+		<numfield name="tc2_num" title="Num formula 2.87" unit="mm" formatpattern="0.00" default="3.24" >
+			<formula interpreter="beanshell">
+				return 2.87;
+			</formula>
+		</numfield>
+		<scalefield name="tc2_scale" title="Scale formula 92" min="0" max="100" default="17" >
+			<formula interpreter="beanshell">
+				return 92;
+			</formula>
+		</scalefield>
+		<strfield name="tc2_str" title="Str formula medshare" default="Hilotec" >
+			<formula interpreter="beanshell">
+				return "medshare";
+			</formula>
+		</strfield>
+		<design>
+			<panel type="grid">
+				<attribute name="columns" value="1" />
+				<panel type="field">
+					<attribute name="ref" value="tc2_bool" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc2_calc" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc2_date" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc2_enum" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc2_num" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc2_scale" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc2_str" />
+				</panel>
+			</panel>
+		</design>
+	</datatype>
+	<datatype name="tc3" title="Testcase 3" description="Exceptions in Formulas -> Default Values für alle Datentypen">
+		<boolfield name="tc3_bool" title="Bool formula exception (false)" default="false">
+			<formula interpreter="beanshell">
+				return 1/0;
+			</formula>
+		</boolfield>
+		<calcfield name="tc3_calc" title="Calc formula exception (exc)" default="exc" >
+			<formula interpreter="beanshell">
+				return 1/0;
+			</formula>
+		</calcfield>
+		<datefield name="tc3_date" title="Date formula exception (11.11.2011)" default="2011-11-11" >
+			<formula interpreter="beanshell">
+				return 1/0);
+			</formula>
+		</datefield >
+		<enumfield name="tc3_enum" title="Enum formula exception (BE)" default="2">
+			<formula interpreter="beanshell">
+				return 1/0;
+			</formula>
+			<option value="0" title="keine Angaben" />
+			<option value="1" title="ZH" />
+			<option value="2" title="BE" />
+			<option value="3" title="LU" />
+			<option value="32" title="anderes Ausland" />
+		</enumfield>
+		<numfield name="tc3_num" title="Num formula exception(3.24)" unit="mm" formatpattern="0.00" default="3.24" >
+			<formula interpreter="beanshell">
+				return 1/0;
+			</formula>
+		</numfield>
+		<scalefield name="tc3_scale" title="Scale formula exception (17)" min="0" max="100" default="17" >
+			<formula interpreter="beanshell">
+				return 1/0;
+			</formula>
+		</scalefield>
+		<strfield name="tc3_str" title="Str formula exception (Hilotec)" default="Hilotec" >
+			<formula interpreter="beanshell">
+				return 1/0;
+			</formula>
+		</strfield>
+		<design>
+			<panel type="grid">
+				<attribute name="columns" value="1" />
+				<panel type="field">
+					<attribute name="ref" value="tc3_bool" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc3_calc" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc3_date" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc3_enum" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc3_num" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc3_scale" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="tc3_str" />
+				</panel>
+			</panel>
+		</design>
+	</datatype>
+	<datatype name="tc4" title="Testcase 4" description="Spezialfälle">
+		<calcfield name="username" title="Username">
+			<formula interpreter="beanshell">
+				return actUser.get(ch.elexis.data.Anwender.FLD_NAME);
+			</formula>
+		</calcfield>
+		<counterfield name="number" title="Nr." countermode="global_counter" startvalue="0" formatpattern="#,000" />
+		<datafield name="teststatus" title="Teststatus" type="status" />
+	</datatype>
+</datatypes>

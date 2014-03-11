@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ********************************************************
+XML Schema for the configuration of the Elexis Plugin "Hilotec Messwerte V2"
+Valid for Plugin Version 2.1.6
+
+History:
+03.08.2009	Antoine Kaufmann, Hilotec (Erster Release des Plug-Ins)
+31.10.2011	Tony Schaller, medshare GmbH (Neue Datentypen datefield und counterfield, Formatierte Darstellung und Rundung von Zahlenwerten
+10.02.2012	Tony Schaller, medshare GmbH (Defaultwerte können auch mit Formeln definiert werden Performance Verbesserungen, erweiterte Exportfunktion)
+
+******************************************************** -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+
+	<xs:element name="datatypes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="datatype" type="datatype" maxOccurs="unbounded"
+				minOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="datatype">
+		<xs:choice maxOccurs="unbounded" minOccurs="1">
+			<xs:element name="boolfield" type="boolfieldtype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="calcfield" type="calcfieldtype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="counterfield" type="counterfieldtype" minOccurs="0" maxOccurs="1" />
+			<xs:element name="datafield" type="datafieldtype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="datefield" type="datefieldtype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="enumfield" type="enumfieldtype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="numfield" type="numfieldtype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="scalefield" type="scalefieldtype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="strfield" type="strfieldtype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="design" type="designtype" maxOccurs="1" minOccurs="0" />
+		</xs:choice>
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="description" type="titletype" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="boolfieldtype">
+		<xs:sequence>
+			<xs:element name="var" type="vartype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="formula" type="formulatype" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="unit" type="unittype" default="" />
+		<xs:attribute name="default" type="xs:boolean" default="false" />
+	</xs:complexType>
+
+	<xs:complexType name="calcfieldtype">
+		<xs:sequence>
+			<xs:element name="var" type="vartype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="formula" type="formulatype" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="unit" type="unittype" default="" />
+		<xs:attribute name="default" type="xs:string" default="" />
+		<xs:attribute name="formatpattern" type="formatpatternType" default="#0.#" />
+		<xs:attribute name="roundingmode" type="roundingmodeType" default="HALF_UP"/>
+		<xs:attribute name="lowAlert" type="xs:decimal" />
+		<xs:attribute name="lowWarning" type="xs:decimal" />
+		<xs:attribute name="highWarning" type="xs:decimal" />
+		<xs:attribute name="highAlert" type="xs:decimal" />
+		<xs:attribute name="places" type="xs:nonNegativeInteger" default="0" />
+	</xs:complexType>
+
+	<xs:complexType name="counterfieldtype">
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="formatpattern" type="formatpatternType" default="#,000" />
+		<xs:attribute name="lowAlert" type="xs:decimal" />
+		<xs:attribute name="lowWarning" type="xs:decimal" />
+		<xs:attribute name="highWarning" type="xs:decimal" />
+		<xs:attribute name="highAlert" type="xs:decimal" />
+		<xs:attribute name="countermode" type="countermodetype" use="required" />
+		<xs:attribute name="startvalue" type="xs:integer" default="0"/>
+	</xs:complexType>
+
+	<xs:complexType name="datafieldtype">
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="unit" type="unittype" default="" />
+		<xs:attribute name="type" type="nametype" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="datefieldtype">
+		<xs:sequence>
+			<xs:element name="var" type="vartype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="formula" type="formulatype" minOccurs="0"  maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="default" type="xs:date"/>
+		<xs:attribute name="lowAlert" type="xs:decimal" />
+		<xs:attribute name="lowWarning" type="xs:decimal" />
+		<xs:attribute name="highWarning" type="xs:decimal" />
+		<xs:attribute name="highAlert" type="xs:decimal" />
+	</xs:complexType>
+
+	<xs:complexType name="enumfieldtype">
+		<xs:sequence>
+			<xs:element name="var" type="vartype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="formula" type="formulatype" minOccurs="0" maxOccurs="1" />
+			<xs:element name="option" type="optiontype" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="unit" type="unittype" default="" />
+		<xs:attribute name="default" type="xs:nonNegativeInteger" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="numfieldtype">
+		<xs:sequence>
+			<xs:element name="var" type="vartype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="formula" type="formulatype" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="unit" type="unittype" default="" />
+		<xs:attribute name="default" type="xs:decimal" default="0" />
+		<xs:attribute name="lowAlert" type="xs:decimal" />
+		<xs:attribute name="lowWarning" type="xs:decimal" />
+		<xs:attribute name="highWarning" type="xs:decimal" />
+		<xs:attribute name="highAlert" type="xs:decimal" />
+		<xs:attribute name="places" type="xs:nonNegativeInteger" default="0" />
+		<xs:attribute name="formatpattern" type="formatpatternType" default="#0.#" />
+		<xs:attribute name="roundingmode" type="roundingmodeType" default="HALF_UP"/>
+	</xs:complexType>
+
+	<xs:complexType name="scalefieldtype">
+		<xs:sequence>
+			<xs:element name="var" type="vartype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="formula" type="formulatype" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="unit" type="unittype" default="" />
+		<xs:attribute name="default" type="xs:integer" default="0" />
+		<xs:attribute name="lowAlert" type="xs:decimal" />
+		<xs:attribute name="lowWarning" type="xs:decimal" />
+		<xs:attribute name="highWarning" type="xs:decimal" />
+		<xs:attribute name="highAlert" type="xs:decimal" />
+		<xs:attribute name="min" type="xs:integer" default="0" />
+		<xs:attribute name="max" type="xs:integer" default="100" />
+	</xs:complexType>
+
+	<xs:complexType name="strfieldtype">
+		<xs:sequence>
+			<xs:element name="var" type="vartype" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="formula" type="formulatype" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+		<xs:attribute name="unit" type="unittype" default="" />
+		<xs:attribute name="default" type="xs:string" default="" />
+		<xs:attribute name="lines" type="xs:positiveInteger" default="1" />
+	</xs:complexType>
+
+	<xs:complexType name="optiontype">
+		<xs:attribute name="value" type="xs:nonNegativeInteger" use="required" />
+		<xs:attribute name="title" type="titletype" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="formulatype">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="interpreter" type="xs:normalizedString" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="vartype">
+		<xs:attribute name="name" type="nametype" use="required" />
+		<xs:attribute name="source" type="xs:normalizedString" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="designtype">
+		<xs:sequence>
+			<xs:element name="panel" type="paneltype" maxOccurs="unbounded" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="paneltype">
+		<xs:sequence>
+			<xs:element name="attribute" type="attributeType" maxOccurs="unbounded" minOccurs="0">
+			</xs:element>
+			<xs:element name="panel" type="paneltype" maxOccurs="unbounded" minOccurs="0">
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="type" type="panelTypeEnum" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="fieldref">
+		<xs:attribute name="name" type="xs:string"></xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="attributeType">
+		<xs:attribute name="name" type="attributeTypeEnum" />
+		<xs:attribute name="value" type="xs:string" />
+	</xs:complexType>
+
+	<xs:simpleType name="formatpatternType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0#.-E;%',]*" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="countermodetype">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="global_counter"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="roundingmodeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UP"/>
+			<xs:enumeration value="DOWN"/>
+			<xs:enumeration value="CEILING"/>
+			<xs:enumeration value="FLOOR"/>
+			<xs:enumeration value="HALF_UP"/>
+			<xs:enumeration value="HALF_DOWN"/>
+			<xs:enumeration value="HALF_EVEN"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="nametype">
+		<xs:restriction base="xs:normalizedString">
+			<xs:minLength value="1" />
+			<xs:pattern value="[a-zA-Z0-9_]*" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="titletype">
+		<xs:restriction base="xs:normalizedString">
+			<xs:minLength value="0" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="unittype">
+		<xs:restriction base="xs:normalizedString" />
+	</xs:simpleType>
+
+	<xs:simpleType name="panelTypeEnum">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="plain"/>
+			<xs:enumeration value="display"/>
+			<xs:enumeration value="label"/>
+			<xs:enumeration value="grid"/>
+			<xs:enumeration value="field"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="attributeTypeEnum">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="columns"/>
+			<xs:enumeration value="url"/>
+			<xs:enumeration value="size"/>
+			<xs:enumeration value="text"/>
+			<xs:enumeration value="ref"/>
+			<xs:enumeration value="editable"/>
+			<xs:enumeration value="validpattern"/>
+			<xs:enumeration value="invalidmessage"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

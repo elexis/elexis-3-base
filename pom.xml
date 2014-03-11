@@ -59,6 +59,8 @@
   <module>ch.elexis.laborimport_lg1.feature</module>
   <module>ch.elexis.laborimport_rischbern</module>
   <module>ch.elexis.laborimport_rischbern.feature</module>
+  <module>ch.elexis.laborimport_rothen</module>
+  <module>ch.elexis.laborimport_rothen.feature</module>
   <module>ch.elexis.notes</module>
   <module>ch.elexis.notes.feature</module>
   <module>ch.elexis.connect.reflotron.v2</module>

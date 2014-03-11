@@ -153,6 +153,9 @@
    <feature url="features/ch.elexis.laborimport_rischbern.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport_rischbern.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
+   <feature url="features/ch.elexis.laborimport_rothen.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport_rothen.feature" version="3.0.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

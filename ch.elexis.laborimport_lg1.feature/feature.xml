@@ -18,7 +18,7 @@
    </license>
 
    <plugin
-         id="ch.elexis.laborimport.logolab"
+         id="ch.elexis.laborimport_lg1"
          download-size="0"
          install-size="0"
          version="0.0.0"

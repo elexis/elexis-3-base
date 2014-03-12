@@ -105,6 +105,8 @@
   <module>com.hilotec.elexis.messwerte.v2.feature</module>
   <module>com.hilotec.elexis.pluginstatistiken</module>
   <module>com.hilotec.elexis.pluginstatistiken.feature</module>
+  <module>de.fhdo.elexis.perspective</module>
+  <module>de.fhdo.elexis.perspective.feature</module>
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
   <module>ch.elexis.base.p2site</module>

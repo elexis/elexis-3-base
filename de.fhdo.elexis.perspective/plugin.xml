@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="de.fhdo.elexis.perspective.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RCP Perspective"
+            class="de.fhdo.elexis.perspective.Perspective"
+            id="de.fhdo.elexis.perspective.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="category - Import/Export Category"
+            id="de.fhdo.elexis.perspective.category.ImportExportCategory"
+            name="ImportExportCategory">
+      </category>
+      <command
+            categoryId="de.fhdo.elexis.perspective.category.ImportExportCategory"
+            description="exportCmd - Command zum Exportieren von Perspektiven"
+            id="de.fhdo.elexis.perspective.command.exportCmd"
+            name="exportCmd">
+      </command>
+      <command
+            categoryId="de.fhdo.elexis.perspective.category.ImportExportCategory"
+            description="importCmd - Command zum Importieren von Perspektiven"
+            id="de.fhdo.elexis.perspective.command.importCmd"
+            name="importCmd">
+      </command>
+      <command
+            categoryId="de.fhdo.elexis.perspective.category.ImportExportCategory"
+            description="deleteCmd - Command zum Löschen von Perspektiven"
+            id="de.fhdo.elexis.perspective.command.deleteCmd"
+            name="deleteCmd">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="de.fhdo.elexis.perspective.handler.ExportHandler"
+            commandId="de.fhdo.elexis.perspective.command.exportCmd">
+      </handler>
+      <handler
+            class="de.fhdo.elexis.perspective.handler.ImportHandler"
+            commandId="de.fhdo.elexis.perspective.command.importCmd">
+      </handler>
+      <handler
+            class="de.fhdo.elexis.perspective.handler.DeleteHandler"
+            commandId="de.fhdo.elexis.perspective.command.deleteCmd">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:openPerspective?after=perspectivesShortlist">
+         <separator
+               name="ImportExportSeperatorTop"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.fhdo.elexis.perspective.command.exportCmd"
+               label="Export Perspective"
+               style="push">
+         </command>
+         <command
+               commandId="de.fhdo.elexis.perspective.command.importCmd"
+               label="Import Perspective"
+               style="push">
+         </command>
+         <command
+               commandId="de.fhdo.elexis.perspective.command.deleteCmd"
+               label="Delete Perspective"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

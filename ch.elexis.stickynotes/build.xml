@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: build.xml 5520 2009-07-04 14:07:51Z rgw_ch $
+-->
+<project name="elexis-Haftnotizen" default="all">
+	<!-- modify the following 2 lines -->
+	<property name="pluginname" value="elexis-haftnotizen" />
+	<property name="targetdir" value="ch.elexis.stickynotes_${version}" />
+
+	<!-- the remainder of the file can be copied without modifications for most plugins -->
+	<property name="sourcedir" value="${source}/${pluginname}" />
+	<property name="plugindir" value="${dist}/plugins/${targetdir}" />
+
+	<target name="all">
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
+			<property name="copydest" value="${plugindir}" />
+			<property name="copysrc" value="${sourcedir}" />
+		</ant>
+		<javac srcdir="${sourcedir}" destdir="${plugindir}" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8">
+			<classpath>
+				<path refid="eclipseclasses" />
+			</classpath>
+		</javac>
+		<tstamp />
+		<!-- ant antfile="../BuildElexis/rsc/build/build.xml" target="texify" / -->
+		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip" />
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition" />
+	</target>
+</project>

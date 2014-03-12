@@ -159,6 +159,9 @@
    <feature url="features/ch.medshare.elexis_directories.feature_3.0.0.qualifier.jar" id="ch.medshare.elexis_directories.feature" version="3.0.0.qualifier">
       <category name="dataexchange"/>
    </feature>
+   <feature url="features/ch.elexis.stickynotes.feature_3.0.0.qualifier.jar" id="ch.elexis.stickynotes.feature" version="3.0.0.qualifier">
+      <category name="organisation"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.stickynotes.ui.Preferences"
+            id="ch.elexis.stickynotes.prefs"
+            name="Sticky Notes">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.stickynotes.ui.StickyNotesView"
+            icon="icons/stickynote16.png"
+            id="ch.elexis.stickynotes.view"
+            name="Sticky Notes"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="ch.elexis.stickynotes.data.StickyNotesFactory">
+      </Factory>
+   </extension>
+
+</plugin>

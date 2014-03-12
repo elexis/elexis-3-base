@@ -95,6 +95,8 @@
   <module>ch.elexis.privatrechnung.feature</module>
   <module>ch.elexis.stickynotes</module>
   <module>ch.elexis.stickynotes.feature</module>
+  <module>ch.elexis.support.dbshaker</module>
+  <module>ch.elexis.support.dbshaker.feature</module>
   <module>ch.medelexis.text.templator</module>
   <module>ch.medelexis.text.templator.feature</module>
   <module>com.hilotec.elexis.opendocument</module>

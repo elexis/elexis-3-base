@@ -165,6 +165,9 @@
    <feature url="features/de.fhdo.elexis.perspective.feature_3.0.0.qualifier.jar" id="de.fhdo.elexis.perspective.feature" version="3.0.0.qualifier">
       <category name="divers"/>
    </feature>
+   <feature url="features/ch.elexis.support.dbshaker.feature_3.0.0.qualifier.jar" id="ch.elexis.support.dbshaker.feature" version="3.0.0.qualifier">
+      <category name="support"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

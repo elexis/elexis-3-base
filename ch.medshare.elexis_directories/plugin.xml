@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="ch.elexis.datenKategorie"
+            class="ch.medshare.elexis.directories.views.WeisseSeitenSearchView"
+            icon="icons/directories_white_logo16.png"
+            id="ch.medshare.directories.views.WeisseSeitenSearchView"
+            name="%WeisseSeitenView">
+      </view>
+   </extension>
+
+</plugin>

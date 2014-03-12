@@ -1,0 +1,66 @@
+<div id="contAdr">
+	<div class="contAdr" onMouseOver="" onMouseOut=""
+		xmlns:XslBase="urn:xsltExt-XslBase">
+		<div id="78779">
+			<span />
+		</div>
+		<div class="adr" onMouseOver="" onMouseOut="">
+			<div class="contAdrLeftDet" style="">
+				<div class="adrNameDetLev0" style="">
+					<span>Albrecht Michael u. Imhof Nicole</span>
+					<br />
+					Wagenleise 1
+					<br />
+					3904 Naters
+					<br />
+				</div>
+			</div>
+			<div class="contAdrRightDet">
+				<div class="reset">
+					<span />
+				</div>
+				<div class="adrInfo" id="-843842840" style="">
+
+					Telefon
+				</div>
+				<div class="adrNumDet" style="">
+					<span class="noAdvert">*</span>
+					<a href="callto:+41279235203"
+						onclick="return VoIp_Check('de');">
+						027 923 52 03
+					</a>
+				</div>
+			</div>
+			<div class="reset">
+				<span />
+			</div>
+			<div class="contAdrNav">
+				<div class="adrNavLev0">
+					<span />
+					<a
+						href="/weisseseiten/base.aspx?do=entrydetail&amp;entryid=78779&amp;sortno=1">
+						Karte
+					</a>
+					<span class="routingdetail"
+						onclick="RoutingDetail('Wagenleise','1','Naters','3904')"
+						onmouseover="this.style.color='#D32'"
+						onmouseout="this.style.color='#002080'">
+						Routenplaner
+					</span>
+
+					<span onclick="VCard(this,78779)"
+						style="color:#002080; cursor:pointer; text-decoration:underline;"
+						onmouseover="this.style.color='#D32'"
+						onmouseout="this.style.color='#002080'">
+						vCard
+					</span>
+
+					<a
+						href="/base.aspx?do=content&amp;pid=nudirhllistingupdres&amp;language=&amp;phone=027 923 52 03">
+						Eintrag ändern
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

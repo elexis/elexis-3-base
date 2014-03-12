@@ -1,0 +1,73 @@
+<div id="contAdr">
+	<div class="contAdr" onMouseOver="" onMouseOut=""
+		xmlns:XslBase="urn:xsltExt-XslBase">
+		<div id="78779">
+			<span></span>
+		</div>
+		<div class="adr" onMouseOver="" onMouseOut="">
+			<div class="adrNumber" style="float:left">1.</div>
+			<div class="adrListLev0">
+				<a
+					href="/weisseseiten/base.aspx?do=goresultdetail&amp;entryid=78779&amp;searchtype=adr_simple">
+					Albrecht Michael u. Imhof Nicole
+				</a>
+				, Wagenleise 1, 3904 Naters
+			</div>
+			<div class="reset">
+				<span></span>
+			</div>
+		</div>
+	</div>
+	<div class="contAdr" onMouseOver="" onMouseOut=""
+		xmlns:XslBase="urn:xsltExt-XslBase">
+		<div id="441636">
+			<span></span>
+		</div>
+		<div class="adrLineGrey">
+			<span></span>
+		</div>
+		<div class="adrListLev0Cat"
+			style="font-weight:bold;padding:0 2px 0 0; text-decoration: none">
+			<span></span>
+			Restaurant
+		</div>
+		<div class="reset">
+			<span></span>
+		</div>
+		<div class="adr" onMouseOver="" onMouseOut="">
+			<div class="adrNumber" style="float:left">2.</div>
+			<div class="adrListLev1">
+				<a
+					href="/weisseseiten/base.aspx?do=goresultdetail&amp;entryid=441636&amp;searchtype=adr_simple">
+					Fluhhof Michael Imhof
+				</a>
+				, 6436 Ried (Muotathal)
+			</div>
+			<div class="reset">
+				<span></span>
+			</div>
+		</div>
+	</div>
+	<div class="contAdr" onMouseOver="" onMouseOut=""
+		xmlns:XslBase="urn:xsltExt-XslBase">
+		<div id="3315760">
+			<span></span>
+		</div>
+		<div class="adrLineGrey">
+			<span></span>
+		</div>
+		<div class="adr" onMouseOver="" onMouseOut="">
+			<div class="adrNumber" style="float:left">3.</div>
+			<div class="adrListLev0">
+				<a
+					href="/weisseseiten/base.aspx?do=goresultdetail&amp;entryid=3315760&amp;searchtype=adr_simple">
+					Imhof Erich, Christine, Michael und Dominique
+				</a>
+				, Kirchstr. 9b, 3427 Utzenstorf
+			</div>
+			<div class="reset">
+				<span></span>
+			</div>
+		</div>
+	</div>
+</div>

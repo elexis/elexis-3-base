@@ -73,6 +73,8 @@
   <module>ch.elexis.connect.sysmex.feature</module>
   <module>ch.medshare.connect.abacusjunior</module>
   <module>ch.medshare.connect.abacusjunior.feature</module>
+  <module>ch.medshare.elexis_directories</module>
+  <module>ch.medshare.elexis_directories.feature</module>
   <module>ch.elexis.externe_dokumente</module>
   <module>ch.elexis.externe_dokumente.feature</module>
   <module>ch.elexis.externe_dokumente.tests</module>

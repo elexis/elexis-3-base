@@ -1,0 +1,91 @@
+<div class="resrowclr_yellow">
+	</br>
+	<img class="imgbox"
+		src="http://s.staticlocal.ch/images/pois/na/blue.png" alt="poi" />
+	<p class="role">Garage</p>
+	<h2 class="fn">Auto Meier AG</h2>
+	<p class="role">Opel-Vertretung</p>
+	<div class="addressBlockMain">
+		<div class="streetAddress">
+			<span class="street-address">Hauptstrasse 253</span>
+			</br>
+			<span class="postal-code">5314</span>
+			<span class="locality">Kleindöttingen</span>
+		</div>
+		</br>
+		<table>
+			<tbody>
+				<tr class="phoneNumber">
+					<td>
+						<span class="contact">Telefon:</span>
+					</td>
+					<td class="tel">
+						<a class="phonenr"
+							href="callto://+41448104211">
+							044 810 42 11
+						</a>
+					</td>
+					<td id="freecall"></td>
+				</tr>
+				<tr>
+					<td>
+						<span class="contact">Fax:</span>
+					</td>
+					<td>
+						*&nbsp;044 810 54 40
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;
+					</td>
+					<td>&nbsp;
+					</td>
+					<td></td>
+				</tr>
+				<tr class="">
+					<td>
+						<span class="contact">E-Mail:</span>
+					</td>
+					<td>
+						*&nbsp;<a href="mailto:info@kvd.ch">
+							info@kvd.ch
+							</a>
+					</td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<br class="bighr" />
+	<div id="moreAddresses">
+		<h3>Zusatzeintrag</h3>
+		<div class="additionalAddress" id="additionalAddress1">
+			<span class="role">Verkauf</span>
+			</br>
+			<table>
+				<tbody>
+					<tr class="phoneNumber">
+						<td>
+							<span class="contact">Telefon:</span>
+						</td>
+						<td class="tel">
+							<a class="phonenr"
+								href="callto://+41562455656">
+								056 245 56 56
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<a
+								href="/redir/?a=link&amp;t=&amp;u=http%3A%2F%2Fwww.automeierag.opel.ch"
+								class="url">
+								http://www.automeierag.opel.ch
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

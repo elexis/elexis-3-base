@@ -116,6 +116,8 @@
   <module>ch.elexis.base.p2site</module>
   <module>ch.unibe.iam.scg.archie</module>
   <module>ch.unibe.iam.scg.archie.feature</module>
+  <module>ch.weirich.templator.pages</module>
+  <module>ch.weirich.templator.pages.feature</module>
   <module>ch.elexis.archie.wzw</module>
   <module>ch.elexis.archie.wzw.feature</module>
   <module>ch.elexis.archie.patientstatistik</module>

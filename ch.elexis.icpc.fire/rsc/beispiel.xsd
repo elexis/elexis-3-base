@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML Studio - Designer Edition 7.0.4.795 (http://www.liquid-technologies.com)-->
+<xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="meldung">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="konsultation">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element minOccurs="0" name="konsdate" type="xs:date" />
+              <xs:element minOccurs="0" name="patid" type="xs:integer" />
+              <xs:element minOccurs="0" name="patyear" type="xs:gYear" />
+              <xs:element minOccurs="0" name="patgender" type="xs:string" />
+              <xs:element minOccurs="0" name="arzt" type="xs:string" />
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="diagnose">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element minOccurs="0" name="icpc" type="xs:string" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="vital">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element minOccurs="0" name="bdsyst" type="xs:integer" />
+                    <xs:element minOccurs="0" name="bddiast" type="xs:integer" />
+                    <xs:element minOccurs="0" name="puls" type="xs:integer" />
+                    <xs:element minOccurs="0" name="groesse" type="xs:double" />
+                    <xs:element minOccurs="0" name="gewicht" type="xs:double" />
+                    <xs:element minOccurs="0" name="bauchumfang" type="xs:double" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="labor">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element minOccurs="0" name="labordate" type="xs:date" />
+                    <xs:element minOccurs="0" name="quelle" type="xs:string" />
+                    <xs:element minOccurs="0" name="analyse" type="xs:string" />
+                    <xs:element minOccurs="0" name="einheit" type="xs:string" />
+                    <xs:element minOccurs="0" name="min" type="xs:double" />
+                    <xs:element minOccurs="0" name="max" type="xs:double" />
+                    <xs:element minOccurs="0" name="abnormalflag" type="xs:string" />
+                    <xs:element minOccurs="0" name="laborwert" type="xs:string" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="medi">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element minOccurs="0" name="pharmacode" type="xs:string" />
+                    <xs:element minOccurs="0" name="dosismo" type="xs:string" />
+                    <xs:element minOccurs="0" name="dosismi" type="xs:string" />
+                    <xs:element minOccurs="0" name="dosisab" type="xs:string" />
+                    <xs:element minOccurs="0" name="dosisna" type="xs:string" />
+                    <xs:element minOccurs="0" name="stopdate" type="xs:string" />
+                    <xs:element minOccurs="0" name="stopbegr" type="xs:string" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

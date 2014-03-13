@@ -53,6 +53,8 @@
   <module>ch.elexis.global_inbox.feature</module>
   <module>ch.elexis.icpc</module>
   <module>ch.elexis.icpc.feature</module>
+  <module>ch.elexis.icpc.fire</module>
+  <module>ch.elexis.icpc.fire.feature</module>
   <module>ch.elexis.laborimport_labtop</module>
   <module>ch.elexis.laborimport_labtop.feature</module>
   <module>ch.elexis.laborimport_lg1</module>

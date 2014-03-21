@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.buchhaltung.views.BuchhaltungView"
+            id="ch.elexis.buchhaltung.basis.view"
+            name="Buchhaltung"/>
+   </extension>
+   <extension
+         point="ch.unibe.iam.scg.archie.dataprovider">
+      <DataProvider
+            category="ch.elexis.buchhaltung.ProviderCategory"
+            class="ch.elexis.buchhaltung.model.FakturaJournal"
+            name="FakturaJournal">
+      </DataProvider>
+      <DataProvider
+            category="ch.elexis.buchhaltung.ProviderCategory"
+            class="ch.elexis.buchhaltung.model.ZahlungsJournal"
+            name="Zahlungsjournal">
+      </DataProvider>
+      <DataProvider
+            category="ch.elexis.buchhaltung.ProviderCategory"
+            class="ch.elexis.buchhaltung.model.OffenePostenListe"
+            name="Offene Posten">
+      </DataProvider>
+      <DataProvider
+            category="ch.elexis.buchhaltung.ProviderCategory"
+            class="ch.elexis.buchhaltung.model.ListeNachFaelligkeit"
+            name="Rechnungen nach Fälligkeit">
+      </DataProvider>
+      <category
+            id="ch.elexis.buchhaltung.ProviderCategory"
+            name="Buchhaltung">
+      </category>
+      <DataProvider
+            category="ch.elexis.buchhaltung.ProviderCategory"
+            class="ch.elexis.buchhaltung.model.FakturaJournalDetail"
+            name="GarantJournal">
+      </DataProvider>
+      <DataProvider
+            category="ch.elexis.buchhaltung.ProviderCategory"
+            class="ch.elexis.buchhaltung.model.AlleLeistungen"
+            name="Alle Leistungen">
+      </DataProvider>
+   </extension>
+
+</plugin>

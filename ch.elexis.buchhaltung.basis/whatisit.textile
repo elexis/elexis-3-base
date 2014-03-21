@@ -1,0 +1,11 @@
+h1. elexis-buchhaltung-basis
+
+h2. Summary
+
+Some basic bookkeeping funktions
+
+h3. Dependencies
+
+Elexis
+Archie (http://archie.googlecode.com/svn/ch.unibe.iam.scg.archie/trunk)
+

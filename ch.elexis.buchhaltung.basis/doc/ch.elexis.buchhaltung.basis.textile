@@ -1,0 +1,99 @@
+h2. Einführung
+
+Dieses Plugin bietet eine Aufbereitung aller verrechneten Leistungen sowie die Buchhaltungsfunktionen wie 'Faktura Journal', 'Faktura Journal detailliert', 'Offene Posten' (Debitoren nach Datum), 'Zahlungsjournal' und 'Rechnungen nach Fälligkeitsdatum'.
+
+h2. Voraussetzungen
+
+Elexis-buchhaltung-basis benötigt Elexis 1.4 oder höher. Ausserdem muss das Plugin 'Archie' (http://archie.designchuchi.ch) installiert sein. Buchhaltung-Basis hängt sich in die Archie-Statistikauswahl ein.
+
+h2. Installation und Deinstallation
+
+Wie üblich muss das Plugin zur Installation nur in den Plugins-Ordner kopiert bzw. zur Deinstallation aus diesem Ordner gelöscht werden. Danach muss Elexis neu gestartet werden.
+
+h2. Bedienung
+
+Gehen Sie für alle im Weiteren beschriebenen Auswertungen auf die Archie-Perspektive (S. Abb. 1). Die gewünschte Auswertung kann in der Combobox rechts oben ('Verfügbare Statistiken') ausgesucht werden, im Feld darunter können Parameter wie Start- und Enddatum eingestellt werden, und schliesslich wird die Analyse durch Klick auf 'Abfrage starten' ausgelöst. Das Ergebnis erscheint im linken Fenster und kann - wie alle in Archie erstellten Auswertungen - grafisch angezeigt oder im universellen CSV-Format für andere Programme wie Excelexportiert werden.
+Für eine Analyse der Daten aus der Abfrage 'Alle Leistungen' kann im Programm der Wahl erfolgen (Excel, SQL-Datenbank). Für grössere Betriebe wird ein Export in eine SQL-Datenbank (Structured Query Language) empfohlen. Abfragen mit SQL erlauben sehr differenzierte Resultate. Falls sie selber nicht 'SQL-mächtig' sind hilft Ihnen Medelexis oder Ihr SupportCenter gerne weiter.
+
+Aus Datenschutzgründen werden (ausser in 'Alle Leistungen') keine Patientennamen sondern nur die internen  -  und für Dritte bedeutungslosen  -  * Patientennummern angegeben. Die Listen können daher ohne Bedenken z.B. einem Treuhänder oder Wirtschatsprüfer übergeben werden.
+Die Ausgabe 'Alle Leistungen' ist für interne Analysen bestimmt. Beim Erstellen von Abfragen erleichtern für den Ausführenden Namen, gegenüber Nummern, in der Regel die Plausiblitätsprüfung von Resultaten. Sind Namen aus Sicherheitsgründen nicht erwünscht kann, nach Import des CSV-Files in die Datenbank der Wahl, Name und Vorname gelöscht werden und nur mit der Pat-ID gearbeitet werden. 
+
+!images/ch.elexis.buchhaltung.basis/buch1.png(image)!
+Übersicht 'Archie-Perspektive'
+
+h2. Alle Leistungen 
+
+Diese Auswertung liefert Ihnen alle im angegebenen Zeitraum verrechneten Leistungen. Wählen Sie dazu unter 'Verfügbare Statistiken' die Option 'Alle Leistungen', wählen Sie Start- und Enddatum und klicken Sie auf 'Abfrage starten'.
+Jeder Leistung werden folgende Argumente zugeordnet:
+* Rechnungssteller 
+* Mandant
+* Benutzer
+* Stammarzt
+* Beh_Datum
+* Pat_Name
+* Pat_Vorname
+* Pat_Id
+* Geb_Datum
+* Sex
+* PLZ
+* Wohnort
+* Text
+* Tarmed_Code
+* Tarmed_AL
+* Tarmed_TL
+* Tariftyp
+* TP_Wert
+* Anzahl
+* Einkauf_Kosten
+* Verkauf_Kosten
+* Betrag
+* MWSt
+* Rn_Status (Rechnungsstatus)
+
+
+h2. Faktura-Journal
+
+Diese Auswertung liefert Ihnen alle im angegebenen Zeitraum ausgelösten Buchungsvorgänge mit den Spalten 
+* Patienten-Nr
+* Datum
+* Betrag
+* Typ
+* Text (Rechnungen, Zahlungen, Stornos). 
+Der Saldo aller Buchungsvorgänge entspricht Ihren offenen Debitoren.
+
+Wählen Sie dazu unter 'Verfügbare Statistiken' die Option 'Faktura-Journal', wählen Sie Start- und Enddatum und klicken Sie auf 'Abfrage starten';
+
+h2. Zahlungsjournal
+
+Diese Auswertung liefert alle Zahlungseingänge im angegebenen Zeitraum.
+
+h2. Offene Posten
+
+'Offene Posten' liefert Ihnen alle im angegebenen Zeitraum ausgelösten Buchungsvorgänge mit den Spalten 
+* Patienten-Nr
+* Rechnung-Nr
+* Rechnungsstatus
+* Offener Betrag
+
+
+!images/ch.elexis.buchhaltung.basis/buch2.png(image)! 
+Abbildung 2: Offene Posten
+
+Diese Auswertung (Vgl. Abb 2) liefert alle Ausstände zu einem anzugebenden Stichtag. Wählen Sie das Ausgangsdatum (ältere Rechnungen werden nicht mehr berücksichtigt) und einen Stichtag (Zahlungen nach diesem Stichtag werden nicht mehr berücksichtigt). 
+
+
+Grafische Darstellung: Abbildung 3 zeigt ein Beispiel, wie man eine Auswertung grafisch darstellen kann.
+
+!images/ch.elexis.buchhaltung.basis/buch3.png(image)! 
+
+Abb 3: Betrags-Vergleich der verschiedenen Kategorien von Ausständen.
+
+
+h2. Rechnungen nach Fälligkeitsdatum
+
+Diese Auswertung erlaubt Ihnen eine gewissen 'Blick in die Zukunft': Sie zeigt Ihnen, welche Rechnungen bis zu einem bestimmten Zeitpunkt fällig werden. Geben Sie das gewünschte Stichdatum ein und klicken Sie auf 'Abfrage starten'. Die Abfrage bringt folgende Spalten zurück:
+* Patienten-Nr
+* Rechnung-Nr
+* Fällig am
+* Betrag
+

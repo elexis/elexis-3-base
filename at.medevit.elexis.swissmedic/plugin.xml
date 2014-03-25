@@ -11,7 +11,7 @@
                icon="rsc/swissmedic-logo.png"
                label="Swissmedic suchen ..."
                style="push"
-               tooltip="Medikamenteninteraktion prüfen ...">
+               tooltip="Fachinformation Swissmedic...">
          </command>
       </menuContribution>
    </extension>

@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IOptifier;
+import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.optifier.NoObligationOptifier;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
@@ -35,7 +37,6 @@ import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
 import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
 
-
 /**
  * {@link ArtikelstammItem} persistent object implementation. This class conforms both to the
  * requirements of an {@link Artikel} as required by Elexis v2.1 and to the requirements given by
@@ -43,7 +44,7 @@ import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
  */
 public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammItem.class);
-
+	
 	private static DateFormat df = new SimpleDateFormat("ddMMyy HH:mm");
 	
 	private static IOptifier noObligationOptifier = new NoObligationOptifier();
@@ -471,11 +472,11 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public static boolean purgeEntries(List<ArtikelstammItem> qre){
 		JdbcLink link = getConnection();
-
+		
 		for (ArtikelstammItem artikelstammItem : qre) {
 			link.exec("DELETE FROM " + TABLENAME + " WHERE ID=" + artikelstammItem.getWrappedId());
 		}
-
+		
 		return true;
 	}
 	
@@ -637,5 +638,43 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public void setVerkaufseinheit(int vse){
 		set(VERKAUFSEINHEIT, vse + "");
+	}
+	
+	/**
+	 * @param ean
+	 *            the European Article Number or GTIN
+	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if not
+	 *         found
+	 */
+	public static @Nullable
+	ArtikelstammItem findByEANorGTIN(@NonNull
+	String ean){
+		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
+		qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, ean);
+		List<ArtikelstammItem> result = qre.execute();
+		if (result.size() == 1)
+			return result.get(0);
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param pharmaCode
+	 * @return the ArtikelstammItem for the given pharma code or <code>null</code> if not found
+	 */
+	public static @Nullable
+	ArtikelstammItem findByPharmaCode(@NonNull
+	String pharmaCode){
+		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
+		qre.add(ArtikelstammItem.FLD_PHAR, Query.LIKE, pharmaCode);
+		List<ArtikelstammItem> result = qre.execute();
+		if (result.size() == 1)
+			return result.get(0);
+		
+		if (!pharmaCode.startsWith(String.valueOf(0))) {
+			return ArtikelstammItem.findByPharmaCode(String.valueOf(0) + pharmaCode);
+		}
+		
+		return null;
 	}
 }

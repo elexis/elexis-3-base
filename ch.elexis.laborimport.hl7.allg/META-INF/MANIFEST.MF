@@ -4,6 +4,7 @@ Bundle-Name: Universal HL7-Import
 Bundle-SymbolicName: ch.elexis.laborimport.hl7.allg;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: elexis.info
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.ui,
  ch.rgw.utility,
  ch.elexis.core.ui.importer.div,

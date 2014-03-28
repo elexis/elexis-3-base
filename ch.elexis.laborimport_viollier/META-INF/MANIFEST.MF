@@ -5,6 +5,7 @@ Bundle-SymbolicName: ch.elexis.laborimport_viollier;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: ch.rgw.utility,
  org.eclipse.core.runtime,
  org.eclipse.ui,

@@ -11,5 +11,6 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.rgw.utility,
  ch.elexis.core.ui.importer.div;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
- ch.elexis.core.data;bundle-version="3.0.0"
+ ch.elexis.core.data;bundle-version="3.0.0",
+ ch.elexis.core.hl7.v2x
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

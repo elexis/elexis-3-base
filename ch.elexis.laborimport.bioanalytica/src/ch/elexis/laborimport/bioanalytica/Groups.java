@@ -24,13 +24,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.elexis.core.data.util.PlatformHelper;
-import ch.elexis.core.ui.importer.div.importers.HL7.OBX;
 import ch.elexis.core.ui.importer.div.importers.ILabItemResolver;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Query;
+import ch.elexis.hl7.model.AbstractData;
+import ch.elexis.hl7.model.LabResultData;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -306,18 +307,26 @@ public class Groups implements ILabItemResolver {
 	}
 	
 	@Override
-	public String getTestName(OBX obx){
-		return Groups.getCodeName(obx.getItemCode());
+	public String getTestGroupName(AbstractData data){
+		if (data instanceof LabResultData) {
+			LabResultData labData = (LabResultData) data;
+			return Groups.getGroupNameOfCode(labData.getCode());
+		}
+		return Groups.getGroupNameOfCode(data.getName() + " " + data.getGroup());
 	}
 	
 	@Override
-	public String getTestGroupName(OBX obx){
-		return Groups.getGroupNameOfCode(obx.getItemCode());
+	public String getTestName(AbstractData data){
+		if (data instanceof LabResultData) {
+			LabResultData labData = (LabResultData) data;
+			return Groups.getCodeName(labData.getCode());
+		}
+		return Groups.getCodeName(data.getName());
 	}
 	
 	@Override
-	public String getNextTestGroupSequence(OBX obx){
+	public String getNextTestGroupSequence(AbstractData data){
 		Labor labor = LabImportUtil.getOrCreateLabor(Importer.MY_LAB);
-		return Groups.getCodeOrderByGroupName(getTestGroupName(obx), labor);
+		return Groups.getCodeOrderByGroupName(getTestGroupName(data), labor);
 	}
 }

@@ -6,7 +6,7 @@ Bundle-Version: 3.0.0.qualifier
 Fragment-Host: ch.unibe.iam.scg.archie;bundle-version="0.7"
 Bundle-Localization: src/ch/unibe/iam/scg/archie/samples/i18n/messages
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: ch.rgw.tools
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface

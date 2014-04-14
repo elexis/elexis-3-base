@@ -22,6 +22,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -223,7 +224,9 @@ public class XMLExporter implements IRnOutputter {
 	Mandant actMandant;
 	double tpTarmedTL = 0;
 	double tpTarmedAL = 0;
-	String diagnosen, dgsys;
+	
+	List<IDiagnose> diagnosen = new ArrayList<IDiagnose>();
+	
 	Rechnung rn;
 	
 	private Money mTarmed;
@@ -253,8 +256,7 @@ public class XMLExporter implements IRnOutputter {
 		actMandant = null;
 		tpTarmedTL = 0;
 		tpTarmedAL = 0;
-		diagnosen = StringConstants.EMPTY;
-		dgsys = StringConstants.EMPTY;
+		diagnosen = new ArrayList<IDiagnose>();
 		rn = null;
 		
 		mTarmed = new Money();
@@ -621,8 +623,6 @@ public class XMLExporter implements IRnOutputter {
 		
 		// Alle Informationen je Konsultation sammeln
 		// alle Preise (in Rappen) auflisten
-		StringBuilder sbDiagnosen = new StringBuilder();
-		dgsys = FREETEXT;
 		String lastDate = StringConstants.EMPTY;
 		int sessionNumber = 1;
 		
@@ -651,10 +651,7 @@ public class XMLExporter implements IRnOutputter {
 			for (IDiagnose dg : ld) {
 				String dgc = dg.getCode();
 				if (dgc != null) {
-					dgsys = dg.getCodeSystemName();
-					if (sbDiagnosen.indexOf(dgc) == -1) {
-						sbDiagnosen.append(dg.getCode()).append(StringConstants.SPACE);
-					}
+					diagnosen.add(dg);
 				}
 			}
 			List<Verrechnet> lv = b.getLeistungen();
@@ -1186,24 +1183,27 @@ public class XMLExporter implements IRnOutputter {
 		detail.setAttribute("service_locality", "practice"); // 15021 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// 15030 ff weggelassen
-		
-		Element diagnosis = new Element("diagnosis", ns); // 15500 //$NON-NLS-1$
-		/*
-		 * String dgType=actMandant.getInfoString(ta.DIAGSYS); if(dgType.equals("")){
-		 * dgType="by_contract"; }
-		 */
-		
-		diagnosis.setAttribute(ATTR_TYPE, match_diag(dgsys)); // 15510
-		diagnosen = sbDiagnosen.toString().trim(); // 15530
-		if (dgsys.equals(FREETEXT)) {
-			diagnosis.setText(diagnosen);
-		} else {
-			if (diagnosen.length() > 12) {
-				diagnosen = diagnosen.substring(0, 12);
+		for (IDiagnose diagnose : diagnosen) {
+			Element diagnosis = new Element("diagnosis", ns); // 15500 //$NON-NLS-1$
+			/*
+			 * String dgType=actMandant.getInfoString(ta.DIAGSYS); if(dgType.equals("")){
+			 * dgType="by_contract"; }
+			 */
+			String diagnosisType = match_diag(diagnose.getCodeSystemName());
+			diagnosis.setAttribute(ATTR_TYPE, diagnosisType); // 15510
+			String code = diagnose.getCode();
+			if (diagnosisType.equalsIgnoreCase(FREETEXT)) {
+				code = "";
+				diagnosis.setText(diagnose.getText());
+			} else {
+				if (code.length() > 12) {
+					code = code.substring(0, 12);
+				}
 			}
-			diagnosis.setAttribute(ATTR_CODE, diagnosen);
+			
+			diagnosis.setAttribute(ATTR_CODE, code);
+			detail.addContent(diagnosis);
 		}
-		detail.addContent(diagnosis);
 		
 		String gesetz = TarmedRequirements.getGesetz(actFall);
 		
@@ -1567,7 +1567,7 @@ public class XMLExporter implements IRnOutputter {
 	}
 	
 	private String match_diag(final String name){
-		if (name == null) {
+		if (name.equalsIgnoreCase(FREETEXT)) {
 			return FREETEXT;
 		}
 		if (name.equalsIgnoreCase("ICD-10")) { //$NON-NLS-1$

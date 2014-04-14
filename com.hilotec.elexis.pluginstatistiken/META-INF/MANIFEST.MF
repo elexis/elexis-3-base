@@ -4,7 +4,7 @@ Bundle-Name: Hilotec_Pluginstatistiken
 Bundle-SymbolicName: com.hilotec.elexis.pluginstatistiken;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: hilotec.com
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: ch.unibe.iam.scg.archie,
  org.eclipse.core.runtime,
  org.eclipse.swt,

@@ -34,5 +34,11 @@
             name="%TessinerCodes">
       </Diagnosesystem>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.KonsExtension">
+      <Makro
+            KonsMakro="ch.elexis.base.ch.diagnosecodes.util.TIMakro">
+      </Makro>
+   </extension>
 
 </plugin>

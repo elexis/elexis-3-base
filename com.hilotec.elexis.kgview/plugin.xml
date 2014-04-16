@@ -190,6 +190,13 @@
             name="EKG"
             restorable="true">
       </view>
+      <view
+            category="com.hilotec.elexis.kgview.category"
+            class="com.hilotec.elexis.kgview.Therapieliste"
+            id="com.hilotec.elexis.kgview.Therapieliste"
+            name="Therapieliste"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

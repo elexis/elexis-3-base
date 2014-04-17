@@ -1,0 +1,17 @@
+h1. Schnittstelle zur Ärztekasse
+
+p(klein). (c) 2012 by medshare GmbH
+ 
+{toc}
+ 
+h2. Einleitung
+
+Bietet einen weiteren Rechnungsoutputter an, welcher die XML Files an die Ärztekasse übermittelt 
+
+h2. Bedieneranleitung
+
+Siehe hier: <a href="http://www.medshare.net/fileadmin/downloads/elexis/dox/ElexisAerztekasseConnector.pdf" target="blank">Bedieneranleitung</a> 
+
+h2. Entwickleranleitung
+
+Auf Anfrage bei medshare erhältlich: <a href="http://www.medshare.net/kontakt.html" target="blank">Kontakt</a>

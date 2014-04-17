@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invoice:request xmlns:invoice="http://www.xmlData.ch/xmlInvoice/XSD" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd" role="production">
+  <invoice:header>
+    <invoice:sender ean_party="7600000000005" />
+    <invoice:intermediate ean_party="2000000000000" />
+    <invoice:recipient ean_party="2000000000000" />
+  </invoice:header>
+  <invoice:prolog>
+    <invoice:package version="216" id="0">Elexis</invoice:package>
+    <invoice:generator>
+      <invoice:software version="100" id="0">JDOM</invoice:software>
+    </invoice:generator>
+    <invoice:validator focus="tarmed" version_software="216" version_db="401" id="0">Elexis TarmedVerifier</invoice:validator>
+  </invoice:prolog>
+  <invoice:invoice invoice_timestamp="1340180363" invoice_id="000001000077" invoice_date="2012-06-20T00:00:00" resend="false" case_id="x29ac9f557c33638b0120">
+    <invoice:balance currency="CHF" amount="0.00" amount_prepaid="0.00" amount_due="0.00" amount_tarmed="0.00" unit_tarmed.mt="0.00" amount_tarmed.mt="0.00" unit_tarmed.tt="0.00" amount_tarmed.tt="0.00" amount_cantonal="0.00" amount_unclassified="0.00" amount_lab="0.00" amount_physio="0.00" amount_drug="0.00" amount_migel="0.00" amount_obligations="0.00">
+      <invoice:vat vat="0.00">
+        <invoice:vat_rate vat_rate="0.00" amount="0.00" vat="0.00" />
+      </invoice:vat>
+    </invoice:balance>
+    <invoice:esr9 participant_number="01-200000-7" type="16or27" reference_number="00 00000 00000 00000 00100 00775" coding_line="0100000000005&gt;000000000000000000010000775+ 012000007&gt;">
+      <invoice:bank>
+        <invoice:company>
+          <invoice:companyname>TestKasse</invoice:companyname>
+          <invoice:postal>
+            <invoice:zip>0000</invoice:zip>
+            <invoice:city>Unbekannt</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-555 55 55</invoice:phone>
+          </invoice:telecom>
+        </invoice:company>
+      </invoice:bank>
+    </invoice:esr9>
+    <invoice:tiers_garant payment_periode="P30D">
+      <invoice:biller ean_party="7600000000005" zsr="U890030">
+        <invoice:person title="Dr. med.">
+          <invoice:familyname>Muster</invoice:familyname>
+          <invoice:givenname>Franz</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Specimengasse 99</invoice:street>
+            <invoice:zip countrycode="CH">9999</invoice:zip>
+            <invoice:city>Musterhausen</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>033 123 45 66</invoice:phone>
+            <invoice:fax>033 123 45 99</invoice:fax>
+          </invoice:telecom>
+          <invoice:online>
+            <invoice:email>dev@medshare.net</invoice:email>
+            <invoice:url>www.specimen.ch</invoice:url>
+          </invoice:online>
+        </invoice:person>
+      </invoice:biller>
+      <invoice:provider ean_party="7600000000005" zsr="U890030">
+        <invoice:person title="Dr. med.">
+          <invoice:familyname>Muster</invoice:familyname>
+          <invoice:givenname>Franz</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Specimengasse 99</invoice:street>
+            <invoice:zip countrycode="CH">9999</invoice:zip>
+            <invoice:city>Musterhausen</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>033 123 45 66</invoice:phone>
+            <invoice:fax>033 123 45 99</invoice:fax>
+          </invoice:telecom>
+          <invoice:online>
+            <invoice:email>dev@medshare.net</invoice:email>
+            <invoice:url>www.specimen.ch</invoice:url>
+          </invoice:online>
+        </invoice:person>
+      </invoice:provider>
+      <invoice:insurance ean_party="2000000000000">
+        <invoice:company>
+          <invoice:companyname>Testbank</invoice:companyname>
+          <invoice:postal>
+            <invoice:street>Paradeplatz</invoice:street>
+            <invoice:zip>8888</invoice:zip>
+            <invoice:city>Zürich</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-555 55 55</invoice:phone>
+          </invoice:telecom>
+        </invoice:company>
+      </invoice:insurance>
+      <invoice:patient gender="male" birthdate="1970-01-01T00:00:00">
+        <invoice:person>
+          <invoice:familyname>Muster</invoice:familyname>
+          <invoice:givenname>Franz</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Specimengasse 99</invoice:street>
+            <invoice:zip>9999</invoice:zip>
+            <invoice:city>Musterhausen</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-555 55 55</invoice:phone>
+          </invoice:telecom>
+        </invoice:person>
+      </invoice:patient>
+      <invoice:guarantor>
+        <invoice:person>
+          <invoice:familyname>Muster</invoice:familyname>
+          <invoice:givenname>Franz</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Specimengasse 99</invoice:street>
+            <invoice:zip>9999</invoice:zip>
+            <invoice:city>Musterhausen</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-555 55 55</invoice:phone>
+          </invoice:telecom>
+        </invoice:person>
+      </invoice:guarantor>
+      <invoice:referrer ean_party="7600000000005" zsr="U890030">
+        <invoice:person title="Dr. med.">
+          <invoice:familyname>Muster</invoice:familyname>
+          <invoice:givenname>Franz</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Specimengasse 99</invoice:street>
+            <invoice:zip countrycode="CH">9999</invoice:zip>
+            <invoice:city>Musterhausen</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>033 123 45 66</invoice:phone>
+            <invoice:fax>033 123 45 99</invoice:fax>
+          </invoice:telecom>
+          <invoice:online>
+            <invoice:email>dev@medshare.net</invoice:email>
+            <invoice:url>www.specimen.ch</invoice:url>
+          </invoice:online>
+        </invoice:person>
+      </invoice:referrer>
+    </invoice:tiers_garant>
+    <invoice:detail date_begin="2012-06-19T00:00:00" date_end="2012-06-19T00:00:00" canton="BE" service_locality="practice">
+      <invoice:diagnosis type="ICD10" code="L00 F21" />
+      <invoice:kvg reason="disease" patient_id="56465" case_date="2012-06-19T00:00:00" />
+      <invoice:services>
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ean_provider="7600000000005" ean_responsible="7600000000005" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="0.00" unit_factor.mt="0.86" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="0.00" unit.tt="0.00" unit_factor.tt="0.86" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="0.00" amount="0.00" vat_rate="0.0" validate="true" obligation="true" record_id="1" number="1" quantity="1.0" date_begin="2012-06-19T00:00:00" code="00.01.01">Konsultation, Besuch, Wegentschädigung u.a.</invoice:record_tarmed>
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ean_provider="7600000000005" ean_responsible="7600000000005" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="0.00" unit_factor.mt="0.86" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="0.00" unit.tt="0.00" unit_factor.tt="0.86" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="0.00" amount="0.00" vat_rate="0.0" validate="true" obligation="true" record_id="2" number="1" quantity="1.0" date_begin="2012-06-19T00:00:00" code="00.01.02">Betreuung des hospitalisierten Patienten</invoice:record_tarmed>
+      </invoice:services>
+    </invoice:detail>
+  </invoice:invoice>
+</invoice:request>
+

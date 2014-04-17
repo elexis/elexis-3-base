@@ -1,0 +1,20 @@
+h1. Viollier Laborimporter
+
+p(klein). (c) 2012 by medshare GmbH
+ 
+{toc}
+ 
+h2. Einleitung
+
+Die gemessenen Labordaten werden von Viollier in ein HL7-Meldung (ORU^R01) verpackt und mit Hilfe von OpenMedical
+auf den Elexis-Rechner geladen (MedTransfer). Diese Daten können dann in Elexis importiert werden. 
+Der Import wird manuell gestartet.
+Nutzt zum Parsing der HL7 Nachrichten das HAPI via ch.elexis.hl7.v2x 
+
+h2. Bedieneranleitung
+
+Siehe hier: <a href="http://www.medshare.net/fileadmin/downloads/elexis/dox/ElexisViollierConnector.pdf" target="blank">Bedieneranleitung</a> 
+
+h2. Entwickleranleitung
+
+Auf Anfrage bei medshare erhältlich: <a href="http://www.medshare.net/kontakt.html" target="blank">Kontakt</a>

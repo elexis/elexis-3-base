@@ -95,6 +95,8 @@
   <module>ch.elexis.laborimport.analytica.feature</module>
   <module>ch.elexis.laborimport.teamw</module>
   <module>ch.elexis.laborimport.teamw.feature</module>
+  <module>ch.elexis.laborimport.viollier.v2</module>
+  <module>ch.elexis.laborimport.viollier.v2.feature</module>
   <module>ch.elexis.omnivore</module>
   <module>ch.elexis.omnivore.feature</module>
   <module>ch.elexis.privatrechnung</module>

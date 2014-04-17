@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            Class="ch.elexis.labor.viollier.v2.labimport.LabOrderImport"
+            name="%importer.name">
+      </Importer>
+   </extension>
+	<extension
+		point="org.eclipse.ui.preferencePages">
+		<page
+        category="ch.elexis.preferences.transporters"
+        class="ch.elexis.labor.viollier.v2.ViollierPreferencePage"
+        id="ch.elexis.labor.viollier.v2.prefs"
+        name="%preferences.title">
+		</page>
+	</extension>
+</plugin>

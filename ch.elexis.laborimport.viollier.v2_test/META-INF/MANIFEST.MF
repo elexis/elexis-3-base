@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test Fragment for Laborimport Viollier
+Bundle-SymbolicName: ch.elexis.laborimport.viollier.v2_test
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: elexis.ch
+Fragment-Host: ch.elexis.laborimport.viollier.v2;bundle-version="3.0.0.qualifier"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.junit
+Export-Package: ch.elexis.laborimport.viollier.v2_test,
+ ch.elexis.laborimport.viollier.v2_test.importer

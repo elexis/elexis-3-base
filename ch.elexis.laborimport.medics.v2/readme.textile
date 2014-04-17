@@ -1,0 +1,74 @@
+h1. Medics Laborimporter
+
+p(klein). (c) 2011 by M.Imhof 
+ $Id$	
+ 
+{toc}
+ 
+h2. Einleitung
+
+Mit dem DLMessenger Programm der Firma Dorner (www.dorner.de) werden die HL7-Dateien zwischen der Firma Medics und Elexis 
+hin und hergeschickt. 
+In der ersten Etappe wird in Elexis ein HL7-Auftrag (OML^O21) erstellt und an die Firma Medics geschickt. Dazu wird im DLMessenger
+eine Anforderung ausgelöst.
+Die gemessenen Labordaten werden danach von Medics in ein HL7-Meldung (ORU^R01) verpackt und mit Hilfe des DLMessengers
+zurück auf den Elexis-Rechner geladen (DLMessenger Job). Diese Daten können dann in Elexis importiert werden. Die Auslösung
+des Imports wird manuell ausgelöst.
+
+h2. Einstellungen
+
+Das Elexis – Medics Connector Plugin V2 erweitert Elexis um eine Einstellung "Datenaustausch | Medics" 
+mit folgenden Inhalten:
+* Download Verzeichnis
+* Upload Verzeichnis
+* Archiv Verzeichnis. Importierte HL7 Dateien werden im Archiv-Verzeichnis abgelegt.
+* Error Verzeichnis. Fehlerhafte HL7-Dateien werden in dieses Verzeichnis verschoben
+* Kategorie in Omnivore (Vorgabe: Medics Laborbefunde)
+
+h2. Dropdown-Aktion auf LaborView
+
+Der Laborauftrag wird als Elexis Extension implementiert. Falls mehrere ch.elexis.LabOrder Extensions vorhanden
+sind, so wird der beim Klicken der letzte gestartete Laborauftrag ausgeführt.
+
+Mittels DropDown auf dem Icon werden aller Laboraufträge angezeigt und der Default-Laborauftrag kann 
+geändert werden.
+
+Wird der Medics-Laborauftrag gestartet, so wird:
+# Eine neue Auftragsnummer gelöst und in der Datenbank gespeichert
+# Eine HL7 Datei (V2.6) mit den Patientendaten erstellt und ins Upload Verzeichnis des Messenger gestellt.
+
+Die Auftragsnummer ist eindeutig und wird von Elexis erstellt und in der Datenbank zum jeweiligen Patienten abgespeichert.
+Dazu wird eine neue Tabelle KONTAKT_ORDER_MANAGEMENT verwendet.
+
+h2. Tests
+
+h3. HL7-Auftragsdatei erstellen
+
+Im View-Menu der Laborliste erscheint ein Dropdown-Aktion !rsc/medics16.png!. Wird diese angeklickt,
+so wird im Upload-Verzeichnis ein HL7 Auftragsdatei erstellt mit einer eindeutigen Auftragsnummer.
+
+h3. HL7 Dateien importieren
+
+Bevor die Dateien im /samples Verzeichnis importiert werden können, müssen diese entsprechend angepasst
+werden:
+* entweder ORC-2: Auftragsnummer welche in der Tabelle KONTAKT_ORDER_MANAGEMENT einem Patienten zugeordnet ist
+* oder PID-2 Patient ID: Existierende Elexis Patient-Nr
+* oder PID-4 Alternate Patient ID: Falls PID-2 leer ist wird dieses Feld gelesen
+
+Folgende Fälle müssen getestet werden:
+# Normales Laborresultat verarbeiten
+** samples/Kalium.hl7
+# Angehängt Pdf Dateien werden in Omnivore abgelegt
+** samples/Kalium_Pdf.hl7
+# Bei den Laborwerten (OBX) sollen auch TX und Text berücksichtigt werden (dabei werden Texte als ISO-8859-1 übernommen).
+** samples/Natrium_Text.hl7
+** samples/Bakteriologiebefund_TX.hl7 
+# Zusätzliche Kommentare (NTE: Notes and comments) sollen ebenfalls verarbeitet werden können
+** samples/Chol_Punkt_NTE.hl7
+# Resultaten mit Punkt, bzw Leer als Platzhalter
+** samples/Blut_leer.hl7
+** samples/Chol_Punkt_NTE.hl7
+# Gruppe/Position des Laborwertes soll aus dem OBX übernommen (tbd). Falls bereits vorhanden wird das Feld jedoch NICHT überschrieben
+** samples/Glukose_GrpChemie_Pos1234.hl7
+# Bei Importfehler soll die fehlerhafte HL7 Datei in ein /error Verzeichnis verschoben werden. Danach wird weiter importiert.
+

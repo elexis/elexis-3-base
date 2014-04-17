@@ -86,6 +86,8 @@
   <module>ch.elexis.laborimport.bioanalytica.feature</module>
   <module>ch.elexis.laborimport.hl7.allg</module>
   <module>ch.elexis.laborimport.hl7.allg.feature</module>
+  <module>ch.elexis.laborimport.medics.v2</module>
+  <module>ch.elexis.laborimport.medics.v2.feature</module>
   <module>ch.elexis.laborimport_viollier</module>
   <module>ch.elexis.laborimport_viollier.feature</module>
   <module>ch.ngiger.utilities.comm</module>

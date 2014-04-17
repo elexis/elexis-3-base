@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.labor.medics.v2.MedicsPreferencePage"
+            id="ch.elexis.laborimport.medics.v2.prefs"
+            name="%preferences.title">
+      </page>
+   </extension>
+   <!--
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.laborimport.medics.v2.views.MedicsBrowserView"
+            icon="rsc/medics16.png"
+            id="ch.elexis.medics.views.MedicsBrowserView"
+            name="%browserView.title"
+            restorable="true">
+      </view>
+   </extension>
+   -->
+   <extension
+         point="ch.elexis.core.ui.LaborOrder">
+      <Importer
+            ToolbarAction="ch.elexis.labor.medics.v2.order.LabOrderAction"
+            name="LabOrder">
+      </Importer>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.LaborOrder">
+      <Importer
+            ToolbarAction="ch.elexis.labor.medics.v2.order.iMedAbfrageAction"
+            name="imedquery">
+      </Importer>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            Class="ch.elexis.labor.medics.v2.labimport.LabOrderImport"
+            name="%importer.name">
+      </Importer>
+   </extension>
+</plugin>

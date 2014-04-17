@@ -177,6 +177,9 @@
    <feature url="features/ch.elexis.buchhaltung.basis.feature_3.0.0.qualifier.jar" id="ch.elexis.buchhaltung.basis.feature" version="3.0.0.qualifier">
       <category name="finances"/>
    </feature>
+   <feature url="features/ch.elexis.laborimport.medics.v2.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.medics.v2.feature" version="3.0.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

@@ -10,8 +10,11 @@
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -41,6 +46,7 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.data.Patient;
@@ -57,6 +63,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class FindingsView extends ViewPart implements IActivationListener, ElexisEventListener {
+	private static Log log = Log.get(FindingsView.class.getName());
 	
 	public static final String ID = "elexis-befunde.findingsView"; //$NON-NLS-1$
 	private CTabFolder ctabs;
@@ -154,6 +161,7 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 	
 	class FindingsPage extends Composite {
 		
+		boolean sortDescending = true;
 		Table table;
 		TableColumn[] tc;
 		TableItem[] items;
@@ -165,7 +173,8 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 			parent.setLayout(new FillLayout());
 			myparm = param;
 			setLayout(new GridLayout());
-			table = new Table(this, SWT.FULL_SELECTION | SWT.V_SCROLL);
+			
+			table = new Table(this, SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER);
 			table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			table.setHeaderVisible(true);
 			table.setLinesVisible(true);
@@ -176,6 +185,48 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 				tc[0] = new TableColumn(table, SWT.NONE);
 				tc[0].setText("Datum"); //$NON-NLS-1$
 				tc[0].setWidth(80);
+				tc[0].addListener(SWT.Selection, new Listener() {
+					
+					@Override
+					public void handleEvent(Event event){
+						items = table.getItems();
+						for (int i = 0; i < items.length; i++) {
+							SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+							Date date1 = null;
+							Date date2 = null;
+							try {
+								date1 = formatter.parse(items[i].getText());
+								
+								for (int j = 0; j < i; j++) {
+									date2 = formatter.parse(items[j].getText());
+									if (sortDescending) {
+										if (date1.before(date2)) {
+											sort(i, j);
+											break;
+										}
+									} else {
+										if (date1.after(date2)) {
+											sort(i, j);
+											break;
+										}
+									}
+								}
+							} catch (ParseException e) {
+								log.log(e, "Date parsing exception", Log.WARNINGS);
+							}
+						}
+						
+						if (sortDescending) {
+							sortDescending = false;
+						} else {
+							sortDescending = true;
+						}
+						
+						table.setSortColumn(tc[0]);
+						table.update();
+					}
+					
+				});
 				for (int i = 1; i <= flds.length; i++) {
 					tc[i] = new TableColumn(table, SWT.NONE);
 					flds[i - 1] = flds[i - 1].split(Messwert.SETUP_CHECKSEPARATOR)[0];
@@ -204,6 +255,16 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 				}
 				
 			});
+		}
+		
+		private void sort(int i, int j){
+			String[] values = {
+				items[i].getText(0), items[i].getText(1), items[i].getText(2)
+			};
+			items[i].dispose();
+			TableItem item = new TableItem(table, SWT.NONE, j);
+			item.setText(values);
+			items = table.getItems();
 		}
 		
 		public String[][] getFields(){
@@ -249,7 +310,6 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 					}
 				}
 			}
-			
 		}
 	}
 	

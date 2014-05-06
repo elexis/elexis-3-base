@@ -92,6 +92,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	// Button bUseEDA;
 	// Button bWithImage;
 	
+	private ResponsibleComposite responsible;
+
 	static TarmedACL ta = TarmedACL.getInstance();
 	
 	static final String[] ExtFlds = {
@@ -279,6 +281,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			
 		});
 		
+		Group gResponsible = new Group(ret, SWT.NONE);
+		gResponsible.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gResponsible.setLayout(new FillLayout());
+		gResponsible.setText("Responsible Doctor");
+		responsible = new ResponsibleComposite(gResponsible, SWT.NONE);
+
 		// bills electronically
 		bBillsElec = new Button(ret, SWT.CHECK);
 		bBillsElec.setText("Bills electronically");
@@ -559,6 +567,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		//bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
 		//bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
 		cbTC.setText(TarmedRequirements.getTCName(actMandant)); // actMandant.getInfoString(PreferenceConstants.TARMEDTC));
+		
+		responsible.setMandant(m);
 	}
 	
 	/**

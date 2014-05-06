@@ -48,6 +48,8 @@ public class TarmedRequirements {
 	public static final String DOMAIN_SUVA = "www.xid.ch/id/suva"; // $NON-NLS-1$
 	public final static String DOMAIN_RECIPIENT_EAN = "www.xid.ch/id/recipient_ean"; //$NON-NLS-1$
 	
+	public static final String RESPONSIBLE_INFO_KEY = "ch.elexis.tarmedprefs.responsible";
+
 	static {
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK,
 			Messages.getString("TarmedRequirements.kskName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$

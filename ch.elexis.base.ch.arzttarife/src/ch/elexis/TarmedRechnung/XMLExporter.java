@@ -83,6 +83,7 @@ import ch.elexis.data.Person;
 import ch.elexis.data.PhysioLeistung;
 import ch.elexis.data.RFE;
 import ch.elexis.data.Rechnung;
+import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.RnStatus.REJECTCODE;
 import ch.elexis.data.TarmedLeistung;
@@ -646,7 +647,6 @@ public class XMLExporter implements IRnOutputter {
 		double sumTarmedTL = 0.0;
 		
 		for (Konsultation b : lb) {
-			Mandant responsibleMandant = b.getMandant();
 			List<IDiagnose> ld = b.getDiagnosen();
 			for (IDiagnose dg : ld) {
 				String dgc = dg.getCode();
@@ -738,10 +738,8 @@ public class XMLExporter implements IRnOutputter {
 					if (!StringTool.isNothing(bezug)) {
 						el.setAttribute("ref_code", bezug); //$NON-NLS-1$
 					}
-					el.setAttribute(ATTR_EAN_PROVIDER,
-						TarmedRequirements.getEAN(actMandant.getRechnungssteller())); // 22390
-					el.setAttribute(ATTR_EAN_RESPONSIBLE,
-						TarmedRequirements.getEAN(responsibleMandant)); // 22400
+					el.setAttribute(ATTR_EAN_PROVIDER, TarmedRequirements.getEAN(b.getMandant())); // 22390
+					el.setAttribute(ATTR_EAN_RESPONSIBLE, getResponsibleEAN(b)); // 22400
 					el.setAttribute(ATTR_BILLING_ROLE, "both"); // 22410 //$NON-NLS-1$
 					el.setAttribute(ATTR_MEDICAL_ROLE, "self_employed"); // 22430 //$NON-NLS-1$
 					
@@ -882,16 +880,15 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					// get EAN provider
-					String ean = TarmedRequirements.getEAN(actMandant.getRechnungssteller());
+					String ean = TarmedRequirements.getEAN(b.getMandant());
 					if (ean.equals(TarmedRequirements.EAN_PSEUDO))
 						ean = "unknown";
 					el.setAttribute(ATTR_EAN_PROVIDER, ean);
 					// get EAN resposible
-					ean = TarmedRequirements.getEAN(responsibleMandant);
+					ean = getResponsibleEAN(b);
 					if (ean.equals(TarmedRequirements.EAN_PSEUDO))
 						ean = "unknown";
-					el.setAttribute(ATTR_EAN_RESPONSIBLE,
-						TarmedRequirements.getResponsibleEAN(actFall));
+					el.setAttribute(ATTR_EAN_RESPONSIBLE, ean);
 					
 					mPhysio.addMoney(mAmountLocal);
 					
@@ -1053,20 +1050,21 @@ public class XMLExporter implements IRnOutputter {
 		if (!spec.equals("")) { //$NON-NLS-1$
 			biller.setAttribute("specialty", spec); // 11404 //$NON-NLS-1$
 		}
-		biller.addContent(buildAdressElement(actMandant.getRechnungssteller())); // 11600-11680
+		biller.addContent(buildRechnungsstellerAdressElement(actMandant.getRechnungssteller())); // 11600-11680
 		eTiers.addContent(biller);
 		
 		Element provider = new Element("provider", ns); // 11080 -> 11800 //$NON-NLS-1$
 		// 11802
-		provider.setAttribute(ATTR_EAN_PARTY, TarmedRequirements.getEAN(actMandant)); // 11802
-		provider.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString //$NON-NLS-1$
+		provider.setAttribute(ATTR_EAN_PARTY,
+			TarmedRequirements.getEAN(actMandant.getRechnungssteller())); // 11802
+		provider.setAttribute("zsr", TarmedRequirements.getKSK(actMandant.getRechnungssteller())); // actMandant.getInfoString //$NON-NLS-1$
 		// ("KSK"));
 		// // 11803
-		spec = actMandant.getInfoString(ta.SPEC);
+		spec = actMandant.getRechnungssteller().getInfoString(ta.SPEC);
 		if (!spec.equals("")) { //$NON-NLS-1$
 			provider.setAttribute("specialty", spec); // 11804 //$NON-NLS-1$
 		}
-		provider.addContent(buildAdressElement(actMandant)); // 11830-11680
+		provider.addContent(buildRechnungsstellerAdressElement(actMandant.getRechnungssteller())); // 11830-11680
 		eTiers.addContent(provider);
 		
 		Element onlineElement = null; // tschaller: see comments in
@@ -1154,13 +1152,15 @@ public class XMLExporter implements IRnOutputter {
 		eTiers.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", ns); // 11120 //$NON-NLS-1$
-		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute(ATTR_EAN_PARTY, TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
-		
-		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber. //$NON-NLS-1$
-		
-		referrer.addContent(buildAdressElement(auftraggeber));
-		eTiers.addContent(referrer);
+		Kontakt auftraggeber = actFall.getRequiredContact("Zuweiser");
+		if (auftraggeber != null) {
+			referrer.setAttribute(ATTR_EAN_PARTY, TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
+			
+			referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber. //$NON-NLS-1$
+			
+			referrer.addContent(buildAdressElement(auftraggeber));
+			eTiers.addContent(referrer);
+		}
 		
 		if (tiers.equals(TIERS_GARANT) && (TarmedRequirements.hasTCContract(actMandant))) {
 			Element demand = new Element("demand", ns); //$NON-NLS-1$
@@ -1315,13 +1315,27 @@ public class XMLExporter implements IRnOutputter {
 		return Messages.XMLExporter_TarmedForTrustCenter;
 	}
 	
+	public Element buildRechnungsstellerAdressElement(final Kontakt k){
+		return buildAdressElement(k, false, true);
+	}
+	
 	public Element buildAdressElement(final Kontakt k){
-		return buildAdressElement(k, false);
+		return buildAdressElement(k, false, false);
 	}
 	
 	public Element buildAdressElement(final Kontakt k, final boolean useAnschrift){
+		return buildAdressElement(k, useAnschrift, false);
+	}
+	
+	public Element buildAdressElement(final Kontakt k, final boolean useAnschrift,
+		boolean checkAnrede){
 		Element ret;
-		if (k.istPerson() == false) {
+		boolean anredeOrganization = false;
+		if (checkAnrede) {
+			String anrede = (String) k.getInfoElement("Anrede");
+			anredeOrganization = (anrede == null || anrede.isEmpty());
+		}
+		if (k.istPerson() == false || anredeOrganization) {
 			ret = new Element("company", ns); //$NON-NLS-1$
 			Element companyname = new Element("companyname", ns); //$NON-NLS-1$
 			companyname.setText(StringTool.limitLength(k.get(Kontakt.FLD_NAME1), 35));
@@ -1861,5 +1875,36 @@ public class XMLExporter implements IRnOutputter {
 		el.setAttribute(ATTR_VAT_RATE, Double.toString(value)); //$NON-NLS-1$
 		
 		vatsum.add(value, amount.doubleValue());
+	}
+	
+	/**
+	 * Determine the EAN of the responsible Kontakt for a Konsultation. The search for thee right
+	 * contact is in the following order.<br\>
+	 * 1. configured via ResponsibleComposite on RechnungsPref preference page for the Mandant of
+	 * the consultation<br\>
+	 * 2. Rechnungssteller of the Mandant of the consultation if not an organization<br\>
+	 * 3. the Mandant of the consultation<\br>
+	 * 
+	 * @param kons
+	 * @return
+	 */
+	private String getResponsibleEAN(Konsultation kons){
+		Kontakt responsibleKontakt = null;
+		
+		String responsibleId =
+			(String) kons.getMandant().getInfoElement(TarmedRequirements.RESPONSIBLE_INFO_KEY);
+		if (responsibleId != null && !responsibleId.isEmpty()) {
+			responsibleKontakt = Mandant.load(responsibleId);
+		} else {
+			Rechnungssteller rechnungssteller = kons.getMandant().getRechnungssteller();
+			String anrede = rechnungssteller.getInfoString("Anrede");
+			// only way to determine if rechnungssteller is a organization is testing empty anrede
+			if (anrede != null && !anrede.isEmpty()) {
+				responsibleKontakt = rechnungssteller;
+			} else {
+				responsibleKontakt = kons.getMandant();
+			}
+		}
+		return TarmedRequirements.getEAN(responsibleKontakt);
 	}
 }

@@ -12,6 +12,7 @@
   <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
   <repo_name>elexis.3.base</repo_name>
   <repo_variant>snapshot</repo_variant>
+  <timestamp_format>'a'yyyyMMdd-HHmm</timestamp_format>
 </properties>
 <packaging>pom</packaging>
 <modules>
@@ -309,7 +310,7 @@ Without it Maven would put two versions of each class file into the jars
         </dependencies>
         <configuration>
           <strictBinIncludes>false</strictBinIncludes>
-          <format>'v'yyyyMMdd-HHmm</format>
+          <format>${timestamp_format}</format>
           <timestampProvider>jgit</timestampProvider>
           <jgit.ignore>pom.xml</jgit.ignore>
           <jgit.dirtyWorkingTree>warning</jgit.dirtyWorkingTree>

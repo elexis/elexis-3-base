@@ -4,7 +4,7 @@ Bundle-Name: FIRE-Fragment für ICPC
 Bundle-SymbolicName: ch.elexis.icpc.fire;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: elexis.info
-Fragment-Host: ch.elexis.icpc;bundle-version="3.0.0.qualifier"
+Fragment-Host: ch.elexis.icpc;bundle-version="3.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.ui,
  ch.elexis.base.befunde;bundle-version="3.0.0",

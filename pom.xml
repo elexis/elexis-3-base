@@ -12,7 +12,6 @@
   <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
   <repo_name>elexis.3.base</repo_name>
   <repo_variant>snapshot</repo_variant>
-  <timestamp_format>'a'yyyyMMdd-HHmm</timestamp_format>
 </properties>
 <packaging>pom</packaging>
 <modules>
@@ -162,7 +161,29 @@
 </repositories>
 <build>
   <plugins>
-    <plugin>
+		<plugin>
+			<groupId>com.github.goldin</groupId>
+			<artifactId>properties-maven-plugin</artifactId>
+			<version>0.2.5</version>
+			<executions>
+				<execution>
+					<id>set-properties</id>
+					<phase>validate</phase>
+					<goals>
+						<goal>set-properties</goal>
+					</goals>
+					<configuration>
+						<properties>
+							<property>
+								<name>timestamp_format</name>
+								<value>{{"'" + "${repo_variant}".substring(0,1).replaceFirst('s','a')+"'yyyyMMdd-HHmm" }}</value>
+							</property>
+						</properties>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+		<plugin>
       <groupId>org.eclipse.tycho.extras</groupId>
       <artifactId>tycho-source-feature-plugin</artifactId>
       <version>${tycho-extras.version}</version>

@@ -11,6 +11,30 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <build>
       <plugins>
         <plugin>
+          <groupId>com.github.goldin</groupId>
+          <artifactId>properties-maven-plugin</artifactId>
+          <version>0.2.5</version>
+          <executions>
+            <execution>
+              <id>set-properties</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>set-properties</goal>
+              </goals>
+              <configuration>
+                <properties>
+                  <property>
+                    <name>groovyBuildQualifier</name>
+                    <value>{{import java.text.SimpleDateFormat; new
+                      SimpleDateFormat("'"+project.properties.repo_variant.substring(0,1).replaceFirst('s','a')+"'yyyyMMdd-HHmm").format(Calendar.getInstance().getTime())
+                        }}</value>
+                      </property>
+                    </properties>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          <plugin>
            <groupId>com.google.code.maven-replacer-plugin</groupId>
            <artifactId>replacer</artifactId>
            <version>1.5.2</version>
@@ -37,7 +61,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
                    </replacement>         
                    <replacement>
                        <token>buildQualifier</token>
-                       <value>${buildQualifier}</value>
+                       <value>${groovyBuildQualifier}</value>
                    </replacement>         
                    <replacement>
                        <token>unqualifiedVersion</token>

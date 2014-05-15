@@ -72,5 +72,11 @@
             outputter="ch.elexis.TarmedRechnung.XMLExporter">
       </Rechnung>
    </extension>
+   <extension
+         point="ch.elexis.core.data.referenceDataImporter">
+      <importer
+            class="ch.elexis.data.importer.TarmedReferenceDataImporter">
+      </importer>
+   </extension>
 
 </plugin>

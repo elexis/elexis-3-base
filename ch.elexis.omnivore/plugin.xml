@@ -9,8 +9,8 @@
             id="ch.elexis.omnivore">
       </category>
       <view
-            name="Dokumente"
-            icon="icons/sample.gif"
+            name="Omnivore"
+            icon="icons/fressen.gif"
             category="ch.elexis.omnivore"
             class="ch.elexis.omnivore.views.OmnivoreView"
             id="ch.elexis.omnivore.views.OmnivoreView">

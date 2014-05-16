@@ -26,7 +26,10 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
                   <property>
                     <name>groovyBuildQualifier</name>
                     <value>{{import java.text.SimpleDateFormat; new
-                      SimpleDateFormat("'"+project.properties.repo_variant.substring(0,1).replaceFirst('s','a')+"'yyyyMMdd-HHmm").format(Calendar.getInstance().getTime())
+                      <!-- We have to copy the Elexis.product, as we cannot build a plug-in
+                      and a target inside the same Maven project (or at least don't know howto)
+                      Under Linux a symbolic link would suffice. But this did not work under Windows -->
+                      SimpleDateFormat("'"+repo_variant.substring(0,1).replaceFirst('s','a')+"'yyyyMMdd-HHmm").format(Calendar.getInstance().getTime())
                         }}</value>
                       </property>
                     </properties>

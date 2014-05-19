@@ -104,19 +104,21 @@ public class InboxContentProvider extends CommonContentProviderAdapter {
 		@Override
 		protected IStatus run(IProgressMonitor monitor){
 			String filepath = CoreHub.localCfg.get(Preferences.PREF_DIR, null);
+			File dir = null;
 			if (filepath == null) {
-				return new Status(Status.ERROR, Activator.PLUGIN_ID,
-					"Es ist in den Einstellungen kein Eingangsverzeichnis definiert");
+				filepath = Preferences.PREF_DIR_DEFAULT;
+				CoreHub.localCfg.set(Preferences.PREF_DIR, Preferences.PREF_DIR_DEFAULT);
 			}
-			File dir = new File(filepath);
-			Object dm = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
-			if (dm == null) {
-				return new Status(Status.ERROR, Activator.PLUGIN_ID,
-					Messages.InboxContentProvider_thereIsNoDocumentManagerHere);
-			}
-			if (dir == null || !dir.isDirectory()) {
+			dir = new File(filepath);
+			if (!dir.isDirectory()) {
+				if (!dir.mkdirs()) {
 				return new Status(Status.ERROR, Activator.PLUGIN_ID,
 					Messages.InboxContentProvider_noInboxDefined);
+				}
+			}
+			Object dm = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
+			if (dm == null) {
+				return Status.OK_STATUS;
 			}
 			IDocumentManager documentManager = (IDocumentManager) dm;
 			String[] cats = documentManager.getCategories();

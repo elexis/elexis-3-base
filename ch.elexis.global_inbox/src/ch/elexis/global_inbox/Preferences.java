@@ -13,8 +13,8 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String PREFERENCE_BRANCH = "plugins/global_inbox/"; //$NON-NLS-1$
 	public static final String PREF_DIR = PREFERENCE_BRANCH + "dir"; //$NON-NLS-1$
-	public static final String PREF_DIR_DEFAULT =
-		System.getProperty("user.home") + File.separator + "elexis" + File.separator + "Eingangsfach";//$NON-NLS-1$
+	public static final String PREF_DIR_DEFAULT = new File(CoreHub.getWritableUserDir(),
+		Messages.InboxView_inbox).toString();
 	
 	public Preferences(){
 		super(GRID);

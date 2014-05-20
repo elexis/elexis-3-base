@@ -461,6 +461,7 @@ public class ARTIKELSTAMM {
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
      *               &lt;enumeration value="O"/>
      *               &lt;enumeration value="G"/>
+     *               &lt;enumeration value="K"/>
      *             &lt;/restriction>
      *           &lt;/simpleType>
      *         &lt;/element>

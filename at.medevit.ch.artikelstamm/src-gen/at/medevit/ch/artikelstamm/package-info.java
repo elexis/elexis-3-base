@@ -5,5 +5,5 @@
 // Generated on: 2013.05.31 at 10:05:04 PM CEST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://elexis.ch/Elexis_Artikelstamm_v001", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://elexis.ch/Elexis_Artikelstamm_v002", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package at.medevit.ch.artikelstamm;

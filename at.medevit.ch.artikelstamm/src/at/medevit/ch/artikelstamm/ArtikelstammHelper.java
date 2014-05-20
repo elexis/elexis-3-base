@@ -38,7 +38,7 @@ import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 public class ArtikelstammHelper {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammHelper.class);
 	
-	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v001.xsd";
+	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v002.xsd";
 	private static URL schemaLocationUrl = null;
 	
 	private static SchemaFactory schemaFactory = SchemaFactory
@@ -93,7 +93,11 @@ public class ArtikelstammHelper {
 	 */
 	public static String createUUID(int cummulatedVersion, TYPE type, String gtin, BigInteger phar){
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%014d", Long.parseLong(gtin)));
+		if(gtin.length()>0) {
+			sb.append(String.format("%014d", Long.parseLong(gtin)));
+		} else {
+			sb.append("00000000000000");
+		}
 		if (phar != null) {
 			sb.append(String.format("%07d", phar));
 		} else {
@@ -142,9 +146,15 @@ public class ArtikelstammHelper {
 		String string){
 		TYPE type = ArtikelstammConstants.TYPE.valueOf(converted.getTYPE());
 		Date outputDate = converted.getCREATIONDATETIME().toGregorianCalendar().getTime();
-		String filename =
-			"artikelstamm_" + type.name() + "_" + dateFormat.format(outputDate) + "_" + string
-				+ ".xml";
+		String filename;
+		if (string != null) {
+			filename =
+				"artikelstamm_" + type.name() + "_" + dateFormat.format(outputDate) + "_" + string
+					+ ".xml";
+		} else {
+			filename = "artikelstamm_" + type.name() + "_" + dateFormat.format(outputDate) + ".xml";
+		}
+		
 		return new File(inboundFileObj.getParent(), filename);
 	}
 	

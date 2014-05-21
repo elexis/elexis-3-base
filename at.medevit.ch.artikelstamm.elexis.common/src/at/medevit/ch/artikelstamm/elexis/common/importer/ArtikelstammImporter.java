@@ -50,7 +50,7 @@ import ch.rgw.tools.JdbcLink;
 
 public class ArtikelstammImporter extends ImporterPage {
 	
-	private static String PLUGIN_ID = "at.medevit.ch.artikelstamm.elexisv21.common";
+	private static String PLUGIN_ID = "at.medevit.ch.artikelstamm.elexis.common";
 	
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporter.class);
 	
@@ -83,11 +83,13 @@ public class ArtikelstammImporter extends ImporterPage {
 		
 		// only continue if the dataset to be imported for importStammType is newer than
 		// the current
-		if (currentStammVersion > importStammVersion) {
+		if (currentStammVersion >= importStammVersion) {
 			Status status =
-				new Status(IStatus.ERROR, PLUGIN_ID, "Import-Datei ist älter als vorhandener Stand");
+				new Status(IStatus.ERROR, PLUGIN_ID, "Import-Datei ist älter ("
+					+ importStammVersion + ") oder gleich vorhandener Stand ("
+					+ currentStammVersion + "). Import wird abgebrochen.");
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
-			return Status.CANCEL_STATUS;
+			return Status.OK_STATUS;
 		}
 		
 		// clean all blackbox marks, as we will determine them newly

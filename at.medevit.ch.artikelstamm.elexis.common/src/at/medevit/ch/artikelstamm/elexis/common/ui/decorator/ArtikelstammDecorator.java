@@ -9,6 +9,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.wb.swt.ResourceManager;
 
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.ui.UiDesk;
 
 public class ArtikelstammDecorator implements ILightweightLabelDecorator {
 	
@@ -51,7 +52,8 @@ public class ArtikelstammDecorator implements ILightweightLabelDecorator {
 			decoration.addOverlay(warning, IDecoration.TOP_LEFT);
 		}
 		if (item.isBlackBoxed()) {
-			
+			decoration.setForegroundColor(UiDesk.getColor(UiDesk.COL_WHITE));
+			decoration.setBackgroundColor(UiDesk.getColor(UiDesk.COL_BLACK));
 		}
 		String genericType = item.getGenericType();
 		if (genericType.startsWith("G")) {

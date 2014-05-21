@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 MEDEVIT.
+ * Copyright (c) 2013-2014 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.optifier.NoObligationOptifier;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.Money;
@@ -51,7 +52,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	private static IOptifier defaultOptifier = new DefaultOptifier();
 	
 	public static final String TABLENAME = "ARTIKELSTAMM_CH";
-	static final String VERSION = "1.0.0";
+	static final String VERSION = "1.1.0";
 	
 	//@formatter:off
 	/** Eintrag zugeh. zu  */ public static final String FLD_CUMMULATED_VERSION = "CUMM_VERSION";
@@ -118,24 +119,29 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			+ MINBESTAND + " VARCHAR(4),"
 			+ ISTBESTAND + " VARCHAR(4),"
 			+ VERKAUFSEINHEIT + " VARCHAR(4),"  // Stück pro Abgabe
-			+ ANBRUCH + " VARCHAR(4)"			// Aktuell am Lager
+			+ ANBRUCH + " VARCHAR(4),"			// Aktuell am Lager
+			+ PersistentObject.FLD_EXTINFO + "BLOB"
 			+ "); "
-			+ "CREATE INDEX idxPHAR ON " + TABLENAME + " ("+FLD_PHAR+"); "
-			+ "CREATE INDEX idxITEMTYPE ON " + TABLENAME + " ("+FLD_ITEM_TYPE+"); "
-			+ "CREATE INDEX idxGTIN ON "+ TABLENAME + " ("+FLD_GTIN+"); "
-			+ "CREATE INDEX idxMONTH ON "+ TABLENAME + " ("+FLD_CUMMULATED_VERSION+"); "
-			+ "CREATE INDEX idxBB ON "+ TABLENAME + " ("+FLD_BLACKBOXED+"); "
+			+ "CREATE INDEX idxAiPHAR ON " + TABLENAME + " ("+FLD_PHAR+"); "
+			+ "CREATE INDEX idxAiITEMTYPE ON " + TABLENAME + " ("+FLD_ITEM_TYPE+"); "
+			+ "CREATE INDEX idxAiGTIN ON "+ TABLENAME + " ("+FLD_GTIN+"); "
+			+ "CREATE INDEX idxAiMONTH ON "+ TABLENAME + " ("+FLD_CUMMULATED_VERSION+"); "
+			+ "CREATE INDEX idxAiBB ON "+ TABLENAME + " ("+FLD_BLACKBOXED+"); "
 			+ "INSERT INTO " + TABLENAME + " (ID,"+FLD_GTIN+","+FLD_NARCOTIC_CAS+","+FLD_PEXF+","+FLD_PPUB+") VALUES ('VERSION',"
 			+ JdbcLink.wrap(VERSION) +","+JdbcLink.wrap(df.format(new Date()))+",0,0);";
-		//@formatter:on
+
 	
+	static final String dbUpdateFrom10to11 =
+		"ALTER TABLE "+TABLENAME+" ADD "+PersistentObject.FLD_EXTINFO+" BLOB;";
+			//@formatter:on
+			
 	static {
 		addMapping(TABLENAME, FLD_ITEM_TYPE, FLD_CUMMULATED_VERSION, FLD_BLACKBOXED, FLD_GTIN,
 			FLD_PHAR, FLD_DSCR, FLD_ADDDSCR, FLD_ATC, FLD_COMP_GLN, FLD_COMP_NAME, FLD_PEXF,
 			FLD_PPUB, FLD_PKG_SIZE, FLD_SL_ENTRY, FLD_IKSCAT, FLD_LIMITATION, FLD_LIMITATION_PTS,
 			FLD_LIMITATION_TEXT, FLD_GENERIC_TYPE, FLD_HAS_GENERIC, FLD_LPPV, FLD_DEDUCTIBLE,
 			FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE, FLD_LIEFERANT_ID, MAXBESTAND, MINBESTAND,
-			ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH);
+			ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH, PersistentObject.FLD_EXTINFO);
 		ArtikelstammItem version = load("VERSION"); //$NON-NLS-1$
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
@@ -143,9 +149,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			VersionInfo vi = new VersionInfo(version.get(FLD_GTIN));
 			
 			if (vi.isOlder(VERSION)) {
-				// we should update eg. with createOrModifyTable(update.sql);
-				// And then set the new version
-				version.set(FLD_PHAR, VERSION);
+				createOrModifyTable(dbUpdateFrom10to11);
+				version.set(FLD_GTIN, VERSION);
 			}
 		}
 	}

@@ -27,4 +27,10 @@
           Class="ch.artikelstamm.elexis.common.ArtikelstammPOFactory">
     </Factory>
  </extension>
+ <extension
+       point="ch.elexis.core.data.referenceDataImporter">
+    <importer
+          class="at.medevit.ch.artikelstamm.elexis.common.importer.ArtikelstammReferenceDataImporter">
+    </importer>
+ </extension>
 </plugin>

@@ -11,6 +11,9 @@
 package at.medevit.ch.artikelstamm;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -110,18 +113,24 @@ public class ArtikelstammHelper {
 		return sb.toString();
 	}
 	
+	
+	public static ARTIKELSTAMM unmarshallInputStream(InputStream xmlFileIs) throws JAXBException, SAXException {
+		Unmarshaller u = JAXBContext.newInstance(ARTIKELSTAMM.class).createUnmarshaller();
+		Schema schema = schemaFactory.newSchema(schemaLocationUrl);
+		u.setSchema(schema);
+		return (ARTIKELSTAMM) u.unmarshal(xmlFileIs);
+	}
+	
 	/**
 	 * 
 	 * @param xmlFile
 	 * @return {@link ARTIKELSTAMM}
 	 * @throws JAXBException
 	 * @throws SAXException
+	 * @throws FileNotFoundException 
 	 */
-	public static ARTIKELSTAMM unmarshallFile(File xmlFile) throws JAXBException, SAXException{
-		Unmarshaller u = JAXBContext.newInstance(ARTIKELSTAMM.class).createUnmarshaller();
-		Schema schema = schemaFactory.newSchema(schemaLocationUrl);
-		u.setSchema(schema);
-		return (ARTIKELSTAMM) u.unmarshal(xmlFile);
+	public static ARTIKELSTAMM unmarshallFile(File xmlFile) throws JAXBException, SAXException, FileNotFoundException{
+		return  unmarshallInputStream(new FileInputStream(xmlFile));
 	}
 	
 	public static void marshallToFileSystem(Object newData, File outputFile) throws SAXException,

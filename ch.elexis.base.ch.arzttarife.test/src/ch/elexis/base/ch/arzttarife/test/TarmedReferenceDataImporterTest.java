@@ -36,7 +36,7 @@ public class TarmedReferenceDataImporterTest {
 		
 		TarmedReferenceDataImporter importer = new TarmedReferenceDataImporter();
 		Status retStatus =
-			(Status) importer.performImport(new NullProgressMonitor(), tarmedInStream);
+			(Status) importer.performImport(new NullProgressMonitor(), tarmedInStream, null);
 		assertEquals(IStatus.OK, retStatus.getCode());
 		
 		JdbcLink cacheDb = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:tarmed_import", "hsql");

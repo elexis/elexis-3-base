@@ -77,8 +77,7 @@ public class TarmedImporter extends ImporterPage {
 	 */
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		TarmedReferenceDataImporter trdImporter = new TarmedReferenceDataImporter();
-		return trdImporter.performImport(monitor, new FileInputStream(results[0]));
-		
+		return trdImporter.performImport(monitor, new FileInputStream(results[0]), null);
 	}
 	
 	@Override

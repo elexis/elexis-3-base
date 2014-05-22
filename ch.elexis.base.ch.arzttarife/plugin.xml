@@ -75,7 +75,8 @@
    <extension
          point="ch.elexis.core.data.referenceDataImporter">
       <importer
-            class="ch.elexis.data.importer.TarmedReferenceDataImporter">
+            class="ch.elexis.data.importer.TarmedReferenceDataImporter"
+            referenceDataId="tarmed">
       </importer>
    </extension>
 

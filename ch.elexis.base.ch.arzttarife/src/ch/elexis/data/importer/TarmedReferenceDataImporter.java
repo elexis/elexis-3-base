@@ -69,19 +69,23 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	// then real import
 	private boolean updateBlockWarning = false;
 	boolean updateIDs = false;
-	
-	public TarmedReferenceDataImporter(){}
-	
+
 	@Override
-	public String getReferenceDataIdResponsibleFor(){
-		return "tarmed";
+	public Class<?> getReferenceDataTypeResponsibleFor(){
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
+
 	@Override
-	public IStatus performImport(IProgressMonitor ipm, InputStream input){
-		
-		if (ipm == null)
+	public int getCurrentVersion(){
+		return TarmedLeistung.getCurrentVersion();
+	}
+
+	@Override
+	public IStatus performImport(IProgressMonitor ipm, InputStream input, Integer version){
+		if(ipm == null) {
 			ipm = new NullProgressMonitor();
+		}
 		
 		// init database connection
 		pj = PersistentObject.getConnection();
@@ -339,6 +343,13 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 			if (updateIDs) {
 				updateExistingIDs(ipm);
 			}
+			
+			if(version==null) {
+				TarmedLeistung.setVersion(new TimeTool().toString(TimeTool.DATE_COMPACT));
+			} else {
+				TarmedLeistung.setVersion(version.toString());
+			}
+
 			
 			ipm.done();
 			String message = Messages.TarmedImporter_successMessage;

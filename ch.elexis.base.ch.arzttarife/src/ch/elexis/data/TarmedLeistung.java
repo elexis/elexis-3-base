@@ -76,6 +76,8 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		+ " ALTER TABLE TARMED MODIFY ID VARCHAR(25);"
 		+ " ALTER TABLE TARMED_EXTENSION MODIFY CODE VARCHAR(25);";
 	
+	private static final String ROW_VERSION = "Version";
+	
 	private static final JdbcLink j = getConnection();
 	static {
 		createTables();
@@ -85,7 +87,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	}
 	
 	static void createTables(){
-		TarmedLeistung version = load("Version");
+		TarmedLeistung version = load(ROW_VERSION);
 		addMapping(
 			"TARMED", "Ziffer=" + FLD_CODE, FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			FLD_SPARTE, "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -109,10 +111,10 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 			}
 			
 		}
-		TarmedLeistung tlv = TarmedLeistung.load("Version");
+		TarmedLeistung tlv = TarmedLeistung.load(ROW_VERSION);
 		if (!tlv.exists()) {
 			tlv = new TarmedLeistung();
-			tlv.create("Version");
+			tlv.create(ROW_VERSION);
 		}
 		VersionInfo vi = new VersionInfo(tlv.get(FLD_NICK));
 		if (!tlv.exists() || vi.isOlder(VERSION_110)) {
@@ -569,5 +571,20 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public VatInfo getVatInfo(){
 		// TarmedLeistung is a treatment per default
 		return VatInfo.VAT_CH_ISTREATMENT;
+	}
+
+	public static int getCurrentVersion(){
+		TarmedLeistung version = load(ROW_VERSION);
+		String versionVal = version.get(FLD_GUELTIG_BIS);
+		try{
+			return Integer.parseInt(versionVal);
+		} catch (NumberFormatException nfe) {
+			return -1;
+		}
+	}
+
+	public static void setVersion(String versionVal){
+		TarmedLeistung version = load(ROW_VERSION);
+		version.set(FLD_GUELTIG_BIS, versionVal);
 	}
 }

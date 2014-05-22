@@ -7,7 +7,7 @@
             CodeDetailDisplay="at.medevit.ch.artikelstamm.elexis.open.ui.OpenArtikelstammDetailDisplay"
             CodeSelectorFactory="at.medevit.ch.artikelstamm.elexis.common.ui.ArtikelstammCodeSelectorFactory"
             ElementFactory="ch.artikelstamm.elexis.common.ArtikelstammPOFactory"
-            ImporterClass="at.medevit.ch.artikelstamm.elexis.common.importer.ArtikelstammImporter"
+            ImporterClass="at.medevit.ch.artikelstamm.elexis.common.importer.ArtikelstammImporterPage"
             name="Artikelstamm CH">
       </Artikel>
    </extension>

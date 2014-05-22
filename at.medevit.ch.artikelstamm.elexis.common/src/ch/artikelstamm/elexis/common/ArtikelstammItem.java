@@ -120,7 +120,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			+ ISTBESTAND + " VARCHAR(4),"
 			+ VERKAUFSEINHEIT + " VARCHAR(4),"  // Stück pro Abgabe
 			+ ANBRUCH + " VARCHAR(4),"			// Aktuell am Lager
-			+ PersistentObject.FLD_EXTINFO + "BLOB"
+			+ PersistentObject.FLD_EXTINFO + " BLOB"
 			+ "); "
 			+ "CREATE INDEX idxAiPHAR ON " + TABLENAME + " ("+FLD_PHAR+"); "
 			+ "CREATE INDEX idxAiITEMTYPE ON " + TABLENAME + " ("+FLD_ITEM_TYPE+"); "

@@ -30,7 +30,12 @@
  <extension
        point="ch.elexis.core.data.referenceDataImporter">
     <importer
-          class="at.medevit.ch.artikelstamm.elexis.common.importer.ArtikelstammReferenceDataImporter">
+          class="at.medevit.ch.artikelstamm.elexis.common.importer.ArtikelstammPharmaReferenceDataImporter"
+          referenceDataId="artikelstamm_pharma">
+    </importer>
+    <importer
+          class="at.medevit.ch.artikelstamm.elexis.common.importer.ArtikelstammNonPharmaReferenceDataImporter"
+          referenceDataId="artikelstamm_nonpharma">
     </importer>
  </extension>
 </plugin>

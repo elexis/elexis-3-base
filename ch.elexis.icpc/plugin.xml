@@ -56,7 +56,7 @@
             fixed="false"
             icon="icons/wonca16.png"
             id="ch.elexis.icpc.perspective"
-            name="ICPC "/>
+            name="ICPC"/>
    </extension>
    <extension
          point="ch.elexis.core.ui.KonsExtension">

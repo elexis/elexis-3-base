@@ -161,7 +161,9 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					return file;
 				}
 			}
-			configError();
+			if (CoreHub.localCfg.get(Preferences.STOREFS, false)) {
+				configError();
+			}
 		}
 		return null;
 	}
@@ -174,7 +176,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	 */
 	public DocHandle(IOpaqueDocument doc) throws ElexisException{
 		create(doc.getGUID());
-
+		
 		String category = doc.getCategory();
 		if (category == null || category.length() < 1) {
 			category = DocHandle.getDefaultCategory().getCategoryName();
@@ -186,7 +188,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}, category, doc.getPatient().getId(), doc.getCreationDate(), doc.getTitle(),
 			doc.getKeywords(), doc.getMimeType());
 		store(doc.getContentsAsBytes());
-
+		
 	}
 	
 	/**
@@ -212,7 +214,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			return;
 		}
 		create(null);
-
+		
 		if (category == null || category.length() < 1) {
 			category = DocHandle.getDefaultCategory().getCategoryName();
 		} else {
@@ -248,7 +250,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			}
 		}
 	}
-
+	
 	/**
 	 * We need a default category as a fallback for invalid or not defined categories.
 	 * 
@@ -840,7 +842,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		tt.setTime(d);
 		set(FLD_DATE, tt.toString(TimeTool.DATE_GER));
 	}
-
+	
 	private void configError(){
 		SWTHelper.showError("config error", Messages.DocHandle_configErrorCaption, //$NON-NLS-1$
 			Messages.DocHandle_configErrorText);

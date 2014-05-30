@@ -1193,7 +1193,7 @@ public class XMLExporter implements IRnOutputter {
 			diagnosis.setAttribute(ATTR_TYPE, diagnosisType); // 15510
 			String code = diagnose.getCode();
 			if (diagnosisType.equalsIgnoreCase(FREETEXT)) {
-				code = "";
+				code = FREETEXT;
 				diagnosis.setText(diagnose.getText());
 			} else {
 				if (code.length() > 12) {
@@ -1487,7 +1487,7 @@ public class XMLExporter implements IRnOutputter {
 		if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, false)) {
 			Source source = new JDOMSource(xmlDoc);
 			String path =
-				PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator + "rsc"; //$NON-NLS-1$ //$NON-NLS-2$
+				PlatformHelper.getBasePath("ch.elexis.base.ch.arzttarife") + File.separator + "rsc"; //$NON-NLS-1$ //$NON-NLS-2$
 			List<String> errs =
 				XMLTool.validateSchema(path + File.separator + "MDInvoiceRequest_400.xsd", source); //$NON-NLS-1$
 			if (!errs.isEmpty()) {

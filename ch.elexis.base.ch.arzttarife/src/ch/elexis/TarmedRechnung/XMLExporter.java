@@ -1193,15 +1193,13 @@ public class XMLExporter implements IRnOutputter {
 			diagnosis.setAttribute(ATTR_TYPE, diagnosisType); // 15510
 			String code = diagnose.getCode();
 			if (diagnosisType.equalsIgnoreCase(FREETEXT)) {
-				code = FREETEXT;
 				diagnosis.setText(diagnose.getText());
 			} else {
 				if (code.length() > 12) {
 					code = code.substring(0, 12);
 				}
+				diagnosis.setAttribute(ATTR_CODE, code);
 			}
-			
-			diagnosis.setAttribute(ATTR_CODE, code);
 			detail.addContent(diagnosis);
 		}
 		

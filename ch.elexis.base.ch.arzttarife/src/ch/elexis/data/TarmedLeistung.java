@@ -28,11 +28,6 @@ import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Query;
-import ch.elexis.data.Verrechnet;
-import ch.elexis.data.Xid;
 import ch.elexis.views.TarmedDetailDialog;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.IFilter;
@@ -60,25 +55,29 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public static final String FLD_DIGNI_QUALI = "DigniQuali";
 	public static final String FLD_TEXT = "Text";
 	public static final String FLD_NICK = "Nick";
+	
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
-	Hashtable<String, String> ext;
-	private static final String VERSION_000 = "0.0.0";
-	private static final String VERSION_110 = "1.1.0";
-	private static final String VERSION_111 = "1.1.1";
-	private static final String VERSION_120 = "1.2.0";
+
+	public static final String SIDE = "Seite";
+	public static final String PFLICHTLEISTUNG = "obligation";
+
 	public static final TarmedComparator tarmedComparator;
 	public static final TarmedOptifier tarmedOptifier;
 	public static final TimeTool INFINITE = new TimeTool("19991231");
-	public static final String SIDE = "Seite";
-	public static final String PFLICHTLEISTUNG = "obligation";
+	
+	private static final String VERSION_110 = "1.1.0";
+	private static final String VERSION_111 = "1.1.1";
+	private static final String VERSION_120 = "1.2.0";
 	private static final String upd110 = "ALTER TABLE TARMED ADD lastupdate BIGINT";
 	private static final String upd120 = "ALTER TABLE TARMED ADD code VARCHAR(25);"
 		+ " ALTER TABLE TARMED MODIFY ID VARCHAR(25);"
 		+ " ALTER TABLE TARMED_EXTENSION MODIFY CODE VARCHAR(25);";
 	
 	private static final String ROW_VERSION = "Version";
-	
 	private static final JdbcLink j = getConnection();
+	
+	Hashtable<String, String> ext;
+	
 	static {
 		createTables();
 		tarmedComparator = new TarmedComparator();
@@ -90,7 +89,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		TarmedLeistung version = load(ROW_VERSION);
 		addMapping(
 			"TARMED", "Ziffer=" + FLD_CODE, FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			FLD_SPARTE, "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			FLD_SPARTE, FLD_TEXT+"=tx255", "Name=tx255", FLD_NICK+"=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis", //$NON-NLS-1$ //$NON-NLS-2$
 			"deleted" //$NON-NLS-1$ 
 		);
@@ -573,9 +572,13 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		return VatInfo.VAT_CH_ISTREATMENT;
 	}
 
+	/**
+	 * @return the current data set version of the tarmed database
+	 * @see http://tarmedsuisse.ch/
+	 */
 	public static int getCurrentVersion(){
 		TarmedLeistung version = load(ROW_VERSION);
-		String versionVal = version.get(FLD_GUELTIG_BIS);
+		String versionVal = version.get(FLD_CODE);
 		try{
 			return Integer.parseInt(versionVal);
 		} catch (NumberFormatException nfe) {
@@ -583,8 +586,16 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		}
 	}
 
+	/**
+	 * @param versionVal sets the version of the contained data set
+	 */
 	public static void setVersion(String versionVal){
 		TarmedLeistung version = load(ROW_VERSION);
-		version.set(FLD_GUELTIG_BIS, versionVal);
+		if (!version.exists()) {
+			version = new TarmedLeistung();
+			version.create(ROW_VERSION);
+			version.set(FLD_NICK, VERSION_120);
+		}
+		version.set(FLD_CODE, versionVal);
 	}
 }

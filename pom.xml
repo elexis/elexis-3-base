@@ -81,7 +81,6 @@
   <module>ch.medshare.elexis_directories.feature</module>
   <module>ch.elexis.externe_dokumente</module>
   <module>ch.elexis.externe_dokumente.feature</module>
-  <module>ch.elexis.externe_dokumente.tests</module>
   <module>ch.elexis.laborimport.bioanalytica</module>
   <module>ch.elexis.laborimport.bioanalytica.feature</module>
   <module>ch.elexis.laborimport.hl7.allg</module>
@@ -136,6 +135,15 @@
   <module>ch.docbox.elexis.feature</module>
   <module>net.medshare.connector.aerztekasse</module>
   <module>net.medshare.connector.aerztekasse.feature</module>
+
+  <!-- our test modules -->
+  <module>at.medevit.atc_codes.test</module>
+  <module>at.medevit.elexis.loinc_test</module>
+  <module>ch.elexis.base.ch.arzttarife.test</module>
+  <module>ch.elexis.externe_dokumente.tests</module>
+  <module>ch.elexis.laborimport.viollier.v2_test</module>
+  <module>com.hilotec.elexis.messwerte.v2_test</module>
+  <module>net.medshare.connector.aerztekasse_test</module>
 </modules>
 <repositories>
   <repository>

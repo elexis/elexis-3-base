@@ -20,14 +20,30 @@
         <artifactId>tycho-surefire-plugin</artifactId>
         <version>${tycho-version}</version>
         <configuration>
+          <application>ch.elexis.core.application.ElexisApp</application>
+          <!--product>ch.elexis.ElexisProduct</product-->
           <skipTests>true</skipTests>
-          <useUIHarness>false</useUIHarness>
+          <argLine>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
+          <useUIThread>true</useUIThread>
+          <useUIHarness>true</useUIHarness>
           <showEclipseLog>true</showEclipseLog>
-          <systemProperties>
-            <ch.elexis.username>007</ch.elexis.username>
-            <ch.elexis.password>topsecret</ch.elexis.password>
-            <elexis-run-mode>RunFromScratch</elexis-run-mode>
-          </systemProperties>
+          <dependencies>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>ch.elexis.core.application</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.ui.navigator</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.ui.views</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+          </dependencies>
         </configuration>
       </plugin>
     </plugins>

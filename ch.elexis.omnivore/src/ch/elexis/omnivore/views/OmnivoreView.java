@@ -12,6 +12,7 @@
 
 package ch.elexis.omnivore.views;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +37,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -61,21 +64,20 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.RestrictedAction;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
-import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -407,6 +409,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		Transfer[] transferTypes = new Transfer[] {
 			FileTransfer.getInstance()
 		};
+		
 		viewer.addDropSupport(DND.DROP_COPY, transferTypes, new DropTargetAdapter() {
 			
 			@Override
@@ -425,6 +428,24 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			}
 			
 		});
+		
+		viewer.addDragSupport(DND.DROP_COPY, transferTypes, new DragSourceAdapter() {
+			@Override
+			public void dragSetData(DragSourceEvent event){
+				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+				DocHandle dh = (DocHandle) selection.getFirstElement();
+
+				if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
+					int end = dh.getTitle().lastIndexOf(".");
+					String titel = (dh.getTitle()).substring(0, end);
+					File file = dh.createTemporaryFile(titel);
+					event.data = new String[] {
+						file.getAbsolutePath()
+					};
+				}
+			}
+		});
+		
 		GlobalEventDispatcher.addActivationListener(this, this);
 		eeli_user.catchElexisEvent(ElexisEvent.createUserEvent());
 		viewer.setInput(getViewSite());

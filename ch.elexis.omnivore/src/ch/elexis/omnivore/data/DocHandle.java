@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +44,7 @@ import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.exceptions.PersistenceException;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -411,60 +413,54 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	public void execute(){
 		try {
 			String ext = StringConstants.SPACE;
-			String typname = get(FLD_MIMETYPE);
-			int r = typname.lastIndexOf('.');
-			if (r == -1) {
-				typname = get(FLD_TITLE);
-				r = typname.lastIndexOf('.');
+			File temp = createTemporaryFile(null);
+			
+			Program proggie = Program.findProgram(ext);
+			if (proggie != null) {
+				proggie.execute(temp.getAbsolutePath());
+			} else {
+				if (Program.launch(temp.getAbsolutePath()) == false) {
+					Runtime.getRuntime().exec(temp.getAbsolutePath());
+				}
 			}
 			
-			if (r != -1) {
-				ext = typname.substring(r + 1);
-			}
-			
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			SWTHelper.showError(Messages.DocHandle_execError, ex.getMessage());
+		}
+	}
+	
+	/**
+	 * create a temporary file
+	 * 
+	 * @param titel
+	 *            optional (can as well be null - name will be created using preferences settings)
+	 * @return temporary file
+	 */
+	public File createTemporaryFile(String title){
+		String ext = "";
+		String typname = get(FLD_MIMETYPE);
+		int r = typname.lastIndexOf('.');
+		if (r == -1) {
+			typname = get(FLD_TITLE);
+			r = typname.lastIndexOf('.');
+		}
+		
+		if (r != -1) {
+			ext = typname.substring(r + 1);
+		}
+		// Make the temporary filename configurable
+		StringBuffer configured_temp_filename;
+		if (title.equals(null) || title.equals("")) {
 			// Make the temporary filename configurable
-			StringBuffer configured_temp_filename = new StringBuffer();
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element(
-				"constant1", ""));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("PID",
-				getPatient().getKuerzel()));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("fn",
-				getPatient().getName()));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("gn",
-				getPatient().getVorname()));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dob",
-				getPatient().getGeburtsdatum()));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dt",
-				getTitle())); // not more than 80 characters, laut javadoc
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dk",
-				getKeywords()));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dguid",
-				getGUID()));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			
-			SecureRandom random = new SecureRandom();
-			int needed_bits =
-				(int) Math.round(Math.ceil(Math
-					.log(Preferences.nPreferences_cotf_element_digits_max) / Math.log(2)));
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("random",
-				new BigInteger(needed_bits, random).toString()));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			
-			configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element(
-				"constant2", ""));
-			log.debug("configured_temp_filename=" + configured_temp_filename.toString());
-			
-			File temp;
+			configured_temp_filename = generateConfiguredTempFilename();
+		} else {
+			configured_temp_filename = new StringBuffer();
+			configured_temp_filename.append(title);
+		}
+		
+		File temp = null;
+		try {
 			if (configured_temp_filename.length() > 0) {
 				File uniquetemp =
 					File.createTempFile(configured_temp_filename.toString() + "_", "." + ext); //$NON-NLS-1$ //$NON-NLS-2$
@@ -484,25 +480,62 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			if (b == null) {
 				SWTHelper.showError(Messages.DocHandle_readErrorCaption,
 					Messages.DocHandle_readErrorMessage);
-				return;
+				return temp;
 			}
 			FileOutputStream fos = new FileOutputStream(temp);
 			fos.write(b);
 			fos.close();
-			Program proggie = Program.findProgram(ext);
-			if (proggie != null) {
-				proggie.execute(temp.getAbsolutePath());
-			} else {
-				if (Program.launch(temp.getAbsolutePath()) == false) {
-					Runtime.getRuntime().exec(temp.getAbsolutePath());
-				}
-				
-			}
-			
-		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			SWTHelper.showError(Messages.DocHandle_execError, ex.getMessage());
+		} catch (FileNotFoundException e) {
+			log.debug("File not found " + e, Log.WARNINGS);
+		} catch (IOException e) {
+			log.debug("Error creating file " + e, Log.WARNINGS);
 		}
+		
+		return temp;
+	}
+	
+	private StringBuffer generateConfiguredTempFilename(){
+		StringBuffer configured_temp_filename = new StringBuffer();
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("constant1",
+			""));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("PID",
+			getPatient().getKuerzel()));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("fn",
+			getPatient().getName()));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("gn",
+			getPatient().getVorname()));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dob",
+			getPatient().getGeburtsdatum()));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dt",
+			getTitle())); // not more than 80 characters, laut javadoc
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dk",
+			getKeywords()));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("dguid",
+			getGUID()));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		
+		SecureRandom random = new SecureRandom();
+		int needed_bits =
+			(int) Math.round(Math.ceil(Math.log(Preferences.nPreferences_cotf_element_digits_max)
+				/ Math.log(2)));
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("random",
+			new BigInteger(needed_bits, random).toString()));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		
+		configured_temp_filename.append(Preferences.getOmnivoreTemp_Filename_Element("constant2",
+			""));
+		log.debug("configured_temp_filename=" + configured_temp_filename.toString());
+		return configured_temp_filename;
 	}
 	
 	public String getMimetype(){

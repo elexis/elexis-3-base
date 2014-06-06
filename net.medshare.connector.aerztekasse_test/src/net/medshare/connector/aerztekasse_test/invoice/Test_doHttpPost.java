@@ -108,7 +108,7 @@ public class Test_doHttpPost {
 			
 			try {
 				filePath = FileLocator.toFileURL(url).getPath();
-				filePath = filePath.substring(1);
+				// Not needed under linux !!! filePath = filePath.substring(1);
 			} catch (IOException e) {
 				ExHandler.handle(e);
 			}

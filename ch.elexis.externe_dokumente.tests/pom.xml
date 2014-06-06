@@ -9,9 +9,6 @@
   <artifactId>ch.elexis.externe_dokumente.tests</artifactId>
   <version>3.0.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
-  
-  <!-- comment out to enable headless tests and add additional dependencies if needed
-    -->
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -21,8 +18,6 @@
         <version>${tycho-version}</version>
         <configuration>
           <application>ch.elexis.core.application.ElexisApp</application>
-          <!--product>ch.elexis.ElexisProduct</product-->
-          <skipTests>true</skipTests>
           <argLine>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
           <useUIThread>true</useUIThread>
           <useUIHarness>true</useUIHarness>

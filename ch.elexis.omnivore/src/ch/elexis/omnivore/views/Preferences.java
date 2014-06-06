@@ -167,7 +167,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		gOmnivorePrefsGridLayoutData.horizontalAlignment = GridData.FILL;
 		
 		gAllOmnivorePrefs.setLayoutData(gOmnivorePrefsGridLayoutData);
-		Group gGeneralOptions = new Group(gAllOmnivorePrefs, SWT.NONE);		
+		Group gGeneralOptions = new Group(gAllOmnivorePrefs, SWT.NONE);
 		GridData gGeneralOptionsGridLayoutData = new GridData();
 		gGeneralOptionsGridLayoutData.grabExcessHorizontalSpace = true;
 		gGeneralOptionsGridLayoutData.horizontalAlignment = GridData.FILL;
@@ -187,12 +187,13 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		gPathForMaxChars.setLayout(new FillLayout());
 		IPreferenceStore preferenceStore = new SettingsPreferenceStore(CoreHub.localCfg);
 		preferenceStore.setDefault(PREF_MAX_FILENAME_LENGTH, OmnivoreMax_Filename_Length_Default);
-		IntegerFieldEditor maxCharsEditor = new IntegerFieldEditor(PREF_MAX_FILENAME_LENGTH,
-			Messages.Preferences_MAX_FILENAME_LENGTH, gPathForMaxChars);
-		maxCharsEditor.setValidRange(OmnivoreMax_Filename_Length_Min, OmnivoreMax_Filename_Length_Max);
+		IntegerFieldEditor maxCharsEditor =
+			new IntegerFieldEditor(PREF_MAX_FILENAME_LENGTH,
+				Messages.Preferences_MAX_FILENAME_LENGTH, gPathForMaxChars);
+		maxCharsEditor.setValidRange(OmnivoreMax_Filename_Length_Min,
+			OmnivoreMax_Filename_Length_Max);
 		addField(maxCharsEditor);
 		
-
 		// ---
 		
 		// For automatic archiving of incoming files:
@@ -563,7 +564,11 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	public static Integer getOmnivoreMax_Filename_Length(){
 		IPreferenceStore preferenceStore = new SettingsPreferenceStore(CoreHub.localCfg);
-		return preferenceStore.getInt(PREF_MAX_FILENAME_LENGTH);
+		int ret = preferenceStore.getInt(PREF_MAX_FILENAME_LENGTH);
+		if (ret == 0) {
+			ret = OmnivoreMax_Filename_Length_Default;
+		}
+		return ret;
 	}
 	
 	// ----------------------------------------------------------------------------

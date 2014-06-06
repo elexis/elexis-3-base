@@ -14,7 +14,6 @@
 
 package ch.elexis.laborimport.teamw;
 
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -25,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.inputs.InexistingDirectoryOKDirectoryFieldEditor;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
@@ -83,7 +83,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			Messages.getString("PreferencePage.label.user"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new StringFieldEditor(FTP_PWD,
 			Messages.getString("PreferencePage.label.password"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new DirectoryFieldEditor(DL_DIR,
+		addField(new InexistingDirectoryOKDirectoryFieldEditor(DL_DIR,
 			Messages.getString("PreferencePage.label.download"), getFieldEditorParent())); //$NON-NLS-1$
 	}
 	

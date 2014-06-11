@@ -69,6 +69,14 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	// then real import
 	private boolean updateBlockWarning = false;
 	boolean updateIDs = false;
+	boolean showRestartDialog = true;
+
+	/**
+	 * Only for unit tests! Suppress dialog at end of import
+	 */
+	public void suppressRestartDialog() {
+		showRestartDialog = false;
+	}
 
 	@Override
 	public Class<?> getReferenceDataTypeResponsibleFor(){
@@ -356,8 +364,9 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 			if (updateBlockWarning) {
 				message = message + "\n" + Messages.TarmedImporter_updateBlockWarning;
 			}
-			
-			SWTHelper.showInfo(Messages.TarmedImporter_successTitle, message);
+			if (showRestartDialog) {
+				SWTHelper.showInfo(Messages.TarmedImporter_successTitle, message);
+			}
 			return Status.OK_STATUS;
 			
 		} catch (Exception ex) {

@@ -35,6 +35,7 @@ public class TarmedReferenceDataImporterTest {
 		InputStream tarmedInStream = new FileInputStream(tarmedFile);
 		
 		TarmedReferenceDataImporter importer = new TarmedReferenceDataImporter();
+		importer.suppressRestartDialog();
 		Status retStatus =
 			(Status) importer.performImport(new NullProgressMonitor(), tarmedInStream, null);
 		assertEquals(IStatus.OK, retStatus.getCode());

@@ -78,15 +78,7 @@ public class Test_externe_dokumente {
 			file.deleteOnExit();
 		}
 	}
-	@Test
-	public void testShould_be_okay(){
-		System.out.println("testShould_be_okay");
-		assertTrue(true);
-	}
-	
-	/* When running under maven I don't know how to setup the environment correctly
-	 * Therefore don't running Before/after stuff and ignoring all tests
-	 */
+
 	@BeforeClass
 	public static void setupOnce(){
 		testRoot = org.apache.commons.io.FileUtils.getTempDirectoryPath() + "/data/test";
@@ -141,9 +133,9 @@ public class Test_externe_dokumente {
 		PatOldNew[] valid =
 			{
 				new PatOldNew(anneCecile, base_1 + "/Beck  Anne-Cécile Pers.tif", base_1
-					+ "/Beck  Annecécile 2002-07-01/Beck  Anne-Cécile Pers.tif", 2),
+					+ "/Beck  AnneCécile 2002-07-01/Beck  Anne-Cécile Pers.tif", 2),
 				new PatOldNew(anneCecile, base_1 + "/Beck  Anne-Cécile", base_1
-					+ "/Beck  Annecécile 2002-07-01/Beck  Anne-Cécile", 2),
+					+ "/Beck  AnneCécile 2002-07-01/Beck  Anne-Cécile", 2),
 				new PatOldNew(helena, base_1 + "/Duck  Helena Pers.tif", base_1
 					+ "/Duck  Helena 2001-01-01/Duck  Helena Pers.tif", 2),
 				new PatOldNew(helena, base_1 + "/Duck  Helena.tif", base_1
@@ -158,7 +150,7 @@ public class Test_externe_dokumente {
 					+ "/GiezenWerner 1980-12-30/GiezenWerner Antikoagulation.txt", 4),
 				new PatOldNew(werner, base_3 + "/GiezenWerner test.txt", base_3
 					+ "/GiezenWerner 1980-12-30/GiezenWerner test.txt", 4),
-				new PatOldNew(meier, base_1 + "/Meyer ", base_1 + "/Meyer  1111-11-11/Meyer ", 1)
+				new PatOldNew(meier, base_1 + "/Meyer ", base_1 + "/Meyer  1111-11-11/Meyer ", 1),
 			};
 		validExamples = valid;
 		try {
@@ -223,7 +215,14 @@ public class Test_externe_dokumente {
 		}
 	}
 	
-	 @Test
+	@Test
+	public void testMoveIntoSubDirWeirdNames(){
+		String weird = "Zyz------------------------------------Begrenzer";
+		boolean result = MatchPatientToPath.MoveIntoSubDir(weird);
+		assertTrue("Must not throw an exception if weird pathname passed. Should simply return false", !result);
+	}
+
+	@Test
 	public void testMoveIntoSubDir(){
 		for (int j = 0; j < validExamples.length; j++) {
 			// create old file
@@ -270,7 +269,7 @@ public class Test_externe_dokumente {
 		for (int j = 0; j < validExamples.length; j++) {
 			File neu = new File(validExamples[j].neu);
 			if (!neu.exists())
-				System.out.format("alt: %1s should exist %2s\n", neu.getAbsolutePath(),
+				System.out.format("alt: '%1s' should exist, but is %2s\n", neu.getAbsolutePath(),
 					neu.exists());
 			assertTrue(neu.exists());
 			Object allFiles = MatchPatientToPath.getFilesForPatient(validExamples[j].p, null);

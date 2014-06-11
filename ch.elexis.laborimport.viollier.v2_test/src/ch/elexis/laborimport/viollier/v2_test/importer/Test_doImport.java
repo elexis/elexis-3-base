@@ -103,7 +103,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen ", result, SaveResult.ERROR); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen ", SaveResult.ERROR , result); //$NON-NLS-1$
 			
 			// Dann den Patienten erfassen und das File nochmals importieren
 			// -> muss erfolgreich sein
@@ -112,7 +112,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
@@ -207,7 +207,7 @@ public class Test_doImport {
 			
 			// omnivore kontrollieren
 			List<IOpaqueDocument> items = dm.listDocuments(patient, null, null, null, null, null);
-			assertEquals(test + ": Falsche Anzahl Dokumenten", items.size(), 1); //$NON-NLS-1$
+			assertEquals(test + ": Falsche Anzahl Dokumenten", 1, items.size()); //$NON-NLS-1$
 			if (items.size() == 1) {
 				IOpaqueDocument doc = items.get(0);
 				String cat = TEST_CATEGORY;
@@ -217,14 +217,11 @@ public class Test_doImport {
 				// Omnivore unterstützt
 				if (dm.getCategories() == null)
 					cat = "";
-				assertEquals(test + ": Falscher Wert bei Dokument: Kategorie", doc.getCategory(), //$NON-NLS-1$
-					cat);
-				assertEquals(test + ": Falscher Wert bei Dokument: Titel", doc.getTitle(), //$NON-NLS-1$
-					"Laborbefund 2012-02-15 14:48:00.pdf"); //$NON-NLS-1$
-				assertEquals(test + ": Falscher Wert bei Dokument: Datum", doc.getCreationDate(), //$NON-NLS-1$
-					date); //$NON-NLS-1$
-				assertEquals(test + ": Falscher Wert bei Dokument: Keywords", doc.getKeywords(), //$NON-NLS-1$
-					"1_1_0002834_3_20120215145502_01105727278_20100401_Testpatient_19121213_1234_12004.pdf"); //$NON-NLS-1$
+				assertEquals(test + ": Falscher Wert bei Dokument: Kategorie", cat, doc.getCategory()); //$NON-NLS-1$
+				assertEquals(test + ": Falscher Wert bei Dokument: Titel", "Laborbefund 2012-02-15 14:48:00.pdf", doc.getTitle());//$NON-NLS-1$ //$NON-NLS-12
+				assertEquals(test + ": Falscher Wert bei Dokument: Datum", date, doc.getCreationDate()); //$NON-NLS-1$ //$NON-NLS-2$
+				assertEquals(test + ": Falscher Wert bei Dokument: Keywords", //$NON-NLS-1$
+					"1_1_0002834_3_20120215145502_01105727278_20100401_Testpatient_19121213_1234_12004.pdf", doc.getKeywords()); //$NON-NLS-1$
 			}
 			
 		} catch (Exception e) {
@@ -257,7 +254,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
@@ -321,7 +318,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS,  result); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
@@ -405,7 +402,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
@@ -435,7 +432,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			hl7TimeStamp = "201205101103"; //$NON-NLS-1$
 			
@@ -485,7 +482,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
@@ -505,7 +502,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.REF_RANGE_MISMATCH); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.REF_RANGE_MISMATCH, result); //$NON-NLS-1$
 			
 			hl7TimeStamp = "201205110833"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
@@ -522,7 +519,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			hl7TimeStamp = "201205110833"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
@@ -565,7 +562,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
@@ -585,7 +582,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			hl7TimeStamp = "201204190855"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
@@ -602,7 +599,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			hl7TimeStamp = "201204200859"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
@@ -646,7 +643,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
@@ -665,7 +662,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			hl7TimeStamp = "201205182100"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
@@ -681,7 +678,7 @@ public class Test_doImport {
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			hl7TimeStamp = "201205182100"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
@@ -696,7 +693,7 @@ public class Test_doImport {
 			file2Import = rscDir + "Test07_1.HL7"; //$NON-NLS-1$
 			hl7File = new File(file2Import);
 			result = LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings, true, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			hl7TimeStamp = "201205180800"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
@@ -734,10 +731,10 @@ public class Test_doImport {
 			// Konfiguration: Mit Überschreiben
 			settings.setGlobalSaveRefRange(false);
 			result = LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings, true, false);
-			assertEquals(test + ": Import fehlgeschlagen", result, SaveResult.SUCCESS); //$NON-NLS-1$
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
 			String vioNr = LabOrderImport.getVioNr(patient);
-			assertEquals(test + ": VioNummer falsch", vioNr, "1779500");
+			assertEquals(test + ": VioNummer falsch",  "1779500", vioNr);
 			
 		} catch (Exception e) {
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -758,7 +755,6 @@ public class Test_doImport {
 			
 			try {
 				filePath = FileLocator.toFileURL(url).getPath();
-				filePath = filePath.substring(1);
 			} catch (IOException e) {
 				ExHandler.handle(e);
 			}
@@ -795,17 +791,17 @@ public class Test_doImport {
 		Query<LabItem> q = new Query<LabItem>(LabItem.class);
 		q.add(LabItem.SHORTNAME, Query.EQUALS, kuerzel);
 		List<LabItem> items = q.execute();
-		assertEquals(test + ": Falsche Anzahl LabItems", items.size(), 1); //$NON-NLS-1$
+		assertEquals(test + ": Falsche Anzahl LabItems", 1, items.size()); //$NON-NLS-1$
 		if (items.size() == 1) {
 			item = items.get(0);
-			assertEquals(test + ": Falscher Wert bei LabItem: Titel", item.getName(), titel); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: RefMann", item.getRefM(), refMann); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: RefFrau", item.getRefW(), refFrau); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: Einheit", item.getEinheit(), einheit); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: Typ", item.getTyp(), typ); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: Gruppe", item.getGroup(), gruppe); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: Prio", item.getPrio(), prio); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: Export", item.getExport(), ""); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals(test + ": Falscher Wert bei LabItem: Titel", titel, item.getName()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabItem: RefMann", refMann, item.getRefM()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabItem: RefFrau", refFrau, item.getRefW()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabItem: Einheit", einheit, item.getEinheit()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabItem: Typ", typ, item.getTyp()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabItem: Gruppe", gruppe, item.getGroup()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabItem: Prio", prio, item.getPrio()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabItem: Export", "", item.getExport()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return item;
 	}
@@ -837,12 +833,11 @@ public class Test_doImport {
 		q.add(LabResult.DATE, Query.EQUALS, hl7TimeStamp.substring(0, 8));
 		q.add(LabResult.TIME, Query.EQUALS, hl7TimeStamp.substring(8, 14));
 		List<LabResult> items = q.execute();
-		assertEquals(test + ": Falsche Anzahl LabResults", items.size(), 1); //$NON-NLS-1$
+		assertEquals(test + ": Falsche Anzahl LabResults", 1, items.size()); //$NON-NLS-1$
 		if (items.size() == 1) {
 			LabResult item = items.get(0);
-			assertEquals(test + ": Falscher Wert bei LabResult: Resultat", item.getResult(), result); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabResult: Kommentar", item.getComment(), //$NON-NLS-1$
-				comment);
+			assertEquals(test + ": Falscher Wert bei LabResult: Resultat", result, item.getResult()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabResult: Kommentar", comment, item.getComment()); //$NON-NLS-1$
 		}
 	}
 	

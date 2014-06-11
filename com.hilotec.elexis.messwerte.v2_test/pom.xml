@@ -19,12 +19,16 @@
         <version>${tycho-version}</version>
         <configuration>
           <application>ch.elexis.core.application.ElexisApp</application>
-          <skipTests>true</skipTests>  <!-- hilotec have problems with formulas. -->
-          <argLine>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
+          <argLine>-Dcom.hilotec.unitests=1 -debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
           <useUIThread>true</useUIThread>
           <useUIHarness>true</useUIHarness>
           <showEclipseLog>true</showEclipseLog>
           <dependencies>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>ch.elexis.core.scripting.beanshell</artifactId>
+              <version>0.0.0</version>
+            </dependency>
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>com.hilotec.elexis.messwerte.v2</artifactId>

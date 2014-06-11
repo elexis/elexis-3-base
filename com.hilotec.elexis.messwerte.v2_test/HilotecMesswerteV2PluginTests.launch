@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
-<setAttribute key="additional_plugins"/>
+<setAttribute key="additional_plugins">
+<setEntry value="ch.elexis.core.scripting.beanshell:3.0.0.qualifier:default:true"/>
+<setEntry value="com.hilotec.elexis.messwerte.v2:3.0.0.qualifier:default:true"/>
+</setAttribute>
 <booleanAttribute key="append.args" value="true"/>
-<stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
 <booleanAttribute key="askclear" value="false"/>
 <booleanAttribute key="automaticAdd" value="false"/>
 <booleanAttribute key="automaticValidate" value="false"/>
@@ -34,12 +36,10 @@
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dosgi.requiredJavaVersion=1.5&#13;&#10;-Xms64m&#13;&#10;-Xmx1024m&#13;&#10;-Dch.elexis.username=007 &#13;&#10;-Dch.elexis.password=topsecret &#13;&#10;-Delexis-run-mode=RunFromScratch&#10;-Dcom.hilotec.unitests=1"/>
 <stringAttribute key="pde.version" value="3.3"/>
-<stringAttribute key="product" value="ch.elexis.ElexisProduct"/>
+<stringAttribute key="product" value="ch.elexis.core.application.product"/>
 <booleanAttribute key="run_in_ui_thread" value="true"/>
 <setAttribute key="selected_features">
-<setEntry value="ch.elexis.core.extlibs.feature:default"/>
-<setEntry value="ch.elexis.core.feature:default"/>
-<setEntry value="ch.elexis.core.test.feature:default"/>
+<setEntry value="ch.elexis.core.application.feature:default"/>
 <setEntry value="org.eclipse.equinox.executable:default"/>
 <setEntry value="org.eclipse.equinox.p2.core.feature:default"/>
 <setEntry value="org.eclipse.equinox.p2.extras.feature:default"/>
@@ -52,9 +52,10 @@
 <stringAttribute key="selected_target_plugins" value="bouncycastle.bcprov-jdk14@default:default,ch.qos.logback.classic*1.0.7.v20121108-1250@default:default,ch.qos.logback.core*1.0.7.v20121108-1250@default:default,ch.qos.logback.slf4j@default:false,com.ibm.icu@default:default,com.mysql.jdbc@default:default,jfree.chart-swt@default:default,jfree.chart@default:default,jfree.jcommon@default:default,junit@default:default,org.apache.commons.dbcp@default:default,org.apache.commons.pool@default:default,org.beanshell.bsh@default:default,org.eclipse.ant.core@default:default,org.eclipse.core.commands@default:default,org.eclipse.core.contenttype@default:default,org.eclipse.core.databinding.beans@default:default,org.eclipse.core.databinding.observable@default:default,org.eclipse.core.databinding.property@default:default,org.eclipse.core.databinding@default:default,org.eclipse.core.expressions@default:default,org.eclipse.core.filesystem.win32.x86@default:false,org.eclipse.core.filesystem@default:default,org.eclipse.core.jobs@default:default,org.eclipse.core.resources.win32.x86@default:false,org.eclipse.core.resources@default:default,org.eclipse.core.runtime.compatibility.registry@default:false,org.eclipse.core.runtime@default:true,org.eclipse.core.variables@default:default,org.eclipse.emf.common@default:default,org.eclipse.emf.ecore@default:default,org.eclipse.equinox.app@default:default,org.eclipse.equinox.common@2:true,org.eclipse.equinox.p2.core@default:default,org.eclipse.equinox.p2.engine@default:default,org.eclipse.equinox.p2.metadata.repository@default:default,org.eclipse.equinox.p2.metadata@default:default,org.eclipse.equinox.p2.repository@default:default,org.eclipse.equinox.preferences@default:default,org.eclipse.equinox.registry@default:default,org.eclipse.equinox.security.win32.x86@default:false,org.eclipse.equinox.security@default:default,org.eclipse.help@default:default,org.eclipse.jface.databinding@default:default,org.eclipse.jface.text@default:default,org.eclipse.jface@default:default,org.eclipse.nebula.cwt@default:default,org.eclipse.nebula.widgets.cdatetime@default:default,org.eclipse.nebula.widgets.tablecombo@default:default,org.eclipse.osgi@-1:true,org.eclipse.swt.win32.win32.x86@default:false,org.eclipse.swt@default:default,org.eclipse.text@default:default,org.eclipse.ui.forms@default:default,org.eclipse.ui.ide@default:default,org.eclipse.ui.win32@default:false,org.eclipse.ui.workbench@default:default,org.eclipse.ui@default:default,org.h2@default:default,org.hamcrest.core@default:default,org.jdom@default:default,org.junit@default:default,org.postgresql@default:default,org.slf4j.api@default:default,org.slf4j.nop@default:false"/>
 <stringAttribute key="selected_workspace_plugins" value="ch.elexis.core.data.tests@default:false,ch.elexis.core.data@default:default,ch.elexis.core.logging.default_configuration@default:false,ch.elexis.core.scripting.beanshell@default:default,ch.elexis.core.ui.icons@default:default,ch.elexis.core.ui@default:default,ch.elexis.core@default:default,ch.rgw.utility.tests@default:false,ch.rgw.utility@default:default,ch.unibe.iam.scg.archie.samples@default:false,ch.unibe.iam.scg.archie@default:default,com.hilotec.elexis.messwerte.v2@default:default,com.hilotec.elexis.messwerte.v2_test@default:false,com.hilotec.elexis.pluginstatistiken@default:default"/>
 <booleanAttribute key="show_selected_only" value="false"/>
+<stringAttribute key="testApplication" value="ch.elexis.core.application.ElexisApp"/>
 <booleanAttribute key="tracing" value="false"/>
-<booleanAttribute key="useCustomFeatures" value="false"/>
+<booleanAttribute key="useCustomFeatures" value="true"/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
 <booleanAttribute key="useDefaultConfigArea" value="false"/>
-<booleanAttribute key="useProduct" value="false"/>
+<booleanAttribute key="useProduct" value="true"/>
 </launchConfiguration>

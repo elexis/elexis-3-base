@@ -38,6 +38,7 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		
 		synchronized (PrintMediEtiketteUi.class) {
+			boolean valid = false;
 			// init the selection
 			ISelection selection =
 				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
@@ -48,42 +49,46 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 					Prescription prescription = (Prescription) selected;
 					DataAccessor.setSelectedPrescription(prescription);
 					DataAccessor.setSelectedArticel(prescription.getArtikel());
+					valid = true;
 				} else if (selected instanceof Verrechnet) {
 					Verrechnet verrechnet = (Verrechnet) selected;
 					IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
 					if (verrechenbar instanceof Artikel) {
 						Artikel articel = (Artikel) verrechenbar;
 						DataAccessor.setSelectedArticel(articel);
+						valid = true;
 					} else {
 						return null;
 					}
 				}
 			}
 			
-			// start printing the etikette
-			Kontakt kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Patient.class);
-			EtiketteDruckenDialog dlg =
-				new EtiketteDruckenDialog(HandlerUtil.getActiveShell(event), kontakt,
-					Messages.PrintMediEtiketteUi_TemplateName);
-			dlg.setTitle(Messages.PrintMediEtiketteUi_DialogTitel);
-			dlg.setMessage(Messages.PrintMediEtiketteUi_DialogMessage);
-			if (!CoreHub.localCfg.get("Drucker/Etiketten/Choose", true)) { //$NON-NLS-1$
-				dlg.setBlockOnOpen(false);
-				dlg.open();
-				if (dlg.doPrint()) {
-					dlg.close();
+			if (valid) {
+				// start printing the etikette
+				Kontakt kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Patient.class);
+				EtiketteDruckenDialog dlg =
+					new EtiketteDruckenDialog(HandlerUtil.getActiveShell(event), kontakt,
+						Messages.PrintMediEtiketteUi_TemplateName);
+				dlg.setTitle(Messages.PrintMediEtiketteUi_DialogTitel);
+				dlg.setMessage(Messages.PrintMediEtiketteUi_DialogMessage);
+				if (!CoreHub.localCfg.get("Drucker/Etiketten/Choose", true)) { //$NON-NLS-1$
+					dlg.setBlockOnOpen(false);
+					dlg.open();
+					if (dlg.doPrint()) {
+						dlg.close();
+					} else {
+						StatusManager.getManager().handle(
+							new ElexisStatus(ElexisStatus.ERROR, Activator.PLUGIN_ID,
+								ElexisStatus.CODE_NOFEEDBACK,
+								Messages.PrintMediEtiketteUi_PrintError, ElexisStatus.LOG_ERRORS),
+							StatusManager.BLOCK);
+						return null;
+					}
 				} else {
-					StatusManager.getManager().handle(
-						new ElexisStatus(ElexisStatus.ERROR, Activator.PLUGIN_ID,
-							ElexisStatus.CODE_NOFEEDBACK, Messages.PrintMediEtiketteUi_PrintError,
-							ElexisStatus.LOG_ERRORS), StatusManager.BLOCK);
-					return null;
+					dlg.setBlockOnOpen(true);
+					dlg.open();
 				}
-			} else {
-				dlg.setBlockOnOpen(true);
-				dlg.open();
 			}
-			
 			// clear the selection
 			DataAccessor.setSelectedPrescription(null);
 			DataAccessor.setSelectedArticel(null);

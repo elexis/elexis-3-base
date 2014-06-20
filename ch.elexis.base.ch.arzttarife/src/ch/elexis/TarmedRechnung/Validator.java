@@ -65,7 +65,7 @@ public class Validator {
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
 			res.add(Result.SEVERITY.ERROR, 7, Messages.Validator_NoName, rn, true);
 		}
-		if (StringTool.isNothing(xp.diagnosen)) {
+		if (xp.diagnosen.isEmpty()) {
 			rn.reject(RnStatus.REJECTCODE.NO_DIAG, Messages.Validator_NoDiagnosis);
 			res.add(Result.SEVERITY.ERROR, 8, Messages.Validator_NoDiagnosis, rn, true);
 		}

@@ -48,7 +48,8 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		FieldDescriptor<?>[] fields =
 			{
 				new FieldDescriptor<ArtikelstammItem>("Bezeichnung", ArtikelstammItem.FLD_DSCR,
-					Typ.STRING, null)
+					Typ.STRING, null),
+				new FieldDescriptor<ArtikelstammItem>("ATC-Code", ArtikelstammItem.FLD_ATC, Typ.STRING, null)
 			};
 		slp = new SelectorPanelProvider(fields, true);
 		

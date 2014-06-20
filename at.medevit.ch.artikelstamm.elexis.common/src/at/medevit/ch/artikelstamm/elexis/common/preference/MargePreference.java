@@ -6,8 +6,6 @@ import ch.rgw.tools.Money;
 
 public class MargePreference {
 	
-	private static final String CSV_MARGE_STORAGE = "artikelstamm/csvMargeStorage";
-	
 	private static Marge[] marges = null;
 	
 	public static Marge[] getMarges(){
@@ -25,12 +23,12 @@ public class MargePreference {
 			if (i != marges.length)
 				sb.append("$");
 		}
-		CoreHub.globalCfg.set(CSV_MARGE_STORAGE, sb.toString());
+		CoreHub.globalCfg.set(PreferenceConstants.PREV_CSV_MARGE_STORAGE, sb.toString());
 		CoreHub.globalCfg.flush();
 	}
 	
 	private static void initMarges(){
-		String margeStorageString = CoreHub.globalCfg.get(CSV_MARGE_STORAGE, "0/0/0$0/0/0$0/0/0");
+		String margeStorageString = CoreHub.globalCfg.get(PreferenceConstants.PREV_CSV_MARGE_STORAGE, "0/0/0$0/0/0$0/0/0");
 		String[] margeStorageEntry = margeStorageString.split("\\$");
 		marges = new Marge[margeStorageEntry.length];
 		for (int i = 0; i < margeStorageEntry.length; i++) {

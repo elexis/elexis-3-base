@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 MEDEVIT.
+ * Copyright (c) 2013-2014 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import at.medevit.atc_codes.ATCCode;
-import at.medevit.atc_codes.parser.ATCDDDParser;
 import at.medevit.atc_codes.parser.ATCDDDParser.ATCDDDDefinition;
-import at.medevit.atc_codes.parser.ATCParser;
 import at.medevit.atc_codes.parser.ATCParser.ATCDefinition;
 
 public class ATCCodes {
@@ -71,25 +69,8 @@ public class ATCCodes {
 		return atcCodesMap;
 	}
 	
-	public void init(final File atcFile, final File atcDDDFile){
-		ATCParser atcParser = new ATCParser();
-		ATCDDDParser atcdddParser = new ATCDDDParser();
-		
-		try {
-			readXMLFile(atcFile, atcParser);
-			readXMLFile(atcDDDFile, atcdddParser);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		List<ATCDefinition> atcDefinitions = atcParser.getDefinitions();
-		HashMap<String, ATCDDDDefinition> atcDDDDefinitions = atcdddParser.getDddDefinitions();
-		initHashMap(atcDefinitions, atcDDDDefinitions);
-	}
-	
 	protected void initHashMap(List<ATCDefinition> atcDefinitions,
-		HashMap<String, ATCDDDDefinition> atcDDDDefinitions){
+		HashMap<String, ATCDDDDefinition> atcDDDDefinitions, HashMap<String, String> atcCodeToGerman){
 		atcCodesMap = new HashMap<String, at.medevit.atc_codes.ATCCode>();
 		
 		for (ATCDefinition def : atcDefinitions) {
@@ -112,7 +93,9 @@ public class ATCCodes {
 					dddComment = dddDef.dddComment;
 			}
 			
-			ATCCode c = new ATCCode(def.atcCode, def.name, level, ddd, dddUt, dddAc, dddComment);
+			String germanName = atcCodeToGerman.get(def.atcCode);
+			
+			ATCCode c = new ATCCode(def.atcCode, def.name, germanName, level, ddd, dddUt, dddAc, dddComment);
 			atcCodesMap.put(def.atcCode, c);
 		}
 	}

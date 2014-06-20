@@ -37,6 +37,7 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import at.medevit.atc_codes.ATCCode;
+import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.ui.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.ui.internal.DatabindingTextResizeConverter;
 import at.medevit.ch.artikelstamm.ui.internal.IntToStringConverterSelbstbehalt;
@@ -45,6 +46,8 @@ public class DetailComposite extends Composite {
 	private DataBindingContext m_bindingContext;
 	
 	private WritableValue item = new WritableValue(null, IArtikelstammItem.class);
+	
+	public static String prefAtcLanguage = null;
 	
 	private Label lblDSCR;
 	private Label lblPHZNR;
@@ -67,9 +70,11 @@ public class DetailComposite extends Composite {
 	private ControlDecoration controlDecoIsCalculatedPPUB;
 	private Button btnUserDefinedPrice;
 	
-	public DetailComposite(Composite parent, int style){
+	public DetailComposite(Composite parent, int style, String atcCodeLanguage){
 		super(parent, style);
 		setLayout(new GridLayout(1, false));
+		
+		DetailComposite.prefAtcLanguage = atcCodeLanguage;
 		
 		Composite headerComposite = new Composite(this, SWT.NONE);
 		headerComposite.setLayout(new GridLayout(4, false));
@@ -231,12 +236,21 @@ public class DetailComposite extends Composite {
 			if (atcHierarchy != null && atcHierarchy.size() > 0) {
 				ATCCode rootCode = atcHierarchy.get(atcHierarchy.size() - 1);
 				TreeItem root = new TreeItem(treeATC, SWT.None);
-				root.setText(rootCode.atcCode + " " + rootCode.name);
+				if(prefAtcLanguage.equals(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN)) {
+					root.setText(rootCode.atcCode + " " + rootCode.name_german);
+				} else {
+					root.setText(rootCode.atcCode + " " + rootCode.name);
+				}
 				TreeItem parent = root;
 				for (int i = atcHierarchy.size() - 2; i >= 0; i--) {
 					ATCCode code = atcHierarchy.get(i);
 					TreeItem newItem = new TreeItem(parent, SWT.None);
-					newItem.setText(code.atcCode + " " + code.name);
+					if(prefAtcLanguage.equals(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN)) {
+						newItem.setText(code.atcCode + " " + code.name_german);
+					} else {
+						newItem.setText(code.atcCode + " " + code.name);
+					}
+
 					parent = newItem;
 					if (i == 0)
 						treeATC.setSelection(newItem);
@@ -387,5 +401,9 @@ public class DetailComposite extends Composite {
 				UpdateValueStrategy.POLICY_NEVER), null);
 		//
 		return bindingContext;
+	}
+	
+	public static void setPrefAtcLanguage(String prefAtcLanguage){
+		DetailComposite.prefAtcLanguage = prefAtcLanguage;
 	}
 }

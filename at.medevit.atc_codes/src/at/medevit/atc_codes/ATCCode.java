@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 MEDEVIT.
+ * Copyright (c) 2013-2014 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ public class ATCCode implements Serializable {
 	};
 	
 	final public String name;
+	final public String name_german;
 	final public String atcCode;
 	final public int level;
 	final public float dailyDefinedDose;
@@ -28,9 +29,10 @@ public class ATCCode implements Serializable {
 	final public String administrativeCode;
 	final public String dddComment;
 	
-	public ATCCode(String atcCode, String name, int level, float dailyDefinedDose,
+	public ATCCode(String atcCode, String name, String name_german, int level, float dailyDefinedDose,
 		DDD_UNIT_TYPE dddut, String admCode, String dddComment){
 		this.name = name;
+		this.name_german = name_german;
 		this.atcCode = atcCode;
 		this.level = level;
 		this.dailyDefinedDose = dailyDefinedDose;

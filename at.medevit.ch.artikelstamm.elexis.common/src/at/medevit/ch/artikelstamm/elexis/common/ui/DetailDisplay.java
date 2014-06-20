@@ -31,11 +31,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PlatformUI;
 
+import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
+import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
@@ -43,7 +46,6 @@ import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.core.ui.views.artikel.Messages;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
-
 
 public class DetailDisplay implements IDetailDisplay {
 	
@@ -79,7 +81,11 @@ public class DetailDisplay implements IDetailDisplay {
 	@Override
 	public Composite createDisplay(Composite parent, IViewSite site){
 		if (dc == null) {
-			dc = new DetailComposite(parent, SWT.None);
+			String atcLang =
+				CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+					ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+			
+			dc = new DetailComposite(parent, SWT.None, atcLang);
 			
 			addLagerhaltungGroupToComposite(dc);
 			addAdditionalInformation(dc);
@@ -274,4 +280,5 @@ public class DetailDisplay implements IDetailDisplay {
 			integerToString);
 		
 	}
+
 }

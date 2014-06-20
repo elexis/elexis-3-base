@@ -6,17 +6,28 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
+import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.marge.Marge;
+import at.medevit.ch.artikelstamm.ui.DetailComposite;
+
+import org.eclipse.swt.widgets.Button;
+
+import ch.elexis.core.data.activator.CoreHub;
 
 public class ArtikelstammPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	public Marge margeA, margeB, margeC;
@@ -33,6 +44,10 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	private Text textMargeCendIntervall;
 	private Text textMargeCAddition;
 	private Label lblInfo;
+	private Composite compAtcLang;
+	private Label lblShowAtcCodesIn;
+	private Button btnRadioGerman;
+	private Button btnRadioEnglish;
 	
 	/**
 	 * Create the preference page.
@@ -53,83 +68,123 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	@Override
 	public Control createContents(Composite parent){
 		Composite container = new Composite(parent, SWT.NULL);
-		container.setLayout(new GridLayout(5, false));
+		container.setLayout(new GridLayout(1, false));
 		
-		Label lblMargeA = new Label(container, SWT.NONE);
+		Group margeGroup = new Group(container, SWT.None);
+		margeGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		margeGroup.setLayout(new GridLayout(5, false));
+		margeGroup.setText("Margen-Konfiguration");
+		
+		Label lblMargeA = new Label(margeGroup, SWT.NONE);
 		lblMargeA.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblMargeA.setText("Marge");
 		
-		textMargeAstartIntervall = new Text(container, SWT.BORDER);
+		textMargeAstartIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeAstartIntervall.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		textMargeAstartIntervall.setMessage("von CHF");
 		
-		textMargeAendIntervall = new Text(container, SWT.BORDER);
+		textMargeAendIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeAendIntervall.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		textMargeAendIntervall.setMessage("bis CHF");
 		
-		Label lblZuschlag = new Label(container, SWT.NONE);
+		Label lblZuschlag = new Label(margeGroup, SWT.NONE);
 		lblZuschlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblZuschlag.setText("Zuschlag in %");
 		
-		textMargeAAddition = new Text(container, SWT.BORDER);
+		textMargeAAddition = new Text(margeGroup, SWT.BORDER);
 		textMargeAAddition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		textMargeAAddition.setMessage("%");
 		
 		// --
 		
-		Label lblMargeB = new Label(container, SWT.NONE);
+		Label lblMargeB = new Label(margeGroup, SWT.NONE);
 		lblMargeB.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblMargeB.setText("Marge");
 		
-		textMargeBstartIntervall = new Text(container, SWT.BORDER);
+		textMargeBstartIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeBstartIntervall.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		textMargeBstartIntervall.setMessage("von CHF");
 		
-		textMargeBendIntervall = new Text(container, SWT.BORDER);
+		textMargeBendIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeBendIntervall.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		textMargeBendIntervall.setMessage("bis CHF");
 		
-		Label lblBZuschlag = new Label(container, SWT.NONE);
+		Label lblBZuschlag = new Label(margeGroup, SWT.NONE);
 		lblBZuschlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblBZuschlag.setText("Zuschlag in %");
 		
-		textMargeBAddition = new Text(container, SWT.BORDER);
+		textMargeBAddition = new Text(margeGroup, SWT.BORDER);
 		textMargeBAddition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		textMargeBAddition.setMessage("%");
 		
 		// --
 		
-		Label lblMargeC = new Label(container, SWT.NONE);
+		Label lblMargeC = new Label(margeGroup, SWT.NONE);
 		lblMargeC.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblMargeC.setText("Marge");
 		
-		textMargeCstartIntervall = new Text(container, SWT.BORDER);
+		textMargeCstartIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeCstartIntervall.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		textMargeCstartIntervall.setMessage("von CHF");
 		
-		textMargeCendIntervall = new Text(container, SWT.BORDER);
+		textMargeCendIntervall = new Text(margeGroup, SWT.BORDER);
 		textMargeCendIntervall.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		textMargeCendIntervall.setMessage("bis CHF");
 		
-		Label lblCZuschlag = new Label(container, SWT.NONE);
+		Label lblCZuschlag = new Label(margeGroup, SWT.NONE);
 		lblCZuschlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblCZuschlag.setText("Zuschlag in %");
 		
-		textMargeCAddition = new Text(container, SWT.BORDER);
+		textMargeCAddition = new Text(margeGroup, SWT.BORDER);
 		textMargeCAddition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		textMargeCAddition.setMessage("%");
 		
-		lblInfo = new Label(container, SWT.NONE);
+		lblInfo = new Label(margeGroup, SWT.NONE);
 		lblInfo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 5, 1));
 		lblInfo.setText("Ein 0 Eintrag bewirkt das Ignorieren einer Zeile.");
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
+		
+		compAtcLang = new Composite(container, SWT.NONE);
+		compAtcLang.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		compAtcLang.setLayout(new GridLayout(3, false));
+		
+		lblShowAtcCodesIn = new Label(compAtcLang, SWT.NONE);
+		lblShowAtcCodesIn.setText("ATC Codes darstellen in");
+		
+		SelectionListener radioSl = new LanguageRadioSelectionButtonListener();
+		
+		btnRadioGerman = new Button(compAtcLang, SWT.RADIO);
+		btnRadioGerman.setData(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+		btnRadioGerman.setText("deutsch");
+		btnRadioGerman.addSelectionListener(radioSl);
+		
+		btnRadioEnglish = new Button(compAtcLang, SWT.RADIO);
+		btnRadioEnglish.setData(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_ENGLISH);
+		btnRadioEnglish.setText("english");
+		btnRadioEnglish.addSelectionListener(radioSl);
+		
+		String language =
+			CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+		if (language.equals(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN)) {
+			btnRadioGerman.setSelection(true);
+		} else {
+			btnRadioEnglish.setSelection(true);
+		}
+		
 		m_bindingContext = initDataBindings();
 		
 		return container;
+	}
+	
+	private class LanguageRadioSelectionButtonListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e){
+			if (!((Button) e.widget).getSelection())
+				return;
+			CoreHub.globalCfg.set(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+				(String) e.widget.getData());
+			DetailComposite.setPrefAtcLanguage((String) e.widget.getData());
+		}
 	}
 	
 	/**

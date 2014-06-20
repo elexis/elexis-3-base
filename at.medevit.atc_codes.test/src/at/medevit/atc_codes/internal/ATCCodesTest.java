@@ -80,7 +80,7 @@ public class ATCCodesTest {
 			System.out.println(line);
 			String[] split = line.split(";");
 			if(split.length==2) {
-				atcCodesToGerman.put(split[0], split[1]);
+				atcCodesToGerman.put(split[0].trim(), split[1]);
 			}
 		}
 		
@@ -100,7 +100,7 @@ public class ATCCodesTest {
 		
 		System.out.println("Written to "+ATC_CODES_MAP_SER);
 		
-		ATCCode c = ac.getATCCode("A11GA01");
+		ATCCode c = ac.getATCCode("N");
 		System.out.println(c.atcCode + " " + c.name +"("+c.name_german+") "+ c.level + " " + c.administrativeCode);
 	}
 	
@@ -128,7 +128,7 @@ public class ATCCodesTest {
 		List<ATCCode> result = asi.getHierarchyForATCCode("B03BB01");
 		Assert.assertEquals(5, result.size());
 		for (ATCCode atcCode : result) {
-			System.out.println(atcCode.level + " " + atcCode.atcCode + "\t\t" + atcCode.name + " ("
+			System.out.println(atcCode.level + " " + atcCode.atcCode + "\t\t" + atcCode.name_german + " ("
 				+ atcCode.dddComment + ")");
 		}
 	}

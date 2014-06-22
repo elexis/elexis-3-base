@@ -451,7 +451,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 		// Make the temporary filename configurable
 		StringBuffer configured_temp_filename;
-		if (title.equals(null) || title.equals("")) {
+		if (title == null || title.equals("")) {
 			// Make the temporary filename configurable
 			configured_temp_filename = generateConfiguredTempFilename();
 		} else {

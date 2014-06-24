@@ -13,16 +13,17 @@ import at.medevit.elexis.loinc.model.ILoincCodeService;
 public class LoincServiceComponent {
 	
 	private static Logger logger = LoggerFactory.getLogger(LoincServiceComponent.class);
-
+	
 	private static ILoincCodeService service;
 	private static boolean updated = false;
-
+	
 	public static ILoincCodeService getService(){
 		logger.info("Get updated " + updated + " service " + service);
 		if (!updated) {
 			// The login job
 			final IRunnableWithProgress job = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException{
+					monitor.setTaskName("Updating LOINC Top 2000");
 					service.updateTop2000();
 				}
 			};

@@ -13,6 +13,7 @@ package ch.artikelstamm.elexis.common;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -690,5 +691,18 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * 
+	 * @return all {@link ArtikelstammItem} currently on stock
+	 */
+	public static List<ArtikelstammItem> getAllArticlesOnStock(){
+		Query<ArtikelstammItem> qbe = new Query<ArtikelstammItem>(ArtikelstammItem.class);
+		qbe.add(MINBESTAND, Query.GREATER, StringConstants.ZERO);
+		qbe.or();
+		qbe.add(MAXBESTAND, Query.GREATER, StringConstants.ZERO);
+		List<ArtikelstammItem> l = qbe.execute();
+		return l == null ? new ArrayList<ArtikelstammItem>(0) : l;
 	}
 }

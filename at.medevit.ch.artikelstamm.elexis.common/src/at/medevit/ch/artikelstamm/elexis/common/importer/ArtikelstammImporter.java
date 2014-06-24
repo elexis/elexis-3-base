@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants;
-import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEM;
+import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
+import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.elexis.common.PluginConstants;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.artikelstamm.elexis.common.BlackBoxReason;
@@ -81,6 +81,7 @@ public class ArtikelstammImporter {
 			return Status.OK_STATUS;
 		}
 		
+		long startTime = System.currentTimeMillis();
 		// clean all blackbox marks, as we will determine them newly
 		monitor.subTask("Black-Box Markierung zurücksetzen");
 		resetAllBlackboxMarks(importStammType);
@@ -101,6 +102,8 @@ public class ArtikelstammImporter {
 		ArtikelstammItem.setImportSetDataQuality(importStammType, importStamm.getDATAQUALITY());
 		monitor.worked(1);
 		monitor.done();
+		long endTime = System.currentTimeMillis();
+		log.debug("Artikelstamm import took " + ((endTime - startTime) / 1000) + "sec");
 		
 		ElexisEventDispatcher.reload(ArtikelstammItem.class);
 		
@@ -130,11 +133,15 @@ public class ArtikelstammImporter {
 	 * 
 	 * @param importStammType
 	 */
-	private static void setBlackboxOnAllReferencedItems(IProgressMonitor monitor, TYPE importStammType){
+	private static void setBlackboxOnAllReferencedItems(IProgressMonitor monitor,
+		TYPE importStammType){
 		// black box all ArtikelStammItem referenced by a prescription
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-		List<Prescription> resultPrescription =
-			new Query<Prescription>(Prescription.class).execute();
+		
+		Query<Prescription> query = new Query<Prescription>(Prescription.class);
+		query.add(Prescription.ARTICLE, Query.LIKE, ArtikelstammItem.class.getName() + "%");
+		List<Prescription> resultPrescription = query.execute();
+		
 		monitor.subTask("BlackBox Markierung für Medikationen");
 		subMonitor.beginTask("", resultPrescription.size());
 		for (Prescription p : resultPrescription) {
@@ -155,7 +162,11 @@ public class ArtikelstammImporter {
 		
 		// black box all import ArtikelStammItem reference by a konsultations leistung
 		SubProgressMonitor subMonitor2 = new SubProgressMonitor(monitor, 1);
-		List<Verrechnet> resultVerrechnet = new Query<Verrechnet>(Verrechnet.class).execute();
+		
+		Query<Verrechnet> queryVer = new Query<Verrechnet>(Verrechnet.class);
+		queryVer.add(Verrechnet.CLASS, Query.LIKE, ArtikelstammItem.class.getName());
+		List<Verrechnet> resultVerrechnet = queryVer.execute();
+		
 		monitor.subTask("BlackBox Markierung für Artikel in Konsultationen");
 		subMonitor2.beginTask("", resultVerrechnet.size());
 		for (Verrechnet vr : resultVerrechnet) {
@@ -178,8 +189,7 @@ public class ArtikelstammImporter {
 		
 		// Wenn ein Artikel auf Lager ist, darf er auch nicht gelöscht werden!
 		SubProgressMonitor subMonitor3 = new SubProgressMonitor(monitor, 1);
-		List<ArtikelstammItem> resultLagerartikel =
-			new Query<ArtikelstammItem>(ArtikelstammItem.class).execute();
+		List<ArtikelstammItem> resultLagerartikel = ArtikelstammItem.getAllArticlesOnStock();
 		monitor.subTask("BlackBox Markierung für Lagerartikel");
 		subMonitor3.beginTask("", resultLagerartikel.size());
 		for (ArtikelstammItem ai : resultLagerartikel) {
@@ -200,8 +210,8 @@ public class ArtikelstammImporter {
 	 * @param currentStammVersion
 	 * @param monitor
 	 */
-	private static void removeAllNonBlackboxedWithVersion(TYPE importStammType, int currentStammVersion,
-		IProgressMonitor monitor){
+	private static void removeAllNonBlackboxedWithVersion(TYPE importStammType,
+		int currentStammVersion, IProgressMonitor monitor){
 		Query<ArtikelstammItem> qbe = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		
 		qbe.add(ArtikelstammItem.FLD_BLACKBOXED, Query.EQUALS, StringConstants.ZERO);

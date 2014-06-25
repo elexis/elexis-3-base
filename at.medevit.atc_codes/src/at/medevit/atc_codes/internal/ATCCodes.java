@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import at.medevit.atc_codes.ATCCode;
+import at.medevit.atc_codes.ATCCodeService;
 import at.medevit.atc_codes.parser.ATCDDDParser.ATCDDDDefinition;
 import at.medevit.atc_codes.parser.ATCParser.ATCDefinition;
 
@@ -37,7 +40,9 @@ public class ATCCodes {
 	private static ATCCodes instance = null;
 	private HashMap<String, ATCCode> atcCodesMap = null;
 	
-	private ATCCodes(){}
+	private ATCCodes(){
+		initHashMapFromSerializedObject();
+	}
 	
 	public static ATCCodes getInstance(){
 		if (instance == null) {
@@ -46,7 +51,7 @@ public class ATCCodes {
 		return instance;
 	}
 	
-	public void initHashMapFromSerializedObject(){
+	private void initHashMapFromSerializedObject(){
 		try {
 			// use buffering
 			InputStream is = ATCCodes.class.getResourceAsStream(ATC_CODES_SERIALIZED_FILE);
@@ -58,9 +63,7 @@ public class ATCCodes {
 			} finally {
 				input.close();
 			}
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-		} catch (IOException ex) {
+		} catch (ClassNotFoundException | IOException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -95,7 +98,8 @@ public class ATCCodes {
 			
 			String germanName = atcCodeToGerman.get(def.atcCode);
 			
-			ATCCode c = new ATCCode(def.atcCode, def.name, germanName, level, ddd, dddUt, dddAc, dddComment);
+			ATCCode c =
+				new ATCCode(def.atcCode, def.name, germanName, level, ddd, dddUt, dddAc, dddComment);
 			atcCodesMap.put(def.atcCode, c);
 		}
 	}
@@ -117,6 +121,13 @@ public class ATCCodes {
 		}
 	}
 	
+	/**
+	 * Used in test code only
+	 * 
+	 * @param inFile
+	 * @param parser
+	 * @throws IOException
+	 */
 	protected void readXMLFile(File inFile, DefaultHandler parser) throws IOException{
 		try {
 			XMLReader xr = XMLReaderFactory.createXMLReader();
@@ -140,8 +151,38 @@ public class ATCCodes {
 	 * @return {@link ATCCode} if valid ATC code, else <code>null</code>
 	 */
 	public ATCCode getATCCode(String atcCode){
-		if (atcCodesMap == null)
-			initHashMapFromSerializedObject();
 		return atcCodesMap.get(atcCode.trim());
+	}
+	
+	/**
+	 * @see ATCCodeService#getATCCodesMatchingName(String, int)
+	 */
+	public List<ATCCode> getATCCodesMatchingName(String name, int i){
+		List<ATCCode> ret = new ArrayList<>();
+		
+		Collection<ATCCode> values = atcCodesMap.values();
+		
+		if (i == ATCCodeService.ATC_NAME_LANGUAGE_GERMAN) {
+			for (ATCCode atcCode : values) {
+//				if (atcCode.atcCode.length() < 6)
+//					continue;
+				if (atcCode.name_german != null
+					&& atcCode.name_german.toLowerCase().contains(name.toLowerCase())) {
+					ret.add(atcCode);
+				} else if (atcCode.name != null
+					&& atcCode.name.toLowerCase().contains(name.toLowerCase())) {
+					ret.add(atcCode);
+				}
+			}
+			
+		} else {
+			for (ATCCode atcCode : values) {
+				if (atcCode.name != null && atcCode.name.toLowerCase().contains(name.toLowerCase())) {
+					ret.add(atcCode);
+				}
+			}
+		}
+		
+		return ret;
 	}
 }

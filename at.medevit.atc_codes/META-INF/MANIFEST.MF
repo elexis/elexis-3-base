@@ -11,3 +11,4 @@ Bundle-Activator: at.medevit.atc_codes.internal.Activator
 Export-Package: at.medevit.atc_codes
 Bundle-ClassPath: lib/,
  .
+Service-Component: OSGI-INF/atccodeservice.xml

@@ -80,6 +80,7 @@ public final class Messages extends NLS {
 	public static String TerminDialog_reason;
 	public static String TerminDialog_32;
 	public static String TerminDialog_editTermins;
+	public static String TerminDialog_collision;
 	public static String TerminDialog_termin;
 	public static String TerminDialog_noPatSelected;
 	public static String TerminDialog_40;

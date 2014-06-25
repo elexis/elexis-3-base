@@ -61,7 +61,6 @@ import ch.elexis.agenda.util.TimeInput.TimeInputListener;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -69,7 +68,6 @@ import ch.elexis.core.ui.util.NumberInput;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Query;
-import ch.rgw.tools.Log;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -119,6 +117,7 @@ public class TerminDialog extends TitleAreaDialog {
 	Text tGrund;
 	Activator agenda = Activator.getDefault();
 	boolean bModified;
+	private String msg;
 	
 	public TerminDialog(IPlannable act){
 		super(UiDesk.getTopShell());
@@ -377,6 +376,7 @@ public class TerminDialog extends TitleAreaDialog {
 						tName.setText(actKontakt.getLabel());
 						tNr.setText(actKontakt.get(Kontakt.FLD_SHORT_LABEL));
 					}
+					setEnablement();
 					/*
 					 * if (actPlannable == null) { actPlannable = new Termin(agenda.getActDate()
 					 * .toString(TimeTool.DATE_COMPACT), tiVon .getTimeAsMinutes(),
@@ -564,6 +564,7 @@ public class TerminDialog extends TitleAreaDialog {
 	}
 	
 	private void enable(final boolean mode){
+		msg = Messages.TerminDialog_editTermins;
 		if (mode) {
 			bChange.setEnabled(true);
 			bSave.setEnabled(true);
@@ -574,13 +575,23 @@ public class TerminDialog extends TitleAreaDialog {
 			bSave.setEnabled(false);
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 			slider.setBackground(UiDesk.getColor(UiDesk.COL_DARKGREY)); //$NON-NLS-1$
+			msg = Messages.TerminDialog_editTermins + "\n" + Messages.TerminDialog_collision;
 		}
+		
+		getShell().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run(){
+				setMessage(msg);
+			}
+		});
 	}
 	
 	private void setEnablement(){
 		TimeSpan ts = new TimeSpan(tiVon.setTimeTool(agenda.getActDate()), niDauer.getValue());
 		if (actPlannable instanceof Termin.Free) {
 			if (Plannables.collides(ts, dayBar.list, null)) {
+				enable(false);
+			} else if (terminOverlaps(agenda.getActDate(), ts)) {
 				enable(false);
 			} else {
 				enable(true);
@@ -591,6 +602,10 @@ public class TerminDialog extends TitleAreaDialog {
 				enable(false);
 			} else {
 				if (bModified) {
+					if (terminOverlaps(agenda.getActDate(), ts)) {
+						enable(false);
+						return;
+					}
 					enable(true);
 				} else {
 					enable(false);
@@ -848,4 +863,31 @@ public class TerminDialog extends TitleAreaDialog {
 		setEnablement();
 	}
 	
+	/**
+	 * checks if the given appointment overlaps with any other appointment of this patient
+	 * 
+	 * @param actDate
+	 *            date of the appointment
+	 * @param terminTS
+	 *            timespan of the appointment
+	 * @return true if there is a collision
+	 */
+	private boolean terminOverlaps(TimeTool actDate, TimeSpan terminTS){
+		Query<Termin> tQuery = new Query<Termin>(Termin.class);
+		tQuery.add(Termin.FLD_PATIENT, Query.EQUALS, actKontakt.getId());
+		tQuery.add(Termin.FLD_TAG, Query.EQUALS, actDate.toString(TimeTool.DATE_COMPACT));
+		java.util.List<Termin> termine = tQuery.execute();
+		
+		Termin curTermin = (Termin) actPlannable;
+		for (Termin t : termine) {
+			// only compare if it's not the currently open appointment
+			if (!t.getId().equals(curTermin.getId())) {
+				TimeSpan ts = t.getTimeSpan();
+				if (ts.overlap(terminTS) != null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

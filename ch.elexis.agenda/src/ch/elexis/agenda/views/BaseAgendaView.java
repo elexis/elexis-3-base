@@ -31,11 +31,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.actions.Activator;
-import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.actions.AgendaActions;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.actions.IBereichSelectionEvent;
 import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -47,6 +44,20 @@ import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.agenda.ui.BereichMenuCreator;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.dialogs.KontaktSelektor;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
@@ -56,19 +67,8 @@ import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
-import ch.rgw.tools.TimeTool;
-import ch.elexis.core.data.events.Heartbeat.HeartListener;
-import ch.elexis.actions.IBereichSelectionEvent;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.dialogs.KontaktSelektor;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Log;
+import ch.rgw.tools.TimeTool;
 
 public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 		IActivationListener, IBereichSelectionEvent {
@@ -103,8 +103,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 			updateActions();
 			if (tv != null) {
 				if (!tv.getControl().isDisposed()) {
-					tv.getControl().setFont(
-						UiDesk.getFont(Preferences.USR_DEFAULTFONT));
+					tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));
 				}
 			}
 			setBereich(CoreHub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
@@ -490,6 +489,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 	@Override
 	public void bereichSelectionEvent(String bereich){
 		setPartName("Agenda " + bereich);
+		ElexisEventDispatcher.reload(Termin.class);
 		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
 	}
 }

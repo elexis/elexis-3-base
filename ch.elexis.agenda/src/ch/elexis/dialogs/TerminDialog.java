@@ -591,8 +591,6 @@ public class TerminDialog extends TitleAreaDialog {
 		if (actPlannable instanceof Termin.Free) {
 			if (Plannables.collides(ts, dayBar.list, null)) {
 				enable(false);
-			} else if (terminOverlaps(agenda.getActDate(), ts)) {
-				enable(false);
 			} else {
 				enable(true);
 			}

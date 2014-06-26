@@ -20,6 +20,9 @@ public interface ATCCodeService {
 	public static final int ATC_NAME_LANGUAGE_ENGLISH = 0;
 	public static final int ATC_NAME_LANGUAGE_GERMAN = 1;
 	
+	public static final int MATCH_NAME_BY_NAME_ONLY = 0;
+	public static final int MATCH_NAME_BY_NAME_OR_ATC = 1;
+	
 	/**
 	 * @param atcCode
 	 *            the ATC code value to resolve
@@ -49,7 +52,11 @@ public interface ATCCodeService {
 	 *            the language to match name on, supports
 	 *            {@link ATCCodeService#ATC_NAME_LANGUAGE_ENGLISH} and
 	 *            {@link ATCCodeService#ATC_NAME_LANGUAGE_GERMAN}
-	 * @return
+	 * @param j
+	 *            whether to match the given name with the real name of the article only
+	 *            {@link ATCCodeService#MATCH_NAME_BY_NAME_ONLY} or to include the atc code in the
+	 *            matching {@link ATCCodeService#MATCH_NAME_BY_NAME_OR_ATC}
+	 * @return a list containing all matched elements, sorted by ATC Hierarchy
 	 */
-	public List<ATCCode> getATCCodesMatchingName(String name, int i);
+	public List<ATCCode> getATCCodesMatchingName(String name, int i, int j);
 }

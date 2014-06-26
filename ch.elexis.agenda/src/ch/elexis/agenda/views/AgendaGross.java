@@ -85,7 +85,7 @@ public class AgendaGross extends BaseAgendaView {
 		"von", "bis", "Typ", "Status", "Personalien", "Grund"
 	};
 	private static final int[] columnWidths = {
-		30, 30, 50, 70, 300, 200
+		48, 30, 50, 70, 300, 200
 	};
 	
 	public AgendaGross(){
@@ -113,7 +113,8 @@ public class AgendaGross extends BaseAgendaView {
 		fdRight.bottom = new FormAttachment(100, -5);
 		right.setLayoutData(fdRight);
 		String[] bereiche =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
+			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
+				.split(","); //$NON-NLS-1$
 		ChangeBereichAdapter chb = new ChangeBereichAdapter();
 		bChange = new Button[bereiche.length];
 		for (int i = 0; i < bereiche.length; i++) {
@@ -252,6 +253,7 @@ public class AgendaGross extends BaseAgendaView {
 		 * if (pinger != null) { pinger.doSync(); }
 		 */
 		tv.refresh();
+		tv.getTable().getColumn(0).pack();
 	}
 	
 	@Override
@@ -293,7 +295,7 @@ public class AgendaGross extends BaseAgendaView {
 				IPlannable ip = (IPlannable) element;
 				if (ip.isRecurringDate())
 					return UiDesk.getImage(Activator.IMG_RECURRING_DATE);
-			}			
+			}
 			return null;
 		}
 		

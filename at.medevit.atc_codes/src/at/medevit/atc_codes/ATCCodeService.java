@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 MEDEVIT.
+ * Copyright (c) 2013-2014 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,13 @@ import java.util.List;
  * Service to resolve ATC codes to their names and also resolve the hierarchy of an ATC Code.
  */
 public interface ATCCodeService {
+	
+	public static final int ATC_NAME_LANGUAGE_ENGLISH = 0;
+	public static final int ATC_NAME_LANGUAGE_GERMAN = 1;
+	
+	public static final int MATCH_NAME_BY_NAME_ONLY = 0;
+	public static final int MATCH_NAME_BY_NAME_OR_ATC = 1;
+	
 	/**
 	 * @param atcCode
 	 *            the ATC code value to resolve
@@ -34,4 +41,22 @@ public interface ATCCodeService {
 	 *         <code>null</code> if not found
 	 */
 	public List<ATCCode> getHierarchyForATCCode(String atcCode);
+	
+	/**
+	 * Return all ATC codes that wild-carded match the given name
+	 * 
+	 * @param name
+	 *            the name to perform a wild-carded match upon. e.g. given the name <code>per</code>
+	 *            will match on <code>*per*</code>
+	 * @param i
+	 *            the language to match name on, supports
+	 *            {@link ATCCodeService#ATC_NAME_LANGUAGE_ENGLISH} and
+	 *            {@link ATCCodeService#ATC_NAME_LANGUAGE_GERMAN}
+	 * @param j
+	 *            whether to match the given name with the real name of the article only
+	 *            {@link ATCCodeService#MATCH_NAME_BY_NAME_ONLY} or to include the atc code in the
+	 *            matching {@link ATCCodeService#MATCH_NAME_BY_NAME_OR_ATC}
+	 * @return a list containing all matched elements, sorted by ATC Hierarchy
+	 */
+	public List<ATCCode> getATCCodesMatchingName(String name, int i, int j);
 }

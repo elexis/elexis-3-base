@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 MEDEVIT.
+ * Copyright (c) 2013-2014 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
-package at.medevit.ch.artikelstamm.ui.internal;
+package at.medevit.ch.artikelstamm.elexis.common.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

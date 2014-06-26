@@ -52,5 +52,10 @@ public class ATCCodeServiceImpl implements ATCCodeService {
 			return null;
 		}
 	}
+
+	@Override
+	public List<ATCCode> getATCCodesMatchingName(String name, int language, int matchType){
+		return ATCCodes.getInstance().getATCCodesMatchingName(name, language, matchType);
+	}
 	
 }

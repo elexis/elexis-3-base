@@ -163,6 +163,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	protected String getTableName(){
+		//
 		return TABLENAME;
 	}
 	
@@ -319,7 +320,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return false;
 	}
 	
-	// -- VERRECHENBAR ADAPTER ---
+	// -- VERRECHENBAR ADAPTER and ARTIKEL ---
 	@Override
 	public VatInfo getVatInfo(){
 		switch (getType()) {
@@ -398,6 +399,22 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	public String getEAN(){
 		return get(FLD_GTIN);
 	}
+	
+	@Override
+	public String getATC_code(){
+		return getATCCode();
+	}
+	
+	public int getVerkaufseinheit(){
+		try {
+			int value = Integer.parseInt(get(VERKAUFSEINHEIT));
+			return value;
+		} catch (NumberFormatException nfe) {
+			return 0;
+		}
+	}
+	
+	// --------------------
 	
 	/**
 	 * @param stammType
@@ -640,15 +657,6 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public void setVerpackungseinheit(int vpe){
 		set(FLD_PKG_SIZE, vpe + "");
-	}
-	
-	public int getVerkaufseinheit(){
-		try {
-			int value = Integer.parseInt(get(VERKAUFSEINHEIT));
-			return value;
-		} catch (NumberFormatException nfe) {
-			return 0;
-		}
 	}
 	
 	public void setVerkaufseinheit(int vse){

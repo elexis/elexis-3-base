@@ -12,3 +12,4 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.data
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Import-Package: org.slf4j

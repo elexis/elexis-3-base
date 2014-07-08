@@ -20,6 +20,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.program.Program;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.text.IRichTextDisplay;
@@ -27,6 +29,8 @@ import ch.elexis.core.ui.util.IKonsExtension;
 import ch.elexis.data.Prescription;
 
 public class EphaSearchAction extends Action implements IKonsExtension, IHandler {
+	
+	public static final Logger logger = LoggerFactory.getLogger(EphaSearchAction.class);
 	
 	public static final String ID = "at.medevit.elexis.epha.interactions.EphaSearchAction"; //$NON-NLS-1$
 	private static EphaSearchAction instance;
@@ -54,11 +58,22 @@ public class EphaSearchAction extends Action implements IKonsExtension, IHandler
 		Prescription[] medication = ElexisEventDispatcher.getSelectedPatient().getFixmedikation();
 		
 		for (Prescription prescription : medication) {
+			String num = null;
 			String ean = prescription.getArtikel().getEAN();
-			if (sb.length() == 0)
-				sb.append(ean);
-			else
-				sb.append("," + ean);
+			
+			if (ean != null && !ean.isEmpty() && ean.length() >= 9) {
+				num = ean.substring(4, 9);
+			} else {
+				logger.warn("Could not get EAN for aritcle with id "
+					+ prescription.getArtikel().getId());
+			}
+			
+			if (num != null && !num.isEmpty()) {
+				if (sb.length() == 0)
+					sb.append(num);
+				else
+					sb.append("," + num);
+			}
 		}
 		
 		String url = "http://matrix.epha.ch/#" + sb.toString(); //$NON-NLS-1$

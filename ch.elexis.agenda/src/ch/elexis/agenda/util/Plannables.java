@@ -163,7 +163,9 @@ public final class Plannables {
 	/** Die einem Plannable-Status zugeordnete Farnbe holen */
 	public static Color getStatusColor(IPlannable p){
 		if (p.getType().equals(Termin.typReserviert())) {
-			return UiDesk.getColor(UiDesk.COL_BLACK);
+			String coldesc =
+				CoreHub.userCfg.get(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "000000"); //$NON-NLS-1$
+			return UiDesk.getColorFromRGB(coldesc);
 		}
 		String coldesc =
 			CoreHub.userCfg.get(PreferenceConstants.AG_STATCOLOR_PREFIX + p.getStatus(), "000000"); //$NON-NLS-1$

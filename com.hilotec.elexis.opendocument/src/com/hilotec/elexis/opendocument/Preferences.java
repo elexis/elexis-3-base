@@ -28,6 +28,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String P_EDITOR = BASE + "editorpath";
 	public static final String P_EDITARGS = BASE + "editargs";
 	public static final String P_PRINTARGS = BASE + "printargs";
+	public static final String P_PDFCONVERTER = BASE + "pdfpath";
+	public static final String P_PDFARGS = BASE + "pdfargs";
 	
 	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.localCfg);
 	
@@ -44,6 +46,9 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			true, getFieldEditorParent()));
 		addField(new MultilineFieldEditor(P_PRINTARGS, "Argumente zum Drucken", 5, SWT.V_SCROLL,
 			true, getFieldEditorParent()));
+		addField(new FileFieldEditor(P_PDFCONVERTER, "PDF-Konverter", getFieldEditorParent()));
+		addField(new MultilineFieldEditor(P_PDFARGS, "Argumente fuer PDF-Konvertierung", 5,
+			SWT.V_SCROLL, false, getFieldEditorParent()));
 	}
 	
 	@Override

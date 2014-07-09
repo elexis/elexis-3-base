@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.hilotec.elexis.stickerprefix.feature"
-      label="KG Hilotec"
+      label="Sticker Prefix"
       version="3.0.0.qualifier"
       provider-name="hilotec.com">
 

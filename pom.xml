@@ -166,6 +166,8 @@
   <module>com.hilotec.elexis.opendocument.feature</module>
   <module>com.hilotec.elexis.kgview</module>
   <module>com.hilotec.elexis.kgview.feature</module>
+  <module>com.hilotec.elexis.toolbar</module>
+  <module>com.hilotec.elexis.toolbar.feature</module>
   <module>com.hilotec.elexis.stickerprefix</module>
   <module>com.hilotec.elexis.stickerprefix.feature</module>
 

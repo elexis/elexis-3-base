@@ -261,7 +261,7 @@
    <feature url="features/com.hilotec.elexis.pluginstatistiken.feature.source_3.0.0.qualifier.jar" id="com.hilotec.elexis.pluginstatistiken.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/com.hilotec.elexis.stickerprefix.feature_3.0.0.qualifier.jar" id="com.hilotec.elexis.stickeprefix.feature" version="3.0.0.qualifier">
+   <feature url="features/com.hilotec.elexis.stickerprefix.feature_3.0.0.qualifier.jar" id="com.hilotec.elexis.stickerprefix.feature" version="3.0.0.qualifier">
       <category name="divers"/>
    </feature>
    <feature url="features/com.hilotec.elexis.toolbar.feature_3.0.0.qualifier.jar" id="com.hilotec.elexis.toolbar.feature" version="3.0.0.qualifier">

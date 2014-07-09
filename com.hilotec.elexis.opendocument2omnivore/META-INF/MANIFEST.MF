@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: com.hilotec.elexis.opendocument2omnivore
+Bundle-SymbolicName: com.hilotec.elexis.opendocument2omnivore;singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Vendor: hilotec.com
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: com.hilotec.elexis.opendocument;bundle-version="0.0.3",
+ ch.rgw.utility,
+ org.eclipse.ui,
+ ch.elexis.omnivore,
+ ch.elexis.core.data
+Import-Package: ch.elexis.omnivore.data

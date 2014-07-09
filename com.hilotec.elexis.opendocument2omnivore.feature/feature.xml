@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.hilotec.elexis.opendocument2omnivore.feature"
+      label="Omnivore-Schnittstelle fuer OpenDocument-Plugin"
+      version="3.0.0.qualifier"
+      provider-name="ch.medelexis">
+
+   <description>
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="com.hilotec.elexis.opendocument2omnivore"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

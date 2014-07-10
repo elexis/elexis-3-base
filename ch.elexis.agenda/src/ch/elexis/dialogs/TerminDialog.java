@@ -600,7 +600,7 @@ public class TerminDialog extends TitleAreaDialog {
 				enable(false);
 			} else {
 				if (bModified) {
-					if (terminOverlaps(agenda.getActDate(), ts)) {
+					if (actKontakt != null && terminOverlaps(agenda.getActDate(), ts)) {
 						enable(false);
 						return;
 					}

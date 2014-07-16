@@ -193,7 +193,7 @@ public class AgendaGross extends BaseAgendaView {
 		int average = fm.getAverageCharWidth();
 		int nw = gc.getCharWidth('0');
 		gc.dispose();
-		columnWidths[0] = 8 * nw;
+		columnWidths[0] = 10 * nw;
 		columnWidths[1] = columnWidths[0];
 		int w = 10;
 		for (int i = 0; i < Termin.TerminTypes.length; i++) {

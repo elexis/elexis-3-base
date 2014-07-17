@@ -21,25 +21,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.data.Patient;
+import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.ui.provider.TermineLabelProvider;
 import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.actions.FlatDataLoader;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.actions.PersistentObjectLoader;
+import ch.elexis.core.ui.actions.PersistentObjectLoader.QueryFilter;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
-import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.PersistentObjectLoader;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.actions.FlatDataLoader;
-import ch.elexis.core.ui.actions.PersistentObjectLoader.QueryFilter;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.data.Query;
-import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-
+import ch.elexis.data.Query;
 
 public class TerminListeView extends ViewPart implements IActivationListener, ElexisEventListener {
 	ScrolledForm form;
@@ -71,21 +70,19 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 		});
 		
 		ViewerConfigurer vc =
-			new ViewerConfigurer(fdl, new DefaultLabelProvider(), new SimpleWidgetProvider(
+			new ViewerConfigurer(fdl, new TermineLabelProvider(), new SimpleWidgetProvider(
 				SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, body, SWT.NONE, this);
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 	
 	@Override
-	public void setFocus(){
-		// TODO Auto-generated method stub
-		
-	}
+	public void setFocus(){}
 	
 	public void activation(boolean mode){
-		// TODO Auto-generated method stub
-		
+		if (mode) {
+			updateSelection(ElexisEventDispatcher.getSelectedPatient());
+		}
 	}
 	
 	@Override
@@ -107,8 +104,7 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					form.setText(((Patient) ev.getObject()).getLabel());
-					fdl.inputChanged(cv.getViewerWidget(), this, this);
+					updateSelection((Patient) ev.getObject());
 				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
 					form.setText("No Patient selected"); //$NON-NLS-1$
 				}
@@ -120,6 +116,11 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 	public ElexisEvent getElexisEventFilter(){
 		return new ElexisEvent(null, Patient.class, ElexisEvent.EVENT_SELECTED
 			| ElexisEvent.EVENT_DESELECTED);
+	}
+	
+	private void updateSelection(Patient patient){
+		form.setText(patient.getLabel());
+		fdl.inputChanged(cv.getViewerWidget(), this, this);
 	}
 	
 }

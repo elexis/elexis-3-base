@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.medshare.mediport.feature"
+      label="Abrechnungsplugin für MediPort"
+      version="3.0.0.qualifier"
+      provider-name="ch.elexis">
+
+   <description>
+      Abrechnungsplugin für MediPort
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [TODO: Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [TODO: Enter License Description here.]
+   </license>
+
+   <plugin
+         id="ch.medshare.mediport"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.medshare.commons"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="bouncycastle.bcprov-jdk14"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

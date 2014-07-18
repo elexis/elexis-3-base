@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Medshare commons
+Bundle-SymbolicName: ch.medshare.commons;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Require-Bundle: 
+ org.eclipse.swt;bundle-version="3.8.1",
+ bouncycastle.bcprov-jdk14;bundle-version="138.0.0"
+Export-Package: ch.medshare.licence,
+ ch.medshare.swt.widgets,
+ ch.medshare.util
+Bundle-Vendor: medshare.ch
+Bundle-ClassPath: .
+Created-By: Buildr
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+

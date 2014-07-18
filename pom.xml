@@ -106,6 +106,9 @@
   <module>ch.elexis.support.dbshaker.feature</module>
   <module>ch.medelexis.text.templator</module>
   <module>ch.medelexis.text.templator.feature</module>
+  <module>ch.medshare.mediport</module>
+  <module>ch.medshare.mediport.feature</module>
+  <module>ch.medshare.commons</module>
   <module>com.hilotec.elexis.opendocument</module>
   <module>com.hilotec.elexis.opendocument.feature</module>
   <module>com.hilotec.elexis.kgview</module>
@@ -118,6 +121,11 @@
   <module>de.fhdo.elexis.perspective.feature</module>
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
+  <module>org.iatrix.bestellung.rose</module>
+  <module>org.iatrix.bestellung.rose_test</module>
+  <module>org.iatrix.bestellung.rose.feature</module>
+  <module>org.iatrix.messwerte</module>
+  <module>org.iatrix.messwerte.feature</module>
   <module>ch.elexis.base.p2site</module>
   <module>ch.unibe.iam.scg.archie</module>
   <module>ch.unibe.iam.scg.archie.feature</module>

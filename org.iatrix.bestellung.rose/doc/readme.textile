@@ -1,0 +1,28 @@
+h1. Bestellungen an die Apotheke zur Rose
+
+Mit diesem Plug-In können Bestellungen an die Apotheke zur Rose übermittelt werden.
+
+Vor dem ersten Versand sind in den Einstellung unter "Bestellung..Apotheke zur Rose" die Kundennummer einzugeben. Diese Information gibt die Apotheke zur Rose ihren Kunden bekannt.
+
+h1. Entwickler-Informationen
+
+h2. Tests
+
+Ein automatisierter PDE-Junit-Test wurde im Plug-In org.iatrix.bestellung.rose_test realisiert.
+
+Dieser Test läuft nur, wenn der ASAS-Client installiert und aktiviert ist. Testzugangsdaten bei Apotheke zur Rose sind leider nicht bekannt.
+
+Manuell kann das Ganze getestet werden, indem manuell ein Rezept erstellt wird und verschickt wird. Im elexis-log findet sich die geschickte XML.
+
+Eine korrekte XML-Datei sieht wie folgt aus:
+
+bq.		/*
+		 * Example XML:
+		 * 
+		 * <?xml version="1.0" encoding="UTF-8"?> <order
+		 * xmlns="http://estudio.clustertec.ch/schemas/order"
+		 * xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=
+		 * "http://estudio.clustertec.ch/schemas/order http://estudio.clustertec.ch/schemas/order/order.xsd"
+		 * user="test" password="test" deliveryType="1"> <product pharmacode="1234567"
+		 * eanId="7600000000000" description="ASPIRIN" quantity="1" positionType="1"/> </order>
+		 */

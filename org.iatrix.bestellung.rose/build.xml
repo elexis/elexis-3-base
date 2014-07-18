@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2008, Daniel Lutz
+ *
+ * Contributors:
+ *    Daniel Lutz - initial implementation
+ *    
+ * $Id$
+-->
+<project name="iatrix-bestellung-rose" default="all">
+	<property name="plugin_version" value="0.3.1"/>
+	<property name="sourcedir" value="${source}/iatrix-bestellung-rose"/>
+	<property name="plugindir" value="${dist}/plugins/org.iatrix.bestellung.rose_${plugin_version}"/>
+	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
+	
+	<!-- Pfade für -classpath des Java-compilers festlegen -->
+	<path id="eclipseclasses">
+		<fileset dir="${dist}/plugins">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="${elexis_plugin}/bin"/>
+		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	
+	<target name="checkout" unless="unplugged">
+			<exec executable="svn" dir="${sourcedir}"><arg line="update"/></exec>	
+	</target>
+		
+	<target name="all">
+		
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
+			 <property name="copydest" value="${plugindir}"/>
+			 <property name="copysrc" value="${sourcedir}"/>
+		</ant>
+	 	<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses"
+	 	 debug="no" optimize="yes" target="1.5" encoding="UTF-8"/>
+		<tstamp/>
+		<zip basedir="${plugindir}" destfile="${updatefiles}/org.iatrix.bestellung.rose_${version}.${DSTAMP}.zip"/>
+
+	</target>
+</project>

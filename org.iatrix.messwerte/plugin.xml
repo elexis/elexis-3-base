@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="ch.elexis.messungenKategorie"
+            class="org.iatrix.messwerte.views.MesswerteView"
+            icon="rsc/reagenzglas.ico"
+            id="org.iatrix.messwerte.views.MesswerteView"
+            name="Messwerte Iatrix">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.iatrix.preferences.IatrixPreferences"
+            class="org.iatrix.messwerte.preferences.MesswertePreferences"
+            id="org.iatrix.messwerte.preferences.MesswertePreferences"
+            name="Messwerte Iatrix">
+      </page>
+      <page
+            category="org.iatrix.preferences.IatrixPreferences"
+            class="org.iatrix.messwerte.preferences.LabGroupPrefs"
+            id="org.iatrix.messwerte.preferences.LabGroupPrefs"
+            name="Laborgruppen (Laborblätter)">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.ACLContribution">
+      <ACLContribution
+            ACLContributor="org.iatrix.messwerte.acl.ACLContributor"
+            name="org.iatrix.messwerte.acl.ACLContributor">
+      </ACLContribution>
+   </extension>
+
+</plugin>

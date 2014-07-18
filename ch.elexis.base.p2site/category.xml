@@ -48,6 +48,9 @@
    <feature url="features/ch.medelexis.text.templator.feature_3.0.0.qualifier.jar" id="ch.medelexis.text.templator.feature" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
+   <feature url="features/ch.medshare.mediport.feature_3.0.0.qualifier.jar" id="ch.medshare.mediport.feature" version="3.0.0.qualifier">
+      <category name="finances"/>
+   </feature>
    <feature url="features/com.hilotec.elexis.opendocument.feature.source_3.0.0.qualifier.jar" id="com.hilotec.elexis.opendocument.feature.source" version="3.0.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
@@ -59,6 +62,12 @@
    </feature>
    <feature url="features/org.iatrix.feature_3.0.0.qualifier.jar" id="org.iatrix.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/org.iatrix.messwerte.feature_3.0.0.qualifier.jar" id="org.iatrix.messwerte.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/org.iatrix.bestellung.rose.feature_3.0.0.qualifier.jar" id="org.iatrix.bestellung.rose.feature" version="3.0.0.qualifier">
+      <category name="dataexchange"/>
    </feature>
    <feature url="features/ch.elexis.base.messages.feature_3.0.0.qualifier.jar" id="ch.elexis.base.messages.feature" version="3.0.0.qualifier">
       <category name="organisation"/>

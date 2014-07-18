@@ -1,0 +1,7 @@
+0.7.6 - Original Version
+0.7.7 - 05.07.2012 - M. Descher
+	- Prevent double date entries
+	- Added modification of number of presented columns to preferences
+	- Lab values are now populated starting from the left side
+0.7.8 - 16.5.2013 - M. Descher
+	- Bugfix for missing entries, Ticket 1317

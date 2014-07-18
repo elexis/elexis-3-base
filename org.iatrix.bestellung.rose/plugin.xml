@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.Transporter">
+      <Transporter
+            AcceptableTypes="ch.elexis.data.Bestellung"
+            ExporterClass="org.iatrix.bestellung.rose.Sender"
+            id="org.iatrix.bestellung.rose.sender"
+            name="Apotheke zur Rose"
+            type="ch.elexis.data.Bestellung">
+      </Transporter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="org.iatrix.bestellung.rose.RosePreferences"
+            id="org.iatrix.bestellung.rose"
+            name="Apotheke zur Rose (Bestellungen)">
+      </page>
+   </extension>
+
+</plugin>

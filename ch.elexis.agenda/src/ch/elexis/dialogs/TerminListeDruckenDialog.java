@@ -25,7 +25,7 @@ import ch.elexis.core.ui.text.ITextPlugin.ICallback;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Brief;
-
+import ch.elexis.data.Patient;
 
 public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallback {
 	IPlannable[] liste;
@@ -45,19 +45,26 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, "AgendaListe", Brief.UNKNOWN, CoreHub.actUser, "Agenda");
-		String[][] termine = new String[liste.length + 1][4];
+		String[][] termine = new String[liste.length + 1][5];
 		termine[0] = new String[] {
-			"von", "bis", "Typ", "Name"
+			"von", "bis", "Typ", "Name", "Grund"
 		};
 		for (int i = 1; i < liste.length; i++) {
 			termine[i][0] = Plannables.getStartTimeAsString(liste[i - 1]);
 			termine[i][1] = Plannables.getEndTimeAsString(liste[i - 1]);
 			termine[i][2] = liste[i - 1].getType();
-			termine[i][3] = liste[i - 1].getTitle();
+			Patient pat = Patient.load(liste[i - 1].getText());
+			String patCode = "";
+			if (pat.exists()) {
+				patCode = ", Id: " + pat.getPatCode();
+			}
+			termine[i][3] = liste[i - 1].getTitle() + patCode;
+			termine[i][4] = liste[i - 1].getReason();
 		}
+		
 		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
 		text.getPlugin().insertTable("[Termine]", 0, termine, new int[] {
-			10, 10, 30, 50
+			15, 15, 20, 50, 20
 		});
 		return ret;
 	}

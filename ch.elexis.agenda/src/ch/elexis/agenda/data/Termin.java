@@ -944,6 +944,10 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		return getPersonalia();
 	}
 	
+	public String getReason(){
+		return getGrund();
+	}
+	
 	public String getType(){
 		return get(FLD_TERMINTYP);
 	}
@@ -1019,6 +1023,10 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		@Override
 		public boolean isRecurringDate(){
 			return false;
+		}
+		
+		public String getReason(){
+			return "";
 		}
 	}
 	

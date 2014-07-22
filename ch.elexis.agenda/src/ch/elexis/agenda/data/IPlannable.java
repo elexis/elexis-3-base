@@ -40,4 +40,6 @@ public interface IPlannable {
 	
 	public boolean isRecurringDate();
 	
+	public String getReason();
+	
 }

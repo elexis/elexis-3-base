@@ -30,13 +30,16 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
 import ch.medelexis.templator.ui.Preferences;
 import ch.rgw.tools.ExHandler;
 
 public class ProcessingSchema extends Document {
+	private static final Logger log = LoggerFactory.getLogger(ProcessingSchema.class);
+	
 	private static final long serialVersionUID = -1050660384548846589L;
 	public static final Namespace ns = Namespace.getNamespace(
 		"TemplateProcessingInstruction", "http://www.medelexis.ch/templator"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -71,6 +74,7 @@ public class ProcessingSchema extends Document {
 				}
 			}
 		}
+		log.warn("Processor is null");
 		return null;
 	}
 	

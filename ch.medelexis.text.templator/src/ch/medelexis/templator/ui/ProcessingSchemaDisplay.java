@@ -12,24 +12,13 @@
 package ch.medelexis.templator.ui;
 
 import java.io.File;
-import java.util.List;
 
-import javax.annotation.processing.Processor;
-import javax.xml.validation.Schema;
-
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.preference.FileFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -47,9 +36,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.text.ITextPlugin.ICallback;
@@ -58,6 +48,7 @@ import ch.medelexis.templator.model.IProcessor;
 import ch.medelexis.templator.model.ProcessingSchema;
 
 public class ProcessingSchemaDisplay extends Composite {
+	private static final Logger log = LoggerFactory.getLogger(ProcessingSchemaDisplay.class);
 	private static final String NO_SCHEMA_SELECTED = "Kein Schema ausgewählt";
 	private static final String NO_PATIENT_SELECTED = "Kein Patient ausgewählt ";
 	private IAction printAction, addAction, directOutputAction;
@@ -243,6 +234,7 @@ public class ProcessingSchemaDisplay extends Composite {
 				String con = text.getText();
 				String name = (String) text.getData();
 				proc.getField(name).setText(con);
+				log.debug("read field - " + name);
 			}
 		}
 		String sProcessor = cbProcessor.getText();

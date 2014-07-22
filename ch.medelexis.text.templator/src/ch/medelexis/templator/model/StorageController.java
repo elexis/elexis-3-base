@@ -20,13 +20,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
@@ -36,6 +37,7 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class StorageController extends Job implements HeartListener {
+	private static final Logger log = LoggerFactory.getLogger(StorageController.class);
 	private IDocumentManager dm;
 	private List<Metafile> metafiles = new ArrayList<StorageController.Metafile>();
 	private static StorageController theInstance;
@@ -67,6 +69,9 @@ public class StorageController extends Job implements HeartListener {
 		if (CoreHub.localCfg.get(Preferences.PREF_DOSAVE, true) && dm != null && pat != null) {
 			Metafile mf = new Metafile(pat, name, category, System.currentTimeMillis(), dest);
 			metafiles.add(mf);
+		} else {
+			log.debug("DocumentManager null [" + (dm == null) + "], Patient null (["
+				+ (pat == null) + "])");
 		}
 		return dest;
 	}

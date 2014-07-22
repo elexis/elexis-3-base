@@ -19,9 +19,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.medelexis.templator.ui.OOOProcessorPrefs;
 import ch.rgw.io.FileTool;
@@ -34,6 +36,7 @@ import ch.rgw.tools.ExHandler;
  * 
  */
 public class OpenOfficeProcessor implements IProcessor {
+	private static final Logger log = LoggerFactory.getLogger(OpenOfficeProcessor.class);
 	ProcessingSchema proc;
 	
 	public String getName(){
@@ -45,6 +48,7 @@ public class OpenOfficeProcessor implements IProcessor {
 		proc = schema;
 		File tmpl = schema.getTemplateFile();
 		if (!tmpl.exists()) {
+			log.warn("Template " + schema + " missing");
 			SWTHelper.alert("Template missing", MessageFormat.format(
 				"Konnte Vorlagedatei {0} nicht öffnen", tmpl.getAbsolutePath()));
 			return false;

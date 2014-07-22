@@ -106,9 +106,8 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 					updateSelection((Patient) ev.getObject());
 				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					form.setText("No Patient selected"); //$NON-NLS-1$
+					form.setText(Messages.TerminListView_noPatientSelected);
 				}
-				
 			}
 		});
 	}
@@ -119,8 +118,12 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 	}
 	
 	private void updateSelection(Patient patient){
-		form.setText(patient.getLabel());
-		fdl.inputChanged(cv.getViewerWidget(), this, this);
+		if (patient == null) {
+			form.setText(Messages.TerminListView_noPatientSelected);
+		} else {
+			form.setText(patient.getLabel());
+			fdl.inputChanged(cv.getViewerWidget(), this, this);
+		}
 	}
 	
 }

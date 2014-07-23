@@ -9,9 +9,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.forms,
  org.eclipse.swt,
  org.eclipse.ui,
- ch.elexis.core;bundle-version="3.0.0",
- ch.unibe.iam.scg.archie;bundle-version="3.0.0",
  ch.rgw.utility;bundle-version="3.0.0",
+ ch.elexis.core;bundle-version="3.0.0",
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
- ch.elexis.core.ui.icons;bundle-version="3.0.0"
+ ch.elexis.core.ui.icons;bundle-version="3.0.0",
+ ch.unibe.iam.scg.archie;bundle-version="3.0.0"

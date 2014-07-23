@@ -10,6 +10,7 @@ import at.medevit.atc_codes.ATCCode;
 import at.medevit.ch.artikelstamm.elexis.common.ui.cv.ATCFilterInfoListElement;
 import at.medevit.ch.artikelstamm.ui.ATCLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.data.interfaces.IVerrechenbar.VatInfo;
 
 public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvider {
 	
@@ -25,7 +26,15 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 	@Override
 	public String getText(Object element){
 		if (element instanceof ArtikelstammItem) {
-			return super.getText(element);
+			String ret =  super.getText(element);
+			
+			ArtikelstammItem ai = (ArtikelstammItem) element;
+			String overriden =  (String) ai.getExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_VAT_OVERRIDEN);
+			if(overriden != null) {
+				ret = ret+" (MWSt: "+resolveVatInfoLabel(VatInfo.valueOf(overriden))+")";
+			}
+			
+			return ret;
 		} else if (element instanceof ATCCode) {
 			return atcLabelProvider.getText(element);
 		} else if (element instanceof ATCFilterInfoListElement) {
@@ -35,6 +44,17 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 		return null;
 	}
 	
+	private String resolveVatInfoLabel(VatInfo vatinfo){
+		switch (vatinfo) {
+		case VAT_CH_ISMEDICAMENT:
+			return "Reduziert";
+		case VAT_NONE:
+			return "Keine";
+		default:
+			return "Normal";
+		}
+	}
+
 	@Override
 	public Image getImage(Object element){
 		if (element instanceof ArtikelstammItem) {

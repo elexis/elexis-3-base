@@ -20,6 +20,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.ch.artikelstamm.ArtikelstammConstants;
+import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
+import at.medevit.ch.artikelstamm.ArtikelstammHelper;
+import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
+import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.jdt.NonNull;
@@ -33,11 +38,6 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
-import at.medevit.ch.artikelstamm.ArtikelstammHelper;
-import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
-import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
 
 /**
  * {@link ArtikelstammItem} persistent object implementation. This class conforms both to the
@@ -82,6 +82,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	/** Ist Betäubungsmittel */	public static final String FLD_NARCOTIC = "NARCOTIC";
 	/** CAS Nr wenn Betäub */	public static final String FLD_NARCOTIC_CAS = "NARCOTIC_CAS";
 	/** Ist Impfstoff */		public static final String FLD_VACCINE = "VACCINE";
+	
+	
+	public static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE";
 	
 	/** Definition of the database table */
 	static final String createDB =
@@ -320,9 +323,18 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return false;
 	}
 	
+	public void overrideVatInfo(VatInfo overridenVat) {
+		setExtInfoStoredObjectByKey(EXTINFO_VAL_VAT_OVERRIDEN, overridenVat.toString());
+	}
+	
 	// -- VERRECHENBAR ADAPTER and ARTIKEL ---
 	@Override
 	public VatInfo getVatInfo(){
+		String overridenVat = (String) getExtInfoStoredObjectByKey(EXTINFO_VAL_VAT_OVERRIDEN);
+		if(overridenVat !=null) {
+			return VatInfo.valueOf(overridenVat);
+		}
+		
 		switch (getType()) {
 		case P:
 			return VatInfo.VAT_CH_ISMEDICAMENT;

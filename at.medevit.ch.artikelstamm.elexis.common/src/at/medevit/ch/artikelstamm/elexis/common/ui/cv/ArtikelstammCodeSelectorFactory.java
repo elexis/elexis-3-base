@@ -14,9 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.menus.IMenuService;
 
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
@@ -24,6 +27,7 @@ import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.elexis.common.ui.provider.ATCArtikelstammDecoratingLabelProvider;
 import at.medevit.ch.artikelstamm.elexis.common.ui.provider.LagerhaltungArtikelstammLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.artikelstamm.elexis.common.ArtikelstammPOFactory;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
@@ -79,9 +83,9 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		// new MedINDEXArticleControlFieldProvider(cv),
 			slp, new ViewerConfigurer.DefaultButtonProvider(), swp, fdl);
 		
-// MenuManager menuManager = new MenuManager();
-// menuManager.add(new CSFMedINDEXArticleMenuContribution(cv));
-// cv.setContextMenu(menuManager);
+		MenuManager menu = new MenuManager();
+		menu.add(new VATMenuContributionItem(cv));
+		cv.setContextMenu(menu);
 		
 		return vc;
 	}
@@ -103,10 +107,12 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 	
 	/**
 	 * Overwrite to add actions to the selector panel
-	 * @param actionList 
+	 * 
+	 * @param actionList
 	 * 
 	 * @param slp2
 	 */
-	public void populateSelectorPanel(SelectorPanelProvider slp, FlatDataLoader fdl, List<IAction> actionList){}
+	public void populateSelectorPanel(SelectorPanelProvider slp, FlatDataLoader fdl,
+		List<IAction> actionList){}
 	
 }

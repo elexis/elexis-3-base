@@ -22,7 +22,6 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
 
-
 /**
  * {@link LabelProvider} that extends the basic {@link ArtikelstammLabelProvider} to consider the
  * stock status of articles. Applicable to Elexis v2.1 only.
@@ -39,6 +38,12 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 		if (ai.isBlackBoxed())
 			return blackBoxedImage;
 		return super.getImage(element);
+	}
+	
+	@Override
+	public String getText(Object element){
+		ArtikelstammItem ai = (ArtikelstammItem) element;
+		return ai.getLabel() + " (LB: " + ai.getIstbestand() + ")";
 	}
 	
 	/**

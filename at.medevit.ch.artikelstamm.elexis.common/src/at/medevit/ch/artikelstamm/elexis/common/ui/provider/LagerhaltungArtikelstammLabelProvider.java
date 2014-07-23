@@ -43,7 +43,11 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	@Override
 	public String getText(Object element){
 		ArtikelstammItem ai = (ArtikelstammItem) element;
-		return ai.getLabel() + " (LB: " + ai.getIstbestand() + ")";
+		int istBestand = ai.getIstbestand();
+		if (istBestand == 0) {
+			return ai.getLabel();
+		}
+		return ai.getLabel() + " (LB: " + istBestand + ")";
 	}
 	
 	/**

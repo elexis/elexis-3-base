@@ -123,8 +123,8 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		
 	};
 	
-	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-		ElexisEvent.EVENT_USER_CHANGED) {
+	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(
+		Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
 		public void runInUi(ElexisEvent ev){
 			String[] defsort = CoreHub.userCfg.get(SORTMODE_DEF, "0,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
@@ -157,19 +157,19 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		public void dispose(){}
 		
 		/** Add filters for search to query */
-		private void addFilters(Query<DocHandle> qbe) {
-			qbe.add(DocHandle.FLD_TITLE, Query.LIKE, "%"+searchTitle+"%");
+		private void addFilters(Query<DocHandle> qbe){
+			qbe.add(DocHandle.FLD_TITLE, Query.LIKE, "%" + searchTitle + "%");
 			// Add every keyword
-			for (String kw: searchKW.split(" ")) {
-				qbe.add(DocHandle.FLD_KEYWORDS, Query.LIKE, "%"+kw+"%");
+			for (String kw : searchKW.split(" ")) {
+				qbe.add(DocHandle.FLD_KEYWORDS, Query.LIKE, "%" + kw + "%");
 			}
 		}
 		
-		private boolean filterMatches(String[] kws, DocHandle h) {
+		private boolean filterMatches(String[] kws, DocHandle h){
 			if (!h.getTitle().toLowerCase().contains(searchTitle.toLowerCase()))
 				return false;
 			String dkw = h.getKeywords().toLowerCase();
-			for (String kw: kws) {
+			for (String kw : kws) {
 				if (!dkw.contains(kw)) {
 					return false;
 				}
@@ -178,10 +178,10 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		}
 		
 		/** Filter a list of DocHandles */
-		private List<DocHandle> filterList(List<DocHandle> list) {
+		private List<DocHandle> filterList(List<DocHandle> list){
 			List<DocHandle> result = new LinkedList<DocHandle>();
 			String[] kws = searchKW.toLowerCase().split(" ");
-			for (DocHandle dh: list) {
+			for (DocHandle dh : list) {
 				if (filterMatches(kws, dh))
 					result.add(dh);
 			}
@@ -210,7 +210,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 				qbe.add(DocHandle.FLD_PATID, Query.EQUALS, pat.getId());
 				addFilters(qbe);
 				List<DocHandle> docs = qbe.execute();
-				for (DocHandle dh: docs) {
+				for (DocHandle dh : docs) {
 					if (!dh.isCategory())
 						ret.add(dh);
 				}
@@ -277,7 +277,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	}
 	
 	class Sorter extends ViewerSorter {
-		private int docCompare(DocHandle d1, DocHandle d2) {
+		private int docCompare(DocHandle d1, DocHandle d2){
 			String c1, c2;
 			if (sortMode == SORTMODE_DATE) {
 				c1 = new TimeTool(d1.get(DocHandle.FLD_DATE)).toString(TimeTool.DATE_COMPACT);
@@ -356,11 +356,9 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		// Title search field
 		Label lSearchTitle = new Label(parent, SWT.NONE);
 		lSearchTitle.setText(Messages.OmnivoreView_searchTitleLabel);
-		lSearchTitle.setLayoutData(
-			new GridData(SWT.LEFT, SWT.TOP, false, false));
+		lSearchTitle.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		final Text tSearchTitle = new Text(parent, SWT.SINGLE);
-		tSearchTitle.setLayoutData(
-			new GridData(SWT.FILL, SWT.TOP, true, false));
+		tSearchTitle.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		
 		// Keyword search field
 		Label lSearchKW = new Label(parent, SWT.NONE);
@@ -371,7 +369,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		
 		// Add search listener
 		ModifyListener searchListener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+			public void modifyText(ModifyEvent e){
 				searchKW = tSearchKW.getText();
 				searchTitle = tSearchTitle.getText();
 				refresh();
@@ -379,7 +377,6 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		};
 		tSearchTitle.addModifyListener(searchListener);
 		tSearchKW.addModifyListener(searchListener);
-		
 		
 		// Table to display documents
 		table = new Tree(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -394,8 +391,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		table.setLayoutData(
-			new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
 		
 		viewer = new TreeViewer(table);
 		viewer.setContentProvider(new ViewContentProvider());
@@ -406,7 +402,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		Transfer[] transferTypes = new Transfer[] {
+		final Transfer[] transferTypes = new Transfer[] {
 			FileTransfer.getInstance()
 		};
 		
@@ -419,10 +415,12 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			
 			@Override
 			public void drop(DropTargetEvent event){
-				String[] files = (String[]) event.data;
-				for (String file : files) {
-					DocHandle.assimilate(file);
-					viewer.refresh();
+				if (transferTypes[0].isSupportedType(event.currentDataType)) {
+					String[] files = (String[]) event.data;
+					for (String file : files) {
+						DocHandle.assimilate(file);
+						viewer.refresh();
+					}
 				}
 				
 			}
@@ -434,7 +432,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			public void dragSetData(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				DocHandle dh = (DocHandle) selection.getFirstElement();
-
+				
 				if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
 					int end = dh.getTitle().lastIndexOf(".");
 					String titel = (dh.getTitle()).substring(0, end);
@@ -503,8 +501,8 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			new RestrictedAction(AccessControlDefaults.ACE_DOC_CREATE,
 				Messages.OmnivoreView_importActionCaption) {
 				{
-				setToolTipText(Messages.OmnivoreView_importActionToolTip);
-				setImageDescriptor(Images.IMG_IMPORT.getImageDescriptor());
+					setToolTipText(Messages.OmnivoreView_importActionToolTip);
+					setImageDescriptor(Images.IMG_IMPORT.getImageDescriptor());
 				}
 				
 				public void doRun(){
@@ -523,11 +521,11 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			new RestrictedAction(AccessControlDefaults.ACE_DOC_DELETE,
 				Messages.OmnivoreView_deleteActionCaption) {
 				{
-				setToolTipText(Messages.OmnivoreView_deleteActionToolTip);
-				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
-			}
-			
-			public void doRun(){
+					setToolTipText(Messages.OmnivoreView_deleteActionToolTip);
+					setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
+				}
+				
+				public void doRun(){
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					DocHandle dh = (DocHandle) obj;
@@ -552,24 +550,24 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 					} else {
 						if (SWTHelper.askYesNo(
 							Messages.OmnivoreView_reallyDeleteCaption,
-					MessageFormat.format(Messages.OmnivoreView_reallyDeleteContents,
-						dh.get("Titel")))) { //$NON-NLS-2$
-					dh.delete();
-					viewer.refresh();
+							MessageFormat.format(Messages.OmnivoreView_reallyDeleteContents,
+								dh.get("Titel")))) { //$NON-NLS-2$
+							dh.delete();
+							viewer.refresh();
 						}
-				}
+					}
+				};
 			};
-		};
-			
+		
 		editAction =
 			new RestrictedAction(AccessControlDefaults.ACE_DOC_DELETE,
 				Messages.OmnivoreView_editActionCaption) {
 				{
 					setToolTipText(Messages.OmnivoreView_editActionTooltip);
-				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
-			}
-			
-			public void doRun(){
+					setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
+				}
+				
+				public void doRun(){
 					ISelection selection = viewer.getSelection();
 					DocHandle dh = (DocHandle) ((IStructuredSelection) selection).getFirstElement();
 					if (dh.isCategory()) {
@@ -643,18 +641,19 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			}
 		};
 		
-		flatViewAction = new Action(Messages.OmnivoreView_flatActionCaption,
-				Action.AS_CHECK_BOX) {
+		flatViewAction = new Action(Messages.OmnivoreView_flatActionCaption, Action.AS_CHECK_BOX) {
 			{
 				setImageDescriptor(Images.IMG_FILTER.getImageDescriptor());
 				setToolTipText(Messages.OmnivoreView_flatActionTooltip);
 			}
-			public void run() {
+			
+			public void run(){
 				bFlat = isChecked();
 				refresh();
 			}
 		};
 	};
+	
 	private void hookDoubleClickAction(){
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event){

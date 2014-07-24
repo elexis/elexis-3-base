@@ -22,13 +22,11 @@ import ch.elexis.base.ch.ebanking.esr.ESRFile;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.Messages;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.Log;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
@@ -82,6 +80,15 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 													continue;
 												}
 											}
+											if (rn.getStatus() == RnStatus.IN_BETREIBUNG) {
+												if (SWTHelper.askYesNo(
+													Messages.ESRView_compulsoryExecution,
+													Messages.ESRView_rechnung + rn.getNr()
+														+ Messages.ESRView_isInCompulsoryExecution) == false) {
+													continue;
+												}
+											}
+											
 											Money zahlung = rec.getBetrag();
 											Money offen = rn.getOffenerBetrag();
 											if (zahlung.isMoreThan(offen)) {

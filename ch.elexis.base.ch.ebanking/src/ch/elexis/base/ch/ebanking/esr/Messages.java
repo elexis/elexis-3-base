@@ -61,6 +61,8 @@ public class Messages extends NLS {
 	public static String ESRView_loadESR;
 	public static String ESRView_morethan;
 	public static String ESRView_not_booked;
+	public static String ESRView_compulsoryExecution;
+	public static String ESRView_isInCompulsoryExecution;
 	public static String ESRView_paid;
 	public static String ESRView_paymentfor;
 	public static String ESRView_read_ESR;

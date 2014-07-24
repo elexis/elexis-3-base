@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.omnivore.feature"
-      label="omnivore: Ein einfaches Archiv für Dokumente (fast) aller Art"
+      label="Omnivore: Ein einfaches Archiv für Dokumente (fast) aller Art"
       version="3.0.0.qualifier"
       provider-name="ch.elexis">
 

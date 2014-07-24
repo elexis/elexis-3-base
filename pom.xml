@@ -106,9 +106,9 @@
   <module>ch.elexis.support.dbshaker.feature</module>
   <module>ch.medelexis.text.templator</module>
   <module>ch.medelexis.text.templator.feature</module>
+  <module>ch.medshare.commons</module>
   <module>ch.medshare.mediport</module>
   <module>ch.medshare.mediport.feature</module>
-  <module>ch.medshare.commons</module>
   <module>com.hilotec.elexis.opendocument</module>
   <module>com.hilotec.elexis.opendocument.feature</module>
   <module>com.hilotec.elexis.kgview</module>
@@ -212,6 +212,9 @@
           </goals>
           <configuration>
             <excludes>
+              <plugin id="bouncycastle.bcprov"/>
+              <plugin id="bouncycastle.bcprov-jdk14"/>
+              <plugin id="bcprov"/>
               <plugin id="org.apache.xerces"/>
               <plugin id="de.kupzog.ktable"/>
               <plugin id="xerces.Impl"/>

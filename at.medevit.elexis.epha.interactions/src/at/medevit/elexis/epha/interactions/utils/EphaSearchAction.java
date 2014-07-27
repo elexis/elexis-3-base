@@ -59,6 +59,10 @@ public class EphaSearchAction extends Action implements IKonsExtension, IHandler
 		
 		for (Prescription prescription : medication) {
 			String num = null;
+			if (prescription.getArtikel() == null) {
+				logger.warn("Article of prescription ID=" + prescription.getId() + " not valid");
+				continue;
+			}
 			String ean = prescription.getArtikel().getEAN();
 			
 			if (ean != null && !ean.isEmpty() && ean.length() >= 9) {

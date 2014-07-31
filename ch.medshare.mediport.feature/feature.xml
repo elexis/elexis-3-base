@@ -7,14 +7,15 @@
 
    <description>
       Abrechnungsplugin für MediPort
+      Mehr Info unter http://wiki.elexis.info/ch.medshare.mediport.feature.feature.group
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [TODO: Enter Copyright Description here.]
+   <copyright url="http://elexis.info/de_contributers.html">
+     Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [TODO: Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
    </license>
 
    <plugin

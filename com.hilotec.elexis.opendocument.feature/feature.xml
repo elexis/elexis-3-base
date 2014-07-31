@@ -6,7 +6,7 @@
       provider-name="ch.medelexis">
 
    <description>
-      Freies alternatives Text-Plugin fuer Elexis. Sollte mit jeder Textverarbeitung funktionieren welche das OpenDocument-Format unterstuetzt. Das Plugin generiert ODT-Files und öffnet sie danach mit dem konfigurierten Programm. Mehr Info unter http://wiki.elexis.info/com.hilotec.elexis.opendocument
+      Freies alternatives Text-Plugin fuer Elexis. Sollte mit jeder Textverarbeitung funktionieren welche das OpenDocument-Format unterstuetzt. Das Plugin generiert ODT-Files und öffnet sie danach mit dem konfigurierten Programm. Mehr Info unter http://wiki.elexis.info/com.hilotec.elexis.opendocument.feature.feature.group
 
   Zusaetzliche Features:
 

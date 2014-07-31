@@ -6,7 +6,7 @@
       provider-name="ch.elexis">
 
   <description>
-      Einfache Einbindung eines beliebigen Dokumentenverzeichnisses (Dateinamen müssen bestimmten Konventionen folgen). Mehr Info unter http://wiki.elexis.info/Ch.elexis.externe_dokumente
+      Einfache Einbindung eines beliebigen Dokumentenverzeichnisses (Dateinamen müssen bestimmten Konventionen folgen). Mehr Info unter http://wiki.elexis.info/ch.elexis.externe_dokumente.feature.feature.group
   </description>
 
    <copyright url="http://elexis.info/de_contributers.html">

@@ -6,7 +6,8 @@
       provider-name="medevit.at">
 
   <description>
-  Unterstützung für den Zugriff auf swissmedic, epha und andere nützliche Wissensquelllen. Mehr Info unter http://wiki.elexis.info/at.medevit.elexis.decision
+  Unterstützung für den Zugriff auf swissmedic, epha und andere nützliche Wissensquelllen. 
+  Mehr Info unter http://wiki.elexis.info/at.medevit.elexis.decision.feature.feature.group
   </description>
 
     <copyright url="http://elexis.info/de_contributers.html">

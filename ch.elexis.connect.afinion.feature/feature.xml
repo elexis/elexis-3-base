@@ -6,10 +6,10 @@
       provider-name="elexis.info">
 
    <description>
-      Dieses Plugin dient dazu, das Laborgerät ‘Afinion AS100 Analyzer’1 an Elexis anzubinden. Mit diesem Plugin können die, vom Afinion gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden. Mehr Info unter http://wiki.elexis.info/ch.elexis.connect.afinion
+      Dieses Plugin dient dazu, das Laborgerät ‘Afinion AS100 Analyzer’1 an Elexis anzubinden. Mit diesem Plugin können die, vom Afinion gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden. Mehr Info unter http://wiki.elexis.info/ch.elexis.connect.afinion.feature.feature.group
    </description>
 
-    <copyright url="http://elexis.info/de_contributers.html">
+   <copyright url="http://elexis.info/de_contributers.html">
      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 

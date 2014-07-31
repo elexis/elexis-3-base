@@ -6,7 +6,8 @@
       provider-name="elexis.ch">
 
   <description>
-      This plugin allows to integrate hidden notes into a consultation text. Mehr Info unter http://wiki.elexis.info/ch.elexis.base.konsextension.privatnotizen
+      This plugin allows to integrate hidden notes into a consultation text. Mehr Info unter http://wiki.elexis.info/ch.elexis.base.konsextension.privatnotizen.feature.feature.group
+      Mehr Info unter http://wiki.elexis.info/at.medevit.elexis.medietikette.feature.feature.group
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">

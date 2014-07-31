@@ -6,7 +6,7 @@
       provider-name="elexis.info">
 
   <description>
-      Import von Laborresultaten vom Labor Analytica. Via OpenVPN. Mehr Info unter http://wiki.elexis.info/ch.elexis.laborimport.analytica
+      Import von Laborresultaten vom Labor Analytica. Via OpenVPN. Mehr Info unter http://wiki.elexis.info/ch.elexis.laborimport.analytica.feature.feature.group
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">

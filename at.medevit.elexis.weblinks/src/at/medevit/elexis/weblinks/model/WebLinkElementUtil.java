@@ -96,12 +96,16 @@ public class WebLinkElementUtil {
 	private static void saveIds(List<String> ids){
 		StringBuilder sb = new StringBuilder();
 		
-		for (String string : ids) {
-			sb.append(string);
-			sb.append(ID_DELIMITER);
+		if (ids.isEmpty()) {
+			CoreHub.userCfg.set(CFG_WEBLINK_IDS, "");
+		} else {
+			for (String string : ids) {
+				sb.append(string);
+				sb.append(ID_DELIMITER);
+			}
+			sb.setLength(sb.length() - ID_DELIMITER.length());
+			CoreHub.userCfg.set(CFG_WEBLINK_IDS, sb.toString());
 		}
-		sb.setLength(sb.length() - ID_DELIMITER.length());
-		CoreHub.userCfg.set(CFG_WEBLINK_IDS, sb.toString());
 	}
 	
 	public static String getTextConfig(String id){

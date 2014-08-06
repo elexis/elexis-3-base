@@ -25,11 +25,11 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.scripting.ScriptEditor;
 //import ch.elexis.core.ui.UiDesk;
 //import ch.elexis.core.ui.scripting.ScriptEditor;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Query;
+import ch.elexis.scripting.ScriptEditor;
 import ch.rgw.tools.StringTool;
 
 public class PrefsPage extends Composite {

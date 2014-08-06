@@ -14,8 +14,8 @@ package ch.elexis.agenda.data;
 import java.io.FileWriter;
 import java.util.List;
 
-import ch.elexis.core.ui.scripting.CSVWriter;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.scripting.CSVWriter;
 import ch.rgw.tools.ExHandler;
 
 public class CSVExporter {

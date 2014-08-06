@@ -20,6 +20,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
@@ -28,9 +30,11 @@ import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class ArtikelstammImporterPage extends ImporterPage {
+	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporter.class);
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
+		log.info("ArtikelstammImporterPage. doImport " + results[0]);
 		ArtikelstammPharmaReferenceDataImporter ardi = new ArtikelstammPharmaReferenceDataImporter();
 		return ardi.performImport(monitor, new FileInputStream(results[0]), null);
 	}

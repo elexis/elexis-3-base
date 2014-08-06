@@ -46,22 +46,26 @@ public class ArtikelstammImporter {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporter.class);
 	
 	public static IStatus performImport(IProgressMonitor monitor, InputStream input){
-		if(monitor == null) {
+		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 		
-		monitor.beginTask("Aktualisierung des Artikelstamms", 7);
+		String msg = "Aktualisierung des Artikelstamms";
+		log.info(msg + " ");
+		monitor.beginTask(msg, 7);
 		monitor.subTask("Einlesen der Aktualisierungsdaten");
 		ARTIKELSTAMM importStamm = null;
 		try {
 			importStamm = ArtikelstammHelper.unmarshallInputStream(input);
 		} catch (JAXBException | SAXException je) {
+			msg = "Fehler beim Einlesen der Import-Datei";
 			Status status =
-				new ElexisStatus(IStatus.ERROR, PluginConstants.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK,
-					"Fehler beim Einlesen der Import-Datei", je);			
+				new ElexisStatus(IStatus.ERROR, PluginConstants.PLUGIN_ID,
+					ElexisStatus.CODE_NOFEEDBACK, msg, je);
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
+			log.info(msg);
 			return Status.CANCEL_STATUS;
-		} 
+		}
 		monitor.worked(1);
 		
 		int importStammVersion = importStamm.getCUMULVER();
@@ -73,11 +77,13 @@ public class ArtikelstammImporter {
 		// only continue if the dataset to be imported for importStammType is newer than
 		// the current
 		if (currentStammVersion >= importStammVersion) {
-			Status status =
-				new Status(IStatus.ERROR, PluginConstants.PLUGIN_ID, "Import-Datei ist älter ("
+			msg = "Import-Datei ist älter ("
 					+ importStammVersion + ") oder gleich vorhandener Stand ("
-					+ currentStammVersion + "). Import wird abgebrochen.");
+					+ currentStammVersion + "). Import wird abgebrochen.";
+			Status status =
+				new Status(IStatus.ERROR, PluginConstants.PLUGIN_ID, msg);
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
+			log.info(msg);
 			return Status.OK_STATUS;
 		}
 		
@@ -103,10 +109,10 @@ public class ArtikelstammImporter {
 		monitor.worked(1);
 		monitor.done();
 		long endTime = System.currentTimeMillis();
-		log.debug("Artikelstamm import took " + ((endTime - startTime) / 1000) + "sec");
-		
 		ElexisEventDispatcher.reload(ArtikelstammItem.class);
 		
+		log.info("Artikelstamm import of" + importStammType + ": " + importStammVersion + " took "
+				+ ((endTime - startTime) / 1000) + "sec");
 		return Status.OK_STATUS;
 	}
 	

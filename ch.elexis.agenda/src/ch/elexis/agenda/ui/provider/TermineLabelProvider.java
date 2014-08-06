@@ -19,23 +19,44 @@ public class TermineLabelProvider extends LabelProvider implements ITableLabelPr
 	public String getColumnText(Object element, int columnIndex){
 		if (element instanceof Termin) {
 			Termin termin = (Termin) element;
+			StringBuilder sbLabel = new StringBuilder();
+			
 			TimeSpan ts = termin.getTimeSpan();
 			
-			// get day, start and end time
+			// day
 			TimeTool tt = new TimeTool();
 			tt.setDate(termin.getDay());
-			String day = tt.toString(TimeTool.DATE_GER);
+			sbLabel.append(tt.toString(TimeTool.DATE_GER));
+			sbLabel.append(", ");
 			
+			// start time
 			tt.setTime(ts.from);
-			String from = tt.toString(TimeTool.TIME_SMALL);
+			sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
+			sbLabel.append(" - ");
 			
+			// end time
 			tt.setTime(ts.until);
-			String until = tt.toString(TimeTool.TIME_SMALL);
+			sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
 			
-			String label =
-				day + ", " + from + " - " + until + " (" + termin.getType() + ", "
-					+ termin.getStatus() + ")";
-			return label;
+			// type
+			sbLabel.append(" (");
+			sbLabel.append(termin.getType());
+			sbLabel.append(", ");
+			// status
+			sbLabel.append(termin.getStatus());
+			sbLabel.append("), ");
+			
+			// bereich
+			sbLabel.append(termin.getBereich());
+			
+			// grund if set
+			if (termin.getGrund() != null && !termin.getGrund().isEmpty()) {
+				sbLabel.append(" (");
+				sbLabel.append(termin.getGrund());
+				sbLabel.append(")");
+			}
+			
+			return sbLabel.toString();
 		}
 		return element.toString();
 	}

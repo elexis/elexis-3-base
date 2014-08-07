@@ -45,6 +45,7 @@ public class Messages extends NLS {
 	public static String DocHandle_readErrorText;
 	public static String DocHandle_writeErrorCaption;
 	public static String xChangeContributor_thisIsAnOmnivoreDoc;
+	public static String DocHandle_fileNameTooLong;
 	
 	static {
 		// initialize resource bundle

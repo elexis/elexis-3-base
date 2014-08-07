@@ -574,6 +574,10 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	}
 	
 	public static void assimilate(String f){
+		assimilate(f, null);
+	}
+	
+	public static void assimilate(String f, String selectedCategory){
 		Patient act = ElexisEventDispatcher.getSelectedPatient();
 		if (act == null) {
 			SWTHelper.showError(Messages.DocHandle_noPatientSelected,
@@ -597,7 +601,13 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			return;
 		}
 		
-		FileImportDialog fid = new FileImportDialog(file.getName());
+		FileImportDialog fid;
+		if (selectedCategory == null) {
+			fid = new FileImportDialog(file.getName());
+		} else {
+			fid = new FileImportDialog(file.getName(), selectedCategory);
+		}
+		
 		if (fid.open() == Dialog.OK) {
 			try {
 				BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
@@ -608,7 +618,18 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				}
 				bis.close();
 				baos.close();
-				new DocHandle(null, baos.toByteArray(), act, fid.title.trim(), file.getName(),
+				
+				String fileName = file.getName();
+				if (fileName.length() > 255) {
+					SWTHelper.showError(Messages.DocHandle_readErrorCaption,
+						Messages.DocHandle_fileNameTooLong);
+					return;
+				}
+				String category = fid.category;
+				if (category == null || category.length() == 0) {
+					category = DocHandle.getDefaultCategory().getCategoryName();
+				}
+				new DocHandle(category, baos.toByteArray(), act, fid.title.trim(), file.getName(),
 					fid.keywords.trim());
 			} catch (Exception ex) {
 				ExHandler.handle(ex);

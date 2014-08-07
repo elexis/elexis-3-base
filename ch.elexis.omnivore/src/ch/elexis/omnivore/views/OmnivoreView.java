@@ -417,12 +417,16 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			public void drop(DropTargetEvent event){
 				if (transferTypes[0].isSupportedType(event.currentDataType)) {
 					String[] files = (String[]) event.data;
+					String category = null;
+					if (event.item != null && event.item.getData() instanceof DocHandle) {
+						DocHandle dh = (DocHandle) event.item.getData();
+						category = dh.getCategory();
+					}
 					for (String file : files) {
-						DocHandle.assimilate(file);
+						DocHandle.assimilate(file, category);
 						viewer.refresh();
 					}
 				}
-				
 			}
 			
 		});

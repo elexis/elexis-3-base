@@ -32,16 +32,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.tiff.common.ui.datepicker.DatePickerCombo;
-
-import ch.elexis.core.ui.Hub;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.omnivore.data.DocHandle;
 import ch.rgw.tools.TimeTool;
+
+import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class FileImportDialog extends TitleAreaDialog {
 	String file;
@@ -55,6 +54,7 @@ public class FileImportDialog extends TitleAreaDialog {
 	public String title;
 	public String keywords;
 	public String category;
+	private String preSelectedCategory;
 	
 	public FileImportDialog(DocHandle dh){
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
@@ -65,6 +65,12 @@ public class FileImportDialog extends TitleAreaDialog {
 	public FileImportDialog(String name){
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
 		file = name;
+	}
+	
+	public FileImportDialog(String name, String preSelectedCategory){
+		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
+		file = name;
+		this.preSelectedCategory = preSelectedCategory;
 	}
 	
 	@Override
@@ -146,7 +152,17 @@ public class FileImportDialog extends TitleAreaDialog {
 		if (cats.size() > 0) {
 			Collections.sort(cats);
 			cbCategories.setItems(cats.toArray(new String[0]));
-			cbCategories.select(0);
+			
+			if (preSelectedCategory == null) {
+				cbCategories.select(0);
+			} else {
+				String[] items = cbCategories.getItems();
+				for (int i = 0; i < items.length; i++) {
+					if (items[i].equals(preSelectedCategory)) {
+						cbCategories.select(i);
+					}
+				}
+			}
 		}
 		new Label(ret, SWT.NONE).setText(Messages.FileImportDialog_titleLabel);
 		tTitle = SWTHelper.createText(ret, 1, SWT.NONE);

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/ehealthconnector.jar" sourcepath="/ehealthconnector/src"/>
+	<classpathentry exported="true" kind="lib" path="lib/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200803061910.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.ocl_1.3.0.v200905271400.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.ocl.ecore_1.3.0.v200905271400.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.hl7.datatypes_1.2.0.201212201425.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.hl7.rim_1.2.0.201212201425.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.hl7.vocab_1.2.0.201212201425.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.cda_1.2.0.201212201425.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.cda.hitsp_1.2.0.201212201425.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.emf.runtime_1.0.0.201212201425.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.cda.cdt_1.2.0.201212201425.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.ihe.xds_2.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.ihe.xds.consumer_2.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.ihe.xds.metadata_2.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.ihe.xds.metadata.extract_2.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.ihe.xds.metadata.extract.cdar2_2.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.ihe.xds.metadata.transform_2.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.ihe.xds.soap_2.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.cda.ch.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.cda.ihe_1.2.0.201212201425.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.mdht.uml.cda.ccd_1.2.0.201212201425.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.openhealthtools.ihe.utils_2.0.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

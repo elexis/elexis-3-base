@@ -476,7 +476,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			}
 			
 			temp.deleteOnExit();
-			byte[] b = getBinary(FLD_DOC);
+			byte[] b = getContents();
 			if (b == null) {
 				SWTHelper.showError(Messages.DocHandle_readErrorCaption,
 					Messages.DocHandle_readErrorMessage);

@@ -1,19 +1,50 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-<modelVersion>4.0.0</modelVersion>
-<groupId>ch.elexis.base</groupId>
-<artifactId>elexis-3-base</artifactId>
-<version>3.0.0-SNAPSHOT</version>
-<properties>
-  <tycho-version>0.20.0</tycho-version>
-  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  <tycho-extras.version>${tycho-version}</tycho-extras.version>
-  <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
-  <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
-  <repo_name>elexis.3.base</repo_name>
-  <repo_variant>snapshot</repo_variant>
-</properties>
-<packaging>pom</packaging>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ch.elexis.base</groupId>
+  <artifactId>elexis-3-base</artifactId>
+  <version>3.0.0-SNAPSHOT</version>
+  <properties>
+    <tycho-version>0.20.0</tycho-version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tycho-extras.version>${tycho-version}</tycho-extras.version>
+    <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
+    <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
+    <repo_name>elexis.3.base</repo_name>
+    <repo_variant>snapshot</repo_variant>
+    <useBranch>master</useBranch>
+    <nonElexisP2variant>snapshot</nonElexisP2variant>
+    <ROOT>${project.basedir}/compositeRepository</ROOT>
+  </properties>
+  <packaging>pom</packaging>
+  <profiles>
+    <profile>
+      <id>prerelease</id>
+      <activation>
+        <property>
+          <name>repo_variant</name>
+          <value>prerelease</value>
+        </property>
+      </activation>
+      <properties>
+        <nonElexisP2variant>release</nonElexisP2variant>
+        <useBranch>release</useBranch>
+      </properties>
+    </profile>
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>repo_variant</name>
+          <value>release</value>
+        </property>
+      </activation>
+      <properties>
+        <nonElexisP2variant>release</nonElexisP2variant>
+        <useBranch>release</useBranch>
+      </properties>
+    </profile>
+  </profiles>
 <modules>
   <module>at.medevit.atc_codes</module>
   <module>at.medevit.elexis.weblinks</module>
@@ -166,12 +197,12 @@
 </repository-->
   <repository>
     <id>mirror.4.elexis.${repo_variant}</id>
-    <url>http://download.elexis.info/mirror.4.elexis/${repo_variant}/</url>
+    <url>http://download.elexis.info/mirror.4.elexis/${nonElexisP2variant}/</url>
     <layout>p2</layout>
   </repository>
   <repository>
     <id>elexis.3.3rdparty.libraries</id>
-    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/${repo_variant}</url>
+    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/${nonElexisP2variant}</url>
     <layout>p2</layout>
   </repository>
 </repositories>
@@ -192,7 +223,7 @@
 						<properties>
 							<property>
 								<name>timestamp_format</name>
-								<value>{{"'" + "${repo_variant}".substring(0,1).replaceFirst('s','a')+"'yyyyMMdd-HHmm" }}</value>
+								<value>{{"'" + "${repo_variant}".substring(0,1).replaceFirst('s','a').replaceFirst('p','r')+"'yyyyMMdd-HHmm" }}</value>
 							</property>
 						</properties>
 					</configuration>

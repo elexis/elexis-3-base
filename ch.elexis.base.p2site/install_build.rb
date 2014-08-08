@@ -1,12 +1,7 @@
 #!/usr/bin/env ruby
-# Elexis developers! Please only copy the code from 
-# https://github.com/elexis/elexis-3-core/blob/master/ch.elexis.core.p2site/install_build.rb
-# and use it in our p2site.
-#
-#
+#encoding: utf-8
 # ========================================================================
 # Copyright (c) 2006-2010 Intalio Inc
-#               2013      Niklaus Giger, niklaus.giger@member.fsf.org 
 # ------------------------------------------------------------------------
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
@@ -22,7 +17,7 @@
 # Author hmalphettes
 # github.com/intalio/tycho-p2-scripts 
 #
-# Adapted for the needs of Elexis by Niklaus Giger
+# Adapted for the needs of Elexis by Niklaus Giger, niklaus.giger@member.fsf.org 2013 
 #
 
 require "find"
@@ -90,12 +85,22 @@ class CompositeRepository
     if last_version.nil?
       raise "Could not locate a version directory in #{compositeRepoParentFolder.to_s}/#{version_glob}"
     end
-    all.each{|version| 
+    /snapshot/i.match(compositeRepoParentFolder.to_s) ? nrVersions = 3 : nrVersions = 0
+    addedVersions = 0
+    all.sort.reverse.each{|version|
               newVersion = File.join(relative.to_s, version)
               next if @children_repo.index(newVersion)
-              puts "Adding #{newVersion}"
-              @children_repo << newVersion
-              @already_indexed_parents << compositeRepoParentFolder
+              artifactJar = File.expand_path(File.join(compositeRepoParentFolder, relative, newVersion, 'artifacts.jar'))
+              if nrVersions == 0 or addedVersions < nrVersions
+                addedVersions += 1
+                puts "Adding #{addedVersions}/#{nrVersions}: #{newVersion} has #{artifactJar} #{File.size(artifactJar)} bytes"
+                @children_repo << newVersion
+                @already_indexed_parents << compositeRepoParentFolder
+              else
+                snapshotDir2Delete = File.dirname(artifactJar)
+                puts "Removing #{addedVersions}/#{nrVersions} artifactJar #{snapshotDir2Delete}"
+                FileUtils.rm_rf(snapshotDir2Delete, :verbose => $VERBOSE)
+              end
             }
   end
     
@@ -141,7 +146,7 @@ class CompositeRepository
     puts "compute_last_version in #{parent_dir} using '#{version_glob}'"
     glob=File.join(parent_dir,version_glob)
     puts "Looking for the last version in #{glob}"
-    versions = Dir.glob(File.join(glob,"artifacts.*")) | Dir.glob(File.join(glob,"dummy")) | Dir.glob(File.join(glob,"compositeArtifacts.*"))
+    versions = Dir.glob(File.join(glob,"artifacts.*")) | Dir.glob(File.join(glob,"compositeArtifacts.*"))
     sortedversions= Array.new
     versions.uniq.sort.each do |path|
       if FileTest.file?(path) && !FileTest.symlink?(File.dirname(path)) && "latest" != File.basename(File.dirname(path))
@@ -155,7 +160,6 @@ class CompositeRepository
   def compute_versioned_output()
     compute_version
     @versionned_output_dir = "#{@outputPath}/#{@version}"
-    pp @versionned_output_dir
     if @test != "true"
       if File.exist? @versionned_output_dir
         puts "warning: removing the existing directory #{@versionned_output_dir}"
@@ -200,10 +204,56 @@ class CompositeRepository
     children_repos.sort!
   end
   
+  COMPOSITE_XML_RHTML = %(<?xml version="1.0" encoding="UTF-8"?>
+<?composite<%=@ArtifactOrMetadata%>Repository version="1.0.0"?>
+<repository name="&quot;<%=@name%>-<%=@version%>&quot;"
+    type="org.eclipse.equinox.internal.p2.metadata.repository.Composite<%=@ArtifactOrMetadata%>Repository" version="1.0.0">
+  <properties size="1">
+    <property name="p2.timestamp" value="<%=@timestamp%>"/>
+  </properties>
+  <children size="<%=@children_repo.size%>">
+    <%@children_repo.each do |child_repo| %><child location="<%=child_repo%>"/>
+    <%end%>
+  </children>
+</repository>
+)
+  COMPOSITE_INDEX_XML_RHTML = %(<?xml version="1.0" encoding="UTF-8"?>
+<html>
+  <head><title>Composite Repository <%= @name %>-<%= @version %></title></head>
+  <body>
+    <p>This the P2-update site for the <%= @name %> features.</p>
+    <p>The code can be found in the git repository <%= `git ls-remote --get-url` %></p>
+    <h3>For more info see <a  href="http://download.elexis.info/">http://download.elexis.info/</a></h3>
+    <h3>Stable releases</h3>
+    <ol>
+    <li>Elexis 3.0.0 was released on August 3 2014</li>
+    </ol>
+    <h3>Further information</h3>
+    <p>The p2-update site service is sponsored by Medelexis AG. Thanks a lot!</p>
+    <p>For questions and suggestions send an e-mail to the <a  href="mailto:elexis-develop@lists.sourceforge.net">elexis developer</a></p>
+    <h3>Content of <%= @name %>-<%= @version %> built on <%= @date %></h3>
+    <ul>
+      <%@children_repo.each do |child_repo| %><li><a href="<%= child_repo %>"><%= child_repo %></a></li>
+      <% end %>
+    </ul>
+    <p>Link to the actual sources of the composite repository:
+    <ul>
+      <li><a href="compositeArtifacts.xml">compositeArtifacts.xml</a></li>
+      <li><a href="compositeArtifacts.xml">compositeContent.xml</a></li>
+    </ul>
+    </p>
+  </body>
+</html>
+  )
   def emit
     current_dir=File.expand_path(File.dirname(__FILE__))
     #Generate the Artifact Repository
-    template=ERB.new File.new(File.join(current_dir,"composite.xml.rhtml")).read, nil, "%"
+    composite_rhtml = File.join(current_dir,"composite.xml.rhtml")
+    if File.exists?(composite_rhtml)
+      template = ERB.new(File.new(composite_rhtml).read, nil, "%")
+    else
+      template = ERB.new(COMPOSITE_XML_RHTML, nil, "%")
+    end
     artifactsRes=template.result(self.get_binding)
 
     #Generate the Metadata Repository
@@ -211,7 +261,12 @@ class CompositeRepository
     metadataRes=template.result(self.get_binding)
 
     #Generate the HTML page.
-    html_template=ERB.new File.new(File.join(current_dir,"composite_index_html.rhtml")).read, nil, "%"
+    composite__index_rhtml = File.join(current_dir,"composite_index_html.rhtml")
+    if File.exists?(composite__index_rhtml)
+      html_template = ERB.new(File.new(composite__index_rhtml).read, nil, "%")
+    else
+      html_template = ERB.new(COMPOSITE_INDEX_XML_RHTML, nil, '%')
+    end
     htmlRes=html_template.result(self.get_binding)
 
     p2_index = "version = 1
@@ -230,36 +285,31 @@ artifact.repository.factory.order = compositeArtifacts.xml,\!
       out_dir = @versionned_output_dir
       File.open(File.join(out_dir,"compositeArtifacts.xml"), 'w') {|f| f.puts(artifactsRes) }
       File.open(File.join(out_dir,"compositeContent.xml"), 'w') {|f| f.puts(metadataRes) }
-      File.open(File.join(out_dir,"index.html"), 'w') {|f| f.puts(htmlRes) }
+      File.open(File.join(out_dir,"index.html"), 'w') {
+        |f|
+        f.puts(htmlRes)
+      }
       File.open(File.join(out_dir,"p2.index"), 'w') {|f| f.puts(p2_index) }
       puts "Wrote the composite repository in #{out_dir}"
     end
   end
-end
+end  
 
-
-ini_lines = IO.readlines(File.join(File.dirname(__FILE__), 'repo.properties'))
+property_file = File.join(File.dirname(__FILE__), 'repo.properties')
+ini_lines = IO.readlines(property_file)
+puts "Read repo.properties from #{property_file}"
 ini = {}
 ini_lines.each{ |line| splitted = line.strip.split('='); ini[splitted[0]] = splitted[1] }
-
-variant =ini['repoVariant']
-branch = ENV['GIT_BRANCH'] # given by a jenkins-CI
-
-if branch && /release/.match(branch) 
-  release_name = branch.split('/')[-1]
-  if variant != 'release'
-    puts "Cannot build a release as repoVariant '#{variant}' should be release"
-    exit 2
-  end
-  puts "Building release for #{branch}. Name ist #{release_name}"
-end
-
 fullVersion = "#{ini['version']}.#{ini['qualifier']}"
 repo_name = ini['repoName']
 project = File.expand_path(File.join(__FILE__, '..', '..', ini['projectName']))
-ENV['ROOT'] ||= "/srv/www/download.elexis.info/#{repo_name}"
-root = ENV['ROOT']
-destBaseDir = "#{root}/versions_4_#{variant}/"
+if ARGV.size == 1
+	root = ARGV[0]
+else
+	ENV['ROOT'] ||= "/srv/www/download.elexis.info/#{repo_name}"
+	root = ENV['ROOT']
+end
+destBaseDir = "#{root}/versions_4_#{ini['repoVariant']}/"
 dest = File.expand_path("#{destBaseDir}/#{fullVersion}")
 unless File.directory?(dest)
   FileUtils.makedirs(dest, :verbose => true)
@@ -271,5 +321,6 @@ artifact.repository.factory.order = artifacts.xml,\!
 
 end
 
-compositeRepository=CompositeRepository.new root, variant, destBaseDir, ini['repoName'], 'otherurls'
+compositeRepository=CompositeRepository.new root, ini['repoVariant'], destBaseDir, ini['repoName'], 'otherurls'
 compositeRepository.emit
+FileUtils.cp(File.expand_path(__FILE__),compositeRepository.get_versionned_output_dir, :verbose => true) # copy myself to be able to be downloaded!

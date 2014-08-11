@@ -138,14 +138,22 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	static final String dbUpdateFrom10to11 =
 		"ALTER TABLE "+TABLENAME+" ADD "+PersistentObject.FLD_EXTINFO+" BLOB;";
 			//@formatter:on
-			
+	
 	static {
-		addMapping(TABLENAME, FLD_ITEM_TYPE, FLD_CUMMULATED_VERSION, FLD_BLACKBOXED, FLD_GTIN,
-			FLD_PHAR, FLD_DSCR, FLD_ADDDSCR, FLD_ATC, FLD_COMP_GLN, FLD_COMP_NAME, FLD_PEXF,
-			FLD_PPUB, FLD_PKG_SIZE, FLD_SL_ENTRY, FLD_IKSCAT, FLD_LIMITATION, FLD_LIMITATION_PTS,
-			FLD_LIMITATION_TEXT, FLD_GENERIC_TYPE, FLD_HAS_GENERIC, FLD_LPPV, FLD_DEDUCTIBLE,
-			FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE, FLD_LIEFERANT_ID, MAXBESTAND, MINBESTAND,
-			ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH, PersistentObject.FLD_EXTINFO);
+		/**
+		 * FLD_ITEM_TYPE, FLD_PHAR, FLD_PEXF, FLD_PPUB have two mappings on purpose! The mappings
+		 * with the Artikel-Fields are essential in order to make the ArtikelDetailDialog work with
+		 * ArtikelstammItems
+		 */
+		addMapping(TABLENAME, FLD_ITEM_TYPE, Artikel.FLD_TYP + "=" + FLD_ITEM_TYPE,
+			FLD_CUMMULATED_VERSION, FLD_BLACKBOXED, FLD_GTIN, FLD_PHAR, Artikel.FLD_PHARMACODE
+				+ "=" + FLD_PHAR, FLD_DSCR, FLD_ADDDSCR, FLD_ATC, FLD_COMP_GLN, FLD_COMP_NAME,
+			FLD_PEXF, Artikel.FLD_EK_PREIS + "=" + FLD_PEXF, FLD_PPUB, Artikel.FLD_VK_PREIS + "="
+				+ FLD_PPUB, FLD_PKG_SIZE, FLD_SL_ENTRY, FLD_IKSCAT, FLD_LIMITATION,
+			FLD_LIMITATION_PTS, FLD_LIMITATION_TEXT, FLD_GENERIC_TYPE, FLD_HAS_GENERIC, FLD_LPPV,
+			FLD_DEDUCTIBLE, FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE, FLD_LIEFERANT_ID,
+			MAXBESTAND, MINBESTAND, ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH,
+			PersistentObject.FLD_EXTINFO);
 		ArtikelstammItem version = load("VERSION"); //$NON-NLS-1$
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
@@ -323,7 +331,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return false;
 	}
 	
-	public void overrideVatInfo(VatInfo overridenVat) {
+	public void overrideVatInfo(VatInfo overridenVat){
 		setExtInfoStoredObjectByKey(EXTINFO_VAL_VAT_OVERRIDEN, overridenVat.toString());
 	}
 	
@@ -331,7 +339,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public VatInfo getVatInfo(){
 		String overridenVat = (String) getExtInfoStoredObjectByKey(EXTINFO_VAL_VAT_OVERRIDEN);
-		if(overridenVat !=null) {
+		if (overridenVat != null) {
 			return VatInfo.valueOf(overridenVat);
 		}
 		
@@ -572,6 +580,10 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return ArtikelstammConstants.TYPE.valueOf(get(FLD_ITEM_TYPE));
 	}
 	
+	public String getTyp(){
+		return get(FLD_ITEM_TYPE);
+	}
+	
 	@Override
 	public String getManufacturerLabel(){
 		StringBuilder sb = new StringBuilder();
@@ -681,9 +693,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if not
 	 *         found
 	 */
-	public static @Nullable
-	ArtikelstammItem findByEANorGTIN(@NonNull
-	String ean){
+	public static @Nullable ArtikelstammItem findByEANorGTIN(@NonNull String ean){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, ean);
 		List<ArtikelstammItem> result = qre.execute();
@@ -697,9 +707,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @param pharmaCode
 	 * @return the ArtikelstammItem for the given pharma code or <code>null</code> if not found
 	 */
-	public static @Nullable
-	ArtikelstammItem findByPharmaCode(@NonNull
-	String pharmaCode){
+	public static @Nullable ArtikelstammItem findByPharmaCode(@NonNull String pharmaCode){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_PHAR, Query.LIKE, pharmaCode);
 		List<ArtikelstammItem> result = qre.execute();

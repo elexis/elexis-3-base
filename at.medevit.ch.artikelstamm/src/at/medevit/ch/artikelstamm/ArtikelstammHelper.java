@@ -95,8 +95,24 @@ public class ArtikelstammHelper {
 	 * @return deterministic uuid of an {@link ARTIKELSTAMM} item
 	 */
 	public static String createUUID(int cummulatedVersion, TYPE type, String gtin, BigInteger phar){
+		return createUUID(cummulatedVersion, type, gtin, phar, true);
+	}
+	
+	/**
+	 * For importer usage, for regular usage see {@link #createUUID(int, TYPE, String, BigInteger)}
+	 * 
+	 * @param cummulatedVersion
+	 * @param type
+	 * @param gtin
+	 * @param phar
+	 * @param includeVersion
+	 *            include the version number of the dataset
+	 * @return deterministic uuid of an {@link ARTIKELSTAMM} item
+	 */
+	public static String createUUID(int cummulatedVersion, TYPE type, String gtin, BigInteger phar,
+		final boolean includeVersion){
 		StringBuilder sb = new StringBuilder();
-		if(gtin.length()>0) {
+		if (gtin.length() > 0) {
 			sb.append(String.format("%014d", Long.parseLong(gtin)));
 		} else {
 			sb.append("00000000000000");
@@ -109,12 +125,13 @@ public class ArtikelstammHelper {
 		sb.append(type.name());
 		if (cummulatedVersion > 999 || cummulatedVersion < 0)
 			cummulatedVersion = 0;
-		sb.append(String.format("%03d", cummulatedVersion));
+		if (includeVersion)
+			sb.append(String.format("%03d", cummulatedVersion));
 		return sb.toString();
 	}
 	
-	
-	public static ARTIKELSTAMM unmarshallInputStream(InputStream xmlFileIs) throws JAXBException, SAXException {
+	public static ARTIKELSTAMM unmarshallInputStream(InputStream xmlFileIs) throws JAXBException,
+		SAXException{
 		Unmarshaller u = JAXBContext.newInstance(ARTIKELSTAMM.class).createUnmarshaller();
 		Schema schema = schemaFactory.newSchema(schemaLocationUrl);
 		u.setSchema(schema);
@@ -127,10 +144,11 @@ public class ArtikelstammHelper {
 	 * @return {@link ARTIKELSTAMM}
 	 * @throws JAXBException
 	 * @throws SAXException
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
-	public static ARTIKELSTAMM unmarshallFile(File xmlFile) throws JAXBException, SAXException, FileNotFoundException{
-		return  unmarshallInputStream(new FileInputStream(xmlFile));
+	public static ARTIKELSTAMM unmarshallFile(File xmlFile) throws JAXBException, SAXException,
+		FileNotFoundException{
+		return unmarshallInputStream(new FileInputStream(xmlFile));
 	}
 	
 	public static void marshallToFileSystem(Object newData, File outputFile) throws SAXException,

@@ -11,6 +11,7 @@
 package at.medevit.ch.artikelstamm.elexis.common.importer;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -77,11 +78,11 @@ public class ArtikelstammImporter {
 		// only continue if the dataset to be imported for importStammType is newer than
 		// the current
 		if (currentStammVersion >= importStammVersion) {
-			msg = "Import-Datei ist älter ("
-					+ importStammVersion + ") oder gleich vorhandener Stand ("
-					+ currentStammVersion + "). Import wird abgebrochen.";
-			Status status =
-				new Status(IStatus.ERROR, PluginConstants.PLUGIN_ID, msg);
+			msg =
+				"Import-Datei ist älter (" + importStammVersion
+					+ ") oder gleich vorhandener Stand (" + currentStammVersion
+					+ "). Import wird abgebrochen.";
+			Status status = new Status(IStatus.ERROR, PluginConstants.PLUGIN_ID, msg);
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
 			log.info(msg);
 			return Status.OK_STATUS;
@@ -112,7 +113,7 @@ public class ArtikelstammImporter {
 		ElexisEventDispatcher.reload(ArtikelstammItem.class);
 		
 		log.info("Artikelstamm import of" + importStammType + ": " + importStammVersion + " took "
-				+ ((endTime - startTime) / 1000) + "sec");
+			+ ((endTime - startTime) / 1000) + "sec");
 		return Status.OK_STATUS;
 	}
 	
@@ -123,12 +124,10 @@ public class ArtikelstammImporter {
 	 * @param importStammType
 	 */
 	private static void resetAllBlackboxMarks(TYPE importStammType){
-		JdbcLink link = PersistentObject.getConnection();
-		
-		link.exec("UPDATE " + ArtikelstammItem.TABLENAME + " SET "
-			+ ArtikelstammItem.FLD_BLACKBOXED + "=" + StringConstants.ZERO + " WHERE "
-			+ ArtikelstammItem.FLD_ITEM_TYPE + " LIKE " + JdbcLink.wrap(importStammType.name()));
-		
+		PersistentObject.getConnection().exec(
+			"UPDATE " + ArtikelstammItem.TABLENAME + " SET " + ArtikelstammItem.FLD_BLACKBOXED
+				+ "=" + StringConstants.ZERO + " WHERE " + ArtikelstammItem.FLD_ITEM_TYPE
+				+ " LIKE " + JdbcLink.wrap(importStammType.name()));
 	}
 	
 	/**
@@ -233,7 +232,7 @@ public class ArtikelstammImporter {
 		if (!success)
 			log.warn("Error purging items");
 	}
-	
+
 	private static void importNewItemsIntoDatabase(TYPE importStammType, ARTIKELSTAMM importStamm,
 		IProgressMonitor monitor){
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
@@ -244,58 +243,120 @@ public class ArtikelstammImporter {
 		for (ITEM item : importItemList) {
 			String itemUuid =
 				ArtikelstammHelper.createUUID(importStamm.getCUMULVER(), importStammType,
-					item.getGTIN(), item.getPHAR());
+					item.getGTIN(), item.getPHAR(), false);
 			// Is the item to be imported already in the database? This should only happen
 			// if one re-imports an already imported dataset and the item was marked as black-box
 			int foundElements =
 				PersistentObject.getConnection().queryInt(
 					"SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME + " WHERE "
 						+ ArtikelstammItem.FLD_ID + " " + Query.LIKE + " "
-						+ JdbcLink.wrap(itemUuid));
+						+ JdbcLink.wrap(itemUuid + "%"));
 			
 			if (foundElements == 0) {
 				ai =
 					new ArtikelstammItem(importStamm.getCUMULVER(), importStammType,
 						item.getGTIN(), item.getPHAR(), item.getDSCR(), item.getADDSCR());
+				setValuesOnArtikelstammItem(ai, item, false, -1);
+			} else if (foundElements == 1) {
+				String itemId =
+					PersistentObject.getConnection().queryString(
+						"SELECT ID FROM " + ArtikelstammItem.TABLENAME + " WHERE "
+							+ ArtikelstammItem.FLD_ID + " " + Query.LIKE + " "
+							+ JdbcLink.wrap(itemUuid + "%"));
+				ai = ArtikelstammItem.load(itemId);
+				log.info("Updating article " + ai.getId() + " (" + item.getDSCR() + ")");
+				setValuesOnArtikelstammItem(ai, item, true, importStamm.getCUMULVER());
 			} else {
-				ai = ArtikelstammItem.load(itemUuid);
-				log.warn("Item " + itemUuid + " will be overwritten.");
+				log.error("Found " + foundElements + " items for " + itemUuid + ".");
 			}
-			if (item.getATC() != null)
-				ai.set(ArtikelstammItem.FLD_ATC, item.getATC());
-			if (item.getCOMP() != null) {
-				if (item.getCOMP().getNAME() != null)
-					ai.set(ArtikelstammItem.FLD_COMP_NAME, item.getCOMP().getNAME());
-				if (item.getCOMP().getGLN() != null)
-					ai.set(ArtikelstammItem.FLD_COMP_GLN, item.getCOMP().getGLN());
-			}
-			if (item.getPEXF() != null)
-				ai.set(ArtikelstammItem.FLD_PEXF, item.getPEXF().toString());
-			if (item.getPPUB() != null)
-				ai.set(ArtikelstammItem.FLD_PPUB, item.getPPUB().toString());
-			if (item.isSLENTRY() != null && item.isSLENTRY())
-				ai.set(ArtikelstammItem.FLD_SL_ENTRY, StringConstants.ONE);
-			if (item.getDEDUCTIBLE() != null)
-				ai.set(ArtikelstammItem.FLD_DEDUCTIBLE, item.getDEDUCTIBLE().toString());
-			if (item.getGENERICTYPE() != null)
-				ai.set(ArtikelstammItem.FLD_GENERIC_TYPE, item.getGENERICTYPE());
-			if (item.getIKSCAT() != null)
-				ai.set(ArtikelstammItem.FLD_IKSCAT, item.getIKSCAT());
-			if (item.isNARCOTIC() != null && item.isNARCOTIC())
-				ai.set(ArtikelstammItem.FLD_NARCOTIC, StringConstants.ONE);
-			if (item.isLPPV() != null && item.isLPPV())
-				ai.set(ArtikelstammItem.FLD_LPPV, StringConstants.ONE);
-			if (item.isLIMITATION() != null && item.isLIMITATION())
-				ai.set(ArtikelstammItem.FLD_LIMITATION, StringConstants.ONE);
-			if (item.getLIMITATIONPTS() != null)
-				ai.set(ArtikelstammItem.FLD_LIMITATION_PTS, item.getLIMITATIONPTS().toString());
-			if (item.getLIMITATIONTEXT() != null)
-				ai.set(ArtikelstammItem.FLD_LIMITATION_TEXT, item.getLIMITATIONTEXT());
-			if (item.getPKGSIZE() != null)
-				ai.set(ArtikelstammItem.FLD_PKG_SIZE, item.getPKGSIZE().toString());
 			
 			subMonitor.worked(1);
 		}
 		subMonitor.done();
+	}
+	
+	private static void setValuesOnArtikelstammItem(ArtikelstammItem ai, ITEM item,
+		boolean allValues, final int cummulatedVersion){
+		List<String> fields = new ArrayList<>();
+		List<String> values = new ArrayList<>();
+		
+		// reset blackbox as we updated the article
+		fields.add(ArtikelstammItem.FLD_BLACKBOXED);
+		values.add(StringConstants.ZERO);
+		
+		if (allValues) {
+			// include header values
+			fields.add(ArtikelstammItem.FLD_DSCR);
+			values.add(item.getDSCR());
+			fields.add(ArtikelstammItem.FLD_ADDDSCR);
+			values.add(item.getADDSCR());
+			fields.add(ArtikelstammItem.FLD_CUMMULATED_VERSION);
+			values.add(cummulatedVersion + "");
+		}
+		
+		if (item.getATC() != null) {
+			fields.add(ArtikelstammItem.FLD_ATC);
+			values.add(item.getATC());
+		}
+		if (item.getCOMP() != null) {
+			if (item.getCOMP().getNAME() != null) {
+				fields.add(ArtikelstammItem.FLD_COMP_NAME);
+				values.add(item.getCOMP().getNAME());
+			}
+			if (item.getCOMP().getGLN() != null) {
+				fields.add(ArtikelstammItem.FLD_COMP_GLN);
+				values.add(item.getCOMP().getGLN());
+			}
+		}
+		if (item.getPEXF() != null) {
+			fields.add(ArtikelstammItem.FLD_PEXF);
+			values.add(item.getPEXF().toString());
+		}
+		if (item.getPPUB() != null) {
+			fields.add(ArtikelstammItem.FLD_PPUB);
+			values.add(item.getPPUB().toString());
+		}
+		if (item.isSLENTRY() != null) {
+			fields.add(ArtikelstammItem.FLD_SL_ENTRY);
+			values.add((item.isSLENTRY()) ? StringConstants.ONE : StringConstants.ZERO);
+		}
+		if (item.getDEDUCTIBLE() != null) {
+			fields.add(ArtikelstammItem.FLD_DEDUCTIBLE);
+			values.add(item.getDEDUCTIBLE().toString());
+		}
+		if (item.getGENERICTYPE() != null) {
+			fields.add(ArtikelstammItem.FLD_GENERIC_TYPE);
+			values.add(item.getGENERICTYPE());
+		}
+		if (item.getIKSCAT() != null) {
+			fields.add(ArtikelstammItem.FLD_IKSCAT);
+			values.add(item.getIKSCAT());
+		}
+		if (item.isNARCOTIC() != null) {
+			fields.add(ArtikelstammItem.FLD_NARCOTIC);
+			values.add((item.isNARCOTIC()) ? StringConstants.ONE : StringConstants.ZERO);
+		}
+		if (item.isLPPV() != null) {
+			fields.add(ArtikelstammItem.FLD_LPPV);
+			values.add((item.isLPPV()) ? StringConstants.ONE : StringConstants.ZERO);
+		}
+		if (item.isLIMITATION() != null) {
+			fields.add(ArtikelstammItem.FLD_LIMITATION);
+			values.add((item.isLIMITATION()) ? StringConstants.ONE : StringConstants.ZERO);
+		}
+		if (item.getLIMITATIONPTS() != null) {
+			fields.add(ArtikelstammItem.FLD_LIMITATION_PTS);
+			values.add(item.getLIMITATIONPTS().toString());
+		}
+		if (item.getLIMITATIONTEXT() != null) {
+			fields.add(ArtikelstammItem.FLD_LIMITATION_TEXT);
+			values.add(item.getLIMITATIONTEXT());
+		}
+		if (item.getPKGSIZE() != null) {
+			fields.add(ArtikelstammItem.FLD_PKG_SIZE);
+			values.add(item.getPKGSIZE().toString());
+		}
+		
+		ai.set(fields.toArray(new String[0]), values.toArray(new String[0]));
 	}
 }

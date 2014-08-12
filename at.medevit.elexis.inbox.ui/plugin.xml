@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="elementsui" name="ElementsUi" schema="schema/elementsui.exsd"/>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="at.medevit.elexis.inbox.ui.part.InboxView"
+            icon="rsc/img/inbox_into.png"
+            id="at.medevit.elexis.inbox.ui.view"
+            name="Inbox"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.inbox.ui.command.ReloadViewCommand"
+            id="at.medevit.elexis.inbox.ui.command.reload"
+            name="reload">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:at.medevit.elexis.inbox.ui.view">
+         <command
+               commandId="at.medevit.elexis.inbox.ui.command.reload"
+               icon="rsc/img/refresh.gif"
+               label="Neu laden"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

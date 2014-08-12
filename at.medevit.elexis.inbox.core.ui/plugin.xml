@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="at.medevit.elexis.inbox.ui.elementsui">
+      <uiprovider
+            class="at.medevit.elexis.inbox.core.ui.LabResultUiProvider"
+            id="at.medevit.elexis.inbox.core.ui.uiprovider">
+      </uiprovider>
+   </extension>
+
+</plugin>

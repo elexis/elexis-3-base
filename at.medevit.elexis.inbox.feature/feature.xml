@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="at.medevit.elexis.inbox.feature"
+      label="Inbox"
+      version="3.0.0.qualifier"
+      provider-name="medevit.at">
+
+   <description url="http://www.medelexis.ch">
+      Inbox
+      Mehr Info unter http://wiki.elexis.info/ch.medelexis.application.feature.feature.group
+   </description>
+
+   <copyright>
+      Medelexis AG
+   </copyright>
+
+   <license>
+      Proprietär
+   </license>
+
+   <plugin
+         id="at.medevit.elexis.inbox"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="at.medevit.elexis.inbox.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="at.medevit.elexis.inbox.core.elements"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="at.medevit.elexis.inbox.core.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

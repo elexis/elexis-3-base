@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="at.medevit.elexis.inbox.service">
+   <implementation class="at.medevit.elexis.inbox.model.impl.InboxElementService"/>
+   <service>
+      <provide interface="at.medevit.elexis.inbox.model.IInboxElementService"/>
+   </service>
+</scr:component>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="ehcexport" name="EhcExport" schema="schema/ehcexport.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -10,6 +11,56 @@
             name="eHealthConnector"
             restorable="true">
       </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.ehc.ui.handler.CreateDocumentHandler"
+            id="at.medevit.elexis.ehc.ui.createDocument"
+            name="create eHC document">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.BriefAuswahlView">
+         <command
+               commandId="at.medevit.elexis.ehc.ui.createDocument"
+               icon="icons/ehc.jpg"
+               label="eHC Dokument erstellen"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="at.medevit.elexis.ehc.ui.preference.PreferencePage"
+            id="at.medevit.elexis.ehc.ui.preference"
+            name="eHC">
+      </page>
+   </extension>
+   <extension
+         point="at.medevit.elexis.inbox.elementsprovider">
+      <provider
+            class="at.medevit.elexis.ehc.ui.inbox.InboxElementsProvider"
+            id="at.medevit.elexis.ehc.ui.inbox.elementsprovider">
+      </provider>
+   </extension>
+   <extension
+         point="at.medevit.elexis.inbox.ui.elementsui">
+      <uiprovider
+            class="at.medevit.elexis.ehc.ui.inbox.InboxElementUiProvider"
+            id="at.medevit.elexis.ehc.ui.inbox.uiprovider">
+      </uiprovider>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="at.medevit.elexis.ehc.ui.model.EhcDocumentObjectFactory">
+      </Factory>
    </extension>
 
 </plugin>

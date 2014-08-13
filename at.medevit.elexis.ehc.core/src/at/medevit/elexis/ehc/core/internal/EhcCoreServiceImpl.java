@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2014 MEDEVIT.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     T. Huster - initial API and implementation
+ *******************************************************************************/
 package at.medevit.elexis.ehc.core.internal;
 
 import java.io.InputStream;
@@ -18,6 +28,11 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	
 	private static Logger logger = LoggerFactory.getLogger(EhcCoreServiceImpl.class);
 	
+	public EhcCoreServiceImpl(){
+		// make sure CDACH is registered and initialized
+		CHFactory.eINSTANCE.createCDACH().init();
+	}
+	
 	@Override
 	public CdaCh getPatientDocument(Patient patient){
 		CdaChImpl ret = new CdaChImpl(CHFactory.eINSTANCE.createCDACH().init());
@@ -33,6 +48,8 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 			clinicalDocument = CDAUtil.load(document);
 			if (clinicalDocument instanceof CDACH) {
 				return new CdaChImpl((CDACH) clinicalDocument);
+			} else {
+				logger.warn("Loaded document is not a subclass of CDACH.");
 			}
 		} catch (Exception e) {
 			logger.warn("Error loading document.", e);

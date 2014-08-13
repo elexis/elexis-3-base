@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="at.medevit.elexis.ehc.ui.ehcexport">
+      <category
+            id="at.medevit.elexis.ehc.ui.example.category"
+            name="Beispiele">
+      </category>
+      <wizard
+            category="at.medevit.elexis.ehc.ui.example.category"
+            class="at.medevit.elexis.ehc.ui.example.wizard.PatientWizard"
+            id="at.medevit.elexis.ehc.ui.example.patient"
+            name="Stammdaten Patient">
+      </wizard>
+   </extension>
+
+</plugin>

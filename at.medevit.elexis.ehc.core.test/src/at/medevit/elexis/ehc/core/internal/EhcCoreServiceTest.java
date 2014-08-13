@@ -1,6 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2014 MEDEVIT.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     T. Huster - initial API and implementation
+ *******************************************************************************/
 package at.medevit.elexis.ehc.core.internal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -9,14 +20,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ch.elexis.data.Anschrift;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
+import ehealthconnector.cda.documents.ch.Address;
 import ehealthconnector.cda.documents.ch.CdaCh;
 import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.AdministrativeGenderCode;
+import ehealthconnector.cda.documents.ch.Phone;
 
 public class EhcCoreServiceTest {
 	
@@ -25,6 +41,13 @@ public class EhcCoreServiceTest {
 	@BeforeClass
 	public static void before() throws IOException{
 		patient = new Patient("name", "firstname", "01.01.2000", Patient.FEMALE);
+		patient.set(Kontakt.FLD_PHONE1, "+01555123");
+		patient.set(Kontakt.FLD_MOBILEPHONE, "+01444132");
+		Anschrift anschrift = new Anschrift();
+		anschrift.setOrt("City");
+		anschrift.setPlz("123");
+		anschrift.setStrasse("Street 1");
+		patient.setAnschrift(anschrift);
 	}
 	
 	@AfterClass
@@ -43,6 +66,12 @@ public class EhcCoreServiceTest {
 		assertEquals("firstname", cdaPatient.cGetName().cGetFirstName());
 		assertEquals(AdministrativeGenderCode.Female, cdaPatient.cGetGender());
 		assertEquals("01.01.2000", cdaPatient.cGetBirthDate());
+		List<Address> addresses = cdaPatient.cGetAddresses();
+		assertFalse(addresses.isEmpty());
+		assertEquals("City", addresses.get(0).cGetCity());
+		List<Phone> phones = cdaPatient.cGetPhones();
+		assertFalse(phones.isEmpty());
+		assertEquals("+01555123", phones.get(0).cGetNumber());
 	}
 	
 	@Test

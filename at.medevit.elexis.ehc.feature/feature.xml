@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.ehc.feature"
       label="e Health Connector for Elexis"
-      version="1.0.0.qualifier"
+      version="3.0.0.qualifier"
       provider-name="medevit">
 
    <description url="http://www.example.com/description">
@@ -26,6 +26,13 @@
 
    <plugin
          id="at.medevit.elexis.ehc.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="at.medevit.elexis.ehc.ui.example"
          download-size="0"
          install-size="0"
          version="0.0.0"

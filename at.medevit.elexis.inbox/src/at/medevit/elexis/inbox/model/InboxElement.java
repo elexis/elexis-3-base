@@ -1,7 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2013, MEDEVIT OG and MEDELEXIS AG
- * All rights reserved.
- ******************************************************************************/
+ * Copyright (c) 2014 MEDEVIT.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     T. Huster - initial API and implementation
+ *******************************************************************************/
 package at.medevit.elexis.inbox.model;
 
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
@@ -75,7 +81,7 @@ public class InboxElement extends PersistentObject {
 	
 	public InboxElement(Patient patient, Kontakt mandant, PersistentObject object){
 		create(null);
-		set(FLD_PATIENT, patient.getId());
+		set(FLD_PATIENT, patient != null ? patient.getId() : "");
 		set(FLD_MANDANT, mandant.getId());
 		set(FLD_OBJECT, object.storeToString());
 		set(FLD_STATE, Integer.toString(State.NEW.ordinal()));
@@ -132,10 +138,18 @@ public class InboxElement extends PersistentObject {
 	}
 	
 	public Patient getPatient(){
-		return Patient.load(checkNull(get(FLD_PATIENT)));
+		Patient ret = Patient.load(checkNull(get(FLD_PATIENT)));
+		if (ret.exists()) {
+			return ret;
+		}
+		return null;
 	}
 	
 	public Mandant getMandant(){
-		return Mandant.load(checkNull(get(FLD_MANDANT)));
+		Mandant ret = Mandant.load(checkNull(get(FLD_MANDANT)));
+		if (ret.exists()) {
+			return ret;
+		}
+		return null;
 	}
 }

@@ -1,7 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2013, MEDEVIT OG and MEDELEXIS AG
- * All rights reserved.
- ******************************************************************************/
+ * Copyright (c) 2014 MEDEVIT.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     T. Huster - initial API and implementation
+ *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part;
 
 import java.util.ArrayList;
@@ -11,9 +17,12 @@ import java.util.List;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -123,6 +132,20 @@ public class InboxView extends ViewPart {
 			}
 		});
 		
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event){
+				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
+				if (!selection.isEmpty()) {
+					Object selectedObj = selection.getFirstElement();
+					if (selectedObj instanceof InboxElement) {
+						InboxElementUiExtension extension = new InboxElementUiExtension();
+						extension.fireDoubleClicked((InboxElement) selectedObj);
+					}
+				}
+			}
+		});
+		
 		addFilterActions(menuManager);
 		
 		InboxServiceComponent.getService().addUpdateListener(new IInboxUpdateListener() {
@@ -171,6 +194,7 @@ public class InboxView extends ViewPart {
 		filterText.setFocus();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private ArrayList<PatientInboxElements> getOpenInboxElements(){
 		HashMap<Patient, PatientInboxElements> map = new HashMap<Patient, PatientInboxElements>();
 		List<InboxElement> openElements =

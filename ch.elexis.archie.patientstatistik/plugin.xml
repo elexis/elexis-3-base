@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            class="ch.elexis.archie.patientstatistik.VerrechnungsStatistikView"
-            id="ch.elexis.archie.patientstatistik.view1"
-            name="Verrechnungsstatistik"
-            restorable="true">
-      </view>
-   </extension>
-	<view
- 	   id="ch.elexis.archie.patientstatistik.view"
-	   name="Verrechnungssatistik">
-	</view>
+ <extension
+       point="org.eclipse.ui.views">
+    <view
+          class="ch.elexis.archie.patientstatistik.VerrechnungsStatistikView"
+          id="ch.elexis.archie.patientstatistik.view1"
+          name="Verrechnungsstatistik"
+          restorable="true">
+    </view>
+ </extension>
 </plugin>

@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
@@ -45,8 +42,6 @@ import ch.rgw.tools.VersionInfo;
  * the common base in form of {@link IArtikelstammItem}
  */
 public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
-	private static Logger log = LoggerFactory.getLogger(ArtikelstammItem.class);
-	
 	private static DateFormat df = new SimpleDateFormat("ddMMyy HH:mm");
 	
 	private static IOptifier noObligationOptifier = new NoObligationOptifier();
@@ -137,7 +132,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	static final String dbUpdateFrom10to11 =
 		"ALTER TABLE "+TABLENAME+" ADD "+PersistentObject.FLD_EXTINFO+" BLOB;";
-			//@formatter:on
+	//@formatter:on
 	
 	static {
 		/**
@@ -261,13 +256,37 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public void einzelAbgabe(final int n){
-		// TODO invalid code
+		int anbruch = checkZero(get(ANBRUCH));
+		int ve = getVerkaufseinheit();
+		int vk = getVerpackungsEinheit();
+		if (vk == 0) {
+			if (ve != 0) {
+				vk = ve;
+			}
+		}
+		if (ve == 0) {
+			if (vk != 0) {
+				ve = vk;
+				setVerkaufseinheit(ve);
+			}
+		}
+		int num = n * ve;
+		if (vk == ve) {
+			setIstbestand(getIstbestand() - n);
+		} else {
+			int rest = anbruch - num;
+			while (rest < 0) {
+				rest = rest + vk;
+				setIstbestand(getIstbestand() - 1);
+			}
+			set(ANBRUCH, Integer.toString(rest));
+		}
 	}
 	
 	@Override
 	public void einzelRuecknahme(final int n){
 		int anbruch = checkZero(get(ANBRUCH));
-		int ve = checkZero(get(VERKAUFSEINHEIT));
+		int ve = getVerkaufseinheit();
 		int vk = getVerpackungsEinheit();
 		int num = n * ve;
 		if (vk == ve) {
@@ -284,8 +303,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public int getVerpackungsEinheit(){
-		// TODO
-		return 0;
+		return checkZero(get(FLD_PKG_SIZE));
 	}
 	
 	@Override
@@ -426,12 +444,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public int getVerkaufseinheit(){
-		try {
-			int value = Integer.parseInt(get(VERKAUFSEINHEIT));
-			return value;
-		} catch (NumberFormatException nfe) {
-			return 0;
-		}
+		return checkZero(get(VERKAUFSEINHEIT));
 	}
 	
 	// --------------------
@@ -671,12 +684,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public int getVerpackungseinheit(){
-		try {
-			int value = Integer.parseInt(get(FLD_PKG_SIZE));
-			return value;
-		} catch (NumberFormatException nfe) {
-			return 0;
-		}
+		return getVerpackungsEinheit();
 	}
 	
 	public void setVerpackungseinheit(int vpe){
@@ -693,7 +701,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if not
 	 *         found
 	 */
-	public static @Nullable ArtikelstammItem findByEANorGTIN(@NonNull String ean){
+	public static @Nullable
+	ArtikelstammItem findByEANorGTIN(@NonNull
+	String ean){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, ean);
 		List<ArtikelstammItem> result = qre.execute();
@@ -707,7 +717,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @param pharmaCode
 	 * @return the ArtikelstammItem for the given pharma code or <code>null</code> if not found
 	 */
-	public static @Nullable ArtikelstammItem findByPharmaCode(@NonNull String pharmaCode){
+	public static @Nullable
+	ArtikelstammItem findByPharmaCode(@NonNull
+	String pharmaCode){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_PHAR, Query.LIKE, pharmaCode);
 		List<ArtikelstammItem> result = qre.execute();

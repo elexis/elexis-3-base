@@ -50,6 +50,7 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.TerminDialog;
 
@@ -107,6 +108,10 @@ public class TerminLabel extends Composite {
 				super.mouseUp(e);
 			}
 			
+			@Override
+			public void mouseDown(MouseEvent e){
+				ElexisEventDispatcher.fireSelectionEvent(t.getKontakt());
+			}
 		});
 		new PersistentObjectDragSource(lbl, new PersistentObjectDragSource.ISelectionRenderer() {
 			

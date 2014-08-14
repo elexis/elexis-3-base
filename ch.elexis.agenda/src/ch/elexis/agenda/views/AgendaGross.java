@@ -85,7 +85,7 @@ public class AgendaGross extends BaseAgendaView {
 		"von", "bis", "Typ", "Status", "Personalien", "Grund"
 	};
 	private static final int[] columnWidths = {
-		48, 30, 50, 70, 300, 200
+		50, 50, 50, 70, 300, 200
 	};
 	
 	public AgendaGross(){

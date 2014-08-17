@@ -193,8 +193,7 @@ public class CDALoader {
 			if (!tmpXsl.exists()) {
 				URL xslUrl =
 					FileLocator.resolve(CDALoader.class.getResource("/rsc/vhitg-cda-v3.xsl"));
-				File xslSource = new File(xslUrl.getPath());
-				Files.copy(xslSource.toPath(), tmpXsl.toPath());
+				Files.copy(xslUrl.openStream(), tmpXsl.toPath());
 			}
 			path = tmpXsl.getAbsolutePath();
 		} catch (IOException e) {

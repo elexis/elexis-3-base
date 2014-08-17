@@ -11,6 +11,8 @@ Require-Bundle: at.medevit.elexis.ehc.core,
  org.eclipse.ui.workbench,
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0",
- ch.rgw.utility
+ ch.rgw.utility,
+ ch.elexis.core.ui;bundle-version="3.0.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ehcservice.xml
+Import-Package: org.slf4j

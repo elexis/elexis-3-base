@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="ehcexport" name="EhcExport" schema="schema/ehcexport.exsd"/>
+   <extension-point id="ehcimport" name="EhcImport" schema="schema/ehcimport.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -19,6 +20,11 @@
             id="at.medevit.elexis.ehc.ui.createDocument"
             name="create eHC document">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.ehc.ui.handler.ImportDocumentHandler"
+            id="at.medevit.elexis.ehc.ui.importDocument"
+            name="import eHC document">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -29,6 +35,16 @@
                commandId="at.medevit.elexis.ehc.ui.createDocument"
                icon="icons/ehc.jpg"
                label="eHC Dokument erstellen"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:at.medevit.elexis.eHealthConnectorView">
+         <command
+               commandId="at.medevit.elexis.ehc.ui.importDocument"
+               icon="icons/ehc.jpg"
+               label="eHC Dokument importieren"
                style="push">
          </command>
       </menuContribution>

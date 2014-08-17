@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import feature="at.medevit.elexis.inbox.feature" version="3.0.0.qualifier"/>
+   </requires>
+
    <plugin
          id="at.medevit.elexis.ehc.core"
          download-size="0"

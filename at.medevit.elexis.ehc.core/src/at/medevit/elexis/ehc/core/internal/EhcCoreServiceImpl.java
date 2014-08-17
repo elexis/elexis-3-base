@@ -11,6 +11,7 @@
 package at.medevit.elexis.ehc.core.internal;
 
 import java.io.InputStream;
+import java.util.List;
 
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.ch.CDACH;
@@ -23,6 +24,7 @@ import at.medevit.elexis.ehc.core.EhcCoreService;
 import at.medevit.elexis.ehc.core.internal.document.CdaChImpl;
 import ch.elexis.data.Patient;
 import ehealthconnector.cda.documents.ch.CdaCh;
+import ehealthconnector.cda.documents.ch.Phone;
 
 public class EhcCoreServiceImpl implements EhcCoreService {
 	
@@ -55,5 +57,15 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 			logger.warn("Error loading document.", e);
 		}
 		return null;
+	}
+	
+	@Override
+	public void importPatient(ehealthconnector.cda.documents.ch.Patient ehcPatient){
+		Patient patient = EhcCoreMapper.getElexisPatient(ehcPatient);
+		EhcCoreMapper.importEhcAddress(patient, ehcPatient.cGetAddresses().get(0));
+		List<Phone> phones = ehcPatient.cGetPhones();
+		for (Phone phone : phones) {
+			EhcCoreMapper.importEhcPhone(patient, phone);
+		}
 	}
 }

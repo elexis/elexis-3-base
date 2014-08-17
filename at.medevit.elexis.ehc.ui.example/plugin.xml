@@ -9,7 +9,20 @@
       </category>
       <wizard
             category="at.medevit.elexis.ehc.ui.example.category"
-            class="at.medevit.elexis.ehc.ui.example.wizard.PatientWizard"
+            class="at.medevit.elexis.ehc.ui.example.wizard.ExportPatientWizard"
+            id="at.medevit.elexis.ehc.ui.example.patient"
+            name="Stammdaten Patient">
+      </wizard>
+   </extension>
+   <extension
+         point="at.medevit.elexis.ehc.ui.ehcimport">
+      <category
+            id="at.medevit.elexis.ehc.ui.example.category"
+            name="Beispiele">
+      </category>
+      <wizard
+            category="at.medevit.elexis.ehc.ui.example.category"
+            class="at.medevit.elexis.ehc.ui.example.wizard.ImportPatientWizard"
             id="at.medevit.elexis.ehc.ui.example.patient"
             name="Stammdaten Patient">
       </wizard>

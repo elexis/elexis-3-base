@@ -54,6 +54,10 @@
   <module>at.medevit.elexis.loinc</module>
   <module>at.medevit.elexis.loinc.ui</module>
   <module>at.medevit.elexis.loinc.feature</module>
+  <module>at.medevit.elexis.ehc.core</module>
+  <module>at.medevit.elexis.ehc.ui</module>
+  <module>at.medevit.elexis.ehc.ui.example</module>
+  <module>at.medevit.elexis.ehc.feature</module>
   <module>at.medevit.ch.artikelstamm.elexis.common</module>
   <module>at.medevit.ch.artikelstamm.elexis.open</module>
   <module>at.medevit.ch.artikelstamm.ui</module>

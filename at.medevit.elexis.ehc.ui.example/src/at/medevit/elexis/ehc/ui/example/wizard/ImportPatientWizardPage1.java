@@ -10,12 +10,12 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.example.wizard;
 
-import java.io.File;
+import java.util.Collections;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -26,22 +26,23 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
-import at.medevit.elexis.ehc.ui.preference.PreferencePage;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.exchange.KontaktMatcher;
+import ch.elexis.core.ui.exchange.KontaktMatcher.CreateMode;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
-import ch.elexis.data.Query;
 import ehealthconnector.cda.documents.ch.CdaCh;
+import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.AdministrativeGenderCode;
 
-public class PatientWizardPage1 extends WizardPage {
+public class ImportPatientWizardPage1 extends WizardPage {
 	
 	private TableViewer contentViewer;
+	private CdaCh ehcDocument;
 	
-	protected PatientWizardPage1(String pageName){
+	protected ImportPatientWizardPage1(String pageName, CdaCh ehcDocument){
 		super(pageName);
-		setTitle(pageName);
+		setTitle("Patienten für import auswählen.");
+		this.ehcDocument = ehcDocument;
 	}
 	
 	@Override
@@ -52,22 +53,26 @@ public class PatientWizardPage1 extends WizardPage {
 		
 		contentViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		Control control = contentViewer.getControl();
-		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd.heightHint = 300;
+		control.setLayoutData(gd);
 		
 		contentViewer.setContentProvider(new ArrayContentProvider());
 		contentViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element){
-				if (element instanceof Patient) {
-					return ((Patient) element).getLabel();
+				if (element instanceof ehealthconnector.cda.documents.ch.Patient) {
+					ehealthconnector.cda.documents.ch.Patient patient =
+						((ehealthconnector.cda.documents.ch.Patient) element);
+					return patient.cGetName().cGetCompleteName() + " - " + patient.cGetBirthDate();
 				}
 				return super.getText(element);
 			}
 			
 			@Override
 			public Image getImage(Object element){
-				if (element instanceof Patient) {
-					if (((Patient) element).getGeschlecht().equals(Person.FEMALE)) {
+				if (element instanceof ehealthconnector.cda.documents.ch.Patient) {
+					if (((ehealthconnector.cda.documents.ch.Patient) element).cGetGender() == AdministrativeGenderCode.Female) {
 						return Images.IMG_FRAU.getImage();
 					} else {
 						return Images.IMG_MANN.getImage();
@@ -76,13 +81,9 @@ public class PatientWizardPage1 extends WizardPage {
 				return super.getImage(element);
 			}
 		});
-		Query<Patient> qp = new Query(Patient.class);
-		contentViewer.setInput(qp.execute());
 		
-		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
-		if (selectedPatient != null) {
-			contentViewer.setSelection(new StructuredSelection(selectedPatient));
-			contentViewer.getTable().showSelection();
+		if (ehcDocument != null) {
+			contentViewer.setInput(Collections.singletonList(ehcDocument.cGetPatient()));
 		}
 		
 		setControl(composite);
@@ -92,20 +93,34 @@ public class PatientWizardPage1 extends WizardPage {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
 		
 		if (!contentSelection.isEmpty()) {
-			Patient selectedPatient = (Patient) contentSelection.getFirstElement();
-			CdaCh document = ServiceComponent.getService().getPatientDocument(selectedPatient);
-			try {
-				String outputDir =
-					CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
-						PreferencePage.getDefaultOutputDir());
-				document.cSaveToFile(outputDir + File.separator
-					+ selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			ehealthconnector.cda.documents.ch.Patient selectedPatient =
+				(ehealthconnector.cda.documents.ch.Patient) contentSelection.getFirstElement();
+			String gender =
+				selectedPatient.cGetGender() == AdministrativeGenderCode.Female ? Person.FEMALE
+						: Person.MALE;
+			Patient existing =
+				KontaktMatcher.findPatient(selectedPatient.cGetName().cGetName(), selectedPatient
+					.cGetName().cGetFirstName(), selectedPatient.cGetBirthDate(), gender, null,
+					null, null, null, CreateMode.FAIL);
+			if (existing != null) {
+				boolean result =
+					MessageDialog.openConfirm(getShell(), "Patient existiert",
+						"Der Patient existiert bereits sollen die Daten überschrieben werden?");
+				if (!result) {
+					return true;
+				}
 			}
+			ServiceComponent.getService().importPatient(selectedPatient);
 		}
 		
 		return true;
+	}
+	
+	public void setDocument(CdaCh ehcDocument){
+		this.ehcDocument = ehcDocument;
+		if (contentViewer != null && !contentViewer.getControl().isDisposed()) {
+			contentViewer.setInput(Collections.singletonList(ehcDocument.cGetPatient()));
+			contentViewer.refresh();
+		}
 	}
 }

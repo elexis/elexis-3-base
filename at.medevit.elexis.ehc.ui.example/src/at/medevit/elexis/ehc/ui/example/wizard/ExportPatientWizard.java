@@ -14,11 +14,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 
-public class PatientWizard extends Wizard {
+public class ExportPatientWizard extends Wizard {
 	
-	private PatientWizardPage1 mainPage;
+	private ExportPatientWizardPage1 mainPage;
 	
-	public PatientWizard(){
+	public ExportPatientWizard(){
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -30,7 +30,7 @@ public class PatientWizard extends Wizard {
 	@Override
 	public void addPages(){
 		super.addPages();
-		mainPage = new PatientWizardPage1("Export Patientenstammdaten.");
+		mainPage = new ExportPatientWizardPage1("Export Patientenstammdaten.");
 		addPage(mainPage);
 	}
 	

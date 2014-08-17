@@ -50,6 +50,7 @@ public class EHealthConnectorView extends ViewPart {
 	private Browser browser;
 	
 	private CDALoader cdaLoader;
+	private File displayedReport;
 	
 	public EHealthConnectorView(){
 		cdaLoader = new CDALoader();
@@ -123,8 +124,19 @@ public class EHealthConnectorView extends ViewPart {
 		if (path == null) {
 			path = "";
 		}
-		File cdaFile = cdaLoader.buildXmlDocument(inputStream, path);
-		browser.setUrl(cdaFile.getAbsolutePath());
+		displayedReport = cdaLoader.buildXmlDocument(inputStream, path);
+		browser.setUrl(displayedReport.getAbsolutePath());
+	}
+	
+	public InputStream getDisplayedReport(){
+		if (displayedReport != null && displayedReport.exists()) {
+			try {
+				return new FileInputStream(displayedReport);
+			} catch (FileNotFoundException e) {
+				log.error("Could not open displayed report.", e);
+			}
+		}
+		return null;
 	}
 	
 	@Override

@@ -8,17 +8,28 @@
  * Contributors:
  *     T. Huster - initial API and implementation
  *******************************************************************************/
-package at.medevit.elexis.ehc.core;
+package at.medevit.elexis.ehc.ui.dialog;
 
 import java.io.InputStream;
 
-import ch.elexis.data.Patient;
-import ehealthconnector.cda.documents.ch.CdaCh;
+import org.eclipse.jface.wizard.Wizard;
 
-public interface EhcCoreService {
-	public CdaCh getPatientDocument(Patient patient);
+import at.medevit.elexis.ehc.ui.extension.ImportWizardsExtension;
+
+public class ImportSelectionWizard extends Wizard {
 	
-	public CdaCh getDocument(InputStream document);
+	@Override
+	public void addPages(){
+		addPage(new ImportWizardSelectionPage());
+		setForcePreviousAndNextButtons(true);
+	}
 	
-	public void importPatient(ehealthconnector.cda.documents.ch.Patient selectedPatient);
+	@Override
+	public boolean performFinish(){
+		return false;
+	}
+	
+	public void setDocument(InputStream document){
+		ImportWizardsExtension.setImportDocument(document);
+	}
 }

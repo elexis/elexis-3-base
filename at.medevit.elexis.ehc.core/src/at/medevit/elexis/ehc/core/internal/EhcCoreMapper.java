@@ -11,12 +11,14 @@
 package at.medevit.elexis.ehc.core.internal;
 
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
+import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 import ehealthconnector.cda.documents.ch.Address;
 import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.AdministrativeGenderCode;
@@ -85,5 +87,63 @@ public class EhcCoreMapper {
 	public static Date getDate(String elexisDate){
 		timeTool.set(elexisDate);
 		return timeTool.getTime();
+	}
+	
+	public static ch.elexis.data.Patient getElexisPatient(
+		ehealthconnector.cda.documents.ch.Patient ehcPatient){
+		Query<ch.elexis.data.Patient> qpa =
+			new Query<ch.elexis.data.Patient>(ch.elexis.data.Patient.class);
+		// initialize data
+		Name ehcName = ehcPatient.cGetName();
+		String ehcBirthdate = ehcPatient.cGetBirthDate();
+		String gender =
+			ehcPatient.cGetGender() == AdministrativeGenderCode.Female ? Person.FEMALE
+					: Person.MALE;
+		TimeTool ttBirthdate = new TimeTool();
+		// add data to query
+		if (ehcName.cGetName() != null && !ehcName.cGetName().isEmpty()) {
+			qpa.add(ch.elexis.data.Patient.FLD_NAME, Query.EQUALS, ehcName.cGetName());
+		}
+		if (ehcName.cGetFirstName() != null && !ehcName.cGetFirstName().isEmpty()) {
+			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS, ehcName.cGetFirstName());
+		}
+		if (ehcBirthdate != null && !ehcBirthdate.isEmpty()) {
+			if (ttBirthdate.set(ehcBirthdate)) {
+				qpa.add(Person.BIRTHDATE, Query.EQUALS, ttBirthdate.toString(TimeTool.DATE_COMPACT));
+			}
+		}
+		List<ch.elexis.data.Patient> existing = qpa.execute();
+		// create or overwrite Patient
+		ch.elexis.data.Patient ret = null;
+		if (existing.isEmpty()) {
+			ret =
+				new ch.elexis.data.Patient(ehcName.cGetName(), ehcName.cGetFirstName(),
+					ttBirthdate.toString(TimeTool.DATE_COMPACT), gender);
+		} else {
+			ret = existing.get(0);
+		}
+		
+		return ret;
+	}
+	
+	public static void importEhcAddress(ch.elexis.data.Kontakt kontakt,
+		ehealthconnector.cda.documents.ch.Address address){
+		Anschrift elexisAddress = kontakt.getAnschrift();
+		elexisAddress.setOrt(address.cGetCity());
+		elexisAddress.setPlz(address.cGetZip());
+		elexisAddress.setStrasse(address.cGetStreet() + " " + address.cGetHouseNumber());
+		kontakt.setAnschrift(elexisAddress);
+	}
+	
+	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt,
+		ehealthconnector.cda.documents.ch.Phone phone){
+		String existing = kontakt.get(Kontakt.FLD_PHONE1);
+		if (existing == null || existing.isEmpty()) {
+			kontakt.set(Kontakt.FLD_PHONE1, phone.cGetNumber());
+		} else {
+			if (!existing.equals(phone.cGetNumber())) {
+				kontakt.set(Kontakt.FLD_PHONE2, phone.cGetNumber());
+			}
+		}
 	}
 }

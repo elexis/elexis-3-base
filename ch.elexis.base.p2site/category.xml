@@ -324,6 +324,9 @@
    <feature url="features/at.medevit.elexis.inbox.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.inbox.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature url="features/at.medevit.elexis.ehc.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.ehc.feature" version="3.0.0.qualifier">
+      <category name="dataexchange"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

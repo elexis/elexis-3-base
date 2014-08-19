@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<!--
+ ***********************************************************
+ * Copyright (c) 2007, G. Weirich, A. Brögli and A. Häffner
+ * All rights reserved. 
+ *    
+ * $Id: plugin.xml 220 2007-08-20 11:56:05Z gerry $
+ ************************************************************
+ -->
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.molemax.views.Overview"
+            icon="icons/camera.png"
+            id="molemax.overview"
+            name="Molemax">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.molemax.views.MolemaxPrefs"
+            id="molemax.pref2"
+            name="MoleMax">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="ch.elexis.molemax.data.TrackerFactory"
+            name="Molemax-Tracker">
+      </Factory>
+   </extension>
+   <extension
+         point="ch.elexis.ACLContribution">
+      <ACLContribution
+            ACLContributor="ch.elexis.molemax.data.MolemaxACL"
+            name="molemax.ACLContribution1">
+      </ACLContribution>
+   </extension>
+
+</plugin>

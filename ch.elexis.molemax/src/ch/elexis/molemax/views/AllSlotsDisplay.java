@@ -28,7 +28,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 public class AllSlotsDisplay extends Composite {
-	FormToolkit tk = Desk.getToolkit();
+	FormToolkit tk = UiDesk.getToolkit();
 	Overview parent;
 	ImageSlot[] slots = new ImageSlot[12];
 	Composite self;
@@ -72,7 +72,7 @@ public class AllSlotsDisplay extends Composite {
 
 	void reload() {
 
-		Desk.asyncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run() {
 				for (int i = 0; i < 12; i++) {
 					if (slots[i] != null) {

@@ -311,7 +311,7 @@ public class Tracker extends PersistentObject {
 			return null;
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			returnImages. .getImage();
+			return image;
 		}
 
 	}

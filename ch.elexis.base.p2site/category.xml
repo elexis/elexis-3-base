@@ -222,6 +222,12 @@
    <feature url="features/ch.docbox.elexis.feature_3.0.0.qualifier.jar" id="ch.docbox.elexis.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature url="features/ch.elexis.molemax.feature.source_3.0.0.qualifier.jar" id="ch.elexis.molemax.feature.source" version="3.0.0.qualifier">
+      <category name="sources"/>
+   </feature>
+   <feature url="features/ch.elexis.molemax.feature_3.0.0.qualifier.jar" id="ch.elexis.molemax.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <feature url="features/ch.elexis.laborimport_labtop.feature.source_3.0.0.qualifier.jar" id="ch.elexis.laborimport_labtop.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>

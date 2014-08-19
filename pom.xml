@@ -105,6 +105,8 @@
   <module>ch.elexis.laborimport_rischbern.feature</module>
   <module>ch.elexis.laborimport_rothen</module>
   <module>ch.elexis.laborimport_rothen.feature</module>
+  <module>ch.elexis.molemax</module>
+  <module>ch.elexis.molemax.feature</module>
   <module>ch.elexis.notes</module>
   <module>ch.elexis.notes.feature</module>
   <module>ch.elexis.connect.reflotron.v2</module>

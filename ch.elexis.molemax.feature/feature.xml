@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.molemax.feature"
-      label="TODO: Feature for ch.elexis.molemax"
+      label="Plugin zur Aufzeichnung von Hautbildern und zur Dokumentation der Entwicklung"
       version="3.0.0.qualifier"
       provider-name="ch.elexis">
 
   <description>
-      TODO: Feature for ch.elexis.molemax
+Idee und Konzept: Dr. med. Angela Brögli, PD Dr. med. Andreas Häffner
+MoleMax ist ein Elexis-Plugin zur Aufzeichnung von Hautbildern und zur Dokumentation der Entwicklung von Hautveränderungen über die Zeit. MoleMax benötigt Elexis 3.0.3 oder höher.
   </description>
 
   <copyright url="http://elexis.info/de_contributers.html">

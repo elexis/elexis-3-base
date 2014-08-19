@@ -92,7 +92,7 @@ public class Overview extends ViewPart implements IActivationListener {
 	private IAction selectDateAction, restoreAction /* , newDateAction */;
 
 	public Overview() {
-		tk = Desk.getToolkit();
+		tk = UiDesk.getToolkit();
 	}
 
 	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(

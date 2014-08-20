@@ -14,6 +14,11 @@ package ch.elexis.agenda.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -22,11 +27,14 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.preferences.inputs.MultilineFieldEditor;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 public class AgendaDefinitionen extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+	
+	Button btnAvoidDoubleBooking;
 	
 	public AgendaDefinitionen(){
 		super(GRID);
@@ -35,6 +43,8 @@ public class AgendaDefinitionen extends FieldEditorPreferencePage implements
 			StringTool.join(Termin.TerminTypes, ",")); //$NON-NLS-1$
 		prefs.setDefault(PreferenceConstants.AG_TERMINSTATUS,
 			StringTool.join(Termin.TerminStatus, ",")); //$NON-NLS-1$
+		prefs.setDefault(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
+			PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT);
 		setPreferenceStore(prefs);
 		setDescription(Messages.AgendaDefinitionen_defForAgenda);
 	}
@@ -50,6 +60,7 @@ public class AgendaDefinitionen extends FieldEditorPreferencePage implements
 		
 		addField(new MultilineFieldEditor(PreferenceConstants.AG_TERMINSTATUS,
 			Messages.AgendaDefinitionen_states, 5, SWT.V_SCROLL, true, getFieldEditorParent()));
+		
 		/*
 		 * addField(new StringListFieldEditor(PreferenceConstants.AG_BEREICHE,
 		 * Messages.AgendaDefinitionen_shortCutsForBer, Messages.AgendaDefinitionen_enterNames +
@@ -69,7 +80,35 @@ public class AgendaDefinitionen extends FieldEditorPreferencePage implements
 	}
 	
 	@Override
+	protected Control createContents(Composite parent){
+		// create the field editors by calling super
+		Control superParent = super.createContents(parent);
+		Composite feParent = getFieldEditorParent();
+		
+		new Label(feParent, SWT.NONE);
+		Label separator = new Label(feParent, SWT.HORIZONTAL | SWT.SEPARATOR);
+		GridData separatorGridData = new GridData();
+		separatorGridData.horizontalSpan = 3;
+		separatorGridData.grabExcessHorizontalSpace = true;
+		separatorGridData.horizontalAlignment = GridData.FILL;
+		separatorGridData.verticalIndent = 0;
+		separator.setLayoutData(separatorGridData);
+		
+		btnAvoidDoubleBooking = new Button(feParent, SWT.CHECK);
+		btnAvoidDoubleBooking.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		btnAvoidDoubleBooking.setText(Messages.AgendaDefinitionen_AvoidPatientDoubleBooking);
+		btnAvoidDoubleBooking.setSelection(CoreHub.localCfg.get(
+			PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
+			PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT));
+		return superParent;
+	}
+	
+	@Override
 	public boolean performOk(){
+		CoreHub.localCfg.set(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
+			btnAvoidDoubleBooking.getSelection());
+		CoreHub.localCfg.flush();
+		
 		prefs.flush();
 		return super.performOk();
 	}

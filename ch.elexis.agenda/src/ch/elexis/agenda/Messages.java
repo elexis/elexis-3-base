@@ -95,6 +95,7 @@ public final class Messages extends NLS {
 	public static String AgendaImages_imagesForAgenda;
 	public static String AgendaDefinitionen_defForAgenda;
 	public static String AgendaDefinitionen_enterTypes;
+	public static String AgendaDefinitionen_AvoidPatientDoubleBooking;
 	public static String AgendaImages_change;
 	public static String AgendaImages_cannotCopy;
 	public static String AgendaImages_6;

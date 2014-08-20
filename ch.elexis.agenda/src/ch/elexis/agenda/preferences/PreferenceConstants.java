@@ -53,4 +53,8 @@ public class PreferenceConstants {
 	public static final String AG_PRINT_APPOINTMENTCARD_DIRECTPRINT =
 		"agenda/print/appointmentcard_directprint"; //$NON-NLS-1$
 	public static final boolean AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT = false;
+	
+	public static final String AG_AVOID_PATIENT_DOUBLE_BOOKING =
+		"agenda/patient/doppelteTerminvergabeVermeiden";
+	public static final boolean AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT = false;
 }

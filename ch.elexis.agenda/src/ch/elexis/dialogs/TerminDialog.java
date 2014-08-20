@@ -55,6 +55,7 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.agenda.util.TimeInput;
 import ch.elexis.agenda.util.TimeInput.TimeInputListener;
@@ -565,15 +566,12 @@ public class TerminDialog extends TitleAreaDialog {
 	
 	private void enable(final boolean mode){
 		msg = Messages.TerminDialog_editTermins;
-		if (mode) {
-			bChange.setEnabled(true);
-			bSave.setEnabled(true);
-			getButton(IDialogConstants.OK_ID).setEnabled(true);
-			slider.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY)); //$NON-NLS-1$
-		} else {
-			bChange.setEnabled(false);
-			bSave.setEnabled(false);
-			getButton(IDialogConstants.OK_ID).setEnabled(false);
+		bChange.setEnabled(mode);
+		bSave.setEnabled(mode);
+		getButton(IDialogConstants.OK_ID).setEnabled(mode);
+		slider.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY)); //$NON-NLS-1$
+		
+		if (!mode) {
 			slider.setBackground(UiDesk.getColor(UiDesk.COL_DARKGREY)); //$NON-NLS-1$
 			msg = Messages.TerminDialog_editTermins + "\n" + Messages.TerminDialog_collision;
 		}
@@ -589,7 +587,8 @@ public class TerminDialog extends TitleAreaDialog {
 	private void setEnablement(){
 		TimeSpan ts = new TimeSpan(tiVon.setTimeTool(agenda.getActDate()), niDauer.getValue());
 		if (actPlannable instanceof Termin.Free) {
-			if (Plannables.collides(ts, dayBar.list, null)) {
+			if (Plannables.collides(ts, dayBar.list, null)
+				|| terminOverlaps(agenda.getActDate(), ts)) {
 				enable(false);
 			} else {
 				enable(true);
@@ -871,20 +870,36 @@ public class TerminDialog extends TitleAreaDialog {
 	 * @return true if there is a collision
 	 */
 	private boolean terminOverlaps(TimeTool actDate, TimeSpan terminTS){
-		Query<Termin> tQuery = new Query<Termin>(Termin.class);
-		tQuery.add(Termin.FLD_PATIENT, Query.EQUALS, actKontakt.getId());
-		tQuery.add(Termin.FLD_TAG, Query.EQUALS, actDate.toString(TimeTool.DATE_COMPACT));
-		java.util.List<Termin> termine = tQuery.execute();
+		boolean avoidPatientDoubleBooking =
+			CoreHub.localCfg.get(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
+				PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT);
 		
-		Termin curTermin = (Termin) actPlannable;
-		for (Termin t : termine) {
-			// only compare if it's not the currently open appointment
-			if (!t.getId().equals(curTermin.getId())) {
-				TimeSpan ts = t.getTimeSpan();
-				if (ts.overlap(terminTS) != null) {
-					return true;
+		if (avoidPatientDoubleBooking) {
+			Query<Termin> tQuery = new Query<Termin>(Termin.class);
+			tQuery.add(Termin.FLD_PATIENT, Query.EQUALS, actKontakt.getId());
+			tQuery.add(Termin.FLD_TAG, Query.EQUALS, actDate.toString(TimeTool.DATE_COMPACT));
+			java.util.List<Termin> termine = tQuery.execute();
+			
+			if (actPlannable instanceof Termin.Free) {
+				for (Termin t : termine) {
+					TimeSpan ts = t.getTimeSpan();
+					if (ts.overlap(terminTS) != null) {
+						return true;
+					}
+				}
+			} else {
+				Termin curTermin = (Termin) actPlannable;
+				for (Termin t : termine) {
+					// only compare if it's not the currently open appointment
+					if (!t.getId().equals(curTermin.getId())) {
+						TimeSpan ts = t.getTimeSpan();
+						if (ts.overlap(terminTS) != null) {
+							return true;
+						}
+					}
 				}
 			}
+			return false;
 		}
 		return false;
 	}

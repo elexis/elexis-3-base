@@ -46,6 +46,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	private static IOptifier noObligationOptifier = new NoObligationOptifier();
 	private static IOptifier defaultOptifier = new DefaultOptifier();
+	private final double ZERO = 0.0;
 	
 	public static final String TABLENAME = "ARTIKELSTAMM_CH";
 	static final String VERSION = "1.1.0";
@@ -238,8 +239,16 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public int getTotalCount(){
-		// TODO
-		return 0;
+		int pkgUnits = getIstbestand();
+		int pkgSize = getPackungsGroesse();
+		if (pkgSize == 0) {
+			return pkgUnits;
+		}
+		int vkUnits = getVerkaufseinheit();
+		if (vkUnits < pkgSize) {
+			return (pkgUnits * pkgSize) + (getBruchteile() * vkUnits);
+		}
+		return pkgUnits;
 	}
 	
 	@Override
@@ -380,7 +389,14 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public int getPreis(TimeTool dat, Fall fall){
-		return getVKPreis().getCents();
+		double vkPreis = checkZeroDouble(getVKPreis().getCentsAsString());
+		double pkgSize = checkZeroDouble((String) get(FLD_PKG_SIZE));
+		double vkUnits = checkZeroDouble((String) get(VERKAUFSEINHEIT));
+		if ((pkgSize > ZERO) && (vkUnits > ZERO) && (pkgSize != vkUnits)) {
+			return (int) Math.round(vkUnits * (vkPreis / pkgSize));
+		} else {
+			return (int) Math.round(vkPreis);
+		}
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ package at.medevit.elexis.ehc.core;
 import java.io.InputStream;
 
 import ch.elexis.data.Patient;
+import ch.elexis.data.Rezept;
 import ehealthconnector.cda.documents.ch.CdaCh;
 
 public interface EhcCoreService {
@@ -21,4 +22,6 @@ public interface EhcCoreService {
 	public CdaCh getDocument(InputStream document);
 	
 	public void importPatient(ehealthconnector.cda.documents.ch.Patient selectedPatient);
+	
+	public CdaCh getPrescriptionDocument(Rezept rezept);
 }

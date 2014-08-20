@@ -29,6 +29,7 @@ import org.junit.Test;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
+import ch.elexis.data.Rezept;
 import ehealthconnector.cda.documents.ch.Address;
 import ehealthconnector.cda.documents.ch.CdaCh;
 import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.AdministrativeGenderCode;
@@ -37,6 +38,7 @@ import ehealthconnector.cda.documents.ch.Phone;
 public class EhcCoreServiceTest {
 	
 	private static Patient patient;
+	private static Rezept rezept;
 	
 	@BeforeClass
 	public static void before() throws IOException{
@@ -48,6 +50,8 @@ public class EhcCoreServiceTest {
 		anschrift.setPlz("123");
 		anschrift.setStrasse("Street 1");
 		patient.setAnschrift(anschrift);
+		
+		rezept = new Rezept(patient);
 	}
 	
 	@AfterClass
@@ -115,5 +119,14 @@ public class EhcCoreServiceTest {
 		assertEquals("name", readPatient.cGetName().cGetName());
 		assertEquals("firstname", readPatient.cGetName().cGetFirstName());
 		assertEquals(AdministrativeGenderCode.Female, readPatient.cGetGender());
+	}
+	
+	@Test
+	public void testGetPrescriptionDocument() throws Exception{
+		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
+		CdaCh cda = service.getPrescriptionDocument(rezept);
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		cda.cPrintXmlToStream(output);
+		assertTrue(output.size() > 0);
 	}
 }

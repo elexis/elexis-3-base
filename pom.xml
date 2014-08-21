@@ -62,6 +62,9 @@
   <module>at.medevit.ch.artikelstamm.elexis.open</module>
   <module>at.medevit.ch.artikelstamm.ui</module>
   <module>at.medevit.ch.artikelstamm/</module>
+  <module>at.medevit.elexis.impfplan.feature</module>
+  <module>at.medevit.elexis.impfplan</module>
+  <module>at.medevit.elexis.impfplan.ui</module>
   <module>ch.elexis.agenda</module>
   <module>ch.elexis.agenda.feature</module>
   <module>ch.elexis.base.befunde</module>

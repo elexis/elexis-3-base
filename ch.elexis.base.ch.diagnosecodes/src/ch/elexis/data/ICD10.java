@@ -16,11 +16,7 @@ package ch.elexis.data;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.action.IAction;
-
 import ch.elexis.core.data.interfaces.IDiagnose;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 
@@ -90,7 +86,14 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	static final int TEXT = 10;
 	
 	public static ICD10 load(final String id){
-		return new ICD10(id);
+		ICD10 ret = new ICD10(id);
+		if (!ret.exists()) {
+			String dbId = new Query<ICD10>(ICD10.class).findSingle("Code", "=", id); //$NON-NLS-1$ //$NON-NLS-2$
+			if (dbId != null) {
+				ret = new ICD10(dbId);
+			}
+		}
+		return ret;
 	}
 	
 	public ICD10(final String parent, final String code, final String shortCode){

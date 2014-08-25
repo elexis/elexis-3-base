@@ -14,10 +14,6 @@ package ch.elexis.data;
 
 import java.lang.reflect.Method;
 
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.PersistentObjectFactory;
-import ch.elexis.data.Query;
-
 public class DiagnoseCodeFactory extends PersistentObjectFactory {
 	
 	public DiagnoseCodeFactory(){}
@@ -30,19 +26,6 @@ public class DiagnoseCodeFactory extends PersistentObjectFactory {
 			PersistentObject ret = (PersistentObject) (load.invoke(null, new Object[] {
 				ci[1]
 			}));
-			if (ret instanceof TICode) {
-				return ret;
-			}
-			if (!ret.exists()) {
-				if (clazz.getName().equals(ICD10.class.getName())) {
-					String id = new Query<ICD10>(ICD10.class).findSingle("Code", "=", ci[1]); //$NON-NLS-1$ //$NON-NLS-2$
-					if (id != null) {
-						return (PersistentObject) (load.invoke(null, new Object[] {
-							id
-						}));
-					}
-				}
-			}
 			return ret;
 		} catch (Exception ex) {
 			// ExHandler.handle(ex);

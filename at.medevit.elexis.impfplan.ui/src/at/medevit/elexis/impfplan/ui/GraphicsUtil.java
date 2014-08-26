@@ -1,5 +1,9 @@
 package at.medevit.elexis.impfplan.ui;
 
+//Send questions, comments, bug reports, etc. to the authors:
+//Rob Warner (rwarner@interspatial.com)
+//Robert Harris (rbrt_harris@yahoo.com)
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;

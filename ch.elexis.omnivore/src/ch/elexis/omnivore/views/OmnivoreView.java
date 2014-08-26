@@ -438,9 +438,12 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 				DocHandle dh = (DocHandle) selection.getFirstElement();
 				
 				if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
+					String title = dh.getTitle();
 					int end = dh.getTitle().lastIndexOf(".");
-					String titel = (dh.getTitle()).substring(0, end);
-					File file = dh.createTemporaryFile(titel);
+					if (end != -1) {
+						title = (dh.getTitle()).substring(0, end);
+					}
+					File file = dh.createTemporaryFile(title);
 					event.data = new String[] {
 						file.getAbsolutePath()
 					};

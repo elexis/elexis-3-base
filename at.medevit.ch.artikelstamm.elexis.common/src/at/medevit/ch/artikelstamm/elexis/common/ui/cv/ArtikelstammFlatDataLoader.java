@@ -3,6 +3,7 @@ package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -40,8 +41,10 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 		this.slp = slp;
 		
 		setOrderFields(ArtikelstammItem.FLD_DSCR);
-		addQueryFilter(new NoVersionQueryFilter());
+
 		applyQueryFilters();
+		addQueryFilter(new IncludeEANQueryFilter());
+		addQueryFilter(new NoVersionQueryFilter());
 	}
 	
 	/**
@@ -50,7 +53,22 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 	private class NoVersionQueryFilter implements QueryFilter {
 		@Override
 		public void apply(Query<? extends PersistentObject> qbe){
+			qbe.and();
 			qbe.add("ID", Query.NOT_EQUAL, "VERSION");
+		}
+	}
+	
+	private class IncludeEANQueryFilter implements QueryFilter {
+
+		@Override
+		public void apply(Query<? extends PersistentObject> qbe){
+			if(slp.getValues()!=null) {
+				String eanValue = slp.getValues()[0];
+				if(eanValue.length()>0 && StringUtils.isNumeric(eanValue)) {
+					qbe.or();
+					qbe.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, eanValue+"%");
+				}
+			}
 		}
 	}
 	

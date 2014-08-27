@@ -54,11 +54,12 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	static {
 		addMapping(
 			"ICD10", "parent", FLD_CODE + "=ICDCode", FLD_TEXT + "=ICDTxt", "encoded", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		if (!PersistentObject.tableExists("ICD10")) {
+			initialize();
+		}
 		
 		ICD10 check = load("1");
-		if (check.state() < PersistentObject.DELETED) {
-			initialize();
-		} else {
+		if (check.exists()) {
 			VersionInfo vi = new VersionInfo(check.get("Text"));
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("1.0.1")) {

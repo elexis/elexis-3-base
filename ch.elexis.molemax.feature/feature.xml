@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.molemax.feature"
-      label="Plugin zur Aufzeichnung von Hautbildern und zur Dokumentation der Entwicklung"
+      label="Molemax: Aufzeichnung von Hautbildern und Dokumentation der Entwicklung"
       version="3.0.0.qualifier"
       provider-name="ch.elexis">
 

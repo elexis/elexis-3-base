@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2_test.data;
@@ -23,6 +23,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import org.eclipse.ui.PlatformUI;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import ch.elexis.core.data.util.PlatformHelper;
@@ -32,10 +34,10 @@ import com.hilotec.elexis.messwerte.v2.data.MessungTyp;
 import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
 
 public class MessungKonfigurationTest {
-	
+
 	private static String TEST_XML = "rsc/messwerte_test.xml";
 	private static String THIS_DESCR = "MessungKonfigurationTest: ";
-	
+
 	private static String TC1_BOOL_TRUE = "tc1_bool_true";
 	private static String TC1_BOOL_FALSE = "tc1_bool_false";
 	private static String TC1_CALC = "tc1_calc_error";
@@ -44,7 +46,7 @@ public class MessungKonfigurationTest {
 	private static String TC1_NUM = "tc1_num_324";
 	private static String TC1_SCALE = "tc1_scale_17";
 	private static String TC1_STR = "tc1_str_hilotec";
-	
+
 	private static String TC2_BOOL = "tc2_bool";
 	private static String TC2_CALC = "tc2_calc";
 	private static String TC2_DATE = "tc2_date";
@@ -52,7 +54,7 @@ public class MessungKonfigurationTest {
 	private static String TC2_NUM = "tc2_num";
 	private static String TC2_SCALE = "tc2_scale";
 	private static String TC2_STR = "tc2_str";
-	
+
 	private static String TC3_BOOL = "tc3_bool";
 	private static String TC3_CALC = "tc3_calc";
 	private static String TC3_DATE = "tc3_date";
@@ -60,10 +62,10 @@ public class MessungKonfigurationTest {
 	private static String TC3_NUM = "tc3_num";
 	private static String TC3_SCALE = "tc3_scale";
 	private static String TC3_STR = "tc3_str";
-	
+
 	@Test
 	public void testReadFromXML(){
-		
+
 		try {
 			String testXML =
 				PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2_test") + File.separator
@@ -72,7 +74,7 @@ public class MessungKonfigurationTest {
 			MessungKonfiguration testConfig = MessungKonfiguration.getInstance();
 			assertFalse("read eines nicht existierenden files darf nicht true zurückgeben...",
 				testConfig.readFromXML("dummy.xml"));
-			
+
 			ArrayList<MessungTyp> dataTypes = testConfig.getTypes();
 			dataTypes.clear();
 			assertTrue("test xml '" + testXML + "' kann nicht initialisiert werden",
@@ -88,7 +90,7 @@ public class MessungKonfigurationTest {
 					System.out.println(THIS_DESCR + "Teste datatype " + dataTypes.get(i).getName()
 						+ ", " + messWertTypName + " (Typ: "
 						+ messwertTypes.get(j).getClass().getName() + ")");
-					
+
 					// teste einzelne Datentypen
 					if ("".equals(messWertTypName)) {
 						fail("messWertName darf nicht leer sein");
@@ -113,7 +115,7 @@ public class MessungKonfigurationTest {
 						assertTrue(TC3_BOOL + ": Berechneter Wert falsch",
 							!Boolean.parseBoolean(messWertTyp.getDefault(null)));
 					}
-					
+
 					// Calc Defaultwert
 					else if (TC1_CALC.equals(messWertTypName)) {
 						System.out.println(THIS_DESCR + "TC1_CALC Default: "
@@ -134,13 +136,13 @@ public class MessungKonfigurationTest {
 						assertEquals(TC3_CALC + ": Default Wert falsch", "exc",
 							messWertTyp.getDefault(null));
 					}
-					
+
 					// Counterfield
 					// TC3
-					
+
 					// Datafield
 					// TC3
-					
+
 					// Date Defaultwert
 					else if (TC1_DATE.equals(messWertTypName)) {
 						System.out.println(THIS_DESCR + "TEST_DATE Default: "
@@ -166,7 +168,7 @@ public class MessungKonfigurationTest {
 						assertTrue(TC3_DATE + ": Defaulwert falsch",
 							"11.11.2011".equals(messWertTyp.getDefault(null)));
 					}
-					
+
 					// Enum Defaultwert
 					else if (TC1_ENUM.equals(messWertTypName)) {
 						System.out.println(THIS_DESCR + "TEST_ENUM Default: "
@@ -187,7 +189,7 @@ public class MessungKonfigurationTest {
 						assertTrue(TC3_ENUM + ": Defaulwert falsch",
 							"2".equals(messWertTyp.getDefault(null)));
 					}
-					
+
 					// Num Defaultwert
 					else if (TC1_NUM.equals(messWertTypName)) {
 						System.out.println(THIS_DESCR + "TEST_NUM Default: "
@@ -208,7 +210,7 @@ public class MessungKonfigurationTest {
 						assertTrue(TC3_NUM + ": Defaulwert falsch",
 							"3.24".equals(messWertTyp.getDefault(null)));
 					}
-					
+
 					// Scale Defaultwert
 					else if (TC1_SCALE.equals(messWertTypName)) {
 						System.out.println(THIS_DESCR + "TC1_SCALE Default: "
@@ -229,7 +231,7 @@ public class MessungKonfigurationTest {
 						assertTrue(TC3_SCALE + ": Defaulwert falsch",
 							"17".equals(messWertTyp.getDefault(null)));
 					}
-					
+
 					// Str Defaultwert
 					else if (TC1_STR.equals(messWertTypName)) {
 						System.out.println(THIS_DESCR + "TC1_STR Default: "
@@ -250,14 +252,14 @@ public class MessungKonfigurationTest {
 						assertTrue(TC3_STR + ": Defaulwert falsch",
 							"Hilotec".equals(messWertTyp.getDefault(null)));
 					}
-					
+
 				}
 			}
 		} catch (Exception e) {
 			fail("Genereller Fehler: " + e.getMessage());
 		}
 	}
-	
+
 	// einzelne Tests für Datentypen
 	private void test_datatype(MessungTyp datatype){
 		//
@@ -268,5 +270,16 @@ public class MessungKonfigurationTest {
 				"Default Values für alle Datentypen", datatype.getDescription());
 		}
 	}
-	
+
+	@AfterClass
+	public static void teardown() throws Exception{
+		PlatformUI.getWorkbench().saveAllEditors(false); // do not confirm saving
+		PlatformUI.getWorkbench().saveAll(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
+		if (PlatformUI.getWorkbench() != null) // null if run from Eclipse-IDE
+		{
+			// needed if run as surefire test from using mvn install
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllPerspectives(false, true);
+		}
+	}
+
 }

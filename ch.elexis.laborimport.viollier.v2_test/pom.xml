@@ -19,7 +19,6 @@
         <version>${tycho-version}</version>
         <configuration>
           <application>ch.elexis.core.application.ElexisApp</application>
-          <skipTests>true</skipTests> <!-- error Grund: Kein Dokumentablage gefunden! probably omnivore should be correctly configured! -->
           <argLine>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
           <useUIThread>true</useUIThread>
           <useUIHarness>true</useUIHarness>

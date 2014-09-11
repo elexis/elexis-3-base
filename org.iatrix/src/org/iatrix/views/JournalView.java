@@ -110,7 +110,6 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
@@ -387,11 +386,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 	}
 
-	private final ElexisEventListener eeli_problem = new ElexisUiEventListenerImpl(Episode.class,
+	private final ElexisUiEventListenerImpl eeli_problem = new ElexisUiEventListenerImpl(Episode.class,
 		EVENT_UPDATE | EVENT_DESELECTED) {
 
 		@Override
-		public void run(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev){
 			switch (ev.getType()) {
 			case EVENT_UPDATE:
 				// problem change may affect current problems list and consultation
@@ -408,11 +407,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 	};
 
-	private final ElexisEventListener eeli_kons = new ElexisUiEventListenerImpl(Konsultation.class,
+	private final ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(Konsultation.class,
 		EVENT_DELETE | EVENT_UPDATE | EVENT_SELECTED | EVENT_DESELECTED) {
 
 		@Override
-		public void run(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev){
 			Konsultation k = (Konsultation) ev.getObject();
 			switch (ev.getType()) {
 			case EVENT_UPDATE:
@@ -440,10 +439,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	};
 
-	private final ElexisEventListener eeli_fall = new ElexisUiEventListenerImpl(Fall.class,
+	private final ElexisUiEventListenerImpl eeli_fall = new ElexisUiEventListenerImpl(Fall.class,
 		ElexisEvent.EVENT_SELECTED) {
 		@Override
-		public void run(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev){
 			Fall fall = (Fall) ev.getObject();
 			Patient patient = fall.getPatient();
 
@@ -471,7 +470,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		}
 	};
-	private final ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
+	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
 
 		@Override
 		public void runInUi(ElexisEvent ev){
@@ -539,7 +538,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	};
 
-	private final ElexisEventListener eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
+	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
 		ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
 		public void runInUi(ElexisEvent ev){
@@ -2370,7 +2369,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	@Override
 	public void activation(boolean mode){
-		if (mode == true) {} else {
+		if (mode == true) {
+			setKonsultation((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class), false);
+		} else {
 			updateEintrag();
 		}
 	}
@@ -2571,6 +2572,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 * Aktuellen Patienten setzen
 	 */
 	public void setPatient(Patient patient){
+		if (actPatient == patient)
+		{
+			return;
+		}
 		actPatient = patient;
 
 		// widgets may be disposed when application is closed

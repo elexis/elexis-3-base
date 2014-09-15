@@ -140,8 +140,8 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	}
 	
 	public File getStorageFile(boolean force){
-		if (force || CoreHub.localCfg.get(Preferences.STOREFS, false)) {
-			String pathname = CoreHub.localCfg.get(Preferences.BASEPATH, null);
+		if (force || Preferences.storeInFilesystem()) {
+			String pathname = Preferences.getBasepath();
 			if (pathname != null) {
 				File dir = new File(pathname);
 				if (dir.isDirectory()) {
@@ -155,7 +155,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					return file;
 				}
 			}
-			if (CoreHub.localCfg.get(Preferences.STOREFS, false)) {
+			if (Preferences.storeInFilesystem()) {
 				configError();
 			}
 		}

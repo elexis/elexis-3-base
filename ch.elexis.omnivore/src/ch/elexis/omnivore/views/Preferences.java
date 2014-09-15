@@ -178,11 +178,16 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		
 		Group gPathForDocs = new Group(gGeneralOptions, SWT.NONE);
 		gPathForDocs.setLayout(new FillLayout());
+		
 		addField(new BooleanFieldEditor(STOREFS, Messages.Preferences_storeInFS, gPathForDocs));
+		storeInFilesystem();
+		
 		DirectoryFieldEditor dfStorePath =
 			new DirectoryFieldEditor(BASEPATH, Messages.Preferences_pathForDocs, gPathForDocs);
+		getBasepath();
 		dfStorePath.setEmptyStringAllowed(true);
 		addField(dfStorePath);
+		
 		Group gPathForMaxChars = new Group(gGeneralOptions, SWT.NONE);
 		gPathForMaxChars.setLayout(new FillLayout());
 		IPreferenceStore preferenceStore = new SettingsPreferenceStore(CoreHub.localCfg);
@@ -547,6 +552,26 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			} // if ... equals(element_key)
 		} // for int i...
 		return ""; // default return value, if nothing is defined.
+	}
+	
+	public static boolean storeInFilesystem(){
+		initGlobalConfig();
+		return CoreHub.globalCfg.get(STOREFS, false);
+	}
+	
+	public static String getBasepath(){
+		initGlobalConfig();
+		return CoreHub.globalCfg.get(BASEPATH, "");
+	}
+	
+	/**
+	 * checks if there are any settings in the 'old' local config
+	 */
+	private static void initGlobalConfig(){
+		if (CoreHub.globalCfg.get(BASEPATH, null) == null) {
+			CoreHub.globalCfg.set(BASEPATH, CoreHub.localCfg.get(BASEPATH, ""));
+			CoreHub.globalCfg.set(STOREFS, CoreHub.localCfg.get(STOREFS, false));
+		}
 	}
 	
 	// ----------------------------------------------------------------------------

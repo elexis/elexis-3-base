@@ -72,7 +72,7 @@ public class TICode extends PersistentObject implements IDiagnose {
 	
 	public static TICode getFromCode(String code){
 		TICode ret = hash.get(code);
-		if (ret == null) {
+		if (ret == null && !code.isEmpty()) {
 			String chapter = code.substring(0, 1);
 			int subch = 0;
 			if (code.length() == 2) {

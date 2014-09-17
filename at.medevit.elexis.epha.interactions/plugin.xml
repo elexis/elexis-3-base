@@ -8,10 +8,7 @@
             locationURI="toolbar:ch.elexis.dauermedikationview">
          <command
                commandId="at.medevit.elexis.epha.interactions.ephasearch"
-               icon="rsc/pill_exclamation.png"
-               label="Medikamenteninteraktion prüfen ..."
-               style="push"
-               tooltip="Medikamenteninteraktion prüfen ...">
+               style="push">
          </command>
       </menuContribution>
    </extension>
@@ -30,6 +27,13 @@
             KonsExtension="at.medevit.elexis.epha.interactions.EphaSearchAction"
             name="at.medevit.elexis.epha.interactions">
       </Link>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="at.medevit.elexis.epha.interactions.ephasearch"
+            icon="rsc/pill_exclamation.png">
+      </image>
    </extension>
 
 </plugin>

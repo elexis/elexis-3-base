@@ -44,20 +44,20 @@ public class MedikarteHelpers {
 			qbe.clear();
 		}
 
-		qbe.add(Prescription.PATIENT_ID, Query.EQUALS, patient.getId());
-		qbe.add(Prescription.REZEPT_ID, StringTool.leer, null);
+		qbe.add(Prescription.FLD_PATIENT_ID, Query.EQUALS, patient.getId());
+		qbe.add(Prescription.FLD_REZEPT_ID, StringTool.leer, null);
 		if (!alle) {
 			qbe.startGroup();
 			String today = new TimeTool().toString(TimeTool.DATE_COMPACT);
 			if (Preferences.getMedikarteStopdatumInkl()) {
-				qbe.add(Prescription.DATE_UNTIL, Query.GREATER_OR_EQUAL, today);
+				qbe.add(Prescription.FLD_DATE_UNTIL, Query.GREATER_OR_EQUAL, today);
 			} else {
-				qbe.add(Prescription.DATE_UNTIL, Query.GREATER, today);
+				qbe.add(Prescription.FLD_DATE_UNTIL, Query.GREATER, today);
 			}
 			qbe.or();
-			qbe.add(Prescription.DATE_UNTIL, StringTool.leer, null);
+			qbe.add(Prescription.FLD_DATE_UNTIL, StringTool.leer, null);
 			qbe.or();
-			qbe.add(Prescription.DATE_UNTIL, Query.EQUALS, "");
+			qbe.add(Prescription.FLD_DATE_UNTIL, Query.EQUALS, "");
 			qbe.endGroup();
 		}
 

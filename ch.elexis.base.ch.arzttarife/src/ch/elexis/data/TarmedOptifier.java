@@ -51,6 +51,7 @@ public class TarmedOptifier implements IOptifier {
 	private static final String DEFAULT_TAX_XRAY_ROOM = "39.2000";
 	
 	boolean bOptify = true;
+	private Verrechnet newVerrechnet;
 	
 	/**
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
@@ -117,7 +118,7 @@ public class TarmedOptifier implements IOptifier {
 					}
 				}
 			}
-			Verrechnet check = null;
+			newVerrechnet = null;
 			// Korrekter Fall Typ prüfen, und ggf. den code ändern
 			if (tc.getCode().matches("39.002[01]") || tc.getCode().matches("39.001[0156]")) {
 				String gesetz = kons.getFall().getRequiredString("Gesetz");
@@ -151,8 +152,8 @@ public class TarmedOptifier implements IOptifier {
 				if (v.isInstance(code)
 					&& (side.equals("none") || (tc.requiresSide() && side
 						.equals(TarmedLeistung.LEFT)))) {
-					check = v;
-					check.setZahl(check.getZahl() + 1);
+					newVerrechnet = v;
+					newVerrechnet.setZahl(newVerrechnet.getZahl() + 1);
 					if (bezugOK) {
 						break;
 					}
@@ -161,15 +162,15 @@ public class TarmedOptifier implements IOptifier {
 				if (checkBezug && bOptify) {
 					if (v.getCode().equals(bezug)) {
 						bezugOK = true;
-						if (check != null) {
+						if (newVerrechnet != null) {
 							break;
 						}
 					}
 				}
 			}
 			// Ausschliessende Kriterien prüfen ("Nicht zusammen mit")
-			if (check == null) {
-				check = new Verrechnet(code, kons, 1);
+			if (newVerrechnet == null) {
+				newVerrechnet = new Verrechnet(code, kons, 1);
 				// Exclusionen
 				if (bOptify) {
 					String excl = ((TarmedLeistung) code).getExclusion();
@@ -177,7 +178,7 @@ public class TarmedOptifier implements IOptifier {
 						for (String e : excl.split(",")) { //$NON-NLS-1$
 							for (Verrechnet v : lst) {
 								if (v.getCode().equals(e)) {
-									check.delete();
+									newVerrechnet.delete();
 									return new Result<IVerrechenbar>(
 										Result.SEVERITY.WARNING,
 										EXKLUSION,
@@ -187,7 +188,7 @@ public class TarmedOptifier implements IOptifier {
 								Result<IVerrechenbar> resCompatible =
 									compatibleWithOtherVerrechnet(code.getCode(), v);
 								if (!resCompatible.isOK()) {
-									check.delete();
+									newVerrechnet.delete();
 									return resCompatible;
 								}
 							}
@@ -198,22 +199,22 @@ public class TarmedOptifier implements IOptifier {
 							Result<IVerrechenbar> resCompatible =
 								compatibleWithOtherVerrechnet(code.getCode(), v);
 							if (!resCompatible.isOK()) {
-								check.delete();
+								newVerrechnet.delete();
 								return resCompatible;
 							}
 						}
 					}
 					
-					if (check.getCode().equals("00.0750") || check.getCode().equals("00.0010")) {
+					if (newVerrechnet.getCode().equals("00.0750") || newVerrechnet.getCode().equals("00.0010")) {
 						String excludeCode = null;
-						if (check.getCode().equals("00.0010")) {
+						if (newVerrechnet.getCode().equals("00.0010")) {
 							excludeCode = "00.0750";
 						} else {
 							excludeCode = "00.0010";
 						}
 						for (Verrechnet v : lst) {
 							if (v.getCode().equals(excludeCode)) {
-								check.delete();
+								newVerrechnet.delete();
 								return new Result<IVerrechenbar>(
 									Result.SEVERITY.WARNING,
 									EXKLUSION,
@@ -222,14 +223,14 @@ public class TarmedOptifier implements IOptifier {
 						}
 					}
 				}
-				check.setDetail(AL, Integer.toString(tc.getAL()));
-				check.setDetail(TL, Integer.toString(tc.getTL()));
-				lst.add(check);
+				newVerrechnet.setDetail(AL, Integer.toString(tc.getAL()));
+				newVerrechnet.setDetail(TL, Integer.toString(tc.getTL()));
+				lst.add(newVerrechnet);
 			}
 			
 			// check if side is required
 			if (tc.requiresSide()) {
-				check.setDetail(TarmedLeistung.SIDE, TarmedLeistung.SIDE_L);
+				newVerrechnet.setDetail(TarmedLeistung.SIDE, TarmedLeistung.SIDE_L);
 			}
 			
 			/*
@@ -252,7 +253,7 @@ public class TarmedOptifier implements IOptifier {
 						if (f.length == 5) {
 							switch (Integer.parseInt(f[4].trim())) {
 							case 7: // Pro Sitzung
-								if (check.getCode().equals("00.0020")) {
+								if (newVerrechnet.getCode().equals("00.0020")) {
 									if (CoreHub.mandantCfg.get(
 										PreferenceConstants.BILL_ELECTRONICALLY, false)) {
 										break;
@@ -261,8 +262,8 @@ public class TarmedOptifier implements IOptifier {
 								// todo check if electronic billing
 								if (f[2].equals("1") && f[0].equals("<=")) { // 1 Sitzung //$NON-NLS-1$
 									int menge = Math.round(Float.parseFloat(f[1]));
-									if (check.getZahl() > menge) {
-										check.setZahl(menge);
+									if (newVerrechnet.getZahl() > menge) {
+										newVerrechnet.setZahl(menge);
 										return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 											KUMULATION, Messages.TarmedOptifier_codemax + menge
 												+ Messages.TarmedOptifier_perSession, null, false); //$NON-NLS-1$ //$NON-NLS-2$
@@ -272,8 +273,8 @@ public class TarmedOptifier implements IOptifier {
 							case 21: // Pro Tag
 								if (f[2].equals("1") && f[0].equals("<=")) { // 1 Tag
 									int menge = Math.round(Float.parseFloat(f[1]));
-									if (check.getZahl() > menge) {
-										check.setZahl(menge);
+									if (newVerrechnet.getZahl() > menge) {
+										newVerrechnet.setZahl(menge);
 										return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 											KUMULATION, Messages.TarmedOptifier_codemax + menge
 												+ "Mal pro Tag", null, false); //$NON-NLS-1$ //$NON-NLS-2$
@@ -316,9 +317,9 @@ public class TarmedOptifier implements IOptifier {
 				}
 				
 				// check.setPreis(new Money(sum));
-				check.setTP(sum);
-				check.setDetail(TL, Double.toString(sum));
-				check.setPrimaryScaleFactor(-0.4);
+				newVerrechnet.setTP(sum);
+				newVerrechnet.setDetail(TL, Double.toString(sum));
+				newVerrechnet.setPrimaryScaleFactor(-0.4);
 				/*
 				 * double sum=0.0; for(Verrechnet v:lst){ if(v.getVerrechenbar() instanceof
 				 * TarmedLeistung){ TarmedLeistung tl=(TarmedLeistung) v.getVerrechenbar();
@@ -343,9 +344,9 @@ public class TarmedOptifier implements IOptifier {
 						}
 					}
 				}
-				check.setTP(sumAL + sumTL);
-				check.setDetail(AL, Double.toString(sumAL));
-				check.setDetail(TL, Double.toString(sumTL));
+				newVerrechnet.setTP(sumAL + sumTL);
+				newVerrechnet.setDetail(AL, Double.toString(sumAL));
+				newVerrechnet.setDetail(TL, Double.toString(sumTL));
 			}
 			
 			// Zuschlag Kinder
@@ -389,10 +390,10 @@ public class TarmedOptifier implements IOptifier {
 				}
 				// sum = sum * factor / 100.0;
 				// check.setPreis(new Money(sum));
-				check.setTP(sumAL + sumTL);
-				check.setDetail(AL, Double.toString(sumAL));
-				check.setDetail(TL, Double.toString(sumTL));
-				check.setPrimaryScaleFactor(0.5);
+				newVerrechnet.setTP(sumAL + sumTL);
+				newVerrechnet.setDetail(AL, Double.toString(sumAL));
+				newVerrechnet.setDetail(TL, Double.toString(sumTL));
+				newVerrechnet.setPrimaryScaleFactor(0.5);
 			}
 			// Notfall-Zuschläge
 			if (tcid.startsWith("00.25")) { //$NON-NLS-1$
@@ -418,9 +419,9 @@ public class TarmedOptifier implements IOptifier {
 						}
 					}
 					// check.setPreis(sum.multiply(factor));
-					check.setTP(sum);
-					check.setDetail(AL, Double.toString(sum));
-					check.setPrimaryScaleFactor(0.25);
+					newVerrechnet.setTP(sum);
+					newVerrechnet.setDetail(AL, Double.toString(sum));
+					newVerrechnet.setPrimaryScaleFactor(0.25);
 					break;
 				case 40: // 22-7: 180 TP
 					break;
@@ -438,9 +439,9 @@ public class TarmedOptifier implements IOptifier {
 						}
 					}
 					// check.setPreis(sum.multiply(factor));
-					check.setTP(sum);
-					check.setDetail(AL, Double.toString(sum));
-					check.setPrimaryScaleFactor(0.5);
+					newVerrechnet.setTP(sum);
+					newVerrechnet.setDetail(AL, Double.toString(sum));
+					newVerrechnet.setPrimaryScaleFactor(0.5);
 					break;
 				
 				case 60: // Tel. Mo-Fr 19-22, Sa 12-22, So 7-22: 30 TP
@@ -494,6 +495,11 @@ public class TarmedOptifier implements IOptifier {
 		l.remove(code);
 		code.delete();
 		return new Result<Verrechnet>(code);
+	}
+
+	@Override
+	public Verrechnet getCreatedVerrechnet(){
+		return newVerrechnet;
 	}
 	
 }

@@ -21,6 +21,8 @@ import ch.rgw.tools.Result;
 
 public class BAGOptifier implements IOptifier {
 	
+	private Verrechnet newVerrechnet;
+
 	public Result<Object> optify(final Konsultation kons){
 		return new Result<Object>(kons);
 	}
@@ -40,7 +42,8 @@ public class BAGOptifier implements IOptifier {
 					
 				}
 			}
-			old.add(new Verrechnet(code, kons, 1));
+			newVerrechnet = new Verrechnet(code, kons, 1);
+			old.add(newVerrechnet);
 			
 		}
 		return new Result<IVerrechenbar>(code);
@@ -51,6 +54,11 @@ public class BAGOptifier implements IOptifier {
 		old.remove(v);
 		v.delete();
 		return new Result<Verrechnet>(null);
+	}
+
+	@Override
+	public Verrechnet getCreatedVerrechnet(){
+		return newVerrechnet;
 	}
 	
 }

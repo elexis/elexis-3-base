@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -766,6 +767,18 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return PersistentObject.getConnection().queryInt(
 			"SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME + " WHERE "
 				+ ArtikelstammItem.FLD_ATC + " " + Query.LIKE + " " + JdbcLink.wrap(atcCode + "%"));
+	}
+	
+	/**
+	 * @return alternative {@link ArtikelstammItem} objects that match the ATC code
+	 */
+	public @NonNull List<ArtikelstammItem> getAlternativeArticlesByATCGroup() {
+		String code = getATC_code();
+		if(code==null || code.length()<1) return Collections.emptyList();
+		
+		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
+		qre.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, code);
+		return qre.execute();
 	}
 	
 	/**

@@ -26,6 +26,8 @@ import ch.rgw.tools.Result.SEVERITY;
 import ch.rgw.tools.TimeTool;
 
 public class Optifier implements IOptifier {
+	private Verrechnet newVerrechnet;
+
 	/**
 	 * Add and recalculate the various possible amendments
 	 */
@@ -48,7 +50,7 @@ public class Optifier implements IOptifier {
 				}
 			}
 			
-			new Verrechnet(code, kons, 1);
+			newVerrechnet = new Verrechnet(code, kons, 1);
 			Result<Object> res = optify(kons);
 			if (res.isOK()) {
 				return new Result<IVerrechenbar>(code);
@@ -224,11 +226,17 @@ public class Optifier implements IOptifier {
 		}
 		
 		if (tarif != null) {
-			return new Verrechnet(tarif, kons, 1);
+			newVerrechnet = new Verrechnet(tarif, kons, 1); 
+			return newVerrechnet;
 		} else {
 			throw new Exception("Tariff not installed correctly"); //$NON-NLS-1$
 		}
 		
+	}
+
+	@Override
+	public Verrechnet getCreatedVerrechnet(){
+		return newVerrechnet;
 	}
 	
 }

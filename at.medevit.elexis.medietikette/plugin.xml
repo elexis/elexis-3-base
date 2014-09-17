@@ -65,6 +65,24 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.core.ui.medication.views.MedicationView">
+         <command
+               commandId="at.medevit.medelexis.medietikette.PrintMediEtiketteUi"
+               label="Etikette drucken"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     operator="and">
+                  <instanceof
+                        value="ch.elexis.data.Prescription">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

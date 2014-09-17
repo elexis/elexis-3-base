@@ -66,7 +66,7 @@ public class VaccinationPrescriptionEventListener implements ElexisEventListener
 				lotId.open();
 				String lotNo = lotId.getValue();
 				
-				new Vaccination(p.get(Prescription.PATIENT_ID), p.getArtikel(), d, lotNo, m
+				new Vaccination(p.get(Prescription.FLD_PATIENT_ID), p.getArtikel(), d, lotNo, m
 					.storeToString());
 			}
 		});

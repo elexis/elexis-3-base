@@ -34,6 +34,7 @@ import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
+//import ch.elexis.core.ui.actions.AddVerrechenbarContributionItem;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
@@ -126,6 +127,8 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 				return (element instanceof ArtikelstammItem);
 			}
 		});
+		
+//		menu.add(new AddVerrechenbarContributionItem(cov));
 		
 		MenuManager subMenu = new MenuManager("ATC Gruppen-Selektion", Images.IMG_CATEGORY_GROUP.getImageDescriptor(), null){
 			@Override

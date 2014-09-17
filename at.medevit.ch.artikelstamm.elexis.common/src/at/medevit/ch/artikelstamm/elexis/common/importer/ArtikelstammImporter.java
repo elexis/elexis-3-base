@@ -154,7 +154,7 @@ public class ArtikelstammImporter {
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 		
 		Query<Prescription> query = new Query<Prescription>(Prescription.class);
-		query.add(Prescription.ARTICLE, Query.LIKE, ArtikelstammItem.class.getName() + "%");
+		query.add(Prescription.FLD_ARTICLE, Query.LIKE, ArtikelstammItem.class.getName() + "%");
 		List<Prescription> resultPrescription = query.execute();
 		
 		monitor.subTask("BlackBox Markierung für Medikationen");

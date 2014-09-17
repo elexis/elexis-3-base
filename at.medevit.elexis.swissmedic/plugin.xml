@@ -8,7 +8,16 @@
             locationURI="toolbar:ch.elexis.dauermedikationview">
          <command
                commandId="at.medevit.elexis.swissmedic.search"
-               icon="rsc/swissmedic-logo.png"
+               label="Swissmedic suchen ..."
+               style="push"
+               tooltip="Fachinformation Swissmedic...">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.core.ui.medication.views.MedicationView">
+         <command
+               commandId="at.medevit.elexis.swissmedic.search"
                label="Swissmedic suchen ..."
                style="push"
                tooltip="Fachinformation Swissmedic...">
@@ -23,6 +32,13 @@
             id="at.medevit.elexis.swissmedic.search"
             name="Swissmedic suchen ...">
       </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="at.medevit.elexis.swissmedic.search"
+            icon="rsc/swissmedic-logo.png">
+      </image>
    </extension>
 
 </plugin>

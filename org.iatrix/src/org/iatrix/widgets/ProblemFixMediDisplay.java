@@ -117,7 +117,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 								Prescription prescription =
 									new Prescription(artikel, problem.getPatient(),
 										StringTool.leer, StringTool.leer);
-								prescription.set(Prescription.DATE_FROM, new TimeTool()
+								prescription.set(Prescription.FLD_DATE_FROM, new TimeTool()
 									.toString(TimeTool.DATE_GER));
 								problem.addPrescription(prescription);
 								
@@ -146,7 +146,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 								Prescription now =
 									new Prescription(pre.getArtikel(), problem.getPatient(), pre
 										.getDosis(), pre.getBemerkung());
-								now.set(Prescription.DATE_FROM, new TimeTool()
+								now.set(Prescription.FLD_DATE_FROM, new TimeTool()
 									.toString(TimeTool.DATE_GER));
 								problem.addPrescription(now);
 								

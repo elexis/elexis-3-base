@@ -59,6 +59,11 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
 
 	public static final String SIDE = "Seite";
+	public static final String SIDE_L = "l";
+	public static final String SIDE_R = "r";
+	public static final String LEFT = "left";
+	public static final String RIGHT = "right";
+	
 	public static final String PFLICHTLEISTUNG = "obligation";
 
 	public static final TarmedComparator tarmedComparator;
@@ -557,13 +562,21 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		IVerrechenbar vv = v.getVerrechenbar();
 		if (vv instanceof TarmedLeistung) {
 			String side = v.getDetail(SIDE);
-			if ("l".equalsIgnoreCase(side)) {
-				return "left";
-			} else if ("r".equalsIgnoreCase(side)) {
-				return "right";
+			if (SIDE_L.equalsIgnoreCase(side)) {
+				return LEFT;
+			} else if (SIDE_R.equalsIgnoreCase(side)) {
+				return RIGHT;
 			}
 		}
 		return "none";
+	}
+	
+	public boolean requiresSide(){
+		loadExtension();
+		if (checkZero(ext.get(SIDE.toUpperCase())) == 1) {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override

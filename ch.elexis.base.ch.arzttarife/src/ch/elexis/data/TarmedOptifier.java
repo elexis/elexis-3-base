@@ -21,10 +21,6 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Verrechnet;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.RechnungsPrefs;
 import ch.rgw.tools.Result;
@@ -145,7 +141,10 @@ public class TarmedOptifier implements IOptifier {
 			// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann
 			// nur Zahl erhöhen.
 			for (Verrechnet v : lst) {
-				if (v.isInstance(code) && TarmedLeistung.getSide(v).equals("none")) {
+				String side = TarmedLeistung.getSide(v);
+				if (v.isInstance(code)
+					&& (side.equals("none") || (tc.requiresSide() && side
+						.equals(TarmedLeistung.LEFT)))) {
 					check = v;
 					check.setZahl(check.getZahl() + 1);
 					if (bezugOK) {
@@ -216,6 +215,12 @@ public class TarmedOptifier implements IOptifier {
 				check.setDetail(TL, Integer.toString(tc.getTL()));
 				lst.add(check);
 			}
+			
+			// check if side is required
+			if (tc.requiresSide()) {
+				check.setDetail(TarmedLeistung.SIDE, TarmedLeistung.SIDE_L);
+			}
+			
 			/*
 			 * Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten -> vorerst raus //
 			 * "Zusammen mit" - Bedingung nicht erfüllt -> Hauptziffer einfügen. if(checkBezug){

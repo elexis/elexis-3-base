@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.exceptions.ElexisException;
@@ -317,6 +316,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		getConnection().exec(
 			"update CH_ELEXIS_OMNIVORE_DATA set Title=" + JdbcLink.wrap(newName) + " where Title="
 				+ JdbcLink.wrap(oldname) + " and mimetype=" + JdbcLink.wrap("text/category"));
+		clearCache();
 	}
 	
 	public static void removeCategory(String name, String destName){
@@ -374,7 +374,14 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	@Override
 	public String getLabel(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(get(FLD_DATE)).append(StringConstants.SPACE).append(get(FLD_TITLE));
+		
+		// avoid adding only a space - causes trouble in renaming of categories
+		String date = get(FLD_DATE);
+		if (date != null && !date.isEmpty()) {
+			sb.append(get(FLD_DATE));
+			sb.append(StringConstants.SPACE);
+		}
+		sb.append(get(FLD_TITLE));
 		return sb.toString();
 	}
 	

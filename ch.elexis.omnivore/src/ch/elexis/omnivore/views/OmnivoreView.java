@@ -143,7 +143,8 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	};
 	
 	private final ElexisUiEventListenerImpl eeli_dochandle = new ElexisUiEventListenerImpl(
-		DocHandle.class, ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE) {
+		DocHandle.class, ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE
+			| ElexisEvent.EVENT_UPDATE) {
 		@Override
 		public void runInUi(ElexisEvent ev){
 			viewer.refresh();
@@ -587,7 +588,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 									dh.getLabel(), null);
 							if (id.open() == Dialog.OK) {
 								String nn = id.getValue();
-								DocHandle.renameCategory(dh.getLabel(), nn);
+								DocHandle.renameCategory(dh.getTitle(), nn);
 								viewer.refresh();
 							}
 						} else {

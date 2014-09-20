@@ -210,6 +210,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	private Patient actPatient = null;
 	private Konsultation actKons;
+	private static boolean creatingKons = false;
+	private static String  savedInitialKonsText = null;
 
 	private Hashtable<String, IKonsExtension> hXrefs;
 
@@ -2814,6 +2816,12 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		removeKonsTextLock();
 
 		actKons = k;
+		if (savedInitialKonsText != null)
+		{
+			actKons.updateEintrag(savedInitialKonsText, true);
+			savedInitialKonsText = null;
+		}
+		creatingKons = false;
 
 		if (actKons != null) {
 			// create new konsTextLock
@@ -3026,10 +3034,12 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 * Creates a new consultation if text has been entered, but no consultation is selected.
 	 */
 	private void handleInitialKonsText(){
-		if (actPatient != null && actKons == null) {
+		if (actPatient != null && actKons == null && creatingKons == false) {
+			creatingKons = true;
 			String initialText = text.getContentsAsXML();
-
 			Konsultation.neueKons(initialText);
+		}	else {
+			savedInitialKonsText = text.getContentsAsXML();
 		}
 	}
 

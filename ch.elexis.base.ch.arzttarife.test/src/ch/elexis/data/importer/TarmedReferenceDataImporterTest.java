@@ -1,4 +1,4 @@
-package ch.elexis.base.ch.arzttarife.test;
+package ch.elexis.data.importer;
 
 import static org.junit.Assert.assertEquals;
 

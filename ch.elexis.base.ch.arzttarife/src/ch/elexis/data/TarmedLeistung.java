@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public static final String FLD_NICK = "Nick";
 	
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
-
+	
 	public static final String SIDE = "Seite";
 	public static final String SIDE_L = "l";
 	public static final String SIDE_R = "r";
@@ -69,6 +70,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public static final TarmedComparator tarmedComparator;
 	public static final TarmedOptifier tarmedOptifier;
 	public static final TimeTool INFINITE = new TimeTool("19991231");
+	public static TimeTool curTimeHelper = new TimeTool();
 	
 	private static final String VERSION_110 = "1.1.0";
 	private static final String VERSION_111 = "1.1.1";
@@ -474,8 +476,20 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	}
 	
 	public String getExclusion(){
-		loadExtension();
-		return checkNull(ext.get("exclusion")); //$NON-NLS-1$
+		curTimeHelper.setTime(new Date());
+		return getExclusion(curTimeHelper);
+	}
+	
+	public String getExclusion(TimeTool date){
+		String exclusions = TarmedKumulation.getExclusions(getCode(), date);
+		if (exclusions == null) {
+			loadExtension();
+			if (ext == null) {
+				return "";
+			}
+			return checkNull(ext.get("exclusion"));
+		}
+		return checkNull(exclusions);
 	}
 	
 	public int getTP(final TimeTool date, final Fall fall){

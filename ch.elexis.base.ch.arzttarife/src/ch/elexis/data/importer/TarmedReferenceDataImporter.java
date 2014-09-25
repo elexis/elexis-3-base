@@ -39,6 +39,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.data.TarmedKumulation;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
 import ch.rgw.compress.CompEx;
@@ -70,28 +71,28 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	private boolean updateBlockWarning = false;
 	boolean updateIDs = false;
 	boolean showRestartDialog = true;
-
+	
 	/**
 	 * Only for unit tests! Suppress dialog at end of import
 	 */
-	public void suppressRestartDialog() {
+	public void suppressRestartDialog(){
 		showRestartDialog = false;
 	}
-
+	
 	@Override
 	public Class<?> getReferenceDataTypeResponsibleFor(){
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public int getCurrentVersion(){
 		return TarmedLeistung.getCurrentVersion();
 	}
-
+	
 	@Override
 	public IStatus performImport(IProgressMonitor ipm, InputStream input, Integer version){
-		if(ipm == null) {
+		if (ipm == null) {
 			ipm = new NullProgressMonitor();
 		}
 		
@@ -124,6 +125,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 			pj.exec("DELETE FROM TARMED"); //$NON-NLS-1$
 			pj.exec("DELETE FROM TARMED_DEFINITIONEN"); //$NON-NLS-1$
 			pj.exec("DELETE FROM TARMED_EXTENSION"); //$NON-NLS-1$
+			pj.exec("DELETE FROM " + TarmedKumulation.getDBTableName()); //$NON-NLS-1$
 			ipm.subTask(Messages.TarmedImporter_definitions);
 			importDefinition("ANAESTHESIE", "DIGNI_QUALI", "DIGNI_QUANTI", "LEISTUNG_BLOECKE", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				"LEISTUNG_GRUPPEN", "LEISTUNG_TYP", "PFLICHT", "REGEL_EL_ABR", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -278,43 +280,8 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 					ext.put("kombination_or", k); //$NON-NLS-1$
 				}
 				
-				// get LNR_SLAVE, TYP
-				rsub =
-					stmCached.query(String.format(
-						"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s", ImportPrefix,
-						JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
-				String exclusion = ""; //$NON-NLS-1$
-				String inclusion = ""; //$NON-NLS-1$
-				String exclusive = ""; //$NON-NLS-1$
-				validResults = getValidValueMaps(rsub, validFrom);
-				if (!validResults.isEmpty()) {
-					for (Map<String, String> map : validResults) {
-						String typ = map.get("TYP"); //$NON-NLS-1$
-						String slave = map.get("LNR_SLAVE"); //$NON-NLS-1$
-						if (typ != null) {
-							if (typ.equals("E")) { //$NON-NLS-1$
-								exclusion += slave + ","; //$NON-NLS-1$
-							} else if (typ.equals("I")) { //$NON-NLS-1$
-								inclusion += slave + ","; //$NON-NLS-1$
-							} else if (typ.equals("X")) { //$NON-NLS-1$
-								exclusive += slave + ","; //$NON-NLS-1$
-							}
-						}
-					}
-				}
-				rsub.close();
-				if (!exclusion.equals("")) { //$NON-NLS-1$
-					String k = exclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					ext.put("exclusion", k); //$NON-NLS-1$
-				}
-				if (!inclusion.equals("")) { //$NON-NLS-1$
-					String k = inclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					ext.put("inclusion", k); //$NON-NLS-1$
-				}
-				if (!exclusive.equals("")) { //$NON-NLS-1$
-					String k = exclusive.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					ext.put("exclusive", k); //$NON-NLS-1$
-				}
+				// get LNR_SLAVE, TYP (invalid combinations with other codes)
+				importKumulations(tl.getCode(), stmCached);
 				
 				// get OPERATOR, MENGE, ZR_ANZAHL, PRO_NACH, ZR_EINHEIT
 				rsub =
@@ -352,12 +319,11 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 				updateExistingIDs(ipm);
 			}
 			
-			if(version==null) {
+			if (version == null) {
 				TarmedLeistung.setVersion(new TimeTool().toString(TimeTool.DATE_COMPACT));
 			} else {
 				TarmedLeistung.setVersion(version.toString());
 			}
-
 			
 			ipm.done();
 			String message = Messages.TarmedImporter_successMessage;
@@ -387,6 +353,35 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 		}
 		return Status.CANCEL_STATUS;
 		
+	}
+	
+	/**
+	 * Import all the kumulations from the LEISTUNG_KUMULATION table for the given code. The
+	 * kumulations contain inclusions, exclusions and exclusives.
+	 * 
+	 * @param code
+	 *            of a tarmed value
+	 * @param stmCached
+	 * @throws SQLException
+	 */
+	private void importKumulations(String code, Stm stmCached) throws SQLException{
+		ResultSet res =
+			stmCached.query(String.format(
+				"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s", ImportPrefix,
+				JdbcLink.wrap(code))); //$NON-NLS-1$
+		TimeTool fromTime = new TimeTool();
+		TimeTool toTime = new TimeTool();
+		
+		while (res != null && res.next()) {
+			fromTime.set(res.getString("GUELTIG_VON"));
+			toTime.set(res.getString("GUELTIG_BIS"));
+			
+			new TarmedKumulation(code, res.getString("ART_MASTER"), res.getString("LNR_SLAVE"),
+				res.getString("ART_SLAVE"), res.getString("TYP"), res.getString("ANZEIGE"),
+				res.getString("GUELTIG_SEITE"), fromTime.toString(TimeTool.DATE_COMPACT),
+				toTime.toString(TimeTool.DATE_COMPACT));
+		}
+		res.close();
 	}
 	
 	/**

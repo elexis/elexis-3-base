@@ -28,6 +28,7 @@ import org.jdom.Namespace;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
+import ch.elexis.TarmedRechnung.XMLExporterServices;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.StringConstants;
@@ -356,7 +357,7 @@ public class RnPrintView2 extends ViewPart {
 		
 		// lookup EAN numbers in services and set field 98
 		HashSet<String> eanUniqueSet = new HashSet<String>();
-		List allServices = detail.getChild(XMLExporter.ELEMENT_SERVICES, ns).getChildren(); //$NON-NLS-1$
+		List allServices = detail.getChild(XMLExporterServices.ELEMENT_SERVICES, ns).getChildren(); //$NON-NLS-1$
 		for (Object object : allServices) {
 			if (object instanceof Element) {
 				Element service = (Element) object;
@@ -386,7 +387,7 @@ public class RnPrintView2 extends ViewPart {
 			}
 		}
 		
-		Element services = detail.getChild(XMLExporter.ELEMENT_SERVICES, ns); //$NON-NLS-1$
+		Element services = detail.getChild(XMLExporterServices.ELEMENT_SERVICES, ns); //$NON-NLS-1$
 		SortedList<Element> ls = new SortedList(services.getChildren(), new RnComparator());
 		
 		Element remark = invoice.getChild(XMLExporter.ELEMENT_REMARK); //$NON-NLS-1$

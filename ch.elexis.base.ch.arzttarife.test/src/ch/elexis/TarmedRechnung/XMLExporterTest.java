@@ -38,5 +38,11 @@ public class XMLExporterTest {
 		Element record = (Element) iter.next();
 		Attribute code = record.getAttribute("code");
 		assertEquals("00.0010", code.getValue());
+		// check if patient is included
+		iter = root.getDescendants(new ElementFilter("patient"));
+		assertTrue(iter.hasNext());
+		Element patient = (Element) iter.next();
+		Attribute gender = patient.getAttribute("gender");
+		assertEquals("female", gender.getValue());
 	}
 }

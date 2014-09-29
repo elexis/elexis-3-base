@@ -252,6 +252,17 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	@Override
+	public int getPackungsGroesse(){
+		int val = 0;
+		try {
+			val = Integer.parseInt(get(FLD_PKG_SIZE));
+		} catch (NumberFormatException nfe) {
+			
+		}
+		return val;
+	}
+	
+	@Override
 	public Money getKosten(final TimeTool dat){
 		double vkt = checkZeroDouble(getTP(dat, null) + "");
 		double vpe = checkZeroDouble((String) get(FLD_PKG_SIZE));

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="at.medevit.elexis.ehc.ui.ehcexport">
+      <category
+            id="at.medevit.elexis.ehc.ui.docbox.category"
+            name="Docbox">
+      </category>
+      <wizard
+            category="at.medevit.elexis.ehc.ui.docbox.category"
+            class="at.medevit.elexis.ehc.ui.docbox.wizard.ExportPrescriptionWizard"
+            id="at.medevit.elexis.ehc.ui.docbox.prescriptionwizard"
+            name="eRezept">
+      </wizard>
+   </extension>
+
+</plugin>

@@ -8,7 +8,7 @@
  * Contributors:
  *     T. Huster - initial API and implementation
  *******************************************************************************/
-package at.medevit.elexis.ehc.core.internal;
+package at.medevit.elexis.ehc.core;
 
 import java.util.Date;
 import java.util.List;
@@ -17,10 +17,13 @@ import java.util.regex.Pattern;
 
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
+import ch.elexis.data.Xid;
 import ch.rgw.tools.TimeTool;
 import ehealthconnector.cda.documents.ch.Address;
+import ehealthconnector.cda.documents.ch.Author;
 import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.AdministrativeGenderCode;
 import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.UseCode;
 import ehealthconnector.cda.documents.ch.Name;
@@ -49,20 +52,31 @@ public class EhcCoreMapper {
 		// ADDRESS
 		Anschrift elexisAddress = elexisPatient.getAnschrift();
 		if (elexisAddress != null) {
-			String elexisStreet = elexisAddress.getStrasse();
-			String houseNumber = "";
-			// try to get the house number
-			Matcher matcher = lastIntPattern.matcher(elexisStreet);
-			if (matcher.find()) {
-				houseNumber = matcher.group(1);
-				elexisStreet = elexisStreet.substring(0, matcher.start(1));
-			}
-			
-			Address ehcAddress =
-				new Address(elexisStreet.trim(), houseNumber, elexisAddress.getPlz(),
-					elexisAddress.getOrt());
-			ret.cAddAddress(ehcAddress);
+			ret.cAddAddress(getEhcAddress(elexisAddress));
 		}
+		return ret;
+	}
+	
+	public static Address getEhcAddress(Anschrift elexisAddress){
+		String elexisStreet = elexisAddress.getStrasse();
+		String houseNumber = "";
+		// try to get the house number
+		Matcher matcher = lastIntPattern.matcher(elexisStreet);
+		if (matcher.find()) {
+			houseNumber = matcher.group(1);
+			elexisStreet = elexisStreet.substring(0, matcher.start(1));
+		}
+		
+		Address ehcAddress =
+			new Address(elexisStreet.trim(), houseNumber, elexisAddress.getPlz(),
+				elexisAddress.getOrt());
+		
+		return ehcAddress;
+	}
+	
+	public static Author getEhcAuthor(Mandant elexisMandant){
+		String gln = elexisMandant.getXid(Xid.DOMAIN_EAN);
+		Author ret = new Author(getEhcPersonName(elexisMandant), gln);
 		
 		return ret;
 	}

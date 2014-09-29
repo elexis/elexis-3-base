@@ -8,21 +8,24 @@
  * Contributors:
  *     T. Huster - initial API and implementation
  *******************************************************************************/
-package at.medevit.elexis.ehc.core;
+package at.medevit.elexis.ehc.docbox.service;
 
-import java.io.InputStream;
+import at.medevit.elexis.ehc.core.EhcCoreService;
 
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Rezept;
-import ehealthconnector.cda.documents.ch.CdaCh;
-
-public interface EhcCoreService {
-	public CdaCh getCdaChDocument(Patient patient, Mandant mandant);
+public class EhcServiceComponent {
+	private static EhcCoreService service;
 	
-	public CdaCh getDocument(InputStream document);
+	public synchronized void setService(EhcCoreService service){
+		EhcServiceComponent.service = service;
+	}
 	
-	public void importPatient(ehealthconnector.cda.documents.ch.Patient selectedPatient);
+	public synchronized void unsetService(EhcCoreService service){
+		if (EhcServiceComponent.service == service) {
+			EhcServiceComponent.service = null;
+		}
+	}
 	
-	public CdaCh getPrescriptionDocument(Rezept rezept);
+	public static EhcCoreService getService(){
+		return service;
+	}
 }

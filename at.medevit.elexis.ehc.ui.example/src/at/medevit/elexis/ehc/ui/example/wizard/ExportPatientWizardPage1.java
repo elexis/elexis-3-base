@@ -30,6 +30,7 @@ import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
@@ -95,7 +96,9 @@ public class ExportPatientWizardPage1 extends WizardPage {
 		
 		if (!contentSelection.isEmpty()) {
 			Patient selectedPatient = (Patient) contentSelection.getFirstElement();
-			CdaCh document = ServiceComponent.getService().getPatientDocument(selectedPatient);
+			CdaCh document =
+				ServiceComponent.getService().getCdaChDocument(selectedPatient,
+					(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 			try {
 				String outputDir =
 					CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,

@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rezept;
 import ehealthconnector.cda.documents.ch.Address;
@@ -38,6 +39,7 @@ import ehealthconnector.cda.documents.ch.Phone;
 public class EhcCoreServiceTest {
 	
 	private static Patient patient;
+	private static Mandant mandant;
 	private static Rezept rezept;
 	
 	@BeforeClass
@@ -62,7 +64,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testGetPatientDocument(){
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getPatientDocument(patient);
+		CdaCh cda = service.getCdaChDocument(patient, mandant);
 		assertNotNull(cda);
 		ehealthconnector.cda.documents.ch.Patient cdaPatient = cda.cGetPatient();
 		assertNotNull(cdaPatient);
@@ -81,7 +83,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testWritePatientDocument() throws UnsupportedEncodingException{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getPatientDocument(patient);
+		CdaCh cda = service.getCdaChDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		cda.cPrintXmlToStream(output);
 		assertTrue(output.size() > 0);
@@ -93,7 +95,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testWritePatientDocumentFile() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getPatientDocument(patient);
+		CdaCh cda = service.getCdaChDocument(patient, mandant);
 		
 		String userHome = System.getProperty("user.home");
 		String outFilePath = userHome + File.separator + "testPatientCda.xml";
@@ -108,7 +110,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testGetDocument() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getPatientDocument(patient);
+		CdaCh cda = service.getCdaChDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		cda.cPrintXmlToStream(output);
 		assertTrue(output.size() > 0);

@@ -35,8 +35,10 @@ import org.openhealthtools.mdht.uml.hl7.vocab.NullFlavor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.core.EhcCoreService;
 import at.medevit.elexis.ehc.core.internal.document.CdaChImpl;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
@@ -54,10 +56,11 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public CdaCh getPatientDocument(Patient patient){
+	public CdaCh getCdaChDocument(Patient patient, Mandant mandant){
 		CdaChImpl ret = new CdaChImpl(CHFactory.eINSTANCE.createCDACH().init());
 		
 		ret.cSetPatient(EhcCoreMapper.getEhcPatient(patient));
+		ret.cSetAuthor(EhcCoreMapper.getEhcAuthor(mandant));
 		return ret;
 	}
 	
@@ -101,12 +104,16 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		
 		// set the patient
 		ret.cSetPatient(EhcCoreMapper.getEhcPatient(patient));
+		// set the author
+		ret.cSetAuthor(EhcCoreMapper.getEhcAuthor(rezept.getMandant()));
 		
 		// create a medication section
 		MedicationsSection mediSection = IHEFactory.eINSTANCE.createMedicationsSection();
 		mediSection.setTitle(DatatypesFactory.eINSTANCE.createST(rezeptTitle));
 		// set ID
-		mediSection.setId(DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.6"));
+		mediSection.setId(DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.1.1.1.3.1.1"));
+		mediSection.setCode(DatatypesFactory.eINSTANCE.createCE("10160-0", "2.16.840.1.113883.6.1",
+			"LOINC", "HISTORY OF MEDICATION USE"));
 		
 		StrucDocText line = CDAFactory.eINSTANCE.createStrucDocText();
 		
@@ -114,8 +121,6 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		for (Prescription p : prescriptions) {
 			line.addText(p.getLabel() + "   ");
 			String pharmaCode = p.getArtikel().getPharmaCode();
-			mediSection.setCode(DatatypesFactory.eINSTANCE.createCE(pharmaCode,
-				"2.16.840.1.113883.6.1", "LOINC", "HISTORY OF MEDICATION USE"));
 			
 			// TODO not connected to the rezept or prescription any more
 			// define substance administration

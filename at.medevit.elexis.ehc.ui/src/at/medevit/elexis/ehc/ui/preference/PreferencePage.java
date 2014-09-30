@@ -31,6 +31,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.userCfg));
 		setDescription("e-Health Connector Einstellungen");
 		
+		initDirectories();
+	}
+	
+	public static void initDirectories(){
 		if (CoreHub.userCfg.get(EHC_OUTPUTDIR, "notset").equals("notset")) {
 			File outputDir = new File(getDefaultOutputDir());
 			if (!outputDir.exists()) {
@@ -40,9 +44,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		}
 		
 		if (CoreHub.userCfg.get(EHC_INPUTDIR, "notset").equals("notset")) {
-			File outputDir = new File(getDefaultInputDir());
-			if (!outputDir.exists()) {
-				outputDir.mkdirs();
+			File inputDir = new File(getDefaultInputDir());
+			if (!inputDir.exists()) {
+				inputDir.mkdirs();
 			}
 			CoreHub.userCfg.set(EHC_INPUTDIR, getDefaultInputDir());
 		}

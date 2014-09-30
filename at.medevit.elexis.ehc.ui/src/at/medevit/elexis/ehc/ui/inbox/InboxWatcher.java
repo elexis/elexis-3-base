@@ -149,18 +149,23 @@ public class InboxWatcher {
 		@Override
 		public void run(){
 			File inboxFolder = new File(activeInboxString);
+			if (!inboxFolder.exists()) {
+				PreferencePage.initDirectories();
+			}
 			File[] files = inboxFolder.listFiles();
-			for (File file : files) {
-				if (!file.isDirectory()) {
-					try {
-						URL url = new URL("file:///" + file.getAbsolutePath());
-						if (!EhcDocument.documentExists(url)) {
-							EhcDocument newDocument =
-								new EhcDocument(file.getName(), url, new TimeTool());
-							fireInboxCreated(newDocument);
+			if (files != null) {
+				for (File file : files) {
+					if (!file.isDirectory()) {
+						try {
+							URL url = new URL("file:///" + file.getAbsolutePath());
+							if (!EhcDocument.documentExists(url)) {
+								EhcDocument newDocument =
+									new EhcDocument(file.getName(), url, new TimeTool());
+								fireInboxCreated(newDocument);
+							}
+						} catch (MalformedURLException e) {
+							logger.error("Error initializing inbox.", e);
 						}
-					} catch (MalformedURLException e) {
-						logger.error("Error initializing inbox.", e);
 					}
 				}
 			}

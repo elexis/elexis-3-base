@@ -7,7 +7,6 @@ import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
 import ch.elexis.data.LabItem;
-import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
@@ -66,23 +65,8 @@ public class Value {
 			initialize();
 		}
 		
-		String comment = ""; //$NON-NLS-1$
-		int resultFlags = 0;
-		if (flags.equals("1")) { //$NON-NLS-1$
-			// comment = Messages.getString("Value.High");
-			resultFlags |= LabResult.PATHOLOGIC;
-		}
-		if (flags.equals("2")) { //$NON-NLS-1$
-			// comment = Messages.getString("Value.Low");
-			resultFlags |= LabResult.PATHOLOGIC;
-		}
-		if (flags.equals("*") || flags.equals("E")) { //$NON-NLS-1$ //$NON-NLS-2$
-			comment = Messages.getString("Value.Error"); //$NON-NLS-1$
-		}
-		
 		TransientLabResult tLabResult =
-			new TransientLabResult.Builder(patient, _myLab, _labItem, value).date(date)
-				.comment(comment).flags(resultFlags).build();
+			new TransientLabResult.Builder(patient, _myLab, _labItem, value).date(date).build();
 		LabImportUtil.importLabResults(Collections.singletonList(tLabResult),
 			new DefaultLabImportUiHandler());
 	}

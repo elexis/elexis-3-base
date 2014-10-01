@@ -70,7 +70,7 @@ public class EhcCoreMapper {
 		Address ehcAddress =
 			new Address(elexisStreet.trim(), houseNumber, elexisAddress.getPlz(),
 				elexisAddress.getOrt());
-		
+		ehcAddress.cSetAddressline1(elexisAddress.getStrasse());
 		return ehcAddress;
 	}
 	

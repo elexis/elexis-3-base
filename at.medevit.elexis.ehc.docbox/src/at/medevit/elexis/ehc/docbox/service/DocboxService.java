@@ -271,8 +271,17 @@ public class DocboxService {
 		sb.append(new SimpleDateFormat("HH").format(now));
 		sb.append(new SimpleDateFormat("mm").format(now));
 		sb.append(new SimpleDateFormat("ss").format(now));
-		// format ignored and 3 digits are returned ...
-		sb.append(new SimpleDateFormat("SS").format(now).substring(1));
+		// Milliseconds ... 
+		String millis = new SimpleDateFormat("SS").format(now);
+		if(millis.length() == 1) {
+			sb.append("0").append(millis);
+		} else if (millis.length() == 2) {
+			sb.append(millis);
+		} else if (millis.length() == 3){
+			sb.append(millis.substring(1));
+		} else {
+			sb.append("00");
+		}
 		
 		String checkString = sb.toString();
 		int checkSum = 0;

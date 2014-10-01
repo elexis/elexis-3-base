@@ -3,7 +3,6 @@ package ch.elexis.TarmedRechnung;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
-import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
@@ -11,7 +10,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.elexis.data.Rechnung;
 import ch.elexis.tarmedprefs.TarmedRequirements;
-import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
@@ -27,7 +25,7 @@ public class XMLExporterTiers {
 		return tiersElement;
 	}
 	
-	public static XMLExporterTiers buildTiers(Rechnung rechnung, ESR besr, Money mDue){
+	public static XMLExporterTiers buildTiers(Rechnung rechnung, XMLExporter xmlExporter){
 		TarmedACL ta = TarmedACL.getInstance();
 		
 		Fall fall = rechnung.getFall();
@@ -187,7 +185,7 @@ public class XMLExporterTiers {
 		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
 		ret.tiersElement.addContent(patientElement);
 		
-		Element guarantor = XMLExporterUtil.buildGuarantor(rnAdressat, patient); // 11110
+		Element guarantor = xmlExporter.buildGuarantor(rnAdressat, patient); // 11110
 		ret.tiersElement.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", XMLExporter.ns); // 11120 //$NON-NLS-1$
@@ -206,7 +204,8 @@ public class XMLExporterTiers {
 			Element demand = new Element("demand", XMLExporter.ns); //$NON-NLS-1$
 			demand.setAttribute("tc_demand_id", "0"); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			demand.setAttribute("tc_token", besr.createCodeline(XMLTool.moneyToXmlDouble(mDue) //$NON-NLS-1$
+			demand.setAttribute(
+					"tc_token", xmlExporter.getBesr().createCodeline(XMLTool.moneyToXmlDouble(xmlExporter.getDueMoney()) //$NON-NLS-1$
 				.replaceFirst("[.,]", ""), tcCode)); //$NON-NLS-1$ //$NON-NLS-2$
 			demand.setAttribute(
 				"insurance_demand_date", XMLExporterUtil.makeTarmedDatum(rechnung.getDatumRn())); //$NON-NLS-1$

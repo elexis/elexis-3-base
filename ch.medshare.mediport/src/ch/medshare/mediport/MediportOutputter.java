@@ -30,6 +30,7 @@ import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.util.ResultAdapter;
@@ -147,6 +148,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 		try {
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
 				new IRunnableWithProgress() {
+					@Override
 					public void run(final IProgressMonitor monitor){
 						monitor.beginTask(Messages
 							.getString("MediportOutputter.info.exportiereRechnungen"), rnn.size()); //$NON-NLS-1$
@@ -268,12 +270,14 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 					final IRnOutputter iro = alternativeAusgabe;
 					SWTHelper.SimpleDialog dlg =
 						new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider() {
+							@Override
 							public Control getControl(Composite parent){
 								parent.getShell().setText(iro.getDescription());
 								return (Control) iro.createSettingsControl(parent);
 								
 							}
 							
+							@Override
 							public void beforeClosing(){
 								iro.saveComposite();
 							}
@@ -353,7 +357,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 		// XML Standard: http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
 		// Dort steht beim Feld 11310: Gesetzlicher Vertreter des Patienten.
 		Element guarantor = new Element("guarantor", ns);
-		guarantor.addContent(buildAdressElement(patient, true)); // use "Anschrift" instead of
+		guarantor.addContent(XMLExporterUtil.buildAdressElement(patient, true)); // use "Anschrift" instead of
 		// contact details (e.g. for
 		// "gesetzliche Vertretung")
 		return guarantor;
@@ -395,11 +399,13 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 		if (selectedParam == null) {
 			SWTHelper.SimpleDialog dlg =
 				new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider() {
+					@Override
 					public Control getControl(Composite parent){
 						parent.getShell().setText(getDescription());
 						return createSettingsControl(parent);
 					}
 					
+					@Override
 					public void beforeClosing(){
 						saveComposite();
 					}

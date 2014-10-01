@@ -46,7 +46,6 @@ import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
-import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
@@ -733,13 +732,19 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 		sql.append("SELECT ").append(field).append(" FROM ").append(tablename)
 			.append(" WHERE ID='").append(id).append("'");
 		
-		ResultSet res = executeSqlQuery(sql.toString());
+		Stm stm = null;
 		try {
+			stm = pj.getStatement();
+			ResultSet res = stm.query(sql.toString());
 			if ((res != null) && (res.next() == true)) {
 				return res.getBytes(field);
 			}
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
+		} finally {
+			if (stm != null) {
+				pj.releaseStatement(stm);
+			}
 		}
 		return null;
 	}
@@ -771,34 +776,6 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 				throw new PersistenceException("Could not close statement " + e.getMessage());
 			}
 		}
-	}
-	
-	/**
-	 * Execute the sql string and handle exceptions appropriately.
-	 * <p>
-	 * <b>ATTENTION:</b> JdbcLinkResourceException will trigger a restart of Elexis in
-	 * at.medevit.medelexis.ui.statushandler.
-	 * </p>
-	 * 
-	 * @param sql
-	 * @return
-	 */
-	private ResultSet executeSqlQuery(String sql){
-		JdbcLink conn = null;
-		Stm stm = null;
-		ResultSet res = null;
-		try {
-			conn = PersistentObject.getConnection();
-			stm = conn.getStatement();
-			res = stm.query(sql);
-		} catch (JdbcLinkException je) {
-			je.printStackTrace();
-			ExHandler.handle(je);
-		} finally {
-			if (stm != null)
-				conn.releaseStatement(stm);
-		}
-		return res;
 	}
 	
 	private File convertInputStreamToFile(InputStream input){

@@ -177,17 +177,6 @@ public class XMLExporterUtil {
 		return ret;
 	}
 	
-	public static Element buildGuarantor(Kontakt garant, Kontakt patient){
-		// Patient wird im override des MediPort Plugins verwendet
-		// Hinweis:
-		// XML Standard:
-		// http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
-		// Dort steht beim Feld 11310: Gesetzlicher Vertreter des Patienten.
-		Element guarantor = new Element("guarantor", XMLExporter.ns); //$NON-NLS-1$
-		guarantor.addContent(buildAdressElement(garant));
-		return guarantor;
-	}
-	
 	public static boolean setAttributeIfNotEmpty(final Element element, final String name,
 		final String value){
 		if (element == null) {

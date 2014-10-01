@@ -183,6 +183,7 @@ public class XMLExporter implements IRnOutputter {
 	private Money mTotal;
 	private Money mPaid;
 	private Money mDue;
+	private ESR besr;
 	static TarmedACL ta;
 	private String outputDir;
 	private static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$
@@ -219,16 +220,19 @@ public class XMLExporter implements IRnOutputter {
 	 * @param rnn
 	 *            a Collection of Rechnung - Objects to output
 	 */
+	@Override
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn,
 		Properties props){
 		Result<Rechnung> ret = new Result<Rechnung>();
 		if (outputDir == null) {
 			SWTHelper.SimpleDialog dlg =
 				new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider() {
+					@Override
 					public Control getControl(Composite parent){
 						return createSettingsControl(parent);
 					}
 					
+					@Override
 					public void beforeClosing(){
 						// Nothing
 					}
@@ -252,6 +256,7 @@ public class XMLExporter implements IRnOutputter {
 	 * @param rn
 	 *            we don't mind, we always return true
 	 */
+	@Override
 	public boolean canStorno(final Rechnung rn){
 		return true;
 	}
@@ -613,7 +618,7 @@ public class XMLExporter implements IRnOutputter {
 		String esrmode = actMandant.getRechnungssteller().getInfoString(ta.ESR5OR9);
 		Element esr; // 10400
 		String userdata = rn.getRnId();
-		ESR besr =
+		besr =
 			new ESR(actMandant.getRechnungssteller().getInfoString(ta.ESRNUMBER), actMandant
 				.getRechnungssteller().getInfoString(ta.ESRSUB), userdata, ESR.ESR27);
 		
@@ -677,7 +682,7 @@ public class XMLExporter implements IRnOutputter {
 		//			eTiers.setAttribute("purpose", ELEMENT_INVOICE); // 11265 //$NON-NLS-1$
 		//		}
 		
-		XMLExporterTiers tiers = XMLExporterTiers.buildTiers(rechnung, besr, mDue);
+		XMLExporterTiers tiers = XMLExporterTiers.buildTiers(rechnung, this);
 		invoice.addContent(tiers.getElement());
 		
 		Element detail = new Element(XMLExporterServices.ELEMENT_DETAIL, ns); // 15000
@@ -822,6 +827,18 @@ public class XMLExporter implements IRnOutputter {
 		return xmlRn;
 	}
 	
+	protected Element buildGuarantor(Kontakt garant, Kontakt patient){
+		// Patient wird im override des MediPort Plugins verwendet
+		// Hinweis:
+		// XML Standard:
+		// http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
+		// Dort steht beim Feld 11310: Gesetzlicher Vertreter des Patienten.
+		Element guarantor = new Element("guarantor", XMLExporter.ns); //$NON-NLS-1$
+		guarantor.addContent(XMLExporterUtil.buildAdressElement(garant));
+		return guarantor;
+	}
+
+	@Override
 	public String getDescription(){
 		return Messages.XMLExporter_TarmedForTrustCenter;
 	}
@@ -900,6 +917,7 @@ public class XMLExporter implements IRnOutputter {
 		return BY_CONTRACT;
 	}
 	
+	@Override
 	public Control createSettingsControl(final Object parent){
 		final Composite parentInc = (Composite) parent;
 		Composite ret = new Composite(parentInc, SWT.NONE);
@@ -942,6 +960,7 @@ public class XMLExporter implements IRnOutputter {
 			+ RnStatus.getStatusText(rn.getStatus()));
 	}
 	
+	@Override
 	public boolean canBill(final Fall fall){
 		Kontakt garant = fall.getGarant();
 		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
@@ -957,6 +976,7 @@ public class XMLExporter implements IRnOutputter {
 		return false;
 	}
 	
+	@Override
 	public void saveComposite(){
 		// Nothing
 	}
@@ -1012,6 +1032,7 @@ public class XMLExporter implements IRnOutputter {
 				sumvat += (amount / (100.0)) * scale;
 			}
 			
+			@Override
 			public int compareTo(VatRateElement other){
 				if (scale < other.scale)
 					return -1;
@@ -1034,5 +1055,13 @@ public class XMLExporter implements IRnOutputter {
 			element.add(amount);
 			sumvat += (amount / (100.0)) * scale;
 		}
+	}
+	
+	public ESR getBesr(){
+		return besr;
+	}
+	
+	public Money getDueMoney(){
+		return mDue;
 	}
 }

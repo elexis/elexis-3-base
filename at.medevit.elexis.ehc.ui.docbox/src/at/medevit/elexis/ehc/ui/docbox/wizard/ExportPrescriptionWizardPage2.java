@@ -2,6 +2,9 @@ package at.medevit.elexis.ehc.ui.docbox.wizard;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -10,6 +13,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import at.medevit.elexis.ehc.docbox.service.DocboxService;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 
@@ -48,6 +52,18 @@ public class ExportPrescriptionWizardPage2 extends WizardPage {
 		return !xmlText.getText().isEmpty();
 	}
 	
+	private void writePdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException{
+		String outputDir =
+			CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR, PreferencePage.getDefaultOutputDir());
+		File pdfFile =
+			new File(outputDir + File.separator + ExportPrescriptionWizard.getRezept().getLabel()
+				+ ".pdf");
+		try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
+			fos.write(pdf.toByteArray());
+			fos.flush();
+		}
+	}
+
 	public boolean finish(){
 		try {
 			String outputDir =
@@ -56,6 +72,9 @@ public class ExportPrescriptionWizardPage2 extends WizardPage {
 			ExportPrescriptionWizard.getDocument().cSaveToFile(
 				outputDir + File.separator + ExportPrescriptionWizard.getRezept().getLabel()
 					+ ".xml");
+			ByteArrayOutputStream pdf =
+				DocboxService.getPrescriptionPdf(ExportPrescriptionWizard.getDocument());
+			writePdf(pdf);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

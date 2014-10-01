@@ -39,4 +39,6 @@ Service-Component: OSGI-INF/ehcservice.xml
 Export-Package: at.medevit.elexis.ehc.core,
  ehealthconnector.cda.documents.ch,
  org.openhealthtools.mdht.uml.cda,
- org.openhealthtools.mdht.uml.hl7.datatypes
+ org.openhealthtools.mdht.uml.cda.ccd,
+ org.openhealthtools.mdht.uml.hl7.datatypes,
+ org.openhealthtools.mdht.uml.hl7.vocab

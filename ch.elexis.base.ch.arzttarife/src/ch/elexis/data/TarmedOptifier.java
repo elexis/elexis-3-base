@@ -118,7 +118,10 @@ public class TarmedOptifier implements IOptifier {
 			// Korrekter Fall Typ prüfen, und ggf. den code ändern
 			if (tc.getCode().matches("39.002[01]") || tc.getCode().matches("39.001[0156]")) {
 				String gesetz = kons.getFall().getRequiredString("Gesetz");
-
+				if (gesetz == null || gesetz.isEmpty()) {
+					gesetz = kons.getFall().getAbrechnungsSystem();
+				}
+				
 				if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0011")) {
 					return this.add(TarmedLeistung.getFromCode("39.0010"), kons);
 				} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0010")) {

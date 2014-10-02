@@ -40,7 +40,7 @@ public class Probe {
 		}
 		
 		if (strArray.length > 3) {
-			resultat = strArray[3].trim();
+			resultat = strArray[3];
 		}
 		
 		if (strArray.length > 4) {
@@ -58,30 +58,30 @@ public class Probe {
 	 * @return String Warnungsmeldung, die geloggt werden sollte
 	 */
 	public String write(Patient patient) throws PackageException{
-		if (getResultat().length() < 19) {
+		if (resultat.length() < 19) {
 			throw new PackageException(Messages.getString("Probe.ResultatMsg")); //$NON-NLS-1$
 		}
 		
 		String paramName;
 		String value;
 		String unit;
-		if (getResultat().length() > 20) {
-			if (getResultat().charAt(20) == 'C') {
+		if (resultat.length() > 20) {
+			if (resultat.charAt(20) == 'C') {
 				// Enzym
-				paramName = getResultat().substring(0, 4).trim().toUpperCase();
-				value = getResultat().substring(4, 10).trim();
-				unit = getResultat().substring(10, 16).trim();
+				paramName = resultat.substring(0, 4).trim().toUpperCase();
+				value = resultat.substring(4, 10).trim();
+				unit = resultat.substring(10, 16).trim();
 			} else {
 				// Substrat
-				paramName = getResultat().substring(0, 4).trim().toUpperCase();
-				value = getResultat().substring(5, 11).trim();
-				unit = getResultat().substring(12, 21).trim();
+				paramName = resultat.substring(0, 4).trim().toUpperCase();
+				value = resultat.substring(5, 11).trim();
+				unit = resultat.substring(12, 21).trim();
 			}
 		} else {
 			// Substrat
-			paramName = getResultat().substring(0, 4).trim().toUpperCase();
-			value = getResultat().substring(5, 11).trim();
-			unit = getResultat().substring(12, getResultat().length()).trim();
+			paramName = resultat.substring(0, 4).trim().toUpperCase();
+			value = resultat.substring(5, 11).trim();
+			unit = resultat.substring(12, resultat.length()).trim();
 		}
 		
 		Value val = Value.getValue(paramName, unit);

@@ -84,7 +84,7 @@ public class DataAccessor implements IDataAccess {
 						null, false);
 		} else if (descriptor.equals("OPGroesse")) { //$NON-NLS-1$
 			if (selectedArticel != null)
-				ret = new Result<Object>(Integer.toString(selectedArticel.getPackungsGroesse()));
+				ret = new Result<Object>(selectedArticel.getPackungsGroesseDesc());
 			else
 				ret =
 					new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,

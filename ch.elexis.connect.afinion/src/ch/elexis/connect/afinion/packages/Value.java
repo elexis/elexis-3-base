@@ -4,6 +4,7 @@ import java.util.ResourceBundle;
 
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
@@ -44,7 +45,13 @@ public class Value {
 		_longName = getString(paramName, "text");
 		_unit = getString(paramName, "unit");
 		if (unit != null && !unit.equals(_unit)) {
-			throw new PackageException("Einheit ist verschieden: " + unit + " - " + _unit);
+			boolean answeredYes =
+				SWTHelper.askYesNo("Einheiten Abweichung", "Vom Gerät erhalten: " + unit
+					+ "\nErwartet: " + _unit + "\nSoll die vom Gerät mitgesendete Einheit [" + unit
+					+ "] übernommen werden?");
+			if (answeredYes) {
+				_unit = unit;
+			}
 		}
 		_refMann = getString(paramName, "refM");
 		_refFrau = getString(paramName, "refF");

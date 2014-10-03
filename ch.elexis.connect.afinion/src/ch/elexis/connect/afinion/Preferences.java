@@ -26,10 +26,11 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	public static final String PARAMS = AFINION_BASE + "params"; //$NON-NLS-1$
 	public static final String LOG = AFINION_BASE + "log"; //$NON-NLS-1$
 	public static final String BACKGROUND = AFINION_BASE + "background"; //$NON-NLS-1$
+	public static final String APPLY_SENT_UNITS = AFINION_BASE + "applysentunits";
 	
 	Combo ports;
 	Text speed, data, stop, timeout, logFile;
-	Button parity, log, background;
+	Button parity, log, background, btnApplySentUnits;
 	
 	public Preferences(){
 		super(Messages.getString("AfinionAS100Action.ButtonName")); //$NON-NLS-1$
@@ -94,6 +95,19 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		log = new Button(ret, SWT.CHECK);
 		log.setSelection(CoreHub.localCfg.get(LOG, "n").equalsIgnoreCase("y")); //$NON-NLS-1$ //$NON-NLS-2$
 		
+		new Label(ret, SWT.NONE);
+		new Label(ret, SWT.NONE);
+		
+		Label lblAdditionalSettings = new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
+		lblAdditionalSettings.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		lblAdditionalSettings.setText(Messages.getString("Preferences.lblAdditionalSettings.text"));
+		
+		btnApplySentUnits = new Button(ret, SWT.CHECK);
+		btnApplySentUnits.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		btnApplySentUnits.setText(Messages.getString("Preferences.btnCheckButton.text"));
+		btnApplySentUnits.setSelection(CoreHub.localCfg.get(APPLY_SENT_UNITS, "n")
+			.equalsIgnoreCase("y"));
+		
 		return ret;
 	}
 	
@@ -114,6 +128,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		CoreHub.localCfg.set(TIMEOUT, timeout.getText());
 		CoreHub.localCfg.set(LOG, log.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
 		CoreHub.localCfg.set(BACKGROUND, background.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
+		CoreHub.localCfg.set(APPLY_SENT_UNITS, btnApplySentUnits.getSelection() ? "y" : "n");
 		CoreHub.localCfg.flush();
 		return super.performOk();
 	}

@@ -13,6 +13,8 @@
 package ch.elexis.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import ch.elexis.core.ui.actions.ReadOnceTreeLoader;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
@@ -34,6 +36,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		new FieldDescriptor<TarmedLeistung>("Ziffer", TarmedLeistung.FLD_CODE, Typ.STRING, null),
 		new FieldDescriptor<TarmedLeistung>("Text", TarmedLeistung.FLD_TEXT, null)
 	};
+	int eventType = SWT.KeyDown;
 	
 	public TarmedCodeSelectorFactory(){
 		
@@ -42,6 +45,20 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		this.cv = cv;
+		// add keyListener to search field
+		Listener keyListener = new Listener() {
+			@Override
+			public void handleEvent(Event event){
+				if (event.type == eventType) {
+					if (event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR) {
+						slp.fireChangedEvent();
+					}
+				}
+			}
+		};
+		for (FieldDescriptor<?> fd : fields) {
+			fd.setAssignedListener(eventType, keyListener);
+		}
 		slp = new TarmedSelectorPanelProvider(cv, fields, true);
 		tdl =
 			new ReadOnceTreeLoader(cv, new Query<TarmedLeistung>(TarmedLeistung.class), "Parent",

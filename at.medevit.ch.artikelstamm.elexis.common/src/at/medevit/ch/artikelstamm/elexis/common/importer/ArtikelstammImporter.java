@@ -32,6 +32,7 @@ import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.elexis.common.PluginConstants;
+import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCache;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.artikelstamm.elexis.common.BlackBoxReason;
 import ch.elexis.core.constants.StringConstants;
@@ -114,6 +115,9 @@ public class ArtikelstammImporter {
 		
 		log.info("Artikelstamm import of" + importStammType + ": " + importStammVersion + " took "
 			+ ((endTime - startTime) / 1000) + "sec");
+		
+		ATCCodeCache.rebuildCache(new SubProgressMonitor(monitor, 1));
+		
 		return Status.OK_STATUS;
 	}
 	

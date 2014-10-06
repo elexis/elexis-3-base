@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.widgets.TableItem;
 
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeService;
@@ -171,6 +172,7 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 			return;
 		List<ATCCode> results =
 			atcCodeService.getATCCodesMatchingName(name, ATCCodeService.ATC_NAME_LANGUAGE_GERMAN, ATCCodeService.MATCH_NAME_BY_NAME_OR_ATC);
+
 		raw.addAll(0, results);
 	}
 	

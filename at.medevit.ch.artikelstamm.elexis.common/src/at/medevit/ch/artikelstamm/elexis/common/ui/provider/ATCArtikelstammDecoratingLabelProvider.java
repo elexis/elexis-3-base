@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.elexis.common.ui.cv.ATCFilterInfoListElement;
+import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCache;
 import at.medevit.ch.artikelstamm.ui.ATCLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
@@ -28,28 +29,36 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 	@Override
 	public String getText(Object element){
 		if (element instanceof ArtikelstammItem) {
-			String ret =  super.getText(element);
+			String ret = super.getText(element);
 			
 			ArtikelstammItem ai = (ArtikelstammItem) element;
-			String overriden =  (String) ai.getExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_VAT_OVERRIDEN);
-			if(overriden != null) {
-				ret = ret+" (MWSt: "+resolveVatInfoLabel(VatInfo.valueOf(overriden))+")";
+			String overriden =
+				(String) ai.getExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_VAT_OVERRIDEN);
+			if (overriden != null) {
+				ret = ret + " (MWSt: " + resolveVatInfoLabel(VatInfo.valueOf(overriden)) + ")";
 			}
-			if(CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true)) {
+			if (CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true)) {
 				Double publicPrice = ai.getPublicPrice();
-				if(publicPrice > 0.0d) {
-					ret = ret+" <"+ai.getPublicPrice()+"> ";
+				if (publicPrice > 0.0d) {
+					ret = ret + " <" + ai.getPublicPrice() + "> ";
 				}
 			}
 			
 			return ret;
 		} else if (element instanceof ATCCode) {
-			return atcLabelProvider.getText(element);
+			String atcLabel = atcLabelProvider.getText(element);
+			String atcLabelWAvailability =
+				atcLabel + " [" + determineNumberOfAvailableArticlesForAtcCode((ATCCode) element)+" Artikel]";
+			return atcLabelWAvailability;
 		} else if (element instanceof ATCFilterInfoListElement) {
 			ATCFilterInfoListElement afile = (ATCFilterInfoListElement) element;
 			return afile.getDescription();
 		}
 		return null;
+	}
+	
+	private String determineNumberOfAvailableArticlesForAtcCode(ATCCode element){
+		return String.valueOf(ATCCodeCache.getAvailableArticlesByATCCode(element));
 	}
 	
 	private String resolveVatInfoLabel(VatInfo vatinfo){
@@ -62,7 +71,7 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 			return "Normal";
 		}
 	}
-
+	
 	@Override
 	public Image getImage(Object element){
 		if (element instanceof ArtikelstammItem) {

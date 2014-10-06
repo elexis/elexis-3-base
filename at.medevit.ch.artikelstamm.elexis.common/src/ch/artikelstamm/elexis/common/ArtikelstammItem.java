@@ -737,13 +737,23 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		set(VERKAUFSEINHEIT, vse + "");
 	}
 	
+	public static int findNumberOfArtikelstammItemsForATCWildcard(String atcCode){
+		return PersistentObject.getConnection()
+			.queryInt(
+				"SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME + " WHERE "
+					+ ArtikelstammItem.FLD_ATC + " " + Query.LIKE + " "
+					+ JdbcLink.wrap(atcCode + "%"));
+	}
+	
 	/**
 	 * @param ean
 	 *            the European Article Number or GTIN
 	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if not
 	 *         found
 	 */
-	public static @Nullable ArtikelstammItem findByEANorGTIN(@NonNull String ean){
+	public static @Nullable
+	ArtikelstammItem findByEANorGTIN(@NonNull
+	String ean){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, ean);
 		List<ArtikelstammItem> result = qre.execute();
@@ -757,7 +767,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @param pharmaCode
 	 * @return the ArtikelstammItem for the given pharma code or <code>null</code> if not found
 	 */
-	public static @Nullable ArtikelstammItem findByPharmaCode(@NonNull String pharmaCode){
+	public static @Nullable
+	ArtikelstammItem findByPharmaCode(@NonNull
+	String pharmaCode){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_PHAR, Query.LIKE, pharmaCode);
 		List<ArtikelstammItem> result = qre.execute();

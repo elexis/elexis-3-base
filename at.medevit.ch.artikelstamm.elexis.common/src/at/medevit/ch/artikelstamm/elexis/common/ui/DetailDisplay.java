@@ -212,36 +212,18 @@ public class DetailDisplay implements IDetailDisplay {
 		IObservableValue targetIst = WidgetProperties.text(SWT.Modify).observe(txtISTBESTAND);
 		bindingContext.bindValue(targetIst, propertyIst, stringToInteger, integerToString);
 		
-		Label lblLieferant = new Label(grpLagerhaltung, SWT.NONE);
-		lblLieferant.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblLieferant.setText("Lieferant");
-		lblLieferant.setForeground(UiDesk.getColorRegistry().get(UiDesk.COL_BLUE));
+		// Anbruch
+		Label lblAnbruch = new Label(grpLagerhaltung, SWT.NONE);
+		lblAnbruch.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblAnbruch.setText("Anbruch");
 		
-		txtLIEFERANT = new Text(grpLagerhaltung, SWT.BORDER | SWT.READ_ONLY);
-		txtLIEFERANT.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
-		lblLieferant.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e){
-				if (item.getValue() == null)
-					return;
-				KontaktSelektor ksl =
-					new KontaktSelektor(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-						Kontakt.class, Messages.Artikeldetail_lieferant,
-						Messages.Artikeldetail_LieferantWaehlen, Kontakt.DEFAULT_SORT);
-				if (ksl.open() == IDialogConstants.OK_ID) {
-					ArtikelstammItem ai = (ArtikelstammItem) item.getValue();
-					Kontakt k = (Kontakt) ksl.getSelection();
-					ai.setLieferant(k);
-					String lbl = ai.getLieferant().getLabel();
-					if (lbl.length() > 15) {
-						lbl = lbl.substring(0, 12) + "..."; //$NON-NLS-1$
-					}
-					txtLIEFERANT.setText(lbl);
-					ElexisEventDispatcher.reload(ArtikelstammItem.class);
-				}
-			}
-		});
+		Text txtAnbruch = new Text(grpLagerhaltung, SWT.BORDER);
+		txtAnbruch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		IObservableValue propertyAnbruch =
+			PojoProperties.value(ArtikelstammItem.class, "bruchteile", Integer.class).observeDetail(
+				item);
+		IObservableValue targetAnbruch = WidgetProperties.text().observe(txtAnbruch);
+		bindingContext.bindValue(targetAnbruch, propertyAnbruch);
 		
 		// Stk. pro Pkg.
 		Label lblStkProPack = new Label(grpLagerhaltung, SWT.NONE);
@@ -276,9 +258,42 @@ public class DetailDisplay implements IDetailDisplay {
 				.observeDetail(item);
 		IObservableValue targetStkProAbgabe =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProAbgabe);
+		
+		// Lieferant
+		Label lblLieferant = new Label(grpLagerhaltung, SWT.NONE);
+		lblLieferant.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblLieferant.setText("Lieferant");
+		lblLieferant.setForeground(UiDesk.getColorRegistry().get(UiDesk.COL_BLUE));
+		
+		lblLieferant.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e){
+				if (item.getValue() == null)
+					return;
+				KontaktSelektor ksl =
+					new KontaktSelektor(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
+						Kontakt.class, Messages.Artikeldetail_lieferant,
+						Messages.Artikeldetail_LieferantWaehlen, Kontakt.DEFAULT_SORT);
+				if (ksl.open() == IDialogConstants.OK_ID) {
+					ArtikelstammItem ai = (ArtikelstammItem) item.getValue();
+					Kontakt k = (Kontakt) ksl.getSelection();
+					ai.setLieferant(k);
+					String lbl = ai.getLieferant().getLabel();
+					if (lbl.length() > 15) {
+						lbl = lbl.substring(0, 12) + "..."; //$NON-NLS-1$
+					}
+					txtLIEFERANT.setText(lbl);
+					ElexisEventDispatcher.reload(ArtikelstammItem.class);
+				}
+			}
+		});
+		
+		txtLIEFERANT = new Text(grpLagerhaltung, SWT.BORDER | SWT.READ_ONLY);
+		txtLIEFERANT.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+		
 		bindingContext.bindValue(targetStkProAbgabe, propertyStkProAbgabe, stringToInteger,
 			integerToString);
 		
 	}
-
+	
 }

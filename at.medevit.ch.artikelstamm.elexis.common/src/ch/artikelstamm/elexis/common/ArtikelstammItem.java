@@ -280,8 +280,18 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	@Override
+	public int getBruchteile(){
+		return checkZero(get(ANBRUCH));
+	}
+	
+	@Override
+	public void setBruchteile(int number){
+		set(ANBRUCH, Integer.toString(number));
+	}
+	
+	@Override
 	public void einzelAbgabe(final int n){
-		int anbruch = checkZero(get(ANBRUCH));
+		int anbruch = getBruchteile();
 		int ve = getVerkaufseinheit();
 		int vk = getVerpackungsEinheit();
 		if (vk == 0) {
@@ -304,13 +314,13 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 				rest = rest + vk;
 				setIstbestand(getIstbestand() - 1);
 			}
-			set(ANBRUCH, Integer.toString(rest));
+			setBruchteile(rest);
 		}
 	}
 	
 	@Override
-	public void einzelRuecknahme(final int n){
-		int anbruch = checkZero(get(ANBRUCH));
+	public void einzelRuecknahme(int n){
+		int anbruch = getBruchteile();
 		int ve = getVerkaufseinheit();
 		int vk = getVerpackungsEinheit();
 		int num = n * ve;
@@ -318,11 +328,11 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			setIstbestand(getIstbestand() + n);
 		} else {
 			int rest = anbruch + num;
-			while (rest > vk) {
+			while (rest >= vk) {
 				rest = rest - vk;
 				setIstbestand(getIstbestand() + 1);
 			}
-			set(ANBRUCH, Integer.toString(rest));
+			setBruchteile(rest);
 		}
 	}
 	

@@ -48,6 +48,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	private Label lblShowAtcCodesIn;
 	private Button btnRadioGerman;
 	private Button btnRadioEnglish;
+	private Button btnShowArticlePrice;
 	
 	/**
 	 * Create the preference page.
@@ -161,6 +162,16 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		btnRadioEnglish.setData(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_ENGLISH);
 		btnRadioEnglish.setText("english");
 		btnRadioEnglish.addSelectionListener(radioSl);
+		
+		btnShowArticlePrice = new Button(container, SWT.CHECK);
+		btnShowArticlePrice.setSelection(CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true));
+		btnShowArticlePrice.setText("Artikelpreis in Übersicht anzeigen");
+		btnShowArticlePrice.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				CoreHub.globalCfg.set(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, btnShowArticlePrice.getSelection());
+			}
+		});
 		
 		String language =
 			CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,

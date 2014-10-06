@@ -7,9 +7,11 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import at.medevit.atc_codes.ATCCode;
+import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.elexis.common.ui.cv.ATCFilterInfoListElement;
 import at.medevit.ch.artikelstamm.ui.ATCLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar.VatInfo;
 
 public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvider {
@@ -32,6 +34,12 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 			String overriden =  (String) ai.getExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_VAT_OVERRIDEN);
 			if(overriden != null) {
 				ret = ret+" (MWSt: "+resolveVatInfoLabel(VatInfo.valueOf(overriden))+")";
+			}
+			if(CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true)) {
+				Double publicPrice = ai.getPublicPrice();
+				if(publicPrice > 0.0d) {
+					ret = ret+" <"+ai.getPublicPrice()+"> ";
+				}
 			}
 			
 			return ret;

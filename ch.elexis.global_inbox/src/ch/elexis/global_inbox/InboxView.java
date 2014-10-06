@@ -83,6 +83,7 @@ public class InboxView extends ViewPart {
 			}
 		});
 		cp.setView(this);
+		cp.reload();
 		tv.setInput(this);
 		final MenuManager mgr = new MenuManager();
 		mgr.addMenuListener(new IMenuListener() {

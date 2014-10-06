@@ -111,9 +111,11 @@ public class InboxContentProvider extends CommonContentProviderAdapter {
 			}
 			dir = new File(filepath);
 			if (!dir.isDirectory()) {
-				if (!dir.mkdirs()) {
-				return new Status(Status.ERROR, Activator.PLUGIN_ID,
-					Messages.InboxContentProvider_noInboxDefined);
+				if (!dir.mkdirs() && view != null) {
+					return new Status(Status.ERROR, Activator.PLUGIN_ID,
+						Messages.InboxContentProvider_noInboxDefined);
+				} else {
+					return Status.OK_STATUS;
 				}
 			}
 			Object dm = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);

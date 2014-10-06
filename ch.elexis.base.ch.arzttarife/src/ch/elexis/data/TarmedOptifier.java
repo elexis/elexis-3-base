@@ -47,6 +47,9 @@ public class TarmedOptifier implements IOptifier {
 	public static final int NOTYETVALID = 7;
 	public static final int NOMOREVALID = 8;
 	
+	private static final String CHAPTER_XRAY = "39.02";
+	private static final String DEFAULT_TAX_XRAY_ROOM = "39.2000";
+	
 	boolean bOptify = true;
 	
 	/**
@@ -287,6 +290,12 @@ public class TarmedOptifier implements IOptifier {
 			}
 			
 			String tcid = code.getCode();
+			
+			// check if it's an X-RAY service and add default tax if so
+			// default xray tax will only be added once (see above)
+			if (tc.getParent().startsWith(CHAPTER_XRAY)) {
+				add(TarmedLeistung.getFromCode(DEFAULT_TAX_XRAY_ROOM), kons);
+			}
 			
 			// double factor =
 			// PersistentObject.checkZeroDouble(check.get("VK_Scale"));

@@ -56,6 +56,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public static final String FLD_DIGNI_QUALI = "DigniQuali";
 	public static final String FLD_TEXT = "Text";
 	public static final String FLD_NICK = "Nick";
+	public static final String FLD_PARENT = "Parent";
 	
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
 	
@@ -95,8 +96,8 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	static void createTables(){
 		TarmedLeistung version = load(ROW_VERSION);
 		addMapping(
-			"TARMED", "Ziffer=" + FLD_CODE, FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			FLD_SPARTE, FLD_TEXT+"=tx255", "Name=tx255", FLD_NICK+"=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"TARMED", "Ziffer=" + FLD_CODE, FLD_CODE, FLD_PARENT, FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			FLD_SPARTE, FLD_TEXT + "=tx255", "Name=tx255", FLD_NICK + "=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis", //$NON-NLS-1$ //$NON-NLS-2$
 			"deleted" //$NON-NLS-1$ 
 		);
@@ -206,7 +207,8 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		create(code);
 		j.exec("INSERT INTO TARMED_EXTENSION (CODE) VALUES (" + getWrappedId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		set(new String[] {
-			"Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, FLD_SPARTE}, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			FLD_PARENT, FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, FLD_SPARTE
+		}, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	/** Konstruktor wird nur vom Importer gebraucht */
@@ -215,7 +217,8 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		create(id);
 		j.exec("INSERT INTO TARMED_EXTENSION (CODE) VALUES (" + getWrappedId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		set(new String[] {
-			FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, FLD_SPARTE}, code, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			FLD_CODE, FLD_PARENT, FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, FLD_SPARTE
+		}, code, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	/*
@@ -591,6 +594,10 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 			return true;
 		}
 		return false;
+	}
+	
+	public String getParent(){
+		return get(FLD_PARENT);
 	}
 	
 	@Override

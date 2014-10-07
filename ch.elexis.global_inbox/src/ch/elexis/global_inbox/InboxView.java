@@ -3,6 +3,7 @@ package ch.elexis.global_inbox;
 import java.io.File;
 import java.text.MessageFormat;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -43,6 +44,8 @@ public class InboxView extends ViewPart {
 		Messages.InboxView_category, Messages.InboxView_title
 	};
 	TableColumn[] tc;
+	private IStatus inboxConfigStat;
+	private boolean configErrorShown = false;
 	
 	public InboxView(){
 		// TODO Auto-generated constructor stub
@@ -83,7 +86,7 @@ public class InboxView extends ViewPart {
 			}
 		});
 		cp.setView(this);
-		cp.reload();
+		inboxConfigStat = cp.reload();
 		tv.setInput(this);
 		final MenuManager mgr = new MenuManager();
 		mgr.addMenuListener(new IMenuListener() {
@@ -113,8 +116,11 @@ public class InboxView extends ViewPart {
 	
 	@Override
 	public void setFocus(){
-		// TODO Auto-generated method stub
-		
+		if (!inboxConfigStat.isOK() && !configErrorShown) {
+			SWTHelper.alert(Messages.Activator_noInbox,
+				Messages.InboxContentProvider_noInboxDefined);
+			configErrorShown = true;
+		}
 	}
 	
 	public void reload(){

@@ -37,8 +37,8 @@ public class InboxContentProvider extends CommonContentProviderAdapter {
 		super.dispose();
 	}
 	
-	public void reload(){
-		loader.run(null);
+	public IStatus reload(){
+		return loader.run(null);
 	}
 	
 	public InboxContentProvider(){
@@ -111,9 +111,8 @@ public class InboxContentProvider extends CommonContentProviderAdapter {
 			}
 			dir = new File(filepath);
 			if (!dir.isDirectory()) {
-				if (!dir.mkdirs() && view != null) {
-					return new Status(Status.ERROR, Activator.PLUGIN_ID,
-						Messages.InboxContentProvider_noInboxDefined);
+				if (view != null) {
+					return Status.CANCEL_STATUS;
 				} else {
 					return Status.OK_STATUS;
 				}

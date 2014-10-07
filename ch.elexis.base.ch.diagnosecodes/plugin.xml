@@ -37,7 +37,8 @@
    <extension
          point="ch.elexis.core.ui.KonsExtension">
       <Makro
-            KonsMakro="ch.elexis.base.ch.diagnosecodes.util.TIMakro">
+            KonsMakro="ch.elexis.base.ch.diagnosecodes.util.TIMakro"
+            name="TI Diagnosen">
       </Makro>
    </extension>
 

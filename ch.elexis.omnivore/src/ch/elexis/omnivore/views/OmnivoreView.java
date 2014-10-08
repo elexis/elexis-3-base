@@ -434,6 +434,15 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		
 		viewer.addDragSupport(DND.DROP_COPY, transferTypes, new DragSourceAdapter() {
 			@Override
+			public void dragStart(DragSourceEvent event){
+				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+				DocHandle dh = (DocHandle) selection.getFirstElement();
+				if (dh.isCategory()) {
+					event.doit = false;
+				}
+			}
+			
+			@Override
 			public void dragSetData(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				DocHandle dh = (DocHandle) selection.getFirstElement();

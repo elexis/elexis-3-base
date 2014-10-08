@@ -1,7 +1,5 @@
 package ch.elexis.global_inbox;
 
-import java.io.File;
-
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
@@ -13,8 +11,7 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String PREFERENCE_BRANCH = "plugins/global_inbox/"; //$NON-NLS-1$
 	public static final String PREF_DIR = PREFERENCE_BRANCH + "dir"; //$NON-NLS-1$
-	public static final String PREF_DIR_DEFAULT = new File(CoreHub.getWritableUserDir(),
-		Messages.InboxView_inbox).toString();
+	public static final String PREF_DIR_DEFAULT = "";
 	
 	public Preferences(){
 		super(GRID);

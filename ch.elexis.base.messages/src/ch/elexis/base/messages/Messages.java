@@ -15,6 +15,12 @@ public class Messages extends NLS {
 	public static String MsgDetailDialog_reply;
 	public static String MsgDetailDialog_send;
 	public static String MsgDetailDialog_to;
+	public static String Prefs_Messages;
+	public static String Prefs_SoundSettings;
+	public static String Prefs_TurnOnSound;
+	public static String Prefs_BrowseFS;
+	public static String Prefs_FS_Open;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

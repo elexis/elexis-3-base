@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+ 	<extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.UserPreferences"
+            class="ch.elexis.base.messages.MessagePreferences"
+            id="ch.elexis.messageprefs"
+            name="Nachrichten">
+      </page>
+   </extension>
    <extension
          point="ch.elexis.core.data.PersistentReference">
       <Factory

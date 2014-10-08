@@ -1,0 +1,108 @@
+package ch.elexis.base.messages;
+
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.data.activator.CoreHub;
+
+public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
+	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav";
+	
+	private Text txtSoundFilePath;
+	private Button btnBrowse, btnSoundOn;
+	
+	boolean soundOn;
+	String soundFilePath;
+	
+	public MessagePreferences(){
+		super(Messages.Prefs_Messages);
+		soundOn = CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_ON, true);
+		soundFilePath = CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
+	}
+	
+	@Override
+	protected Control createContents(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
+		ret.setLayout(new GridLayout(1, false));
+		
+		Group grpSound = new Group(ret, SWT.NONE);
+		grpSound.setLayout(new GridLayout(2, false));
+		GridData gd_grpSound = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+		grpSound.setLayoutData(gd_grpSound);
+		grpSound.setText(Messages.Prefs_SoundSettings);
+		
+		btnSoundOn = new Button(grpSound, SWT.CHECK);
+		btnSoundOn.setText(Messages.Prefs_TurnOnSound);
+		btnSoundOn.setSelection(soundOn);
+		btnSoundOn.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e){
+				txtSoundFilePath.setEnabled(btnSoundOn.getSelection());
+				btnBrowse.setEnabled(btnSoundOn.getSelection());
+			};
+		});
+		new Label(grpSound, SWT.NONE);
+		
+		txtSoundFilePath = new Text(grpSound, SWT.BORDER);
+		txtSoundFilePath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtSoundFilePath.setText(soundFilePath);
+		txtSoundFilePath.setEnabled(soundOn);
+		
+		btnBrowse = new Button(grpSound, SWT.NONE);
+		btnBrowse.setText(Messages.Prefs_BrowseFS);
+		btnBrowse.setEnabled(soundOn);
+		btnBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				FileDialog fd = new FileDialog(btnBrowse.getShell(), SWT.OPEN);
+				fd.setText(Messages.Prefs_FS_Open);
+				fd.setFilterPath("C:/");
+				String[] filterExt = {
+					"*.wav"
+				};
+				fd.setFilterExtensions(filterExt);
+				txtSoundFilePath.setText(fd.open());
+			}
+		});
+		
+		return ret;
+	}
+	
+	@Override
+	public void init(IWorkbench workbench){}
+	
+	@Override
+	protected void performDefaults(){
+		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_ON, true);
+		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
+		
+		btnSoundOn.setSelection(true);
+		btnBrowse.setEnabled(true);
+		txtSoundFilePath.setEnabled(true);
+		txtSoundFilePath.setText(CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH,
+			DEF_SOUND_PATH));
+		
+		super.performDefaults();
+	}
+	
+	@Override
+	public boolean performOk(){
+		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_ON, btnSoundOn.getSelection());
+		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_PATH, txtSoundFilePath.getText());
+		CoreHub.userCfg.flush();
+		return super.performOk();
+	}
+}

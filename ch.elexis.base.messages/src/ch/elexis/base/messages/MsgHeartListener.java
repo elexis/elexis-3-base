@@ -12,8 +12,21 @@
 
 package ch.elexis.base.messages;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.Hub;
@@ -22,6 +35,7 @@ import ch.elexis.data.Query;
 import ch.elexis.messages.Message;
 
 public class MsgHeartListener implements HeartListener {
+	static Logger log = LoggerFactory.getLogger(MsgHeartListener.class);
 	boolean bSkip;
 	
 	public void heartbeat(){
@@ -34,6 +48,9 @@ public class MsgHeartListener implements HeartListener {
 					UiDesk.getDisplay().asyncExec(new Runnable() {
 						public void run(){
 							bSkip = true;
+							if (CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_ON, true)) {
+								playSound();
+							}
 							new MsgDetailDialog(Hub.getActiveShell(), res.get(0)).open();
 							bSkip = false;
 						}
@@ -41,6 +58,42 @@ public class MsgHeartListener implements HeartListener {
 					
 				}
 			}
+		}
+	}
+	
+	/**
+	 * plays a sound. the sound file can be defined via the message preferences
+	 */
+	private void playSound(){
+		try {
+			AudioInputStream audioInStream;
+			String soundFilePath =
+				CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH,
+					MessagePreferences.DEF_SOUND_PATH);
+			
+			// create an audioinputstream from sound url
+			if (MessagePreferences.DEF_SOUND_PATH.equals(soundFilePath)) {
+				URL sound = getClass().getResource(soundFilePath);
+				
+				audioInStream = AudioSystem.getAudioInputStream(sound);
+			} else {
+				// create AudioInputStream from user defined file
+				File soundFile = new File(soundFilePath);
+				if (!soundFile.exists()) {
+					log.warn("Sound file [" + soundFilePath + "] not found");
+					return;
+				}
+				audioInStream = AudioSystem.getAudioInputStream(soundFile);
+			}
+			
+			// load the sound into memory (a Clip)
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioInStream);
+			clip.start();
+			
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+			log.error("Could not play message sound", e);
+			return;
 		}
 	}
 }

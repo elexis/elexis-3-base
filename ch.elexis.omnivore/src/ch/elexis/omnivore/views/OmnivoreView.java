@@ -99,9 +99,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			"", Messages.OmnivoreView_categoryColumn, Messages.OmnivoreView_dateColumn, Messages.OmnivoreView_titleColumn, //$NON-NLS-1$
 			Messages.OmnivoreView_keywordsColumn
 		};
-	private final int[] colWidth = {
-		20, 80, 80, 150, 500
-	};
+	private final String colWidth = "20,80,80,150,500";
 	private int sortMode = SORTMODE_DATE;
 	private boolean bReverse = false;
 	private boolean bCatReverse = false;
@@ -385,11 +383,12 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		TreeColumn[] cols = new TreeColumn[colLabels.length];
 		for (int i = 0; i < colLabels.length; i++) {
 			cols[i] = new TreeColumn(table, SWT.NONE);
-			cols[i].setWidth(colWidth[i]);
 			cols[i].setText(colLabels[i]);
 			cols[i].setData(new Integer(i));
 			cols[i].addSelectionListener(sortListener);
 		}
+		applyUsersColumnWidthSetting();
+		
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
@@ -465,6 +464,19 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		eeli_user.catchElexisEvent(ElexisEvent.createUserEvent());
 		viewer.setInput(getViewSite());
 		
+	}
+	
+	private void applyUsersColumnWidthSetting(){
+		TreeColumn[] treeColumns = table.getColumns();
+		String[] userColWidth = colWidth.split(",");
+		if (CoreHub.userCfg.get(Preferences.SAVE_COLUM_WIDTH, false)) {
+			String ucw = CoreHub.userCfg.get(Preferences.USR_COLUMN_WIDTH_SETTINGS, colWidth);
+			userColWidth = ucw.split(",");
+		}
+		
+		for (int i = 0; i < treeColumns.length; i++) {
+			treeColumns[i].setWidth(Integer.parseInt(userColWidth[i]));
+		}
 	}
 	
 	@Override
@@ -687,8 +699,15 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	}
 	
 	public void activation(boolean mode){
-		// TODO Auto-generated method stub
-		
+		if (mode == false) {
+			TreeColumn[] treeColumns = viewer.getTree().getColumns();
+			StringBuilder sb = new StringBuilder();
+			for (TreeColumn tc : treeColumns) {
+				sb.append(tc.getWidth());
+				sb.append(",");
+			}
+			CoreHub.userCfg.set(Preferences.USR_COLUMN_WIDTH_SETTINGS, sb.toString());
+		}
 	}
 	
 	public void refresh(){

@@ -23,7 +23,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.slf4j.Logger;
@@ -121,6 +125,11 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		Messages.Preferences_cotf_fill_lead_char, Messages.Preferences_cotf_num_digits,
 		Messages.Preferences_cotf_add_trail_char
 	};
+	
+	public static final String USR_COLUMN_WIDTH_SETTINGS = PREFBASE + "/columnwidths";
+	public static final String SAVE_COLUM_WIDTH = PREFBASE + "/savecolwidths";
+	
+	private Button btnSaveColumnWidths;
 	
 	public Preferences(){
 		super(GRID);
@@ -332,6 +341,28 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	}
 	
 	@Override
+	protected Control createContents(Composite parent){
+		Control c = super.createContents(parent);
+		addSeparator();
+		
+		btnSaveColumnWidths = new Button(getFieldEditorParent(), SWT.CHECK);
+		btnSaveColumnWidths.setText("Spaltenbreite speichern (für Ihren Benutzer)");
+		btnSaveColumnWidths.setSelection(CoreHub.userCfg.get(Preferences.SAVE_COLUM_WIDTH, false));
+		
+		return c;
+	}
+	
+	private void addSeparator(){
+		Label separator = new Label(getFieldEditorParent(), SWT.HORIZONTAL | SWT.SEPARATOR);
+		GridData separatorGridData = new GridData();
+		separatorGridData.horizontalSpan = 3;
+		separatorGridData.grabExcessHorizontalSpace = true;
+		separatorGridData.horizontalAlignment = GridData.FILL;
+		separatorGridData.verticalIndent = 0;
+		separator.setLayoutData(separatorGridData);
+	}
+	
+	@Override
 	public void init(IWorkbench workbench){
 		// For automatic archiving of incoming files:
 		// construct the keys to the elexis preference store from a fixed header plus rule number:
@@ -344,6 +375,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected void performApply(){
+		CoreHub.userCfg.set(Preferences.SAVE_COLUM_WIDTH, btnSaveColumnWidths.getSelection());
+		CoreHub.userCfg.flush();
 		CoreHub.globalCfg.flush();
 		CoreHub.localCfg.flush();
 		super.performApply();

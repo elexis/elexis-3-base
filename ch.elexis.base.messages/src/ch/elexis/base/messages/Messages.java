@@ -20,6 +20,8 @@ public class Messages extends NLS {
 	public static String Prefs_TurnOnSound;
 	public static String Prefs_BrowseFS;
 	public static String Prefs_FS_Open;
+	public static String Prefs_DialogSettings;
+	public static String Prefs_btnAnswerAutoclear;
 	
 	static {
 		// initialize resource bundle

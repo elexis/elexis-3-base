@@ -23,15 +23,16 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav";
 	
 	private Text txtSoundFilePath;
-	private Button btnBrowse, btnSoundOn;
+	private Button btnBrowse, btnSoundOn, btnAnswerAutoclear;
 	
-	boolean soundOn;
+	private boolean soundOn, answerAutoclear;
 	String soundFilePath;
 	
 	public MessagePreferences(){
 		super(Messages.Prefs_Messages);
 		soundOn = CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_ON, true);
 		soundFilePath = CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
+		answerAutoclear = CoreHub.userCfg.get(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false);
 	}
 	
 	@Override
@@ -78,6 +79,15 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 			}
 		});
 		
+		Group grpDialogConfig = new Group(ret, SWT.NONE);
+		grpDialogConfig.setLayout(new GridLayout(1, false));
+		grpDialogConfig.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		grpDialogConfig.setText(Messages.Prefs_DialogSettings);
+		
+		btnAnswerAutoclear = new Button(grpDialogConfig, SWT.CHECK);
+		btnAnswerAutoclear.setText(Messages.Prefs_btnAnswerAutoclear);
+		btnAnswerAutoclear.setSelection(answerAutoclear);
+		
 		return ret;
 	}
 	
@@ -88,7 +98,9 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	protected void performDefaults(){
 		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_ON, true);
 		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
+		CoreHub.userCfg.set(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false);
 		
+		btnAnswerAutoclear.setSelection(false);
 		btnSoundOn.setSelection(true);
 		btnBrowse.setEnabled(true);
 		txtSoundFilePath.setEnabled(true);
@@ -102,6 +114,8 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	public boolean performOk(){
 		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_ON, btnSoundOn.getSelection());
 		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_PATH, txtSoundFilePath.getText());
+		CoreHub.userCfg.set(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR,
+			btnAnswerAutoclear.getSelection());
 		CoreHub.userCfg.flush();
 		return super.performOk();
 	}

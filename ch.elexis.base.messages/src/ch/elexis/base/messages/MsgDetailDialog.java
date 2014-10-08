@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -153,6 +154,11 @@ public class MsgDetailDialog extends Dialog {
 						msg.delete();
 						msg = null;
 					}
+					// check if text should be cleared for answer
+					if (CoreHub.userCfg.get(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false)) {
+						text.setText("");
+					}
+					
 					bOK.setText(Messages.MsgDetailDialog_send);
 					// *** make sure we can see <from> when name is longer than before
 					lbFrom.getParent().layout();

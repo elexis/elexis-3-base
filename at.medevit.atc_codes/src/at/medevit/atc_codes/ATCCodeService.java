@@ -32,8 +32,8 @@ public interface ATCCodeService {
 	public ATCCode getForATCCode(String atcCode);
 	
 	/**
-	 * Returns the complete hierarchy for a given ATC code w.r.t. to the given level, so the list
-	 * size is max 5 elements.
+	 * Returns the complete parent hierarchy for a given ATC leaf code. With respect to the given
+	 * level the list size is max 5 elements.
 	 * 
 	 * @param atcCode
 	 *            the ATC code to resolve
@@ -59,4 +59,10 @@ public interface ATCCodeService {
 	 * @return a list containing all matched elements, sorted by ATC Hierarchy
 	 */
 	public List<ATCCode> getATCCodesMatchingName(String name, int i, int j);
+	
+	/**
+	 * @return A list of all available ATC codes. The order is determined by the ATC hierarchy.
+	 * @since 3.1
+	 */
+	public List<ATCCode> getAllATCCodes();
 }

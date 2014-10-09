@@ -226,4 +226,10 @@ public class ATCCodes {
 			}
 		}
 	}
+	
+	public List<ATCCode> getAllATCCodes(){
+		ArrayList<ATCCode> list = new ArrayList<ATCCode>(atcCodesMap.values());
+		orderByATCHierarchy(list);
+		return Collections.unmodifiableList(list);
+	}
 }

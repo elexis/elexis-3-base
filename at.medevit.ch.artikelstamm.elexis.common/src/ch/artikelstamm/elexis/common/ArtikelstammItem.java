@@ -263,6 +263,15 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	@Override
+	public int getAbgabeEinheit(){
+		int val = 0;
+		try {
+			val = Integer.parseInt(get(VERKAUFSEINHEIT));
+		} catch (NumberFormatException nfe) {}
+		return val;
+	}
+	
+	@Override
 	public String getPackungsGroesseDesc(){
 		return checkNull(get(FLD_ADDDSCR));
 	}
@@ -738,11 +747,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public static int findNumberOfArtikelstammItemsForATCWildcard(String atcCode){
-		return PersistentObject.getConnection()
-			.queryInt(
-				"SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME + " WHERE "
-					+ ArtikelstammItem.FLD_ATC + " " + Query.LIKE + " "
-					+ JdbcLink.wrap(atcCode + "%"));
+		return PersistentObject.getConnection().queryInt(
+			"SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME + " WHERE "
+				+ ArtikelstammItem.FLD_ATC + " " + Query.LIKE + " " + JdbcLink.wrap(atcCode + "%"));
 	}
 	
 	/**

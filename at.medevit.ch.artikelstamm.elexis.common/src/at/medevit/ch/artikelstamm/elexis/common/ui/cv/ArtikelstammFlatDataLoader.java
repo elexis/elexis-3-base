@@ -11,7 +11,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.widgets.TableItem;
 
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeService;
@@ -20,6 +19,7 @@ import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.actions.PersistentObjectLoader;
+import ch.elexis.core.ui.selectors.ActiveControl;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
@@ -207,11 +207,14 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 		}
 	}
 	
+	private String filterValueStore;
+	
 	@Override
 	public void doubleClick(DoubleClickEvent event){
 		StructuredSelection selection = (StructuredSelection) event.getSelection();
 		if(selection.getFirstElement()==null) return;
 		if (selection.getFirstElement() instanceof ATCCode) {
+			filterValueStore = slp.getValues()[0];
 			slp.clearValues();
 			ATCCode a = (ATCCode) selection.getFirstElement();
 			atcQueryFilter.setAtcFilter(a.atcCode);
@@ -219,6 +222,8 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 			dj.launch(0);
 		} else if (selection.getFirstElement() instanceof ATCFilterInfoListElement) {
 			slp.clearValues();
+			ActiveControl ac = slp.getPanel().getControls().get(0);
+			ac.setText(filterValueStore);
 			removeQueryFilter(atcQueryFilter);
 			atcQueryFilter.setAtcFilter(null);
 			dj.launch(0);

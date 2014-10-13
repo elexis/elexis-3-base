@@ -598,6 +598,13 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			return;
 		}
 		
+		// can't import complete directory
+		if (file.isDirectory()) {
+			SWTHelper.showError(Messages.DocHandle_importErrorDirectory,
+				Messages.DocHandle_importErrorDirectoryText);
+			return;
+		}
+		
 		Integer maxOmnivoreFilenameLength =
 			ch.elexis.omnivore.views.Preferences.getOmnivoreMax_Filename_Length();
 		

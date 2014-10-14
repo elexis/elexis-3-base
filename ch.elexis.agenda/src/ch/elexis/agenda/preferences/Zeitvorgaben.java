@@ -1,4 +1,5 @@
 /*******************************************************************************
+
  * Copyright (c) 2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -155,7 +156,11 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 					String ntext = text.getText();
 					it.setText(idx, text.getText());
 					Hashtable<String, String> map = Plannables.getTimePrefFor(cols[idx].getText());
-					map.put(it.getText(0), ntext);
+					String typ = it.getText(0);
+					if (typ == null || typ.isEmpty()) {
+						typ = "std";
+					}
+					map.put(typ, ntext);
 					Plannables.setTimePrefFor(cols[idx].getText(), map);
 					text.dispose();
 					// cursorDown();

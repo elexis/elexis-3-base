@@ -112,6 +112,16 @@
                id="ch.elexis.agenda.series.command.AddReccuringDate"
                name="add reccuring date">
          </command>
+         <command
+               defaultHandler="ch.elexis.agenda.commands.SortAscendingCommand"
+               id="ch.elexis.agenda.commands.SortAscending"
+               name="Aufsteigend sortieren">
+         </command>
+         <command
+               defaultHandler="ch.elexis.agenda.commands.SortDescendingCommand"
+               id="ch.elexis.agenda.commands.SortDescending"
+               name="Absteigend sortieren">
+         </command>
       </extension>
       <extension
             point="org.eclipse.ui.menus">
@@ -172,6 +182,18 @@
                   commandId="ch.elexis.agenda.series.command.AddReccuringDate"
                   icon="icons/arrow-repeat.png"
                   label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+            <command
+                  commandId="ch.elexis.agenda.commands.SortAscending"
+                  icon="icons/sort-number.png"
+                  label="Aufsteigend Sortieren"
+                  style="push">
+            </command>
+            <command
+                  commandId="ch.elexis.agenda.commands.SortDescending"
+                  icon="icons/sort-number-descending.png"
+                  label="Absteigend Sortieren"
                   style="push">
             </command>
          </menuContribution>

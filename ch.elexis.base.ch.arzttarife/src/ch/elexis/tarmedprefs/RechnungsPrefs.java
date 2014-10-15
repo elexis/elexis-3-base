@@ -46,7 +46,6 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktExtDialog;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
@@ -96,11 +95,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 	static TarmedACL ta = TarmedACL.getInstance();
 	
-	static final String[] ExtFlds = {
-		"Anrede", "Kanton", "EAN=" + Xid.DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
-		ta.KANTON, ta.LOCAL, ta.DIAGSYS
-	};
+	static final String[] ExtFlds =
+		{
+			"Anrede=" + Kontakt.XID_KONTAKT_ANREDE, "Kanton=" + Kontakt.XID_KONTAKT_KANTON, "EAN=" + Xid.DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
+			ta.KANTON, ta.LOCAL, ta.DIAGSYS
+		};
 	
 	public RechnungsPrefs(){
 		super(Messages.getString("RechnungsPrefs.BillPrefs")); //$NON-NLS-1$

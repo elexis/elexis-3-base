@@ -70,6 +70,12 @@ public class Value {
 			initialize();
 		}
 		
+		// do not set a flag or comment if none is given
+		if (flags == null || flags.isEmpty()) {
+			return new TransientLabResult.Builder(patient, _labor, _labItem, value).date(date)
+				.build();
+		}
+		
 		String comment = "";
 		int resultFlags = 0;
 		if (flags.equals("1")) {

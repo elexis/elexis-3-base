@@ -1,0 +1,61 @@
+h1. Elexis-Impfplan
+
+(c) 2010 by G. Weirich
+
+h2. Zusammenfassung
+
+Dieses Plugin erfasst Impfungen, erinnert an Impfungen und lässt Impfdaten ausdrucken.
+
+h2. Systemvoraussetzungen
+
+Dieses Plugin benötigt Elexis 2.1 oder höher
+
+h2. Konfiguration
+
+Sie finden die Einstellungsseite unter "Klinische Hilfsmittel/Impfplan". Diese Maske dient dazu, alle Impfungen, welche bei IHnen in Gebrauch sind, zu definieren.
+ 
+!impfplan1.png!
+
+Mit "Hinzu" können Sie eine Impfung erfassen (Dasselbe Fenster öffnet sich auch, wenn Sie auf eine bereits erfasste Impfung doppelklicken):
+
+!impfplan2.png!
+
+Unter "Name" geben Sie den Namen der Impfung ein. Der Name kann von Ihnen frei gewählt werden, dient aber dem System dazu, gleichartige Impfungen zu erkennen. Wenn Sie also Encepur(tm)  und FSME-Immun(tm) beide mit dem Namen "FSME" bezeichnen, dann weiss das System, dass beide Impfstoffe dieselbe Impfung betreffen und wird nicht beide vorschlagen.
+ 
+Unter "empfohlenes Alter" geben Sie ein Alter in Wochen, Monaten oder Jahren an, für das Sie die Impfung empfehlen. Wenn eine Impfung nicht zu den von Ihnen empfohlenen gehört, lassen Sie dieses Feld leer oder geben 0 ein. Wenn es für alle Altersgruppen empfohlen sein soll, geben Sie 0- ein.
+  
+Die Abstände bezeichnen jeweils immer den Abstand zur vorherigen Injektion.
+ 
+h3. Zeitbezeichnungen
+
+Beim Alter und bei den Impfabständen können folgende Kennzeichnungen verwendet werden:
+
+|_.Zeichen|_.Bedeutung|
+|5y-|Ab 5 Jahren|
+|5y-20y|5-20 Jahre|
+|5m|5 Monate|
+|5w|5 Wochen|
+|-5y|bis 5 Jahren|
+|30d-90d|30-90 Tage|
+
+Wenn keine Suffix gesetzt wird, wird y angenommen. 5y-10y ist also dasselbe wie 5-10. Statt y wird auch j und a als Jahr interpretiert, statt w wird auch s als Woche interpretiert.
+
+h2. Bedienung
+
+Sie finden die Impfplan-View unter "Impfplan". Im oberen Teil stehen die Impfungen, die der aktuell ausgewählte Patient hatte, im unteren Teil diejenigen, die empfohlen sind. Rechts oben finden Sie zwei Buttons zum Hinzufügen einer Impfung und zum Ausdrucken des Impfplans.
+
+!impfplan4.png!
+
+Wenn Sie eine neue Impfung hinzufügen wollen, erscheint folgende Dialogbox mit allen in "Einstellungen" definierten Impfungen. Wählen Sie im oben Teil die gewählte Impfung aus und geben Sie darunter ein Datum ein (Sie können mit Klick auf das Dreieckssymbol auch einen Kalender aufklappen). Wenn Sie das Datum nicht genau wissen, weil Sie z.B. eine Impfanamnese aus der Erinnerung des Patienten erstellen, klicken Sie auch das Feld "Datum nur ungefähr" an. Das System weiss dadurch z.B. in obigem Beispiel, dass eine Tetanus-Grundimmunisierung irgendwann um 1970 durchgeführt worden ist, und wird darum keine solche mehr vorschlagen. Wenn Sie früher stattgefundne Impfungen dagegen nicht eintragen, würde das System immer wieder auf die fehlende Grundimmunisierung hinweisen.
+
+!impfplan3.png!
+
+h3. Impfliste ausdrucken
+
+Sie können die Impfliste und die Impfempfehlungen auch ausdrucken. Hierfür können Sie eine beliebig gestaltete Systemvorlage verwenden, die den Namen "Impfplan" tragen muss und die Platzhalter [Impfungen] und [Vorschlag] enthalten kann. Weitere Platzhalter können natürlich wie üblich ebenfalls eingesetzt werden.
+
+!impfplan5.png!
+
+
+ 
+

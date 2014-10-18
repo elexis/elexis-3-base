@@ -130,6 +130,8 @@
   <module>ch.medshare.elexis_directories.feature</module>
   <module>ch.elexis.externe_dokumente</module>
   <module>ch.elexis.externe_dokumente.feature</module>
+  <module>ch.elexis.impfplan</module>
+  <module>ch.elexis.impfplan.feature</module>
   <module>ch.elexis.laborimport.bioanalytica</module>
   <module>ch.elexis.laborimport.bioanalytica.feature</module>
   <module>ch.elexis.laborimport.hl7.allg</module>

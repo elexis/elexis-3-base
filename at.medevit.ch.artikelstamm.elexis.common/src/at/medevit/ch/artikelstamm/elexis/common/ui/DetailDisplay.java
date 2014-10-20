@@ -247,12 +247,15 @@ public class DetailDisplay implements IDetailDisplay {
 		Label lblStkProAbgabe = new Label(grpLagerhaltung, SWT.NONE);
 		lblStkProAbgabe.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblStkProAbgabe.setText("Stk. pro Abgabe");
+		final String tooltip = "Für Komplettpackung bitte 0 Stk. angeben.";
+		lblStkProAbgabe.setToolTipText(tooltip);
 		
 		Text txtStkProAbgabe = new Text(grpLagerhaltung, SWT.BORDER);
 		txtStkProAbgabe.setTextLimit(4);
 		GridData gd_txtStkProAbgabe = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_txtStkProAbgabe.widthHint = 40;
 		txtStkProAbgabe.setLayoutData(gd_txtStkProAbgabe);
+		txtStkProAbgabe.setToolTipText(tooltip);
 		IObservableValue propertyStkProAbgabe =
 			PojoProperties.value(ArtikelstammItem.class, "verkaufseinheit", Integer.class)
 				.observeDetail(item);

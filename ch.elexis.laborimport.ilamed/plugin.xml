@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.LaborDatenImport">
+      <Importer
+            Class="ch.elexis.laborimport.ilamed.Importer"
+            name="Labor Ilamed">
+      </Importer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.laborimport.ilamed.PreferencePage"
+            id="ch.elexis.laborimport.ilamed.prefs"
+            name="Labor Ilamed">
+      </page>
+   </extension>
+
+</plugin>

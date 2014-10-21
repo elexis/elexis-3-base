@@ -33,7 +33,6 @@ import at.medevit.ch.artikelstamm.elexis.common.ui.provider.LagerhaltungArtikels
 import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.icons.Images;
@@ -43,9 +42,7 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
-import ch.elexis.core.ui.views.artikel.Messages;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
-import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 

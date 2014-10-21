@@ -15,7 +15,10 @@ import org.eclipse.jface.viewers.TableViewer;
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeService;
 import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
+import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
+import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCache;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.actions.PersistentObjectLoader;
@@ -159,6 +162,7 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 	 * adds the atc names we find for the given description on the top of the table
 	 * @param params
 	 */
+	@SuppressWarnings("unchecked")
 	private void insertATCCodeValues(HashMap<String, Object> params){	
 		HashMap<String, String> fieldValuesHashmap =
 			(HashMap<String, String>) params.get(PersistentObjectLoader.PARAM_VALUES);
@@ -173,7 +177,15 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 		List<ATCCode> results =
 			atcCodeService.getATCCodesMatchingName(name, ATCCodeService.ATC_NAME_LANGUAGE_GERMAN, ATCCodeService.MATCH_NAME_BY_NAME_OR_ATC);
 
-		raw.addAll(0, results);
+		boolean showEmptyGroups =
+			CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES, true);
+		if (!showEmptyGroups) {
+			for (ATCCode atcCode : results) {
+				if(ATCCodeCache.getAvailableArticlesByATCCode(atcCode)>0) raw.add(atcCode);
+			}
+		} else {
+			raw.addAll(0, results);
+		}
 	}
 	
 	public void setResult(List<PersistentObject> res){

@@ -49,6 +49,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	private Button btnRadioGerman;
 	private Button btnRadioEnglish;
 	private Button btnShowArticlePrice;
+	private Button btnShowEmptyATCCodeGroups;
 	
 	/**
 	 * Create the preference page.
@@ -170,6 +171,17 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				CoreHub.globalCfg.set(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, btnShowArticlePrice.getSelection());
+			}
+		});
+		
+		
+		btnShowEmptyATCCodeGroups = new Button(container, SWT.CHECK);
+		btnShowEmptyATCCodeGroups.setText("ATC Gruppen ohne verfügbare Artikel anzeigen");
+		btnShowEmptyATCCodeGroups.setSelection(CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES, true));
+		btnShowEmptyATCCodeGroups.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				CoreHub.globalCfg.set(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES, btnShowEmptyATCCodeGroups.getSelection());
 			}
 		});
 		

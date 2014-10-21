@@ -188,11 +188,9 @@ public class DetailComposite extends Composite {
 		
 		btnlLimitation = new Button(grpLimitations, SWT.CHECK);
 		btnlLimitation.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		btnlLimitation.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.BOLD));
 		btnlLimitation.setText("Limitation");
 		
 		lblLimitationspunkte = new Label(grpLimitations, SWT.NONE);
-		lblLimitationspunkte.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.BOLD));
 		lblLimitationspunkte.setText("Limitationspunkte");
 		
 		lblLIMITATIONPOINTS = new Label(grpLimitations, SWT.NONE);
@@ -200,7 +198,6 @@ public class DetailComposite extends Composite {
 		
 		lblLimitationstext = new Label(grpLimitations, SWT.NONE);
 		lblLimitationstext.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-		lblLimitationstext.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.BOLD));
 		lblLimitationstext.setText("Limitationstext");
 		
 		txtLIMITATIONTEXT = new Text(grpLimitations, SWT.WRAP | SWT.MULTI);

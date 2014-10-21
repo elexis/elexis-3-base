@@ -128,7 +128,7 @@ public class Vaccination extends PersistentObject {
 	@Override
 	public String getLabel(){
 		return getDateOfAdministration().toString(TimeTool.DATE_COMPACT) + " " + getBusinessName()
-			+ " (" + getChargeNo() + ") - " + getAdministratorLabel();
+			+ " (" + getLotNo() + ") - " + getAdministratorLabel();
 	}
 	
 	public TimeTool getDateOfAdministration(){
@@ -139,7 +139,13 @@ public class Vaccination extends PersistentObject {
 		return get(FLD_BUSS_NAME);
 	}
 	
-	public String getChargeNo(){
+	public String getBusinessNameShort(){
+		Artikel art =
+			(Artikel) new PersistentObjectFactory().createFromString(get(FLD_ARTIKEL_REF));
+		return art.getName();
+	}
+	
+	public String getLotNo(){
 		return get(FLD_LOT_NO);
 	}
 	
@@ -147,14 +153,18 @@ public class Vaccination extends PersistentObject {
 		return get(FLD_ATCCODE);
 	}
 	
+	public String getPatientId(){
+		return get(FLD_PATIENT_ID);
+	}
+	
 	/**
 	 * @return a human-readable label of the person that administered the vaccine
 	 */
-	public @NonNull
-	String getAdministratorLabel(){
+	public @NonNull String getAdministratorLabel(){
 		String value = get(FLD_ADMINISTRATOR);
 		if (value.startsWith(Mandant.class.getName())) {
-			return new PersistentObjectFactory().createFromString(value).getLabel();
+			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
+			return mandant.getName() + " " + mandant.getVorname();
 		} else {
 			if (value == null || value.length() < 2)
 				return "";
@@ -163,4 +173,15 @@ public class Vaccination extends PersistentObject {
 		}
 	}
 	
+	public boolean isSupplement(){
+		String value = get(FLD_ADMINISTRATOR);
+		if (value.startsWith(Mandant.class.getName())) {
+			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
+			
+			if (mandant.exists()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

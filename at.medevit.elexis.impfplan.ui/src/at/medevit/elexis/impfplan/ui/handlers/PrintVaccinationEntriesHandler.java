@@ -18,6 +18,8 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
@@ -45,13 +47,16 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import at.medevit.elexis.impfplan.ui.VaccinationComposite;
 import at.medevit.elexis.impfplan.ui.VaccinationCompositePaintListener;
 import at.medevit.elexis.impfplan.ui.VaccinationView;
+import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.events.MessageEvent;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
 public class PrintVaccinationEntriesHandler extends AbstractHandler {
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMM.yyyy");
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
@@ -97,6 +102,8 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		PDRectangle pageSize = page.findMediaBox();
 		PDFont font = PDType1Font.HELVETICA_BOLD;
 		
+		PDFont subFont = PDType1Font.HELVETICA;
+		
 		PDPageContentStream contentStream = new PDPageContentStream(document, page);
 		contentStream.beginText();
 		contentStream.setFont(font, 14);
@@ -104,15 +111,46 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		contentStream.drawString(patient.getLabel());
 		contentStream.endText();
 		
+		float avgFontWidth = 5f;
+		String mandantLabel = mandant.getName() + " " + mandant.getVorname();
+		String dateLabel = sdf.format(Calendar.getInstance().getTime());
+		float o1 = pageSize.getUpperRightX() - 40 - (avgFontWidth * mandantLabel.length());
+		float o2 = pageSize.getUpperRightX() - 40 - (avgFontWidth * dateLabel.length());
+		float leftOffset = 40;
+		if (o1 > o2) {
+			leftOffset = o2;
+		} else {
+			leftOffset = o1;
+		}
+		contentStream.beginText();
+		contentStream.setFont(subFont, 10);
+		contentStream.moveTextPositionByAmount(leftOffset, pageSize.getUpperRightY() - 55);
+		contentStream.drawString(mandantLabel);
+		contentStream.endText();
+		
+		contentStream.beginText();
+		contentStream.setFont(subFont, 10);
+		contentStream.moveTextPositionByAmount(leftOffset, pageSize.getUpperRightY() - 65);
+		contentStream.drawString(dateLabel);
+		contentStream.endText();
+		
 		BufferedImage imageAwt = convertToAWT(image.getImageData());
 		
 		PDXObjectImage pdPixelMap = new PDPixelMap(document, imageAwt);
-		contentStream.drawXObject(pdPixelMap, 40, 20, pageSize.getWidth() - 80,
-			pageSize.getHeight() - 80);
+		contentStream.drawXObject(pdPixelMap, 40, 30, pageSize.getWidth() - 80,
+			pageSize.getHeight() - 100);
 		contentStream.close();
 		
-		File pdf =
-			new File(CoreHub.getWritableUserDir(), "impfplan_" + patient.getPatCode() + ".pdf");
+		String outputPath =
+			CoreHub.userCfg.get(PreferencePage.VAC_PDF_OUTPUTDIR, CoreHub.getWritableUserDir()
+				.getAbsolutePath());
+		if (outputPath.equals(CoreHub.getWritableUserDir())) {
+			SWTHelper.showInfo("Kein Ausgabeverzeichnis definiert", "Ausgabe erfolgt in: "
+				+ outputPath
+				+ "\nDas Ausgabeverzeichnis kann unter Einstellungen/Impfplan definiert werden.");
+		}
+		File outputDir = new File(outputPath);
+		File pdf = new File(outputDir, "impfplan_" + patient.getPatCode() + ".pdf");
 		document.save(pdf);
 		document.close();
 		Desktop.getDesktop().open(pdf);

@@ -17,8 +17,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -27,11 +31,14 @@ import org.eclipse.ui.part.ViewPart;
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2013;
+import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
@@ -45,6 +52,7 @@ public class VaccinationView extends ViewPart {
 	private VaccinationComposite vaccinationComposite;
 	
 	public static final String HEADER_ID_SHOW_ADMINISTERED = "HISA";
+	private Patient pat;
 	
 	private ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
 		public void runInUi(ElexisEvent ev){
@@ -70,18 +78,47 @@ public class VaccinationView extends ViewPart {
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		vaccinationComposite = new VaccinationComposite(parent);
+		Menu menu = new Menu(vaccinationComposite);
+		MenuItem mDeleteEntry = new MenuItem(menu, SWT.PUSH);
+		mDeleteEntry.setText("Eintrag löschen");
+		mDeleteEntry.setImage(Images.IMG_DELETE.getImage());
+		mDeleteEntry.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				VaccinationCompositePaintListener vcpl =
+					vaccinationComposite.getVaccinationCompositePaintListener();
+				Vaccination selVaccination = vcpl.getSelectedVaccination();
+				selVaccination.delete();
+				updateUi(true);
+			}
+		});
+		vaccinationComposite.setMenu(menu);
+		
 	}
 	
 	private void setPatient(Patient selectedPatient){
-		updateUi(selectedPatient);
+		pat = selectedPatient;
+		updateUi(true);
 	}
 	
-	public void updateUi(Patient pat){
-		if (pat != null) {
+	/**
+	 * updates the ui
+	 * 
+	 * @param patientChanged
+	 *            if this value is true all vacc's will be reloaded (via a query)
+	 */
+	public void updateUi(boolean patientChanged){
+		if (pat == null) {
+			vaccinations = Collections.emptyList();
+			return;
+		}
+		
+		if (patientChanged) {
+			boolean sortDir = CoreHub.userCfg.get(PreferencePage.VAC_SORT_ORDER, false);
 			Query<Vaccination> qbe = new Query<>(Vaccination.class);
 			qbe.add("ID", Query.NOT_EQUAL, StringConstants.VERSION_LITERAL);
 			qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, pat.getId());
-			qbe.orderBy(true, Vaccination.FLD_DOA);
+			qbe.orderBy(sortDir, Vaccination.FLD_DOA);
 			vaccinations = qbe.execute();
 			
 			if (vaccinationHeaderDefinition.id.equals(HEADER_ID_SHOW_ADMINISTERED)) {
@@ -100,17 +137,14 @@ public class VaccinationView extends ViewPart {
 						"Nur verabreichte Impfungen", new ArrayList<String>(atc),
 						Collections.EMPTY_LIST);
 			}
-			vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations, new TimeTool(pat.getGeburtsdatum()));
-		} else {
-			vaccinations = Collections.emptyList();
 		}
-		
-
+		vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations,
+			new TimeTool(pat.getGeburtsdatum()));
 	}
 	
 	@Override
 	public void setFocus(){
-		updateUi(ElexisEventDispatcher.getSelectedPatient());
+		updateUi(false);
 	}
 	
 	@Override

@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
+import at.medevit.elexis.impfplan.ui.handlers.ApplyVaccinationHandler;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
@@ -54,15 +55,19 @@ public class VaccinationPrescriptionEventListener implements ElexisEventListener
 			
 			@Override
 			public void run(){
-				Mandant m = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-				InputDialog lotId =
-					new InputDialog(UiDesk.getTopShell(), "Chargen-Nummer",
-						"Bitte geben Sie die Chargen-Nummer des Impfstoffes an", null, null);
-				lotId.open();
-				String lotNo = lotId.getValue();
-				
-				new Vaccination(p.get(Prescription.PATIENT_ID), p.getArtikel(), new Date(), lotNo,
-					m.storeToString());
+				if (ApplyVaccinationHandler.inProgress()) {
+					ApplyVaccinationHandler.createVaccination(p.getArtikel());
+				} else {
+					Mandant m = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+					InputDialog lotId =
+						new InputDialog(UiDesk.getTopShell(), "Lot-Nummer",
+							"Bitte geben Sie die Lot-Nummer des Impfstoffes an", null, null);
+					lotId.open();
+					String lotNo = lotId.getValue();
+					
+					new Vaccination(p.get(Prescription.PATIENT_ID), p.getArtikel(), new Date(),
+						lotNo, m.storeToString());
+				}
 			}
 		});
 	}

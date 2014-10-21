@@ -21,11 +21,16 @@ import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -35,18 +40,20 @@ import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.proposals.PersistentObjectContentProposal;
 import ch.elexis.core.ui.proposals.PersistentObjectProposalProvider;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 
-public class SupplementVaccinationDialog extends TitleAreaDialog {
+public class ApplyVaccinationDialog extends TitleAreaDialog {
 	private Text txtAdministrator;
 	private Text txtArticleName;
-	private Text txtLotNr;
+	private Text txtLotNo;
 	private Text txtAtcCode;
 	private Text txtArticleEAN;
 	
+	private boolean isSupplement = false;
 	private String administratorString = null;
 	private String articleString = null;
 	private DateTime dateOfAdministration;
@@ -56,14 +63,19 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	private String articleAtcCode;
 	private String lotNo;
 	private GregorianCalendar doa;
+	private GregorianCalendar dob;
+	
+	private Mandant mandant;
 	
 	/**
 	 * Create the dialog.
 	 * 
 	 * @param parentShell
+	 * @param b
 	 */
-	public SupplementVaccinationDialog(Shell parentShell){
+	public ApplyVaccinationDialog(Shell parentShell){
 		super(parentShell);
+		mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 	}
 	
 	/**
@@ -73,13 +85,11 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent){
-		setTitle("Impfung nachtragen");
+		setTitle("Impfung ein-/nachtragen");
 		setTitleImage(ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui",
 			"rsc/icons/vaccination_logo.png"));
 		
 		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
-		
-		setTitle("Impfung nachtragen");
 		setMessage(selectedPatient.getLabel());
 		
 		Composite area = (Composite) super.createDialogArea(parent);
@@ -87,11 +97,39 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		container.setLayout(new GridLayout(2, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		Group radioGroup = new Group(container, SWT.NONE);
+		RowLayout rl_radioGroup = new RowLayout(SWT.HORIZONTAL);
+		rl_radioGroup.fill = true;
+		radioGroup.setLayout(rl_radioGroup);
+		radioGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		
+		Button btnNewVacc = new Button(radioGroup, SWT.RADIO);
+		btnNewVacc.setText("eintragen");
+		btnNewVacc.setSelection(true);
+		btnNewVacc.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				txtAdministrator.setText(mandant.getMandantLabel());
+				administratorString = mandant.storeToString();
+				isSupplement = false;
+			}
+		});
+		
+		Button btnSupplementVacc = new Button(radioGroup, SWT.RADIO);
+		btnSupplementVacc.setText("nachtragen (wird nicht verrechnet)");
+		btnSupplementVacc.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				administratorString = "";
+				txtAdministrator.setText("");
+				isSupplement = true;
+			}
+		});
+		
 		Label lblVerabreichungsdatum = new Label(container, SWT.NONE);
 		lblVerabreichungsdatum.setText("Datum");
 		
 		dateOfAdministration = new DateTime(container, SWT.BORDER | SWT.DROP_DOWN);
-		
 		{ // administrating contact
 			Label lblAdministratingContact = new Label(container, SWT.NONE);
 			lblAdministratingContact.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
@@ -99,6 +137,8 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 			lblAdministratingContact.setText("Verabr. Arzt");
 			
 			txtAdministrator = new Text(container, SWT.BORDER);
+			administratorString = mandant.storeToString();
+			txtAdministrator.setText(mandant.getMandantLabel());
 			txtAdministrator.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e){
 					administratorString = txtAdministrator.getText();
@@ -162,26 +202,35 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 			});
 		}
 		
-		Label lblArtikelEan = new Label(container, SWT.NONE);
-		lblArtikelEan.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		Label lblLotNo = new Label(container, SWT.NONE);
+		lblLotNo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblLotNo.setText("Lot-Nr");
+		
+		txtLotNo = new Text(container, SWT.BORDER);
+		txtLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		
+		Group optionalGroup = new Group(container, SWT.NONE);
+		optionalGroup.setText("Optionale Angaben");
+		optionalGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		optionalGroup.setLayout(new GridLayout(2, false));
+		
+		Label lblArtikelEan = new Label(optionalGroup, SWT.NONE);
+		lblArtikelEan.setSize(60, 15);
 		lblArtikelEan.setText("Artikel EAN");
 		
-		txtArticleEAN = new Text(container, SWT.BORDER);
+		txtArticleEAN = new Text(optionalGroup, SWT.BORDER);
 		txtArticleEAN.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtArticleEAN.setSize(348, 21);
 		
-		Label lblChargennr = new Label(container, SWT.NONE);
-		lblChargennr.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblChargennr.setText("Chargen-Nr");
-		
-		txtLotNr = new Text(container, SWT.BORDER);
-		txtLotNr.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		
-		Label lblAtccode = new Label(container, SWT.NONE);
-		lblAtccode.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		Label lblAtccode = new Label(optionalGroup, SWT.NONE);
+		lblAtccode.setSize(56, 15);
 		lblAtccode.setText("ATC-Code");
 		
-		txtAtcCode = new Text(container, SWT.BORDER);
-		txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		txtAtcCode = new Text(optionalGroup, SWT.BORDER);
+		txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtAtcCode.setSize(314, 21);
+		new Label(container, SWT.NONE);
+		new Label(container, SWT.NONE);
 		
 		return area;
 	}
@@ -201,11 +250,35 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	protected void okPressed(){
 		articleEAN = txtArticleEAN.getText();
 		articleAtcCode = txtAtcCode.getText();
-		lotNo = txtLotNr.getText();
+		lotNo = txtLotNo.getText();
+		
 		doa =
 			new GregorianCalendar(dateOfAdministration.getYear(), dateOfAdministration.getMonth(),
 				dateOfAdministration.getDay());
-		super.okPressed();
+		
+		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
+		if (selectedPatient != null && selectedPatient.getGeburtsdatum() != null) {
+			String[] bdArray = selectedPatient.getGeburtsdatum().split("\\.");
+			dob =
+				new GregorianCalendar(Integer.parseInt(bdArray[2]), Integer.parseInt(bdArray[1]),
+					Integer.parseInt(bdArray[0]));
+			
+			// patient wasn't born yet
+			if (dob.after(doa)) {
+				boolean askYesNo =
+					SWTHelper
+						.askYesNo("Patient noch nicht geboren",
+							"Am von Ihnen eingetragenen Datum war der Patient noch nicht geboren. Trotzdem fortfahren?");
+				if (askYesNo) {
+					// apply anyway
+					super.okPressed();
+				}
+			} else {
+				super.okPressed();
+			}
+		} else {
+			super.okPressed();
+		}
 	}
 	
 	public TimeTool getDateOfAdministration(){
@@ -230,5 +303,9 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	
 	public String getEAN(){
 		return articleEAN;
+	}
+	
+	public boolean isSupplement(){
+		return isSupplement;
 	}
 }

@@ -15,10 +15,6 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            id="at.medevit.elexis.impfplan.ui.command.PerformImmunization"
-            name="%performImmunization">
-      </command>
-      <command
             id="at.medevit.elexis.impfplan.ui.view.vaccinationHeader"
             name="select vaccination header">
          <commandParameter
@@ -28,12 +24,21 @@
          </commandParameter>
       </command>
       <command
-            id="at.medevit.elexis.impfplan.ui.command.SupplementVaccination"
-            name="%supplementvaccination">
+            id="at.medevit.elexis.impfplan.ui.command.ApplyVaccination"
+            name="%applyVaccination">
       </command>
       <command
             id="at.medevit.elexis.impfplan.ui.command.PrintVaccinationEntries"
             name="%printvaccinationentries">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.impfplan.ui.handlers.SortVaccinationsHandler"
+            id="at.medevit.elexis.impfplan.ui.command.SortVaccinations"
+            name="Impfungen sortieren (nach Datum)">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
       </command>
    </extension>
    <extension
@@ -53,16 +58,23 @@
             </parameter>
          </command>
          <command
-               commandId="at.medevit.elexis.impfplan.ui.command.SupplementVaccination"
-               icon="rsc/icons/clock--plus.png"
+               commandId="at.medevit.elexis.impfplan.ui.command.ApplyVaccination"
+               icon="icon://IMG_NEW"
                style="push"
-               tooltip="%supplementvaccination">
+               tooltip="%applyVaccination">
          </command>
          <command
                commandId="at.medevit.elexis.impfplan.ui.command.PrintVaccinationEntries"
                icon="icon://IMG_PRINTER"
                style="push"
                tooltip="%printvaccinationentries">
+         </command>
+         <command
+               commandId="at.medevit.elexis.impfplan.ui.command.SortVaccinations"
+               hoverIcon="rsc/icons/sort-date-descending.png"
+               icon="rsc/icons/sort-date.png"
+               label="Impfungen sortieren (nach Datum)"
+               style="toggle">
          </command>
       </menuContribution>
       <menuContribution
@@ -87,13 +99,21 @@
             commandId="at.medevit.elexis.impfplan.ui.view.vaccinationHeader">
       </handler>
       <handler
-            class="at.medevit.elexis.impfplan.ui.handlers.SupplementVaccinationHandler"
-            commandId="at.medevit.elexis.impfplan.ui.command.SupplementVaccination">
+            class="at.medevit.elexis.impfplan.ui.handlers.ApplyVaccinationHandler"
+            commandId="at.medevit.elexis.impfplan.ui.command.ApplyVaccination">
       </handler>
       <handler
             class="at.medevit.elexis.impfplan.ui.handlers.PrintVaccinationEntriesHandler"
             commandId="at.medevit.elexis.impfplan.ui.command.PrintVaccinationEntries">
       </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="at.medevit.elexis.impfplan.ui.preferences.PreferencePage"
+            id="at.medevit.elexis.impfplan.ui.preferences"
+            name="Impfplan">
+      </page>
    </extension>
 
 </plugin>

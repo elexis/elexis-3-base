@@ -19,15 +19,18 @@ import at.medevit.elexis.impfplan.model.po.Vaccination;
 import ch.elexis.core.ui.UiDesk;
 import ch.rgw.tools.TimeTool;
 
-
 public class VaccinationComposite extends Composite {
 	
 	private VaccinationCompositePaintListener vcpl;
+	private VaccinationCompositeMouseMoveListener vcmml;
 	
 	public VaccinationComposite(Composite parent){
-		super(parent, SWT.NONE);
+		super(parent, SWT.DOUBLE_BUFFERED);
 		vcpl = new VaccinationCompositePaintListener();
+		vcmml = new VaccinationCompositeMouseMoveListener(vcpl);
 		addPaintListener(vcpl);
+		addMouseMoveListener(vcmml);
+		
 		setBackground(UiDesk.getColor(UiDesk.COL_WHITE));
 	}
 	
@@ -37,16 +40,20 @@ public class VaccinationComposite extends Composite {
 		vcpl = null;
 		super.dispose();
 	}
-
-	public void updateUi(VaccinationPlanHeaderDefinition _ihd, List<Vaccination> vaccinations, TimeTool birthDate){
+	
+	public void updateUi(VaccinationPlanHeaderDefinition _ihd, List<Vaccination> vaccinations,
+		TimeTool birthDate){
 		vcpl.setVaccinationPlanHeader(_ihd);
 		vcpl.setVaccinationEntries(vaccinations);
 		vcpl.setPatientBirthdate(birthDate);
 		redraw();
 	}
 	
-	public VaccinationCompositePaintListener getVaccinationCompositePaintListener() {
+	public VaccinationCompositePaintListener getVaccinationCompositePaintListener(){
 		return vcpl;
 	}
-
+	
+	public Vaccination getSelection(){
+		return vcpl.getSelectedVaccination();
+	}
 }

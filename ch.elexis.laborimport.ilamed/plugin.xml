@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
+<?eclipse version="3.2"?>
 <plugin>
+	<!--
+		(c) 2007-2010 by G. Weirich
+		All rights reserved
+		$Id: plugin.xml 116 2007-06-07 07:06:44Z gerry $
+	-->
    <extension
-         point="ch.elexis.LaborDatenImport">
+         point="ch.elexis.core.ui.LaborDatenImport">
       <Importer
             Class="ch.elexis.laborimport.ilamed.Importer"
-            name="Labor Ilamed">
-      </Importer>
+            name="Labor Ilamed"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -14,8 +18,7 @@
             category="ch.elexis.preferences.transporters"
             class="ch.elexis.laborimport.ilamed.PreferencePage"
             id="ch.elexis.laborimport.ilamed.prefs"
-            name="Labor Ilamed">
-      </page>
+            name="Labor Ilamed"/>
    </extension>
 
 </plugin>

@@ -106,6 +106,8 @@
   <module>ch.elexis.laborimport_labtop.feature</module>
   <module>ch.elexis.laborimport_lg1</module>
   <module>ch.elexis.laborimport_lg1.feature</module>
+  <module>ch.elexis.laborimport.ilamed</module>
+  <module>ch.elexis.laborimport.ilamed.feature</module>
   <module>ch.elexis.laborimport_rischbern</module>
   <module>ch.elexis.laborimport_rischbern.feature</module>
   <module>ch.elexis.laborimport_rothen</module>

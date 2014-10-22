@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -193,7 +194,7 @@ public class InboxView extends ViewPart {
 				if (SWTHelper.askYesNo(Messages.InboxView_inbox,
 					MessageFormat.format(Messages.InboxView_thisreallydelete, sel.getName()))) {
 					sel.delete();
-					Activator.getDefault().getContentProvider().reload();
+					reloadInbox();
 				}
 			}
 		};
@@ -234,8 +235,15 @@ public class InboxView extends ViewPart {
 			
 			@Override
 			public void run(){
-				Activator.getDefault().getContentProvider().reload();
+				reloadInbox();
 			}
 		};
+	}
+	
+	private void reloadInbox(){
+		IStatus status = Activator.getDefault().getContentProvider().reload();
+		if (status == Status.CANCEL_STATUS) {
+			SWTHelper.showError(Messages.InboxView_error, Messages.InvoxView_errorCantDetectInbox);
+		}
 	}
 }

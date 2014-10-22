@@ -20,19 +20,15 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected void createFieldEditors(){
-		addField(new DirectoryFieldEditor(PREF_DIR, Messages.Preferences_directory,
-			getFieldEditorParent()));
+		DirectoryFieldEditor dirFieldEditor =
+			new DirectoryFieldEditor(PREF_DIR, Messages.Preferences_directory,
+				getFieldEditorParent());
+		dirFieldEditor.getTextControl(getFieldEditorParent()).setEditable(false);
+		addField(dirFieldEditor);
 	}
 	
 	@Override
 	public void init(IWorkbench workbench){
-		
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
-	
-	@Override
-	protected void performApply(){
-		super.performApply();
-		CoreHub.localCfg.flush();
-	}
-	
 }

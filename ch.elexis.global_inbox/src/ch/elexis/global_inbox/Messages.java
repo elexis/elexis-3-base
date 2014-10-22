@@ -14,6 +14,7 @@ public class Messages extends NLS {
 	public static String InboxView_couldNotStart;
 	public static String InboxView_delete;
 	public static String InboxView_error;
+	public static String InvoxView_errorCantDetectInbox;
 	public static String InboxView_inbox;
 	public static String InboxView_reallydelete;
 	public static String InboxView_reload;

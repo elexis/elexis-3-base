@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
@@ -430,8 +431,9 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		}
 	}
 	
-	public void setSelection(Vaccination vaccination){
+	public void setSelection(Vaccination vaccination, Control control){
 		selectedVacc = vaccination;
+		control.redraw();
 	}
 	
 	/**

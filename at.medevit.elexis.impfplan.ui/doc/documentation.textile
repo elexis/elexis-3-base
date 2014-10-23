@@ -1,0 +1,62 @@
+h1<. Impfplan
+
+_Bezeichnung:_  Impfplan 
+_Author:_ Lucia Amann <amann@medevit.at>
+_Version:_ 3.0.0, 23.10.2014
+_Beschreibung:_ Dieses Plug-In ermöglicht das Ein- und Nachtragen von Impfungen in Elexis.
+
+h2<. 1. Einführung
+
+Mit dem Impflan Plugin können Impfungen eines Patienten eingetragen und nachgetragen werden. Die Impflan View orientiert sich dabei am Schweizerischen Impfplan 2013 und kann bei Bedarf ausgedruckt werden.
+
+h2<. 2. Installation
+
+Damit sie das Impflan Plugin in Elexis verwenden können, muss aus der Kategorie „Klinische Hilfsmittel“ das Modul „Impfpan“ abonniert werden. Nachdem Aktualisieren von Elexis ist das Modul geladen.
+
+h3<. 2.1 Konfiguration
+
+Für die Ausgabe der Impfungen eines Patientens via PDF kann unter @Datei/Einstellungen/Klinische Hilfsmittel/Impfplan@ eine Ausgabeverzeichnis definiert werden.
+!preferences.png!
+
+h2<. 3. Verwendung
+
+Öffnen Sie die Impfplan Ansicht und selektieren Sie einen Patient. Es werden alle bisher vorgenommenen Impfungen angezeigt. Empfholene Standardimpfungen sind all jene, welche sich vor der breiten schwarzen Linie befinden.
+!vaccination_view.png!
+
+h3<. 3.1 Eintragen oder Nachtragen
+
+Eine Impfung kann über das grüne Plus registriert werden. 
+!vacc_dialog.png!
+
+*Eintragen*
+Bei Eintragungen wird die Impfung gleichzeitig einer Konsultation zugewiesen und in die Verrechnungen aufgenommen. Zudem wird davon ausgegangen, dass ein im System existierender Mandant als Verabr. Arzt eingetragen ist.
+
+*Nachtragen*
+Nachtragungen werden nicht mehr verrechnet und könne auch externe Ärzte als Verabreicher beeinhalten. Bei Impfnachtragungen von externen Ärzten wird der Name des Arztes grün dargestellt. 
+
+h3<. 3.2 Ausdrucken/ PDF erstellen
+
+Die Impfungsübersicht eines Patienten kann über das Drucksymbol als PDF ausgegeben werden.
+
+h3<. 3.3 Impfungen sortieren
+
+Imfpungen können über dieses Symbol !sort-date.png! nach dem Datum sortiert wreden. Der rote Balken entspricht dabei jeweils dem neuestem Datum.
+
+h3<. 3.4 Impfung löschen
+
+Über einen Rechtsklick auf die gewünschte Impfung und aufrufen des Menüs _Eintrag löschen_ kann z.B. eine falsch eingetragene Impfung entfernt werden.
+
+h3<. 3.5 Filtern
+
+Im ViewMenu kann über den Filter definiert werden ob der _Schweizer Impfplan 2013_ oder alle _verabreichten Impfungen_ angezeigt werden sollen.
+!filter.png!
+
+h3<. 3.6 Alle Patienten welche eine Impfung mit Lot-Nummer XY erhalten haben suchen
+
+Über ein Script können alle Patienten ermittelt werden, welche eine Imfpung mit einer bestimmten Lot-Nummer erhalten haben.
+Dieses Script kann in der Script View über Rechtsklick _Sricpt ausführen_ und Eingabe der Lot-Nummer in Anführungszeichen (siehe Screenshot) ausgeführt werden.
+!script_impfung.png!
+
+Die Ergebnisse werden sowohl in einem Dialog ausgegeben als auch im Elexis Installationsverzeichnis unter @LotNoAffectedPatients.txt@ gespeichert.
+!script_output.png!
+

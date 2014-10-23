@@ -66,6 +66,8 @@ public class ApplyVaccinationDialog extends TitleAreaDialog {
 	private GregorianCalendar dob;
 	
 	private Mandant mandant;
+	private TimeTool patBDay;
+	private TimeTool selDate;
 	
 	/**
 	 * Create the dialog.
@@ -76,6 +78,9 @@ public class ApplyVaccinationDialog extends TitleAreaDialog {
 	public ApplyVaccinationDialog(Shell parentShell){
 		super(parentShell);
 		mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+		Patient pat = ElexisEventDispatcher.getSelectedPatient();
+		patBDay = new TimeTool(pat.getGeburtsdatum());
+		selDate = new TimeTool();
 	}
 	
 	/**
@@ -126,17 +131,40 @@ public class ApplyVaccinationDialog extends TitleAreaDialog {
 			}
 		});
 		
-		Label lblVerabreichungsdatum = new Label(container, SWT.NONE);
+		Group mainGroup = new Group(container, SWT.NONE);
+		mainGroup.setText("Pflicht Angaben");
+		GridLayout gd_MainGroup = new GridLayout(2, false);
+		mainGroup.setLayout(gd_MainGroup);
+		mainGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Label lblVerabreichungsdatum = new Label(mainGroup, SWT.NONE);
+		lblVerabreichungsdatum
+			.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblVerabreichungsdatum.setText("Datum");
 		
-		dateOfAdministration = new DateTime(container, SWT.BORDER | SWT.DROP_DOWN);
+		dateOfAdministration = new DateTime(mainGroup, SWT.BORDER | SWT.DROP_DOWN);
+		dateOfAdministration.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				selDate.set(dateOfAdministration.getYear(), dateOfAdministration.getMonth(),
+					dateOfAdministration.getDay());
+				
+				if (selDate.isBefore(patBDay)) {
+					SWTHelper.showInfo("Patient noch nicht geboren",
+						"Das von Ihnen gewählte Datum liegt vor der Geburt des Patienten.");
+					dateOfAdministration.setYear(patBDay.get(TimeTool.YEAR));
+					dateOfAdministration.setMonth(patBDay.get(TimeTool.MONTH));
+					dateOfAdministration.setDay(patBDay.get(TimeTool.DAY_OF_MONTH));
+				}
+			}
+		});
 		{ // administrating contact
-			Label lblAdministratingContact = new Label(container, SWT.NONE);
+			Label lblAdministratingContact = new Label(mainGroup, SWT.NONE);
 			lblAdministratingContact.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false, 1, 1));
 			lblAdministratingContact.setText("Verabr. Arzt");
 			
-			txtAdministrator = new Text(container, SWT.BORDER);
+			txtAdministrator = new Text(mainGroup, SWT.BORDER);
 			administratorString = mandant.storeToString();
 			txtAdministrator.setText(mandant.getMandantLabel());
 			txtAdministrator.addModifyListener(new ModifyListener() {
@@ -170,11 +198,11 @@ public class ApplyVaccinationDialog extends TitleAreaDialog {
 		}
 		
 		{ // article name
-			Label lblArtikelname = new Label(container, SWT.NONE);
+			Label lblArtikelname = new Label(mainGroup, SWT.NONE);
 			lblArtikelname.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 			lblArtikelname.setText("Artikelname");
 			
-			txtArticleName = new Text(container, SWT.BORDER);
+			txtArticleName = new Text(mainGroup, SWT.BORDER);
 			txtArticleName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			txtArticleName.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e){
@@ -202,12 +230,13 @@ public class ApplyVaccinationDialog extends TitleAreaDialog {
 			});
 		}
 		
-		Label lblLotNo = new Label(container, SWT.NONE);
+		Label lblLotNo = new Label(mainGroup, SWT.NONE);
 		lblLotNo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblLotNo.setText("Lot-Nr");
 		
-		txtLotNo = new Text(container, SWT.BORDER);
+		txtLotNo = new Text(mainGroup, SWT.BORDER);
 		txtLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		new Label(container, SWT.NONE);
 		
 		Group optionalGroup = new Group(container, SWT.NONE);
 		optionalGroup.setText("Optionale Angaben");
@@ -229,8 +258,6 @@ public class ApplyVaccinationDialog extends TitleAreaDialog {
 		txtAtcCode = new Text(optionalGroup, SWT.BORDER);
 		txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtAtcCode.setSize(314, 21);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
 		
 		return area;
 	}
@@ -255,30 +282,7 @@ public class ApplyVaccinationDialog extends TitleAreaDialog {
 		doa =
 			new GregorianCalendar(dateOfAdministration.getYear(), dateOfAdministration.getMonth(),
 				dateOfAdministration.getDay());
-		
-		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
-		if (selectedPatient != null && selectedPatient.getGeburtsdatum() != null) {
-			String[] bdArray = selectedPatient.getGeburtsdatum().split("\\.");
-			dob =
-				new GregorianCalendar(Integer.parseInt(bdArray[2]), Integer.parseInt(bdArray[1]),
-					Integer.parseInt(bdArray[0]));
-			
-			// patient wasn't born yet
-			if (dob.after(doa)) {
-				boolean askYesNo =
-					SWTHelper
-						.askYesNo("Patient noch nicht geboren",
-							"Am von Ihnen eingetragenen Datum war der Patient noch nicht geboren. Trotzdem fortfahren?");
-				if (askYesNo) {
-					// apply anyway
-					super.okPressed();
-				}
-			} else {
-				super.okPressed();
-			}
-		} else {
-			super.okPressed();
-		}
+		super.okPressed();
 	}
 	
 	public TimeTool getDateOfAdministration(){

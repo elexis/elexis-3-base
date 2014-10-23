@@ -110,6 +110,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            category="ch.elexis.preferences.cdss"
             class="at.medevit.elexis.impfplan.ui.preferences.PreferencePage"
             id="at.medevit.elexis.impfplan.ui.preferences"
             name="Impfplan">

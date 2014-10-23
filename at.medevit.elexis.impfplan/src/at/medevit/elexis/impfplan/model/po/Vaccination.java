@@ -11,6 +11,7 @@
 package at.medevit.elexis.impfplan.model.po;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -21,6 +22,7 @@ import ch.elexis.data.Artikel;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
+import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 
@@ -183,5 +185,19 @@ public class Vaccination extends PersistentObject {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Find all vaccinations with a specific lotNo
+	 * 
+	 * @param lotNo
+	 *            number to look for
+	 * @return list of vaccinations matching the lotNo
+	 */
+	public static List<Vaccination> findByLotNo(String lotNo){
+		Query<Vaccination> qbe = new Query<Vaccination>(Vaccination.class);
+		qbe.clear(true);
+		qbe.add(FLD_LOT_NO, Query.EQUALS, lotNo);
+		return qbe.execute();
 	}
 }

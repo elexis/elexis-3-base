@@ -1,0 +1,29 @@
+/* !BSH! */
+/* Von LotNr betroffene Patienten */
+
+import at.medevit.elexis.impfplan.model.po.Vaccination;
+import ch.elexis.data.*;
+import java.util.List;
+import java.io.*;
+import ch.elexis.core.data.activator.CoreHub;
+
+matches=Vaccination.findByLotNo($lotNr);
+StringBuilder sb = new StringBuilder();
+
+for(Vaccination vac : matches){
+	Kontakt k = Kontakt.load(vac.getPatientId());
+	sb.append(k.getLabel() + ", Geb.Datum: "+k.get(Patient.FLD_DOB)+", PatNr: "+k.get(Patient.FLD_PATID));
+	sb.append("\n");
+}
+
+File outputFile = new File(CoreHub.getWritableUserDir(), "LotNoAffectedPatients.txt");
+if(!outputFile.exists()){
+	outputFile.createNewFile();
+}
+
+FileWriter fw = new FileWriter(outputFile.getAbsoluteFile());
+BufferedWriter bw = new BufferedWriter(fw);
+bw.write(sb.toString());
+bw.close();
+
+return "Resultat gespeichert unter: "+CoreHub.getWritableUserDir()+"\\LotNoAffectedPatients.txt\n\nGefundene Patienten:\n"+sb.toString();

@@ -93,7 +93,9 @@ public class VaccinationView extends ViewPart {
 			}
 		});
 		vaccinationComposite.setMenu(menu);
-		
+		if (ElexisEventDispatcher.getSelectedPatient() != null) {
+			setPatient(ElexisEventDispatcher.getSelectedPatient());
+		}
 	}
 	
 	private void setPatient(Patient selectedPatient){
@@ -121,22 +123,24 @@ public class VaccinationView extends ViewPart {
 			qbe.orderBy(sortDir, Vaccination.FLD_DOA);
 			vaccinations = qbe.execute();
 			
-			if (vaccinationHeaderDefinition.id.equals(HEADER_ID_SHOW_ADMINISTERED)) {
-				HashSet<String> atc = new HashSet<>();
-				for (Vaccination vacc : vaccinations) {
-					String atcCode = vacc.get(Vaccination.FLD_ATCCODE);
-					if(atcCode.length()>3) {
-						List<String> immunisationForAtcCode = ArticleToImmunisationModel.getImmunisationForAtcCode(atcCode);
-						atc.addAll(immunisationForAtcCode);
-					} else {
-						atc.addAll(Arrays.asList(vacc.get(Vaccination.FLD_VACC_AGAINST).split(",")));
-					}
+		}
+		
+		if (vaccinationHeaderDefinition.id.equals(HEADER_ID_SHOW_ADMINISTERED)) {
+			HashSet<String> atc = new HashSet<>();
+			for (Vaccination vacc : vaccinations) {
+				String atcCode = vacc.get(Vaccination.FLD_ATCCODE);
+				if (atcCode.length() > 3) {
+					List<String> immunisationForAtcCode =
+						ArticleToImmunisationModel.getImmunisationForAtcCode(atcCode);
+					atc.addAll(immunisationForAtcCode);
+				} else {
+					atc.addAll(Arrays.asList(vacc.get(Vaccination.FLD_VACC_AGAINST).split(",")));
 				}
-				vaccinationHeaderDefinition =
-					new VaccinationPlanHeaderDefinition(HEADER_ID_SHOW_ADMINISTERED,
-						"Nur verabreichte Impfungen", new ArrayList<String>(atc),
-						Collections.EMPTY_LIST);
 			}
+			vaccinationHeaderDefinition =
+				new VaccinationPlanHeaderDefinition(HEADER_ID_SHOW_ADMINISTERED,
+					"Nur verabreichte Impfungen", new ArrayList<String>(atc),
+					Collections.EMPTY_LIST);
 		}
 		vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations,
 			new TimeTool(pat.getGeburtsdatum()));
@@ -169,8 +173,8 @@ public class VaccinationView extends ViewPart {
 	public static VaccinationPlanHeaderDefinition getVaccinationHeaderDefinition(){
 		return vaccinationHeaderDefinition;
 	}
-
+	
 	public VaccinationComposite getVaccinationComposite(){
-		return vaccinationComposite;	
+		return vaccinationComposite;
 	}
 }

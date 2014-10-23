@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2014 MEDEVIT.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     MEDEVIT <office@medevit.at> - initial API and implementation
+ ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 
 import java.util.HashMap;
@@ -229,17 +239,30 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 			filterValueStore = slp.getValues()[0];
 			slp.clearValues();
 			ATCCode a = (ATCCode) selection.getFirstElement();
-			atcQueryFilter.setAtcFilter(a.atcCode);
-			addQueryFilter(atcQueryFilter);
-			dj.launch(0);
+			setAtcQueryFilterValue(a.atcCode);
 		} else if (selection.getFirstElement() instanceof ATCFilterInfoListElement) {
 			slp.clearValues();
 			ActiveControl ac = slp.getPanel().getControls().get(0);
-			ac.setText(filterValueStore);
+			ac.setText((filterValueStore!=null) ? filterValueStore : "");
+			setAtcQueryFilterValue(null);
+		}
+	}
+	
+	/**
+	 * Set the ATC value to filter the selector
+	 * 
+	 * @param filterValue
+	 *            an ATC code or <code>null</code> to remove
+	 */
+	public void setAtcQueryFilterValue(String filterValue){
+		if (filterValue == null) {
 			removeQueryFilter(atcQueryFilter);
 			atcQueryFilter.setAtcFilter(null);
-			dj.launch(0);
+		} else {
+			atcQueryFilter.setAtcFilter(filterValue);
+			addQueryFilter(atcQueryFilter);
 		}
+		dj.launch(0);
 	}
 	
 	/**

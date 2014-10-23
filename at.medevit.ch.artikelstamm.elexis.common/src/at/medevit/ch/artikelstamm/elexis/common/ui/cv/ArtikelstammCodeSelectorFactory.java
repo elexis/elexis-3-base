@@ -104,6 +104,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		// new MedINDEXArticleControlFieldProvider(cv),
 			slp, new ViewerConfigurer.DefaultButtonProvider(), swp, fdl);
 		
+		// the dropdown menu on the viewer
 		MenuManager menu = new MenuManager();
 		menu.add(new Action(ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesAction) {
 			{
@@ -117,7 +118,35 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 				ArtikelstammDetailDialog dd = new ArtikelstammDetailDialog(UiDesk.getTopShell(), (IArtikelstammItem) element);
 				dd.open();
 			}
+			
+			@Override
+			public boolean isEnabled(){
+				StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
+				Object element = structuredSelection.getFirstElement();
+				return (element instanceof ArtikelstammItem);
+			}
 		});
+		
+		MenuManager subMenu = new MenuManager("ATC Gruppen-Selektion", Images.IMG_CATEGORY_GROUP.getImageDescriptor(), null){
+			@Override
+			public boolean isDynamic(){
+				return true;
+			}
+			
+			@Override
+			public boolean isVisible(){
+				StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
+				Object element = structuredSelection.getFirstElement();
+				if (element instanceof ArtikelstammItem) {
+					ArtikelstammItem ai = (ArtikelstammItem) element;
+					return (ai.getATCCode()!=null && ai.getATCCode().length()>0);
+				}
+				return false;
+			}
+		};
+		subMenu.add(new ATCMenuContributionItem(cov, fdl));
+		menu.add(subMenu);
+		
 		menu.add(new Separator());
 		menu.add(new VATMenuContributionItem(cov));
 		cv.setContextMenu(menu);

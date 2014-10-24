@@ -323,7 +323,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			}
 			
 			gc.setFont(boldFont);
-			gc.drawText(vacc.getBusinessNameShort(), 10, heightStart);
+			gc.drawText(vacc.getBusinessName(), 10, heightStart);
 			gc.setFont(defaultFont);
 			
 			// add lot nr

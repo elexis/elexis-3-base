@@ -141,12 +141,6 @@ public class Vaccination extends PersistentObject {
 		return get(FLD_BUSS_NAME);
 	}
 	
-	public String getBusinessNameShort(){
-		Artikel art =
-			(Artikel) new PersistentObjectFactory().createFromString(get(FLD_ARTIKEL_REF));
-		return art.getName();
-	}
-	
 	public String getLotNo(){
 		return get(FLD_LOT_NO);
 	}

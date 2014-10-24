@@ -17,7 +17,6 @@ import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
 
 public class AddVaccinationToKons {
-	private static Logger logger = LoggerFactory.getLogger(AddVaccinationToKons.class);
 	private static final String TARMED_5MIN_TARIF = "00.0010";
 	
 	private static Object selectKonsLock = new Object();

@@ -264,8 +264,8 @@ public class TextPlugin implements ITextPlugin {
 		sb.append(actPatient.getVorname() + "_");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_S");
 		Date date = new Date();
-		sb.append(dateFormat.format(date));
-		return sb.toString();
+		sb.append(dateFormat.format(date));		
+		return sb.toString().replaceAll("[^0-9A-Za-z]", "_");
 	}
 	
 	private boolean editorRunning(){
@@ -537,12 +537,11 @@ public class TextPlugin implements ITextPlugin {
 			return null;
 		}
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		if (stream == null)
-			return null;
+
 		try {
 			odt.save(stream);
-			logger.info("storeToByteArray: completed " + file.length() + " bytes will open editor");
-			openEditor();
+			//logger.info("storeToByteArray: completed " + file.length() + " bytes will open editor");
+			//openEditor();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

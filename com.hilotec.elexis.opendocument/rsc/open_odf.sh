@@ -8,6 +8,7 @@
 # On MacOSX lsof is less a CPU hog
 # fuser is an alternative, too. Faster on Linux
 
+# Start the editor
 $* &
 
 # our logfile
@@ -39,20 +40,18 @@ while [ 1 ]
 do
   sleep 0.3
   nrWaits=$[ $nrWaits + 1 ]
-  timeout 1 fuser --silent $watchFile 
-  res=$?
-  if [ "$nrWaits" -gt "$maxWait" ] || [ $res -eq 0 ] ; then break ; fi
+  res=`timeout 1 lsof -F a $watchFile | grep -c -E 'au|aw|aW'`
+  if [ "$nrWaits" -gt "$maxWait" ] || [ $res -gt 0 ] ; then break ; fi
 done
 log2file "After $nrWaits sleeps $watchFile is open"
 
 # wait for the lockfile to disappear
 while true
 do
-  timeout 1 fuser --silent $watchFile
-  if [ $? -gt 0 ] ; then break ; fi
+  res=`timeout 1 lsof -F a $watchFile | grep -c -E 'au|aw|aW'`
+  if [ "$res" -eq 0 ] ; then break ; fi
   sleep 1
 done
 log2file "$watchFile went away"
 
 exit 0
-# should we use --norestore and/or -o

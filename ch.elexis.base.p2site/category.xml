@@ -54,6 +54,12 @@
    <feature url="features/ch.medshare.mediport.feature_3.0.0.qualifier.jar" id="ch.medshare.mediport.feature" version="3.0.0.qualifier">
       <category name="finances"/>
    </feature>
+   <feature url="features/ch.pharmed.phmprescriber.feature_3.0.0.qualifier.jar" id="ch.pharmed.phmprescriber.feature" version="3.0.0.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/ch.pharmed.phmprescriber.feature.source_3.0.0.qualifier.jar" id="ch.pharmed.phmprescriber.feature.source" version="3.0.0.qualifier">
+      <category name="sources"/>
+   </feature>
    <feature url="features/com.hilotec.elexis.opendocument.feature.source_3.0.0.qualifier.jar" id="com.hilotec.elexis.opendocument.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>

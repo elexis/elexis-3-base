@@ -158,6 +158,8 @@
   <module>ch.medshare.commons</module>
   <module>ch.medshare.mediport</module>
   <module>ch.medshare.mediport.feature</module>
+  <module>ch.pharmed.phmprescriber</module>
+  <module>ch.pharmed.phmprescriber.feature</module>
   <module>com.hilotec.elexis.opendocument</module>
   <module>com.hilotec.elexis.opendocument.feature</module>
   <module>com.hilotec.elexis.kgview</module>
@@ -199,6 +201,7 @@
   <module>ch.elexis.base.ch.arzttarife.test</module>
   <module>ch.elexis.externe_dokumente.tests</module>
   <module>ch.elexis.laborimport.viollier.v2_test</module>
+  <module>ch.pharmed.phmprescriber_test</module>
   <module>com.hilotec.elexis.messwerte.v2_test</module>
   <module>net.medshare.connector.aerztekasse_test</module>
 </modules>

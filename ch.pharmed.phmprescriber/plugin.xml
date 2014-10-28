@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.Transporter">
+      <Transporter
+            AcceptableTypes="ch.elexis.data.Bestellung"
+            ExporterClass="ch.pharmed.phmprescriber.Sender"
+            id="ch.pharmed.phmprescriber.sender"
+            name="Rezeptübermittlung"
+            type="ch.pharmed.phmprescriber.Bestellung">
+      </Transporter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.pharmed.phmprescriber.PhMPreferencePage"
+            id="ch.pharmed.phmprescriber"
+            name="Rezeptübermittlung">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.RezeptHook">
+      <Hook
+            RpMenuAction="ch.pharmed.phmprescriber.PhMRpActions"
+            RpToolbarAction="ch.pharmed.phmprescriber.PhMRpActions"></Hook>
+   </extension>
+
+</plugin>

@@ -1,0 +1,22 @@
+h1. Electronic prescriptions with PhM Prescriber
+ 
+Plugin to enable the sending of prescriptions via the PhM Prescriber API to pharmacies (ProPharma, Pharmatic and TriaPharm systems).
+
+Additional features of the plugin are:
+
+    Automatic print-out (without template) of the prescription with QR- and barcode
+    Check for drug-drug-interaction on the prescription (optional)
+    Selection of target pharmacy to pull a prescription (only ProPharma/Pharmatic)
+    Demand of administrative information for a particular ZSR-Id (address, phone etc.)
+
+For testing please use the following ZSR-Id:
+
+    W 0192.59
+
+To test the WS to get administrative info, use any valid ZSR-Id.
+
+h1. Information for developpers
+
+h2. Tests
+
+An automated PDE-JUnit-Test have been implemented in the Plug-in ch.pharmed.phmprescriber_test.

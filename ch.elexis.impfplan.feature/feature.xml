@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.impfplan.feature"
-      label="Elexis Impfplan"
+      label="Elexis Impfplan (G. Weirich)"
       version="3.0.0.qualifier"
       provider-name="elexis.info">
 
    <description>
-      Mehrplatz- und Mehrbenutzerfähige Agenda mit mehreren Views.
-      Mehr Info unter http://wiki.elexis.info/ch.elexis.impfplan.feature.feature.group
+      Dieses Plugin erfasst Impfungen, erinnert an Impfungen und lässt Impfdaten ausdrucken.
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+     Gerry Weirich, 2010
+     Portierung auf Elexis 3.0 durch Fabian Schmid
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

@@ -30,6 +30,12 @@
    <feature url="features/ch.elexis.icpc.feature_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature url="features/ch.elexis.impfplan.feature.source_3.0.0.qualifier.jar" id="ch.elexis.impfplan.feature.source" version="3.0.0.qualifier">
+      <category name="sources"/>
+   </feature>
+   <feature url="features/ch.elexis.impfplan.feature_3.0.0.qualifier.jar" id="ch.elexis.impfplan.feature" version="3.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <feature url="features/ch.elexis.omnivore.feature.source_3.0.0.qualifier.jar" id="ch.elexis.omnivore.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>

@@ -265,7 +265,7 @@ public class TextPlugin implements ITextPlugin {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_S");
 		Date date = new Date();
 		sb.append(dateFormat.format(date));
-		return sb.toString();
+		return sb.toString().replaceAll("[^0-9A-Za-z]", "_");
 	}
 	
 	private boolean editorRunning(){

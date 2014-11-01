@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2009, A. Kaufmann and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    A. Kaufmann - initial implementation
+ *
+ *******************************************************************************/
+
 package com.hilotec.elexis.opendocument;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -11,20 +23,20 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.preferences.inputs.MultilineFieldEditor;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	
+
 	private static final String BASE = "com.hilotec.elexis.ooo.";
 	public static final String P_EDITOR = BASE + "editorpath";
 	public static final String P_EDITARGS = BASE + "editargs";
 	public static final String P_PRINTARGS = BASE + "printargs";
-	
+
 	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.localCfg);
-	
+
 	public Preferences(){
 		super(GRID);
 		setPreferenceStore(prefs);
 		setDescription("Einstellungen für das Hilotec-OpenDocument-Plugin");
 	}
-	
+
 	@Override
 	protected void createFieldEditors(){
 		addField(new FileFieldEditor(P_EDITOR, "OpenDocument Editor", getFieldEditorParent()));
@@ -33,11 +45,11 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		addField(new MultilineFieldEditor(P_PRINTARGS, "Argumente zum Drucken", 5, SWT.V_SCROLL,
 			true, getFieldEditorParent()));
 	}
-	
+
 	@Override
 	public void init(IWorkbench arg0){
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

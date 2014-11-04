@@ -34,7 +34,7 @@
       </Factory>
    </extension>
    <extension
-         point="ch.elexis.ACLContribution">
+         point="ch.elexis.core.data.ACLContribution">
       <ACLContribution
             ACLContributor="ch.elexis.molemax.data.MolemaxACL"
             name="molemax.ACLContribution1">

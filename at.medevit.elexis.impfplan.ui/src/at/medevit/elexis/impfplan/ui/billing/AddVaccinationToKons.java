@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
@@ -37,13 +35,15 @@ public class AddVaccinationToKons {
 		}
 	}
 	
-	public boolean findOrCreateKons(){
+	public Konsultation findOrCreateKons(){
 		// TODO anbieten, dass Tarifpositionen vorab bestimmt werden können
 // String l = CoreHub.userCfg.get(PreferencePage.VAC_BILLING_POS, "");
 // String[] billingPos = l.split(",");
 		
 		initKonsultation();
-		if (kons != null && kons.isEditable(false)) {
+		if (kons == null || !kons.isEditable(false)) {
+			return null;
+		} else { // (kons != null && kons.isEditable(false)) {
 			kons.addLeistung(art);
 			
 			boolean addedCons = true;
@@ -64,9 +64,7 @@ public class AddVaccinationToKons {
 					kons.addLeistung(consVerrechenbar);
 				}
 			}
-			return true;
-		} else {
-			return false;
+			return kons;
 		}
 	}
 	

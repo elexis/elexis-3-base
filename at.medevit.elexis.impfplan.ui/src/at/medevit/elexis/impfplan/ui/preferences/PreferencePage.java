@@ -1,10 +1,13 @@
 package at.medevit.elexis.impfplan.ui.preferences;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
+import at.medevit.elexis.impfplan.ui.VaccinationView;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
@@ -30,5 +33,21 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				getFieldEditorParent());
 		addField(editor);
 		
+		BooleanFieldEditor bfEditor =
+			new BooleanFieldEditor(VAC_SORT_ORDER, "Sortierung von neu-alt (neueste oben)",
+				getFieldEditorParent());
+		addField(bfEditor);
+		
+	}
+	
+	@Override
+	public boolean performOk(){
+		CoreHub.userCfg.flush();
+		
+		VaccinationView vaccView =
+			(VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.findView(VaccinationView.PART_ID);
+		vaccView.updateUi(true); // as query needs to be ordered
+		return super.performOk();
 	}
 }

@@ -60,12 +60,19 @@ public class VaccinationView extends ViewPart {
 		}
 	};
 	
+	private ElexisEventListener eeli_vacc = new ElexisUiEventListenerImpl(Vaccination.class,
+		ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE) {
+		public void runInUi(ElexisEvent ev){
+			updateUi(true);
+		};
+	};
+	
 	public VaccinationView(){
 		ImpfplanSchweiz2013 is = new ImpfplanSchweiz2013();
 		vaccinationHeaderDefinition =
 			new VaccinationPlanHeaderDefinition(is.id, is.name, is.getOrderedBaseDiseases(),
 				is.getOrderedExtendedDiseases());
-		ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
+		ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_vacc);
 	}
 	
 	/**
@@ -88,8 +95,9 @@ public class VaccinationView extends ViewPart {
 				VaccinationCompositePaintListener vcpl =
 					vaccinationComposite.getVaccinationCompositePaintListener();
 				Vaccination selVaccination = vcpl.getSelectedVaccination();
-				selVaccination.delete();
-				updateUi(true);
+				if (selVaccination != null) {
+					selVaccination.delete();
+				}
 			}
 		});
 		vaccinationComposite.setMenu(menu);
@@ -153,7 +161,7 @@ public class VaccinationView extends ViewPart {
 	
 	@Override
 	public void dispose(){
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_vacc);
 		super.dispose();
 	}
 	

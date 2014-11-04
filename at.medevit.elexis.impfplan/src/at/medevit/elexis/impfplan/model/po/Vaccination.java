@@ -141,6 +141,11 @@ public class Vaccination extends PersistentObject {
 		return get(FLD_BUSS_NAME);
 	}
 	
+	public String getShortBusinessName(){
+		String businessName = get(FLD_BUSS_NAME);
+		return businessName.substring(0, businessName.indexOf("("));
+	}
+	
 	public String getLotNo(){
 		return get(FLD_LOT_NO);
 	}

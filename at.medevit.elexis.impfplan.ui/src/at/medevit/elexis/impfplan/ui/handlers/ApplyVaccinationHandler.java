@@ -10,85 +10,113 @@
  *******************************************************************************/
 package at.medevit.elexis.impfplan.ui.handlers;
 
+import java.util.Date;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.ui.PlatformUI;
 
-import at.medevit.elexis.impfplan.model.po.Vaccination;
-import at.medevit.elexis.impfplan.ui.VaccinationView;
+import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.ui.billing.AddVaccinationToKons;
-import at.medevit.elexis.impfplan.ui.dialogs.ApplyVaccinationDialog;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.actions.CodeSelectorHandler;
+import ch.elexis.core.ui.util.PersistentObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.codesystems.LeistungenView;
 import ch.elexis.data.Artikel;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObjectFactory;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.PersistentObject;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class ApplyVaccinationHandler extends AbstractHandler {
 	private static boolean inProgress = false;
-	private static Patient patient;
-	private static String administratorString;
+	private static PersistentObjectDropTarget dropTarget;
 	private static TimeTool doa;
-	private static String lotNo;
+	private static Konsultation kons;
+	private LeistungenView leistungenView;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
-		ApplyVaccinationDialog avd = new ApplyVaccinationDialog(UiDesk.getTopShell());
-		int retVal = avd.open();
-		if (retVal == TitleAreaDialog.OK) {
-			patient = ElexisEventDispatcher.getSelectedPatient();
-			administratorString = avd.getAdministratorString();
-			lotNo = avd.getLotNo();
-			doa = avd.getDateOfAdministration();
-			
-			String ean = avd.getEAN();
-			String articleString = avd.getArticleString();
-			Artikel art = (Artikel) new PersistentObjectFactory().createFromString(articleString);
-			
-			if (avd.isSupplement()) {
-				if (art != null) {
-					new Vaccination(patient.getId(), art, doa.getTime(), lotNo, administratorString);
-				} else {
-					String articleAtcCode = avd.getAtcCode();
-					new Vaccination(patient.getId(), null, articleString, ean, articleAtcCode,
-						doa.getTime(), lotNo, administratorString);
-				}
-				updateVaccinationView();
-			} else {
-				inProgress = true;
-				AddVaccinationToKons addVacToKons = new AddVaccinationToKons(patient, art, ean);
-				
-				if (!addVacToKons.findOrCreateKons()) {
-					SWTHelper.showError("Nicht erstellbar",
-						"Konnte Impfung nich eintragen, da keine Konsultation vorhanden ist.");
-				}
+		if (dropTarget == null) {
+			dropTarget =
+				new PersistentObjectDropTarget("Impfplan", UiDesk.getTopShell(), new DropReceiver());
+		}
+		
+		// open the LeistungenView
+		try {
+			if (StringTool.isNothing(LeistungenView.ID)) {
+				SWTHelper.alert("Fehler", "LeistungenView.ID");
 			}
 			
+			leistungenView =
+				(LeistungenView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getActivePage().showView(LeistungenView.ID);
+			CodeSelectorHandler.getInstance().setCodeSelectorTarget(dropTarget);
+			
+			for (CTabItem cti : leistungenView.ctab.getItems()) {
+				if (cti.getText().equalsIgnoreCase("Artikelstamm")) {
+					leistungenView.setSelected(cti);
+					leistungenView.setFocus();
+					leistungenView.ctab.setSelection(cti);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	public static void createVaccination(Artikel art){
-		inProgress = false;
-		new Vaccination(patient.getId(), art, doa.getTime(), lotNo, administratorString);
-		updateVaccinationView();
-		patient = null;
-		lotNo = null;
-		administratorString = null;
+	public static Date getKonsDate(){
+		doa = new TimeTool(kons.getDatum());
+		return doa.getTime();
 	}
 	
 	public static boolean inProgress(){
 		return inProgress;
 	}
 	
-	private static void updateVaccinationView(){
-		VaccinationView vaccView =
-			(VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.findView(VaccinationView.PART_ID);
-		vaccView.updateUi(true);
+	/**
+	 * waits for dropps/double-clicks on vaccinations
+	 *
+	 */
+	private final class DropReceiver implements PersistentObjectDropTarget.IReceiver {
+		public void dropped(PersistentObject o, DropTargetEvent ev){
+			if (o instanceof Artikel) {
+				Artikel artikel = (Artikel) o;
+				
+				// only accept vaccinations
+				String atcCode = artikel.getATC_code();
+				if (atcCode != null && atcCode.length() > 4) {
+					if (atcCode.toUpperCase().startsWith(
+						DiseaseDefinitionModel.VACCINATION_ATC_GROUP_TRAILER)) {
+						AddVaccinationToKons addVacToKons =
+							new AddVaccinationToKons(ElexisEventDispatcher.getSelectedPatient(),
+								artikel, artikel.getEAN());
+						
+						kons = addVacToKons.findOrCreateKons();
+						if (kons == null) {
+							SWTHelper
+								.showError("Nicht erstellbar",
+									"Konnte Impfung nich eintragen, da keine Konsultation vorhanden ist.");
+						}
+						inProgress = true;
+					}
+				}
+			}
+		}
+		
+		public boolean accept(PersistentObject o){
+			if (ElexisEventDispatcher.getSelectedPatient() != null) {
+				if (o instanceof Artikel) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

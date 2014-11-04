@@ -144,10 +144,13 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		String outputPath =
 			CoreHub.userCfg.get(PreferencePage.VAC_PDF_OUTPUTDIR, CoreHub.getWritableUserDir()
 				.getAbsolutePath());
-		if (outputPath.equals(CoreHub.getWritableUserDir())) {
-			SWTHelper.showInfo("Kein Ausgabeverzeichnis definiert", "Ausgabe erfolgt in: "
-				+ outputPath
-				+ "\nDas Ausgabeverzeichnis kann unter Einstellungen/Impfplan definiert werden.");
+		if (outputPath.equals(CoreHub.getWritableUserDir().getAbsolutePath())) {
+			SWTHelper
+				.showInfo(
+					"Kein Ausgabeverzeichnis definiert",
+					"Ausgabe erfolgt in: "
+						+ outputPath
+						+ "\nDas Ausgabeverzeichnis kann unter Einstellungen\\Klinische Hilfsmittel\\Impfplan definiert werden.");
 		}
 		File outputDir = new File(outputPath);
 		File pdf = new File(outputDir, "impfplan_" + patient.getPatCode() + ".pdf");

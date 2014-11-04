@@ -52,22 +52,22 @@ public class VaccinationPrescriptionEventListener implements ElexisEventListener
 	
 	private void performVaccination(final Prescription p){
 		UiDesk.asyncExec(new Runnable() {
-			
 			@Override
 			public void run(){
+				Date d = new Date();
 				if (ApplyVaccinationHandler.inProgress()) {
-					ApplyVaccinationHandler.createVaccination(p.getArtikel());
-				} else {
-					Mandant m = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-					InputDialog lotId =
-						new InputDialog(UiDesk.getTopShell(), "Lot-Nummer",
-							"Bitte geben Sie die Lot-Nummer des Impfstoffes an", null, null);
-					lotId.open();
-					String lotNo = lotId.getValue();
-					
-					new Vaccination(p.get(Prescription.PATIENT_ID), p.getArtikel(), new Date(),
-						lotNo, m.storeToString());
+					d = ApplyVaccinationHandler.getKonsDate();
 				}
+				
+				Mandant m = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+				InputDialog lotId =
+					new InputDialog(UiDesk.getTopShell(), "Lot-Nummer",
+						"Bitte geben Sie die Lot-Nummer des Impfstoffes an", null, null);
+				lotId.open();
+				String lotNo = lotId.getValue();
+				
+				new Vaccination(p.get(Prescription.PATIENT_ID), p.getArtikel(), d, lotNo, m
+					.storeToString());
 			}
 		});
 	}

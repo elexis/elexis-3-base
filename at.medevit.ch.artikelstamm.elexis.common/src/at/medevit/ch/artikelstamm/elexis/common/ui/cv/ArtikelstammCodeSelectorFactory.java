@@ -57,7 +57,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		
 		FieldDescriptor<?>[] fields =
 			{
-				new FieldDescriptor<ArtikelstammItem>("Bezeichnung", ArtikelstammItem.FLD_DSCR,
+				new FieldDescriptor<ArtikelstammItem>("Artikel oder Wirkstoff", ArtikelstammItem.FLD_DSCR,
 					Typ.STRING, null),
 			};
 		

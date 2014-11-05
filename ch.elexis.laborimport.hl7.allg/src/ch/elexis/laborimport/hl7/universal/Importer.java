@@ -61,7 +61,7 @@ public class Importer extends Action implements IAction {
 			})) {
 				files++;
 				File hl7file = new File(dir, fn);
-				r = hlp.importFile(hl7file, archiveDir, false);
+				r = hlp.importFile(hl7file, archiveDir, null, new LinkLabContactResolver(), false);
 				if (!r.isOK()) {
 					err++;
 					File errFile = new File(errorDir, fn);

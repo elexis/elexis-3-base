@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2012 by Niklaus Giger niklaus.giger@member.fsf.org
+# Copyright 2012-2014 by Niklaus Giger niklaus.giger@member.fsf.org
 # Distributed under the Eclipse Public License 1.0
 # wait (using lsof) to see whether the file passed to lowriter is being used
 # lsof is a CPU hog under Linux, inotify would be several magnitudes faster
@@ -30,6 +30,7 @@ do
     break
   fi
 done
+
 
 # wait max 30 seconds for the watchFile to be opened
 maxWait=100

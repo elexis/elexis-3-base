@@ -33,7 +33,7 @@ public class ArtikelstammNonPharmaReferenceDataImporter extends AbstractReferenc
 	
 	@Override
 	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer version){
-		return ArtikelstammImporter.performImport(monitor, input);	
+		return ArtikelstammImporter.performImport(monitor, input, version);	
 	}
 	
 }

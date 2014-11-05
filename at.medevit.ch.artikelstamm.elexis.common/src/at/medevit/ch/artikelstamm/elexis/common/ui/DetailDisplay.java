@@ -10,6 +10,8 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.ui;
 
+import java.util.Date;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoProperties;
@@ -109,21 +111,24 @@ public class DetailDisplay implements IDetailDisplay {
 		int pharma = ArtikelstammItem.getImportSetCumulatedVersion(TYPE.P);
 		if (pharma != 99999)
 			sb.append("Pharma "
-				+ dataQualityToString(ArtikelstammItem.getImportSetDataQuality(TYPE.P))
-				+ " "
-				+ ArtikelstammHelper.monthAndYearWritten.format(ArtikelstammHelper
-					.getDateFromCumulatedVersionNumber(pharma)) + " (" + pharma + ")");
-		
+				+ dataQualityToString(ArtikelstammItem.getImportSetDataQuality(TYPE.P)));
+		Date importSetDatePharma = ArtikelstammItem.getImportSetCreationDate(TYPE.P);
+		if (importSetDatePharma != null) {
+			sb.append(" " + ArtikelstammHelper.monthAndYearWritten.format(importSetDatePharma)
+				+ " (" + pharma + ")");
+		}
 		int nonPharma = ArtikelstammItem.getImportSetCumulatedVersion(TYPE.N);
 		if (nonPharma != 99999 && pharma != 99999)
 			sb.append(", ");
 		if (nonPharma != 99999)
 			sb.append("Non-Pharma "
-				+ dataQualityToString(ArtikelstammItem.getImportSetDataQuality(TYPE.N))
-				+ " "
-				+ ArtikelstammHelper.monthAndYearWritten.format(ArtikelstammHelper
-					.getDateFromCumulatedVersionNumber(nonPharma)) + " (" + nonPharma + ")");
-		
+				+ dataQualityToString(ArtikelstammItem.getImportSetDataQuality(TYPE.N)));
+		Date importSetDateNonPharma = ArtikelstammItem.getImportSetCreationDate(TYPE.N);
+		if (importSetDateNonPharma != null) {
+			sb.append(" "
+				+ ArtikelstammHelper.monthAndYearWritten.format(ArtikelstammItem
+					.getImportSetCreationDate(TYPE.N)) + " (" + nonPharma + ")");
+		}
 		label.setText("Datensatz-Basis: " + sb.toString());
 		
 		addUpdateLabelToBottom(ret);
@@ -220,8 +225,8 @@ public class DetailDisplay implements IDetailDisplay {
 		Text txtAnbruch = new Text(grpLagerhaltung, SWT.BORDER);
 		txtAnbruch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		IObservableValue propertyAnbruch =
-			PojoProperties.value(ArtikelstammItem.class, "bruchteile", Integer.class).observeDetail(
-				item);
+			PojoProperties.value(ArtikelstammItem.class, "bruchteile", Integer.class)
+				.observeDetail(item);
 		IObservableValue targetAnbruch = WidgetProperties.text().observe(txtAnbruch);
 		bindingContext.bindValue(targetAnbruch, propertyAnbruch);
 		

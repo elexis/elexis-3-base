@@ -12,6 +12,7 @@ package ch.artikelstamm.elexis.common;
 
 import java.math.BigInteger;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,6 +50,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	private final double ZERO = 0.0;
 	
 	public static final String TABLENAME = "ARTIKELSTAMM_CH";
+	private static final String VERSION_ENTRY_ID = "VERSION";
 	static final String VERSION = "1.1.0";
 	
 	//@formatter:off
@@ -94,8 +96,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			+ FLD_CUMMULATED_VERSION + " CHAR(4),"
 			+ FLD_GTIN + " VARCHAR(14)," // id(VERSION) contains table version, has to be varchar else vi.isolder() fails
 			+ FLD_PHAR 	+" CHAR(7),"
-			+ FLD_DSCR	+" VARCHAR(50)," // id(VERSION) filename of last P import
-			+ FLD_ADDDSCR	+" VARCHAR(50)," // id(VERSION) filename of last N import
+			+ FLD_DSCR	+" VARCHAR(50)," // id(VERSION) creation date of current P dataset
+			+ FLD_ADDDSCR	+" VARCHAR(50)," // id(VERSION) creation date of current N dataset
 			+ FLD_ATC +" CHAR(10),"
 			+ FLD_COMP_GLN + " CHAR(13),"
 			+ FLD_COMP_NAME + " VARCHAR(255),"
@@ -150,7 +152,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			FLD_DEDUCTIBLE, FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE, FLD_LIEFERANT_ID,
 			MAXBESTAND, MINBESTAND, ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH,
 			PersistentObject.FLD_EXTINFO);
-		ArtikelstammItem version = load("VERSION"); //$NON-NLS-1$
+		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
 		} else {
@@ -505,7 +507,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @return The version of the resp {@link TYPE}, or 99999 if not found
 	 */
 	public static int getImportSetCumulatedVersion(TYPE stammType){
-		ArtikelstammItem version = load("VERSION");
+		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		switch (stammType) {
 		case N:
 			return version.getInt(FLD_PEXF);
@@ -516,7 +518,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public static void setImportSetCumulatedVersion(TYPE stammType, int importStammVersion){
-		ArtikelstammItem version = load("VERSION");
+		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		switch (stammType) {
 		case N:
 			version.setInt(FLD_PEXF, importStammVersion);
@@ -528,7 +530,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public static void setImportSetDataQuality(TYPE p, int dq){
-		ArtikelstammItem version = load("VERSION");
+		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		switch (p) {
 		case N:
 			version.setInt(FLD_BLACKBOXED, dq);
@@ -540,7 +542,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public static int getImportSetDataQuality(TYPE p){
-		ArtikelstammItem version = load("VERSION");
+		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		switch (p) {
 		case N:
 			return version.getInt(FLD_BLACKBOXED);
@@ -551,38 +553,35 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		}
 	}
 	
-	/**
-	 * Stores the filename of the last import source file
-	 * 
-	 * @param stammType
-	 * @param importFilename
-	 */
-	public static void setImportSetLastImportFileName(TYPE stammType, String importFilename){
-		ArtikelstammItem version = load("VERSION");
+	public static void setImportSetCreationDate(TYPE stammType, Date creationDate){
+		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		switch (stammType) {
 		case N:
-			version.set(FLD_ADDDSCR, importFilename);
+			version.set(FLD_ADDDSCR, df.format(creationDate.getTime()));
 			return;
 		case P:
-			version.set(FLD_DSCR, importFilename);
+			version.set(FLD_DSCR, df.format(creationDate.getTime()));
 			return;
 		}
 	}
-	
-	/**
-	 * Retrieves the filename of the last import source file
-	 * 
-	 * @param stammType
-	 */
-	public static String getImportSetLastImportFileName(TYPE stammType){
-		ArtikelstammItem version = load("VERSION");
+
+	public static Date getImportSetCreationDate(TYPE stammType){
+		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		switch (stammType) {
 		case N:
-			return version.get(FLD_ADDDSCR);
+			try {
+				return df.parse(version.get(FLD_ADDDSCR));
+			} catch (ParseException e) {
+				return null;
+			}
 		case P:
-			return version.get(FLD_DSCR);
+			try {
+				return df.parse(version.get(FLD_DSCR));
+			} catch (ParseException e) {
+				return null;
+			}
 		default:
-			return "";
+			return null;
 		}
 	}
 	

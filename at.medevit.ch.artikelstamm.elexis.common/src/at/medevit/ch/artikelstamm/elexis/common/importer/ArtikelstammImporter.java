@@ -47,7 +47,16 @@ import ch.rgw.tools.JdbcLink;
 public class ArtikelstammImporter {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporter.class);
 	
-	public static IStatus performImport(IProgressMonitor monitor, InputStream input){
+	/**
+	 * 
+	 * @param monitor
+	 * @param input
+	 * @param version
+	 *            if <code>null</code> use the version from the import file, else the provided
+	 *            version value
+	 * @return
+	 */
+	public static IStatus performImport(IProgressMonitor monitor, InputStream input, Integer version){
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -76,18 +85,7 @@ public class ArtikelstammImporter {
 		// the current version stored in the database for importStammType
 		int currentStammVersion = ArtikelstammItem.getImportSetCumulatedVersion(importStammType);
 		
-		// only continue if the dataset to be imported for importStammType is newer than
-		// the current
-		if (currentStammVersion >= importStammVersion) {
-			msg =
-				"Import-Datei ist älter (" + importStammVersion
-					+ ") oder gleich vorhandener Stand (" + currentStammVersion
-					+ "). Import wird abgebrochen.";
-			Status status = new Status(IStatus.ERROR, PluginConstants.PLUGIN_ID, msg);
-			StatusManager.getManager().handle(status, StatusManager.SHOW);
-			log.info(msg);
-			return Status.OK_STATUS;
-		}
+		log.info("Importing " + currentStammVersion + " -> " + importStammVersion);
 		
 		long startTime = System.currentTimeMillis();
 		// clean all blackbox marks, as we will determine them newly
@@ -106,8 +104,16 @@ public class ArtikelstammImporter {
 		importNewItemsIntoDatabase(importStammType, importStamm, monitor);
 		// update the version number for type importStammType
 		monitor.subTask("Setze neue Versionsnummer");
-		ArtikelstammItem.setImportSetCumulatedVersion(importStammType, importStammVersion);
+		
+		if(version != null) {
+			ArtikelstammItem.setImportSetCumulatedVersion(importStammType, version);
+		} else {
+			ArtikelstammItem.setImportSetCumulatedVersion(importStammType, importStammVersion);
+		}
+
 		ArtikelstammItem.setImportSetDataQuality(importStammType, importStamm.getDATAQUALITY());
+		ArtikelstammItem.setImportSetCreationDate(importStammType, importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime());
+		
 		monitor.worked(1);
 		monitor.done();
 		long endTime = System.currentTimeMillis();
@@ -236,7 +242,7 @@ public class ArtikelstammImporter {
 		if (!success)
 			log.warn("Error purging items");
 	}
-
+	
 	private static void importNewItemsIntoDatabase(TYPE importStammType, ARTIKELSTAMM importStamm,
 		IProgressMonitor monitor){
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);

@@ -190,14 +190,17 @@ public class FileImportDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-		if (dDate != null)
+		if (dDate != null) {
 			date = dDate.getDate();
+			if (date == null) {
+				date = new Date();
+			}
+		}
 		keywords = tKeywords.getText();
 		title = tTitle.getText();
 		category = cbCategories.getText();
 		if (dh != null) {
-			if (date != null)
-				dh.setDate(date);
+			dh.setDate(date);
 			if (category.length() > 0)
 				dh.set(DocHandle.FLD_CAT, category);
 			dh.set(DocHandle.FLD_TITLE, title);

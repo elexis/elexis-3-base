@@ -402,7 +402,7 @@ public class XMLExporter implements IRnOutputter {
 		root.setAttribute("schemaLocation", //$NON-NLS-1$
 			"http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_440.xsd", nsxsi); //$NON-NLS-1$
 		
-		root.setAttribute(ATTR_MODUS, "production");
+		root.setAttribute(ATTR_MODUS, getRole(actFall));
 		root.setAttribute(ATTR_LANGUAGE, Locale.getDefault().getLanguage());
 		xmlRn = new Document(root);
 		
@@ -720,5 +720,9 @@ public class XMLExporter implements IRnOutputter {
 	
 	public List<IDiagnose> getDiagnoses(){
 		return xmlTreatment.getDiagnoses();
+	}
+	
+	protected String getRole(final Fall fall){
+		return "production"; //$NON-NLS-1$
 	}
 }

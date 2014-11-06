@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Fall;
@@ -42,8 +43,8 @@ public class TestData {
 		TestSzenario(){
 			createMandanten();
 			
-			createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w");
-			createPatientWithFall("Karin", "Zirbelkiefer", "24.04.1951", "w");
+			createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
+			createPatientWithFall("Karin", "Zirbelkiefer", "24.04.1951", "w", true);
 			
 			createLeistungen();
 			
@@ -148,17 +149,33 @@ public class TestData {
 		}
 		
 		public Patient createPatientWithFall(String firstname, String lastname, String birthdate,
-			String gender){
+			String gender, boolean addKostentraeger){
 			Patient pat = new Patient(lastname, firstname, birthdate, gender);
 			patienten.add(pat);
+			
+			// move required fields to non required ... we are testing xml not Rechnung.build
+			moveRequiredToOptional(Fall.getDefaultCaseLaw());
+
 			Fall fall =
 				pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(),
 					Fall.getDefaultCaseLaw());
-			fall.setInfoElement("Kostenträger", pat.getId());
+			if (addKostentraeger) {
+				fall.setInfoElement("Kostenträger", pat.getId());
+			}
 			faelle.add(fall);
 			return pat;
 		}
 		
+		private void moveRequiredToOptional(String defaultCaseLaw){
+			String requirements = Fall.getRequirements(defaultCaseLaw);
+			if (requirements != null) {
+				CoreHub.globalCfg.set(Preferences.LEISTUNGSCODES_CFG_KEY + "/" //$NON-NLS-1$
+					+ defaultCaseLaw + "/bedingungen", ""); //$NON-NLS-1$
+				CoreHub.globalCfg.set(Preferences.LEISTUNGSCODES_CFG_KEY + "/" //$NON-NLS-1$
+					+ defaultCaseLaw + "/fakultativ", requirements); //$NON-NLS-1$
+			}
+		}
+
 		private Konsultation createKons(Fall fall, Mandant mandant){
 			Konsultation kons = new Konsultation(fall);
 			return kons;

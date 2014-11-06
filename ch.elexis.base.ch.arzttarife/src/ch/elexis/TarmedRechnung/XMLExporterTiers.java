@@ -17,6 +17,8 @@ import ch.rgw.tools.XMLTool;
 public class XMLExporterTiers {
 	private Element tiersElement;
 	
+	private String tiers;
+
 	private XMLExporterTiers(Element tiers){
 		this.tiersElement = tiers;
 	}
@@ -25,6 +27,10 @@ public class XMLExporterTiers {
 		return tiersElement;
 	}
 	
+	public String getTiers(){
+		return tiers;
+	}
+
 	public static XMLExporterTiers buildTiers(Rechnung rechnung, XMLExporter xmlExporter){
 		TarmedACL ta = TarmedACL.getInstance();
 		
@@ -212,6 +218,8 @@ public class XMLExporterTiers {
 			ret.tiersElement.addContent(demand);
 		}
 		
+		ret.tiers = tiers;
+
 		return ret;
 	}
 }

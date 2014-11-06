@@ -48,26 +48,32 @@ public class Validator {
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);
 			res.add(Result.SEVERITY.ERROR, 3, Messages.Validator_NoEAN, rn, true);
 		}
-		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		if (kostentraeger == null) {
-			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
-			res.add(Result.SEVERITY.ERROR, 7, Messages.Validator_NoName, rn, true);
-			return res;
-		}
-		ean = TarmedRequirements.getEAN(kostentraeger);
-		
-		if (StringTool.isNothing(ean) || (!ean.matches(TarmedRequirements.EAN_PATTERN))) {
-			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);
-			res.add(Result.SEVERITY.ERROR, 6, Messages.Validator_NoEAN2, rn, true);
-		}
-		String bez = kostentraeger.get(Kontakt.FLD_NAME1);
-		if (StringTool.isNothing(bez)) {
-			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
-			res.add(Result.SEVERITY.ERROR, 7, Messages.Validator_NoName, rn, true);
-		}
-		if (xp.diagnosen.isEmpty()) {
+		if (xp.getDiagnoses().isEmpty()) {
 			rn.reject(RnStatus.REJECTCODE.NO_DIAG, Messages.Validator_NoDiagnosis);
 			res.add(Result.SEVERITY.ERROR, 8, Messages.Validator_NoDiagnosis, rn, true);
+		}
+		
+		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		// kostentraeger is optional for tiers garant else check if valid
+		if (kostentraeger == null && xp.tiers != null && xp.tiers.equals(XMLExporter.TIERS_GARANT)) {
+			return res;
+		} else {
+			if (kostentraeger == null) {
+				rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
+				res.add(Result.SEVERITY.ERROR, 7, Messages.Validator_NoName, rn, true);
+				return res;
+			}
+			ean = TarmedRequirements.getEAN(kostentraeger);
+			
+			if (StringTool.isNothing(ean) || (!ean.matches(TarmedRequirements.EAN_PATTERN))) {
+				rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);
+				res.add(Result.SEVERITY.ERROR, 6, Messages.Validator_NoEAN2, rn, true);
+			}
+			String bez = kostentraeger.get(Kontakt.FLD_NAME1);
+			if (StringTool.isNothing(bez)) {
+				rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
+				res.add(Result.SEVERITY.ERROR, 7, Messages.Validator_NoName, rn, true);
+			}
 		}
 		return res;
 	}

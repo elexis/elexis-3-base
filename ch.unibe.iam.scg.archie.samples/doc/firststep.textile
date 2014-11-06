@@ -1,0 +1,197 @@
+h1<. Erste Schritte zu einer neuen Elexis Auswertung
+
+_Bezeichnung:_ Erste Schritte
+_Author:_ Thomas Huster <huster@medevit.at>
+_Version:_ 3.0.0, 06.11.2014
+_Beschreibung:_ Beschreibung der ersten Schritte die nötig sind um ein neues Auswertungsplugin in Elexis zu erstellen
+
+h2<. 1. Einführung
+
+Für die Auswertungen in "Elexis":http://elexis.info/ wurde 2009 ein Framework namens "Archie":http://scg.unibe.ch/archive/projects/Sche09a.pdf entwickelt. Elexis basiert auf dem "Eclipse RCP":http://wiki.eclipse.org/Rich_Client_Platform Framework welches wiederum auf OSGi und Java aufbaut. 
+
+In der Folge wird davon ausgegangen das der Elexis Sourcecode bereits in einer "Eclipse IDE":https://www.eclipse.org/home/index.php verfügbar ist.
+
+h2<. 2. Das Plugin
+
+Als erstes erstellen wir ein neues "Plugin":http://www.vogella.com/tutorials/EclipsePlugIn/article.html in welchem die Auswertungen implementiert werden.
+
+Auf der ersten Wizard Seite wird der Plugin Name *ch.elexis.archie.example* konfiguriert. Für die restlichen Einstellungen kann der default Wert übernommen werden. Auf der 2ten Wizard Seite sollte _Will make contributions to the UI_ aktiviert sein, und sowohl _Generate an Activator, ..._ also auch _Create Rich Client Platform Application_ deaktiviert werden. Die Generierung aus einem Template kann auf der 3ten Seite deaktiviert werden.
+
+p=. !img/NewPlugin.png!
+
+h2<. 3. Die Abhängigkeiten
+
+Für die folgenden Schritte ist es nötig in dem neuen Plugin zu spezifizieren welche Abhängigkeiten dieses auf die anderen Plugins und Packages hat.
+
+p=. !img/Dependencies.png!
+
+Kurze Erklärung warum diese Abhängigkeiten bestehen.
+
+*ch.unibe.iam.scg.archie* -> Die Definition des Extension Point für die Auswertung und der Klassen dafür.
+*ch.elexis.core.data* -> Die Definition der Daten Klassen (Patient, Mandant, Fall, Konsultation, ...) von Elexis.
+*org.eclipse.core.runtime* -> Die Definition von Eclipse Jobs, alle Auswertungen sind Jobs. 
+
+*ch.rgw.tools* -> Utilities (TimeTool, ...) und Definition die bei der Verwendung von Elexis Daten Klassen benötigt werden.
+
+
+h2<. 4. Der Extension Point
+
+Das Konzept von "Extensions Points":http://www.vogella.com/tutorials/EclipseExtensionPoint/article.html ermöglicht es uns das Plugin *ch.unibe.iam.scg.archie* mit eigenen Auswertungen zu erweitern. Der dafür vorgesehene Extension Point hat die Id *ch.unibe.iam.scg.archie.dataprovider*. In diesem Extension Point können DataProvider Elemente angelegt werden (Kontextmenu > New > DataProvider).
+
+p=. !img/ExtensionPoint.png! 
+
+Durch Klick auf den _class*_ Link neben dem Namen der neuen Klasse in der die Auswertung implementiert wird kann die Klasse direkt angelegt werden.
+ 
+p=. !img/ExampleDataproviderEmpty.png!
+
+h2<. 4. Der Code
+
+Unsere Auswertung soll alle innerhalb eines Zeitraums verrechneten Leistungen anzeigen. 
+
+Jede Auswertung muss in der *List<String> createHeadings()* Methode bekannt geben welche Spalten benötigt werden. 
+
+Für Auswertungen welche die Angabe eines Zeitraums benötigen wurde die Klasse *ch.unibe.iam.scg.archie.model.AbstractTimeSeries* erstellt. Alle abgeleiteten Klassen haben die dazu benötigten Eingabefelder, und können mittels *this.getStartDate()* und *this.getEndDate()* auf die Werte zugreifen.
+
+<pre>
+		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
+		TimeTool ttEnd = new TimeTool(this.getEndDate().getTimeInMillis());
+</pre>
+
+In Elexis wird die *Query* Klasse dazu verwendet Abfragen an die Datenbank zu stellen.
+
+<pre>
+		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
+		qbe.add(Konsultation.FLD_DATE, Query.GREATER_OR_EQUAL,
+			ttStart.toString(TimeTool.DATE_COMPACT));
+		qbe.add(Konsultation.FLD_DATE, Query.LESS_OR_EQUAL,
+			ttEnd.toString(TimeTool.DATE_COMPACT));
+		List<Konsultation> consultations = qbe.execute();
+</pre> 
+
+Die Daten werden als eine Liste von Arrays von Comparable erstellt, und mittels der setContent der lokalen Variable dataSet zugewiesen.
+
+<pre>
+		// erstellen der Liste von Arrays
+		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
+		.
+		.
+		.
+						// erstellen eines Arrays für jede Zeile
+						Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
+		.
+		.
+		.				
+		// übergabe der gesammelten Daten
+		this.dataSet.setContent(result);
+</pre>
+
+Die komplette Implementierung für das ermitteln von Arzt, Datum, Pat Id, Behandlung und Preis aller verrechneten Leistungen in einem Zeitraum sieht dann wie folgt aus.
+
+<pre>
+package ch.elexis.archie.example;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import ch.elexis.data.AccountTransaction;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Query;
+import ch.elexis.data.Verrechnet;
+import ch.rgw.tools.TimeTool;
+import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
+
+public class ExampleDataProvider extends AbstractTimeSeries {
+	
+	public ExampleDataProvider(){
+		super("Beispiel Auswertung");
+	}
+	
+	@Override
+	public String getDescription(){
+		return "Beispiel Auswertung";
+	}
+	
+	@Override
+	protected List<String> createHeadings(){
+		List<String> ret = new ArrayList<String>();
+		ret.add("Arzt");
+		ret.add("Datum");
+		ret.add("Pat Id");
+		ret.add("Behandlung");
+		ret.add("Preis");
+		return ret;
+	}
+	
+	@Override
+	protected IStatus createContent(IProgressMonitor monitor){
+		monitor.beginTask("Beispiel Auswertung", IProgressMonitor.UNKNOWN);
+		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
+		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
+		TimeTool ttEnd = new TimeTool(this.getEndDate().getTimeInMillis());
+		qbe.add(Konsultation.FLD_DATE, Query.GREATER_OR_EQUAL,
+			ttStart.toString(TimeTool.DATE_COMPACT));
+		qbe.add(Konsultation.FLD_DATE, Query.LESS_OR_EQUAL,
+			ttEnd.toString(TimeTool.DATE_COMPACT));
+		monitor.subTask("Lade Konsultationen");
+		List<Konsultation> consultations = qbe.execute();
+		
+		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
+
+		for (Konsultation cons : consultations) {
+			if (cons.getFall() != null) {
+				Patient patient = cons.getFall().getPatient();
+				Mandant mandant = cons.getMandant();
+				List<Verrechnet> activities = cons.getLeistungen();
+				if (mandant != null && patient != null && activities != null
+					&& !activities.isEmpty()) {
+					for (Verrechnet verrechnet : activities) {
+						Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
+						int index = 0;
+						
+						row[index++] = mandant.getMandantLabel();
+						row[index++] = cons.getDatum();
+						row[index++] = patient.get(Patient.FLD_PATID);
+						row[index++] = verrechnet.getText();
+						row[index++] = verrechnet.getNettoPreis().toString();
+						
+						result.add(row);
+						
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						}
+					}
+				}
+			}
+		}
+		// Set content.
+		this.dataSet.setContent(result);
+
+		// Job finished successfully
+		monitor.done();
+		
+		return Status.OK_STATUS;
+	}
+}
+</pre>
+
+h2<. 5. Die Run Configuration
+
+Für das Starten von Applikationen aus Eclipse wird eine Run Configuration benötigt. Damit das neue Plugin ausgeführt wird, muss dieses in diese mit aufgenommen werden. Da das Plugin in keinem Feature enthalten ist, muss die Konfiguration auf Plugins basieren (Launch with: Plugins selected below only). Durch ausführen von _Add Required Plug-ins_ werden automatisch zusätzlich benötigte Plugins in die Konfiguration aufgenommen.
+
+p=. !img/RunConfiguration.png!
+
+h2<. 6. Die laufende Auswertung
+
+Wenn das Plugin mit gestartet wird ist die *Beispiel Auswertung* in der Seitenleiste View der Archie Perspektive auswählbar.
+
+p=. !img/SeitenleisteAuswahl.png!
+
+Die Auswertung kann mittels *Abfrage Starten*, nach der Auswahl eines sinnvollen Zeitbereichs, gestartet werden. Je nach Datensatz und Zeitbereich dauert das Zusammenstellen der Datenzeilen, bevor die Tabelle mit den Ergebnissen angezeigt wird.
+
+p=. !img/AuswertungFertig.png!

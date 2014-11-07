@@ -24,6 +24,7 @@ import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.elexis.tarmedprefs.TarmedRequirements;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -45,19 +46,19 @@ public class XMLExporterServices {
 	private static final String ELEMENT_RECORD_LAB = "record_lab"; //$NON-NLS-1$
 	private static final String ATTR_OBLIGATION = "obligation"; //$NON-NLS-1$
 	private static final String ATTR_VALIDATE = "validate"; //$NON-NLS-1$
-	private static final String ATTR_EXTERNAL_FACTOR_TT = "external_factor.tt"; //$NON-NLS-1$
-	private static final String ATTR_SCALE_FACTOR_TT = "scale_factor.tt"; //$NON-NLS-1$
-	private static final String ATTR_UNIT_FACTOR_TT = "unit_factor.tt"; //$NON-NLS-1$
-	private static final String ATTR_UNIT_TT = "unit.tt"; //$NON-NLS-1$
-	private static final String ATTR_EXTERNAL_FACTOR_MT = "external_factor.mt"; //$NON-NLS-1$
-	private static final String ATTR_SCALE_FACTOR_MT = "scale_factor.mt"; //$NON-NLS-1$
-	private static final String ATTR_UNIT_FACTOR_MT = "unit_factor.mt"; //$NON-NLS-1$
-	private static final String ATTR_UNIT_MT = "unit.mt"; //$NON-NLS-1$
+	private static final String ATTR_EXTERNAL_FACTOR_TT = "external_factor_tt"; //$NON-NLS-1$
+	private static final String ATTR_SCALE_FACTOR_TT = "scale_factor_tt"; //$NON-NLS-1$
+	private static final String ATTR_UNIT_FACTOR_TT = "unit_factor_tt"; //$NON-NLS-1$
+	private static final String ATTR_UNIT_TT = "unit_tt"; //$NON-NLS-1$
+	private static final String ATTR_EXTERNAL_FACTOR_MT = "external_factor_mt"; //$NON-NLS-1$
+	private static final String ATTR_SCALE_FACTOR_MT = "scale_factor_mt"; //$NON-NLS-1$
+	private static final String ATTR_UNIT_FACTOR_MT = "unit_factor_mt"; //$NON-NLS-1$
+	private static final String ATTR_UNIT_MT = "unit_mt"; //$NON-NLS-1$
 	private static final String ATTR_BODY_LOCATION = "body_location"; //$NON-NLS-1$
 	private static final String ATTR_MEDICAL_ROLE = "medical_role"; //$NON-NLS-1$
 	private static final String ATTR_BILLING_ROLE = "billing_role"; //$NON-NLS-1$
-	private static final String ATTR_EAN_RESPONSIBLE = "ean_responsible"; //$NON-NLS-1$
-	private static final String ATTR_EAN_PROVIDER = "ean_provider"; //$NON-NLS-1$
+	private static final String ATTR_EAN_RESPONSIBLE = "responsible_id"; //$NON-NLS-1$
+	private static final String ATTR_EAN_PROVIDER = "provider_id"; //$NON-NLS-1$
 	private static final String ATTR_TREATMENT = "treatment"; //$NON-NLS-1$
 	private static final String ATTR_DATE_BEGIN = "date_begin"; //$NON-NLS-1$
 	
@@ -84,7 +85,9 @@ public class XMLExporterServices {
 	private Money mPhysio;
 	private Money mMedikament;
 	
-	private XMLExporterServices(Element services){
+	boolean initialized = false;
+
+	public XMLExporterServices(Element services){
 		this.servicesElement = services;
 		
 		mTarmed = new Money();
@@ -101,59 +104,107 @@ public class XMLExporterServices {
 	}
 	
 	public double getSumTarmedAL(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return sumTarmedAL;
 	}
 	
 	public double getSumTarmedTL(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return sumTarmedTL;
 	}
 	
 	public double getTpTarmedAL(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return tpTarmedAL;
 	}
 	
 	public double getTpTarmedTL(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return tpTarmedTL;
 	}
 	
 	public Money getTarmedMoney(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return mTarmed;
 	}
 	
 	public Money getKantMoney(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return mKant;
 	}
 	
 	public Money getUebrigeMoney(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return mUebrige;
 	}
 	
 	public Money getAnalysenMoney(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return mAnalysen;
 	}
 	
 	public Money getMigelMoney(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return mMigel;
 	}
 	
 	public Money getPhysioMoney(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return mPhysio;
 	}
 	
 	public Money getMedikamentMoney(){
+		if (!initialized) {
+			initFromElement();
+		}
 		return mMedikament;
 	}
 	
+	public void negateAll(){
+		@SuppressWarnings("unchecked")
+		List<Element> sr = servicesElement.getChildren();
+		for (Element el : sr) {
+			try {
+				XMLExporterUtil.negate(el, XMLExporter.ATTR_QUANTITY);//$NON-NLS-1$
+				XMLExporterUtil.negate(el, XMLExporter.ATTR_AMOUNT_MT);//$NON-NLS-1$
+				XMLExporterUtil.negate(el, XMLExporter.ATTR_AMOUNT_TT);//$NON-NLS-1$
+				XMLExporterUtil.negate(el, XMLExporter.ATTR_AMOUNT);//$NON-NLS-1$
+			} catch (Exception ex) {
+				ExHandler.handle(ex);
+			}
+		}
+	}
+	
+	private void initFromElement(){
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
 	public static XMLExporterServices buildServices(Rechnung rechnung, VatRateSum vatSummer){
 		XMLExporterServices ret =
-			new XMLExporterServices(new Element(ELEMENT_SERVICES, XMLExporter.ns));
+			new XMLExporterServices(new Element(ELEMENT_SERVICES, XMLExporter.nsinvoice));
 		
 		List<Konsultation> konsultationen = rechnung.getKonsultationen();
-		
-		// Alle Informationen je Konsultation sammeln
-		// alle Preise (in Rappen) auflisten
-		String lastDate = StringConstants.EMPTY;
-		int sessionNumber = 1;
 		
 		// To make the validator happy, the attribute date_begin must duplicate
 		// exactly
@@ -172,15 +223,8 @@ public class XMLExporterServices {
 			List<Verrechnet> leistungen = konsultation.getLeistungen();
 			
 			TimeTool tt = new TimeTool(konsultation.getDatum());
-			String dateShort = tt.toString(TimeTool.DATE_COMPACT);
 			String dateForTarmed = XMLExporterUtil.makeTarmedDatum(konsultation.getDatum());
-			if (dateShort.equals(lastDate)) {
-				sessionNumber++;
-			} else {
-				sessionNumber = 1;
-			}
 			
-			lastDate = dateShort;
 			boolean bRFE = false; // RFE already encoded
 			
 			for (Verrechnet verrechnet : leistungen) {
@@ -190,7 +234,7 @@ public class XMLExporterServices {
 				
 				if (v == null) {
 					logger.error(Messages.XMLExporter_ErroneusBill + rechnung.getNr()
-						+ " Null-Verrechenbar bei Kons " //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-1$
+						+ " Null-Verrechenbar bei Kons " //$NON-NLS-1$
 						+ konsultation.getLabel());
 					continue;
 				}
@@ -240,9 +284,9 @@ public class XMLExporterServices {
 						el.setAttribute("ref_code", bezug); //$NON-NLS-1$
 					}
 					el.setAttribute(ATTR_EAN_PROVIDER,
-						TarmedRequirements.getEAN(konsultation.getMandant())); // 22390
+						TarmedRequirements.getEAN(konsultation.getMandant()));
 					el.setAttribute(ATTR_EAN_RESPONSIBLE,
-						XMLExporterUtil.getResponsibleEAN(konsultation)); // 22400
+						XMLExporterUtil.getResponsibleEAN(konsultation));
 					el.setAttribute(ATTR_BILLING_ROLE, "both"); // 22410 //$NON-NLS-1$
 					el.setAttribute(ATTR_MEDICAL_ROLE, "self_employed"); // 22430 //$NON-NLS-1$
 					
@@ -351,6 +395,10 @@ public class XMLExporterServices {
 						el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE);
 					}
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
+					el.setAttribute(ATTR_EAN_PROVIDER,
+						TarmedRequirements.getEAN(konsultation.getMandant()));
+					el.setAttribute(ATTR_EAN_RESPONSIBLE,
+						XMLExporterUtil.getResponsibleEAN(konsultation));
 					ret.mMedikament.addMoney(mAmountLocal);
 				} else if (v instanceof MiGelArtikel) {
 					el = new Element(ELEMENT_RECORD_MIGEL, XMLExporter.ns);
@@ -410,16 +458,16 @@ public class XMLExporterServices {
 					ret.mUebrige.addMoney(mAmountLocal);
 				}
 				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
-				el.setAttribute("number", Integer.toString(sessionNumber)); // 22030 //$NON-NLS-1$
 				el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
 				el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370
-				el.setText(verrechnet.getText()); // 22340
+				el.setAttribute("name", verrechnet.getText()); // 22340
 				// el.setAttribute("code",v.getCode()); // 22330
 				XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE, v.getCode(),
 					StringConstants.ZERO); // 22330
 				ret.servicesElement.addContent(el);
 			}
 		}
+		ret.initialized = true;
 		return ret;
 	}
 }

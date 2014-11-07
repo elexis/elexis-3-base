@@ -50,20 +50,7 @@ public class XMLExporterInsurance {
 				}
 			}
 			element.setAttribute(ATTR_CASE_ID, caseNumber);
-			String ahv =
-				TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
-			if (ahv.length() == 0) {
-				ahv =
-					actFall.getRequiredString(TarmedRequirements.SSN).replaceAll(
-						"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
-			}
-			boolean bAHVValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
-				&& (bAHVValid == false)) {
-				rechnung.reject(REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_AHVInvalid);
-			} else {
-				element.setAttribute("ssn", ahv); //$NON-NLS-1$
-			}
+			addSSNAttribute(element, actPatient, actFall, rechnung);
 			String nif =
 				TarmedRequirements.getNIF(actMandant.getRechnungssteller()).replaceAll(
 					"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
@@ -73,6 +60,9 @@ public class XMLExporterInsurance {
 			} else {
 				element.setAttribute("nif", nif); //$NON-NLS-1$
 			}
+		} else if (gesetz.equalsIgnoreCase("mvg")) {
+			addSSNAttribute(element, actPatient, actFall, rechnung);
+			addInsuredId(element, actPatient, actFall);
 		} else if (gesetz.equalsIgnoreCase("uvg")) { //$NON-NLS-1$
 			String casenumber = actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
 			if (StringTool.isNothing(casenumber)) {
@@ -81,19 +71,9 @@ public class XMLExporterInsurance {
 			if (!StringTool.isNothing(casenumber)) {
 				element.setAttribute(ATTR_CASE_ID, casenumber);
 			}
-			String vnummer = actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
-			if (!StringTool.isNothing(vnummer)) {
-				element.setAttribute("patient_id", vnummer); //$NON-NLS-1$
-			}
+			addInsuredId(element, actPatient, actFall);
 		} else {
-			String vnummer = actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
-			if (StringTool.isNothing(vnummer)) {
-				vnummer = actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
-			}
-			if (StringTool.isNothing(vnummer)) {
-				vnummer = actPatient.getId();
-			}
-			element.setAttribute("patient_id", vnummer); //$NON-NLS-1$
+			addInsuredId(element, actPatient, actFall);
 		}
 		String casedate = actFall.getInfoString("Unfalldatum"); //$NON-NLS-1$
 		if (StringTool.isNothing(casedate)) {
@@ -104,5 +84,34 @@ public class XMLExporterInsurance {
 			.getInfoString("Vertragsnummer")); //$NON-NLS-1$
 
 		return new XMLExporterInsurance(element);
+	}
+	
+	private static void addInsuredId(Element element, Patient actPatient, Fall actFall){
+		String vnummer = actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
+		if (StringTool.isNothing(vnummer)) {
+			vnummer = actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+		}
+		if (StringTool.isNothing(vnummer)) {
+			vnummer = actPatient.getId();
+		}
+		element.setAttribute("insured_id", vnummer); //$NON-NLS-1$
+	}
+
+	private static void addSSNAttribute(Element element, Patient actPatient, Fall actFall,
+		Rechnung rechnung){
+		String ahv =
+			TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+		if (ahv.length() == 0) {
+			ahv =
+				actFall.getRequiredString(TarmedRequirements.SSN).replaceAll(
+					"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+		}
+		boolean bAHVValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
+			&& (bAHVValid == false)) {
+			rechnung.reject(REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_AHVInvalid);
+		} else {
+			element.setAttribute("ssn", ahv); //$NON-NLS-1$
+		}
 	}
 }

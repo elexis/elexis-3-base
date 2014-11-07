@@ -6,7 +6,6 @@ import org.jdom.Element;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum.VatRateElement;
-import ch.elexis.core.constants.StringConstants;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Rechnung;
 import ch.rgw.tools.Money;
@@ -22,14 +21,76 @@ public class XMLExporterBalance {
 	private Money mDue;
 	private Money mTotal = new Money();
 
-	private XMLExporterBalance(Element balance){
+	public XMLExporterBalance(Element balance){
 		this.balanceElement = balance;
 	}
 	
+	public Money getDue(){
+		if (mDue == null) {
+			String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT_DUE);
+			if (attrValue != null && !attrValue.isEmpty()) {
+				mDue = XMLTool.xmlDoubleToMoney(attrValue);
+			} else {
+				mDue = new Money();
+			}
+		}
+		return mDue;
+	}
+	
+	public void setDue(Money money){
+		mDue = money;
+		balanceElement.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue));
+	}
+
+	public Money getTotal(){
+		return mTotal;
+	}
+
+	public Money getAmount(){
+		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT);
+		if (attrValue != null && !attrValue.isEmpty()) {
+			return XMLTool.xmlDoubleToMoney(attrValue);
+		}
+		return new Money();
+	}
+	
+	public void setAmount(Money money){
+		balanceElement.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(money));
+	}
+
+	public Money getAmountObligations(){
+		String attrValue = balanceElement.getAttributeValue(ATTR_AMOUNT_OBLIGATIONS);
+		if (attrValue != null && !attrValue.isEmpty()) {
+			return XMLTool.xmlDoubleToMoney(attrValue);
+		}
+		return new Money();
+	}
+
+	public Money getPrepaid(){
+		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT_PREPAID);
+		if (attrValue != null && !attrValue.isEmpty()) {
+			return XMLTool.xmlDoubleToMoney(attrValue);
+		}
+		return new Money();
+	}
+
+	public void setPrepaid(Money money){
+		balanceElement.setAttribute(XMLExporter.ATTR_AMOUNT_PREPAID,
+			XMLTool.moneyToXmlDouble(money));
+	}
+
 	public Element getElement(){
 		return balanceElement;
 	}
 	
+	public void negateAmount(){
+		XMLExporterUtil.negate(balanceElement, XMLExporter.ATTR_AMOUNT);
+	}
+	
+	public void negateAmountObligations(){
+		XMLExporterUtil.negate(balanceElement, ATTR_AMOUNT_OBLIGATIONS);
+	}
+
 	public static XMLExporterBalance buildBalance(Rechnung rechnung, XMLExporterServices services,
 		VatRateSum vatSummer, XMLExporter xmlExporter){
 		
@@ -57,30 +118,29 @@ public class XMLExporterBalance {
 		balance.mDue.roundTo5();
 		
 		// round and create Money from sumTarmed double values
-		Money mTarmedAL = new Money((int) Math.round(services.getSumTarmedAL()));
-		Money mTarmedTL = new Money((int) Math.round(services.getSumTarmedTL()));
+		//		Money mTarmedAL = new Money((int) Math.round(services.getSumTarmedAL()));
+		//		Money mTarmedTL = new Money((int) Math.round(services.getSumTarmedTL()));
 
 		element.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(balance.mDue));
-		element.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED,
-			XMLTool.moneyToXmlDouble(services.getTarmedMoney()));
-		element
-			.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED_MT, XMLTool.moneyToXmlDouble(mTarmedAL));
-		element
-			.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED_TT, XMLTool.moneyToXmlDouble(mTarmedTL));
-		element.setAttribute(XMLExporter.ATTR_AMOUNT_CANTONAL, StringConstants.DOUBLE_ZERO);
-		element.setAttribute(XMLExporter.ATTR_AMOUNT_UNCLASSIFIED,
-			XMLTool.moneyToXmlDouble(services.getUebrigeMoney()));
-		element.setAttribute(XMLExporter.ATTR_AMOUNT_LAB,
-			XMLTool.moneyToXmlDouble(services.getAnalysenMoney()));
-		element.setAttribute(XMLExporter.ATTR_AMOUNT_PHYSIO,
-			XMLTool.moneyToXmlDouble(services.getPhysioMoney()));
-		element.setAttribute(XMLExporter.ATTR_AMOUNT_DRUG,
-			XMLTool.moneyToXmlDouble(services.getMedikamentMoney()));
-		element.setAttribute(XMLExporter.ATTR_AMOUNT_MIGEL,
-			XMLTool.moneyToXmlDouble(services.getMigelMoney()));
+		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED,
+		//			XMLTool.moneyToXmlDouble(services.getTarmedMoney()));
+		//		element
+		//			.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED_MT, XMLTool.moneyToXmlDouble(mTarmedAL));
+		//		element
+		//			.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED_TT, XMLTool.moneyToXmlDouble(mTarmedTL));
+		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_CANTONAL, StringConstants.DOUBLE_ZERO);
+		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_UNCLASSIFIED,
+		//			XMLTool.moneyToXmlDouble(services.getUebrigeMoney()));
+		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_LAB,
+		//			XMLTool.moneyToXmlDouble(services.getAnalysenMoney()));
+		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_PHYSIO,
+		//			XMLTool.moneyToXmlDouble(services.getPhysioMoney()));
+		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_DRUG,
+		//			XMLTool.moneyToXmlDouble(services.getMedikamentMoney()));
+		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_MIGEL,
+		//			XMLTool.moneyToXmlDouble(services.getMigelMoney()));
 		element.setAttribute(ATTR_AMOUNT_OBLIGATIONS, XMLTool.moneyToXmlDouble(balance.mTotal));
 		
-		// 10370 Vat on invoice level
 		Element vat = new Element(XMLExporter.ELEMENT_VAT, XMLExporter.nsinvoice);
 		
 		String vatNumber =
@@ -90,7 +150,6 @@ public class XMLExporterBalance {
 		
 		vat.setAttribute(XMLExporter.ELEMENT_VAT, XMLTool.doubleToXmlDouble(vatSummer.sumvat, 2));
 		
-		// 10380 Vat on rate level
 		VatRateElement[] vatValues = vatSummer.rates.values().toArray(new VatRateElement[0]);
 		Arrays.sort(vatValues);
 		for (VatRateElement rate : vatValues) {
@@ -107,13 +166,5 @@ public class XMLExporterBalance {
 		element.addContent(vat);
 		
 		return balance;
-	}
-	
-	public Money getDue(){
-		return mDue;
-	}
-	
-	public Money getTotal(){
-		return mTotal;
 	}
 }

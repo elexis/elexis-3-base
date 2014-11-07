@@ -1,17 +1,25 @@
 package ch.elexis.base.ch.arzttarife.test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+
 import ch.elexis.TarmedRechnung.TarmedACL;
+import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
+import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.TICode;
@@ -22,9 +30,15 @@ import ch.rgw.tools.Result;
 
 public class TestData {
 	
+	public static final String EXISTING_44_RNR = "4400";
+
+	public static String EXISTING_4_RNR = "4000";
+
 	private static TestSzenario testSzenarioInstance = null;
 	
-	public static TestSzenario getTestSzenarioInstance(){
+	private static int patientCount = 0;
+
+	public static TestSzenario getTestSzenarioInstance() throws IOException{
 		if (testSzenarioInstance == null) {
 			testSzenarioInstance = new TestSzenario();
 		}
@@ -40,7 +54,7 @@ public class TestData {
 		List<TarmedLeistung> leistungen = new ArrayList<TarmedLeistung>();
 		List<Rechnung> rechnungen = new ArrayList<Rechnung>();
 		
-		TestSzenario(){
+		TestSzenario() throws IOException{
 			createMandanten();
 			
 			createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
@@ -71,8 +85,23 @@ public class TestData {
 				}
 			}
 			
+			importExistingXml();
 		}
 		
+		private void importExistingXml() throws IOException{
+			InputStream xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing4_1.xml");
+			StringWriter stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			NamedBlob blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_4_RNR);
+			blob.putString(stringWriter.toString());
+			
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing44_1.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_44_RNR);
+			blob.putString(stringWriter.toString());
+		}
+
 		private void createLeistungen(){
 			TarmedLeistung leistung = new TarmedLeistung("00", null, "NIL", "", "", "");
 			leistung.setText("Grundleistungen");
@@ -126,6 +155,7 @@ public class TestData {
 		}
 		
 		private void createMandanten(){
+			
 			Mandant mandant = new Mandant("Mandant.tarmed", "Mandant.tarmed", "01.01.1900", "w");
 			mandant.setLabel("mt");
 			
@@ -133,8 +163,11 @@ public class TestData {
 			mandant.setExtInfoStoredObjectByKey("Anrede", "Frau");
 			mandant.setExtInfoStoredObjectByKey("Kanton", "AG");
 			
-			mandant.addXid(Xid.DOMAIN_EAN, "0000000000002", true);
-			mandant.addXid(TarmedRequirements.DOMAIN_KSK, "0000000000002", true);
+			mandant.addXid(Xid.DOMAIN_EAN, "2000000000002", true);
+			// make sure somains are registered
+			TarmedRequirements.getEAN(mandant);
+
+			mandant.addXid(TarmedRequirements.DOMAIN_KSK, "C000002", true);
 			
 			mandant.setExtInfoStoredObjectByKey(ta.ESR5OR9, "esr9");
 			mandant.setExtInfoStoredObjectByKey(ta.ESRPLUS, "esr16or27");
@@ -143,6 +176,9 @@ public class TestData {
 			mandant.setExtInfoStoredObjectByKey(ta.SPEC, "Allgemein");
 			mandant.setExtInfoStoredObjectByKey(ta.TIERS, "payant");
 			
+			mandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, "01-12648-2");
+			mandant.setExtInfoStoredObjectByKey(ta.ESRSUB, "15453");
+
 			mandanten.add(mandant);
 			
 			CoreHub.setMandant(mandant);
@@ -151,6 +187,7 @@ public class TestData {
 		public Patient createPatientWithFall(String firstname, String lastname, String birthdate,
 			String gender, boolean addKostentraeger){
 			Patient pat = new Patient(lastname, firstname, birthdate, gender);
+			addNextAHV(pat);
 			patienten.add(pat);
 			
 			// move required fields to non required ... we are testing xml not Rechnung.build
@@ -166,6 +203,30 @@ public class TestData {
 			return pat;
 		}
 		
+		private void addNextAHV(Patient pat){
+			String country = "756";
+			String number = String.format("%09d", ++patientCount);
+			StringBuilder ahvBuilder = new StringBuilder(country + number);
+			ahvBuilder.append(getCheckNumber(ahvBuilder.toString()));
+			
+			pat.addXid(Xid.DOMAIN_AHV, ahvBuilder.toString(), true);
+		}
+
+		private String getCheckNumber(String string){
+			int sum = 0;
+			for (int i = 0; i < string.length(); i++) {
+				// reveresd order
+				char character = string.charAt((string.length() - 1) - i);
+				int intValue = Character.getNumericValue(character);
+				if (i % 2 == 0) {
+					sum += intValue * 3;
+				} else {
+					sum += intValue;
+				}
+			}
+			return Integer.toString(sum % 10);
+		}
+
 		private void moveRequiredToOptional(String defaultCaseLaw){
 			String requirements = Fall.getRequirements(defaultCaseLaw);
 			if (requirements != null) {
@@ -183,6 +244,23 @@ public class TestData {
 		
 		public List<Rechnung> getRechnungen(){
 			return rechnungen;
+		}
+		
+		public Rechnung getExistingRechnung(String rechnungNr){
+			Konsultation kons = createKons(faelle.get(0), mandanten.get(0));
+			kons.addDiagnose(TICode.getFromCode("A1"));
+			for (TarmedLeistung leistung : leistungen) {
+				Result<IVerrechenbar> result = kons.addLeistung(leistung);
+				if (!result.isOK()) {
+					throw new IllegalStateException(result.toString());
+				}
+			}
+			Result<Rechnung> result = Rechnung.build(Collections.singletonList(kons));
+			Rechnung ret = result.get();
+			
+			ret.set(Rechnung.BILL_NUMBER, rechnungNr);
+
+			return ret;
 		}
 	}
 }

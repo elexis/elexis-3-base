@@ -63,56 +63,48 @@ public class XMLExporterTiers {
 		
 		Element element = null;
 		if (tiers.equals(XMLExporter.TIERS_GARANT)) {
-			element = new Element(XMLExporter.ELEMENT_TIERS_GARANT, XMLExporter.ns); // 11020 //$NON-NLS-1$
+			element = new Element(XMLExporter.ELEMENT_TIERS_GARANT, XMLExporter.nsinvoice); //$NON-NLS-1$
 			String paymentPeriode = mandant.getRechnungssteller().getInfoString("rnfrist"); //$NON-NLS-1$
 			if (StringTool.isNothing(paymentPeriode)) {
 				paymentPeriode = "30"; //$NON-NLS-1$
 			}
-			element.setAttribute("payment_periode", "P" + paymentPeriode + "D"); // 11021 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			element.setAttribute("payment_period", "P" + paymentPeriode + "D"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			element = new Element(XMLExporter.ELEMENT_TIERS_PAYANT, XMLExporter.ns); // 11260 //$NON-NLS-1$
-			// to simplify things for now we do no accept modifications
-			element.setAttribute("invoice_modification", "false"); // 11262 //$NON-NLS-1$ //$NON-NLS-2$
-			element.setAttribute("purpose", XMLExporter.ELEMENT_INVOICE); // 11265 //$NON-NLS-1$
+			element = new Element(XMLExporter.ELEMENT_TIERS_PAYANT, XMLExporter.nsinvoice); //$NON-NLS-1$
 		}
 		
 		XMLExporterTiers ret = new XMLExporterTiers(element);
 		
-		Element biller = new Element("biller", XMLExporter.ns); // 11070 -> 11400 //$NON-NLS-1$
-		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); //
-		// 11402
+		Element biller = new Element("biller", XMLExporter.nsinvoice); //$NON-NLS-1$
 		biller.setAttribute(XMLExporter.ATTR_EAN_PARTY,
-			TarmedRequirements.getEAN(mandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(mandant.getRechnungssteller())); // actMandant.getInfoString //$NON-NLS-1$
-		// ("KSK"));
-		// // 11403
+			TarmedRequirements.getEAN(mandant.getRechnungssteller()));
+		XMLExporterUtil.setAttributeIfNotEmpty(biller, "zsr",
+			TarmedRequirements.getKSK(mandant.getRechnungssteller()));
 		String spec = mandant.getRechnungssteller().getInfoString(ta.SPEC);
 		if (!spec.equals("")) { //$NON-NLS-1$
-			biller.setAttribute("specialty", spec); // 11404 //$NON-NLS-1$
+			biller.setAttribute("specialty", spec); //$NON-NLS-1$
 		}
 		biller.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant
 			.getRechnungssteller())); // 11600-11680
 		ret.tiersElement.addContent(biller);
 		
-		Element provider = new Element("provider", XMLExporter.ns); // 11080 -> 11800 //$NON-NLS-1$
-		// 11802
+		Element provider = new Element("provider", XMLExporter.nsinvoice); //$NON-NLS-1$
 		provider.setAttribute(XMLExporter.ATTR_EAN_PARTY,
-			TarmedRequirements.getEAN(mandant.getRechnungssteller())); // 11802
-		provider.setAttribute("zsr", TarmedRequirements.getKSK(mandant.getRechnungssteller())); // actMandant.getInfoString //$NON-NLS-1$
-		// ("KSK"));
-		// // 11803
+			TarmedRequirements.getEAN(mandant.getRechnungssteller()));
+		provider.setAttribute(
+			"zsr", TarmedRequirements.getKSK(mandant.getRechnungssteller())); //$NON-NLS-1$
 		spec = mandant.getRechnungssteller().getInfoString(ta.SPEC);
 		if (!spec.equals("")) { //$NON-NLS-1$
-			provider.setAttribute("specialty", spec); // 11804 //$NON-NLS-1$
+			provider.setAttribute("specialty", spec); //$NON-NLS-1$
 		}
 		provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant
-			.getRechnungssteller())); // 11830-11680
+			.getRechnungssteller()));
 		ret.tiersElement.addContent(provider);
 		
 		Element onlineElement = null; // tschaller: see comments in
 		// buildOnlineElement
 		
-		Element insurance = new Element("insurance", XMLExporter.ns); // 11090 //$NON-NLS-1$
+		Element insurance = new Element("insurance", XMLExporter.nsinvoice); //$NON-NLS-1$
 		// The 'insurance' element is optional in Tiers Garant so in TG we only
 		// insert this Element,
 		// if we have all data absolutely correct.
@@ -138,8 +130,8 @@ public class XMLExporterTiers {
 			 * if(!kEAN.matches("[0-9]{13,13}")){ kEAN="2000000000000"; }
 			 */
 			insurance.setAttribute(XMLExporter.ATTR_EAN_PARTY, kEAN);
-			Element company = new Element("company", XMLExporter.ns); //$NON-NLS-1$
-			Element companyname = new Element("companyname", XMLExporter.ns); //$NON-NLS-1$
+			Element company = new Element("company", XMLExporter.nsinvoice); //$NON-NLS-1$
+			Element companyname = new Element("companyname", XMLExporter.nsinvoice); //$NON-NLS-1$
 			companyname.setText(StringTool.limitLength(kostentraeger.get(Kontakt.FLD_NAME1), 35));
 			company.addContent(companyname);
 			company.addContent(XMLExporterUtil.buildPostalElement(kostentraeger));
@@ -160,7 +152,7 @@ public class XMLExporterTiers {
 			
 		}
 		
-		Element patientElement = new Element("patient", XMLExporter.ns); // 11100 //$NON-NLS-1$
+		Element patientElement = new Element("patient", XMLExporter.nsinvoice); //$NON-NLS-1$
 		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is
 		// optional and should be
 		// ssn13 type. leave it out for now
@@ -191,10 +183,10 @@ public class XMLExporterTiers {
 		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
 		ret.tiersElement.addContent(patientElement);
 		
-		Element guarantor = xmlExporter.buildGuarantor(rnAdressat, patient); // 11110
+		Element guarantor = xmlExporter.buildGuarantor(rnAdressat, patient);
 		ret.tiersElement.addContent(guarantor);
 		
-		Element referrer = new Element("referrer", XMLExporter.ns); // 11120 //$NON-NLS-1$
+		Element referrer = new Element("referrer", XMLExporter.nsinvoice); //$NON-NLS-1$
 		Kontakt auftraggeber = fall.getRequiredContact("Zuweiser");
 		if (auftraggeber != null) {
 			referrer.setAttribute(XMLExporter.ATTR_EAN_PARTY,
@@ -207,7 +199,7 @@ public class XMLExporterTiers {
 		}
 		
 		if (tiers.equals(XMLExporter.TIERS_GARANT) && (TarmedRequirements.hasTCContract(mandant))) {
-			Element demand = new Element("demand", XMLExporter.ns); //$NON-NLS-1$
+			Element demand = new Element("demand", XMLExporter.nsinvoice); //$NON-NLS-1$
 			demand.setAttribute("tc_demand_id", "0"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			demand.setAttribute(

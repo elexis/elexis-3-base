@@ -19,9 +19,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,7 @@ import org.eclipse.swt.widgets.Text;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.transform.JDOMSource;
@@ -137,11 +140,10 @@ public class XMLExporter implements IRnOutputter {
 	public static final String ATTR_AMOUNT_TARMED_MT = "amount_tarmed.mt"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_TARMED = "amount_tarmed"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT = "amount"; //$NON-NLS-1$
-	public static final String ATTR_AMOUNT_TT = "amount.tt"; //$NON-NLS-1$
-	public static final String ATTR_AMOUNT_MT = "amount.mt"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_TT = "amount_tt"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_MT = "amount_mt"; //$NON-NLS-1$
 	public static final String ATTR_QUANTITY = "quantity"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_DUE = "amount_due"; //$NON-NLS-1$
-	private static final String ATTR_RESEND = "resend"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_PREPAID = "amount_prepaid"; //$NON-NLS-1$
 	public static final String ELEMENT_BALANCE = "balance"; //$NON-NLS-1$
 	public static final String ELEMENT_INVOICE = "invoice"; //$NON-NLS-1$
@@ -176,7 +178,7 @@ public class XMLExporter implements IRnOutputter {
 	private ESR besr;
 	static TarmedACL ta;
 	private String outputDir;
-	private static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$
+	public static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$
 	
 	/**
 	 * Reset exporter
@@ -275,109 +277,20 @@ public class XMLExporter implements IRnOutputter {
 	 *            true if the bill should be sent trough a verifyer after creation.
 	 * @return the jdom XML-Document that contains the bill. Might be null on failure.
 	 */
-	@SuppressWarnings("unchecked")
 	public Document doExport(final Rechnung rechnung, final String dest,
 		final IRnOutputter.TYPE type, final boolean doVerify){
 		clear();
 		// create a object for managing vat rates and values on invoice level
 		VatRateSum vatSummer = new VatRateSum();
 		rn = rechnung;
-		//		mPaid = rn.getAnzahlung();
 		
-		//		if (NamedBlob.exists(PREFIX + rechnung.getNr())) {
-		//			// If the bill exists already in the database, it has been output
-		//			// earlier, so we don't
-		//			// recreate it. We must, however, reflect changes that happened
-		//			// since it was output:
-		//			// Payments, state changes, obligations
-		//			NamedBlob blob = NamedBlob.load(PREFIX + rechnung.getNr());
-		//			SAXBuilder builder = new SAXBuilder();
-		//			try {
-		//				Document ret = builder.build(new StringReader(blob.getString()));
-		//				Element root = ret.getRootElement();
-		//				Element invoice = root.getChild(ELEMENT_INVOICE, ns);
-		//				Element balance = invoice.getChild(ELEMENT_BALANCE, ns);
-		//				Money anzInBill =
-		//					XMLTool.xmlDoubleToMoney(balance.getAttributeValue(ATTR_AMOUNT_PREPAID));
-		//				if (!mPaid.equals(anzInBill)) {
-		//					balance.setAttribute(ATTR_AMOUNT_PREPAID, XMLTool.moneyToXmlDouble(mPaid)); // 10335
-		//					mDue =
-		//						XMLTool
-		//							.xmlDoubleToMoney(balance.getAttributeValue(ATTR_AMOUNT_OBLIGATIONS));
-		//					mDue.subtractMoney(mPaid);
-		//					mDue.roundTo5();
-		//					balance.setAttribute(ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue)); // 10340
-		//				}
-		//				if (type.equals(IRnOutputter.TYPE.COPY)) {
-		//					invoice.setAttribute(ATTR_RESEND, Boolean.toString(true));
-		//				} else if (type.equals(TYPE.STORNO)) {
-		//					Element detail = invoice.getChild(XMLExporterServices.ELEMENT_DETAIL, ns);
-		//					Element services = detail.getChild(XMLExporterServices.ELEMENT_SERVICES, ns);
-		//					List<Element> sr = services.getChildren();
-		//					for (Element el : sr) {
-		//						try {
-		//							negate(el, ATTR_QUANTITY);
-		//							// negate(el,"unit.mt");
-		//							// negate(el,"unit.tt");
-		//							negate(el, ATTR_AMOUNT_MT);
-		//							negate(el, ATTR_AMOUNT_TT);
-		//							// negate(el,"unit");
-		//							negate(el, ATTR_AMOUNT);
-		//							/*
-		//							 * Money betrag=XMLTool.xmlDoubleToMoney(el.getAttributeValue
-		//							 * ("amount")); el.setAttribute("amount",
-		//							 * XMLTool.moneyToXmlDouble(betrag.negate()));
-		//							 */
-		//							
-		//						} catch (Exception ex) {
-		//							ExHandler.handle(ex);
-		//						}
-		//					}
-		//					// Money
-		//					// betrag=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount"));
-		//					// balance.setAttribute("amount",XMLTool.moneyToXmlDouble(betrag.negate()));
-		//					negate(balance, ATTR_AMOUNT);
-		//					negate(balance, ATTR_AMOUNT_TARMED);
-		//					negate(balance, ATTR_AMOUNT_TARMED_MT);
-		//					negate(balance, ATTR_AMOUNT_TARMED_TT);
-		//					negate(balance, ATTR_AMOUNT_CANTONAL);
-		//					negate(balance, ATTR_AMOUNT_UNCLASSIFIED);
-		//					negate(balance, ATTR_AMOUNT_DRUG);
-		//					negate(balance, ATTR_AMOUNT_LAB);
-		//					negate(balance, ATTR_AMOUNT_MIGEL);
-		//					negate(balance, ATTR_AMOUNT_PHYSIO);
-		//					negate(balance, ATTR_AMOUNT_OBLIGATIONS);
-		//					balance.setAttribute(ATTR_AMOUNT_DUE, StringConstants.DOUBLE_ZERO);
-		//					balance.setAttribute(ATTR_AMOUNT_PREPAID, StringConstants.DOUBLE_ZERO);
-		//					
-		//					// change the purpose if a payant element is present
-		//					Element payant = invoice.getChild(ELEMENT_TIERS_PAYANT, ns);
-		//					if (payant != null) {
-		//						payant.setAttribute("purpose", ELEMENT_ANNULMENT); //$NON-NLS-1$
-		//					}
-		//				}
-		//				
-		//				checkXML(ret, dest, rn, doVerify);
-		//				
-		//				if (dest != null) {
-		//					if (type.equals(TYPE.STORNO)) {
-		//						writeFile(ret, dest.toLowerCase().replaceFirst("\\.xml$", "_storno.xml")); //$NON-NLS-1$ //$NON-NLS-2$
-		//					} else {
-		//						writeFile(ret, dest);
-		//					}
-		//				}
-		//				StringWriter stringWriter = new StringWriter();
-		//				XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
-		//				xout.output(ret, stringWriter);
-		//				blob.putString(stringWriter.toString());
-		//				return ret;
-		//			} catch (Exception ex) {
-		//				ExHandler.handle(ex);
-		//				SWTHelper.showError(Messages.XMLExporter_ReadErrorCaption,
-		//					Messages.XMLExporter_ReadErrorText);
-		//				// What should we do -> We create it from scratch
-		//			}
-		//		}
+		if (xmlBillExists(rechnung)) {
+			Document updated = updateExistingXmlBill(rechnung, dest, type, doVerify);
+			if (updated != null) {
+				return updated;
+			}
+		}
+
 		if (type.equals(TYPE.STORNO)) {
 			SWTHelper.showError(Messages.XMLExporter_StornoImpossibleCaption,
 				Messages.XMLExporter_StornoImpossibleText);
@@ -440,7 +353,7 @@ public class XMLExporter implements IRnOutputter {
 		//body
 		Element body = new Element(ELEMENT_BODY, nsinvoice);
 		body.setAttribute(ATTR_BODY_ROLE, "physician");
-		body.setAttribute(ATTR_BODY_PLACE, "pratice");
+		body.setAttribute(ATTR_BODY_PLACE, "practice");
 		
 		//prolog
 		XMLExporterProlog prolog = XMLExporterProlog.buildProlog(rechnung, this);
@@ -523,6 +436,151 @@ public class XMLExporter implements IRnOutputter {
 		return xmlRn;
 	}
 	
+	private Document updateExistingXmlBill(Rechnung rechnung, String dest, TYPE type,
+		boolean doVerify){
+		// If the bill exists already in the database, it has been output
+		// earlier, so we don't
+		// recreate it. We must, however, reflect changes that happened
+		// since it was output:
+		// Payments, state changes, obligations
+		NamedBlob blob = NamedBlob.load(PREFIX + rechnung.getNr());
+		SAXBuilder builder = new SAXBuilder();
+
+		try {
+			Document ret = builder.build(new StringReader(blob.getString()));
+			Element root = ret.getRootElement();
+			if (getXmlVersion(root).equals("4.0")) {
+				updateExisting4Xml(root, type, rechnung);
+			} else if (getXmlVersion(root).equals("4.4")) {
+				updateExisting44Xml(root, type, rechnung);
+			} else {
+				logger.warn("Bill in unknown XML version " + getXmlVersion(root)
+					+ ", recreating bill.");
+				return null;
+			}
+			checkXML(ret, dest, rn, doVerify);
+			
+			if (dest != null) {
+				if (type.equals(TYPE.STORNO)) {
+					writeFile(ret, dest.toLowerCase().replaceFirst("\\.xml$", "_storno.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					writeFile(ret, dest);
+				}
+			}
+			StringWriter stringWriter = new StringWriter();
+			XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
+			xout.output(ret, stringWriter);
+			blob.putString(stringWriter.toString());
+			return ret;
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			SWTHelper.showError(Messages.XMLExporter_ReadErrorCaption,
+				Messages.XMLExporter_ReadErrorText);
+			// What should we do -> We create it from scratch
+			return null;
+		}
+	}
+	
+	private void updateExisting44Xml(Element root, TYPE type, Rechnung rechnung){
+		Money mPaid = rn.getAnzahlung();
+		
+		Element payload = root.getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
+		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
+		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
+		XMLExporterBalance xmlBalance = new XMLExporterBalance(balance);
+		if (!mPaid.equals(xmlBalance.getPrepaid())) {
+			xmlBalance.setPrepaid(mPaid);
+			Money mDue = xmlBalance.getAmountObligations();
+			mDue.subtractMoney(mPaid);
+			mDue.roundTo5();
+			xmlBalance.setDue(mDue);
+		}
+		if (type.equals(IRnOutputter.TYPE.COPY)) {
+			payload.setAttribute("copy", Boolean.toString(true));//$NON-NLS-1$
+		} else if (type.equals(TYPE.STORNO)) {
+			payload.setAttribute("storno", Boolean.toString(true));//$NON-NLS-1$
+			Element services = body.getChild("services", XMLExporter.nsinvoice);//$NON-NLS-1$
+			XMLExporterServices xmlServices = new XMLExporterServices(services);
+			xmlServices.negateAll();
+			
+			xmlBalance.negateAmount();
+			xmlBalance.negateAmountObligations();
+			xmlBalance.setDue(new Money());
+			xmlBalance.setPrepaid(new Money());
+		}
+	}
+	
+	private void updateExisting4Xml(Element root, TYPE type, Rechnung rechnung){
+		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
+		Money mPaid = rn.getAnzahlung();
+
+		Element invoice = root.getChild("invoice", namespace);//$NON-NLS-1$
+		Element balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
+		Money anzInBill = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_prepaid"));//$NON-NLS-1$
+		if (!mPaid.equals(anzInBill)) {
+			balance.setAttribute("amount_prepaid", XMLTool.moneyToXmlDouble(mPaid));//$NON-NLS-1$
+			Money mDue = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));//$NON-NLS-1$
+			mDue.subtractMoney(mPaid);
+			mDue.roundTo5();
+			balance.setAttribute("amount_due", XMLTool.moneyToXmlDouble(mDue));//$NON-NLS-1$
+		}
+		if (type.equals(IRnOutputter.TYPE.COPY)) {
+			invoice.setAttribute("resend", Boolean.toString(true));//$NON-NLS-1$
+		} else if (type.equals(TYPE.STORNO)) {
+			Element detail = invoice.getChild("detail", namespace);//$NON-NLS-1$
+			Element services = detail.getChild("services", namespace);//$NON-NLS-1$
+			@SuppressWarnings("unchecked")
+			List<Element> sr = services.getChildren();
+			for (Element el : sr) {
+				try {
+					negate(el, "quantity");//$NON-NLS-1$
+					negate(el, "amount.mt");//$NON-NLS-1$
+					negate(el, "amount.tt");//$NON-NLS-1$
+					negate(el, "amount");//$NON-NLS-1$
+				} catch (Exception ex) {
+					ExHandler.handle(ex);
+				}
+			}
+			negate(balance, "amount");//$NON-NLS-1$
+			negate(balance, "amount_tarmed");//$NON-NLS-1$
+			negate(balance, "amount_tarmed.mt");//$NON-NLS-1$
+			negate(balance, "amount_tarmed.tt");//$NON-NLS-1$
+			negate(balance, "amount_cantonal");//$NON-NLS-1$
+			negate(balance, "amount_unclassified");//$NON-NLS-1$
+			negate(balance, "amount_drug");//$NON-NLS-1$
+			negate(balance, "amount_lab");//$NON-NLS-1$
+			negate(balance, "amount_migel");//$NON-NLS-1$
+			negate(balance, "amount_physio");//$NON-NLS-1$
+			negate(balance, "amount_obligations");//$NON-NLS-1$
+			balance.setAttribute("amount_due", StringConstants.DOUBLE_ZERO);//$NON-NLS-1$
+			balance.setAttribute("amount_prepaid", StringConstants.DOUBLE_ZERO);//$NON-NLS-1$
+			
+			// change the purpose if a payant element is present
+			Element payant = invoice.getChild("tiers_payant");//$NON-NLS-1$
+			if (payant != null) {
+				payant.setAttribute("purpose", ELEMENT_ANNULMENT); //$NON-NLS-1$
+			}
+		}
+	}
+	
+	private String getXmlVersion(Element root){
+		String location =
+			root.getAttributeValue(
+				"schemaLocation", Namespace.getNamespace("http://www.w3.org/2001/XMLSchema-instance"));//$NON-NLS-1$ //$NON-NLS-2$
+		if (location != null && !location.isEmpty()) {
+			if (location.contains("InvoiceRequest_400")) {//$NON-NLS-1$
+				return "4.0";//$NON-NLS-1$
+			} else if (location.contains("InvoiceRequest_440")) {//$NON-NLS-1$
+				return "4.4";//$NON-NLS-1$
+			}
+		}
+		return location;//$NON-NLS-1$
+	}
+
+	private boolean xmlBillExists(Rechnung rechnung){
+		return NamedBlob.exists(PREFIX + rechnung.getNr());
+	}
+
 	protected Element buildGuarantor(Kontakt garant, Kontakt patient){
 		// Patient wird im override des MediPort Plugins verwendet
 		// Hinweis:
@@ -559,9 +617,22 @@ public class XMLExporter implements IRnOutputter {
 			Source source = new JDOMSource(xmlDoc);
 			String path =
 				PlatformHelper.getBasePath("ch.elexis.base.ch.arzttarife") + File.separator + "rsc"; //$NON-NLS-1$ //$NON-NLS-2$
-			List<String> errs =
-				XMLTool.validateSchema(
-					path + File.separator + "generalInvoiceRequest_440.xsd", source); //$NON-NLS-1$
+			List<String> errs = null;
+			// validate depending on tarmed version
+			if (getXmlVersion(xmlDoc.getRootElement()).equals("4.0")) {
+				errs =
+					XMLTool.validateSchema(
+						path + File.separator + "MDInvoiceRequest_400.xsd", source); //$NON-NLS-1$
+			} else if (getXmlVersion(xmlDoc.getRootElement()).equals("4.4")) {
+				errs =
+					XMLTool.validateSchema(
+						path + File.separator + "generalInvoiceRequest_440.xsd", source); //$NON-NLS-1$
+			} else {
+				errs =
+					Collections.singletonList("Bill in unknown XML version "
+						+ getXmlVersion(xmlDoc.getRootElement()));
+			}
+			
 			if (!errs.isEmpty()) {
 				StringBuilder sb = new StringBuilder();
 				for (String err : errs) {

@@ -45,8 +45,8 @@ public class XMLExporterUtil {
 			anredeOrganization = (anrede == null || anrede.isEmpty());
 		}
 		if (k.istPerson() == false || anredeOrganization) {
-			ret = new Element("company", XMLExporter.ns); //$NON-NLS-1$
-			Element companyname = new Element("companyname", XMLExporter.ns); //$NON-NLS-1$
+			ret = new Element("company", XMLExporter.nsinvoice); //$NON-NLS-1$
+			Element companyname = new Element("companyname", XMLExporter.nsinvoice); //$NON-NLS-1$
 			companyname.setText(StringTool.limitLength(k.get(Kontakt.FLD_NAME1), 35));
 			ret.addContent(companyname);
 			ret.addContent(buildPostalElement(k));
@@ -56,9 +56,9 @@ public class XMLExporterUtil {
 				ret.addContent(onlineElement);
 			}
 		} else {
-			ret = new Element("person", XMLExporter.ns); //$NON-NLS-1$
-			Element familyname = new Element("familyname", XMLExporter.ns); //$NON-NLS-1$
-			Element givenname = new Element("givenname", XMLExporter.ns); //$NON-NLS-1$
+			ret = new Element("person", XMLExporter.nsinvoice); //$NON-NLS-1$
+			Element familyname = new Element("familyname", XMLExporter.nsinvoice); //$NON-NLS-1$
+			Element givenname = new Element("givenname", XMLExporter.nsinvoice); //$NON-NLS-1$
 			
 			String anschrift = k.get(Kontakt.FLD_ANSCHRIFT);
 			if (!useAnschrift || StringTool.isNothing(anschrift)
@@ -95,7 +95,7 @@ public class XMLExporterUtil {
 	}
 	
 	public static Element buildPostalElement(final Kontakt k){
-		Element ret = new Element("postal", XMLExporter.ns); //$NON-NLS-1$
+		Element ret = new Element("postal", XMLExporter.nsinvoice); //$NON-NLS-1$
 		addElementIfExists(ret, "pobox", null, StringTool.limitLength(k.getInfoString("Postfach"), //$NON-NLS-1$ //$NON-NLS-2$
 			35), null);
 		addElementIfExists(ret,
@@ -112,7 +112,7 @@ public class XMLExporterUtil {
 	}
 	
 	public static Element buildPostalElement(final Postanschrift postanschrift){
-		Element ret = new Element("postal", XMLExporter.ns); //$NON-NLS-1$
+		Element ret = new Element("postal", XMLExporter.nsinvoice); //$NON-NLS-1$
 		addElementIfExists(ret, "pobox", null, StringTool.limitLength(postanschrift.adresse2, 35), //$NON-NLS-1$
 			null);
 		addElementIfExists(ret, "street", null, StringTool.limitLength(postanschrift.adresse1, 35), //$NON-NLS-1$
@@ -127,7 +127,7 @@ public class XMLExporterUtil {
 	}
 	
 	public static Element buildOnlineElement(final Kontakt k){
-		// Element ret = new Element("online", XMLExporter.ns);
+		// Element ret = new Element("online", XMLExporter.nsinvoice);
 		// String email = StringTool.limitLength(k.get("E-Mail"), 70);
 		// if (!email.matches(".+@.+")) {
 		// email = "mail@invalid.invalid";
@@ -150,7 +150,7 @@ public class XMLExporterUtil {
 				value = "mail@invalid.invalid"; //$NON-NLS-1$
 			}
 			if (ret == null) {
-				ret = new Element(ELEMENT_ONLINE, XMLExporter.ns);
+				ret = new Element(ELEMENT_ONLINE, XMLExporter.nsinvoice);
 			}
 			addElementIfExists(ret, ELEMENT_EMAIL, null, value, null);
 		}
@@ -159,7 +159,7 @@ public class XMLExporterUtil {
 		value = StringTool.limitLength(k.get(Kontakt.FLD_WEBSITE), 100);
 		if (!value.equals(StringConstants.EMPTY)) {
 			if (ret == null) {
-				ret = new Element(ELEMENT_ONLINE, XMLExporter.ns);
+				ret = new Element(ELEMENT_ONLINE, XMLExporter.nsinvoice);
 				addElementIfExists(ret, ELEMENT_EMAIL, null, "mail@invalid.invalid", null); //$NON-NLS-1$
 			}
 			addElementIfExists(ret, "url", null, value, null); //$NON-NLS-1$
@@ -168,7 +168,7 @@ public class XMLExporterUtil {
 	}
 	
 	public static Element buildTelekomElement(final Kontakt k){
-		Element ret = new Element("telecom", XMLExporter.ns); //$NON-NLS-1$
+		Element ret = new Element("telecom", XMLExporter.nsinvoice); //$NON-NLS-1$
 		addElementIfExists(ret,
 			"phone", null, StringTool.limitLength(k.get(Kontakt.FLD_PHONE1), 25), //$NON-NLS-1$
 			"555-555 55 55"); //$NON-NLS-1$
@@ -234,7 +234,7 @@ public class XMLExporterUtil {
 			val = defValue;
 		}
 		if (!StringTool.isNothing(val)) {
-			Element ret = new Element(name, XMLExporter.ns);
+			Element ret = new Element(name, XMLExporter.nsinvoice);
 			if (attr == null) {
 				ret.setText(val);
 			} else {
@@ -421,4 +421,17 @@ public class XMLExporterUtil {
 		}
 	}
 	
+	public static void negate(Element el, String attr){
+		String v = el.getAttributeValue(attr);
+		if (!StringTool.isNothing(v)) {
+			if (!v.equals(StringConstants.DOUBLE_ZERO)) {
+				if (v.startsWith(StringConstants.DASH)) {
+					v = v.substring(1);
+				} else {
+					v = StringConstants.DASH + v;
+				}
+				el.setAttribute(attr, v);
+			}
+		}
+	}
 }

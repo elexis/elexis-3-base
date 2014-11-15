@@ -175,15 +175,15 @@ import de.kupzog.ktable.renderers.FixedCellRenderer;
 
 /**
  * KG-Ansicht nach Iatrix-Vorstellungen
- *
+ * 
  * Oben wird die Problemliste dargestellt, unten die aktuelle Konsultation und die bisherigen
  * Konsultationen. Hinweis: Es wird sichergestellt, dass die Problemliste und die Konsultation(en)
  * zum gleichen Patienten gehoeren.
- *
+ * 
  * TODO Definieren, wann welcher Patient und welche Konsultation gesetzt werden soll. Wie mit
  * Faellen umgehen? TODO adatpMenu as in KonsDetailView TODO check compatibility of assigned
  * problems if fall is changed
- *
+ * 
  * @author Daniel Lutz <danlutz@watz.ch>
  */
 
@@ -212,7 +212,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private Patient actPatient = null;
 	private Konsultation actKons;
 	private static boolean creatingKons = false;
-	private static String  savedInitialKonsText = null;
+	private static String savedInitialKonsText = null;
 
 	private Hashtable<String, IKonsExtension> hXrefs;
 
@@ -388,9 +388,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			hasMultipleMandants = true;
 		}
 	}
-
-	private final ElexisUiEventListenerImpl eeli_problem = new ElexisUiEventListenerImpl(Episode.class,
-		EVENT_UPDATE | EVENT_DESELECTED) {
+	
+	private final ElexisUiEventListenerImpl eeli_problem = new ElexisUiEventListenerImpl(
+		Episode.class, EVENT_UPDATE | EVENT_DESELECTED) {
 
 		@Override
 		public void runInUi(ElexisEvent ev){
@@ -409,9 +409,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		}
 	};
-
-	private final ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(Konsultation.class,
-		EVENT_DELETE | EVENT_UPDATE | EVENT_SELECTED | EVENT_DESELECTED) {
+	
+	private final ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(
+		Konsultation.class, EVENT_DELETE | EVENT_UPDATE | EVENT_SELECTED | EVENT_DESELECTED) {
 
 		@Override
 		public void runInUi(ElexisEvent ev){
@@ -473,76 +473,78 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		}
 	};
-	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
-
-		@Override
-		public void runInUi(ElexisEvent ev){
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				Patient selectedPatient = (Patient) ev.getObject();
-
-				showAllChargesAction.setChecked(false);
-				showAllConsultationsAction.setChecked(false);
-
-				Patient patient = null;
-				Fall fall = null;
-				Konsultation konsultation = null;
-
-				konsultation = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-				if (konsultation != null) {
-					// diese Konsulation setzen, falls sie zum ausgewaehlten
-					// Patienten gehoert
-					fall = konsultation.getFall();
-					patient = fall.getPatient();
-					if (patient.getId().equals(selectedPatient.getId())) {
-						setPatient(patient);
-						setKonsultation(konsultation, true);
-
-						return;
+	private final ElexisUiEventListenerImpl eeli_pat =
+		new ElexisUiEventListenerImpl(Patient.class) {
+			
+			@Override
+			public void runInUi(ElexisEvent ev){
+				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+					Patient selectedPatient = (Patient) ev.getObject();
+					
+					showAllChargesAction.setChecked(false);
+					showAllConsultationsAction.setChecked(false);
+					
+					Patient patient = null;
+					Fall fall = null;
+					Konsultation konsultation = null;
+					
+					konsultation =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					if (konsultation != null) {
+						// diese Konsulation setzen, falls sie zum ausgewaehlten
+						// Patienten gehoert
+						fall = konsultation.getFall();
+						patient = fall.getPatient();
+						if (patient.getId().equals(selectedPatient.getId())) {
+							setPatient(patient);
+							setKonsultation(konsultation, true);
+							
+							return;
+						}
 					}
-				}
-
-				// Konsulation gehoert nicht zu diesem Patienten, Fall
-				// untersuchen
-				fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-				if (fall != null) {
-					patient = fall.getPatient();
-					if (patient.getId().equals(selectedPatient.getId())) {
-						// aktuellste Konsultation dieses Falls waehlen
-						konsultation = getTodaysLatestKons(fall);
-
-						setPatient(patient);
-						setKonsultation(konsultation, true);
-
-						return;
+					
+					// Konsulation gehoert nicht zu diesem Patienten, Fall
+					// untersuchen
+					fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+					if (fall != null) {
+						patient = fall.getPatient();
+						if (patient.getId().equals(selectedPatient.getId())) {
+							// aktuellste Konsultation dieses Falls waehlen
+							konsultation = getTodaysLatestKons(fall);
+							
+							setPatient(patient);
+							setKonsultation(konsultation, true);
+							
+							return;
+						}
 					}
-				}
-
-				// weder aktuell ausgewaehlte Konsulation noch aktuell
-				// ausgewaehlter Fall gehoeren zu diesem Patienten
-				setPatient(selectedPatient);
-
-				// lezte Kons setzen, falls heutiges Datum
-				Konsultation letzteKons = getTodaysLatestKons(selectedPatient);
-				if (letzteKons != null) {
-					TimeTool letzteKonsDate = new TimeTool(letzteKons.getDatum());
-					TimeTool today = new TimeTool();
-					if (!letzteKonsDate.isSameDay(today)) {
-						letzteKons = null;
+					
+					// weder aktuell ausgewaehlte Konsulation noch aktuell
+					// ausgewaehlter Fall gehoeren zu diesem Patienten
+					setPatient(selectedPatient);
+					
+					// lezte Kons setzen, falls heutiges Datum
+					Konsultation letzteKons = getTodaysLatestKons(selectedPatient);
+					if (letzteKons != null) {
+						TimeTool letzteKonsDate = new TimeTool(letzteKons.getDatum());
+						TimeTool today = new TimeTool();
+						if (!letzteKonsDate.isSameDay(today)) {
+							letzteKons = null;
+						}
+						setKonsultation(letzteKons, true);
+					} else {
+						setKonsultation(null, true);
 					}
-					setKonsultation(letzteKons, true);
-				} else {
-					setKonsultation(null, true);
+					
+				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+					setPatient(null);
 				}
-
-			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-				setPatient(null);
 			}
-		}
-
-	};
-
-	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-		ElexisEvent.EVENT_USER_CHANGED) {
+			
+		};
+	
+	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(
+		Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
 		public void runInUi(ElexisEvent ev){
 			adaptMenus();
@@ -1852,9 +1854,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	/**
 	 * Get the latest Konsultation of today
-	 *
+	 * 
 	 * @return today's latest Konsultation
-	 *
+	 * 
 	 *         Same implementation as Patient.getLetzteKons()
 	 */
 	public Konsultation getTodaysLatestKons(Patient patient){
@@ -2351,7 +2353,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	/**
 	 * Check whether the text in the text field has changed compared to the database entry.
-	 *
+	 * 
 	 * @return true, if the text changed, false else
 	 */
 	private boolean textChanged(){
@@ -2373,7 +2375,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	@Override
 	public void activation(boolean mode){
 		if (mode == true) {
-			setKonsultation((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class), false);
+			setKonsultation((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class),
+				false);
 		} else {
 			updateEintrag();
 		}
@@ -2509,7 +2512,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	/**
 	 * Return the auto-save time period interval, as configured in CoreHub.userCfg
-	 *
+	 * 
 	 * @return the calculated period interval, or 1 if there are invalid configuration values, or 0
 	 *         if autos-save is disabled
 	 */
@@ -2575,8 +2578,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 * Aktuellen Patienten setzen
 	 */
 	public void setPatient(Patient patient){
-		if (actPatient == patient)
-		{
+		if (actPatient == patient) {
 			return;
 		}
 		actPatient = patient;
@@ -2801,10 +2803,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	/**
 	 * Aktuelle Konsultation setzen.
-	 *
+	 * 
 	 * Wenn eine Konsultation gesetzt wird stellen wir sicher, dass der gesetzte Patient zu dieser
 	 * Konsultation gehoert. Falls nicht, wird ein neuer Patient gesetzt.
-	 *
+	 * 
 	 * @param putCaretToEnd
 	 *            if true, activate text field ant put caret to the end
 	 */
@@ -2816,8 +2818,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		removeKonsTextLock();
 
 		actKons = k;
-		if (savedInitialKonsText != null)
-		{
+		if (savedInitialKonsText != null) {
 			actKons.updateEintrag(savedInitialKonsText, true);
 			savedInitialKonsText = null;
 		}
@@ -2980,11 +2981,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	/**
 	 * Is the patient a tardy payer, i. e. hasn't it paid all his bills?
-	 *
+	 * 
 	 * @param patient
 	 *            the patient to examine
 	 * @return true if the patient is a tardy payer, false otherwise
-	 *
+	 * 
 	 *         TODO this maybe makes the view slower
 	 */
 	private boolean isTardyPayer(Patient patient){
@@ -3038,7 +3039,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			creatingKons = true;
 			String initialText = text.getContentsAsXML();
 			Konsultation.neueKons(initialText);
-		}	else {
+		} else {
 			savedInitialKonsText = text.getContentsAsXML();
 		}
 	}
@@ -3544,7 +3545,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		/**
 		 * Finds the index of the given problem (array index, not row)
-		 *
+		 * 
 		 * @param problem
 		 * @return the index, or -1 if not found
 		 */
@@ -3566,7 +3567,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		/**
 		 * Returns the KTable index corresponding to our model index (mapping)
-		 *
+		 * 
 		 * @param rowIndex
 		 *            the index of a problem
 		 * @return the problem's index as a KTable index
@@ -3578,7 +3579,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		/**
 		 * Returns the model index corresponding to the KTable index (mapping)
-		 *
+		 * 
 		 * @param row
 		 *            the KTable index of a problem
 		 * @return the problem's index of the model
@@ -4186,7 +4187,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	/**
 	 * Renderer for Therapy cell. Shows the procedere of the problem. If there are prescriptions,
 	 * they are shown above the procedere, separated by a line.
-	 *
+	 * 
 	 * @author danlutz
 	 */
 	class ProblemsTableTherapyCellRenderer extends ProblemsTableCellRendererBase {
@@ -4424,7 +4425,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		/**
 		 * Implement In-Textfield navigation with the keys...
-		 *
+		 * 
 		 * @see de.kupzog.ktable.KTableCellEditor#onTraverse(org.eclipse.swt.events.TraverseEvent)
 		 */
 		@Override
@@ -4479,9 +4480,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	/**
 	 * Replacement for KTableCellEditorText2 We don't want to have the editor vertically centered
-	 *
+	 * 
 	 * @author danlutz
-	 *
+	 * 
 	 */
 	public class MyKTableCellEditorText2 extends BaseCellEditor {
 		protected Text m_Text;
@@ -4534,7 +4535,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		/**
 		 * Implement In-Textfield navigation with the keys...
-		 *
+		 * 
 		 * @see de.kupzog.ktable.KTableCellEditor#onTraverse(org.eclipse.swt.events.TraverseEvent)
 		 */
 		@Override
@@ -4627,7 +4628,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		/**
 		 * Implement In-Textfield navigation with the keys...
-		 *
+		 * 
 		 * @see de.kupzog.ktable.KTableCellEditor#onTraverse(org.eclipse.swt.events.TraverseEvent)
 		 */
 		@Override
@@ -4735,7 +4736,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	/**
 	 * Compare by status. ACTIVE problems are sorted before INACTIVE problems. Problems with same
 	 * status are sorted by date.
-	 *
+	 * 
 	 * @author danlutz
 	 */
 	static class StatusComparator implements Comparator<Problem> {
@@ -4808,7 +4809,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	/**
 	 * Check whether we own the lock
-	 *
+	 * 
 	 * @return true, if we own the lock, false else
 	 */
 	private boolean hasKonsTextLock(){
@@ -4817,7 +4818,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	/**
 	 * Handle locking of kons text to avoid access of multiple users/instances at the same time
-	 *
+	 * 
 	 * @author danlutz
 	 */
 	class KonsTextLock {
@@ -4910,7 +4911,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		/**
 		 * Check wheter we own the lock
-		 *
+		 * 
 		 * @return true if we own the lock, false otherwise
 		 */
 		private synchronized boolean isLocked(){
@@ -4982,7 +4983,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			/**
 			 * Return the Anwender owning this lock
-			 *
+			 * 
 			 * @return Anwender owning the lock, or null if not found
 			 */
 			Anwender getUser(){

@@ -1456,13 +1456,15 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		konsultationTextComposite.setLayout(new GridLayout(1, true));
 		text = new EnhancedTextField(konsultationTextComposite);
 		hXrefs = new Hashtable<String, IKonsExtension>();
-		List<IKonsExtension> xrefs =
-			Extensions.getClasses(ExtensionPointConstantsUi.KONSEXTENSION, "KonsExtension");
-		for (IKonsExtension x : xrefs) {
+		@SuppressWarnings("unchecked")
+		List<IKonsExtension> listKonsextensions =
+			Extensions.getClasses(
+				Extensions.getExtensions(ExtensionPointConstantsUi.KONSEXTENSION), "KonsExtension", //$NON-NLS-1$ //$NON-NLS-2$
+				false);
+		for (IKonsExtension x : listKonsextensions) {
 			String provider = x.connect(text);
 			hXrefs.put(provider, x);
 		}
-		text.setXrefHandlers(hXrefs);
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
 		text.getControl().addFocusListener(new FocusAdapter() {

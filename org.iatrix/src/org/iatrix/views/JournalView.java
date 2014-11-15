@@ -122,6 +122,7 @@ import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
 import ch.elexis.core.ui.contacts.views.PatientDetailView;
+import ch.elexis.core.ui.data.UiSticker;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.dialogs.MediDetailDialog;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
@@ -144,12 +145,12 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
-import ch.elexis.data.Person;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.RnStatus;
+import ch.elexis.data.Sticker;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.extdoc.util.Email;
 import ch.elexis.icpc.Encounter;
@@ -2738,18 +2739,17 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	private void setRemarkAndSticker(){
 		String text = "";
-		sticker = Images.IMG_MANN.getImage();
+		sticker = Images.IMG_EMPTY_TRANSPARENT.getImage();
 
 		if (actPatient != null) {
 			text = actPatient.getBemerkung();
 			ISticker et = actPatient.getSticker();
-			// TODO: HowTo get image of sticker??
-
-			if (actPatient.getGeschlecht().equals(Person.MALE)) {
-				sticker = Images.IMG_MANN.getImage();
-			} else {
-				sticker = Images.IMG_FRAU.getImage();
+			if (et != null) {
+				sticker = new UiSticker((Sticker) et).getImage();
 			}
+		}
+		if (sticker == null) {
+			sticker = Images.IMG_EMPTY_TRANSPARENT.getImage();
 		}
 
 		stickerLabel.setImage(sticker);

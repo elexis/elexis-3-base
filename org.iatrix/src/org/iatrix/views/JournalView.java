@@ -104,29 +104,41 @@ import org.iatrix.data.Problem;
 import org.iatrix.dialogs.ChooseKonsRevisionDialog;
 import org.iatrix.widgets.KonsListDisplay;
 
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.core.ui.actions.CodeSelectorHandler;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.data.util.Extensions;
+import ch.elexis.core.model.ISticker;
+import ch.elexis.core.text.model.Samdas;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
-import ch.elexis.core.ui.contacts.views.PatientDetailView2;
+import ch.elexis.core.ui.contacts.views.PatientDetailView;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.dialogs.MediDetailDialog;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.text.EnhancedTextField;
+import ch.elexis.core.ui.util.IKonsExtension;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.codesystems.DiagnosenView;
+import ch.elexis.core.ui.views.codesystems.LeistungenView;
+import ch.elexis.core.ui.views.rechnung.AccountView;
+import ch.elexis.core.ui.views.rechnung.BillSummary;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
-import ch.elexis.core.data.interfaces.IDiagnose;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -142,18 +154,6 @@ import ch.elexis.data.Verrechnet;
 import ch.elexis.extdoc.util.Email;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.Episode;
-import ch.elexis.core.ui.text.EnhancedTextField;
-import ch.elexis.core.model.ISticker;
-import ch.elexis.core.text.model.Samdas;
-import ch.elexis.core.data.util.Extensions;
-import ch.elexis.core.ui.util.IKonsExtension;
-import ch.elexis.core.ui.util.Log;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.core.ui.util.ViewMenus;
-import ch.elexis.core.ui.views.codesystems.DiagnosenView;
-import ch.elexis.core.ui.views.codesystems.LeistungenView;
-import ch.elexis.core.ui.views.rechnung.AccountView;
-import ch.elexis.core.ui.views.rechnung.BillSummary;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -722,7 +722,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			public void linkActivated(HyperlinkEvent e){
 				if (actPatient != null) {
 					try {
-						getViewSite().getPage().showView(PatientDetailView2.ID);
+						getViewSite().getPage().showView(PatientDetailView.ID);
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 						log.log("Fehler beim Öffnen von PatientDetailView: " + ex.getMessage(),

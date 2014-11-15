@@ -121,7 +121,7 @@ import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
-import ch.elexis.core.ui.contacts.views.PatientDetailView;
+import ch.elexis.core.ui.contacts.views.PatientDetailView2;
 import ch.elexis.core.ui.data.UiSticker;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.dialogs.MediDetailDialog;
@@ -725,7 +725,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			public void linkActivated(HyperlinkEvent e){
 				if (actPatient != null) {
 					try {
-						getViewSite().getPage().showView(PatientDetailView.ID);
+						getViewSite().getPage().showView(PatientDetailView2.ID);
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 						log.log("Fehler beim Öffnen von PatientDetailView: " + ex.getMessage(),

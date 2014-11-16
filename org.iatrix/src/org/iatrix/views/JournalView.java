@@ -2820,13 +2820,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		removeKonsTextLock();
 
 		actKons = k;
-		if (savedInitialKonsText != null) {
+		if (savedInitialKonsText != null && actKons != null) {
 			actKons.updateEintrag(savedInitialKonsText, true);
 			savedInitialKonsText = null;
 		}
 		creatingKons = false;
 
-		if (savedInitialKonsText != null && actKons != null) {
+		if (actKons != null) {
 			// create new konsTextLock
 			createKonsTextLock();
 

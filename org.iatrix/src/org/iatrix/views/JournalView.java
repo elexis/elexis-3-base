@@ -100,6 +100,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.iatrix.Iatrix;
 import org.iatrix.actions.IatrixEventHelper;
+import org.iatrix.data.KonsTextLock;
 import org.iatrix.data.Problem;
 import org.iatrix.dialogs.ChooseKonsRevisionDialog;
 import org.iatrix.widgets.KonsListDisplay;
@@ -156,8 +157,6 @@ import ch.elexis.extdoc.util.Email;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.Episode;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.JdbcLink;
-import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
@@ -4816,185 +4815,5 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 */
 	private boolean hasKonsTextLock(){
 		return (konsTextLock != null && konsTextLock.isLocked());
-	}
-
-	/**
-	 * Handle locking of kons text to avoid access of multiple users/instances at the same time
-	 * 
-	 * @author danlutz
-	 */
-	class KonsTextLock {
-		// unique value for this instance
-		String identifier = null;
-		String konsultationId = null;
-		String userId = null;
-		String key = null;
-
-		// constructor
-		KonsTextLock(Konsultation konsultation, Anwender user){
-			identifier = StringTool.unique(ID);
-
-			konsultationId = konsultation.getId();
-			userId = user.getId();
-
-			// create key name
-			StringBuffer sb = new StringBuffer();
-			sb.append(ID).append("_").append("konslock").append("_").append(konsultationId);
-
-			key = sb.toString();
-		}
-
-		Value getLockValue(){
-			String lockValue =
-				PersistentObject.getConnection().queryString(
-					"SELECT wert from CONFIG WHERE param = " + JdbcLink.wrap(key));
-			return new Value(lockValue);
-		}
-
-		// taken from PersistentObject
-		// return true if lock is ok, false else
-		// may also be called to update a lock
-		// a lock older than 2 hours is considered as outdated
-		// therefore, a lock must regularly be updated
-		private synchronized boolean lock(){
-			Stm stm = PersistentObject.getConnection().getStatement();
-
-			long now = System.currentTimeMillis();
-			// Gibt es das angeforderte Lock schon?
-			String oldlock =
-				stm.queryString("SELECT wert FROM CONFIG WHERE param=" + JdbcLink.wrap(key));
-			if (!StringTool.isNothing(oldlock)) {
-				// Ja, wie alt ist es?
-				Value lockValue = new Value(oldlock);
-				String lockIdentifier = lockValue.getIdentifier();
-				if (lockIdentifier != null && lockIdentifier.equals(identifier)) {
-					// it's our own lock. update timestamp
-					lockValue = new Value(userId, identifier);
-					// System.err.println("DEBUG:   lock() update: time = " +
-					// lockValue.getTimestamp());
-					String lockstring = lockValue.getLockString();
-					StringBuilder sb = new StringBuilder();
-					sb.append("UPDATE CONFIG SET wert = ").append("'" + lockstring + "'")
-						.append(" WHERE param = ").append(JdbcLink.wrap(key));
-					stm.exec(sb.toString());
-					return true;
-				}
-
-				long locktime = lockValue.getTimestamp();
-				long age = now - locktime;
-				if (age > 2 * 1000L * 3600L) { // Älter als zwei Stunden -> Löschen
-					// System.err.println("DEBUG:   lock() giving up: age = " + age);
-					stm.exec("DELETE FROM CONFIG WHERE param=" + JdbcLink.wrap(key));
-				} else {
-					PersistentObject.getConnection().releaseStatement(stm);
-					return false;
-				}
-			}
-			// Neues Lock erstellen
-			Value lockValue = new Value(userId, identifier);
-			// System.err.println("DEBUG:   lock() insert: time = " + lockValue.getTimestamp());
-			String lockstring = lockValue.getLockString();
-			StringBuilder sb = new StringBuilder();
-			sb.append("INSERT INTO CONFIG (param,wert) VALUES (").append(JdbcLink.wrap(key))
-				.append(",").append("'").append(lockstring).append("')");
-			stm.exec(sb.toString());
-			// Prüfen, ob wir es wirklich haben, oder ob doch jemand anders schneller war.
-			String check =
-				stm.queryString("SELECT wert FROM CONFIG WHERE param=" + JdbcLink.wrap(key));
-			if (check == null || !check.equals(lockstring)) {
-				// lock doesn't exist or has wrong value
-				PersistentObject.getConnection().releaseStatement(stm);
-				return false;
-			}
-
-			PersistentObject.getConnection().releaseStatement(stm);
-			return true;
-		}
-
-		/**
-		 * Check wheter we own the lock
-		 * 
-		 * @return true if we own the lock, false otherwise
-		 */
-		private synchronized boolean isLocked(){
-			Value lockValue = getLockValue();
-			return (identifier.equals(lockValue.getIdentifier()));
-		}
-
-		// taken from PersistentObject
-		private synchronized boolean unlock(){
-			String lock =
-				PersistentObject.getConnection().queryString(
-					"SELECT wert from CONFIG WHERE param=" + JdbcLink.wrap(key));
-			if (StringTool.isNothing(lock)) {
-				return false;
-			}
-
-			Value lockValue = new Value(lock);
-			String lockIdentifier = lockValue.getIdentifier();
-			if (lockIdentifier != null && lockIdentifier.equals(identifier)) {
-				PersistentObject.getConnection().exec(
-					"DELETE FROM CONFIG WHERE param=" + JdbcLink.wrap(key));
-				return true;
-			}
-
-			return false;
-		}
-
-		class Value {
-			private long timestamp = 0;
-			private String userId = null;
-			private String identifier = null;
-
-			Value(String lockValue){
-				// format: <timestamp>#<userid>#<identifier>
-
-				if (lockValue != null) {
-					String[] tokens = lockValue.split("#");
-					if (tokens.length == 3) {
-						try {
-							timestamp = Long.parseLong(tokens[0]);
-						} catch (NumberFormatException ex) {
-							return;
-						}
-
-						userId = tokens[1];
-						identifier = tokens[2];
-					}
-				}
-			}
-
-			Value(String userId, String identifier){
-				timestamp = System.currentTimeMillis();
-
-				this.userId = userId;
-				this.identifier = identifier;
-			}
-
-			String getLockString(){
-				StringBuffer sb = new StringBuffer();
-				sb.append(new Long(timestamp).toString()).append("#").append(userId).append("#")
-					.append(identifier);
-
-				return sb.toString();
-			}
-
-			long getTimestamp(){
-				return timestamp;
-			}
-
-			/**
-			 * Return the Anwender owning this lock
-			 * 
-			 * @return Anwender owning the lock, or null if not found
-			 */
-			Anwender getUser(){
-				return Anwender.load(userId);
-			}
-
-			String getIdentifier(){
-				return identifier;
-			}
-		}
 	}
 }

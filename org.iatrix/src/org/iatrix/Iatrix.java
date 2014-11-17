@@ -39,4 +39,12 @@ public class Iatrix {
 	// (false)
 	public static final String CFG_CODE_SELECTION_AUTOCLOSE = "org.iatrix/code_selection_autoclose";
 	public static final boolean CFG_CODE_SELECTION_AUTOCLOSE_DEFAULT = false;
+	
+	// Use konstext locking defaults to true
+	public static final String CFG_USE_KONSTEXT_LOCKING = "org.iatrix/use_konstext_locking";
+	public static final boolean CFG_USE_KONSTEXT_LOCKING_DEFAULT = true;
+	
+	// Use konstext tracing defaults to false
+	public static final String CFG_USE_KONSTEXT_TRACE = "org.iatrix/use_konstext_trace";
+	public static final boolean CFG_USE_KONSTEXT_TRACE_DEFAULT = false;
 }

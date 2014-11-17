@@ -44,6 +44,11 @@ public class KGIatrixPreferences extends FieldEditorPreferencePage implements
 		addField(new BooleanFieldEditor(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
 			"Auswahl Leistungen/Diagnosen: Fenster nach Auswahl schliessen [U]",
 			getFieldEditorParent()));
+		addField(new BooleanFieldEditor(Iatrix.CFG_USE_KONSTEXT_LOCKING,
+			"Globales Sperren des Konsultationstext auf allen Stationen",
+			getFieldEditorParent()));
+		addField(new BooleanFieldEditor(Iatrix.CFG_USE_KONSTEXT_TRACE,
+			"Aufzeichnen der Sperren (nur für Fehlersuche)", getFieldEditorParent()));
 	}
 	
 	public void init(final IWorkbench workbench){
@@ -59,6 +64,16 @@ public class KGIatrixPreferences extends FieldEditorPreferencePage implements
 		if (value == null) {
 			CoreHub.userCfg.set(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
 				Iatrix.CFG_CODE_SELECTION_AUTOCLOSE_DEFAULT);
+		}
+		value = CoreHub.userCfg.get(Iatrix.CFG_USE_KONSTEXT_LOCKING, null);
+		if (value == null) {
+			CoreHub.userCfg.set(Iatrix.CFG_USE_KONSTEXT_LOCKING,
+				Iatrix.CFG_USE_KONSTEXT_LOCKING_DEFAULT);
+		}
+		value = CoreHub.userCfg.get(Iatrix.CFG_USE_KONSTEXT_TRACE, null);
+		if (value == null) {
+			CoreHub.userCfg.set(Iatrix.CFG_USE_KONSTEXT_TRACE,
+				Iatrix.CFG_USE_KONSTEXT_TRACE_DEFAULT);
 		}
 	}
 	

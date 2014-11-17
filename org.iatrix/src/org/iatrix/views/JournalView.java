@@ -1249,7 +1249,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	private void createKonsultationArea(Composite parent){
 		// parent has FillLayout
-
 		Composite konsultationComposite = tk.createComposite(parent);
 		konsultationComposite.setLayout(new GridLayout(1, true));
 
@@ -2436,7 +2435,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 
 		heartbeatActive = true;
-		Display.getDefault().asyncExec(new Runnable() {
+		UiDesk.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run(){
 				heartbeatProblem();

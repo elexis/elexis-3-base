@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
@@ -118,7 +119,7 @@ import ch.rgw.tools.StringTool;
  * This allows to configure the width of each column
  * <p>
  * * Create an underlined line for lines starting and ending with '_'
- * 
+ *
  * <p>
  * * Since version 3.1 it is possible to open several documents concurrently.
  * <p>
@@ -145,7 +146,7 @@ import ch.rgw.tools.StringTool;
  * <p>
  * * A user can save the document under another name. In this case Elexis is unaware of the changes
  * in that document and will ignore any modifications made there.
- * 
+ *
  * @author Antoine Kaufmann & Niklaus Giger
  *
  */
@@ -319,6 +320,7 @@ public class TextPlugin implements ITextPlugin {
 	private static Path tempPath = null;
 	private final Logger logger = LoggerFactory.getLogger(pluginID);
 	private Boolean only_one_doc_open = true;
+	private static Integer file_counter = 0;
 
 	/**
 	 * Creates a human readable filename inside our temp directory, containing the name of the
@@ -331,8 +333,12 @@ public class TextPlugin implements ITextPlugin {
 		StringBuffer sb = new StringBuffer();
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
 		sb.append(actPatient.getVorname() + "_");
+		sb.append(actPatient.getName() + "_");
 		Brief actBrief = (Brief) ElexisEventDispatcher.getSelected(Brief.class);
-		sb.append(actBrief.getLabel()); // contains datum
+		if (actBrief != null)
+			sb.append(actBrief.getLabel()); // contains datum
+		file_counter += 1; // append a unique part
+		sb.append("_" + file_counter);
 		return sb.toString().replaceAll("[^0-9A-Za-z]", "_");
 	}
 
@@ -372,8 +378,8 @@ public class TextPlugin implements ITextPlugin {
 			} else {
 				openFiles.remove(path);
 			}
-			logger.info("openEditor: updated " + openFiles.size() + " filenames add " + add + ": "
-				+ path.toString());
+			logger.info("updateOpenFiles: updated " + openFiles.size() + " filenames add " + add
+				+ ": " + path.toString());
 		}
 		if (openFiles.size() == 0) {
 			filenames_label.setText(NoFileOpen);
@@ -436,7 +442,9 @@ public class TextPlugin implements ITextPlugin {
 		if (printIt)
 			file.setWritable(false);
 		file.deleteOnExit(); // TODO: can this lead to problems when the document is still open in LibreOffice?
-		final Brief actBrief = (Brief) ElexisEventDispatcher.getSelected(Brief.class);
+		try {
+			logger.error("runOpenoffice: file is " + path + " " + Files.size(path) + " bytes.");
+		} catch (IOException e1) {}
 		String argstr = "";
 		odtSync();
 		odt.close();
@@ -476,16 +484,17 @@ public class TextPlugin implements ITextPlugin {
 									logger.info("runOpenoffice: printing done. exitValue "
 										+ editor_process.exitValue() + " done " + path);
 								} else {
+									logger.info("runOpenoffice: exitValue "
+										+ editor_process.exitValue() + " file is " + path + " "
+										+ Files.size(path) + " bytes.");
 									odt =
 										(OdfTextDocument) OdfTextDocument.loadDocument(path
 											.toString());
-									actBrief.save(odtToByteArray(odt), getMimeType());
-									logger.info("runOpenoffice: exitValue "
-										+ editor_process.exitValue() + " done. actBrief.getId "
-										+ actBrief.getId() + " " + path);
+									odtToByteArray(odt);
 								}
 								File f = new File(path.toString());
 								f.delete();
+								logger.info("runOpenoffice: completed successfully");
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -653,7 +662,6 @@ public class TextPlugin implements ITextPlugin {
 
 	@Override
 	public byte[] storeToByteArray(){
-		logger.info("storeToByteArray: " + " file: " + file + " odt null " + (odt == null));
 		if (file == null || odt == null) {
 			return null;
 		}
@@ -672,7 +680,8 @@ public class TextPlugin implements ITextPlugin {
 		byte[] bytes = odtToByteArray(odt);
 		if (bytes != null) {
 			openEditor();
-			logger.info("storeToByteArray: finishing " + bytes.length + " bytes after open editor");
+			logger.info("storeToByteArray: " + file.getAbsolutePath() + " returns " + bytes.length
+				+ " bytes");
 		}
 		return bytes;
 	}
@@ -685,7 +694,7 @@ public class TextPlugin implements ITextPlugin {
 	}
 
 	private void ensureTempDirectory(){
-		if (tempPath == null)
+		if (tempPath == null || !Files.isWritable(tempPath))
 			try {
 				tempPath = java.nio.file.Files.createTempDirectory("hilotec_odf");
 				File file = new File(tempPath.toString());

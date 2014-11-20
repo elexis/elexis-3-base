@@ -5,7 +5,7 @@
   <artifactId>elexis-3-base</artifactId>
   <version>3.0.0-SNAPSHOT</version>
   <properties>
-    <tycho-version>0.20.0</tycho-version>
+    <tycho-version>0.21.0</tycho-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tycho-extras.version>${tycho-version}</tycho-extras.version>
     <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
@@ -199,13 +199,13 @@
 
   <!-- our test modules -->
   <module>at.medevit.atc_codes.test</module>
-  <module>at.medevit.elexis.loinc_test</module>
+  <module>net.medshare.connector.aerztekasse_test</module>
+  <module>ch.pharmed.phmprescriber_test</module>
   <module>ch.elexis.base.ch.arzttarife.test</module>
   <module>ch.elexis.externe_dokumente.tests</module>
+  <module>at.medevit.elexis.loinc_test</module>
   <module>ch.elexis.laborimport.viollier.v2_test</module>
-  <module>ch.pharmed.phmprescriber_test</module>
   <module>com.hilotec.elexis.messwerte.v2_test</module>
-  <module>net.medshare.connector.aerztekasse_test</module>
 </modules>
 <repositories>
   <repository>
@@ -356,7 +356,7 @@
   <pluginManagement>
     <plugins>
       <plugin>
-        <!-- we want to ensure that the bin directory created by the Eclipse gets cleaned, too. 
+        <!-- we want to ensure that the bin directory created by the Eclipse gets cleaned, too.
 Without it Maven would put two versions of each class file into the jars
 -->
         <artifactId>maven-clean-plugin </artifactId>

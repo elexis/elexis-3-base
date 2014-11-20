@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ui.PlatformUI;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,9 +21,28 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Labor;
 
 public class LoincCodeServiceTest {
-	
+
 	private static Kontakt labor1;
 	private static Kontakt labor2;
+
+	@After
+	public void teardown() throws Exception{
+		PlatformUI.getWorkbench().saveAllEditors(false); // do not confirm saving
+		PlatformUI.getWorkbench().saveAll(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
+		if (PlatformUI.getWorkbench() != null) // null if run from Eclipse-IDE
+		{
+			// needed if run as surefire test from using mvn install
+			try {
+
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllPerspectives(false, true);
+			} catch (Exception e) {
+
+				System.out.println(e.getMessage());
+			}
+
+
+		}
+	}
 
 	@BeforeClass
 	public static void before() throws IOException{
@@ -30,11 +51,11 @@ public class LoincCodeServiceTest {
 		service.importFromCsv(loadTop2000(), getFieldMapping());
 		List<LoincCode> codes = service.getAllCodes();
 		assertTrue(codes.size() > 0);
-		
+
 		labor1 = new Labor("Labor 1", "Labor test one");
 		labor2 = new Labor("Labor 2", "Labor test two");
 	}
-	
+
 	@AfterClass
 	public static void after(){
 		LoincCodeService service = new LoincCodeService();
@@ -43,11 +64,11 @@ public class LoincCodeServiceTest {
 		for (LoincCode loincCode : codes) {
 			loincCode.delete();
 		}
-		
+
 		labor1.delete();
 		labor2.delete();
 	}
-	
+
 	@Test
 	public void testGetByCode() throws IOException{
 		LoincCodeService service = new LoincCodeService();
@@ -63,15 +84,15 @@ public class LoincCodeServiceTest {
 	@Test
 	public void testGetAll(){
 		LoincCodeService service = new LoincCodeService();
-		
+
 		List<LoincCode> all = service.getAllCodes();
 		assertTrue((all.size() > 1500) && (all.size() < 2500));
 	}
-	
+
 	@Test
 	public void testUpdateTop2000(){
 		LoincCodeService service = new LoincCodeService();
-		
+
 		List<LoincCode> all = service.getAllCodes();
 		for (LoincCode loincCode : all) {
 			loincCode.delete();
@@ -87,7 +108,7 @@ public class LoincCodeServiceTest {
 
 		LoincCode.setTop2000Version("0.0.0");
 		service.updateTop2000();
-		
+
 		all = service.getAllCodes();
 		assertTrue((all.size() > 1500) && (all.size() < 2500));
 	}
@@ -96,7 +117,7 @@ public class LoincCodeServiceTest {
 		return LoincCodeServiceTest.class
 			.getResourceAsStream("/rsc/TOP_2000_COMMON_LAB_RESULTS_SI_LOINC_V1-1.CSV");
 	}
-	
+
 	private static Map<Integer, String> getFieldMapping(){
 		HashMap<Integer, String> ret = new HashMap<Integer, String>();
 		ret.put(0, LoincCode.FLD_CODE);

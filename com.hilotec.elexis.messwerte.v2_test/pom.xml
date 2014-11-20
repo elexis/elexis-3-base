@@ -22,18 +22,8 @@
           <showEclipseLog>true</showEclipseLog>
           <dependencies>
             <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>ch.elexis.core.scripting.beanshell</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>com.hilotec.elexis.messwerte.v2</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>ch.elexis.core.application</artifactId>
+              <type>eclipse-feature</type>
+              <artifactId>ch.elexis.core.application.feature</artifactId>
               <version>0.0.0</version>
             </dependency>
           </dependencies>

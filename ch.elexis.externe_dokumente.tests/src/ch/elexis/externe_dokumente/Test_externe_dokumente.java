@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.elexis.core.data.activator.CoreHub;
@@ -28,25 +28,25 @@ public class Test_externe_dokumente {
 	private static Patient fritz; // Hat kein Geburtsdatum
 	private static Patient anneCecile;
 	private static Patient meier; // Hat weder Vornamen noch Geburtsdatum
-	
+
 	static class PathToFirstAndFamily {
 		public String path;
 		public String firstName;
 		public String familyName;
-		
+
 		PathToFirstAndFamily(String pat, String family, String first){
 			path = pat;
 			firstName = first;
 			familyName = family;
 		}
 	}
-	
+
 	static class PatOldNew {
 		public Patient p;
 		public String alt;
 		public String neu;
 		public int nrFiles;
-		
+
 		PatOldNew(Patient pat, String old, String neuer, int nrF){
 			p = pat;
 			alt = old;
@@ -54,16 +54,16 @@ public class Test_externe_dokumente {
 			nrFiles = nrF;
 		}
 	}
-	
+
 	PatOldNew[] validExamples;
 	static String testRoot;
 	static String base_1;
 	static String base_2;
 	static String base_3;
 	static String saved[];
-	
+
 	private static void createFiles(String[] names){
-		
+
 		for (int j = 0; j < names.length; j++) {
 			File file = new File(names[j]);
 			try {
@@ -76,6 +76,25 @@ public class Test_externe_dokumente {
 			}
 			assertTrue(file.exists());
 			file.deleteOnExit();
+		}
+	}
+
+	@After
+	public void teardown() throws Exception{
+		PlatformUI.getWorkbench().saveAllEditors(false); // do not confirm saving
+		PlatformUI.getWorkbench().saveAll(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
+		if (PlatformUI.getWorkbench() != null) // null if run from Eclipse-IDE
+		{
+			// needed if run as surefire test from using mvn install
+			try {
+
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllPerspectives(false, true);
+			} catch (Exception e) {
+
+				System.out.println(e.getMessage());
+			}
+
+
 		}
 	}
 
@@ -107,9 +126,9 @@ public class Test_externe_dokumente {
 		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD2, saved[1]);
 		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD3, saved[2]);
 		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD4, saved[3]);
-		
+
 	}
-	
+
 	@Before
 	public void setup(){
 		String testPfad_1 = testRoot + "/1";
@@ -125,7 +144,7 @@ public class Test_externe_dokumente {
 		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD2, testPfad_2);
 		CoreHub.localCfg.set(PreferenceConstants.BASIS_PFAD3, testPfad_3);
 		CoreHub.userCfg.set(PreferenceConstants.SELECTED_PATHS, "7");
-		
+
 		PreferenceConstants.PathElement[] prefElems = PreferenceConstants.getPrefenceElements();
 		base_1 = prefElems[0].baseDir;
 		base_2 = prefElems[1].baseDir;
@@ -162,7 +181,7 @@ public class Test_externe_dokumente {
 			System.out.println(ex.toString());
 		}
 	}
-	
+
 	@After
 	public void tearDown(){
 		for (int j = 0; j < validExamples.length; j++) {
@@ -193,7 +212,7 @@ public class Test_externe_dokumente {
 			Assert.assertEquals("path and family name should match", t.familyName, family);
 		}
 	}
-	
+
 	@Test
 	public void testSplitInalid(){
 		PathToFirstAndFamily[] invalid =
@@ -214,7 +233,7 @@ public class Test_externe_dokumente {
 			assert (first.equals(t.familyName));
 		}
 	}
-	
+
 	@Test
 	public void testMoveIntoSubDirWeirdNames(){
 		String weird = "Zyz------------------------------------Begrenzer";
@@ -237,7 +256,7 @@ public class Test_externe_dokumente {
 			File neu = new File(validExamples[j].neu);
 			if (neu.exists())
 				assertTrue(neu.delete());
-			
+
 			// test where it should be moved to
 			MatchPatientToPath m = new MatchPatientToPath(validExamples[j].p);
 			String should =
@@ -265,7 +284,7 @@ public class Test_externe_dokumente {
 		while (iterator.hasNext()) {
 			MatchPatientToPath.MoveIntoSubDir(iterator.next().getAbsolutePath());
 		}
-		
+
 		for (int j = 0; j < validExamples.length; j++) {
 			File neu = new File(validExamples[j].neu);
 			if (!neu.exists())
@@ -281,7 +300,7 @@ public class Test_externe_dokumente {
 			assertEquals(tst.size(), validExamples[j].nrFiles);
 		}
 	}
-	
+
 	@Test
 	public void testMatchesAllFilesInSubDir(){
 		String[] wernerFiles =
@@ -290,7 +309,7 @@ public class Test_externe_dokumente {
 				base_2 + "/GiezenWerner 1980-12-30/Meier Fritz   TestDatei.xx"
 			};
 		createFiles(wernerFiles);
-		
+
 		Object allFiles = MatchPatientToPath.getFilesForPatient(werner, null);
 		assertEquals("class java.util.ArrayList", allFiles.getClass().toString());
 		ArrayList<String> tst = (ArrayList<String>) allFiles;
@@ -311,7 +330,7 @@ public class Test_externe_dokumente {
 			assertTrue("Did not find file " + name, found);
 		}
 	}
-	
+
 	@Test
 	public void testPatientenMitGleichemNamenUndVornamen(){
 		Patient peter1 = new Patient("Mustermann", "Peter", "04.01.1981", "m");
@@ -320,7 +339,7 @@ public class Test_externe_dokumente {
 			base_2 + "/MusterPeter Brief wegen Vater", base_2 + "/MusterPeter Brief wegen Sohn"
 		};
 		createFiles(peterFiles);
-		
+
 		// Test für Peter1
 		Object allFiles = MatchPatientToPath.getFilesForPatient(peter1, null);
 		assertEquals("class java.util.ArrayList", allFiles.getClass().toString());
@@ -329,7 +348,7 @@ public class Test_externe_dokumente {
 		assertEquals("Fuer Peter1 müssen wir zwei Dateien finden", 2, tst.size());
 		List<File> oldFiles = MatchPatientToPath.getAllOldConventionFiles();
 		assertEquals("Fuer Peter1 müssen wir zwei alte Dateien finden", 2, oldFiles.size());
-		
+
 		// Test für Peter2
 		allFiles = MatchPatientToPath.getFilesForPatient(peter2, null);
 		assertEquals("class java.util.ArrayList", allFiles.getClass().toString());
@@ -337,7 +356,7 @@ public class Test_externe_dokumente {
 		assertEquals("Fuer Peter1 müssen wir zwei Dateien finden", 2, tst.size());
 		oldFiles = MatchPatientToPath.getAllOldConventionFiles();
 		assertEquals("Fuer Peter1 müssen wir zwei alte Dateien finden", oldFiles.size(), 2);
-		
+
 		// Jetzt versuchen wir sie in ein Unterverzeichnis zu schieben
 		// Dies muss fehlschlagen, da es mehrere Möglichkeiten gibt
 		MatchPatientToPath m = new MatchPatientToPath(peter1);
@@ -354,9 +373,9 @@ public class Test_externe_dokumente {
 		oldFiles = MatchPatientToPath.getAllOldConventionFiles();
 		assertEquals("Fuer Peter1 müssen wir immer noch zwei alte Dateien finden", 2,
 			oldFiles.size());
-		
+
 	}
-	
+
 	@Test
 	public void keineDateienVorhanden(){
 		Patient ohneDateien = new Patient("Muster", "Albert", "30.12.1972", "m");

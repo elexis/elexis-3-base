@@ -90,12 +90,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.data.util.PlatformHelper;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Patient;
@@ -318,6 +318,7 @@ public class TextPlugin implements ITextPlugin {
 	private static final String NoFileOpen = "Keine Datei geöffnet";
 	private static Path tempPath = null;
 	private final Logger logger = LoggerFactory.getLogger(pluginID);
+	private Boolean only_one_doc_open = true;
 
 	/**
 	 * Creates a human readable filename inside our temp directory, containing the name of the
@@ -660,6 +661,13 @@ public class TextPlugin implements ITextPlugin {
 			// We ignore save commands which result by the activation of the view
 			return null;
 		}
+		only_one_doc_open = CoreHub.localCfg.get(Preferences.P_ONLY_ONE_OPEN, true);
+		if (only_one_doc_open && openFiles.size() > 0) {
+			logger.info("storeToByteArray: only_one_doc_open, and already " + openFiles.size()
+				+ " open file(s)");
+			showOnlyOneOpenFileAllowed();
+			return null;
+		}
 
 		byte[] bytes = odtToByteArray(odt);
 		if (bytes != null) {
@@ -688,6 +696,11 @@ public class TextPlugin implements ITextPlugin {
 			}
 	}
 
+	public void showOnlyOneOpenFileAllowed(){
+		SWTHelper.showError("Nur eine offene Datei erlaubt",
+			"Gemäss Einstellungen darf nur eine Datei offen sein!");
+	}
+
 	@Override
 	public boolean loadFromStream(InputStream is, boolean asTemplate){
 		logger.info("loadFromStream: " + (file != null));
@@ -700,6 +713,13 @@ public class TextPlugin implements ITextPlugin {
 				// We ignore save commands which result by the activation of the view
 				return false;
 			}
+			only_one_doc_open = CoreHub.localCfg.get(Preferences.P_ONLY_ONE_OPEN, true);
+			if (only_one_doc_open && openFiles.size() > 0) {
+				logger.info("loadFromStream: only_one_doc_open, and already " + openFiles.size()
+					+ " open file(s)");
+				showOnlyOneOpenFileAllowed();
+				return false;
+			}
 			file.deleteOnExit(); // TODO: can this lead to problems when the document is still open in LibreOffice?
 			odt = (OdfTextDocument) OdfDocument.loadDocument(is);
 			odt.save(file);
@@ -707,6 +727,9 @@ public class TextPlugin implements ITextPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.info("loadFromStream: loading document failed ");
+			SWTHelper.alert("Fehler beim Laden",
+				"Das Dokument konnte nicht geladen werden. Meldung war: " + e.getMessage());
+			file = null;
 			return false;
 		}
 

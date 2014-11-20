@@ -12,6 +12,7 @@
 
 package com.hilotec.elexis.opendocument;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.swt.SWT;
@@ -28,6 +29,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String P_EDITOR = BASE + "editorpath";
 	public static final String P_EDITARGS = BASE + "editargs";
 	public static final String P_PRINTARGS = BASE + "printargs";
+	public static final String P_ONLY_ONE_OPEN = BASE + "only_one_open";
 
 	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.localCfg);
 
@@ -42,8 +44,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		addField(new FileFieldEditor(P_EDITOR, "OpenDocument Editor", getFieldEditorParent()));
 		addField(new MultilineFieldEditor(P_EDITARGS, "Argumente zum Editieren", 5, SWT.V_SCROLL,
 			true, getFieldEditorParent()));
-		addField(new MultilineFieldEditor(P_PRINTARGS, "Argumente zum Drucken", 5, SWT.V_SCROLL,
-			true, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(P_ONLY_ONE_OPEN, "Nur eine offene Datei erlauben",
+			getFieldEditorParent()));
 	}
 
 	@Override

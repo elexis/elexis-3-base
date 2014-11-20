@@ -40,20 +40,33 @@ while [ 1 ]
 do
   sleep 0.3
   nrWaits=$[ $nrWaits + 1 ]
-  timeout 1 fuser --silent $watchFile 
+  # cannot use --silent on MacOSX
+  timeout 1 fuser  $watchFile
   res=$?
   if [ "$nrWaits" -gt "$maxWait" ] || [ $res -eq 0 ] ; then break ; fi
 done
 log2file "After $nrWaits sleeps $watchFile is open"
 
 # wait for the lockfile to disappear
+function waitForFile2vanish() {
+	while true
+	do
+	  # don't use --silent. Not supported on MacOSX
+	  timeout 1 fuser $watchFile
+	  if [ $? -gt 0 ] ; then break ; fi
+	  sleep 1
+	done
+	log2file "$watchFile went away"
+}
+
 while true
 do
-  timeout 1 fuser --silent $watchFile
-  if [ $? -gt 0 ] ; then break ; fi
-  sleep 1
+	waitForFile2vanish
+	sleep 1 # and a second time to be sure
+	waitForFile2vanish
+	timeout 1 fuser --silent $watchFile
+	if [ $? -gt 0 ] ; then break ; fi
 done
-log2file "$watchFile went away"
 
 exit 0
 # should we use --norestore and/or -o

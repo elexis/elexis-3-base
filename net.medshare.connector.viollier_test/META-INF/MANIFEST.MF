@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test Fragment for Viollier Connector
+Bundle-SymbolicName: net.medshare.connector.viollier_test
+Bundle-Version: 3.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: medshare.net
+Fragment-Host: net.medshare.connector.viollier;bundle-version="3.0.0.qualifier"
+Require-Bundle: org.junit
+Export-Package: net.medshare.connector.viollier_test

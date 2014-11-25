@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="net.medshare.connector.viollier.ViollierConnectorPreferencePage"
+            id="net.medshare.connector.viollier"
+            name="Viollier Connector">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:viollierConnector">
+         <command
+               commandId="net.medshare.connector.viollier.cmd.createOrder"
+               icon="rsc/viollier1.png"
+               label="Neuer Auftrag"
+               style="push"
+               tooltip="Neuen Auftrag Erstellen">
+         </command>
+         <command
+               commandId="net.medshare.connector.viollier.cmd.orderState"
+               icon="rsc/viollier3.png"
+               label="Alle Aufträge"
+               style="push"
+               tooltip="Alle Aufträge">
+         </command>
+         <command
+               commandId="net.medshare.connector.viollier.cmd.repeatOrder"
+               icon="rsc/viollier2.png"
+               label="Auftrag wiederholen"
+               style="push"
+               tooltip="Auftrag wiederholen">
+         </command>
+         <command
+               commandId="net.medshare.connector.viollier.cmd.diagnoseQueryDoctor"
+               icon="rsc/viollier4.png"
+               label="Alle Befunde"
+               style="push"
+               tooltip="Alle Befunde">
+         </command>
+         <command
+               commandId="net.medshare.connector.viollier.cmd.diagnoseQueryOrder"
+               icon="rsc/viollier5.png"
+               label="Befund Auftrag"
+               style="push"
+               tooltip="Befund Auftrag">
+         </command>
+         <command
+               commandId="net.medshare.connector.viollier.cmd.diagnoseQueryPatient"
+               icon="rsc/viollier6.png"
+               label="Befund Patient"
+               style="push"
+               tooltip="Befund Patient">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.Labor">
+         <command
+               commandId="net.medshare.connector.viollier.cmd.viollierConnector"
+               icon="rsc/viollier16.png"
+               id="viollierConnector"
+               style="pulldown"
+               tooltip="ViollierConnect">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="net.medshare.connector.viollier.cmd.viollierConnector"
+            name="viollierConnector">
+      </command>
+      <command
+            id="net.medshare.connector.viollier.cmd.createOrder"
+            name="createOrder">
+      </command>
+      <command
+            id="net.medshare.connector.viollier.cmd.orderState"
+            name="orderState">
+      </command>
+      <command
+            id="net.medshare.connector.viollier.cmd.repeatOrder"
+            name="repeatOrder">
+      </command>
+      <command
+            id="net.medshare.connector.viollier.cmd.diagnoseQueryDoctor"
+            name="diagnoseQueryDoctor">
+      </command>
+      <command
+            id="net.medshare.connector.viollier.cmd.diagnoseQueryOrder"
+            name="diagnoseQueryOrder">
+      </command>
+      <command
+            id="net.medshare.connector.viollier.cmd.diagnoseQueryPatient"
+            name="diagnoseQueryPatient">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="net.medshare.connector.viollier.handlers.ViollierConnectorHandler"
+            commandId="net.medshare.connector.viollier.cmd.viollierConnector">
+      </handler>
+      <handler
+            class="net.medshare.connector.viollier.handlers.CreateOrderHandler"
+            commandId="net.medshare.connector.viollier.cmd.createOrder">
+      </handler>
+      <handler
+            class="net.medshare.connector.viollier.handlers.OrderStateHandler"
+            commandId="net.medshare.connector.viollier.cmd.orderState">
+      </handler>
+      <handler
+            class="net.medshare.connector.viollier.handlers.RepeatOrderHandler"
+            commandId="net.medshare.connector.viollier.cmd.repeatOrder">
+      </handler>
+      <handler
+            class="net.medshare.connector.viollier.handlers.DiagnoseQueryDoctorHandler"
+            commandId="net.medshare.connector.viollier.cmd.diagnoseQueryDoctor">
+      </handler>
+      <handler
+            class="net.medshare.connector.viollier.handlers.DiagnoseQueryOrderHandler"
+            commandId="net.medshare.connector.viollier.cmd.diagnoseQueryOrder">
+      </handler>
+      <handler
+            class="net.medshare.connector.viollier.handlers.DiagnoseQueryPatientHandler"
+            commandId="net.medshare.connector.viollier.cmd.diagnoseQueryPatient">
+      </handler>
+   </extension>
+
+</plugin>

@@ -196,6 +196,8 @@
   <module>ch.docbox.elexis.feature</module>
   <module>net.medshare.connector.aerztekasse</module>
   <module>net.medshare.connector.aerztekasse.feature</module>
+  <module>net.medshare.connector.viollier</module>
+  <module>net.medshare.connector.viollier.feature</module>
 
   <!-- our test modules -->
   <module>at.medevit.atc_codes.test</module>

@@ -399,6 +399,19 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		setExtInfoStoredObjectByKey(EXTINFO_VAL_VAT_OVERRIDEN, overridenVat.toString());
 	}
 	
+	/**
+	 * Ticket #3050 - need to override for ch.elexis.data.XMLExporter#849 to return correct
+	 * obligation type
+	 */
+	@Override
+	public String getExt(String name){
+		// "Kassentyp" = ch.elexis.artikel_ch.data. MedikamentImporter.KASSENTYP
+		if (name.equals("Kassentyp")) {
+			return isInSLList() ? StringConstants.ONE : StringConstants.ZERO;
+		}
+		return super.getExt(name);
+	}
+	
 	// -- VERRECHENBAR ADAPTER and ARTIKEL ---
 	@Override
 	public VatInfo getVatInfo(){

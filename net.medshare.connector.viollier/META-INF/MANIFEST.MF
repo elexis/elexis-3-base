@@ -7,11 +7,11 @@ Bundle-Activator: net.medshare.connector.viollier.ViollierConnectorActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.elexis.core;bundle-version="3.0.0",
+ ch.elexis.core.data,
  ch.rgw.utility;bundle-version="3.0.0",
  ch.elexis.laborimport.viollier.v2,
  org.apache.httpcomponents.httpclient;bundle-version="4.1.3",
- org.apache.httpcomponents.httpcore;bundle-version="4.1.4",
- ch.elexis.core.data
+ org.apache.httpcomponents.httpcore;bundle-version="4.1.4"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: medshare.net

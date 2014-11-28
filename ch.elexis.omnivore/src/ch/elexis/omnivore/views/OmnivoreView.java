@@ -43,11 +43,13 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.internal.ole.win32.COM;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -78,6 +80,7 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.omnivore.data.OutlookTransfer;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -403,7 +406,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		hookDoubleClickAction();
 		contributeToActionBars();
 		final Transfer[] transferTypes = new Transfer[] {
-			FileTransfer.getInstance()
+			OutlookTransfer.getInstance(), FileTransfer.getInstance()
 		};
 		
 		viewer.addDropSupport(DND.DROP_COPY, transferTypes, new DropTargetAdapter() {
@@ -414,8 +417,19 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			}
 			
 			@Override
+			public void dropAccept(DropTargetEvent event){
+				for (TransferData td : event.dataTypes) {
+					// use FileTransfer if available not OutlookTransfer
+					if (td.type == COM.CF_HDROP) {
+						event.currentDataType = td;
+					}
+				}
+			}
+			
+			@Override
 			public void drop(DropTargetEvent event){
-				if (transferTypes[0].isSupportedType(event.currentDataType)) {
+				if (FileTransfer.getInstance().isSupportedType(event.currentDataType)
+					|| OutlookTransfer.getInstance().isSupportedType(event.currentDataType)) {
 					String[] files = (String[]) event.data;
 					String category = null;
 					if (event.item != null && event.item.getData() instanceof DocHandle) {
@@ -431,7 +445,11 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			
 		});
 		
-		viewer.addDragSupport(DND.DROP_COPY, transferTypes, new DragSourceAdapter() {
+		final Transfer[] dragTransferTypes = new Transfer[] {
+			FileTransfer.getInstance()
+		};
+		
+		viewer.addDragSupport(DND.DROP_COPY, dragTransferTypes, new DragSourceAdapter() {
 			@Override
 			public void dragStart(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();

@@ -31,11 +31,7 @@ public class XMLExporterEsr9 {
 		
 		String esrmode = actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESR5OR9);
 		Element element;
-		String userdata = rechnung.getRnId();
-		ESR besr =
-			new ESR(actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRNUMBER),
-				actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRSUB), userdata,
-				ESR.ESR27);
+		ESR besr = xmlExporter.getBesr();
 		
 		if (esrmode.equals("esr9")) {
 			element = new Element("esr9", XMLExporter.nsinvoice); //$NON-NLS-1$

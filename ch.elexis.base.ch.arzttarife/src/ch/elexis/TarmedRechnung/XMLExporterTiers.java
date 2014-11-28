@@ -12,7 +12,6 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.XMLTool;
 
 public class XMLExporterTiers {
 	private Element tiersElement;
@@ -31,18 +30,8 @@ public class XMLExporterTiers {
 		return tiers;
 	}
 
-	public static XMLExporterTiers buildTiers(Rechnung rechnung, XMLExporter xmlExporter){
-		TarmedACL ta = TarmedACL.getInstance();
-		
-		Fall fall = rechnung.getFall();
-		Patient patient = fall.getPatient();
-		Mandant mandant = rechnung.getMandant();
-		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		// We try to figure out whether we should use Tiers Payant or Tiers
-		// Garant.
-		// if unsure, we make it TG
+	public static String getTiers(Kontakt rnAdressat, Kontakt kostentraeger, Fall fall){
 		String tiers = XMLExporter.TIERS_GARANT;
-		Kontakt rnAdressat = fall.getGarant();
 		
 		if ((kostentraeger != null) && (kostentraeger.isValid())) {
 			if (rnAdressat.equals(kostentraeger)) {
@@ -54,7 +43,22 @@ public class XMLExporterTiers {
 			kostentraeger = rnAdressat;
 			tiers = XMLExporter.TIERS_GARANT;
 		}
-		String tcCode = TarmedRequirements.getTCCode(mandant);
+		
+		return tiers;
+	}
+
+	public static XMLExporterTiers buildTiers(Rechnung rechnung, XMLExporter xmlExporter){
+		TarmedACL ta = TarmedACL.getInstance();
+		
+		Fall fall = rechnung.getFall();
+		Patient patient = fall.getPatient();
+		Mandant mandant = rechnung.getMandant();
+		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		// We try to figure out whether we should use Tiers Payant or Tiers
+		// Garant.
+		// if unsure, we make it TG
+		Kontakt rnAdressat = fall.getGarant();
+		String tiers = getTiers(rnAdressat, kostentraeger, fall);
 		
 		if (kostentraeger == null) {
 			kostentraeger = patient;
@@ -197,19 +201,6 @@ public class XMLExporterTiers {
 			referrer.addContent(XMLExporterUtil.buildAdressElement(auftraggeber));
 			ret.tiersElement.addContent(referrer);
 		}
-		
-		if (tiers.equals(XMLExporter.TIERS_GARANT) && (TarmedRequirements.hasTCContract(mandant))) {
-			Element demand = new Element("demand", XMLExporter.nsinvoice); //$NON-NLS-1$
-			demand.setAttribute("tc_demand_id", "0"); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			demand.setAttribute(
-					"tc_token", xmlExporter.getBesr().createCodeline(XMLTool.moneyToXmlDouble(xmlExporter.getDueMoney()) //$NON-NLS-1$
-				.replaceFirst("[.,]", ""), tcCode)); //$NON-NLS-1$ //$NON-NLS-2$
-			demand.setAttribute(
-				"insurance_demand_date", XMLExporterUtil.makeTarmedDatum(rechnung.getDatumRn())); //$NON-NLS-1$
-			ret.tiersElement.addContent(demand);
-		}
-		
 		ret.tiers = tiers;
 
 		return ret;

@@ -178,6 +178,8 @@ public class XMLExporter implements IRnOutputter {
 	private ESR besr;
 	static TarmedACL ta;
 	private String outputDir;
+	
+	private XMLExporterEsr9 esr9;
 	public static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$
 	
 	/**
@@ -285,6 +287,7 @@ public class XMLExporter implements IRnOutputter {
 		rn = rechnung;
 		
 		if (xmlBillExists(rechnung)) {
+			logger.info("Updating existing bill for " + rechnung.getNr());
 			Document updated = updateExistingXmlBill(rechnung, dest, type, doVerify);
 			if (updated != null) {
 				return updated;
@@ -306,6 +309,7 @@ public class XMLExporter implements IRnOutputter {
 			kostentraeger = actPatient;
 		}
 
+		logger.info("Creating new bill for " + rechnung.getNr());
 		Document xmlRn;
 		Element root = new Element(ELEMENT_REQUEST, nsinvoice);
 		root.addNamespaceDeclaration(nsxsi);
@@ -385,7 +389,11 @@ public class XMLExporter implements IRnOutputter {
 		body.addContent(xmlBalance.getElement());
 		
 		//esr9
-		XMLExporterEsr9 esr9 = XMLExporterEsr9.buildEsr9(rechnung, xmlBalance, this);
+		besr =
+			new ESR(actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRNUMBER),
+				actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRSUB),
+				rechnung.getRnId(), ESR.ESR27);
+		esr9 = XMLExporterEsr9.buildEsr9(rechnung, xmlBalance, this);
 		body.addContent(esr9.getElement());
 
 		//tiers garant or payant
@@ -563,7 +571,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
-	private String getXmlVersion(Element root){
+	public static String getXmlVersion(Element root){
 		String location =
 			root.getAttributeValue(
 				"schemaLocation", Namespace.getNamespace("http://www.w3.org/2001/XMLSchema-instance"));//$NON-NLS-1$ //$NON-NLS-2$
@@ -587,7 +595,7 @@ public class XMLExporter implements IRnOutputter {
 		// XML Standard:
 		// http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
 		// Dort steht beim Feld 11310: Gesetzlicher Vertreter des Patienten.
-		Element guarantor = new Element("guarantor", XMLExporter.ns); //$NON-NLS-1$
+		Element guarantor = new Element("guarantor", XMLExporter.nsinvoice); //$NON-NLS-1$
 		guarantor.addContent(XMLExporterUtil.buildAdressElement(garant));
 		return guarantor;
 	}
@@ -620,10 +628,12 @@ public class XMLExporter implements IRnOutputter {
 			List<String> errs = null;
 			// validate depending on tarmed version
 			if (getXmlVersion(xmlDoc.getRootElement()).equals("4.0")) {
+				logger.info("Validating XML against MDInvoiceRequest_400.xsd");
 				errs =
 					XMLTool.validateSchema(
 						path + File.separator + "MDInvoiceRequest_400.xsd", source); //$NON-NLS-1$
 			} else if (getXmlVersion(xmlDoc.getRootElement()).equals("4.4")) {
+				logger.info("Validating XML against generalInvoiceRequest_440.xsd");
 				errs =
 					XMLTool.validateSchema(
 						path + File.separator + "generalInvoiceRequest_440.xsd", source); //$NON-NLS-1$
@@ -640,6 +650,15 @@ public class XMLExporter implements IRnOutputter {
 				}
 				logger.error(sb.toString());
 				rn.reject(RnStatus.REJECTCODE.VALIDATION_ERROR, sb.toString());
+				XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
+				StringWriter sw = new StringWriter();
+				try {
+					xout.output(xmlDoc, sw);
+				} catch (IOException e) {
+					logger.error("Failed getting document as String.", e);
+					return;
+				}
+				logger.debug(sw.toString());
 			}
 		}
 		

@@ -1,5 +1,6 @@
 package ch.elexis.TarmedRechnung;
 
+import java.text.ParseException;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -144,7 +145,7 @@ public class XMLExporterServices {
 		}
 		return mKant;
 	}
-	
+
 	public Money getUebrigeMoney(){
 		if (!initialized) {
 			initFromElement();
@@ -196,8 +197,31 @@ public class XMLExporterServices {
 	}
 	
 	private void initFromElement(){
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		// calculate sum per type
+		List<?> records = servicesElement.getChildren();
+		for (Object object : records) {
+			if (object instanceof Element) {
+				Element element = (Element) object;
+				try {
+					if (element.getName().equals(ELEMENT_RECORD_TARMED)) {
+						mTarmed.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
+					} else if (element.getName().equals(ELEMENT_RECORD_LAB)) {
+						mAnalysen.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
+					} else if (element.getName().equals(ELEMENT_RECORD_DRUG)) {
+						mMedikament.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
+					} else if (element.getName().equals(ELEMENT_RECORD_MIGEL)) {
+						mMigel.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
+					} else if (element.getName().equals(ELEMENT_RECORD_PHYSIO)) {
+						mPhysio.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
+					} else if (element.getName().equals(ELEMENT_RECORD_UNCLASSIFIED)) {
+						mUebrige.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
+					}
+				} catch (ParseException e) {
+					logger.error("Error parsing services " + e);
+				}
+			}
+		}
+		initialized = true;
 	}
 
 	public static XMLExporterServices buildServices(Rechnung rechnung, VatRateSum vatSummer){
@@ -275,7 +299,7 @@ public class XMLExporterServices {
 					
 					ret.mTarmed.addCent(mAmountLocal.getCents());
 					
-					el = new Element(ELEMENT_RECORD_TARMED, XMLExporter.ns); // 22000
+					el = new Element(ELEMENT_RECORD_TARMED, XMLExporter.nsinvoice); // 22000
 					el.setAttribute(ATTR_TREATMENT, "ambulatory"); // 22050 //$NON-NLS-1$
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "001"); // 22060 //$NON-NLS-1$
 					Hashtable<String, String> ext = tl.loadExtension();
@@ -329,7 +353,7 @@ public class XMLExporterServices {
 					}
 					
 				} else if (v instanceof Labor2009Tarif) {
-					el = new Element(ELEMENT_RECORD_LAB, XMLExporter.ns); // 28000
+					el = new Element(ELEMENT_RECORD_LAB, XMLExporter.nsinvoice); // 28000
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
 					Labor2009Tarif ll = (Labor2009Tarif) v;
 					double mult = ll.getFactor(tt, rechnung.getFall());
@@ -345,7 +369,7 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					ret.mAnalysen.addMoney(mAmountLocal);
 				} else if (v instanceof LaborLeistung) {
-					el = new Element(ELEMENT_RECORD_LAB, XMLExporter.ns); // 28000
+					el = new Element(ELEMENT_RECORD_LAB, XMLExporter.nsinvoice); // 28000
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "316"); // 28060 //$NON-NLS-1$
 					LaborLeistung ll = (LaborLeistung) v;
 					double mult = ll.getFactor(tt, rechnung.getFall());
@@ -363,7 +387,7 @@ public class XMLExporterServices {
 					ret.mAnalysen.addMoney(mAmountLocal);
 				} else if ((v instanceof Medikament) || (v instanceof Medical)
 					|| (v.getCodeSystemCode() == "400")) { //$NON-NLS-1$
-					el = new Element(ELEMENT_RECORD_DRUG, XMLExporter.ns);
+					el = new Element(ELEMENT_RECORD_DRUG, XMLExporter.nsinvoice);
 					Artikel art = (Artikel) v;
 					double mult = art.getFactor(tt, rechnung.getFall());
 					Money preis = verrechnet.getNettoPreis();
@@ -401,7 +425,7 @@ public class XMLExporterServices {
 						XMLExporterUtil.getResponsibleEAN(konsultation));
 					ret.mMedikament.addMoney(mAmountLocal);
 				} else if (v instanceof MiGelArtikel) {
-					el = new Element(ELEMENT_RECORD_MIGEL, XMLExporter.ns);
+					el = new Element(ELEMENT_RECORD_MIGEL, XMLExporter.nsinvoice);
 					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
 					Money preis = verrechnet.getNettoPreis();
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
@@ -416,7 +440,7 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
 					ret.mMigel.addMoney(mAmountLocal);
 				} else if (v instanceof PhysioLeistung) {
-					el = new Element(ELEMENT_RECORD_PHYSIO, XMLExporter.ns);
+					el = new Element(ELEMENT_RECORD_PHYSIO, XMLExporter.nsinvoice);
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode()); // 28060
 					PhysioLeistung pl = (PhysioLeistung) v;
 					double mult = pl.getFactor(tt, rechnung.getFall());
@@ -444,7 +468,7 @@ public class XMLExporterServices {
 					ret.mPhysio.addMoney(mAmountLocal);
 				} else {
 					Money preis = verrechnet.getNettoPreis();
-					el = new Element(ELEMENT_RECORD_UNCLASSIFIED, XMLExporter.ns);
+					el = new Element(ELEMENT_RECORD_UNCLASSIFIED, XMLExporter.nsinvoice);
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$

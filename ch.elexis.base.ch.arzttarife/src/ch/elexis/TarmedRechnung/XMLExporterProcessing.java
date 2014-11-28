@@ -9,6 +9,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.XMLTool;
 
 public class XMLExporterProcessing {
 	
@@ -80,6 +81,23 @@ public class XMLExporterProcessing {
 
 		transport.addContent(via);
 		element.addContent(transport);
+
+		// insert demand if TG and TC contract
+		String tiers = XMLExporterTiers.getTiers(actFall.getGarant(), kostentraeger, actFall);
+		if (tiers.equals(XMLExporter.TIERS_GARANT)
+			&& (TarmedRequirements.hasTCContract(actMandant))) {
+			String tcCode = TarmedRequirements.getTCCode(actMandant);
+			Element demand = new Element("demand", XMLExporter.nsinvoice); //$NON-NLS-1$
+			demand.setAttribute("tc_demand_id", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			demand
+				.setAttribute(
+					"tc_token", xmlExporter.getBesr().createCodeline(XMLTool.moneyToXmlDouble(xmlExporter.getDueMoney()) //$NON-NLS-1$
+								.replaceFirst("[.,]", ""), tcCode)); //$NON-NLS-1$ //$NON-NLS-2$
+			demand.setAttribute(
+				"insurance_demand_date", XMLExporterUtil.makeTarmedDatum(rechnung.getDatumRn())); //$NON-NLS-1$
+			element.addContent(demand);
+		}
 
 		XMLExporterProcessing ret = new XMLExporterProcessing(element);
 

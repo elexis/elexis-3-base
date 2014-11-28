@@ -116,29 +116,8 @@ public class XMLExporterBalance {
 		balance.mDue = new Money(balance.mTotal);
 		balance.mDue.subtractMoney(rechnung.getAnzahlung());
 		balance.mDue.roundTo5();
-		
-		// round and create Money from sumTarmed double values
-		//		Money mTarmedAL = new Money((int) Math.round(services.getSumTarmedAL()));
-		//		Money mTarmedTL = new Money((int) Math.round(services.getSumTarmedTL()));
 
 		element.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(balance.mDue));
-		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED,
-		//			XMLTool.moneyToXmlDouble(services.getTarmedMoney()));
-		//		element
-		//			.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED_MT, XMLTool.moneyToXmlDouble(mTarmedAL));
-		//		element
-		//			.setAttribute(XMLExporter.ATTR_AMOUNT_TARMED_TT, XMLTool.moneyToXmlDouble(mTarmedTL));
-		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_CANTONAL, StringConstants.DOUBLE_ZERO);
-		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_UNCLASSIFIED,
-		//			XMLTool.moneyToXmlDouble(services.getUebrigeMoney()));
-		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_LAB,
-		//			XMLTool.moneyToXmlDouble(services.getAnalysenMoney()));
-		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_PHYSIO,
-		//			XMLTool.moneyToXmlDouble(services.getPhysioMoney()));
-		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_DRUG,
-		//			XMLTool.moneyToXmlDouble(services.getMedikamentMoney()));
-		//		element.setAttribute(XMLExporter.ATTR_AMOUNT_MIGEL,
-		//			XMLTool.moneyToXmlDouble(services.getMigelMoney()));
 		element.setAttribute(ATTR_AMOUNT_OBLIGATIONS, XMLTool.moneyToXmlDouble(balance.mTotal));
 		
 		Element vat = new Element(XMLExporter.ELEMENT_VAT, XMLExporter.nsinvoice);

@@ -323,6 +323,21 @@ public class XMLExporter implements IRnOutputter {
 		root.setAttribute(ATTR_LANGUAGE, Locale.getDefault().getLanguage());
 		xmlRn = new Document(root);
 		
+		// services are needed for the balance
+		XMLExporterServices services = null;
+		List<Konsultation> lb = rn.getKonsultationen();
+		for (Konsultation b : lb) {
+			List<Verrechnet> lv = b.getLeistungen();
+			if (lv.size() == 0) {
+				continue;
+			}
+			
+			services = XMLExporterServices.buildServices(rn, vatSummer);
+		}
+		
+		//balance is needed by other parts so initialize first
+		initBalanceData(rechnung, services, vatSummer);
+
 		//processing
 		XMLExporterProcessing processing = XMLExporterProcessing.buildProcessing(rechnung, this);
 		root.addContent(processing.getElement());
@@ -371,28 +386,10 @@ public class XMLExporter implements IRnOutputter {
 			body.addContent(remark);
 		}
 		
-		// services are needed for the balance
-		XMLExporterServices services = null;
-		List<Konsultation> lb = rn.getKonsultationen();
-		for (Konsultation b : lb) {
-			List<Verrechnet> lv = b.getLeistungen();
-			if (lv.size() == 0) {
-				continue;
-			}
-			
-			services = XMLExporterServices.buildServices(rn, vatSummer);
-		}
-		
-		//balance
-		xmlBalance =
-			XMLExporterBalance.buildBalance(rechnung, services, vatSummer, this);
+		// add the balance
 		body.addContent(xmlBalance.getElement());
 		
 		//esr9
-		besr =
-			new ESR(actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRNUMBER),
-				actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRSUB),
-				rechnung.getRnId(), ESR.ESR27);
 		esr9 = XMLExporterEsr9.buildEsr9(rechnung, xmlBalance, this);
 		body.addContent(esr9.getElement());
 
@@ -800,10 +797,27 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
+	/**
+	 * Initialize balance related data structures of the export.
+	 * 
+	 * @param rechnung
+	 * @param services
+	 * @param vatSummer
+	 */
+	private void initBalanceData(Rechnung rechnung, XMLExporterServices services,
+		VatRateSum vatSummer){
+		xmlBalance = XMLExporterBalance.buildBalance(rechnung, services, vatSummer, this);
+		
+		besr =
+			new ESR(actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRNUMBER),
+				actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRSUB),
+				rechnung.getRnId(), ESR.ESR27);
+	}
+
 	public ESR getBesr(){
 		return besr;
 	}
-	
+
 	public Money getDueMoney(){
 		return xmlBalance.getDue();
 	}

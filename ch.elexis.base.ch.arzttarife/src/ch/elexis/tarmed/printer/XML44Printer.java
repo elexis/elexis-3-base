@@ -434,27 +434,33 @@ public class XML44Printer {
 	
 	private String getVatVat(int code, Element vat){
 		Element vatrate = getVatRateElement(code, vat);
-		String rate = vatrate.getAttributeValue("vat");
-		if (rate != null && !rate.isEmpty()) {
-			return rate;
+		if (vatrate != null) {
+			String rate = vatrate.getAttributeValue("vat");
+			if (rate != null && !rate.isEmpty()) {
+				return rate;
+			}
 		}
 		return "0.00";
 	}
 	
 	private String getVatAmount(int code, Element vat){
 		Element vatrate = getVatRateElement(code, vat);
-		String amount = vatrate.getAttributeValue("amount");
-		if (amount != null && !amount.isEmpty()) {
-			return amount;
+		if (vatrate != null) {
+			String amount = vatrate.getAttributeValue("amount");
+			if (amount != null && !amount.isEmpty()) {
+				return amount;
+			}
 		}
 		return "0.00";
 	}
 	
 	private String getVatRate(int code, Element vat){
 		Element vatrate = getVatRateElement(code, vat);
-		String rate = vatrate.getAttributeValue("vat_rate");
-		if (rate != null && !rate.isEmpty()) {
-			return rate;
+		if (vatrate != null) {
+			String rate = vatrate.getAttributeValue("vat_rate");
+			if (rate != null && !rate.isEmpty()) {
+				return rate;
+			}
 		}
 		return "0.00";
 	}

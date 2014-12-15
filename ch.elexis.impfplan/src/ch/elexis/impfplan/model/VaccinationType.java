@@ -12,17 +12,20 @@
 
 package ch.elexis.impfplan.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.impfplan.controller.ImpfplanController;
 import ch.rgw.tools.TimeTool;
-
+import ch.rgw.tools.VersionInfo;
 
 public class VaccinationType extends PersistentObject {
 	public static final String RECOMMENDED_AGE = "recommendedAge"; //$NON-NLS-1$
@@ -33,8 +36,10 @@ public class VaccinationType extends PersistentObject {
 	public static final String DELAY1TO2 = "delay_1to2"; //$NON-NLS-1$
 	public static final String PRODUCT = "product"; //$NON-NLS-1$
 	public static final String NAME = "name"; //$NON-NLS-1$
+	public static final String VACC_AGAINST = "vaccAgainst";
+	
 	private static final String TABLENAME = "CH_ELEXIS_IMPFPLAN_VACCINATION_TYPES"; //$NON-NLS-1$
-	private static final String VERSION = "0.1.0"; //$NON-NLS-1$
+	private static final String VERSION = "0.2.0"; //$NON-NLS-1$
 	private static final String createDB = "CREATE TABLE " //$NON-NLS-1$
 		+ TABLENAME + " (" //$NON-NLS-1$
 		+ "ID	VARCHAR(25) primary key, deleted CHAR(1) default '0', lastupdate BIGINT," //$NON-NLS-1$
@@ -55,16 +60,26 @@ public class VaccinationType extends PersistentObject {
 		+ // delay until rappel ot 0 if no rappel required
 		"recommendedAge VARCHAR(10)," //$NON-NLS-1$
 		+ // recommended age in months for 1st, e.g. 8-12 or 48- or -24
-		"remarks TEXT);" // general remarks, warnings, limitations etc. //$NON-NLS-1$
+		"remarks TEXT," // general remarks, warnings, limitations etc. //$NON-NLS-1$
+		+ FLD_EXTINFO + " longblob);" // extinfo //$NON-NLS-1$
 		+ "INSERT INTO " + TABLENAME + " (ID,name) VALUES('VERSION','" //$NON-NLS-1$ //$NON-NLS-2$
 		+ VERSION + "');"; //$NON-NLS-1$
 	
+	public static final String upd020 = "ALTER TABLE " + TABLENAME //$NON-NLS-1$
+		+ " ADD " + FLD_EXTINFO + " longblob"; //$NON-NLS-1$
+	
 	static {
 		addMapping(TABLENAME, NAME, PRODUCT, DELAY1TO2, DELAY2TO3, DELAY3TO4, DELAY_REP, REMARKS,
-			RECOMMENDED_AGE);
+			RECOMMENDED_AGE, FLD_EXTINFO);
 		VaccinationType ver = load("VERSION"); //$NON-NLS-1$
 		if (!ver.exists()) {
 			createOrModifyTable(createDB);
+		} else {
+			VersionInfo vi = new VersionInfo(ver.get(NAME));
+			if (vi.isOlder(VERSION)) {
+				createOrModifyTable(upd020);
+				ver.set(NAME, VERSION);
+			}
 		}
 	}
 	
@@ -157,8 +172,7 @@ public class VaccinationType extends PersistentObject {
 	
 	public static List<VaccinationType> findDueFor(Patient pat) throws ElexisException{
 		LinkedList<VaccinationType> ret = new LinkedList<VaccinationType>();
-		Collection<VaccinationType> vaccinationsDefined = 
-				ImpfplanController.allVaccs();
+		Collection<VaccinationType> vaccinationsDefined = ImpfplanController.allVaccs();
 		HashMap<VaccinationType, List<TimeTool>> vaccs =
 			new HashMap<VaccinationType, List<TimeTool>>();
 		for (Vaccination v : ImpfplanController.getVaccinations(pat)) {
@@ -236,6 +250,47 @@ public class VaccinationType extends PersistentObject {
 			return true;
 		}
 		return false;
+	}
+	
+	public List<String> getVaccAgainstList(){
+		String vaccAgainst = getExt(VACC_AGAINST);
+		
+		if (vaccAgainst == null || vaccAgainst.isEmpty()) {
+			return Collections.emptyList();
+		} else {
+			List<String> atcCodes = new ArrayList<String>();
+			String[] singleCodes = vaccAgainst.split(",");
+			for (String atc : singleCodes) {
+				atcCodes.add(atc);
+			}
+			return atcCodes;
+		}
+		
+	}
+	
+	public String getVaccAgainst(){
+		return checkNull(getExt(VACC_AGAINST));
+	}
+	
+	public void setVaccAgainst(final String bem){
+		setExt(VACC_AGAINST, bem);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setExt(final String name, final String value){
+		Map h = getMap(FLD_EXTINFO);
+		if (value == null) {
+			h.remove(name);
+		} else {
+			h.put(name, value);
+		}
+		setMap(FLD_EXTINFO, h);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String getExt(final String name){
+		Map h = getMap(FLD_EXTINFO);
+		return checkNull((String) h.get(name));
 	}
 	
 	@Override

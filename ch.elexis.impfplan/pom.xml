@@ -9,4 +9,5 @@
 	</parent>
 	<artifactId>ch.elexis.impfplan</artifactId>
 	<packaging>eclipse-plugin</packaging>
+	<version>3.0.1-SNAPSHOT</version>
 </project>

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Impfplan für Elexis
 Bundle-Localization: plugin
 Bundle-SymbolicName: ch.elexis.impfplan;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.0.1.qualifier
 Bundle-Vendor: G. Weirich
 Require-Bundle: ch.rgw.utility,
  org.eclipse.ui,
@@ -16,3 +16,4 @@ Require-Bundle: ch.rgw.utility,
  ch.elexis.core.ui.icons
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: ch.elexis.impfplan.model

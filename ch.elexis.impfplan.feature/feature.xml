@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.impfplan.feature"
       label="Elexis Impfplan (G. Weirich)"
-      version="3.0.0.qualifier"
+      version="3.0.1.qualifier"
       provider-name="elexis.info">
 
    <description>
@@ -10,7 +10,7 @@
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2010
+      Gerry Weirich, 2010
      Portierung auf Elexis 3.0 durch Fabian Schmid
    </copyright>
 

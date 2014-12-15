@@ -84,6 +84,15 @@ public class Vaccination extends PersistentObject {
 		}
 	}
 	
+	public String getRawDateString(){
+		String dat = get(Vaccination.DATE);
+		if (dat.endsWith("0000")) { //$NON-NLS-1$
+			return dat;
+		} else {
+			return getDate().toString(TimeTool.DATE_COMPACT);
+		}
+	}
+	
 	public TimeTool getDate(){
 		String dRaw = get(DATE);
 		if (dRaw.endsWith("0000")) { //$NON-NLS-1$
@@ -98,6 +107,10 @@ public class Vaccination extends PersistentObject {
 			val = val.substring(0, 4) + "0000"; //$NON-NLS-1$
 		}
 		set(DATE, val);
+	}
+	
+	public String getPatientId(){
+		return checkNull(get(PATIENT_ID));
 	}
 	
 	public static Vaccination load(String id){

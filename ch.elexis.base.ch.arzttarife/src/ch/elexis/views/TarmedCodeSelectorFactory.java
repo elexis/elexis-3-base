@@ -12,11 +12,16 @@
 
 package ch.elexis.views;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import ch.elexis.core.ui.actions.ReadOnceTreeLoader;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -27,6 +32,7 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.Query;
 import ch.elexis.data.TarmedLeistung;
+import ch.elexis.data.VerrechenbarAdapter;
 
 public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
@@ -43,7 +49,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	}
 	
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(final CommonViewer cv){
 		this.cv = cv;
 		// add keyListener to search field
 		Listener keyListener = new Listener() {
@@ -60,6 +66,25 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 			fd.setAssignedListener(eventType, keyListener);
 		}
 		slp = new TarmedSelectorPanelProvider(cv, fields, true);
+		
+		MenuManager menu = new MenuManager();
+		Action addToFavoriteAction = new Action("Favorisieren") {
+			@Override
+			public void run(){
+				StructuredSelection structuredSelection = new StructuredSelection(cv.getSelection());
+				VerrechenbarAdapter element = (VerrechenbarAdapter) structuredSelection.getFirstElement();
+				element.addAsFavorite();
+			}
+			
+			@Override
+			public ImageDescriptor getImageDescriptor(){
+				return Images.IMG_STAR.getImageDescriptor();
+			}
+			
+		};
+		menu.add(addToFavoriteAction);
+		cv.setContextMenu(menu);
+		
 		tdl =
 			new ReadOnceTreeLoader(cv, new Query<TarmedLeistung>(TarmedLeistung.class), "Parent",
 				"ID");

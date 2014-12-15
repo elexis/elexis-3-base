@@ -9,13 +9,16 @@
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
-
 package ch.elexis.base.ch.artikel.views;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -28,6 +31,7 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.core.ui.views.artikel.Artikeldetail;
+import ch.elexis.core.ui.views.controls.ArticleDefaultSignatureComposite;
 
 public class MedicalDetailDisplay implements IDetailDisplay {
 	
@@ -37,13 +41,14 @@ public class MedicalDetailDisplay implements IDetailDisplay {
 	LabeledInputField ifName;
 	Text tName;
 	Medical act;
+	private ArticleDefaultSignatureComposite adsc;
 	
 	public Composite createDisplay(Composite parent, IViewSite site){
 		parent.setLayout(new FillLayout());
 		form = tk.createScrolledForm(parent);
+		
 		Composite ret = form.getBody();
-		TableWrapLayout twl = new TableWrapLayout();
-		ret.setLayout(twl);
+		ret.setLayout(new TableWrapLayout());
 		
 		ifName = new LabeledInputField(ret, "Name");
 		ifName.setLayoutData(new TableWrapData(TableWrapData.FILL));
@@ -61,10 +66,16 @@ public class MedicalDetailDisplay implements IDetailDisplay {
 		});
 		tblArtikel =
 			new LabeledInputField.AutoForm(ret, Artikeldetail.getFieldDefs(parent.getShell()));
+		tblArtikel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
-		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
-		twd.grabHorizontal = true;
-		tblArtikel.setLayoutData(twd);
+		Group grpDefaultSignature = new Group(ret, SWT.NONE);
+		grpDefaultSignature.setLayout(new GridLayout(1, false));
+		grpDefaultSignature.setText("Standard-Signatur");
+		grpDefaultSignature.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		adsc = new ArticleDefaultSignatureComposite(grpDefaultSignature, SWT.NONE);
+		adsc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		adsc.initDataBindings(null);
+		adsc.setEnabled(false);
 		
 		return ret;
 	}
@@ -79,6 +90,9 @@ public class MedicalDetailDisplay implements IDetailDisplay {
 			form.setText(act.getLabel());
 			tblArtikel.reload(act);
 			ifName.setText(act.getInternalName());
+			adsc.setArticleToBind(act);
+		} else {
+			adsc.setArticleToBind(null);
 		}
 		
 	}

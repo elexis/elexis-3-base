@@ -41,6 +41,8 @@ import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.ui.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.ui.internal.DatabindingTextResizeConverter;
 import at.medevit.ch.artikelstamm.ui.internal.IntToStringConverterSelbstbehalt;
+import ch.elexis.core.ui.views.controls.ArticleDefaultSignatureComposite;
+import ch.elexis.data.Artikel;
 
 public class DetailComposite extends Composite {
 	private DataBindingContext m_bindingContext;
@@ -69,6 +71,8 @@ public class DetailComposite extends Composite {
 	private Text txtLIMITATIONTEXT;
 	private ControlDecoration controlDecoIsCalculatedPPUB;
 	private Button btnUserDefinedPrice;
+	private Group grpDefaultSignature;
+	private ArticleDefaultSignatureComposite adsc;
 	
 	public DetailComposite(Composite parent, int style, String atcCodeLanguage){
 		super(parent, style);
@@ -211,9 +215,19 @@ public class DetailComposite extends Composite {
 		
 		lblHERSTELLER = new Label(grpHersteller, SWT.NONE);
 		lblHERSTELLER.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		grpDefaultSignature = new Group(this, SWT.NONE);
+		grpDefaultSignature.setLayout(new GridLayout(1, false));
+		grpDefaultSignature.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpDefaultSignature.setText("Standard Signatur");
+		
+		adsc = new ArticleDefaultSignatureComposite(grpDefaultSignature, SWT.NONE);
+		adsc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
 		m_bindingContext = initDataBindings();
+		adsc.initDataBindings(m_bindingContext);
 	}
-	
+
 	@Override
 	protected void checkSubclass(){
 		// Disable the check that prevents subclassing of SWT components
@@ -221,6 +235,10 @@ public class DetailComposite extends Composite {
 	
 	public void setItem(IArtikelstammItem obj){
 		item.setValue(obj);
+		
+		String atcCode = obj.getATCCode();
+		adsc.setArticleToBind((Artikel) obj);
+		
 		if (obj.isCalculatedPrice()) {
 			controlDecoIsCalculatedPPUB.show();
 		} else {
@@ -229,7 +247,7 @@ public class DetailComposite extends Composite {
 		treeATC.removeAll();
 		if (ATCCodeServiceConsumer.getATCCodeService() != null) {
 			List<ATCCode> atcHierarchy =
-				ATCCodeServiceConsumer.getATCCodeService().getHierarchyForATCCode(obj.getATCCode());
+				ATCCodeServiceConsumer.getATCCodeService().getHierarchyForATCCode(atcCode);
 			if (atcHierarchy != null && atcHierarchy.size() > 0) {
 				ATCCode rootCode = atcHierarchy.get(atcHierarchy.size() - 1);
 				TreeItem root = new TreeItem(treeATC, SWT.None);

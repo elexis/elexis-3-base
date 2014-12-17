@@ -11,9 +11,12 @@
  *******************************************************************************/
 package ch.elexis.labortarif2009.data;
 
+import java.util.List;
+
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
 import ch.elexis.data.Fall;
+import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -56,6 +59,8 @@ public class Labor2009Tarif extends UiVerrechenbarAdapter {
 	
 	private static final IOptifier l09optifier = new Optifier();
 	
+	private static TimeTool future = new TimeTool("01.01.9999"); //$NON-NLS-1$
+
 	static {
 		createTable();
 	}
@@ -172,6 +177,20 @@ public class Labor2009Tarif extends UiVerrechenbarAdapter {
 		return true;
 	}
 	
+	public static int getCurrentCodeVersion(){
+		Labor2009Tarif version = load("1");
+		String currentVersion = version.get(Labor2009Tarif.FLD_CHAPTER);
+		if (currentVersion != null && !currentVersion.isEmpty()) {
+			return Integer.parseInt(currentVersion);
+		}
+		return 0;
+	}
+	
+	public static void setCurrentCodeVersion(int value){
+		Labor2009Tarif version = load("1");
+		version.set(Labor2009Tarif.FLD_CHAPTER, Integer.toString(value));
+	}
+
 	@Override
 	public boolean isDragOK(){
 		return true;
@@ -198,5 +217,43 @@ public class Labor2009Tarif extends UiVerrechenbarAdapter {
 		// 2: reduzierter MWSt-Satz (zur Zeit 2%)
 		// 3: von der MWSt befreit
 		return VatInfo.VAT_NONE;
+	}
+	
+	public static Labor2009Tarif getFromCode(String code, TimeTool date){
+		Query<Labor2009Tarif> query = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+		query.add(Labor2009Tarif.FLD_CODE, "=", code);
+		List<Labor2009Tarif> leistungen = query.execute();
+		for (Labor2009Tarif laborLeistung : leistungen) {
+			TimeTool validFrom = laborLeistung.getGueltigVon();
+			TimeTool validTo = laborLeistung.getGueltigBis();
+			if (validTo == null) {
+				validTo = future;
+			}
+			if (date.isAfterOrEqual(validFrom) && date.isBeforeOrEqual(validTo))
+				return laborLeistung;
+		}
+		return null;
+	}
+	
+	private TimeTool getGueltigBis(){
+		String value = get(FLD_GUELTIG_BIS);
+		if (!StringTool.isNothing(value)) {
+			TimeTool res = new TimeTool(value);
+			res.set(TimeTool.HOUR_OF_DAY, 23);
+			res.set(TimeTool.MINUTE, 59);
+			res.set(TimeTool.SECOND, 59);
+			return res;
+		} else {
+			return null;
+		}
+	}
+	
+	private TimeTool getGueltigVon(){
+		String value = get(FLD_GUELTIG_VON);
+		if (!StringTool.isNothing(value)) {
+			return new TimeTool(value);
+		} else {
+			return null;
+		}
 	}
 }

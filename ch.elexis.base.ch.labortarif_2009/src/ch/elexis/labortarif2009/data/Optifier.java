@@ -106,10 +106,12 @@ public class Optifier implements IOptifier {
 						continue;
 					} else {
 						Labor2009Tarif vlt = (Labor2009Tarif) iv;
-						if (vlt.get(Labor2009Tarif.FLD_FACHBEREICH).indexOf("C") > -1) { //$NON-NLS-1$
-							z470710 += v.getZahl();
-						} else {
-							z470720 += v.getZahl();
+						if (!vlt.get(Labor2009Tarif.FLD_CHAPTER).trim().equals("5.1.2.2.1")) {
+							if (vlt.get(Labor2009Tarif.FLD_FACHBEREICH).indexOf("C") > -1) { //$NON-NLS-1$
+								z470710 += v.getZahl();
+							} else {
+								z470720 += v.getZahl();
+							}
 						}
 						z4708 += v.getZahl();
 					}
@@ -147,27 +149,32 @@ public class Optifier implements IOptifier {
 				v470720.setZahl(z470720);
 			}
 			
-			if (z4707 == 0 && ((z470710 + z470720) > 0) && haveKons == true) {
-				doCreate(kons, "4707.00"); //$NON-NLS-1$
-			}
-			if (z4708 > 0 && haveKons == true) {
-				if (v4708 == null) {
-					if (date.isBefore(deadline)) {
-						v4708 = doCreate(kons, "4708.00"); //$NON-NLS-1$
-					}
-				} else {
-					if (date.isAfterOrEqual(deadline)) {
-						v4708.delete();
-						return new Result<Object>(
-							SEVERITY.WARNING,
-							2,
-							"4708.00 only until " + deadline.toString(TimeTool.DATE_GER), null, false); //$NON-NLS-1$
+			// only consider 4707.00 & 4708.00 before 01.01.2015
+			// configured deadline is still active before 01.01.2015
+			if (date.isBefore(new TimeTool("01.01.2015"))) {
+				if (z4707 == 0 && ((z470710 + z470720) > 0) && haveKons == true) {
+					doCreate(kons, "4707.00"); //$NON-NLS-1$
+				}
+				if (z4708 > 0 && haveKons == true) {
+					if (v4708 == null) {
+						if (date.isBefore(deadline)) {
+							v4708 = doCreate(kons, "4708.00"); //$NON-NLS-1$
+						}
+					} else {
+						if (date.isAfterOrEqual(deadline)) {
+							v4708.delete();
+							return new Result<Object>(
+								SEVERITY.WARNING,
+								2,
+								"4708.00 only until " + deadline.toString(TimeTool.DATE_GER), null, false); //$NON-NLS-1$
+						}
 					}
 				}
+				if (v4708 != null) {
+					v4708.setZahl(z4708);
+				}
 			}
-			if (v4708 != null) {
-				v4708.setZahl(z4708);
-			}
+
 			return new Result<Object>(kons);
 		} catch (Exception ex) {
 			ExHandler.handle(ex);

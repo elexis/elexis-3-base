@@ -16,8 +16,6 @@ import java.util.LinkedList;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
@@ -39,9 +37,6 @@ import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
-
-import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
 	private static final String SPECNUM = "specnum"; //$NON-NLS-1$
@@ -107,31 +102,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 			}
 		});
 		bOptify.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		
-		Label lbl = new Label(groupOptify, SWT.NONE);
-		lbl.setText(Messages.Preferences_automaticAdditionsToLabel);
-		final DatePickerCombo dpc = new DatePickerCombo(groupOptify, SWT.BORDER);
-		dpc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		// set selected date on focus lost due to selection event will not fire if text changed
-		dpc.addFocusListener(new FocusListener() {
-			public void focusLost(FocusEvent e){
-				if (dpc.getDate() != null) {
-					TimeTool time = new TimeTool(dpc.getDate().getTime());
-					time.set(TimeTool.HOUR_OF_DAY, 23);
-					time.set(TimeTool.MINUTE, 59);
-					time.set(TimeTool.SECOND, 59);
-					CoreHub.globalCfg.set(OPTIMIZE_ADDITION_DEADLINE, time);
-					// System.out.println(time.toString(TimeTool.DATE_GER));
-				}
-			}
-			
-			public void focusGained(FocusEvent e){}
-		});
-		TimeTool deadline = CoreHub.globalCfg.getDate(OPTIMIZE_ADDITION_DEADLINE);
-		if (deadline == null)
-			deadline = new TimeTool(OPTIMIZE_ADDITION_INITDEADLINE);
-		dpc.setDate(deadline.getTime());
-		
+
 		return ret;
 	}
 	

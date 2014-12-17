@@ -27,5 +27,12 @@
             name="%Labortarif2009">
       </Leistung>
    </extension>
+   <extension
+         point="ch.elexis.core.data.referenceDataImporter">
+      <importer
+            class="ch.elexis.labortarif2009.data.EALReferenceDataImporter"
+            referenceDataId="analysenliste">
+      </importer>
+   </extension>
 
 </plugin>

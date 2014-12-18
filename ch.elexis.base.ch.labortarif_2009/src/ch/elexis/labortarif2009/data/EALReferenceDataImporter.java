@@ -108,6 +108,7 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 				Labor2009Tarif.setCurrentCodeVersion(newVersion);
 				EALBlocksCodeUpdater blocksUpdater = new EALBlocksCodeUpdater();
 				String message = blocksUpdater.updateBlockCodes();
+				logger.info("Updated Blocks: \n" + message); //$NON-NLS-1$
 				return Status.OK_STATUS;
 			}
 		}
@@ -265,7 +266,7 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 
 	private String convertCodeString(String code){
 		// split by all possible delimiters after reading for xls
-		String[] parts = code.split("[\\.,]");
+		String[] parts = code.split("[\\.,']");
 		StringBuilder sb = new StringBuilder();
 		for (String part : parts) {
 			sb.append(part);

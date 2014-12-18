@@ -18,7 +18,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.ui.billing.AddVaccinationToKons;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -34,6 +37,8 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class ApplyVaccinationHandler extends AbstractHandler {
+	private static Logger logger = LoggerFactory.getLogger(ApplyVaccinationHandler.class);
+	
 	private static boolean inProgress = false;
 	private static PersistentObjectDropTarget dropTarget;
 	private static TimeTool doa;
@@ -56,17 +61,19 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 			leistungenView =
 				(LeistungenView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 					.getActivePage().showView(LeistungenView.ID);
-			CodeSelectorHandler.getInstance().setCodeSelectorTarget(dropTarget);
+			CodeSelectorHandler csHandler = CodeSelectorHandler.getInstance();
+			csHandler.setCodeSelectorTarget(dropTarget);
+			csHandler.getCodeSelectorTarget().registered(false);
 			
 			for (CTabItem cti : leistungenView.ctab.getItems()) {
-				if (cti.getText().equalsIgnoreCase("Artikelstamm")) {
+				if (cti.getText().equalsIgnoreCase(ArtikelstammConstants.CODESYSTEM_NAME)) {
 					leistungenView.setSelected(cti);
 					leistungenView.setFocus();
 					leistungenView.ctab.setSelection(cti);
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error trying to open LeistungenView", e);
 		}
 		return null;
 	}
@@ -100,6 +107,8 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 						
 						kons = addVacToKons.findOrCreateKons();
 						if (kons == null) {
+							logger
+								.warn("Could not insert vaccination as no consultation was found for this patient");
 							SWTHelper
 								.showError("Nicht erstellbar",
 									"Konnte Impfung nich eintragen, da keine Konsultation vorhanden ist.");

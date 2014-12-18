@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.impfplan.model.po;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import ch.elexis.data.Artikel;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
+import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
@@ -91,9 +93,16 @@ public class Vaccination extends PersistentObject {
 		final String articleLabel, final String articleEAN, final String articleATCCode,
 		final Date doa, final String lotNo, final String mandantId){
 		
+		this(patientId, articleStoreToString, articleLabel, articleEAN, articleATCCode,
+			(new TimeTool(doa)).toString(TimeTool.DATE_COMPACT), lotNo, mandantId);
+	}
+	
+	public Vaccination(final String patientId, final String articleStoreToString,
+		final String articleLabel, final String articleEAN, final String articleATCCode,
+		final String doa, final String lotNo, final String mandantId){
+		
 		create(null);
 		
-		TimeTool doaTt = new TimeTool(doa);
 		String vaccAgainst =
 			StringUtils.join(ArticleToImmunisationModel.getImmunisationForAtcCode(articleATCCode),
 				",");
@@ -106,7 +115,7 @@ public class Vaccination extends PersistentObject {
 		String[] vals =
 			new String[] {
 				patientId, articleStoreToString, articleLabel, articleEAN, articleATCCode, lotNo,
-				doaTt.toString(TimeTool.DATE_COMPACT), mandantId, vaccAgainst
+				doa, mandantId, vaccAgainst
 			};
 		set(fields, vals);
 	}
@@ -137,13 +146,26 @@ public class Vaccination extends PersistentObject {
 		return new TimeTool(get(FLD_DOA));
 	}
 	
+	public String getDateOfAdministrationLabel(){
+		String doa = get(FLD_DOA);
+		if (doa.contains("0000")) {
+			doa = doa.replace("0000", "");
+			return doa;
+		}
+		TimeTool ttDoA = new TimeTool(doa);
+		return ttDoA.toString(TimeTool.DATE_GER);
+	}
+	
 	public String getBusinessName(){
 		return get(FLD_BUSS_NAME);
 	}
 	
 	public String getShortBusinessName(){
 		String businessName = get(FLD_BUSS_NAME);
-		return businessName.substring(0, businessName.indexOf("("));
+		if (businessName.contains("(")) {
+			return businessName.substring(0, businessName.indexOf("("));
+		}
+		return businessName;
 	}
 	
 	public String getLotNo(){
@@ -165,7 +187,16 @@ public class Vaccination extends PersistentObject {
 		String value = get(FLD_ADMINISTRATOR);
 		if (value.startsWith(Mandant.class.getName())) {
 			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
-			return mandant.getName() + " " + mandant.getVorname();
+			
+			if (mandant == null) {
+				return "";
+			}
+			
+			String title = Person.load(mandant.getId()).get(Person.TITLE);
+			if (title == null || title.isEmpty()) {
+				return mandant.getName() + " " + mandant.getVorname();
+			}
+			return title + " " + mandant.getName() + " " + mandant.getVorname();
 		} else {
 			if (value == null || value.length() < 2)
 				return "";
@@ -198,5 +229,19 @@ public class Vaccination extends PersistentObject {
 		qbe.clear(true);
 		qbe.add(FLD_LOT_NO, Query.EQUALS, lotNo);
 		return qbe.execute();
+	}
+	
+	public void setVaccAgainst(String vaccAgainst){
+		set(FLD_VACC_AGAINST, vaccAgainst);
+	}
+	
+	public List<String> getVaccAgainstList(){
+		List<String> vaccAgainst = new ArrayList<String>();
+		String vaccAgaisntString = get(FLD_VACC_AGAINST);
+		String[] split = vaccAgaisntString.split(",");
+		for (String va : split) {
+			vaccAgainst.add(va);
+		}
+		return vaccAgainst;
 	}
 }

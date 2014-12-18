@@ -35,13 +35,25 @@
             id="at.medevit.elexis.impfplan.ui.command.PrintVaccinationEntries"
             name="%printvaccinationentries">
       </command>
+      <command
+            id="at.medevit.elexis.impfplan.ui.command.SortByVaccination"
+            name="%sortByVaccination">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            id="at.medevit.elexis.impfplan.ui.command.ImportOtherVaccinations"
+            name="Andere Impfungen Importieren">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="toolbar:at.medevit.elexis.impfplan.ui.ImpfplanViewPart">
-         <command
+       <command
                commandId="at.medevit.elexis.impfplan.ui.view.vaccinationHeader"
                icon="icon://IMG_FILTER"
                id="filterMenuContribution"
@@ -69,6 +81,15 @@
                icon="icon://IMG_PRINTER"
                style="push"
                tooltip="%printvaccinationentries">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:at.medevit.elexis.impfplan.ui.ImpfplanViewPart">
+         <command
+               commandId="at.medevit.elexis.impfplan.ui.command.SortByVaccination"
+               icon="rsc/icons/sort-alphabet.png"
+               style="toggle">
          </command>
       </menuContribution>
       <menuContribution
@@ -103,6 +124,14 @@
       <handler
             class="at.medevit.elexis.impfplan.ui.handlers.SupplementVaccinationHandler"
             commandId="at.medevit.elexis.impfplan.ui.command.SupplementVaccination">
+      </handler>
+      <handler
+            class="at.medevit.elexis.impfplan.ui.handlers.SortByVaccinationHandler"
+            commandId="at.medevit.elexis.impfplan.ui.command.SortByVaccination">
+      </handler>
+      <handler
+            class="at.medevit.elexis.impfplan.ui.handlers.ImportLegacyVaccinationsHandler"
+            commandId="at.medevit.elexis.impfplan.ui.command.ImportOtherVaccinations">
       </handler>
    </extension>
    <extension

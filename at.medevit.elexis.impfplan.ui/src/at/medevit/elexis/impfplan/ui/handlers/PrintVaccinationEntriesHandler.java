@@ -42,7 +42,7 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.PlatformUI;
 
 import at.medevit.elexis.impfplan.ui.VaccinationComposite;
 import at.medevit.elexis.impfplan.ui.VaccinationCompositePaintListener;
@@ -54,15 +54,18 @@ import ch.elexis.core.data.interfaces.events.MessageEvent;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.elexis.data.Person;
 
 public class PrintVaccinationEntriesHandler extends AbstractHandler {
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMM.yyyy");
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMM yyyy");
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		
-		VaccinationView vaccView = (VaccinationView) HandlerUtil.getActivePart(event);
+		VaccinationView vaccView =
+			(VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.findView(VaccinationView.PART_ID);
 		VaccinationComposite vaccinationComposite = vaccView.getVaccinationComposite();
 		VaccinationCompositePaintListener vcpl =
 			vaccinationComposite.getVaccinationCompositePaintListener();
@@ -111,27 +114,13 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		contentStream.drawString(patient.getLabel());
 		contentStream.endText();
 		
-		float avgFontWidth = 5f;
-		String mandantLabel = mandant.getName() + " " + mandant.getVorname();
 		String dateLabel = sdf.format(Calendar.getInstance().getTime());
-		float o1 = pageSize.getUpperRightX() - 40 - (avgFontWidth * mandantLabel.length());
-		float o2 = pageSize.getUpperRightX() - 40 - (avgFontWidth * dateLabel.length());
-		float leftOffset = 40;
-		if (o1 > o2) {
-			leftOffset = o2;
-		} else {
-			leftOffset = o1;
-		}
+		String title = Person.load(mandant.getId()).get(Person.TITLE);
+		String mandantLabel = title + " " + mandant.getName() + " " + mandant.getVorname();
 		contentStream.beginText();
 		contentStream.setFont(subFont, 10);
-		contentStream.moveTextPositionByAmount(leftOffset, pageSize.getUpperRightY() - 55);
-		contentStream.drawString(mandantLabel);
-		contentStream.endText();
-		
-		contentStream.beginText();
-		contentStream.setFont(subFont, 10);
-		contentStream.moveTextPositionByAmount(leftOffset, pageSize.getUpperRightY() - 65);
-		contentStream.drawString(dateLabel);
+		contentStream.moveTextPositionByAmount(40, pageSize.getUpperRightY() - 55);
+		contentStream.drawString("Ausstellung " + dateLabel + ", " + mandantLabel);
 		contentStream.endText();
 		
 		BufferedImage imageAwt = convertToAWT(image.getImageData());

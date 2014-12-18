@@ -13,6 +13,7 @@ package at.medevit.elexis.impfplan.ui;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -27,6 +28,8 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
@@ -44,7 +47,7 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 
 public class VaccinationView extends ViewPart {
-	
+	private static Logger logger = LoggerFactory.getLogger(VaccinationView.class);
 	public static final String PART_ID = "at.medevit.elexis.impfplan.ui.ImpfplanViewPart";
 	
 	private static VaccinationPlanHeaderDefinition vaccinationHeaderDefinition;
@@ -53,6 +56,10 @@ public class VaccinationView extends ViewPart {
 	
 	public static final String HEADER_ID_SHOW_ADMINISTERED = "HISA";
 	private Patient pat;
+	/**
+	 * knowledge if the sortByVaccination icon is active
+	 */
+	private boolean sortByVaccinationName = false;
 	
 	private ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
 		public void runInUi(ElexisEvent ev){
@@ -133,6 +140,10 @@ public class VaccinationView extends ViewPart {
 			
 		}
 		
+		if (sortByVaccinationName) {
+			sortVaccinationsByName();
+		}
+		
 		if (vaccinationHeaderDefinition.id.equals(HEADER_ID_SHOW_ADMINISTERED)) {
 			HashSet<String> atc = new HashSet<>();
 			for (Vaccination vacc : vaccinations) {
@@ -152,6 +163,22 @@ public class VaccinationView extends ViewPart {
 		}
 		vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations,
 			new TimeTool(pat.getGeburtsdatum()));
+	}
+	
+	public void sortVaccinationsByName(){
+		Collections.sort(vaccinations, new Comparator<Vaccination>() {
+			@Override
+			public int compare(Vaccination vac1, Vaccination vac2){
+				String name1 = vac1.getShortBusinessName();
+				String name2 = vac2.getShortBusinessName();
+				return name1.compareTo(name2);
+			}
+		});
+	}
+	
+	public void setSortByVaccinationName(boolean sort){
+		sortByVaccinationName = sort;
+		updateUi(!sort);
 	}
 	
 	@Override

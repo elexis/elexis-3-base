@@ -18,11 +18,18 @@ import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalListener;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -32,8 +39,11 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.wb.swt.ResourceManager;
 
+import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
+import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel.DiseaseDefinition;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.proposals.PersistentObjectContentProposal;
@@ -50,12 +60,14 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	private Text txtLotNo;
 	private Text txtAtcCode;
 	private Text txtArticleEAN;
+	private CheckboxTreeViewer treeViewer;
 	
 	private boolean isSupplement = false;
 	private String administratorString = null;
 	private String articleString = null;
 	private DateTime dateOfAdministration;
 	private String articleEAN;
+	private String vaccAgainst;
 	
 	private String articleAtcCode;
 	private String lotNo;
@@ -153,9 +165,15 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 				public void proposalAccepted(IContentProposal proposal){
 					PersistentObjectContentProposal<ArtikelstammItem> prop =
 						(PersistentObjectContentProposal<ArtikelstammItem>) proposal;
+					txtArticleName.setText(prop.getLabel());
 					articleString = prop.getPersistentObject().storeToString();
-					txtArticleEAN.setText(prop.getPersistentObject().getEAN());
-					txtAtcCode.setText(prop.getPersistentObject().getATCCode());
+					
+					/**
+					 * could be useful to define vacc. against at some point, but not needed in the
+					 * current version
+					 */
+// txtArticleEAN.setText(prop.getPersistentObject().getEAN());
+// txtAtcCode.setText(prop.getPersistentObject().getATCCode());
 				}
 			});
 		}
@@ -170,7 +188,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 			Label lblAdministratingContact = new Label(optionalGroup, SWT.NONE);
 			lblAdministratingContact.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false, 1, 1));
-			lblAdministratingContact.setText("Verabr. Arzt");
+			lblAdministratingContact.setText("Nachtrag f. Arzt");
 			
 			txtAdministrator = new Text(optionalGroup, SWT.BORDER);
 			administratorString = mandant.storeToString();
@@ -212,21 +230,43 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		txtLotNo = new Text(optionalGroup, SWT.BORDER);
 		txtLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		
-		Label lblArtikelEan = new Label(optionalGroup, SWT.NONE);
-		lblArtikelEan.setSize(60, 15);
-		lblArtikelEan.setText("Artikel EAN");
+		/**
+		 * could be useful to define vacc. against at some point, but not needed in the current
+		 * version
+		 */
+// Label lblArtikelEan = new Label(optionalGroup, SWT.NONE);
+// lblArtikelEan.setSize(60, 15);
+// lblArtikelEan.setText("Artikel EAN");
+//
+// txtArticleEAN = new Text(optionalGroup, SWT.BORDER);
+// txtArticleEAN.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+// txtArticleEAN.setSize(348, 21);
+//
+// Label lblAtccode = new Label(optionalGroup, SWT.NONE);
+// lblAtccode.setSize(56, 15);
+// lblAtccode.setText("ATC-Code");
+//
+// txtAtcCode = new Text(optionalGroup, SWT.BORDER);
+// txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+// txtAtcCode.setSize(314, 21);
 		
-		txtArticleEAN = new Text(optionalGroup, SWT.BORDER);
-		txtArticleEAN.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtArticleEAN.setSize(348, 21);
+		Label lblVaccAgainst = new Label(optionalGroup, SWT.NONE);
+		lblVaccAgainst.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
+		lblVaccAgainst.setText("Impfung gegen Krankheit(en)");
 		
-		Label lblAtccode = new Label(optionalGroup, SWT.NONE);
-		lblAtccode.setSize(56, 15);
-		lblAtccode.setText("ATC-Code");
+		treeViewer =
+			new CheckboxTreeViewer(optionalGroup, SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL);
+		Tree tree = treeViewer.getTree();
+		tree.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+		tree.setHeaderVisible(false);
+		tree.setLinesVisible(true);
 		
-		txtAtcCode = new Text(optionalGroup, SWT.BORDER);
-		txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtAtcCode.setSize(314, 21);
+		TreeViewerColumn col = new TreeViewerColumn(treeViewer, SWT.NONE);
+		col.getColumn().setWidth(225);
+		
+		treeViewer.setContentProvider(new DiseaseTreeContentProvider());
+		treeViewer.setLabelProvider(new DiseaseTreeLabelProvider());
+		treeViewer.setInput(DiseaseDefinitionModel.getDiseaseDefinitions());
 		
 		return area;
 	}
@@ -244,14 +284,28 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-		articleEAN = txtArticleEAN.getText();
-		articleAtcCode = txtAtcCode.getText();
+// articleEAN = txtArticleEAN.getText();
+// articleAtcCode = txtAtcCode.getText();
 		lotNo = txtLotNo.getText();
-		
 		doa =
 			new GregorianCalendar(dateOfAdministration.getYear(), dateOfAdministration.getMonth(),
 				dateOfAdministration.getDay());
+		vaccAgainst = getCheckedElementsString();
+		
 		super.okPressed();
+	}
+	
+	private String getCheckedElementsString(){
+		Object[] checkedElements = treeViewer.getCheckedElements();
+		StringBuilder sb = new StringBuilder();
+		
+		for (Object element : checkedElements) {
+			DiseaseDefinition disease = (DiseaseDefinition) element;
+			sb.append(disease.getATCCode());
+			sb.append(",");
+		}
+		
+		return sb.toString();
 	}
 	
 	public TimeTool getDateOfAdministration(){
@@ -280,5 +334,65 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	
 	public boolean isSupplement(){
 		return isSupplement;
+	}
+	
+	public String getVaccAgainst(){
+		return vaccAgainst;
+	}
+	
+	private class DiseaseTreeContentProvider implements ITreeContentProvider {
+		
+		@Override
+		public void dispose(){}
+		
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
+		
+		@Override
+		public Object[] getElements(Object inputElement){
+			return DiseaseDefinitionModel.getDiseaseDefinitions().toArray();
+		}
+		
+		@Override
+		public Object[] getChildren(Object parentElement){
+			return null;
+		}
+		
+		@Override
+		public Object getParent(Object element){
+			return (DiseaseDefinition) element;
+		}
+		
+		@Override
+		public boolean hasChildren(Object element){
+			return false;
+		}
+	}
+	
+	private class DiseaseTreeLabelProvider implements ILabelProvider {
+		
+		@Override
+		public void addListener(ILabelProviderListener listener){}
+		
+		@Override
+		public void dispose(){}
+		
+		@Override
+		public boolean isLabelProperty(Object element, String property){
+			return false;
+		}
+		
+		@Override
+		public void removeListener(ILabelProviderListener listener){}
+		
+		@Override
+		public Image getImage(Object element){
+			return null;
+		}
+		
+		@Override
+		public String getText(Object element){
+			return ((DiseaseDefinition) element).getDiseaseLabel();
+		}
 	}
 }

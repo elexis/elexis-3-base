@@ -53,7 +53,13 @@ h3<. 3.5 Filtern
 Im ViewMenu kann über den Filter definiert werden ob der _Schweizer Impfplan 2013_ oder alle _verabreichten Impfungen_ angezeigt werden sollen.
 !filter.png!
 
-h3<. 3.6 Alle Patienten welche eine Impfung mit Lot-Nummer XY erhalten haben suchen
+h3<. 3.6 Sortieren nach Name des Impfstoffes
+
+Über das ViewMenu kann die Sortierung nach Name der Verabreichten Impfung aktiviert werden. Solange dieses Icon *aktiviert* ist, werden die Impfungen nach ihrem Namen statt dem Datum der Verabreichung sortiert. 
+Die Funktionalität kann durch erneutes klicken auf _Nach Name der Impfung sortieren_ wieder *deaktiviert* werden.
+!sortByName.png!
+
+h3<. 3.7 Alle Patienten welche eine Impfung mit Lot-Nummer XY erhalten haben suchen
 
 Über ein Script können alle Patienten ermittelt werden, welche eine Imfpung mit einer bestimmten Lot-Nummer erhalten haben.
 Dieses Script kann in der Script View über Rechtsklick _Sricpt ausführen_ und Eingabe der Lot-Nummer in Anführungszeichen (siehe Screenshot) ausgeführt werden.

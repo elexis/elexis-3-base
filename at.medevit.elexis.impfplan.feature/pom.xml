@@ -7,4 +7,5 @@
   </parent>
   <artifactId>at.medevit.elexis.impfplan.feature</artifactId>
   <packaging>eclipse-feature</packaging>
+  <version>3.0.1-SNAPSHOT</version>
 </project>

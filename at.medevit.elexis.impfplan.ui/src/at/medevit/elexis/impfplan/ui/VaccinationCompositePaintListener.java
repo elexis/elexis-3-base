@@ -340,8 +340,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			
 			// add date
 			_administrationDate = vacc.getDateOfAdministration();
-			gc.drawText(_administrationDate.toString(TimeTool.DATE_GER), locationOfDateBorder + 5,
-				heightStart);
+			gc.drawText(vacc.getDateOfAdministrationLabel(), locationOfDateBorder + 5, heightStart);
 			
 			// get age
 			gc.drawText(getAgeLabel(_administrationDate), locationOfAgeBorder + 2, heightStart);
@@ -407,6 +406,11 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		String atcCode = vacc.getAtcCode();
 		HashSet<String> immunisation =
 			new HashSet<>(ArticleToImmunisationModel.getImmunisationForAtcCode(atcCode));
+		
+		if (immunisation == null || immunisation.isEmpty()) {
+			immunisation = new HashSet<>(vacc.getVaccAgainstList());
+		}
+		
 		for (DiseaseBoundary db : diseaseBoundaries) {
 			if (immunisation.contains(db.atcCode)) {
 				if (!background.equals(COLOR_CREME) && !background.equals(COLOR_LIGHTGREY)) {

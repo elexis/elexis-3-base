@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2012 by Niklaus Giger niklaus.giger@member.fsf.org
+# Copyright 2012-2014 by Niklaus Giger niklaus.giger@member.fsf.org
 # Distributed under the Eclipse Public License 1.0
 # wait (using lsof) to see whether the file passed to lowriter is being used
 # lsof is a CPU hog under Linux, inotify would be several magnitudes faster
@@ -39,7 +39,8 @@ while [ 1 ]
 do
   sleep 0.3
   nrWaits=$[ $nrWaits + 1 ]
-  timeout 1 fuser --silent $watchFile 
+  # cannot use --silent on MacOSX
+  timeout 1 fuser  $watchFile
   res=$?
   if [ "$nrWaits" -gt "$maxWait" ] || [ $res -eq 0 ] ; then break ; fi
 done
@@ -48,7 +49,8 @@ log2file "After $nrWaits sleeps $watchFile is open"
 # wait for the lockfile to disappear
 while true
 do
-  timeout 1 fuser --silent $watchFile
+  # don't use --silent. Not supported on MacOSX
+  timeout 1 fuser $watchFile
   if [ $? -gt 0 ] ; then break ; fi
   sleep 1
 done

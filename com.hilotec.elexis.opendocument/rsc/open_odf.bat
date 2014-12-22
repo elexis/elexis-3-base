@@ -1,5 +1,5 @@
 rem Script for Windows for the Elexis opendocument plugin
-rem (c) copyright 2012-2014 by Niklaus Giger niklaus.giger@member.fsf.org
+rem (c) copyright 2012-2013 by Niklaus Giger niklaus.giger@member.fsf.org
 set EXE_TO_USE=%1
 set FILE_TO_EDIT=%2
 time /t >> test.log

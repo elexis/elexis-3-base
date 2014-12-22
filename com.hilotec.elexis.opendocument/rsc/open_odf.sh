@@ -17,7 +17,7 @@ mkdir -p `dirname $logFile`
 # log message our log file
 function log2file {
 	# we use the same data format as elexis.log prepended with the day
-  msg="`date +"%Y:%m:%d %H:%M:%S.%3N"` $1"
+  msg="`date +"%H:%M:%S.%3N"` open_odf.sh.log $1"
   echo $msg 
   echo $msg >> $logFile
 }

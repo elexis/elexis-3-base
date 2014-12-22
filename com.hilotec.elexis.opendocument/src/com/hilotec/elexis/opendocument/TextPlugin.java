@@ -142,7 +142,7 @@ import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 
 public class TextPlugin implements ITextPlugin {
-	
+
 	/** Internal Representation of current style */
 	private class Style {
 		final static int ALIGN = SWT.LEFT | SWT.CENTER | SWT.RIGHT;
@@ -296,22 +296,18 @@ public class TextPlugin implements ITextPlugin {
 	}
 	
 	private Process editor_process;
-	
 	private File file;
-	
 	private OdfTextDocument odt;
 	private Style curStyle;
-	
 	private Composite comp;
 	private Label filename_label;
 	private Button open_button;
 	private Button import_button;
 	private static final String pluginID = "com.hilotec.elexis.opendocument";
 	private static final String NoFileOpen = "Dateiname: Keine Datei geöffnet";
-	
-	private Logger logger = LoggerFactory.getLogger(pluginID);
-	static int cnt = 0;
-	
+	private static Logger logger = LoggerFactory.getLogger(pluginID);
+	private static int cnt = 0;
+
 	private String getTempPrefix(){
 		cnt += 1;
 		StringBuffer sb = new StringBuffer();
@@ -376,6 +372,7 @@ public class TextPlugin implements ITextPlugin {
 	}
 	
 	private void openEditor(){
+		logger.info("openEditor "+file);
 		if (file == null || !ensureClosed()) {
 			return;
 		}
@@ -402,7 +399,7 @@ public class TextPlugin implements ITextPlugin {
 			scriptShell.setExecutable(true);
 		String args = (scriptFile + "\n" + editor + "\n" + argstr + "\n" + file.getAbsolutePath());
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
-		logger.info("openEditor: " + actPatient.getPersonalia() + "\n" + args);
+		logger.info("openEditor: " + actPatient.getPersonalia() + " as " + file.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(args.split("\n"));
 		filename_label.setText(file.getAbsolutePath());
 		
@@ -415,7 +412,7 @@ public class TextPlugin implements ITextPlugin {
 						editor_process.waitFor();
 						odt = (OdfTextDocument) OdfTextDocument.loadDocument(file);
 						logger.info("openEditor: exitValue " + editor_process.exitValue()
-							+ " done " + file.getAbsolutePath());
+							+ " done " + file.getAbsolutePath() + " NOT closing odt");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -466,6 +463,7 @@ public class TextPlugin implements ITextPlugin {
 	}
 	
 	public boolean print(String toPrinter, String toTray, boolean wait){
+		logger.info("String: " + (file != null));
 		if (file == null || !ensureClosed()) {
 			return false;
 		}
@@ -493,7 +491,6 @@ public class TextPlugin implements ITextPlugin {
 	
 	@Override
 	public Composite createContainer(Composite parent, ICallback handler){
-		logger.info("createContainer: ");
 		if (comp == null) {
 			comp = new Composite(parent, SWT.NONE);
 			RowLayout layout = new RowLayout(SWT.VERTICAL);
@@ -593,12 +590,9 @@ public class TextPlugin implements ITextPlugin {
 			return null;
 		}
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		if (stream == null)
-			return null;
 		try {
 			odt.save(stream);
-			logger.info("storeToByteArray: completed " + file.length() + " bytes will open editor");
-			openEditor();
+			logger.info("storeToByteArray: completed " + file.length());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -1353,7 +1347,6 @@ public class TextPlugin implements ITextPlugin {
 	
 	@Override
 	public boolean isDirectOutput(){
-		// TODO: Make sure that false is what we want here...
 		return false;
 	}
 	

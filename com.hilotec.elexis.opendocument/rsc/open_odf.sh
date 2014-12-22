@@ -16,7 +16,8 @@ mkdir -p `dirname $logFile`
 
 # log message our log file
 function log2file {
-  msg="`date +"%Y:%m:%d %H:%M:%S"` $1"
+	# we use the same data format as elexis.log prepended with the day
+  msg="`date +"%Y:%m:%d %H:%M:%S.%3N"` $1"
   echo $msg 
   echo $msg >> $logFile
 }

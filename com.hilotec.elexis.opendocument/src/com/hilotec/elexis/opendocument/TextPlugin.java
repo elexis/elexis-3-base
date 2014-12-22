@@ -1,3 +1,59 @@
+/*******************************************************************************
+ * Copyright (c) 2009-2014, A. Kaufmann, Niklaus Giger and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    A. Kaufmann - initial implementation
+ *    Niklaus Giger - Ported to Elexis 3.0, some bug fixes
+ *
+ *******************************************************************************/
+
+/**
+ * This text-plugin can work under Linux/MacoSX/Windows with any editor which is able to modify in
+ * the OpenDocument Format. It's primary use is for LibreOffice under Windows and Linux.
+ * <p>
+ * The user documentation can be found at
+ * <p>
+ * http://wiki.elexis.info/Com.hilotec.elexis.opendocument.feature.feature.group
+ * <p>
+ * <p>
+ * The following features are implemented
+ * <p>
+ * * all normally supported formats for text (bold, italic)
+ * <p>
+ * * Tables in templates allow [] which contains a place holder {} for the formatting of each line.
+ * This allows to configure the width of each column
+ * <p>
+ * * Create an underlined line for lines starting and ending with '_'
+ *
+ * <p>
+ * * ODT documents are removed after saving their contents as extinfo in the corresponding Brief.
+ * <p>
+ * * A list of all currently opened documents is show in the view of the plugin.
+ * <p>
+ * * A helper script (open_odf.bat/sh) is used to launch the editor application. It may not return
+ * before the editor application closed the document. It must return soon after the document is
+ * closed or Elexis will wait forever.
+ * <p>
+ * * Known working templates can be found under https://github.com/hilotec/elexis-vorlagen
+ * <p>
+ * Known deficiencies:
+ * <p>
+ * * Some combinations of unreadable documents/double clicking an already open document may result
+ * in an unspecified behaviour.
+ * <p>
+ * * Separate instances of Elexis can modify the same document. (This problem should probably be
+ * fixed in elexis core).
+ * <p>
+ * * A user can save the document under another name. In this case Elexis is unaware of the changes
+ * in that document and will ignore any modifications made there.
+ *
+ * @author Antoine Kaufmann & Niklaus Giger
+ */
+
 package com.hilotec.elexis.opendocument;
 
 import java.io.ByteArrayInputStream;

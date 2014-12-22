@@ -60,10 +60,10 @@
    <feature url="features/ch.pharmed.phmprescriber.feature.source_3.0.0.qualifier.jar" id="ch.pharmed.phmprescriber.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/com.hilotec.elexis.opendocument.feature.source_3.0.0.qualifier.jar" id="com.hilotec.elexis.opendocument.feature.source" version="3.0.0.qualifier">
+   <feature url="features/com.hilotec.elexis.opendocument.feature.source_3.1.1.qualifier.jar" id="com.hilotec.elexis.opendocument.feature.source" version="3.1.1.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/com.hilotec.elexis.opendocument.feature_3.0.0.qualifier.jar" id="com.hilotec.elexis.opendocument.feature" version="3.0.0.qualifier">
+   <feature url="features/com.hilotec.elexis.opendocument.feature_3.1.1.qualifier.jar" id="com.hilotec.elexis.opendocument.feature" version="3.1.1.qualifier">
       <category name="documentmanagement"/>
    </feature>
    <feature url="features/org.iatrix.feature.source_3.0.0.qualifier.jar" id="org.iatrix.feature.source" version="3.0.0.qualifier">

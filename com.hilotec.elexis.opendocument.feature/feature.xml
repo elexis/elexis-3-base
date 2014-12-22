@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.hilotec.elexis.opendocument.feature"
-      label="Textplugin für OpenDocument kompatible Textprogramme"
-      version="3.0.0.qualifier"
+      label="Textplugin für OpenDocument kompatible Textprogramme (von Hilotec)"
+      version="3.1.1.qualifier"
       provider-name="ch.medelexis">
 
    <description>

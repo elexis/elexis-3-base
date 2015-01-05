@@ -85,6 +85,7 @@ public class EALVerrechnet2015Updater {
 				for (Verrechnet verrechnet : leistungen) {
 					IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
 					if (verrechenbar instanceof Labor2009Tarif) {
+						String code = verrechenbar.getCode();
 						Labor2009Tarif analyseTarif =
 							(Labor2009Tarif) resolver.getTarif(verrechenbar.getCode(), startDate);
 						if (analyseTarif != null) {
@@ -92,10 +93,30 @@ public class EALVerrechnet2015Updater {
 							konsultation.addLeistung(analyseTarif);
 							absoluteCnt++;
 						}
+						// try removing wrong zuschlag -> reason is error before fix2015Chapters 
+						if (code.endsWith(".01")) {
+							removeZuschlag(konsultation);
+						}
 					}
 				}
 			}
 		}
 		return absoluteCnt + " EAL codes in Konsultationen angepasst.\n";
+	}
+	
+	private void removeZuschlag(Konsultation konsultation){
+		List<Verrechnet> leistungen = konsultation.getLeistungen();
+		if (leistungen != null && !leistungen.isEmpty()) {
+			for (Verrechnet verrechnet : leistungen) {
+				IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
+				if (verrechenbar instanceof Labor2009Tarif) {
+					Labor2009Tarif tarif = (Labor2009Tarif) verrechenbar;
+					String code = tarif.getCode();
+					if (code.equals("4707.10") || code.equals("4707.20")) {
+						konsultation.removeLeistung(verrechnet);
+					}
+				}
+			}
+		}
 	}
 }

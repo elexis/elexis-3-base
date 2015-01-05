@@ -38,14 +38,15 @@ public class Labor2009Tarif extends UiVerrechenbarAdapter {
 	public static final String XIDDOMAIN = "www.xid.ch/id/analysenliste_ch2009/"; //$NON-NLS-1$
 	private final static String TABLENAME = "CH_MEDELEXIS_LABORTARIF2009"; //$NON-NLS-1$
 	public static final String VERSION010 = "0.1.0"; //$NON-NLS-1$
-	public static final String VERSION = "0.1.1"; //$NON-NLS-1$
+	public static final String VERSION011 = "0.1.1"; //$NON-NLS-1$
+	public static final String VERSION = "0.1.2"; //$NON-NLS-1$
 	
 	// @formatter:off
 	private static final String createTable = "create table " + TABLENAME + "(" //$NON-NLS-1$ //$NON-NLS-2$
 		+ "ID		VARCHAR(25) primary key," //$NON-NLS-1$
 		+ "lastupdate BIGINT," //$NON-NLS-1$
 		+ "deleted	 CHAR(1) default '0'," //$NON-NLS-1$
-		+ "chapter   VARCHAR(10)," //$NON-NLS-1$
+		+ "chapter   VARCHAR(255)," //$NON-NLS-1$
 		+ "code		 VARCHAR(12)," //$NON-NLS-1$
 		+ "tp		 VARCHAR(10)," //$NON-NLS-1$
 		+ "name		 VARCHAR(255)," //$NON-NLS-1$
@@ -71,9 +72,15 @@ public class Labor2009Tarif extends UiVerrechenbarAdapter {
 		Labor2009Tarif version = load("1"); //$NON-NLS-1$
 		if (!version.exists()) {
 			createOrModifyTable(createTable);
-		} else if (version.get(FLD_CODE).equals(VERSION010)) {
+		}
+		if (version.get(FLD_CODE).equals(VERSION010)) {
 			createOrModifyTable("ALTER TABLE " + TABLENAME
 				+ " ADD GueltigVon CHAR(8); ALTER TABLE " + TABLENAME + " ADD GueltigBis CHAR(8);");
+			createOrModifyTable("ALTER TABLE " + TABLENAME + " MODIFY chapter VARCHAR(255);");
+			version.set(FLD_CODE, VERSION);
+		}
+		if (version.get(FLD_CODE).equals(VERSION011)) {
+			createOrModifyTable("ALTER TABLE " + TABLENAME + " MODIFY chapter VARCHAR(255);");
 			version.set(FLD_CODE, VERSION);
 		}
 		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN,

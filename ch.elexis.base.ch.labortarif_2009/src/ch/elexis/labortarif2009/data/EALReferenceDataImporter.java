@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 MEDEVIT.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     T. Huster - initial API and implementation
+ ******************************************************************************/
+
 package ch.elexis.labortarif2009.data;
 
 import java.io.InputStream;
@@ -182,7 +193,9 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 						Labor2009Tarif.FLD_CHAPTER, Labor2009Tarif.FLD_CODE, Labor2009Tarif.FLD_TP,
 						Labor2009Tarif.FLD_NAME, Labor2009Tarif.FLD_LIMITATIO,
 						Labor2009Tarif.FLD_FACHBEREICH, Labor2009Tarif.FLD_FACHSPEC
-					}, importedValues.get(Labor2009Tarif.FLD_CHAPTER),
+						},
+						concatChapter(labor2009Tarif,
+							importedValues.get(Labor2009Tarif.FLD_CHAPTER)),
 						importedValues.get(Labor2009Tarif.FLD_CODE),
 						importedValues.get(Labor2009Tarif.FLD_TP),
 						importedValues.get(Labor2009Tarif.FLD_NAME),
@@ -206,6 +219,15 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 						validFrom.toString(TimeTool.DATE_COMPACT));
 				}
 			}
+		}
+	}
+
+	private String concatChapter(Labor2009Tarif existing, String chapter){
+		String existingChapter = existing.get(Labor2009Tarif.FLD_CHAPTER);
+		if (existingChapter != null && !existingChapter.isEmpty()) {
+			return existingChapter + ", " + chapter;
+		} else {
+			return chapter;
 		}
 	}
 

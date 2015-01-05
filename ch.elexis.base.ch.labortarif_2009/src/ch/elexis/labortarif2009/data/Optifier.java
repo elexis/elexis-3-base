@@ -106,7 +106,7 @@ public class Optifier implements IOptifier {
 						continue;
 					} else {
 						Labor2009Tarif vlt = (Labor2009Tarif) iv;
-						if (!vlt.get(Labor2009Tarif.FLD_CHAPTER).trim().equals("5.1.2.2.1")) {
+						if (!isSchnellAnalyse(vlt)) {
 							if (vlt.get(Labor2009Tarif.FLD_FACHBEREICH).indexOf("C") > -1) { //$NON-NLS-1$
 								z470710 += v.getZahl();
 							} else {
@@ -185,6 +185,19 @@ public class Optifier implements IOptifier {
 		
 	}
 	
+	private boolean isSchnellAnalyse(Labor2009Tarif vlt){
+		String chapter = vlt.get(Labor2009Tarif.FLD_CHAPTER).trim();
+		if (chapter != null && !chapter.isEmpty()) {
+			String[] chapters = chapter.split(",");
+			for (String string : chapters) {
+				if (string.trim().equals("5.1.2.2.1")) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public Result<Verrechnet> remove(Verrechnet code, Konsultation kons){
 		List<Verrechnet> l = kons.getLeistungen();
 		l.remove(code);

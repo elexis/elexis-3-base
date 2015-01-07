@@ -1,6 +1,8 @@
 package ch.elexis.connect.reflotron.packages;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
@@ -9,6 +11,11 @@ import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
 public class Probe {
+	private static int NAME = 0;
+	private static int VALUE = 1;
+	private static int UNIT = 2;
+	
+	private boolean isEnzym;
 	private TimeTool date;
 	private String ident;
 	private String resultat;
@@ -58,39 +65,71 @@ public class Probe {
 	 * @return String Warnungsmeldung, die geloggt werden sollte
 	 */
 	public String write(Patient patient) throws PackageException{
-		if (resultat.length() < 19) {
+		if (resultat == null || resultat.isEmpty()) {
 			throw new PackageException(Messages.getString("Probe.ResultatMsg")); //$NON-NLS-1$
 		}
 		
-		String paramName;
-		String value;
-		String unit;
-		if (resultat.length() > 20) {
-			if (resultat.charAt(20) == 'C') {
-				// Enzym
-				paramName = resultat.substring(0, 4).trim().toUpperCase();
-				value = resultat.substring(4, 10).trim();
-				unit = resultat.substring(10, 16).trim();
-			} else {
-				// Substrat
-				paramName = resultat.substring(0, 4).trim().toUpperCase();
-				value = resultat.substring(5, 11).trim();
-				unit = resultat.substring(12, 21).trim();
-			}
+		isEnzym = false;
+		String paramName, value, unit;
+		
+		String[] resFields = splitResultFields();
+		int noFields = resFields.length;
+		int offset = 0;
+		
+		paramName = resFields[NAME];
+		// check if an offset is needed
+		if ((!isEnzym && noFields == 4) || (isEnzym && noFields == 5)) {
+			offset = 1;
+			value = (resFields[VALUE] + resFields[VALUE + offset]).trim();
 		} else {
-			// Substrat
-			paramName = resultat.substring(0, 4).trim().toUpperCase();
-			value = resultat.substring(5, 11).trim();
-			unit = resultat.substring(12, resultat.length()).trim();
+			value = resFields[VALUE];
 		}
+		unit = resFields[UNIT + offset];
 		
 		Value val = Value.getValue(paramName, unit);
+		
+		// for Unit-Test only
+		if (hint.equals("ElexisReflotronUnitTestRunning")) {
+			return val.get_longName() + ";" + val.get_shortName() + ";" + value + ";" + unit;
+		}
+		
 		TransientLabResult result = val.fetchValue(patient, value, "", getDate()); //$NON-NLS-1$
 		
 		LabImportUtil.importLabResults(Collections.singletonList(result),
 			new DefaultLabImportUiHandler());
 		
 		return val.getWarning();
+	}
+	
+	private String[] splitResultFields() throws PackageException{
+		String[] split = resultat.split(" ");
+		String regex = "^[a-zA-Z0-9/]+$"; //letter,digit, '/'
+		
+		// might be an enzym
+		if (resultat.endsWith("C")) {
+			String prevChar = resultat.substring(resultat.length() - 2, resultat.length() - 1);
+			boolean matches = prevChar.matches(regex);
+			
+			//Enzym
+			if (!matches) {
+				isEnzym = true;
+				if (split.length < 4 && resultat.length() > 20) {
+					List<String> splitList = new ArrayList<String>();
+					splitList.add(resultat.substring(0, 4).trim().toUpperCase()); //name
+					splitList.add(resultat.substring(4, 10).trim()); //value
+					splitList.add(resultat.substring(10, 16).trim()); //unit 
+					splitList.add(resultat.substring(16, 20).trim()); //ref. temp
+					
+					return splitList.toArray(new String[splitList.size()]);
+				}
+			}
+		}
+		
+		if (split.length < 3) {
+			throw new PackageException(Messages.getString("Probe.ResultatMsg")); //$NON-NLS-1$
+		}
+		return split;
+		
 	}
 	
 	public TimeTool getDate(){
@@ -111,5 +150,9 @@ public class Probe {
 	
 	public String getZusatztext(){
 		return zusatztext;
+	}
+	
+	public void setResult(String resultat){
+		this.resultat = resultat;
 	}
 }

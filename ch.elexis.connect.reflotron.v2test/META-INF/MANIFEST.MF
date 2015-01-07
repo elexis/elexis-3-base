@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Reflotron v2 Test
+Bundle-SymbolicName: ch.elexis.connect.reflotron.v2test
+Bundle-Version: 3.0.0.qualifier
+Fragment-Host: ch.elexis.connect.reflotron.v2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.junit

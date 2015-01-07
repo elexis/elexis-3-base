@@ -1,0 +1,22 @@
+The display for enzymes and substrates differ in the result line:
+
+“PPPP-vDDDDD-EEEEEEEEE–––” Substrate
+“PPPPvDDDDDEEEEEE-DD°C–––” Enzyme
+
+P = name of parameter
+D = digits/decimal points
+E = characters for the unit
+DD°C = enzyme reference temperature
+v = preceding sign, e.g. ; <; >
+– = space
+*
+
+The arrangement is usually left-adjusted, e.g.
+GGT < 2.80 U/l 25°C
+GLU > 600 mg/dl
+GLU 128.0  mg/dl
+CHOL 240 mg/dl
+K 105.00 mmol/l
+CREA 1.76 mg/dl
+GGT <5.00 U/l 37øC
+CHOL<15.26mmol/l 20°C

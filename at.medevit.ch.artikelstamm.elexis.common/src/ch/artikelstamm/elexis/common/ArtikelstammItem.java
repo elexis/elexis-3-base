@@ -653,7 +653,13 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public TYPE getType(){
-		return ArtikelstammConstants.TYPE.valueOf(get(FLD_ITEM_TYPE));
+		try {
+			return ArtikelstammConstants.TYPE.valueOf(get(FLD_ITEM_TYPE));
+		} catch (IllegalArgumentException iae) {
+			// be more resilient on wrong database entries (e.g. #3193)
+			log.error("Invalid TYPE argument for " + getId() + ": " + get(FLD_ITEM_TYPE));
+			return null;
+		}
 	}
 	
 	public String getTyp(){

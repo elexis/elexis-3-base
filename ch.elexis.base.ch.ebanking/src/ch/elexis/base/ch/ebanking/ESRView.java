@@ -11,7 +11,10 @@ import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -340,6 +343,26 @@ public class ESRView extends ViewPart {
 		
 		tableViewer.setLabelProvider(new ESRLabelProvider());
 		tableViewer.setContentProvider(new ESRContentProvider(lblSUMME, DISPLAY_ESR));
+		
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				StructuredSelection ss = (StructuredSelection) tableViewer.getSelection();
+				Object firstElement = ss.getFirstElement();
+				if (firstElement != null) {
+					ESRRecord selRecord = (ESRRecord) firstElement;
+					ElexisEventDispatcher.fireSelectionEvent(selRecord);
+					Rechnung rn = selRecord.getRechnung();
+					if (rn != null) {
+						ElexisEventDispatcher.fireSelectionEvent(rn);
+					}
+				} else {
+					ElexisEventDispatcher.clearSelection(ESRRecord.class);
+				}
+				
+			}
+		});
 		
 		ViewerFilter[] filters = new ViewerFilter[] {
 			FilterSearchField.getInstance()

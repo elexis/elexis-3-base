@@ -5,16 +5,18 @@
       version="3.0.0.qualifier"
       provider-name="hilotec.com">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://www.hilotec.com/">
+      Einfache Perspektiven-Toolbar wo auch selbst erstellte Perspektiven aufgenommen
+      werden koennen. (Vielleicht mittlerweile ueberfluessig).
+      Mehr Info unter http://wiki.elexis.info/com.hilotec.elexis.toolbar.feature.feature.group
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://elexis.info/de_contributers.html">
+     Antoine Kaufmann
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
    </license>
 
    <plugin

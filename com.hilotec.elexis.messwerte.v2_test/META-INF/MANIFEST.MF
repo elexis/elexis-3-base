@@ -5,6 +5,6 @@ Bundle-SymbolicName: com.hilotec.elexis.messwerte.v2_test
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: info@medshare.net
 Fragment-Host: com.hilotec.elexis.messwerte.v2;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.junit,
  ch.elexis.core.scripting.beanshell;bundle-version="3.0.0"

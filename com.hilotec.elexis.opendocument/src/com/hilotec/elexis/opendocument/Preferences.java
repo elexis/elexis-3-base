@@ -12,6 +12,7 @@
 
 package com.hilotec.elexis.opendocument;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.swt.SWT;
@@ -30,6 +31,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String P_PRINTARGS = BASE + "printargs";
 	public static final String P_PDFCONVERTER = BASE + "pdfpath";
 	public static final String P_PDFARGS = BASE + "pdfargs";
+	public static final String P_WRAPPERSCRIPT = BASE + "wrapperscript";
 	
 	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.localCfg);
 	
@@ -49,6 +51,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		addField(new FileFieldEditor(P_PDFCONVERTER, "PDF-Konverter", getFieldEditorParent()));
 		addField(new MultilineFieldEditor(P_PDFARGS, "Argumente fuer PDF-Konvertierung", 5,
 			SWT.V_SCROLL, false, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(P_WRAPPERSCRIPT, "Wrapper Skript aktivieren",
+			getFieldEditorParent()));
 	}
 	
 	@Override

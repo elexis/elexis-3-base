@@ -402,7 +402,9 @@ public class TextPlugin implements ITextPlugin {
 		File scriptShell = new File(scriptFile);
 		if (!scriptShell.canExecute())
 			scriptShell.setExecutable(true);
-		String args = (scriptFile + "\n" + editor + "\n" + argstr + "\n" + file.getAbsolutePath());
+		String args = (editor + "\n" + argstr + "\n" + file.getAbsolutePath());
+		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, true))
+			args = scriptFile + "\n" + args;
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
 		logger.info("openEditor: " + actPatient.getPersonalia() + " as " + file.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(args.split("\n"));
@@ -647,7 +649,7 @@ public class TextPlugin implements ITextPlugin {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
 			odt.save(stream);
-			logger.info("storeToByteArray: completed " + file.length());
+			logger.info("storeToByteArray: completed " + file.length() + " bytes");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

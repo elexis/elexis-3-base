@@ -204,6 +204,7 @@
   <module>net.medshare.connector.aerztekasse_test</module>
   <module>ch.pharmed.phmprescriber_test</module>
   <module>ch.elexis.base.ch.arzttarife.test</module>
+  <module>ch.elexis.connect.reflotron.v2test</module>
   <module>ch.elexis.externe_dokumente.tests</module>
   <module>at.medevit.elexis.loinc_test</module>
   <module>ch.elexis.laborimport.viollier.v2_test</module>

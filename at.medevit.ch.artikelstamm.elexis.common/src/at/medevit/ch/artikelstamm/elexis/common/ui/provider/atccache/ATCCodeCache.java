@@ -25,6 +25,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.atc_codes.ATCCode;
+import at.medevit.atc_codes.ATCCodeService;
+import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
+import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.NamedBlob2;
@@ -32,10 +36,6 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
-import at.medevit.atc_codes.ATCCode;
-import at.medevit.atc_codes.ATCCodeService;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
-import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
 
 /**
  * Provide a cache for the number of elements available in the Artikelstamm set for each ATC code.
@@ -113,6 +113,7 @@ public class ATCCodeCache {
 		
 		cache = new HashMap<String, Integer>(numberOfATCCodes);
 		
+		int worked = 0;
 		for (ATCCode atcCode : allATCCodes) {
 			String query =
 				"SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME + " WHERE "
@@ -121,10 +122,13 @@ public class ATCCodeCache {
 			
 			int foundElements = PersistentObject.getConnection().queryInt(query);
 			cache.put(atcCode.atcCode, foundElements);
+			worked++;
+			monitor.subTask("Rebuilding ATC Code product index (" + worked + "/" + numberOfATCCodes
+				+ ")");
 			monitor.worked(1);
 		}
 		
-		monitor.subTask("Persisting cache to database");
+		monitor.subTask("Persisting ATC Code product cache to database");
 		// clear old caches
 		NamedBlob2.cleanup(NAMED_BLOB_PREFIX, new TimeTool());
 		

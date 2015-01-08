@@ -3,6 +3,7 @@ package at.medevit.elexis.impfplan.ui.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.impfplan.ui.VaccinationView;
@@ -18,7 +19,10 @@ public class SortByVaccinationHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		boolean toggled = HandlerUtil.toggleCommandState(event.getCommand());
-		VaccinationView vaccView = (VaccinationView) HandlerUtil.getActivePart(event);
+		
+		VaccinationView vaccView =
+			(VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.findView(VaccinationView.PART_ID);
 		
 		if (toggled) {
 			vaccView.setSortByVaccinationName(false);

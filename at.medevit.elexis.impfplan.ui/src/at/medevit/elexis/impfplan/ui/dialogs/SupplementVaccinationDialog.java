@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel.DiseaseDefinition;
@@ -112,6 +113,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Group mainGroup = new Group(container, SWT.NONE);
+		mainGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
 		mainGroup.setText("Pflicht Angaben");
 		GridLayout gd_MainGroup = new GridLayout(2, false);
 		mainGroup.setLayout(gd_MainGroup);
@@ -180,6 +182,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		new Label(container, SWT.NONE);
 		
 		Group optionalGroup = new Group(container, SWT.NONE);
+		optionalGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
 		optionalGroup.setText("Optionale Angaben");
 		optionalGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		optionalGroup.setLayout(new GridLayout(2, false));
@@ -188,7 +191,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 			Label lblAdministratingContact = new Label(optionalGroup, SWT.NONE);
 			lblAdministratingContact.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false, 1, 1));
-			lblAdministratingContact.setText("Nachtrag f. Arzt");
+			lblAdministratingContact.setText("Nachtrag von");
 			
 			txtAdministrator = new Text(optionalGroup, SWT.BORDER);
 			administratorString = mandant.storeToString();
@@ -221,53 +224,61 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 					administratorString = prop.getPersistentObject().storeToString();
 				}
 			});
+			
+			Label lblLotNo = new Label(optionalGroup, SWT.NONE);
+			lblLotNo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+			lblLotNo.setText("Lot-Nr");
+			
+			txtLotNo = new Text(optionalGroup, SWT.BORDER);
+			txtLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		}
-		
-		Label lblLotNo = new Label(optionalGroup, SWT.NONE);
-		lblLotNo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblLotNo.setText("Lot-Nr");
-		
-		txtLotNo = new Text(optionalGroup, SWT.BORDER);
-		txtLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		
 		/**
 		 * could be useful to define vacc. against at some point, but not needed in the current
 		 * version
 		 */
-// Label lblArtikelEan = new Label(optionalGroup, SWT.NONE);
-// lblArtikelEan.setSize(60, 15);
-// lblArtikelEan.setText("Artikel EAN");
-//
-// txtArticleEAN = new Text(optionalGroup, SWT.BORDER);
-// txtArticleEAN.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-// txtArticleEAN.setSize(348, 21);
-//
-// Label lblAtccode = new Label(optionalGroup, SWT.NONE);
-// lblAtccode.setSize(56, 15);
-// lblAtccode.setText("ATC-Code");
-//
-// txtAtcCode = new Text(optionalGroup, SWT.BORDER);
-// txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-// txtAtcCode.setSize(314, 21);
+		// Label lblArtikelEan = new Label(optionalGroup, SWT.NONE);
+		// lblArtikelEan.setSize(60, 15);
+		// lblArtikelEan.setText("Artikel EAN");
+		//
+		// txtArticleEAN = new Text(optionalGroup, SWT.BORDER);
+		// txtArticleEAN.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		// txtArticleEAN.setSize(348, 21);
+		//
+		// Label lblAtccode = new Label(optionalGroup, SWT.NONE);
+		// lblAtccode.setSize(56, 15);
+		// lblAtccode.setText("ATC-Code");
+		//
+		// txtAtcCode = new Text(optionalGroup, SWT.BORDER);
+		// txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		// txtAtcCode.setSize(314, 21);
 		
-		Label lblVaccAgainst = new Label(optionalGroup, SWT.NONE);
-		lblVaccAgainst.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
-		lblVaccAgainst.setText("Impfung gegen Krankheit(en)");
-		
-		treeViewer =
-			new CheckboxTreeViewer(optionalGroup, SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL);
-		Tree tree = treeViewer.getTree();
-		tree.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
-		tree.setHeaderVisible(false);
-		tree.setLinesVisible(true);
-		
-		TreeViewerColumn col = new TreeViewerColumn(treeViewer, SWT.NONE);
-		col.getColumn().setWidth(225);
-		
-		treeViewer.setContentProvider(new DiseaseTreeContentProvider());
-		treeViewer.setLabelProvider(new DiseaseTreeLabelProvider());
-		treeViewer.setInput(DiseaseDefinitionModel.getDiseaseDefinitions());
-		
+		Group expiredGroup = new Group(container, SWT.NONE);
+		expiredGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
+		expiredGroup.setText("Bei nicht mehr erhältlichen Impfstoffen");
+		expiredGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		expiredGroup.setLayout(new GridLayout(2, false));
+		{
+			Label lblVaccAgainst = new Label(expiredGroup, SWT.NONE);
+			lblVaccAgainst.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
+			lblVaccAgainst.setText("Impfung gegen Krankheit(en)");
+			
+			treeViewer =
+				new CheckboxTreeViewer(expiredGroup, SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL);
+			Tree tree = treeViewer.getTree();
+			GridData gd_tree = new GridData(SWT.FILL, SWT.TOP, true, false);
+			gd_tree.heightHint = 200;
+			tree.setLayoutData(gd_tree);
+			tree.setHeaderVisible(false);
+			tree.setLinesVisible(true);
+			
+			TreeViewerColumn col = new TreeViewerColumn(treeViewer, SWT.NONE);
+			col.getColumn().setWidth(225);
+			
+			treeViewer.setContentProvider(new DiseaseTreeContentProvider());
+			treeViewer.setLabelProvider(new DiseaseTreeLabelProvider());
+			treeViewer.setInput(DiseaseDefinitionModel.getDiseaseDefinitions());
+		}
 		return area;
 	}
 	

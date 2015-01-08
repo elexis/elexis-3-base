@@ -58,7 +58,7 @@
                icon="icon://IMG_FILTER"
                id="filterMenuContribution"
                style="pulldown"
-               tooltip="Anzuzeigende Impfungen definieren">
+               tooltip="Darstellung der Impfungen definieren">
             <parameter
                   name="at.medevit.elexis.impfplan.ui.view.vaccinationHeader.headerType"
                   value="HWAV">
@@ -86,15 +86,19 @@
       <menuContribution
             allPopups="false"
             locationURI="menu:at.medevit.elexis.impfplan.ui.ImpfplanViewPart">
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:filterMenuContribution">
          <command
                commandId="at.medevit.elexis.impfplan.ui.command.SortByVaccination"
                icon="rsc/icons/sort-alphabet.png"
                style="toggle">
          </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:filterMenuContribution">
+         <separator
+               name="at.medevit.elexis.impfplan.ui.separator1"
+               visible="true">
+         </separator>
          <dynamic
                class="at.medevit.elexis.impfplan.ui.handlers.FilterHandlerDynamicContribution"
                id="at.medevit.elexis.impfplan.ui.handlers.FilterHandlerDynamicContribution">

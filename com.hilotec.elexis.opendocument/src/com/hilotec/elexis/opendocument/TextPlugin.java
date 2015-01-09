@@ -134,17 +134,17 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import com.hilotec.elexis.opendocument.Export.Exporter;
-
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.data.util.PlatformHelper;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
+
+import com.hilotec.elexis.opendocument.Export.Exporter;
 
 public class TextPlugin implements ITextPlugin {
 
@@ -317,8 +317,10 @@ public class TextPlugin implements ITextPlugin {
 		cnt += 1;
 		StringBuffer sb = new StringBuffer();
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
-		sb.append(cnt + "_" + actPatient.getName() + "_");
-		sb.append(actPatient.getVorname() + "_");
+		if (actPatient != null) {
+			sb.append(cnt + "_" + actPatient.getName() + "_");
+			sb.append(actPatient.getVorname() + "_");
+		}
 		DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_S");
 		Date date = new Date();
 		sb.append(dateFormat.format(date));
@@ -358,8 +360,10 @@ public class TextPlugin implements ITextPlugin {
 	 */
 	private boolean ensureClosed(){
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
-		logger.info("ensureClosed: " + actPatient.getVorname() + " "
-			+ actPatient.getName().toString());
+		if (actPatient != null) {
+			logger.info("ensureClosed: " + actPatient.getVorname() + " "
+				+ actPatient.getName().toString());
+		}
 		
 		while (editorRunning()) {
 			logger.info("Editor already opened file " + file.getAbsolutePath());
@@ -647,6 +651,8 @@ public class TextPlugin implements ITextPlugin {
 			return null;
 		}
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		if (stream == null)
+			return null;
 		try {
 			odt.save(stream);
 			logger.info("storeToByteArray: completed " + file.length() + " bytes");

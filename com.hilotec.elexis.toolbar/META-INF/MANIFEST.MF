@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Toolbar
+Bundle-SymbolicName: com.hilotec.elexis.toolbar;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: hilotec.com
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.forms,
+ ch.elexis.core.data,
+ ch.rgw.utility,
+ org.eclipse.core.runtime,
+ ch.elexis.core,
+ ch.elexis.core.ui

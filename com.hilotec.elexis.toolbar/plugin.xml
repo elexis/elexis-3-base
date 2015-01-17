@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="com.hilotec.elexis.toolbar.perspektiven"
+               label="Perspektiven">
+            <dynamic
+                  class="com.hilotec.elexis.toolbar.PerspektivenContribution"
+                  id="com.hilotec.elexis.toolbar.PerspektivenItem">
+            </dynamic>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.hilotec.elexis.toolbar.Preferences"
+            id="com.hilotec.elexis.toolbar.preferences"
+            name="Hilotec Toolbar">
+      </page>
+   </extension>
+
+</plugin>

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Labor Ilamed importer
-Bundle-SymbolicName: ch.elexis.laborimport.ilamed;singleton:=true
+Bundle-Name: Labor Synlab importer
+Bundle-SymbolicName: ch.elexis.laborimport.synlab;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin

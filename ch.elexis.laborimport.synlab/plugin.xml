@@ -9,16 +9,16 @@
    <extension
          point="ch.elexis.core.ui.LaborDatenImport">
       <Importer
-            Class="ch.elexis.laborimport.ilamed.Importer"
-            name="Labor Ilamed"/>
+            Class="ch.elexis.laborimport.synlab.Importer"
+            name="Labor Synlab"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="ch.elexis.preferences.transporters"
-            class="ch.elexis.laborimport.ilamed.PreferencePage"
-            id="ch.elexis.laborimport.ilamed.prefs"
-            name="Labor Ilamed"/>
+            class="ch.elexis.laborimport.synlab.PreferencePage"
+            id="ch.elexis.laborimport.synlab.prefs"
+            name="Labor Synlab"/>
    </extension>
 
 </plugin>

@@ -8,7 +8,7 @@
  * 
  */
 
-package ch.elexis.laborimport.ilamed;
+package ch.elexis.laborimport.synlab;
 
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -21,9 +21,9 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
-	public static final String JAR_PATH = "ilamed/jar_path"; //$NON-NLS-1$
-	public static final String INI_PATH = "ilamed/ini_path"; //$NON-NLS-1$
-	public static final String DL_DIR = "ilamed/downloaddir"; //$NON-NLS-1$
+	public static final String JAR_PATH = "synlab/jar_path"; //$NON-NLS-1$
+	public static final String INI_PATH = "synlab/ini_path"; //$NON-NLS-1$
+	public static final String DL_DIR = "synlab/downloaddir"; //$NON-NLS-1$
 	
 	public PreferencePage(){
 		super(GRID);

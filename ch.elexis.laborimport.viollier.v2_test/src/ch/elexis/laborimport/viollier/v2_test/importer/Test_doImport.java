@@ -518,7 +518,7 @@ public class Test_doImport {
 
 			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
-			hl7TimeStamp = "20120511083334"; //$NON-NLS-1$
+			hl7TimeStamp = "201205110831"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "11700", "Paracetamol", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$

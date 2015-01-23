@@ -38,7 +38,6 @@ public class ViollierLaborImportSettings {
 	public static final String cfgDirError = cfgBase + "/dir/error"; //$NON-NLS-1$
 	public static final String cfgDocumentCategory = cfgBase + "/documentCategory"; //$NON-NLS-1$
 	public static final String cfgArchivePurgeInterval = cfgBase + "/archivePurgeIntervalDays"; //$NON-NLS-1$
-	public static final String cfgSaveRefRange = cfgBase + "/saveRefRange"; //$NON-NLS-1$
 	String globalJMedTransferJar;
 	String globalJMedTransferParam;
 	String globalDirDownload;
@@ -46,7 +45,6 @@ public class ViollierLaborImportSettings {
 	String globalDirError;
 	String globalDocumentCategory;
 	int globalArchivePurgeInterval;
-	boolean globalSaveRefRange;
 	
 	// Mandanten Einstellungen
 	public static final String cfgMandantUseGlobalSettings = cfgBase + "/mandantUseGlobalSettings"; //$NON-NLS-1$
@@ -425,37 +423,6 @@ public class ViollierLaborImportSettings {
 	}
 	
 	/**
-	 * Gibt die aktuell gültige Einstellung zum Überschreiben von Referenzbereichen zurück.
-	 * 
-	 * @return aktuell gültige Einstellung zum Überschreiben von Referenzbereichen
-	 */
-	public boolean getSaveRefRange(){
-		if (mandantUseGlobalSettings)
-			return globalSaveRefRange;
-		else
-			return globalSaveRefRange;
-	}
-	
-	/**
-	 * Gibt die global konfigurierte Einstellung zum Überschreiben von Referenzbereichen zurück.
-	 * 
-	 * @return global konfigurierte Einstellung zum Überschreiben von Referenzbereichen
-	 */
-	public boolean getGlobalSaveRefRange(){
-		return globalSaveRefRange;
-	}
-	
-	/**
-	 * Setzt die global konfigurierte Einstellung zum Überschreiben von Referenzbereichen
-	 * 
-	 * @param value
-	 *            Einstellung zum Überschreiben von Referenzbereichen
-	 */
-	public void setGlobalSaveRefRange(boolean value){
-		globalSaveRefRange = value;
-	}
-	
-	/**
 	 * Gibt die aktuell gültige Einstellung zum Bereinigen des Archivverzeichnisses zurück.
 	 * 
 	 * @return aktuell gültige Einstellung zum Bereinigen des Archivverzeichnisses
@@ -528,10 +495,6 @@ public class ViollierLaborImportSettings {
 			globalArchivePurgeInterval = Integer.parseInt(temp);
 		} catch (Exception e) {}
 		globalDocumentCategory = globalCfg.get(cfgDocumentCategory, ""); //$NON-NLS-1$
-		temp = globalCfg.get(cfgSaveRefRange, ""); //$NON-NLS-1$
-		try {
-			globalSaveRefRange = ("1".equals(temp)); //$NON-NLS-1$
-		} catch (Exception e) {}
 		
 		// Mandanten Settings
 		settingText = mandantCfg.get(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
@@ -565,7 +528,6 @@ public class ViollierLaborImportSettings {
 		globalCfg.set(cfgDirError, globalDirError);
 		globalCfg.set(cfgArchivePurgeInterval, globalArchivePurgeInterval);
 		globalCfg.set(cfgDocumentCategory, globalDocumentCategory);
-		globalCfg.set(cfgSaveRefRange, globalSaveRefRange);
 		globalCfg.flush();
 		
 		// Mandanten Settings

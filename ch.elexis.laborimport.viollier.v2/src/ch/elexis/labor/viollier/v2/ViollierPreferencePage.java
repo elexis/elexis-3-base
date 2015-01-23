@@ -52,7 +52,6 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 	private Text tGlobalDirError;
 	private Text tGlobalArchivePurgeInterval;
 	private Text tGlobalDocumentCategory;
-	private Button bGlobalSaveRefRange;
 	
 	private Group gMandantSettings;
 	private Button bMandantUseGlobalSettings;
@@ -96,7 +95,6 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		} catch (Exception e) {}
 		mySettings.setGlobalArchivePurgeInterval(days);
 		mySettings.setGlobalDocumentCategory(tGlobalDocumentCategory.getText());
-		mySettings.setGlobalSaveRefRange(bGlobalSaveRefRange.getSelection());
 		
 		mySettings.setMandantUsingGlobalSettings(bMandantUseGlobalSettings.getSelection());
 		mySettings.setMandantDocumentCategory(tMandantDocumentCategory.getText());
@@ -229,13 +227,6 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalDocumentCategory = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalDocumentCategory.setLayoutData(gridDataForInputs);
 		tGlobalDocumentCategory.setText(undefined);
-		
-		// Save Reference Range
-		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(Messages.Preferences_SaveRefRange);
-		lbl.setLayoutData(gridDataForLabels);
-		bGlobalSaveRefRange = new Button(grp, SWT.CHECK);
-		bGlobalSaveRefRange.setLayoutData(gridDataForInputs);
 		
 		// =====================================================================
 		// Mandant Settings
@@ -417,7 +408,6 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalArchivePurgeInterval.setText(Integer.toString(mySettings
 			.getGlobalArchivePurgeInterval()));
 		tGlobalDocumentCategory.setText(mySettings.getGlobalDocumentCategory());
-		bGlobalSaveRefRange.setSelection(mySettings.getGlobalSaveRefRange());
 		
 		showMandantSettings();
 		showMachineSettings();

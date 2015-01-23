@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
@@ -67,6 +68,11 @@ public class Test_doImport {
 	
 	private Patient patient = null;
 	
+	@Before
+	public void before(){
+		LabOrderImport.setTestMode(true);
+	}
+
 	/**
 	 * Prüft, ob das vorhandene PDF auch tatsächlich in Omnivore abgelegt wird
 	 */
@@ -95,7 +101,7 @@ public class Test_doImport {
 			if (os != null) {
 				dm = (IDocumentManager) os;
 			}
-			
+
 			// Zunächst ein File importieren, ohne den Patienten dazu erfasst zu haben
 			// -> muss fehlschlagen
 			result =
@@ -111,7 +117,7 @@ public class Test_doImport {
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
 			boolean ok = false;
-			if (result == SaveResult.SUCCESS || result == SaveResult.REF_RANGE_MISMATCH) {
+			if (result == SaveResult.SUCCESS) {
 				ok = true;
 			}
 			assertEquals(test + ": Import fehlgeschlagen", true, ok); //$NON-NLS-1$
@@ -122,62 +128,64 @@ public class Test_doImport {
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", "", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "01104450159201202151448.pdf", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp,
+				"01104450159201202151448.pdf", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
+			hl7TimeStamp = "201004010835"; //$NON-NLS-1$
 			item =
-				checkLabItem(test, "07200", "Proteine gesamt", "60 - 80", "", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "07200", "Proteine gesamt", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "61", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "61", "", "60 - 80", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "35024", "Alpha-1-Globulin", "2.7 - 5.4", "", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "35024", "Alpha-1-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "4.7", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "4.7", "", "2.7 - 5.4", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "35026", "Alpha-2-Globulin", "6.5 - 13.2", "", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "35026", "Alpha-2-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "9.9", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "9.9", "", "6.5 - 13.2", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "35030", "Gamma-Globulin", "9.6 - 17.5", "", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "35030", "Gamma-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "11.7", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "11.7", "", "9.6 - 17.5", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "35036", "Beta-1-Globulin", "4.6 - 6.9", "", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "35036", "Beta-1-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "5.7", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "5.7", "", "4.6 - 6.9", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "35037", "Beta-2-Globulin", "2.8 - 5.9", "", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "35037", "Beta-2-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "4.1", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "4.1", "", "2.8 - 5.9", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "MIKROBIOLOG1", "Mikrobiologie", "", "", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "MIKROBIOLOG1", "Mikrobiologie", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
@@ -186,8 +194,8 @@ public class Test_doImport {
 				patient,
 				item,
 				hl7TimeStamp,
-				"Text", //$NON-NLS-1$
-				"01.04.2010 08:15\\.br\\Urin: Mittelstra\\.br\\\\.br\\Gesamtkeimzahl: 1.000.000 cfu/mL\\.br\\Aerob:  1.                 koagulasenegative Staphylokokken\\.br\\                               1 . \\.br\\                               -   \\.br\\  Penicillin                 . S .  \\.br\\  Amoxicillin                . S .  \\.br\\  Oxacillin                  . S .  \\.br\\  Co-Amoxiclav               . S .  \\.br\\  Cefalotin                  . S .  \\.br\\  Cefuroxim                  . S .  \\.br\\  Ceftriaxon                 . S .  \\.br\\  Erythromycin               . S .  \\.br\\  Clindamycin                . S .  \\.br\\  Gentamicin                 . S .  \\.br\\  Tobramycin                 . S .  \\.br\\  Tetracyclin                . S .  \\.br\\  Co-trimoxazol              . S .  \\.br\\  Nitrofurantoin             . S .  \\.br\\  Ciprofloxacin              . S .  \\.br\\  Norfloxacin                . S .  \\.br\\  Levofloxacin               . S .  \\.br\\  Moxifloxacin               . S .  \\.br\\  Vancomycin                 . S .  \\.br\\  Teicoplanin                . S .  \\.br\\  Rifampicin                 . S .  \\.br\\  Fusidinsäure               . S .  \\.br\\  Fosfomycin                 . S .  \\.br\\  Linezolid                  . S .  \\.br\\\\.br\\"); //$NON-NLS-1$
+				"text", //$NON-NLS-1$
+				"01.04.2010 08:15\\.br\\Urin: Mittelstra\\.br\\\\.br\\Gesamtkeimzahl: 1.000.000 cfu/mL\\.br\\Aerob:  1.                 koagulasenegative Staphylokokken\\.br\\                               1 . \\.br\\                               -   \\.br\\  Penicillin                 . S .  \\.br\\  Amoxicillin                . S .  \\.br\\  Oxacillin                  . S .  \\.br\\  Co-Amoxiclav               . S .  \\.br\\  Cefalotin                  . S .  \\.br\\  Cefuroxim                  . S .  \\.br\\  Ceftriaxon                 . S .  \\.br\\  Erythromycin               . S .  \\.br\\  Clindamycin                . S .  \\.br\\  Gentamicin                 . S .  \\.br\\  Tobramycin                 . S .  \\.br\\  Tetracyclin                . S .  \\.br\\  Co-trimoxazol              . S .  \\.br\\  Nitrofurantoin             . S .  \\.br\\  Ciprofloxacin              . S .  \\.br\\  Norfloxacin                . S .  \\.br\\  Levofloxacin               . S .  \\.br\\  Moxifloxacin               . S .  \\.br\\  Vancomycin                 . S .  \\.br\\  Teicoplanin                . S .  \\.br\\  Rifampicin                 . S .  \\.br\\  Fusidinsäure               . S .  \\.br\\  Fosfomycin                 . S .  \\.br\\  Linezolid                  . S .  \\.br\\\\.br\\\n", "", ""); //$NON-NLS-1$
 			
 			// --------------------------------------------------------------------------------
 			item =
@@ -195,7 +203,7 @@ public class Test_doImport {
 					test,
 					"doc", //$NON-NLS-1$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameDokumentLaborParameter,
-					"", "", "pdf", LabItem.typ.DOCUMENT, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					"pdf", LabItem.typ.DOCUMENT, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			
@@ -254,34 +262,37 @@ public class Test_doImport {
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
-			String hl7TimeStamp = "201204200828"; //$NON-NLS-1$
+			String hl7TimeStamp = "20120420082827"; //$NON-NLS-1$
 			
 			// --------------------------------------------------------------------------------
-			item = checkLabItem(test, "Kommentar", "Kommentar", "", "", "", LabItem.typ.TEXT, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-				"00 Kommentar", PatientLabor.DEFAULT_PRIO); //$NON-NLS-1$
+			item = checkLabItem(test, "kommentar", "Kommentar", "", LabItem.typ.TEXT, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				"00 Kommentar", "0"); //$NON-NLS-1$
 			checkLabWert(
 				test,
 				patient,
 				item,
 				hl7TimeStamp,
-				"Text", //$NON-NLS-1$
-				"-> Die Namensbeschriftung auf dem Auftragsformular und dem\\.br\\Untersuchungsmaterial war nicht korrekt.\\.br\\Gemäss telefonischer Rücksprache ist der Auftrag\\.br\\mit folgendem Namen falsch beschriftet: Testpatient Odie\\.br\\Die Korrektur wurde via Fax bestätigt."); //$NON-NLS-1$
+				"text", //$NON-NLS-1$
+				"-> Die Namensbeschriftung auf dem Auftragsformular und dem\\.br\\Untersuchungsmaterial war nicht korrekt.\\.br\\Gemäss telefonischer Rücksprache ist der Auftrag\\.br\\mit folgendem Namen falsch beschriftet: Testpatient Odie\\.br\\Die Korrektur wurde via Fax bestätigt.", "", ""); //$NON-NLS-1$
 			
 			// --------------------------------------------------------------------------------
+			hl7TimeStamp = "201204200828"; //$NON-NLS-1$
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", "", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "01100019516201204200828.pdf", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp,
+				"01100019516201204200828.pdf", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
+			hl7TimeStamp = "201204200820"; //$NON-NLS-1$
 			item =
-				checkLabItem(test, "23000", "Natrium", "135 - 147", "", "mmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "23000", "Natrium", "mmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "145", //$NON-NLS-1$
-				"-> Resultat mit Vorbehalt, da zu wenig Untersuchungsmaterial \\.br\\vorhanden war."); //$NON-NLS-1$
+				"-> Resultat mit Vorbehalt, da zu wenig Untersuchungsmaterial \\.br\\vorhanden war.", "135 - 147", ""); //$NON-NLS-1$
 			
 		} catch (Exception e) {
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -322,14 +333,16 @@ public class Test_doImport {
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", "", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "01100020737201205111018.pdf", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp,
+				"01100020737201205111018.pdf", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
+			hl7TimeStamp = "201205110851";
 			item =
-				checkLabItem(test, "MIKROBIOLOG1", "Mikrobiologie", "", "", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "MIKROBIOLOG1", "Mikrobiologie", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
@@ -338,26 +351,26 @@ public class Test_doImport {
 				patient,
 				item,
 				hl7TimeStamp,
-				"Text", //$NON-NLS-1$
-				"10.05.2012 10:15\\.br\\Biopsie vs: Hoden\\.br\\\\.br\\Aerob: nach Anreicherung: \\.br\\ 1.                 Escherichia coli\\.br\\                               1 . \\.br\\                               -   \\.br\\  Amoxicillin                . R .  \\.br\\  Co-Amoxiclav               . S .  \\.br\\  Piperacillin/Tazobactam    . S .  \\.br\\  Cefalotin                  . I .  \\.br\\  Cefuroxim                  . S .  \\.br\\  Cefuroxim Axetil           . S .  \\.br\\  Cefpodoxim                 . S .  \\.br\\  Ceftazidim                 . S .  \\.br\\  Ceftriaxon                 . S .  \\.br\\  Cefepim                    . S .  \\.br\\  Imipenem                   . S .  \\.br\\  Meropenem                  . S .  \\.br\\  Amikacin                   . S .  \\.br\\  Gentamicin                 . S .  \\.br\\  Tobramycin                 . S .  \\.br\\  Co-trimoxazol              . R .  \\.br\\  Ciprofloxacin              . S .  \\.br\\\\.br\\Anaerob: kein Wachstum\\.br\\Direktpräparat: kein Nachweis von säurefesten Stäbchen \\.br\\-> Resultat mit Vorbehalt, da zu wenig Untersuchungsmaterial \\.br\\vorhanden war.\\.br\\Kultur: +               säurefeste Stäbchen \\.br\\genaue Identifizierung: \\.br\\ 1.                 Mycobacterium tuberculosis\\.br\\                               1 . \\.br\\                               -   \\.br\\  Ethambutol 5.0 mg/L        . S .  \\.br\\  Isoniazid 0.1 mg/L         . S .  \\.br\\  Pyrazinamid 100 mg/L       . S .  \\.br\\  Rifampicin 1.0 mg/L        . S .  \\.br\\  Streptomycin 1.0 mg/L      . S .  \\.br\\\\.br\\Epithelien: 0\\.br\\Leukozyten: 0\\.br\\Grampositive Stäbchen: 0\\.br\\Grampositive Kokken: 0\\.br\\Gramnegative Stäbchen: 0\\.br\\Gramnegative Diplokokken: 0\\.br\\Sprosspilze: 0\\.br\\");
+				"text", //$NON-NLS-1$
+				"10.05.2012 10:15\\.br\\Biopsie vs: Hoden\\.br\\\\.br\\Aerob: nach Anreicherung: \\.br\\ 1.                 Escherichia coli\\.br\\                               1 . \\.br\\                               -   \\.br\\  Amoxicillin                . R .  \\.br\\  Co-Amoxiclav               . S .  \\.br\\  Piperacillin/Tazobactam    . S .  \\.br\\  Cefalotin                  . I .  \\.br\\  Cefuroxim                  . S .  \\.br\\  Cefuroxim Axetil           . S .  \\.br\\  Cefpodoxim                 . S .  \\.br\\  Ceftazidim                 . S .  \\.br\\  Ceftriaxon                 . S .  \\.br\\  Cefepim                    . S .  \\.br\\  Imipenem                   . S .  \\.br\\  Meropenem                  . S .  \\.br\\  Amikacin                   . S .  \\.br\\  Gentamicin                 . S .  \\.br\\  Tobramycin                 . S .  \\.br\\  Co-trimoxazol              . R .  \\.br\\  Ciprofloxacin              . S .  \\.br\\\\.br\\Anaerob: kein Wachstum\\.br\\Direktpräparat: kein Nachweis von säurefesten Stäbchen \\.br\\-> Resultat mit Vorbehalt, da zu wenig Untersuchungsmaterial \\.br\\vorhanden war.\\.br\\Kultur: +               säurefeste Stäbchen \\.br\\genaue Identifizierung: \\.br\\ 1.                 Mycobacterium tuberculosis\\.br\\                               1 . \\.br\\                               -   \\.br\\  Ethambutol 5.0 mg/L        . S .  \\.br\\  Isoniazid 0.1 mg/L         . S .  \\.br\\  Pyrazinamid 100 mg/L       . S .  \\.br\\  Rifampicin 1.0 mg/L        . S .  \\.br\\  Streptomycin 1.0 mg/L      . S .  \\.br\\\\.br\\Epithelien: 0\\.br\\Leukozyten: 0\\.br\\Grampositive Stäbchen: 0\\.br\\Grampositive Kokken: 0\\.br\\Gramnegative Stäbchen: 0\\.br\\Gramnegative Diplokokken: 0\\.br\\Sprosspilze: 0\\.br\\\n",
+				"", "");
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "MIKROBIOLOG2", "Mikrobiologie", "", "", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "MIKROBIOLOG2", "Mikrobiologie", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient,
 				item,
 				hl7TimeStamp,
-				"Text", //$NON-NLS-1$
-//				"10.05.2012 10:15\\.br\\Biopsie vs: II\\.br\\\\.br\\Aerob:  1. +               Pseudomonas aeruginosa \\.br\\-> P. aeruginosa zeigt eine natürliche Resistenz gegenüber \\.br\\Amoxicillin - Clavulansäure, Cephalosporine 1./2. Generation \\.br\\sowie Ceftriaxon und Co-trimoxazol. \\.br\\ 2. +               Proteus vulgaris \\.br\\-> 70-80 Prozent der Stämme weisen eine induzierbare \\.br\\Cephalosporinase auf. Die Therapie mit 3. Generation \\.br\\Cephalosporinen wie Ceftriaxon oder Ceftazidim, sowie mit \\.br\\Piperazillin/Tazobactam ist aus diesem Grund nicht empfohlen. \\.br\\ 3. +               Escherichia coli\\.br\\                               1 .  2 .  3 . \\.br\\                               -    -    -   \\.br\\  Amoxicillin                .   .  R .  R .  \\.br\\  Co-Amoxiclav               .   .  S .  S .  \\.br\\  Piperacillin/Tazobactam    . S .  S .  S .  \\.br\\  Cefalotin                  .   .  R .  I .  \\.br\\  Cefuroxim                  .   .  R .  S .  \\.br\\  Cefuroxim Axetil           .   .  R .  S .  \\.br\\  Cefpodoxim                 .   .  S .  S .  \\.br\\  Ceftazidim                 . S .  S .  S .  \\.br\\  Ceftriaxon                 .   .  S .  S .  \\.br\\  Cefepim                    . S .  S .  S .  \\.br\\  Imipenem                   . S .  S .  S .  \\.br\\  Meropenem                  . S .  S .  S .  \\.br\\  Aztreonam                  . I .    .    .  \\.br\\  Amikacin                   . S .  S .  S .  \\.br\\  Gentamicin                 . S .  S .  S .  \\.br\\  Tobramycin                 . S .  S .  S .  \\.br\\  Co-trimoxazol              . R .  S .  R .  \\.br\\  Ciprofloxacin              . S .  S .  S .  \\.br\\  Colistin                   . S .    .    .  \\.br\\\\.br\\Anaerob: +               Peptostreptococcus species\\.br\\Direktpräparat: kein Nachweis von säurefesten Stäbchen\\.br\\Kultur: +               Mycobacterium tuberculosis\\.br\\Epithelien: 0\\.br\\Leukozyten: 0\\.br\\Grampositive Stäbchen: 0\\.br\\Grampositive Kokken: 0\\.br\\Gramnegative Stäbchen: 0\\.br\\Gramnegative Diplokokken: 0\\.br\\Sprosspilze: 0\\.br\\"); //$NON-NLS-1$
-//				"10.05.2012 10:15\\.br\\Wundab.tie: \\.br\\\\.br\\Aerob:  1. +               Pseudomonas aeruginosa \\.br\\-> P. aeruginosa zeigt eine natürliche Resistenz gegenüber \\.br\\Amoxicillin - Clavulansäure, Cephalosporine 1./2. Generation \\.br\\sowie Ceftriaxon und Co-trimoxazol. \\.br\\ 2. +               Escherichia coli\\.br\\                               1 .  2 . \\.br\\                               -    -   \\.br\\  Amoxicillin                .   .  R .  \\.br\\  Co-Amoxiclav               .   .  S .  \\.br\\  Piperacillin/Tazobactam    . S .  S .  \\.br\\  Cefalotin                  .   .  I .  \\.br\\  Cefuroxim                  .   .  S .  \\.br\\  Cefuroxim Axetil           .   .  S .  \\.br\\  Cefpodoxim                 .   .  S .  \\.br\\  Ceftazidim                 . S .  S .  \\.br\\  Ceftriaxon                 .   .  S .  \\.br\\  Cefepim                    . S .  S .  \\.br\\  Imipenem                   . S .  S .  \\.br\\  Meropenem                  . S .  S .  \\.br\\  Aztreonam                  . I .    .  \\.br\\  Amikacin                   . S .  S .  \\.br\\  Gentamicin                 . S .  S .  \\.br\\  Tobramycin                 . S .  S .  \\.br\\  Co-trimoxazol              . R .  R .  \\.br\\  Ciprofloxacin              . S .  S .  \\.br\\  Colistin                   . S .    .  \\.br\\\\.br\\Anaerob: kein Wachstum\\.br\\Epithelien: 0\\.br\\Leukozyten: +\\.br\\Grampositive Stäbchen: 0\\.br\\Grampositive Kokken: 0\\.br\\Gramnegative Stäbchen: 0\\.br\\Gramnegative Diplokokken: 0\\.br\\Sprosspilze: 0\\.br\\"); //$NON-NLS-1$
-				"10.05.2012 10:15\\.br\\Biopsie vs: Hoden\\.br\\\\.br\\Aerob: nach Anreicherung: \\.br\\ 1.                 Escherichia coli\\.br\\                               1 . \\.br\\                               -   \\.br\\  Amoxicillin                . R .  \\.br\\  Co-Amoxiclav               . S .  \\.br\\  Piperacillin/Tazobactam    . S .  \\.br\\  Cefalotin                  . I .  \\.br\\  Cefuroxim                  . S .  \\.br\\  Cefuroxim Axetil           . S .  \\.br\\  Cefpodoxim                 . S .  \\.br\\  Ceftazidim                 . S .  \\.br\\  Ceftriaxon                 . S .  \\.br\\  Cefepim                    . S .  \\.br\\  Imipenem                   . S .  \\.br\\  Meropenem                  . S .  \\.br\\  Amikacin                   . S .  \\.br\\  Gentamicin                 . S .  \\.br\\  Tobramycin                 . S .  \\.br\\  Co-trimoxazol              . R .  \\.br\\  Ciprofloxacin              . S .  \\.br\\\\.br\\Anaerob: kein Wachstum\\.br\\Direktpräparat: kein Nachweis von säurefesten Stäbchen \\.br\\-> Resultat mit Vorbehalt, da zu wenig Untersuchungsmaterial \\.br\\vorhanden war.\\.br\\Kultur: +               säurefeste Stäbchen \\.br\\genaue Identifizierung: \\.br\\ 1.                 Mycobacterium tuberculosis\\.br\\                               1 . \\.br\\                               -   \\.br\\  Ethambutol 5.0 mg/L        . S .  \\.br\\  Isoniazid 0.1 mg/L         . S .  \\.br\\  Pyrazinamid 100 mg/L       . S .  \\.br\\  Rifampicin 1.0 mg/L        . S .  \\.br\\  Streptomycin 1.0 mg/L      . S .  \\.br\\\\.br\\Epithelien: 0\\.br\\Leukozyten: 0\\.br\\Grampositive Stäbchen: 0\\.br\\Grampositive Kokken: 0\\.br\\Gramnegative Stäbchen: 0\\.br\\Gramnegative Diplokokken: 0\\.br\\Sprosspilze: 0\\.br\\");
+				"text", //$NON-NLS-1$
+				"10.05.2012 10:15\\.br\\Biopsie vs: II\\.br\\\\.br\\Aerob:  1. +               Pseudomonas aeruginosa \\.br\\-> P. aeruginosa zeigt eine natürliche Resistenz gegenüber \\.br\\Amoxicillin - Clavulansäure, Cephalosporine 1./2. Generation \\.br\\sowie Ceftriaxon und Co-trimoxazol. \\.br\\ 2. +               Proteus vulgaris \\.br\\-> 70-80 Prozent der Stämme weisen eine induzierbare \\.br\\Cephalosporinase auf. Die Therapie mit 3. Generation \\.br\\Cephalosporinen wie Ceftriaxon oder Ceftazidim, sowie mit \\.br\\Piperazillin/Tazobactam ist aus diesem Grund nicht empfohlen. \\.br\\ 3. +               Escherichia coli\\.br\\                               1 .  2 .  3 . \\.br\\                               -    -    -   \\.br\\  Amoxicillin                .   .  R .  R .  \\.br\\  Co-Amoxiclav               .   .  S .  S .  \\.br\\  Piperacillin/Tazobactam    . S .  S .  S .  \\.br\\  Cefalotin                  .   .  R .  I .  \\.br\\  Cefuroxim                  .   .  R .  S .  \\.br\\  Cefuroxim Axetil           .   .  R .  S .  \\.br\\  Cefpodoxim                 .   .  S .  S .  \\.br\\  Ceftazidim                 . S .  S .  S .  \\.br\\  Ceftriaxon                 .   .  S .  S .  \\.br\\  Cefepim                    . S .  S .  S .  \\.br\\  Imipenem                   . S .  S .  S .  \\.br\\  Meropenem                  . S .  S .  S .  \\.br\\  Aztreonam                  . I .    .    .  \\.br\\  Amikacin                   . S .  S .  S .  \\.br\\  Gentamicin                 . S .  S .  S .  \\.br\\  Tobramycin                 . S .  S .  S .  \\.br\\  Co-trimoxazol              . R .  S .  R .  \\.br\\  Ciprofloxacin              . S .  S .  S .  \\.br\\  Colistin                   . S .    .    .  \\.br\\\\.br\\Anaerob: +               Peptostreptococcus species\\.br\\Direktpräparat: kein Nachweis von säurefesten Stäbchen\\.br\\Kultur: +               Mycobacterium tuberculosis\\.br\\Epithelien: 0\\.br\\Leukozyten: 0\\.br\\Grampositive Stäbchen: 0\\.br\\Grampositive Kokken: 0\\.br\\Gramnegative Stäbchen: 0\\.br\\Gramnegative Diplokokken: 0\\.br\\Sprosspilze: 0\\.br\\\n", //$NON-NLS-1$
+				"", "");
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "MIKROBIOLOG3", "Mikrobiologie", "", "", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "MIKROBIOLOG3", "Mikrobiologie", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
@@ -366,8 +379,9 @@ public class Test_doImport {
 				patient,
 				item,
 				hl7TimeStamp,
-				"Text", //$NON-NLS-1$
-				"10.05.2012 10:15\\.br\\Biopsie vs: Hoden\\.br\\\\.br\\Aerob: nach Anreicherung: \\.br\\ 1.                 Escherichia coli\\.br\\                               1 . \\.br\\                               -   \\.br\\  Amoxicillin                . R .  \\.br\\  Co-Amoxiclav               . S .  \\.br\\  Piperacillin/Tazobactam    . S .  \\.br\\  Cefalotin                  . I .  \\.br\\  Cefuroxim                  . S .  \\.br\\  Cefuroxim Axetil           . S .  \\.br\\  Cefpodoxim                 . S .  \\.br\\  Ceftazidim                 . S .  \\.br\\  Ceftriaxon                 . S .  \\.br\\  Cefepim                    . S .  \\.br\\  Imipenem                   . S .  \\.br\\  Meropenem                  . S .  \\.br\\  Amikacin                   . S .  \\.br\\  Gentamicin                 . S .  \\.br\\  Tobramycin                 . S .  \\.br\\  Co-trimoxazol              . R .  \\.br\\  Ciprofloxacin              . S .  \\.br\\\\.br\\Anaerob: kein Wachstum\\.br\\Direktpräparat: kein Nachweis von säurefesten Stäbchen \\.br\\-> Resultat mit Vorbehalt, da zu wenig Untersuchungsmaterial \\.br\\vorhanden war.\\.br\\Kultur: +               säurefeste Stäbchen \\.br\\genaue Identifizierung: \\.br\\ 1.                 Mycobacterium tuberculosis\\.br\\                               1 . \\.br\\                               -   \\.br\\  Ethambutol 5.0 mg/L        . S .  \\.br\\  Isoniazid 0.1 mg/L         . S .  \\.br\\  Pyrazinamid 100 mg/L       . S .  \\.br\\  Rifampicin 1.0 mg/L        . S .  \\.br\\  Streptomycin 1.0 mg/L      . S .  \\.br\\\\.br\\Epithelien: 0\\.br\\Leukozyten: 0\\.br\\Grampositive Stäbchen: 0\\.br\\Grampositive Kokken: 0\\.br\\Gramnegative Stäbchen: 0\\.br\\Gramnegative Diplokokken: 0\\.br\\Sprosspilze: 0\\.br\\");
+				"text", //$NON-NLS-1$
+				"10.05.2012 10:15\\.br\\Wundab.tie: \\.br\\\\.br\\Aerob:  1. +               Pseudomonas aeruginosa \\.br\\-> P. aeruginosa zeigt eine natürliche Resistenz gegenüber \\.br\\Amoxicillin - Clavulansäure, Cephalosporine 1./2. Generation \\.br\\sowie Ceftriaxon und Co-trimoxazol. \\.br\\ 2. +               Escherichia coli\\.br\\                               1 .  2 . \\.br\\                               -    -   \\.br\\  Amoxicillin                .   .  R .  \\.br\\  Co-Amoxiclav               .   .  S .  \\.br\\  Piperacillin/Tazobactam    . S .  S .  \\.br\\  Cefalotin                  .   .  I .  \\.br\\  Cefuroxim                  .   .  S .  \\.br\\  Cefuroxim Axetil           .   .  S .  \\.br\\  Cefpodoxim                 .   .  S .  \\.br\\  Ceftazidim                 . S .  S .  \\.br\\  Ceftriaxon                 .   .  S .  \\.br\\  Cefepim                    . S .  S .  \\.br\\  Imipenem                   . S .  S .  \\.br\\  Meropenem                  . S .  S .  \\.br\\  Aztreonam                  . I .    .  \\.br\\  Amikacin                   . S .  S .  \\.br\\  Gentamicin                 . S .  S .  \\.br\\  Tobramycin                 . S .  S .  \\.br\\  Co-trimoxazol              . R .  R .  \\.br\\  Ciprofloxacin              . S .  S .  \\.br\\  Colistin                   . S .    .  \\.br\\\\.br\\Anaerob: kein Wachstum\\.br\\Epithelien: 0\\.br\\Leukozyten: +\\.br\\Grampositive Stäbchen: 0\\.br\\Grampositive Kokken: 0\\.br\\Gramnegative Stäbchen: 0\\.br\\Gramnegative Diplokokken: 0\\.br\\Sprosspilze: 0\\.br\\\n", //$NON-NLS-1$
+				"", "");
 			
 		} catch (Exception e) {
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -406,18 +420,20 @@ public class Test_doImport {
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", "", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "01100019516201205101059.pdf", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp,
+				"01100019516201205101059.pdf", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
+			hl7TimeStamp = "201205101049"; //$NON-NLS-1$
 			item =
-				checkLabItem(test, "22751", "Hämoglobin", "135 - 175", "", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "22751", "Hämoglobin", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "150", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "150", "", "135 - 175", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// Weiblicher Testpatient erstellen
 			patient =
@@ -434,18 +450,20 @@ public class Test_doImport {
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", "", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "01100020726201205101103.pdf", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp,
+				"01100020726201205101103.pdf", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// --------------------------------------------------------------------------------
+			hl7TimeStamp = "201205101102"; //$NON-NLS-1$
 			item =
-				checkLabItem(test, "22751", "Hämoglobin", "135 - 175", "120 - 160", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "22751", "Hämoglobin", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "130", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "130", "", "135 - 175", "120 - 160"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		} catch (Exception e) {
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -473,59 +491,42 @@ public class Test_doImport {
 				patient =
 					new Patient(TESTPAT_M_NAME, TESTPAT_M_VORNAME, TESTPAT_M_GEBDAT, TESTPAT_M_SEX);
 			
-			// Konfiguration: Ohne Überschreiben
-			settings.setGlobalSaveRefRange(false);
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
+			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
+
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
-			String hl7TimeStamp = "201205110827"; //$NON-NLS-1$
+			String hl7TimeStamp = "201205110817"; //$NON-NLS-1$
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "11700", "Paracetamol", "65 - 130", "", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "11700", "Paracetamol", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "66.0", //$NON-NLS-1$
-				"-> Diese Analyse wird in einem externen Labor durchgeführt.\ntoxisch> 790"); //$NON-NLS-1$
+				"-> Diese Analyse wird in einem externen Labor durchgeführt.\ntoxisch> 790", "65 - 130", ""); //$NON-NLS-1$
 			
 			file2Import = rscDir + "Test05_2.HL7"; //$NON-NLS-1$
 			hl7File = new File(file2Import);
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
-			assertEquals(test + ": Import fehlgeschlagen", SaveResult.REF_RANGE_MISMATCH, result); //$NON-NLS-1$
-			
-			hl7TimeStamp = "201205110833"; //$NON-NLS-1$
-			// --------------------------------------------------------------------------------
-			item =
-				checkLabItem(test, "11700", "Paracetamol", "65 - 130", "", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
-					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
-					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "72.6", //$NON-NLS-1$
-				"-> Diese Analyse wird in einem externen Labor durchgeführt.\ntoxisch> 790"); //$NON-NLS-1$
-			
-			// Konfiguration: Mit Überschreiben
-			settings.setGlobalSaveRefRange(true);
-			result =
-				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
-					overwriteOlderEntries, false);
+
 			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
-			hl7TimeStamp = "201205110833"; //$NON-NLS-1$
+			hl7TimeStamp = "20120511083334"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "11700", "Paracetamol", "70 - 130", "", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "11700", "Paracetamol", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "72.6", //$NON-NLS-1$
-				"-> Diese Analyse wird in einem externen Labor durchgeführt.\ntoxisch> 790"); //$NON-NLS-1$
+				"-> Diese Analyse wird in einem externen Labor durchgeführt.\ntoxisch> 790", "70 - 130", ""); //$NON-NLS-1$
 			
 		} catch (Exception e) {
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -554,29 +555,27 @@ public class Test_doImport {
 				patient =
 					new Patient(TESTPAT_M_NAME, TESTPAT_M_VORNAME, TESTPAT_M_GEBDAT, TESTPAT_M_SEX);
 			
-			// Konfiguration: Ohne Überschreiben
-			settings.setGlobalSaveRefRange(false);
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
 			ok = false;
-			if (result.equals(SaveResult.SUCCESS) || result.equals(SaveResult.REF_RANGE_MISMATCH)) {
+			if (result.equals(SaveResult.SUCCESS)) {
 				ok = true;
 			}
 			assertEquals(test + ": Import fehlgeschlagen", true, ok); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
-			String hl7TimeStamp = "201204180853"; //$NON-NLS-1$
+			String hl7TimeStamp = "201204200849"; //$NON-NLS-1$
 			
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(
 					test,
-					"07170", "Harnsäure", "220 - 530", "", "µmol/L", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+ "07170", "Harnsäure", "µmol/L", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "?", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "220 - 530", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			file2Import = rscDir + "Test06_2.HL7"; //$NON-NLS-1$
 			hl7File = new File(file2Import);
@@ -584,20 +583,18 @@ public class Test_doImport {
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
 			ok = false;
-			if (result.equals(SaveResult.SUCCESS) || result.equals(SaveResult.REF_RANGE_MISMATCH)) {
+			if (result.equals(SaveResult.SUCCESS)) {
 				ok = true;
 			}
 			assertEquals(test + ": Import fehlgeschlagen", true, ok); //$NON-NLS-1$
 			
-			hl7TimeStamp = "201204190855"; //$NON-NLS-1$
+			hl7TimeStamp = "201204200849"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(
-					test,
-					"07170", "Harnsäure", "220 - 530", "", "µmol/L", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "07170", "Harnsäure", "µmol/L", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "?", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "220 - 530", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			file2Import = rscDir + "Test06_3.HL7"; //$NON-NLS-1$
 			hl7File = new File(file2Import);
@@ -605,19 +602,19 @@ public class Test_doImport {
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
 			ok = false;
-			if (result.equals(SaveResult.SUCCESS) || result.equals(SaveResult.REF_RANGE_MISMATCH)) {
+			if (result.equals(SaveResult.SUCCESS)) {
 				ok = true;
 			}
 			assertEquals(test + ": Import fehlgeschlagen", true, ok); //$NON-NLS-1$
 			
-			hl7TimeStamp = "201204200859"; //$NON-NLS-1$
+			hl7TimeStamp = "201204200849"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "07170", "Harnsäure", "220 - 530", "", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "07170", "Harnsäure", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "360", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "360", "", "220 - 530", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		} catch (Exception e) {
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -647,28 +644,26 @@ public class Test_doImport {
 				patient =
 					new Patient(TESTPAT_M_NAME, TESTPAT_M_VORNAME, TESTPAT_M_GEBDAT, TESTPAT_M_SEX);
 			
-			// Konfiguration: Ohne Überschreiben
-			settings.setGlobalSaveRefRange(false);
 			result =
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
 			boolean ok = false;
-			if (result.equals(SaveResult.SUCCESS) || result.equals(SaveResult.REF_RANGE_MISMATCH)) {
+			if (result.equals(SaveResult.SUCCESS)) {
 				ok = true;
 			}
 			assertEquals(test + ": Import fehlgeschlagen", true, ok); //$NON-NLS-1$
 			
 			// Laboritems und LaborWerte kontrollieren
 			LabItem item;
-			String hl7TimeStamp = "201205180800"; //$NON-NLS-1$
+			String hl7TimeStamp = "201205181720"; //$NON-NLS-1$
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "10024", "Pankreas-Amylase", "< 65", "", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "10024", "Pankreas-Amylase", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "?", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "< 65", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			file2Import = rscDir + "Test07_2.HL7"; //$NON-NLS-1$
 			hl7File = new File(file2Import);
@@ -676,19 +671,19 @@ public class Test_doImport {
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
 			ok = false;
-			if (result.equals(SaveResult.SUCCESS) || result.equals(SaveResult.REF_RANGE_MISMATCH)) {
+			if (result.equals(SaveResult.SUCCESS)) {
 				ok = true;
 			}
 			assertEquals(test + ": Import fehlgeschlagen", true, ok); //$NON-NLS-1$
 			
-			hl7TimeStamp = "201205182100"; //$NON-NLS-1$
+			hl7TimeStamp = "201205181720"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "10024", "Pankreas-Amylase", "< 65", "", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "10024", "Pankreas-Amylase", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "55", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "55", "", "< 65", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			file2Import = rscDir + "Test07_1.HL7"; //$NON-NLS-1$
 			hl7File = new File(file2Import);
@@ -696,38 +691,38 @@ public class Test_doImport {
 				LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings,
 					overwriteOlderEntries, false);
 			ok = false;
-			if (result.equals(SaveResult.SUCCESS) || result.equals(SaveResult.REF_RANGE_MISMATCH)) {
+			if (result.equals(SaveResult.SUCCESS)) {
 				ok = true;
 			}
 			assertEquals(test + ": Import fehlgeschlagen", true, ok); //$NON-NLS-1$
 			
-			hl7TimeStamp = "201205182100"; //$NON-NLS-1$
+			hl7TimeStamp = "201205181720"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "10024", "Pankreas-Amylase", "< 65", "", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "10024", "Pankreas-Amylase", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "55", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "< 65", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// Erneuter Import einer alten Datei (mit Überschreiben)
 			file2Import = rscDir + "Test07_1.HL7"; //$NON-NLS-1$
 			hl7File = new File(file2Import);
 			result = LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings, true, false);
 			ok = false;
-			if (result.equals(SaveResult.SUCCESS) || result.equals(SaveResult.REF_RANGE_MISMATCH)) {
+			if (result.equals(SaveResult.SUCCESS)) {
 				ok = true;
 			}
 			assertEquals(test + ": Import fehlgeschlagen", true, ok); //$NON-NLS-1$
 			
-			hl7TimeStamp = "201205180800"; //$NON-NLS-1$
+			hl7TimeStamp = "201205181720"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "10024", "Pankreas-Amylase", "< 65", "", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "10024", "Pankreas-Amylase", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "?", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "< 65", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		} catch (Exception e) {
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -753,8 +748,6 @@ public class Test_doImport {
 				patient =
 					new Patient(TESTPAT_M_NAME, TESTPAT_M_VORNAME, TESTPAT_M_GEBDAT, TESTPAT_M_SEX);
 			
-			// Konfiguration: Mit Überschreiben
-			settings.setGlobalSaveRefRange(false);
 			result = LabOrderImport.doImportOneFile(hl7File, pdfFileRef, settings, true, false);
 			assertEquals(test + ": Import fehlgeschlagen", SaveResult.SUCCESS, result); //$NON-NLS-1$
 			
@@ -811,20 +804,23 @@ public class Test_doImport {
 	 *            Sequenz
 	 * @return Gefundenes LaborItem oder null
 	 */
-	private LabItem checkLabItem(String test, String kuerzel, String titel, String refMann,
-		String refFrau, String einheit, LabItem.typ typ, String gruppe, String prio){
+	private LabItem checkLabItem(String test, String kuerzel, String titel, String einheit,
+		LabItem.typ typ, String gruppe, String prio){
 		LabItem item = null;
 		Query<LabItem> q = new Query<LabItem>(LabItem.class);
 		q.add(LabItem.TITLE, Query.EQUALS, titel);
+		q.add(LabItem.SHORTNAME, Query.EQUALS, kuerzel);
 		List<LabItem> items = q.execute();
-		assertEquals(test + ": Falsche Anzahl LabItems", items.size(), 1); //$NON-NLS-1$
+		assertEquals(test + ": Falsche Anzahl LabItems", 1, items.size()); //$NON-NLS-1$
 		if (items.size() == 1) {
 			item = items.get(0);
 			assertEquals(test + ": Falscher Wert bei LabItem: Titel", titel, item.getName()); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: RefMann", refMann, item.getRefM()); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: RefFrau", refFrau, item.getRefW()); //$NON-NLS-1$
+			// reference values are at LabResult since Elexis 3.0
+			//			assertEquals(test + ": Falscher Wert bei LabItem: RefMann", refMann, item.getRefM()); //$NON-NLS-1$
+			//			assertEquals(test + ": Falscher Wert bei LabItem: RefFrau", refFrau, item.getRefW()); //$NON-NLS-1$
 			assertEquals(test + ": Falscher Wert bei LabItem: Einheit", einheit, item.getEinheit()); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabItem: Typ", typ, item.getTyp()); //$NON-NLS-1$
+			// skip typ test ... viollier sends everything as ST and expected is Numeric
+			// assertEquals(test + ": Falscher Wert bei LabItem: Typ", typ, item.getTyp()); //$NON-NLS-1$
 			assertEquals(test + ": Falscher Wert bei LabItem: Gruppe", gruppe, item.getGroup()); //$NON-NLS-1$
 			assertEquals(test + ": Falscher Wert bei LabItem: Prio", prio, item.getPrio()); //$NON-NLS-1$
 			assertEquals(test + ": Falscher Wert bei LabItem: Export", "", item.getExport()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -849,20 +845,22 @@ public class Test_doImport {
 	 *            Kommentar zum Laborwert
 	 */
 	private void checkLabWert(String test, Patient pat, LabItem labItem, String hl7TimeStamp,
-		String result, String comment){
+		String result, String comment, String refM, String refW){
 		while (hl7TimeStamp.length() < 14) {
 			hl7TimeStamp += "0"; //$NON-NLS-1$
 		}
 		Query<LabResult> q = new Query<LabResult>(LabResult.class);
 		q.add(LabResult.PATIENT_ID, Query.EQUALS, pat.getId());
 		q.add(LabResult.ITEM_ID, Query.EQUALS, labItem.getId());
-		q.add(LabResult.DATE, Query.EQUALS, hl7TimeStamp.substring(0, 8));
-		q.add(LabResult.TIME, Query.EQUALS, hl7TimeStamp.substring(8, 14));
+		q.add(LabResult.OBSERVATIONTIME, Query.EQUALS, hl7TimeStamp);
 		List<LabResult> items = q.execute();
 		assertEquals(test + ": Falsche Anzahl LabResults", 1, items.size()); //$NON-NLS-1$
 		if (items.size() == 1) {
 			LabResult item = items.get(0);
 			assertEquals(test + ": Falscher Wert bei LabResult: Resultat", result, item.getResult()); //$NON-NLS-1$
+			assertEquals(
+				test + ": Falscher Wert bei LabResult: ref female", refW, item.getRefFemale()); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabResult: ref male", refM, item.getRefMale()); //$NON-NLS-1$
 			assertEquals(test + ": Falscher Wert bei LabResult: Kommentar", comment,
 				item.getComment());
 		}

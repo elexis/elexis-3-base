@@ -42,25 +42,27 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
+import ch.elexis.core.ui.importer.div.importers.HL7Parser;
+import ch.elexis.core.ui.importer.div.importers.ILabItemResolver;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.LabOrder;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
 import ch.elexis.data.Xid.XIDException;
-import ch.elexis.hl7.model.EncapsulatedData;
-import ch.elexis.hl7.model.IValueType;
+import ch.elexis.hl7.model.AbstractData;
 import ch.elexis.hl7.model.ObservationMessage;
-import ch.elexis.hl7.model.StringData;
-import ch.elexis.hl7.model.TextData;
 import ch.elexis.hl7.v22.HL7_ORU_R01;
 import ch.elexis.importers.openmedical.MedTransfer;
 import ch.elexis.labor.viollier.v2.Messages;
 import ch.elexis.labor.viollier.v2.ViollierActivator;
 import ch.elexis.labor.viollier.v2.data.ViollierLaborImportSettings;
 import ch.elexis.laborimport.viollier.v2.data.KontaktOrderManagement;
+import ch.elexis.laborimport.viollier.v2.data.LaborwerteOrderManagement;
 import ch.elexis.laborimport.viollier.v2.util.ViollierLogger;
 import ch.rgw.io.FileTool;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -72,44 +74,46 @@ public class LabOrderImport extends ImporterPage {
 	private static String DOMAIN_VIONR = "viollier.ch/vioNumber";
 	
 	public enum SaveResult {
-		SUCCESS, REF_RANGE_MISMATCH, ERROR
+		SUCCESS, ERROR
 	};
 	
-// Info zu JMedTransferO.jar
-// =========================
-// java -jar JMedTransferO.jar --help
-// Usage: JMedTransfer [-options]
-// Where options include :
-//
-// -ln <file name> Specify the file name where logging data will be stored
-// --logName <file name>
-//
-// -lp <path> Specify the directory where logging data will be stored
-// --logPath <path>
-//
-// --verbose ERR|WNG|INF Enable verbose output (Default is ERR)
-//
-// -i <file name> Specify the ini file to use
-// --ini <file name>
-//
-// -d <path> Specify the path where the data has to be downloaded
-// --download <path>
-//
-// -h Show this help
-// --help
-//
-// -v Show the product version
-// --version
-//
-// -allInOne
-// In case more accounts are defined, download all data in the same path
-// Without this parameter, when more accounts are defined,the downloaded data are copied
-// in subdirectories defined by the name of the each account in the form lastname_firstname
+	// Info zu JMedTransferO.jar
+	// =========================
+	// java -jar JMedTransferO.jar --help
+	// Usage: JMedTransfer [-options]
+	// Where options include :
+	//
+	// -ln <file name> Specify the file name where logging data will be stored
+	// --logName <file name>
+	//
+	// -lp <path> Specify the directory where logging data will be stored
+	// --logPath <path>
+	//
+	// --verbose ERR|WNG|INF Enable verbose output (Default is ERR)
+	//
+	// -i <file name> Specify the ini file to use
+	// --ini <file name>
+	//
+	// -d <path> Specify the path where the data has to be downloaded
+	// --download <path>
+	//
+	// -h Show this help
+	// --help
+	//
+	// -v Show the product version
+	// --version
+	//
+	// -allInOne
+	// In case more accounts are defined, download all data in the same path
+	// Without this parameter, when more accounts are defined,the downloaded data are copied
+	// in subdirectories defined by the name of the each account in the form lastname_firstname
 	
 	// Als Domain für die Filler-Auftragsnummer die GLN von Viollier verwenden
 	public static final String ORDER_NR_DOMAIN_FILLER =
 		KontaktOrderManagement.ORDER_DOMAIN_LAB_ORDER_FILLER_VIOLLIER;
 	
+	private static String KUERZEL = Messages.PatientLabor_kuerzelViollier;
+
 	private boolean doAllFiles = true;
 	private Text tSingleHL7Filename;
 	private String singleHL7Filename = "";; //$NON-NLS-1$
@@ -119,9 +123,15 @@ public class LabOrderImport extends ImporterPage {
 	private boolean settingProcessMode = false;
 	private boolean settingOverwrite = false;
 	
+	private static HL7Parser hlp = new HL7Parser(KUERZEL);
+
 	protected final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"); //$NON-NLS-1$
 	private ViollierLaborImportSettings settings;
 	
+	public static void setTestMode(boolean value){
+		hlp.setTestMode(value);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -274,7 +284,7 @@ public class LabOrderImport extends ImporterPage {
 	 * @param overwriteOlderEntries
 	 *            true, wenn Laborwerte überschrieben werden sollen, auch wenn bereits ein neuerer
 	 *            Wert in der DB vorhanden ist. Sonst false (false ist Normalfall!)
-	 * @return SUCCESS, REF_RANGE_MISMATCH oder ERROR
+	 * @return SUCCESS oder ERROR
 	 * @throws IOException
 	 */
 	public static SaveResult doImportOneFile(File hl7File, AtomicReference<File> pdfFileRef,
@@ -300,7 +310,7 @@ public class LabOrderImport extends ImporterPage {
 	 *            true, wenn Benutzerinterface verwendet werden soll (Normalfall!). falls, wenn
 	 *            Ablauf ohne GUI gewünscht ist (für JUnit Tests)
 	 * 
-	 * @return SUCCESS, REF_RANGE_MISMATCH oder ERROR
+	 * @return SUCCESS oder ERROR
 	 * @throws IOException
 	 */
 	public static SaveResult doImportOneFile(File hl7File, AtomicReference<File> pdfFileRef,
@@ -333,11 +343,44 @@ public class LabOrderImport extends ImporterPage {
 			if (saveResult == SaveResult.SUCCESS) {
 				patient = getPatient(observation, askUser);
 				if (patient != null) {
+
 					labor = new PatientLabor(patient);
+					
+					Result<?> result =
+						hlp.importFile(hl7File, new File(settings.getDirArchive()),
+							new ILabItemResolver() {
+								@Override
+								public String getTestName(AbstractData data){
+									return data.getName();
+								}
+								
+								@Override
+								public String getTestGroupName(AbstractData data){
+									return "Labor Viollier";
+								}
+								
+								@Override
+								public String getNextTestGroupSequence(AbstractData data){
+									return PatientLabor.DEFAULT_PRIO;
+								}
+							}, false);
+					if (result.isOK()) {
+						// get created results using the orderId
+						Object obj = result.get();
+						if (obj instanceof String) {
+							List<LabOrder> orders =
+								LabOrder.getLabOrders(null, null, null, null, (String) obj, null,
+									null);
+							if (orders != null) {
+								for (LabOrder labOrder : orders) {
+									new LaborwerteOrderManagement(labOrder.getLabResult().getId(),
+										orderId);
+								}
+							}
+						}
+					}
+
 					orderId = getAuftragsId(observation);
-					saveResult =
-						addObservations(patient, labor, orderId, observation,
-							overwriteOlderEntries, settings.getSaveRefRange());
 					// Wenn HL7 Import VioNumber enthält --> in XID speichern
 					if (!observation.getAlternatePatientId().isEmpty()) {
 						addVioNumber(observation.getAlternatePatientId(), patient);
@@ -413,7 +456,7 @@ public class LabOrderImport extends ImporterPage {
 							+ FileTool.getExtension(filename);
 					
 					labor.saveLaborItem(title, settings.getDocumentCategory(), pdfFile, timeStamp,
-						orderId, filename);
+						orderId, filename, "", "");
 				}
 			}
 		}
@@ -487,67 +530,6 @@ public class LabOrderImport extends ImporterPage {
 			}
 		}
 		return ok;
-	}
-	
-	/**
-	 * Fügt Observations (Laboreinträge) zu Patient hinzu
-	 * 
-	 * @param patient
-	 *            Patient, dem die Eintrage zugeordnet werden sollen
-	 * @param labor
-	 *            Instanz der PatientLabor Klasse
-	 * @param orderId
-	 *            Id aus KontaktOrderManagement
-	 * @param observation
-	 *            Eigentliche Laborresultate
-	 * @param overwriteResults
-	 *            true, wenn Laborwerte überschrieben werden sollen, auch wenn bereits ein neuerer
-	 *            Wert in der DB vorhanden ist. Sonst false (false ist Normalfall!)
-	 * @param updateRefRange
-	 *            true, wenn Referenzbereiche überschrieben werden sollen, auch wenn bereits ein
-	 *            bestehender Wert in der DB vorhanden ist. Sonst false (false ist Normalfall!).
-	 *            Details siehe Bedieneranleitung:
-	 *            http://www.medshare.net/fileadmin/downloads/elexis/dox/ElexisViollierConnector.pdf
-	 * 
-	 * @return SUCCESS, REF_RANGE_MISMATCH oder ERROR
-	 */
-	private static SaveResult addObservations(Patient patient, PatientLabor labor, String orderId,
-		final ObservationMessage observation, boolean overwriteResults, boolean updateRefRange){
-		SaveResult retVal = SaveResult.ERROR;
-		ViollierLogger.getLogger().println(Messages.LabOrderImport_CreateLabResults);
-		if (patient != null) {
-			labor.setOverwriteResults(overwriteResults);
-			boolean refRangeMismatch = false;
-			
-			for (IValueType type : observation.getObservations()) {
-				if (type instanceof StringData) {
-					PatientLabor.SaveResult result =
-						labor.saveLaborItem((StringData) type,
-							observation.getDateTimeOfTransaction(), orderId, updateRefRange);
-					if (result == PatientLabor.SaveResult.REF_RANGE_MISMATCH)
-						refRangeMismatch = true;
-					
-				} else if (type instanceof EncapsulatedData) {
-					try {
-						labor.saveLaborItem((EncapsulatedData) type,
-							observation.getDateTimeOfTransaction(), orderId);
-					} catch (IOException e) {
-						ViollierLogger.getLogger().println(
-							MessageFormat.format(Messages.LabOrderImport_ErrorStoreDocument,
-								e.getMessage()));
-						break;
-					}
-				} else if (type instanceof TextData) {
-					labor.saveLaborItem((TextData) type, observation.getDateTimeOfTransaction(),
-						orderId);
-				}
-			}
-			if (refRangeMismatch)
-				retVal = SaveResult.REF_RANGE_MISMATCH;
-			else
-				retVal = SaveResult.SUCCESS;
-		}
-		return retVal;
 	}
 	
 	/**
@@ -699,14 +681,8 @@ public class LabOrderImport extends ImporterPage {
 			}
 		} else if (auftragsNrFiller > 0) {
 			// Patient anhand Auftragsnummer des Labors identifizieren
-			Query<KontaktOrderManagement> patientOrderNrQuery =
-				new Query<KontaktOrderManagement>(KontaktOrderManagement.class);
-			
-			patientOrderNrQuery.add(KontaktOrderManagement.FLD_ORDER_NR, Query.EQUALS,
-				Long.toString(auftragsNrFiller));
-			patientOrderNrQuery.add(KontaktOrderManagement.FLD_ORDER_NR_DOMAIN, Query.EQUALS,
-				ORDER_NR_DOMAIN_FILLER);
-			List<KontaktOrderManagement> patientOrderNrList = patientOrderNrQuery.execute();
+			List<KontaktOrderManagement> patientOrderNrList =
+				getByNumberAndDomain(Long.toString(auftragsNrFiller), ORDER_NR_DOMAIN_FILLER);
 			if (patientOrderNrList.size() > 0) {
 				fillerAuftragExists = true;
 				List<Patient> patientList = readPatienten(patientId);
@@ -754,14 +730,29 @@ public class LabOrderImport extends ImporterPage {
 					MessageFormat.format(Messages.LabOrderImport_InfoStoredFillerOrderNr,
 						auftragsNrFillerString, patientId, patient.getLabel()));
 				
-				// neuen Eintrag in DB erstellen:
-				new KontaktOrderManagement(patient, auftragsNrFillerString, ORDER_NR_DOMAIN_FILLER);
+				List<KontaktOrderManagement> orders =
+					getByNumberAndDomain(auftragsNrFillerString, ORDER_NR_DOMAIN_FILLER);
+				if (orders.isEmpty()) {
+					// neuen Eintrag in DB erstellen:
+					new KontaktOrderManagement(patient, auftragsNrFillerString,
+						ORDER_NR_DOMAIN_FILLER);
+				}
 			}
 		}
 		
 		return patient;
 	}
 	
+	private static List<KontaktOrderManagement> getByNumberAndDomain(String number, String domain){
+		Query<KontaktOrderManagement> patientOrderNrQuery =
+			new Query<KontaktOrderManagement>(KontaktOrderManagement.class);
+		
+		patientOrderNrQuery.add(KontaktOrderManagement.FLD_ORDER_NR, Query.EQUALS, number);
+		patientOrderNrQuery.add(KontaktOrderManagement.FLD_ORDER_NR_DOMAIN, Query.EQUALS,
+			ORDER_NR_DOMAIN_FILLER);
+		return patientOrderNrQuery.execute();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1069,13 +1060,8 @@ public class LabOrderImport extends ImporterPage {
 		try {
 			auftragsNrFiller = observation.getOrderNumberFiller();
 		} catch (Exception ex) {}
-		Query<KontaktOrderManagement> patientOrderNrQuery =
-			new Query<KontaktOrderManagement>(KontaktOrderManagement.class);
-		patientOrderNrQuery
-			.add(KontaktOrderManagement.FLD_ORDER_NR, Query.EQUALS, auftragsNrFiller);
-		patientOrderNrQuery.add(KontaktOrderManagement.FLD_ORDER_NR_DOMAIN, Query.EQUALS,
-			ORDER_NR_DOMAIN_FILLER);
-		List<KontaktOrderManagement> orderNrList = patientOrderNrQuery.execute();
+		List<KontaktOrderManagement> orderNrList =
+			getByNumberAndDomain(auftragsNrFiller, ORDER_NR_DOMAIN_FILLER);
 		if (orderNrList.size() > 0) {
 			orderId = orderNrList.get(0).getId();
 		}

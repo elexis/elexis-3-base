@@ -39,7 +39,8 @@ import ch.medshare.elexis.directories.KontaktEntry;
 
 public class TestElexisDirectories {
 	
-	private void compare_file_to_kontacts(File file, List<KontaktEntry> expectedKontakte)
+	private List<KontaktEntry> compare_file_to_kontacts(File file,
+		List<KontaktEntry> expectedKontakte)
 		throws IOException{
 		String content = FileUtils.readFileToString(file);
 		DirectoriesContentParser parser = new DirectoriesContentParser(content);
@@ -60,15 +61,13 @@ public class TestElexisDirectories {
 				Assert.assertEquals(soll.getTelefon(), ist.getTelefon());
 			}
 		}
+		return kontakte;
 	}
 	
 	private File get_ressource_path(){
 		return new File(PlatformHelper.getBasePath("ch.medshare.elexis_directories.test"), "rsc");
 	}
 
-	/**
-	 * Test method for {@link ch.elexis.importers.HL7#HL7(java.lang.String, java.lang.String)}.
-	 */
 	@Test
 	public void test_atupri_bern() throws IOException{
 		File base = get_ressource_path();
@@ -83,4 +82,43 @@ public class TestElexisDirectories {
 		compare_file_to_kontacts(to_test, expectedKontakte);
 	}
 	
+	@Test
+	public void test_hamacher_bern() throws IOException{
+		File base = get_ressource_path();
+		Assert.assertTrue(base.exists());
+		File to_test = new File(base, "hamacher_bern.html");
+		Assert.assertTrue(to_test.exists());
+		KontaktEntry juerg =
+			new KontaktEntry("Jürg", "Hamacher",
+				"Ärzte, Innere Medizin, Lungenkrankheiten (Pneumologie)",
+				"Bremgartenstrasse 119",
+ "3012", "Bern", "031 300 35 00", "", "", true);
+		List<KontaktEntry> expectedKontakte = new ArrayList<KontaktEntry>();
+		KontaktEntry ellen =
+			new KontaktEntry("Ellen", "Hamacher", "", "Kutscherweg 20",
+ "3047", "Bremgarten b. Bern",
+				"031 301 74 74", "", "", true);
+		expectedKontakte.add(juerg);
+		expectedKontakte.add(ellen);
+		compare_file_to_kontacts(to_test, expectedKontakte);
+	}
+	
+	@Test
+	public void test_meier_bern() throws IOException{
+		File base = get_ressource_path();
+		Assert.assertTrue(base.exists());
+		File to_test = new File(base, "meier_bern.html");
+		Assert.assertTrue(to_test.exists());
+		compare_file_to_kontacts(to_test, null);
+	}
+
+	@Test
+	public void test_anne_muller_bern() throws IOException{
+		File base = get_ressource_path();
+		Assert.assertTrue(base.exists());
+		File to_test = new File(base, "anne_müller_bern.html");
+		Assert.assertTrue(to_test.exists());
+		compare_file_to_kontacts(to_test, null);
+	}
+
 }

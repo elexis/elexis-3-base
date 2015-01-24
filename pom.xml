@@ -214,6 +214,7 @@
   <module>ch.elexis.externe_dokumente.tests</module>
   <module>at.medevit.elexis.loinc_test</module>
   <module>ch.elexis.laborimport.viollier.v2_test</module>
+  <module>ch.medshare.elexis_directories.test</module>
   <module>com.hilotec.elexis.messwerte.v2_test</module>
 </modules>
 <repositories>

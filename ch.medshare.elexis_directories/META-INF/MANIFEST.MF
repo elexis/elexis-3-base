@@ -9,8 +9,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  ch.rgw.utility,
- ch.elexis.base.ch.diagnosecodes,
  ch.elexis.core.ui,
  ch.elexis.core.data,
  ch.elexis.core.ui.icons,
  ch.elexis.core.ui.contacts
+Export-Package: ch.medshare.elexis.directories

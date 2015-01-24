@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class='skeleton no-js ie6 oldie' lang='de'>
+<![endif]-->
+<!--[if IE 7]>
+<html class='skeleton no-js ie7 oldie' lang='de'>
+<![endif]-->
+<!--[if IE 8]>
+<html class='skeleton no-js ie8' lang='de'>
+<![endif]-->
+<!--[if IE 9]>
+<html class='skeleton no-js ie9' lang='de'>
+<![endif]-->
+<!--[if gt IE 9]><!-->
+<html class='no-js skeleton' lang='de' xmlns:ng='http://angularjs.org'>
+<!--<![endif]-->
+<head>
+<meta charset='utf-8'>
+<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"beacon-5.newrelic.com","errorBeacon":"bam.nr-data.net","licenseKey":"d69fdd9c8a","applicationID":"1524650","transactionName":"dAlYQEALXgoDRx5eW0QSX1pVFx0PCFFUSg==","queueTime":0,"applicationTime":344,"ttGuid":"","agentToken":null,"agent":"js-agent.newrelic.com/nr-476.min.js"}</script>
+<script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"UwcOUFBACQYCUFdXBw=="};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o?o:e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({QJf3ax:[function(t,e){function n(t){function e(e,n,a){t&&t(e,n,a),a||(a={});for(var c=s(e),f=c.length,u=i(a,o,r),d=0;f>d;d++)c[d].apply(u,n);return u}function a(t,e){f[t]=s(t).concat(e)}function s(t){return f[t]||[]}function c(){return n(e)}var f={};return{on:a,emit:e,create:c,listeners:s,_events:f}}function r(){return{}}var o="nr@context",i=t("gos");e.exports=n()},{gos:"7eSDFh"}],ee:[function(t,e){e.exports=t("QJf3ax")},{}],3:[function(t){function e(t,e,n,i,s){try{c?c-=1:r("err",[s||new UncaughtException(t,e,n)])}catch(f){try{r("ierr",[f,(new Date).getTime(),!0])}catch(u){}}return"function"==typeof a?a.apply(this,o(arguments)):!1}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function n(t){r("err",[t,(new Date).getTime()])}var r=t("handle"),o=t(5),i=t("ee"),a=window.onerror,s=!1,c=0;t("loader").features.err=!0,window.onerror=e,NREUM.noticeError=n;try{throw new Error}catch(f){"stack"in f&&(t(1),t(4),"addEventListener"in window&&t(2),window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&t(3),s=!0)}i.on("fn-start",function(){s&&(c+=1)}),i.on("fn-err",function(t,e,r){s&&(this.thrown=!0,n(r))}),i.on("fn-end",function(){s&&!this.thrown&&c>0&&(c-=1)}),i.on("internal-error",function(t){r("ierr",[t,(new Date).getTime(),!0])})},{1:8,2:5,3:9,4:7,5:20,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],4:[function(t){function e(){}if(window.performance&&window.performance.timing&&window.performance.getEntriesByType){var n=t("ee"),r=t("handle"),o=t(2);t("loader").features.stn=!0,t(1),n.on("fn-start",function(t){var e=t[0];e instanceof Event&&(this.bstStart=Date.now())}),n.on("fn-end",function(t,e){var n=t[0];n instanceof Event&&r("bst",[n,e,this.bstStart,Date.now()])}),o.on("fn-start",function(t,e,n){this.bstStart=Date.now(),this.bstType=n}),o.on("fn-end",function(t,e){r("bstTimer",[e,this.bstStart,Date.now(),this.bstType])}),n.on("pushState-start",function(){this.time=Date.now(),this.startPath=location.pathname+location.hash}),n.on("pushState-end",function(){r("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),"addEventListener"in window.performance&&(window.performance.addEventListener("webkitresourcetimingbufferfull",function(){r("bstResource",[window.performance.getEntriesByType("resource")]),window.performance.webkitClearResourceTimings()},!1),window.performance.addEventListener("resourcetimingbufferfull",function(){r("bstResource",[window.performance.getEntriesByType("resource")]),window.performance.clearResourceTimings()},!1)),document.addEventListener("scroll",e,!1),document.addEventListener("keypress",e,!1),document.addEventListener("click",e,!1)}},{1:6,2:8,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],5:[function(t,e){function n(t){i.inPlace(t,["addEventListener","removeEventListener"],"-",r)}function r(t){return t[1]}var o=(t(1),t("ee").create()),i=t(2)(o),a=t("gos");if(e.exports=o,n(window),"getPrototypeOf"in Object){for(var s=document;s&&!s.hasOwnProperty("addEventListener");)s=Object.getPrototypeOf(s);s&&n(s);for(var c=XMLHttpRequest.prototype;c&&!c.hasOwnProperty("addEventListener");)c=Object.getPrototypeOf(c);c&&n(c)}else XMLHttpRequest.prototype.hasOwnProperty("addEventListener")&&n(XMLHttpRequest.prototype);o.on("addEventListener-start",function(t){if(t[1]){var e=t[1];"function"==typeof e?this.wrapped=t[1]=a(e,"nr@wrapped",function(){return i(e,"fn-",null,e.name||"anonymous")}):"function"==typeof e.handleEvent&&i.inPlace(e,["handleEvent"],"fn-")}}),o.on("removeEventListener-start",function(t){var e=this.wrapped;e&&(t[1]=e)})},{1:20,2:21,ee:"QJf3ax",gos:"7eSDFh"}],6:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window.history,["pushState"],"-")},{1:21,2:20,ee:"QJf3ax"}],7:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window,["requestAnimationFrame","mozRequestAnimationFrame","webkitRequestAnimationFrame","msRequestAnimationFrame"],"raf-"),n.on("raf-start",function(t){t[0]=r(t[0],"fn-")})},{1:21,2:20,ee:"QJf3ax"}],8:[function(t,e){function n(t,e,n){var r=t[0];"string"==typeof r&&(r=new Function(r)),t[0]=o(r,"fn-",null,n)}var r=(t(2),t("ee").create()),o=t(1)(r);e.exports=r,o.inPlace(window,["setTimeout","setInterval","setImmediate"],"setTimer-"),r.on("setTimer-start",n)},{1:21,2:20,ee:"QJf3ax"}],9:[function(t,e){function n(){c.inPlace(this,d,"fn-")}function r(t,e){c.inPlace(e,["onreadystatechange"],"fn-")}function o(t,e){return e}var i=t("ee").create(),a=t(1),s=t(2),c=s(i),f=s(a),u=window.XMLHttpRequest,d=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"];e.exports=i,window.XMLHttpRequest=function(t){var e=new u(t);try{i.emit("new-xhr",[],e),f.inPlace(e,["addEventListener","removeEventListener"],"-",function(t,e){return e}),e.addEventListener("readystatechange",n,!1)}catch(r){try{i.emit("internal-error",[r])}catch(o){}}return e},window.XMLHttpRequest.prototype=u.prototype,c.inPlace(XMLHttpRequest.prototype,["open","send"],"-xhr-",o),i.on("send-xhr-start",r),i.on("open-xhr-start",r)},{1:5,2:21,ee:"QJf3ax"}],10:[function(t){function e(t){if("string"==typeof t&&t.length)return t.length;if("object"!=typeof t)return void 0;if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if("undefined"!=typeof FormData&&t instanceof FormData)return void 0;try{return JSON.stringify(t).length}catch(e){return void 0}}function n(t){var n=this.params,r=this.metrics;if(!this.ended){this.ended=!0;for(var i=0;c>i;i++)t.removeEventListener(s[i],this.listener,!1);if(!n.aborted){if(r.duration=(new Date).getTime()-this.startTime,4===t.readyState){n.status=t.status;var a=t.responseType,f="arraybuffer"===a||"blob"===a||"json"===a?t.response:t.responseText,u=e(f);if(u&&(r.rxSize=u),this.sameOrigin){var d=t.getResponseHeader("X-NewRelic-App-Data");d&&(n.cat=d.split(", ").pop())}}else n.status=0;r.cbTime=this.cbTime,o("xhr",[n,r,this.startTime])}}}function r(t,e){var n=i(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}if(window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&!/CriOS/.test(navigator.userAgent)){t("loader").features.xhr=!0;var o=t("handle"),i=t(2),a=t("ee"),s=["load","error","abort","timeout"],c=s.length,f=t(1);t(4),t(3),a.on("new-xhr",function(){this.totalCbs=0,this.called=0,this.cbTime=0,this.end=n,this.ended=!1,this.xhrGuids={}}),a.on("open-xhr-start",function(t){this.params={method:t[0]},r(this,t[1]),this.metrics={}}),a.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),a.on("send-xhr-start",function(t,n){var r=this.metrics,o=t[0],i=this;if(r&&o){var f=e(o);f&&(r.txSize=f)}this.startTime=(new Date).getTime(),this.listener=function(t){try{"abort"===t.type&&(i.params.aborted=!0),("load"!==t.type||i.called===i.totalCbs&&(i.onloadCalled||"function"!=typeof n.onload))&&i.end(n)}catch(e){try{a.emit("internal-error",[e])}catch(r){}}};for(var u=0;c>u;u++)n.addEventListener(s[u],this.listener,!1)}),a.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),a.on("xhr-load-added",function(t,e){var n=""+f(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),a.on("xhr-load-removed",function(t,e){var n=""+f(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),a.on("addEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-added",[t[1],t[2]],e)}),a.on("removeEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-removed",[t[1],t[2]],e)}),a.on("fn-start",function(t,e,n){e instanceof XMLHttpRequest&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),a.on("fn-end",function(t,e){this.xhrCbStart&&a.emit("xhr-cb-time",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}},{1:"XL7HBI",2:11,3:9,4:5,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],11:[function(t,e){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");return!r.port&&o[1]&&(r.port=o[1].split("/")[0].split(":")[1]),r.port&&"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,"/"!==r.pathname.charAt(0)&&(r.pathname="/"+r.pathname),r.sameOrigin=!e.hostname||e.hostname===document.domain&&e.port===n.port&&e.protocol===n.protocol,r}},{}],gos:[function(t,e){e.exports=t("7eSDFh")},{}],"7eSDFh":[function(t,e){function n(t,e,n){if(r.call(t,e))return t[e];var o=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:o,writable:!0,enumerable:!1}),o}catch(i){}return t[e]=o,o}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],D5DuLP:[function(t,e){function n(t,e,n){return r.listeners(t).length?r.emit(t,e,n):(o[t]||(o[t]=[]),void o[t].push(e))}var r=t("ee").create(),o={};e.exports=n,n.ee=r,r.q=o},{ee:"QJf3ax"}],handle:[function(t,e){e.exports=t("D5DuLP")},{}],XL7HBI:[function(t,e){function n(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:i(t,o,function(){return r++})}var r=1,o="nr@id",i=t("gos");e.exports=n},{gos:"7eSDFh"}],id:[function(t,e){e.exports=t("XL7HBI")},{}],loader:[function(t,e){e.exports=t("G9z0Bl")},{}],G9z0Bl:[function(t,e){function n(){var t=p.info=NREUM.info;if(t&&t.agent&&t.licenseKey&&t.applicationID&&c&&c.body){p.proto="https"===d.split(":")[0]||t.sslForHttp?"https://":"http://",a("mark",["onload",i()]);var e=c.createElement("script");e.src=p.proto+t.agent,c.body.appendChild(e)}}function r(){"complete"===c.readyState&&o()}function o(){a("mark",["domContent",i()])}function i(){return(new Date).getTime()}var a=t("handle"),s=window,c=s.document,f="addEventListener",u="attachEvent",d=(""+location).split("?")[0],p=e.exports={offset:i(),origin:d,features:{}};c[f]?(c[f]("DOMContentLoaded",o,!1),s[f]("load",n,!1)):(c[u]("onreadystatechange",r),s[u]("onload",n)),a("mark",["firstbyte",i()])},{handle:"D5DuLP"}],20:[function(t,e){function n(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(0>o?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=n},{}],21:[function(t,e){function n(t){return!(t&&"function"==typeof t&&t.apply&&!t[i])}var r=t("ee"),o=t(1),i="nr@wrapper",a=Object.prototype.hasOwnProperty;e.exports=function(t){function e(t,e,r,a){function nrWrapper(){var n,i,s,f;try{i=this,n=o(arguments),s=r&&r(n,i)||{}}catch(d){u([d,"",[n,i,a],s])}c(e+"start",[n,i,a],s);try{return f=t.apply(i,n)}catch(p){throw c(e+"err",[n,i,p],s),p}finally{c(e+"end",[n,i,f],s)}}return n(t)?t:(e||(e=""),nrWrapper[i]=!0,f(t,nrWrapper),nrWrapper)}function s(t,r,o,i){o||(o="");var a,s,c,f="-"===o.charAt(0);for(c=0;c<r.length;c++)s=r[c],a=t[s],n(a)||(t[s]=e(a,f?s+o:o,i,s,t))}function c(e,n,r){try{t.emit(e,n,r)}catch(o){u([o,e,n,r])}}function f(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){u([r])}for(var o in t)a.call(t,o)&&(e[o]=t[o]);return e}function u(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=r),e.inPlace=s,e.flag=i,e}},{1:20,ee:"QJf3ax"}]},{},["G9z0Bl",3,10,4]);</script>
+<!--
+  ............................
+  |POLAR BEAR IN A SNOW STORM|
+  |..........................|
+  ||                        ||
+  ||                        ||
+  ||                        ||
+  ||                        ||
+  ||                        ||
+  ||                        ||
+  ||                        ||
+  ||                        ||
+  ||                        ||
+  ||________________________||
+  '..........................'
+-->
+
+<meta content='width=device-width, initial-scale=1' name='viewport'>
+<meta content='noarchive' name='robots'>
+<link href='http://tel.local.ch/en/q/Bern/anne%20m%C3%BCller.html' hreflang='en' rel='alternate'>
+<link href='http://tel.local.ch/de/q/Bern/anne%20m%C3%BCller.html' hreflang='de' rel='alternate'>
+<link href='http://tel.local.ch/fr/q/Bern/anne%20m%C3%BCller.html' hreflang='fr' rel='alternate'>
+<link href='http://tel.local.ch/it/q/Bern/anne%20m%C3%BCller.html' hreflang='it' rel='alternate'>
+
+<title>anne müller in Bern - 6 Treffer auf local.ch
+</title>
+<meta content='6 Treffer für anne müller in Bern (Craniosacral Therapie)' name='description'>
+<meta content='local.ch' name='application-name'>
+<meta content='Firmen und Privatpersonen in der ganze Schweiz einfach finden mit dem offiziellen Telefonbuch bei local.ch' name='msapplication-tooltip'>
+<meta content='http://www.local.ch/de' name='msapplication-starturl'>
+<meta content='#009ee3' name='msapplication-navbutton-color'>
+<meta content='name=Finden;action-uri=http://www.local.ch/de;icon-uri=/favicon.ico' name='msapplication-task'>
+<meta content='name=Telefonbuch;action-uri=http://tel.local.ch/de;icon-uri=/favicon.ico;' name='msapplication-task'>
+<meta content='name=Die Gelben Seiten;action-uri=http://yellow.local.ch/de;icon-uri=/favicon.ico;' name='msapplication-task'>
+<meta content='name=Karte;action-uri=http://map.local.ch/de;icon-uri=/favicon.ico;' name='msapplication-task'>
+
+<meta content='http://www.local.ch/assets/logo_de-df4b227900940a6cc17974107752cbac.gif' property='og:image'>
+<meta content='website' property='og:type'>
+<meta content='http://tel.local.ch/de' property='og:url'>
+<meta content='anne müller in Bern - 6 Treffer auf local.ch' property='og:title'>
+
+<meta content='TRUE' name='MSSmartTagsPreventParsing'>
+<meta content='SKYPE_TOOLBAR_PARSER_COMPATIBLE' name='SKYPE_TOOLBAR'>
+<meta content='58bXhH8otXbtynDykH1JD8BwObuu9iEn5XIX+Q7Ahdg=' name='verify-v1'>
+<link href='http://tel.local.ch/de/q/Bern/anne%20m%C3%BCller.html' rel='canonical'>
+<link href='android-app://ch.local.android/localch/tel/search?lang=de&amp;what=anne+m%C3%BCller&amp;where=Bern' rel='alternate'>
+
+<link href="//www.local.ch/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+<link href="//www.local.ch/assets/local_skeleton/application-f2988698e9a84a342eba7f203630d641.css" media="all" rel="stylesheet" type="text/css" />
+<link href="//www.local.ch/assets/responsive/application-ea8da99899f7b64c0425ecd153b78691.css" media="all" rel="stylesheet" type="text/css" />
+
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="ho/6MjUb3f0fb/YwgpnMy6ShAj0/cnw/8NjEIM77sug=" name="csrf-token" />
+<!-- 7b7c597c38/production -->
+</head>
+<body class='de sticky-header controller-listings controller-listings-action-index left-align-small' id='ng-app' ng-app='lcl'>
+<!--[if lt IE 8]>
+<script src="//www.local.ch/assets/application/unsupported-eecf80df05831fbbd70f30f20bdbcdcf.js" type="text/javascript"></script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script src="//www.local.ch/assets/slot/ielt9-a6b7faaa868a597c7448034ae20d6737.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  (function() {
+    var docElement = document.documentElement;
+    docElement.className = docElement.className.replace(/(^|\s)no-js(\s|$)/, '$1$2') + ' js ';
+  })();
+</script>
+<script id="ga-top">
+    window._gaq = window._gaq || [];
+    _gaq.push(['_setAccount', 'UA-3637699-6']);
+    _gaq.push(['_setDomainName', 'local.ch']);
+</script>
+
+
+<div id='header'>
+<div class='closed top-nav'>
+<div class='row'>
+<div class='twelve columns'>
+<div class='left'>
+<ul id='slot-navigation-selector'>
+<li class='hamburger'>
+<i class='icon-reorder'></i>
+</li>
+<li class='menu-item www'>
+<a href="http://www.local.ch/de" target="_top" title="local.ch - Offizielles Telefonbuch und Gelbe Seiten der Schweiz">Startseite</a>
+</li>
+<li class='active menu-item tel'>
+<a href="http://tel.local.ch/de" data-add-search-params="" target="_top" title="Offizielles Telefonbuch der Schweiz – local.ch">Telefonbuch</a>
+</li>
+<li class='menu-item yellow'>
+<a href="http://yellow.local.ch/de" data-add-search-params="" target="_top" title="Die Gelben Seiten der Schweiz von local.ch - Unternehmen finden">Die Gelben Seiten</a>
+</li>
+<li class='menu-item restaurants'>
+<a href="http://www.local.ch/de/restaurants" target="_top" title="Restaurant Guide und Magazin für die Schweiz bei local.ch">Restaurants</a>
+</li>
+<li class='maps menu-item'>
+<a href="http://www.local.ch/de/map" data-add-search-params="" target="_top" title="Schweizer Karte für Adresssuche und Routenplanung - jetzt bei local.ch">Karte</a>
+</li>
+</ul>
+</div>
+<div class='right right-nav'>
+<ul class='right' id='language-selector'>
+<li class="active" title="Schweizer Telefonbuch in Deutsch">de</li><li><a href="/fr/q/Bern/anne%20m%C3%BCller.html?mode=text" class="fr" title="Annuaire Suisse en Français">fr</a></li><li><a href="/it/q/Bern/anne%20m%C3%BCller.html?mode=text" class="it" title="Italiano">it</a></li><li><a href="/en/q/Bern/anne%20m%C3%BCller.html?mode=text" class="en" title="Swiss Phonebook in English">en</a></li>
+</ul>
+<ul class='right'>
+<li><a href="https://customercenter.local.ch/de/?target=http%3A%2F%2Ftel.local.ch%2Fde%2Fq%3Fwhat%3Danne%2Bm%25C3%25BCller%26where%3DBern%26mode%3Dtext" class="cc-login" rel="nofollow" target="_top">Kundencenter</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<div class='row'>
+<div class='columns twelve'>
+<div class='search-bar-container'>
+<div class='search-bar' ng-init='searchForm={}'>
+<div class='logo-container'>
+<a class='production' href='http://www.local.ch/de' id='logo' target='_top' title='Offizielles Telefonbuch der Schweiz von local.ch'>
+<span class='shadow'></span>
+<img alt="Logo local.ch" src="//www.local.ch/assets/local_logo_de-df7c085ba2d0ada400e641e5f32f6b24.png" />
+</a>
+</div>
+
+<form accept-charset='UTF-8' action='http://tel.local.ch/de/q' class='search tel' lcl-search-form-guidance-url='/de/api/guidance.json' lcl-search-form-url='/de/api/as3/suggestwhatwhere' lcl-search-form='searchForm'>
+<div class='shadow'>
+<div class='field'>
+<input autocomplete='off' autofocus lcl-init-model-value name='what' ng-model='searchForm.what' ng-trim='false' placeholder='Wer oder Was?' tabindex='1' value='anne müller'>
+<div class='what tooltip'>
+Namen, Firmen oder Telefonnummern
+<br>
+<small>z.B. Müller, Bar Odeon oder 044 308 68 68</small>
+<a class='close' href='#'>×</a>
+</div>
+</div>
+<div class='field where-field'>
+<input autocomplete='off' lcl-init-model-value name='where' ng-model='searchForm.where' ng-trim='false' placeholder='Wo?' tabindex='2' value='Bern'>
+<div class='where tooltip'>
+Adresse, Ort oder PLZ
+<br>
+<small>z.B. Luzern, 5700 oder Bergstrasse</small>
+<a class='close' href='#'>×</a>
+</div>
+</div>
+<button class='button submit big'>
+<i class='icon-search'></i>
+</button>
+</div>
+<input class='randomizer' name='rid' type='hidden' value='T2l4'>
+<!--[if lt IE 10]>
+<input name="utf8" type="hidden" value="&#x2713;" />
+<![endif]-->
+</form>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class='-context result-list tel-slot' data-total-results='6'>
+<div class='row'>
+<div class='eight columns'>
+<div class='listings-title clearfix'>
+<h1>
+anne müller in Bern - 6 Treffer auf local.ch
+</h1>
+<span class='print'>
+<div class='dropdown split-button'>
+<a href="/de/print/q?print=map&amp;what=anne+m%C3%BCller&amp;where=Bern" rel="nofollow" target="_blank"><i class='icon-print'></i>
+<span>Drucken</span>
+</a><a class='toggle' data-toggle='dropdown' href='#'>
+<i class='icon-caret-down'></i>
+</a>
+<ul class='dropdown-menu pull-right'>
+<li>
+<a href="/de/print/q?print=map&amp;what=anne+m%C3%BCller&amp;where=Bern" rel="nofollow" target="_blank"><i class='icon-sign-blank'></i>
+Mit Karte
+</a></li>
+<li>
+<a href="/de/print/q?print=text&amp;what=anne+m%C3%BCller&amp;where=Bern" rel="nofollow" target="_blank"><i class='icon-reorder'></i>
+Ohne Karte
+</a></li>
+</ul>
+</div>
+</span>
+
+</div>
+</div>
+</div>
+<div class='row'>
+<div class='eight columns'>
+<div class='new' id='banner' style='display:block;'>
+<a href='http://tel.local.ch/de/slot/phonebook/ads/banner/CJ2XPafCOhS71RHrbzQqQg/redirect?category=7791&amp;region=303' target='_blank' title='http://www.cranio-atma.ch/'>
+<img alt='http://www.cranio-atma.ch/' height='60' src='http://bin.staticlocal.ch/banner-ad/db/db7fef735b428c0efe4c01c18f98f0747fb11d66/upload1.gif' width='468'>
+</a>
+</div>
+
+<div class='panel toolbar clearfix'>
+<div class='left catref'>
+<span class='label'>Einschränken nach:</span>
+<div class='dropdown'>
+<a class='toggle' data-toggle='dropdown' href='#'>
+<span>
+Rubrik
+</span>
+<i class='icon-caret-down'></i>
+</a>
+<ul class='dropdown-menu pull-left'>
+<li>
+<a href="http://tel.local.ch/de/q/Bern/anne%20m%C3%BCller.html?cat=510&amp;mode=text" rel="nofollow">Craniosacral Therapie&nbsp;(1)
+</a></li>
+</ul>
+</div>
+</div>
+<div class='right typeref'>
+<span class='active'>
+<i class='icon-circle'></i>
+Alle Einträge
+</span>
+<a href='http://tel.local.ch/de/q/Bern/anne%20m%C3%BCller.html?mode=text&amp;typeref=res' rel='nofollow'>
+<i class='icon-circle-blank'></i>
+Private (5)
+</a>
+<a href='http://tel.local.ch/de/q/Bern/anne%20m%C3%BCller.html?mode=text&amp;typeref=bus' rel='nofollow'>
+<i class='icon-circle-blank'></i>
+Firmen (1)
+</a>
+</div>
+</div>
+
+<div class='ad responsive tel' data-adtype='TLE' data-adurl='//adserver.adtech.de/addyn/3.0/1108.1/2755452/0/0/ADTECH;loc=100;group=1;cookie=info;alias=303DEWPOTLE;key=cat=7791+sp=anne müller;;misc=1422086530' id='toplisting' title='Anzeige'></div>
+<div class='row local-listing' id='listing_NCoPclCXRvgJqiNjMCfhpA'>
+<div class='twelve columns'>
+<div class='border-container'>
+<div class='container clearfix'>
+
+<h2>
+<a href="http://tel.local.ch/de/d/Bern/3007/Craniosacral-Therapie/Anne-Mueller-NCoPclCXRvgJqiNjMCfhpA?what=anne+m%C3%BCller&amp;where=Bern">Anne Müller</a>
+</h2>
+<p>
+<span class='categories'>Craniosacral Therapie</span>
+<br>
+<span class='address'>Gemeinschaftspraxis, Monbijoustrasse 124, 3007 Bern</span>
+<br>
+<span class='contact'>
+<span class='phone'>
+<label>Telefon</label>
+<span class='value'><span class='star'>*</span><a href="tel:+41319312155" class="number" rel="nofollow">031 931 21 55</a>
+</span>
+</span>
+
+</span>
+<br>
+<a class='big info-link button' href='http://tel.local.ch/de/d/Bern/3007/Craniosacral-Therapie/Anne-Mueller-NCoPclCXRvgJqiNjMCfhpA?what=anne+m%C3%BCller&amp;where=Bern' title='Anne Müller'>Details</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class='row local-listing' id='listing_BMcvDtNZp0OiiqM4-SwbTw'>
+<div class='twelve columns'>
+<div class='border-container'>
+<div class='container clearfix'>
+
+<h2>
+<a href="http://tel.local.ch/de/d/Bern/3008/Mueller-Anne-Baumgartner-BMcvDtNZp0OiiqM4-SwbTw?what=anne+m%C3%BCller&amp;where=Bern">Müller Anne (-Baumgartner)</a>
+</h2>
+<p>
+<span class='address'>Monreposweg 24, 3008 Bern</span>
+<br>
+<span class='contact'>
+<span class='phone'>
+<label>Telefon</label>
+<span class='value'><span class='star'>*</span><a href="tel:+41319010200" class="number" rel="nofollow">031 901 02 00</a>
+</span>
+</span>
+
+</span>
+<br>
+<a class='big info-link button' href='http://tel.local.ch/de/d/Bern/3008/Mueller-Anne-Baumgartner-BMcvDtNZp0OiiqM4-SwbTw?what=anne+m%C3%BCller&amp;where=Bern' title='Müller Anne (-Baumgartner)'>Details</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class='row local-listing' id='listing_l-gxa03plchVxIN06TybOw'>
+<div class='twelve columns'>
+<div class='border-container'>
+<div class='container clearfix'>
+
+<h2>
+<a href="http://tel.local.ch/de/d/Bern/3006/Mueller-Christoph-und-Anne-Rose-Schenk-l-gxa03plchVxIN06TybOw?what=anne+m%C3%BCller&amp;where=Bern">Müller Christoph und Anne-Rose (-Schenk)</a>
+</h2>
+<p>
+<span class='address'>Kleiner Muristalden 26, 3006 Bern</span>
+<br>
+<span class='contact'>
+<span class='phone'>
+<label>Telefon</label>
+<span class='value'><span class='star'>*</span><a href="tel:+41313520073" class="number" rel="nofollow">031 352 00 73</a>
+</span>
+</span>
+
+</span>
+<br>
+<a class='big info-link button' href='http://tel.local.ch/de/d/Bern/3006/Mueller-Christoph-und-Anne-Rose-Schenk-l-gxa03plchVxIN06TybOw?what=anne+m%C3%BCller&amp;where=Bern' title='Müller Christoph und Anne-Rose (-Schenk)'>Details</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class='row local-listing' id='listing_G4jnTBVN_A1-h-G6GNKzeg'>
+<div class='twelve columns'>
+<div class='border-container'>
+<div class='container clearfix'>
+
+<h2>
+<a href="http://tel.local.ch/de/d/Spiegel-b-Bern/3095/Mueller-Anne-und-Bernhard-Egger-G4jnTBVN_A1-h-G6GNKzeg?what=anne+m%C3%BCller&amp;where=Bern">Müller Anne und Bernhard (-Egger)</a>
+</h2>
+<p>
+<span class='address'>Albitweg 37, 3095 Spiegel b. Bern</span>
+<br>
+<span class='contact'>
+<span class='phone'>
+<label>Telefon</label>
+<span class='value'><span class='star'>*</span><a href="tel:+41319721417" class="number" rel="nofollow">031 972 14 17</a>
+</span>
+</span>
+
+</span>
+<br>
+<a class='big info-link button' href='http://tel.local.ch/de/d/Spiegel-b-Bern/3095/Mueller-Anne-und-Bernhard-Egger-G4jnTBVN_A1-h-G6GNKzeg?what=anne+m%C3%BCller&amp;where=Bern' title='Müller Anne und Bernhard (-Egger)'>Details</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class='row local-listing' id='listing_Uz1qU2lJlXmdNFrCXxc67A'>
+<div class='twelve columns'>
+<div class='border-container'>
+<div class='container clearfix'>
+
+<h2>
+<a href="http://tel.local.ch/de/d/Spiegel-b-Bern/3095/Mueller-Bernhard-und-Anne-Egger-Uz1qU2lJlXmdNFrCXxc67A?what=anne+m%C3%BCller&amp;where=Bern">Müller Bernhard und Anne (-Egger)</a>
+</h2>
+<p>
+<span class='address'>Albitweg 37, 3095 Spiegel b. Bern</span>
+<br>
+<span class='contact'>
+<span class='phone'>
+<label>Telefon</label>
+<span class='value'><span class='star'>*</span><a href="tel:+41319721417" class="number" rel="nofollow">031 972 14 17</a>
+</span>
+</span>
+
+</span>
+<br>
+<a class='big info-link button' href='http://tel.local.ch/de/d/Spiegel-b-Bern/3095/Mueller-Bernhard-und-Anne-Egger-Uz1qU2lJlXmdNFrCXxc67A?what=anne+m%C3%BCller&amp;where=Bern' title='Müller Bernhard und Anne (-Egger)'>Details</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class='row local-listing' id='listing__UfVUiYaiXuzISZynGiIdA'>
+<div class='twelve columns'>
+<div class='border-container'>
+<div class='container clearfix'>
+
+<h2>
+<a href="http://tel.local.ch/de/d/Bremgarten-b-Bern/3047/Mueller-Roland-u-Anne-Matter-_UfVUiYaiXuzISZynGiIdA?what=anne+m%C3%BCller&amp;where=Bern">Müller Roland u. Anne (-Matter)</a>
+</h2>
+<p>
+<span class='address'>Hangweg 23, 3047 Bremgarten b. Bern</span>
+<br>
+<span class='contact'>
+<span class='phone'>
+<label>Telefon</label>
+<span class='value'>
+<a href="tel:+41313015120" class="number" rel="nofollow">031 301 51 20</a>
+</span>
+</span>
+
+</span>
+<br>
+<a class='big info-link button' href='http://tel.local.ch/de/d/Bremgarten-b-Bern/3047/Mueller-Roland-u-Anne-Matter-_UfVUiYaiXuzISZynGiIdA?what=anne+m%C3%BCller&amp;where=Bern' title='Müller Roland u. Anne (-Matter)'>Details</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class='pagination'>
+
+</div>
+<div class='panel guidance'>
+<h3>Nicht gefunden? Vielleicht meinten Sie...</h3>
+<ul class='suggestions'>
+<li class='Wildcard'><span class='search-for'>Suchen Sie nach</span>
+<a href="http://tel.local.ch/de/q/Bern*/anne%20m%C3%BCller.html">anne müller in Bern*</a>
+<span class='count'>(7 Treffer)</span>
+</li>
+
+</ul>
+</div>
+
+</div>
+<div class='four columns sidebar skyscraper-container'>
+<iframe data-async-ad-min-width='1024' data-async-ad-src='/de/slot/tel/ads/skyscraper?canton=BE&amp;ltv_category=7791&amp;placement=RL&amp;region=303&amp;sd_category=510' data-async-ad-widths='[160,300]' frameborder='0' height='600' id='skyscraper' scrolling='no' width='160'></iframe>
+
+<div class='mini-map'>
+<a href="http://www.local.ch/de/map/q?backlink=http%3A%2F%2Ftel.local.ch%2Fde%2Fq%2FBern%2Fanne%2520m%25C3%25BCller.html&amp;bounds=46.92799%2C7.423819%2C46.97697%2C7.46062&amp;layers=results&amp;what=anne+m%C3%BCller" class="text " rel="nofollow"><div class='expand'>
+<i class='icon-fullscreen'></i>
+<span>Karte vergrössern</span>
+</div>
+<img alt='anne müller in Bern - 6 Treffer auf local.ch' src='//maps.googleapis.com/maps/api/staticmap?client=gme-local&amp;language=de&amp;maptype=roadmap&amp;markers=icon%3Ahttp%3A%2F%2Fwww.local.ch%2Fassets%2Fmaps%2Fmarkers%2Fresults-mini-cd5293263d0d2cafd24f214bc1e7983f.png%7Cshadow%3Afalse%7C46.935844%2C7.436545%7C46.937975%2C7.423819%7C46.945305%2C7.46062%7C46.927991%2C7.428969%7C%7C46.97697%2C7.427789&amp;sensor=false&amp;size=300x390&amp;visual_refresh=true&amp;signature=UKKdX-T9VVSX7IhrAxoePGCvt8M='>
+</a></div>
+
+<div id='ad-rectangle'>
+<iframe data-src='/de/slot/tel/ads/rectangle?canton=BE&amp;ltv_category=7791&amp;placement=RL&amp;region=303&amp;sd_category=510' frameborder='0' height='250' scrolling='no' width='300'></iframe>
+</div>
+<div id='ad-homech'>
+<iframe data-src='//dban.home.ch/v2/3007/de/284x450?track=utm_source%3Dlocalch%26utm_medium%3Dweb%26utm_campaign%3Dresultslist' frameborder='0' scrolling='no'></iframe>
+</div>
+
+<div class='panel related-searches'>
+<h3>Ähnliche Suchanfragen</h3>
+<p>
+Suchen Sie nach "<span class="term">anne müller</span>" in:
+<a href="http://tel.local.ch/de/q/Spiegel%20b.%20Bern/anne%20m%C3%BCller.html">Spiegel b. Bern</a>
+</p>
+</div>
+
+</div>
+</div>
+</div>
+<div class='ad' data-adtype='LCO' data-adurl='//adserver.adtech.de/addyn/3.0/1108.1/2755452/0/0/ADTECH;loc=100;group=1;cookie=info;alias=303DEWPOLCO;key=cat=7791+sp=anne müller;;misc=1422086530' id='corner'></div>
+
+<div id='footer'>
+<div class='row'>
+<div class='four columns'>
+<div class='title'>Kundendienst</div>
+<a href="http://info.local.ch/de/medien/kontakt" class="button big block submit" rel="nofollow" target="_top">Kontaktieren</a>
+<ul>
+<li>
+<a href="tel:+41800868086" class="phone" rel="nofollow">Kontaktieren Sie local.ch: 0800 86 80 86</a>
+</li>
+<li><a href="http://help.local.ch/home?locale=8" target="_top">Häufige Fragen</a></li>
+<li><a href="http://info.local.ch/de/agb" target="_top" title="Allgemeine Geschäftsbedingungen (AGB)">Allgemeine Geschäftsbedingungen (AGB)</a></li>
+</ul>
+</div>
+<div class='four columns'>
+<div class='title'><a href="http://www.local.ch/de/werbung" target="_top">Werben mit uns</a></div>
+<ul>
+<li><a href="http://www.local.ch/de/werbung#firmenaufbau" target="_top">Selbstständigkeit wagen</a></li>
+<li><a href="http://www.local.ch/de/werbung#wachstum" target="_top">Geschäft vergrössern</a></li>
+<li><a href="http://www.local.ch/de/werbung#weiterentwicklung" target="_top">Firmenpräsenz ausbauen
+</a></li>
+<li><a href="http://localina.local.ch/de/home/" target="_top">Für Gastronomen: Localina</a></li>
+</ul>
+</div>
+<div class='four columns'>
+<div class='title'><a href="http://info.local.ch/de/ihr-eintrag" target="_top">Ihr Eintrag</a></div>
+<ul>
+<li><a href="http://info.local.ch/de/ihr-eintrag/kostenlos-firmenprasenz-erstellen" target="_top">Kostenlos Firmenpräsenz</a></li>
+<li><a href="http://info.local.ch/de/ihr-eintrag/kostenlos-als-privatperson-eintragen" target="_top">Kostenlos als Privatperson</a></li>
+<li><a href="http://info.local.ch/de/ihr-eintrag/adressbuchschwindel" target="_top">Adressbuchschwindel</a></li>
+</ul>
+</div>
+</div>
+<div class='row'>
+<div class='four columns'>
+<div class='title'>Verzeichnisse</div>
+<ul>
+<li><a href="http://info.local.ch/de/directories/print" target="_top">Print</a></li>
+<li><a href="http://info.local.ch/de/directories/mobile" target="_top">Mobile</a></li>
+<li><a href="http://info.local.ch/de/directories/online" target="_top">Online</a></li>
+<li><a href="http://info.local.ch/de/internationale-suche" target="_top">Internationale Suche</a></li>
+</ul>
+</div>
+<div class='four columns'>
+<div class='title'><a href="http://info.local.ch/de/about-us" target="_top">Über local.ch</a></div>
+<ul>
+<li><a href="http://info.local.ch/de/about-us/das-unternehmen" target="_top">Das Unternehmen</a></li>
+<li><a href="http://info.local.ch/de/about-us/engagement" target="_top">Engagement</a></li>
+<li><a href="http://info.local.ch/de/about-us/werbe-kampagnen" target="_top">Werbe-Kampagnen</a></li>
+<li><a href="http://info.local.ch/de/about-us/jobs" target="_top">Karriere</a></li>
+</ul>
+</div>
+<div class='four columns'>
+<div class='title'><a href="http://info.local.ch/de/medien" target="_top">Medien</a></div>
+<ul>
+<li><a href="http://info.local.ch/medien/medienmitteilungen" target="_top">Medienmitteilungen</a></li>
+<li><a href="http://info.local.ch/de/medien/local-dot-ch-in-den-medien" target="_top">local.ch in den Medien</a></li>
+<li><a href="http://blog.local.ch/de/category/news/" target="_top">Blog</a></li>
+<li class='no-border'>
+<a href="http://www.facebook.com/localch" class="social-circle facebook" rel="nofollow" target="_top"><i class='icon-facebook'></i>
+</a><a href="http://twitter.com/localch" class="social-circle twitter" rel="nofollow" target="_top"><i class='icon-twitter'></i>
+</a><a href="https://plus.google.com/114432410774462110983" class="social-circle google-plus" rel="publisher" target="_top"><i class='icon-google-plus'></i>
+</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class='bottom-line'>
+<div class='row'>
+<div class='five columns legal'>
+<a href="http://info.local.ch/de/rechtliche-hinweise" target="_top">Rechtliche Hinweise</a>
+<a href="http://info.local.ch/de/impressum" target="_top">Impressum</a>
+</div>
+<div class='seven columns text-right'>
+local.ch - Die Marke für Verzeichnisse von Swisscom Directories AG
+</div>
+</div>
+</div>
+
+<div id='feedback'>
+<div class='container'>
+<a href='https://localch.zendesk.com/account/dropboxes/20046358?x=1#/dropbox/tickets/new'>Hilfe</a>
+</div>
+</div>
+<!--[if gte IE 8]><!-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+<script>
+  window.jQuery || document.write('<script src="//www.local.ch/assets/jquery-baa1ad5d6a029b9e75d0f6e3f3416db6.js" type="text/javascript"><\/script>');
+</script>
+
+<script src="//www.local.ch/assets/global/vendor-93c44fafc20d7b96f0580ceb37f5157d.js" type="text/javascript"></script>
+<script src="//www.local.ch/assets/responsive/application-cfcfd5f5d25d432b76a2754cd0ebc878.js" type="text/javascript"></script>
+<script src="//www.local.ch/assets/responsive/locales/de-ba6f8c68c0e631974a9cefc67fae378f.js" type="text/javascript"></script>
+
+<!--<![endif]-->
+<!-- NET-Metrix-Audit version="1.5" -->
+<script id="netmetrix" type="text/javascript">
+    <!--
+    var WEMF="http://local.wemfbox.ch/cgi-bin/ivw/CP/web/listings/tel";
+    document.write("<img src=\""+WEMF+"?r="+escape(document.referrer)+"&d="+(Math.random()*100000)+"&x="+screen.width+"x"+screen.height+"\" width=\"1\" height=\"1\" alt=\"\" />");
+    // -->
+  var szmvars="local//CP//web/listings/tel";
+</script>
+<noscript>
+  <img src="http://local.wemfbox.ch/cgi-bin/ivw/CP/web/listings/tel" width="1" height="1" alt="" />
+</noscript>
+  <script src="http://local.wemfbox.ch/2004/01/survey.js" async defer></script>
+<!-- /NET-Metrix-Audit -->
+
+<script id="ga-bottom" type="text/javascript">
+    _gaq.push(['_trackPageview']);
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+    })();
+</script>
+
+<iframe class='tracking' data-src='//d3ohl9zam7fjvh.cloudfront.net/tracking-iframes/other.html?ref=&amp;url=http%3A%2F%2Ftel.local.ch%2Fde%2Fq%3Fwhat%3Danne%2Bm%25C3%25BCller%26where%3DBern%26mode%3Dtext' height='0' width='0'></iframe>
+
+<script type="text/javascript">
+  var _kiq = _kiq || [];
+  (function(){
+    setTimeout(function(){
+    var d = document, f = d.getElementsByTagName('script')[0], s = d.createElement('script'); s.type = 'text/javascript';
+    s.async = true; s.src = '//s3.amazonaws.com/ki.js/49252/acC.js'; f.parentNode.insertBefore(s, f);
+    }, 1000);
+  })();
+</script>
+
+</body>
+</html>

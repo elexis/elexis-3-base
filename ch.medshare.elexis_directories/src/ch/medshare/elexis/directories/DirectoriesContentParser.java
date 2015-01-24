@@ -158,13 +158,13 @@
 package ch.medshare.elexis.directories;
 
 import java.io.IOException;
-
-import java.net.MalformedURLException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Vector;
 import java.io.UnsupportedEncodingException; //20120713js
+import java.net.MalformedURLException;
 import java.net.URLDecoder; //20120713js
+import java.util.List;
+import java.util.Vector;
+
+import ch.elexis.core.ui.util.SWTHelper;
 
 /**
  * 
@@ -234,8 +234,51 @@ public class DirectoriesContentParser extends HtmlParser {
 	// others with double quotation marks, and what this plugin processes is not identical
 	// to what mozilla would save in a file with this respect.
 	//
-	private static final String ADR_LISTENTRY_TAG = "<div class='listing'"; //$NON-NLS-1$
-	private static final String ADR_SINGLEDETAILENTRY_TAG = "<div class='details'";; //$NON-NLS-1$
+	
+	//201311270235js: local.ch website revised. Between 201207xx and 20131124, we got text like this:
+	/*
+	<div class='listing' id='listing_Z0CjHLPzn5m5APt8Mn-jkA'>
+	 */
+	//This code could use it:
+	//private static final String ADR_LISTENTRY_TAG = "<div class='listing'"; //$NON-NLS-1$
+	//
+	//This tag does not work any more.
+	//It returns only the number of search hits (which is extracted separately by getSearchInfo() from <title></title> which still works),
+	//but leaves the table of search hits completely empty.
+	
+	//201311270235js: Now we get text like this:
+	/*
+	<div class="row local-listing" id="listing_ofI1kCicVYT7o_T68z0D5w">
+	 */
+	//This tag does the job now - at least for some searches I tested:
+	//Please note that Mozilla firefox saved files contain values enclosed by double quotes, but elexis (and wget) actually receive single quotes.
+	//Test searches:
+	//hamacher		bern	(see debug output and downloaded text in multiple stages in external documentation files)
+	//meier			bern
+	//anne müller	bern	(Do ! see intro comments above and individual comments below for this)
+	//atupri		bern	(Bitte schauen - in den Details erscheinen MEHRERE Abschnitte, nämlich auch ein zweiter für das Servic Center Bern, 
+	//						 das hat dieselbe Anschrift, aber zusätzlich ein Postfach mit anderer PLZ eingetragen.)
+	private static final String ADR_LISTENTRY_TAG = "<div class='row local-listing'"; //$NON-NLS-1$
+	
+	//201311270235js: local.ch website revised. Between 201207xx and 20131124, we got text like this:
+	/*
+	<div class='eight columns details'>		(as seen in Elexis debug log output, or in a wget saved filed)
+	 */
+	//This code could use it:		
+	//private static final String ADR_SINGLEDETAILENTRY_TAG = "<div class='details'";; //$NON-NLS-1$
+	
+	//201311270235js: Now we get text like this:
+	/*
+	<div class="row local-listing" id="listing_ofI1kCicVYT7o_T68z0D5w">
+	 */
+	private static final String ADR_SINGLEDETAILENTRY_TAG = "<div class='eight columns details'";; //$NON-NLS-1$
+
+	//20131127js
+	//New variables to store some meta information we might get at the beginning of a details page to be used during further parsing.
+	//Sorry for putting this to a top level variable, but I don't want to pass it through all the time etc.
+	private static String metaPLZTrunc = "";
+	private static String metaOrtTrunc = "";
+	private static String metaStrasseTrunc = "";
 	
 	public DirectoriesContentParser(String htmlText){
 		super(htmlText);
@@ -380,6 +423,41 @@ public class DirectoriesContentParser extends HtmlParser {
 		System.out.print("jsdebug: DirectoriesContentParser.java: extractKontakte() running...\n");
 		System.out.print("jsdebug: Beginning of substrate: <" + extract("<", ">") + "...\n");
 		
+		//20131127js: Added some processing of meta information from the page header,
+		//because the content of the detailed class="address" comes without any field structure now,
+		//so we can either assume a very fixed format, or try to use rudimentary and possibly truncated (!!!)
+		//information from the <meta> field to restore information about which value refers came from what field.
+		//That possibly helpful meta field may look like that:
+		/*
+		 für hamacher 	bern
+		 <meta content='Adresse von Hamacher Jürg (Strasse: Bremgartenstras…, PLZ: 3012, Ort: Bern, Telefon: 031 300 3…)' name='description'>
+		 für atupri		bern
+		 <meta content='Adresse von Atupri Krankenkasse (Strasse: Zieglerstras…, PLZ: 3007, Ort: Bern, Telefon: 031 555 0…)' name='description'>
+		 (Auch für Atupri NUR Strasse: PLZ: Ort:, und zwar von der Hausadresse. Postfach-Anschrift hier gar nicht berücksichtigt.)
+		 (The truncation indicator is actually NO underscore, but rather three-dots-in-one-character instead.)
+		 */
+		if (getNextPos("<meta content='Adresse von ") > 0) {
+			System.out
+				.print("jsdebug: Processing a <meta> field to help processing the 'details' field later on which is very unstructured after 20131124...\n");
+			moveTo("<meta content='Adresse von ");
+			metaStrasseTrunc = removeDirt(extract("Strasse: ", ",")).replaceAll("[^A-Za-z0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$	//20131127js
+			metaPLZTrunc = removeDirt(extract("PLZ: ", ",")).replaceAll("[^A-Za-z0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$	//20131127js
+			metaOrtTrunc = removeDirt(extract("Ort: ", ",")).replaceAll("[^A-Za-z0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$	//20131127js
+			if (metaStrasseTrunc == null)
+				System.out.print("jsdebug: WARNING: metaStrasseTrunc == null\n");
+			else
+				System.out.print("jsdebug: metaStrasseTrunc == " + metaStrasseTrunc + "\n");
+			if (metaPLZTrunc == null)
+				System.out.print("jsdebug: WARNING: metaPLZTrunc == null\n");
+			else
+				System.out.print("jsdebug: metaPLZTrunc == " + metaPLZTrunc + "\n");
+			if (metaOrtTrunc == null)
+				System.out.print("jsdebug: WARNING: metaOrtTrunc == null\n");
+			else
+				System.out.print("jsdebug: metaOrtTrunc == " + metaOrtTrunc + "\n");
+		}
+		;
+		
 		List<KontaktEntry> kontakte = new Vector<KontaktEntry>();
 		
 		int listIndex = getNextPos(ADR_LISTENTRY_TAG);
@@ -392,6 +470,7 @@ public class DirectoriesContentParser extends HtmlParser {
 		System.out.print("jsdebug: DirectoriesContentParser.java: extractKontakte().detailIndex: "
 			+ detailIndex + "\n");
 		
+		//20131127js: These values get -1 if the end of the file is passed during the above search.
 		while (listIndex > 0 || detailIndex > 0) {
 			KontaktEntry entry = null;
 			
@@ -745,7 +824,31 @@ public class DirectoriesContentParser extends HtmlParser {
 		// moveTo("<a class=\"fn\""); //20120712pre js
 		//String nameVornameText = extract("\">", "</a>"); //$NON-NLS-1$ //$NON-NLS-2$	//20120712pre js
 		
-		moveTo("<h4><a href=\"http://tel.local.ch/"); // 20120712js
+		//Before 20131124, we would see text like this:
+		/*
+		<h4><a href="http://tel.local.ch/de/d/Bern/3012/Aerzte/Hamacher-Juerg-ofI1kCicVYT7o_T68z0D5w?rid=Gw3i&amp;what=hamacher&amp;where=bern">Hamacher Jürg</a></h4>		 
+		*/
+		//And we would navigate to before the name like this:
+		//20131227pre js: Old code:
+		//moveTo("<h4><a href=\"http://tel.local.ch/"); // 20120712js
+		
+		//After 20131124, we would see text like this:
+		/*
+		<h2>
+		<a href="http://tel.local.ch/de/d/Bern/3012/Aerzte/Hamacher-Juerg-ofI1kCicVYT7o_T68z0D5w?what=hamacher&where=bern">Hamacher Jürg</a>
+		</h2>
+		*/
+		//And we would navigate to before the name like this:
+		//20131227js: New code:
+		//TODO: Shouldn't the \\\" in the following line and similar ones throughout this file be changed to a simple ' ???
+		System.out
+			.println("TODO: DirectoriesContentParser.java: Shouldn't the \\\" in the following line and similar ones throughout this file be changed to a simple ' ???\n");
+		moveTo("<h2><a href=\"http://tel.local.ch/"); // 20131127js
+		//Please note: Even with the old <h4> in the above search string (which doesn't occur in the file, though),
+		//names and phone numbers would still be returned into the list.
+		//But extraction would take very long with <h4>. Using <h2> would speed this up considerably.
+		//(But still not return more than name and number. More updates below...)
+		
 		String nameVornameText = extract("\">", "</a>"); //$NON-NLS-1$ //$NON-NLS-2$	//20120712js
 		
 		nameVornameText = removeDirt(nameVornameText);
@@ -818,6 +921,22 @@ public class DirectoriesContentParser extends HtmlParser {
 			.print("jsToDo:  DirectoriesContentParser.java: extractListKontakt() Possibly add better processing of a successor to role/categories/profession fields here as well, see comments above.\n");
 		
 		String zusatz = ""; // 20120712js
+		
+		//20131127pre js Old code:
+		//If category information was available, between 20120712 and 20131124, we could find text like this:
+		/*
+		<div class="categories">
+		<div class="edge"> </div>
+		<ul>
+		<li>Ärzte</li>
+		<li>Innere Medizin</li>
+		<li>Lungenkrankheiten (Pneumologie)</li>
+		</ul>
+		</div>
+		*/
+
+		//And we would extract and transform the single or multiple lines into a single line for Elexis field "Zusatz" like this:
+		/*
 		int catIndex = getNextPos("<div class='categories'>"); // 20120712js
 		if (catIndex > 0 && ((catIndex < nextEntryPoxIndex) || nextEntryPoxIndex == -1)) { // 20120712js
 			moveTo("<div class='categories'>"); // 20120712js
@@ -827,8 +946,29 @@ public class DirectoriesContentParser extends HtmlParser {
 			zusatz = zusatz.replaceAll("<li>", ""); // 20120712js
 			zusatz = zusatz.replaceAll("</li>", ""); // 20120712js
 			zusatz = zusatz.replaceAll("^\n", ""); // 20120712js
-			zusatz = zusatz.replaceAll("\n$", ""); // 20120712js
+			zusatz = zusatz.replaceAll("\n$", ""); // 20120712js			
 		} // 20120712js
+		*/
+		
+		//If category information was available, after 20131124, we would find text like this instead:
+		/*
+		<span class='categories'>Ärzte&nbsp;&bull;&nbsp;Innere Medizin&nbsp;&bull;&nbsp;Lungenkrankheiten (Pneumologie)</span>
+		<br>
+		*/
+		//This is obviously much worse structured XML in a technical sense.
+		//It's all direct layout control, rather than providing logically structured content and letting the browser do the formatting etc. 
+		//Anyway - we would extract the single or multiple entries from a single line (!) into a single line for Elexis field "Zusatz" like this:
+		int catIndex = getNextPos("<span class='categories'>"); // 20131127js:
+		if (catIndex > 0 && ((catIndex < nextEntryPoxIndex) || nextEntryPoxIndex == -1)) { // 20120712js
+			moveTo("<span class='categories'>"); // 20131127js:
+			zusatz = extractTo("</span>"); // 20131127js:
+			zusatz = zusatz.replaceAll("&nbsp;&bull;&nbsp;", ", "); // 20131127js:
+		} // 20120712js
+			//I don't want to use a bullet instead of the comma, because I this may be much more error prone, as it depends on suitable character sets/encodings etc.
+			//One drawback (but this was there before) is that the "Gemeinschaftspraxis, ..." from the address field returned for anne müller and separated further below
+			//will be separated by a dash (done by code below), so this is an inconsistency. On the other hand, this was there before, and it's also information retrieved from another source.
+			//So: may that remain like that for now. 
+			//This update gets us the categories information into the Zusatz field in the single result that appears after dblclick on one entry from the tabulated results.
 		
 		// Anne Müller case debug output:
 		System.out.print("jsdebug: DirectoriesContentParser.java: extractListKontakt() catIndex: "
@@ -848,12 +988,29 @@ public class DirectoriesContentParser extends HtmlParser {
 		// New code:
 		// String adressTxt = extract("<p class=\"address adr\">", "</p>");
 		// //20120712pre js
-		String adressTxt = extract("<p class='address'>", "</p>"); // 20120712js
+		
+		//20131127pre js: Before 20131124, text came in this format:
+		/*
+		<p class="address">Bremgartenstrasse 119, 3012 Bern</p>
+		*/
+		//So we used this code:
+		//String adressTxt = extract("<p class='address'>", "</p>"); // 20120712js
+		
+		//20131127js: Once again, the text comes in a new (and technically: "worse") format:
+		/*
+		<span class='address'>Bremgartenstrasse 119, 3012 Bern</span>
+		<br>
+		*/
+		//So we use new code:
+		String adressTxt = extract("<span class='address'>", "</span>"); // 20131127js
+		//This update gets us address (street, number, zip, city) into both the tabulated results, and the single result that appears after dblclick on one entry from the tabulated results.
+		//(But still not the Fax number, that should be extracted from what appears if we click on "Details" in the local.ch tabulated results page.
+		// The Fax number is *not* contained in the tabulated result for multiple hits on local.ch, so that will be extracted later on.)  
 		
 		System.out
 			.print("jsdebug: DirectoriesContentParser.java: extractListKontakt().addressTxt:\n"
 				+ adressTxt + "\n\n");
-		
+
 		// 5.5.09 ts: verschachtelte spans -> alles bis zur nächsten span klasse
 		// holen
 		// 20101213js: I'm unaware why this should be needed here.
@@ -941,6 +1098,13 @@ public class DirectoriesContentParser extends HtmlParser {
 				strasse = removeDirt(strasse.substring(CommaPos + 2));
 			}
 		}
+		//20131127js please note:
+		//One drawback (but this was there before) is that the "Gemeinschaftspraxis, ..." from the address field returned for anne müller and separated here
+		//will be separated by a dash - inside the Zusatz field - whereas everything natively found in the "categories" class/span would be separated by commas,
+		//which had in turn been replacements for bullets. On the other hand, this was there before, and it's also information retrieved from another source.
+		//So: may that remain like that for now.
+		//The output for the details listing has now also be simplified, so I will use the same code over there.
+		//Although there (and here???), we might have some hints from a single meta line - with labels, but truncated content. 
 		
 		// Tel-Nr
 		// moveTo("<span class=\"tel\""); //20120712pre js
@@ -968,7 +1132,7 @@ public class DirectoriesContentParser extends HtmlParser {
 		} // 20120712js
 		
 		// 20120713js: Please note: Fax and E-mail are NOT available in the List format result
-		
+		// 20131127js: And this is still the case in the next revision after 20131124js...
 		return new KontaktEntry(vorname, nachname, zusatz, //$NON-NLS-1$
 			strasse, plz, ort, telNr, "", "", false); //$NON-NLS-1$
 	}
@@ -1130,243 +1294,590 @@ public class DirectoriesContentParser extends HtmlParser {
 		// class='n fn'> //20120712js
 		// Check the html dump in debugging output to see what is actually being processed here.
 		// //20120712js
-		String nameVornameText = extract("<h1 class='n fn'>", "</h1>"); // 20120712js
+		//String nameVornameText = extract("<h1 class='n fn'>", "</h1>"); // 20120712js
 		
-		System.out
-			.print("jsdebug: DirectoriesContentParser.java: extractKontakt().nameVornameText: \""
-				+ nameVornameText + "\"\n");
-		
-		if (nameVornameText == null || nameVornameText.length() == 0) { // Keine leeren Inhalte
-			return null;
-		}
-		String[] vornameNachname = getVornameNachname(nameVornameText);
-		String vorname = vornameNachname[0];
-		String nachname = vornameNachname[1];
-		
-		// Anne Müller case debug output:
-		System.out
-			.print("jsdebug: DirectoriesContentParser.java: extractKontakt() nameVornameText: "
-				+ nameVornameText + "\n");
-		
-		// Zusatz
+		//20131127js: Ich sehe für die Atupri Krankenkasse, dass diese im Detail-Ergebnis gleich MEHRERE Einträge mit unterschiedlichen Adressen hat:
+		//Einmal:
+		/*
+		 <h4 class='name fn'>Atupri Krankenkasse</h4>
+		 ...
+		 <div class='profession'></div>
+		<p class='address'>
+		Zieglerstrasse 29<br/>
+		3007 Bern
+		</p>
+		...
+		 */
+		//Und danach noch:
+		/*
+		<h4 class='name fn'>Service Center Bern</h4>
+		...
+		<p class='address'>
+		Zieglerstrasse 29<br/>
+		3007 Bern<br/>
+		Postfach 8721<br/>
+		3001 Bern
+		</p>
+		...
+		*/
 		//
-		// Comment added 20101213js:
-		// Please note, that if zusatz remains empty, then further below it will
-		// receive
-		// the content of the poBox field. This however, would return garbage
-		// (i.e. some
-		// remainders of PLZ and ORT plus HTML tag leftovers) in versions before
-		// 2010-12-13.
-		// That garbage, however, was introduced from the poBox related code
-		// below,
-		// where plzCode was filled even when the corresponding tag was not
-		// available,
-		// whereas the following 4 lines are (and have been) apparently ok:
-		String zusatz = "";
-		// if (moveTo("<p class=\"role\">")) { //20120712pre js
-		// zusatz = extractTo("</p>"); //20120712pre js
-		if (moveTo("<div class='profession'>")) { // 20120712js
-			zusatz = extractTo("</div>"); // 20120712js
-		}
-		
-		// Anne Müller case debug output:
-		System.out.print("jsdebug: DirectoriesContentParser.java: extractKontakt() zusatz: \""
-			+ zusatz + "\"\n\n");
-		
-		// Adresse (this is a two level record, both before and after
-		// 20120712js):
-		
-		// String adressTxt = extract("<div class=\"streetAddress\">", "</div>"); //20120712pre js
-		
-		// Please note: We need single quotation marks around class='adr' (and other class tags),
-		// but double quotation marks around class=\"street-address" (and others in the second
-		// level).
-		// What mozilla firefox saves from downloads is NOT exactly what is processed here.
-		// 20120712js
-		String adressTxt = extract("<p class='adr'>", "</p>"); // 20120712js
-		
-		// Anne Müller, Bern or Eggimann Meier, Bern case debug output:
-		System.out.print("jsdebug: DirectoriesContentParser.java: adressTxt: " + adressTxt + "\n");
-		
-		HtmlParser parser = new HtmlParser(adressTxt);
-		
-		// String streetAddress = removeDirt(parser.extract("<span class=\"street-address\">",
-		// "</span>")); // 20120712js:
-		String streetAddress = ""; // 20120712js
-		if (adressTxt.contains("<span class=\"street-address\">")) { // 20120712js
-			streetAddress =
-				removeDirt(parser.extract("<span class=\"street-address\">", "</span>")); // 20120712js
-		} // 20120712js
-			// unchanged
-		// 20101213js:
-		// The simple (unconditional):
-		//
-		// Old code:
-		// String poBox =
-		// removeDirt(parser.extract("<span class=\"post-office-box\">",
-		// "</span>"));
-		//
-		// would not really work if there was no post-office-box available at
-		// all.
-		// In that case, it might return garbage.
-		// And if zusatz was also empty (see further above), then any bad
-		// content
-		// of poBox would be propagated up to zusatz.
-		// Therefore, we want to be a bit more careful with doing anything into
-		// poBox:
-		//
-		// New code:
-		// String poBox = ""; // 20120712pre js
-		// if (moveTo("<span class=\"post-office-box\">")) { // 20120712pre js
-		// poBox = removeDirt(extractTo("</span>")); // 20120712pre js
-		// } // 20120712pre js
-		// Ja, so ist es gut :-) // 20120712pre js
-		
-		// 20120713js revised:
-		String poBox = ""; // 20120712js
-		if (adressTxt.contains("<span class=\"poBox\">")) { // 20120712js
-			poBox = removeDirt(parser.extract("<span class=\"poBox\">", "</span>")); // 20120712js
-		} // 20120712js
-		
-		// plzCode
-		//
-		// 20101217js:
-		// It's probably better to also fill plzCode ONLY when moveTo() would
-		// not fail.
-		//
-		// Old code:
-		// String plzCode =
-		// removeDirt(parser.extract("<span class=\"postal-code\">",
-		// "</span>"));
-		//
-		// New code:
-		// String plzCode = ""; // 20120712pre js
-		// if (moveTo("<span class=\"postal-code\">")) { // 20120712pre js
-		// plzCode = removeDirt(extractTo("</span>")); // 20120712pre js
-		// } // 20120712pre js
-		
-		// 20120713js revised:
+
+		//Wegen des hinzugefügten loops für ggf. mehrere Adressen auch im Detailergebnis: Variablen hier vorab definiert,
+		//damit sie später bei return ausserhalb des loops noch sichtbar sind.
+		String vorname = "";
+		String nachname = "";
+
+		String streetAddress = "";
+		String poBox = "";
 		String plzCode = ""; // 20120712js
-		if (adressTxt.contains("<span class=\"postal-code\">")) { // 20120712js
-			plzCode = removeDirt(parser.extract("<span class=\"postal-code\">", "</span>")); // 20120712js
-		} // 20120712js
-		
-		// 20120712js: Region:
-		// There is an additional field class="region" available now in local.ch
-		// output,
-		// which follows the "street-address" field and precedes "locality".
-		// But it's apparently not used in Elexis so far, and I don't add it
-		// now.
-		
-		// Ort
-		//
-		// 20101217js:
-		// It's probably better to also fill Ort ONLY when moveTo() would not
-		// fail.
-		//
-		// Older code:
-		// String ort = removeDirt(new
-		// HtmlParser(adressTxt).extract("<span class=\"locality\">",
-		// "</span>"));
-		//
-		// Old code:
-		// parser.moveTo("<tr class=\"locality\">");
-		// parser.moveTo("<a href=");
-		// String ort = removeDirt(parser.extract(">", "</a>").replace("&nbsp;",
-		// "").trim());
-		//
-		// New code:
-		// String ort = "";
-		// if (moveTo("<tr class=\"locality\">")) { //20120712pre js
-		// moveTo("<a href="); //20120712pre js
-		// ort = removeDirt(parser.extract(">", "</a>").replace("&nbsp;",
-		// "").trim()); //20120712pre js
-		// } //20120712pre js
-		
-		// 20120713js revised:
 		String ort = ""; // 20120712js
-		if (adressTxt.contains("<span class=\"locality\">")) { // 20120712js
-			ort = removeDirt(parser.extract("<span class=\"locality\">", "</span>")); // 20120712js
-		} // 20120712js
-		
-		// If zusatz is empty, then we copy the content of poBox into zusatz.
-		if (zusatz == null || zusatz.length() == 0) {
-			zusatz = poBox;
-		}
-		
-		// Tel/Fax & Email
-		
-		// moveTo("<tr class=\"phoneNumber\">"); //20120712pre js
-		// String tel = ""; //20120712pre js
-		// if (moveTo("<span class=\"contact\">Telefon")) { //20120712pre js
-		// moveTo("<td class=\"tel\""); //20120712pre js
-		// moveTo("<a class=\"phonenr\""); //20120712pre js
-		// tel = extract(">", "</a>").replace("&nbsp;", "").replace("*",
-		// "").trim(); //20120712pre js
-		// } //20120712pre js
-		
-		// Please note: some class tags need single, others need double quotation marks. //
-		// 20120712js
+
+		String zusatz = "";
 		String tel = ""; // 20120712js
-		if (moveTo("<tr class='phone'>")) { // 20120712js
-			if (moveTo("<th class='label'>\nTelefon:")) { // 20120712js
-				// 20120713js Don't use "refuse number" but only "number" - the "refuse " is
-				// probably only there
-				// for people who don't want to get called for advertising or a similar thing; there
-				// is a matching
-				// note on the individual Details entries; and probably an asterisk displayed left
-				// of the phone number
-				// in the List format output.
-				moveTo("number\""); // 20120712js
-				tel = extract(">", "</").replace("&nbsp;", "").replace("*", "").trim(); // 20120712js
+		String fax = ""; // 20120712js
+		String email = ""; // 20120712js
+
+		Boolean doItOnceMore = true;
+		while (doItOnceMore) { // 20120712js
+			//20131127js: Further above, we found <h4> -> <h2>, here we find <h1> -> <h4> now.
+			//As above, searching for the old = wrong tag takes very long, after the main ADR_SINGLEDETAILENTRY_TAG has been updated.
+			//Correcting this search as well, brings the processing back to its original speed.
+			//Also note: n -> name; but fn -> fn ...
+			//I inserted a moveTo (and therefore moved most of the target string to that statement) so that we can process multiple entries in a loop.
+			moveTo("<h4 class='name fn'");
+			String nameVornameText = extract(">", "</h4>"); // 20120712js
+			
+			System.out
+				.print("jsdebug: DirectoriesContentParser.java: extractKontakt().nameVornameText: \""
+					+ nameVornameText + "\"\n");
+			
+			if (nameVornameText == null || nameVornameText.length() == 0) { // Keine leeren Inhalte
+				return null;
+			}
+			String[] vornameNachname = getVornameNachname(nameVornameText);
+			//20131127js: Um bei mehrfachloops (z.B. für (1) Atupri (2) Service Center Bern möglichst viele Infos zu erhalten,
+			//die (ggf. neuen) Einträgen zu den (ggf. vorhandenen) einigermassen schlau zu den alten hinzufügen.
+			//Das hier würde liefern:
+			//1. pass:
+			//Name:  	Atupri
+			//Vorname:	Krankenkasse
+			//(vielleicht auch andersrum)
+			//2. pass:
+			//Name:  	Service
+			//Vorname:	Center Bern
+			//(hier wär die Atupri also ganz verloren gegangen)
+			//vorname = vornameNachname[0];
+			//nachname = vornameNachname[1];
+			
+			if (vorname.equals("")) {
+				vorname = vornameNachname[0];
+				nachname = vornameNachname[1];
+			} else {
+				//Bei der Atupri funktioniert das jetzt gut und liefert:
+				//Listeneintrag:
+				//Atupri Krankenkasse Service Center Bern
+				//Detaileintrag:
+				//Name:	Atupri
+				//Vorname: Krankenkasse Service Center Bern
+				//vorname = vorname + " " + vornameNachname[1] + " " + vornameNachname[0];
+				
+				//Das hier ist vielleicht besser, wenn's geht:
+				nachname = nachname + " " + vorname;
+				vorname = vornameNachname[1] + " " + vornameNachname[0];
+				//Das liefert:
+				//Listeneintrag:
+				//Atupri Krankenkasse Service Center Bern
+				//Detaileintrag:
+				//Name:	Atupri Krankenkasse
+				//Vorname: Service Center Bern
+				//vorname = vorname + " " + vornameNachname[1] + " " + vornameNachname[0];
+				//:-)
+			}
+			
+			// Anne Müller case debug output:
+			System.out
+				.print("jsdebug: DirectoriesContentParser.java: extractKontakt() nameVornameText: "
+					+ nameVornameText + "\n");
+			
+			// Zusatz
+			//
+			// Comment added 20101213js:
+			// Please note, that if zusatz remains empty, then further below it will
+			// receive
+			// the content of the poBox field. This however, would return garbage
+			// (i.e. some
+			// remainders of PLZ and ORT plus HTML tag leftovers) in versions before
+			// 2010-12-13.
+			// That garbage, however, was introduced from the poBox related code
+			// below,
+			// where plzCode was filled even when the corresponding tag was not
+			// available,
+			// whereas the following 4 lines are (and have been) apparently ok:
+
+			// if (moveTo("<p class=\"role\">")) { //20120712pre js
+			// zusatz = extractTo("</p>"); //20120712pre js
+			if (moveTo("<div class='profession'>")) { // 20120712js
+				zusatz = extractTo("</div>"); // 20120712js
+			}
+			
+			//20131127js: Replace something like "Dr. med. PD" by "PD Dr. med."
+			zusatz = zusatz.replace("Dr. med. PD", "PD Dr. med.");
+			zusatz = zusatz.replace("Dr. med. Prof.", "Prof. Dr. med.");
+			
+			// Anne Müller case debug output:
+			System.out.print("jsdebug: DirectoriesContentParser.java: extractKontakt() zusatz: \""
+				+ zusatz + "\"\n\n");
+			
+			//20131127pre: Before 20131124, we got text for address like this:
+			/*
+			<p class="adr">
+			<span class="street-address">Bremgartenstrasse 119</span><br>
+			<span class="region"><span class="postal-code">3012</span> <span class="locality">Bern</span></span>
+			</p>		
+			 */
+			//We would parse that like this:
+			/*
+			// Adresse (this is a two level record, both before and after
+			// 20120712js):
+			
+			// String adressTxt = extract("<div class=\"streetAddress\">", "</div>"); //20120712pre js
+			
+			// Please note: We need single quotation marks around class='adr' (and other class tags),
+			// but double quotation marks around class=\"street-address" (and others in the second
+			// level).
+			// What mozilla firefox saves from downloads is NOT exactly what is processed here.
+			// 20120712js
+			String adressTxt = extract("<p class='adr'>", "</p>"); // 20120712js
+			
+			// Anne Müller, Bern or Eggimann Meier, Bern case debug output:
+			System.out.print("jsdebug: DirectoriesContentParser.java: adressTxt: " + adressTxt + "\n");
+			
+			HtmlParser parser = new HtmlParser(adressTxt);
+			
+			// String streetAddress = removeDirt(parser.extract("<span class=\"street-address\">",
+			// "</span>")); // 20120712js:
+			String streetAddress = ""; // 20120712js
+			if (adressTxt.contains("<span class=\"street-address\">")) { // 20120712js
+				streetAddress =
+					removeDirt(parser.extract("<span class=\"street-address\">", "</span>")); // 20120712js
+			} // 20120712js
+				// unchanged
+			// 20101213js:
+			// The simple (unconditional):
+			//
+			// Old code:
+			// String poBox =
+			// removeDirt(parser.extract("<span class=\"post-office-box\">",
+			// "</span>"));
+			//
+			// would not really work if there was no post-office-box available at
+			// all.
+			// In that case, it might return garbage.
+			// And if zusatz was also empty (see further above), then any bad
+			// content
+			// of poBox would be propagated up to zusatz.
+			// Therefore, we want to be a bit more careful with doing anything into
+			// poBox:
+			//
+			// New code:
+			// String poBox = ""; // 20120712pre js
+			// if (moveTo("<span class=\"post-office-box\">")) { // 20120712pre js
+			// poBox = removeDirt(extractTo("</span>")); // 20120712pre js
+			// } // 20120712pre js
+			// Ja, so ist es gut :-) // 20120712pre js
+			
+			// 20120713js revised:
+			String poBox = ""; // 20120712js
+			if (adressTxt.contains("<span class=\"poBox\">")) { // 20120712js
+				poBox = removeDirt(parser.extract("<span class=\"poBox\">", "</span>")); // 20120712js
+			} // 20120712js
+			
+			// plzCode
+			//
+			// 20101217js:
+			// It's probably better to also fill plzCode ONLY when moveTo() would
+			// not fail.
+			//
+			// Old code:
+			// String plzCode =
+			// removeDirt(parser.extract("<span class=\"postal-code\">",
+			// "</span>"));
+			//
+			// New code:
+			// String plzCode = ""; // 20120712pre js
+			// if (moveTo("<span class=\"postal-code\">")) { // 20120712pre js
+			// plzCode = removeDirt(extractTo("</span>")); // 20120712pre js
+			// } // 20120712pre js
+			
+			// 20120713js revised:
+			String plzCode = ""; // 20120712js
+			if (adressTxt.contains("<span class=\"postal-code\">")) { // 20120712js
+				plzCode = removeDirt(parser.extract("<span class=\"postal-code\">", "</span>")); // 20120712js
+			} // 20120712js
+			
+			// 20120712js: Region:
+			// There is an additional field class="region" available now in local.ch
+			// output,
+			// which follows the "street-address" field and precedes "locality".
+			// But it's apparently not used in Elexis so far, and I don't add it
+			// now.
+			
+			// Ort
+			//
+			// 20101217js:
+			// It's probably better to also fill Ort ONLY when moveTo() would not
+			// fail.
+			//
+			// Older code:
+			// String ort = removeDirt(new
+			// HtmlParser(adressTxt).extract("<span class=\"locality\">",
+			// "</span>"));
+			//
+			// Old code:
+			// parser.moveTo("<tr class=\"locality\">");
+			// parser.moveTo("<a href=");
+			// String ort = removeDirt(parser.extract(">", "</a>").replace("&nbsp;",
+			// "").trim());
+			//
+			// New code:
+			// String ort = "";
+			// if (moveTo("<tr class=\"locality\">")) { //20120712pre js
+			// moveTo("<a href="); //20120712pre js
+			// ort = removeDirt(parser.extract(">", "</a>").replace("&nbsp;",
+			// "").trim()); //20120712pre js
+			// } //20120712pre js
+			
+			// 20120713js revised:
+			String ort = ""; // 20120712js
+			if (adressTxt.contains("<span class=\"locality\">")) { // 20120712js
+				ort = removeDirt(parser.extract("<span class=\"locality\">", "</span>")); // 20120712js
+			} // 20120712js
+			*/
+			
+			//After 20131124, we get address information like this (much worse, as all the definitive field information has been stripped,
+			//as in other portions of the result, they presend rather preformatted content.
+			//And even the <meta> fields in the header are not much better - they it might provide additional field tags helpful for inform guessing,
+			//but only contain shortened fragments of the fields itself...):
+			/*
+			
+			für hamacher	bern
+			
+			<p class='address'>
+			Bremgartenstrasse 119<br/>
+			3012 Bern
+			</p>
+			
+			für atupri	bern (in einer Details-Seite eigentlich 2 Einträge, mit 2 Adressen:)
+			
+			<p class='address'>
+			Zieglerstrasse 29<br/>
+			3007 Bern
+			</p>
+			
+			<p class='address'>
+			Zieglerstrasse 29<br/>
+			3007 Bern<br/>
+			Postfach 8721<br/>
+			3001 Bern
+			</p>
+			
+			AUA!
+			 */
+			
+			//20131127js: So the parser becomes much less specific as well:
+			//(at the end of this block we check if there are MORE class=address entries for the same Details record using the same target string...
+			// say some "AUA AUA AUA" to the local.ch developers.)
+			//(If you want to reduce your pain you may put that target string in a local static variable.)
+			String adressTxt = extract("<p class='address'>", "</p>").trim(); // 20120712js
+			
+			// Anne Müller, Bern or Eggimann Meier, Bern case debug output:
+			System.out.print("jsdebug: DirectoriesContentParser.java: adressTxt: " + adressTxt
+				+ "\n");
+			
+			//HtmlParser parser = new HtmlParser(adressTxt);
+			
+			String[] addressLines = adressTxt.split("<br/>");
+			
+			// String streetAddress = removeDirt(parser.extract("<span class=\"street-address\">",
+			// "</span>")); // 20120712js:
+			System.out
+				.print("jsdebug: Trying to use Meta-Info collected above to parse the address content...\n");
+			if (metaStrasseTrunc == null)
+				System.out.print("jsdebug: WARNING: metaStrasseTrunc == null\n");
+			else
+				System.out.print("jsdebug: metaStrasseTrunc == " + metaStrasseTrunc + "\n");
+			if (metaPLZTrunc == null)
+				System.out.print("jsdebug: WARNING: metaPLZTrunc == null\n");
+			else
+				System.out.print("jsdebug: metaPLZTrunc == " + metaPLZTrunc + "\n");
+			if (metaOrtTrunc == null)
+				System.out.print("jsdebug: WARNING: metaOrtTrunc == null\n");
+			else
+				System.out.print("jsdebug: metaOrtTrunc == " + metaOrtTrunc + "\n");
+			for (String thisLine : addressLines) {
+				if (thisLine != null) {
+					thisLine = thisLine.trim();
+				}
+				; //especially remove leading and trailing newlines. 
+				if (thisLine == null)
+					System.out.print("jsdebug: WARNING: thisLine == null\n");
+				else {
+					System.out.print("jsdebug: thisLine == " + thisLine + "\n");
+					if (thisLine.startsWith(metaStrasseTrunc)) {
+						streetAddress = removeDirt(thisLine);
+					}
+					if (thisLine.startsWith(metaPLZTrunc)) {
+						int i = thisLine.indexOf(" ");
+						plzCode = removeDirt(thisLine.substring(0, i));
+						ort = removeDirt(thisLine.substring(i + 1));
+					}
+				}
+			}
+
+			//20131127js:
+			//Jetzt ggf. noch die Zeilen auf poBox auswerten - dazu gibt's keinen Hint aus der MetaInfo:
+			//Falls eine Zeile "Postfach" oder "Postfach..." gefunden wird, diese nach poBoxA tun.
+			String poBoxA = "";
+			String poBoxB = "";
+			for (String thisLine : addressLines) {
+				if (thisLine != null) {
+					thisLine = thisLine.trim();
+				}
+				; //especially remove leading and trailing newlines. 
+				if (thisLine == null)
+					System.out.print("jsdebug: WARNING: thisLine == null\n");
+				else {
+					System.out.print("jsdebug: thisLine == " + thisLine + "\n");
+					if (thisLine.startsWith("Postfach")) {
+						poBoxA = removeDirt(thisLine);
+					}
+				}
+			}
+			//dürfte das wohl der (vom schon verarbeiteten PLZ Ort der Strassenadresse abweichende) PLZ Ort von PoBox sein.
+			//Diesen dann bitte mit Komma Leerzeichen getrennt an den Eintrag der poBox anhängen.
+			if (poBoxA != "") {
+				for (String thisLine : addressLines) {
+					if (thisLine != null) {
+						thisLine = thisLine.trim();
+					}
+					; //especially remove leading and trailing newlines. 
+					if (thisLine == null)
+						System.out.print("jsdebug: WARNING: thisLine == null\n");
+					else {
+						System.out.print("jsdebug: thisLine == " + thisLine + "\n");
+						if (thisLine.contains(metaOrtTrunc) && (!thisLine.startsWith(metaPLZTrunc))) {
+							poBoxB = thisLine;
+						}
+					}
+				}
+			}
+			if (poBoxB.equals("")) {
+				poBox = poBoxA;
+			} else {
+				poBox = poBoxA + ", " + poBoxB;
+			}
+			;
+
+			//20131127js:
+			//Debug output zeigt, was herausgekommen ist:
+			if (streetAddress == null)
+				System.out.print("jsdebug: WARNING: streetAddress == null\n");
+			else
+				System.out.print("jsdebug: streetAddress == " + streetAddress + "\n");
+			if (poBox == null)
+				System.out.print("jsdebug: WARNING: poBox == null\n");
+			else
+				System.out.print("jsdebug: poBox == " + poBox + "\n");
+			if (plzCode == null)
+				System.out.print("jsdebug: WARNING: plzCode == null\n");
+			else
+				System.out.print("jsdebug: plzCode == " + plzCode + "\n");
+			if (ort == null)
+				System.out.print("jsdebug: WARNING: ort == null\n");
+			else
+				System.out.print("jsdebug: ort == " + ort + "\n");
+			
+			// If zusatz is empty, then we copy the content of poBox into zusatz.
+			if (zusatz == null || zusatz.length() == 0) {
+				zusatz = poBox;
+			}
+			
+			// Tel/Fax & Email
+			
+			// moveTo("<tr class=\"phoneNumber\">"); //20120712pre js
+			// String tel = ""; //20120712pre js
+			// if (moveTo("<span class=\"contact\">Telefon")) { //20120712pre js
+			// moveTo("<td class=\"tel\""); //20120712pre js
+			// moveTo("<a class=\"phonenr\""); //20120712pre js
+			// tel = extract(">", "</a>").replace("&nbsp;", "").replace("*",
+			// "").trim(); //20120712pre js
+			// } //20120712pre js
+
+			//20131127pre js: Before 20131124, we would get text like this:
+			/*
+			<tr class="phone">
+			<th class="label">
+			Telefon:
+			</th>
+			<td>
+			<span class="value">
+			<span class="star">*</span><a href="tel:+41313003500" class="refuse number">031 300 35 00</a>
+			/*
+			// 20131127pre: Suitable old code was:  
+			/*
+			// Please note: some class tags need single, others need double quotation marks. //
+			// 20120712js
+			if (moveTo("<tr class='phone'>")) { // 20120712js
+				if (moveTo("<th class='label'>\nTelefon:")) { // 20120712js
+					// 20120713js Don't use "refuse number" but only "number" - the "refuse " is
+					// probably only there
+					// for people who don't want to get called for advertising or a similar thing; there
+					// is a matching
+					// note on the individual Details entries; and probably an asterisk displayed left
+					// of the phone number
+					// in the List format output.
+					moveTo("number\""); // 20120712js
+					tel = extract(">", "</").replace("&nbsp;", "").replace("*", "").trim(); // 20120712js
+				}
+			}
+			*/
+			
+			// 20131127js: Now we get text like this:
+			/*
+			<tr class='phone'>
+			<th class='label'>
+			<span>
+			Telefon: 
+			</span>
+			</th>
+			<td>
+			<span class='value'><span class='star'>*</span><a href="tel:+41313003500" class="number" rel="nofollow">031 300 35 00</a>
+			*/
+			// Suitable new Code is:
+			// Please note: some class tags need single, others need double quotation marks. //
+			// TODO: 20131127js: Please note: We could also extract the full international number with country prefix if desired. But probably, within CH, it's more convenient to stick with the national number. local.ch won't return international results anyway.
+			//if (getNextPos("<tr class='phone'>") < getNextPos("<h4 class='name fn'")) {	//20131127js: Cave: if only the last entry of a multientry single-result has phone, make sure we don't skip over other content!
+			if (moveTo("<tr class='phone'>")) { // 20120712js
+				if (moveTo("<span>\nTelefon:")) { // 20131127js
+					if (moveTo("href=\"tel:")) { // 20131127js
+						// 20120713js Don't use "refuse number" but only "number" - the "refuse " is
+						// probably only there
+						// for people who don't want to get called for advertising or a similar thing; there
+						// is a matching
+						// note on the individual Details entries; and probably an asterisk displayed left
+						// of the phone number
+						// in the List format output.
+						moveTo("number\""); // 20120712js
+						tel = extract(">", "</").replace("&nbsp;", "").replace("*", "").trim(); // 20120712js
+					}
+				}
+			}
+			//}	
+			
+			// String fax = ""; //20120712pre js
+			// if (moveTo("<span class=\"contact\">Fax")) { //20120712pre js
+			// fax = extract("<td>", "</td>").replace("&nbsp;", "").replace("*",
+			// "").trim(); //20120712pre js
+			// } //20120712pre js
+
+			//20131127js: No code examples added for fax, we just change one line and added the next line to make the updated version work again:
+			//if (getNextPos("<tr class='fax'>") < getNextPos("<h4 class='name fn'")) {	//20131127js: Cave: if only the last entry of a multientry single-result has fax, make sure we don't skip over other content!
+			if (moveTo("<tr class='fax'>")) { // 20120712js
+			
+				//if (moveTo("<th class='label'>\nFax:")) { // 20120712js
+				if (moveTo("<span>\nFax:")) { // 20131127js
+				
+					// 20120713js Don't use "refuse number" but only "number" - the "refuse " is
+					// probably only there
+					// for people who don't want to get called for advertising or a similar thing; there
+					// is a matching
+					// note on the individual Details entries; and probably an asterisk displayed left
+					// of the phone number
+					// in the List format output.
+					//20131127js: WARNING: We really have 'number' here and "number" in the phone number above. ... Using the wrong character causes information to be skipped!!! 
+					//(Either the fax number for normal detail entries,
+					// or even the remainder of the first entry AND much of the beginning of the second entry, e.g. in atupri bern, where multiple address entries appear in one "details" result.)
+					moveTo("number'"); // 20120712js
+					fax = extract(">", "</").replace("&nbsp;", "").replace("*", "").trim(); // 20120712js
+				} // 20120712js
+			} // 20120712js
+			//}
+			
+			// String email = ""; //20120712pre js
+			// if (moveTo("<span class=\"contact\">E-Mail")) { //20120712pre js
+			// moveTo("<span class=\"obfuscml\""); //20120712pre js
+			// email = extract("\">", "</span>"); //20120712pre js
+			// // Email Adresse wird verkehrt gesendet //20120712pre js
+			// email = reverseString(email); //20120712pre js
+			// } //20120712pre js
+			
+			//20131127pre js: Old Text:
+			//This also shows clearly, that the level of mastery has dropped - not only because direct layout control has replaced structured content:
+			//Before, e-mail-Adresses were encoded, probably to protect from spammers (I introduced the deciphering of that into Elexis/medshare directories,
+			//together with Umlaut processing, clearing from unwanted dirt etc.. Now, e-mail is transmitted as clear text.
+			//That's why I'm including code examples and the complete before/after block here:
+			/*
+			<th class="label">
+			E-Mail:
+			</th>
+			<td>
+			<span class="value">
+			<span class="star">*</span><script type="text/javascript">eval(decodeURIComponent('%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%65%66%3d%5c%22%6d%61%69%6c%74%6f%3a%6c%75%6e%67%65%6e%2d%73%63%68%6c%61%66%2d%70%72%61%78%69%73%2e%68%61%6d%61%63%68%65%72%40%68%69%6e%2e%63%68%5c%22%3e%6c%75%6e%67%65%6e%2d%73%63%68%6c%61%66%2d%70%72%61%78%69%73%2e%68%61%6d%61%63%68%65%72%40%68%69%6e%2e%63%68%3c%5c%2f%61%3e%27%29%3b'))</script><a href="mailto:lungen-schlaf-praxis.hamacher@hin.ch">lungen-schlaf-praxis.hamacher@hin.ch</a>
+			</span>		 
+			 */
+			//20131127pre js: Old code:
+			/*
+			if (moveTo("<tr class='email'")) { // 20120712js
+				if (moveTo("<th class='label'>\nE-Mail:")) { // 20120712js
+					// moveTo("<a href=\"mailto"); // 20120712js
+					// e-mail is served in an URI encoded format - so decode this, therefore added a
+					// separate function above
+					moveTo("decodeURIComponent(");// 20120712js
+					email = decodeURIComponent(extract("'", "')")); // 20120712js
+					// the e-mail entry also contains javascript documentwrite('<a
+					// href='\"mailto:user@server.ch\">user@server.ch<\/a>'); wrapped around it.
+					// remove all that is not needed...
+					email = email.replaceFirst("^.*mailto:.*\\\">", ""); // 20120712js
+					email = email.replaceFirst("<..a>'.;$", "");
+				} // 20120712js
+			}
+			*/
+			
+			//20131127js: New text:
+			/*
+			<div class='email'><span class='star'>*</span><a href="mailto:lungen-schlaf-praxis.hamacher@hin.ch">lungen-schlaf-praxis.hamacher@hin.ch</a>
+			</div>
+			(And further below, they write "* Wünscht keine Werbung" to clarify what an asterisk next to the phone number means.
+			 Oh yeah, sure, that will help.
+			 Well, the decoding could also be done, but at least it was not THAT easy to collect email addresses.)
+			Looking at my documented old-old-code, this is clearly a return to a much product made by s.o. much less knowledgeable at local.ch.
+			Isn't this tragic? 			
+			*/
+			//20131127js: New code:
+			//Please note that *THIS* use of ' and \" in the strings works. Other attempts have not worked.
+			//So I guess on the way from server to here, some are transmitted to finally appear as ' and others as ".
+			//if (getNextPos("<div class='email'") < getNextPos("<h4 class='name fn'")) {	//20131127js: Cave: if only the last entry of a multientry single-result has e-mail, make sure we don't skip over other content!
+			System.out.println("jsdebug: Trying to parse e-mail...\n");
+			if (moveTo("<div class='email'")) { // 20131127js
+				//Here we also accumulate results from multiple address entries per single result, if available; This time, separated by ;
+				//If desired (or a user who does not know better uses that), it can be entered directly into several mail clients and will cause a message to be sent to each of the contained addresses. 
+				if (email.equals("")) {
+					email = extract("href=\"mailto:", "\">").trim();
+				} else {
+					email = email + "; " + extract("href=\"mailto:", "\">").trim();
+				}
+			}
+			//}	
+			
+			doItOnceMore = (getNextPos("<h4 class='name fn'") > 0);
+			if (doItOnceMore) {
+				SWTHelper
+					.showInfo(
+						"Warnung",
+						"Dieser eine Eintrag liefert gleich mehrere Adressen.\n\nBitte führen Sie selbst eine Suche im WWW auf tel.local.ch durch,\num alle Angaben zu sehen.\n\nIch versuche, für die Namen die Informationen sinnvoll zusammenzufügen;\nfür die Adressdaten bleibt von mehreren Einträgen der letzte bestehen.\n\nFalls Sie eine Verbesserung benötigen, fragen Sie bitte\njoerg.sigle@jsigle.com - Danke!");
 			}
 		}
-		
-		// String fax = ""; //20120712pre js
-		// if (moveTo("<span class=\"contact\">Fax")) { //20120712pre js
-		// fax = extract("<td>", "</td>").replace("&nbsp;", "").replace("*",
-		// "").trim(); //20120712pre js
-		// } //20120712pre js
-		
-		String fax = ""; // 20120712js
-		if (moveTo("<tr class='fax'>")) { // 20120712js
-			if (moveTo("<th class='label'>\nFax:")) { // 20120712js
-				// 20120713js Don't use "refuse number" but only "number" - the "refuse " is
-				// probably only there
-				// for people who don't want to get called for advertising or a similar thing; there
-				// is a matching
-				// note on the individual Details entries; and probably an asterisk displayed left
-				// of the phone number
-				// in the List format output.
-				moveTo("number\""); // 20120712js
-				fax = extract(">", "</").replace("&nbsp;", "").replace("*", "").trim(); // 20120712js
-			} // 20120712js
-		} // 20120712js
-		
-		// String email = ""; //20120712pre js
-		// if (moveTo("<span class=\"contact\">E-Mail")) { //20120712pre js
-		// moveTo("<span class=\"obfuscml\""); //20120712pre js
-		// email = extract("\">", "</span>"); //20120712pre js
-		// // Email Adresse wird verkehrt gesendet //20120712pre js
-		// email = reverseString(email); //20120712pre js
-		// } //20120712pre js
-		
-		String email = ""; // 20120712js
-		if (moveTo("<tr class='email'")) { // 20120712js
-			if (moveTo("<th class='label'>\nE-Mail:")) { // 20120712js
-				// moveTo("<a href=\"mailto"); // 20120712js
-				// e-mail is served in an URI encoded format - so decode this, therefore added a
-				// separate function above
-				moveTo("decodeURIComponent(");// 20120712js
-				email = decodeURIComponent(extract("'", "')")); // 20120712js
-				// the e-mail entry also contains javascript documentwrite('<a
-				// href='\"mailto:user@server.ch\">user@server.ch<\/a>'); wrapped around it.
-				// remove all that is not needed...
-				email = email.replaceFirst("^.*mailto:.*\\\">", ""); // 20120712js
-				email = email.replaceFirst("<..a>'.;$", "");
-			} // 20120712js
-		}
-		
+
 		return new KontaktEntry(vorname, nachname, zusatz, streetAddress, plzCode, ort, tel, fax,
 			email, true);
 	}

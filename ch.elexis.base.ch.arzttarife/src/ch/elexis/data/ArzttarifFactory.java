@@ -21,8 +21,14 @@ import ch.elexis.data.PersistentObjectFactory;
 public class ArzttarifFactory extends PersistentObjectFactory {
 	@SuppressWarnings("unchecked")
 	public PersistentObject createFromString(String code){
+		String[] ci = code.split(StringConstants.DOUBLECOLON); //$NON-NLS-1$
+		
+		// silently discard all requests we can't handle
+		if (!ci[0].startsWith("ch.elexis.data")) { //$NON-NLS-1$
+			return null;
+		}
+		
 		try {
-			String[] ci = code.split(StringConstants.DOUBLECOLON);
 			Class<?> clazz = Class.forName(ci[0]);
 			Method load = clazz.getMethod("load", new Class[] { String.class}); //$NON-NLS-1$
 			return (PersistentObject) (load.invoke(null, new Object[] {

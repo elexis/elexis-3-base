@@ -113,7 +113,7 @@ public class XMLExporterTreatment {
 			return XMLExporter.FREETEXT;
 		}
 		if (name.equalsIgnoreCase("ICD-10")) { //$NON-NLS-1$
-			return "ICD10"; //$NON-NLS-1$
+			return "ICD"; //$NON-NLS-1$
 		}
 		if (name.equalsIgnoreCase("by contract")) { //$NON-NLS-1$
 			return BY_CONTRACT;

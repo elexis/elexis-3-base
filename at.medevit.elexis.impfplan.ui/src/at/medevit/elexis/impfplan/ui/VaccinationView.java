@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -90,8 +91,13 @@ public class VaccinationView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
+		ScrolledComposite sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.BORDER);
+		vaccinationComposite = new VaccinationComposite(sc);
+		sc.setContent(vaccinationComposite);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		sc.setMinSize(vaccinationComposite.computeSize(800, 800));
 		
-		vaccinationComposite = new VaccinationComposite(parent);
 		Menu menu = new Menu(vaccinationComposite);
 		MenuItem mDeleteEntry = new MenuItem(menu, SWT.PUSH);
 		mDeleteEntry.setText("Eintrag löschen");

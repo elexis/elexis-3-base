@@ -60,6 +60,9 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	private int separatorBoundary, locationOfLotNrBorder, locationOfDocBorder,
 			locationOfDateBorder, locationOfAgeBorder, locationOfFirstDisease;
 	
+	private int lengthOfBasisimpfungen, lengthOfDoctor, lengthOfLotNr, lengthOfDateString,
+			leftStart;
+	
 	private List<Vaccination> _vaccinations;
 	private List<DiseaseBoundary> diseaseBoundaries = new ArrayList<DiseaseBoundary>();
 	
@@ -95,7 +98,13 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		paintControl(e.gc, e.display, e.width, e.height, false);
 	}
 	
-	public void paintControl(GC gc, Display display, int width, int height, boolean b) {
+	public void paintControl(GC gc, Display display, int width, int height, boolean b){
+		int minWidth = determineMinWidth(gc);
+		// if width smaller than minimal width and it's not a printout
+		if (width < minWidth && !b) {
+			width = minWidth;
+		}
+		
 		drawHeader(gc, display, width);
 		drawEntries(gc, display, width);
 		
@@ -119,14 +128,34 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		_patientBirthDate = birthDate;
 	}
 	
+	private int determineMinWidth(GC gc){
+		int minWidth = 0;
+		
+		lengthOfBasisimpfungen = _vphd.base.size() * DISTANCE_BETWEEN_DISEASES;
+		lengthOfDoctor = determineMaxAdministratorLabelLength(gc);
+		lengthOfLotNr = determineMaxLotNr(gc);
+		lengthOfDateString = gc.textExtent("09.07.2014").x;
+		leftStart =
+			_vphd.extended.size() * DISTANCE_BETWEEN_DISEASES + SEPARATOR_WIDTH_BASE_EXTENDED;
+		int lNames = determineMaxVaccNameLength(gc);
+		
+		gc.setFont(headerFont);
+		String extendedVaccination = "sowie ergänzende Impfungen";
+		Point pt = gc.textExtent(extendedVaccination);
+		if (pt.x > lNames) {
+			lNames = pt.x;
+		}
+		gc.setFont(defaultFont);
+		
+		minWidth =
+			lengthOfBasisimpfungen + lengthOfDoctor + lengthOfLotNr + lengthOfDateString
+				+ leftStart + lNames;
+		return minWidth;
+	}
+	
 	private void drawHeader(GC gc, Display display, int width){
 		boolean alternator = true;
 		diseaseBoundaries.clear();
-		
-		int lengthOfBasisimpfungen = _vphd.base.size() * DISTANCE_BETWEEN_DISEASES;
-		int lengthOfDoctor = determineMaxAdministratorLabelLength(gc);
-		int lengthOfLotNr = determineMaxLotNr(gc);
-		int lengthOfDateString = gc.textExtent("09.07.2014").x;
 		
 		if (HEADER_HEIGHT == -1)
 			HEADER_HEIGHT = determineMaxDiseaseStringExtension(gc).x + 10;
@@ -150,9 +179,6 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		gc.setForeground(COLOR_DARKGREY);
 		gc.drawText(TRADENAME, 10, HEADER_HEIGHT - (fontHeightDefaultFont * 1) - 2);
 		gc.setForeground(COLOR_BLACK);
-		
-		int leftStart =
-			_vphd.extended.size() * DISTANCE_BETWEEN_DISEASES + SEPARATOR_WIDTH_BASE_EXTENDED;
 		
 		// age
 		gc.setFont(boldFont);
@@ -283,6 +309,18 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		for (Vaccination vac : _vaccinations) {
 			String lotNr = vac.getLotNo();
 			maxExtended = determineMax(lotNr, maxExtended, gc);
+		}
+		return maxExtended.x;
+	}
+	
+	private int determineMaxVaccNameLength(GC gc){
+		Point maxExtended = new Point(0, 0);
+		// assure minimal size is header length
+		maxExtended = determineMax(VACCINE, maxExtended, gc);
+		
+		for (Vaccination vac : _vaccinations) {
+			String sbn = vac.getBusinessName();
+			maxExtended = determineMax(sbn, maxExtended, gc);
 		}
 		return maxExtended.x;
 	}

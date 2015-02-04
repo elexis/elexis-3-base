@@ -129,7 +129,11 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String USR_COLUMN_WIDTH_SETTINGS = PREFBASE + "/columnwidths";
 	public static final String SAVE_COLUM_WIDTH = PREFBASE + "/savecolwidths";
 	
+	public static final String USR_SORT_DIRECTION_SETTINGS = PREFBASE + "/sortdirection";
+	public static final String SAVE_SORT_DIRECTION = PREFBASE + "/savesortdirection";
+	
 	private Button btnSaveColumnWidths;
+	private Button btnSaveSortDirection;
 	
 	public Preferences(){
 		super(GRID);
@@ -349,6 +353,11 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		btnSaveColumnWidths.setText("Spaltenbreite speichern (für Ihren Benutzer)");
 		btnSaveColumnWidths.setSelection(CoreHub.userCfg.get(Preferences.SAVE_COLUM_WIDTH, false));
 		
+		btnSaveSortDirection = new Button(getFieldEditorParent(), SWT.CHECK);
+		btnSaveSortDirection.setText("Sortierung speichern (für Ihren Benutzer)");
+		btnSaveSortDirection.setSelection(CoreHub.userCfg.get(Preferences.SAVE_SORT_DIRECTION,
+			false));
+		
 		return c;
 	}
 	
@@ -376,6 +385,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	@Override
 	protected void performApply(){
 		CoreHub.userCfg.set(Preferences.SAVE_COLUM_WIDTH, btnSaveColumnWidths.getSelection());
+		CoreHub.userCfg.set(Preferences.SAVE_SORT_DIRECTION, btnSaveSortDirection.getSelection());
 		CoreHub.userCfg.flush();
 		CoreHub.globalCfg.flush();
 		CoreHub.localCfg.flush();

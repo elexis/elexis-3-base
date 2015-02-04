@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -47,6 +46,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -78,7 +78,6 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
-import ch.rgw.tools.TimeTool;
 
 /**
  * A class do receive documents by drag&drop. Documents are imported into the database and linked to
@@ -100,17 +99,14 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			Messages.OmnivoreView_keywordsColumn
 		};
 	private final String colWidth = "20,80,80,150,500";
-	private int sortMode = SORTMODE_DATE;
-	private boolean bReverse = false;
-	private boolean bCatReverse = false;
+	private final String sortSettings = "0,1,-1,false";
 	private boolean bFlat = false;
 	private String searchTitle = "";
 	private String searchKW = "";
-	static final int SORTMODE_DATE = 0;
-	static final int SORTMODE_TITLE = 1;
 	// ISource selectedSource = null;
 	
-	private static final String SORTMODE_DEF = "omnivore/sortmode"; //$NON-NLS-1$
+	private OmnivoreViewerComparator ovComparator;
+	
 	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
 		ElexisEvent.EVENT_SELECTED) {
 		
@@ -125,13 +121,6 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
 		public void runInUi(ElexisEvent ev){
-			String[] defsort = CoreHub.userCfg.get(SORTMODE_DEF, "0,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
-			try {
-				sortMode = Integer.parseInt(defsort[0]);
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
-			bReverse = defsort.length > 1 ? defsort[1].equals("1") : false; //$NON-NLS-1$
 			viewer.refresh();
 			importAction.reflectRight();
 			editAction.reflectRight();
@@ -275,70 +264,6 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		}
 	}
 	
-	class Sorter extends ViewerSorter {
-		private int docCompare(DocHandle d1, DocHandle d2){
-			String c1, c2;
-			if (sortMode == SORTMODE_DATE) {
-				c1 = new TimeTool(d1.get(DocHandle.FLD_DATE)).toString(TimeTool.DATE_COMPACT);
-				c2 = new TimeTool(d2.get(DocHandle.FLD_DATE)).toString(TimeTool.DATE_COMPACT);
-			} else if (sortMode == SORTMODE_TITLE) {
-				c1 = d1.get(DocHandle.FLD_TITLE).toLowerCase();
-				c2 = d2.get(DocHandle.FLD_TITLE).toLowerCase();
-			} else {
-				c1 = ""; //$NON-NLS-1$
-				c2 = ""; //$NON-NLS-1$
-			}
-			if (bReverse) {
-				return c1.compareTo(c2);
-			} else {
-				return c2.compareTo(c1);
-			}
-		}
-		
-		@Override
-		public int compare(Viewer viewer, Object e1, Object e2){
-			if ((e1 instanceof DocHandle) && (e2 instanceof DocHandle)) {
-				DocHandle d1 = (DocHandle) e1;
-				DocHandle d2 = (DocHandle) e2;
-				String c1 = d1.getCategory();
-				String c2 = d2.getCategory();
-				if (!bFlat && !c1.equals(c2)) {
-					return (!bCatReverse ? c1.compareTo(c2) : c2.compareTo(c1));
-				}
-				if (!c1.isEmpty()) {
-					return docCompare(d1, d2);
-				}
-			}
-			return 0;
-		}
-		
-	}
-	
-	class SortListener extends SelectionAdapter {
-		
-		@Override
-		public void widgetSelected(SelectionEvent e){
-			TreeColumn col = (TreeColumn) e.getSource();
-			if (col.getData().equals(2)) {
-				if (sortMode == SORTMODE_DATE) {
-					bReverse = !bReverse;
-				}
-				sortMode = SORTMODE_DATE;
-			} else if (col.getData().equals(3)) {
-				if (sortMode == SORTMODE_TITLE) {
-					bReverse = !bReverse;
-				}
-				sortMode = SORTMODE_TITLE;
-			} else if (col.getData().equals(1) && !bFlat) {
-				bCatReverse = !bCatReverse;
-			}
-			CoreHub.userCfg.set(SORTMODE_DEF, Integer.toString(sortMode) + "," //$NON-NLS-1$
-				+ (bReverse ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
-			viewer.refresh();
-		}
-		
-	}
-	
 	/**
 	 * The constructor.
 	 */
@@ -379,13 +304,11 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		
 		// Table to display documents
 		table = new Tree(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		SortListener sortListener = new SortListener();
 		TreeColumn[] cols = new TreeColumn[colLabels.length];
 		for (int i = 0; i < colLabels.length; i++) {
 			cols[i] = new TreeColumn(table, SWT.NONE);
 			cols[i].setText(colLabels[i]);
 			cols[i].setData(new Integer(i));
-			cols[i].addSelectionListener(sortListener);
 		}
 		applyUsersColumnWidthSetting();
 		
@@ -396,9 +319,18 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		viewer = new TreeViewer(table);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new Sorter());
 		viewer.setUseHashlookup(true);
 		makeActions();
+		
+		ovComparator = new OmnivoreViewerComparator();
+		viewer.setComparator(ovComparator);
+		applySortDirection();
+		TreeColumn[] treeCols = viewer.getTree().getColumns();
+		for (int i = 0; i < treeCols.length; i++) {
+			TreeColumn tc = treeCols[i];
+			tc.addSelectionListener(getSelectionAdapter(tc, i));
+		}
+		
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
@@ -466,6 +398,57 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		
 	}
 	
+	private SelectionListener getSelectionAdapter(final TreeColumn column, final int index){
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				ovComparator.setColumn(index);
+				ovComparator.setFlat(bFlat);
+				viewer.getTree().setSortDirection(ovComparator.getDirection());
+				viewer.getTree().setSortColumn(column);
+				viewer.refresh();
+			}
+		};
+		return selectionAdapter;
+	}
+	
+	private void applySortDirection(){
+		String[] usrSortSettings = sortSettings.split(",");
+		
+		if (CoreHub.userCfg.get(Preferences.SAVE_SORT_DIRECTION, false)) {
+			String sortSet =
+				CoreHub.userCfg.get(Preferences.USR_SORT_DIRECTION_SETTINGS, sortSettings);
+			usrSortSettings = sortSet.split(",");
+		}
+		
+		int propertyIdx = Integer.parseInt(usrSortSettings[0]);
+		int direction = Integer.parseInt(usrSortSettings[1]);
+		int catDirection = Integer.parseInt(usrSortSettings[2]);
+		bFlat = Boolean.valueOf(usrSortSettings[3]);
+		
+		flatViewAction.setChecked(bFlat);
+		if (!bFlat) {
+			if (catDirection != -1) {
+				sortViewer(1, catDirection);
+			}
+		}
+		
+		if (propertyIdx != 0) {
+			sortViewer(propertyIdx, direction);
+		}
+		
+	}
+	
+	private void sortViewer(int propertyIdx, int direction){
+		TreeColumn column = viewer.getTree().getColumn(propertyIdx);
+		ovComparator.setColumn(propertyIdx);
+		ovComparator.setDirection(direction);
+		ovComparator.setFlat(bFlat);
+		viewer.getTree().setSortDirection(ovComparator.getDirection());
+		viewer.getTree().setSortColumn(column);
+		viewer.refresh();
+	}
+	
 	private void applyUsersColumnWidthSetting(){
 		TreeColumn[] treeColumns = table.getColumns();
 		String[] userColWidth = colWidth.split(",");
@@ -482,6 +465,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	@Override
 	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
+		saveSortSettings();
 		super.dispose();
 	}
 	
@@ -707,7 +691,17 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 				sb.append(",");
 			}
 			CoreHub.userCfg.set(Preferences.USR_COLUMN_WIDTH_SETTINGS, sb.toString());
+			
+			saveSortSettings();
 		}
+	}
+	
+	private void saveSortSettings(){
+		int propertyIdx = ovComparator.getPropertyIndex();
+		int direction = ovComparator.getDirectionDigit();
+		int catDirection = ovComparator.getCategoryDirection();
+		CoreHub.userCfg.set(Preferences.USR_SORT_DIRECTION_SETTINGS, propertyIdx + "," + direction
+			+ "," + catDirection + "," + bFlat);
 	}
 	
 	public void refresh(){

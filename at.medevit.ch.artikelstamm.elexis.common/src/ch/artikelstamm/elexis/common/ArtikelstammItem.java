@@ -616,7 +616,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 */
 	public boolean isBlackBoxed(){
 		String val = get(FLD_BLACKBOXED);
-		return !(StringConstants.ZERO.equals(val);
+		return !(StringConstants.ZERO.equals(val));
 	}
 	
 	/**

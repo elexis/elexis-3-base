@@ -80,7 +80,7 @@ public class EphaSearchAction extends Action implements IKonsExtension, IHandler
 			}
 		}
 		
-		String url = "http://matrix.epha.ch/#" + sb.toString(); //$NON-NLS-1$
+		String url = "https://matrix.epha.ch/#/gtin:" + sb.toString(); //$NON-NLS-1$
 		Program.launch(url);
 	}
 	

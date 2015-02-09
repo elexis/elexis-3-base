@@ -103,7 +103,7 @@ public class EALBlocksCodeUpdater {
 				StringBuilder newCodes = new StringBuilder();
 				// get blob
 				byte[] compressed =
-					getBinaryRaw(Leistungsblock.LEISTUNGEN, Leistungsblock.TABLENAME, block.getId());
+					getBinaryRaw(Leistungsblock.FLD_LEISTUNGEN, Leistungsblock.TABLENAME, block.getId());
 				if (compressed != null) {
 					// get String representing all contained leistungen
 					String storable = new String(CompEx.expand(compressed), "UTF-8"); //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class EALBlocksCodeUpdater {
 						}
 					}
 					// write the updated String back
-					setBinaryRaw(Leistungsblock.LEISTUNGEN, Leistungsblock.TABLENAME,
+					setBinaryRaw(Leistungsblock.FLD_LEISTUNGEN, Leistungsblock.TABLENAME,
 						block.getId(), CompEx.Compress(newCodes.toString(), CompEx.ZIP));
 				}
 			}

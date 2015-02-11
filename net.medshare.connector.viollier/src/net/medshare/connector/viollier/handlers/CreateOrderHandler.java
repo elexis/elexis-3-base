@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.data.Anschrift;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -53,6 +54,8 @@ public class CreateOrderHandler extends AbstractHandler {
 		String plz = "";
 		String ort = "";
 		String land = "";
+		String socialSecurityNumber = ""; // AHV-Nummer
+		String insuranceCardNumber = ""; // Versicherungskarte
 		boolean hasVioNumber = true;
 		
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
@@ -69,12 +72,18 @@ public class CreateOrderHandler extends AbstractHandler {
 			vorname = patient.getVorname();
 			name = patient.getName();
 			geburtsdatum = convertDate(patient.getGeburtsdatum());
-			gender = patient.getGeschlecht().toUpperCase();
+			gender = parseGender(patient);
 			Anschrift tempAdr = patient.getAnschrift();
 			address = tempAdr.getStrasse();
 			plz = tempAdr.getPlz();
 			ort = tempAdr.getOrt();
 			land = tempAdr.getLand();
+			
+			Fall currentFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+			socialSecurityNumber = patient.getXid(Xid.DOMAIN_AHV);
+			if(socialSecurityNumber.length()==0) socialSecurityNumber = currentFall.getRequiredString("AHV-Nummer");
+			// falls Covercard-Fall
+			insuranceCardNumber = currentFall.getRequiredString("Versicherten-Nummer");
 		}
 		
 		// URL zum Direktaufruf von OrderIT
@@ -113,7 +122,14 @@ public class CreateOrderHandler extends AbstractHandler {
 				httpsUrl += URLEncoder.encode("&city=" + ort, "UTF-8");
 				httpsUrl += URLEncoder.encode("&country=" + land, "UTF-8");
 				httpsUrl += URLEncoder.encode("&patientReference=" + patient.getId(), "UTF-8");
-				
+				if (socialSecurityNumber.length() > 0) {
+					httpsUrl +=
+						URLEncoder.encode("&socialSecurityNumber=" + socialSecurityNumber, "UTF-8");
+				}
+				if (insuranceCardNumber.length() > 0) {
+					httpsUrl +=
+						URLEncoder.encode("&insuranceCardNumber=" + insuranceCardNumber, "UTF-8");
+				}
 			}
 		} catch (UnsupportedEncodingException e1) {
 			log.error("Enoding not supported", e1);
@@ -129,6 +145,23 @@ public class CreateOrderHandler extends AbstractHandler {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * retrieve a value of m, f or x for the service; as we have some uncertainty about the actual
+	 * contents of the db
+	 * 
+	 * @param patient
+	 * @return
+	 */
+	private String parseGender(Patient patient){
+		String sexRaw = patient.getGeschlecht();
+		if (sexRaw.length() > 0) {
+			if (sexRaw.equalsIgnoreCase("m"))
+				return "M";
+			return "F";
+		}
+		return "X";
 	}
 	
 	private String convertDate(String gebDat){

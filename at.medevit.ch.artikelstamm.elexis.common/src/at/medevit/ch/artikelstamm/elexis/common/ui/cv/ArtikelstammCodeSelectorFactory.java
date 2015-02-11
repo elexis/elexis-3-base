@@ -18,7 +18,10 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -36,6 +39,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
 //import ch.elexis.core.ui.actions.AddVerrechenbarContributionItem;
 import ch.elexis.core.ui.actions.FlatDataLoader;
+import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
@@ -51,15 +55,26 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 	
 	private SelectorPanelProvider slp;
 	private int eventType = SWT.KeyDown;
+	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
+	
+	private ISelectionChangedListener selChange = new ISelectionChangedListener() {
+		@Override
+		public void selectionChanged(SelectionChangedEvent event){
+			TableViewer tv = (TableViewer) event.getSource();
+			StructuredSelection ss = (StructuredSelection) tv.getSelection();
+			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
+		}
+	};
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		final CommonViewer cov = cv;
+		cov.setSelectionChangedListener(selChange);
 		
 		FieldDescriptor<?>[] fields =
 			{
-				new FieldDescriptor<ArtikelstammItem>("Artikel oder Wirkstoff", ArtikelstammItem.FLD_DSCR,
-					Typ.STRING, null),
+				new FieldDescriptor<ArtikelstammItem>("Artikel oder Wirkstoff",
+					ArtikelstammItem.FLD_DSCR, Typ.STRING, null),
 			};
 		
 		// add keyListener to search field
@@ -107,49 +122,50 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		
 		// the dropdown menu on the viewer
 		MenuManager menu = new MenuManager();
-		menu.add(new Action(ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesAction) {
+		menu.add(new Action(
+			ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesAction) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setToolTipText(ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesTooltip);
 			}
-			@Override
-			public void run(){
-				StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
-				Object element = structuredSelection.getFirstElement();
-				ArtikelstammDetailDialog dd = new ArtikelstammDetailDialog(UiDesk.getTopShell(), (IArtikelstammItem) element);
-				dd.open();
-			}
 			
 			@Override
-			public boolean isEnabled(){
-				StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
+			public void run(){
+				StructuredSelection structuredSelection =
+					new StructuredSelection(cov.getSelection());
 				Object element = structuredSelection.getFirstElement();
-				return (element instanceof ArtikelstammItem);
+				ArtikelstammDetailDialog dd =
+					new ArtikelstammDetailDialog(UiDesk.getTopShell(), (IArtikelstammItem) element);
+				dd.open();
 			}
 		});
 		
-//		menu.add(new AddVerrechenbarContributionItem(cov));
+		//		menu.add(new AddVerrechenbarContributionItem(cov));
 		
-		MenuManager subMenu = new MenuManager("ATC Gruppen-Selektion", Images.IMG_CATEGORY_GROUP.getImageDescriptor(), null){
-			@Override
-			public boolean isDynamic(){
-				return true;
-			}
-			
-			@Override
-			public boolean isVisible(){
-				StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
-				Object element = structuredSelection.getFirstElement();
-				if (element instanceof ArtikelstammItem) {
-					ArtikelstammItem ai = (ArtikelstammItem) element;
-					return (ai.getATCCode()!=null && ai.getATCCode().length()>0);
+		MenuManager subMenu =
+			new MenuManager("ATC Gruppen-Selektion",
+				Images.IMG_CATEGORY_GROUP.getImageDescriptor(), null) {
+				@Override
+				public boolean isDynamic(){
+					return true;
 				}
-				return false;
-			}
-		};
+				
+				@Override
+				public boolean isVisible(){
+					StructuredSelection structuredSelection =
+						new StructuredSelection(cov.getSelection());
+					Object element = structuredSelection.getFirstElement();
+					if (element instanceof ArtikelstammItem) {
+						ArtikelstammItem ai = (ArtikelstammItem) element;
+						return (ai.getATCCode() != null && ai.getATCCode().length() > 0);
+					}
+					return false;
+				}
+			};
 		subMenu.add(new ATCMenuContributionItem(cov, fdl));
 		menu.add(subMenu);
 		
+		menu.add(tvfa);
 		menu.add(new Separator());
 		menu.add(new VATMenuContributionItem(cov));
 		cv.setContextMenu(menu);

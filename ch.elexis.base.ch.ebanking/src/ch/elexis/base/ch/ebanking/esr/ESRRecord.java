@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -139,8 +140,8 @@ public class ESRRecord extends PersistentObject {
 		if (date == null) {
 			date = new TimeTool();
 		}
-		set(FLD_BOOKING_DATE, date.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
-		set(FLD_REJECT_CODE, "0"); //$NON-NLS-1$
+		set(FLD_BOOKING_DATE, date.toString(TimeTool.DATE_GER));
+		set(FLD_REJECT_CODE, StringConstants.ZERO);
 	}
 	
 	/**

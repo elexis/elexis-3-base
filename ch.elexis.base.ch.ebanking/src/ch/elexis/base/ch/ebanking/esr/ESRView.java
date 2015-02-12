@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.ACE;
 import ch.elexis.admin.AccessControlDefaults;
@@ -66,9 +68,6 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ESRView extends ViewPart implements IActivationListener {
 	CommonViewer cv;
 	ViewerConfigurer vc;
@@ -80,6 +79,7 @@ public class ESRView extends ViewPart implements IActivationListener {
 	private ViewMenus menus;
 	private ESRSelectionListener esrl;
 	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private TimeTool ttBooking = new TimeTool();
 	
 	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
 		ElexisEvent.EVENT_USER_CHANGED) {
@@ -312,11 +312,11 @@ public class ESRView extends ViewPart implements IActivationListener {
 														}
 													}
 													
+													ttBooking.set(rec.getValuta());
 													rn.addZahlung(zahlung, Messages.ESRView_vesrfor
 														+ rn.getNr() + " / " //$NON-NLS-1$
-														+ rec.getPatient().getPatCode(),
-														new TimeTool(rec.getValuta()));
-													rec.setGebucht(null);
+														+ rec.getPatient().getPatCode(), ttBooking);
+													rec.setGebucht(ttBooking);
 												}
 											}
 										}

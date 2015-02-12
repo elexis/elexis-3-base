@@ -54,6 +54,7 @@ public class ESRRecordDialog extends TitleAreaDialog {
 	private Button bKeep, bBook, bUnbook, bDelete;
 	private Label lFile;
 	private LabeledInputField.AutoForm af;
+	private TimeTool ttBooking = new TimeTool();
 	
 	private InputData[] fields =
 		{
@@ -207,9 +208,10 @@ public class ESRRecordDialog extends TitleAreaDialog {
 			if (!bBooked) {
 				Money zahlung = rec.getBetrag();
 				Rechnung rn = rec.getRechnung();
+				ttBooking.set(rec.getValuta());
 				rn.addZahlung(zahlung, Messages.ESRRecordDialog_vESRForBill + rn.getNr() + " / " //$NON-NLS-1$
-					+ rec.getPatient().getPatCode(), new TimeTool(rec.getValuta()));
-				rec.setGebucht(null);
+					+ rec.getPatient().getPatCode(), ttBooking);
+				rec.setGebucht(ttBooking);
 			}
 		} else if (bUnbook.getSelection()) {
 			if (bBooked) {

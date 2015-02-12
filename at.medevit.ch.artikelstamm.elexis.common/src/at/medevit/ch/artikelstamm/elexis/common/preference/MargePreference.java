@@ -43,15 +43,11 @@ public class MargePreference {
 		}
 	}
 	
-	public static Money calculateVKP(Money ekPreis){
-		if (marges == null) {
-			initMarges();
-		}
-		
+	public static Money calculateVKP(Money ekPreis){		
 		double amount = ekPreis.getAmount();
 		
-		for (int i = 0; i < marges.length; i++) {
-			Marge m = marges[i];
+		for (int i = 0; i < getMarges().length; i++) {
+			Marge m = getMarges()[i];
 			if (!m.isValid())
 				continue;
 			if (m.startInterval <= amount && m.endInterval >= amount) {

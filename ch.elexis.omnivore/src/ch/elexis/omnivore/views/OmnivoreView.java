@@ -324,12 +324,12 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		
 		ovComparator = new OmnivoreViewerComparator();
 		viewer.setComparator(ovComparator);
-		applySortDirection();
 		TreeColumn[] treeCols = viewer.getTree().getColumns();
 		for (int i = 0; i < treeCols.length; i++) {
 			TreeColumn tc = treeCols[i];
 			tc.addSelectionListener(getSelectionAdapter(tc, i));
 		}
+		applySortDirection();
 		
 		hookContextMenu();
 		hookDoubleClickAction();
@@ -430,6 +430,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		if (!bFlat) {
 			if (catDirection != -1) {
 				sortViewer(1, catDirection);
+				ovComparator.setCategoryDirection(catDirection);
 			}
 		}
 		

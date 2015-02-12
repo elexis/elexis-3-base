@@ -126,6 +126,10 @@ public class OmnivoreViewerComparator extends ViewerComparator {
 		return catDirection;
 	}
 	
+	public void setCategoryDirection(int catDirection){
+		this.catDirection = catDirection;
+	}
+	
 	public int getPropertyIndex(){
 		return propertyIndex;
 	}

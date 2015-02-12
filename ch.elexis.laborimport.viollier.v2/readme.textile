@@ -13,7 +13,7 @@ Nutzt zum Parsing der HL7 Nachrichten das HAPI via ch.elexis.hl7.v2x
 
 h2. Bedieneranleitung
 
-Siehe hier: <a href="http://www.medshare.net/fileadmin/downloads/elexis/dox/ElexisViollierConnector.pdf" target="blank">Bedieneranleitung</a> 
+Siehe hier: <a href="http://www.medshare.ch/fileadmin/downloads/elexis/dox/ElexisViollierPortalConnector.pdf" target="blank">Bedieneranleitung</a> 
 
 h2. Entwickleranleitung
 

@@ -355,6 +355,10 @@ public class XMLExporterServices {
 				} else if (v instanceof Labor2009Tarif) {
 					el = new Element(ELEMENT_RECORD_LAB, XMLExporter.nsinvoice); // 28000
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
+					el.setAttribute(ATTR_EAN_PROVIDER,
+						TarmedRequirements.getEAN(konsultation.getMandant()));
+					el.setAttribute(ATTR_EAN_RESPONSIBLE,
+						XMLExporterUtil.getResponsibleEAN(konsultation));
 					Labor2009Tarif ll = (Labor2009Tarif) v;
 					double mult = ll.getFactor(tt, rechnung.getFall());
 					Money preis = verrechnet.getNettoPreis();

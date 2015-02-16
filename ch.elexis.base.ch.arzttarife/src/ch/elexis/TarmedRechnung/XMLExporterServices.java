@@ -436,6 +436,10 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "452"); // MiGeL ab 2001-basiert //$NON-NLS-1$
 					el.setAttribute(XMLExporter.ATTR_CODE, ((MiGelArtikel) v).getCode());
+					el.setAttribute(ATTR_EAN_PROVIDER,
+						TarmedRequirements.getEAN(konsultation.getMandant()));
+					el.setAttribute(ATTR_EAN_RESPONSIBLE,
+						XMLExporterUtil.getResponsibleEAN(konsultation));
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
 					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal));

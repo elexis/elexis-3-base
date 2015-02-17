@@ -15,10 +15,11 @@ package ch.elexis.agenda.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IDataAccess;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Access data stored in Termin.
@@ -28,8 +29,11 @@ import ch.rgw.tools.Result;
  * 
  */
 public class DataAccessor implements IDataAccess {
+	private TimeTool time;
 	
-	public DataAccessor(){}
+	public DataAccessor(){
+		time = new TimeTool();
+	}
 	
 	@Override
 	public String getName(){
@@ -59,6 +63,8 @@ public class DataAccessor implements IDataAccess {
 		ArrayList<Element> ret = new ArrayList<Element>();
 		ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, "Bereich", //$NON-NLS-1$
 			getPlatzhalter(Termin.FLD_BEREICH), Termin.class, 1));
+		ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, "Tag",
+			getPlatzhalter(Termin.FLD_TAG), Termin.class, 1));
 		return ret;
 	}
 	
@@ -77,11 +83,13 @@ public class DataAccessor implements IDataAccess {
 	public Result<Object> getObject(String descriptor, PersistentObject dependentObject,
 		String dates, String[] params){
 		Result<Object> ret = null;
+		Termin termin = TerminListeDruckenDialog.getFirstOfSelected();
 		
-		if (descriptor.equals(Termin.FLD_BEREICH)) {
-			PersistentObject selectedTermin =
-				(PersistentObject) ElexisEventDispatcher.getSelected(Termin.class);
-			ret = new Result<Object>(selectedTermin.get(Termin.FLD_BEREICH));
+		if (termin != null && descriptor.equals(Termin.FLD_BEREICH)) {
+			ret = new Result<Object>(termin.getBereich());
+		} else if (termin != null && descriptor.equals(Termin.FLD_TAG)) {
+			time.set(termin.getDay());
+			ret = new Result<Object>(time.toString(TimeTool.DATE_GER));
 		} else {
 			ret =
 				new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,

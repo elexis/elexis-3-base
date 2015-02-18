@@ -38,7 +38,7 @@ public class XMLExporterServices {
 	public static final String ELEMENT_DETAIL = "detail"; //$NON-NLS-1$
 	
 	private static final String ATTR_RECORD_ID = "record_id"; //$NON-NLS-1$
-	private static final String ELEMENT_RECORD_UNCLASSIFIED = "record_unclassified"; //$NON-NLS-1$
+	private static final String ELEMENT_RECORD_OTHER = "record_other"; //$NON-NLS-1$
 	private static final String ELEMENT_RECORD_PHYSIO = "record_physio"; //$NON-NLS-1$
 	private static final String ELEMENT_RECORD_MIGEL = "record_migel"; //$NON-NLS-1$
 	private static final String ELEMENT_RECORD_DRUG = "record_drug"; //$NON-NLS-1$
@@ -213,7 +213,7 @@ public class XMLExporterServices {
 						mMigel.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
 					} else if (element.getName().equals(ELEMENT_RECORD_PHYSIO)) {
 						mPhysio.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
-					} else if (element.getName().equals(ELEMENT_RECORD_UNCLASSIFIED)) {
+					} else if (element.getName().equals(ELEMENT_RECORD_OTHER)) {
 						mUebrige.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
 					}
 				} catch (ParseException e) {
@@ -476,7 +476,7 @@ public class XMLExporterServices {
 					ret.mPhysio.addMoney(mAmountLocal);
 				} else {
 					Money preis = verrechnet.getNettoPreis();
-					el = new Element(ELEMENT_RECORD_UNCLASSIFIED, XMLExporter.nsinvoice);
+					el = new Element(ELEMENT_RECORD_OTHER, XMLExporter.nsinvoice);
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
@@ -487,6 +487,12 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
 					el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$
 					el.setAttribute("external_factor", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
+					
+					el.setAttribute(ATTR_EAN_PROVIDER,
+						TarmedRequirements.getEAN(konsultation.getMandant()));
+					el.setAttribute(ATTR_EAN_RESPONSIBLE,
+						XMLExporterUtil.getResponsibleEAN(konsultation));
+					
 					ret.mUebrige.addMoney(mAmountLocal);
 				}
 				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010

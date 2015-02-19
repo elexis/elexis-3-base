@@ -1,0 +1,60 @@
+
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td> 3.0.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td> KG-Führung </td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td> Bildanzeige in der Konsultations-View in den Formaten jpg und png </td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Franz Marty</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>25. August 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Unix</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+
+'''Bitte Doku erstellen'''
+
+
+
+== Installation / Deinstallation==
+Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren. OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]]). 
+Nach dem download muss Elexis neu gestartet werden, damit das Features in Elexis angemeldet und geladen wird. 
+
+
+
+== Konfiguration ==
+Keine Konfiguration notwendig
+
+
+== Funktionen ==
+Nach Installation kann der Benutzer Innerhalb des Lauftextes mittels Rechtsklick und Menupunkt "Bild einfügen..." ein Dialogfenster starten, welches die Auswahl eines Bildes im Dateisystem ermöglicht. Es werden jpg und png Dateien akzeptiert. Dem Bild kann ein Titel und eine Beschreibung beigefügt werden.  'Bild: (Titel)' werden in der Folge eingefärbt. Nach einem Doppelklick auf den eingefärbten Text wird das ausgewählte Bild aufgerufen
+
+
+'''Abbildung 1: Verstümmelung durch Zigarette'''
+[[Datei:Kons_Bild.jpg|none|800px]]

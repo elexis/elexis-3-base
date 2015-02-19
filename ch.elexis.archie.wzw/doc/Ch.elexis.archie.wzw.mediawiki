@@ -1,0 +1,21 @@
+[[Kategorie:Statistik]]
+== WZW-Statistik ==
+
+This tool helps the physician to survive a Santésuisse-WZW-trial by providing the necessary statistical info
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.archie.wzw
+| eingelesen=von /elexis-addons/ch.elexis.archie.wzw/whatisit.textile am 25.03.2013
+| name=WZW-Statistik
+| description=Archie-Client zur Erstellung von Statistiken, die für WZW-Verfahren wichtig sein können
+| category=feature
+| license=EPL
+| first_commit_date=2011-08-21
+| first_commit_author=Gerry
+| responsible=weirich@elexis.ch
+| type=Statistik
+
+
+}}

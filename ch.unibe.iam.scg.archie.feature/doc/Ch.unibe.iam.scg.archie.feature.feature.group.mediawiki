@@ -1,0 +1,69 @@
+
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td> 3.0.0.v20140328-2024 </td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Statistik</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>A Statistics Framework For Elexis</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+
+
+== Installation / Deinstallation==
+Medelexis-Benutzer können über das 'Abo-Management' installieren oder deinstallieren.  OpenSource Location >
+
+
+Ausführliche Entwickler-Dokumentation : [http://scg.unibe.ch/archive/projects/Sche09a.pdf]
+
+'''Archie'''
+
+A Statistics Framework For Elexis, Technical Report Dennis Schenk Peter Siska, March 2009
+Supervised by Prof. Dr. Oscar Nierstrasz, David Ro ̈thlisberger
+University of Bern, Switzerland, Software Composition Group
+
+== Konfiguration ==
+ToDo
+
+
+== Einführung ==
+ToDo
+
+
+== Funktionen ==
+ToDo
+
+
+== ev andere Untertitel ==
+ToDo
+
+=

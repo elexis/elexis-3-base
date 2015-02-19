@@ -1,0 +1,19 @@
+[[Kategorie:Basis-System]]
+== View: Encounters==
+{{PluginInfo
+|plugin=ch.elexis.icpc
+| category=ch.elexis.icpcCategory
+| wikiName=ChElexisIcpcViewsEncounterview
+| Iatrix-Hilfe=[http://www.iatrix.org/pmwiki.php?n=Elexishilfe.Encounters http://www.iatrix.org/pmwiki.php?n=Elexishilfe.Encounters]
+| view_name=View
+| name=ICPC-2
+| description=ICPC-2 Diagnosesystem
+| category=feature
+| license=EPL
+| first_commit_date=2007-06-24
+| first_commit_author=rgw_ch
+| responsible=weirich@elexis.ch
+| type=Basis-System
+
+
+}}

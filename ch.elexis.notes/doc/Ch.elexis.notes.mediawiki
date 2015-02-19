@@ -1,0 +1,91 @@
+[[Kategorie:Organisation]]
+== Einführung ==
+
+Dieses Plugin dient dazu, beliebige nicht-patientenbezogene Informationen und Dokumente abzulegen. Diese können nach beliebigen Kriterien strukturiert und mit Stichwörtern versehen werden.
+
+Ausserdem können, falls in Elexis ein Scanservice<sup>[[#fn1|1]]</sup> vorhanden ist, Dokumente direkt eingescannt werden.
+
+elexis-notes benötigt Elexis ab Version 1.4
+
+== Installation, Deinstallation, Konfiguration ==
+
+Wie üblich wird das Plugin durch einfaches Kopieren ins Plugins-Verzeichnis installiert und durch Löschen aus diesem Verzeichnis wieder deinstalliert.
+
+[[Image:ch.elexis.notes:config.png|image]]<br />
+ [fig:notes1]
+
+Die Konfiguration (Vgl. Abb. [fig:notes1]) beschränkt sich darauf, ein Basisverzeichnis anzugeben, unterhalb dem ''Elexis-Notes'' externe Dokumente ablegen soll.
+
+== Verwendung ==
+
+Wenn das Plugin korrekt installiert ist, finden Sie unter Fenster-Views-Andere eine View Namens ‘Notizen’ [fig:notes]. Es sollte sich dann ein Fenster wie in Abb. [fig:notes2] öffnen (natürlich zunächst ohne Inhalt).
+
+[htbp]
+
+0.4
+
+[[Image:ch.elexis.notes:notesview.png|image]] [fig:notes]
+
+0.5
+
+[[Image:ch.elexis.notes:notestools.png|image]] [fig:tools]
+
+[[Image:ch.elexis.notes:notesview2.png|image]]<br />
+ [fig:notes2]
+
+''Elexis-Notes'' Ordnet Notizen und Dokumente beliebig hierarchisch. Sie können Hauptkategorien (die oberste Ebene) vorgeben und darunter beliebig viele Unterkategorieren in beliebig tiefer Schachtelung erstellen. Jede Unterkategorie kann gleichzeitig auch eine Notiz sein, resp. jede Notiz kann Unterkategorien enthalten.
+
+== Neue Hauptkategorie erstellen ==
+
+Klick auf diesen Knopf öffnet ein Fenster um einen Namen einzugeben. Eine Hauptkategorie dieses Namens wird in der obersten Ebene er Liste erstellt.
+
+== Neue Unterkategorie oder Notiz erstellen ==
+
+Klicken Sie auf die gewünschte Kategorie oder Notiz und klicken Sie auf diesen Button. Sie können dann wieder einen Namen eingeben, und der neue Eintrag wird unterhalb des vorher markierten Eintrags erstellt.
+
+== Scannen ==
+
+Diese Funktion steht nur zur Verfügung, wenn Sie ein Plugin installiert haben, welches einen Scannerdienst anbietet (z.B. Omnivore direct). Markieren Sie eine gewünschte Kategorie oder Notiz und klicken Sie auf den Scan-Button. Dies öffnet das Scanprogramm Ihres Scanners. Nach Einscannen des Dokuments können Sie einen Namen für das Dokument vergeben. Das Dokument wird dort abgespeichert, wo Sie in der Konfiguration das Basisverzeichnis angegeben hatten, und ein Verweis auf das Dokument wird unter dem markierten Eintrag angelegt.
+
+== Notizen schreiben ==
+
+Im rechten Feld können Sie beliebig Text eingeben, der dem links markierten Element (Kategorie, Unterkategorie oder Notiz) zugeordnet wird. Bei Verlassen des Feldes wird der Text automatisch gespeichert.
+
+== Externe Dokumente oder Websites verlinken ==
+
+Im unteren Feld können Sie mit Klick auf den + Button Links erstellen. Ein Link kann entweder eine beliebige Datei oder ein Internet-Link sein (Komplett mit http:// einzugeben). Vgl Abb. [fig:notes3].
+
+[[Image:ch.elexis.notes:notesview3.png|image]]<br />
+ [fig:notes3]
+
+== Stichwörter zuordnen ==
+
+Im mittleren Feld zwischen Titel und Querverweisen können Sie beliebige, durch Komma getrennte Stichwörter zur aktuellen Notiz eintragen. (Vgl. Abb. [fig:notes3])
+
+== Einträge suchen ==
+
+Im Feld ‘Suchen’ können Sie den Anfang eines Suchbegriffs eingeben und dann die Eingabetaste drücken. (Vgl. Abb. [fig:find]).
+
+[[Image:ch.elexis.notes:find.png|image]]<br />
+ [fig:find]
+
+Die Liste wird dann auf diejenigen Einträge limitiert, die den gesuchten Begriff entweder im Titel oder in den Stichwörtern haben. Um wieder alle anzuzeigen, klicken Sie auf das rote ‘x’.
+
+[[#fnr1|<sup>1</sup>]] Ein Scanservice liefert die Fähigkeit, Scanner anzusteuern und kann von einem anderen, separat zu besorgenden Plugin beigesteuert werden, z.b. Omnivore-direct ist ein solcher Service-Provider
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.notes
+| eingelesen=von /elexis-base/ch.elexis.notes/doc/ch.elexis.notes.tex am 25.03.2013
+| name=Elexis Notizen
+| description=Nicht patientenspezifische Notizen, Merkblätter etc. mit Stichwort- und Themensuche
+| category=feature
+| license=EPL
+| first_commit_date=2007-06-24
+| first_commit_author=rgw_ch
+| responsible=weirich@elexis.ch
+| type=Organisation
+
+
+}}

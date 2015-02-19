@@ -1,0 +1,56 @@
+[[Category:KG-Führung]]
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0.a20140505-1023</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>KG-Führung</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>Das Features bietet eine Ansicht neuer Daten in Elexis.</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Thomas Huster</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>11. Juni 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+== Einführung==
+Das Features bietet eine Ansicht neuer Daten in Elexis. Die Art der Daten welche in der Inbox auf scheinen kann je nach zusätzlich installiertem Feature unterschiedlich sein. Die Daten werden pro Mandanten angezeigt und verwaltet. Im Feature integriert sind folgende Datentypen:
+
+* Laborwerte
+
+Es werden Anbindungspunkte für andere Features zur Verfügung gestellt über die Daten in der Inbox angezeigt werden können.
+
+== Installation / Deinstallation==
+Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren. OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]])
+
+== Funktionen==
+Die Inbox Ansicht kann einzeln geöffnet und einer Perspektive zugeordnet werden.
+
+[[Datei:medevit_inbox1.png]]
+
+* Es können die angezeigten Daten nach Typ und Text gefiltert werden.
+* Durch markieren der Checkbox können die Daten als gesehen markiert werden. Somit werden sie bei diesem Mandanten nicht mehr angezeigt.

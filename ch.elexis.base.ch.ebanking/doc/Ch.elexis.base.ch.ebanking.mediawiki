@@ -1,0 +1,1 @@
+Unterstützung für das E-Banking in der Schweiz, u.a. dem automatischen Einlesen von ESR-Daten

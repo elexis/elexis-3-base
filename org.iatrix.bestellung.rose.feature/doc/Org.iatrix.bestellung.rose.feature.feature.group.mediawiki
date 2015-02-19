@@ -1,0 +1,54 @@
+
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0.a20140325-1130</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td> Datenaustausch	 </td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>Bestellung zur Rose</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>29. Mai 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0, Iatrix</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+
+
+== Installation / Deinstallation==
+Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren. OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]])
+
+
+== Konfiguration ==
+Mit diesem Plug-In können Bestellungen an die Apotheke zur Rose übermittelt werden. Vor dem ersten Versand sind in den Einstellung unter “Bestellung..Apotheke zur Rose” die Kundennummer einzugeben. Diese Information gibt die Apotheke zur Rose ihren Kunden bekannt.
+
+Ein automatisierter PDE-Junit-Test wurde im Plug-In org.iatrix.bestellung.rose_test realisiert. Dieser Test läuft nur, wenn der ASAS-Client installiert und aktiviert ist. Testzugangsdaten bei Apotheke zur Rose sind leider nicht bekannt.
+Manuell kann das Ganze getestet werden, indem manuell ein Rezept erstellt wird und verschickt wird. Im elexis-log findet sich die geschickte XML.
+
+
+== Funktionen ==
+Benutzer der KG Matrix können mit dem Feature bei der Apotheke zur Rose bestellen.

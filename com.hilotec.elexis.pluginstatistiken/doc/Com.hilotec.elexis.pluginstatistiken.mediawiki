@@ -1,0 +1,99 @@
+[[Kategorie:Statistik]]
+== Einführung ==
+
+Dieses Plugin dient dazu statistische Auswertungen und Exporte mit Patientendaten durchzuführen. Dazu wird die IDataAccess-Schnittstelle benutzt, die von diversen Elexis-Plugins benutzt wird, wie beispielsweise vom Befunde- oder vom Hilotec-Messwerte-Plugin, wofür dieses Plugin primär entwickelt wurde. Dabei wird auf das Statistikplugin «Archie» aufgesetzt, welches die Möglichkeit bietet Diagramme zu generieren, und Daten als CSV zu exportieren. Welche Daten benutzt werden, wird mit einer XML-Datei beschrieben. Darin können mehrere Datenquellen mit Namen eingerichtet werden. In der XML-Konfigurationsdatei kann die Auswahl der Daten nach beliebigen Kriterien eingeschränkt werden.
+
+== Voraussetzungen ==
+
+* Elexis 2.0
+* Archie trunk-Version
+
+== Konfiguration ==
+
+Wie oben bereits erwähnt, geschieht die Konfiguration der Datenquellen(Abfragen oder Englisch «query») über eine XML-Konfigurationsdatei. Diese befindet sich im Benutzerdatenverzeichnis:
+
+; Windows:
+: <tt>C:\Dokumente und Einstellungen\Benutzer\Elexis\statistiken.xml</tt>
+; Linux:
+: <tt>/home/benutzer/elexis/statistik.xml</tt>
+
+In dieser XML-Datei können die einzelnen Abfragen im Root-Element <tt>queries</tt> mit <tt>query</tt>-Elementen definiert werden. Zu jeder Abfrage muss eine Liste mit den gewünschten Feldern angegeben werden, und optional kann die Menge der Datensätzen mit beliebigen Bedingungen eingeschränkt werden. Die XML-Konfiguration könnte beispielsweise folgendermassen aussehen:
+
+<pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;queries&gt;
+  &lt;query title=&quot;Aelter als 30, Bluthochdruck&quot;&gt;
+    &lt;cols&gt;
+      &lt;col name=&quot;alter&quot; source=&quot;Patient.Alter&quot; /&gt;
+      &lt;col name=&quot;name&quot; source=&quot;Patient.Name&quot; /&gt;
+      &lt;col name=&quot;vorname&quot; source=&quot;Patient.Vorname&quot; /&gt;
+      &lt;col name=&quot;bdvorher&quot;
+        source=&quot;Messwerte:Patient:firstsince=[startdatum]:\
+        status.bddia&quot; /&gt; 
+      &lt;col name=&quot;bdnacher&quot;
+        source=&quot;Messwerte:Patient:lastbefore=[enddatum]:\
+        status.bddia&quot; /&gt;
+    &lt;/cols&gt;
+    &lt;where&gt;
+      &lt;and&gt;
+        &lt;greaterthan a=&quot;[alter]&quot; b=&quot;30&quot; /&gt;
+        &lt;greaterthan a=&quot;[bdvorher]&quot; b=&quot;120&quot; /&gt;
+      &lt;/and&gt;
+    &lt;/where&gt;
+  &lt;/query&gt;
+&lt;/queries&gt;</pre>
+'''Hinweis:''' Bitte beachten Sie, dass die Zeilen mit <tt>\</tt> am Ende nur aus Darstellungsgründen umgebrochen wurden, und in der Konfigurationsdatei unbedingt am Stück und ohne Leerzeichen stehen müssen.
+
+Auf den ersten Blick sieht diese Konfigurationsdatei womöglich etwas kompliziert aus, da die IDataAccess-Identifier (also der Teil mit <tt>Messwerte:Patient...</tt>) manchmal etwas lang werden. Die Idee, die dahinter steckt, ist aber einfach. Für genauere Informationen zur IDataAccess-Schnittstelle kann das Elexis-Handbuch und die Dokumentation des jeweiligen Plugins zu Rate gezogen werden. Im Folgenden wird genauer auf die Möglichkeiten beim Erstellen von Abfragen eingegangen.
+
+== Spaltenliste ==
+
+Die Spaltenliste besteht nur aus <tt>col</tt>-Elementen mit zwei Attributen. Das erste Attribut <tt>name</tt> ist glechzeitig Spaltenbeschriftung und interne Bezeichung für die Spalte(zum Beispiel für die where-Bedingungen), während mit dem zweiten Attribut <tt>source</tt> ein IDataAccess-Identifier angegeben werden muss, der angibt, wo die Daten für die Spalte hergenommen werden sollen. Im Gegensatz zu den IDataAccess-Platzhaltern, wie sie in Briefen und Dokumenten angegeben werden können, dürfen sie hier nicht in eckigen Klammern eingeschlossen werden.
+
+Was aber in dem Source-Attribut in eckigen Klammern angegeben werden kann, sind Abfrageparameter. Dies wird auch oben im Beispiell benutzt, um den Datumsbereich einzuschränken(<tt>[startdatum]</tt> bei <tt>firstsince</tt> und <tt>[enddatum]</tt> bei <tt>lastbefore</tt><sup>[[#fn1|1]]</sup>). Im Moment stehen nur <tt>startdatum</tt> und <tt>enddatum</tt> als Parameter für die Abfragen zur Verfügung. Die Werte dieser Parameter werden durch die beiden Datumsfelder in der Archie-View gesetzt.
+
+== Bedingungen ==
+
+Um die Menge der ausgegebenen Datensätze einzuschränken, können mit dem <tt>where</tt>-Element Bedingungen angegeben werden, die angeben welche Datensätze miteinbezogen werden sollen, und welche nicht. Dabei können Abfragen aus den folgenden Vergleichs-Operatoren zusammengebaut werden:
+
+; equal
+: Vergleicht Attribut <tt>a</tt> mit Atttribut <tt>b</tt> und ist wahr, wenn die beiden Werte übereinstimmen.
+; greaterthan
+: Vergleicht Attribut <tt>a</tt> mit Atttribut <tt>b</tt> und ist wahr wenn <tt>a</tt> grösser ist als <tt>b</tt>.
+; lessthan
+: Vergleicht Attribut <tt>a</tt> mit Atttribut <tt>b</tt> und ist wahr wenn <tt>a</tt> kleiner ist als <tt>b</tt>.
+
+In den Attributen der Operatoren kann auf Werte in Spalten zugegriffen werden, indem Platzhalter in der Form <tt>[spaltenname]</tt> benutzt werden.
+
+Weiter stehen auch die üblichen Logischen Operatoren zur Verfügung:
+
+; not
+: Negiert den Wahrheitswert des Unterelements, muss genau ein Unterelement haben.
+; and
+: Ist genau dann wahr, wenn alle Unterelemente wahr sind, oder keine Unterelemente vorhanden sind. Es können beliebig viele Unterelemente angegeben werden.
+; or
+: Ist wahr, wenn mindestens ein Unterelement wahr ist. Es können beliebig viele Unterelemente angegeben werden.
+
+Damit können beliebig verschachtelte Bedingungen entworfen werden.
+
+== Verwendung ==
+
+Die Verwendung des Plugins ist relativ selbsterklärend. Wenn es geladen ist, erscheint in der Statistikliste von Archie eine weitere Statistik mit dem Titel «Pluginstatistiken», diese muss ausgewählt werden. Sobald das geschehen ist, erscheint im Parameterfenster von Archie eine Dropdown-Liste mit den vorhandenen Abfragen. Dort muss die gewünschte Statistik ausgewählt werden, und in den beiden Datumsfelder müssen ggf. noch die gewünschten Werte eingefüllt werden. Sobald die Daten zusammengesucht wurde, ist alles weitere Sache von Archie. Hier können die Daten dann beispielsweise mit Archies Exportfunktion als CSV exportiert werden.
+
+[[#fnr1|<sup>1</sup>]] Für genauere Informationen dazu, bitte die <tt>hilotec-messwerte</tt>-Dokumentation konsultieren
+
+
+
+{{PluginInfo
+|plugin=com.hilotec.elexis.pluginstatistiken
+| eingelesen=von /elexis-base/com.hilotec.elexis.pluginstatistiken/doc/com.hilotec.elexis.pluginstatistiken.tex am 25.03.2013
+| name=Hilotec Messwerte Statistik
+| description=Statistikmodul zu Hilotec-Messwerte
+| category=feature
+| license=EPL
+| first_commit_date=2009-09-08
+| first_commit_author=freakypenguin
+| responsible=info@hilotec.com
+| type=Statistik
+
+
+}}

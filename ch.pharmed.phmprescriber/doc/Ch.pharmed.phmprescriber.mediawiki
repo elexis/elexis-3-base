@@ -1,0 +1,124 @@
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>KG-Führung</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>Direkte Übermittlung von Rezepten an Apotheke inkl. automatischem Interaktions-Check</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Pharmed Solutions GmbH</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>20. Oktober 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+== Einführung==
+Dieses Plugin ermöglicht das elektronische Übermitteln von Rezepten an die Apotheken. Das Rezept wird dabei stets ausgedruckt, unterschrieben und dem Patienten mitgegeben. Es werden alle grossen Apothekensysteme unterstützt (ProPharma, Pharmatic, TriaPharm). Die aufgedruckten Strichcodes sind für das Abrufen der Rezepte notwendig. Patientendaten werden dabei nirgendwo gespeichert.
+
+
+Zusätzliche Features:
+* Automatischer Interaktions-Check der Produkte eines übermittelten Rezeptes
+* Sauberer Ausdruck des Rezeptes ohne Vorlage
+* Automatisches Abrufen der Adress-Daten
+
+Ausgangspunkt für Rezeptübermittlung ist die normale Rezepteingabe. Ist das Plug-In aktiviert, so kann in der Menu-Leiste das entsprechende Symbol angeklickt werden:
+
+
+'''Abbildung 1: Senden eines Rezeptes mit PhM Prescriber'''
+
+[[Datei:overview.png|800px]]
+
+
+Die Interaktionen werden nun geprüft, das Rezept übermittelt und schliesslich zum Unterschreiben ausgedruckt.
+
+
+== Installation / Deinstallation==
+Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren. OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]])
+
+===Einstellungen des Plug-In===
+
+Unter <b>Datei..Einstellungen..Datenaustausch..Rezeptübermittlung</b> kann ein Profil für die Rezeptübermittlung angelegt werden. Wird zuerst die ZSR-Nummer eingetragen, so können via Web-Dienst die meisten Angaben bereits vervollständigt werden (Button "Personalien automatisch abrufen"). Damit die Informationen auf dem ausgedruckten Rezept den Anforderungen entsprechen, sollten die weiteren Felder ausgefüllt werden. 
+
+
+'''Abbildung 2: Einstellungen des Plug-In'''
+
+[[Datei:preferences.png|800px]]
+
+
+Optional kann angegeben werden, ob ein automatischer Interaktions-Check erfolgen soll.
+
+
+==Rezept senden und drucken==
+
+Nachdem ein Rezept erstellt wurde, kann in der Menu-Leiste der Button "Rezept übermitteln und drucken" angewählt werden. 
+
+
+
+'''Abbildung 3: Senden aktivieren'''
+
+[[Datei:overview.png|800px]]
+
+
+Nun erscheint ein Dialogfeld, in dem die Ziel-Apotheke ausgewählt werden kann. <b>Dieses Fenster wird nur angezeigt, falls in der Nähe Apotheken vorhanden sind, die diese Funktion untersützen. Wird das Rezept an eine bestimmte Apotheke gesendet, so muss das Einverständnis des Patienten vorliegen.</b>
+Ansonsten holt die Apotheke das Rezept erst ab, wenn der Patient dort mit dem Rezept erscheint.
+
+
+'''Abbildung 4: Optionale Auswahl der Apotheke'''
+
+[[Datei:shops.png|800px]]
+
+
+Wird "Abbrechen" gewählt, so kann das Rezept in allen Apotheken eingelöst werden.
+
+Liegt eine Interaktion vor, wird diese angezeigt: 
+
+
+'''Abbildung 5: Anzeige einer Interaktion'''
+
+[[Datei:interactions.png|800px]]
+
+
+Wird die Interaktion ignoriert, so wird das Rezept gesendet.
+Wurde das Rezept erfolgreich übermittelt, wird der Druckerdialog angezeigt und das Rezept kann ausgedruckt werden:
+
+
+'''Abbildung 6: Gesendetes und ausgedrucktes Rezept'''
+
+[[Datei:prescription.png|680px]]
+
+
+Das gedruckte Rezept wird nun unterschrieben und dem Patienten mitgegeben.
+
+==Anmerkungen für Entwickler & Administratoren==
+
+Die hier angesteuerte Schnittstelle steht auch anderer Software zur Verfügung. Alles erforderlichen Informationen können bei Pharmed Solutions GmbH angefordert werden:
+* info@pharmedsolutions.ch
+* https://www.pharmedsolutions.ch
+
+
+==Datenschutz==
+
+Bei der Rezeptübermittlung an die Apotheken werden lediglich die verschriebenen Produkte, deren Anzahl und Dosierungsangaben gespeichert. Patientendaten werden keine festgehalten. Die Apotheke identifiziert den Patienten anhand des auf dem Rezept vorhandenen Namens oder über ihr internes System.

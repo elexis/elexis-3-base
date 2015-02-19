@@ -1,0 +1,15 @@
+[[Kategorie:Basis-System]]
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=ch.ngiger.utilities.comm
+| name=N. Giger Communications Utilities
+| description=Kommunuikationsfunktionen für Elexis
+| category=invisible
+| responsible=niklaus.giger@member.fsf.org
+| type=Basis-System
+
+
+}}

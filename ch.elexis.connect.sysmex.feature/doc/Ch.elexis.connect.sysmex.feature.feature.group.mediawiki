@@ -1,0 +1,175 @@
+[[Category:Geräteanbindung]]
+
+
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0.a20140408-1247</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Geräteanbindung</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>23. Juni 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+ex_logo.png|image]]<br />
+ image
+
+[[Image:ch.elexis.connect.sysmex:sysmex_device.png|image]]<br />
+ image
+
+== Einführung ==
+
+Dieses Plugin dient dazu, die Laborgeräte<sup>[[#fn1|1]]</sup> ‘Sysmex KX-21’, ‘Sysmex KX-21N’ und ‘pocH-100i’ an Elexis anzubinden. Mit diesem Plugin können die, vom Gerät gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.
+
+== Voraussetzungen ==
+
+Dieses Plugin benötigt Elexis V1.4.1 oder höher sowie ein pocH-100i oder ein Sysmex Gerät (Modell KX-21 oder KX-21N). Ausserdem wird ein PC mit mindestens einer freien seriellen Schnittstelle und ein korrekt, gekreuzt verdrahtetes serielles Kabel (Nullmodemkabel) zur Verbindung des Gerätes mit dem PC benötigt<sup>[[#fn2|2]]</sup>.
+
+== Installation und Konfiguration ==
+
+Installieren Sie auf dem, sich im Labor befindlichen PC das Plugin wie gewohnt. Verbinden Sie dann bei '''ausgeschalteten''' Geräten das Sysmex mit einem seriellen Port des Computers.
+
+== Datenübertragung am Sysmex einschalten ==
+
+Die serielle Datenkommunikation ist im Sysmex standardmässig inaktiv. Damit das Sysmex Gerät Daten über die Schnittstelle an den Computer sendet, muss die Datenüber-tragung eingeschaltet werden. Wie dies gemacht wird, ist in der Gebrauchsanweisung zum Sysmex beschrieben (z.B. KX-21N: Kapitel 6, Seite 6.9). Es folgt hier nur eine Kurzform für geübte Techniker:
+
+'''Kommunikationsparameter für KX-21 und KX-21N:'''<br />
+ Select, 6 (Einstellungen), 5 (Labor-EDV-Einst)<br />
+ - Verbindung: aktiv (mit Pfeiltasten li/re)<br />
+ - Ausgabeformat: '''K-1000''' oder '''KX21N'''<br />
+ - Autom. Ausgabe: On<br />
+ - Baud-Rate: 9600 (*)<br />
+ - Code: 8 bits (*)<br />
+ - Stop-Bit: 1 bit (*)<br />
+ - Paritätsprüfung: None (*)<br />
+ - Protokoll: Class A<br />
+ - Intervall: 2<br />
+ - RTS/CTS: Ignore<br />
+ Select, Übern. (mit Pfeiltasten li/re), Enter
+
+(*): Empfehlung; eingestellter Wert muss mit Elexis Konfiguration übereinstimmen!<br />
+ '''Kommunikationsparameter für pocH-100i:'''<br />
+ Menü, Einstell., Host-Übertragung<br />
+ - Anschluss: seriell<br />
+ - Autoausg.: Aktiv<br />
+ - Format: '''KX-21N'''<br />
+ - Ü-Rate: 9600bps (*)<br />
+ - Datenlän.: 8 bits (*)<br />
+ Pfeil nach rechts<br />
+ - Stop-Bit: 1 bit (*)<br />
+ - Parität: Deaktiv. (*)<br />
+ - Protokoll: Class A<br />
+ - Ü-Intervall: 2<br />
+ - RTS/CTS: Deaktiv.<br />
+ Speichern, OK
+
+(*): Empfehlung; eingestellter Wert muss mit Elexis Konfiguration übereinstimmen!
+
+== Elexis Konfiguration ==
+
+Starten Sie Elexis und gehen Sie dort zu Datei-Einstellungen-Datenaustausch-Sysmex (S. Abb. [fig:config]).
+
+[h] [[Image:ch.elexis.connect.sysmex:config.png|image]] [fig:config]
+
+Hier wählen Sie Ihr Gerätemodell (KX-21, KX-21N oder pocH-100i) aus und stellen den seriellen Port, sowie die Schnittstellenparameter ein. Die Werte Geschwindigkeit<sup>[[#fn3|3]]</sup>, Daten-Bits<sup>[[#fn4|4]]</sup>, Parität<sup>[[#fn5|5]]</sup> und Stop-Bits<sup>[[#fn6|6]]</sup> müssen mit den Einstellungen auf dem Sysmex Gerät übereinstimmen (siehe vorheriges Kapitel).
+
+Spezialfall KX-21:<br />
+ Hier müssen Sie in der Auswahlliste ‘RDW’ angeben, ob das Gerät den Wert RDW als SD oder CV liefert<sup>[[#fn7|7]]</sup>
+
+'''Weitere Konfigurationswerte:'''<br />
+ '''Timeout (Sek):''' Der Wert bestimmt, wie lange Elexis maximal auf Resultate warten soll, bevor die Verbindung getrennt wird.
+
+'''Im Hintergrund:''' Damit beeinflussen Sie das Verhalten von Elexis. Bei eingeschalteter Option wird die Übertragung im Hintergrund ausgeführt und Sie können weiter in Elexis arbeiten. Bei ausgeschalteter Option erscheint die Abb. [fig:connected]
+
+'''Logging:''' Diese Option verwenden Sie bitte nur auf Anweisung des Supports, ansonsten wird Ihr Computer mit unnötigen Daten gefüllt.
+
+== Verwendung ==
+
+Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch ein neuer Toolbar Button ‘Sysmex’ (Abb. [fig:toolbarbutton]). Klicken Sie auf diesen Knopf um die Verbindung mit dem Gerät herzustellen.
+
+[h] [[Image:ch.elexis.connect.sysmex:toolbarbutton.png|image]] [fig:toolbarbutton]
+
+Die Verbindung bleibt bestehen bis ein Wert über-tragen wurde oder das Timeout gemäss Konfiguration abgelaufen ist. Das Sysmex Gerät benötigt für die Tests ca. 45 Sekunden. Jedesmal wenn ein Test abgeschlossen ist, wird das Resultat an den Computer gesendet.
+
+'''Wichtig:''' Der PC muss dabei auf Empfang sein, ansonsten erscheint auf dem Gerät eine Fehlermeldung<sup>[[#fn8|8]]</sup>. Nach der Übertragung eines Messresultates bleibt die Schnittstelle noch für 5 Sekunden aktiv (dies für den Fall, dass manuell mehrere Werte auf dem Gerät für die Übertragung selektiert wurden). Anschliessend wird die Schnittstelle beendet und muss vor der nächsten Messung erneut eingeschaltet werden.
+
+[h] [[Image:ch.elexis.connect.sysmex:connected.png|image]] [fig:connected]
+
+Wenn Elexis ein Resultat empfängt, muss der Anwender dieses einem Patienten zuordnen. Dazu wird das Elexis Fenster für die Patientenselektion angezeigt.
+
+Es kann passieren, dass die Datenübetragung zwischen Sysmex und Computer fehlschlägt. In diesem Fall kann ein oder mehrere Messwerte auf dem Sysmex folgendermassen erneut gesendet werden (siehe nächstes Kapitel).
+
+== Messwerte erneut senden ==
+
+'''Sysmex KX-21:'''<br />
+ Select, 1 (Datenspeicher)<br />
+ Mit Pfeiltasten (nach oben/unten) zum gewünschten Messwert navigieren<br />
+ Enter zum Selektieren des Messerts für die Übertragung (es können mehrere Messwerte selektiert werden)<br />
+ 3 (Labor-EDV)
+
+'''Sysmex KX-21N:'''<br />
+ Select, 1 (Datenspeicher)<br />
+ Mit Pfeiltasten (nach oben/unten) zum gewünschten Messwert navigieren<br />
+ Enter zum Selektieren des Messerts für die Übertragung (es können mehrere Messwerte selektiert werden)<br />
+ 2 (Ausgabe)<br />
+ 1 (Host)
+
+'''pocH-100i:'''<br />
+ Menü<br />
+ Datensp.<br />
+ Mit Pfeiltasten (nach oben/unten) zum gewünschten Messwert navigieren<br />
+ Host
+
+== Plattformen ==
+
+Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, dass unter Linux die seriellen Ports nicht COM1 usw., sondern /dev/ttyS0 usw. heissen.
+
+== Kabelspezifikation ==
+
+[h] [[Image:ch.elexis.connect.sysmex:kabel.png|image]] [fig:kabel]
+
+Es wird ein gekreuztes, serielles Kabel benötigt (Nullmodemkabel! gemäss Abb. [fig:kabel])). Das Kabel muss an beiden Enden einen 9-poligen Stecker (weiblich) aufweisen.
+
+[[#fnr1|<sup>1</sup>]] Firma Sysmex Digitana
+
+[[#fnr2|<sup>2</sup>]] Alternative: RS-232 Adapter für USB oder Bluetooth
+
+[[#fnr3|<sup>3</sup>]] Sysmex: Baud-Rate
+
+[[#fnr4|<sup>4</sup>]] Sysmex: Code
+
+[[#fnr5|<sup>5</sup>]] Sysmex: Paritätsprüfung
+
+[[#fnr6|<sup>6</sup>]] Sysmex: Stop-Bit
+
+[[#fnr7|<sup>7</sup>]] Sysmex: Kann auf dem KX-21 Gerät folgendermassen eingestellt werden: Select, 6, 1
+
+[[#fnr8|<sup>8</sup>]] Sysmex: Piepston kann mit ‘C’ abgeschaltet werden. Darüber hinaus muss danach aber die automatische Übertragung aus- und wieder eingeschaltet werden. Siehe dazu Kapitel ‘Installation und Konfiguration’

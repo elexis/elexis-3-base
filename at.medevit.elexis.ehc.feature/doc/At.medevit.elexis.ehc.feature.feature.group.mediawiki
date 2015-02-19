@@ -1,0 +1,78 @@
+
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Datenaustausch</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>Import, Export und Ansicht von e Health Dokumenten</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Thomas Huster</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>19.08.2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+== Einführung ==
+Das Feature bietet die Grundlage um e Health Dokumente zu erzeugen und wieder einzulesen. Dabei wird die ebenfalls unter der EPL verfügbare Bibliothek [http://sourceforge.net/projects/ehealthconnector/ eHealthConnector] verwendet.
+
+== Installation / Deinstallation==
+Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren. OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]])
+
+== Konfiguration ==
+Es können Verzeichnisse für Dokumenten Ein- bzw. Ausgang konfiguriert werden.
+
+[[Datei:medevit_ehc1.png]]
+
+== Funktionen ==
+
+=== Eingang von neuen e Health Dokumenten===
+
+[[Datei:medevit_ehc2.png]]
+
+Das konfigurierte Eingangsverzeichnis wird ständig überwacht, und neue bzw. vorhandene Dokumente werde in der Inbox Ansicht ([[At.medevit.elexis.inbox.feature.feature.group]]) angezeigt.
+
+=== Ansicht von e Health Dokumenten ===
+
+[[Datei:medevit_ehc3.png]]
+
+Durch Doppelklick auf ein Dokument in der Inbox Ansicht, wird dieses in der Anzeige Ansicht des e Health Connectors geöffnet. In der Ansicht kann im Textfeld auch eine URL zu einem externen Dokument welches angezeigt werden soll eingegeben werden. Ausserdem wird der '''Import''' von Daten aus dem angezeigten Dokument durch Klick auf den ehc Knopf gestartet.
+
+=== Import von e Health Dokumenten ===
+
+[[Datei:medevit_ehc4.png]]
+
+Im Importer Dialog kann ein Importer ausgewählt werden. Dann wird über Klick auf '''Next''' der ausgewählte Importer konfiguriert, und via '''Finish''' ausgeführt. Zum jetzigen Zeitpunkt ist nur ein Beispiel Importer für Patientendaten Teil dieses Features.
+
+=== Export von e Health Dokumenten ===
+
+[[Datei:medevit_ehc5.png]]
+
+Das Erzeugen neuer e Health Dokumente im Menu der Briefe Perspektive gestartet werden.
+
+[[Datei:medevit_ehc6.png]]
+
+Im Exporter Dialog kann ein Exporter ausgewählt werden. Dann wird über Klick auf '''Next''' der ausgewählte Exporter konfiguriert, und via '''Finish''' ausgeführt. Zum jetzigen Zeitpunkt ist nur ein Beispiel Exporter für Patientendaten Teil dieses Features.

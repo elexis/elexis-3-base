@@ -1,0 +1,18 @@
+[[Kategorie:Organisation]]
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.stickynotes
+| name=Haftnotizen
+| description=Haftnotizen für beliebigen Patientspezifischen, nicht an eine Konsultation gebundenen Freitext
+| category=feature
+| license=EPL
+| first_commit_date=2009-08-17
+| first_commit_author=gerry.weirich
+| responsible=weirich@elexis.ch
+| type=Organisation
+
+
+}}

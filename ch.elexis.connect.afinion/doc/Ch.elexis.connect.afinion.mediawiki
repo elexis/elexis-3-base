@@ -1,0 +1,110 @@
+[[Kategorie:Geräteanbindung]]
+[[Image:ch.elexis.connect.afinion:elexis_logo.png|image]]<br />
+ image
+
+[[Image:ch.elexis.connect.afinion:axis_shield_logo.png|image]]<br />
+ image
+
+[[Image:ch.elexis.connect.afinion:afinion_device.png|image]]<br />
+ image
+
+[[Image:ch.elexis.connect.afinion:afinion_logo.png|image]]<br />
+ image
+
+== Einführung ==
+
+Dieses Plugin dient dazu, das Laborgerät ‘Afinion AS100 Analyzer’<sup>[[#fn1|1]]</sup> an Elexis anzubinden. Mit diesem Plugin können die, vom Afinion gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.
+
+== Voraussetzungen ==
+
+Dieses Plugin benötigt Elexis V1.4.1 oder höher sowie einen Afinion AS100 Analyzer Gerät. Ausserdem wird ein PC mit mindestens einer freien seriellen Schnittstelle (Alternative: USB To RS-232 Adapter) und ein korrekt gerade verdrahtetes serielles Kabel (kein Nullmodemkabel) zur Verbindung des Afinion mit dem PC benötigt.
+
+== Installation und Konfiguration ==
+
+Installieren Sie auf dem, sich im Labor befindlichen PC das Plugin wie gewohnt. Verbinden Sie dann bei '''ausgeschalteten''' Geräten den Afinion mit einem seriellen Port des Computers.
+
+== Datenübertragungskonfiguration Afinion ==
+
+Die serielle Datenkommunikation ist im Afinion standardmässig aktiv. Das Gerät erfordert zwingend folgende Einstellungen:<br />
+ Baudrate: 115200<br />
+ Daten-Bits: 8<br />
+ Parität: Nein<br />
+ Stop-Bits: 1
+
+== Afinion Funktion Patienten-ID ==
+
+Die Funktion Patienten-ID ist auf dem Afinion Gerät standardmässig aktiviert. Mit dieser Funktion ist die Eingabe einer Patientenidentifikation bei jeder Probe auf dem Gerät zwingend. Wenn diese Funktion eingeschaltet, ist versucht Elexis den Patienten automatisch der Probe zuzuordnen. Wird die Funktion ausgeschaltet, muss in Elexis bei jeder Probe der Patient selektiert werden.<br />
+ Weitere Informationen zur Funktion Patienten-ID finden Sie im Manual zum Afinion auf Seite 22.
+
+== Elexis Konfiguration ==
+
+Starten Sie Elexis und gehen Sie dort zu Datei-Einstellungen-Datenaustausch- Afinion AS100 Analyzer (S. Abb. [fig:config]). Hier stellen Sie den seriellen Port und die Schnittstellenparameter ein. Die Werte müssen mit den Einstellungen auf dem Afinion Gerät übereinstimmen (siehe oben). Wichtig: Nach dem Ändern dieser Parameter müssen Sie Elexis neu starten.
+
+'''Weitere Konfigurationswerte:'''<br />
+ '''Timeout (Sek):''' Der Wert bestimmt, wie lange Elexis maximal auf Resultate warten soll, bevor die Verbindung getrennt wird.<br />
+ '''Im Hintergrund:''' Damit beeinflussen Sie das Verhalten von Elexis. Bei eingeschalteter Option wird die Übertragung im Hintergrund ausgeführt und sie können weiter in Elexis arbeiten. Bei ausgeschalteter Option erscheint die Abb. [fig:connected]<br />
+ '''Logging:''' Diese Option verwenden Sie bitte nur auf Anweisung des Supports, ansonsten wird Ihr Computer mit unnötigen Daten gefüllt.
+
+[h] [[Image:ch.elexis.connect.afinion:config.png|image]] [fig:config]
+
+== Verwendung ==
+
+[h] [[Image:ch.elexis.connect.afinion:toolbarbutton.png|image]] [fig:toolbarbutton]
+
+Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch ein neuer Toolbar Button ‘Afinion AS100 Analyzer’ (Abb. [fig:toolbarbutton]).
+
+Ablauf:
+
+# Probenmessung mit dem Afinion durchführen
+# Messwert auf dem Afinion quittieren (allenfalls Patienten Nummer oder Namen eingeben)
+# Erst dann den Toolbar Button klicken um die Verbindung mit dem Gerät herzustellen.
+
+[h] [[Image:ch.elexis.connect.afinion:connected.png|image]] [fig:connected]
+
+Wenn Sie die Probe auf dem Afinion Gerät quittiert haben, können Sie das Resultat mit einem Klick auf den Toolbar Button abholen. Wenn Elexis ein Resultat empfängt, wird versucht dieses einem Patienten zuzuordnen. In Abb. [fig:messwert] ist ersichtlich, wie der Patient zugeordnet wird (Beispiel: Muster Franz sind die Angaben aus Elexis und MUSTER wurde auf dem Afinion eingegeben). Kann der Patient nicht automatisch zugewiesen werden folgt das Fenster mit der Patientenselektion.
+
+'''Wichtig:'''<br />
+ Es werden nur Werte an Elexis übertragen, welche am aktuellen Tag gemessen wurden. Ältere Messwerte müssen Sie manuell in Elexis eingeben.
+
+[h] [[Image:ch.elexis.connect.afinion:messwert.png|image]] [fig:messwert]
+
+== Anweisungen zum Afinion ==
+
+Damit eine automatische Zuweisung des Patienten möglich wird, muss auf dem Afinion der Patient der Messung zugeordnet werden (siehe auch ‘Afinion Funktion Patienten-ID’). Auf dem Afinion kann die Patienten-ID numerisch oder als Text (Handy-Tastatur) eingegeben werden. Sie müssen Sie zwingend eines der folgenden Eingabeformat einhalten (ohne Leerzeichen nach dem Komma!):
+
+* '''PatNummer'''
+* '''PatNummer,Namen'''<br />
+ Tipp: Es kann auch nur der erste Buchstaben des Namens eingegeben werden
+* '''Namen,Vornamen'''<br />
+ Tipp: Namen und/oder Vornamen können auch abgekürzt eingegeben werden
+
+== Fehlerbehandlung ==
+
+Wenn das Gerät nicht reagiert können die Verbindung mit Cancel gemäss Abb. [fig:connected] abbrechen. Ansonsten bleibt die Verbindung bis zum Ablauf des konfigurierten Timeouts bestehen.
+
+== Plattformen ==
+
+Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, dass unter Linux die seriellen Ports nicht COM1 usw., sondern /dev/ttyS0 usw. heissen.
+
+== Kabelspezifikation ==
+
+Es wird ein normales serielles Kabel benötigt (kein Nullmodemkabel!). Das Kabel muss vom 9-poligen Stecker (männlich) auf den 9-poligen Stecker (weiblich) 1:1 verdrahtet sein. Folgende Pins werden verwendet: 2 (Receive), 3 (Transmit), 5 (Signal GND).
+
+[[#fnr1|<sup>1</sup>]] Firma Axis-Shield
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.connect.afinion
+| eingelesen=von /elexis-base/ch.elexis.connect.afinion/doc/ch.elexis.connect.afinion.tex am 25.03.2013
+| name=Afinion AS100 Laborgerätanbindung
+| description=Verbindung von Elexis zum Afinion AS100 Analyzer
+| category=feature
+| license=EPL
+| first_commit_date=2009-06-10
+| first_commit_author=michael_imhof
+| responsible=support@medelexis.ch
+| type=Geräteanbindung
+
+
+}}

@@ -1,0 +1,101 @@
+[[Kategorie:Dokumentenverwaltung]]
+'''Kurzbeschrieb:'''
+
+Ein einfaches Archiv für Dokumente (fast) aller Art.
+
+'''Was kann man damit machen?'''
+
+Extern erstellte Dokumente (PDF, Word, eingehende Arztbriefe, Reports von diagnostischen Geräten etc.) dem Patienten zugeordnet in Elexis archivieren.
+
+Die Dokumente werden in der Elexis-Datenbank abgelegt und sind in Omnivore per Doppelklick wieder anzuzeigen.
+
+Beim Patienten sieht man die Liste der zugehörigen Dokumente mit Importdatum, Dateiname oder Titel, und dem beim Import zugeordneten Stichworten. Titel und Stichworte können auch nachträglich geändert werden, ein importierter Eintrag kann gelöscht werden. Sortierung der angezeigten Liste vorhandener Dokumente nach Datum (des Imports), Titel oder Stichwort, jeweils auf- und absteigend. Alle pro Patient vorhandenen Dokumente werden gleichzeitig angezeigt (schnelle Übersicht).
+
+Dokumente können nach Omnivore hinein direkt aus Windows-Ordnern, vielen anderen Programmen, und Thunderbird gezogen werden. Aus Outlook leider nicht, da Outlook ein spezielles Protokoll erfordert.
+
+'''Verwandte Plugins mit leicht anderer Funktionalität'''
+
+Omnivore Plus, Omnivore direct, Global Inbox, externe Dokumente<br />
+ Alternative von Drittherstellern: Paperport, Archivista, sonstige Dokumenten-Archiv-Systeme<br />
+ Benützen mit: Foxit Reader, Foxit Reader Previewer von Tim Heuer (!)
+
+'''Limitationen'''
+
+Omnivore 1.4.2 ist sehr einfach – wird mit Elexis bis 2013-04 als Standard ausgeliefert.<br />
+ Keine Preview-Funktion vor Öffnen eines Dokuments. Keine Suchfunktionen ausser dem Auge des Betrachters.
+
+Einteilung in Kategorien ist allenfalls so möglich, dass die Benutzer z.B. unter “Stichworte” geeignete Kürzel als erste Buchstaben eingeben – z.B.: N Notizen, B Bericht, L Labor etc. dann wird die Sortierung nach Stichworten auch eine Sortierung nach Kategorien.
+
+'''Vorteile'''
+
+Schnell, einfach in Standardkonfiguration dabei.<br />
+ Mit den u.a. Erweiterungen ab Version 1.4.4 wird ein sehr flotter Workflow möglich, sowohl für den Import, als auch für den e-Mail Versand von Berichten.
+
+Dank des Verzichts auf vordefinierte Kategorien kann man ein eigenes effizientes System für die Kategoriebestimmenden Kürzel wählen, das bei Import ohne jeglichen Zeitverlust implementiert wird. Eingehende Dossiers aus mehreren Bestandteilen kann man auch zwanglos ad-hoc in einem grossen PDF-Dokument einlesen, welches danach nur einen Doppelklick zum Öffnen und danach das schnelle Blättern im PDF-Viewer braucht.
+
+Im Vergleich zu Omnivore direct/Global Inbox kann man bei Nutzung eines Windows-Ordners als Import-Quelle die Preview-Funktion nutzen, um viele eingehende Dokumente schnell zu sichten und den jeweiligen Patienten zuzuordnen, ohne dass man erst extern die Dateien umbenennen müsste. Omnivore Plus hat zwar eine Einteilung in Kategorien – Baumstruktur – aber standarmässig sind die Äste geschlossen, so macht die Einteilung eher mehr Mühe, und auch das Finden eines Dokuments, wenn man nicht sehr strukturiert arbeitet.
+
+Omnivore direkt bindet zwar den Scanner direkt an – verwaltet aber immer nur eine Seite.
+
+'''Verbesserte Versionen / Zusatzfunktionalität'''
+
+Omnivore_js 1.4.4
+
+* Entfernen überschüssiger Zeichen bei eingegebenen Stichworten (Eingabetaste am Ende etc.)
+* Konfigurierbares Limit für Länge der Dateinamen importierter Dateien, darüber Warnung und Info an Nutzer.
+* Automatische Wegarchivieren von Dokumenten nach dem Import, anhand konfigurierbarer Regeln (verbessert den Workflow erheblich)
+* Verwendung sinnvoller Dateinamen für die Temporärdateien welche beim Anschauen der in Omnivore enthaltenen Dokumente erzeugt werden. Elemente dieser Dateinamen sind konfigurierbar. Damit sofort verwendbare Benennung von e-Mail attachments, ohne Notwendigkeit manueller Umbenennungen.
+
+'''Praktischer Tip zur Konfiguration von Omnivore_js 1.4.4'''
+
+Maximale Länge des Dateinamens eingehender Dateien: 80<br />
+ (auf Windows-Systemen)
+
+Konfigurierbarer Dateienamen, z.B.:
+
+Konstante: Praxis_Meier_
+
+ID, Name, Vorname, Geburtsdatum des Patienten:<br />
+ jeweils Anzahl der Zeichen: 64<br />
+ Nachfolgendes Zeichen: _
+
+Titel und/oder Stichwortliste<br />
+ (je nachdem, ob die Nutzer vorab die Titel/Namen der eingehenden Dateien geändert haben,<br />
+ oder die Stichwortliste in Omnivore gepflegt haben):<br />
+ Anzahl der Zeichen: 80
+
+Alle anderen Felder freilassen.
+
+Das erzeugt einen Dateinamen wie:
+
+<tt>Praxis_Meier_262_Musterpatient_Max_01.02.1934_D Dossier von HA Dr. Müller.pdf</tt>
+
+Limitation/ToDo: Für Dateinamen unzulässige Zeichen in Titel oder Stichworten werden ausgefiltert. In den konfigurierten Füll- und Trennzeichen jedoch noch nicht, man könnte also als Trennzeichen tatsächlich einen / eintragen – das führt dann erst im Betrieb zur Fehlermeldung “ungültiger Pfad” etc.
+
+'''Geplante Erweiterungen'''
+
+Eingabefelder für Suchtexte in Titel, Stichworte<br />
+ Volltextindex und Volltextsuche<br />
+ Drag&amp;Drop hinaus zu Thunderbird<br />
+ (Drag&amp;Drop hinein und hinaus zu Outlook, später)
+
+Weitere Informationen:
+
+[http://www.jsigle.com/prog/elexis http://www.jsigle.com/prog/elexis]<br />
+ www.elexis-forum.ch, dort Thread zu e-mail Versand von Dokumenten, oder Forum News / Einträge von jsigle zu Omnivore ab ca. März/April 2013.
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.omnivore
+| name=Omnivore
+| description=Einfaches Dokumentenmanagementsystem zum filesystemzentrierten Import und flacher Speicherung
+| category=feature
+| license=EPL
+| first_commit_date=2007-06-24
+| first_commit_author=rgw_ch
+| responsible=weirich@elexis.ch
+| type=Dokumentenverwaltung
+
+
+}}

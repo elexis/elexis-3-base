@@ -1,0 +1,1 @@
+Erlaubt es auf einfache Art anhand der in der Schweiz öffentlich zugängliche Daten für Medikamenten, alle zugelassenen Medikamente, MiGel und einige andere Produkte in Elexis einzubinden und verrechnen zu können. Basiert auf den Daten von [[http://ch.oddb.org/| ch.oddb.org]].

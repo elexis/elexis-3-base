@@ -1,0 +1,19 @@
+
+
+{{PluginInfo
+|plugin=at.medevit.ch.artikelstamm.ui
+| eingelesen=von /opt/elexis-2.1.7-rm/medevit/at.medevit.ch.artikelstamm.ui/opt/src/doc_de.wiki/at.medevit.ch.artikelstamm.ui.textile am 25.03.2013
+| license=EPL
+| first_commit_date=unknown
+| first_commit_author=unknown
+
+== Per doc_site.rb generierte Information ==
+
+plugin
+| eingelesen=von /medevit/at.medevit.ch.artikelstamm.ui/at.medevit.ch.artikelstamm.ui.textile am 25.03.2013
+| license=EPL
+| first_commit_date=unknown
+| first_commit_author=unknown
+
+
+}}

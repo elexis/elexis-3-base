@@ -1,0 +1,18 @@
+[[Kategorie:Laboranbindung]]
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.laborimport.bioanalytica
+| name=Laborimport Bioanalytica
+| description=Laborimport Labor Bioanalytica HL7
+| category=feature
+| license=EPL
+| first_commit_date=2007-11-01
+| first_commit_author=danlutz
+| responsible=support@medelexis.ch
+| type=Laboranbindung
+
+
+}}

@@ -1,0 +1,71 @@
+<table style="width:100%; border: 1px solid; ">
+<tr>
+		<td style="width:150px;">Name des  Plugins:</td>
+		<td>At.medevit.elexis.swissmedic </td>
+	</tr>
+<tr>
+		<td style="width:150px;">Plugin Kategorie</td>
+		<td>Decision-Support</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Beschreibung:</td>
+		<td>[http://www.swissmedicinfo.ch  Swissmedic] Arzneitmittelinformation ('''A'''rzneimittel'''i'''nformations-'''P'''ublikationspplattform '''S'''wissmedic AIPS)</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Franz Marty <mesmeta@bluewin.ch> </td>
+	</tr>
+	<tr>
+		<td>Plugin_Version:</td>
+		<td>3.0.0 </td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>12.03.2014 </td>
+	</tr>
+	<tr>
+		<td>Abh&auml;ngigkeiten:</td>
+		<td>at.medevit.elexis.decision.feature.feature.group </td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux </td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+
+
+== Installation / Deinstallation==
+Installation via Service-Abo Medelexis. Der 'Interaktionscheck Basis' ist ein Plugin der Kategorie 'Decision Support'. --> OpenSource Location noch eintragen
+
+
+== Konfiguration ==
+Keine Konfiguration notwendig
+
+
+== Einführung ==
+Swissmedic, die schweizerische Beh&ouml;rde f&uuml;r Zulassung von Medikamenten, stellt seit Mitte 2013 einen 'Deep-Link' zur direkten Anfrage der Fachinformation f&uuml;r Medikamente zur Verf&uuml;gung. Die Swissmedic verf&uuml;gt über eine vollst&auml;ndigen Sammlung der Fachinformation f&uuml;r beh&ouml;rdlich zugelassene Medikamente.
+
+
+== Funktionen ==
+Die Fachinformation zu einem Medikament kann folgendermassen nachgeschlagen werden:
+* Markieren des Medikamentes, welches nachgeschlagen werden soll, in der View 'Fixmediaktion' oder 'Therapieplan' (1)
+* Klick auf das Swissmedic-Icon im Menü der View oben re  (2) lanciert den Browser-Aufruf
+* Der Webbrowser bringt die Fachinformation von Swissmedi (3)
+
+
+'''Abbildung 1: Browser-Aufruf aus der Fixmedikation / Therapieplan'''
+
+[[Datei:swissmedic1.jpg|600px]]
+
+
+[[Category:Decision support]]

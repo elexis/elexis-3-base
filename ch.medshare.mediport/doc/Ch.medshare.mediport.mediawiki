@@ -1,0 +1,29 @@
+[[Kategorie:Finanzen (proprietär)]]
+<!--  Text above may be removed without notice. Start editing in the next line -->
+
+== Mediport-Uebermittlung ==
+
+Mit den dazugehörenden Plugins können Rechnungen via separat zu installierenden MediPortCommunicator an die Mediport übermittelt werden. Mediport ist kostenpflichtig, benötigt je eine Lizenz von Mediport und Medshare und einen Lizenz-Schlüssel. Entscheidend ist die richtige Konfiguration nach Anleitung.
+
+Mit dem Plugin kann bei jedem Kunden auch eine Rechnung via Mediport eröffnet werden, auf Wunsch auch bei jedem parallel zu anderen Rechnungen per Post, Aerztekasse oder wen auch immer; dh man bleibt damit flexibel.
+
+ZB erleben wir hier, dass die Sozialämter lieber die Rechnung direkt bekommen und ja auch zahlen und nicht vom Patienten die Mediport-Rechnugns-Kopie erhalten (oder auch nicht).
+
+* Liste der Mediport Krankenkassen [https://www.medidata.ch/md/cms/web_support/hilfsmittel/versicherer/versicherer_a.html?sess=new|hier auf der Mediport-Webseite ]
+
+== Gebrauch ==
+
+* Bei der Erstellung eines Falls kann, wenn Mediport installiert ist, auch ein 'Mediport'-KVG- od -UVG-Fall ausgewählt werden. Das ist schon die ganzes Kunst.
+    
+* Beim Abrechnen .. 
+
+== Installation und Einstellungen des MediPortCommunicators ==
+
+* ..erfolgt einmalig und ist eher eine Sache für den Supporter.
+* Vor jedem Jahreswechsel müssen Zertifikate und Passwörter von einer neuen, von Medidata automatisch zugeschickten CD einlesen werden. S.a [https://www.medidata.ch/md/cms/system/galleries/download/support/hilfsmittel/zertifikat_anleitungen/Medelexis_de.pdf| Anleitung von medidata]
+
+== Probleme ==
+
+* mediport ist nicht recht linux-tauglich, auch für linux-server-praxen: die dateipfade können nicht im linuxformat gespeichert werden.
+* Ausdruck 'Praxis Dr. Schönbucher', zweite Zeile 'Unbekannt' auf den Mediport-Rechnungen im Gegensatz zu den Papierrechnungen, die wir in der Praxis druckten.
+** Lösung: In den Kontaktangaben des Mandanten fehlte die Angabe des Vornamens! Dies hatten wir sonst nicht bemerkt, da dieser Eintrag sonst nicht benützten.

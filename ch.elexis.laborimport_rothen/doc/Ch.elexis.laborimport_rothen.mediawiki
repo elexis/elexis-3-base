@@ -1,0 +1,20 @@
+[[Kategorie:Laboranbindung]]
+Copyright 2010 © Niklaus Giger &lt;niklaus.giger@member.fsf.org&gt;<br />
+ Automatically generated. See Laborimport-Template/whatisit.textile
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.laborimport_rothen
+| eingelesen=von /elexis-base/ch.elexis.laborimport_rothen/whatisit.textile am 25.03.2013
+| name=Laborimport Rothen
+| description=Laborimport Rothen
+| category=feature
+| license=EPL
+| first_commit_date=2010-12-25
+| first_commit_author=Niklaus
+| responsible=support@medelexis.ch
+| type=Laboranbindung
+
+
+}}

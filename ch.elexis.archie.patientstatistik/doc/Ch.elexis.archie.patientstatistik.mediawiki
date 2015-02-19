@@ -1,0 +1,18 @@
+[[Kategorie:Statistik]]
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.archie.patientstatistik
+| name=Statistik pro Patient
+| description=Anzeige von statistischen Daten pro Patient
+| category=feature
+| license=EPL
+| first_commit_date=2009-11-21
+| first_commit_author=gerry.weirich
+| responsible=weirich@elexis.ch
+| type=Statistik
+
+
+}}

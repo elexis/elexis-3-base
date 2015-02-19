@@ -1,0 +1,15 @@
+[[Kategorie:Statistik]]
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.icpc.fire
+| name=ICPC-Fire
+| description=Fire Exporter zum ICPC-Modul
+| category=feature
+| responsible=weirich@elexis.ch
+| type=Statistik
+
+
+}}

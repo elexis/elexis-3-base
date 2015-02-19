@@ -1,0 +1,1 @@
+In Befunde werden beliebige Messwerte ausserhalb der Labordatenbank gespeichert.

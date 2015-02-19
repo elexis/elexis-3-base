@@ -1,0 +1,31 @@
+[[Kategorie:KG-Führung]]
+Dieses Plug-In wurde von der Medelexis AG und Dr. Peter Schönbucher im Januar 2014 für die kommende Version 3.0 von Elexis unter der Eclipse Public License als OpenSource freigegeben.
+
+Das Plugin org.iatrix stellt die Krankengeschichte (KG) Iatrix dar.
+
+Iatrix war ursprünglich ein eigenständiges Projekt mit folgenden Anforderungen, ein Projekt das schliesslich innerhalb Elexis realisiert wurde. (siehe [http://www.iatrix.org/pmwiki.php?n=Iatrix.Iatrix?from=Main.HomePage  hier] )
+Bei der ärztlichen Arbeit mit Patienten sind sollen auf einen Blick folgendes erfassbar sein:
+* Zeitmanagement, dh die Agenda, woraus die Krankengeschichten aufgerufen werden
+* eine übersicht über den aktuellen Patienten, dh eine Problem- oder Auftragsliste kombiniert mit der persönlichen Anamnese und aktuellen Medikation
+* jetzige und letzten Konsultationen
+* samt je zugehörigen Fakturierungsvermerken, was eine Plausibilitätskontrolle ermöglicht
+* Rechnungssaldi, auch als Merkmal für die Beziehung 
+* einfügbare Verknüpfungen führen zu vielfältigen, erweiterbaren Detailansichten in Unterfenstern zb für medizinische Checklisten, Abklärungsprotokollen, Überwachung von Krankheiten, Überweisungen, etc zB: Diabetes-, Schwangerschaftskontrolle, Studienprotokolle, Kriterien für vielfältige Diagnosen, BD- od INR-Verlauf, Laborübersicht uvam.
+
+Details dazu auf [http://www.iatrix.org/pmwiki.php?n=Elexishilfe.KGIatrix iatrix.org hier ]!
+<br />
+<br />
+
+[[Image:iatrix.png]]
+
+{{PluginInfo
+|plugin=org.iatrix
+| name=KG Iatrix
+| description=Iatrix KG mit persönlicher Anamnese und Problemliste
+| category=feature
+| license=epl
+| first_commit_date=2011-03-31
+| first_commit_author=Niklaus
+| responsible=support@iatrix.org
+| type=KG-Führung
+}}

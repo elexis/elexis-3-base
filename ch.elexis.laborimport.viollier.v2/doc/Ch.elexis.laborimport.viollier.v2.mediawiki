@@ -1,0 +1,20 @@
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=com.hilotec.elexis.kgview
+| license=EPL
+| first_commit_date=unknown
+| first_commit_author=unknown
+
+== Per doc_site.rb generierte Information ==
+
+plugin
+| eingelesen=von /elexis-distrib/ch.elexis.laborimport.viollier.v2/com.hilotec.elexis.kgview.textile am 25.03.2013
+| license=EPL
+| first_commit_date=2012-07-17
+| first_commit_author=tony
+
+
+}}

@@ -1,0 +1,15 @@
+[[Kategorie:Statistik]]
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=ch.unibe.iam.scg.archie
+| name=Archie
+| description=Basismodul für verschiedene Statistikfunktionen
+| category=feature
+| responsible=info@designchuchi.ch
+| type=Statistik
+
+
+}}

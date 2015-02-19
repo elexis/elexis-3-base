@@ -1,0 +1,14 @@
+'''Warning: Skipped file /opt/elexis-2.1.7-rm/elexis-base/ch.elexis.laborimport.analytica/doc/ch.elexis.laborimport.analytica.tex as we could not transform it using pandoc'''
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.laborimport.analytica
+| eingelesen=von /elexis-base/ch.elexis.laborimport.analytica/doc/ch.elexis.laborimport.analytica.tex am 25.03.2013
+| license=EPL
+| first_commit_date=2010-04-25
+| first_commit_author=niklausgiger
+| remarks=Other documents are doc/installation_openvpn_redhat.tex
+
+
+}}

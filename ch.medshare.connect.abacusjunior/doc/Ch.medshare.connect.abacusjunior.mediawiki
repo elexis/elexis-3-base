@@ -1,0 +1,18 @@
+[[Kategorie:Geräteanbindung]]
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=ch.medshare.connect.abacusjunior
+| name=Abacus Junior Laborgerätanbindung
+| description=Verbindung von Elexis zum Abacus Junior
+| category=feature
+| license=EPL
+| first_commit_date=2008-07-28
+| first_commit_author=rgw_ch
+| responsible=support@medelexis.ch
+| type=Geräteanbindung
+
+
+}}

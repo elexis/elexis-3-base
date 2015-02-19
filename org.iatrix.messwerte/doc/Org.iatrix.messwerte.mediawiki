@@ -1,0 +1,21 @@
+[[Kategorie:KG-Führung (proprietär)]]
+{{ProprietaryPlugin}}<!--  Text above may be removed without notice. Start editing in the next line -->
+'''Warning: Skipped file /opt/elexis-2.1.7-rm/medelexis-trunk/org.iatrix.messwerte/doc/design.odg as we could not transform it using pandoc'''
+
+
+
+{{PluginInfo
+|plugin=org.iatrix.messwerte
+| eingelesen=von /medelexis-trunk/org.iatrix.messwerte/doc/design.odg am 29.03.2013
+| name=Messwerte Iatrix
+| description=Verbesserte Labordarstellung (Gruppierungen und nur Parameter, von denen Werte existieren)
+| category=feature
+| license=medelexis
+| first_commit_date=2009-08-23
+| first_commit_author=unknown
+| responsible=support@iatrix.org
+| type=KG-Führung
+| remarks=Other documents are doc/CodeRelations.odg
+
+
+}}

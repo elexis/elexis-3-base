@@ -1,0 +1,81 @@
+[[Category:Statistik]]
+
+
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0.a20140408-1247</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Statistik</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>23. Juni 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>Proprietär</td>
+	</tr>
+</table>
+
+
+
+==== Zusammenfassung ====
+
+Das Plugin Statistics.elexis gibt in der vorliegenden Version zwei Auswertungen aus: eine Zusammenstellung der verursachten Kosten pro Patient über einen bestimmten Zeitraum und eine weitere über die verursachten Kosten aller Patienten einer bestimmten Kohorte.
+
+==== Ziel ====
+
+Heute muss sich der Arzt im Klaren sein über
+
+# verursachte Kosten seiner Patienten zum Beispiel Top Ten vom 1. Januar bis heute.
+# Kosten einer bestimmten Altersgruppe, zum Beispiel einer Kohorte von je f&quot;unf Jahrgängen: Wieviel verrechne ich f&quot;ur die Frauen resp. Männer der Altersgruppe von 20 bis 24 Jahren .
+
+So lässt sich abschätzen, welche Patienten überproportional viel oder wenig zum Kostenvolumen beitragen. Die Kosten pro Altersgruppe werden im Rahmen der ANOVA-Statistik analysiert durch die Santesuisse.
+
+==== Installation ====
+
+Das Plugin wird in den Ordner -Elexis-plugins kopiert. Nach dem Neustart von Elexis steht eine neue View ''Statistics OutputView'' zur Verfügung.
+
+===== Konsultationsauswertung =====
+
+Sie wählen ''Anfangsdatum'', ''Enddatum'' und ''Kohortengrösse'', also die Anzahl der Jahrgänge, welche aggregiert werden sollten. Patienten ohne gültiges Geburtsdatum oder Geschlecht werden ignoriert.
+
+===== Kosten pro Patient =====
+
+Sie wählen ''Anfangsdatum'' und ''Enddatum''. Ein Klick auf den Spaltenkopf sortiert die zugehörige Spalte.
+
+==== Export ====
+
+Die aufbereiteten Daten werden abgespeichert als<br />
+ csv – Datei unter “Kosten_pro_Patient Datum”. Sie können in Tabellenkalkulationsprogrammmen wie OpenOffice importiert und bei Bedarf darin weiter analysiert werden.
+
+==== Weiterentwicklung ====
+
+Weitere Fragestellungen sind willkommen und dürfen an den Autor herangetragen werden.
+
+[[Image:Waelti.Statistics:kohorte.png|image]]<br />
+ [Abb1]
+
+[[Image:Waelti.Statistics:patient.png|image]]<br />
+ [Abb2]

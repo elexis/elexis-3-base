@@ -1,0 +1,98 @@
+[[Category:KG-Führung]]
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0.v20140328-2024</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>KG-Führung</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>Importiert in Dokumentenverzeichnis</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>11. Juni 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+
+== Globales Eingangsfach (global inbox) ==
+
+
+Dieses Plugin überwacht ein Verzeichnis auf der Festplatte und importiert alle dorthin gespeicherten Dateien in die Dokumentenverwaltung von Elexis.
+
+
+== Systemvoraussetzung: ==
+
+
+Ein Dokumentverwaltungs-Plugin in Elexis, z.B. Omnivore plus oder Omnivore direct.
+
+
+== Konfiguration ==
+
+
+Erstellen Sie ein Verzeichnis, in das die Importe gespeicher werde sollen, und stellen Sie das Eingangsfach darauf ein.
+
+[[Image:ch.elexis.global_inbox:inbox1.png|Abbildung 1|frame|none]]
+
+Nach kurzer Zeit werden in diesem Eingangsverzeichnis automatisch Unterverzeichnise angelegt, die den Kategorien Ihres Dokumentverwaltungssystems entsprechen.
+
+
+== Bedienung ==
+
+
+Das Eingangsfach-Fenster zeigt den Inhalt des EIngangsverzeichnisses
+
+[[Image:ch.elexis.global_inbox:inbox2.png|Abbildung 2|frame|none]]
+
+[[Image:inbox3.png|Abbildung 3|frame|none]]
+
+Wenn Sie irgendein Dokument, z.B. eine E-Mail oder einen E-Mail-Anhang etc. im Eingangsverzeichnis speichern, dann erscheint dieses Dokument nach einiger Zeit auch in der Eingangsfach-View (Das Plugin schaut standardmässig alle paar Minuten nach, ob neue Dateien angekommen sind). Allerdings kann das System bei solchen Dokumenten ja nicht wissen, zu welchem Patienten sie gehören. Deswegen landen sie in einem “universalen” Eingangsfach, bis sie manuell zugeordnet werden. Sie können bereits beim Speichern die Dokumentkategorie festlegen, indem Sie das Dokument im entsprechenden Unterverzeichnis speichern.
+
+Die Eingansgfach-View hat oben folgende Buttons:
+
+* Zuordnen: Wenn ein Patient und ein Dokument markiert sind, dann wird das Dokument diesem Patienten zugeordet, also in dessen Dokumentverwaltung gespeichert und aus der Inbox geloscht.
+
+* Ansehen: Damit können Sie ein Dokument betrachten und auch ggf. noch ändern, wenn es änderbar ist. Dies geht nur, wenn im System ein Programm vorhanden ist, um diesen Dokumenttyp zu öffnen.
+
+* Löschen: Damit wird das aktuell markierte Dokument unwiderruflich gelöscht.
+
+* Neu einlesen: Damit können Sie die Eingangsfach-View anweisen, jetzt sofort nach neuen Dokumenten zu sehen, anstatt erst beim nächsten “Heartbeat”.
+
+(Mit Rechtsklick auf einem Dokument erhalten Sie dieselben Optionen)
+
+Wenn wir nun auf den “Zuordnen” Button klicken, erscheint eine Rückfrage:
+
+
+[[Image:ch.elexis.global_inbox:inbox4.png||Abbildung 4|frame|none]]
+
+
+Wenn wir hier mit OK bestätigen, verschwindet das Dokument aus der Inbox und wird ins Omnivore (Oder Ihr sonstiges Dokumentverwaltungs-Plugin) transferiert und dem entsprechenden Patienten zugeordnet.
+
+Sie können den Zuordnungsprozess automatisieren, indem Sie das Dokument beim Speichern entsprechen benennen. Das Eingangsfach wird jedes Dokument, dessen Name mit einer Nummer, gefolgt von einem Unterstrich und dem eigentlichen Namen besteht, dem Patienten mit dieser Nummer zuordnen. Wenn Sie also ein Dokument als
+
+<tt>234_BerichtChirurgie.pdf</tt>
+
+im Eingangsverzeichnis speichern, dann wird dieses Dokument automatisch dem Patienten mit der Nummer 234 unter dem Titel “BerichtChirurgie” zugewiesen.

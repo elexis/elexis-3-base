@@ -1,0 +1,82 @@
+[[Category:Sonstige]]
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Sonstige</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>11. Juni 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+[[Kategorie:Organisation]]
+== Zweck ==
+
+Ein plugin um Benutzer-Perspektiven zu speichern, laden und löschen.
+
+Contributed by Bernhard Rimatzki, Thorsten Wagner, Pascal Proksch, Sven Lüttmann.
+
+== Gebrauch ==
+
+Das Plug-In fügt unter Fenster..Perspektive drei neue Aktionen an:
+
+* Export Perpektive
+* Import Perpektive
+* Delete Perpektive
+
+== Tests ==
+
+Manuelle Tests:
+
+# Fenster neu arrangieren
+# Perspektive speichern (als Test1)
+# Fenster verändern
+# Perspektive laden (Test1)
+## Überschreiben ablehnen
+## Fenster dürfen sich nicht geändert haben
+# Perspektive laden (Test1)
+## Überschreiben akzeptiere
+## Fenster müssen dem gespeicherten Format entsprechen haben
+# Perspektive löschen
+## Test1 auswählen
+## Rückfrage muss kommen
+## Löschen ablehnen
+# Perspektive löschen
+## Test1 kann nochmals auswählt werden
+## Löschen akzeptieren
+# Perspektive löschen
+## Test1 ist gelöscht und kann deshalb nicht angewählt werden
+
+== TODO: ==
+
+* Internationalize PlugIn-Command-IDs
+
+
+
+}

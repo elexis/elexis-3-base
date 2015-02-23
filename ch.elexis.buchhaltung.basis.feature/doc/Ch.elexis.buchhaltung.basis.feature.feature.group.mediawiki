@@ -89,7 +89,7 @@ Diese Auswertung (Vgl. Abb 2) liefert alle Ausstände zu einem anzugebenden Stic
 
 '''Abbildung 2: Offene Posten'''
 
-[[Image:ch.elexis.buchhaltung.basis:buch2.png|image|800px]] 
+[[Image:ch.elexis.buchhaltung.basis_buch2.png|image|800px]]
 
 
 ==== Rechnungen nach Fälligkeitsdatum ====
@@ -102,4 +102,4 @@ Patienten-Nr / Rechnung-Nr / Fällig am / Betrag
 Die Abbildung 3 zeigt eine grafische Darstellung ''(noch ausführen)''
 '''Abbildung 3: Betrags-Vergleich der verschiedenen Kategorien von Ausständen'''
 
-[[Image:ch.elexis.buchhaltung.basis:buch3.png|image|800px]]
+[[Image:ch.elexis.buchhaltung.basis_buch3.png|image|800px]]

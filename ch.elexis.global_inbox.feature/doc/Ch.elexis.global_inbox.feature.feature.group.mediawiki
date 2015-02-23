@@ -55,7 +55,7 @@ Ein Dokumentverwaltungs-Plugin in Elexis, z.B. Omnivore plus oder Omnivore direc
 
 Erstellen Sie ein Verzeichnis, in das die Importe gespeicher werde sollen, und stellen Sie das Eingangsfach darauf ein.
 
-[[Image:ch.elexis.global_inbox:inbox1.png|Abbildung 1|frame|none]]
+[[Image:ch.elexis.global_inbox_inbox1.png|Abbildung 1|frame|none]]
 
 Nach kurzer Zeit werden in diesem Eingangsverzeichnis automatisch Unterverzeichnise angelegt, die den Kategorien Ihres Dokumentverwaltungssystems entsprechen.
 
@@ -65,7 +65,7 @@ Nach kurzer Zeit werden in diesem Eingangsverzeichnis automatisch Unterverzeichn
 
 Das Eingangsfach-Fenster zeigt den Inhalt des EIngangsverzeichnisses
 
-[[Image:ch.elexis.global_inbox:inbox2.png|Abbildung 2|frame|none]]
+[[Image:ch.elexis.global_inbox_inbox2.png|Abbildung 2|frame|none]]
 
 [[Image:inbox3.png|Abbildung 3|frame|none]]
 
@@ -86,7 +86,7 @@ Die Eingansgfach-View hat oben folgende Buttons:
 Wenn wir nun auf den “Zuordnen” Button klicken, erscheint eine Rückfrage:
 
 
-[[Image:ch.elexis.global_inbox:inbox4.png||Abbildung 4|frame|none]]
+[[Image:ch.elexis.global_inbox_inbox4.png||Abbildung 4|frame|none]]
 
 
 Wenn wir hier mit OK bestätigen, verschwindet das Dokument aus der Inbox und wird ins Omnivore (Oder Ihr sonstiges Dokumentverwaltungs-Plugin) transferiert und dem entsprechenden Patienten zugeordnet.

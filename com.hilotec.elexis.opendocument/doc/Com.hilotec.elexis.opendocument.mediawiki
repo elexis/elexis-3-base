@@ -10,7 +10,7 @@ Zusaetzliche Features:
 
 Ausgangspunkt für alle Text-Dokumente sind jeweils Text-Vorlagen ([http://de.wikipedia.org/wiki/OpenDocument OpenDocument] Textdateien), welche wie folgt aussehen:
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_1.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_1.png|frame|none]]
 
 Die Platzhalter, welche zwischen [] oder {} stehen, werden jeweils durch den aktuellen Inhalt, z.B. den Namen des ausgewählten Patienten, ersetzt.
 
@@ -40,15 +40,15 @@ Unter Datei..Einstellungen..Hilotec-Opendocument kann man
 * zu übergebende Parameter zum Drucken eines Dokumentes<br />
  angeben. Die Vorgabewerte sollten für LibreOffice und OpenOffice in Ordnung sein.
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_2.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_2.png|frame|none]]
 
 Unter Datei..Einstellungen..Textverarbeitung kann man das gewünschte Text-Plugin (falls man mehrere installiert hat) auswählen. Hier muss Hilotec-Opendocument angewählt sein.
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_3.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_3.png|frame|none]]
 
 Unter Datei..Einstellungen..Dokumentvorlage kann man Arbeitsplatz abhängige Vorlagen definieren. Im folgenden gehen wir davon aus, dass Sie diese Möglichkeit nicht nutzen und der Suffix leer ist.
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_4.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_4.png|frame|none]]
 
 === Aufsetzen der DemoDB (optional) ===
 
@@ -61,13 +61,13 @@ Ebenso gehen wir davon aus, dass Sie die elexis-vorlagen unter /pfad/zu/elexis-v
 * Via Fenster..Ansicht..Other die Ansicht “Briefe” öffnen.
 * Im Pull-Down-Menu oben rechts in der Ansicht “Dokument importieren” auswählen.
 * Im Dialog zur Auswahl der Datei /pfad/zu/elexis-vorlagen/ch.elexis/AUF-Zeugnis.odt öffnen.<br />
- [[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_5.png]]
+ [[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_5.png]]
 
 Der Reiter der Ansicht zeigt soviel wie möglich vom Pfad der importieren Datei an.
 
 * Im Pull-Down-Menu oben rechts in der Ansicht “Als Vorlage speichern” auswählen.
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_6.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_6.png|frame|none]]
 
 Beim aufgehenden Dialog (siehe unten) darauf achten, dass
 
@@ -75,7 +75,7 @@ Beim aufgehenden Dialog (siehe unten) darauf achten, dass
 * “Als System-Vorlage” angewählt ist
 * “Alle” Mandanten mit dieser Vorlage arbeiten
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_7.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_7.png|frame|none]]
 
 Falls Sie schon eine Vorlage mit dem gleichen Namen haben, müssen Sie das Überschreiben der Vorlage bestätigen.
 
@@ -84,33 +84,33 @@ Falls Sie schon eine Vorlage mit dem gleichen Namen haben, müssen Sie das Über
 * Wählen Sie einen Patienten aus
 * wählen (oder erstellen) einen Fall
 * wählen (oder erstellen) eine Konsultation, das könnte dann wie folgt aussehen:<br />
- [[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_8.png]]
+ [[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_8.png]]
 
 * erstellen sie eine neue “AUF” mit Hilfe des “+”-Knopfs
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_9.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_9.png|frame|none]]
 
 * wählen Sie die neu erstellte AUF-Zeile aus
 * drücken Sie auf den Drucker-Knopf
 * wählen Sie einen Empfänger und drücken Sie auf “Okay”
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_10.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_10.png|frame|none]]
 
 * Wecheln Sie zu Ansicht “Briefauswahl”
 * Wählen Sie den (neu) erstellen Brief
 * Drücken Sie unten auf den Knop “Laden”. Damit öffnet sich automatisch auch die Ansicht “Brief”
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_11.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_11.png|frame|none]]
 
 * Drücken Sie auf den Knopf “Editor öffnen”. Jetzt sollte sich LibreOffice mit der gewählten Datei öffnen.
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_12.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_12.png|frame|none]]
 
 Wenn Sie nun dieses Dokument mit der Vorlage vergleichen, werden Sie erkennen, dass tatsächlich alle Platzhalter mit den aktuellen Daten gefüllt wurden.
 
 Die Fehlermeldung “Es ist bereits ein Editor geöffnet, diesen bitte erst schliessen” kommt, weil das Hilotec-OpenDocument-Plug-In nur eine einzige offene Textdatei zulässt.
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_13.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_13.png|frame|none]]
 
 Die Entwickler sind sich bewusst, dass die Handhabung für den Benutzer bei weitem nicht optional ist und würden sich freuen, wenn einige Anwender die Weiterentwicklung (mit-)finanzieren könnten.
 
@@ -118,7 +118,7 @@ Die Entwickler sind sich bewusst, dass die Handhabung für den Benutzer bei weit
 
 Falls Sie via “Fenster..Ansicht..Other” die Ansicht Platzhalter öffnen, erhalten Sie eine Liste aller möglichen Platzhalter, welche Sie in Ihren Vorlagen verwenden können.
 
-[[Image:com.hilotec.elexis.opendocument:anleitung_opendocument_14.png|frame|none]]
+[[Image:com.hilotec.elexis.opendocument_anleitung_opendocument_14.png|frame|none]]
 
 Bitte beachten Sie, dass nicht in jeder Vorlage jeder Platzhalter Sinn macht. So sind in einem Arbeitsunfähigkeitszeugniss Rezeptzeilen fehl am Platz.
 

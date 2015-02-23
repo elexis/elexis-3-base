@@ -1,14 +1,14 @@
 [[Kategorie:Geräteanbindung]]
-[[Image:ch.elexis.connect.afinion:elexis_logo.png|image]]<br />
+[[Image:ch.elexis.connect.afinion_elexis_logo.png|image]]<br />
  image
 
-[[Image:ch.elexis.connect.afinion:axis_shield_logo.png|image]]<br />
+[[Image:ch.elexis.connect.afinion_axis_shield_logo.png|image]]<br />
  image
 
-[[Image:ch.elexis.connect.afinion:afinion_device.png|image]]<br />
+[[Image:ch.elexis.connect.afinion_afinion_device.png|image]]<br />
  image
 
-[[Image:ch.elexis.connect.afinion:afinion_logo.png|image]]<br />
+[[Image:ch.elexis.connect.afinion_afinion_logo.png|image]]<br />
  image
 
 == Einführung ==
@@ -45,11 +45,11 @@ Starten Sie Elexis und gehen Sie dort zu Datei-Einstellungen-Datenaustausch- Afi
  '''Im Hintergrund:''' Damit beeinflussen Sie das Verhalten von Elexis. Bei eingeschalteter Option wird die Übertragung im Hintergrund ausgeführt und sie können weiter in Elexis arbeiten. Bei ausgeschalteter Option erscheint die Abb. [fig:connected]<br />
  '''Logging:''' Diese Option verwenden Sie bitte nur auf Anweisung des Supports, ansonsten wird Ihr Computer mit unnötigen Daten gefüllt.
 
-[h] [[Image:ch.elexis.connect.afinion:config.png|image]] [fig:config]
+[h] [[Image:ch.elexis.connect.afinion_config.png|image]] [fig:config]
 
 == Verwendung ==
 
-[h] [[Image:ch.elexis.connect.afinion:toolbarbutton.png|image]] [fig:toolbarbutton]
+[h] [[Image:ch.elexis.connect.afinion_toolbarbutton.png|image]] [fig:toolbarbutton]
 
 Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch ein neuer Toolbar Button ‘Afinion AS100 Analyzer’ (Abb. [fig:toolbarbutton]).
 
@@ -59,14 +59,14 @@ Ablauf:
 # Messwert auf dem Afinion quittieren (allenfalls Patienten Nummer oder Namen eingeben)
 # Erst dann den Toolbar Button klicken um die Verbindung mit dem Gerät herzustellen.
 
-[h] [[Image:ch.elexis.connect.afinion:connected.png|image]] [fig:connected]
+[h] [[Image:ch.elexis.connect.afinion_connected.png|image]] [fig:connected]
 
 Wenn Sie die Probe auf dem Afinion Gerät quittiert haben, können Sie das Resultat mit einem Klick auf den Toolbar Button abholen. Wenn Elexis ein Resultat empfängt, wird versucht dieses einem Patienten zuzuordnen. In Abb. [fig:messwert] ist ersichtlich, wie der Patient zugeordnet wird (Beispiel: Muster Franz sind die Angaben aus Elexis und MUSTER wurde auf dem Afinion eingegeben). Kann der Patient nicht automatisch zugewiesen werden folgt das Fenster mit der Patientenselektion.
 
 '''Wichtig:'''<br />
  Es werden nur Werte an Elexis übertragen, welche am aktuellen Tag gemessen wurden. Ältere Messwerte müssen Sie manuell in Elexis eingeben.
 
-[h] [[Image:ch.elexis.connect.afinion:messwert.png|image]] [fig:messwert]
+[h] [[Image:ch.elexis.connect.afinion_messwert.png|image]] [fig:messwert]
 
 == Anweisungen zum Afinion ==
 

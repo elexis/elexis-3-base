@@ -67,7 +67,7 @@ Die erste Spalte der Tabelle deklariert nun das Elternelement der betreffenden L
 
 Die so erstellte Tabelle kann nun nach Elexis importiert werden: Sofern das Privatrechnung-Plugin installiert ist, erscheint in der ‘Codes’ View (in der Perspektive ‘Leistungen’) die entsprechende Seite ‘Privatrechnung’ (S. Abb [fig:privatrechnung1].
 
-[[Image:ch.elexis.privatrechnung:privatrechnung1.png|image]] [fig:privatrechnung1]
+[[Image:ch.elexis.privatrechnung_privatrechnung1.png|image]] [fig:privatrechnung1]
 
 Wenn Sie im ViewMenu (Dreieck rechts oben) auf ‘Import’ Klicken, können Sie die csv- oder xls-Tabelle mit Ihrem Codesystem einlesen. <sup>[[#fn1|1]]</sup> Danach stehen Ihnen Ihre selbstdefinierten Leistungen wie jedes andere Leistungssystem zur Verfügung.
 
@@ -75,12 +75,12 @@ Wenn Sie im ViewMenu (Dreieck rechts oben) auf ‘Import’ Klicken, können Sie
 
 Oft werden Sie für Ihr eigenes Codesystem auch ein eignes Abrechnungssystem benötigen. (Wenn Sie Rechnungen beispielsweise nicht als Tarmed-Rechnungen, sondern mit selbstdefinierten Rechnungsformularen ausdrucken wollen). Hierzu definieren Sie ein neues Abrechnungssystem mit dem gewünschten Namen (S. Abb. [fig:privatrechnung2])
 
-[[Image:ch.elexis.privatrechnung:privatrechnung2.png|image]]<br />
+[[Image:ch.elexis.privatrechnung_privatrechnung2.png|image]]<br />
  [fig:privatrechnung2]
 
 Falls Sie selbstdefinierte Rechnungsformulare verwenden wollen, müssen Sie ausserdem noch festlegen, welche Formatvorlagen für diese Rechnungsformulare vorgegeben sind (s. Abb [fig:privatrechnung3]) und welche Daten für die Einzahlungsscheine notwendig sind.
 
-[[Image:ch.elexis.privatrechnung:privatrechnung3.png|image]]<br />
+[[Image:ch.elexis.privatrechnung_privatrechnung3.png|image]]<br />
  [fig:privatrechnung3]
 
 == Druckformatvorlagen ==
@@ -92,11 +92,11 @@ aufgelistet. Sie können die Darstellung also durch Plazierung der Tabulatoren i
 
 0.5
 
-[[Image:ch.elexis.privatrechnung:privatrechnung5.png|frame|none|alt=image|caption image]]
+[[Image:ch.elexis.privatrechnung_privatrechnung5.png|frame|none|alt=image|caption image]]
 
 0.5
 
-[[Image:ch.elexis.privatrechnung:privatrechnung6.png|frame|none|alt=image|caption image]]
+[[Image:ch.elexis.privatrechnung_privatrechnung6.png|frame|none|alt=image|caption image]]
 
 == Anwendung ==
 

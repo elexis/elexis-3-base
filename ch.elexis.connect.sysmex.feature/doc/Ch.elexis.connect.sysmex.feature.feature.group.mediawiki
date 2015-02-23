@@ -42,7 +42,7 @@
 ex_logo.png|image]]<br />
  image
 
-[[Image:ch.elexis.connect.sysmex:sysmex_device.png|image]]<br />
+[[Image:ch.elexis.connect.sysmex_sysmex_device.png|image]]<br />
  image
 
 == Einführung ==
@@ -97,7 +97,7 @@ Die serielle Datenkommunikation ist im Sysmex standardmässig inaktiv. Damit das
 
 Starten Sie Elexis und gehen Sie dort zu Datei-Einstellungen-Datenaustausch-Sysmex (S. Abb. [fig:config]).
 
-[h] [[Image:ch.elexis.connect.sysmex:config.png|image]] [fig:config]
+[h] [[Image:ch.elexis.connect.sysmex_config.png|image]] [fig:config]
 
 Hier wählen Sie Ihr Gerätemodell (KX-21, KX-21N oder pocH-100i) aus und stellen den seriellen Port, sowie die Schnittstellenparameter ein. Die Werte Geschwindigkeit<sup>[[#fn3|3]]</sup>, Daten-Bits<sup>[[#fn4|4]]</sup>, Parität<sup>[[#fn5|5]]</sup> und Stop-Bits<sup>[[#fn6|6]]</sup> müssen mit den Einstellungen auf dem Sysmex Gerät übereinstimmen (siehe vorheriges Kapitel).
 
@@ -115,13 +115,13 @@ Spezialfall KX-21:<br />
 
 Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch ein neuer Toolbar Button ‘Sysmex’ (Abb. [fig:toolbarbutton]). Klicken Sie auf diesen Knopf um die Verbindung mit dem Gerät herzustellen.
 
-[h] [[Image:ch.elexis.connect.sysmex:toolbarbutton.png|image]] [fig:toolbarbutton]
+[h] [[Image:ch.elexis.connect.sysmex_toolbarbutton.png|image]] [fig:toolbarbutton]
 
 Die Verbindung bleibt bestehen bis ein Wert über-tragen wurde oder das Timeout gemäss Konfiguration abgelaufen ist. Das Sysmex Gerät benötigt für die Tests ca. 45 Sekunden. Jedesmal wenn ein Test abgeschlossen ist, wird das Resultat an den Computer gesendet.
 
 '''Wichtig:''' Der PC muss dabei auf Empfang sein, ansonsten erscheint auf dem Gerät eine Fehlermeldung<sup>[[#fn8|8]]</sup>. Nach der Übertragung eines Messresultates bleibt die Schnittstelle noch für 5 Sekunden aktiv (dies für den Fall, dass manuell mehrere Werte auf dem Gerät für die Übertragung selektiert wurden). Anschliessend wird die Schnittstelle beendet und muss vor der nächsten Messung erneut eingeschaltet werden.
 
-[h] [[Image:ch.elexis.connect.sysmex:connected.png|image]] [fig:connected]
+[h] [[Image:ch.elexis.connect.sysmex_connected.png|image]] [fig:connected]
 
 Wenn Elexis ein Resultat empfängt, muss der Anwender dieses einem Patienten zuordnen. Dazu wird das Elexis Fenster für die Patientenselektion angezeigt.
 
@@ -154,7 +154,7 @@ Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, das
 
 == Kabelspezifikation ==
 
-[h] [[Image:ch.elexis.connect.sysmex:kabel.png|image]] [fig:kabel]
+[h] [[Image:ch.elexis.connect.sysmex_kabel.png|image]] [fig:kabel]
 
 Es wird ein gekreuztes, serielles Kabel benötigt (Nullmodemkabel! gemäss Abb. [fig:kabel])). Das Kabel muss an beiden Enden einen 9-poligen Stecker (weiblich) aufweisen.
 

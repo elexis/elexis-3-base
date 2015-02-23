@@ -13,13 +13,13 @@ Installieren Sie auf dem im Labor befindlichen PC das Plugin wie gewohnt. Verbin
 
 Starten Sie dann Elexis und gehen Sie dort zu Datei-Einstellungen-Datenaustausch-Mythic (S. Abb. [fig:mythic1]).
 
-[h] [[Image:ch.elexis.connect.mythic:mythic2.png|image]] [fig:mythic1]
+[h] [[Image:ch.elexis.connect.mythic_mythic2.png|image]] [fig:mythic1]
 
 Hier stellen Sie den gewählten seriellen Port ein und die Schnittstellenparameter ein.
 
 == Verwendung ==
 
-[h] [[Image:ch.elexis.connect.mythic:mythic1.png|image]] [fig:mythic2]
+[h] [[Image:ch.elexis.connect.mythic_mythic1.png|image]] [fig:mythic2]
 
 Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch ein neuer Button ‘Mythic’ (Abb. [fig:mythic2]. Klicken Sie auf diesem Knopf, dann erscheint zunächst eine Dialogbox, in der Sie eingeben müssen, welchem Patienten die nächsten Resultate zugeordnet werden sollen. Danach wird die Verbindung hergestellt. Die Verbindung bleibt bestehen (Der Knopf erscheint eingerastet), bis entweder die Daten empfangen worden sind, oder 5 Minuten verstrichen sind, ohne dass Daten übertragen wurden, oder Sie den Knopf wieder manuell auslösen.
 
@@ -27,7 +27,7 @@ Wichtig: In der aktuellen Version muss das Senden vom Mythic zum PC manuell ausg
 
 == Kabelspezifikation ==
 
-[htbp] [[Image:ch.elexis.connect.mythic:kabel.png|image]] [fig:kabel]
+[htbp] [[Image:ch.elexis.connect.mythic_kabel.png|image]] [fig:kabel]
 
 Es wird ein gerades, serielles Kabel benötigt (gemäss Abb. [fig:kabel])). Das Kabel muss an beiden Enden einen 9-poligen Stecker (1x weiblich und 1x männlich) aufweisen.
 

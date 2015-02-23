@@ -49,14 +49,14 @@ Dieses Plugin ermöglicht eine einfache Nachrichtenübermittlung zwischen versch
 == Nachricht erstellen ==
 
 
-[[Image:ch.elexis.messages:newmsg.png|image]]
+[[Image:ch.elexis.messages_newmsg.png|image]]
 
 
 Wenn das Plugin installiert ist, erscheint in der Haupt-Werkzeugleiste von Elexis der Knopf ‘Nachricht erstellen’ (s. Bild). Klick auf dieses Werkzeug öffnet den Dialog ‘Nachricht erstellen’:
 
 Mit Klick auf ‘senden’ wird die Nachricht abgesendet. Elexis findet automatisch die Arbeitsstation, auf der die Empfängerin eingeloggt ist und zeigt dort die Nachricht an. Wenn der Empfänger zur Zeit nicht eingeloggt ist, erscheint die Nachjricht sofort beim nächsten Einloggen. Wenn sie an mehreren Arbeitsstationen eingeloggt ist, erscheint die Nachricht auf allen.
 
-[[Image:ch.elexis.messages:newmsg3.png|image]]
+[[Image:ch.elexis.messages_newmsg3.png|image]]
 
 Die Empfängerin hat folgende Möglichkeiten:
 

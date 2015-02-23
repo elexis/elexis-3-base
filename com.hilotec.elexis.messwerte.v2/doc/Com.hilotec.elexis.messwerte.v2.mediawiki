@@ -54,7 +54,7 @@ Im Folgenden wird auf die einzelnen Feldtypen genauer eingegangen. Die angegeben
 
 Ein- oder mehrzeiliges Textfeld
 
-[[Image:com.hilotec.elexis.messwerte.v2:strfield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_strfield.png|image]]<br />
  image
 
 === Attribute ===
@@ -71,7 +71,7 @@ Ein- oder mehrzeiliges Textfeld
 
 Zahlenfeld
 
-[[Image:com.hilotec.elexis.messwerte.v2:numfield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_numfield.png|image]]<br />
  image
 
 === Attribute ===
@@ -125,7 +125,7 @@ roundingmode=&quot;HALF_UP&quot; /&gt;</pre>
 
 Feld um Ganzzahlen in einem eingegrenzten Bereich zu erfassen
 
-[[Image:com.hilotec.elexis.messwerte.v2:scalefield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_scalefield.png|image]]<br />
  image
 
 === Attribute ===
@@ -145,7 +145,7 @@ Feld um Ganzzahlen in einem eingegrenzten Bereich zu erfassen
 
 Auswahlfeld mit einer fixen Liste an Auswahlmöglichkeiten
 
-[[Image:com.hilotec.elexis.messwerte.v2:enumfield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_enumfield.png|image]]<br />
  image
 
 === Attribute ===
@@ -167,7 +167,7 @@ Die einzelnen auswählbaren Optionen werden mit dem Unterlement <tt>option</tt> 
 
 Häkchen für ja/nein-Werte
 
-[[Image:com.hilotec.elexis.messwerte.v2:boolfield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_boolfield.png|image]]<br />
  image
 
 === Attribute ===
@@ -182,7 +182,7 @@ Häkchen für ja/nein-Werte
 
 Verweis auf andere Messungen
 
-[[Image:com.hilotec.elexis.messwerte.v2:datafield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_datafield.png|image]]<br />
  image
 
 === Attribute ===
@@ -197,7 +197,7 @@ Verweis auf andere Messungen
 
 Errechnetes Feld
 
-[[Image:com.hilotec.elexis.messwerte.v2:calcfield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_calcfield.png|image]]<br />
  image
 
 === Attribute ===
@@ -232,7 +232,7 @@ Beim Element <tt>formula</tt> muss mit dem Attribut <tt>interpreter</tt> der zu 
 
 Auswahlfeld für ein Datum
 
-[[Image:com.hilotec.elexis.messwerte.v2:datefield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_datefield.png|image]]<br />
  image
 
 === Beispiel ===
@@ -242,7 +242,7 @@ Auswahlfeld für ein Datum
 
 Automatisch generierte Laufnummer für die Messung
 
-[[Image:com.hilotec.elexis.messwerte.v2:counterfield.png|image]]<br />
+[[Image:com.hilotec.elexis.messwerte.v2_counterfield.png|image]]<br />
  image
 
 === Attribute ===

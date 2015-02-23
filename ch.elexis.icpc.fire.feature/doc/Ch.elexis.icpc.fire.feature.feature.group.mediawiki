@@ -74,11 +74,11 @@ Nach Installation des Plugins finden Sie eine ICPC-Perspektive vor. Diese ist nu
 == Ein Problem erstellen und bearbeiten ==
 
 
-[[Image:ch.elexis.icpc:icpc0.png| Abbildung 1|frame|none]] 
+[[Image:ch.elexis.icpc_icpc0.png| Abbildung 1|frame|none]]
 
 
 
-[[Image:ch.elexis.icpc:icpc1.png|Abbildung 2|frame|none]] 
+[[Image:ch.elexis.icpc_icpc1.png|Abbildung 2|frame|none]]
 
 
 Klicken Sie in der Probleme-View auf den roten Stern Abb. 1). Sie können dann ein neues Problem erfassen. (Abb. 2). Für jedes Problem kann ein Name, ein Beginn-Datum und eine Nummer angegeben werden. Probleme werden in der Probleme-View immer anhand der Nummer sortiert. Es sind auch hierarchische Nummern (1.1.2 oder so) möglich. Das Beginn-Datum kann als genaues Datum oder auch nur als Jahr angegeben werden. Standardmässig wird das aktuelle Datum genommen.
@@ -89,7 +89,7 @@ Wenn Sie mit der rechten Maustaste auf ein Problem klicken, können Sie das Prob
 == Ein Problem in einer Konsultation behandeln ==
 
 
-[[Image:ch.elexis.icpc:icpc2.png|Abbildung 3|frame|none]]
+[[Image:ch.elexis.icpc_icpc2.png|Abbildung 3|frame|none]]
 
 
 Ziehen Sie ein Problem aus der Problemliste mit der Maus ins Konsultationsfenster der aktuellen Konsultation. Es erscheint der Text Problem: gefolgt vom grün unterlegten Namen des Problems (Abb. 3).
@@ -98,11 +98,11 @@ Ziehen Sie ein Problem aus der Problemliste mit der Maus ins Konsultationsfenste
 == Ein Encounter codieren ==
 
 
-[[Image:ch.elexis.icpc:icpc3.png|Abbildung 4|frame| none]]
+[[Image:ch.elexis.icpc_icpc3.png|Abbildung 4|frame| none]]
 
 
 
-[[Image:ch.elexis.icpc:icpc4.png|Abbildung 5|frame| none]]
+[[Image:ch.elexis.icpc_icpc4.png|Abbildung 5|frame| none]]
 
 
 Ein Ecounter ist wie gesagt der Schnittpunkt eines Problems mit einer Konsulation. Soald Sie ein Problem wie oben beschrieben in ein Konsultationsfenster gezogen haben, haben Sie ein Encounter erstellt. Das Encounter hat ‘automatisch’ ein zugeordnetes Problem, ein Datum und einen Namen, was noch fehlt, sind RFE, Diagnose und Procedere. Machen Sie dazu einen Doppelcklick auf den Titel des Problems in der Konsultation. Im Fenter ‘Encounter’ erscheint nun diese Encounter ausgewählt. Wenn Sie auf eines der Felder ‘RFE’, ‘Diagnose’ oder ‘Procedere’ klicken, erscheint die ICPCCodes-View (Abb. [fig:icpc4] und [fig:icpc5]), die wir im Folgenden etwas genauer anschauen wollen:
@@ -143,22 +143,22 @@ Wie eingangs ausgeführt, liefert das ICPC-2 Plugin nur die Grundstruktur und di
 # Klicken Sie auf ‘Datenbank auswählen’ und wählen Sie Ihre vorher erstellte ODBC-Quelle ([fig:import2]).
 # Nach Abschliessendem Klick auf OK startet der Import. Danach muss Elexis beendet und neu gestartet werden.
 
-[[Image:ch.elexis.icpc:icpc5.png|Abbildung 6|frame|none]]
+[[Image:ch.elexis.icpc_icpc5.png|Abbildung 6|frame|none]]
 
 
-[[Image:ch.elexis.icpc:icpc6.png|Abbildung 7|frame|none]]
+[[Image:ch.elexis.icpc_icpc6.png|Abbildung 7|frame|none]]
 
 
-[[Image:ch.elexis.icpc:icpc8.png|Abbildung 8|frame|none]]
+[[Image:ch.elexis.icpc_icpc8.png|Abbildung 8|frame|none]]
 
 
-[[Image:ch.elexis.icpc:icpc7.png|Abbildung 9|frame|none]]
+[[Image:ch.elexis.icpc_icpc7.png|Abbildung 9|frame|none]]
 
 
-[[Image:ch.elexis.icpc:icpc9.png|Abbildung 10|frame|none]]
+[[Image:ch.elexis.icpc_icpc9.png|Abbildung 10|frame|none]]
 
 
-[[Image:ch.elexis.icpc:icpc10.png|Abbildung 11|frame|none]]
+[[Image:ch.elexis.icpc_icpc10.png|Abbildung 11|frame|none]]
 
 
-[[Image:ch.elexis.icpc:icpc11.png|Abbildung 12|frame| none]]
+[[Image:ch.elexis.icpc_icpc11.png|Abbildung 12|frame| none]]

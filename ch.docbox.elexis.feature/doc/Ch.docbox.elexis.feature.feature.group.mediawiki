@@ -49,24 +49,24 @@ Das ch.docbox.elexis Plugin verfügt über die Möglichkeit, aus elexis via der 
 
 Folgende Funktionen unterstütz das Plugin:
 
-* docbox Browser öffnen [[Image:ch.docbox.elexis:docbox16.png]]
-* docbox Browser öffnen mit dem aktuell gewähltem Patienten im elexis [[Image:ch.docbox.elexis:meinpatient_logo16.png]]
-* Patient an Spital überweisen [[Image:ch.docbox.elexis:hospital16.png]]
-* Patient an Arzt überweisen [[Image:ch.docbox.elexis:doc2doc16.png]]
-* Patiententermin vereinbaren [[Image:ch.docbox.elexis:terminvereinbarung16.png]]
-* Berichte, Kopien Überweisungen &amp; Termine aus docbox in elexis herunterladen [[Image:ch.docbox.elexis:document16.png]]
+* docbox Browser öffnen [[Image:ch.docbox.elexis_docbox16.png]]
+* docbox Browser öffnen mit dem aktuell gewähltem Patienten im elexis [[Image:ch.docbox.elexis_meinpatient_logo16.png]]
+* Patient an Spital überweisen [[Image:ch.docbox.elexis_hospital16.png]]
+* Patient an Arzt überweisen [[Image:ch.docbox.elexis_doc2doc16.png]]
+* Patiententermin vereinbaren [[Image:ch.docbox.elexis_terminvereinbarung16.png]]
+* Berichte, Kopien Überweisungen &amp; Termine aus docbox in elexis herunterladen [[Image:ch.docbox.elexis_document16.png]]
 
 
 Das Plugin stellt zwei neue Sichten zur Verfügung, die docbox Browser sowie die docbox Dokumente View.
 
 
-[[Image:ch.docbox.elexis:docboxBrowser.png]]<br />
+[[Image:ch.docbox.elexis_docboxBrowser.png]]<br />
 Mit der docbox Browser View können die einzelnen Prozesse innerhalb der dobox mit dem gewählten Patienten ausgeführt werden.
 
 
 
 
-[[Image:ch.docbox.elexis:docboxDokumente.png]]<br />
+[[Image:ch.docbox.elexis_docboxDokumente.png]]<br />
 In der docbox Dokumentenview werden die empfangenen Dokumente aus der docbox angezeigt.
 
 
@@ -93,7 +93,7 @@ Falls noch kein Zugang zu docbox besteht, kann dieser bei [http://www.docbox.ch/
 
 ==== Einmalige elexis Einstellungen ====
 
-[[Image:ch.docbox.elexis:docboxElexisEinstellungen.png|frame|none]]
+[[Image:ch.docbox.elexis_docboxElexisEinstellungen.png|frame|none]]
 
 # Ö̈ffnen Sie elexis und wählen Sie im Hauptmenu unter “elexis” den Menuepunkt “Einstellungen”/&quot; Anwender&quot;/“docbox Einstellungen”. Sie brauchen Adminrechte für den Mandant um die Einstellungen zu ändern.
 # Geben Sie hier die docbox Login ID und das docbox Passwort (allenfalls auch notwendendiger Produktschlüssel) ein und klicken Sie auf “Test docbox Verbindung” Konfiguration. Es sollte “ok” erscheinen.

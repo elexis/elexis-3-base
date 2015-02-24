@@ -43,6 +43,12 @@ public class XMLExporterBalance {
 	}
 
 	public Money getTotal(){
+		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT);
+		if (attrValue != null && !attrValue.isEmpty()) {
+			mTotal = XMLTool.xmlDoubleToMoney(attrValue);
+		} else {
+			mTotal = new Money();
+		}
 		return mTotal;
 	}
 

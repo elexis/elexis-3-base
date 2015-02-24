@@ -249,7 +249,7 @@ public class XML40Printer {
 				}
 			});
 		}
-		XMLPrinterUtil.replaceHeaderFields(text, rn, ezData.paymentMode);
+		XMLPrinterUtil.replaceHeaderFields(text, rn, xmlRn, ezData.paymentMode);
 		text.replace("\\[F.+\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 		TimeTool r = new TimeTool();
@@ -366,7 +366,7 @@ public class XML40Printer {
 					return false;
 				}
 				
-				XMLPrinterUtil.insertPage("Tarmedrechnung_S2", ++page, adressat, rn,
+				XMLPrinterUtil.insertPage("Tarmedrechnung_S2", ++page, adressat, rn, xmlRn,
 					ezData.paymentMode, text);
 				cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 				cmAvail = cmMiddlePage;
@@ -385,7 +385,7 @@ public class XML40Printer {
 				Hub.setMandant(mSave);
 				return false;
 			}
-			XMLPrinterUtil.insertPage("Tarmedrechnung_S2", ++page, adressat, rn,
+			XMLPrinterUtil.insertPage("Tarmedrechnung_S2", ++page, adressat, rn, xmlRn,
 				ezData.paymentMode, text);
 			cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 			monitor.worked(2);

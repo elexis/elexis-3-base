@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.swt.SWT;
+import org.jdom.Document;
 import org.jdom.Element;
 
 import ch.elexis.TarmedRechnung.XMLExporter;
@@ -21,6 +22,7 @@ import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.RnStatus;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 public class XMLPrinterUtil {
 	
@@ -64,10 +66,9 @@ public class XMLPrinterUtil {
 	}
 	
 	public static void insertPage(String templateName, final int page, final Kontakt adressat,
-		final Rechnung rn,
-		final String paymentMode, TextContainer text){
+		final Rechnung rn, final Document xmlRn, final String paymentMode, TextContainer text){
 		createBrief(templateName, adressat, text);
-		replaceHeaderFields(text, rn, paymentMode);
+		replaceHeaderFields(text, rn, xmlRn, paymentMode);
 		text.replace("\\[Seite\\]", StringTool.pad(StringTool.LEFT, '0', Integer.toString(page), 2)); //$NON-NLS-1$
 	}
 	
@@ -108,14 +109,20 @@ public class XMLPrinterUtil {
 	}
 
 	public static void replaceHeaderFields(final TextContainer text, final Rechnung rn,
-		final String paymentMode){
+		final Document xmlRn, final String paymentMode){
 		Fall fall = rn.getFall();
 		Mandant m = rn.getMandant();
-		text.replace("\\[F1\\]", rn.getRnId()); //$NON-NLS-1$
 		
 		String titel;
 		String titelMahnung;
 		
+		// implementation specific headers
+		if (XMLExporter.getXmlVersion(xmlRn.getRootElement()).equals("4.0")) {
+			replace40HeaderFields(text, rn, xmlRn);
+		} else if (XMLExporter.getXmlVersion(xmlRn.getRootElement()).equals("4.4")) {
+			replace44HeaderFields(text, rn, xmlRn);
+		}
+
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) { //$NON-NLS-1$
 			titel = Messages.RnPrintView_tbBill;
 			
@@ -161,6 +168,24 @@ public class XMLPrinterUtil {
 		text.replace("\\?\\?\\??[a-zA-Z0-9 \\.]+\\?\\?\\??", "");
 	}
 	
+	private static void replace44HeaderFields(TextContainer text, Rechnung rn, Document xmlRn){
+		Element xmlPayload = xmlRn.getRootElement().getChild("payload", XMLExporter.nsinvoice);
+		Element xmlInvoice = xmlPayload.getChild("invoice", XMLExporter.nsinvoice);
+		if (xmlInvoice != null) {
+			String requestId = xmlInvoice.getAttributeValue(XMLExporter.ATTR_REQUEST_ID);
+			String requestDate = xmlInvoice.getAttributeValue(XMLExporter.ATTR_REQUEST_DATE);
+			TimeTool date = new TimeTool(requestDate);
+			text.replace(
+				"\\[F1\\]", requestId + " - " + date.toString(TimeTool.DATE_GER) + " " + date.toString(TimeTool.TIME_FULL)); //$NON-NLS-1$
+		} else {
+			text.replace("\\[F1\\]", rn.getRnId()); //$NON-NLS-1$
+		}
+	}
+	
+	private static void replace40HeaderFields(TextContainer text, Rechnung rn, Document xmlRn){
+		text.replace("\\[F1\\]", rn.getRnId()); //$NON-NLS-1$
+	}
+
 	public static String getValue(final Element s, final String field){
 		String ret = s.getAttributeValue(field);
 		if (StringTool.isNothing(ret)) {
@@ -178,8 +203,7 @@ public class XMLPrinterUtil {
 	}
 
 	public static Object print(final Object cur, final ITextPlugin p, final int size,
-		final int align, boolean bold,
-		final String text){
+		final int align, boolean bold, final String text){
 		if (bold) {
 			p.setFont("Helvetica", SWT.BOLD, size); //$NON-NLS-1$
 		} else {

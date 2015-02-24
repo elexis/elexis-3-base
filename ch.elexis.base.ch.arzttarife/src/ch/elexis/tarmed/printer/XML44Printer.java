@@ -45,7 +45,7 @@ public class XML44Printer {
 	private static Logger logger = LoggerFactory.getLogger(XML44Printer.class);
 	
 	private static double cmPerLine = 0.67; // Höhe pro Zeile (0.65 plus Toleranz)
-	private static double cmFirstPage = 13.0; // Platz auf der ersten Seite
+	private static double cmFirstPage = 11.0; // Platz auf der ersten Seite
 	private static double cmMiddlePage = 21.0; // Platz auf Folgeseiten
 	private static double cmFooter = 4; // Platz für Endabrechnung
 	
@@ -236,15 +236,12 @@ public class XML44Printer {
 				}
 			});
 		}
-		XMLPrinterUtil.replaceHeaderFields(text, rn, ezData.paymentMode);
+		XMLPrinterUtil.replaceHeaderFields(text, rn, xmlRn, ezData.paymentMode);
 		text.replace("\\[F.+\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 		TimeTool r = new TimeTool();
 		int page = 1;
 		double seitentotal = 0.0;
-		double sumPfl = 0.0;
-		double sumNpfl = 0.0;
-		double sumTotal = 0.0;
 		ITextPlugin tp = text.getPlugin();
 		cmAvail = cmFirstPage;
 		monitor.worked(2);
@@ -303,13 +300,10 @@ public class XML44Printer {
 				Hub.setMandant(mSave);
 				return false;
 			}
-			sumTotal += dLine;
 			if (pfl.equalsIgnoreCase("true")) { //$NON-NLS-1$
 				sb.append("0\t"); //$NON-NLS-1$
-				sumPfl += dLine;
 			} else {
 				sb.append("1\t"); //$NON-NLS-1$
-				sumNpfl += dLine;
 			}
 			sb.append(
 				Integer.toString(XMLPrinterUtil.guessVatCode(XMLPrinterUtil.getValue(s, "vat_rate")))).append("\t"); //$NON-NLS-1$
@@ -327,7 +321,7 @@ public class XML44Printer {
 				StringBuilder footer = new StringBuilder();
 				cursor = tp.insertText(cursor, "\n\n", SWT.LEFT); //$NON-NLS-1$
 				footer
-					.append("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(seitentotal)); //$NON-NLS-1$
+					.append("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(seitentotal)); //$NON-NLS-1$
 				tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
 				cursor = tp.insertText(cursor, footer.toString(), SWT.LEFT);
 				seitentotal = 0.0;
@@ -342,8 +336,8 @@ public class XML44Printer {
 					return false;
 				}
 				
-				XMLPrinterUtil
-					.insertPage("TR44_S2", ++page, adressat, rn, ezData.paymentMode, text);
+				XMLPrinterUtil.insertPage("TR44_S2", ++page, adressat, rn, xmlRn,
+					ezData.paymentMode, text);
 				cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 				cmAvail = cmMiddlePage;
 				monitor.worked(2);
@@ -360,7 +354,8 @@ public class XML44Printer {
 				Hub.setMandant(mSave);
 				return false;
 			}
-			XMLPrinterUtil.insertPage("TR44_S2", ++page, adressat, rn, ezData.paymentMode, text);
+			XMLPrinterUtil.insertPage("TR44_S2", ++page, adressat, rn, xmlRn, ezData.paymentMode,
+				text);
 			cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 			monitor.worked(2);
 		}
@@ -380,7 +375,7 @@ public class XML44Printer {
 		}
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, vatNumber + "\t"); //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Anzahlung:\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, ezData.paid + "\t"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, ezData.paid + "\t\t\t"); //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "Gesamtbetrag:\t"); //$NON-NLS-1$
 		cursor =
 			XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false, xmlBalance.getTotal() + "\n"); //$NON-NLS-1$

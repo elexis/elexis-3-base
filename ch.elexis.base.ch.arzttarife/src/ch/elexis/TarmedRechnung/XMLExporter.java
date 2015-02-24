@@ -126,8 +126,8 @@ public class XMLExporter implements IRnOutputter {
 	private static final String ATTR_LANGUAGE = "language"; //$NON-NLS-1$
 	private static final String ELEMENT_REQUEST = "request"; //$NON-NLS-1$
 	private static final String ATTR_REQUEST_TIMESTAMP = "request_timestamp"; //$NON-NLS-1$
-	private static final String ATTR_REQUEST_DATE = "request_date"; //$NON-NLS-1$
-	private static final String ATTR_REQUEST_ID = "request_id"; //$NON-NLS-1$
+	public static final String ATTR_REQUEST_DATE = "request_date"; //$NON-NLS-1$
+	public static final String ATTR_REQUEST_ID = "request_id"; //$NON-NLS-1$
 	public static final String TIERS_GARANT = "TG"; //$NON-NLS-1$
 	public static final String TIERS_PAYANT = "TP"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_PHYSIO = "amount_physio"; //$NON-NLS-1$

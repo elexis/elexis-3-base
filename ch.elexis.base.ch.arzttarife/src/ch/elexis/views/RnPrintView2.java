@@ -86,11 +86,9 @@ public class RnPrintView2 extends ViewPart {
 	 * @param monitor
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean doPrint(final Rechnung rn, final IRnOutputter.TYPE rnType,
 		final String saveFile, final boolean withESR, final boolean withForms,
 		final boolean doVerify, final IProgressMonitor monitor){
-		String printer = null;
 		XMLExporter xmlex = new XMLExporter();
 		Document xmlRn = xmlex.doExport(rn, saveFile, rnType, doVerify);
 		if (rn.getStatus() == RnStatus.FEHLERHAFT) {

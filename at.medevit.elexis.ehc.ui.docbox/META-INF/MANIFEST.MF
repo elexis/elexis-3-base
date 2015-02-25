@@ -12,5 +12,7 @@ Require-Bundle: at.medevit.elexis.ehc.core;bundle-version="3.0.0",
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.rgw.utility,
  at.medevit.elexis.ehc.docbox,
- ch.elexis.core.ui.icons
+ ch.elexis.core.ui.icons,
+ org.eclipse.core.runtime;bundle-version="3.8.0",
+ ch.elexis.core
 Bundle-ActivationPolicy: lazy

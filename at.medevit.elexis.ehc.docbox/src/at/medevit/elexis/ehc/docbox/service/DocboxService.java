@@ -49,9 +49,12 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import ch.elexis.data.Mandant;
+import ch.elexis.data.Person;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.Rezept;
+import ch.elexis.docbox.ws.client.SendClinicalDocumentClient;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ehealthconnector.cda.documents.ch.CdaCh;
 import ehealthconnector.cda.documents.ch.Organization;
@@ -105,9 +108,22 @@ public class DocboxService {
 		clinicalDocument.setEffectiveTime(timestamp);
 		// Patient und Arzt bereits gesetzt, darum custodian
 		Rechnungssteller rechnungssteller = rezept.getMandant().getRechnungssteller();
-		Organization organization = new Organization(rechnungssteller.getLabel());
+		Organization organization = null;
+		if (rechnungssteller.istOrganisation()) {
+			organization =
+				new Organization(rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
+					+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
+		} else {
+			organization =
+				new Organization(rechnungssteller.get(Person.TITLE) + " "
+					+ rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
+					+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
+		}
 		organization.cAddAddress(EhcCoreMapper.getEhcAddress(rechnungssteller.getAnschrift()));
-		organization.cAddPhone("");
+		String phone = (String) rechnungssteller.get(Rechnungssteller.FLD_PHONE1);
+		if (!StringTool.isNothing(phone)) {
+			organization.cAddPhone(phone);
+		}
 		document.cSetCustodian(organization);
 		// add ZSR to custodian organization
 		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.1.2");
@@ -185,7 +201,7 @@ public class DocboxService {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		URL xslt = null;
-		xslt = DocboxService.class.getResource("/rsc/xsl/ArztArzt.xsl");
+		xslt = DocboxService.class.getResource("/rsc/xsl/prescription.xsl");
 		
 		ByteArrayOutputStream documentXml = new ByteArrayOutputStream();
 		document.cPrintXmlToStream(documentXml);
@@ -199,6 +215,17 @@ public class DocboxService {
 		return out;
 	}
 	
+	public static String sendPrescription(InputStream xmlFile, InputStream pdfFile){
+		SendClinicalDocumentClient send = new SendClinicalDocumentClient();
+		
+		boolean success = send.sendClinicalDocument(xmlFile, pdfFile);
+		String message = send.getMessage();
+		if (!success) {
+			message = "FAILED " + message;
+		}
+		return message;
+	}
+
 	private static void generatePdf(ByteArrayOutputStream documentXml, InputStream xslt,
 		ByteArrayOutputStream pdf){
 
@@ -273,11 +300,11 @@ public class DocboxService {
 		sb.append(new SimpleDateFormat("ss").format(now));
 		// Milliseconds ... 
 		String millis = new SimpleDateFormat("SS").format(now);
-		if(millis.length() == 1) {
+		if (millis.length() == 1) {
 			sb.append("0").append(millis);
 		} else if (millis.length() == 2) {
 			sb.append(millis);
-		} else if (millis.length() == 3){
+		} else if (millis.length() == 3) {
 			sb.append(millis.substring(1));
 		} else {
 			sb.append("00");

@@ -36,13 +36,6 @@
          unpack="false"/>
 
    <plugin
-         id="at.medevit.elexis.ehc.ui.example"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.emf.ecore"
          download-size="0"
          install-size="0"
@@ -51,20 +44,6 @@
 
    <plugin
          id="org.eclipse.emf.ecore.xmi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="at.medevit.elexis.ehc.docbox"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="at.medevit.elexis.ehc.ui.docbox"
          download-size="0"
          install-size="0"
          version="0.0.0"

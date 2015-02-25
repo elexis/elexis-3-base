@@ -1,0 +1,83 @@
+<jxb:bindings version="1.0" 
+  xmlns:jxb="http://java.sun.com/xml/ns/jaxb" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" 
+  jxb:extensionBindingPrefixes="xjc">
+    <jxb:bindings schemaLocation="CDA.xsd" node="/xs:schema">
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Text']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Title']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Caption']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Col']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Colgroup']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Content']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.TitleContent']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Footnote']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.TitleFootnote']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.FootnoteRef']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Item']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.LinkHtml']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.List']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Paragraph']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.RenderMultiMedia']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Table']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Tbody']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Td']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Tfoot']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Th']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Thead']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='StrucDoc.Tr']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='POCD_MT000040.ObservationMedia']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='POCD_MT000040.RegionOfInterest']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='POCD_MT000040.Section']/xs:attribute[@name='ID']">
+            <jxb:property name="attributeId"/>
+        </jxb:bindings>
+    </jxb:bindings>
+</jxb:bindings>

@@ -10,7 +10,7 @@ Require-Bundle: at.medevit.elexis.ehc.core;bundle-version="3.0.0",
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.fop_wrapper;bundle-version="3.0.0",
  ch.rgw.utility
-Service-Component: OSGI-INF/ehcservice.xml,
- OSGI-INF/atcservice.xml
+Service-Component: OSGI-INF/ehcservice.xml
 Export-Package: at.medevit.elexis.ehc.docbox.service
-Import-Package: org.slf4j
+Import-Package: ch.elexis.docbox.ws.client,
+ org.slf4j

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<project name="cxf wsdl2java" basedir="../../">  
+
+   <property environment="env"/>
+   <echo message="CXF_HOME = ${env.CXF_HOME}"/>
+	
+   <path id="cxf.classpath">
+      <fileset dir="${env.CXF_HOME}/lib">
+         <include name="*.jar"/>
+      </fileset>
+   </path>
+   
+ 	
+   <target name="generate">
+      <java classname="org.apache.cxf.tools.wsdlto.WSDLToJava" fork="true">
+         <arg value="-xjc-b,rsc/wsdl/CDAbindings.xjb"/>
+         <arg value="-d"/>
+         <arg value="src-gen"/>
+         <arg value="rsc/wsdl/CDACHServicesV2Test.wsdl"/>
+         <classpath>
+            <path refid="cxf.classpath"/>
+         </classpath>
+      </java>
+   </target>
+</project>

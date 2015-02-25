@@ -199,6 +199,7 @@
   <module>waelti.statistics</module>
   <module>waelti.statistics.feature</module>
   <module>ch.docbox.elexis</module>
+  <module>ch.elexis.docbox.ws.client</module>
   <module>ch.docbox.elexis.feature</module>
   <module>net.medshare.connector.aerztekasse</module>
   <module>net.medshare.connector.aerztekasse.feature</module>

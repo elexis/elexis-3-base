@@ -4,17 +4,19 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Query;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
@@ -366,6 +368,148 @@ public class SerienTermin {
 			return target;
 		}
 		return tt;
+	}
+	
+	public boolean collidesWithLockTimes(){
+		Calendar cal = Calendar.getInstance();
+		cal.clear();
+		cal.setTime(seriesStartDate);
+		cal.add(Calendar.HOUR, beginTime.getHours());
+		cal.add(Calendar.MINUTE, beginTime.getMinutes());
+		TimeTool startTime = getRootTerminStartTime(cal);
+		
+		TimeTool endTime = new TimeTool(startTime);
+		endTime.addMinutes(getAppointmentDuration());
+		
+		TimeSpan ts = new TimeSpan(startTime, endTime);
+		rootTermin = new Termin(Activator.getDefault().getActResource(), ts, "series");
+		TimeTool dateIncrementer = rootTermin.getStartTime();
+		
+		List<TimeTool> seriesTimesList = getAllTimesOfSeries(dateIncrementer);
+		String bereich = Activator.getDefault().getActResource();
+		
+		for (TimeTool sTime : seriesTimesList) {
+			TimeTool eTime = new TimeTool(sTime);
+			eTime.addMinutes(getAppointmentDuration());
+			TimeSpan span = new TimeSpan(sTime, eTime);
+			
+			// get all appointments where type=locked and day=X and bereich=y
+			Query<Termin> qbe = new Query<Termin>(Termin.class);
+			qbe.add(Termin.FLD_TERMINTYP, Query.EQUALS,
+				ch.elexis.agenda.Messages.Termin_range_locked);
+			qbe.add(Termin.FLD_TAG, Query.EQUALS, sTime.toString(TimeTool.DATE_COMPACT));
+			qbe.add(Termin.FLD_BEREICH, Query.EQUALS, bereich);
+			qbe.add(Termin.FLD_DELETED, Query.EQUALS, "0");
+			List<Termin> locks = qbe.execute();
+			
+			for (Termin lockTermin : locks) {
+				TimeSpan lockSpan = lockTermin.getTimeSpan();
+				
+				if (lockSpan.overlap(span) != null) {
+					rootTermin.delete(false);
+					return true;
+				}
+			}
+		}
+		
+		//clean up
+		rootTermin.delete(false);
+		return false;
+	}
+	
+	private List<TimeTool> getAllTimesOfSeries(TimeTool dateIncrementer){
+		List<TimeTool> seriesTimesList = new ArrayList<TimeTool>();
+		
+		//calculate occurrences
+		int occurences = 0;
+		TimeTool endingDate = null;
+		if (endingType.equals(EndingType.AFTER_N_OCCURENCES)) {
+			occurences = (Integer.parseInt(endsAfterNDates) - 1);
+		} else {
+			endingDate = new TimeTool(endsOnDate);
+		}
+		
+		switch (seriesType) {
+		case DAILY:
+			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
+				occurences = dateIncrementer.daysTo(endingDate) + 1;
+			}
+			
+			for (int i = 0; i < occurences; i++) {
+				dateIncrementer.add(Calendar.DAY_OF_YEAR, 1);
+				seriesTimesList.add(dateIncrementer);
+			}
+			break;
+		
+		case WEEKLY:
+			String[] seriesPattern = getSeriesPatternString().split(",");
+			int weekStepSize = Integer.parseInt(seriesPattern[0]);
+			// handle start week
+			for (int i = 1; i < seriesPattern[1].length(); i++) {
+				Calendar calWeekOne = Calendar.getInstance();
+				calWeekOne.setTime(dateIncrementer.getTime());
+				int dayValue = Integer.parseInt(seriesPattern[1].charAt(i) + "");
+				calWeekOne.set(Calendar.DAY_OF_WEEK, dayValue);
+				seriesTimesList.add(new TimeTool(calWeekOne.getTime()));
+			}
+			
+			// calculate occurrences per week
+			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
+				long milisecondsDiff =
+					endingDate.getTime().getTime() - dateIncrementer.getTime().getTime();
+				int days = (int) (milisecondsDiff / (1000 * 60 * 60 * 24));
+				int weeks = days / 7;
+				occurences = weeks / weekStepSize;
+			}
+			// handle subsequent weeks
+			for (int i = 0; i < occurences; i++) {
+				dateIncrementer.add(Calendar.WEEK_OF_YEAR, weekStepSize);
+				for (int j = 0; j < seriesPattern[1].length(); j++) {
+					Calendar calSub = Calendar.getInstance();
+					calSub.setTime(dateIncrementer.getTime());
+					int dayValue = Integer.parseInt(seriesPattern[1].charAt(j) + "");
+					calSub.set(Calendar.DAY_OF_WEEK, dayValue);
+					seriesTimesList.add(new TimeTool(calSub.getTime()));
+				}
+			}
+			break;
+		case MONTHLY:
+			//calculate occurrences per month
+			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
+				occurences =
+					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR))
+						* 12
+						+ (endingDate.get(Calendar.MONTH) - dateIncrementer.get(Calendar.MONTH))
+						+ (endingDate.get(Calendar.DAY_OF_MONTH) >= dateIncrementer
+							.get(Calendar.DAY_OF_MONTH) ? 0 : -1);
+			}
+			
+			for (int i = 0; i < occurences; i++) {
+				dateIncrementer.add(Calendar.MONTH, 1);
+				seriesTimesList.add(dateIncrementer);
+			}
+			break;
+		case YEARLY:
+			//calculate occurrences per year
+			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
+				int monthOccurences =
+					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR))
+						* 12
+						+ (endingDate.get(Calendar.MONTH) - dateIncrementer.get(Calendar.MONTH))
+						+ (endingDate.get(Calendar.DAY_OF_MONTH) >= dateIncrementer
+							.get(Calendar.DAY_OF_MONTH) ? 0 : -1);
+				occurences = (monthOccurences / 12);
+			}
+			
+			for (int i = 0; i < occurences; i++) {
+				dateIncrementer.add(Calendar.YEAR, 1);
+				seriesTimesList.add(dateIncrementer);
+			}
+			break;
+		default:
+			break;
+		}
+		return seriesTimesList;
 	}
 	
 	@Override

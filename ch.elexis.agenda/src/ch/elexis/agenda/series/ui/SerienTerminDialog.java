@@ -11,6 +11,7 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -47,6 +48,10 @@ import ch.elexis.data.Kontakt;
 import ch.rgw.tools.TimeTool;
 
 public class SerienTerminDialog extends TitleAreaDialog {
+	private static final int DAYS_OF_WEEK = 7;
+	private static final int APPLY = 0;
+	private static final int CANCEL = 2;
+	
 	private DataBindingContext m_bindingContext;
 	
 	private Text txtEndsAfterNOccurences;
@@ -72,6 +77,8 @@ public class SerienTerminDialog extends TitleAreaDialog {
 	private Combo comboArea;
 	
 	private Spinner durationSpinner;
+	
+	private int result;
 	
 	/**
 	 * Create the dialog.
@@ -403,18 +410,26 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		super.buttonPressed(buttonId);
 		switch (buttonId) {
 		case Dialog.OK:
-			serienTermin.persist();
-			close();
+			if (result == APPLY) {
+				serienTermin.persist();
+				close();
+			} else if (result == CANCEL) {
+				cancelEntry();
+			}
 			break;
 		case IDialogConstants.STOP_ID:
-			serienTermin.delete(false);
-			setReturnCode(IDialogConstants.STOP_ID);
-			close();
+			cancelEntry();
 			break;
 		default:
 			break;
 		}
 		ElexisEventDispatcher.reload(Termin.class);
+	}
+	
+	private void cancelEntry(){
+		serienTermin.delete(false);
+		setReturnCode(IDialogConstants.STOP_ID);
+		close();
 	}
 	
 	@Override
@@ -455,8 +470,24 @@ public class SerienTerminDialog extends TitleAreaDialog {
 			serienTermin.setFreeText(txtContact.getText());
 		}
 		
-		System.out.println(serienTermin);
-		super.okPressed();
+		// ask user about next step (keep, change, cancel) in case of a lock time collision
+		if (serienTermin.collidesWithLockTimes()) {
+			MessageDialog collisionDialog =
+				new MessageDialog(getShell(),
+					Messages.getString("SerienTerminDialog.dlgLockTimesConflict"),
+					getTitleImageLabel().getImage(),
+					Messages.getString("SerienTerminDialog.dlgLockTimesSeriesConflict"),
+					MessageDialog.WARNING, new String[] {
+						Messages.getString("SerienTerminDialog.dlgBtnApplyAnyway"),
+						Messages.getString("SerienTerminDialog.dlgBtnChange"),
+						Messages.getString("SerienTerminDialog.dlgBtnCancel")
+					}, 0);
+			
+			result = collisionDialog.open();
+		} else {
+			result = APPLY;
+			super.okPressed();
+		}
 	}
 	
 	protected DataBindingContext initDataBindings(){

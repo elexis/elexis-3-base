@@ -27,6 +27,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.xml.utils.DefaultErrorHandler;
 import org.openhealthtools.mdht.uml.cda.Act;
+import org.openhealthtools.mdht.uml.cda.Author;
 import org.openhealthtools.mdht.uml.cda.CDAFactory;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.Consumable;
@@ -34,6 +35,7 @@ import org.openhealthtools.mdht.uml.cda.EntryRelationship;
 import org.openhealthtools.mdht.uml.cda.InfrastructureRootTypeId;
 import org.openhealthtools.mdht.uml.cda.ManufacturedProduct;
 import org.openhealthtools.mdht.uml.cda.Material;
+import org.openhealthtools.mdht.uml.cda.PatientRole;
 import org.openhealthtools.mdht.uml.cda.Section;
 import org.openhealthtools.mdht.uml.cda.SubstanceAdministration;
 import org.openhealthtools.mdht.uml.cda.Supply;
@@ -127,6 +129,15 @@ public class DocboxService {
 		confidentiality.setCodeSystem("2.16.840.1.113883.5.25");
 		confidentiality.setCode("N");
 		clinicalDocument.setConfidentialityCode(confidentiality);
+		
+		// add empty id to patient role
+		PatientRole patientRole = clinicalDocument.getPatientRoles().get(0);
+		patientRole.getIds().add(DatatypesFactory.eINSTANCE.createII());
+
+		// add empty time to author
+		Author author = clinicalDocument.getAuthors().get(0);
+		author.setTime(DatatypesFactory.eINSTANCE.createTS());
+
 		// Patient und Arzt bereits gesetzt, darum custodian
 		Rechnungssteller rechnungssteller = rezept.getMandant().getRechnungssteller();
 		Organization organization = null;
@@ -182,16 +193,18 @@ public class DocboxService {
 			
 			// atc code as material
 			String atcCode = prescription.getArtikel().getATC_code();
+			ManufacturedProduct product = CDAFactory.eINSTANCE.createManufacturedProduct();
+			Material material = CDAFactory.eINSTANCE.createMaterial();
 			if (atcCode != null && !atcCode.isEmpty()) {
-				ManufacturedProduct product = CDAFactory.eINSTANCE.createManufacturedProduct();
-				Material material = CDAFactory.eINSTANCE.createMaterial();
 				material.setCode(DatatypesFactory.eINSTANCE.createCE(atcCode,
 					"2.16.840.1.113883.6.73"));
-				product.setManufacturedMaterial(material);
-				Consumable consumable = CDAFactory.eINSTANCE.createConsumable();
-				consumable.setManufacturedProduct(product);
-				administration.setConsumable(consumable);
+			} else {
+				material.setCode(DatatypesFactory.eINSTANCE.createCE());
 			}
+			product.setManufacturedMaterial(material);
+			Consumable consumable = CDAFactory.eINSTANCE.createConsumable();
+			consumable.setManufacturedProduct(product);
+			administration.setConsumable(consumable);
 
 			addDose(administration, prescription.getDosis());
 			addRemark(administration, prescription.getBemerkung());
@@ -288,17 +301,21 @@ public class DocboxService {
 		if (!doseFloats.isEmpty()) {
 			if (doseFloats.size() == 1) {
 				// assume per day
-				addEffectiveTime(administration, "", "1", "d");
-				addDoseQuantity(administration, doseFloats.get(0), "1");
+				if (doseFloats.get(0) > 0) {
+					addEffectiveTime(administration, "", "1", "d");
+					addDoseQuantity(administration, doseFloats.get(0), "1");
+				}
 			} else {
 				// morning, midday, evening, night
 				for (int i = 0; i < doseFloats.size(); i++) {
-					SubstanceAdministration doseAdministration =
-						addDoseAdministration(administration);
-					if (i < 4) {
-						addEffectiveTime(doseAdministration, DOSE_TIME[i], "1", "d");
+					if (doseFloats.get(i) > 0) {
+						SubstanceAdministration doseAdministration =
+							addDoseAdministration(administration);
+						if (i < 4) {
+							addEffectiveTime(doseAdministration, DOSE_TIME[i], "1", "d");
+						}
+						addDoseQuantity(doseAdministration, doseFloats.get(i), "1");
 					}
-					addDoseQuantity(doseAdministration, doseFloats.get(i), "1");
 				}
 			}
 		}

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,24 +26,35 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.xml.utils.DefaultErrorHandler;
+import org.openhealthtools.mdht.uml.cda.Act;
 import org.openhealthtools.mdht.uml.cda.CDAFactory;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.Consumable;
+import org.openhealthtools.mdht.uml.cda.EntryRelationship;
 import org.openhealthtools.mdht.uml.cda.InfrastructureRootTypeId;
 import org.openhealthtools.mdht.uml.cda.ManufacturedProduct;
 import org.openhealthtools.mdht.uml.cda.Material;
 import org.openhealthtools.mdht.uml.cda.Section;
 import org.openhealthtools.mdht.uml.cda.SubstanceAdministration;
+import org.openhealthtools.mdht.uml.cda.Supply;
 import org.openhealthtools.mdht.uml.hl7.datatypes.CD;
 import org.openhealthtools.mdht.uml.hl7.datatypes.CE;
-import org.openhealthtools.mdht.uml.hl7.datatypes.CV;
 import org.openhealthtools.mdht.uml.hl7.datatypes.DatatypesFactory;
 import org.openhealthtools.mdht.uml.hl7.datatypes.ED;
-import org.openhealthtools.mdht.uml.hl7.datatypes.EN;
 import org.openhealthtools.mdht.uml.hl7.datatypes.II;
+import org.openhealthtools.mdht.uml.hl7.datatypes.IVL_PQ;
+import org.openhealthtools.mdht.uml.hl7.datatypes.IVL_TS;
+import org.openhealthtools.mdht.uml.hl7.datatypes.PIVL_TS;
+import org.openhealthtools.mdht.uml.hl7.datatypes.PQ;
 import org.openhealthtools.mdht.uml.hl7.datatypes.ST;
+import org.openhealthtools.mdht.uml.hl7.datatypes.TEL;
 import org.openhealthtools.mdht.uml.hl7.datatypes.TS;
+import org.openhealthtools.mdht.uml.hl7.vocab.ActClassSupply;
 import org.openhealthtools.mdht.uml.hl7.vocab.NullFlavor;
+import org.openhealthtools.mdht.uml.hl7.vocab.SetOperator;
+import org.openhealthtools.mdht.uml.hl7.vocab.x_ActClassDocumentEntryAct;
+import org.openhealthtools.mdht.uml.hl7.vocab.x_ActRelationshipEntryRelationship;
+import org.openhealthtools.mdht.uml.hl7.vocab.x_DocumentActMood;
 import org.openhealthtools.mdht.uml.hl7.vocab.x_DocumentSubstanceMood;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +75,10 @@ public class DocboxService {
 	private static final Logger logger = LoggerFactory.getLogger(DocboxService.class);
 	
 	public static final String DOMAIN_KSK = "www.xid.ch/id/ksk"; //$NON-NLS-1$
+	
+	public static final String[] DOSE_TIME = {
+		"190001010800", "190001011200", "190001011600", "190001012000"
+	};
 
 	public static CdaCh getPrescriptionDocument(Rezept rezept){
 		CdaCh document =
@@ -106,6 +122,11 @@ public class DocboxService {
 		TimeTool rezeptDate = new TimeTool(rezept.getDate());
 		timestamp.setValue(rezeptDate.toString(TimeTool.TIMESTAMP));
 		clinicalDocument.setEffectiveTime(timestamp);
+		// confidentiality
+		CE confidentiality = DatatypesFactory.eINSTANCE.createCE();
+		confidentiality.setCodeSystem("2.16.840.1.113883.5.25");
+		confidentiality.setCode("N");
+		clinicalDocument.setConfidentialityCode(confidentiality);
 		// Patient und Arzt bereits gesetzt, darum custodian
 		Rechnungssteller rechnungssteller = rezept.getMandant().getRechnungssteller();
 		Organization organization = null;
@@ -134,7 +155,7 @@ public class DocboxService {
 		Section section = CDAFactory.eINSTANCE.createSection();
 		clinicalDocument.addSection(section);
 		
-		CV prescriptionCode = DatatypesFactory.eINSTANCE.createCV();
+		CE prescriptionCode = DatatypesFactory.eINSTANCE.createCE();
 		prescriptionCode.setNullFlavor(NullFlavor.NA);
 		CD translationCode = DatatypesFactory.eINSTANCE.createCD();
 		translationCode.setCodeSystem("2.16.756.5.30.1.105.2.2");
@@ -146,57 +167,186 @@ public class DocboxService {
 		title.addText("Medikamente");
 		section.setTitle(title);
 		StringBuilder sectionText = new StringBuilder();
-		sectionText.append("<list>");
-
+		addMedicationTextStart(sectionText);
 		List<Prescription> prescriptions = rezept.getLines();
-		for (Prescription prescription : prescriptions) {
+		for (int idx = 0; idx < prescriptions.size(); idx++) {
+			Prescription prescription = prescriptions.get(idx);
 			SubstanceAdministration administration =
 				CDAFactory.eINSTANCE.createSubstanceAdministration();
 			administration.setMoodCode(x_DocumentSubstanceMood.RQO);
 			// pharmacode
-			ManufacturedProduct product = CDAFactory.eINSTANCE.createManufacturedProduct();
 			String pharmaCode = prescription.getArtikel().getPharmaCode();
 			II pharmacodeId = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.2.6.1");
 			pharmacodeId.setExtension(pharmaCode);
-			product.getIds().add(pharmacodeId);
+			administration.getIds().add(pharmacodeId);
+			
 			// atc code as material
 			String atcCode = prescription.getArtikel().getATC_code();
 			if (atcCode != null && !atcCode.isEmpty()) {
+				ManufacturedProduct product = CDAFactory.eINSTANCE.createManufacturedProduct();
 				Material material = CDAFactory.eINSTANCE.createMaterial();
 				material.setCode(DatatypesFactory.eINSTANCE.createCE(atcCode,
 					"2.16.840.1.113883.6.73"));
-				EN articelLabel = DatatypesFactory.eINSTANCE.createEN();
-				articelLabel.addText(prescription.getArtikel().getLabel());
-				material.setName(articelLabel);
 				product.setManufacturedMaterial(material);
-				
+				Consumable consumable = CDAFactory.eINSTANCE.createConsumable();
+				consumable.setManufacturedProduct(product);
+				administration.setConsumable(consumable);
 			}
-			Consumable consumable = CDAFactory.eINSTANCE.createConsumable();
-			consumable.setManufacturedProduct(product);
-			administration.setConsumable(consumable);
+
+			addDose(administration, prescription.getDosis());
+			addRemark(administration, prescription.getBemerkung());
+			addQuantity(administration, 1);
+
 			// artikel, dosierung und bemerkung in text
 			ED text = DatatypesFactory.eINSTANCE.createED();
-			text.addText(prescription.getArtikel().getLabel());
-			String dosis = prescription.getDosis();
-			if (dosis != null && !dosis.isEmpty()) {
-				text.addText(", " + dosis);
-			}
-			String remark = prescription.getBemerkung();
-			if (remark != null && !remark.isEmpty()) {
-				text.addText(", " + remark);
-			}
+			TEL reference = DatatypesFactory.eINSTANCE.createTEL();
+			reference.setValue("#m" + idx);
+			text.setReference(reference);
+			//			text.addText("<reference value=\"#m" + idx + "\" />");
 			administration.setText(text);
 			// text of section
-			sectionText.append("<item>" + text.getText() + "</item>");
+			addMedicationText(sectionText, prescription, idx);
 			
 			section.addSubstanceAdministration(administration);
 		}
-		sectionText.append("</list>");
+		addMedicationTextEnd(sectionText);
 		section.createStrucDocText(sectionText.toString());
 
 		return document;
 	}
 	
+	private static void addMedicationText(StringBuilder sectionText, Prescription prescription,
+		int id){
+		// article
+		sectionText.append("<tr>\n<td>\n");
+		sectionText.append("<content ID=\"m" + id + "\"> " + prescription.getArtikel().getLabel()
+			+ "</content>");
+		sectionText.append("\n</td>");
+		// dose
+		sectionText.append("\n<td>\n");
+		sectionText.append(prescription.getDosis());
+		sectionText.append("\n</td>");
+		// valid date range
+		sectionText.append("\n<td>\n");
+		String endDate = prescription.getEndDate();
+		if (endDate != null && !endDate.isEmpty()) {
+			sectionText.append("Gültig bis " + endDate);
+		}
+		sectionText.append("\n</td>");
+		// remarks
+		sectionText.append("\n<td>\n");
+		sectionText.append(prescription.getBemerkung());
+		sectionText.append("\n</td>\n</tr>");
+	}
+
+	private static void addMedicationTextStart(StringBuilder sectionText){
+		sectionText.append("<table>\n<thead>\n<tr>\n")
+			.append("<th>Präparat</th><th>Dosis</th><th>Gültigkeit</th><th>Verabreichung</th>")
+			.append("\n</tr>\n</thead>\n").append("<tbody>\n");
+	}
+	
+	private static void addMedicationTextEnd(StringBuilder sectionText){
+		sectionText.append("\n</tbody>\n</table>\n");
+	}
+
+	private static void addQuantity(SubstanceAdministration administration, int quantity){
+		if (administration != null) {
+			EntryRelationship relationship = CDAFactory.eINSTANCE.createEntryRelationship();
+			relationship.setTypeCode(x_ActRelationshipEntryRelationship.REFR);
+			relationship.setInversionInd(false);
+			Supply supply = CDAFactory.eINSTANCE.createSupply();
+			supply.setClassCode(ActClassSupply.SPLY);
+			supply.setMoodCode(x_DocumentSubstanceMood.INT);
+			PQ quantityPQ = DatatypesFactory.eINSTANCE.createPQ();
+			quantityPQ.setValue(Double.valueOf(quantity));
+			supply.setQuantity(quantityPQ);
+			relationship.setSupply(supply);
+			administration.getEntryRelationships().add(relationship);
+		}
+	}
+	
+	private static void addRemark(SubstanceAdministration administration, String bemerkung){
+		if (administration != null && bemerkung != null && !bemerkung.isEmpty()) {
+			EntryRelationship relationship = CDAFactory.eINSTANCE.createEntryRelationship();
+			relationship.setTypeCode(x_ActRelationshipEntryRelationship.SPRT);
+			Act act = CDAFactory.eINSTANCE.createAct();
+			act.setClassCode(x_ActClassDocumentEntryAct.INFRM);
+			act.setMoodCode(x_DocumentActMood.RQO);
+			CD code = DatatypesFactory.eINSTANCE.createCD();
+			code.setNullFlavor(NullFlavor.NA);
+			ED text = DatatypesFactory.eINSTANCE.createED();
+			text.addText(bemerkung);
+			code.setOriginalText(text);
+			act.setCode(code);
+			relationship.setAct(act);
+			administration.getEntryRelationships().add(relationship);
+		}
+	}
+	
+	private static void addDose(SubstanceAdministration administration, String dosis){
+		ArrayList<Float> doseFloats = Prescription.getDoseAsFloats(dosis);
+		if (!doseFloats.isEmpty()) {
+			if (doseFloats.size() == 1) {
+				// assume per day
+				addEffectiveTime(administration, "", "1", "d");
+				addDoseQuantity(administration, doseFloats.get(0), "1");
+			} else {
+				// morning, midday, evening, night
+				for (int i = 0; i < doseFloats.size(); i++) {
+					SubstanceAdministration doseAdministration =
+						addDoseAdministration(administration);
+					if (i < 4) {
+						addEffectiveTime(doseAdministration, DOSE_TIME[i], "1", "d");
+					}
+					addDoseQuantity(doseAdministration, doseFloats.get(i), "1");
+				}
+			}
+		}
+		// default do not encode ... info has to be in remark or text form
+	}
+
+	private static SubstanceAdministration addDoseAdministration(
+		SubstanceAdministration administration){
+		if (administration != null) {
+			EntryRelationship relationship = CDAFactory.eINSTANCE.createEntryRelationship();
+			relationship.setTypeCode(x_ActRelationshipEntryRelationship.COMP);
+			SubstanceAdministration ret = CDAFactory.eINSTANCE.createSubstanceAdministration();
+			ret.setMoodCode(x_DocumentSubstanceMood.RQO);
+			relationship.setSubstanceAdministration(ret);
+			administration.getEntryRelationships().add(relationship);
+			return ret;
+		}
+		return null;
+	}
+	
+	private static void addDoseQuantity(SubstanceAdministration administration, Float value,
+		String unit){
+		if (administration != null) {
+			IVL_PQ doseQuantity = DatatypesFactory.eINSTANCE.createIVL_PQ();
+			PQ quantity = DatatypesFactory.eINSTANCE.createPQ();
+			quantity.setValue(Double.valueOf(value));
+			quantity.setUnit(unit);
+			doseQuantity.setCenter(quantity);
+			administration.setDoseQuantity(doseQuantity);
+		}
+	}
+
+	private static void addEffectiveTime(SubstanceAdministration administration, String time,
+		String periodValue, String periodUnit){
+		if (administration != null) {
+			PIVL_TS effectiveTime = DatatypesFactory.eINSTANCE.createPIVL_TS();
+			effectiveTime.setOperator(SetOperator.A);
+			IVL_TS phase = DatatypesFactory.eINSTANCE.createIVL_TS();
+			phase.setValue(time);
+			effectiveTime.setPhase(phase);
+			PQ period = DatatypesFactory.eINSTANCE.createPQ();
+			period.setValue(Double.parseDouble(periodValue));
+			period.setUnit(periodUnit);
+			effectiveTime.setPeriod(period);
+			administration.getEffectiveTimes().add(effectiveTime);
+		}
+	}
+
 	public static ByteArrayOutputStream getPrescriptionPdf(CdaCh document){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		

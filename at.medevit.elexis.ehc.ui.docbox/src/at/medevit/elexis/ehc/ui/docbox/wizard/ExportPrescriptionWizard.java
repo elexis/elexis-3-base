@@ -9,7 +9,7 @@ import ehealthconnector.cda.documents.ch.CdaCh;
 
 public class ExportPrescriptionWizard extends Wizard {
 	private ExportPrescriptionWizardPage1 prescriptionMainPage;
-	private ExportPrescriptionWizardPage2 prescriptionDocboxPage;
+	//	private ExportPrescriptionWizardPage2 prescriptionDocboxPage;
 	
 	private static CdaCh document;
 	private static Rezept rezept;
@@ -23,7 +23,7 @@ public class ExportPrescriptionWizard extends Wizard {
 	
 	@Override
 	public boolean performFinish(){
-		return prescriptionDocboxPage.finish();
+		return prescriptionMainPage.finish();
 	}
 	
 	@Override
@@ -31,8 +31,8 @@ public class ExportPrescriptionWizard extends Wizard {
 		super.addPages();
 		prescriptionMainPage = new ExportPrescriptionWizardPage1("Rezept auswählen");
 		addPage(prescriptionMainPage);
-		prescriptionDocboxPage = new ExportPrescriptionWizardPage2("Rezept bearbeiten");
-		addPage(prescriptionDocboxPage);
+		//		prescriptionDocboxPage = new ExportPrescriptionWizardPage2("Rezept bearbeiten");
+		//		addPage(prescriptionDocboxPage);
 	}
 	
 	public static void setDocument(CdaCh document){

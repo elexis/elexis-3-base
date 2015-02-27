@@ -1,5 +1,11 @@
 package at.medevit.elexis.ehc.ui.docbox.wizard;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -15,6 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import at.medevit.elexis.ehc.docbox.service.DocboxService;
+import at.medevit.elexis.ehc.ui.preference.PreferencePage;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -99,5 +107,37 @@ public class ExportPrescriptionWizardPage1 extends WizardPage {
 			}
 		}
 		return false;
+	}
+	
+	private void writePdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException{
+		String outputDir =
+			CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR, PreferencePage.getDefaultOutputDir());
+		File pdfFile = new File(outputDir + File.separator + getRezeptFileName() + ".pdf");
+		try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
+			fos.write(pdf.toByteArray());
+			fos.flush();
+		}
+	}
+	
+	public boolean finish(){
+		try {
+			String outputDir =
+				CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
+					PreferencePage.getDefaultOutputDir());
+			ExportPrescriptionWizard.getDocument().cSaveToFile(
+				outputDir + File.separator + getRezeptFileName() + ".xml");
+			ByteArrayOutputStream pdf =
+				DocboxService.getPrescriptionPdf(ExportPrescriptionWizard.getDocument());
+			writePdf(pdf);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public String getRezeptFileName(){
+		String ret = ExportPrescriptionWizard.getRezept().getLabel();
+		return ret.replaceAll(" ", "_");
 	}
 }

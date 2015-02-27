@@ -131,14 +131,38 @@
 		</fo:root>
 	</xsl:template>
 
-	<xsl:template match="cda:entry/cda:substanceAdministration">
-		<fo:table-row>
-			<fo:table-cell>
-				<fo:block>
-					<xsl:value-of select="cda:text" />
-				</fo:block>
-			</fo:table-cell>
-		</fo:table-row>
+	<xsl:template match="cda:text">
+		<xsl:apply-templates select="cda:table" />
+	</xsl:template>
+
+	<xsl:template match="cda:thead/cda:tr">
+
+	</xsl:template>
+
+	<xsl:template match="cda:tbody/cda:tr">
+
+		<xsl:for-each select="cda:td">
+			<xsl:choose>
+				<xsl:when test="cda:content">
+					<fo:table-row>
+						<fo:table-cell>
+							<fo:block font-weight="bold">
+								<xsl:value-of select="cda:content" />
+							</fo:block>
+						</fo:table-cell>
+					</fo:table-row>
+				</xsl:when>
+				<xsl:otherwise>
+					<fo:table-row>
+						<fo:table-cell>
+							<fo:block>
+								<xsl:value-of select="." />
+							</fo:block>
+						</fo:table-cell>
+					</fo:table-row>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:for-each>
 		<fo:table-row>
 			<fo:table-cell>
 				<fo:block>

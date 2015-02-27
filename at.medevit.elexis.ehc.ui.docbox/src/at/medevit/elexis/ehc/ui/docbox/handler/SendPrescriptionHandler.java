@@ -34,9 +34,15 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		prescription = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
 		if (prescription != null) {
-			CdaCh cdaPrescription = DocboxService.getPrescriptionDocument(prescription);
-			ByteArrayOutputStream pdfPrescription =
-				DocboxService.getPrescriptionPdf(cdaPrescription);
+			CdaCh cdaPrescription = null;
+			ByteArrayOutputStream pdfPrescription = null;
+			try {
+				cdaPrescription = DocboxService.getPrescriptionDocument(prescription);
+				pdfPrescription = DocboxService.getPrescriptionPdf(cdaPrescription);
+			} catch (IllegalStateException e) {
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+					"Das Rezept konnte nicht erstellt werden. " + e.getMessage());
+			}
 			if (cdaPrescription != null && pdfPrescription != null) {
 				// create InputStreams for sending ...
 				ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream();

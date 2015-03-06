@@ -78,7 +78,7 @@
 												<barcode:barcode xmlns:barcode="http://barcode4j.krysalis.org/ns"
 													message="{$BarcodeKennung}">
 													<barcode:code128>
-														<barcode:height>10mm</barcode:height>
+														<barcode:height>15mm</barcode:height>
 													</barcode:code128>
 												</barcode:barcode>
 											</fo:instream-foreign-object>

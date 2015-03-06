@@ -329,6 +329,15 @@ public class DocboxService {
 			relationship.setTypeCode(x_ActRelationshipEntryRelationship.COMP);
 			SubstanceAdministration ret = CDAFactory.eINSTANCE.createSubstanceAdministration();
 			ret.setMoodCode(x_DocumentSubstanceMood.RQO);
+			
+			ManufacturedProduct product = CDAFactory.eINSTANCE.createManufacturedProduct();
+			Material material = CDAFactory.eINSTANCE.createMaterial();
+			material.setCode(DatatypesFactory.eINSTANCE.createCE());
+			product.setManufacturedMaterial(material);
+			Consumable consumable = CDAFactory.eINSTANCE.createConsumable();
+			consumable.setManufacturedProduct(product);
+			ret.setConsumable(consumable);
+
 			relationship.setSubstanceAdministration(ret);
 			administration.getEntryRelationships().add(relationship);
 			return ret;

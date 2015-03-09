@@ -79,11 +79,13 @@ public class CreateOrderHandler extends AbstractHandler {
 			ort = tempAdr.getOrt();
 			land = tempAdr.getLand();
 			
-			Fall currentFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 			socialSecurityNumber = patient.getXid(Xid.DOMAIN_AHV);
-			if(socialSecurityNumber.length()==0) socialSecurityNumber = currentFall.getRequiredString("AHV-Nummer");
+			Fall currentFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+			if (currentFall != null && socialSecurityNumber.length() == 0)
+				socialSecurityNumber = currentFall.getRequiredString("AHV-Nummer");
 			// falls Covercard-Fall
-			insuranceCardNumber = currentFall.getRequiredString("Versicherten-Nummer");
+			if (currentFall != null)
+				insuranceCardNumber = currentFall.getRequiredString("Versicherten-Nummer");
 		}
 		
 		// URL zum Direktaufruf von OrderIT

@@ -14,7 +14,6 @@ package net.medshare.connector.viollier.ses;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +47,6 @@ public class PortalCookieService {
 	
 	private String userid;
 	private String password;
-	private String loginQuery;
 	
 	private ViollierConnectorSettings mySettings;
 	
@@ -73,9 +71,6 @@ public class PortalCookieService {
 				Messages.Exception_errorMessageNoUserPasswordDefined, ElexisException.EE_NOT_FOUND);
 		}
 		
-		loginQuery = "userid=" + URLEncoder.encode(userid, "UTF-8");
-		loginQuery += "&password=" + URLEncoder.encode(password, "UTF-8");
-		
 		HttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(httpsUrl);
 		
@@ -87,10 +82,9 @@ public class PortalCookieService {
 		String cookie = "";
 		HttpResponse response = client.execute(post);
 		if (response.getStatusLine().toString().equalsIgnoreCase("HTTP/1.1 302 Found")) {
-			System.out.println();
 			Header[] headers = response.getHeaders("Set-Cookie");
 			String headerValue1 = headers[1].getValue().replaceAll("SCDID_S=", "");
-			cookie = headerValue1.replaceAll(" path=/; Secure; ", "");
+			cookie = headerValue1.replaceAll(" path=/; Secure; (HttpOnly)?", "");
 		} else
 			throw new ElexisException(PortalCookieService.class,
 				Messages.Handler_errorMessageGetCookie, ElexisException.EE_UNEXPECTED_RESPONSE);

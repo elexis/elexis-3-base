@@ -4,7 +4,9 @@ package org.hl7.v3;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -48,10 +50,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-// JAVA7JAXBCONFLICTWITHANY	@XmlType(name = "ED", propOrder = {
-// JAVA7JAXBCONFLICTWITHANY	    "reference",
-// JAVA7JAXBCONFLICTWITHANY	    "thumbnail"
-// JAVA7JAXBCONFLICTWITHANY	})
+@XmlType(name = "ED", propOrder = {
+	"reference", "thumbnail"
+})
 @XmlSeeAlso({
     Thumbnail.class,
     ST.class
@@ -64,8 +65,10 @@ public class ED
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-// JAVA7JAXBCONFLICTWITHANY	protected TEL reference;
-// JAVA7JAXBCONFLICTWITHANY	    protected Thumbnail thumbnail;
+	@XmlElement
+	protected TEL reference;
+	@XmlElement
+	protected Thumbnail thumbnail;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String mediaType;

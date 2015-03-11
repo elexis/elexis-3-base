@@ -102,6 +102,9 @@ public class Probe {
 	}
 	
 	private String[] splitResultFields() throws PackageException{
+		//replace all multispaces with a single space
+		resultat = resultat.replaceAll("\\s+", " ").trim();
+		
 		String[] split = resultat.split(" ");
 		String regex = "^[a-zA-Z0-9/]+$"; //letter,digit, '/'
 		

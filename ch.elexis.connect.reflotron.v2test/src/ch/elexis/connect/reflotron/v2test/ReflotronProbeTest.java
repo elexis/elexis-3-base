@@ -10,7 +10,7 @@ import ch.elexis.connect.reflotron.packages.Probe;
 
 public class ReflotronProbeTest {
 	
-	public static String p1, p2, p3, p4, p5, p6, p7, p8;
+	public static String p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11;
 	private static String SEPARATOR = ";";
 	private static int NAME = 0;
 	private static int SHORT = 1;
@@ -23,9 +23,13 @@ public class ReflotronProbeTest {
 		p2 = "CHOL >600 mg/dl";
 		p3 = "CHOL 240 mg/dl";
 		p4 = "K 105.00 mmol/l";
-		p5 = "GGT <5.00 U/l 37øC";
+		p5 = "GGT <5.00 U/l    37øC   ";
 		p6 = "CHOL<15.26mmol/l 20°C";
 		p7 = "I'll fail";
+		p8 = "CREA  88.3    umol/l";
+		p9 = "GOT  25.3 U/l    37øC ";
+		p10 = "GPT  17.9 U/l    37øC   ";
+		p11 = "GLU   9.28    mmol/l   ";
 	}
 	
 	@Test
@@ -87,5 +91,32 @@ public class ReflotronProbeTest {
 			assertEquals("Resultat der Probe zu klein!", e.getMessage());
 		}
 		
+		probe.setResult(p8);
+		fields = probe.write(null).split(SEPARATOR);
+		assertEquals("Creatinin", fields[NAME]);
+		assertEquals("CREA", fields[SHORT]);
+		assertEquals("88.3", fields[VALUE]);
+		assertEquals("umol/l", fields[UNIT]);
+		
+		probe.setResult(p9);
+		fields = probe.write(null).split(SEPARATOR);
+		assertEquals("GOT", fields[NAME]);
+		assertEquals("GOT", fields[SHORT]);
+		assertEquals("25.3", fields[VALUE]);
+		assertEquals("U/l", fields[UNIT]);
+		
+		probe.setResult(p10);
+		fields = probe.write(null).split(SEPARATOR);
+		assertEquals("GPT", fields[NAME]);
+		assertEquals("GPT", fields[SHORT]);
+		assertEquals("17.9", fields[VALUE]);
+		assertEquals("U/l", fields[UNIT]);
+		
+		probe.setResult(p11);
+		fields = probe.write(null).split(SEPARATOR);
+		assertEquals("Glukose", fields[NAME]);
+		assertEquals("GLU", fields[SHORT]);
+		assertEquals("9.28", fields[VALUE]);
+		assertEquals("mmol/l", fields[UNIT]);
 	}
 }

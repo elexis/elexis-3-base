@@ -25,6 +25,8 @@ public class PreferenceConstants {
 	public static final String AG_DAYPREFERENCES = "agenda/tagesvorgaben"; //$NON-NLS-1$
 	public static final String AG_SHOW_REASON = "agenda/show_reason"; //$NON-NLS-1$
 	public static final String AG_BEREICH = "agenda/bereich"; //$NON-NLS-1$
+	public static final String AG_BIG_SAVE_COLUMNWIDTH = "agenda/big/savecolumnwidth";
+	public static final String AG_BIG_COLUMNWIDTH = "agenda/big/columnwidth";
 	
 	public static final String AG_DAY_PRESENTATION_STARTS_AT =
 		"agenda/beginnStundeTagesdarstellung";

@@ -29,6 +29,7 @@ public class AgendaAnzeige extends FieldEditorPreferencePage implements IWorkben
 		super(GRID);
 		
 		prefs.setDefault(PreferenceConstants.AG_SHOW_REASON, false);
+		prefs.setDefault(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true);
 		
 		setPreferenceStore(prefs);
 		
@@ -39,6 +40,9 @@ public class AgendaAnzeige extends FieldEditorPreferencePage implements IWorkben
 	protected void createFieldEditors(){
 		addField(new BooleanFieldEditor(PreferenceConstants.AG_SHOW_REASON,
 			Messages.AgendaAnzeige_showReason, getFieldEditorParent()));
+		
+		addField(new BooleanFieldEditor(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH,
+			Messages.AgendaAnzeige_saveColumnSize, getFieldEditorParent()));
 	}
 	
 	@Override

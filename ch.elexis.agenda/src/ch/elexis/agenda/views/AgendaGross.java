@@ -10,6 +10,8 @@
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -21,8 +23,6 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
@@ -72,6 +72,11 @@ import com.tiff.common.ui.datepicker.DatePicker;
  */
 public class AgendaGross extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.largeview"; //$NON-NLS-1$
+	private static final String SEPARATOR = ",";
+	private static final int[] DEFAULT_COLUMN_WIDTHS = {
+		60, 60, 105, 80, 300, 200
+	};
+	
 	DatePicker cal;
 	Composite cButtons;
 	Composite right;
@@ -83,9 +88,6 @@ public class AgendaGross extends BaseAgendaView {
 	
 	private static final String[] columnTitles = {
 		"von", "bis", "Typ", "Status", "Personalien", "Grund"
-	};
-	private static final int[] columnWidths = {
-		50, 50, 50, 70, 300, 200
 	};
 	
 	public AgendaGross(){
@@ -187,28 +189,7 @@ public class AgendaGross extends BaseAgendaView {
 		
 		tv.setLabelProvider(new AgendaLabelProvider());
 		Table table = tv.getTable();
-		
-		GC gc = new GC(table);
-		FontMetrics fm = gc.getFontMetrics();
-		int average = fm.getAverageCharWidth();
-		int nw = gc.getCharWidth('0');
-		gc.dispose();
-		columnWidths[0] = 10 * nw;
-		columnWidths[1] = columnWidths[0];
-		int w = 10;
-		for (int i = 0; i < Termin.TerminTypes.length; i++) {
-			if (Termin.TerminTypes[i].length() > w) {
-				w = Termin.TerminTypes[i].length();
-			}
-		}
-		columnWidths[2] = (w + 1) * average;
-		w = 10;
-		for (int i = 0; i < Termin.TerminStatus.length; i++) {
-			if (Termin.TerminStatus[i].length() > w) {
-				w = Termin.TerminStatus[i].length();
-			}
-		}
-		columnWidths[3] = (w + 1) * average;
+		int[] columnWidths = loadColumnWidths();
 		for (int i = 0; i < columnTitles.length; i++) {
 			TableColumn tc = new TableColumn(table, SWT.NONE);
 			tc.setText(columnTitles[i]);
@@ -259,6 +240,44 @@ public class AgendaGross extends BaseAgendaView {
 	@Override
 	public void setFocus(){
 		tv.getControl().setFocus();
+	}
+	
+	@Override
+	public void activation(boolean mode){
+		super.activation(mode);
+		if (!mode) {
+			saveColumnSizes();
+		}
+	}
+	
+	private void saveColumnSizes(){
+		if (CoreHub.userCfg.get(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
+			StringBuilder sb = new StringBuilder();
+			TableColumn[] columns = tv.getTable().getColumns();
+			for (TableColumn tc : columns) {
+				sb.append(tc.getWidth());
+				sb.append(SEPARATOR);
+			}
+			CoreHub.userCfg.set(PreferenceConstants.AG_BIG_COLUMNWIDTH, sb.toString());
+		}
+	}
+	
+	private int[] loadColumnWidths(){
+		int colWidth[] = DEFAULT_COLUMN_WIDTHS;
+		
+		// load user preferences if settings require it
+		if (CoreHub.userCfg.get(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
+			String defaultColWidths =
+				Arrays.toString(DEFAULT_COLUMN_WIDTHS).replace("[", "").replace("]", "");
+			String userColWidths =
+				CoreHub.userCfg.get(PreferenceConstants.AG_BIG_COLUMNWIDTH, defaultColWidths);
+			
+			String[] widthStrings = userColWidths.split(SEPARATOR);
+			for (int i = 0; i < widthStrings.length; i++) {
+				colWidth[i] = Integer.parseInt(widthStrings[i]);
+			}
+		}
+		return colWidth;
 	}
 	
 	private class AgendaLabelProvider extends LabelProvider implements ITableColorProvider,

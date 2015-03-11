@@ -119,6 +119,7 @@ public final class Messages extends NLS {
 	
 	public static String AgendaAnzeige_options;
 	public static String AgendaAnzeige_showReason;
+	public static String AgendaAnzeige_saveColumnSize;
 	
 	public static String Synchronizer_connctNotSuccessful;
 	public static String AgendaActions_unblock;

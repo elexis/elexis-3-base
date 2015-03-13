@@ -274,7 +274,7 @@ public class AgendaGross extends BaseAgendaView {
 			
 			String[] widthStrings = userColWidths.split(SEPARATOR);
 			for (int i = 0; i < widthStrings.length; i++) {
-				colWidth[i] = Integer.parseInt(widthStrings[i]);
+				colWidth[i] = Integer.parseInt(widthStrings[i].trim());
 			}
 		}
 		return colWidth;

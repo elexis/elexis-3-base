@@ -43,6 +43,7 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.docbox.ws.client.WsClientConfig;
+import ch.elexis.docbox.ws.client.WsClientUtil;
 import ch.rgw.io.Settings;
 import ch.swissmedicalsuite.HCardBrowser;
 
@@ -216,6 +217,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 				dlg.open();
 			}
 		});
+		if (WsClientUtil.isMedelexisCertAvailable()) {
+			buttonConfigureCert.setEnabled(false);
+		}
 		
 		buttonUseHCard = new Button(getFieldEditorParent(), SWT.CHECK);
 		buttonUseHCard.setText(Messages.UserDocboxPreferences_UseHCard);

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -13,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -106,6 +109,32 @@ public class WsClientUtil {
 		});
 	}
 
+	public static boolean isMedelexisCertAvailable(){
+		InputStream keyInputStream = null;
+		InputStream certInputStream = null;
+		try {
+			certInputStream =
+				WsClientUtil.class.getResourceAsStream("/cert/MedElexis_MedElexis.p12");
+			keyInputStream = WsClientUtil.class.getResourceAsStream("/cert/cert.key");
+			return certInputStream != null && keyInputStream != null;
+		} finally {
+			if (keyInputStream != null) {
+				try {
+					keyInputStream.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+			if (certInputStream != null) {
+				try {
+					certInputStream.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+	}
+
 	private static class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
 		private String username;
 		private String password;
@@ -136,6 +165,7 @@ public class WsClientUtil {
 			if (outboundProperty.booleanValue()) {
 				
 				if (clientcert) {
+					InputStream certInput = null;
 					try {
 						
 						String trustpass = passwordJks;
@@ -154,11 +184,12 @@ public class WsClientUtil {
 						}
 						
 						KeyStore keyStore = KeyStore.getInstance("PKCS12");
-						File keystore = new File(p12);
-						keyStore.load(new FileInputStream(keystore), passwordP12.toCharArray());
+						char[] certPass = getCertPass();
+						certInput = getCertInputStream();
+						keyStore.load(certInput, certPass);
 						KeyManagerFactory keyFactory =
 							KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-						keyFactory.init(keyStore, passwordP12.toCharArray());
+						keyFactory.init(keyStore, certPass);
 						KeyManager[] km = keyFactory.getKeyManagers();
 						
 						SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -186,6 +217,14 @@ public class WsClientUtil {
 					} catch (IOException ioe) {
 						logger.error("Security configuration failed with the following: "
 							+ ioe.getCause());
+					} finally {
+						if (certInput != null) {
+							try {
+								certInput.close();
+							} catch (IOException e) {
+								// ignore
+							}
+						}
 					}
 				}
 				
@@ -219,6 +258,53 @@ public class WsClientUtil {
 			return true;
 		}
 		
+		private InputStream getCertInputStream(){
+			// look for cert from fragment
+			InputStream certInputStream =
+				WsClientUtil.class.getResourceAsStream("/cert/MedElexis_MedElexis.p12");
+			if (certInputStream != null) {
+				logger.info("Using fragment Cert.");
+				return certInputStream;
+			}
+			// look for configured cert
+			try {
+				File keystore = new File(p12);
+				logger.info("Using configured Cert.");
+				return new FileInputStream(keystore);
+			} catch (FileNotFoundException e) {
+				logger.warn("Could not load cert." + e);
+			}
+			return null;
+		}
+		
+		private char[] getCertPass(){
+			// look for pass from fragment
+			InputStream keyInputStream = WsClientUtil.class.getResourceAsStream("/cert/cert.key");
+			if (keyInputStream != null) {
+				char[] chars = new char[1024];
+				InputStreamReader reader = new InputStreamReader(keyInputStream);
+				try {
+					int len = reader.read(chars);
+					byte[] decoded = Base64.getDecoder().decode(new String(chars, 0, len));
+					return new String(decoded, "UTF-8").toCharArray();
+				} catch (IOException e) {
+					logger.warn("Could not load cert." + e);
+				} finally {
+					try {
+						if (reader != null) {
+							reader.close();
+						}
+						if (keyInputStream != null) {
+							keyInputStream.close();
+						}
+					} catch (IOException e) {
+						// ignore
+					}
+				}
+			}
+			return passwordP12.toCharArray();
+		}
+
 		public boolean handleFault(SOAPMessageContext context){
 			return true;
 		}

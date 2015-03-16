@@ -10,15 +10,16 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.core.elements;
 
-import at.medevit.elexis.inbox.core.elements.service.ServiceComponent;
-import ch.elexis.core.data.activator.CoreHub;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
-import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabResult;
 
 public class LabResultCreateListener extends ElexisEventListenerImpl {
+	private Executor executor = Executors.newCachedThreadPool();
+
 	public LabResultCreateListener(){
 		super(LabResult.class, ElexisEvent.EVENT_CREATE);
 	}
@@ -26,14 +27,9 @@ public class LabResultCreateListener extends ElexisEventListenerImpl {
 	@Override
 	public void catchElexisEvent(ElexisEvent ev){
 		LabResult result = (LabResult) ev.getObject();
-		if (result != null && result.getPatient() != null) {
-			ServiceComponent.getService().createInboxElement(result.getPatient(),
-				CoreHub.actMandant, result);
-			Kontakt doctor = result.getPatient().getStammarzt();
-			if (doctor != null && doctor.exists() && !doctor.equals(CoreHub.actMandant)) {
-				ServiceComponent.getService().createInboxElement(
-					ElexisEventDispatcher.getSelectedPatient(), doctor, result);
-			}
+		if (result != null) {
+			// check if we should add an EAL code to the active Konsultation
+			executor.execute(new AddLabInboxElement(result));
 		}
 	}
 }

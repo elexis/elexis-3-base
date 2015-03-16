@@ -10,3 +10,5 @@ Require-Bundle: at.medevit.elexis.inbox,
  ch.elexis.core.data,
  org.eclipse.core.jobs;bundle-version="3.5.200"
 Bundle-ActivationPolicy: lazy
+Import-Package: ch.elexis.core.model,
+ org.slf4j

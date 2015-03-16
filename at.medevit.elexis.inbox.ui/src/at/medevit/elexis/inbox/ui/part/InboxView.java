@@ -59,6 +59,8 @@ public class InboxView extends ViewPart {
 	private Text filterText;
 	private CheckboxTreeViewer viewer;
 	
+	private boolean reloadPending;
+
 	private InboxElementViewerFilter filter = new InboxElementViewerFilter();
 	
 	private ElexisUiEventListenerImpl mandantChanged = new ElexisUiEventListenerImpl(Mandant.class,
@@ -192,6 +194,10 @@ public class InboxView extends ViewPart {
 	@Override
 	public void setFocus(){
 		filterText.setFocus();
+		
+		if (reloadPending) {
+			reload();
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -251,6 +257,12 @@ public class InboxView extends ViewPart {
 	}
 	
 	public void reload(){
+		if (!viewer.getControl().isVisible()) {
+			reloadPending = true;
+			return;
+		}
+		
+		reloadPending = false;
 		viewer.setInput(getOpenInboxElements());
 		viewer.expandAll();
 	}

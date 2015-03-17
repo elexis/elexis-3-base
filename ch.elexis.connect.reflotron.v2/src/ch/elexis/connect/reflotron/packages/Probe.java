@@ -11,6 +11,7 @@ import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
 public class Probe {
+	private static final String UNIT_TEST_RUNNING = "ElexisReflotronUnitTestRunning";
 	private static int NAME = 0;
 	private static int VALUE = 1;
 	private static int UNIT = 2;
@@ -89,7 +90,7 @@ public class Probe {
 		Value val = Value.getValue(paramName, unit);
 		
 		// for Unit-Test only
-		if (hint.equals("ElexisReflotronUnitTestRunning")) {
+		if (UNIT_TEST_RUNNING.equals(hint)) {
 			return val.get_longName() + ";" + val.get_shortName() + ";" + value + ";" + unit;
 		}
 		

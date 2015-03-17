@@ -22,6 +22,7 @@ import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.text.ITextPlugin.ICallback;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -30,14 +31,14 @@ import ch.elexis.data.Patient;
 
 public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallback {
 	IPlannable[] liste;
-	private static Termin termin;
 	
 	public TerminListeDruckenDialog(Shell shell, IPlannable[] liste){
 		super(shell);
 		this.liste = liste;
 		// use first appointment for day and section reference
 		if (liste != null && liste.length > 0) {
-			termin = (Termin) liste[0];
+			Termin termin = (Termin) liste[0];
+			ElexisEventDispatcher.fireSelectionEvent(termin);
 		}
 	}
 	
@@ -94,9 +95,5 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 	
 	public boolean saveAs(){
 		return false;
-	}
-	
-	public static Termin getFirstOfSelected(){
-		return termin;
 	}
 }

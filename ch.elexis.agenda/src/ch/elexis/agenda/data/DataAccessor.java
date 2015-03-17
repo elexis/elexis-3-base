@@ -15,9 +15,9 @@ package ch.elexis.agenda.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IDataAccess;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
@@ -83,7 +83,7 @@ public class DataAccessor implements IDataAccess {
 	public Result<Object> getObject(String descriptor, PersistentObject dependentObject,
 		String dates, String[] params){
 		Result<Object> ret = null;
-		Termin termin = TerminListeDruckenDialog.getFirstOfSelected();
+		Termin termin = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		
 		if (termin != null && descriptor.equals(Termin.FLD_BEREICH)) {
 			ret = new Result<Object>(termin.getBereich());

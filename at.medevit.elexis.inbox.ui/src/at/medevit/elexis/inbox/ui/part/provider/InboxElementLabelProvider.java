@@ -19,6 +19,9 @@ import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.inbox.model.InboxElement;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Person;
 
 public class InboxElementLabelProvider extends LabelProvider implements IColorProvider {
 	
@@ -43,7 +46,14 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 	
 	@Override
 	public Image getImage(Object element){
-		if (element instanceof InboxElement) {
+		if (element instanceof PatientInboxElements) {
+			Patient pat = ((PatientInboxElements) element).getPatient();
+			if (pat.getGeschlecht().equals(Person.MALE)) {
+				return Images.IMG_MANN.getImage();
+			} else {
+				return Images.IMG_FRAU.getImage();
+			}
+		} else if (element instanceof InboxElement) {
 			Image image = extension.getImage((InboxElement) element);
 			if (image != null) {
 				return image;

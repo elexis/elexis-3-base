@@ -10,8 +10,6 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.action.ToolBarManager;
@@ -47,18 +45,17 @@ import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementLabelProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
 
 public class InboxView extends ViewPart {
 	
 	private Text filterText;
 	private CheckboxTreeViewer viewer;
 	
+
 	private boolean reloadPending;
 
 	private InboxElementViewerFilter filter = new InboxElementViewerFilter();
@@ -70,6 +67,7 @@ public class InboxView extends ViewPart {
 			reload();
 		}
 	};
+	private InboxElementContentProvider contentProvider;
 	
 	@Override
 	public void createPartControl(Composite parent){
@@ -109,7 +107,8 @@ public class InboxView extends ViewPart {
 		filters[0] = filter;
 		viewer.setFilters(filters);
 		
-		viewer.setContentProvider(new InboxElementContentProvider());
+		contentProvider = new InboxElementContentProvider();
+		viewer.setContentProvider(contentProvider);
 		
 		viewer.setLabelProvider(new InboxElementLabelProvider());
 		
@@ -125,12 +124,15 @@ public class InboxView extends ViewPart {
 						} else {
 							viewer.setChecked(inboxElement, true);
 						}
+						contentProvider.refreshElement(inboxElement);
 					}
+					contentProvider.refreshElement(patientInbox);
 				} else if (event.getElement() instanceof InboxElement) {
 					InboxElement inboxElement = (InboxElement) event.getElement();
 					toggleInboxElementState(inboxElement);
+					contentProvider.refreshElement(inboxElement);
 				}
-				reload();
+				viewer.refresh(false);
 			}
 		});
 		
@@ -151,10 +153,11 @@ public class InboxView extends ViewPart {
 		addFilterActions(menuManager);
 		
 		InboxServiceComponent.getService().addUpdateListener(new IInboxUpdateListener() {
-			public void update(InboxElement element){
+			public void update(final InboxElement element){
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run(){
-						reload();
+						contentProvider.refreshElement(element);
+						viewer.refresh();
 					}
 				});
 			}
@@ -200,23 +203,12 @@ public class InboxView extends ViewPart {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
-	private ArrayList<PatientInboxElements> getOpenInboxElements(){
-		HashMap<Patient, PatientInboxElements> map = new HashMap<Patient, PatientInboxElements>();
+	private List<InboxElement> getOpenInboxElements(){
 		List<InboxElement> openElements =
-			InboxServiceComponent.getService().getInboxElements(CoreHub.actMandant, null,
+			InboxServiceComponent.getService().getInboxElements(
+				(Mandant) ElexisEventDispatcher.getSelected(Mandant.class), null,
 				IInboxElementService.State.NEW);
-		// create PatientInboxElements for all InboxElements
-		for (InboxElement inboxElement : openElements) {
-			Patient patient = inboxElement.getPatient();
-			PatientInboxElements patientInbox = map.get(patient);
-			if (patientInbox == null) {
-				patientInbox = new PatientInboxElements(patient);
-				map.put(patient, patientInbox);
-			}
-			patientInbox.addElement(inboxElement);
-		}
-		return new ArrayList<PatientInboxElements>(map.values());
+		return openElements;
 	}
 	
 	private class InboxElementViewerFilter extends ViewerFilter {
@@ -225,12 +217,12 @@ public class InboxView extends ViewPart {
 		
 		public void setSearchText(String s){
 			// Search must be a substring of the existing value
-			this.searchString = ".*" + s + ".*";
+			this.searchString = s;
 		}
 		
 		private boolean isSelect(Object leaf){
 			String label = labelProvider.getText(leaf);
-			if (label != null && label.matches(searchString)) {
+			if (label != null && label.contains(searchString)) {
 				return true;
 			}
 			return false;
@@ -262,9 +254,9 @@ public class InboxView extends ViewPart {
 			return;
 		}
 		
-		reloadPending = false;
 		viewer.setInput(getOpenInboxElements());
-		viewer.expandAll();
+		reloadPending = false;
+		viewer.refresh();
 	}
 	
 	@Override

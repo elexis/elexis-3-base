@@ -15,7 +15,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -39,6 +38,7 @@ import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -285,7 +285,7 @@ public class WsClientUtil {
 				InputStreamReader reader = new InputStreamReader(keyInputStream);
 				try {
 					int len = reader.read(chars);
-					byte[] decoded = Base64.getDecoder().decode(new String(chars, 0, len));
+					byte[] decoded = Base64.decodeBase64(new String(chars, 0, len));
 					return new String(decoded, "UTF-8").toCharArray();
 				} catch (IOException e) {
 					logger.warn("Could not load cert." + e);

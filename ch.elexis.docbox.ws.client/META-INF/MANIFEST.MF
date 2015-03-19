@@ -9,6 +9,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: rsc/wsdl/,
  .
 Require-Bundle: ch.elexis.core.data;bundle-version="3.1.0",
- ch.rgw.utility
+ ch.rgw.utility,
+ org.apache.commons.codec
 Export-Package: ch.elexis.docbox.ws.client
 Import-Package: org.slf4j

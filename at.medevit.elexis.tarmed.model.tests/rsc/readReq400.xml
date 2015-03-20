@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invoice:request xmlns:invoice="http://www.xmlData.ch/xmlInvoice/XSD" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd" role="production">
+  <invoice:header>
+    <invoice:sender ean_party="2099988872462" />
+    <invoice:intermediate ean_party="2000000000000" />
+    <invoice:recipient ean_party="2000000000000" />
+  </invoice:header>
+  <invoice:prolog>
+    <invoice:package version="300" id="0">Elexis</invoice:package>
+    <invoice:generator>
+      <invoice:software version="100" id="0">JDOM</invoice:software>
+    </invoice:generator>
+    <invoice:validator focus="tarmed" version_software="300" version_db="401" id="0">Elexis TarmedVerifier</invoice:validator>
+  </invoice:prolog>
+  <invoice:invoice invoice_timestamp="1426759765" invoice_id="001026000562" invoice_date="2015-03-19T00:00:00" resend="false" case_id="ka933bacc6535fecf017">
+    <invoice:balance currency="CHF" amount="110.19" amount_prepaid="0.00" amount_due="110.20" amount_tarmed="54.59" unit_tarmed.mt="30.61" amount_tarmed.mt="28.16" unit_tarmed.tt="28.73" amount_tarmed.tt="26.43" amount_cantonal="0.00" amount_unclassified="0.00" amount_lab="0.00" amount_physio="0.00" amount_drug="55.60" amount_migel="0.00" amount_obligations="110.19">
+      <invoice:vat vat="3.11">
+        <invoice:vat_rate vat_rate="0.00" amount="54.59" vat="0.00" />
+        <invoice:vat_rate vat_rate="2.50" amount="24.25" vat="0.61" />
+        <invoice:vat_rate vat_rate="8.00" amount="31.35" vat="2.51" />
+      </invoice:vat>
+    </invoice:balance>
+    <invoice:esr9 participant_number="01-200020-9" type="16or27" reference_number="81 17000 00000 00001 02600 05629" coding_line="0100000110207&gt;811700000000000010260005629+ 012000209&gt;">
+      <invoice:bank>
+        <invoice:company>
+          <invoice:companyname>Hartmann</invoice:companyname>
+          <invoice:postal>
+            <invoice:zip>0000</invoice:zip>
+            <invoice:city>Unbekannt</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-5714265</invoice:phone>
+          </invoice:telecom>
+        </invoice:company>
+      </invoice:bank>
+    </invoice:esr9>
+    <invoice:tiers_payant invoice_modification="false" purpose="invoice">
+      <invoice:biller ean_party="2099988872462" zsr="C196719" specialty="Allgemeine Medizin">
+        <invoice:person salutation="Frau" title="Dr.">
+          <invoice:familyname>Schwarz</invoice:familyname>
+          <invoice:givenname>Lena</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Uferweg 3</invoice:street>
+            <invoice:zip countrycode="CH">5000</invoice:zip>
+            <invoice:city>Aarau</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-0944235</invoice:phone>
+          </invoice:telecom>
+          <invoice:online>
+            <invoice:email>info@praxisschwarz.ch</invoice:email>
+          </invoice:online>
+        </invoice:person>
+      </invoice:biller>
+      <invoice:provider ean_party="2099988872462" zsr="C196719" specialty="Allgemeine Medizin">
+        <invoice:person salutation="Frau" title="Dr.">
+          <invoice:familyname>Schwarz</invoice:familyname>
+          <invoice:givenname>Lena</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Uferweg 3</invoice:street>
+            <invoice:zip countrycode="CH">5000</invoice:zip>
+            <invoice:city>Aarau</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-0944235</invoice:phone>
+          </invoice:telecom>
+          <invoice:online>
+            <invoice:email>info@praxisschwarz.ch</invoice:email>
+          </invoice:online>
+        </invoice:person>
+      </invoice:provider>
+      <invoice:insurance ean_party="2000000000000">
+        <invoice:company>
+          <invoice:companyname>Adlerauge</invoice:companyname>
+          <invoice:postal>
+            <invoice:street>Bahnhofstrasse 3</invoice:street>
+            <invoice:zip countrycode="CH">5000</invoice:zip>
+            <invoice:city>Aarau</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-9834087</invoice:phone>
+          </invoice:telecom>
+        </invoice:company>
+      </invoice:insurance>
+      <invoice:patient gender="male" birthdate="1966-07-20T00:00:00">
+        <invoice:person>
+          <invoice:familyname>Adlerauge</invoice:familyname>
+          <invoice:givenname>Albertino</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Bahnhofstrasse 3</invoice:street>
+            <invoice:zip countrycode="CH">5000</invoice:zip>
+            <invoice:city>Aarau</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-9834087</invoice:phone>
+          </invoice:telecom>
+        </invoice:person>
+      </invoice:patient>
+      <invoice:guarantor>
+        <invoice:person>
+          <invoice:familyname>Adlerauge</invoice:familyname>
+          <invoice:givenname>Albertino</invoice:givenname>
+          <invoice:postal>
+            <invoice:street>Bahnhofstrasse 3</invoice:street>
+            <invoice:zip countrycode="CH">5000</invoice:zip>
+            <invoice:city>Aarau</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-9834087</invoice:phone>
+          </invoice:telecom>
+        </invoice:person>
+      </invoice:guarantor>
+    </invoice:tiers_payant>
+    <invoice:detail date_begin="2015-03-19T00:00:00" date_end="2015-03-19T00:00:00" canton="AG" service_locality="practice">
+      <invoice:diagnosis type="ICD10" code="V17" />
+      <invoice:diagnosis type="by_contract" code="R4" />
+      <invoice:diagnosis type="by_contract" code="R5" />
+      <invoice:uvg reason="accident" case_id="97651" case_date="2015-03-19T00:00:00" />
+      <invoice:services>
+        <invoice:record_drug unit="3.90" unit_factor="1.00" tariff_type="400" code="2321636" amount="3.90" vat_rate="8.0" obligation="false" validate="true" record_id="1" number="1" quantity="1.0" date_begin="2015-03-19T00:00:00">HANSAPLAST Wundreinigungstücher 8 Stk ()</invoice:record_drug>
+        <invoice:record_drug unit="24.45" unit_factor="1.00" tariff_type="400" code="2180791" amount="24.45" vat_rate="8.0" obligation="false" validate="true" record_id="2" number="1" quantity="1.0" date_begin="2015-03-19T00:00:00">HANSAPLAST Knie Bandage (1 Stk)</invoice:record_drug>
+        <invoice:record_drug unit="3.00" unit_factor="1.00" tariff_type="400" code="2321599" amount="3.00" vat_rate="8.0" obligation="false" validate="true" record_id="3" number="1" quantity="1.0" date_begin="2015-03-19T00:00:00">HANSAPLAST UNIVERSAL Schnellverb Strips ass 20 Stk ()</invoice:record_drug>
+        <invoice:record_drug unit="24.25" unit_factor="1.00" tariff_type="400" code="2648343" amount="24.25" vat_rate="2.5" obligation="false" validate="true" record_id="4" number="1" quantity="1.0" date_begin="2015-03-19T00:00:00">VOLTAREN DOLO Emulgel (Tube 120 g)</invoice:record_drug>
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ean_provider="2099988872462" ean_responsible="2099988872462" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="9.57" unit_factor.mt="0.92" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="8.80" unit.tt="8.19" unit_factor.tt="0.92" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="7.53" amount="16.34" vat_rate="0.0" validate="true" obligation="true" record_id="5" number="1" quantity="1.0" date_begin="2015-03-19T00:00:00" code="00.0010">Konsultation, erste 5 Min. (Grundkonsultation)</invoice:record_tarmed>
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ean_provider="2099988872462" ean_responsible="2099988872462" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="21.04" unit_factor.mt="0.92" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="19.36" unit.tt="20.54" unit_factor.tt="0.92" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="18.90" amount="38.25" vat_rate="0.0" validate="true" obligation="true" record_id="6" number="1" quantity="1.0" date_begin="2015-03-19T00:00:00" code="01.0110">Taping, Kategorie I</invoice:record_tarmed>
+      </invoice:services>
+    </invoice:detail>
+  </invoice:invoice>
+</invoice:request>
+

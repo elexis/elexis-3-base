@@ -205,6 +205,7 @@
   <module>net.medshare.connector.aerztekasse.feature</module>
   <module>net.medshare.connector.viollier</module>
   <module>net.medshare.connector.viollier.feature</module>
+  <module>at.medevit.elexis.tarmed.model</module>
 
   <!-- our test modules -->
   <module>at.medevit.atc_codes.test</module>
@@ -217,6 +218,7 @@
   <module>ch.elexis.laborimport.viollier.v2_test</module>
   <module>ch.medshare.elexis_directories.test</module>
   <module>com.hilotec.elexis.messwerte.v2_test</module>
+  <module>at.medevit.elexis.tarmed.model.tests</module>
 </modules>
 <repositories>
   <repository>

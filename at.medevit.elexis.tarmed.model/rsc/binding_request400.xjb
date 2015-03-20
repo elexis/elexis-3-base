@@ -1,0 +1,12 @@
+<jxb:bindings 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+    version="2.1">
+
+    <jxb:bindings schemaLocation="MDInvoiceRequest_400.xsd">
+            <jxb:bindings node="//xs:complexType[@name='detailType']/xs:attribute[@name='service_locality']">
+                <jxb:property name="serviceLocalityAttribute"/>
+            </jxb:bindings>
+    </jxb:bindings>
+
+</jxb:bindings>

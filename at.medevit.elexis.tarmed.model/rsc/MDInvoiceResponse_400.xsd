@@ -1,0 +1,1174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ==========================================================================
+   Date of Generation: 01.04.2004
+   
+   This is the schema definition for a "MD Invoice Response" process encoded
+   in XML. The MDInvoiceResponse is generated as a preliminary or final response
+   always related to an initally sent MDInvoiceRequest process. Therefore, for
+   each request there is an unbounded number of preliminary responses and possibly
+   one final response, all encoded in XML. The final response ultimately ends
+   the document cycle for that particular invoice.
+   This is normative for the electronic invoice project XMLInvoice.
+
+   Permission to use, and distribute this schema and its accompanying
+   documentation for any purpose and without fee is hereby granted in perpetuity,
+   provided that the above copyright notice and this paragraph appear in all copies.
+   The copyright holders make no representation about the suitability of the schema
+   for any purpose.
+
+   It is provided "as is" without expressed or implied warranty.
+
+   Copyright (c) 2004 Forum Datenaustausch, All Rights Reserved.
+   Editor: MediData AG, Peter Bloch
+   ========================================================================== -->
+<schema targetNamespace="http://www.xmlData.ch/xmlInvoice/XSD" xmlns:invoice="http://www.xmlData.ch/xmlInvoice/XSD" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- generic element for non-empty text -->
+	<simpleType name="nonEmptyTextType">
+		<restriction base="string">
+			<minLength value="1"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 3 Zeichen
+	-->
+	<simpleType name="stringType1_3">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="3"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 9 Zeichen
+	-->
+	<simpleType name="stringType1_9">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="9"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 20 Zeichen
+	-->
+	<simpleType name="stringType1_20">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="20"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 25 Zeichen
+	-->
+	<simpleType name="stringType1_25">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="25"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 35 Zeichen
+	-->
+	<simpleType name="stringType1_35">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="35"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 50 Zeichen
+	-->
+	<simpleType name="stringType1_50">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="50"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 70 Zeichen
+	-->
+	<simpleType name="stringType1_70">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="70"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 100 Zeichen
+	-->
+	<simpleType name="stringType1_100">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="100"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 350 Zeichen
+	-->
+	<simpleType name="stringType1_350">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="350"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 0 bis 350 Zeichen
+	-->
+	<simpleType name="stringType0_350">
+		<restriction base="string">
+			<maxLength value="350"/>
+		</restriction>
+	</simpleType>
+	<!--
+	Datentyp string 1 bis 700 Zeichen
+	-->
+	<simpleType name="stringType1_700">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="700"/>
+		</restriction>
+	</simpleType>
+	<!-- 
+	EAN- und ZSR-Nummer 
+	-->
+	<simpleType name="eanPartyType">
+		<restriction base="string">
+			<pattern value="(20[0-9]{11}|76[0-9]{11})"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="xtendEanPartyType">
+		<restriction base="string">
+			<pattern value="(20[0-9]{11}|76[0-9]{11}|unknown)"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="zsrPartyType">
+		<restriction base="string">
+			<pattern value="([A-Z][0-9]{6})"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="unionPartyType">
+		<union memberTypes="invoice:xtendEanPartyType invoice:zsrPartyType"/>
+	</simpleType>
+	<!--
+	Adressen
+	-->
+	<complexType name="zipType">
+		<simpleContent>
+			<extension base="invoice:stringType1_9">
+				<attribute name="statecode" type="invoice:stringType1_9"/>
+				<attribute name="countrycode" type="invoice:stringType1_3" default="CH"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<complexType name="postalAddressType">
+		<sequence>
+			<sequence>
+				<element name="pobox" type="invoice:stringType1_35" minOccurs="0"/>
+				<element name="street" type="invoice:stringType1_35" minOccurs="0"/>
+			</sequence>
+			<element name="zip" type="invoice:zipType"/>
+			<element name="city" type="invoice:stringType1_35"/>
+		</sequence>
+	</complexType>
+	<complexType name="telecomAddressType">
+		<sequence>
+			<element name="phone" type="invoice:stringType1_25" maxOccurs="3"/>
+			<element name="fax" type="invoice:stringType1_25" minOccurs="0" maxOccurs="3"/>
+		</sequence>
+	</complexType>
+	<complexType name="onlineAddressType">
+		<sequence>
+			<element name="email" maxOccurs="3">
+				<simpleType>
+					<restriction base="invoice:stringType1_70">
+						<pattern value=".+@.+"/>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="url" minOccurs="0" maxOccurs="3">
+				<simpleType>
+					<restriction base="anyURI">
+						<minLength value="1"/>
+						<maxLength value="100"/>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="replyCompanyType">
+		<sequence>
+			<sequence>
+				<element name="companyname" type="invoice:stringType1_35"/>
+				<element name="department" type="invoice:stringType1_35" minOccurs="0" maxOccurs="3"/>
+			</sequence>
+			<element name="postal" type="invoice:postalAddressType"/>
+			<element name="telecom" type="invoice:telecomAddressType" minOccurs="0"/>
+			<element name="online" type="invoice:onlineAddressType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	<complexType name="replyContactType">
+		<sequence>
+			<sequence>
+				<element name="familyname" type="invoice:stringType1_35"/>
+				<element name="givenname" type="invoice:stringType1_35" maxOccurs="3"/>
+			</sequence>
+			<element name="telecom" type="invoice:telecomAddressType" minOccurs="0"/>
+			<element name="online" type="invoice:onlineAddressType" minOccurs="0"/>
+		</sequence>
+		<attribute name="salutation" type="invoice:stringType1_35"/>
+		<attribute name="title" type="invoice:stringType1_35"/>
+	</complexType>
+	<complexType name="replyAddressType">
+		<sequence minOccurs="0">
+			<element name="company" type="invoice:replyCompanyType"/>
+			<element name="contact" type="invoice:replyContactType" minOccurs="0"/>
+		</sequence>
+		<attribute name="ean_party" type="invoice:xtendEanPartyType" use="required"/>
+	</complexType>
+	<complexType name="bankCompanyType">
+		<sequence>
+			<sequence>
+				<element name="companyname" type="invoice:stringType1_35"/>
+				<element name="department" type="invoice:stringType1_35" minOccurs="0" maxOccurs="3"/>
+			</sequence>
+			<sequence>
+				<element name="postal" type="invoice:postalAddressType"/>
+				<element name="telecom" type="invoice:telecomAddressType" minOccurs="0"/>
+				<element name="online" type="invoice:onlineAddressType" minOccurs="0"/>
+			</sequence>
+		</sequence>
+	</complexType>
+	<complexType name="bankAddressType">
+		<sequence>
+			<element name="company" type="invoice:bankCompanyType"/>
+		</sequence>
+	</complexType>
+	<!--
+	Header
+	-->
+	<complexType name="headerPartyType">
+		<attribute name="ean_party" type="invoice:eanPartyType" use="required"/>
+	</complexType>
+	<complexType name="headerType">
+		<sequence>
+			<element name="sender" type="invoice:headerPartyType"/>
+			<element name="intermediate" type="invoice:headerPartyType"/>
+			<element name="recipient" type="invoice:headerPartyType"/>
+		</sequence>
+	</complexType>
+	<!--
+	Prolog
+	-->
+	<complexType name="prologType">
+		<sequence>
+			<element name="package" type="invoice:softwareType" minOccurs="0"/>
+			<element name="generator" type="invoice:generatorType"/>
+			<element name="validator" type="invoice:dataValidatorType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="generatorType">
+		<sequence>
+			<element name="software" type="invoice:softwareType"/>
+		</sequence>
+	</complexType>
+	<complexType name="softwareType">
+		<simpleContent>
+			<extension base="invoice:stringType1_50">
+				<attribute name="version" type="invoice:versionType" use="required"/>
+				<attribute name="id" default="0">
+					<simpleType>
+						<restriction base="integer">
+							<minInclusive value="0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<simpleType name="versionType">
+		<restriction base="integer">
+			<minInclusive value="100"/>
+		</restriction>
+	</simpleType>
+	<complexType name="dataValidatorType">
+		<simpleContent>
+			<extension base="invoice:stringType1_350">
+				<attribute name="focus" use="required">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="tarmed"/>
+							<enumeration value="cantonal"/>
+							<enumeration value="lab"/>
+							<enumeration value="unclassified"/>
+							<enumeration value="drug"/>
+							<enumeration value="migel"/>
+							<enumeration value="physio"/>
+							<enumeration value="other"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="version_software" type="invoice:versionType" use="required"/>
+				<attribute name="version_db" type="invoice:versionType" use="required"/>
+				<attribute name="id" default="0">
+					<simpleType>
+						<restriction base="integer">
+							<minInclusive value="0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<!--
+	Rechnungs-Rueckweisung
+	-->
+	<complexType name="rejectedErrorType">
+		<complexContent>
+			<extension base="invoice:errorType">
+				<choice minOccurs="0">
+					<element name="error_business" type="invoice:errorBusinessType"/>
+					<element name="error_schema" type="invoice:errorSchemaType"/>
+				</choice>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="modifiedErrorType">
+		<complexContent>
+			<extension base="invoice:errorType">
+				<sequence minOccurs="0">
+					<element name="error_business" type="invoice:errorBusinessType"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="errorType">
+		<attribute name="major" use="required">
+			<simpleType>
+				<restriction base="integer">
+					<minInclusive value="1000"/>
+					<maxInclusive value="1999"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="minor" use="required">
+			<simpleType>
+				<restriction base="integer">
+					<pattern value="(0|2[0-9]{3})"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="error" use="required">
+			<simpleType>
+				<restriction base="integer">
+					<pattern value="(0|3[0-9]{3})"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+	<complexType name="errorBusinessType">
+		<simpleContent>
+			<extension base="invoice:stringType0_350">
+				<attribute name="error_value" type="invoice:stringType1_350"/>
+				<attribute name="valid_value" type="invoice:stringType1_350"/>
+				<attribute name="record_id" type="positiveInteger"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<complexType name="errorSchemaType">
+		<simpleContent>
+			<extension base="invoice:nonEmptyTextType">
+				<attribute name="line_number" type="positiveInteger"/>
+				<attribute name="line_pos" type="positiveInteger"/>
+				<attribute name="err_code" type="integer"/>
+				<attribute name="err_text" type="invoice:stringType1_350"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<complexType name="rejectedType">
+		<sequence>
+			<element name="explanation" type="invoice:stringType1_700" minOccurs="0"/>
+			<element name="error" type="invoice:rejectedErrorType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="type" type="string" fixed="final"/>
+	</complexType>
+	<!--
+	Rechnungskorrektur
+	-->
+	<complexType name="balanceType">
+		<attribute name="currency" type="string" fixed="CHF"/>
+		<attribute name="amount" type="double" use="required"/>
+		<attribute name="amount_prepaid" default="0">
+			<simpleType>
+				<restriction base="double">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="amount_due" use="required">
+			<simpleType>
+				<restriction base="double">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="amount_tarmed" type="double" default="0"/>
+		<attribute name="unit_tarmed.mt" type="double" default="0"/>
+		<attribute name="amount_tarmed.mt" type="double" default="0"/>
+		<attribute name="unit_tarmed.tt" type="double" default="0"/>
+		<attribute name="amount_tarmed.tt" type="double" default="0"/>
+		<attribute name="amount_cantonal" type="double" default="0"/>
+		<attribute name="amount_unclassified" type="double" default="0"/>
+		<attribute name="amount_lab" type="double" default="0"/>
+		<attribute name="amount_migel" type="double" default="0"/>
+		<attribute name="amount_physio" type="double" default="0"/>
+		<attribute name="amount_drug" type="double" default="0"/>
+		<attribute name="amount_obligations" type="double" default="0"/>
+	</complexType>
+	<!--
+	Leistungspositionen (werden nur bei einer Rechnungskorrektur benutzt)
+	TarMed-Position
+	-->
+	<complexType name="recordTarmedType">
+		<simpleContent>
+			<extension base="invoice:stringType1_350">
+				<attribute name="status" use="required">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="added"/>
+							<enumeration value="corrected"/>
+							<enumeration value="rejected"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="comment" type="invoice:stringType1_350"/>
+				<attribute name="record_id" type="positiveInteger" use="required"/>
+				<attribute name="number" type="positiveInteger" default="1"/>
+				<attribute name="treatment" fixed="ambulatory">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="ambulatory"/>
+							<enumeration value="semi_stationary"/>
+							<enumeration value="stationary"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="tariff_type" type="string" fixed="001"/>
+				<attribute name="code" type="invoice:stringType1_20" use="required"/>
+				<attribute name="quantity" type="double" use="required"/>
+				<attribute name="ref_code" type="invoice:stringType1_20"/>
+				<attribute name="date_begin" type="dateTime" use="required"/>
+				<attribute name="date_end" type="dateTime"/>
+				<attribute name="ean_provider" type="invoice:eanPartyType" use="required"/>
+				<attribute name="ean_responsible" type="invoice:eanPartyType" use="required"/>
+				<attribute name="billing_role" default="both">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="mt"/>
+							<enumeration value="tt"/>
+							<enumeration value="both"/>
+							<enumeration value="none"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="medical_role" default="self_employed">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="self_employed"/>
+							<enumeration value="employee"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="body_location" default="none">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="none"/>
+							<enumeration value="left"/>
+							<enumeration value="right"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit.mt" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit_factor.mt" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minExclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="scale_factor.mt" type="double" default="1.0"/>
+				<attribute name="external_factor.mt" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="amount.mt" type="double" default="0.0"/>
+				<attribute name="unit.tt" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit_factor.tt" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minExclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="scale_factor.tt" type="double" default="1.0"/>
+				<attribute name="external_factor.tt" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="amount.tt" type="double" default="0.0"/>
+				<attribute name="amount" type="double" use="required"/>
+				<attribute name="vat_rate" default="0.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0"/>
+							<maxInclusive value="100"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="validate" type="boolean" default="true"/>
+				<attribute name="obligation" type="boolean" default="true"/>
+				<attribute name="remark" type="invoice:stringType1_350"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<!--
+	Leistungsposition "Kantonal"
+	-->
+	<complexType name="recordCantonalType">
+		<simpleContent>
+			<extension base="invoice:stringType1_350">
+				<attribute name="status" use="required">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="added"/>
+							<enumeration value="corrected"/>
+							<enumeration value="rejected"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="comment" type="invoice:stringType1_350"/>
+				<attribute name="record_id" type="positiveInteger" use="required"/>
+				<attribute name="number" type="positiveInteger" default="1"/>
+				<attribute name="tariff_type" use="required">
+					<simpleType>
+						<restriction base="string">
+							<pattern value="[0-9A-Z]{3}"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="code" type="invoice:stringType1_20" use="required"/>
+				<attribute name="quantity" type="double" use="required"/>
+				<attribute name="date_begin" type="dateTime" use="required"/>
+				<attribute name="date_end" type="dateTime"/>
+				<attribute name="unit" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minExclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="external_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="amount" type="double" use="required"/>
+				<attribute name="vat_rate" default="0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0"/>
+							<maxInclusive value="100"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="validate" type="boolean" default="true"/>
+				<attribute name="obligation" type="boolean" default="true"/>
+				<attribute name="remark" type="invoice:stringType1_350"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<!--
+	Leistungsposition "Uebrige"
+	-->
+	<complexType name="recordUnclassifiedType">
+		<simpleContent>
+			<extension base="invoice:stringType1_350">
+				<attribute name="status" use="required">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="added"/>
+							<enumeration value="corrected"/>
+							<enumeration value="rejected"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="comment" type="invoice:stringType1_350"/>
+				<attribute name="record_id" type="positiveInteger" use="required"/>
+				<attribute name="number" type="positiveInteger" default="1"/>
+				<attribute name="tariff_type" use="required">
+					<simpleType>
+						<restriction base="string">
+							<pattern value="[0-9A-Z]{3}"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="code" type="invoice:stringType1_20" use="required"/>
+				<attribute name="quantity" type="double" use="required"/>
+				<attribute name="date_begin" type="dateTime" use="required"/>
+				<attribute name="date_end" type="dateTime"/>
+				<attribute name="unit" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minExclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="external_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="amount" type="double" use="required"/>
+				<attribute name="vat_rate" default="0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0"/>
+							<maxInclusive value="100"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="validate" type="boolean" default="true"/>
+				<attribute name="obligation" type="boolean" default="true"/>
+				<attribute name="remark" type="invoice:stringType1_350"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<!--
+	Leistungsposition "Medikament"
+	-->
+	<complexType name="recordDrugType">
+		<simpleContent>
+			<extension base="invoice:stringType1_350">
+				<attribute name="status" use="required">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="added"/>
+							<enumeration value="corrected"/>
+							<enumeration value="rejected"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="comment" type="invoice:stringType1_350"/>
+				<attribute name="record_id" type="positiveInteger" use="required"/>
+				<attribute name="number" type="positiveInteger" default="1"/>
+				<attribute name="tariff_type" default="400">
+					<simpleType>
+						<restriction base="string">
+							<pattern value="[0-9A-Z]{3}"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="code" type="invoice:stringType1_20" use="required"/>
+				<attribute name="quantity" type="double" use="required"/>
+				<attribute name="date_begin" type="dateTime" use="required"/>
+				<attribute name="date_end" type="dateTime"/>
+				<attribute name="unit" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minExclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="external_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="amount" type="double" use="required"/>
+				<attribute name="vat_rate" default="0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0"/>
+							<maxInclusive value="100"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="validate" type="boolean" default="true"/>
+				<attribute name="obligation" type="boolean" default="true"/>
+				<attribute name="remark" type="invoice:stringType1_350"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<!--
+	Leistungsposition "Labor"
+	-->
+	<complexType name="recordLabType">
+		<simpleContent>
+			<extension base="invoice:stringType1_350">
+				<attribute name="status" use="required">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="added"/>
+							<enumeration value="corrected"/>
+							<enumeration value="rejected"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="comment" type="invoice:stringType1_350"/>
+				<attribute name="record_id" type="positiveInteger" use="required"/>
+				<attribute name="number" type="positiveInteger" default="1"/>
+				<attribute name="tariff_type" default="316">
+					<simpleType>
+						<restriction base="string">
+							<pattern value="[0-9A-Z]{3}"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="code" type="invoice:stringType1_20" use="required"/>
+				<attribute name="quantity" type="double" use="required"/>
+				<attribute name="date_begin" type="dateTime" use="required"/>
+				<attribute name="date_end" type="dateTime"/>
+				<attribute name="unit" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minExclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="external_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="amount" type="double" use="required"/>
+				<attribute name="vat_rate" default="0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0"/>
+							<maxInclusive value="100"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="validate" type="boolean" default="true"/>
+				<attribute name="obligation" type="boolean" default="true"/>
+				<attribute name="remark" type="invoice:stringType1_350"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<!--
+	Leistungsposition "MiGeL"
+	-->
+	<complexType name="recordMigelType">
+		<simpleContent>
+			<extension base="invoice:stringType1_350">
+				<attribute name="status" use="required">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="added"/>
+							<enumeration value="corrected"/>
+							<enumeration value="rejected"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="comment" type="invoice:stringType1_350"/>
+				<attribute name="record_id" type="positiveInteger" use="required"/>
+				<attribute name="number" type="positiveInteger" default="1"/>
+				<attribute name="tariff_type" default="452">
+					<simpleType>
+						<restriction base="string">
+							<pattern value="[0-9A-Z]{3}"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="code" type="invoice:stringType1_20" use="required"/>
+				<attribute name="quantity" type="double" use="required"/>
+				<attribute name="date_begin" type="dateTime" use="required"/>
+				<attribute name="date_end" type="dateTime"/>
+				<attribute name="unit" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minExclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="external_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="amount" type="double" use="required"/>
+				<attribute name="vat_rate" default="0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0"/>
+							<maxInclusive value="100"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="validate" type="boolean" default="true"/>
+				<attribute name="obligation" type="boolean" default="true"/>
+				<attribute name="remark" type="invoice:stringType1_350"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<!--
+	Leistungsposition "Physio"
+	-->
+	<complexType name="recordPhysioType">
+		<simpleContent>
+			<extension base="invoice:stringType1_350">
+				<attribute name="status" use="required">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="added"/>
+							<enumeration value="corrected"/>
+							<enumeration value="rejected"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="comment" type="invoice:stringType1_350"/>
+				<attribute name="record_id" type="positiveInteger" use="required"/>
+				<attribute name="number" type="positiveInteger" default="1"/>
+				<attribute name="tariff_type" default="311">
+					<simpleType>
+						<restriction base="string">
+							<pattern value="[0-9A-Z]{3}"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="code" type="invoice:stringType1_20" use="required"/>
+				<attribute name="quantity" type="double" use="required"/>
+				<attribute name="date_begin" type="dateTime" use="required"/>
+				<attribute name="date_end" type="dateTime"/>
+				<attribute name="ean_provider" type="invoice:unionPartyType" use="required"/>
+				<attribute name="ean_responsible" type="invoice:unionPartyType" use="required"/>
+				<attribute name="unit" use="required">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="unit_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minExclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="external_factor" default="1.0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0.0"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="amount" type="double" use="required"/>
+				<attribute name="vat_rate" default="0">
+					<simpleType>
+						<restriction base="double">
+							<minInclusive value="0"/>
+							<maxInclusive value="100"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="validate" type="boolean" default="true"/>
+				<attribute name="obligation" type="boolean" default="true"/>
+				<attribute name="remark" type="invoice:stringType1_350"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<complexType name="servicesType">
+		<choice maxOccurs="unbounded">
+			<element name="record_tarmed" type="invoice:recordTarmedType"/>
+			<element name="record_cantonal" type="invoice:recordCantonalType"/>
+			<element name="record_unclassified" type="invoice:recordUnclassifiedType"/>
+			<element name="record_lab" type="invoice:recordLabType"/>
+			<element name="record_migel" type="invoice:recordMigelType"/>
+			<element name="record_physio" type="invoice:recordPhysioType"/>
+			<element name="record_drug" type="invoice:recordDrugType"/>
+		</choice>
+	</complexType>
+	<complexType name="modifiedType">
+		<sequence>
+			<element name="explanation" type="invoice:stringType1_700"/>
+			<element name="error" type="invoice:modifiedErrorType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="balance" type="invoice:balanceType"/>
+			<element name="balance_corrected" type="invoice:balanceType"/>
+			<element name="services" type="invoice:servicesType"/>
+		</sequence>
+		<attribute name="type" type="string" fixed="final"/>
+	</complexType>
+	<!--
+	Einforderung von Unterlagen
+	-->
+	<complexType name="calledInErrorType">
+		<attribute name="major" use="required">
+			<simpleType>
+				<restriction base="integer">
+					<minInclusive value="4000"/>
+					<maxInclusive value="4099"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+	<complexType name="calledInType">
+		<sequence>
+			<element name="explanation" type="invoice:stringType1_700" minOccurs="0"/>
+			<element name="error" type="invoice:calledInErrorType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="type" type="string" fixed="preliminary"/>
+	</complexType>
+	<!--
+	Vorbescheid / Anforderung Rechnungs-Kopie
+	-->
+	<complexType name="notificationType">
+		<sequence>
+			<element name="explanation" type="invoice:stringType1_700"/>
+		</sequence>
+		<attribute name="type" type="string" fixed="preliminary"/>
+	</complexType>
+	<!--
+	Akzeptierung Annullierung / Gutschriftsanzeige mit der Moeglichkeit zur Angabe des Zahlungsziels
+	-->
+	<complexType name="esr5Type">
+		<sequence minOccurs="0">
+			<element name="bank" type="invoice:bankAddressType"/>
+		</sequence>
+		<attribute name="type" default="15">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="15plus"/>
+					<enumeration value="15"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="participant_number" use="required">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="[0-9]{5}"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="reference_number" use="required">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="[0-9]{5} [0-9]{5} [0-9]{5}"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="coding_line" use="required">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="(&lt;[0-9]{2}0001[0-9]{9}&gt; [0-9]{15}\+ [0-9]{5}&gt;|[0-9]{15}\+ [0-9]{5}&gt;)"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="amount_due" type="double" use="required"/>
+	</complexType>
+	<complexType name="esr9Type">
+		<sequence minOccurs="0">
+			<element name="bank" type="invoice:bankAddressType"/>
+		</sequence>
+		<attribute name="type" default="16or27">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="16or27plus"/>
+					<enumeration value="16or27"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="reference_number" use="required">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="([0-9] [0-9]{5} [0-9]{5} [0-9]{5}|[0-9]{2} [0-9]{5} [0-9]{5} [0-9]{5} [0-9]{5} [0-9]{5})"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="participant_number" use="required">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="01-[1-9][0-9]{0,5}-[0-9]"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="coding_line" use="required">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="(01[0-9]{11}&gt;[0-9]{16}\+ [0-9]{9}&gt;|042&gt;[0-9]{16}\+ [0-9]{9}&gt;|01[0-9]{11}&gt;[0-9]{27}\+ [0-9]{9}&gt;|042&gt;[0-9]{27}\+ [0-9]{9}&gt;)"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="amount_due" type="double" use="required"/>
+	</complexType>
+	<complexType name="esrRedType">
+		<sequence>
+			<element name="payment_for" type="invoice:bankAddressType" minOccurs="0"/>
+			<element name="in_favor_of" type="invoice:bankAddressType" minOccurs="0"/>
+			<element name="payment_reason" type="invoice:stringType1_35" minOccurs="0" maxOccurs="4"/>
+		</sequence>
+		<attribute name="payment_to" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="postal_account"/>
+					<enumeration value="bank_account"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="bank_account_number" type="invoice:stringType1_35"/>
+		<attribute name="bank_clearing_number" type="invoice:stringType1_35"/>
+		<attribute name="participant_number" type="invoice:stringType1_35"/>
+		<attribute name="coding_line1" type="invoice:stringType1_70"/>
+		<attribute name="coding_line2" type="invoice:stringType1_70"/>
+		<attribute name="amount_due" type="double" use="required"/>
+	</complexType>
+	<complexType name="xtraElementType"/>
+	<complexType name="invoicePaidType">
+		<choice>
+			<element name="esr5" type="invoice:esr5Type"/>
+			<element name="esr9" type="invoice:esr9Type"/>
+			<element name="esrRed" type="invoice:esrRedType"/>
+		</choice>
+	</complexType>
+	<complexType name="annulmentType">
+		<sequence>
+			<element name="explanation" type="invoice:stringType1_700" minOccurs="0"/>
+			<choice>
+				<element name="notAccepted" type="invoice:xtraElementType"/>
+				<element name="accepted" type="invoice:xtraElementType"/>
+				<element name="invoiceNotFound" type="invoice:xtraElementType"/>
+				<element name="invoiceRejected" type="invoice:xtraElementType"/>
+				<element name="invoicePaid" type="invoice:invoicePaidType"/>
+			</choice>
+		</sequence>
+		<attribute name="type" type="string" fixed="final"/>
+	</complexType>
+	<complexType name="creditAdviceType">
+		<sequence>
+			<element name="explanation" type="invoice:stringType1_700" minOccurs="0"/>
+			<choice>
+				<element name="notAccepted" type="invoice:xtraElementType"/>
+				<element name="accepted" type="invoice:invoicePaidType"/>
+			</choice>
+		</sequence>
+		<attribute name="type" type="string" fixed="final"/>
+	</complexType>
+	<!--
+	Beginn Element invoice
+	-->
+	<complexType name="invoiceType">
+		<sequence>
+			<element name="biller">
+				<complexType>
+					<attribute name="ean_party" type="invoice:eanPartyType" use="required"/>
+				</complexType>
+			</element>
+			<element name="insurance">
+				<complexType>
+					<attribute name="ean_party" type="invoice:eanPartyType" use="required"/>
+				</complexType>
+			</element>
+			<element name="reply" type="invoice:replyAddressType"/>
+		</sequence>
+		<attribute name="invoice_timestamp" type="unsignedLong" use="required"/>
+		<attribute name="invoice_id" type="invoice:stringType1_35" use="required"/>
+		<attribute name="invoice_date" type="dateTime" use="required"/>
+		<attribute name="case_id" type="invoice:stringType1_35"/>
+		<attribute name="response_timestamp" type="unsignedLong" use="required"/>
+		<attribute name="response_id" type="invoice:stringType1_35" use="required"/>
+	</complexType>
+	<!--
+	Antwortstatus
+	-->
+	<complexType name="statusType">
+		<choice>
+			<element name="rejected" type="invoice:rejectedType"/>
+			<element name="calledIn" type="invoice:calledInType"/>
+			<element name="pending" type="invoice:notificationType"/>
+			<element name="resend" type="invoice:notificationType"/>
+			<element name="modified" type="invoice:modifiedType"/>
+			<element name="annulment" type="invoice:annulmentType"/>
+			<element name="creditAdvice" type="invoice:creditAdviceType"/>
+		</choice>
+	</complexType>
+	<!--
+	Beginn Rechnungs-Antwort
+	-->
+	<element name="response" type="invoice:responseType"/>
+	<complexType name="responseType">
+		<sequence>
+			<element name="header" type="invoice:headerType"/>
+			<element name="prolog" type="invoice:prologType"/>
+			<element name="status" type="invoice:statusType"/>
+			<element name="invoice" type="invoice:invoiceType"/>
+		</sequence>
+		<attribute name="role" default="production">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="production"/>
+					<enumeration value="test"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+</schema>

@@ -127,6 +127,7 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 			viewer.addFilter(filter);
 			ElexisEventDispatcher.getInstance().addListeners(konsFilter);
 			txtFilter.addKeyListener(new FilterKeyListener(txtFilter, viewer));
+			txtFilter.setFocus();
 			// call with null, event is not used in listener impl.
 			konsFilter.catchElexisEvent(null);
 		}

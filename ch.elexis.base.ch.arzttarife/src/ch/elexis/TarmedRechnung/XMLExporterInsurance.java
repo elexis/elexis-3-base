@@ -36,6 +36,8 @@ public class XMLExporterInsurance {
 		Element element = new Element(gesetz.toLowerCase(), XMLExporter.nsinvoice);
 		if (gesetz.equalsIgnoreCase("ivg")) { //$NON-NLS-1$
 			String caseNumber = actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+			caseNumber = caseNumber.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+			
 			if ((!caseNumber.matches("[0-9]{14}")) && // seit 1.1.2000 gültige Nummer //$NON-NLS-1$
 				(!caseNumber.matches("[0-9]{10}")) && // bis 31.12.1999 gültige Nummer //$NON-NLS-1$
 				(!caseNumber.matches("[0-9]{9}")) && // auch bis 31.12.1999 gültige Nummer //$NON-NLS-1$
@@ -82,7 +84,7 @@ public class XMLExporterInsurance {
 		element.setAttribute("case_date", XMLExporterUtil.makeTarmedDatum(casedate)); //$NON-NLS-1$
 		XMLExporterUtil.setAttributeIfNotEmpty(element, "contract_number", actFall //$NON-NLS-1$
 			.getInfoString("Vertragsnummer")); //$NON-NLS-1$
-
+		
 		return new XMLExporterInsurance(element);
 	}
 	
@@ -96,7 +98,7 @@ public class XMLExporterInsurance {
 		}
 		element.setAttribute("insured_id", vnummer); //$NON-NLS-1$
 	}
-
+	
 	private static void addSSNAttribute(Element element, Patient actPatient, Fall actFall,
 		Rechnung rechnung){
 		String ahv =

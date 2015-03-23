@@ -22,9 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
@@ -42,11 +40,9 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 	private Text txtFilter;
 	
 	private Labor2009CodeTextValidFilter filter;
-	private FilterKonsultationListener konsFilter;
 	
 	public Labor2009ControlFieldProvider(final CommonViewer viewer){
 		commonViewer = viewer;
-		konsFilter = new FilterKonsultationListener(Konsultation.class);
 		filter = new Labor2009CodeTextValidFilter();
 	}
 	
@@ -125,49 +121,31 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 		if (viewer == null) {
 			viewer = commonViewer.getViewerWidget();
 			viewer.addFilter(filter);
-			ElexisEventDispatcher.getInstance().addListeners(konsFilter);
 			txtFilter.addKeyListener(new FilterKeyListener(txtFilter, viewer));
 			txtFilter.setFocus();
-			// call with null, event is not used in listener impl.
-			konsFilter.catchElexisEvent(null);
-		}
-	}
-	
-	private class FilterKonsultationListener extends ElexisUiEventListenerImpl {
-		
-		public FilterKonsultationListener(Class<?> clazz){
-			super(clazz);
-		}
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			Konsultation selectedKons =
-				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			// apply the filter
-			if (selectedKons != null) {
-				filter.setValidDate(new TimeTool(selectedKons.getDatum()));
-				viewer.getControl().setRedraw(false);
-				viewer.refresh();
-				viewer.getControl().setRedraw(true);
-			} else {
-				filter.setValidDate(null);
-				viewer.getControl().setRedraw(false);
-				viewer.refresh();
-				viewer.getControl().setRedraw(true);
-			}
 		}
 	}
 	
 	private class FilterKeyListener extends KeyAdapter {
 		private Text text;
 		private StructuredViewer viewer;
-		
+		private TimeTool konsTime = new TimeTool();
+
 		FilterKeyListener(Text filterTxt, StructuredViewer viewer){
 			text = filterTxt;
 			this.viewer = viewer;
 		}
 		
 		public void keyReleased(KeyEvent ke){
+			Konsultation selectedKons =
+				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+			if (selectedKons != null) {
+				konsTime.set(selectedKons.getDatum());
+				filter.setValidDate(konsTime);
+			} else {
+				filter.setValidDate(null);
+			}
+
 			String txt = text.getText();
 			if (txt.length() > 1) {
 				filter.setSearchText(txt);

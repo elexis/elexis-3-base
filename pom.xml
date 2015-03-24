@@ -218,7 +218,7 @@
   <module>ch.elexis.laborimport.viollier.v2_test</module>
   <module>ch.medshare.elexis_directories.test</module>
   <module>com.hilotec.elexis.messwerte.v2_test</module>
-  <module>at.medevit.elexis.tarmed.model.tests</module>
+<!-- <module>at.medevit.elexis.tarmed.model.tests</module> -->
 </modules>
 <repositories>
   <repository>

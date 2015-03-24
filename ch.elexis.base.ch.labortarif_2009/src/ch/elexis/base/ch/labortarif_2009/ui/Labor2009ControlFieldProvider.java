@@ -149,15 +149,18 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 			String txt = text.getText();
 			if (txt.length() > 1) {
 				filter.setSearchText(txt);
-				viewer.getControl().setRedraw(false);
-				viewer.refresh();
-				viewer.getControl().setRedraw(true);
 			} else {
 				filter.setSearchText(null);
-				viewer.getControl().setRedraw(false);
-				viewer.refresh();
-				viewer.getControl().setRedraw(true);
 			}
+			// update the view async
+			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run(){
+					viewer.getControl().setRedraw(false);
+					viewer.refresh();
+					viewer.getControl().setRedraw(true);
+				}
+			});
 		}
 	}
 }

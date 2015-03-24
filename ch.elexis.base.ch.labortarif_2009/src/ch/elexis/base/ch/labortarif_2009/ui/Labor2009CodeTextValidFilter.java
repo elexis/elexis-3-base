@@ -30,7 +30,7 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 	private String searchString;
 	private TimeTool validDate;
 	
-	private static final int MAX_LOOKUP = 1000;
+	private static final int MAX_LOOKUP = 500;
 	private TimeTool compareTime = new TimeTool();
 	private WeakHashMap<Labor2009Tarif, TarifDescription> cache =
 		new WeakHashMap<Labor2009Tarif, TarifDescription>(1000);
@@ -85,6 +85,9 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 		} else {
 			searchString = s.toLowerCase();
 		}
+		if (cache.isEmpty()) {
+			initCache();
+		}
 	}
 	
 	/**
@@ -106,9 +109,6 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 		Labor2009Tarif tarif = (Labor2009Tarif) element;
 		int lookup = MAX_LOOKUP;
 		TarifDescription description = null;
-		if (cache.isEmpty()) {
-			initCache();
-		}
 		description = cache.get(tarif);
 
 		while (description == null) {

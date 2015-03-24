@@ -32,6 +32,7 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 	
 	private static final int MAX_LOOKUP = 500;
 	private TimeTool compareTime = new TimeTool();
+	private Object cacheLock;
 	private WeakHashMap<Labor2009Tarif, TarifDescription> cache =
 		new WeakHashMap<Labor2009Tarif, TarifDescription>(1000);
 	
@@ -67,6 +68,7 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 	}
 	
 	private void initCache(){
+		cacheLock = new Object();
 		executor.execute(new Runnable() {
 			@Override
 			public void run(){
@@ -74,9 +76,23 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 				List<Labor2009Tarif> tarifList = qt.execute();
 				for (Labor2009Tarif labor2009Tarif : tarifList) {
 					cache.put(labor2009Tarif, new TarifDescription(labor2009Tarif));
+					if (cacheLock != null) {
+						synchronized (cacheLock) {
+							cacheLock.notifyAll();
+						}
+					}
 				}
 			}
 		});
+		// wait until init started
+		synchronized (cacheLock) {
+			try {
+				cacheLock.wait();
+				cacheLock = null;
+			} catch (InterruptedException e) {
+				// ignore
+			}
+		}
 	}
 
 	public void setSearchText(String s){
@@ -84,9 +100,6 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 			searchString = s;
 		} else {
 			searchString = s.toLowerCase();
-		}
-		if (cache.isEmpty()) {
-			initCache();
 		}
 	}
 	
@@ -101,14 +114,15 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element){
-		if (searchString == null || searchString.length() == 0) {
-			return true;
-		}
-		
 		// lookup cache
 		Labor2009Tarif tarif = (Labor2009Tarif) element;
 		int lookup = MAX_LOOKUP;
 		TarifDescription description = null;
+		
+		if (cache.isEmpty()) {
+			initCache();
+		}
+
 		description = cache.get(tarif);
 
 		while (description == null) {
@@ -127,6 +141,10 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 			if (validDate != null) {
 				if (!description.isValidOn(validDate))
 					return false;
+			}
+			
+			if (searchString == null || searchString.length() == 0) {
+				return true;
 			}
 			
 			if (description.code != null && description.code.contains(searchString)) {

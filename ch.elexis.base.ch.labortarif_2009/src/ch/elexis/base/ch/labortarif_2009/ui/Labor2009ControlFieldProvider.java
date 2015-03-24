@@ -22,7 +22,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
@@ -39,11 +41,28 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 	
 	private Text txtFilter;
 	
+	private TimeTool konsTime = new TimeTool();
 	private Labor2009CodeTextValidFilter filter;
 	
 	public Labor2009ControlFieldProvider(final CommonViewer viewer){
 		commonViewer = viewer;
 		filter = new Labor2009CodeTextValidFilter();
+		
+		ElexisEventDispatcher.getInstance().addListeners(
+			new ElexisEventListenerImpl(Konsultation.class) {
+				@Override
+				public void catchElexisEvent(ElexisEvent ev){
+					Konsultation selectedKons =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					if (selectedKons != null) {
+						konsTime.set(selectedKons.getDatum());
+						filter.setValidDate(konsTime);
+					} else {
+						filter.setValidDate(null);
+					}
+					refreshViewer();
+				}
+			});
 	}
 	
 	public Composite createControl(Composite parent){
@@ -121,46 +140,38 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 		if (viewer == null) {
 			viewer = commonViewer.getViewerWidget();
 			viewer.addFilter(filter);
-			txtFilter.addKeyListener(new FilterKeyListener(txtFilter, viewer));
+			txtFilter.addKeyListener(new FilterKeyListener(txtFilter));
 			txtFilter.setFocus();
 		}
 	}
 	
+	private void refreshViewer(){
+		// update the view async
+		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run(){
+				viewer.getControl().setRedraw(false);
+				viewer.refresh();
+				viewer.getControl().setRedraw(true);
+			}
+		});
+	}
+
 	private class FilterKeyListener extends KeyAdapter {
 		private Text text;
-		private StructuredViewer viewer;
-		private TimeTool konsTime = new TimeTool();
 
-		FilterKeyListener(Text filterTxt, StructuredViewer viewer){
+		FilterKeyListener(Text filterTxt){
 			text = filterTxt;
-			this.viewer = viewer;
 		}
 		
 		public void keyReleased(KeyEvent ke){
-			Konsultation selectedKons =
-				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			if (selectedKons != null) {
-				konsTime.set(selectedKons.getDatum());
-				filter.setValidDate(konsTime);
-			} else {
-				filter.setValidDate(null);
-			}
-
 			String txt = text.getText();
 			if (txt.length() > 1) {
 				filter.setSearchText(txt);
 			} else {
 				filter.setSearchText(null);
 			}
-			// update the view async
-			viewer.getControl().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run(){
-					viewer.getControl().setRedraw(false);
-					viewer.refresh();
-					viewer.getControl().setRedraw(true);
-				}
-			});
+			refreshViewer();
 		}
 	}
 }

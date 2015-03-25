@@ -11,31 +11,23 @@
  *******************************************************************************/
 package ch.elexis.base.ch.labortarif_2009.ui;
 
-import java.util.List;
-import java.util.WeakHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import ch.elexis.data.Query;
 import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.rgw.tools.TimeTool;
 
 public class Labor2009CodeTextValidFilter extends ViewerFilter {
 	
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
-
 	private String searchString;
 	private TimeTool validDate;
 	
-	private TimeTool compareTime = new TimeTool();
-	private Object cacheLock = new Object();
-	private WeakHashMap<Labor2009Tarif, TarifDescription> cache =
-		new WeakHashMap<Labor2009Tarif, TarifDescription>(1000);
-	
-	private class TarifDescription {
+	private Labor2009ContentProvider contentProvider;
+
+	protected static class TarifDescription {
+		private TimeTool compareTime = new TimeTool();
+
 		private String validFromString;
 		private String validToString;
 		private String code;
@@ -66,22 +58,6 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 		}
 	}
 	
-	private void initCache(){
-		executor.execute(new Runnable() {
-			@Override
-			public void run(){
-				Query<Labor2009Tarif> qt = new Query<Labor2009Tarif>(Labor2009Tarif.class);
-				List<Labor2009Tarif> tarifList = qt.execute();
-				for (Labor2009Tarif labor2009Tarif : tarifList) {
-					cache.put(labor2009Tarif, new TarifDescription(labor2009Tarif));
-				}
-				synchronized (cacheLock) {
-					cacheLock.notifyAll();
-				}
-			}
-		});
-	}
-
 	public void setSearchText(String s){
 		if (s == null || s.length() == 0) {
 			searchString = s;
@@ -105,20 +81,11 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 		Labor2009Tarif tarif = (Labor2009Tarif) element;
 		TarifDescription description = null;
 		
-		synchronized (cache) {
-			if (cache.isEmpty()) {
-				// wait until init finished
-				synchronized (cacheLock) {
-					try {
-						initCache();
-						cacheLock.wait();
-					} catch (InterruptedException e) {
-						// ignore
-					}
-				}
-			}
+		if(contentProvider == null) {
+			contentProvider = (Labor2009ContentProvider)((StructuredViewer)viewer).getContentProvider(); 
 		}
-		description = cache.get(tarif);
+		
+		description = contentProvider.getDescription(tarif);
 		
 		if (description != null) {
 			if (validDate != null) {

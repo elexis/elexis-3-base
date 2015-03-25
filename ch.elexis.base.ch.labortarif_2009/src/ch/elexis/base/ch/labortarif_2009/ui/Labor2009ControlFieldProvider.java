@@ -46,42 +46,47 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 	private String newKonsTime;
 	private TimeTool konsTime = new TimeTool();
 	private Labor2009CodeTextValidFilter filter;
+	private UpdateDateEventListener updateDateListener = new UpdateDateEventListener();
 	
 	public Labor2009ControlFieldProvider(final CommonViewer viewer){
 		commonViewer = viewer;
 		filter = new Labor2009CodeTextValidFilter();
 		
-		ElexisEventDispatcher.getInstance().addListeners(
-			new ElexisEventListenerImpl(Konsultation.class, ElexisEvent.EVENT_SELECTED
-				| ElexisEvent.EVENT_DESELECTED) {
-				@Override
-				public void catchElexisEvent(ElexisEvent ev){
-					Konsultation selectedKons =
-						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-					if (selectedKons != null) {
-						newKonsTime = selectedKons.getDatum();
-						konsTime.set(newKonsTime);
-						filter.setValidDate(konsTime);
-					} else {
-						newKonsTime = null;
-						filter.setValidDate(null);
-					}
-					if (needsRefresh()) {
-						refreshViewer();
-					}
-				}
-				
-				private boolean needsRefresh(){
-					boolean ret = true;
-					if (previousKonsTime == null && newKonsTime == null) {
-						ret = false;
-					} else if (previousKonsTime != null && newKonsTime != null) {
-						ret = !previousKonsTime.equals(newKonsTime);
-					}
-					previousKonsTime = newKonsTime;
-					return ret;
-				}
-			});
+		ElexisEventDispatcher.getInstance().addListeners(updateDateListener);
+	}
+	
+	private class UpdateDateEventListener extends ElexisEventListenerImpl {
+		public UpdateDateEventListener(){
+			super(Konsultation.class, ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
+		}
+		
+		@Override
+		public void catchElexisEvent(ElexisEvent ev){
+			Konsultation selectedKons =
+				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+			if (selectedKons != null) {
+				newKonsTime = selectedKons.getDatum();
+				konsTime.set(newKonsTime);
+				filter.setValidDate(konsTime);
+			} else {
+				newKonsTime = null;
+				filter.setValidDate(null);
+			}
+			if (needsRefresh()) {
+				refreshViewer();
+			}
+		}
+		
+		private boolean needsRefresh(){
+			boolean ret = true;
+			if (previousKonsTime == null && newKonsTime == null) {
+				ret = false;
+			} else if (previousKonsTime != null && newKonsTime != null) {
+				ret = !previousKonsTime.equals(newKonsTime);
+			}
+			previousKonsTime = newKonsTime;
+			return ret;
+		}
 	}
 	
 	public Composite createControl(Composite parent){
@@ -163,6 +168,8 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 			viewer.addFilter(filter);
 			txtFilter.addKeyListener(new FilterKeyListener(txtFilter));
 			txtFilter.setFocus();
+			// trigger initial filtering
+			updateDateListener.catchElexisEvent(null);
 		}
 	}
 	

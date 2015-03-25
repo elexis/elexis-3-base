@@ -487,19 +487,25 @@ public class DocboxService {
 		}
 		
 		String checkString = sb.toString();
-		int checkSum = 0;
-		for (int i = 0; i < checkString.length(); i++) {
-			checkSum += Integer.parseInt(checkString.substring(i, i + 1));
+		try {
+			int checkSum = 0;
+			for (int i = 0; i < checkString.length(); i++) {
+				checkSum += Integer.parseInt(checkString.substring(i, i + 1));
+			}
+			sb.append(String.valueOf(checkSum % 10));
+		} catch (NumberFormatException ne) {
+			logger.error("Could not generate checksum for [" + checkString + "]");
+			throw ne;
 		}
-		sb.append(String.valueOf(checkSum % 10));
-		
 		return sb.toString();
 	}
 	
 	private static String getIdZsr(Rezept rezept){
 		String zsr = getZsr(rezept);
-		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.substring(zsr.length() - 6, zsr.length());
+		if (zsr != null && !zsr.isEmpty()) {
+			if (zsr.length() >= 6) {
+				return zsr.substring(zsr.length() - 6, zsr.length());
+			}
 		}
 		throw new IllegalStateException("Keine ZSR gefunden");
 	}
@@ -510,11 +516,11 @@ public class DocboxService {
 		
 		String zsr = rechnungssteller.getXid(DOMAIN_KSK);
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr;
+			return zsr.replaceAll("\\.", "");
 		}
 		zsr = mandant.getXid(DOMAIN_KSK);
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr;
+			return zsr.replaceAll("\\.", "");
 		}
 		throw new IllegalStateException("Keine ZSR gefunden");
 	}

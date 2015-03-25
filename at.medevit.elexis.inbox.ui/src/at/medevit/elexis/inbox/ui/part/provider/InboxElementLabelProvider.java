@@ -48,10 +48,14 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 	public Image getImage(Object element){
 		if (element instanceof PatientInboxElements) {
 			Patient pat = ((PatientInboxElements) element).getPatient();
-			if (pat.getGeschlecht().equals(Person.MALE)) {
-				return Images.IMG_MANN.getImage();
+			if (pat != null) {
+				if (pat.getGeschlecht().equals(Person.MALE)) {
+					return Images.IMG_MANN.getImage();
+				} else {
+					return Images.IMG_FRAU.getImage();
+				}
 			} else {
-				return Images.IMG_FRAU.getImage();
+				return Images.IMG_QUESTION_MARK.getImage();
 			}
 		} else if (element instanceof InboxElement) {
 			Image image = extension.getImage((InboxElement) element);

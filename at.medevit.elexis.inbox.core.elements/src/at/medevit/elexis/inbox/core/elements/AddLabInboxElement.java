@@ -1,11 +1,14 @@
 package at.medevit.elexis.inbox.core.elements;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.core.elements.service.ServiceComponent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.LabOrder;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -49,8 +52,14 @@ public class AddLabInboxElement implements Runnable {
 		
 		Patient patient = labResult.getPatient();
 		Mandant mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+		List<LabOrder> orders =
+			LabOrder.getLabOrders(patient, null, null, labResult, null, null, null);
+		if (orders != null) {
+			String mandantId = orders.get(0).get(LabOrder.FLD_MANDANT);
+			mandant = Mandant.load(mandantId);
+		}
 		logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
-			+ patient.getLabel());
+			+ patient.getLabel() + " for mandant " + mandant.getLabel());
 		ServiceComponent.getService().createInboxElement(patient, mandant, labResult);
 		
 		Kontakt doctor = labResult.getPatient().getStammarzt();

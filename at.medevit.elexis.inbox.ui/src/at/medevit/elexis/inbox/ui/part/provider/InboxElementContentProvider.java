@@ -60,6 +60,7 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 		if (newInput instanceof List<?>) {
 			List<InboxElement> input = (List<InboxElement>) newInput;
 			// refresh map and list
+			map.clear();
 			for (InboxElement inboxElement : input) {
 				Patient patient = inboxElement.getPatient();
 				PatientInboxElements patientInbox = map.get(patient);

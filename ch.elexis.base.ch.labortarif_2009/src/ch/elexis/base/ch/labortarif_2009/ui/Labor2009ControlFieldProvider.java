@@ -31,6 +31,7 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.TimeTool;
 
@@ -41,6 +42,8 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 	
 	private Text txtFilter;
 	
+	private String previousKonsTime;
+	private String newKonsTime;
 	private TimeTool konsTime = new TimeTool();
 	private Labor2009CodeTextValidFilter filter;
 	
@@ -49,18 +52,34 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 		filter = new Labor2009CodeTextValidFilter();
 		
 		ElexisEventDispatcher.getInstance().addListeners(
-			new ElexisEventListenerImpl(Konsultation.class) {
+			new ElexisEventListenerImpl(Konsultation.class, ElexisEvent.EVENT_SELECTED
+				| ElexisEvent.EVENT_DESELECTED) {
 				@Override
 				public void catchElexisEvent(ElexisEvent ev){
 					Konsultation selectedKons =
 						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 					if (selectedKons != null) {
-						konsTime.set(selectedKons.getDatum());
+						newKonsTime = selectedKons.getDatum();
+						konsTime.set(newKonsTime);
 						filter.setValidDate(konsTime);
 					} else {
+						newKonsTime = null;
 						filter.setValidDate(null);
 					}
-					refreshViewer();
+					if (needsRefresh()) {
+						refreshViewer();
+					}
+				}
+				
+				private boolean needsRefresh(){
+					boolean ret = true;
+					if (previousKonsTime == null && newKonsTime == null) {
+						ret = false;
+					} else if (previousKonsTime != null && newKonsTime != null) {
+						ret = !previousKonsTime.equals(newKonsTime);
+					}
+					previousKonsTime = newKonsTime;
+					return ret;
 				}
 			});
 	}
@@ -139,6 +158,8 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 		// first filter then viewer -> viewer not ready on createControl.
 		if (viewer == null) {
 			viewer = commonViewer.getViewerWidget();
+			Query<Labor2009Tarif> qbe = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+			viewer.setInput(qbe.execute());
 			viewer.addFilter(filter);
 			txtFilter.addKeyListener(new FilterKeyListener(txtFilter));
 			txtFilter.setFocus();
@@ -147,14 +168,16 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 	
 	private void refreshViewer(){
 		// update the view async
-		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run(){
-				viewer.getControl().setRedraw(false);
-				viewer.refresh();
-				viewer.getControl().setRedraw(true);
-			}
-		});
+		if (viewer != null) {
+			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run(){
+					viewer.getControl().setRedraw(false);
+					viewer.refresh();
+					viewer.getControl().setRedraw(true);
+				}
+			});
+		}
 	}
 
 	private class FilterKeyListener extends KeyAdapter {

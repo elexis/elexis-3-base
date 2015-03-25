@@ -30,9 +30,8 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 	private String searchString;
 	private TimeTool validDate;
 	
-	private static final int MAX_LOOKUP = 500;
 	private TimeTool compareTime = new TimeTool();
-	private Object cacheLock;
+	private Object cacheLock = new Object();
 	private WeakHashMap<Labor2009Tarif, TarifDescription> cache =
 		new WeakHashMap<Labor2009Tarif, TarifDescription>(1000);
 	
@@ -68,7 +67,6 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 	}
 	
 	private void initCache(){
-		cacheLock = new Object();
 		executor.execute(new Runnable() {
 			@Override
 			public void run(){
@@ -76,23 +74,12 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 				List<Labor2009Tarif> tarifList = qt.execute();
 				for (Labor2009Tarif labor2009Tarif : tarifList) {
 					cache.put(labor2009Tarif, new TarifDescription(labor2009Tarif));
-					if (cacheLock != null) {
-						synchronized (cacheLock) {
-							cacheLock.notifyAll();
-						}
-					}
+				}
+				synchronized (cacheLock) {
+					cacheLock.notifyAll();
 				}
 			}
 		});
-		// wait until init started
-		synchronized (cacheLock) {
-			try {
-				cacheLock.wait();
-				cacheLock = null;
-			} catch (InterruptedException e) {
-				// ignore
-			}
-		}
 	}
 
 	public void setSearchText(String s){
@@ -116,26 +103,22 @@ public class Labor2009CodeTextValidFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element){
 		// lookup cache
 		Labor2009Tarif tarif = (Labor2009Tarif) element;
-		int lookup = MAX_LOOKUP;
 		TarifDescription description = null;
 		
-		if (cache.isEmpty()) {
-			initCache();
-		}
-
-		description = cache.get(tarif);
-
-		while (description == null) {
-			try {
-				Thread.sleep(10);
-				description = cache.get(tarif);
-				if (--lookup == 0) {
-					break;
+		synchronized (cache) {
+			if (cache.isEmpty()) {
+				// wait until init finished
+				synchronized (cacheLock) {
+					try {
+						initCache();
+						cacheLock.wait();
+					} catch (InterruptedException e) {
+						// ignore
+					}
 				}
-			} catch (InterruptedException e) {
-				break;
 			}
 		}
+		description = cache.get(tarif);
 		
 		if (description != null) {
 			if (validDate != null) {

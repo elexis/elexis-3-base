@@ -43,8 +43,8 @@ import ch.rgw.tools.Result.SEVERITY;
 // import ch.elexis.util.Messages;
 
 public class Importer extends ImporterPage {
-	public static final String MY_LAB = "snylab";
-	public static final String PLUGIN_ID = "ch.elexis.laborimport_snylab";
+	public static final String MY_LAB = "Synlab";
+	public static final String PLUGIN_ID = "ch.elexis.laborimport.synlab";
 	
 	private static final String OPENMEDICAL_MAINCLASS = "ch.openmedical.JMedTransfer.JMedTransfer";
 	

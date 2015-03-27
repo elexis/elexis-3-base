@@ -99,7 +99,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		{
 			"Anrede=" + Kontakt.XID_KONTAKT_ANREDE, "Kanton=" + Kontakt.XID_KONTAKT_KANTON, "EAN=" + Xid.DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
-			ta.KANTON, ta.LOCAL, ta.DIAGSYS
+			ta.KANTON, ta.LOCAL, ta.DIAGSYS, "Rolle=" + Kontakt.XID_KONTAKT_ROLLE
 		};
 	
 	public RechnungsPrefs(){

@@ -8,7 +8,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.jdom.Document;
-import org.jdom.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,12 +61,10 @@ public class XML44Printer {
 	
 	private static final String FREETEXT = "freetext";
 	private static final String BY_CONTRACT = "by_contract";
-	private static final String TARMED_TARIF = "001";
-	private static final String PARAMED_TARIF = "311"; // former physio tarif
 	private static final String SPACE = " ";
 	
 	private static double cmPerLine = 0.67; // Höhe pro Zeile (0.65 plus Toleranz)
-	private static double cmFirstPage = 11.0; // Platz auf der ersten Seite
+	private static double cmFirstPage = 12.0; // Platz auf der ersten Seite
 	private static double cmMiddlePage = 21.0; // Platz auf Folgeseiten
 	private static double cmFooter = 4; // Platz für Endabrechnung
 	private double cmAvail = 21.4; // Verfügbare Druckhöhe in cm
@@ -89,9 +86,6 @@ public class XML44Printer {
 	
 	private static DecimalFormat df = new DecimalFormat(StringConstants.DOUBLE_ZERO);
 	
-	private static Namespace namespace = Namespace.getNamespace("invoice", //$NON-NLS-1$
-		"http://www.forum-datenaustausch.ch/invoice"); //$NON-NLS-1$
-
 	public XML44Printer(TextContainer text){
 		this.text = text;
 		tTime = new TimeTool();
@@ -181,7 +175,6 @@ public class XML44Printer {
 		text.replace("\\[F98\\]", XMLPrinterUtil.getEANList(eanArray));
 		
 		// add the various record services 
-		@SuppressWarnings("unchecked")
 		SortedList<Object> serviceRecordsSorted =
 			new SortedList<Object>(serviceRecords, new Rn44Comparator());
 		
@@ -233,7 +226,7 @@ public class XML44Printer {
 			}
 		}
 		cursor = tp.insertText(cursor, "\n", SWT.LEFT); //$NON-NLS-1$
-		if (cmAvail < cmFooter) {
+		if (cmAvail < cmPerLine) {
 			//add subtotal on current page before moving to the next
 			cursor = addSubTotalLine(cursor, tp, balance, tcCode, esr);
 			
@@ -304,20 +297,23 @@ public class XML44Printer {
 	}
 	
 	private void addFallSpecificLines(){
-		// Vergütungsart F17
-		// replaced with Fall.payment
-		if (fall.getAbrechnungsSystem().equals("UVG")) { //$NON-NLS-1$
-			text.replace("\\[F58\\]", fall.getBeginnDatum()); //$NON-NLS-1$
-		} else {
-			text.replace("\\[F58\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
-		Kontakt zuweiser = fall.getRequiredContact("Zuweiser");
-		if (zuweiser != null) {
-			String ean = TarmedRequirements.getEAN(zuweiser);
-			if (!ean.equals(TarmedRequirements.EAN_PSEUDO)) {
-				text.replace("\\[F23\\]", ean);
+		BodyType body = request.getPayload().getBody();
+		if (body != null) {
+			String gesetzDatum = "Falldatum";
+			String gesetzNummer = "Fall-Nr.";
+			String gesetzZSRNIF = "ZSR-Nr.(P)";
+			if (body.getUvg() != null) {
+				gesetzDatum = "Unfalldatum";
+				gesetzNummer = "Unfall-Nr.";
 			}
+			if (body.getIvg() != null) {
+				gesetzDatum = "Verfügungsdatum";
+				gesetzNummer = "Verfügungs-Nr.";
+				gesetzZSRNIF = "NIF-Nr.(P)";
+			}
+			text.replace("\\[F44.Datum\\]", gesetzDatum);
+			text.replace("\\[F44.Nummer\\]", gesetzNummer);
+			text.replace("\\[F44.ZSRNIF\\]", gesetzZSRNIF);
 		}
 	}
 	
@@ -525,7 +521,7 @@ public class XML44Printer {
 	}
 	
 	private void addBalanceLines(Object cursor, ITextPlugin tp, BalanceType balance, Money paid){
-		cursor = text.getPlugin().insertTextAt(0, 250, 190, 45, " ", SWT.LEFT); //$NON-NLS-1$
+		cursor = text.getPlugin().insertTextAt(0, 255, 190, 45, " ", SWT.LEFT); //$NON-NLS-1$
 		String balanceHeaders = "Code\tSatz\tBetrag\tMWSt\tMWSt.-Nr.:\t"; //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, balanceHeaders);
 		

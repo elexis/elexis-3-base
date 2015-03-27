@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.jdom.Document;
 
+import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.ui.text.ITextPlugin;
@@ -95,21 +96,21 @@ public class RnPrintView2 extends ViewPart {
 			return false;
 		}
 		// check if we are working with 4.0 or 4.4 tarmed xml
-		if (XMLExporter.getXmlVersion(xmlRn.getRootElement()).equals("4.0")) {
+		if (TarmedJaxbUtil.getXMLVersion(xmlRn).equals("4.0")) {
 			XML40Printer xmlPrinter = new XML40Printer(text);
 			return xmlPrinter.doPrint(rn, xmlRn, rnType, saveFile, withESR, withForms, doVerify,
 				monitor);
-		} else if (XMLExporter.getXmlVersion(xmlRn.getRootElement()).equals("4.4")) {
+		} else if (TarmedJaxbUtil.getXMLVersion(xmlRn).equals("4.4")) {
 			XML44Printer xmlPrinter = new XML44Printer(text);
 			return xmlPrinter.doPrint(rn, xmlRn, rnType, saveFile, withESR, withForms, doVerify,
 				monitor);
 		} else {
+			
 			SWTHelper.showError("Fehler beim Drucken",
 				"Die Rechnung ist in keinem gültigen XML Format");
 			rn.addTrace(Rechnung.REJECTED, "XML Format");
 			return false;
 		}
 		
-
 	}
 }

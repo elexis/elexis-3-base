@@ -39,7 +39,7 @@ public class XMLExporterServices {
 	
 	private static final String ATTR_RECORD_ID = "record_id"; //$NON-NLS-1$
 	private static final String ELEMENT_RECORD_OTHER = "record_other"; //$NON-NLS-1$
-	private static final String ELEMENT_RECORD_PHYSIO = "record_physio"; //$NON-NLS-1$
+	private static final String ELEMENT_RECORD_PARAMED = "record_paramed"; //$NON-NLS-1$
 	private static final String ELEMENT_RECORD_MIGEL = "record_migel"; //$NON-NLS-1$
 	private static final String ELEMENT_RECORD_DRUG = "record_drug"; //$NON-NLS-1$
 	private static final String ATTR_UNIT_FACTOR = "unit_factor"; //$NON-NLS-1$
@@ -167,6 +167,11 @@ public class XMLExporterServices {
 		return mMigel;
 	}
 	
+	/**
+	 * paramed and physio can be seen identical as in XML4.4 physio got replaced with paramed
+	 * 
+	 * @return
+	 */
 	public Money getPhysioMoney(){
 		if (!initialized) {
 			initFromElement();
@@ -211,7 +216,7 @@ public class XMLExporterServices {
 						mMedikament.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
 					} else if (element.getName().equals(ELEMENT_RECORD_MIGEL)) {
 						mMigel.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
-					} else if (element.getName().equals(ELEMENT_RECORD_PHYSIO)) {
+					} else if (element.getName().equals(ELEMENT_RECORD_PARAMED)) {
 						mPhysio.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
 					} else if (element.getName().equals(ELEMENT_RECORD_OTHER)) {
 						mUebrige.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
@@ -448,7 +453,7 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
 					ret.mMigel.addMoney(mAmountLocal);
 				} else if (v instanceof PhysioLeistung) {
-					el = new Element(ELEMENT_RECORD_PHYSIO, XMLExporter.nsinvoice);
+					el = new Element(ELEMENT_RECORD_PARAMED, XMLExporter.nsinvoice);
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode()); // 28060
 					PhysioLeistung pl = (PhysioLeistung) v;
 					double mult = pl.getFactor(tt, rechnung.getFall());

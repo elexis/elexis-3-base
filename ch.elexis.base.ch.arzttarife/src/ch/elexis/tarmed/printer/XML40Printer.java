@@ -81,7 +81,7 @@ public class XML40Printer {
 			ret.amountMigel =
 				XMLTool.xmlDoubleToMoney(balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_MIGEL));
 			ret.amountPhysio =
-				XMLTool.xmlDoubleToMoney(balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_PHYSIO));
+				XMLTool.xmlDoubleToMoney(balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_PARAMED));
 			ret.amountUnclassified =
 				XMLTool.xmlDoubleToMoney(balance
 					.getAttributeValue(XMLExporter.ATTR_AMOUNT_UNCLASSIFIED));

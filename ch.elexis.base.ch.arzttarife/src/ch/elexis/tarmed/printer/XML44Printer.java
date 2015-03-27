@@ -8,19 +8,18 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
-import ch.elexis.TarmedRechnung.XMLExporterBalance;
-import ch.elexis.TarmedRechnung.XMLExporterServices;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.data.util.SortedList;
@@ -36,26 +35,57 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.Rechnungssteller;
 import ch.elexis.tarmed.printer.EZPrinter.EZPrinterData;
 import ch.elexis.tarmedprefs.TarmedRequirements;
+import ch.fd.invoice440.request.BalanceType;
+import ch.fd.invoice440.request.BodyType;
+import ch.fd.invoice440.request.DiagnosisType;
+import ch.fd.invoice440.request.GarantType;
+import ch.fd.invoice440.request.RecordDRGType;
+import ch.fd.invoice440.request.RecordDrugType;
+import ch.fd.invoice440.request.RecordLabType;
+import ch.fd.invoice440.request.RecordMigelType;
+import ch.fd.invoice440.request.RecordOtherType;
+import ch.fd.invoice440.request.RecordParamedType;
+import ch.fd.invoice440.request.RecordServiceType;
+import ch.fd.invoice440.request.RecordTarmedType;
+import ch.fd.invoice440.request.RequestType;
+import ch.fd.invoice440.request.ServicesType;
+import ch.fd.invoice440.request.TreatmentType;
+import ch.fd.invoice440.request.VatRateType;
+import ch.fd.invoice440.request.VatType;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.XMLTool;
 
 public class XML44Printer {
 	
 	private static Logger logger = LoggerFactory.getLogger(XML44Printer.class);
 	
+	private static final String FREETEXT = "freetext";
+	private static final String BY_CONTRACT = "by_contract";
+	private static final String TARMED_TARIF = "001";
+	private static final String PARAMED_TARIF = "311"; // former physio tarif
+	private static final String SPACE = " ";
+	
 	private static double cmPerLine = 0.67; // Höhe pro Zeile (0.65 plus Toleranz)
 	private static double cmFirstPage = 11.0; // Platz auf der ersten Seite
 	private static double cmMiddlePage = 21.0; // Platz auf Folgeseiten
 	private static double cmFooter = 4; // Platz für Endabrechnung
+	private double cmAvail = 21.4; // Verfügbare Druckhöhe in cm
 	
 	private TextContainer text;
 
 	private Brief actBrief;
 	
-	private double cmAvail = 21.4; // Verfügbare Druckhöhe in cm
-	
 	private String printer;
+	private String tarmedTray;
+	private TimeTool tTime;
+	private double sideTotal;
+	
+	private Fall fall;
+	private Patient pat;
+	private Mandant rnMandant;
+	private Rechnungssteller rnSteller;
+	private RequestType request;
 	
 	private static DecimalFormat df = new DecimalFormat(StringConstants.DOUBLE_ZERO);
 	
@@ -64,23 +94,25 @@ public class XML44Printer {
 
 	public XML44Printer(TextContainer text){
 		this.text = text;
+		tTime = new TimeTool();
 	}
-
-	private EZPrinter.EZPrinterData getEZPrintData(XMLExporterBalance xmlBalance,
-		XMLExporterServices xmlServices, Element body){
+	
+	private EZPrinter.EZPrinterData getEZPrintData(BalanceType balance, ServicesType services,
+		BodyType body){
 		EZPrinter.EZPrinterData ret = new EZPrinter.EZPrinterData();
+		XML44Services xmlServices = new XML44Services(services);
 		
 		ret.amountTarmed = xmlServices.getTarmedMoney();
-		ret.amountDrug = xmlServices.getMedikamentMoney();
-		ret.amountLab = xmlServices.getAnalysenMoney();
+		ret.amountDrug = xmlServices.getDrugMoney();
+		ret.amountLab = xmlServices.getLabMoney();
 		ret.amountMigel = xmlServices.getMigelMoney();
-		ret.amountPhysio = xmlServices.getPhysioMoney();
-		ret.amountUnclassified = xmlServices.getUebrigeMoney();
+		ret.amountPhysio = xmlServices.getParamedMoney();
+		ret.amountUnclassified = xmlServices.getOtherMoney();
 		
-		ret.due = xmlBalance.getDue();
-		ret.paid = xmlBalance.getPrepaid();
+		ret.due = new Money(balance.getAmountDue());
+		ret.paid = new Money(balance.getAmountPrepaid());
 		
-		Element eTiers = body.getChild(XMLExporter.ELEMENT_TIERS_GARANT, namespace);
+		GarantType eTiers = body.getTiersGarant();
 		if (eTiers == null) {
 			ret.paymentMode = XMLExporter.TIERS_PAYANT;
 		}
@@ -90,52 +122,32 @@ public class XML44Printer {
 	public boolean doPrint(Rechnung rn, Document xmlRn, TYPE rnType, String saveFile,
 		boolean withESR, boolean withForms, boolean doVerify, IProgressMonitor monitor){
 		
-		Mandant mSave = CoreHub.actMandant;
+		Mandant mSave = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 		monitor.subTask(rn.getLabel());
-		Fall fall = rn.getFall();
-		Mandant mnd = rn.getMandant();
-		if (fall == null || mnd == null) {
+		
+		if (!initBasicInvoiceValues(rn, xmlRn)) {
 			return false;
 		}
-		Patient pat = fall.getPatient();
-		Hub.setMandant(mnd);
-		Rechnungssteller rs = mnd.getRechnungssteller();
-		if (pat == null || rs == null) {
-			return false;
-		}
-
-		Element payload = xmlRn.getRootElement().getChild("payload", namespace);
-		Element body = payload.getChild("body", namespace);
-		Element balance = body.getChild("balance", namespace);
-		Element services = body.getChild("services", namespace);
-		XMLExporterBalance xmlBalance = new XMLExporterBalance(balance);
-		XMLExporterServices xmlServices = new XMLExporterServices(services);
-		EZPrinterData ezData = getEZPrintData(xmlBalance, xmlServices, body);
+		initPrinterSettings();
+		
+		BodyType body = request.getPayload().getBody();
+		BalanceType balance = body.getBalance();
+		ServicesType services = body.getServices();
+		EZPrinterData ezData = getEZPrintData(balance, services, body);
 		
 		String tcCode = null;
-		if (TarmedRequirements.hasTCContract(rs)
+		if (TarmedRequirements.hasTCContract(rnSteller)
 			&& ezData.paymentMode.equals(XMLExporter.TIERS_GARANT)) {
-			tcCode = TarmedRequirements.getTCCode(rs);
+			tcCode = TarmedRequirements.getTCCode(rnSteller);
 		} else if (ezData.paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			tcCode = "01";
 		}
-		XMLPrinterUtil.updateContext(rn, fall, pat, mnd, rs, ezData.paymentMode);
 		
-		Kontakt adressat;
-		if (ezData.paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
-			adressat = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		} else {
-			adressat = fall.getGarant();
-		}
-		if ((adressat == null) || (!adressat.exists())) {
-			adressat = pat;
-		}
-		adressat.getPostAnschrift(true); // damit sicher eine existiert
+		XMLPrinterUtil.updateContext(rn, fall, pat, rnMandant, rnSteller, ezData.paymentMode);
 		
-		String offenRp = ezData.due.getCentsAsString();
 		ESR esr =
-			new ESR(rs.getInfoString(TarmedACL.getInstance().ESRNUMBER), rs.getInfoString(TarmedACL
-				.getInstance().ESRSUB), rn.getRnId(), ESR.ESR27);
+			new ESR(rnSteller.getInfoString(TarmedACL.getInstance().ESRNUMBER),
+				rnSteller.getInfoString(TarmedACL.getInstance().ESRSUB), rn.getRnId(), ESR.ESR27);
 		
 		if (withESR == true) {
 			EZPrinter ezPrinter = new EZPrinter();
@@ -147,192 +159,69 @@ public class XML44Printer {
 			Hub.setMandant(mSave);
 			return true;
 		}
-		printer = CoreHub.localCfg.get("Drucker/A4/Name", null); //$NON-NLS-1$
-		String tarmedTray = CoreHub.localCfg.get("Drucker/A4/Schacht", null); //$NON-NLS-1$
-		if (StringTool.isNothing(tarmedTray)) {
-			tarmedTray = null;
-		}
+		
+		Kontakt adressat = loadAddressee(ezData.paymentMode);
 		XMLPrinterUtil.createBrief("TR44_S1", adressat, text);
 		
-		StringBuilder sb = new StringBuilder();
-		Element root = xmlRn.getRootElement();
-		Namespace ns = root.getNamespace();
-		//Element invoice=root.getChild("invoice",ns); //$NON-NLS-1$
-		if (payload.getAttributeValue("copy").equalsIgnoreCase("true")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (request.getPayload().isCopy()) {
 			text.replace("\\[F5\\]", Messages.RnPrintView_yes); //$NON-NLS-1$
 		} else {
 			text.replace("\\[F5\\]", Messages.RnPrintView_no); //$NON-NLS-1$
 		}
 		
-		// Vergütungsart F17
-		// replaced with Fall.payment
+		addFallSpecificLines();
+		addDiagnoses(body.getTreatment());
+		addRemarks(body.getRemark());
 		
-		if (fall.getAbrechnungsSystem().equals("UVG")) { //$NON-NLS-1$
-			text.replace("\\[F58\\]", fall.getBeginnDatum()); //$NON-NLS-1$
-		} else {
-			text.replace("\\[F58\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		List<Object> serviceRecords = services.getRecordTarmedOrRecordDrgOrRecordLab();
 		
-		Element treatment = body.getChild("treatment", ns); //$NON-NLS-1$
-		Element diagnosis = treatment.getChild("diagnosis", ns); //$NON-NLS-1$
-		String type = diagnosis.getAttributeValue(Messages.RnPrintView_62);
-		
-		// TODO Cheap workaround, fix
-		if (type.equals("by_contract")) { //$NON-NLS-1$
-			type = "TI-Code"; //$NON-NLS-1$
-		}
-		text.replace("\\[F51\\]", type); //$NON-NLS-1$
-		if (type.equals("freetext")) { //$NON-NLS-1$
-			text.replace("\\[F52\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			text.replace("\\[F53\\]", diagnosis.getText()); //$NON-NLS-1$
-		} else {
-			text.replace("\\[F52\\]", diagnosis.getAttributeValue("code")); //$NON-NLS-1$ //$NON-NLS-2$
-			text.replace("\\[F53\\]", diagnosis.getText()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
-		// lookup EAN numbers in services and set field 98
-		HashSet<String> eanUniqueSet = new HashSet<String>();
-		List allServices = services.getChildren(); //$NON-NLS-1$
-		for (Object object : allServices) {
-			if (object instanceof Element) {
-				Element service = (Element) object;
-				String tariftype = service.getAttributeValue("tariff_type");
-				// look into all tarmed 001 and physio 311 services
-				if (tariftype != null && (tariftype.equals("001") || tariftype.equals("311"))) {
-					String ean_responsible = service.getAttributeValue("responsible_id");
-					if (ean_responsible != null && !ean_responsible.isEmpty()) {
-						eanUniqueSet.add(ean_responsible);
-					}
-					String ean_provider = service.getAttributeValue("provider_id");
-					if (ean_provider != null && !ean_provider.isEmpty()) {
-						eanUniqueSet.add(ean_provider);
-					}
-				}
-			}
-		}
-		String[] eanArray = XMLPrinterUtil.getEANArray(eanUniqueSet);
+		// lookup EAN numbers in services
+		String[] eanArray = initEanArray(serviceRecords);
 		HashMap<String, String> eanMap = XMLPrinterUtil.getEANHashMap(eanArray);
 		text.replace("\\[F98\\]", XMLPrinterUtil.getEANList(eanArray));
 		
-		Kontakt zuweiser = fall.getRequiredContact("Zuweiser");
-		if (zuweiser != null) {
-			String ean = TarmedRequirements.getEAN(zuweiser);
-			if (!ean.equals(TarmedRequirements.EAN_PSEUDO)) {
-				text.replace("\\[F23\\]", ean);
-			}
-		}
-		
+		// add the various record services 
 		@SuppressWarnings("unchecked")
-		SortedList<Element> ls =
-			new SortedList<Element>(services.getChildren(), new RnComparator());
+		SortedList<Object> serviceRecordsSorted =
+			new SortedList<Object>(serviceRecords, new Rn44Comparator());
 		
-		Element remark = body.getChild(XMLExporter.ELEMENT_REMARK); //$NON-NLS-1$
-		if (remark != null) {
-			final String rem = remark.getText();
-			text.getPlugin().findOrReplace(Messages.RnPrintView_remark, new ReplaceCallback() {
-				@Override
-				public String replace(final String in){
-					return Messages.RnPrintView_remarksp + rem;
-				}
-			});
-		}
 		XMLPrinterUtil.replaceHeaderFields(text, rn, xmlRn, ezData.paymentMode);
 		text.replace("\\[F.+\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
-		TimeTool r = new TimeTool();
 		int page = 1;
-		double seitentotal = 0.0;
+		sideTotal = 0.0;
 		ITextPlugin tp = text.getPlugin();
 		cmAvail = cmFirstPage;
 		monitor.worked(2);
-		for (Element s : ls) {
+		StringBuilder sb = new StringBuilder();
+		
+		for (Object obj : serviceRecordsSorted) {
 			tp.setFont("Helvetica", SWT.NORMAL, 8); //$NON-NLS-1$
 			sb.setLength(0);
-			if (r.set(s.getAttributeValue("date_begin")) == false) { //$NON-NLS-1$
+			String recText = "";
+			String name = "";
+			
+			if (obj instanceof RecordServiceType) {
+				RecordServiceType rec = (RecordServiceType) obj;
+				recText = getRecordServiceString(rec, sb, eanMap);
+				name = rec.getName();
+			} else if (obj instanceof RecordTarmedType) {
+				RecordTarmedType tarmed = (RecordTarmedType) obj;
+				recText = getTarmedRecordString(tarmed, sb, eanMap);
+				name = tarmed.getName();
+			}
+			
+			if (recText == null) {
 				continue;
 			}
-			sb.append(r.toString(TimeTool.DATE_GER)).append("\t"); //$NON-NLS-1$
-			sb.append(XMLPrinterUtil.getValue(s, "tariff_type")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append(XMLPrinterUtil.getValue(s, "code")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append(XMLPrinterUtil.getValue(s, "ref_code")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append(XMLPrinterUtil.getValue(s, "session", "1")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (XMLPrinterUtil.getValue(s, "body_location").startsWith("l")) //$NON-NLS-1$ //$NON-NLS-2$
-				sb.append("L\t");
-			else if (XMLPrinterUtil.getValue(s, "body_location").startsWith("r")) //$NON-NLS-1$ //$NON-NLS-2$
-				sb.append("R\t");
-			else
-				sb.append(" \t");
-			sb.append(XMLPrinterUtil.getValue(s, "quantity")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append(XMLPrinterUtil.getValue(s, "unit_mt")).append("\t"); //$NON-NLS-1$
-			sb.append(XMLPrinterUtil.getValue(s, "scale_factor_mt")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append(XMLPrinterUtil.getValue(s, "unit_factor_mt")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-
-			sb.append(XMLPrinterUtil.getValue(s, "unit_tt")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append(XMLPrinterUtil.getValue(s, "scale_factor_tt")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append(XMLPrinterUtil.getValue(s, "unit_factor_tt")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			// set responsible (field 77) and provider (field 78)
-			String tariftype = s.getAttributeValue("tariff_type");
-			// look into all tarmed 001 and physio 311 services
-			if (tariftype != null && (tariftype.equals("001") || tariftype.equals("311"))) {
-				String ean_provider = s.getAttributeValue("provider_id"); //$NON-NLS-1$
-				if (ean_provider != null && !ean_provider.isEmpty()) {
-					sb.append(eanMap.get(ean_provider) + "\t"); //$NON-NLS-1$
-				}
-				String ean_responsible = s.getAttributeValue("responsible_id"); //$NON-NLS-1$
-				if (ean_responsible != null && !ean_responsible.isEmpty()) {
-					sb.append(eanMap.get(ean_responsible) + "\t"); //$NON-NLS-1$
-				}
-			} else {
-				sb.append("\t\t");
-			}
-			
-			String pfl = s.getAttributeValue("obligation"); //$NON-NLS-1$
-			String am = s.getAttributeValue(XMLExporter.ATTR_AMOUNT); //$NON-NLS-1$
-			// double dLine=Double.parseDouble(am);
-			double dLine;
-			try {
-				dLine = XMLTool.xmlDoubleToMoney(am).getAmount();
-			} catch (NumberFormatException ex) {
-				// avoid dead letters
-				XMLPrinterUtil.deleteBrief(actBrief);
-				logger.error("Fehlerhaftes Format für amount bei " + sb.toString());
-				Hub.setMandant(mSave);
-				return false;
-			}
-			if (pfl.equalsIgnoreCase("true")) { //$NON-NLS-1$
-				sb.append("0\t"); //$NON-NLS-1$
-			} else {
-				sb.append("1\t"); //$NON-NLS-1$
-			}
-			sb.append(
-				Integer.toString(XMLPrinterUtil.guessVatCode(XMLPrinterUtil.getValue(s, "vat_rate")))).append("\t"); //$NON-NLS-1$
-			
-			sb.append(am);
-			seitentotal += dLine;
-			sb.append("\n"); //$NON-NLS-1$
-			cursor = tp.insertText(cursor, sb.toString(), SWT.LEFT);
-
+			cursor = tp.insertText(cursor, recText, SWT.LEFT);
 			tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
-			cursor = tp.insertText(cursor, "\t" + s.getAttributeValue("name") + "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
-
+			cursor = tp.insertText(cursor, "\t" + name + "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+			
 			cmAvail -= cmPerLine;
-			if (cmAvail <= 0) {
-				StringBuilder footer = new StringBuilder();
-				cursor = tp.insertText(cursor, "\n\n", SWT.LEFT); //$NON-NLS-1$
-				footer
-					.append("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(seitentotal)); //$NON-NLS-1$
-				tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
-				cursor = tp.insertText(cursor, footer.toString(), SWT.LEFT);
-				seitentotal = 0.0;
-				if (tcCode != null) {
-					esr.printESRCodeLine(text.getPlugin(), offenRp, tcCode);
-				}
-				
-				if (text.getPlugin().print(printer, tarmedTray, false) == false) {
-					// avoid dead letters
-					XMLPrinterUtil.deleteBrief(actBrief);
-					Hub.setMandant(mSave);
+			if (cmAvail <= cmPerLine) {
+				cursor = addSubTotalLine(cursor, tp, balance, tcCode, esr);
+				if (needDeadLetterAvoidance(mSave)) {
 					return false;
 				}
 				
@@ -345,77 +234,29 @@ public class XML44Printer {
 		}
 		cursor = tp.insertText(cursor, "\n", SWT.LEFT); //$NON-NLS-1$
 		if (cmAvail < cmFooter) {
-			if (tcCode != null) {
-				esr.printESRCodeLine(text.getPlugin(), offenRp, tcCode);
-			}
-			if (text.getPlugin().print(printer, tarmedTray, false) == false) {
-				// avoid dead letters
-				XMLPrinterUtil.deleteBrief(actBrief);
-				Hub.setMandant(mSave);
+			//add subtotal on current page before moving to the next
+			cursor = addSubTotalLine(cursor, tp, balance, tcCode, esr);
+			
+			if (needDeadLetterAvoidance(mSave)) {
 				return false;
 			}
+			
+			// new page
 			XMLPrinterUtil.insertPage("TR44_S2", ++page, adressat, rn, xmlRn, ezData.paymentMode,
 				text);
 			cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 			monitor.worked(2);
 		}
 		
-		cursor = text.getPlugin().insertTextAt(0, 250, 190, 45, " ", SWT.LEFT); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Code\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Satz\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Betrag\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "MWSt\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "MWSt.-Nr.:\t"); //$NON-NLS-1$
-		Element vat = balance.getChild("vat", ns);
-		String vatNumber = XMLPrinterUtil.getValue(vat, "vat_number");
-		if (vatNumber.equals(" ")) {
-			vatNumber = "keine";
-		} else {
-			vatNumber = vatNumber + " MWST";
-		}
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, vatNumber + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Anzahlung:\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, ezData.paid + "\t\t\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "Gesamtbetrag:\t"); //$NON-NLS-1$
-		cursor =
-			XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false, xmlBalance.getTotal() + "\n"); //$NON-NLS-1$
-		// second line
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "0\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatRate(0, vat) + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatAmount(0, vat) + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatVat(0, vat) + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Währung:\t\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "CHF\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "\t\t\t\t\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "davon PFL:\t"); //$NON-NLS-1$
-		cursor =
-			XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false, xmlBalance.getAmountObligations()
-				+ "\n"); //$NON-NLS-1$
-		// third line
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "1\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatRate(1, vat) + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatAmount(1, vat) + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatVat(1, vat) + "\n"); //$NON-NLS-1$
-		// forth line
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "2\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatRate(2, vat) + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatAmount(2, vat) + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, getVatVat(2, vat) + "\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "\t\t\t\t\t\t\t\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "Fälliger Betrag:\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, xmlBalance.getDue() + "\n"); //$NON-NLS-1$
+		addBalanceLines(cursor, tp, balance, ezData.paid);
+		addESRCodeLine(balance, tcCode, esr);
 		
-		if (tcCode != null) {
-			esr.printESRCodeLine(text.getPlugin(), offenRp, tcCode);
-		}
-		
-		if (text.getPlugin().print(printer, tarmedTray, false) == false) {
-			// avoid dead letters
-			XMLPrinterUtil.deleteBrief(actBrief);
-			Hub.setMandant(mSave);
+		if (needDeadLetterAvoidance(mSave)) {
 			return false;
 		}
+		
 		monitor.worked(2);
+		
 		// avoid dead letters
 		XMLPrinterUtil.deleteBrief(actBrief);
 		Hub.setMandant(mSave);
@@ -427,49 +268,402 @@ public class XML44Printer {
 		return true;
 	}
 	
-	private String getVatVat(int code, Element vat){
-		Element vatrate = getVatRateElement(code, vat);
-		if (vatrate != null) {
-			String rate = vatrate.getAttributeValue("vat");
-			if (rate != null && !rate.isEmpty()) {
-				return rate;
-			}
+	private void initPrinterSettings(){
+		printer = CoreHub.localCfg.get("Drucker/A4/Name", null); //$NON-NLS-1$
+		tarmedTray = CoreHub.localCfg.get("Drucker/A4/Schacht", null); //$NON-NLS-1$
+		if (StringTool.isNothing(tarmedTray)) {
+			tarmedTray = null;
 		}
-		return "0.00";
 	}
 	
-	private String getVatAmount(int code, Element vat){
-		Element vatrate = getVatRateElement(code, vat);
-		if (vatrate != null) {
-			String amount = vatrate.getAttributeValue("amount");
-			if (amount != null && !amount.isEmpty()) {
-				return amount;
-			}
+	private Kontakt loadAddressee(String paymentMode){
+		Kontakt addressee;
+		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
+			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		} else {
+			addressee = fall.getGarant();
 		}
-		return "0.00";
+		if ((addressee == null) || (!addressee.exists())) {
+			addressee = pat;
+		}
+		addressee.getPostAnschrift(true); // damit sicher eine existiert
+		return addressee;
 	}
 	
-	private String getVatRate(int code, Element vat){
-		Element vatrate = getVatRateElement(code, vat);
-		if (vatrate != null) {
-			String rate = vatrate.getAttributeValue("vat_rate");
-			if (rate != null && !rate.isEmpty()) {
-				return rate;
-			}
-		}
-		return "0.00";
+	private Object addSubTotalLine(Object cursor, ITextPlugin tp, BalanceType balance,
+		String tcCode, ESR esr){
+		StringBuilder footer = new StringBuilder();
+		cursor = tp.insertText(cursor, "\n\n", SWT.LEFT); //$NON-NLS-1$
+		footer.append("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(sideTotal)); //$NON-NLS-1$
+		tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
+		cursor = tp.insertText(cursor, footer.toString(), SWT.LEFT);
+		sideTotal = 0.0;
+		
+		addESRCodeLine(balance, tcCode, esr);
+		return cursor;
 	}
 	
-	private Element getVatRateElement(int code, Element vat){
-		List<?> children = vat.getChildren();
-		for (Object object : children) {
-			if (object instanceof Element) {
-				Element element = (Element) object;
-				String rate = element.getAttributeValue("vat_rate");
-				int rateCode = XMLPrinterUtil.guessVatCode(rate);
-				if (rateCode == code) {
-					return element;
+	private void addFallSpecificLines(){
+		// Vergütungsart F17
+		// replaced with Fall.payment
+		if (fall.getAbrechnungsSystem().equals("UVG")) { //$NON-NLS-1$
+			text.replace("\\[F58\\]", fall.getBeginnDatum()); //$NON-NLS-1$
+		} else {
+			text.replace("\\[F58\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		Kontakt zuweiser = fall.getRequiredContact("Zuweiser");
+		if (zuweiser != null) {
+			String ean = TarmedRequirements.getEAN(zuweiser);
+			if (!ean.equals(TarmedRequirements.EAN_PSEUDO)) {
+				text.replace("\\[F23\\]", ean);
+			}
+		}
+	}
+	
+	private void addRemarks(final String remark){
+		if (remark != null && !remark.isEmpty()) {
+			text.getPlugin().findOrReplace(Messages.RnPrintView_remark, new ReplaceCallback() {
+				@Override
+				public String replace(final String in){
+					return Messages.RnPrintView_remarksp + remark;
 				}
+			});
+		}
+	}
+	
+	private void addESRCodeLine(BalanceType balance, String tcCode, ESR esr){
+		String offenRp = new Money(balance.getAmountDue()).getCentsAsString();
+		if (tcCode != null) {
+			esr.printESRCodeLine(text.getPlugin(), offenRp, tcCode);
+		}
+	}
+	
+	private boolean needDeadLetterAvoidance(Mandant mSave){
+		if (text.getPlugin().print(printer, tarmedTray, false) == false) {
+			// avoid dead letters
+			XMLPrinterUtil.deleteBrief(actBrief);
+			Hub.setMandant(mSave);
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean initBasicInvoiceValues(Rechnung rn, Document xmlRn){
+		fall = rn.getFall();
+		rnMandant = rn.getMandant();
+		if (fall == null || rnMandant == null) {
+			logger.error("Fall and/or Mandant of invoice is null");
+			return false;
+		}
+		
+		pat = fall.getPatient();
+		Hub.setMandant(rnMandant);
+		rnSteller = rnMandant.getRechnungssteller();
+		if (pat == null || rnSteller == null) {
+			logger.error("Patient and/or Rechnungssteller is null");
+			return false;
+		}
+		
+		request = TarmedJaxbUtil.unmarshalInvoiceRequest440(xmlRn);
+		if (request == null) {
+			logger.error("Could not unmarshall xml document for invoice");
+			return false;
+		}
+		return true;
+	}
+	
+	private String[] initEanArray(List<Object> serviceRecords){
+		HashSet<String> eanUniqueSet = new HashSet<String>();
+		
+		for (Object record : serviceRecords) {
+			String responsibleEAN = null;
+			String providerEAN = null;
+			
+			if (record instanceof RecordServiceType) {
+				RecordServiceType recService = (RecordServiceType) record;
+				responsibleEAN = recService.getResponsibleId();
+				providerEAN = recService.getProviderId();
+			} else if (record instanceof RecordTarmedType) {
+				RecordTarmedType recTarmed = (RecordTarmedType) record;
+				responsibleEAN = recTarmed.getResponsibleId();
+				providerEAN = recTarmed.getProviderId();
+			}
+			
+			if (responsibleEAN != null && !responsibleEAN.isEmpty()) {
+				eanUniqueSet.add(responsibleEAN);
+			}
+			
+			if (providerEAN != null && !providerEAN.isEmpty()) {
+				eanUniqueSet.add(providerEAN);
+			}
+		}
+		
+		return XMLPrinterUtil.getEANArray(eanUniqueSet);
+	}
+	
+	private String getRecordServiceString(RecordServiceType rec, StringBuilder sb,
+		HashMap<String, String> eanMap){
+		if (rec.getDateBegin() == null) {
+			return null;
+		}
+		
+		tTime.set(rec.getDateBegin().toGregorianCalendar());
+		sb.append(tTime.toString(TimeTool.DATE_GER)).append("\t"); //$NON-NLS-1$
+		sb.append(getTarifType(rec)).append("\t");//$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(rec.getCode()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		String refCode = rec.getRefCode();
+		if (refCode == null) {
+			refCode = SPACE;
+		}
+		sb.append(refCode).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(rec.getSession()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(" \t");
+		sb.append(rec.getQuantity()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// unit, scale factor, unit factor mt & tt
+		sb.append(SPACE).append("\t"); //$NON-NLS-1$
+		sb.append(SPACE).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(SPACE).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(SPACE).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(SPACE).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(SPACE).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		String providerEAN = rec.getProviderId();
+		String responsibleEAN = rec.getResponsibleId();
+		if (getTarifType(rec) != null) {
+			if (providerEAN != null && !providerEAN.isEmpty()) {
+				sb.append(eanMap.get(providerEAN) + "\t");//$NON-NLS-1$
+			}
+			
+			if (responsibleEAN != null && !responsibleEAN.isEmpty()) {
+				sb.append(eanMap.get(responsibleEAN) + "\t"); //$NON-NLS-1$
+			}
+		} else {
+			sb.append("\t\t");
+		}
+		
+		if (rec.isObligation()) {
+			sb.append("0\t"); //$NON-NLS-1$
+		} else {
+			sb.append("1\t"); //$NON-NLS-1$
+		}
+		
+		double amount = rec.getAmount();
+		double vatRate = rec.getVatRate();
+		sb.append(Integer.toString(XMLPrinterUtil.guessVatCode(vatRate + ""))).append("\t"); //$NON-NLS-1$
+		sb.append(amount + "");
+		sideTotal += amount;
+		sb.append("\n"); //$NON-NLS-1$
+		
+		return sb.toString();
+	}
+	
+	private String getTarmedRecordString(RecordTarmedType tarmed, StringBuilder sb,
+		HashMap<String, String> eanMap){
+		
+		if (tarmed.getDateBegin() == null) {
+			return null;
+		}
+		tTime.set(tarmed.getDateBegin().toGregorianCalendar());
+		sb.append(tTime.toString(TimeTool.DATE_GER)).append("\t"); //$NON-NLS-1$
+		sb.append(tarmed.getTariffType()).append("\t");//$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(tarmed.getCode()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		String refCode = tarmed.getRefCode();
+		if (refCode == null) {
+			refCode = SPACE;
+		}
+		sb.append(refCode).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(tarmed.getSession()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		String bodyLocation = tarmed.getBodyLocation();
+		if (bodyLocation.startsWith("l")) { //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("L\t");
+		} else if (bodyLocation.startsWith("r")) { //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("R\t");
+		} else {
+			sb.append(" \t");
+		}
+		
+		sb.append(tarmed.getQuantity()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(tarmed.getUnitMt()).append("\t"); //$NON-NLS-1$
+		sb.append(tarmed.getScaleFactorMt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(tarmed.getUnitFactorMt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		sb.append(tarmed.getUnitTt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(tarmed.getScaleFactorTt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(tarmed.getUnitFactorTt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		String providerEAN = tarmed.getProviderId();
+		String responsibleEAN = tarmed.getResponsibleId();
+		if (tarmed.getTariffType() != null) {
+			if (providerEAN != null && !providerEAN.isEmpty()) {
+				sb.append(eanMap.get(providerEAN) + "\t");//$NON-NLS-1$
+			}
+			
+			if (responsibleEAN != null && !responsibleEAN.isEmpty()) {
+				sb.append(eanMap.get(responsibleEAN) + "\t"); //$NON-NLS-1$
+			}
+		} else {
+			sb.append("\t\t");
+		}
+		
+		if (tarmed.isObligation()) {
+			sb.append("0\t"); //$NON-NLS-1$
+		} else {
+			sb.append("1\t"); //$NON-NLS-1$
+		}
+		
+		double amount = tarmed.getAmount();
+		double vatRate = tarmed.getVatRate();
+		sb.append(Integer.toString(XMLPrinterUtil.guessVatCode(vatRate + ""))).append("\t"); //$NON-NLS-1$
+		sb.append(amount + "");
+		sideTotal += amount;
+		sb.append("\n"); //$NON-NLS-1$
+		
+		return sb.toString();
+	}
+	
+	private void addBalanceLines(Object cursor, ITextPlugin tp, BalanceType balance, Money paid){
+		cursor = text.getPlugin().insertTextAt(0, 250, 190, 45, " ", SWT.LEFT); //$NON-NLS-1$
+		String balanceHeaders = "Code\tSatz\tBetrag\tMWSt\tMWSt.-Nr.:\t"; //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, balanceHeaders);
+		
+		VatType vat = balance.getVat();
+		String vatNumber = vat.getVatNumber();
+		if (vatNumber == null || vatNumber.equals(" ")) {
+			vatNumber = "keine";
+		} else {
+			vatNumber = vatNumber + " MWST";
+		}
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, vatNumber + "\t"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Anzahlung:\t"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, paid + "\t\t\t"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "Gesamtbetrag:\t"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false, balance.getAmount() + "\n"); //$NON-NLS-1$
+		
+		// second line
+		String secondLine =
+			"0\t" + getVatRate(0, vat) + "\t" + getVatAmount(0, vat) + "\t" + getVatVat(0, vat)
+				+ "\t";
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, secondLine); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Währung:\t\t"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "CHF\t"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "\t\t\t\t\t"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "davon PFL:\t"); //$NON-NLS-1$
+		cursor =
+			XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false, balance.getAmountObligations()
+				+ "\n"); //$NON-NLS-1$
+		// third line
+		String thirdLine =
+			"1\t" + getVatRate(1, vat) + "\t" + getVatAmount(1, vat) + "\t" + getVatVat(1, vat) //$NON-NLS-1$
+				+ "\n"; //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, thirdLine); //$NON-NLS-1$
+		
+		// forth line
+		String forthLine =
+			"2\t" + getVatRate(2, vat) + "\t" + getVatAmount(2, vat) + "\t" + vat.getVat() + "\t\t\t\t\t\t\t\t\t";//$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, forthLine);
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "Fälliger Betrag:\t"); //$NON-NLS-1$
+		cursor =
+			XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true,
+				String.format("%.2f", balance.getAmountDue()) + "\n"); //$NON-NLS-1$
+	}
+	
+	private void addDiagnoses(TreatmentType treatment){
+		if (treatment == null) {
+			logger.debug("no treatments defined");
+			return;
+		}
+		
+		List<DiagnosisType> diagnoses = treatment.getDiagnosis();
+		if (diagnoses == null || diagnoses.isEmpty()) {
+			logger.warn("No diagnoses found to print at the tarmed invoice request");
+			return;
+		}
+		
+		String type = "";
+		String freetext = "";
+		StringBuilder dCodesBuilder = new StringBuilder();
+		for (DiagnosisType diagnose : diagnoses) {
+			String dType = diagnose.getType();
+			if (dType.equals(FREETEXT)) {
+				freetext = diagnose.getValue();
+				continue;
+			}
+			
+			if (type.isEmpty()) {
+				type = dType;
+				dCodesBuilder.append(diagnose.getCode());
+			} else if (type.equals(dType)) {
+				dCodesBuilder.append("; "); //$NON-NLS-1$
+				dCodesBuilder.append(diagnose.getCode());
+			}
+		}
+		
+		if (type.equals(BY_CONTRACT)) {
+			type = "TI-Code"; //$NON-NLS-1$
+		}
+		
+		text.replace("\\[F51\\]", type); //$NON-NLS-1$  //$NON-NLS-1$
+		text.replace("\\[F52\\]", dCodesBuilder.toString()); //$NON-NLS-1$  //$NON-NLS-1$
+		text.replace("\\[F53\\]", freetext); //$NON-NLS-1$  //$NON-NLS-1$
+	}
+	
+	private String getTarifType(RecordServiceType rec){
+		if (rec instanceof RecordOtherType) {
+			RecordOtherType other = (RecordOtherType) rec;
+			return other.getTariffType();
+		} else if (rec instanceof RecordDrugType) {
+			RecordDrugType drug = (RecordDrugType) rec;
+			return drug.getTariffType();
+		} else if (rec instanceof RecordDRGType) {
+			RecordDRGType drg = (RecordDRGType) rec;
+			return drg.getTariffType();
+		} else if (rec instanceof RecordMigelType) {
+			RecordMigelType migel = (RecordMigelType) rec;
+			return migel.getTariffType();
+		} else if (rec instanceof RecordLabType) {
+			RecordLabType lab = (RecordLabType) rec;
+			return lab.getTariffType();
+		} else if (rec instanceof RecordParamedType) {
+			RecordParamedType param = (RecordParamedType) rec;
+			return param.getTariffType();
+		}
+		return "";
+	}
+	
+	private double getVatAmount(int code, VatType vat){
+		VatRateType vatRate = getVatRateElement(code, vat);
+		if (vatRate != null) {
+			return vatRate.getAmount();
+		}
+		return 0.0D;
+	}
+	
+	private double getVatRate(int code, VatType vat){
+		VatRateType vatRate = getVatRateElement(code, vat);
+		if (vatRate != null) {
+			return vatRate.getVatRate();
+		}
+		return 0.0D;
+	}
+	
+	private double getVatVat(int code, VatType vat){
+		VatRateType vatRate = getVatRateElement(code, vat);
+		if (vatRate != null) {
+			return vatRate.getVat();
+		}
+		return 0.0D;
+	}
+	
+	private VatRateType getVatRateElement(int code, VatType vat){
+		List<VatRateType> vatRates = vat.getVatRate();
+		for (VatRateType vatRate : vatRates) {
+			double rate = vatRate.getVatRate();
+			int vatCode = XMLPrinterUtil.guessVatCode(rate + "");
+			if (vatCode == code) {
+				return vatRate;
 			}
 		}
 		return null;

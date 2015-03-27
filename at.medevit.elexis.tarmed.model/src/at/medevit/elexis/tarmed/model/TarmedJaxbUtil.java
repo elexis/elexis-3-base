@@ -10,8 +10,13 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.output.DOMOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 import ch.fd.invoice440.request.RequestType;
 import ch.fd.invoice440.response.ResponseType;
@@ -245,5 +250,42 @@ public class TarmedJaxbUtil {
 			log.error("Unmarshalling generalInvoiceResponse_440 failed", e);
 		}
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static RequestType unmarshalInvoiceRequest440(org.jdom.Document jdomDoc){
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(RequestType.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			
+			DOMOutputter outputter = new DOMOutputter();
+			Document document = outputter.output(jdomDoc);
+			JAXBElement<Object> jaxElement = (JAXBElement<Object>) unmarshaller.unmarshal(document);
+			
+			if (jaxElement.getValue() instanceof RequestType) {
+				RequestType request = (RequestType) jaxElement.getValue();
+				return request;
+			}
+			
+		} catch (JDOMException | JAXBException e) {
+			log.error("Unmarshalling generalInvoiceRequest_440 from jDom document failed", e);
+		}
+		return null;
+	}
+	
+	public static String getXMLVersion(org.jdom.Document jdomDoc){
+		Element root = jdomDoc.getRootElement();
+		String location =
+			root.getAttributeValue(Constants.SCHEMA_LOCATION,
+				Namespace.getNamespace(Constants.DEFAULT_NAMESPACE));
+		
+		if (location != null && !location.isEmpty()) {
+			if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_400_LOCATION)) {
+				return "4.0";
+			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_440_LOCATION)) {
+				return "4.4";
+			}
+		}
+		return location;
 	}
 }

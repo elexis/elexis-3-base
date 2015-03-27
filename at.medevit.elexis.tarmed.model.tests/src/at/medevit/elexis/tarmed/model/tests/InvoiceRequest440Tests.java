@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 
@@ -15,6 +16,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -52,13 +56,11 @@ import ch.fd.invoice440.request.VatType;
 import ch.fd.invoice440.request.ZipType;
 
 public class InvoiceRequest440Tests {
-	private static TarmedJaxbUtil jaxbHelper;
 	private static File writeReq440;
 	private static File readReq440;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
-		jaxbHelper = new TarmedJaxbUtil();
 		writeReq440 = new File("rsc/writeReq440.xml");
 		if (!writeReq440.exists()) {
 			writeReq440.createNewFile();
@@ -71,7 +73,7 @@ public class InvoiceRequest440Tests {
 	public void testMarshallInvoiceRequest440() throws InstantiationException,
 		IllegalAccessException, FileNotFoundException, DatatypeConfigurationException{
 		
-		jaxbHelper.marshallInvoiceRequest(generateRequestSample(), new FileOutputStream(
+		TarmedJaxbUtil.marshallInvoiceRequest(generateRequestSample(), new FileOutputStream(
 			writeReq440));
 		assertTrue(writeReq440.exists());
 	}
@@ -81,7 +83,7 @@ public class InvoiceRequest440Tests {
 		InstantiationException, IllegalAccessException, DatatypeConfigurationException{
 		
 		RequestType requestType =
-			jaxbHelper.unmarshalInvoiceRequest440(new FileInputStream(readReq440));
+			TarmedJaxbUtil.unmarshalInvoiceRequest440(new FileInputStream(readReq440));
 		
 		assertNotNull(requestType);
 		assertEquals("en", requestType.getLanguage());
@@ -99,6 +101,38 @@ public class InvoiceRequest440Tests {
 		assertNotNull(body.getTiersPayant());
 		assertEquals("6564564", body.getKvg().getInsuredId());
 		assertEquals(1, body.getServices().getRecordTarmedOrRecordDrgOrRecordLab().size());
+	}
+	
+	@Test
+	public void testDomUnmarshalInvoiceRequest440() throws JDOMException, IOException{
+		SAXBuilder builder = new SAXBuilder();
+		Document jdomDoc = builder.build(readReq440);
+		RequestType requestType = TarmedJaxbUtil.unmarshalInvoiceRequest440(jdomDoc);
+		
+		assertNotNull(requestType);
+		assertEquals("en", requestType.getLanguage());
+		assertEquals("UnitTest", requestType.getModus());
+		assertNotNull(requestType.getProcessing());
+		assertNotNull(requestType.getProcessing().getTransport());
+		assertEquals("2099988872462", requestType.getProcessing().getTransport().getFrom());
+		assertEquals("7601001302181", requestType.getProcessing().getTransport().getTo());
+		assertEquals(1, requestType.getProcessing().getTransport().getVia().size());
+		assertNotNull(requestType.getPayload());
+		assertNotNull(requestType.getPayload().getInvoice());
+		BodyType body = requestType.getPayload().getBody();
+		assertNotNull(body);
+		assertNotNull(body.getEsr9());
+		assertNotNull(body.getTiersPayant());
+		assertEquals("6564564", body.getKvg().getInsuredId());
+		assertEquals(1, body.getServices().getRecordTarmedOrRecordDrgOrRecordLab().size());
+	}
+	
+	@Test
+	public void testGetXMLVersion() throws JDOMException, IOException{
+		SAXBuilder builder = new SAXBuilder();
+		Document jdomDoc = builder.build(readReq440);
+		String version = TarmedJaxbUtil.getXMLVersion(jdomDoc);
+		assertEquals("4.4", version);
 	}
 	
 	private RequestType generateRequestSample() throws InstantiationException,

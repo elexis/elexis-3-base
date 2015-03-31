@@ -37,6 +37,7 @@ public class ArticleToImmunisationModel {
 		inl("J07AG01;J07AG");
 		inl("J07AH04;J07AH");
 		inl("J07AH07;J07AH");
+		inl("J07AH08;J07AH");
 		inl("J07AJ52;J07AF,J07AM,J07AJ");
 		inl("J07AL01;J07AL");
 		inl("J07AL02;J07AL");

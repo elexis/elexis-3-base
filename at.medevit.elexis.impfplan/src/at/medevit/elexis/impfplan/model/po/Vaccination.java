@@ -13,7 +13,6 @@ package at.medevit.elexis.impfplan.model.po;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -257,23 +256,10 @@ public class Vaccination extends PersistentObject {
 	}
 	
 	public String getSide(){
-		return checkNull(getExtInfo(SIDE));
+		return checkNull(getExtInfoStoredObjectByKey(SIDE));
 	}
 	
 	public void setSide(final String side){
-		setExtInfo(SIDE, side);
-	}
-	
-	public String getExtInfo(final String key){
-		Map map = getMap(FLD_EXTINFO);
-		String ret = (String) map.get(key);
-		return checkNull(ret);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void setExtInfo(final String key, final String value){
-		Map map = getMap(FLD_EXTINFO);
-		map.put(key, value);
-		setMap(FLD_EXTINFO, map);
+		setExtInfoStoredObjectByKey(SIDE, side);
 	}
 }

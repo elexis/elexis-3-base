@@ -84,7 +84,7 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		} catch (COSVisitorException | IOException e) {
 			MessageEvent.fireError("Fehler beim Erstellen des PDF", e.getMessage(), e);
 		}
-		
+		vcpl.restorePrePrintSettting();
 		return null;
 	}
 	

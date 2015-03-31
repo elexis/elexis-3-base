@@ -13,6 +13,7 @@ package at.medevit.elexis.impfplan.model.po;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -44,6 +45,8 @@ public class Vaccination extends PersistentObject {
 	/** Verabreicher, entweder ein Mandant im lokalen System, oder ein Kontakt-String */	
 						public static final String FLD_ADMINISTRATOR = "administrator";
 	/** Impfung gegen */public static final String FLD_VACC_AGAINST = "vaccAgainst";
+	/** side where vaccination was applied (optional)*/	
+						public static final String SIDE = "Side";
 	
 	/** Definition of the database table */
 	static final String createDB =
@@ -243,5 +246,34 @@ public class Vaccination extends PersistentObject {
 			vaccAgainst.add(va);
 		}
 		return vaccAgainst;
+	}
+	
+	public void setAdministratorString(String administrator){
+		set(FLD_ADMINISTRATOR, administrator);
+	}
+	
+	public void setLotNo(String lotNo){
+		set(FLD_LOT_NO, lotNo);
+	}
+	
+	public String getSide(){
+		return checkNull(getExtInfo(SIDE));
+	}
+	
+	public void setSide(final String side){
+		setExtInfo(SIDE, side);
+	}
+	
+	public String getExtInfo(final String key){
+		Map map = getMap(FLD_EXTINFO);
+		String ret = (String) map.get(key);
+		return checkNull(ret);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setExtInfo(final String key, final String value){
+		Map map = getMap(FLD_EXTINFO);
+		map.put(key, value);
+		setMap(FLD_EXTINFO, map);
 	}
 }

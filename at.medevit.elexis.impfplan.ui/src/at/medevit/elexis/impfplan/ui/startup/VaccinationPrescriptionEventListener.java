@@ -12,10 +12,9 @@ package at.medevit.elexis.impfplan.ui.startup;
 
 import java.util.Date;
 
-import org.eclipse.jface.dialogs.InputDialog;
-
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
+import at.medevit.elexis.impfplan.ui.dialogs.ApplicationInputDialog;
 import at.medevit.elexis.impfplan.ui.handlers.ApplyVaccinationHandler;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -60,14 +59,18 @@ public class VaccinationPrescriptionEventListener implements ElexisEventListener
 				}
 				
 				Mandant m = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-				InputDialog lotId =
-					new InputDialog(UiDesk.getTopShell(), "Lot-Nummer",
-						"Bitte geben Sie die Lot-Nummer des Impfstoffes an", null, null);
-				lotId.open();
-				String lotNo = lotId.getValue();
+				ApplicationInputDialog aid = new ApplicationInputDialog(UiDesk.getTopShell());
+				aid.open();
+				String lotNo = aid.getLotNo();
+				String side = aid.getSide();
 				
-				new Vaccination(p.get(Prescription.FLD_PATIENT_ID), p.getArtikel(), d, lotNo, m
-					.storeToString());
+				Vaccination vacc =
+					new Vaccination(p.get(Prescription.FLD_PATIENT_ID), p.getArtikel(), d, lotNo, m
+						.storeToString());
+				
+				if (side != null && !side.isEmpty()) {
+					vacc.setSide(side);
+				}
 			}
 		});
 	}

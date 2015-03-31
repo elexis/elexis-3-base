@@ -3,6 +3,7 @@ package at.medevit.elexis.impfplan.ui.preferences;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.layout.GridData;
@@ -34,6 +35,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String VAC_PDF_OUTPUTDIR = PREFBASE + "outputdir";
 	public static final String VAC_SORT_ORDER = PREFBASE + "sortorder";
 	public static final String VAC_BILLING_POS = PREFBASE + "defleistungen";
+	public static final String VAC_SHOW_SIDE = PREFBASE + "showside";
+	public static final String VAC_DEFAULT_SIDE = PREFBASE + "defaultside";
 	
 	private Text txtLog;
 	private Label lblInfo;
@@ -66,6 +69,23 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			new BooleanFieldEditor(VAC_SORT_ORDER, "Sortierung von neu-alt (neueste oben)",
 				getFieldEditorParent());
 		addField(bfEditor);
+		
+		BooleanFieldEditor bfShowSideEditor =
+			new BooleanFieldEditor(VAC_SHOW_SIDE, "Seite (auf welcher geimpft wurde) einblenden",
+				getFieldEditorParent());
+		addField(bfShowSideEditor);
+		
+		RadioGroupFieldEditor radioGroup =
+			new RadioGroupFieldEditor(VAC_DEFAULT_SIDE,
+				"Standard Seite (nur relevant, wenn Seite einblenden aktiv ist)", 2,
+				new String[][] {
+					{
+						"links", "left"
+					}, {
+						"rechts", "right"
+					}
+				}, getFieldEditorParent(), true);
+		addField(radioGroup);
 		
 		Composite area = new Composite(getFieldEditorParent().getParent(), SWT.NONE);
 		area.setLayoutData(new GridData(GridData.FILL_BOTH));

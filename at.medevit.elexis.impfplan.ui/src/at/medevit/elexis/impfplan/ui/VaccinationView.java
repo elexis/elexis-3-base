@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2013;
+import at.medevit.elexis.impfplan.ui.dialogs.EditVaccinationDialog;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
@@ -54,6 +55,7 @@ public class VaccinationView extends ViewPart {
 	private static VaccinationPlanHeaderDefinition vaccinationHeaderDefinition;
 	private static List<Vaccination> vaccinations;
 	private VaccinationComposite vaccinationComposite;
+	private VaccinationCompositePaintListener vcPaintListener;
 	
 	public static final String HEADER_ID_SHOW_ADMINISTERED = "HISA";
 	private Patient pat;
@@ -97,22 +99,38 @@ public class VaccinationView extends ViewPart {
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 		sc.setMinSize(vaccinationComposite.computeSize(800, 800));
+		vcPaintListener = vaccinationComposite.getVaccinationCompositePaintListener();
 		
 		Menu menu = new Menu(vaccinationComposite);
+		// add delete entry menu
 		MenuItem mDeleteEntry = new MenuItem(menu, SWT.PUSH);
 		mDeleteEntry.setText("Eintrag löschen");
 		mDeleteEntry.setImage(Images.IMG_DELETE.getImage());
 		mDeleteEntry.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				VaccinationCompositePaintListener vcpl =
-					vaccinationComposite.getVaccinationCompositePaintListener();
-				Vaccination selVaccination = vcpl.getSelectedVaccination();
+				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
 				if (selVaccination != null) {
 					selVaccination.delete();
 				}
 			}
 		});
+		// add edit menu entry
+		MenuItem mEditEntry = new MenuItem(menu, SWT.PUSH);
+		mEditEntry.setText("Impfung editieren");
+		mEditEntry.setImage(Images.IMG_EDIT.getImage());
+		mEditEntry.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
+				if (selVaccination != null) {
+					EditVaccinationDialog evd =
+						new EditVaccinationDialog(vaccinationComposite.getShell(), selVaccination);
+					evd.open();
+				}
+			}
+		});
+		
 		vaccinationComposite.setMenu(menu);
 		if (ElexisEventDispatcher.getSelectedPatient() != null) {
 			setPatient(ElexisEventDispatcher.getSelectedPatient());

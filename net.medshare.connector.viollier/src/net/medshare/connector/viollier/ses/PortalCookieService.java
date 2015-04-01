@@ -14,6 +14,7 @@ package net.medshare.connector.viollier.ses;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +85,8 @@ public class PortalCookieService {
 		if (response.getStatusLine().toString().equalsIgnoreCase("HTTP/1.1 302 Found")) {
 			Header[] headers = response.getHeaders("Set-Cookie");
 			String headerValue1 = headers[1].getValue().replaceAll("SCDID_S=", "");
-			cookie = headerValue1.replaceAll(" path=/; Secure; (HttpOnly)?", "");
+			headerValue1 = headerValue1.replaceAll("; path=/; Secure; (HttpOnly)?", "");
+			cookie = URLEncoder.encode(headerValue1, "UTF-8");
 		} else
 			throw new ElexisException(PortalCookieService.class,
 				Messages.Handler_errorMessageGetCookie, ElexisException.EE_UNEXPECTED_RESPONSE);

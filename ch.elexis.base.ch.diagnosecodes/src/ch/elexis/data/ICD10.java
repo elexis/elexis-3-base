@@ -16,6 +16,7 @@ package ch.elexis.data;
 import java.util.List;
 import java.util.Map;
 
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
@@ -129,9 +130,8 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	
 	@Override
 	public String getLabel(){
-		StringBuilder b = new StringBuilder();
-		b.append(getCode()).append(" ").append(getText()); //$NON-NLS-1$
-		return b.toString();
+		String[] vals = get(true, FLD_CODE, FLD_TEXT);
+		return vals[0]+StringConstants.SPACE+vals[1];
 	}
 	
 	@Override

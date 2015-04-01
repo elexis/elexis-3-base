@@ -77,11 +77,12 @@ public class LoincCode extends PersistentObject implements ch.elexis.core.model.
 	
 	@Override
 	public String getLabel(){
-		String text = getText();
-		if (text != null && text.trim().length() > 0)
-			return getCode() + " - " + text.trim();
+		String[] vals = get(true, FLD_CODE, FLD_LONGNAME);
+		
+		if (vals[1].trim().length() > 0)
+			return vals[0] + " - " + vals[1].trim();
 		else
-			return getCode();
+			return vals[0];
 	}
 	
 	@Override

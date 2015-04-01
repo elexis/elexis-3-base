@@ -104,11 +104,8 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	
 	@Override
 	public String getLabel(){
-		String[] res = new String[2];
-		get(new String[] {
-			FLD_ZIFFER, FLD_TITEL
-		}, res);
-		return new StringBuilder().append(res[0]).append(" ").append(res[1]).toString();
+		String[] vals = get(true, FLD_ZIFFER, FLD_TITEL);
+		return new StringBuilder().append(vals[0]).append(" ").append(vals[1]).toString();
 	}
 	
 	@Override

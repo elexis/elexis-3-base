@@ -14,6 +14,7 @@ package ch.elexis.data;
 import java.util.List;
 import java.util.Map;
 
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.VerrechenbarAdapter;
@@ -24,6 +25,9 @@ import ch.rgw.tools.TimeTool;
 
 public class LaborLeistung extends VerrechenbarAdapter {
 	public static final String FLD_NAME = "Name"; //$NON-NLS-1$
+	public static final String FLD_CODE = "Code";
+	public static final String FLD_TEXT = "Text";
+	
 	private static final String TABLENAME = "ARTIKEL"; //$NON-NLS-1$
 	public static final String XIDDOMAIN = "www.xid.ch/id/analysenliste_ch/"; //$NON-NLS-1$
 	
@@ -51,7 +55,7 @@ public class LaborLeistung extends VerrechenbarAdapter {
 			setMap("ExtInfo", ex); //$NON-NLS-1$
 		}
 		set(new String[] {
-			"Code", "Text", "VK_Preis"}, code, text.trim(), tp_vk); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			FLD_CODE, FLD_TEXT, "VK_Preis"}, code, text.trim(), tp_vk); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	@Override
@@ -59,18 +63,14 @@ public class LaborLeistung extends VerrechenbarAdapter {
 		return TABLENAME; //$NON-NLS-1$
 	}
 	
-	/*
-	 * public String[] getDisplayedFields(){ return new String[] { "Code", "Text"}; //$NON-NLS-1$
-	 * //$NON-NLS-2$ }
-	 */
 	@Override
 	public String getCode(){
-		return get("Code"); //$NON-NLS-1$
+		return get(FLD_CODE); 
 	}
 	
 	@Override
 	public String getText(){
-		return checkNull(get("Text")); //$NON-NLS-1$
+		return checkNull(get(FLD_TEXT));
 	}
 	
 	@Override
@@ -78,11 +78,6 @@ public class LaborLeistung extends VerrechenbarAdapter {
 		return "Laborleistung"; //$NON-NLS-1$
 	}
 	
-	/*
-	 * public int getPreis(final TimeTool dat, final String subgroup) { String r=get("VK_Preis");
-	 * //$NON-NLS-1$ return StringTool.isNothing(r) ? 0 :
-	 * (int)Math.round(Double.parseDouble(r)getVKMultiplikator(dat, "EAL")100); }
-	 */
 	@Override
 	public Money getKosten(final TimeTool dat){
 		String r = get("EK_Preis"); //$NON-NLS-1$
@@ -112,9 +107,8 @@ public class LaborLeistung extends VerrechenbarAdapter {
 	
 	@Override
 	public String getLabel(){
-		StringBuilder ret = new StringBuilder();
-		ret.append(getCode()).append(" ").append(getText()); //$NON-NLS-1$
-		return ret.toString();
+		String[] vals = get(true, FLD_CODE, FLD_TEXT);
+		return vals[0] + StringConstants.SPACE + vals[1];
 	}
 	
 	@Override

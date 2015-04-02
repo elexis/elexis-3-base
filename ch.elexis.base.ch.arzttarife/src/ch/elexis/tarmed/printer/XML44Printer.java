@@ -311,9 +311,12 @@ public class XML44Printer {
 				gesetzNummer = "Verfügungs-Nr.";
 				gesetzZSRNIF = "NIF-Nr.(P)";
 			}
+			String vekaNummer = fall.getXid("www.covercard.ch/xid");
+			
 			text.replace("\\[F44.Datum\\]", gesetzDatum);
 			text.replace("\\[F44.Nummer\\]", gesetzNummer);
 			text.replace("\\[F44.ZSRNIF\\]", gesetzZSRNIF);
+			text.replace("\\[F44.VEKANr\\]", vekaNummer);
 		}
 	}
 	

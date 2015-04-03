@@ -295,14 +295,14 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 				Collections.sort(list, new Comparator<Messwert>() {
 					
 					public int compare(final Messwert o1, final Messwert o2){
-						TimeTool t1 = new TimeTool(o1.get(Messwert.FLD_DATE));
-						TimeTool t2 = new TimeTool(o2.get(Messwert.FLD_DATE));
+						TimeTool t1 = new TimeTool(o1.getDate());
+						TimeTool t2 = new TimeTool(o2.getDate());
 						return t1.compareTo(t2);
 					}
 				});
 				for (Messwert m : list) {
 					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(0, m.get(Messwert.FLD_DATE)); //$NON-NLS-1$
+					item.setText(0, m.getDate()); //$NON-NLS-1$
 					item.setData(m);
 					Map hash = m.getMap(Messwert.FLD_BEFUNDE); //$NON-NLS-1$
 					for (int i = 0; i < flds.length; i++) {

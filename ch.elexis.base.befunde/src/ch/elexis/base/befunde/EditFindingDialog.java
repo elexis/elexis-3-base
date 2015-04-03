@@ -142,6 +142,7 @@ public class EditFindingDialog extends TitleAreaDialog {
 				hash.put(flds[i], val);
 			}
 		}
+		mw.setDate(dp.getDate());
 		mw.setMap(Messwert.FLD_BEFUNDE, hash);
 		super.okPressed();
 	}

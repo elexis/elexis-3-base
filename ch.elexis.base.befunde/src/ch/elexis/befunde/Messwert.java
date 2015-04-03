@@ -12,6 +12,7 @@
 package ch.elexis.befunde;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -21,6 +22,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.TimeTool;
 
 //import java.io.ByteArrayInputStream;
 //import java.util.Map;
@@ -131,6 +133,13 @@ public class Messwert extends PersistentObject {
 	
 	public String getDate(){
 		return get(FLD_DATE);
+	}
+	
+	public void setDate(Date date){
+		TimeTool tt = new TimeTool();
+		tt.setTime(date);
+		set(FLD_DATE, tt.toString(TimeTool.DATE_COMPACT));
+		clearCache();
 	}
 	
 	/**

@@ -152,7 +152,9 @@ public class XMLExporter implements IRnOutputter {
 	public static final String ATTR_BODY_PLACE = "place"; //$NON-NLS-1$
 	public static final String ELEMENT_ANNULMENT = "annulment"; //$NON-NLS-1$
 	public static final String FIELDNAME_TIMESTAMPXML = "TimeStampXML"; //$NON-NLS-1$
-
+	public static final String ELEMENT_REMINDER = "reminder";
+	public static final String ATTR_REMINDER_LEVEL = "reminder_level";
+	
 	public static final Namespace ns = Namespace
 		.getNamespace("http://www.forum-datenaustausch.ch/invoice"); //$NON-NLS-1$
 	public static final Namespace nsinvoice = Namespace.getNamespace("invoice", //$NON-NLS-1$
@@ -458,6 +460,18 @@ public class XMLExporter implements IRnOutputter {
 				updateExisting4Xml(root, type, rechnung);
 			} else if (getXmlVersion(root).equals("4.4")) {
 				updateExisting44Xml(root, type, rechnung);
+				
+				int status = rechnung.getStatus();
+				if (status == RnStatus.MAHNUNG_1) {
+					dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m1.xml");
+					addReminderEntry(root, rechnung, "1");
+				} else if (status == RnStatus.MAHNUNG_2) {
+					dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m2.xml");
+					addReminderEntry(root, rechnung, "2");
+				} else if (status == RnStatus.MAHNUNG_3) {
+					dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m3.xml");
+					addReminderEntry(root, rechnung, "3");
+				}
 			} else {
 				logger.warn("Bill in unknown XML version " + getXmlVersion(root)
 					+ ", recreating bill.");
@@ -483,6 +497,30 @@ public class XMLExporter implements IRnOutputter {
 				Messages.XMLExporter_ReadErrorText);
 			// What should we do -> We create it from scratch
 			return null;
+		}
+	}
+	
+	private void addReminderEntry(Element root, Rechnung rechnung, String reminderLevel){
+		boolean firstReminder = false;
+		Element payload = root.getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
+		payload.setAttribute(ATTR_PAYLOAD_TYPE, "reminder"); //$NON-NLS-1$
+		
+		TimeTool tt = new TimeTool(new Date());
+		String timestamp = Long.toString(tt.getTimeInMillis() / 1000);
+		String dateString = tt.toString(TimeTool.DATE_MYSQL) + "T00:00:00";
+		
+		Element reminder = payload.getChild(ELEMENT_REMINDER, nsinvoice);
+		if (reminder == null) {
+			reminder = new Element(ELEMENT_REMINDER, nsinvoice);
+			firstReminder = true;
+		}
+		reminder.setAttribute(ATTR_REQUEST_TIMESTAMP, timestamp); //$NON-NLS-1$
+		reminder.setAttribute(ATTR_REQUEST_DATE, dateString); //$NON-NLS-1$
+		reminder.setAttribute(ATTR_REQUEST_ID, rechnung.getRnId()); //$NON-NLS-1$
+		reminder.setAttribute(ATTR_REMINDER_LEVEL, reminderLevel); //$NON-NLS-1$
+		
+		if (firstReminder) {
+			payload.addContent(1, reminder);
 		}
 	}
 	

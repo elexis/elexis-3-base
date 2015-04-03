@@ -1,9 +1,14 @@
 package ch.elexis.tarmed.printer;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -46,6 +51,7 @@ import ch.fd.invoice440.request.RecordOtherType;
 import ch.fd.invoice440.request.RecordParamedType;
 import ch.fd.invoice440.request.RecordServiceType;
 import ch.fd.invoice440.request.RecordTarmedType;
+import ch.fd.invoice440.request.ReminderType;
 import ch.fd.invoice440.request.RequestType;
 import ch.fd.invoice440.request.ServicesType;
 import ch.fd.invoice440.request.TreatmentType;
@@ -166,6 +172,8 @@ public class XML44Printer {
 		addFallSpecificLines();
 		addDiagnoses(body.getTreatment());
 		addRemarks(body.getRemark());
+		// adds values to reminder fields or "" if it's no reminder
+		addReminderFields(request.getPayload().getReminder(), rn.getNr());
 		
 		List<Object> serviceRecords = services.getRecordTarmedOrRecordDrgOrRecordLab();
 		
@@ -259,6 +267,23 @@ public class XML44Printer {
 			// never mind
 		}
 		return true;
+	}
+	
+	private void addReminderFields(ReminderType reminder, String nr){
+		String reminderDate = "";
+		String reminderNr = "";
+		
+		if (reminder != null) {
+			String reminderLevel = reminder.getReminderLevel();
+			reminderNr = nr + "_m" + reminderLevel;
+			
+			DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+			XMLGregorianCalendar date = reminder.getRequestDate();
+			GregorianCalendar cal = date.toGregorianCalendar();
+			reminderDate = df.format(cal.getTime());
+		}
+		text.replace("\\[F44.MDatum\\]", reminderDate);
+		text.replace("\\[F44.MNr\\]", reminderNr);
 	}
 	
 	private void initPrinterSettings(){

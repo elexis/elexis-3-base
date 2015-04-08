@@ -21,6 +21,8 @@ import org.eclipse.jface.viewers.Viewer;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
 import at.medevit.elexis.inbox.model.InboxElement;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
 public class InboxElementContentProvider implements ITreeContentProvider {
@@ -82,7 +84,12 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 			if (inboxElement.getState() == State.SEEN) {
 				patientInboxElement.removeElement(inboxElement);
 			} else {
-				patientInboxElement.addElement(inboxElement);
+				Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();
+				if (activeMandant.equals(inboxElement.getMandant())) {
+					patientInboxElement.addElement(inboxElement);
+				} else {
+					patientInboxElement.removeElement(inboxElement);
+				}
 			}
 		} else if (inboxElement.getState() == State.NEW) {
 			patientInboxElement = new PatientInboxElements(patient);
@@ -93,6 +100,12 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 	public void refreshElement(PatientInboxElements patientInbox){
 		if (patientInbox.getElements().isEmpty()) {
 			items.remove(patientInbox);
+		} else {
+			Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();
+			Mandant inboxMandant = patientInbox.getElements().get(0).getMandant();
+			if (!activeMandant.equals(inboxMandant)) {
+				items.remove(patientInbox);
+			}
 		}
 	}
 }

@@ -19,6 +19,26 @@
             id="at.medevit.elexis.inbox.ui.command.reload"
             name="reload">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.inbox.ui.command.ExpandAllCommand"
+            id="at.medevit.elexis.inbox.ui.command.expandAll"
+            name="expand all">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.inbox.ui.command.IgnoreCommand"
+            id="at.medevit.elexis.inbox.ui.command.ignore"
+            name="ignore">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.inbox.ui.command.ChangeMandantCommand"
+            id="at.medevit.elexis.inbox.ui.command.changeMandant"
+            name="change mandant">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.inbox.ui.command.ActivatePatientCommand"
+            id="at.medevit.elexis.inbox.ui.command.activatePatient"
+            name="activate patient">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -30,6 +50,46 @@
                icon="rsc/img/refresh.gif"
                label="Neu laden"
                style="push">
+         </command>
+         <command
+               commandId="at.medevit.elexis.inbox.ui.command.expandAll"
+               icon="icon://IMG_ARROWDOWN"
+               label="Alle Aufklappen"
+               style="push">
+         </command>
+         <command
+               commandId="at.medevit.elexis.inbox.ui.command.ignore"
+               icon="rsc/img/sausage.png"
+               label="Ignorieren"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:at.medevit.elexis.inbox.ui.view">
+         <command
+               commandId="at.medevit.elexis.inbox.ui.command.changeMandant"
+               icon="rsc/img/user-silhouette-question.png"
+               label="Mandant ändern"
+               style="push">
+         </command>
+         <command
+               commandId="at.medevit.elexis.inbox.ui.command.activatePatient"
+               icon="icon://IMG_BULLET_GREEN"
+               label="Patient aktivieren"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <instanceof
+                           value="at.medevit.elexis.inbox.ui.part.model.PatientInboxElements">
+                     </instanceof></iterate>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>

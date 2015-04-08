@@ -12,6 +12,7 @@ package at.medevit.elexis.inbox.ui.part;
 
 import java.util.List;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -31,6 +32,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
@@ -165,7 +167,13 @@ public class InboxView extends ViewPart {
 		
 		reload();
 		
+		MenuManager ctxtMenuManager = new MenuManager();
+		Menu menu = ctxtMenuManager.createContextMenu(viewer.getTree());
+		viewer.getTree().setMenu(menu);
+		getSite().registerContextMenu(ctxtMenuManager, viewer);
+		
 		ElexisEventDispatcher.getInstance().addListeners(mandantChanged);
+		getSite().setSelectionProvider(viewer);
 	}
 	
 	private void addFilterActions(ToolBarManager menuManager){
@@ -263,5 +271,9 @@ public class InboxView extends ViewPart {
 	public void dispose(){
 		ElexisEventDispatcher.getInstance().removeListeners(mandantChanged);
 		super.dispose();
+	}
+	
+	public CheckboxTreeViewer getCheckboxTreeViewer(){
+		return viewer;
 	}
 }

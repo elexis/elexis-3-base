@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/inboxservice.xml
 Require-Bundle: at.medevit.elexis.inbox,
  ch.elexis.core.data,
- org.eclipse.core.jobs;bundle-version="3.5.200"
+ org.eclipse.core.jobs;bundle-version="3.5.200",
+ ch.rgw.utility;bundle-version="3.1.0"
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.model,
  org.slf4j

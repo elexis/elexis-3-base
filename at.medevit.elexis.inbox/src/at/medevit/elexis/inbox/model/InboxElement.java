@@ -152,4 +152,8 @@ public class InboxElement extends PersistentObject {
 		}
 		return null;
 	}
+	
+	public void setMandant(Mandant mandant){
+		set(FLD_MANDANT, mandant.getId());
+	}
 }

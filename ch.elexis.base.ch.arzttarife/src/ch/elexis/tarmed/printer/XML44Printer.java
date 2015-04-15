@@ -318,7 +318,16 @@ public class XML44Printer {
 		String tcCode, ESR esr){
 		StringBuilder footer = new StringBuilder();
 		cursor = tp.insertText(cursor, "\n\n", SWT.LEFT); //$NON-NLS-1$
-		footer.append("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(sideTotal)); //$NON-NLS-1$
+		int places = Double.toString(sideTotal).indexOf('.');
+		if (places > 6) {
+			footer.append("\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(sideTotal)); //$NON-NLS-1$
+		} else if (places > 3) {
+			footer
+				.append("\t\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(sideTotal)); //$NON-NLS-1$
+		} else {
+			footer
+				.append("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(sideTotal)); //$NON-NLS-1$
+		}
 		tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
 		cursor = tp.insertText(cursor, footer.toString(), SWT.LEFT);
 		sideTotal = 0.0;

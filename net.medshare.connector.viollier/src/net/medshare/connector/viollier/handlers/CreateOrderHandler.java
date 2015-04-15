@@ -123,7 +123,7 @@ public class CreateOrderHandler extends AbstractHandler {
 				httpsUrl += URLEncoder.encode("&zip=" + plz, "UTF-8");
 				httpsUrl += URLEncoder.encode("&city=" + ort, "UTF-8");
 				httpsUrl += URLEncoder.encode("&country=" + land, "UTF-8");
-				httpsUrl += URLEncoder.encode("&patientReference=" + patient.getId(), "UTF-8");
+				httpsUrl += URLEncoder.encode("&patientReference=" + patient.getPatCode(), "UTF-8");
 				if (socialSecurityNumber.length() > 0) {
 					httpsUrl +=
 						URLEncoder.encode("&socialSecurityNumber=" + socialSecurityNumber, "UTF-8");

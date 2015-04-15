@@ -18,6 +18,7 @@ import java.security.InvalidKeyException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.ws.BindingProvider;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -693,16 +694,19 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 			System.setProperty("https.proxyPort", UserDocboxPreferences.getProxyPort());
 		}
 		CDACHServices_Service serviceClient = new CDACHServices_Service();
-		String username = getDocboxLoginID(false);
 		if (UserDocboxPreferences.useHCard()) {
 			new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false), null).setProxyPort();
 		}
-		return CDACHServicesClient
-			.addWsSecurityAndHttpConfig(serviceClient,
-				UserDocboxPreferences.getSha1DocboxSecretKey()
-					+ (UserDocboxPreferences.useHCard() ? "" : username), (UserDocboxPreferences
-					.useHCard() ? "" : UserDocboxPreferences.getSha1DocboxPassword()),
-				getDocboxServiceUrl());
+		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(serviceClient,
+			WsClientConfig.getSecretkey() + WsClientConfig.getUsername(),
+			WsClientConfig.getPassword(), WsClientConfig.getP12Path(), null,
+			WsClientConfig.getP12Password(), null);
+		
+		CDACHServices port = serviceClient.getCDACHServices();
+		((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+			getDocboxServiceUrl());
+		
+		return port;
 	}
 	
 	public static boolean downloadAppointments(){

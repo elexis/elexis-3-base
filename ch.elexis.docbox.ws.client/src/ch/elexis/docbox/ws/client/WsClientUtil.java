@@ -135,7 +135,7 @@ public class WsClientUtil {
 		}
 	}
 
-	private static class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
+	public static class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
 		private String username;
 		private String password;
 		private boolean clientcert;

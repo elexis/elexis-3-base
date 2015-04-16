@@ -227,7 +227,8 @@ public class XML44Printer {
 			
 			cmAvail -= cmPerLine;
 			if (cmAvail <= cmPerLine) {
-				cursor = addSubTotalLine(cursor, tp, balance, tcCode, esr);
+				addSubTotalLine(cursor, tp, balance, tcCode, esr);
+				addESRCodeLine(balance, tcCode, esr);
 				if (needDeadLetterAvoidance(mSave)) {
 					return false;
 				}
@@ -238,21 +239,6 @@ public class XML44Printer {
 				cmAvail = cmMiddlePage;
 				monitor.worked(2);
 			}
-		}
-		cursor = tp.insertText(cursor, "\n", SWT.LEFT); //$NON-NLS-1$
-		if (cmAvail < cmPerLine) {
-			//add subtotal on current page before moving to the next
-			cursor = addSubTotalLine(cursor, tp, balance, tcCode, esr);
-			
-			if (needDeadLetterAvoidance(mSave)) {
-				return false;
-			}
-			
-			// new page
-			XMLPrinterUtil.insertPage("TR44_S2", ++page, adressat, rn, xmlRn, ezData.paymentMode,
-				text);
-			cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
-			monitor.worked(2);
 		}
 		
 		addBalanceLines(cursor, tp, balance, ezData.paid);
@@ -314,10 +300,9 @@ public class XML44Printer {
 		return addressee;
 	}
 	
-	private Object addSubTotalLine(Object cursor, ITextPlugin tp, BalanceType balance,
-		String tcCode, ESR esr){
+	private void addSubTotalLine(Object cursor, ITextPlugin tp, BalanceType balance, String tcCode,
+		ESR esr){
 		StringBuilder footer = new StringBuilder();
-		cursor = tp.insertText(cursor, "\n\n", SWT.LEFT); //$NON-NLS-1$
 		int places = Double.toString(sideTotal).indexOf('.');
 		if (places > 6) {
 			footer.append("\t\t\t\t\t\t\t\t\t\t\t\t\tZwischentotal\t").append(df.format(sideTotal)); //$NON-NLS-1$
@@ -330,10 +315,9 @@ public class XML44Printer {
 		}
 		tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
 		cursor = tp.insertText(cursor, footer.toString(), SWT.LEFT);
+		// needed to make sure ESRCodeLine gets inserted correctly
+		cursor = text.getPlugin().insertTextAt(0, 0, 0, 0, "", SWT.LEFT); //$NON-NLS-1$
 		sideTotal = 0.0;
-		
-		addESRCodeLine(balance, tcCode, esr);
-		return cursor;
 	}
 	
 	private void addFallSpecificLines(){

@@ -227,7 +227,7 @@ public class DetailDisplay implements IDetailDisplay {
 		IObservableValue propertyAnbruch =
 			PojoProperties.value(ArtikelstammItem.class, "bruchteile", Integer.class)
 				.observeDetail(item);
-		IObservableValue targetAnbruch = WidgetProperties.text().observe(txtAnbruch);
+		IObservableValue targetAnbruch = WidgetProperties.text(SWT.Modify).observe(txtAnbruch);
 		bindingContext.bindValue(targetAnbruch, propertyAnbruch);
 		
 		// Stk. pro Pkg.

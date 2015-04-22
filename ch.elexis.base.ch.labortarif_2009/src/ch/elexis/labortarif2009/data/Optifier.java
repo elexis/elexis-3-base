@@ -55,6 +55,7 @@ public class Optifier implements IOptifier {
 			if (res.isOK()) {
 				return new Result<IVerrechenbar>(code);
 			} else {
+				newVerrechnet.delete();
 				return new Result<IVerrechenbar>(res.getSeverity(), res.getCode(), res.toString(),
 					code, true);
 			}

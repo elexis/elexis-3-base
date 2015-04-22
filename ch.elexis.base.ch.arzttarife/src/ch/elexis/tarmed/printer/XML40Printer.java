@@ -229,7 +229,7 @@ public class XML40Printer {
 		Kontakt zuweiser = fall.getRequiredContact("Zuweiser");
 		if (zuweiser != null) {
 			String ean = TarmedRequirements.getEAN(zuweiser);
-			if (!ean.equals(TarmedRequirements.EAN_PSEUDO)) {
+			if (ean != null && !ean.equals(TarmedRequirements.EAN_PSEUDO)) {
 				text.replace("\\[F23\\]", ean);
 			}
 		}

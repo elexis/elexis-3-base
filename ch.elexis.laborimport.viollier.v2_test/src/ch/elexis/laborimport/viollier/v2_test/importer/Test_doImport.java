@@ -852,6 +852,8 @@ public class Test_doImport {
 		Query<LabResult> q = new Query<LabResult>(LabResult.class);
 		q.add(LabResult.PATIENT_ID, Query.EQUALS, pat.getId());
 		q.add(LabResult.ITEM_ID, Query.EQUALS, labItem.getId());
+		q.add(LabResult.ANALYSETIME, Query.EQUALS, hl7TimeStamp);
+		q.or();
 		q.add(LabResult.OBSERVATIONTIME, Query.EQUALS, hl7TimeStamp);
 		List<LabResult> items = q.execute();
 		assertEquals(test + ": Falsche Anzahl LabResults", 1, items.size()); //$NON-NLS-1$

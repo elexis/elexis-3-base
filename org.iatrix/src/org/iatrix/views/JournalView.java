@@ -2265,8 +2265,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		exportToClipboardAction = new Action("Export (Zwischenablage)") {
 			{
-				setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
-					"rsc/plaf/modern/icons/export.ico"));
+				setImageDescriptor(Images.IMG_EXPORT.getImageDescriptor());
 				setToolTipText("Zusammenfassung in Zwischenablage kopieren");
 			}
 
@@ -2280,8 +2279,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		sendEmailAction = new Action("E-Mail verschicken") {
 			{
-				setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
-					"rsc/mail.png"));
+				setImageDescriptor(Images.IMG_MAIL.getImageDescriptor());
 				setToolTipText("E-Mail Programm öffnent (mit Medikation und allen Konsultationen)");
 			}
 

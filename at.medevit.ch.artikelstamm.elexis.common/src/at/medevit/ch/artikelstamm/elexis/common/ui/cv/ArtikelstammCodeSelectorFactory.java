@@ -96,9 +96,13 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		Query<ArtikelstammItem> qbe = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		ArtikelstammFlatDataLoader fdl = new ArtikelstammFlatDataLoader(cv, qbe, slp);
 		
+		MephaPrefferedProviderSorterAction mppsa = new MephaPrefferedProviderSorterAction(fdl);
+		mppsa.setChecked(CoreHub.globalCfg.get(
+			MephaPrefferedProviderSorterAction.CFG_PREFER_MEPHA, false));
 		SupportedATCFilteringAction safa = new SupportedATCFilteringAction(fdl);
 		
 		List<IAction> actionList = new ArrayList<>();
+		actionList.add(mppsa);
 		actionList.add(safa);
 		populateSelectorPanel(slp, fdl, actionList);
 		slp.addActions(actionList.toArray(new IAction[actionList.size()]));

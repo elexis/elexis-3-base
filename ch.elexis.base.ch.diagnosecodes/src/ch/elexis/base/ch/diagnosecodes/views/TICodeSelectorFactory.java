@@ -115,16 +115,14 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			} else {
 				List<TICode> filteredTICodes = new ArrayList<TICode>();
 				
-				// search for any match of query
+				boolean startMatchesOnly = true;
+				// search for any match if query starts with %
 				if (filterText.startsWith("%")) {
 					filterText = filterText.replace("%", "");
-					setFilterValue(filterText);
-					filteredTICodes = findAnyMatches(filterText);
-				} else {
-					// search for starts with query
-					setFilterValue(filterText);
-					filteredTICodes = findStartMatches(filterText);
+					startMatchesOnly = false;
 				}
+				setFilterValue(filterText);
+				filteredTICodes = findMatchingTiCodes(filterText, startMatchesOnly);
 				nodes = filteredTICodes;
 			}
 			// update view
@@ -132,29 +130,55 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 		}
 		
 		/**
-		 * looks for TICode texts that start with the searched query
+		 * looks for TICode texts that match with the searched query
 		 * 
 		 * @param search
+		 *            pattern
+		 * @param startMatchesOnly
+		 *            whether only to search for {@link TICode}s starting with the pattern (
+		 *            {@code true} or containing it anywhere in the name ({@code false})
 		 * @return list of search term matching TICodes
 		 */
-		private List<TICode> findStartMatches(String search){
+		private List<TICode> findMatchingTiCodes(String search, boolean startMatchesOnly){
 			childs = new ArrayList<TICode>();
 			List<TICode> matches = new ArrayList<TICode>();
 			
 			for (TICode tiCode : allNodes) {
 				String text = tiCode.getText().toLowerCase();
-				if (text.startsWith(search)) {
+				if (isMatch(search, text, startMatchesOnly)) {
 					matches.add(tiCode);
-				} else {
-					TICode[] ticChildren = tiCode.getChildren();
-					for (TICode ticChild : ticChildren) {
-						text = ticChild.getText().toLowerCase();
-						if (text.startsWith(search)) {
-							childs.add(ticChild);
-							if (!matches.contains(tiCode)) {
-								matches.add(tiCode);
-							}
-						}
+				}
+				matches =
+					addMatchingChildren(search, startMatchesOnly, matches, tiCode.getChildren(),
+						tiCode);
+				
+			}
+			return matches;
+		}
+		
+		/**
+		 * adds all children who's names match the search pattern
+		 * 
+		 * @param search
+		 *            word/pattern
+		 * @param startMatchesOnly
+		 *            {@link TICode} must {@code true}: start with pattern/ {@code false}: contain
+		 *            pattern
+		 * @param matches
+		 *            list of matching parents
+		 * @param tiChildren
+		 *            all relevant children
+		 * @param parent
+		 * @return up to date list of matching parents
+		 */
+		private List<TICode> addMatchingChildren(String search, boolean startMatchesOnly,
+			List<TICode> matches, TICode[] tiChildren, TICode parent){
+			for (TICode tic : tiChildren) {
+				String text = tic.getText().toLowerCase();
+				if (isMatch(search, text, startMatchesOnly)) {
+					childs.add(tic);
+					if (!matches.contains(parent)) {
+						matches.add(parent);
 					}
 				}
 				
@@ -162,36 +186,12 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			return matches;
 		}
 		
-		/**
-		 * looks for matching text everywhere in the text
-		 * 
-		 * @param search
-		 * @return list of all matching TICodes
-		 */
-		private List<TICode> findAnyMatches(String search){
-			childs = new ArrayList<TICode>();
-			List<TICode> matches = new ArrayList<TICode>();
-			
-			for (TICode tiCode : allNodes) {
-				String text = tiCode.getText().toLowerCase();
-				
-				if (text.contains(search)) {
-					matches.add(tiCode);
-				} else {
-					TICode[] ticChildren = tiCode.getChildren();
-					for (TICode ticChild : ticChildren) {
-						text = ticChild.getText().toLowerCase();
-						if (text.contains(search)) {
-							childs.add(ticChild);
-							if (!matches.contains(tiCode)) {
-								matches.add(tiCode);
-							}
-						}
-					}
-				}
-				
+		private boolean isMatch(String search, String text, boolean startMatchesOnly){
+			if (startMatchesOnly) {
+				return text.startsWith(search);
+			} else {
+				return text.contains(search);
 			}
-			return matches;
 		}
 		
 		public void reorder(String field){}

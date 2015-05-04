@@ -13,6 +13,7 @@ package at.medevit.atc_codes;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.elexis.core.jdt.Nullable;
 import at.medevit.atc_codes.internal.ATCCodes;
 
 public class ATCCodeServiceImpl implements ATCCodeService {
@@ -61,6 +62,19 @@ public class ATCCodeServiceImpl implements ATCCodeService {
 	@Override
 	public List<ATCCode> getAllATCCodes(){
 		return ATCCodes.getInstance().getAllATCCodes();
+	}
+
+	@Override
+	public @Nullable ATCCode getNextInHierarchy(ATCCode code){
+		List<ATCCode> allATCCodes = getAllATCCodes();
+		boolean fetchNext = false;
+		for (ATCCode atcCode : allATCCodes) {
+			if(atcCode.level==code.level) {
+				if(fetchNext) return atcCode;
+				fetchNext = (atcCode.equals(code));
+			}
+		}
+		return null;
 	}
 	
 }

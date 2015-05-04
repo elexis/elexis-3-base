@@ -12,6 +12,8 @@ package at.medevit.atc_codes;
 
 import java.util.List;
 
+import ch.elexis.core.jdt.Nullable;
+
 /**
  * Service to resolve ATC codes to their names and also resolve the hierarchy of an ATC Code.
  */
@@ -65,4 +67,12 @@ public interface ATCCodeService {
 	 * @since 3.1
 	 */
 	public List<ATCCode> getAllATCCodes();
+	
+	/**
+	 * Retrieve the next ATCCode in the ordered hierarchy of the provided {@link ATCCode}
+	 * @param code
+	 * @return
+	 * @since 3.1
+	 */
+	public @Nullable ATCCode getNextInHierarchy(ATCCode code);
 }

@@ -46,7 +46,6 @@ public class TarmedRequirements {
 	public static final String DOMAIN_KSK = "www.xid.ch/id/ksk"; //$NON-NLS-1$
 	public static final String DOMAIN_NIF = "www.xid.ch/id/nif"; //$NON-NLS-1$
 	public static final String DOMAIN_SUVA = "www.xid.ch/id/suva"; // $NON-NLS-1$
-	public final static String DOMAIN_RECIPIENT_EAN = "www.xid.ch/id/recipient_ean"; //$NON-NLS-1$
 	
 	public static final String RESPONSIBLE_INFO_KEY = "ch.elexis.tarmedprefs.responsible";
 
@@ -55,7 +54,8 @@ public class TarmedRequirements {
 			Messages.getString("TarmedRequirements.kskName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF,
 			Messages.getString("TarmedRequirements.NifName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN, "rEAN", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+		Xid.localRegisterXIDDomainIfNotExists(Xid.DOMAIN_RECIPIENT_EAN,
+			"rEAN", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_SUVA, "Suva-Nr", Xid.ASSIGNMENT_REGIONAL);
 	}
 	
@@ -79,7 +79,7 @@ public class TarmedRequirements {
 	}
 	
 	public static String getRecipientEAN(final Kontakt k){
-		String ret = k.getXid(DOMAIN_RECIPIENT_EAN);
+		String ret = k.getXid(Xid.DOMAIN_RECIPIENT_EAN);
 		if (ret.length() == 0) {
 			ret = "unknown"; //$NON-NLS-1$
 		}

@@ -11,6 +11,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -153,6 +154,15 @@ public class InboxView extends ViewPart {
 				File sel = getSelection();
 				Patient pat = ElexisEventDispatcher.getSelectedPatient();
 				if (sel != null && pat != null) {
+					long heapSize = Runtime.getRuntime().totalMemory();
+					long length = sel.length();
+					if (length >= heapSize) {
+						MessageDialog.openInformation(UiDesk.getTopShell(), "Fehler bei Import",
+							"Kann " + sel.getAbsolutePath()
+								+ " nicht importieren, da groesser heap size. (#3652)");
+						return;
+					}
+					
 					if (SWTHelper.askYesNo(
 						Messages.InboxView_inbox,
 						MessageFormat.format(Messages.InboxView_assignxtoy, sel.getName(),
@@ -166,6 +176,7 @@ public class InboxView extends ViewPart {
 								cat = "";
 							}
 							tv.remove(sel);
+							
 							GenericDocument fd =
 								new GenericDocument(pat, sel.getName(), cat, sel,
 									new TimeTool().toString(TimeTool.DATE_GER), "", null);

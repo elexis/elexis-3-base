@@ -10,6 +10,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
@@ -24,6 +26,8 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 public class InboxContentProvider extends CommonContentProviderAdapter {
+	private static Logger log = LoggerFactory.getLogger(InboxContentProvider.class);
+	
 	ArrayList<File> files = new ArrayList<File>();
 	InboxView view;
 	LoadJob loader;
@@ -74,6 +78,14 @@ public class InboxContentProvider extends CommonContentProviderAdapter {
 							(IDocumentManager) Extensions
 								.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 						try {
+							
+							long heapSize = Runtime.getRuntime().totalMemory();
+							long length = file.length();
+							if(length>=heapSize) {
+								log.warn("Skipping "+file.getAbsolutePath()+" as bigger than heap size. (#3652)");
+								continue;
+							}
+							
 							GenericDocument fd =
 								new GenericDocument(pat, nam, cat, file,
 									new TimeTool().toString(TimeTool.DATE_GER), "", null);
@@ -119,6 +131,7 @@ public class InboxContentProvider extends CommonContentProviderAdapter {
 			}
 			Object dm = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 			if (dm == null) {
+				log.warn("No document management service found.");
 				return Status.OK_STATUS;
 			}
 			IDocumentManager documentManager = (IDocumentManager) dm;

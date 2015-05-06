@@ -463,7 +463,7 @@ public class Test_doImport {
 					LabItem.typ.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
-			checkLabWert(test, patient, item, hl7TimeStamp, "130", "", "135 - 175", "120 - 160"); //$NON-NLS-1$ //$NON-NLS-2$
+			checkLabWert(test, patient, item, hl7TimeStamp, "130", "", "", "120 - 160"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		} catch (Exception e) {
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -860,9 +860,10 @@ public class Test_doImport {
 		if (items.size() == 1) {
 			LabResult item = items.get(0);
 			assertEquals(test + ": Falscher Wert bei LabResult: Resultat", result, item.getResult()); //$NON-NLS-1$
+			// Behaviour changed in 3.1 - see #3618
 			assertEquals(
-				test + ": Falscher Wert bei LabResult: ref female", refW, item.getRefFemale()); //$NON-NLS-1$
-			assertEquals(test + ": Falscher Wert bei LabResult: ref male", refM, item.getRefMale()); //$NON-NLS-1$
+				test + ": Falscher Wert bei LabResult: ref female", refW, item.get(LabResult.REFFEMALE)); //$NON-NLS-1$
+			assertEquals(test + ": Falscher Wert bei LabResult: ref male", refM, item.get(LabResult.REFMALE)); //$NON-NLS-1$
 			assertEquals(test + ": Falscher Wert bei LabResult: Kommentar", comment,
 				item.getComment());
 		}

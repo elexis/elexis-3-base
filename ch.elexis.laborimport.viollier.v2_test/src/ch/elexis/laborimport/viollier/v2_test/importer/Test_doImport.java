@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
@@ -68,9 +69,17 @@ public class Test_doImport {
 	
 	private Patient patient = null;
 	
+	@BeforeClass
+	public static void beforeClass() {
+		LabOrderImport.setTestMode(true);
+	}
+	
 	@Before
 	public void before(){
-		LabOrderImport.setTestMode(true);
+		 List<LabResult> execute = new Query<LabResult>(LabResult.class).execute();
+		 for (LabResult labResult : execute) {
+			labResult.delete();
+		}
 	}
 
 	/**

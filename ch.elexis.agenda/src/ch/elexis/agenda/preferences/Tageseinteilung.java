@@ -349,6 +349,7 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		
 		CoreHub.globalCfg.set(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, sodt.getText());
 		CoreHub.globalCfg.set(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, eodt.getText());
+		CoreHub.globalCfg.flush();
 	}
 	
 	public void init(IWorkbench workbench){

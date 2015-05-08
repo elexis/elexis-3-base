@@ -60,41 +60,73 @@ public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 		InterruptedException{
-		String[] closedTimes = _newValues.split(StringConstants.LF);
 		
-		List<String> skipUpdate = new ArrayList<String>();
-		
+		//select all appointments from the area of interest
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
 		qbe.add(Termin.FLD_BEREICH, Query.LIKE, _bereich);
-		// den richtigen Bereich selektieren!
-		List<Termin> qre = qbe.execute();
-		monitor.beginTask(Messages.TermineLockedTimesUpdater_0, 2 * qre.size());
+		List<Termin> appointments = qbe.execute();
 		
-		// First we check, whether any dates clash
-		for (Termin t : qre) {
-			if (t.getId().equals("1")) //$NON-NLS-1$
+		monitor.beginTask(Messages.TermineLockedTimesUpdater_0, 2 * appointments.size());
+		List<String> skipUpdate = checkAppointmentCollision(appointments, monitor);
+		
+		// find existing lock times or appointments that would collide with new lock times 
+		for (Termin t : appointments) {
+			TimeTool day = new TimeTool(t.getDay());
+			if (_startDate.isBeforeOrEqual(day)) {
+				if (t.getType().equals(Termin.typReserviert())) {
+					if (skipUpdate.contains(t.getDay()))
+						continue;
+					
+					t.delete();
+				} else if (!skipUpdate.contains(t.getDay())) {
+					t.delete();
+				}
+			}
+			monitor.worked(1);
+		}
+		monitor.done();
+	}
+	
+	/**
+	 * check whether any appointments collide with the lock time changes
+	 * 
+	 * @param appointments
+	 * @param monitor
+	 * @return list of appointments to skip when applying the new lock times
+	 */
+	private List<String> checkAppointmentCollision(List<Termin> appointments,
+		IProgressMonitor monitor){
+		List<String> skipUpdate = new ArrayList<String>();
+		String[] closedTimes = _newValues.split(StringConstants.LF);
+		TimeTool day = new TimeTool();
+		
+		for (Termin t : appointments) {
+			if (t.getId().equals(StringConstants.ONE))
 				continue;
 			if (t.getDay() == null || t.getDay().length() < 3)
 				continue;
-			TimeTool day = new TimeTool(t.getDay());
+			
+			day.set(t.getDay());
 			if (_startDate.isBeforeOrEqual(day)) {
 				if (day.get(Calendar.DAY_OF_WEEK) == _applyForDay.numericDayValue) {
+					// ignore locktimes
 					if (!t.getType().equals(Termin.typReserviert())) {
-						// If we have a non reserved date, check whether it clashes with the
-						// new closed times
 						for (String s : closedTimes) {
 							int von = TimeTool.minutesStringToInt(s.split("-")[0]); //$NON-NLS-1$
 							int bis = TimeTool.minutesStringToInt(s.split("-")[1]); //$NON-NLS-1$
-							boolean clash = t.crossesTimeFrame(von, bis - von);
-							if (clash) {
-								boolean doNotUpdate =
+							
+							//check for collision
+							if (t.crossesTimeFrame(von, bis - von)) {
+								boolean keepOldLocktimes =
 									MessageDialog.openQuestion(PlatformUI.getWorkbench()
 										.getActiveWorkbenchWindow().getShell(),
 										Messages.TermineLockedTimesUpdater_4,
 										Messages.TermineLockedTimesUpdater_5 + t.getLabel()
 											+ Messages.TermineLockedTimesUpdater_6 + s + ". "
 											+ Messages.TermineLockedTimesUpdater_7);
-								if (doNotUpdate)
+								
+								//update anyway -> add appointment to delete list
+								if (keepOldLocktimes)
 									skipUpdate.add(t.getDay());
 							}
 						}
@@ -103,21 +135,6 @@ public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 			}
 			monitor.worked(1);
 		}
-		
-		for (Termin t : qre) {
-			TimeTool day = new TimeTool(t.getDay());
-			if (_startDate.isBeforeOrEqual(day)) {
-				if (t.getType().equals(Termin.typReserviert())) {
-					// if no clash or accepted by user, delete the entry
-					if (skipUpdate.contains(t.getDay()))
-						continue;
-					t.delete();
-				}
-			}
-			monitor.worked(1);
-		}
-		
-		monitor.done();
-		
+		return skipUpdate;
 	}
 }

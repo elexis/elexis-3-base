@@ -631,6 +631,6 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	
 	@Override
 	public int getCacheTime(){
-		return 30;
+		return CACHE_TIME_MAX;
 	}
 }

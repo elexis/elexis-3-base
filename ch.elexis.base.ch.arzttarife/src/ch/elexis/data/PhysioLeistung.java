@@ -138,4 +138,9 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public int getCacheTime(){
+		return CACHE_TIME_MAX;
+	}
 }

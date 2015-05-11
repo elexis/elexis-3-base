@@ -198,6 +198,7 @@ public class RnPrintView extends ViewPart {
 		esr.printBESR(bank, adressat, rn.getMandant(), sum.getCentsAsString(), tc);
 		tc.replace("\\[Leistungen\\]", sum.getAmountAsString());
 		tc.getPlugin().print(CoreHub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
+		tc.getPlugin().setFont(null, SWT.NORMAL, 0.0f);
 		return ret;
 	}
 	

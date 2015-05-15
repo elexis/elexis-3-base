@@ -155,6 +155,7 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 	@Override
 	public void setFocus(){
 		CTabItem tab = tabfolder.getSelection();
+		if(tab==null) return;
 		Control c = tab.getControl();
 		TableViewer tv = (TableViewer) c.getData(DATA_VIEWER);
 		if (tv != null) {

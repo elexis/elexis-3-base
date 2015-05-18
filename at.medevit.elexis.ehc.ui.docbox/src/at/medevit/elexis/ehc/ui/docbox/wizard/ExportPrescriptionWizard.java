@@ -3,9 +3,9 @@ package at.medevit.elexis.ehc.ui.docbox.wizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
+import org.ehealth_connector.cda.ch.CdaCh;
 
 import ch.elexis.data.Rezept;
-import ehealthconnector.cda.documents.ch.CdaCh;
 
 public class ExportPrescriptionWizard extends Wizard {
 	private ExportPrescriptionWizardPage1 prescriptionMainPage;

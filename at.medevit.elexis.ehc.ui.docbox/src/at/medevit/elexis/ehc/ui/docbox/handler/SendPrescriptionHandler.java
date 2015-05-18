@@ -17,13 +17,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.ehealth_connector.cda.ch.CdaCh;
+import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 
 import at.medevit.elexis.ehc.docbox.service.DocboxService;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IOutputter;
 import ch.elexis.data.OutputLog;
 import ch.elexis.data.Rezept;
-import ehealthconnector.cda.documents.ch.CdaCh;
 
 public class SendPrescriptionHandler extends AbstractHandler implements IHandler, IOutputter {
 	
@@ -42,11 +43,18 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 			} catch (IllegalStateException e) {
 				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 					"Das Rezept konnte nicht erstellt werden. " + e.getMessage());
+				return null;
 			}
 			if (cdaPrescription != null && pdfPrescription != null) {
 				// create InputStreams for sending ...
 				ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream();
-				cdaPrescription.cPrintXmlToStream(cdaOutput);
+				try {
+					CDAUtil.save(cdaPrescription.getDocRoot().getClinicalDocument(), cdaOutput);
+				} catch (Exception ex) {
+					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+						"Das Rezept konnte nicht erstellt werden. " + ex.getMessage());
+					return null;
+				}
 				ByteArrayInputStream cdaInput = new ByteArrayInputStream(cdaOutput.toByteArray());
 
 				ByteArrayInputStream pdfInput =

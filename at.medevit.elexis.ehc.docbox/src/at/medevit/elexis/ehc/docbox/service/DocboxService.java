@@ -26,6 +26,10 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.xml.utils.DefaultErrorHandler;
+import org.ehealth_connector.cda.ch.CdaCh;
+import org.ehealth_connector.cda.enums.AddressUse;
+import org.ehealth_connector.common.Organization;
+import org.ehealth_connector.common.Telecoms;
 import org.openhealthtools.mdht.uml.cda.Act;
 import org.openhealthtools.mdht.uml.cda.Author;
 import org.openhealthtools.mdht.uml.cda.CDAFactory;
@@ -39,6 +43,7 @@ import org.openhealthtools.mdht.uml.cda.PatientRole;
 import org.openhealthtools.mdht.uml.cda.Section;
 import org.openhealthtools.mdht.uml.cda.SubstanceAdministration;
 import org.openhealthtools.mdht.uml.cda.Supply;
+import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.openhealthtools.mdht.uml.hl7.datatypes.CD;
 import org.openhealthtools.mdht.uml.hl7.datatypes.CE;
 import org.openhealthtools.mdht.uml.hl7.datatypes.DatatypesFactory;
@@ -70,8 +75,6 @@ import ch.elexis.data.Rezept;
 import ch.elexis.docbox.ws.client.SendClinicalDocumentClient;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ehealthconnector.cda.documents.ch.CdaCh;
-import ehealthconnector.cda.documents.ch.Organization;
 
 public class DocboxService {
 	private static final Logger logger = LoggerFactory.getLogger(DocboxService.class);
@@ -87,7 +90,7 @@ public class DocboxService {
 			EhcServiceComponent.getService().getCdaChDocument(rezept.getPatient(),
 				rezept.getMandant());
 		
-		ClinicalDocument clinicalDocument = document.docRoot.getClinicalDocument();
+		ClinicalDocument clinicalDocument = document.getDocRoot().getClinicalDocument();
 		// clear template ids for now
 		clinicalDocument.getTemplateIds().clear();
 
@@ -151,12 +154,13 @@ public class DocboxService {
 					+ rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
 					+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
 		}
-		organization.cAddAddress(EhcCoreMapper.getEhcAddress(rechnungssteller.getAnschrift()));
+		organization.addAddress(EhcCoreMapper.getEhcAddress(rechnungssteller.getAnschrift()));
 		String phone = (String) rechnungssteller.get(Rechnungssteller.FLD_PHONE1);
 		if (!StringTool.isNothing(phone)) {
-			organization.cAddPhone(phone);
+			Telecoms telcoms = organization.getTelecoms();
+			telcoms.addPhone(phone, AddressUse.BUSINESS);
 		}
-		document.cSetCustodian(organization);
+		document.setCustodian(organization);
 		// add ZSR to custodian organization
 		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.1.2");
 		id.setExtension(getZsr(rezept));
@@ -380,11 +384,11 @@ public class DocboxService {
 		xslt = DocboxService.class.getResource("/rsc/xsl/prescription.xsl");
 		
 		ByteArrayOutputStream documentXml = new ByteArrayOutputStream();
-		document.cPrintXmlToStream(documentXml);
-		
 		try {
+			CDAUtil.save(document.getDocRoot().getClinicalDocument(), documentXml);
+
 			generatePdf(documentXml, xslt.openStream(), out);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("Could not create prescription PDF" + e);
 		}
 
@@ -518,7 +522,15 @@ public class DocboxService {
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
 			return zsr.replaceAll("\\.", "");
 		}
+		zsr = rechnungssteller.getInfoString("KSK");
+		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
+			return zsr.replaceAll("\\.", "");
+		}
 		zsr = mandant.getXid(DOMAIN_KSK);
+		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
+			return zsr.replaceAll("\\.", "");
+		}
+		zsr = mandant.getInfoString("KSK");
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
 			return zsr.replaceAll("\\.", "");
 		}

@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.ehealth_connector.cda.ch.CdaCh;
 import org.openhealthtools.mdht.uml.cda.CDAFactory;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.Consumable;
@@ -43,8 +44,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
 import ch.rgw.tools.TimeTool;
-import ehealthconnector.cda.documents.ch.CdaCh;
-import ehealthconnector.cda.documents.ch.Phone;
 
 public class EhcCoreServiceImpl implements EhcCoreService {
 	
@@ -59,8 +58,8 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	public CdaCh getCdaChDocument(Patient patient, Mandant mandant){
 		CdaChImpl ret = new CdaChImpl(CHFactory.eINSTANCE.createCDACH().init());
 		
-		ret.cSetPatient(EhcCoreMapper.getEhcPatient(patient));
-		ret.cSetAuthor(EhcCoreMapper.getEhcAuthor(mandant));
+		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
+		ret.addAuthor(EhcCoreMapper.getEhcAuthor(mandant));
 		return ret;
 	}
 	
@@ -81,13 +80,10 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public void importPatient(ehealthconnector.cda.documents.ch.Patient ehcPatient){
+	public void importPatient(org.ehealth_connector.common.Patient ehcPatient){
 		Patient patient = EhcCoreMapper.getElexisPatient(ehcPatient);
-		EhcCoreMapper.importEhcAddress(patient, ehcPatient.cGetAddresses().get(0));
-		List<Phone> phones = ehcPatient.cGetPhones();
-		for (Phone phone : phones) {
-			EhcCoreMapper.importEhcPhone(patient, phone);
-		}
+		EhcCoreMapper.importEhcAddress(patient, ehcPatient.getAddress());
+		EhcCoreMapper.importEhcPhone(patient, ehcPatient.getTelecoms());
 	}
 	
 	@Override
@@ -103,9 +99,9 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		String rezeptTitle = "Rezept " + sdf.format(tt.getTime());
 		
 		// set the patient
-		ret.cSetPatient(EhcCoreMapper.getEhcPatient(patient));
+		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
 		// set the author
-		ret.cSetAuthor(EhcCoreMapper.getEhcAuthor(rezept.getMandant()));
+		ret.addAuthor(EhcCoreMapper.getEhcAuthor(rezept.getMandant()));
 		
 		// create a medication section
 		MedicationsSection mediSection = IHEFactory.eINSTANCE.createMedicationsSection();

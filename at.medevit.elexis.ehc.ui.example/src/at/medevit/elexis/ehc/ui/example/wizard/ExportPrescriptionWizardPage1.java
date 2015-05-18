@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.ehealth_connector.cda.ch.CdaCh;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
@@ -22,7 +23,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rezept;
-import ehealthconnector.cda.documents.ch.CdaCh;
 
 public class ExportPrescriptionWizardPage1 extends WizardPage {
 	private TableViewer contentViewer;
@@ -83,7 +83,7 @@ public class ExportPrescriptionWizardPage1 extends WizardPage {
 				String outputDir =
 					CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
 						PreferencePage.getDefaultOutputDir());
-				document.cSaveToFile(outputDir + File.separator + selectedRezept.getId()
+				document.saveToFile(outputDir + File.separator + selectedRezept.getId()
 					+ "_rezept.xml");
 			} catch (Exception e) {
 				e.printStackTrace();

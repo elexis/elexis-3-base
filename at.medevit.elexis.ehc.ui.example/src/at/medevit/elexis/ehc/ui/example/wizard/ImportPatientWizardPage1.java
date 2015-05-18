@@ -24,6 +24,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.ehealth_connector.cda.ch.CdaCh;
+import org.ehealth_connector.cda.enums.AdministrativeGender;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
@@ -31,8 +33,7 @@ import ch.elexis.core.ui.exchange.KontaktMatcher.CreateMode;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
-import ehealthconnector.cda.documents.ch.CdaCh;
-import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.AdministrativeGenderCode;
+import ch.rgw.tools.TimeTool;
 
 public class ImportPatientWizardPage1 extends WizardPage {
 	
@@ -61,18 +62,20 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		contentViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element){
-				if (element instanceof ehealthconnector.cda.documents.ch.Patient) {
-					ehealthconnector.cda.documents.ch.Patient patient =
-						((ehealthconnector.cda.documents.ch.Patient) element);
-					return patient.cGetName().cGetCompleteName() + " - " + patient.cGetBirthDate();
+				if (element instanceof org.ehealth_connector.common.Patient) {
+					org.ehealth_connector.common.Patient patient =
+						((org.ehealth_connector.common.Patient) element);
+					return patient.getName().getCompleteName() + " - "
+						+ patient.getBirthday().toString();
 				}
 				return super.getText(element);
 			}
 			
 			@Override
 			public Image getImage(Object element){
-				if (element instanceof ehealthconnector.cda.documents.ch.Patient) {
-					if (((ehealthconnector.cda.documents.ch.Patient) element).cGetGender() == AdministrativeGenderCode.Female) {
+				if (element instanceof org.ehealth_connector.common.Patient) {
+					if (((org.ehealth_connector.common.Patient) element)
+						.getAdministrativeGenderCode() == AdministrativeGender.FEMALE) {
 						return Images.IMG_FRAU.getImage();
 					} else {
 						return Images.IMG_MANN.getImage();
@@ -83,7 +86,7 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		});
 		
 		if (ehcDocument != null) {
-			contentViewer.setInput(Collections.singletonList(ehcDocument.cGetPatient()));
+			contentViewer.setInput(Collections.singletonList(ehcDocument.getPatient()));
 		}
 		
 		setControl(composite);
@@ -93,15 +96,16 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
 		
 		if (!contentSelection.isEmpty()) {
-			ehealthconnector.cda.documents.ch.Patient selectedPatient =
-				(ehealthconnector.cda.documents.ch.Patient) contentSelection.getFirstElement();
+			org.ehealth_connector.common.Patient selectedPatient =
+				(org.ehealth_connector.common.Patient) contentSelection.getFirstElement();
 			String gender =
-				selectedPatient.cGetGender() == AdministrativeGenderCode.Female ? Person.FEMALE
+				selectedPatient.getAdministrativeGenderCode() == AdministrativeGender.FEMALE ? Person.FEMALE
 						: Person.MALE;
 			Patient existing =
-				KontaktMatcher.findPatient(selectedPatient.cGetName().cGetName(), selectedPatient
-					.cGetName().cGetFirstName(), selectedPatient.cGetBirthDate(), gender, null,
-					null, null, null, CreateMode.FAIL);
+				KontaktMatcher.findPatient(selectedPatient.getName().getFamilyName(),
+					selectedPatient.getName().getGivenNames(),
+					new TimeTool(selectedPatient.getBirthday()).toString(TimeTool.DATE_COMPACT),
+					gender, null, null, null, null, CreateMode.FAIL);
 			if (existing != null) {
 				boolean result =
 					MessageDialog.openConfirm(getShell(), "Patient existiert",
@@ -119,7 +123,7 @@ public class ImportPatientWizardPage1 extends WizardPage {
 	public void setDocument(CdaCh ehcDocument){
 		this.ehcDocument = ehcDocument;
 		if (contentViewer != null && !contentViewer.getControl().isDisposed()) {
-			contentViewer.setInput(Collections.singletonList(ehcDocument.cGetPatient()));
+			contentViewer.setInput(Collections.singletonList(ehcDocument.getPatient()));
 			contentViewer.refresh();
 		}
 	}

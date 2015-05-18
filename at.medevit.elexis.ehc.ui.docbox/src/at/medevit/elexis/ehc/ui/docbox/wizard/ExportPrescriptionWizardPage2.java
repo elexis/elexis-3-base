@@ -6,12 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
+import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 
 import at.medevit.elexis.ehc.docbox.service.DocboxService;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
@@ -42,7 +45,14 @@ public class ExportPrescriptionWizardPage2 extends WizardPage {
 		super.setVisible(visible);
 		if (visible) {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			ExportPrescriptionWizard.getDocument().cPrintXmlToStream(output);
+			try {
+				CDAUtil.save(ExportPrescriptionWizard.getDocument().getDocRoot()
+					.getClinicalDocument(), output);
+			} catch (Exception e) {
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+					"Das Rezept konnte nicht erstellt werden. " + e.getMessage());
+				return;
+			}
 			xmlText.setText(output.toString());
 		}
 	}
@@ -67,7 +77,7 @@ public class ExportPrescriptionWizardPage2 extends WizardPage {
 			String outputDir =
 				CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
 					PreferencePage.getDefaultOutputDir());
-			ExportPrescriptionWizard.getDocument().cSaveToFile(
+			ExportPrescriptionWizard.getDocument().saveToFile(
 				outputDir + File.separator + getRezeptFileName() + ".xml");
 			ByteArrayOutputStream pdf =
 				DocboxService.getPrescriptionPdf(ExportPrescriptionWizard.getDocument());

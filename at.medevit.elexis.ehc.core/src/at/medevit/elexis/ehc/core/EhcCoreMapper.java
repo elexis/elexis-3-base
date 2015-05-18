@@ -11,9 +11,19 @@
 package at.medevit.elexis.ehc.core;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.ehealth_connector.cda.enums.AddressUse;
+import org.ehealth_connector.cda.enums.AdministrativeGender;
+import org.ehealth_connector.common.Address;
+import org.ehealth_connector.common.Author;
+import org.ehealth_connector.common.Name;
+import org.ehealth_connector.common.Patient;
+import org.ehealth_connector.common.Telecoms;
 
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
@@ -22,12 +32,6 @@ import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
 import ch.rgw.tools.TimeTool;
-import ehealthconnector.cda.documents.ch.Address;
-import ehealthconnector.cda.documents.ch.Author;
-import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.AdministrativeGenderCode;
-import ehealthconnector.cda.documents.ch.ConvenienceUtilsEnums.UseCode;
-import ehealthconnector.cda.documents.ch.Name;
-import ehealthconnector.cda.documents.ch.Patient;
 
 public class EhcCoreMapper {
 	
@@ -41,18 +45,20 @@ public class EhcCoreMapper {
 				getDate(elexisPatient.getGeburtsdatum()));
 		
 		// PHONE
+		Telecoms telecoms = new Telecoms();
 		String value = elexisPatient.get(Kontakt.FLD_PHONE1);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
-			ret.cAddPhone(value, UseCode.Private);
+			telecoms.addPhone(value, AddressUse.PRIVATE);
 		}
 		value = elexisPatient.get(Kontakt.FLD_MOBILEPHONE);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
-			ret.cAddPhone(value, UseCode.Mobile);
+			telecoms.addPhone(value, AddressUse.MOBILE);
 		}
+		ret.setTelecoms(telecoms);
 		// ADDRESS
 		Anschrift elexisAddress = elexisPatient.getAnschrift();
 		if (elexisAddress != null) {
-			ret.cAddAddress(getEhcAddress(elexisAddress));
+			ret.addAddress(getEhcAddress(elexisAddress));
 		}
 		return ret;
 	}
@@ -70,7 +76,7 @@ public class EhcCoreMapper {
 		Address ehcAddress =
 			new Address(elexisStreet.trim(), houseNumber, elexisAddress.getPlz(),
 				elexisAddress.getOrt());
-		ehcAddress.cSetAddressline1(elexisAddress.getStrasse());
+		ehcAddress.setAddressline1(elexisAddress.getStrasse());
 		return ehcAddress;
 	}
 	
@@ -83,19 +89,19 @@ public class EhcCoreMapper {
 	
 	public static Name getEhcPersonName(Person elexisPerson){
 		Name ret =
-			new Name(elexisPerson.getName(), elexisPerson.getVorname(),
+			new Name(elexisPerson.getVorname(), elexisPerson.getName(),
 				elexisPerson.get(Person.TITLE));
 		
 		return ret;
 	}
 	
-	public static AdministrativeGenderCode getEhcGenderCode(Person elexisPerson){
+	public static AdministrativeGender getEhcGenderCode(Person elexisPerson){
 		if (elexisPerson.getGeschlecht().equals(Person.FEMALE)) {
-			return AdministrativeGenderCode.Female;
+			return AdministrativeGender.FEMALE;
 		} else if (elexisPerson.getGeschlecht().equals(Person.MALE)) {
-			return AdministrativeGenderCode.Male;
+			return AdministrativeGender.MALE;
 		}
-		return AdministrativeGenderCode.Undifferentiated;
+		return AdministrativeGender.UNDIFFERENTIATED;
 	}
 	
 	public static Date getDate(String elexisDate){
@@ -103,35 +109,33 @@ public class EhcCoreMapper {
 		return timeTool.getTime();
 	}
 	
-	public static ch.elexis.data.Patient getElexisPatient(
-		ehealthconnector.cda.documents.ch.Patient ehcPatient){
+	public static ch.elexis.data.Patient getElexisPatient(Patient ehcPatient){
 		Query<ch.elexis.data.Patient> qpa =
 			new Query<ch.elexis.data.Patient>(ch.elexis.data.Patient.class);
 		// initialize data
-		Name ehcName = ehcPatient.cGetName();
-		String ehcBirthdate = ehcPatient.cGetBirthDate();
+		Name ehcName = ehcPatient.getName();
+		Date ehcBirthdate = ehcPatient.getBirthday();
 		String gender =
-			ehcPatient.cGetGender() == AdministrativeGenderCode.Female ? Person.FEMALE
+			ehcPatient.getAdministrativeGenderCode() == AdministrativeGender.FEMALE ? Person.FEMALE
 					: Person.MALE;
 		TimeTool ttBirthdate = new TimeTool();
 		// add data to query
-		if (ehcName.cGetName() != null && !ehcName.cGetName().isEmpty()) {
-			qpa.add(ch.elexis.data.Patient.FLD_NAME, Query.EQUALS, ehcName.cGetName());
+		if (ehcName.getFamilyName() != null && !ehcName.getFamilyName().isEmpty()) {
+			qpa.add(ch.elexis.data.Patient.FLD_NAME, Query.EQUALS, ehcName.getFamilyName());
 		}
-		if (ehcName.cGetFirstName() != null && !ehcName.cGetFirstName().isEmpty()) {
-			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS, ehcName.cGetFirstName());
+		if (ehcName.getGivenNames() != null && !ehcName.getGivenNames().isEmpty()) {
+			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS, ehcName.getGivenNames());
 		}
-		if (ehcBirthdate != null && !ehcBirthdate.isEmpty()) {
-			if (ttBirthdate.set(ehcBirthdate)) {
-				qpa.add(Person.BIRTHDATE, Query.EQUALS, ttBirthdate.toString(TimeTool.DATE_COMPACT));
-			}
+		if (ehcBirthdate != null) {
+			ttBirthdate.setTime(ehcBirthdate);
+			qpa.add(Person.BIRTHDATE, Query.EQUALS, ttBirthdate.toString(TimeTool.DATE_COMPACT));
 		}
 		List<ch.elexis.data.Patient> existing = qpa.execute();
 		// create or overwrite Patient
 		ch.elexis.data.Patient ret = null;
 		if (existing.isEmpty()) {
 			ret =
-				new ch.elexis.data.Patient(ehcName.cGetName(), ehcName.cGetFirstName(),
+				new ch.elexis.data.Patient(ehcName.getFamilyName(), ehcName.getGivenNames(),
 					ttBirthdate.toString(TimeTool.DATE_COMPACT), gender);
 		} else {
 			ret = existing.get(0);
@@ -141,22 +145,26 @@ public class EhcCoreMapper {
 	}
 	
 	public static void importEhcAddress(ch.elexis.data.Kontakt kontakt,
-		ehealthconnector.cda.documents.ch.Address address){
+ Address address){
 		Anschrift elexisAddress = kontakt.getAnschrift();
-		elexisAddress.setOrt(address.cGetCity());
-		elexisAddress.setPlz(address.cGetZip());
-		elexisAddress.setStrasse(address.cGetStreet() + " " + address.cGetHouseNumber());
+		elexisAddress.setOrt(address.getCity());
+		elexisAddress.setPlz(address.getZip());
+		elexisAddress.setStrasse(address.getStreet() + " " + address.getHouseNumber());
 		kontakt.setAnschrift(elexisAddress);
 	}
 	
-	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt,
-		ehealthconnector.cda.documents.ch.Phone phone){
+	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt, Telecoms telecoms){
+		HashMap<String, AddressUse> phones = telecoms.getPhones();
+		Set<String> keys = phones.keySet();
 		String existing = kontakt.get(Kontakt.FLD_PHONE1);
-		if (existing == null || existing.isEmpty()) {
-			kontakt.set(Kontakt.FLD_PHONE1, phone.cGetNumber());
-		} else {
-			if (!existing.equals(phone.cGetNumber())) {
-				kontakt.set(Kontakt.FLD_PHONE2, phone.cGetNumber());
+		
+		for (String key : keys) {
+			if (!key.equals(existing)) {
+				if (existing == null || existing.isEmpty()) {
+					kontakt.set(Kontakt.FLD_PHONE1, key);
+				} else {
+					kontakt.set(Kontakt.FLD_PHONE2, key);
+				}
 			}
 		}
 	}

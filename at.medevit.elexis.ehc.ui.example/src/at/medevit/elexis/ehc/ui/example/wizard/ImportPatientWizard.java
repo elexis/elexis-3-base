@@ -17,12 +17,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
+import org.ehealth_connector.cda.ch.CdaCh;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import at.medevit.elexis.ehc.ui.extension.IImportWizard;
-import ehealthconnector.cda.documents.ch.CdaCh;
 
 public class ImportPatientWizard extends Wizard implements IImportWizard {
 	

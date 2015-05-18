@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.ehealth_connector.cda.ch.CdaCh;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
@@ -34,7 +35,6 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
-import ehealthconnector.cda.documents.ch.CdaCh;
 
 public class ExportPatientWizardPage1 extends WizardPage {
 	
@@ -103,7 +103,7 @@ public class ExportPatientWizardPage1 extends WizardPage {
 				String outputDir =
 					CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
 						PreferencePage.getDefaultOutputDir());
-				document.cSaveToFile(outputDir + File.separator
+				document.saveToFile(outputDir + File.separator
 					+ selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

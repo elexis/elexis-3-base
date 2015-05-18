@@ -15,9 +15,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.ehealth_connector.cda.ch.CdaCh;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.ui.service.ServiceComponent;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -25,7 +27,6 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
-import ehealthconnector.cda.documents.ch.CdaCh;
 
 public class EhcDocument extends PersistentObject {
 	private static Logger logger = LoggerFactory.getLogger(EhcDocument.class);
@@ -100,13 +101,17 @@ public class EhcDocument extends PersistentObject {
 	}
 	
 	private Patient getPatientFromDocument(URL location){
+		Patient ret = null;
 		try {
 			CdaCh document = ServiceComponent.getEhcService().getDocument(location.openStream());
-			ehealthconnector.cda.documents.ch.Patient patient = document.cGetPatient();
+			org.ehealth_connector.common.Patient patient = document.getPatient();
+			if (patient != null) {
+				ret = EhcCoreMapper.getElexisPatient(patient);
+			}
 		} catch (IOException e) {
 			logger.error("Could not open location.", e);
 		}
-		return null;
+		return ret;
 	}
 	
 	public String getName(){

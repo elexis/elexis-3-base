@@ -69,6 +69,17 @@
                tooltip="ViollierConnect">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:at.medevit.elexis.roche.labor.view">
+         <command
+               commandId="net.medshare.connector.viollier.cmd.viollierConnector"
+               icon="rsc/viollier16.png"
+               id="viollierConnector"
+               style="pulldown"
+               tooltip="ViollierConnect">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

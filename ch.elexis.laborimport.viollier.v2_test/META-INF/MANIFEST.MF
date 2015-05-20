@@ -5,8 +5,9 @@ Bundle-SymbolicName: ch.elexis.laborimport.viollier.v2_test
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: elexis.ch
 Fragment-Host: ch.elexis.laborimport.viollier.v2;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit,
+ ch.elexis.core.application;bundle-version="3.1.0",
  ch.elexis.omnivore
 Export-Package: ch.elexis.laborimport.viollier.v2_test,
  ch.elexis.laborimport.viollier.v2_test.importer

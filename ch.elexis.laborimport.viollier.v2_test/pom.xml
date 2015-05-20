@@ -19,6 +19,11 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
+					
+					
+					<skipTests>true</skipTests>
+					
+					
 					<useUIHarness>true</useUIHarness>
 					<showEclipseLog>true</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>

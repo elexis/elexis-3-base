@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ui.PlatformUI;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -18,6 +19,7 @@ import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.junit.After;
 import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.test.TestData;
@@ -30,6 +32,23 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class XMLExporterTest {
+	
+	@After
+	public void teardown() throws Exception{
+		PlatformUI.getWorkbench().saveAllEditors(false); // do not confirm saving
+		PlatformUI.getWorkbench().saveAll(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
+		if (PlatformUI.getWorkbench() != null) // null if run from Eclipse-IDE
+		{
+			// needed if run as surefire test from using mvn install
+			try {
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllPerspectives(false, true);
+			} catch (Exception e) {
+
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+	
 	@Test
 	public void doExportTest() throws IOException{
 		TestSzenario szenario = TestData.getTestSzenarioInstance();

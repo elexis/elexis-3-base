@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.PlatformUI;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,6 +70,22 @@ public class Test_doImport {
 	private static String TEST_CATEGORY = "Laborbefunde Viollier"; //$NON-NLS-1$
 	
 	private Patient patient = null;
+	
+	@After
+	public void teardown() throws Exception{
+		PlatformUI.getWorkbench().saveAllEditors(false); // do not confirm saving
+		PlatformUI.getWorkbench().saveAll(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
+		if (PlatformUI.getWorkbench() != null) // null if run from Eclipse-IDE
+		{
+			// needed if run as surefire test from using mvn install
+			try {
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllPerspectives(false, true);
+			} catch (Exception e) {
+
+				System.out.println(e.getMessage());
+			}
+		}
+	}
 	
 	@BeforeClass
 	public static void beforeClass() {

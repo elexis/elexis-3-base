@@ -17,34 +17,54 @@
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
   <packaging>pom</packaging>
-  <profiles>
-    <profile>
-      <id>prerelease</id>
-      <activation>
-        <property>
-          <name>repo_variant</name>
-          <value>prerelease</value>
-        </property>
-      </activation>
-      <properties>
-        <nonElexisP2variant>release</nonElexisP2variant>
-        <useBranch>release</useBranch>
-      </properties>
-    </profile>
-    <profile>
-      <id>release</id>
-      <activation>
-        <property>
-          <name>repo_variant</name>
-          <value>release</value>
-        </property>
-      </activation>
-      <properties>
-        <nonElexisP2variant>release</nonElexisP2variant>
-        <useBranch>release</useBranch>
-      </properties>
-    </profile>
-  </profiles>
+	<profiles>
+		<profile>
+			<id>prerelease</id>
+			<activation>
+				<property>
+					<name>repo_variant</name>
+					<value>prerelease</value>
+				</property>
+			</activation>
+			<properties>
+				<nonElexisP2variant>release</nonElexisP2variant>
+				<useBranch>release</useBranch>
+			</properties>
+		</profile>
+		<profile>
+			<id>release</id>
+			<activation>
+				<property>
+					<name>repo_variant</name>
+					<value>release</value>
+				</property>
+			</activation>
+			<properties>
+				<nonElexisP2variant>release</nonElexisP2variant>
+				<useBranch>release</useBranch>
+			</properties>
+		</profile>
+		<!-- activate operating system dependent testing vm args -->
+		<profile>
+			<id>mac-surefire-tests</id>
+			<activation>
+				<os><family>mac</family></os>
+			</activation>
+			<properties> <!-- Do not linebreak! https://bugs.eclipse.org/bugs/show_bug.cgi?id=427693 -->
+				<elexis.ui.test.vmargs>-DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch -XstartOnFirstThread</elexis.ui.test.vmargs>
+			</properties>
+		</profile>
+		<profile>
+			<id>non-mac-surefire-tests</id>
+			<activation>
+				<os><family>!mac</family></os>
+			</activation>
+			<properties> <!-- Do not linebreak! https://bugs.eclipse.org/bugs/show_bug.cgi?id=427693 -->
+				<elexis.ui.test.vmargs>-DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</elexis.ui.test.vmargs>
+			</properties>
+		</profile>
+		<!-- activate operating system dependent testing vm args -->
+	</profiles>
 <modules>
   <module>at.medevit.atc_codes</module>
   <module>at.medevit.elexis.weblinks</module>

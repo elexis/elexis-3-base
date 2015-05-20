@@ -34,14 +34,17 @@ import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.program.Program;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
+import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.exceptions.PersistenceException;
+import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -130,9 +133,11 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					createOrModifyTable(upd202);
 					start.set(FLD_TITLE, DBVERSION);
 				} else {
-					MessageDialog.openError(UiDesk.getTopShell(),
-						Messages.DocHandle_versionConflictCaption,
-						Messages.DocHandle_versionConflictText);
+					ElexisStatus status =
+						new ElexisStatus(ElexisStatus.WARNING, "ch.elexis.omnivore", //$NON-NLS-1$
+							ElexisStatus.CODE_NONE, "Error on static initialization of"
+								+ DocHandle.class.getName()+": "+vi, null, ElexisStatus.LOG_WARNINGS);
+					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 			}
 		}

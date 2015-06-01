@@ -1,5 +1,8 @@
 package ch.elexis.tarmed.printer;
 
+import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_44_S1;
+import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_44_S2;
+
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -78,7 +81,7 @@ public class XML44Printer {
 	private double cmAvail = 21.4; // Verfügbare Druckhöhe in cm
 	
 	private TextContainer text;
-
+	
 	private Brief actBrief;
 	
 	private String printer;
@@ -124,7 +127,7 @@ public class XML44Printer {
 		}
 		return ret;
 	}
-
+	
 	public boolean doPrint(Rechnung rn, Document xmlRn, TYPE rnType, String saveFile,
 		boolean withESR, boolean withForms, boolean doVerify, IProgressMonitor monitor){
 		
@@ -167,7 +170,7 @@ public class XML44Printer {
 		}
 		
 		Kontakt adressat = loadAddressee(ezData.paymentMode);
-		XMLPrinterUtil.createBrief("TR44_S1", adressat, text);
+		XMLPrinterUtil.createBrief(TT_TARMED_44_S1, adressat, text);
 		
 		if (request.getPayload().isCopy()) {
 			text.replace("\\[F5\\]", Messages.RnPrintView_yes); //$NON-NLS-1$
@@ -233,7 +236,7 @@ public class XML44Printer {
 					return false;
 				}
 				
-				XMLPrinterUtil.insertPage("TR44_S2", ++page, adressat, rn, xmlRn,
+				XMLPrinterUtil.insertPage(TT_TARMED_44_S2, ++page, adressat, rn, xmlRn,
 					ezData.paymentMode, text);
 				cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 				cmAvail = cmMiddlePage;

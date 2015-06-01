@@ -11,6 +11,8 @@
  *******************************************************************************/
 package ch.elexis.dialogs;
 
+import static ch.elexis.agenda.text.AgendaTextTemplateRequirement.TT_APPOINTMENT_CARD;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -22,7 +24,6 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.text.ITextPlugin.ICallback;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -45,15 +46,12 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 		ret.setLayout(new FillLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
-		String template =
-			CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE,
-				PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT);
-		
 		text = new TextContainer(getShell());
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(true);
 		text.getPlugin().showToolbar(true);
-		text.createFromTemplateName(null, template, Brief.UNKNOWN, CoreHub.actUser, "Agenda");
+		text.createFromTemplateName(null, TT_APPOINTMENT_CARD, Brief.UNKNOWN, CoreHub.actUser,
+			"Agenda");
 		/*
 		 * String[][] termine=new String[liste.length+1][3]; termine[0]=new String[]{"Datum",
 		 * "Zeit","Bei"}; for(int i=0;i<liste.length;i++){ TimeTool day=new

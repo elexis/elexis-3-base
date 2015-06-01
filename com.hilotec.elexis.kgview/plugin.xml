@@ -244,5 +244,11 @@
             name="Hilotec kgview">
       </page>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.TextTemplateRequirement">
+      <TextTemplateRequirement
+            element="com.hilotec.elexis.kgview.text.KGTextTemplateRequirement">
+      </TextTemplateRequirement>
+   </extension>
 
 </plugin>

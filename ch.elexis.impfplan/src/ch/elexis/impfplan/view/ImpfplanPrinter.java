@@ -11,6 +11,8 @@
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
+import static ch.elexis.impfplan.text.ImpfplanTextTemplateRequirement.TT_VACCINATIONS;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -49,16 +51,13 @@ public class ImpfplanPrinter extends TitleAreaDialog implements ICallback {
 			ret.setLayout(new FillLayout());
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			
-			String template = Messages.ImpfplanPrinter_templateName;
-			
 			text = new TextContainer(getShell());
 			text.getPlugin().createContainer(ret, this);
 			text.getPlugin().showMenu(true);
 			text.getPlugin().showToolbar(true);
-			text.createFromTemplateName(null, template, Brief.UNKNOWN, CoreHub.actUser,
-					Messages.ImpfplanPrinter_templateType);
-			Collection<Vaccination> r =
-					ImpfplanController.getVaccinations(actPatient);
+			text.createFromTemplateName(null, TT_VACCINATIONS, Brief.UNKNOWN, CoreHub.actUser,
+				Messages.ImpfplanPrinter_templateType);
+			Collection<Vaccination> r = ImpfplanController.getVaccinations(actPatient);
 			String[][] tbl = new String[r.size()][3];
 			int line = 0;
 			for (Vaccination vacc : r) {

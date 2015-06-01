@@ -10,6 +10,8 @@
  ******************************************************************************/
 package at.medevit.elexis.medietikette.command;
 
+import static ch.elexis.core.ui.text.TextTemplateRequirement.TT_MEDI_LABEL;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -68,7 +70,7 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 				Kontakt kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Patient.class);
 				EtiketteDruckenDialog dlg =
 					new EtiketteDruckenDialog(HandlerUtil.getActiveShell(event), kontakt,
-						Messages.PrintMediEtiketteUi_TemplateName);
+						TT_MEDI_LABEL);
 				dlg.setTitle(Messages.PrintMediEtiketteUi_DialogTitel);
 				dlg.setMessage(Messages.PrintMediEtiketteUi_DialogMessage);
 				if (!CoreHub.localCfg.get("Drucker/Etiketten/Choose", true)) { //$NON-NLS-1$

@@ -1,5 +1,7 @@
 package com.hilotec.elexis.kgview.medikarte;
 
+import static com.hilotec.elexis.kgview.text.KGTextTemplateRequirement.TT_MEDICARD;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -40,8 +42,6 @@ import com.hilotec.elexis.kgview.medikarte.MedikarteEintragComparator.Sortierung
 
 public class MedikarteView extends ViewPart implements ElexisEventListener {
 	public static final String ID = "com.hilotec.elexis.kgview.MedikarteView";
-	
-	private static final String TEMPLATE_MEDIKARTE = "Medikarte";
 	
 	private Table table;
 	// Alle Verschreibungen anzeigen? Oder nur die aktiven.
@@ -251,8 +251,8 @@ public class MedikarteView extends ViewPart implements ElexisEventListener {
 				
 				// Medikarte aus Vorlage erstellen
 				Brief doc =
-					tv.getTextContainer().createFromTemplateName(kons, TEMPLATE_MEDIKARTE,
-						Brief.UNKNOWN, patient, "Medikamentenkarte");
+					tv.getTextContainer().createFromTemplateName(kons, TT_MEDICARD, Brief.UNKNOWN,
+						patient, "Medikamentenkarte");
 				tv.openDocument(doc);
 			}
 		};

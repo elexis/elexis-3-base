@@ -1,5 +1,8 @@
 package ch.elexis.tarmed.printer;
 
+import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_S1;
+import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_S2;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,31 +46,31 @@ import ch.rgw.tools.XMLTool;
 public class XML40Printer {
 	
 	private static Logger logger = LoggerFactory.getLogger(XML40Printer.class);
-
+	
 	private static double cmPerLine = 0.67; // Höhe pro Zeile (0.65 plus Toleranz)
 	private static double cmFirstPage = 13.0; // Platz auf der ersten Seite
 	private static double cmMiddlePage = 21.0; // Platz auf Folgeseiten
 	private static double cmFooter = 4.5; // Platz für Endabrechnung
-
+	
 	private TarmedACL ta = TarmedACL.getInstance();
 	
 	private TextContainer text;
-
+	
 	private Brief actBrief;
 	
 	private double cmAvail = 21.4; // Verfügbare Druckhöhe in cm
-
+	
 	private String printer;
-
+	
 	private static DecimalFormat df = new DecimalFormat(StringConstants.DOUBLE_ZERO);
-
+	
 	private static Namespace namespace = Namespace
 		.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
-
+	
 	public XML40Printer(TextContainer text){
 		this.text = text;
 	}
-
+	
 	private EZPrinter.EZPrinterData getEZPrintData(Element balance, Element invoice){
 		EZPrinter.EZPrinterData ret = new EZPrinter.EZPrinterData();
 		
@@ -81,7 +84,8 @@ public class XML40Printer {
 			ret.amountMigel =
 				XMLTool.xmlDoubleToMoney(balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_MIGEL));
 			ret.amountPhysio =
-				XMLTool.xmlDoubleToMoney(balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_PARAMED));
+				XMLTool
+					.xmlDoubleToMoney(balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_PARAMED));
 			ret.amountUnclassified =
 				XMLTool.xmlDoubleToMoney(balance
 					.getAttributeValue(XMLExporter.ATTR_AMOUNT_UNCLASSIFIED));
@@ -102,7 +106,7 @@ public class XML40Printer {
 		}
 		return ret;
 	}
-
+	
 	public boolean doPrint(Rechnung rn, Document xmlRn, TYPE rnType, String saveFile,
 		boolean withESR, boolean withForms, boolean doVerify, IProgressMonitor monitor){
 		
@@ -132,7 +136,7 @@ public class XML40Printer {
 			tcCode = "01";
 		}
 		XMLPrinterUtil.updateContext(rn, fall, pat, mnd, rs, ezData.paymentMode);
-
+		
 		Kontakt adressat;
 		if (ezData.paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			adressat = fall.getRequiredContact(TarmedRequirements.INSURANCE);
@@ -148,7 +152,7 @@ public class XML40Printer {
 		ESR esr =
 			new ESR(rs.getInfoString(TarmedACL.getInstance().ESRNUMBER), rs.getInfoString(TarmedACL
 				.getInstance().ESRSUB), rn.getRnId(), ESR.ESR27);
-
+		
 		if (withESR == true) {
 			EZPrinter ezPrinter = new EZPrinter();
 			actBrief = ezPrinter.doPrint(rn, ezData, text, esr, monitor);
@@ -164,7 +168,7 @@ public class XML40Printer {
 		if (StringTool.isNothing(tarmedTray)) {
 			tarmedTray = null;
 		}
-		XMLPrinterUtil.createBrief("Tarmedrechnung_S1", adressat, text);
+		XMLPrinterUtil.createBrief(TT_TARMED_S1, adressat, text);
 		
 		StringBuilder sb = new StringBuilder();
 		Element root = xmlRn.getRootElement();
@@ -366,7 +370,7 @@ public class XML40Printer {
 					return false;
 				}
 				
-				XMLPrinterUtil.insertPage("Tarmedrechnung_S2", ++page, adressat, rn, xmlRn,
+				XMLPrinterUtil.insertPage(TT_TARMED_S2, ++page, adressat, rn, xmlRn,
 					ezData.paymentMode, text);
 				cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 				cmAvail = cmMiddlePage;
@@ -385,7 +389,7 @@ public class XML40Printer {
 				Hub.setMandant(mSave);
 				return false;
 			}
-			XMLPrinterUtil.insertPage("Tarmedrechnung_S2", ++page, adressat, rn, xmlRn,
+			XMLPrinterUtil.insertPage(TT_TARMED_S2, ++page, adressat, rn, xmlRn,
 				ezData.paymentMode, text);
 			cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 			monitor.worked(2);

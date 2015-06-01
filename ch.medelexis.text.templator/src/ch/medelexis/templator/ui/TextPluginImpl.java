@@ -26,12 +26,12 @@ import org.jdom.JDOMException;
 
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.ui.text.ITextPlugin;
+import ch.elexis.core.ui.text.MimeTypeUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.medelexis.templator.model.ProcessingSchema;
 import ch.rgw.tools.ExHandler;
 
 public class TextPluginImpl implements ITextPlugin {
-	private static final String MIMETYPE = "text/xml";
 	ProcessingSchemaDisplay schemaDisplay;
 	ProcessingSchema schema;
 	ICallback saveHandler;
@@ -82,7 +82,7 @@ public class TextPluginImpl implements ITextPlugin {
 	
 	@Override
 	public String getMimeType(){
-		return MIMETYPE;
+		return MimeTypeUtil.MIME_TYPE_TEMPLATOR;
 	}
 	
 	@Override
@@ -262,7 +262,7 @@ public class TextPluginImpl implements ITextPlugin {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void setParameter(Parameter parameter){
 		// TODO Auto-generated method stub

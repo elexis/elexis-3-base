@@ -12,6 +12,8 @@
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
+import static ch.elexis.base.befunde.text.BefundeTextTemplateRequirement.TT_MEASUREMENTS;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -44,7 +46,8 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		text.createFromTemplateName(null, "Messwerte", Brief.UNKNOWN, CoreHub.actUser, "Messwerte"); //$NON-NLS-1$ //$NON-NLS-2$
+		text.createFromTemplateName(null, TT_MEASUREMENTS, Brief.UNKNOWN, CoreHub.actUser,
+			"Messwerte"); //$NON-NLS-1$ //$NON-NLS-2$
 		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
 		text.getPlugin().insertTable("[Tabelle]", ITextPlugin.FIRST_ROW_IS_HEADER, fields, null); //$NON-NLS-1$
 		return ret;
@@ -65,8 +68,8 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 	}
 	
 	public void save(){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public boolean saveAs(){

@@ -1,5 +1,7 @@
 package com.hilotec.elexis.kgview;
 
+import static com.hilotec.elexis.kgview.text.KGTextTemplateRequirement.TT_ARCHIV_KG;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
@@ -108,7 +110,8 @@ public class ArchivKGPrintView extends ViewPart {
 	}
 	
 	public void doPrint(Konsultation kons, Kontakt adressat, boolean reversed){
-		brief = text.createFromTemplateName(kons, "ArchivKG", Brief.UNKNOWN, adressat, "Archiv-KG");
+		brief =
+			text.createFromTemplateName(kons, TT_ARCHIV_KG, Brief.UNKNOWN, adressat, "Archiv-KG");
 		ITextPlugin tp = text.getPlugin();
 		Patient pat = kons.getFall().getPatient();
 		

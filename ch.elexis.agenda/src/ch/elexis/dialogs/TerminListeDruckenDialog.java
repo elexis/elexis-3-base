@@ -11,6 +11,8 @@
  *******************************************************************************/
 package ch.elexis.dialogs;
 
+import static ch.elexis.agenda.text.AgendaTextTemplateRequirement.TT_AGENDA_LIST;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -51,7 +53,7 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		text.createFromTemplateName(null, "AgendaListe", Brief.UNKNOWN, CoreHub.actUser, "Agenda");
+		text.createFromTemplateName(null, TT_AGENDA_LIST, Brief.UNKNOWN, CoreHub.actUser, "Agenda");
 		String[][] termine = new String[liste.length + 1][5];
 		termine[0] = new String[] {
 			"von", "bis", "Typ", "Name", "Grund"

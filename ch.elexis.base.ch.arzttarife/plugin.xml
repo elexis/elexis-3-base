@@ -79,5 +79,11 @@
             referenceDataId="tarmed">
       </importer>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.TextTemplateRequirement">
+      <TextTemplateRequirement
+            element="ch.elexis.tarmed.printer.TarmedTemplateRequirement">
+      </TextTemplateRequirement>
+   </extension>
 
 </plugin>

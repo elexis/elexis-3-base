@@ -71,5 +71,11 @@
             xChangeContribution="ch.elexis.befunde.xchange.XChangeContributor">
       </Transporter>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.TextTemplateRequirement">
+      <TextTemplateRequirement
+            element="ch.elexis.base.befunde.text.BefundeTextTemplateRequirement">
+      </TextTemplateRequirement>
+   </extension>
 
 </plugin>

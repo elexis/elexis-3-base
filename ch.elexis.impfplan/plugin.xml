@@ -26,5 +26,11 @@
             name="%Impfplan">
       </Factory>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.TextTemplateRequirement">
+      <TextTemplateRequirement
+            element="ch.elexis.impfplan.text.ImpfplanTextTemplateRequirement">
+      </TextTemplateRequirement>
+   </extension>
 
 </plugin>

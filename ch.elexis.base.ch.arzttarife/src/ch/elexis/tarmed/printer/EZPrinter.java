@@ -1,5 +1,10 @@
 package ch.elexis.tarmed.printer;
 
+import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_EZ;
+import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_M1;
+import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_M2;
+import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_M3;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -79,16 +84,16 @@ public class EZPrinter {
 		if ((adressat == null) || (!adressat.exists())) {
 			adressat = pat;
 		}
-		String tmpl = "Tarmedrechnung_EZ"; //$NON-NLS-1$
+		String tmpl = TT_TARMED_EZ; //$NON-NLS-1$
 		if ((rn.getStatus() == RnStatus.MAHNUNG_1)
 			|| (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
-			tmpl = "Tarmedrechnung_M1"; //$NON-NLS-1$
+			tmpl = TT_TARMED_M1;
 		} else if ((rn.getStatus() == RnStatus.MAHNUNG_2)
 			|| (rn.getStatus() == RnStatus.MAHNUNG_2_GEDRUCKT)) {
-			tmpl = "Tarmedrechnung_M2"; //$NON-NLS-1$
+			tmpl = TT_TARMED_M2;
 		} else if ((rn.getStatus() == RnStatus.MAHNUNG_3)
 			|| (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)) {
-			tmpl = "Tarmedrechnung_M3"; //$NON-NLS-1$
+			tmpl = TT_TARMED_M3;
 		}
 		actBrief = XMLPrinterUtil.createBrief(tmpl, adressat, text);
 		
@@ -119,7 +124,7 @@ public class EZPrinter {
 		sb.append("--------------------------------------").append(StringConstants.LF); //$NON-NLS-1$ 
 		
 		sb.append(Messages.RnPrintView_sum).append(mEZDue);
-
+		
 		if (!ezData.paid.isZero()) {
 			sb.append(Messages.RnPrintView_prepaid).append(ezData.paid.getAmountAsString())
 				.append(StringConstants.LF);
@@ -131,7 +136,7 @@ public class EZPrinter {
 		
 		text.getPlugin().setFont("Serif", SWT.NORMAL, 9); //$NON-NLS-1$
 		text.replace("\\[Leistungen\\]", sb.toString());
-
+		
 		if (esr.printBESR(bank, adressat, rs, mEZDue.roundTo5().getCentsAsString(), text) == false) {
 			return actBrief;
 		}
@@ -158,4 +163,5 @@ public class EZPrinter {
 		
 		return actBrief;
 	}
+	
 }

@@ -23,4 +23,7 @@ public class PreferenceConstants {
 	public static final String cfgTemplateBill = cfgBase + "/templateBill";
 	public static final String esrIdentity = cfgBase + "/esrIdentity";
 	public static final String esrUser = cfgBase + "/esrUser";
+	
+	public static final String DEFAULT_TEMPLATE_BILL = "privatrechnung_S2";
+	public static final String DEFAULT_TEMPLATE_ESR = "privatrechnung_ESR";
 }

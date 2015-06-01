@@ -23,9 +23,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.base.ch.ebanking.esr.ESR; 
+import ch.elexis.core.ui.text.ITextPlugin;
+import ch.elexis.core.ui.text.TextContainer;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -34,9 +37,6 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.elexis.privatrechnung.rechnung.RnPrintView.VatRateSum.VatRateElement;
-import ch.elexis.core.ui.text.ITextPlugin;
-import ch.elexis.core.ui.text.TextContainer;
-import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
@@ -83,13 +83,6 @@ public class RnPrintView extends ViewPart {
 		nf.setMinimumFractionDigits(2);
 		nf.setMaximumFractionDigits(2);
 		
-		if (templateBill == null) {
-			templateBill = CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateBill, "");
-		}
-		if (templateESR == null) {
-			templateESR = CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateESR, "");
-		}
-		
 		Result<Rechnung> ret = new Result<Rechnung>();
 		fall = rn.getFall();
 		ElexisEventDispatcher.fireSelectionEvent(fall);
@@ -97,7 +90,8 @@ public class RnPrintView extends ViewPart {
 		if (!adressat.isValid()) {
 			adressat = fall.getPatient();
 		}
-		tc.createFromTemplateName(null, templateBill, Brief.RECHNUNG, adressat, rn.getNr());
+		tc.createFromTemplateName(null, PrivaterechnungTextTemplateRequirement.getBillTemplate(),
+			Brief.RECHNUNG, adressat, rn.getNr());
 		fillFields();
 		List<Konsultation> kons = rn.getKonsultationen();
 		Collections.sort(kons, new Comparator<Konsultation>() {
@@ -189,8 +183,8 @@ public class RnPrintView extends ViewPart {
 		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());
 		fillFields();
 		ESR esr =
-			new ESR(CoreHub.globalCfg.get(PreferenceConstants.esrIdentity, ""), CoreHub.globalCfg.get(
-				PreferenceConstants.esrUser, ""), rn.getRnId(), 27);
+			new ESR(CoreHub.globalCfg.get(PreferenceConstants.esrIdentity, ""),
+				CoreHub.globalCfg.get(PreferenceConstants.esrUser, ""), rn.getRnId(), 27);
 		Kontakt bank = Kontakt.load(CoreHub.globalCfg.get(PreferenceConstants.cfgBank, ""));
 		if (!bank.isValid()) {
 			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");

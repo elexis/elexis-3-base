@@ -42,5 +42,11 @@
             name="Privatrechnung">
       </view>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.TextTemplateRequirement">
+      <TextTemplateRequirement
+            element="ch.elexis.privatrechnung.rechnung.PrivaterechnungTextTemplateRequirement">
+      </TextTemplateRequirement>
+   </extension>
 
 </plugin>

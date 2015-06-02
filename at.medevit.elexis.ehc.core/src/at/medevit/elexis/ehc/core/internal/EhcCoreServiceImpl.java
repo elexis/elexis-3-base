@@ -11,28 +11,14 @@
 package at.medevit.elexis.ehc.core.internal;
 
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.List;
 
 import org.ehealth_connector.cda.ch.CdaCh;
-import org.openhealthtools.mdht.uml.cda.CDAFactory;
+import org.ehealth_connector.cda.ch.CdaChVacd;
+import org.ehealth_connector.cda.ch.enums.LanguageCode;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import org.openhealthtools.mdht.uml.cda.Consumable;
-import org.openhealthtools.mdht.uml.cda.ManufacturedProduct;
-import org.openhealthtools.mdht.uml.cda.Material;
-import org.openhealthtools.mdht.uml.cda.StrucDocText;
-import org.openhealthtools.mdht.uml.cda.SubstanceAdministration;
 import org.openhealthtools.mdht.uml.cda.ch.CDACH;
 import org.openhealthtools.mdht.uml.cda.ch.CHFactory;
-import org.openhealthtools.mdht.uml.cda.ihe.IHEFactory;
-import org.openhealthtools.mdht.uml.cda.ihe.MedicationsSection;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
-import org.openhealthtools.mdht.uml.hl7.datatypes.CE;
-import org.openhealthtools.mdht.uml.hl7.datatypes.DatatypesFactory;
-import org.openhealthtools.mdht.uml.hl7.datatypes.ED;
-import org.openhealthtools.mdht.uml.hl7.datatypes.EN;
-import org.openhealthtools.mdht.uml.hl7.datatypes.IVL_PQ;
-import org.openhealthtools.mdht.uml.hl7.vocab.NullFlavor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +27,6 @@ import at.medevit.elexis.ehc.core.EhcCoreService;
 import at.medevit.elexis.ehc.core.internal.document.CdaChImpl;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
-import ch.elexis.data.Rezept;
-import ch.rgw.tools.TimeTool;
 
 public class EhcCoreServiceImpl implements EhcCoreService {
 	
@@ -87,95 +70,14 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public CdaCh getPrescriptionDocument(Rezept rezept){
-		CDACH clinicalDocument = CHFactory.eINSTANCE.createCDACH().init();
-		CdaChImpl ret = new CdaChImpl(clinicalDocument);
+	public CdaChVacd getVaccinationsDocument(Patient elexisPatient, Mandant elexisMandant){
+		// Create eVACDOC (Header)
+		CdaChVacd doc = new CdaChVacd(LanguageCode.GERMAN, null, null);
+		doc.setPatient(EhcCoreMapper.getEhcPatient(elexisPatient));
+		doc.setCustodian(EhcCoreMapper.getEhcOrganization(elexisMandant));
+		doc.addAuthor(EhcCoreMapper.getEhcAuthor(elexisMandant));
+		doc.setLegalAuthenticator(EhcCoreMapper.getEhcAuthor(elexisMandant));
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		Patient patient = rezept.getPatient();
-		List<Prescription> prescriptions = rezept.getLines();
-		
-		TimeTool tt = new TimeTool(rezept.getDate());
-		String rezeptTitle = "Rezept " + sdf.format(tt.getTime());
-		
-		// set the patient
-		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
-		// set the author
-		ret.addAuthor(EhcCoreMapper.getEhcAuthor(rezept.getMandant()));
-		
-		// create a medication section
-		MedicationsSection mediSection = IHEFactory.eINSTANCE.createMedicationsSection();
-		mediSection.setTitle(DatatypesFactory.eINSTANCE.createST(rezeptTitle));
-		// set ID
-		mediSection.setId(DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.1.1.1.3.1.1"));
-		mediSection.setCode(DatatypesFactory.eINSTANCE.createCE("10160-0", "2.16.840.1.113883.6.1",
-			"LOINC", "HISTORY OF MEDICATION USE"));
-		
-		StrucDocText line = CDAFactory.eINSTANCE.createStrucDocText();
-		
-		// add prescription lines
-		for (Prescription p : prescriptions) {
-			line.addText(p.getLabel() + "   ");
-			String pharmaCode = p.getArtikel().getPharmaCode();
-			
-			// TODO not connected to the rezept or prescription any more
-			// define substance administration
-			SubstanceAdministration substanceAdministration =
-				CDAFactory.eINSTANCE.createSubstanceAdministration();
-			ED prescriptionLabel = DatatypesFactory.eINSTANCE.createED(p.getLabel());
-			substanceAdministration.setText(prescriptionLabel);
-			substanceAdministration.getTemplateIds().add(
-				DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.1.1.1.1"));
-			substanceAdministration.getIds().add(
-				DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.2.6.1"));
-			
-			// code, system, systemname, displayname
-			substanceAdministration.setCode(DatatypesFactory.eINSTANCE.createCD("DRUG",
-				"2.16.840.1.113883.5.4", "", "Medikamentöse Therapie"));
-			substanceAdministration.setStatusCode(DatatypesFactory.eINSTANCE.createCS("completed"));
-			substanceAdministration.getEffectiveTimes().add(
-				DatatypesFactory.eINSTANCE.createIVL_TS("20140807"));
-			substanceAdministration.setPriorityCode(DatatypesFactory.eINSTANCE.createCE("R",
-				"2.16.840.1.113883.5.7", "ActPriority", "Routine"));
-			substanceAdministration.setRouteCode(DatatypesFactory.eINSTANCE.createCE("PO",
-				"2.16.840.1.113883.5.112", "RouteOfAdministration", "schlucken, oral"));
-			
-			// set quantities
-			IVL_PQ ivlQuantity = DatatypesFactory.eINSTANCE.createIVL_PQ();
-			ivlQuantity.setCenter(DatatypesFactory.eINSTANCE.createPQ(1, p.getDosis()));
-			substanceAdministration.setDoseQuantity(ivlQuantity);
-			
-			IVL_PQ ivlRateQuantity = DatatypesFactory.eINSTANCE.createIVL_PQ();
-			ivlRateQuantity.setNullFlavor(NullFlavor.UNK);
-			substanceAdministration.setRateQuantity(ivlQuantity);
-			
-			// set consumable medication
-			Consumable consumable = CDAFactory.eINSTANCE.createConsumable();
-			ManufacturedProduct manufacturedProduct =
-				CDAFactory.eINSTANCE.createManufacturedProduct();
-			Material material = CDAFactory.eINSTANCE.createMaterial();
-			CE materialCode =
-				DatatypesFactory.eINSTANCE.createCE("C09BA03SETN000000010TABL",
-					"2.16.756.5.30.2.6.2");
-			
-			// set original text UNK
-			materialCode.getTranslations().add(
-				DatatypesFactory.eINSTANCE.createCD("C09BA03", "2.16.840.1.113883.6.73", "", ""));
-			material.setCode(DatatypesFactory.eINSTANCE.createCE("C09BA03SETN000000010TABL",
-				"2.16.756.5.30.2.6.2"));
-			EN name = DatatypesFactory.eINSTANCE.createEN();
-			name.addText(p.getLabel());
-			material.setName(name);
-			manufacturedProduct.setManufacturedMaterial(material);
-			consumable.setManufacturedProduct(manufacturedProduct);
-			
-			substanceAdministration.setConsumable(consumable);
-			mediSection.addSubstanceAdministration(substanceAdministration);
-		}
-		mediSection.setText(line);
-		
-		clinicalDocument.addSection(mediSection);
-		
-		return ret;
+		return doc;
 	}
 }

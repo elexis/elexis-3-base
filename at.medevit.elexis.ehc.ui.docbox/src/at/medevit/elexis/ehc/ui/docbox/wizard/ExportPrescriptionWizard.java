@@ -1,8 +1,6 @@
 package at.medevit.elexis.ehc.ui.docbox.wizard;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IWorkbench;
 import org.ehealth_connector.cda.ch.CdaCh;
 
 import ch.elexis.data.Rezept;
@@ -14,11 +12,8 @@ public class ExportPrescriptionWizard extends Wizard {
 	private static CdaCh document;
 	private static Rezept rezept;
 	
-	public ExportPrescriptionWizard(){}
-	
-	public void init(IWorkbench workbench, IStructuredSelection selection){
+	public ExportPrescriptionWizard(){
 		setWindowTitle("Rezept Docbox export");
-		setNeedsProgressMonitor(true);
 	}
 	
 	@Override

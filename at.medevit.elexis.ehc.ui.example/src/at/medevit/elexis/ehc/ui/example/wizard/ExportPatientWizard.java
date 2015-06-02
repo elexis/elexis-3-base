@@ -10,21 +10,14 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.example.wizard;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IWorkbench;
 
 public class ExportPatientWizard extends Wizard {
 	
 	private ExportPatientWizardPage1 mainPage;
 	
 	public ExportPatientWizard(){
-		// TODO Auto-generated constructor stub
-	}
-	
-	public void init(IWorkbench workbench, IStructuredSelection selection){
 		setWindowTitle("Patientenstammdaten export.");
-		setNeedsProgressMonitor(true);
 	}
 	
 	@Override

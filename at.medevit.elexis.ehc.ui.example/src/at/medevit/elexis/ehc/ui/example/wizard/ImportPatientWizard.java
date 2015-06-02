@@ -14,9 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IWorkbench;
 import org.ehealth_connector.cda.ch.CdaCh;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +31,7 @@ public class ImportPatientWizard extends Wizard implements IImportWizard {
 	private CdaCh ehcDocument;
 	
 	public ImportPatientWizard(){
-		// TODO Auto-generated constructor stub
-	}
-	
-	public void init(IWorkbench workbench, IStructuredSelection selection){
 		setWindowTitle("Patientenstammdaten import.");
-		setNeedsProgressMonitor(true);
 	}
 	
 	@Override

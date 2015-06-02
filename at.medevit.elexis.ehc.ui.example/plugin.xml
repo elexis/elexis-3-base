@@ -13,12 +13,6 @@
             id="at.medevit.elexis.ehc.ui.example.patient"
             name="Stammdaten Patient">
       </wizard>
-      <wizard
-            category="at.medevit.elexis.ehc.ui.example.category"
-            class="at.medevit.elexis.ehc.ui.example.wizard.ExportPrescriptionWizard"
-            id="at.medevit.elexis.ehc.ui.example.prescription"
-            name="Rezept">
-      </wizard>
    </extension>
    <extension
          point="at.medevit.elexis.ehc.ui.ehcimport">

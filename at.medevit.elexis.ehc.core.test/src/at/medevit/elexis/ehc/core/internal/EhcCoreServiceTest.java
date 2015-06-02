@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ehealth_connector.cda.ch.CdaCh;
+import org.ehealth_connector.cda.ch.CdaChVacd;
 import org.ehealth_connector.cda.enums.AddressUse;
 import org.ehealth_connector.cda.enums.AdministrativeGender;
 import org.ehealth_connector.common.Address;
@@ -36,13 +37,14 @@ import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Rezept;
+import ch.elexis.data.Xid;
 
 public class EhcCoreServiceTest {
 	
+	public static final String DOMAIN_KSK = "www.xid.ch/id/ksk"; //$NON-NLS-1$
+
 	private static Patient patient;
 	private static Mandant mandant;
-	private static Rezept rezept;
 	
 	@BeforeClass
 	public static void before() throws IOException{
@@ -54,12 +56,45 @@ public class EhcCoreServiceTest {
 		anschrift.setPlz("123");
 		anschrift.setStrasse("Street 1");
 		patient.setAnschrift(anschrift);
-		
-		rezept = new Rezept(patient);
+		addAHVNumber(patient, 1);
 		
 		mandant = new Mandant("mandant", "firstname", "02.02.2002", Mandant.MALE);
+		mandant.set(Kontakt.FLD_PHONE1, "+01555987");
+		mandant.set(Kontakt.FLD_MOBILEPHONE, "+01444987");
+		anschrift = new Anschrift();
+		anschrift.setOrt("City");
+		anschrift.setPlz("987");
+		anschrift.setStrasse("Street 2");
+		mandant.setAnschrift(anschrift);
+		mandant.addXid(Xid.DOMAIN_EAN, "2000000000002", true);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, "KSK/ZSR-Nr", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+		mandant.addXid(DOMAIN_KSK, "C000002", true);
 	}
 	
+	private static void addAHVNumber(Patient pat, int index){
+		String country = "756";
+		String number = String.format("%09d", index);
+		StringBuilder ahvBuilder = new StringBuilder(country + number);
+		ahvBuilder.append(getCheckNumber(ahvBuilder.toString()));
+		
+		pat.addXid(Xid.DOMAIN_AHV, ahvBuilder.toString(), true);
+	}
+	
+	private static String getCheckNumber(String string){
+		int sum = 0;
+		for (int i = 0; i < string.length(); i++) {
+			// reveresd order
+			char character = string.charAt((string.length() - 1) - i);
+			int intValue = Character.getNumericValue(character);
+			if (i % 2 == 0) {
+				sum += intValue * 3;
+			} else {
+				sum += intValue;
+			}
+		}
+		return Integer.toString(sum % 10);
+	}
+
 	@AfterClass
 	public static void after(){
 		patient.delete();
@@ -133,9 +168,9 @@ public class EhcCoreServiceTest {
 	}
 	
 	@Test
-	public void testGetPrescriptionDocument() throws Exception{
+	public void testGetVaccinationsDocument() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getPrescriptionDocument(rezept);
+		CdaChVacd cda = service.getVaccinationsDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		assertTrue(output.size() > 0);

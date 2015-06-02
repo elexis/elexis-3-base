@@ -13,5 +13,6 @@ Require-Bundle: at.medevit.elexis.impfplan;bundle-version="3.0.1",
  ch.rgw.utility;bundle-version="3.1.0",
  ch.elexis.core,
  org.eclipse.core.jobs;bundle-version="3.5.200"
-Import-Package: ch.artikelstamm.elexis.common
+Import-Package: at.medevit.ch.artikelstamm.ui,
+ ch.artikelstamm.elexis.common
 Export-Package: at.medevit.elexis.ehc.vacdoc.service

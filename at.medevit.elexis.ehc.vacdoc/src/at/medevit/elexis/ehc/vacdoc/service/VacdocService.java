@@ -91,8 +91,7 @@ public class VacdocService {
 
 				Immunization immunization =
 					new Immunization(consumable, author, DateUtil.date(vaccination
-						.getDateOfAdministrationLabel()),
-						null, null);
+						.getDateOfAdministrationLabel()), null, null);
 				doc.addImmunization(immunization);
 			}
 		}
@@ -136,33 +135,44 @@ public class VacdocService {
 			
 			Code atcCode = consumable.getWhoAtcCode();
 			Identificator gtin = consumable.getManufacturedProductId();
-			Artikel article = resolveArticle(gtin.getExtension(), atcCode.getCode());
+			Artikel article = resolveArticle(gtin, atcCode);
 			
-			if(article != null) {
+			Author author = immunization.getAuthor();
+			
+			if (article != null) {
 				new Vaccination(elexisPatient.getId(), article, immunization.getApplyDate(),
-					consumable.getLotNr(), "TODO");
+					consumable.getLotNr(), ((author != null) ? author.getCompleteName() : ""));
 			} else {
-				logger.warn("Article [" + consumable.getTradeName() + "] not found GTIN [" + gtin.getExtension() + "]");
+				logger.warn("Article [" + consumable.getTradeName() + "] not found GTIN ["
+					+ ((gtin != null) ? gtin.getExtension() : "") + "]");
+				new Vaccination(elexisPatient.getId(), "", consumable.getTradeName(),
+					((gtin != null) ? gtin.getExtension() : ""),
+					((atcCode != null) ? atcCode.getCode() : ""), immunization.getApplyDate(),
+					consumable.getLotNr(), ((author != null) ? author.getCompleteName() : ""));
 			}
 		}
 	}
 	
-	private Artikel resolveArticle(String gtin, String atc){
+	private Artikel resolveArticle(Identificator gtin, Code atcCode){
+		String gtinStr = (gtin != null) ? gtin.getExtension() : null;
+		String atcStr = (atcCode != null) ? atcCode.getCode() : null;
 		Query<ArtikelstammItem> query = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		
-		query.add(ArtikelstammItem.FLD_GTIN, Query.EQUALS, gtin);
-		List<ArtikelstammItem> articles = query.execute();
-		if (articles == null || articles.isEmpty()) {
-			query = new Query<ArtikelstammItem>(ArtikelstammItem.class);
-			
-			query.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, atc);
-			articles = query.execute();
+		if (gtinStr != null) {
+			query.add(ArtikelstammItem.FLD_GTIN, Query.EQUALS, gtinStr);
+			List<ArtikelstammItem> articles = query.execute();
+			if (articles == null || articles.isEmpty()) {
+				if (atcStr != null) {
+					query = new Query<ArtikelstammItem>(ArtikelstammItem.class);
+					
+					query.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, atcStr);
+					articles = query.execute();
+				}
+			}
+			if (articles != null && !articles.isEmpty()) {
+				return articles.get(0);
+			}
 		}
-		return null;
-	}
-
-	public Patient getElexisPatient(CdaChVacd ehcDocument){
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

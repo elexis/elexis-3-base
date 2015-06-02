@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="at.medevit.elexis.ehc.ui.ehcexport">
+      <category
+            id="at.medevit.elexis.ehc.ui.vacdoc.category"
+            name="Impfungen">
+      </category>
+      <wizard
+            category="at.medevit.elexis.ehc.ui.vacdoc.category"
+            class="at.medevit.elexis.ehc.ui.vacdoc.wizard.ExportVaccinationsWizard"
+            id="at.medevit.elexis.ehc.ui.vacdoc.wizard.export"
+            name="Impfungen">
+      </wizard>
+   </extension>
+   <extension
+         point="at.medevit.elexis.ehc.ui.ehcimport">
+      <category
+            id="at.medevit.elexis.ehc.ui.vacdoc.category"
+            name="Impfungen">
+      </category>
+      <wizard
+            category="at.medevit.elexis.ehc.ui.vacdoc.category"
+            class="at.medevit.elexis.ehc.ui.vacdoc.wizard.ImportVaccinationsWizard"
+            id="at.medevit.elexis.ehc.ui.vacdoc.wizard.import"
+            name="Impfungen">
+      </wizard>
+   </extension>
+
+</plugin>

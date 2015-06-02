@@ -75,6 +75,8 @@
   <module>at.medevit.elexis.loinc.ui</module>
   <module>at.medevit.elexis.loinc.feature</module>
   <module>at.medevit.elexis.ehc.core</module>
+  <module>at.medevit.elexis.ehc.ui.vacdoc</module>
+  <module>at.medevit.elexis.ehc.vacdoc</module>
   <module>at.medevit.elexis.ehc.docbox</module>
   <module>at.medevit.elexis.ehc.ui</module>
   <module>at.medevit.elexis.ehc.ui.docbox</module>

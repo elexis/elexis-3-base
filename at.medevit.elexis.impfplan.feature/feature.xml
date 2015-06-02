@@ -17,6 +17,10 @@
       Eclipse Public License v1.0
    </license>
 
+   <requires>
+      <import feature="at.medevit.elexis.ehc.feature" version="3.0.0.qualifier"/>
+   </requires>
+
    <plugin
          id="at.medevit.elexis.impfplan"
          download-size="0"
@@ -30,5 +34,17 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="at.medevit.elexis.ehc.ui.vacdoc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="at.medevit.elexis.ehc.vacdoc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

@@ -59,6 +59,7 @@ import org.hl7.v3.POCDMT000040InformationRecipient;
 import org.hl7.v3.POCDMT000040RecordTarget;
 
 import ch.docbox.cdach.DocboxCDA;
+import ch.docbox.model.DocboxContact;
 import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.docbox.ws.cdachservices.CDACHServices_Service;
 import ch.elexis.core.constants.StringConstants;
@@ -434,10 +435,10 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 			}
 			informationRecipient =
 				docboxCDA.getInformationRecipient(kontakt.get(Person.TITLE), kontakt
-					.get(Kontakt.FLD_NAME2), kontakt.get(Kontakt.FLD_NAME1),
-					kontakt.getInfoString("docboxId").toString(), docboxCDA.getOrganization(
-						organization, null, null, null, kontakt.getAnschrift().getStrasse(),
-						kontakt.getAnschrift().getPlz(), kontakt.getAnschrift().getOrt()));
+					.get(Kontakt.FLD_NAME2), kontakt.get(Kontakt.FLD_NAME1), DocboxContact
+					.getDocboxIdFor(kontakt), docboxCDA.getOrganization(organization, null, null,
+					null, kontakt.getAnschrift().getStrasse(), kontakt.getAnschrift().getPlz(),
+					kontakt.getAnschrift().getOrt()));
 		}
 		
 		docboxCDA.addComponentToBody("Notiz", message, "NOTIZ");

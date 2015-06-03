@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *    
  *******************************************************************************/
-package ch.docbox.elexis;
+package ch.docbox.model;
 
 import java.lang.reflect.Method;
 

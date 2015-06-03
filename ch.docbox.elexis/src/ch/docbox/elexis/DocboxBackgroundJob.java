@@ -43,6 +43,8 @@ import org.hl7.v3.POCDMT000040Person;
 
 import ch.docbox.cdach.CdaChXPath;
 import ch.docbox.cdach.DocboxCDA;
+import ch.docbox.model.CdaMessage;
+import ch.docbox.model.DocboxContact;
 import ch.docbox.ws.cdachservices.AppointmentType;
 import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.docbox.ws.cdachservices.DocumentInfoType;
@@ -52,6 +54,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Xid;
@@ -211,19 +214,20 @@ public class DocboxBackgroundJob extends Job {
 				if (docboxId.length() > 0) {
 					++count;
 					Person p = null;
-					p =
-						(Person) Kontakt.findKontaktfromInfoStore(Person.class, "docboxId",
-							docboxId);
+					Kontakt cMatching = DocboxContact.findContactForDocboxId(docboxId);
+					if (cMatching != null) {
+						p = (Person) cMatching;
+					}
 					if (p == null && "self".equals(application)) {
-						p = CoreHub.actMandant;
-						p.setInfoElement("docboxId", docboxId);
+						p = (Person) ElexisEventDispatcher.getSelected(Mandant.class);
+						new DocboxContact(docboxId, p);
 					}
 					if (p == null || UserDocboxPreferences.isDocboxTest()) {
 						boolean newPerson = p == null;
 						
 						if (newPerson) {
 							p = new Person(family, given, "", "");
-							p.setInfoElement("docboxId", docboxId);
+							new DocboxContact(docboxId, p);
 						}
 						
 						p.set(Person.NAME, family);

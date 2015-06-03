@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *    
  *******************************************************************************/
-package ch.docbox.elexis;
+package ch.docbox.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.docbox.cdach.CdaChXPath;
+import ch.docbox.elexis.UserDocboxPreferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Anwender;

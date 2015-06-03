@@ -39,6 +39,8 @@ public class Messages extends NLS {
 	public static String UserDocboxPreferences_UseProxyPort;
 	public static String UserDocboxPreferences_ClearDocboxInbox;
 	public static String UserDocboxPreferences_ClearDocboxInboxConfirm;
+	public static String UserDocboxPreferences_ConvertDocboxIds;
+	public static String UserDocboxPreferences_ConvertDocboxIds_Tooltip;
 	
 	public static String DocboxDocumentsView_Title;
 	public static String DocboxDocumentsView_Patient;

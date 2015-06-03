@@ -26,6 +26,7 @@ import org.hl7.v3.POCDMT000040InformationRecipient;
 import org.hl7.v3.POCDMT000040RecordTarget;
 
 import ch.docbox.cdach.DocboxCDA;
+import ch.docbox.model.DocboxContact;
 import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -177,7 +178,7 @@ public class DocboxTerminvereinbarungAction extends DocboxAction {
 		if (kontakt != null) {
 			informationRecipient =
 				docboxCDA.getInformationRecipient(null, null, null,
-					kontakt.getInfoString("docboxId").toString(), null);
+					DocboxContact.getDocboxIdFor(kontakt), null);
 		}
 		
 		ClinicalDocumentType _addReferral_document = new ClinicalDocumentType();

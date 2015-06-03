@@ -90,7 +90,7 @@
    <extension
          point="ch.elexis.core.data.PersistentReference">
       <Factory
-            Class="ch.docbox.elexis.CdaMessageFactory"
+            Class="ch.docbox.model.CdaMessageFactory"
             name="ch.docbox.elexis"/>
    </extension>
 

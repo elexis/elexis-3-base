@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.InvalidKeyException;
 
@@ -21,6 +22,8 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.ws.BindingProvider;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -33,7 +36,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 
+import ch.docbox.model.CdaMessage;
+import ch.docbox.model.DocboxContact;
 import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.docbox.ws.cdachservices.CDACHServices_Service;
 import ch.elexis.admin.AccessControlDefaults;
@@ -207,7 +214,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 			
 			addField(secretkeyFieldEditor);
 		}
-
+		
 		buttonConfigureCert = new Button(getFieldEditorParent(), SWT.PUSH);
 		buttonConfigureCert.setText("Zertifikat konfigurieren");
 		buttonConfigureCert.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
@@ -387,6 +394,27 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 			buttonClearDocboxInbox.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
 		}
 		
+		Button btnConvertDocboxIds = new Button(getFieldEditorParent(), SWT.PUSH);
+		btnConvertDocboxIds.setText(Messages.UserDocboxPreferences_ConvertDocboxIds);
+		btnConvertDocboxIds.setToolTipText(Messages.UserDocboxPreferences_ConvertDocboxIds_Tooltip);
+		btnConvertDocboxIds.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
+		btnConvertDocboxIds.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0){
+				IProgressService progService = PlatformUI.getWorkbench().getProgressService();
+				try {
+					progService.runInUI(progService, new IRunnableWithProgress() {
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException,
+							InterruptedException{
+							DocboxContact.importDocboxIdsFromKontaktExtinfo(monitor);
+						}
+					}, null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public int getAgendaIndex(){

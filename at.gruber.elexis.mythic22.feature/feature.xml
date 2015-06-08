@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="at.gruber.elexis.mythic22.feature"
+      label="Mythic 22 Geräteanbindung"
+      version="3.0.0.qualifier"
+      provider-name="medevit.at">
+
+   <description url="http://www.medevit.at/features/at.gruber.elexis.mythic22">
+      Dieses Plug-In bindet das mythic 22 Blut-Analysegerät von Orphée über die Netzwerk-Schnittstelle an Elexis an. Die Ersterstellung dieses Plug-Ins entstand im Rahmen der Bachelor-Arbeit von Christian Gruber an der Fachhochschule Vorarberg im Sommer-Semester 2011.
+   </description>
+
+   <copyright url="http://www.medevit.at/copyright/at.gruber.elexis.mythic22">
+      Copyright (c) 2011, Christian Gruber and MEDEVIT OG
+All rights reserved.
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="at.gruber.elexis.mythic22"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

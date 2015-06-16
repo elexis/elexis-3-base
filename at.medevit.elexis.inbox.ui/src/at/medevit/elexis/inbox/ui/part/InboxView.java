@@ -120,7 +120,7 @@ public class InboxView extends ViewPart {
 				if (event.getElement() instanceof PatientInboxElements) {
 					PatientInboxElements patientInbox = (PatientInboxElements) event.getElement();
 					for (InboxElement inboxElement : patientInbox.getElements()) {
-						if (filter.isSelect(inboxElement)) {
+						if (!filter.isActive() || filter.isSelect(inboxElement)) {
 							State newState = toggleInboxElementState(inboxElement);
 							if (newState == State.NEW) {
 								viewer.setChecked(inboxElement, false);
@@ -133,7 +133,7 @@ public class InboxView extends ViewPart {
 					contentProvider.refreshElement(patientInbox);
 				} else if (event.getElement() instanceof InboxElement) {
 					InboxElement inboxElement = (InboxElement) event.getElement();
-					if (filter.isSelect(inboxElement)) {
+					if (!filter.isActive() || filter.isSelect(inboxElement)) {
 						toggleInboxElementState(inboxElement);
 						contentProvider.refreshElement(inboxElement);
 					}
@@ -230,6 +230,13 @@ public class InboxView extends ViewPart {
 		public void setSearchText(String s){
 			// Search must be a substring of the existing value
 			this.searchString = s;
+		}
+		
+		public boolean isActive(){
+			if (searchString == null || searchString.isEmpty()) {
+				return false;
+			}
+			return true;
 		}
 		
 		private boolean isSelect(Object leaf){

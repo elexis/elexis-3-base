@@ -120,19 +120,23 @@ public class InboxView extends ViewPart {
 				if (event.getElement() instanceof PatientInboxElements) {
 					PatientInboxElements patientInbox = (PatientInboxElements) event.getElement();
 					for (InboxElement inboxElement : patientInbox.getElements()) {
-						State newState = toggleInboxElementState(inboxElement);
-						if (newState == State.NEW) {
-							viewer.setChecked(inboxElement, false);
-						} else {
-							viewer.setChecked(inboxElement, true);
+						if (filter.isSelect(inboxElement)) {
+							State newState = toggleInboxElementState(inboxElement);
+							if (newState == State.NEW) {
+								viewer.setChecked(inboxElement, false);
+							} else {
+								viewer.setChecked(inboxElement, true);
+							}
+							contentProvider.refreshElement(inboxElement);
 						}
-						contentProvider.refreshElement(inboxElement);
 					}
 					contentProvider.refreshElement(patientInbox);
 				} else if (event.getElement() instanceof InboxElement) {
 					InboxElement inboxElement = (InboxElement) event.getElement();
-					toggleInboxElementState(inboxElement);
-					contentProvider.refreshElement(inboxElement);
+					if (filter.isSelect(inboxElement)) {
+						toggleInboxElementState(inboxElement);
+						contentProvider.refreshElement(inboxElement);
+					}
 				}
 				viewer.refresh(false);
 			}

@@ -39,6 +39,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 			String text = extension.getText((InboxElement) element);
 			if (text != null) {
 				return text;
+			} else {
+				return "unbekannt";
 			}
 		}
 		return super.getText(element);
@@ -61,6 +63,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 			Image image = extension.getImage((InboxElement) element);
 			if (image != null) {
 				return image;
+			} else {
+				return Images.IMG_QUESTION_MARK.getImage();
 			}
 		}
 		return null;

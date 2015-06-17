@@ -93,7 +93,13 @@
 						font-weight="bold">
 						Rezept
 					</fo:block>
-
+					<fo:block space-before="10pt" font-size="10pt">
+						<xsl:call-template name="formatDate">
+							<xsl:with-param name="date"
+								select="cda:ClinicalDocument/cda:effectiveTime/@value" />
+						</xsl:call-template>
+					</fo:block>
+					
 					<fo:block font-size="10pt" space-before="10mm">
 						<xsl:value-of
 							select="cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:patient/cda:name/cda:given" />
@@ -109,7 +115,7 @@
 						<fo:inline>&#44;&#160;</fo:inline>
 						<xsl:value-of
 							select="cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:addr/cda:streetAddressLine" />
-						<fo:inline>&#160;</fo:inline>
+						<fo:inline>&#44;&#160;</fo:inline>
 						<xsl:value-of
 							select="cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:addr/cda:postalCode" />
 						<fo:inline>&#160;</fo:inline>

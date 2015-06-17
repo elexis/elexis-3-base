@@ -1,50 +1,68 @@
 package at.medevit.elexis.cobasmira.model;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.milyn.csv.prog.CSVListBinder;
 
 import at.medevit.elexis.cobasmira.Activator;
 import at.medevit.elexis.cobasmira.ui.Preferences;
+import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
+import au.com.bytecode.opencsv.bean.CsvToBean;
 import ch.elexis.core.data.activator.CoreHub;
 
 public class CobasMiraMapping {
 	public static final String CSV_FORMAT =
 		"testNameCM,testNameShort,TestName,laborwertID,refM,refW,noDecPlaces";
-	protected static List<CobasMiraMappingLabitem> cmmappings;
+	protected static List<CobasMiraMappingLabitem> cobasMappings;
 	
 	public static List<CobasMiraMappingLabitem> getCmmappings(){
-		if (cmmappings == null) {
+		if (cobasMappings == null) {
 			CobasMiraMapping.initializeMapping();
 		}
-		return cmmappings;
+		return cobasMappings;
 	}
 	
 	public static void initializeMapping(){
-		String inputFilename =
-			CoreHub.localCfg.get(Preferences.MAPPINGSCSVFILE, "/Users/marco/cmmli.csv");
+		cobasMappings = new ArrayList<CobasMiraMappingLabitem>();
+		String csvFilename =
+			CoreHub.localCfg.get(Preferences.MAPPINGSCSVFILE,
+				Preferences.getDefaultMappingCSVLocation());
 		
 		try {
-			CSVListBinder binder =
-				new CSVListBinder(CobasMiraMapping.CSV_FORMAT, CobasMiraMappingLabitem.class);
-			cmmappings = binder.bind(new FileInputStream(new File(inputFilename)));
-			cmmappings.remove(0);
+			CsvToBean csvBean = new CsvToBean();
+			List csvList = csvBean.parse(getMappingStrategy(), new FileReader(csvFilename));
+			
+			for (Object object : csvList) {
+				CobasMiraMappingLabitem cmlItem = (CobasMiraMappingLabitem) object;
+				cobasMappings.add(cmlItem);
+			}
+			
 		} catch (FileNotFoundException e) {
 			Status status =
 				new Status(IStatus.WARNING, Activator.PLUGIN_ID, "CSV Mapping File nicht gefunden",
 					e);
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
 		}
+		cobasMappings.remove(0);
+	}
+	
+	private static ColumnPositionMappingStrategy getMappingStrategy(){
+		ColumnPositionMappingStrategy strategy = new ColumnPositionMappingStrategy();
+		strategy.setType(CobasMiraMappingLabitem.class);
+		String[] columns = new String[] {
+			"testNameCM", "testNameShort", "TestName", "laborwertID", "refM", "refW", "noDecPlaces"
+		};
+		strategy.setColumnMapping(columns);
+		return strategy;
 	}
 	
 	public static String getId(String testName){
-		for (CobasMiraMappingLabitem cMMLI : cmmappings) {
+		for (CobasMiraMappingLabitem cMMLI : cobasMappings) {
 			if (cMMLI.getTestNameCM().equalsIgnoreCase(testName))
 				return cMMLI.getLaborwertID();
 		}
@@ -52,7 +70,7 @@ public class CobasMiraMapping {
 	}
 	
 	public static int getNoDecPlaces(String testName){
-		for (CobasMiraMappingLabitem cMMLI : cmmappings) {
+		for (CobasMiraMappingLabitem cMMLI : cobasMappings) {
 			try {
 				if (cMMLI.getTestNameCM().equalsIgnoreCase(testName))
 					return Integer.parseInt(cMMLI.getNoDecPlaces());

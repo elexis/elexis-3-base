@@ -1,5 +1,10 @@
 package at.medevit.elexis.cobasmira.ui;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,12 +20,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.cobasmira.connection.CobasMiraConnection;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
+	private static final Logger logger = LoggerFactory.getLogger(Preferences.class);
+	
 	public static final String COBASMIRA_BASE = "connectors/cobasmira/"; //$NON-NLS-1$
 	public static final String PORT = COBASMIRA_BASE + "port"; //$NON-NLS-1$
 	public static final String TIMEOUT = COBASMIRA_BASE + "timeout"; //$NON-NLS-1$
@@ -46,6 +55,8 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	public Preferences(){
 		super(Messages.getString("CobasMiraAction.ButtonName")); //$NON-NLS-1$
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
+		
+		initMappingFileLocation();
 	}
 	
 	@Override
@@ -197,6 +208,44 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	}
 	
 	public void init(IWorkbench arg0){}
+	
+	private void initMappingFileLocation(){
+		String cobasMappingCSV = CoreHub.localCfg.get(MAPPINGSCSVFILE, null);
+		if (cobasMappingCSV == null) {
+			cobasMappingCSV = getDefaultMappingCSVLocation();
+		}
+		setOrCreateMappingCSV(cobasMappingCSV);
+	}
+	
+	private void setOrCreateMappingCSV(String path){
+		try {
+			File csv = new File(path);
+			if (!csv.exists()) {
+				csv.getParentFile().mkdirs();
+				csv.createNewFile();
+				
+				// copy csv to destination file
+				InputStream sourceStream = Preferences.class.getResourceAsStream("/rsc/cmmli.csv");
+				FileOutputStream destStream = new FileOutputStream(csv);
+				
+				byte[] buffer = new byte[1024];
+				int length;
+				while ((length = sourceStream.read(buffer)) > 0) {
+					destStream.write(buffer, 0, length);
+				}
+				sourceStream.close();
+				destStream.close();
+			}
+			CoreHub.localCfg.set(MAPPINGSCSVFILE, csv.getAbsolutePath());
+		} catch (IOException ioe) {
+			logger.error("Unable to initialize CobasMira base mapping csv", ioe);
+		}
+	}
+	
+	public static String getDefaultMappingCSVLocation(){
+		return CoreHub.getWritableUserDir() + File.separator + "cobasMira" + File.separator
+			+ "cmmli.csv";
+	}
 	
 	@Override
 	public boolean performOk(){

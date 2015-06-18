@@ -34,10 +34,20 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class DataAccessor implements IDataAccess {
+	private static final String FIRST = "first";//$NON-NLS-1$
+	private static final String LAST = "last";//$NON-NLS-1$
 	private static final String ALL = "all"; //$NON-NLS-1$
+	
+	private static final String PREFIX_DATE = "[Befunde-Data:Patient:-:";
+	private static final String PREFIX_FIRST = "[Befunde-Data:Patient:first:";
+	private static final String PREFIX_LAST = "[Befunde-Data:Patient:last:";
+	private static final String PREFIX_ALL = "[Befunde-Data:Patient:all:";
+	private static final String SUFFIX = "]";
+	
 	Map<String, String> hash;
 	Hashtable<String, String[]> columns;
 	ArrayList<String> parameters;
+	private TimeTool today;
 	
 	@SuppressWarnings("unchecked")
 	public DataAccessor(){
@@ -57,6 +67,7 @@ public class DataAccessor implements IDataAccess {
 				}
 			}
 		}
+		today = new TimeTool();
 	}
 	
 	public String getDescription(){
@@ -68,21 +79,47 @@ public class DataAccessor implements IDataAccess {
 	}
 	
 	/**
-	 * Retourniert Platzhalter für die Integration im Textsystem.
+	 * A list of the available placeholders. <br>
+	 * For each available type of {@link Messwert} the following placeholders will be delivered
+	 * <p>
+	 * [Befunde-Data:Patient:-:TypeName:20150408] <br>
+	 * [Befunde-Data:Patient:first:TypeName]<br>
+	 * [Befunde-Data:Patient:last:TypeName]<br>
+	 * [Befunde-Data:Patient:all:TypeName]
+	 * </p>
 	 * 
-	 * @return
+	 * @return list of placeholders to be integrated
 	 */
-	private String getPlatzhalter(final String befund){
-		return "[Befunde-Data:Patient:" + befund + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
 	public List<Element> getList(){
-		ArrayList<Element> ret = new ArrayList<Element>(parameters.size());
+		List<Element> ret = new ArrayList<Element>(parameters.size());
 		for (String n : parameters) {
-			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, n, getPlatzhalter(n),
-				Patient.class, 1));
+			// placeholder for finding of specific date
+			String placeholder =
+				PREFIX_DATE + n + ":" + today.toString(TimeTool.DATE_COMPACT) + SUFFIX;
+			String readableName = n + " - " + Messages.getString("DataAccessor.date");
+			ret.add(createElement(readableName, placeholder));
+			
+			// placeholder for first finding
+			placeholder = PREFIX_FIRST + n + SUFFIX;
+			readableName = n + " - " + Messages.getString("DataAccessor.first");
+			ret.add(createElement(readableName, placeholder));
+			
+			// placeholder for last finding
+			placeholder = PREFIX_LAST + n + SUFFIX;
+			readableName = n + " - " + Messages.getString("DataAccessor.last");
+			ret.add(createElement(readableName, placeholder));
+			
+			// placeholder for all findings
+			placeholder = PREFIX_ALL + n + SUFFIX;
+			readableName = n + " - " + Messages.getString("DataAccessor.all");
+			ret.add(createElement(readableName, placeholder));
 		}
 		return ret;
+	}
+	
+	private IDataAccess.Element createElement(String readableName, String placeholder){
+		return new IDataAccess.Element(IDataAccess.TYPE.STRING, readableName, placeholder,
+			Patient.class, 1);
 	}
 	
 	/**
@@ -145,7 +182,7 @@ public class DataAccessor implements IDataAccess {
 					}
 				}
 				ret = new Result<Object>(values);
-			} else if (dates.equals("last")) { //$NON-NLS-1$
+			} else if (dates.equals(LAST)) { //$NON-NLS-1$
 				TimeTool today = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 				for (Messwert m : list) {
 					TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
@@ -161,7 +198,7 @@ public class DataAccessor implements IDataAccess {
 							params, true);
 				}
 				
-			} else if (dates.equals("first")) { //$NON-NLS-1$
+			} else if (dates.equals(FIRST)) { //$NON-NLS-1$
 				TimeTool firstdate = null;
 				
 				if (list.size() > 0) {
@@ -197,6 +234,15 @@ public class DataAccessor implements IDataAccess {
 							mwrt = m;
 							break;
 						}
+					}
+					
+					// no entry for this date found - display error with date and descriptor
+					if (mwrt == null) {
+						ret =
+							new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+								descriptor + " [" + find.toString(TimeTool.DATE_GER)
+									+ "] " + Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
+								params, true);
 					}
 				}
 			}
@@ -245,8 +291,6 @@ public class DataAccessor implements IDataAccess {
 				}
 			}
 		}
-		
 		return ret;
 	}
-	
 }

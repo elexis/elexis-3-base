@@ -5,7 +5,7 @@
   <artifactId>elexis-3-base</artifactId>
   <version>3.0.0-SNAPSHOT</version>
   <properties>
-    <tycho-version>0.22.0</tycho-version>
+    <tycho-version>0.23.0</tycho-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tycho-extras.version>${tycho-version}</tycho-extras.version>
     <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
@@ -66,6 +66,23 @@
 		<!-- activate operating system dependent testing vm args -->
 	</profiles>
 <modules>
+  <!-- our test modules. Come first to make them run as soon as possible -->
+  <module>at.medevit.atc_codes.test</module>
+  <module>at.medevit.elexis.ehc.core.test</module>
+  <module>at.medevit.elexis.impfplan.test</module>
+  <module>at.medevit.elexis.loinc_test</module>
+  <module>at.medevit.elexis.tarmed.model.tests</module>
+  <module>ch.elexis.base.ch.arzttarife.test</module>
+  <module>ch.elexis.connect.reflotron.v2test</module>
+  <module>ch.elexis.externe_dokumente.tests</module>
+  <module>ch.elexis.laborimport.viollier.v2_test</module>
+  <module>ch.medshare.elexis_directories.test</module>
+  <module>com.hilotec.elexis.messwerte.v2_test</module>
+  <module>net.medshare.connector.aerztekasse_test</module>
+  <module>net.medshare.connector.viollier_test</module>
+  <module>org.iatrix.bestellung.rose_test</module>
+  <module>ch.pharmed.phmprescriber_test</module>
+
   <module>at.medevit.atc_codes</module>
   <module>at.medevit.elexis.weblinks</module>
   <module>at.medevit.elexis.swissmedic</module>
@@ -203,7 +220,6 @@
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
   <module>org.iatrix.bestellung.rose</module>
-  <module>org.iatrix.bestellung.rose_test</module>
   <module>org.iatrix.bestellung.rose.feature</module>
   <module>org.iatrix.messwerte</module>
   <module>org.iatrix.messwerte.feature</module>
@@ -229,18 +245,6 @@
   <module>net.medshare.connector.viollier.feature</module>
   <module>at.medevit.elexis.tarmed.model</module>
 
-  <!-- our test modules -->
-  <module>at.medevit.atc_codes.test</module>
-  <module>net.medshare.connector.aerztekasse_test</module>
-<!-- <module>ch.pharmed.phmprescriber_test</module> -->
-  <module>ch.elexis.base.ch.arzttarife.test</module>
-  <module>ch.elexis.connect.reflotron.v2test</module>
-  <module>ch.elexis.externe_dokumente.tests</module>
-  <module>at.medevit.elexis.loinc_test</module>
-  <module>ch.elexis.laborimport.viollier.v2_test</module>
-  <module>ch.medshare.elexis_directories.test</module>
-  <module>com.hilotec.elexis.messwerte.v2_test</module>
-<!-- <module>at.medevit.elexis.tarmed.model.tests</module> -->
 </modules>
 <repositories>
   <repository>
@@ -391,6 +395,26 @@
   <pluginManagement>
     <plugins>
       <plugin>
+        <!-- Use compiler plugin with tycho as the adapter to the JDT compiler. -->
+        <artifactId>maven-compiler-plugin </artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8 </target>
+          <compilerId>jdt</compilerId>
+          <compilerArgument>-err:nullAnnot,null </compilerArgument>
+          <!-- insert your warn/err configuration here -->
+        </configuration>
+        <dependencies>
+          <!-- This dependency provides the implementation of compiler "jdt": -->
+          <dependency>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-compiler-jdt </artifactId>
+            <version>${tycho-version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
         <!-- we want to ensure that the bin directory created by the Eclipse gets cleaned, too.
 Without it Maven would put two versions of each class file into the jars
 -->
@@ -413,6 +437,9 @@ Without it Maven would put two versions of each class file into the jars
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho-version}</version>
+        <configuration>
+          <executionEnvironment>JavaSE-1.8</executionEnvironment>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>

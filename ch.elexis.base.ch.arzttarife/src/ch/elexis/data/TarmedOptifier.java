@@ -254,7 +254,7 @@ public class TarmedOptifier implements IOptifier {
 							switch (Integer.parseInt(f[4].trim())) {
 							case 7: // Pro Sitzung
 								if (newVerrechnet.getCode().equals("00.0020")) {
-									if (CoreHub.mandantCfg.get(
+									if (CoreHub.mandantCfg != null && CoreHub.mandantCfg.get(
 										PreferenceConstants.BILL_ELECTRONICALLY, false)) {
 										break;
 									}
@@ -351,7 +351,7 @@ public class TarmedOptifier implements IOptifier {
 			
 			// Zuschlag Kinder
 			else if (tcid.equals("00.0010") || tcid.equals("00.0060")) {
-				if (CoreHub.mandantCfg.get(RechnungsPrefs.PREF_ADDCHILDREN, false)) {
+				if (CoreHub.mandantCfg != null && CoreHub.mandantCfg.get(RechnungsPrefs.PREF_ADDCHILDREN, false)) {
 					Fall f = kons.getFall();
 					if (f != null) {
 						Patient p = f.getPatient();

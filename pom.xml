@@ -66,6 +66,8 @@
 		<!-- activate operating system dependent testing vm args -->
 	</profiles>
 <modules>
+  <module>at.gruber.elexis.mythic22</module>
+  <module>at.gruber.elexis.mythic22.feature</module>
   <module>at.medevit.atc_codes</module>
   <module>at.medevit.elexis.weblinks</module>
   <module>at.medevit.elexis.swissmedic</module>
@@ -86,6 +88,8 @@
   <module>at.medevit.ch.artikelstamm.elexis.open</module>
   <module>at.medevit.ch.artikelstamm.ui</module>
   <module>at.medevit.ch.artikelstamm/</module>
+  <module>at.medevit.elexis.cobasmira</module>
+  <module>at.medevit.elexis.cobasmira.feature</module>
   <module>at.medevit.elexis.impfplan.feature</module>
   <module>at.medevit.elexis.impfplan</module>
   <module>at.medevit.elexis.impfplan.ui</module>
@@ -203,7 +207,7 @@
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
   <module>org.iatrix.bestellung.rose</module>
-  <module>org.iatrix.bestellung.rose_test</module>
+ <!-- <module>org.iatrix.bestellung.rose_test</module> -->
   <module>org.iatrix.bestellung.rose.feature</module>
   <module>org.iatrix.messwerte</module>
   <module>org.iatrix.messwerte.feature</module>

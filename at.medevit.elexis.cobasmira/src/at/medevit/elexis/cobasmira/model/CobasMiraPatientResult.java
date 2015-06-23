@@ -43,7 +43,7 @@ public class CobasMiraPatientResult {
 				this.flag = input.charAt(53);
 				this.remark = Integer.parseInt(input.substring(55, 57));
 			} else {
-				System.out.println("LineCode is not 20 its " + input.substring(0, 2));
+				logger.debug("LineCode is not 20 its " + input.substring(0, 2));
 			}
 		} catch (NumberFormatException e) {
 			logger.warn("NumberFormatException: " + e.getMessage());

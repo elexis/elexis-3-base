@@ -1,4 +1,4 @@
-package at.medevit.elexis.cobasmira;
+package at.medevit.elexis.cobasmira.tests;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,17 +11,17 @@ import org.junit.Test;
 import at.medevit.elexis.cobasmira.model.CobasMiraMessage;
 
 public class CobasMiraMessageTest {
-	private static String filePathHeader = "sampleHeader.txt";
-	private static String filePathText = "sampleText.txt";
+	private static String headerFile = "rsc/sampleHeader.txt";
+	private static String textFile = "rsc/sampleText.txt";
 	private static String inputHeader;
 	private static String inputText;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
-		byte[] bufferHeader = new byte[(int) new File(filePathHeader).length()];
-		byte[] bufferText = new byte[(int) new File(filePathText).length()];
-		FileInputStream isHeader = new FileInputStream(filePathHeader);
-		FileInputStream isText = new FileInputStream(filePathText);
+		byte[] bufferHeader = new byte[(int) new File(headerFile).length()];
+		byte[] bufferText = new byte[(int) new File(textFile).length()];
+		FileInputStream isHeader = new FileInputStream(headerFile);
+		FileInputStream isText = new FileInputStream(textFile);
 		
 		isHeader.read(bufferHeader);
 		isText.read(bufferText);
@@ -44,5 +44,4 @@ public class CobasMiraMessageTest {
 		assertEquals(03, cmm.getBlockType());
 		assertEquals(inputTextNoEntries, cmm.getNoPatientResults());
 	}
-	
 }

@@ -1,4 +1,4 @@
-package at.medevit.elexis.cobasmira;
+package at.medevit.elexis.cobasmira.tests;
 
 import junit.framework.Assert;
 

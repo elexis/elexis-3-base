@@ -173,9 +173,9 @@ public class FileImportDialog extends TitleAreaDialog {
 			tKeywords.setText(dh.get(DocHandle.FLD_KEYWORDS));
 			cbCategories.setText(dh.getCategoryName());
 		}
-		bEditCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.ACE_DOC_CATDELETE));
-		bDeleteCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.ACE_DOC_CATDELETE));
-		bNewCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.ACE_DOC_CATCREATE));
+		bEditCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE));
+		bDeleteCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE));
+		bNewCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATCREATE));
 		
 		return ret;
 	}

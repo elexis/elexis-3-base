@@ -512,7 +512,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	
 	private void makeActions(){
 		importAction =
-			new RestrictedAction(AccessControlDefaults.ACE_DOC_CREATE,
+			new RestrictedAction(AccessControlDefaults.DOCUMENT_CREATE,
 				Messages.OmnivoreView_importActionCaption) {
 				{
 					setToolTipText(Messages.OmnivoreView_importActionToolTip);
@@ -532,7 +532,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			};
 		
 		deleteAction =
-			new RestrictedAction(AccessControlDefaults.ACE_DOC_DELETE,
+			new RestrictedAction(AccessControlDefaults.DOCUMENT_DELETE,
 				Messages.OmnivoreView_deleteActionCaption) {
 				{
 					setToolTipText(Messages.OmnivoreView_deleteActionToolTip);
@@ -545,7 +545,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 					DocHandle dh = (DocHandle) obj;
 					
 					if (dh.isCategory()) {
-						if (CoreHub.acl.request(AccessControlDefaults.ACE_DOC_CATDELETE)) {
+						if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
 							InputDialog id =
 								new InputDialog(
 									getViewSite().getShell(),
@@ -574,7 +574,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			};
 		
 		editAction =
-			new RestrictedAction(AccessControlDefaults.ACE_DOC_DELETE,
+			new RestrictedAction(AccessControlDefaults.DOCUMENT_DELETE,
 				Messages.OmnivoreView_editActionCaption) {
 				{
 					setToolTipText(Messages.OmnivoreView_editActionTooltip);
@@ -585,7 +585,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 					ISelection selection = viewer.getSelection();
 					DocHandle dh = (DocHandle) ((IStructuredSelection) selection).getFirstElement();
 					if (dh.isCategory()) {
-						if (CoreHub.acl.request(AccessControlDefaults.ACE_DOC_CATDELETE)) {
+						if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
 							
 							InputDialog id =
 								new InputDialog(getViewSite().getShell(), MessageFormat.format(

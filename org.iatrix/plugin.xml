@@ -56,43 +56,43 @@
       <key
             commandId="org.iatrix.commands.newcons"
             contextId="org.iatrix.view.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="ch.elexis.ui.keybindingScheme"
             sequence="M1+K">
       </key>
       <key
             commandId="org.iatrix.commands.export_clipboard"
             contextId="org.iatrix.view.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="ch.elexis.ui.keybindingScheme"
             sequence="M1+E">
       </key>
       <key
             commandId="org.iatrix.commands.newproblem"
             contextId="org.iatrix.view.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="ch.elexis.ui.keybindingScheme"
             sequence="M1+P">
       </key>
       <key
             commandId="org.iatrix.commands.show_all_charges"
             contextId="org.iatrix.view.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="ch.elexis.ui.keybindingScheme"
             sequence="F6">
       </key>
       <key
             commandId="org.iatrix.commands.show_all_charges"
             contextId="org.iatrix.view.konslist.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="ch.elexis.ui.keybindingScheme"
             sequence="F6">
       </key>
       <key
             commandId="org.iatrix.commands.show_all_consultations"
             contextId="org.iatrix.view.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="ch.elexis.ui.keybindingScheme"
             sequence="F5">
       </key>
       <key
             commandId="org.iatrix.commands.show_all_consultations"
             contextId="org.iatrix.view.konslist.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="ch.elexis.ui.keybindingScheme"
             sequence="F5">
       </key>
    </extension>

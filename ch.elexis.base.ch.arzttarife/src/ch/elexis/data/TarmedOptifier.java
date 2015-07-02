@@ -338,7 +338,7 @@ public class TarmedOptifier implements IOptifier {
 						TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
 						String tlc = tl.getCode();
 						double z = v.getZahl();
-						if (tlc.matches("29.20[13578]0") || (tlc.equals("29.2200"))) {
+						if (tlc.matches("29.20[1234578]0") || (tlc.equals("29.2200"))) {
 							sumAL += (z * tl.getAL()) / 2;
 							sumTL += (z * tl.getTL()) / 4;
 						}

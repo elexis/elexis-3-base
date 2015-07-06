@@ -14,14 +14,14 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2013;
+import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2015;
 import at.medevit.elexis.impfplan.model.vaccplans.AbstractVaccinationPlan.RequiredVaccination;
 
-public class ImfplanSchweiz2013Test {
+public class ImfplanSchweiz2015Test {
 
 	@Test
-	public void testImpfplanSchweiz2013(){
-		ImpfplanSchweiz2013 ipfplch = new ImpfplanSchweiz2013();
+	public void testImpfplanSchweiz2015(){
+		ImpfplanSchweiz2015 ipfplch = new ImpfplanSchweiz2015();
 		for (RequiredVaccination rv : ipfplch.baseVaccinations) {
 			System.out.println("B "+rv);
 		}

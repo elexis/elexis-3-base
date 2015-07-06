@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import at.medevit.elexis.impfplan.model.vaccplans.AbstractVaccinationPlan;
-import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2013;
+import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2015;
 
 public class VaccinationPlanModel {
 	
@@ -29,7 +29,7 @@ public class VaccinationPlanModel {
 	
 	private static void init(){
 		vaccinationPlans = new ArrayList<>();
-		vaccinationPlans.add(new ImpfplanSchweiz2013());
+		vaccinationPlans.add(new ImpfplanSchweiz2015());
 		// add in the future
 		vaccinationPlans = Collections.unmodifiableList(vaccinationPlans);
 	}

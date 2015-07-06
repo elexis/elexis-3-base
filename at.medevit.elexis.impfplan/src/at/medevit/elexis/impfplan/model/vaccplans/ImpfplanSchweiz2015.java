@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ImpfplanSchweiz2013 extends AbstractVaccinationPlan {
+public class ImpfplanSchweiz2015 extends AbstractVaccinationPlan {
 	
 	private List<RequiredVaccination> vaccPlan;
 	
@@ -33,8 +33,8 @@ public class ImpfplanSchweiz2013 extends AbstractVaccinationPlan {
 		"780;J07AF/B,J07AM/B,J07AL,J07BB"
 	};
 	
-	public ImpfplanSchweiz2013(){
-		super("VACC_CH_2013", "Schweizerischer Impfplan 2013");
+	public ImpfplanSchweiz2015(){
+		super("VACC_CH_2015", "Schweizerischer Impfplan 2015");
 		// vaccPlan is needed for initialization only
 		vaccPlan = null;
 	}

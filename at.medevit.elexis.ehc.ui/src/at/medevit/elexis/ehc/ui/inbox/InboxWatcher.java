@@ -186,6 +186,10 @@ public class InboxWatcher {
 			if (watchKeys.get(activeInboxString) == null) {
 				try {
 					Path inboxPath = Paths.get(activeInboxString);
+					if (!inboxPath.toFile().exists()) {
+						inboxPath.toFile().mkdirs();
+					}
+					
 					WatchKey key;
 					key =
 						inboxPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,

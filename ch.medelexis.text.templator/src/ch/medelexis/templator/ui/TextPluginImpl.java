@@ -28,6 +28,7 @@ import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.MimeTypeUtil;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.textsystem.TextTemplatePrintSettings;
 import ch.medelexis.templator.model.ProcessingSchema;
 import ch.rgw.tools.ExHandler;
 
@@ -35,6 +36,8 @@ public class TextPluginImpl implements ITextPlugin {
 	ProcessingSchemaDisplay schemaDisplay;
 	ProcessingSchema schema;
 	ICallback saveHandler;
+	
+	private TextTemplatePrintSettings printSettings;
 	
 	@Override
 	public boolean clear(){
@@ -267,5 +270,10 @@ public class TextPluginImpl implements ITextPlugin {
 	public void setParameter(Parameter parameter){
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void initTemplatePrintSettings(String template){
+		printSettings = new TextTemplatePrintSettings(template, getMimeType());
 	}
 }

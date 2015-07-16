@@ -1419,4 +1419,10 @@ public class TextPlugin implements ITextPlugin {
 		
 	}
 	
+	@Override
+	public void initTemplatePrintSettings(String template){
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

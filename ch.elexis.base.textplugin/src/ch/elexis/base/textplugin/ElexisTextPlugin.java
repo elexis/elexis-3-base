@@ -343,4 +343,10 @@ public class ElexisTextPlugin implements ITextPlugin {
 	public boolean isDirectOutput(){
 		return false;
 	}
+	
+	@Override
+	public void initTemplatePrintSettings(String template){
+		// TODO Auto-generated method stub
+		
+	}
 }

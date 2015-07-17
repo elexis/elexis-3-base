@@ -188,8 +188,8 @@ import de.kupzog.ktable.renderers.FixedCellRenderer;
  * @author Daniel Lutz <danlutz@watz.ch>
  */
 
-public class JournalView extends ViewPart implements IActivationListener, ISaveablePart2,
-		HeartListener {
+public class JournalView extends ViewPart
+		implements IActivationListener, ISaveablePart2, HeartListener {
 
 	public static final String ID = "org.iatrix.views.JournalView"; //$NON-NLS-1$
 
@@ -291,8 +291,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		120, // BEZEICHNUNG
 		120, // THERAPIE
 		80, // DIAGNOSEN
-		20	// STATUS
-		};
+		20 // STATUS
+	};
 
 	private static final String CFG_BASE_KEY = "org.iatrix/views/journalview/column_width";
 	private static final String[] COLUMN_CFG_KEY = {
@@ -305,7 +305,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		 * CFG_BASE_KEY + "/" + "law", // GESETZ
 		 */
 
-		CFG_BASE_KEY + "/" + "status", // STATUS
+			CFG_BASE_KEY + "/" + "status", // STATUS
 	};
 
 	private CheckboxTableViewer problemAssignmentViewer;
@@ -380,26 +380,26 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 	}
 
-	private final ElexisUiEventListenerImpl eeli_problem = new ElexisUiEventListenerImpl(
-		Episode.class, EVENT_UPDATE | EVENT_DESELECTED) {
+	private final ElexisUiEventListenerImpl eeli_problem =
+		new ElexisUiEventListenerImpl(Episode.class, EVENT_UPDATE | EVENT_DESELECTED) {
 
-		@Override
-		public void runInUi(ElexisEvent ev){
-			switch (ev.getType()) {
-			case EVENT_UPDATE:
-				// problem change may affect current problems list and consultation
-				// TODO check if problem is part of current consultation
-				// work-around: just update the current patient and consultation
-				setPatient(actPatient);
-				updateKonsultation(!konsEditorHasFocus, false);
-				break;
-			case EVENT_DESELECTED:
-				problemsKTable.clearSelection();
-				break;
+			@Override
+			public void runInUi(ElexisEvent ev){
+				switch (ev.getType()) {
+				case EVENT_UPDATE:
+					// problem change may affect current problems list and consultation
+					// TODO check if problem is part of current consultation
+					// work-around: just update the current patient and consultation
+					setPatient(actPatient);
+					updateKonsultation(!konsEditorHasFocus, false);
+					break;
+				case EVENT_DESELECTED:
+					problemsKTable.clearSelection();
+					break;
+				}
+
 			}
-
-		}
-	};
+		};
 
 	private final ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(
 		Konsultation.class, EVENT_DELETE | EVENT_UPDATE | EVENT_SELECTED | EVENT_DESELECTED) {
@@ -433,37 +433,37 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	};
 
-	private final ElexisUiEventListenerImpl eeli_fall = new ElexisUiEventListenerImpl(Fall.class,
-		ElexisEvent.EVENT_SELECTED) {
-		@Override
-		public void runInUi(ElexisEvent ev){
-			Fall fall = (Fall) ev.getObject();
-			Patient patient = fall.getPatient();
+	private final ElexisUiEventListenerImpl eeli_fall =
+		new ElexisUiEventListenerImpl(Fall.class, ElexisEvent.EVENT_SELECTED) {
+			@Override
+			public void runInUi(ElexisEvent ev){
+				Fall fall = (Fall) ev.getObject();
+				Patient patient = fall.getPatient();
 
-			// falls aktuell ausgewaehlte Konsulation zu diesem Fall
-			// gehoert,
-			// diese setzen
-			Konsultation konsulation =
-				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			if (konsulation != null) {
-				if (konsulation.getFall().getId().equals(fall.getId())) {
-					// diese Konsulation gehoert zu diesem Patienten
+				// falls aktuell ausgewaehlte Konsulation zu diesem Fall
+				// gehoert,
+				// diese setzen
+				Konsultation konsulation =
+					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				if (konsulation != null) {
+					if (konsulation.getFall().getId().equals(fall.getId())) {
+						// diese Konsulation gehoert zu diesem Patienten
 
-					setPatient(patient);
-					setKonsultation(konsulation, true);
+						setPatient(patient);
+						setKonsultation(konsulation, true);
 
-					return;
+						return;
+					}
 				}
+
+				// sonst die aktuellste Konsulation des Falls setzen
+				konsulation = getTodaysLatestKons(fall);
+
+				setPatient(patient);
+				setKonsultation(konsulation, true);
+
 			}
-
-			// sonst die aktuellste Konsulation des Falls setzen
-			konsulation = getTodaysLatestKons(fall);
-
-			setPatient(patient);
-			setKonsultation(konsulation, true);
-
-		}
-	};
+		};
 	private final ElexisUiEventListenerImpl eeli_pat =
 		new ElexisUiEventListenerImpl(Patient.class) {
 
@@ -534,14 +534,14 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		};
 
-	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(
-		Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-		@Override
-		public void runInUi(ElexisEvent ev){
-			adaptMenus();
-		}
+	private final ElexisUiEventListenerImpl eeli_user =
+		new ElexisUiEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+			@Override
+			public void runInUi(ElexisEvent ev){
+				adaptMenus();
+			}
 
-	};
+		};
 
 	@Override
 	public void createPartControl(Composite parent){
@@ -654,8 +654,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						if (actKons != null) {
 							Result<IVerrechenbar> result = actKons.addLeistung(verrechenbar);
 							if (!result.isOK()) {
-								SWTHelper
-									.alert("Diese Verrechnung ist ungültig", result.toString());
+								SWTHelper.alert("Diese Verrechnung ist ungültig",
+									result.toString());
 							} else {
 								if (CoreHub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
 									Iatrix.CFG_CODE_SELECTION_AUTOCLOSE_DEFAULT)) {
@@ -664,9 +664,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 										getViewSite().getPage().showView(JournalView.ID);
 									} catch (Exception ex) {
 										ExHandler.handle(ex);
-										log.error(
-											"Fehler beim Öffnen von JournalView: "
-												+ ex.getMessage());
+										log.error("Fehler beim Öffnen von JournalView: "
+											+ ex.getMessage());
 									}
 								}
 							}
@@ -868,9 +867,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	}
 
 	private void createProblemsTable(Composite parent){
-		problemsKTable =
-			new MyKTable(parent, SWTX.MARK_FOCUS_HEADERS | SWTX.AUTO_SCROLL
-				| SWTX.FILL_WITH_DUMMYCOL | SWTX.EDIT_ON_KEY);
+		problemsKTable = new MyKTable(parent, SWTX.MARK_FOCUS_HEADERS | SWTX.AUTO_SCROLL
+			| SWTX.FILL_WITH_DUMMYCOL | SWTX.EDIT_ON_KEY);
 
 		tk.adapt(problemsKTable);
 
@@ -944,9 +942,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 											problemDiagnosesCodeSelectorTarget);
 									} catch (Exception ex) {
 										ExHandler.handle(ex);
-										log.error(
-											"Fehler beim Starten des Diagnosencodes "
-												+ ex.getMessage());
+										log.error("Fehler beim Starten des Diagnosencodes "
+											+ ex.getMessage());
 									}
 								}
 								break;
@@ -985,7 +982,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 								KTableCellEditor editor =
 									problemsTableModel.getCellEditor(col, row);
 								if (editor != null
-									&& (editor.getActivationSignals() & KTableCellEditor.KEY_RETURN_AND_SPACE) != 0
+									&& (editor.getActivationSignals()
+										& KTableCellEditor.KEY_RETURN_AND_SPACE) != 0
 									&& editor.isApplicable(KTableCellEditor.KEY_RETURN_AND_SPACE,
 										problemsKTable, col, row, null, e.character + "",
 										e.stateMask)) {
@@ -1015,8 +1013,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						try {
 							getViewSite().getPage().showView(DiagnosenView.ID);
 							// register as ICodeSelectorTarget
-							CodeSelectorHandler.getInstance().setCodeSelectorTarget(
-								problemDiagnosesCodeSelectorTarget);
+							CodeSelectorHandler.getInstance()
+								.setCodeSelectorTarget(problemDiagnosesCodeSelectorTarget);
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
 							log.error("Fehler beim Starten des Diagnosencodes " + ex.getMessage());
@@ -1164,12 +1162,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
 				@Override
 				public void linkActivated(HyperlinkEvent e){
-					KontaktSelektor ksl =
-						new KontaktSelektor(getSite().getShell(), Mandant.class,
-							"Mandant auswählen", "Auf wen soll diese Kons verrechnet werden?",
-							new String[] {
-								Mandant.FLD_SHORT_LABEL, Mandant.FLD_NAME1, Mandant.FLD_NAME2
-							});
+					KontaktSelektor ksl = new KontaktSelektor(getSite().getShell(), Mandant.class,
+						"Mandant auswählen", "Auf wen soll diese Kons verrechnet werden?",
+						new String[] {
+							Mandant.FLD_SHORT_LABEL, Mandant.FLD_NAME1, Mandant.FLD_NAME2
+					});
 					if (ksl.open() == Dialog.OK) {
 						actKons.setMandant((Mandant) ksl.getSelection());
 						updateKonsultation(true, false);
@@ -1202,13 +1199,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				Fall nFall = faelle[i];
 				Fall actFall = actKons.getFall();
 				if (!nFall.getId().equals(actFall.getId())) {
-					MessageDialog msd =
-						new MessageDialog(getViewSite().getShell(), "Fallzuordnung ändern",
-							Images.IMG_LOGO.getImage(), "Möchten Sie diese Behandlung vom Fall:\n'"
-								+ actFall.getLabel() + "' zum Fall:\n'" + nFall.getLabel()
-								+ "' transferieren?", MessageDialog.QUESTION, new String[] {
-								"Ja", "Nein"
-							}, 0);
+					MessageDialog msd = new MessageDialog(getViewSite().getShell(),
+						"Fallzuordnung ändern", Images.IMG_LOGO.getImage(),
+						"Möchten Sie diese Behandlung vom Fall:\n'" + actFall.getLabel()
+							+ "' zum Fall:\n'" + nFall.getLabel() + "' transferieren?",
+						MessageDialog.QUESTION, new String[] {
+							"Ja", "Nein"
+					}, 0);
 					if (msd.open() == 0) {
 						// TODO check compatibility of assigned problems
 						actKons.setFall(nFall);
@@ -1236,8 +1233,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		problemAssignmentViewer = CheckboxTableViewer.newCheckList(assignmentComposite, SWT.SINGLE);
 		Table problemAssignmentTable = problemAssignmentViewer.getTable();
 		tk.adapt(problemAssignmentTable);
-		problemAssignmentViewer.getControl().setLayoutData(
-			SWTHelper.getFillGridData(1, true, 1, true));
+		problemAssignmentViewer.getControl()
+			.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		problemAssignmentViewer.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement){
@@ -1343,19 +1340,16 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		text = new EnhancedTextField(konsultationTextComposite);
 		hXrefs = new Hashtable<String, IKonsExtension>();
 		@SuppressWarnings("unchecked")
-		List<IKonsExtension> listKonsextensions =
-			Extensions.getClasses(
-				Extensions.getExtensions(ExtensionPointConstantsUi.KONSEXTENSION), "KonsExtension", //$NON-NLS-1$ //$NON-NLS-2$
-				false);
+		List<IKonsExtension> listKonsextensions = Extensions.getClasses(
+			Extensions.getExtensions(ExtensionPointConstantsUi.KONSEXTENSION), "KonsExtension", //$NON-NLS-1$ //$NON-NLS-2$
+			false);
 		for (IKonsExtension x : listKonsextensions) {
 			String provider = x.connect(text);
 			hXrefs.put(provider, x);
 		}
 		@SuppressWarnings("unchecked")
-		List<IKonsMakro> makros =
-			Extensions.getClasses(
-				Extensions.getExtensions(ExtensionPointConstantsUi.KONSEXTENSION),
-				"KonsMakro", false); //$NON-NLS-1$
+		List<IKonsMakro> makros = Extensions.getClasses(
+			Extensions.getExtensions(ExtensionPointConstantsUi.KONSEXTENSION), "KonsMakro", false); //$NON-NLS-1$
 		text.setExternalMakros(makros);
 
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -1409,8 +1403,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			public void linkActivated(HyperlinkEvent e){
 				try {
 					getViewSite().getPage().showView(LeistungenView.ID);
-					CodeSelectorHandler.getInstance().setCodeSelectorTarget(
-						konsultationVerrechnungCodeSelectorTarget);
+					CodeSelectorHandler.getInstance()
+						.setCodeSelectorTarget(konsultationVerrechnungCodeSelectorTarget);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 					log.error("Fehler beim Starten des Leistungscodes " + ex.getMessage());
@@ -1818,10 +1812,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			.setEnabled(CoreHub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN));
 
 		// TODO this belongs to GlobalActions itself (action creator)
-		GlobalActions.delKonsAction.setEnabled(CoreHub.acl
-			.request(AccessControlDefaults.KONS_DELETE));
-		GlobalActions.neueKonsAction.setEnabled(CoreHub.acl
-			.request(AccessControlDefaults.KONS_CREATE));
+		GlobalActions.delKonsAction
+			.setEnabled(CoreHub.acl.request(AccessControlDefaults.KONS_DELETE));
+		GlobalActions.neueKonsAction
+			.setEnabled(CoreHub.acl.request(AccessControlDefaults.KONS_CREATE));
 	}
 
 	private void makeActions(){
@@ -1919,11 +1913,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				Point[] selection = problemsKTable.getCellSelection();
 				if (selection.length != 1) {
 					// no problem selected
-					SWTHelper
-						.alert(
-							"Fixmedikation hinzufügen",
-							"Sie können eine Fixmedikation nur dann hinzufügen,"
-								+ "wenn Sie in der entsprechenden Spalte der Patientenübersicht stehen.");
+					SWTHelper.alert("Fixmedikation hinzufügen",
+						"Sie können eine Fixmedikation nur dann hinzufügen,"
+							+ "wenn Sie in der entsprechenden Spalte der Patientenübersicht stehen.");
 					return;
 				}
 
@@ -1934,8 +1926,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					try {
 						getViewSite().getPage().showView(LeistungenView.ID);
 						// register as ICodeSelectorTarget
-						CodeSelectorHandler.getInstance().setCodeSelectorTarget(
-							problemFixmedikationCodeSelectorTarget);
+						CodeSelectorHandler.getInstance()
+							.setCodeSelectorTarget(problemFixmedikationCodeSelectorTarget);
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 						log.error("Fehler beim Anzeigen der Artikel " + ex.getMessage());
@@ -1983,9 +1975,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void run(){
-				Object sel =
-					((IStructuredSelection) problemAssignmentViewer.getSelection())
-						.getFirstElement();
+				Object sel = ((IStructuredSelection) problemAssignmentViewer.getSelection())
+					.getFirstElement();
 				if (sel != null) {
 					Problem problem = (Problem) sel;
 
@@ -2008,11 +1999,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		versionBackAction = new Action("Vorherige Version") {
 			@Override
 			public void run(){
-				if (MessageDialog
-					.openConfirm(
-						getViewSite().getShell(),
-						"Konsultationstext ersetzen",
-						"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine frühere Version desselben Eintrags ersetzen?")) {
+				if (MessageDialog.openConfirm(getViewSite().getShell(),
+					"Konsultationstext ersetzen",
+					"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine frühere Version desselben Eintrags ersetzen?")) {
 					setKonsText(actKons, displayedVersion - 1, false);
 					text.setDirty(true);
 				}
@@ -2021,11 +2010,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		versionFwdAction = new Action("nächste Version") {
 			@Override
 			public void run(){
-				if (MessageDialog
-					.openConfirm(
-						getViewSite().getShell(),
-						"Konsultationstext ersetzen",
-						"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine spätere Version desselben Eintrags ersetzen?")) {
+				if (MessageDialog.openConfirm(getViewSite().getShell(),
+					"Konsultationstext ersetzen",
+					"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine spätere Version desselben Eintrags ersetzen?")) {
 					setKonsText(actKons, displayedVersion + 1, false);
 					text.setDirty(true);
 				}
@@ -2135,9 +2122,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					Verrechnet verrechnet = (Verrechnet) sel;
 					String p = Integer.toString(verrechnet.getZahl());
 					InputDialog dlg =
-						new InputDialog(
-							getViewSite().getShell(),
-							"Zahl der Leistung ändern",
+						new InputDialog(getViewSite().getShell(), "Zahl der Leistung ändern",
 							"Geben Sie bitte die neue Anwendungszahl für die Leistung bzw. den Artikel ein",
 							p, null);
 					if (dlg.open() == Dialog.OK) {
@@ -2191,7 +2176,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// history display
 		showAllChargesAction = new Action("Alle Leistungen anzeigen", Action.AS_CHECK_BOX) {
 			{
-				setToolTipText("Leistungen aller Konsultationen anzeigen, nicht nur der ersten paar.");
+				setToolTipText(
+					"Leistungen aller Konsultationen anzeigen, nicht nur der ersten paar.");
 			}
 
 			@Override
@@ -2234,11 +2220,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					updateKonsVersionLabel();
 				} else {
 					// should never happen...
-					SWTHelper
-						.alert(
-							"Konsultation gesperrt",
-							"Der Text kann nicht gespeichert werden, weil die Konsultation durch einen anderen Benutzer gesperrt ist."
-								+ " (Dieses Problem ist ein Programmfehler. Bitte informieren Sie die Entwickler.)");
+					SWTHelper.alert("Konsultation gesperrt",
+						"Der Text kann nicht gespeichert werden, weil die Konsultation durch einen anderen Benutzer gesperrt ist."
+							+ " (Dieses Problem ist ein Programmfehler. Bitte informieren Sie die Entwickler.)");
 				}
 			}
 		}
@@ -2862,9 +2846,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 
 		String initialValue = PersistentObject.checkNull(actPatient.getBemerkung());
-		InputDialog dialog =
-			new InputDialog(getViewSite().getShell(), "Bemerkungen", "Bemerkungen eingeben",
-				initialValue, null);
+		InputDialog dialog = new InputDialog(getViewSite().getShell(), "Bemerkungen",
+			"Bemerkungen eingeben", initialValue, null);
 		if (dialog.open() == Window.OK) {
 			String text = dialog.getValue();
 			actPatient.setBemerkung(text);
@@ -2969,8 +2952,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		return true;
 	}
 
-	private class ProblemsTableLabelProvider implements ITableLabelProvider, ITableFontProvider,
-			ITableColorProvider {
+	private class ProblemsTableLabelProvider
+			implements ITableLabelProvider, ITableFontProvider, ITableColorProvider {
 		@Override
 		public void addListener(ILabelProviderListener listener){
 			// nothing to do
@@ -3029,12 +3012,12 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				lineSeparator = System.getProperty("line.separator");
 				text = diagnosen.replaceAll(Problem.TEXT_SEPARATOR, lineSeparator);
 				return text;
-				/*
-				 * case GESETZ: return problem.getGesetz();
-				 */
-				/*
-				 * case RECHNUNGSDATEN: return "not yet implemented";
-				 */
+			/*
+			 * case GESETZ: return problem.getGesetz();
+			 */
+			/*
+			 * case RECHNUNGSDATEN: return "not yet implemented";
+			 */
 			case THERAPIE:
 				String prescriptions = problem.getPrescriptionsAsText();
 				lineSeparator = System.getProperty("line.separator");
@@ -3406,8 +3389,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		private final Hashtable<Integer, Integer> colWidths = new Hashtable<Integer, Integer>();
 		private final Hashtable<Integer, Integer> rowHeights = new Hashtable<Integer, Integer>();
 
-		private final KTableCellRenderer fixedRenderer = new FixedCellRenderer(
-			FixedCellRenderer.STYLE_PUSH | FixedCellRenderer.INDICATION_SORT
+		private final KTableCellRenderer fixedRenderer =
+			new FixedCellRenderer(FixedCellRenderer.STYLE_PUSH | FixedCellRenderer.INDICATION_SORT
 				| FixedCellRenderer.INDICATION_FOCUS | FixedCellRenderer.INDICATION_CLICKED);
 
 		private final KTableCellRenderer textRenderer = new ProblemsTableTextCellRenderer();
@@ -3732,12 +3715,12 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						lineSeparator = System.getProperty("line.separator");
 						text = diagnosen.replaceAll(Problem.TEXT_SEPARATOR, lineSeparator);
 						return text;
-						/*
-						 * case GESETZ: return problem.getGesetz();
-						 */
-						/*
-						 * case RECHNUNGSDATEN: return "not yet implemented";
-						 */
+					/*
+					 * case GESETZ: return problem.getGesetz();
+					 */
+					/*
+					 * case RECHNUNGSDATEN: return "not yet implemented";
+					 */
 					case THERAPIE:
 						/*
 						 * String prescriptions = problem.getPrescriptionsAsText(); lineSeparator =
@@ -3746,9 +3729,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						 * text;
 						 */
 						return problem;
-						/*
-						 * case PROCEDERE: return problem.getProcedere();
-						 */
+					/*
+					 * case PROCEDERE: return problem.getProcedere();
+					 */
 					case STATUS:
 						if (problem.getStatus() == Episode.ACTIVE) {
 							return UiDesk.getImage(Iatrix.IMG_ACTIVE);
@@ -3959,8 +3942,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 
 		@Override
-		public void drawCell(GC gc, Rectangle rect, int col, int row, Object content,
-			boolean focus, boolean fixed, boolean clicked, KTableModel model){
+		public void drawCell(GC gc, Rectangle rect, int col, int row, Object content, boolean focus,
+			boolean fixed, boolean clicked, KTableModel model){
 			Color textColor;
 			Color backColor;
 			Color borderColor;
@@ -4027,8 +4010,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 
 		@Override
-		public void drawCell(GC gc, Rectangle rect, int col, int row, Object content,
-			boolean focus, boolean fixed, boolean clicked, KTableModel model){
+		public void drawCell(GC gc, Rectangle rect, int col, int row, Object content, boolean focus,
+			boolean fixed, boolean clicked, KTableModel model){
 			Color backColor;
 			Color borderColor;
 
@@ -4170,8 +4153,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 
 		@Override
-		public void drawCell(GC gc, Rectangle rect, int col, int row, Object content,
-			boolean focus, boolean fixed, boolean clicked, KTableModel model){
+		public void drawCell(GC gc, Rectangle rect, int col, int row, Object content, boolean focus,
+			boolean fixed, boolean clicked, KTableModel model){
 			Color textColor;
 			Color backColor;
 			Color borderColor;
@@ -4225,8 +4208,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				int prescriptionsHeight = gc.textExtent(prescriptionsText).y;
 
 				gc.setForeground(borderColor);
-				gc.drawLine(rect.x, rect.y + prescriptionsHeight + 1, rect.x + rect.width, rect.y
-					+ prescriptionsHeight + 1);
+				gc.drawLine(rect.x, rect.y + prescriptionsHeight + 1, rect.x + rect.width,
+					rect.y + prescriptionsHeight + 1);
 
 				gc.setBackground(backColor);
 				gc.setForeground(textColor);
@@ -4591,8 +4574,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				return -1;
 			}
 
-			return PersistentObject.checkNull(o1.getStartDate()).compareTo(
-				PersistentObject.checkNull(o2.getStartDate()));
+			return PersistentObject.checkNull(o1.getStartDate())
+				.compareTo(PersistentObject.checkNull(o2.getStartDate()));
 		}
 
 		@Override
@@ -4616,8 +4599,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				return -1;
 			}
 
-			return PersistentObject.checkNull(o1.getNumber()).compareTo(
-				PersistentObject.checkNull(o2.getNumber()));
+			return PersistentObject.checkNull(o1.getNumber())
+				.compareTo(PersistentObject.checkNull(o2.getNumber()));
 		}
 
 		@Override
@@ -4652,8 +4635,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			if (status1 == status2) {
 				// same status, compare date
-				return PersistentObject.checkNull(o1.getStartDate()).compareTo(
-					PersistentObject.checkNull(o2.getStartDate()));
+				return PersistentObject.checkNull(o1.getStartDate())
+					.compareTo(PersistentObject.checkNull(o2.getStartDate()));
 			} else if (status1 == Episode.ACTIVE) {
 				return -1;
 			} else {

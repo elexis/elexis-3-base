@@ -108,72 +108,69 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 
 	private ViewMenus menus;
 
-	private final ElexisEventListenerImpl eeli_problem =
-		new ElexisEventListenerImpl(Episode.class, ElexisEvent.EVENT_SELECTED
-			| ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_UPDATE) {
+	private final ElexisEventListenerImpl eeli_problem = new ElexisEventListenerImpl(Episode.class,
+		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_UPDATE) {
 
-			@Override
-			public void run(ElexisEvent ev){
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					PersistentObject obj = ev.getObject();
-					if (obj instanceof Episode) {
-						Episode episode = (Episode) obj;
-						setProblem(Problem.convertEpisodeToProblem(episode));
-					} else {
-						// not an episode object, silently ignore
-						setProblem(null);
-					}
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+		@Override
+		public void run(ElexisEvent ev){
+			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+				PersistentObject obj = ev.getObject();
+				if (obj instanceof Episode) {
+					Episode episode = (Episode) obj;
+					setProblem(Problem.convertEpisodeToProblem(episode));
+				} else {
+					// not an episode object, silently ignore
 					setProblem(null);
-				} else if (ev.getType() == ElexisEvent.EVENT_UPDATE) {
-					PersistentObject obj = ev.getObject();
-					if (obj instanceof Episode) {
-						Episode updatedEpisode = (Episode) obj;
-						Episode actEpisode = actProblem;
-						if (updatedEpisode.getId().equals(actEpisode.getId())) {
-							setProblem(actProblem);
+				}
+			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+				setProblem(null);
+			} else if (ev.getType() == ElexisEvent.EVENT_UPDATE) {
+				PersistentObject obj = ev.getObject();
+				if (obj instanceof Episode) {
+					Episode updatedEpisode = (Episode) obj;
+					Episode actEpisode = actProblem;
+					if (updatedEpisode.getId().equals(actEpisode.getId())) {
+						setProblem(actProblem);
+					}
+				} else {
+					// not an episode object, silently ignore
+					setProblem(null);
+				}
+			}
+		}
+	};
+
+	private final ElexisEventListenerImpl eeli_patient = new ElexisEventListenerImpl(Patient.class,
+		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED) {
+
+		@Override
+		public void run(ElexisEvent ev){
+			// make sure the current problem belongs to the newly selected patient
+			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+				PersistentObject obj = ev.getObject();
+				if (obj instanceof Patient) {
+					Patient selectedPatient = (Patient) obj;
+					if (actProblem != null) {
+						// check whether Problem matches the currently selected patient
+						if (selectedPatient != null
+							&& !actProblem.getPatient().getId().equals(selectedPatient.getId())) {
+							// selected patient doesn't match the current problem's patient
+							setProblem(null);
 						}
 					} else {
-						// not an episode object, silently ignore
-						setProblem(null);
-					}
-				}
-			}
-		};
-
-	private final ElexisEventListenerImpl eeli_patient =
-		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED
-			| ElexisEvent.EVENT_DESELECTED) {
-
-			@Override
-			public void run(ElexisEvent ev){
-				// make sure the current problem belongs to the newly selected patient
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					PersistentObject obj = ev.getObject();
-					if (obj instanceof Patient) {
-						Patient selectedPatient = (Patient) obj;
-						if (actProblem != null) {
-							// check whether Problem matches the currently selected patient
-							if (selectedPatient != null
-								&& !actProblem.getPatient().getId().equals(selectedPatient.getId())) {
-								// selected patient doesn't match the current problem's patient
-								setProblem(null);
-							}
-						} else {
-							// re-select the previously selected problem
-							// actually, this should never occur, but currently happens since
-							// there is no responsible event manager for Episode events yet
-							Problem previousProblem = IatrixEventHelper.getSelectedProblem();
-							if (selectedPatient != null
-								&& previousProblem.getPatient().getId().equals(
-									selectedPatient.getId())) {
-								setProblem(previousProblem);
-							}
+						// re-select the previously selected problem
+						// actually, this should never occur, but currently happens since
+						// there is no responsible event manager for Episode events yet
+						Problem previousProblem = IatrixEventHelper.getSelectedProblem();
+						if (selectedPatient != null && previousProblem.getPatient().getId()
+							.equals(selectedPatient.getId())) {
+							setProblem(previousProblem);
 						}
 					}
 				}
 			}
-		};
+		}
+	};
 
 	@Override
 	public void createPartControl(Composite parent){
@@ -188,9 +185,8 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 		SashForm mainSash = new SashForm(form.getBody(), SWT.VERTICAL);
 		mainSash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
-		dauermedikationSection =
-			tk.createExpandableComposite(mainSash, ExpandableComposite.EXPANDED
-				| ExpandableComposite.TWISTIE);
+		dauermedikationSection = tk.createExpandableComposite(mainSash,
+			ExpandableComposite.EXPANDED | ExpandableComposite.TWISTIE);
 		dauermedikationSection.setText("Fixmedikation");
 
 		Composite dauermedikationComposite = tk.createComposite(dauermedikationSection);
@@ -253,12 +249,12 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void dispose(){
-			// nothing to do
+				// nothing to do
 			}
 
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-			// nothing to do
+				// nothing to do
 			}
 		});
 		diagnosenViewer.setLabelProvider(new LabelProvider() {
@@ -297,12 +293,12 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void dispose(){
-			// nothing to do
+				// nothing to do
 			}
 
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-			// nothing to do
+				// nothing to do
 			}
 		});
 		konsultationenViewer.setLabelProvider(new LabelProvider() {
@@ -339,17 +335,17 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 			/* Mausbewegungen mit gedrückter Taste sind uns egal */
 			@Override
 			public void dragLeave(DropTargetEvent event){
-			/* leer */
+				/* leer */
 			}
 
 			@Override
 			public void dragOperationChanged(DropTargetEvent event){
-			/* leer */
+				/* leer */
 			}
 
 			@Override
 			public void dragOver(DropTargetEvent event){
-			/* leer */
+				/* leer */
 			}
 
 			/* Erst das Loslassen interessiert uns wieder */
@@ -375,7 +371,7 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void dropAccept(DropTargetEvent event){
-			/* leer */
+				/* leer */
 			}
 		});
 
@@ -389,7 +385,7 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 
 	@Override
 	public void setFocus(){
-	// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 
 	}
 
@@ -453,7 +449,7 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 
 	@Override
 	public void activation(boolean mode){
-	// do nothing
+		// do nothing
 	}
 
 	@Override
@@ -514,8 +510,8 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 		actProblem = problem;
 
 		if (actProblem != null) {
-			form.setText("Problem " + problem.getLabel() + " von "
-				+ problem.getPatient().getLabel());
+			form.setText(
+				"Problem " + problem.getLabel() + " von " + problem.getPatient().getLabel());
 		} else {
 			form.setText("Kein Problem ausgewählt");
 		}

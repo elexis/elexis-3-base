@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * 	   G. Weirich - initial implementation
  *     D. Lutz    - adapted from Patient to Problem
- * 
+ *
  * Sponsors:
  *     Dr. Peter Schönbucher, Luzern
- *     
+ *
  ******************************************************************************/
 package org.iatrix.widgets;
 
@@ -27,19 +27,13 @@ import org.eclipse.ui.IViewSite;
 import org.iatrix.actions.IatrixEventHelper;
 import org.iatrix.data.Problem;
 
-import ch.elexis.core.ui.UiDesk;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.dialogs.MediDetailDialog;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Artikel;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Prescription;
-import ch.elexis.data.Rezept;
 import ch.elexis.core.ui.util.ListDisplay;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
@@ -47,6 +41,11 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.views.RezeptBlatt;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
+import ch.elexis.data.Artikel;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Prescription;
+import ch.elexis.data.Rezept;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -56,12 +55,12 @@ import ch.rgw.tools.TimeTool;
  * Display and let the user modify the medication of the currently selected problem. This is a
  * pop-in-Replacement for DauerMediDisplay. To calculate the daily cost wie accept the forms 1-1-1-1
  * and 1x1, 2x3 and so on
- * 
+ *
  * This class is actually a specialized version fo FixMediDisplay. It acts on Problems instead of on
  * Patients.
- * 
+ *
  * @author gerry
- * 
+ *
  */
 public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 	private static final String TTCOST = Messages.getString("FixMediDisplay.DailyCost"); //$NON-NLS-1$
@@ -74,12 +73,12 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 	static final String LISTE = Messages.getString("FixMediDisplay.UsageList"); //$NON-NLS-1$
 	static final String HINZU = Messages.getString("FixMediDisplay.AddItem"); //$NON-NLS-1$
 	static final String KOPIEREN = Messages.getString("FixMediDisplay.Copy"); //$NON-NLS-1$
-	
+
 	// DBUG
 	public org.eclipse.swt.widgets.List getList(){
 		return list;
 	}
-	
+
 	public ProblemFixMediDisplay(Composite parent, IViewSite s){
 		super(parent, SWT.NONE, null);
 		lCost = new Label(this, SWT.NONE);
@@ -94,10 +93,10 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			removeMedicationAction);
 		setDLDListener(dlisten);
 		target =
-			new PersistentObjectDropTarget(
-				Messages.getString("FixMediDisplay.FixMedikation"), this, //$NON-NLS-1$
+			new PersistentObjectDropTarget(Messages.getString("FixMediDisplay.FixMedikation"), this, //$NON-NLS-1$
 				new PersistentObjectDropTarget.IReceiver() {
-					
+
+					@Override
 					public boolean accept(PersistentObject o){
 						if (o instanceof Prescription) {
 							return true;
@@ -107,33 +106,33 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 						}
 						return false;
 					}
-					
+
+					@Override
 					public void dropped(PersistentObject o, DropTargetEvent e){
 						Problem problem = IatrixEventHelper.getSelectedProblem();
 						if (problem != null) {
 							if (o instanceof Artikel) {
 								Artikel artikel = (Artikel) o;
-								
-								Prescription prescription =
-									new Prescription(artikel, problem.getPatient(),
-										StringTool.leer, StringTool.leer);
-								prescription.set(Prescription.FLD_DATE_FROM, new TimeTool()
-									.toString(TimeTool.DATE_GER));
+
+								Prescription prescription = new Prescription(artikel,
+									problem.getPatient(), StringTool.leer, StringTool.leer);
+								prescription.set(Prescription.FLD_DATE_FROM,
+									new TimeTool().toString(TimeTool.DATE_GER));
 								problem.addPrescription(prescription);
-								
+
 								// Let the user set the Prescription properties
-								
+
 								MediDetailDialog dlg =
 									new MediDetailDialog(getShell(), prescription);
 								dlg.open();
-								
+
 								// tell other viewers that something has changed
 								IatrixEventHelper.updateProblem(problem);
-								
+
 								reload();
 							} else if (o instanceof Prescription) {
 								Prescription pre = (Prescription) o;
-								
+
 								// find existing prescription
 								List<Prescription> existing = problem.getPrescriptions();
 								for (Prescription prescription : existing) {
@@ -142,30 +141,31 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 										return;
 									}
 								}
-								
-								Prescription now =
-									new Prescription(pre.getArtikel(), problem.getPatient(), pre
-										.getDosis(), pre.getBemerkung());
-								now.set(Prescription.FLD_DATE_FROM, new TimeTool()
-									.toString(TimeTool.DATE_GER));
+
+								Prescription now = new Prescription(pre.getArtikel(),
+									problem.getPatient(), pre.getDosis(), pre.getBemerkung());
+								now.set(Prescription.FLD_DATE_FROM,
+									new TimeTool().toString(TimeTool.DATE_GER));
 								problem.addPrescription(now);
-								
+
 								// tell other viewers that something has changed
 								IatrixEventHelper.updateProblem(problem);
-								
+
 								// self.add(now);
 								reload();
 							}
 						} else {
-							SWTHelper.alert(Messages
-								.getString("ProblemFixMediDisplay.AlertNoProblemSelectedTitle"),
+							SWTHelper.alert(
+								Messages
+									.getString("ProblemFixMediDisplay.AlertNoProblemSelectedTitle"),
 								Messages
 									.getString("ProblemFixMediDisplay.AlertNoProblemSelectedText"));
 						}
 					}
 				});
 		new PersistentObjectDragSource(list, new PersistentObjectDragSource.ISelectionRenderer() {
-			
+
+			@Override
 			public List<PersistentObject> getSelection(){
 				Prescription pr = ProblemFixMediDisplay.this.getSelection();
 				ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>(1);
@@ -175,9 +175,9 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 				return ret;
 			}
 		});
-		
+
 	}
-	
+
 	public void reload(){
 		clear();
 		Problem problem = IatrixEventHelper.getSelectedProblem();
@@ -190,7 +190,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 				problem = null;
 			}
 		}
-		
+
 		double cost = 0.0;
 		boolean canCalculate = true;
 		if (problem != null) {
@@ -249,7 +249,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			}
 		}
 	}
-	
+
 	private float getNum(String n){
 		if (n.indexOf('/') != -1) {
 			String[] bruch = n.split(StringConstants.SLASH);
@@ -260,24 +260,25 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			return Float.parseFloat(n);
 		}
 	}
-	
+
 	class DauerMediListener implements LDListener {
 		IViewSite site;
-		
+
 		DauerMediListener(IViewSite s){
 			site = s;
 		}
-		
+
+		@Override
 		public void hyperlinkActivated(String l){
 			try {
 				if (l.equals(HINZU)) {
 					site.getPage().showView(LeistungenView.ID);
 					CodeSelectorHandler.getInstance().setCodeSelectorTarget(target);
 				} else if (l.equals(LISTE)) {
-					
+
 					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
-					rpb.createEinnahmeliste(ElexisEventDispatcher.getSelectedPatient(), getAll()
-						.toArray(new Prescription[0]));
+					rpb.createEinnahmeliste(ElexisEventDispatcher.getSelectedPatient(),
+						getAll().toArray(new Prescription[0]));
 				} else if (l.equals(REZEPT)) {
 					Rezept rp = new Rezept(ElexisEventDispatcher.getSelectedPatient());
 					for (Prescription p : getAll().toArray(new Prescription[0])) {
@@ -295,9 +296,10 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}
-			
+
 		}
-		
+
+		@Override
 		public String getLabel(Object o){
 			if (o instanceof Prescription) {
 				return ((Prescription) o).getLabel();
@@ -305,72 +307,72 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			return o.toString();
 		}
 	}
-	
+
 	private void makeActions(){
-		
-		changeMedicationAction =
-			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
-				.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
-				{
-					setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
-					setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
+
+		changeMedicationAction = new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,
+			Messages.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
+			{
+				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
+				setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
+			}
+
+			@Override
+			public void doRun(){
+				Prescription pr = getSelection();
+				if (pr != null) {
+					new MediDetailDialog(getShell(), pr).open();
+					reload();
+					redraw();
 				}
-				
-				public void doRun(){
-					Prescription pr = getSelection();
-					if (pr != null) {
-						new MediDetailDialog(getShell(), pr).open();
-						reload();
-						redraw();
+			}
+		};
+
+		stopMedicationAction = new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,
+			Messages.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
+			{
+				setImageDescriptor(Images.IMG_REMOVEITEM.getImageDescriptor());
+				setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
+			}
+
+			@Override
+			public void doRun(){
+				Prescription pr = getSelection();
+				if (pr != null) {
+					remove(pr);
+					pr.delete(); // this does not delete but stop the Medication. Sorry for
+					// that
+					reload();
+				}
+			}
+		};
+
+		removeMedicationAction = new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION,
+			Messages.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
+			{
+				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
+				setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
+			}
+
+			@Override
+			public void doRun(){
+				Prescription pr = getSelection();
+				if (pr != null) {
+					// remove prescription from problem
+					Problem problem = IatrixEventHelper.getSelectedProblem();
+					if (problem != null) {
+						problem.removePrescription(pr);
 					}
+
+					remove(pr);
+					pr.remove(); // this does, in fact, remove the medication from the
+					// database
+
+					reload();
 				}
-			};
-		
-		stopMedicationAction =
-			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
-				.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
-				{
-					setImageDescriptor(Images.IMG_REMOVEITEM.getImageDescriptor());
-					setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
-				}
-				
-				public void doRun(){
-					Prescription pr = getSelection();
-					if (pr != null) {
-						remove(pr);
-						pr.delete(); // this does not delete but stop the Medication. Sorry for
-						// that
-						reload();
-					}
-				}
-			};
-		
-		removeMedicationAction =
-			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, Messages
-				.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
-				{
-					setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
-					setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
-				}
-				
-				public void doRun(){
-					Prescription pr = getSelection();
-					if (pr != null) {
-						// remove prescription from problem
-						Problem problem = IatrixEventHelper.getSelectedProblem();
-						if (problem != null) {
-							problem.removePrescription(pr);
-						}
-						
-						remove(pr);
-						pr.remove(); // this does, in fact, remove the medication from the
-						// database
-						
-						reload();
-					}
-				}
-			};
-		
+			}
+		};
+
 	}
-	
+
 }

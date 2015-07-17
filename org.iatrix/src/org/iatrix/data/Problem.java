@@ -40,7 +40,6 @@ import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
-
 /**
  * Datentyp für Problemliste.
  *
@@ -102,17 +101,18 @@ public class Problem extends Episode {
 		"CREATE TABLE " + PROBLEM_BEHDL_TABLENAME + " (" + "ID            VARCHAR(25) primary key,"
 			+ "ProblemID     VARCHAR(25)," + "BehandlungsID VARCHAR(25)" + ");"
 			+ "CREATE INDEX problembehdl1 on " + PROBLEM_BEHDL_TABLENAME + " (ProblemID);" + ""
-			+ "CREATE TABLE " + PROBLEM_DG_TABLENAME + " (" + "ID				VARCHAR(25) primary key,"
-			+ "ProblemID      VARCHAR(25)," + "DiagnoseID		VARCHAR(25)" + ");" + ""
-			+ "CREATE INDEX problemdg1 on " + PROBLEM_DG_TABLENAME + " (ProblemID);" + ""
-			+ "CREATE TABLE " + PROBLEM_DAUERMEDIKATION_TABLENAME + " ("
+			+ "CREATE TABLE " + PROBLEM_DG_TABLENAME + " ("
+			+ "ID				VARCHAR(25) primary key," + "ProblemID      VARCHAR(25),"
+			+ "DiagnoseID		VARCHAR(25)" + ");" + "" + "CREATE INDEX problemdg1 on "
+			+ PROBLEM_DG_TABLENAME + " (ProblemID);" + "" + "CREATE TABLE "
+			+ PROBLEM_DAUERMEDIKATION_TABLENAME + " ("
 			+ "ID                VARCHAR(25) primary key," + "ProblemID         VARCHAR(25),"
 			+ "DauermedikationID VARCHAR(25)" + ");" + ""
 			+ "CREATE INDEX problemdauermedikation1 on " + PROBLEM_DAUERMEDIKATION_TABLENAME
 			+ " (ProblemID);";
-	/*
-	 * ""+ "INSERT INTO " + PROBLEM_TABLENAME + " (ID) VALUES ('__SETUP__');";
-	 */
+			/*
+			 * ""+ "INSERT INTO " + PROBLEM_TABLENAME + " (ID) VALUES ('__SETUP__');";
+			 */
 
 	/*
 	 * static{ addMapping(PROBLEM_TABLENAME, "PatientID", "EpisodeID", "Bezeichnung", "Nummer",
@@ -206,21 +206,18 @@ public class Problem extends Episode {
 
 			if (vi.isOlder(IATRIX_DB_VERSION_ENCOUNTERS)) {
 				/* We changed to use Encounters and Episode's diagnosis */
-				SWTHelper
-					.showInfo("Aktualisierung DB Iatrix",
-						"DB Iatrix wird nachfolgend aktualisiert. Bitte Elexis nicht beenden, bis Sie informiert werden.");
+				SWTHelper.showInfo("Aktualisierung DB Iatrix",
+					"DB Iatrix wird nachfolgend aktualisiert. Bitte Elexis nicht beenden, bis Sie informiert werden.");
 
 				boolean success1 = convertProblemAssignmentsToEncounters();
 				boolean success2 = convertIatrixDiagnosisToEpisodeDiagnosis();
 
 				if (!(success1 && success2)) {
-					SWTHelper
-						.showError(
-							"Fehler bei Aktualisierung DB Iatrix",
-							"Bei der Aktualisierung der DB Iatrix sind Fehler aufgetreten. "
-								+ "Bitte benachrichtigen Sie Ihren Elexis-Dienstleister, um das Problem "
-								+ "zu beheben, bevor Sie weiter arbeiten. Bitte beenden Sie nun Elexis. "
-								+ "Informationen zum Problem sind in der Log-Datei zu finden.");
+					SWTHelper.showError("Fehler bei Aktualisierung DB Iatrix",
+						"Bei der Aktualisierung der DB Iatrix sind Fehler aufgetreten. "
+							+ "Bitte benachrichtigen Sie Ihren Elexis-Dienstleister, um das Problem "
+							+ "zu beheben, bevor Sie weiter arbeiten. Bitte beenden Sie nun Elexis. "
+							+ "Informationen zum Problem sind in der Log-Datei zu finden.");
 				} else {
 					// success
 					CoreHub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION_ENCOUNTERS);
@@ -359,9 +356,8 @@ public class Problem extends Episode {
 					IDiagnose diagnose = null;
 
 					Stm stm2 = j.getStatement();
-					ResultSet rs2 =
-						stm2.query("SELECT DG_CODE, KLASSE FROM DIAGNOSEN WHERE ID = "
-							+ JdbcLink.wrap(diagnoseId));
+					ResultSet rs2 = stm2.query("SELECT DG_CODE, KLASSE FROM DIAGNOSEN WHERE ID = "
+						+ JdbcLink.wrap(diagnoseId));
 					if (rs2.next()) {
 						String code = rs2.getString(1);
 						String klasse = rs2.getString(2);
@@ -417,7 +413,7 @@ public class Problem extends Episode {
 	 * Der parameterlose Konstruktor wird nur von der Factory gebraucht und sollte nie public sein.
 	 */
 	protected Problem(){
-	// empty
+		// empty
 	}
 
 	/**
@@ -876,18 +872,16 @@ public class Problem extends Episode {
 	 * @return true if the Prescription has been added, else otherwise
 	 */
 	public boolean addPrescription(Prescription prescription){
-		String exists =
-			j.queryString("SELECT ID FROM " + PROBLEM_DAUERMEDIKATION_TABLENAME
-				+ " WHERE ProblemID = " + getWrappedId() + " AND DauermedikationID = "
-				+ prescription.getWrappedId());
+		String exists = j.queryString(
+			"SELECT ID FROM " + PROBLEM_DAUERMEDIKATION_TABLENAME + " WHERE ProblemID = "
+				+ getWrappedId() + " AND DauermedikationID = " + prescription.getWrappedId());
 		if (StringTool.isNothing(exists)) {
 			String problemDaueredikationId = StringTool.unique("problemdauermedikation");
 			StringBuilder sql = new StringBuilder(200);
-			sql.append(
-				"INSERT INTO " + PROBLEM_DAUERMEDIKATION_TABLENAME
-					+ " (ID, ProblemID, DauermedikationID) VALUES (").append(
-				JdbcLink.wrap(problemDaueredikationId)).append(",").append(getWrappedId()).append(
-				",").append(prescription.getWrappedId()).append(")");
+			sql.append("INSERT INTO " + PROBLEM_DAUERMEDIKATION_TABLENAME
+				+ " (ID, ProblemID, DauermedikationID) VALUES (")
+				.append(JdbcLink.wrap(problemDaueredikationId)).append(",").append(getWrappedId())
+				.append(",").append(prescription.getWrappedId()).append(")");
 			j.exec(sql.toString());
 
 			return true;
@@ -904,9 +898,9 @@ public class Problem extends Episode {
 	 */
 	public void removePrescription(Prescription prescription){
 		StringBuilder sql = new StringBuilder(200);
-		sql.append("DELETE FROM " + PROBLEM_DAUERMEDIKATION_TABLENAME).append(
-			" WHERE ProblemID = " + getWrappedId()).append(" AND").append(
-			" DauermedikationID = " + prescription.getWrappedId());
+		sql.append("DELETE FROM " + PROBLEM_DAUERMEDIKATION_TABLENAME)
+			.append(" WHERE ProblemID = " + getWrappedId()).append(" AND")
+			.append(" DauermedikationID = " + prescription.getWrappedId());
 		j.exec(sql.toString());
 	}
 
@@ -919,8 +913,8 @@ public class Problem extends Episode {
 		ArrayList<Prescription> prescriptions = new ArrayList<Prescription>();
 
 		StringBuilder sql = new StringBuilder(200);
-		sql.append("SELECT DauermedikationID FROM " + PROBLEM_DAUERMEDIKATION_TABLENAME).append(
-			" WHERE ProblemID = " + getWrappedId());
+		sql.append("SELECT DauermedikationID FROM " + PROBLEM_DAUERMEDIKATION_TABLENAME)
+			.append(" WHERE ProblemID = " + getWrappedId());
 
 		Stm stm = j.getStatement();
 		ResultSet rs = stm.query(sql.toString());

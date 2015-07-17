@@ -106,8 +106,8 @@ public class KonsListComposite {
 				StringBuilder sb = new StringBuilder();
 				int z = verrechnet.getZahl();
 				Money preis = new Money(verrechnet.getEffPreis()).multiply(z);
-				sb.append(z).append(" ").append(name).append(" (")
-					.append(preis.getAmountAsString()).append(")");
+				sb.append(z).append(" ").append(name).append(" (").append(preis.getAmountAsString())
+					.append(")");
 				return sb.toString();
 			}
 		};
@@ -388,9 +388,8 @@ public class KonsListComposite {
 				int width;
 
 				// for hTitle and lFall, min/max are identical
-				width =
-					row.hTitle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x
-						+ row.lFall.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x;
+				width = row.hTitle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x
+					+ row.lFall.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x;
 				if (width > totalWidth) {
 					totalWidth = width;
 				}
@@ -510,7 +509,8 @@ public class KonsListComposite {
 			} else {
 				// not yet set
 
-				int cfgSashXPercentLeft = CoreHub.localCfg.get(CFG_SASH_X_PERCENT_LEFT, SASH_X_NOTSET);
+				int cfgSashXPercentLeft =
+					CoreHub.localCfg.get(CFG_SASH_X_PERCENT_LEFT, SASH_X_NOTSET);
 				if (cfgSashXPercentLeft != SASH_X_NOTSET && cfgSashXPercentLeft < 100) {
 					sashXLeft = percentToAbsolute(width, cfgSashXPercentLeft);
 				} else {

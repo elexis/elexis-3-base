@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    G. Weirich - initial implementation
  *    D. Lutz    - simplified read-only version
- * 
+ *
  * Sponsors:
  *     Dr. Peter Schönbucher, Luzern
  ******************************************************************************/
@@ -36,24 +36,24 @@ import ch.elexis.core.ui.util.SWTHelper;
  * Ein StyledText mit erweiterten Eigenschaften. Kann XML-Dokumente von SAmDaS-Typ lesen. Aus
  * Kompatibiltätsgründen können auch reine Texteinträge gelesen werden, werden beim Speichern aber
  * nach XML gewandelt.
- * 
+ *
  * @author Gerry
- * 
+ *
  */
 public class EnhancedTextFieldRO extends Composite {
 	StyledText text;
-	
+
 	List<Samdas.XRef> links;
 	List<Samdas.Markup> markups;
 	List<Samdas.Range> ranges;
 	Samdas samdas;
 	Samdas.Record record;
-	
+
 	private static Pattern outline = Pattern.compile("^\\S+:", Pattern.MULTILINE);
 	private static Pattern bold = Pattern.compile("\\*\\S+\\*");
 	private static Pattern italic = Pattern.compile("\\/\\S+\\/");
 	private static Pattern underline = Pattern.compile("_\\S+_");
-	
+
 	public EnhancedTextFieldRO(Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new TableWrapLayout());
@@ -61,7 +61,7 @@ public class EnhancedTextFieldRO extends Composite {
 		text.setLayoutData(SWTHelper.getFillTableWrapData(1, true, 1, true));
 		text.setWordWrap(true);
 	}
-	
+
 	/**
 	 * Text formatieren (d.h. Style-Ranges erstellen. Es wird unterschieden zwischen dem KG-Eintrag
 	 * alten Stils und dem neuen XML-basierten format.
@@ -76,9 +76,9 @@ public class EnhancedTextFieldRO extends Composite {
 			record = samdas.getRecord();
 			text.setText(tx);
 		}
-		
+
 		// Überschriften formatieren
-		
+
 		// obsoleted by markups!
 		Matcher matcher = outline.matcher(tx);
 		while (matcher.find() == true) {
@@ -88,7 +88,7 @@ public class EnhancedTextFieldRO extends Composite {
 			n.fontStyle = SWT.BOLD;
 			text.setStyleRange(n);
 		}
-		
+
 		matcher = bold.matcher(tx);
 		while (matcher.find() == true) {
 			StyleRange n = new StyleRange();
@@ -105,7 +105,7 @@ public class EnhancedTextFieldRO extends Composite {
 			n.fontStyle = SWT.ITALIC;
 			text.setStyleRange(n);
 		}
-		
+
 		matcher = underline.matcher(tx);
 		while (matcher.find() == true) {
 			StyleRange n = new StyleRange();
@@ -116,7 +116,7 @@ public class EnhancedTextFieldRO extends Composite {
 		}
 		// Obsoleted, do not rely
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	void doFormatXML(String tx){
 		samdas = new Samdas(tx);
@@ -151,21 +151,21 @@ public class EnhancedTextFieldRO extends Composite {
 				// fehlerhaftes Markup entfernen.
 				record.remove(m);
 			}
-			
+
 		}
-		
+
 		/*
 		 * for(Samdas.XRef xref:xrefs){ IKonsExtension xProvider=hXrefs.get(xref.getProvider());
 		 * if(xProvider==null){ continue; } StyleRange n=new StyleRange(); n.start=xref.getPos();
 		 * n.length=xref.getLength();
 		 * if(xProvider.doLayout(n,xref.getProvider(),xref.getID())==true){ links.add(xref); }
-		 * 
+		 *
 		 * if((n.start+n.length)>text.getCharCount()){ n.length=text.getCharCount()-n.start; }
 		 * if((n.length>0) && (n.start>=0)){ text.setStyleRange(n); ranges.add(xref); }else{
 		 * xref.setPos(0); } }
 		 */
 	}
-	
+
 	/**
 	 * Liefert den Inhalt des Textfields als jdom-Document zurück
 	 */
@@ -174,7 +174,7 @@ public class EnhancedTextFieldRO extends Composite {
 		// StyleRange[] rgs=text.getStyleRanges();
 		return samdas.getDocument();
 	}
-	
+
 	/**
 	 * Liefert den Inhalt des Textfelds als XML-Text zurück
 	 */
@@ -182,10 +182,10 @@ public class EnhancedTextFieldRO extends Composite {
 		XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
 		return xo.outputString(getDocument());
 	}
-	
+
 	/**
 	 * Markup erstellen
-	 * 
+	 *
 	 * @param type
 	 *            '*' bold, '/' italic, '_', underline
 	 */
@@ -203,21 +203,21 @@ public class EnhancedTextFieldRO extends Composite {
 		record.add(markup);
 		doFormat(getContentsAsXML());
 	}
-	
+
 	/**
 	 * Den Text mit len zeichen ab start durch nt ersetzen
 	 */
 	public void replace(int start, int len, String nt){
 		text.replaceTextRange(start, len, nt);
 	}
-	
+
 	public void setText(String ntext){
 		doFormat(ntext);
 	}
-	
+
 	/**
 	 * Liefert das zugrundeliegende Text-Control zurueck
-	 * 
+	 *
 	 * @return das zugrundeliegende Text-Control
 	 */
 	public Control getControl(){

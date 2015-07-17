@@ -4,12 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     D. Lutz - initial API and implementation
  *      Gerry Weirich - angepasst an neues Rezeptmodell
  *                    - angepasst an neues Eventmodell
- * 
+ *
  * Sponsors:
  *     Dr. Peter Schönbucher, Luzern
  ******************************************************************************/
@@ -52,65 +52,66 @@ import org.eclipse.ui.part.ViewPart;
 import org.iatrix.actions.IatrixEventHelper;
 import org.iatrix.data.Problem;
 import org.iatrix.widgets.ProblemFixMediDisplay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.codesystems.DiagnosenView;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Episode;
-import ch.elexis.core.ui.util.Log;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.core.ui.util.ViewMenus;
-import ch.elexis.core.ui.views.codesystems.DiagnosenView;
 import ch.rgw.tools.ExHandler;
 
 /**
  * View for editing Problem properties.
- * 
+ *
  * TODO When a Prescription is removed from the Patient's Prescriptions (e. g. in the
  * PatientDetailView), the Prescription should be removed from the Problem, too. Is there an event
  * available for this?
- * 
+ *
  * @author danlutz
  */
 
 public class ProblemView extends ViewPart implements IActivationListener, ISaveablePart2 {
 	public static final String ID = "org.iatrix.views.ProblemView";
-	
-	static Log log = Log.get("Problemliste");
-	
+
+	private static Logger log = LoggerFactory.getLogger(org.iatrix.views.JournalView.class);
+
 	private Problem actProblem;
-	
+
 	private FormToolkit tk;
 	private ScrolledForm form;
-	
+
 	private ExpandableComposite dauermedikationSection;
 	private ProblemFixMediDisplay dlDauerMedi;
-	
+
 	private Composite diagnosenComposite;
 	private TableViewer diagnosenViewer;
 	private TableViewer konsultationenViewer;
-	
+
 	/* diagnosenViewer */
 	private IAction delDiagnoseAction;
-	
+
 	/* konsultationenViewer */
 	private IAction unassignProblemAction;
-	
+
 	private ViewMenus menus;
-	
+
 	private final ElexisEventListenerImpl eeli_problem =
 		new ElexisEventListenerImpl(Episode.class, ElexisEvent.EVENT_SELECTED
 			| ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_UPDATE) {
-			
+
 			@Override
 			public void run(ElexisEvent ev){
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
@@ -128,7 +129,7 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 					PersistentObject obj = ev.getObject();
 					if (obj instanceof Episode) {
 						Episode updatedEpisode = (Episode) obj;
-						Episode actEpisode = (Episode) actProblem;
+						Episode actEpisode = actProblem;
 						if (updatedEpisode.getId().equals(actEpisode.getId())) {
 							setProblem(actProblem);
 						}
@@ -139,11 +140,11 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 				}
 			}
 		};
-	
+
 	private final ElexisEventListenerImpl eeli_patient =
 		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED
 			| ElexisEvent.EVENT_DESELECTED) {
-			
+
 			@Override
 			public void run(ElexisEvent ev){
 				// make sure the current problem belongs to the newly selected patient
@@ -173,55 +174,55 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 				}
 			}
 		};
-	
+
 	@Override
 	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout());
 		Composite main = new Composite(parent, SWT.NONE);
 		main.setLayout(new FillLayout());
-		
+
 		tk = UiDesk.getToolkit();
 		form = tk.createScrolledForm(main);
 		form.getBody().setLayout(new GridLayout(1, true));
-		
+
 		SashForm mainSash = new SashForm(form.getBody(), SWT.VERTICAL);
 		mainSash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		dauermedikationSection =
 			tk.createExpandableComposite(mainSash, ExpandableComposite.EXPANDED
 				| ExpandableComposite.TWISTIE);
 		dauermedikationSection.setText("Fixmedikation");
-		
+
 		Composite dauermedikationComposite = tk.createComposite(dauermedikationSection);
 		dauermedikationSection.setClient(dauermedikationComposite);
 		Composite bottomComposite = tk.createComposite(mainSash);
-		
+
 		mainSash.setWeights(new int[] {
 			25, 75
 		});
-		
+
 		// Dauermedikation
-		
+
 		dauermedikationComposite.setLayout(new GridLayout());
-		
+
 		// Label lDauermedikation = tk.createLabel(dauermedikationComposite, "Fixmedikation");
 		// lDauermedikation.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		dlDauerMedi = new ProblemFixMediDisplay(dauermedikationComposite, getViewSite());
-		
+
 		bottomComposite.setLayout(new GridLayout());
-		
+
 		SashForm bottomSash = new SashForm(bottomComposite, SWT.HORIZONTAL);
 		bottomSash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		diagnosenComposite = tk.createComposite(bottomSash);
 		Composite konsultationenComposite = tk.createComposite(bottomSash);
-		
+
 		bottomSash.setWeights(new int[] {
 			25, 75
 		});
-		
+
 		diagnosenComposite.setLayout(new GridLayout(1, true));
-		
+
 		Hyperlink hDiagnosen = tk.createHyperlink(diagnosenComposite, "Diagnosen", SWT.NONE);
 		hDiagnosen.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		hDiagnosen.addHyperlinkListener(new HyperlinkAdapter() {
@@ -231,18 +232,17 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 					getViewSite().getPage().showView(DiagnosenView.ID);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					log
-						.log("Fehler beim Starten des Diagnosencodes " + ex.getMessage(),
-							Log.ERRORS);
+					log.error("Fehler beim Starten des Diagnosencodes " + ex.getMessage());
 				}
 			}
 		});
-		
+
 		Table diagnosenTable = tk.createTable(diagnosenComposite, SWT.SINGLE);
 		diagnosenTable.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		diagnosenViewer = new TableViewer(diagnosenTable);
 		diagnosenViewer.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		diagnosenViewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement){
 				if (actProblem != null) {
 					List<IDiagnose> diagnosen = actProblem.getDiagnosen();
@@ -250,39 +250,43 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 				}
 				return new Object[0];
 			}
-			
+
+			@Override
 			public void dispose(){
 			// nothing to do
 			}
-			
+
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
 			// nothing to do
 			}
 		});
 		diagnosenViewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element){
 				if (!(element instanceof IDiagnose)) {
 					return "";
 				}
-				
+
 				IDiagnose diagnose = (IDiagnose) element;
 				return diagnose.getLabel();
 			}
-			
+
 		});
 		diagnosenViewer.setInput(this);
-		
+
 		konsultationenComposite.setLayout(new GridLayout(1, true));
-		
+
 		Label lKonsultationen = tk.createLabel(konsultationenComposite, "Konsultationen", SWT.LEFT);
 		lKonsultationen.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		
+
 		Table konsultationenTable = tk.createTable(konsultationenComposite, SWT.SINGLE);
 		konsultationenTable.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		konsultationenViewer = new TableViewer(konsultationenTable);
 		konsultationenViewer.getControl()
 			.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		konsultationenViewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement){
 				if (actProblem != null) {
 					List<Konsultation> konsultationen = actProblem.getKonsultationen();
@@ -290,58 +294,66 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 				}
 				return new Object[0];
 			}
-			
+
+			@Override
 			public void dispose(){
 			// nothing to do
 			}
-			
+
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
 			// nothing to do
 			}
 		});
 		konsultationenViewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element){
 				if (!(element instanceof Konsultation)) {
 					return "";
 				}
-				
+
 				Konsultation konsultation = (Konsultation) element;
 				return konsultation.getLabel();
 			}
-			
+
 		});
 		konsultationenViewer.setInput(this);
-		
+
 		/* Implementation Drag&Drop */
 
 		final TextTransfer textTransfer = TextTransfer.getInstance();
 		Transfer[] types = new Transfer[] {
 			textTransfer
 		};
-		
+
 		// diagnosenComposite
 		DropTarget dtarget = new DropTarget(diagnosenComposite, DND.DROP_COPY);
 		dtarget.setTransfer(types);
 		dtarget.addDropListener(new DropTargetListener() {
+			@Override
 			public void dragEnter(DropTargetEvent event){
 				/* Wir machen nur Copy-Operationen */
 				event.detail = DND.DROP_COPY;
 			}
-			
+
 			/* Mausbewegungen mit gedrückter Taste sind uns egal */
+			@Override
 			public void dragLeave(DropTargetEvent event){
 			/* leer */
 			}
-			
+
+			@Override
 			public void dragOperationChanged(DropTargetEvent event){
 			/* leer */
 			}
-			
+
+			@Override
 			public void dragOver(DropTargetEvent event){
 			/* leer */
 			}
-			
+
 			/* Erst das Loslassen interessiert uns wieder */
+			@Override
 			public void drop(DropTargetEvent event){
 				String drp = (String) event.data;
 				String[] dl = drp.split(",");
@@ -350,39 +362,40 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 					if (dropped instanceof IDiagnose) {
 						IDiagnose diagnose = (IDiagnose) dropped;
 						actProblem.addDiagnose(diagnose);
-						
+
 						// tell other viewers that something has changed
 						IatrixEventHelper.updateProblem(actProblem);
-						
+
 						// update ourselves
 						// TODO: implement ObjectListener
 						diagnosenViewer.refresh();
 					}
 				}
 			}
-			
+
+			@Override
 			public void dropAccept(DropTargetEvent event){
 			/* leer */
 			}
 		});
-		
+
 		makeActions();
 		menus = new ViewMenus(getViewSite());
 		menus.createViewerContextMenu(diagnosenViewer, delDiagnoseAction);
 		menus.createViewerContextMenu(konsultationenViewer, unassignProblemAction);
-		
+
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
-	
+
 	@Override
 	public void setFocus(){
 	// TODO Auto-generated method stub
-	
+
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	@Override
@@ -390,56 +403,60 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
-	
+
 	private void makeActions(){
 		// Diagnosen
-		
+
 		delDiagnoseAction = new Action("Diagnose entfernen") {
+			@Override
 			public void run(){
 				Object sel =
 					((IStructuredSelection) diagnosenViewer.getSelection()).getFirstElement();
 				if (sel != null && actProblem != null) {
 					IDiagnose diagnose = (IDiagnose) sel;
 					actProblem.removeDiagnose(diagnose);
-					
+
 					// TODO Diagnosen von Konsultationen entfernen
 					diagnosenViewer.refresh();
-					
+
 					// tell other viewers that something has changed
 					IatrixEventHelper.updateProblem(actProblem);
 				}
 			}
 		};
-		
+
 		// Konsultationen
-		
+
 		unassignProblemAction = new Action("Problem entfernen") {
 			{
 				setToolTipText("Problem von Konsulation entfernen");
 			}
-			
+
+			@Override
 			public void run(){
 				Object sel =
 					((IStructuredSelection) konsultationenViewer.getSelection()).getFirstElement();
 				if (sel != null && actProblem != null) {
 					Konsultation konsultation = (Konsultation) sel;
-					
+
 					// remove problem. ask user if encounter still contains data.
 					IatrixViewTool.removeProblemFromKonsultation(konsultation, actProblem);
 					konsultationenViewer.refresh();
-					
+
 					// tell other viewers that something has changed
 					IatrixEventHelper.updateProblem(actProblem);
 				}
 			}
 		};
-		
+
 	}
-	
+
+	@Override
 	public void activation(boolean mode){
 	// do nothing
 	}
-	
+
+	@Override
 	public void visible(boolean mode){
 		if (mode == true) {
 			Problem problem = IatrixEventHelper.getSelectedProblem();
@@ -460,72 +477,78 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_problem, eeli_patient);
 		}
 	}
-	
+
 	/*
 	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
 	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
 	 * Gibt es da keine einfachere Methode?
 	 */
+	@Override
 	public int promptToSaveOnClose(){
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-	
+
+	@Override
 	public void doSave(IProgressMonitor monitor){ /* leer */}
-	
+
+	@Override
 	public void doSaveAs(){ /* leer */}
-	
+
+	@Override
 	public boolean isDirty(){
 		return true;
 	}
-	
+
+	@Override
 	public boolean isSaveAsAllowed(){
 		return false;
 	}
-	
+
+	@Override
 	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
-	
+
 	private void setProblem(Problem problem){
 		actProblem = problem;
-		
+
 		if (actProblem != null) {
 			form.setText("Problem " + problem.getLabel() + " von "
 				+ problem.getPatient().getLabel());
 		} else {
 			form.setText("Kein Problem ausgewählt");
 		}
-		
+
 		diagnosenViewer.refresh();
 		konsultationenViewer.refresh();
-		
+
 		// Fixmedikation
-		
+
 		// TODO work-around
 		// we need to call "reload" two times to make the list expand
 		// unknown why this is required
 		dlDauerMedi.reload();
 		dlDauerMedi.reload();
 		dauermedikationSection.layout(true);
-		
+
 		form.reflow(true);
 	}
-	
+
 	// FocusListener fuer Felder
 	class Focusreact extends FocusAdapter {
 		private final String field;
-		
+
 		Focusreact(String f){
 			field = f;
 		}
-		
+
 		@Override
 		public void focusLost(FocusEvent e){
 			if (actProblem == null) {
 				return;
 			}
-			
+
 			String oldvalue = actProblem.get(field);
 			String newvalue = ((Text) e.getSource()).getText();
 			if (oldvalue != null) {

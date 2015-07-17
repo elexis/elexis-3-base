@@ -104,6 +104,8 @@ import org.iatrix.data.KonsTextLock;
 import org.iatrix.data.Problem;
 import org.iatrix.dialogs.ChooseKonsRevisionDialog;
 import org.iatrix.widgets.KonsListDisplay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
@@ -131,7 +133,6 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.text.EnhancedTextField;
 import ch.elexis.core.ui.util.IKonsExtension;
 import ch.elexis.core.ui.util.IKonsMakro;
-import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.views.codesystems.DiagnosenView;
@@ -207,7 +208,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private static final NumberComparator NUMBER_COMPARATOR = new NumberComparator();
 	private static final StatusComparator STATUS_COMPARATOR = new StatusComparator();
 
-	static Log log = Log.get(JournalView.class.getSimpleName());
+	private static Logger log = LoggerFactory.getLogger(org.iatrix.views.JournalView.class);
 
 	private Patient actPatient = null;
 	private Konsultation actKons;
@@ -570,8 +571,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 								getViewSite().getPage().showView(JournalView.ID);
 							} catch (Exception ex) {
 								ExHandler.handle(ex);
-								log.log("Fehler beim Öffnen von JournalView: " + ex.getMessage(),
-									Log.ERRORS);
+								log.error("Fehler beim Öffnen von JournalView: " + ex.getMessage());
 							}
 						}
 					}
@@ -618,8 +618,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 								getViewSite().getPage().showView(JournalView.ID);
 							} catch (Exception ex) {
 								ExHandler.handle(ex);
-								log.log("Fehler beim Öffnen von JournalView: " + ex.getMessage(),
-									Log.ERRORS);
+								log.error("Fehler beim Öffnen von JournalView: " + ex.getMessage());
 							}
 						}
 					}
@@ -665,9 +664,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 										getViewSite().getPage().showView(JournalView.ID);
 									} catch (Exception ex) {
 										ExHandler.handle(ex);
-										log.log(
+										log.error(
 											"Fehler beim Öffnen von JournalView: "
-												+ ex.getMessage(), Log.ERRORS);
+												+ ex.getMessage());
 									}
 								}
 							}
@@ -718,8 +717,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						getViewSite().getPage().showView(PatientDetailView2.ID);
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
-						log.log("Fehler beim Öffnen von PatientDetailView: " + ex.getMessage(),
-							Log.ERRORS);
+						log.error("Fehler beim Öffnen von PatientDetailView: " + ex.getMessage());
 					}
 				}
 			}
@@ -777,8 +775,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						getViewSite().getPage().showView(AccountView.ID);
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
-						log.log("Fehler beim Öffnen von AccountView: " + ex.getMessage(),
-							Log.ERRORS);
+						log.error("Fehler beim Öffnen von AccountView: " + ex.getMessage());
 					}
 				}
 			}
@@ -799,8 +796,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						getViewSite().getPage().showView(BillSummary.ID);
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
-						log.log("Fehler beim Öffnen von AccountView: " + ex.getMessage(),
-							Log.ERRORS);
+						log.error("Fehler beim Öffnen von AccountView: " + ex.getMessage());
 					}
 				}
 			}
@@ -948,9 +944,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 											problemDiagnosesCodeSelectorTarget);
 									} catch (Exception ex) {
 										ExHandler.handle(ex);
-										log.log(
+										log.error(
 											"Fehler beim Starten des Diagnosencodes "
-												+ ex.getMessage(), Log.ERRORS);
+												+ ex.getMessage());
 									}
 								}
 								break;
@@ -1023,8 +1019,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 								problemDiagnosesCodeSelectorTarget);
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
-							log.log("Fehler beim Starten des Diagnosencodes " + ex.getMessage(),
-								Log.ERRORS);
+							log.error("Fehler beim Starten des Diagnosencodes " + ex.getMessage());
 						}
 					}
 					break;
@@ -1054,104 +1049,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				// nothing to do
 			}
 		});
-		/*
-		 * Sortiert die Probleme nach Datum, aktuelle zuerst
-		 */
-		/*
-		 * problemsTableDatumComparator = new ViewerComparator() { public int compare(Viewer viewer,
-		 * Object e1, Object e2) { if (!(e1 instanceof Problem)) { return 1; } if (!(e2 instanceof
-		 * Problem)) { return -1; }
-		 *
-		 * Problem p1 = (Problem) e1; Problem p2 = (Problem) e2;
-		 *
-		 * String datum1 = p1.getDatum(); String datum2 = p2.getDatum();
-		 *
-		 * if (datum1.equals(datum2)) { // datum ist identisch, nach Nummer sortieren
-		 *
-		 * String nummer1 = p1.getNummer(); String nummer2 = p2.getNummer();
-		 *
-		 * return nummer1.compareTo(nummer2); }
-		 *
-		 * return datum2.compareTo(datum1); } };
-		 *
-		 * problemsTableNummerComparator = new ViewerComparator() { public int compare(Viewer
-		 * viewer, Object e1, Object e2) { if (!(e1 instanceof Problem)) { return 1; } if (!(e2
-		 * instanceof Problem)) { return -1; }
-		 *
-		 * Problem p1 = (Problem) e1; Problem p2 = (Problem) e2;
-		 *
-		 * String nummer1 = p1.getNummer(); String nummer2 = p2.getNummer();
-		 *
-		 * return nummer1.compareTo(nummer2); } };
-		 *
-		 * problemsTableViewer.setComparator(problemsTableDatumComparator);
-		 */
-		/*
-		 * Table table = problemsTableViewer.getTable(); table.setHeaderVisible(true);
-		 * table.setLinesVisible(true);
-		 *
-		 * problemsTableViewer.setInput(this);
-		 *
-		 * TableColumn[] tc = new TableColumn[COLUMN_TEXT.length]; for (int i = 0; i <
-		 * COLUMN_TEXT.length; i++) { tc[i] = new TableColumn(table, SWT.NONE);
-		 * tc[i].setText(COLUMN_TEXT[i]); tc[i].setWidth(COLUMN_WIDTH[i]); }
-		 *
-		 * tc[DATUM].addSelectionListener(new SelectionAdapter() { public void
-		 * widgetSelected(SelectionEvent event) {
-		 * problemsTableViewer.setComparator(problemsTableDatumComparator); } });
-		 *
-		 * tc[NUMMER].addSelectionListener(new SelectionAdapter() { public void
-		 * widgetSelected(SelectionEvent event) { problemsTableViewer
-		 * .setComparator(problemsTableNummerComparator); } });
-		 */
-		/*
-		 * CellEditor[] cellEditors = new CellEditor[7]; cellEditors[DATUM] = new
-		 * TextCellEditor(table); cellEditors[NUMMER] = new TextCellEditor(table);
-		 * cellEditors[BEZEICHNUNG] = new TextCellEditor(table); cellEditors[PROCEDERE] = new
-		 * TextCellEditor(table);
-		 *
-		 * problemsTableViewer.setColumnProperties(PROPS); problemsTableViewer.setCellModifier(new
-		 * ICellModifier() { public boolean canModify(Object element, String property) { if
-		 * (property.equals(DATUM_PROP) || property.equals(NUMMER_PROP) ||
-		 * property.equals(BEZEICHNUNG_PROP) || property.equals(PROCEDERE_PROP)) {
-		 *
-		 * return true; }
-		 *
-		 * return false; }
-		 *
-		 * public Object getValue(Object element, String property) { Problem problem = (Problem)
-		 * element;
-		 *
-		 * if (property.equals(DATUM_PROP)) { return problem.getDatum(); } else if
-		 * (property.equals(NUMMER_PROP)) { return problem.getNummer(); } else if
-		 * (property.equals(BEZEICHNUNG_PROP)) { return problem.getBezeichnung(); } else if
-		 * (property.equals(PROCEDERE_PROP)) { return problem.getProcedere(); } else { return null;
-		 * } }
-		 *
-		 * public void modify(Object element, String property, Object value) { if (element
-		 * instanceof Item) { element = ((Item) element).getData(); } Problem problem = (Problem)
-		 * element;
-		 *
-		 * if (property.equals(DATUM_PROP)) { problem.setDatum((String) value); } else if
-		 * (property.equals(NUMMER_PROP)) { problem.setNummer((String) value); } else if
-		 * (property.equals(BEZEICHNUNG_PROP)) { problem.setBezeichnung((String) value); } else if
-		 * (property.equals(PROCEDERE_PROP)) { problem.setProcedere((String) value); }
-		 *
-		 * problemsTableViewer.refresh(); refreshProblemAssignmentViewer(); } });
-		 * problemsTableViewer.setCellEditors(cellEditors);
-		 */
-		/*
-		 * problemsTableViewer.addSelectionChangedListener(new ISelectionChangedListener() { public
-		 * void selectionChanged(SelectionChangedEvent event) { Object sel = ((IStructuredSelection)
-		 * problemsTableViewer.getSelection()).getFirstElement(); if (sel != null) { Problem problem
-		 * = (Problem) sel; GlobalEvents.getInstance().fireSelectionEvent(problem); } } });
-		 *
-		 * problemsTableViewer.addDoubleClickListener(new IDoubleClickListener() { public void
-		 * doubleClick(DoubleClickEvent event) { try {
-		 * getViewSite().getPage().showView(ProblemView.ID); } catch (Exception ex) {
-		 * ExHandler.handle(ex); log.log("Fehler beim Öffnen von ProblemView: " + ex.getMessage(),
-		 * Log.ERRORS); } } });
-		 */
 
 		// Drag'n'Drop support
 		// Quelle
@@ -1516,7 +1413,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						konsultationVerrechnungCodeSelectorTarget);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					log.log("Fehler beim Starten des Leistungscodes " + ex.getMessage(), Log.ERRORS);
+					log.error("Fehler beim Starten des Leistungscodes " + ex.getMessage());
 				}
 			}
 		});
@@ -2041,7 +1938,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 							problemFixmedikationCodeSelectorTarget);
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
-						log.log("Fehler beim Anzeigen der Artikel " + ex.getMessage(), Log.ERRORS);
+						log.error("Fehler beim Anzeigen der Artikel " + ex.getMessage());
 					}
 				}
 			}
@@ -2058,7 +1955,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					getViewSite().getPage().showView(ProblemView.ID);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					log.log("Fehler beim Öffnen von ProblemView: " + ex.getMessage(), Log.ERRORS);
+					log.error("Fehler beim Öffnen von ProblemView: " + ex.getMessage());
 				}
 			}
 		};
@@ -2074,7 +1971,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					getViewSite().getPage().showView(ProblemView.ID);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					log.log("Fehler beim Öffnen von ProblemView: " + ex.getMessage(), Log.ERRORS);
+					log.error("Fehler beim Öffnen von ProblemView: " + ex.getMessage());
 				}
 			}
 		};
@@ -2324,11 +2221,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	private void updateEintrag(){
 		if (actKons != null) {
-			log.log("updateEintrag", Log.DEBUGMSG);
+			log.debug("updateEintrag");
 			if (text.isDirty() || textChanged()) {
 				if (hasKonsTextLock()) {
 					actKons.updateEintrag(text.getContentsAsXML(), false);
-					log.log("saved.", Log.DEBUGMSG);
+					log.debug("saved.");
 					text.setDirty(false);
 
 					// update kons version label
@@ -2359,7 +2256,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		if (textEintrag != null) {
 			if (!textEintrag.equals(dbEintrag)) {
 				// text differs from db entry
-				log.log("textChanged", Log.DEBUGMSG);
+				log.debug("textChanged");
 				return true;
 			}
 		}
@@ -2497,7 +2394,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// refresh kons text lock
 		if (konsTextLock != null) {
 			boolean success = konsTextLock.lock();
-			log.log("heartbeatKonsultation: konsText locked (" + success + ")", Log.DEBUGMSG);
+			log.debug("heartbeatKonsultation: konsText locked (" + success + ")");
 			// System.err.println("DEBUG: heartbeatKonsultation: konsText locked (" + success +
 			// ")");
 
@@ -2520,7 +2417,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			return 0;
 		}
 
-		log.log("TimePeriod: " + timePeriod, Log.DEBUGMSG);
+		log.debug("TimePeriod: " + timePeriod);
 		int heartbeatInterval =
 			CoreHub.localCfg.get(ch.elexis.core.constants.Preferences.ABL_HEARTRATE, 30);
 		if (heartbeatInterval > 0 && timePeriod >= heartbeatInterval) {
@@ -2542,7 +2439,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 */
 	private void heartbeatSaveKonsText(){
 		int konsTextSaverPeriod = getKonsTextSaverPeriod();
-		log.log("Period: " + konsTextSaverPeriod, Log.DEBUGMSG);
+		log.debug("Period: " + konsTextSaverPeriod);
 		if (!(konsTextSaverPeriod > 0)) {
 			// auto-save disabled
 			return;
@@ -2554,12 +2451,12 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		konsTextSaverCount++;
 		konsTextSaverCount %= konsTextSaverPeriod;
 
-		log.log("konsTextSaverCount = " + konsTextSaverCount, Log.DEBUGMSG);
-		log.log("konsEditorHasFocus: " + konsEditorHasFocus, Log.DEBUGMSG);
+		log.debug("konsTextSaverCount = " + konsTextSaverCount);
+		log.debug("konsEditorHasFocus: " + konsEditorHasFocus);
 
 		if (konsTextSaverCount == 0) {
 			if (konsEditorHasFocus) {
-				log.log("Auto Save Kons Text", Log.DEBUGMSG);
+				log.debug("Auto Save Kons Text");
 
 				updateEintrag();
 			}
@@ -2607,7 +2504,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			// history.load(actPatient);
 			// history.start();
 
-			log.log("Patient: " + actPatient.getId(), Log.DEBUGMSG);
+			log.debug("Patient: " + actPatient.getId());
 		} else {
 			// problemsTable.setInput(null);
 
@@ -2622,7 +2519,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			 * history.stop(); history.load(null, true); history.start();
 			 */
 
-			log.log("Patient: null", Log.DEBUGMSG);
+			log.debug("Patient: null");
 		}
 
 		konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
@@ -2640,7 +2537,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		if (actKons != null) {
 			int version = actKons.getHeadVersion();
 
-			log.log("Update Version Label: " + version, Log.DEBUGMSG);
+			log.debug("Update Version Label: " + version);
 
 			VersionedResource vr = actKons.getEintrag();
 			ResourceItem entry = vr.getVersion(version);
@@ -2901,7 +2798,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			setDiagnosenText(actKons);
 
-			log.log("Konsultation: " + actKons.getId(), Log.DEBUGMSG);
+			log.debug("Konsultation: " + actKons.getId());
 		} else {
 			cbFall.setEnabled(false);
 			hVerrechnung.setEnabled(false);
@@ -2922,7 +2819,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			setKonsText(null, 0, putCaretToEnd);
 			setDiagnosenText(null);
 
-			log.log("Konsultation: null", Log.DEBUGMSG);
+			log.debug("Konsultation: null");
 		}
 
 		konsFallArea.layout();
@@ -4786,7 +4683,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		if (konsTextLock != null) {
 			boolean success = konsTextLock.lock();
-			log.log("createKonsTextLock: konsText locked (" + success + ")", Log.DEBUGMSG);
+			log.debug("createKonsTextLock: konsText locked (" + success + ")");
 			// System.err.println("DEBUG: createKonsTextLock: konsText locked (" + success + ")");
 		}
 	}
@@ -4797,7 +4694,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private void removeKonsTextLock(){
 		if (konsTextLock != null) {
 			boolean success = konsTextLock.unlock();
-			log.log("removeKonsTextLock: konsText unlocked (" + success + ")", Log.DEBUGMSG);
+			log.debug("removeKonsTextLock: konsText unlocked (" + success + ")");
 			// System.err.println("DEBUG: removeKonsTextLock: konsText unlocked (" + success + ")");
 			konsTextLock = null;
 		}

@@ -23,6 +23,7 @@ import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -1043,6 +1044,40 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 			return false;
 		return true;
 		
+	}
+	
+	/**
+	 * check if an appointemnt exists for this time and duration in this area
+	 * 
+	 * @param area
+	 *            the agenda area to check
+	 * @param time
+	 *            with date and start time to check
+	 * @param duration
+	 *            span to check
+	 * @param idToIgnore
+	 *            of {@link Termin} that should be ignored, may be null if none has to be ignored
+	 * @return true if a {@link Termin} exists during this time, false otherwise
+	 */
+	public static boolean overlaps(String area, TimeTool time, int duration,
+		@Nullable String idToIgnore){
+		Query<Termin> tQuery = new Query<Termin>(Termin.class);
+		tQuery.add(Termin.FLD_BEREICH, Query.EQUALS, area);
+		tQuery.add(Termin.FLD_TAG, Query.EQUALS, time.toString(TimeTool.DATE_COMPACT));
+		
+		List<Termin> termine = tQuery.execute();
+		TimeSpan tsInQuestion = new TimeSpan(time, duration);
+		tsInQuestion.until.getTimeAsLong();
+		
+		for (Termin t : termine) {
+			String id = t.getId();
+			if (!id.equals(idToIgnore)) {
+				if (tsInQuestion.overlap(t.getTimeSpan()) != null) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 }

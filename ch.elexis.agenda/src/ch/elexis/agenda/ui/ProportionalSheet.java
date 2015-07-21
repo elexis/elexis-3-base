@@ -82,7 +82,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		TimeTool tt = new TimeTool(Activator.getDefault().getActDate());
 		int hour = minute / 60;
 		minute = minute - (60 * hour);
-		int raster = 15;
+		int raster = 5;
 		minute = ((minute + (raster >> 1)) / raster) * raster;
 		tt.set(TimeTool.AM_PM, TimeTool.AM);
 		tt.set(TimeTool.HOUR, (dayStartHour + hour));
@@ -141,9 +141,14 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				TimeTool tt = setTerminTo(pt.x, pt.y);
 				if (o instanceof Termin) {
 					Termin t = (Termin) o;
-					t.setStartTime(tt);
-					t.setBereich(Activator.getDefault().getActResource());
-					refresh();
+					if (Termin.overlaps(Activator.getDefault().getActResource(), tt, t.getDauer(),
+						t.getId())) {
+						SWTHelper.showInfo("Termin Kollision", "Termine überschneiden sich");
+					} else {
+						t.setStartTime(tt);
+						t.setBereich(Activator.getDefault().getActResource());
+						refresh();
+					}
 				}
 			}
 		});

@@ -211,7 +211,7 @@ public class AgendaParallel extends BaseView {
 						CoreHub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, "0.4");
 					int currentFactor = (int) (Float.parseFloat(currentFactorString) * 100);
 					for (String s : new String[] {
-						"40", "60", "80", "100", "120", "140", "160", "200", "300"}) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+						"40", "60", "80", "100", "120", "140", "160", "200", "300", "400", "500"}) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 						MenuItem it = new MenuItem(mine, SWT.RADIO);
 						it.setText(s + "%"); //$NON-NLS-1$
 						it.setData(s);

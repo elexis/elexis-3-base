@@ -37,12 +37,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.util.PersistentObjectDropTarget;
-import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.util.PersistentObjectDropTarget;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TerminDialog;
@@ -74,6 +74,10 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				break;
 			}
 		}
+		String startOfDayTimeInMinutes =
+			CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+		int dayStartHour = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
+		
 		int minute = (int) Math.round(y / ppm);
 		TimeTool tt = new TimeTool(Activator.getDefault().getActDate());
 		int hour = minute / 60;
@@ -81,7 +85,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		int raster = 15;
 		minute = ((minute + (raster >> 1)) / raster) * raster;
 		tt.set(TimeTool.AM_PM, TimeTool.AM);
-		tt.set(TimeTool.HOUR, hour);
+		tt.set(TimeTool.HOUR, (dayStartHour + hour));
 		tt.set(TimeTool.MINUTE, minute);
 		if (resource.length() > 0) {
 			Activator.getDefault().setActResource(resource);
@@ -135,12 +139,10 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			public void dropped(PersistentObject o, DropTargetEvent e){
 				Point pt = Display.getCurrent().map(null, ProportionalSheet.this, e.x, e.y);
 				TimeTool tt = setTerminTo(pt.x, pt.y);
-				TerminLabel tl = (TerminLabel) e.widget;
-				Termin t = tl.getTermin();
-				if (t != null) {
+				if (o instanceof Termin) {
+					Termin t = (Termin) o;
 					t.setStartTime(tt);
 					t.setBereich(Activator.getDefault().getActResource());
-					tl.refresh();
 					refresh();
 				}
 			}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="at.gruber.elexis.mythic22.ui.Preferences"
+            id="at.gruber.elexis.mythic22.preferences"
+            name="Mythic22">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="at.gruber.elexis.mythic22.ui.ServerControl"
+            name="Mythic 22 NetListener Control">
+         <state
+               class="org.eclipse.jface.commands.ToggleState"
+               id="STYLE">
+         </state>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="at.gruber.elexis.mythic22.command.ServerControl"
+            commandId="at.gruber.elexis.mythic22.ui.ServerControl">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.Labor">
+         <command
+               commandId="at.gruber.elexis.mythic22.ui.ServerControl"
+               icon="rsc/icons/mythic22Icon.ico"
+               label="Mythic22 Server Control"
+               style="toggle"
+               tooltip="Start/Stopp Mythic 22 Listener">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="at.medevit.elexis.mythic22.EarlyStartup">
+      </startup>
+   </extension>
+
+</plugin>

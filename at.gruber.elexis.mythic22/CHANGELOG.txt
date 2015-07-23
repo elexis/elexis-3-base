@@ -1,0 +1,25 @@
+1.0.0 - 1.8.2011 - Initial release
+	- Taken from Gruber Christian
+	- Adapted by Marco Descher to integrate into release line
+1.0.1 - 2.8.2011
+	- Ignore the SocketTimeoutException
+	- Start of i18n
+	- new icon
+1.0.2 - 3.8.2011
+	- Erroneous build.properties (missing icon)
+	- Fix for server socket teardown (missing m_serversocket.close))
+	- Support for automatic startup of service
+1.0.3 - 4.8.2011
+	- Switch to a toggle button, showing the state of the service
+	- Multiple bug fixes
+1.0.4 - 5.6.2013
+	- Catch IndexOutOfBoundsException in InputHandler
+	
+TODO:
+
+	- BindException bei erneutem Aufbau des SOckets? (IllegalThreadStateException)
+	- Preferences: Automatisch Server-Prozess starten
+	- Mapping Datei anpassen : MCHC geht auf Stangassinger soll aber auf intern
+	- Einfachen Weg mapping-datei zu erstellen
+	- ID / PID / SID
+	- Preferences Page auf FieldEditors umstellen

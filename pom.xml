@@ -82,7 +82,6 @@
   <module>net.medshare.connector.viollier_test</module>
   <module>org.iatrix.bestellung.rose_test</module>
   <module>ch.pharmed.phmprescriber_test</module>
-  <module>at.medevit.elexis.cobasmira.tests</module>
 
   <module>at.gruber.elexis.mythic22</module>
   <module>at.gruber.elexis.mythic22.feature</module>

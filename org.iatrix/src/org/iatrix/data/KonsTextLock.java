@@ -4,15 +4,18 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     D. Lutz - initial API and implementation
  *     N. Giger - Moved KonsTextLock to separate file, fixed lock for Elexis 3.0
- * 
+ *
  * Sponsors:
  *     Dr. Peter Schönbucher, Luzern
  ******************************************************************************/
 package org.iatrix.data;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import org.iatrix.Iatrix;
 import org.iatrix.views.JournalView;
@@ -29,12 +32,12 @@ import ch.rgw.tools.StringTool;
 
 /**
  * Handle locking of kons text to avoid access of multiple users/instances at the same time
- * 
+ *
  * @author danlutz
  */
 public class KonsTextLock {
 	// unique value for this instance
-	String identifier = null;
+	private final String identifier;
 	String konsultationId = null;
 	String userId = null;
 	String key = null;
@@ -68,7 +71,6 @@ public class KonsTextLock {
 		// create key name
 		StringBuffer sb = new StringBuffer();
 		sb.append(JournalView.ID).append("_").append("konslock").append("_").append(konsultationId);
-
 		key = sb.toString();
 		trace("new KonsTextLock: ");
 		lockVar = false;
@@ -78,7 +80,17 @@ public class KonsTextLock {
 		String lockValue =
 			PersistentObject.getConnection().queryString(
 				"SELECT wert from CONFIG WHERE param = " + JdbcLink.wrap(key));
+		// .append(stationMarker).
+		// append(InetAddress.getLocalHost().getHostName());
 		return new Value(lockValue);
+	}
+
+	/**
+	 * getKey
+	 * @return the key for the Kons (user and kons.getId())
+	 */
+	public String getKey() {
+		return key;
 	}
 
 	// taken from PersistentObject
@@ -115,7 +127,7 @@ public class KonsTextLock {
 					trace("lock: okay ");
 					return true;
 				}
-				
+
 				long locktime = lockValue.getTimestamp();
 				long age = now - locktime;
 				if (age > 2 * 1000L * 3600L) { // Älter als zwei Stunden -> Löschen
@@ -150,7 +162,7 @@ public class KonsTextLock {
 
 	/**
 	 * Check wheter we own the lock
-	 * 
+	 *
 	 * @return true if we own the lock, false otherwise
 	 */
 	public synchronized boolean isLocked(){
@@ -194,13 +206,13 @@ public class KonsTextLock {
 		private long timestamp = 0;
 		private String userId = null;
 		private String identifier = null;
-
+		private String hostName = null;
 		Value(String lockValue){
-			// format: <timestamp>#<userid>#<identifier>
+			// format: <timestamp>#<userid>#<identifier>#<hostname>
 
 			if (lockValue != null) {
 				String[] tokens = lockValue.split("#");
-				if (tokens.length == 3) {
+				if (tokens.length >= 3) {
 					try {
 						timestamp = Long.parseLong(tokens[0]);
 					} catch (NumberFormatException ex) {
@@ -209,6 +221,10 @@ public class KonsTextLock {
 
 					userId = tokens[1];
 					identifier = tokens[2];
+					// Allow interaction with old 2.1.7 and older 3.0
+					if (tokens.length >= 4) {
+						hostName = tokens[3];
+					}
 				}
 			}
 		}
@@ -218,12 +234,17 @@ public class KonsTextLock {
 
 			this.userId = userId;
 			this.identifier = identifier;
+			try {
+				this.hostName =  InetAddress.getLocalHost().getHostName();
+			} catch (UnknownHostException e) {
+				this.hostName = null;
+			}
 		}
 
 		String getLockString(){
 			StringBuffer sb = new StringBuffer();
 			sb.append(new Long(timestamp).toString()).append("#").append(userId).append("#")
-				.append(identifier);
+				.append(identifier).append("#").append(hostName);
 
 			return sb.toString();
 		}
@@ -234,11 +255,20 @@ public class KonsTextLock {
 
 		/**
 		 * Return the Anwender owning this lock
-		 * 
+		 *
 		 * @return Anwender owning the lock, or null if not found
 		 */
 		public Anwender getUser(){
 			return Anwender.load(userId);
+		}
+
+		/**
+		 * Return the hostname owning this lock
+		 *
+		 * @return hostowning the lock, or null if not found
+		 */
+		public String getHost(){
+			return hostName;
 		}
 
 		String getIdentifier(){

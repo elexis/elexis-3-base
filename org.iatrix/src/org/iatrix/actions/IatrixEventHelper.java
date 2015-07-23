@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     D. Lutz - initial API and implementation
- * 
+ *
  * Sponsors:
  *     Dr. Peter Schönbucher, Luzern
  ******************************************************************************/
@@ -21,7 +21,7 @@ import ch.elexis.icpc.Episode;
 public class IatrixEventHelper {
 	/**
 	 * Select a problem by selecting the corresponding episode.
-	 * 
+	 *
 	 * @param problem
 	 *            the problem to be selected
 	 */
@@ -31,10 +31,10 @@ public class IatrixEventHelper {
 			ElexisEventDispatcher.fireSelectionEvent(episode);
 		}
 	}
-	
+
 	/**
 	 * Convert Problem to Episode and send update event for Episode
-	 * 
+	 *
 	 * @param problem
 	 *            the problem to send an update event for
 	 */
@@ -44,18 +44,18 @@ public class IatrixEventHelper {
 			ElexisEventDispatcher.update(episode);
 		}
 	}
-	
+
 	/**
 	 * Get the currently selected problem. Actually looks for the selected episode and converts it
 	 * to a problem.
-	 * 
+	 *
 	 * @return the selected problem
 	 */
 	public static Problem getSelectedProblem(){
 		Episode episode = (Episode) ElexisEventDispatcher.getSelected(Episode.class);
 		return Problem.convertEpisodeToProblem(episode);
 	}
-	
+
 	/**
 	 * Make sure no Problem is selected. Actually deselects the corresponding Episode.
 	 */

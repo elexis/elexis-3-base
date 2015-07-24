@@ -296,8 +296,14 @@ public class XML44Printer {
 		} else {
 			addressee = fall.getGarant();
 		}
-		if ((addressee == null) || (!addressee.exists())) {
-			addressee = pat;
+		
+		Kontakt legalGuardian = pat.getLegalGuardian();
+		if ((addressee == null) || (!addressee.exists()) || legalGuardian != null) {
+			if (legalGuardian != null) {
+				addressee = legalGuardian;
+			} else {
+				addressee = pat;
+			}
 		}
 		addressee.getPostAnschrift(true); // damit sicher eine existiert
 		return addressee;

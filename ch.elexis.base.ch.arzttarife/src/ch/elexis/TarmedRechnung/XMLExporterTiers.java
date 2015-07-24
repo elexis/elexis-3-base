@@ -187,6 +187,10 @@ public class XMLExporterTiers {
 		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
 		ret.tiersElement.addContent(patientElement);
 		
+		Kontakt legalGuardian = patient.getLegalGuardian();
+		if (legalGuardian != null) {
+			rnAdressat = legalGuardian;
+		}
 		Element guarantor = xmlExporter.buildGuarantor(rnAdressat, patient);
 		ret.tiersElement.addContent(guarantor);
 		

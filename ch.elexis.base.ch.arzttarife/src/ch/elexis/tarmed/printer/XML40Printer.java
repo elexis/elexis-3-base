@@ -143,8 +143,13 @@ public class XML40Printer {
 		} else {
 			adressat = fall.getGarant();
 		}
-		if ((adressat == null) || (!adressat.exists())) {
-			adressat = pat;
+		Kontakt legalGuardian = pat.getLegalGuardian();
+		if ((adressat == null) || (!adressat.exists()) || legalGuardian != null) {
+			if (legalGuardian != null) {
+				adressat = legalGuardian;
+			} else {
+				adressat = pat;
+			}
 		}
 		adressat.getPostAnschrift(true); // damit sicher eine existiert
 		

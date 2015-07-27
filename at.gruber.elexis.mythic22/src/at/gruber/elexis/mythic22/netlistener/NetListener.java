@@ -7,6 +7,7 @@ package at.gruber.elexis.mythic22.netlistener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -101,6 +102,9 @@ public class NetListener implements Runnable {
 			}
 			
 		} catch (IOException e) {
+			if(e instanceof BindException) {
+				requestThreadToStop();
+			}
 			if (e instanceof SocketTimeoutException)
 				return null;
 			String message = "Error on creation of server socket on port " + m_serverPort;

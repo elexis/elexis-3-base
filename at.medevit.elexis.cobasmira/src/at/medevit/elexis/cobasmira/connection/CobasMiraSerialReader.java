@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.cobasmira.model.CobasMiraLog;
 import at.medevit.elexis.cobasmira.model.CobasMiraMessage;
+import gnu.io.SerialPort;
 
 public class CobasMiraSerialReader implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(CobasMiraSerialReader.class);
@@ -18,6 +19,7 @@ public class CobasMiraSerialReader implements Runnable {
 	private static final int EOT = 0x04; // End of Transmission
 	
 	private InputStream in;
+	private SerialPort serialPort;
 	private boolean keepRunning = true;
 	
 	public boolean isKeepRunning(){
@@ -28,64 +30,72 @@ public class CobasMiraSerialReader implements Runnable {
 		this.keepRunning = keepRunning;
 	}
 	
-	public CobasMiraSerialReader(InputStream in){
+	public CobasMiraSerialReader(InputStream in, SerialPort serialPort){
+		this.serialPort = serialPort;
 		this.in = in;
 	}
 	
 	public void run(){
 		logger.debug("Starting reader thread");
 		try {
-			CobasMiraLog log = CobasMiraLog.getInstance();
+			CobasMiraLog cobasMiraLog = CobasMiraLog.getInstance();
 			
 			int data;
 			int state = 0;
 			StringBuffer headerBuf = new StringBuffer();
 			StringBuffer textBuf = new StringBuffer();
-			CobasMiraMessage temp = null;
-			data = in.read();
-			while (data != -1) {
-				if (!keepRunning)
-					return;
-				if (data == SOH) {
-					logger.debug("SOH");
-					headerBuf = new StringBuffer();
-					state = 1;
-					data = in.read();
-					continue;
-				} else if (data == STX) {
-					logger.debug("STX");
-					temp = new CobasMiraMessage();
-					temp.setHeader(headerBuf.toString());
-					textBuf = new StringBuffer();
-					state = 2;
-					data = in.read();
-					continue;
-				} else if (data == ETX) {
-					logger.debug("ETX");
-					temp.setText(textBuf.toString());
-					data = in.read();
-					continue;
-				} else if (data == EOT) {
-					logger.debug("EOT");
-					log.addMessage(temp);
-					data = in.read();
-					continue;
-				} else {
-					if (state == 0) {
-						logger.debug("Invalid state! Ignoring " + data);
-						data = in.read();
-						continue;
+			CobasMiraMessage message = null;
+			
+			while(keepRunning) {
+				data = in.read();
+				if(data==-1) {
+					try {
+						Thread.sleep(1000);
+						logger.trace("Waiting for serial input...");
+					} catch (InterruptedException e) {
+						logger.warn("Sleep interrupted", e);
 					}
-					if (state == 1)
+				} else if (data == SOH) {
+					logger.trace("SOH");
+					headerBuf = new StringBuffer();
+					state = SOH;
+				} else if (data == STX) {
+					logger.trace("STX");
+					message = new CobasMiraMessage();
+					message.setHeader(headerBuf.toString());
+					textBuf = new StringBuffer();
+					state = STX;
+				} else if (data == ETX) {
+					logger.trace("ETX");
+					if(message!=null) {
+						message.setText(textBuf.toString());
+					} else {
+						logger.warn("message is null, programmatic error");
+					}
+					state = ETX;
+				} else if (data == EOT) {
+					logger.trace("EOT");
+					cobasMiraLog.addMessage(message);
+					state = EOT;
+				} else {
+					switch (state) {
+					case SOH:
 						headerBuf.append((char) data);
-					if (state == 2)
+						break;
+					case STX:
 						textBuf.append((char) data);
-					data = in.read();
-					continue;
+						break;
+					default:
+						logger.debug("Invalid state! Ignoring " + data);
+						break;
+					}	
 				}
 			}
-			
+
+			logger.debug("Exiting reader");
+			if(serialPort!=null) serialPort.close();
 		} catch (IOException e) {
+			logger.error("Error receveiving data", e);
 			e.printStackTrace();
 		}
 	}

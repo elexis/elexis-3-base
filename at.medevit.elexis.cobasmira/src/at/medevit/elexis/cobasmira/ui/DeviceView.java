@@ -1,18 +1,9 @@
 package at.medevit.elexis.cobasmira.ui;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -21,9 +12,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -33,7 +22,6 @@ import at.medevit.elexis.cobasmira.connection.CobasMiraConnection;
 import at.medevit.elexis.cobasmira.model.CobasMiraLog;
 import at.medevit.elexis.cobasmira.model.CobasMiraMapping;
 import at.medevit.elexis.cobasmira.model.CobasMiraMessage;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Anwender;
 
 public class DeviceView extends ViewPart {
@@ -44,14 +32,10 @@ public class DeviceView extends ViewPart {
 	
 	private Table tableCobasMiraLog;
 	private Table tableCobasMiraMapping;
-	private Label lblStatus;
 	private TableViewer tableViewer;
 	private TableColumn tableZeit;
 	private CobasMiraConnection conn = CobasMiraConnection.getInstance();
-	private Button buttonActivate;
-	private Button buttonDeactivate;
-	private Combo anwenderErrMsgCombo;
-	private StructuredSelection selectedErrMsgRcvr;
+	private Button btnActive;
 	
 	public DeviceView(){
 		// TODO Auto-generated constructor stub
@@ -59,7 +43,7 @@ public class DeviceView extends ViewPart {
 	
 	@Override
 	public void createPartControl(Composite parent){
-		parent.setLayout(new GridLayout(2, true));
+		parent.setLayout(new GridLayout(1, true));
 		
 		Label lblCobasMiraLog = new Label(parent, SWT.NONE);
 		lblCobasMiraLog.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 9, 1));
@@ -105,62 +89,19 @@ public class DeviceView extends ViewPart {
 		Label lblMappingEintrge = new Label(parent, SWT.NONE);
 		lblMappingEintrge.setText("Mapping Einträge");
 		
-		Group grpFehlermeldungen = new Group(parent, SWT.NONE);
-		grpFehlermeldungen.setText("Fehlermeldungen");
-		grpFehlermeldungen.setLayout(new GridLayout(3, false));
-		grpFehlermeldungen.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 5));
-		
-		Label lblEmpfnger = new Label(grpFehlermeldungen, SWT.NONE);
-		lblEmpfnger.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblEmpfnger.setText("Empfänger");
-		
-		ComboViewer comboViewer = new ComboViewer(grpFehlermeldungen, SWT.NONE);
-		anwenderErrMsgCombo = comboViewer.getCombo();
-		anwenderErrMsgCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
-		comboViewer.setContentProvider(new ArrayContentProvider());
-		comboViewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element){
-				Anwender anw = (Anwender) element;
-				return anw.getVorname() + " " + anw.getName();
-			}
-			
-		});
-		
 		// NEEDED in 2.1
 		//TODO: Remove afterwards
 		ch.elexis.data.Query<Anwender> qbe = new ch.elexis.data.Query<Anwender>(Anwender.class);
-		comboViewer.setInput(qbe.execute().toArray());
 		//comboViewer.setInput(Anwender.getAll().toArray());
 		//
-		
-		Anwender selected = getSelectedAnwender();
-		if (selected != null)
-			comboViewer.setSelection(new StructuredSelection(selected));
-		comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event){
-				selectedErrMsgRcvr = (StructuredSelection) event.getSelection();
-				Anwender selected = (Anwender) selectedErrMsgRcvr.getFirstElement();
-				CoreHub.localCfg.set(Preferences.ERRORMSGRECEIVER, selected.getId());
-				CoreHub.localCfg.flush();
-			}
-		});
-		new Label(grpFehlermeldungen, SWT.NONE);
-		
-		Button button = new Button(grpFehlermeldungen, SWT.CHECK);
-		button.setText("Check Button");
-		
-		Button button_1 = new Button(grpFehlermeldungen, SWT.CHECK);
-		button_1.setText("Check Button");
-		new Label(grpFehlermeldungen, SWT.NONE);
 		
 		TableViewer tableViewerCMM = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		tableCobasMiraMapping = tableViewerCMM.getTable();
 		tableCobasMiraMapping.setLinesVisible(true);
 		tableCobasMiraMapping.setHeaderVisible(true);
-		tableCobasMiraMapping.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 4));
+		GridData gd_tableCobasMiraMapping = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 4);
+		gd_tableCobasMiraMapping.heightHint = 100;
+		tableCobasMiraMapping.setLayoutData(gd_tableCobasMiraMapping);
 		
 		TableViewerColumn tableViewerColumnTestkrzel =
 			new TableViewerColumn(tableViewerCMM, SWT.NONE);
@@ -177,8 +118,8 @@ public class DeviceView extends ViewPart {
 		TableViewerColumn tableViewerColumnNoKommastellen =
 			new TableViewerColumn(tableViewerCMM, SWT.NONE);
 		TableColumn tblclmnNoKommastellen = tableViewerColumnNoKommastellen.getColumn();
-		tblclmnNoKommastellen.setToolTipText(Messages
-			.getString("DeviceView.tblclmnNoKommastellen.toolTipText")); //$NON-NLS-1$
+		tblclmnNoKommastellen
+			.setToolTipText(Messages.getString("DeviceView.tblclmnNoKommastellen.toolTipText")); //$NON-NLS-1$
 		tblclmnNoKommastellen.setWidth(70);
 		tblclmnNoKommastellen.setText(Messages.getString("DeviceView.tblclmnNoKommastellen.text")); //$NON-NLS-1$
 		
@@ -197,69 +138,38 @@ public class DeviceView extends ViewPart {
 		tableViewerCMM.setLabelProvider(new CobasMiraMappingLabelProvider());
 		tableViewerCMM.setInput(CobasMiraMapping.getCmmappings());
 		
-		lblStatus = new Label(parent, SWT.NONE);
-		lblStatus.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
 		Composite compositeButtonContainer = new Composite(parent, SWT.NONE);
-		compositeButtonContainer.setLayout(new GridLayout(2, true));
+		compositeButtonContainer.setLayout(new GridLayout(1, true));
 		compositeButtonContainer
 			.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-		
-		buttonActivate = new Button(compositeButtonContainer, SWT.NONE);
-		buttonActivate.addSelectionListener(new SelectionAdapter() {
+			
+		btnActive = new Button(compositeButtonContainer, SWT.TOGGLE);
+		btnActive.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				conn.startReadingSerialInput();
-				if (conn.isActivated()) {
-					buttonActivate.setEnabled(false);
-					buttonDeactivate.setEnabled(true);
+				boolean selection = btnActive.getSelection();
+				if (selection) {
+					conn.startReadingSerialInput();
+				} else {
+					conn.stopReadingSerialInput();
 				}
 			}
 		});
-		buttonActivate.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		buttonActivate.setText("Aktivieren");
-		if (conn.isActivated())
-			buttonActivate.setEnabled(false);
+		btnActive.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		btnActive.setText("Aktivieren");
 		
-		buttonDeactivate = new Button(compositeButtonContainer, SWT.NONE);
-		buttonDeactivate.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				conn.stopReadingSerialInput();
-				buttonActivate.setEnabled(true);
-				buttonDeactivate.setEnabled(false);
-			}
-		});
-		buttonDeactivate.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		buttonDeactivate.setText("Deaktivieren");
-		if (conn.isDeactivated())
-			buttonDeactivate.setEnabled(false);
+		btnActive.setSelection(conn.isActivated());
 		
 		m_bindingContext = initDataBindings();
 	}
 	
-	private Anwender getSelectedAnwender(){
-		String id = CoreHub.localCfg.get(Preferences.ERRORMSGRECEIVER, "1");
-		return Anwender.load(id);
-	}
-	
 	@Override
 	public void setFocus(){
-		
-	}
-	
-	public Label getLblStatus(){
-		return lblStatus;
+		tableViewer.getTable().setFocus();
 	}
 	
 	protected DataBindingContext initDataBindings(){
 		DataBindingContext bindingContext = new DataBindingContext();
-		//
-		IObservableValue lblStatusObserveTextObserveWidget = SWTObservables.observeText(lblStatus);
-		IObservableValue conngetStatusBytesObserveValue =
-			BeanProperties.value("status").observe(conn);
-		bindingContext.bindValue(lblStatusObserveTextObserveWidget, conngetStatusBytesObserveValue,
-			null, null);
 		//
 		return bindingContext;
 	}

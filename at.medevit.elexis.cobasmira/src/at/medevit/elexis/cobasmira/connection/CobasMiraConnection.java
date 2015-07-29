@@ -97,7 +97,7 @@ public class CobasMiraConnection implements PropertyChangeListener {
 				InputStream in = serialPort.getInputStream();
 				//OutputStream out = serialPort.getOutputStream();
 				
-				reader = new CobasMiraSerialReader(in);
+				reader = new CobasMiraSerialReader(in, serialPort);
 				cobasMiraReader = new Thread(reader);
 				cobasMiraReader.start();
 				logger.debug("Reader Thread ID: " + cobasMiraReader.getId() + " Priority: "

@@ -64,7 +64,7 @@ Wenn das Plugin korrekt installiert ist, finden Sie unter Fenster-Views-Andere e
 [[Image:ch.elexis.notes_notesview.png|image]]
 
 
-[[Image:ch.elexis.notes_notestools.png|image]]
+[[Image:ch.elexis.notes_notestools.png|image]] 
 
 
 [[Image:ch.elexis.notes_notesview2.png|image]]

@@ -55,7 +55,7 @@ Installieren Sie auf dem im Labor befindlichen PC das Plugin wie gewohnt. Verbin
 Starten Sie dann Elexis und gehen Sie dort zu Datei-Einstellungen-Datenaustausch-Mythic
 
 
-[[Image:ch.elexis.connect.mythic_mythic2.png|image]]
+[[Image:ch.elexis.connect.mythic_mythic2.png|image]] 
 
 Hier stellen Sie den gewählten seriellen Port ein und die Schnittstellenparameter ein.
 

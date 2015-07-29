@@ -1067,7 +1067,7 @@ Der letzte Abschnitt der Agenda-Einstellungen betrifft die Vorgabe-Zeitdauer fü
 
 Des weiteren können Sie einige Einstellungen zum Druck von Terminkarten vornehmen. Diese Einstellungen finden Sie unter ''Druck''.
 
-[[Image:doc_de_settings_agenda-druck1.png|image]]<br />
+[[Image:doc_de:settings_agenda-druck1.png|image]]<br />
  image
 
 Die Standard-Vorlage für den Ausdruck von Terminkarten heisst ''Terminkarte''. Sie können eine beliebige andere Systemvorlage wählen. Die Termine werden beim Platzhalter ''[Termine]'' eingesetzt.
@@ -1076,7 +1076,7 @@ Beim Ausdruck einer Terminkarte erscheint ein Fenster mit der vorbereiteten Term
 
 Möchten Sie, dass die Terminkarte direkt auf dem Drucker ausgegeben wird, markieren Sie ''Direkt drucken''. Sie können nun den Drucker und optional den gewünschten Schacht auswählen. Falls Sie keinen Schacht auswählen, wird der in der Vorlage gespeicherte Schacht oder der Standard-Schacht des ausgewählten Druckers verwendet.
 
-[[Image:doc_de_settings_agenda-druck1.png|image]]<br />
+[[Image:doc_de:settings_agenda-druck1.png|image]]<br />
  image
 
 Damit sind Sie mit der Konfiguration der Agenda fertig. Drücken Sie auf ''OK'' und beenden Sie Elexis. Ab dem nächsten Programmstart stehen die neuen Einstellungen zur Verfügung.

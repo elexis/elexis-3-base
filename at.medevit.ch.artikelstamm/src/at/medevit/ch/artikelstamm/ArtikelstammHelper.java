@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 MEDEVIT.
+ * Copyright (c) 2013-2015 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 public class ArtikelstammHelper {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammHelper.class);
 	
-	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v002.xsd";
+	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v003.xsd";
 	private static URL schemaLocationUrl = null;
 	
 	private static SchemaFactory schemaFactory = SchemaFactory
@@ -153,9 +153,9 @@ public class ArtikelstammHelper {
 	
 	public static void marshallToFileSystem(Object newData, File outputFile) throws SAXException,
 		JAXBException{
-		Schema validationSchema = schemaFactory.newSchema(schemaLocationUrl);
+//		Schema validationSchema = schemaFactory.newSchema(schemaLocationUrl);
 		Marshaller m = JAXBContext.newInstance(ARTIKELSTAMM.class).createMarshaller();
-		m.setSchema(validationSchema);
+//		m.setSchema(validationSchema);
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		m.marshal(newData, outputFile);
 	}

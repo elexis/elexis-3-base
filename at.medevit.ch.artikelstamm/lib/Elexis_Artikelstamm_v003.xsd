@@ -15,7 +15,7 @@
   Contributors:
       MEDEVIT <office@medevit.at> - initial API and implementation
 -->
-<xs:schema targetNamespace="http://elexis.ch/Elexis_Artikelstamm_v003" elementFormDefault="qualified" attributeFormDefault="unqualified" version="002" id="Elexis_Artikelstamm_v003" xmlns="http://elexis.ch/Elexis_Artikelstamm_v003" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema targetNamespace="http://elexis.ch/Elexis_Artikelstamm_v003" elementFormDefault="qualified" attributeFormDefault="unqualified" version="003" id="Elexis_Artikelstamm_v003" xmlns="http://elexis.ch/Elexis_Artikelstamm_v003" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="ARTIKELSTAMM">
     <xs:annotation>
       <xs:documentation xml:lang="EN">Information on medicaments</xs:documentation>

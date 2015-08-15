@@ -60,7 +60,7 @@ Um das Impfplan Plugin in Elexis verwenden zu können, muss aus der Kategorie �
 == Konfiguration ==
 
 * Für die Ausgabe der dargestellten Impfungen eines Patientens via PDF kann unter ''Datei/Einstellungen/Klinische Hilfsmittel/Impfliste'' eine ''Druck-Ausgabeverzeichnis'' definiert werden.
-[[Datei:Medevit_vacc1.png]]
+[[File:medevit_vacc1.png]]
 
 * Die Impfungen werden standardmässig nach dem Datum der Verabreichung sortiert. Je nach Bedarf kann definiert werden, ob von neu-zu-alt (neueste Verabreichung oben) oder umgekehrt sortiert werden soll.
 
@@ -72,7 +72,7 @@ Um das Impfplan Plugin in Elexis verwenden zu können, muss aus der Kategorie �
 
 Öffnen Sie die View Impfliste und selektieren Sie einen Patient. Es werden alle bisher vorgenommenen Impfungen angezeigt. Empfohlene Standardimpfungen sind all jene, welche sich vor der breiten schwarzen Linie befinden.
 
-[[Datei:Medevit_vacc2.png|1000px]]
+[[File:medevit_vacc2.png|1000px]]
 
 === Impfung Eintragen ===
 
@@ -84,16 +84,16 @@ Die Imfung wird direkt über die Konsultation verrechnet (dabei öffnet sich ein
 '''Variante 2'''
 In der Impflisten-View kann über des grüne Plus der Artikelstamm geöffnet werden. Dort kann die gewünschte Impfung per Doppelklick hinzugefügt werden. Die Impfung muss einer Konsultation zugewiesen werden bzw. es kann automatisch eine neue Konsultation generiert werden. Nach Eintragen der Lot-Nummer, wird die Impfung in die Verrechnung aufgenommen und im Impfplan festgehalten. Bei Einträgen wird davon ausgegangen, dass der am System angemeldete Mandant die Impfung verabreicht hat.
 
-''Tipp:'' Im Artikelstamm kann durch aktivieren des ATC basierten Filters [[Datei:Medevit_vacc3.png]] nach Impfstoffen gesucht werden. Durch Doppelklick auf die gewünschte Impfstoffgruppe öffnen sich alle zugehörigen Artikel. Ein erneuter Doppelklick auf die Gruppe schliesst diese ansicht wiederum.
+''Tipp:'' Im Artikelstamm kann durch aktivieren des ATC basierten Filters [[File:medevit_vacc3.png]] nach Impfstoffen gesucht werden. Durch Doppelklick auf die gewünschte Impfstoffgruppe öffnen sich alle zugehörigen Artikel. Ein erneuter Doppelklick auf die Gruppe schliesst diese ansicht wiederum.
 
-[[Datei:Medevit_vacc4.png]]
+[[File:medevit_vacc4.png]]
 
 
 === Impfung Nachtragen ===
 
-Eine Impfung kann über dieses Icon [[Datei:Medevit_vacc5.png]] nachgetragen werden. 
+Eine Impfung kann über dieses Icon [[File:medevit_vacc5.png]] nachgetragen werden. 
 
-[[Datei:Medevit_vacc6.png]]
+[[File:medevit_vacc6.png]]
 
 * Pflicht Angaben
 ** Das Datum darf nicht vor dem Geburtsdatum des Patienten liegen. 
@@ -105,7 +105,7 @@ Eine Impfung kann über dieses Icon [[Datei:Medevit_vacc5.png]] nachgetragen wer
 * Bei nicht mehr erhältlichen Impfungen (nicht durch Auto-Vervollständigung gefunden)
 ** In diesem Fall gilt es die Krankheiten gegen welche die Impfung dient anzukreuzen.
 
-[[Datei:Medevit_vacc7.png]]
+[[File:medevit_vacc7.png]]
 
 === Ausdrucken/ PDF erstellen ===
 
@@ -117,9 +117,9 @@ Die Impfungsübersicht eines Patienten kann über das Drucksymbol als PDF ausgeg
 
 === Darstellung der Impfungen ===
 
-Die nachfolgenden zwei Unterpunkte sind im View Menü _Darstellung der Impfungen_ [[Datei:Medevit_vacc8.gif]] zu finden.
+Die nachfolgenden zwei Unterpunkte sind im View Menü _Darstellung der Impfungen_ [[File:medevit_vacc8.gif]] zu finden.
 
-[[Datei:Medevit_vacc9.png]]
+[[File:medevit_vacc9.png]]
 
 ==== Nach Name der Impfung sortieren ====
 
@@ -134,18 +134,18 @@ Es kann definiert werden ob der _Schweizerischer Impfplan 2013_ oder alle _verab
 Über ein Script können alle Patienten ermittelt werden, welche eine Imfpung mit einer bestimmten Lot-Nummer erhalten haben.
 Dieses Script kann in der Script View über Rechtsklick _Script ausführen_ gestartet werden und wird nach Eingabe der Lot-Nummer in Anführungszeichen (siehe Screenshot) ausgeführt.
 
-[[Datei:Medevit_vacc10.png]]
+[[File:medevit_vacc10.png]]
 
 Die Ergebnisse werden sowohl in einem Dialog ausgegeben als auch im Elexis Installationsverzeichnis unter ''LotNoAffectedPatients.txt'' gespeichert.
 
-[[Datei:Medevit_vacc11.png]]
+[[File:medevit_vacc11.png]]
 
 === Impfungen aus früherem Impfplan importieren ===
 
 '''Schritt 1)''' Impfungen in früherem Impfplan anpassen
 Zuerst müssen die Impfungen aus dem Impfplan Plugin von G. Weirich angepasst werden. Hierzu unter ''Datei/Einstellungen/Klinische Hilfsmittel/Impfplan'' für alle aufgelisteten Impfungen die Krankheiten gegen welche sie dienen definieren. 
 
-[[Datei:Medevit_vacc12.png]]
+[[File:medevit_vacc12.png]]
 
 Dieser Dialog kann per Doppelklick auf die entsprechende Impfung geöffnet werden.
 
@@ -155,4 +155,4 @@ Die Logausgabe dient zur Auskunft über Erfolg/Misserfolg des Imports.
 
 Bei Problemen beim Importieren wird der Grund, die Impfung und der zugehörige Patient angegeben. Bereits importierte Impfungen werden nicht noch einmal importiert!
 
-[[Datei:Medevit_vacc13.png]]
+[[File:medevit_vacc13.png]]

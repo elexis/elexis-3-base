@@ -49,7 +49,7 @@ Ausgangspunkt für Rezeptübermittlung ist die normale Rezepteingabe. Ist das Pl
 
 '''Abbildung 1: Senden eines Rezeptes mit PhM Prescriber'''
 
-[[Datei:overview.png|800px]]
+[[File:overview.png|800px]]
 
 
 Die Interaktionen werden nun geprüft, das Rezept übermittelt und schliesslich zum Unterschreiben ausgedruckt.
@@ -65,7 +65,7 @@ Unter <b>Datei..Einstellungen..Datenaustausch..Rezeptübermittlung</b> kann ein 
 
 '''Abbildung 2: Einstellungen des Plug-In'''
 
-[[Datei:preferences.png|800px]]
+[[File:preferences.png|800px]]
 
 
 Optional kann angegeben werden, ob ein automatischer Interaktions-Check erfolgen soll.
@@ -79,7 +79,7 @@ Nachdem ein Rezept erstellt wurde, kann in der Menu-Leiste der Button "Rezept ü
 
 '''Abbildung 3: Senden aktivieren'''
 
-[[Datei:overview.png|800px]]
+[[File:overview.png|800px]]
 
 
 Nun erscheint ein Dialogfeld, in dem die Ziel-Apotheke ausgewählt werden kann. <b>Dieses Fenster wird nur angezeigt, falls in der Nähe Apotheken vorhanden sind, die diese Funktion untersützen. Wird das Rezept an eine bestimmte Apotheke gesendet, so muss das Einverständnis des Patienten vorliegen.</b>
@@ -88,7 +88,7 @@ Ansonsten holt die Apotheke das Rezept erst ab, wenn der Patient dort mit dem Re
 
 '''Abbildung 4: Optionale Auswahl der Apotheke'''
 
-[[Datei:shops.png|800px]]
+[[File:shops.png|800px]]
 
 
 Wird "Abbrechen" gewählt, so kann das Rezept in allen Apotheken eingelöst werden.
@@ -98,7 +98,7 @@ Liegt eine Interaktion vor, wird diese angezeigt:
 
 '''Abbildung 5: Anzeige einer Interaktion'''
 
-[[Datei:interactions.png|800px]]
+[[File:interactions.png|800px]]
 
 
 Wird die Interaktion ignoriert, so wird das Rezept gesendet.
@@ -107,7 +107,7 @@ Wurde das Rezept erfolgreich übermittelt, wird der Druckerdialog angezeigt und 
 
 '''Abbildung 6: Gesendetes und ausgedrucktes Rezept'''
 
-[[Datei:prescription.png|680px]]
+[[File:prescription.png|680px]]
 
 
 Das gedruckte Rezept wird nun unterschrieben und dem Patienten mitgegeben.

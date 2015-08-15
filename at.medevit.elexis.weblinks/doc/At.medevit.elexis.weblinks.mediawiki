@@ -61,14 +61,14 @@ Bei der Selektion des Strings "Diabetes" und der Wahl von "Medix" im Rechtsklick
 
 '''Abbildung 1: Die Suchanfrage "Diabetes mellitus" bei Infomed'''
 
-[[Datei:welinks1.jpg|600px]]
+[[File:welinks1.jpg|600px]]
 
 
 
 
 '''Abbildung 2: Die Suchanfrage "Diabetes mellitus" bei Google für die Website medix.ch'''
 
-[[Datei:weblinks2.jpg|600px]]
+[[File:weblinks2.jpg|600px]]
 
 
 == Konfiguration ==
@@ -89,7 +89,7 @@ Beispiel C parametriert eine Anfrage bei Google für eine Suche auf der Website 
 
 '''Abbildung 3: Dialog für die Parametrierung''' 
 
-[[Datei:weblink3.jpg|600px]]
+[[File:weblink3.jpg|600px]]
 
 
 

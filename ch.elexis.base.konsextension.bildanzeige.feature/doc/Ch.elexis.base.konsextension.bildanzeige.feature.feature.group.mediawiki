@@ -57,4 +57,4 @@ Nach Installation kann der Benutzer Innerhalb des Lauftextes mittels Rechtsklick
 
 
 '''Abbildung 1: Verstümmelung durch Zigarette'''
-[[Datei:Kons_Bild.jpg|none|800px]]
+[[File:kons_bild.jpg|none|800px]]

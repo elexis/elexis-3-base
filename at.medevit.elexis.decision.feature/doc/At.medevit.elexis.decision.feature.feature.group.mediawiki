@@ -63,7 +63,7 @@ Die Fachinformation zu einem Medikament kann folgendermassen nachgeschlagen werd
 
 '''Abbildung 1: Browser-Aufruf aus der Fixmedikation / Therapieplan'''
 
-[[Datei:swissmedic1.jpg|800px]]
+[[File:swissmedic1.jpg|800px]]
 
 
 
@@ -92,7 +92,7 @@ Für die Prüfung eines neu zu verordnenden Medikamentes ist eine Interaktionspr
 
 '''Abbildung 2: Die Anfrage öffnet ein Browser-Fenster mit dem grafischen Interface von Epha'''
 
-[[Datei:EphaAbb1.jpg|800px]]
+[[File:ephaabb1.jpg|800px]]
 
 
 
@@ -114,14 +114,14 @@ Zu den Beispielen: 
 
 '''Abbildung 3: Die Suchanfrage "Diabetes mellitus" bei Infomed'''
 
-[[Datei:Param2.jpg|none|800px]]
+[[File:param2.jpg|none|800px]]
 
 
 
 
 '''Abbildung 4: Die Suchanfrage "Diabetes mellitus" bei Google für die Website medix.ch'''
 
-[[Datei:weblinks2.jpg|800px]]
+[[File:weblinks2.jpg|800px]]
 
 === Konfiguration ===
 Jede Website, welche Anfragen mittels einer URL zulässt, kann nach einer Parametrierung im Rechtsklick-Menü aufgerufen werden. Die Parametrierung der individuellen Suchanfragen erfolgt in den ,Einstellungen‘ von Elexis (Menü --> Datei / Einstellung / Online Dienste / Weblinks). Nach Klick auf 'Weblinks' erscheint ein Dialogfenster wie in Abbildung 5. Das Dialogfenster zeigt zwei Leerfelder (Abbé Punkt 1) für die Parameter und in unserem Beispiel vier parametrierte Einträge Abb 5 Punkte A-D).
@@ -141,4 +141,4 @@ Beispiel C parametriert eine Anfrage bei Google für eine Suche auf der Website 
 
 '''Abbildung 5: Dialog für die Parametrierung''' 
 
-[[Datei:Param3.jpg|800px]]
+[[File:param3.jpg|800px]]

@@ -11,7 +11,7 @@ elexis-notes benötigt Elexis ab Version 1.4
 
 Wie üblich wird das Plugin durch einfaches Kopieren ins Plugins-Verzeichnis installiert und durch Löschen aus diesem Verzeichnis wieder deinstalliert.
 
-[[Image:ch.elexis.notes_config.png|image]]<br />
+[[File:Ch.elexis.notes/config.png|image]]<br />
  [fig:notes1]
 
 Die Konfiguration (Vgl. Abb. [fig:notes1]) beschränkt sich darauf, ein Basisverzeichnis anzugeben, unterhalb dem ''Elexis-Notes'' externe Dokumente ablegen soll.
@@ -24,13 +24,13 @@ Wenn das Plugin korrekt installiert ist, finden Sie unter Fenster-Views-Andere e
 
 0.4
 
-[[Image:ch.elexis.notes_notesview.png|image]] [fig:notes]
+[[File:Ch.elexis.notes/notesview.png|image]] [fig:notes]
 
 0.5
 
-[[Image:ch.elexis.notes_notestools.png|image]] [fig:tools]
+[[File:Ch.elexis.notes/notestools.png|image]] [fig:tools]
 
-[[Image:ch.elexis.notes_notesview2.png|image]]<br />
+[[File:Ch.elexis.notes/notesview2.png|image]]<br />
  [fig:notes2]
 
 ''Elexis-Notes'' Ordnet Notizen und Dokumente beliebig hierarchisch. Sie können Hauptkategorien (die oberste Ebene) vorgeben und darunter beliebig viele Unterkategorieren in beliebig tiefer Schachtelung erstellen. Jede Unterkategorie kann gleichzeitig auch eine Notiz sein, resp. jede Notiz kann Unterkategorien enthalten.
@@ -55,7 +55,7 @@ Im rechten Feld können Sie beliebig Text eingeben, der dem links markierten Ele
 
 Im unteren Feld können Sie mit Klick auf den + Button Links erstellen. Ein Link kann entweder eine beliebige Datei oder ein Internet-Link sein (Komplett mit http:// einzugeben). Vgl Abb. [fig:notes3].
 
-[[Image:ch.elexis.notes_notesview3.png|image]]<br />
+[[File:Ch.elexis.notes/notesview3.png|image]]<br />
  [fig:notes3]
 
 == Stichwörter zuordnen ==
@@ -66,7 +66,7 @@ Im mittleren Feld zwischen Titel und Querverweisen können Sie beliebige, durch 
 
 Im Feld ‘Suchen’ können Sie den Anfang eines Suchbegriffs eingeben und dann die Eingabetaste drücken. (Vgl. Abb. [fig:find]).
 
-[[Image:ch.elexis.notes_find.png|image]]<br />
+[[File:Ch.elexis.notes/find.png|image]]<br />
  [fig:find]
 
 Die Liste wird dann auf diejenigen Einträge limitiert, die den gesuchten Begriff entweder im Titel oder in den Stichwörtern haben. Um wieder alle anzuzeigen, klicken Sie auf das rote ‘x’.

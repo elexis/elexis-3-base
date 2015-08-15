@@ -1,10 +1,10 @@
-[[Image:ch.elexis.connect.reflotron.v2_elexis_logo.png|image]]<br />
+[[File:Ch.elexis.connect.reflotron.v2/elexis_logo.png|image]]<br />
  image
 
-[[Image:ch.elexis.connect.reflotron.v2_roche_logo.png|image]]<br />
+[[File:Ch.elexis.connect.reflotron.v2/roche_logo.png|image]]<br />
  image
 
-[[Image:ch.elexis.connect.reflotron.v2_reflotron_device.png|image]]<br />
+[[File:Ch.elexis.connect.reflotron.v2/reflotron_device.png|image]]<br />
  image
 
 == Einführung ==
@@ -50,7 +50,7 @@ Die serielle Datenkommunikation ist im Reflotron standardmässig inaktiv. Damit 
 
 Starten Sie Elexis und gehen Sie dort zu Datei-Einstellungen-Datenaustausch-Roche Reflotron (S. Abb. [fig:config]).
 
-[h] [[Image:ch.elexis.connect.reflotron.v2_config.png|image]] [fig:config]
+[h] [[File:Ch.elexis.connect.reflotron.v2/config.png|image]] [fig:config]
 
 Hier stellen Sie den seriellen Port und die Schnittstellenparameter ein. Die Werte müssen mit den Einstellungen auf dem Reflotron Gerät übereinstimmen (siehe oben). Wichtig: Nach dem Ändern dieser Parameter müssen Sie Elexis neu starten.
 
@@ -63,19 +63,19 @@ Hier stellen Sie den seriellen Port und die Schnittstellenparameter ein. Die Wer
 
 Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch ein neuer Toolbar Button ‘Reflotron’ (Abb. [fig:toolbarbutton]). Klicken Sie auf diesen Knopf um die Verbindung mit dem Gerät herzustellen.
 
-[h] [[Image:ch.elexis.connect.reflotron.v2_toolbarbutton.png|image]] [fig:toolbarbutton]
+[h] [[File:Ch.elexis.connect.reflotron.v2/toolbarbutton.png|image]] [fig:toolbarbutton]
 
 Die Verbindung bleibt bestehen bis das Timeout gemäss Konfiguration abgelaufen ist. Das Reflotron Gerät benötigt für die verschiedene Tests unterschiedlich lang. Jedesmal wenn ein Test abgeschlossen ist, wird das Resultat an den Computer gesendet. Wenn alle Resultate empfangen wurden, kann die Verbindung abgebrochen werden (Cancel gemäss Abb. [fig:connected]).
 
-[h] [[Image:ch.elexis.connect.reflotron.v2_connected.png|image]] [fig:connected]
+[h] [[File:Ch.elexis.connect.reflotron.v2/connected.png|image]] [fig:connected]
 
-[h] [[Image:ch.elexis.connect.reflotron.v2_messwert.png|image]] [fig:messwert]
+[h] [[File:Ch.elexis.connect.reflotron.v2/messwert.png|image]] [fig:messwert]
 
 Wenn Elexis ein Resultat empfängt, wird versucht, dieses einem Patienten zuzuordnen. In Abb. [fig:messwert] ist ersichtlich, wie der Patient zugeordnet wird (Beispiel: Muster Franz sind die Angaben aus Elexis und muster wurde auf dem Reflotron eingegeben). Kann der Patient nicht automatisch zugewiesen werden folgt das Fenster mit der Patientenselektion.
 
 Es kann passieren, dass der Datenstrom zwischen Reflotron und Computer fehlerhaft ist. In diesem Fall erscheint eine Fehlermeldung (siehe [fig:transmissionerror]). In diesem Fall kann das Profil des Patienten auf dem Reflotron erneut gesendet werden.
 
-[h] [[Image:ch.elexis.connect.reflotron.v2_transmissionerror.png|image]] [fig:transmissionerror]
+[h] [[File:Ch.elexis.connect.reflotron.v2/transmissionerror.png|image]] [fig:transmissionerror]
 
 '''Reflotron sprint:'''<br />
  F2, Profil aufrufen, F10 Patient suchen und F5 Send Profile<br />
@@ -110,7 +110,7 @@ Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, das
 
 == Kabelspezifikation ==
 
-[h] [[Image:ch.elexis.connect.reflotron.v2_kabel.png|image]] [fig:kabel]
+[h] [[File:Ch.elexis.connect.reflotron.v2/kabel.png|image]] [fig:kabel]
 
 Es wird ein normales, serielles Kabel benötigt (kein Nullmodemkabel!). Das Kabel muss vom 25-poligen Stecker (männlich) auf den 9-poligen Stecker (weiblich) gemäss Abb. [fig:kabel] verdrahtet sein.
 

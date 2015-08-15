@@ -50,7 +50,7 @@ Ausserdem können, falls in Elexis ein Scanservice vorhanden ist, Dokumente dire
 Medelexis-Benutzer können über das Abo-Management installieren oder deinstallieren.  OpenSource Location >
 
 
-[[Image:ch.elexis.notes_config.png|image]]
+[[File:Ch.elexis.notes/config.png|image]]
 
 
 Die Konfiguration beschränkt sich darauf, ein Basisverzeichnis anzugeben, unterhalb dem ''Elexis-Notes'' externe Dokumente ablegen soll.
@@ -61,13 +61,13 @@ Die Konfiguration beschränkt sich darauf, ein Basisverzeichnis anzugeben, unter
 Wenn das Plugin korrekt installiert ist, finden Sie unter Fenster-Views-Andere eine View Namens ‘Notizen’. Es sollte sich dann ein Fenster wie in Abb. [fig:notes2] öffnen (natürlich zunächst ohne Inhalt).
 
 
-[[Image:ch.elexis.notes_notesview.png|image]]
+[[File:Ch.elexis.notes/notesview.png|image]]
 
 
-[[Image:ch.elexis.notes_notestools.png|image]] 
+[[File:Ch.elexis.notes/notestools.png|image]] 
 
 
-[[Image:ch.elexis.notes_notesview2.png|image]]
+[[File:Ch.elexis.notes/notesview2.png|image]]
 
 
 ''Elexis-Notes'' ordnet Notizen und Dokumente beliebig hierarchisch. Sie können Hauptkategorien (die oberste Ebene) vorgeben und darunter beliebig viele Unterkategorieren in beliebig tiefer Schachtelung erstellen. Jede Unterkategorie kann gleichzeitig auch eine Notiz sein, resp. jede Notiz kann Unterkategorien enthalten.
@@ -101,7 +101,7 @@ Im rechten Feld können Sie beliebig Text eingeben, der dem links markierten Ele
 
 Im unteren Feld können Sie mit Klick auf den + Button Links erstellen. Ein Link kann entweder eine beliebige Datei oder ein Internet-Link sein (Komplett mit http:// einzugeben).
 
-[[Image:ch.elexis.notes_notesview3.png|image]]
+[[File:Ch.elexis.notes/notesview3.png|image]]
 
 
 == Stichwörter zuordnen ==
@@ -115,7 +115,7 @@ Im mittleren Feld zwischen Titel und Querverweisen können Sie beliebige, durch 
 
 Im Feld ‘Suchen’ können Sie den Anfang eines Suchbegriffs eingeben und dann die Eingabetaste drücken.
 
-[[Image:ch.elexis.notes_find.png|image]]
+[[File:Ch.elexis.notes/find.png|image]]
 
 
 Die Liste wird dann auf diejenigen Einträge limitiert, die den gesuchten Begriff entweder im Titel oder in den Stichwörtern haben. Um wieder alle anzuzeigen, klicken Sie auf das rote ‘x’.

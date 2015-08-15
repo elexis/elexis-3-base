@@ -50,7 +50,7 @@ Medelexis-Benutzer können über das Service-Abo installieren oder deinstalliere
 == Funktionen==
 Die Inbox Ansicht kann einzeln geöffnet und einer Perspektive zugeordnet werden.
 
-[[Datei:medevit_inbox1.png]]
+[[File:medevit_inbox1.png]]
 
 * Es können die angezeigten Daten nach Typ und Text gefiltert werden.
 * Durch markieren der Checkbox können die Daten als gesehen markiert werden. Somit werden sie bei diesem Mandanten nicht mehr angezeigt.

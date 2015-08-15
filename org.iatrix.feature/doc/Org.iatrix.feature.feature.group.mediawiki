@@ -55,4 +55,4 @@ Details dazu auf [http://www.iatrix.org/pmwiki.php?n=Elexishilfe.KGIatrix iatrix
 <br />
 <br />
 
-[[Image:iatrix.png]]
+[[File:iatrix.png]]

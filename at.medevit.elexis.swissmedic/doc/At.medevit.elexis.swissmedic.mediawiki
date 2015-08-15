@@ -65,7 +65,7 @@ Die Fachinformation zu einem Medikament kann folgendermassen nachgeschlagen werd
 
 '''Abbildung 1: Browser-Aufruf aus der Fixmedikation / Therapieplan'''
 
-[[Datei:swissmedic1.jpg|600px]]
+[[File:swissmedic1.jpg|600px]]
 
 
 [[Category:Decision support]]

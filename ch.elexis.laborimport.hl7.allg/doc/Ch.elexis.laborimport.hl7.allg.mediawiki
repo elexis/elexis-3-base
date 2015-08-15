@@ -13,7 +13,7 @@ Wenn Sie das Plugin korrekt installiert haben, dann erscheint unter Datei-Einste
 
 Klicken Sie einfach auf den Import-Knopf in der Labor-View ([fig:lab1]).
 
-[[Image:ch.elexis.laborimport.hl7.allg_abb1.png|image]]<br />
+[[File:Ch.elexis.laborimport.hl7.allg/abb1.png|image]]<br />
  [fig:lab1]
 
 Nach dem Import werden alle heruntergeladenen Dateien in einem Unterordner ‘archive’ des Download-Verzeichnisses aufbewahrt, wo Sie sie nach einiger Zeit von Hand löschen können.

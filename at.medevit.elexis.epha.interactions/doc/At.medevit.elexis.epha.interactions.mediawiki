@@ -81,7 +81,7 @@ Dieser Interaktions-Check erlaubt so eine rasche Interaktionsprüfung im Workflo
 
 '''Abbildung 1. Webbrowser-Aufruf'''
 
-[[Image:at.medevit.elexis.epha.interactions_FixmedikationAufruf.png|frame|none]]
+[[File:At.medevit.elexis.epha.interactions/fixmedikationaufruf.png|frame|none]]
 
 
 
@@ -89,7 +89,7 @@ Dieser Interaktions-Check erlaubt so eine rasche Interaktionsprüfung im Workflo
 
 '''Abbildung 2: Die Anfrage öffnet ein Browser-Fenster mit dem grafischen Interface von Epha'''
 
-[[Image:at.medevit.elexis.epha.interactions_EphaInterface.png|frame|none]]
+[[File:At.medevit.elexis.epha.interactions/ephainterface.png|frame|none]]
 
 
 [[Category:Decision support]]

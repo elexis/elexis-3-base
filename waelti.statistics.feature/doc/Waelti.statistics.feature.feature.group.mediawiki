@@ -74,8 +74,8 @@ Die aufbereiteten Daten werden abgespeichert als<br />
 
 Weitere Fragestellungen sind willkommen und dürfen an den Autor herangetragen werden.
 
-[[Image:Waelti.Statistics_kohorte.png|image]]<br />
+[[File:Waelti.statistics/kohorte.png|image]]<br />
  [Abb1]
 
-[[Image:Waelti.Statistics_patient.png|image]]<br />
+[[File:Waelti.statistics/patient.png|image]]<br />
  [Abb2]

@@ -249,19 +249,21 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private void updateAllKonsAreas(Konsultation newKons, boolean putCaretToEnd){
 		/* Not yet sure whether comparing only the id or the whole cons is better
 		 */
+		actKons = newKons;
 		String newId = newKons == null ? "null" : newKons.getId();
-		if (savedKonsId.equals(newId)) {
-		// if (savedKons == newKons) {
-			logEvent("updateAllKonsAreas: skip as same " + newId);
-		} else {
-			savedKons = newKons;
-			savedKonsId = newId;
-			logEvent("updateAllKonsAreas: " + newId + " konsId match? " + savedKonsId.equals(newId));
-			for (int i = 0; i < allAreas.size(); i++) {
-				IJournalArea a = allAreas.get(i);
-				if (a != null) {
-					a.setKons(newKons, putCaretToEnd);
-				}
+		// It is a bad idea to skip updating the kons, when the Id matches
+		if (savedKons == newKons && savedKons == null) {
+			// Some changes, e.g. when date of actual kons are possible even when the compare matches.
+			// Therefore we return only when we have nothing to update savedKonst == newKons?" + newId + " konsId match? " + savedKonsId.equals(newId));
+			return;
+		}
+		savedKons = newKons;
+		savedKonsId = newId;
+		logEvent("updateAllKonsAreas: " + newId + " konsId match? " + savedKonsId.equals(newId));
+		for (int i = 0; i < allAreas.size(); i++) {
+			IJournalArea a = allAreas.get(i);
+			if (a != null) {
+				a.setKons(newKons, putCaretToEnd);
 			}
 		}
 	}
@@ -315,19 +317,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		@Override
 		public void runInUi(ElexisEvent ev){
 			Konsultation k = (Konsultation) ev.getObject();
+			logEvent("eeli_kons " + k.getId() + " typ "+ ev.getType());
 			switch (ev.getType()) {
 			case EVENT_UPDATE:
-				if (actKons != null && k.getId().equals(actKons.getId())) {
-					logEvent("eeli_kons EVENT_UPDATE ");
-					updateAllKonsAreas(k, true);
-				}
-
+				updateAllKonsAreas(k, true);
 				break;
 			case EVENT_DELETE:
-				if (actKons != null && k.getId().equals(actKons.getId())) {
-					logEvent("eeli_kons EVENT_DELETE");
-					updateAllKonsAreas(k, false);
-				}
+				updateAllKonsAreas(k, false);
 				break;
 			case EVENT_SELECTED:
 				logEvent("eeli_kons EVENT_SELECTED");

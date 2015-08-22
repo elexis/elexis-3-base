@@ -317,7 +317,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		@Override
 		public void runInUi(ElexisEvent ev){
 			Konsultation k = (Konsultation) ev.getObject();
-			logEvent("eeli_kons " + k.getId() + " typ "+ ev.getType());
+			logEvent("eeli_kons " + k.getId() + " typ " + ev.getType());
 			switch (ev.getType()) {
 			case EVENT_UPDATE:
 				updateAllKonsAreas(k, true);
@@ -434,9 +434,16 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 							+ selectedPatient.getPersonalia());
 						updateAllKonsAreas(letzteKons, true);
 					} else {
-						logEvent("runInUi eeli_pat EVENT_SELECTED letzte Kons setzen null"
+						// When no consultation is selected we must create one (maybe a case, too)
+						// This allows one to start working, as soon as possible
+						logEvent("runInUi eeli_pat EVENT_SELECTED create kons as none selected"
 							+ selectedPatient.getPersonalia());
-						updateAllKonsAreas(null, true);
+						if (fall == null) {
+							actKons = selectedPatient.createFallUndKons();
+						} else {
+							actKons = fall.neueKonsultation();
+						}
+						updateAllKonsAreas(actKons, true);
 					}
 
 				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
@@ -632,10 +639,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		if (actKons == null) {
 			sb.append("actKons null");
 		} else {
-			Patient pat = actKons.getFall().getPatient();
-			sb.append(actKons.getId());
-			sb.append(" kons vom " + actKons.getDatum());
-			sb.append(" " + pat.getId() + ": " + pat.getPersonalia());
+			Fall f = actKons.getFall();
+			if (f != null) {
+				Patient pat = f.getPatient();
+				sb.append(actKons.getId());
+				sb.append(" kons vom " + actKons.getDatum());
+				sb.append(" " + pat.getId() + ": " + pat.getPersonalia());
+			}
 		}
 		log.debug(sb.toString());
 	}

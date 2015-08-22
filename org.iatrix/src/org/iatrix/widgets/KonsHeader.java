@@ -23,10 +23,12 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -57,6 +59,7 @@ public class KonsHeader implements IJournalArea {
 	private Hyperlink hlKonsultationDatum;
 	private Hyperlink hlMandant;
 	private Combo cbFall;
+	private Label cbLabel;
 	private static Logger log = LoggerFactory.getLogger(KonsHeader.class);
 	/**
 	 * Flag indicating if there are more than one mandants. This variable is initially set in
@@ -100,7 +103,7 @@ public class KonsHeader implements IJournalArea {
 		} else {
 			hlMandant = null;
 			// placeholder
-			tk.createLabel(konsFallArea, "nur 1 Mandant "); // TODO ngngn
+			tk.createLabel(konsFallArea, "nur 1 Mandant ");
 		}
 
 		Composite fallArea = tk.createComposite(konsFallArea);
@@ -111,7 +114,7 @@ public class KonsHeader implements IJournalArea {
 
 		//
 		fallArea.setLayout(new GridLayout(2, false));
-		tk.createLabel(fallArea, "Fall:");
+		cbLabel = tk.createLabel(fallArea, "Fall:");
 		cbFall = new Combo(fallArea, SWT.SINGLE | SWT.READ_ONLY);
 		cbFall.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cbFall.addSelectionListener(new SelectionAdapter() {
@@ -227,6 +230,18 @@ public class KonsHeader implements IJournalArea {
 				// no selection event seems to be generated
 				cbFall.select(index);
 			}
+			String label = fall.getLabel();
+			cbFall.setBackground(cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			Color color = null;
+			if (label.contains("UVG")) {
+				 color = UiDesk.getColor(UiDesk.COL_SKYBLUE);
+			} else if (label.contains("KVG")) {
+				 color = cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+			} else {
+				 color = cbFall.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
+			}
+			cbLabel.setBackground(color);
+			cbFall.getParent().setBackground(color);
 		}
 	}
 

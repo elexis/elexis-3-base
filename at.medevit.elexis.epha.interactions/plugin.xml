@@ -11,6 +11,16 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.core.ui.medication.views.MedicationView">
+         <command
+               commandId="at.medevit.elexis.epha.interactions.ephasearch"
+               label="Medikamenteninteraktion prüfen ..."
+               style="push"
+               tooltip="Medikamenteninteraktion prüfen ...">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

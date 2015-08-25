@@ -145,6 +145,7 @@ public class KonsHeader implements IJournalArea {
 		cbFall.setEnabled(false);
 
 	}
+
 	/**
 	 * Initialize hasMultipleMandants variable
 	 */
@@ -211,6 +212,9 @@ public class KonsHeader implements IJournalArea {
 
 		if (konsultation != null) {
 			Fall fall = konsultation.getFall();
+			if (fall == null) {
+				return;
+			}
 			Patient patient = fall.getPatient();
 
 			Fall[] faelle = patient.getFaelle();
@@ -234,11 +238,11 @@ public class KonsHeader implements IJournalArea {
 			cbFall.setBackground(cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			Color color = null;
 			if (label.contains("UVG")) {
-				 color = UiDesk.getColor(UiDesk.COL_SKYBLUE);
+				color = UiDesk.getColor(UiDesk.COL_SKYBLUE);
 			} else if (label.contains("KVG")) {
-				 color = cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+				color = cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 			} else {
-				 color = cbFall.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
+				color = cbFall.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
 			}
 			cbLabel.setBackground(color);
 			cbFall.getParent().setBackground(color);
@@ -250,11 +254,13 @@ public class KonsHeader implements IJournalArea {
 		log.debug("setPatient " + newPatient);
 		konsFallArea.layout();
 	}
+
 	@Override
 	public void visible(boolean mode){
 		// TODO Auto-generated method stub
 
 	}
+
 	@Override
 	public void activation(boolean mode){
 		// TODO Auto-generated method stub

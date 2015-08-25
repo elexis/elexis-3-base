@@ -465,9 +465,9 @@ public class ProblemArea implements IJournalArea {
 					if (StringTool.isNothing(label)) {
 						label = Constants.UNKNOWN;
 					}
-					if (!CoreHub.acl.request(AccessControlDefaults.DELETE_FORCED))
-					{
-						log.error("Das Problem konnte nicht gelöscht werden: " + problem + " missing AccessControlDefaults.DELETE_FORCED");
+					if (!CoreHub.acl.request(AccessControlDefaults.DELETE_FORCED)) {
+						log.error("Das Problem konnte nicht gelöscht werden: " + problem
+							+ " missing AccessControlDefaults.DELETE_FORCED");
 						SWTHelper.alert("Konnte Problem nicht löschen",
 							"Sie haben keine Berechtigung das Problem mit den verknüpften Daten zu löschen. (aka AccessControlDefaults.DELETE_FORCED)");
 						return;
@@ -710,8 +710,7 @@ public class ProblemArea implements IJournalArea {
 	@Override
 	public void setKons(Konsultation newKons, boolean putCaretToEnd){
 		if (actKons != newKons) {
-			log.trace("setKons " + (newKons == null ? "null"
-					: newKons.getId() + newKons.getFall().getPatient().getPersonalia()));
+			log.trace("setKons " + (newKons == null ? "null" : newKons.getId()));
 			actKons = newKons;
 		} else {
 			log.trace("setKons newKons matches actKons");

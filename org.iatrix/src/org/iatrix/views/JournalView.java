@@ -317,7 +317,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		@Override
 		public void runInUi(ElexisEvent ev){
 			Konsultation k = (Konsultation) ev.getObject();
-			logEvent("eeli_kons " + k.getId() + " typ " + ev.getType());
+			logEvent("eeli_kons " + (k != null ? k.getId(): "null") + " typ " + ev.getType());
 			switch (ev.getType()) {
 			case EVENT_UPDATE:
 				updateAllKonsAreas(k, true);
@@ -436,11 +436,29 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					} else {
 						// When no consultation is selected we must create one (maybe a case, too)
 						// This allows one to start working, as soon as possible
-						logEvent("runInUi eeli_pat EVENT_SELECTED create kons as none selected"
-							+ selectedPatient.getPersonalia());
 						if (fall == null) {
-							actKons = selectedPatient.createFallUndKons();
+							Fall[] faelle = selectedPatient.getFaelle();
+							if (faelle.length == 0) {
+								actKons = selectedPatient.createFallUndKons();
+								logEvent(
+									"runInUi eeli_pat EVENT_SELECTED create FallUndKons as none selected"
+										+ selectedPatient.getPersonalia());
+							} else {
+								actKons = faelle[0].getLetzteBehandlung();
+								if (actKons == null) {
+									actKons = faelle[0].neueKonsultation();
+									logEvent(
+										"runInUi eeli_pat EVENT_SELECTED create kons for faelle[0]"
+											+ selectedPatient.getPersonalia());
+								} else {
+									logEvent(
+										"runInUi eeli_pat EVENT_SELECTED found kons for for faelle[0]"
+											+ selectedPatient.getPersonalia());
+								}
+							}
 						} else {
+							logEvent("runInUi eeli_pat EVENT_SELECTED create kons for fall"
+								+ selectedPatient.getPersonalia());
 							actKons = fall.neueKonsultation();
 						}
 						updateAllKonsAreas(actKons, true);

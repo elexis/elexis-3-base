@@ -52,6 +52,7 @@ import ch.elexis.core.ui.util.IKonsExtension;
 import ch.elexis.core.ui.util.IKonsMakro;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -168,17 +169,22 @@ public class KonsText implements IJournalArea {
 
 	public void updateEintrag(){
 		if (actKons != null) {
+			if (actKons.getFall() == null) {
+				return;
+			}
 			Patient konsPatient = actKons.getFall().getPatient();
 			if (text.isDirty() || textChanged()) {
 				if (actPatient != null && konsPatient.getId().equals(actPatient.getId())) {
 					logEvent("updateEintrag same");
 				} else {
-					logEvent("updateEintrag not same. not skipping");
+					logEvent("updateEintrag not same. not skipping. Length is "
+						+ text.getContentsPlaintext().length());
 					//					return;
 				}
 				if (hasKonsTextLock()) {
 					actKons.updateEintrag(text.getContentsAsXML(), false);
-					logEvent("saved rev. " + actKons.getHeadVersion() + text.getContentsPlaintext());
+					logEvent(
+						"saved rev. " + actKons.getHeadVersion() + text.getContentsPlaintext());
 					text.setDirty(false);
 
 					// update kons version label
@@ -198,6 +204,8 @@ public class KonsText implements IJournalArea {
 								+ ". Dieses Problem ist ein Programmfehler. Bitte informieren Sie die Entwickler.)");
 					}
 				}
+			} else {
+				log.debug("skipping ");
 			}
 		}
 	}
@@ -444,7 +452,7 @@ public class KonsText implements IJournalArea {
 	 */
 	@Override
 	public void setKons(Konsultation k, boolean putCaretToEnd){
-		// save probably not yet saved changes
+		// save probably not yet saved changes, also
 		// TODO: Niklaus das ist die falsche Stelle, wir müssen updateEintrag(); oder ähnliches beim Verlassen des Fenster oder ähnlichem
 		// TODO: machen!!
 
@@ -458,9 +466,10 @@ public class KonsText implements IJournalArea {
 			actPatient = actKons.getFall().getPatient();
 		}
 		if (savedInitialKonsText != null && actKons != null) {
-			logEvent("set kons patient key " + text.getData(PATIENT_KEY) + " len " + savedInitialKonsText.length());
-			if (savedInitialKonsText.length() > 0 && !actKons.getEintrag().toString().equalsIgnoreCase(text.getContentsAsXML()))
-			{
+			logEvent("set kons patient key " + text.getData(PATIENT_KEY) + " len "
+				+ savedInitialKonsText.length());
+			if (savedInitialKonsText.length() > 0
+				&& !actKons.getEintrag().toString().equalsIgnoreCase(text.getContentsAsXML())) {
 				logEvent("in DB:" + actKons.getEintrag().getHead().toString());
 				logEvent("in Text:" + text.getContentsAsXML());
 				actKons.updateEintrag(savedInitialKonsText, false);
@@ -554,20 +563,44 @@ public class KonsText implements IJournalArea {
 		} else {
 			sb.append(actKons.getId());
 			sb.append(" kons rev. " + actKons.getHeadVersion());
-		    sb.append(" vom " + actKons.getDatum());
-			sb.append(" " + actKons.getFall().getPatient().getPersonalia());
+			sb.append(" vom " + actKons.getDatum());
+			if (actKons.getFall() != null) {
+				sb.append(" " + actKons.getFall().getPatient().getPersonalia());
+			}
 		}
 		log.debug(sb.toString());
 	}
 
 	@Override
 	public void activation(boolean mode){
+		logEvent("activation mode " + mode);
 		if (mode == false) {
+			// text is neither dirty nor changed.
+			// If it es empty and nothing has been billed, we just delete this kons.
+			if (actKons == null) {
+				return;
+			}
+			boolean noLeistungen = actKons.getLeistungen() == null || actKons.getLeistungen().isEmpty();
+			log.debug(actPatient.getPersonalia() + " delete3 the kons? " + text.getContentsPlaintext().length() + " noLeistungen " + noLeistungen);
+			if (text.getContentsPlaintext().length() == 0
+				&& (noLeistungen)) {
+				Fall f = actKons.getFall();
+				Konsultation[] ret = f.getBehandlungen(false);
+				actKons.delete(true);
+				if (ret.length == 1) {
+					/* Trying to remove the associated case got me into problems.
+					 * Therefore flagging it as TODO:: remove associated problem
+					 * Caused by: java.lang.NullPointerException  at ch.elexis.core.ui.views.DiagnosenDisplay.setDiagnosen(DiagnosenDisplay.java:161)
+					 */
+					// f.delete(true);
+				}
+			}
 			setKons(null, false);
 			text.setData(PATIENT_KEY, null);
 			savedInitialKonsText = "";
 			text.setText("");
-			logEvent("activation: forcing everything to empty");
+			actKons = null;
+			actPatient = null;
 		}
 	}
 
@@ -579,25 +612,25 @@ public class KonsText implements IJournalArea {
 			@Override
 			public void heartbeat(){
 				logEvent("Period: " + konsTextSaverPeriod);
-			    if (!(konsTextSaverPeriod > 0)) {
-			      // auto-save disabled
-			      return;
-			    }
+				if (!(konsTextSaverPeriod > 0)) {
+					// auto-save disabled
+					return;
+				}
 
-			    // inv: konsTextSaverPeriod > 0
+				// inv: konsTextSaverPeriod > 0
 
-			    // increment konsTextSaverCount, but stay inside period
-			    konsTextSaverCount++;
-			    konsTextSaverCount %= konsTextSaverPeriod;
+				// increment konsTextSaverCount, but stay inside period
+				konsTextSaverCount++;
+				konsTextSaverCount %= konsTextSaverPeriod;
 
-			    logEvent("konsTextSaverCount = " + konsTextSaverCount + " konsEditorHasFocus: "
-			      + konsEditorHasFocus);
-			    if (konsTextSaverCount == 0) {
-			      if (konsEditorHasFocus) {
-			        logEvent("Auto Save Kons Text");
-			        updateEintrag();
-			      }
-			    }
+				logEvent("konsTextSaverCount = " + konsTextSaverCount + " konsEditorHasFocus: "
+					+ konsEditorHasFocus);
+				if (konsTextSaverCount == 0) {
+					if (konsEditorHasFocus) {
+						logEvent("Auto Save Kons Text");
+						updateEintrag();
+					}
+				}
 			}
 		});
 	}

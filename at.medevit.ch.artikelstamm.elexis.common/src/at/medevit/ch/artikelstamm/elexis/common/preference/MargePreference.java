@@ -36,9 +36,10 @@ public class MargePreference {
 			String[] values = entry.split("/");
 			if (values.length == 3) {
 				marges[i] = new Marge();
-				marges[i].setStartInterval(Double.parseDouble(values[0]));
-				marges[i].setEndInterval(Double.parseDouble(values[1]));
-				marges[i].setAddition(Double.parseDouble(values[2]));
+				marges[i].setStartInterval(Double
+					.parseDouble(values[0] == null ? "0.0" : values[0]));
+				marges[i].setEndInterval(Double.parseDouble(values[1] == null ? "0.0" : values[1]));
+				marges[i].setAddition(Double.parseDouble(values[2] == null ? "0.0" : values[2]));
 			}
 		}
 	}

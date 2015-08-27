@@ -10,7 +10,9 @@
  ******************************************************************************/
 package ch.elexis.base.ch.labortarif_2009.ui.dialogs;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -31,6 +33,10 @@ import ch.elexis.labortarif2009.data.Labor2009Tarif;
 
 public class EalSelektor extends FilteredItemsSelectionDialog {
 	
+	private static boolean initialized = false;
+	private static HashMap<Labor2009Tarif, String> labelCache;
+	private static List<Labor2009Tarif> allCodes;
+	
 	public EalSelektor(Shell shell){
 		super(shell);
 		setTitle("EAL Code Selektion");
@@ -41,7 +47,7 @@ public class EalSelektor extends FilteredItemsSelectionDialog {
 				if (element == null) {
 					return "";
 				}
-				return ((Labor2009Tarif) element).getLabel();
+				return labelCache.get((Labor2009Tarif) element);
 			}
 		});
 	}
@@ -80,7 +86,7 @@ public class EalSelektor extends FilteredItemsSelectionDialog {
 			public boolean matchItem(Object item){
 				Labor2009Tarif code = (Labor2009Tarif) item;
 				
-				return matches(code.getLabel());
+				return matches(labelCache.get(code));
 			}
 		};
 	}
@@ -90,7 +96,7 @@ public class EalSelektor extends FilteredItemsSelectionDialog {
 		return new Comparator<Labor2009Tarif>() {
 			
 			public int compare(Labor2009Tarif o1, Labor2009Tarif o2){
-				return o1.getLabel().compareTo(o2.getLabel());
+				return labelCache.get(o1).compareTo(labelCache.get(o2));
 			}
 		};
 	}
@@ -99,9 +105,21 @@ public class EalSelektor extends FilteredItemsSelectionDialog {
 	protected void fillContentProvider(AbstractContentProvider contentProvider,
 		ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException{
 		
-		Query<Labor2009Tarif> qlt = new Query<Labor2009Tarif>(Labor2009Tarif.class);
-		List<Labor2009Tarif> allCodes = qlt.execute();
-		
+		if (!initialized) {
+			labelCache = new HashMap<Labor2009Tarif, String>();
+			allCodes = new ArrayList<Labor2009Tarif>();
+			Query<Labor2009Tarif> qlt = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+			allCodes.addAll(qlt.execute());
+			progressMonitor.beginTask("", allCodes.size());
+			for (Labor2009Tarif labor2009Tarif : allCodes) {
+				if (progressMonitor.isCanceled()) {
+					return;
+				}
+				labelCache.put(labor2009Tarif, labor2009Tarif.getLabel());
+				progressMonitor.worked(1);
+			}
+			initialized = true;
+		}
 		for (Labor2009Tarif code : allCodes) {
 			if (progressMonitor.isCanceled()) {
 				return;
@@ -113,7 +131,7 @@ public class EalSelektor extends FilteredItemsSelectionDialog {
 	@Override
 	public String getElementName(Object item){
 		Labor2009Tarif code = (Labor2009Tarif) item;
-		return code.getLabel();
+		return labelCache.get(code);
 	}
 	
 	@Override

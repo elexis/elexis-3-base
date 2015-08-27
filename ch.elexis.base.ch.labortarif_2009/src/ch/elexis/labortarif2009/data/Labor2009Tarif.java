@@ -98,15 +98,20 @@ public class Labor2009Tarif extends UiVerrechenbarAdapter {
 	
 	@Override
 	public String getLabel(){
-		String code = getCode();
+		String[] values =
+				get(true, Labor2009Tarif.FLD_GUELTIG_VON, Labor2009Tarif.FLD_GUELTIG_BIS,
+					Labor2009Tarif.FLD_CODE, Labor2009Tarif.FLD_NAME);
+		String validFromString = values[0];
+		String validToString = values[1];
+		String code = values[2];
+		String text = StringTool.getFirstLine(values[3], 80);
+		
 		if (!StringTool.isNothing(code)) {
-			StringBuilder sb = new StringBuilder(code).append(" ").append(getText()) //$NON-NLS-1$
+			StringBuilder sb = new StringBuilder(code).append(" ").append(text) //$NON-NLS-1$
 				.append(" (").append(get(FLD_FACHBEREICH)).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			TimeTool validFrom = null;
 			TimeTool validTo = null;
-			String validFromString = get(Labor2009Tarif.FLD_GUELTIG_VON);
-			String validToString = get(Labor2009Tarif.FLD_GUELTIG_BIS);
 			if (validFromString != null && validFromString.trim().length() > 0) {
 				validFrom = new TimeTool(validFromString);
 			}

@@ -21,8 +21,10 @@ import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.core.ui.exchange.elements.XChangeElement;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.BestellView;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Bestellung;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -40,6 +42,8 @@ public class Sender implements IDataSender {
 	
 	private final List<String> orderRequests = new ArrayList<String>();
 	
+	private int counter;
+	
 	public boolean canHandle(Class<? extends PersistentObject> clazz){
 		if (clazz.equals(ch.elexis.data.Bestellung.class)) {
 			return true;
@@ -49,6 +53,11 @@ public class Sender implements IDataSender {
 	}
 	
 	public void finalizeExport() throws XChangeException{
+		if (counter == 0) {
+			log.log("Order contains no articles to order from Rose supplier", Log.INFOS);
+			return;
+		}
+		
 		// get proxy settings and store old values
 		Properties systemSettings = System.getProperties();
 		String oldProxyHost = systemSettings.getProperty("http.proxyHost");
@@ -152,6 +161,7 @@ public class Sender implements IDataSender {
 	 *         not valid
 	 */
 	private XChangeElement addOrder(Bestellung order) throws XChangeException{
+		counter = 0;
 		if (order == null) {
 			// order must not be null
 			throw new XChangeException("Die Bestellung ist leer.");
@@ -170,6 +180,13 @@ public class Sender implements IDataSender {
 		if (StringTool.isNothing(clientNrRose)) {
 			throw new XChangeException(
 				"Kundennummer ist nicht konfiguriert. (Einstellungen/Datenaustausch/zur Rose (Bestellungen))");
+		}
+		
+		String supplier = CoreHub.globalCfg.get(Constants.CFG_ROSE_SUPPLIER, null);
+		String selDialogTitle = "Kein 'Zur Rose' Lieferant definiert";
+		Kontakt roseSupplier = BestellView.resolveDefaultSupplier(supplier, selDialogTitle);
+		if (roseSupplier == null || !roseSupplier.exists()) {
+			return null;
 		}
 		
 		/*
@@ -196,45 +213,50 @@ public class Sender implements IDataSender {
 		
 		for (Bestellung.Item item : items) {
 			Artikel artikel = item.art;
-			String pharmacode = artikel.getPharmaCode();
-			if (pharmacode != null && pharmacode.length() == 6) {
-				pharmacode = "0" + pharmacode;
-			}
-			String eanId = artikel.getExt("EAN");
-			if (StringTool.isNothing(eanId)) {
-				eanId = artikel.getEAN();
-			}
-			String description = artikel.getName();
-			int quantity = item.num;
-			
-			if (StringTool.isNothing(pharmacode) || StringTool.isNothing(eanId)
-				|| StringTool.isNothing(description) || quantity < 1) {
-				
-				StringBuffer msg = new StringBuffer();
-				msg.append("Der Artikel " + PersistentObject.checkNull(description)
-					+ " (Pharma-Code " + PersistentObject.checkNull(pharmacode)
-					+ ") ist nicht korrekt konfiguriert: ");
-				if (StringTool.isNothing(pharmacode)) {
-					msg.append("Ungültiger Pharmacode. ");
+			Kontakt artSupplier = item.art.getLieferant();
+			// only add zurRose line items
+			if (roseSupplier.equals(artSupplier)) {
+				String pharmacode = artikel.getPharmaCode();
+				if (pharmacode != null && pharmacode.length() == 6) {
+					pharmacode = "0" + pharmacode;
 				}
+				String eanId = artikel.getExt("EAN");
 				if (StringTool.isNothing(eanId)) {
-					msg.append("Ungültiger EAN-Code. ");
+					eanId = artikel.getEAN();
 				}
-				if (quantity < 1) {
-					msg.append("Ungültige Anzahl. ");
+				String description = artikel.getName();
+				int quantity = item.num;
+				
+				if (StringTool.isNothing(pharmacode) || StringTool.isNothing(eanId)
+					|| StringTool.isNothing(description) || quantity < 1) {
+					
+					StringBuffer msg = new StringBuffer();
+					msg.append("Der Artikel " + PersistentObject.checkNull(description)
+						+ " (Pharma-Code " + PersistentObject.checkNull(pharmacode)
+						+ ") ist nicht korrekt konfiguriert: ");
+					if (StringTool.isNothing(pharmacode)) {
+						msg.append("Ungültiger Pharmacode. ");
+					}
+					if (StringTool.isNothing(eanId)) {
+						msg.append("Ungültiger EAN-Code. ");
+					}
+					if (quantity < 1) {
+						msg.append("Ungültige Anzahl. ");
+					}
+					msg.append("Bitte korrigieren Sie diese Fehler.");
+					
+					SWTHelper.alert("Fehlerhafter Artikel", msg.toString());
+					
+					throw new XChangeException("Fehlerhafter Artikel: Pharamcode: " + pharmacode
+						+ ", EAN: " + eanId + ", Name: " + description + ", Anzahl: " + quantity);
 				}
-				msg.append("Bitte korrigieren Sie diese Fehler.");
 				
-				SWTHelper.alert("Fehlerhafter Artikel", msg.toString());
-				
-				throw new XChangeException("Fehlerhafter Artikel: Pharamcode: " + pharmacode
-					+ ", EAN: " + eanId + ", Name: " + description + ", Anzahl: " + quantity);
+				sb.append("<product" + " pharmacode=\"" + escapeXmlAttribute(pharmacode) + "\""
+					+ " eanId=\"" + escapeXmlAttribute(eanId) + "\"" + " description=\""
+					+ escapeXmlAttribute(description) + "\"" + " quantity=\"" + quantity + "\""
+					+ " positionType=\"1\"" + "/>" + XML_NEWLINE);
+				counter++;
 			}
-			
-			sb.append("<product" + " pharmacode=\"" + escapeXmlAttribute(pharmacode) + "\""
-				+ " eanId=\"" + escapeXmlAttribute(eanId) + "\"" + " description=\""
-				+ escapeXmlAttribute(description) + "\"" + " quantity=\"" + quantity + "\""
-				+ " positionType=\"1\"" + "/>" + XML_NEWLINE);
 		}
 		sb.append("</order>" + XML_NEWLINE);
 		

@@ -12,6 +12,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.inputs.KontaktFieldEditor;
 
 public class RosePreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
@@ -29,7 +30,8 @@ public class RosePreferences extends FieldEditorPreferencePage implements IWorkb
 			getFieldEditorParent()));
 		addField(new StringFieldEditor(Constants.CFG_ASAS_PROXY_PORT, "HIN-Client Port",
 			getFieldEditorParent()));
-		
+		addField(new KontaktFieldEditor(CoreHub.globalCfg, Constants.CFG_ROSE_SUPPLIER,
+			"Lieferant", getFieldEditorParent()));
 	}
 	
 	public void init(final IWorkbench workbench){

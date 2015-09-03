@@ -82,6 +82,7 @@
   <module>net.medshare.connector.viollier_test</module>
   <module>org.iatrix.bestellung.rose_test</module>
   <module>ch.pharmed.phmprescriber_test</module>
+  <module>at.medevit.ch.artikelstamm.medcalendar.test</module>
 
   <module>at.gruber.elexis.mythic22</module>
   <module>at.gruber.elexis.mythic22.feature</module>
@@ -107,6 +108,8 @@
   <module>at.medevit.ch.artikelstamm.elexis.open</module>
   <module>at.medevit.ch.artikelstamm.ui</module>
   <module>at.medevit.ch.artikelstamm/</module>
+  <module>at.medevit.ch.artikelstamm.medcalendar</module>
+  <module>at.medevit.ch.artikelstamm.medcalendar.feature/</module>
   <module>at.medevit.elexis.impfplan.feature</module>
   <module>at.medevit.elexis.impfplan</module>
   <module>at.medevit.elexis.impfplan.ui</module>

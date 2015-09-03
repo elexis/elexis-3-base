@@ -24,8 +24,10 @@ Import-Package: org.eclipse.core.databinding.observable.value,
  org.eclipse.jface.viewers,
  org.slf4j
 Export-Package: at.medevit.ch.artikelstamm.elexis.common.importer,
+ at.medevit.ch.artikelstamm.elexis.common.preference,
  at.medevit.ch.artikelstamm.elexis.common.ui,
  at.medevit.ch.artikelstamm.elexis.common.ui.cv,
+ at.medevit.ch.artikelstamm.elexis.common.ui.provider,
  ch.artikelstamm.elexis.common
 Service-Component: OSGI-INF/atccodeserviceconsumer.xml 
 Bundle-ActivationPolicy: lazy

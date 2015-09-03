@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.Verrechnungscode">
+      <Artikel
+            CodeDetailDisplay="at.medevit.ch.artikelstamm.medcalendar.ui.MedCalArtikelstammDetailDisplay"
+            CodeSelectorFactory="at.medevit.ch.artikelstamm.medcalendar.ui.MedCalArtikelstammCodeSelectorFactory"
+            ElementFactory="ch.artikelstamm.elexis.common.ArtikelstammPOFactory"
+            name="Artikelstamm MedKalender">
+      </Artikel>
+   </extension>
+
+</plugin>

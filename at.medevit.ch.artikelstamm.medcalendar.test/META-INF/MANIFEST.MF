@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MedCalendar Tests
+Bundle-SymbolicName: at.medevit.ch.artikelstamm.medcalendar.test
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: medevit.at
+Fragment-Host: at.medevit.ch.artikelstamm.medcalendar;bundle-version="3.0.0.qualifier"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.junit

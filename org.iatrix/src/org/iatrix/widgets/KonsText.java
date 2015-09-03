@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.iatrix.Iatrix;
 import org.iatrix.data.KonsTextLock;
 import org.iatrix.dialogs.ChooseKonsRevisionDialog;
 import org.iatrix.util.Heartbeat;
@@ -400,37 +399,6 @@ public class KonsText implements IJournalArea {
 
 	}
 
-	/**
-	 * Return the auto-save time period interval, as configured in CoreHub.userCfg
-	 *
-	 * @return the calculated period interval, or 1 if there are invalid configuration values, or 0
-	 *         if autos-save is disabled
-	 */
-	private int getKonsTextSaverPeriod(){
-		int timePeriod =
-			CoreHub.userCfg.get(Iatrix.CFG_AUTO_SAVE_PERIOD, Iatrix.CFG_AUTO_SAVE_PERIOD_DEFAULT);
-		if (timePeriod == 0) {
-			// no auto-save
-			return 0;
-		}
-
-		log.trace("TimePeriod: " + timePeriod);
-		int heartbeatInterval =
-			CoreHub.localCfg.get(ch.elexis.core.constants.Preferences.ABL_HEARTRATE, 30);
-		if (heartbeatInterval > 0 && timePeriod >= heartbeatInterval) {
-			int period = timePeriod / heartbeatInterval;
-			if (period > 0) {
-				return period;
-			} else {
-				// shouldn't occur...
-				return 1;
-			}
-		} else {
-			// shouldn't occur...
-			return 1;
-		}
-	}
-
 	/*
 	 * Aktuellen Patienten setzen
 	 */
@@ -589,8 +557,10 @@ public class KonsText implements IJournalArea {
 				actKons.delete(true);
 				if (ret.length == 1) {
 					/* Trying to remove the associated case got me into problems.
-					 * Therefore flagging it as TODO:: remove associated problem
-					 * Caused by: java.lang.NullPointerException  at ch.elexis.core.ui.views.DiagnosenDisplay.setDiagnosen(DiagnosenDisplay.java:161)
+					 * Peter Schoenbucher argued on September, 2, 2015, that we should never
+					 * delete a case, because the case holds the information which Krankenkasse is
+					 * attached to this client. Therefore often the assistant opens a case before
+					 * the consultation starts
 					 */
 					// f.delete(true);
 				}

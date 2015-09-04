@@ -13,8 +13,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class MedCalendar {
-	public static final String MEDCAL_SERIALIZED_FILE = "/rsc/MedCalMap.ser";
-	public static final String ATC_MEDCAL_SERIALIZED_FILE = "/rsc/ATCMedCalMap.ser";
+	public static final String MEDCAL_SERIALIZED_FILE = "/lib/MedCalMap.ser";
+	public static final String ATC_MEDCAL_SERIALIZED_FILE = "/lib/ATCMedCalMap.ser";
 	
 	private static MedCalendar instance = null;
 	private TreeMap<String, MedCalendarSection> medCalMap = null;

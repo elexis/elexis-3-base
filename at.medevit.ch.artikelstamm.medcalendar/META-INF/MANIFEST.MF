@@ -18,3 +18,5 @@ Require-Bundle: org.eclipse.core.runtime,
  at.medevit.ch.artikelstamm.elexis.common,
  org.apache.commons.lang
 Import-Package: org.eclipse.wb.swt
+Bundle-ClassPath: lib/,
+ .

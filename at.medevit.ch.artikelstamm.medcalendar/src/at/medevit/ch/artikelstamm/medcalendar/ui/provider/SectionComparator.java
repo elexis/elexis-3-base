@@ -1,4 +1,4 @@
-package at.medevit.ch.artikelstamm.medcalendar.test.internal;
+package at.medevit.ch.artikelstamm.medcalendar.ui.provider;
 
 import java.io.Serializable;
 import java.util.Comparator;

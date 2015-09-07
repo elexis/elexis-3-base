@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="at.medevit.ch.artikelstamm.medcalendar.feature"
-      label="MedKalendar"
+      label="MedKalendar (BETA)"
       version="3.0.0.qualifier"
       provider-name="medevit.at">
 

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.medcalendar.MedCalendarSection;
+import at.medevit.ch.artikelstamm.medcalendar.ui.provider.SectionComparator;
 
 public class SerializedMapGenerator {
 	private static final Logger log = LoggerFactory.getLogger(SerializedMapGenerator.class);

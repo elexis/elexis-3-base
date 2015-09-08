@@ -24,9 +24,13 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -63,6 +67,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 	private int textWidth;
 	private double sheetWidth;
 	private double widthPerColumn;
+	private boolean ctrlKeyDown = false;
 	
 	private TimeTool setTerminTo(int x, int y){
 		String resource = ""; //$NON-NLS-1$
@@ -127,6 +132,22 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			
 		});
 		
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e){
+				if (e.keyCode == SWT.CTRL) {
+					ctrlKeyDown = true;
+				}
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e){
+				if (e.keyCode == SWT.CTRL) {
+					ctrlKeyDown = false;
+				}
+			}
+		});
+		
 		// setBackground(Desk.getColor(Desk.COL_GREEN));
 		left_offset = LEFT_OFFSET_DEFAULT;
 		padding = PADDING_DEFAULT;
@@ -145,9 +166,16 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 						t.getId())) {
 						SWTHelper.showInfo("Termin Kollision", "Termine überschneiden sich");
 					} else {
-						t.setStartTime(tt);
-						t.setBereich(Activator.getDefault().getActResource());
-						refresh();
+						if (ctrlKeyDown) { // copy 
+							Termin tCopy = (Termin) t.clone();
+							tCopy.setStartTime(tt);
+							tCopy.setBereich(Activator.getDefault().getActResource());
+							refresh();
+						} else { // move
+							t.setStartTime(tt);
+							t.setBereich(Activator.getDefault().getActResource());
+							refresh();
+						}
 					}
 				}
 			}
@@ -221,7 +249,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			ppm = AgendaParallel.getPixelPerMinute();
 			
 			String startOfDayTimeInMinutes =
-					CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 			int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 			int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 			int sodtM = (sodtHours * 60);

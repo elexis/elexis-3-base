@@ -50,7 +50,6 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.TerminDialog;
 
@@ -110,6 +109,11 @@ public class TerminLabel extends Composite {
 			
 			@Override
 			public void mouseDown(MouseEvent e){
+				if (e.stateMask == SWT.CTRL) {
+					lbl.setToolTipText("kopieren");
+				} else {
+					lbl.setToolTipText("verschieben");
+				}
 				ElexisEventDispatcher.fireSelectionEvent(t.getKontakt());
 			}
 		});

@@ -15,6 +15,7 @@
 
 package ch.elexis.agenda.ui;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,8 +25,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -45,6 +44,7 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.PersistentObject;
@@ -348,8 +348,37 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				y += quarter;
 				runner.addHours(1);
 			}
+			addCurrentTimeline(gc, dayStartsAt);
 		}
+	}
+	
+	/**
+	 * adds a red horizontal line representing the current time
+	 * 
+	 * @param gc
+	 * @param dayStartsAt
+	 */
+	private void addCurrentTimeline(GC gc, String dayStartsAt){
+		// calculate start of day time in minutes
+		int sodtHours = Integer.parseInt(dayStartsAt.substring(0, 2));
+		int sodtMinutes = Integer.parseInt(dayStartsAt.substring(2));
+		int sodtM = (sodtHours * 60);
+		sodtM += sodtMinutes;
 		
+		// calc current time line
+		int w = ProportionalSheet.this.getSize().x - 5;
+		int y = 0;
+		Calendar c = Calendar.getInstance();
+		int minuteOfDay = c.get(Calendar.HOUR_OF_DAY) * 60 + c.get(Calendar.MINUTE);
+		if (minuteOfDay < sodtM) {
+			y = (int) getPixelPerMinute();
+		} else {
+			int startMinute = minuteOfDay - sodtM;
+			y = (int) Math.round(startMinute * getPixelPerMinute());
+		}
+		gc.setForeground(UiDesk.getColor(UiDesk.COL_RED));
+		gc.drawLine(getLeftOffset() - 5, y, w, y); // create a horizontal red line (about full width)
+		gc.setForeground(UiDesk.getColor(UiDesk.COL_BLACK));
 	}
 	
 	public Composite getComposite(){

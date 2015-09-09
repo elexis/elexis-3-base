@@ -113,19 +113,11 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			
 			@Override
 			public void mouseDoubleClick(MouseEvent e){
-				String startOfDayTimeInMinutes =
-					CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
-				int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
-				int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
-
 				TimeTool tt = setTerminTo(e.x, e.y);
-				tt.addHours(sodtHours);
-				tt.addMinutes(sodtMinutes);
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.create();
 				dlg.setTime(tt);
 				if (dlg.open() == Dialog.OK) {
-					
 					refresh();
 				}
 			}

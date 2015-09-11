@@ -12,3 +12,4 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.rgw.utility
 Import-Package: org.eclipse.wb.swt
 Bundle-ClassPath: .
+Eclipse-BundleShape: dir

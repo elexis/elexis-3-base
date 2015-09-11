@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.connector.medicosearch.ui.MedicosearchPreferences"
+            id="ch.elexis.connector.medicosearch.prefs"
+            name="Medicosearch">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.agenda.largeview">
+         <command
+               commandId="ch.elexis.connector.medicosearch.cmd.syncMedicosearch"
+               icon="icons/medicosearch.png"
+               style="push"
+               tooltip="Sync. mit Medicosearch">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="ch.elexis.connector.medicosearch.commands.SyncMedicosearchHandler"
+            id="ch.elexis.connector.medicosearch.cmd.syncMedicosearch"
+            name="Medicosearch Synchronisation">
+      </command>
+   </extension>
+
+</plugin>

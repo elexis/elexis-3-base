@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.connector.medicosearch.feature"
+      label="Elexis Agenda - Medicosearch Connector"
+      version="3.0.0.qualifier">
+
+   <description>
+      Über dieses Plug-In können Agenda Einträge mit dem Medicosearch
+Portal synchronisiert werden.
+Mehr Info unter http://wiki.elexis.info/Ch.elexis.connector.medicosearch.feature.feature.group
+   </description>
+
+   <copyright url="http://elexis.info/de_contributers.html">
+      Gerry Weirich, 2007-2013 und viele andere
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.elexis.connector.medicosearch"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>

@@ -13,6 +13,7 @@ package ch.elexis.base.befunde;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -104,9 +105,9 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 			@Override
 			public void widgetSelected(final SelectionEvent e){
 				InputDialog id =
-					new InputDialog(
-						getShell(),
-						Messages.getString("BefundePrefs.enterNameCaption"), Messages.getString("BefundePrefs.enterNameMessage"), "", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					new InputDialog(getShell(), Messages.getString("BefundePrefs.enterNameCaption"), //$NON-NLS-1$
+						Messages.getString("BefundePrefs.enterNameMessage"), "", //$NON-NLS-1$//$NON-NLS-2$
+						new FindingNameInputValidator());
 				if (id.open() == Dialog.OK) {
 					String name = id.getValue();
 					if (StringTool.isNothing(names)) {
@@ -153,6 +154,35 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 		if (!CoreHub.acl.request(ACLContributor.DELETE_PARAM)) {
 			bRemove.setEnabled(false);
 		}
+		
+		Button bRename = new Button(cButtons, SWT.PUSH);
+		bRename.setText(Messages.getString("BefundePrefs.renameFinding"));
+		bRename.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				CTabItem tab = ctabs.getSelection();
+				if (tab != null) {
+					// ask user for desired new name
+					InputDialog id = new InputDialog(getShell(),
+						Messages.getString("BefundePrefs.enterRenameCaption"),
+						Messages.getString("BefundePrefs.enterRenameMessage"), "",
+						new FindingNameInputValidator());
+					if (id.open() == Dialog.OK) {
+						String oldName = tab.getText();
+						String newName = id.getValue();
+						
+						PrefsPage pp = (PrefsPage) tab.getControl();
+						// renames all relations in DB
+						if (pp.rename(newName)) {
+							names = names.replaceFirst(oldName, newName); //$NON-NLS-1$
+						}
+						fields.put("names", names); //$NON-NLS-1$
+						tab.setText(newName);
+					}
+				}
+			}
+		});
+		
 		return ret;
 	}
 	
@@ -196,4 +226,16 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 		return super.performOk();
 	}
 	
+	class FindingNameInputValidator implements IInputValidator {
+		
+		@Override
+		public String isValid(String newText){
+			newText = newText.trim();
+			if (newText.endsWith(".")) {
+				return Messages.getString("BefundePrefs.dotEndingNameNotAllowed");
+			}
+			return null;
+		}
+		
+	}
 }

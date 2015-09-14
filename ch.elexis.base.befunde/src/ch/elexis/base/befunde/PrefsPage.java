@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -128,6 +129,37 @@ public class PrefsPage extends Composite {
 				m.delete();
 			}
 			hash.remove(name + Messwert._FIELDS);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * renames all {@link Messwert Messwerte} entries who's {@link Messwert#FLD_NAME} matches this
+	 * name to the given new name and updates this name.
+	 * 
+	 * @param newName
+	 *            {@link String}
+	 * @return true if rename was successful, false otherwise
+	 */
+	public boolean rename(String newName){
+		if (SWTHelper.askYesNo(Messages.getString("PrefsPage.warningNotUndoableCaption"), //$NON-NLS-1$
+			Messages.getString("PrefsPage.warningConfirmRename"))) { //$NON-NLS-1$
+			
+			// rename all entries from oldName to new one
+			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
+			qbe.add(Messwert.FLD_NAME, Query.EQUALS, name);
+			List<Messwert> list = qbe.execute();
+			for (Messwert m : list) {
+				m.set(Messwert.FLD_NAME, newName);
+			}
+			// keep value to add to new name
+			Object value = hash.get(name + Messwert._FIELDS);
+			hash.remove(name + Messwert._FIELDS);
+			// add new name with value
+			hash.put(newName + Messwert._FIELDS, value);
+			name = newName;
+			
 			return true;
 		}
 		return false;

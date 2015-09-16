@@ -384,6 +384,9 @@
    <feature url="features/ch.elexis.connector.medicosearch.feature_3.0.0.qualifier.jar" id="ch.elexis.connector.medicosearch.feature" version="3.0.0.qualifier">
       <category name="dataexchange"/>
    </feature>
+   <feature url="features/ch.elexis.laborimport.synlab.v2.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.synlab.v2.feature" version="3.0.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

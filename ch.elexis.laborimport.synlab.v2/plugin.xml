@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.laborimport.synlab.v2.SynlabPreferences"
+            id="ch.elexis.laborimport.synlab.v2.prefs"
+            name="Labor Synlab (V2)">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            Class="ch.elexis.laborimport.synlab.v2.SynlabImporter"
+            name="Synlab Importer (V2)">
+      </Importer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.Labor">
+         <command
+               commandId="at.medevit.elexis.gdt.command.StammdatenUebermitteln"
+               icon="icons/synlabgdt.png"
+               label="Synlab Stammdatenübermittlung"
+               style="push">
+            <parameter
+                  name="at.medevit.elexis.gdt.cmd.parameter.partnerClassname"
+                  value="ch.elexis.laborimport.synlab.v2.gdt.SynlabGDTCommunicationPartner">
+            </parameter>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:at.medevit.elexis.roche.labor.view">
+         <command
+               commandId="at.medevit.elexis.gdt.command.StammdatenUebermitteln"
+               icon="icons/synlabgdt.png"
+               label="Synlab Stammdatenübermittlung"
+               style="push">
+            <parameter
+                  name="at.medevit.elexis.gdt.cmd.parameter.partnerClassname"
+                  value="ch.elexis.laborimport.synlab.v2.gdt.SynlabGDTCommunicationPartner">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="at.medevit.elexis.gdt.communicationPartner">
+      <commPartner
+            interface="ch.elexis.laborimport.synlab.v2.gdt.SynlabGDTCommunicationPartner">
+      </commPartner>
+   </extension>
+
+</plugin>

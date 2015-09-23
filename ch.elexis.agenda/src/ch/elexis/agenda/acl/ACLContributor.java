@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2015, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,15 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *    MEDEVIT <office@medevit.at> - adapted to RBAC
  *******************************************************************************/
 package ch.elexis.agenda.acl;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.admin.ACE;
-import ch.elexis.admin.AccessControl;
+import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.IACLContributor;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.data.Role;
 
 /**
  * Define access rights needed for the various actions with the agenda
@@ -60,20 +60,11 @@ public class ACLContributor implements IACLContributor {
 			DELETE_APPOINTMENTS, CHANGE_DAYSETTINGS, CHANGE_APPLOCK
 		};
 	}
-	
-	/**
-	 * react on errors reserving rights
-	 */
-	public ACE[] reject(final ACE[] acl){
-		return null;
+
+	@Override
+	public void initializeDefaults(AbstractAccessControl ac){
+		ac.grant(Role.SYSTEMROLE_LITERAL_USER, USE_AGENDA);
+		ac.grant(Role.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, ADMIN_AGENDA);
 	}
-	
-	/**
-	 * On first run of the agenda, set the rights to reasonable defaults
-	 */
-	public static void initialize(){
-		CoreHub.acl.grant(AccessControl.USER_GROUP, USE_AGENDA);
-		CoreHub.acl.grant(AccessControl.ADMIN_GROUP, ADMIN_AGENDA);
-		CoreHub.acl.flush();
-	}
+
 }

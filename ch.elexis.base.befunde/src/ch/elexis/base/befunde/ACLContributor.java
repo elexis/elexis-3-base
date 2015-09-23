@@ -11,8 +11,10 @@
 package ch.elexis.base.befunde;
 
 import ch.elexis.admin.ACE;
+import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.admin.IACLContributor;
+import ch.elexis.data.Role;
 
 public class ACLContributor implements IACLContributor {
 	public static final ACE ACE_BEFUNDE = new ACE(ACE.ACE_ROOT,
@@ -27,8 +29,10 @@ public class ACLContributor implements IACLContributor {
 			DELETE_PARAM, ADD_PARAM
 		};
 	}
-	
-	public ACE[] reject(ACE[] acl){
-		return null;
+
+	@Override
+	public void initializeDefaults(AbstractAccessControl ac){
+		ac.grant(Role.SYSTEMROLE_LITERAL_USER, ACE_BEFUNDE);
+		ac.grant(Role.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, DELETE_PARAM);
 	}
 }

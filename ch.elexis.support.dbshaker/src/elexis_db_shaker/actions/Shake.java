@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbench;
@@ -27,6 +28,8 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
@@ -61,6 +64,11 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action){
+		if(!CoreHub.acl.request(DBShakerACL.EXEC_DBSHAKER)) {
+			MessageDialog.openInformation(UiDesk.getTopShell(), "Insufficient rights", "Insufficient rights to execute.");
+			return;
+		};
+		
 		final SettingsDialog sd = new SettingsDialog(window.getShell());
 		if (sd.open() == Dialog.OK) {
 			if (SWTHelper

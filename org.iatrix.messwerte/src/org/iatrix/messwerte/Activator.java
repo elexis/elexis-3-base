@@ -41,7 +41,7 @@ public class Activator extends AbstractUIPlugin {
 	private void initACL(){
 		boolean isInitialized = CoreHub.globalCfg.get(Constants.ACL_INITIALIZED, false);
 		if (!isInitialized) {
-			ACLContributor.initialize();
+			new ACLContributor().initializeDefaults(CoreHub.acl);
 			CoreHub.globalCfg.set(Constants.ACL_INITIALIZED, true);
 			// make sure configuration is written, so that initalization is not repeated
 			CoreHub.globalCfg.flush();

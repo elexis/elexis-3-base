@@ -202,7 +202,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				"icons/blaulicht.ico"); //$NON-NLS-2$
 			CoreHub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_visit,
 				"icons/ambulanz.ico"); //$NON-NLS-2$
-			ACLContributor.initialize();
+			new ACLContributor().initializeDefaults(CoreHub.acl);
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}

@@ -1,9 +1,9 @@
 package org.iatrix.messwerte.acl;
 
 import ch.elexis.admin.ACE;
-import ch.elexis.admin.AccessControl;
+import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.IACLContributor;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.data.Role;
 
 public class ACLContributor implements IACLContributor {
 	public ACE[] getACL(){
@@ -13,26 +13,21 @@ public class ACLContributor implements IACLContributor {
 			ACL.DELETE_MESSWERT_INT_LAB, ACL.DELETE_MESSWERT_EXT_LAB,
 		};
 	}
-	
-	public ACE[] reject(ACE[] acl){
-		return null;
-	}
-	
-	public static void initialize(){
+
+	@Override
+	public void initializeDefaults(AbstractAccessControl ac){
 		// allow any user to change the pathologic state of any value
-		CoreHub.acl.grant(AccessControl.USER_GROUP, ACL.DATA_MESSWERT_EDIT_INT_LAB_PATH_STATE);
-		CoreHub.acl.grant(AccessControl.USER_GROUP, ACL.DATA_MESSWERT_EDIT_EXT_LAB_PATH_STATE);
+		ac.grant(Role.SYSTEMROLE_LITERAL_USER, ACL.DATA_MESSWERT_EDIT_INT_LAB_PATH_STATE);
+		ac.grant(Role.SYSTEMROLE_LITERAL_USER, ACL.DATA_MESSWERT_EDIT_EXT_LAB_PATH_STATE);
 		
 		// allow any user to change values of the internal lab
-		CoreHub.acl.grant(AccessControl.USER_GROUP, ACL.DATA_MESSWERT_EDIT_INT_LAB_VALUE);
+		ac.grant(Role.SYSTEMROLE_LITERAL_USER, ACL.DATA_MESSWERT_EDIT_INT_LAB_VALUE);
 		
 		// only allow admins to change values of the external labs
-		CoreHub.acl.grant(AccessControl.ADMIN_GROUP, ACL.DATA_MESSWERT_EDIT_EXT_LAB_VALUE);
+		ac.grant(Role.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, ACL.DATA_MESSWERT_EDIT_EXT_LAB_VALUE);
 		
 		// only allow admins to delete values
-		CoreHub.acl.grant(AccessControl.ADMIN_GROUP, ACL.DELETE_MESSWERT_INT_LAB);
-		CoreHub.acl.grant(AccessControl.ADMIN_GROUP, ACL.DELETE_MESSWERT_EXT_LAB);
-		
-		CoreHub.acl.flush();
+		ac.grant(Role.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, ACL.DELETE_MESSWERT_INT_LAB);
+		ac.grant(Role.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, ACL.DELETE_MESSWERT_EXT_LAB);
 	}
 }

@@ -12,7 +12,9 @@
 package ch.elexis.molemax.data;
 
 import ch.elexis.admin.ACE;
+import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.IACLContributor;
+import ch.elexis.data.Role;
 
 public class MolemaxACL implements IACLContributor {
 	public static final ACE ACLBASE = new ACE(ACE.ACE_ROOT,
@@ -26,14 +28,9 @@ public class MolemaxACL implements IACLContributor {
 		return new ACE[] { ACLBASE, SEE_IMAGES, CHANGE_IMAGES };
 	}
 
-	public String[] reject(String[] acl) {
-		return null;
-	}
-
 	@Override
-	public ACE[] reject(ACE[] acl) {
-		// TODO Auto-generated method stub
-		return null;
+	public void initializeDefaults(AbstractAccessControl ac){
+		ac.grant(Role.SYSTEMROLE_LITERAL_DOCTOR, ACLBASE);
 	}
 
 }

@@ -30,6 +30,7 @@ import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.optifier.NoObligationOptifier;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.DBConnection;
 import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -834,6 +835,6 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public int getCacheTime(){
-		return CACHE_TIME_MAX;
+		return DBConnection.CACHE_TIME_MAX;
 	}
 }

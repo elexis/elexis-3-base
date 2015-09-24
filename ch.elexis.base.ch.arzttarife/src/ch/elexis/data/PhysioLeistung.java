@@ -14,9 +14,6 @@ import java.util.List;
 
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.optifier.NoObligationOptifier;
-import ch.elexis.data.Fall;
-import ch.elexis.data.VerrechenbarAdapter;
-import ch.elexis.data.Xid;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -141,6 +138,6 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	
 	@Override
 	public int getCacheTime(){
-		return CACHE_TIME_MAX;
+		return DBConnection.CACHE_TIME_MAX;
 	}
 }

@@ -60,8 +60,6 @@ public class MedikamentImporter extends ImporterPage {
 		long l = file.length();
 		InputStreamReader ir = new InputStreamReader(new FileInputStream(file), "iso-8859-1"); //$NON-NLS-1$
 		BufferedReader br = new BufferedReader(ir);
-		int cachetime = PersistentObject.getDefaultCacheLifetime();
-		PersistentObject.setDefaultCacheLifetime(2);
 		String in;
 		String mode = Messages.MedikamentImporter_ModeOfImport;
 		/*
@@ -246,7 +244,6 @@ public class MedikamentImporter extends ImporterPage {
 			
 		}
 		monitor.done();
-		PersistentObject.setDefaultCacheLifetime(cachetime);
 		SWTHelper.showInfo(Messages.MedikamentImporter_SuccessTitel,
 			String.format(Messages.MedikamentImporter_SuccessContent, createdCount, updatedCount));
 		return Status.OK_STATUS;

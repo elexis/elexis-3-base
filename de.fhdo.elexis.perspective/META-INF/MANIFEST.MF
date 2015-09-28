@@ -4,10 +4,10 @@ Bundle-Name: Perspective
 Bundle-SymbolicName: de.fhdo.elexis.perspective; singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Activator: de.fhdo.elexis.perspective.Activator
-Require-Bundle: org.eclipse.ui;bundle-version="[3.8.0,3.9.0)",
+Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- ch.elexis.core.ui.icons;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.0.0"
+ ch.elexis.core.ui.icons,
+ ch.elexis.core.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: www.fhdo.de

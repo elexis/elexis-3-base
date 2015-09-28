@@ -3,6 +3,23 @@
 <plugin>
 
    <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="de.fhdo.elexis.perspective.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RCP Perspective"
+            class="de.fhdo.elexis.perspective.Perspective"
+            id="de.fhdo.elexis.perspective.perspective">
+      </perspective>
+   </extension>
+   <extension
          point="org.eclipse.ui.commands">
       <category
             description="category - Import/Export Category"
@@ -54,19 +71,16 @@
          </separator>
          <command
                commandId="de.fhdo.elexis.perspective.command.exportCmd"
-               icon="icons/application-export.png"
                label="Export Perspective"
                style="push">
          </command>
          <command
                commandId="de.fhdo.elexis.perspective.command.importCmd"
-               icon="icons/application-import.png"
                label="Import Perspective"
                style="push">
          </command>
          <command
                commandId="de.fhdo.elexis.perspective.command.deleteCmd"
-               icon="icons/application-delete.png"
                label="Delete Perspective"
                style="push">
          </command>

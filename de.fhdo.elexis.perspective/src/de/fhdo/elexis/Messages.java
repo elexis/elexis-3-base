@@ -24,13 +24,6 @@ public class Messages extends NLS {
 	public static String ImportHandler_Cannot_Overwrite_Perspective;
 	public static String ImportHandler_Choose_new_name_for_Perspective;
 	public static String ImportHandler_Imported_perspectives_successfully;
-	public static String FixPerspectiveDlg_Title;
-	public static String FixPerspectiveDlg_Message;
-	public static String FixPerspectiveDlg_MissingView;
-	public static String FixPerspectiveDlg_ReplaceWith;
-	public static String SelectViewDlg_Title;
-	public static String SelectViewDlg_Hint;
-	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

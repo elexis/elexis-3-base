@@ -47,6 +47,7 @@ import ch.elexis.core.ui.importer.div.importers.ILabItemResolver;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabOrder;
+import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
@@ -122,6 +123,7 @@ public class LabOrderImport extends ImporterPage {
 	private Button bDirect;
 	private boolean settingProcessMode = false;
 	private boolean settingOverwrite = false;
+	private static TimeTool dateTime = new TimeTool();
 	
 	private static HL7Parser hlp = new HL7Parser(KUERZEL);
 
@@ -368,10 +370,10 @@ public class LabOrderImport extends ImporterPage {
 						// get created results using the orderId
 						Object obj = result.get();
 						if (obj instanceof String) {
-							List<LabOrder> orders =
-								LabOrder.getLabOrders(null, null, null, null, (String) obj, null,
-									null);
-							if (orders != null) {
+							List<LabOrder> orders = LabOrder.getLabOrders(null, null, null, null,
+								(String) obj, null, null);
+							if (orders != null && !orders.isEmpty()) {
+								resolveTimeForPdf(orders.get(0).getLabResult(), observation);
 								for (LabOrder labOrder : orders) {
 									new LaborwerteOrderManagement(labOrder.getLabResult().getId(),
 										orderId);
@@ -446,21 +448,58 @@ public class LabOrderImport extends ImporterPage {
 					File pdfFile = pdfFiles[0];
 					pdfFileRef.set(pdfFile);
 					String filename = pdfFile.getName();
-					Date timeStamp = observation.getDateTimeOfTransaction();
-					TimeTool dateTime = new TimeTool();
-					dateTime.setTime(timeStamp);
 					
 					SimpleDateFormat sdfTitle = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
-					String title =
-						Messages.LabOrderImport_LabResult + sdfTitle.format(timeStamp) + "." //$NON-NLS-1$
-							+ FileTool.getExtension(filename);
-					
-					labor.saveLaborItem(title, settings.getDocumentCategory(), pdfFile, timeStamp,
-						orderId, filename, "", "");
+					String title = Messages.LabOrderImport_LabResult
+						+ sdfTitle.format(dateTime.getTime()) + "." //$NON-NLS-1$
+						+ FileTool.getExtension(filename);
+						
+					labor.saveLaborItem(title, settings.getDocumentCategory(), pdfFile,
+						dateTime.getTime(), orderId, filename, "", "");
+						
 				}
 			}
 		}
 		return saveResult;
+	}
+	
+	/**
+	 * Prio 1: use observation time of {@link LabResult}<br>
+	 * Prio 2: use analyze time of {@link LabResult}<br>
+	 * Prio 3: use transmission time of {@link LabResult}<br>
+	 * Prio 4: use transaction time of {@link ObservationMessage}<br>
+	 * Prio 5: use time of message {@link ObservationMessage}<br>
+	 * Prio 6: use current date time<br>
+	 * 
+	 * @param labResult
+	 * @param observation
+	 */
+	private static void resolveTimeForPdf(LabResult labResult, ObservationMessage observation){
+		boolean timeSet = false;
+		if (labResult != null) {
+			TimeTool obsTime = labResult.getObservationTime();
+			if (obsTime != null) {
+				dateTime.set(obsTime);
+				timeSet = true;
+			} else if (labResult.getAnalyseTime() != null) {
+				dateTime.set(labResult.getAnalyseTime());
+				timeSet = true;
+			} else if (labResult.getTransmissionTime() != null) {
+				dateTime.set(labResult.getTransmissionTime());
+				timeSet = true;
+			}
+		}
+		
+		if (!timeSet) {
+			Date timeStamp = observation.getDateTimeOfTransaction();
+			if (timeStamp == null) {
+				timeStamp = observation.getDateTimeOfMessage();
+				if (timeStamp == null) {
+					timeStamp = new Date();
+				}
+			}
+			dateTime.setTime(timeStamp);
+		}
 	}
 	
 	/**

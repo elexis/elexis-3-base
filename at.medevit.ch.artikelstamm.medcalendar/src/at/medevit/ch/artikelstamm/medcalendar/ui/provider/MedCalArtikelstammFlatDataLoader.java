@@ -249,6 +249,7 @@ public class MedCalArtikelstammFlatDataLoader extends FlatDataLoader implements
 					}
 					qbe.add(ArtikelstammItem.FLD_ATC, Query.LIKE, atc + "%");
 				}
+				qbe.and();
 			}
 		}
 		

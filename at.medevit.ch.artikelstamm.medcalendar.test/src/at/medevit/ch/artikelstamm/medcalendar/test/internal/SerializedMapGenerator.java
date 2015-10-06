@@ -22,6 +22,9 @@ public class SerializedMapGenerator {
 	
 	public static final String MEDCAL_CSV = "rsc/medcal.csv";
 	public static final String MEDCAL_ATC_MATCHING_CSV = "rsc/medcal_atc_match.csv";
+	private static final int IDX_CHAPTER = 0;
+	private static final int IDX_SECTION = 1;
+	private static final int IDX_SUBSECTION = 2;
 	
 	private HashMap<String, MedCalendarSection> medCalMap = null;
 	private HashMap<String, String> atcMedCalMap = null;
@@ -86,31 +89,62 @@ public class SerializedMapGenerator {
 		for (String[] line : splitLines) {
 			if (line.length >= 6) {
 				// combination of chapter, section and subsection
-				String mcCode = line[0] + "." + line[1] + "." + line[2] + ".";
+				String[] mcsHierarchy =
+					generateMedCalendarSectionHierarchy(line[0], line[1], line[2]);
 				String atcCode = line[4];
 				
-				// create medCalCode if not existing and add atcCode
-				MedCalendarSection section = medCalMap.get(mcCode);
-				if (section == null) {
-					section = createMedCalendarSection(mcCode, line[3]);
-				}
-				section.addATCCode(atcCode);
-				medCalMap.put(mcCode, section);
+				populateMedCalendarSectionsWithATCCode(mcsHierarchy, line[3], atcCode);
 				
 				//add atcCode - medCalCode mapping
-				atcMedCalMap.put(atcCode, mcCode);
+				atcMedCalMap.put(atcCode, mcsHierarchy[IDX_SUBSECTION]);
 			}
 		}
 	}
 	
-	protected MedCalendarSection createMedCalendarSection(String code, String name){
-		if (name.equals("X nicht im Medkalender")) {
-			name = "Nicht im Medkalender";
-		}
-		MedCalendarSection medCalSection = new MedCalendarSection(code, name, 3);
-		medCalMap.put(code, medCalSection);
+	private void populateMedCalendarSectionsWithATCCode(String[] mcsHierarchy, String mcsName,
+		String atcCode){
 		
-		return medCalSection;
+		MedCalendarSection subSection =
+			getOrCreateMedCalendarSection(mcsHierarchy[IDX_SUBSECTION], mcsName, 3);
+		subSection.addATCCode(atcCode);
+		medCalMap.put(mcsHierarchy[IDX_SUBSECTION], subSection);
+		
+		MedCalendarSection section =
+			getOrCreateMedCalendarSection(mcsHierarchy[IDX_SECTION], mcsName, 2);
+		section.addATCCode(atcCode);
+		medCalMap.put(mcsHierarchy[IDX_SECTION], section);
+		
+		MedCalendarSection chapter =
+			getOrCreateMedCalendarSection(mcsHierarchy[IDX_CHAPTER], mcsName, 1);
+		chapter.addATCCode(atcCode);
+		medCalMap.put(mcsHierarchy[IDX_CHAPTER], chapter);
+	}
+	
+	private MedCalendarSection getOrCreateMedCalendarSection(String mcsCode, String mcsName,
+		int level){
+		MedCalendarSection section = medCalMap.get(mcsCode);
+		
+		//create MedCalendarSection if not existing
+		if (section == null) {
+			if (mcsName.equals("X nicht im Medkalender")) {
+				mcsName = "Nicht im Medkalender";
+			}
+			return new MedCalendarSection(mcsCode, mcsName, level);
+		}
+		return section;
+	}
+	
+	private String[] generateMedCalendarSectionHierarchy(String chapter, String section,
+		String subsection){
+		String[] mcsHierarchy = new String[3];
+		// add chapter
+		mcsHierarchy[IDX_CHAPTER] = chapter;
+		// add section
+		mcsHierarchy[IDX_SECTION] = chapter + "." + section + ".";
+		// add subsection
+		mcsHierarchy[IDX_SUBSECTION] = chapter + "." + section + "." + subsection + ".";
+		
+		return mcsHierarchy;
 	}
 	
 	private int determineLevel(String code){

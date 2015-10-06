@@ -437,10 +437,12 @@ public class AgendaGross extends BaseAgendaView {
 	public void bereichSelectionEvent(String bereich){
 		super.bereichSelectionEvent(bereich);
 		for (Button b : bChange) {
-			if (b.getText().equalsIgnoreCase(bereich)) {
-				b.setSelection(true);
-			} else {
-				b.setSelection(false);
+			if (!b.isDisposed()) {
+				if (b.getText().equalsIgnoreCase(bereich)) {
+					b.setSelection(true);
+				} else {
+					b.setSelection(false);
+				}
 			}
 		}
 		

@@ -11,13 +11,11 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.medcalendar.MedCalendarSection;
-import at.medevit.ch.artikelstamm.medcalendar.ui.provider.SectionComparator;
 
 public class SerializedMapGenerator {
 	private static final Logger log = LoggerFactory.getLogger(SerializedMapGenerator.class);
@@ -25,7 +23,7 @@ public class SerializedMapGenerator {
 	public static final String MEDCAL_CSV = "rsc/medcal.csv";
 	public static final String MEDCAL_ATC_MATCHING_CSV = "rsc/medcal_atc_match.csv";
 	
-	private TreeMap<String, MedCalendarSection> medCalMap = null;
+	private HashMap<String, MedCalendarSection> medCalMap = null;
 	private HashMap<String, String> atcMedCalMap = null;
 	
 	public boolean initSerializableMedCalMaps(File mcCSV, File mcAtcMatching, String serMedCalMap,
@@ -55,16 +53,28 @@ public class SerializedMapGenerator {
 	}
 	
 	private void initMedCalMap(File medCalCSV){
-		medCalMap = new TreeMap<String, MedCalendarSection>(new SectionComparator());
+		medCalMap = new HashMap<String, MedCalendarSection>();
 		
 		List<String[]> splitLines = getCSVLinesSplitted(medCalCSV);
 		for (String[] line : splitLines) {
-			if (line.length == 2) {
+			if (line.length >= 2) {
 				String code = line[0].trim().replaceAll("[^\\d.]", "");
 				int level = determineLevel(code);
 				
-				MedCalendarSection medCalCode = new MedCalendarSection(code, line[1].trim(), level);
-				medCalMap.put(code, medCalCode);
+				MedCalendarSection medCalSection =
+					new MedCalendarSection(code, line[1].trim(), level);
+					
+				// read referring sections
+				if (line.length == 3) {
+					String refSections = line[2];
+					if (refSections != null && !refSections.isEmpty()) {
+						String[] refs = refSections.split("/");
+						for (String ref : refs) {
+							medCalSection.addRefSection(ref.trim());
+						}
+					}
+				}
+				medCalMap.put(code, medCalSection);
 			}
 		}
 	}

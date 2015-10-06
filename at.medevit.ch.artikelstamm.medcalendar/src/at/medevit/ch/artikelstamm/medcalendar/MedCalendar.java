@@ -7,17 +7,13 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class MedCalendar {
 	public static final String MEDCAL_SERIALIZED_FILE = "/lib/MedCalMap.ser";
 	public static final String ATC_MEDCAL_SERIALIZED_FILE = "/lib/ATCMedCalMap.ser";
 	
 	private static MedCalendar instance = null;
-	private TreeMap<String, MedCalendarSection> medCalMap = null;
+	private HashMap<String, MedCalendarSection> medCalMap = null;
 	private HashMap<String, String> atcMedCalMap = null;
 	
 	private MedCalendar(){
@@ -43,7 +39,7 @@ public class MedCalendar {
 			
 			try {
 				// deserialize the Lists
-				medCalMap = (TreeMap<String, MedCalendarSection>) inMedCal.readObject();
+				medCalMap = (HashMap<String, MedCalendarSection>) inMedCal.readObject();
 				atcMedCalMap = (HashMap<String, String>) inAtcMedCal.readObject();
 			} finally {
 				inMedCal.close();
@@ -57,7 +53,7 @@ public class MedCalendar {
 		return atcMedCalMap;
 	}
 	
-	protected TreeMap<String, MedCalendarSection> getMedCalMap(){
+	protected HashMap<String, MedCalendarSection> getMedCalMap(){
 		return medCalMap;
 	}
 	
@@ -71,36 +67,43 @@ public class MedCalendar {
 	}
 	
 	public List<MedCalendarSection> getHierarchyForMedCal(String atcCode){
-		ArrayList<MedCalendarSection> ret = new ArrayList<MedCalendarSection>();
-		MedCalendarSection root = getMedCalendarSectionByATC(atcCode);
+		List<MedCalendarSection> mcsHierarchy = new ArrayList<MedCalendarSection>();
 		
+		MedCalendarSection root = getMedCalendarSectionByATC(atcCode);
 		if (root != null) {
-			String[] borderKeys = fetchBorderSections(root.getCode());
-			SortedMap<String, MedCalendarSection> subMap =
-				medCalMap.subMap(borderKeys[0], borderKeys[1]);
-			Set<Entry<String, MedCalendarSection>> entrySet = subMap.entrySet();
-			
-			for (Entry<String, MedCalendarSection> entry : entrySet) {
-				ret.add(entry.getValue());
+			mcsHierarchy.add(root);
+			int currentLevel = root.getLevel() - 1;
+			while (currentLevel > 0) {
+				MedCalendarSection mcs = fetchLevelForMedCalSection(root, currentLevel);
+				if (mcs != null) {
+					mcsHierarchy.add(mcs);
+					// check refs
+					if (!mcs.getRefSections().isEmpty()) {
+						for (String subCode : mcs.getRefSections()) {
+							MedCalendarSection mcsSub = getMedCalendarSectionByCode(subCode);
+							mcsHierarchy.add(mcsSub);
+						}
+					}
+				}
+				currentLevel--;
 			}
-			ret.remove(0);
 		}
-		return ret;
+		return mcsHierarchy;
 	}
 	
-	private String[] fetchBorderSections(String code){
-		String[] borders = new String[] {
-			"", ""
-		};
-		String[] codeParts = code.split("\\.");
-		if (codeParts.length < 2) {
-			return borders;
-		}
+	private MedCalendarSection fetchLevelForMedCalSection(MedCalendarSection rootSec,
+		int currentLevel){
+		String[] codeParts = rootSec.getCode().split("\\.");
 		
-		borders[0] = codeParts[0] + "." + codeParts[1] + ".";
-		// increase section number
-		int nextSection = Integer.parseInt(codeParts[1]) + 1;
-		borders[1] = codeParts[0] + "." + nextSection + ".";
-		return borders;
+		switch (currentLevel) {
+		case 3:
+			return getMedCalendarSectionByCode(
+				codeParts[0] + "." + codeParts[1] + "." + codeParts[2] + ".");
+		case 2:
+			return getMedCalendarSectionByCode(codeParts[0] + "." + codeParts[1] + ".");
+		case 1:
+			return getMedCalendarSectionByCode(codeParts[0]);
+		}
+		return null;
 	}
 }

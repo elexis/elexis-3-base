@@ -11,12 +11,14 @@ public class MedCalendarSection implements Serializable {
 	private String name;
 	private int level;
 	private List<String> atcCodes;
+	private List<String> refSections;
 	
 	public MedCalendarSection(String code, String name, int level){
 		this.code = code;
 		this.name = name;
 		this.level = level;
 		this.atcCodes = new ArrayList<String>();
+		this.refSections = new ArrayList<String>();
 	}
 	
 	public String getCode(){
@@ -37,5 +39,13 @@ public class MedCalendarSection implements Serializable {
 	
 	public List<String> getATCCodes(){
 		return atcCodes;
+	}
+	
+	public void addRefSection(String refSection){
+		refSections.add(refSection);
+	}
+	
+	public List<String> getRefSections(){
+		return refSections;
 	}
 }

@@ -81,6 +81,7 @@ public class MedCalArtikelstammFlatDataLoader extends FlatDataLoader implements
 			removeQueryFilter(medCalQueryFilter);
 			medCalQueryFilter.setSectionFilter(null);
 		} else {
+			slp.clearValues();
 			medCalQueryFilter.setSectionFilter(filterValue);
 			addQueryFilter(medCalQueryFilter);
 		}
@@ -240,7 +241,7 @@ public class MedCalArtikelstammFlatDataLoader extends FlatDataLoader implements
 		
 		@Override
 		public void apply(Query<? extends PersistentObject> qbe){
-			if (!sectionFilter.getATCCodes().isEmpty()) {
+			if (sectionFilter != null && !sectionFilter.getATCCodes().isEmpty()) {
 				String first = sectionFilter.getATCCodes().get(0);
 				for (String atc : sectionFilter.getATCCodes()) {
 					if (!atc.equals(first)) {

@@ -13,15 +13,13 @@
 package ch.elexis.base.messages;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.DataLine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +60,12 @@ public class MsgHeartListener implements HeartListener {
 	}
 	
 	/**
-	 * plays a sound. the sound file can be defined via the message preferences
+	 * Plays a sound. The sound file can be defined via the message preferences.<br>
+	 * <br>
+	 * Set {@link DataLine.Info} and use it to load {@link Clip} to avoid IllegalArgumentException
+	 * caused by missing/wrong system settings. See <a href=
+	 * "http://stackoverflow.com/questions/26435282/issue-playing-audio-with-stackoverflows-javasound-tag-example">
+	 * Stackoverflow</a> for detailed explanation.
 	 */
 	private void playSound(){
 		try {
@@ -87,7 +90,8 @@ public class MsgHeartListener implements HeartListener {
 			}
 			
 			// load the sound into memory (a Clip)
-			Clip clip = AudioSystem.getClip();
+			DataLine.Info info = new DataLine.Info(Clip.class, audioInStream.getFormat());
+			Clip clip = (Clip) AudioSystem.getLine(info);
 			clip.open(audioInStream);
 			clip.start();
 			

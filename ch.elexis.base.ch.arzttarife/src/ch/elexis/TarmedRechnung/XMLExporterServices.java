@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2015, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    MEDEVIT <office@medevit.at> - #4078 remove dependency to c.e.base.ch.artikel
+ *******************************************************************************/
 package ch.elexis.TarmedRechnung;
 
 import java.text.ParseException;
@@ -9,10 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
-import ch.elexis.artikel_ch.data.Medical;
-import ch.elexis.artikel_ch.data.Medikament;
-import ch.elexis.artikel_ch.data.MedikamentImporter;
-import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Artikel;
@@ -394,7 +401,8 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					ret.mAnalysen.addMoney(mAmountLocal);
-				} else if ((v instanceof Medikament) || (v instanceof Medical)
+				} else if (("Medikamente".equals(v.getCodeSystemName())) //$NON-NLS-1$
+					|| ("Medicals".equals(v.getCodeSystemName())) //$NON-NLS-1$
 					|| (v.getCodeSystemCode() == "400")) { //$NON-NLS-1$
 					el = new Element(ELEMENT_RECORD_DRUG, XMLExporter.nsinvoice);
 					Artikel art = (Artikel) v;
@@ -421,7 +429,7 @@ public class XMLExporterServices {
 						StringTool.pad(StringTool.LEFT, '0', pk, 7));
 					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal));
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
-					String ckzl = art.getExt(MedikamentImporter.KASSENTYP);
+					String ckzl = art.getExt("Kassentyp"); // cf. MedikamentImporter#KASSENTYP
 					if (ckzl.equals("1")) {
 						el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
 					} else {
@@ -433,14 +441,14 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_EAN_RESPONSIBLE,
 						XMLExporterUtil.getResponsibleEAN(konsultation));
 					ret.mMedikament.addMoney(mAmountLocal);
-				} else if (v instanceof MiGelArtikel) {
+				} else if ("MiGeL".equals(v.getCodeSystemName())) {
 					el = new Element(ELEMENT_RECORD_MIGEL, XMLExporter.nsinvoice);
 					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
 					Money preis = verrechnet.getNettoPreis();
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "452"); // MiGeL ab 2001-basiert //$NON-NLS-1$
-					el.setAttribute(XMLExporter.ATTR_CODE, ((MiGelArtikel) v).getCode());
+					el.setAttribute(XMLExporter.ATTR_CODE, v.getCode());
 					el.setAttribute(ATTR_EAN_PROVIDER,
 						TarmedRequirements.getEAN(konsultation.getMandant()));
 					el.setAttribute(ATTR_EAN_RESPONSIBLE,

@@ -28,7 +28,7 @@ public class Medikament extends Artikel {
 	
 	@Override
 	public String getCodeSystemName(){
-		return Messages.Medikament_CodeSystemNameMedicaments;
+		return "Medikamente";
 	}
 	
 	@Override

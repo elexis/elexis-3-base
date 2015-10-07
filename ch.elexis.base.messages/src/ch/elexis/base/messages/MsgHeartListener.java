@@ -91,7 +91,7 @@ public class MsgHeartListener implements HeartListener {
 			clip.open(audioInStream);
 			clip.start();
 			
-		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+		} catch (Exception e) {
 			log.error("Could not play message sound", e);
 			return;
 		}

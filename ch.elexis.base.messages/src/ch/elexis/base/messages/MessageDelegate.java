@@ -16,7 +16,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import ch.elexis.core.ui.Hub;
+
+import ch.elexis.core.ui.UiDesk;
 
 public class MessageDelegate implements IWorkbenchWindowActionDelegate {
 	
@@ -29,7 +30,7 @@ public class MessageDelegate implements IWorkbenchWindowActionDelegate {
 	}
 	
 	public void run(final IAction action){
-		new MsgDetailDialog(Hub.getActiveShell(), null).open();
+		new MsgDetailDialog(UiDesk.getTopShell(), null).open();
 		
 	}
 	

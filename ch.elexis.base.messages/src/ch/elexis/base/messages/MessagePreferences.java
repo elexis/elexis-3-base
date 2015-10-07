@@ -75,7 +75,10 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 					"*.wav"
 				};
 				fd.setFilterExtensions(filterExt);
-				txtSoundFilePath.setText(fd.open());
+				String filePath = fd.open();
+				if (filePath != null) {
+					txtSoundFilePath.setText(filePath);
+				}
 			}
 		});
 		
@@ -104,9 +107,9 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		btnSoundOn.setSelection(true);
 		btnBrowse.setEnabled(true);
 		txtSoundFilePath.setEnabled(true);
-		txtSoundFilePath.setText(CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH,
-			DEF_SOUND_PATH));
-		
+		txtSoundFilePath
+			.setText(CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH));
+			
 		super.performDefaults();
 	}
 	

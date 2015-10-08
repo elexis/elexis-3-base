@@ -19,9 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ch.elexis.artikel_ch.data.Medical;
-import ch.elexis.artikel_ch.data.Medikament;
-import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -33,7 +30,6 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.labortarif2009.data.Labor2009Tarif;
-import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
@@ -42,7 +38,7 @@ import ch.rgw.tools.TimeTool;
  * Tarmed-TL-cost, Physio cost, lab cost
  * 
  * @author gerry
- * 
+ * 		
  */
 public class PatientenHitlist extends BaseStats {
 	static final String NAME = "Patienten-Hitliste";
@@ -60,7 +56,7 @@ public class PatientenHitlist extends BaseStats {
 			ttl_male, ttl_female, medicals_male, medicals_female, medics_male, medics_female,
 			physio_male, physio_female, other_male, other_female, cons_male, cons_female,
 			visit_male, visit_female, bills_female, bills_male;
-	
+			
 	public PatientenHitlist(){
 		super(NAME, DESC, HEADINGS);
 	}
@@ -249,16 +245,20 @@ public class PatientenHitlist extends BaseStats {
 							numVisits++;
 						}
 						double cal =
-							Math.round(v.getZahl() * tl.getAL() * tl.getFactor(kdate, fall)) / 100.0;
+							Math.round(v.getZahl() * tl.getAL() * tl.getFactor(kdate, fall))
+								/ 100.0;
 						costTarmedAL += cal;
 						double ctl =
-							Math.round(v.getZahl() * tl.getTL() * tl.getFactor(kdate, fall)) / 100.0;
+							Math.round(v.getZahl() * tl.getTL() * tl.getFactor(kdate, fall))
+								/ 100.0;
 						costTarmedTL += ctl;
 					} else if (vv instanceof PhysioLeistung) {
 						costPhysio += cost;
-					} else if (vv instanceof Medical || vv instanceof MiGelArtikel) {
+					} else if ("Medicals".equals(vv.getCodeSystemName())
+						|| "MiGeL".equals(vv.getCodeSystemName())) {
 						costMedical += cost;
-					} else if (vv instanceof Medikament || vv instanceof BAGMedi) {
+					} else if ("Medikamente".equals(vv.getCodeSystemName())
+						|| "400".equals(vv.getCodeSystemCode())) {
 						costMedikamente += cost;
 					} else if (vv instanceof Labor2009Tarif) {
 						costLabor += cost;

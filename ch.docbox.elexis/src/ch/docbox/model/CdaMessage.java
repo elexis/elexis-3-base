@@ -32,7 +32,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
@@ -40,22 +39,27 @@ public class CdaMessage extends PersistentObject {
 	private static Logger logger = LoggerFactory.getLogger(CdaMessage.class);
 	
 	public static final String TABLENAME = "CH_DOCBOX_ELEXIS_CDAMESSAGE";
-	public static final String DBVERSION = "1.0.0";
-	public static final String createDB = "CREATE TABLE " + TABLENAME + " ("
-		+ "ID			VARCHAR(25) primary key," + "CreationDate VARCHAR(15),"
-		+ "Deleted      CHAR(1) default '0'," + "DeletedDocs  CHAR(1) default '0',"
-		+ "lastupdate   BIGINT," + "PatID		VARCHAR(25)," + "DocumentID	VARCHAR(25),"
-		+ "AnwenderID	VARCHAR(25)," + "KonsultationID	VARCHAR(25),"
-		+ "Downloaded   CHAR(1) default '0'," + "Date 		CHAR(24),"
-		+ "Unread       CHAR(1) default '1'," + "Title 		VARCHAR(80)," + "Sender 		VARCHAR(80),"
-		+ "Patient 		VARCHAR(80)," + "FilesListing	VARCHAR(2048)," + "Cda			BLOB);"
+	public static final String DBVERSION = "1.1.0";
+	public static final String createDB =
+		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25) primary key,"
+			+ "CreationDate VARCHAR(15)," + "Deleted      CHAR(1) default '0',"
+			+ "DeletedDocs  CHAR(1) default '0'," + "lastupdate   BIGINT,"
+			+ "PatID		VARCHAR(25)," + "DocumentID	VARCHAR(25)," + "AnwenderID	VARCHAR(25),"
+			+ "KonsultationID	VARCHAR(25)," + "Downloaded   CHAR(1) default '0',"
+			+ "Date 		CHAR(24)," + "Unread       CHAR(1) default '1',"
+			+ "Title 		VARCHAR(255)," + "Sender 		VARCHAR(255),"
+			+ "Patient 		VARCHAR(255)," + "FilesListing	VARCHAR(2048)," + "Cda			BLOB);"
 		+ "CREATE INDEX CH_DOCBOX_ELEXIS_CDAMESSAGEI1 ON " + TABLENAME + " (PatID);"
 		+ "CREATE INDEX CH_DOCBOX_ELEXIS_CDAMESSAGEI2 ON " + TABLENAME + " (DocumentID);"
 		+ "CREATE INDEX CH_DOCBOX_ELEXIS_CDAMESSAGEI3 ON " + TABLENAME + " (AnwenderID);"
 		+ "CREATE INDEX CH_DOCBOX_ELEXIS_CDAMESSAGEI4 ON " + TABLENAME + " (ID);" + "INSERT INTO "
 		+ TABLENAME + " (ID, TITLE) VALUES ('1','" + DBVERSION + "');";
-	private static final JdbcLink j = getConnection();
 	
+	public static final String upd110 = "ALTER TABLE " + TABLENAME //$NON-NLS-1$
+		+ " MODIFY Title VARCHAR(255);" + "ALTER TABLE " + TABLENAME //$NON-NLS-1$ //$NON-NLS-2$
+		+ " MODIFY Sender VARCHAR(255);" + "ALTER TABLE " + TABLENAME //$NON-NLS-1$ //$NON-NLS-2$
+		+ " MODIFY Patient VARCHAR(255);"; //$NON-NLS-1$	
+		
 	static {
 		addMapping(TABLENAME, "CreationDate", "DeletedDocs", "PatID", "DocumentID", "AnwenderID",
 			"KonsultationID", "Downloaded", "Unread", "Date", "Title", "Sender", "Patient",
@@ -66,14 +70,14 @@ public class CdaMessage extends PersistentObject {
 		} else {
 			VersionInfo vi = new VersionInfo(start.get("Title"));
 			if (vi.isOlder(DBVERSION)) {
-				if (vi.isOlder("1.1.0")) {
-					// future update script
+				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
+					createOrModifyTable(upd110);
+					start.set("Title", DBVERSION);
 				} else {
 					MessageDialog.openError(UiDesk.getTopShell(), "Versionskonsflikt",
 						"Die Datentabelle für " + TABLENAME
 							+ " hat eine zu alte Versionsnummer. Dies kann zu Fehlern führen");
 				}
-				
 			}
 		}
 	}
@@ -169,12 +173,7 @@ public class CdaMessage extends PersistentObject {
 	}
 	
 	public static void init(){
-		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-			j.execScript(bais, true, false);
-		} catch (Exception ex) {
-			ExHandler.handle(ex);
-		}
+		createOrModifyTable(createDB);
 	}
 	
 	@Override

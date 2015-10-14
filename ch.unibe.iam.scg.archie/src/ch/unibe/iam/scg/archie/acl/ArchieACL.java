@@ -65,7 +65,7 @@ public class ArchieACL implements IACLContributor {
 	 */
 	@Override
 	public void initializeDefaults(AbstractAccessControl ac) {
-		ac.grant(Role.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, USE_ARCHIE);
+		ac.grant(Role.SYSTEMROLE_LITERAL_DOCTOR, USE_ARCHIE);
 	}
 
 }

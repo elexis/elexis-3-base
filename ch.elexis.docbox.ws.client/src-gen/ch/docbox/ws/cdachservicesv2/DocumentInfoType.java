@@ -11,7 +11,7 @@ import org.hl7.v3.CE;
 
 
 /**
- * <p>Java-Klasse für DocumentInfoType complex type.
+ * <p>Java-Klasse fÃ¼r DocumentInfoType complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 

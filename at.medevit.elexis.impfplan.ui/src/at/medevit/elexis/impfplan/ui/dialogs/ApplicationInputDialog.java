@@ -1,7 +1,11 @@
 package at.medevit.elexis.impfplan.ui.dialogs;
 
+import java.util.Optional;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -15,7 +19,9 @@ import org.eclipse.wb.swt.ResourceManager;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.data.Artikel;
 import ch.elexis.data.Patient;
+import ch.elexis.data.Prescription;
 
 public class ApplicationInputDialog extends TitleAreaDialog {
 	private static final String DEF_SIDE = "left";
@@ -24,10 +30,12 @@ public class ApplicationInputDialog extends TitleAreaDialog {
 	
 	private Text txtLotNo;
 	private Button btnLeft, btnRight;
+	private Optional<Artikel> art;
 	
-	public ApplicationInputDialog(Shell parentShell){
+	public ApplicationInputDialog(Shell parentShell, Prescription p){
 		super(parentShell);
 		showSideOption = CoreHub.userCfg.get(PreferencePage.VAC_SHOW_SIDE, false);
+		art = Optional.ofNullable(p.getArtikel());
 	}
 	
 	@Override
@@ -45,7 +53,19 @@ public class ApplicationInputDialog extends TitleAreaDialog {
 		
 		Label lblLotNo = new Label(containerLotNo, SWT.NONE);
 		lblLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		lblLotNo.setText("Bitte geben Sie die Lot-Nummer des Impfstoffes an");
+		lblLotNo.setText("Lot-Nummer für Impfstoff angeben");
+		
+		Label lblArticleName = new Label(containerLotNo, SWT.NONE);
+		lblArticleName.setAlignment(SWT.CENTER);
+		lblArticleName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		FontDescriptor boldDescriptor =
+			FontDescriptor.createFrom(lblArticleName.getFont()).setStyle(SWT.BOLD);
+		Font boldFont = boldDescriptor.createFont(lblArticleName.getDisplay());
+		lblArticleName.setFont(boldFont);
+		lblArticleName.setText((art.isPresent() ? art.get().getLabel() : "Artikel nicht gefunden"));
+		
+		Label lblP = new Label(containerLotNo, SWT.NONE);
+		lblP.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		
 		txtLotNo = new Text(containerLotNo, SWT.BORDER);
 		txtLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));

@@ -59,7 +59,7 @@ public class VaccinationPrescriptionEventListener implements ElexisEventListener
 				}
 				
 				Mandant m = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-				ApplicationInputDialog aid = new ApplicationInputDialog(UiDesk.getTopShell());
+				ApplicationInputDialog aid = new ApplicationInputDialog(UiDesk.getTopShell(), p);
 				aid.open();
 				String lotNo = aid.getLotNo();
 				String side = aid.getSide();

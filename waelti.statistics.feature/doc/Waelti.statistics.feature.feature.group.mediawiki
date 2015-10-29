@@ -52,7 +52,7 @@ Die aufbereiteten Daten werden abgespeichert als<br />
  csv – Datei unter “Kosten_pro_Patient Datum”. Sie können in Tabellenkalkulationsprogrammmen wie OpenOffice importiert und bei Bedarf darin weiter analysiert werden.
 ==== Weiterentwicklung ====
 Weitere Fragestellungen sind willkommen und dürfen an den Autor herangetragen werden.
-[[File:Waelti.statistics/kohorte.png|image]]<br />
+[[File:kohorte.png|image]]<br />
  [Abb1]
-[[File:Waelti.statistics/patient.png|image]]<br />
+[[File:patient.png|image]]<br />
  [Abb2]

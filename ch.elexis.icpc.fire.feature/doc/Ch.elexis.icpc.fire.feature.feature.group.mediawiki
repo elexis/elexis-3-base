@@ -50,16 +50,16 @@ Alle drei Elemente können für ein- und dasselbe Problem bei jedem Encounter wi
 == Anwendung in Elexis ==
 Nach Installation des Plugins finden Sie eine ICPC-Perspektive vor. Diese ist nur als Beispiel zu verstehen, und kann wie in Elexis üblich, beliebig an Ihre Vorlieben und Ihren Bildschirm angepasst werden. Sie können Views entfernen oder zufügen, oder Views anders anordnen. Zur Anwendung von ICPC-2 benötigen Sie aber mindestens die Views ‘Konsultation’, ‘Probleme’, ‘Encounters’ und ‘ICPC2-Codes’.
 == Ein Problem erstellen und bearbeiten ==
-[[File:Ch.elexis.icpc.fire/icpc0.png| Abbildung 1|frame|none]] 
-[[File:Ch.elexis.icpc.fire/icpc1.png|Abbildung 2|frame|none]] 
+[[File:icpc0.png| Abbildung 1|frame|none]] 
+[[File:icpc1.png|Abbildung 2|frame|none]] 
 Klicken Sie in der Probleme-View auf den roten Stern Abb. 1). Sie können dann ein neues Problem erfassen. (Abb. 2). Für jedes Problem kann ein Name, ein Beginn-Datum und eine Nummer angegeben werden. Probleme werden in der Probleme-View immer anhand der Nummer sortiert. Es sind auch hierarchische Nummern (1.1.2 oder so) möglich. Das Beginn-Datum kann als genaues Datum oder auch nur als Jahr angegeben werden. Standardmässig wird das aktuelle Datum genommen.
 Wenn Sie mit der rechten Maustaste auf ein Problem klicken, können Sie das Problem für aktiv oder passiv erklären (Ein passives Problem erscheint ausgegraut), Sie können es umbenennen oder durch Vergabe einer anderen Nummer irgendwo anders einsortieren. Sie können es auch löschen. Im Allgemein ist es aber emfehlenswert, es nur inaktiv zu schalten.
 == Ein Problem in einer Konsultation behandeln ==
-[[File:Ch.elexis.icpc.fire/icpc2.png|Abbildung 3|frame|none]]
+[[File:icpc2.png|Abbildung 3|frame|none]]
 Ziehen Sie ein Problem aus der Problemliste mit der Maus ins Konsultationsfenster der aktuellen Konsultation. Es erscheint der Text Problem: gefolgt vom grün unterlegten Namen des Problems (Abb. 3).
 == Ein Encounter codieren ==
-[[File:Ch.elexis.icpc.fire/icpc3.png|Abbildung 4|frame| none]]
-[[File:Ch.elexis.icpc.fire/icpc4.png|Abbildung 5|frame| none]]
+[[File:icpc3.png|Abbildung 4|frame| none]]
+[[File:icpc4.png|Abbildung 5|frame| none]]
 Ein Ecounter ist wie gesagt der Schnittpunkt eines Problems mit einer Konsulation. Soald Sie ein Problem wie oben beschrieben in ein Konsultationsfenster gezogen haben, haben Sie ein Encounter erstellt. Das Encounter hat ‘automatisch’ ein zugeordnetes Problem, ein Datum und einen Namen, was noch fehlt, sind RFE, Diagnose und Procedere. Machen Sie dazu einen Doppelcklick auf den Titel des Problems in der Konsultation. Im Fenter ‘Encounter’ erscheint nun diese Encounter ausgewählt. Wenn Sie auf eines der Felder ‘RFE’, ‘Diagnose’ oder ‘Procedere’ klicken, erscheint die ICPCCodes-View (Abb. [fig:icpc4] und [fig:icpc5]), die wir im Folgenden etwas genauer anschauen wollen:
 Wie Sie sehen, wird das Fenster ICPC-Codes geöffnet (oder in den Vordergrund gebracht), sobald Sie auf eine der Zeilen ‘RFC’, ‘Diagnose’ oder ‘Procedere’ in der Encounter-View klicken. Das entsprechende Feld wird dann rot umrandet als Zeichen, dass ein Doppelklick im Codefenster den Code in den rot umrandeten Bereich ‘befördern’ wird. Im oberen Bereich der View sehen Sie die ICPC2-Kapitel A-Z. Wenn Sie mit der Maus über einem der Reiter verweilen, sehen Sie den kompletten Titel des Kapitels. Nach Auswahl eines Kapitels sehen Sie im Hauptbereich des Fensters die 7 Komponenten zu diesem Kapitel. Durch Klick auf eine Komponente öffnet sich der Inhalt, der dann die einzelnen Codes enthält. Wie Sie im Vergleich von Abb. [fig:icpc4] und [fig:icpc5] sehen, sind nicht immer alle Komponenten auswählbar. Dies entspricht der ICPC2-Vorgabe: RFE kann aus jeder Komponente kommen, Diagnose nur aus Komponenten 1 und 7, Procedere aus 2,3,5 und 6.
 Sie sollten die 3 Dimensionen für jeden Encounter, den Sie pro Konsultation behandeln, ausfüllen.
@@ -80,10 +80,10 @@ Wie eingangs ausgeführt, liefert das ICPC-2 Plugin nur die Grundstruktur und di
 # Klicken Sie auf den Reiter ICPC und dann auf das Viewmenu (Dreieck rechts oben) und wählen Sie ‘import’ ([fig:import1]).
 # Klicken Sie auf ‘Datenbank auswählen’ und wählen Sie Ihre vorher erstellte ODBC-Quelle ([fig:import2]).
 # Nach Abschliessendem Klick auf OK startet der Import. Danach muss Elexis beendet und neu gestartet werden.
-[[File:Ch.elexis.icpc.fire/icpc5.png|Abbildung 6|frame|none]]
-[[File:Ch.elexis.icpc.fire/icpc6.png|Abbildung 7|frame|none]]
-[[File:Ch.elexis.icpc.fire/icpc8.png|Abbildung 8|frame|none]]
-[[File:Ch.elexis.icpc.fire/icpc7.png|Abbildung 9|frame|none]]
-[[File:Ch.elexis.icpc.fire/icpc9.png|Abbildung 10|frame|none]]
-[[File:Ch.elexis.icpc.fire/icpc10.png|Abbildung 11|frame|none]]
-[[File:Ch.elexis.icpc.fire/icpc11.png|Abbildung 12|frame| none]]
+[[File:icpc5.png|Abbildung 6|frame|none]]
+[[File:icpc6.png|Abbildung 7|frame|none]]
+[[File:icpc8.png|Abbildung 8|frame|none]]
+[[File:icpc7.png|Abbildung 9|frame|none]]
+[[File:icpc9.png|Abbildung 10|frame|none]]
+[[File:icpc10.png|Abbildung 11|frame|none]]
+[[File:icpc11.png|Abbildung 12|frame| none]]

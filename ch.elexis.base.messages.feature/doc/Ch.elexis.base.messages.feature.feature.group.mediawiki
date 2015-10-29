@@ -37,10 +37,10 @@
 == Einführung ==
 Dieses Plugin ermöglicht eine einfache Nachrichtenübermittlung zwischen verschiedenen Mitarbeitern. Im Gegensatz zu Remindern erscheinen diese Nachrichten immer als Dialogbox.
 == Nachricht erstellen ==
-[[File:Ch.elexis.base.messages/newmsg.png|image]]
+[[File:newmsg.png|image]]
 Wenn das Plugin installiert ist, erscheint in der Haupt-Werkzeugleiste von Elexis der Knopf ‘Nachricht erstellen’ (s. Bild). Klick auf dieses Werkzeug öffnet den Dialog ‘Nachricht erstellen’:
 Mit Klick auf ‘senden’ wird die Nachricht abgesendet. Elexis findet automatisch die Arbeitsstation, auf der die Empfängerin eingeloggt ist und zeigt dort die Nachricht an. Wenn der Empfänger zur Zeit nicht eingeloggt ist, erscheint die Nachjricht sofort beim nächsten Einloggen. Wenn sie an mehreren Arbeitsstationen eingeloggt ist, erscheint die Nachricht auf allen.
-[[File:Ch.elexis.base.messages/newmsg3.png|image]]
+[[File:newmsg3.png|image]]
 Die Empfängerin hat folgende Möglichkeiten:
 * Löschen – Nachricht wird gelöscht und erscheint nicht mehr
 * Antworten – Es wird eine Nachricht an den Absender erstellt. Die ursrünglich Nachricht wird gelöscht.

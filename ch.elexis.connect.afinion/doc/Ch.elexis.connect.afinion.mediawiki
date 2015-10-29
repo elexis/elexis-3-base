@@ -1,11 +1,11 @@
 [[Kategorie:Geräteanbindung]]
 [[File:afinion-elexis_logo.png|image]]<br />
  image
-[[File:Ch.elexis.connect.afinion/axis_shield_logo.png|image]]<br />
+[[File:axis_shield_logo.png|image]]<br />
  image
-[[File:Ch.elexis.connect.afinion/afinion-_device.png|image]]<br />
+[[File:afinion-_device.png|image]]<br />
  image
-[[File:Ch.elexis.connect.afinion/afinion-_logo.png|image]]<br />
+[[File:afinion-_logo.png|image]]<br />
  image
 == Einführung ==
 Dieses Plugin dient dazu, das Laborgerät ‘Afinion AS100 Analyzer’<sup>[[#fn1|1]]</sup> an Elexis anzubinden. Mit diesem Plugin können die, vom Afinion gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.

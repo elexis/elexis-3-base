@@ -6,7 +6,7 @@ Dieses Plugin benötigt Elexis 1.4.0 oder höher.
 Wenn Sie das Plugin korrekt installiert haben, dann erscheint unter Datei-Einstellungen-Datenaustausch eine Seite ‘HL7 Dateien’, wo Sie eingeben müssen, in welchem Verzeichnis Elexis nach Labordateien suchen soll.
 == Anwendung ==
 Klicken Sie einfach auf den Import-Knopf in der Labor-View ([fig:lab1]).
-[[File:Ch.elexis.laborimport.hl7.allg/abb1.png|image]]<br />
+[[File:abb1.png|image]]<br />
  [fig:lab1]
 Nach dem Import werden alle heruntergeladenen Dateien in einem Unterordner ‘archive’ des Download-Verzeichnisses aufbewahrt, wo Sie sie nach einiger Zeit von Hand löschen können.
 {{PluginInfo

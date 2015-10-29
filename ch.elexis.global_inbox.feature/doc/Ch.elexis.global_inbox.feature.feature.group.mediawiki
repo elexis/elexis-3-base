@@ -40,11 +40,11 @@ Dieses Plugin überwacht ein Verzeichnis auf der Festplatte und importiert alle 
 Ein Dokumentverwaltungs-Plugin in Elexis, z.B. Omnivore plus oder Omnivore direct.
 == Konfiguration ==
 Erstellen Sie ein Verzeichnis, in das die Importe gespeicher werde sollen, und stellen Sie das Eingangsfach darauf ein.
-[[File:Ch.elexis.global_inbox/inbox1.png|Abbildung 1|frame|none]]
+[[File:inbox1.png|Abbildung 1|frame|none]]
 Nach kurzer Zeit werden in diesem Eingangsverzeichnis automatisch Unterverzeichnise angelegt, die den Kategorien Ihres Dokumentverwaltungssystems entsprechen.
 == Bedienung ==
 Das Eingangsfach-Fenster zeigt den Inhalt des EIngangsverzeichnisses
-[[File:Ch.elexis.global_inbox/inbox2.png|Abbildung 2|frame|none]]
+[[File:inbox2.png|Abbildung 2|frame|none]]
 [[File:inbox3.png|Abbildung 3|frame|none]]
 Wenn Sie irgendein Dokument, z.B. eine E-Mail oder einen E-Mail-Anhang etc. im Eingangsverzeichnis speichern, dann erscheint dieses Dokument nach einiger Zeit auch in der Eingangsfach-View (Das Plugin schaut standardmässig alle paar Minuten nach, ob neue Dateien angekommen sind). Allerdings kann das System bei solchen Dokumenten ja nicht wissen, zu welchem Patienten sie gehören. Deswegen landen sie in einem “universalen” Eingangsfach, bis sie manuell zugeordnet werden. Sie können bereits beim Speichern die Dokumentkategorie festlegen, indem Sie das Dokument im entsprechenden Unterverzeichnis speichern.
 Die Eingansgfach-View hat oben folgende Buttons:
@@ -54,7 +54,7 @@ Die Eingansgfach-View hat oben folgende Buttons:
 * Neu einlesen: Damit können Sie die Eingangsfach-View anweisen, jetzt sofort nach neuen Dokumenten zu sehen, anstatt erst beim nächsten “Heartbeat”.
 (Mit Rechtsklick auf einem Dokument erhalten Sie dieselben Optionen)
 Wenn wir nun auf den “Zuordnen” Button klicken, erscheint eine Rückfrage:
-[[File:Ch.elexis.global_inbox/inbox4.png||Abbildung 4|frame|none]]
+[[File:inbox4.png||Abbildung 4|frame|none]]
 Wenn wir hier mit OK bestätigen, verschwindet das Dokument aus der Inbox und wird ins Omnivore (Oder Ihr sonstiges Dokumentverwaltungs-Plugin) transferiert und dem entsprechenden Patienten zugeordnet.
 Sie können den Zuordnungsprozess automatisieren, indem Sie das Dokument beim Speichern entsprechen benennen. Das Eingangsfach wird jedes Dokument, dessen Name mit einer Nummer, gefolgt von einem Unterstrich und dem eigentlichen Namen besteht, dem Patienten mit dieser Nummer zuordnen. Wenn Sie also ein Dokument als
 <tt>234_BerichtChirurgie.pdf</tt>

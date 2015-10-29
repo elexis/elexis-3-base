@@ -3,16 +3,16 @@
 === Einführung ===
 Das ch.docbox.elexis Plugin verfügt über die Möglichkeit, aus elexis via der [http://www.docbox.ch docbox] Patienten an Spitäler und Ärzte zu überweisen, Berichte zu empfangen und Termine für Patienten bei anderen Leistungserbringern zu buchen. Termine (Notfalldienst, Ärztebesucherplanung, Terminbuchungen von Patienten, Ärzten), die in der docbox vereinbart wurden, können in die elexis Agenda übertragen werden.
 Folgende Funktionen unterstütz das Plugin:
-* docbox Browser öffnen [[File:Ch.docbox.elexis/docbox16.png]]
-* docbox Browser öffnen mit dem aktuell gewähltem Patienten im elexis [[File:Ch.docbox.elexis/meinpatient_logo16.png]]
-* Patient an Spital überweisen [[File:Ch.docbox.elexis/hospital16.png]]
-* Patient an Arzt überweisen [[File:Ch.docbox.elexis/doc2doc16.png]]
-* Patiententermin vereinbaren [[File:Ch.docbox.elexis/terminvereinbarung16.png]]
-* Berichte, Kopien Überweisungen &amp; Termine aus docbox in elexis herunterladen [[File:Ch.docbox.elexis/document16.png]]
+* docbox Browser öffnen [[File:docbox16.png]]
+* docbox Browser öffnen mit dem aktuell gewähltem Patienten im elexis [[File:meinpatient_logo16.png]]
+* Patient an Spital überweisen [[File:hospital16.png]]
+* Patient an Arzt überweisen [[File:doc2doc16.png]]
+* Patiententermin vereinbaren [[File:terminvereinbarung16.png]]
+* Berichte, Kopien Überweisungen &amp; Termine aus docbox in elexis herunterladen [[File:document16.png]]
 Das Plugin stellt zwei neue Sichten zur Verfügung, die docbox Browser sowie die docbox Dokumente View.
-[[File:Ch.docbox.elexis/docboxbrowser.png]]<br />
+[[File:docboxbrowser.png]]<br />
  Mit der docbox Browser View können die einzelnen Prozesse innerhalb der dobox mit dem gewählten Patienten ausgeführt werden.
-[[File:Ch.docbox.elexis/docboxdokumente.png]]<br />
+[[File:docboxdokumente.png]]<br />
  In der docbox Dokumentenview werden die empfangenen Dokumente aus der docbox angezeigt.
 === Neue Features im Plugin 2.1.6 in Zusammenarbeit mit argomed AG / visionary AG ===
 * Drag and Drop von der DokumentenView ins Omnivore (setzt das Omnivore PlugIn voraus)
@@ -29,7 +29,7 @@ Falls noch kein Zugang zu docbox besteht, kann dieser bei [http://www.docbox.ch/
 ## “Elektronische Überweisungen von Arzt zu Arzt”.
 ## Die “Arzt-Patient Terminvereinbarung” müssen Sie nur anklicken, falls Sie Patiententermine für andere Kollegen zum Buchen freigeben möchten.
 ==== Einmalige elexis Einstellungen ====
-[[File:Ch.docbox.elexis/docboxelexiseinstellungen.png|frame|none]]
+[[File:docboxelexiseinstellungen.png|frame|none]]
 # Ö̈ffnen Sie elexis und wählen Sie im Hauptmenu unter “elexis” den Menuepunkt “Einstellungen”/&quot; Anwender&quot;/“docbox Einstellungen”. Sie brauchen Adminrechte für den Mandant um die Einstellungen zu ändern.
 # Geben Sie hier die docbox Login ID und das docbox Passwort (allenfalls auch notwendendiger Produktschlüssel) ein und klicken Sie auf “Test docbox Verbindung” Konfiguration. Es sollte “ok” erscheinen.
 # Konfigurieren Sie sich unter “Fenster”/“Ansicht”/“andere” die beiden Fenster “docbox Browser” und “docbox Dokumente” hinzu

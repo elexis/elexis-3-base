@@ -69,7 +69,7 @@ Bei allen Feldtypen sind die folgenden Attribute verfügbar:
 Im Folgenden wird auf die einzelnen Feldtypen genauer eingegangen. Die angegebenen Typnamen entsprechen gleichzeitig auch den XML-Tagnamen um Felder des entsprechenden Typs zu generieren.
 == strfield ==
 Ein- oder mehrzeiliges Textfeld
-[[File:Com.hilotec.elexis.messwerte.v2/strfield.png|Abbildung 1|frame|none]]
+[[File:strfield.png|Abbildung 1|frame|none]]
 === Attribute ===
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird
@@ -79,7 +79,7 @@ Ein- oder mehrzeiliges Textfeld
 <pre>&lt;strfield name=&quot;bemerk&quot; title=&quot;Bemerkungen&quot; lines=&quot;1&quot; /&gt;</pre>
 == numfield ==
 Zahlenfeld
-[[File:Com.hilotec.elexis.messwerte.v2/numfield.png|Abbildung 2|frame|none]]
+[[File:numfield.png|Abbildung 2|frame|none]]
 === Attribute ===
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird
@@ -120,7 +120,7 @@ Mit dem <tt>roundingmode</tt> Attribut kann angegeben werden, wie eine Zahl geru
 roundingmode=&quot;HALF_UP&quot; /&gt;</pre>
 == scalefield ==
 Feld um Ganzzahlen in einem eingegrenzten Bereich zu erfassen
-[[File:Com.hilotec.elexis.messwerte.v2/scalefield.png|Abbildung 3|frame|none]]
+[[File:scalefield.png|Abbildung 3|frame|none]]
 === Attribute ===
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird
@@ -133,7 +133,7 @@ Feld um Ganzzahlen in einem eingegrenzten Bereich zu erfassen
   min=&quot;0&quot; max=&quot;5&quot; default=&quot;5&quot; /&gt;</pre>
 == enumfield ==
 Auswahlfeld mit einer fixen Liste an Auswahlmöglichkeiten
-[[File:Com.hilotec.elexis.messwerte.v2/enumfield.png|Abbildung 4|frame|none]]
+[[File:enumfield.png|Abbildung 4|frame|none]]
 === Attribute ===
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird. Muss angegeben werden und dem Wert einer Option aus der Liste entsprechen.
@@ -146,7 +146,7 @@ Die einzelnen auswählbaren Optionen werden mit dem Unterlement <tt>option</tt> 
 &lt;/enumfield&gt;</pre>
 == boolfield ==
 Häkchen für ja/nein-Werte
-[[File:Com.hilotec.elexis.messwerte.v2/boolfield.png|Abbildung 5|frame|none]]
+[[File:boolfield.png|Abbildung 5|frame|none]]
 === Attribute ===
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird (nur <tt>true</tt> oder <tt>false</tt> werden akzeptiert)
@@ -154,7 +154,7 @@ Häkchen für ja/nein-Werte
 <pre>&lt;boolfield name=&quot;herger&quot; title=&quot;Herzgeraeusch&quot; /&gt;</pre>
 == datafield ==
 Verweis auf andere Messungen
-[[File:Com.hilotec.elexis.messwerte.v2/datafield.png|Abbildung 6|frame|none]]
+[[File:datafield.png|Abbildung 6|frame|none]]
 === Attribute ===
 ; type:
 : Name des Messungstyps auf den verwiesen werden soll
@@ -162,7 +162,7 @@ Verweis auf andere Messungen
 <pre>&lt;datafield  name=&quot;vorekg&quot; title=&quot;Vorekg&quot; type=&quot;ekg&quot; /&gt;</pre>
 == calcfield ==
 Errechnetes Feld
-[[File:Com.hilotec.elexis.messwerte.v2/calcfield.png|Abbildung 7|frame|none]]
+[[File:calcfield.png|Abbildung 7|frame|none]]
 === Attribute ===
 ; places:
 : Anzahl der Nachkommastellen beim Ergebnis
@@ -186,12 +186,12 @@ Beim Element <tt>formula</tt> muss mit dem Attribut <tt>interpreter</tt> der zu 
 &lt;/calcfield&gt;</pre>
 == datefield ==
 Auswahlfeld für ein Datum
-[[File:Com.hilotec.elexis.messwerte.v2/datefield.png|Abbildung 8|frame|none]]
+[[File:datefield.png|Abbildung 8|frame|none]]
 === Beispiel ===
 <pre>&lt;datefield name=&quot;erfdatum&quot; title=&quot;Datum&quot; /&gt;</pre>
 == counterfield ==
 Automatisch generierte Laufnummer für die Messung
-[[File:Com.hilotec.elexis.messwerte.v2/counterfield.png|Abbildung 9|frame|none]]]]
+[[File:counterfield.png|Abbildung 9|frame|none]]]]
 === Attribute ===
 ; countermode:
 : Modus für den Zähler ''[Standard: global_counter]''<br />

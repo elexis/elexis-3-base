@@ -57,7 +57,7 @@ In unserem Fall "Erhöhtes Risiko für Myopathien". Beurteilung: Kontraindiziert
 Für die Prüfung eines neu zu verordnetden Medikamentes ist eine Interaktionsprüfung der Fixmedikation durchzuführen und das neue Medikament im Suchfeld des Browserfenster oben links einzutragen (Abb1 Punkt 3). Die Interaktionabfrage testet dann die Verträglichkeit des neuen Medikamentes mit der Fixmedikation. Bei einer Interaktionsmeldung können so bei Bedarf sofort Alternativen geprüft und bei fehlender Indikation das neue Medikament in der Fixmedikation eingetragen werden. 
 Dieser Interaktions-Check erlaubt so eine rasche Interaktionsprüfung im Workflow der Konsultation.
 '''Abbildung 1. Webbrowser-Aufruf'''
-[[File:At.medevit.elexis.epha.interactions/fixmedikationaufruf.png|frame|none]]
+[[File:fixmedikationaufruf.png|frame|none]]
 '''Abbildung 2: Die Anfrage öffnet ein Browser-Fenster mit dem grafischen Interface von Epha'''
-[[File:At.medevit.elexis.epha.interactions/ephainterface.png|frame|none]]
+[[File:ephainterface.png|frame|none]]
 [[Category:Decision support]]

@@ -65,7 +65,7 @@ Die Auftragsnummer ist eindeutig und wird von Elexis erstellt und in der Datenba
 Dazu wird eine neue Tabelle KONTAKT_ORDER_MANAGEMENT verwendet.
 == Tests ==
 === HL7-Auftragsdatei erstellen ===
-Im View-Menu der Laborliste erscheint ein Dropdown-Aktion [[File:Ch.elexis.laborimport.medics.v2/medics-16.png]]. Wird diese angeklickt,<br />
+Im View-Menu der Laborliste erscheint ein Dropdown-Aktion [[File:medics-16.png]]. Wird diese angeklickt,<br />
 so wird im Upload-Verzeichnis ein HL7 Auftragsdatei erstellt mit einer eindeutigen Auftragsnummer.
 === HL7 Dateien importieren ===
 Bevor die Dateien im /samples Verzeichnis importiert werden können, müssen diese entsprechend angepasst

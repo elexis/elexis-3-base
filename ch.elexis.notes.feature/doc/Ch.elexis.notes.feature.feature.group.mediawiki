@@ -43,9 +43,9 @@ Medelexis-Benutzer können über das Abo-Management installieren oder deinstalli
 Die Konfiguration beschränkt sich darauf, ein Basisverzeichnis anzugeben, unterhalb dem ''Elexis-Notes'' externe Dokumente ablegen soll.
 == Verwendung ==
 Wenn das Plugin korrekt installiert ist, finden Sie unter Fenster-Views-Andere eine View Namens ‘Notizen’. Es sollte sich dann ein Fenster wie in Abb. [fig:notes2] öffnen (natürlich zunächst ohne Inhalt).
-[[File:Ch.elexis.notes/notes-view.png|image]]
-[[File:Ch.elexis.notes/notes-tools.png|image]] 
-[[File:Ch.elexis.notes/notes-view2.png|image]]
+[[File:notes-view.png|image]]
+[[File:notes-tools.png|image]] 
+[[File:notes-view2.png|image]]
 ''Elexis-Notes'' ordnet Notizen und Dokumente beliebig hierarchisch. Sie können Hauptkategorien (die oberste Ebene) vorgeben und darunter beliebig viele Unterkategorieren in beliebig tiefer Schachtelung erstellen. Jede Unterkategorie kann gleichzeitig auch eine Notiz sein, resp. jede Notiz kann Unterkategorien enthalten.
 == Neue Hauptkategorie erstellen ==
 Klick auf diesen Knopf öffnet ein Fenster um einen Namen einzugeben. Eine Hauptkategorie dieses Namens wird in der obersten Ebene er Liste erstellt.
@@ -57,10 +57,10 @@ Diese Funktion steht nur zur Verfügung, wenn Sie ein Plugin installiert haben, 
 Im rechten Feld können Sie beliebig Text eingeben, der dem links markierten Element (Kategorie, Unterkategorie oder Notiz) zugeordnet wird. Bei Verlassen des Feldes wird der Text automatisch gespeichert.
 == Externe Dokumente oder Websites verlinken ==
 Im unteren Feld können Sie mit Klick auf den + Button Links erstellen. Ein Link kann entweder eine beliebige Datei oder ein Internet-Link sein (Komplett mit http:// einzugeben).
-[[File:Ch.elexis.notes/notes-view3.png|image]]
+[[File:notes-view3.png|image]]
 == Stichwörter zuordnen ==
 Im mittleren Feld zwischen Titel und Querverweisen können Sie beliebige, durch Komma getrennte Stichwörter zur aktuellen Notiz eintragen.
 == Einträge suchen ==
 Im Feld ‘Suchen’ können Sie den Anfang eines Suchbegriffs eingeben und dann die Eingabetaste drücken.
-[[File:Ch.elexis.notes/find.png|image]]
+[[File:find.png|image]]
 Die Liste wird dann auf diejenigen Einträge limitiert, die den gesuchten Begriff entweder im Titel oder in den Stichwörtern haben. Um wieder alle anzuzeigen, klicken Sie auf das rote ‘x’.

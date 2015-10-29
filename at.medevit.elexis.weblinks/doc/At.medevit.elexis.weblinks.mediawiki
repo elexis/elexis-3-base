@@ -40,57 +40,29 @@
 		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
 	</tr>
 </table>
-
-
 == Installation / Deinstallation==
 Installation via Service Abo Medelexis. 'Weblinks' ist ein Plugin der Kategorie 'Decision Support'. --> OpenSource Location noch eintragen
-
-
 == Einführung ==
 In der &auml;rztlichen Konsultation ergeben sich laufend Fragen (Medkikamentenverordnung, medizinische Informationen, klinische Entscheidungsunterst&uuml;tzung). Idealerweise stehen dem Arzt die Antworten w&auml;hrend der Konsultation zu Verf&uuml;gung.  
 Die individuellen Informations-Bed&uuml;rfnisse der &Auml;rzte sind vielf&auml;ltig. Ebenso das Angebot von Websiten, welche mittels einer URL eine Suchanfrage zulassen. Auf Wunsch von Anwendern entwickelte Elexis deshalb ein Plugin, welches eine individuelle Parametrierung von Suchanfragen erlaubt. 
-
-
 == Funktionen ==
 Das Plugin erlaubt die Selektion eines oder mehrerer Worte im Lauftext und das Versenden dieses Strings als Suchanfrage an eine individuell gewählte Website. Nach Tippen des Wortes oder 
 durch Auswahl eines Wortes mit dem Cursor und Rechtsklick öffnet ein Menü mit Adressaten für die Anfrage. Nach Auswahl eines Adressaten/Website wird der markierte String als Anfrage zur Website gesandt. Als Resultat öffnet sich ein Browserfenster mit der gewählten Website und zeigt die Resultate der verarbeiteten Suchanfrage. 
-
 Zu den Beispielen:  Bei der Selektion des Strings "Diabetes" (1) in der Konsultationsview von Elexis und der Wahl von "Infomed" (2) im Rechtsklick-Menü öffnet sich das Browserfenster und zeigt das Suchresultet der Abfrage "Diabetes" (3) auf der Website von Infomed (Abb 1).
 Bei der Selektion des Strings "Diabetes" und der Wahl von "Medix" im Rechtsklick-Menü öffnet sich das Browserfenster und zeigt das Suchresultet von Google nach Dokumenten mit dem String "Diabetes" auf der Website von medix.ch (Abb 2).
-
-
 '''Abbildung 1: Die Suchanfrage "Diabetes mellitus" bei Infomed'''
-
 [[File:welinks1.jpg|600px]]
-
-
-
-
 '''Abbildung 2: Die Suchanfrage "Diabetes mellitus" bei Google für die Website medix.ch'''
-
 [[File:weblinks2.jpg|600px]]
-
-
 == Konfiguration ==
 Jede Website, welche Anfragen mittels einer URL zulässt, kann nach einer Parametrierung im Rechtsklick-Menü aufgerufen werden. Die Parametrierung der individuellen Suchanfragen erfolgt in den ,Einstellungen‘ von Elexis (Menü --> Datei / Einstellung / Online Dienste / Weblinks). Nach Klick auf 'Weblinks' erscheint ein Dialogfenster wie in Abbildung 3. Dieses zeigt  unter 1 zwei Leerfelder für die Parameter und in unserem Beispiel von A bis D vier parametrierte Einträge.
-
 Ein Klick auf den Button "Weblink hinzufügen" öffnet zwei Textfelder: 
 *Im linken Textfeld <b>'Name' </b> ist die Bezeichnung des gewählten Webservice einzutragen. Dieser Eintrag erscheint nach der Parametrierung im rechts-klick Menü. 
 *Im rechten Textfeld ''''Link''''  ist die URL des Webservice und der Platzhalter einzutragen  . 
 Beispiel A parametriert eine Anfrage an 'Infomed' . Als Bezeichner, im rechts-klick Menü sichtbar ist '''Infomed''' gesetzt. Das Textfeld re setzt sich zusammen aus der URL, welche bei Infomed eine Suchanfrage induziert  <b><nowiki>http://www.infomed.ch/infomed_search.php?zoom_query=</nowiki></b> und dem Platzhalter für die Suchanfrage '''[text.selection]''', welche den in Elexis markierten Text auf die Reise schickt.
-
 In Beispiel B ist eine Suchanfrage an Pubmed parametrisiert.
-
 Lässt eine Website die Suche mittels eines URL-stings nicht zu, hilft eine Google-Suche nach Dokumenten auf der in Frage kommenden Website weiter. 
-
 Beispiel C parametriert eine Anfrage bei Google für eine Suche auf der Website von '''medix.ch'''. Dem Suchstring von Google  '''<nowiki>http://www.google.ch/search?site=&source=hp&q=</nowiki>'''  wird der Platzhalter  ''' [text.selection]'''  angehängt und danach die Website, auf der gesucht werden soll  '''site:medix.ch''' angegeben. 
-
-
-
 '''Abbildung 3: Dialog für die Parametrierung''' 
-
 [[File:weblink3.jpg|600px]]
-
-
-
 [[Category:Decision support]]

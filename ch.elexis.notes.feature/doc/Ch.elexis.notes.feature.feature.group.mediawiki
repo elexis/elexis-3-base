@@ -1,5 +1,4 @@
 [[Kategorie:Organisation]]
-
 <table style="width:100%; border: 1px solid; padding: 10px">
 	
 	<tr>
@@ -35,87 +34,33 @@
 		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
 	</tr>
 </table>
-
-
-
 == Einführung ==
-
-
 Dieses Plugin dient dazu, beliebige nicht-patientenbezogene Informationen und Dokumente abzulegen. Diese können nach beliebigen Kriterien strukturiert und mit Stichwörtern versehen werden.
 Ausserdem können, falls in Elexis ein Scanservice vorhanden ist, Dokumente direkt eingescannt werden. 
-
-
 == Installation, Deinstallation, Konfiguration ==
-
 Medelexis-Benutzer können über das Abo-Management installieren oder deinstallieren.  OpenSource Location >
-
-
-[[File:Ch.elexis.notes/config.png|image]]
-
-
+[[File:notes-config.png|image]]
 Die Konfiguration beschränkt sich darauf, ein Basisverzeichnis anzugeben, unterhalb dem ''Elexis-Notes'' externe Dokumente ablegen soll.
-
-
 == Verwendung ==
-
 Wenn das Plugin korrekt installiert ist, finden Sie unter Fenster-Views-Andere eine View Namens ‘Notizen’. Es sollte sich dann ein Fenster wie in Abb. [fig:notes2] öffnen (natürlich zunächst ohne Inhalt).
-
-
-[[File:Ch.elexis.notes/notesview.png|image]]
-
-
-[[File:Ch.elexis.notes/notestools.png|image]] 
-
-
-[[File:Ch.elexis.notes/notesview2.png|image]]
-
-
+[[File:Ch.elexis.notes/notes-view.png|image]]
+[[File:Ch.elexis.notes/notes-tools.png|image]] 
+[[File:Ch.elexis.notes/notes-view2.png|image]]
 ''Elexis-Notes'' ordnet Notizen und Dokumente beliebig hierarchisch. Sie können Hauptkategorien (die oberste Ebene) vorgeben und darunter beliebig viele Unterkategorieren in beliebig tiefer Schachtelung erstellen. Jede Unterkategorie kann gleichzeitig auch eine Notiz sein, resp. jede Notiz kann Unterkategorien enthalten.
-
-
 == Neue Hauptkategorie erstellen ==
-
 Klick auf diesen Knopf öffnet ein Fenster um einen Namen einzugeben. Eine Hauptkategorie dieses Namens wird in der obersten Ebene er Liste erstellt.
-
-
 == Neue Unterkategorie oder Notiz erstellen ==
-
-
 Klicken Sie auf die gewünschte Kategorie oder Notiz und klicken Sie auf diesen Button. Sie können dann wieder einen Namen eingeben, und der neue Eintrag wird unterhalb des vorher markierten Eintrags erstellt.
-
-
 == Scannen ==
-
-
 Diese Funktion steht nur zur Verfügung, wenn Sie ein Plugin installiert haben, welches einen Scannerdienst anbietet (z.B. Omnivore direct). Markieren Sie eine gewünschte Kategorie oder Notiz und klicken Sie auf den Scan-Button. Dies öffnet das Scanprogramm Ihres Scanners. Nach Einscannen des Dokuments können Sie einen Namen für das Dokument vergeben. Das Dokument wird dort abgespeichert, wo Sie in der Konfiguration das Basisverzeichnis angegeben hatten, und ein Verweis auf das Dokument wird unter dem markierten Eintrag angelegt.
-
-
 == Notizen schreiben ==
-
-
 Im rechten Feld können Sie beliebig Text eingeben, der dem links markierten Element (Kategorie, Unterkategorie oder Notiz) zugeordnet wird. Bei Verlassen des Feldes wird der Text automatisch gespeichert.
-
-
 == Externe Dokumente oder Websites verlinken ==
-
-
 Im unteren Feld können Sie mit Klick auf den + Button Links erstellen. Ein Link kann entweder eine beliebige Datei oder ein Internet-Link sein (Komplett mit http:// einzugeben).
-
-[[File:Ch.elexis.notes/notesview3.png|image]]
-
-
+[[File:Ch.elexis.notes/notes-view3.png|image]]
 == Stichwörter zuordnen ==
-
-
 Im mittleren Feld zwischen Titel und Querverweisen können Sie beliebige, durch Komma getrennte Stichwörter zur aktuellen Notiz eintragen.
-
-
 == Einträge suchen ==
-
-
 Im Feld ‘Suchen’ können Sie den Anfang eines Suchbegriffs eingeben und dann die Eingabetaste drücken.
-
 [[File:Ch.elexis.notes/find.png|image]]
-
-
 Die Liste wird dann auf diejenigen Einträge limitiert, die den gesuchten Begriff entweder im Titel oder in den Stichwörtern haben. Um wieder alle anzuzeigen, klicken Sie auf das rote ‘x’.

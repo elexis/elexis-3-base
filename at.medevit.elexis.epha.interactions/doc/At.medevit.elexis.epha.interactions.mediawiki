@@ -1,5 +1,4 @@
 
-
 <table style="width:100%; border: 1px solid; ">
 <tr>
 		<td style="width:150px;">Name des Plugins:</td>
@@ -42,54 +41,23 @@
 		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
 	</tr>
 </table>
-
-
-
-
 == 1. Installation / Deinstallation==
 Installation via Service-Abo Medelexis. Der 'Interaktionscheck Basis' ist ein Plugin der Kategorie 'Decision Support'. --> OpenSource Location noch eintragen
-
-
 == 2. Konfiguration ==
 Keine Konfiguration notwendig
-
-
-
 == 3. Einführung ==
-
 Die Patienten werden zunehmend älter und leiden immer öfter an mehreren Erkrankungen (Polymorbidität). Die medikamentösen Therapie-Möglichkeiten werden laufend erweitert, die Anzahl der therapeutischen Wirkstoffe und konfektionierten Medikamente nimmt entsprechend zu. Dies hat zur Folge, dass Patienten immer häufiger mehrere Dauermedikamente einnehmen (Polymedikation) und bei akuten Erkrankungen zusätzliche Medikamente verschrieben bekommen.
-
 Mit ansteigender Anzahl verordneter Medikamente steigt das Risiko von Medikamenten-Interaktionen mit unerwünschten oder gefährlichen Nebenwirkungen exponential. Muss ein Patient mehr als 3 Wirkstoffe regelmässig einnehmen wird die Überprüfung der Medikamenten-Interaktionen (Interaktions-Check) sehr komplex.
-
 Die Interaktions-Information sollte beim Verordnen vorliegen. Um dies zu erreichen muss das Absetzen einer Interaktions-Anfrage schnell und einfach möglich sein (ein Klick) und die Darstellung des Resultates sollte leicht lesbar, am besten grafisch und synoptisch erfolgen. Idealerweise würde bei allfälligen Interaktions-Problemen vom antwortenden Service eine medikamentöse Alternativ-Therapie angeboten.
-
 == 4. Anbieter der Interaktions-Informationen ==
-
 Epha ist ein ‘spin-off’ des Pharmakologischen und Toxikologischen Institutes der Universität Zürich. Die Firma will sich als Spezialist für Dienstleistungen rund um die Medikamentenabgabe und Verschreibung/Rezeptierung profilieren. Unter anderem bieten sie einen Interaktions-Check mit guter Visualisierung. Die Interaktions-Informationen stammen aus dem Institut, die Empfehlungen sind praxisnah und als OpenSoruce zur freien Verfügung.
-
 == 5. Funktionen ==
-
 Eine Interaktion-Abfrage wird ausgelsöt mit einem Klick auf das rot eingerahmte Symbol im Menü der View ‘Fixmedikation’ (Nr 1 in Abb 1). In unserem Beispiel besteht die Fixmedikation aus den Medikamenten 'Sporanox', 'Klacid' und 'Simvasin'. Die Anfrage übergibt diese 3 Parameter dem Epha-Server. Dieser prüft die Medikamente auf Verträglichkeit und bringt bei vorhandener Interaktion eine grafische Darstellung in einem Browserfenster zurück (Abb 1 im roten Rahmen). Vom 'Verursacher' der Interaktion (in unserem Beispiel Sporanox und Klacid) führt ein Pfeil auf das 'Opfer' (Simvasin) – d.h. in unserem Beispiel wird die Chance einer Simvasin-Nebenwirkung durch Sporanox und Klacid stark erhöht.  Ein Klick auf den Pfeilkopf des Interaktionspfeils (Nr 2 in Abb 1) öffnet einen Kurzkommentar zur Nebenwirkung. 
-
 In unserem Fall "Erhöhtes Risiko für Myopathien". Beurteilung: Kontraindiziert"
-
 Für die Prüfung eines neu zu verordnetden Medikamentes ist eine Interaktionsprüfung der Fixmedikation durchzuführen und das neue Medikament im Suchfeld des Browserfenster oben links einzutragen (Abb1 Punkt 3). Die Interaktionabfrage testet dann die Verträglichkeit des neuen Medikamentes mit der Fixmedikation. Bei einer Interaktionsmeldung können so bei Bedarf sofort Alternativen geprüft und bei fehlender Indikation das neue Medikament in der Fixmedikation eingetragen werden. 
 Dieser Interaktions-Check erlaubt so eine rasche Interaktionsprüfung im Workflow der Konsultation.
-
-
-
-
 '''Abbildung 1. Webbrowser-Aufruf'''
-
 [[File:At.medevit.elexis.epha.interactions/fixmedikationaufruf.png|frame|none]]
-
-
-
-
-
 '''Abbildung 2: Die Anfrage öffnet ein Browser-Fenster mit dem grafischen Interface von Epha'''
-
 [[File:At.medevit.elexis.epha.interactions/ephainterface.png|frame|none]]
-
-
 [[Category:Decision support]]

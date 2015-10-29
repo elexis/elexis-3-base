@@ -1,5 +1,4 @@
 [[Category:KG-Führung]]
-
 <table style="width:100%; border: 1px solid; padding: 10px">
 	
 	<tr>
@@ -35,22 +34,14 @@
 		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
 	</tr>
 </table>
-
-
 == Einführung==
 Das Features bietet eine Ansicht neuer Daten in Elexis. Die Art der Daten welche in der Inbox auf scheinen kann je nach zusätzlich installiertem Feature unterschiedlich sein. Die Daten werden pro Mandanten angezeigt und verwaltet. Im Feature integriert sind folgende Datentypen:
-
 * Laborwerte
-
 Es werden Anbindungspunkte für andere Features zur Verfügung gestellt über die Daten in der Inbox angezeigt werden können.
-
 == Installation / Deinstallation==
 Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren. OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]])
-
 == Funktionen==
 Die Inbox Ansicht kann einzeln geöffnet und einer Perspektive zugeordnet werden.
-
 [[File:medevit_inbox1.png]]
-
 * Es können die angezeigten Daten nach Typ und Text gefiltert werden.
 * Durch markieren der Checkbox können die Daten als gesehen markiert werden. Somit werden sie bei diesem Mandanten nicht mehr angezeigt.

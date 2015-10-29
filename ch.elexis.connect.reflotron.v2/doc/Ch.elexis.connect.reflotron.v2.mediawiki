@@ -1,28 +1,17 @@
-[[File:Ch.elexis.connect.reflotron.v2/elexis_logo.png|image]]<br />
+[[File:reflotron-elexis_logo.png|image]]<br />
  image
-
 [[File:Ch.elexis.connect.reflotron.v2/roche_logo.png|image]]<br />
  image
-
-[[File:Ch.elexis.connect.reflotron.v2/reflotron_device.png|image]]<br />
+[[File:Ch.elexis.connect.reflotron.v2/reflotron-_device.png|image]]<br />
  image
-
 == Einführung ==
-
 Dieses Plugin dient dazu, die Laborgerät ‘Reflotron sprint’ und ‘Reflotron plus’ <sup>[[#fn1|1]]</sup> an Elexis anzubinden. Mit diesem Plugin können die, vom Reflotron gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.
-
 == Voraussetzungen ==
-
 Dieses Plugin benötigt Elexis V1.4.1 oder höher sowie einen Reflotron Gerät (Modell sprint oder plus). Ausserdem wird ein PC mit mindestens einer freien seriellen Schnittstelle und ein korrekt gerade verdrahtetes serielles Kabel (kein Nullmodemkabel) zur Verbindung des Reflotrons mit dem PC benötigt <sup>[[#fn2|2]]</sup>.
-
 == Installation und Konfiguration ==
-
 Installieren Sie auf dem, sich im Labor befindlichen PC das Plugin wie gewohnt. Verbinden Sie dann bei '''ausgeschalteten''' Geräten den Reflotron mit einem seriellen Port des Computers.
-
 == Datenübertragung am Reflotron einschalten ==
-
 Die serielle Datenkommunikation ist im Reflotron standardmässig inaktiv. Damit das Reflotron Gerät Daten über die Schnittstelle an den Computer sendet, muss die Datenübertragung eingeschaltet werden. Wie dies gemacht wird, ist im Manual zum Reflotron im Kapitel 6 (Insbesondere Seite 6.9) beschrieben. Es folgt hier nur eine Kurzform für geübte Techniker:
-
 '''Reflotron sprint:'''<br />
  F2, User Level Setup<br />
  Fn+F1 (=F11)<br />
@@ -30,14 +19,12 @@ Die serielle Datenkommunikation ist im Reflotron standardmässig inaktiv. Damit 
  2x Pg Down<br />
  RS-232<br />
  Mit Esc zurück bis zur Hauptmaske (Werte sind gespeichert).
-
 '''Reflotron plus:'''<br />
  Gerät ausschalten<br />
  Tasten und gleichzeitig drücken und Gerät einschalten<br />
  Erste 10 Einträge mit Enter bestätigen; bis Baudrate erscheint<br />
  Einstellungen (siehe unten) falls notwendig mittels Tasten und verändern<br />
  Weitere 5 Einträge mit Enter bestätigen; bis ‘SETUP OK ?’ erscheint
-
 '''Roche empfiehlt folgende Einstellungen:'''<br />
  Baudrate: 9600<br />
  Stop-Bits: 1<br />
@@ -45,87 +32,52 @@ Die serielle Datenkommunikation ist im Reflotron standardmässig inaktiv. Damit 
  STX/ETX Frame: Yes<br />
  Automatic Data Transfer To RS 232: Yes<br />
  BCC: Odd (kann in Elexis nicht eingestellt werden)
-
 == Elexis Konfiguration ==
-
 Starten Sie Elexis und gehen Sie dort zu Datei-Einstellungen-Datenaustausch-Roche Reflotron (S. Abb. [fig:config]).
-
-[h] [[File:Ch.elexis.connect.reflotron.v2/config.png|image]] [fig:config]
-
+[h] [[File:reflotron-config.png|image]] [fig:config]
 Hier stellen Sie den seriellen Port und die Schnittstellenparameter ein. Die Werte müssen mit den Einstellungen auf dem Reflotron Gerät übereinstimmen (siehe oben). Wichtig: Nach dem Ändern dieser Parameter müssen Sie Elexis neu starten.
-
 '''Weitere Konfigurationswerte:'''<br />
  '''Timeout (Sek):''' Der Wert bestimmt, wie lange Elexis maximal auf Resultate warten soll, bevor die Verbindung getrennt wird.<br />
  '''Im Hintergrund:''' Damit beeinflussen Sie das Verhalten von Elexis. Bei eingeschalteter Option wird die Übertragung im Hintergrund ausgeführt und Sie können weiter in Elexis arbeiten. Bei ausgeschalteter Option erscheint die Abb. [fig:connected]<br />
  '''Logging:''' Diese Option verwenden Sie bitte nur auf Anweisung des Supports, ansonsten wird Ihr Computer mit unnötigen Daten gefüllt.
-
 == Verwendung ==
-
 Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch ein neuer Toolbar Button ‘Reflotron’ (Abb. [fig:toolbarbutton]). Klicken Sie auf diesen Knopf um die Verbindung mit dem Gerät herzustellen.
-
-[h] [[File:Ch.elexis.connect.reflotron.v2/toolbarbutton.png|image]] [fig:toolbarbutton]
-
+[h] [[File:reflotron-toolbarbutton.png|image]] [fig:toolbarbutton]
 Die Verbindung bleibt bestehen bis das Timeout gemäss Konfiguration abgelaufen ist. Das Reflotron Gerät benötigt für die verschiedene Tests unterschiedlich lang. Jedesmal wenn ein Test abgeschlossen ist, wird das Resultat an den Computer gesendet. Wenn alle Resultate empfangen wurden, kann die Verbindung abgebrochen werden (Cancel gemäss Abb. [fig:connected]).
-
-[h] [[File:Ch.elexis.connect.reflotron.v2/connected.png|image]] [fig:connected]
-
-[h] [[File:Ch.elexis.connect.reflotron.v2/messwert.png|image]] [fig:messwert]
-
+[h] [[File:reflotron-connected.png|image]] [fig:connected]
+[h] [[File:reflotron-messwert.png|image]] [fig:messwert]
 Wenn Elexis ein Resultat empfängt, wird versucht, dieses einem Patienten zuzuordnen. In Abb. [fig:messwert] ist ersichtlich, wie der Patient zugeordnet wird (Beispiel: Muster Franz sind die Angaben aus Elexis und muster wurde auf dem Reflotron eingegeben). Kann der Patient nicht automatisch zugewiesen werden folgt das Fenster mit der Patientenselektion.
-
 Es kann passieren, dass der Datenstrom zwischen Reflotron und Computer fehlerhaft ist. In diesem Fall erscheint eine Fehlermeldung (siehe [fig:transmissionerror]). In diesem Fall kann das Profil des Patienten auf dem Reflotron erneut gesendet werden.
-
 [h] [[File:Ch.elexis.connect.reflotron.v2/transmissionerror.png|image]] [fig:transmissionerror]
-
 '''Reflotron sprint:'''<br />
  F2, Profil aufrufen, F10 Patient suchen und F5 Send Profile<br />
  Eine genauere Anleitung befindet sich im Manual zum Reflotron auf S. 3.21.
-
 '''Reflotron plus:'''<br />
  F9, Patientennamen eingeben (achten Sie auf Gross-/Kleinschreibung), Enter<br />
  Eine genauere Anleitung befindet sich im Manual zum Reflotron auf S. 6.10.<br />
  '''Wichtig:''' Das Übertragungsprotokoll bei Benutzung der Funktionstaste F8 ist nicht unterstützt!
-
 == Anweisungen zum Reflotron ==
-
 Damit eine automatische Zuweisung des Patienten möglich wird, muss auf dem Reflotron der Patient der Messung zugeordnet werden. Sie müssen zwingend eines der folgenden Eingabeformat einhalten (ohne Leerzeichen nach dem Komma!):
-
 * '''PatNummer,Namen'''<br />
  Tipp: Es kann auch nur der erste Buchstabe des Namens eingegeben werden
 * '''Namen,Vornamen'''<br />
  Tipp: Namen und/oder Vornamen können auch abgekürzt eingegeben werden
-
 Den Patientennamen können Sie nach Drücken der Taste Home erfassen und mit Enter auf die aktive Messkammer übernehmen. Das müssen Sie tun, bevor Sie die Messkammer schliessen.
-
 Das Reflotron verlangt von Zeit zu Zeit die Checkstreifen. Bei solchen Check Messungen messen Sie keine Patienten Proben in einer andern Messkammer und stellen Elexis dabei auch nicht auf Empfang. Die Fehlermeldung des Gerätes ‘Kein Datentransfer’ können Sie in diesem Fall ignorieren.
-
 == Hinweise zu Testserien am selben Tag (z.B. Glucose) ==
-
 Elexis unterstützt nur ein Messwert pro Patient, Datum und Zeile im Laborblatt. Bei Testserien (z.B. mehrere Glucosetests) müssen Sie deshalb manuelle Einträge im Laborblatt erstellen und im Falle von Testserien jeweils nach der Übermittlung die Einzelresultate diese manuell in die dafür vorgesehenen Zellen übertragen.<br />
  '''Wichtig:''' Beim Übermitteln des nächsten Testresultates mit dem selben Datum wird das vorherige Laborresultat in Elexis überschrieben!
-
 == Plattformen ==
-
 Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, dass unter Linux die seriellen Ports nicht COM1 usw., sondern /dev/ttyS0 usw. heissen.
-
 == Kabelspezifikation ==
-
-[h] [[File:Ch.elexis.connect.reflotron.v2/kabel.png|image]] [fig:kabel]
-
+[h] [[File:reflotron-kabel.png|image]] [fig:kabel]
 Es wird ein normales, serielles Kabel benötigt (kein Nullmodemkabel!). Das Kabel muss vom 25-poligen Stecker (männlich) auf den 9-poligen Stecker (weiblich) gemäss Abb. [fig:kabel] verdrahtet sein.
-
 [[#fnr1|<sup>1</sup>]] Firma Roche Diagnostics
-
 [[#fnr2|<sup>2</sup>]] Alternative: RS-232 Adapter für USB oder Bluetooth
-
-
-
 {{PluginInfo
 |plugin=ch.elexis.connect.reflotron.v2
 | eingelesen=von /elexis-base/ch.elexis.connect.reflotron.v2/doc/ch.elexis.connect.reflotron.v2.tex am 25.03.2013
 | license=EPL
 | first_commit_date=2011-02-22
 | first_commit_author=michael_imhof
-
-
 }}

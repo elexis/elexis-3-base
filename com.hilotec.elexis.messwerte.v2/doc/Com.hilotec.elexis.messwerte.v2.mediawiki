@@ -1,31 +1,19 @@
 [[Kategorie:KG-Führung]]
 == Einführung ==
-
 Dieses Elexis-Plugin ist dazu gedacht, Messungen und andere Erhebungsdaten in Elexis strukturiert erfassen und verarbeiten zu können. Mit dem Plugin ''hilotec-pluginstatistiken'' wird es auch ermöglicht, Auswertungen darüber zu erstellen, und die Werte als CSV zu exportieren.
-
 Das Plugin stellt eine View &quot;Hilotec Messwerte V2&quot; zur Verfügung, die eine Übersicht über alle Messungen eines Patienten bietet. Dort können auch neue Messungen erfasst und Bestehende bearbeitet (verändert oder gelöscht) werden.
-
 Die Konfiguration der möglichen Messungen und deren Struktur wird in einer XML-Datei spezifiziert.
-
 == Neuerungen in V2 ==
-
 In der V2 des Plugins sind zwei neue Datentypen hinzugekommen (datefield und counterfield). Zudem können bei numfield, calcfield und counterfield nun Zahlenformate und Rundungsmechanismen konfiguriert werden.
-
 == Voraussetzungen ==
-
 * Elexis ab V2.0
-
 == Konfiguration ==
-
 Wie weiter oben bereits erwähnt, wird das Plugin über eine XML-Datei konfiguriert. Diese Dateien befinden sich im Benutzerdatenverzeichnis von Elexis:
-
 ; Windows:
 : <tt>C:\Dokumente und Einstellungen\Benutzer\Elexis\messwerte_v2.xml</tt>
 ; Linux:
 : <tt>/home/benutzer/elexis/messwerte_v2.xml</tt>
-
 Die verfügbaren Messungstypen werden mit <tt>datatype</tt>-Elementen im Rootelement <tt>datatypes</tt> deklariert. Pro Messungstyp kann ein Name, der intern (unter anderem auch für die IDataAccess-Schnittstelle und damit z.B. Nutzung der Messwerte als Platzhalter in Briefen) zur Identifikation des Typs benutzt wird, dieser kann mit dem Attribut <tt>name</tt> festgelegt werden. Die Messungsbezeichnung, die dem Benutzer angezeigt wird, kann über das Attribut <tt>title</tt> konfiguriert werden. In der XML Datei sieht das folgendermassen aus:
-
 <pre>&lt;?xml version=&quot;1.0&quot;&gt;
 &lt;datatypes&gt;
   &lt;datatype name=&quot;masse&quot; title=&quot;Masse&quot;&gt;
@@ -38,55 +26,38 @@ Die verfügbaren Messungstypen werden mit <tt>datatype</tt>-Elementen im Rootele
   &lt;/datatype&gt;
 &lt;/datatypes&gt;</pre>
 In den <tt>datatype</tt>-Tags können die zur Messung gehörenden Felder eingetragen werden.
-
 Bei allen Feldtypen sind die folgenden Attribute verfügbar:
-
 ; name:
 : Interner Feldname, muss eindeutig sein in dem Typ
 ; title:
 : Dem Benutzer angezeigter Titel
 ; unit:
 : Einheit (nur für den Benutzer)
-
 Im Folgenden wird auf die einzelnen Feldtypen genauer eingegangen. Die angegebenen Typnamen entsprechen gleichzeitig auch den XML-Tagnamen um Felder des entsprechenden Typs zu generieren.
-
 == strfield ==
-
 Ein- oder mehrzeiliges Textfeld
-
 [[File:Com.hilotec.elexis.messwerte.v2/strfield.png|image]]<br />
  image
-
 === Attribute ===
-
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird
 ; lines:
 : Anzahl Zeilen des Textfeldes ''[Standard: 1]''
-
 === Beispiel ===
-
 <pre>&lt;strfield name=&quot;bemerk&quot; title=&quot;Bemerkungen&quot; lines=&quot;1&quot; /&gt;</pre>
 == numfield ==
-
 Zahlenfeld
-
 [[File:Com.hilotec.elexis.messwerte.v2/numfield.png|image]]<br />
  image
-
 === Attribute ===
-
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird
 ; formatpattern:
 : Pattern für die Formatierung der angezeigten Zahl ''[Standard: #0.#]''
 ; roundingmode:
 : Modus wie die angezeigte Zahl gerundet wird ''[Standard: HALF_UP]''
-
 === Beschreibung formatpattern Attribut ===
-
 Mit dem <tt>formatpattern</tt> Attribut kann angegeben werden wie die angezeigte Zahl dargestellt werden soll. Die Formatierung wird beim Anzeigen angewendet. Es bassiert auf der Verwendung der JAVA Klasse ''DecimalFormat''. Der Formatierungsstring kann eine Menge von Formatierungsanweisungen vertragen (siehe Java API). Die beiden wichtigsten Symbole sind <tt>0</tt> und <tt>#</tt>. Beide repräsentieren Ziffern. Weiter sind Punkt und Komma wichtig, welche als Dezimaltrenner und zum Gruppieren der Ziffern dienen.
-
 ; 0
 : Repräsentiert eine Ziffer – ist die Stelle nicht belegt, wird eine Null angezeigt.
 ; #
@@ -96,11 +67,8 @@ Mit dem <tt>formatpattern</tt> Attribut kann angegeben werden wie die angezeigte
 ; ,
 : Gruppiert die Ziffern (eine Gruppe ist so groß wie der Abstand von &quot;,&quot; zu &quot;.&quot;).<br />
  Wird für Tausendertrennzeichen verwendet.
-
 === Beschreibung roundingmode Attribut ===
-
 Mit dem <tt>roundingmode</tt> Attribut kann angegeben werden, wie eine Zahl gerundet werden soll. Die Rundung wird beim Speichern angewendet. Es basiert ebenfalls auf der Verwendung der JAVA Klasse ''DecimalFormat'' mit dem Enum ''RoundingMode''. Folgende Auswahlmöglichkeiten stehen zur Verfügung:
-
 ; UP
 : Rundet die Zahl von 0 ausgehend auf
 ; DOWN
@@ -116,92 +84,60 @@ Mit dem <tt>roundingmode</tt> Attribut kann angegeben werden, wie eine Zahl geru
 : Rundet die Zahl auf die nächste Ganzzahl, bei 0.5 wird abgerundet
 ; HALF_EVEN
 : Rundet die Zahl auf die nächste Ganzzahl, bei 0.5 wird immer auf die gerade Ganzzahl gerundet
-
 === Beispiel ===
-
 <pre>&lt;numfield name=&quot;gewicht&quot; title=&quot;Gewicht&quot; unit=&quot;kg&quot; formatpattern=&quot;0.00&quot;
 roundingmode=&quot;HALF_UP&quot; /&gt;</pre>
 == scalefield ==
-
 Feld um Ganzzahlen in einem eingegrenzten Bereich zu erfassen
-
 [[File:Com.hilotec.elexis.messwerte.v2/scalefield.png|image]]<br />
  image
-
 === Attribute ===
-
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird
 ; min:
 : Kleinster erfassbarer Wert
 ; max:
 : Grösster erfassbarer Wert
-
 === Beispiel ===
-
 <pre>&lt;scalefield name=&quot;arfaeh&quot; title=&quot;Arbeitsfaehigkeit&quot;
   min=&quot;0&quot; max=&quot;5&quot; default=&quot;5&quot; /&gt;</pre>
 == enumfield ==
-
 Auswahlfeld mit einer fixen Liste an Auswahlmöglichkeiten
-
 [[File:Com.hilotec.elexis.messwerte.v2/enumfield.png|image]]<br />
  image
-
 === Attribute ===
-
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird. Muss angegeben werden und dem Wert einer Option aus der Liste entsprechen.
-
 === Unterelemente ===
-
 Die einzelnen auswählbaren Optionen werden mit dem Unterlement <tt>option</tt> spezifiziert. Für jede Option muss ein interner Wert mit dem Attribut <tt>value</tt> angegeben werden. Dieser interne Wert muss eine positive Ganzzahl und in diesem Enumfield eindeutig sein. Das zweite notwendige Attribut <tt>title</tt> legt den Wert fest, der dem Benutzer angezeigt wird bei dieser Option.
-
 === Beispiel ===
-
 <pre>&lt;enumfield name=&quot;position&quot; title=&quot;Position&quot; default=&quot;1&quot;&gt;
   &lt;option value=&quot;1&quot; title=&quot;sitzend&quot; /&gt;
   &lt;option value=&quot;2&quot; title=&quot;liegend&quot; /&gt;
 &lt;/enumfield&gt;</pre>
 == boolfield ==
-
 Häkchen für ja/nein-Werte
-
 [[File:Com.hilotec.elexis.messwerte.v2/boolfield.png|image]]<br />
  image
-
 === Attribute ===
-
 ; default:
 : Standardwert, wenn die Messung neu erfasst wird (nur <tt>true</tt> oder <tt>false</tt> werden akzeptiert)
-
 === Beispiel ===
-
 <pre>&lt;boolfield name=&quot;herger&quot; title=&quot;Herzgeraeusch&quot; /&gt;</pre>
 == datafield ==
-
 Verweis auf andere Messungen
-
 [[File:Com.hilotec.elexis.messwerte.v2/datafield.png|image]]<br />
  image
-
 === Attribute ===
-
 ; type:
 : Name des Messungstyps auf den verwiesen werden soll
-
 === Beispiel ===
-
 <pre>&lt;datafield  name=&quot;vorekg&quot; title=&quot;Vorekg&quot; type=&quot;ekg&quot; /&gt;</pre>
 == calcfield ==
-
 Errechnetes Feld
-
 [[File:Com.hilotec.elexis.messwerte.v2/calcfield.png|image]]<br />
  image
-
 === Attribute ===
-
 ; places:
 : Anzahl der Nachkommastellen beim Ergebnis
 ; formatpattern:
@@ -210,17 +146,11 @@ Errechnetes Feld
 ; roundingmode:
 : Modus wie die angezeigte Zahl gerundet wird ''[Standard: HALF_UP]''<br />
  Siehe auch Beschreibung bei numfield.
-
 === Unterelemente ===
-
 Beim calcfield sind 2 verschiedene Unterelemente vorgesehen. Zum einen ist das <tt>var</tt>, das es ermöglicht, Felder aus der Messung als Variablen in die Formel zu importieren, zum andern <tt>formula</tt>, das die eigentliche Formel enthält.
-
 Bei <tt>var</tt> müssen 2 Attribute angegeben werden <tt>name</tt>, der Name wie die Variable in der Formel heissen soll, und <tt>source</tt> mit dem Feldnamen in der Messung. Bei Datenfeldern kann beispielsweise mit <tt>datenfeldname.gewicht</tt> auf das Feld <tt>gewicht</tt> in der referenzierten Messung zugegriffen werden. Das Ganze kann beliebig tief verschachtelt werden.
-
 Beim Element <tt>formula</tt> muss mit dem Attribut <tt>interpreter</tt> der zu benutzende Interpreter ausgewählt werden. Im Moment steht jedoch nur «beanshell» zur Verfügung.
-
 === Beispiel ===
-
 <pre>&lt;calcfield name=&quot;bmi&quot; title=&quot;BMI&quot; places=&quot;2&quot;&gt;
   &lt;var name=&quot;gewicht&quot; source=&quot;gewicht&quot; /&gt;
   &lt;var name=&quot;groesse&quot; source=&quot;groesse&quot; /&gt;
@@ -229,24 +159,16 @@ Beim Element <tt>formula</tt> muss mit dem Attribut <tt>interpreter</tt> der zu 
   &lt;/formula&gt;
 &lt;/calcfield&gt;</pre>
 == datefield ==
-
 Auswahlfeld für ein Datum
-
 [[File:Com.hilotec.elexis.messwerte.v2/datefield.png|image]]<br />
  image
-
 === Beispiel ===
-
 <pre>&lt;datefield name=&quot;erfdatum&quot; title=&quot;Datum&quot; /&gt;</pre>
 == counterfield ==
-
 Automatisch generierte Laufnummer für die Messung
-
 [[File:Com.hilotec.elexis.messwerte.v2/counterfield.png|image]]<br />
  image
-
 === Attribute ===
-
 ; countermode:
 : Modus für den Zähler ''[Standard: global_counter]''<br />
  Derzeit sind keine weiteren Modi implementiert.
@@ -258,17 +180,12 @@ Automatisch generierte Laufnummer für die Messung
 ; roundingmode:
 : Modus wie die angezeigte Zahl gerundet wird ''[Standard: HALF_UP]''<br />
  Siehe auch Beschreibung bei numfield.
-
 === Beispiel ===
-
 <pre>&lt;counterfield name=&quot;number&quot; title=&quot;Nr.&quot; countermode=&quot;global_counter&quot;
 startvalue=&quot;0&quot; formatpattern=&quot;#,000&quot; /&gt;</pre>
 == IDataAccess-Schnittstelle ==
-
 Das <tt>hilotec-messwerte</tt>-Plugin stellt die IDataAccess-Schnittstelle, die auch von anderen Elexis-Plugins benutzt wird, zur Verfügung. Damit wird es unter anderem auch möglich in Briefen und Berichten auf Werte aus erfassten Messungen zurückzugreifen. Allgemeine Informationen zu dieser Schnittstelle sind dem Elexis-Handbuch zu entnehmen, wo die Schnittstelle genauer beschrieben wird. Im Folgenden soll nur auf den pluginspezifischen Teil eingegangen werden.
-
 Das Plugin benutzt den Identifier <tt>Messwerte</tt> fuer die Schnittstelle. Das heisst, die Platzhalter für den Zugriff haben die Form <tt>Messwerte:Patient:auswahl:daten</tt>. Wobei für den Teil <tt>auswahl</tt> die folgenden Möglichkeiten bestehen:
-
 ; <tt>dd.mm.yyyy</tt>:
 : Messung von genau dem angegebenen Datum
 ; first:
@@ -279,18 +196,12 @@ Das Plugin benutzt den Identifier <tt>Messwerte</tt> fuer die Schnittstelle. Das
 : Erste Messung nach dem angegebenen Datum
 ; lastbefore=<tt>dd.mm.yyyy</tt>:
 : Letzte Messung vor dem angegebenen Datum
-
 Der Teil <tt>daten</tt> hat die Form <tt>typ.feld</tt>, wobei <tt>typ</tt> den Namen des Messungstyp bezeichnet, und <tt>feld</tt> den Namen des Feldes in dem Typ. Kommen Datenfelder vor, kann mit einem weiteren Punkt der Feldname in der referenzierten Messung spezifiziert werden. Auch hier können die Datafelder wieder beliebig verschachtelt werden.
-
 === Beispiel ===
-
 <pre>[Messwerte:Patient:last:status.gewicht]</pre>
 == Layout Steuerung ==
-
 Standardmässig wird bei Doppelklick auf eine Messwertreihe ein Dialogfenster geöffnet, welches alle Werte untereinander zum Eingeben und Ändern anbietet. Auf Wunsch kann den einzelnen Messwertreihen aber auch Darstellungsinformation mitgegeben werden. Dies wird gemacht, indem man ein Element &lt;design&gt; der &lt;datatype&gt; – Definition zufügt.
-
 == Beispiel messwerte_v2.xml ==
-
 <pre>&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;
 &amp;lt;datatypes&amp;gt;
   &amp;lt;datatype name=&amp;quot;status&amp;quot; title=&amp;quot;Status&amp;quot;&amp;gt;
@@ -331,7 +242,6 @@ Standardmässig wird bei Doppelklick auf eine Messwertreihe ein Dialogfenster ge
       &amp;lt;/panel&amp;gt;
     &amp;lt;/design&amp;gt;
   &amp;lt;/datatype&amp;gt;
-
   &amp;lt;datatype name=&amp;quot;ident_basis&amp;quot; title=&amp;quot;Identifikation und Basisinfo&amp;quot;&amp;gt;
     &amp;lt;counterfield name=&amp;quot;number&amp;quot; title=&amp;quot;Nr.&amp;quot; countermode=&amp;quot;global_counter&amp;quot;
                   formatpattern=&amp;quot;#,000&amp;quot; /&amp;gt;
@@ -371,8 +281,6 @@ Standardmässig wird bei Doppelklick auf eine Messwertreihe ein Dialogfenster ge
     &amp;lt;/design&amp;gt;
   &amp;lt;/datatype&amp;gt;
 &amp;lt;/datatypes&amp;gt;</pre>
-
-
 {{PluginInfo
 |plugin=com.hilotec.elexis.messwerte.v2
 | eingelesen=von /elexis-base/com.hilotec.elexis.messwerte.v2/doc/com.hilotec.elexis.messwerte.v2.tex am 25.03.2013
@@ -384,6 +292,4 @@ Standardmässig wird bei Doppelklick auf eine Messwertreihe ein Dialogfenster ge
 | first_commit_author=Niklaus
 | responsible=info@hilotec.com
 | type=KG-Führung
-
-
 }}

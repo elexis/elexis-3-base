@@ -1,5 +1,4 @@
 
-
 <table style="width:100%; border: 1px solid; padding: 10px">
 	
 	<tr>
@@ -35,26 +34,13 @@
 		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
 	</tr>
 </table>
-
-
-
 '''Bitte Doku erstellen'''
-
-
-
 == Installation / Deinstallation==
 Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren. OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]]). 
 Nach dem download muss Elexis neu gestartet werden, damit das Features in Elexis angemeldet und geladen wird. 
-
-
-
 == Konfiguration ==
 Keine Konfiguration notwendig
-
-
 == Funktionen ==
 Nach Installation kann der Benutzer Innerhalb des Lauftextes mittels Rechtsklick und Menupunkt "Bild einfügen..." ein Dialogfenster starten, welches die Auswahl eines Bildes im Dateisystem ermöglicht. Es werden jpg und png Dateien akzeptiert. Dem Bild kann ein Titel und eine Beschreibung beigefügt werden.  'Bild: (Titel)' werden in der Folge eingefärbt. Nach einem Doppelklick auf den eingefärbten Text wird das ausgewählte Bild aufgerufen
-
-
 '''Abbildung 1: Verstümmelung durch Zigarette'''
 [[File:kons_bild.jpg|none|800px]]

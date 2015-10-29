@@ -1,25 +1,14 @@
 [[Kategorie:Laboranbindung]]
 == Einführung ==
-
 Dieses Plugin dient dazu, Laborwerte von Labors oder Geräten zu importieren, für die kein spezifisches Import-Plugin existiert, die aber Dateien im HL7-Format erzeugen können.
-
 Dieses Plugin benötigt Elexis 1.4.0 oder höher.
-
 == Konfiguration ==
-
 Wenn Sie das Plugin korrekt installiert haben, dann erscheint unter Datei-Einstellungen-Datenaustausch eine Seite ‘HL7 Dateien’, wo Sie eingeben müssen, in welchem Verzeichnis Elexis nach Labordateien suchen soll.
-
 == Anwendung ==
-
 Klicken Sie einfach auf den Import-Knopf in der Labor-View ([fig:lab1]).
-
 [[File:Ch.elexis.laborimport.hl7.allg/abb1.png|image]]<br />
  [fig:lab1]
-
 Nach dem Import werden alle heruntergeladenen Dateien in einem Unterordner ‘archive’ des Download-Verzeichnisses aufbewahrt, wo Sie sie nach einiger Zeit von Hand löschen können.
-
-
-
 {{PluginInfo
 |plugin=ch.elexis.laborimport.hl7.allg
 | eingelesen=von /elexis-base/ch.elexis.laborimport.hl7.allg/doc/ch.elexis.laborimport.hl7.allg.tex am 29.03.2013
@@ -31,6 +20,4 @@ Nach dem Import werden alle heruntergeladenen Dateien in einem Unterordner ‘ar
 | first_commit_author=rgw_ch
 | responsible=weirich@elexis.ch
 | type=Laboranbindung
-
-
 }}

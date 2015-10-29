@@ -1,5 +1,4 @@
 [[Category:Organisation]]
-
 <table style="width:100%; border: 1px solid; padding: 10px">
 	
 	<tr>
@@ -35,34 +34,16 @@
 		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
 	</tr>
 </table>
-
-
-
-
-
 == Einführung ==
-
-
 Dieses Plugin ermöglicht eine einfache Nachrichtenübermittlung zwischen verschiedenen Mitarbeitern. Im Gegensatz zu Remindern erscheinen diese Nachrichten immer als Dialogbox.
-
-
 == Nachricht erstellen ==
-
-
 [[File:Ch.elexis.base.messages/newmsg.png|image]]
-
-
 Wenn das Plugin installiert ist, erscheint in der Haupt-Werkzeugleiste von Elexis der Knopf ‘Nachricht erstellen’ (s. Bild). Klick auf dieses Werkzeug öffnet den Dialog ‘Nachricht erstellen’:
-
 Mit Klick auf ‘senden’ wird die Nachricht abgesendet. Elexis findet automatisch die Arbeitsstation, auf der die Empfängerin eingeloggt ist und zeigt dort die Nachricht an. Wenn der Empfänger zur Zeit nicht eingeloggt ist, erscheint die Nachjricht sofort beim nächsten Einloggen. Wenn sie an mehreren Arbeitsstationen eingeloggt ist, erscheint die Nachricht auf allen.
-
 [[File:Ch.elexis.base.messages/newmsg3.png|image]]
-
 Die Empfängerin hat folgende Möglichkeiten:
-
 * Löschen – Nachricht wird gelöscht und erscheint nicht mehr
 * Antworten – Es wird eine Nachricht an den Absender erstellt. Die ursrünglich Nachricht wird gelöscht.
 * Als Reminder – Die Nachricht wird in einen Reminder umgewandelt und bleibt so erhalten
 * Abbruch – Die Anzeige wird geschlossen, abe die Nachricht erscheint nach einiger Zeit erneut.
-
 '''Konfiguration''' Es ist keine Spezielle Konfiguration notwendig. Der Zeitabstand zwischen Absenden und Erscheinen der Nachricht hängt vom ‘Heartbeat’ ab (Datei-Einstellungen-Allgemein-Aktualisierungsintervall)

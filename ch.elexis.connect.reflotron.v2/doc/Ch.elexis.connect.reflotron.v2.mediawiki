@@ -2,7 +2,7 @@
  image
 [[File:roche_logo.png|image]]<br />
  image
-[[File:reflotron-_device.png|image]]<br />
+[[File:reflotron-device.png|image]]<br />
  image
 == Einführung ==
 Dieses Plugin dient dazu, die Laborgerät ‘Reflotron sprint’ und ‘Reflotron plus’ <sup>[[#fn1|1]]</sup> an Elexis anzubinden. Mit diesem Plugin können die, vom Reflotron gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.

@@ -1,9 +1,9 @@
 [[Kategorie:Geräteanbindung]]
 [[File:sysmex-elexis_logo.png|image]]<br />
  image
-[[File:sysmex-_logo.png|image]]<br />
+[[File:sysmex-logo.png|image]]<br />
  image
-[[File:sysmex-_device.png|image]]<br />
+[[File:sysmex-device.png|image]]<br />
  image
 == Einführung ==
 Dieses Plugin dient dazu, die Laborgeräte<sup>[[#fn1|1]]</sup> ‘Sysmex KX-21’, ‘Sysmex KX-21N’ und ‘pocH-100i’ an Elexis anzubinden. Mit diesem Plugin können die, vom Gerät gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.

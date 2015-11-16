@@ -33,6 +33,15 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public void start(BundleContext context) throws Exception{
 		super.start(context);
 		plugin = this;
+		
+		String giDirSetting = CoreHub.localCfg.get(Preferences.PREF_DIR, "NOTSET");
+		if("NOTSET".equals(giDirSetting)) {
+			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox");
+			boolean created = giDir.mkdir();
+			if(created) {
+				CoreHub.localCfg.set(Preferences.PREF_DIR, giDir.getAbsolutePath());
+			}
+		}
 	}
 	
 	/*

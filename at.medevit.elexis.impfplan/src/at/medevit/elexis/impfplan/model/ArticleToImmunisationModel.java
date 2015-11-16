@@ -24,7 +24,7 @@ public class ArticleToImmunisationModel {
 	
 	public static @NonNull List<String> getImmunisationForAtcCode(String atcCode) {
 		if(atim == null) initModel();
-		List<String> list = atim.get(atcCode);
+		List<String> list = atim.get(atcCode.trim());
 		if(list==null) return Collections.emptyList();
 		return list;
 	}

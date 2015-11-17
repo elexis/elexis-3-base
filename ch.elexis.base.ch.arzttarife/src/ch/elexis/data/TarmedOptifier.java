@@ -173,34 +173,23 @@ public class TarmedOptifier implements IOptifier {
 				newVerrechnet = new Verrechnet(code, kons, 1);
 				// Exclusionen
 				if (bOptify) {
-					String excl = ((TarmedLeistung) code).getExclusion();
-					if ((!StringTool.isNothing(excl))) {
-						for (String e : excl.split(",")) { //$NON-NLS-1$
-							for (Verrechnet v : lst) {
-								if (v.getCode().equals(e)) {
-									newVerrechnet.delete();
-									return new Result<IVerrechenbar>(
-										Result.SEVERITY.WARNING,
-										EXKLUSION,
-										code.getCode() + " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
-								}
-								// compare with existing tarmed leistungen on Verrechnung
+					TarmedLeistung newTarmed = (TarmedLeistung) code;
+					for (Verrechnet v : lst) {
+						if (v.getVerrechenbar() instanceof TarmedLeistung) {
+							TarmedLeistung tarmed = (TarmedLeistung) v.getVerrechenbar();
+							if (tarmed != null && tarmed.exists()) {
+								// check if new has an exclusion for this verrechnet tarmed
 								Result<IVerrechenbar> resCompatible =
-									compatibleWithOtherVerrechnet(code.getCode(), v);
+									isCompatible(tarmed, newTarmed);
+								if (resCompatible.isOK()) {
+									// check if existing tarmed has exclusion for new one
+									resCompatible = isCompatible(newTarmed, tarmed);
+								}
+								
 								if (!resCompatible.isOK()) {
 									newVerrechnet.delete();
 									return resCompatible;
 								}
-							}
-						}
-					} else {
-						// check if there is any inconsitency with tarmed leistungen on Verrechnung
-						for (Verrechnet v : lst) {
-							Result<IVerrechenbar> resCompatible =
-								compatibleWithOtherVerrechnet(code.getCode(), v);
-							if (!resCompatible.isOK()) {
-								newVerrechnet.delete();
-								return resCompatible;
 							}
 						}
 					}
@@ -460,25 +449,26 @@ public class TarmedOptifier implements IOptifier {
 	}
 	
 	/**
-	 * check compatibility of the code with a Verrechnet
+	 * check compatibility of one tarmed with another
 	 * 
-	 * @param code
-	 *            of the TarmedLeistung to check
-	 * @param v
-	 *            Verrechnet that is already part of the 'Verrechnung'
-	 * @return OK if they are compatible, WARNING otherwise
+	 * @param tarmedCode
+	 *            the tarmed and it's parents code are check whether they have to be excluded
+	 * @param tarmed
+	 *            TarmedLeistung who incompatibilities are examined
+	 * @return true OK if they are compatible, WARNING if it matches an exclusion case
 	 */
-	private Result<IVerrechenbar> compatibleWithOtherVerrechnet(String code, Verrechnet v){
-		if (v.getVerrechenbar() instanceof TarmedLeistung) {
-			TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
-			if (tl != null && tl.exists()) {
-				// load the exclusions
-				String notCompatible = tl.getExclusion();
-				for (String nc : notCompatible.split(",")) {
-					if (nc.equals(code)) {
-						return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION, code
-							+ " nicht kombinierbar mit " + tl.getCode(), null, false); //$NON-NLS-1$
-					}
+	public Result<IVerrechenbar> isCompatible(TarmedLeistung tarmedCode, TarmedLeistung tarmed){
+		String notCompatible = tarmed.getExclusion();
+		
+		// there are some exclusions to consider
+		if (!StringTool.isNothing(notCompatible)) {
+			String code = tarmedCode.getCode();
+			String codeParent = tarmedCode.getParent();
+			for (String nc : notCompatible.split(",")) {
+				if (code.equals(nc) || codeParent.startsWith(nc)) {
+					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION,
+						tarmed.getCode() + " nicht kombinierbar mit " + code, //$NON-NLS-1$
+						null, false);
 				}
 			}
 		}

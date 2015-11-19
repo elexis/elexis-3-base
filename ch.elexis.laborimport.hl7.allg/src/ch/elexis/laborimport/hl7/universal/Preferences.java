@@ -10,12 +10,14 @@
  ******************************************************************************/
 package ch.elexis.laborimport.hl7.universal;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.importer.div.importers.HL7Parser;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -28,13 +30,16 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected void createFieldEditors(){
-		addField(new DirectoryFieldEditor(CFG_DIRECTORY, "Importverzeichnis",
-			getFieldEditorParent()));
+		addField(
+			new DirectoryFieldEditor(CFG_DIRECTORY, "Importverzeichnis", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(HL7Parser.CFG_IMPORT_ENCDATA,
+			"Angehängte Daten importieren", getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench){
-		// TODO Auto-generated method stub
-		
+		if (CoreHub.localCfg.get(HL7Parser.CFG_IMPORT_ENCDATA, null) == null) {
+			CoreHub.localCfg.set(HL7Parser.CFG_IMPORT_ENCDATA, false);
+		}
 	}
 	
 	@Override

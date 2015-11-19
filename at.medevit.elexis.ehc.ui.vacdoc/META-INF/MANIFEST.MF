@@ -13,3 +13,4 @@ Require-Bundle: at.medevit.elexis.ehc.vacdoc;bundle-version="1.0.0",
  ch.rgw.utility;bundle-version="3.1.0",
  at.medevit.elexis.ehc.core
 Bundle-ActivationPolicy: lazy
+Import-Package: org.apache.commons.io

@@ -1,9 +1,12 @@
 package at.medevit.elexis.ehc.ui.vacdoc.wizard;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -30,10 +33,13 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.data.Xid;
 
 public class ExportVaccinationsWizardPage1 extends WizardPage {
-
+	
 	private TableViewer contentViewer;
+	
+	private Patient selectedPatient;
 	
 	protected ExportVaccinationsWizardPage1(String pageName){
 		super(pageName);
@@ -85,7 +91,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		if (visible) {
 			setErrorMessage(null);
 			Query<Vaccination> qbe = new Query<Vaccination>(Vaccination.class);
-			Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
+			selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 			if (selectedPatient != null) {
 				qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, selectedPatient.getId());
 				qbe.orderBy(true, new String[] {
@@ -94,6 +100,11 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 				List<Vaccination> vaccinations = qbe.execute();
 				contentViewer.setInput(vaccinations);
 				contentViewer.setSelection(new StructuredSelection(vaccinations), true);
+				
+				String ahvNr = selectedPatient.getXid(Xid.DOMAIN_AHV);
+				if (ahvNr == null || ahvNr.isEmpty()) {
+					setErrorMessage("Patient hat keine AHV Nummer.");
+				}
 			} else {
 				setErrorMessage("Es ist kein Patient ausgewählt.");
 			}
@@ -103,8 +114,8 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	@Override
 	public boolean isPageComplete(){
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
-		
-		if (!contentSelection.isEmpty()) {
+		String ahvNr = selectedPatient.getXid(Xid.DOMAIN_AHV);
+		if (!contentSelection.isEmpty() && ahvNr != null && !ahvNr.isEmpty()) {
 			return true;
 		}
 		return false;
@@ -119,24 +130,28 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		}
 		return Collections.emptyList();
 	}
-
+	
 	public boolean finish(){
 		String outputFile = "";
 		try {
 			Patient elexisPatient = ElexisEventDispatcher.getSelectedPatient();
 			Mandant elexisMandant = ElexisEventDispatcher.getSelectedMandator();
-			String outputDir =
-				CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
-					PreferencePage.getDefaultOutputDir());
+			String outputDir = CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
+				PreferencePage.getDefaultOutputDir());
 			VacdocService service = ExportVaccinationsWizard.getVacdocService();
-
+			
 			CdaChVacd document = service.getVacdocDocument(elexisPatient, elexisMandant);
 			
 			service.addVaccinations(document, getSelectedVaccinations());
-
+			
+			// write a XDM document for exchange
+			InputStream xdmDocumentStream = service.getXdmAsStream(document);
 			outputFile =
-				outputDir + File.separator + getVaccinationsFileName(elexisPatient) + ".xml";
-			document.saveToFile(outputFile);
+				outputDir + File.separator + getVaccinationsFileName(elexisPatient) + ".xdm";
+			FileOutputStream outputStream = new FileOutputStream(outputFile);
+			IOUtils.copy(xdmDocumentStream, outputStream);
+			xdmDocumentStream.close();
+			outputStream.close();
 		} catch (Exception e) {
 			ExportVaccinationsWizard.logger.error("Export failed.", e);
 			MessageDialog.openError(getShell(), "Error",
@@ -146,7 +161,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		}
 		return true;
 	}
-
+	
 	private String getVaccinationsFileName(Patient patient){
 		return "vacc_" + patient.getPatCode();
 	}

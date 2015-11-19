@@ -16,6 +16,7 @@ import java.io.InputStream;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.ehealth_connector.cda.ch.CdaCh;
+import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,8 @@ public class ImportPatientWizard extends Wizard implements IImportWizard {
 	public void setDocument(InputStream document){
 		try {
 			document.reset();
-			ehcDocument = ServiceComponent.getService().getDocument(document);
+			ClinicalDocument clinicalDocument = ServiceComponent.getService().getDocument(document);
+			ehcDocument = ServiceComponent.getService().getCdaChDocument(clinicalDocument);
 			if (mainPage != null) {
 				mainPage.setDocument(ehcDocument);
 			}

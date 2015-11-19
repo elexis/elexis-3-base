@@ -15,22 +15,35 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.ehealth_connector.cda.ch.CdaCh;
 import org.ehealth_connector.cda.ch.CdaChVacd;
 import org.ehealth_connector.cda.enums.AddressUse;
 import org.ehealth_connector.cda.enums.AdministrativeGender;
 import org.ehealth_connector.common.Address;
+import org.ehealth_connector.common.Identificator;
+import org.ehealth_connector.communication.ConvenienceCommunication;
+import org.ehealth_connector.communication.DocumentMetadata;
+import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;
+import org.ehealth_connector.communication.xd.xdm.XdmContents;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
+import org.openhealthtools.ihe.xds.document.XDSDocument;
+import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
+import org.openhealthtools.mdht.uml.cda.ch.VACD;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 
 import ch.elexis.data.Anschrift;
@@ -159,7 +172,9 @@ public class EhcCoreServiceTest {
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		assertTrue(output.size() > 0);
 		ByteArrayInputStream documentInput = new ByteArrayInputStream(output.toByteArray());
-		CdaCh cdach = service.getDocument(documentInput);
+		ClinicalDocument document = service.getDocument(documentInput);
+		assertNotNull(document);
+		CdaCh<?> cdach = service.getCdaChDocument(document);
 		assertNotNull(cdach);
 		org.ehealth_connector.common.Patient readPatient = cdach.getPatient();
 		assertEquals("name", readPatient.getName().getFamilyName());
@@ -174,5 +189,81 @@ public class EhcCoreServiceTest {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		assertTrue(output.size() > 0);
+	}
+	
+	@Test
+	public void testGetXdmAsStream() throws Exception{
+		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
+		CdaChVacd cda = service.getVaccinationsDocument(patient, mandant);
+		
+		InputStream input = service.getXdmAsStream(cda.getDoc());
+		assertTrue(input != null);
+		File testTmp = File.createTempFile("ehccoretest_", ".tmp");
+		try(FileOutputStream fout = new FileOutputStream(testTmp)) {
+			IOUtils.copy(input, fout);
+			input.close();
+		}
+		
+		List<org.ehealth_connector.common.Patient> patients = service.getXdmPatients(testTmp);
+		assertFalse(patients.isEmpty());
+		List<Identificator> ids = patients.get(0).getIds();
+		assertFalse(ids.isEmpty());
+		Identificator id = ids.get(0);
+		assertNotNull(id);
+		assertEquals("7560000000011", id.getExtension());
+	}
+	
+	@Test
+	public void testWriteXdm() throws Exception{
+		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
+		CdaChVacd cda = service.getVaccinationsDocument(patient, mandant);
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
+		
+		ConvenienceCommunication conCom = new ConvenienceCommunication();
+		DocumentMetadata metaData = conCom.addChDocument(DocumentDescriptor.CDA_R2,
+			new ByteArrayInputStream(output.toByteArray()));
+		assertNotNull(metaData);
+		List<Identificator> ids = cda.getPatient().getIds();
+		if (!ids.isEmpty()) {
+			metaData.setDestinationPatientId(ids.get(0));
+		}
+		output.reset();
+		conCom.createXdmContents(output);
+		assertTrue(output.size() > 0);
+	}
+	
+	@Test
+	public void testReadXdm() throws Exception{
+		File xdmFile = createTempFile("/rsc/xdm/test_xdm.zip");
+		ConvenienceCommunication conCom = new ConvenienceCommunication();
+		XdmContents contents = conCom.getXdmContents(xdmFile.getAbsolutePath());
+		assertNotNull(contents);
+		List<DocumentContentAndMetadata> documents = contents.getDocumentAndMetadataList();
+		assertNotNull(documents);
+		assertFalse(documents.isEmpty());
+		XDSDocument xdsDocument = documents.get(0).getXdsDocument();
+		assertNotNull(xdsDocument);
+		ClinicalDocument clinicalDocument = CDAUtil.load(xdsDocument.getStream());
+		assertNotNull(clinicalDocument);
+		assertTrue(clinicalDocument instanceof VACD);
+		DocumentMetadata meta = documents.get(0).getDocEntry();
+		assertNotNull(meta);
+		Identificator id = meta.getPatientId();
+		assertNotNull(id);
+		assertEquals("7560000000011", id.getExtension());
+	}
+	
+	private File createTempFile(String string) throws IOException{
+		File ret = File.createTempFile("test_", ".tmp");
+		if (ret != null) {
+			try (FileOutputStream output = new FileOutputStream(ret)) {
+				BufferedInputStream input =
+					new BufferedInputStream(getClass().getResourceAsStream(string));
+				IOUtils.copy(input, output);
+				input.close();
+			}
+		}
+		return ret;
 	}
 }

@@ -10,12 +10,26 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.core.internal;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.ehealth_connector.cda.ch.CdaCh;
 import org.ehealth_connector.cda.ch.CdaChVacd;
 import org.ehealth_connector.cda.ch.enums.LanguageCode;
+import org.ehealth_connector.communication.ConvenienceCommunication;
+import org.ehealth_connector.communication.DocumentMetadata;
+import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;
+import org.ehealth_connector.communication.xd.xdm.XdmContents;
+import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
+import org.openhealthtools.ihe.xds.document.XDSDocument;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
+import org.openhealthtools.mdht.uml.cda.RecordTarget;
 import org.openhealthtools.mdht.uml.cda.ch.CDACH;
 import org.openhealthtools.mdht.uml.cda.ch.CHFactory;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
@@ -38,7 +52,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public CdaCh getCdaChDocument(Patient patient, Mandant mandant){
+	public CdaCh<?> getCdaChDocument(Patient patient, Mandant mandant){
 		CdaChImpl ret = new CdaChImpl(CHFactory.eINSTANCE.createCDACH().init());
 		
 		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
@@ -47,18 +61,21 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public CdaCh getDocument(InputStream document){
-		ClinicalDocument clinicalDocument;
+	public ClinicalDocument getDocument(InputStream document){
 		try {
-			clinicalDocument = CDAUtil.load(document);
-			if (clinicalDocument instanceof CDACH) {
-				return new CdaChImpl((CDACH) clinicalDocument);
-			} else {
-				logger.warn("Loaded document is not a subclass of CDACH.");
-			}
+			return CDAUtil.load(document);
 		} catch (Exception e) {
 			logger.warn("Error loading document.", e);
 		}
+		return null;
+	}
+	
+	@Override
+	public CdaCh<?> getCdaChDocument(ClinicalDocument clinicalDocument){
+		if (clinicalDocument instanceof CDACH) {
+			return new CdaChImpl((CDACH) clinicalDocument);
+		}
+		logger.warn("Document is not a subclass of CDACH.");
 		return null;
 	}
 	
@@ -79,5 +96,82 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		doc.setLegalAuthenticator(EhcCoreMapper.getEhcAuthor(elexisMandant));
 		
 		return doc;
+	}
+	
+	@Override
+	public InputStream getXdmAsStream(ClinicalDocument document) throws Exception{
+		ConvenienceCommunication conCom = new ConvenienceCommunication();
+		ByteArrayOutputStream outputStream = null;
+		// write document and create an InputStream
+		outputStream = new ByteArrayOutputStream();
+		CDAUtil.save(document, outputStream);
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+		outputStream.reset();
+		// write XDM and create an InputStream
+		DocumentMetadata metaData = conCom.addChDocument(DocumentDescriptor.CDA_R2, inputStream);
+		metaData.setPatient(getPatient(document));
+		conCom.createXdmContents(outputStream);
+		return new ByteArrayInputStream(outputStream.toByteArray());
+	}
+	
+	private org.ehealth_connector.common.Patient getPatient(ClinicalDocument document){
+		EList<RecordTarget> targets = document.getRecordTargets();
+		if (targets != null && !targets.isEmpty()) {
+			if (targets.size() > 1) {
+				logger.warn("Document " + document.getTitle() + " has more than one record target");
+			}
+			return new org.ehealth_connector.common.Patient(EcoreUtil.copy(targets.get(0)));
+		}
+		throw new IllegalStateException(
+			"Document " + document.getTitle() + " has no record target");
+	}
+	
+	@Override
+	public List<ClinicalDocument> getXdmDocuments(File file,
+		org.ehealth_connector.common.Patient patient){
+		List<ClinicalDocument> ret = null;
+		ConvenienceCommunication conCom = new ConvenienceCommunication();
+		XdmContents contents = conCom.getXdmContents(file.getAbsolutePath());
+		if (contents != null) {
+			ret = new ArrayList<ClinicalDocument>();
+			List<DocumentContentAndMetadata> dataList = contents.getDocumentAndMetadataList();
+			for (DocumentContentAndMetadata documentContentAndMetadata : dataList) {
+				XDSDocument xdsDocument = documentContentAndMetadata.getXdsDocument();
+				if (xdsDocument != null) {
+					ClinicalDocument clinicalDocument;
+					try {
+						clinicalDocument = CDAUtil.load(xdsDocument.getStream());
+						if (clinicalDocument != null) {
+							ret.add(clinicalDocument);
+						}
+					} catch (Exception e) {
+						logger
+							.error("Could not load document " + xdsDocument.getNewDocumentUniqueId()
+								+ " from xdm " + file.getAbsolutePath());
+					}
+				}
+			}
+		}
+		return ret;
+	}
+	
+	@Override
+	public List<org.ehealth_connector.common.Patient> getXdmPatients(File file){
+		List<org.ehealth_connector.common.Patient> ret = null;
+		ConvenienceCommunication conCom = new ConvenienceCommunication();
+		XdmContents contents = conCom.getXdmContents(file.getAbsolutePath());
+		if (contents != null) {
+			ret = new ArrayList<org.ehealth_connector.common.Patient>();
+			List<DocumentContentAndMetadata> dataList = contents.getDocumentAndMetadataList();
+			for (DocumentContentAndMetadata documentContentAndMetadata : dataList) {
+				ret.add(documentContentAndMetadata.getDocEntry().getPatient());
+			}
+		}
+		return ret;
+	}
+	
+	@Override
+	public Patient getElexisPatient(org.ehealth_connector.common.Patient ehcPatient){
+		return EhcCoreMapper.getElexisPatient(ehcPatient);
 	}
 }

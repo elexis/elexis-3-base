@@ -1,6 +1,5 @@
 package at.medevit.elexis.ehc.ui.vacdoc.wizard;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,8 +18,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.Immunization;
 import org.ehealth_connector.cda.ch.CdaChVacd;
+import org.ehealth_connector.cda.ch.Immunization;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
@@ -83,7 +82,7 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 		super.setVisible(visible);
 		if (visible) {
 			if (ehcDocument != null) {
-				ArrayList<Immunization> immunizations = ehcDocument.getImmunizations();
+				List<Immunization> immunizations = ehcDocument.getImmunizations();
 				contentViewer.setInput(immunizations);
 				contentViewer.setSelection(new StructuredSelection(immunizations), true);
 			}

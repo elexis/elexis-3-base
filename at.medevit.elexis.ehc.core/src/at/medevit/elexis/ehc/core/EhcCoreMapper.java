@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.ehealth_connector.cda.ch.enums.CodeSystems;
 import org.ehealth_connector.cda.enums.AddressUse;
 import org.ehealth_connector.cda.enums.AdministrativeGender;
 import org.ehealth_connector.common.Address;
@@ -27,7 +26,9 @@ import org.ehealth_connector.common.Name;
 import org.ehealth_connector.common.Organization;
 import org.ehealth_connector.common.Patient;
 import org.ehealth_connector.common.Telecoms;
+import org.ehealth_connector.common.enums.CodeSystems;
 
+import ch.elexis.core.model.IPersistentObject;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
@@ -182,6 +183,26 @@ public class EhcCoreMapper {
 	}
 	
 	public static ch.elexis.data.Patient getElexisPatient(Patient ehcPatient){
+		// try to look up via ids
+		List<Identificator> ids = ehcPatient.getIds();
+		for (Identificator identificator : ids) {
+			String idRoot = identificator.getRoot();
+			if (idRoot.equals(CodeSystems.SwissSSNDeprecated.getCodeSystemId())
+				|| idRoot.equals(CodeSystems.SwissSSN.getCodeSystemId())) {
+				IPersistentObject ret =
+					Xid.findObject(Xid.DOMAIN_AHV, identificator.getExtension());
+				if (ret instanceof Kontakt) {
+					if (((Kontakt) ret).istPatient()) {
+						return ch.elexis.data.Patient.load(ret.getId());
+					}
+				}
+				System.out.println("foud ret " + ret);
+				if (ret instanceof ch.elexis.data.Patient) {
+					return (ch.elexis.data.Patient) ret;
+				}
+			}
+		}
+		
 		Query<ch.elexis.data.Patient> qpa =
 			new Query<ch.elexis.data.Patient>(ch.elexis.data.Patient.class);
 		// initialize data

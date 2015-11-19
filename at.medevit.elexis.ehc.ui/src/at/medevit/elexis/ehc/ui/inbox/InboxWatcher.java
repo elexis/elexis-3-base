@@ -41,7 +41,6 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Mandant;
-import ch.rgw.tools.TimeTool;
 
 public class InboxWatcher {
 	private static Logger logger = LoggerFactory.getLogger(InboxWatcher.class);
@@ -103,7 +102,26 @@ public class InboxWatcher {
 		}
 	}
 	
+	private class DirectoryDocumentStrategy {
+		public void execute(URL fileUrl){
+			if (!EhcDocument.documentExists(fileUrl)) {
+				if (EhcDocument.isEhcXml(fileUrl)) {
+					fireInboxCreated(EhcDocument.createFromXml(fileUrl));
+				} else if (EhcDocument.isEhcXdm(fileUrl)) {
+					// no inbox element for the XDM
+					EhcDocument.createFromXdm(fileUrl);
+				}
+			}
+		}
+	}
+	
 	private class DirectoryWatcher implements Runnable {
+		
+		private DirectoryDocumentStrategy documentStrategy;
+		
+		public DirectoryWatcher(){
+			documentStrategy = new DirectoryDocumentStrategy();
+		}
 		
 		@SuppressWarnings("unchecked")
 		@Override
@@ -124,14 +142,10 @@ public class InboxWatcher {
 						} else if (ENTRY_CREATE == kind) {
 							// A new Path was created
 							Path newPath = ((WatchEvent<Path>) watchEvent).context();
-							String newInboxPath =
-								activeInboxString + File.separator
-									+ newPath.getFileName().toString();
-							URL fileURL = new URL("file:///" + newInboxPath);
-							EhcDocument newDocument =
-								new EhcDocument(newPath.getFileName().toString(), fileURL,
-									new TimeTool());
-							fireInboxCreated(newDocument);
+							String newInboxPath = activeInboxString + File.separator
+								+ newPath.getFileName().toString();
+							URL fileUrl = new URL("file:///" + newInboxPath);
+							documentStrategy.execute(fileUrl);
 						}
 					}
 					if (!key.reset()) {
@@ -146,6 +160,12 @@ public class InboxWatcher {
 	
 	private class DirectoryInitializer implements Runnable {
 		
+		private DirectoryDocumentStrategy documentStrategy;
+		
+		public DirectoryInitializer(){
+			documentStrategy = new DirectoryDocumentStrategy();
+		}
+		
 		@Override
 		public void run(){
 			File inboxFolder = new File(activeInboxString);
@@ -157,12 +177,8 @@ public class InboxWatcher {
 				for (File file : files) {
 					if (!file.isDirectory()) {
 						try {
-							URL url = new URL("file:///" + file.getAbsolutePath());
-							if (!EhcDocument.documentExists(url)) {
-								EhcDocument newDocument =
-									new EhcDocument(file.getName(), url, new TimeTool());
-								fireInboxCreated(newDocument);
-							}
+							URL fileUrl = new URL("file:///" + file.getAbsolutePath());
+							documentStrategy.execute(fileUrl);
 						} catch (MalformedURLException e) {
 							logger.error("Error initializing inbox.", e);
 						}
@@ -179,9 +195,8 @@ public class InboxWatcher {
 		
 		@Override
 		public void runInUi(ElexisEvent ev){
-			activeInboxString =
-				CoreHub.userCfg.get(PreferencePage.EHC_INPUTDIR,
-					PreferencePage.getDefaultInputDir());
+			activeInboxString = CoreHub.userCfg.get(PreferencePage.EHC_INPUTDIR,
+				PreferencePage.getDefaultInputDir());
 			executor.execute(new DirectoryInitializer());
 			if (watchKeys.get(activeInboxString) == null) {
 				try {
@@ -191,9 +206,8 @@ public class InboxWatcher {
 					}
 					
 					WatchKey key;
-					key =
-						inboxPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-							StandardWatchEventKinds.ENTRY_DELETE);
+					key = inboxPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
+						StandardWatchEventKinds.ENTRY_DELETE);
 					watchKeys.put(activeInboxString, key);
 				} catch (IOException e) {
 					logger.error("Error creating filesystem key", e);

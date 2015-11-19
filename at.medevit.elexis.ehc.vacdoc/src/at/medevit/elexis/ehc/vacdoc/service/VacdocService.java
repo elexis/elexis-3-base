@@ -3,15 +3,15 @@ package at.medevit.elexis.ehc.vacdoc.service;
 import java.io.InputStream;
 import java.util.List;
 
-import org.ehealth_connector.cda.Consumable;
-import org.ehealth_connector.cda.Immunization;
 import org.ehealth_connector.cda.ch.CdaChVacd;
+import org.ehealth_connector.cda.ch.Consumable;
 import org.ehealth_connector.cda.ch.DocumentProcessor;
-import org.ehealth_connector.cda.ch.enums.CodeSystems;
+import org.ehealth_connector.cda.ch.Immunization;
 import org.ehealth_connector.common.Author;
 import org.ehealth_connector.common.Code;
 import org.ehealth_connector.common.DateUtil;
 import org.ehealth_connector.common.Identificator;
+import org.ehealth_connector.common.enums.CodeSystems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +28,17 @@ public class VacdocService {
 	
 	private static Logger logger = LoggerFactory.getLogger(VacdocService.class);
 
+	/**
+	 * Get an InputStream containing the
+	 * 
+	 * @param document
+	 * @return
+	 * @throws Exception
+	 */
+	public InputStream getXdmAsStream(CdaChVacd document) throws Exception{
+		return EhcServiceComponent.getService().getXdmAsStream(document.getDoc());
+	}
+	
 	/**
 	 * Get empty vaccination document.
 	 * 

@@ -12,12 +12,25 @@
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <repo_name>elexis.3.base</repo_name>
     <repo_variant>snapshot</repo_variant>
+    <timestamp_prefix>p</timestamp_prefix>
     <useBranch>master</useBranch>
     <nonElexisP2variant>snapshot</nonElexisP2variant>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
   <packaging>pom</packaging>
 	<profiles>
+    <profile>
+      <id>beta</id>
+      <properties>
+        <timestamp_prefix>b</timestamp_prefix>
+      </properties>
+      <activation>
+        <property>
+          <name>repo_variant</name>
+          <value>beta</value>
+        </property>
+      </activation>
+    </profile>
 		<profile>
 			<id>prerelease</id>
 			<activation>
@@ -28,6 +41,7 @@
 			</activation>
 			<properties>
 				<nonElexisP2variant>release</nonElexisP2variant>
+        <timestamp_prefix>p</timestamp_prefix>
 				<useBranch>release</useBranch>
 			</properties>
 		</profile>
@@ -42,6 +56,7 @@
 			<properties>
 				<nonElexisP2variant>release</nonElexisP2variant>
 				<useBranch>release</useBranch>
+        <timestamp_prefix>r</timestamp_prefix>
 			</properties>
 		</profile>
 		<!-- activate operating system dependent testing vm args -->
@@ -280,28 +295,6 @@
 <build>
   <plugins>
 		<plugin>
-			<groupId>com.github.goldin</groupId>
-			<artifactId>properties-maven-plugin</artifactId>
-			<version>0.2.5</version>
-			<executions>
-				<execution>
-					<id>set-properties</id>
-					<phase>validate</phase>
-					<goals>
-						<goal>set-properties</goal>
-					</goals>
-					<configuration>
-						<properties>
-							<property>
-								<name>timestamp_format</name>
-								<value>{{"'" + "${repo_variant}".substring(0,1).replaceFirst('s','a').replaceFirst('p','r')+"'yyyyMMdd-HHmm" }}</value>
-							</property>
-						</properties>
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
-		<plugin>
       <groupId>org.eclipse.tycho.extras</groupId>
       <artifactId>tycho-source-feature-plugin</artifactId>
       <version>${tycho-extras.version}</version>
@@ -475,7 +468,7 @@ Without it Maven would put two versions of each class file into the jars
         </dependencies>
         <configuration>
           <strictBinIncludes>false</strictBinIncludes>
-          <format>${timestamp_format}</format>
+          <format>'${timestamp_prefix}'yyyyMMddHHmm</format>
           <timestampProvider>jgit</timestampProvider>
           <jgit.ignore>pom.xml</jgit.ignore>
           <jgit.dirtyWorkingTree>warning</jgit.dirtyWorkingTree>
@@ -539,30 +532,7 @@ Without it Maven would put two versions of each class file into the jars
       <plugin>
         <groupId>org.eclipse.m2e</groupId>
         <artifactId>lifecycle-mapping</artifactId>
-        <version>1.0.0</version>
-        <configuration>
-          <lifecycleMappingMetadata>
-            <pluginExecutions>
-              <pluginExecution>
-                <pluginExecutionFilter>
-                  <groupId>com.github.goldin</groupId>
-                  <artifactId>
-                    properties-maven-plugin
-                  </artifactId>
-                  <versionRange>
-                    [0.2.5,)
-                  </versionRange>
-                  <goals>
-                    <goal>set-properties</goal>
-                  </goals>
-                </pluginExecutionFilter>
-                <action>
-                  <ignore></ignore>
-                </action>
-              </pluginExecution>
-            </pluginExecutions>
-          </lifecycleMappingMetadata>
-        </configuration>
+        <version>3.0.5</version>
       </plugin>
     </plugins>
   </pluginManagement>

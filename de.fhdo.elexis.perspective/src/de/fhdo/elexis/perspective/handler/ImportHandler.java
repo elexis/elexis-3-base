@@ -84,11 +84,10 @@ public class ImportHandler extends AbstractHandler implements IHandler {
 		//
 		for (String file : diag.getFileNames()) {
 			String filename = diag.getFilterPath() + File.separator + file;
-			FileReader reader;
+
 			XMLMemento memento = null;
 			
-			try {
-				reader = new FileReader(new File(filename));
+			try (FileReader reader = new FileReader(new File(filename))){
 				memento = XMLMemento.createReadRoot(reader);
 				PerspectiveDescriptor newPersp = new PerspectiveDescriptor(null, null, null);
 				
@@ -153,7 +152,7 @@ public class ImportHandler extends AbstractHandler implements IHandler {
 						
 						String dialogMessageOverride =
 							notDeleted + Messages.ImportHandler_Choose_new_name_for_Perspective;
-						;
+
 						InputDialog inputDiag =
 							new InputDialog(mainWindow.getShell(),
 								Messages.ImportHandler_Rename_Perspective, dialogMessageOverride,
@@ -162,7 +161,6 @@ public class ImportHandler extends AbstractHandler implements IHandler {
 						inputDiag.open();
 						
 						String[] idsplit = id.split("\\.");//$NON-NLS-1$
-						System.out.println("ID: " + idsplit.length);//$NON-NLS-1$
 						id = "";//$NON-NLS-1$
 						label = inputDiag.getValue();
 						
@@ -185,8 +183,6 @@ public class ImportHandler extends AbstractHandler implements IHandler {
 				memento.getChild("descriptor").putString("id", id);//$NON-NLS-1$ //$NON-NLS-2$
 				
 				newPersp.restoreState(memento);
-				
-				reader.close();
 				
 				//
 				// Save the new generated perspective in the preference store

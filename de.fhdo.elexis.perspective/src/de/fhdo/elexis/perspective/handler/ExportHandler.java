@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+
 import de.fhdo.elexis.Messages;
 
 /**
@@ -45,7 +46,7 @@ import de.fhdo.elexis.Messages;
  * 
  * @author Bernhard Rimatzki, Thorsten Wagner, Pascal Proksch, Sven Lüttmann
  * @version 1.0
- * 
+ * 			
  */
 
 public class ExportHandler extends AbstractHandler implements IHandler {
@@ -63,7 +64,6 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 			}
 			return (IPerspectiveDescriptor[]) perspectives
 				.toArray(new IPerspectiveDescriptor[perspectives.size()]);
-			
 		}
 	}
 	
@@ -80,10 +80,10 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 		//
 		SelectPerspectiveDialog selectionDialog =
 			new SelectPerspectiveDialog(mainWindow.getShell(), perspRegistry);
-		
+			
 		if (selectionDialog.open() == SelectPerspectiveDialog.CANCEL)
 			return null;
-		
+			
 		PerspectiveDescriptor pDesc;
 		pDesc = (PerspectiveDescriptor) selectionDialog.getSelection();
 		
@@ -96,15 +96,9 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 			//
 			mem = (XMLMemento) perspRegistry.getCustomPersp(pDesc.getId());
 			
-		} catch (WorkbenchException e2) {
-			
+		} catch (WorkbenchException | IOException e) {
 			MessageDialog.openError(mainWindow.getShell(), Messages.ExportHandler_Error,
-				Messages.ExportHandler_Error_Exporting);
-			return null;
-		} catch (IOException e2) {
-			
-			MessageDialog.openError(mainWindow.getShell(), Messages.ExportHandler_Error,
-				Messages.ExportHandler_Error_Exporting);
+				Messages.ExportHandler_Error_Exporting + ": " + e.getMessage());
 			return null;
 		}
 		
@@ -115,6 +109,7 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 		// and the location
 		//
 		FileDialog diag = new FileDialog(mainWindow.getShell(), SWT.SAVE);
+		diag.setFileName(pDesc.getLabel());
 		String filename;
 		
 		//
@@ -131,30 +126,15 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 		//
 		if ((filename = diag.open()) == null)
 			return null;
-		
+			
 		File file = new File(filename);
-		FileWriter writer = null;
 		
-		try {
-			
-			//
-			// Let's now save the memento in the selected .xml file
-			// If something crashes print out the error message on the screen
-			//
-			writer = new FileWriter(file);
+		try (FileWriter writer = new FileWriter(file)) {
 			mem.save(writer);
-		} catch (IOException e1) {
-			
+		} catch (IOException e) {
 			MessageDialog.openError(mainWindow.getShell(), Messages.ExportHandler_ErrorOccured,
-				e1.getMessage());
+				e.getMessage() + ": " + e.getMessage());
 			return null;
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				MessageDialog.openError(mainWindow.getShell(), Messages.ExportHandler_ErrorOccured,
-					e.getMessage());
-			}
 		}
 		
 		return null;

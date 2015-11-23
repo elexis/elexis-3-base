@@ -10,27 +10,34 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <packaging>eclipse-repository</packaging>
     <build>
       <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.9</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <id>regex-property</id>
-            <goals>
-              <goal>timestamp-property</goal>
-            </goals>
-            <configuration>
-              <name>groovyBuildQualifier</name>
-                  <value>${buildQualifier}</value>
-              <regex>-XXXXXX</regex>
-              <replacement> pre-release development version</replacement>
-              <failIfNoMatch>false</failIfNoMatch>
-            </configuration>
-          </execution>
-        </executions>
-        </plugin>
+        <plugin>
+          <groupId>com.github.goldin</groupId>
+          <artifactId>properties-maven-plugin</artifactId>
+          <version>0.2.5</version>
+          <executions>
+            <execution>
+              <id>set-properties</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>set-properties</goal>
+              </goals>
+              <configuration>
+                <properties>
+                  <property>
+                    <name>groovyBuildQualifier</name>
+                    <value>{{import java.text.SimpleDateFormat; new
+                      <!-- We have to copy the Elexis.product, as we cannot build a plug-in
+                      and a target inside the same Maven project (or at least don't know howto)
+                      Under Linux a symbolic link would suffice. But this did not work under Windows -->
+                      <!-- for snapshot we want an 'a' << 'b' (beta) << 'r' (prerelease and release) -->
+                      SimpleDateFormat("'"+repo_variant.substring(0,1).replaceFirst('s','a').replaceFirst('p','r')+"'yyyyMMdd-HHmm").format(Calendar.getInstance().getTime())
+                        }}</value>
+                      </property>
+                    </properties>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
           <plugin>
            <groupId>com.google.code.maven-replacer-plugin</groupId>
            <artifactId>replacer</artifactId>

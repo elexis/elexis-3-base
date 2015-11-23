@@ -1,6 +1,6 @@
 package ch.elexis.connect.sysmex.packages;
 
-import ch.elexis.connect.sysmex.Preferences;
+import ch.elexis.connect.sysmex.ui.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.rgw.tools.TimeTool;
 
@@ -21,6 +21,16 @@ public class KX21Data extends AbstractData {
 		TimeTool timetool = new TimeTool();
 		timetool.set(year, month - 1, day);
 		return timetool;
+	}
+	
+	@Override
+	protected String getPatientId(String content){
+		String patId = content.substring(10, 22);
+		if (patId != null && !patId.isEmpty()) {
+			// remove leading zeros
+			patId = Integer.valueOf(patId).toString();
+		}
+		return patId;
 	}
 	
 	private boolean isRdwSd(){

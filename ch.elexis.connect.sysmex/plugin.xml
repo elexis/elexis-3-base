@@ -12,7 +12,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="ch.elexis.preferences.transporters"
-            class="ch.elexis.connect.sysmex.Preferences"
+            class="ch.elexis.connect.sysmex.ui.Preferences"
             id="ch.elexis.connect.sysmex.preferences"
             name="Sysmex">
       </page>

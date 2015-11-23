@@ -1,4 +1,4 @@
-package ch.elexis.connect.sysmex;
+package ch.elexis.connect.sysmex.ui;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferencePage;
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import ch.elexis.connect.sysmex.Messages;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.importer.div.rs232.Connection;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;

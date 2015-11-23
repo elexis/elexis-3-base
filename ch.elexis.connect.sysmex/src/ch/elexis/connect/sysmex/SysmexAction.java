@@ -16,6 +16,8 @@ import ch.elexis.connect.sysmex.packages.KX21Data;
 import ch.elexis.connect.sysmex.packages.KX21NData;
 import ch.elexis.connect.sysmex.packages.PackageException;
 import ch.elexis.connect.sysmex.packages.PocH100iData;
+import ch.elexis.connect.sysmex.ui.Preferences;
+import ch.elexis.connect.sysmex.ui.WhichPatientDialog;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.Hub;
@@ -223,23 +225,33 @@ public class SysmexAction extends Action implements ComPortListener {
 		UiDesk.getDisplay().syncExec(new Runnable() {
 			
 			public void run(){
-				selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 				UiDesk.getDisplay().syncExec(new Runnable() {
 					public void run(){
-						// TODO: Filter vorname/name in KontaktSelektor
-						// einbauen
-						KontaktSelektor ksl =
-							new KontaktSelektor(Hub.getActiveShell(), Patient.class, Messages
-								.getString("SysmexAction.Patient.Title"), Messages //$NON-NLS-1$
-								.getString("SysmexAction.Patient.Text"), Patient.DEFAULT_SORT); //$NON-NLS-1$
-						ksl.create();
-						ksl.getShell().setText(Messages.getString("SysmexAction.Patient.Title")); //$NON-NLS-1$
-						if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
-							selectedPatient = (Patient) ksl.getSelection();
-						} else {
-							selectedPatient = null;
+						Patient suggestedPatient = findSuggestedPatient(probe.getPatientId());
+						// only open selection dialog if there is a suggestion available
+						if (suggestedPatient != null) {
+							WhichPatientDialog wpDialog =
+								new WhichPatientDialog(UiDesk.getTopShell(), suggestedPatient);
+							wpDialog.open();
+							selectedPatient = wpDialog.getPatient();
 						}
 						
+						// case no patient selection was orcould be made yet
+						if (selectedPatient == null) {
+							KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(),
+								Patient.class, Messages.getString("SysmexAction.Patient.Title"), //$NON-NLS-1$
+								Messages.getString("SysmexAction.Patient.Text"), //$NON-NLS-1$
+								Patient.DEFAULT_SORT);
+							ksl.create();
+							ksl.getShell()
+								.setText(Messages.getString("SysmexAction.Patient.Title")); //$NON-NLS-1$
+								
+							if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
+								selectedPatient = (Patient) ksl.getSelection();
+							} else {
+								selectedPatient = null;
+							}
+						}
 					}
 				});
 				if (selectedPatient != null) {
@@ -255,6 +267,28 @@ public class SysmexAction extends Action implements ComPortListener {
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Finds potential suggestion of a patient.<br>
+	 * Tries to resolve Sysmex sent patient number first and alternatively tries to resolve
+	 * currently selected patient.
+	 * 
+	 * @param sysmexPatId
+	 * @return The patient sent via the Sysmex device. If SysmexPatient is can't be resolved the
+	 *         currently selected patient is used. NULL if neither SysmexPatient or ActivePatient
+	 *         could be resolved.
+	 */
+	private Patient findSuggestedPatient(String sysmexPatId){
+		if (sysmexPatId == null || sysmexPatId.isEmpty()) {
+			return ElexisEventDispatcher.getSelectedPatient();
+		}
+		
+		Patient suggestedPatient = Patient.loadByPatientID(sysmexPatId);
+		if (suggestedPatient == null) {
+			return ElexisEventDispatcher.getSelectedPatient();
+		}
+		return suggestedPatient;
 	}
 	
 	/**

@@ -21,6 +21,11 @@ public class KX21NData extends AbstractData {
 		return timetool;
 	}
 	
+	@Override
+	protected String getPatientId(String content){
+		return null;
+	}
+	
 	protected String getRDWSD(final String content){
 		int pos = getDataIndex() + 70;
 		return getValueStr(content, pos, "XXX.XF"); //$NON-NLS-1$

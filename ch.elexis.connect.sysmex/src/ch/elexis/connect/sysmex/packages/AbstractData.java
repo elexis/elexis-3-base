@@ -8,6 +8,7 @@ import ch.rgw.tools.TimeTool;
 
 public abstract class AbstractData {
 	private TimeTool date;
+	private String patId;
 	private String wbc;
 	private String rbc;
 	private String hgb;
@@ -35,6 +36,7 @@ public abstract class AbstractData {
 	public void parse(final String content){
 		// Datum
 		date = getDate(content);
+		patId = getPatientId(content);
 		
 		wbc = getWBC(content);
 		rbc = getRBC(content);
@@ -126,6 +128,10 @@ public abstract class AbstractData {
 	
 	public TimeTool getDate(){
 		return date;
+	}
+	
+	public String getPatientId(){
+		return patId;
 	}
 	
 	protected String getValueStr(final String content, final int pos, String pattern){
@@ -248,4 +254,6 @@ public abstract class AbstractData {
 	protected abstract TimeTool getDate(final String content);
 	
 	protected abstract Value getValue(final String paramName) throws PackageException;
+	
+	protected abstract String getPatientId(final String content);
 }

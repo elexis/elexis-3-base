@@ -24,6 +24,7 @@ import ch.elexis.base.ch.ebanking.esr.Messages;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.rgw.tools.ExHandler;
@@ -105,6 +106,12 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 													rec.getValuta()));
 											rec.setGebucht(null);
 										}
+									} else if (rec.getRejectCode()
+										.equals(ESRRecord.REJECT.RN_NUMMER)) {
+										TimeTool valutaDate = new TimeTool(rec.getValuta());
+										new AccountTransaction(rec.getPatient(), null,
+											rec.getBetrag(), valutaDate.toString(TimeTool.DATE_GER),
+											Messages.LoadESRFileHandler_notAssignable);
 									}
 								}
 								monitor.done();

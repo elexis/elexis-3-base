@@ -85,6 +85,8 @@ public class Messages extends NLS {
 	public static String ESRView2_notbooked;
 	public static String ESRView2_patient;
 	public static String ESRView2_readDate;
+	public static String LoadESRFileHandler_notAssignable;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

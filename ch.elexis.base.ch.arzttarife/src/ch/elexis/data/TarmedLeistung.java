@@ -224,6 +224,9 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	@Override
 	public String getLabel(){
 		String[] vals = get(true, FLD_CODE, FLD_TEXT);
+		if (vals[0].isEmpty()) {
+			vals[0] = getId();
+		}
 		return vals[0] + " " + vals[1];
 	}
 	

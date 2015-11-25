@@ -51,20 +51,39 @@ public class AddLabInboxElement implements Runnable {
 		}
 		
 		Patient patient = labResult.getPatient();
-		Mandant mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-		List<LabOrder> orders =
-			LabOrder.getLabOrders(patient, null, null, labResult, null, null, null);
-		if (orders != null) {
-			String mandantId = orders.get(0).get(LabOrder.FLD_MANDANT);
-			mandant = Mandant.load(mandantId);
-		}
-		logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
-			+ patient.getLabel() + " for mandant " + mandant.getLabel());
-		ServiceComponent.getService().createInboxElement(patient, mandant, labResult);
-		
 		Kontakt doctor = labResult.getPatient().getStammarzt();
-		if (doctor != null && doctor.exists() && !doctor.equals(mandant)) {
+		Mandant assignedMandant = loadAssignedMandant();
+		
+		// patient has NO stammarzt 
+		if (doctor == null) {
+			if (assignedMandant == null) {
+				// if stammarzt and assigned contact is null use active mandant
+				assignedMandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+			}
+		} else {
+			// stammarzt is defined
+			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
+				+ patient.getLabel() + " for mandant " + doctor.getLabel());
 			ServiceComponent.getService().createInboxElement(patient, doctor, labResult);
 		}
+		
+		// an assigned contact was found that is different than the stammarzt
+		if (assignedMandant != null && !assignedMandant.equals(doctor)) {
+			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
+				+ patient.getLabel() + " for mandant " + assignedMandant.getLabel());
+			ServiceComponent.getService().createInboxElement(patient, assignedMandant, labResult);
+		}
+	}
+	
+	private Mandant loadAssignedMandant(){
+		List<LabOrder> orders =
+			LabOrder.getLabOrders(labResult.getPatient(), null, null, labResult, null, null, null);
+		if (orders != null && !orders.isEmpty()) {
+			String mandantId = orders.get(0).get(LabOrder.FLD_MANDANT);
+			if (mandantId != null && !mandantId.isEmpty()) {
+				return Mandant.load(mandantId);
+			}
+		}
+		return null;
 	}
 }

@@ -30,10 +30,10 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected void createFieldEditors(){
-		addField(
-			new DirectoryFieldEditor(CFG_DIRECTORY, "Importverzeichnis", getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(CFG_DIRECTORY, Messages.Prefs_ImportDirectory,
+			getFieldEditorParent()));
 		addField(new BooleanFieldEditor(HL7Parser.CFG_IMPORT_ENCDATA,
-			"Angehängte Daten importieren", getFieldEditorParent()));
+			Messages.Prefs_ImportAttachedFiles, getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench){

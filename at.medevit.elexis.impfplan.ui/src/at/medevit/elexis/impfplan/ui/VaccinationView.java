@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -29,8 +31,6 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
@@ -49,7 +49,7 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 
 public class VaccinationView extends ViewPart {
-	private static Logger logger = LoggerFactory.getLogger(VaccinationView.class);
+	
 	public static final String PART_ID = "at.medevit.elexis.impfplan.ui.ImpfplanViewPart";
 	
 	private static VaccinationPlanHeaderDefinition vaccinationHeaderDefinition;
@@ -100,6 +100,13 @@ public class VaccinationView extends ViewPart {
 		sc.setExpandVertical(true);
 		sc.setMinSize(vaccinationComposite.computeSize(800, 800));
 		vcPaintListener = vaccinationComposite.getVaccinationCompositePaintListener();
+		vaccinationComposite.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e){
+				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
+				editVaccination(selVaccination);
+			}
+		});
 		
 		Menu menu = new Menu(vaccinationComposite);
 		// add delete entry menu
@@ -123,17 +130,21 @@ public class VaccinationView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
-				if (selVaccination != null) {
-					EditVaccinationDialog evd =
-						new EditVaccinationDialog(vaccinationComposite.getShell(), selVaccination);
-					evd.open();
-				}
+				editVaccination(selVaccination);
 			}
 		});
 		
 		vaccinationComposite.setMenu(menu);
 		if (ElexisEventDispatcher.getSelectedPatient() != null) {
 			setPatient(ElexisEventDispatcher.getSelectedPatient());
+		}
+	}
+	
+	private void editVaccination(Vaccination selVaccination) {
+		if (selVaccination != null) {
+			EditVaccinationDialog evd =
+				new EditVaccinationDialog(vaccinationComposite.getShell(), selVaccination);
+			evd.open();
 		}
 	}
 	
@@ -183,7 +194,7 @@ public class VaccinationView extends ViewPart {
 			vaccinationHeaderDefinition =
 				new VaccinationPlanHeaderDefinition(HEADER_ID_SHOW_ADMINISTERED,
 					"Nur verabreichte Impfungen", new ArrayList<String>(atc),
-					Collections.EMPTY_LIST);
+					Collections.emptyList());
 		}
 		vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations,
 			new TimeTool(pat.getGeburtsdatum()));

@@ -18,11 +18,9 @@ import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalListener;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -39,12 +37,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel.DiseaseDefinition;
+import at.medevit.elexis.impfplan.ui.VaccinationEffectCheckboxTreeViewer;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.proposals.PersistentObjectContentProposal;
@@ -61,7 +59,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	private Text txtLotNo;
 	private Text txtAtcCode;
 	private Text txtArticleEAN;
-	private CheckboxTreeViewer treeViewer;
+	private VaccinationEffectCheckboxTreeViewer vect;
 	
 	private boolean isSupplement = false;
 	private String administratorString = null;
@@ -263,21 +261,8 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 			lblVaccAgainst.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
 			lblVaccAgainst.setText("Impfung gegen Krankheit(en)");
 			
-			treeViewer =
-				new CheckboxTreeViewer(expiredGroup, SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL);
-			Tree tree = treeViewer.getTree();
-			GridData gd_tree = new GridData(SWT.FILL, SWT.TOP, true, false);
-			gd_tree.heightHint = 200;
-			tree.setLayoutData(gd_tree);
-			tree.setHeaderVisible(false);
-			tree.setLinesVisible(true);
-			
-			TreeViewerColumn col = new TreeViewerColumn(treeViewer, SWT.NONE);
-			col.getColumn().setWidth(225);
-			
-			treeViewer.setContentProvider(new DiseaseTreeContentProvider());
-			treeViewer.setLabelProvider(new DiseaseTreeLabelProvider());
-			treeViewer.setInput(DiseaseDefinitionModel.getDiseaseDefinitions());
+			vect = new VaccinationEffectCheckboxTreeViewer(container, SWT.BORDER,
+				vaccAgainst);
 		}
 		return area;
 	}
@@ -295,28 +280,13 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-// articleEAN = txtArticleEAN.getText();
-// articleAtcCode = txtAtcCode.getText();
 		lotNo = txtLotNo.getText();
 		doa =
 			new GregorianCalendar(dateOfAdministration.getYear(), dateOfAdministration.getMonth(),
 				dateOfAdministration.getDay());
-		vaccAgainst = getCheckedElementsString();
+		vaccAgainst = vect.getCheckedElementsAsCommaSeparatedString();
 		
 		super.okPressed();
-	}
-	
-	private String getCheckedElementsString(){
-		Object[] checkedElements = treeViewer.getCheckedElements();
-		StringBuilder sb = new StringBuilder();
-		
-		for (Object element : checkedElements) {
-			DiseaseDefinition disease = (DiseaseDefinition) element;
-			sb.append(disease.getATCCode());
-			sb.append(",");
-		}
-		
-		return sb.toString();
 	}
 	
 	public TimeTool getDateOfAdministration(){

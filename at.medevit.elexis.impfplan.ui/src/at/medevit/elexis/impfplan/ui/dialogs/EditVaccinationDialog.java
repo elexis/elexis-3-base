@@ -1,5 +1,7 @@
 package at.medevit.elexis.impfplan.ui.dialogs;
 
+import java.util.Calendar;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
@@ -18,11 +20,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.elexis.impfplan.model.po.Vaccination;
+import at.medevit.elexis.impfplan.ui.VaccinationEffectCheckboxTreeViewer;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.proposals.PersistentObjectContentProposal;
 import ch.elexis.core.ui.proposals.PersistentObjectProposalProvider;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.rgw.tools.TimeTool;
+
+import org.eclipse.swt.widgets.DateTime;
 
 public class EditVaccinationDialog extends TitleAreaDialog {
 	private Vaccination vacc;
@@ -30,6 +36,8 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 	private Text txtAdministrator;
 	private String administratorString;
 	private Text txtLotNo;
+	private DateTime dateTimeDOA;
+	private VaccinationEffectCheckboxTreeViewer vect;
 	
 	public EditVaccinationDialog(Shell parentShell, Vaccination vacc){
 		super(parentShell);
@@ -50,8 +58,8 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label lblAdministratingContact = new Label(container, SWT.NONE);
-		lblAdministratingContact.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1,
-			1));
+		lblAdministratingContact
+			.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAdministratingContact.setText("Verabreicht von");
 		
 		txtAdministrator = new Text(container, SWT.BORDER);
@@ -70,9 +78,9 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 					return a.getMandantLabel();
 				}
 			};
-		
-		ContentProposalAdapter mandatorProposalAdapter =
-			new ContentProposalAdapter(txtAdministrator, new TextContentAdapter(), mopp, null, null);
+			
+		ContentProposalAdapter mandatorProposalAdapter = new ContentProposalAdapter(
+			txtAdministrator, new TextContentAdapter(), mopp, null, null);
 		mandatorProposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 		mandatorProposalAdapter.addContentProposalListener(new IContentProposalListener() {
 			
@@ -92,6 +100,28 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 		txtLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		txtLotNo.setText(vacc.getLotNo());
 		
+		Label lblVerabreichungsdatum = new Label(container, SWT.NONE);
+		lblVerabreichungsdatum
+			.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblVerabreichungsdatum.setAlignment(SWT.RIGHT);
+		lblVerabreichungsdatum.setText("Verabreichungsdatum");
+		
+		dateTimeDOA = new DateTime(container, SWT.BORDER);
+		TimeTool doa = vacc.getDateOfAdministration();
+		dateTimeDOA.setDate(doa.get(Calendar.YEAR), doa.get(Calendar.MONTH),
+			doa.get(Calendar.DAY_OF_MONTH));
+			
+		if(vacc.get(Vaccination.FLD_ARTIKEL_REF).length()==0) {
+			Label lblImpfungGegen = new Label(container, SWT.NONE);
+			lblImpfungGegen.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
+			lblImpfungGegen.setAlignment(SWT.RIGHT);
+			lblImpfungGegen.setText("Impfung gegen");
+			
+			vect = new VaccinationEffectCheckboxTreeViewer(container, SWT.BORDER,
+				vacc.get(Vaccination.FLD_VACC_AGAINST));
+			vect.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		}
+		
 		return area;
 	}
 	
@@ -99,6 +129,15 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 	protected void okPressed(){
 		vacc.setAdministratorString(administratorString);
 		vacc.setLotNo(txtLotNo.getText());
+		
+		Calendar instance = Calendar.getInstance();
+		instance.set(Calendar.DAY_OF_MONTH, dateTimeDOA.getDay());
+		instance.set(Calendar.MONTH, dateTimeDOA.getMonth());
+		instance.set(Calendar.YEAR, dateTimeDOA.getYear());
+		vacc.setDateOfAdministration(instance.getTime());
+		
+		vacc.setVaccAgainst(vect.getCheckedElementsAsCommaSeparatedString());
+		
 		super.okPressed();
 	}
 	

@@ -105,20 +105,20 @@ public class Vaccination extends PersistentObject {
 		
 		create(null);
 		
-		String vaccAgainst =
-			StringUtils.join(ArticleToImmunisationModel.getImmunisationForAtcCode(articleATCCode),
-				",");
+		String vaccAgainst = "";
+		if (articleATCCode != null) {
+			vaccAgainst = StringUtils
+				.join(ArticleToImmunisationModel.getImmunisationForAtcCode(articleATCCode), ",");
+		}
 		
-		String[] fields =
-			new String[] {
-				FLD_PATIENT_ID, FLD_ARTIKEL_REF, FLD_BUSS_NAME, FLD_EAN, FLD_ATCCODE, FLD_LOT_NO,
-				FLD_DOA, FLD_ADMINISTRATOR, FLD_VACC_AGAINST
-			};
-		String[] vals =
-			new String[] {
-				patientId, articleStoreToString, articleLabel, articleEAN, articleATCCode, lotNo,
-				doa, mandantId, vaccAgainst
-			};
+		String[] fields = new String[] {
+			FLD_PATIENT_ID, FLD_ARTIKEL_REF, FLD_BUSS_NAME, FLD_EAN, FLD_ATCCODE, FLD_LOT_NO,
+			FLD_DOA, FLD_ADMINISTRATOR, FLD_VACC_AGAINST
+		};
+		String[] vals = new String[] {
+			patientId, articleStoreToString, articleLabel, articleEAN, articleATCCode, lotNo, doa,
+			mandantId, vaccAgainst
+		};
 		set(fields, vals);
 	}
 	
@@ -146,6 +146,11 @@ public class Vaccination extends PersistentObject {
 	
 	public TimeTool getDateOfAdministration(){
 		return new TimeTool(get(FLD_DOA));
+	}
+	
+	public void setDateOfAdministration(Date tt){
+		TimeTool ttd = new TimeTool(tt);
+		set(FLD_DOA, ttd.toString(TimeTool.DATE_COMPACT));
 	}
 	
 	public String getDateOfAdministrationLabel(){
@@ -202,7 +207,7 @@ public class Vaccination extends PersistentObject {
 		} else {
 			if (value == null || value.length() < 2)
 				return "";
-			
+				
 			return value;
 		}
 	}

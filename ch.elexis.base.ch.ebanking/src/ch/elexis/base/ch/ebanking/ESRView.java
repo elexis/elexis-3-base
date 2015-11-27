@@ -1,5 +1,7 @@
 package ch.elexis.base.ch.ebanking;
 
+import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,7 +39,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.wb.swt.TableViewerColumnSorter;
 
-import ch.elexis.admin.ACE;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.ESRRecordDialog;
@@ -68,9 +69,6 @@ public class ESRView extends ViewPart {
 			
 	protected final SimpleDateFormat sdf = (SimpleDateFormat) DateFormat
 		.getDateInstance(DateFormat.MEDIUM);
-	
-	public final static ACE DISPLAY_ESR = new ACE(AccessControlDefaults.DATA,
-		"ch.elexis.ebanking_ch:DisplayESR", Messages.ESRView_showESRData);
 	
 	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(
 		Anwender.class,

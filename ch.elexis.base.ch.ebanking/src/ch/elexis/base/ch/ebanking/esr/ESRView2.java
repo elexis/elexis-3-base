@@ -33,11 +33,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.admin.ACE;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.AbstractDataLoaderJob;
 import ch.elexis.core.ui.actions.FlatDataLoader;
@@ -97,7 +95,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	ViewerConfigurer vc;
 	// ESRLoader esrloader;
 	FlatDataLoader fdl;
-	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT, "DisplayESR"); //$NON-NLS-1$
+
 	Query<ESRRecord> qbe;
 	// private Action loadESRFile;
 	private ViewMenus menus;

@@ -53,7 +53,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public static final String TABLENAME = "ARTIKELSTAMM_CH";
 	private static final String VERSION_ENTRY_ID = "VERSION";
-	static final String VERSION = "1.1.0";
+	static final String VERSION = "1.2.0";
 	
 	//@formatter:off
 	/** Eintrag zugeh. zu  */ public static final String FLD_CUMMULATED_VERSION = "CUMM_VERSION";
@@ -82,7 +82,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	/** Ist Betäubungsmittel */	public static final String FLD_NARCOTIC = "NARCOTIC";
 	/** CAS Nr wenn Betäub */	public static final String FLD_NARCOTIC_CAS = "NARCOTIC_CAS";
 	/** Ist Impfstoff */		public static final String FLD_VACCINE = "VACCINE";
-	
+	/** Produkt-Nummer */ 	  	public static final String FLD_PRODNO = "PRODNO";
 	
 	public static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE";
 	
@@ -137,6 +137,10 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	static final String dbUpdateFrom10to11 =
 		"ALTER TABLE "+TABLENAME+" ADD "+PersistentObject.FLD_EXTINFO+" BLOB;";
+	
+	static final String dbUpdateFrom11to12 =
+		"ALTER TABLE "+TABLENAME+" ADD "+FLD_PRODNO+" VARCHAR(10);";
+	
 	//@formatter:on
 	
 	static {
@@ -152,17 +156,23 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 				+ FLD_PPUB, FLD_PKG_SIZE, FLD_SL_ENTRY, FLD_IKSCAT, FLD_LIMITATION,
 			FLD_LIMITATION_PTS, FLD_LIMITATION_TEXT, FLD_GENERIC_TYPE, FLD_HAS_GENERIC, FLD_LPPV,
 			FLD_DEDUCTIBLE, FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE, FLD_LIEFERANT_ID,
-			MAXBESTAND, MINBESTAND, ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH,
+			MAXBESTAND, MINBESTAND, ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH, FLD_PRODNO,
 			PersistentObject.FLD_EXTINFO);
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
 		} else {
 			VersionInfo vi = new VersionInfo(version.get(FLD_GTIN));
-			
+			System.out.println(vi);
 			if (vi.isOlder(VERSION)) {
-				createOrModifyTable(dbUpdateFrom10to11);
-				version.set(FLD_GTIN, VERSION);
+				if(vi.isOlder("1.1.0")) {
+					createOrModifyTable(dbUpdateFrom10to11);
+					version.set(FLD_GTIN, "1.1.0");
+				}
+				if(vi.isOlder("1.2.0")) {
+					createOrModifyTable(dbUpdateFrom11to12);
+					version.set(FLD_GTIN, VERSION);
+				}
 			}
 		}
 	}

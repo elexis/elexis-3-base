@@ -366,6 +366,10 @@ public class ArtikelstammImporter {
 			fields.add(ArtikelstammItem.FLD_PKG_SIZE);
 			values.add(item.getPKGSIZE().toString());
 		}
+		if(item.getPRODNO()!=null) {
+			fields.add(ArtikelstammItem.FLD_PRODNO);
+			values.add(item.getPRODNO());
+		}
 		
 		ai.set(fields.toArray(new String[0]), values.toArray(new String[0]));
 	}

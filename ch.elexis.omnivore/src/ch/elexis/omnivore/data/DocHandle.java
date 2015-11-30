@@ -106,10 +106,12 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	
 	private static final String CATEGORY_MIMETYPE = "text/category"; //$NON-NLS-1$
 	
+	protected static final String VERSION = "1";
+	
 	static {
 		addMapping(TABLENAME, FLD_PATID, FLD_CAT + "=Category", DATE_COMPOUND, //$NON-NLS-1$
 			FLD_TITLE + "=Title", FLD_KEYWORDS, FLD_PATH, FLD_DOC, FLD_MIMETYPE); //$NON-NLS-1$
-		DocHandle start = load("1"); //$NON-NLS-1$
+		DocHandle start = load(VERSION); //$NON-NLS-1$
 		if (start == null) {
 			init();
 		} else {

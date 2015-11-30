@@ -104,7 +104,7 @@ public class DocumentManagement implements IDocumentManager {
 	@Override
 	public boolean removeDocument(String guid){
 		DocHandle dh = DocHandle.load(guid);
-		if (dh != null && dh.exists()) {
+		if (dh != null && dh.exists() && (!DocHandle.VERSION.equals(dh.getId()))) {
 			return dh.delete();
 		}
 		return false;

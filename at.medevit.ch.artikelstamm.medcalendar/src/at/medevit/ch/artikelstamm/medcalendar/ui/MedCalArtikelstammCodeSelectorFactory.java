@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.wb.swt.ResourceManager;
 
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.ui.ArtikelstammDetailDialog;
 import at.medevit.ch.artikelstamm.elexis.common.ui.cv.ArtikelstammCodeSelectorFactory;
 import at.medevit.ch.artikelstamm.elexis.common.ui.cv.VATMenuContributionItem;
@@ -27,7 +28,7 @@ import at.medevit.ch.artikelstamm.elexis.common.ui.provider.LagerhaltungArtikels
 import at.medevit.ch.artikelstamm.medcalendar.action.MephaPrefferedProviderSorterAction;
 import at.medevit.ch.artikelstamm.medcalendar.ui.provider.MedCalArtikelstammFlatDataLoader;
 import at.medevit.ch.artikelstamm.medcalendar.ui.provider.MedCalDecoratingLabelProvider;
-import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
+
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;

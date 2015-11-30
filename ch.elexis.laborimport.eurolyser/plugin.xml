@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.laborimport.eurolyser.ui.PreferencePage"
+            id="ch.elexis.laborimport.eurolyser.page"
+            name="Eurolyser">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            Class="ch.elexis.laborimport.eurolyser.ui.LabImportPage"
+            ToolbarAction="ch.elexis.laborimport.eurolyser.ui.LabImportAction"
+            name="Eurolyser">
+      </Importer>
+   </extension>
+
+</plugin>

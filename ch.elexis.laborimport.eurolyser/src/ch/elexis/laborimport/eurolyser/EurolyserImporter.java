@@ -22,6 +22,8 @@ public class EurolyserImporter {
 	private File file;
 	private Labor labor;
 	
+	private HashMap<String, Patient> filePatientMap = new HashMap<String, Patient>();
+	
 	public EurolyserImporter(Labor labor, File file){
 		this.file = file;
 		this.labor = labor;
@@ -36,7 +38,7 @@ public class EurolyserImporter {
 				if (line != null && !line.isEmpty()) {
 					EurolyserLine eurolyserLine = new EurolyserLine(labor, line);
 					if (eurolyserLine.isRelevant()) {
-						TransientLabResult result = eurolyserLine.createResult();
+						TransientLabResult result = eurolyserLine.createResult(filePatientMap);
 						if (result != null) {
 							results.add(result);
 						}

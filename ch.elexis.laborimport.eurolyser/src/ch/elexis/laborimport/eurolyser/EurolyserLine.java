@@ -1,5 +1,6 @@
 package ch.elexis.laborimport.eurolyser;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -137,13 +138,30 @@ public class EurolyserLine {
 		}
 	}
 	
+	private class AskCreateItemRunnable implements Runnable {
+		private boolean result;
+		
+		@Override
+		public void run(){
+			result =
+				MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Labor Parameter",
+					"Kein Labor Parameter ausgewählt. Soll ein neuer angelegt werden?");
+		}
+		
+		public boolean getResult(){
+			return result;
+		}
+	}
+	
 	/**
 	 * Create a LabResult from the imported line information.
 	 * 
+	 * @param filePatientMap
+	 * 			
 	 * @return
 	 */
-	public TransientLabResult createResult(){
-		Patient patient = resolvePatient();
+	public TransientLabResult createResult(HashMap<String, Patient> filePatientMap){
+		Patient patient = resolvePatient(filePatientMap);
 		if (patient == null) {
 			AskAbortRunnable askAbort = new AskAbortRunnable();
 			Display.getDefault().syncExec(askAbort);
@@ -151,8 +169,19 @@ public class EurolyserLine {
 				throw new RuntimeException("Import aborted");
 			}
 		}
+		filePatientMap.put(patientId, patient);
 		
 		LabItem labItem = resolveLabItem();
+		if(labItem == null) {
+			AskCreateItemRunnable askCreate = new AskCreateItemRunnable();
+			Display.getDefault().syncExec(askCreate);
+			if (askCreate.getResult()) {
+				labItem = new LabItem(resultItemName, resultItemName, null, null, null, resultUnit,
+					LabItem.typ.NUMERIC, "Eurolyser", "0");
+				// create a mapping with the slection
+				new LabMapping(labor.getId(), resultItemName, labItem.getId(), false);
+			}
+		}
 		
 		if (labItem != null && patient != null) {
 			TimeTool analyseTime = new TimeTool(resultObservationTime);
@@ -210,7 +239,7 @@ public class EurolyserLine {
 		
 	}
 	
-	private Patient resolvePatient(){
+	private Patient resolvePatient(HashMap<String, Patient> filePatientMap){
 		String lastname = "";
 		String firstname = "";
 		String[] nameParts = patientName.split(" ");
@@ -228,6 +257,11 @@ public class EurolyserLine {
 				logger.info("Patient " + p.getLabel() + " found by PracitceID [" + patientId + "]");
 				return p;
 			}
+		}
+		
+		p = filePatientMap.get(patientId);
+		if (p != null) {
+			return p;
 		}
 		
 		return (Patient) KontaktSelektor.showInSync(Patient.class, "Patient ausw\u00E4hlen",

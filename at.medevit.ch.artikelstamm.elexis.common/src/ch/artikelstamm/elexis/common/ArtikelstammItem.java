@@ -20,10 +20,10 @@ import java.util.Date;
 import java.util.List;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
-import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.jdt.NonNull;

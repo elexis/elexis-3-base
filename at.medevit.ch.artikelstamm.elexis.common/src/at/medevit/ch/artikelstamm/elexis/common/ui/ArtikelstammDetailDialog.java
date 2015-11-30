@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import at.medevit.ch.artikelstamm.ui.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 
 public class ArtikelstammDetailDialog extends Dialog {
 	

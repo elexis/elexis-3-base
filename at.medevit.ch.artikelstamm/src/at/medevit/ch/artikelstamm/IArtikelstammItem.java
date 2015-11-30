@@ -8,7 +8,7 @@
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
-package at.medevit.ch.artikelstamm.ui;
+package at.medevit.ch.artikelstamm;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 

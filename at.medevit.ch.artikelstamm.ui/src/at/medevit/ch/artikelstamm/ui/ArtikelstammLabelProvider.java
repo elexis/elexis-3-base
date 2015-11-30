@@ -14,6 +14,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.wb.swt.ResourceManager;
 
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
+
 public class ArtikelstammLabelProvider extends LabelProvider {
 	
 	private static Image emptyTransparent = ResourceManager.getPluginImage(

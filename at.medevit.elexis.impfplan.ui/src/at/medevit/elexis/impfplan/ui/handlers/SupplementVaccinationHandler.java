@@ -12,6 +12,7 @@ import at.medevit.elexis.impfplan.ui.dialogs.SupplementVaccinationDialog;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObjectFactory;
 import ch.rgw.tools.TimeTool;
 
@@ -20,10 +21,14 @@ public class SupplementVaccinationHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
-		SupplementVaccinationDialog svd = new SupplementVaccinationDialog(UiDesk.getTopShell());
+		Patient sp = ElexisEventDispatcher.getSelectedPatient();
+		if(sp==null) {
+			return null;
+		}
+		SupplementVaccinationDialog svd = new SupplementVaccinationDialog(UiDesk.getTopShell(), sp);
 		int retVal = svd.open();
 		if (retVal == TitleAreaDialog.OK) {
-			String patientId = ElexisEventDispatcher.getSelectedPatient().getId();
+			String patientId = sp.getId();
 			String administratorString = svd.getAdministratorString();
 			String lotNo = svd.getLotNo();
 			TimeTool doa = svd.getDateOfAdministration();

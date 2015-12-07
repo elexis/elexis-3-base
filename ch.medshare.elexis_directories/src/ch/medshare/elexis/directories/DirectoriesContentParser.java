@@ -619,8 +619,10 @@ public class DirectoriesContentParser extends HtmlParser {
 			}
 			
 			//20131127js: Replace something like "Dr. med. PD" by "PD Dr. med."
-			zusatz = zusatz.replace("Dr. med. PD", "PD Dr. med.");
-			zusatz = zusatz.replace("Dr. med. Prof.", "Prof. Dr. med.");
+			if(zusatz!=null) {
+				zusatz = zusatz.replace("Dr. med. PD", "PD Dr. med.");
+				zusatz = zusatz.replace("Dr. med. Prof.", "Prof. Dr. med.");
+			}
 			
 			// Anne Müller case debug output:
 			logger.debug("DirectoriesContentParser.java: extractKontakt() zusatz: \""

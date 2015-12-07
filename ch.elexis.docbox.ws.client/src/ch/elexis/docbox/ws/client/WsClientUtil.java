@@ -67,13 +67,16 @@ public class WsClientUtil {
 		try {
 			md = MessageDigest.getInstance("SHA");
 			md.update(password.getBytes("UTF-8"));
+			byte[] digest = md.digest();
+			return toHex(digest);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
+			logger.error("Error", e);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+			logger.error("Error", e);
 		}
-		byte[] digest = md.digest();
-		return toHex(digest);
+		return "";
 	}
 
 	public static boolean checkAccess(CDACHServicesV2 port){

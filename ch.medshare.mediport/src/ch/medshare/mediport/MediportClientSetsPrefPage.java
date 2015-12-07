@@ -258,7 +258,7 @@ public class MediportClientSetsPrefPage extends MediPortAbstractPrefPage {
 		}
 		txtSenderEan.setText(senderEan);
 		cxWieMandant.setSelection((mandantEan == null && senderEan == null)
-			|| senderEan.equals(mandantEan));
+			|| (senderEan!=null) && senderEan.equals(mandantEan));
 		txtSenderEan.setEnabled(!cxWieMandant.getSelection());
 		
 		txtSendDir.setText(client.getSend_dir());
@@ -323,7 +323,7 @@ public class MediportClientSetsPrefPage extends MediPortAbstractPrefPage {
 			fillMKey(clientNum);
 		}
 		mapClientValues(client);
-		putPrefString(prefsKey, clientNum.toString());
+		putPrefString(prefsKey, String.valueOf(clientNum));
 		storePrefs();
 	}
 	

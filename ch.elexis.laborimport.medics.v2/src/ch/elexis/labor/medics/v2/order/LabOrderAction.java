@@ -249,7 +249,7 @@ public class LabOrderAction extends Action {
 		hl7Kontakt.setZip(zip.trim());
 		
 		String country = kontakt.get(Patient.FLD_COUNTRY);
-		if (country != null) {
+		if (country == null) {
 			country = ""; //$NON-NLS-1$
 		}
 		hl7Kontakt.setCountry(country.trim());

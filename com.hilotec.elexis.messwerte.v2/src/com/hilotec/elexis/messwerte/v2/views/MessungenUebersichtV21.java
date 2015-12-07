@@ -257,7 +257,9 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 					}
 				}
 			}
-			viewerToRefresh.setInput(Messung.getPatientMessungen(patient, typToRefresh));
+			if(viewerToRefresh!=null) {
+				viewerToRefresh.setInput(Messung.getPatientMessungen(patient, typToRefresh));
+			}
 			if (form.getCursor() != null)
 				form.setCursor(null);
 		}

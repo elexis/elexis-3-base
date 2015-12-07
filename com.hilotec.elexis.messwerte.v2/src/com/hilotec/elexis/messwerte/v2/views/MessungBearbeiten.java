@@ -122,8 +122,13 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		lbl.setLayoutData(new RowData(90, SWT.DEFAULT));
 		
 		lbl = new Label(row, SWT.NONE);
-		lbl.setText(pat.getLabel() + " (" + pat.getAlter() + ") - [" //$NON-NLS-1$ //$NON-NLS-2$
-			+ pat.get(Patient.FLD_PATID).toString() + "]"); //$NON-NLS-1$
+		
+		if (pat != null) {
+			lbl.setText(pat.getLabel() + " (" + pat.getAlter() + ") - [" //$NON-NLS-1$ //$NON-NLS-2$
+				+ pat.get(Patient.FLD_PATID).toString() + "]"); //$NON-NLS-1$
+		} else {
+			lbl.setText("Patient is null");
+		}
 		
 		row = new Composite(comp, SWT.NONE);
 		row.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -179,10 +184,12 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		} else if (panelType.equals(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY)) {
 			c.setLayout(new GridLayout());
 			Browser browser = new Browser(c, SWT.NONE);
-			String url = p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_URL);
+			String url =
+				(p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_URL) : null;
 			browser.setUrl(url == null ? "" : url); //$NON-NLS-1$
 			GridData gd = SWTHelper.getFillGridData(1, true, 1, true);
-			String bounds = p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_SIZE);
+			String bounds = (p != null)
+					? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_SIZE) : null;
 			if (bounds != null) {
 				String[] coord = bounds.trim().split("\\s*,\\s*"); //$NON-NLS-1$
 				if (coord.length == 2) {
@@ -195,9 +202,12 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		} else if (panelType.equals(MessungKonfiguration.ELEMENT_LAYOUTLABEL)) {
 			c.setLayout(new GridLayout());
 			Label l = new Label(c, SWT.WRAP);
-			l.setText(p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTLABEL_TEXT));
+			if (p != null) {
+				l.setText(p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTLABEL_TEXT));
+			}
 		} else if (panelType.equals(MessungKonfiguration.ELEMENT_LAYOUTGRID)) {
-			String cols = p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTGRID_COLUMNS);
+			String cols = (p != null)
+					? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTGRID_COLUMNS) : null;
 			if (cols == null) {
 				c.setLayout(new GridLayout());
 			} else {
@@ -205,26 +215,30 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			}
 			
 		} else if (panelType.equals(MessungKonfiguration.ELEMENT_LAYOUTFIELD)) {
-			String fieldref = p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_REF);
+			String fieldref =
+				(p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_REF) : null;
 			Messwert mw = getMesswert(fieldref);
 			if (mw != null) {
 				IMesswertTyp dft = mw.getTyp();
 				
 				boolean bEditable = true;
-				String attr = p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_EDITABLE);
+				String attr = (p != null)
+						? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_EDITABLE) : null;
 				if (attr != null && attr.equals("false")) { //$NON-NLS-1$
 					bEditable = false;
 				}
 				dft.setEditable(bEditable);
 				
-				String validpattern =
-					p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_VALIDPATTERN);
+				String validpattern = (p != null)
+						? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_VALIDPATTERN)
+						: null;
 				if (validpattern == null) {
 					validpattern = "[\u0000-\uFFFF]*"; //$NON-NLS-1$
 				}
 				dft.setValidpattern(validpattern);
-				String invalidMsg =
-					p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_INVALIDMESSAGE);
+				String invalidMsg = (p != null)
+						? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_INVALIDMESSAGE)
+						: null;
 				if (invalidMsg == null) {
 					invalidMsg = Messages.MessungBearbeiten_InvalidValue;
 				}
@@ -245,11 +259,10 @@ public class MessungBearbeiten extends TitleAreaDialog {
 				tl.setText(labelText);
 				tl.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 				
-				Image image =
-					new Image(c.getDisplay(),
-						PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2") //$NON-NLS-1$
-							+ File.separator + "rsc" + File.separator //$NON-NLS-1$
-							+ MesswertBase.ICON_TRANSPARENT);
+				Image image = new Image(c.getDisplay(),
+					PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2") //$NON-NLS-1$
+						+ File.separator + "rsc" + File.separator //$NON-NLS-1$
+						+ MesswertBase.ICON_TRANSPARENT);
 				// label für icons, wenn Wert ausserhalb des konfigurierten Bereichs liegt
 				Label il = new Label(labelRow, SWT.NONE);
 				il.setImage(image);

@@ -53,7 +53,9 @@ public class Validator {
 			res.add(Result.SEVERITY.ERROR, 8, Messages.Validator_NoDiagnosis, rn, true);
 		}
 		
-		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		
+		Kontakt kostentraeger =
+			(fall != null) ? fall.getRequiredContact(TarmedRequirements.INSURANCE) : null;
 		// kostentraeger is optional for tiers garant else check if valid
 		if (kostentraeger == null && xp.tiers != null && xp.tiers.equals(XMLExporter.TIERS_GARANT)) {
 			return res;

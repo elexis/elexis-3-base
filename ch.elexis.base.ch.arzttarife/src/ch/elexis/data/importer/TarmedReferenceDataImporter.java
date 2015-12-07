@@ -32,6 +32,8 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.exceptions.PersistenceException;
+import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.importer.div.importers.AccessWrapper;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Konsultation;
@@ -79,9 +81,8 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	}
 	
 	@Override
-	public Class<?> getReferenceDataTypeResponsibleFor(){
-		// TODO Auto-generated method stub
-		return null;
+	public @NonNull Class<?> getReferenceDataTypeResponsibleFor(){
+		return TarmedLeistung.class;
 	}
 	
 	@Override
@@ -90,7 +91,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	}
 	
 	@Override
-	public IStatus performImport(IProgressMonitor ipm, InputStream input, Integer version){
+	public IStatus performImport(@Nullable IProgressMonitor ipm, InputStream input, @Nullable Integer version){
 		if (ipm == null) {
 			ipm = new NullProgressMonitor();
 		}
@@ -131,35 +132,33 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 				"SEITE", "SEX", "SPARTE", "ZR_EINHEIT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			ipm.worked(13);
 			ipm.subTask(Messages.TarmedImporter_chapter);
-			ResultSet res =
-				source.query(String.format(
-					"SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE=%s", ImportPrefix, lang)); //$NON-NLS-1$
-			
-			while (res != null && res.next()) {
-				String code = res.getString("KNR"); //$NON-NLS-1$
-				
-				if (code.trim().equals("I")) { //$NON-NLS-1$
-					continue;
+			try(ResultSet res = source.query(
+				String.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE=%s", ImportPrefix, lang))) {
+				while (res != null && res.next()) {
+					String code = res.getString("KNR"); //$NON-NLS-1$
+					
+					if (code.trim().equals("I")) { //$NON-NLS-1$
+						continue;
+					}
+					TarmedLeistung tl = TarmedLeistung.load(code);
+					String txt = convert(res, "BEZ_255"); //$NON-NLS-1$
+					int subcap = code.lastIndexOf('.');
+					String parent = "NIL"; //$NON-NLS-1$
+					if (subcap != -1) {
+						parent = code.substring(0, subcap);
+					}
+					if ((!tl.exists()) || (!parent.equals(tl.get("Parent")))) { //$NON-NLS-1$
+						tl = new TarmedLeistung(code, parent, "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					}
+					if (tl.exists()) {
+						tl.setText(txt);
+						tl.flushExtension();
+					}
+					ipm.worked(1);
 				}
-				TarmedLeistung tl = TarmedLeistung.load(code);
-				String txt = convert(res, "BEZ_255"); //$NON-NLS-1$
-				int subcap = code.lastIndexOf('.');
-				String parent = "NIL"; //$NON-NLS-1$
-				if (subcap != -1) {
-					parent = code.substring(0, subcap);
-				}
-				if ((!tl.exists()) || (!parent.equals(tl.get("Parent")))) { //$NON-NLS-1$
-					tl = new TarmedLeistung(code, parent, "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
-				if (tl.exists()) {
-					tl.setText(txt);
-					tl.flushExtension();
-				}
-				ipm.worked(1);
 			}
-			res.close();
 			ipm.subTask(Messages.TarmedImporter_singleLst);
-			res = source.query(String.format("SELECT * FROM %sLEISTUNG", ImportPrefix)); //$NON-NLS-1$
+			ResultSet res = source.query(String.format("SELECT * FROM %sLEISTUNG", ImportPrefix)); //$NON-NLS-1$
 			PreparedStatement preps_extension =
 				pj.prepareStatement("UPDATE TARMED_EXTENSION SET MED_INTERPRET=?,TECH_INTERPRET=? WHERE CODE=?"); //$NON-NLS-1$
 			TimeTool validFrom = new TimeTool();
@@ -364,23 +363,22 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	 * @throws SQLException
 	 */
 	private void importKumulations(String code, Stm stmCached) throws SQLException{
-		ResultSet res =
-			stmCached.query(String.format(
-				"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s", ImportPrefix,
-				JdbcLink.wrap(code))); //$NON-NLS-1$
-		TimeTool fromTime = new TimeTool();
-		TimeTool toTime = new TimeTool();
-		
-		while (res != null && res.next()) {
-			fromTime.set(res.getString("GUELTIG_VON"));
-			toTime.set(res.getString("GUELTIG_BIS"));
+		try(ResultSet res =
+			stmCached.query(String.format("SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s",
+				ImportPrefix, JdbcLink.wrap(code)))) {
+			TimeTool fromTime = new TimeTool();
+			TimeTool toTime = new TimeTool();
 			
-			new TarmedKumulation(code, res.getString("ART_MASTER"), res.getString("LNR_SLAVE"),
-				res.getString("ART_SLAVE"), res.getString("TYP"), res.getString("ANZEIGE"),
-				res.getString("GUELTIG_SEITE"), fromTime.toString(TimeTool.DATE_COMPACT),
-				toTime.toString(TimeTool.DATE_COMPACT));
+			while (res != null && res.next()) {
+				fromTime.set(res.getString("GUELTIG_VON"));
+				toTime.set(res.getString("GUELTIG_BIS"));
+				
+				new TarmedKumulation(code, res.getString("ART_MASTER"), res.getString("LNR_SLAVE"),
+					res.getString("ART_SLAVE"), res.getString("TYP"), res.getString("ANZEIGE"),
+					res.getString("GUELTIG_SEITE"), fromTime.toString(TimeTool.DATE_COMPACT),
+					toTime.toString(TimeTool.DATE_COMPACT));
+			}
 		}
-		res.close();
 	}
 	
 	/**

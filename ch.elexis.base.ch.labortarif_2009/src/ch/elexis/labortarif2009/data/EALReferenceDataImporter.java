@@ -30,6 +30,8 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.AbstractReferenceDataImporter;
+import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.importer.div.importers.ExcelWrapper;
 import ch.elexis.data.Query;
 import ch.elexis.labortarif2009.data.Importer.Fachspec;
@@ -49,13 +51,12 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 	private HashMap<String, String> importedValues = new HashMap<String, String>();
 
 	@Override
-	public Class<?> getReferenceDataTypeResponsibleFor(){
-		// TODO Auto-generated method stub
-		return null;
+	public @NonNull Class<?> getReferenceDataTypeResponsibleFor(){
+		return Labor2009Tarif.class;
 	}
 	
 	@Override
-	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion){
+	public IStatus performImport(@Nullable IProgressMonitor monitor, @NonNull InputStream input, @Nullable Integer newVersion){
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -116,7 +117,9 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 				if (monitor != null)
 					monitor.done();
 				ElexisEventDispatcher.reload(Labor2009Tarif.class);
-				Labor2009Tarif.setCurrentCodeVersion(newVersion);
+				if(newVersion != null) {
+					Labor2009Tarif.setCurrentCodeVersion(newVersion);
+				}
 				EALBlocksCodeUpdater blocksUpdater = new EALBlocksCodeUpdater();
 				String message = blocksUpdater.updateBlockCodes();
 				logger.info("Updated Blocks: \n" + message); //$NON-NLS-1$

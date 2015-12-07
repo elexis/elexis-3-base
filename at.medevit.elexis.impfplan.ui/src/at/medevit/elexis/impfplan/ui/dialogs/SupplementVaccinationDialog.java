@@ -75,17 +75,19 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	private Mandant mandant;
 	private TimeTool patBDay;
 	private TimeTool selDate;
+	private Patient pat;
 	
 	/**
 	 * Create the dialog.
 	 * 
 	 * @param parentShell
+	 * @param sp 
 	 * @param b
 	 */
-	public SupplementVaccinationDialog(Shell parentShell){
+	public SupplementVaccinationDialog(Shell parentShell, Patient pat){
 		super(parentShell);
+		this.pat = pat;
 		mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		patBDay = new TimeTool(pat.getGeburtsdatum());
 		selDate = new TimeTool();
 		isSupplement = true;
@@ -103,7 +105,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 			"rsc/icons/vaccination_logo.png"));
 		
 		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
-		setMessage(selectedPatient.getLabel());
+		setMessage(pat.getLabel());
 		
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);

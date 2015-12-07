@@ -21,9 +21,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.Before;
@@ -128,6 +130,8 @@ public class Test_doImport {
 			if (os != null) {
 				dm = (IDocumentManager) os;
 			}
+			
+			Assert.isNotNull(dm);
 
 			// Zunächst ein File importieren, ohne den Patienten dazu erfasst zu haben
 			// -> muss fehlschlagen

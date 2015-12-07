@@ -632,7 +632,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				Konsultation kons =
 					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 				if (kons != null) {
-					if (!kons.getFall().getPatient().equals(patient)) {
+					if (!kons.getFall().getPatient().equals(patient) && patient!=null) {
 						kons = patient.getLetzteKons(false);
 					}
 				}

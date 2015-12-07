@@ -43,8 +43,8 @@ public class ApplicationInputDialog extends TitleAreaDialog {
 		setTitle("Impfungsdetails");
 		setTitleImage(ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui",
 			"rsc/icons/vaccination_logo.png"));
-		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
-		setMessage(selectedPatient.getLabel());
+		Patient sp = ElexisEventDispatcher.getSelectedPatient();
+		setMessage((sp!=null) ? sp.getLabel() : "missing patient name"); //$NON-NLS-1$
 		
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite containerLotNo = new Composite(area, SWT.NONE);

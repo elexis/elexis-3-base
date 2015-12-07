@@ -407,7 +407,12 @@ public class XMLExporter implements IRnOutputter {
 		xmlTreatment = XMLExporterTreatment.buildTreatment(rechnung, this);
 		body.addContent(xmlTreatment.getElement());
 		
-		body.addContent(services.getElement());
+		if(services!=null) {
+			body.addContent(services.getElement());
+		} else {
+			logger.warn("services is null!");
+		}
+
 
 		payload.addContent(body);
 		

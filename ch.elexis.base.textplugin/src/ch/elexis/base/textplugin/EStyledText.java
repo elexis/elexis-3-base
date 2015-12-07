@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.core.jdt.NonNull;
+
 public class EStyledText extends StyledText implements FocusListener {
 	
 	protected ElexisEditor editor;
@@ -107,7 +109,7 @@ public class EStyledText extends StyledText implements FocusListener {
 			index++;
 			if (index < styles.length) {
 				StyleRange style = styles[index];
-				if (sameStyle(current, style)) {
+				if (current!=null && sameStyle(current, style)) {
 					current.length += style.length;
 				} else {
 					result.add(current);
@@ -121,7 +123,7 @@ public class EStyledText extends StyledText implements FocusListener {
 		return result;
 	}
 	
-	protected boolean sameStyle(StyleRange s1, StyleRange s2){
+	protected boolean sameStyle(@NonNull StyleRange s1, @NonNull StyleRange s2){
 		if (s1.fontStyle != s2.fontStyle || s1.underline != s2.underline) {
 			return false;
 		}

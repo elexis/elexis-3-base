@@ -101,29 +101,14 @@ public class UtilFile {
 	 * Liest binäre gezippte Datei
 	 */
 	public static byte[] readZippedFile(final String filenamePath) throws IOException{
-		GZIPInputStream in = null;
-		ByteArrayOutputStream out = null;
 		byte[] daten = new byte[1024];
-		try {
-			// Original-Datei mit Stream verbinden
-			in = new GZIPInputStream(new FileInputStream(filenamePath));
-			out = new ByteArrayOutputStream();
-			// Alle Daten aus der Original-Datei einlesen und
-			// in die Ausgabe schreiben
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				GZIPInputStream in = new GZIPInputStream(new FileInputStream(filenamePath))) {
 			int read = 0;
 			while ((read = in.read(daten, 0, 1024)) != -1)
 				out.write(daten, 0, read);
-			in.close();
-			out.close();
-		} finally {
-			if (in != null) {
-				in.close();
-			}
-			if (out != null) {
-				out.close();
-			}
+			return out.toByteArray();
 		}
-		return out.toByteArray();
 	}
 	
 	/**

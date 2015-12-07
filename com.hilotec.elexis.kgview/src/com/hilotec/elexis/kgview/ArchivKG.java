@@ -27,12 +27,14 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.Messages;
@@ -53,7 +55,7 @@ import com.hilotec.elexis.kgview.data.KonsData;
  */
 class ScrollHelper implements KeyListener, DisposeListener, FocusListener {
 	enum Direction {
-		UP, DOWN
+			UP, DOWN
 	};
 	
 	private ScrolledFormText comp;
@@ -83,7 +85,7 @@ class ScrollHelper implements KeyListener, DisposeListener, FocusListener {
 	private void start(){
 		if (timer != null)
 			return;
-		
+			
 		TimerTask tt = new TimerTask() {
 			@Override
 			public void run(){
@@ -218,7 +220,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 		ViewMenus menus = new ViewMenus(getViewSite());
 		menus.createToolbar(actNeueKons, actNeueTelKons, actNeuerHausbesuch, null, actKonsAendern,
 			actAutoAkt, actSortierungUmk, null, actDrucken);
-		
+			
 		// Aktuell ausgewaehlten Patienten laden
 		Patient pat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		loadPatient(pat);
@@ -339,7 +341,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	private void addParagraph(String titel, String text, String icpc, StringBuilder sb){
 		if ((text == null || text.isEmpty()) && (icpc == null || icpc.isEmpty()))
 			return;
-		
+			
 		sb.append("<b>" + titel + "</b><br/>");
 		if (icpc != null && !icpc.isEmpty())
 			sb.append("ICPC: " + icpc.replace(",", ", ") + "<br/>");
@@ -367,7 +369,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	
 	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
 		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-	
+		
 	public ElexisEvent getElexisEventFilter(){
 		return eetmpl;
 	}
@@ -480,17 +482,20 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 				ArchivKGPrintView apv = null;
 				try {
 					apv = (ArchivKGPrintView) p.showView(ArchivKGPrintView.ID);
-				} catch (PartInitException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (PartInitException ex) {
+					ElexisStatus status = new ElexisStatus(ElexisStatus.WARNING, Hub.PLUGIN_ID,
+						ElexisStatus.CODE_NONE, "Error opening part", ex,
+						ElexisStatus.LOG_WARNINGS);
+					StatusManager.getManager().handle(status, StatusManager.SHOW);
+					return;
 				}
 				
 				Konsultation kons =
 					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 				if (kons == null) {
-					SWTHelper.showError("Keine Konsultation aktiv", "Es wird"
-						+ "eine aktive Konsultation benötigt um die KG "
-						+ "drucken und ablegen zu können.");
+					SWTHelper.showError("Keine Konsultation aktiv",
+						"Es wird" + "eine aktive Konsultation benötigt um die KG "
+							+ "drucken und ablegen zu können.");
 					return;
 				}
 				apv.doPrint(kons, null, sortRev);

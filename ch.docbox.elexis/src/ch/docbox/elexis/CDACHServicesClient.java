@@ -16,7 +16,12 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.xml.namespace.QName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CDACHServicesClient {
+	
+	private static Logger log = LoggerFactory.getLogger(CDACHServicesClient.class);
 	
 	public static final QName SERVICE_NAME = new QName("http://ws.docbox.ch/CDACHServices/",
 		"CDACHServices");
@@ -42,12 +47,14 @@ public class CDACHServicesClient {
 		try {
 			md = MessageDigest.getInstance("SHA");
 			md.update(password.getBytes("UTF-8"));
+			byte[] digest = md.digest();
+			return toHex(digest);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error("Error in getSHA1, returning empty string", e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error("Error in getSHA1, returning empty string", e);
 		}
-		byte[] digest = md.digest();
-		return toHex(digest);
+
+		return "";
 	}
 }

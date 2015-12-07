@@ -54,10 +54,11 @@ public class CopySelected extends AbstractHandler {
 		IWorkbenchPage page = window.getActivePage();
 		IViewPart view = (IViewPart) page.findView(StatisticsView.ID);
 		ISelection selection = view.getSite().getSelectionProvider().getSelection();
-
+		if(selection==null) return null;
+		
 		// build selection string
 		StringBuilder builder = new StringBuilder();
-		if (selection != null & selection instanceof IStructuredSelection) {
+		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection strucSelection = (IStructuredSelection) selection;
 			for (Iterator<Object> iterator = strucSelection.iterator(); iterator.hasNext();) {
 				Comparable<?>[] row = (Comparable<?>[]) iterator.next();

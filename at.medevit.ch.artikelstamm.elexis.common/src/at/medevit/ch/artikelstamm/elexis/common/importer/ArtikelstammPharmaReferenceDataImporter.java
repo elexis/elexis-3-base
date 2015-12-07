@@ -18,11 +18,13 @@ import org.eclipse.core.runtime.IStatus;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.interfaces.AbstractReferenceDataImporter;
+import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.jdt.Nullable;
 
 public class ArtikelstammPharmaReferenceDataImporter extends AbstractReferenceDataImporter {
 	
 	@Override
-	public Class<?> getReferenceDataTypeResponsibleFor(){
+	public @NonNull Class<?> getReferenceDataTypeResponsibleFor(){
 		return ArtikelstammItem.class;
 	}
 
@@ -32,7 +34,7 @@ public class ArtikelstammPharmaReferenceDataImporter extends AbstractReferenceDa
 	}
 
 	@Override
-	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer version){
+	public IStatus performImport(@Nullable IProgressMonitor monitor, @NonNull InputStream input, @Nullable Integer version){
 		return ArtikelstammImporter.performImport(monitor, input, version);	
 	}
 }

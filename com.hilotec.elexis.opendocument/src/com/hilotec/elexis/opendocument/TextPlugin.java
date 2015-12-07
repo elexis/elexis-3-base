@@ -410,7 +410,8 @@ public class TextPlugin implements ITextPlugin {
 		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, true))
 			args = scriptFile + "\n" + args;
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
-		logger.info("openEditor: " + actPatient.getPersonalia() + " as " + file.getAbsolutePath());
+		String personalia = (actPatient!=null) ? actPatient.getPersonalia() : "null";
+		logger.info("openEditor: " + personalia + " as " + file.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(args.split("\n"));
 		filename_label.setText(file.getAbsolutePath());
 		

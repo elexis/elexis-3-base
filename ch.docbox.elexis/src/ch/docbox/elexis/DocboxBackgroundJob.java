@@ -40,6 +40,8 @@ import org.hl7.v3.PN;
 import org.hl7.v3.POCDMT000040IntendedRecipient;
 import org.hl7.v3.POCDMT000040Organization;
 import org.hl7.v3.POCDMT000040Person;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.docbox.cdach.CdaChXPath;
 import ch.docbox.cdach.DocboxCDA;
@@ -63,7 +65,7 @@ import ch.rgw.tools.StringTool;
 
 public class DocboxBackgroundJob extends Job {
 	
-	protected static Log log = Log.get("DocboxBackgroundJob"); //$NON-NLS-1$
+	private static Logger log = LoggerFactory.getLogger(DocboxBackgroundJob.class);
 	
 	public DocboxBackgroundJob(){
 		super(Messages.DocboxBackgroundJob_Title);
@@ -81,13 +83,15 @@ public class DocboxBackgroundJob extends Job {
 			for (AppointmentType appointment : appointments) {
 				DocboxTermin docboxTermin = new DocboxTermin();
 				if (appointment.getState() != null
-					&& ((appointment.getState().contains("salesrepresentative") && UserDocboxPreferences.isAppointmentsPharmaVisits()) //$NON-NLS-1$
-						|| (appointment.getState().contains("emergencyservice") && UserDocboxPreferences
-							.isAppointmentsEmergencyService()) || (appointment.getState().contains(
-						"terminierung") && UserDocboxPreferences.isAppointmentsTerminvereinbarung()))) { //$NON-NLS-1$
+					&& ((appointment.getState().contains("salesrepresentative") //$NON-NLS-1$
+						&& UserDocboxPreferences.isAppointmentsPharmaVisits())
+						|| (appointment.getState().contains("emergencyservice")
+							&& UserDocboxPreferences.isAppointmentsEmergencyService())
+						|| (appointment.getState().contains("terminierung") //$NON-NLS-1$
+							&& UserDocboxPreferences.isAppointmentsTerminvereinbarung()))) {
 					++count;
-					docboxTermin
-						.create(appointment, UserDocboxPreferences.getAppointmentsBereich());
+					docboxTermin.create(appointment,
+						UserDocboxPreferences.getAppointmentsBereich());
 					if (docboxTermine.contains(docboxTermin)) {
 						docboxTermine.remove(docboxTermin);
 					}
@@ -228,14 +232,18 @@ public class DocboxBackgroundJob extends Job {
 						if (newPerson) {
 							p = new Person(family, given, "", "");
 							new DocboxContact(docboxId, p);
+						} else {
+							log.warn("newPerson is false, skipping intialization cMatching: "
+								+ cMatching+"/ docboxId: "+docboxId);
+							continue;
 						}
 						
 						p.set(Person.NAME, family);
 						p.set(Person.FIRSTNAME, given);
 						p.set(Person.TITLE, prefix);
 						
-						if (!PersistentObject.checkNull(p.get(Person.FLD_IS_USER)).equals(
-							StringConstants.ONE)) {
+						if (!PersistentObject.checkNull(p.get(Person.FLD_IS_USER))
+							.equals(StringConstants.ONE)) {
 							p.set(Kontakt.FLD_NAME3, organizationName);
 						}
 						p.set(Kontakt.FLD_STREET, streetAdressLine);
@@ -256,7 +264,7 @@ public class DocboxBackgroundJob extends Job {
 	 * @return true if everything successful, false if a warning or error occurred
 	 */
 	public synchronized int fetchInboxClinicalDocuments(final IProgressMonitor monitor){
-		log.log("fetchInboxClinicalDocuments", Log.DEBUGMSG);//$NON-NLS-1$
+		log.debug("fetchInboxClinicalDocuments");//$NON-NLS-1$
 		boolean result = true;
 		int count = 0;
 		CDACHServices port = UserDocboxPreferences.getPort();
@@ -279,11 +287,9 @@ public class DocboxBackgroundJob extends Job {
 							cal = null;
 						}
 						cdaMessage = new CdaMessage(id, documentInfoType.getTitle(), cal);
-						log.log("creating messseage with id " + id,//$NON-NLS-1$
-							Log.DEBUGMSG);
+						log.debug("creating messseage with id " + id);//$NON-NLS-1$
 					} else {
-						log.log("redo download for document id " + id,//$NON-NLS-1$
-							Log.DEBUGMSG);
+						log.debug("redo download for document id " + id);//$NON-NLS-1$
 					}
 					Holder<ClinicalDocumentType> clincialDocumentTypeHolder =
 						new Holder<ClinicalDocumentType>();
@@ -292,15 +298,13 @@ public class DocboxBackgroundJob extends Job {
 					boolean unzipSuccessful = true;
 					if (attachmentHolder.value != null) {
 						if (!cdaMessage.unzipAttachment(attachmentHolder.value)) {
-							log.log("unzip of attachment failed" + id,//$NON-NLS-1$
-								Log.DEBUGMSG);
+							log.debug("unzip of attachment failed" + id);//$NON-NLS-1$
 							unzipSuccessful = false;
 						}
 					}
 					if (clincialDocumentTypeHolder.value != null && unzipSuccessful) {
-						String receivedCDA =
-							docboxCDA.marshallIntoString(clincialDocumentTypeHolder.value
-								.getClinicalDocument());
+						String receivedCDA = docboxCDA.marshallIntoString(
+							clincialDocumentTypeHolder.value.getClinicalDocument());
 						CdaChXPath cdaChXPath = new CdaChXPath();
 						cdaChXPath.setPatientDocument(receivedCDA);
 						if (cdaMessage.setCda(receivedCDA)) {
@@ -323,16 +327,14 @@ public class DocboxBackgroundJob extends Job {
 								+ (org && (first || last) ? ", " : "")//$NON-NLS-1$ //$NON-NLS-2$
 								+ (org ? organization : "");//$NON-NLS-1$
 							if (!cdaMessage.setDownloaded(sender, patient)) {
-								log.log("failed to set cda message downloaded with id "//$NON-NLS-1$
-									+ id, Log.DEBUGMSG);
+								log.debug("failed to set cda message downloaded with id " + id);//$NON-NLS-1$
 								result = false;
 							} else {
 								ElexisEventDispatcher.update(cdaMessage);
 								++count;
 							}
 						} else {
-							log.log("failed to set cda message downloaded with id "//$NON-NLS-1$
-								+ id, Log.DEBUGMSG);
+							log.debug("failed to set cda message downloaded with id " + id);//$NON-NLS-1$
 							result = false;
 						}
 					}
@@ -369,8 +371,8 @@ public class DocboxBackgroundJob extends Job {
 					TrayItem item = null;
 					if (tray != null) {
 						item = new TrayItem(tray, SWT.NONE);
-						item.setImage(Activator
-							.getImageDescriptor("icons/docbox16.png").createImage());//$NON-NLS-1$
+						item.setImage(
+							Activator.getImageDescriptor("icons/docbox16.png").createImage());//$NON-NLS-1$
 						tip.setText("docbox");//$NON-NLS-1$
 						item.setToolTip(tip);
 					} else {
@@ -399,52 +401,49 @@ public class DocboxBackgroundJob extends Job {
 	protected IStatus run(IProgressMonitor monitor){
 		boolean success = true;
 		String msg = ""; //$NON-NLS-1$
-		log.log("running", Log.DEBUGMSG);
+		log.debug("running");
 		if (CoreHub.actUser != null) {
 			try {
 				if (CoreHub.actUser != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
 					
-					log.log("beginTask", Log.DEBUGMSG);
+					log.debug("beginTask");
 					
 					monitor.beginTask(Messages.DocboxBackgroundJob_Title, 200);
 					monitor.worked(10);
 					
 					if (!monitor.isCanceled()) {
-						log.log("fetchInboxClinicalDocuments", Log.DEBUGMSG);
+						log.debug("fetchInboxClinicalDocuments");
 						int downloadedDocuments = fetchInboxClinicalDocuments(monitor);
 						if (downloadedDocuments > 0) {
-							msg +=
-								String.format(Messages.DocboxBackgroundJob_DocumentsDownloaded,
-									downloadedDocuments);
+							msg += String.format(Messages.DocboxBackgroundJob_DocumentsDownloaded,
+								downloadedDocuments);
 						}
-						log.log(msg, Log.DEBUGMSG);
+						log.debug(msg);
 					}
 					
 					if (UserDocboxPreferences.hasAgendaPlugin()
 						&& UserDocboxPreferences.downloadAppointments() && !monitor.isCanceled()) {
-						log.log("fetchAppointments", Log.DEBUGMSG);
+						log.debug("fetchAppointments");
 						int downloadedAppointments = fetchAppointments(monitor);
 						if (!"".equals(msg)) { //$NON-NLS-1$
 							msg += "\n"; //$NON-NLS-1$
 						}
-						msg +=
-							String.format(Messages.DocboxBackgroundJob_AppointmentsUpdated,
-								downloadedAppointments);
-						log.log(msg, Log.DEBUGMSG);
+						msg += String.format(Messages.DocboxBackgroundJob_AppointmentsUpdated,
+							downloadedAppointments);
+						log.debug(msg);
 					} else {
 						monitor.worked(60);
 					}
 					
 					if (!monitor.isCanceled()) {
-						log.log("updateDoctorDirectory", Log.DEBUGMSG);
+						log.debug("updateDoctorDirectory");
 						int count = updateDoctorDirectory(monitor);
 						if (!"".equals(msg)) { //$NON-NLS-1$
 							msg += "\n"; //$NON-NLS-1$
 						}
-						msg +=
-							String.format(Messages.DocboxBackgroundJob_DoctorDirecotoryUpdated,
-								count);
-						log.log(msg, Log.DEBUGMSG);
+						msg += String.format(Messages.DocboxBackgroundJob_DoctorDirecotoryUpdated,
+							count);
+						log.debug(msg);
 					} else {
 						monitor.worked(60);
 					}
@@ -458,10 +457,10 @@ public class DocboxBackgroundJob extends Job {
 				} else {}
 			} catch (Exception e) {
 				ExHandler.handle(e);
-				log.log(e, "error in task", Log.DEBUGMSG);
+				log.debug("error in task", e);
 			}
 		}
-		log.log("stopped", Log.DEBUGMSG);
+		log.debug("stopped");
 		return (success ? Status.OK_STATUS : Status.CANCEL_STATUS);
 	}
 	

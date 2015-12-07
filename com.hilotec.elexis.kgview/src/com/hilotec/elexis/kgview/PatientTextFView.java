@@ -27,7 +27,7 @@ public abstract class PatientTextFView extends SimpleTextFView implements Elexis
 	@Override
 	protected void fieldChanged(){
 		Patient p = ElexisEventDispatcher.getSelectedPatient();
-		p.set(dbfield, getText());
+		if(p!=null) p.set(dbfield, getText());
 	}
 	
 	private void patientChanged(Patient p){

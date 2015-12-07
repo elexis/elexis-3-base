@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -213,12 +215,20 @@ public class MedikamentImporter extends ImporterPage {
 				kasse = new String(in.substring(22, 23));
 				cmws = new String(in.substring(23, 24));
 				if (vk.matches("0+")) { //$NON-NLS-1$
-					a.set(Artikel.FLD_EK_PREIS, ek);
+					if(a!=null) {
+						a.set(Artikel.FLD_EK_PREIS, ek);
+					} else {
+						log.log("a is null", Log.ERRORS);
+					}
 				} else {
 					String[] fields = {
 						Artikel.FLD_EK_PREIS, Artikel.FLD_VK_PREIS
 					};
-					a.set(fields, ek, vk);
+					if(a!=null) {
+						a.set(fields, ek, vk);
+					} else {
+						log.log("a is null", Log.ERRORS);
+					}
 				}
 				updatedCount++;
 			} else {
@@ -232,7 +242,7 @@ public class MedikamentImporter extends ImporterPage {
 				monitor.done();
 				return Status.CANCEL_STATUS;
 			}
-			monitor.subTask(a.getLabel());
+			monitor.subTask((a!=null) ? a.getLabel() : "a is null");
 			a = null;
 			in = null;
 			if (counter++ > 1000) { // Speicher freigeben

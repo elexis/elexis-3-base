@@ -174,10 +174,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 		Query<Kontakt> qbe = new Query<Kontakt>(Kontakt.class);
 		List<Kontakt> list = qbe.execute();
 		int workPerName = (Math.round(workUnits * .8f) / list.size());
-		Namen n = null;
-		if (zufallsnamen) {
-			n = new Namen();
-		}
+		Namen n = new Namen();
 		monitor.worked(Math.round(workUnits * .2f));
 		for (Kontakt k : list) {
 			String vorname = "";

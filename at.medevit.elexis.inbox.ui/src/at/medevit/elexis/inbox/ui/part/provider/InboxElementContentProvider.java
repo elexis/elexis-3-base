@@ -85,7 +85,7 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 				patientInboxElement.removeElement(inboxElement);
 			} else {
 				Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();
-				if (activeMandant.equals(inboxElement.getMandant())) {
+				if (inboxElement.getMandant().equals(activeMandant)) {
 					patientInboxElement.addElement(inboxElement);
 				} else {
 					patientInboxElement.removeElement(inboxElement);
@@ -103,7 +103,7 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 		} else {
 			Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();
 			Mandant inboxMandant = patientInbox.getElements().get(0).getMandant();
-			if (!activeMandant.equals(inboxMandant)) {
+			if (!inboxMandant.equals(activeMandant)) {
 				items.remove(patientInbox);
 			}
 		}

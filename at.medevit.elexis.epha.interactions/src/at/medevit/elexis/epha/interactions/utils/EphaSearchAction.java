@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.text.IRichTextDisplay;
 import ch.elexis.core.ui.util.IKonsExtension;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 
 public class EphaSearchAction extends Action implements IKonsExtension, IHandler {
@@ -55,7 +56,10 @@ public class EphaSearchAction extends Action implements IKonsExtension, IHandler
 	public void run(){
 		StringBuilder sb = new StringBuilder();
 		// get actual fix medication of the patient
-		Prescription[] medication = ElexisEventDispatcher.getSelectedPatient().getFixmedikation();
+		Patient sp = ElexisEventDispatcher.getSelectedPatient();
+		if(sp==null) return;
+		
+		Prescription[] medication = sp.getFixmedikation();
 		
 		for (Prescription prescription : medication) {
 			String num = null;

@@ -339,12 +339,11 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 		DataSet cloneSet = null;
 		try {
 			cloneSet = (DataSet) super.clone();
+			cloneSet.content = new ArrayList<Comparable<?>[]>(cloneSet.content);
+			cloneSet.headings = new ArrayList<String>(cloneSet.headings);
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-
-		cloneSet.content = new ArrayList<Comparable<?>[]>(cloneSet.content);
-		cloneSet.headings = new ArrayList<String>(cloneSet.headings);
 
 		return cloneSet;
 	}

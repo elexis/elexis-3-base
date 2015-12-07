@@ -50,12 +50,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -78,6 +81,9 @@ public class ICalTransfer {
 	Combo cbTypes, cbStates;
 	Button bAll;
 	Label lFilename;
+	
+	private static Logger log = LoggerFactory.getLogger(ICalTransfer.class);
+	
 	
 	public ICalTransfer(){
 		bereiche =
@@ -253,10 +259,14 @@ public class ICalTransfer {
 									});
 								
 							}
+							
+							if(termin==null) {
+								throw new IllegalStateException("termin is null");
+							}
 							Summary summary = event.getSummary();
 							if (summary != null) {
 								termin.setText(summary.getValue());
-							}
+							} 
 							Description desc = event.getDescription();
 							if (desc != null) {
 								termin.setGrund(desc.getValue());

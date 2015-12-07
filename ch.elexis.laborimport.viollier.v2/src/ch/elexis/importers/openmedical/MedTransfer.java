@@ -98,10 +98,12 @@ public class MedTransfer {
 			Object[] finalParams = new Object[] {
 				concatArrays(systemParams, customParams)
 			};
-			Object omResult = openmedicalDownloadMethod.invoke(openmedicalObject, finalParams);
-			if (omResult instanceof Integer) {
-				result = ((Integer) omResult).intValue();
-			}
+			if(openmedicalDownloadMethod!=null) {
+				Object omResult = openmedicalDownloadMethod.invoke(openmedicalObject, finalParams);
+				if (omResult instanceof Integer) {
+					result = ((Integer) omResult).intValue();
+				}
+			} 
 		} catch (Throwable e) {
 			// method call failed; do nothing
 		}

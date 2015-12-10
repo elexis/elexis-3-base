@@ -112,6 +112,7 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 			doa.get(Calendar.DAY_OF_MONTH));
 			
 		if(vacc.get(Vaccination.FLD_ARTIKEL_REF).length()==0) {
+			// nachtragsimpfung mit formal unbekanntem artikel
 			Label lblImpfungGegen = new Label(container, SWT.NONE);
 			lblImpfungGegen.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
 			lblImpfungGegen.setAlignment(SWT.RIGHT);
@@ -136,7 +137,9 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 		instance.set(Calendar.YEAR, dateTimeDOA.getYear());
 		vacc.setDateOfAdministration(instance.getTime());
 		
-		vacc.setVaccAgainst(vect.getCheckedElementsAsCommaSeparatedString());
+		if(vect!=null) {
+			vacc.setVaccAgainst(vect.getCheckedElementsAsCommaSeparatedString());
+		}
 		
 		super.okPressed();
 	}

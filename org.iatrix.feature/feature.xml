@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.iatrix.feature"
-      label=" Iatrix KG mit persönlicher Anamnese und Problemliste"
+      label="Iatrix KG mit persönlicher Anamnese, Problemliste und  Medi-Übersicht in Tabelle"
       version="3.0.0.qualifier"
       provider-name="ch.elexis">
 
    <description>
-   Iatrix Krankengeschichte mit persönlicher Anamnese und Problemliste. Mehr Info unter http://wiki.elexis.info/org.iatrix.feature.feature.group
+      Die KG Iatrix ist eine Krankengeschicht mit persönlicher Anamnese, Problemliste und eine tabellarischen Übersicht der verschriebenen Medikamente.
+Mehr Info unter http://wiki.elexis.info/org.iatrix.feature.feature.group
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

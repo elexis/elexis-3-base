@@ -87,12 +87,12 @@ public class KonsHeader implements IJournalArea {
 			hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
 				@Override
 				public void linkActivated(HyperlinkEvent e){
-					KontaktSelektor ksl = new KontaktSelektor(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						Mandant.class, "Mandant auswählen",
-						"Auf wen soll diese Kons verrechnet werden?", new String[] {
-							Mandant.FLD_SHORT_LABEL, Mandant.FLD_NAME1, Mandant.FLD_NAME2
-					});
+					KontaktSelektor ksl =
+						new KontaktSelektor(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+							.getShell(), Mandant.class, "Mandant auswählen",
+							"Auf wen soll diese Kons verrechnet werden?", new String[] {
+								Mandant.FLD_SHORT_LABEL, Mandant.FLD_NAME1, Mandant.FLD_NAME2
+							});
 					if (ksl.open() == Dialog.OK) {
 						actKons.setMandant((Mandant) ksl.getSelection());
 						setKons(actKons, false);
@@ -125,14 +125,14 @@ public class KonsHeader implements IJournalArea {
 				Fall nFall = faelle[i];
 				Fall actFall = actKons.getFall();
 				if (!nFall.getId().equals(actFall.getId())) {
-					MessageDialog msd = new MessageDialog(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						"Fallzuordnung ändern", Images.IMG_LOGO.getImage(),
-						"Möchten Sie diese Behandlung vom Fall:\n'" + actFall.getLabel()
-							+ "' zum Fall:\n'" + nFall.getLabel() + "' transferieren?",
-						MessageDialog.QUESTION, new String[] {
-							"Ja", "Nein"
-					}, 0);
+					MessageDialog msd =
+						new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+							.getShell(), "Fallzuordnung ändern", Images.IMG_LOGO.getImage(),
+							"Möchten Sie diese Behandlung vom Fall:\n'" + actFall.getLabel()
+								+ "' zum Fall:\n'" + nFall.getLabel() + "' transferieren?",
+							MessageDialog.QUESTION, new String[] {
+								"Ja", "Nein"
+							}, 0);
 					if (msd.open() == 0) {
 						// TODO check compatibility of assigned problems
 						actKons.setFall(nFall);
@@ -238,13 +238,18 @@ public class KonsHeader implements IJournalArea {
 			cbFall.setBackground(cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			Color color = null;
 			if (label.contains("UVG")) {
-				color = UiDesk.getColor(UiDesk.COL_SKYBLUE);
+				color = UiDesk.getColor(UiDesk.COL_RED);
 			} else if (label.contains("KVG")) {
-				color = cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+				color = cbFall.getDisplay().getSystemColor(SWT.COLOR_GREEN);
 			} else {
-				color = cbFall.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
+				color = cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 			}
+			String explanation =
+				"Die Farben erklären sich wie folgt: Bei Unfall "
+					+ "rot wie Blut, bei Krankheit grün wie Galle, sonst weiss";
+			cbLabel.setToolTipText(explanation);
 			cbLabel.setBackground(color);
+			cbFall.setToolTipText(explanation);
 			cbFall.getParent().setBackground(color);
 		}
 	}

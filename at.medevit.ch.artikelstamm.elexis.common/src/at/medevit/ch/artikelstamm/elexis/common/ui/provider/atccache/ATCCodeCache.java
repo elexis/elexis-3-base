@@ -112,6 +112,9 @@ public class ATCCodeCache {
 	}
 	
 	public static void rebuildCache(IProgressMonitor monitor){
+		if (atcCodeService == null) {
+			return;
+		}
 		List<ATCCode> allATCCodes = atcCodeService.getAllATCCodes();
 		int numberOfATCCodes = allATCCodes.size();
 		
@@ -141,13 +144,13 @@ public class ATCCodeCache {
 		for (ATCCode atcCode : allATCCodes) {
 			int foundElements = 0;
 		
-			ATCCode next = atcCodeService.getNextInHierarchy(atcCode);			
+			ATCCode next = atcCodeService.getNextInHierarchy(atcCode);
 			SortedMap<String, Integer> subMap;
 			if(next!=null) {
 				subMap = tm.subMap(atcCode.atcCode, next.atcCode);
 			} else {
 				subMap = tm.tailMap(atcCode.atcCode);
-			}	
+			}
 
 			for (Iterator<String> a = subMap.keySet().iterator(); a.hasNext();) {
 				String val = a.next();
@@ -162,7 +165,7 @@ public class ATCCodeCache {
 		// clear old caches
 		NamedBlob2.cleanup(NAMED_BLOB_PREFIX, new TimeTool());
 		
-		// serialize the cache		
+		// serialize the cache
 		try {
 			NamedBlob2 cacheStorage = NamedBlob2.create(determineBlobId(), false);
 			ByteArrayOutputStream ba = new ByteArrayOutputStream();

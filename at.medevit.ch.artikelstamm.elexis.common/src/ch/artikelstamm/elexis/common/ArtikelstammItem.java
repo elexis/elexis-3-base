@@ -20,9 +20,9 @@ import java.util.Date;
 import java.util.List;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
+import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IOptifier;
@@ -124,6 +124,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			+ ISTBESTAND + " VARCHAR(4),"
 			+ VERKAUFSEINHEIT + " VARCHAR(4),"  // Stück pro Abgabe
 			+ ANBRUCH + " VARCHAR(4),"			// Aktuell am Lager
+			+ FLD_PRODNO+" VARCHAR(10),"
 			+ PersistentObject.FLD_EXTINFO + " BLOB"
 			+ "); "
 			+ "CREATE INDEX idxAiPHAR ON " + TABLENAME + " ("+FLD_PHAR+"); "
@@ -293,8 +294,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public Money getKosten(final TimeTool dat){
 		double vkt = checkZeroDouble(getTP(dat, null) + "");
-		double vpe = checkZeroDouble((String) get(FLD_PKG_SIZE));
-		double vke = checkZeroDouble((String) get(VERKAUFSEINHEIT));
+		double vpe = checkZeroDouble(get(FLD_PKG_SIZE));
+		double vke = checkZeroDouble(get(VERKAUFSEINHEIT));
 		if (vpe != vke) {
 			return new Money((int) Math.round(vke * (vkt / vpe)));
 		} else {
@@ -385,6 +386,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return MargePreference.calculateVKP(getEKPreis());
 	}
 	
+	@Override
 	public boolean isCalculatedPrice(){
 		String value = get(FLD_PPUB);
 		if (value != null && !value.isEmpty()) {
@@ -397,6 +399,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return false;
 	}
 	
+	@Override
 	public boolean isUserDefinedPrice(){
 		String value = get(FLD_PPUB);
 		if (value != null && !value.isEmpty()) {
@@ -452,8 +455,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public int getPreis(TimeTool dat, Fall fall){
 		double vkPreis = checkZeroDouble(getVKPreis().getCentsAsString());
-		double pkgSize = checkZeroDouble((String) get(FLD_PKG_SIZE));
-		double vkUnits = checkZeroDouble((String) get(VERKAUFSEINHEIT));
+		double pkgSize = checkZeroDouble(get(FLD_PKG_SIZE));
+		double vkUnits = checkZeroDouble(get(VERKAUFSEINHEIT));
 		if ((pkgSize > ZERO) && (vkUnits > ZERO) && (pkgSize != vkUnits)) {
 			return (int) Math.round(vkUnits * (vkPreis / pkgSize));
 		} else {
@@ -521,6 +524,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return getATCCode();
 	}
 	
+	@Override
 	public int getVerkaufseinheit(){
 		return checkZero(get(VERKAUFSEINHEIT));
 	}
@@ -770,6 +774,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		set(FLD_PKG_SIZE, vpe + "");
 	}
 	
+	@Override
 	public void setVerkaufseinheit(int vse){
 		set(VERKAUFSEINHEIT, vse + "");
 	}

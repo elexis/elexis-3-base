@@ -1,15 +1,15 @@
-#!/bin/bash -v
+#!/bin/bash
 # abort bash on error
 set -e
 
-if [ -z "$ROOT" ]
+if [ -z "$ROOT_ELEXIS_BASE" ]
 then
-  export ROOT=/tmp/repos
+  export ROOT_ELEXIS_BASE=/srv/download.elexis.info/elexis.3.base
 fi
 
-if [ ! -d "$ROOT" ]
+if [ ! -d "$ROOT_ELEXIS_BASE" ]
 then
-  echo "ROOT (actually defined as $ROOT) must exist"
+  echo "ROOT_ELEXIS_BASE (actually defined as $ROOT_ELEXIS_BASE) must exist"
   exit 1
 fi
 
@@ -33,31 +33,31 @@ then
   echo "File ${act_version_file} must exist!"
   exit 1
 fi
-export backup_root=${ROOT}/backup/$VARIANT
+export backup_root=${ROOT_ELEXIS_BASE}/backup/$VARIANT
 
-echo $0: ROOT is $ROOT and VARIANT is $VARIANT.
+echo $0: ROOT_ELEXIS_BASE is $ROOT_ELEXIS_BASE and VARIANT is $VARIANT.
 
 # Check whether we have to backup the old version of the repository
-export old_version_file=${ROOT}/${VARIANT}/repo.version
+export old_version_file=${ROOT_ELEXIS_BASE}/${VARIANT}/repo.version
 if [ -f ${old_version_file}  ]
 then
   source ${old_version_file}
   if [ ! -d $backup_root/$version-$qualifier ]
   then
-    echo "Backup of version found under $ROOT/$VARIANT necessary"
+    echo "Backup of version found under $ROOT_ELEXIS_BASE/$VARIANT necessary"
     mkdir -p $backup_root
-    mv -v $ROOT/$VARIANT $backup_root/$version-$qualifier
+    mv -v $ROOT_ELEXIS_BASE/$VARIANT $backup_root/$version-$qualifier
   else
     echo Skipping backup as  $backup_root/$version-$qualifier already present
   fi
 fi
 
-rm -rf ${ROOT}/$VARIANT
-mv  ${tmpRepo} ${ROOT}/$VARIANT
-cp -rpvu *p2site/repo.properties ${ROOT}/$VARIANT/repo.version
-export title="Medelexis-3 P2-repository ($VARIANT)"
-echo "Creating repository $ROOT/$VARIANT/index.html"
-tee  ${ROOT}/$VARIANT/index.html <<EOF
+rm -rf ${ROOT_ELEXIS_BASE}/$VARIANT
+cp -rpu *p2site/target/repository/ ${ROOT_ELEXIS_BASE}/$VARIANT
+cp -rpvu *p2site/repo.properties ${ROOT_ELEXIS_BASE}/$VARIANT/repo.version
+export title="Elexis-Application P2-repository ($VARIANT)"
+echo "Creating repository $ROOT_ELEXIS_BASE/$VARIANT/index.html"
+tee  ${ROOT_ELEXIS_BASE}/$VARIANT/index.html <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <html>
   <head><title>$title</title></head>

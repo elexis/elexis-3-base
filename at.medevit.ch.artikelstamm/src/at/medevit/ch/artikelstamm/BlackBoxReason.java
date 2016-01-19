@@ -8,7 +8,7 @@
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
-package ch.artikelstamm.elexis.common;
+package at.medevit.ch.artikelstamm;
 
 public enum BlackBoxReason {
 	

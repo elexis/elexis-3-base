@@ -258,7 +258,8 @@ public class PatientenHitlist extends BaseStats {
 						|| "MiGeL".equals(vv.getCodeSystemName())) {
 						costMedical += cost;
 					} else if ("Medikamente".equals(vv.getCodeSystemName())
-						|| "400".equals(vv.getCodeSystemCode())) {
+						|| "400".equals(vv.getCodeSystemCode())
+						|| "402".equals(vv.getCodeSystemCode())) {
 						costMedikamente += cost;
 					} else if (vv instanceof Labor2009Tarif) {
 						costLabor += cost;

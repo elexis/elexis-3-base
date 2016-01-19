@@ -237,7 +237,11 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	
 	@Override
 	public String getCodeSystemCode(){
-		return "400";
+		String gtin = getEAN();
+		if (gtin != null && gtin.length() > 3) {
+			return "402";
+		}
+		return super.getCodeSystemCode();
 	}
 	
 	@Override

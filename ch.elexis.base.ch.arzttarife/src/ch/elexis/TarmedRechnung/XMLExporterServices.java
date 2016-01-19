@@ -94,7 +94,7 @@ public class XMLExporterServices {
 	private Money mMedikament;
 	
 	boolean initialized = false;
-
+	
 	public XMLExporterServices(Element services){
 		this.servicesElement = services;
 		
@@ -152,7 +152,7 @@ public class XMLExporterServices {
 		}
 		return mKant;
 	}
-
+	
 	public Money getUebrigeMoney(){
 		if (!initialized) {
 			initFromElement();
@@ -235,11 +235,11 @@ public class XMLExporterServices {
 		}
 		initialized = true;
 	}
-
+	
 	public static XMLExporterServices buildServices(Rechnung rechnung, VatRateSum vatSummer){
 		XMLExporterServices ret =
 			new XMLExporterServices(new Element(ELEMENT_SERVICES, XMLExporter.nsinvoice));
-		
+			
 		List<Konsultation> konsultationen = rechnung.getKonsultationen();
 		
 		// To make the validator happy, the attribute date_begin must duplicate
@@ -292,16 +292,13 @@ public class XMLExporterServices {
 						tlAL = tl.getAL();
 					}
 					// build monetary values of this TarmedLeistung
-					Money mAL =
-						new Money((int) Math.round(tlAL * mult * zahl * primaryScale
-							* secondaryScale));
-					Money mTL =
-						new Money((int) Math.round(tlTl * mult * zahl * primaryScale
-							* secondaryScale));
-					Money mAmountLocal =
-						new Money((int) Math.round((tlAL + tlTl) * mult * zahl * primaryScale
-							* secondaryScale));
-					
+					Money mAL = new Money(
+						(int) Math.round(tlAL * mult * zahl * primaryScale * secondaryScale));
+					Money mTL = new Money(
+						(int) Math.round(tlTl * mult * zahl * primaryScale * secondaryScale));
+					Money mAmountLocal = new Money((int) Math
+						.round((tlAL + tlTl) * mult * zahl * primaryScale * secondaryScale));
+						
 					// sum tax points and monetary value
 					ret.tpTarmedTL += tlTl * zahl;
 					ret.tpTarmedAL += tlAL * zahl;
@@ -346,7 +343,8 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_EXTERNAL_FACTOR_TT,
 						XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22550
 					el.setAttribute(XMLExporter.ATTR_AMOUNT_TT, XMLTool.moneyToXmlDouble(mTL)); // 22560
-					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
+					el.setAttribute(XMLExporter.ATTR_AMOUNT,
+						XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 22590 //$NON-NLS-1$
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 22620
 					
@@ -379,7 +377,8 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
+					el.setAttribute(XMLExporter.ATTR_AMOUNT,
+						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
@@ -396,14 +395,16 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
+					el.setAttribute(XMLExporter.ATTR_AMOUNT,
+						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590 //$NON-NLS-1$
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					ret.mAnalysen.addMoney(mAmountLocal);
-				} else if (("Medikamente".equals(v.getCodeSystemName())) //$NON-NLS-1$
-					|| ("Medicals".equals(v.getCodeSystemName())) //$NON-NLS-1$
-					|| (v.getCodeSystemCode() == "400")) { //$NON-NLS-1$
+				} else if ("Medikamente".equals(v.getCodeSystemName()) //$NON-NLS-1$
+					|| "Medicals".equals(v.getCodeSystemName()) //$NON-NLS-1$
+					|| "400".equals(v.getCodeSystemCode()) //$NON-NLS-1$
+					|| "402".equals(v.getCodeSystemCode())) {
 					el = new Element(ELEMENT_RECORD_DRUG, XMLExporter.nsinvoice);
 					Artikel art = (Artikel) v;
 					double mult = art.getFactor(tt, rechnung.getFall());
@@ -423,11 +424,20 @@ public class XMLExporterServices {
 					// end corrections
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(einzelpreis));
 					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "400"); // Pharmacode-basiert //$NON-NLS-1$
-					String pk = ((Artikel) v).getPharmaCode();
-					el.setAttribute(XMLExporter.ATTR_CODE,
-						StringTool.pad(StringTool.LEFT, '0', pk, 7));
-					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal));
+					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
+					if ("402".equals(v.getCodeSystemCode())) { // GTIN-basiert //$NON-NLS-1$
+						String gtin = ((Artikel) v).getEAN();
+						el.setAttribute(XMLExporter.ATTR_CODE, gtin);
+					} else if ("400".equals(v.getCodeSystemCode())) { // Pharmacode-basiert //$NON-NLS-1$
+						String pk = ((Artikel) v).getPharmaCode();
+						el.setAttribute(XMLExporter.ATTR_CODE,
+							StringTool.pad(StringTool.LEFT, '0', pk, 7));
+					} else {
+						logger.warn("Unknown medical code " + v.getCodeSystemCode()
+							+ " encountered for " + v.getCodeSystemName() + "@" + v);
+					}
+					el.setAttribute(XMLExporter.ATTR_AMOUNT,
+						XMLTool.moneyToXmlDouble(mAmountLocal));
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
 					String ckzl = art.getExt("Kassentyp"); // cf. MedikamentImporter#KASSENTYP
 					if (ckzl.equals("1")) {
@@ -455,7 +465,8 @@ public class XMLExporterServices {
 						XMLExporterUtil.getResponsibleEAN(konsultation));
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal));
+					el.setAttribute(XMLExporter.ATTR_AMOUNT,
+						XMLTool.moneyToXmlDouble(mAmountLocal));
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
@@ -471,7 +482,8 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
+					el.setAttribute(XMLExporter.ATTR_AMOUNT,
+						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
@@ -495,7 +507,8 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal));
+					el.setAttribute(XMLExporter.ATTR_AMOUNT,
+						XMLTool.moneyToXmlDouble(mAmountLocal));
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
 					el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$
@@ -505,16 +518,18 @@ public class XMLExporterServices {
 						TarmedRequirements.getEAN(konsultation.getMandant()));
 					el.setAttribute(ATTR_EAN_RESPONSIBLE,
 						XMLExporterUtil.getResponsibleEAN(konsultation));
-					
+						
 					ret.mUebrige.addMoney(mAmountLocal);
 				}
 				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
 				el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
 				el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370
 				el.setAttribute("name", verrechnet.getText()); // 22340
-				// el.setAttribute("code",v.getCode()); // 22330
-				XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE, v.getCode(),
-					StringConstants.ZERO); // 22330
+				// 22330 set code if still empty
+				if (el.getAttribute(XMLExporter.ATTR_CODE) == null) {
+					XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE, v.getCode(),
+						StringConstants.ZERO); // 22330
+				}
 				ret.servicesElement.addContent(el);
 			}
 		}

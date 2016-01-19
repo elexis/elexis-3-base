@@ -447,12 +447,15 @@ public class XML44Printer {
 		tTime.set(rec.getDateBegin().toGregorianCalendar());
 		sb.append(tTime.toString(TimeTool.DATE_GER)).append("\t"); //$NON-NLS-1$
 		sb.append(getTarifType(rec)).append("\t");//$NON-NLS-1$ //$NON-NLS-2$
-		sb.append(rec.getCode()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-		String refCode = rec.getRefCode();
-		if (refCode == null) {
-			refCode = SPACE;
+		String code = rec.getCode();
+		sb.append(code).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (code.length() < 10) {
+			String refCode = rec.getRefCode();
+			if (refCode == null) {
+				refCode = SPACE;
+			}
+			sb.append(refCode).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		sb.append(refCode).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.append(rec.getSession()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.append(" \t");
 		sb.append(rec.getQuantity()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -492,9 +492,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public String getCodeSystemCode(){
-		String pharmaCode = getPharmaCode();
-		if (pharmaCode != null && pharmaCode.length() > 3) {
-			return "400";
+		String gtin = getGTIN();
+		if (gtin != null && gtin.length() > 3) {
+			return "402";
 		}
 		return super.getCodeSystemCode();
 	}

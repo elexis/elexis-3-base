@@ -11,8 +11,10 @@
 package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -25,6 +27,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
@@ -36,9 +39,11 @@ import at.medevit.ch.artikelstamm.elexis.common.ui.provider.ATCArtikelstammDecor
 import at.medevit.ch.artikelstamm.elexis.common.ui.provider.LagerhaltungArtikelstammLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 //import ch.elexis.core.ui.actions.AddVerrechenbarContributionItem;
 import ch.elexis.core.ui.actions.FlatDataLoader;
+import ch.elexis.core.ui.actions.ScannerEvents;
 import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
@@ -47,7 +52,10 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldListener;
+import ch.elexis.core.ui.views.KonsDetailView;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 
@@ -56,6 +64,8 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 	private SelectorPanelProvider slp;
 	private int eventType = SWT.KeyDown;
 	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
+	
+	private static final String DISP_NAME = "Artikel oder Wirkstoff";
 	
 	private ISelectionChangedListener selChange = new ISelectionChangedListener() {
 		@Override
@@ -71,11 +81,10 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		final CommonViewer cov = cv;
 		cov.setSelectionChangedListener(selChange);
 		
-		FieldDescriptor<?>[] fields =
-			{
-				new FieldDescriptor<ArtikelstammItem>("Artikel oder Wirkstoff",
-					ArtikelstammItem.FLD_DSCR, Typ.STRING, null),
-			};
+		FieldDescriptor<?>[] fields = {
+			new FieldDescriptor<ArtikelstammItem>(DISP_NAME, ArtikelstammItem.FLD_DSCR, Typ.STRING,
+				null),
+		};
 		
 		// add keyListener to search field
 		Listener keyListener = new Listener() {
@@ -92,6 +101,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 			fd.setAssignedListener(eventType, keyListener);
 		}
 		slp = new SelectorPanelProvider(fields, true);
+		slp.addChangeListener(new AControlFieldListener(slp));
 		
 		Query<ArtikelstammItem> qbe = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		ArtikelstammFlatDataLoader fdl = new ArtikelstammFlatDataLoader(cv, qbe, slp);
@@ -201,5 +211,50 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 	 */
 	public void populateSelectorPanel(SelectorPanelProvider slp, FlatDataLoader fdl,
 		List<IAction> actionList){}
+		
+	private class AControlFieldListener implements ControlFieldListener {
+		private SelectorPanelProvider slp;
+
+		public AControlFieldListener(SelectorPanelProvider slp){
+			this.slp = slp;
+		}
+
+		@Override
+		public void changed(HashMap<String, String> values){
+			String val = values.get(DISP_NAME);
+			if (val != null && val.length() == 13 && StringUtils.isNumeric(val)) {	
+				List<ArtikelstammItem> result = new Query<ArtikelstammItem>(ArtikelstammItem.class,
+					ArtikelstammItem.FLD_GTIN, val).execute();
+				if (result!=null && result.size()==1) {
+					KonsDetailView detailView = getKonsDetailView();
+					Konsultation kons =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					if (detailView != null && kons != null) {
+						detailView.addToVerechnung(result.get(0));
+						slp.clearValues();
+					} else {
+						ScannerEvents.beep();
+					}
+				}
+			}
+		}
+		
+		private KonsDetailView getKonsDetailView(){
+			IViewReference[] viewReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage().getViewReferences();
+			for (IViewReference viewRef : viewReferences) {
+				if (KonsDetailView.ID.equals(viewRef.getId())) {
+					return (KonsDetailView) viewRef.getPart(false);
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		public void reorder(String field){}
+		
+		@Override
+		public void selected(){}
+	}
 	
 }

@@ -5,7 +5,7 @@ import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.admin.IACLContributor;
 import ch.elexis.base.ch.ebanking.esr.Messages;
-import ch.elexis.data.Role;
+import ch.elexis.core.model.RoleConstants;
 
 public class EBankingACLContributor implements IACLContributor {
 	
@@ -19,7 +19,7 @@ public class EBankingACLContributor implements IACLContributor {
 	
 	@Override
 	public void initializeDefaults(AbstractAccessControl ac){
-		ac.grant(Role.SYSTEMROLE_LITERAL_USER, DISPLAY_ESR);
+		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_USER, DISPLAY_ESR);
 	}
 	
 }

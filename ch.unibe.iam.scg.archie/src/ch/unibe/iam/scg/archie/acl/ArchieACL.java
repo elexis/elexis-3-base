@@ -16,7 +16,7 @@ import ch.elexis.admin.ACE;
 import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.IACLContributor;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.data.Role;
+import ch.elexis.core.model.RoleConstants;
 import ch.unibe.iam.scg.archie.ArchieActivator;
 import ch.unibe.iam.scg.archie.i18n.Messages;
 
@@ -65,7 +65,7 @@ public class ArchieACL implements IACLContributor {
 	 */
 	@Override
 	public void initializeDefaults(AbstractAccessControl ac) {
-		ac.grant(Role.SYSTEMROLE_LITERAL_DOCTOR, USE_ARCHIE);
+		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_DOCTOR, USE_ARCHIE);
 	}
 
 }

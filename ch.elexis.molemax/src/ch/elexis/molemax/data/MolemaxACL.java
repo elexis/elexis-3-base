@@ -14,7 +14,7 @@ package ch.elexis.molemax.data;
 import ch.elexis.admin.ACE;
 import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.IACLContributor;
-import ch.elexis.data.Role;
+import ch.elexis.core.model.RoleConstants;
 
 public class MolemaxACL implements IACLContributor {
 	public static final ACE ACLBASE = new ACE(ACE.ACE_ROOT,
@@ -30,7 +30,7 @@ public class MolemaxACL implements IACLContributor {
 
 	@Override
 	public void initializeDefaults(AbstractAccessControl ac){
-		ac.grant(Role.SYSTEMROLE_LITERAL_DOCTOR, ACLBASE);
+		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_DOCTOR, ACLBASE);
 	}
 
 }

@@ -14,25 +14,25 @@ import ch.elexis.admin.ACE;
 import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.admin.IACLContributor;
-import ch.elexis.data.Role;
+import ch.elexis.core.model.RoleConstants;
 
 public class ACLContributor implements IACLContributor {
-	public static final ACE ACE_BEFUNDE = new ACE(ACE.ACE_ROOT,
-		"Messwert", Messages.getString("ACLContributor.messwertACLName")); //$NON-NLS-1$ //$NON-NLS-2$
-	public static final ACE DELETE_PARAM = new ACE(AccessControlDefaults.DELETE,
-		"Messwertrubrik", Messages.getString("ACLContributor.messwertRubrikACLName")); //$NON-NLS-1$ //$NON-NLS-2$
-	public static final ACE ADD_PARAM = new ACE(ACE_BEFUNDE,
-		"Befund zufügen", Messages.getString("ACLContributor.addMesswertACLName")); //$NON-NLS-1$ //$NON-NLS-2$
-	
+	public static final ACE ACE_BEFUNDE =
+		new ACE(ACE.ACE_ROOT, "Messwert", Messages.getString("ACLContributor.messwertACLName")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE DELETE_PARAM = new ACE(AccessControlDefaults.DELETE, "Messwertrubrik", //$NON-NLS-1$
+		Messages.getString("ACLContributor.messwertRubrikACLName")); //$NON-NLS-1$
+	public static final ACE ADD_PARAM = new ACE(ACE_BEFUNDE, "Befund zufügen", //$NON-NLS-1$
+		Messages.getString("ACLContributor.addMesswertACLName")); //$NON-NLS-1$
+		
 	public ACE[] getACL(){
 		return new ACE[] {
 			DELETE_PARAM, ADD_PARAM
 		};
 	}
-
+	
 	@Override
 	public void initializeDefaults(AbstractAccessControl ac){
-		ac.grant(Role.SYSTEMROLE_LITERAL_USER, ACE_BEFUNDE);
-		ac.grant(Role.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, DELETE_PARAM);
+		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_USER, ACE_BEFUNDE);
+		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, DELETE_PARAM);
 	}
 }

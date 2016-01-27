@@ -15,6 +15,7 @@ import ch.elexis.actions.Activator;
 import ch.elexis.admin.ACE;
 import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.IACLContributor;
+import ch.elexis.core.model.RoleConstants;
 import ch.elexis.data.Role;
 
 /**
@@ -63,8 +64,8 @@ public class ACLContributor implements IACLContributor {
 
 	@Override
 	public void initializeDefaults(AbstractAccessControl ac){
-		ac.grant(Role.SYSTEMROLE_LITERAL_USER, USE_AGENDA);
-		ac.grant(Role.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, ADMIN_AGENDA);
+		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_USER, USE_AGENDA);
+		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, ADMIN_AGENDA);
 	}
 
 }

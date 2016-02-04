@@ -5,6 +5,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.jdom.Element;
+import org.jdom.Verifier;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.core.constants.StringConstants;
@@ -144,7 +145,7 @@ public class XMLExporterUtil {
 		Element ret = null;
 		
 		// mail adresse
-		String value = StringTool.limitLength(k.get(Kontakt.FLD_E_MAIL), 70);
+		String value = getValidXMLString(StringTool.limitLength(k.get(Kontakt.FLD_E_MAIL), 70));
 		if (!value.equals(StringConstants.EMPTY)) {
 			if (!value.matches(".+@.+")) { //$NON-NLS-1$
 				value = "mail@invalid.invalid"; //$NON-NLS-1$
@@ -156,7 +157,7 @@ public class XMLExporterUtil {
 		}
 		
 		// webseite
-		value = StringTool.limitLength(k.get(Kontakt.FLD_WEBSITE), 100);
+		value = getValidXMLString(StringTool.limitLength(k.get(Kontakt.FLD_WEBSITE), 100));
 		if (!value.equals(StringConstants.EMPTY)) {
 			if (ret == null) {
 				ret = new Element(ELEMENT_ONLINE, XMLExporter.nsinvoice);
@@ -433,5 +434,16 @@ public class XMLExporterUtil {
 				el.setAttribute(attr, v);
 			}
 		}
+	}
+	
+	public static String getValidXMLString(String source){
+		StringBuilder ret = new StringBuilder();
+		for (int i = 0, len = source.length(); i < len; i++) {
+			// skip non valid XML characters
+			if (Verifier.isXMLCharacter(source.charAt(i))) {
+				ret.append(source.charAt(i));
+			}
+		}
+		return ret.toString();
 	}
 }

@@ -130,7 +130,7 @@ public class XMLExporter implements IRnOutputter {
 	public static final String ATTR_REQUEST_ID = "request_id"; //$NON-NLS-1$
 	public static final String TIERS_GARANT = "TG"; //$NON-NLS-1$
 	public static final String TIERS_PAYANT = "TP"; //$NON-NLS-1$
-	public static final String ATTR_AMOUNT_PARAMED = "amount_paramed"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_PHYSIO = "amount_physio"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_MIGEL = "amount_migel"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_LAB = "amount_lab"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_DRUG = "amount_drug"; //$NON-NLS-1$

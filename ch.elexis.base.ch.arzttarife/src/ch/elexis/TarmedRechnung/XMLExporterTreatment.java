@@ -7,6 +7,7 @@ import java.util.List;
 import org.jdom.Element;
 
 import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.model.FallConstants;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
@@ -90,19 +91,19 @@ public class XMLExporterTreatment {
 		if (type == null) {
 			return XMLExporter.DISEASE;
 		}
-		if (type.equalsIgnoreCase(Fall.TYPE_DISEASE)) {
+		if (type.equalsIgnoreCase(FallConstants.TYPE_DISEASE)) {
 			return XMLExporter.DISEASE;
 		}
-		if (type.equalsIgnoreCase(Fall.TYPE_ACCIDENT)) {
+		if (type.equalsIgnoreCase(FallConstants.TYPE_ACCIDENT)) {
 			return "accident"; //$NON-NLS-1$
 		}
-		if (type.equalsIgnoreCase(Fall.TYPE_MATERNITY)) {
+		if (type.equalsIgnoreCase(FallConstants.TYPE_MATERNITY)) {
 			return "maternity"; //$NON-NLS-1$
 		}
-		if (type.equalsIgnoreCase(Fall.TYPE_PREVENTION)) {
+		if (type.equalsIgnoreCase(FallConstants.TYPE_PREVENTION)) {
 			return "prevention"; //$NON-NLS-1$
 		}
-		if (type.equalsIgnoreCase(Fall.TYPE_BIRTHDEFECT)) {
+		if (type.equalsIgnoreCase(FallConstants.TYPE_BIRTHDEFECT)) {
 			return XMLExporter.BIRTHDEFECT;
 		}
 		return XMLExporter.DISEASE;

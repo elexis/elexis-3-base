@@ -29,6 +29,7 @@ import ch.docbox.cdach.DocboxCDA;
 import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.FallConstants;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.Log;
@@ -347,13 +348,13 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 	 */
 	private void addEinweisungsgrund(Fall fall, DocboxCDA docboxCDA){
 		if (fall != null) {
-			if (Fall.TYPE_DISEASE.equals(fall.getGrund())) {
+			if (FallConstants.TYPE_DISEASE.equals(fall.getGrund())) {
 				docboxCDA.addEinweisungsgrund("Krankheit");
-			} else if (Fall.TYPE_ACCIDENT.equals(fall.getGrund())) {
+			} else if (FallConstants.TYPE_ACCIDENT.equals(fall.getGrund())) {
 				docboxCDA.addEinweisungsgrund("Unfall");
-			} else if (Fall.TYPE_MATERNITY.equals(fall.getGrund())) {
+			} else if (FallConstants.TYPE_MATERNITY.equals(fall.getGrund())) {
 				docboxCDA.addEinweisungsgrund("Mutterschaft");
-			} else if (Fall.TYPE_OTHER.equals(fall.getGrund())) {
+			} else if (FallConstants.TYPE_OTHER.equals(fall.getGrund())) {
 				docboxCDA.addEinweisungsgrund("Anderer");
 			}
 		}

@@ -36,6 +36,11 @@ public class TerminStatusDialog extends TitleAreaDialog {
 		termin = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 	}
 	
+	public TerminStatusDialog(Shell shell, Termin termin) {
+		super(shell);
+		this.termin = termin;
+	}
+	
 	@Override
 	protected Control createDialogArea(Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);

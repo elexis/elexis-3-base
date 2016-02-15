@@ -50,6 +50,8 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tiff.common.ui.datepicker.DatePicker;
+
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -72,8 +74,6 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
-
-import com.tiff.common.ui.datepicker.DatePicker;
 
 /**
  * Dialog zur Eingabe eines oder mehrerer Termine in die Agenda.
@@ -123,12 +123,13 @@ public class TerminDialog extends TitleAreaDialog {
 	public TerminDialog(IPlannable act){
 		super(UiDesk.getTopShell());
 		// base=parent;
-		
 		if (act == null) {
 			act = new Termin.Free(agenda.getActDate().toString(TimeTool.DATE_COMPACT), 0, 30);
 		}
 		if (act instanceof Termin) {
-			actKontakt = ((Termin) act).getKontakt();
+			Termin lact = (Termin) act;
+			CoreHub.ls.acquireLock(lact.storeToString());
+			actKontakt = lact.getKontakt();
 		} else {
 			actKontakt = ElexisEventDispatcher.getSelectedPatient();
 		}
@@ -827,8 +828,10 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin =
 				new Termin(agenda.getActResource(), agenda.getActDate().toString(
 					TimeTool.DATE_COMPACT), von, bis, typ, status);
+			CoreHub.ls.acquireLock(actTermin.storeToString());
 		} else {
 			actTermin = (Termin) actPlannable;
+			CoreHub.ls.acquireLock(actTermin.storeToString());
 			if (bMulti) {
 				actTermin.clone();
 			}
@@ -858,6 +861,8 @@ public class TerminDialog extends TitleAreaDialog {
 		dayBar.recalc();
 		actPlannable = actTermin;
 		setEnablement();
+		
+		CoreHub.ls.releaseLock(actTermin.storeToString());
 	}
 	
 	/**

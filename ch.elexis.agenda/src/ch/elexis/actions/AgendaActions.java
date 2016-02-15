@@ -28,6 +28,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.dialogs.TerminStatusDialog;
 
 /**
@@ -39,9 +40,9 @@ import ch.elexis.dialogs.TerminStatusDialog;
 public class AgendaActions {
 	
 	/** modify an appointment */
-	public static IAction changeTerminStatusAction;
+	public static LockRequestingRestrictedAction<Termin> changeTerminStatusAction;
 	/** delete an appointment */
-	public static IAction delTerminAction;
+	public static LockRequestingRestrictedAction<Termin> delTerminAction;
 	/** Display or change the state of an appointment */
 	public static IAction terminStatusAction;
 	
@@ -53,9 +54,9 @@ public class AgendaActions {
 	 * Reflect the user's rights on the agenda actions
 	 */
 	public static void updateActions(){
-		changeTerminStatusAction.setEnabled(CoreHub.acl.request(ACLContributor.USE_AGENDA));
+		changeTerminStatusAction.reflectRight();
 		terminStatusAction.setEnabled(CoreHub.acl.request(ACLContributor.USE_AGENDA));
-		delTerminAction.setEnabled(CoreHub.acl.request(ACLContributor.DELETE_APPOINTMENTS));
+		delTerminAction.reflectRight();
 	}
 	
 	static void makeActions(){
@@ -71,24 +72,36 @@ public class AgendaActions {
 			}
 		};
 		
-		changeTerminStatusAction = new Action(Messages.AgendaActions_state) {
-			public void run(){
-				TerminStatusDialog dlg =
-					new TerminStatusDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.getShell());
+		changeTerminStatusAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.USE_AGENDA,
+				Messages.AgendaActions_state) {
+
+			@Override
+			public Termin getTargetedObject() {
+				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			}
+
+			@Override
+			public void doRun(Termin element) {
+				TerminStatusDialog dlg = new TerminStatusDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), element);
 				dlg.open();
 			}
 		};
-		delTerminAction = new Action(Messages.AgendaActions_deleteDate) {
+		delTerminAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.DELETE_APPOINTMENTS,
+				Messages.AgendaActions_deleteDate) {
 			{
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 				setToolTipText(Messages.AgendaActions_deleteDate);
 			}
-			
+
 			@Override
-			public void run(){
-				Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-				t.delete();
+			public Termin getTargetedObject() {
+				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			}
+
+			@Override
+			public void doRun(Termin element) {
+				element.delete();
 				ElexisEventDispatcher.reload(Termin.class);
 			}
 		};
@@ -125,9 +138,12 @@ public class AgendaActions {
 						@Override
 						public void widgetSelected(SelectionEvent e){
 							Termin act = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+							boolean success = CoreHub.ls.acquireLock(act.storeToString());
+							if(!success) return;
 							MenuItem it = (MenuItem) e.getSource();
 							act.setStatus(it.getText());
 							ElexisEventDispatcher.reload(Termin.class);
+							CoreHub.ls.releaseLock(act.storeToString());
 						}
 					});
 				}

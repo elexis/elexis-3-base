@@ -264,6 +264,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		final String typ, final String status){
 		create(null);
 		
+		CoreHub.ls.acquireLock(storeToString());
+		
 		String ts = createTimeStamp();
 		set(new String[] {
 			FLD_BEREICH, FLD_TAG, FLD_BEGINN, FLD_DAUER, FLD_TERMINTYP, FLD_TERMINSTATUS,

@@ -54,9 +54,11 @@ import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
@@ -77,8 +79,9 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 	protected SelectionListener sListen = new SelectionListener();
 	TableViewer tv;
 	BaseAgendaView self;
-	protected IAction newTerminAction, blockAction, terminKuerzenAction, terminVerlaengernAction,
-			terminAendernAction;
+	protected LockRequestingRestrictedAction<Termin> terminAendernAction, terminKuerzenAction, terminVerlaengernAction;
+	protected RestrictedAction newTerminAction;
+	protected IAction blockAction;
 	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction,
 			newTerminForAction;
 	protected IAction printPatientAction;
@@ -134,12 +137,12 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 					newTerminAction.run();
 				} else {
 					if (pl.isRecurringDate()) {
+						// TODO Locking
 						SerienTermin st = new SerienTermin(pl);
 						new SerienTerminDialog(UiDesk.getTopShell(), st).open();
 						tv.refresh(true);
 					} else {
-						TerminDialog dlg = new TerminDialog(pl);
-						dlg.open();
+						terminAendernAction.run();
 						tv.refresh(true);
 					}
 					
@@ -266,11 +269,10 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 	
 	protected void updateActions(){
 		dayLimitsAction.setEnabled(CoreHub.acl.request(ACLContributor.CHANGE_DAYSETTINGS));
-		boolean canChangeAppointments = CoreHub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
-		newTerminAction.setEnabled(canChangeAppointments);
-		terminKuerzenAction.setEnabled(canChangeAppointments);
-		terminVerlaengernAction.setEnabled(canChangeAppointments);
-		terminAendernAction.setEnabled(canChangeAppointments);
+		newTerminAction.reflectRight();
+		terminKuerzenAction.reflectRight();
+		terminVerlaengernAction.reflectRight();
+		terminAendernAction.reflectRight();
 		AgendaActions.updateActions();
 	}
 	
@@ -302,57 +304,67 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 				
 			}
 		};
-		terminAendernAction = new Action(Messages.TagesView_changeTermin) {
+		terminAendernAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
+				Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setToolTipText(Messages.TagesView_changeThisTermin);
 			}
-			
+
 			@Override
-			public void run(){
-				TerminDialog dlg =
-					new TerminDialog((Termin) ElexisEventDispatcher.getSelected(Termin.class));
+			public Termin getTargetedObject() {
+				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			}
+
+			@Override
+			public void doRun(Termin element) {
+				TerminDialog dlg = new TerminDialog(element);
 				dlg.open();
 				if (tv != null) {
 					tv.refresh(true);
 				}
 			}
 		};
-		terminKuerzenAction = new Action(Messages.TagesView_shortenTermin) {
+		terminKuerzenAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
+				Messages.TagesView_shortenTermin) {
 			@Override
-			public void run(){
-				Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-				if (t != null) {
-					t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
+			public Termin getTargetedObject() {
+				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			}
+
+			@Override
+			public void doRun(Termin element) {
+				element.setDurationInMinutes(element.getDurationInMinutes() >> 1);
+				ElexisEventDispatcher.reload(Termin.class);
+			}
+		};
+		terminVerlaengernAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
+				Messages.TagesView_enlargeTermin) {
+			@Override
+			public Termin getTargetedObject() {
+				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			}
+
+			@Override
+			public void doRun(Termin t) {
+				agenda.setActDate(t.getDay());
+				Termin n = Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(), t);
+				if (n != null) {
+					t.setEndTime(n.getStartTime());
+					// t.setDurationInMinutes(t.getDurationInMinutes()+15);
 					ElexisEventDispatcher.reload(Termin.class);
 				}
+
 			}
 		};
-		terminVerlaengernAction = new Action(Messages.TagesView_enlargeTermin) {
-			@Override
-			public void run(){
-				Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-				if (t != null) {
-					agenda.setActDate(t.getDay());
-					Termin n =
-						Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(),
-							t);
-					if (n != null) {
-						t.setEndTime(n.getStartTime());
-						// t.setDurationInMinutes(t.getDurationInMinutes()+15);
-						ElexisEventDispatcher.reload(Termin.class);
-					}
-				}
-			}
-		};
-		newTerminAction = new Action(Messages.TagesView_newTermin) {
+		newTerminAction = new RestrictedAction(ACLContributor.CHANGE_DAYSETTINGS, Messages.TagesView_newTermin) {
 			{
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 				setToolTipText(Messages.TagesView_createNewTermin);
 			}
-			
+	
 			@Override
-			public void run(){
+			public void doRun() {
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.open();
 				if (tv != null) {

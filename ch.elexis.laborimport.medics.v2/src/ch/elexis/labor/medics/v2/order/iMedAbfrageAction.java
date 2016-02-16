@@ -8,6 +8,8 @@
 
 package ch.elexis.labor.medics.v2.order;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
+
 import java.io.File;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -27,7 +29,6 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Xid;
 import ch.elexis.hl7.data.HL7Kontakt;
 import ch.elexis.hl7.data.HL7Kostentraeger;
 import ch.elexis.hl7.data.HL7Mandant;
@@ -245,7 +246,7 @@ public class iMedAbfrageAction extends Action {
 		
 		HL7Mandant mandant = new HL7Mandant();
 		mandant.setLabel(CoreHub.actMandant.get(Anwender.FLD_LABEL));
-		mandant.setEan(CoreHub.actMandant.getXid(Xid.DOMAIN_EAN));
+		mandant.setEan(CoreHub.actMandant.getXid(DOMAIN_EAN));
 		
 		HL7_OML_O21 omlO21 =
 			new HL7_OML_O21("CHELEXIS", "PATDATA", Messages.LabOrderAction_receivingApplication,
@@ -266,12 +267,12 @@ public class iMedAbfrageAction extends Action {
 		// Rechnungsempfaenger
 		HL7Kostentraeger hl7Rechnungsempfaenger = new HL7Kostentraeger();
 		fillHL7Kontakt(hl7Rechnungsempfaenger, rechnungsempfaenger);
-		hl7Rechnungsempfaenger.setEan(rechnungsempfaenger.getXid(Xid.DOMAIN_EAN));
+		hl7Rechnungsempfaenger.setEan(rechnungsempfaenger.getXid(DOMAIN_EAN));
 		
 		// Kostentraeger
 		HL7Kostentraeger hl7Kostentraeger = new HL7Kostentraeger();
 		fillHL7Kontakt(hl7Kostentraeger, kostentraeger);
-		hl7Kostentraeger.setEan(kostentraeger.getXid(Xid.DOMAIN_EAN));
+		hl7Kostentraeger.setEan(kostentraeger.getXid(DOMAIN_EAN));
 		
 		try {
 			String encodedMessage =

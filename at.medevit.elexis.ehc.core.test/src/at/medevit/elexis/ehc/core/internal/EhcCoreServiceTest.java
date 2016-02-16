@@ -10,6 +10,8 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.core.internal;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
+import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -52,6 +54,7 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
 
+
 public class EhcCoreServiceTest {
 	
 	public static final String DOMAIN_KSK = "www.xid.ch/id/ksk"; //$NON-NLS-1$
@@ -79,7 +82,7 @@ public class EhcCoreServiceTest {
 		anschrift.setPlz("987");
 		anschrift.setStrasse("Street 2");
 		mandant.setAnschrift(anschrift);
-		mandant.addXid(Xid.DOMAIN_EAN, "2000000000002", true);
+		mandant.addXid(DOMAIN_EAN, "2000000000002", true);
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, "KSK/ZSR-Nr", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 		mandant.addXid(DOMAIN_KSK, "C000002", true);
 	}
@@ -90,7 +93,7 @@ public class EhcCoreServiceTest {
 		StringBuilder ahvBuilder = new StringBuilder(country + number);
 		ahvBuilder.append(getCheckNumber(ahvBuilder.toString()));
 		
-		pat.addXid(Xid.DOMAIN_AHV, ahvBuilder.toString(), true);
+		pat.addXid(DOMAIN_AHV, ahvBuilder.toString(), true);
 	}
 	
 	private static String getCheckNumber(String string){

@@ -1,5 +1,8 @@
 package ch.elexis.base.ch.arzttarife.test;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
+import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -24,7 +27,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.TICode;
 import ch.elexis.data.TarmedLeistung;
-import ch.elexis.data.Xid;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Result;
 
@@ -163,7 +165,7 @@ public class TestData {
 			mandant.setExtInfoStoredObjectByKey("Anrede", "Frau");
 			mandant.setExtInfoStoredObjectByKey("Kanton", "AG");
 			
-			mandant.addXid(Xid.DOMAIN_EAN, "2000000000002", true);
+			mandant.addXid(DOMAIN_EAN, "2000000000002", true);
 			// make sure somains are registered
 			TarmedRequirements.getEAN(mandant);
 
@@ -209,7 +211,7 @@ public class TestData {
 			StringBuilder ahvBuilder = new StringBuilder(country + number);
 			ahvBuilder.append(getCheckNumber(ahvBuilder.toString()));
 			
-			pat.addXid(Xid.DOMAIN_AHV, ahvBuilder.toString(), true);
+			pat.addXid(DOMAIN_AHV, ahvBuilder.toString(), true);
 		}
 
 		private String getCheckNumber(String string){

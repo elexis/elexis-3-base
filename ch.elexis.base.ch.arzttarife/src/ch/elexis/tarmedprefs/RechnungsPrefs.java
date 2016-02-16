@@ -12,6 +12,8 @@
 
 package ch.elexis.tarmedprefs;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,7 +57,6 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
 import ch.elexis.data.TrustCenters;
-import ch.elexis.data.Xid;
 import ch.rgw.tools.StringTool;
 
 public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferencePage {
@@ -97,7 +98,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	
 	static final String[] ExtFlds =
 		{
-			"Anrede=" + Kontakt.XID_KONTAKT_ANREDE, "Kanton=" + Kontakt.XID_KONTAKT_KANTON, "EAN=" + Xid.DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"Anrede=" + Kontakt.XID_KONTAKT_ANREDE, "Kanton=" + Kontakt.XID_KONTAKT_KANTON, "EAN=" + DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
 			ta.KANTON, ta.LOCAL, ta.DIAGSYS, "Rolle=" + Kontakt.XID_KONTAKT_ROLLE
 		};

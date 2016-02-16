@@ -1,5 +1,7 @@
 package at.medevit.elexis.ehc.ui.vacdoc.wizard;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -33,7 +35,6 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.data.Xid;
 
 public class ExportVaccinationsWizardPage1 extends WizardPage {
 	
@@ -101,7 +102,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 				contentViewer.setInput(vaccinations);
 				contentViewer.setSelection(new StructuredSelection(vaccinations), true);
 				
-				String ahvNr = selectedPatient.getXid(Xid.DOMAIN_AHV);
+				String ahvNr = selectedPatient.getXid(DOMAIN_AHV);
 				if (ahvNr == null || ahvNr.isEmpty()) {
 					setErrorMessage("Patient hat keine AHV Nummer.");
 				}
@@ -114,7 +115,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	@Override
 	public boolean isPageComplete(){
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
-		String ahvNr = selectedPatient.getXid(Xid.DOMAIN_AHV);
+		String ahvNr = selectedPatient.getXid(DOMAIN_AHV);
 		if (!contentSelection.isEmpty() && ahvNr != null && !ahvNr.isEmpty()) {
 			return true;
 		}

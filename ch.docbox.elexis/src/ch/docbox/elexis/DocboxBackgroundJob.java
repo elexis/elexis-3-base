@@ -9,6 +9,8 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
+
 import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -54,12 +56,10 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
-import ch.elexis.data.Xid;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
@@ -250,7 +250,7 @@ public class DocboxBackgroundJob extends Job {
 						p.set(Kontakt.FLD_ZIP, plz);
 						p.set(Kontakt.FLD_PLACE, city);
 						
-						p.addXid(Xid.DOMAIN_EAN, ean, true);
+						p.addXid(DOMAIN_EAN, ean, true);
 					}
 					p.setInfoElement(application, true);
 				}

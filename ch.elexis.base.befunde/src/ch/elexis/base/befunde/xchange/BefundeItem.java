@@ -10,6 +10,8 @@
  *******************************************************************************/
 package ch.elexis.base.befunde.xchange;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_ELEXIS;
+
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.ui.exchange.XChangeExporter;
 import ch.elexis.core.ui.exchange.elements.FindingElement;
@@ -25,7 +27,7 @@ public class BefundeItem extends FindingElement {
 		setAttribute(ATTR_NAME, mw.getLabel() + ":" + field); //$NON-NLS-1$
 		setAttribute(ATTR_GROUP, "Messwert"); //$NON-NLS-1$
 		XidElement eXid = new XidElement();
-		eXid.addIdentity(Xid.DOMAIN_ELEXIS, mw.getId() + field, Xid.ASSIGNMENT_LOCAL, true);
+		eXid.addIdentity(DOMAIN_ELEXIS, mw.getId() + field, Xid.ASSIGNMENT_LOCAL, true);
 		eXid.setMainID(null);
 		add(eXid);
 		add(new MetaElement().asExporter(home, ResultElement.ATTRIB_CREATOR, Messwert.PLUGIN_ID));

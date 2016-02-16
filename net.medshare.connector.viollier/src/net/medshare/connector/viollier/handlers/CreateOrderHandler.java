@@ -1,5 +1,7 @@
 package net.medshare.connector.viollier.handlers;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
+
 import java.awt.Desktop;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -7,10 +9,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.List;
-
-import net.medshare.connector.viollier.Messages;
-import net.medshare.connector.viollier.data.ViollierConnectorSettings;
-import net.medshare.connector.viollier.ses.PortalCookieService;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -28,6 +26,9 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
+import net.medshare.connector.viollier.Messages;
+import net.medshare.connector.viollier.data.ViollierConnectorSettings;
+import net.medshare.connector.viollier.ses.PortalCookieService;
 
 public class CreateOrderHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(CreateOrderHandler.class);
@@ -79,7 +80,7 @@ public class CreateOrderHandler extends AbstractHandler {
 			ort = tempAdr.getOrt();
 			land = tempAdr.getLand();
 			
-			socialSecurityNumber = patient.getXid(Xid.DOMAIN_AHV);
+			socialSecurityNumber = patient.getXid(DOMAIN_AHV);
 			Fall currentFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 			if (currentFall != null && socialSecurityNumber.length() == 0)
 				socialSecurityNumber = currentFall.getRequiredString("AHV-Nummer");

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -69,7 +71,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
-import ch.elexis.data.Xid;
 
 /**
  * Displays the documents downloaded from docbox (doctrans)
@@ -448,7 +449,7 @@ public class DocboxDocumentsView extends ViewPart implements ISaveablePart2, IAc
 						
 						String ahv = xpath.getPatientAhv13();
 						if (ahv != null && !"".equals(ahv)) {
-							p.addXid(Xid.DOMAIN_AHV, xpath.getPatientAhv13(), true);
+							p.addXid(DOMAIN_AHV, xpath.getPatientAhv13(), true);
 						}
 						
 						ElexisEventDispatcher.fireSelectionEvent((PersistentObject) p);

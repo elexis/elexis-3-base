@@ -38,6 +38,8 @@ import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.Xid;
 import ch.rgw.tools.TimeTool;
 
+import static ch.elexis.core.constants.XidConstants.*;
+
 public class EhcCoreMapper {
 	
 	private static TimeTool timeTool = new TimeTool();
@@ -78,7 +80,7 @@ public class EhcCoreMapper {
 			ret.addAddress(getEhcAddress(elexisAddress));
 		}
 		
-		String socialSecurityNumber = elexisPatient.getXid(Xid.DOMAIN_AHV);
+		String socialSecurityNumber = elexisPatient.getXid(DOMAIN_AHV);
 		if (socialSecurityNumber != null) {
 			socialSecurityNumber = socialSecurityNumber.trim();
 			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", "");
@@ -112,7 +114,7 @@ public class EhcCoreMapper {
 	}
 	
 	public static Author getEhcAuthor(Mandant elexisMandant){
-		String gln = elexisMandant.getXid(Xid.DOMAIN_EAN);
+		String gln = elexisMandant.getXid(DOMAIN_EAN);
 		Author ret = new Author(getEhcPersonName(elexisMandant), gln);
 		
 		// PHONE
@@ -137,7 +139,7 @@ public class EhcCoreMapper {
 	
 	public static Organization getEhcOrganization(Mandant elexisMandant){
 		Rechnungssteller rechnungssteller = elexisMandant.getRechnungssteller();
-		String gln = rechnungssteller.getXid(Xid.DOMAIN_EAN);
+		String gln = rechnungssteller.getXid(DOMAIN_EAN);
 		Organization ret = new Organization(rechnungssteller.getLabel(), gln);
 		
 		// PHONE
@@ -190,7 +192,7 @@ public class EhcCoreMapper {
 			if (idRoot.equals(CodeSystems.SwissSSNDeprecated.getCodeSystemId())
 				|| idRoot.equals(CodeSystems.SwissSSN.getCodeSystemId())) {
 				IPersistentObject ret =
-					Xid.findObject(Xid.DOMAIN_AHV, identificator.getExtension());
+					Xid.findObject(DOMAIN_AHV, identificator.getExtension());
 				if (ret instanceof Kontakt) {
 					if (((Kontakt) ret).istPatient()) {
 						return ch.elexis.data.Patient.load(ret.getId());

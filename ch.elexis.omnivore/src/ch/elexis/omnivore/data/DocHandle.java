@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.data.status.ElexisStatus;
@@ -587,29 +588,29 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 	}
 	
-	public static void assimilate(String f){
-		assimilate(f, null);
+	public static DocHandle assimilate(String f){
+		return assimilate(f, null);
 	}
 	
-	public static void assimilate(String f, String selectedCategory){
+	public static DocHandle assimilate(String f, String selectedCategory){
 		Patient act = ElexisEventDispatcher.getSelectedPatient();
 		if (act == null) {
 			SWTHelper.showError(Messages.DocHandle_noPatientSelected,
 				Messages.DocHandle_pleaseSelectPatient);
-			return;
+			return null;
 		}
 		File file = new File(f);
 		if (!file.canRead()) {
 			SWTHelper.showError(Messages.DocHandle_cantReadCaption,
 				MessageFormat.format(Messages.DocHandle_cantReadMessage, f));
-			return;
+			return null;
 		}
 		
 		// can't import complete directory
 		if (file.isDirectory()) {
 			SWTHelper.showError(Messages.DocHandle_importErrorDirectory,
 				Messages.DocHandle_importErrorDirectoryText);
-			return;
+			return null;
 		}
 		
 		Integer maxOmnivoreFilenameLength =
@@ -619,7 +620,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		if (nam.length() > maxOmnivoreFilenameLength) {
 			SWTHelper.showError(Messages.DocHandle_importErrorCaption, MessageFormat.format(
 				Messages.DocHandle_importErrorMessage, maxOmnivoreFilenameLength));
-			return;
+			return null;
 		}
 		
 		FileImportDialog fid;
@@ -629,6 +630,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			fid = new FileImportDialog(file.getName(), selectedCategory);
 		}
 		
+		DocHandle dh = null;
 		if (fid.open() == Dialog.OK) {
 			try {
 				BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
@@ -644,19 +646,19 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				if (fileName.length() > 255) {
 					SWTHelper.showError(Messages.DocHandle_readErrorCaption,
 						Messages.DocHandle_fileNameTooLong);
-					return;
+					return null;
 				}
 				String category = fid.category;
 				if (category == null || category.length() == 0) {
 					category = DocHandle.getDefaultCategory().getCategoryName();
 				}
-				new DocHandle(category, baos.toByteArray(), act, fid.title.trim(), file.getName(),
+				dh = new DocHandle(category, baos.toByteArray(), act, fid.title.trim(), file.getName(),
 					fid.keywords.trim());
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				SWTHelper.showError(Messages.DocHandle_importErrorCaption,
 					Messages.DocHandle_importErrorMessage2);
-				return;
+				return null;
 			}
 			
 			try {
@@ -682,7 +684,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 							
 							if (DestDir == "") {
 								log.debug("DestDir is empty. No more rules will be evaluated for this file. Returning.");
-								return;
+								return dh;
 							}
 							
 							File NewFile = new File(DestDir);
@@ -728,7 +730,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					Messages.DocHandle_MoveError);
 			}
 		}
-		
+		return dh;
 	}
 	
 	public String getTitle(){

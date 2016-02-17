@@ -73,6 +73,7 @@ import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
@@ -525,92 +526,95 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 					FileDialog fd = new FileDialog(getViewSite().getShell(), SWT.OPEN);
 					String filename = fd.open();
 					if (filename != null) {
-						DocHandle.assimilate(filename);
+						DocHandle dh = DocHandle.assimilate(filename);
+						if(dh!=null) {
+							CoreHub.ls.acquireLock(dh);
+							CoreHub.ls.releaseLock(dh);
+						}
 						viewer.refresh();
 					}
 				}
 			};
 		
-		deleteAction =
-			new RestrictedAction(AccessControlDefaults.DOCUMENT_DELETE,
+		deleteAction = new LockRequestingRestrictedAction<DocHandle>(AccessControlDefaults.DOCUMENT_DELETE,
 				Messages.OmnivoreView_deleteActionCaption) {
-				{
-					setToolTipText(Messages.OmnivoreView_deleteActionToolTip);
-					setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
-				}
-				
-				public void doRun(){
-					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection).getFirstElement();
-					DocHandle dh = (DocHandle) obj;
-					
-					if (dh.isCategory()) {
-						if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
-							InputDialog id =
-								new InputDialog(
-									getViewSite().getShell(),
-									MessageFormat.format("Kategorie {0} löschen", dh.getLabel()),
-									"Geben Sie bitte an, in welche andere Kategorie die Dokumente dieser Kategorie verschoben werden sollen",
-									"", null);
-							if (id.open() == Dialog.OK) {
-								DocHandle.removeCategory(dh.getLabel(), id.getValue());
-								viewer.refresh();
-							}
-						} else {
-							SWTHelper.showError("Insufficient Rights",
-								"You have insufficient rights to delete document categories");
-						}
-						
-					} else {
-						if (SWTHelper.askYesNo(
-							Messages.OmnivoreView_reallyDeleteCaption,
-							MessageFormat.format(Messages.OmnivoreView_reallyDeleteContents,
-								dh.get("Titel")))) { //$NON-NLS-2$
-							dh.delete();
+			{
+				setToolTipText(Messages.OmnivoreView_deleteActionToolTip);
+				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
+			}
+
+			@Override
+			public DocHandle getTargetedObject() {
+				ISelection selection = viewer.getSelection();
+				return (DocHandle) ((IStructuredSelection) selection).getFirstElement();
+			}
+
+			@Override
+			public void doRun(DocHandle dh) {
+				if (dh.isCategory()) {
+					if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
+						InputDialog id = new InputDialog(getViewSite().getShell(),
+								MessageFormat.format("Kategorie {0} löschen", dh.getLabel()),
+								"Geben Sie bitte an, in welche andere Kategorie die Dokumente dieser Kategorie verschoben werden sollen",
+								"", null);
+						if (id.open() == Dialog.OK) {
+							DocHandle.removeCategory(dh.getLabel(), id.getValue());
 							viewer.refresh();
 						}
-					}
-				};
-			};
-		
-		editAction =
-			new RestrictedAction(AccessControlDefaults.DOCUMENT_DELETE,
-				Messages.OmnivoreView_editActionCaption) {
-				{
-					setToolTipText(Messages.OmnivoreView_editActionTooltip);
-					setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
-				}
-				
-				public void doRun(){
-					ISelection selection = viewer.getSelection();
-					DocHandle dh = (DocHandle) ((IStructuredSelection) selection).getFirstElement();
-					if (dh.isCategory()) {
-						if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
-							
-							InputDialog id =
-								new InputDialog(getViewSite().getShell(), MessageFormat.format(
-									"Kategorie '{0}' umbenennen.", dh.getLabel()),
-									"Geben Sie bitte einen neuen Namen für die Kategorie ein",
-									dh.getLabel(), null);
-							if (id.open() == Dialog.OK) {
-								String nn = id.getValue();
-								DocHandle.renameCategory(dh.getTitle(), nn);
-								viewer.refresh();
-							}
-						} else {
-							SWTHelper.showError("Insufficient Rights",
+					} else {
+						SWTHelper.showError("Insufficient Rights",
 								"You have insufficient rights to delete document categories");
-							
+					}
+
+				} else {
+					if (SWTHelper.askYesNo(Messages.OmnivoreView_reallyDeleteCaption,
+							MessageFormat.format(Messages.OmnivoreView_reallyDeleteContents, dh.get("Titel")))) { // $NON-NLS-2$
+						dh.delete();
+						viewer.refresh();
+					}
+				}
+			};
+		};
+		
+		editAction = new LockRequestingRestrictedAction<DocHandle>(AccessControlDefaults.DOCUMENT_DELETE,
+				Messages.OmnivoreView_editActionCaption) {
+			{
+				setToolTipText(Messages.OmnivoreView_editActionTooltip);
+				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
+			}
+
+			@Override
+			public DocHandle getTargetedObject() {
+				ISelection selection = viewer.getSelection();
+				return (DocHandle) ((IStructuredSelection) selection).getFirstElement();
+			}
+
+			@Override
+			public void doRun(DocHandle dh) {
+				if (dh.isCategory()) {
+					if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
+
+						InputDialog id = new InputDialog(getViewSite().getShell(),
+								MessageFormat.format("Kategorie '{0}' umbenennen.", dh.getLabel()),
+								"Geben Sie bitte einen neuen Namen für die Kategorie ein", dh.getLabel(), null);
+						if (id.open() == Dialog.OK) {
+							String nn = id.getValue();
+							DocHandle.renameCategory(dh.getTitle(), nn);
+							viewer.refresh();
 						}
 					} else {
-						FileImportDialog fid = new FileImportDialog(dh);
-						if (fid.open() == Dialog.OK) {
-							viewer.refresh(true);
-						}
+						SWTHelper.showError("Insufficient Rights",
+								"You have insufficient rights to delete document categories");
+
 					}
-					
+				} else {
+					FileImportDialog fid = new FileImportDialog(dh);
+					if (fid.open() == Dialog.OK) {
+						viewer.refresh(true);
+					}
 				}
-			};
+			}
+		};
 		
 		doubleClickAction = new Action() {
 			public void run(){

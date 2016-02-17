@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.ReminderConstants;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
@@ -167,7 +168,7 @@ public class MsgDetailDialog extends Dialog {
 					if (idx != -1) {
 						Reminder rem =
 							new Reminder(users[idx], new TimeTool().toString(TimeTool.DATE_GER),
-								Reminder.Typ.anzeigeTodoAll, "", text.getText()); //$NON-NLS-1$
+								ReminderConstants.Typ.anzeigeTodoAll, "", text.getText()); //$NON-NLS-1$
 						rem.addResponsible(users[idx]);
 					}
 					okPressed();

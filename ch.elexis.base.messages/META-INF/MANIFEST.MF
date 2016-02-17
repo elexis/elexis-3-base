@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.ui.icons;bundle-version="3.0.0",
  ch.rgw.utility,
  org.eclipse.ui.forms,
- ch.elexis.core;bundle-version="3.0.0"
+ ch.elexis.core;bundle-version="3.1.0"
 Eclipse-LazyStart: true
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

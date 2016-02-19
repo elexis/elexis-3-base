@@ -207,6 +207,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		return ret;
 	}
 	
+	@Override
 	public void init(IWorkbench arg0){}
 	
 	private void initMappingFileLocation(){
@@ -217,7 +218,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		setOrCreateMappingCSV(cobasMappingCSV);
 	}
 	
-	private void setOrCreateMappingCSV(String path){
+	private static void setOrCreateMappingCSV(String path){
 		try {
 			File csv = new File(path);
 			if (!csv.exists()) {
@@ -243,8 +244,10 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	}
 	
 	public static String getDefaultMappingCSVLocation(){
-		return CoreHub.getWritableUserDir() + File.separator + "cobasMira" + File.separator
-			+ "cmmli.csv";
+		String csv_file = CoreHub.getWritableUserDir() + File.separator + "cobasMira" + File.separator
+				+ "cmmli.csv";
+		setOrCreateMappingCSV(csv_file);
+		return csv_file;
 	}
 	
 	@Override

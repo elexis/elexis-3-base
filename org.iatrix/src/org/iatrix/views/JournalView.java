@@ -370,8 +370,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			}
 		};
-	private final ElexisUiEventListenerImpl eeli_pat =
-		new ElexisUiEventListenerImpl(Patient.class) {
+		private final ElexisUiEventListenerImpl eeli_pat =
+		new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
 
 			@Override
 			public void runInUi(ElexisEvent ev){

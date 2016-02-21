@@ -451,9 +451,19 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 										"runInUi eeli_pat EVENT_SELECTED create kons for faelle[0]"
 											+ selectedPatient.getPersonalia());
 								} else {
-									logEvent(
-										"runInUi eeli_pat EVENT_SELECTED found kons for for faelle[0]"
-											+ selectedPatient.getPersonalia());
+									TimeTool letzteKonsDate = new TimeTool(actKons.getDatum());
+									if (letzteKonsDate.isSameDay(new TimeTool())) {
+										logEvent(
+											"runInUi eeli_pat EVENT_SELECTED found kons of today for for faelle[0] "
+												+ selectedPatient.getPersonalia() + " von "
+												+ actKons.getDatum());
+									} else {
+										logEvent(
+											"runInUi eeli_pat EVENT_SELECTED found kons for for faelle[0] "
+												+ selectedPatient.getPersonalia()
+												+ " ist nicht von heute " + actKons.getDatum());
+										actKons = faelle[0].neueKonsultation();
+									}
 								}
 							}
 						} else {

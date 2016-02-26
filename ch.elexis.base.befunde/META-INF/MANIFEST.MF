@@ -8,7 +8,7 @@ Bundle-Localization: plugin
 Export-Package: ch.elexis.base.befunde,
  ch.elexis.base.befunde.xchange,
  ch.elexis.befunde
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Created-By: Buildr
 Import-Package: ch.elexis.core.ui.actions,
  ch.elexis.core.ui.icons,

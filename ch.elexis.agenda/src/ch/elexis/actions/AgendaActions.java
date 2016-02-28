@@ -138,8 +138,7 @@ public class AgendaActions {
 						@Override
 						public void widgetSelected(SelectionEvent e){
 							Termin act = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-							boolean success = CoreHub.ls.acquireLock(act.storeToString());
-							if(!success) return;
+							if(!CoreHub.ls.acquireLock(act.storeToString()).isOk()) return;
 							MenuItem it = (MenuItem) e.getSource();
 							act.setStatus(it.getText());
 							ElexisEventDispatcher.reload(Termin.class);

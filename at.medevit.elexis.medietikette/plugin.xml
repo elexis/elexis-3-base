@@ -77,7 +77,7 @@
                <iterate
                      operator="and">
                   <instanceof
-                        value="ch.elexis.data.Prescription">
+                        value="ch.elexis.core.ui.medication.views.MedicationTableViewerItem">
                   </instanceof>
                </iterate>
             </visibleWhen>

@@ -52,6 +52,7 @@ public class TarmedOptifier implements IOptifier {
 	
 	boolean bOptify = true;
 	private Verrechnet newVerrechnet;
+	private String newVerrechnetSide;
 	
 	/**
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
@@ -124,6 +125,7 @@ public class TarmedOptifier implements IOptifier {
 			}
 		}
 		newVerrechnet = null;
+		newVerrechnetSide = null;
 		// Korrekter Fall Typ prüfen, und ggf. den code ändern
 		if (tc.getCode().matches("39.002[01]") || tc.getCode().matches("39.001[0156]")) {
 			String gesetz = kons.getFall().getRequiredString("Gesetz");
@@ -153,11 +155,11 @@ public class TarmedOptifier implements IOptifier {
 		// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann
 		// nur Zahl erhöhen.
 		for (Verrechnet v : lst) {
-			String side = TarmedLeistung.getSide(v);
-			if (v.isInstance(code)
-					&& (side.equals("none") || (tc.requiresSide() && side.equals(TarmedLeistung.LEFT)))) {
-				newVerrechnet = v;
-				newVerrechnet.setZahl(newVerrechnet.getZahl() + 1);
+			if (v.isInstance(code)) {
+				if (!tc.requiresSide()) {
+					newVerrechnet = v;
+					newVerrechnet.setZahl(newVerrechnet.getZahl() + 1);
+				}
 				if (bezugOK) {
 					break;
 				}
@@ -172,9 +174,18 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 		}
+		
+		if (tc.requiresSide()) {
+			newVerrechnetSide = getNewVerrechnetSideOrIncrement(code, lst);
+		}
+		
 		// Ausschliessende Kriterien prüfen ("Nicht zusammen mit")
 		if (newVerrechnet == null) {
 			newVerrechnet = new Verrechnet(code, kons, 1);
+			// make sure side is initialized
+			if (tc.requiresSide()) {
+				newVerrechnet.setDetail(TarmedLeistung.SIDE, newVerrechnetSide);
+			}
 			// Exclusionen
 			if (bOptify) {
 				TarmedLeistung newTarmed = (TarmedLeistung) code;
@@ -220,12 +231,7 @@ public class TarmedOptifier implements IOptifier {
 			newVerrechnet.setDetail(TL, Integer.toString(tc.getTL()));
 			lst.add(newVerrechnet);
 		}
-
-		// check if side is required
-		if (tc.requiresSide()) {
-			newVerrechnet.setDetail(TarmedLeistung.SIDE, TarmedLeistung.SIDE_L);
-		}
-
+		
 		/*
 		 * Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten ->
 		 * vorerst raus // "Zusammen mit" - Bedingung nicht erfüllt ->
@@ -451,6 +457,47 @@ public class TarmedOptifier implements IOptifier {
 			return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 		}
 		return new Result<IVerrechenbar>(null);
+	}
+	
+	/**
+	 * Always toggle the side of a specific code. Starts with left, then right, then add to the
+	 * respective side.
+	 * 
+	 * @param code
+	 * @param lst
+	 * @return
+	 */
+	private String getNewVerrechnetSideOrIncrement(IVerrechenbar code, List<Verrechnet> lst){
+		int countSideLeft = 0;
+		Verrechnet leftVerrechnet = null;
+		int countSideRight = 0;
+		Verrechnet rightVerrechnet = null;
+		
+		for (Verrechnet v : lst) {
+			if (v.isInstance(code)) {
+				String side = v.getDetail(TarmedLeistung.SIDE);
+				if (side.equals(TarmedLeistung.SIDE_L)) {
+					countSideLeft += v.getZahl();
+					leftVerrechnet = v;
+				} else {
+					countSideRight += v.getZahl();
+					rightVerrechnet = v;
+				}
+			}
+		}
+		
+		if (countSideLeft > 0 || countSideRight > 0) {
+			if ((countSideLeft > countSideRight) && rightVerrechnet != null) {
+				newVerrechnet = rightVerrechnet;
+				newVerrechnet.setZahl(newVerrechnet.getZahl() + 1);
+			} else if ((countSideLeft <= countSideRight) && leftVerrechnet != null) {
+				newVerrechnet = leftVerrechnet;
+				newVerrechnet.setZahl(newVerrechnet.getZahl() + 1);
+			} else if ((countSideLeft > countSideRight) && rightVerrechnet == null) {
+				return TarmedLeistung.SIDE_R;
+			}
+		}
+		return TarmedLeistung.SIDE_L;
 	}
 	
 	/**

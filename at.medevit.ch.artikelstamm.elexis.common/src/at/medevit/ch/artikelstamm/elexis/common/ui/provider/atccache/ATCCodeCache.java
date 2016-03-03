@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeService;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.ui.UiDesk;
@@ -58,8 +57,7 @@ public class ATCCodeCache {
 	}
 	
 	private static String determineBlobId(){
-		return NAMED_BLOB_PREFIX + "_P" + ArtikelstammItem.getImportSetCumulatedVersion(TYPE.P)
-			+ "_N" + ArtikelstammItem.getImportSetCumulatedVersion(TYPE.N);
+		return NAMED_BLOB_PREFIX + "_" + ArtikelstammItem.getCurrentVersion();
 	}
 	
 	@SuppressWarnings("unchecked")

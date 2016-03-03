@@ -1,8 +1,8 @@
-h1. Elexis Artikelstamm Elexis 2.1 Integration Basis
+h1. Elexis Artikelstamm Elexis 3.2 Integration Basis
 
-__Copyright 2013, MEDEVIT <office@medevit.at>__ 
+__Copyright 2013-2016, MEDEVIT <office@medevit.at>__ 
 
-Dieses Plug-In bildet die Basis für die Artikelstamm Integration in "Elexis 2.1":http://www.elexis.ch, es stell für sich
+Dieses Plug-In bildet die Basis für die Artikelstamm Integration in "Elexis 3.2":http://www.elexis.ch, es stell für sich
 alleine noch keine vollständige Integration dar, sondern führt nur in Zusammenarbeit mit einem weiteren Plug-In zu einer
 anwendbaren Integration.
 

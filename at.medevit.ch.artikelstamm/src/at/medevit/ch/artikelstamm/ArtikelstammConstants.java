@@ -15,13 +15,14 @@ public class ArtikelstammConstants {
 	public static final String CODESYSTEM_NAME = "Artikelstamm";
 	
 	/**
-	 * The dataset type:<br>
+	 * The element type:<br>
 	 * <br>
-	 * <b>P</b> contains only Pharma items<br>
-	 * <b>N</b> contains only Non-Pharma items
+	 * <b>P</b> a Pharma items<br>
+	 * <b>N</b> a Non-Pharma items</br>
+	 * <b>X</b> a Product
 	 */
 	public enum TYPE {
-		P, N
+		P, N, X
 	};
 	
 }

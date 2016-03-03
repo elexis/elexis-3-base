@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2014 MEDEVIT.
+ * Copyright (c) 2013-2016 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -152,14 +153,14 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		 * ArtikelstammItems
 		 */
 		addMapping(TABLENAME, FLD_ITEM_TYPE, Artikel.FLD_TYP + "=" + FLD_ITEM_TYPE,
-			FLD_CUMMULATED_VERSION, FLD_BLACKBOXED, FLD_GTIN, FLD_PHAR, Artikel.FLD_PHARMACODE
-				+ "=" + FLD_PHAR, FLD_DSCR, FLD_ADDDSCR, FLD_ATC, FLD_COMP_GLN, FLD_COMP_NAME,
-			FLD_PEXF, Artikel.FLD_EK_PREIS + "=" + FLD_PEXF, FLD_PPUB, Artikel.FLD_VK_PREIS + "="
-				+ FLD_PPUB, FLD_PKG_SIZE, FLD_SL_ENTRY, FLD_IKSCAT, FLD_LIMITATION,
-			FLD_LIMITATION_PTS, FLD_LIMITATION_TEXT, FLD_GENERIC_TYPE, FLD_HAS_GENERIC, FLD_LPPV,
-			FLD_DEDUCTIBLE, FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE, FLD_LIEFERANT_ID,
-			MAXBESTAND, MINBESTAND, ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH, FLD_PRODNO,
-			PersistentObject.FLD_EXTINFO);
+			FLD_CUMMULATED_VERSION, FLD_BLACKBOXED, FLD_GTIN, FLD_PHAR,
+			Artikel.FLD_PHARMACODE + "=" + FLD_PHAR, FLD_DSCR, FLD_ADDDSCR, FLD_ATC, FLD_COMP_GLN,
+			FLD_COMP_NAME, FLD_PEXF, Artikel.FLD_EK_PREIS + "=" + FLD_PEXF, FLD_PPUB,
+			Artikel.FLD_VK_PREIS + "=" + FLD_PPUB, FLD_PKG_SIZE, FLD_SL_ENTRY, FLD_IKSCAT,
+			FLD_LIMITATION, FLD_LIMITATION_PTS, FLD_LIMITATION_TEXT, FLD_GENERIC_TYPE,
+			FLD_HAS_GENERIC, FLD_LPPV, FLD_DEDUCTIBLE, FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE,
+			FLD_LIEFERANT_ID, MAXBESTAND, MINBESTAND, ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH,
+			FLD_PRODNO, PersistentObject.FLD_EXTINFO);
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
@@ -167,11 +168,11 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			VersionInfo vi = new VersionInfo(version.get(FLD_GTIN));
 			System.out.println(vi);
 			if (vi.isOlder(VERSION)) {
-				if(vi.isOlder("1.1.0")) {
+				if (vi.isOlder("1.1.0")) {
 					createOrModifyTable(dbUpdateFrom10to11);
 					version.set(FLD_GTIN, "1.1.0");
 				}
-				if(vi.isOlder("1.2.0")) {
+				if (vi.isOlder("1.2.0")) {
 					createOrModifyTable(dbUpdateFrom11to12);
 					version.set(FLD_GTIN, VERSION);
 				}
@@ -182,7 +183,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public String getLabel(){
 		String[] vals = get(true, FLD_DSCR, FLD_ADDDSCR);
-		return vals[0] + " (" + vals[1] + ")";
+		
+		return (vals[1].length()>0) ? vals[0] + " (" + vals[1] + ")" : vals[0];
 	}
 	
 	@Override
@@ -206,28 +208,38 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @param cummulatedVersion
 	 *            dataset version for type
 	 * @param type
-	 *            the data set type
+	 *            the item type: P (Pharma), N (NonPharma) or X (Product)
 	 * @param gtin
 	 *            global trade index number
-	 * @param phar
-	 *            pharmacode
+	 * @param code
+	 *            pharmacode if type P or N, if X the Product Number (PRODNO)
 	 * @param dscr
 	 *            description
 	 * @param addscr
 	 *            additional description
 	 */
-	public ArtikelstammItem(int cummulatedVersion, TYPE type, String gtin, BigInteger phar,
-		String dscr, String addscr){
-		create(ArtikelstammHelper.createUUID(cummulatedVersion, type, gtin, phar));
+	public ArtikelstammItem(int version, char type, String gtin, BigInteger code, String dscr,
+		String addscr){
 		
-		// fix pharmacode length < 7 chars
-		String pharmacode = (phar != null) ? String.format("%07d", phar) : "0000000";
+		type = Character.toUpperCase(type);
 		
-		set(new String[] {
-			FLD_ITEM_TYPE, FLD_GTIN, FLD_PHAR, FLD_DSCR, FLD_ADDDSCR, FLD_CUMMULATED_VERSION,
-			FLD_BLACKBOXED
-		}, type.name(), gtin, pharmacode, dscr, addscr, cummulatedVersion + "",
-			StringConstants.ZERO);
+		if (type == 'X') {
+			create(code.toString());
+			set(new String[] {
+				FLD_ITEM_TYPE, FLD_DSCR, FLD_CUMMULATED_VERSION, FLD_BLACKBOXED
+			}, Character.toString(type), dscr, Integer.toString(version), StringConstants.ZERO);
+		} else {
+			create(ArtikelstammHelper.createUUID(version, gtin, code));
+			
+			// fix pharmacode length < 7 chars
+			String pharmacode = (code != null) ? String.format("%07d", code) : "0000000";
+			
+			set(new String[] {
+				FLD_ITEM_TYPE, FLD_GTIN, FLD_PHAR, FLD_DSCR, FLD_ADDDSCR, FLD_CUMMULATED_VERSION,
+				FLD_BLACKBOXED
+			}, Character.toString(type), gtin, pharmacode, dscr, addscr, Integer.toString(version),
+				StringConstants.ZERO);
+		}
 	}
 	
 	// -------------------------------------------------
@@ -273,7 +285,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		try {
 			val = Integer.parseInt(get(FLD_PKG_SIZE));
 		} catch (NumberFormatException nfe) {
-			
+		
 		}
 		return val;
 	}
@@ -534,94 +546,50 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	/**
 	 * @param stammType
-	 * @return The version of the resp {@link TYPE}, or 99999 if not found
+	 * @return The version of the current imported data-set
 	 */
-	public static int getImportSetCumulatedVersion(TYPE stammType){
+	public static int getCurrentVersion(){
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
-		switch (stammType) {
-		case N:
-			return version.getInt(FLD_PEXF);
-		case P:
-			return version.getInt(FLD_PPUB);
-		}
-		return 99999;
+		return version.getInt(FLD_PPUB);
 	}
 	
-	public static void setImportSetCumulatedVersion(TYPE stammType, int importStammVersion){
+	public static void setCurrentVersion(int importStammVersion){
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
-		switch (stammType) {
-		case N:
-			version.setInt(FLD_PEXF, importStammVersion);
-			return;
-		case P:
-			version.setInt(FLD_PPUB, importStammVersion);
-			return;
-		}
+		version.setInt(FLD_PPUB, importStammVersion);
 	}
 	
-	public static void setImportSetDataQuality(TYPE p, int dq){
+	public static void setImportSetCreationDate(Date creationDate){
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
-		switch (p) {
-		case N:
-			version.setInt(FLD_BLACKBOXED, dq);
-			return;
-		case P:
-			version.setInt(FLD_ITEM_TYPE, dq);
-			return;
-		}
+		version.set(FLD_DSCR, df.format(creationDate.getTime()));
 	}
 	
-	public static int getImportSetDataQuality(TYPE p){
+	public static @Nullable Date getImportSetCreationDate(){
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
-		switch (p) {
-		case N:
-			return version.getInt(FLD_BLACKBOXED);
-		case P:
-			return version.getInt(FLD_ITEM_TYPE);
-		default:
-			return 0;
-		}
-	}
-	
-	public static void setImportSetCreationDate(TYPE stammType, Date creationDate){
-		ArtikelstammItem version = load(VERSION_ENTRY_ID);
-		switch (stammType) {
-		case N:
-			version.set(FLD_ADDDSCR, df.format(creationDate.getTime()));
-			return;
-		case P:
-			version.set(FLD_DSCR, df.format(creationDate.getTime()));
-			return;
-		}
-	}
-
-	public static Date getImportSetCreationDate(TYPE stammType){
-		ArtikelstammItem version = load(VERSION_ENTRY_ID);
-		switch (stammType) {
-		case N:
-			try {
-				return df.parse(version.get(FLD_ADDDSCR));
-			} catch (ParseException e) {
-				return null;
-			}
-		case P:
-			try {
-				return df.parse(version.get(FLD_DSCR));
-			} catch (ParseException e) {
-				return null;
-			}
-		default:
+		try {
+			return df.parse(version.get(FLD_DSCR));
+		} catch (ParseException e) {
 			return null;
 		}
 	}
 	
-	public static boolean purgeEntries(List<ArtikelstammItem> qre){
-		JdbcLink link = getConnection();
-		
-		for (ArtikelstammItem artikelstammItem : qre) {
-			link.exec("DELETE FROM " + TABLENAME + " WHERE ID=" + artikelstammItem.getWrappedId());
+	public static boolean purgeEntries(List<ArtikelstammItem> list){
+		if(list.size()==0) {
+			return true;
 		}
+		String string = list.stream().map(o -> o.getWrappedId())
+			.reduce((u, t) -> u + StringConstants.COMMA + t).get();
+			
+		Stm stm = getConnection().getStatement();
+		stm.exec("DELETE FROM " + TABLENAME + " WHERE ID IN (" + string + ")");
+		getConnection().releaseStatement(stm);
 		
+		return true;
+	}
+	
+	public static boolean purgeProducts(){
+		Stm stm = getConnection().getStatement();
+		stm.exec("DELETE FROM " + TABLENAME + " WHERE TYPE = 'X'");
+		getConnection().releaseStatement(stm);
 		return true;
 	}
 	
@@ -675,10 +643,6 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			log.error("Invalid TYPE argument for " + getId() + ": " + get(FLD_ITEM_TYPE));
 			return null;
 		}
-	}
-	
-	public String getTyp(){
-		return get(FLD_ITEM_TYPE);
 	}
 	
 	@Override
@@ -781,18 +745,19 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public static int findNumberOfArtikelstammItemsForATCWildcard(String atcCode){
-		return PersistentObject.getConnection().queryInt(
-			"SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME + " WHERE "
+		return PersistentObject.getConnection()
+			.queryInt("SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME + " WHERE "
 				+ ArtikelstammItem.FLD_ATC + " " + Query.LIKE + " " + JdbcLink.wrap(atcCode + "%"));
 	}
 	
 	/**
 	 * @return alternative {@link ArtikelstammItem} objects that match the ATC code
 	 */
-	public @NonNull List<ArtikelstammItem> getAlternativeArticlesByATCGroup() {
+	public @NonNull List<ArtikelstammItem> getAlternativeArticlesByATCGroup(){
 		String code = getATC_code();
-		if(code==null || code.length()<1) return Collections.emptyList();
-		
+		if (code == null || code.length() < 1)
+			return Collections.emptyList();
+			
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, code);
 		return qre.execute();
@@ -804,9 +769,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if not
 	 *         found
 	 */
-	public static @Nullable
-	ArtikelstammItem findByEANorGTIN(@NonNull
-	String ean){
+	public static @Nullable ArtikelstammItem findByEANorGTIN(@NonNull String ean){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, ean);
 		List<ArtikelstammItem> result = qre.execute();
@@ -820,15 +783,13 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @param pharmaCode
 	 * @return the ArtikelstammItem for the given pharma code or <code>null</code> if not found
 	 */
-	public static @Nullable
-	ArtikelstammItem findByPharmaCode(@NonNull
-	String pharmaCode){
+	public static @Nullable ArtikelstammItem findByPharmaCode(@NonNull String pharmaCode){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_PHAR, Query.LIKE, pharmaCode);
 		List<ArtikelstammItem> result = qre.execute();
 		if (result.size() == 1)
 			return result.get(0);
-		
+			
 		if (!pharmaCode.startsWith(String.valueOf(0))) {
 			return ArtikelstammItem.findByPharmaCode(String.valueOf(0) + pharmaCode);
 		}

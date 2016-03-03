@@ -1,6 +1,6 @@
 h1. Elexis Artikelstamm Format
 
-__Copyright 2014, MEDEVIT <office@medevit.at>__ 
+__Copyright 2016, MEDEVIT <office@medevit.at>__ 
 
 *Elexis Artikelstamm Format*  
 
@@ -15,4 +15,4 @@ The development of this plugin was sponsored by Dr. med. Franz Marty, "Medizinis
 
 h2. Version
 
-Version 3.0.0 is adapted 1.0.3 from https://github.com/col-panic/elexis
+Version 3.2.0

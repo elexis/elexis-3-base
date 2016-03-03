@@ -47,6 +47,8 @@ public class ArtikelstammLabelProvider extends LabelProvider {
 			return nonPharmaMain;
 		case P:
 			return (item.isInSLList()) ? slMain : pharmaMain;
+		case X:
+			return pharmaMain;
 		}
 		return emptyTransparent;
 	}

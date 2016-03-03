@@ -35,13 +35,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEM;
+import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEMS.ITEM;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 
 public class ArtikelstammHelper {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammHelper.class);
 	
-	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v003.xsd";
+	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v4.xsd";
 	private static URL schemaLocationUrl = null;
 	
 	private static SchemaFactory schemaFactory = SchemaFactory
@@ -86,7 +86,7 @@ public class ArtikelstammHelper {
 	 * <li>Characters 0-13: GTIN, if gtin less 14 chars, left padded with zeros <li>Characters
 	 * 14-20: Pharmacode, if Pharmacode less 7 chars, left padded with zeros <li>Character 21: P or
 	 * N, depending on {@link ArtikelstammConstants.TYPE} <li>Character 22-24: cummulatedVersion, if
-	 * >999 or <0 set to 0 <br>
+	 * >9999 or <0 set to 0 <br>
 	 * 
 	 * @param cummulatedVersion
 	 * @param type
@@ -94,22 +94,21 @@ public class ArtikelstammHelper {
 	 * @param phar
 	 * @return deterministic uuid of an {@link ARTIKELSTAMM} item
 	 */
-	public static String createUUID(int cummulatedVersion, TYPE type, String gtin, BigInteger phar){
-		return createUUID(cummulatedVersion, type, gtin, phar, true);
+	public static String createUUID(int version, String gtin, BigInteger phar){
+		return createUUID(version, gtin, phar, true);
 	}
 	
 	/**
 	 * For importer usage, for regular usage see {@link #createUUID(int, TYPE, String, BigInteger)}
 	 * 
-	 * @param cummulatedVersion
-	 * @param type
+	 * @param version
 	 * @param gtin
 	 * @param phar
 	 * @param includeVersion
 	 *            include the version number of the dataset
 	 * @return deterministic uuid of an {@link ARTIKELSTAMM} item
 	 */
-	public static String createUUID(int cummulatedVersion, TYPE type, String gtin, BigInteger phar,
+	public static String createUUID(int version, String gtin, BigInteger phar,
 		final boolean includeVersion){
 		StringBuilder sb = new StringBuilder();
 		if (gtin.length() > 0) {
@@ -122,11 +121,10 @@ public class ArtikelstammHelper {
 		} else {
 			sb.append("0000000");
 		}
-		sb.append(type.name());
-		if (cummulatedVersion > 999 || cummulatedVersion < 0)
-			cummulatedVersion = 0;
+		if (version > 9999 || version < 0)
+			version = 0;
 		if (includeVersion)
-			sb.append(String.format("%03d", cummulatedVersion));
+			sb.append(String.format("%04d", version));
 		return sb.toString();
 	}
 	
@@ -171,15 +169,14 @@ public class ArtikelstammHelper {
 	 */
 	public static File determineOutputFileName(ARTIKELSTAMM converted, File inboundFileObj,
 		String string){
-		TYPE type = ArtikelstammConstants.TYPE.valueOf(converted.getTYPE());
 		Date outputDate = converted.getCREATIONDATETIME().toGregorianCalendar().getTime();
 		String filename;
 		if (string != null) {
 			filename =
-				"artikelstamm_" + type.name() + "_" + dateFormat.format(outputDate) + "_" + string
+				"artikelstamm_" + dateFormat.format(outputDate) + "_" + string
 					+ ".xml";
 		} else {
-			filename = "artikelstamm_" + type.name() + "_" + dateFormat.format(outputDate) + ".xml";
+			filename = "artikelstamm_" +  dateFormat.format(outputDate) + ".xml";
 		}
 		
 		return new File(inboundFileObj.getParent(), filename);
@@ -195,20 +192,20 @@ public class ArtikelstammHelper {
 	 * @param pharmacode
 	 * @return the {@link ITEM} or <code>null</code> if not found
 	 */
-	public static ITEM getItemInListByPharmacode(ARTIKELSTAMM artikelstamm, String pharmacode){
-		if (itemPharmacodeCache == null) {
-			if (artikelstamm.getTYPE().equals(ArtikelstammConstants.TYPE.N))
-				throw new IllegalArgumentException("Trying to enrich Non-Pharma artikelstamm data");
-			
-			itemPharmacodeCache = new HashMap<String, ITEM>(artikelstamm.getITEM().size());
-			for (ITEM item : artikelstamm.getITEM()) {
-				itemPharmacodeCache.put(item.getPHAR().toString(), item);
-			}
-		}
-		if (itemPharmacodeCache.containsKey(pharmacode))
-			return itemPharmacodeCache.get(pharmacode);
-		return null;
-	}
+//	public static ITEM getItemInListByPharmacode(ARTIKELSTAMM.ITEMS artikelstamm, String pharmacode){
+//		if (itemPharmacodeCache == null) {
+//			if (artikelstamm.getTYPE().equals(ArtikelstammConstants.TYPE.N))
+//				throw new IllegalArgumentException("Trying to enrich Non-Pharma artikelstamm data");
+//			
+//			itemPharmacodeCache = new HashMap<String, ITEM>(artikelstamm.getITEM().size());
+//			for (ITEM item : artikelstamm.getITEM()) {
+//				itemPharmacodeCache.put(item.getPHAR().toString(), item);
+//			}
+//		}
+//		if (itemPharmacodeCache.containsKey(pharmacode))
+//			return itemPharmacodeCache.get(pharmacode);
+//		return null;
+//	}
 	
 	private static HashMap<String, ITEM> itemGTINCache = null;
 	
@@ -220,7 +217,7 @@ public class ArtikelstammHelper {
 	 * @param gtin
 	 * @return
 	 */
-	public static ITEM getItemInListByGTIN(ARTIKELSTAMM artikelstamm, String gtin){
+	public static ITEM getItemInListByGTIN(ARTIKELSTAMM.ITEMS artikelstamm, String gtin){
 		if (itemGTINCache == null) {
 			itemGTINCache = new HashMap<String, ITEM>(artikelstamm.getITEM().size());
 			for (ITEM item : artikelstamm.getITEM()) {
@@ -241,7 +238,7 @@ public class ArtikelstammHelper {
 	 * @param item
 	 * @return an 8-char-length string with the SwissmedicNo8, if not applicable <code>null</code>
 	 */
-	public String getSwissmedicNo8ForArtikelstammItem(ARTIKELSTAMM.ITEM item){
+	public String getSwissmedicNo8ForArtikelstammItem(ARTIKELSTAMM.ITEMS.ITEM item){
 		String gtin = item.getGTIN();
 		if (gtin != null && gtin.startsWith("7680"))
 			return gtin.substring(4, 12);

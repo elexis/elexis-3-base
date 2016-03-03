@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 MEDEVIT.
+ * Copyright (c) 2016 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ import org.eclipse.ui.PlatformUI;
 
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
@@ -108,26 +107,14 @@ public class DetailDisplay implements IDetailDisplay {
 		Label label = new Label(ret, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false, 1, 1));
 		StringBuilder sb = new StringBuilder();
-		int pharma = ArtikelstammItem.getImportSetCumulatedVersion(TYPE.P);
-		if (pharma != 99999)
-			sb.append("Pharma "
-				+ dataQualityToString(ArtikelstammItem.getImportSetDataQuality(TYPE.P)));
-		Date importSetDatePharma = ArtikelstammItem.getImportSetCreationDate(TYPE.P);
-		if (importSetDatePharma != null) {
-			sb.append(" " + ArtikelstammHelper.monthAndYearWritten.format(importSetDatePharma)
-				+ " (" + pharma + ")");
+		int version = ArtikelstammItem.getCurrentVersion();
+		if (version != 99999) {
+			sb.append(" v"+version);
 		}
-		int nonPharma = ArtikelstammItem.getImportSetCumulatedVersion(TYPE.N);
-		if (nonPharma != 99999 && pharma != 99999)
-			sb.append(", ");
-		if (nonPharma != 99999)
-			sb.append("Non-Pharma "
-				+ dataQualityToString(ArtikelstammItem.getImportSetDataQuality(TYPE.N)));
-		Date importSetDateNonPharma = ArtikelstammItem.getImportSetCreationDate(TYPE.N);
-		if (importSetDateNonPharma != null) {
-			sb.append(" "
-				+ ArtikelstammHelper.monthAndYearWritten.format(ArtikelstammItem
-					.getImportSetCreationDate(TYPE.N)) + " (" + nonPharma + ")");
+		Date creationDate = ArtikelstammItem.getImportSetCreationDate();
+		if (creationDate != null) {
+			sb.append(" / "
+				+ ArtikelstammHelper.monthAndYearWritten.format(creationDate));
 		}
 		label.setText("Datensatz-Basis: " + sb.toString());
 		

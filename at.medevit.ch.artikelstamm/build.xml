@@ -1,0 +1,11 @@
+<project default="generate-jaxb-code">
+	<target name="generate-jaxb-code">
+		<java classname="com.sun.tools.internal.xjc.XJCFacade">
+			<arg value="-d" />
+			<arg value="src-gen" />
+			<arg value="-p" />
+			<arg value="at.medevit.ch.artikelstamm" />
+			<arg value="lib/Elexis_Artikelstamm_v4.xsd" />
+		</java>
+	</target>
+</project>

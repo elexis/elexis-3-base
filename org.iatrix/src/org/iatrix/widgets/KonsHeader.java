@@ -15,8 +15,6 @@
  ******************************************************************************/
 package org.iatrix.widgets;
 
-import java.util.List;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -48,7 +46,6 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
 import ch.elexis.data.Rechnungssteller;
 
 public class KonsHeader implements IJournalArea {
@@ -61,11 +58,6 @@ public class KonsHeader implements IJournalArea {
 	private Combo cbFall;
 	private Label cbLabel;
 	private static Logger log = LoggerFactory.getLogger(KonsHeader.class);
-	/**
-	 * Flag indicating if there are more than one mandants. This variable is initially set in
-	 * createPartControl().
-	 */
-	private boolean hasMultipleMandants = false;
 
 	public KonsHeader(Composite konsultationComposite){
 		tk = UiDesk.getToolkit();
@@ -81,30 +73,24 @@ public class KonsHeader implements IJournalArea {
 				GlobalActions.redateAction.run();
 			}
 		});
-
-		if (hasMultipleMandants) {
-			hlMandant = tk.createHyperlink(konsFallArea, "", SWT.NONE);
-			hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
-				@Override
-				public void linkActivated(HyperlinkEvent e){
-					KontaktSelektor ksl =
-						new KontaktSelektor(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-							.getShell(), Mandant.class, "Mandant auswählen",
-							"Auf wen soll diese Kons verrechnet werden?", new String[] {
-								Mandant.FLD_SHORT_LABEL, Mandant.FLD_NAME1, Mandant.FLD_NAME2
-							});
-					if (ksl.open() == Dialog.OK) {
-						actKons.setMandant((Mandant) ksl.getSelection());
-						setKons(actKons, false);
-					}
+		hlMandant = tk.createHyperlink(konsFallArea, "", SWT.NONE);
+		hlMandant.setText("--"); //$NON-NLS-1$
+		hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e){
+				KontaktSelektor ksl = new KontaktSelektor(
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Mandant.class,
+					"Mandant auswählen", "Auf wen soll diese Kons verrechnet werden?",
+					new String[] {
+						Mandant.FLD_SHORT_LABEL, Mandant.FLD_NAME1, Mandant.FLD_NAME2
+				});
+				if (ksl.open() == Dialog.OK) {
+					actKons.setMandant((Mandant) ksl.getSelection());
+					setKons(actKons, false);
 				}
+			}
 
-			});
-		} else {
-			hlMandant = null;
-			// placeholder
-			tk.createLabel(konsFallArea, "nur 1 Mandant ");
-		}
+		});
 
 		Composite fallArea = tk.createComposite(konsFallArea);
 		// GridData gd = SWTHelper.getFillGridData(1, false, 1, false);
@@ -112,7 +98,6 @@ public class KonsHeader implements IJournalArea {
 		GridData gd = new GridData(SWT.RIGHT, SWT.TOP, true, false);
 		fallArea.setLayoutData(gd);
 
-		//
 		fallArea.setLayout(new GridLayout(2, false));
 		cbLabel = tk.createLabel(fallArea, "Fall:");
 		cbFall = new Combo(fallArea, SWT.SINGLE | SWT.READ_ONLY);
@@ -125,14 +110,14 @@ public class KonsHeader implements IJournalArea {
 				Fall nFall = faelle[i];
 				Fall actFall = actKons.getFall();
 				if (!nFall.getId().equals(actFall.getId())) {
-					MessageDialog msd =
-						new MessageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-							.getShell(), "Fallzuordnung ändern", Images.IMG_LOGO.getImage(),
-							"Möchten Sie diese Behandlung vom Fall:\n'" + actFall.getLabel()
-								+ "' zum Fall:\n'" + nFall.getLabel() + "' transferieren?",
-							MessageDialog.QUESTION, new String[] {
-								"Ja", "Nein"
-							}, 0);
+					MessageDialog msd = new MessageDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						"Fallzuordnung ändern", Images.IMG_LOGO.getImage(),
+						"Möchten Sie diese Behandlung vom Fall:\n'" + actFall.getLabel()
+							+ "' zum Fall:\n'" + nFall.getLabel() + "' transferieren?",
+						MessageDialog.QUESTION, new String[] {
+							"Ja", "Nein"
+					}, 0);
 					if (msd.open() == 0) {
 						// TODO check compatibility of assigned problems
 						actKons.setFall(nFall);
@@ -146,17 +131,6 @@ public class KonsHeader implements IJournalArea {
 
 	}
 
-	/**
-	 * Initialize hasMultipleMandants variable
-	 */
-	private void initHasMultipleMandants(){
-		Query<Mandant> query = new Query<Mandant>(Mandant.class);
-		List<Mandant> list = query.execute();
-		if (list != null && list.size() > 1) {
-			hasMultipleMandants = true;
-		}
-	}
-
 	@Override
 	public void setKons(Konsultation k, boolean putCaretToEnd){
 		log.debug("setKons " + k);
@@ -167,27 +141,34 @@ public class KonsHeader implements IJournalArea {
 			sb.append(actKons.getDatum());
 			hlKonsultationDatum.setText(sb.toString());
 			hlKonsultationDatum.setEnabled(true);
-
-			if (hasMultipleMandants) {
-				Mandant m = actKons.getMandant();
-				sb = new StringBuilder();
-				if (m == null) {
-					sb.append("(nicht von Ihnen)");
+			Mandant m = actKons.getMandant();
+			sb = new StringBuilder();
+			if (m == null) {
+				sb.append(ch.elexis.core.ui.views.Messages.KonsDetailView_NotYours); // $NON-NLS-1$
+			} else {
+				Rechnungssteller rs = m.getRechnungssteller();
+				if (rs.getId().equals(m.getId())) {
+					sb.append("(").append(m.getLabel()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					Rechnungssteller rs = m.getRechnungssteller();
-					if (rs.getId().equals(m.getId())) {
-						sb.append("(").append(m.getLabel()).append(")");
-					} else {
-						sb.append("(").append(m.getLabel()).append("/").append(rs.getLabel())
-							.append(")");
-					}
+					sb.append("(").append(m.getLabel()).append("/").append( //$NON-NLS-1$ //$NON-NLS-2$
+						rs.getLabel()).append(")"); //$NON-NLS-1$
 				}
-				hlMandant.setText(sb.toString());
-				hlMandant.setEnabled(CoreHub.acl.request(AccessControlDefaults.KONS_REASSIGN));
 			}
+			boolean enabled = CoreHub.acl.request(AccessControlDefaults.KONS_REASSIGN);
+			hlMandant.setBackground(konsFallArea.getBackground());
+			hlMandant.setEnabled(enabled);
+			if (enabled) {
+				hlMandant.setToolTipText(
+						"Sie haben die Erlaubnis, Konsultation jemanden anderem zuzuordnen");
+			} else {
+				hlMandant.setToolTipText(
+						"Sie haben keine Erlaubnis, Konsultation jemanden anderem zuzuordnen");
+			}
+			hlMandant.setText(sb.toString());
+
 			reloadFaelle(actKons);
 
-			log.debug("Konsultation: " + actKons.getId());
+			log.debug("setKons " +  actKons.getId() + " Rechnungssteller " + sb + " enabled? " + enabled);
 		} else {
 			cbFall.setEnabled(false);
 
@@ -201,7 +182,6 @@ public class KonsHeader implements IJournalArea {
 				hlMandant.setEnabled(false);
 			}
 
-			log.debug("Konsultation: null");
 			reloadFaelle(null);
 		}
 		konsFallArea.layout();
@@ -244,9 +224,8 @@ public class KonsHeader implements IJournalArea {
 			} else {
 				color = cbFall.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 			}
-			String explanation =
-				"Die Farben erklären sich wie folgt: Bei Unfall "
-					+ "rot wie Blut, bei Krankheit grün wie Galle, sonst weiss";
+			String explanation = "Die Farben erklären sich wie folgt: Bei Unfall "
+				+ "rot wie Blut, bei Krankheit grün wie Galle, sonst weiss";
 			cbLabel.setToolTipText(explanation);
 			cbLabel.setBackground(color);
 			cbFall.setToolTipText(explanation);

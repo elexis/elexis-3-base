@@ -20,16 +20,15 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
-import ch.elexis.dialogs.TerminStatusDialog;
 
 /**
  * Some common actions for the agenda
@@ -39,54 +38,35 @@ import ch.elexis.dialogs.TerminStatusDialog;
  */
 public class AgendaActions {
 	
-	/** modify an appointment */
-	public static LockRequestingRestrictedAction<Termin> changeTerminStatusAction;
 	/** delete an appointment */
-	public static LockRequestingRestrictedAction<Termin> delTerminAction;
+	private static LockRequestingRestrictedAction<Termin> delTerminAction;
 	/** Display or change the state of an appointment */
-	public static IAction terminStatusAction;
-	
-	// public static IAction terminLeerAction;
-	/** free a previously blocked time range */
-	public static IAction unblockAction;
+	private static IAction terminStatusAction;
 	
 	/**
 	 * Reflect the user's rights on the agenda actions
 	 */
 	public static void updateActions(){
-		changeTerminStatusAction.reflectRight();
-		terminStatusAction.setEnabled(CoreHub.acl.request(ACLContributor.USE_AGENDA));
-		delTerminAction.reflectRight();
+		getTerminStatusAction().setEnabled(CoreHub.acl.request(ACLContributor.USE_AGENDA));
+		((RestrictedAction) getDelTerminAction()).reflectRight();
 	}
 	
-	static void makeActions(){
+	public static IAction getDelTerminAction(){
+		if (delTerminAction == null) {
+			makeActions();
+		}
+		return delTerminAction;
+	}
+	
+	public static IAction getTerminStatusAction(){
+		if (terminStatusAction == null) {
+			makeActions();
+		}
+		return terminStatusAction;
+	}
+	
+	private static void makeActions(){
 		
-		unblockAction = new Action(Messages.AgendaActions_unblock) {
-			@Override
-			public void run(){
-				Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-				if ((t != null) && (t.getType().equals(Termin.typReserviert()))) {
-					t.delete();
-					ElexisEventDispatcher.reload(Termin.class);
-				}
-			}
-		};
-		
-		changeTerminStatusAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.USE_AGENDA,
-				Messages.AgendaActions_state) {
-
-			@Override
-			public Termin getTargetedObject() {
-				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-			}
-
-			@Override
-			public void doRun(Termin element) {
-				TerminStatusDialog dlg = new TerminStatusDialog(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), element);
-				dlg.open();
-			}
-		};
 		delTerminAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.DELETE_APPOINTMENTS,
 				Messages.AgendaActions_deleteDate) {
 			{

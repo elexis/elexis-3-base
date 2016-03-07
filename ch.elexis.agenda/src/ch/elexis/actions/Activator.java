@@ -64,7 +64,6 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(final BundleContext context) throws Exception{
 		super.start(context);
-		AgendaActions.makeActions();
 		// log.log("activated", Log.DEBUGMSG);
 		UiDesk.getImageRegistry().put(IMG_HOME, getImageDescriptor("icons/calendar_view_day.png")); //$NON-NLS-1$
 		UiDesk.getImageRegistry().put(IMG_RECURRING_DATE,

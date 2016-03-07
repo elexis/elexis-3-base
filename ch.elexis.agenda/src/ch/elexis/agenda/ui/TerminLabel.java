@@ -272,11 +272,11 @@ public class TerminLabel extends Composite {
 	class TerminLabelMenu {
 		TerminLabelMenu(){
 			MenuManager contextMenuManager = new MenuManager();
-			contextMenuManager.add(AgendaActions.terminStatusAction);
+			contextMenuManager.add(AgendaActions.getTerminStatusAction());
 			contextMenuManager.add(terminKuerzenAction);
 			contextMenuManager.add(terminVerlaengernAction);
 			contextMenuManager.add(terminAendernAction);
-			contextMenuManager.add(AgendaActions.delTerminAction);
+			contextMenuManager.add(AgendaActions.getDelTerminAction());
 			TerminLabel.this.lbl
 				.setMenu(contextMenuManager.createContextMenu(TerminLabel.this.lbl));
 		}

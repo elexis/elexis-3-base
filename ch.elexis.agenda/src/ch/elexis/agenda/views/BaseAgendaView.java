@@ -155,11 +155,11 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 					manager.add(newTerminAction);
 					manager.add(blockAction);
 				} else {
-					manager.add(AgendaActions.terminStatusAction);
+					manager.add(AgendaActions.getTerminStatusAction());
 					manager.add(terminKuerzenAction);
 					manager.add(terminVerlaengernAction);
 					manager.add(terminAendernAction);
-					manager.add(AgendaActions.delTerminAction);
+					manager.add(AgendaActions.getDelTerminAction());
 				}
 				updateActions();
 			}

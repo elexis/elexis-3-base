@@ -280,9 +280,11 @@ public class TarmedJaxbUtil {
 				Namespace.getNamespace(Constants.DEFAULT_NAMESPACE));
 		
 		if (location != null && !location.isEmpty()) {
-			if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_400_LOCATION)) {
+			if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_400_LOCATION)
+				|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_400_LOCATION)) {
 				return "4.0";
-			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_440_LOCATION)) {
+			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_440_LOCATION)
+				|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_440_LOCATION)) {
 				return "4.4";
 			}
 		}

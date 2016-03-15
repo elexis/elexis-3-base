@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Plugin fuer Import Laborwerte TeamW
 Bundle-SymbolicName: ch.elexis.laborimport.teamw;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -10,8 +10,8 @@ Require-Bundle: ch.rgw.utility;bundle-version="2.0.0",
  ch.ngiger.utilities.comm;bundle-version="1.0.0",
  org.eclipse.ui,
  org.eclipse.core.runtime,
- ch.elexis.core;bundle-version="0.0.2",
- ch.elexis.core.ui.importer.div;bundle-version="3.0.0",
+ ch.elexis.core;bundle-version="3.2.0",
+ ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.data
 Import-Package: org.apache.commons.net.ftp

@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis - Medics Connector Plugin V2
 Bundle-SymbolicName: ch.elexis.laborimport.medics.v2;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  ch.rgw.utility,
  ch.elexis.core.hl7.v2x,
- ch.elexis.core,
+ ch.elexis.core;bundle-version="3.2.0",
  ch.elexis.core.data,
  ch.elexis.core.ui,
  ch.elexis.base.ch.arzttarife,

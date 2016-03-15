@@ -3,9 +3,10 @@ package ch.elexis.connect.afinion.packages;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import ch.elexis.core.importer.div.importers.TransientLabResult;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
+
 import ch.elexis.data.Patient;
 
 /**
@@ -90,7 +91,7 @@ public class Record {
 	 * @throws PackageException
 	 */
 	public void write(Patient patient) throws PackageException{
-		ArrayList<TransientLabResult> results = new ArrayList<LabImportUtil.TransientLabResult>();
+		ArrayList<TransientLabResult> results = new ArrayList<TransientLabResult>();
 		for (int i = 0; i < parts.length; i++) {
 			if (parts[i].isValid()) {
 				Value val = Value.getValue(parts[i].getKuerzel(), parts[i].getUnit());
@@ -98,7 +99,7 @@ public class Record {
 					this.header.getDate()));
 			}
 		}
-		LabImportUtil.importLabResults(results, new DefaultLabImportUiHandler());
+		new LabImportUtil().importLabResults(results, new DefaultLabImportUiHandler());
 	}
 	
 	public String toString(){

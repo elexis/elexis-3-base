@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.importer.div.importers.HL7Parser;
+import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {

@@ -12,6 +12,7 @@ package ch.elexis.laborimport.LG1;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,7 +36,9 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.ui.importer.div.importers.HL7Parser;
+import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
+
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Result;
@@ -48,7 +52,7 @@ public class Importer extends ImporterPage {
 	
 	private static final String OPENMEDICAL_MAINCLASS = "ch.openmedical.JMedTransfer.JMedTransfer";
 	
-	private HL7Parser hlp = new HL7Parser(MY_LAB);
+	private HL7Parser hlp = new DefaultHL7Parser(MY_LAB);
 	
 	// importer type
 	private static final int FILE = 1;
@@ -159,10 +163,12 @@ public class Importer extends ImporterPage {
 			});
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result<?> rs = hlp.importFile(f, archiveDir, false);
-				if (!rs.isOK()) {
-					// importFile already shows error
-					// rs.display("Fehler beim Import");
+				Result<?> rs;
+				try {
+					rs = hlp.importFile(f, archiveDir, false);
+				} catch (IOException e) {
+					SWTHelper.showError("Import error",
+							e.getMessage());
 				}
 			}
 			SWTHelper.showInfo("Verbindung mit Labor " + MY_LAB + " erfolgreich", "Es wurden "
@@ -217,7 +223,11 @@ public class Importer extends ImporterPage {
 		public void run(){
 			if (type == FILE) {
 				String filename = results[1];
-				result = ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
+				try {
+					result = ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
+				} catch (IOException e) {
+					result = new Status(Status.ERROR, "ch.elexis.laborimport_lg1", e.getMessage());
+				}
 			} else {
 				result = ResultAdapter.getResultAsStatus(importDirect());
 			}

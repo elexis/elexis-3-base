@@ -41,9 +41,11 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.importer.div.importers.ILabItemResolver;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
-import ch.elexis.core.ui.importer.div.importers.HL7Parser;
-import ch.elexis.core.ui.importer.div.importers.ILabItemResolver;
+import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
+import ch.elexis.core.ui.importer.div.importers.TestHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabOrder;
@@ -125,13 +127,17 @@ public class LabOrderImport extends ImporterPage {
 	private boolean settingOverwrite = false;
 	private static TimeTool dateTime = new TimeTool();
 	
-	private static HL7Parser hlp = new HL7Parser(KUERZEL);
+	private static HL7Parser hlp = new DefaultHL7Parser(KUERZEL);
 
 	protected final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"); //$NON-NLS-1$
 	private ViollierLaborImportSettings settings;
 	
 	public static void setTestMode(boolean value){
-		hlp.setTestMode(value);
+		if(value) {
+			LabOrderImport.hlp = new TestHL7Parser(KUERZEL);
+		} else {
+			LabOrderImport.hlp = new DefaultHL7Parser(KUERZEL);
+		}
 	}
 
 	/*
@@ -370,8 +376,7 @@ public class LabOrderImport extends ImporterPage {
 						// get created results using the orderId
 						Object obj = result.get();
 						if (obj instanceof String) {
-							List<LabOrder> orders = LabOrder.getLabOrders(null, null, null, null,
-								(String) obj, null, null);
+							List<LabOrder> orders = LabOrder.getLabOrdersByOrderId((String) obj);
 							if (orders != null && !orders.isEmpty()) {
 								resolveTimeForPdf(orders.get(0).getLabResult(), observation);
 								for (LabOrder labOrder : orders) {

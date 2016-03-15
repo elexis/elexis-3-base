@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Messwerte Iatrix
 Bundle-SymbolicName: org.iatrix.messwerte;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: org.iatrix.messwerte.Activator
 Bundle-Vendor: org.iatrix
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
- ch.elexis.core;bundle-version="3.0.0",
+ ch.elexis.core;bundle-version="3.2.0",
  ch.rgw.utility;bundle-version="3.0.0",
  org.slf4j.api,
  ch.elexis.core.data,

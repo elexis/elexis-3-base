@@ -10,10 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
 import ch.elexis.core.ui.laboratory.dialogs.LabItemSelektor;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabMapping;
 import ch.elexis.data.Labor;
@@ -128,8 +131,7 @@ public class EurolyserLine {
 		
 		@Override
 		public void run(){
-			result = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
-				"Abbrechen",
+			result = MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Abbrechen",
 				"Kein Patient ausgewählt. Soll der gesamte Import abgerochen werden?");
 		}
 		
@@ -172,12 +174,12 @@ public class EurolyserLine {
 		filePatientMap.put(patientId, patient);
 		
 		LabItem labItem = resolveLabItem();
-		if(labItem == null) {
+		if (labItem == null) {
 			AskCreateItemRunnable askCreate = new AskCreateItemRunnable();
 			Display.getDefault().syncExec(askCreate);
 			if (askCreate.getResult()) {
-				labItem = new LabItem(resultItemName, resultItemName, null, null, null, resultUnit,
-					LabItem.typ.NUMERIC, "Eurolyser", "0");
+				labItem = new LabItem(resultItemName, resultItemName, (Kontakt) null, null, null, resultUnit,
+					LabItemTyp.NUMERIC, "Eurolyser", "0");
 				// create a mapping with the slection
 				new LabMapping(labor.getId(), resultItemName, labItem.getId(), false);
 			}
@@ -186,8 +188,8 @@ public class EurolyserLine {
 		if (labItem != null && patient != null) {
 			TimeTool analyseTime = new TimeTool(resultObservationTime);
 			TransientLabResult result =
-				new TransientLabResult.Builder(patient, labor, labItem, resultValue)
-					.unit(resultUnit).analyseTime(analyseTime).build();
+				new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(labor), labItem, resultValue)
+					.unit(resultUnit).analyseTime(analyseTime).build(new LabImportUtil());
 			return result;
 		}
 		

@@ -50,7 +50,8 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.FileUtility;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.ui.importer.div.importers.HL7Parser;
+import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.ngiger.comm.ftp.FtpSemaException;
@@ -75,7 +76,7 @@ public class Importer extends ImporterPage {
 	private static final int FILE = 1;
 	private static final int DIRECT = 2;
 	
-	private HL7Parser hlp = new HL7Parser(MY_LAB);
+	private HL7Parser hlp = new DefaultHL7Parser(MY_LAB);
 	
 	public Importer(){}
 	
@@ -99,14 +100,19 @@ public class Importer extends ImporterPage {
 	 */
 	private Result<?> importFile(final String filepath){
 		File file = new File(filepath);
-		Result<?> result = hlp.importFile(file, null, false);
-		if (result.isOK()) {
+		Result<?> rs = null;
+		try {
+			rs = hlp.importFile(file, null, false);
+		} catch (IOException e) {
+			SWTHelper.showError("Import error", e.getMessage());
+		}
+		if (rs != null && rs.isOK()) {
 			if (!file.delete()) {
 				logger.warn("Datei " + file.getPath() //$NON-NLS-1$
 					+ " konnte nicht gelöscht werden."); //$NON-NLS-1$
 			}
 		}
-		return result;
+		return rs;
 	}
 	
 	private Result<?> importDirect(){
@@ -116,16 +122,15 @@ public class Importer extends ImporterPage {
 	private Result<?> importDirectFtp(){
 		Result<String> result =
 			new Result<String>(ch.elexis.laborimport.analytica.Messages.getString("Importer.ok")); //$NON-NLS-1$
-		
+			
 		String ftpHost =
 			CoreHub.globalCfg.get(PreferencePage.FTP_HOST, PreferencePage.DEFAULT_FTP_HOST);
 		String user =
 			CoreHub.globalCfg.get(PreferencePage.FTP_USER, PreferencePage.DEFAULT_FTP_USER);
 		String pwd = CoreHub.globalCfg.get(PreferencePage.FTP_PWD, PreferencePage.DEFAULT_FTP_PWD);
-		String downloadDir =
-			FileUtility.getCorrectPath(CoreHub.globalCfg.get(PreferencePage.DL_DIR,
-				PreferencePage.DEFAULT_DL_DIR));
-		
+		String downloadDir = FileUtility.getCorrectPath(
+			CoreHub.globalCfg.get(PreferencePage.DL_DIR, PreferencePage.DEFAULT_DL_DIR));
+			
 		FtpServer ftp = new FtpServer();
 		try {
 			List<String> hl7FileList = new Vector<String>();
@@ -152,18 +157,16 @@ public class Importer extends ImporterPage {
 				}
 			}
 			
-			String header =
-				MessageFormat.format(
-					ch.elexis.laborimport.analytica.Messages.getString("Importer.import.header"), //$NON-NLS-1$
-					new Object[] {
-						MY_LAB
-					});
-			String question =
-				MessageFormat.format(
-					ch.elexis.laborimport.analytica.Messages.getString("Importer.import.message"), //$NON-NLS-1$
-					new Object[] {
-						hl7FileList.size(), downloadDir
-					});
+			String header = MessageFormat.format(
+				ch.elexis.laborimport.analytica.Messages.getString("Importer.import.header"), //$NON-NLS-1$
+				new Object[] {
+					MY_LAB
+			});
+			String question = MessageFormat.format(
+				ch.elexis.laborimport.analytica.Messages.getString("Importer.import.message"), //$NON-NLS-1$
+				new Object[] {
+					hl7FileList.size(), downloadDir
+			});
 			if (SWTHelper.askYesNo(header, question)) {
 				for (String filename : hl7FileList) {
 					importFile(downloadDir + filename);
@@ -234,7 +237,7 @@ public class Importer extends ImporterPage {
 	 * FILE is chosen, the file path is stored in results[1].
 	 * 
 	 * @author gerry, danlutz
-	 * 
+	 * 		
 	 */
 	private class LabImporter extends Composite {
 		private final Button bFile;
@@ -247,8 +250,8 @@ public class Importer extends ImporterPage {
 			setLayout(new GridLayout(3, false));
 			
 			bFile = new Button(this, SWT.RADIO);
-			bFile.setText(ch.elexis.laborimport.analytica.Messages
-				.getString("Importer.label.importFile")); //$NON-NLS-1$
+			bFile.setText(
+				ch.elexis.laborimport.analytica.Messages.getString("Importer.label.importFile")); //$NON-NLS-1$
 			bFile.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			
 			Label lFile = new Label(this, SWT.NONE);
@@ -266,8 +269,9 @@ public class Importer extends ImporterPage {
 			String direktHerkunft =
 				ch.elexis.laborimport.analytica.Messages.getString("Importer.ftp.label"); //$NON-NLS-1$
 			bDirect = new Button(this, SWT.RADIO);
-			bDirect.setText(ch.elexis.laborimport.analytica.Messages
-				.getString("Importer.label.importDirect") + " (" + direktHerkunft + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			bDirect.setText(
+				ch.elexis.laborimport.analytica.Messages.getString("Importer.label.importDirect") //$NON-NLS-1$
+					+ " (" + direktHerkunft + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			bDirect.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			
 			int type = CoreHub.localCfg.get("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
@@ -322,8 +326,8 @@ public class Importer extends ImporterPage {
 						home.results[1] = filename;
 						
 						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-						CoreHub.localCfg.set(
-							"ImporterPage/" + home.getTitle() + "/filename", filename); //$NON-NLS-1$ //$NON-NLS-2$
+						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", //$NON-NLS-1$//$NON-NLS-2$
+							filename);
 					} else {
 						bFile.setSelection(false);
 						bDirect.setSelection(true);
@@ -350,9 +354,11 @@ public class Importer extends ImporterPage {
 					
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
 					fdl.setFilterExtensions(new String[] {
-						"*"}); //$NON-NLS-1$
+						"*" //$NON-NLS-1$
+					});
 					fdl.setFilterNames(new String[] {
-						Messages.getString("ImporterPage.allFiles")}); //$NON-NLS-1$
+						Messages.getString("ImporterPage.allFiles") //$NON-NLS-1$
+					});
 					String filename = fdl.open();
 					if (filename == null) {
 						filename = ""; //$NON-NLS-1$

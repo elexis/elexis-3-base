@@ -18,12 +18,14 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.beans.ContactBean;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
 import ch.elexis.core.ui.importer.div.rs232.Connection;
 import ch.elexis.core.ui.importer.div.rs232.Connection.ComPortListener;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -39,18 +41,18 @@ public class MythicAction extends Action implements ComPortListener {
 	private static final int MODE_AWAIT_LINES = 1;
 	private final int mode = 0;
 	
-	Connection ctrl = new Connection("Elexis-Mythic",
-		CoreHub.localCfg.get(Preferences.PORT, "COM1"), CoreHub.localCfg.get(Preferences.PARAMS,
-			"9600,8,n,1"), this);
+	Connection ctrl =
+		new Connection("Elexis-Mythic", CoreHub.localCfg.get(Preferences.PORT, "COM1"),
+			CoreHub.localCfg.get(Preferences.PARAMS, "9600,8,n,1"), this);
 	Labor myLab;
 	Patient actPatient;
 	
 	public MythicAction(){
 		super("Mythic", AS_CHECK_BOX);
 		setToolTipText("Daten von Mythic einlesen");
-		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
-			"ch.elexis.connect.mythic", "icons/mythic.ico")); //$NON-NLS-1$
-		
+		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.mythic", //$NON-NLS-1$
+			"icons/mythic.ico"));
+			
 		myLab = LabImportUtil.getOrCreateLabor("Mythic");
 	}
 	
@@ -113,20 +115,21 @@ public class MythicAction extends Action implements ComPortListener {
 				LabItem li = LabImportUtil.getLabItem(line[0], myLab);
 				if (li == null) {
 					String ref = line[5] + "-" + line[6];
-					li =
-						new LabItem(line[0], line[0], myLab, ref, ref, units[idx],
-							LabItem.typ.NUMERIC, "MTH Mythic", "50");
+					li = new LabItem(line[0], line[0], myLab, ref, ref, units[idx],
+						LabItemTyp.NUMERIC, "MTH Mythic", "50");
 				}
 				
 				String comment = "";
 				if ((line[2].length() > 0) || (line[3].length() > 0)) {
 					comment = line[2] + ";" + line[3];
 				}
+				LabImportUtil lu = new LabImportUtil();
 				TransientLabResult tLabResult =
-					new TransientLabResult.Builder(actPatient, myLab, li, line[1])
-						.date(new TimeTool()).comment(comment).build();
-				
-				LabImportUtil.importLabResults(Collections.singletonList(tLabResult),
+					new TransientLabResult.Builder(new ContactBean(actPatient),
+						new ContactBean(myLab), li, line[1]).date(new TimeTool()).comment(comment)
+							.build(lu);
+							
+				lu.importLabResults(Collections.singletonList(tLabResult),
 					new DefaultLabImportUiHandler());
 			}
 		}
@@ -139,8 +142,8 @@ public class MythicAction extends Action implements ComPortListener {
 	}
 	
 	String[] results = {
-		"WBC", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "RDW", "PLT", "MPV", "THT", "PDW",
-		"LYM%", "MON%", "GRA%", "LYM", "MON", "GRA"
+		"WBC", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "RDW", "PLT", "MPV", "THT", "PDW", "LYM%",
+		"MON%", "GRA%", "LYM", "MON", "GRA"
 	};
 	String[] units = {
 		"G/l", "G/l", "g/dl", "%", "fl", "pg", "g/dl", "%", "G/l", "fl", "%", "%", "%", "%", "%",

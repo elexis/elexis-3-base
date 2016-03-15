@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import at.medevit.elexis.inbox.core.ui.preferences.InboxPreferences;
 import at.medevit.elexis.inbox.model.InboxElement;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.PersistentObject;
@@ -118,7 +119,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 	@Override
 	public Color getForeground(Object element){
 		LabResult labResult = (LabResult) ((InboxElement) element).getObject();
-		if (labResult.isFlag(LabResult.PATHOLOGIC)) {
+		if (labResult.isFlag(LabResultConstants.PATHOLOGIC)) {
 			return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
 		} else {
 			return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);

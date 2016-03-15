@@ -183,7 +183,9 @@ public class RnPrintView2 extends ViewPart {
 					// ignore
 				}
 				try {
-					bout.close();
+					if(bout!=null) {
+						bout.close();
+					}
 				} catch (IOException e) {
 					// ignore
 				}

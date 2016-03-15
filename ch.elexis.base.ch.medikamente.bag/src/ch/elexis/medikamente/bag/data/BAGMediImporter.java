@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.core.exceptions.ElexisException;
-import ch.elexis.core.ui.importer.div.importers.ExcelWrapper;
+import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Artikel;

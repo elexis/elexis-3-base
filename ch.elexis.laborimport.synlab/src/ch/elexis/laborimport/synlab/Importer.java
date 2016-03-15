@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.ui.importer.div.importers.multifile.MultiFileParser;
+import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;

@@ -15,6 +15,7 @@ package ch.elexis.laborimport.labtop;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -36,7 +37,8 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.ui.importer.div.importers.HL7Parser;
+import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Result;
@@ -48,7 +50,7 @@ public class Importer extends ImporterPage {
 	
 	private static final String OPENMEDICAL_MAINCLASS = "ch.openmedical.JMedTransfer.JMedTransfer";
 	
-	private HL7Parser hlp = new HL7Parser(MY_LAB);
+	private HL7Parser hlp = new DefaultHL7Parser(MY_LAB);
 	
 	// importer type
 	private static final int FILE = 1;
@@ -159,10 +161,11 @@ public class Importer extends ImporterPage {
 			});
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result<?> rs = hlp.importFile(f, archiveDir, false);
-				if (!rs.isOK()) {
-					// importFile already shows error
-					// rs.display("Fehler beim Import");
+				Result<?> rs;
+				try {
+					rs = hlp.importFile(f, archiveDir, false);
+				} catch (IOException e) {
+					SWTHelper.showError("Import error", e.getMessage());
 				}
 			}
 			SWTHelper.showInfo("Verbindung mit Labor " + MY_LAB + " erfolgreich", "Es wurden "

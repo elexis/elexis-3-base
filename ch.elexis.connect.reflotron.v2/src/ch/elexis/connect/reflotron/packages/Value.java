@@ -2,8 +2,11 @@ package ch.elexis.connect.reflotron.packages;
 
 import java.util.ResourceBundle;
 
+import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.model.LabResultConstants;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
@@ -65,7 +68,7 @@ public class Value {
 		if (_labItem == null) {
 			_labItem =
 				new LabItem(_shortName, _longName, _labor, _refMann, _refFrau, _unit,
-					LabItem.typ.NUMERIC, Messages.getString("Value.LabName"), "50");
+					LabItemTyp.NUMERIC, Messages.getString("Value.LabName"), "50");
 		}
 	}
 	
@@ -74,27 +77,29 @@ public class Value {
 			initialize();
 		}
 		
+		LabImportUtil lu = new LabImportUtil();
+		
 		// do not set a flag or comment if none is given
 		if (flags == null || flags.isEmpty()) {
-			return new TransientLabResult.Builder(patient, _labor, _labItem, value).date(date)
-				.build();
+			return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_labor), _labItem, value).date(date)
+				.build(lu);
 		}
 		
 		String comment = "";
 		int resultFlags = 0;
 		if (flags.equals("1")) {
 			// comment = Messages.getString("Value.High");
-			resultFlags |= LabResult.PATHOLOGIC;
+			resultFlags |= LabResultConstants.PATHOLOGIC;
 		}
 		if (flags.equals("2")) {
 			// comment = Messages.getString("Value.Low");
-			resultFlags |= LabResult.PATHOLOGIC;
+			resultFlags |= LabResultConstants.PATHOLOGIC;
 		}
 		if (flags.equals("*") || flags.equals("E")) {
 			comment = Messages.getString("Value.Error");
 		}
 		
-		return new TransientLabResult.Builder(patient, _labor, _labItem, value).date(date)
-			.comment(comment).flags(resultFlags).build();
+		return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_labor), _labItem, value).date(date)
+			.comment(comment).flags(resultFlags).build(lu);
 	}
 }

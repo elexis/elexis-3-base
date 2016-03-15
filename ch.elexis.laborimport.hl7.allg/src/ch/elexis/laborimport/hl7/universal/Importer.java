@@ -12,21 +12,23 @@ package ch.elexis.laborimport.hl7.universal;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.importer.div.importers.HL7Parser;
+import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Result;
 
 public class Importer extends Action implements IAction {
 	public static final String MY_LAB = "Eigenlabor";
 	
-	private HL7Parser hlp = new HL7Parser(MY_LAB);
+	private HL7Parser hlp = new DefaultHL7Parser(MY_LAB);
 	
 	public Importer(){
 		super("Hl7 Datei", Images.IMG_IMPORT.getImageDescriptor());
@@ -61,8 +63,9 @@ public class Importer extends Action implements IAction {
 			})) {
 				files++;
 				File hl7file = new File(dir, fn);
-				r = hlp.importFile(hl7file, archiveDir, null, new LinkLabContactResolver(), false);
-				if (!r.isOK()) {
+				try {
+					r = hlp.importFile(hl7file, archiveDir, null, new LinkLabContactResolver(), false);
+				} catch (IOException e) {
 					err++;
 					File errFile = new File(errorDir, fn);
 					hl7file.renameTo(errFile);

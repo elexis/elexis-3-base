@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Private Abrechnung
 Bundle-SymbolicName: ch.elexis.privatrechnung;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-Vendor: elexis.ch
 Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
  ch.elexis.core.data;bundle-version="3.0.0",
@@ -11,10 +11,10 @@ Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
  org.eclipse.jface,
  org.eclipse.core.runtime,
  org.eclipse.ui,
- ch.elexis.core.ui.importer.div,
+ ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
  org.eclipse.ui.forms,
  ch.rgw.utility,
- ch.elexis.core;bundle-version="3.0.0",
+ ch.elexis.core;bundle-version="3.2.0",
  ch.elexis.base.ch.ebanking;bundle-version="3.0.0"
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

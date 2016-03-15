@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.elexis.core.data.util.PlatformHelper;
-import ch.elexis.core.ui.importer.div.importers.ILabItemResolver;
+import ch.elexis.core.importer.div.importers.ILabItemResolver;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;

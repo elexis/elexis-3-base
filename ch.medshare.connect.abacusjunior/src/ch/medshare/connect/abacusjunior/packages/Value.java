@@ -2,8 +2,12 @@ package ch.medshare.connect.abacusjunior.packages;
 
 import java.util.ResourceBundle;
 
+import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.model.LabResultConstants;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
+
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
@@ -13,7 +17,7 @@ import ch.rgw.tools.TimeTool;
 public class Value {
 	private static final String BUNDLE_NAME =
 		"ch.medshare.connect.abacusjunior.packages.valuetexts";
-	
+		
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 	
 	private static String getString(String paramName, String key){
@@ -53,39 +57,41 @@ public class Value {
 		_labItem = LabImportUtil.getLabItem(_shortName, _myLab);
 		
 		if (_labItem == null) {
-			_labItem =
-				new LabItem(_shortName, _longName, _myLab, _refMann, _refFrau, _unit,
-					LabItem.typ.NUMERIC, Messages.getString("Value.LabName"), "50");
+			_labItem = new LabItem(_shortName, _longName, _myLab, _refMann, _refFrau, _unit,
+				LabItemTyp.NUMERIC, Messages.getString("Value.LabName"), "50");
 		}
 	}
 	
-	public TransientLabResult fetchValue(Patient patient, String value, String flags, TimeTool date){
+	public TransientLabResult fetchValue(Patient patient, String value, String flags,
+		TimeTool date){
 		if (_labItem == null) {
 			initialize();
 		}
 		
+		LabImportUtil liu = new LabImportUtil();
+		
 		// do not set a flag or comment if none is given
 		if (flags == null || flags.isEmpty()) {
-			return new TransientLabResult.Builder(patient, _myLab, _labItem, value).date(date)
-				.build();
+			return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_myLab),
+				_labItem, value).date(date).build(liu);
 		}
 		
 		String comment = "";
 		int resultFlags = 0;
 		if (flags.equals("1")) {
 			// comment = Messages.getString("Value.High");
-			resultFlags |= LabResult.PATHOLOGIC;
+			resultFlags |= LabResultConstants.PATHOLOGIC;
 		}
 		if (flags.equals("2")) {
 			// comment = Messages.getString("Value.Low");
-			resultFlags |= LabResult.PATHOLOGIC;
+			resultFlags |= LabResultConstants.PATHOLOGIC;
 		}
 		if (flags.equals("*") || flags.equals("E")) {
 			comment = Messages.getString("Value.Error");
 		}
 		
-		return new TransientLabResult.Builder(patient, _myLab, _labItem, value).date(date)
-			.comment(comment).flags(resultFlags).build();
-		
+		return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_myLab),
+			_labItem, value).date(date).comment(comment).flags(resultFlags).build(liu);
+			
 	}
 }

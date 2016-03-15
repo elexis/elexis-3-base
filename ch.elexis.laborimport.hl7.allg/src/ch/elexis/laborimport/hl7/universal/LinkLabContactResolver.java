@@ -1,6 +1,8 @@
 package ch.elexis.laborimport.hl7.universal;
 
-import ch.elexis.core.ui.importer.div.importers.ILabContactResolver;
+import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.importer.div.importers.ILabContactResolver;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.importer.div.importers.Messages;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -9,7 +11,7 @@ import ch.elexis.data.Labor;
 public class LinkLabContactResolver implements ILabContactResolver {
 	
 	@Override
-	public Labor getLabContact(String identifier, String sendingFacility){
+	public IContact getLabContact(String identifier, String sendingFacility){
 		Labor labor = LabImportUtil.getLinkLabor(sendingFacility);
 		
 		if (labor == null) {
@@ -19,6 +21,6 @@ public class LinkLabContactResolver implements ILabContactResolver {
 				labor = LabImportUtil.getOrCreateLabor(identifier);
 			}
 		}
-		return labor;
+		return new ContactBean(labor);
 	}
 }

@@ -9,9 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import ch.elexis.core.importer.div.importers.TransientLabResult;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
+
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 
@@ -50,7 +51,7 @@ public class EurolyserImporter {
 			Set<Patient> keys = resultsMap.keySet();
 			for (Patient patient : keys) {
 				List<TransientLabResult> patResults = resultsMap.get(patient);
-				LabImportUtil.importLabResults(patResults, new DefaultLabImportUiHandler());
+				new LabImportUtil().importLabResults(patResults, new DefaultLabImportUiHandler());
 			}
 			return !resultsMap.isEmpty();
 		} catch (RuntimeException e) {
@@ -66,7 +67,8 @@ public class EurolyserImporter {
 			if (patResults == null) {
 				patResults = new ArrayList<TransientLabResult>();
 				patResults.add(transientLabResult);
-				ret.put(transientLabResult.getPatient(), patResults);
+				Patient pat = Patient.load(transientLabResult.getPatient().getId());
+				ret.put(pat, patResults);
 			} else {
 				patResults.add(transientLabResult);
 			}

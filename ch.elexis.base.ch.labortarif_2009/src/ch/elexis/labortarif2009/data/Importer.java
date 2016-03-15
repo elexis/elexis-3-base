@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.core.data.util.PlatformHelper;
-import ch.elexis.core.ui.importer.div.importers.ExcelWrapper;
+import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;

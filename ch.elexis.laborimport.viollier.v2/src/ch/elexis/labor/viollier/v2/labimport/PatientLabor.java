@@ -25,6 +25,7 @@ import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.data.LabItem;
@@ -162,7 +163,7 @@ public class PatientLabor {
 	 *            Typ, nach dem gesucht werden soll
 	 * @return LabItem falls exisitiert. Sonst null
 	 */
-	private LabItem getLabItem(String kuerzel, String name, LabItem.typ type){
+	private LabItem getLabItem(String kuerzel, String name, LabItemTyp type){
 		Query<LabItem> qli = new Query<LabItem>(LabItem.class);
 		qli.add(LabItem.SHORTNAME, "=", kuerzel); //$NON-NLS-1$ //$NON-NLS-2$
 		qli.and();
@@ -267,7 +268,7 @@ public class PatientLabor {
 		String name = Messages.PatientLabor_DocumentLabItemName;
 		String kuerzel = "doc"; //$NON-NLS-1$
 		
-		LabItem labItem = getLabItem(kuerzel, name, LabItem.typ.DOCUMENT);
+		LabItem labItem = getLabItem(kuerzel, name, LabItemTyp.DOCUMENT);
 		if (labItem == null) {
 			if (group == null || group.length() == 0) {
 				group = LABOR_NAME;
@@ -278,7 +279,7 @@ public class PatientLabor {
 			labItem =
 				new LabItem(kuerzel, Messages.PatientLabor_nameDokumentLaborParameter, myLab,
 					"", "", //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-					"pdf", LabItem.typ.DOCUMENT, group, sequence); //$NON-NLS-1$ //$NON-NLS-2$
+					"pdf", LabItemTyp.DOCUMENT, group, sequence); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (orderId == null || "".equals(orderId)) { //$NON-NLS-1$
 			orderId = LABOR_NAME;

@@ -27,6 +27,7 @@ package ch.elexis.laborimport.viollier;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -50,7 +52,8 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.Messages;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.ui.importer.div.importers.HL7Parser;
+import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Result;
@@ -62,7 +65,7 @@ public class Importer extends ImporterPage {
 	
 	private static final String OPENMEDICAL_MAINCLASS = "ch.openmedical.JMedTransfer.JMedTransfer";
 	
-	private HL7Parser hlp = new HL7Parser(MY_LAB);
+	private HL7Parser hlp = new DefaultHL7Parser(MY_LAB);
 	
 	// importer type
 	private static final int FILE = 1;
@@ -89,7 +92,7 @@ public class Importer extends ImporterPage {
 				try {
 					URLClassLoader urlLoader =
 						getURLClassLoader(new URL("file", null, jar.getAbsolutePath()));
-					
+						
 					Class<?> openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
 					
 					// try to get the download method
@@ -135,13 +138,12 @@ public class Importer extends ImporterPage {
 		int res = -1;
 		if (iniPath != null) {
 			try {
-				Object omResult =
-					openmedicalDownloadMethod.invoke(openmedicalObject, new Object[] {
-						new String[] {
-							"--download", downloadDirPath, "--logPath", downloadDirPath, "--ini",
-							iniPath, "--verbose", "INF", "-#OpenMedicalKey#", "-allInOne"
+				Object omResult = openmedicalDownloadMethod.invoke(openmedicalObject, new Object[] {
+					new String[] {
+						"--download", downloadDirPath, "--logPath", downloadDirPath, "--ini",
+						iniPath, "--verbose", "INF", "-#OpenMedicalKey#", "-allInOne"
 						}
-					});
+				});
 				if (omResult instanceof Integer) {
 					res = ((Integer) omResult).intValue();
 					System.out.println(res + " files downoladed");
@@ -173,14 +175,15 @@ public class Importer extends ImporterPage {
 			});
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result<?> rs = hlp.importFile(f, archiveDir, false);
-				if (!rs.isOK()) {
-					// importFile already shows error
-					// rs.display("Fehler beim Import");
+				Result<?> rs;
+				try {
+					rs = hlp.importFile(f, archiveDir, false);
+				} catch (IOException e) {
+					SWTHelper.showError("Import error", e.getMessage());
 				}
 			}
-			SWTHelper.showInfo("Verbindung mit Labor " + MY_LAB + " erfolgreich", "Es wurden "
-				+ Integer.toString(res) + " Dateien verarbeitet");
+			SWTHelper.showInfo("Verbindung mit Labor " + MY_LAB + " erfolgreich",
+				"Es wurden " + Integer.toString(res) + " Dateien verarbeitet");
 		} else {
 			SWTHelper.showError("Falsches Verzeichnis",
 				"Bitte kontrollieren Sie die Einstellungen für das Download-Verzeichnis");
@@ -230,7 +233,11 @@ public class Importer extends ImporterPage {
 		public void run(){
 			if (type == FILE) {
 				String filename = results[1];
-				result = ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
+				try {
+					result = ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
+				} catch (IOException e) {
+					result = new Status(Status.ERROR, "ch.elexis.laborimport_viollier", e.getMessage());
+				}
 			} else {
 				result = ResultAdapter.getResultAsStatus(importDirect());
 			}
@@ -266,7 +273,7 @@ public class Importer extends ImporterPage {
 	 * FILE is chosen, the file path is stored in results[1].
 	 * 
 	 * @author gerry, danlutz
-	 * 
+	 * 		
 	 */
 	private class LabImporter extends Composite {
 		private final Button bFile;
@@ -357,8 +364,8 @@ public class Importer extends ImporterPage {
 						home.results[1] = filename;
 						
 						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-						CoreHub.localCfg.set(
-							"ImporterPage/" + home.getTitle() + "/filename", filename); //$NON-NLS-1$ //$NON-NLS-2$
+						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", //$NON-NLS-1$//$NON-NLS-2$
+							filename);
 					} else {
 						bFile.setSelection(false);
 						bDirect.setSelection(true);
@@ -385,7 +392,8 @@ public class Importer extends ImporterPage {
 					
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
 					fdl.setFilterExtensions(new String[] {
-						"*"}); //$NON-NLS-1$
+						"*" //$NON-NLS-1$
+					});
 					fdl.setFilterNames(new String[] {
 						Messages.ImporterPage_allFiles
 					}); //$NON-NLS-1$

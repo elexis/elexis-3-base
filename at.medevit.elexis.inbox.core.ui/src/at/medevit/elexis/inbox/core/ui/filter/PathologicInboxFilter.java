@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import at.medevit.elexis.inbox.model.InboxElement;
+import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.data.LabResult;
 
 public class PathologicInboxFilter extends ViewerFilter {
@@ -23,7 +24,7 @@ public class PathologicInboxFilter extends ViewerFilter {
 		if (element instanceof InboxElement) {
 			if (((InboxElement) element).getObject() instanceof LabResult) {
 				LabResult labResult = (LabResult) ((InboxElement) element).getObject();
-				if (labResult.isFlag(LabResult.PATHOLOGIC)) {
+				if (labResult.isFlag(LabResultConstants.PATHOLOGIC)) {
 					return true;
 				}
 			}

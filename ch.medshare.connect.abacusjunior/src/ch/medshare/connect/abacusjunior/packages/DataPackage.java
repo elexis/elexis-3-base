@@ -3,9 +3,10 @@ package ch.medshare.connect.abacusjunior.packages;
 import java.util.Collections;
 import java.util.MissingResourceException;
 
+import ch.elexis.core.importer.div.importers.TransientLabResult;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
+
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
@@ -38,7 +39,7 @@ public class DataPackage extends Package {
 					TransientLabResult result =
 						val.fetchValue(actPatient, cells[1], cells.length >= 3 ? cells[2] : "",
 							date);
-					LabImportUtil.importLabResults(Collections.singletonList(result),
+					new LabImportUtil().importLabResults(Collections.singletonList(result),
 						new DefaultLabImportUiHandler());
 				} catch (MissingResourceException ex) {
 					// Value will not be recorded

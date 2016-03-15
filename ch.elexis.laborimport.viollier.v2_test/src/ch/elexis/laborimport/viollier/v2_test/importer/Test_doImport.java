@@ -38,6 +38,7 @@ import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
@@ -159,7 +160,7 @@ public class Test_doImport {
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItemTyp.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp,
@@ -169,7 +170,7 @@ public class Test_doImport {
 			hl7TimeStamp = "201004010835"; //$NON-NLS-1$
 			item =
 				checkLabItem(test, "07200", "Proteine gesamt", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "61", "", "60 - 80", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -177,7 +178,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "35024", "Alpha-1-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "4.7", "", "2.7 - 5.4", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -185,7 +186,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "35026", "Alpha-2-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "9.9", "", "6.5 - 13.2", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -193,7 +194,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "35030", "Gamma-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "11.7", "", "9.6 - 17.5", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -201,7 +202,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "35036", "Beta-1-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "5.7", "", "4.6 - 6.9", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -209,7 +210,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "35037", "Beta-2-Globulin", "%", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "4.1", "", "2.8 - 5.9", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -217,7 +218,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "MIKROBIOLOG1", "Mikrobiologie", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(
@@ -234,7 +235,7 @@ public class Test_doImport {
 					test,
 					"doc", //$NON-NLS-1$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameDokumentLaborParameter,
-					"pdf", LabItem.typ.DOCUMENT, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					"pdf", LabItemTyp.DOCUMENT, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			
@@ -296,7 +297,7 @@ public class Test_doImport {
 			String hl7TimeStamp = "20120420082827"; //$NON-NLS-1$
 			
 			// --------------------------------------------------------------------------------
-			item = checkLabItem(test, "kommentar", "Kommentar", "", LabItem.typ.TEXT, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			item = checkLabItem(test, "kommentar", "Kommentar", "", LabItemTyp.TEXT, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				"00 Kommentar", "0"); //$NON-NLS-1$
 			checkLabWert(
 				test,
@@ -309,7 +310,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			hl7TimeStamp = "201204200828"; //$NON-NLS-1$
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItemTyp.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp,
@@ -319,7 +320,7 @@ public class Test_doImport {
 			hl7TimeStamp = "201204200820"; //$NON-NLS-1$
 			item =
 				checkLabItem(test, "23000", "Natrium", "mmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "145", //$NON-NLS-1$
@@ -364,7 +365,7 @@ public class Test_doImport {
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItemTyp.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp,
@@ -374,7 +375,7 @@ public class Test_doImport {
 			hl7TimeStamp = "201205110851";
 			item =
 				checkLabItem(test, "MIKROBIOLOG1", "Mikrobiologie", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(
@@ -389,7 +390,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "MIKROBIOLOG2", "Mikrobiologie", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient,
@@ -402,7 +403,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "MIKROBIOLOG3", "Mikrobiologie", "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(
@@ -451,7 +452,7 @@ public class Test_doImport {
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItemTyp.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp,
@@ -461,7 +462,7 @@ public class Test_doImport {
 			hl7TimeStamp = "201205101049"; //$NON-NLS-1$
 			item =
 				checkLabItem(test, "22751", "Hämoglobin", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "150", "", "135 - 175", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -481,7 +482,7 @@ public class Test_doImport {
 			
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "REPPDF", "PDF Report", "", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "REPPDF", "PDF Report", "", LabItemTyp.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp,
@@ -491,7 +492,7 @@ public class Test_doImport {
 			hl7TimeStamp = "201205101102"; //$NON-NLS-1$
 			item =
 				checkLabItem(test, "22751", "Hämoglobin", "g/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "130", "", "", "120 - 160"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -535,7 +536,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "11700", "Paracetamol", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "66.0", //$NON-NLS-1$
@@ -553,7 +554,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "11700", "Paracetamol", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "72.6", //$NON-NLS-1$
@@ -603,7 +604,7 @@ public class Test_doImport {
 			item =
 				checkLabItem(
 					test,
- "07170", "Harnsäure", "µmol/L", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+ "07170", "Harnsäure", "µmol/L", LabItemTyp.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "220 - 530", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -622,7 +623,7 @@ public class Test_doImport {
 			hl7TimeStamp = "201204200849"; //$NON-NLS-1$
 			// --------------------------------------------------------------------------------
 			item =
-				checkLabItem(test, "07170", "Harnsäure", "µmol/L", LabItem.typ.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				checkLabItem(test, "07170", "Harnsäure", "µmol/L", LabItemTyp.NUMERIC, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "220 - 530", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -642,7 +643,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "07170", "Harnsäure", "µmol/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "360", "", "220 - 530", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -691,7 +692,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "10024", "Pankreas-Amylase", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "< 65", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -711,7 +712,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "10024", "Pankreas-Amylase", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "55", "", "< 65", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -731,7 +732,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "10024", "Pankreas-Amylase", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "< 65", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -750,7 +751,7 @@ public class Test_doImport {
 			// --------------------------------------------------------------------------------
 			item =
 				checkLabItem(test, "10024", "Pankreas-Amylase", "U/L", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					LabItem.typ.NUMERIC,
+					LabItemTyp.NUMERIC,
 					ch.elexis.labor.viollier.v2.Messages.PatientLabor_nameViollierLabor,
 					PatientLabor.DEFAULT_PRIO);
 			checkLabWert(test, patient, item, hl7TimeStamp, "?", "", "< 65", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -836,7 +837,7 @@ public class Test_doImport {
 	 * @return Gefundenes LaborItem oder null
 	 */
 	private LabItem checkLabItem(String test, String kuerzel, String titel, String einheit,
-		LabItem.typ typ, String gruppe, String prio){
+		LabItemTyp typ, String gruppe, String prio){
 		LabItem item = null;
 		Query<LabItem> q = new Query<LabItem>(LabItem.class);
 		q.add(LabItem.TITLE, Query.EQUALS, titel);

@@ -10,6 +10,7 @@ import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
@@ -111,7 +112,7 @@ public class PatientLabor {
 	 * @param type
 	 * @return LabItem falls exisitiert. Sonst null
 	 */
-	private LabItem getLabItem(String kuerzel, LabItem.typ type){
+	private LabItem getLabItem(String kuerzel, LabItemTyp type){
 		Query<LabItem> qli = new Query<LabItem>(LabItem.class);
 		qli.add(LabItem.SHORTNAME, "=", kuerzel); //$NON-NLS-1$ //$NON-NLS-2$
 		qli.and();
@@ -156,7 +157,7 @@ public class PatientLabor {
 	 * @param data
 	 */
 	public void addLaborItem(final StringData data){
-		LabItem labItem = getLabItem(data.getName(), LabItem.typ.NUMERIC);
+		LabItem labItem = getLabItem(data.getName(), LabItemTyp.NUMERIC);
 		if (labItem == null) {
 			String group = data.getGroup();
 			if (group == null || group.length() == 0) {
@@ -168,7 +169,7 @@ public class PatientLabor {
 			}
 			labItem =
 				new LabItem(data.getName(), data.getName(), myLab, null, null, data.getUnit(),
-					LabItem.typ.NUMERIC, group, sequence);
+					LabItemTyp.NUMERIC, group, sequence);
 		}
 		
 		// RefFrau, bzw. RefMann aktualisieren
@@ -203,7 +204,7 @@ public class PatientLabor {
 	 * @param data
 	 */
 	public void addLaborItem(final TextData data){
-		LabItem labItem = getLabItem(data.getName(), LabItem.typ.TEXT);
+		LabItem labItem = getLabItem(data.getName(), LabItemTyp.TEXT);
 		if (labItem == null) {
 			String group = data.getGroup();
 			if (group == null || group.length() == 0) {
@@ -215,7 +216,7 @@ public class PatientLabor {
 			}
 			labItem =
 				new LabItem(data.getName(), data.getName(), myLab, null, null,
-					"", LabItem.typ.TEXT, group, sequence); //$NON-NLS-1$ //$NON-NLS-2$
+					"", LabItemTyp.TEXT, group, sequence); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		TimeTool dateTime = new TimeTool();
@@ -275,7 +276,7 @@ public class PatientLabor {
 			
 			// Labor Item erstellen
 			String kuerzel = "doc"; //$NON-NLS-1$
-			LabItem labItem = getLabItem(kuerzel, LabItem.typ.DOCUMENT);
+			LabItem labItem = getLabItem(kuerzel, LabItemTyp.DOCUMENT);
 			if (labItem == null) {
 				String group = data.getGroup();
 				if (group == null || group.length() == 0) {
@@ -288,7 +289,7 @@ public class PatientLabor {
 				labItem =
 					new LabItem(kuerzel, Messages.PatientLabor_nameDokumentLaborParameter, myLab,
 						"", "", //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-						FileTool.getExtension(filename), LabItem.typ.DOCUMENT, group, sequence); //$NON-NLS-1$ //$NON-NLS-2$
+						FileTool.getExtension(filename), LabItemTyp.DOCUMENT, group, sequence); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			LabResult lr = new LabResult(patient, dateTime, labItem, filename, data.getComment()); //$NON-NLS-1$

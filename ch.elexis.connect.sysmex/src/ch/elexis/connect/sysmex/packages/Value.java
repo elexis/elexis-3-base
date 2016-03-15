@@ -3,9 +3,11 @@ package ch.elexis.connect.sysmex.packages;
 import java.util.Collections;
 import java.util.ResourceBundle;
 
+import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil.TransientLabResult;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
@@ -18,7 +20,7 @@ public class Value {
 		"ch.elexis.connect.sysmex.packages.valuetexts_KX21N"; //$NON-NLS-1$
 	private static final String POCH_BUNDLE_NAME =
 		"ch.elexis.connect.sysmex.packages.valuetexts_pocH"; //$NON-NLS-1$
-	
+		
 	private final ResourceBundle _bundle;
 	Labor _myLab;
 	String _shortName;
@@ -54,9 +56,8 @@ public class Value {
 		
 		_labItem = LabImportUtil.getLabItem(_shortName, _myLab);
 		if (_labItem == null) {
-			_labItem =
-				new LabItem(_shortName, _longName, _myLab, _refMann, _refFrau, _unit,
-					LabItem.typ.NUMERIC, Messages.getString("Value.LabName"), "50");
+			_labItem = new LabItem(_shortName, _longName, _myLab, _refMann, _refFrau, _unit,
+				LabItemTyp.NUMERIC, Messages.getString("Value.LabName"), "50");
 		}
 	}
 	
@@ -65,10 +66,10 @@ public class Value {
 			initialize();
 		}
 		
-		TransientLabResult tLabResult =
-			new TransientLabResult.Builder(patient, _myLab, _labItem, value).date(date).build();
-		LabImportUtil.importLabResults(Collections.singletonList(tLabResult),
-			new DefaultLabImportUiHandler());
+		LabImportUtil lu = new LabImportUtil();
+		TransientLabResult tLabResult = new TransientLabResult.Builder(new ContactBean(patient),
+			new ContactBean(_myLab), _labItem, value).date(date).build(lu);
+		lu.importLabResults(Collections.singletonList(tLabResult), new DefaultLabImportUiHandler());
 	}
 	
 	public String get_shortName(){

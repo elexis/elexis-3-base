@@ -70,6 +70,8 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.model.LabResultConstants;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
@@ -402,7 +404,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 								boolean isPathologic = false;
 								LabResult labResult = values.get(valueIndex);
 								sb.append(labResult.getResult());
-								if (labResult.isFlag(LabResult.PATHOLOGIC)) {
+								if (labResult.isFlag(LabResultConstants.PATHOLOGIC)) {
 									isPathologic = true;
 								}
 								
@@ -446,7 +448,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 								boolean isPathologic = false;
 								boolean hasComment = false;
 								LabResult labResult = values.get(valueIndex);
-								if (labResult.isFlag(LabResult.PATHOLOGIC)) {
+								if (labResult.isFlag(LabResultConstants.PATHOLOGIC)) {
 									isPathologic = true;
 								}
 								if (!StringTool.isNothing(labResult.getComment())) {
@@ -828,7 +830,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 						if (labResults != null && labResults.size() > valueIndex) {
 							LabResult labResult = labResults.get(valueIndex);
 							boolean isPathologic = false;
-							if (labResult.isFlag(LabResult.PATHOLOGIC)) {
+							if (labResult.isFlag(LabResultConstants.PATHOLOGIC)) {
 								isPathologic = true;
 							}
 							pathologicAction.setChecked(isPathologic);
@@ -980,7 +982,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 									// isChecked() returnes the value as
 									// activated by the user's click
 									boolean isPathologic = isChecked();
-									labResult.setFlag(LabResult.PATHOLOGIC, isPathologic);
+									labResult.setFlag(LabResultConstants.PATHOLOGIC, isPathologic);
 									viewer.refresh();
 								}
 							}
@@ -1014,7 +1016,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 				
 				log.debug("index+" + datesIndex + ", item: " + labItem.getShortLabel());
 				
-				if (labItem.getTyp() == LabItem.typ.TEXT) {
+				if (labItem.getTyp() == LabItemTyp.TEXT) {
 					StringBuffer sb = new StringBuffer();
 					System.getProperty("line.separator");
 					
@@ -1459,7 +1461,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 							List<LabResult> results = labRowValues.results.get(date);
 							if (results != null && results.size() > valueIndex) {
 								LabResult labResult = results.get(valueIndex);
-								if (labItem.getTyp() == LabItem.typ.TEXT) {
+								if (labItem.getTyp() == LabItemTyp.TEXT) {
 									value = labResult.getComment();
 									if (StringTool.isNothing(value)) {
 										value = labResult.getResult();
@@ -1503,7 +1505,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 								// it now
 								LabResult labResult;
 								TimeTool timeTool = new TimeTool(date);
-								if (labItem.getTyp() == LabItem.typ.TEXT) {
+								if (labItem.getTyp() == LabItemTyp.TEXT) {
 									labResult =
 										new LabResult(actPatient, timeTool, labItem, "text",
 											newValue);
@@ -1517,7 +1519,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 							} else {
 								// update
 								LabResult labResult = results.get(valueIndex);
-								if (labItem.getTyp() == LabItem.typ.TEXT) {
+								if (labItem.getTyp() == LabItemTyp.TEXT) {
 									labResult.set("Kommentar", newValue);
 								} else {
 									labResult.setResult(newValue);

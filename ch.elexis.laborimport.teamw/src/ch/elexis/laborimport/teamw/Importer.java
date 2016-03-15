@@ -45,7 +45,8 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.data.util.UtilFile;
-import ch.elexis.core.ui.importer.div.importers.HL7Parser;
+import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -71,7 +72,7 @@ public class Importer extends ImporterPage {
 	private static final int FILE = 1;
 	private static final int DIRECT = 2;
 	
-	private HL7Parser hlp = new HL7Parser(MY_LAB);
+	private HL7Parser hlp = new DefaultHL7Parser(MY_LAB);
 	
 	public Importer(){}
 	
@@ -95,8 +96,13 @@ public class Importer extends ImporterPage {
 	 */
 	private Result<?> importFile(final String filepath){
 		File file = new File(filepath);
-		Result<?> result = hlp.importFile(file, null, false);
-		if (result.isOK()) {
+		Result<?> result = null;
+		try {
+			result = hlp.importFile(file, null, false);
+		} catch (IOException e) {
+			log.log(e);
+		}
+		if (result!=null && result.isOK()) {
 			if (!file.delete()) {
 				log.log("Datei " + file.getPath() //$NON-NLS-1$
 					+ " konnte nicht gelöscht werden.", Log.WARNINGS); //$NON-NLS-1$

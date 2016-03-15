@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Laborimport Viollier HL7
 Bundle-SymbolicName: ch.elexis.laborimport_viollier;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -11,6 +11,6 @@ Require-Bundle: ch.rgw.utility,
  org.eclipse.ui,
  org.eclipse.ui.forms,
  ch.elexis.core.ui,
- ch.elexis.core.ui.importer.div,
+ ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
  ch.elexis.core.data
 Bundle-ClassPath: .

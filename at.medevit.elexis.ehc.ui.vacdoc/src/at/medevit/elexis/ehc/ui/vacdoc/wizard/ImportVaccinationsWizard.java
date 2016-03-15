@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
-import org.ehealth_connector.cda.ch.CdaChVacd;
+import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

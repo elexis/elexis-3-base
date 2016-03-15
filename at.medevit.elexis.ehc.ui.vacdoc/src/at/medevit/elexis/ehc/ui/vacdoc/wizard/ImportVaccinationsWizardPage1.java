@@ -18,8 +18,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.ch.CdaChVacd;
-import org.ehealth_connector.cda.ch.Immunization;
+import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
+import org.ehealth_connector.cda.ch.vacd.Immunization;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;

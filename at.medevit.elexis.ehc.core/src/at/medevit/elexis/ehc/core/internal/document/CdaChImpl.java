@@ -10,10 +10,11 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.core.internal.document;
 
-import org.ehealth_connector.cda.ch.CdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.ch.CDACH;
 
-public class CdaChImpl extends CdaCh {
+public class CdaChImpl extends AbstractCdaCh<ClinicalDocument> {
 
 	public CdaChImpl(CDACH cdach){
 		super(cdach);

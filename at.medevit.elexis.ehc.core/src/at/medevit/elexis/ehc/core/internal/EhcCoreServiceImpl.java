@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.ehealth_connector.cda.ch.CdaCh;
-import org.ehealth_connector.cda.ch.CdaChVacd;
-import org.ehealth_connector.cda.ch.enums.LanguageCode;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
+import org.ehealth_connector.cda.enums.LanguageCode;
 import org.ehealth_connector.communication.ConvenienceCommunication;
 import org.ehealth_connector.communication.DocumentMetadata;
 import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;
@@ -52,7 +52,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public CdaCh<?> getCdaChDocument(Patient patient, Mandant mandant){
+	public AbstractCdaCh<?> getCdaChDocument(Patient patient, Mandant mandant){
 		CdaChImpl ret = new CdaChImpl(CHFactory.eINSTANCE.createCDACH().init());
 		
 		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
@@ -71,7 +71,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public CdaCh<?> getCdaChDocument(ClinicalDocument clinicalDocument){
+	public AbstractCdaCh<?> getCdaChDocument(ClinicalDocument clinicalDocument){
 		if (clinicalDocument instanceof CDACH) {
 			return new CdaChImpl((CDACH) clinicalDocument);
 		}
@@ -108,7 +108,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 		outputStream.reset();
 		// write XDM and create an InputStream
-		DocumentMetadata metaData = conCom.addChDocument(DocumentDescriptor.CDA_R2, inputStream);
+		DocumentMetadata metaData = conCom.addDocument(DocumentDescriptor.CDA_R2, inputStream);
 		metaData.setPatient(getPatient(document));
 		conCom.createXdmContents(outputStream);
 		return new ByteArrayInputStream(outputStream.toByteArray());

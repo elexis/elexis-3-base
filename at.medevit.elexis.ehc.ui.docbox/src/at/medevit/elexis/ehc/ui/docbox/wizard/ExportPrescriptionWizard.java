@@ -1,7 +1,7 @@
 package at.medevit.elexis.ehc.ui.docbox.wizard;
 
 import org.eclipse.jface.wizard.Wizard;
-import org.ehealth_connector.cda.ch.CdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
 
 import ch.elexis.data.Rezept;
 
@@ -9,7 +9,7 @@ public class ExportPrescriptionWizard extends Wizard {
 	private ExportPrescriptionWizardPage1 prescriptionMainPage;
 	//	private ExportPrescriptionWizardPage2 prescriptionDocboxPage;
 	
-	private static CdaCh document;
+	private static AbstractCdaCh<?> document;
 	private static Rezept rezept;
 	
 	public ExportPrescriptionWizard(){
@@ -30,11 +30,11 @@ public class ExportPrescriptionWizard extends Wizard {
 		//		addPage(prescriptionDocboxPage);
 	}
 	
-	public static void setDocument(CdaCh document){
+	public static void setDocument(AbstractCdaCh<?> document){
 		ExportPrescriptionWizard.document = document;
 	}
 	
-	public static CdaCh getDocument(){
+	public static AbstractCdaCh<?> getDocument(){
 		return ExportPrescriptionWizard.document;
 	}
 	

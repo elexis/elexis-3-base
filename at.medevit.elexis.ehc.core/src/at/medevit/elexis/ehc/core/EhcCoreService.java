@@ -14,8 +14,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import org.ehealth_connector.cda.ch.CdaCh;
-import org.ehealth_connector.cda.ch.CdaChVacd;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 
 import ch.elexis.data.Mandant;
@@ -27,9 +27,9 @@ public interface EhcCoreService {
 	
 	public void importPatient(org.ehealth_connector.common.Patient selectedPatient);
 	
-	public CdaCh<?> getCdaChDocument(Patient patient, Mandant mandant);
+	public AbstractCdaCh<?> getCdaChDocument(Patient patient, Mandant mandant);
 	
-	public CdaCh<?> getCdaChDocument(ClinicalDocument document);
+	public AbstractCdaCh<?> getCdaChDocument(ClinicalDocument document);
 	
 	public CdaChVacd getVaccinationsDocument(Patient elexisPatient, Mandant elexisMandant);
 	

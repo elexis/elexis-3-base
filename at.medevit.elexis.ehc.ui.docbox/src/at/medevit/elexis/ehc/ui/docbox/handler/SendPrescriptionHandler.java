@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.ehealth_connector.cda.ch.CdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 
 import at.medevit.elexis.ehc.docbox.service.DocboxService;
@@ -35,7 +35,7 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		prescription = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
 		if (prescription != null) {
-			CdaCh cdaPrescription = null;
+			AbstractCdaCh<?> cdaPrescription = null;
 			ByteArrayOutputStream pdfPrescription = null;
 			try {
 				cdaPrescription = DocboxService.getPrescriptionDocument(prescription);

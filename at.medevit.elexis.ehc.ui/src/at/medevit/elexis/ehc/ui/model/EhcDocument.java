@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import org.ehealth_connector.cda.ch.CdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.slf4j.Logger;
@@ -125,7 +125,7 @@ public class EhcDocument extends PersistentObject {
 			if (EhcDocument.isEhcXml(location)) {
 				ClinicalDocument clinicalDocument =
 					ServiceComponent.getEhcService().getDocument(location.openStream());
-				CdaCh<?> cdaCh =
+				AbstractCdaCh<?> cdaCh =
 					ServiceComponent.getEhcService().getCdaChDocument(clinicalDocument);
 				if (cdaCh != null) {
 					org.ehealth_connector.common.Patient patient = cdaCh.getPatient();

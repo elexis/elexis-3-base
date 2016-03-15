@@ -26,10 +26,10 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.xml.utils.DefaultErrorHandler;
-import org.ehealth_connector.cda.ch.CdaCh;
-import org.ehealth_connector.cda.enums.AddressUse;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
 import org.ehealth_connector.common.Organization;
 import org.ehealth_connector.common.Telecoms;
+import org.ehealth_connector.common.enums.AddressUse;
 import org.openhealthtools.mdht.uml.cda.Act;
 import org.openhealthtools.mdht.uml.cda.Author;
 import org.openhealthtools.mdht.uml.cda.CDAFactory;
@@ -85,8 +85,8 @@ public class DocboxService {
 		"190001010800", "190001011200", "190001011600", "190001012000"
 	};
 
-	public static CdaCh getPrescriptionDocument(Rezept rezept){
-		CdaCh document =
+	public static AbstractCdaCh<?> getPrescriptionDocument(Rezept rezept){
+		AbstractCdaCh<?> document =
 			EhcServiceComponent.getService().getCdaChDocument(rezept.getPatient(),
 				rezept.getMandant());
 		
@@ -377,7 +377,7 @@ public class DocboxService {
 		}
 	}
 
-	public static ByteArrayOutputStream getPrescriptionPdf(CdaCh document){
+	public static ByteArrayOutputStream getPrescriptionPdf(AbstractCdaCh<?> document){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		URL xslt = null;

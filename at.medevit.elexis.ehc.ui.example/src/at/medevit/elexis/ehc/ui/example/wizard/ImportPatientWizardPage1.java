@@ -24,8 +24,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.ch.CdaCh;
-import org.ehealth_connector.cda.enums.AdministrativeGender;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.common.enums.AdministrativeGender;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
@@ -38,9 +38,9 @@ import ch.rgw.tools.TimeTool;
 public class ImportPatientWizardPage1 extends WizardPage {
 	
 	private TableViewer contentViewer;
-	private CdaCh ehcDocument;
+	private AbstractCdaCh<?> ehcDocument;
 	
-	protected ImportPatientWizardPage1(String pageName, CdaCh ehcDocument){
+	protected ImportPatientWizardPage1(String pageName, AbstractCdaCh<?> ehcDocument){
 		super(pageName);
 		setTitle("Patienten für import auswählen.");
 		this.ehcDocument = ehcDocument;
@@ -120,7 +120,7 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		return true;
 	}
 	
-	public void setDocument(CdaCh ehcDocument){
+	public void setDocument(AbstractCdaCh<?> ehcDocument){
 		this.ehcDocument = ehcDocument;
 		if (contentViewer != null && !contentViewer.getControl().isDisposed()) {
 			contentViewer.setInput(Collections.singletonList(ehcDocument.getPatient()));

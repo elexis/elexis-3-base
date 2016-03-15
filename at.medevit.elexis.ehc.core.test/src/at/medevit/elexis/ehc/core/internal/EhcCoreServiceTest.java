@@ -25,16 +25,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.ehealth_connector.cda.ch.CdaCh;
-import org.ehealth_connector.cda.ch.CdaChVacd;
-import org.ehealth_connector.cda.enums.AddressUse;
-import org.ehealth_connector.cda.enums.AdministrativeGender;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.common.Address;
 import org.ehealth_connector.common.Identificator;
+import org.ehealth_connector.common.enums.AddressUse;
+import org.ehealth_connector.common.enums.AdministrativeGender;
 import org.ehealth_connector.communication.ConvenienceCommunication;
 import org.ehealth_connector.communication.DocumentMetadata;
 import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;
@@ -120,7 +120,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testGetPatientDocument(){
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getCdaChDocument(patient, mandant);
+		AbstractCdaCh<?> cda = service.getCdaChDocument(patient, mandant);
 		assertNotNull(cda);
 		org.ehealth_connector.common.Patient cdaPatient = cda.getPatient();
 		assertNotNull(cdaPatient);
@@ -135,7 +135,7 @@ public class EhcCoreServiceTest {
 		assertFalse(addresses.isEmpty());
 		assertEquals("City", addresses.get(0).getCity());
 		
-		HashMap<String, AddressUse> phones = cdaPatient.getTelecoms().getPhones();
+		Map<String, AddressUse> phones = cdaPatient.getTelecoms().getPhones();
 		assertFalse(phones.isEmpty());
 		assertTrue(phones.containsKey("tel:+01555123"));
 	}
@@ -143,7 +143,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testWritePatientDocument() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getCdaChDocument(patient, mandant);
+		AbstractCdaCh<?> cda = service.getCdaChDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		assertTrue(output.size() > 0);
@@ -155,7 +155,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testWritePatientDocumentFile() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getCdaChDocument(patient, mandant);
+		AbstractCdaCh<?> cda = service.getCdaChDocument(patient, mandant);
 		
 		String userHome = System.getProperty("user.home");
 		String outFilePath = userHome + File.separator + "testPatientCda.xml";
@@ -170,14 +170,14 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testGetDocument() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		CdaCh cda = service.getCdaChDocument(patient, mandant);
+		AbstractCdaCh<?> cda = service.getCdaChDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		assertTrue(output.size() > 0);
 		ByteArrayInputStream documentInput = new ByteArrayInputStream(output.toByteArray());
 		ClinicalDocument document = service.getDocument(documentInput);
 		assertNotNull(document);
-		CdaCh<?> cdach = service.getCdaChDocument(document);
+		AbstractCdaCh<?> cdach = service.getCdaChDocument(document);
 		assertNotNull(cdach);
 		org.ehealth_connector.common.Patient readPatient = cdach.getPatient();
 		assertEquals("name", readPatient.getName().getFamilyName());
@@ -224,7 +224,7 @@ public class EhcCoreServiceTest {
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
-		DocumentMetadata metaData = conCom.addChDocument(DocumentDescriptor.CDA_R2,
+		DocumentMetadata metaData = conCom.addDocument(DocumentDescriptor.CDA_R2,
 			new ByteArrayInputStream(output.toByteArray()));
 		assertNotNull(metaData);
 		List<Identificator> ids = cda.getPatient().getIds();

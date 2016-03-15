@@ -10,15 +10,16 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.core;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
+import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
+
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.ehealth_connector.cda.enums.AddressUse;
-import org.ehealth_connector.cda.enums.AdministrativeGender;
 import org.ehealth_connector.common.Address;
 import org.ehealth_connector.common.Author;
 import org.ehealth_connector.common.Identificator;
@@ -26,6 +27,8 @@ import org.ehealth_connector.common.Name;
 import org.ehealth_connector.common.Organization;
 import org.ehealth_connector.common.Patient;
 import org.ehealth_connector.common.Telecoms;
+import org.ehealth_connector.common.enums.AddressUse;
+import org.ehealth_connector.common.enums.AdministrativeGender;
 import org.ehealth_connector.common.enums.CodeSystems;
 
 import ch.elexis.core.model.IPersistentObject;
@@ -37,8 +40,6 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.Xid;
 import ch.rgw.tools.TimeTool;
-
-import static ch.elexis.core.constants.XidConstants.*;
 
 public class EhcCoreMapper {
 	
@@ -248,7 +249,7 @@ public class EhcCoreMapper {
 	}
 	
 	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt, Telecoms telecoms){
-		HashMap<String, AddressUse> phones = telecoms.getPhones();
+		Map<String, AddressUse> phones = telecoms.getPhones();
 		Set<String> keys = phones.keySet();
 		String existing = kontakt.get(Kontakt.FLD_PHONE1);
 		

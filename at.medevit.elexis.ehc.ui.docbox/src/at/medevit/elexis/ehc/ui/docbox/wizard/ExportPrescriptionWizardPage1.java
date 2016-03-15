@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.ch.CdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaCh;
 
 import at.medevit.elexis.ehc.docbox.service.DocboxService;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
@@ -99,7 +99,7 @@ public class ExportPrescriptionWizardPage1 extends WizardPage {
 		if (!contentSelection.isEmpty()) {
 			Rezept selectedRezept = (Rezept) contentSelection.getFirstElement();
 			
-			CdaCh document = DocboxService.getPrescriptionDocument(selectedRezept);
+			AbstractCdaCh<?> document = DocboxService.getPrescriptionDocument(selectedRezept);
 			if (document != null) {
 				ExportPrescriptionWizard.setRezept(selectedRezept);
 				ExportPrescriptionWizard.setDocument(document);

@@ -34,7 +34,10 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
+import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
+import ch.elexis.core.ui.importer.div.importers.PersistenceHandler;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -48,6 +51,7 @@ public class Importer extends ImporterPage {
 	private static final String OPENMEDICAL_MAINCLASS = "ch.openmedical.JMedTransfer.JMedTransfer";
 	
 	private MultiFileParser mfParser = new MultiFileParser(MY_LAB);
+	private HL7Parser hl7Parser = new DefaultHL7Parser(MY_LAB);
 	
 	// importer type
 	private static final int FILE = 1;
@@ -158,7 +162,7 @@ public class Importer extends ImporterPage {
 			});
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result<?> rs = mfParser.importFromFile(f, new DefaultImportStrategyFactory());
+				Result<?> rs = mfParser.importFromFile(f, new DefaultImportStrategyFactory(), hl7Parser, new PersistenceHandler());
 				if (!rs.isOK()) {
 					// importFile already shows error
 					// rs.display("Fehler beim Import");
@@ -217,7 +221,7 @@ public class Importer extends ImporterPage {
 				String filename = results[1];
 				File hl7File = new File(filename);
 				result = ResultAdapter.getResultAsStatus(
-					mfParser.importFromFile(hl7File, new DefaultImportStrategyFactory()));
+					mfParser.importFromFile(hl7File, new DefaultImportStrategyFactory(), hl7Parser, new PersistenceHandler()));
 			} else {
 				result = ResultAdapter.getResultAsStatus(importDirect());
 			}

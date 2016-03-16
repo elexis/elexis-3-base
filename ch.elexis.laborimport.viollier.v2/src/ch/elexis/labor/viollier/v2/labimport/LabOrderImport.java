@@ -43,6 +43,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.ILabItemResolver;
+import ch.elexis.core.model.ILabOrder;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.importer.div.importers.TestHL7Parser;
@@ -376,10 +377,10 @@ public class LabOrderImport extends ImporterPage {
 						// get created results using the orderId
 						Object obj = result.get();
 						if (obj instanceof String) {
-							List<LabOrder> orders = LabOrder.getLabOrdersByOrderId((String) obj);
+							List<ILabOrder> orders = LabOrder.getLabOrdersByOrderId((String) obj);
 							if (orders != null && !orders.isEmpty()) {
-								resolveTimeForPdf(orders.get(0).getLabResult(), observation);
-								for (LabOrder labOrder : orders) {
+								resolveTimeForPdf((LabResult) orders.get(0).getLabResult(), observation);
+								for (ILabOrder labOrder : orders) {
 									new LaborwerteOrderManagement(labOrder.getLabResult().getId(),
 										orderId);
 								}

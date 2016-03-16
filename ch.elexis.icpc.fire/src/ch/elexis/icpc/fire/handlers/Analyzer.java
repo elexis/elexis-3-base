@@ -95,7 +95,7 @@ public class Analyzer {
 		qbe.add("PatientID", "=", pat.getId());
 		qbe.add("Datum", "=", ttDate.toString(TimeTool.DATE_COMPACT));
 		for (LabResult lr : qbe.execute()) {
-			LabItem li = lr.getItem();
+			LabItem li = (LabItem) lr.getItem();
 			Element eLab = new Element("labor");
 			addElement(eLab, "labordate", ttDate.toString(TimeTool.DATE_ISO));
 			addElement(eLab, "quelle", li.getLabor().get("Bezeichnung1"));

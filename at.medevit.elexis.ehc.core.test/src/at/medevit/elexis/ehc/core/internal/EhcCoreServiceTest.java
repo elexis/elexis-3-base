@@ -45,7 +45,7 @@ import org.junit.Test;
 import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
 import org.openhealthtools.ihe.xds.document.XDSDocument;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import org.openhealthtools.mdht.uml.cda.ch.VACD;
+import org.openhealthtools.mdht.uml.cda.ihe.MedicalDocument;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 
 import ch.elexis.data.Anschrift;
@@ -249,7 +249,7 @@ public class EhcCoreServiceTest {
 		assertNotNull(xdsDocument);
 		ClinicalDocument clinicalDocument = CDAUtil.load(xdsDocument.getStream());
 		assertNotNull(clinicalDocument);
-		assertTrue(clinicalDocument instanceof VACD);
+		assertTrue(clinicalDocument instanceof MedicalDocument);
 		DocumentMetadata meta = documents.get(0).getDocEntry();
 		assertNotNull(meta);
 		Identificator id = meta.getPatientId();

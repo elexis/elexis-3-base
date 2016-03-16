@@ -229,8 +229,12 @@ public class SerienTermin {
 				writeSubsequentDateEntry(new TimeTool(cal.getTime()));
 			}
 			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
-				long milisecondsDiff =
-					endingDate.getTime().getTime() - dateIncrementer.getTime().getTime();
+				long milisecondsDiff = 0;
+				if (endingDate != null) {
+					milisecondsDiff =
+						endingDate.getTime().getTime() - dateIncrementer.getTime().getTime();
+				}
+				
 				int days = (int) (milisecondsDiff / (1000 * 60 * 60 * 24));
 				int weeks = days / 7;
 				occurences = weeks / weekStepSize;
@@ -248,10 +252,9 @@ public class SerienTermin {
 			}
 			break;
 		case MONTHLY:
-			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
+			if (endingType.equals(EndingType.ON_SPECIFIC_DATE) && endingDate != null ) {
 				occurences =
-					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR))
-						* 12
+					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR)) * 12
 						+ (endingDate.get(Calendar.MONTH) - dateIncrementer.get(Calendar.MONTH))
 						+ (endingDate.get(Calendar.DAY_OF_MONTH) >= dateIncrementer
 							.get(Calendar.DAY_OF_MONTH) ? 0 : -1);
@@ -262,10 +265,9 @@ public class SerienTermin {
 			}
 			break;
 		case YEARLY:
-			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
+			if (endingType.equals(EndingType.ON_SPECIFIC_DATE) && endingDate != null ) {
 				int monthOccurences =
-					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR))
-						* 12
+					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR)) * 12
 						+ (endingDate.get(Calendar.MONTH) - dateIncrementer.get(Calendar.MONTH))
 						+ (endingDate.get(Calendar.DAY_OF_MONTH) >= dateIncrementer
 							.get(Calendar.DAY_OF_MONTH) ? 0 : -1);
@@ -440,7 +442,7 @@ public class SerienTermin {
 				seriesTimesList.add(dateIncrementer);
 			}
 			break;
-		
+			
 		case WEEKLY:
 			String[] seriesPattern = getSeriesPatternString().split(",");
 			int weekStepSize = Integer.parseInt(seriesPattern[0]);
@@ -455,8 +457,11 @@ public class SerienTermin {
 			
 			// calculate occurrences per week
 			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
-				long milisecondsDiff =
-					endingDate.getTime().getTime() - dateIncrementer.getTime().getTime();
+				long milisecondsDiff = 0;
+				if (endingDate != null) {
+					milisecondsDiff =
+						endingDate.getTime().getTime() - dateIncrementer.getTime().getTime();
+				}
 				int days = (int) (milisecondsDiff / (1000 * 60 * 60 * 24));
 				int weeks = days / 7;
 				occurences = weeks / weekStepSize;
@@ -475,10 +480,9 @@ public class SerienTermin {
 			break;
 		case MONTHLY:
 			//calculate occurrences per month
-			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
+			if (endingType.equals(EndingType.ON_SPECIFIC_DATE) && endingDate != null) {
 				occurences =
-					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR))
-						* 12
+					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR)) * 12
 						+ (endingDate.get(Calendar.MONTH) - dateIncrementer.get(Calendar.MONTH))
 						+ (endingDate.get(Calendar.DAY_OF_MONTH) >= dateIncrementer
 							.get(Calendar.DAY_OF_MONTH) ? 0 : -1);
@@ -491,10 +495,9 @@ public class SerienTermin {
 			break;
 		case YEARLY:
 			//calculate occurrences per year
-			if (endingType.equals(EndingType.ON_SPECIFIC_DATE)) {
+			if (endingType.equals(EndingType.ON_SPECIFIC_DATE) && endingDate != null ) {
 				int monthOccurences =
-					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR))
-						* 12
+					(endingDate.get(Calendar.YEAR) - dateIncrementer.get(Calendar.YEAR)) * 12
 						+ (endingDate.get(Calendar.MONTH) - dateIncrementer.get(Calendar.MONTH))
 						+ (endingDate.get(Calendar.DAY_OF_MONTH) >= dateIncrementer
 							.get(Calendar.DAY_OF_MONTH) ? 0 : -1);

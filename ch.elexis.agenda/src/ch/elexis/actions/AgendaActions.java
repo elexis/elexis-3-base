@@ -48,7 +48,7 @@ public class AgendaActions {
 	 */
 	public static void updateActions(){
 		getTerminStatusAction().setEnabled(CoreHub.acl.request(ACLContributor.USE_AGENDA));
-		getDelTerminAction();
+		getDelTerminAction().setEnabled(CoreHub.acl.request(ACLContributor.DELETE_APPOINTMENTS));
 	}
 
 	public static IAction getDelTerminAction(){

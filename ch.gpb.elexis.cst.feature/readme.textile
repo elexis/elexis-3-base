@@ -1,0 +1,3 @@
+Das Cellsymbiosistherapie®-Plugin ist ein Tool zum Patienten-Monitoring, das Elexis-Anwendern 
+eine pro Patient konfigurierbare und übersichtliche Darstellung der relevanten Resultate 
+und Befunde über den Zeitverlauf ermöglicht.

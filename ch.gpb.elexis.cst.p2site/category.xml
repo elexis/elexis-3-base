@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/ch.gpb.elexis.cst.feature_1.0.0.qualifier.jar" id="ch.gpb.elexis.cst.feature" version="1.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.gpb.elexis.cst.feature.source_3_1.0.0.qualifier.jar" id="ch.gpb.elexis.cst.feature" version="1.0.0.qualifier">
+      <category name="sources"/>
+   </feature>
+
+   <category-def name="sources" label="Quelldateien für Elexis"/>
+   <category-def name="clinicrecordkeeping" label="KG-Führung">
+      <description>
+         Elexis bietet verschiedene Plug-Ins für die Führung der Krankengeschichte an. Hinweise zur Auswahl finden Sie unter http://wiki.elexis.info/Auswahl.Krankengeschichte.
+      </description>
+   </category-def>
+</site>

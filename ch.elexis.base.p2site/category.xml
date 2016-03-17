@@ -387,6 +387,12 @@
    <feature url="features/ch.elexis.laborimport.eurolyser.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.eurolyser.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
+   <feature url="features/ch.gpb.elexis.cst.feature.source_1.0.0.qualifier.jar" id="ch.gpb.elexis.cst.feature.source" version="1.0.0.qualifier">
+      <category name="sources"/>
+   </feature>
+   <feature url="features/ch.gpb.elexis.cst.feature_1.0.0.qualifier.jar" id="ch.gpb.elexis.cst.feature" version="1.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

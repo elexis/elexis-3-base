@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="CST"
+            id="ch.gpb.elexis.cst">
+      </category>
+      <view
+            allowMultiple="false"
+            category="ch.gpb.elexis.cst"
+            class="ch.gpb.elexis.cst.view.CstThemenblockEditor"
+            icon="icons/icon-cat-1-16.png"
+            id="ch.gpb.elexis.cst.views.cstcategoryview"
+            name="CST Group Editor"
+            restorable="true">
+      </view>
+      <view
+            category="ch.gpb.elexis.cst"
+            class="ch.gpb.elexis.cst.view.CstProfileEditor"
+            icon="icons/icon-cat-2-16.png"
+            id="ch.gpb.elexis.cst.views.cstprofileeditor"
+            name="CST Profile Editor"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="ch.gpb.elexis.cst"
+            class="ch.gpb.elexis.cst.view.CstResultEffektiv"
+            icon="icons/icon-cat-3-16.png"
+            id="ch.gpb.elexis.cst.cstresulteffektiv"
+            name="CST Auswertung Effektiv"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="ch.gpb.elexis.cst"
+            class="ch.gpb.elexis.cst.view.CstResultMiniMax"
+            icon="icons/icon-cat-3-16.png"
+            id="ch.gpb.elexis.cst.cstresultminimax"
+            name="CST Auswertung Minimal / Maximal"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.general"
+            class="ch.gpb.elexis.cst.preferences.CstPreference"
+            id="ch.gpb.elexis.cst.ui.preference"
+            name="CST Einstellungen">
+      </page>
+   </extension>
+
+</plugin>

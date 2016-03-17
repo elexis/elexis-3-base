@@ -83,7 +83,8 @@
   <module>org.iatrix.bestellung.rose_test</module>
   <module>ch.pharmed.phmprescriber_test</module>
   <module>at.medevit.ch.artikelstamm.medcalendar.test</module>
-
+  <module>ch.gpb.elexis.cst</module>
+  <module>ch.gpb.elexis.cst.feature</module>
   <module>at.gruber.elexis.mythic22</module>
   <module>at.gruber.elexis.mythic22.feature</module>
   <module>at.medevit.elexis.cobasmira</module>

@@ -118,11 +118,12 @@ public class AgendaActions {
 						@Override
 						public void widgetSelected(SelectionEvent e){
 							Termin act = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-							if(!CoreHub.ls.acquireLock(act.storeToString()).isOk()) return;
+							if (!CoreHub.getLocalLockService().acquireLock(act).isOk())
+								return;
 							MenuItem it = (MenuItem) e.getSource();
 							act.setStatus(it.getText());
 							ElexisEventDispatcher.reload(Termin.class);
-							CoreHub.ls.releaseLock(act.storeToString());
+							CoreHub.getLocalLockService().releaseLock(act);
 						}
 					});
 				}

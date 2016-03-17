@@ -128,7 +128,6 @@ public class TerminDialog extends TitleAreaDialog {
 		}
 		if (act instanceof Termin) {
 			Termin lact = (Termin) act;
-			CoreHub.ls.acquireLock(lact.storeToString());
 			actKontakt = lact.getKontakt();
 		} else {
 			actKontakt = ElexisEventDispatcher.getSelectedPatient();
@@ -828,10 +827,10 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin =
 				new Termin(agenda.getActResource(), agenda.getActDate().toString(
 					TimeTool.DATE_COMPACT), von, bis, typ, status);
-			CoreHub.ls.acquireLock(actTermin.storeToString());
+			CoreHub.getLocalLockService().acquireLock(actTermin);
 		} else {
 			actTermin = (Termin) actPlannable;
-			CoreHub.ls.acquireLock(actTermin.storeToString());
+			CoreHub.getLocalLockService().acquireLock(actTermin);
 			if (bMulti) {
 				actTermin.clone();
 			}
@@ -862,7 +861,7 @@ public class TerminDialog extends TitleAreaDialog {
 		actPlannable = actTermin;
 		setEnablement();
 		
-		CoreHub.ls.releaseLock(actTermin.storeToString());
+		CoreHub.getLocalLockService().releaseLock(actTermin);
 	}
 	
 	/**

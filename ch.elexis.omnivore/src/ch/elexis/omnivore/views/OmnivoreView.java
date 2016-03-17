@@ -528,8 +528,8 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 					if (filename != null) {
 						DocHandle dh = DocHandle.assimilate(filename);
 						if(dh!=null) {
-							CoreHub.ls.acquireLock(dh);
-							CoreHub.ls.releaseLock(dh);
+							CoreHub.getLocalLockService().acquireLock(dh);
+							CoreHub.getLocalLockService().releaseLock(dh);
 						}
 						viewer.refresh();
 					}

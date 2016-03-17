@@ -114,4 +114,9 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	public String getCodeSystemName(){
 		return "Tarmed"; //$NON-NLS-1$
 	}
+	
+	@Override
+	public PersistentObject findElement(String code){
+		return (PersistentObject) TarmedLeistung.getFromCode(code);
+	}
 }

@@ -24,6 +24,7 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.labortarif2009.data.Labor2009Tarif;
+import ch.rgw.tools.TimeTool;
 
 public class Labor2009Selector extends CodeSelectorFactory {
 	CommonViewer cv;
@@ -56,6 +57,11 @@ public class Labor2009Selector extends CodeSelectorFactory {
 	@Override
 	public Class<? extends PersistentObject> getElementClass(){
 		return Labor2009Tarif.class;
+	}
+	
+	@Override
+	public PersistentObject findElement(String code){
+		return Labor2009Tarif.getFromCode(code, new TimeTool());
 	}
 	
 	private class UpdateEventListener extends ElexisUiEventListenerImpl {

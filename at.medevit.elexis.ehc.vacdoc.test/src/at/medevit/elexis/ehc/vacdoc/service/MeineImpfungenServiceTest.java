@@ -2,6 +2,7 @@ package at.medevit.elexis.ehc.vacdoc.service;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -11,7 +12,6 @@ import org.junit.Test;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Anschrift;
-import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 
@@ -26,13 +26,11 @@ public class MeineImpfungenServiceTest {
 		if (!patients.isEmpty()) {
 			patient = patients.get(0);
 		} else {
-			patient = new Patient("name", "firstname", "01.01.2000", Patient.FEMALE);
-			patient.set(Kontakt.FLD_PHONE1, "+01555123");
-			patient.set(Kontakt.FLD_MOBILEPHONE, "+01444132");
+			patient = new Patient("Wurst", "Hans", "01.04.1970", Patient.MALE);
 			Anschrift anschrift = new Anschrift();
-			anschrift.setOrt("City");
-			anschrift.setPlz("123");
-			anschrift.setStrasse("Street 1");
+			anschrift.setOrt("Küsnacht ZH");
+			anschrift.setPlz("8700");
+			anschrift.setStrasse("Testweg 1");
 			patient.setAnschrift(anschrift);
 		}
 		String ahvNumber = getAHVNumber(patient);
@@ -74,6 +72,10 @@ public class MeineImpfungenServiceTest {
 		MeineImpfungenService service = new MeineImpfungenService();
 		assertFalse(service.isVaild());
 		
+		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH,
+			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH));
+		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS,
+			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS));
 		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PATH,
 			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PATH));
 		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PASS,
@@ -83,8 +85,16 @@ public class MeineImpfungenServiceTest {
 	}
 	
 	@Test
+	public void getPatients(){
+		MeineImpfungenService service = new MeineImpfungenService();
+		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
+		assertNotNull(patients);
+	}
+	
+	@Test
 	public void getDocuments(){
 		MeineImpfungenService service = new MeineImpfungenService();
-		service.getDocuments(patient);
+		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
+		service.getDocuments(patients.get(0));
 	}
 }

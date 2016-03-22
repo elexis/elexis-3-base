@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.data.interfaces.AbstractReferenceDataImporter;
+import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.jdt.Nullable;
 

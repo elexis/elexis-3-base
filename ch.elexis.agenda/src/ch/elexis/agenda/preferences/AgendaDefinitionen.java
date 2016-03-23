@@ -12,6 +12,8 @@
 
 package ch.elexis.agenda.preferences;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -30,10 +32,11 @@ import ch.elexis.core.ui.preferences.inputs.MultilineFieldEditor;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
-public class AgendaDefinitionen extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
+public class AgendaDefinitionen extends FieldEditorPreferencePage
+		implements IWorkbenchPreferencePage {
 	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
 	
+	Label mappingOverView;
 	Button btnAvoidDoubleBooking;
 	
 	public AgendaDefinitionen(){
@@ -54,13 +57,17 @@ public class AgendaDefinitionen extends FieldEditorPreferencePage implements
 		addField(new MultilineFieldEditor(PreferenceConstants.AG_BEREICHE,
 			Messages.AgendaDefinitionen_shortCutsForBer, 5, SWT.V_SCROLL, true,
 			getFieldEditorParent()));
-		
+			
+		addField(new MultilineFieldEditor(PreferenceConstants.AG_BEREICHE_TO_USER,
+			Messages.AgendaDefinitionen_shortCutsForBerToUser, 5, SWT.V_SCROLL, true,
+			getFieldEditorParent()));
+			
 		addField(new MultilineFieldEditor(PreferenceConstants.AG_TERMINTYPEN,
 			Messages.AgendaDefinitionen_enterTypes, 5, SWT.V_SCROLL, true, getFieldEditorParent()));
-		
+			
 		addField(new MultilineFieldEditor(PreferenceConstants.AG_TERMINSTATUS,
 			Messages.AgendaDefinitionen_states, 5, SWT.V_SCROLL, true, getFieldEditorParent()));
-		
+			
 		/*
 		 * addField(new StringListFieldEditor(PreferenceConstants.AG_BEREICHE,
 		 * Messages.AgendaDefinitionen_shortCutsForBer, Messages.AgendaDefinitionen_enterNames +
@@ -84,8 +91,7 @@ public class AgendaDefinitionen extends FieldEditorPreferencePage implements
 		// create the field editors by calling super
 		Control superParent = super.createContents(parent);
 		Composite feParent = getFieldEditorParent();
-		
-		new Label(feParent, SWT.NONE);
+
 		Label separator = new Label(feParent, SWT.HORIZONTAL | SWT.SEPARATOR);
 		GridData separatorGridData = new GridData();
 		separatorGridData.horizontalSpan = 3;
@@ -97,9 +103,32 @@ public class AgendaDefinitionen extends FieldEditorPreferencePage implements
 		btnAvoidDoubleBooking = new Button(feParent, SWT.CHECK);
 		btnAvoidDoubleBooking.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		btnAvoidDoubleBooking.setText(Messages.AgendaDefinitionen_AvoidPatientDoubleBooking);
-		btnAvoidDoubleBooking.setSelection(CoreHub.localCfg.get(
-			PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
-			PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT));
+		btnAvoidDoubleBooking
+			.setSelection(CoreHub.localCfg.get(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
+				PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT));
+		
+		Label separator2 = new Label(feParent, SWT.HORIZONTAL | SWT.SEPARATOR);
+		GridData separator2GridData = new GridData();
+		separator2GridData.horizontalSpan = 3;
+		separator2GridData.grabExcessHorizontalSpace = true;
+		separator2GridData.horizontalAlignment = GridData.FILL;
+		separator2GridData.verticalIndent = 0;
+		separator2.setLayoutData(separator2GridData);
+		
+		Label mapings = new Label(feParent, SWT.NONE);
+		mapings.setText(Messages.AgendaDefinitionen_CurrentMappings);
+		
+		mappingOverView = new Label(feParent, SWT.HORIZONTAL);
+		GridData mappingOverViewGridData = new GridData();
+		mappingOverViewGridData.horizontalSpan = 3;
+		mappingOverViewGridData.grabExcessHorizontalSpace = true;
+		mappingOverViewGridData.horizontalAlignment = GridData.FILL;
+		mappingOverViewGridData.verticalAlignment = GridData.FILL;
+		mappingOverViewGridData.verticalIndent = 0;
+		mappingOverView.setLayoutData(mappingOverViewGridData);
+		
+		updateMappingOverview();
+		
 		return superParent;
 	}
 	
@@ -113,6 +142,31 @@ public class AgendaDefinitionen extends FieldEditorPreferencePage implements
 		return super.performOk();
 	}
 	
+	@Override
+	protected void performApply(){
+		super.performApply();
+		
+		updateMappingOverview();
+		
+		
+	}
+	
+	private void updateMappingOverview(){
+		String[] areas = getPreferenceStore().getString(PreferenceConstants.AG_BEREICHE).split(",");
+		String[] areaToUser = getPreferenceStore().getString(PreferenceConstants.AG_BEREICHE_TO_USER).split(",");
+		
+		int max = Math.max(areas.length, areaToUser.length);
+		String[] mappings = new String[max];
+		Arrays.fill(mappings, "");
+		for (int i = 0; i < mappings.length; i++) {
+			String area = (areas.length>i) ? areas[i] : "";
+			String user = (areaToUser.length>i) ? areaToUser[i] : "N/A";
+			mappings[i] = area+"->"+user;
+		}
+		
+		mappingOverView.setText(Arrays.toString(mappings));
+	}
+
 	public void init(IWorkbench workbench){
 		// TODO Auto-generated method stub
 		

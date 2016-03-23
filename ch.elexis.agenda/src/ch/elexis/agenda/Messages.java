@@ -96,6 +96,7 @@ public final class Messages extends NLS {
 	public static String AgendaDefinitionen_defForAgenda;
 	public static String AgendaDefinitionen_enterTypes;
 	public static String AgendaDefinitionen_AvoidPatientDoubleBooking;
+	public static String AgendaDefinitionen_CurrentMappings;
 	public static String AgendaImages_change;
 	public static String AgendaImages_cannotCopy;
 	public static String AgendaImages_6;
@@ -115,6 +116,7 @@ public final class Messages extends NLS {
 	public static String Zeitvorgaben_praxis;
 	public static String Zeitvorgaben_terminTypes;
 	public static String AgendaDefinitionen_shortCutsForBer;
+	public static String AgendaDefinitionen_shortCutsForBerToUser;
 	public static String Tageseinteilung_no_past_Date;
 	
 	public static String AgendaAnzeige_options;

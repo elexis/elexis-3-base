@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.Text">
+      <Texterweiterung
+            Klasse="com.jsigle.noa.NOAText"
+            name="NOAText_jsl"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ag.ion.noa4e.internal.ui.preferences.LocalOfficeApplicationPreferencesPage"
+            id="ag.ion.bion.noatext_jsl"
+            name="NOAText_jsl · Version 1.4.12 · 2013-05-27 · Aktualisiertes und verbessertes NOAText · joerg.sigle@jsigle.com · www.jsigle.com"/>
+   </extension>
+ 
+</plugin>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.jsigle.noatext_jsl.feature"
+      label="OOWrapper updated with noa-libre and improved by Joerg Sigle"
+      version="3.0.0.qualifier"
+      provider-name="elexis.info">
+
+   <description>
+      Ein TextPlugin für Elexis, aktualisiert auf Basis von noa-libre, mit verbesserter Stabilität.
+      Mehr Informationen dazu findet man unter http://www.jsigle.com/prog/elexis#NOAText_jsl
+   </description>
+
+   <copyright url="http://elexis.info/de_contributers.html">
+     Gerry Weirich, 2007-2015 und viele andere
+   </copyright>
+
+   <license url="http://www.gnu.org/licenses/gpl-2.0.html">
+      GNU General Public License (GPL), Version 2.0
+   </license>
+
+   <plugin
+         id="com.jsigle.noatext_jsl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+
+   <plugin
+         id="com.lowagie.itext"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

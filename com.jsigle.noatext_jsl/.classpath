@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/"/>
+	<classpathentry exported="true" kind="lib" path="bin/"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="lib/jurt.jar" sourcepath=""/>
+	<classpathentry exported="true" kind="lib" path="lib/officebean.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java_uno_accessbridge.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java_uno.jar" sourcepath=""/>
+	<classpathentry exported="true" kind="lib" path="lib/juh.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit-3.8.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jut.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/registry-3.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ridl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/sandbox.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/unoil.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

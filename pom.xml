@@ -227,6 +227,8 @@
   <module>com.hilotec.elexis.stickerprefix</module>
   <module>com.hilotec.elexis.toolbar.feature</module>
   <module>com.hilotec.elexis.toolbar</module>
+  <module>com.jsigle.noatext_jsl</module>
+  <module>com.jsigle.noatext_jsl.feature</module>
   <module>de.fhdo.elexis.perspective</module>
   <module>de.fhdo.elexis.perspective.feature</module>
   <module>org.iatrix</module>

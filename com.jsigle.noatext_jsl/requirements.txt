@@ -1,0 +1,43 @@
+Aktuell:
+
+noa-libre
+
+code.google.com/p/noa-libre
+
+Ein fork des untenstehenden, um eine Weiterentwicklung u.a. für Kompatibilität
+mit noa-libre zu realisieren.
+
+(Dieses ist (in Teilen) Grundlage von NOAText_jsl,
+ und vollständig auch in meiner Entwicklungsumgebung
+ von think2:l:/home/jsigle/workspace/elexis-2.1.6-20120105 in
+ Projektordnern unterhalb von noa-libre enthalten. Dort mit Stand von Februar 2012.)
+
+Früher:
+
+von IOn AG: noa und noa4e
+
+ag.ion.bion.workbench.office.editor core
+ag.ion.noa
+
+von http://ubion.ion.ag/
+
+(Um den letzten von IOn AG bereitgestellten Stand zu erreichen,
+ musste man erst in die Eclipse Entwicklungsumgebung installieren
+ was über deren Website direkt downloadbar war, (NOA for Eclipse),
+ und dann innerhalb von Eclipse weiter updaten von deren Update-Site.
+ Siehe Notizen von js anderswo, wohl bis auf noa4e 2.0.14 / noa 2.2.3.
+ Dann musste ich die aktualisierten Files wieder für die weitere Verwendung
+ im eigenen Projekt dort herauskopieren (wenn ich mich recht erinnere).
+ Dieser Stand ist (in Teilen) Grundlage von NOAText_js, und vollständig
+ auch in meiner Entwicklungsumgebung von
+ think2:l:/home/jsigle/workspace/elexis-2.1.6-20120105 in
+ Projektordnern unterhalb von noa enthalten.
+ Als Nebeneffekt dieser Prozedur ist dann noa4e aber auch in Eclipse als
+ Plugin aktiv, d.h. man erkennt nicht leict, ob man während des Debuggens
+ in der Entwicklungsumgebung jetzt das noa4e Plugin innerhalb von Eclipse,
+ oder NOA unterhalb das Plugins innerhalb von NOAText_js/NOAText_jsl verwendet.
+ Deshalb muss man unbedingt uach das exportierte Endprodukt testen,
+ insbesondere, ob alle notwendigen Files mit dabei sind - und aktuell,
+ und nicht mehrfach an unterschiedlichen Orten.)
+
+ 20120626js joerg.sigle at jsigle.com

@@ -67,6 +67,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.util.NumberInput;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -827,12 +828,13 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin =
 				new Termin(agenda.getActResource(), agenda.getActDate().toString(
 					TimeTool.DATE_COMPACT), von, bis, typ, status);
-			CoreHub.getLocalLockService().acquireLock(actTermin);
 		} else {
 			actTermin = (Termin) actPlannable;
-			CoreHub.getLocalLockService().acquireLock(actTermin);
 			if (bMulti) {
-				actTermin.clone();
+				Termin clonedTermin = (Termin) actTermin.clone();
+				if (CoreHub.getLocalLockService().acquireLock(clonedTermin).isOk()) {
+					CoreHub.getLocalLockService().releaseLock(clonedTermin);
+				}
 			}
 			
 			actTermin.set(new String[] {
@@ -842,26 +844,29 @@ public class TerminDialog extends TitleAreaDialog {
 				Integer.toString(von), Integer.toString(bis - von), typ, status
 			});
 		}
-		
 		lTerminListe.add(actTermin.getLabel());
 		lTermine.add(actTermin);
-		if (actKontakt != null) {
-			actTermin.setKontakt(actKontakt);
-		} else {
-			actTermin.set("Wer", tName.getText()); //$NON-NLS-1$
-		}
-		actTermin.setGrund(tGrund.getText());
-		actTermin.set("ErstelltVon", CoreHub.actUser.getLabel()); //$NON-NLS-1$
-		
-		if (bLocked.getSelection()) {
-			actTermin.setFlag(Termin.SW_LOCKED);
-		}
-		ElexisEventDispatcher.reload(Termin.class);
+		final Termin lockTermin = actTermin;
+		AcquireLockBlockingUi.aquireAndRun(lockTermin, new Runnable() {
+			@Override
+			public void run(){
+				if (actKontakt != null) {
+					lockTermin.setKontakt(actKontakt);
+				} else {
+					lockTermin.set("Wer", tName.getText()); //$NON-NLS-1$
+				}
+				lockTermin.setGrund(tGrund.getText());
+				lockTermin.set("ErstelltVon", CoreHub.actUser.getLabel()); //$NON-NLS-1$
+				
+				if (bLocked.getSelection()) {
+					lockTermin.setFlag(Termin.SW_LOCKED);
+				}
+				ElexisEventDispatcher.reload(Termin.class);
+			}
+		});
 		dayBar.recalc();
 		actPlannable = actTermin;
 		setEnablement();
-		
-		CoreHub.getLocalLockService().releaseLock(actTermin);
 	}
 	
 	/**

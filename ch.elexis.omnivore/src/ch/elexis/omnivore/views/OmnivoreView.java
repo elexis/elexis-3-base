@@ -527,7 +527,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 					String filename = fd.open();
 					if (filename != null) {
 						DocHandle dh = DocHandle.assimilate(filename);
-						if(dh!=null) {
+						if (dh != null && dh.exists()) {
 							CoreHub.getLocalLockService().acquireLock(dh);
 							CoreHub.getLocalLockService().releaseLock(dh);
 						}

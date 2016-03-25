@@ -90,7 +90,7 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 		ArtikelstammItem ai = (ArtikelstammItem) element;
 		if (ai.isBlackBoxed())
 			return UiDesk.getColor(UiDesk.COL_GREY60);
-		return null;
+		return super.getBackground(element);
 	}
 	
 }

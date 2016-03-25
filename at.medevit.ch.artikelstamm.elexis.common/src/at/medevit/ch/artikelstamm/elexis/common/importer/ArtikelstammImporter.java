@@ -290,7 +290,7 @@ public class ArtikelstammImporter {
 				new BigInteger(product.getPRODNO()), product.getDSCR(), StringConstants.EMPTY);
 			String atc = product.getATC();
 			if(atc!=null) {
-				productItem.setATC_code(atc);
+				productItem.setATCCode(atc);
 			}
 		});
 		// TODO fixed length for prodno?

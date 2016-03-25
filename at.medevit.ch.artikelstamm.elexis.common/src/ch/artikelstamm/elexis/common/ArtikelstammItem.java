@@ -55,7 +55,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public static final String TABLENAME = "ARTIKELSTAMM_CH";
 	private static final String VERSION_ENTRY_ID = "VERSION";
-	static final String VERSION = "1.2.0";
+	static final String VERSION = "1.3.0";
 	
 	//@formatter:off
 	/** Eintrag zugeh. zu  */ public static final String FLD_CUMMULATED_VERSION = "CUMM_VERSION";
@@ -100,7 +100,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			+ FLD_CUMMULATED_VERSION + " CHAR(4),"
 			+ FLD_GTIN + " VARCHAR(14)," // id(VERSION) contains table version, has to be varchar else vi.isolder() fails
 			+ FLD_PHAR 	+" CHAR(7),"
-			+ FLD_DSCR	+" VARCHAR(50)," // id(VERSION) creation date of current P dataset
+			+ FLD_DSCR	+" VARCHAR(100)," // id(VERSION) creation date of current P dataset
 			+ FLD_ADDDSCR	+" VARCHAR(50)," // id(VERSION) creation date of current N dataset
 			+ FLD_ATC +" CHAR(10),"
 			+ FLD_COMP_GLN + " CHAR(13),"
@@ -144,6 +144,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	static final String dbUpdateFrom11to12 =
 		"ALTER TABLE "+TABLENAME+" ADD "+FLD_PRODNO+" VARCHAR(10);";
 	
+	static final String dbUpdateFrom12to13 =
+			"ALTER TABLE "+TABLENAME+" MODIFY "+FLD_DSCR+" VARCHAR(100);";
+	
 	//@formatter:on
 	
 	static {
@@ -174,6 +177,10 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 				}
 				if (vi.isOlder("1.2.0")) {
 					createOrModifyTable(dbUpdateFrom11to12);
+					version.set(FLD_GTIN, VERSION);
+				}
+				if (vi.isOlder("1.3.0")) {
+					createOrModifyTable(dbUpdateFrom12to13);
 					version.set(FLD_GTIN, VERSION);
 				}
 			}
@@ -632,6 +639,10 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public String getATCCode(){
 		return get(FLD_ATC);
+	}
+	
+	public void setATCCode(String ATC_code){
+		set(FLD_ATC, ATC_code);
 	}
 	
 	@Override

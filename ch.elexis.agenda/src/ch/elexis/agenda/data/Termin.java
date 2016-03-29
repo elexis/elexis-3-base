@@ -124,7 +124,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				};
 		}
 		Termin version = load("1"); //$NON-NLS-1$
-		if (version == null) {
+		if (version == null || !version.exists()) {
 			init();
 		} else {
 			VersionInfo vi = new VersionInfo(version.get(FLD_PATIENT));
@@ -237,11 +237,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	 */
 	public static Termin load(final String id){
 		Termin ret = new Termin(id);
-		if (ret.state() > PersistentObject.INVALID_ID) {
-			return ret;
-		}
-		return null;
-		
+		return ret;
 	}
 	
 	public Termin(final String bereich, final TimeSpan ts, final String typ){

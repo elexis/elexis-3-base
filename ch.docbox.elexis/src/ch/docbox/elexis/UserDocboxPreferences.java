@@ -430,7 +430,8 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static boolean hasAgendaPlugin(){
-		return Termin.load("1") != null; //$NON-NLS-1$
+		Termin termin = Termin.load("1");
+		return termin != null && termin.exists(); //$NON-NLS-1$
 	}
 	
 	public static String getDocboxLoginID(boolean prefixed){

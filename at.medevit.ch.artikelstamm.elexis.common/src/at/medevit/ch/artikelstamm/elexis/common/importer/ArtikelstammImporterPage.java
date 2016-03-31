@@ -11,6 +11,7 @@
 package at.medevit.ch.artikelstamm.elexis.common.importer;
 
 import java.io.FileInputStream;
+import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -59,9 +60,15 @@ public class ArtikelstammImporterPage extends ImporterPage {
 		lblVERSION.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		int version = ArtikelstammItem.getCurrentVersion();
-		lblVERSION.setText(" v" + version + " / " + ArtikelstammHelper.monthAndYearWritten
-			.format(ArtikelstammItem.getImportSetCreationDate()));
-			
+		StringBuilder sb = new StringBuilder();
+		sb.append(" v" + version);
+		Date importSetCreationDate = ArtikelstammItem.getImportSetCreationDate();
+		if (importSetCreationDate != null) {
+			sb.append(" / " + ArtikelstammHelper.monthAndYearWritten
+				.format(ArtikelstammItem.getImportSetCreationDate()));
+		}
+		lblVERSION.setText(sb.toString());
+		
 		Composite ret = new ImporterPage.FileBasedImporter(parent, this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(2, false));

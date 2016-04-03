@@ -2,7 +2,7 @@
 <feature
       id="org.iatrix.feature"
       label="Iatrix KG mit persönlicher Anamnese, Problemliste und  Medi-Übersicht in Tabelle"
-      version="3.0.0.qualifier"
+      version="3.1.0.qualifier"
       provider-name="ch.elexis">
 
    <description>

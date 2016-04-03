@@ -23,6 +23,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -108,16 +110,27 @@ public class KonsText implements IJournalArea {
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
 
+		text.getControl().addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent e){
+				logEvent("widgetDisposed");
+				updateEintrag();
+				konsEditorHasFocus = false;
+			}
+
+		});
 		text.getControl().addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e){
+				logEvent("focusGained");
 				konsEditorHasFocus = true;
 			}
 
 			@Override
 			public void focusLost(FocusEvent e){
+				logEvent("focusLost");
 				updateEintrag();
-
 				konsEditorHasFocus = false;
 			}
 		});
@@ -438,8 +451,10 @@ public class KonsText implements IJournalArea {
 				+ savedInitialKonsText.length());
 			if (savedInitialKonsText.length() > 0
 				&& !actKons.getEintrag().toString().equalsIgnoreCase(text.getContentsAsXML())) {
-				logEvent("in DB:" + actKons.getEintrag().getHead().toString());
 				logEvent("in Text:" + text.getContentsAsXML());
+				if (actKons != null && actKons.getEintrag() != null && actKons.getEintrag().getHead() != null) {
+					logEvent("in DB:" + actKons.getEintrag().getHead().toString());
+				}
 				actKons.updateEintrag(savedInitialKonsText, false);
 			}
 			savedInitialKonsText = null;
@@ -548,10 +563,11 @@ public class KonsText implements IJournalArea {
 			if (actKons == null) {
 				return;
 			}
-			boolean noLeistungen = actKons.getLeistungen() == null || actKons.getLeistungen().isEmpty();
-			log.debug(actPatient.getPersonalia() + " delete3 the kons? " + text.getContentsPlaintext().length() + " noLeistungen " + noLeistungen);
-			if (text.getContentsPlaintext().length() == 0
-				&& (noLeistungen)) {
+			boolean noLeistungen =
+				actKons.getLeistungen() == null || actKons.getLeistungen().isEmpty();
+			log.debug(actPatient.getPersonalia() + " delete3 the kons? "
+				+ text.getContentsPlaintext().length() + " noLeistungen " + noLeistungen);
+			if (text.getContentsPlaintext().length() == 0 && (noLeistungen)) {
 				Fall f = actKons.getFall();
 				Konsultation[] ret = f.getBehandlungen(false);
 				actKons.delete(true);

@@ -179,7 +179,7 @@ public class KonsText implements IJournalArea {
 		return versionBackAction;
 	}
 
-	public void updateEintrag(){
+	public synchronized void updateEintrag(){
 		if (actKons != null) {
 			if (actKons.getFall() == null) {
 				return;
@@ -324,7 +324,7 @@ public class KonsText implements IJournalArea {
 	}
 
 	@Override
-	public void visible(boolean mode){
+	public synchronized void visible(boolean mode){
 		log.debug("visible mode " + mode);
 	}
 
@@ -432,7 +432,7 @@ public class KonsText implements IJournalArea {
 	 *            if true, activate text field ant put caret to the end
 	 */
 	@Override
-	public void setKons(Konsultation k, boolean putCaretToEnd){
+	public synchronized void setKons(Konsultation k, boolean putCaretToEnd){
 		// save probably not yet saved changes, also
 		// TODO: Niklaus das ist die falsche Stelle, wir müssen updateEintrag(); oder ähnliches beim Verlassen des Fenster oder ähnlichem
 		// TODO: machen!!
@@ -476,7 +476,7 @@ public class KonsText implements IJournalArea {
 	/**
 	 * Set the version label to reflect the current kons' latest version Called by: updateEintrag()
 	 */
-	void updateKonsVersionLabel(){
+	private void updateKonsVersionLabel(){
 		if (actKons != null) {
 			int version = actKons.getHeadVersion();
 			logEvent("Update Version Label: " + version);
@@ -493,7 +493,7 @@ public class KonsText implements IJournalArea {
 		}
 	}
 
-	void setKonsText(Konsultation b, int version, boolean putCaretToEnd){
+	private void setKonsText(Konsultation b, int version, boolean putCaretToEnd){
 		if (b != null) {
 			String ntext = "";
 			if ((version >= 0) && (version <= b.getHeadVersion())) {
@@ -555,7 +555,7 @@ public class KonsText implements IJournalArea {
 	}
 
 	@Override
-	public void activation(boolean mode){
+	public synchronized void activation(boolean mode){
 		logEvent("activation mode " + mode);
 		if (mode == false) {
 			// text is neither dirty nor changed.
@@ -590,7 +590,7 @@ public class KonsText implements IJournalArea {
 		}
 	}
 
-	public void registerUpdateHeartbeat(){
+	public synchronized void registerUpdateHeartbeat(){
 		Heartbeat heat = Heartbeat.getInstance();
 		heat.addListener(new IatrixHeartListener() {
 			private int konsTextSaverPeriod;

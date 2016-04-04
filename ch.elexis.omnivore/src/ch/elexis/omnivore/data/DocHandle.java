@@ -32,21 +32,17 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.exceptions.PersistenceException;
-import ch.elexis.core.ui.Hub;
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
@@ -372,11 +368,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	}
 	
 	public static DocHandle load(String id){
-		DocHandle ret = new DocHandle(id);
-		if (ret.exists()) {
-			return ret;
-		}
-		return null;
+		return new DocHandle(id);
 	}
 	
 	@Override

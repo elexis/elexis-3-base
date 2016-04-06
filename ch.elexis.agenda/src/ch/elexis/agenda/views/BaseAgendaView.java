@@ -39,6 +39,7 @@ import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.data.TerminUtil;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
@@ -233,7 +234,10 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 		
 		public Object[] getElements(Object inputElement){
 			if (CoreHub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
-				return Plannables.loadDay(agenda.getActResource(), agenda.getActDate());
+				String resource = agenda.getActResource();
+				TimeTool date = agenda.getActDate();
+				TerminUtil.updateBoundaries(resource, date);
+				return Plannables.loadDay(resource, date);
 			} else {
 				return new Object[0];
 			}

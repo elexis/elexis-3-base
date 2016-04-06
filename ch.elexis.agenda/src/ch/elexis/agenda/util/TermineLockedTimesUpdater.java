@@ -28,6 +28,12 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.TimeTool.DAYS;
 
+/**
+ * Update the configured day boundaries on all given week days from a specific start date. Update
+ * means only delete the existing boundaries, as the new boundaries will be initialized when the day
+ * is accessed.
+ *
+ */
 public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 	
 	private TimeTool _startDate;
@@ -69,16 +75,13 @@ public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 		monitor.beginTask(Messages.TermineLockedTimesUpdater_0, 2 * appointments.size());
 		List<String> skipUpdate = checkAppointmentCollision(appointments, monitor);
 		
-		// find existing lock times or appointments that would collide with new lock times 
+		// delete existing boundaries if we should not keep them on that day 
 		for (Termin t : appointments) {
+			if (skipUpdate.contains(t.getDay()))
+				continue;
 			TimeTool day = new TimeTool(t.getDay());
 			if (_startDate.isBeforeOrEqual(day)) {
 				if (t.getType().equals(Termin.typReserviert())) {
-					if (skipUpdate.contains(t.getDay()))
-						continue;
-					
-					t.delete();
-				} else if (!skipUpdate.contains(t.getDay())) {
 					t.delete();
 				}
 			}
@@ -92,7 +95,7 @@ public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 	 * 
 	 * @param appointments
 	 * @param monitor
-	 * @return list of appointments to skip when applying the new lock times
+	 * @return list of days to skip when deleting the old boundaries
 	 */
 	private List<String> checkAppointmentCollision(List<Termin> appointments,
 		IProgressMonitor monitor){

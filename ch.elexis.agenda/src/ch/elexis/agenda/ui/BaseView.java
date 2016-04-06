@@ -15,10 +15,7 @@
 
 package ch.elexis.agenda.ui;
 
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -37,31 +34,31 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.data.TerminUtil;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -134,41 +131,10 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		if (date == null) {
 			date = agenda.getActDate();
 		}
-		String day = date.toString(TimeTool.DATE_COMPACT);
 		if (resource == null) {
 			resource = agenda.getActResource();
 		}
-		Query<Termin> qbe = new Query<Termin>(Termin.class);
-		qbe.add(Termin.FLD_TAG, Query.EQUALS, day);
-		qbe.add(Termin.FLD_BEREICH, Query.EQUALS, resource);
-		
-		List<Termin> resList = qbe.execute();
-		// check whether the only entries are appointments if yes also check
-		// whether some "Tagesgrenzen" are missing
-		boolean onlyAppointments = true;
-		for (Termin termin : resList) {
-			if (termin.getType().equals(Termin.typReserviert()))
-				onlyAppointments = false;
-		}
-		if (!onlyAppointments)
-			return;
-		
-		Hashtable<String, String> map = Plannables.getDayPrefFor(resource);
-		int d = date.get(Calendar.DAY_OF_WEEK);
-		String ds = map.get(TimeTool.wdays[d - 1]);
-		if (StringTool.isNothing(ds)) {
-			// default für Tagesgrenzen falls nicht definiert
-			ds = "0000-0800\n1800-2359"; //$NON-NLS-1$
-		}
-		String[] flds = ds.split("\r*\n\r*"); //$NON-NLS-1$
-		for (String fld : flds) {
-			String from = fld.substring(0, 4);
-			String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
-			// Lege Termine für die Tagesgrenzen an
-			new Termin(resource, day, TimeTool.getMinutesFromTimeString(from),
-				TimeTool.getMinutesFromTimeString(until), Termin.typReserviert(),
-				Termin.statusLeer());
-		}
+		TerminUtil.updateBoundaries(resource, date);
 	}
 	
 	protected void updateActions(){

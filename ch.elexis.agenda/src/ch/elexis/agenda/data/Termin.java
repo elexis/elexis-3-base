@@ -1036,7 +1036,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		int aMin = getBeginn();
 		int aMax = getBeginn() + getDauer();
 		
-		if ((aMax < begin) || ((begin + dauer) < aMin))
+		if ((aMax <= begin) || (aMin >= (begin + dauer)))
 			return false;
 		return true;
 		

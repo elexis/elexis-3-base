@@ -68,6 +68,7 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.util.NumberInput;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -825,16 +826,38 @@ public class TerminDialog extends TitleAreaDialog {
 		String status = cbStatus.getItem(cbStatus.getSelectionIndex());
 		Termin actTermin = null;
 		if (actPlannable instanceof Termin.Free) {
-			actTermin =
-				new Termin(agenda.getActResource(), agenda.getActDate().toString(
-					TimeTool.DATE_COMPACT), von, bis, typ, status);
+			Termin newTermin = new Termin(agenda.getActResource(),
+				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status);
+			AcquireLockBlockingUi.aquireAndRun(actTermin, new ILockHandler() {
+
+				@Override
+				public void lockAcquired(){
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void lockFailed(){
+					newTermin.delete();
+				}
+			});
+			actTermin = newTermin;
 		} else {
 			actTermin = (Termin) actPlannable;
 			if (bMulti) {
 				Termin clonedTermin = (Termin) actTermin.clone();
-				if (CoreHub.getLocalLockService().acquireLock(clonedTermin).isOk()) {
-					CoreHub.getLocalLockService().releaseLock(clonedTermin);
-				}
+				AcquireLockBlockingUi.aquireAndRun(clonedTermin, new ILockHandler() {
+					@Override
+					public void lockFailed(){
+						clonedTermin.delete();
+					}
+					
+					@Override
+					public void lockAcquired(){
+						// do nothing
+						
+					}
+				});
 			}
 			
 			actTermin.set(new String[] {
@@ -847,9 +870,15 @@ public class TerminDialog extends TitleAreaDialog {
 		lTerminListe.add(actTermin.getLabel());
 		lTermine.add(actTermin);
 		final Termin lockTermin = actTermin;
-		AcquireLockBlockingUi.aquireAndRun(lockTermin, new Runnable() {
+		AcquireLockBlockingUi.aquireAndRun(lockTermin, new ILockHandler() {
+			
 			@Override
-			public void run(){
+			public void lockFailed(){
+				// do nothing
+			}
+			
+			@Override
+			public void lockAcquired(){
 				if (actKontakt != null) {
 					lockTermin.setKontakt(actKontakt);
 				} else {

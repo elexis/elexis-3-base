@@ -11,6 +11,7 @@ import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.text.model.Samdas.Record;
 import ch.elexis.core.ui.dialogs.SelectOrCreateOpenKonsDialog;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
@@ -47,9 +48,16 @@ public class AddVaccinationToKons {
 		if (kons == null || !kons.isEditable(false)) {
 			return null;
 		} else { // (kons != null && kons.isEditable(false)) {
-			AcquireLockBlockingUi.aquireAndRun(kons, new Runnable() {
+			AcquireLockBlockingUi.aquireAndRun(kons, new ILockHandler() {
+				
 				@Override
-				public void run(){
+				public void lockFailed(){
+					// do nothing
+					
+				}
+				
+				@Override
+				public void lockAcquired(){
 					kons.addLeistung(art);
 					
 					// update kons. text

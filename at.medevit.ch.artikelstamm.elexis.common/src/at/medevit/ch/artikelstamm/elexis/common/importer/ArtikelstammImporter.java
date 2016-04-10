@@ -286,12 +286,17 @@ public class ArtikelstammImporter {
 		// for each defined PRODNO value generate the resp. product entry		
 		productList.stream().forEachOrdered(s -> {
 			PRODUCT product = products.get(s);
-			ArtikelstammItem productItem = new ArtikelstammItem(version, 'X', StringConstants.EMPTY,
-				new BigInteger(product.getPRODNO()), product.getDSCR(), StringConstants.EMPTY);
-			String atc = product.getATC();
-			if(atc!=null) {
-				productItem.setATCCode(atc);
+			if(product!=null) {
+				ArtikelstammItem productItem = new ArtikelstammItem(version, 'X', StringConstants.EMPTY,
+					new BigInteger(product.getPRODNO()), product.getDSCR(), StringConstants.EMPTY);
+				String atc = product.getATC();
+				if(atc!=null) {
+					productItem.setATCCode(atc);
+				}
+			} else {
+				log.error("Product is null for {}", s);
 			}
+			
 		});
 		// TODO fixed length for prodno?
 	}
@@ -344,6 +349,9 @@ public class ArtikelstammImporter {
 		// reset blackbox as we updated the article
 		fields.add(ArtikelstammItem.FLD_BLACKBOXED);
 		values.add(StringConstants.ZERO);
+		
+		fields.add(ArtikelstammItem.FLD_GTIN);
+		values.add(item.getGTIN());
 		
 		if (allValues) {
 			// include header values

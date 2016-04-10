@@ -118,98 +118,110 @@
 									</xs:annotation>
 									<xs:sequence>
 
-										<xs:element name="GTIN" nillable="false" minOccurs="0"
-											maxOccurs="1">
+										<xs:element name="GTIN"
+											nillable="false" minOccurs="0" maxOccurs="1">
 											<xs:annotation>
-												<xs:documentation xml:lang="EN">
+												<xs:documentation
+													xml:lang="EN">
 													Reference number
 													(GTIN = Global trade
 													item number)
 												</xs:documentation>
 											</xs:annotation>
 											<xs:simpleType>
-												<xs:restriction base="xs:string">
+												<xs:restriction
+													base="xs:string">
 
 												</xs:restriction>
 											</xs:simpleType>
 										</xs:element>
-										<xs:element name="PHAR" nillable="false" minOccurs="0"
-											maxOccurs="1">
+										<xs:element name="PHAR"
+											nillable="false" minOccurs="0" maxOccurs="1">
 											<xs:annotation>
-												<xs:documentation xml:lang="EN">
+												<xs:documentation
+													xml:lang="EN">
 													Pharmacode
 												</xs:documentation>
 											</xs:annotation>
 											<xs:simpleType>
-												<xs:restriction base="xs:integer" />
+												<xs:restriction
+													base="xs:integer" />
 											</xs:simpleType>
 										</xs:element>
 
 
-										<xs:element name="DSCR" nillable="false" type="DSCRType"
-											minOccurs="1" maxOccurs="1">
+										<xs:element name="DSCR"
+											nillable="false" type="DSCRType" minOccurs="1"
+											maxOccurs="1">
 											<xs:annotation>
-												<xs:documentation xml:lang="EN">
-													Product
-													description,
+												<xs:documentation
+													xml:lang="EN">
+													Product description,
 													e.g. Adalat retard
 													Tabletten 20 mg
 												</xs:documentation>
 											</xs:annotation>
 										</xs:element>
-										<xs:element name="DSCRF" type="xs:string"
-											minOccurs="1" maxOccurs="1">
+										<xs:element name="DSCRF"
+											type="xs:string" minOccurs="1" maxOccurs="1">
 										</xs:element>
-										<xs:element name="COMP" minOccurs="0">
+										<xs:element name="COMP"
+											minOccurs="0">
 											<xs:annotation>
-												<xs:documentation xml:lang="EN">
+												<xs:documentation
+													xml:lang="EN">
 													Manufacturer
 												</xs:documentation>
 											</xs:annotation>
 											<xs:complexType>
 												<xs:sequence>
-													<xs:element name="NAME" minOccurs="0" maxOccurs="1">
+													<xs:element
+														name="NAME" minOccurs="0" maxOccurs="1">
 														<xs:annotation>
 															<xs:documentation>
 																CompanyName
 															</xs:documentation>
 														</xs:annotation>
 														<xs:simpleType>
-															<xs:restriction base="xs:string">
-																<xs:maxLength value="101" />
+															<xs:restriction
+																base="xs:string">
+																<xs:maxLength
+																	value="101" />
 															</xs:restriction>
 														</xs:simpleType>
 													</xs:element>
-													<xs:element name="GLN" nillable="false"
-														minOccurs="0" maxOccurs="1">
+													<xs:element
+														name="GLN" nillable="false" minOccurs="0" maxOccurs="1">
 														<xs:annotation>
-															<xs:documentation xml:lang="EN">
+															<xs:documentation
+																xml:lang="EN">
 																Company
 																GLN
 															</xs:documentation>
 														</xs:annotation>
 														<xs:simpleType>
-															<xs:restriction base="xs:string">
-																<xs:maxLength value="13" />
+															<xs:restriction
+																base="xs:string">
+																<xs:maxLength
+																	value="13" />
 															</xs:restriction>
 														</xs:simpleType>
 													</xs:element>
 												</xs:sequence>
 											</xs:complexType>
 										</xs:element>
-										<xs:element name="PEXF" type="xs:double" minOccurs="0"
-											maxOccurs="1">
+										<xs:element name="PEXF"
+											type="xs:double" minOccurs="0" maxOccurs="1">
 											<xs:annotation>
 												<xs:documentation>
 													Exfactorypreis in
 													Franken und Rappen
-													(exkl.
-													MWSt)
+													(exkl. MWSt)
 												</xs:documentation>
 											</xs:annotation>
 										</xs:element>
-										<xs:element name="PPUB" type="xs:double" minOccurs="0"
-											maxOccurs="1">
+										<xs:element name="PPUB"
+											type="xs:double" minOccurs="0" maxOccurs="1">
 											<xs:annotation>
 												<xs:documentation>
 													Publikumspreis in
@@ -218,21 +230,24 @@
 												</xs:documentation>
 											</xs:annotation>
 										</xs:element>
-										<xs:element name="PKG_SIZE" type="xs:int"
-											maxOccurs="1" minOccurs="0">
+										<xs:element name="PKG_SIZE"
+											type="xs:int" maxOccurs="1" minOccurs="0">
 										</xs:element>
-										<xs:element name="SL_ENTRY" type="xs:boolean"
-											minOccurs="0" maxOccurs="1">
+										<xs:element name="PKG_SIZE_STRING"
+											type="xs:string" minOccurs="0" maxOccurs="1">
+										</xs:element>
+										<xs:element name="SL_ENTRY"
+											type="xs:boolean" minOccurs="0" maxOccurs="1">
 											<xs:annotation>
 												<xs:documentation>
 													Item ist in der
 													Spezialitätenliste
-													(SL)
-													eingetragen
+													(SL) eingetragen
 												</xs:documentation>
 											</xs:annotation>
 										</xs:element>
-										<xs:element name="IKSCAT" maxOccurs="1" minOccurs="0">
+										<xs:element name="IKSCAT"
+											maxOccurs="1" minOccurs="0">
 											<xs:annotation>
 												<xs:documentation>
 													Abgabekategorie
@@ -249,8 +264,7 @@
 														B:
 														Rezeptpflichtig
 														C: erhältlich in
-														Apotheken
-														ohne
+														Apotheken ohne
 														Rezept D:
 														erhältlich in
 														Apotheken und
@@ -259,22 +273,28 @@
 														Kategorisierung
 													</xs:documentation>
 												</xs:annotation>
-												<xs:restriction base="xs:string">
-													<xs:enumeration value="A">
+												<xs:restriction
+													base="xs:string">
+													<xs:enumeration
+														value="A">
 													</xs:enumeration>
-													<xs:enumeration value="B">
+													<xs:enumeration
+														value="B">
 													</xs:enumeration>
-													<xs:enumeration value="C">
+													<xs:enumeration
+														value="C">
 													</xs:enumeration>
-													<xs:enumeration value="D">
+													<xs:enumeration
+														value="D">
 													</xs:enumeration>
-													<xs:enumeration value="E">
+													<xs:enumeration
+														value="E">
 													</xs:enumeration>
 												</xs:restriction>
 											</xs:simpleType>
 										</xs:element>
-										<xs:element name="GENERIC_TYPE" maxOccurs="1"
-											minOccurs="0">
+										<xs:element name="GENERIC_TYPE"
+											maxOccurs="1" minOccurs="0">
 
 											<xs:simpleType>
 												<xs:annotation>
@@ -284,18 +304,22 @@
 														Komplementärprodukt
 													</xs:documentation>
 												</xs:annotation>
-												<xs:restriction base="xs:string">
-													<xs:enumeration value="O">
+												<xs:restriction
+													base="xs:string">
+													<xs:enumeration
+														value="O">
 													</xs:enumeration>
-													<xs:enumeration value="G">
+													<xs:enumeration
+														value="G">
 													</xs:enumeration>
-													<xs:enumeration value="K">
+													<xs:enumeration
+														value="K">
 													</xs:enumeration>
 												</xs:restriction>
 											</xs:simpleType>
 										</xs:element>
-										<xs:element name="HAS_GENERIC" type="xs:boolean"
-											minOccurs="0" maxOccurs="1">
+										<xs:element name="HAS_GENERIC"
+											type="xs:boolean" minOccurs="0" maxOccurs="1">
 											<xs:annotation>
 												<xs:documentation>
 													Generikum zu diesem
@@ -304,8 +328,8 @@
 												</xs:documentation>
 											</xs:annotation>
 										</xs:element>
-										<xs:element name="LPPV" type="xs:boolean"
-											maxOccurs="1" minOccurs="0">
+										<xs:element name="LPPV"
+											type="xs:boolean" maxOccurs="1" minOccurs="0">
 											<xs:annotation>
 												<xs:documentation>
 													Ist eingetragen in
@@ -318,8 +342,8 @@
 											</xs:annotation>
 										</xs:element>
 
-										<xs:element name="DEDUCTIBLE" type="xs:int"
-											maxOccurs="1" minOccurs="0">
+										<xs:element name="DEDUCTIBLE"
+											type="xs:int" maxOccurs="1" minOccurs="0">
 											<xs:annotation>
 												<xs:documentation>
 													Selbstbehalt für
@@ -328,8 +352,8 @@
 												</xs:documentation>
 											</xs:annotation>
 										</xs:element>
-										<xs:element name="NARCOTIC" type="xs:boolean"
-											maxOccurs="1" minOccurs="0">
+										<xs:element name="NARCOTIC"
+											type="xs:boolean" maxOccurs="1" minOccurs="0">
 											<xs:annotation>
 												<xs:documentation>
 													Produkt ist
@@ -338,8 +362,8 @@
 												</xs:documentation>
 											</xs:annotation>
 										</xs:element>
-										<xs:element name="NARCOTIC_CAS" type="xs:string"
-											maxOccurs="1" minOccurs="0">
+										<xs:element name="NARCOTIC_CAS"
+											type="xs:string" maxOccurs="1" minOccurs="0">
 											<xs:annotation>
 												<xs:documentation>
 													Wenn
@@ -352,14 +376,20 @@
 										</xs:element>
 
 
-										<xs:element name="PRODNO" minOccurs="0" maxOccurs="1"
-											type="PRODNOType">
+										<xs:element name="PRODNO"
+											minOccurs="0" maxOccurs="1" type="PRODNOType">
 											<xs:annotation>
 												<xs:documentation>
 													Produktnummer des
 													Artikels
 												</xs:documentation>
 											</xs:annotation>
+										</xs:element>
+										<xs:element name="MEASURE"
+											type="xs:string" minOccurs="0" maxOccurs="1">
+                                            <xs:annotation>
+                                            	<xs:documentation>Measurement Unit, e.g. Pills or milliliters</xs:documentation>
+                                            </xs:annotation>
 										</xs:element>
 									</xs:sequence>
 

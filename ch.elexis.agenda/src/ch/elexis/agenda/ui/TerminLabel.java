@@ -48,6 +48,8 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.PersistentObject;
@@ -93,11 +95,23 @@ public class TerminLabel extends Composite {
 			public void mouseDoubleClick(MouseEvent e){
 				agenda.setActDate(t.getDay());
 				agenda.setActResource(t.getBereich());
-				if (t.isRecurringDate()) {
-					new SerienTerminDialog(UiDesk.getTopShell(), new SerienTermin(t)).open();
-				} else {
-					new TerminDialog(t).open();
-				}
+				AcquireLockBlockingUi.aquireAndRun(t, new ILockHandler() {
+					
+					@Override
+					public void lockFailed(){
+						// do nothing
+					}
+					
+					@Override
+					public void lockAcquired(){
+						if (t.isRecurringDate()) {
+							new SerienTerminDialog(UiDesk.getTopShell(), new SerienTermin(t))
+								.open();
+						} else {
+							new TerminDialog(t).open();
+						}
+					}
+				});
 				refresh();
 			}
 			
@@ -292,10 +306,20 @@ public class TerminLabel extends Composite {
 			
 			@Override
 			public void run(){
-				agenda.setActResource(t.getBereich());
-				TerminDialog dlg =
-					new TerminDialog((Termin) ElexisEventDispatcher.getSelected(Termin.class));
-				dlg.open();
+				AcquireLockBlockingUi.aquireAndRun(t, new ILockHandler() {
+					@Override
+					public void lockFailed(){
+						// do nothing
+					}
+					
+					@Override
+					public void lockAcquired(){
+						agenda.setActResource(t.getBereich());
+						TerminDialog dlg = new TerminDialog(t);
+						dlg.open();
+					}
+				});
+				
 				refresh();
 				
 			}
@@ -304,7 +328,17 @@ public class TerminLabel extends Composite {
 			@Override
 			public void run(){
 				if (t != null) {
-					t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
+					AcquireLockBlockingUi.aquireAndRun(t, new ILockHandler() {
+						@Override
+						public void lockFailed(){
+							// do nothing
+						}
+						
+						@Override
+						public void lockAcquired(){
+							t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
+						}
+					});
 					ElexisEventDispatcher.update(t);
 				}
 			}
@@ -313,17 +347,23 @@ public class TerminLabel extends Composite {
 			@Override
 			public void run(){
 				if (t != null) {
-					agenda.setActDate(t.getDay());
-					Termin n =
-						Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(),
-							t);
-					if (n != null) {
-						t.setEndTime(n.getStartTime());
-						// t.setDurationInMinutes(t.getDurationInMinutes()+15);
-						refresh();
-						// GlobalEvents.getInstance()
-						// .fireUpdateEvent(Termin.class);
-					}
+					AcquireLockBlockingUi.aquireAndRun(t, new ILockHandler() {
+						@Override
+						public void lockFailed(){
+							// do nothing
+						}
+						
+						@Override
+						public void lockAcquired(){
+							agenda.setActDate(t.getDay());
+							Termin n = Plannables.getFollowingTermin(agenda.getActResource(),
+								agenda.getActDate(), t);
+							if (n != null) {
+								t.setEndTime(n.getStartTime());
+							}
+						}
+					});
+					refresh();
 				}
 			}
 		};

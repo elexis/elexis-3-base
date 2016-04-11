@@ -45,6 +45,8 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.PersistentObject;
@@ -160,12 +162,34 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 					} else {
 						if (ctrlKeyDown) { // copy 
 							Termin tCopy = (Termin) t.clone();
-							tCopy.setStartTime(tt);
-							tCopy.setBereich(Activator.getDefault().getActResource());
+							AcquireLockBlockingUi.aquireAndRun(tCopy, new ILockHandler() {
+								
+								@Override
+								public void lockFailed(){
+									tCopy.delete();
+								}
+								
+								@Override
+								public void lockAcquired(){
+									tCopy.setStartTime(tt);
+									tCopy.setBereich(Activator.getDefault().getActResource());
+								}
+							});
 							refresh();
 						} else { // move
-							t.setStartTime(tt);
-							t.setBereich(Activator.getDefault().getActResource());
+							AcquireLockBlockingUi.aquireAndRun(t, new ILockHandler() {
+								
+								@Override
+								public void lockFailed(){
+									// do nothing
+								}
+								
+								@Override
+								public void lockAcquired(){
+									t.setStartTime(tt);
+									t.setBereich(Activator.getDefault().getActResource());
+								}
+							});
 							refresh();
 						}
 					}

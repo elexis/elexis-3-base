@@ -59,6 +59,8 @@ import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
@@ -322,8 +324,19 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 
 			@Override
 			public void doRun(Termin element) {
-				TerminDialog dlg = new TerminDialog(element);
-				dlg.open();
+					AcquireLockBlockingUi.aquireAndRun(element, new ILockHandler() {
+						
+						@Override
+						public void lockFailed(){
+							// do nothing
+						}
+						
+						@Override
+						public void lockAcquired(){
+							TerminDialog dlg = new TerminDialog(element);
+							dlg.open();
+						}
+					});
 				if (tv != null) {
 					tv.refresh(true);
 				}

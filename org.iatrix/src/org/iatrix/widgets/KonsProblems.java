@@ -204,16 +204,14 @@ public class KonsProblems implements IJournalArea {
 			List<Problem> problems = Problem.getProblemsOfKonsultation(actKons);
 			problemAssignmentViewer.setCheckedElements(problems.toArray());
 			problemAssignmentViewer.refresh();
-			lProbleme.setText(problems.size() + "/" + problemAssignmentViewer.getCheckedElements().length +
-				"/" + Problem.getProblemsOfPatient(actKons.getFall().getPatient()).size() +
-				" Probleme");
+
+			lProbleme.setText("Probleme");
 		} else {
 			// empty selection
 			problemAssignmentViewer.setCheckedElements(new Problem[] {});
 			problemAssignmentViewer.refresh();
 			lProbleme.setText("Probleme");
 		}
-		logEvent("updateProblemAssignmentViewer" + lProbleme.getText());
 	}
 
 	class ProblemAssignmentLabelProvider extends LabelProvider implements ITableColorProvider {

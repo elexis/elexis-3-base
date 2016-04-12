@@ -96,7 +96,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	private static Logger log = LoggerFactory.getLogger(JournalView.class);
 	private Patient patient = null;
-	private Konsultation actKons = null;
+	private static Konsultation actKons = null;
 
 	private FormToolkit tk;
 	private Form form;
@@ -125,7 +125,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private Action showAllConsultationsAction;
 
 	private boolean heartbeatActive = false;
-	private List<IJournalArea> allAreas;
+	private static List<IJournalArea> allAreas;
 
 	private KonsHeader konsHeader;
 
@@ -246,7 +246,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	static String savedKonsId = "-";
 	static Konsultation savedKons;
 
-	private void updateAllKonsAreas(Konsultation newKons, boolean putCaretToEnd){
+	public static void updateAllKonsAreas(Konsultation newKons, boolean putCaretToEnd){
 		/* Not yet sure whether comparing only the id or the whole cons is better
 		 */
 		actKons = newKons;
@@ -662,7 +662,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		visibleAllKonsAreas(mode);
 	};
 
-	private void logEvent(String msg){
+	private static void logEvent(String msg){
 		StringBuilder sb = new StringBuilder(msg + ": ");
 		if (actKons == null) {
 			sb.append("actKons null");

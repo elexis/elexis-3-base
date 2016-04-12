@@ -196,7 +196,7 @@ public class KonsText implements IJournalArea {
 				if (hasKonsTextLock()) {
 					actKons.updateEintrag(text.getContentsAsXML(), false);
 					logEvent(
-						"saved rev. " + actKons.getHeadVersion() + text.getContentsPlaintext());
+						"saved rev. " + actKons.getHeadVersion() + " "+ text.getContentsPlaintext());
 					text.setDirty(false);
 
 					// update kons version label
@@ -217,7 +217,15 @@ public class KonsText implements IJournalArea {
 					}
 				}
 			} else {
-				log.debug("skipping ");
+				boolean check = (savedInitialKonsText == null) || (text == null) || savedInitialKonsText.equals(text.getContentsPlaintext());
+				if (check)
+				{
+					log.debug("skipping check vis " + text.isVisible() + " enabled " + text.isEnabled()+  " disposed " + text.isDisposed() + " " + text.getContentsPlaintext() + " initial " + savedInitialKonsText);
+				} else
+				{
+					log.debug("skipping check " + text.getContentsPlaintext() + " != initial " + savedInitialKonsText);
+					actKons.updateEintrag(text.getContentsAsXML(), false);
+				}
 			}
 		}
 	}
@@ -408,8 +416,6 @@ public class KonsText implements IJournalArea {
 			setKonsText(null, 0, putCaretToEnd);
 			logEvent("updateKonsultation: null");
 		}
-		// TODO: ngngn konsFallArea.layout();
-
 	}
 
 	/*
@@ -433,10 +439,6 @@ public class KonsText implements IJournalArea {
 	 */
 	@Override
 	public synchronized void setKons(Konsultation k, boolean putCaretToEnd){
-		// save probably not yet saved changes, also
-		// TODO: Niklaus das ist die falsche Stelle, wir müssen updateEintrag(); oder ähnliches beim Verlassen des Fenster oder ähnlichem
-		// TODO: machen!!
-
 		// make sure to unlock the kons edit field and release the lock
 		removeKonsTextLock();
 		actKons = k;
@@ -444,11 +446,18 @@ public class KonsText implements IJournalArea {
 			actPatient = null;
 			logEvent("setKons null");
 		} else {
+			boolean different = actPatient != null && k != null && !actPatient.getId().equals(k.getFall().getPatient().getId());
+			if (different) {
+				Patient newPat =  k.getFall().getPatient();
+				logEvent("changed actPatient " +  actPatient.getId() + "  != patient "+ newPat.getId() + " for kon. Skipping ??  "+  newPat.getPersonalia());
+				creatingKons = false;
+				return;
+			}
 			actPatient = actKons.getFall().getPatient();
 		}
 		if (savedInitialKonsText != null && actKons != null) {
 			logEvent("set kons patient key " + text.getData(PATIENT_KEY) + " len "
-				+ savedInitialKonsText.length());
+					+ savedInitialKonsText.length());
 			if (savedInitialKonsText.length() > 0
 				&& !actKons.getEintrag().toString().equalsIgnoreCase(text.getContentsAsXML())) {
 				logEvent("in Text:" + text.getContentsAsXML());
@@ -581,6 +590,7 @@ public class KonsText implements IJournalArea {
 					// f.delete(true);
 				}
 			}
+			updateEintrag();
 			setKons(null, false);
 			text.setData(PATIENT_KEY, null);
 			savedInitialKonsText = "";

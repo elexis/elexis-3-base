@@ -73,6 +73,8 @@ import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
@@ -356,7 +358,20 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 						category = dh.getCategory();
 					}
 					for (String file : files) {
-						DocHandle.assimilate(file, category);
+						final DocHandle handle = DocHandle.assimilate(file, category);
+						if (handle != null) {
+							AcquireLockBlockingUi.aquireAndRun(handle, new ILockHandler() {
+								@Override
+								public void lockFailed(){
+									handle.delete();
+								}
+								
+								@Override
+								public void lockAcquired(){
+									// do nothing
+								}
+							});
+						}
 						viewer.refresh();
 					}
 				}
@@ -526,10 +541,19 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 					FileDialog fd = new FileDialog(getViewSite().getShell(), SWT.OPEN);
 					String filename = fd.open();
 					if (filename != null) {
-						DocHandle dh = DocHandle.assimilate(filename);
-						if (dh != null && dh.exists()) {
-							CoreHub.getLocalLockService().acquireLock(dh);
-							CoreHub.getLocalLockService().releaseLock(dh);
+						final DocHandle handle = DocHandle.assimilate(filename);
+						if (handle != null) {
+							AcquireLockBlockingUi.aquireAndRun(handle, new ILockHandler() {
+								@Override
+								public void lockFailed(){
+									handle.delete();
+								}
+								
+								@Override
+								public void lockAcquired(){
+									// do nothing
+								}
+							});
 						}
 						viewer.refresh();
 					}

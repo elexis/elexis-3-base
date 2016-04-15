@@ -52,12 +52,16 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public static final String FLD_GRUND = "Grund"; //$NON-NLS-1$
 	public static final String FLD_DAUER = "Dauer"; //$NON-NLS-1$
 	public static final String FLD_BEGINN = "Beginn"; //$NON-NLS-1$
+	public static final String FLD_PRIORITY = "priority"; //$NON-NLS-1$
+	public static final String FLD_CASE_TYPE = "caseType"; //$NON-NLS-1$
+	public static final String FLD_INSURANCE_TYPE = "insuranceType"; //$NON-NLS-1$
+	public static final String FLD_TREATMENT_REASON = "treatmentReason"; //$NON-NLS-1$
 	public static final String FLD_TAG = "Tag"; //$NON-NLS-1$
 	public static final String FLD_LASTEDIT = "lastedit"; //$NON-NLS-1$
 	public static final String FLD_STATUSHIST = "StatusHistory"; //$NON-NLS-1$
 	public static final String FLD_LINKGROUP = "linkgroup";
 	public static final String TABLENAME = "AGNTERMINE";
-	public static final String VERSION = "1.2.6"; //$NON-NLS-1$
+	public static final String VERSION = "1.2.7"; //$NON-NLS-1$
 	public static String[] TerminTypes;
 	public static String[] TerminStatus;
 	public static String[] TerminBereiche;
@@ -99,6 +103,10 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;"; //$NON-NLS-1$
 	private static final String upd125 = "ALTER TABLE AGNTERMINE ADD StatusHistory TEXT;"; //$NON-NLS-1$
 	private static final String upd126 = "ALTER TABLE AGNTERMINE MODIFY linkgroup VARCHAR(50)"; //$NON-NLS-1$
+	private static final String upd127 = "ALTER TABLE AGNTERMINE ADD priority CHAR(1);"
+		+ "ALTER TABLE AGNTERMINE ADD caseType CHAR(1);"
+		+ "ALTER TABLE AGNTERMINE ADD insuranceType CHAR(1);"
+		+ "ALTER TABLE AGNTERMINE ADD treatmentReason CHAR(1);";
 	
 	static {
 		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT + "=PatID", FLD_TAG, FLD_BEGINN, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -156,6 +164,9 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				}
 				if (vi.isOlder("1.2.6")) {
 					createOrModifyTable(upd126);
+				}
+				if (vi.isOlder("1.2.7")) {
+					createOrModifyTable(upd127);
 				}
 				version.set(FLD_PATIENT, VERSION);
 			}

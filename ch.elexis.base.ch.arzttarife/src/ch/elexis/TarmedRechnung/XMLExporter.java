@@ -63,7 +63,6 @@ import ch.elexis.core.data.preferences.CorePreferenceInitializer;
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.NamedBlob;
@@ -71,7 +70,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.TrustCenters;
-import ch.elexis.data.Verrechnet;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.ExHandler;
@@ -327,15 +325,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		// services are needed for the balance
 		XMLExporterServices services = null;
-		List<Konsultation> lb = rn.getKonsultationen();
-		for (Konsultation b : lb) {
-			List<Verrechnet> lv = b.getLeistungen();
-			if (lv.size() == 0) {
-				continue;
-			}
-			
-			services = XMLExporterServices.buildServices(rn, vatSummer);
-		}
+		services = XMLExporterServices.buildServices(rn, vatSummer);
 		
 		//balance is needed by other parts so initialize first
 		initBalanceData(rechnung, services, vatSummer);

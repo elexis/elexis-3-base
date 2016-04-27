@@ -44,6 +44,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	private static Logger log = LoggerFactory.getLogger("ch.elexis.omnivore.PreferencePage"); //$NON-NLS-1$
 	
 	public static final String PREFBASE = "ch.elexis.omnivore/"; //$NON-NLS-1$
+	public static final String STOREFSGLOBAL = PREFBASE + "/store_in_fs_global"; //$NON-NLS-1$
 	public static final String STOREFS = PREFBASE + "store_in_fs"; //$NON-NLS-1$
 	public static final String BASEPATH = PREFBASE + "basepath"; //$NON-NLS-1$
 	public static final String CATEGORIES = PREFBASE + "categories"; //$NON-NLS-1$
@@ -132,6 +133,12 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String USR_SORT_DIRECTION_SETTINGS = PREFBASE + "/sortdirection";
 	public static final String SAVE_SORT_DIRECTION = PREFBASE + "/savesortdirection";
 	
+	private static SettingsPreferenceStore fsSettingsStore;
+	
+	private BooleanFieldEditor bStoreFSGlobal;
+	private BooleanFieldEditor bStoreFS;
+	private DirectoryFieldEditor dfStorePath;
+	
 	private Button btnSaveColumnWidths;
 	private Button btnSaveSortDirection;
 	
@@ -192,10 +199,27 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		Group gPathForDocs = new Group(gGeneralOptions, SWT.NONE);
 		gPathForDocs.setLayout(new FillLayout());
 		
-		addField(new BooleanFieldEditor(STOREFS, Messages.Preferences_storeInFS, gPathForDocs));
+		bStoreFSGlobal = new BooleanFieldEditor(STOREFSGLOBAL,
+			"Dateisystem Einstellungen global speichern", gPathForDocs) {
+			@Override
+			protected void fireValueChanged(String property, Object oldValue, Object newValue){
+				super.fireValueChanged(property, oldValue, newValue);
+				if ((Boolean) newValue) {
+					fsSettingsStore = new SettingsPreferenceStore(CoreHub.globalCfg);
+					updateFSSettingsStore();
+				} else {
+					fsSettingsStore = new SettingsPreferenceStore(CoreHub.localCfg);
+					updateFSSettingsStore();
+				}
+			}
+		};
+		addField(bStoreFSGlobal);
+		
+		bStoreFS = new BooleanFieldEditor(STOREFS, Messages.Preferences_storeInFS, gPathForDocs);
+		addField(bStoreFS);
 		storeInFilesystem();
 		
-		DirectoryFieldEditor dfStorePath =
+		dfStorePath =
 			new DirectoryFieldEditor(BASEPATH, Messages.Preferences_pathForDocs, gPathForDocs);
 		getBasepath();
 		dfStorePath.setEmptyStringAllowed(true);
@@ -344,9 +368,23 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		}
 	}
 	
+	private void updateFSSettingsStore(){
+		// update fs settings store accoring to global cfg
+		bStoreFS.setPreferenceStore(fsSettingsStore);
+		bStoreFS.load();
+		dfStorePath.setPreferenceStore(fsSettingsStore);
+		dfStorePath.load();
+	}
+	
 	@Override
 	protected Control createContents(Composite parent){
 		Control c = super.createContents(parent);
+		// save global setting to global cfg
+		bStoreFSGlobal.setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
+		bStoreFSGlobal.load();
+		// must be called after createFieldEditors / super.createContents
+		updateFSSettingsStore();
+		
 		addSeparator();
 		
 		btnSaveColumnWidths = new Button(getFieldEditorParent(), SWT.CHECK);
@@ -599,21 +637,25 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	public static boolean storeInFilesystem(){
 		initGlobalConfig();
-		return CoreHub.globalCfg.get(STOREFS, false);
+		return fsSettingsStore.getBoolean(STOREFS);
 	}
 	
 	public static String getBasepath(){
 		initGlobalConfig();
-		return CoreHub.globalCfg.get(BASEPATH, "");
+		return fsSettingsStore.getString(BASEPATH);
 	}
 	
 	/**
-	 * checks if there are any settings in the 'old' local config
+	 * reload the fs settings store
 	 */
 	private static void initGlobalConfig(){
-		if (CoreHub.globalCfg.get(BASEPATH, null) == null) {
-			CoreHub.globalCfg.set(BASEPATH, CoreHub.localCfg.get(BASEPATH, ""));
-			CoreHub.globalCfg.set(STOREFS, CoreHub.localCfg.get(STOREFS, false));
+		if (fsSettingsStore == null) {
+			boolean isGlobal = CoreHub.globalCfg.get(STOREFSGLOBAL, false);
+			if (isGlobal) {
+				fsSettingsStore = new SettingsPreferenceStore(CoreHub.globalCfg);
+			} else {
+				fsSettingsStore = new SettingsPreferenceStore(CoreHub.localCfg);
+			}
 		}
 	}
 	

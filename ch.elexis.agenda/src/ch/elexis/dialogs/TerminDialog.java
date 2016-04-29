@@ -828,19 +828,6 @@ public class TerminDialog extends TitleAreaDialog {
 		if (actPlannable instanceof Termin.Free) {
 			Termin newTermin = new Termin(agenda.getActResource(),
 				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status);
-			AcquireLockBlockingUi.aquireAndRun(newTermin, new ILockHandler() {
-
-				@Override
-				public void lockAcquired(){
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void lockFailed(){
-					newTermin.delete();
-				}
-			});
 			actTermin = newTermin;
 		} else {
 			actTermin = (Termin) actPlannable;

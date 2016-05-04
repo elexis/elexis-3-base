@@ -24,6 +24,7 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.jdt.Nullable;
+import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -41,7 +42,8 @@ import ch.rgw.tools.VersionInfo;
  * Termin-Klasse für Agenda
  */
 
-public class Termin extends PersistentObject implements Cloneable, Comparable<Termin>, IPlannable {
+public class Termin extends PersistentObject
+		implements Cloneable, Comparable<Termin>, IPlannable, IPeriod {
 	
 	public static final String FLD_BEREICH = "BeiWem"; //$NON-NLS-1$
 	public static final String FLD_TERMINTYP = "Typ"; //$NON-NLS-1$
@@ -769,9 +771,9 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		return new TimeSpan(start, checkZero(res[2]));
 	}
 	
-	public boolean setStartTime(final TimeTool t){
+	public void setStartTime(final TimeTool t){
 		if (checkLock()) {
-			return false;
+			return;
 		}
 		String Tag = t.toString(TimeTool.DATE_COMPACT);
 		int Beginn = (t.get(TimeTool.HOUR_OF_DAY) * 60) + t.get(TimeTool.MINUTE);
@@ -779,9 +781,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 			set(new String[] {
 				FLD_TAG, FLD_BEGINN, FLD_LASTEDIT
 			}, Tag, Integer.toString(Beginn), createTimeStamp());
-			return true;
 		}
-		return false;
 	}
 	
 	public void setEndTime(final TimeTool o){
@@ -1087,4 +1087,15 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		return false;
 	}
 	
+	@Override
+	public TimeTool getEndTime(){
+		String[] vals = new String[3];
+		get(new String[] {
+			FLD_TAG, FLD_BEGINN, FLD_DAUER
+		}, vals);
+		TimeTool ret = new TimeTool(vals[0]);
+		ret.addMinutes(checkZero(vals[1]));
+		ret.addMinutes(checkZero(vals[2]));
+		return ret;
+	}
 }

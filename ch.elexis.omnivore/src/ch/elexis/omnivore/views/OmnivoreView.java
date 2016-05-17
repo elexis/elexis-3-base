@@ -41,6 +41,7 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -79,6 +80,7 @@ import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
 
@@ -337,11 +339,11 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		final Transfer[] transferTypes = new Transfer[] {
+		final Transfer[] dropTransferTypes = new Transfer[] {
 			FileTransfer.getInstance()
 		};
 		
-		viewer.addDropSupport(DND.DROP_COPY, transferTypes, new DropTargetAdapter() {
+		viewer.addDropSupport(DND.DROP_COPY, dropTransferTypes, new DropTargetAdapter() {
 			
 			@Override
 			public void dragEnter(DropTargetEvent event){
@@ -350,7 +352,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			
 			@Override
 			public void drop(DropTargetEvent event){
-				if (transferTypes[0].isSupportedType(event.currentDataType)) {
+				if (dropTransferTypes[0].isSupportedType(event.currentDataType)) {
 					String[] files = (String[]) event.data;
 					String category = null;
 					if (event.item != null && event.item.getData() instanceof DocHandle) {
@@ -379,7 +381,10 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			
 		});
 		
-		viewer.addDragSupport(DND.DROP_COPY, transferTypes, new DragSourceAdapter() {
+		final Transfer[] dragTransferTypes = new Transfer[] {
+			FileTransfer.getInstance(), TextTransfer.getInstance()
+		};
+		viewer.addDragSupport(DND.DROP_COPY, dragTransferTypes, new DragSourceAdapter() {
 			@Override
 			public void dragStart(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
@@ -393,7 +398,6 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			public void dragSetData(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				DocHandle dh = (DocHandle) selection.getFirstElement();
-				
 				if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
 					String title = dh.getTitle();
 					int end = dh.getTitle().lastIndexOf(".");
@@ -404,6 +408,10 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 					event.data = new String[] {
 						file.getAbsolutePath()
 					};
+				} else {
+					StringBuilder sb = new StringBuilder();
+					sb.append(((PersistentObject) dh).storeToString()).append(","); //$NON-NLS-1$
+					event.data = sb.toString().replace(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		});

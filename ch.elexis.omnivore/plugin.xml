@@ -62,4 +62,11 @@
             value="90">
       </Service>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.KonsExtension">
+      <Link
+            KonsExtension="ch.elexis.omnivore.views.KonsExtension"
+            name="omnivore">
+      </Link>
+   </extension>
 </plugin>

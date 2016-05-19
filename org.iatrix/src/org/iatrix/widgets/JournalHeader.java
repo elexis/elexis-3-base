@@ -68,8 +68,6 @@ public class JournalHeader implements IJournalArea {
 	private Label kontoLabel;
 	private Color kontoLabelColor; // original color of kontoLabel
 	Composite cEtiketten;
-	private static boolean useStickerList = true;
-
 	public JournalHeader(Composite formBody){
 		tk = UiDesk.getToolkit();
 		formBody.setLayout(new GridLayout(1, true));
@@ -380,17 +378,14 @@ public class JournalHeader implements IJournalArea {
 	 * @param newKons.
 	 *            Ignored, as we are only interested in patients
 	 */
-	public void setKons(Konsultation newKons, boolean putCaretToEnd){}
+	public void setKons(Konsultation newKons, KonsActions op){}
 
 	@Override
 	public void visible(boolean mode){
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void activation(boolean mode){
-		// TODO Auto-generated method stub
-
 	}
+
 }

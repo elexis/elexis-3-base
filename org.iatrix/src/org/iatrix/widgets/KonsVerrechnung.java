@@ -62,6 +62,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
+import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
@@ -468,7 +469,7 @@ public class KonsVerrechnung implements IJournalArea {
 		return success;
 	}
 
-	public void updateKonsultation(boolean updateText, boolean putCaretToEnd){
+	public void updateKonsultation(boolean updateText){
 		if (actKons != null) {
 			hVerrechnung.setEnabled(true);
 			tVerrechnungKuerzel.setEnabled(true);
@@ -520,6 +521,7 @@ public class KonsVerrechnung implements IJournalArea {
 				}
 			}
 		};
+		delVerrechnetAction.setActionDefinitionId(GlobalActions.DELETE_COMMAND);
 		changeVerrechnetPreisAction = new Action("Preis ändern") {
 			@Override
 			public void run(){
@@ -529,9 +531,10 @@ public class KonsVerrechnung implements IJournalArea {
 					Verrechnet verrechnet = (Verrechnet) sel;
 					// String p=Rechnung.geldFormat.format(verrechnet.getEffPreisInRappen()/100.0);
 					String p = verrechnet.getEffPreis().getAmountAsString();
-					InputDialog dlg =
-						new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Preis für Leistung ändern",
-							"Geben Sie bitte den neuen Preis für die Leistung ein (x.xx)", p, null);
+					InputDialog dlg = new InputDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						"Preis für Leistung ändern",
+						"Geben Sie bitte den neuen Preis für die Leistung ein (x.xx)", p, null);
 					if (dlg.open() == Dialog.OK) {
 						Money newPrice;
 						try {
@@ -557,10 +560,11 @@ public class KonsVerrechnung implements IJournalArea {
 				if (sel != null) {
 					Verrechnet verrechnet = (Verrechnet) sel;
 					String p = Integer.toString(verrechnet.getZahl());
-					InputDialog dlg =
-						new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Zahl der Leistung ändern",
-							"Geben Sie bitte die neue Anwendungszahl für die Leistung bzw. den Artikel ein",
-							p, null);
+					InputDialog dlg = new InputDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						"Zahl der Leistung ändern",
+						"Geben Sie bitte die neue Anwendungszahl für die Leistung bzw. den Artikel ein",
+						p, null);
 					if (dlg.open() == Dialog.OK) {
 						int vorher = verrechnet.getZahl();
 						int neu = Integer.parseInt(dlg.getValue());
@@ -580,7 +584,8 @@ public class KonsVerrechnung implements IJournalArea {
 		};
 
 	}
-	private void logEvent(String msg) {
+
+	private void logEvent(String msg){
 		StringBuilder sb = new StringBuilder(msg + ": ");
 		if (actKons == null) {
 			sb.append("actKons null");
@@ -598,11 +603,13 @@ public class KonsVerrechnung implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation newKons, boolean putCaretToEnd){
-		actKons = newKons;
-		updateKonsultation(false, putCaretToEnd);
-		verrechnungViewer.refresh();
-		updateVerrechnungSum();
+	public void setKons(Konsultation newKons, KonsActions op){
+		if (KonsActions.ACTIVATE_KONS == op) {
+			actKons = newKons;
+			updateKonsultation(false);
+			verrechnungViewer.refresh();
+			updateVerrechnungSum();
+		}
 	}
 
 	@Override

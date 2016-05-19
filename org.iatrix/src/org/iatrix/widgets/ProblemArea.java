@@ -708,12 +708,12 @@ public class ProblemArea implements IJournalArea {
 	 * Aktuellen Patienten setzen
 	 */
 	@Override
-	public void setKons(Konsultation newKons, boolean putCaretToEnd){
-		if (actKons != newKons) {
-			log.trace("setKons " + (newKons == null ? "null" : newKons.getId()));
-			actKons = newKons;
-		} else {
-			log.trace("setKons newKons matches actKons");
+	public void setKons(Konsultation newKons, KonsActions op){
+		if (op == KonsActions.ACTIVATE_KONS) {
+			if (actKons != newKons) {
+				log.trace("setKons " + (newKons == null ? "null" : newKons.getId()));
+				actKons = newKons;
+			}
 		}
 	}
 
@@ -727,7 +727,6 @@ public class ProblemArea implements IJournalArea {
 	}
 
 	public MyKTable getProblemKTable(){
-		// TODO Auto-generated method stub
 		return problemsKTable;
 	}
 
@@ -736,18 +735,15 @@ public class ProblemArea implements IJournalArea {
 	}
 
 	@Override
-	public void visible(boolean mode){
-		// TODO Auto-generated method stub
-
-	}
+	public void visible(boolean mode){}
 
 	@Override
 	public void activation(boolean mode){
 		if (mode == true) {
 			log.debug("activation " + mode);
-			setKons((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class), false);
+			setKons((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class),KonsActions.ACTIVATE_KONS);
 		} else {
-			setKons(null, false);
+			setKons(null, KonsActions.ACTIVATE_KONS);
 		}
 	}
 }

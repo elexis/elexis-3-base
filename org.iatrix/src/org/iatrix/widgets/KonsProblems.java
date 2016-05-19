@@ -58,9 +58,10 @@ public class KonsProblems implements IJournalArea {
 	private FormToolkit tk;
 	private static Logger log = LoggerFactory.getLogger(KonsProblems.class);
 	private static CheckboxTableViewer problemAssignmentViewer;
-    public Action unassignProblemAction;
+	public Action unassignProblemAction;
 	private static final DateComparator DATE_COMPARATOR = new DateComparator();
 	private Label lProbleme;
+
 	public KonsProblems(Composite assignmentComposite){
 		tk = UiDesk.getToolkit();
 		lProbleme = tk.createLabel(assignmentComposite, "Probleme", SWT.LEFT);
@@ -236,36 +237,31 @@ public class KonsProblems implements IJournalArea {
 
 	}
 
-	public CheckboxTableViewer getProblemAssignmentViewer() {
+	public CheckboxTableViewer getProblemAssignmentViewer(){
 		return problemAssignmentViewer;
 	}
 
 	@Override
-	public void setPatient(Patient newPatient){
-		// TODO Auto-generated method stub
+	public void setPatient(Patient newPatient){}
 
+	@Override
+	public void setKons(Konsultation newKons, KonsActions op){
+		if (op == KonsActions.ACTIVATE_KONS) {
+			actKons = newKons;
+			updateProblemAssignmentViewer();
+		}
 	}
 
 	@Override
-	public void setKons(Konsultation newKons, boolean putCaretToEnd){
-		actKons = newKons;
-		updateProblemAssignmentViewer();
-
-	}
-
-	@Override
-	public void visible(boolean mode){
-		// TODO Auto-generated method stub
-
-	}
+	public void visible(boolean mode){}
 
 	@Override
 	public void activation(boolean mode){
 		if (mode == true) {
 			log.debug("activation " + mode);
-			setKons((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class), false);
+			setKons((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class), KonsActions.ACTIVATE_KONS);
 		} else {
-			setKons(null, false);
+			setKons(null, KonsActions.ACTIVATE_KONS);
 		}
 	}
 
@@ -281,4 +277,5 @@ public class KonsProblems implements IJournalArea {
 		}
 		log.debug(sb.toString());
 	}
+
 }

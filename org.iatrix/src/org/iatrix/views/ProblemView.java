@@ -385,8 +385,6 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 
 	@Override
 	public void setFocus(){
-		// TODO Auto-generated method stub
-
 	}
 
 	/*

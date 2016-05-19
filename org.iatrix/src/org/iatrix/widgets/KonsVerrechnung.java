@@ -37,6 +37,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -62,7 +64,6 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
-import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
@@ -225,7 +226,23 @@ public class KonsVerrechnung implements IJournalArea {
 		Transfer[] types = new Transfer[] {
 			textTransfer
 		};
+		verrechnungViewer.getControl().addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e){
+				if (e.keyCode == SWT.DEL) {
+					int j = verrechnungViewer.getTable().getSelectionIndex();
+					deleleSelectedItem();
+					// Allow pressing delete several times in a row
+					if (j >= 1) { // Correct by one, as we removed one item
+						verrechnungViewer.getTable().setFocus();
+						verrechnungViewer.getTable().select(j-1);
+					}
+				}
+			}
 
+			@Override
+			public void keyPressed(KeyEvent e){}
+		});
 		// assignmentComposite
 		DropTarget dtarget = new DropTarget(assignmentComposite, DND.DROP_COPY);
 		dtarget.setTransfer(types);
@@ -493,35 +510,34 @@ public class KonsVerrechnung implements IJournalArea {
 		}
 	}
 
+	/*
+	 * Return the index of the selected item. -1 if it could not be found
+	 */
+	private void deleleSelectedItem(){
+		IStructuredSelection sel = (IStructuredSelection) verrechnungViewer.getSelection();
+		if (sel != null) {
+			for (Object obj : sel.toArray()) {
+				if (obj instanceof Verrechnet) {
+					Verrechnet verrechnet = (Verrechnet) obj;
+					Result<Verrechnet> result = actKons.removeLeistung(verrechnet);
+					if (!result.isOK()) {
+						SWTHelper.alert("Leistungsposition kann nicht entfernt werden",
+							result.toString());
+					}
+					verrechnungViewer.refresh();
+					updateVerrechnungSum();
+				}
+			}
+		}
+	}
+
 	private void makeActions(){
 		delVerrechnetAction = new Action("Leistungsposition entfernen") {
 			@Override
 			public void run(){
-				IStructuredSelection sel = (IStructuredSelection) verrechnungViewer.getSelection();
-				if (sel != null) {
-					/*
-					 * if (SWTHelper.askYesNo("Leistungsposition entfernen", "Sind Sie sicher, dass
-					 * Sie die ausgewählten Leistungsposition entfernen wollen?") {
-					 */
-					for (Object obj : sel.toArray()) {
-						if (obj instanceof Verrechnet) {
-							Verrechnet verrechnet = (Verrechnet) obj;
-							Result result = actKons.removeLeistung(verrechnet);
-							if (!result.isOK()) {
-								SWTHelper.alert("Leistungsposition kann nicht entfernt werden",
-									result.toString());
-							}
-							verrechnungViewer.refresh();
-							updateVerrechnungSum();
-						}
-					}
-					/*
-					 * }
-					 */
-				}
+				deleleSelectedItem();
 			}
 		};
-		delVerrechnetAction.setActionDefinitionId(GlobalActions.DELETE_COMMAND);
 		changeVerrechnetPreisAction = new Action("Preis ändern") {
 			@Override
 			public void run(){

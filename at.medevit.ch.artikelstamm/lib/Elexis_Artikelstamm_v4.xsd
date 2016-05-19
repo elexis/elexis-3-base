@@ -25,39 +25,46 @@
 							<xs:element name="PRODUCT" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element name="PRODNO" type="PRODNOType"
-											minOccurs="1" maxOccurs="1">
+										<xs:element name="PRODNO"
+											type="PRODNOType" minOccurs="1" maxOccurs="1">
 										</xs:element>
-										<xs:element name="DSCR" type="DSCRType" minOccurs="1"
-											maxOccurs="1">
+										<xs:element name="DSCR"
+											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
-										<xs:element name="DSCRF" type="DSCRType" minOccurs="1"
-											maxOccurs="1">
+										<xs:element name="DSCRF"
+											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
-										<xs:element name="ATC" nillable="false" maxOccurs="1"
-											minOccurs="0">
+										<xs:element name="ATC"
+											nillable="false" maxOccurs="1" minOccurs="0">
 											<xs:annotation>
-												<xs:documentation xml:lang="EN">
-													ATC Code
-													beinhaltet
+												<xs:documentation
+													xml:lang="EN">
+													ATC Code beinhaltet
 													Information ob Item
 													ein Impfstoff ist.
-													Dies ist der
-													Fall
+													Dies ist der Fall
 													wenn der ATC Code
 													mit J07 startet.
 												</xs:documentation>
 											</xs:annotation>
 											<xs:simpleType>
-												<xs:restriction base="xs:string">
-													<xs:maxLength value="8" />
+												<xs:restriction
+													base="xs:string">
+													<xs:maxLength
+														value="8" />
 												</xs:restriction>
 											</xs:simpleType>
 										</xs:element>
-										<xs:element name="LIMNAMEBAG" type="xs:string"
-											minOccurs="0" maxOccurs="1">
+										<xs:element name="LIMNAMEBAG"
+											type="xs:string" minOccurs="0" maxOccurs="1">
 										</xs:element>
 
+										<xs:element name="SUBSTANCE"
+											type="xs:string" minOccurs="0" maxOccurs="1">
+										</xs:element>
+										<xs:element name="SUBSTANCEF"
+											type="xs:string" minOccurs="0" maxOccurs="1">
+										</xs:element>
 									</xs:sequence>
 									<xs:attribute name="DELTA" type="DELTAType" use="optional">
 									</xs:attribute>

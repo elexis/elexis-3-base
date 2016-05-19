@@ -57,6 +57,10 @@ public class ATCCodes {
 		try {
 			// use buffering
 			InputStream is = ATCCodes.class.getResourceAsStream(ATC_CODES_SERIALIZED_FILE);
+			if (is == null) {
+				// patch to load library from within non-osgi environment
+				is = ATCCodes.class.getResourceAsStream("/ATCCodesMap.ser");
+			}
 			ObjectInput input = new ObjectInputStream(is);
 			try {
 				// deserialize the List

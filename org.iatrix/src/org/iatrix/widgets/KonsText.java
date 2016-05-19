@@ -63,14 +63,14 @@ import ch.rgw.tools.VersionedResource.ResourceItem;
 
 public class KonsText implements IJournalArea {
 
-	private Patient actPatient = null;
-	private Konsultation actKons = null;
+	private static Patient actPatient = null;
+	private static Konsultation actKons = null;
 	private static int konsTextSaverCount = 0;
 	private static Logger log = LoggerFactory.getLogger(org.iatrix.widgets.KonsText.class);
-	private EnhancedTextField text;
-	private Label lVersion = null;
-	private Label lKonsLock = null;
-	private KonsTextLock konsTextLock = null;
+	private static EnhancedTextField text;
+	private static Label lVersion = null;
+	private static Label lKonsLock = null;
+	private static KonsTextLock konsTextLock = null;
 	int displayedVersion;
 	private Action purgeAction;
 	private Action saveAction;
@@ -195,8 +195,8 @@ public class KonsText implements IJournalArea {
 				}
 				if (hasKonsTextLock()) {
 					actKons.updateEintrag(text.getContentsAsXML(), false);
-					logEvent(
-						"saved rev. " + actKons.getHeadVersion() + " "+ text.getContentsPlaintext());
+					logEvent("updateEintrag saved rev. " + actKons.getHeadVersion() + " "
+						+ text.getContentsPlaintext());
 					text.setDirty(false);
 
 					// update kons version label
@@ -217,13 +217,14 @@ public class KonsText implements IJournalArea {
 					}
 				}
 			} else {
-				boolean check = (savedInitialKonsText == null) || (text == null) || savedInitialKonsText.equals(text.getContentsPlaintext());
-				if (check)
-				{
-					log.debug("skipping check vis " + text.isVisible() + " enabled " + text.isEnabled()+  " disposed " + text.isDisposed() + " " + text.getContentsPlaintext() + " initial " + savedInitialKonsText);
-				} else
-				{
-					log.debug("skipping check " + text.getContentsPlaintext() + " != initial " + savedInitialKonsText);
+				boolean check = (savedInitialKonsText == null) || (text == null)
+					|| savedInitialKonsText.equals(text.getContentsPlaintext());
+				if (check) {
+					setKonsText(actKons, actKons.getHeadVersion(), true);
+					log.debug("updateEintrag: forced to " + text.getContentsPlaintext());
+				} else {
+					log.debug("updateEintrag skipping check " + text.getContentsPlaintext() + " != initial "
+						+ savedInitialKonsText);
 					actKons.updateEintrag(text.getContentsAsXML(), false);
 				}
 			}
@@ -236,6 +237,9 @@ public class KonsText implements IJournalArea {
 	 * @return true, if the text changed, false else
 	 */
 	private boolean textChanged(){
+		if (actKons == null) {
+			return false;
+		}
 		String dbEintrag = actKons.getEintrag().getHead();
 		String textEintrag = text.getContentsAsXML();
 
@@ -294,6 +298,7 @@ public class KonsText implements IJournalArea {
 	// should be called when a new konsultation is set
 	private void createKonsTextLock(){
 		// remove old lock
+
 		removeKonsTextLock();
 
 		if (actKons != null && CoreHub.actUser != null) {
@@ -303,10 +308,10 @@ public class KonsText implements IJournalArea {
 		}
 
 		if (konsTextLock != null) {
-			boolean success = konsTextLock.lock();
-			logEvent(
-				"createKonsTextLock: konsText locked (" + success + ")" + konsTextLock.getKey());
-			// System.err.println("DEBUG: createKonsTextLock: konsText locked (" + success + ")");
+			konsTextLock.lock();
+			// boolean success = konsTextLock.lock();
+			// logEvent(
+			// "createKonsTextLock: konsText locked (" + success + ")" + konsTextLock.getKey());
 		}
 	}
 
@@ -315,9 +320,10 @@ public class KonsText implements IJournalArea {
 	// or the program/view exits
 	private void removeKonsTextLock(){
 		if (konsTextLock != null) {
-			boolean success = konsTextLock.unlock();
-			logEvent(
-				"removeKonsTextLock: konsText unlocked (" + success + ") " + konsTextLock.getKey());
+			konsTextLock.unlock();
+			// boolean success = konsTextLock.unlock();
+			// logEvent(
+			// "removeKonsTextLock: konsText unlocked (" + success + ") " + konsTextLock.getKey());
 			konsTextLock = null;
 		}
 	}
@@ -404,16 +410,16 @@ public class KonsText implements IJournalArea {
 		};
 	};
 
-	private void updateKonsultation(boolean updateText, boolean putCaretToEnd){
+	private void updateKonsultation(boolean updateText){
 		if (actKons != null) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(actKons.getDatum());
 			if (updateText) {
-				setKonsText(actKons, actKons.getHeadVersion(), putCaretToEnd);
+				setKonsText(actKons, actKons.getHeadVersion(), true);
 			}
 			logEvent("updateKonsultation: " + actKons.getId());
 		} else {
-			setKonsText(null, 0, putCaretToEnd);
+			setKonsText(null, 0, true);
 			logEvent("updateKonsultation: null");
 		}
 	}
@@ -438,48 +444,74 @@ public class KonsText implements IJournalArea {
 	 *            if true, activate text field ant put caret to the end
 	 */
 	@Override
-	public synchronized void setKons(Konsultation k, boolean putCaretToEnd){
-		// make sure to unlock the kons edit field and release the lock
-		removeKonsTextLock();
-		actKons = k;
-		if (actKons == null) {
-			actPatient = null;
-			logEvent("setKons null");
-		} else {
-			boolean different = actPatient != null && k != null && !actPatient.getId().equals(k.getFall().getPatient().getId());
-			if (different) {
-				Patient newPat =  k.getFall().getPatient();
-				logEvent("changed actPatient " +  actPatient.getId() + "  != patient "+ newPat.getId() + " for kon. Skipping ??  "+  newPat.getPersonalia());
-				creatingKons = false;
-				return;
+	public synchronized void setKons(Konsultation k, KonsActions op){
+		if (op == KonsActions.SAVE_KONS) {
+			if (text.isDirty() || textChanged()) {
+				logEvent("setKons.SAVE_KONS text.isDirty or changed saving Kons from "
+					+ actKons.getDatum() + " is '" + text.getContentsPlaintext() + "'");
+				updateEintrag();
+				savedInitialKonsText = null;
+				text.setData(PATIENT_KEY, null);
+				text.setText("saved kons");
+				removeKonsTextLock();
+				actKons = null;
+			} else {
+				logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum() + " is '" + text.getContentsPlaintext() + "'");
+				savedInitialKonsText = null;
 			}
-			actPatient = actKons.getFall().getPatient();
+			return;
 		}
-		if (savedInitialKonsText != null && actKons != null) {
-			logEvent("set kons patient key " + text.getData(PATIENT_KEY) + " len "
-					+ savedInitialKonsText.length());
-			if (savedInitialKonsText.length() > 0
-				&& !actKons.getEintrag().toString().equalsIgnoreCase(text.getContentsAsXML())) {
-				logEvent("in Text:" + text.getContentsAsXML());
-				if (actKons != null && actKons.getEintrag() != null && actKons.getEintrag().getHead() != null) {
-					logEvent("in DB:" + actKons.getEintrag().getHead().toString());
+		if (op == KonsActions.ACTIVATE_KONS) {
+			// make sure to unlock the kons edit field and release the lock
+			if (text != null && actKons != null) {
+				logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " textChanged "
+					+ textChanged() + " actKons vom: " + actKons.getDatum());
+			}
+			logEvent("setKons.ACTIVATE_KONS newKons vom: " + (k != null ? k.getDatum() : "null"));
+			removeKonsTextLock();
+			actKons = k;
+			if (actKons == null) {
+				actPatient = null;
+				logEvent("setKons null");
+			} else {
+				boolean different = actPatient != null && k != null
+					&& !actPatient.getId().equals(k.getFall().getPatient().getId());
+				if (different) {
+					Patient newPat = k.getFall().getPatient();
+					logEvent("setKons.changed actPatient " + actPatient.getId() + "  != patient "
+						+ newPat.getId() + " for kon. Skipping ??  " + newPat.getPersonalia());
+					creatingKons = false;
+					return;
 				}
-				actKons.updateEintrag(savedInitialKonsText, false);
+				actPatient = actKons.getFall().getPatient();
 			}
-			savedInitialKonsText = null;
-			text.setData(PATIENT_KEY, null);
-		}
-		creatingKons = false;
+			if (savedInitialKonsText != null && actKons != null) {
+				logEvent("set kons patient key " + text.getData(PATIENT_KEY) + " len "
+					+ savedInitialKonsText.length());
+				if (savedInitialKonsText.length() > 0
+					&& !actKons.getEintrag().toString().equalsIgnoreCase(text.getContentsAsXML())) {
+					logEvent("setKons.text '" + text.getContentsPlaintext() + "'");
+					if (actKons != null && actKons.getEintrag() != null
+						&& actKons.getEintrag().getHead() != null) {
+						logEvent("in DB:" + actKons.getEintrag().getHead().toString());
+					}
+					actKons.updateEintrag(savedInitialKonsText, false);
+				}
+				savedInitialKonsText = null;
+				text.setData(PATIENT_KEY, null);
+			}
+			creatingKons = false;
 
-		if (actKons != null) {
-			// create new konsTextLock
-			createKonsTextLock();
-		}
-		updateKonsultation(true, putCaretToEnd);
+			if (actKons != null) {
+				// create new konsTextLock
+				createKonsTextLock();
+			}
+			updateKonsultation(true);
 
-		// update konslock label and enable/disable save action
-		updateKonsLockLabel();
-		saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
+			// update konslock label and enable/disable save action
+			updateKonsLockLabel();
+			saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
+		}
 	}
 
 	/**
@@ -517,13 +549,13 @@ public class KonsText implements IJournalArea {
 			} else {
 				lVersion.setText("");
 			}
-			logEvent("setKonsText");
 			text.setText(PersistentObject.checkNull(ntext));
 			text.setKons(b);
 			text.setEnabled(hasKonsTextLock());
 			displayedVersion = version;
 			versionBackAction.setEnabled(version != 0);
 			versionFwdAction.setEnabled(version != b.getHeadVersion());
+			logEvent("setKonsText.1 " + lVersion.getText() + " " + text.getContentsPlaintext());
 
 			if (putCaretToEnd) {
 				// set focus and put caret at end of text
@@ -545,6 +577,7 @@ public class KonsText implements IJournalArea {
 			displayedVersion = -1;
 			versionBackAction.setEnabled(false);
 			versionFwdAction.setEnabled(false);
+			logEvent("setKonsText.2 " + lVersion.getText() + " " + text.getContentsPlaintext());
 		}
 	}
 
@@ -591,7 +624,7 @@ public class KonsText implements IJournalArea {
 				}
 			}
 			updateEintrag();
-			setKons(null, false);
+			setKons(null, KonsActions.ACTIVATE_KONS);
 			text.setData(PATIENT_KEY, null);
 			savedInitialKonsText = "";
 			text.setText("");

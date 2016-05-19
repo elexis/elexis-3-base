@@ -74,7 +74,7 @@ public class KonsDiagnosen implements IJournalArea {
 		logEvent("setDiagnosenText");
 	}
 
-	private void updateKonsultation(boolean updateText, boolean putCaretToEnd){
+	private void updateKonsultation(boolean updateText){
 		if (actKons != null) {
 			setDiagnosenText(actKons);
 		} else {
@@ -102,9 +102,11 @@ public class KonsDiagnosen implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation newKons, boolean putCaretToEnd){
-		actKons = newKons;
-		updateKonsultation(true, putCaretToEnd);
+	public void setKons(Konsultation newKons, KonsActions op){
+		if (op == KonsActions.ACTIVATE_KONS) {
+			actKons = newKons;
+			updateKonsultation(true);
+		}
 	}
 
 	@Override

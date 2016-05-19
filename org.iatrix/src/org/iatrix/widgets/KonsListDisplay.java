@@ -120,7 +120,9 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 	 */
 	private void refresh(){
 		// check for disposed widget to avoid error message at program exit
-		if (!form.isDisposed()) {
+		if (form.isDisposed()) {
+			dataLoader.cancel();
+		} else {
 			form.reflow(true);
 		}
 	}
@@ -244,28 +246,34 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 						}
 					}
 				}
+				if (monitor == null) {
+					return Status.CANCEL_STATUS;
+				}
 
 				monitor.worked(1);
 
-				int maxShownConsultations = CoreHub.globalCfg.get(
-					Iatrix.CFG_MAX_SHOWN_CONSULTATIONS, Iatrix.CFG_MAX_SHOWN_CONSULTATIONS_DEFAULT);
+				if (CoreHub.globalCfg != null) {
+					int maxShownConsultations =
+						CoreHub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CONSULTATIONS,
+							Iatrix.CFG_MAX_SHOWN_CONSULTATIONS_DEFAULT);
 
-				if (preview && konsList.size() > PREVIEW_COUNT) {
-					// don't load all entries in this step
+					if (preview && konsList.size() > PREVIEW_COUNT) {
+						// don't load all entries in this step
 
-					List<Konsultation> newList = new ArrayList<Konsultation>();
-					for (int i = 0; i < PREVIEW_COUNT; i++) {
-						newList.add(konsList.get(i));
+						List<Konsultation> newList = new ArrayList<Konsultation>();
+						for (int i = 0; i < PREVIEW_COUNT; i++) {
+							newList.add(konsList.get(i));
+						}
+						konsList = newList;
+					} else if (!showAllConsultations && konsList.size() > maxShownConsultations) {
+						// don't load all entries
+
+						List<Konsultation> newList = new ArrayList<Konsultation>();
+						for (int i = 0; i < maxShownConsultations; i++) {
+							newList.add(konsList.get(i));
+						}
+						konsList = newList;
 					}
-					konsList = newList;
-				} else if (!showAllConsultations && konsList.size() > maxShownConsultations) {
-					// don't load all entries
-
-					List<Konsultation> newList = new ArrayList<Konsultation>();
-					for (int i = 0; i < maxShownConsultations; i++) {
-						newList.add(konsList.get(i));
-					}
-					konsList = newList;
 				}
 
 				/*

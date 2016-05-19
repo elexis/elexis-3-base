@@ -35,6 +35,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.iatrix.data.Problem;
 import org.iatrix.views.JournalView;
+import org.iatrix.widgets.IJournalArea.KonsActions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -233,10 +234,15 @@ public class KonsListComposite {
 			hTitle.addHyperlinkListener(new HyperlinkAdapter() {
 				@Override
 				public void linkActivated(HyperlinkEvent e){
+					log.debug("linkActivated: " + e + " " + e.getSource());
 					if (konsData != null) {
-						log.debug("fireSelectionEvent: rev. " + konsData.konsultation.getHeadVersion() + " "
-							+ konsData.konsultation.getDatum() + " " + konsData.konsultation.getFall().getPatient().getPersonalia());
-						JournalView.updateAllKonsAreas(konsData.konsultation, true);
+						JournalView.saveActKonst();
+						JournalView.updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
+						log.debug(
+							"fireSelectionEvent: rev. " + konsData.konsultation.getHeadVersion()
+								+ " " + konsData.konsultation.getDatum() + " "
+								+ konsData.konsultation.getFall().getPatient().getPersonalia() + " "
+								+ konsData.konsultation);
 						ElexisEventDispatcher.fireSelectionEvent(konsData.konsultation);
 					}
 				}

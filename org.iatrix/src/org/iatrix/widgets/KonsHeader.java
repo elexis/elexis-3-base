@@ -86,7 +86,7 @@ public class KonsHeader implements IJournalArea {
 				});
 				if (ksl.open() == Dialog.OK) {
 					actKons.setMandant((Mandant) ksl.getSelection());
-					setKons(actKons, false);
+					setKons(actKons, KonsActions.ACTIVATE_KONS);
 				}
 			}
 
@@ -121,7 +121,7 @@ public class KonsHeader implements IJournalArea {
 					if (msd.open() == 0) {
 						// TODO check compatibility of assigned problems
 						actKons.setFall(nFall);
-						setKons(actKons, false);
+						setKons(actKons, KonsActions.ACTIVATE_KONS);
 					}
 				}
 			}
@@ -132,7 +132,11 @@ public class KonsHeader implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation k, boolean putCaretToEnd){
+	public void setKons(Konsultation k, KonsActions op){
+		if (op != KonsActions.ACTIVATE_KONS )
+		{
+			return;
+		}
 		log.debug("setKons " + k);
 		actKons = k;
 		if (actKons != null) {
@@ -241,13 +245,10 @@ public class KonsHeader implements IJournalArea {
 
 	@Override
 	public void visible(boolean mode){
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void activation(boolean mode){
-		// TODO Auto-generated method stub
-
 	}
+
 }

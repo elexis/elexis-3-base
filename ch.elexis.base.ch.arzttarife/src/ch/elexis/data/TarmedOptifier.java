@@ -12,6 +12,7 @@
 
 package ch.elexis.data;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -152,6 +153,20 @@ public class TarmedOptifier implements IOptifier {
 			}
 		}
 
+		if (tc.getCode().matches("35.0020")) {
+			List<Verrechnet> opCodes = getOPList(lst);
+			List<Verrechnet> opReduction = getOPReduction(lst);
+			// updated reductions to codes, and get not yet reduced codes
+			List<Verrechnet> availableCodes = updateOPReductions(opCodes, opReduction);
+			if (availableCodes.isEmpty()) {
+				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KOMBINATION,
+					code.getCode(), null, false);
+			}
+			newVerrechnet = new Verrechnet(tc, kons, 1);
+			mapOpReduction(availableCodes.get(0), newVerrechnet);
+			return new Result<IVerrechenbar>(null);
+		}
+		
 		// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann
 		// nur Zahl erhöhen.
 		for (Verrechnet v : lst) {
@@ -303,40 +318,7 @@ public class TarmedOptifier implements IOptifier {
 			// add 39.0020, will be changed according to case (see above)
 			add(TarmedLeistung.getFromCode("39.0020"), kons);
 		}
-
-		// double factor =
-		// PersistentObject.checkZeroDouble(check.get("VK_Scale"));
-		// Abzug für Praxis-Op. (alle TL von OP I auf 40% reduzieren)
-		if (tcid.equals("35.0020")) { //$NON-NLS-1$
-
-			double sum = 0.0;
-			for (Verrechnet v : lst) {
-				if (v.getVerrechenbar() instanceof TarmedLeistung) {
-					TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
-					if (tl.getSparteAsText().equals("OP I")) { //$NON-NLS-1$
-						/*
-						 * int tech = tl.getTL(); double abzug = tech 4.0 /
-						 * 10.0; sum -= abzug;
-						 */
-						sum += tl.getTL();
-					}
-				}
-			}
-
-			// check.setPreis(new Money(sum));
-			newVerrechnet.setTP(sum);
-			newVerrechnet.setDetail(TL, Double.toString(sum));
-			newVerrechnet.setPrimaryScaleFactor(-0.4);
-			/*
-			 * double sum=0.0; for(Verrechnet v:lst){ if(v.getVerrechenbar()
-			 * instanceof TarmedLeistung){ TarmedLeistung tl=(TarmedLeistung)
-			 * v.getVerrechenbar(); if(tl.getSparteAsText().equals("OP I")){ int
-			 * tech=tl.getTL(); sum+=tech; } } } double scale=-0.4;
-			 * check.setDetail("scale", Double.toString(scale));
-			 * sum=sumfactor/100.0; check.setPreis(new Money(sum));
-			 */
-		}
-
+		
 		// Interventionelle Schmerztherapie: Zuschlag cervical und thoracal
 		else if (tcid.equals("29.2090")) {
 			double sumAL = 0.0;
@@ -460,6 +442,93 @@ public class TarmedOptifier implements IOptifier {
 			return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 		}
 		return new Result<IVerrechenbar>(null);
+	}
+	
+	/**
+	 * Create a new mapping between an OP I reduction (35.0020) and a service from the OP I section.
+	 * 
+	 * @param opVerrechnet
+	 *            Verrechnet representing a service from the OP I section
+	 * @param reductionVerrechnet
+	 *            Verrechnet representing the OP I reduction (35.0020)
+	 */
+	private void mapOpReduction(Verrechnet opVerrechnet, Verrechnet reductionVerrechnet){
+		TarmedLeistung opVerrechenbar = (TarmedLeistung) opVerrechnet.getVerrechenbar();
+		reductionVerrechnet.setZahl(opVerrechnet.getZahl());
+		reductionVerrechnet.setDetail(TL, Double.toString(opVerrechenbar.getTL()));
+		reductionVerrechnet.setDetail(AL, Double.toString(0.0));
+		reductionVerrechnet.setTP(opVerrechenbar.getTL());
+		reductionVerrechnet.setPrimaryScaleFactor(-0.4);
+		reductionVerrechnet.setDetail("Bezug", opVerrechenbar.getCode());
+	}
+	
+	/**
+	 * Update existing OP I reductions (35.0020), and return a list of all not yet mapped OP I
+	 * services.
+	 * 
+	 * @param opCodes
+	 *            list of all available OP I codes see {@link #getOPList(List)}
+	 * @param opReduction
+	 *            list of all available reduction codes see {@link #getOPReduction(List)}
+	 * @return list of not unmapped OP I codes
+	 */
+	private List<Verrechnet> updateOPReductions(List<Verrechnet> opCodes,
+		List<Verrechnet> opReduction){
+		List<Verrechnet> notMappedCodes = new ArrayList<Verrechnet>();
+		notMappedCodes.addAll(opCodes);
+		// update already mapped
+		for (Verrechnet reductionVerrechnet : opReduction) {
+			boolean isMapped = false;
+			String bezug = reductionVerrechnet.getDetail("Bezug");
+			if (bezug != null && !bezug.isEmpty()) {
+				for (Verrechnet opVerrechnet : opCodes) {
+					TarmedLeistung opVerrechenbar = (TarmedLeistung) opVerrechnet.getVerrechenbar();
+					String opCodeString = opVerrechenbar.getCode();
+					if (bezug.equals(opCodeString)) {
+						// update
+						reductionVerrechnet.setZahl(opVerrechnet.getZahl());	
+						reductionVerrechnet.setDetail(TL, Double.toString(opVerrechenbar.getTL()));
+						reductionVerrechnet.setDetail(AL, Double.toString(0.0));
+						reductionVerrechnet.setPrimaryScaleFactor(-0.4);
+						notMappedCodes.remove(opVerrechnet);
+						isMapped = true;
+						break;
+					}
+				}
+			}
+			if (!isMapped) {
+				reductionVerrechnet.setZahl(0);
+				reductionVerrechnet.setDetail("Bezug", "");
+			}
+		}
+		
+		return notMappedCodes;
+	}
+	
+	private List<Verrechnet> getOPList(List<Verrechnet> lst){
+		List<Verrechnet> ret = new ArrayList<Verrechnet>();
+		for (Verrechnet v : lst) {
+			if (v.getVerrechenbar() instanceof TarmedLeistung) {
+				TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+				if (tl.getSparteAsText().equals("OP I")) { //$NON-NLS-1$
+					ret.add(v);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	private List<Verrechnet> getOPReduction(List<Verrechnet> lst){
+		List<Verrechnet> ret = new ArrayList<Verrechnet>();
+		for (Verrechnet v : lst) {
+			if (v.getVerrechenbar() instanceof TarmedLeistung) {
+				TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+				if (tl.getCode().equals("35.0020")) { //$NON-NLS-1$
+					ret.add(v);
+				}
+			}
+		}
+		return ret;
 	}
 	
 	/**

@@ -313,6 +313,9 @@ public class XMLExporterServices {
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "001"); // 22060 //$NON-NLS-1$
 					Hashtable<String, String> ext = tl.loadExtension();
 					String bezug = ext.get("Bezug"); // 22360 //$NON-NLS-1$
+					if (StringTool.isNothing(bezug)) {
+						bezug = verrechnet.getDetail("Bezug");
+					}
 					if (!StringTool.isNothing(bezug)) {
 						el.setAttribute("ref_code", bezug); //$NON-NLS-1$
 					}

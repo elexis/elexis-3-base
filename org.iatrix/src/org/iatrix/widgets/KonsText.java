@@ -39,6 +39,7 @@ import org.iatrix.data.KonsTextLock;
 import org.iatrix.dialogs.ChooseKonsRevisionDialog;
 import org.iatrix.util.Heartbeat;
 import org.iatrix.util.Heartbeat.IatrixHeartListener;
+import org.iatrix.views.JournalView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,7 +196,8 @@ public class KonsText implements IJournalArea {
 				}
 				if (hasKonsTextLock()) {
 					actKons.updateEintrag(text.getContentsAsXML(), false);
-					logEvent("updateEintrag saved rev. " + actKons.getHeadVersion() + " "
+					int new_version = actKons.getHeadVersion();
+					logEvent("updateEintrag saved rev. " + new_version + " "
 						+ text.getContentsPlaintext());
 					text.setDirty(false);
 
@@ -203,6 +205,8 @@ public class KonsText implements IJournalArea {
 					// (we would get an objectChanged event, but this event isn't processed
 					// in case the kons text field has the focus.)
 					updateKonsVersionLabel();
+					JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
+					ElexisEventDispatcher.fireSelectionEvent(actKons);
 				} else {
 					// should never happen...
 					if (konsTextLock == null) {
@@ -223,8 +227,8 @@ public class KonsText implements IJournalArea {
 					setKonsText(actKons, actKons.getHeadVersion(), true);
 					log.debug("updateEintrag: forced to " + text.getContentsPlaintext());
 				} else {
-					log.debug("updateEintrag skipping check " + text.getContentsPlaintext() + " != initial "
-						+ savedInitialKonsText);
+					log.debug("updateEintrag skipping check " + text.getContentsPlaintext()
+						+ " != initial " + savedInitialKonsText);
 					actKons.updateEintrag(text.getContentsAsXML(), false);
 				}
 			}
@@ -456,7 +460,8 @@ public class KonsText implements IJournalArea {
 				removeKonsTextLock();
 				actKons = null;
 			} else {
-				logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum() + " is '" + text.getContentsPlaintext() + "'");
+				logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum()
+					+ " is '" + text.getContentsPlaintext() + "'");
 				savedInitialKonsText = null;
 			}
 			return;
@@ -503,12 +508,9 @@ public class KonsText implements IJournalArea {
 			creatingKons = false;
 
 			if (actKons != null) {
-				// create new konsTextLock
 				createKonsTextLock();
 			}
 			updateKonsultation(true);
-
-			// update konslock label and enable/disable save action
 			updateKonsLockLabel();
 			saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
 		}

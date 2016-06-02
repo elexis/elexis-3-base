@@ -50,7 +50,7 @@ import ch.elexis.data.Query;
  * @author Daniel Lutz
  *
  */
-public class KonsListDisplay extends Composite implements BackgroundJobListener {
+public class KonsListDisplay extends Composite implements BackgroundJobListener, IJournalArea {
 	private Patient patient = null;
 
 	private final FormToolkit toolkit;
@@ -289,17 +289,17 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 					return Status.CANCEL_STATUS;
 				}
 
+				if (CoreHub.globalCfg != null) {
 				// convert Konsultation objects to KonsData objects
-
-				int maxShownCharges = CoreHub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CHARGES,
-					Iatrix.CFG_MAX_SHOWN_CHARGES_DEFAULT);
-				int i = 0; // counter for maximally shown charges
-				for (Konsultation k : konsList) {
-					KonsListComposite.KonsData ks =
-						new KonsListComposite.KonsData(k, showAllCharges || i < maxShownCharges);
-					konsDataList.add(ks);
-
-					i++;
+					int maxShownCharges = CoreHub.globalCfg.get(Iatrix.CFG_MAX_SHOWN_CHARGES,
+						Iatrix.CFG_MAX_SHOWN_CHARGES_DEFAULT);
+					int i = 0; // counter for maximally shown charges
+					for (Konsultation k : konsList) {
+						KonsListComposite.KonsData ks =
+							new KonsListComposite.KonsData(k, showAllCharges || i < maxShownCharges);
+						konsDataList.add(ks);
+						i++;
+					}
 				}
 
 				monitor.worked(1);
@@ -335,4 +335,31 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 		}
 	}
 
+	@Override
+	public void visible(boolean mode){
+	}
+
+	@Override
+	public void activation(boolean mode){
+	}
+
+	@Override
+	public void setPatient(Patient newPatient){
+	}
+
+	static int savedKonsVersion = -1;
+	static Konsultation actKons = null;
+
+	@Override
+	public void setKons(Konsultation newKons, KonsActions op){
+		int newKonsVersion = -1;
+		if (newKons !=  null) {
+			newKonsVersion = newKons.getHeadVersion();
+			if (savedKonsVersion != newKonsVersion) {
+				savedKonsVersion = newKons.getHeadVersion();
+				actKons = newKons;
+				setPatient(newKons.getFall().getPatient(), showAllCharges,	showAllConsultations);
+			}
+		}
+	}
 }

@@ -84,6 +84,7 @@ public class KonsDiagnosen implements IJournalArea {
 	}
 	private void logEvent(String msg){
 		StringBuilder sb = new StringBuilder(msg + ": ");
+		sb.append(lDiagnosis.getText());
 		if (actKons == null) {
 			sb.append("actKons null");
 		} else {
@@ -92,7 +93,6 @@ public class KonsDiagnosen implements IJournalArea {
 			sb.append(" kons vom " + actKons.getDatum());
 			sb.append(" " + pat.getId() + ": " + pat.getPersonalia());
 		}
-		sb.append(" diagnose: " +  lDiagnosis.getText());
 		log.debug(sb.toString());
 	}
 
@@ -103,10 +103,18 @@ public class KonsDiagnosen implements IJournalArea {
 
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
-		if (op == KonsActions.ACTIVATE_KONS) {
-			actKons = newKons;
+		boolean konsChanged = actKons != null &&
+				newKons != null && actKons.getId() != newKons.getId();
+		if ((actKons == null && newKons != null) ||
+			(newKons == null && actKons != null))
+		{
+			konsChanged = true;
+		}
+		if (op == KonsActions.ACTIVATE_KONS || konsChanged) {
 			updateKonsultation(true);
 		}
+		actKons = newKons;
+
 	}
 
 	@Override

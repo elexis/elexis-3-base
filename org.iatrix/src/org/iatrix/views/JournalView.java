@@ -197,6 +197,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		allAreas.add(konsDiagnosen);
 		allAreas.add(konsTextComposite);
 		allAreas.add(konsVerrechnung);
+		allAreas.add(konsListDisplay);
 		makeActions();
 		menus = new ViewMenus(getViewSite());
 		if (CoreHub.acl.request(AccessControlDefaults.AC_PURGE)) {
@@ -341,14 +342,15 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				logEvent("eeli_kons EVENT_SELECTED patient_already_active " + patient_already_active
 					+ " " + selectedPatient.getId());
 
-				if (!patient_already_active) {
-					setPatient(selectedPatient);
-				}
 				String fallIdOfActKonst = actKons == null ? "" : actKons.getFall().getId();
 				Fall newFall = k.getFall();
 				boolean fall_already_active = newFall.getId().equals(fallIdOfActKonst);
+				boolean changedKonsVersion = k != null && actKons != null && k.getHeadVersion() != actKons.getHeadVersion();
 				logEvent("eeli_kons EVENT_SELECTED fall_already_active " + fall_already_active + " "
-					+ newFall.getId());
+						 + " changedKonsVersion " + changedKonsVersion + " id: " + newFall.getId());
+				if (!patient_already_active || !fall_already_active || changedKonsVersion) {
+					setPatient(selectedPatient);
+				}
 				updateAllKonsAreas(k, KonsActions.ACTIVATE_KONS);
 				konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
 					showAllConsultationsAction.isChecked());
@@ -674,9 +676,16 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		GlobalActions.registerActionHandler(this, showAllConsultationsAction);
 	}
 
+	private boolean isActivating = false; // prevent recursion
 	@Override
 	public void activation(boolean mode){
-		activateAllKonsAreas(mode);
+		if (!isActivating) {
+			isActivating = true;
+			activateAllKonsAreas(mode);
+			isActivating = false;
+		} else {
+			logEvent("Preventing recursion mode " + mode);
+		}
 	}
 
 	@Override

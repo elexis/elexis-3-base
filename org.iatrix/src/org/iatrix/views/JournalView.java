@@ -52,7 +52,6 @@ import org.iatrix.widgets.KonsProblems;
 import org.iatrix.widgets.KonsText;
 import org.iatrix.widgets.KonsVerrechnung;
 import org.iatrix.widgets.ProblemArea;
-import org.iatrix.widgets.ProblemsTableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +105,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	// Parts (from top to bottom that make up our display
 	private JournalHeader formHeader = null; // Patient name, sex, birthday, remarks, sticker, account balance, account overview
-	private ProblemsTableModel problemsTableModel; // TODO: moved to external
 	private KTable problemsKTable = null; // TODO: moved to external
 	// date, mandant, Fall (drop-down list)
 	private ProblemArea problemsArea = null; // KTable with Date, nr, diagnosis, therapy, code, activ/inactiv
@@ -125,7 +123,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private Action showAllChargesAction;
 	private Action showAllConsultationsAction;
 
-	private boolean heartbeatActive = false;
 	private static List<IJournalArea> allAreas;
 
 	private KonsHeader konsHeader;
@@ -150,9 +147,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		topArea.setLayout(new FillLayout(SWT.VERTICAL));
 		topArea.setBackground(topArea.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
-		problemsArea = new ProblemArea(topArea, JournalView.this.getPartName());
+		problemsArea = new ProblemArea(topArea, JournalView.this.getPartName(), getViewSite());
 		problemsKTable = problemsArea.getProblemKTable();
-		problemsTableModel = problemsArea.getProblemsTableModel();
 		Composite middleArea = tk.createComposite(mainSash, SWT.NONE);
 		middleArea.setLayout(new FillLayout());
 		Composite konsultationComposite = tk.createComposite(middleArea);
@@ -257,6 +253,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			}
 		}
 	}
+
 	public static void updateAllKonsAreas(Konsultation newKons, IJournalArea.KonsActions op){
 		/* Not yet sure whether comparing only the id or the whole cons is better
 		 */
@@ -345,9 +342,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				String fallIdOfActKonst = actKons == null ? "" : actKons.getFall().getId();
 				Fall newFall = k.getFall();
 				boolean fall_already_active = newFall.getId().equals(fallIdOfActKonst);
-				boolean changedKonsVersion = k != null && actKons != null && k.getHeadVersion() != actKons.getHeadVersion();
+				boolean changedKonsVersion =
+					k != null && actKons != null && k.getHeadVersion() != actKons.getHeadVersion();
 				logEvent("eeli_kons EVENT_SELECTED fall_already_active " + fall_already_active + " "
-						 + " changedKonsVersion " + changedKonsVersion + " id: " + newFall.getId());
+					+ " changedKonsVersion " + changedKonsVersion + " id: " + newFall.getId());
 				if (!patient_already_active || !fall_already_active || changedKonsVersion) {
 					setPatient(selectedPatient);
 				}
@@ -567,7 +565,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	@Override
 	public void dispose(){
-		// konsTextComposite.removeKonsTextLock(); ngng not needed. is calle by setKons(null)
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem, eeli_fall,
 			eeli_pat, eeli_user);
@@ -676,15 +673,32 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		GlobalActions.registerActionHandler(this, showAllConsultationsAction);
 	}
 
-	private boolean isActivating = false; // prevent recursion
 	@Override
 	public void activation(boolean mode){
-		if (!isActivating) {
-			isActivating = true;
-			activateAllKonsAreas(mode);
-			isActivating = false;
-		} else {
-			logEvent("Preventing recursion mode " + mode);
+		activateAllKonsAreas(mode);
+		if (mode == false) {
+			// text is neither dirty nor changed.
+			// If it es empty and nothing has been billed, we just delete this kons.
+			if (actKons == null) {
+				return;
+			}
+			boolean noLeistungen =
+				actKons.getLeistungen() == null || actKons.getLeistungen().isEmpty();
+			log.debug(actPatient.getPersonalia() + " delete3 the kons? "
+				+ konsTextComposite.getPlainText().length() + " noLeistungen " + noLeistungen);
+			if (konsTextComposite.getPlainText().length() == 0 && (noLeistungen)) {
+				Fall f = actKons.getFall();
+				Konsultation[] ret = f.getBehandlungen(false);
+				actKons.delete(true);
+				if (ret.length == 1) {
+					/* Trying to remove the associated case got me into problems.
+					 * Peter Schoenbucher argued on September, 2, 2015, that we should never
+					 * delete a case, because the case holds the information which Krankenkasse is
+					 * attached to this client. Therefore often the assistant opens a case before
+					 * the consultation starts
+					 */
+				}
+			}
 		}
 	}
 

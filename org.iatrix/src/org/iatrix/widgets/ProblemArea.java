@@ -35,6 +35,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -60,6 +61,7 @@ import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.core.ui.dialogs.MediDetailDialog;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
@@ -89,9 +91,8 @@ public class ProblemArea implements IJournalArea {
 	public Action deleteFixmedikationAction;
 	public Action editFixmedikationAction;
 	private FormToolkit tk;
-	private ICodeSelectorTarget problemDiagnosesCodeSelectorTarget;
 
-	public ProblemArea(Composite topArea, String partName){
+	public ProblemArea(Composite topArea, String partName, IViewSite viewSite){
 		tk = UiDesk.getToolkit();
 		journalViewPartName = partName;
 		problemsKTable = new MyKTable(topArea, SWTX.MARK_FOCUS_HEADERS | SWTX.AUTO_SCROLL
@@ -101,7 +102,7 @@ public class ProblemArea implements IJournalArea {
 		problemsTableModel = new ProblemsTableModel();
 		problemsTableModel.setProblemsKTable(problemsKTable);
 		problemsKTable.setModel(problemsTableModel);
-		makeActions();
+		makeActions(viewSite);
 
 		log.debug("addProblemAction is : " + addProblemAction);
 		// selections
@@ -332,8 +333,7 @@ public class ProblemArea implements IJournalArea {
 				String drp = (String) event.data;
 				String[] dl = drp.split(",");
 				for (String obj : dl) {
-					PersistentObject dropped = CoreHub.poFactory.createFromString(obj);
-
+					CoreHub.poFactory.createFromString(obj);
 					// we don't yet support dropping to the problemsKTable
 				}
 			}
@@ -342,7 +342,7 @@ public class ProblemArea implements IJournalArea {
 			public void dropAccept(DropTargetEvent event){}
 		});
 
-		problemDiagnosesCodeSelectorTarget = new ICodeSelectorTarget() {
+		new ICodeSelectorTarget() {
 			@Override
 			public String getName(){
 				return journalViewPartName;
@@ -454,7 +454,7 @@ public class ProblemArea implements IJournalArea {
 		problemsKTable.refresh();
 	}
 
-	private void makeActions(){
+	private void makeActions(IViewSite viewSite){
 		delProblemAction = new Action("Problem löschen") {
 			@Override
 			public void run(){
@@ -593,6 +593,9 @@ public class ProblemArea implements IJournalArea {
 				}
 			}
 		};
+		ViewMenus menus = new ViewMenus(viewSite);
+		menus.createControlContextMenu(problemsKTable, addFixmedikationAction,
+			editFixmedikationAction, deleteFixmedikationAction);
 
 	}
 
@@ -643,7 +646,6 @@ public class ProblemArea implements IJournalArea {
 			sb.append(" kons vom " + actKons.getDatum());
 			sb.append(" " + actKons.getFall().getPatient().getPersonalia());
 		}
-		// TODO: probleme ?? sb.append(" sum: " + hVerrechnung.getText());
 		log.debug(sb.toString());
 	}
 

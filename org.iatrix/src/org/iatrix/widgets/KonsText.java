@@ -54,7 +54,6 @@ import ch.elexis.core.ui.util.IKonsExtension;
 import ch.elexis.core.ui.util.IKonsMakro;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
-import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -224,7 +223,7 @@ public class KonsText implements IJournalArea {
 				boolean check = (savedInitialKonsText == null) || (text == null)
 					|| savedInitialKonsText.equals(text.getContentsPlaintext());
 				if (check) {
-					setKonsText(actKons, actKons.getHeadVersion(), true);
+					setKonsText(actKons, actKons.getHeadVersion(), false);
 					log.debug("updateEintrag: forced to " + text.getContentsPlaintext());
 				} else {
 					log.debug("updateEintrag skipping check " + text.getContentsPlaintext()
@@ -460,8 +459,10 @@ public class KonsText implements IJournalArea {
 				removeKonsTextLock();
 				actKons = null;
 			} else {
-				logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum()
-					+ " is '" + text.getContentsPlaintext() + "'");
+				if (actKons != null && text != null) {
+					logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum()
+						+ " is '" + text.getContentsPlaintext() + "'");
+				}
 				savedInitialKonsText = null;
 			}
 			return;
@@ -472,9 +473,9 @@ public class KonsText implements IJournalArea {
 				logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " textChanged "
 					+ textChanged() + " actKons vom: " + actKons.getDatum());
 			}
-			logEvent("setKons.ACTIVATE_KONS newKons vom: " + (k != null ? k.getDatum() : "null"));
 			removeKonsTextLock();
 			actKons = k;
+			logEvent("setKons.ACTIVATE_KONS newKons");
 			if (actKons == null) {
 				actPatient = null;
 				logEvent("setKons null");
@@ -600,39 +601,6 @@ public class KonsText implements IJournalArea {
 
 	@Override
 	public synchronized void activation(boolean mode){
-		logEvent("activation mode " + mode);
-		if (mode == false) {
-			// text is neither dirty nor changed.
-			// If it es empty and nothing has been billed, we just delete this kons.
-			if (actKons == null) {
-				return;
-			}
-			boolean noLeistungen =
-				actKons.getLeistungen() == null || actKons.getLeistungen().isEmpty();
-			log.debug(actPatient.getPersonalia() + " delete3 the kons? "
-				+ text.getContentsPlaintext().length() + " noLeistungen " + noLeistungen);
-			if (text.getContentsPlaintext().length() == 0 && (noLeistungen)) {
-				Fall f = actKons.getFall();
-				Konsultation[] ret = f.getBehandlungen(false);
-				actKons.delete(true);
-				if (ret.length == 1) {
-					/* Trying to remove the associated case got me into problems.
-					 * Peter Schoenbucher argued on September, 2, 2015, that we should never
-					 * delete a case, because the case holds the information which Krankenkasse is
-					 * attached to this client. Therefore often the assistant opens a case before
-					 * the consultation starts
-					 */
-					// f.delete(true);
-				}
-			}
-			updateEintrag();
-			setKons(null, KonsActions.ACTIVATE_KONS);
-			text.setData(PATIENT_KEY, null);
-			savedInitialKonsText = "";
-			text.setText("");
-			actKons = null;
-			actPatient = null;
-		}
 	}
 
 	public synchronized void registerUpdateHeartbeat(){
@@ -664,5 +632,12 @@ public class KonsText implements IJournalArea {
 				}
 			}
 		});
+	}
+
+	public String getPlainText(){
+		if (text == null ) {
+			return "";
+		}
+		return text.getContentsPlaintext();
 	}
 }

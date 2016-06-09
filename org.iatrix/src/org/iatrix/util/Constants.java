@@ -39,7 +39,7 @@ public class Constants {
 		"Datum/Dauer des Ereignis, z.B. 2013-12-30, 1999-11, 1988, 1988-2010", // DATUM
 		"Nummer des Ereignis", // NUMMER
 		"Geschildertes Problem, Diagnose", // BEZEICHNUNG
-		"Therapie, Medikation", // THERAPIE
+		"Therapie, Medikation. Rechtsklick für Fixmedikation", // THERAPIE
 		"Diagnose", // DIAGOSEN
 		"Status des Problems ist aktiv oder inaktiv. Doppelclick zum Ändern", //STATUS
 	};

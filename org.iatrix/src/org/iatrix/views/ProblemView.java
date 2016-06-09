@@ -58,12 +58,12 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.views.codesystems.DiagnosenView;
@@ -107,70 +107,75 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 	private IAction unassignProblemAction;
 
 	private ViewMenus menus;
+	private ElexisUiEventListenerImpl eeli_problem = null;
+	private ElexisUiEventListenerImpl eeli_patient = null;
 
-	private final ElexisEventListenerImpl eeli_problem = new ElexisEventListenerImpl(Episode.class,
-		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_UPDATE) {
 
-		@Override
-		public void run(ElexisEvent ev){
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				PersistentObject obj = ev.getObject();
-				if (obj instanceof Episode) {
-					Episode episode = (Episode) obj;
-					setProblem(Problem.convertEpisodeToProblem(episode));
-				} else {
-					// not an episode object, silently ignore
-					setProblem(null);
-				}
-			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-				setProblem(null);
-			} else if (ev.getType() == ElexisEvent.EVENT_UPDATE) {
-				PersistentObject obj = ev.getObject();
-				if (obj instanceof Episode) {
-					Episode updatedEpisode = (Episode) obj;
-					Episode actEpisode = actProblem;
-					if (updatedEpisode.getId().equals(actEpisode.getId())) {
-						setProblem(actProblem);
+	private void makeListeners() {
+		eeli_problem = new ElexisUiEventListenerImpl(Episode.class,
+			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_UPDATE) {
+
+			@Override
+			public void runInUi(ElexisEvent ev){
+				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+					PersistentObject obj = ev.getObject();
+					if (obj instanceof Episode) {
+						Episode episode = (Episode) obj;
+						setProblem(Problem.convertEpisodeToProblem(episode));
+					} else {
+						// not an episode object, silently ignore
+						setProblem(null);
 					}
-				} else {
-					// not an episode object, silently ignore
+				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
 					setProblem(null);
-				}
-			}
-		}
-	};
-
-	private final ElexisEventListenerImpl eeli_patient = new ElexisEventListenerImpl(Patient.class,
-		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED) {
-
-		@Override
-		public void run(ElexisEvent ev){
-			// make sure the current problem belongs to the newly selected patient
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				PersistentObject obj = ev.getObject();
-				if (obj instanceof Patient) {
-					Patient selectedPatient = (Patient) obj;
-					if (actProblem != null) {
-						// check whether Problem matches the currently selected patient
-						if (selectedPatient != null
-							&& !actProblem.getPatient().getId().equals(selectedPatient.getId())) {
-							// selected patient doesn't match the current problem's patient
-							setProblem(null);
+				} else if (ev.getType() == ElexisEvent.EVENT_UPDATE) {
+					PersistentObject obj = ev.getObject();
+					if (obj instanceof Episode) {
+						Episode updatedEpisode = (Episode) obj;
+						Episode actEpisode = actProblem;
+						if (updatedEpisode.getId().equals(actEpisode.getId())) {
+							setProblem(actProblem);
 						}
 					} else {
-						// re-select the previously selected problem
-						// actually, this should never occur, but currently happens since
-						// there is no responsible event manager for Episode events yet
-						Problem previousProblem = IatrixEventHelper.getSelectedProblem();
-						if (selectedPatient != null && previousProblem.getPatient().getId()
-							.equals(selectedPatient.getId())) {
-							setProblem(previousProblem);
+						// not an episode object, silently ignore
+						setProblem(null);
+					}
+				}
+			}
+		};
+
+		eeli_patient = new ElexisUiEventListenerImpl(Patient.class,
+			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED) {
+
+			@Override
+			public void runInUi(ElexisEvent ev){
+				// make sure the current problem belongs to the newly selected patient
+				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+					PersistentObject obj = ev.getObject();
+					if (obj instanceof Patient) {
+						Patient selectedPatient = (Patient) obj;
+						if (actProblem != null) {
+							// check whether Problem matches the currently selected patient
+							if (selectedPatient != null
+								&& !actProblem.getPatient().getId().equals(selectedPatient.getId())) {
+								// selected patient doesn't match the current problem's patient
+								setProblem(null);
+							}
+						} else {
+							// re-select the previously selected problem
+							// actually, this should never occur, but currently happens since
+							// there is no responsible event manager for Episode events yet
+							Problem previousProblem = IatrixEventHelper.getSelectedProblem();
+							if (selectedPatient != null && previousProblem.getPatient().getId()
+								.equals(selectedPatient.getId())) {
+								setProblem(previousProblem);
+							}
 						}
 					}
 				}
 			}
-		}
-	};
+		};
+	}
 
 	@Override
 	public void createPartControl(Composite parent){
@@ -375,6 +380,7 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 			}
 		});
 
+		makeListeners();
 		makeActions();
 		menus = new ViewMenus(getViewSite());
 		menus.createViewerContextMenu(diagnosenViewer, delDiagnoseAction);

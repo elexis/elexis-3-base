@@ -33,10 +33,10 @@ import org.iatrix.Iatrix;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.ui.actions.BackgroundJob;
 import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.core.ui.actions.ObjectFilterRegistry;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -69,8 +69,8 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 	// default is true (show all consultations)
 	private boolean showAllConsultations = true;
 
-	private final ElexisEventListenerImpl eeli_kons =
-		new ElexisEventListenerImpl(Konsultation.class, ElexisEvent.EVENT_RELOAD) {
+	private final ElexisUiEventListenerImpl eeli_kons =
+		new ElexisUiEventListenerImpl(Konsultation.class, ElexisEvent.EVENT_RELOAD) {
 			@Override
 			public void run(ElexisEvent ev){
 				if (patient != null) {

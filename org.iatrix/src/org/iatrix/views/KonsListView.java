@@ -49,7 +49,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 
 	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
 		@Override
-		public void run(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev){
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 				showAllChargesAction.setChecked(false);
 				showAllConsultationsAction.setChecked(false);

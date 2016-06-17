@@ -105,14 +105,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	// Parts (from top to bottom that make up our display
 	private JournalHeader formHeader = null; // Patient name, sex, birthday, remarks, sticker, account balance, account overview
-	private KTable problemsKTable = null; // TODO: moved to external
-	// date, mandant, Fall (drop-down list)
+	private KTable problemsKTable = null; // On top
 	private ProblemArea problemsArea = null; // KTable with Date, nr, diagnosis, therapy, code, activ/inactiv
-	private KonsProblems konsProblems = null; // Checkbox of all problems for this consultation
+	private KonsProblems konsProblems = null; // left: List of Checkbox of all problems for this consultation
 	private KonsText konsTextComposite; // Konsultationtext (with lock over all stations), revision info
-	private KonsVerrechnung konsVerrechnung = null; // Items to be billed for select consultation
+	private KonsVerrechnung konsVerrechnung = null; // right: Items to be billed for select consultation
 	private KonsDiagnosen konsDiagnosen = null; // diagnosis line
-	private KonsListDisplay konsListDisplay; // list of all consultations date, decreasing with date, mandant, case, text, billed items
+	private KonsListDisplay konsListDisplay; // bottom list of all consultations date, decreasing with date, mandant, case, text, billed items
 
 	private ViewMenus menus;
 
@@ -161,7 +160,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		Composite assignmentComposite = tk.createComposite(konsultationSash);
 		assignmentComposite.setLayout(new GridLayout(1, true));
-		konsProblems = new KonsProblems(assignmentComposite);
+		konsProblems = new KonsProblems(assignmentComposite); // on the left side
 		Composite konsultationTextComposite = tk.createComposite(konsultationSash);
 		konsultationTextComposite.setLayout(new GridLayout(1, true));
 		konsTextComposite = new KonsText(konsultationTextComposite);
@@ -308,8 +307,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					// TODO check if problem is part of current consultation
 					// work-around: just update the current patient and consultation
 					logEvent("eeli_problem EVENT_UPDATE");
-					setPatient(actPatient);
-					// TODO ngng: konskonsArea.updateKonsultation(!konsEditorHasFocus, false);
+					problemsArea.reloadAndRefresh();
 					break;
 				case EVENT_DESELECTED:
 					logEvent("eeli_problem EVENT_DESELECTED");

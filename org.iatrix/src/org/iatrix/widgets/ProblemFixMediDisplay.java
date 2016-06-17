@@ -324,6 +324,8 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 					new MediDetailDialog(getShell(), pr).open();
 					reload();
 					redraw();
+					// tell other viewers that something has changed
+					IatrixEventHelper.updateProblem(IatrixEventHelper.getSelectedProblem());
 				}
 			}
 		};
@@ -343,6 +345,8 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 					pr.delete(); // this does not delete but stop the Medication. Sorry for
 					// that
 					reload();
+					// tell other viewers that something has changed
+					IatrixEventHelper.updateProblem(IatrixEventHelper.getSelectedProblem());
 				}
 			}
 		};
@@ -367,6 +371,9 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 					remove(pr);
 					pr.remove(); // this does, in fact, remove the medication from the
 					// database
+
+					// tell other viewers that something has changed
+					IatrixEventHelper.updateProblem(problem);
 
 					reload();
 				}

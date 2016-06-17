@@ -32,13 +32,15 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.iatrix.views.JournalView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalActions;
+import ch.elexis.core.ui.dialogs.DateSelectorDialog;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -47,6 +49,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnungssteller;
+import ch.rgw.tools.TimeTool;
 
 public class KonsHeader implements IJournalArea {
 
@@ -66,11 +69,21 @@ public class KonsHeader implements IJournalArea {
 		konsFallArea.setLayout(new GridLayout(3, false));
 
 		hlKonsultationDatum = tk.createHyperlink(konsFallArea, "", SWT.NONE);
+		hlKonsultationDatum.setToolTipText("Datum der Konsultation ändern");
 		hlKonsultationDatum.setFont(JFaceResources.getHeaderFont());
 		hlKonsultationDatum.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
-				GlobalActions.redateAction.run();
+				// We cannot use GlobalActions.redateAction.run, as it does not find the actKons
+				// Therefore we re-implement it here
+				DateSelectorDialog dlg = new DateSelectorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+				if (dlg.open() == Dialog.OK) {
+					TimeTool date = dlg.getSelectedDate();
+					log.info("Change date of actKons " + actKons.getId() + " to " + date.toString(TimeTool.DATE_GER));
+					actKons.setDatum(date.toString(TimeTool.DATE_GER), false);
+					JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
+					ElexisEventDispatcher.fireSelectionEvent(actKons);
+				}
 			}
 		});
 		hlMandant = tk.createHyperlink(konsFallArea, "", SWT.NONE);

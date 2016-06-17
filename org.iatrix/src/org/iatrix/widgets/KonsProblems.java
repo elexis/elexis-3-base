@@ -186,10 +186,9 @@ public class KonsProblems implements IJournalArea {
 					.getFirstElement();
 				if (sel != null) {
 					Problem problem = (Problem) sel;
-
 					problem.removeFromKonsultation(actKons);
 					updateProblemAssignmentViewer();
-					logEvent("unassignProblemAction: " + sel);
+					logEvent("unassignProblemAction: " + problem.getTitle());
 					ElexisEventDispatcher.fireSelectionEvents(actKons);
 				}
 			}

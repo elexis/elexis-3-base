@@ -62,6 +62,7 @@ import ch.elexis.core.ui.dialogs.MediDetailDialog;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.codesystems.DiagnosenView;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
@@ -83,10 +84,10 @@ public class ProblemArea implements IJournalArea {
 	private MyKTable problemsKTable;
 	private static Logger log = LoggerFactory.getLogger(ProblemArea.class);
 	private ICodeSelectorTarget problemFixmedikationCodeSelectorTarget;
+	private ICodeSelectorTarget problemDiagnosesCodeSelectorTarget;
 	private String journalViewPartName;
 	public Action addProblemAction;
 	public Action delProblemAction;
-	public Action unassignProblemAction;
 	public Action addFixmedikationAction;
 	public Action deleteFixmedikationAction;
 	public Action editFixmedikationAction;
@@ -121,9 +122,7 @@ public class ProblemArea implements IJournalArea {
 			@Override
 			public void fixedCellSelected(int col, int row, int statemask){
 				problemsTableModel.setComparator(col, row);
-
-				problemsTableModel.reload();
-				// TODO: ng problemsKTable.refresh();
+				reloadAndRefresh();
 			}
 		});
 		registerUpdateHeartbeat();
@@ -165,11 +164,10 @@ public class ProblemArea implements IJournalArea {
 
 								if (problem != null) {
 									try {
-										log.debug("skip problemDiagnosesCodeSelectorTarget");
-										// TODO: ngng getViewSite().getPage().showView(DiagnosenView.ID);
+										log.debug("doe problemDiagnosesCodeSelectorTarget");
 										// register as ICodeSelectorTarget
-										// TODO: ngng CodeSelectorHandler.getInstance().setCodeSelectorTarget(
-										// TODO: ngng problemDiagnosesCodeSelectorTarget);
+										viewSite.getPage().showView(DiagnosenView.ID);
+										CodeSelectorHandler.getInstance().setCodeSelectorTarget(problemDiagnosesCodeSelectorTarget);
 									} catch (Exception ex) {
 										ExHandler.handle(ex);
 										log.error("Fehler beim Starten des Diagnosencodes "
@@ -235,11 +233,10 @@ public class ProblemArea implements IJournalArea {
 
 					if (problem != null) {
 						try {
-							log.debug("skip problemDiagnosesCodeSelectorTarget");
-							// TODO: ngng getViewSite().getPage().showView(DiagnosenView.ID);
 							// register as ICodeSelectorTarget
-							// TODO: ngng CodeSelectorHandler.getInstance()
-							// TODO: ngng 								.setCodeSelectorTarget(problemDiagnosesCodeSelectorTarget);
+							log.debug("problemDiagnosesCodeSelectorTarget");
+							viewSite.getPage().showView(DiagnosenView.ID);
+							CodeSelectorHandler.getInstance().setCodeSelectorTarget(problemDiagnosesCodeSelectorTarget);
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
 							log.error("Fehler beim Starten des Diagnosencodes " + ex.getMessage());
@@ -256,6 +253,8 @@ public class ProblemArea implements IJournalArea {
 						} else {
 							problem.setStatus(Episode.ACTIVE);
 						}
+						log.info("Problem status changed to: " + problem.getStatus());
+						IatrixEventHelper.fireSelectionEventProblem(problem);
 					}
 					break;
 				}
@@ -375,7 +374,7 @@ public class ProblemArea implements IJournalArea {
 
 			@Override
 			public void registered(boolean registered){
-				// TODO: ngng highlightProblemsTable(registered);
+				highlightProblemsTable(registered);
 			}
 		};
 
@@ -425,14 +424,21 @@ public class ProblemArea implements IJournalArea {
 			@Override
 			public void registered(boolean registered){
 				if (registered) {
-
-					// TODO: ngng highlightProblemsTable(true, true);
+					highlightProblemsTable(true, true);
 				} else {
-					// TODO: ngng highlightProblemsTable(false);
+					highlightProblemsTable(false);
 				}
 			}
 		};
 
+	}
+	private void highlightProblemsTable(boolean highlight){
+		highlightProblemsTable(highlight, false);
+	}
+
+	private void highlightProblemsTable(boolean highlight, boolean full){
+		problemsTableModel.setHighlightSelection(highlight, full);
+		problemsKTable.redraw();
 	}
 
 	public Problem getSelectedProblem(){
@@ -458,7 +464,6 @@ public class ProblemArea implements IJournalArea {
 		delProblemAction = new Action("Problem löschen") {
 			@Override
 			public void run(){
-				log.warn(" TODO Problem löschen"); /// TODO ngng
 				Problem problem = getSelectedProblem();
 				if (problem != null) {
 					String label = problem.getLabel();
@@ -481,9 +486,6 @@ public class ProblemArea implements IJournalArea {
 								"Das Problem konnte nicht gelöscht werden.");
 						} else {
 							reloadAndRefresh();
-							;
-
-							// TODO: NGNGN updateProblemAssignmentViewer();
 						}
 					}
 				}
@@ -513,7 +515,6 @@ public class ProblemArea implements IJournalArea {
 				 */
 
 				reloadAndRefresh();
-				problemsKTable.refresh();
 
 				// select the new object
 				int rowIndex = problemsTableModel.getIndexOf(problem);
@@ -724,8 +725,6 @@ public class ProblemArea implements IJournalArea {
 		// problemsKTable.
 		problemsTableModel.setPatient(newPatient);
 		reloadAndRefresh();
-		problemsKTable.refresh();
-
 	}
 
 	public MyKTable getProblemKTable(){

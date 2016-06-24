@@ -27,21 +27,21 @@ public class Constants {
 
 	public static final String[] COLUMN_TEXT = {
 		"Datum", // DATUM
-		"Nr.", // NUMMER
-		"Problem/Diagnose", // BEZEICHNUNG
-		"Proc./Medic.", // THERAPIE
+		"#", // NUMMER
+		"Problem, respektive Diagnose, frühere Therapie", // BEZEICHNUNG
+		"Aktuelles Prozedere und Fixmedikation", // THERAPIE
 		"Code", // DIAGNOSEN
-		"A/I", // Status Aktiv|Inaktiv
+		"a/inaktiv", // Status Aktiv|Inaktiv
 	};
 
 	public static final String[] TOOLTIP_TEXT = {
-		"Übersicht der Diagnosen/Probleme des Patienten",
-		"Datum/Dauer des Ereignis, z.B. 2013-12-30, 1999-11, 1988, 1988-2010", // DATUM
-		"Nummer des Ereignis", // NUMMER
-		"Geschildertes Problem, Diagnose", // BEZEICHNUNG
-		"Therapie, Medikation. Rechtsklick für Fixmedikation", // THERAPIE
-		"Diagnose", // DIAGOSEN
-		"Status des Problems ist aktiv oder inaktiv. Doppelclick zum Ändern", //STATUS
+		"Passen Sie die Breite der einzelnen Kolonnen so an, dass der Platz optimal ausgenutzt wird.\nDie eingestellte Breite geht durch einen Neustart nicht verloren",
+		"Datum(+Dauer) des Ereignis. zB.\n2013-12-30\n1999-11\n1988\n1988—2010\n1988--90", // DATUM
+		"Nummerierung der Ereignisse nach Kausalität", // NUMMER
+		"Bedeutende Symptome, Probleme, Diagnosen gemäss Zunahme Verständnis", // BEZEICHNUNG
+		"Freitext\n(Auf Rechtsclick Auswahl von Medikamenten)", // THERAPIE
+		"Code für Rechnungsstellung oder Forschung", // DIAGOSEN
+		"Problem aktiv od inaktiv, verlangt Aktivität od nicht mehr.", //STATUS
 	};
 
 	public static final int[] DEFAULT_COLUMN_WIDTH = {

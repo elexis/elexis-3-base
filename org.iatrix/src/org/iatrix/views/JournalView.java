@@ -15,8 +15,10 @@
  ******************************************************************************/
 package org.iatrix.views;
 
+import static ch.elexis.core.data.events.ElexisEvent.EVENT_CREATE;
 import static ch.elexis.core.data.events.ElexisEvent.EVENT_DELETE;
 import static ch.elexis.core.data.events.ElexisEvent.EVENT_DESELECTED;
+import static ch.elexis.core.data.events.ElexisEvent.EVENT_RELOAD;
 import static ch.elexis.core.data.events.ElexisEvent.EVENT_SELECTED;
 import static ch.elexis.core.data.events.ElexisEvent.EVENT_UPDATE;
 
@@ -59,6 +61,7 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
@@ -318,51 +321,75 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			}
 		};
 
-	private final ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(
-		Konsultation.class, EVENT_DELETE | EVENT_UPDATE | EVENT_SELECTED | EVENT_DESELECTED) {
+	private ElexisEventListener eeli_kons_filter = new ElexisEventListener() {
+		private final ElexisEvent eetempl = new ElexisEvent(null, Konsultation.class,
+			EVENT_UPDATE | EVENT_RELOAD | EVENT_CREATE | EVENT_DELETE);
 
 		@Override
-		public void runInUi(ElexisEvent ev){
-			Konsultation k = (Konsultation) ev.getObject();
-			logEvent("eeli_kons " + (k != null ? k.getId() : "null") + " typ " + ev.getType());
-			switch (ev.getType()) {
-			case EVENT_DELETE:
-				updateAllKonsAreas(k, KonsActions.ACTIVATE_KONS);
-				break;
-			case EVENT_SELECTED:
-			case EVENT_UPDATE:
-				Patient selectedPatient = k.getFall().getPatient();
-				boolean patient_already_active =
-					actPatient != null && selectedPatient.getId().equals(actPatient.getId());
-				logEvent("eeli_kons EVENT_SELECTED patient_already_active " + patient_already_active
-					+ " " + selectedPatient.getId());
-
-				String fallIdOfActKonst = actKons == null ? "" : actKons.getFall().getId();
-				Fall newFall = k.getFall();
-				boolean fall_already_active = newFall.getId().equals(fallIdOfActKonst);
-				boolean changedKonsVersion =
-					k != null && actKons != null && k.getHeadVersion() != actKons.getHeadVersion();
-				logEvent("eeli_kons EVENT_SELECTED fall_already_active " + fall_already_active + " "
-					+ " changedKonsVersion " + changedKonsVersion + " id: " + newFall.getId());
-				if (!patient_already_active || !fall_already_active || changedKonsVersion) {
-					setPatient(selectedPatient);
-				}
-				updateAllKonsAreas(k, KonsActions.ACTIVATE_KONS);
-				konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
-					showAllConsultationsAction.isChecked());
-				break;
-			case EVENT_DESELECTED:
-				logEvent("eeli_kons EVENT_DESELECTED null");
-				updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
-				break;
-			}
-
+		public ElexisEvent getElexisEventFilter(){
+			return eetempl;
 		}
 
+		@Override
+		public void catchElexisEvent(ElexisEvent ev){
+			log.debug("catchElexisEvent " + ev.getType());
+			konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
+				showAllConsultationsAction.isChecked());
+		}
 	};
 
+	private final ElexisUiEventListenerImpl eeli_kons =
+		new ElexisUiEventListenerImpl(Konsultation.class,
+			EVENT_DELETE | EVENT_UPDATE | EVENT_SELECTED | EVENT_DESELECTED | EVENT_RELOAD) {
+
+			@Override
+			public void runInUi(ElexisEvent ev){
+				Konsultation k = (Konsultation) ev.getObject();
+				logEvent("eeli_kons " + (k != null ? k.getId() : "null") + " typ " + ev.getType());
+				switch (ev.getType()) {
+				case EVENT_DELETE:
+					updateAllKonsAreas(k, KonsActions.ACTIVATE_KONS);
+					break;
+				// case EVENT_RELOAD:
+				case EVENT_SELECTED:
+				case EVENT_UPDATE:
+					boolean patient_already_active = false;
+					Patient selectedPatient = null;
+					if (k != null) {
+						selectedPatient = k.getFall().getPatient();
+						patient_already_active = actPatient != null
+							&& selectedPatient.getId().equals(actPatient.getId());
+						logEvent("eeli_kons EVENT_SELECTED patient_already_active "
+							+ patient_already_active + " " + selectedPatient.getId());
+					}
+
+					String fallIdOfActKonst = actKons == null ? "" : actKons.getFall().getId();
+					Fall newFall = k.getFall();
+					boolean fall_already_active = newFall.getId().equals(fallIdOfActKonst);
+					boolean changedKonsVersion = k != null && actKons != null
+						&& k.getHeadVersion() != actKons.getHeadVersion();
+					logEvent("eeli_kons EVENT_SELECTED fall_already_active " + fall_already_active
+						+ " " + " changedKonsVersion " + changedKonsVersion + " id: "
+						+ newFall.getId());
+					if (!patient_already_active || !fall_already_active || changedKonsVersion) {
+						setPatient(selectedPatient);
+					}
+					updateAllKonsAreas(k, KonsActions.ACTIVATE_KONS);
+					konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
+						showAllConsultationsAction.isChecked());
+					break;
+				case EVENT_DESELECTED:
+					logEvent("eeli_kons EVENT_DESELECTED null");
+					updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
+					break;
+				}
+
+			}
+
+		};
+
 	private final ElexisUiEventListenerImpl eeli_fall =
-		new ElexisUiEventListenerImpl(Fall.class, ElexisEvent.EVENT_SELECTED) {
+		new ElexisUiEventListenerImpl(Fall.class, EVENT_SELECTED) {
 			@Override
 			public void runInUi(ElexisEvent ev){
 				// falls aktuell ausgewaehlte Konsulation zu diesem Fall
@@ -564,8 +591,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	@Override
 	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem, eeli_fall,
-			eeli_pat, eeli_user);
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_kons_filter, eeli_kons,
+			eeli_problem, eeli_fall, eeli_pat, eeli_user);
 		super.dispose();
 	}
 
@@ -706,8 +733,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			showAllChargesAction.setChecked(false);
 			showAllConsultationsAction.setChecked(false);
 
-			ElexisEventDispatcher.getInstance().addListeners(eeli_kons, eeli_problem, eeli_fall,
-				eeli_pat, eeli_user);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_kons_filter, eeli_kons,
+				eeli_problem, eeli_fall, eeli_pat, eeli_user);
 
 			Patient patient = ElexisEventDispatcher.getSelectedPatient();
 			setPatient(patient);
@@ -730,8 +757,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			heartbeat.enableListener(true);
 		} else {
 			heartbeat.enableListener(false);
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem, eeli_fall,
-				eeli_pat, eeli_user);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons_filter, eeli_kons,
+				eeli_problem, eeli_fall, eeli_pat, eeli_user);
 			setPatient(null);
 		}
 		visibleAllKonsAreas(mode);

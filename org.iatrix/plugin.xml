@@ -19,6 +19,7 @@
             id="org.iatrix.views.ProblemView"
             name="Problem"/>
       <view
+            category="org.iatrix"
             class="org.iatrix.views.KonsListView"
             id="org.iatrix.views.KonsListView"
             name="Konsultationen Iatrix">

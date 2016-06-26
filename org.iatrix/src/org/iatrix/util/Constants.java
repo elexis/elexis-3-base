@@ -41,7 +41,7 @@ public class Constants {
 		"Bedeutende Symptome, Probleme, Diagnosen gemäss Zunahme Verständnis", // BEZEICHNUNG
 		"Freitext\n(Auf Rechtsclick Auswahl von Medikamenten)", // THERAPIE
 		"Code für Rechnungsstellung oder Forschung", // DIAGOSEN
-		"Problem aktiv od inaktiv, verlangt Aktivität od nicht mehr.", //STATUS
+		"Problem aktiv oder inaktiv (verlangt keine weitere Behandlungen mehr)", //STATUS
 	};
 
 	public static final int[] DEFAULT_COLUMN_WIDTH = {

@@ -109,7 +109,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		addMapping(TABLENAME, FLD_PATID, FLD_CAT + "=Category", DATE_COMPOUND, //$NON-NLS-1$
 			FLD_TITLE + "=Title", FLD_KEYWORDS, FLD_PATH, FLD_DOC, FLD_MIMETYPE); //$NON-NLS-1$
 		DocHandle start = load(VERSION); //$NON-NLS-1$
-		if (start == null) {
+		if (!tableExists(TABLENAME)) {
 			init();
 		} else {
 			VersionInfo vi = new VersionInfo(start.get(FLD_TITLE));

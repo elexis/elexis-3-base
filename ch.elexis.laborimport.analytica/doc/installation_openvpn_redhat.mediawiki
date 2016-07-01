@@ -1,51 +1,19 @@
-%% LyX 1.6.5 created this file.  For more info, see http://www.lyx.org/.
-%% Do not edit unless you really know what you are doing.
-\documentclass[ngerman]{article}
-\usepackage[T1]{fontenc}
-\usepackage[latin9]{inputenc}
-\usepackage{listings}
-\usepackage[letterpaper]{geometry}
-\geometry{verbose,tmargin=1.5cm,bmargin=1.5cm,lmargin=1cm,rmargin=1cm}
-\usepackage{amsthm}
-\usepackage{amsmath}
+= Aufsetzen von OpenVPN auf einem Redhat-Server =
 
-\makeatletter
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
-\numberwithin{equation}{section}
-\numberwithin{figure}{section}
+= Voraussetzungen =
 
-\makeatother
+Benutzer-Namen und Passwort fÃ¼r RedHat-Server sind bekannt. Benutzer muss z.B. via sudo Zugriff mit System-Rechten haben.
 
-\usepackage{babel}
-
-\begin{document}
-\selectlanguage{ngerman}
-
-\section*{Aufsetzen von OpenVPN auf einem Redhat-Server}
-
-
-\section{Voraussetzungen}
-
-Benutzer-Namen und Passwort für RedHat-Server sind bekannt. Benutzer
-muss z.B. via sudo Zugriff mit System-Rechten haben.
-
-
-\section{Installation auf einem RedHat Server (5.4)}
+= Installation auf einem RedHat Server (5.4) =
 
 Die meisten Informationen kommen von: http://www.packtpub.com/article/installing-openvpn-on-linux-and-unix-systems-1
 
-Folgende Befehle als root ausführen:
+Folgende Befehle als root ausfÃ¼hren:
 
-
-\begin{lstlisting}
-wget http://www.fedorafaq.org/samples/yum.conf
+<pre>wget http://www.fedorafaq.org/samples/yum.conf
 rpm -Uvh http://www.fedorafaq.org/yum
-yum install openvpn
-\end{lstlisting}
-
-
-
-\section{Einfacher Test, ob es läuft oder nicht}
+yum install openvpn</pre>
+= Einfacher Test, ob es lÃ¤uft oder nicht =
 
 S.a. http://www.openvpn.net/index.php/open-source/documentation/miscellaneous/78-static-key-mini-howto.html
 
@@ -53,63 +21,38 @@ Achtung: Damit kann auf dem Server jedoch nur 1 Client laufen!
 
 Generate a static key:
 
+<pre>cd /etc/openvpn &amp;&amp; openvpn --genkey --secret elexis_test_labo.key</pre>
+Copy the static key to both client and server, over a pre-existing secure channel. Server configuration file /etc/openvpn/elexis_test_labo.conf
 
-\begin{lstlisting}
-cd /etc/openvpn && openvpn --genkey --secret elexis_test_labo.key
-\end{lstlisting}
-
-
-Copy the static key to both client and server, over a pre-existing
-secure channel. Server configuration file /etc/openvpn/elexis\_test\_labo.conf
-
-
-\begin{lstlisting}
-# Konfiguration einfacher OpenVPN Test-Server fuer elexis
+<pre># Konfiguration einfacher OpenVPN Test-Server fuer elexis
 # Server-Seite
 dev tun
 ifconfig 10.87.53.102   10.87.53.101 
-secret elexis_test_labo.key
-\end{lstlisting}
-
-
+secret elexis_test_labo.key</pre>
 Danach kann man lokal testen, mit Hilfe von sftp 100.87.0.53.101
 
-Client configuration file Pfad-Zu-Installation-Von-OpenVPN/etc/openvpn/elexis\_test\_arzt.ovpn
-(ovpn ist für Windows-Clients, für {*}nux-Clients muss die {*}.ovpn-Datei
-nach {*}.conf umbenannt werden)
+Client configuration file Pfad-Zu-Installation-Von-OpenVPN/etc/openvpn/elexis_test_arzt.ovpn (ovpn ist fÃ¼r Windows-Clients, fÃ¼r <span>*</span>nux-Clients muss die <span>*</span>.ovpn-Datei nach <span>*</span>.conf umbenannt werden)
 
-
-\begin{lstlisting}
-# Konfiguration einfacher OpenVPN Test-Server fuer Labor
+<pre># Konfiguration einfacher OpenVPN Test-Server fuer Labor
 # Client
 dev tun
 remote 62.202.1.152
 #
-#        Client (Arzt) ->       Server (Labo)
+#        Client (Arzt) -&gt;       Server (Labo)
 ifconfig 10.87.53.102   10.87.53.101
-secret Labor_test_1.key
-\end{lstlisting}
+secret Labor_test_1.key</pre>
+Firewall-Einstellungen wurde so geÃ¤ndert, dass sie auf dem Port 1194 sowohl UDP als auch TCP in beide Richtung zulassen.
 
+Falls auf dem Client alles gut lÃ¤uft, kÃ¶nnen die geÃ¶ffneten Dienste (FTP) auf dem Server 10.87.53.101 benutzt werden.
 
-Firewall-Einstellungen wurde so geändert, dass sie auf dem Port 1194
-sowohl UDP als auch TCP in beide Richtung zulassen.
+== Anpassungen fÃ¼r mehrere Clients ==
 
-Falls auf dem Client alles gut läuft, können die geöffneten Dienste
-(FTP) auf dem Server 10.87.53.101 benutzt werden.
+Dazu mÃ¼ssen auf dem Server SchlÃ¼ssel generiert werden. Die SchlÃ¼ssel fÃ¼r den Server mÃ¼ssen nur einmal generiert werden. Dazu dient folgendes Script
 
-
-\subsection{Anpassungen für mehrere Clients}
-
-Dazu müssen auf dem Server Schlüssel generiert werden. Die Schlüssel
-für den Server müssen nur einmal generiert werden. Dazu dient folgendes
-Script
-
-
-\begin{lstlisting}[basicstyle={\ttfamily},showstringspaces=false]
-#! /bin/bash 
+<pre>#! /bin/bash 
 # 2010-04-10 Niklaus Giger 
 # Die Dateien /etc/openvpn/vars und /etc/openvpn/server.conf anpassen. 
-# Dann diese Datei als root ausführen 
+# Dann diese Datei als root ausfÃ¼hren 
 rm -rf /etc/openvpn/easy-rsa 
 mkdir  /etc/openvpn/easy-rsa 
 cp -rp /usr/src/redhat/BUILD/openvpn-2.1.1/easy-rsa/2.0/* /etc/openvpn/easy-rsa 
@@ -117,31 +60,26 @@ rm -rf /etc/openvpn/easy-rsa/vars
 cd /etc/openvpn/easy-rsa 
 . /etc/openvpn/vars 
 /etc/openvpn/easy-rsa/clean-all 
-# Hier sollte bei ein paar Fragen nur noch okay geklickt werden müssen 
+# Hier sollte bei ein paar Fragen nur noch okay geklickt werden mÃ¼ssen 
 /etc/openvpn/easy-rsa/build-ca --batch 
 # Den Server-Key erstellen
 /etc/openvpn/easy-rsa/build-key-server  --batch server 
-# Der nächste Befehl kann auch auf einer schnellen Maschine mehrere Minuten dauern 
-/etc/openvpn/easy-rsa/build-dh 
-\end{lstlisting}
+# Der nÃ¤chste Befehl kann auch auf einer schnellen Maschine mehrere Minuten dauern 
+/etc/openvpn/easy-rsa/build-dh </pre>
+Folgendes Script muss jeweils pro neuen Clients ausgefÃ¼hrt werden.
 
-
-Folgendes Script muss jeweils pro neuen Clients ausgeführt werden.
-
-
-\begin{lstlisting}[basicstyle={\ttfamily},breaklines=true,showstringspaces=false]
-#! /bin/bash
+<pre>#! /bin/bash
 # 2010-06-10 Niklaus Giger
 #
-# *.key-Dateien sollten geheim gehalten werden. Müssen aber
+# *.key-Dateien sollten geheim gehalten werden. MÃ¼ssen aber
 #       wegen der Windows-Clients world-readable sein.
-# *.crt und *.pem-Dateien sind öffentlich
+# *.crt und *.pem-Dateien sind Ã¶ffentlich
 # Am besten keine Leerzeichen beim Kundenamen haben.
 #
-KundenName="client3"
+KundenName=&quot;client3&quot;
 
 #------------------------------------------------------------------------------
-# Hier noch ihre Parameter beim UserAdd hinzufügen
+# Hier noch ihre Parameter beim UserAdd hinzufÃ¼gen
 # Habe mal -m zum Erstellen des Home-Verzeichnisses genommen
 #------------------------------------------------------------------------------
 /usr/sbin/useradd --create-home  $KundenName
@@ -151,14 +89,14 @@ KundenName="client3"
 # Ab hier sollte es nichts mehr zum Andern geben
 #------------------------------------------------------------------------------
 
-# Dann diese Datei als root ausführen
+# Dann diese Datei als root ausfÃ¼hren
 cd /etc/openvpn/easy-rsa
 . /etc/openvpn/vars
 #Jetzt noch den ersten Test-Clients erstellen
 /etc/openvpn/easy-rsa/build-key --batch $KundenName
 
 # What follows is a so called Here document (or variable) of bash
-confFile=$(cat <<EndOfVar
+confFile=$(cat &lt;&lt;EndOfVar
 ##############################################
 # Config-File for Labor OpenVPN          #
 ##############################################
@@ -204,36 +142,29 @@ mute 20
 mute-replay-warnings
 EndOfVar)
 
-echo "$confFile" > /etc/openvpn/keys/$KundenName.ovpn
+echo &quot;$confFile&quot; &gt; /etc/openvpn/keys/$KundenName.ovpn
 unix2dos /etc/openvpn/keys/$KundenName.ovpn
 chown $KundenName /etc/openvpn/keys/$KundenName.*
 cp /etc/openvpn/keys/ca.crt /home/$KundenName/Labor-ca.crt
 cp /etc/openvpn/keys/$KundenName.crt /home/$KundenName
 cp /etc/openvpn/keys/$KundenName.key /home/$KundenName
 chown $KundenName /home/$KundenName/$KundenName.*
-echo "$confFile" > /home/$KundenName/$KundenName.ovpn
+echo &quot;$confFile&quot; &gt; /home/$KundenName/$KundenName.ovpn
 echo /home/$KundeName/$KundenName.ovpn
-echo "Created config/key-files for $KundenName in /home/$KundenName"
+echo &quot;Created config/key-files for $KundenName in /home/$KundenName&quot;
 ls -l /home/$KundenName
-echo $clientConf
-\end{lstlisting}
+echo $clientConf</pre>
+FÃ¼r <span>*</span>nux-Clients muss die <span>*</span>.ovpn-Datei nach <span>*</span>.conf umbenannt werden.
 
+Zum Testen auf dem Client openvpn starten. Etwa folgendes sollte im Log zu sehen sein:
 
-Für {*}nux-Clients muss die {*}.ovpn-Datei nach {*}.conf umbenannt
-werden.
-
-Zum Testen auf dem Client openvpn starten. Etwa folgendes sollte im
-Log zu sehen sein:
-
-
-\begin{lstlisting}[basicstyle={\small},breaklines=true,showstringspaces=false]
-Sun Apr 11 12:01:41 2010 OpenVPN 2.1.1 i686-pc-mingw32 [SSL] [LZO2] [PKCS11] built on Dec 11 2009 
+<pre>Sun Apr 11 12:01:41 2010 OpenVPN 2.1.1 i686-pc-mingw32 [SSL] [LZO2] [PKCS11] built on Dec 11 2009 
 Sun Apr 11 12:01:41 2010 NOTE: OpenVPN 2.1 requires '--script-security 2' or higher to call user-defined scripts or executables 
 Sun Apr 11 12:01:41 2010 LZO compression initialized Sun Apr 11 12:01:41 2010 Control Channel MTU parms [ L:1542 D:138 EF:38 EB:0 ET:0 EL:0 ] 
 Sun Apr 11 12:01:41 2010 Data Channel MTU parms [ L:1542 D:1450 EF:42 EB:135 ET:0 EL:0 AF:3/1 ] 
 Sun Apr 11 12:01:41 2010 Local Options hash (VER=V4): '41690919' 
 Sun Apr 11 12:01:41 2010 Expected Remote Options hash (VER=V4): '530fdded' 
-Sun Apr 11 12:01:41 2010 Socket Buffers: R=[8192->8192] S=[8192->8192] 
+Sun Apr 11 12:01:41 2010 Socket Buffers: R=[8192-&gt;8192] S=[8192-&gt;8192] 
 Sun Apr 11 12:01:41 2010 UDPv4 link local: [undef] 
 Sun Apr 11 12:01:41 2010 UDPv4 link remote: 172.25.1.134:1194 
 Sun Apr 11 12:01:41 2010 TLS: Initial packet from 172.25.1.134:1194, sid=74d0481d b9c0622a 
@@ -260,21 +191,12 @@ Sun Apr 11 12:01:49 2010 TEST ROUTES: 1/1 succeeded len=1 ret=1 a=0 u/d=up
 Sun Apr 11 12:01:49 2010 C:\WINDOWS\system32\route.exe ADD 172.23.45.1 MASK 255.255.255.255 172.23.45.13 
 Sun Apr 11 12:01:49 2010 ROUTE: CreateIpForwardEntry succeeded with dwForwardMetric1=30 and dwForwardType=4 
 Sun Apr 11 12:01:49 2010 Route addition via IPAPI succeeded [adaptive] 
-Sun Apr 11 12:01:49 2010 Initialization Sequence Completed 
-\end{lstlisting}
+Sun Apr 11 12:01:49 2010 Initialization Sequence Completed </pre>
+== Testumgebung ==
 
+RedHat 30-Tag-Lizenz, RedHat 5.4-DVD (2.6 GB) runtergeladen und auf MacBookPro via KVM/virt-manager installiert.
 
+* 1855755 30-day Unsupported Evaluation Red Hat Enterprise Linux (Up to 2 Sockets)
+* 03/29/2010 04/27/2010 Info zur VerlÃ¤ngerung
+* RHN 363fcca9327b83cc
 
-\subsection{Testumgebung}
-
-RedHat 30-Tag-Lizenz, RedHat 5.4-DVD (2.6 GB) runtergeladen und auf
-MacBookPro via KVM/virt-manager installiert.
-\begin{itemize}
-\item 1855755 30-day Unsupported Evaluation Red Hat Enterprise Linux (Up
-to 2 Sockets) 
-\item 03/29/2010 04/27/2010 Info zur Verlängerung 
-\item RHN 363fcca9327b83cc
-\end{itemize}
-
-
-\end{document}

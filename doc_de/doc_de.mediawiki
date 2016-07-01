@@ -24,32 +24,32 @@ Elexis – die elektronische Praxis – ist
 Es gibt inzwischen in mehreren Regionen der Schweiz Firmen und Einzelpersonen, die Ihnen gerne eine Offerte für eine schlüsselfertige Elexis-Installation oder ein Komplettsystem inklusive Hardware machen. Sie finden eine Liste unter http://www.elexis.ch.
 = Eine neue Patientin erfassen =
 [tour] Starten Sie Elexis durch Doppelklick auf das Programmsymbol. Nach einem kurzen Moment erscheint ein Fenster etwa wie in Abb. [fig:startbild] <sup>[[#fn2|2]]</sup>.
-[ht] [[File:doc_de/einf0.png]] [fig:startbild]
+[ht] [[File:einf0.png]] [fig:startbild]
 == Patientendaten erfassen ==
 r
 8cm
-[[File:doc_de/einf1.png|image]] [fig:patname]
+[[File:einf1.png|image]] [fig:patname]
 Aktivieren sie mit einem Klick die Ansicht ‘Patienten’ und schreiben Sie in die Eingabefelder Name und Vorname der neuen Patientin. Falls die Patientin schon einmal erfasst worden ist erscheint ihr Name, in unserem Fall, wo keine Patientin dieses Namens vorhanden ist, werden unten keine Einträge angezeigt (s. Abb. [fig:patname])<sup>[[#fn3|3]]</sup>.
 Klicken Sie dann auf das grüne Plus-Symbol oben rechts, um eine Patientin mit diesen Daten neu anzulegen. Es erscheint ein Dialogfenster (Abb. [fig:patdata]), wo Sie die Angaben in die entsprechenden Felder eingeben können.
-[ht] [[File:doc_de/einf2.png|image]] [fig:patdata]
+[ht] [[File:einf2.png|image]] [fig:patdata]
 Sie brauchen die hier verlangten Daten nicht vollständig einzugeben, sondern einfach soweit Sie diese im Moment kennen. Sie müssen also im Notfalldienst nicht zuerst die vollständigen Daten eingeben, bevor Sie mit der Behandlung beginnen können. Erfassen Sie z.B. nur Name und Geburtsdatum und überlassen Sie den Rest Ihrer MPA. Für Elexis ist ein neuer Patient in dem Moment bekannt, wo Sie ‘OK’ klicken – egal wieviele Daten zu diesem Zeitpunkt eingegeben sind.
 == Falldaten erfassen ==
 Bei einer neuen Patientin müssen Sie zunächst einen Fall erstellen, dem die Konsultation zugeordnet werden kann.
 [htbp]
 0.4
-[[File:doc_de/einf3.png|image]] [fig:faelle1]
+[[File:einf3.png|image]] [fig:faelle1]
 0.6
-[[File:doc_de/einf4.png|image]] [fig:falldetail]
+[[File:einf4.png|image]] [fig:falldetail]
 Ein Fall sammelt alle Konsultationen, die mit einem gemeinsamen Abrechnungssystem erfasst werden. (Vgl. [settings:abrechnungssystem] auf S. ). Klicken Sie also in der Fälle-Ansicht (Abb. [fig:faelle1]) auf das grüne Plus-Symbol.
 Dadurch öffnet sich ein Dialog, in dem Sie wiederum die Angaben eintragen können, soweit diese Ihnen bekannt sind (Abb. [fig:falldetail])
 Spätestens zur Rechnungsstellung müssen dann allerdings die notwendigen Angaben (Debitor, Kostenträger und Versicherungsnummer bzw. Fallnummer) eingegeben werden. Nach dem Klick auf OK haben Sie den neuen Fall erstellt. Bei weiteren Konsultationen kann man sich diesen Schritt natürlich sparen.
 Als nächstes erstellen wir eine neue Konsultation, wieder mit dem nun schon bekannten grünen Plus-Symbol (Abb. [fig:neuekons].
-[ht] [[File:doc_de/einf5.png|image]] [fig:neuekons]
+[ht] [[File:einf5.png|image]] [fig:neuekons]
 Danach können wir mit dem KG-Eintrag beginnen (Abb. [fig:KG]).
 == Krankengeschichte führen ==
-[[File:doc_de/einf6.png|image]] [fig:KG]
+[[File:einf6.png|image]] [fig:KG]
 Der KG-Eintrag kann einfache Textformatierungen enthalten, Textbausteine können beliebig definiert und über eine konfigurierbare shortcut-Taste aufgerufen werden. Die Verrechnung erfolgt dann entweder über ein Tastaturmakro oder per Maus. Nach Fertigstellung des Eintrags (auch vor oder während des Eintragens) können Sie durch Klicken auf Verrechnung die Leistungen-Ansicht öffnen (Abb. [fig:Verrechnung]). Analog können sie durch klicken auf Behandlungsdiagnosen die Diagnosen-Ansicht öffnen.
-[ht] [[File:doc_de/einf7.png|image]] [fig:Verrechnung]
+[ht] [[File:einf7.png|image]] [fig:Verrechnung]
 Dieses Fenster enthält alle im System vorgesehenen Leistungscode-Systeme, sowie eine Seite mit selbstdefinierten Leistungsblöcken. Sie können entweder einen ganzen Block oder einzelne Leistungen aus dem Block oder aus einem anderen Leistungsfenster (Tarmed etc.) ins Verrechnung-Feld ziehen (drag and drop).
 Genau gleich lassen sich zur Konsultation auch Diagnosen zuordnen, auch hier hat man die Wahl zwischen allen im System integrierten Diagnosecodesystemen (beliebig anzupassen und erweiterbar).
 = Benutzeroberfläche einrichten =
@@ -60,18 +60,18 @@ Hervorstechendstes Merkmal vom Elexis ist die grosse Flexibilität. Wenn Sie ein
 Stellen Sie sich Ihren Arbeitstisch vor. Vermutlich werden Sie sich im Lauf der Zeit angewöhnt haben, bestimmte Dinge an einen bestimmten Ort auf Ihrem Schreibtisch zu legen, also Arbeitsfunktionen einem Ort zuzuordnen, wo sie sie jeweils (idealerweise) leicht wiederfinden. Ihre Anordnung ist nicht unbedingt dieselbe wie bei jemand anderem, der dasselbe Schreibtischmodell besitzt.
 Das Programmfenster von Elexis ist so ein Schreibtisch (s. fig. [fig:tour1].Es ist in keiner Weise festgelegt, welche Funktion wo zu finden ist, ja es ist nicht einmal festgelegt, welche Elemente überhaupt auf dem Schreibtisch erscheinen, und welche vielleicht irgendwo in einer Schublade verstaut sind und nur bei Bedarf hervorgeholt werden müssen. Ähnlich wie bei einem echten Schreibtisch kann es auch zu einem heillosen Durcheinander kommen, in dem man überhaupt nichts mehr findet. Ein gutes Ablageprinzip wird sich erst im Verlauf der Arbeit einspielen.
 [htp]
-[[File:doc_de/tour1.png|image]] [fig:tour1]
+[[File:tour1.png|image]] [fig:tour1]
 Eine Anordnung von Arbeitsflächen nennen wir eine ‘Perspektive’ (perspective). Die einzelnen Unterfenster bzw. Funktionseinheiten (oben ‘Patienten’ und ‘Patienten-Detail’), aus denen sich die Perspektive zusammensetzt bezeichnet man als ‘Ansicht’ (View).
 ==== Perspektive und Views ====
 Oben (fig. [fig:tour1] sehen sie als Beispiel eine Perspektive, die für einen kleinen Bildschirm geeignet ist, es zeigt einen Screenshot auf einem 15-Zoll-TFT-Monitor. Die Ansichten Patienten(links) und Patient Detail(rechts) liegen obenauf, andere Ansichten sind dahinter angeordnet, so dass nur ein Karteireiter oben zu sehen ist.
 Auf einem grösseren Bildschirm würden Sie vermutlich eine andere Anordnung bevorzugen: fig. [fig:tour2] zeigt einen Screenshot auf einem 17-Zoll-TFT-Monitor mit mehreren Views gleichzeitig.
 [htp]
-[[File:doc_de/tour2.png|image]] [fig:tour2]
+[[File:tour2.png|image]] [fig:tour2]
 ==== Ansichten / Views ====
 Jede Ansicht entspricht einer bestimmten Funktionalität. Im abgebildeten Fenster sehen sie die Ansicht einer Patientenliste (links) und die Details des ‘aktiven’ Patienten (rechts). Es gibt weitere Ansichten wie KG-Eintrag des aktuellen Patienten, eine Liste aller KG-Einträge, die Fixmedikation, die Rezepte,die Arbeitsunfähigkeitszeugnisse, die Agenda etc. Jede Ansicht ist eine definierte Sichtauf die vorhandenen Daten, daher der Name Ansicht. Sie lassen sich über die Reiter aktivieren. Die Reiter selber lassen sich beliebig anordnen, aktivieren oder deaktivieren.
 Egal wie Sie die Views angeordnet haben, jede View lässt sich zur besseren Übersicht jederzeit auf Vollbildgrösse bringen, indem man auf den Reiter doppelklickt (s. Abb. [fig:tour3]).
 [htp]
-[[File:doc_de/tour3.png|image]] [fig:tour3]
+[[File:tour3.png|image]] [fig:tour3]
 ==== Views und Perspektiven anpassen ====
 In der Standard-Startperspektive ist links eine Startleiste zu sehen. Diese führt Sie zu vordefinierten Perspektiven – es erscheinen in diesen jeweils die passenden Ansichten. Die Werkzeugleiste führt, wie bei anderen Programmen üblich, zu verschiedenen Funktionen. Jede Ansicht hat einen Karteireiter, über den sie in den Vordergrund gebracht oder maximiert werden kann.
 =5000 Die Programmfenster-Inhalte und Zusammenstellungen der Ansichten lassen sich leicht Ihren indivicuellen Wünschen anpassen:
@@ -85,14 +85,14 @@ Jede Zusammenstellung kann als Perspektive gespeichert werden – und ist als so
 Wählen Sie im Menu Fenster – Ansicht – Andere. Es öffnet sich ein Dialog wie in Abb. [fig:cust1].
 [htbp]
 0.4
-[[File:doc_de/customize1.png|image]] [fig:cust1]
+[[File:customize1.png|image]] [fig:cust1]
 0.5
 Diese Dialogbox zeigt Ihnen sämtliche Views, die in Ihrer Elexis-Installation vorhanden sind (Welche und wieviele das sind, hängt von den installierten Plugins ab). Wenn Sie in der obersten Zeile den Anfang der gesuchten View zu tippen beginnen, wird die Liste automatisch gefiltert.
 Wenn Sie den Namen der gesuchten View nicht wissen, können Sie hier natürlich auch einfach alle Views durchblättern.
 '''Schritt 2: Die Ansichten an die gewünschte Stelle schieben und auf die gewünschte Grösse bringen:'''
-[[File:doc_de/agendagewaehlt.png|image]]<br />
+[[File:agendagewaehlt.png|image]]<br />
  image
-[[File:doc_de/agendaanpassen.png|image]]<br />
+[[File:agendaanpassen.png|image]]<br />
  image
 '''Schritt 3:Perspektive speichern'''<br />
  Wenn Sie möchten, dass Ihre so erstellte Perspektive auch bei späteren Programmstarts oder auf anderen Computern zur Verfügung steht, haben Sie mehrere Möglichkeiten:
@@ -105,7 +105,7 @@ Wenn Sie den Namen der gesuchten View nicht wissen, können Sie hier natürlich 
 = Konzepte =
 == Kontakte ==
 [kontakt] In Elexis ist jede Person oder Firma, die in irgendeiner Beziehung zur Praxis steht, zunächst mal ein Kontakt. Kontakte werden in der Kontakt-Perspektive eingegeben oder geändert.
-[[File:doc_de/contactperspective.png|image]]<br />
+[[File:contactperspective.png|image]]<br />
  image
 Es gibt folgende Typen von Kontakten:
 * Person
@@ -128,17 +128,17 @@ Ein Fall kann immer nur einen Patienten und ein Abrechnungssystem haben, kann ab
 == Sticker ==
 [Etiketten] Patienten, Konsultationen und andere Datenbankinhalte können mit ‘Stickern’ markiert werden. Ein Sticker ist ein im Prinzip beliebiges Merkmal, das mit dem entsprechenden Datenbankobjekt verknüpft wird. Beispielsweise könnte ein Patient mit den Stickern ‘Hausarztmodell’, ‘MRSA’ oder anderen markiert werden. Ein solcher Sticker wird beim Aufruf des entsprechenden Obekts mit angezeigt.
 Sticker werden unter Datei-Einstellungen-Sticker definiert (S. Abb. [fig:etiketten1]). Es können beliebig viele Sticker definiert werden. Um einen neuen Sticker anzulegen, schreiben Sie den Text für den Sticker ins obere Feld und klicken dann auf ‘Neuer Sticker’. Der eben angelegte Sticker erscheint dann mit Standardwerten in der Liste. Markieren Sie ihn und geben Sie je nach Wunsch ein Bild (Format JPG oder PNG, 16×16 Pixel), eine Textfarbe und eine Hintergrundfarbe ein. Die Bedeutung des ‘Werts’ sehen Sie weiter unten.
-[[File:doc_de/etikette1.png|image]] [fig:etiketten1]
+[[File:etikette1.png|image]] [fig:etiketten1]
 So erstellte Sticker können einem Patienten durch Rechtsklick in der Patientenliste und Auswahl von ‘Sticker…’ zugeordnet werden. Jeder Patient kann null bis beliebig viele Sticker erhalten. In der Patientenliste wird nun der entsprechende Eintrag mit dem dem Sticker zugeordenen Bild, Vordergrund- und Hintergrundfarbe angezeigt (Abb. [fig:etiketten2]).
-[[File:doc_de/etikette3.png|image]] [fig:etiketten2]
+[[File:etikette3.png|image]] [fig:etiketten2]
 Hier sieht man nun auch denn Sinn des ‘Wert’-Attributs eines Stickers: Wenn ein Patient mehrere Sticker zugeordnet hat, dann wird in der Patientenliste immer diejenige mit dem höchsten ‘Wert’ angezeigt. Was für Zahlen Sie da konkret einsetzen, ist egal. Die abolute Grösse spielt keine Rolle, nur das Verhältnis zueinander.
 Wenn Sie einen Konsulaltionseintrag öffnen, sehen Sie alle zugeordneten Sticker.
-[[File:doc_de/etikette2.png|image]] [fig:etiketten3]
+[[File:etikette2.png|image]] [fig:etiketten3]
 == Leistungsabrechnung ==
 [concept:leistung]
 l
 7.5cm
-[[File:doc_de/leistungen1.png|image]] [fig:leistungen]
+[[File:leistungen1.png|image]] [fig:leistungen]
 Die Leistungscodes, die verrechnet werden können, werden einerseits von Plugins beigesteuert (z.B. Elexis-Arzttarife-Schweiz), andererseits durch von Ihnen selbst definierte Leistungsblöcke (s. weiter unten).
 Alle im System vorhandenen Leistungscodesysteme sind im Fenster Leistungen (Abb. [fig:leistungen]) untergebracht: Am unteren Rand des Fensters sehen Sie für jedes installierte Leistungscodesystem einen Reiter.
 Dieses Fenster erscheint jeweils dann, wenn Sie vom Konsultationsfenster aus Verrechnung anklicken. Der Aufbau ist für jedes Leistungscodesystem gleich:
@@ -148,11 +148,11 @@ Um einen Code zu verrechnen, können Sie ihn aus irgendeinem der drei Abschnitte
 === Leistungsblöcke und Eigenleistungen ===
 r
 6cm
-[[File:doc_de/block1.png|image]] [fig:bloecke]
+[[File:block1.png|image]] [fig:bloecke]
 Als weitere Arbeitserleichterung erlaubt Elexis auch, mehrere Leistungscodes, auch aus ganz unterschiedlichen Codesystemen, zu Blöcken zusammenzufassen, die dann komplett oder teilweise verrechnet werden können. Solche Blöcke können nebst vordefinierten Leistungscodes aller installierten Codesysteme auch selbstdefinierte Elemente enthalten. In Abb. [fig:bloecke] sehen Sie einige Beispiele: ''kons15'' ist ein Beispiel für einen Block, der üblicherweise als Ganzes verrechnet wird. Dies kann man machen, indem man den Block mit der Maus ins Verrechnungs-Fenster der Konsultation zieht. Oder, falls Sie lieber mit der Tastatur arbeiten, tippt man im Konsultationstext den Namen des Blocks, gefolgt von der Makroauslösetaste (standardmässig #). Die Eingabe von kons15# im Konsultationstext würde also in unserem Beispiel eine 15-minütige Tarmed-Konsultation verrechnen. ''Impfungen'' wäre ein Beispiel für einen Block, der eher als Zusammenfassung ähnlicher Elemente (als Zeitersparnis beim Heraussuchen) gedacht ist, welche <br />
  meist einzeln verrechnet werden. Hier zieht man einfach die einzelnen Unterelemente aus dem Block ins Verrechnungs-Fenster.
 Um einen neuen Block zu erstellen, gibt man einen (frei wählbaren, aber eindeutigen) Namen für diesen Block ein und klickt anschliessend auf ''Neu erstellen…''. Das Hinzufügen von Leistungen zum Block geschieht dann im Fenster Codes (s. Abb. [fig:bloecke2]).
-[htp] [[File:doc_de/block2.png|image]] [fig:bloecke2]
+[htp] [[File:block2.png|image]] [fig:bloecke2]
 Sie können entweder vordefinierte Leistungen aus einem der installierten Codesysteme durch drag&amp;drop hinzufügen, oder Sie können auch eigene Leistungen definieren. Hier müssen Sie auch Kosten und Preis in Rappen/Cents, sowie die für die Leistung budgetierte Zeit in Minuten angeben.
 == Artikel und Lager ==
 Alles was eingekauft, gelagert, abgegeben oder rezeptiert werden kann, ist ein ''Artikel''. Artikel sind in Klassen organisiert, beispielsweise ''Medikament'', oder ''MiGeL'' oder ''Büromaterial''. Elexis kann jeden Artikel, den es kennt, als ''Lagerartikel'' aufnehmen.
@@ -160,7 +160,7 @@ Ein Lagerartikel ist ein Artikel, dessen Bestand monitorisiert wird, und der bei
 == Import von externen Daten ==
 Elexis ist grundsätzlich in der Lage, Daten aus beliebigen Quellen zu importieren. Allerdings muss natürlich das Format dieser Daten bekannt oder in bestimmter Weise standardisiert sein. Datenimport wird deswegen meist von Importer-Plugins bewerkstelligt. Es gibt Importer für Telefunbuch-Daten, für Stammdaten anderer Praxisprogramme, für externe Labors, für Laborgeräte und für andere medizinische Geräte, die ihre Daten zu einem Computer transferieren können, für MiGeL, Medikamente, Tarmed und andere Datenbanken usw. Eine Aufstellung erhältlicher Plugins finden Sie im Menu ‘Plugins’ auf http://www.elexis.ch. Zusätzliche Importer können meist relativ einfach programmiert werden, verlangen Sie ggf. einen Kostenvoranschlag.
 Importer befinden sich meist im lokalen Menü der View, die die entsprechenden Daten anzeigt (z.B. Tarmed-Importer oder Labor-Importer). Eine Klasse von Importern, die keiner bestimmten View zugeordnet sind, hängen sich auch im Datei-Datenimport-Menü ein. Hier öffnet sich ein Dialog wie in Abb. [fig:importdlg].
-[[File:doc_de/importdlg.png|image]]<br />
+[[File:importdlg.png|image]]<br />
  [fig:importdlg]
 In den Reitern unten finden Sie alle installierten allgemeinen Importer. Welche das sind, hängt von den vorhandenen Plugins ab. Lediglich der in der Abbildung in den Vordergrund gebrachte ‘Kontakt-Importer’ ist immer vorhanden. Dieser Importer kann Kontakte aus externen Dateien importieren, sofern diese auf eine standardisierte Weise als Tabellen aufbereitet sind. Wählen Sie unter ‘Dateityp’, ob es sich um eine MicrosoftExcelTabelle (xls), um eine Character Separated Values-Tabelle (csv)oder um die Santésuisse-Tabelle der Versicherer und ihrer EAN-Codes handelt. Im Fall von xls muss die Datei eine Tabelle 0 mit folgenden Spalten enthalten:
 ; Spaltentitel &amp; Erklärung<br />
@@ -190,6 +190,7 @@ Wenn Sie den Dateityp festgelegt haben, Klicken Sie auf den Button ‘Datei wäh
 * Sie diese ID unbedingt beibehalten wollen
 Wenn Sie das Häkchen nicht setzen, was in den meisten Fällen empfohlen ist, dann wird Elexis beim Import für jeden Kontakt eine eigene eindeutige ID erstellen (genauso, als würde man den Kontakt manuell neu anlegen).<br />
  Klicken Sie dann OK, um den Import zu starten.
+
 == Mehrere Instanzen gleichzeitig ==
 Sie können Elexis problemlos mehrfach starten und dann in verschiedenen Fenstern unterschiedliche Perspektiven oder verschiedene Patienten anzeigen. Einzelne Elemente können auch mit Cut&amp;Paste zwischen den laufenden Instanzen ausgetauscht werden. Anwendungsbeispiele:
 * Sie arbeiten an einem Patienteneintrag und es kommt ein Telefon betreffend eines anderen Patienten. Anstatt Ihre Arbeit zu verlassen, bringen Sie die zweite Elexis-Instanz in den Vordergrund und suchen dort den neuen Patienten auf.
@@ -230,7 +231,7 @@ In diesem Kapitel werden diejenigen Views beschrieben, die im Grundsystem von El
 === Öffnen und Schliessen einer View ===
 Alle im System vorhandenen Views (auch die, die von externen Plugins mitgebracht werden) sind unter dem Menüpunkt Fenster-Ansicht erreichbar. In diesem Menü finden sich manchmal einige Views, die für die aktuelle Perspektive zusammengestellt wurden, sowie immer ein Menüpunkt Andere… resp. Other…. Hier ist eine nach Themen gruppierte Liste aller Views zu finden (s. Abb. [fig:viewlist]).
 [htp]
-[[File:doc_de/showviewdialog.png|image]] [fig:viewlist]
+[[File:showviewdialog.png|image]] [fig:viewlist]
 Sie können entweder diese Liste durchblättern, oder Sie können den Namen der gesuchten View im Textfeld oben eintippen. Sobald Sie anfangen zu tippen, wird die Liste sofort auf die zu den getippten Buchstaben passenden Einträge gefiltert.
 Markieren Sie dann die gewünschte View und öffnen Sie sie entweder durch Doppelklick oder Klick auf OK.
 Um eine View zu schliessen genügt es, auf das X- Symbol im Karteireiter der betreffenden View zu klicken.
@@ -246,7 +247,7 @@ Eine Perspektive hat als Startperspektive eine spezielle Bedeutung: Diese Perspe
 == Stammdaten-Views ==
 === Patienten ===
 Die Patientenliste dient sowohl der Anzeige existierender Patienteneinträge, als auch dem Erfassen neuer Einträge. Die Liste zeigt all diejenigen Kontakte an, die als Patient markiert sind.
-[ht] [[File:doc_de/patlistview.png|image]] [fig:patlist]
+[ht] [[File:patlistview.png|image]] [fig:patlist]
 Die Eingabefelder oben (Name, Vorname, Geburtsdatum) dienen dem Begrenzen der Liste gemäss den gewünschten Parametern.
 * Bei Name und Vorname gilt:
 ** Wenn Sie mindestens zwei Buchstaben eingeben, erscheinen in der Liste nur noch diejenigen Einträge, die mit diesen Buchstaben ''beginnen''.
@@ -264,9 +265,9 @@ Sie können die Anzeige der Patienteneinträge anhand bestimmter Kriterien beein
 <li><p>Mit der Taste Filter (s. Abb. [fig:patlist]) öffnen und Schliessen Sie eine Filterbox, in der Sie bestimmte Kriterien eingeben können, nach denen die Liste gefiltert wird.(s. Abb. [fig:patlistfilter]).</p>
 <p>[ht]</p>
 <p>0.5</p>
-<p>[[File:doc_de/patlistfilter.png|image]] [fig:patlistfilter]</p>
+<p>[[File:patlistfilter.png|image]] [fig:patlistfilter]</p>
 <p>0.5</p>
-<p>[[File:doc_de/patlistfilter2.png|image]] [fig:filterexpr]</p></li></ul>
+<p>[[File:patlistfilter2.png|image]] [fig:filterexpr]</p></li></ul>
 Sie können den Filter auf verschiedene Weise beeinflussen:
 * Nach Klick auf ‘Feld…’ öffnet sich eine Dialogbox wie in Abb. [fig:filterexpr]. Sie können hier beliebige Datenbankfelder abfragen. Hierbei bedeutet ‘=’: Der Ausdruck muss genau so sein, inklusive Gross/Kleinschrift. ‘LIKE’: Der Ausdruck muss so anfangen, Gross/Klein ist egal. ’REGEXP: Der Ausdruck soll als regulärer Ausdruck interpretiert werden. Eine Erläuterung dieses Konzepts würde hier aber zu weit führen.
 * Nach Klick auf ‘Sticker’ öffnet sich eine Dialogbox, die alle im System definierten Sticker enthält. Sie können ein oder durch mehrfachen Aufruf auch mehrere auswählen.
@@ -280,7 +281,7 @@ Das Kontextmenü erscheint, wenn Sie auf einem Patienteneintrag mit der rechten 
 * KG exportieren. Falls ein Export-Plugin installiert ist, wird die KG des aktuell markierten Patienten über dieses Plugin exportiert. Falls mehrere Export-Plugins definiert sind, erscheint zunächst eine Dialogbox, mit der sie das gewünschte Ziel bzw. Format auswählen können.<sup>[[#fn8|8]]</sup>
 === Patient-Detail ===
 Diese View (Abb. [fig:patdetail] zeigt Details des momentan ausgewählten Patienten resp. der momentan ausgewählten Patientin an
-[t] [[File:doc_de/patdetail.png|image]] [fig:patdetail]
+[t] [[File:patdetail.png|image]] [fig:patdetail]
 Sie sehen, dass die einzelnen Einträge grau erscheinen und nicht geändert werden können . Wenn Sie auf das Schloss-Symbol rechts oben klicken, können Sie die View entsperren (sofern Sie die entsprechenden Rechte besitzen). Dann können alle Felder können durch einfaches Überschreiben geändert werden. Eine Änderung wird in dem Moment gespeichert, in dem ein Feld wieder verlassen wird. (Explizites Speichern ist in Elexis nie notwendig). Bei erneutem Klick auf das Schloss, oder bei Auswahl eines anderen Patienten, wird die Sicherung gegen versehentliches Überschreiben wieder eingeschaltet.
 Die Felder im oberen Block sind alle einzeilige Textfelder und können direkt geändert werden, bis auf das Feld Konto, welches nicht direkt beschreibbar ist. Dieses Feld stellt den Saldo aller Forderungen an diesen bzw. Zahlungen von diesem Patienten dar. Wenn der aktuell eingeloggte Anwender Verrechnungs-Rechte besitzt, kann er den blauen Text Konto anklicken, dann öffnet sich ein Dialog, in dem einzelne Buchungen eingegeben werden können.
 '''Achtung''': Normalerweise erfolgen Buchungen automatisch durch Erstellen von Rechnungen und Einlesen von ESR-Files. Manuelle Buchungen können zu Inkonsistenzen in der Buchhaltung führen. Führen Sie also nur dann manuelle Buchungen durch, wenn Sie sich über die Konsequenzen exakt bewusst sind.
@@ -293,24 +294,24 @@ Die darunterstehenden Felder sind alle aufklappbar: Standardmässig ist nur der 
 === Kontakte ===
 Diese View (Abb. [fig:kontaktlist]) zeigt eine Liste aller in Elexis vorhandenen Kontakte an. Ein Kontakt ist jede Person oder jede Organisation, welche in irgendeiner Beziehung zu unserer Praxis steht. Das sind beispielsweise Patienten, Kollegen, Spitäler, Versicherungen, Labors, Lieferanten usw.
 [htp]
-[[File:doc_de/kontaktlistview.png|image]] [fig:kontaktlist]
+[[File:kontaktlistview.png|image]] [fig:kontaktlist]
 Mit Klick auf das Briefumschlag-Symbol rechts oben können Sie eine Adressetikette für den betreffenden Kontakt ausdrucken.
 === Kontakt-Detail ===
 Hier werden die Details zum aktuell ausgewählten Kontakt angezeigt und können geändert werden (Abb. [fig:kontaktdetail]).
 [htp]
-[[File:doc_de/kontaktdetail.png|image]] [fig:kontaktdetail]
+[[File:kontaktdetail.png|image]] [fig:kontaktdetail]
 In den Checkboxen der obersten Zeile können Sie den Typ des betreffenden Kontakts festlegen. Beachten Sie, dass ein Kontakt auch mehrere Typen haben kann (Beispielsweise kann jemand Anwender und auch Patient sein). Hingegen kann ein Kontakt natürlich nur entweder eine Organisation oder aber eine Person sein. Achten Sie darauf, dies und bei Personen auch das Geschlecht (m oder w) korrekt zu erfassen, da Textformatvorlagen diese Informationen auswerten, um die korrekten Formulierungen auszuwählen.
 Das Feld ‘Kürzel/ID’ enthält bei Patienten die Patientennummer und sollte daher nicht geändert werden. Bei anderen Kontakten kann es sinnvoll sein, hier ein Kürzel zum schnellen auffinden einzusetzen. Beispielsweise könnten Ärzte mit der präfix ‘az’, gefolgt von der Spezialität gefolgt von den Initialen eingetragen werden, Krankenkassen mit der Präfix ‘kk’ etc. So wäre der Internist Dr. Erst Meier beispielsweise als azInnEM gespeichert, die Swica Schaffhausen als kkSwicaSH. Die EInträge müssen nicht eindeutig sein und man muss das auch nicht so zu machen; es hilft einem lediglich z.B. beim Briefe schreiben rascher den Adressaten zu finden etc.
 Das Feld ‘Externe ID’ dient dazu eine im Prinzip beliebig grosse Anzahl von extern vergebenen Identifikationen (XID) festzuhalten. Durch Klick auf das blaue ‘Externe ID’ öffnet sich ein Dialog in dem alle eingetragenen XID’s dargestellt werden. Im Kontaktdetail angezeigt wird immer der ‘beste’ d.h. ‘eindeutigste’ der zur Verfügung stehenden Identifikatoren. Beispiele für XID’s sind etwa EAN, BAG-Nummer, Sozialversicherungsnummer/AHV-Nummer etc.
 In der untersten Zeile steht die Postanschrift des betreffenden Kontakts. Dies ist die Adresse, wie sie beispielsweise im Adressfeld von Briefen oder Rechnungen oder auf Adressetiketten erscheinen soll. Mit Klick auf das blaue Wort Anschriftöffnet sich die Anschrifteingabe-Dialogbox (Abb. [fig:anschrift]), wo Sie beliebigen Text eingeben können. (Klick auf den Button Postanschrift erstellt eine Standard-Anschrift aus den vorhandenen Adressangaben)
 [htp]
-[[File:doc_de/anschrifteingabe.png|image]] [fig:anschrift]
+[[File:anschrifteingabe.png|image]] [fig:anschrift]
 === Artikel ===
 [view:artikel] Ein Artikelist jedes Objekt, das auf Lager genommen und/oder abgegeben werden kann. Es gibt einerseits vordefinierte Artikel (z.B. die Liste aller zugelassenen Medikamente), andererseits auch Eigenartikel. Elexis kann den Lagerbestand von Lagerartikeln verwalten und halbautomatisch Bestellungen zur Neige gehender Artikel vornehmen.
 === Artikelliste ===
 In Abb. [fig:artikel] ist eine Artikelauswahl-Liste und die Artikeldetaildarstellung nebeneinander zu sehen.
 [htp]
-[[File:doc_de/artikelview.png|image]] [fig:artikel]
+[[File:artikelview.png|image]] [fig:artikel]
 Die Liste links können Sie in gewohnter Weise filtern, indem Sie einige Buchstaben des gewünschten Artikelnamens eingeben. In der Detailansicht sehen Sie Einzelheiten zum gerade ausgewählten Artikel. (In Perspektiven, wo die Liste allein dargestellt ist, können Sie mit der rechten Maustaste und Bearbeiten zur Detailansicht gelangen.)
 Ein Artikel wird dadurch zum Lagerartikel, dass Sie ihm einen Mindestbestand grösser als Null zuweisen. Geben Sie ausserdem einen Höchstbestand höher als der Mindestbestand ein und weisen Sie dem Feld Istbestand den korrekten Wert zu. Elexis wird bei einer halbautomatischen Bestellung von jedem Artikel, dessen Istbestand unter dem Mindestbestand ist, soviele Exemplare bestellen, um auf den Höchstbestand zu kommen.
 Bei manchen Artikeltypen wird üblicherweise nicht eine ganze Verpackungseinheit auf einmal abgegeben, beispielsweise Ampullen. Hierfür sind die Felder Stück pro Packungund Stück pro Abgabevorgesehen. Angenommen ein Artikel wird in Packungen zu 10 Stück eingekauft, aber einzeln abgegeben. In diesem Fall können Sie bei Stück pro Abgabe eine 1 setzen, bei Stück pro Packung eine 10. Wenn dieser Artikel dann einem Patienten verrechnet wird, dann wird automatisch 1/10 des Verpackungs-Verkaufspreises berechnet und auch nur 1/10 einer Packung aus dem Lager ausgebucht.
@@ -319,7 +320,7 @@ Die Angabe Aktuell an Lager meint dann die Zahl der einzelnen Artikel, während 
 Wie oben beschrieben, kann Elexis Ihr Warenlager halbautomatisch bewirtschaften. Wann immer Sie einem Patienten einen Artikel verrechnen, wird dieser Artikel automatisch aus dem Lagerbestand ausgebucht. Sobald der Bestand eines Lagerartikels unter den von Ihnen definierten Mindestbestand fällt, weiss Elexis, dass dieser Artikel nachbestellt werden muss. Nebst dieser automatischen Erkennung können Sie selbstverständlich Bestellungen auch manuell erstellen und/oder ändern.
 Diese Funktionen sind in der View Bestellung erreichbar (s. fig. [fig:bestellungen]).
 [htp]
-[[File:doc_de/bestell1.png|image]] [fig:bestellungen]
+[[File:bestell1.png|image]] [fig:bestellungen]
 Links finden Sie die schon bekannten Artikelauswahlfenster für alle Artikelkategorien, für die Sie Plugins haben (Normalerweise Medikamente, Medicals, MiGeL und Eigenartikel). Rechts ist das Feld Bestellung, welches anfangs leer ist. Sie haben nun folgende Möglichkeiten:
 * Mit Klick auf das Zauberstab-Symbol werden automatisch diejenigen Artikel der Bestellung zugefügt, von welchen weniger als der Mindestbestand an Lager ist. Es werden jeweils soviele bestellt, dass der für diesen Artikel definierte Höchstbestand erreicht wird.
 * Sie können aus einem der Fenster links Artikel in die Bestellung herüberziehen.
@@ -328,14 +329,14 @@ Links finden Sie die schon bekannten Artikelauswahlfenster für alle Artikelkate
 * Sie können eine früüher gespeicherte Bestellung wieder laden.
 * Sie können die Bestellung ausdrucken. Dafür ist eine System-Textvorlage (s. S. ) namens Bestellung notwendig, welche an einer Stelle den Platzhalter [Bestellung] enthält (s. Abb. [fig:bestell2]).
 * Last but not least können Sie, falls Sie ein entsprechendes Plugin für Ihren Lieferanten haben, die Bestellung direkt via Internet oder Modem absenden. Ein entsprechendes Plugin für Galexis ist bereits verfügbar, weitere werden entwickelt.
-[hb] [[File:doc_de/bestell2.png|image]]<br />
+[hb] [[File:bestell2.png|image]]<br />
  [fig:bestell2]
 == Konsultationsbezogene Views ==
 === Fälle ===
 Diese View (Abb. [fig:faelle2] listet alle für den aktuell selektierten Patienten existierenden Fälle.
 l
 6.8cm
-[[File:doc_de/faelleview.png|image]] [fig:faelle2]
+[[File:faelleview.png|image]] [fig:faelle2]
 Das Symbol links von der Fallbezeichnung gibt an, ob alle für die Verrechnung des Falles notwendigen Daten vorhanden sind: Wenn es grün ist, sollte die Rechnungserstellung möglich sein, wenn es rot ist, fehlen noch eine oder mehrere Angaben.
 ''Welche'' Angaben mindestens notwendig sind, hängt vom Abrechnungssystem ab. So ist für Fälle, die nach dem KVG abgerechnet werden, die Angabe eines Rechnungsempfängers, eines Versicherers und der Versichertennummer notwendig. Bei Fällen, die nach UVG abgerechnet werden, muss eine Fallnummer vorhanden sein. Bei Privatrechnungen wird mindestens ein Rechnungsempfänger anzugeben sein.
 [filter:fall] Klick auf das Filtersymbol in der Titelzeile der View führt dazu, dass nu noch diejenigen Konsultationen in der Konsultationsliste (siehe [view:konsultationen]) angezeigt werden, welche zum gerade ausgewählten Fall gehören. Wenn ein anderer Fall angeklickt wird, wird die Liste erneut gefiltert. Erneuter Klick auf das Filter-Symbol schaltet den Filter wieder aus.
@@ -353,7 +354,7 @@ Rechtsklick auf einen Fall öffnet dessen Kontextmenü. Dieses enthält die folg
 === Fälle und Kons ===
 l
 7cm
-[[File:doc_de/fallkonsview.png|image]] [fig:fallkons]
+[[File:fallkonsview.png|image]] [fig:fallkons]
 Diese View (Abb. [fig:fallkons] listet synoptisch Fälle und dazugehörige Konsultationen (Nur Titel ohne Texte) auf. Wenn im oberen Bereich ein Fall angeklickt wird, werden im unteren Bereich die zu diesem Fall gehörenden Konsultationen angezeigt. Wenn eine Konsultation angeklickt wird, wird diese Konsultation in der Konsultation-View (S. [konsview] s. ) angezeigt.
 Um einen neuen Fall zu erstellen, geben Sie einen Titel für diesen Fall ein und klicken dann auf ''neuer Fall''. Um eine neue Konsultation einzugeben, wählen Sie den dazugehörigen Fall aus und klicken auf ''Neue Konsultation''
 Anmerkung: Sie werden festgestellt haben, dass diese View und die vorher besprochene Fälle-View bis zu einem gewissen Punkt redundant sind. Das ist auch so. Sie können getrennte Views für Fälle und Konsultationen bevorzugen, oder eine View in der beides enthalten ist. In der Regel werden Sie nicht beide Konzepte anwenden, sondern dasjenige, welches Ihnen besser gefällt – Elexis lässt Ihnen die Wahl.
@@ -361,7 +362,7 @@ Anmerkung: Sie werden festgestellt haben, dass diese View und die vorher besproc
 [view:konsultationen]
 L
 7.5cm
-[[File:doc_de/konslisteview.png|image]] [fig:konslisteview]
+[[File:konslisteview.png|image]] [fig:konslisteview]
 Dies ist eine Auflistung aller bisherigen Konsultationen des aktuell selektierten Patienten, unabhängig vom jeweiligen Fall. Zu jeder Konsultation wird der Text ohne Formatierungen angezeigt. (S. Abb. [fig:konslisteview]).<br />
  Klick auf den (blauen) Titel einer Konsultation wählt diese Konsultation in der Konsultation-View (s. S. ) aus.
 Klick auf das Filter-Symbol rechts oben öffnet den Filter-Dialog (s. Abb. [fig:konsfilter]). Hier können Sie bestimmte Kriterien eingeben, nach denen die angezeigten Konsultationen gefiltert werden sollen (d.h. es werden nur noch diejenigen Konsultationen angezeigt, die den Filterbedingungen entsprechen).
@@ -369,10 +370,10 @@ Im oberen Feld können Sie angeben, ob nur Konsultationen eines bestimmten Falls
 Ganz unten können Sie schliesslich noch angeben, ob Gross/Kleinschreibung beachtet werden soll, oder ob Suchbegriffe als reguläre Ausdrücke betrachtet werden sollen. Eine genaue Erklärung dieses Themas würde hier zu weit führen; Sie finden sehr viel Literatur dazu mit den Stichwörtern Regular Expressionoder Pattern Matching. Diese Technik erlaubt es, den Suchbegriff mit verschiedensten Platzhaltern zu beschreiben. So würde z.B. M[ae][iy]e?r nach allen Meiers, Mayrs etc. in allen Schreibweisen suchen.
 Anmerkung: Das Filtern der Konsultationen mit diesem Verfahren kann, da der Text jeder Konsultstion komplett durchsucht wird, einige Sekunden dauern. Wenn man lediglich nach Fällen oder Problemen filtern möchte, ist der entsprechende Fallfilter (S. ) oder Problemliste-Filter (S. )im Allgemeinen effizienter.
 [ht]
-[[File:doc_de/filterdialog.png|image]] [fig:konsfilter]
+[[File:filterdialog.png|image]] [fig:konsfilter]
 === Konsultation ===
 [konsview] Detailansicht eines Konsultationseintrags (S. Abb. [fig:konsdetail]).
-[ht] [[File:doc_de/konsview.png|image]] [fig:konsdetail]
+[ht] [[File:konsview.png|image]] [fig:konsdetail]
 Sie haben im Textfeld folgende zusätzlichen Möglichkeiten:
 ; Makros
 : Schreiben Sie einen beliebigen Text, markieren Sie diesen Text mit der linken Maustaste, klicken Sie dann mit der rechten Maustaste und wählen Sie &quot;‘als Makro…&quot;’. eben Sie dem Makro einen beliebigen Namen. Wenn Sie nun zukünftig den Namen des Makros gefolgt von # tippen, wird dieser Text durch den vorher definierten Inhalt des Makros ersetzt.
@@ -382,14 +383,14 @@ Sie haben im Textfeld folgende zusätzlichen Möglichkeiten:
 : Es können auch einige einfache Textauszeichnungen gemacht werden: Ein Wort am Anfang einer Zeile, welches von einem Doppelpunkt gefolgt ist, wird fett gedruckt. Ebenso ein Wort zwischen zwei *. Ein Wort zwischen zwei / wird kursiv geschrieben.
 === AUF ===
 Diese View dient der Festlegung einer Arbeitsunfähigkeit. (Abb [fig:auf]) .
-[[File:doc_de/aufview.png|image]] [fig:auf]
+[[File:aufview.png|image]] [fig:auf]
 Eine AUF bezieht sich immer auf einen bestimmten Fall. Wenn kein Fall markiert ist, werden Sie aufgefordert, zunächst einen anzugeben.
 Wenn Sie auf das Neu-Symbol (roter Stern) klicken, erscheint ein Dialog, in dem Sie Anfang und Ende der neuen Arbeitsunfähigkeit festlegen können. Klick auf das Drucker-Symbol öffnet eine Text-View, in der Sie noch manuelle Änderungen am AUF-Text ergänzen können, bevor Sie das Zeugnis definitiv ausdrucken oder aufs Fax senden.
 === Rezepte ===
 In dieser View werden Rezepte aufgenommen. Klicken Sie auf das Neu-Symbol (grünes plus) und es wird ein neues Rezept mit dem Aktuellen Datum erstellt. Ziehen Sie Artikel mittels Drag&amp;Drop aus einer Artikelliste oder der Dauermedikations-View in dieses Rezept. Mit Klick auf das Drucker- Symbol öffnen Sie eine Text-View, in der Sie noch manuelle Änderungen anbringen können, bevor Sie das Rezept definitiv auf den Drucker oder ein Faxgerät oder in einen Export-Konnektor senden. Hierzu muss eine Textvorlage namens Rezeptexistieren, welche an einer Stelle den Platzhalter [Rezeptzeilen] enthält. Dort werden die ausgewählten Artikel eingefügt.
 === Falldetail ===
 [falldetail] Diese View (Abb. [fig:falldetail]) dient zum Einstellen der Details eines Falls (Eine Dialogbox mit derselben View wird geöffnet, wenn man einen neuen Fall (s. [definition:fall] S. ) erstellt).
-[ht] [[File:doc_de/falldetail.png|image]]<br />
+[ht] [[File:falldetail.png|image]]<br />
  [fig:falldetail]
 In der obersten Auswahlbox geben Sie an, welches Abrechnungssystem (S. auch [settings:abrechnungssystem] auf Seite ) für diesen Fall angewendet werden soll. Darunter steht eine Bezeichnung für den fall, die Sie frei wählen können. Diese dient nur Ihrer eigenen Information, damit Sie verschiedene Fälle desselben Patienten einfacher auseinanderhalten können. Die nächste Zeile, ‘Grund für die Versicherung’ ist eine Angabe, die auf den zu diesem fall erstellten Rechnungen stehen wird (Falls die Rechnungsvorlage ein entsprechendes Feld enthält).
 Das '''Startdatum''' ist üblicherweise das Datum der ersten Konsultation, oder bei Unfällen, das Unfalldatum. Das '''Enddatum''' hingegen bezeichnet das Datum, wen der Fall abgeschlossen wird. Ein Fall, welcher ein Enddatum hat, wird in der Fall-Liste (Abb. [fig:faelle2]) als ‘GESCHLOSSEN’ markiert. Zu einem solchen Fall können keine Konsultationen mehr erstellt werden. In der Regel sollte ein Fall nur abgeschlossen werden, wenn es ein Unfall ist, welcher abgeschlossen ist, oder wenn der Patient den Versicherer wechselt und die Abrechnungsdaten darum ändern.
@@ -399,7 +400,7 @@ Alle weiteren Zeilen sind je nach gewähltem Abrechnungssystem unterschiedlich. 
 [view:diagnosen] Diese View (Abb. [fig:diagnosen]) dient dazu, Diagnosen auszuwählen und einer Konsultation zuzuordnen.
 l
 7cm
-[[File:doc_de/diagnosenview.png|image]] [fig:diagnosen]
+[[File:diagnosenview.png|image]] [fig:diagnosen]
 Unten sehen Sie eine Reihe von Reitern, die den installierten Diagnosecode-Plugins entsprechen (standardmässig TI-Code, ICD-10, und ICPC-2). Um eine Diagnose auszuwählen, wählen Sie zunächst aus diesen Reitern das entsprechende Codesystem und dann den Code. Die Auswahl kann durch Drag&amp;Drop oder durch Doppelklick erfolgen. Für jedes Codesystem sehen Sie ein dreigeteiltes Fenster: Im obersten Bereich sind Ihre (d.h. des aktuell eingeloggten Anwenders) am häufigsten eingesetzten Diagnosen zu sehen; im mittleren Teil diejenigen Diagnosen, die beim aktuell ausgewählten Patienten bisher am häufigsten verwendet worden sind, und um unteren Teil die gesamte Systematik des gewählten Codesystems.
 Auf diese Weise haben Sie stets Zugriff auf die am häufigsten benötigten Codes und werden nur noch selten die ganze Systematik durchsuchen müssen.
 == Laboranzeige-View ==
@@ -410,7 +411,7 @@ Die Anzeige eines Befundes wird bestimmt durch
 * Einen Patienten, zu dem dieser Befund gehört
 Das Laboritem definiert, wie und wo der Laborbefund angezeigt werden soll, und zu welchem Typ von Laborwerten er gehört. Das Erstellen von Labritems ist in der Regel nur bei der Installation des Programms notwendig, bzw. dann, wenn Sie neue Laborparameter in Ihre Standardbesimmungen aufnehmen möchten. Das genaue Vorgehen ist unter Konfiguration (S. genauer beschrieben.
 [htp]
-[[File:doc_de/labview.png|image]] [fig:labview]
+[[File:labview.png|image]] [fig:labview]
 === Manuelle Eingabe ===
 Um Laborwerte manuell einzutragen, gehen Sie so vor:
 * Wenn für das gewünschte Datum noch keine Spalte exstiert, klicken Sie auf das grüne Pluszeichen rechts oben, um ein Datum anzugeben.
@@ -420,14 +421,14 @@ Wenn ein Laborparameter numerisch ist, und der eingegebene Wert ausserhalb des R
 Elexis kann Laborwerte selbstverständlich auch automatisch einlesen. Hierfür dient das View-Menu rechts oben:
 r
 7cm
-[[File:doc_de/labor6.png|image]]<br />
+[[File:labor6.png|image]]<br />
  image
 Klicken Sie auf ''import'' und wählen Sie in der dann erscheinenden Dialogbox die Quelle für die einzulesenden Laborwerte aus. Was für Quellen hier angeboten werden, hängt von den vorhandenen Laborimport-Plugins ab. In Frage kommen Laborgeräte und verschiedene externe Labors. Eine aktuelle Liste aller vorhandenen Laborimport-Plugins finden Sie auf http://www.elexis.ch
 === Laborblatt drucken ===
 Um ein Laborblatt auszudrucken, klicken Sie auf das Drucker-Symbol rechts oben. Dies erstellt eine Tabelle innerhalb einer System-Textvorlage Laborblatt, welche einen Platzhalter [Laborwerte] enthalten muss (s. auch [textvorlagen]).
 == Labor Neu ==
 Diese View dient dazu, alle Laborwerte anzuzeigen, welche noch nicht als gesehen markiert worden sind, und erlaubt es auch gleich, sie als gesehen zu markieren (S. Abb. [fig:labneu]).
-[[File:doc_de/labneu1.png|image]]<br />
+[[File:labneu1.png|image]]<br />
  [fig:labneu]
 Werte ausserhalb des Referenzbereichs werden rot dargestellt. Man kann gesehene Werte mit einem Häkchen in der Checkbox links markieren. Nach einiger Zeit werden diese dann aus der Liste entfernt (Solange sie noch nicht entfernt sind, kann man die Markierung mit einem erneuten Klick wieder löschen). Werte die älter als 96 Stunden sind, werden automatisch aus der Liste entfernt.
 Wenn man einen Eintrag markiert wird das Laborblatt des betreffenden Patienten aktiviert (sofern eine Labor-View geöffnet ist). Man kann entweder einen einzelnen Wert oder alle Resultate des aktuell markierten Patienten, oder alle angezeigten Resultate als gelesen markieren.
@@ -436,7 +437,7 @@ Um die Werte einzeln oder gesamthaft als gesehen zu markieren, ist das Recht ''D
 === Konsultationen nach Datum ===
 l
 7.3cm
-[[File:doc_de/heute.png|image]] [fig:heute]
+[[File:heute.png|image]] [fig:heute]
 Diese View (Abb. [fig:heute]) dient dazu, Konsultationen eines bestimmten Zeitraums (standardmässig des aktuellen Tages) darzustellen. Sie gibt einen Überblick über Verrechnung und verrechnete Zeit jeder Konsultation einzeln und der Summe davon. Durch Anklicken der entsprechenden Checkbox können Sie angeben, ob offene<sup>[[#fn12|12]]</sup> oder abgerechnete Konsultationen (oder beides) gezählt werden sollen. In den Datumsfeldern können Sie Start- und Enddatum des gewünschten Zeitraums angeben. Nach jeder Änderung müssen Sie auf den ‘Neu einlesen’-Knopf klicken, damit die Liste neu gezählt wird.
 Im unteren Abschnitt der View sehen Sie die Gesamtzahl der Konsultationen im gewählten Zeitraum, sowie die (vom Abrechnungssystem her vorgegebene) verrechnete Zeit und den verrechneten Betrag. Im Feld darunter sehen Sie dieselben Angaben für die aktuell markierte Konsultation.
 Sie können diese View also auch verwenden, um Abends kurz die Konsultationen des Tages durchzugehen um unverrechnete oder falsch verrechnete zu korrigieren.
@@ -445,7 +446,7 @@ Im View-Menü finden Sie die Option ‘Liste drucken’. Dadurch öffnet sich ei
 Für detailliertere Statistiken können Sie ebenfalls im View-Menü die Option ‘Statistik’ auswählen. Dies liefert eine Datei im CSV<sup>[[#fn13|13]]</sup>- Format, die mit anderen Programmen wie OpenOffice.org calc oder MicrosoftExceleingelesen und statistisch aufbereitet werden kann. Diese Datei enthält alle abgerechneten Positionen mit Häufigkeit, Kosten und Umsatz.
 === Konsultationen zum Verrechnen ===
 Diese View (s. fig. [fig:konsv]) dient dazu, diejenigen Konsultationen auszuwählen, von welchen eine Rechnung erstellt werden soll. Es werden dabei nur die Konsultationen des aktuellen Mandanten angezeigt.
-[hb] [[File:doc_de/konsv.png|image]] [fig:konsv]
+[hb] [[File:konsv.png|image]] [fig:konsv]
 Hierzu gibt es folgende Möglichkeiten:
 * Automatische Auswahl (Zauberstab-Icon): Dabei werden die Konsultationen nach bestimmten Regeln automatisch ausgewählt und in die Auswahlliste übertragen. Dies wird weiter unten (Rechnungsautomatik) genauer ausgeführt.
 * Patientennamen aus der Liste in die Auswahl ziehen: Dadurch werden alle Konsultationen aller Fälle des gewählten Patienten zur Abrechnung markiert.
@@ -455,7 +456,7 @@ Bei allen Methoden können Sie die Auswahl nachträglich noch beliebig ändern. 
 Wenn Sie die Auswahl fertig erstellt haben, können Sie auf Rechnungen erstellenklicken, dann werden Rechnungen für alle in der Auswahl befindlichen Elemente erstellt. Dabei werden immer alle Konsultationen, die zu einem Fall gehören, zusammengefasst. Wenn von einem Patienten also mehrere Fälle in der Auswahl sind, werden auch mehrere Rechnungen erstellt.
 ==== Rechnungsautomatk ====
 [auto] Hiermit werden Konsultationen nach bestimmten wählbaren Kriterien zum Abrechnen vorgeschlagen (S. Abb. [fig:rnautomatik]).
-[[File:doc_de/rechnungsautomatik.png|image]]<br />
+[[File:rechnungsautomatik.png|image]]<br />
  [fig:rnautomatik]
 * Alle Fälle vorschlagen, die zum Abrechnen vorgemerkt sind: Wenn Sie diese Checkbox anklicken werden die Konsultationen jener Fälle ausgewählt, bei denen Sie ein Abrechnungsdatum im Fall-Detail spezifiziert hatten (Vgl. Abb. [fig:falldetail]).
 * Alle Behandlungsserien vorschlagen, welche angefangen haben vor…: Damit werden sämtliche unverrechneten Konsultationen eines Falls (bis heute) ausgewählt, sofern mindestens eine der Konsulationen vor dem Stichtag stattgefunden hat.
@@ -464,7 +465,7 @@ Wenn Sie die Auswahl fertig erstellt haben, können Sie auf Rechnungen erstellen
 * Alle Behandlungen des vergangenen Quartals vorschlagen: Hierbei wird das letzte ''Kalenderquartal'' abgerechnet. Es gelten also die Stichtage 31.3., 30.6, 30.9. und 31.12.
 Bei allen Optionen gilt, dass sie nur ausgewertet werden, wenn das Häkchen in der Checkbox gesetzt ist. Es genügt also nicht, einen Wert einzutragen. Die verschiedenen Optionen gelten additiv: Es wird also am Schluss jede Konsultation ausgewählt, für die mindestens eine der aktiven Kriterien zutrifft.
 === Rechnungen ===
-[ht] [[File:doc_de/rechnungsview.png|image]]<br />
+[ht] [[File:rechnungsview.png|image]]<br />
  [fig:rechnungen]
 In dieser View (Abb. [fig:rechnungen]) sehen Sie die erstellten Rechnungen. Eine Rechnung hat immer einen bestimmten Status:
 ; Offen
@@ -504,7 +505,7 @@ Um nur eine bestimmte Rechnungsnummer auszuwählen, geben Sie diese Nummer im Fe
 Wenn Sie auf das ‘Filter’-Symbol klicken, erhalten Sie weitere Darstellungsoptionen.
 l
 7cm
-[[File:doc_de/rechnungsfilter.png|image]]<br />
+[[File:rechnungsfilter.png|image]]<br />
  image
 Die Felder Betrag von/bis dienen dazu, Rechnungen mit einem bestimmten Betrag auszufiltern. Sie können auch nur eins der beiden Felder eingeben, damit wird das andere zur offenen Grenze. Die Felder Rechnungsdatum von und Rechnungsdatum bis dienen dazu, nur Rechnungen auszuwählen, welche zwischen diesen Daten erstellt wurden. Im Unterschied dazu dienen die Felder Statusdatum von/bis dazu, Rechnungen auszufiltern, deren letzte Statusänderung zwischen den genannten Daten lag. Auch hier können Sie jeweils nur eins der beiden Daten eingeben und das andere offenlassen. Wenn Sie den Dialog mit OK verlassen, wird die Liste anhand Ihrer Kriterien neu eingelesen.
 Solange der Filter-Knopf eingerastet ist, sind alle folgenden Einlese-Operationen mit dem Filter UND-Verknüpft. Wenn Sie also beispielsweise Statusdatum bis 30.10.2007 gefiltert haben, und dann das Statusfeld auf &quot;2. Mahnung gedruckt&quot; setzen und neu einlesen, dann werden Ihnen alle Rechnungen angezeigt, welche vor dem 30.10.2007 auf den Status ‘2. Mahnung gedruckt’ gesetzt wurden.
@@ -541,14 +542,14 @@ Diese View funktioniert ähnlich wie die Diagnosen-View (S. [view:diagnosen] auf
 == Diverse Views ==
 === Datenanzeige ===
 Dies ist eine View, die beliebige Felder der Elexis-Datenbank anzeigen kann. Mehrere Exemplare dieser View können (mit unterschiedlichen oder denselben Inhalten) in einer Perspektive eingebunden werden (S. Abb. [figure1]).
-[hb] [[File:doc_de/data1.png|image]] [figure1]
+[hb] [[File:data1.png|image]] [figure1]
 Durch Klick auf den '''+''' – Button können Sie ein weiteres Exemplar der View öffnen, durch Druck auf den Editieren-Button können Sie die anzuzeigenden Daten einstellen.
-[hb] [[File:doc_de/data2.png|image]] [figure2]
+[hb] [[File:data2.png|image]] [figure2]
 Es erscheint dann eine Dialogbox wie in Abb. [figure2]. Sie können hier jeden Datentyp einsetzen, der auch in Textvorlagen als Platzhalter verwendet werden kann (Vgl. S. ). Wenn Sie die Checkbox ‘Feld kann geändert werden’ ankreuzen, dann können die Daten (ausreichende Rechte vorausgesetzt) direkt durch Schreiben in dieses Fenster geändert werden. Die Anordnung und der Inhalt der Datenanzeige-Views werden beim Verlassen von Elexis, oder bei Betätigen der Menüaktion ‘Perspektive speichern’ gespeichert.
 === Fixmedikation ===
 Diese View zeigt die Fix- oder Dauermedikation des aktuell selektierten Patienten an (S. Abb. [fig:fixmedi])
 [htp]
-[[File:doc_de/fixmediview.png|image]] [fig:fixmedi]
+[[File:fixmediview.png|image]] [fig:fixmedi]
 Sie können Medikamente aus dem Artikel-Fenster oder aus einem Rezept in diese View ziehen, und Sie können auch Artikel aus der Fixmedikation in ein Rezept ziehen. Mit Klick auf Hinzu… öffnen Sie die Artikel-View. Mit Klick auf Liste… erstellen Sie eine Einnahmeliste für den Patienten. Dazu muss eine Textvorlage namens Einnahmeliste existieren, und diese muss an einer Stelle den Platzhalter [Medikamentenliste] enthalten. Mit Klick auf Rezept erstellen Sie ein Rezept mit der Dauermedikation. Hierzu muss eine Textvorlage namens Rezeptexistieren, welche an einer Stelle den Platzhalter [Rezeptzeilen] enthält.
 === Medikamenten-Verlauf ===
 Diese View zeigt alle Medikamente, die beim aktuellen Patienten je verschrieben oder abgegeben worden sind, mit Datum und Dosierung (falls angegeben). Durch Klick auf die entsprechenden Spaltenköpfe können Sie nac Abgabedatum oder Medinamen sortieren. Bei Medikamenten aus der Fixmedikation wird ausserdem, falls gegeben, das Stopdatum angezeigt.
@@ -560,7 +561,7 @@ Diese View zeigt bei aktiver Internet-Verbindung die entsprechende Site an, die 
 Erinnerungen, Reminders, Pendenzen: Diese View zeigt Ihnen Dinge an, an die Sie denken mochten oder sollten (s. Abb. [fig:pendenzen]).
 l
 7.5cm
-[[File:doc_de/pendenzenview.png|image]] [fig:pendenzen]
+[[File:pendenzenview.png|image]] [fig:pendenzen]
 Eine Pendenz hat ein Fälligkeitsdatum und einen Status (geplant, fällig, überfällig, erledigt, bleibt unerledigt).
 Es gibt folgende Typen von Pendenzen:
 * Aufträge für eine bestimmte Person oder Aufträge an alle.
@@ -611,45 +612,45 @@ Standardmässig sind bei der Elexis-Komplettinstallation, die Sie von der Websit
 [Agenda] Mehrbenutzerfähige Agenda zum Einbinden in Elexis. Dieses Plugin ist Teil der Standard-Distribution. Dieser Artikel beschreibt die Konfiguration und Verwendung der Agenda.
 === Konfiguration ===
 Wählen Sie im Menü '''Datei -Einstellungen'''. Wenn das Agenda-Plugin installiert ist, findet sich dort eine Rubrik ''Agenda'':
-[[File:doc_de/settings1.png|image]]<br />
+[[File:settings1.png|image]]<br />
  image
 Im oberen Abschnitt ''Bereiche'' können Sie angeben, wieviele und welche Agenden parallel geführt werden sollen. Dies kann beispielsweise eine eigene Agenda für jeden Arzt einer Gemeinschaftspraxis, oder auch bestimmte Ressourcen sein (z.B. Arzt, EKG, Labor, Ergometrie etc.). Menge und Titel der Bereiche sind ganz von den spezifischen Bedürfnissen Ihrer Praxis abhängig.
 Darunter,''Termintypen'' können Sie angeben, welche verschiedene Arten von Terminen es bei Ihnen geben soll. Ein Termintyp ist alles, was eingetragen werden kann. Also beispielsweise auch ''Teamsitzung'', ''Akupunktur'', ''Check-Up'', ''Fortbildung'' usw. Termintypen werden später unterschiedlich angezeigt und können unterschiedliche Zeitvorgaben haben. Die ersten beiden Einträge, frei und gesperrt, müssen mit dieser Bedeutung in dieser Reihenfolge angegeben sein, dürfen aber anders genannt werden (z.B. ''leer'' und ''reserviert''). Die anderen Zeilen können Sie beliebig benennen und es können beliebig viele sein.
 Das unterste Feld, ''Terminstatus'', ist ebenfalls ganz von den spezifischen Gegebenheiten Ihrer Praxis abhängig. Auch hier sind die zwei obersten Einträge in ihrer Bedeutung vorgegeben (können aber anders benannt werden), während die anderen völlig frei sind. Man könnte hier z.B. auch ''abgesagt'', ''wartet auf Labor'', ''wartet auf Arzt'' etc. eingeben.
 Die nächste Einstellungsseite der Agenda betrifft die Icons, mit denen die verschiedenen Termintypen angezeigt werden sollen.
-[[File:doc_de/settings2.png|image]]<br />
+[[File:settings2.png|image]]<br />
  image
 (Falls hier noch nicht Ihre gewählten Termintypen auftauchen, müssen Sie Elexis beenden und neu starten, um sie korrekt einzulesen). Klicken Sie auf ''Ändern'' und wählen Sie ein Bild im .*gif, *png oder *.ico Format aus.
 Der nächste Abschnitt betrifft die Anzeigefarben für Termintypen und -Status:
-[[File:doc_de/settings3.png|image]]<br />
+[[File:settings3.png|image]]<br />
  image
 Nach Doppelklick auf ein Feld können Sie die Farbe für dieses Feld auswählen.
-[[File:doc_de/settings4.png|image]]<br />
+[[File:settings4.png|image]]<br />
  image
 Die obere Reihe betrifft die Termintypen. Die hier angezeigten Farben werden im Termineingabedialog angezeigt. Die untere Reihe ist der Terminstatus; diese Farben werden in der normalen Agenda-Anzeige dargestellt
 Der nächste Abschnitt der Agenda-Einstellungen betrifft die Tageseinteilung:
-[[File:doc_de/settings5.png|image]] Hier wird eingestellt, welche Zeiträume für jeden Wochentag standardmässig für jeden Agenda-Bereich planbar sind. Dies kann nachträglich natürlich für jeden Tag auch separat geändert werden; hier geht es um die Vorgaben.
+[[File:settings5.png|image]] Hier wird eingestellt, welche Zeiträume für jeden Wochentag standardmässig für jeden Agenda-Bereich planbar sind. Dies kann nachträglich natürlich für jeden Tag auch separat geändert werden; hier geht es um die Vorgaben.
 Wählen Sie oben den gewünschten Bereich, und geben Sie hier jeweils Beginn- und Ende für jeden nicht planbaren Zeitraum an. Diese Zeiträume werden später mit dem Termintyp ''gesperrt'' besetzt. Sie können beliebig viele dieser Zeiträume für jeden Wochentag eingeben.
 Der letzte Abschnitt der Agenda-Einstellungen betrifft die Vorgabe-Zeitdauer für jeden Termintyp:
-[[File:doc_de/settings6.png|image]] Hier sehen Sie für jeden Bereich und jeden Termintyp eine Zeitangabe in Minuten. Sie können jedes Feld durch Anklicken und Überschreiben ändern. Diese Zeit wird die Agenda jeweils standardmässig für die entsprechenden Termintypen vorgeben (kann aber jeweils manuell geändert werden). Wenn Sie an einer Stelle 0 eingeben, dann wird dieser Termintyp beim entsprechenden Bereich gar nicht angeboten. Die oberste Zeile ist die Standarddauer, die immer dann angewendet wird, wenn keine spezifische Dauer gefunden werden kann.
+[[File:settings6.png|image]] Hier sehen Sie für jeden Bereich und jeden Termintyp eine Zeitangabe in Minuten. Sie können jedes Feld durch Anklicken und Überschreiben ändern. Diese Zeit wird die Agenda jeweils standardmässig für die entsprechenden Termintypen vorgeben (kann aber jeweils manuell geändert werden). Wenn Sie an einer Stelle 0 eingeben, dann wird dieser Termintyp beim entsprechenden Bereich gar nicht angeboten. Die oberste Zeile ist die Standarddauer, die immer dann angewendet wird, wenn keine spezifische Dauer gefunden werden kann.
 Des weiteren können Sie einige Einstellungen zum Druck von Terminkarten vornehmen. Diese Einstellungen finden Sie unter ''Druck''.
-[[File:doc_de/settings_agenda-druck1.png|image]]<br />
+[[File:settings_agenda-druck1.png|image]]<br />
  image
 Die Standard-Vorlage für den Ausdruck von Terminkarten heisst ''Terminkarte''. Sie können eine beliebige andere Systemvorlage wählen. Die Termine werden beim Platzhalter ''[Termine]'' eingesetzt.
 Beim Ausdruck einer Terminkarte erscheint ein Fenster mit der vorbereiteten Terminkarte. Sie können die Terminkarte aus der Textverarbeitung heraus drucken.
 Möchten Sie, dass die Terminkarte direkt auf dem Drucker ausgegeben wird, markieren Sie ''Direkt drucken''. Sie können nun den Drucker und optional den gewünschten Schacht auswählen. Falls Sie keinen Schacht auswählen, wird der in der Vorlage gespeicherte Schacht oder der Standard-Schacht des ausgewählten Druckers verwendet.
-[[File:doc_de/settings_agenda-druck1.png|image]]<br />
+[[File:settings_agenda-druck1.png|image]]<br />
  image
 Damit sind Sie mit der Konfiguration der Agenda fertig. Drücken Sie auf ''OK'' und beenden Sie Elexis. Ab dem nächsten Programmstart stehen die neuen Einstellungen zur Verfügung.
 Die nächsten Abschnitte befassen sich kurz mit der Bedienung der Agenda.
 === Bedienung der Agenda ===
 Die Agenda-View (Abb. [fig:agenda1]) wird standardmässig nicht angezeigt. Um sie auf den Bildschirm zu holen, wählen Sie im Menu '''Fenster-Ansicht-Andere''', tippen Sie im Filterfeld oben ''Agenda'', wählen Sie die Agenda aus und klicken Sie ''OK''. Ziehen Sie danach das Agenda-Fenster an die gewünschte Position der Perspektive, wie in ''erste Schritte'' [tour:customize] auf S. beschrieben.
-[[File:doc_de/use2.png|image]] [fig:agenda1]
+[[File:use2.png|image]] [fig:agenda1]
 Im Oberen Bereich können Sie das Datum einstellen. Klick auf das Haus führt zum heutigen Tag, Klick auf die Pfeile einen Tag vor oder zurück, Klick auf den mittleren Bereich zu einem Kalender, auf dem man das Datum auswählen kann. Klick auf das Dreieck rechts oben öffnet das View-Menu, in dem man den aktuell anzuzeigenden Bereich und die Tagesgrenzen einstellen kann.
 Im Hauptbereich sehen Sie die Agendaeinträge mit den Unter Terminstatus definierten Farben und mit jeweils dem Bild, das für den betreffenden Termintyp definiert wurde. Grün sind die noch freien Zeiträume. Beachten Sie, dass diese Agenda die Zeiträume nicht proportional zu ihrer Dauer anzeigt. Dies ist zwar am Anfang etwas gewöhnungsbedürftig, aber es hat sich bewährt, da man so auf kleinem Raum den ganzen Tag anzeigen kann
 Im untersten Bereich schliesslich sehen Sie weitere Informationen zum aktuell ausgewählten Termin.
 Wenn Sie auf einem freien Zeitraum doppelklicken, können Sie einen neuen Termin eingeben, wenn Sie auf einen Termin doppelklicken, können Sie diesen Termin ändern. In beiden Fällen geht das Dialogfenster Abb. [fig:termineingabe] auf.
-[ht] [[File:doc_de/use4.png|image]] [fig:termineingabe]
+[ht] [[File:use4.png|image]] [fig:termineingabe]
 Diese recht komplexe Dialogbox ist in mehrere Bereiche unterteilt:
 * Oben links ein Kalender, in dem sie einen anderen Tag auswählen können
 * Oben in der Mitte Felder für Anfangszeit, Endzeit und Dauer des aktuell ausgewählten Termins,
@@ -661,16 +662,16 @@ Diese recht komplexe Dialogbox ist in mehrere Bereiche unterteilt:
 * Darunter sind schliesslich die Personalien des ausgewählten Patienten, sowie Typ, Status und Text zum aktuellen Termin. Wenn Sie nicht einen Patienten, sondern freien Text eingeben wollen, können Sie auf die Zeile ''Personalien'' klicken und können dann selbst die Angaben verändern.
 Mit Klick auf OK wird der aktuelle Termin gesetzt und der Dialog wieder geschlossen.
 Wenn Sie einen Termin mit der rechten Maustaste anklicken, öffnet sich ein Kontextmenü, in dem Sie verschiedene Details zum Termin ändern können.
-[[File:doc_de/use5.png|image]] Am wichtigsten wohl die Veränderungen des Terminstatus: Da eine solche Änderung auf alle im Netz angeschlossenen PC’s repliziert wird, kann von den anderen Stationen aus festgestellt werden, dass z.B. jemand ''eingetroffen'' ist.
+[[File:use5.png|image]] Am wichtigsten wohl die Veränderungen des Terminstatus: Da eine solche Änderung auf alle im Netz angeschlossenen PC’s repliziert wird, kann von den anderen Stationen aus festgestellt werden, dass z.B. jemand ''eingetroffen'' ist.
 Wenn Sie für einen einzelnen Tag die reservierten Zeiträume ändern wollen, können Sie im Viewmenü oben ''Tagesgrenzen'' auswählen. Es erscheint dann folgender Dialog:
-[[File:doc_de/use3.png|image]] Hier können Sie (wie in den Einstellungen beschrieben) für den aktuellen Tag die Sperrzeiten einstellen.
+[[File:use3.png|image]] Hier können Sie (wie in den Einstellungen beschrieben) für den aktuellen Tag die Sperrzeiten einstellen.
 ==== Mehrere Agendafenster gleichzeitig ====
 Sie können ohne weiteres auch mehrere Agendafenster gleichzeitig darstellen, um etwa verschiedene Bereiche oder verschiedene Tage anzuzeigen.
-[[File:doc_de/agendamulti.png|image]]<br />
+[[File:agendamulti.png|image]]<br />
  image
 ==== Grösseres Fenster ====
 Ihre MPA möchte vielleicht auf ihrem Bildschirm eine Agenda, die mehr Informationen auf einen Blick liefert. Hierfür ist die View ''Agenda gross'' geeignet:
-[[File:doc_de/agenda2.png|image]] Wie Sie sehen, werden hier alle relevanten Informationen synoptisch dargestellt. Ansonsten ist die Funktion genau identisch; Sie können ohne weiteres auch beide Agenda-Viewtypen gleichzeitig benutzen
+[[File:agenda2.png|image]] Wie Sie sehen, werden hier alle relevanten Informationen synoptisch dargestellt. Ansonsten ist die Funktion genau identisch; Sie können ohne weiteres auch beide Agenda-Viewtypen gleichzeitig benutzen
 ==== Terminkarten drucken ====
 Im View-Menü der Agenda können Sie ''Patienten-Termine drucken'' wählen, um eine Terminkarte für den ausgewählten Patienten zu drucken. Die Zugehörige Formatvorlage heisst ''Terminkarte''. Weitere Informationen zur Konfiguration finden Sie weiter oben.
 Beim Ausdruck einer Terminkarte erscheint ein Fenster mit der vorbereiteten Terminkarte. Sie können die Terminkarte aus der Textverarbeitung heraus drucken. Das Fenster können Sie danach durch Klicken auf ''OK'' oder ''Abbrechen'' wieder schliessen.
@@ -679,33 +680,33 @@ Beim Ausdruck einer Terminkarte erscheint ein Fenster mit der vorbereiteten Term
 === Konfiguration ===
 [htbp]
 0.35
-[[File:doc_de/befunde1.png|image]] [fig:befundesettings]
+[[File:befunde1.png|image]] [fig:befundesettings]
 0.65
 Wenn das Plugin installiert ist, finden Sie im Menu Datei-Einstellungen eine Rubrik ''Befunde''. Diese wird anfangs leer sein (Abb. [fig:befundesettings]).
 Um einen neuen Befundparameter hinzuzufügen, klicken Sie auf ''Hinzufügen''. Sie werden nach dem Namen dieses Parameters gefragt, wir wählen Röntgen. Danach erscheint eine Karteikarte mit diesem Parameter, die wir jetzt noch mit den einzutragenden Datenspalten versehen müssen.
 [htbp]
 0.35
-[[File:doc_de/befunde2.png|image]] [fig:befundesettings]
+[[File:befunde2.png|image]] [fig:befundesettings]
 0.65
 Klicken Sie nach jeder Zeile auf ''Apply'' bzw. ''Anwenden'': Wenn ein Feld mehrzeilig sein soll, klicken Sie die entsprechende Checkbox an. Eine Variante mit mehr als zwei Spalten sehen Sie in Abb. [fig:befunde4].:
 [htbp]
 0.35
-[[File:doc_de/befunde7.png|image]] [fig:befunde4] [fig:befunde4]
+[[File:befunde7.png|image]] [fig:befunde4] [fig:befunde4]
 0.65
 Werte können auch errechnet statt direkt eingegeben werden. Geben Sie hierzu einfach einen Ausdruck der Form ''Resultat=Formel'' ein, wobei Sie sich mit Fx auf andere Felder derselben Seite beziehen können. Im Beispiel links errechnen wir den BMI aus den eingegebenen Werten für Grösse und Gewicht. Das Resultat wird allerdings standardmässig auf 9 Stellen genau ausgegeben, deswegen runden wir es hier auf eine Stelle.
 === Anwendung ===
 Öffnen Sie die Befunde-View.
-[[File:doc_de/befunde4.png|image]]<br />
+[[File:befunde4.png|image]]<br />
  image
 Sie sehen dann die konfigurierten Messparameter:
-[[File:doc_de/befunde5.png|image]]<br />
+[[File:befunde5.png|image]]<br />
  image
 Um eine neue Messung einzugeben, klicken Sie auf das grüne Pluszeichen rechts oben.
-[[File:doc_de/befunde6.png|image]]<br />
+[[File:befunde6.png|image]]<br />
  image
 Sie sehen jetzt Ihre bei der Konfiguration angegebenen Messzeilen, ein- oder mehrzeilig. Mit Klick auf OK wird der neue Eintrag übernommen. Mit Doppelklick können Sie ihn wieder öffnen.
 Im Fall eines berechneten Wertes können Sie die Rechnung durch Klicken auf den blauen Titel auslösen:
-[[File:doc_de/befunde8.png|image]]<br />
+[[File:befunde8.png|image]]<br />
  image
 === Text-Platzhalter ===
 Befunde können auch in Platzhalter von Textdokumenten eingefügt werden. Sie müssen hierzu die Syntax wie unter ‘Daten aus externen Plugins’ beschrieben ([datenfelder<sub>e</sub>xtern], S. ) anwenden. Der Schlüsselname des Befunde-Plugins ist Befunde-Data.
@@ -715,14 +716,14 @@ Um beispielsweise eine Tabelle mit dem Gewichtsverlauf des aktuellen Patienten i
 == Elexis-Arzttarife-Schweiz ==
 [arzttarife] Da Elexis ein universelles Praxisprogramm ist, ist die Abrechnung nach Tarmed nur eines von beliebig vielen möglichen Abrechnungssystemen. Konsequenterweise ist deshalb sowohl die Leistungserfassung, als auch die Rechnungserstellung nicht im Kernsystem enthalten, sondern in Plugins ausgelagert. Da Elexis aber ein Schweizer Programm ist, ist dieses Plugin natürlich Teil der Standarddistribution.
 === Einstellungen ===
-[[File:doc_de/arztrechnung1.png|image]]<br />
+[[File:arztrechnung1.png|image]]<br />
  [fig:tarmed1]
 Sobald das Tarmed-Plugin installiert ist (was standardmässig immer der Fall ist), können bei den Abrechnungssystemen (s. Abb. [fig:tarmed1]) Tarmedleistungen und Tarmeddrucker ausgewählt werden. Standardmässig werden beim ersten Erstellen eines Falls die Abrechnungssysteme KVG, UVG, IV, VVG und MV eingerichtet; weitere können Sie manuell hinzufügen bzw. werden von Plugins erstellt (z.B. Covercard). Weitere Hinweise zu den Abrechnungssystemen finden Sie im Anhang unter [settings:abrechnungssystem] auf S. . '''Wichtig:''' Achten Sie darauf, die für Ihren Kanton gültigen Taxpunktwerte einzutragen bevor Sie die ersten Leistungen verrechnen. Denken Sie bei einer Änderung des Taxpunktwerts bitte auch daran, dies hier nachzutragen, bevor Sie Leistungen verrechnen, für die der neue Taxpunktwert gilt. Nachträgliche Änderungen schon gedruckter Rechnungen sind sehr mühsam. Vergessen Sie auch nicht, unter ‘Labortarif’ den aktuell gültigen TP-Wert einzusetzen.
 Ein Taxpunktwert gilt immer ab einem bestimmten Datum und für so lange, bis ein neuer Taxpunktwert eingegeben wird. Ein einmal eingesetzter Wert kann nicht mehr geändert oder gelöscht werden (da sonst früher damit berechnete Leistungen ungültig würden). Man kann aber jederzeit einen neuen Taxpunktwert ab einem bestimmten Datum hinzufügen, indem man den entsprechenden Knopf klickt. Wenn Sie den Abschnitt Tarmed öffnen, erscheint der Punkt Rechnungseinstellungen (Abb. [fig:tarmed2]). Dort können Sie für jeden Mandanten einzeln einstellen, wie die Rechnungsdetails aussehen sollen.
-[[File:doc_de/arztrechnung2.png|image]]<br />
+[[File:arztrechnung2.png|image]]<br />
  [fig:tarmed2]
 Wählen Sie in der oberen Combobox einen Mandanten aus. Klicken Sie dann auf das Wort Leistungserbringer. Es erscheint eine Liste mit allem, was Tarmed von Ihnen wissen will:
-[[File:doc_de/tarmed3.png|image]]<br />
+[[File:tarmed3.png|image]]<br />
  image
 * Anrede – nunja, das war ja noch einfach
 * Titel – ebenso
@@ -735,7 +736,7 @@ Wählen Sie in der oberen Combobox einen Mandanten aus. Klicken Sie dann auf das
 * TarmedESRPlus – esr16or27 ist richtig, wenn Sie den Betrag in der ESR-Zeile eincodieren möchten/können (dies ist der Normalfall), esr16or27plus müssen Sie angeben, wenn der Kunde den Betrag manuell eingeben müssen soll.
 * TarmedSpezialität – Ihre Spezialität, unter der Sie mit diesem Mandanten abrechnen
 Klicken Sie dann je nach Ihren Verhältnissen auf das Wort ''Bankverbindung'' oder ''Postkonto''
-[[File:doc_de/tarmed4.png|image]]<br />
+[[File:tarmed4.png|image]]<br />
  image
 Bei Bankverbindung wählen Sie anschliessend noch durch Klick auf Finanzinstitut Ihre (hoffentlich schon als Kontakt erfasste) Bank aus. Danach müssen noch zwei Details zum ESR-Vertrag ergänzt werden: TarmedERSParticipantNumber – Die ESR-Teilnehmernummer Ihrer Bank (dort zu erfragen) TarmedESRIdentity – Ihre BESR-Kundennummer, die Sie ebenfalls von der Bank erfragen müssen
 '''Bitte beachten:''' Sie werden keine gültige Tarmed-Rechnung ausdrucken oder ans Trust-Center übermitteln können, bevor Sie nicht alle diese Daten korrekt eingetragen haben. Dafür kann Elexis nichts, das sind Anforderungen von Tarmed.
@@ -751,7 +752,7 @@ Welche dieser Methoden die Richtige ist, hängt von Ihrem Kanton, Ihren vertragl
 === Views dieses Plugins ===
 Dieses Plugin arbeitet mit der existierenden Rechnungen-View des Kernsystems zusammen. Es bringt nur eine eigene View zum Verbuchen der Zahlungseingänge mit:
 ==== ESR ====
-[hb] [[File:doc_de/esr1.png|image]]<br />
+[hb] [[File:esr1.png|image]]<br />
  [fig:esr]
 In Abb. [fig:esr] sehen Sie die View zum Einlesen von ESR-Dateien. Ihre Bank wird Ihnen, wenn Sie die entsprechende Vereinbarung unterzeichnet haben, ESR-Dateien zum Abholen per Internet bereitstellen. Diese ESR-Dateien enthalten die Zahlungseingänge zu Ihren Rechnungen. Elexis kann die ESR-Dateien einlesen und die bezahlten Beträge automatisch den entsprechenden Rechnungen gutschreiben.
 = Das Textsystem =
@@ -763,10 +764,10 @@ Im Installer der Windows-Version von Elexis ist bereits eine geeignete OpenOffic
 Nach der Installation von OpenOffice und Elexis müssen Sie die beiden Programme noch miteinander bekannt machen. Dies geschieht innerhalb von Elexis, indem Sie das Textplugin so konfigurieren, dass es auf OpenOffice zugreift (Das Plugin NOA-Text<sup>[[#fn14|14]]</sup>muss hierzu installiert sein, was standardmässig der Fall ist.
 Wählen Sie im Menu Datei – Einstellungen – Textverarbeitung Es erscheint eine Dialogbox wie in Abb [fig:text1]. Wählen Sie dort
 [htp]
-[[File:doc_de/text1.png|image]] [fig:text1]
+[[File:text1.png|image]] [fig:text1]
 NOA-Text. Gehen Sie dann zum Feld OpenOffice.org (S. Abb. [fig:text2] und wählen Sie durch Klick auf definierenden Pfad zu Ihrer OpenOffice-Installation aus.
 [htp]
-[[File:doc_de/text2.png|image]] [fig:text2]
+[[File:text2.png|image]] [fig:text2]
 Ab dem, nächsten Start von Elexis sollte OpenOffice dann zur Verfügung stehen (Bei der ersten Verwendung werden Sie noch den Lizenzbedingungen von OpenOffice.org zustimmen müssen)
 == Vorlagen ==
 [textvorlagen] In Elexis erstellte Dokumente basieren immer auf bestimmten Vorlagen. Eine Vorlage enthält einerseits das Aussehen des Dokuments (Briefkopf etc.), andererseits bestimmte Platzhalter, in die beim Erstellen des Dokuments dann die entsprechenden Daten eingefügt werden.
@@ -907,7 +908,7 @@ Bei Elexis kann jeder Anwender Mitglied eine oder mehrere ''Rollen''<sup>[[#fn15
 Sobald Anwender und Rollen definiert sind, können die Rechte verteilt werden. Dieser Schritt ist unter Standardbedingungen nicht unbedingt notwendig, da die normalerweise existierenden Rechte oft schon für diese Zwecke richtig definiert sind.
 Die Verteilung von Zugriffsrechten erfolgt über das Menü Datei – Einstellungen – Gruppen und Rechte – Zugriffsteuerung (S. [fig:zugriff]).
 [htp]
-[[File:doc_de/zugriff.png|image]] [fig:zugriff]
+[[File:zugriff.png|image]] [fig:zugriff]
 Wie Sie erkennen können, sind die Rechte benannt und hierarchisch angeordnet – Das Recht Vorlagen ändern ist offensichtlich dem Recht Dokumente untergeordnet. Im unteren Abschnitt des Fensters sehen Sie alle im System vorhandenen Gruppen und Anwender. Die Regel ist nun so:
 * Wer ein Recht hat, hat implizit auch alle diesem Recht untergeordneten Rechte.
 * Wer ein Recht hat, hat aber ''nicht'' automatisch die diesem Recht übergeordneten Rechte.
@@ -945,7 +946,7 @@ Bitte beachten Sie, dass unsere Pauschalangebote und Wartungsverträge jeweils n
 = Einstellungen =
 [settings] Die Einstellungen sind alle im selben Dialog zusammengefasst, welcher unter Datei-Einstellungen erreicht werden kann (Abb. [fig:settingsmain]).
 [h]
-[[File:doc_de/settingsmain.png|image]] [fig:settingsmain]
+[[File:settingsmain.png|image]] [fig:settingsmain]
 Wie üblich in Elexis ist der genaue Inhalt dieses Dialogs davon abhängig, welche Plugins installiert sind. Mit den Reitern auf der linken Seite wählt man einen Bereich aus, für den man Einstellungen ändern möchte. Wir gehen hier auf diejenigen Seiten ein, die zur Grundausstattung von Elexis gehören. Grundsätzlich sollten alle Einstellungen Ab Werkvernünftige Grundeinstellungen aufweisen, so dass es zunächst nicht nötig ist, hier etwas zu ändern. Sie brauchen daher dieses Kapitel auch nicht unbedingt weiterzulesen.
 == Abrechnungssysteme ==
 [settings:abrechnungssystem] Auf dieser Seite legen Sie fest, welche Arten von Abrechnungssystemen in Ihrer Praxis verwendet werden.
@@ -959,7 +960,7 @@ Man kann in Elexis beliebig viele Abrechnungssysteme definieren, welche parallel
 Jedes Abrechnungssystem hat bestimmte Eigenschaften:
 l
 5cm
-[[File:doc_de/abrechnungssystem1.png|image]] [fig:abr1]
+[[File:abrechnungssystem1.png|image]] [fig:abr1]
 Der Name ist frei wählbar, Leistungscode-System und Standard-Rechnungsausgabe können aus den installierten Plugins gewählt werden (Für nicht vorhandene Abrechnungssysteme müssten entsprechende Plugins erstellt werden). Der Multiplikator ist ein Faktor, der auf jede einzelne Position angewendet wird, wenn sie verrechnet wird. Man kann also verschiedene Abrechnungssysteme mit demselbem Leistungscode-System, aber verschiedenen Multiplikatoren (Taxpunkten) haben. Mit ''Hinzufügen'' kann man einen Multiplikator definieren, welcher immer ab einem bestimmten Datum gilt.
 Und schliesslich sind je nach Abrechnungssystem bestimmte Angaben notwendig, um die Leistungen zu verrechnen, beispielsweise Rechnungsempfänger, Kostenträger, Nummern etc. Elexis macht hier keine Vorschriften, Sie können eingeben, was immer Sie wollen. Es sind die Datentypen Text, Kontakt und Datum möglich. (Bei UVG-Versicherungen beispielsweise auch Unfalldatum).
 == Allgemein ==
@@ -1005,7 +1006,7 @@ Dies ist die zentrale Benutzerverwaltung. Auf diesen Einstellungsseiten können 
 Jedes Laborresultat ist durch ein solches Item, ein Datum und einen Patienten eindeutig identifiziert. Es kann deswegen durchaus mehrere Items für ein- und denselben Parameter geben. Beispielsweise kann es ein Item Vitamin B12 von verschiedenen Labors geben, welche nicht zwingend denselben Normbereich haben müssen. Sie können die Liste der Tabelle durch Klick auf die Spaltenköpfe umsortieren.
 Mit Neuer Laborparameter können Sie manuell ein neues Item erstellen<sup>[[#fn16|16]]</sup> und die oben genannten Angaben eingeben. Hier ist es sehr wichtig, dass Sie sich im Voraus genau überlegen, welche Laborparameter Sie benötigen, und wie Sie diese gruppiert haben wollen.
 [htp]
-[[File:doc_de/labor1.png|image]] [fig:labor1]
+[[File:labor1.png|image]] [fig:labor1]
 In Abb. [fig:labor1] sehen Sie den Dialog zum Anlegen eines neuen bzw. Ändern eines existierenden Items. Ganz oben geben Sie da Labor ein, von dem es stammt (Das Labor muss bereits als Kontakt erfasst sein). Kürzel und Titel sind die Anzeige des Items. Als Typ wählen Sie ''Zahl'', ''Text'' (Für Parameter, die sich nicht als Zahl darstellen lassen, z.B. Bakteriologiebefunde), ''Absolut'' für Parameter, die nur positiv oder negativ sein können und ''Formel'' für Resultate, die errechnet werden sollen (z.B. LDL-Cholesterin gem. Friedewald- Dies ist weiter unten ([ref:formel]) genauer erklärt).
 Unter ''ReferenzM'' geben Sie den Referenzbereich für Männer, unter ''ReferenzF'' für Frauen ein <sup>[[#fn17|17]]</sup>, unter ''Einheit'' entsprechend die Masseinheit für den Parameter.
 Unter ''Gruppe'' geben Sie an, wo dieser Parameter gruppiert sein soll. Bereits existierende Gruppen sind in der Combobox schon enthalten und können einfach ausgewählt werden. Um eine neue Gruppe zu erstellen, können Sie den Namen einfach eintippen. Der Gruppenname muss folgendes Format haben: Ein- oder mehrere Buchstaben, ein Leerzeichen, dann ein beliebiger Text. Die räfix entscheidet über die Sortierung auf dem Laborblatt. So wird die Gruppe ''A Hämatologie'' oberhalb von ''B Elektrolyte'' zu stehen kommen, und ''DA Leberwerte'' vor ''DC Nierenparameter''. Die Bennenung und die Reihenfolge der Gruppen bleibt ganz Ihnen überlassen.
@@ -1017,16 +1018,16 @@ Unter ''Sequenz-Nr'' schliesslich geben Sie ein, wo innerhalb der Gruppe dieser 
 * Triglyceride in Gruppe ''G Fettstoffwechsel'', Sequenznummer 40
 Wir erstellen jetzt einen neuen Parameter namens ''LDL (errechnet)'' in Gruppe G und geben ihm z.B. die Sequenznummer 21 (hier sehen Sie, dass es gut war, dass wir bei den vorherigen Sequenznummern Lücken gelassen haben) (Abb. [fig:labor2]).
 [htp]
-[[File:doc_de/labor2.png|image]] [fig:labor2]
+[[File:labor2.png|image]] [fig:labor2]
 Dann Klicken Sie bitte auf die Typbezeichnung ''Formel_. Es öffnet sich ein Eingabedialog zum Eingeben der Formel:<br />
  !images/doc''de/labor3(image)!<br />
  Um uns in der Formel auf andere Laborparameter zu beziehen, verwenden wir deren Gruppenindex (also das was vor dem Leerzeichen in der Gruppenbezeichnung steht) und Sequenznummer, getrennt durch einen Unterstrich. Um Gesamtcholesterin zu referenzieren, wählen wir also die Bezeichnung G_20. Die Friedewald-Formel wird damit zu ''G_10-G_20-(G_40/2.2)''. Dies würde dann allerdings auf 9 Stellen genau ausgegeben. Deshalb runden wir in unserem Beispiel mittels Math.round noch auf 2 Stellen.
 Wenn jetzt die Laborwerte, auf die sich die Formel bezieht, eingegeben werden, dann wird Elexis jeweils versuchen, die Formel auszuwerten. Wenn das nicht gelingt, weil beispielsweise noch nicht alle benötigten Parameter eingegeben sind, wird ''?formel?'' eingesetzt (S. Abb. [fig:labor4]).
 [htp]
-[[File:doc_de/labor4.png|image]] [fig:labor4]
+[[File:labor4.png|image]] [fig:labor4]
 Erst wenn alle benötigten Parameter vorhanden sind, wird der errechnete Wert eingesetzt (Abb. [fig:labor5]).
 [htp]
-[[File:doc_de/labor5.png|image]] [fig:labor5]
+[[File:labor5.png|image]] [fig:labor5]
 == Leistungscodes ==
 Dies ist wieder eine Sammelrubrik, die je nach vorhandenen Plugins für die Leistungsabrechnung unterschiedlich gefüllt sein kann. In der Schweiz ist hier standardmässig Labortarif und Tarmed vorhanden. Diese sind auf Seite genauer erklärt.
 == Textverarbeitung ==

@@ -34,40 +34,63 @@
 		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
 	</tr>
 </table>
+
 == Einführung ==
+
 Dieses Feature bietet eine Aufbereitung aller verrechneten Leistungen sowie die Buchhaltungsfunktionen ‘Faktura Journal’, ‘Faktura Journal detailliert’, ‘Offene Posten’ (Debitoren nach Datum), ‘Zahlungsjournal’ und ‘Rechnungen nach Fälligkeitsdatum’.
+
 == Installation und Deinstallation ==
 Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren.  OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]])
+
 ==Bedienung==
+
 ===Aufrufen der 'Archie'-Perspective===
 Mit einem Klick auf das Archie-Icon (Abb. 1) erreichen Sie die Perspektive. Die gewünschte Auswertung kann in der Combobox rechts oben (‘Verfügbare Statistiken’) ausgesucht werden, im Feld darunter kann das Zeitintervall  Start- und Enddatum eingestellt werden, und schliesslich wird die Abfrage durch Klick auf ‘Abfrage starten’ ausgelöst. Das Ergebnis erscheint im linken Fenster und kann – wie alle in Archie erstellten Auswertungen – grafisch angezeigt oder im universellen CSV-Format für andere Programme wie Excelexportiert werden.
 Aus Datenschutzgründen werden (ausser in ‘Alle Leistungen’) keine Patientennamen sondern nur die internen – und für Dritte bedeutungslosen – * Patientennummern angegeben. Die Listen können daher ohne Bedenken z.B. einem Treuhänder oder Wirtschatsprüfer übergeben werden.
 Die Ausgabe ‘Alle Leistungen’ ist für '''interne''' Analysen in grösseren Praxen bestimmt, z.B für Kostenteiler-Berechnungen. Das Mitführen der Patientennamen erleichtern die Plausibilitätsprüfung. Sind Namen aus Datenschutzgründen nicht erwünscht kann, nach Import des CSV-Files in die Datenbank der Wahl, Name und Vorname gelöscht werden und nur mit der Pat-ID gearbeitet werden.
+
 '''Abbildung 1: Übersicht ‘Archie-Perspektive’'''
-[[File:buch1.png|image|600px]]
+[[File:buch1.png|none|image|600px]]
+
+
+
 === Die verschiedenen Abfragen===
+
 ====Alle Leistungen====
+
 Diese Auswertung liefert Ihnen alle im angegebenen Zeitraum verrechneten Leistungen. Wählen Sie dazu unter ‘Verfügbare Statistiken’ die Option ‘Alle Leistungen’, wählen Sie Start- und Enddatum und klicken Sie auf ‘Abfrage starten’.
 Jeder Leistung werden folgende Argumente zugeordnet:
 Rechnungssteller / Mandant / Benutzer / Stammarzt / Beh_Datum / Pat_Name / Pat_Vorname / Pat_Id / Geb_Datum / Sex / PLZ / Wohnort / Text / Tarmed_Code / Tarmed_AL / Tarmed_TL / Tariftyp / TP_Wert / Anzahl / Einkauf_Kosten / Verkauf_Kosten / Betrag / MWSt / Rn_Status (Rechnungsstatus)
 Für eine Analyse der Daten aus der Abfrage ‘Alle Leistungen’ können Sie die Aufstellung als CSV-Datei exportieren und im Programm der Wahl bearbeiten (Excel, SQL-Datenbank). Für grössere Betriebe wird ein Export in eine SQL-Datenbank (Structured Query Language) empfohlen. Abfragen mit SQL erlauben sehr differenzierte Resultate. Falls sie selber nicht ‘SQL-mächtig’ sind hilft Ihnen Medelexis oder Ihr SupportCenter gerne weiter.
+
 ==== Faktura-Journal ====
+
 Diese Auswertung liefert Ihnen alle im angegebenen Zeitraum ausgelösten Buchungsvorgänge mit den folgenden Spalten:
 Patienten-Nr / Datum / Betrag / Typ / Text (Rechnungen, Zahlungen, Stornos).
 Der Saldo aller Buchungsvorgänge entspricht Ihren offenen Debitoren.
 Wählen Sie dazu unter ‘Verfügbare Statistiken’ die Option ‘Faktura-Journal’, wählen Sie Start- und Enddatum und klicken Sie auf ‘Abfrage starten’;
+
 ====Zahlungsjournal ====
+
 Diese Auswertung liefert alle Zahlungseingänge im angegebenen Zeitraum.
+
 ==== Offene Posten ====
+
 ‘Offene Posten’ liefert Ihnen alle im angegebenen Zeitraum ausgelösten Buchungsvorgänge mit den folgenden Spalten:
 Patienten-Nr / Rechnung-Nr / Rechnungsstatus / Offener Betrag
-Diese Auswertung (Vgl. Abb 2) liefert alle Ausstände zu einem anzugebenden Stichtag. Wählen Sie das Ausgangsdatum (ältere Rechnungen werden nicht mehr berücksichtigt) und einen Stichtag (Zahlungen nach diesem Stichtag werden nicht mehr berücksichtigt).
-'''Abbildung 2: Offene Posten'''
-[[File:buch2.png|image|800px]] 
+Diese Auswertung (Vgl. Abb 2) liefert alle Ausstände zu einem anzugebenden Stichtag. Wählen Sie das Ausgangsdatum (ältere Rechnungen werden nicht mehr berücksichtigt) und einen Stichtag (Zahlungen nach diesem Stichtag werden nicht mehr berücksichtigt). <br />
+
+'''Abbildung 2: Offene Posten''' <br />
+
+[[File:buch2.png|none|image|800px]] 
+
 ==== Rechnungen nach Fälligkeitsdatum ====
+
 Diese Auswertung erlaubt Ihnen eine gewissen ‘Blick in die Zukunft’: Sie zeigt Ihnen, welche Rechnungen bis zu einem bestimmten Zeitpunkt fällig werden. Geben Sie das gewünschte Stichdatum ein und klicken Sie auf ‘Abfrage starten’. Die Abfrage bringt folgende Spalten zurück:
 Patienten-Nr / Rechnung-Nr / Fällig am / Betrag
+
 ==== Grafische Darstellung====
+
 Die Abbildung 3 zeigt eine grafische Darstellung ''(noch ausführen)''
 '''Abbildung 3: Betrags-Vergleich der verschiedenen Kategorien von Ausständen'''
-[[File:buch3.png|image|800px]]
+[[File:buch3.png|none|image|800px]]

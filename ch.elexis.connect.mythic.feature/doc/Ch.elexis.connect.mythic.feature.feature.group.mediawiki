@@ -49,6 +49,6 @@ Hier stellen Sie den gewählten seriellen Port ein und die Schnittstellenparamet
 Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch ein neuer Button ‘Mythic’ (Abb. [fig:mythic2]. Klicken Sie auf diesem Knopf, dann erscheint zunächst eine Dialogbox, in der Sie eingeben müssen, welchem Patienten die nächsten Resultate zugeordnet werden sollen. Danach wird die Verbindung hergestellt. Die Verbindung bleibt bestehen (Der Knopf erscheint eingerastet), bis entweder die Daten empfangen worden sind, oder 5 Minuten verstrichen sind, ohne dass Daten übertragen wurden, oder Sie den Knopf wieder manuell auslösen.
 Wichtig: In der aktuellen Version muss das Senden vom Mythic zum PC manuell ausgelöst werden (Resultate-&gt;Optionen-&gt;Send)
 == Kabelspezifikation ==
-[[File:Ch.elexis.connect.mythic/kabel.png|image]]
+[[File:kabel.png|image]]
 Es wird ein gerades, serielles Kabel benötigt (gemäss Abb. [fig:kabel])). Das Kabel muss an beiden Enden einen 9-poligen Stecker (1x weiblich und 1x männlich) aufweisen.
 [[#fnr1|<sup>1</sup>]] In der Schweiz von der Firma Polymed vertrieben

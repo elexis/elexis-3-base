@@ -8,7 +8,7 @@
 	</tr>
 	<tr>
 		<td style="width:150px;">Kategorie:</td>
-		<td></td>
+		<td>Geräteanbindung</td>
 	</tr>
 	<tr>
 		<td>Beschreibung:</td>

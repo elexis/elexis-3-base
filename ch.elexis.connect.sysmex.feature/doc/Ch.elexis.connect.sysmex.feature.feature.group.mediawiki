@@ -34,7 +34,7 @@
 		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
 	</tr>
 </table>
-ex_logo.png|image]]<br />
+[[File:sysmex-elexis_logo.png|image]]<br />
  image
 [[File:sysmex-device.png|image]]<br />
  image

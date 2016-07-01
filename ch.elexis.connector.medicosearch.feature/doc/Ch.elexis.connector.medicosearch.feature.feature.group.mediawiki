@@ -1,0 +1,105 @@
+[[Category:Datenaustausch]]
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Datenaustausch</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>Elexis Agenda - Medicosearch Synchronisation</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Lucia Amann</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>11. September 2015</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0, Internetverbidnung</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+== Einführung ==
+
+Dieses Plugin ermöglicht den Abgleich von Agenda Terminen mit dem Medicosearch Portal. 
+
+== Voraussetzungen ==
+
+Sie benötigen neben Elexis 3.0 und einer Internetverbindung einen [http://www.medicosearch.ch/ Medicosearch] Account 
+
+
+== Installation und Konfiguration ==
+
+Die Anwendung kann über das Abo-Management installiert/deinstalliert werden. Abonnieren Sie in der Kategorie ''Datenaustausch'' das Plugin ''Elexis Agenda - Medicosearch Synchronisation''. Nach dem Aktualisieren von Elexis ist das Modul geladen. 
+
+=== Konfiguration ===
+
+Nach erfolgreicher Installation finden sie unter ''Einstellungen/Datenaustausch/Medicosearch'' die entsprechende Einstellugnsseite.
+
+[[Datei:MedicosearchPrefs.png]]
+
+Sie können die Konfigurationsdatei von hier aus direkt öffnen und die notwendigen Einstellungen setzten. Bitte achten Sie darauf das die Konfigurationsdatei die nachfolgenden Einträge enthält, da die Synchronisation bei falschen Angaben nicht korrekt durchgeführt werden kann.
+
+'''1) Konfiguration der Datenbank Informationen'''
+
+[[Datei:connectionElexis.png|700px]]
+
+Info zum Datenbanktreiber, der URL und dem Datenbank User Ihrer Elexisinstallation erhalten Sie unter Verbindungen ...
+
+[[Datei:CurrDBInfo.png]]
+
+
+'''2) Konfiguration für Medicosearch Portal'''
+
+Geben Sie hier die Medicosearch Termin Buchungs-URL an (dürfte mit nachfolgender URL übereinstimmen), sowie Ihre Medicosearch Zugangsdaten. 
+
+[[Datei:connectionMedicosearch.png|700px]]
+
+
+'''3) Konfiguration des eines Agendabereichs zum Synchronisieren'''
+
+Über diese Synchronisationsoptionen lässt sich festlegen, für welhen Mandanten welcher Agenda Bereich synchronisiert werden soll.
+Zudem muss angegeben werden, für welche Wochentage und jeweilige Zeitspanne die Online Terminvergabe erlaubt ist. Alle Zeiten ausserhalb der definierten Zeitspannen erscheinen in Medicosearch als ''besetzt''.
+
+''Beispiel:'' 
+* m1.timespan.mondays = 07:30-17:30
+* m1.timespan.tuesdays = 08:00-18:00
+* m1.timespan.wednesdays
+Hier wird die Online Termin Verbuchung an Montage jeweils von 07:30 bis 17:30 Uhr, an Dienstage zwischen 8:00 bis
+18:00 Uhr und an Mittwoche den ganzen Tag erlaubt. An den anderen Wochentagen ist keine Online Terminvergabe
+erlaubt.
+
+<KEY> muss durch den Schlüssel für diesen Mandanten ersetzt werden (im Beispiel also m1). Pro Mandant muss ein neuer Schlüssel genommen werden (für Mandant 2 also m2).
+
+[[Datei:MedicosearchMandantSettings.png|700px]]
+
+== Anwendung ==
+
+Um die Termine aus Elexis mit Medicosearch zu synchronisieren betätigen Sie in der View ''Agenda Gross'' das Medicosearch Icon [[Datei:syncMedicosearch.png]].
+
+Nach der Synchronisation stehen jene Zeiten, welche Bereits mit Terminen belegt sind in Medicosearch nicht mehr zur Verfügung.
+
+[[Datei:AgendaMedicosearchOverview.png|400px|Elexis Agenda Übersicht]]
+[[Datei:MedicosearchOnline.png|400px|Medicosearch Online]]
+
+== Warnungen und Fehler ==
+
+Die Konfigurationsdatei und die Medicosearch Jar-Datei sind essentiell für die Funktion dieses Plugins und müssen deshalb vorhanden sein, ansonsten kann die Synchronisation nicht durchgeführt werden.

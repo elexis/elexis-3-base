@@ -1,0 +1,79 @@
+[[Category:Datenaustausch]]
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Datenaustausch</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>Laborimport Eurolyser</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Thomas Huster</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>30. November 2015</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+== Einführung ==
+
+Dieses Plugin ermöglicht das Importieren von Laborwerte aus Dateien welche von Eurolyser Geräten generiert wurden.
+
+== Installation und Konfiguration ==
+
+Die Installation (bzw. Deinstallation) des Plugins erfolgt über das Abo-Management. Abonnieren Sie in der Kategorie ''Datenaustausch'' das Plguin ''Laborimport Eurolyser''. Nach dem Aktualisieren von Elexis ist das Modul geladen. 
+
+=== Konfiguration ===
+
+[[Datei:Eurolyser_Preferences.png]]
+
+Unter ''Einstellungen/Datenaustausch/Eurolyser'' können Sie ein Mandaten Kürzel einstellen. Wenn kein Kürzel eingestellt ist werden unabhängig vom Mandaten alle Werte aus den Eurolyser Dateien importiert. Wenn ein Kürzel konfiguriert ist, werden nur die Werte importiert welche mit dem Kürzel markiert sind.
+
+Ein Beispiel Wert des Mandanten-Kürzel DZ, für dem Patienten Max Mustermann mit der ID 6, sieht wie folgt aus.
+
+''DZ0006;Max Mustermann;GOT AST;26.0 U/l;30.11.15,10:10:51''
+
+Dateien welche sich nicht an das Format halten, bzw. keine Zeile für dem eingestellten Mandaten beinhalten werden ignoriert. Dateien aus welchen ein Import stattgefunden hat, werde einen Archiv Verzeichnis verschoben. Das Archiv Verzeichnis wird im Verzeichnis aus dem der Import gestartet wurde erstellt.
+
+== Vewerwendung ==
+
+In der LaborView bzw. Roche LaborView findet sich nach der Laborimport Eurolyser Installation zusätzliche Funktionalitäten:
+
+[[Datei:Eurolyser_Import_Action.png]]
+
+# Beim Aufruf von ''Import...'' findet sich nun ein zusätzlicher Tab '''Eurolyser'''
+# Es erscheint ein neuer Menüpunkt für den direkten Import.
+
+=== Labor-Import ===
+
+[[Datei:Eurolyser_Import.png]]
+
+* Wählen Sie ein Verzeichnis aus in dem sich die zu importierenden Eurolyser Dateien befinden, und klicken Sie auf ''OK''. Es beginnt der Import und Sie werden falls der Patient bzw. der Laborparameter nicht automatisch erkannt wird, aufgefordert diesen manuell auszuwählen.
+
+Für die ausgewählten Laborparameter wird ein Mapping erstellt, damit diese beim nächsten Import automatisch erkannt werden. Diese Mappings können natürlich auch direkt in den Laborparameter Einstellungen vergeben bzw. geändert werden.
+
+[[Datei:Eurolyser_Preferences_Mapping.png]]
+
+Nach erfolgreichem Import erscheinen die Messwerte und Dateien in der LaborView bzw. in Inbox.

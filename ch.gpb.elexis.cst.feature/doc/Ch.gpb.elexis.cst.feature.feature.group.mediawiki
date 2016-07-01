@@ -1,0 +1,108 @@
+== Einführung ==
+Das '''Cellsymbiosistherapie®-Plugin''' ist ein Tool zum Patienten-Monitoring, das Elexis-Anwendern eine pro Patient konfigurierbare und übersichtliche Darstellung der relevanten Resultate und Befunde über den Zeitverlauf ermöglicht.
+Es wurde eigentlich speziell für die CST entwickelt, kann aber genauso für andere Therapieformen, welche ein Monitoring von Laborwerten und Befunden erfordern, verwendet werden.
+
+== Beispiele Auswertung ==
+
+'''Anzeigemodus Effektiv'''
+
+[[Datei:Cst-auswertung-effektiv.png|mini|CST Group Editor]]
+
+Die obere der beiden Grafiken zeigt den Verlauf der Werte, die untere den neuesten Wert, 
+über den Zeitraum, so wie er im Profileditor definiert wurde.
+
+
+----
+
+
+'''Anzeigemodus Minimal/Maximal'''
+
+[[Datei:Cst-auswertung-minimax.png|mini|CST Group Editor]]
+
+Diese Auswertung zeigt den jeweils höchsten und niedersten Wert innerhalb einer 
+bestimmten Zeitspanne. Im Profileditor können drei verschiedene Zeitspannen festgelegt werden.
+
+----
+
+
+'''Befundauswertung'''
+
+[[Datei:Cst-auswertung-common.png|mini|CST Group Editor]]
+
+Diese Anzeige ist in beiden Auswertungsmodi vorhanden. Die Befundarten werden im Profileditor dynamisch aufgelistet
+und können zur Anzeige selektiert werden. 
+
+''Sämtliche Auswertungen können im PDF- und PNG-Format gespeichert werden''
+
+== Installation / Deinstallation==
+
+Falls Sie das Plugin nicht über das ServiceAbo installieren, müssen Sie
+die Datei in den Ordner "Dropins" kopieren.
+
+
+== Konfiguration ==
+In den Einstellungen können Auswahlkriterien für die Anzeige von CST-relevanten Briefen
+sowie Omnivore-Dokumenten innerhalb des CST Plugins festgelegt werden.
+
+[[Datei:Cst-einstellungen.png|mini|CST Einstellungen]]
+
+== Funktionen ==
+
+Das Plugin besteht im Wesentlichen aus zwei Editoren-Views und zwei verschiedenen
+Anzeige-Modi für die Resultatauswertung: 
+* CST Group Editor
+* CST Profile Editor
+
+* Auswertungsmodus "Effektiv"
+* Auswertungsmodus "Minimal/Maximal"
+
+
+
+im '''Group Editor''' können Laborparameter, wie sie auch in der "Labor"-View zur Anzeige kommen, zu Themenblöcken oder Gruppen zusammengestellt werden.
+
+Die Themenblöcke können später im Profile Editor den Patienten-Profilen zugeordnet werden:
+
+
+[[Datei:Cst-group-editor-2.PNG|mini|CST Group Editor]]
+
+Zu jedem Laborparameter kann eine Zusammenfassung erfasst werden, welche in der späteren Auswertung zur Anzeige kommt.
+
+Funktionen:
+
+* CST Gruppe (Themenblock) erstellen oder löschen
+* Laborparameter zu Themenblock hinzufügen oder löschen
+* Beschreibung erfassen
+
+
+----
+
+
+Im '''Profile Editor''' können für den ausgewählten Patienten "CST-Profile" erstellt werden.
+
+Den Profilen können rechterhand in der View die vorher erstellten "CST Groups" oder Themenblöcke zugeordnet werden.
+
+Die Reihenfolge (in der Auswertung) kann mit den Buttons Auf und Abwärts festgelegt werden:
+
+[[Datei:Cst-profile-editor-2.PNG|mini|CST Group Editor]]
+
+
+'''Templates:''' 
+
+Profile können als Template markiert werden und stehen dann in der Auswahl
+des "neues Profil anlegen" - Dialogs zur Verfügung.
+							
+'''Auswertungsmodus "Effektiv"'''
+
+Der Parameter Crawlback bestimmt, wie weit die Suche nach Laborwerten und Befunden 
+zurückgeht (in Tagen), bis ein Resultat für die Anzeige in der Letzter-Wert-Grafik 
+gefunden wird. Alle früheren Werte werden in der Vorwert-Grafik angezeigt, ab dem 
+Datum in "Auswerten ab".
+
+: Crawlback = 0  in der Letzer-Wert-Grafik wird das neueste Datum, an dem es Laborresultate gab, verwendet, auch wenn für den vorliegenden Parameter an diesem Datum kein Wert vorliegt.
+: Crawlback > 0  in der Letzer-Wert-Grafik der neueste verfügbare Wert angezeigt, so weit der Crawlback eben reicht.
+: Auswerten ab:  nur neuere Werte werden berücksichtigt.
+							
+'''Auswertungsmodus "Minimal/Maximal"'''
+				
+für diesen Modus können drei Zeitspannen festgelegt werden, aus welchen
+jeweils der maximale und minimale Wert herausgesucht wird.

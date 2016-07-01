@@ -1,0 +1,98 @@
+[[Kategorie:Basis-System]]
+== Einführung ==
+
+Dies ist ein Medikamente-Plugin, das als Datenbasis die vom BAG veröffentlichte Excel-Version der Spezialitätenliste verwendet. Darüberhinaus hat es einige funktionelle Erweiterungen gegenüber dem älteren, Galdat-basierten Plugin. Es bindet sich in die Verrechnen-View und in die Artikel-Perspektive ein und kann so exakt gleich wie die anderen Verrechnungsbezogenen Views verwendet werden.
+
+== Voraussetzungen ==
+
+Dieses Plugin benötigt Elexis 1.4.0 oder höher.
+
+Dieses Plugin kann entweder allein oder auch zusammen mit dem existierenden Galdat-Plugin verwendet werden. In letzterem Fall wird auch eine gemeinsame Datenbasis verwendet. Das heisst, bei Medikamenten der SL werden die zusätzlichen SL-spezifischen Angaben integriert, die nicht-SL-Artikel bleiben weiterhin vorhanden, aber haben weiterhin nur die Galdat-Informationen. (Die Zusätzlichen Informationen der SL-Medikamente sind im Wesentlichen Inhaltsstoffe, therapeutische Gruppe und Generika-Status)
+
+== Verwendung ==
+
+[htbp]
+
+0.5
+
+[[Image:liste1.png|image]] [fig:bagmedi]
+
+0.5
+
+[[Image:liste2.png|image]] [fig:bagmedi2]
+
+In der Listenauswahl (Abb. [fig:bagmedi]) haben Sie jetzt einen Generika-Filterknopf und drei verschiedene Felder zur Auswahl:
+
+* Name: Medikamente nach Name filtern
+* Substanz: Medikamente nach Inhaltsstoff filtern
+* Notiz: Medikamente nach eigenen Notizen filtern.
+
+Wenn der Generika-Knopf eingerastet ist, werden bei allen ''nachfolgenden'' Filterungen nur Generika angezeigt.
+
+Wenn Sie auf ein Medikament mit der rechten Maustaste klicken, erhalten Sie ausserdem die Option &quot;‘selbe therap. Gruppe&quot;’. Auswahl dieser Option bewirkt, dass alle Medikamente, die zur selben therapeutischen Gruppe gehören, angezeigt werden.
+
+Die Bilder vor dem Medikamentennamen stehen für den Generikastatus: Blaues O bedeutet: Dies ist ein Originalpräparat, für das kein Generikum existiert. Rotes O bedeutet: Dies ist ein Originalpräparat, für das midnestens ein Generikum existiert. Grünes G bedeutet: Dies ist ein Generikum.
+
+Jede Zeile enthält den offiziellen Namen des Medikaments, dahinter den &lt;Preis&gt;, dann die [Inhaltsstoffe] und zuletzt, bei Lagerartikeln, den (Lagerbestand). Lagerartikel werden ausserdem in blau dargestellt, oder in rot, falls der Lagerbestand unter den Minimalbestand abgesunken ist.
+
+Die Notiz-Spalte (Abb. [fig:bagmedi2]) dient dazu, Medikamente nach eigenen Kriterien zu gruppieren. Beispielsweise könnten Sie Ihren Diabetesmedikamenten die Notiz ''Diabetes'' zuordnen. Wenn Sei dann im Notiz-Feld ''Diabetes'' eintippen, erscheint Ihre Auswahl.
+
+Klick auf den neu einlesen Knopf löscht alle Filterbedingungen und lädt somit wieder alle Medikamente in die Liste.
+
+== Detailansicht ==
+
+[[Image:detail1.png|image]] [fig:bagdetail]
+
+Die Detailansicht zeigt Ihnen einerseits verschiedene Details zum ausgewählten Medikament, erlaubt Ihnen aber andererseits auch, eigene Ergänzungen anzubringen.
+
+== Datenfelder ==
+
+Die Datenfelder im oberen Bereich bieten Ihnen die Möglichkeit, ein Medikament als Lagerartikel zu deklarieren. Gehen Sie dazu so vor:
+
+* Geben Sie unter Min. Pckg. an Lager ein, wieviele Packungen dieses Medikaments mindestens an Lager sein sollen. (Sobald die vorhandene Anzahl unter diese Zahl fällt, wird das betreffende Medikament bei der nächsten Bestellung aufgeführt)
+* Geben Sie unter Max. Pckg. an Lager ein, wieviele Packungen dieses Medikaments höchstens an Lager sein sollen. Wenn eine Bestellung erstellt wird, dann werden soviele Packungen bestellt, dass diese Zahl erreicht wird.
+* Geben Sie unter Aktuell Packg. an Lager ein. wieviele Packungen jetzt an Lager sind.
+* Suchen Sie unter Lieferant den Lieferanten für dieses Medikament aus.
+
+Falls es sich um ein Medikament handelt, bei dem üblicherweise nicht ganze Verpackungseinheiten abgeben werden (zum Beispiel Ampullen), dann tragen Sie ausserdem unter Stück pro Packung und Stück pro Abgabe, sowie Aktuell an Lager die entsprechenden Angaben ein (Aber nur dann! Lassen Sie diese beiden Felder leer bei Produkten, die Sie in denselben Packungen verkaufen, in denen Sie sie auch einkaufen.)
+
+Bei jeder Verrechnung eines Lagerartikels wird der Lagerbestand automatisch entsprechend angepasst (Bei Packungsbruchteilen wird jeweils Aktuell an Lager heruntergezählt und bei Erreichen von 0 eine neue Packung &quot;‘angebrochen&quot;’.)
+
+== Inhaltsstoffe ==
+
+Dieses Feld ist nur bei SL-Medikamenten gefüllt, da die Galdat-Daten diese Informationen nicht beinhalten.
+
+== Bisher eingetragene Interaktionen ==
+
+Dies ist keine (teure) vorgefertigte Lösung, sondern ein Angebot, die für Sie relevanten Interaktionen selbst einzutragen. Auf Wunsch können Sie auch ein Abonnement abschliessen, um Ihre Interaktionsdaten regelmässig mit einer zentralen Datenbank abzugleichen.
+
+Um eine neue Interaktion zu erfassen, klicken Sie auf ‘Bearbeiten…’. Es öffnet sich eine Dialogbox wie in Abb. [fig:baginterakt].
+
+[ht]
+
+[[Image:interakt1.png|image]] [fig:baginterakt]
+
+Klicken Sie auf einen der im obersten Feld angegebenen Inhaltsstoffe. Es erscheinen dann alle zu diesem Inhaltsstoff bekannten Interaktionen im mittleren Feld. Um eine neue Interaktion zu erfassen, klicken Sie auf Substanz hinzufügen. Wenn Sie eine der Substanzen anklicken, können Sie weiter unten die Art der Interaktion spezifizieren. Geben Sie ‘Typ der Interaktion’ und ‘Klinische Relevanz’ ein. Im untersten Feld können Sie die Art der Interaktion noch in Worten beschreiben.
+
+== Fachinformationen ==
+
+Auch hier setzen wir auf do it yourself<sup>[[#fn1|1]]</sup>: Bei denjenigen Medikamenten, die Ihnen wichtig sind, können Sie selbst mit Cut&amp;Paste die Fachdokumentation hier hineinkopieren. Beachten Sie dabei aber bitte allfällige urheberrechtliche Bestimmungen.
+
+[[#fnr1|<sup>1</sup>]] Da dieses Plugin kostenlos ist, rechnen wir mit Ihrem Verständnis dafür, dass es keine teuren Lizenzen für Medikamenteninformationen enthält. Im Prinzip wäre es im Interesse der Qualität des Gesundheitswesens (und damit Sache des BAG) Fachinformationen und Interaktionsdaten zu vernünftigen Preisen zur Verfügung zu stellen. Dies findet bisher aber leider nicht statt.
+
+
+
+{{PluginInfo
+|plugin=ch.elexis.medikamente.bag
+| eingelesen=von /elexis-base/ch.elexis.medikamente.bag/doc/ch.elexis.medikamente.bag.tex am 25.03.2013
+| name=Medikamente SL
+| description=Medikamentenauswahl basierend auf der Spezialitätenliste
+| category=feature
+| license=EPL
+| first_commit_date=2007-09-06
+| first_commit_author=rgw_ch
+| responsible=weirich@elexis.ch
+| type=Basis-System
+
+
+}}

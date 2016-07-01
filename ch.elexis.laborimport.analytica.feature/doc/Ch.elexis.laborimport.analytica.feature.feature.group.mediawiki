@@ -1,42 +1,158 @@
 [[Category:Laboranbindung]]
+= Elexis OpenVPN-Client für Analytica =
+
+Mit diesem Plug-In lassen sich einfach Labordaten von Analytica übernehmen. Wir zeigen hier auf, wie Sie OpenVPN installieren, das Plugin-Konfigurieren und einen Import durchführen.
+
+== Installation des Windows-OpenVPN-Clients ==
+
+Falls Ihr Support OpenVPN schon auf Ihrem Computer installiert hat, sollten Sie in Ihrer Bildschirmleiste das Icon von “OpenVPN” sehen (in dieser Abbildung in der Mitte).
+
+ 
+
+[[Image:OpenVPN_Config_1.png|image]]<br />
+
+Falls dies der Fall ist, überspringen Sie diesen Abschnitt.
+
+OpenVPN kann vom Internet aus [[ http://www.openvpn.net/release/openvpn-2.1.1-install.exe|http://www.openvpn.net/index.php/open-source/downloads.html]] hinuntergeladen werden. Bei diesen Beispielen wurde eine englische Version gebraucht.
+
+; <span><span>Übersetzte</span></span>
+: Versionen findet man für
+;; <span><span>Deutsch</span></span>
+;: http://openvpn.se/files/localized/binary/1.0.3/openvpn-gui-1.0.3-de.exe
+;; <span><span>Französich</span></span>
+;: http://openvpn.se/files/localized/binary/1.0.3/openvpn-gui-1.0.3-fr.exe
+;; <span><span>Italienisch</span></span>
+;: http://openvpn.se/files/localized/binary/1.0.3/openvpn-gui-1.0.3-it.exe
+
+Wir nehmen im folgenden an, dass Sie diese unter C:\Programme\OpenVPN installiert haben
+
+Diese Datei ausführen (allfällige Warnungen quittieren). Dann sollte folgendes Fenster erscheinen:
+
+ 
+
+[[Image:OpenVPN_Setup_1.png|image]]<br />
+
+Auf Next drücken.Beim nächsten Dialog muss der Pfad angegeben werden. Falls Sie sich für einen anderen entscheiden, müssen Sie Sich diesen merken, da er später bei der Konfiguration des Plugins gebraucht wird. <br /> 
+
+[[Image:OpenVPN_Setup_2.png|image]]<br />
+
+Nach dem Drücken auf Install geht es eine Weile, bis alle Datein kopiert wurden. Warten, bis “Installation Complete” erscheint und die Taste “Next” gedrückt werden kann.
+
+ 
+
+[[Image:OpenVPN_Setup_3.png|image]]<br />
+
+Nach einem weiteren Tastendruck auf “Finish” ist die Installation beendet.
+
+ 
+
+[[Image:OpenVPN_Setup_4.png|image]]<br />
+
+== Konfiguration (pro Arbeitsplatz) ==
+
+Analytica liefert folgende Dateien. Diese müssen wie folgt im Ordner C:\Program Files\OpenVPN\config abgelegt werden. Dazu brauchen Sie Administratorenrechte und müssen diese Aktion bestätigen.
+
+# analytica-ca.crt (öffentlicher Teil des Schlüssel von Analytica)
+# Pro Arbeitsplatz (hier die Name für die erste)
+## name_1.crt (öffentlicher Teil des Schlüssel von name_1)
+## name_1.key (privater Teil des Schlüssel von name_1. Darf nicht weitergegeben werden!)
+## name_1.ovpn (Konfiguration von OpenVPN wie IP-Adresse des Analytica-Servers)
+
+Wichtig! Eine Datei wie name_1.crt darf auf genau einem PC installiert werden, ansonsten es zu gravierenden Problemen kommt (sprich: Keine Verbindung mehr möglich, oder nur wenn nur 1 PC am laufen ist).
+
+== Erster Verbindungstest ==
+
+Zum Testen der Verbindung starten Sie unter “Alle Programme..OpenVPN..OpenVPN GUI”.
+
+Danach sollte Sie in Ihrer Bildschirmleiste ein neues Icon sehen, das beim Anklicken etwa so aussieht:
+
+ 
+
+[[Image:OpenVPN_start_1.png|image]]<br />
+
+Drücken Sie nun auf “Connect”. Falls Ihre Verbindung zu Stand kommt, erwartet Sie etwa folgendes Bild:
+
+ 
+
+[[Image:OpenVPN_Status_172.png|image]]<br />
+
+Bei Probleme überprüfen Sie Ihre Firewall-Einstellungen.
+
+== Import-Plugin konfigurieren ==
+
+Bevor Sie das Plugin benutzen können, müssen in den Einstellung noch einige Sachen angepasst werden.
+
+# Nach dem Aufstarten von Elexis den Menupunkt Datei..Einstellungen..auswählen. Datenaustausch..Team-W Import anwählen.
+# Die Felder “Adresse des FTP-Servers, FTP User, FTP Password” gemäss Angaben von Analytica ausfüllen.
+# Einen Order für die vom FTP-Server herunterzuladnen Dateien erstellen. Vollständigen Pfadnamen dazu im Feld “Download Verzeichnis” angeben. Auf “Apply” drücken. Auf “OK” drücken.
+
+== Import-Plugin benutzen ==
+
+Beim Labor-Blatt benutzen Sie den Menupunkt “Import”.
+
+ 
+
+[[Image:Import_4.png|image]]<br />Danach können Sie Daten, entweder aus einer Datei importieren oder via Plugin alle von Analytica auf dem FTP-Server bereitgestellten Resultate abholen.
+
+ 
+
+[[Image:Import_1.png|image]]<br />
+
+Sie müssen die Zuordnung zum Patienten beim Importieren noch bestätigen, falls diese nicht automatisch festgestellt werden konnte.
+
+Fehlermeldungen:
+
+<pre>C:\Programme\OpenVPN\config&gt;openvpn.exe --config elexis-1.ovpn
+Tue Apr 27 21:12:15 2010 Error: private key password verification failed</pre>
+Grund war: <span>*</span>.key-Datei war leer, da sie nicht vom Server her gelesen werden konnte.
+
+= Windows-Firewall =
+
+Unter Windows soll man wie folgt die Firewall abschalten können (via Registry.key)
+
+<pre>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters IPEnableRouter = dword:00000001</pre>
+= Wie vorgehen bei Problemen =
+
+<ol>
+<li><p>OpenVPN-Logdatei überprüfen</p>
+<p>Die Verbindung ist zu Stande gekommen, falls folgende Zeile gefunden werden kann</p>
+<pre>Mon Jun 06 16:43:31 2011 Initialization Sequence Completed</pre></li>
+<li><p>FTP-Verbindung überprüfen.</p>
+<p>Kann mit einem Ftp-Client (z.B. FileZilla von http://www.filezilla.de/) auf den FTP-Server (z.B. 172.23.45.1) von Analytica zugegriffen werden?</p></li></ol>
+
 
 <table style="width:100%; border: 1px solid; padding: 10px">
-	
-	<tr>
-		<td>Version:</td>
-		<td>3.0.0.v20140328-2023</td>
-	</tr>
-	<tr>
-		<td style="width:150px;">Kategorie:</td>
-		<td>Laboranbindung</td>
-	</tr>
-	<tr>
-		<td>Beschreibung:</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>Author:</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>Letzte Bearbeitung:</td>
-		<td>14. Juni 2014</td>
-	</tr>
-	<tr>
-		<td>Voraussetzungen:</td>
-		<td>Elexis 3.0</td>
-	</tr>
-	<tr>
-		<td>Betriebssystem:</td>
-		<td>Windows, Mac, Linux</td>
-	</tr>
-	<tr>
-		<td>Lizenz:</td>
-		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
-	</tr>
+  
+  <tr>
+    <td>Version:</td>
+    <td>3.0.0.v20140328-2023</td>
+  </tr>
+  <tr>
+    <td style="width:150px;">Kategorie:</td>
+    <td>Laboranbindung</td>
+  </tr>
+  <tr>
+    <td>Beschreibung:</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Author:</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Letzte Bearbeitung:</td>
+    <td>14. Juni 2014</td>
+  </tr>
+  <tr>
+    <td>Voraussetzungen:</td>
+    <td>Elexis 3.0</td>
+  </tr>
+  <tr>
+    <td>Betriebssystem:</td>
+    <td>Windows, Mac, Linux</td>
+  </tr>
+  <tr>
+    <td>Lizenz:</td>
+    <td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+  </tr>
 </table>
-
-
-
-
-== Bitte Dokumentation erstellen ==

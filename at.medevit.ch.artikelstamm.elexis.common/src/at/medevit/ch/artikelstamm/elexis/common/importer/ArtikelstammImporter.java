@@ -324,8 +324,10 @@ public class ArtikelstammImporter {
 			PersistentObject.getConnection().releaseStatement(stm);
 			
 			if (foundElements == 0) {
+				String dscr = (item.getDSCR().length() > 99) ? item.getDSCR().substring(0, 100)
+						: item.getDSCR();
 				ai = new ArtikelstammItem(newVersion, item.getPHARMATYPE().charAt(0),
-					item.getGTIN(), item.getPHAR(), item.getDSCR(), StringConstants.EMPTY);
+					item.getGTIN(), item.getPHAR(), dscr, StringConstants.EMPTY);
 				setValuesOnArtikelstammItem(ai, item, false, -1);
 			} else if (foundElements == 1) {
 				String itemId = PersistentObject.getConnection()
@@ -359,7 +361,9 @@ public class ArtikelstammImporter {
 		if (allValues) {
 			// include header values
 			fields.add(ArtikelstammItem.FLD_DSCR);
-			values.add(item.getDSCR());
+			String dscr = item.getDSCR();
+			values.add((dscr.length() > 99) ? item.getDSCR().substring(0, 100).toString()
+					: item.getDSCR());
 			fields.add(ArtikelstammItem.FLD_CUMMULATED_VERSION);
 			values.add(cummulatedVersion + "");
 		}

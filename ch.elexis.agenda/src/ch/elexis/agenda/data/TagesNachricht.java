@@ -40,8 +40,7 @@ public class TagesNachricht extends PersistentObject {
 	
 	static {
 		addMapping(TABLENAME, "Zeile=Kurz", "Text=Msg"); //$NON-NLS-1$ //$NON-NLS-2$
-		TagesNachricht start = load("1"); //$NON-NLS-1$
-		if (start.state() < PersistentObject.DELETED) {
+		if (!tableExists(TABLENAME)) {
 			try {
 				createOrModifyTable(createDB);
 				// ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));

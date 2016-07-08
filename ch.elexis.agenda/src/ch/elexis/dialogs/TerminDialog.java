@@ -899,7 +899,7 @@ public class TerminDialog extends TitleAreaDialog {
 			CoreHub.localCfg.get(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
 				PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT);
 		
-		if (avoidPatientDoubleBooking) {
+		if (avoidPatientDoubleBooking && actKontakt != null) {
 			Query<Termin> tQuery = new Query<Termin>(Termin.class);
 			tQuery.add(Termin.FLD_PATIENT, Query.EQUALS, actKontakt.getId());
 			tQuery.add(Termin.FLD_TAG, Query.EQUALS, actDate.toString(TimeTool.DATE_COMPACT));

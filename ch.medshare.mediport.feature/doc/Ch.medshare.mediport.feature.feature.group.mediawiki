@@ -32,7 +32,7 @@
 	</tr>
 	<tr>
 		<td>Lizenz:</td>
-		<td>Proprietär</td>
+		<td>EPL</td>
 	</tr>
 </table>
 

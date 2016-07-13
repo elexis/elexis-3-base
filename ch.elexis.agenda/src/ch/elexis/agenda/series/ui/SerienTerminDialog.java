@@ -79,6 +79,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 	private Spinner durationSpinner;
 	
 	private int result;
+	private boolean noedit;
 	
 	/**
 	 * Create the dialog.
@@ -88,8 +89,12 @@ public class SerienTerminDialog extends TitleAreaDialog {
 	public SerienTerminDialog(Shell parentShell, SerienTermin serienTermin){
 		super(parentShell);
 		this.serienTermin = serienTermin;
-		if (this.serienTermin == null)
+		if (this.serienTermin == null) {
+			noedit = false;
 			this.serienTermin = new SerienTermin();
+		} else {
+			noedit = true;
+		}
 	}
 	
 	/**
@@ -102,7 +107,11 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		Composite area = (Composite) super.createDialogArea(parent);
 		
 		setTitleImage(ResourceManager.getPluginImage("ch.elexis.agenda", "icons/recurringDate.png"));
-		setMessage(Messages.getString("SerienTerminDialog.this.message")); //$NON-NLS-1$
+		if (noedit) {
+			setMessage(Messages.getString("SerienTerminDialog.this.message.show")); //$NON-NLS-1$
+		} else {
+			setMessage(Messages.getString("SerienTerminDialog.this.message.create")); //$NON-NLS-1$
+		}
 		
 		Group grpTermin = new Group(area, SWT.NONE);
 		grpTermin.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -327,7 +336,24 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		
 		initDialog();
 		
+		if (noedit) {
+			disableAll(area);
+		}
+		
 		return area;
+	}
+	
+	private void disableAll(Control widget){
+		if (widget instanceof Composite) {
+			Composite composite = (Composite) widget;
+			Control[] children = composite.getChildren();
+			for (Control control : children) {
+				disableAll(control);
+			}
+			composite.setEnabled(false);
+		} else if (widget instanceof Control) {
+			widget.setEnabled(false);
+		}
 	}
 	
 	private void initDialog(){
@@ -410,11 +436,11 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		super.buttonPressed(buttonId);
 		switch (buttonId) {
 		case Dialog.OK:
-			if (result == APPLY) {
+			if (noedit) {
+				close();
+			} else if (result == APPLY) {
 				serienTermin.persist();
 				close();
-			} else if (result == CANCEL) {
-				cancelEntry();
 			}
 			break;
 		case IDialogConstants.STOP_ID:
@@ -434,46 +460,46 @@ public class SerienTerminDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-		switch (serienTermin.getSeriesType()) {
-		case DAILY:
-			switch (serienTermin.getEndingType()) {
-			case AFTER_N_OCCURENCES:
-				serienTermin.setSeriesPatternString(txtEndsAfterNOccurences.getText());
-				break;
-			case ON_SPECIFIC_DATE:
-				serienTermin.setSeriesPatternString(SerienTermin.dateFormat.format(serienTermin
-					.getEndsOnDate()));
-				break;
-			}
-			break;
-		case WEEKLY:
-			StringBuilder sb = new StringBuilder();
-			sb.append(wsc.getTxtWeekDistance().getText() + ",");
-			for (int i = 1; i < 8; i++) {
-				if (wsc.getWeekdays()[i].getSelection()) {
-					sb.append(i);
+		if (!noedit) {
+			switch (serienTermin.getSeriesType()) {
+			case DAILY:
+				switch (serienTermin.getEndingType()) {
+				case AFTER_N_OCCURENCES:
+					serienTermin.setSeriesPatternString(txtEndsAfterNOccurences.getText());
+					break;
+				case ON_SPECIFIC_DATE:
+					serienTermin.setSeriesPatternString(
+						SerienTermin.dateFormat.format(serienTermin.getEndsOnDate()));
+					break;
 				}
+				break;
+			case WEEKLY:
+				StringBuilder sb = new StringBuilder();
+				sb.append(wsc.getTxtWeekDistance().getText() + ",");
+				for (int i = 1; i < 8; i++) {
+					if (wsc.getWeekdays()[i].getSelection()) {
+						sb.append(i);
+					}
+				}
+				serienTermin.setSeriesPatternString(sb.toString());
+				break;
+			case MONTHLY:
+				serienTermin.setSeriesPatternString(msc.getDay() + "");
+				break;
+			case YEARLY:
+				serienTermin.setSeriesPatternString(
+					decimalFormat.format(ysc.getDay()) + decimalFormat.format(ysc.getMonth()));
+				break;
+			default:
+				break;
 			}
-			serienTermin.setSeriesPatternString(sb.toString());
-			break;
-		case MONTHLY:
-			serienTermin.setSeriesPatternString(msc.getDay() + "");
-			break;
-		case YEARLY:
-			serienTermin.setSeriesPatternString(decimalFormat.format(ysc.getDay())
-				+ decimalFormat.format(ysc.getMonth()));
-			break;
-		default:
-			break;
-		}
-		if (serienTermin.getContact() == null) {
-			serienTermin.setFreeText(txtContact.getText());
-		}
-		
-		// ask user about next step (keep, change, cancel) in case of a lock time collision
-		if (serienTermin.collidesWithLockTimes()) {
-			MessageDialog collisionDialog =
-				new MessageDialog(getShell(),
+			if (serienTermin.getContact() == null) {
+				serienTermin.setFreeText(txtContact.getText());
+			}
+			
+			// ask user about next step (keep, change, cancel) in case of a lock time collision
+			if (serienTermin.collidesWithLockTimes()) {
+				MessageDialog collisionDialog = new MessageDialog(getShell(),
 					Messages.getString("SerienTerminDialog.dlgLockTimesConflict"),
 					getTitleImageLabel().getImage(),
 					Messages.getString("SerienTerminDialog.dlgLockTimesSeriesConflict"),
@@ -482,11 +508,12 @@ public class SerienTerminDialog extends TitleAreaDialog {
 						Messages.getString("SerienTerminDialog.dlgBtnChange"),
 						Messages.getString("SerienTerminDialog.dlgBtnCancel")
 					}, 0);
-			
-			result = collisionDialog.open();
-		} else {
-			result = APPLY;
-			super.okPressed();
+					
+				result = collisionDialog.open();
+			} else {
+				result = APPLY;
+				super.okPressed();
+			}
 		}
 	}
 	

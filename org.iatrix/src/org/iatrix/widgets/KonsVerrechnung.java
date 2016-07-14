@@ -545,6 +545,11 @@ public class KonsVerrechnung implements IJournalArea {
 					((IStructuredSelection) verrechnungViewer.getSelection()).getFirstElement();
 				if (sel != null) {
 					Verrechnet verrechnet = (Verrechnet) sel;
+					
+					if(!verrechnet.getKons().isEditable(true)) {
+						return;
+					}
+					
 					// String p=Rechnung.geldFormat.format(verrechnet.getEffPreisInRappen()/100.0);
 					String p = verrechnet.getEffPreis().getAmountAsString();
 					InputDialog dlg = new InputDialog(

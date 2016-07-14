@@ -1,6 +1,6 @@
 [[Category:Laboranbindung]]
 
-table style="width:100%; border: 1px solid; padding: 10px">
+<table style="width:100%; border: 1px solid; padding: 10px">
 	
 	<tr>
 		<td>Version:</td>

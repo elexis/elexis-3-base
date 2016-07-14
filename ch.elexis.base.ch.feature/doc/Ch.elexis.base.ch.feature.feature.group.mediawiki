@@ -34,20 +34,12 @@
 	</tr>
 </table>
 
+Basis-System für die Unterstützung des Schweizer Gesundheitswesens in Elexis.
 
-
-
-== Installation / Deinstallation==
-ToDo
-
-
-== Konfiguration ==
-ToDo
-
-
-== Einführung ==
-ToDo
-
-
-== Funktionen ==
-ToDo
+Enthält:
+* Unterstützung für die [[At.medevit.elexis.loinc.feature.feature.group| LOINC-Klassifizierung]]
+* [[Ch.elexis.base.ch.ebanking| E-Banking ]]
+* [[Ch.elexis.base.ch.labortarif_2009 | Labortarife und TARMED]]
+* [[Ch.elexis.base.ch.diagnosecodes | Diagnosecodes]]
+* [[At.medevit.ch.artikelstamm| Artikelstamm]] für alle in der Schweiz zugelassenen Medikamente und MiGel
+* [[At.medevit.atc_code| ATC-Codes]]

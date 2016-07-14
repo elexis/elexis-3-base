@@ -1,1 +1,1 @@
-Basisfunktionen für Elexis zum Erstellen von PDFs
+#WEITERLEITUNG [[Ch.elexis.fop wrapper.feature.feature.group]]

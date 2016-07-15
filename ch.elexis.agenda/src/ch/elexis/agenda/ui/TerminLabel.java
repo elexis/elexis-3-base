@@ -65,6 +65,7 @@ public class TerminLabel extends Composite {
 	Activator agenda = Activator.getDefault();
 	private IAction terminKuerzenAction, terminVerlaengernAction, terminAendernAction;
 	private GC lblGc;
+	private List<TerminLabel> overLapped;
 	
 	/**
 	 * Static map holding all fonts used by all TerminLabel instances.
@@ -159,6 +160,9 @@ public class TerminLabel extends Composite {
 	}
 	
 	public void refresh(){
+		if (overLapped != null) {
+			setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));
+		}
 		Color back = Plannables.getTypColor(t);
 		lbl.setBackground(back);
 		// l.setBackground(Desk.getColor(Desk.COL_GREY20));
@@ -329,4 +333,25 @@ public class TerminLabel extends Composite {
 		};
 	}
 	
+	public static void checkAllCollisions(List<TerminLabel> tlabels){
+		tlabels.parallelStream().forEach(terminLabel -> terminLabel.checkCollision(tlabels));
+	}
+	
+	private void checkCollision(List<TerminLabel> tlabels){
+		String checkBereich = getTermin().getBereich();
+		for (TerminLabel otherLabel : tlabels) {
+			if (otherLabel != this && otherLabel.getTermin().getBereich().equals(checkBereich)) {
+				if (Plannables.isOverlapped(getTermin(), otherLabel.getTermin())) {
+					addOverlapped(otherLabel);
+				}
+			}
+		}
+	}
+	
+	private void addOverlapped(TerminLabel otherLabel){
+		if (overLapped == null) {
+			overLapped = new ArrayList<TerminLabel>();
+		}
+		overLapped.add(otherLabel);
+	}
 }

@@ -16,8 +16,6 @@
 package ch.elexis.agenda.ui;
 
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -232,31 +230,26 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		}
 		qbe.endGroup();
 		List<Termin> apps = qbe.execute();
-		Collections.sort(apps);
-		if (tlabels == null) {
+		// clear old TerminLabel list
+		if (tlabels != null) {
+			for (TerminLabel terminLabel : tlabels) {
+				terminLabel.dispose();
+			}
+			tlabels.clear();
+		} else {
 			tlabels = new LinkedList<TerminLabel>();
 		}
-		int s = apps.size();
-		while (s < tlabels.size()) {
-			tlabels.remove(0).dispose();
-		}
-		while (s > tlabels.size()) {
-			tlabels.add(new TerminLabel(this));
-		}
-		Iterator<Termin> ipi = apps.iterator();
-		Iterator<TerminLabel> iptl = tlabels.iterator();
-		while (ipi.hasNext()) {
-			TerminLabel tl = iptl.next();
-			Termin t = ipi.next();
-			String m = t.getBereich();
+		// populate new TerminLabel list
+		for (Termin termin : apps) {
+			String m = termin.getBereich();
 			int idx = StringTool.getIndex(resnames, m);
-			if (idx == -1) {
-				ipi.remove();
-				iptl.remove();
-			} else {
-				tl.set(t, idx);
+			if (idx != -1) {
+				TerminLabel terminLabel = new TerminLabel(this);
+				terminLabel.set(termin, idx);
+				tlabels.add(terminLabel);
 			}
 		}
+		TerminLabel.checkAllCollisions(tlabels);
 		recalc();
 	}
 	

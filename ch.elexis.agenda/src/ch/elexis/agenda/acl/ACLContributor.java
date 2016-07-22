@@ -65,6 +65,7 @@ public class ACLContributor implements IACLContributor {
 	@Override
 	public void initializeDefaults(AbstractAccessControl ac){
 		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_USER, USE_AGENDA);
+		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_USER, DISPLAY_APPOINTMENTS);
 		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, ADMIN_AGENDA);
 	}
 

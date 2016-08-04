@@ -54,6 +54,12 @@
    <feature url="features/ch.medshare.mediport.feature_3.0.0.qualifier.jar" id="ch.medshare.mediport.feature" version="3.0.0.qualifier">
       <category name="finances"/>
    </feature>
+   <feature url="features/ch.berchtold.privatrechnung.feature_3.0.0.qualifier.jar" id="ch.berchtold.privatrechnung.feature" version="3.0.0.qualifier">
+      <category name="finances"/>
+   </feature>
+   <feature url="features/ch.berchtold.privatrechnung.feature.source_3.0.0.qualifier.jar" id="ch.berchtold.privatrechnung.feature.source" version="3.0.0.qualifier">
+      <category name="sources"/>
+   </feature>
    <feature url="features/ch.pharmed.phmprescriber.feature_3.0.0.qualifier.jar" id="ch.pharmed.phmprescriber.feature" version="3.0.0.qualifier">
       <category name="dataexchange"/>
    </feature>

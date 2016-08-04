@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.Verrechnungscode">
+      <Leistung
+            CodeDetailDisplay="ch.berchtold.emanuel.privatrechnung.views.Leistungsdetail"
+            CodeSelectorFactory="ch.berchtold.emanuel.privatrechnung.views.Leistungsselektor"
+            ElementFactory="ch.berchtold.emanuel.privatrechnung.data.LeistungsFactory"
+            ImporterClass="ch.berchtold.emanuel.privatrechnung.data.Importer"
+            name="Privatrechnung Berchtold">
+      </Leistung>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.RechnungsManager">
+      <Rechnung
+            name="Privatrechnung Berchtold"
+            outputter="ch.berchtold.emanuel.privatrechnung.rechnung.RechnungsDrucker">
+      </Rechnung>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="ch.berchtold.emanuel.privatrechnung.data.LeistungsFactory"
+            name="Privatrechnung Berchtold">
+      </Factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.berchtold.emanuel.privatrechnung.views.Preferences"
+            id="ch.berchtold.privatrechung"
+            name="Privatrechnung Berchtold">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.berchtold.emanuel.privatrechnung.rechnung.RnPrintView"
+            id="ch.berchtold.privatrechung.view"
+            name="Rechnung"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.TextTemplateRequirement">
+      <TextTemplateRequirement
+            element="ch.berchtold.emanuel.privatrechnung.rechnung.BerchtoldPrivatrechnungTextTemplateRequirement">
+      </TextTemplateRequirement>
+   </extension>
+
+</plugin>

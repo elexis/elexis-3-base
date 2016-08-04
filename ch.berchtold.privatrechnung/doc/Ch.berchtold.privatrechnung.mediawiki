@@ -1,0 +1,19 @@
+[[Kategorie:Basis-System (proprietär)]]
+{{ProprietaryPlugin}}<!--  Text above may be removed without notice. Start editing in the next line -->
+'''Bitte Dokumentation erstellen!'''
+
+
+
+{{PluginInfo
+|plugin=ch.berchtold.privatrechnung
+| name=Privatrechnung E.Berchtold
+| description=Einbindung eines Privattarifs in Elexis
+| category=feature
+| license=medelexis
+| first_commit_date=2009-05-06
+| first_commit_author=unknown
+| responsible=weirich@elexis.ch
+| type=Basis-System
+
+
+}}

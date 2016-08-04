@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.berchtold.privatrechnung.feature"
+      label="Privatrechnung E. Berchtold"
+      version="3.0.0.qualifier"
+      provider-name="elexis.info">
+
+   <description url="http://www.medelexis.ch">
+      Einbindung eines Privattarifs in Elexis.
+      Mehr Info unter http://wiki.elexis.info/ch.medelexis.application.feature.feature.group
+   </description>
+
+   <copyright>
+      Medelexis AG
+   </copyright>
+
+   <license>
+      Proprietär
+   </license>
+
+   <plugin
+         id="ch.berchtold.privatrechnung"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -353,14 +353,8 @@ public class TerminDialog extends TitleAreaDialog {
 					tName.setText(inp.getValue());
 					tNr.setText(""); //$NON-NLS-1$
 					actKontakt = null;
-					// actTermin=null;
-					actPlannable =
-						new Termin.Free(agenda.getActDate().toString(TimeTool.DATE_COMPACT), tiVon
-							.getTimeAsMinutes(), niDauer.getValue());
-					// TODO actPnannable und slider
 				}
 			}
-			
 		});
 		hlText.setForeground(UiDesk.getColor(UiDesk.COL_BLUE));
 		// new Label(cLinks,SWT.SEPARATOR|SWT.VERTICAL);
@@ -380,15 +374,8 @@ public class TerminDialog extends TitleAreaDialog {
 						tNr.setText(actKontakt.get(Kontakt.FLD_SHORT_LABEL));
 					}
 					setEnablement();
-					/*
-					 * if (actPlannable == null) { actPlannable = new Termin(agenda.getActDate()
-					 * .toString(TimeTool.DATE_COMPACT), tiVon .getTimeAsMinutes(),
-					 * niDauer.getValue()); }
-					 */
-					
 				}
 			}
-			
 		});
 		
 		new Label(cBottom, SWT.NONE).setText(Messages.TerminDialog_Mandator);

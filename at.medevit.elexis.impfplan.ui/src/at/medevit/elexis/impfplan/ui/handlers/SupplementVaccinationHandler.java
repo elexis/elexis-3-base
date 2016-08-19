@@ -40,7 +40,7 @@ public class SupplementVaccinationHandler extends AbstractHandler {
 			} else {
 				Vaccination v =
 					new Vaccination(patientId, null, articleString, null, null, doa.getTime(),
-						null, administratorString);
+						lotNo, administratorString);
 				v.setVaccAgainst(svd.getVaccAgainst());
 			}
 			logger.debug("Supplement vaccination: " + articleString + " added");

@@ -162,8 +162,10 @@ public class TarmedOptifier implements IOptifier {
 				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KOMBINATION,
 					code.getCode(), null, false);
 			}
-			newVerrechnet = new Verrechnet(tc, kons, 1);
-			mapOpReduction(availableCodes.get(0), newVerrechnet);
+			for (Verrechnet verrechnet : availableCodes) {
+				newVerrechnet = new Verrechnet(tc, kons, 1);
+				mapOpReduction(verrechnet, newVerrechnet);
+			}
 			return new Result<IVerrechenbar>(null);
 		}
 		

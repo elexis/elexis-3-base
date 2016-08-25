@@ -13,6 +13,7 @@
 package ch.elexis.dialogs;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Hashtable;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -293,6 +294,12 @@ public class TerminDialog extends TitleAreaDialog {
 						qbe.add("Tag", ">", new TimeTool().toString(TimeTool.DATE_COMPACT));
 					}
 					java.util.List<Termin> list = qbe.execute();
+					list.sort(new Comparator<Termin>() {
+						@Override
+						public int compare(Termin t1, Termin t2){
+							return t2.getStartTime().compareTo(t1.getStartTime());
+						}
+					});
 					lTermine.clear();
 					lTerminListe.removeAll();
 					if ((list != null) && (list.size() > 0)) {

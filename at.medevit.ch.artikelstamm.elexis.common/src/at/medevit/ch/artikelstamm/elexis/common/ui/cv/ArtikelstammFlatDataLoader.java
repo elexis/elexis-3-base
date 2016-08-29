@@ -131,7 +131,7 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 
 		if(useMephaPreferredSorter) {
 			// #3627 need to work-around 
-			qbe.addToken(" 1=1 ORDER BY FIELD(COMP_GLN, '7601001001121') DESC, DSCR ASC");
+			qbe.addToken(" 1=1 ORDER BY CASE WHEN COMP_GLN='7601001001121' THEN 1 ELSE 2 END, DSCR ASC");
 		} else {
 			if (orderFields != null) {
 				qbe.orderBy(false, orderFields);

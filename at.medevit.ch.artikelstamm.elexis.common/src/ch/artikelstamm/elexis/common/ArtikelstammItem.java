@@ -273,6 +273,11 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	// --- ARTIKEL OVERRIDE
 	
 	@Override
+	public boolean isProduct(){
+		return (TYPE.X==getType());
+	}
+	
+	@Override
 	public int getTotalCount(){
 		int pkgUnits = getIstbestand();
 		int pkgSize = getPackungsGroesse();

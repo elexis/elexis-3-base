@@ -268,7 +268,9 @@ public class TarmedOptifier implements IOptifier {
 				for (String line : lin) {
 					String[] f = line.split(","); //$NON-NLS-1$
 					if (f.length == 5) {
-						switch (Integer.parseInt(f[4].trim())) {
+						Integer limitCode = Integer.parseInt(f[4].trim());
+						switch (limitCode) {
+						case 10: // Pro Seite
 						case 7: // Pro Sitzung
 							if (newVerrechnet.getCode().equals("00.0020")) {
 								if (CoreHub.mandantCfg != null
@@ -277,16 +279,21 @@ public class TarmedOptifier implements IOptifier {
 								}
 							}
 							// todo check if electronic billing
-							if (f[2].equals("1") && f[0].equals("<=")) { // 1 //$NON-NLS-1$
-																			// Sitzung
+							if (f[2].equals("1") && f[0].equals("<=")) {
 								int menge = Math.round(Float.parseFloat(f[1]));
 								if (newVerrechnet.getZahl() > menge) {
 									newVerrechnet.setZahl(menge);
+									if (limitCode == 7) {
 									return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KUMULATION,
 											Messages.TarmedOptifier_codemax + menge
 													+ Messages.TarmedOptifier_perSession,
-											null, false); // $NON-NLS-1$
-															// //$NON-NLS-2$
+											null, false);
+									} else if (limitCode == 10) {
+										return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
+											KUMULATION, Messages.TarmedOptifier_codemax + menge
+												+ Messages.TarmedOptifier_perSide,
+											null, false);
+									}
 								}
 							}
 							break;

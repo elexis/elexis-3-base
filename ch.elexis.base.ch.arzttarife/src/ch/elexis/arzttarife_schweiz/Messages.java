@@ -115,6 +115,7 @@ public class Messages extends NLS {
 	public static String TarmedImporter_importLstg;
 	public static String TarmedImporter_connecting;
 	public static String TarmedOptifier_perSession;
+	public static String TarmedOptifier_perSide;
 	public static String TarmedImporter_deleteOldData;
 	public static String TarmedImporter_definitions;
 	public static String TarmedImporter_chapter;

@@ -455,9 +455,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public IOptifier getOptifier(){
-		VatInfo vatInfo = getVatInfo();
-		if (!vatInfo.equals(VatInfo.VAT_CH_ISMEDICAMENT))
+		if (!isInSLList()) {
 			return noObligationOptifier;
+		}
 		return defaultOptifier;
 	}
 	

@@ -106,6 +106,14 @@ public class TarmedKumulation extends PersistentObject {
 			+ getValidToTime().toString(TimeTool.DATE_COMPACT) + "]";
 	}
 	
+	/**
+	 * Get the exclusions as String, containing the service and chapter codes. Group exclusions are
+	 * NOT part of the String.
+	 * 
+	 * @param code
+	 * @param date
+	 * @return
+	 */
 	public static String getExclusions(String code, TimeTool date){
 		Query<TarmedKumulation> query = new Query<TarmedKumulation>(TarmedKumulation.class);
 		query.add(TarmedKumulation.FLD_MASTER_CODE, Query.EQUALS, code);
@@ -118,6 +126,9 @@ public class TarmedKumulation extends PersistentObject {
 		
 		StringBuilder sb = new StringBuilder();
 		for (TarmedKumulation excl : exclusions) {
+			if ("G".equals(excl.getSlaveArt())) {
+				continue;
+			}
 			if (excl.isValidKumulation(date)) {
 				if (!sb.toString().isEmpty()) {
 					sb.append(",");

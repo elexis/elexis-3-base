@@ -477,11 +477,24 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		return (int) Math.round(min);
 	}
 	
+	/**
+	 * Get the exclusions valid now as String, containing the service and chapter codes. Group
+	 * exclusions are NOT part of the String.
+	 * 
+	 * @return
+	 */
 	public String getExclusion(){
 		curTimeHelper.setTime(new Date());
 		return getExclusion(curTimeHelper);
 	}
 	
+	/**
+	 * Get the exclusions valid at the paramater date as String, containing the service and chapter
+	 * codes. Group exclusions are NOT part of the String.
+	 * 
+	 * @param date
+	 * @return
+	 */
 	public String getExclusion(TimeTool date){
 		String exclusions = TarmedKumulation.getExclusions(getCode(), date);
 		if (exclusions == null) {

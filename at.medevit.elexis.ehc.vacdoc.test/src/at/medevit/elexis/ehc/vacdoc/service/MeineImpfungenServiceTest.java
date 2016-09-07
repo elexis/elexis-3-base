@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -84,17 +85,18 @@ public class MeineImpfungenServiceTest {
 		assertTrue(service.isVaild());
 	}
 	
-	@Test
-	public void getPatients(){
-		MeineImpfungenService service = new MeineImpfungenService();
-		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
-		assertNotNull(patients);
-	}
+	//	@Test
+	//	public void getPatients(){
+	//		MeineImpfungenService service = new MeineImpfungenService();
+	//		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
+	//		assertNotNull(patients);
+	//	}
 	
 	@Test
 	public void getDocuments(){
 		MeineImpfungenService service = new MeineImpfungenService();
 		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
-		service.getDocuments(patients.get(0));
+		List<CdaChVacd> documents = service.getDocuments(patients.get(0));
+		assertNotNull(documents);
 	}
 }

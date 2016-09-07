@@ -10,6 +10,7 @@ package ch.elexis.icpc.fire.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -17,7 +18,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 
 
 /**
@@ -89,7 +93,8 @@ public class Report {
     @XmlElement(required = true)
     protected Report.Doctors doctors;
     @XmlAttribute(name = "exportDate")
-    @XmlSchemaType(name = "dateTime")
+	@XmlSchemaType(name = "dateTime")
+    @XmlJavaTypeAdapter(DateAdapter.class)
     protected XMLGregorianCalendar exportDate;
     @XmlAttribute(name = "exportDelay")
     protected Long exportDelay;

@@ -21,7 +21,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.ehealth_connector.cda.ch.AbstractCdaCh;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
-import org.ehealth_connector.cda.enums.LanguageCode;
+import org.ehealth_connector.common.enums.LanguageCode;
 import org.ehealth_connector.communication.ConvenienceCommunication;
 import org.ehealth_connector.communication.DocumentMetadata;
 import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;

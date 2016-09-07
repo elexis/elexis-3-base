@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.ehealth_connector.cda.Consumable;
-import org.ehealth_connector.cda.ch.DocumentProcessor;
+import org.ehealth_connector.cda.ch.utils.CdaChUtil;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.cda.ch.vacd.Immunization;
 import org.ehealth_connector.common.Author;
@@ -137,7 +137,7 @@ public class VacdocService {
 	}
 
 	public CdaChVacd getVacdocDocument(InputStream document) throws Exception{
-		return DocumentProcessor.loadFromStream(document);
+		return CdaChUtil.loadVacdFromStream(document);
 	}
 
 	public void importImmunizations(Patient elexisPatient, List<Immunization> immunizations){

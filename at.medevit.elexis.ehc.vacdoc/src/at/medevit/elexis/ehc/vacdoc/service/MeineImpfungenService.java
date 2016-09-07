@@ -5,8 +5,11 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.ehealth_connector.cda.ch.utils.CdaChUtil;
+import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.Name;
 import org.ehealth_connector.common.enums.CodeSystems;
@@ -15,12 +18,20 @@ import org.ehealth_connector.communication.AffinityDomain;
 import org.ehealth_connector.communication.ConvenienceCommunication;
 import org.ehealth_connector.communication.ConvenienceMasterPatientIndexV3;
 import org.ehealth_connector.communication.Destination;
+import org.ehealth_connector.communication.DocumentRequest;
 import org.ehealth_connector.communication.MasterPatientIndexQuery;
 import org.ehealth_connector.communication.MasterPatientIndexQueryResponse;
 import org.ehealth_connector.communication.ch.enums.AvailabilityStatus;
 import org.ehealth_connector.communication.ch.xd.storedquery.FindDocumentsQuery;
+import org.ehealth_connector.communication.xd.storedquery.GetDocumentsQuery;
 import org.openhealthtools.ihe.atna.nodeauth.SecurityDomainException;
+import org.openhealthtools.ihe.common.ebxml._3._0.rim.ObjectRefType;
+import org.openhealthtools.ihe.xds.document.XDSDocument;
+import org.openhealthtools.ihe.xds.metadata.DocumentEntryType;
+import org.openhealthtools.ihe.xds.response.DocumentEntryResponseType;
 import org.openhealthtools.ihe.xds.response.XDSQueryResponseType;
+import org.openhealthtools.ihe.xds.response.XDSRetrieveResponseType;
+import org.openhealthtools.ihe.xds.response.XDSStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,20 +127,75 @@ public class MeineImpfungenService {
 		return affinityDomain != null && affinityDomain.getPdqDestination() != null;
 	}
 	
-	public void getDocuments(org.ehealth_connector.common.Patient ehcPatient){
+	public List<CdaChVacd> getDocuments(org.ehealth_connector.common.Patient ehcPatient){
+		List<CdaChVacd> ret = new ArrayList<>();
 		ConvenienceCommunication communication = new ConvenienceCommunication(affinityDomain);
-		
 		List<Identificator> ids = ehcPatient.getIds();
 		if (ids != null && !ids.isEmpty()) {
 			FindDocumentsQuery fdq = new FindDocumentsQuery(ids.get(0), null, null, null, null,
 				null, null, null, AvailabilityStatus.APPROVED);
 			XDSQueryResponseType result = communication.queryDocumentsReferencesOnly(fdq);
-			if (result != null) {
-				result.getStatus();
+			if (result != null && result.getStatus() == XDSStatusType.SUCCESS_LITERAL) {
+				ret.addAll(readVacdocFromRefernces(result, communication));
+				//				List<ObjectRefType> references = result.getReferences();
+				//				if(!references.isEmpty()) {
+				//					final String[] docUUIDs = new String[references.size()];
+				//					for (int i = 0; i < docUUIDs.length; i++) {
+				//						docUUIDs[i] = references.get(i).getId();
+				//					}					
+				//					GetDocumentsQuery documentsQuery = new GetDocumentsQuery(docUUIDs, true);
+				//					result = communication.queryDocuments(documentsQuery);
+				//					System.out.println(result);
+				//				}
 			}
-		} else {
-			// TODO
 		}
+		return ret;
+	}
+	
+	private List<CdaChVacd> readVacdocFromRefernces(XDSQueryResponseType result,
+		ConvenienceCommunication communication){
+		List<CdaChVacd> ret = new ArrayList<>();
+		List<ObjectRefType> references = result.getReferences();
+		if (!references.isEmpty()) {
+			final String[] docUUIDs = new String[references.size()];
+			for (int i = 0; i < references.size(); i++) {
+				docUUIDs[i] = references.get(i).getId();
+			}
+			GetDocumentsQuery documentsQuery = new GetDocumentsQuery(docUUIDs, true);
+			ret.addAll(readVacdocFromXDSQueryResult(communication.queryDocuments(documentsQuery),
+				communication));
+		}
+		return ret;
+	}
+	
+	private List<CdaChVacd> readVacdocFromXDSQueryResult(XDSQueryResponseType result,
+		ConvenienceCommunication communication){
+		List<CdaChVacd> ret = new ArrayList<>();
+		List<DocumentEntryResponseType> documents = result.getDocumentEntryResponses();
+		for (DocumentEntryResponseType documentEntryResponseType : documents) {
+			DocumentEntryType entry = documentEntryResponseType.getDocumentEntry();
+			DocumentRequest documentRequest = new DocumentRequest(entry.getRepositoryUniqueId(),
+				affinityDomain.getRepositoryDestination().getUri(), entry.getUniqueId());
+			XDSRetrieveResponseType retrieveResponse =
+				communication.retrieveDocument(documentRequest);
+			if (retrieveResponse.getStatus() == XDSStatusType.SUCCESS_LITERAL
+				&& !retrieveResponse.getAttachments().isEmpty()) {
+				if (entry.getMimeType().equals("text/xml")) {
+					for (XDSDocument xdsDocument : retrieveResponse.getAttachments()) {
+						try {
+							CdaChVacd vacdoc =
+								CdaChUtil.loadVacdFromStream(xdsDocument.getStream());
+							if (vacdoc != null) {
+								ret.add(vacdoc);
+							}
+						} catch (Exception e) {
+							logger.warn("Error loading vacdoc.", e);
+						}
+					}
+				}
+			}
+		}
+		return ret;
 	}
 	
 	public List<org.ehealth_connector.common.Patient> getPatients(Patient elexisPatient){

@@ -69,6 +69,7 @@ public class XMLExporterServices {
 	private static final String ATTR_EAN_PROVIDER = "provider_id"; //$NON-NLS-1$
 	private static final String ATTR_TREATMENT = "treatment"; //$NON-NLS-1$
 	private static final String ATTR_DATE_BEGIN = "date_begin"; //$NON-NLS-1$
+	private static final String ATTR_SESSION = "session"; //$NON-NLS-1$
 	
 	private static final String ELEMENT_RECORD_TARMED = "record_tarmed"; //$NON-NLS-1$
 	private static final String TL = "TL"; //$NON-NLS-1$
@@ -254,11 +255,20 @@ public class XMLExporterServices {
 		// begin end end
 		// dates that are stored in the bill
 		int recordNumber = 1;
-		
+		String lastKonsDatum = null;
+		int session = 1;
 		for (Konsultation konsultation : konsultationen) {
 			List<Verrechnet> leistungen = konsultation.getLeistungen();
+			// konsultationen list is ordered by date, so we can just compare with previous
+			String konsDatum = konsultation.getDatum();
+			if (konsDatum.equals(lastKonsDatum)) {
+				session++;
+			} else {
+				lastKonsDatum = konsDatum;
+				session = 1;
+			}
 			
-			TimeTool tt = new TimeTool(konsultation.getDatum());
+			TimeTool tt = new TimeTool(konsDatum);
 			String dateForTarmed = XMLExporterUtil.makeTarmedDatum(konsultation.getDatum());
 			
 			boolean bRFE = false; // RFE already encoded
@@ -521,6 +531,7 @@ public class XMLExporterServices {
 						
 					ret.mUebrige.addMoney(mAmountLocal);
 				}
+				el.setAttribute(ATTR_SESSION, Integer.toString(session));
 				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
 				el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
 				el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370

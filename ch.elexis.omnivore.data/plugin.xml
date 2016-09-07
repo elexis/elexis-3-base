@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+      <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="ch.elexis.omnivore.data.DocHandleFactory"
+            name="Omnivore"/>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.KonsExtension">
+      <Link
+            KonsExtension="ch.elexis.omnivore.data.KonsExtension"
+            name="omnivore">
+      </Link>
+   </extension>
+      <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="ch.elexis.omnivore"
+            name="Omnivore">
+      </category>
+   </extension>
+</plugin>

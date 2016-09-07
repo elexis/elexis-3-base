@@ -30,10 +30,10 @@
    <feature url="features/ch.elexis.icpc.feature_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
-   <feature url="features/ch.elexis.omnivore.feature.source_3.0.0.qualifier.jar" id="ch.elexis.omnivore.feature.source" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.omnivore.feature.source_3.2.0.qualifier.jar" id="ch.elexis.omnivore.feature.source" version="3.2.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.omnivore.feature_3.0.0.qualifier.jar" id="ch.elexis.omnivore.feature" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.omnivore.feature_3.2.0.qualifier.jar" id="ch.elexis.omnivore.feature" version="3.2.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
    <feature url="features/ch.elexis.privatrechnung.feature.source_3.0.0.qualifier.jar" id="ch.elexis.privatrechnung.feature.source" version="3.0.0.qualifier">

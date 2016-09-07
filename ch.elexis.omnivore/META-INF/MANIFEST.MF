@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Omnivore
 Bundle-SymbolicName: ch.elexis.omnivore; singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
@@ -22,5 +22,5 @@ Bundle-Vendor: elexis.ch, jsigle.com
 Import-Package: org.slf4j
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: ch.elexis.omnivore.data
+Export-Package: ch.elexis.omnivore
 

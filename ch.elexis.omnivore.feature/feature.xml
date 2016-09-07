@@ -2,27 +2,40 @@
 <feature
       id="ch.elexis.omnivore.feature"
       label="Omnivore: Ein einfaches Archiv für Dokumente (fast) aller Art"
-      version="3.0.0.qualifier"
+      version="3.2.0.qualifier"
       provider-name="ch.elexis">
 
-  <description>
-    Ein einfaches Archiv für Dokumente (fast) aller Art. Mehr Info unter http://wiki.elexis.info/ch.elexis.omnivore.feature.feature.group
-  </description>
+   <description>
+      Ein einfaches Archiv für Dokumente (fast) aller Art. Mehr Info unter http://wiki.elexis.info/ch.elexis.omnivore.feature.feature.group
+   </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
       Eclipse Public License v1.0
    </license>
 
-  <plugin
-        id="ch.elexis.omnivore"
-        download-size="0"
-        install-size="0"
-        version="0.0.0"
-        unpack="false"/>
+   <plugin
+         id="ch.elexis.omnivore"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.omnivore.data"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.omnivore.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
-  

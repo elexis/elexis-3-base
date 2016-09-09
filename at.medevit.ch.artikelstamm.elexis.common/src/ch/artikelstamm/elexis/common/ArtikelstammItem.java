@@ -653,7 +653,12 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public TYPE getType(){
 		try {
-			return ArtikelstammConstants.TYPE.valueOf(get(FLD_ITEM_TYPE));
+			String string = get(FLD_ITEM_TYPE);
+			if (string != null && string.length() > 0) {
+				return Enum.valueOf(TYPE.class, Character.toString(string.charAt(0)).toUpperCase());
+			}
+			log.warn("No TYPE argument for " + getId() + " found, defaulting to N (NonPharma).");
+			return TYPE.N;
 		} catch (IllegalArgumentException iae) {
 			// be more resilient on wrong database entries (e.g. #3193)
 			log.error("Invalid TYPE argument for " + getId() + ": " + get(FLD_ITEM_TYPE));

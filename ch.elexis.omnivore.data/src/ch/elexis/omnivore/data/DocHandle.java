@@ -12,6 +12,10 @@
 
 package ch.elexis.omnivore.data;
 
+import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
+import static ch.elexis.omnivore.Constants.DEFAULT_CATEGORY;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -63,10 +67,6 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
-import static ch.elexis.omnivore.Constants.*;
 
 public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	
@@ -633,10 +633,10 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		List<DocHandle> ret = new ArrayList<DocHandle>();
 		FileImportDialog fid = new FileImportDialog(Messages.DocHandle_scannedImageDialogCaption);
 		if (fid.open() == Dialog.OK) {
-			try (ByteArrayOutputStream baos = new ByteArrayOutputStream(100000);
-					ByteArrayOutputStream bimg = new ByteArrayOutputStream()) {
+			try {
 				Document pdf = new Document(PageSize.A4);
 				pdf.setMargins(0, 0, 0, 0);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream(100000);
 				PdfWriter.getInstance(pdf, baos);
 				pdf.open();
 				ImageLoader il = new ImageLoader();
@@ -645,6 +645,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 						images.get(i)
 					};
 					il.data = id;
+					ByteArrayOutputStream bimg = new ByteArrayOutputStream();
 					il.save(bimg, SWT.IMAGE_PNG);
 					Image image = Image.getInstance(bimg.toByteArray());
 					int width = id[0].width;
@@ -656,7 +657,6 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					}
 					pdf.add(image);
 				}
-				
 				pdf.close();
 				DocHandle docHandle = new DocHandle(fid.category, baos.toByteArray(),
 					ElexisEventDispatcher.getSelectedPatient(), fid.originDate, fid.title,

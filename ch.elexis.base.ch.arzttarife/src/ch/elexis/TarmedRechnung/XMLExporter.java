@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    T. Huster - updated for 4.4 and various fixes
  *    
  *******************************************************************************/
 

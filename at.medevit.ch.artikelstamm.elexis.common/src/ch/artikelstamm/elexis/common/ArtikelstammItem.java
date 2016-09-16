@@ -519,7 +519,11 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	public String getCodeSystemCode(){
 		String gtin = getGTIN();
 		if (gtin != null && gtin.length() > 3) {
-			return "402";
+			if (getType() == TYPE.P) {
+				return "402";
+			} else if (getType() == TYPE.N) {
+				return "406";
+			}
 		}
 		return super.getCodeSystemCode();
 	}

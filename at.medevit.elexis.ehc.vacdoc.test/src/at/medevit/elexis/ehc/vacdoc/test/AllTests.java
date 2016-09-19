@@ -4,10 +4,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenServiceTest;
+import at.medevit.elexis.ehc.vacdoc.service.VacdocServiceTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	MeineImpfungenServiceTest.class
+	VacdocServiceTest.class, MeineImpfungenServiceTest.class
 })
 public class AllTests {
 	

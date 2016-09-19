@@ -3,6 +3,7 @@ package at.medevit.elexis.ehc.vacdoc.service;
 import java.io.InputStream;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EClass;
 import org.ehealth_connector.cda.Consumable;
 import org.ehealth_connector.cda.ch.utils.CdaChUtil;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
@@ -12,6 +13,7 @@ import org.ehealth_connector.common.Code;
 import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.enums.CodeSystems;
 import org.ehealth_connector.common.utils.DateUtil;
+import org.openhealthtools.mdht.uml.cda.ch.CHPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +30,13 @@ public class VacdocService {
 	
 	private static Logger logger = LoggerFactory.getLogger(VacdocService.class);
 
+	public VacdocService(){
+		EClass vacdClass = CHPackage.eINSTANCE.getVACD();
+		if (vacdClass == null) {
+			logger.warn("Could not load VACD class from ch package");
+		}
+	}
+	
 	/**
 	 * Get an InputStream containing the
 	 * 
@@ -139,7 +148,7 @@ public class VacdocService {
 	public CdaChVacd getVacdocDocument(InputStream document) throws Exception{
 		return CdaChUtil.loadVacdFromStream(document);
 	}
-
+	
 	public void importImmunizations(Patient elexisPatient, List<Immunization> immunizations){
 		for (Immunization immunization : immunizations) {
 			Consumable consumable = immunization.getConsumable();
@@ -167,20 +176,26 @@ public class VacdocService {
 	private Artikel resolveArticle(Identificator gtin, Code atcCode){
 		String gtinStr = (gtin != null) ? gtin.getExtension() : null;
 		String atcStr = (atcCode != null) ? atcCode.getCode() : null;
-		Query<ArtikelstammItem> query = new Query<ArtikelstammItem>(ArtikelstammItem.class);
-		
 		if (gtinStr != null) {
+			Query<ArtikelstammItem> query = new Query<>(ArtikelstammItem.class);
 			query.add(ArtikelstammItem.FLD_GTIN, Query.EQUALS, gtinStr);
 			List<ArtikelstammItem> articles = query.execute();
-			if (articles == null || articles.isEmpty()) {
-				if (atcStr != null) {
-					query = new Query<ArtikelstammItem>(ArtikelstammItem.class);
-					
-					query.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, atcStr);
-					articles = query.execute();
-				}
-			}
 			if (articles != null && !articles.isEmpty()) {
+				return articles.get(0);
+			}
+		} else if (atcStr != null && !atcStr.isEmpty()) {
+			Query<ArtikelstammItem> query = new Query<>(ArtikelstammItem.class);
+			query.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, atcStr);
+			List<ArtikelstammItem> articles = query.execute();
+			if (articles != null && !articles.isEmpty()) {
+				String displayName = atcCode.getDisplayName().toLowerCase();
+				if (displayName != null && !displayName.isEmpty()) {
+					for (ArtikelstammItem artikelstammItem : articles) {
+						if (artikelstammItem.getName().toLowerCase().contains(displayName)) {
+							return artikelstammItem;
+						}
+					}
+				}
 				return articles.get(0);
 			}
 		}

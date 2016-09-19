@@ -38,6 +38,14 @@ public class MeineImpfungenServiceTest {
 		if (ahvNumber == null || ahvNumber.isEmpty()) {
 			addAHVNumber(patient, 1);
 		}
+		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH,
+			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH));
+		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS,
+			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS));
+		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PATH,
+			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PATH));
+		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PASS,
+			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PASS));
 	}
 	
 	private static String getAHVNumber(Patient pat){
@@ -71,32 +79,45 @@ public class MeineImpfungenServiceTest {
 	@Test
 	public void isValid(){
 		MeineImpfungenService service = new MeineImpfungenService();
-		assertFalse(service.isVaild());
-		
-		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH,
-			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH));
-		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS,
-			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS));
-		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PATH,
-			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PATH));
-		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PASS,
-			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PASS));
-		service = new MeineImpfungenService();
 		assertTrue(service.isVaild());
 	}
 	
 	//	@Test
-	//	public void getPatients(){
-	//		MeineImpfungenService service = new MeineImpfungenService();
-	//		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
-	//		assertNotNull(patients);
+	//	public void test(){
+	//		MeineImpfungen meineImpfungen = new MeineImpfungen();
+	//		
+	//		meineImpfungen.initCertificatesForSecurityDomain(
+	//			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PATH),
+	//			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PASS),
+	//			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH),
+	//			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS));
+	//		
+	//		System.out.println(meineImpfungen.getCdaChVacdAsString("1458654649716000"));
 	//	}
 	
+	//		@Test
+	//		public void getPatients(){
+	//			MeineImpfungenService service = new MeineImpfungenService();
+	//			List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
+	//			assertNotNull(patients);
+	//		}
+	
 	@Test
-	public void getDocuments(){
+	public void getDocuments() throws Exception{
 		MeineImpfungenService service = new MeineImpfungenService();
 		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
 		List<CdaChVacd> documents = service.getDocuments(patients.get(0));
 		assertNotNull(documents);
+		assertFalse(documents.isEmpty());
+		
+		//		BufferedInputStream input =
+		//			new BufferedInputStream(getClass().getResourceAsStream("/rsc/test.xml"));
+		//		assertNotNull(input);
+		//		VacdocService vacdocService = new VacdocService();
+		//		CdaChVacd document = vacdocService.getVacdocDocument(input);
+		//		assertNotNull(document);
+		//		List<Immunization> immunizations = document.getImmunizations();
+		//		assertNotNull(immunizations);
+		//		assertEquals(3, immunizations.size());
 	}
 }

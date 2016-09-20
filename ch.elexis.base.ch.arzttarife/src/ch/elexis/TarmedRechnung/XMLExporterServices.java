@@ -512,7 +512,14 @@ public class XMLExporterServices {
 				} else {
 					Money preis = verrechnet.getNettoPreis();
 					el = new Element(ELEMENT_RECORD_OTHER, XMLExporter.nsinvoice);
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
+					String codeSystemCode = v.getCodeSystemCode();
+					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, codeSystemCode);
+					// all 406 will have code 2000
+					if ("406".equals(codeSystemCode)) {
+						el.setAttribute(XMLExporter.ATTR_CODE, "2000");
+						el.setAttribute("name",
+							verrechnet.getText() + " [" + verrechnet.getCode() + "]"); // 22340
+					}
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
 					Money mAmountLocal = new Money(preis);
@@ -535,7 +542,9 @@ public class XMLExporterServices {
 				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
 				el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
 				el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370
-				el.setAttribute("name", verrechnet.getText()); // 22340
+				if (el.getAttribute("name") == null) {
+					el.setAttribute("name", verrechnet.getText()); // 22340
+				}
 				// 22330 set code if still empty
 				if (el.getAttribute(XMLExporter.ATTR_CODE) == null) {
 					XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE, v.getCode(),

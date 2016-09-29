@@ -332,9 +332,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 		@Override
 		public void catchElexisEvent(ElexisEvent ev){
-			log.debug("catchElexisEvent " + ev.getType());
-			konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
-				showAllConsultationsAction.isChecked());
+			UiDesk.asyncExec(new Runnable() {
+				public void run(){
+					Konsultation kons = (Konsultation) ev.getObject();
+					log.debug("catchElexisEvent " + ev.getType() + " kons " + kons);
+					konsListDisplay.setKons(kons, KonsActions.ACTIVATE_KONS);
+				}
+			});
 		}
 	};
 
@@ -415,7 +419,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				if (patient_already_active) {
 					logEvent("eeli_fall EVENT_SELECTED 3 patient_already_active");
 				} else {
-					setPatient(patientNewFall);
+					logEvent("eeli_fall EVENT_SELECTED fire Event");
+					ElexisEventDispatcher.fireSelectionEvent(patientNewFall);
+					return;
 				}
 
 				if (newKons != null) {
@@ -459,7 +465,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					if (!patient_already_active) {
 						setPatient(selectedPatient);
 						updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
-						return;
 					}
 
 					Patient patient = null;
@@ -472,11 +477,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						// diese Konsulation setzen, falls sie zum ausgewaehlten Patienten gehoert
 						fall = konsultation.getFall();
 						patient = fall.getPatient();
-						logEvent("runInUi eeli_pat EVENT_SELECTED kons " + konsultation.getId());
+						logEvent("runInUi eeli_pat EVENT_SELECTED kons " + konsultation.getId() + " " + konsultation.getHeadVersion() + " vom " + konsultation.getDatum());
 						if (patient.getId().equals(selectedPatient.getId())) {
 							setPatient(patient);
 							updateAllKonsAreas(konsultation, KonsActions.ACTIVATE_KONS);
-							return;
 						}
 					}
 
@@ -495,10 +499,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 							updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
 							return;
 						} else {
-							logEvent(
-								"runInUi eeli_pat EVENT_SELECTED kons Konsulation gehoert zu diesem Patienten "
-									+ patient.getPersonalia());
-							updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
+							logEvent("runInUi eeli_pat EVENT_SELECTED Konsulation gehoert zu diesem Patienten " + konsultation.getId() + " " + konsultation.getHeadVersion() + " vom " + konsultation.getDatum() + " " + patient.getPersonalia());
+							updateAllKonsAreas(konsultation, KonsActions.ACTIVATE_KONS);
 						}
 					}
 
@@ -547,6 +549,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 												+ selectedPatient.getPersonalia()
 												+ " ist nicht von heute " + actKons.getDatum());
 										actKons = faelle[0].neueKonsultation();
+										ElexisEventDispatcher.fireSelectionEvent(actKons);
 									}
 								}
 							}
@@ -554,6 +557,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 							logEvent("runInUi eeli_pat EVENT_SELECTED create kons for fall"
 								+ selectedPatient.getPersonalia());
 							actKons = fall.neueKonsultation();
+							ElexisEventDispatcher.fireSelectionEvent(actKons);
 						}
 						updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
 					}

@@ -353,30 +353,30 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				// case EVENT_RELOAD:
 				case EVENT_SELECTED:
 				case EVENT_UPDATE:
-					boolean patient_already_active = false;
-					Patient selectedPatient = null;
+					// when we get an update or select event teh parameter is always not null
 					if (k != null) {
+						boolean patient_already_active = false;
+						Patient selectedPatient = null;
 						selectedPatient = k.getFall().getPatient();
 						patient_already_active = actPatient != null
-							&& selectedPatient.getId().equals(actPatient.getId());
+								&& selectedPatient.getId().equals(actPatient.getId());
 						logEvent("eeli_kons EVENT_SELECTED patient_already_active "
-							+ patient_already_active + " " + selectedPatient.getId());
-					}
-
-					String fallIdOfActKonst = actKons == null ? "" : actKons.getFall().getId();
-					Fall newFall = k.getFall();
-					boolean fall_already_active = newFall.getId().equals(fallIdOfActKonst);
-					boolean changedKonsVersion = k != null && actKons != null
-						&& k.getHeadVersion() != actKons.getHeadVersion();
-					logEvent("eeli_kons EVENT_SELECTED fall_already_active " + fall_already_active
-						+ " " + " changedKonsVersion " + changedKonsVersion + " id: "
-						+ newFall.getId());
-					if (!patient_already_active || !fall_already_active || changedKonsVersion) {
-						setPatient(selectedPatient);
-					}
-					updateAllKonsAreas(k, KonsActions.ACTIVATE_KONS);
-					konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
-						showAllConsultationsAction.isChecked());
+								+ patient_already_active + " " + selectedPatient.getId());
+						String fallIdOfActKonst = actKons == null ? "" : actKons.getFall().getId();
+						Fall newFall = k.getFall();
+						boolean fall_already_active = newFall.getId().equals(fallIdOfActKonst);
+						boolean changedKonsVersion = k != null && actKons != null
+								&& k.getHeadVersion() != actKons.getHeadVersion();
+						logEvent("eeli_kons EVENT_SELECTED fall_already_active " + fall_already_active
+							+ " " + " changedKonsVersion " + changedKonsVersion + " id: "
+								+ newFall.getId());
+						if (!patient_already_active || !fall_already_active || changedKonsVersion) {
+							setPatient(selectedPatient);
+							}
+						updateAllKonsAreas(k, KonsActions.ACTIVATE_KONS);
+						konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
+							showAllConsultationsAction.isChecked());
+						}
 					break;
 				case EVENT_DESELECTED:
 					logEvent("eeli_kons EVENT_DESELECTED null");

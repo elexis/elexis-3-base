@@ -129,7 +129,7 @@ public class KonsText implements IJournalArea {
 
 			@Override
 			public void focusLost(FocusEvent e){
-				logEvent("focusLost");
+				logEvent("focusLost updateEintrag");
 				updateEintrag();
 				konsEditorHasFocus = false;
 			}
@@ -223,8 +223,8 @@ public class KonsText implements IJournalArea {
 				boolean check = (savedInitialKonsText == null) || (text == null)
 					|| savedInitialKonsText.equals(text.getContentsPlaintext());
 				if (check) {
+					log.debug("updateEintrag: " +  actKons.getFall().getPatient().getPersonalia() + " skip forced to " + text.getContentsPlaintext());
 					setKonsText(actKons, actKons.getHeadVersion(), false);
-					log.debug("updateEintrag: forced to " + text.getContentsPlaintext());
 				} else {
 					log.debug("updateEintrag skipping check " + text.getContentsPlaintext()
 						+ " != initial " + savedInitialKonsText);
@@ -408,6 +408,7 @@ public class KonsText implements IJournalArea {
 
 			@Override
 			public void run(){
+				logEvent("saveAction: ");
 				updateEintrag();
 			}
 		};
@@ -487,6 +488,7 @@ public class KonsText implements IJournalArea {
 					logEvent("setKons.changed actPatient " + actPatient.getId() + "  != patient "
 						+ newPat.getId() + " for kon. Skipping ??  " + newPat.getPersonalia());
 					creatingKons = false;
+					handleInitialKonsText();
 					return;
 				}
 				actPatient = actKons.getFall().getPatient();

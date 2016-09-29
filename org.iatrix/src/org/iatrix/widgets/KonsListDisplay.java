@@ -341,8 +341,10 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 			newKonsVersion = newKons.getHeadVersion();
 			if (savedKonsVersion != newKonsVersion) {
 				savedKonsVersion = newKons.getHeadVersion();
-				actKons = newKons;
-				setPatient(newKons.getFall().getPatient(), showAllCharges,	showAllConsultations);
+				if (newKons != actKons) {
+					actKons = newKons;
+					setPatient(newKons.getFall().getPatient(), showAllCharges,	showAllConsultations);
+				}
 			}
 		}
 	}

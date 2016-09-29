@@ -166,7 +166,8 @@ public class ProblemView extends ViewPart implements IActivationListener, ISavea
 							// actually, this should never occur, but currently happens since
 							// there is no responsible event manager for Episode events yet
 							Problem previousProblem = IatrixEventHelper.getSelectedProblem();
-							if (selectedPatient != null && previousProblem.getPatient().getId()
+							if (selectedPatient != null && previousProblem != null &&
+									previousProblem.getPatient().getId()
 								.equals(selectedPatient.getId())) {
 								setProblem(previousProblem);
 							}

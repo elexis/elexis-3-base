@@ -476,7 +476,6 @@ public class KonsText implements IJournalArea {
 			}
 			removeKonsTextLock();
 			actKons = k;
-			logEvent("setKons.ACTIVATE_KONS newKons");
 			if (actKons == null) {
 				actPatient = null;
 				logEvent("setKons null");
@@ -485,7 +484,7 @@ public class KonsText implements IJournalArea {
 					&& !actPatient.getId().equals(k.getFall().getPatient().getId());
 				if (different) {
 					Patient newPat = k.getFall().getPatient();
-					logEvent("setKons.changed actPatient " + actPatient.getId() + "  != patient "
+					logEvent("setKons.changed actPatient " + actPatient.getId() + " " + actPatient.getPersonalia() + "  != newPat "
 						+ newPat.getId() + " for kon. Skipping ??  " + newPat.getPersonalia());
 					creatingKons = false;
 					handleInitialKonsText();

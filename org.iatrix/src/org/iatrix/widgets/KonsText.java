@@ -410,6 +410,7 @@ public class KonsText implements IJournalArea {
 			public void run(){
 				logEvent("saveAction: ");
 				updateEintrag();
+				JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
 			}
 		};
 	};
@@ -485,9 +486,9 @@ public class KonsText implements IJournalArea {
 				if (different) {
 					Patient newPat = k.getFall().getPatient();
 					logEvent("setKons.changed actPatient " + actPatient.getId() + " " + actPatient.getPersonalia() + "  != newPat "
-						+ newPat.getId() + " for kon. Skipping ??  " + newPat.getPersonalia());
+						+ newPat.getId() + " for kons. newPat " + newPat.getPersonalia() + " " + k.getEintrag().getHead());
 					creatingKons = false;
-					handleInitialKonsText();
+					setKonsText(k, 0, true);
 					return;
 				}
 				actPatient = actKons.getFall().getPatient();

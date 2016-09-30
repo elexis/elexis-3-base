@@ -268,8 +268,9 @@ public class KonsText implements IJournalArea {
 			String initialText = text.getContentsAsXML();
 			Konsultation.neueKons(initialText);
 		} else {
-			logEvent("handleInitialKonsText: set " + text.getContentsPlaintext());
-			text.setData(PATIENT_KEY, actPatient.getId());
+			logEvent("handleInitialKonsText: " +" actKonsPat " + actKons.getFall().getPatient().getId() +
+				" txt: " + text.getContentsPlaintext());
+			text.setData(PATIENT_KEY, actKons.getFall().getPatient().getId());
 			savedInitialKonsText = text.getContentsAsXML();
 		}
 	}
@@ -299,7 +300,7 @@ public class KonsText implements IJournalArea {
 
 	// helper method to create a KonsTextLock object in a save way
 	// should be called when a new konsultation is set
-	private void createKonsTextLock(){
+	private  synchronized void createKonsTextLock(){
 		// remove old lock
 
 		removeKonsTextLock();
@@ -321,7 +322,7 @@ public class KonsText implements IJournalArea {
 	// helper method to release a KonsTextLock
 	// should be called before a new konsultation is set
 	// or the program/view exits
-	private void removeKonsTextLock(){
+	private synchronized void removeKonsTextLock(){
 		if (konsTextLock != null) {
 			konsTextLock.unlock();
 			// boolean success = konsTextLock.unlock();
@@ -336,7 +337,7 @@ public class KonsText implements IJournalArea {
 	 *
 	 * @return true, if we own the lock, false else
 	 */
-	private boolean hasKonsTextLock(){
+	private synchronized boolean hasKonsTextLock(){
 		return (konsTextLock != null && konsTextLock.isLocked());
 	}
 
@@ -488,10 +489,10 @@ public class KonsText implements IJournalArea {
 					logEvent("setKons.changed actPatient " + actPatient.getId() + " " + actPatient.getPersonalia() + "  != newPat "
 						+ newPat.getId() + " for kons. newPat " + newPat.getPersonalia() + " " + k.getEintrag().getHead());
 					creatingKons = false;
+					actPatient = actKons.getFall().getPatient();
 					setKonsText(k, 0, true);
 					return;
 				}
-				actPatient = actKons.getFall().getPatient();
 			}
 			if (savedInitialKonsText != null && actKons != null) {
 				logEvent("set kons patient key " + text.getData(PATIENT_KEY) + " len "
@@ -539,7 +540,7 @@ public class KonsText implements IJournalArea {
 		}
 	}
 
-	private void setKonsText(Konsultation b, int version, boolean putCaretToEnd){
+	private synchronized void setKonsText(Konsultation b, int version, boolean putCaretToEnd){
 		if (b != null) {
 			String ntext = "";
 			if ((version >= 0) && (version <= b.getHeadVersion())) {
@@ -560,7 +561,9 @@ public class KonsText implements IJournalArea {
 			displayedVersion = version;
 			versionBackAction.setEnabled(version != 0);
 			versionFwdAction.setEnabled(version != b.getHeadVersion());
-			logEvent("setKonsText.1 " + lVersion.getText() + " " + text.getContentsPlaintext());
+			boolean locked =  hasKonsTextLock();
+			logEvent("setKonsText.1 hasLock " + locked + " putCaretToEnd " + putCaretToEnd +
+				" " + lVersion.getText() + " '" + text.getContentsPlaintext() + "'");
 
 			if (putCaretToEnd) {
 				// set focus and put caret at end of text

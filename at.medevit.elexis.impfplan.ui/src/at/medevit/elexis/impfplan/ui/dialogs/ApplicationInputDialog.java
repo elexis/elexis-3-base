@@ -21,7 +21,6 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
 
 public class ApplicationInputDialog extends TitleAreaDialog {
 	private static final String DEF_SIDE = "left";
@@ -32,10 +31,10 @@ public class ApplicationInputDialog extends TitleAreaDialog {
 	private Button btnLeft, btnRight;
 	private Optional<Artikel> art;
 	
-	public ApplicationInputDialog(Shell parentShell, Prescription p){
+	public ApplicationInputDialog(Shell parentShell, Artikel article){
 		super(parentShell);
 		showSideOption = CoreHub.userCfg.get(PreferencePage.VAC_SHOW_SIDE, false);
-		art = Optional.ofNullable(p.getArtikel());
+		art = Optional.ofNullable(article);
 	}
 	
 	@Override

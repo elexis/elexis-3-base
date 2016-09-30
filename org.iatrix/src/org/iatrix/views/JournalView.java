@@ -406,14 +406,16 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				boolean patient_already_active =
 					actPatient != null && patientNewFall.getId().equals(actPatient.getId());
 				boolean fall_already_active = newFall.getId().equals(fallIdOfActKonst);
-				boolean kons_already_active =
-					actKons != null && newKons.getId().equals(actKons.getId());
-				logEvent("eeli_fall EVENT_SELECTED 0 fall " + newFall.getId() + " patient "
-					+ patientNewFall.getPersonalia() + " patient_already_active "
-					+ patient_already_active + " fall_already_active " + fall_already_active
-					+ " kons_already_active " + kons_already_active);
-				if (patient_already_active && fall_already_active && kons_already_active) {
-					return;
+				if (newKons != null) {
+					boolean kons_already_active =
+							actKons != null && newKons.getId().equals(actKons.getId());
+					logEvent("eeli_fall EVENT_SELECTED 0 fall " + newFall.getId() + " patient "
+							+ patientNewFall.getPersonalia() + " patient_already_active "
+							+ patient_already_active + " fall_already_active " + fall_already_active
+							+ " kons_already_active " + kons_already_active);
+					if (patient_already_active && fall_already_active && kons_already_active) {
+						return;
+						}
 				}
 
 				if (patient_already_active) {
@@ -704,6 +706,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	@Override
 	public void activation(boolean mode){
+		Konsultation selected_kons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+		if (selected_kons != null && actKons != null && selected_kons.getId() != actKons.getId())
+		{
+			// this should never happen
+			logEvent("activation " + mode + "sel: " + selected_kons.getLabel() + " act: " + actKons.getId());
+			return;
+		}
 		activateAllKonsAreas(mode);
 		if (mode == false) {
 			// text is neither dirty nor changed.

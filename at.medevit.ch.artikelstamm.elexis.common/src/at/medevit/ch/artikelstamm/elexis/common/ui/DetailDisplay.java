@@ -72,7 +72,9 @@ public class DetailDisplay implements IDetailDisplay {
 		if (dc != null)
 			dc.setItem(ai);
 		item.setValue(ai);
-		txtLIEFERANT.setText((ai.getLieferant().exists()) ? ai.getLieferant().getLabel() : "");
+		if (!txtLIEFERANT.isDisposed()) {
+			txtLIEFERANT.setText((ai.getLieferant().exists()) ? ai.getLieferant().getLabel() : "");
+		}
 	}
 	
 	@Override

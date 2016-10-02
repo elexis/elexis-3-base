@@ -1,6 +1,7 @@
 package at.medevit.elexis.ehc.ui.vacdoc.wizard;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
@@ -43,7 +44,8 @@ public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 		try {
 			document.reset();
 			VacdocService service = getVacdocService();
-			ehcDocument = service.getVacdocDocument(document);
+			Optional<CdaChVacd> ehcDocumentOpt = service.getVacdocDocument(document);
+			ehcDocumentOpt.ifPresent(d -> ehcDocument = d);
 		} catch (Exception e) {
 			logger.error("Could not open document", e);
 			MessageDialog.openError(getShell(), "Fehler", "Konnte das Dokument nicht öffnen.");

@@ -2,10 +2,11 @@ package at.medevit.elexis.ehc.vacdoc.service;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
 import org.ehealth_connector.cda.Consumable;
-import org.ehealth_connector.cda.ch.utils.CdaChUtil;
+import org.ehealth_connector.cda.ch.utils.CdaChLoader;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.cda.ch.vacd.Immunization;
 import org.ehealth_connector.common.Author;
@@ -14,6 +15,7 @@ import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.enums.CodeSystems;
 import org.ehealth_connector.common.utils.DateUtil;
 import org.openhealthtools.mdht.uml.cda.ch.CHPackage;
+import org.openhealthtools.mdht.uml.cda.ch.VACD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,8 +147,15 @@ public class VacdocService {
 		return vaccination.get(Vaccination.FLD_ADMINISTRATOR);
 	}
 
-	public CdaChVacd getVacdocDocument(InputStream document) throws Exception{
-		return CdaChUtil.loadVacdFromStream(document);
+	public Optional<CdaChVacd> getVacdocDocument(InputStream document) throws Exception{
+		try {
+			final CdaChLoader<CdaChVacd> loader = new CdaChLoader<CdaChVacd>();
+			return Optional.of(loader.loadFromStream(document, CdaChVacd.class, VACD.class));
+		} catch (Exception e) {
+			logger.error("problem loading xml document", e);
+			e.printStackTrace(System.err);
+		}
+		return Optional.empty();
 	}
 	
 	public void importImmunizations(Patient elexisPatient, List<Immunization> immunizations){

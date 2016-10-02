@@ -2,12 +2,17 @@ package at.medevit.elexis.ehc.vacdoc.service;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.common.Identificator;
@@ -24,11 +29,11 @@ import org.ehealth_connector.communication.ch.ConvenienceCommunicationCh;
 import org.ehealth_connector.communication.ch.enums.AvailabilityStatus;
 import org.ehealth_connector.communication.ch.xd.storedquery.FindDocumentsQuery;
 import org.openhealthtools.ihe.atna.nodeauth.SecurityDomainException;
+import org.openhealthtools.ihe.xds.metadata.AvailabilityStatusType;
 import org.openhealthtools.ihe.xds.metadata.DocumentEntryType;
 import org.openhealthtools.ihe.xds.response.DocumentEntryResponseType;
 import org.openhealthtools.ihe.xds.response.XDSQueryResponseType;
 import org.openhealthtools.ihe.xds.response.XDSRetrieveResponseType;
-import org.openhealthtools.ihe.xds.response.XDSStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +43,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Patient;
 
 public class MeineImpfungenService {
-
+	
 	public static final String CONFIG_TRUSTSTORE_PATH = "meineimpfungen.truststorePath";
 	public static final String CONFIG_TRUSTSTORE_PASS = "meineimpfungen.truststorePass";
 	
@@ -106,11 +111,11 @@ public class MeineImpfungenService {
 				atnaSecConfig.setUri(new URI(ATNA_URL));
 				
 				try {
-
-					SecurityDomainManager.generateSecurityDomain(
-						"suisse-open-exchange.healthcare", atnaSecConfig);
-					SecurityDomainManager.addUriToSecurityDomain(
-						"suisse-open-exchange.healthcare", atnaSecConfig.getUri());
+					
+					SecurityDomainManager.generateSecurityDomain("suisse-open-exchange.healthcare",
+						atnaSecConfig);
+					SecurityDomainManager.addUriToSecurityDomain("suisse-open-exchange.healthcare",
+						atnaSecConfig.getUri());
 				} catch (SecurityDomainException | URISyntaxException e) {
 					throw new IllegalStateException(e);
 				}
@@ -127,45 +132,67 @@ public class MeineImpfungenService {
 	public List<CdaChVacd> getDocuments(org.ehealth_connector.common.Patient ehcPatient){
 		VacdocService vacdocService = new VacdocService();
 		List<CdaChVacd> ret = new ArrayList<>();
-		ConvenienceCommunicationCh communication = new ConvenienceCommunicationCh(affinityDomain);
-		List<Identificator> ids = ehcPatient.getIds();
-		if (ids != null && !ids.isEmpty()) {
-			FindDocumentsQuery fdq = new FindDocumentsQuery(ids.get(0), null, null, null, null,
-				null, null, null, AvailabilityStatus.APPROVED);
-			XDSQueryResponseType result = communication.queryDocuments(fdq);
-			if (result != null && result.getStatus() == XDSStatusType.SUCCESS_LITERAL) {
-				List<DocumentEntryResponseType> docEntrieResponses =
-					result.getDocumentEntryResponses();
-				for (DocumentEntryResponseType docEntryResponse : docEntrieResponses) {
-					DocumentEntryType docEntry = docEntryResponse.getDocumentEntry();
-					if ("text/xml".equals(docEntry.getMimeType())) {
-						InputStream documentStream = getDocumentAsInputStream(docEntry);
-						//						String documentString = "";
-						//						try (BufferedReader buffer =
-						//							new BufferedReader(new InputStreamReader(documentStream))) {
-						//							documentString = buffer.lines().collect(Collectors.joining("\n"));
-						//						} catch (IOException e1) {
-						//							e1.printStackTrace();
-						//						}
-						//						System.out.println("DOCUMENT\n" + documentString);
-
-						//						documentStream = getDocumentAsInputStream(docEntry);
+		List<DocumentEntryType> entryTypes = getAllPatientDocumentEntryTypes(ehcPatient);
+		try {
+			for (DocumentEntryType documentEntryType : entryTypes) {
+				if (documentEntryType.getAvailabilityStatus() != null && documentEntryType
+					.getAvailabilityStatus() == AvailabilityStatusType.APPROVED_LITERAL) {
+					if ("text/xml".equals(documentEntryType.getMimeType())) {
+						InputStream documentStream = getDocumentAsInputStream(documentEntryType);
 						if (documentStream != null) {
-							try {
-								CdaChVacd vacdocDocument =
-									vacdocService.getVacdocDocument(documentStream);
-								ret.add(vacdocDocument);
-							} catch (Exception e) {
-								logger.error("Could not load CdaChVacd", e);
-								e.printStackTrace();
-							}
+							Optional<CdaChVacd> vacdocOpt =
+								vacdocService.getVacdocDocument(documentStream);
+							vacdocOpt.ifPresent(d -> ret.add(d));
 						}
 					}
 				}
 			}
+		} catch (Exception e) {
+			logger.error("Could not load CdaChVacd", e);
+			e.printStackTrace(System.err);
 		}
-		communication.clearDocuments();
 		return ret;
+	}
+	
+	/**
+	 * Gets the document entry types.
+	 *
+	 * @param aMyPatientId
+	 *            the a my patient id
+	 * @return the document entry types
+	 */
+	public List<DocumentEntryType> getAllPatientDocumentEntryTypes(
+		org.ehealth_connector.common.Patient ehcPatient){
+		List<DocumentEntryType> ret = new ArrayList<DocumentEntryType>();
+		List<Identificator> ids = ehcPatient.getIds();
+		if (ids != null && !ids.isEmpty()) {
+			FindDocumentsQuery fdq = new FindDocumentsQuery(ids.get(0), null, null, null, null,
+				null, null, null, AvailabilityStatus.APPROVED);
+			logger.debug("getDocumentEntryTypes");
+			final ConvenienceCommunicationCh convComm =
+				new ConvenienceCommunicationCh(affinityDomain);
+			logger.debug("queryDocuments");
+			final XDSQueryResponseType regDocQuery = convComm.queryDocuments(fdq);
+			if (regDocQuery != null) {
+				final List<DocumentEntryResponseType> docEntrieResponses =
+					regDocQuery.getDocumentEntryResponses();
+				logger.info("Document Entries found: " + docEntrieResponses.size());
+				for (final DocumentEntryResponseType docEntryResponse : docEntrieResponses) {
+					final DocumentEntryType docEntry = docEntryResponse.getDocumentEntry();
+					ret.add(docEntry);
+				}
+			}
+			convComm.clearDocuments();
+		}
+		return ret;
+	}
+	
+	private String getDocumentAsString(DocumentEntryType docEntry) throws IOException{
+		InputStream inputStream = getDocumentAsInputStream(docEntry);
+		try (BufferedReader buffer =
+			new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
+			return buffer.lines().collect(Collectors.joining("\n"));
+		}
 	}
 	
 	/**

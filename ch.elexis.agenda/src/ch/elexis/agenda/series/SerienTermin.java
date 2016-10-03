@@ -115,9 +115,7 @@ public class SerienTermin {
 		if (contact == null)
 			setFreeText(rootTermin.get(Termin.FLD_PATIENT));
 		reason = rootTermin.getGrund();
-		System.out.println("got " + rootTermin.get(Termin.FLD_EXTENSION));
 		parseSerienTerminConfigurationString(rootTermin.get(Termin.FLD_EXTENSION));
-		System.out.println("initialized " + toString());
 	}
 	
 	/**

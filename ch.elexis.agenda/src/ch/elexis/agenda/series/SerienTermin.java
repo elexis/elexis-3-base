@@ -287,7 +287,6 @@ public class SerienTermin {
 		TimeSpan ts = new TimeSpan(dateIncrementer, endTime);
 		Termin t = new Termin(Activator.getDefault().getActResource(), ts, "series");
 		t.set(Termin.FLD_LINKGROUP, groupId);
-		t.setFlag(Termin.SW_LINKED);
 		
 		System.out.println("writing subsequent date entry " + endTime.dump());
 	}
@@ -316,7 +315,6 @@ public class SerienTermin {
 		}
 		
 		rootTermin.setGrund(reason);
-		rootTermin.setFlag(Termin.SW_LINKED);
 		rootTermin.set("ErstelltVon", CoreHub.actUser.getLabel());
 		rootTermin.set(Termin.FLD_EXTENSION, this.toString());
 		

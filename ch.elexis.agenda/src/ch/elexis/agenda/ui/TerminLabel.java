@@ -104,7 +104,7 @@ public class TerminLabel extends Composite {
 			
 			@Override
 			public void mouseUp(MouseEvent e){
-				agenda.dispatchTermin(t);
+				agenda.dispatchTermin(getTermin());
 				super.mouseUp(e);
 			}
 			
@@ -150,14 +150,14 @@ public class TerminLabel extends Composite {
 	}
 	
 	public Termin getTermin(){
-		return t;
+		return isRecurringTermin() ? getRecurringTermin() : t;
 	}
 	
-	public Termin getRecurringTermin(){
+	private Termin getRecurringTermin(){
 		return recurringTermin;
 	}
 	
-	public boolean isRecurringTermin(){
+	private boolean isRecurringTermin(){
 		return recurringTermin != null;
 	}
 	
@@ -180,7 +180,7 @@ public class TerminLabel extends Composite {
 		
 		// l.setForeground(Plannables.getStatusColor(t));
 		StringBuilder sb = new StringBuilder();
-		sb.append(t.getLabel()).append("\n").append(t.getGrund()); //$NON-NLS-1$
+		sb.append(getTermin().getLabel()).append("\n").append(t.getGrund()); //$NON-NLS-1$
 		sb.append("\n--------\n").append(t.getStatusHistoryDesc()); //$NON-NLS-1$
 		String grund = t.getGrund();
 		if (grund != null && !grund.isEmpty())
@@ -350,10 +350,9 @@ public class TerminLabel extends Composite {
 	private void checkCollision(List<TerminLabel> tlabels){
 		String checkBereich = getTermin().getBereich();
 		// use recurring termin for collision checking
-		Termin termin = isRecurringTermin() ? getRecurringTermin() : getTermin();
+		Termin termin = getTermin();
 		for (TerminLabel otherLabel : tlabels) {
-			Termin otherTermin = otherLabel.isRecurringTermin() ? otherLabel.getRecurringTermin()
-					: otherLabel.getTermin();
+			Termin otherTermin = otherLabel.getTermin();
 			if (otherLabel != this && otherTermin.getBereich().equals(checkBereich)) {
 				if (Plannables.isOverlapped(termin, otherTermin)) {
 					addOverlapped(otherLabel);

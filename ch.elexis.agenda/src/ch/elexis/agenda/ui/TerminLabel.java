@@ -55,10 +55,10 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.TerminDialog;
 
-
 public class TerminLabel extends Composite {
 	private Label lbl;
 	private Termin t;
+	private Termin recurringTermin;
 	private int column;
 	private Composite state;
 	private int originalFontHeightPixel, originalFontHeightPoint;
@@ -147,8 +147,10 @@ public class TerminLabel extends Composite {
 	
 	public void set(Termin tf, int col){
 		t = tf;
-		if (tf.isRecurringDate())
+		if (tf.isRecurringDate()) {
+			recurringTermin = tf;
 			t = new SerienTermin(tf).getRootTermin();
+		}
 		this.column = col;
 	}
 	
@@ -163,6 +165,14 @@ public class TerminLabel extends Composite {
 	
 	public Termin getTermin(){
 		return t;
+	}
+	
+	public Termin getRecurringTermin(){
+		return recurringTermin;
+	}
+	
+	public boolean isRecurringTermin(){
+		return recurringTermin != null;
 	}
 	
 	public void updateActions(){
@@ -194,9 +204,8 @@ public class TerminLabel extends Composite {
 		lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		lbl.setToolTipText(sb.toString());
 		
-		int lx =
-			ial.getLeftOffset()
-				+ (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
+		int lx = ial.getLeftOffset()
+			+ (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
 		
 		String startOfDayTimeInMinutes =
 			CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
@@ -206,7 +215,7 @@ public class TerminLabel extends Composite {
 		sodtM += sodtMinutes;
 		
 		String endOfDayTimeInMinutes =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 		int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0, 2));
 		int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
 		int eodtM = (eodtHours * 60);
@@ -231,7 +240,8 @@ public class TerminLabel extends Composite {
 		
 		if (t.getBeginn() < sodtM) {
 			ly = (int) Math.round(t.getBeginn() * ial.getPixelPerMinute());
-			int diff = ((t.getDauer() - sodtM) < 0) ? t.getDauer() : (t.getDauer() - sodtM);
+			int diff =
+				((t.getDauer() - sodtM) < 0) ? t.getDauer() : (t.getDauer() - sodtM);
 			
 			diff += ((t.getBeginn() + diff) > eodtM) ? (t.getBeginn() + diff) - eodtM : 0;
 			
@@ -286,7 +296,7 @@ public class TerminLabel extends Composite {
 		}
 		return font;
 	}
-
+	
 	class TerminLabelMenu {
 		TerminLabelMenu(){
 			MenuManager contextMenuManager = new MenuManager();
@@ -379,9 +389,13 @@ public class TerminLabel extends Composite {
 	
 	private void checkCollision(List<TerminLabel> tlabels){
 		String checkBereich = getTermin().getBereich();
+		// use recurring termin for collision checking
+		Termin termin = isRecurringTermin() ? getRecurringTermin() : getTermin();
 		for (TerminLabel otherLabel : tlabels) {
-			if (otherLabel != this && otherLabel.getTermin().getBereich().equals(checkBereich)) {
-				if (Plannables.isOverlapped(getTermin(), otherLabel.getTermin())) {
+			Termin otherTermin = otherLabel.isRecurringTermin() ? otherLabel.getRecurringTermin()
+					: otherLabel.getTermin();
+			if (otherLabel != this && otherTermin.getBereich().equals(checkBereich)) {
+				if (Plannables.isOverlapped(termin, otherTermin)) {
 					addOverlapped(otherLabel);
 				}
 			}

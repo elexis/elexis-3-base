@@ -184,13 +184,7 @@ public class SerienTermin {
 	 * @param askForConfirmation
 	 */
 	public void delete(boolean askForConfirmation){
-		// due to weirdness of original code, the following sequence of steps has to be undertaken
-		// 1. delete all subsequent dates
 		rootTermin.delete(askForConfirmation);
-		// 2. remove link group info from root date
-		rootTermin.delete(askForConfirmation);
-		// 3. delete the rootTermin itself
-		rootTermin.delete(true);
 	}
 	
 	private void createSubSequentDates(){

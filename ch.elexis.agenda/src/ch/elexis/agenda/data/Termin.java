@@ -13,6 +13,7 @@
 package ch.elexis.agenda.data;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -184,12 +185,7 @@ public class Termin extends PersistentObject
 	static public final int STANDARD = 2;
 	
 	// Status-Flags (dipSwitch)
-	static final byte SW_NEW = 0; // 0x01
-	static final byte SW_MODIFIED = 1; // 0x02
-	static final byte SW_ARCHIVE = 2; // 0x04
-	static public final byte SW_SELECTED = 3; // 0x08
 	static public final byte SW_LOCKED = 4; // 0x10
-	static public final byte SW_LINKED = 5; // 0x20
 	
 	// static String[] Users;
 	
@@ -344,30 +340,19 @@ public class Termin extends PersistentObject
 	
 	/**
 	 * if the linked list is 0 only the original entry is returned; if we have linked elements, all
-	 * linked elements are removed and the original {@link Termin} is "unlinked" but left
+	 * linked elements are returned
 	 * 
 	 * @param orig
 	 * @return
 	 */
 	public static List<Termin> getLinked(final Termin orig){
-		if (orig.getFlag(SW_LINKED) == false) {
-			return null;
-		}
 		if (StringTool.isNothing(orig.get(FLD_LINKGROUP))) {
-			return null;
+			return Collections.singletonList(orig);
 		}
 		
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
 		qbe.add(FLD_LINKGROUP, Query.EQUALS, orig.get(FLD_LINKGROUP));
-		List<Termin> ret = qbe.execute();
-		if (ret.size() == 0) {
-			ret.add(orig);
-		} else if (ret.size() == 1) {
-			orig.clrFlag(SW_LINKED);
-			orig.set(FLD_LINKGROUP, null);
-			// TODO orig.flush();
-		}
-		return ret;
+		return qbe.execute();
 	}
 	
 	/**
@@ -390,6 +375,10 @@ public class Termin extends PersistentObject
 		return new TimeTool(min, 60000);
 	}
 	
+	/**
+	 * @deprecated
+	 * @param flag
+	 */
 	public void setFlag(final byte flag){
 		int flags = checkZero(get("flags"));
 		flags |= 1 << flag;
@@ -400,6 +389,10 @@ public class Termin extends PersistentObject
 		});
 	}
 	
+	/**
+	 * @deprecated
+	 * @param flag
+	 */
 	public void clrFlag(final byte flag){
 		int flags = checkZero(get("flags"));
 		flags &= ~(1 << flag);
@@ -410,6 +403,10 @@ public class Termin extends PersistentObject
 		});
 	}
 	
+	/**
+	 * @deprecated
+	 * @param flag
+	 */
 	public boolean getFlag(final byte flag){
 		int flags = checkZero(get("flags"));
 		return ((flags & (1 << flag)) != 0);
@@ -440,11 +437,10 @@ public class Termin extends PersistentObject
 		if (checkLock()) {
 			return false;
 		}
-		List<Termin> linked = null;
 		String linkgroup = get(FLD_LINKGROUP); //$NON-NLS-1$
-		boolean linkedDate = (getFlag(SW_LINKED) && (!StringTool.isNothing(linkgroup)));
+		boolean isLinked = linkgroup != null && !linkgroup.isEmpty();
 		
-		if (linkedDate && askForConfirmation) {
+		if (isLinked && askForConfirmation) {
 			MessageDialog msd =
 				new MessageDialog(UiDesk.getTopShell(), Messages.Termin_deleteSeries, null,
 					Messages.Termin_thisAppIsPartOfSerie, MessageDialog.QUESTION, new String[] {
@@ -452,62 +448,52 @@ public class Termin extends PersistentObject
 					}, 1);
 			confirmed = (msd.open() == Dialog.OK);
 		}
-		if (confirmed && linkedDate) {
-			linked = getLinked(this);
-			for (Termin ae : (List<Termin>) linked) {
-				ae.set(new String[] {
-					FLD_LASTEDIT, FLD_DELETED
-				}, new String[] {
-					createTimeStamp(), StringConstants.ONE
-				});
+		if (isLinked) {
+			List<Termin> linked = getLinked(this);
+			if (confirmed) {
+				// delete whole series
+				for (Termin ae : (List<Termin>) linked) {
+					ae.set(new String[] {
+						FLD_LASTEDIT, FLD_DELETED
+					}, new String[] {
+						createTimeStamp(), StringConstants.ONE
+					});
+				}
+			} else {
+				if (getId().equals(linkgroup)) {
+					// move root information
+					if (linked.size() > 1) {
+						int index = 0;
+						Termin moveto = linked.get(index);
+						while (moveto.getId().equals(linkgroup)) {
+							moveto = linked.get(++index);
+						}
+						moveto.set(Termin.FLD_PATIENT, get(Termin.FLD_PATIENT));
+						moveto.set(Termin.FLD_GRUND, get(Termin.FLD_GRUND));
+						moveto.set(Termin.FLD_CREATOR, get(Termin.FLD_CREATOR));
+						moveto.set(Termin.FLD_EXTENSION, get(Termin.FLD_EXTENSION));
+						for (Termin termin : linked) {
+							termin.set(Termin.FLD_LINKGROUP, moveto.getId());
+						}
+					}
+				}
+				// delete this
+				set(new String[] {
+					FLD_DELETED, FLD_LASTEDIT
+				}, StringConstants.ONE, createTimeStamp());
 			}
-		}
-		String deleted = get(FLD_DELETED);
-		if (deleted.equals(StringConstants.ONE)) {
-			deleted = StringConstants.ZERO;
 		} else {
-			deleted = StringConstants.ONE;
+			// delete this
+			set(new String[] {
+				FLD_DELETED, FLD_LASTEDIT
+			}, StringConstants.ONE, createTimeStamp());
 		}
-		set(new String[] {
-			FLD_DELETED, FLD_LASTEDIT
-		}, deleted, createTimeStamp());
 		return true;
 	}
 	
 	@Override
 	public boolean delete(){
 		return delete(true);
-// List<Termin> linked = null;
-//		String linkgroup = get(FLD_LINKGROUP); //$NON-NLS-1$
-// if (getFlag(SW_LINKED) && (!StringTool.isNothing(linkgroup))) {
-// MessageDialog msd =
-// new MessageDialog(Desk.getTopShell(), Messages.Termin_deleteSeries, null,
-// Messages.Termin_thisAppIsPartOfSerie, MessageDialog.QUESTION, new String[] {
-// Messages.Termin_yes, Messages.Termin_no
-// }, 1);
-// if (msd.open() == Dialog.OK) {
-// linked = getLinked(this);
-// for (Termin ae : (List<Termin>) linked) {
-// ae.set(new String[] {
-// FLD_LASTEDIT, FLD_DELETED
-// }, new String[] {
-// createTimeStamp(), StringConstants.ONE
-// });
-// }
-// }
-//
-// }
-//
-// String deleted = get(FLD_DELETED);
-// if (deleted.equals(StringConstants.ONE)) {
-// deleted = StringConstants.ZERO;
-// } else {
-// deleted = StringConstants.ONE;
-// }
-// set(new String[] {
-// FLD_DELETED, FLD_LASTEDIT
-// }, deleted, createTimeStamp());
-// return true;
 	}
 	
 	public void setType(final String Type){

@@ -24,10 +24,7 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -147,46 +144,18 @@ public class Activator extends AbstractUIPlugin {
 	 * @param termin
 	 */
 	public void dispatchTermin(final Termin termin){
-		final Kontakt pat = termin.getKontakt();
-		ElexisEventDispatcher.fireSelectionEvent(termin);
-		if (pat != null) {
-			// ElexisEventCascade.getInstance().stop();
-			try {
-				ElexisEventDispatcher.fireSelectionEvent(pat);
-				if (pat instanceof Patient) {
-					final Konsultation kons =
-						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-					
-					final String sVgl = getActDate().toString(TimeTool.DATE_COMPACT);
-					/*
-					 * if ((kons == null) || // Falls nicht die richtige Kons selektiert ist,
-					 * passende // Kons für heute suchen !(kons.getFall
-					 * ().getPatient().getId().equals(pat.getId())) || !(new TimeTool
-					 * (kons.getDatum()).toString(TimeTool.DATE_COMPACT). equals(sVgl))) {
-					 */
-					final Fall[] faelle = ((Patient) pat).getFaelle();
-					final TimeTool ttVgl = new TimeTool();
-					for (Fall f : faelle) {
-						final Konsultation[] konsen = f.getBehandlungen(true);
-						for (Konsultation konsultation : konsen) {
-							ttVgl.set(konsultation.getDatum());
-							if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)) {
-								ElexisEventDispatcher.fireSelectionEvents(konsultation,
-									konsultation.getFall());
-								return;
-							}
-						}
-					}
-					Konsultation k = ((Patient) pat).getLetzteKons(false);
-					if (k != null) {
-						ElexisEventDispatcher.fireSelectionEvents(k, k.getFall());
-					}
-				}
-				// ElexisEventDispatcher.getInstance().waitUntilEventQueueIsEmpty(100);
-				// }
-			} finally {
-				// ElexisEventCascade.getInstance().start();
+		Kontakt contact = null;
+		if (termin.isRecurringDate()) {
+			Termin rootTermin = Termin.load(termin.get(Termin.FLD_LINKGROUP));
+			if (rootTermin != null && rootTermin.exists()) {
+				contact = rootTermin.getKontakt();
 			}
+		} else {
+			contact = termin.getKontakt();
+		}
+		ElexisEventDispatcher.fireSelectionEvent(termin);
+		if (contact != null) {
+			ElexisEventDispatcher.fireSelectionEvent(contact);
 		}
 	}
 }

@@ -228,6 +228,7 @@ public class DetailComposite extends Composite {
 		
 		m_bindingContext = initDataBindings();
 		adsc.initDataBindings(m_bindingContext);
+		adsc.setAutoSave(true);
 	}
 
 	@Override

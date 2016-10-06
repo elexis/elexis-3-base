@@ -6,16 +6,17 @@
       provider-name="medevit.at">
 
    <description url="http://www.medelexis.ch">
-      Voreingestellte Konfiguration der Elexis Unterstützung GeräteDatenTräger Protokoll (GDT-D-10).
-      Mehr Info unter http://wiki.elexis.info/ch.medelexis.application.feature.feature.group
+      Voreingestellte Konfiguration der Elexis Unterstützung GeräteDatenTräger
+Protokoll (GDT-D-10).
+Mehr Info unter https://wiki.elexis.info/At.medevit.elexis.gdt.defaultfilecp
    </description>
 
    <copyright>
-      Medelexis AG
+      Medevit OG, Medelexis AG
    </copyright>
 
-   <license>
-      Proprietär
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
    </license>
 
    <plugin

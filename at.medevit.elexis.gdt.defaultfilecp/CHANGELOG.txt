@@ -1,0 +1,4 @@
+1.0.0 
+	- Initial implementation
+1.0.1 - 11.01.2012 - M. Descher
+	- Support for configurable post GDT file generation executable exectuion

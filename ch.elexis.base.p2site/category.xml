@@ -147,6 +147,18 @@
    <feature url="features/at.medevit.elexis.decision.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.decision.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature url="features/at.medevit.elexis.gdt.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.gdt.feature" version="3.0.0.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.gdt.feature.source_3.0.0.qualifier.jar" id="at.medevit.elexis.gdt.feature" version="3.0.0.qualifier">
+      <category name="sources"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.gdt.defaultfilecp.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.gdt.defaultfilecp.feature" version="3.0.0.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.gdt.defaultfilecp.feature.source_3.0.0.qualifier.jar" id="at.medevit.elexis.gdt.defaultfilecp.feature" version="3.0.0.qualifier">
+      <category name="sources"/>
+   </feature>
    <feature url="features/ch.elexis.global_inbox.feature.source_3.0.0.qualifier.jar" id="ch.elexis.global_inbox.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>

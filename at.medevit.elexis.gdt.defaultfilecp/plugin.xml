@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="at.medevit.elexis.gdt.communicationPartner">
+      <commPartner
+            interface="at.medevit.elexis.gdt.defaultfilecp.DefaultFileCommPartner">
+      </commPartner>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="at.medevit.elexis.gdt.ui.GDTPreferencePage"
+            class="at.medevit.elexis.gdt.defaultfilecp.ui.GDTPreferencePageFileTransfer"
+            id="at.medevit.elexis.gdt.defaultfilecp.ui.GDTPreferencePageFileTransfer"
+            name="Datei-Kommunikation">
+      </page>
+   </extension>
+
+</plugin>

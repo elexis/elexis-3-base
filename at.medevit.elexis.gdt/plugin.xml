@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="communicationPartner" name="GDT Communication Partner" schema="schema/communicationPartner.exsd"/>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="GDT"
+            class="at.medevit.elexis.gdt.ui.GDTPreferencePage"
+            id="at.medevit.elexis.gdt.ui.GDTPreferencePage"
+            name="Gerätedatenträger (GDT)">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="at.medevit.elexis.gdt.EarlyStartup">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="at.medevit.elexis.gdt"
+            id="at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern"
+            name="Neue Untersuchung anfordern">
+      </command>
+      <command
+            categoryId="at.medevit.elexis.gdt"
+            id="at.medevit.elexis.gdt.command.showGDTMessage"
+            name="GDT Nachricht anzeigen">
+      </command>
+      <command
+            categoryId="at.medevit.elexis.gdt"
+            id="at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen"
+            name="Daten einer Untersuchung anzeigen">
+         <commandParameter
+               id="at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource"
+               name="gdtProtokollSource"
+               optional="true">
+         </commandParameter>
+      </command>
+      <category
+            id="at.medevit.elexis.gdt"
+            name="GDT Commands">
+      </category>
+      <command
+            categoryId="at.medevit.elexis.gdt"
+            id="at.medevit.elexis.gdt.command.StammdatenUebermitteln"
+            name="Stammdaten übermitteln">
+         <commandParameter
+               id="at.medevit.elexis.gdt.cmd.parameter.partnerClassname"
+               name="PatnerClassname"
+               optional="true">
+         </commandParameter>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern"
+            commandId="at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern">
+      </handler>
+      <handler
+            class="at.medevit.elexis.gdt.command.ShowGDTMessage"
+            commandId="at.medevit.elexis.gdt.command.showGDTMessage">
+      </handler>
+      <handler
+            class="at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen"
+            commandId="at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen">
+      </handler>
+      <handler
+            class="at.medevit.elexis.gdt.command.StammdatenUebermitteln"
+            commandId="at.medevit.elexis.gdt.command.StammdatenUebermitteln">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="at.medevit.elexis.gdt.ui.GDTProtokollView"
+            icon="rsc/icons/edit-find-and-replace-2.png"
+            id="at.medevit.elexis.gdt.ui.GDTProtokollView"
+            name="GDT Protokoll"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.PersistentReference">
+      <Factory
+            Class="at.medevit.elexis.gdt.data.GDTProtokollFactory"
+            name="GDT Protokoll Factory">
+      </Factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:at.medevit.elexis.gdt.ui.GDTProtokollView">
+         <command
+               commandId="at.medevit.elexis.gdt.command.showGDTMessage"
+               label="Nachricht anzeigen"
+               style="push">
+         </command>
+         <command
+               commandId="at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen"
+               label="Daten dieser Untersuchung anzeigen"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <and>
+                        <instanceof
+                              value="at.medevit.elexis.gdt.data.GDTProtokoll">
+                        </instanceof>
+                        <test
+                              property="at.medevit.elexis.gdt.isGDTSatznachricht6310">
+                        </test>
+                     </and>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.PatListView">
+         <menu
+               icon="rsc/icons/connect.png"
+               id="gdtPatientMenu"
+               label="GeräteDatenTräger (GDT)">
+            <command
+                  commandId="at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern"
+                  icon="rsc/icons/utilities-system-monitor-6.png"
+                  label="Neue Untersuchung anfordern"
+                  style="push">
+            </command>
+            <command
+                  commandId="at.medevit.elexis.gdt.command.StammdatenUebermitteln"
+                  icon="rsc/icons/user-idle-16x16.png"
+                  label="Stammdaten übermitteln"
+                  style="push">
+            </command>
+            <separator
+                  name="at.medevit.elexis.gdt.menu.separator"
+                  visible="true">
+            </separator>
+            <dynamic
+                  class="at.medevit.elexis.gdt.dynamic.UntersuchungAnzeigenMenu"
+                  id="at.medevit.elexis.gdt.dynamic.UntersuchungAnzeigenMenu">
+            </dynamic>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="at.medevit.elexis.gdt.propertyTester.GDTSatzNachrichtType"
+            id="at.medevit.elexis.gdt.propertyTester.GDTSatzNachrichtType"
+            namespace="at.medevit.elexis.gdt"
+            properties="isGDTSatznachricht6310"
+            type="at.medevit.elexis.gdt.data.GDTProtokoll">
+      </propertyTester>
+   </extension>
+
+</plugin>

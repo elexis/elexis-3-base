@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="at.medevit.elexis.gdt.feature"
+      label="Unterstützung Gerätedatenträger GDT"
+      version="3.0.0.qualifier"
+      provider-name="medevit.at">
+
+   <description url="http://www.medelexis.ch">
+      Elexis Unterstützung GeräteDatenTräger Protokoll (GDT-D-10) 
+      Mehr Info unter http://wiki.elexis.info/ch.medelexis.application.feature.feature.group
+   </description>
+
+   <copyright>
+      Medelexis AG
+   </copyright>
+
+   <license>
+      Proprietär
+   </license>
+
+   <plugin
+         id="at.medevit.elexis.gdt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.exec"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -1,0 +1,61 @@
+[[Category:Gerätebindung]]
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0.a20140408-1247</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Gerätebindung</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>23. Juni 2014</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>Proprietär</td>
+	</tr>
+</table>
+== Elexis GDT Standard Datei-Kommunikation ==
+''Bezeichnung:'' Elexis Standard GDT 2.1 Datei-Kommunikation<br />
+ ''Author:'' Marco Descher &lt;descher@medevit.at&gt;<br />
+ ''Version:'' 1.0.0, August 2011<br />
+ ''Beschreibung:'' Dieses Plug-In stellt eine grundlegende Datei-Kommunikationsanbindung für GDT 2.1 zur Verfügung.
+Diese Dokumentation versteht sich als Ergänzung der grundlegenden GDT Dokumentation welche sich im Plug-In <tt>at.medevit.elexis.gdt</tt> befindet.
+== Anforderungen ==
+Diese Plug-In benötigt Elexis in Version &gt;2.1.5 und das Plug-In <tt>at.medevit.elexis.gdt</tt>.
+== Installation ==
+Die Installation des Plug-Ins selbst erfolgt mittels des Konfigurators, es müssen keinerlei spezielle Massnahmen ergriffen werden.
+== Konfiguration ==
+Die Konfiguration ist abhängig von der spezifischen Anwendungsform.
+=== Konfiguration Elexis ===
+Konfigurieren Sie die Anbindung wie in folgender Grafik vorgegeben:
+[[File:at.medevit.elexis.gdt.defaultfilecp:defaultFileCPPref.png|frame|none]]
+# Die lange ID des Empfängers
+# Die kurze ID des Empfängers
+# Das Standard-Austauschverzeichnis
+# Die verwendete Dateiart (siehe GDT Standard)
+== Grundlegende Bedienung ==
+Die Bedienung ist durch das <tt>at.medevit.elexis.gdt</tt> Plug-In vorgegeben, bitte lesen Sie dieses Dokument.
+== Anfordern einer Untersuchung ==
+Siehe Dokumentation in <tt>at.medevit.elexis.gdt</tt>.
+== Daten einer Untersuchung anzeigen ==
+Siehe Dokumentation in <tt>at.medevit.elexis.gdt</tt>.

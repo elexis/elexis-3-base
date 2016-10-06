@@ -1,0 +1,48 @@
+h1. Elexis GDT Standard Datei-Kommunikation
+
+_Bezeichnung:_ Elexis Standard GDT 2.1 Datei-Kommunikation
+_Author:_ Marco Descher <descher@medevit.at>
+_Version:_ 1.0.0, August 2011
+_Beschreibung:_ Dieses Plug-In stellt eine grundlegende Datei-Kommunikationsanbindung für GDT 2.1 zur Verfügung.
+
+Diese Dokumentation versteht sich als Ergänzung der grundlegenden GDT Dokumentation welche sich im Plug-In @at.medevit.elexis.gdt@ befindet.
+
+
+h2. Inhaltsverzeichnis
+
+{toc}
+
+h2. Anforderungen
+
+Diese Plug-In benötigt Elexis in Version >2.1.5 und das Plug-In @at.medevit.elexis.gdt@. 
+
+h2. Installation
+
+Die Installation des Plug-Ins selbst erfolgt mittels des Konfigurators, es müssen keinerlei spezielle Massnahmen ergriffen werden.
+
+h2. Konfiguration
+
+Die Konfiguration ist abhängig von der spezifischen Anwendungsform.
+
+h3. Konfiguration Elexis
+
+Konfigurieren Sie die Anbindung wie in folgender Grafik vorgegeben:
+
+!images/defaultFileCPPref.png!
+
+# Die lange ID des Empfängers
+# Die kurze ID des Empfängers
+# Das Standard-Austauschverzeichnis
+# Die verwendete Dateiart (siehe GDT Standard)
+
+h1. Grundlegende Bedienung
+
+Die Bedienung ist durch das @at.medevit.elexis.gdt@ Plug-In vorgegeben, bitte lesen Sie dieses Dokument.
+
+h2. Anfordern einer Untersuchung
+
+Siehe Dokumentation in @at.medevit.elexis.gdt@.
+
+h2. Daten einer Untersuchung anzeigen
+
+Siehe Dokumentation in @at.medevit.elexis.gdt@.

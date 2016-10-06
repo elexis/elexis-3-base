@@ -1,0 +1,25 @@
+1.0.0 
+	- Initial implementation
+1.0.1 - 21.8.2011
+	- Fix for NPE in EarlyStartup
+1.0.2 - 24.8.2011 - rgw (comment by mde)
+	- undocumented changes
+1.0.3 - 10.1.2012 - M. Descher
+	- Correct null handling in NeueUntersuchungAnfordernDialog
+	- Remove stub configuration page for serial communication
+	- Allow for plug-ins not requiring 8402 definition
+	- Fix for NPE in protokoll view
+	- charset contribution by extending plugins now honored if > 0
+	- Implementation "Stammdaten uebermitteln" Satzart 6301
+	- Support for fixed filename with FILE_COMMUNICATION and GDT_FILETRANSFER_TYP_FEST
+1.0.4 - 23.1.2012 - M. Descher
+	- Fix for com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column 'Remote' at row 1
+1.0.5 - 25.1.2012 - M. Descher
+	- Fix forrrayIndexOutOfBoundsException in GDTResponseIn6310Out6311.createResponse()
+1.0.6 - 28.3.2012 - M. Descher
+	- Increase database row size for GDT Protokoll Remote entry from 60 to 255
+	- Additional debugging entries
+	- Reduce error level of file alteration monitor from ERROR to INFO .. it is not that drastic
+1.0.6.1 - regression patch - missing PLZ-CITY entry already commited to 2.2
+1.0.7 - 9.8.2012 - M. Descher
+	- Fixed incorrect size of dialogs in Linux and Windows -> see #1100

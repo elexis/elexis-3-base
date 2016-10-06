@@ -1,0 +1,141 @@
+h1. Elexis Gerätedatenträger Protokoll Unterstützung
+
+_Bezeichnung:_ Elexis Gerätedatenträger Protokoll Unterstützung 
+_Author:_ Marco Descher <descher@medevit.at>
+_Version:_ 1.0.6, März 2012
+_Beschreibung:_ Dieses Plug-In bietet die grundlegende Unterstützung für das GeräteDatenTräger Protokoll in Version 2.1. Die offizielle Spezifikation ist verfügbar unter "Qualitätsring medizinische Software":http://www.qms-de.org/.
+
+*ACHTUNG:*  Dieses Plug-In alleine ist NICHT lauffähig, da es nur die grundlegende Implementation des GDT Protokolles bietet. Um eine funktionsfähige Anbindung eines spezifischen Gerätes zu erhalten, bedarf es eines auf diesem Plug-In aufbauenden Plug-Ins.
+
+
+h2. Inhaltsverzeichnis
+
+{toc}
+
+h2. Anforderungen
+
+Diese Plug-In benötigt Elexis in Version >2.1.5.
+
+h2. Installation
+
+Die Installation des Plug-Ins selbst erfolgt mittels des Konfigurators, es müssen keinerlei spezielle Massnahmen ergriffen werden.
+
+
+h2. Grundlegendes
+
+Jede an einer GDT Kommunikation teilnehmende Partei verfügt über eine lange und eine kurze Identity (ID).
+Die öange ID wird als Kennzeichnung der jeweiligen Station innerhalb einer GDT Nachricht verwendet (sie darf max. 8 Zeichen lang sein). 
+Die kurze ID wird für die Erstellung des Dateinamens benötigt (die maximale Länge beträgt hier 4 zeichen), sie ist also im Rahmen einer seriellen Anbindung optional. 
+
+Die IDs müssen bei der jeweiligen Station und ihrem Kommunikationspartner ident gesetzt sein (außer serielle Anbindung).
+
+Bei Datei-Konfiguration ist jeweils der Empfänger einer Nachricht verantwortlich dafür diese nach erfolgter Verarbeitung zu löschen. GDT Dateien
+existieren also immer nur einen begrenzten Zeitraum. Es ist daher ungewöhnlich, wenn sich GDT-Kommunikations-Verzeichnisse mit Dateien füllen.
+
+**ACHTUNG:**  Bei der Kommunikation mit GDT Geräten geht dieses Plug-In davon aus, dass die im Feld @PATIENT_KENNUNG@ gesendete Patienten Kennung ident zur Elexis Patienten-Nummer ist! Um eine korrekte Zuordnung in Elexis zu einem Patienten zu erhalten, müssen Sie also die Patienten-Nummer in Elexis und die in Ihren GDT-Geräten synchron halten!
+
+h2. Konfiguration
+
+Folgene Grundeinstellungen müssen für GDT an einem Elexis-Arbeitsplatz getroffen werden:
+
+!images/configGdtBase.png!
+
+# Die lange Identität des Arbeitsplatzes. Empfohlen wird hier @ELEXIS@ und eine fortlaufende im Arbeitsumfeld eindeutige 2-stellige Nummer. Die maximale Länge beträgt 8 Zeichen.
+# Die kurze Identität des Arbeitsplatzes. Empfohlen wird hier @EX@ und wiederum eine fortlaufende im Arbeitsumfeld eindeutige 2-stellige Nummer. Die maximale Länge beträgt 4 Zeichen.
+# Der Standard-Zeichensatz, der für die Kommunikation verwendet wird. Dieser Wert kann von spezifischen Plug-Ins die auf GDT basieren überschrieben werden. Empfohlen wird hier als Einstellung @IBM (Standard) CP 437@, da dies der offizielle GDT 2.1 Standard ist.
+# GDT Datei-basierte Kommunikation wird innerhalb von, für diese Verwendung definierte, Verzeichnissen geführt. Ein Prozess überwacht laufend die Vorgänge im jeweils für Elexis definierten Eingangs-Verzeichnis. Bei Auswahl dieser Option werden Daten die in diese Kommunikations-Verzeichnisse kopiert werden, und welche nicht GDT Datensätze beinhalten ohne Rückmeldung gelöscht. Die Aktivierung dieser Option wird empfohlen.
+
+
+h1. Grundlegende Bedienung
+
+Dieses Plug-In stellt grundlegende Dialoge und Views zur Verwendung durch Plug-Ins welche konkrete Anbindung realisieren dar. Die Beispiele werden auf Basis der custo med Anbindung präsentiert:
+
+h2. Der GDT-Protokoll View
+
+Der Protokoll-View stellt sämtliche eingehende und ausgehende GDT Kommunikation dar, die jeweiligen Symbole sind im folgenden Bild innerhalb der grünen Box zu sehen, wobei !images/incoming.png! eine eingehende Kommunikation und !images/outgoing.png! eine ausgehende Kommunikation darstellt.
+
+!images/protokollView.png!
+
+Beim Start von Elexis, wenn kein Patient ausgewählt ist, beinhaltet der View das komplette GDT-Protokoll. Mit der Selektion eines Patienten, wird nur das für diesen Patienten relevante Protokoll dargestellt. Die Zellen die im gelb markierten Bereich liegen, können durch einfachen Klick nachbearbeitet werden, Sie können sich hier also Notizen oder Eintragungen zu einer spezifischen Nachricht machen. Das Bezeichnungsfeld wird durch Elexis mit einem Vorschlag vorausgefüllt, sie können dies aber natürlich jederzeit ändern.
+
+*ACHTUNG:* Beachten Sie wiederum die korrekte Zuordnung: Patienten-Nummer in Elexis muss im GDT-Gerät synchron gehalten werden.
+
+Der GDT-Protokoll View bietet auch die Möglichkeit Datensätze in Klartext anzusehen. Das Selektieren eines Elementes aus der Liste mit anschliessendem Rechts-Klick bietet das Kontext-Menu mit der Option @Nachricht anzeigen@. Wird dies ausgeführt öffnet sich ein Fenster welches die Nachricht im Klartext anzeigt.
+
+*ACHTUNG:* Es erfolgt hierbei keine Konvertierung in den lokalen Zeichensatz, der GDT Nachrichten-Zeichensatz wird beibehalten, dies kann zur Fehldarstellung von Sonderzeichen führen.
+
+h2. Das Patienten-Liste Kontext Menu
+
+!images/kontextMenu.png!
+
+h2. Der "Neue Untersuchung anfordern" Dialog
+
+Wenn Sie an einem GDT Gerät eine Untersuchung anfordern wollen, wählen Sie im Kontext-Menu eines bestimmten Patienten die Option @Neue Untersuchung anfordern@ aus. Sie erhalten folgenden Dialog:
+
+!images/neueUntersuchungAnfordern.png!
+
+Der im roten Rahmen abgebildete Bereich ist für die Anforderung einer Untersuchung obligatorisch, das heißt hier müssen alle Werte (bis auf Test-Identität) ausgefüllt sein.
+
+Der untere Bereich dient der Übermittlung von Detailinformationen über den Patienten, welche nach GDT Standard optional vorhanden sein können. 
+
+Gehen Sie also zur Übermittlung folgendermassen vor:
+
+# Wählen sie einen Kommunikationspartner. Ein Kommunikationspartner wird von einem Plug-In implementiert, welches eine reale Anbindung an ein Gerät implementiert. Je nach Ihrem System haben Sie hier nur einen oder mehrere Auswahlmöglichkeiten. Existiert nur eine, ist diese standardmässig voreingestellt.
+#* Die Felder __ID Empfänger__  und __ID Sender__  werden von den Grundeinstellungen des lokalen (ID Sender) sowie den spezifischen Einstellungen des Kommunikationspartners (ID Empfänger) übernommen. Sie können hier ggf. geändert werden.
+# Hier werden automatisiert die Daten des Patienten für den die Untersuchung angefordert wird eingetragen. Die Nummer/Kennung ist jeweils ident zur Kennung in Elexis, sollte der Kommunikationspartner eine separate Kennung führen, können Sie diese hier eintragen (Achtung: Eine Rückübermittlung an Elexis wird in diesem Falle aber nicht erkannt!).
+# Dieses Feld beinhaltet das __Geräte- und verfahrensspezifische Kennfeld__ , es dient der Definition der Tests, welche vom Gerät angefordert werden. Diese sind spezifische zum gewählten Kommunikationspartner, und es wird auch eine Kontext-Hilfe abhängig von diesem Kommunikationspartner angeboten (siehe folgende Grafik, welches beispielhaft die custo med unterstützten werte zeigt).
+# Hier können Sie eine Test-Identifikation angeben. Abhängig von Ihrem Kommunikationspartner dient dieser der Kennung des von Ihnen angeforderten Tests.
+
+!images/custoMedKontext.png!
+
+h2. Daten einer Untersuchung anzeigen
+
+Wenn Elexis von einem GDT Kommunikationspartner eine Nachricht vom Typ "Daten einer Untersuchung übermitteln" erhält, geht es davon aus, dass dieses Gerät mittels "Untersuchung anzeigen" angesprochen werden kann. Es besteht daher für diese Typen die Option der Anzeigen. Im Punkt GDT-Protokoll View werden zwei solche Satznachrichten angezeigt @27.07.2011: Antwort: EKG01 [custo med (Dateikommunikation)]@ und @27.07.2011: Antwort: EKG01 [custo med (Dateikommunikation)]@. Ein Klick mit der Maus auf eine dieser beiden führt zum Aufruf des externen Programms und zur Anzeige dieser Untersuchung.
+
+*ACHTUNG:*  Die Konfiguration dieses Aufrufs mit dem externen Program muss innerhalb des Plug-In geführt werden, welches die konkrete Geräteanbindung realisiert.
+
+Die Daten einer Untersuchung können auch innerhalb vom Protokoll-View angezeigt werden. Selektiert man eine Element der Satzart 6310, bietet sich im Kontext-Menu dieses Elementes die Option @Daten dieser Untersuchtung anzeigen@. Die Ausführung dieser Aktion ist ident zu obiger Variante eine Untersuchung anzuzeigen.
+
+h2. Stammdaten übermitteln
+
+Ab der Version 1.0.3 des GDT Plug-Ins existiert auch die Möglichkeit Satzarten vom Typ "Stammdaten übermitteln" durch den bekannten Dialog zu erstellen, wie folgender Screenshot des neuen Kontext-Menu zeigt:
+
+!images/contextMenuStammDaten.png!
+
+Die Auswahl dieses Menu-Punktes erzeugt, konform zum bereits bekannten Dialog "Neue Untersuchung anfordern" ein entsprechendes Datenpaket welches die Stammdaten des ausgewählten Patienten enthält. Die konkrete Ausführung ist abhängig vom jeweils implementierenden Plug-In. Das folgende Screenshot-Beispiel zeigt die Unilabs-Anbindung.
+
+!images/satzart6301Dialog.png!
+
+Da bei der Satzart "Stammdaten übermitteln" kein __Geräte- und verfahrensspezifische Kennfeld__ benötigt wird, ist der entsprechende Teil nicht sichtbar.
+
+h1. Entwickleranmerkungen
+
+h3. Anbindung weiterer Plug-Ins
+
+Plug-Ins welche eine GDT Anbindung realisieren wollen, müssen den Extension Point @at.medevit.elexis.gdt.communicationPartner@ erweitern. 
+
+h3. Changelog
+
+pre.. 
+1.0.0 
+	- Initial implementation
+1.0.1 - 21.8.2011
+	- Fix for NPE in EarlyStartup
+1.0.2 - 24.8.2011 - rgw (comment by mde)
+	- undocumented changes
+1.0.3 - 10.1.2012 - M. Descher
+	- Correct null handling in NeueUntersuchungAnfordernDialog
+	- Remove stub configuration page for serial communication
+	- Allow for plug-ins not requiring 8402 definition
+	- Fix for NPE in protokoll view
+	- charset contribution by extending plugins now honored if > 0
+	- Implementation "Stammdaten uebermitteln" Satzart 6301
+	- Support for fixed filename with FILE_COMMUNICATION and GDT_FILETRANSFER_TYP_FEST
+1.0.4 - 23.1.2012 - M. Descher
+	- Fix for com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column 'Remote' at row 1
+1.0.5 - 25.1.2012 - M. Descher
+	- Fix forrrayIndexOutOfBoundsException in GDTResponseIn6310Out6311.createResponse()
+1.0.6 - 28.3.2012 - M. Descher
+	- Increase database row size for GDT Protokoll Remote entry from 60 to 255
+	- Additional debugging entries
+	- Reduce error level of file alteration monitor from ERROR to INFO .. it is not that drastic

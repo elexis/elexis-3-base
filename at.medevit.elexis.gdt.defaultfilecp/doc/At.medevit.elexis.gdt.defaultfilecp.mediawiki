@@ -1,0 +1,39 @@
+[[Kategorie:Geräteanbindung (proprietär)]]
+{{ProprietaryPlugin}}<!--  Text above may be removed without notice. Start editing in the next line -->
+== Elexis GDT Standard Datei-Kommunikation ==
+''Bezeichnung:'' Elexis Standard GDT 2.1 Datei-Kommunikation<br />
+ ''Author:'' Marco Descher &lt;descher@medevit.at&gt;<br />
+ ''Version:'' 1.0.0, August 2011<br />
+ ''Beschreibung:'' Dieses Plug-In stellt eine grundlegende Datei-Kommunikationsanbindung für GDT 2.1 zur Verfügung.
+Diese Dokumentation versteht sich als Ergänzung der grundlegenden GDT Dokumentation welche sich im Plug-In <tt>at.medevit.elexis.gdt</tt> befindet.
+== Anforderungen ==
+Diese Plug-In benötigt Elexis in Version &gt;2.1.5 und das Plug-In <tt>at.medevit.elexis.gdt</tt>.
+== Installation ==
+Die Installation des Plug-Ins selbst erfolgt mittels des Konfigurators, es müssen keinerlei spezielle Massnahmen ergriffen werden.
+== Konfiguration ==
+Die Konfiguration ist abhängig von der spezifischen Anwendungsform.
+=== Konfiguration Elexis ===
+Konfigurieren Sie die Anbindung wie in folgender Grafik vorgegeben:
+[[File:at.medevit.elexis.gdt.defaultfilecp:defaultFileCPPref.png|frame|none]]
+# Die lange ID des Empfängers
+# Die kurze ID des Empfängers
+# Das Standard-Austauschverzeichnis
+# Die verwendete Dateiart (siehe GDT Standard)
+== Grundlegende Bedienung ==
+Die Bedienung ist durch das <tt>at.medevit.elexis.gdt</tt> Plug-In vorgegeben, bitte lesen Sie dieses Dokument.
+== Anfordern einer Untersuchung ==
+Siehe Dokumentation in <tt>at.medevit.elexis.gdt</tt>.
+== Daten einer Untersuchung anzeigen ==
+Siehe Dokumentation in <tt>at.medevit.elexis.gdt</tt>.
+{{PluginInfo
+|plugin=at.medevit.elexis.gdt.defaultfilecp
+| eingelesen=von /medelexis-trunk/at.medevit.elexis.gdt.defaultfilecp/doc/documentation.textile am 25.03.2013
+| name=Standard GDT Datei-Datenaustausch
+| description=Standard Datei-Datenaustausch für GDT Protokoll
+| category=feature
+| license=medelexis
+| first_commit_date=2011-08-03
+| first_commit_author=Marco
+| responsible=support@medelexis.ch
+| type=Geräteanbindung
+}}

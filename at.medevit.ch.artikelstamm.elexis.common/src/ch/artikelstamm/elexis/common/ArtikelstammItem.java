@@ -225,26 +225,24 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 * @param addscr
 	 *            additional description
 	 */
-	public ArtikelstammItem(int version, char type, String gtin, BigInteger code, String dscr,
+	public ArtikelstammItem(int version, TYPE type, String gtin, BigInteger code, String dscr,
 		String addscr){
 		
-		type = Character.toUpperCase(type);
+		code = (code != null) ? code : BigInteger.ZERO;
+		String pharmaCode = String.format("%07d", code);
 		
-		if (type == 'X') {
-			create(code.toString());
+		if (TYPE.X == type) {
+			create(pharmaCode);
 			set(new String[] {
 				FLD_ITEM_TYPE, FLD_DSCR, FLD_CUMMULATED_VERSION, FLD_BLACKBOXED
-			}, Character.toString(type), dscr, Integer.toString(version), StringConstants.ZERO);
+			}, type.name(), dscr, Integer.toString(version), StringConstants.ZERO);
 		} else {
 			create(ArtikelstammHelper.createUUID(version, gtin, code));
-			
-			// fix pharmacode length < 7 chars
-			String pharmacode = (code != null) ? String.format("%07d", code) : "0000000";
 			
 			set(new String[] {
 				FLD_ITEM_TYPE, FLD_GTIN, FLD_PHAR, FLD_DSCR, FLD_ADDDSCR, FLD_CUMMULATED_VERSION,
 				FLD_BLACKBOXED
-			}, Character.toString(type), gtin, pharmacode, dscr, addscr, Integer.toString(version),
+			}, type.name(), gtin, pharmaCode, dscr, addscr, Integer.toString(version),
 				StringConstants.ZERO);
 		}
 	}
@@ -604,7 +602,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public static boolean purgeProducts(){
 		Stm stm = getConnection().getStatement();
-		stm.exec("DELETE FROM " + TABLENAME + " WHERE TYPE = 'X'");
+		stm.exec("DELETE FROM " + TABLENAME + " WHERE TYPE = '"+TYPE.X.name()+"'");
 		getConnection().releaseStatement(stm);
 		return true;
 	}

@@ -36,6 +36,7 @@ import at.medevit.ch.artikelstamm.ARTIKELSTAMM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEMS.ITEM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.LIMITATIONS.LIMITATION;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.PRODUCTS.PRODUCT;
+import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.BlackBoxReason;
@@ -118,7 +119,7 @@ public class ArtikelstammImporter {
 		// import the new dataset for type importStammType
 		monitor.subTask(
 			"Importiere Artikelstamm " + importStamm.getMONTH() + "/" + importStamm.getYEAR());
-			
+		
 		importNewItemsIntoDatabase(newVersion, importStamm, monitor);
 		
 		importProductsForExistingItemsIntoDatabase(newVersion, importStamm, monitor);
@@ -129,7 +130,7 @@ public class ArtikelstammImporter {
 		ArtikelstammItem.setCurrentVersion(newVersion);
 		ArtikelstammItem.setImportSetCreationDate(
 			importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime());
-			
+		
 		monitor.worked(1);
 		long endTime = System.currentTimeMillis();
 		ElexisEventDispatcher.reload(ArtikelstammItem.class);
@@ -167,7 +168,7 @@ public class ArtikelstammImporter {
 	 * being referenced by {@link Prescription}, ...
 	 * 
 	 * @param monitor
-	 * 			
+	 * 
 	 * @param importStammType
 	 */
 	private static void setBlackboxOnAllReferencedItems(IProgressMonitor monitor){
@@ -250,7 +251,7 @@ public class ArtikelstammImporter {
 		qbe.add(ArtikelstammItem.FLD_BLACKBOXED, Query.EQUALS, StringConstants.ZERO);
 		qbe.add(ArtikelstammItem.FLD_CUMMULATED_VERSION, Query.LESS_OR_EQUAL,
 			currentStammVersion + "");
-			
+		
 		monitor.subTask("Suche nach zu entfernenden Artikeln ...");
 		List<ArtikelstammItem> qre = qbe.execute();
 		
@@ -261,7 +262,9 @@ public class ArtikelstammImporter {
 	}
 	
 	/**
-	 * Delete all products, collect all defined PRODNO entries and generate the resp. PRODUCT entry for it
+	 * Delete all products, collect all defined PRODNO entries and generate the resp. PRODUCT entry
+	 * for it
+	 * 
 	 * @param version
 	 * @param importStamm
 	 * @param monitor
@@ -278,7 +281,7 @@ public class ArtikelstammImporter {
 		try {
 			while (rs.next()) {
 				String prodNo = rs.getString(ArtikelstammItem.FLD_PRODNO);
-				if(prodNo!=null) {
+				if (prodNo != null) {
 					productList.add(prodNo);
 				}
 			}
@@ -289,11 +292,12 @@ public class ArtikelstammImporter {
 		// for each defined PRODNO value generate the resp. product entry		
 		productList.stream().forEachOrdered(s -> {
 			PRODUCT product = products.get(s);
-			if(product!=null) {
-				ArtikelstammItem productItem = new ArtikelstammItem(version, 'X', StringConstants.EMPTY,
-					new BigInteger(product.getPRODNO()), product.getDSCR(), StringConstants.EMPTY);
+			if (product != null) {
+				ArtikelstammItem productItem = new ArtikelstammItem(version, TYPE.X,
+					StringConstants.EMPTY, new BigInteger(product.getPRODNO()), product.getDSCR(),
+					StringConstants.EMPTY);
 				String atc = product.getATC();
-				if(atc!=null) {
+				if (atc != null) {
 					productItem.setATCCode(atc);
 				}
 			} else {
@@ -326,8 +330,12 @@ public class ArtikelstammImporter {
 			if (foundElements == 0) {
 				String dscr = (item.getDSCR().length() > 99) ? item.getDSCR().substring(0, 100)
 						: item.getDSCR();
-				ai = new ArtikelstammItem(newVersion, item.getPHARMATYPE().charAt(0),
-					item.getGTIN(), item.getPHAR(), dscr, StringConstants.EMPTY);
+				
+				String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
+				TYPE pharmaType = TYPE.valueOf(ptString.toUpperCase());
+				
+				ai = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(), item.getPHAR(),
+					dscr, StringConstants.EMPTY);
 				setValuesOnArtikelstammItem(ai, item, false, -1);
 			} else if (foundElements == 1) {
 				String itemId = PersistentObject.getConnection()
@@ -335,7 +343,7 @@ public class ArtikelstammImporter {
 						+ ArtikelstammItem.FLD_ID + " " + Query.LIKE + " "
 						+ JdbcLink.wrap(itemUuid + "%"));
 				ai = ArtikelstammItem.load(itemId);
-				log.info("Updating article " + ai.getId() + " (" + item.getDSCR() + ")");
+				log.trace("Updating article " + ai.getId() + " (" + item.getDSCR() + ")");
 				setValuesOnArtikelstammItem(ai, item, true, newVersion);
 			} else {
 				log.error("Found " + foundElements + " items for " + itemUuid + ".");
@@ -385,11 +393,11 @@ public class ArtikelstammImporter {
 					values.add(limitation != null ? StringConstants.ONE : StringConstants.ZERO);
 					
 					if (limitation != null) {
-						if(limitation.getLIMITATIONPTS()!=null) {
+						if (limitation.getLIMITATIONPTS() != null) {
 							fields.add(ArtikelstammItem.FLD_LIMITATION_PTS);
 							values.add(limitation.getLIMITATIONPTS().toString());
 						}
-
+						
 						fields.add(ArtikelstammItem.FLD_LIMITATION_TEXT);
 						values.add(limitation.getDSCR());
 					}
@@ -443,7 +451,12 @@ public class ArtikelstammImporter {
 		
 		if (item.getPKGSIZE() != null) {
 			fields.add(ArtikelstammItem.FLD_PKG_SIZE);
-			values.add(item.getPKGSIZE().toString());
+			String pkgSize = item.getPKGSIZE().toString();
+			values.add((pkgSize.length() > 6) ? pkgSize.substring(0, 6).toString() : pkgSize);
+			if (pkgSize.length() > 6) {
+				log.warn("Delimited pkg size for [{}] being {} to 6 characters.", ai.getId(),
+					item.getPKGSIZE().toString());
+			}
 		}
 		
 		ai.set(fields.toArray(new String[0]), values.toArray(new String[0]));

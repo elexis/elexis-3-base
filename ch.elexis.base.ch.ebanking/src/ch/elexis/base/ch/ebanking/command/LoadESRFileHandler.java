@@ -18,6 +18,7 @@ import org.eclipse.ui.menus.UIElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.base.ch.ebanking.esr.ESRFile;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.Messages;
@@ -27,6 +28,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
+import ch.elexis.data.Zahlung;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
@@ -67,10 +69,15 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 											|| (rec.getTyp().equals(ESRRecord.MODE.Storno_Schalter))) {
 											Rechnung rn = rec.getRechnung();
 											Money zahlung = rec.getBetrag().negate();
-											rn.addZahlung(zahlung,
+											Zahlung zahlungsObj = rn.addZahlung(zahlung,
 												Messages.ESRView_storno_for + rn.getNr() + " / " //$NON-NLS-1$
 													+ rec.getPatient().getPatCode(), new TimeTool(
 													rec.getValuta()));
+											if (zahlungsObj != null && ESR.getAccount() != null) {
+												AccountTransaction transaction =
+													zahlungsObj.getTransaction();
+												transaction.setAccount(ESR.getAccount());
+											}
 											rec.setGebucht(null);
 										} else {
 											Rechnung rn = rec.getRechnung();
@@ -100,18 +107,27 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 												}
 											}
 											
-											rn.addZahlung(zahlung,
+											Zahlung zahlungsObj = rn.addZahlung(zahlung,
 												Messages.ESRView_vesrfor + rn.getNr() + " / " //$NON-NLS-1$
 													+ rec.getPatient().getPatCode(), new TimeTool(
 													rec.getValuta()));
+											if (zahlungsObj != null && ESR.getAccount() != null) {
+												AccountTransaction transaction =
+													zahlungsObj.getTransaction();
+												transaction.setAccount(ESR.getAccount());
+											}
 											rec.setGebucht(null);
 										}
 									} else if (rec.getRejectCode()
 										.equals(ESRRecord.REJECT.RN_NUMMER)) {
 										TimeTool valutaDate = new TimeTool(rec.getValuta());
-										new AccountTransaction(rec.getPatient(), null,
+										AccountTransaction transaction =
+											new AccountTransaction(rec.getPatient(), null,
 											rec.getBetrag(), valutaDate.toString(TimeTool.DATE_GER),
 											Messages.LoadESRFileHandler_notAssignable);
+										if (ESR.getAccount() != null) {
+											transaction.setAccount(ESR.getAccount());
+										}
 									}
 								}
 								monitor.done();

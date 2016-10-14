@@ -58,11 +58,13 @@ import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.util.viewers.LazyContentProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
+import ch.elexis.data.Zahlung;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
@@ -285,10 +287,16 @@ public class ESRView extends ViewPart implements IActivationListener {
 													.equals(ESRRecord.MODE.Storno_Schalter))) {
 												Rechnung rn = rec.getRechnung();
 												Money zahlung = rec.getBetrag().negate();
-												rn.addZahlung(zahlung,
+													Zahlung zahlungsObj = rn.addZahlung(zahlung,
 													Messages.ESRView_storno_for + rn.getNr() + " / " //$NON-NLS-1$
 														+ rec.getPatient().getPatCode(),
 													new TimeTool(rec.getValuta()));
+													if (zahlungsObj != null
+														&& ESR.getAccount() != null) {
+														AccountTransaction transaction =
+															zahlungsObj.getTransaction();
+														transaction.setAccount(ESR.getAccount());
+													}
 												rec.setGebucht(null);
 											} else {
 												Rechnung rn = rec.getRechnung();
@@ -310,10 +318,16 @@ public class ESRView extends ViewPart implements IActivationListener {
 												}
 												
 												ttBooking.set(rec.getValuta());
-												rn.addZahlung(zahlung,
+													Zahlung zahlungsObj = rn.addZahlung(zahlung,
 													Messages.ESRView_vesrfor + rn.getNr() + " / " //$NON-NLS-1$
 														+ rec.getPatient().getPatCode(),
 													ttBooking);
+													if (zahlungsObj != null
+														&& ESR.getAccount() != null) {
+														AccountTransaction transaction =
+															zahlungsObj.getTransaction();
+														transaction.setAccount(ESR.getAccount());
+													}
 												rec.setGebucht(ttBooking);
 											}
 										}

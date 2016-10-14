@@ -11,6 +11,9 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 import org.eclipse.swt.SWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,8 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.AccountTransaction;
+import ch.elexis.data.AccountTransaction.Account;
 import ch.elexis.data.Kontakt;
 import ch.rgw.tools.StringTool;
 
@@ -367,4 +372,26 @@ public class ESR {
 			5, 0, 9, 4, 6, 8, 2, 7, 1, 3, 1
 		}
 	};
+	
+	private static Account esrAccount;
+	
+	/**
+	 * Get an {@link Account} that should be used for {@link AccountTransaction} created from an ESR
+	 * record.
+	 * 
+	 * @return
+	 */
+	public static Account getAccount(){
+		if (esrAccount == null) {
+			HashMap<Integer, Account> accountsMap = Account.getAccounts();
+			Collection<Account> accounts = accountsMap.values();
+			for (Account account : accounts) {
+				if (account.getName().contains("ESR")) {
+					esrAccount = account;
+					break;
+				}
+			}
+		}
+		return esrAccount;
+	}
 }

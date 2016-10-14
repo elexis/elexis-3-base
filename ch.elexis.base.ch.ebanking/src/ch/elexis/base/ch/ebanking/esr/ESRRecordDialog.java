@@ -32,12 +32,14 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
+import ch.elexis.data.Zahlung;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -209,17 +211,27 @@ public class ESRRecordDialog extends TitleAreaDialog {
 				Money zahlung = rec.getBetrag();
 				Rechnung rn = rec.getRechnung();
 				ttBooking.set(rec.getValuta());
-				rn.addZahlung(zahlung, Messages.ESRRecordDialog_vESRForBill + rn.getNr() + " / " //$NON-NLS-1$
+				Zahlung zahlungsObj =
+					rn.addZahlung(zahlung, Messages.ESRRecordDialog_vESRForBill + rn.getNr() + " / " //$NON-NLS-1$
 					+ rec.getPatient().getPatCode(), ttBooking);
+				if (zahlungsObj != null && ESR.getAccount() != null) {
+					AccountTransaction transaction = zahlungsObj.getTransaction();
+					transaction.setAccount(ESR.getAccount());
+				}
 				rec.setGebucht(ttBooking);
 			}
 		} else if (bUnbook.getSelection()) {
 			if (bBooked) {
 				Money zahlung = rec.getBetrag();
 				Rechnung rn = rec.getRechnung();
-				rn.addZahlung(zahlung.negate(), Messages.ESRRecordDialog_stornoESR + rn.getNr()
+				Zahlung zahlungsObj = rn.addZahlung(zahlung.negate(),
+					Messages.ESRRecordDialog_stornoESR + rn.getNr()
 					+ " / " //$NON-NLS-1$
 					+ rec.getPatient().getPatCode(), null);
+				if (zahlungsObj != null && ESR.getAccount() != null) {
+					AccountTransaction transaction = zahlungsObj.getTransaction();
+					transaction.setAccount(ESR.getAccount());
+				}
 				rec.set(Messages.ESRRecordDialog_booked, ""); //$NON-NLS-1$
 			}
 		}

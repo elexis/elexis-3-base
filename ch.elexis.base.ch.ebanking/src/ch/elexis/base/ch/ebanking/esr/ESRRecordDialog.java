@@ -234,6 +234,8 @@ public class ESRRecordDialog extends TitleAreaDialog {
 				}
 				rec.set(Messages.ESRRecordDialog_booked, ""); //$NON-NLS-1$
 			}
+		} else if (bDelete.getSelection()) {
+			rec.delete();
 		}
 		super.okPressed();
 	}

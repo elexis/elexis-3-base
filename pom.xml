@@ -328,23 +328,25 @@
           </goals>
           <configuration>
             <excludes>
+              <plugin id="bcprov"/>
               <plugin id="bouncycastle.bcprov"/>
               <plugin id="bouncycastle.bcprov-jdk14"/>
-              <plugin id="bcprov"/>
-              <plugin id="org.apache.xerces"/>
               <plugin id="de.kupzog.ktable"/>
-              <plugin id="xerces.Impl"/>
-              <plugin id="xml-apis"/>
               <plugin id="javax.xml"/>
-              <plugin id="org.apache.commons.exec"/>
-              <plugin id="org.apache.commons.logging"/>
-              <plugin id="org.apache.xml.resolver"/>
-              <plugin id="org.apache.xml.serializer"/>
               <plugin id="jfree.chart"/>
               <plugin id="jfree.chart-experimental"/>
               <plugin id="jfree.chart-swt"/>
               <plugin id="jfree.jcommon"/>
               <plugin id="junit"/>
+              <plugin id="org.apache.commons.exec"/>
+              <plugin id="org.apache.commons.logging"/>
+              <plugin id="org.apache.httpcomponents.httpclient"/>
+              <plugin id="org.apache.httpcomponents.httpcore"/>
+              <plugin id="org.apache.xerces"/>
+              <plugin id="org.apache.xml.resolver"/>
+              <plugin id="org.apache.xml.serializer"/>
+              <plugin id="xerces.Impl"/>
+              <plugin id="xml-apis"/>
             </excludes>
           </configuration>
         </execution>

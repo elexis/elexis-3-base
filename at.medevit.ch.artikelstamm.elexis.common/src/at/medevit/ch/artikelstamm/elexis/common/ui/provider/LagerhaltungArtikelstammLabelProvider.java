@@ -18,16 +18,17 @@ import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.ch.artikelstamm.ui.ArtikelstammLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.service.StockService;
+import ch.elexis.core.stock.IStockService.Availability;
 import ch.elexis.core.ui.UiDesk;
 
 /**
  * {@link LabelProvider} that extends the basic {@link ArtikelstammLabelProvider} to consider the
  * stock status of articles. Applicable to Elexis v2.1 only.
  */
-public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProvider implements
-		IColorProvider {
+public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProvider
+		implements IColorProvider {
 	
 	private Image blackBoxedImage = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
 		"/rsc/icons/flag-black.png");
@@ -43,11 +44,12 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	@Override
 	public String getText(Object element){
 		ArtikelstammItem ai = (ArtikelstammItem) element;
-		int istBestand = ai.getIstbestand();
-		if (istBestand == 0) {
-			return ai.getLabel();
+		Integer availability = CoreHub.getStockService().getCumulatedStockForArticle(ai);
+		if (availability != null) {
+			return ai.getLabel() + " (LB: " + availability + ")";
 		}
-		return ai.getLabel() + " (LB: " + istBestand + ")";
+		return ai.getLabel();
+		
 	}
 	
 	/**
@@ -56,29 +58,14 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	@Override
 	public Color getForeground(Object element){
 		ArtikelstammItem ai = (ArtikelstammItem) element;
-		if (ai.isLagerartikel()) {
-			int trigger =
-				CoreHub.globalCfg.get(Preferences.INVENTORY_ORDER_TRIGGER,
-					Preferences.INVENTORY_ORDER_TRIGGER_DEFAULT);
-			
-			int ist = ai.getIstbestand();
-			int min = ai.getMinbestand();
-			
-			boolean order = false;
-			switch (trigger) {
-			case Preferences.INVENTORY_ORDER_TRIGGER_BELOW:
-				order = (ist < min);
-				break;
-			case Preferences.INVENTORY_ORDER_TRIGGER_EQUAL:
-				order = (ist <= min);
-				break;
-			default:
-				order = (ist < min);
-			}
-			
-			if (order) {
+		Availability availability =
+			CoreHub.getStockService().getCumulatedAvailabilityForArticle(ai);
+		if (availability != null) {
+			switch (availability) {
+			case CRITICAL_STOCK:
+			case OUT_OF_STOCK:
 				return UiDesk.getColor(UiDesk.COL_RED);
-			} else {
+			default:
 				return UiDesk.getColor(UiDesk.COL_BLUE);
 			}
 		}

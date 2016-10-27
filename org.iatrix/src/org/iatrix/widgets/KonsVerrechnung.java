@@ -593,8 +593,8 @@ public class KonsVerrechnung implements IJournalArea {
 						IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
 						if (verrechenbar instanceof Artikel) {
 							Artikel art = (Artikel) verrechenbar;
-							art.einzelRuecknahme(vorher);
-							art.einzelAbgabe(neu);
+							CoreHub.getStockService().performSingleReturn(art, 1);
+							CoreHub.getStockService().performSingleDisposal(art, 1);
 						}
 
 						verrechnungViewer.refresh();

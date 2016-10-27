@@ -14,8 +14,14 @@ package ch.elexis.artikel_ch.data;
 import java.util.Map;
 
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Query;
 
 public class Medikament extends Artikel {
+	
+	static {
+		transferAllStockInformationToNew32StockModel(new Query<Medikament>(Medikament.class),
+			Medikament.class);
+	}
 	
 	@Override
 	protected String getConstraint(){

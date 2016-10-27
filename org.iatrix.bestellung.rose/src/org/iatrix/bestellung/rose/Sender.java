@@ -24,6 +24,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.BestellView;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Bestellung;
+import ch.elexis.data.BestellungEntry;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
@@ -102,9 +103,8 @@ public class Sender implements IDataSender {
 					// TODO parse message for errors
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					SWTHelper
-						.alert("Fehler bei Übermittlung",
-							"Die Bestellung konnte nicht gesendet werden. Bitte überprüfen Sie den Zustand in eStudio.");
+					SWTHelper.alert("Fehler bei Übermittlung",
+						"Die Bestellung konnte nicht gesendet werden. Bitte überprüfen Sie den Zustand in eStudio.");
 					throw new XChangeException(
 						"Die Bestellung konnte nicht gesendet werden. Bitte überprüfen Sie den Zustand in eStudio.");
 				}
@@ -137,8 +137,8 @@ public class Sender implements IDataSender {
 			return addOrder(order);
 		} else {
 			// should never happen...
-			throw new XChangeException("Can't handle object of class "
-				+ output.getClass().getName());
+			throw new XChangeException(
+				"Can't handle object of class " + output.getClass().getName());
 		}
 	}
 	
@@ -167,15 +167,14 @@ public class Sender implements IDataSender {
 			throw new XChangeException("Die Bestellung ist leer.");
 		}
 		
-		List<Bestellung.Item> items = order.asList();
+		List<BestellungEntry> items = order.getEntries();
 		if (items == null || items.size() == 0) {
 			// no items
 			throw new XChangeException("Die Bestellung ist leer.");
 		}
 		
-		String clientNrRose =
-			CoreHub.globalCfg.get(Constants.CFG_ROSE_CLIENT_NUMBER,
-				Constants.DEFAULT_ROSE_CLIENT_NUMBER).trim();
+		String clientNrRose = CoreHub.globalCfg
+			.get(Constants.CFG_ROSE_CLIENT_NUMBER, Constants.DEFAULT_ROSE_CLIENT_NUMBER).trim();
 		
 		if (StringTool.isNothing(clientNrRose)) {
 			throw new XChangeException(
@@ -203,17 +202,16 @@ public class Sender implements IDataSender {
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append("<?xml version=\"1.0\" encoding=\"" + ENCODING + " \"?>" + XML_NEWLINE);
-		sb.append("<order"
-			+ " xmlns=\"http://estudio.clustertec.ch/schemas/order\""
+		sb.append("<order" + " xmlns=\"http://estudio.clustertec.ch/schemas/order\""
 			+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
 			+ " xsi:schemaLocation=\"http://estudio.clustertec.ch/schemas/order http://estudio.clustertec.ch/schemas/order/order.xsd\""
 			+ " clientNrRose=\"" + escapeXmlAttribute(clientNrRose) + "\""
 			+ " user=\"elexis\" password=\"elexis\"" // must be present or we will have an error
 			+ " deliveryType=\"1\"" + ">" + XML_NEWLINE);
 		
-		for (Bestellung.Item item : items) {
-			Artikel artikel = item.art;
-			Kontakt artSupplier = item.art.getLieferant();
+		for (BestellungEntry item : items) {
+			Artikel artikel = item.getArticle();
+			Kontakt artSupplier = item.getProvider();
 			// only add zurRose line items
 			if (roseSupplier.equals(artSupplier)) {
 				String pharmacode = artikel.getPharmaCode();
@@ -225,7 +223,7 @@ public class Sender implements IDataSender {
 					eanId = artikel.getEAN();
 				}
 				String description = artikel.getName();
-				int quantity = item.num;
+				int quantity = item.getCount();
 				
 				if (StringTool.isNothing(pharmacode) || StringTool.isNothing(eanId)
 					|| StringTool.isNothing(description) || quantity < 1) {

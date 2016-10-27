@@ -120,12 +120,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			+ FLD_NARCOTIC + " CHAR(1),"
 			+ FLD_NARCOTIC_CAS + " VARCHAR(20)," // id(VERSION) contains table creation date
 			+ FLD_VACCINE + " CHAR(1),"
-			+ FLD_LIEFERANT_ID +" VARCHAR(25),"
-			+ MAXBESTAND + " VARCHAR(4),"
-			+ MINBESTAND + " VARCHAR(4),"
-			+ ISTBESTAND + " VARCHAR(4),"
 			+ VERKAUFSEINHEIT + " VARCHAR(4),"  // Stück pro Abgabe
-			+ ANBRUCH + " VARCHAR(4),"			// Aktuell am Lager
 			+ FLD_PRODNO+" VARCHAR(10),"
 			+ PersistentObject.FLD_EXTINFO + " BLOB"
 			+ "); "
@@ -136,7 +131,6 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			+ "CREATE INDEX idxAiBB ON "+ TABLENAME + " ("+FLD_BLACKBOXED+"); "
 			+ "INSERT INTO " + TABLENAME + " (ID,"+FLD_GTIN+","+FLD_NARCOTIC_CAS+","+FLD_PEXF+","+FLD_PPUB+") VALUES ('VERSION',"
 			+ JdbcLink.wrap(VERSION) +","+JdbcLink.wrap(df.format(new Date()))+",0,0);";
-
 	
 	static final String dbUpdateFrom10to11 =
 		"ALTER TABLE "+TABLENAME+" ADD "+PersistentObject.FLD_EXTINFO+" BLOB;";
@@ -162,14 +156,13 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			Artikel.FLD_VK_PREIS + "=" + FLD_PPUB, FLD_PKG_SIZE, FLD_SL_ENTRY, FLD_IKSCAT,
 			FLD_LIMITATION, FLD_LIMITATION_PTS, FLD_LIMITATION_TEXT, FLD_GENERIC_TYPE,
 			FLD_HAS_GENERIC, FLD_LPPV, FLD_DEDUCTIBLE, FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE,
-			FLD_LIEFERANT_ID, MAXBESTAND, MINBESTAND, ISTBESTAND, VERKAUFSEINHEIT, ANBRUCH,
-			FLD_PRODNO, PersistentObject.FLD_EXTINFO);
+			VERKAUFSEINHEIT, FLD_PRODNO, Artikel.LIEFERANT_ID, Artikel.MINBESTAND,
+			Artikel.ISTBESTAND, Artikel.MAXBESTAND, PersistentObject.FLD_EXTINFO);
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
 		} else {
 			VersionInfo vi = new VersionInfo(version.get(FLD_GTIN));
-			System.out.println(vi);
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("1.1.0")) {
 					createOrModifyTable(dbUpdateFrom10to11);
@@ -185,13 +178,15 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 				}
 			}
 		}
+		
+		Artikel.transferAllStockInformationToNew32StockModel(new Query<ArtikelstammItem>(ArtikelstammItem.class), ArtikelstammItem.class);
 	}
 	
 	@Override
 	public String getLabel(){
 		String[] vals = get(true, FLD_DSCR, FLD_ADDDSCR);
 		
-		return (vals[1].length()>0) ? vals[0] + " (" + vals[1] + ")" : vals[0];
+		return (vals[1].length() > 0) ? vals[0] + " (" + vals[1] + ")" : vals[0];
 	}
 	
 	@Override
@@ -272,21 +267,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public boolean isProduct(){
-		return (TYPE.X==getType());
-	}
-	
-	@Override
-	public int getTotalCount(){
-		int pkgUnits = getIstbestand();
-		int pkgSize = getPackungsGroesse();
-		if (pkgSize == 0) {
-			return pkgUnits;
-		}
-		int vkUnits = getVerkaufseinheit();
-		if (vkUnits < pkgSize) {
-			return (pkgUnits * pkgSize) + (getBruchteile() * vkUnits);
-		}
-		return pkgUnits;
+		return (TYPE.X == getType());
 	}
 	
 	@Override
@@ -295,7 +276,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		try {
 			val = Integer.parseInt(get(FLD_PKG_SIZE));
 		} catch (NumberFormatException nfe) {
-		
+			
 		}
 		return val;
 	}
@@ -323,63 +304,6 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			return new Money((int) Math.round(vke * (vkt / vpe)));
 		} else {
 			return new Money((int) Math.round(vkt));
-		}
-	}
-	
-	@Override
-	public int getBruchteile(){
-		return checkZero(get(ANBRUCH));
-	}
-	
-	@Override
-	public void setBruchteile(int number){
-		set(ANBRUCH, Integer.toString(number));
-	}
-	
-	@Override
-	public void einzelAbgabe(final int n){
-		int anbruch = getBruchteile();
-		int ve = getVerkaufseinheit();
-		int vk = getVerpackungsEinheit();
-		if (vk == 0) {
-			if (ve != 0) {
-				vk = ve;
-			}
-		}
-		if (ve == 0) {
-			if (vk != 0) {
-				ve = vk;
-				setVerkaufseinheit(ve);
-			}
-		}
-		int num = n * ve;
-		if (vk == ve) {
-			setIstbestand(getIstbestand() - n);
-		} else {
-			int rest = anbruch - num;
-			while (rest < 0) {
-				rest = rest + vk;
-				setIstbestand(getIstbestand() - 1);
-			}
-			setBruchteile(rest);
-		}
-	}
-	
-	@Override
-	public void einzelRuecknahme(int n){
-		int anbruch = getBruchteile();
-		int ve = getVerkaufseinheit();
-		int vk = getVerpackungsEinheit();
-		int num = n * ve;
-		if (vk == ve) {
-			setIstbestand(getIstbestand() + n);
-		} else {
-			int rest = anbruch + num;
-			while (rest >= vk) {
-				rest = rest - vk;
-				setIstbestand(getIstbestand() + 1);
-			}
-			setBruchteile(rest);
 		}
 	}
 	
@@ -597,12 +521,12 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public static boolean purgeEntries(List<ArtikelstammItem> list){
-		if(list.size()==0) {
+		if (list.size() == 0) {
 			return true;
 		}
 		String string = list.stream().map(o -> o.getWrappedId())
 			.reduce((u, t) -> u + StringConstants.COMMA + t).get();
-			
+		
 		Stm stm = getConnection().getStatement();
 		stm.exec("DELETE FROM " + TABLENAME + " WHERE ID IN (" + string + ")");
 		getConnection().releaseStatement(stm);
@@ -612,7 +536,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public static boolean purgeProducts(){
 		Stm stm = getConnection().getStatement();
-		stm.exec("DELETE FROM " + TABLENAME + " WHERE TYPE = '"+TYPE.X.name()+"'");
+		stm.exec("DELETE FROM " + TABLENAME + " WHERE TYPE = '" + TYPE.X.name() + "'");
 		getConnection().releaseStatement(stm);
 		return true;
 	}
@@ -788,9 +712,10 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 */
 	public @NonNull List<ArtikelstammItem> getAlternativeArticlesByATCGroup(){
 		String code = getATC_code();
-		if (code == null || code.length() < 1)
+		if (code == null || code.length() < 1) {
 			return Collections.emptyList();
-			
+		}
+		
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, code);
 		return qre.execute();
@@ -822,25 +747,12 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		List<ArtikelstammItem> result = qre.execute();
 		if (result.size() == 1)
 			return result.get(0);
-			
+		
 		if (!pharmaCode.startsWith(String.valueOf(0))) {
 			return ArtikelstammItem.findByPharmaCode(String.valueOf(0) + pharmaCode);
 		}
 		
 		return null;
-	}
-	
-	/**
-	 * 
-	 * @return all {@link ArtikelstammItem} currently on stock
-	 */
-	public static List<ArtikelstammItem> getAllArticlesOnStock(){
-		Query<ArtikelstammItem> qbe = new Query<ArtikelstammItem>(ArtikelstammItem.class);
-		qbe.add(MINBESTAND, Query.GREATER, StringConstants.ZERO);
-		qbe.or();
-		qbe.add(MAXBESTAND, Query.GREATER, StringConstants.ZERO);
-		List<ArtikelstammItem> l = qbe.execute();
-		return l == null ? new ArrayList<ArtikelstammItem>(0) : l;
 	}
 	
 	@Override

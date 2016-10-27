@@ -14,30 +14,29 @@ package ch.elexis.base.ch.medikamente.bag.views;
 
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.settings.UserSettings;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.util.LabeledInputField.InputData.Typ;
+import ch.elexis.core.ui.views.controls.StockDetailComposite;
 import ch.elexis.core.ui.util.ListDisplay;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Artikel;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.medikamente.bag.data.BAGMedi;
@@ -60,6 +59,7 @@ public class BAGMediDetailBlatt extends Composite {
 	private final ScrolledForm form;
 	ListDisplay<Interaction> ldInteraktionen;
 	private BAGMedi actMedi;
+	private StockDetailComposite sdc;
 	ExpandableComposite ecSubst, ecInterakt, ecFachinfo, ecKeywords;
 	
 	InputData[] fields = new InputData[] {
@@ -89,39 +89,8 @@ public class BAGMediDetailBlatt extends Composite {
 		new InputData("Verkauf", "VK_Preis", InputData.Typ.CURRENCY, null),
 		new InputData("Limitatio", "ExtInfo", InputData.Typ.STRING, "Limitatio"),
 		new InputData("LimitatioPts", "ExtInfo", InputData.Typ.STRING, "LimitatioPts"),
-		new InputData("Max. Pckg. an Lager", "Maxbestand", Typ.STRING, null),
-		new InputData("Min. Pckg. an Lager", "Minbestand", Typ.STRING, null),
-		new InputData("Aktuell Pckg. an Lager", "Istbestand", Typ.STRING, null),
-		new InputData("Aktuell an Lager", "ExtInfo", Typ.INT, "Anbruch"),
-		new InputData("Stück pro Packung", "ExtInfo", Typ.INT, "Verpackungseinheit"),
-		new InputData("Stück pro Abgabe", "ExtInfo", Typ.INT, "Verkaufseinheit"),
-		new InputData("Lieferant", "Lieferant", new LabeledInputField.IContentProvider() {
-			public void displayContent(PersistentObject po, InputData ltf){
-				String lbl = ((Artikel) po).getLieferant().getLabel();
-				if (lbl.length() > 15) {
-					lbl = lbl.substring(0, 12) + "...";
-				}
-				ltf.setText(lbl);
-			}
-			
-			public void reloadContent(PersistentObject po, InputData ltf){
-				KontaktSelektor ksl =
-					new KontaktSelektor(Hub.getActiveShell(), Kontakt.class, "Lieferant",
-						"Bitte wählen Sie, wer diesen Artikel liefert", Kontakt.DEFAULT_SORT);
-				if (ksl.open() == Dialog.OK) {
-					Kontakt k = (Kontakt) ksl.getSelection();
-					((Artikel) po).setLieferant(k);
-					String lbl = ((Artikel) po).getLieferant().getLabel();
-					if (lbl.length() > 15) {
-						lbl = lbl.substring(0, 12) + "...";
-					}
-					ltf.setText(lbl);
-					ElexisEventDispatcher.reload(Artikel.class);
-				}
-			}
-			
-		})
-	
+		new InputData("Stück pro Packung", "ExtInfo", Typ.INT, "VerpackungsEinheit"),
+		new InputData("Stück pro Abgabe", "ExtInfo", Typ.INT, "Verkaufseinheit")
 	};
 	
 	public BAGMediDetailBlatt(final Composite pr){
@@ -138,6 +107,14 @@ public class BAGMediDetailBlatt extends Composite {
 		fld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		// fld.setEnabled(false);
 		tk.adapt(fld);
+		
+		Group grpStockDetails = new Group(ret, SWT.NONE);
+		grpStockDetails.setLayout(new GridLayout(1, false));
+		grpStockDetails.setText("Lagerhaltung");
+		tk.adapt(grpStockDetails);
+		sdc = new StockDetailComposite(grpStockDetails, SWT.NONE);
+		sdc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
 		ecSubst = tk.createExpandableComposite(ret, ExpandableComposite.TWISTIE);
 		ecSubst.setText("Inhaltsstoffe");
 		tSubstances = SWTHelper.createText(tk, ecSubst, 5, SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL);
@@ -228,6 +205,7 @@ public class BAGMediDetailBlatt extends Composite {
 	
 	public void display(final BAGMedi m){
 		actMedi = m;
+		sdc.setArticle(m);
 		form.setText(m.getLabel());
 		fld.reload(m);
 		List<Substance> list = m.getSubstances();

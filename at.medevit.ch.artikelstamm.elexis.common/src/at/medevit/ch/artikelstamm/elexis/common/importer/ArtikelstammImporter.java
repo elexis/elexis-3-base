@@ -45,10 +45,13 @@ import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCach
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.StockService;
 import ch.elexis.core.data.status.ElexisStatus;
+import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
+import ch.elexis.data.StockEntry;
 import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -225,14 +228,20 @@ public class ArtikelstammImporter {
 		
 		// Wenn ein Artikel auf Lager ist, darf er auch nicht gelöscht werden!
 		SubProgressMonitor subMonitor3 = new SubProgressMonitor(monitor, 1);
-		List<ArtikelstammItem> resultLagerartikel = ArtikelstammItem.getAllArticlesOnStock();
+		
+		Query<StockEntry> qre = new Query<StockEntry>(StockEntry.class);
+		qre.add(StockEntry.FLD_ARTICLE_TYPE, Query.LIKE, ArtikelstammItem.class.getName());
+		List<StockEntry> resultLagerartikel = qre.execute();
 		monitor.subTask("BlackBox Markierung für Lagerartikel");
 		subMonitor3.beginTask("", resultLagerartikel.size());
-		for (ArtikelstammItem ai : resultLagerartikel) {
-			if (ai.isLagerartikel())
+		for (StockEntry stockEntry : resultLagerartikel) {
+			Artikel article = stockEntry.getArticle();
+			if (article instanceof ArtikelstammItem) {
+				ArtikelstammItem ai = (ArtikelstammItem) article;
 				ai.set(ArtikelstammItem.FLD_BLACKBOXED,
 					BlackBoxReason.IS_ON_STOCK.getNumericalReasonString());
-			subMonitor3.worked(1);
+				subMonitor3.worked(1);
+			}
 		}
 		subMonitor3.done();
 	}

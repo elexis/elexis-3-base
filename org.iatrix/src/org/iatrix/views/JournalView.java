@@ -501,7 +501,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 							updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
 							return;
 						} else {
-							if(konsultation!=null) {
+							if(konsultation != null) {
 								logEvent("runInUi eeli_pat EVENT_SELECTED Konsulation gehoert zu diesem Patienten " + konsultation.getId() + " " + konsultation.getHeadVersion() + " vom " + konsultation.getDatum() + " " + patient.getPersonalia());	
 							}
 							updateAllKonsAreas(konsultation, KonsActions.ACTIVATE_KONS);

@@ -97,6 +97,9 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 			BAGMediFactory.loadImageDescriptor(imgroot + "orot.png"));
 		UiDesk.getImageRegistry().put(IMG_ORIGINAL,
 			BAGMediFactory.loadImageDescriptor(imgroot + "oblau.ico"));
+		
+		transferAllStockInformationToNew32StockModel(new Query<BAGMedi>(BAGMedi.class),
+			BAGMedi.class);
 	}
 	
 	/**

@@ -60,7 +60,7 @@ public class Test_Bestellung_Rose {
 		setPharmacode(a, "0058910");
 		Anwender anwender = new Anwender("007", "topsecret");
 		order = new Bestellung("Test-Bestellung", anwender);
-		order.addItem(a, 1);
+		order.addBestellungEntry(a, null, null, 1);
 		
 	}
 	

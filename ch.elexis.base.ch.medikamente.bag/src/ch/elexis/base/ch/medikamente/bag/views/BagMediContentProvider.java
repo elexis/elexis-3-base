@@ -15,12 +15,15 @@ import java.sql.PreparedStatement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.TableViewer;
 
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.service.StockService;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -89,13 +92,17 @@ public class BagMediContentProvider extends FlatDataLoader {
 					if (bOnlyGenerics) {
 						qbe.add("Generikum", "LIKE", "G%");
 					}
-					if (bOnlyStock) {
-						qbe.add(Artikel.MAXBESTAND, ">", "0");
-					}
 					qbe.orderBy(false, new String[] {
 						BAGMedi.FLD_NAME
 					});
-					medis = qbe.execute().toArray(new BAGMedi[0]);
+					List<? extends PersistentObject> result = qbe.execute();
+					if (bOnlyStock) {
+						result = result.stream()
+							.filter(a -> (CoreHub.getStockService()
+								.getCumulatedAvailabilityForArticle((Artikel) a) != null))
+							.collect(Collectors.toList());
+					}
+					medis = result.toArray(new BAGMedi[0]);
 				} else {
 					if (!StringTool.isNothing(subst)) {
 						String sql = FROM_SUBSTANCE + JdbcLink.wrap(subst + "%");
@@ -164,9 +171,6 @@ public class BagMediContentProvider extends FlatDataLoader {
 	class QueryFilter implements IFilter {
 		public boolean select(Object element){
 			BAGMedi medi = (BAGMedi) element;
-			if (bOnlyStock && !medi.isLagerartikel()) {
-				return false;
-			}
 			if (bOnlyGenerics && !medi.isGenericum()) {
 				return false;
 			}

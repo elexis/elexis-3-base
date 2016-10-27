@@ -20,10 +20,7 @@ import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -31,7 +28,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.PlatformUI;
 
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
@@ -40,25 +36,21 @@ import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.views.IDetailDisplay;
-import ch.elexis.core.ui.views.artikel.Messages;
-import ch.elexis.data.Kontakt;
+import ch.elexis.core.ui.views.controls.StockDetailComposite;
 import ch.elexis.data.PersistentObject;
 
 public class DetailDisplay implements IDetailDisplay {
 	
-	private UpdateValueStrategy integerToString = new UpdateValueStrategy()
-		.setConverter(NumberToStringConverter.fromInteger(true));
-	private UpdateValueStrategy stringToInteger = new UpdateValueStrategy()
-		.setConverter(StringToNumberConverter.toInteger(true));
+	private UpdateValueStrategy integerToString =
+		new UpdateValueStrategy().setConverter(NumberToStringConverter.fromInteger(true));
+	private UpdateValueStrategy stringToInteger =
+		new UpdateValueStrategy().setConverter(StringToNumberConverter.toInteger(true));
 	
 	protected WritableValue item = new WritableValue(null, ArtikelstammItem.class);
 	
 	private DetailComposite dc = null;
-	private Text txtLIEFERANT;
+	private StockDetailComposite sdc;
 	
 	@Override
 	public Class<? extends PersistentObject> getElementClass(){
@@ -68,11 +60,12 @@ public class DetailDisplay implements IDetailDisplay {
 	@Override
 	public void display(Object obj){
 		ArtikelstammItem ai = (ArtikelstammItem) obj;
-		if (dc != null)
-			dc.setItem(ai);
 		item.setValue(ai);
-		if (!txtLIEFERANT.isDisposed()) {
-			txtLIEFERANT.setText((ai.getLieferant().exists()) ? ai.getLieferant().getLabel() : "");
+		if (dc != null) {
+			dc.setItem(ai);
+		}
+		if (sdc != null) {
+			sdc.setArticle(ai);
 		}
 	}
 	
@@ -84,9 +77,8 @@ public class DetailDisplay implements IDetailDisplay {
 	@Override
 	public Composite createDisplay(Composite parent, IViewSite site){
 		if (dc == null) {
-			String atcLang =
-				CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
-					ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+			String atcLang = CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
 			
 			dc = new DetailComposite(parent, SWT.None, atcLang);
 			
@@ -111,12 +103,11 @@ public class DetailDisplay implements IDetailDisplay {
 		StringBuilder sb = new StringBuilder();
 		int version = ArtikelstammItem.getCurrentVersion();
 		if (version != 99999) {
-			sb.append(" v"+version);
+			sb.append(" v" + version);
 		}
 		Date creationDate = ArtikelstammItem.getImportSetCreationDate();
 		if (creationDate != null) {
-			sb.append(" / "
-				+ ArtikelstammHelper.monthAndYearWritten.format(creationDate));
+			sb.append(" / " + ArtikelstammHelper.monthAndYearWritten.format(creationDate));
 		}
 		label.setText("Datensatz-Basis: " + sb.toString());
 		
@@ -160,64 +151,10 @@ public class DetailDisplay implements IDetailDisplay {
 		grpLagerhaltung.setLayout(new GridLayout(4, false));
 		grpLagerhaltung.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		
-		Label lblMaxbestand = new Label(grpLagerhaltung, SWT.NONE);
-		lblMaxbestand.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblMaxbestand.setText("Max. Pckg. an Lager");
-		
-		Text txtMAXBESTAND = new Text(grpLagerhaltung, SWT.BORDER);
-		txtMAXBESTAND.setTextLimit(4);
-		GridData gd_txtMAXBESTAND = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_txtMAXBESTAND.widthHint = 40;
-		txtMAXBESTAND.setLayoutData(gd_txtMAXBESTAND);
-		
-		IObservableValue propertyMax =
-			PojoProperties.value(ArtikelstammItem.class, "maxbestand", Integer.class)
-				.observeDetail(item);
-		IObservableValue targetMax = WidgetProperties.text(SWT.Modify).observe(txtMAXBESTAND);
-		bindingContext.bindValue(targetMax, propertyMax, stringToInteger, integerToString);
-		
-		Label lblMinbestand = new Label(grpLagerhaltung, SWT.NONE);
-		lblMinbestand.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblMinbestand.setText("Min. Pckg. an Lager");
-		
-		Text txtMINBESTAND = new Text(grpLagerhaltung, SWT.BORDER);
-		txtMINBESTAND.setTextLimit(4);
-		GridData gd_txtMINBESTAND = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_txtMINBESTAND.widthHint = 40;
-		txtMINBESTAND.setLayoutData(gd_txtMINBESTAND);
-		IObservableValue propertyMin =
-			PojoProperties.value(ArtikelstammItem.class, "minbestand", Integer.class)
-				.observeDetail(item);
-		IObservableValue targetMin = WidgetProperties.text(SWT.Modify).observe(txtMINBESTAND);
-		bindingContext.bindValue(targetMin, propertyMin, stringToInteger, integerToString);
-		
-		Label lblAktuellPckgAn = new Label(grpLagerhaltung, SWT.NONE);
-		lblAktuellPckgAn.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblAktuellPckgAn.setText("Aktuell Pckg. an Lager");
-		
-		Text txtISTBESTAND = new Text(grpLagerhaltung, SWT.BORDER);
-		txtISTBESTAND.setTextLimit(4);
-		GridData gd_txtISTBESTAND = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_txtISTBESTAND.widthHint = 40;
-		txtISTBESTAND.setLayoutData(gd_txtISTBESTAND);
-		IObservableValue propertyIst =
-			PojoProperties.value(ArtikelstammItem.class, "istbestand", Integer.class)
-				.observeDetail(item);
-		IObservableValue targetIst = WidgetProperties.text(SWT.Modify).observe(txtISTBESTAND);
-		bindingContext.bindValue(targetIst, propertyIst, stringToInteger, integerToString);
-		
-		// Anbruch
-		Label lblAnbruch = new Label(grpLagerhaltung, SWT.NONE);
-		lblAnbruch.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblAnbruch.setText("Anbruch");
-		
-		Text txtAnbruch = new Text(grpLagerhaltung, SWT.BORDER);
-		txtAnbruch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		IObservableValue propertyAnbruch =
-			PojoProperties.value(ArtikelstammItem.class, "bruchteile", Integer.class)
-				.observeDetail(item);
-		IObservableValue targetAnbruch = WidgetProperties.text(SWT.Modify).observe(txtAnbruch);
-		bindingContext.bindValue(targetAnbruch, propertyAnbruch);
+		sdc = new StockDetailComposite(grpLagerhaltung, SWT.NONE);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, true, 4, 1);
+		gridData.heightHint = 100;
+		sdc.setLayoutData(gridData);
 		
 		// Stk. pro Pkg.
 		Label lblStkProPack = new Label(grpLagerhaltung, SWT.NONE);
@@ -229,9 +166,8 @@ public class DetailDisplay implements IDetailDisplay {
 		GridData gd_txtStkProPack = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_txtStkProPack.widthHint = 40;
 		txtStkProPack.setLayoutData(gd_txtStkProPack);
-		IObservableValue propertyStkProPack =
-			PojoProperties.value(ArtikelstammItem.class, "verpackungseinheit", Integer.class)
-				.observeDetail(item);
+		IObservableValue propertyStkProPack = PojoProperties
+			.value(ArtikelstammItem.class, "verpackungseinheit", Integer.class).observeDetail(item);
 		IObservableValue targetStkProPack =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProPack);
 		bindingContext.bindValue(targetStkProPack, propertyStkProPack, stringToInteger,
@@ -250,43 +186,10 @@ public class DetailDisplay implements IDetailDisplay {
 		gd_txtStkProAbgabe.widthHint = 40;
 		txtStkProAbgabe.setLayoutData(gd_txtStkProAbgabe);
 		txtStkProAbgabe.setToolTipText(tooltip);
-		IObservableValue propertyStkProAbgabe =
-			PojoProperties.value(ArtikelstammItem.class, "verkaufseinheit", Integer.class)
-				.observeDetail(item);
+		IObservableValue propertyStkProAbgabe = PojoProperties
+			.value(ArtikelstammItem.class, "verkaufseinheit", Integer.class).observeDetail(item);
 		IObservableValue targetStkProAbgabe =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProAbgabe);
-		
-		// Lieferant
-		Label lblLieferant = new Label(grpLagerhaltung, SWT.NONE);
-		lblLieferant.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblLieferant.setText("Lieferant");
-		lblLieferant.setForeground(UiDesk.getColorRegistry().get(UiDesk.COL_BLUE));
-		
-		lblLieferant.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e){
-				if (item.getValue() == null)
-					return;
-				KontaktSelektor ksl =
-					new KontaktSelektor(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-						Kontakt.class, Messages.Artikeldetail_lieferant,
-						Messages.Artikeldetail_LieferantWaehlen, Kontakt.DEFAULT_SORT);
-				if (ksl.open() == IDialogConstants.OK_ID) {
-					ArtikelstammItem ai = (ArtikelstammItem) item.getValue();
-					Kontakt k = (Kontakt) ksl.getSelection();
-					ai.setLieferant(k);
-					String lbl = ai.getLieferant().getLabel();
-					if (lbl.length() > 15) {
-						lbl = lbl.substring(0, 12) + "..."; //$NON-NLS-1$
-					}
-					txtLIEFERANT.setText(lbl);
-					ElexisEventDispatcher.reload(ArtikelstammItem.class);
-				}
-			}
-		});
-		
-		txtLIEFERANT = new Text(grpLagerhaltung, SWT.BORDER | SWT.READ_ONLY);
-		txtLIEFERANT.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		bindingContext.bindValue(targetStkProAbgabe, propertyStkProAbgabe, stringToInteger,
 			integerToString);

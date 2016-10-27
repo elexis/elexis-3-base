@@ -32,6 +32,7 @@ import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.core.ui.views.artikel.Artikeldetail;
 import ch.elexis.core.ui.views.controls.ArticleDefaultSignatureComposite;
+import ch.elexis.core.ui.views.controls.StockDetailComposite;
 
 public class MedicalDetailDisplay implements IDetailDisplay {
 	
@@ -41,6 +42,8 @@ public class MedicalDetailDisplay implements IDetailDisplay {
 	LabeledInputField ifName;
 	Text tName;
 	Medical act;
+	
+	private StockDetailComposite sdc;
 	private ArticleDefaultSignatureComposite adsc;
 	
 	public Composite createDisplay(Composite parent, IViewSite site){
@@ -68,6 +71,13 @@ public class MedicalDetailDisplay implements IDetailDisplay {
 			new LabeledInputField.AutoForm(ret, Artikeldetail.getFieldDefs(parent.getShell()));
 		tblArtikel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
+		Group grpStockDetails = new Group(ret, SWT.NONE);
+		grpStockDetails.setLayout(new GridLayout(1, false));
+		grpStockDetails.setText("Lagerhaltung");
+		grpStockDetails.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		sdc = new StockDetailComposite(grpStockDetails, SWT.NONE);
+		sdc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
 		Group grpDefaultSignature = new Group(ret, SWT.NONE);
 		grpDefaultSignature.setLayout(new GridLayout(1, false));
 		grpDefaultSignature.setText("Standard-Signatur");
@@ -91,8 +101,10 @@ public class MedicalDetailDisplay implements IDetailDisplay {
 			tblArtikel.reload(act);
 			ifName.setText(act.getInternalName());
 			adsc.setArticleToBind(act);
+			sdc.setArticle(act);
 		} else {
 			adsc.setArticleToBind(null);
+			sdc.setArticle(null);
 		}
 		
 	}

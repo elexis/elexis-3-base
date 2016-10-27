@@ -18,9 +18,9 @@ import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
-import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
+import ch.elexis.core.data.service.StockService;
+import ch.elexis.core.stock.IStockService.Availability;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.data.Artikel;
@@ -46,8 +46,10 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements ITable
 				}
 				sb.append("]");
 			}
-			if (bm.isLagerartikel()) {
-				sb.append(" (").append(bm.getTotalCount()).append(")");
+			Availability availability =
+				CoreHub.getStockService().getCumulatedAvailabilityForArticle(bm);
+			if (availability != null) {
+				sb.append(" (").append(availability).append(")");
 			}
 			
 			return sb.toString();
@@ -64,29 +66,14 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements ITable
 		if (element instanceof Artikel) {
 			Artikel art = (Artikel) element;
 			
-			if (art.isLagerartikel()) {
-				int trigger =
-					CoreHub.globalCfg.get(Preferences.INVENTORY_ORDER_TRIGGER,
-						Preferences.INVENTORY_ORDER_TRIGGER_DEFAULT);
-				
-				int ist = art.getIstbestand();
-				int min = art.getMinbestand();
-				
-				boolean order = false;
-				switch (trigger) {
-				case Preferences.INVENTORY_ORDER_TRIGGER_BELOW:
-					order = (ist < min);
-					break;
-				case Preferences.INVENTORY_ORDER_TRIGGER_EQUAL:
-					order = (ist <= min);
-					break;
-				default:
-					order = (ist < min);
-				}
-				
-				if (order) {
+			Availability availability =
+				CoreHub.getStockService().getCumulatedAvailabilityForArticle(art);
+			if (availability != null) {
+				switch (availability) {
+				case CRITICAL_STOCK:
+				case OUT_OF_STOCK:
 					return UiDesk.getColor(UiDesk.COL_RED);
-				} else {
+				default:
 					return UiDesk.getColor(UiDesk.COL_BLUE);
 				}
 			}

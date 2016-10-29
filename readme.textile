@@ -32,3 +32,8 @@ Here some pointers.
 
 
 
+h2. Javadoc & checkstyle
+
+Use @mvn  --show-version clean -Dmaven.test.skip install -DaltDeploymentRepository=snapshot-repo::default::file:./snapshots -DforceContextQualifier=javadoc javadoc:javadoc checkstyle:checkstyle-aggregate@ to generate output:
+* target/site/apidocs/index.html
+* target/site/checkstyle-aggregate.html

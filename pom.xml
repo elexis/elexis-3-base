@@ -267,7 +267,6 @@
   <module>net.medshare.connector.viollier</module>
   <module>net.medshare.connector.viollier.feature</module>
   <module>at.medevit.elexis.tarmed.model</module>
-
 </modules>
 <repositories>
   <repository>
@@ -293,6 +292,21 @@
 </repositories>
 <build>
   <plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <includeTestResources>false</includeTestResources>
+          <linkXRef>true</linkXRef>
+          <encoding>UTF-8</encoding>
+          <consoleOutput>false</consoleOutput>
+          <failsOnError>false</failsOnError>
+          <headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/epl-v10.html</headerLocation>
+          <configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle.xml</configLocation>
+          <suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
+        </configuration>
+			<version>2.17</version>
+		</plugin>
 		<plugin>
 			<groupId>com.github.goldin</groupId>
 			<artifactId>properties-maven-plugin</artifactId>
@@ -616,4 +630,42 @@ Without it Maven would put two versions of each class file into the jars
     </plugins>
   </pluginManagement>
 </build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+					<includeTestResources>false</includeTestResources>
+					<linkXRef>true</linkXRef>
+					<encoding>UTF-8</encoding>
+					<consoleOutput>false</consoleOutput>
+					<failsOnError>false</failsOnError>
+					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/epl-v10.html</headerLocation>
+					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle.xml</configLocation>
+					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<inherited>false</inherited>
+						<reports>
+							<report>checkstyle-aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin> <!-- maven-jxr-plugin is needed for linkXRef  -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	<distributionManagement>
+		<site>
+			<id>www.elexis.info</id>
+			<url>http://www.elexis.info</url>
+		</site>
+	</distributionManagement>
 </project>

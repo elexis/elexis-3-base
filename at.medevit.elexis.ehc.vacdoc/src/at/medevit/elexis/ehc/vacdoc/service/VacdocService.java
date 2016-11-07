@@ -31,7 +31,7 @@ import ch.elexis.data.Query;
 public class VacdocService {
 	
 	private static Logger logger = LoggerFactory.getLogger(VacdocService.class);
-
+	
 	public VacdocService(){
 		EClass vacdClass = CHPackage.eINSTANCE.getVACD();
 		if (vacdClass == null) {
@@ -78,7 +78,7 @@ public class VacdocService {
 		List<Vaccination> vaccinations = query.execute();
 		addVaccinations(doc, vaccinations);
 	}
-
+	
 	/**
 	 * Add the vaccinations to the document.
 	 * 
@@ -110,10 +110,9 @@ public class VacdocService {
 					String administratorName = getVaccinationAdministrator(vaccination);
 					author = new Author(EhcCoreMapper.getEhcName(administratorName));
 				}
-
-				Immunization immunization =
-					new Immunization(consumable, author, DateUtil.date(vaccination
-						.getDateOfAdministrationLabel()), null, null);
+				
+				Immunization immunization = new Immunization(consumable, author,
+					DateUtil.date(vaccination.getDateOfAdministrationLabel()), null, null);
 				doc.addImmunization(immunization);
 			}
 		}
@@ -146,7 +145,7 @@ public class VacdocService {
 	private String getVaccinationAdministrator(Vaccination vaccination){
 		return vaccination.get(Vaccination.FLD_ADMINISTRATOR);
 	}
-
+	
 	public Optional<CdaChVacd> getVacdocDocument(InputStream document) throws Exception{
 		try {
 			final CdaChLoader<CdaChVacd> loader = new CdaChLoader<CdaChVacd>();
@@ -197,7 +196,8 @@ public class VacdocService {
 			query.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, atcStr);
 			List<ArtikelstammItem> articles = query.execute();
 			if (articles != null && !articles.isEmpty()) {
-				String displayName = atcCode.getDisplayName().toLowerCase();
+				String displayName =
+					(atcCode != null) ? atcCode.getDisplayName().toLowerCase() : null;
 				if (displayName != null && !displayName.isEmpty()) {
 					for (ArtikelstammItem artikelstammItem : articles) {
 						if (artikelstammItem.getName().toLowerCase().contains(displayName)) {

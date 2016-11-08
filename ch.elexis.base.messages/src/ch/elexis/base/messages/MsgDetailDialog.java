@@ -12,24 +12,27 @@
 
 package ch.elexis.base.messages;
 
+import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.issue.Visibility;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Reminder;
@@ -38,17 +41,16 @@ import ch.rgw.tools.TimeTool;
 
 public class MsgDetailDialog extends Dialog {
 	
-	Label lbFrom;
-	Combo cbTo;
-	Text text;
-	Message msg;
-	Anwender[] users;
-	Button bOK, bRecall, bAsReminder, bAnswer, bCancel;
-	ClickListener clickListener = new ClickListener();
+	private Label lblFrom;
+	private ComboViewer cbTo;
+	private Text txtMessage;
+	private Message incomingMsg;
+	private List<Anwender> users = CoreHub.getUserList();
+	private Button bOK, bAnswer;
 	
 	MsgDetailDialog(final Shell shell, final Message msg){
 		super(shell);
-		this.msg = msg;
+		this.incomingMsg = msg;
 	}
 	
 	@Override
@@ -56,37 +58,70 @@ public class MsgDetailDialog extends Dialog {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(4, false));
-		Label l1 = new Label(ret, SWT.NONE);
-		String l =
-			(msg == null) ? new TimeTool().toString(TimeTool.FULL_GER) : new TimeTool(
-				msg.get("time")).toString(TimeTool.FULL_GER); //$NON-NLS-1$
 		
-		l1.setText(Messages.MsgDetailDialog_messageDated + l);
-		
-		l1.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
+		Label lblMessageInfo = new Label(ret, SWT.NONE);
+		lblMessageInfo.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
+		String msgLabel = (incomingMsg == null) ? new TimeTool().toString(TimeTool.FULL_GER)
+				: new TimeTool(incomingMsg.get("time")).toString(TimeTool.FULL_GER); //$NON-NLS-1$
+		lblMessageInfo.setText(Messages.MsgDetailDialog_messageDated + msgLabel);
 		
 		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_from);
-		lbFrom = new Label(ret, SWT.NONE);
+		lblFrom = new Label(ret, SWT.NONE);
 		
 		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_to);
-		cbTo = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
-		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(4,
-			true, 1, false));
-		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
-		text = SWTHelper.createText(ret, 1, SWT.BORDER);
-		text.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
-		users = Hub.getUserList().toArray(new Anwender[0]);
-		for (Anwender a : users) {
-			cbTo.add(a.getLabel());
-		}
-		if (msg == null) {
-			lbFrom.setText(CoreHub.actUser.getLabel());
+		cbTo = new ComboViewer(ret, SWT.SINGLE | SWT.READ_ONLY);
+		cbTo.setContentProvider(ArrayContentProvider.getInstance());
+		cbTo.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element){
+				Anwender anw = (Anwender) element;
+				return anw.getLabel();
+			}
+		});
+		cbTo.setInput(users);
+		
+		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL)
+			.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
+		
+		if (incomingMsg != null) {
+			lblFrom.setText(incomingMsg.getSender().getLabel());
+			Anwender sender = null;
+			for (Anwender anwender : users) {
+				if (incomingMsg.getSender().getId().equals(anwender.getId())) {
+					sender = anwender;
+					break;
+				}
+			}
+			if (sender != null) {
+				cbTo.setSelection(new StructuredSelection(sender));
+			}
+			
+			cbTo.getCombo().setEnabled(false);
+			
+			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
+			Label lblIncomingMsg = new Label(ret, SWT.None);
+			lblIncomingMsg.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
+			lblIncomingMsg.setText(incomingMsg.get("Text"));
+			
+			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_answer);
 		} else {
-			lbFrom.setText(msg.getSender().getLabel());
-			cbTo.setText(msg.getDest().getLabel());
-			cbTo.setEnabled(false);
-			text.setText(msg.get("Text")); //$NON-NLS-1$
+			lblFrom.setText(CoreHub.actUser.getLabel());
+			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 		}
+		
+		txtMessage = SWTHelper.createText(ret, 1, SWT.BORDER);
+		txtMessage.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
+		txtMessage.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e){
+				if (txtMessage.getText() != null && txtMessage.getText().length() > 0) {
+					getShell().setDefaultButton(bAnswer);
+				} else {
+					getShell().setDefaultButton(bOK);
+				}
+			}
+		});
 		
 		return ret;
 	}
@@ -94,7 +129,7 @@ public class MsgDetailDialog extends Dialog {
 	@Override
 	public void create(){
 		super.create();
-		if (msg == null) {
+		if (incomingMsg == null) {
 			getShell().setText(Messages.MsgDetailDialog_createMessage);
 		} else {
 			getShell().setText(Messages.MsgDetailDialog_readMessage);
@@ -104,76 +139,60 @@ public class MsgDetailDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent){
 		String sOK;
-		if (msg == null) {
+		if (incomingMsg == null) {
 			sOK = Messages.MsgDetailDialog_send;
 		} else {
 			sOK = Messages.MsgDetailDialog_delete;
 		}
 		bOK = createButton(parent, IDialogConstants.OK_ID, sOK, false);
 		parent.getShell().setDefaultButton(bOK);
-		bAnswer =
-			createButton(parent, IDialogConstants.CLIENT_ID + 1, Messages.MsgDetailDialog_reply,
-				false);
-		bAnswer.addSelectionListener(clickListener);
-		bAsReminder =
-			createButton(parent, IDialogConstants.CLIENT_ID + 2,
-				Messages.MsgDetailDialog_asReminder, false);
-		bAsReminder.addSelectionListener(clickListener);
-		bCancel =
-			createButton(parent, IDialogConstants.CANCEL_ID, Messages.MsgDetailDialog_cancel, false);
-		if (msg == null) {
+		bAnswer = createButton(parent, IDialogConstants.CLIENT_ID + 1,
+			Messages.MsgDetailDialog_reply, false);
+		if (incomingMsg == null) {
 			bAnswer.setEnabled(false);
 		}
+		createButton(parent, IDialogConstants.CLIENT_ID + 2, Messages.MsgDetailDialog_asReminder,
+			false);
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.MsgDetailDialog_cancel, false);
+	}
+	
+	@Override
+	protected void buttonPressed(int buttonId){
+		switch (buttonId) {
+		case IDialogConstants.OK_ID:
+			okPressed();
+			return;
+		case IDialogConstants.CLIENT_ID + 1:
+			if (incomingMsg != null) {
+				Anwender an = incomingMsg.getSender();
+				new Message(an, txtMessage.getText());
+			}
+			okPressed();
+		case IDialogConstants.CLIENT_ID + 2:
+			StructuredSelection ss = ((StructuredSelection) cbTo.getSelection());
+			if (!ss.isEmpty()) {
+				Anwender anw = (Anwender) ss.getFirstElement();
+				Reminder rem = new Reminder(anw, new TimeTool().toString(TimeTool.DATE_GER),
+					Visibility.ALWAYS, "", txtMessage.getText()); //$NON-NLS-1$
+				rem.addResponsible(anw);
+			}
+			okPressed();
+		default:
+			break;
+		}
+		super.buttonPressed(buttonId);
 	}
 	
 	@Override
 	protected void okPressed(){
-		if (msg == null) {
-			int idx = cbTo.getSelectionIndex();
-			if (idx != -1) {
-				msg = new Message(users[idx], text.getText());
+		if (incomingMsg == null) {
+			StructuredSelection ss = ((StructuredSelection) cbTo.getSelection());
+			if (!ss.isEmpty()) {
+				incomingMsg = new Message((Anwender) ss.getFirstElement(), txtMessage.getText());
 			}
 		} else {
-			msg.delete();
+			incomingMsg.delete();
 		}
 		super.okPressed();
-	}
-	
-	class ClickListener extends SelectionAdapter {
-		
-		@Override
-		public void widgetSelected(final SelectionEvent e){
-			Button bOrigin = ((Button) e.getSource());
-			if (bOrigin != null) {
-				if (bOrigin.equals(bAnswer)) {
-					lbFrom.setText(CoreHub.actUser.getLabel());
-					if (msg != null) {
-						Anwender an = msg.getSender();
-						if (an != null) {
-							cbTo.setText(an.getLabel());
-						}
-						msg.delete();
-						msg = null;
-					}
-					// check if text should be cleared for answer
-					if (CoreHub.userCfg.get(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false)) {
-						text.setText("");
-					}
-					
-					bOK.setText(Messages.MsgDetailDialog_send);
-					// *** make sure we can see <from> when name is longer than before
-					lbFrom.getParent().layout();
-				} else {
-					int idx = cbTo.getSelectionIndex();
-					if (idx != -1) {
-						Reminder rem =
-							new Reminder(users[idx], new TimeTool().toString(TimeTool.DATE_GER),
-								Visibility.ALWAYS, "", text.getText()); //$NON-NLS-1$
-						rem.addResponsible(users[idx]);
-					}
-					okPressed();
-				}
-			}
-		}
 	}
 }

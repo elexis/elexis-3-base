@@ -10,6 +10,7 @@ public class Messages extends NLS {
 	public static String MsgDetailDialog_delete;
 	public static String MsgDetailDialog_from;
 	public static String MsgDetailDialog_message;
+	public static String MsgDetailDialog_answer;
 	public static String MsgDetailDialog_messageDated;
 	public static String MsgDetailDialog_readMessage;
 	public static String MsgDetailDialog_reply;

@@ -43,33 +43,39 @@ public class VATMenuContributionItem extends ContributionItem {
 			mi.setText("MWSt. Satz für Artikel festlegen");
 			mi.setEnabled(false);
 			
-			MenuItem vatNormal = new MenuItem(menu, SWT.RADIO);
+			final MenuItem vatNormal = new MenuItem(menu, SWT.RADIO);
 			vatNormal.setText("Normal");
 			vatNormal.setSelection(vatInfo.equals(VatInfo.VAT_CH_NOTMEDICAMENT));
 			vatNormal.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e){
-					ai.overrideVatInfo(VatInfo.VAT_CH_NOTMEDICAMENT);
+					if (vatNormal.getSelection()) {
+						ai.overrideVatInfo(VatInfo.VAT_CH_NOTMEDICAMENT);
+					}
 				}
 			});
 			
-			MenuItem vatReduced = new MenuItem(menu, SWT.RADIO);
+			final MenuItem vatReduced = new MenuItem(menu, SWT.RADIO);
 			vatReduced.setText("Reduziert");
 			vatReduced.setSelection(vatInfo.equals(VatInfo.VAT_CH_ISMEDICAMENT));
 			vatReduced.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e){
-					ai.overrideVatInfo(VatInfo.VAT_CH_ISMEDICAMENT);
+					if (vatReduced.getSelection()) {
+						ai.overrideVatInfo(VatInfo.VAT_CH_ISMEDICAMENT);
+					}
 				}
 			});
 			
-			MenuItem vatNone = new MenuItem(menu, SWT.RADIO);
+			final MenuItem vatNone = new MenuItem(menu, SWT.RADIO);
 			vatNone.setText("Keine (0%)");
 			vatNone.setSelection(vatInfo.equals(VatInfo.VAT_NONE));
-			vatReduced.addSelectionListener(new SelectionAdapter() {
+			vatNone.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e){
-					ai.overrideVatInfo(VatInfo.VAT_NONE);
+					if (vatNone.getSelection()) {
+						ai.overrideVatInfo(VatInfo.VAT_NONE);
+					}
 				}
 			});
 		}

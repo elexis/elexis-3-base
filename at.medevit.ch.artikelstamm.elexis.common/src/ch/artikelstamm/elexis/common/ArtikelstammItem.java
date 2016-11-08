@@ -434,7 +434,12 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public void overrideVatInfo(VatInfo overridenVat){
-		setExtInfoStoredObjectByKey(EXTINFO_VAL_VAT_OVERRIDEN, overridenVat.toString());
+		VatInfo originalVatInfo = getOriginalVatInfo();
+		if (overridenVat == originalVatInfo) {
+			setExtInfoStoredObjectByKey(EXTINFO_VAL_VAT_OVERRIDEN, null);
+		} else {
+			setExtInfoStoredObjectByKey(EXTINFO_VAL_VAT_OVERRIDEN, overridenVat.toString());
+		}
 	}
 	
 	/**
@@ -450,6 +455,17 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return super.getExt(name);
 	}
 	
+	private VatInfo getOriginalVatInfo(){
+		switch (getType()) {
+		case P:
+			return VatInfo.VAT_CH_ISMEDICAMENT;
+		case N:
+			return VatInfo.VAT_CH_NOTMEDICAMENT;
+		case X:
+		}
+		return VatInfo.VAT_NONE;
+	}
+	
 	// -- VERRECHENBAR ADAPTER and ARTIKEL ---
 	@Override
 	public VatInfo getVatInfo(){
@@ -458,13 +474,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			return VatInfo.valueOf(overridenVat);
 		}
 		
-		switch (getType()) {
-		case P:
-			return VatInfo.VAT_CH_ISMEDICAMENT;
-		case N:
-			return VatInfo.VAT_CH_NOTMEDICAMENT;
-		}
-		return VatInfo.VAT_NONE;
+		return getOriginalVatInfo();
 	}
 	
 	@Override

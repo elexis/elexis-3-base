@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.issue.Visibility;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
@@ -62,7 +64,7 @@ public class MsgDetailDialog extends Dialog {
 		Label lblMessageInfo = new Label(ret, SWT.NONE);
 		lblMessageInfo.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 		String msgLabel = (incomingMsg == null) ? new TimeTool().toString(TimeTool.FULL_GER)
-				: new TimeTool(incomingMsg.get("time")).toString(TimeTool.FULL_GER); //$NON-NLS-1$
+				: new TimeTool(incomingMsg.get(Message.FLD_TIME)).toString(TimeTool.FULL_GER);
 		lblMessageInfo.setText(Messages.MsgDetailDialog_messageDated + msgLabel);
 		
 		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_from);
@@ -79,6 +81,7 @@ public class MsgDetailDialog extends Dialog {
 			}
 		});
 		cbTo.setInput(users);
+		cbTo.setSelection(new StructuredSelection(users.get(0)));
 		
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL)
 			.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
@@ -87,7 +90,7 @@ public class MsgDetailDialog extends Dialog {
 			lblFrom.setText(incomingMsg.getSender().getLabel());
 			Anwender sender = null;
 			for (Anwender anwender : users) {
-				if (incomingMsg.getSender().getId().equals(anwender.getId())) {
+				if (incomingMsg.getDest().getId().equals(anwender.getId())) {
 					sender = anwender;
 					break;
 				}
@@ -101,7 +104,7 @@ public class MsgDetailDialog extends Dialog {
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 			Label lblIncomingMsg = new Label(ret, SWT.None);
 			lblIncomingMsg.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
-			lblIncomingMsg.setText(incomingMsg.get("Text"));
+			lblIncomingMsg.setText(incomingMsg.get(Message.FLD_TEXT));
 			
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_answer);
 		} else {
@@ -172,8 +175,10 @@ public class MsgDetailDialog extends Dialog {
 			StructuredSelection ss = ((StructuredSelection) cbTo.getSelection());
 			if (!ss.isEmpty()) {
 				Anwender anw = (Anwender) ss.getFirstElement();
-				Reminder rem = new Reminder(anw, new TimeTool().toString(TimeTool.DATE_GER),
-					Visibility.ALWAYS, "", txtMessage.getText()); //$NON-NLS-1$
+				Reminder rem = new Reminder(null, new TimeTool().toString(TimeTool.DATE_GER),
+					Visibility.ALWAYS, "", incomingMsg.get(Message.FLD_TEXT));
+				ElexisEventDispatcher.getInstance()
+					.fire(new ElexisEvent(rem, Reminder.class, ElexisEvent.EVENT_CREATE));
 				rem.addResponsible(anw);
 			}
 			okPressed();

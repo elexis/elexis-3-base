@@ -51,6 +51,7 @@ public class DetailDisplay implements IDetailDisplay {
 	
 	private DetailComposite dc = null;
 	private StockDetailComposite sdc;
+	private Text txtStkProPack, txtStkProAbgabe;
 	
 	@Override
 	public Class<? extends PersistentObject> getElementClass(){
@@ -67,6 +68,8 @@ public class DetailDisplay implements IDetailDisplay {
 		if (sdc != null) {
 			sdc.setArticle(ai);
 		}
+		txtStkProAbgabe.setEnabled(!ai.isProduct());
+		txtStkProPack.setEnabled(!ai.isProduct());
 	}
 	
 	@Override
@@ -161,7 +164,7 @@ public class DetailDisplay implements IDetailDisplay {
 		lblStkProPack.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblStkProPack.setText("Stk. pro Pckg.");
 		
-		Text txtStkProPack = new Text(grpLagerhaltung, SWT.BORDER);
+		txtStkProPack = new Text(grpLagerhaltung, SWT.BORDER);
 		txtStkProPack.setTextLimit(4);
 		GridData gd_txtStkProPack = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_txtStkProPack.widthHint = 40;
@@ -180,7 +183,7 @@ public class DetailDisplay implements IDetailDisplay {
 		final String tooltip = "Für Komplettpackung bitte 0 Stk. angeben.";
 		lblStkProAbgabe.setToolTipText(tooltip);
 		
-		Text txtStkProAbgabe = new Text(grpLagerhaltung, SWT.BORDER);
+		txtStkProAbgabe = new Text(grpLagerhaltung, SWT.BORDER);
 		txtStkProAbgabe.setTextLimit(4);
 		GridData gd_txtStkProAbgabe = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_txtStkProAbgabe.widthHint = 40;

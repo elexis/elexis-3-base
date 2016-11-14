@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
  ch.rgw.utility;bundle-version="3.0.0",
  ch.elexis.core;bundle-version="3.1.0",
- ch.elexis.core.data;bundle-version="3.1.0",
+ ch.elexis.core.data;bundle-version="3.2.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
  ch.elexis.core.ui;bundle-version="3.1.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0"

@@ -30,6 +30,7 @@ import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.FallConstants;
+import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.Log;
@@ -407,11 +408,11 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 	 * @param docboxCDA
 	 */
 	private void addMedikamente(Patient patient, DocboxCDA docboxCDA){
-		Prescription[] prescriptions = patient.getFixmedikation();
-		if (prescriptions != null && prescriptions.length > 0) {
-			String[] medikamente = new String[prescriptions.length];
-			for (int i = 0; i < prescriptions.length; ++i) {
-				medikamente[i] = prescriptions[i].getLabel();
+		List<Prescription> prescriptions = patient.getMedication(EntryType.FIXED_MEDICATION);
+		if (prescriptions != null && !prescriptions.isEmpty()) {
+			String[] medikamente = new String[prescriptions.size()];
+			for (int i = 0; i < prescriptions.size(); ++i) {
+				medikamente[i] = prescriptions.get(i).getLabel();
 			}
 			docboxCDA.addMedikamente(medikamente);
 		}

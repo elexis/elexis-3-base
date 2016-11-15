@@ -10,6 +10,8 @@
  ******************************************************************************/
 package at.medevit.elexis.epha.interactions.utils;
 
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -24,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.ui.text.IRichTextDisplay;
 import ch.elexis.core.ui.util.IKonsExtension;
 import ch.elexis.data.Patient;
@@ -59,7 +62,7 @@ public class EphaSearchAction extends Action implements IKonsExtension, IHandler
 		Patient sp = ElexisEventDispatcher.getSelectedPatient();
 		if(sp==null) return;
 		
-		Prescription[] medication = sp.getFixmedikation();
+		List<Prescription> medication = sp.getMedication(EntryType.FIXED_MEDICATION);
 		
 		for (Prescription prescription : medication) {
 			String num = null;

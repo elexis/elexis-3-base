@@ -15,9 +15,7 @@ package ch.elexis.base.ch.ticode;
 import java.util.Hashtable;
 
 /**
- * Die Tessinercodes werden nicht in der Datenbank vorgehalten, sondern sind aus Effizientgründen
- * hier in dieser Klasse fest verdrahtet. Die Klasse ist trotzdem im data-Package, um die
- * Programmierkonsistenz zu wahren.
+ * Copy of the ch.elexis.data.TICode class, but without PersistentObject dependencies.
  * 
  * @author Gerry
  * @since 3.2.0
@@ -25,24 +23,24 @@ import java.util.Hashtable;
 public class TessinerCode {
 	public static final String CODESYSTEM_NAME = "TI-Code";
 	private static Hashtable<String, TessinerCode> hash = new Hashtable<String, TessinerCode>();
-	private String Text;
-	private String Code;
+	private String text;
+	private String code;
 	
-	private TessinerCode(String Code, String Text){
-		this.Code = Code;
-		this.Text = Text;
+	private TessinerCode(String code, String text){
+		this.code = code;
+		this.text = text;
 	}
 	
 	public String getText(){
-		return Text;
+		return text;
 	}
 	
 	public String getCode(){
-		return getCode();
+		return code;
 	}
 	
 	public String getLabel(){
-		return getCode() + " " + Text; //$NON-NLS-1$
+		return code + " " + text; //$NON-NLS-1$
 	}
 	
 	public String getCodeSystemName(){

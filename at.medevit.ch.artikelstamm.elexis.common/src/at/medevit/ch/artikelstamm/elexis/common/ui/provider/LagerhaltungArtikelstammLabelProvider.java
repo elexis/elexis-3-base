@@ -19,7 +19,6 @@ import org.eclipse.wb.swt.ResourceManager;
 import at.medevit.ch.artikelstamm.ui.ArtikelstammLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.service.StockService;
 import ch.elexis.core.services.IStockService.Availability;
 import ch.elexis.core.ui.UiDesk;
 

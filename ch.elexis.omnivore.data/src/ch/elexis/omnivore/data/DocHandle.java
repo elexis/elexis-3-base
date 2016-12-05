@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,7 +50,6 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfWriter;
 
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.exceptions.ElexisException;
@@ -59,7 +59,6 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.omnivore.PreferenceConstants;
 import ch.elexis.omnivore.dialog.FileImportDialog;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
@@ -491,19 +490,13 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		if (ret == null) {
 			File file = getStorageFile(true);
 			if (file != null) {
-				try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						BufferedInputStream bis =
-							new BufferedInputStream(new FileInputStream(file))) {
-					int b;
-					while ((b = bis.read()) != -1) {
-						baos.write(b);
-					}
+				try {
+					byte[] bytes = Files.readAllBytes(Paths.get(file.toURI()));
 					// if we stored the file in the file system but decided
 					// later to store it in the
 					// database: copy the file from the file system to the
 					// database
-					byte[] bytes = baos.toByteArray();
-					if (!CoreHub.localCfg.get(PreferenceConstants.STOREFS, false)) {
+					if (!Preferences.storeInFilesystem()) {
 						try {
 							setBinary(FLD_DOC, bytes);
 						} catch (PersistenceException pe) {

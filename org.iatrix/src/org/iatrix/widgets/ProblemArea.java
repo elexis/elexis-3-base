@@ -495,7 +495,7 @@ public class ProblemArea implements IJournalArea {
 		addProblemAction = new Action("Neues Problem") {
 			{
 				setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.iatrix",
-					"rsc/new_problem.ico"));
+					"icons/new_problem.ico"));
 				setToolTipText("Neues Problem für diesen Patienten erstellen");
 			}
 

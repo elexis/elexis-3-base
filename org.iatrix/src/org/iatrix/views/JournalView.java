@@ -625,7 +625,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		addKonsultationAction = new Action(GlobalActions.neueKonsAction.getText()) {
 			{
 				setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.iatrix",
-					"rsc/new_konsultation.ico"));
+					"icons/new_konsultation.ico"));
 				setToolTipText(GlobalActions.neueKonsAction.getToolTipText());
 			}
 

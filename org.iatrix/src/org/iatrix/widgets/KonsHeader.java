@@ -32,15 +32,14 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.iatrix.views.JournalView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tiff.common.ui.datepicker.EnhancedDatePickerCombo;
+
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.dialogs.DateSelectorDialog;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -56,7 +55,7 @@ public class KonsHeader implements IJournalArea {
 	private Konsultation actKons = null;
 	private FormToolkit tk;
 	private Composite konsFallArea;
-	private Hyperlink hlKonsultationDatum;
+	private EnhancedDatePickerCombo hlKonsultationDatum = null ;
 	private Hyperlink hlMandant;
 	private Combo cbFall;
 	private Label cbLabel;
@@ -68,24 +67,25 @@ public class KonsHeader implements IJournalArea {
 		konsFallArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		konsFallArea.setLayout(new GridLayout(3, false));
 
-		hlKonsultationDatum = tk.createHyperlink(konsFallArea, "", SWT.NONE);
+		hlKonsultationDatum = new EnhancedDatePickerCombo(konsFallArea, SWT.NONE,
+			new EnhancedDatePickerCombo.ExecuteIfValidInterface() {
+				@Override
+				public void doIt(){
+					System.out.println("hlKonsultationDatum2 " + hlKonsultationDatum.getDate());
+					actKons.setDatum(
+						new TimeTool(hlKonsultationDatum.getDate().getTime()).toString(TimeTool.DATE_GER),
+						false);
+					// JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
+					// ElexisEventDispatcher.fireSelectionEvent(actKons);
+				}
+			});
 		hlKonsultationDatum.setToolTipText("Datum der Konsultation ändern");
 		hlKonsultationDatum.setFont(JFaceResources.getHeaderFont());
-		hlKonsultationDatum.addHyperlinkListener(new HyperlinkAdapter() {
-			@Override
-			public void linkActivated(HyperlinkEvent e){
-				// We cannot use GlobalActions.redateAction.run, as it does not find the actKons
-				// Therefore we re-implement it here
-				DateSelectorDialog dlg = new DateSelectorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-				if (dlg.open() == Dialog.OK) {
-					TimeTool date = dlg.getSelectedDate();
-					log.info("Change date of actKons " + actKons.getId() + " to " + date.toString(TimeTool.DATE_GER));
-					actKons.setDatum(date.toString(TimeTool.DATE_GER), false);
-					JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
-					ElexisEventDispatcher.fireSelectionEvent(actKons);
-				}
-			}
-		});
+
+
+		if (actKons != null) {
+			actKons.setDatum(hlKonsultationDatum.getText(), false);
+		}
 		hlMandant = tk.createHyperlink(konsFallArea, "", SWT.NONE);
 		hlMandant.setText("--"); //$NON-NLS-1$
 		hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
@@ -150,14 +150,23 @@ public class KonsHeader implements IJournalArea {
 		{
 			return;
 		}
-		log.debug("setKons " + k);
+		if (k != null)
+		{
+			log.debug("setKons set actKons to " + k.getId() + " vom " + k.getDatum() + " was " + (actKons != null ? actKons.getId() : "null"));
+		} else {
+			log.debug("setKons set actKons null");
+		}
 		actKons = k;
 		if (actKons != null) {
 			cbFall.setEnabled(true);
 			StringBuilder sb = new StringBuilder();
 			sb.append(actKons.getDatum());
-			hlKonsultationDatum.setText(sb.toString());
-			hlKonsultationDatum.setEnabled(true);
+			if (actKons.isEditable(false)) {
+				hlKonsultationDatum.setDate(new TimeTool(sb.toString()).getTime());
+				hlKonsultationDatum.setEnabled(true);
+			} else {
+				hlKonsultationDatum.setEnabled(false);
+			}
 			Mandant m = actKons.getMandant();
 			sb = new StringBuilder();
 			if (m == null) {
@@ -185,14 +194,10 @@ public class KonsHeader implements IJournalArea {
 
 			reloadFaelle(actKons);
 
-			log.debug("setKons " +  actKons.getId() + " Rechnungssteller " + sb + " enabled? " + enabled);
+			log.debug("setKons actKons now " +  actKons.getId() + " Rechnungssteller " + sb + " enabled? " + enabled);
 		} else {
 			cbFall.setEnabled(false);
 
-			/*
-			 * lKonsultation.setText("Keine Konsultation ausgewählt");
-			 */
-			hlKonsultationDatum.setText("Keine Konsultation ausgewählt");
 			hlKonsultationDatum.setEnabled(false);
 			if (hlMandant != null) {
 				hlMandant.setText("");

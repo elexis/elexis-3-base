@@ -2,6 +2,21 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.iatrix.perspective.KgIatrixPerspective"
+            fixed="false"
+            icon="icons/iatrix.ico"
+            id="org.iatrix.perspective.KgIatrixPerspective"
+            name="%iatrix.perspective"/>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.Sidebar">
+      <Perspektive
+            ID="org.iatrix.perspective.KgIatrixPerspective"
+            name="%iatrix.perspective"/>
+   </extension>
+   <extension
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"

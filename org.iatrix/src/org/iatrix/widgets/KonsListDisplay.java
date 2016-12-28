@@ -81,6 +81,7 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 		konsListComposite.setLayoutData(SWTHelper.getFillTableWrapData(1, true, 1, false));
 
 		dataLoader = new KonsLoader();
+		dataLoader.actKons = actKons;
 		dataLoader.addListener(this);
 	}
 
@@ -89,10 +90,10 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 	 */
 	private void reload(boolean showLoading){
 		if (patient != null && dataLoader.isValid()) {
-			konsListComposite.setKonsultationen(dataLoader.getKonsultationen());
+			konsListComposite.setKonsultationen(dataLoader.getKonsultationen(), actKons);
 		} else {
 			if (showLoading) {
-				konsListComposite.setKonsultationen(null);
+				konsListComposite.setKonsultationen(null, null);
 			}
 		}
 
@@ -160,7 +161,9 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 		boolean preview = false;
 		private boolean showAllCharges = true;
 		private boolean showAllConsultations = true;
-		List<KonsListComposite.KonsData> konsDataList = new ArrayList<KonsListComposite.KonsData>();
+		List<KonsListComposite.KonsData> konsDataList = new ArrayList<>();
+
+		public Konsultation actKons;
 
 		public KonsLoader(){
 			super("KonsLoader");
@@ -185,7 +188,7 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 			synchronized (konsDataList) {
 				konsDataList.clear();
 
-				List<Konsultation> konsList = new ArrayList<Konsultation>();
+				List<Konsultation> konsList = new ArrayList<>();
 
 				if (patient != null) {
 					Fall[] faelle = patient.getFaelle();
@@ -206,7 +209,7 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 
 						// re-implementation using Query and conditions
 
-						Query<Konsultation> query = new Query<Konsultation>(Konsultation.class);
+						Query<Konsultation> query = new Query<>(Konsultation.class);
 						query.startGroup();
 						for (Fall fall : faelle) {
 							query.add("FallID", "=", fall.getId());
@@ -244,7 +247,7 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 					if (preview && konsList.size() > PREVIEW_COUNT) {
 						// don't load all entries in this step
 
-						List<Konsultation> newList = new ArrayList<Konsultation>();
+						List<Konsultation> newList = new ArrayList<>();
 						for (int i = 0; i < PREVIEW_COUNT; i++) {
 							newList.add(konsList.get(i));
 						}
@@ -252,7 +255,7 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 					} else if (!showAllConsultations && konsList.size() > maxShownConsultations) {
 						// don't load all entries
 
-						List<Konsultation> newList = new ArrayList<Konsultation>();
+						List<Konsultation> newList = new ArrayList<>();
 						for (int i = 0; i < maxShownConsultations; i++) {
 							newList.add(konsList.get(i));
 						}
@@ -347,5 +350,6 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener,
 				}
 			}
 		}
+		konsListComposite.refeshHyperLinks(newKons);
 	}
 }

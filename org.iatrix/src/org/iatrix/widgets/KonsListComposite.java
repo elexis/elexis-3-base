@@ -79,6 +79,8 @@ public class KonsListComposite {
 	private static final String TEXT_NOT_SHOWN = "?";
 
 	private List<KonsData> konsultationen;
+
+	private Konsultation actKons;
 	private static LabelProvider verrechnetLabelProvider;
 
 	{
@@ -124,7 +126,7 @@ public class KonsListComposite {
 		loadingLabel = toolkit.createLabel(composite, "Lade Konsultationen...");
 		loadingLabel.setVisible(false);
 
-		widgetRows = new ArrayList<WidgetRow>();
+		widgetRows = new ArrayList<>();
 
 		sashLeft = new Sash(composite, SWT.VERTICAL);
 		sashLeft.setVisible(false);
@@ -157,22 +159,53 @@ public class KonsListComposite {
 		composite.setLayoutData(layoutData);
 	}
 
-	public void setKonsultationen(List<KonsData> konsultationen){
+	public void setKonsultationen(List<KonsData> konsultationen, Konsultation actKons){
 		this.konsultationen = konsultationen;
-		refresh();
+		this.actKons = actKons;
+		refreshAllKons(actKons);
+	}
+
+	private void setLinkEnabled(String caller, WidgetRow  row, Konsultation actKons) {
+		String msg = "";
+		Konsultation row_kons = null;
+		if (actKons != null) {
+			msg = "act: " + actKons.getId() + " " + actKons.getDatum();
+		}
+		if (row.konsData != null &&	row.konsData.konsultation != null) {
+			row_kons = row.konsData.konsultation;
+			msg +=  " row " + row_kons.getId() + " " + row_kons.getDatum();
+		}
+		if (actKons != null && row != null && row_kons != null) {
+			boolean enabled = !row_kons.getId().equals(actKons.getId());
+			log.debug(caller + ": hTitle for " + row.hTitle.getText() + " from "
+					+ msg  + " enabled? " + enabled);
+			row.hTitle.setEnabled(enabled);
+		} else {
+			boolean enabled = row != null && row.hTitle != null;
+			row.hTitle.setEnabled(enabled);
+			log.debug(caller + ": " + msg + " enabled " + enabled);
+		}
+	}
+
+	public void refeshHyperLinks(Konsultation actKons){
+		this.actKons = actKons;
+		for (WidgetRow row : widgetRows) {
+			setLinkEnabled("refeshHyperLinks", row, actKons);
+		}
 	}
 
 	// refresh layout and all elements
-	private void refresh(){
+	private void refreshAllKons(Konsultation kons){
 		// clear all widget rows
 		for (WidgetRow row : widgetRows) {
 			row.setKonsData(null);
 		}
 
-		List<WidgetRow> availableRows = new ArrayList<WidgetRow>();
+		List<WidgetRow> availableRows = new ArrayList<>();
 		availableRows.addAll(widgetRows);
 
 		if (konsultationen != null) {
+			int j = 0;
 			for (KonsData konsData : konsultationen) {
 				WidgetRow row;
 				if (availableRows.size() > 0) {
@@ -181,7 +214,13 @@ public class KonsListComposite {
 					row = new WidgetRow(composite);
 					widgetRows.add(row);
 				}
+				j += 1;
+				row.hTitle.setData("TEST_COMP_NAME", "KG_Iatrix_klc_row_"+j + "_htitle"); // for Jubula
+				row.etf.setData("TEST_COMP_NAME", "KG_Iatrix_klc_row_"+j + "_text"); // for Jubula
+				row.verrechnung.setData("TEST_COMP_NAME", "KG_Iatrix_klc_row_"+j + "_verrechnung"); // for Jubula
+				row.problems.setData("TEST_COMP_NAME", "KG_Iatrix_klc_row_"+j + "_problems"); // for Jubula
 				row.setKonsData(konsData);
+				setLinkEnabled("refreshAllKons", row, actKons);
 			}
 
 			loadingLabel.setVisible(false);
@@ -226,7 +265,7 @@ public class KonsListComposite {
 			 * Important: Add all created controls to "controls" for later disposal.
 			 */
 
-			controls = new ArrayList<Control>();
+			controls = new ArrayList<>();
 
 			// header
 
@@ -235,15 +274,13 @@ public class KonsListComposite {
 				@Override
 				public void linkActivated(HyperlinkEvent e){
 					log.debug("linkActivated: " + e + " " + e.getSource());
-					if (konsData != null) {
-						JournalView.saveActKonst();
-						JournalView.updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
-						log.debug(
-							"fireSelectionEvent: rev. " + konsData.konsultation.getHeadVersion()
-								+ " " + konsData.konsultation.getDatum() + " "
-								+ konsData.konsultation.getFall().getPatient().getPersonalia() + " "
-								+ konsData.konsultation);
-						ElexisEventDispatcher.fireSelectionEvent(konsData.konsultation);
+					if (actKons != null && konsData.konsultation != null) {
+						boolean enableFire = !konsData.konsultation.getId().contentEquals(actKons.getId());
+						if (enableFire) {
+							JournalView.saveActKonst();
+							JournalView.updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
+							ElexisEventDispatcher.fireSelectionEvent(konsData.konsultation);
+						}
 					}
 				}
 			});
@@ -698,7 +735,7 @@ public class KonsListComposite {
 		}
 
 		private List<String> replaceBlocks(List<Verrechnet> leistungen){
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 
 			/*
 			 * List<Verrechnet> unassigned = new ArrayList<Verrechnet>();

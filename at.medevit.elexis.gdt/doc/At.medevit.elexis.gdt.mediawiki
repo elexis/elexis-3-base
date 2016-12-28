@@ -1,5 +1,5 @@
-[[Kategorie:Datenaustausch (proprietär)]]
-{{ProprietaryPlugin}}<!--  Text above may be removed without notice. Start editing in the next line -->
+[[Kategorie:Datenaustausch]]
+<!--  Text above may be removed without notice. Start editing in the next line -->
 == Elexis Gerätedatenträger Protokoll Unterstützung ==
 ''Bezeichnung:'' Elexis Gerätedatenträger Protokoll Unterstützung <br />
  ''Author:'' Marco Descher &lt;descher@medevit.at&gt;<br />
@@ -92,7 +92,7 @@ Plug-Ins welche eine GDT Anbindung realisieren wollen, müssen den Extension Poi
 | description=Elexis Unterstützung GeräteDatenTräger Protokoll
 | (GDT-D-10)=
 | category=feature
-| license=medelexis
+| license=EPL
 | first_commit_date=2011-08-03
 | first_commit_author=Marco
 | responsible=support@medelexis.ch

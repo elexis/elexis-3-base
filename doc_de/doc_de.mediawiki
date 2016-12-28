@@ -23,6 +23,8 @@ Elexis – die elektronische Praxis – ist
 '''Unabhängige Supporter'''
 Es gibt inzwischen in mehreren Regionen der Schweiz Firmen und Einzelpersonen, die Ihnen gerne eine Offerte für eine schlüsselfertige Elexis-Installation oder ein Komplettsystem inklusive Hardware machen. Sie finden eine Liste unter http://www.elexis.ch.
 = Eine neue Patientin erfassen =
+Eine Version für 3.0 finden Sie [https://wiki.elexis.info/Start_mit_Elexis hier].
+
 [tour] Starten Sie Elexis durch Doppelklick auf das Programmsymbol. Nach einem kurzen Moment erscheint ein Fenster etwa wie in Abb. [fig:startbild] <sup>[[#fn2|2]]</sup>.
 [ht] [[File:einf0.png]] [fig:startbild]
 == Patientendaten erfassen ==
@@ -52,6 +54,7 @@ Der KG-Eintrag kann einfache Textformatierungen enthalten, Textbausteine können
 [ht] [[File:einf7.png|image]] [fig:Verrechnung]
 Dieses Fenster enthält alle im System vorgesehenen Leistungscode-Systeme, sowie eine Seite mit selbstdefinierten Leistungsblöcken. Sie können entweder einen ganzen Block oder einzelne Leistungen aus dem Block oder aus einem anderen Leistungsfenster (Tarmed etc.) ins Verrechnung-Feld ziehen (drag and drop).
 Genau gleich lassen sich zur Konsultation auch Diagnosen zuordnen, auch hier hat man die Wahl zwischen allen im System integrierten Diagnosecodesystemen (beliebig anzupassen und erweiterbar).
+
 = Benutzeroberfläche einrichten =
 [customize]
 == Funktionsprinzip ==

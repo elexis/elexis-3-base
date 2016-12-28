@@ -1,5 +1,5 @@
-[[Kategorie:Geräteanbindung (proprietär)]]
-{{ProprietaryPlugin}}<!--  Text above may be removed without notice. Start editing in the next line -->
+[[Kategorie:Geräteanbindung]]
+<!--  Text above may be removed without notice. Start editing in the next line -->
 == Elexis GDT Standard Datei-Kommunikation ==
 ''Bezeichnung:'' Elexis Standard GDT 2.1 Datei-Kommunikation<br />
  ''Author:'' Marco Descher &lt;descher@medevit.at&gt;<br />
@@ -14,7 +14,7 @@ Die Installation des Plug-Ins selbst erfolgt mittels des Konfigurators, es müss
 Die Konfiguration ist abhängig von der spezifischen Anwendungsform.
 === Konfiguration Elexis ===
 Konfigurieren Sie die Anbindung wie in folgender Grafik vorgegeben:
-[[File:at.medevit.elexis.gdt.defaultfilecp:defaultFileCPPref.png|frame|none]]
+[[File:defaultfilecp-pref.png|frame|none]]
 # Die lange ID des Empfängers
 # Die kurze ID des Empfängers
 # Das Standard-Austauschverzeichnis
@@ -31,7 +31,7 @@ Siehe Dokumentation in <tt>at.medevit.elexis.gdt</tt>.
 | name=Standard GDT Datei-Datenaustausch
 | description=Standard Datei-Datenaustausch für GDT Protokoll
 | category=feature
-| license=medelexis
+| license=EPL
 | first_commit_date=2011-08-03
 | first_commit_author=Marco
 | responsible=support@medelexis.ch

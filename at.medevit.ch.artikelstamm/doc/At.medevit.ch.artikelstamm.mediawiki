@@ -1,1 +1,82 @@
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.2.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Basispakete</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>05. Oktober 2016</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.2</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+== Einführung ==
+
 Erlaubt es auf einfache Art anhand der in der Schweiz öffentlich zugängliche Daten für Medikamenten, alle zugelassenen Medikamente, MiGel und einige andere Produkte in Elexis einzubinden und verrechnen zu können. Basiert auf den Daten von [[http://ch.oddb.org/| ch.oddb.org]].
+
+== Installation ==
+
+Um den Artikelstamm in Elexis verwenden zu können, muss aus der Kategorie „Basispakete“ das Modul „Elexis Swiss OpenSource Feature“ abonniert werden. Nach dem Aktualisieren von Elexis ist das Modul geladen.
+
+== Import bzw. Update der aktuellen Artikelstamm Daten ==
+
+''Medelexis'' Kunden können die Datensätze über ''Datei > Referenzdaten aktualisieren'' importiert und aktualisiert werden, und der folgende Vorgang kann übersprungen werden.Der manuelle 
+
+Import ist nur bei einer OpenSource Installation nötig. 
+
+Für verschiedene Elexis Versionen gibt es jeweils eigene Datensätze. Für release Versionen können diese von (https://artikelstamm.elexis.info/) bezogen werden. Für die snapshot Versionen müssen sie vom CI Server geladen werden (https://srv.elexis.info/jenkins/view/Artikelstamm/).
+
+Bis und mit Elexis 3.1 wird unterschieden zwischen einem Import von Pharma und einem mit Pharma (Name enthält _P_) und Non-Pharma Produkten (Name enthält _N_).
+
+Der Name enthält auch das Datum, an dem die Dateie erzeugt wurde. Die Datei artikelstamm_N_010316.xml enthält als nur die Pharma-Dateien und wurde am 1. März 2016 erstellt.
+
+
+* Elexis 2.1.7 und frühe Elexis 3.0-Versionen benutzten den den Artikelstamm in der Version 1 oder 2 und werden nicht mehr unterstützt.
+* Aktuelle Elexis 3.0-Versionen und 3.1 (Code-Zweig 3.1-maintenance) benötigen Artikelstamm Version 3
+* Elexis 3.2 (entspricht aktuell dem Code-Zweig master)  wird Artikelstamm Version 4 benötigen
+
+
+Der Import Vorgang wird mit dem Menüpunkt ''Import'' auf der ''Artikestamm View'' gestartet.
+
+[[File:medevit_artikelstamm_import.png]]
+
+Auf dem Artikelstamm Import Dialog wird dann die aktuell vorhandene Version angezeigt, und es kann der zu importierende Datensatz ausgewählt werden.
+
+[[File:medevit_artikelstamm_import_dialog.png]]
+
+Durch Klick auf OK wird der Import bzw. das Update des ausgelöst. Es wird ein Fortschrittsdialog angezeigt, da der Vorgang einige Zeit dauert kann der Dialog auch in den Hintergrund geschaltet werden. Beim erstmaligen Import kann der Vorgang eine Stunde oder länger dauern.
+
+== Verwendung ==
+
+Mittels der ''Artikestamm View'' können die Eigenschaften der Artikel angesehen und teils auch editiert werden.
+
+[[File:medevit_artikelstamm_view.png]]
+
+Die Artikel können auf der ''Konsutlation View'' verrechnet werden, bzw. auf den Views ''Fixmedikation'' bzw. [[Medikamentenliste| Medikationsliste]] verschrieben werden.
+
+[[File:medevit_artikelstamm_selection.png]]

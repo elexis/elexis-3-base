@@ -1,3 +1,4 @@
+[[Datei:medelexis_logo_klein.jpg|rechts]]
 [[Category:Laboranbindung]]
 = Elexis OpenVPN-Client für Analytica =
 

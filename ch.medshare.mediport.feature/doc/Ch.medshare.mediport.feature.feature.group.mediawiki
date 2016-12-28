@@ -12,11 +12,11 @@
 	</tr>
 	<tr>
 		<td>Beschreibung:</td>
-		<td> Abrechnungsplugin für MediPort </td>
+		<td> Abrechnungsplugin für MediPort (von MedShare)</td>
 	</tr>
 	<tr>
 		<td>Author:</td>
-		<td></td>
+		<td>Niklaus Giger, August 2016</td>
 	</tr>
 	<tr>
 		<td>Letzte Bearbeitung:</td>
@@ -28,7 +28,7 @@
 	</tr>
 	<tr>
 		<td>Betriebssystem:</td>
-		<td>Windows, Mac</td>
+		<td>Windows, Mac, Linux</td>
 	</tr>
 	<tr>
 		<td>Lizenz:</td>
@@ -40,7 +40,8 @@
 <!--  Text above may be removed without notice. Start editing in the next line -->
 
 == Mediport-Uebermittlung ==
-Mit den dazugehörenden Plugins können Rechnungen via separat zu installierenden MediPortCommunicator an die Mediport übermittelt werden. Mediport ist kostenpflichtig, benötigt je eine Lizenz von Mediport und Medshare und einen Lizenz-Schlüssel. Entscheidend ist die richtige Konfiguration nach Anleitung.
+
+Mit den dazugehörenden Plugins können Rechnungen via separat zu installierenden MediPortCommunicator an die Mediport übermittelt werden. Mediport ist kostenpflichtig, benötigt je eine Lizenz von Mediport und einen Lizenz-Schlüssel (Bitte beachten Sie [[MediPortCommunicator#Lizenzen_f.C3.BCr_Benutzer_der_freien_Elexis-Variante | MediPortCommunicator/Lizenzen]]. Entscheidend ist die richtige Konfiguration nach Anleitung. 
 
 Mit dem Plugin kann bei jedem Kunden auch eine Rechnung via Mediport eröffnet werden, auf Wunsch auch bei jedem parallel zu anderen Rechnungen per Post, Aerztekasse oder wen auch immer; dh man bleibt damit flexibel.
 
@@ -59,11 +60,30 @@ ZB erleben wir hier, dass die Sozialämter lieber die Rechnung direkt bekommen u
 == Installation und Einstellungen des MediPortCommunicators ==
 
 * erfolgt einmalig und ist eher eine Sache für den Supporter.
-* Vor jedem Jahreswechsel müssen Zertifikate und Passwörter von einer neuen, von Medidata automatisch zugeschickten CD einlesen werden. S.a [https://www.medidata.ch/md/cms/system/galleries/download/support/hilfsmittel/zertifikat_anleitungen/Medelexis_de.pdf| Anleitung von medidata]
+* Vor jedem Jahreswechsel müssen Zertifikate und Passwörter von einer neuen, von Medidata automatisch zugeschickten CD einlesen werden.
 
+=== Konfigurations Datei ===
 
+Um die notwendigen Konfigurationen vorzunehmen kann die Datei ''mpcommunicator.config'' mit Hilfe eines beliebigen Editor bearbeitet werden.
+
+'''Folgende Felder sollten definiert sein'''
+* mpcommunicator.mediport.ip
+* '''Mindestens 1 Client''' muss definiert sein
+** CLIENT.1.EAN=209xxxxxxx
+** CLIENT.1.SEND_DIR=data/send
+** CLIENT.1.SENDARCHIVE_DIR=data/send/archive
+** CLIENT.1.RECEIVE_DIR=data/receive
+** CLIENT.1.RECEIVETEST_DIR=data/receive/test
+** CLIENT.1.ERROR_DIR=data/error
+** CLIENT.1.DOCSTAT_DIR=data/docstatus
+** CLIENT.1.PARTNER_FILE=/kompletter/pfad/zu/data/partner/partnerinfo.txt
+** CLIENT.1.DIR.1=data/send
+
+Bitte beachten: Pro Client muss jeweils ein separates CLIENT.1.DIR.1 erstellt werden. Ebenso muss der vollständige Pfad vom PARTNER_FILE angegeben werden, da ansonsten das Mediport-Plugin die Datei nicht findet.
+
+Bei Problemen im $HOME/elexis/logs/elexis-3.log nach mediport suchen. Falls dort alles okay erscheint, im Mediport-Data-Verzeichnis die Datei data/log/mpcommunicator.log analysieren.
 == Probleme ==
 
-* mediport ist nicht recht linux-tauglich, auch für linux-server-praxen: die dateipfade können nicht im linuxformat gespeichert werden.
-* Ausdruck 'Praxis Dr. Schönbucher', zweite Zeile 'Unbekannt' auf den Mediport-Rechnungen im Gegensatz zu den Papierrechnungen, die wir in der Praxis druckten.
-** Lösung: In den Kontaktangaben des Mandanten fehlte die Angabe des Vornamens! Dies hatten wir sonst nicht bemerkt, da dieser Eintrag sonst nicht benützten.
+* Das Mediport-Plugin ist nicht für Praxen geeignet, welche verschiedene Betriebssystem einsetzen, da die Pfadnamen dann nicht stimmen.
+* Ausdruck 'Praxis xy', zweite Zeile 'Unbekannt' auf den Mediport-Rechnungen im Gegensatz zu den Papierrechnungen, die wir in der Praxis druckten.
+** Lösung: In den Kontaktangaben des Mandanten fehlte die Angabe des Vornamens! Dieser Eintrag wird sonst nicht benützt.

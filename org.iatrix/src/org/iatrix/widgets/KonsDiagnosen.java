@@ -57,7 +57,7 @@ public class KonsDiagnosen implements IJournalArea {
 		if (konsultation != null) {
 			List<IDiagnose> diagnosen = konsultation.getDiagnosen();
 			if (diagnosen != null && diagnosen.size() > 0) {
-				List<String> dxList = new ArrayList<String>();
+				List<String> dxList = new ArrayList<>();
 				for (IDiagnose diagnose : diagnosen) {
 					dxList.add(diagnose.getLabel());
 				}
@@ -105,6 +105,9 @@ public class KonsDiagnosen implements IJournalArea {
 	public void setKons(Konsultation newKons, KonsActions op){
 		boolean konsChanged = actKons != null &&
 				newKons != null && actKons.getId() != newKons.getId();
+		logEvent("setKons " + (newKons != null ? newKons.getId() +
+				" vom " + newKons.getDatum() : "null") +
+				" konsChanged: " + konsChanged);
 		if ((actKons == null && newKons != null) ||
 			(newKons == null && actKons != null))
 		{

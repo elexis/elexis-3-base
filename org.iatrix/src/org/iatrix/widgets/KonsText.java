@@ -93,7 +93,7 @@ public class KonsText implements IJournalArea {
 		Composite konsultationTextComposite = tk.createComposite(konsultationSash);
 		konsultationTextComposite.setLayout(new GridLayout(1, true));
 		text = new EnhancedTextField(konsultationTextComposite);
-		hXrefs = new Hashtable<String, IKonsExtension>();
+		hXrefs = new Hashtable<>();
 		@SuppressWarnings("unchecked")
 		List<IKonsExtension> listKonsextensions = Extensions.getClasses(
 			Extensions.getExtensions(ExtensionPointConstantsUi.KONSEXTENSION), "KonsExtension", //$NON-NLS-1$ //$NON-NLS-2$
@@ -460,7 +460,7 @@ public class KonsText implements IJournalArea {
 				text.setData(PATIENT_KEY, null);
 				text.setText("saved kons");
 				removeKonsTextLock();
-				actKons = null;
+				actKons = null; // Setting it to null made clicking twice for a kons in the kons history the kontext disapper
 			} else {
 				if (actKons != null && text != null) {
 					logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum()
@@ -562,7 +562,7 @@ public class KonsText implements IJournalArea {
 			versionBackAction.setEnabled(version != 0);
 			versionFwdAction.setEnabled(version != b.getHeadVersion());
 			boolean locked =  hasKonsTextLock();
-			logEvent("setKonsText.1 hasLock " + locked + " putCaretToEnd " + putCaretToEnd +
+			logEvent("setKonsText.1 " + b.getId() + " hasLock " + locked + " putCaretToEnd " + putCaretToEnd +
 				" " + lVersion.getText() + " '" + text.getContentsPlaintext() + "'");
 
 			if (putCaretToEnd) {

@@ -17,13 +17,8 @@ package ch.elexis.extdoc.views;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -76,13 +71,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.actions.BackgroundJob;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.actions.BackgroundJob;
 import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
+import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.JobPool;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
@@ -94,13 +89,11 @@ import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.dialogs.FileEditDialog;
 import ch.elexis.extdoc.dialogs.VerifierDialog;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
+import ch.elexis.extdoc.util.Email;
 import ch.elexis.extdoc.util.ListFiles;
 import ch.elexis.extdoc.util.MatchPatientToPath;
-import ch.elexis.core.text.model.Samdas;
-import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.TimeTool;
-import ch.elexis.extdoc.util.Email;;
+import ch.rgw.tools.TimeTool;;
 
 /**
  * Diese Ansicht zeigt externe Dokumente an. Die Dokumente liegen in einem Verzeichnis im

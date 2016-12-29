@@ -21,7 +21,6 @@ Require-Bundle: org.slf4j.api,
  ch.elexis.externe_dokumente;bundle-version="3.0.0",
  org.iatrix.messwerte,
  ch.elexis.core.ui.medication,
- org.iatrix.help.wiki,
  ch.elexis.base.ch.ebanking,
  ch.elexis.core.ui.laboratory
 Eclipse-LazyStart: true

@@ -18,10 +18,10 @@
    <feature url="features/ch.elexis.connect.reflotron.v2.feature.source_3.0.0.qualifier.jar" id="ch.elexis.connect.reflotron.v2.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.externe_dokumente.feature_3.0.0.qualifier.jar" id="ch.elexis.externe_dokumente.feature" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.externe_dokumente.feature_3.0.1.qualifier.jar" id="ch.elexis.externe_dokumente.feature" version="3.0.1.qualifier">
       <category name="documentmanagement"/>
    </feature>
-   <feature url="features/ch.elexis.externe_dokumente.feature.source_3.0.0.qualifier.jar" id="ch.elexis.externe_dokumente.feature.source" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.externe_dokumente.feature.source_3.0.1.qualifier.jar" id="ch.elexis.externe_dokumente.feature.source" version="3.0.1.qualifier">
       <category name="sources"/>
    </feature>
    <feature url="features/ch.elexis.icpc.feature.source_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature.source" version="3.0.0.qualifier">

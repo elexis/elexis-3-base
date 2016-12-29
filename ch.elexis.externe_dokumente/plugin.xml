@@ -7,6 +7,39 @@
             class="ch.elexis.extdoc.views.ExterneDokumente"
             id="ch.elexis.views.ExterneDokumente"
             name="Externe Dokumente"/>
+            name="Externe Dokumente1"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="ch.elexis.extdoc.commands.rename"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="ch.elexis.ui.keybindingScheme"
+            sequence="F2">
+      </key>
+      <key
+            commandId="ch.elexis.extdoc.commands.edit_properties"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="ch.elexis.ui.keybindingScheme"
+            sequence="ALT+ENTER">
+      </key>
+    </extension>
+    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="ch.elexis.extdoc.commands.category"
+            id="ch.elexis.extdoc.commands.rename"
+            name="%ch.elexis.extdoc.cmd.rename">
+      </command>
+      <command
+            categoryId="ch.elexis.extdoc.commands.category"
+            id="ch.elexis.extdoc.commands.edit_properties"
+            name="%extdoc.commands.properties_cmd">
+      </command>
+      <category
+            id="ch.elexis.extdoc.commands.category"
+            name="%extdoc.commands.category">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

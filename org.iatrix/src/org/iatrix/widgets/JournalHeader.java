@@ -322,7 +322,7 @@ public class JournalHeader implements IJournalArea {
 		// if there are such, the patient is a tardy payer
 
 		// find all patient's bills
-		Query<Rechnung> query = new Query<>(Rechnung.class);
+		Query<Rechnung> query = new Query<Rechnung>(Rechnung.class);
 		Fall[] faelle = patient.getFaelle();
 		if ((faelle != null) && (faelle.length > 0)) {
 			query.startGroup();

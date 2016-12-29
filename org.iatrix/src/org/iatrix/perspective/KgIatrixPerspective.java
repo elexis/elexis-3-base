@@ -93,11 +93,11 @@ public class KgIatrixPerspective implements IPerspectiveFactory {
 				layout.createFolder("Left.fourth", IPageLayout.BOTTOM, 0.5f, "Left.third");
 		left_fourth.addView(ReminderView.ID);  // Pendenzen
 
-		main.addView(JournalView.ID); // KG Iatrix v2
+		main.addView(JournalView.ID); // KG Iatrix
 		main.addView(KonsDetailView.ID);// Konsultation
-		main.addView("org.iatrix.v2.views.KonsListView"); // KonsultationenIatrix v2
+		main.addView("org.iatrix.views.KonsListView"); // KonsultationenIatrix
 		main.addView("at.medevit.elexis.roche.labor.view"); // Labor Roche // non-free software
-		main.addView("org.iatrix.messwerte.v2.views.MesswerteView"); // Messwerte Iatrix v2
+		main.addView("org.iatrix.messwerte.views.MesswerteView"); // Messwerte Iatrix
 		main.addView(LaborView.ID); // Labor
 		main.addView("ch.elexis.agenda.parallelview"); // Parallelanzeige
 		// main.addView(AgendaGross.ID);
@@ -125,7 +125,7 @@ public class KgIatrixPerspective implements IPerspectiveFactory {
 				layout.createFolder("Right.unten", IPageLayout.BOTTOM, 0.5f, "Right.mitte");
 
 		rightbottom.addView(SearchView.ID);// TODO: Suche
-		rightbottom.addView("ch.elexis.extdoc.views.ExterneDokumente"); // Externe Dokumente v2
+		rightbottom.addView("ch.elexis.views.ExterneDokumente");  // aus ch.elexis.extdoc.views.ExterneDokumente
 		rightbottom.addView(BriefAuswahl.ID);
 		rightbottom.addView(TextView.ID); // ch.elexis.TextView"
 		rightbottom.addView(FallListeView.ID); // Fälle und kons

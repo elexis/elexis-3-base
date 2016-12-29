@@ -9,7 +9,7 @@
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
  *    Niklaus Giger - Added new layout and support for drop
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.extdoc.views;
@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -78,14 +79,14 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.actions.BackgroundJob;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.actions.BackgroundJob;
+import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.JobPool;
-import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -128,12 +129,11 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	private Action sendMailAction;
 	private Action openFolderAction;
 	private Action openAction;
-	private Action editAction;
-	private Action renameAction;
+	private IAction editAction;
+	private IAction renameAction;
 	private Action moveIntoSubDirsActions;
 	private Action deleteAction;
 	private Action verifyAction;
-	
 	private Patient actPatient;
 	private Mandant actMandant;
 	/*
@@ -173,7 +173,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			} else {
 				result = Messages.ExterneDokumente_no_patient_found;
 			}
-			
+
 			return Status.OK_STATUS;
 		}
 		
@@ -192,7 +192,6 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				JobPool.getJobPool().addJob(job);
 			}
 			job.addListener(this);
-			
 		}
 		
 		public void inputChanged(Viewer v, Object oldInput, Object newInput){}
@@ -225,7 +224,6 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		public void jobFinished(BackgroundJob j){
 			// int size=((Object[])j.getData()).length;
 			viewer.refresh(true);
-			
 		}
 	}
 	
@@ -327,7 +325,6 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			} else {
 				return 0;
 			}
-			
 		}
 	}
 	
@@ -441,35 +438,22 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 					pathCheckBoxes[j]
 						.setToolTipText(Messages.ExterneDokumente_not_defined_in_preferences);
 				} else {
-					String dirName = "";
 					if (!emptyPath)
 						pathCheckBoxes[j].setToolTipText(cur.baseDir);
 				}
 			}
 		}
 		
-		// combo box
-		
-		/*
-		 * pathCombo = new Combo(topArea, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
-		 * pathCombo.add(item1); pathCombo.add(item2); actPath = item1; pathCombo.setText(actPath);
-		 * pathCombo.addSelectionListener(new SelectionAdapter() { public void
-		 * widgetSelected(SelectionEvent e) { actPath = pathCombo.getText(); refresh(); } });
-		 */
-		
 		// table
-		
 		viewer =
 			new TableViewer(bottomArea, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.FULL_SELECTION);
 		
 		Table table = viewer.getTable();
-		
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
 		table.setHeaderVisible(true);
 		table.setLinesVisible(false);
-		
+
 		TableColumn tc;
 		timeComparator = new TimestampComparator();
 		nameComparator = new FilenameComparator();
@@ -528,15 +512,14 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 					addFile(file);
 					viewer.refresh();
 				}
-				
+
 			}
-			
+
 		});
 		
 		// Welcher Patient ist im aktuellen WorkbenchWindow selektiert?
 		actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		GlobalEventDispatcher.addActivationListener(this, this);
-		
 	}
 	
 	private void hookContextMenu(){
@@ -591,7 +574,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		sendMailAction = new Action() {
 			public void run(){
 				Object element = null;
-				List<File> attachements = new ArrayList<File>();
+				List<File> attachements = new ArrayList<>();
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null && !selection.isEmpty()) {
 					Iterator<?> iterator = selection.iterator();
@@ -602,22 +585,26 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 						}
 					}
 				}
-				String inhalt = Email.getEmailPreface(actPatient);
-				inhalt += "\n\n\nMedikation: \n" + actPatient.getMedikation();
-				inhalt += "\nAlle Konsultationen\n" + Email.getAllKonsultations(actPatient) + "\n\n";
-				Email.openMailApplication("", // No default to address
-					null, inhalt, attachements);
+				if (actPatient != null) {
+					String inhalt = Email.getEmailPreface(actPatient);
+					inhalt += "\n\n\nMedikation: \n" + actPatient.getMedikation();
+					inhalt += "\nAlle Konsultationen\n" +
+							Email.getAllKonsultations(actPatient) + "\n\n";
+					Email.openMailApplication("", // No default to address
+						null, inhalt, attachements);
+				}
 			}
 		};
 		sendMailAction.setText(Messages.ExterneDokumente_sendEmail);
-		sendMailAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
-				"rsc/mail.png"));
+		sendMailAction.setImageDescriptor(Images.IMG_MAIL.getImageDescriptor());
 		sendMailAction.setToolTipText(Messages.ExterneDokumente_sendEmailTip);
 		openFolderAction = new Action() {
 			public void run(){
 				List<File> directories = ListFiles.getDirectoriesForActPatient(actPatient);
 				if (directories.size() == 0) {
-					logger.info("No active directories for " + actPatient.getPersonalia());
+					if (actPatient != null) {
+						logger.info("No active directories for " + actPatient.getPersonalia());
+					}
 					return;
 				}
 				for (File directory : directories) {
@@ -632,7 +619,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		openFolderAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.iatrix",
 				"rsc/folder.png"));
 		openFolderAction.setToolTipText(Messages.ExterneDokumente_openFolderTip);
-		
+
 		openAction = new Action() {
 			public void run(){
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
@@ -648,15 +635,16 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		};
 		openAction.setText(Messages.ExterneDokumente_open);
 		openAction.setToolTipText(Messages.ExterneDokumente_OpenFileTip);
-		openAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
-				"rsc/open.gif"));
+		openAction.setImageDescriptor(Images.IMG_DOCUMENT_TEXT.getImageDescriptor());
 		doubleClickAction = new Action() {
+			@Override
 			public void run(){
 				openAction.run();
 			}
 		};
 		
 		editAction = new Action() {
+			@Override
 			public void run(){
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
@@ -669,9 +657,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		};
 		editAction.setText(Messages.ExterneDokumente_propeties);
 		editAction.setToolTipText(Messages.ExterneDokumente_rename_or_change_date);
-		editAction.setActionDefinitionId(GlobalActions.PROPERTIES_COMMAND);
-		editAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis",
-				"rsc/plaf/modern/icons/edit.png"));
+		editAction.setActionDefinitionId("ch.elexis.extdoc.commands.edit_properties");
+		editAction.setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 		GlobalActions.registerActionHandler(this, editAction);
 		
 		deleteAction = new Action() {
@@ -681,7 +668,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 					Object element = selection.getFirstElement();
 					if (element instanceof File) {
 						File file = (File) element;
-						
+
 						if (SWTHelper.askYesNo(Messages.ExterneDokumente_delete_doc,
 							Messages.ExterneDokumente_shold_doc_be_delted + file.getName())) {
 							logger.info("Datei Löschen: " + file.getAbsolutePath()); //$NON-NLS-1$
@@ -710,13 +697,12 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		};
 		renameAction.setText(Messages.ExterneDokumente_renaming_file);
 		renameAction.setToolTipText(Messages.ExterneDokumente_renaming_file);
-		renameAction.setActionDefinitionId(GlobalActions.RENAME_COMMAND);
+		renameAction.setActionDefinitionId("ch.elexis.extdoc.commands.rename");
 		GlobalActions.registerActionHandler(this, renameAction);
 		
 		verifyAction = new Action() {
 			public void run(){
 				new VerifierDialog(getViewSite().getShell(), actPatient).open();
-				
 				// files may have been renamed
 				refresh();
 			}

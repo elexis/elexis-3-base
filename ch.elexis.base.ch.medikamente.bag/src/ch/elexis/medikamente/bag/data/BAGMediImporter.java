@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2016, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    1/2017: G. Weirich added EAN and ATC
  * 
  *******************************************************************************/
 
@@ -66,7 +67,8 @@ public class BAGMediImporter extends ImporterPage {
 			ew.setFieldTypes(new Class[] {
 				String.class, Character.class, Integer.class, Integer.class, Integer.class,
 				Character.class, String.class, String.class, Double.class, Double.class,
-				String.class, Integer.class, Integer.class, String.class, Integer.class
+				String.class, Integer.class, Integer.class, String.class, Integer.class,
+				Character.class, String.class, String.class
 			});
 			for (int i = f; i < l; i++) {
 				List<String> row = ew.getRow(i);
@@ -92,6 +94,7 @@ public class BAGMediImporter extends ImporterPage {
 	 * Import a medicament from one row of the BAG-Medi file
 	 * 
 	 * @param row
+	 * 
 	 *            <pre>
 	 * 		row[0] = ID,bzw Name
 	 * 		row[1] = Generikum
@@ -99,19 +102,26 @@ public class BAGMediImporter extends ImporterPage {
 	 * 	 	row[3] = BAG-Dossier
 	 * 		row[4] = Swissmedic-Nr
 	 * 		row[5] = Swissmedic-Liste
-	 * 	 	row[6]
-	 * 		row[7] = Namen
+	 * 	 	row[6] = Einf. Datum
+	 * 		row[7] = Bezeichnung
 	 * 		row[8] = EK-Preis
 	 *      row[9] = VK-Preis
 	 *      row[10]= Limitatio (Y/N)
 	 *      row[11]= LimitatioPts
 	 *      row[12]= Gruppe (optional)
 	 *      row[13]= Substance (optional)
-	 * </pre>
+	 *      row[14] = Rec.ID
+	 *      row[15] = 20% Selbstbehalt Y/N
+	 *      row[16] = GTIN / EAN
+	 *      row[17] = ATC
+	 *            </pre>
+	 * 
 	 * @return
 	 */
 	public static boolean importUpdate(final String[] row) throws ElexisException{
 		String pharmacode = "0";
+		String ean = "";
+		String atc = "";
 		BAGMedi imp = null;
 		// Kein Pharmacode, dann nach Name suchen
 		if (StringTool.isNothing(row[2].trim())) {
@@ -167,25 +177,23 @@ public class BAGMediImporter extends ImporterPage {
 			}
 			imp = lArt.size() > 0 ? BAGMedi.load(lArt.get(0).getId()) : null;
 		}
+		ean = row[16].replaceAll("'","");
+		atc = row[17];
 		if (imp == null || (!imp.isValid())) {
-			imp = new BAGMedi(row[7], pharmacode);
+			imp = new BAGMedi(row[7], pharmacode, ean, atc);
 			
-			String sql =
-				new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
-					.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
+			String sql = new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
+				.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
 			PersistentObject.getConnection().exec(sql);
 			
 		} else {
 			
-			String sql =
-				new StringBuilder().append("SELECT ID FROM ").append(BAGMedi.EXTTABLE)
-					.append(" WHERE ID=").append(imp.getWrappedId()).toString();
+			String sql = new StringBuilder().append("SELECT ID FROM ").append(BAGMedi.EXTTABLE)
+				.append(" WHERE ID=").append(imp.getWrappedId()).toString();
 			String extid = PersistentObject.getConnection().queryString(sql);
 			if (extid == null) {
-				sql =
-					new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
-						.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");")
-						.toString();
+				sql = new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
+					.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
 				PersistentObject.getConnection().exec(sql);
 			}
 			

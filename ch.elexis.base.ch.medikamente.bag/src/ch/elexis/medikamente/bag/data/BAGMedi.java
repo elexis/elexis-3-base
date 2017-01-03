@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2011, G. Weirich and Elexis
+ * Copyright (c) 2007-2017, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    1/2017: added EAN and ATC
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -46,22 +47,23 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	
 	static final String extDB = "CREATE TABLE " + EXTTABLE + " ("
 		+ "ID				VARCHAR(25) primary key," + "lastupdate BIGINT,"
-		+ "deleted			CHAR(1) default '0'," + "keywords			VARCHAR(80)," + "prescription		TEXT,"
-		+ "KompendiumText	TEXT" + ");";
+		+ "deleted			CHAR(1) default '0'," + "keywords			VARCHAR(80),"
+		+ "prescription		TEXT," + "KompendiumText	TEXT" + ");";
 	
 	static final String jointDB = "CREATE TABLE " + JOINTTABLE + "("
 		+ "ID				VARCHAR(25) primary key," + "product			VARCHAR(25),"
 		+ "substance         VARCHAR(25)" + ");" + "CREATE INDEX CHEMBJ1 ON " + JOINTTABLE
-		+ " (product);" + "CREATE INDEX CHEMBJ2 ON " + JOINTTABLE + " (substance);"
-		+ "INSERT INTO " + JOINTTABLE + " (ID,substance) VALUES('VERSION','" + VERSION + "');";
+		+ " (product);" + "CREATE INDEX CHEMBJ2 ON " + JOINTTABLE + " (substance);" + "INSERT INTO "
+		+ JOINTTABLE + " (ID,substance) VALUES('VERSION','" + VERSION + "');";
 	
 	public static final String CODESYSTEMNAME = "Medikament";
 	public static final String DOMAIN_PHARMACODE = "www.xid.ch/id/pk";
 	
 	static {
 		addMapping(Artikel.TABLENAME, "Gruppe=ExtId", "Generikum=Codeclass",
-			"inhalt=JOINT:substance:product:" + JOINTTABLE, "keywords=EXT:" + EXTTABLE
-				+ ":keywords", "prescription=EXT:" + EXTTABLE + ":prescription",
+			"inhalt=JOINT:substance:product:" + JOINTTABLE,
+			"keywords=EXT:" + EXTTABLE + ":keywords",
+			"prescription=EXT:" + EXTTABLE + ":prescription",
 			"KompendiumText=EXT:" + EXTTABLE + ":KompendiumText");
 		
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE, "Pharmacode",
@@ -71,9 +73,8 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 			createOrModifyTable(jointDB);
 			createOrModifyTable(extDB);
 		} else {
-			String v =
-				getConnection().queryString(
-					"SELECT substance FROM " + JOINTTABLE + " WHERE ID='VERSION';");
+			String v = getConnection()
+				.queryString("SELECT substance FROM " + JOINTTABLE + " WHERE ID='VERSION';");
 			VersionInfo vi = new VersionInfo(v);
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.1.1")) {
@@ -82,10 +83,8 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 				if (vi.isOlder("0.1.2")) {
 					createOrModifyTable("ALTER TABLE " + EXTTABLE + " add lastupdate BIGINT;");
 				}
-				getConnection()
-					.exec(
-						"UPDATE " + JOINTTABLE + " SET substance='" + VERSION
-							+ "' WHERE ID='VERSION';");
+				getConnection().exec("UPDATE " + JOINTTABLE + " SET substance='" + VERSION
+					+ "' WHERE ID='VERSION';");
 			}
 		}
 		// make sure, the substances table is created
@@ -108,9 +107,14 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	 * @param row
 	 *            the line
 	 */
-	public BAGMedi(final String name, final String pharmacode){
+	public BAGMedi(final String name, final String pharmacode, final String EAN, final String ATC){
 		super(name, CODESYSTEMNAME, pharmacode);
-		set("Klasse", getClass().getName());
+		//set("Klasse", getClass().getName());
+		set(new String[] {
+			"Klasse", FLD_EAN, FLD_ATC_CODE
+		}, new String[] {
+			getClass().getName(), EAN, ATC
+		});
 	}
 	
 	public boolean isGenericum(){
@@ -195,6 +199,12 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 			exi.put("LimitatioPts", row[11]);
 		} else {
 			exi.remove("Limitation");
+		}
+		if (row.length > 17 && !StringTool.isNothing(row[17])) {
+			set(FLD_ATC_CODE, row[17]);
+		}
+		if (row.length > 16 && !StringTool.isNothing(row[16])) {
+			set(FLD_EAN, row[16].replaceAll("'", ""));
 		}
 		if (row.length > 13) {
 			if (!StringTool.isNothing(row[13])) {

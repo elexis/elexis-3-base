@@ -36,7 +36,8 @@ public class BAGMediDetailDisplay implements IDetailDisplay {
 	}
 	
 	public String getTitle(){
-		return BAGMedi.CODESYSTEMNAME;
+		//return BAGMedi.CODESYSTEMNAME;
+		return "BAG/SL";
 	}
 	
 }

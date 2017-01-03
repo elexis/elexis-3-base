@@ -256,6 +256,10 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	
 	@Override
 	public String getCode(){
+		String gtin=getEAN();
+		if(gtin != null && gtin.length()>3){
+			return gtin;
+		}
 		return getPharmaCode();
 	}
 	

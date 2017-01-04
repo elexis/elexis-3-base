@@ -187,11 +187,12 @@ public class XMLExporterTiers {
 		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
 		ret.tiersElement.addContent(patientElement);
 		
+		Kontakt garant = patient;
 		Kontakt legalGuardian = patient.getLegalGuardian();
 		if (legalGuardian != null) {
-			rnAdressat = legalGuardian;
+			garant = legalGuardian;
 		}
-		Element guarantor = xmlExporter.buildGuarantor(rnAdressat, patient);
+		Element guarantor = xmlExporter.buildGuarantor(garant, patient);
 		ret.tiersElement.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", XMLExporter.nsinvoice); //$NON-NLS-1$

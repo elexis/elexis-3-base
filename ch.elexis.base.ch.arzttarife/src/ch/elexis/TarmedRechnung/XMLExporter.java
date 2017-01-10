@@ -458,14 +458,20 @@ public class XMLExporter implements IRnOutputter {
 				updateExisting44Xml(root, type, rechnung);
 				
 				int status = rechnung.getStatus();
-				if (status == RnStatus.MAHNUNG_1) {
-					dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m1.xml");
+				if (status == RnStatus.MAHNUNG_1 || status == RnStatus.MAHNUNG_1_GEDRUCKT) {
+					if (dest != null) {
+						dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m1.xml");
+					}
 					addReminderEntry(root, rechnung, "1");
-				} else if (status == RnStatus.MAHNUNG_2) {
-					dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m2.xml");
+				} else if (status == RnStatus.MAHNUNG_2 || status == RnStatus.MAHNUNG_2_GEDRUCKT) {
+					if (dest != null) {
+						dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m2.xml");
+					}
 					addReminderEntry(root, rechnung, "2");
-				} else if (status == RnStatus.MAHNUNG_3) {
-					dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m3.xml");
+				} else if (status == RnStatus.MAHNUNG_3 || status == RnStatus.MAHNUNG_3_GEDRUCKT) {
+					if (dest != null) {
+						dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m3.xml");
+					}
 					addReminderEntry(root, rechnung, "3");
 				}
 			} else {

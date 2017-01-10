@@ -25,11 +25,6 @@ public class Messages extends NLS {
 	public static String MedikamentImporter_SuccessTitel;
 	public static String MedikamentImporter_SuccessContent;
 	public static String MedikamentImporter_BadArticleEntry;
-	public static String MiGelImporter_ClearAllData;
-	public static String MiGelImporter_ModeCreateNew;
-	public static String MiGelImporter_ModeUpdateAdd;
-	public static String MiGelImporter_PleaseSelectFile;
-	public static String MiGelImporter_ReadMigel;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

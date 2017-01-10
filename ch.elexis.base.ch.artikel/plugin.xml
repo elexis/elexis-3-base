@@ -33,13 +33,5 @@
             ImporterClass="ch.elexis.artikel_ch.data.MedikamentImporter"
             name="Medikament">
       </Artikel>
-      <Artikel
-            CodeDetailDisplay="ch.elexis.base.ch.artikel.views.MiGelDetailDisplay"
-            CodeSelectorFactory="ch.elexis.base.ch.artikel.views.MiGelSelector"
-            ElementFactory="ch.elexis.artikel_ch.data.ArtikelFactory"
-            ImporterClass="ch.elexis.artikel_ch.data.MiGelImporter"
-            name="MiGeL">
-      </Artikel>
    </extension>
-
 </plugin>

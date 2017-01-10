@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2017, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,10 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    T. Huster - copied from ch.elexis.base.ch.artikel
  *    
  *******************************************************************************/
-package ch.elexis.artikel_ch.data;
+package ch.elexis.base.ch.migel.ui;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,6 +29,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import au.com.bytecode.opencsv.CSVReader;
+import ch.elexis.artikel_ch.data.MiGelArtikel;
+import ch.elexis.base.ch.migel.Messages;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.PersistentObject;

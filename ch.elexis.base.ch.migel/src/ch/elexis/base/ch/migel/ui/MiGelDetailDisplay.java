@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2017, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,10 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    T. Huster - copied from ch.elexis.base.ch.artikel
  *    
  *******************************************************************************/
-package ch.elexis.base.ch.artikel.views;
+package ch.elexis.base.ch.migel.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -22,11 +23,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.artikel_ch.data.MiGelArtikel;
+import ch.elexis.base.ch.migel.Messages;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
-import ch.elexis.core.ui.views.controls.ArticleDefaultSignatureComposite;
 import ch.rgw.tools.Money;
 
 public class MiGelDetailDisplay implements IDetailDisplay {

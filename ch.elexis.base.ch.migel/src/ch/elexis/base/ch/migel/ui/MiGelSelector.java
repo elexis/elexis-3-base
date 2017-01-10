@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2015, G. Weirich and Elexis
+ * Copyright (c) 2006-2017, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    M. Descher - several changes
+ *    T. Huster - copied from ch.elexis.base.ch.artikel
+ *     
  *******************************************************************************/
 
-package ch.elexis.base.ch.artikel.views;
+package ch.elexis.base.ch.migel.ui;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -18,9 +20,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.artikel_ch.data.ArtikelFactory;
 import ch.elexis.artikel_ch.data.MiGelArtikel;
-import ch.elexis.base.ch.artikel.model.MigelLoader;
+import ch.elexis.artikel_ch.data.MiGelFactory;
 import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
@@ -46,11 +47,11 @@ public class MiGelSelector extends CodeSelectorFactory {
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		ArtikelContextMenu artikelContextMenu =
 			new ArtikelContextMenu(
-				(MiGelArtikel) new ArtikelFactory().createTemplate(MiGelArtikel.class), cv);
+				(MiGelArtikel) new MiGelFactory().createTemplate(MiGelArtikel.class), cv);
 		artikelContextMenu.addAction(tvfa);
 		cv.setSelectionChangedListener(selChangeListener);
 		
-		return new ViewerConfigurer(new MigelLoader(cv), new DefaultLabelProvider(),
+		return new ViewerConfigurer(new MiGelLoader(cv), new DefaultLabelProvider(),
 			new DefaultControlFieldProvider(cv, new String[] {
 				"SubID=Code", "Name" //$NON-NLS-1$ //$NON-NLS-2$
 			}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(

@@ -123,6 +123,7 @@
   <module>ch.elexis.base.befunde</module>
   <module>ch.elexis.base.befunde.feature</module>
   <module>ch.elexis.base.ch.artikel</module>
+  <module>ch.elexis.base.ch.migel</module>
   <module>ch.elexis.base.ch.ticode</module>
   <module>ch.elexis.base.ch.arzttarife</module>
   <module>ch.elexis.base.ch.ebanking</module>

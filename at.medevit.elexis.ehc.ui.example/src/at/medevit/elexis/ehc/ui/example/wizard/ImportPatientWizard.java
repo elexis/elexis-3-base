@@ -51,8 +51,8 @@ public class ImportPatientWizard extends Wizard implements IImportWizard {
 	public void setDocument(InputStream document){
 		try {
 			document.reset();
-			ClinicalDocument clinicalDocument = ServiceComponent.getService().getDocument(document);
-			ehcDocument = ServiceComponent.getService().getCdaChDocument(clinicalDocument);
+			ClinicalDocument clinicalDocument = ServiceComponent.getService().loadDocument(document);
+			ehcDocument = ServiceComponent.getService().getAsCdaChDocument(clinicalDocument);
 			if (mainPage != null) {
 				mainPage.setDocument(ehcDocument);
 			}

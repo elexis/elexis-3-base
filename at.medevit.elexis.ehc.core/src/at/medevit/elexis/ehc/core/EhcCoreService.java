@@ -15,30 +15,78 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.ehealth_connector.cda.ch.AbstractCdaCh;
-import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
+/**
+ * Service interface for access to convenience methods of the ehealthconnector contained within this
+ * bundle.
+ * 
+ * @see <a href="https://sourceforge.net/projects/ehealthconnector/">ehealthconnector</a>
+ * @author thomas
+ *
+ */
 public interface EhcCoreService {
 	
-	public ClinicalDocument getDocument(InputStream document);
+	/**
+	 * Load a {@link ClinicalDocument} implementation from the provided {@link InputStream}.
+	 * 
+	 * @param documentStream
+	 * @return
+	 */
+	public ClinicalDocument loadDocument(InputStream documentStream);
 	
-	public void importPatient(org.ehealth_connector.common.Patient selectedPatient);
+	/**
+	 * Wrap the {@link ClinicalDocument} in a {@link AbstractCdaCh} implementation. This is useful
+	 * for convenient access to basic fields like patient, author, etc.
+	 * 
+	 * @param document
+	 * @return
+	 */
+	public AbstractCdaCh<?> getAsCdaChDocument(ClinicalDocument document);
 	
-	public AbstractCdaCh<?> getCdaChDocument(Patient patient, Mandant mandant);
+	/**
+	 * Search for a matching Patient, or create a new Elexis {@link Patient} with the data from the
+	 * {@link org.ehealth_connector.common.Patient} provided.
+	 * 
+	 * @param selectedPatient
+	 */
+	public Patient getOrCreatePatient(org.ehealth_connector.common.Patient selectedPatient);
 	
-	public AbstractCdaCh<?> getCdaChDocument(ClinicalDocument document);
+	/**
+	 * Create a {@link AbstractCdaCh} implementation, containing the provided {@link Patient} and
+	 * {@link Mandant} as author. Only useful if no specific Document is needed.
+	 * 
+	 * @param patient
+	 * @param mandant
+	 * @return
+	 */
+	public AbstractCdaCh<?> createCdaChDocument(Patient patient, Mandant mandant);
 	
-	public CdaChVacd getVaccinationsDocument(Patient elexisPatient, Mandant elexisMandant);
-	
+	/**
+	 * Create a XDM as stream, with the provided document as content.
+	 * 
+	 * @param document
+	 * @return
+	 * @throws Exception
+	 */
 	public InputStream getXdmAsStream(ClinicalDocument document) throws Exception;
 	
-	public List<ClinicalDocument> getXdmDocuments(File file,
-		org.ehealth_connector.common.Patient patient);
+	/**
+	 * Get all {@link ClinicalDocument} instances from a XDM file.
+	 * 
+	 * @param file
+	 * @return
+	 */
+	public List<ClinicalDocument> getXdmDocuments(File file);
 		
+	/**
+	 * Get all {@link org.ehealth_connector.common.Patient} instances from a XDM file.
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public List<org.ehealth_connector.common.Patient> getXdmPatients(File file);
-	
-	public Patient getElexisPatient(org.ehealth_connector.common.Patient patient);
 }

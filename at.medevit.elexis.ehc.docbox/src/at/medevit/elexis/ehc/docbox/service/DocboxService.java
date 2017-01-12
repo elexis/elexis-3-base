@@ -87,7 +87,7 @@ public class DocboxService {
 
 	public static AbstractCdaCh<?> getPrescriptionDocument(Rezept rezept){
 		AbstractCdaCh<?> document =
-			EhcServiceComponent.getService().getCdaChDocument(rezept.getPatient(),
+			EhcServiceComponent.getService().createCdaChDocument(rezept.getPatient(),
 				rezept.getMandant());
 		
 		ClinicalDocument clinicalDocument = document.getDocRoot().getClinicalDocument();

@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.extension.IImportWizard;
-import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
+import at.medevit.elexis.ehc.ui.vacdoc.wizard.service.VacdocServiceComponent;
 
 public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 	public static Logger logger = LoggerFactory.getLogger(ImportVaccinationsWizard.class);
@@ -35,16 +35,12 @@ public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 		addPage(vaccinationsMainPage);
 	}
 	
-	public static VacdocService getVacdocService(){
-		return new VacdocService();
-	}
-	
 	@Override
 	public void setDocument(InputStream document){
 		try {
 			document.reset();
-			VacdocService service = getVacdocService();
-			Optional<CdaChVacd> ehcDocumentOpt = service.getVacdocDocument(document);
+			Optional<CdaChVacd> ehcDocumentOpt =
+				VacdocServiceComponent.getService().loadVacdocDocument(document);
 			ehcDocumentOpt.ifPresent(d -> ehcDocument = d);
 		} catch (Exception e) {
 			logger.error("Could not open document", e);

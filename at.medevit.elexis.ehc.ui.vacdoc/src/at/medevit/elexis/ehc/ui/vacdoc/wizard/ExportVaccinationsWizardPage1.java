@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
+import at.medevit.elexis.ehc.ui.vacdoc.wizard.service.VacdocServiceComponent;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import ch.elexis.core.data.activator.CoreHub;
@@ -139,7 +140,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 			Mandant elexisMandant = ElexisEventDispatcher.getSelectedMandator();
 			String outputDir = CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
 				PreferencePage.getDefaultOutputDir());
-			VacdocService service = ExportVaccinationsWizard.getVacdocService();
+			VacdocService service = VacdocServiceComponent.getService();
 			
 			CdaChVacd document = service.getVacdocDocument(elexisPatient, elexisMandant);
 			

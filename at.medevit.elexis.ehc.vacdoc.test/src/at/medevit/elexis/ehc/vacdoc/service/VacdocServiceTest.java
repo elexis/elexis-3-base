@@ -11,6 +11,11 @@ import java.util.Optional;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.cda.ch.vacd.Immunization;
 import org.junit.Test;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+
+import at.medevit.elexis.ehc.vacdoc.service.internal.VacdocServiceImpl;
 
 public class VacdocServiceTest {
 	
@@ -19,12 +24,19 @@ public class VacdocServiceTest {
 		BufferedInputStream input =
 			new BufferedInputStream(getClass().getResourceAsStream("/rsc/test.xml"));
 		assertNotNull(input);
-		VacdocService service = new VacdocService();
-		Optional<CdaChVacd> document = service.getVacdocDocument(input);
+		VacdocService service = new VacdocServiceImpl();
+		Optional<CdaChVacd> document = service.loadVacdocDocument(input);
 		assertNotNull(document);
 		assertTrue(document.isPresent());
 		List<Immunization> immunizations = document.get().getImmunizations();
 		assertNotNull(immunizations);
 		assertEquals(3, immunizations.size());
+	}
+	
+	private VacdocService getVacdocService(){
+		// Register directly with the service
+		BundleContext context = FrameworkUtil.getBundle(VacdocServiceTest.class).getBundleContext();
+		ServiceReference<?> reference = context.getServiceReference(VacdocService.class.getName());
+		return (VacdocService) context.getService(reference);
 	}
 }

@@ -124,9 +124,9 @@ public class EhcDocument extends PersistentObject {
 		try {
 			if (EhcDocument.isEhcXml(location)) {
 				ClinicalDocument clinicalDocument =
-					ServiceComponent.getEhcService().getDocument(location.openStream());
+					ServiceComponent.getEhcService().loadDocument(location.openStream());
 				AbstractCdaCh<?> cdaCh =
-					ServiceComponent.getEhcService().getCdaChDocument(clinicalDocument);
+					ServiceComponent.getEhcService().getAsCdaChDocument(clinicalDocument);
 				if (cdaCh != null) {
 					org.ehealth_connector.common.Patient patient = cdaCh.getPatient();
 					if (patient != null) {
@@ -185,9 +185,8 @@ public class EhcDocument extends PersistentObject {
 	
 	public static boolean isEhcXml(URL url){
 		if (url.getPath().endsWith(".xml")) {
-			try {
-				InputStream stream = url.openStream();
-				BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+			try (InputStream stream = url.openStream();
+					BufferedReader br = new BufferedReader(new InputStreamReader(stream));) {
 				String line = null;
 				for (int i = 0; i < 100; i++) {
 					line = br.readLine();
@@ -199,8 +198,6 @@ public class EhcDocument extends PersistentObject {
 						break;
 					}
 				}
-				br.close();
-				stream.close();
 			} catch (IOException e) {
 				// just fall through to returning false
 			}
@@ -246,18 +243,14 @@ public class EhcDocument extends PersistentObject {
 		File xdmFile = new File(fileUrl.getPath());
 		EhcDocument ret = new EhcDocument(xdmFile.getName() + " [" + EhcDocType.XDM + "]", fileUrl,
 			new TimeTool());
-		List<org.ehealth_connector.common.Patient> patients =
-			ServiceComponent.getEhcService().getXdmPatients(xdmFile);
-		for (org.ehealth_connector.common.Patient patient : patients) {
-			List<ClinicalDocument> documents =
-				ServiceComponent.getEhcService().getXdmDocuments(xdmFile, patient);
-			for (ClinicalDocument clinicalDocument : documents) {
-				File documentFile = getXdmDocumentFile(clinicalDocument, xdmFile);
-				try (FileOutputStream outputStream = new FileOutputStream(documentFile)) {
-					CDAUtil.save(clinicalDocument, outputStream);
-				} catch (Exception e) {
-					logger.error("Could not create EhcDocument from xdm.", e);
-				}
+		List<ClinicalDocument> documents =
+			ServiceComponent.getEhcService().getXdmDocuments(xdmFile);
+		for (ClinicalDocument clinicalDocument : documents) {
+			File documentFile = getXdmDocumentFile(clinicalDocument, xdmFile);
+			try (FileOutputStream outputStream = new FileOutputStream(documentFile)) {
+				CDAUtil.save(clinicalDocument, outputStream);
+			} catch (Exception e) {
+				logger.error("Could not create EhcDocument from xdm.", e);
 			}
 		}
 		return ret;

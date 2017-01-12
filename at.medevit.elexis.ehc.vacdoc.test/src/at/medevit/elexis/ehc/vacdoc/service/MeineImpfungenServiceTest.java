@@ -10,7 +10,11 @@ import java.util.List;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
+import at.medevit.elexis.ehc.vacdoc.service.internal.MeineImpfungenServiceImpl;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Patient;
@@ -78,25 +82,34 @@ public class MeineImpfungenServiceTest {
 	
 	@Test
 	public void isValid(){
-		MeineImpfungenService service = new MeineImpfungenService();
+		MeineImpfungenService service = new MeineImpfungenServiceImpl();
 		assertTrue(service.isVaild());
 	}
 	
 	@Test
 	public void getPatients(){
-		MeineImpfungenService service = new MeineImpfungenService();
+		MeineImpfungenService service = new MeineImpfungenServiceImpl();
 		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
 		assertNotNull(patients);
 	}
 	
 	@Test
 	public void getDocuments() throws Exception{
-		MeineImpfungenService service = new MeineImpfungenService();
+		MeineImpfungenService service = getMeineImpfungenService();
 		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
 		List<CdaChVacd> documents = service.getDocuments(patients.get(0));
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());
 		assertNotNull(documents.get(0).getPatient());
 		assertNotNull(documents.get(0).getImmunizations());
+	}
+	
+	private MeineImpfungenService getMeineImpfungenService(){
+		// Register directly with the service
+		BundleContext context =
+			FrameworkUtil.getBundle(MeineImpfungenServiceTest.class).getBundleContext();
+		ServiceReference<?> reference =
+			context.getServiceReference(MeineImpfungenService.class.getName());
+		return (MeineImpfungenService) context.getService(reference);
 	}
 }

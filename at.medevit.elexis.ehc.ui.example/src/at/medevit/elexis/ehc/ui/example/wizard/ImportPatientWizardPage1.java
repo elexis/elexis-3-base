@@ -114,7 +114,7 @@ public class ImportPatientWizardPage1 extends WizardPage {
 					return true;
 				}
 			}
-			ServiceComponent.getService().importPatient(selectedPatient);
+			ServiceComponent.getService().getOrCreatePatient(selectedPatient);
 		}
 		
 		return true;

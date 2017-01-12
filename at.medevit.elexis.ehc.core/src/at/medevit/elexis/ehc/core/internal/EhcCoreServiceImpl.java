@@ -20,8 +20,6 @@ import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.ehealth_connector.cda.ch.AbstractCdaCh;
-import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
-import org.ehealth_connector.common.enums.LanguageCode;
 import org.ehealth_connector.communication.ConvenienceCommunication;
 import org.ehealth_connector.communication.DocumentMetadata;
 import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;
@@ -33,6 +31,7 @@ import org.openhealthtools.mdht.uml.cda.RecordTarget;
 import org.openhealthtools.mdht.uml.cda.ch.CDACH;
 import org.openhealthtools.mdht.uml.cda.ch.CHFactory;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +41,7 @@ import at.medevit.elexis.ehc.core.internal.document.CdaChImpl;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
+@Component
 public class EhcCoreServiceImpl implements EhcCoreService {
 	
 	private static Logger logger = LoggerFactory.getLogger(EhcCoreServiceImpl.class);
@@ -52,7 +52,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public AbstractCdaCh<?> getCdaChDocument(Patient patient, Mandant mandant){
+	public AbstractCdaCh<?> createCdaChDocument(Patient patient, Mandant mandant){
 		CdaChImpl ret = new CdaChImpl(CHFactory.eINSTANCE.createCDACH().init());
 		
 		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
@@ -61,7 +61,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public ClinicalDocument getDocument(InputStream document){
+	public ClinicalDocument loadDocument(InputStream document){
 		try {
 			return CDAUtil.load(document);
 		} catch (Exception e) {
@@ -71,7 +71,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public AbstractCdaCh<?> getCdaChDocument(ClinicalDocument clinicalDocument){
+	public AbstractCdaCh<?> getAsCdaChDocument(ClinicalDocument clinicalDocument){
 		if (clinicalDocument instanceof CDACH) {
 			return new CdaChImpl((CDACH) clinicalDocument);
 		}
@@ -80,22 +80,11 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public void importPatient(org.ehealth_connector.common.Patient ehcPatient){
+	public Patient getOrCreatePatient(org.ehealth_connector.common.Patient ehcPatient){
 		Patient patient = EhcCoreMapper.getElexisPatient(ehcPatient);
 		EhcCoreMapper.importEhcAddress(patient, ehcPatient.getAddress());
 		EhcCoreMapper.importEhcPhone(patient, ehcPatient.getTelecoms());
-	}
-	
-	@Override
-	public CdaChVacd getVaccinationsDocument(Patient elexisPatient, Mandant elexisMandant){
-		// Create eVACDOC (Header)
-		CdaChVacd doc = new CdaChVacd(LanguageCode.GERMAN, null, null);
-		doc.setPatient(EhcCoreMapper.getEhcPatient(elexisPatient));
-		doc.setCustodian(EhcCoreMapper.getEhcOrganization(elexisMandant));
-		doc.addAuthor(EhcCoreMapper.getEhcAuthor(elexisMandant));
-		doc.setLegalAuthenticator(EhcCoreMapper.getEhcAuthor(elexisMandant));
-		
-		return doc;
+		return patient;
 	}
 	
 	@Override
@@ -127,8 +116,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public List<ClinicalDocument> getXdmDocuments(File file,
-		org.ehealth_connector.common.Patient patient){
+	public List<ClinicalDocument> getXdmDocuments(File file){
 		List<ClinicalDocument> ret = null;
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
 		XdmContents contents = conCom.getXdmContents(file.getAbsolutePath());
@@ -168,10 +156,5 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 			}
 		}
 		return ret;
-	}
-	
-	@Override
-	public Patient getElexisPatient(org.ehealth_connector.common.Patient ehcPatient){
-		return EhcCoreMapper.getElexisPatient(ehcPatient);
 	}
 }

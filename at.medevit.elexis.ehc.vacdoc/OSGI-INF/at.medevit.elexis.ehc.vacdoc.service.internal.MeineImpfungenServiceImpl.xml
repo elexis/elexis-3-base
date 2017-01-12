@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.ehc.vacdoc.service.internal.MeineImpfungenServiceImpl">
+   <service>
+      <provide interface="at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService"/>
+   </service>
+   <reference bind="setVacdocService" cardinality="1..1" interface="at.medevit.elexis.ehc.vacdoc.service.VacdocService" name="VacdocService" policy="static" unbind="unsetVacdocService"/>
+   <implementation class="at.medevit.elexis.ehc.vacdoc.service.internal.MeineImpfungenServiceImpl"/>
+</scr:component>

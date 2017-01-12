@@ -41,6 +41,13 @@ import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.Xid;
 import ch.rgw.tools.TimeTool;
 
+/**
+ * Utility class for mapping objects between the Elexis domain and the ehealthconnector domain.
+ * 
+ * @see <a href="https://sourceforge.net/projects/ehealthconnector/">ehealthconnector</a>
+ * @author thomas
+ *
+ */
 public class EhcCoreMapper {
 	
 	private static TimeTool timeTool = new TimeTool();

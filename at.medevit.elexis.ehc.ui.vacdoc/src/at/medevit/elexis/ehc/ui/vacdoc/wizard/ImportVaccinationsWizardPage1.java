@@ -22,7 +22,7 @@ import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.cda.ch.vacd.Immunization;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
-import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
+import at.medevit.elexis.ehc.ui.vacdoc.wizard.service.VacdocServiceComponent;
 import ch.elexis.data.Patient;
 
 public class ImportVaccinationsWizardPage1 extends WizardPage {
@@ -112,9 +112,9 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 	public boolean finish(){
 		try {
 			Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcDocument.getPatient());
-			VacdocService service = ExportVaccinationsWizard.getVacdocService();
 
-			service.importImmunizations(elexisPatient, getSelectedImmunizations());
+			VacdocServiceComponent.getService().importImmunizations(elexisPatient,
+				getSelectedImmunizations());
 		} catch (Exception e) {
 			ImportVaccinationsWizard.logger.error("Import failed.", e);
 			MessageDialog.openError(getShell(), "Error",

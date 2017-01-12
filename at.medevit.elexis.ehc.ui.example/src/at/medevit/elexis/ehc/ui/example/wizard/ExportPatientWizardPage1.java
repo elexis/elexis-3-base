@@ -97,7 +97,7 @@ public class ExportPatientWizardPage1 extends WizardPage {
 		if (!contentSelection.isEmpty()) {
 			Patient selectedPatient = (Patient) contentSelection.getFirstElement();
 			AbstractCdaCh<?> document =
-				ServiceComponent.getService().getCdaChDocument(selectedPatient,
+				ServiceComponent.getService().createCdaChDocument(selectedPatient,
 					(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 			try {
 				String outputDir =

@@ -82,25 +82,12 @@ public class MeineImpfungenServiceTest {
 		assertTrue(service.isVaild());
 	}
 	
-	//	@Test
-	//	public void test(){
-	//		MeineImpfungen meineImpfungen = new MeineImpfungen();
-	//		
-	//		meineImpfungen.initCertificatesForSecurityDomain(
-	//			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PATH),
-	//			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PASS),
-	//			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH),
-	//			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS));
-	//		
-	//		System.out.println(meineImpfungen.getCdaChVacdAsString("1458654649716000"));
-	//	}
-	
-	//		@Test
-	//		public void getPatients(){
-	//			MeineImpfungenService service = new MeineImpfungenService();
-	//			List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
-	//			assertNotNull(patients);
-	//		}
+	@Test
+	public void getPatients(){
+		MeineImpfungenService service = new MeineImpfungenService();
+		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
+		assertNotNull(patients);
+	}
 	
 	@Test
 	public void getDocuments() throws Exception{
@@ -109,15 +96,7 @@ public class MeineImpfungenServiceTest {
 		List<CdaChVacd> documents = service.getDocuments(patients.get(0));
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());
-		
-		//		BufferedInputStream input =
-		//			new BufferedInputStream(getClass().getResourceAsStream("/rsc/test.xml"));
-		//		assertNotNull(input);
-		//		VacdocService vacdocService = new VacdocService();
-		//		CdaChVacd document = vacdocService.getVacdocDocument(input);
-		//		assertNotNull(document);
-		//		List<Immunization> immunizations = document.getImmunizations();
-		//		assertNotNull(immunizations);
-		//		assertEquals(3, immunizations.size());
+		assertNotNull(documents.get(0).getPatient());
+		assertNotNull(documents.get(0).getImmunizations());
 	}
 }

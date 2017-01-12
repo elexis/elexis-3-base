@@ -152,7 +152,6 @@ public class VacdocService {
 			return Optional.of(loader.loadFromStream(document, CdaChVacd.class, VACD.class));
 		} catch (Exception e) {
 			logger.error("problem loading xml document", e);
-			e.printStackTrace(System.err);
 		}
 		return Optional.empty();
 	}

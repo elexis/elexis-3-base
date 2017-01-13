@@ -12,6 +12,10 @@ package at.medevit.elexis.impfplan.ui;
 
 import java.util.List;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -19,7 +23,7 @@ import at.medevit.elexis.impfplan.model.po.Vaccination;
 import ch.elexis.core.ui.UiDesk;
 import ch.rgw.tools.TimeTool;
 
-public class VaccinationComposite extends Composite {
+public class VaccinationComposite extends Composite implements ISelectionProvider {
 	
 	private VaccinationCompositePaintListener vcpl;
 	private VaccinationCompositeMouseMoveListener vcmml;
@@ -53,7 +57,35 @@ public class VaccinationComposite extends Composite {
 		return vcpl;
 	}
 	
-	public Vaccination getSelection(){
-		return vcpl.getSelectedVaccination();
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener){
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public ISelection getSelection(){
+		Vaccination selected = vcpl.getSelectedVaccination();
+		if(selected != null) {
+			return new StructuredSelection(selected);
+		}
+		return new StructuredSelection();
+	}
+	
+	@Override
+	public void removeSelectionChangedListener(ISelectionChangedListener listener){
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void setSelection(ISelection selection){
+		if(selection instanceof StructuredSelection && !selection.isEmpty()) {
+			Object select = ((StructuredSelection)selection).getFirstElement();
+			if (select instanceof Vaccination) {
+				vcpl.setSelection((Vaccination) select, null);
+				redraw();
+			}
+		}
 	}
 }

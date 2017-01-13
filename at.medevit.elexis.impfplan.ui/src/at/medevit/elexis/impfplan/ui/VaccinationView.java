@@ -17,16 +17,15 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -108,33 +107,48 @@ public class VaccinationView extends ViewPart {
 			}
 		});
 		
-		Menu menu = new Menu(vaccinationComposite);
-		// add delete entry menu
-		MenuItem mDeleteEntry = new MenuItem(menu, SWT.PUSH);
-		mDeleteEntry.setText("Eintrag löschen");
-		mDeleteEntry.setImage(Images.IMG_DELETE.getImage());
-		mDeleteEntry.addSelectionListener(new SelectionAdapter() {
+		MenuManager menuManager = new MenuManager();
+		menuManager.add(new Action() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public String getText(){
+				return "Eintrag löschen";
+			}
+			
+			@Override
+			public ImageDescriptor getImageDescriptor(){
+				return Images.IMG_DELETE.getImageDescriptor();
+			}
+			
+			@Override
+			public void run(){
 				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
 				if (selVaccination != null) {
 					selVaccination.delete();
 				}
 			}
 		});
-		// add edit menu entry
-		MenuItem mEditEntry = new MenuItem(menu, SWT.PUSH);
-		mEditEntry.setText("Impfung editieren");
-		mEditEntry.setImage(Images.IMG_EDIT.getImage());
-		mEditEntry.addSelectionListener(new SelectionAdapter() {
+		menuManager.add(new Action() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public String getText(){
+				return "Impfung editieren";
+			}
+			
+			@Override
+			public ImageDescriptor getImageDescriptor(){
+				return Images.IMG_EDIT.getImageDescriptor();
+			}
+			
+			@Override
+			public void run(){
 				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
 				editVaccination(selVaccination);
 			}
 		});
 		
-		vaccinationComposite.setMenu(menu);
+		vaccinationComposite.setMenu(menuManager.createContextMenu(vaccinationComposite));
+		getSite().registerContextMenu(PART_ID + ".contextMenu", menuManager,
+			vaccinationComposite);
+		getSite().setSelectionProvider(vaccinationComposite);
 		if (ElexisEventDispatcher.getSelectedPatient() != null) {
 			setPatient(ElexisEventDispatcher.getSelectedPatient());
 		}

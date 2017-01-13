@@ -515,7 +515,9 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	
 	public void setSelection(Vaccination vaccination, Control control){
 		selectedVacc = vaccination;
-		control.redraw();
+		if (control != null) {
+			control.redraw();
+		}
 	}
 	
 	/**

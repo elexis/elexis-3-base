@@ -22,7 +22,7 @@ import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.cda.ch.vacd.Immunization;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
-import at.medevit.elexis.ehc.ui.vacdoc.wizard.service.VacdocServiceComponent;
+import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 import ch.elexis.data.Patient;
 
 public class ImportVaccinationsWizardPage1 extends WizardPage {

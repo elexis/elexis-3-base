@@ -27,5 +27,50 @@
             name="Impfungen">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:at.medevit.elexis.impfplan.ui.ImpfplanViewPart">
+         <command
+               commandId="at.medevit.elexis.ehc.ui.vacdoc.OpenMeineImpfungen"
+               icon="rsc/meineimpfungenlogo_16x16.png"
+               label="patient in meineimpfungen öffnen"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:at.medevit.elexis.impfplan.ui.ImpfplanViewPart.contextMenu">
+         <command
+               commandId="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen"
+               icon="rsc/meineimpfungenlogo_16x16.png"
+               label="export nach meineimpfungen"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.ehc.ui.vacdoc.handler.OpenMeineImpfungenHandler"
+            id="at.medevit.elexis.ehc.ui.vacdoc.OpenMeineImpfungen"
+            name="meineimpfungen open patient">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.ehc.ui.vacdoc.handler.UploadMeineImpfungenHandler"
+            id="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen"
+            name="meineimpfungen upload">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="at.medevit.elexis.ehc.ui.preference"
+            class="at.medevit.elexis.ehc.ui.vacdoc.preferences.MeineImpfungenPreferences"
+            id="at.medevit.elexis.ehc.ui.vacdoc.preferences.meineimpfungen"
+            name="meineimpfungen">
+      </page>
+   </extension>
 
 </plugin>

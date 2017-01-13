@@ -3,6 +3,8 @@ package at.medevit.elexis.ehc.vacdoc.service.internal;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,14 +28,28 @@ import org.ehealth_connector.communication.DocumentRequest;
 import org.ehealth_connector.communication.MasterPatientIndexQuery;
 import org.ehealth_connector.communication.MasterPatientIndexQueryResponse;
 import org.ehealth_connector.communication.ch.ConvenienceCommunicationCh;
+import org.ehealth_connector.communication.ch.DocumentMetadataCh;
 import org.ehealth_connector.communication.ch.enums.AvailabilityStatus;
+import org.ehealth_connector.communication.ch.enums.ClassCode;
+import org.ehealth_connector.communication.ch.enums.ConfidentialityCode;
+import org.ehealth_connector.communication.ch.enums.FormatCode;
+import org.ehealth_connector.communication.ch.enums.HealthcareFacilityTypeCode;
+import org.ehealth_connector.communication.ch.enums.LanguageCode;
+import org.ehealth_connector.communication.ch.enums.MimeType;
+import org.ehealth_connector.communication.ch.enums.PracticeSettingCode;
+import org.ehealth_connector.communication.ch.enums.TypeCode;
 import org.ehealth_connector.communication.ch.xd.storedquery.FindDocumentsQuery;
 import org.openhealthtools.ihe.atna.nodeauth.SecurityDomainException;
+import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
 import org.openhealthtools.ihe.xds.metadata.AvailabilityStatusType;
 import org.openhealthtools.ihe.xds.metadata.DocumentEntryType;
 import org.openhealthtools.ihe.xds.response.DocumentEntryResponseType;
 import org.openhealthtools.ihe.xds.response.XDSQueryResponseType;
+import org.openhealthtools.ihe.xds.response.XDSResponseType;
 import org.openhealthtools.ihe.xds.response.XDSRetrieveResponseType;
+import org.openhealthtools.ihe.xds.response.XDSStatusType;
+import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -52,14 +68,13 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private static final String PDQ_REQUEST_URL =
 		"https://pilot.suisse-open-exchange.healthcare/openempi-admin/services/PDQSupplier_Port_Soap12";
-	private static final String PDQ_REQUEST_PATID_OID = "2.16.756.5.30.1.147.1.1";
 	
+
 	private static final String XDS_REGISTRY_URL =
 		"https://pilot.suisse-open-exchange.healthcare/openxds/services/DocumentRegistry";
 	
 	private static final String XDS_REPOSITORY_URL =
 		"https://pilot.meineimpfungen.ch/ihe/xds/DocumentRepository";
-	private static final String XDS_REPOSITORY_OID = "2.16.756.5.30.1.147.2.3.2";
 	
 	private static final String ATNA_URL = "tls://pilot.suisse-open-exchange.healthcare:5544";
 	
@@ -78,7 +93,52 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		this.vacdocService = null;
 	}
 	
-	public MeineImpfungenServiceImpl(){
+	@Activate
+	public void activate(){
+		udpateConfiguration();
+	}
+	
+	private void updateAffinityDomain(String truststorePath, String truststorePass,
+		String keystorePath, String keystorePass)
+		throws URISyntaxException, SecurityDomainException{
+		// set secure destinations
+		Destination pdqDestination = new Destination(ORGANIZATIONAL_ID, new URI(PDQ_REQUEST_URL),
+			keystorePath, keystorePass);
+		pdqDestination.setSenderApplicationOid(ORGANIZATIONAL_ID);
+		pdqDestination.setReceiverApplicationOid(PDQ_REQUEST_PATID_OID);
+		pdqDestination.setReceiverFacilityOid(PDQ_REQUEST_PATID_OID);
+		
+		Destination xdsRegistryDestination = new Destination(ORGANIZATIONAL_ID,
+			new URI(XDS_REGISTRY_URL), keystorePath, keystorePass);
+		Destination xdsRepositoryDestination = new Destination(ORGANIZATIONAL_ID,
+			new URI(XDS_REPOSITORY_URL), keystorePath, keystorePass);
+		xdsRegistryDestination.setReceiverApplicationOid(XDS_REPOSITORY_OID);
+		xdsRegistryDestination.setReceiverFacilityOid(XDS_REPOSITORY_OID);
+		
+		affinityDomain = new AffinityDomain();
+		affinityDomain.setPdqDestination(pdqDestination);
+		affinityDomain.setRegistryDestination(xdsRegistryDestination);
+		affinityDomain.addRepository(xdsRepositoryDestination);
+		affinityDomain.setPixDestination(pdqDestination);
+		
+		final AtnaSecurityConfiguration atnaSecConfig = new AtnaSecurityConfiguration();
+		atnaSecConfig.setKeyStoreFile(new File(keystorePath));
+		atnaSecConfig.setKeyStorePassword(keystorePass);
+		atnaSecConfig.setKeyStoreType("PKCS12");
+		atnaSecConfig.setTrustStoreFile(new File(truststorePath));
+		atnaSecConfig.setTrustStorePassword(truststorePass);
+		atnaSecConfig.setTrustStoreType("JKS");
+		atnaSecConfig.setUri(new URI(ATNA_URL));
+		
+		SecurityDomainManager.generateSecurityDomain("suisse-open-exchange.healthcare",
+			atnaSecConfig);
+		SecurityDomainManager.addUriToSecurityDomain("suisse-open-exchange.healthcare",
+			atnaSecConfig.getUri());
+	}
+	
+	@Override
+	public boolean udpateConfiguration(){
+		affinityDomain = null;
 		// read the configuration
 		String truststorePath = CoreHub.mandantCfg.get(CONFIG_TRUSTSTORE_PATH, null);
 		String truststorePass = CoreHub.mandantCfg.get(CONFIG_TRUSTSTORE_PASS, null);
@@ -89,47 +149,13 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		if (truststorePass != null && truststorePath != null && keystorePass != null
 			&& keystorePath != null) {
 			try {
-				// set secure destinations
-				Destination pdqDestination = new Destination(ORGANIZATIONAL_ID,
-					new URI(PDQ_REQUEST_URL), keystorePath, keystorePass);
-				pdqDestination.setSenderApplicationOid(ORGANIZATIONAL_ID);
-				pdqDestination.setReceiverApplicationOid(PDQ_REQUEST_PATID_OID);
-				pdqDestination.setReceiverFacilityOid(PDQ_REQUEST_PATID_OID);
-				
-				Destination xdsRegistryDestination = new Destination(ORGANIZATIONAL_ID,
-					new URI(XDS_REGISTRY_URL), keystorePath, keystorePass);
-				Destination xdsRepositoryDestination = new Destination(ORGANIZATIONAL_ID,
-					new URI(XDS_REPOSITORY_URL), keystorePath, keystorePass);
-				xdsRegistryDestination.setReceiverApplicationOid(XDS_REPOSITORY_OID);
-				xdsRegistryDestination.setReceiverFacilityOid(XDS_REPOSITORY_OID);
-				
-				affinityDomain = new AffinityDomain();
-				affinityDomain.setPdqDestination(pdqDestination);
-				affinityDomain.setRegistryDestination(xdsRegistryDestination);
-				affinityDomain.addRepository(xdsRepositoryDestination);
-				affinityDomain.setPixDestination(pdqDestination);
-				
-				final AtnaSecurityConfiguration atnaSecConfig = new AtnaSecurityConfiguration();
-				atnaSecConfig.setKeyStoreFile(new File(keystorePath));
-				atnaSecConfig.setKeyStorePassword(keystorePass);
-				atnaSecConfig.setKeyStoreType("PKCS12");
-				atnaSecConfig.setTrustStoreFile(new File(truststorePath));
-				atnaSecConfig.setTrustStorePassword(truststorePass);
-				atnaSecConfig.setTrustStoreType("JKS");
-				atnaSecConfig.setUri(new URI(ATNA_URL));
-				
-				try {
-					SecurityDomainManager.generateSecurityDomain("suisse-open-exchange.healthcare",
-						atnaSecConfig);
-					SecurityDomainManager.addUriToSecurityDomain("suisse-open-exchange.healthcare",
-						atnaSecConfig.getUri());
-				} catch (SecurityDomainException | URISyntaxException e) {
-					throw new IllegalStateException(e);
-				}
-			} catch (URISyntaxException e) {
-				logger.error("Could not create affinity domain.", e);
+				updateAffinityDomain(truststorePath, truststorePass, keystorePath, keystorePass);
+			} catch (SecurityDomainException | URISyntaxException e) {
+				logger.error("Could not update affinity domain.", e);
+				return false;
 			}
 		}
+		return true;
 	}
 	
 	@Override
@@ -249,14 +275,6 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		return ret.getPatients();
 	}
 	
-	public void setPatient(Patient elexisPatient){
-		throw new UnsupportedOperationException();
-		//		org.ehealth_connector.common.Patient ehcPatient =
-		//			EhcCoreMapper.getEhcPatient(elexisPatient);
-		//		ConvenienceMasterPatientIndexV3.addPatientDemographics(ehcPatient, ORGANIZATIONAL_ID,
-		//			affinityDomain);
-	}
-	
 	private Identificator getPatientId(Patient elexisPatient){
 		// patient AHV
 		String socialSecurityNumber = elexisPatient.getXid(DOMAIN_AHV);
@@ -272,5 +290,76 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public String getBaseUrl(){
+		return "https://pilot.meineimpfungen.ch/";
+	}
+	
+	@Override
+	public boolean uploadDocument(CdaChVacd document){
+		XDSResponseType response = null;
+		try {
+			ConvenienceCommunicationCh convComm =
+				new ConvenienceCommunicationCh(affinityDomain);
+			DocumentMetadataCh metaData = convComm.addChDocument(DocumentDescriptor.CDA_R2,
+				getDocumentAsInputStream(document));
+			
+			setMetadataCdaCh(metaData, document);
+			response = convComm.submit();
+		} catch (final Exception e) {
+			logger.error("Error uploading document", e);
+			return false;
+		}
+		if (response.getStatus() != null) {
+			return XDSStatusType.SUCCESS == response.getStatus().getValue();
+		}
+		return false;
+	}
+	
+	private boolean setMetadataCdaCh(DocumentMetadataCh metaData, CdaChVacd document){
+		
+		metaData.addAuthor(document.getAuthor());
+		
+		metaData.setMimeType(MimeType.XML_TEXT);
+		Optional<Identificator> patId = getMeineImpfungenPatientId(document.getPatient());
+		if (patId.isPresent()) {
+			metaData.setDestinationPatientId(patId.get());
+			metaData.setSourcePatientId(patId.get());
+		} else {
+			return false;
+		}
+		
+		metaData.setCodedLanguage(LanguageCode.DEUTSCH);
+		
+		metaData.setTypeCode(TypeCode.ELEKTRONISCHER_IMPFAUSWEIS);
+		metaData.setFormatCode(FormatCode.EIMPFDOSSIER);
+		metaData.setClassCode(ClassCode.ALERTS);
+		
+		metaData.setHealthcareFacilityTypeCode(
+			HealthcareFacilityTypeCode.AMBULANTE_EINRICHTUNG_INKL_AMBULATORIUM);
+		metaData.setPracticeSettingCode(PracticeSettingCode.ALLERGOLOGIE);
+		metaData.addConfidentialityCode(ConfidentialityCode.ADMINISTRATIVE_DATEN);
+		return true;
+	}
+	
+	private Optional<Identificator> getMeineImpfungenPatientId(
+		org.ehealth_connector.common.Patient patient){
+		List<Identificator> ids = patient.getIds();
+		if (ids != null && !ids.isEmpty()) {
+			for (Identificator identificator : ids) {
+				if (MeineImpfungenService.PDQ_REQUEST_PATID_OID.equals(identificator.getRoot())) {
+					return Optional.of(identificator);
+				}
+			}
+		}
+		return Optional.empty();
+	}
+	
+	private InputStream getDocumentAsInputStream(CdaChVacd document) throws Exception{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		CDAUtil.save(document.getMdht(), out);
+		return new ByteArrayInputStream(out.toByteArray());
 	}
 }

@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
-import at.medevit.elexis.ehc.ui.vacdoc.wizard.service.VacdocServiceComponent;
+import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import ch.elexis.core.data.activator.CoreHub;

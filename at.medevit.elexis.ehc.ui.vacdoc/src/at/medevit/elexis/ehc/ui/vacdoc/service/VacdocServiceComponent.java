@@ -1,4 +1,4 @@
-package at.medevit.elexis.ehc.ui.vacdoc.wizard.service;
+package at.medevit.elexis.ehc.ui.vacdoc.service;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

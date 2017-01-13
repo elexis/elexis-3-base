@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.extension.IImportWizard;
-import at.medevit.elexis.ehc.ui.vacdoc.wizard.service.VacdocServiceComponent;
+import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 
 public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 	public static Logger logger = LoggerFactory.getLogger(ImportVaccinationsWizard.class);

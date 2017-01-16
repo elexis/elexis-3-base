@@ -46,7 +46,7 @@ public class MeineImpfungenPreferences extends FieldEditorPreferencePage
 	public boolean performOk(){
 		boolean ret = super.performOk();
 		if (ret) {
-			boolean configOk = MeineImpfungenServiceComponent.getService().udpateConfiguration();
+			boolean configOk = MeineImpfungenServiceComponent.getService().updateConfiguration();
 			if (!configOk) {
 				MessageDialog.openError(getShell(), "meineimpfungen",
 					"Es ist ein Fehler aufgetreten, bitte überprüfen Sie die Konfiguration.");

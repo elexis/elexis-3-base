@@ -5,15 +5,17 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
@@ -22,6 +24,7 @@ import org.ehealth_connector.common.Name;
 import org.ehealth_connector.common.enums.CodeSystems;
 import org.ehealth_connector.common.utils.DateUtil;
 import org.ehealth_connector.communication.AffinityDomain;
+import org.ehealth_connector.communication.AtnaConfig;
 import org.ehealth_connector.communication.ConvenienceMasterPatientIndexV3;
 import org.ehealth_connector.communication.Destination;
 import org.ehealth_connector.communication.DocumentRequest;
@@ -39,7 +42,13 @@ import org.ehealth_connector.communication.ch.enums.MimeType;
 import org.ehealth_connector.communication.ch.enums.PracticeSettingCode;
 import org.ehealth_connector.communication.ch.enums.TypeCode;
 import org.ehealth_connector.communication.ch.xd.storedquery.FindDocumentsQuery;
+import org.openhealthtools.ihe.atna.auditor.XDSSourceAuditor;
+import org.openhealthtools.ihe.atna.auditor.context.AuditorModuleConfig;
+import org.openhealthtools.ihe.atna.auditor.context.AuditorModuleContext;
+import org.openhealthtools.ihe.atna.nodeauth.NoSecurityDomainException;
+import org.openhealthtools.ihe.atna.nodeauth.SecurityDomain;
 import org.openhealthtools.ihe.atna.nodeauth.SecurityDomainException;
+import org.openhealthtools.ihe.atna.nodeauth.context.NodeAuthModuleContext;
 import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
 import org.openhealthtools.ihe.xds.metadata.AvailabilityStatusType;
 import org.openhealthtools.ihe.xds.metadata.DocumentEntryType;
@@ -51,6 +60,7 @@ import org.openhealthtools.ihe.xds.response.XDSStatusType;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +68,11 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
 @Component
@@ -84,6 +99,8 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private VacdocService vacdocService;
 	
+	private ElexisEventListener mandantListener;
+	
 	@Reference
 	public void setVacdocService(VacdocService vacdocService){
 		this.vacdocService = vacdocService;
@@ -95,12 +112,45 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	@Activate
 	public void activate(){
-		udpateConfiguration();
+		updateConfiguration();
+		if (mandantListener == null) {
+			mandantListener = new MandantChangedListener();
+			ElexisEventDispatcher.getInstance().addListeners(mandantListener);
+		}
+	}
+	
+	@Deactivate
+	public void deactivate(){
+		if (mandantListener != null) {
+			ElexisEventDispatcher.getInstance().removeListeners(mandantListener);
+			mandantListener = null;
+		}
 	}
 	
 	private void updateAffinityDomain(String truststorePath, String truststorePass,
 		String keystorePath, String keystorePass)
 		throws URISyntaxException, SecurityDomainException{
+		// OHT configuration is leaking to system configuration, so prepare to reset
+		Map<String, String> sysProperties = getSystemSSLProperties();
+		
+		initCertificatesForSecurityDomain(keystorePath, keystorePass, truststorePath,
+			truststorePass);
+		affinityDomain = getMeineImpfungenAffinityDomain(truststorePath, truststorePass,
+			keystorePath, keystorePass);
+		AuditorModuleContext ctx = AuditorModuleContext.getContext();
+		AuditorModuleConfig auditorConfig = ctx.getAuditor(XDSSourceAuditor.class).getConfig();
+		try {
+			auditorConfig
+				.setAuditRepositoryUri(affinityDomain.getAtnaConfig().getAuditRepositoryUri());
+		} catch (Exception e) {
+			logger.error("Audit configuration problem", e);
+		}
+		
+		restoreSystemSSLProperties(sysProperties);
+	}
+	
+	private AffinityDomain getMeineImpfungenAffinityDomain(String truststorePath,
+		String truststorePass, String keystorePath, String keystorePass) throws URISyntaxException{
 		// set secure destinations
 		Destination pdqDestination = new Destination(ORGANIZATIONAL_ID, new URI(PDQ_REQUEST_URL),
 			keystorePath, keystorePass);
@@ -115,29 +165,90 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		xdsRegistryDestination.setReceiverApplicationOid(XDS_REPOSITORY_OID);
 		xdsRegistryDestination.setReceiverFacilityOid(XDS_REPOSITORY_OID);
 		
-		affinityDomain = new AffinityDomain();
-		affinityDomain.setPdqDestination(pdqDestination);
-		affinityDomain.setRegistryDestination(xdsRegistryDestination);
-		affinityDomain.addRepository(xdsRepositoryDestination);
-		affinityDomain.setPixDestination(pdqDestination);
+		AffinityDomain ret = new AffinityDomain();
+		ret.setPdqDestination(pdqDestination);
+		ret.setRegistryDestination(xdsRegistryDestination);
+		ret.addRepository(xdsRepositoryDestination);
+		ret.setPixDestination(pdqDestination);
 		
-		final AtnaSecurityConfiguration atnaSecConfig = new AtnaSecurityConfiguration();
-		atnaSecConfig.setKeyStoreFile(new File(keystorePath));
-		atnaSecConfig.setKeyStorePassword(keystorePass);
-		atnaSecConfig.setKeyStoreType("PKCS12");
-		atnaSecConfig.setTrustStoreFile(new File(truststorePath));
-		atnaSecConfig.setTrustStorePassword(truststorePass);
-		atnaSecConfig.setTrustStoreType("JKS");
-		atnaSecConfig.setUri(new URI(ATNA_URL));
+		AtnaConfig atnaConfig = new AtnaConfig();
+		atnaConfig.setAuditRepositoryUri(ATNA_URL);
+		atnaConfig.setAuditSourceId("EHC-Elexis");
+		ret.setAtnaConfig(atnaConfig);
+		return ret;
+	}
+	
+	private void initCertificatesForSecurityDomain(final String pathKeyStoreP12,
+		final String keyStorePassword, final String pathTrustStoreJks,
+		final String trustStorePassword){
+		String[] uris = {
+			"https://pilot.meineimpfungen.ch:443",
+			"https://pilot.suisse-open-exchange.healthcare:443",
+			"tls://pilot.suisse-open-exchange.healthcare:5544"
+		};
+		initCertificatesForSecurityDomain(pathKeyStoreP12, keyStorePassword, pathTrustStoreJks,
+			trustStorePassword, "meineimpfungen", uris);
+	}
+	
+	private void initCertificatesForSecurityDomain(final String pathKeyStoreP12,
+		final String keyStorePassword, final String pathTrustStoreJks,
+		final String trustStorePassword, String securityDomainName, String[] uris){
 		
-		SecurityDomainManager.generateSecurityDomain("suisse-open-exchange.healthcare",
-			atnaSecConfig);
-		SecurityDomainManager.addUriToSecurityDomain("suisse-open-exchange.healthcare",
-			atnaSecConfig.getUri());
+		java.util.Properties properties = new java.util.Properties();
+		properties.put("javax.net.ssl.keyStoreType", "PKCS12");
+		properties.put("javax.net.ssl.keyStorePassword", keyStorePassword);
+		properties.put("javax.net.ssl.keyStore", pathKeyStoreP12);
+		properties.put("javax.net.ssl.trustStorePassword", trustStorePassword);
+		properties.put("javax.net.ssl.trustStore", pathTrustStoreJks);
+		
+		try {
+			SecurityDomain securityDomain = new SecurityDomain(securityDomainName, properties);
+			NodeAuthModuleContext.getContext().getSecurityDomainManager()
+				.registerSecurityDomain(securityDomain);
+			for (String uri : uris) {
+				NodeAuthModuleContext.getContext().getSecurityDomainManager()
+					.unregisterURItoSecurityDomain(new java.net.URI(uri));
+			}
+			
+			for (String uri : uris) {
+				NodeAuthModuleContext.getContext().getSecurityDomainManager()
+					.registerURItoSecurityDomain(new java.net.URI(uri), securityDomainName);
+			}
+		} catch (NoSecurityDomainException e) {
+			logger.error("error with security domain", e);
+		} catch (URISyntaxException e) {
+			logger.error("error with security domain", e);
+		} catch (SecurityDomainException e) {
+			logger.error("error with security domain", e);
+		}
+	}
+	
+	private void restoreSystemSSLProperties(Map<String, String> sysProperties){
+		Set<String> keys = sysProperties.keySet();
+		for (String key : keys) {
+			String value = sysProperties.get(key);
+			if (value != null) {
+				System.setProperty(key, value);
+			} else {
+				System.clearProperty(key);
+			}
+		}
+	}
+	
+	private Map<String, String> getSystemSSLProperties(){
+		HashMap<String, String> ret = new HashMap<>();
+		ret.put("javax.net.ssl.keyStoreType", System.getProperty("javax.net.ssl.keyStoreType"));
+		ret.put("javax.net.ssl.keyStorePassword",
+			System.getProperty("javax.net.ssl.keyStorePassword"));
+		ret.put("javax.net.ssl.keyStore", System.getProperty("javax.net.ssl.keyStore"));
+		ret.put("javax.net.ssl.trustStorePassword",
+			System.getProperty("javax.net.ssl.trustStorePassword"));
+		ret.put("javax.net.ssl.trustStore", System.getProperty("javax.net.ssl.trustStore"));
+		return ret;
 	}
 	
 	@Override
-	public boolean udpateConfiguration(){
+	public boolean updateConfiguration(){
 		affinityDomain = null;
 		// read the configuration
 		String truststorePath = CoreHub.mandantCfg.get(CONFIG_TRUSTSTORE_PATH, null);
@@ -361,5 +472,16 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		CDAUtil.save(document.getMdht(), out);
 		return new ByteArrayInputStream(out.toByteArray());
+	}
+	
+	private class MandantChangedListener extends ElexisEventListenerImpl {
+		public MandantChangedListener(){
+			super(Mandant.class, ElexisEvent.EVENT_MANDATOR_CHANGED);
+		}
+		
+		@Override
+		public void run(ElexisEvent ev) {
+			updateConfiguration();
+		}
 	}
 }

@@ -69,5 +69,5 @@ public interface MeineImpfungenService {
 	 * 
 	 * @return if the update was successful
 	 */
-	public boolean udpateConfiguration();
+	public boolean updateConfiguration();
 }

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,7 +34,11 @@ import java.util.Properties;
 
 import javax.xml.transform.Source;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -42,6 +47,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jdom.Document;
@@ -228,11 +234,35 @@ public class XMLExporter implements IRnOutputter {
 				return ret;
 			}
 		}
-		for (Rechnung rn : rnn) {
-			if (doExport(rn, outputDir + File.separator + rn.getNr() + ".xml", type, false) == null) { //$NON-NLS-1$
-				ret.add(Result.SEVERITY.ERROR, 1, Messages.XMLExporter_ErrorInBill + rn.getNr(),
-					rn, true);
-			}
+		ProgressMonitorDialog progress =
+			new ProgressMonitorDialog(Display.getDefault().getActiveShell());
+		try {
+			progress.run(true, true, new IRunnableWithProgress() {
+				
+				@Override
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException{
+					monitor.beginTask(Messages.RechnungsDrucker_PrintingBills, rnn.size());
+					for (Rechnung rn : rnn) {
+						if (doExport(rn, outputDir + File.separator + rn.getNr() + ".xml", type, //$NON-NLS-1$
+							false) == null) {
+							ret.add(Result.SEVERITY.ERROR, 1,
+								Messages.XMLExporter_ErrorInBill + rn.getNr(), rn, true);
+						}
+						monitor.worked(1);
+						if (monitor.isCanceled()) {
+							break;
+						}
+					}
+					monitor.done();
+				}
+			});
+			
+		} catch (InvocationTargetException | InterruptedException e) {
+			LoggerFactory.getLogger(XMLExporter.class).error("Error outputting bills", e);
+			MessageDialog.openError(Display.getDefault().getActiveShell(),
+				Messages.RechnungsDrucker_MessageErrorWhilePrinting,
+				Messages.RechnungsDrucker_MessageErrorWhilePrinting + "[" + e.getMessage() + "]");
 		}
 		return ret;
 	}

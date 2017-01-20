@@ -482,7 +482,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			konsultation =
 				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			if (konsultation != null) {
+			if (konsultation != null && selectedPatient != null) {
 				// diese Konsulation setzen, falls sie zum ausgewaehlten Patienten gehoert
 				fall = konsultation.getFall();
 				patient = fall.getPatient();
@@ -528,9 +528,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					letzteKons = null;
 				}
 				logEvent("displaySelectedPatient letzte Kons setzen"
-					+ selectedPatient.getPersonalia());
+					+ ((selectedPatient == null) ? "null" : selectedPatient.getPersonalia()));
 				updateAllKonsAreas(letzteKons, KonsActions.ACTIVATE_KONS);
-			} else {
+			} else if (selectedPatient != null) {
 				// When no consultation is selected we must create one (maybe a case, too)
 				// This allows one to start working, as soon as possible
 				if (fall == null) {

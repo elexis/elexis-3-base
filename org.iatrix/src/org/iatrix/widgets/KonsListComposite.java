@@ -180,8 +180,8 @@ public class KonsListComposite {
 			log.debug(caller + ": hTitle for " + row.hTitle.getText() + " from "
 					+ msg  + " enabled? " + enabled);
 			row.hTitle.setEnabled(enabled);
-		} else {
-			boolean enabled = row != null && row.hTitle != null;
+		} else if (row != null) {
+			boolean enabled =row.hTitle != null;
 			row.hTitle.setEnabled(enabled);
 			log.debug(caller + ": " + msg + " enabled " + enabled);
 		}

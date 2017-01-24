@@ -15,13 +15,13 @@
 
 package ch.elexis.agenda.ui;
 
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.ui.provider.TerminListSorter;
 import ch.elexis.agenda.ui.provider.TerminListWidgetProvider;
@@ -32,20 +32,80 @@ import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.locks.ILockHandler;
+import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.core.ui.util.viewers.DefaultContentProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.dialogs.TerminDialog;
 
-public class TerminListeView extends ViewPart implements IActivationListener, ElexisEventListener {
+public class TerminListeView extends ViewPart implements IActivationListener {
 	public static final String ID = "ch.elexis.agenda.Terminliste";
 	ScrolledForm form;
 	CommonViewer cv = new CommonViewer();
+	LockRequestingRestrictedAction<Termin> terminAendernAction;
+	
+	private ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
+		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED) {
+		public void runInUi(ElexisEvent ev){
+			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+				updateSelection((Patient) ev.getObject());
+			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+				form.setText(Messages.TerminListView_noPatientSelected);
+			}
+		}
+	};
+	
+	private ElexisEventListener eeli_term =
+		new ElexisUiEventListenerImpl(Termin.class, ElexisEvent.EVENT_UPDATE) {
+			public void runInUi(ElexisEvent ev){
+				if (cv != null) {
+					cv.notify(CommonViewer.Message.update);
+				}
+			};
+		};
 	
 	public TerminListeView(){
-		// TODO Auto-generated constructor stub
+		terminAendernAction = new LockRequestingRestrictedAction<Termin>(
+			ACLContributor.CHANGE_APPOINTMENTS, ch.elexis.agenda.Messages.TagesView_changeTermin) {
+			{
+				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
+				setToolTipText(ch.elexis.agenda.Messages.TagesView_changeThisTermin);
+			}
+			
+			@Override
+			public Termin getTargetedObject(){
+				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			}
+			
+			@Override
+			public void doRun(Termin element){
+				AcquireLockBlockingUi.aquireAndRun(element, new ILockHandler() {
+					
+					@Override
+					public void lockFailed(){
+						// do nothing
+					}
+					
+					@Override
+					public void lockAcquired(){
+						TerminDialog dlg = new TerminDialog(element);
+						dlg.open();
+					}
+				});
+				if (cv != null) {
+					cv.notify(CommonViewer.Message.update);
+				}
+			}
+		};
 	}
 	
 	@Override
@@ -71,6 +131,12 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 		}, new TermineLabelProvider(), new TerminListWidgetProvider());
 		cv.create(vc, body, SWT.NONE, this);
 		cv.getConfigurer().getContentProvider().startListening();
+		cv.addDoubleClickListener(new DoubleClickListener() {
+			@Override
+			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+				terminAendernAction.run();
+			}
+		});
 		
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
@@ -92,28 +158,10 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 	
 	public void visible(boolean mode){
 		if (mode) {
-			// selectionEvent(GlobalEvents.getSelectedPatient());
-			ElexisEventDispatcher.getInstance().addListeners(this);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_term);
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(this);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_term);
 		}
-	}
-	
-	public void catchElexisEvent(final ElexisEvent ev){
-		UiDesk.asyncExec(new Runnable() {
-			public void run(){
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					updateSelection((Patient) ev.getObject());
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					form.setText(Messages.TerminListView_noPatientSelected);
-				}
-			}
-		});
-	}
-	
-	public ElexisEvent getElexisEventFilter(){
-		return new ElexisEvent(null, Patient.class, ElexisEvent.EVENT_SELECTED
-			| ElexisEvent.EVENT_DESELECTED);
 	}
 	
 	private void updateSelection(Patient patient){

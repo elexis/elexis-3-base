@@ -303,7 +303,7 @@ public class ArtikelstammImporter {
 			PRODUCT product = products.get(s);
 			if (product != null) {
 				ArtikelstammItem productItem = new ArtikelstammItem(version, TYPE.X,
-					StringConstants.EMPTY, new BigInteger(product.getPRODNO()), product.getDSCR(),
+					product.getPRODNO(), null, product.getDSCR(),
 					StringConstants.EMPTY);
 				String atc = product.getATC();
 				if (atc != null) {

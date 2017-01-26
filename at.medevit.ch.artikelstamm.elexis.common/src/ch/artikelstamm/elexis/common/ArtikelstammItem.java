@@ -222,16 +222,17 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 */
 	public ArtikelstammItem(int version, TYPE type, String gtin, BigInteger code, String dscr,
 		String addscr){
-		
-		code = (code != null) ? code : BigInteger.ZERO;
-		String pharmaCode = String.format("%07d", code);
-		
+				
 		if (TYPE.X == type) {
-			create(pharmaCode);
+			// Product
+			create(gtin);
 			set(new String[] {
 				FLD_ITEM_TYPE, FLD_DSCR, FLD_CUMMULATED_VERSION, FLD_BLACKBOXED
 			}, type.name(), dscr, Integer.toString(version), StringConstants.ZERO);
 		} else {
+			code = (code != null) ? code : BigInteger.ZERO;
+			String pharmaCode = String.format("%07d", code);
+			
 			create(ArtikelstammHelper.createUUID(version, gtin, code));
 			
 			set(new String[] {

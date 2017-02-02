@@ -2,30 +2,12 @@ package at.medevit.elexis.ehc.docbox.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.xml.utils.DefaultErrorHandler;
 import org.ehealth_connector.cda.ch.AbstractCdaCh;
 import org.ehealth_connector.common.Organization;
 import org.ehealth_connector.common.Telecoms;
@@ -63,10 +45,17 @@ import org.openhealthtools.mdht.uml.hl7.vocab.x_ActClassDocumentEntryAct;
 import org.openhealthtools.mdht.uml.hl7.vocab.x_ActRelationshipEntryRelationship;
 import org.openhealthtools.mdht.uml.hl7.vocab.x_DocumentActMood;
 import org.openhealthtools.mdht.uml.hl7.vocab.x_DocumentSubstanceMood;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
+import at.medevit.elexis.ehc.core.EhcCoreService;
+import ch.elexis.core.services.IFormattedOutput;
+import ch.elexis.core.services.IFormattedOutputFactory;
+import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
+import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Person;
 import ch.elexis.data.Prescription;
@@ -76,6 +65,7 @@ import ch.elexis.docbox.ws.client.SendClinicalDocumentClient;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
+@Component
 public class DocboxService {
 	private static final Logger logger = LoggerFactory.getLogger(DocboxService.class);
 	
@@ -85,9 +75,35 @@ public class DocboxService {
 		"190001010800", "190001011200", "190001011600", "190001012000"
 	};
 
+	private static EhcCoreService ehcCoreService;
+	
+	@Reference
+	public synchronized void setEhcCoreService(EhcCoreService service){
+		ehcCoreService = service;
+	}
+	
+	public synchronized void unsetEhcCoreService(EhcCoreService service){
+		if (ehcCoreService == service) {
+			ehcCoreService = null;
+		}
+	}
+	
+	private static IFormattedOutputFactory foFactory;
+	
+	@Reference
+	public synchronized void setFormattedOutputFactory(IFormattedOutputFactory service){
+		foFactory = service;
+	}
+	
+	public synchronized void unsetFormattedOutputFactory(IFormattedOutputFactory service){
+		if (foFactory == service) {
+			foFactory = null;
+		}
+	}
+	
 	public static AbstractCdaCh<?> getPrescriptionDocument(Rezept rezept){
 		AbstractCdaCh<?> document =
-			EhcServiceComponent.getService().createCdaChDocument(rezept.getPatient(),
+			ehcCoreService.createCdaChDocument(rezept.getPatient(),
 				rezept.getMandant());
 		
 		ClinicalDocument clinicalDocument = document.getDocRoot().getClinicalDocument();
@@ -377,22 +393,27 @@ public class DocboxService {
 		}
 	}
 
-	public static ByteArrayOutputStream getPrescriptionPdf(AbstractCdaCh<?> document){
+	public static ByteArrayOutputStream getPrescriptionPdf(ByteArrayOutputStream cdaOutput){
+		IFormattedOutput foImpl =
+			foFactory.getFormattedOutputImplementation(ObjectType.XMLSTREAM, OutputType.PDF);
+		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
-		URL xslt = null;
-		xslt = DocboxService.class.getResource("/rsc/xsl/prescription.xsl");
-		
-		ByteArrayOutputStream documentXml = new ByteArrayOutputStream();
 		try {
-			CDAUtil.save(document.getDocRoot().getClinicalDocument(), documentXml);
-
-			generatePdf(documentXml, xslt.openStream(), out);
+			foImpl.transform(new ByteArrayInputStream(cdaOutput.toByteArray()),
+				DocboxService.class.getResourceAsStream("/rsc/xsl/prescription.xsl"), out);
 		} catch (Exception e) {
 			logger.error("Could not create prescription PDF" + e);
 		}
 
 		return out;
+	}
+	
+	public static ByteArrayOutputStream getPrescriptionPdf(AbstractCdaCh<?> cdaPrescription)
+		throws Exception{
+		ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream();
+		CDAUtil.save(cdaPrescription.getDocRoot().getClinicalDocument(), cdaOutput);
+		return getPrescriptionPdf(cdaOutput);
 	}
 	
 	public static String sendPrescription(InputStream xmlFile, InputStream pdfFile){
@@ -404,66 +425,6 @@ public class DocboxService {
 			message = "FAILED " + message;
 		}
 		return message;
-	}
-
-	private static void generatePdf(ByteArrayOutputStream documentXml, InputStream xslt,
-		ByteArrayOutputStream pdf){
-
-		FopFactory fopFactory = FopFactory.newInstance();
-		
-		FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-		
-		// Setup output
-		try {
-			// Construct fop with desired output format
-			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, pdf);
-			
-			// Setup XSLT
-			Transformer transformer = getTransformerForXSLT(xslt);
-			
-			// Setup input for XSLT transformation
-			Source src = new StreamSource(new ByteArrayInputStream(documentXml.toByteArray()));
-			
-			// Resulting SAX events (the generated FO) must be piped through to
-			// FOP
-			Result res = new SAXResult(fop.getDefaultHandler());
-			
-			// Start XSLT transformation and FOP processing
-			transformer.transform(src, res);
-		} catch (TransformerException e) {
-			logger.error("Error during XML tranformation.", e);
-			throw new IllegalStateException(e);
-		} catch (FOPException e) {
-			logger.error("Error during XML tranformation.", e);
-			throw new IllegalStateException(e);
-		} finally {
-			try {
-				pdf.close();
-			} catch (IOException e) {
-				// ignore exception on close ...
-			}
-		}
-	}
-
-	private static Transformer getTransformerForXSLT(InputStream xslt)
-		throws TransformerConfigurationException{
-		TransformerFactory factory = TransformerFactory.newInstance();
-		Transformer ret = factory.newTransformer(new StreamSource(xslt));
-		ret.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-		ret.setErrorListener(new DefaultErrorHandler() {
-			@Override
-			public void error(TransformerException exception) throws TransformerException{
-				super.error(exception);
-				throw exception;
-			}
-			
-			@Override
-			public void fatalError(TransformerException exception) throws TransformerException{
-				super.error(exception);
-				throw exception;
-			}
-		});
-		return ret;
 	}
 
 	private static String getRezeptId(Rezept rezept){

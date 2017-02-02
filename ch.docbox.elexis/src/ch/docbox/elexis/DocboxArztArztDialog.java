@@ -24,18 +24,6 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.MimeConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -57,6 +45,9 @@ import org.hl7.v3.POCDMT000040Author;
 import org.hl7.v3.POCDMT000040Custodian;
 import org.hl7.v3.POCDMT000040InformationRecipient;
 import org.hl7.v3.POCDMT000040RecordTarget;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 import ch.docbox.cdach.DocboxCDA;
 import ch.docbox.model.DocboxContact;
@@ -64,6 +55,10 @@ import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.docbox.ws.cdachservices.CDACHServices_Service;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.IFormattedOutput;
+import ch.elexis.core.services.IFormattedOutputFactory;
+import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
+import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
@@ -360,37 +355,29 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 		if (xmlData == null) {
 			return null;
 		}
-		ByteArrayOutputStream pdfOut = new java.io.ByteArrayOutputStream();
-		final TransformerFactory factory = TransformerFactory.newInstance();
-		FopFactory fopFactory = FopFactory.newInstance();
-		FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+		ByteArrayOutputStream pdfOut = new ByteArrayOutputStream();
 		
-		ByteArrayInputStream stream = new ByteArrayInputStream(xmlData);
-		StreamSource src = new StreamSource(stream);
-		
-		URL xsl =
-			CDACHServices_Service.class.getResource("/rsc/ch/docbox/ws/cdachservices/ArztArzt.xsl");
-		
-		try {
-			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, pdfOut);
-			Result res = new SAXResult(fop.getDefaultHandler());
+		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		ServiceReference<IFormattedOutputFactory> fopFactoryRef =
+			bundleContext.getServiceReference(IFormattedOutputFactory.class);
+		if (fopFactoryRef != null) {
 			try {
-				Transformer transformer;
-				transformer = factory.newTransformer(new StreamSource(xsl.openStream()));
-				transformer.transform(src, res);
-			} catch (TransformerException te) {
-				ExHandler.handle(te);
-				return null;
+				IFormattedOutputFactory fopFactory = bundleContext.getService(fopFactoryRef);
+				
+				IFormattedOutput foOutputt = fopFactory
+					.getFormattedOutputImplementation(ObjectType.XMLSTREAM, OutputType.PDF);
+				ByteArrayInputStream stream = new ByteArrayInputStream(xmlData);
+				URL xsl = CDACHServices_Service.class
+					.getResource("/rsc/ch/docbox/ws/cdachservices/ArztArzt.xsl");
+				foOutputt.transform(stream, xsl.openStream(), pdfOut);
+			} catch (IllegalStateException e) {
+				ExHandler.handle(e);
 			} catch (IOException e) {
 				ExHandler.handle(e);
-			} catch (Exception e) {
-				ExHandler.handle(e);
 			}
-		} catch (FOPException e) {
-			ExHandler.handle(e);
-		} catch (Exception e) {
-			ExHandler.handle(e);
+			bundleContext.ungetService(fopFactoryRef);
 		}
+		
 		return pdfOut;
 	}
 	

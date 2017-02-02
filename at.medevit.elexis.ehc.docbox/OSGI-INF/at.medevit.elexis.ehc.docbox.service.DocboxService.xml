@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.ehc.docbox.service.DocboxService">
+   <reference bind="setEhcCoreService" cardinality="1..1" interface="at.medevit.elexis.ehc.core.EhcCoreService" name="EhcCoreService" policy="static" unbind="unsetEhcCoreService"/>
+   <reference bind="setFormattedOutputFactory" cardinality="1..1" interface="ch.elexis.core.services.IFormattedOutputFactory" name="FormattedOutputFactory" policy="static" unbind="unsetFormattedOutputFactory"/>
+   <implementation class="at.medevit.elexis.ehc.docbox.service.DocboxService"/>
+</scr:component>

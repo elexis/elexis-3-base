@@ -124,7 +124,10 @@ public class EhcCoreMapper {
 	public static Author getEhcAuthor(Mandant elexisMandant){
 		String gln = elexisMandant.getXid(DOMAIN_EAN);
 		Author ret = new Author(getEhcPersonName(elexisMandant), gln);
-		
+		// add old EAN oid
+		if (gln != null) {
+			ret.addId(new Identificator("1.3.88", gln));
+		}
 		// PHONE
 		Telecoms telecoms = new Telecoms();
 		String value = elexisMandant.get(Kontakt.FLD_PHONE1);

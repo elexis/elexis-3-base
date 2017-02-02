@@ -143,6 +143,7 @@
   <module>ch.elexis.buchhaltung.basis</module>
   <module>ch.elexis.buchhaltung.basis.feature</module>
   <module>ch.elexis.fop_wrapper</module>
+  <module>ch.elexis.fop.service</module>
   <module>ch.elexis.fop_wrapper.feature</module>
   <module>ch.elexis.global_inbox</module>
   <module>ch.elexis.global_inbox.feature</module>

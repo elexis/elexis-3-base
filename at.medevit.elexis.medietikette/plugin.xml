@@ -67,7 +67,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:ch.elexis.core.ui.medication.views.MedicationView">
+            locationURI="popup:ch.elexis.core.ui.medication.tables">
          <command
                commandId="at.medevit.medelexis.medietikette.PrintMediEtiketteUi"
                label="Etikette drucken"

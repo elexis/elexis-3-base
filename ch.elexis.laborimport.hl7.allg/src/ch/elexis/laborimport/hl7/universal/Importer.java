@@ -18,6 +18,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.interfaces.events.MessageEvent;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.ui.icons.Images;
@@ -36,6 +37,11 @@ public class Importer extends Action implements IAction {
 	
 	@Override
 	public void run(){
+		if (CoreHub.localCfg.get(Preferences.CFG_DIRECTORY_AUTOIMPORT, false)) {
+			MessageEvent.fireInformation("HL7 Import", "Automatischer Import ist aktiviert.");
+			return;
+		}
+		
 		File dir = new File(CoreHub.localCfg.get(Preferences.CFG_DIRECTORY, File.separator));
 		if ((!dir.exists()) || (!dir.isDirectory())) {
 			SWTHelper.showError("bad directory for import", "Konfigurationsfehler",
@@ -83,5 +89,4 @@ public class Importer extends Action implements IAction {
 			}
 		}
 	}
-	
 }

@@ -22,6 +22,7 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String CFG_DIRECTORY = "hl7/downloaddir";
+	public static final String CFG_DIRECTORY_AUTOIMPORT = "hl7/autoimport";
 	
 	public Preferences(){
 		super(GRID);
@@ -34,12 +35,12 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			getFieldEditorParent()));
 		addField(new BooleanFieldEditor(HL7Parser.CFG_IMPORT_ENCDATA,
 			Messages.Prefs_ImportAttachedFiles, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CFG_DIRECTORY_AUTOIMPORT,
+			"Verzeichnis überwachen und automatisch importieren", getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench){
-		if (CoreHub.localCfg.get(HL7Parser.CFG_IMPORT_ENCDATA, null) == null) {
-			CoreHub.localCfg.set(HL7Parser.CFG_IMPORT_ENCDATA, false);
-		}
+		
 	}
 	
 	@Override

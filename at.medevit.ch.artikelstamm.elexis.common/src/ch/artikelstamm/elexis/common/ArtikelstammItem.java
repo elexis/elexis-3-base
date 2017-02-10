@@ -181,7 +181,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public String getLabel(){
 		String[] vals = get(true, FLD_DSCR, FLD_ADDDSCR);
-		return vals[0] + " (" + vals[1] + ")";
+		return (vals[1].length() > 0) ? vals[0] + " (" + vals[1] + ")" : vals[0];
 	}
 	
 	@Override

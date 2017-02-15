@@ -3,6 +3,8 @@ package ch.elexis.laborimport.hl7.automatic;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -110,9 +112,15 @@ public class AutomaticImportService {
 					display.syncExec(runnable);
 					r = runnable.getResult();
 					if (!r.isOK()) {
-						err++;
-						File errFile = new File(errorDir, importFile.getName());
-						importFile.renameTo(errFile);
+						try {
+							err++;
+							File errFile = new File(errorDir, importFile.getName());
+							Files.move(importFile.toPath(), errFile.toPath(),
+								StandardCopyOption.REPLACE_EXISTING);
+						} catch (IOException e) {
+							LoggerFactory.getLogger(AutomaticImportService.class)
+								.error("Error moving file", e);
+						}
 					}
 				}
 			}

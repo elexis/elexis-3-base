@@ -20,6 +20,7 @@
 
    <requires>
       <import feature="at.medevit.elexis.ehc.feature" version="3.0.0.qualifier"/>
+      <import feature="ch.elexis.fop_wrapper.feature" version="3.0.0.qualifier"/>
    </requires>
 
    <plugin

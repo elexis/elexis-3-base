@@ -18,7 +18,10 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<showEclipseLog>true</showEclipseLog>
+          <environmentVariables>
+            <SWT_GTK3>0</SWT_GTK3>
+          </environmentVariables>
+          <showEclipseLog>true</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
 				</configuration>

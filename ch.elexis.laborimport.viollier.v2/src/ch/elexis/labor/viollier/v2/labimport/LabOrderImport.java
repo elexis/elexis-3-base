@@ -412,10 +412,6 @@ public class LabOrderImport extends ImporterPage {
 			// PDF in Omnivore aufnehmen, falls vorhanden
 			// 3: Transaktionsnummer (entpricht MSH-10) --> Prüfen
 			final String crit1 = observation.getMessageControlID();
-			// 6: Auftragssnummer (entpricht ORC-3.1) --> Prüfen
-			final String crit2 = observation.getOrderNumberFiller();
-			// 8: Nachname Patient (entpricht PID-5.1) --> Prüfen
-			final String crit3 = observation.getPatientLastName().toLowerCase();
 			// 9: Geburtsdatum Patient (entpricht PID.7) --> Prüfen
 			final String crit4 = observation.getPatientBirthdate();
 			
@@ -430,9 +426,7 @@ public class LabOrderImport extends ImporterPage {
 							offset = 1;
 						if (items.length >= 10) {
 							retVal =
-								(items[offset + 1].equals(crit1) && items[offset + 4].equals(crit2)
-									&& items[offset + 6].equals(crit3) && items[offset + 7]
-									.equals(crit4));
+								items[offset + 1].equals(crit1) && items[offset + 7].equals(crit4);
 						}
 					}
 					return retVal;

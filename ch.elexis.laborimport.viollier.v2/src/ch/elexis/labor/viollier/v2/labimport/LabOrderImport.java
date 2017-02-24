@@ -418,18 +418,22 @@ public class LabOrderImport extends ImporterPage {
 			File[] pdfFiles = downloadDir.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name){
-					boolean retVal = false;
+					boolean crit1found = false;
+					boolean crit4found = false;
 					if (name.toLowerCase().endsWith(".pdf")) { //$NON-NLS-1$
 						String items[] = name.toLowerCase().split("[_]"); //$NON-NLS-1$
-						int offset = 0;
-						if (items.length == 11)
-							offset = 1;
-						if (items.length >= 10) {
-							retVal =
-								items[offset + 1].equals(crit1) && items[offset + 7].equals(crit4);
+						if (items.length > 2) {
+							// look for the criteria in all found items
+							for (int i = 0; i < items.length; i++) {
+								if (items[i].equalsIgnoreCase(crit1)) {
+									crit1found = true;
+								} else if (items[i].equalsIgnoreCase(crit4)) {
+									crit4found = true;
+								}
+							}
 						}
 					}
-					return retVal;
+					return crit1found && crit4found;
 				}
 			});
 			if (pdfFiles.length > 0) {

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Molemax Plug-in für Elexis
 Bundle-SymbolicName: ch.elexis.molemax;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.0.100.qualifier
 Bundle-Vendor: elexis.ch
 Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
  ch.elexis.core.data;bundle-version="3.0.0",

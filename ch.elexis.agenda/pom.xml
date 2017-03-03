@@ -9,4 +9,5 @@
 	</parent>
 	<artifactId>ch.elexis.agenda</artifactId>
 	<packaging>eclipse-plugin</packaging>
+	<version>3.0.100-SNAPSHOT</version>
 </project>

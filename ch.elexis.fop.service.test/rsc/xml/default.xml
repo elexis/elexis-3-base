@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contacts>
+	<contact>
+		<addresses>
+			<city>Entenhausen</city>
+			<street>Entenweg 5</street>
+			<zip>123</zip>
+		</addresses>
+		<firstname>Donald</firstname>
+		<lastname>Duck</lastname>
+	</contact>
+</contacts>

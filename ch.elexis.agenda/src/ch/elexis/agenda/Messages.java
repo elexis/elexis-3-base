@@ -154,7 +154,7 @@ public final class Messages extends NLS {
 	public static String BaseView_printFutureAppointmentsOfSelectedPatient;
 	public static String BaseView_showToday;
 	public static String BaseView_today;
-	public static String BaseView_reload;
+	public static String BaseView_refresh;
 	public static String ICalTransfer_badFileFormat;
 	public static String ICalTransfer_couldNotReadFile;
 	public static String ICalTransfer_couldNotWriteFile;

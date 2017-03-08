@@ -332,9 +332,9 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 			}
 		};
 		
-		refreshAction = new Action(Messages.BaseView_reload) {
+		refreshAction = new Action(Messages.BaseView_refresh) {
 			{
-				setToolTipText(Messages.BaseView_reload);
+				setToolTipText(Messages.BaseView_refresh);
 				setImageDescriptor(Images.IMG_REFRESH.getImageDescriptor());
 			}
 			

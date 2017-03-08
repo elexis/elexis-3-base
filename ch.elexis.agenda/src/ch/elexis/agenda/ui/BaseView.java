@@ -53,6 +53,7 @@ import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.viewers.CommonViewer.Message;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -74,7 +75,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	
 	public IAction newTerminAction, blockAction;
 	public IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
-	public IAction printPatientAction, todayAction;
+	public IAction printPatientAction, todayAction, refreshAction;
 	MenuManager menu = new MenuManager();
 	protected Activator agenda = Activator.getDefault();
 	
@@ -331,6 +332,19 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 			}
 		};
 		
+		refreshAction = new Action(Messages.BaseView_reload) {
+			{
+				setToolTipText(Messages.BaseView_reload);
+				setImageDescriptor(Images.IMG_REFRESH.getImageDescriptor());
+			}
+			
+			@Override
+			public void run(){
+				internalRefresh();
+			}
+		};
+			
+		
 		IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
 		mgr.add(dayLimitsAction);
 		mgr.add(exportAction);
@@ -338,8 +352,8 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		mgr.add(printAction);
 		mgr.add(printPatientAction);
 		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
+		tmr.add(refreshAction);
 		tmr.add(todayAction);
-		
 	}
 	
 }

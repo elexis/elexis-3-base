@@ -14,7 +14,6 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -179,7 +178,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			}
 		}
 		
-		Artikel.transferAllStockInformationToNew32StockModel(new Query<ArtikelstammItem>(ArtikelstammItem.class), ArtikelstammItem.class);
+		Artikel.transferAllStockInformationToNew32StockModel(
+			new Query<ArtikelstammItem>(ArtikelstammItem.class), ArtikelstammItem.class);
 	}
 	
 	@Override
@@ -222,7 +222,13 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 */
 	public ArtikelstammItem(int version, TYPE type, String gtin, BigInteger code, String dscr,
 		String addscr){
-				
+		
+		if (dscr.length() > 100) {
+			dscr = dscr.substring(0, 100);
+			log.warn("Delimiting dscr to 100 chars for [{}] info [{}]", dscr,
+				type + "/" + version + "/" + code);
+		}
+		
 		if (TYPE.X == type) {
 			// Product
 			create(gtin);

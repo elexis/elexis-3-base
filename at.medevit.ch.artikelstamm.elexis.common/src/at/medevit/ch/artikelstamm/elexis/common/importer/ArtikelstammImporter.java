@@ -11,7 +11,6 @@
 package at.medevit.ch.artikelstamm.elexis.common.importer;
 
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,8 +35,8 @@ import at.medevit.ch.artikelstamm.ARTIKELSTAMM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEMS.ITEM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.LIMITATIONS.LIMITATION;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.PRODUCTS.PRODUCT;
-import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
+import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.BlackBoxReason;
 import at.medevit.ch.artikelstamm.elexis.common.PluginConstants;
@@ -45,7 +44,6 @@ import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCach
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.service.StockService;
 import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
@@ -160,6 +158,7 @@ public class ArtikelstammImporter {
 	 * @param importStammType
 	 */
 	private static void resetAllBlackboxMarks(){
+		log.debug("Resetting blackbox marks...");
 		Stm stm = PersistentObject.getConnection().getStatement();
 		stm.exec("UPDATE " + ArtikelstammItem.TABLENAME + " SET " + ArtikelstammItem.FLD_BLACKBOXED
 			+ "=" + StringConstants.ZERO);
@@ -184,11 +183,12 @@ public class ArtikelstammImporter {
 		
 		monitor.subTask("BlackBox Markierung für Medikationen");
 		subMonitor.beginTask("", resultPrescription.size());
+		log.debug("Setting blackbox marks...");
 		for (Prescription p : resultPrescription) {
 			if (p.getArtikel() instanceof ArtikelstammItem) {
 				ArtikelstammItem ai = (ArtikelstammItem) p.getArtikel();
 				if (ai == null || ai.get(ArtikelstammItem.FLD_ITEM_TYPE) == null) {
-					log.error("Invalid ArtikestammItem or missing item type in " + ai);
+					log.error("Invalid ArtikestammItem or missing item type in [{}]", (ai!=null) ? ai.getId() : ai);
 					subMonitor.worked(1);
 					continue;
 				}
@@ -263,7 +263,7 @@ public class ArtikelstammImporter {
 		
 		monitor.subTask("Suche nach zu entfernenden Artikeln ...");
 		List<ArtikelstammItem> qre = qbe.execute();
-		
+		log.debug("Removing {} non-referenced articles...", qre.size());
 		monitor.subTask("Entferne " + qre.size() + " nicht referenzierte Artikel ...");
 		boolean success = ArtikelstammItem.purgeEntries(qre);
 		if (!success)
@@ -280,6 +280,7 @@ public class ArtikelstammImporter {
 	 */
 	private static void importProductsForExistingItemsIntoDatabase(int version,
 		ARTIKELSTAMM importStamm, IProgressMonitor monitor){
+		log.debug("Purging products...");
 		// delete all product entries
 		ArtikelstammItem.purgeProducts();
 		// find all defined PRODNO values
@@ -299,6 +300,7 @@ public class ArtikelstammImporter {
 		}
 		PersistentObject.getConnection().releaseStatement(stm);
 		// for each defined PRODNO value generate the resp. product entry		
+		log.debug("Importing {} products...", productList.size());
 		productList.stream().forEachOrdered(s -> {
 			PRODUCT product = products.get(s);
 			if (product != null) {
@@ -321,15 +323,15 @@ public class ArtikelstammImporter {
 		IProgressMonitor monitor){
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 		List<ITEM> importItemList = importStamm.getITEMS().getITEM();
-		subMonitor.beginTask("", importItemList.size());
+		subMonitor.beginTask("Importiere "+importItemList.size()+" items", importItemList.size());
 		
+		log.debug("Importing {} items...", importItemList.size());
 		ArtikelstammItem ai = null;
 		for (ITEM item : importItemList) {
 			String itemUuid =
 				ArtikelstammHelper.createUUID(newVersion, item.getGTIN(), item.getPHAR(), false);
 			// Is the item to be imported already in the database? This should only happen
 			// if one re-imports an already imported dataset and the item was marked as black-box
-			
 			Stm stm = PersistentObject.getConnection().getStatement();
 			int foundElements = stm.queryInt("SELECT COUNT(*) FROM " + ArtikelstammItem.TABLENAME
 				+ " WHERE " + ArtikelstammItem.FLD_ID + " " + Query.LIKE + " "

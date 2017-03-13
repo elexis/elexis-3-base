@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -446,7 +447,12 @@ public class Termin extends PersistentObject
 					Messages.Termin_thisAppIsPartOfSerie, MessageDialog.QUESTION, new String[] {
 						Messages.Termin_yes, Messages.Termin_no
 					}, 1);
-			confirmed = (msd.open() == Dialog.OK);
+			int retval = msd.open();
+			if (retval == SWT.DEFAULT)
+			{
+				return false;
+			}
+			confirmed = (retval == Dialog.OK);
 		}
 		if (isLinked) {
 			List<Termin> linked = getLinked(this);

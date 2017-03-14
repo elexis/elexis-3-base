@@ -18,6 +18,7 @@ import java.util.Hashtable;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -569,13 +570,13 @@ public class TerminDialog extends TitleAreaDialog {
 		
 		if (!mode) {
 			slider.setBackground(UiDesk.getColor(UiDesk.COL_DARKGREY)); //$NON-NLS-1$
-			msg = Messages.TerminDialog_editTermins + "\n" + Messages.TerminDialog_collision;
+			msg = Messages.TerminDialog_editTermins + "\n\t" + Messages.TerminDialog_collision;
 		}
 		
 		getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run(){
-				setMessage(msg);
+				setMessage(msg, mode ? IMessageProvider.NONE : IMessageProvider.ERROR);
 			}
 		});
 	}

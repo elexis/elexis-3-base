@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 
 import at.medevit.elexis.gdt.Activator;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
+import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartnerProvider;
 
 public class GDTCommPartnerCollector {
 	
@@ -38,6 +39,11 @@ public class GDTCommPartnerCollector {
 					if (ret == null)
 						ret = new LinkedList<IGDTCommunicationPartner>();
 					ret.add((IGDTCommunicationPartner) o);
+				}
+				if (o instanceof IGDTCommunicationPartnerProvider) {
+					if (ret == null)
+						ret = new LinkedList<IGDTCommunicationPartner>();
+					ret.addAll(((IGDTCommunicationPartnerProvider) o).getChildCommunicationPartners());
 				}
 			}
 		} catch (CoreException ex) {
@@ -58,6 +64,14 @@ public class GDTCommPartnerCollector {
 						IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
 						if(cp.getIncomingDirectory().equalsIgnoreCase(incomingDirectory)) return cp;
 					}
+					if (o instanceof IGDTCommunicationPartnerProvider) {
+						LinkedList<IGDTCommunicationPartner> childPartners = new LinkedList<IGDTCommunicationPartner>();
+						for (IGDTCommunicationPartner igdtCommunicationPartner : childPartners) {
+							if(igdtCommunicationPartner.getIncomingDirectory().equalsIgnoreCase(incomingDirectory)) {
+								return igdtCommunicationPartner;
+							}
+						}
+					}
 				}
 			} catch (CoreException ex) {
 				System.out.println(ex.getMessage());
@@ -74,6 +88,14 @@ public class GDTCommPartnerCollector {
 					if (o instanceof IGDTCommunicationPartner) {
 						IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
 						if(cp.getLabel().equalsIgnoreCase(label)) return cp;
+					}
+					if (o instanceof IGDTCommunicationPartnerProvider) {
+						LinkedList<IGDTCommunicationPartner> childPartners = new LinkedList<IGDTCommunicationPartner>();
+						for (IGDTCommunicationPartner igdtCommunicationPartner : childPartners) {
+							if(igdtCommunicationPartner.getLabel().equalsIgnoreCase(label)) {
+								return igdtCommunicationPartner;
+							}
+						}
 					}
 				}
 			} catch (CoreException ex) {

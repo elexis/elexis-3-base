@@ -12,92 +12,69 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.defaultfilecp.ui;
 
-import org.eclipse.jface.preference.DirectoryFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import at.medevit.elexis.gdt.constants.GDTConstants;
+import at.medevit.elexis.gdt.defaultfilecp.FileCommPartner;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
-public class GDTPreferencePageFileTransfer extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
-	
-	public static final String CFG_GDT_FILETRANSFER_DIRECTORY =
-		"GDT/defaultfilecp/fileTransferDirectory";
-	public static final String CFG_GDT_FILETRANSFER_USED_TYPE =
-		"GDT/defaultfilecp/fileTransferUsedType";
-	public static final String CFG_GDT_FILETRANSFER_LONG_ID_RECEIVER =
-		"GDT/defaultfilecp/longIDReceiver";
-	public static final String CFG_GDT_FILETRANSFER_SHORT_ID_RECEIVER =
-		"GDT/defaultfilecp/longIDReceiver";
-	public static final String CFG_GDT_FILETRANSFER_EXECUTABLE = "GDT/defaultfilecp/executable";
-	
-	public static String[][] comboCharsetSelektor = new String[][] {
-		{
-			"7Bit", GDTConstants.ZEICHENSATZ_7BIT_CHARSET_STRING
-		},
-		{
-			"IBM (Standard) CP 437", GDTConstants.ZEICHENSATZ_IBM_CP_437_CHARSET_STRING
-		},
-		{
-			"ISO8859-1 (ANSI) CP 1252",
-			GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING
-		}
-	};
+public class GDTPreferencePageFileTransfer extends PreferencePage
+		implements IWorkbenchPreferencePage {
 	
 	private IPreferenceStore prefStore;
-	private DirectoryFieldEditor exchangeDir;
-	private RadioGroupFieldEditor fileType;
+	private Composite editorParent;
+	
+	List<FileCommPartnerComposite> fileCommPartnerComposites =
+		new ArrayList<FileCommPartnerComposite>();
 	
 	/**
 	 * Create the preference page.
 	 */
 	public GDTPreferencePageFileTransfer(){
-		super(FieldEditorPreferencePage.GRID);
 		setTitle("Datei-Kommunikation");
 	}
 	
-	/**
-	 * Create contents of the preference page.
-	 */
 	@Override
-	protected void createFieldEditors(){
-		addField(new StringFieldEditor(CFG_GDT_FILETRANSFER_LONG_ID_RECEIVER,
-			"Lange GDT ID Receiver", getFieldEditorParent()));
-		addField(new StringFieldEditor(CFG_GDT_FILETRANSFER_SHORT_ID_RECEIVER,
-			"Kurze GDT ID Receiver", getFieldEditorParent()));
+	protected Control createContents(Composite parent){
+		fileCommPartnerComposites.clear();
+		editorParent = new Composite(parent, SWT.NONE);
+		editorParent.setLayout(new GridLayout(3, false));
 		
-		exchangeDir =
-			new DirectoryFieldEditor(CFG_GDT_FILETRANSFER_DIRECTORY,
-				"Standard-Austausch-Verzeichnis", getFieldEditorParent());
-		addField(exchangeDir);
-		
-		fileType =
-			new RadioGroupFieldEditor(CFG_GDT_FILETRANSFER_USED_TYPE, "Zu verwendender Dateityp",
-				1, new String[][] {
-					{
-						"fest", GDTConstants.GDT_FILETRANSFER_TYP_FEST
-					}, {
-						"hochzählend", GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND
-					}
-				}, getFieldEditorParent(), false);
-		addField(fileType);
-		addField(new FileFieldEditor(CFG_GDT_FILETRANSFER_EXECUTABLE, "Verarbeitungsprogramm",
-			getFieldEditorParent()));
+		for (String name : FileCommPartner.getAllFileCommPartnersArray()) {
+			createNewFileCommPartnerComposite(name);
+		}
+		return editorParent;
+	}
+	
+	public void createNewFileCommPartnerComposite(String name){
+		fileCommPartnerComposites
+			.add(new FileCommPartnerComposite(this, editorParent, new FileCommPartner(name)));
+	}
+	
+	@Override
+	public boolean performOk(){
+		for (FileCommPartnerComposite fileCommPartnerComposite : fileCommPartnerComposites) {
+			fileCommPartnerComposite.save();
+		}
+		CoreHub.localCfg.flush();
+		return super.performOk();
 	}
 	
 	/**
-	 * Initialize the preference page.
+	 * Initialize the preferference page.
 	 */
 	public void init(IWorkbench workbench){
 		prefStore = new SettingsPreferenceStore(CoreHub.localCfg);
 		setPreferenceStore(prefStore);
 	}
-	
 }

@@ -809,7 +809,7 @@ public class XMLExporter implements IRnOutputter {
 			
 			void add(double amount){
 				this.sumamount += amount;
-				sumvat += (amount / (100.0)) * scale;
+				sumvat += (amount / (100.0 + scale)) * scale;
 			}
 			
 			@Override
@@ -833,7 +833,7 @@ public class XMLExporter implements IRnOutputter {
 				rates.put(new Double(scale), element);
 			}
 			element.add(amount);
-			sumvat += (amount / (100.0)) * scale;
+			sumvat += (amount / (100.0 + scale)) * scale;
 		}
 	}
 	

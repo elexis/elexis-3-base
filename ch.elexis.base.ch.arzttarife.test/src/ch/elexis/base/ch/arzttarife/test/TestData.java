@@ -19,6 +19,7 @@ import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
@@ -27,19 +28,20 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.TICode;
 import ch.elexis.data.TarmedLeistung;
+import ch.elexis.data.Verrechnet;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Result;
 
 public class TestData {
 	
 	public static final String EXISTING_44_RNR = "4400";
-
+	
 	public static String EXISTING_4_RNR = "4000";
-
+	
 	private static TestSzenario testSzenarioInstance = null;
 	
 	private static int patientCount = 0;
-
+	
 	public static TestSzenario getTestSzenarioInstance() throws IOException{
 		if (testSzenarioInstance == null) {
 			testSzenarioInstance = new TestSzenario();
@@ -53,7 +55,7 @@ public class TestData {
 		List<Patient> patienten = new ArrayList<Patient>();
 		List<Fall> faelle = new ArrayList<Fall>();
 		List<Konsultation> konsultationen = new ArrayList<Konsultation>();
-		List<TarmedLeistung> leistungen = new ArrayList<TarmedLeistung>();
+		List<IVerrechenbar> leistungen = new ArrayList<IVerrechenbar>();
 		List<Rechnung> rechnungen = new ArrayList<Rechnung>();
 		
 		TestSzenario() throws IOException{
@@ -68,10 +70,21 @@ public class TestData {
 				Konsultation kons = createKons(faelle.get(j), mandanten.get(0));
 				konsultationen.add(kons);
 				kons.addDiagnose(TICode.getFromCode("A1"));
-				for (TarmedLeistung leistung : leistungen) {
+				for (IVerrechenbar leistung : leistungen) {
 					Result<IVerrechenbar> result = kons.addLeistung(leistung);
 					if (!result.isOK()) {
 						throw new IllegalStateException(result.toString());
+					}
+				}
+				// apply vat
+				for (Verrechnet verrechnet : kons.getLeistungen()) {
+					if (verrechnet.getVerrechenbar() instanceof Eigenleistung) {
+						if ("GA".equals(verrechnet.getCode())) {
+							verrechnet.setDetail(Verrechnet.VATSCALE, "8.00");
+						}
+						if ("GB".equals(verrechnet.getCode())) {
+							verrechnet.setDetail(Verrechnet.VATSCALE, "2.50");
+						}
 					}
 				}
 			}
@@ -103,7 +116,7 @@ public class TestData {
 			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_44_RNR);
 			blob.putString(stringWriter.toString());
 		}
-
+		
 		private void createLeistungen(){
 			TarmedLeistung leistung = new TarmedLeistung("00", null, "NIL", "", "", "");
 			leistung.setText("Grundleistungen");
@@ -138,6 +151,14 @@ public class TestData {
 			leistung.flushExtension();
 			
 			leistungen.add(leistung);
+			
+			// vat 8.00
+			Eigenleistung eigenleistung =
+				new Eigenleistung("GA", "Gutachten A", "270000", "270000");
+			leistungen.add(eigenleistung);
+			// vat 2.50
+			eigenleistung = new Eigenleistung("GB", "Gutachten B", "250000", "250000");
+			leistungen.add(eigenleistung);
 		}
 		
 		public List<Mandant> getMandanten(){
@@ -168,7 +189,7 @@ public class TestData {
 			mandant.addXid(DOMAIN_EAN, "2000000000002", true);
 			// make sure somains are registered
 			TarmedRequirements.getEAN(mandant);
-
+			
 			mandant.addXid(TarmedRequirements.DOMAIN_KSK, "C000002", true);
 			
 			mandant.setExtInfoStoredObjectByKey(ta.ESR5OR9, "esr9");
@@ -180,7 +201,7 @@ public class TestData {
 			
 			mandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, "01-12648-2");
 			mandant.setExtInfoStoredObjectByKey(ta.ESRSUB, "15453");
-
+			
 			mandanten.add(mandant);
 			
 			CoreHub.setMandant(mandant);
@@ -194,10 +215,9 @@ public class TestData {
 			
 			// move required fields to non required ... we are testing xml not Rechnung.build
 			moveRequiredToOptional(Fall.getDefaultCaseLaw());
-
-			Fall fall =
-				pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(),
-					Fall.getDefaultCaseLaw());
+			
+			Fall fall = pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(),
+				Fall.getDefaultCaseLaw());
 			if (addKostentraeger) {
 				fall.setInfoElement("Kostenträger", pat.getId());
 			}
@@ -213,7 +233,7 @@ public class TestData {
 			
 			pat.addXid(DOMAIN_AHV, ahvBuilder.toString(), true);
 		}
-
+		
 		private String getCheckNumber(String string){
 			int sum = 0;
 			for (int i = 0; i < string.length(); i++) {
@@ -228,7 +248,7 @@ public class TestData {
 			}
 			return Integer.toString(sum % 10);
 		}
-
+		
 		private void moveRequiredToOptional(String defaultCaseLaw){
 			String requirements = Fall.getRequirements(defaultCaseLaw);
 			if (requirements != null) {
@@ -238,7 +258,7 @@ public class TestData {
 					+ defaultCaseLaw + "/fakultativ", requirements); //$NON-NLS-1$
 			}
 		}
-
+		
 		private Konsultation createKons(Fall fall, Mandant mandant){
 			Konsultation kons = new Konsultation(fall);
 			return kons;
@@ -251,7 +271,7 @@ public class TestData {
 		public Rechnung getExistingRechnung(String rechnungNr){
 			Konsultation kons = createKons(faelle.get(0), mandanten.get(0));
 			kons.addDiagnose(TICode.getFromCode("A1"));
-			for (TarmedLeistung leistung : leistungen) {
+			for (IVerrechenbar leistung : leistungen) {
 				Result<IVerrechenbar> result = kons.addLeistung(leistung);
 				if (!result.isOK()) {
 					throw new IllegalStateException(result.toString());
@@ -261,7 +281,7 @@ public class TestData {
 			Rechnung ret = result.get();
 			
 			ret.set(Rechnung.BILL_NUMBER, rechnungNr);
-
+			
 			return ret;
 		}
 	}

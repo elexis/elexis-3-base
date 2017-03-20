@@ -41,14 +41,17 @@ public class XMLExporterTest {
 			@Override
 			public void run(){
 				PlatformUI.getWorkbench().saveAllEditors(false); // do not confirm saving
-				PlatformUI.getWorkbench().saveAll(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
+				PlatformUI.getWorkbench().saveAll(
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
 				if (PlatformUI.getWorkbench() != null) // null if run from Eclipse-IDE
 				{
 					// needed if run as surefire test from using mvn install
 					try {
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllPerspectives(false, true);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.closeAllPerspectives(false, true);
 					} catch (Exception e) {
-
+						
 						System.out.println(e.getMessage());
 					}
 				}
@@ -66,8 +69,7 @@ public class XMLExporterTest {
 		List<Rechnung> rechnungen = szenario.getRechnungen();
 		for (Rechnung rechnung : rechnungen) {
 			Document result =
-				exporter.doExport(rechnung, getTempDestination(), IRnOutputter.TYPE.ORIG,
-					true);
+				exporter.doExport(rechnung, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
 			if (rechnung.getStatus() == RnStatus.FEHLERHAFT) {
 				printFaildDocument(result);
@@ -89,9 +91,45 @@ public class XMLExporterTest {
 	}
 	
 	@Test
+	public void doExportVatTest() throws IOException{
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario.getRechnungen());
+		assertFalse(szenario.getRechnungen().isEmpty());
+		XMLExporter exporter = new XMLExporter();
+		List<Rechnung> rechnungen = szenario.getRechnungen();
+		for (Rechnung rechnung : rechnungen) {
+			Document result =
+				exporter.doExport(rechnung, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			assertNotNull(result);
+			if (rechnung.getStatus() == RnStatus.FEHLERHAFT) {
+				printFaildDocument(result);
+				fail();
+			}
+			// check if the vat is included
+			Element root = result.getRootElement();
+			Iterator<?> iter = root.getDescendants(new ElementFilter("vat_rate"));
+			assertTrue(iter.hasNext());
+			while (iter.hasNext()) {
+				Element vat_rate = (Element) iter.next();
+				Attribute rate = vat_rate.getAttribute("vat_rate");
+				Attribute vat = vat_rate.getAttribute("vat");
+				if ("0.00".equals(rate.getValue())) {
+					assertEquals(0.0, Double.parseDouble(vat.getValue()), 0.01);
+				} else {
+					Attribute amount = vat_rate.getAttribute("amount");
+					Double rateDouble = Double.parseDouble(rate.getValue());
+					Double amountDouble = Double.parseDouble(amount.getValue());
+					Double expectedVat = (amountDouble / (100.0 + rateDouble)) * rateDouble;
+					assertEquals(expectedVat, Double.parseDouble(vat.getValue()), 0.01);
+				}
+			}
+		}
+	}
+	
+	@Test
 	public void doExportExisting4Test() throws IOException{
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
-
+		
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_4_RNR);
 		existing.addZahlung(new Money(1.0), "test", new TimeTool());
@@ -107,9 +145,8 @@ public class XMLExporterTest {
 		Element balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
 		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
 		assertEquals("1.00", prepaid);
-
-		result =
- exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
+		
+		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);
@@ -137,7 +174,7 @@ public class XMLExporterTest {
 		Element payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
-
+		
 		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
 		assertEquals("1.00", prepaid);
 		
@@ -153,11 +190,11 @@ public class XMLExporterTest {
 		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("0.00", due);
 	}
-
+	
 	private String getTempDestination(){
 		return CoreHub.getTempDir().getAbsolutePath() + File.separator + "tarmedTest.xml";
 	}
-
+	
 	private void printFaildDocument(Document result) throws IOException{
 		XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
 		xout.output(result, System.err);

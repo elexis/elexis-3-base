@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
@@ -36,17 +37,21 @@ public class StammdatenUebermitteln extends AbstractHandler {
 	
 	public static final String ID = "at.medevit.elexis.gdt.command.StammdatenUebermitteln";
 	public static final String PARAM_ID = "at.medevit.elexis.gdt.cmd.parameter.partnerClassname";
+	private static final String PARAM_TARGET_ID =
+		"at.medevit.elexis.gdt.cmd.parameter.targetId";
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		Patient pat = null;
 		String commPartnerClass = event.getParameter(PARAM_ID);
 		
-		ISelection selection =
-			HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
-		IStructuredSelection strucSelection = (IStructuredSelection) selection;
-		if (selection != null & selection instanceof IStructuredSelection) {
-			pat = (Patient) strucSelection.getFirstElement();
+		IWorkbenchWindow iWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
+		if (iWorkbenchWindow != null) {
+			ISelection selection = iWorkbenchWindow.getActivePage().getSelection();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection strucSelection = (IStructuredSelection) selection;
+				pat = (Patient) strucSelection.getFirstElement();
+			}
 		}
 		
 		String configuredGDTId = CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, "");
@@ -67,6 +72,7 @@ public class StammdatenUebermitteln extends AbstractHandler {
 			
 		StammdatenUebermittelnDialog sud = new StammdatenUebermittelnDialog(
 			Display.getCurrent().getActiveShell(), gdt6301, commPartnerClass);
+		sud.setTargetIdSelection(event.getParameter(PARAM_TARGET_ID));
 		int retVal = sud.open();
 		
 		if (retVal == TitleAreaDialog.CANCEL)

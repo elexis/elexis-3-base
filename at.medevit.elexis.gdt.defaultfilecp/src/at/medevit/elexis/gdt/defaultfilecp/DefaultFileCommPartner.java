@@ -13,16 +13,20 @@
 package at.medevit.elexis.gdt.defaultfilecp;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import at.medevit.elexis.gdt.constants.Feld8402Constants;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
 import at.medevit.elexis.gdt.constants.SystemConstants;
-import at.medevit.elexis.gdt.defaultfilecp.ui.GDTPreferencePageFileTransfer;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
-import ch.elexis.core.data.activator.CoreHub;
+import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartnerProvider;
 
-public class DefaultFileCommPartner implements IGDTCommunicationPartner {
+public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider {
+	
+	private FileCommPartner defaultFileCommPartner = new FileCommPartner();
 	
 	@Override
 	public int getConnectionType(){
@@ -36,21 +40,23 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartner {
 	
 	@Override
 	public String getLabel(){
-		return "Standard-Datei-Kommunikation ("
-			+ CoreHub.localCfg
-				.get(GDTPreferencePageFileTransfer.CFG_GDT_FILETRANSFER_DIRECTORY, "") + ")";
+		return defaultFileCommPartner.getSettings()
+			.get(defaultFileCommPartner.getFileTransferName(), "") + " ("
+			+ defaultFileCommPartner.getSettings()
+				.get(defaultFileCommPartner.getFileTransferDirectory(), "")
+			+ ")";
 	}
-	
+		
 	@Override
 	public String getIDReceiver(){
-		return CoreHub.localCfg.get(
-			GDTPreferencePageFileTransfer.CFG_GDT_FILETRANSFER_LONG_ID_RECEIVER, "MEDICALDEVICE");
+		return defaultFileCommPartner.getSettings().get(
+				defaultFileCommPartner.getFileTransferIdReceiver(), "MEDICALDEVICE");
 	}
 	
 	@Override
 	public String getShortIDReceiver(){
-		return CoreHub.localCfg.get(
-			GDTPreferencePageFileTransfer.CFG_GDT_FILETRANSFER_SHORT_ID_RECEIVER, "MDEV");
+		return defaultFileCommPartner.getSettings().get(
+				defaultFileCommPartner.getFileTransferShortIdReceiver(), "MDEV");
 	}
 	
 	@Override
@@ -70,26 +76,29 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartner {
 	
 	@Override
 	public String getRequiredFileType(){
-		return CoreHub.localCfg.get(GDTPreferencePageFileTransfer.CFG_GDT_FILETRANSFER_USED_TYPE,
+		return defaultFileCommPartner.getSettings().get(
+			defaultFileCommPartner.getFileTransferUsedType(),
 			GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND);
 	}
 	
 	@Override
 	public String getIncomingDirectory(){
-		return CoreHub.localCfg.get(GDTPreferencePageFileTransfer.CFG_GDT_FILETRANSFER_DIRECTORY,
+		return defaultFileCommPartner.getSettings().get(
+			defaultFileCommPartner.getFileTransferInDirectory(),
 			"");
 	}
 	
 	@Override
 	public String getOutgoingDirectory(){
-		return CoreHub.localCfg.get(GDTPreferencePageFileTransfer.CFG_GDT_FILETRANSFER_DIRECTORY,
+		return defaultFileCommPartner.getSettings().get(
+			defaultFileCommPartner.getFileTransferOutDirectory(),
 			"");
 	}
 	
 	@Override
 	public int getIncomingDefaultCharset(){
 		String charset =
-				CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_CHARSET,
+			defaultFileCommPartner.getSettings().get(GDTPreferenceConstants.CFG_GDT_CHARSET,
 					GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING);
 		return GDTConstants.getCharsetIntByString(charset);
 	}
@@ -97,7 +106,7 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartner {
 	@Override
 	public int getOutgoingDefaultCharset(){
 		String charset =
-				CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_CHARSET,
+			defaultFileCommPartner.getSettings().get(GDTPreferenceConstants.CFG_GDT_CHARSET,
 					GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING);
 		return GDTConstants.getCharsetIntByString(charset);
 	}
@@ -105,14 +114,15 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartner {
 	@Override
 	public String getExternalHandlerProgram(){
 		String executable =
-			CoreHub.localCfg.get(GDTPreferencePageFileTransfer.CFG_GDT_FILETRANSFER_EXECUTABLE,
+			defaultFileCommPartner.getSettings().get(
+				defaultFileCommPartner.getFileTransferExecuteable(),
 				null);
 		if (executable != null) {
 			File execFile = new File(executable);
 			if (execFile.canExecute())
 				return executable;
 		}
-		return null;
+		return null;	
 	}
 	
 	@Override
@@ -120,4 +130,132 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartner {
 		return null;
 	}
 	
+	@Override
+	public String getId(){
+		return defaultFileCommPartner.getId();
+	}
+
+	@Override
+	public List<IGDTCommunicationPartner> getChildCommunicationPartners() {
+		List<IGDTCommunicationPartner> communicationPartners = new ArrayList<IGDTCommunicationPartner>();
+		final DefaultFileCommPartner parent = this;
+		for (String id : FileCommPartner.getAllFileCommPartnersArray())
+		{
+			if (!defaultFileCommPartner.getId().equals(id))
+			{
+				final FileCommPartner fileCommPartner = new FileCommPartner(id);
+				communicationPartners.add(new IGDTCommunicationPartnerProvider() {
+					
+					@Override
+					public String[] getSupported8402valuesDetailDescription() {
+						return parent.getSupported8402valuesDetailDescription();
+					}
+					
+					@Override
+					public String[] getSupported8402valuesDescription() {
+						return parent.getSupported8402valuesDescription();
+					}
+					
+					@Override
+					public String[] getSupported8402values() {
+						return parent.getSupported8402values();
+					}
+					
+					@Override
+					public String getShortIDReceiver() {
+						return defaultFileCommPartner.getSettings()
+							.get(fileCommPartner.getFileTransferShortIdReceiver(), "MDEV");
+					}
+					
+					@Override
+					public String getRequiredFileType() {
+						return defaultFileCommPartner.getSettings().get(
+							fileCommPartner.getFileTransferUsedType(),
+							GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND);
+					}
+					
+					@Override
+					public String getOutgoingDirectory() {
+						return defaultFileCommPartner.getSettings().get(
+							fileCommPartner.getFileTransferOutDirectory(),
+							"");
+					}
+					
+					@Override
+					public int getOutgoingDefaultCharset() {
+						return parent.getOutgoingDefaultCharset();
+					}
+					
+					@Override
+					public String getLabel() {
+						return defaultFileCommPartner.getSettings()
+							.get(fileCommPartner.getFileTransferName(), "")
+							+ " ("
+							+ defaultFileCommPartner.getSettings()
+									.get(fileCommPartner.getFileTransferDirectory(), "") + ")";
+					}
+					
+					@Override
+					public String getIncomingDirectory() {
+						return defaultFileCommPartner.getSettings().get(
+							fileCommPartner.getFileTransferInDirectory(),
+							"");
+					}
+					
+					@Override
+					public int getIncomingDefaultCharset() {
+						return parent.getIncomingDefaultCharset();
+					}
+					
+					@Override
+					public String getIDReceiver() {
+						return defaultFileCommPartner.getSettings()
+							.get(fileCommPartner.getFileTransferIdReceiver(), "MEDICALDEVICE");
+					}
+					
+					@Override
+					public String getFixedCommmunicationFileName() {
+						return parent.getFixedCommmunicationFileName();
+					}
+					
+					@Override
+					public String getExternalHandlerProgram() {
+						String executable =
+							defaultFileCommPartner.getSettings()
+								.get(fileCommPartner.getFileTransferExecuteable(),
+									null);
+							if (executable != null) {
+								File execFile = new File(executable);
+								if (execFile.canExecute())
+									return executable;
+							}
+							return null;
+					}
+					
+					@Override
+					public int getConnectionType() {
+						return parent.getConnectionType();
+					}
+					
+					@Override
+					public String getConnectionString() {
+						return parent.getConnectionString();
+					}
+					
+					@Override
+					public List<IGDTCommunicationPartner> getChildCommunicationPartners(){
+						return Collections.emptyList();
+					}
+					
+					@Override
+					public String getId(){
+						return fileCommPartner.getId();
+					}
+				});
+			
+			}
+			
+		}
+		return communicationPartners;
+	}
 }

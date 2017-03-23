@@ -46,16 +46,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 
+import com.eclipsesource.databinding.multivalidation.DateTimeObservableValue;
+
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
+import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartnerProvider;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6302;
 import at.medevit.elexis.gdt.tools.GDTCommPartnerCollector;
 import at.medevit.elexis.gdt.ui.dialog.provider.ComboViewerCommPartner;
 import at.medevit.elexis.gdt.ui.dialog.provider.ComboViewerGeschlechtLabelProvider;
 import at.medevit.elexis.gdt.ui.dialog.provider.ComboViewerVersichertenartLabelProvider;
 import at.medevit.elexis.gdt.ui.dialog.provider.Feld8402ContentProposalProvider;
-
-import com.eclipsesource.databinding.multivalidation.DateTimeObservableValue;
 
 public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 	private Text txtIDReceiver;
@@ -85,6 +86,8 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 
 	private String[] supported8402values;
 	private String[] supported8402valuesDescription;
+	
+	private String targetIdSelection;
 
 	/**
 	 * Create the dialog.
@@ -92,7 +95,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 	 * @param parentShell
 	 */
 	public NeueUntersuchungAnfordernDialog(Shell parentShell,
-			GDTSatzNachricht6302 gdtSatz) {
+		GDTSatzNachricht6302 gdtSatz){
 		super(parentShell);
 		this.gdt6302 = gdtSatz;
 	}
@@ -380,8 +383,25 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 
 		initDataBindings();
 		if (commPartners != null && commPartners.size() > 0)
-			comboViewerTarget.setSelection(new StructuredSelection(commPartners
-					.get(0)));
+		{
+			comboViewerTarget.setSelection(new StructuredSelection(commPartners.get(0)));
+			if (targetIdSelection != null) {
+				int idx = 0;
+				for (IGDTCommunicationPartner igdtCommunicationPartner : commPartners) {
+					if (igdtCommunicationPartner instanceof IGDTCommunicationPartnerProvider) {
+						String id = ((IGDTCommunicationPartnerProvider) igdtCommunicationPartner)
+							.getId();
+						if (id.equals(targetIdSelection)) {
+							comboViewerTarget
+								.setSelection(new StructuredSelection(commPartners.get(idx)));
+							break;
+						}
+					}
+					idx++;
+				}
+			}
+		}
+		
 		return area;
 	}
 
@@ -481,6 +501,14 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 			return;
 		}
 		setErrorMessage("Bitte Testart im Geräte- und Verfahrensspezifischen Kennfeld angeben!");
+	}
+	
+	public void setTargetIdSelection(String targetIdSelection){
+		this.targetIdSelection = targetIdSelection;
+	}
+	
+	public String getTargetIdSelection(){
+		return targetIdSelection;
 	}
 
 }

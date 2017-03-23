@@ -44,15 +44,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 
+import com.eclipsesource.databinding.multivalidation.DateTimeObservableValue;
+
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
+import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartnerProvider;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6301;
 import at.medevit.elexis.gdt.tools.GDTCommPartnerCollector;
 import at.medevit.elexis.gdt.ui.dialog.provider.ComboViewerCommPartner;
 import at.medevit.elexis.gdt.ui.dialog.provider.ComboViewerGeschlechtLabelProvider;
 import at.medevit.elexis.gdt.ui.dialog.provider.ComboViewerVersichertenartLabelProvider;
-
-import com.eclipsesource.databinding.multivalidation.DateTimeObservableValue;
 
 public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 	private Text txtIDReceiver;
@@ -77,6 +78,7 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 	private DateTime dateTimeBirthday;
 	
 	private String preSelCommPartner;
+	private String targetIdSelection;
 	
 	/**
 	 * Create the dialog.
@@ -334,6 +336,22 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 					}
 				}
 			}
+			else if (targetIdSelection != null) {
+				int idx = 0;
+				for (IGDTCommunicationPartner igdtCommunicationPartner : commPartners) {
+					if (igdtCommunicationPartner instanceof IGDTCommunicationPartnerProvider) {
+						String id = ((IGDTCommunicationPartnerProvider) igdtCommunicationPartner)
+							.getId();
+						if (id.equals(targetIdSelection))
+						{
+							comboViewerTarget
+								.setSelection(new StructuredSelection(commPartners.get(idx)));
+							break;
+						}
+					}
+					idx++;
+				}
+			}
 		}
 		return area;
 	}
@@ -424,5 +442,12 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 	public IGDTCommunicationPartner getGDTCommunicationPartner() {
 		return commPartner;
 	}
-
+	
+	public void setTargetIdSelection(String targetIdSelection){
+		this.targetIdSelection = targetIdSelection;
+	}
+	
+	public String getTargetIdSelection(){
+		return targetIdSelection;
+	}
 }

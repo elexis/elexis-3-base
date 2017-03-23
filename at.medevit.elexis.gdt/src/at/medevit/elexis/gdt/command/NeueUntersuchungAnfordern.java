@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
@@ -34,15 +35,19 @@ import ch.elexis.data.Patient;
 
 public class NeueUntersuchungAnfordern extends AbstractHandler {
 	
+	private static final String PARAM_TARGET_ID =
+		"at.medevit.elexis.gdt.cmd.parameter.targetId";
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		Patient pat = null;
-		
-		ISelection selection =
-			HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection strucSelection = (IStructuredSelection) selection;
-			pat = (Patient) strucSelection.getFirstElement();
+		IWorkbenchWindow iWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
+		if (iWorkbenchWindow != null) {
+			ISelection selection = iWorkbenchWindow.getActivePage().getSelection();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection strucSelection = (IStructuredSelection) selection;
+				pat = (Patient) strucSelection.getFirstElement();
+			}
 		}
 		
 		String configuredGDTId = CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, "");
@@ -63,6 +68,7 @@ public class NeueUntersuchungAnfordern extends AbstractHandler {
 		
 		NeueUntersuchungAnfordernDialog nuad =
 			new NeueUntersuchungAnfordernDialog(Display.getCurrent().getActiveShell(), gdt6302);
+		nuad.setTargetIdSelection(event.getParameter(PARAM_TARGET_ID));
 		int retVal = nuad.open();
 		
 		if (retVal == TitleAreaDialog.CANCEL)

@@ -29,5 +29,14 @@
             name="Datei-Kommunikation">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="at.medevit.elexis.gdt.defaultfilecp.ui.view.GdtView"
+            id="at.medevit.elexis.gdt.defaultfilecp.gdtview"
+            name="GDTView"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>

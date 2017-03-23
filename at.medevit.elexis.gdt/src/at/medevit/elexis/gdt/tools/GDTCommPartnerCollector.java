@@ -87,7 +87,9 @@ public class GDTCommPartnerCollector {
 					final Object o = e.createExecutableExtension("interface");
 					if (o instanceof IGDTCommunicationPartner) {
 						IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
-						if(cp.getLabel().equalsIgnoreCase(label)) return cp;
+						if (cp.getLabel().equalsIgnoreCase(label)) {
+							return cp;
+						}
 					}
 					if (o instanceof IGDTCommunicationPartnerProvider) {
 						LinkedList<IGDTCommunicationPartner> childPartners = new LinkedList<IGDTCommunicationPartner>();

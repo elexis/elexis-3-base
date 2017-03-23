@@ -14,6 +14,7 @@ package at.medevit.elexis.gdt.defaultfilecp;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import at.medevit.elexis.gdt.constants.Feld8402Constants;
@@ -22,7 +23,6 @@ import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
 import at.medevit.elexis.gdt.constants.SystemConstants;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartnerProvider;
-import ch.elexis.core.data.activator.CoreHub;
 
 public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider {
 	
@@ -40,20 +40,22 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	
 	@Override
 	public String getLabel(){
-		return "Standard-Datei-Kommunikation ("
-			+ CoreHub.localCfg
-				.get(defaultFileCommPartner.getFileTransferDirectory(), "") + ")";
+		return defaultFileCommPartner.getSettings()
+			.get(defaultFileCommPartner.getFileTransferName(), "") + " ("
+			+ defaultFileCommPartner.getSettings()
+				.get(defaultFileCommPartner.getFileTransferDirectory(), "")
+			+ ")";
 	}
 		
 	@Override
 	public String getIDReceiver(){
-		return CoreHub.localCfg.get(
+		return defaultFileCommPartner.getSettings().get(
 				defaultFileCommPartner.getFileTransferIdReceiver(), "MEDICALDEVICE");
 	}
 	
 	@Override
 	public String getShortIDReceiver(){
-		return CoreHub.localCfg.get(
+		return defaultFileCommPartner.getSettings().get(
 				defaultFileCommPartner.getFileTransferShortIdReceiver(), "MDEV");
 	}
 	
@@ -74,25 +76,29 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	
 	@Override
 	public String getRequiredFileType(){
-		return CoreHub.localCfg.get(defaultFileCommPartner.getFileTransferUsedType(), GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND);
+		return defaultFileCommPartner.getSettings().get(
+			defaultFileCommPartner.getFileTransferUsedType(),
+			GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND);
 	}
 	
 	@Override
 	public String getIncomingDirectory(){
-		return CoreHub.localCfg.get(defaultFileCommPartner.getFileTransferDirectory(),
+		return defaultFileCommPartner.getSettings().get(
+			defaultFileCommPartner.getFileTransferInDirectory(),
 			"");
 	}
 	
 	@Override
 	public String getOutgoingDirectory(){
-		return CoreHub.localCfg.get(defaultFileCommPartner.getFileTransferDirectory(),
+		return defaultFileCommPartner.getSettings().get(
+			defaultFileCommPartner.getFileTransferOutDirectory(),
 			"");
 	}
 	
 	@Override
 	public int getIncomingDefaultCharset(){
 		String charset =
-				CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_CHARSET,
+			defaultFileCommPartner.getSettings().get(GDTPreferenceConstants.CFG_GDT_CHARSET,
 					GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING);
 		return GDTConstants.getCharsetIntByString(charset);
 	}
@@ -100,7 +106,7 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	@Override
 	public int getOutgoingDefaultCharset(){
 		String charset =
-				CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_CHARSET,
+			defaultFileCommPartner.getSettings().get(GDTPreferenceConstants.CFG_GDT_CHARSET,
 					GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING);
 		return GDTConstants.getCharsetIntByString(charset);
 	}
@@ -108,7 +114,8 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	@Override
 	public String getExternalHandlerProgram(){
 		String executable =
-			CoreHub.localCfg.get(defaultFileCommPartner.getFileTransferExecuteable(),
+			defaultFileCommPartner.getSettings().get(
+				defaultFileCommPartner.getFileTransferExecuteable(),
 				null);
 		if (executable != null) {
 			File execFile = new File(executable);
@@ -122,17 +129,22 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	public String getFixedCommmunicationFileName(){
 		return null;
 	}
+	
+	@Override
+	public String getId(){
+		return defaultFileCommPartner.getId();
+	}
 
 	@Override
 	public List<IGDTCommunicationPartner> getChildCommunicationPartners() {
 		List<IGDTCommunicationPartner> communicationPartners = new ArrayList<IGDTCommunicationPartner>();
 		final DefaultFileCommPartner parent = this;
-		for (String name : FileCommPartner.getAllFileCommPartnersArray())
+		for (String id : FileCommPartner.getAllFileCommPartnersArray())
 		{
-			if (!defaultFileCommPartner.getName().equals(name))
+			if (!defaultFileCommPartner.getId().equals(id))
 			{
-				final FileCommPartner fileCommPartner = new FileCommPartner(name);
-				communicationPartners.add(new IGDTCommunicationPartner() {
+				final FileCommPartner fileCommPartner = new FileCommPartner(id);
+				communicationPartners.add(new IGDTCommunicationPartnerProvider() {
 					
 					@Override
 					public String[] getSupported8402valuesDetailDescription() {
@@ -151,17 +163,22 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					
 					@Override
 					public String getShortIDReceiver() {
-						return CoreHub.localCfg.get(fileCommPartner.getFileTransferShortIdReceiver(), "MDEV");
+						return defaultFileCommPartner.getSettings()
+							.get(fileCommPartner.getFileTransferShortIdReceiver(), "MDEV");
 					}
 					
 					@Override
 					public String getRequiredFileType() {
-						return CoreHub.localCfg.get(fileCommPartner.getFileTransferUsedType(), GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND);
+						return defaultFileCommPartner.getSettings().get(
+							fileCommPartner.getFileTransferUsedType(),
+							GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND);
 					}
 					
 					@Override
 					public String getOutgoingDirectory() {
-						return CoreHub.localCfg.get(fileCommPartner.getFileTransferDirectory(),"");
+						return defaultFileCommPartner.getSettings().get(
+							fileCommPartner.getFileTransferOutDirectory(),
+							"");
 					}
 					
 					@Override
@@ -171,14 +188,18 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					
 					@Override
 					public String getLabel() {
-						return "Erweiterte-Datei-Kommunikation ("
-								+ CoreHub.localCfg
+						return defaultFileCommPartner.getSettings()
+							.get(fileCommPartner.getFileTransferName(), "")
+							+ " ("
+							+ defaultFileCommPartner.getSettings()
 									.get(fileCommPartner.getFileTransferDirectory(), "") + ")";
 					}
 					
 					@Override
 					public String getIncomingDirectory() {
-						return CoreHub.localCfg.get(fileCommPartner.getFileTransferDirectory(), "");
+						return defaultFileCommPartner.getSettings().get(
+							fileCommPartner.getFileTransferInDirectory(),
+							"");
 					}
 					
 					@Override
@@ -188,7 +209,8 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					
 					@Override
 					public String getIDReceiver() {
-						return CoreHub.localCfg.get(fileCommPartner.getFileTransferIdReceiver(), "MEDICALDEVICE");
+						return defaultFileCommPartner.getSettings()
+							.get(fileCommPartner.getFileTransferIdReceiver(), "MEDICALDEVICE");
 					}
 					
 					@Override
@@ -199,7 +221,8 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					@Override
 					public String getExternalHandlerProgram() {
 						String executable =
-								CoreHub.localCfg.get(fileCommPartner.getFileTransferExecuteable(),
+							defaultFileCommPartner.getSettings()
+								.get(fileCommPartner.getFileTransferExecuteable(),
 									null);
 							if (executable != null) {
 								File execFile = new File(executable);
@@ -218,6 +241,16 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					public String getConnectionString() {
 						return parent.getConnectionString();
 					}
+					
+					@Override
+					public List<IGDTCommunicationPartner> getChildCommunicationPartners(){
+						return Collections.emptyList();
+					}
+					
+					@Override
+					public String getId(){
+						return fileCommPartner.getId();
+					}
 				});
 			
 			}
@@ -225,5 +258,4 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 		}
 		return communicationPartners;
 	}
-	
 }

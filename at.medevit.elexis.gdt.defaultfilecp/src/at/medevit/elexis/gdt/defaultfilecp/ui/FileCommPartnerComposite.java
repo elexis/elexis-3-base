@@ -1,5 +1,7 @@
 package at.medevit.elexis.gdt.defaultfilecp.ui;
 
+import java.util.UUID;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,7 +24,6 @@ import org.eclipse.swt.widgets.Text;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.defaultfilecp.FileCommPartner;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 
@@ -32,6 +33,7 @@ public class FileCommPartnerComposite extends Composite {
 	private final IPreferencePage preferencePage;
 	private final ScrolledComposite scrolledComposite;
 	
+	private Text txtName;
 	private Text txtIdReceiver;
 	private Text txtIdShortReceiver;
 	private Text txtExchangeDir;
@@ -41,13 +43,15 @@ public class FileCommPartnerComposite extends Composite {
 	private Text txtAdditionalParam;
 	private Button[] btnFileTypes = new Button[2];
 	
-	public FileCommPartnerComposite(IPreferencePage preferencePage, Composite editorParent,
+	public FileCommPartnerComposite(IPreferencePage preferencePage,
+		ScrolledComposite scrolledComposite, Composite editorParent,
 		FileCommPartner fileCommPartner){
 		super(editorParent, SWT.BORDER);
 		this.preferencePage = preferencePage;
 		this.fileCommPartner = fileCommPartner;
 		createElements();
-		scrolledComposite = findScrolledComposite();
+		this.scrolledComposite = scrolledComposite;
+		refreshParent(getParent());
 	}
 	
 	private void createElements(){
@@ -55,14 +59,19 @@ public class FileCommPartnerComposite extends Composite {
 		this.setLayout(new GridLayout(3, false));
 		
 		GridData gridData1Col = SWTHelper.getFillGridData(1, true, 1, false);
-		gridData1Col.widthHint = 150;
+		gridData1Col.widthHint = 120;
 		GridData gridData2Col = SWTHelper.getFillGridData(2, true, 1, false);
 		GridData gridData3Col = SWTHelper.getFillGridData(3, true, 1, false);
 		
-		Label label = new Label(this, SWT.CENTER);
-		label.setText(fileCommPartner.getName());
+		Label label = new Label(this, SWT.RIGHT);
+		label.setText("");
 		label.setLayoutData(gridData3Col);
 		label.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY));
+		
+		new Label(this, SWT.NONE).setText("Gerätename");
+		txtName = new Text(this, SWT.BORDER);
+		txtName.setLayoutData(gridData2Col);
+		txtName.setText(getValueByConfigKey(fileCommPartner.getFileTransferName()));
 		
 		new Label(this, SWT.NONE).setText("Lange GDT ID Receiver");
 		txtIdReceiver = new Text(this, SWT.BORDER);
@@ -194,7 +203,7 @@ public class FileCommPartnerComposite extends Composite {
 		});
 		btnRemove.setText("Entfernen");
 		btnRemove.setEnabled(
-			!FileCommPartner.DEFAULT_COMM_PARTNER_NAME.equals(fileCommPartner.getName()));
+			!FileCommPartner.DEFAULT_COMM_PARTNER_ID.equals(fileCommPartner.getId()));
 		
 		Button btnAdd = new Button(compositeBtns, SWT.CENTER);
 		btnAdd.addSelectionListener(new SelectionAdapter() {
@@ -203,11 +212,11 @@ public class FileCommPartnerComposite extends Composite {
 				InputDialog inDlg =
 					new InputDialog(getShell(), "Gerät", "Gerät hinzufügen", "", null); //$NON-NLS-1$
 				if (inDlg.open() == Dialog.OK) {
-					String name = inDlg.getValue();
-					if (!add(name))
+					String id = UUID.randomUUID().toString();
+					if (!add(id, inDlg.getValue()))
 					{
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-								"Der Gerätename wird bereits verwendet.");
+							"Dieses Gerät wird bereits verwendet.");
 					}
 				}
 			}
@@ -216,28 +225,59 @@ public class FileCommPartnerComposite extends Composite {
 	}
 	
 	private String getValueByConfigKey(String cfgKey){
-		return CoreHub.localCfg.get(cfgKey, "");
+		return fileCommPartner.getSettings().get(cfgKey, "");
 	}
 	
-	private boolean add(String name){
-		if (fileCommPartner.addFileCommPartner(name)) {
-			((GDTPreferencePageFileTransfer) preferencePage).createNewFileCommPartnerComposite(name);
-			refreshParent(getParent());
+	private boolean add(String id, String name){
+		if (addFileCommPartner(id)) {
+			((GDTPreferencePageFileTransfer) preferencePage).createNewFileCommPartnerComposite(id,
+				name,
+				scrolledComposite);
 			return true;
 		}
 		return false;
 	}
 	
+	private boolean addFileCommPartner(String id){
+		String cfg = getAllFileCommPartners();
+		if (!cfg.contains(id)) {
+			updateFileCommPartner(cfg + FileCommPartner.COMM_PARTNER_SEPERATOR + id);
+			return true;
+		}
+		return false;
+		
+	}
+	
+	private String getAllFileCommPartners(){
+		return fileCommPartner.getSettings()
+			.get(FileCommPartner.CFG_GDT_FILETRANSFER_IDS, FileCommPartner.DEFAULT_COMM_PARTNER_ID);
+	}
+	
+	private void removeFileCommPartner(String id){
+		String cfg = getAllFileCommPartners();
+		if (cfg.contains(id)) {
+			String newCfg = cfg.replaceFirst(FileCommPartner.COMM_PARTNER_SEPERATOR + id, "");
+			updateFileCommPartner(newCfg);
+		}
+	}
+	
+	private void updateFileCommPartner(String cfg){
+		fileCommPartner.getSettings().set(FileCommPartner.CFG_GDT_FILETRANSFER_IDS,
+			cfg);
+	}
+	
 	private void remove(){
-		fileCommPartner.removeFileCommPartner(fileCommPartner.getName());
-		CoreHub.localCfg.remove(fileCommPartner.getFileTransferIdReceiver());
-		CoreHub.localCfg.remove(fileCommPartner.getFileTransferShortIdReceiver());
-		CoreHub.localCfg.remove(fileCommPartner.getFileTransferDirectory());
-		CoreHub.localCfg.remove(fileCommPartner.getFileTransferInDirectory());
-		CoreHub.localCfg.remove(fileCommPartner.getFileTransferOutDirectory());
-		CoreHub.localCfg.remove(fileCommPartner.getFileTransferUsedType());
-		CoreHub.localCfg.remove(fileCommPartner.getFileTransferExecuteable());
-		CoreHub.localCfg.remove(fileCommPartner.getFileAdditionalParams());
+		removeFileCommPartner(fileCommPartner.getId());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferIdReceiver());
+		fileCommPartner.getSettings()
+			.remove(fileCommPartner.getFileTransferShortIdReceiver());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferDirectory());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferInDirectory());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferOutDirectory());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferUsedType());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferExecuteable());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileAdditionalParams());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferName());
 		
 		Composite parent = getParent();
 		dispose();
@@ -246,23 +286,31 @@ public class FileCommPartnerComposite extends Composite {
 	
 	public void save(){
 		if (!isDisposed()) {
-			CoreHub.localCfg.set(fileCommPartner.getFileTransferIdReceiver(),
+			fileCommPartner.getSettings().set(
+				fileCommPartner.getFileTransferIdReceiver(),
 				txtIdReceiver.getText());
-			CoreHub.localCfg.set(fileCommPartner.getFileTransferShortIdReceiver(),
+			fileCommPartner.getSettings().set(
+				fileCommPartner.getFileTransferShortIdReceiver(),
 				txtIdShortReceiver.getText());
-			CoreHub.localCfg.set(fileCommPartner.getFileTransferDirectory(),
+			fileCommPartner.getSettings().set(
+				fileCommPartner.getFileTransferDirectory(),
 				txtExchangeDir.getText());
-			CoreHub.localCfg.set(fileCommPartner.getFileTransferInDirectory(),
+			fileCommPartner.getSettings().set(
+				fileCommPartner.getFileTransferInDirectory(),
 				txtExchangeInDir.getText());
-			CoreHub.localCfg.set(fileCommPartner.getFileTransferOutDirectory(),
+			fileCommPartner.getSettings().set(
+				fileCommPartner.getFileTransferOutDirectory(),
 				txtExchangeOutDir.getText());
-			CoreHub.localCfg.set(fileCommPartner.getFileTransferUsedType(),
+			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferUsedType(),
 				btnFileTypes[1].getSelection() ? GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND
 						: GDTConstants.GDT_FILETRANSFER_TYP_FEST);
-			CoreHub.localCfg.set(fileCommPartner.getFileTransferExecuteable(),
+			fileCommPartner.getSettings().set(
+				fileCommPartner.getFileTransferExecuteable(),
 				txtExecutable.getText());
-			CoreHub.localCfg.set(fileCommPartner.getFileAdditionalParams(),
+			fileCommPartner.getSettings().set(fileCommPartner.getFileAdditionalParams(),
 				txtAdditionalParam.getText());
+			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferName(),
+				txtName.getText());
 		}
 	}
 	
@@ -271,17 +319,5 @@ public class FileCommPartnerComposite extends Composite {
 			scrolledComposite.setMinSize(parent.getParent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		}
 		parent.layout();
-	}
-	
-	private ScrolledComposite findScrolledComposite(){
-		Composite parent = this;
-		for (int i = 0; i < 10; i++) {
-			parent = parent.getParent();
-			if (parent instanceof ScrolledComposite) {
-				return (ScrolledComposite) parent;
-			}
-			
-		}
-		return null;
 	}
 }

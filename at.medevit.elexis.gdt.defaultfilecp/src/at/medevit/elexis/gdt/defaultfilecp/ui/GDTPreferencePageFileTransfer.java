@@ -15,10 +15,13 @@ package at.medevit.elexis.gdt.defaultfilecp.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
@@ -31,7 +34,6 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 public class GDTPreferencePageFileTransfer extends PreferencePage
 		implements IWorkbenchPreferencePage {
 	
-	private IPreferenceStore prefStore;
 	private Composite editorParent;
 	
 	List<FileCommPartnerComposite> fileCommPartnerComposites =
@@ -50,15 +52,56 @@ public class GDTPreferencePageFileTransfer extends PreferencePage
 		editorParent = new Composite(parent, SWT.NONE);
 		editorParent.setLayout(new GridLayout(3, false));
 		
-		for (String name : FileCommPartner.getAllFileCommPartnersArray()) {
-			createNewFileCommPartnerComposite(name);
-		}
+		Button btnCfg = new Button(editorParent, SWT.CHECK);
+		btnCfg.setText("Dateisystem Einstellungen global speichern");
+		btnCfg.setSelection(FileCommPartner.isFileTransferGlobalConfigured());
+		btnCfg.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				Button button = (Button) e.widget;
+				FileCommPartner.setFileTransferConfiguration(button.getSelection());
+				
+				for (Control c : editorParent.getChildren()) {
+					if (c instanceof FileCommPartnerComposite) {
+						c.dispose();
+					}
+				}
+				createContent();
+				editorParent.layout(true, true);
+			}
+		});
+		createContent();
 		return editorParent;
 	}
+
+	private void createContent(){
+		ScrolledComposite scrolledComposite = findScrolledComposite();
+		for (String id : FileCommPartner.getAllFileCommPartnersArray()) {
+			createNewFileCommPartnerComposite(id, null, scrolledComposite);
+		}
+	}
 	
-	public void createNewFileCommPartnerComposite(String name){
+	public void createNewFileCommPartnerComposite(String id, String name,
+		ScrolledComposite scrolledComposite){
+		FileCommPartner fileCommPartner = new FileCommPartner(id);
+		if (name != null) {
+			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferName(), name);
+		}
 		fileCommPartnerComposites
-			.add(new FileCommPartnerComposite(this, editorParent, new FileCommPartner(name)));
+			.add(new FileCommPartnerComposite(this, scrolledComposite, editorParent,
+				fileCommPartner));
+	}
+	
+	private ScrolledComposite findScrolledComposite(){
+		Composite parent = editorParent;
+		for (int i = 0; i < 10; i++) {
+			parent = parent.getParent();
+			if (parent instanceof ScrolledComposite) {
+				return (ScrolledComposite) parent;
+			}
+			
+		}
+		return null;
 	}
 	
 	@Override
@@ -66,6 +109,8 @@ public class GDTPreferencePageFileTransfer extends PreferencePage
 		for (FileCommPartnerComposite fileCommPartnerComposite : fileCommPartnerComposites) {
 			fileCommPartnerComposite.save();
 		}
+		CoreHub.userCfg.flush();
+		CoreHub.globalCfg.flush();
 		CoreHub.localCfg.flush();
 		return super.performOk();
 	}
@@ -74,7 +119,8 @@ public class GDTPreferencePageFileTransfer extends PreferencePage
 	 * Initialize the preferference page.
 	 */
 	public void init(IWorkbench workbench){
-		prefStore = new SettingsPreferenceStore(CoreHub.localCfg);
-		setPreferenceStore(prefStore);
+		setPreferenceStore(
+			new SettingsPreferenceStore(FileCommPartner.isFileTransferGlobalConfigured()
+					? CoreHub.globalCfg : CoreHub.localCfg));
 	}
 }

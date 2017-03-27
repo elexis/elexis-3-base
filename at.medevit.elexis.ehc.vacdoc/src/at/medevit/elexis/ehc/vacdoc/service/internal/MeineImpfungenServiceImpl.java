@@ -379,10 +379,11 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		if (birthDate != null && !birthDate.isEmpty()) {
 			mpiQuery.setPatientDateOfBirth(DateUtil.date(birthDate));
 		}
-		
 		MasterPatientIndexQueryResponse ret =
 			ConvenienceMasterPatientIndexV3.queryPatientDemographics(mpiQuery, affinityDomain);
-		
+		if (!ret.getSuccess()) {
+			throw new IllegalStateException("Error contacting meineimpfungen Service");
+		}
 		return ret.getPatients();
 	}
 	

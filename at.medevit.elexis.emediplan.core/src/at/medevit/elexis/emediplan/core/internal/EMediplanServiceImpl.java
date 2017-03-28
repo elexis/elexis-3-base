@@ -111,7 +111,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 			imageLoader.data = new ImageData[] {
 				qr.getImageData()
 			};
-			imageLoader.compression = 95;
+			imageLoader.compression = 100;
 			imageLoader.save(output, SWT.IMAGE_JPEG);
 			return "data:image/jpg;base64,"
 				+ Base64.getEncoder().encodeToString(output.toByteArray());
@@ -141,7 +141,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 		QRCodeWriter qrCodeWriter = new QRCodeWriter();
 		try {
 			BitMatrix bitMatrix =
-				qrCodeWriter.encode(encodedJson, BarcodeFormat.QR_CODE, 150, 150, hintMap);
+				qrCodeWriter.encode(encodedJson, BarcodeFormat.QR_CODE, 470, 470, hintMap);
 			int width = bitMatrix.getWidth();
 			int height = bitMatrix.getHeight();
 			

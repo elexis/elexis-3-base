@@ -109,6 +109,8 @@
   <module>at.medevit.elexis.ehc.ui.docbox</module>
   <module>at.medevit.elexis.ehc.ui.example</module>
   <module>at.medevit.elexis.ehc.feature</module>
+  <module>at.medevit.elexis.agenda.ui</module>
+  <module>at.medevit.elexis.agenda.feature</module>
   <module>at.medevit.elexis.emediplan.core</module>
   <module>at.medevit.elexis.emediplan.ui</module>
   <module>at.medevit.elexis.emediplan.feature</module>

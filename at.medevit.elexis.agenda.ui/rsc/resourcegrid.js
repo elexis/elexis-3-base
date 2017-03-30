@@ -251,7 +251,7 @@ var ResourceGrid = FC.ResourceGrid = Grid.extend({
 
 		for (col = 0; col < this.colCnt; col++) {
 			date = this.getCellDate(row, col);
-			htmls.push(this.renderBgCellHtml(date));
+			htmls.push(this.renderBgCellHtml(date, ' data-resource="' + this.resourceIds[col] + '"'));
 		}
 
 		return htmls.join('');

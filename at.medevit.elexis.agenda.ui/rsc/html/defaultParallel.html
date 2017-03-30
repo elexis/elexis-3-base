@@ -62,7 +62,7 @@
 
 		function dayClickCallback(date, jsEvent, view) {
 			if (slotDate) {
-				dayClickFunction(date.format());
+				dayClickFunction(date.format(), jsEvent.resource);
 				forgetSlot();
 			} else {
 				singleClickFunction();

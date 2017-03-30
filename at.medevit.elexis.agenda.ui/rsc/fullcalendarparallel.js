@@ -67,7 +67,7 @@ function distributeHeight(els, availableHeight, shouldRedistribute) {
 
 	// find elements that are below the recommended height (expandable).
 	// important to query for heights in a single first pass (to avoid reflow oscillation).
-	els.each(function(i, el) {
+	els.each(function (i, el) {
 		var minOffset = i === els.length - 1 ? minOffset2 : minOffset1;
 		var naturalOffset = $(el).outerHeight(true);
 
@@ -90,7 +90,7 @@ function distributeHeight(els, availableHeight, shouldRedistribute) {
 	}
 
 	// assign heights to all expandable elements
-	$(flexEls).each(function(i, el) {
+	$(flexEls).each(function (i, el) {
 		var minOffset = i === flexEls.length - 1 ? minOffset2 : minOffset1;
 		var naturalOffset = flexOffsets[i];
 		var naturalHeight = flexHeights[i];
@@ -115,7 +115,7 @@ function undistributeHeight(els) {
 function matchCellWidths(els) {
 	var maxInnerWidth = 0;
 
-	els.find('> *').each(function(i, innerEl) {
+	els.find('> *').each(function (i, innerEl) {
 		var innerWidth = $(innerEl).outerWidth();
 		if (innerWidth > maxInnerWidth) {
 			maxInnerWidth = innerWidth;
@@ -167,9 +167,9 @@ ParallelView = View.extend({
 	bottomRuleEl: null,
 
 
-	initialize: function() {
+	initialize: function () {
 		this.resourceGrid = new FC.ResourceGrid(this);
-		
+
 		this.scroller = new FC.Scroller({
 			overflowX: 'hidden',
 			overflowY: 'auto'
@@ -182,21 +182,21 @@ ParallelView = View.extend({
 
 
 	// Sets the display range and computes all necessary dates
-	setRange: function(range) {
+	setRange: function (range) {
 		View.prototype.setRange.call(this, range); // call the super-method
 
 		this.resourceGrid.setRange(range);
 	},
 
 	// Set the resource ids represented by columns 
-	setResourceIds: function(resourceIds) {
+	setResourceIds: function (resourceIds) {
 		this.resourceGrid.setResourceIds(resourceIds);
 		this.requestDateRender();
 		this.requestCurrentEventsRender();
 	},
 
 	// Renders the view into `this.el`, which has already been assigned
-	renderDates: function() {
+	renderDates: function () {
 
 		this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml());
 		this.renderHead();
@@ -218,7 +218,7 @@ ParallelView = View.extend({
 
 
 	// render the day-of-week headers
-	renderHead: function() {
+	renderHead: function () {
 		this.headContainerEl =
 			this.el.find('.fc-head-container')
 				.html(this.resourceGrid.renderHeadHtml());
@@ -227,7 +227,7 @@ ParallelView = View.extend({
 
 	// Unrenders the content of the view. Since we haven't separated skeleton rendering from date rendering,
 	// always completely kill each grid's rendering.
-	unrenderDates: function() {
+	unrenderDates: function () {
 		this.resourceGrid.unrenderDates();
 		this.resourceGrid.removeElement();
 
@@ -237,28 +237,28 @@ ParallelView = View.extend({
 
 	// Builds the HTML skeleton for the view.
 	// The day-grid and time-grid components will render inside containers defined by this HTML.
-	renderSkeletonHtml: function() {
+	renderSkeletonHtml: function () {
 		return '' +
 			'<table>' +
-				'<thead class="fc-head">' +
-					'<tr>' +
-						'<td class="fc-head-container ' + this.widgetHeaderClass + '"></td>' +
-					'</tr>' +
-				'</thead>' +
-				'<tbody class="fc-body">' +
-					'<tr>' +
-						'<td class="' + this.widgetContentClass + '">' +
-						'</td>' +
-					'</tr>' +
-				'</tbody>' +
+			'<thead class="fc-head">' +
+			'<tr>' +
+			'<td class="fc-head-container ' + this.widgetHeaderClass + '"></td>' +
+			'</tr>' +
+			'</thead>' +
+			'<tbody class="fc-body">' +
+			'<tr>' +
+			'<td class="' + this.widgetContentClass + '">' +
+			'</td>' +
+			'</tr>' +
+			'</tbody>' +
 			'</table>';
 	},
 
 
 	// Generates an HTML attribute string for setting the width of the axis, if it is known
-	axisStyleAttr: function() {
+	axisStyleAttr: function () {
 		if (this.axisWidth !== null) {
-			 return 'style="width:' + this.axisWidth + 'px"';
+			return 'style="width:' + this.axisWidth + 'px"';
 		}
 		return '';
 	},
@@ -268,12 +268,12 @@ ParallelView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	renderBusinessHours: function() {
+	renderBusinessHours: function () {
 		this.resourceGrid.renderBusinessHours();
 	},
 
 
-	unrenderBusinessHours: function() {
+	unrenderBusinessHours: function () {
 		this.resourceGrid.unrenderBusinessHours();
 	},
 
@@ -282,17 +282,17 @@ ParallelView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	getNowIndicatorUnit: function() {
+	getNowIndicatorUnit: function () {
 		return this.resourceGrid.getNowIndicatorUnit();
 	},
 
 
-	renderNowIndicator: function(date) {
+	renderNowIndicator: function (date) {
 		this.resourceGrid.renderNowIndicator(date);
 	},
 
 
-	unrenderNowIndicator: function() {
+	unrenderNowIndicator: function () {
 		this.resourceGrid.unrenderNowIndicator();
 	},
 
@@ -301,7 +301,7 @@ ParallelView = View.extend({
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	updateSize: function(isResize) {
+	updateSize: function (isResize) {
 		this.resourceGrid.updateSize(isResize);
 
 		View.prototype.updateSize.call(this, isResize); // call the super-method
@@ -309,14 +309,14 @@ ParallelView = View.extend({
 
 
 	// Refreshes the horizontal dimensions of the view
-	updateWidth: function() {
+	updateWidth: function () {
 		// make all axis cells line up, and record the width so newly created axis cells will have it
 		this.axisWidth = matchCellWidths(this.el.find('.fc-axis'));
 	},
 
 
 	// Adjusts the vertical dimensions of the view to the specified values
-	setHeight: function(totalHeight, isAuto) {
+	setHeight: function (totalHeight, isAuto) {
 		var eventLimit;
 		var scrollerHeight;
 		var scrollbarWidths;
@@ -357,7 +357,7 @@ ParallelView = View.extend({
 
 
 	// given a desired total height of the view, returns what the height of the scroller should be
-	computeScrollerHeight: function(totalHeight) {
+	computeScrollerHeight: function (totalHeight) {
 		return totalHeight -
 			subtractInnerElHeight(this.el, this.scroller.el); // everything that's NOT the scroller
 	},
@@ -368,7 +368,7 @@ ParallelView = View.extend({
 
 
 	// Computes the initial pre-configured scroll state prior to allowing the user to change it
-	computeInitialScroll: function() {
+	computeInitialScroll: function () {
 		var scrollTime = moment.duration(this.opt('scrollTime'));
 		var top = this.resourceGrid.computeTimeTop(scrollTime);
 
@@ -383,12 +383,12 @@ ParallelView = View.extend({
 	},
 
 
-	queryScroll: function() {
+	queryScroll: function () {
 		return { top: this.scroller.getScrollTop() };
 	},
 
 
-	setScroll: function(scroll) {
+	setScroll: function (scroll) {
 		this.scroller.setScrollTop(scroll.top);
 	},
 
@@ -398,40 +398,40 @@ ParallelView = View.extend({
 	// forward all hit-related method calls to the grids (dayGrid might not be defined)
 
 
-	hitsNeeded: function() {
+	hitsNeeded: function () {
 		this.resourceGrid.hitsNeeded();
 	},
 
 
-	hitsNotNeeded: function() {
+	hitsNotNeeded: function () {
 		this.resourceGrid.hitsNotNeeded();
 	},
 
 
-	prepareHits: function() {
+	prepareHits: function () {
 		this.resourceGrid.prepareHits();
 	},
 
 
-	releaseHits: function() {
+	releaseHits: function () {
 		this.resourceGrid.releaseHits();
 	},
 
 
-	queryHit: function(left, top) {
+	queryHit: function (left, top) {
 		var hit = this.resourceGrid.queryHit(left, top);
 
 		return hit;
 	},
 
 
-	getHitSpan: function(hit) {
+	getHitSpan: function (hit) {
 		// TODO: hit.component is set as a hack to identify where the hit came from
 		return hit.component.getHitSpan(hit);
 	},
 
 
-	getHitEl: function(hit) {
+	getHitEl: function (hit) {
 		// TODO: hit.component is set as a hack to identify where the hit came from
 		return hit.component.getHitEl(hit);
 	},
@@ -442,7 +442,7 @@ ParallelView = View.extend({
 
 
 	// Renders events onto the view and populates the View's segment array
-	renderEvents: function(events) {
+	renderEvents: function (events) {
 		var dayEvents = [];
 		var timedEvents = [];
 		var daySegs = [];
@@ -471,13 +471,13 @@ ParallelView = View.extend({
 
 
 	// Retrieves all segment objects that are rendered in the view
-	getEventSegs: function() {
+	getEventSegs: function () {
 		return this.resourceGrid.getEventSegs();
 	},
 
 
 	// Unrenders all event elements and clears internal segment data
-	unrenderEvents: function() {
+	unrenderEvents: function () {
 
 		// unrender the events in the subcomponents
 		this.resourceGrid.unrenderEvents();
@@ -492,14 +492,14 @@ ParallelView = View.extend({
 
 
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(dropLocation, seg) {
+	renderDrag: function (dropLocation, seg) {
 		if (dropLocation.start.hasTime()) {
 			return this.resourceGrid.renderDrag(dropLocation, seg);
 		}
 	},
 
 
-	unrenderDrag: function() {
+	unrenderDrag: function () {
 		this.resourceGrid.unrenderDrag();
 	},
 
@@ -509,7 +509,7 @@ ParallelView = View.extend({
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(span) {
+	renderSelection: function (span) {
 		if (span.start.hasTime() || span.end.hasTime()) {
 			this.resourceGrid.renderSelection(span);
 		}
@@ -517,10 +517,31 @@ ParallelView = View.extend({
 
 
 	// Unrenders a visual indications of a selection
-	unrenderSelection: function() {
+	unrenderSelection: function () {
 		this.resourceGrid.unrenderSelection();
-	}
+	},
 
+	/* Day Click
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Triggers handlers to 'dayClick'
+	// Span has start/end of the clicked area. Only the start is useful.
+	triggerDayClick: function (span, dayEl, ev) {
+		if (dayEl.length > 0) {
+			for (var i = 0, atts = dayEl[0].attributes; i < atts.length; i++) {
+				if (atts[i].nodeName === 'data-resource') {
+					ev.resource = atts[i].nodeValue;
+				}
+			}
+		}
+		this.publiclyTrigger(
+			'dayClick',
+			dayEl,
+			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
+			ev
+		);
+	}
 });
 
 FC.views.agendaParallel = ParallelView; // register our class with the view system

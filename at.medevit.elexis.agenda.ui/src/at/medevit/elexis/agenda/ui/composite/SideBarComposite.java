@@ -185,6 +185,7 @@ public class SideBarComposite extends Composite {
 	}
 	
 	private void saveSelectedResources(){
+		agendaComposite.setSelectedResources(selectedResources);
 		StringBuilder sb = new StringBuilder();
 		for (String resource : selectedResources) {
 			if (sb.length() > 0) {

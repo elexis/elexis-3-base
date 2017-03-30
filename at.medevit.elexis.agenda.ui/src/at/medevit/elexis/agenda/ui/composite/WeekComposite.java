@@ -41,6 +41,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	private ISelection currentSelection;
 	private ListenerList listeners = new ListenerList();
 	private AgendaSpanSize currentSpanSize;
+	private DayClickFunction dayClickFunction;
 	
 	public WeekComposite(IWorkbenchPartSite partSite, Composite parent, int style){
 		super(parent, style);
@@ -60,7 +61,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		
 		new EventResizeFunction(browser, "eventResizeFunction");
 		
-		new DayClickFunction(browser, "dayClickFunction");
+		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
 		URL url = FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultWeek.html");
 		
@@ -120,6 +121,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	@Override
 	public void setSelectedResources(List<String> selectedResources){
 		loadEventsFunction.setResources(selectedResources);
+		dayClickFunction.setSelectedResources(selectedResources);
 		refetchEvents();
 	}
 	

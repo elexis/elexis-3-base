@@ -46,6 +46,8 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	
 	private AgendaSpanSize currentSpanSize;
 	
+	private DayClickFunction dayClickFunction;
+	
 	public ParallelComposite(IWorkbenchPartSite partSite, Composite parent, int style){
 		super(parent, style);
 		setLayout(new FillLayout());
@@ -64,7 +66,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		
 		new EventResizeFunction(browser, "eventResizeFunction");
 		
-		new DayClickFunction(browser, "dayClickFunction");
+		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
 		URL url = FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultParallel.html");
 		
@@ -128,6 +130,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		this.selectedResources.addAll(selectedResources);
 		initializeResources();
 		loadEventsFunction.setResources(selectedResources);
+		dayClickFunction.setSelectedResources(selectedResources);
 	}
 	
 	@Override

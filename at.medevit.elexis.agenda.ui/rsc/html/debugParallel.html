@@ -40,9 +40,11 @@
 
 		function dayClickCallback(date, jsEvent, view) {
 			if (slotDate) {
-				dayClickFunction(date.format());
 				forgetSlot();
 			} else {
+				console.debug(date.format());
+				console.debug(jsEvent.resource);
+				console.debug(view);
 				slotDate = date;
 				$("#calendar").on("mousemove", forgetSlot);
 			}

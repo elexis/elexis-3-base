@@ -59,6 +59,7 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.data.Termin.Free;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.agenda.util.TimeInput;
@@ -66,6 +67,7 @@ import ch.elexis.agenda.util.TimeInput.TimeInputListener;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -74,6 +76,7 @@ import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.util.NumberInput;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
@@ -141,6 +144,29 @@ public class TerminDialog extends TitleAreaDialog {
 			UiDesk.getColorRegistry().put(UiDesk.COL_GREEN, new RGB(0, 255, 0));
 		}
 		actPlannable = act;
+		tMap = Plannables.getTimePrefFor(agenda.getActResource());
+		tMap.put(Termin.typFrei(), "0"); //$NON-NLS-1$
+		tMap.put(Termin.typReserviert(), "0"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Use this constructor for creating a new {@link Termin} from a date and for a resource.
+	 * 
+	 * @param date
+	 * @param resource
+	 * @param patient
+	 */
+	public TerminDialog(@NonNull TimeTool date, @NonNull String resource, Patient patient){
+		super(UiDesk.getTopShell());
+		Free act = new Termin.Free(date.toString(TimeTool.DATE_COMPACT),
+			date.get(TimeTool.HOUR_OF_DAY) * 60 + date.get(TimeTool.MINUTE), 30);
+		actKontakt = patient;
+		Color green = UiDesk.getColor(UiDesk.COL_GREEN);
+		if (green == null) {
+			UiDesk.getColorRegistry().put(UiDesk.COL_GREEN, new RGB(0, 255, 0));
+		}
+		actPlannable = act;
+		agenda.setActResource(resource);
 		tMap = Plannables.getTimePrefFor(agenda.getActResource());
 		tMap.put(Termin.typFrei(), "0"); //$NON-NLS-1$
 		tMap.put(Termin.typReserviert(), "0"); //$NON-NLS-1$

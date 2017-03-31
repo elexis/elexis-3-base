@@ -1,9 +1,11 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -64,9 +66,15 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
-		URL url = FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultWeek.html");
-		LoggerFactory.getLogger(getClass()).debug("Open url [" + url.toString() + "]");
-		browser.setUrl(url.toString());
+		try {
+			URL url = FileLocator.toFileURL(
+				FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultWeek.html"));
+			LoggerFactory.getLogger(getClass()).debug("Open url [" + url.getFile() + "]");
+			browser.setUrl(url.toString());
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass())
+				.error("Could not set url to /rsc/html/defaultWeek.html", e);
+		}
 		
 		browser.addControlListener(new ControlAdapter() {
 			@Override
@@ -82,8 +90,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		browser.setMenu(menu);
 		if (partSite != null) {
 			partSite.setSelectionProvider(this);
-			partSite.registerContextMenu("at.medevit.elexis.agenda.ui.week", menuManager,
-				this);
+			partSite.registerContextMenu("at.medevit.elexis.agenda.ui.week", menuManager, this);
 		}
 		
 		browser.addProgressListener(new ProgressAdapter() {

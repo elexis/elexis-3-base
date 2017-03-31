@@ -1,10 +1,12 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -69,9 +71,15 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
-		URL url = FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultParallel.html");
-		LoggerFactory.getLogger(getClass()).debug("Open url [" + url.toString() + "]");
-		browser.setUrl(url.toString());
+		try {
+			URL url = FileLocator.toFileURL(
+				FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultParallel.html"));
+			LoggerFactory.getLogger(getClass()).debug("Open url [" + url.getFile() + "]");
+			browser.setUrl(url.toString());
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass())
+				.error("Could not set url to /rsc/html/defaultParallel.html", e);
+		}
 		
 		browser.addControlListener(new ControlAdapter() {
 			@Override
@@ -87,8 +95,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		browser.setMenu(menu);
 		if (partSite != null) {
 			partSite.setSelectionProvider(this);
-			partSite.registerContextMenu("at.medevit.elexis.agenda.ui.parallel", menuManager,
-				this);
+			partSite.registerContextMenu("at.medevit.elexis.agenda.ui.parallel", menuManager, this);
 		}
 		
 		browser.addProgressListener(new ProgressAdapter() {

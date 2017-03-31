@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.osgi.framework.FrameworkUtil;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.function.ContextMenuFunction;
 import at.medevit.elexis.agenda.ui.function.DayClickFunction;
@@ -64,7 +65,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
 		URL url = FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultWeek.html");
-		
+		LoggerFactory.getLogger(getClass()).debug("Open url [" + url.toString() + "]");
 		browser.setUrl(url.toString());
 		
 		browser.addControlListener(new ControlAdapter() {

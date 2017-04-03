@@ -121,11 +121,14 @@ public class Event {
 		ret.end = iPeriod.getEndTime().toLocalDateTime().toString();
 		if(iPeriod instanceof Termin) {
 			ret.title = ((Termin) iPeriod).getPersonalia();
-			ret.description = ((Termin) iPeriod).getGrund();
 			ret.resource = ((Termin) iPeriod).getBereich();
 			if (isDayLimit(iPeriod)) {
 				ret.rendering = "background";
 			} else {
+				ret.description =
+					((Termin) iPeriod).getGrund().replaceAll("\n", "<br />") + "<br /><br />"
+					+ ((Termin) iPeriod).getStatusHistoryDesc(true).replaceAll("\n", "<br />");
+				
 				ret.borderColor = getStateColor(iPeriod);
 				ret.backgroundColor = getTypColor(iPeriod);
 				ret.textColor = getTextColor(ret.backgroundColor.substring(1));

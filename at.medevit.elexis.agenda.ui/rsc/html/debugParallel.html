@@ -28,8 +28,8 @@
 				events: [
 					{
 						title: 'Meeting Anton',
-						start: '2017-03-29T10:30:00',
-						end: '2017-03-29T12:30:00',
+						start: '2017-04-03T10:30:00',
+						end: '2017-04-03T12:30:00',
 						resource: 'Anton'
 					},
 				],
@@ -65,8 +65,21 @@
 			element.contextmenu(function () {
 				contextMenuFunction(event.id);
 			});
+			if (event.rendering === undefined) {
+				if (!element.hasClass('fc-helper')) {
+					element.qtip({
+						style: { classes: 'qtip-dark' },
+						content: {
+							title: event.title,
+							text: event.description
+						},
+						position: {
+							viewport: $('#calendar')
+						},
+					});
+				}
+			}
 		}
-
 	</script>
 	<style>
 		body {

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -17,8 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -26,9 +26,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import ch.elexis.agenda.data.Termin;
@@ -42,7 +41,7 @@ public class SideBarComposite extends Composite {
 	
 	private ComboViewer spanSizeCombo;
 	
-	private Label indication;
+	private ToolBarManager menuManager;
 	
 	public SideBarComposite(Composite parent, int style){
 		super(parent, style);
@@ -51,9 +50,23 @@ public class SideBarComposite extends Composite {
 		
 		setLayout(new GridLayout(1, true));
 		
-		indication = new Label(this, SWT.NONE);
-		indication.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
-		
+		menuManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL);
+		menuManager.add(new Action(">", Action.AS_PUSH_BUTTON) {
+			@Override
+			public void run(){
+				if (">".equals(super.getText())) {
+					showContent();
+					super.setText("<");
+				} else {
+					hideContent();
+					super.setText(">");
+				}
+				super.run();
+			}
+		});
+		menuManager.createControl(this)
+			.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+
 		DateTime calendar = new DateTime(this, SWT.CALENDAR);
 		calendar.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -115,33 +128,14 @@ public class SideBarComposite extends Composite {
 				}
 			}
 		});
-		
-		addListener(SWT.MouseEnter, new Listener() {
-			@Override
-			public void handleEvent(Event event){
-				showContent();
-			}
-		});
-		
-		addListener(SWT.MouseExit, new Listener() {
-			@Override
-			public void handleEvent(Event event){
-				// filter exit events triggered by moving over children
-				Rectangle bounds = getBounds();
-				if (!bounds.contains(new Point(event.x, event.y))) {
-					hideContent();
-				}
-			}
-		});
-		
 		hideContent();
 	}
 	
 	private void hideContent(){
 		Control[] controls = getChildren();
 		for (Control control : controls) {
-			if (control == indication) {
-				indication.setText(">");
+			if (control instanceof ToolBar) {
+				// never hide the toolbar
 				continue;
 			}
 			GridData gridData = (GridData) control.getLayoutData();
@@ -158,10 +152,6 @@ public class SideBarComposite extends Composite {
 	private void showContent(){
 		Control[] controls = getChildren();
 		for (Control control : controls) {
-			if (control == indication) {
-				indication.setText("<");
-				continue;
-			}
 			GridData gridData = (GridData) control.getLayoutData();
 			if (gridData == null) {
 				gridData = new GridData();

@@ -22,6 +22,11 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 		}
 	}
 	
+	public void redraw(){
+		String refetchEvents = "$('#calendar').fullCalendar('rerenderEvents');";
+		getBrowser().execute(refetchEvents);
+	}
+	
 	protected LocalDateTime getDateTimeArg(Object object){
 		if (object instanceof String) {
 			if (((String) object).length() == 10) {

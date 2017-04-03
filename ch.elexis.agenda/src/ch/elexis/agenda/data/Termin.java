@@ -537,6 +537,10 @@ public class Termin extends PersistentObject
 	 * Mehrzeiliger String der die History der Statusaenderungen dieses Termins abrufen
 	 */
 	public String getStatusHistoryDesc(){
+		return getStatusHistoryDesc(false);
+	}
+	
+	public String getStatusHistoryDesc(boolean fullTime){
 		StringBuilder sb = new StringBuilder();
 		
 		String lines[] = get(FLD_STATUSHIST).split(StringTool.lf);
@@ -546,8 +550,13 @@ public class Termin extends PersistentObject
 				continue;
 			
 			TimeTool tt = new TimeTool(checkZero(f[0]), 60000);
-			sb.append(tt.toString(TimeTool.TIME_SMALL)).append(": ").append(f[1])
+			if (fullTime) {
+				sb.append(tt.toString(TimeTool.FULL_GER)).append(": ").append(f[1])
+					.append(StringTool.lf);
+			} else {
+				sb.append(tt.toString(TimeTool.TIME_SMALL)).append(": ").append(f[1])
 				.append(StringTool.lf);
+			}
 		}
 		
 		return sb.toString();

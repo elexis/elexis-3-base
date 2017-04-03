@@ -23,7 +23,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 			AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
 				@Override
 				public void lockFailed(){
-					// do nothing
+					redraw();
 				}
 				
 				@Override
@@ -39,6 +39,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						}
 					}
 					ElexisEventDispatcher.reload(Termin.class);
+					redraw();
 				}
 			});
 		} else {

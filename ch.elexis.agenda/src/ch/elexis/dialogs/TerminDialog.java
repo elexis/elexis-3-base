@@ -172,6 +172,10 @@ public class TerminDialog extends TitleAreaDialog {
 		tMap.put(Termin.typReserviert(), "0"); //$NON-NLS-1$
 	}
 	
+	public static void setActResource(String resource){
+		Activator.getDefault().setActResource(resource);
+	}
+	
 	@Override
 	protected Control createDialogArea(final Composite parent){
 		ScrolledComposite sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);

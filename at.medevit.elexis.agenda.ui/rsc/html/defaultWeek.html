@@ -33,6 +33,12 @@
 					eventResizeFunction(event.id, event.start.format(), event.end.format());
 				},
 				eventRender: eventRenderCallback,
+				eventDragStart: function (event, jsEvent, ui, view) {
+					event.qtip('destroy');
+				},
+				eventResizeStart: function (event, jsEvent, ui, view) {
+					event.qtip('destroy');
+				}
 			});
 		});
 
@@ -87,8 +93,21 @@
 			element.contextmenu(function () {
 				contextMenuFunction(event.id);
 			});
+			if (event.rendering === undefined) {
+				if (!element.hasClass('fc-helper')) {
+					element.qtip({
+						style: { classes: 'qtip-dark' },
+						content: {
+							title: "[" + event.resource + "] " + event.title,
+							text: event.description
+						},
+						position: {
+							viewport: $('#calendar')
+						}
+					});
+				}
+			}
 		}
-
 	</script>
 	<style>
 		body {

@@ -27,6 +27,7 @@ public class DoubleClickFunction extends BrowserFunction {
 				
 				@Override
 				public void lockAcquired(){
+					TerminDialog.setActResource(((Termin) termin).getBereich());
 					TerminDialog dlg = new TerminDialog((IPlannable) termin);
 					dlg.open();
 				}

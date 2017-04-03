@@ -25,7 +25,7 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 			AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
 				@Override
 				public void lockFailed(){
-					// do nothing
+					redraw();
 				}
 				
 				@Override
@@ -33,6 +33,7 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 					termin.setStartTime(new TimeTool(startDate));
 					termin.setEndTime(new TimeTool(endDate));
 					ElexisEventDispatcher.reload(Termin.class);
+					redraw();
 				}
 			});
 		} else {

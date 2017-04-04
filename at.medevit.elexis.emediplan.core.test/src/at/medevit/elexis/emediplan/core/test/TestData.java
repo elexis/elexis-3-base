@@ -66,8 +66,8 @@ public class TestData {
 				BigInteger.valueOf(1336630l), "DAFALGAN Tabl 500 mg (16 Stk)", "");
 			prescription = new Prescription(item, patients.get(0), "1-1/2-1", "");
 			prescription.setEntryType(EntryType.FIXED_MEDICATION);
-			// Einnahmevorschrift
-			prescription.setBemerkung("Einnahmevorschrift");
+			// Anwendungsinstruktion
+			prescription.setBemerkung("Anwendungsinstruktion");
 			TimeTool endDate = new TimeTool();
 			endDate.addDays(7);
 			prescription.setEndDate(endDate.toString(TimeTool.TIMESTAMP));
@@ -76,13 +76,13 @@ public class TestData {
 				"MORPHIN HCL 1 % Streuli Tropfen 10 mg/ml (20 ml)", "");
 			prescription = new Prescription(item, patients.get(0), "2-0-2", "");
 			prescription.setEntryType(EntryType.FIXED_MEDICATION);
-			// Einnahmevorschrift
-			prescription.setBemerkung("Einnahmevorschrift");
+			// Anwendungsinstruktion
+			prescription.setBemerkung("Anwendungsinstruktion");
 			
 			prescription = new Prescription(bagMedi, patients.get(0), "freetext dosis", "");
 			prescription.setEntryType(EntryType.RESERVE_MEDICATION);
-			// Einnahmevorschrift
-			prescription.setBemerkung("Einnahmevorschrift");
+			// Anwendungsinstruktion
+			prescription.setBemerkung("Anwendungsinstruktion");
 			
 			prescription =
 				new Prescription(artikelstammItem, patients.get(1), "1/2-1/2-1/2-1/2", "");
@@ -91,10 +91,10 @@ public class TestData {
 			prescription.setEntryType(EntryType.FIXED_MEDICATION);
 			prescription =
 				new Prescription(bagMedi, patients.get(1), "1/4-1/4-1/4", "");
-			// Einnahmevorschrift
-			prescription.setBemerkung("Einnahmevorschrift");
+			// Anwendungsinstruktion
+			prescription.setBemerkung("Anwendungsinstruktion");
 			// Abgabekommentar
-			prescription.setDisposalComment("Abgabekommentar");
+			prescription.setDisposalComment("Anwendungsgrund");
 			prescription.setEntryType(EntryType.SYMPTOMATIC_MEDICATION);
 			
 			prescription = new Prescription(prescription);

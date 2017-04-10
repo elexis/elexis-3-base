@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -112,7 +113,7 @@ public class TerminDialog extends TitleAreaDialog {
 	List lTerminListe;
 	// Button bPrev,bNext;
 	Button bLocked, bSerie;
-	Button bSave, bDelete, bChange, bPrint, bFuture;
+	Button bSave, bDelete, bChange, bPrint, bFuture, bEmergency;
 	Slider slider;
 	DayOverview dayBar;
 	
@@ -360,6 +361,19 @@ public class TerminDialog extends TitleAreaDialog {
 		});
 		bFuture = new Button(topRight, SWT.CHECK);
 		bFuture.setText(Messages.TerminDialog_past);
+		
+		bEmergency = new Button(topRight, SWT.CHECK);
+		bEmergency.setText(Messages.TerminDialog_emergency);
+		bEmergency.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				if (actPlannable instanceof Termin) {
+					((Termin) actPlannable).set(Termin.FLD_PRIORITY,
+						bEmergency.getSelection() ? "1" : "0");
+				}
+			}
+		});
+		
 		// Balken
 		Composite cBar = new Composite(ret, SWT.BORDER);
 		cBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -586,6 +600,7 @@ public class TerminDialog extends TitleAreaDialog {
 			setCombo(cbStatus, actTermin.getStatus(), 0);
 			bLocked.setSelection(actTermin.getFlag(Termin.SW_LOCKED));
 			niDauer.getControl().setSelection(actPlannable.getDurationInMinutes());
+			bEmergency.setSelection(StringUtils.equals(actTermin.get(Termin.FLD_PRIORITY), "1"));
 		}
 		dayBar.redraw();
 		slider.set();

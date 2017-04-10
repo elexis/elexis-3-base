@@ -59,6 +59,7 @@ public final class Messages extends NLS {
 	public static String TerminDialog_duration;
 	public static String TerminDialog_endTime;
 	public static String TerminDialog_locked;
+	public static String TerminDialog_emergency;
 	public static String TerminDialog_serie;
 	public static String TerminDialog_set;
 	public static String TerminDialog_createTermin;

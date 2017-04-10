@@ -51,7 +51,10 @@ public class XMLExporterUtil {
 			companyname.setText(StringTool.limitLength(k.get(Kontakt.FLD_NAME1), 35));
 			ret.addContent(companyname);
 			ret.addContent(buildPostalElement(k));
-			ret.addContent(buildTelekomElement(k));
+			Element telcom = buildTelekomElement(k);
+			if (telcom != null && !telcom.getChildren().isEmpty()) {
+				ret.addContent(telcom);
+			}
 			Element onlineElement = buildOnlineElement(k);
 			if (onlineElement != null) {
 				ret.addContent(onlineElement);
@@ -85,8 +88,10 @@ public class XMLExporterUtil {
 				ret.addContent(givenname);
 				ret.addContent(buildPostalElement(postAnschrift));
 			}
-			
-			ret.addContent(buildTelekomElement(k));
+			Element telcom = buildTelekomElement(k);
+			if (telcom != null && !telcom.getChildren().isEmpty()) {
+				ret.addContent(telcom);
+			}
 			Element onlineElement = buildOnlineElement(k);
 			if (onlineElement != null) {
 				ret.addContent(onlineElement);
@@ -172,7 +177,7 @@ public class XMLExporterUtil {
 		Element ret = new Element("telecom", XMLExporter.nsinvoice); //$NON-NLS-1$
 		addElementIfExists(ret,
 			"phone", null, StringTool.limitLength(k.get(Kontakt.FLD_PHONE1), 25), //$NON-NLS-1$
-			"555-555 55 55"); //$NON-NLS-1$
+			null); //$NON-NLS-1$
 		addElementIfExists(ret,
 			"fax", null, StringTool.limitLength(k.get(Kontakt.FLD_FAX), 25), null); //$NON-NLS-1$
 		return ret;

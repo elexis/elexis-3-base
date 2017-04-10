@@ -61,7 +61,8 @@ public class TestData {
 		TestSzenario() throws IOException{
 			createMandanten();
 			
-			createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
+			createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false)
+				.set(Patient.FLD_PHONE1, "555-555 55 55");
 			createPatientWithFall("Karin", "Zirbelkiefer", "24.04.1951", "w", true);
 			
 			createLeistungen();

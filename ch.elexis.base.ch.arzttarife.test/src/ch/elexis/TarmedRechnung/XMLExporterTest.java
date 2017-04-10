@@ -87,6 +87,19 @@ public class XMLExporterTest {
 			assertTrue(iter.hasNext());
 			Element patient = (Element) iter.next();
 			assertNotNull(patient);
+			if (patient.getAttributeValue("birthdate").equals("1957-04-14T00:00:00")) {
+				Iterator telcoms = patient.getDescendants(new ElementFilter("telecom"));
+				if (!telcoms.hasNext()) {
+					printFaildDocument(result);
+					fail();
+				}
+			} else {
+				Iterator telcoms = patient.getDescendants(new ElementFilter("telecom"));
+				if (telcoms.hasNext()) {
+					printFaildDocument(result);
+					fail();
+				}
+			}
 		}
 	}
 	

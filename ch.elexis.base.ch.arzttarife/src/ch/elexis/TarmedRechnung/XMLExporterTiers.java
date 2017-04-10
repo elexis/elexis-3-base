@@ -139,7 +139,10 @@ public class XMLExporterTiers {
 			companyname.setText(StringTool.limitLength(kostentraeger.get(Kontakt.FLD_NAME1), 35));
 			company.addContent(companyname);
 			company.addContent(XMLExporterUtil.buildPostalElement(kostentraeger));
-			company.addContent(XMLExporterUtil.buildTelekomElement(kostentraeger));
+			Element telcom = XMLExporterUtil.buildTelekomElement(kostentraeger);
+			if (telcom != null && !telcom.getChildren().isEmpty()) {
+				company.addContent(telcom);
+			}
 			// company.addContent(buildOnlineElement(kostentraeger)); //
 			// tschaller: see comments in
 			// buildOnlineElement

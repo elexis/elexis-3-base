@@ -1,0 +1,8 @@
+.ui-calendar-icon
+{
+	background-image: url("lib/cupertino/images/ui-icons_222222_256x240.png");
+	position: absolute;
+	right: 0;
+	background-color: #efefef;
+	border-bottom-left-radius: 5px;
+}

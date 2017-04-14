@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.osgi.framework.FrameworkUtil;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.function.ContextMenuFunction;
@@ -36,8 +37,8 @@ import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
-	
 	private List<String> selectedResources = new ArrayList<>();
+	private static Logger logger = LoggerFactory.getLogger(ParallelComposite.class);
 	
 	private Browser browser;
 	private LoadEventsFunction loadEventsFunction;
@@ -74,13 +75,13 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		try {
 			URL url = FileLocator.toFileURL(
 				FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultParallel.html"));
-			LoggerFactory.getLogger(getClass()).debug("Open url [" + url.getFile() + "]");
+			logger.debug(
+				"Open url at [" + url.getFile() + "] with [" + browser.getBrowserType() + "]");
 			browser.setUrl(url.toString());
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass())
-				.error("Could not set url to /rsc/html/defaultParallel.html", e);
+			logger.error("Could not set url to /rsc/html/defaultParallel.html with ["
+				+ browser.getBrowserType() + "]", e);
 		}
-		
 		browser.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e){

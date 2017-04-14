@@ -198,12 +198,15 @@ public class TagesView extends BaseAgendaView {
 		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
-				if (p.isRecurringDate())
-					p = new SerienTermin(p).getRootTermin();
-				
 				StringBuilder sb = new StringBuilder();
 				sb.append(Plannables.getStartTimeAsString(p)).append("-") //$NON-NLS-1$
-					.append(Plannables.getEndTimeAsString(p)).append(" ").append(p.getTitle()); //$NON-NLS-1$
+					.append(Plannables.getEndTimeAsString(p)).append(" ");
+				
+				if (p.isRecurringDate()) {
+					sb.append(new SerienTermin(p).getRootTermin().getTitle());
+				} else {
+					sb.append(p.getTitle());
+				}
 				
 				// show reason if its configured
 				if (CoreHub.userCfg.get(PreferenceConstants.AG_SHOW_REASON, false)) {
@@ -237,14 +240,17 @@ public class TagesView extends BaseAgendaView {
 	@Override
 	public void setTermin(Termin tf){
 		Termin t = tf;
-		if (tf.isRecurringDate())
-			t = new SerienTermin(tf).getRootTermin();
-		
 		StringBuilder sb = new StringBuilder(200);
 		TimeSpan ts = t.getTimeSpan();
 		sb.append(ts.from.toString(TimeTool.TIME_SMALL))
 			.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-			.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
+			.append(" ");
+		if (t.isRecurringDate()) {
+			sb.append(new SerienTermin(t).getRootTermin().getPersonalia());
+		} else {
+			sb.append(t.getPersonalia());
+		}
+		sb.append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
 			.append(t.getType())
 			.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.append("\n--------\n").append(t.getStatusHistoryDesc());

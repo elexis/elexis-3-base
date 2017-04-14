@@ -303,7 +303,10 @@ public class Termin extends PersistentObject
 		Termin ret =
 			new Termin(get(FLD_BEREICH), get(FLD_TAG), getStartMinute(), getStartMinute()
 				+ getDauer(), getType(), getStatus());
-		ret.setKontakt(getKontakt());
+		Kontakt k = getKontakt();
+		if (k != null) {
+			ret.setKontakt(getKontakt());
+		}
 		return ret;
 	}
 	

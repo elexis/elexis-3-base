@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.core.data.activator.CoreHub;
 
 public class SideBarComposite extends Composite {
@@ -125,6 +126,21 @@ public class SideBarComposite extends Composite {
 							((AgendaSpanSize) ((StructuredSelection) selection).getFirstElement())
 								.name());
 					}
+				}
+			}
+		});
+		Label separator = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Button btn = new Button(this, SWT.NONE);
+		btn.setText("Neue Serie anlegen");
+		btn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				if (e.getSource() instanceof Button) {
+					SerienTerminDialog dlg =
+						new SerienTerminDialog(getShell(), null);
+					dlg.open();
 				}
 			}
 		});

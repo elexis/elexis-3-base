@@ -31,6 +31,8 @@ Bundle-ClassPath: .,
  lib/ical4j-1.0.1.jar
 Export-Package: ch.elexis.agenda.data,
  ch.elexis.agenda.externalaccess,
+ ch.elexis.agenda.series,
+ ch.elexis.agenda.series.ui,
  ch.elexis.agenda.util,
  ch.elexis.dialogs
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

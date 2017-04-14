@@ -1,6 +1,7 @@
 package at.medevit.elexis.agenda.ui.model;
 
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IPeriod;
 
@@ -16,6 +17,7 @@ public class Event {
 	
 	private String id;
 	private String title;
+	private String icon;
 	
 	private String start;
 	private String end;
@@ -108,6 +110,14 @@ public class Event {
 		this.resource = resource;
 	}
 	
+	public void setIcon(String icon){
+		this.icon = icon;
+	}
+	
+	public String getIcon(){
+		return icon;
+	}
+	
 	/**
 	 * Factory method to create a Event from an {@link IPeriod}.
 	 * 
@@ -120,15 +130,23 @@ public class Event {
 		ret.start = iPeriod.getStartTime().toLocalDateTime().toString();
 		ret.end = iPeriod.getEndTime().toLocalDateTime().toString();
 		if(iPeriod instanceof Termin) {
-			ret.title = ((Termin) iPeriod).getPersonalia();
-			ret.resource = ((Termin) iPeriod).getBereich();
+			Termin termin = (Termin) iPeriod;
+			ret.resource = termin.getBereich();
+			Termin rootTermin = null;
+			if (termin.isRecurringDate()
+				&& (rootTermin = new SerienTermin(termin).getRootTermin()) != null) {
+				ret.icon = "ui-icon-arrowrefresh-1-w";
+				ret.title = rootTermin.getPersonalia();
+			}
+			else {
+				ret.title = termin.getPersonalia();
+			}
 			if (isDayLimit(iPeriod)) {
 				ret.rendering = "background";
 			} else {
 				ret.description =
-					((Termin) iPeriod).getGrund().replaceAll("\n", "<br />") + "<br /><br />"
-					+ ((Termin) iPeriod).getStatusHistoryDesc(true).replaceAll("\n", "<br />");
-				
+					termin.getGrund().replaceAll("\n", "<br />") + "<br /><br />"
+						+ termin.getStatusHistoryDesc(true).replaceAll("\n", "<br />");
 				ret.borderColor = getStateColor(iPeriod);
 				ret.backgroundColor = getTypColor(iPeriod);
 				ret.textColor = getTextColor(ret.backgroundColor.substring(1));

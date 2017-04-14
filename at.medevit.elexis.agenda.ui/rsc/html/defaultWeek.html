@@ -6,6 +6,8 @@
 	<link href='../fullcalendar.min.css' rel='stylesheet' />
 	<link href='../fullcalendar.print.min.css' rel='stylesheet' media='print' />
 	<link href='../lib/qTip/jquery.qtip.min.css' rel='stylesheet' />
+	<link href='../lib/cupertino/jquery-ui.min.css' rel='stylesheet' />
+	<link href='../style.css' rel='stylesheet' />
 	<script src='../lib/moment.min.js'></script>
 	<script src='../lib/jquery.min.js'></script>
 	<script src='../lib/qTip/jquery.qtip.min.js'></script>
@@ -53,7 +55,7 @@
 					start: event.start,
 					end: event.end,
 					description: event.description,
-
+					icon: event.icon,
 					rendering: event.rendering,
 					borderColor: event.borderColor,
 					backgroundColor: event.backgroundColor,
@@ -107,6 +109,10 @@
 					});
 				}
 			}
+			if (event.icon)
+			{
+				element.find("div.fc-content").prepend("<i class='ui-icon ui-calendar-icon " +event.icon+"'></i>");
+			}
 		}
 	</script>
 	<style>
@@ -125,6 +131,9 @@
 </head>
 
 <body oncontextmenu="return false;">
+	<!--[if lt IE 9 ]>
+		<p style="background-color: #fffa00">You are using an outdated version of Internet Explorer.  For security reasons you should upgrade your browser. Please go to Windows Updates and install the latest version.</p>
+	<![endif]--> 
 	<div id='calendar'></div>
 </body>
 

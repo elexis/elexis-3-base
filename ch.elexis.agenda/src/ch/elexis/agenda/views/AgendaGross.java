@@ -40,6 +40,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
+import com.tiff.common.ui.datepicker.DatePicker;
+
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
@@ -61,8 +63,6 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
-
-import com.tiff.common.ui.datepicker.DatePicker;
 
 /**
  * A larger view for the agenda with more features than the compact "TagesView"
@@ -321,8 +321,6 @@ public class AgendaGross extends BaseAgendaView {
 		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable ip = (IPlannable) element;
-				if (ip.isRecurringDate())
-					ip = new SerienTermin(ip).getRootTermin();
 				switch (columnIndex) {
 				case 0:
 					return Plannables.getStartTimeAsString(ip);
@@ -333,7 +331,8 @@ public class AgendaGross extends BaseAgendaView {
 				case 3:
 					return ip.getStatus();
 				case 4:
-					return ip.getTitle();
+					return ip.isRecurringDate() ? new SerienTermin(ip).getRootTermin().getTitle()
+							: ip.getTitle();
 				case 5:
 					if (ip instanceof Termin) {
 						Termin termin = (Termin) ip;
@@ -377,7 +376,13 @@ public class AgendaGross extends BaseAgendaView {
 		TimeSpan ts = t.getTimeSpan();
 		sb.append(ts.from.toString(TimeTool.TIME_SMALL))
 			.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-			.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
+			.append(" ");
+		if (t.isRecurringDate()) {
+			sb.append(new SerienTermin(t).getRootTermin().getPersonalia());
+		} else {
+			sb.append(t.getPersonalia());
+		}
+		sb.append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
 			.append(t.getType())
 			.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());

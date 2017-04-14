@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
@@ -157,16 +158,20 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 						SWTHelper.showInfo("Termin Kollision", "Termine überschneiden sich");
 					} else {
 						if (ctrlKeyDown) { // copy 
+							ctrlKeyDown = false;
 							Termin tCopy = (Termin) t.clone();
+							if (t.isRecurringDate() && t.getKontakt() == null) {
+								// take kontakt from root termin
+								tCopy.setKontakt(new SerienTermin(t).getRootTermin().getKontakt());
+							}
 							tCopy.setStartTime(tt);
 							tCopy.setBereich(Activator.getDefault().getActResource());
-							refresh();
 						} else { // move
 							t.setStartTime(tt);
 							t.setBereich(Activator.getDefault().getActResource());
-							refresh();
 						}
 					}
+					refresh();
 				}
 			}
 		});
@@ -179,6 +184,12 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean setFocus(){
+		ctrlKeyDown = false;
+		return super.setFocus();
 	}
 	
 	public MenuManager getContextMenuManager(){

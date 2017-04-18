@@ -21,6 +21,7 @@ public class SingleClickFunction extends BrowserFunction {
 	public Object function(Object[] arguments){
 		if (arguments.length == 1) {
 			Termin termin = Termin.load((String) arguments[0]);
+			ElexisEventDispatcher.fireSelectionEvent(termin);
 			if (selectionProvider != null) {
 				selectionProvider.setSelection(new StructuredSelection(termin));
 			}

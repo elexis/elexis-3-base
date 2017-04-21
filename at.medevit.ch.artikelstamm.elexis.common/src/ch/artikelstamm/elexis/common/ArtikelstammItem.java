@@ -541,13 +541,6 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return true;
 	}
 	
-	public static boolean purgeProducts(){
-		Stm stm = getConnection().getStatement();
-		stm.exec("DELETE FROM " + TABLENAME + " WHERE TYPE = '" + TYPE.X.name() + "'");
-		getConnection().releaseStatement(stm);
-		return true;
-	}
-	
 	/**
 	 * The article is marked as black-boxed if the value within {@link #FLD_BLACKBOXED} does not
 	 * equal 0

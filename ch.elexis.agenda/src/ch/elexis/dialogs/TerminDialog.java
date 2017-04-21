@@ -364,15 +364,6 @@ public class TerminDialog extends TitleAreaDialog {
 		
 		bEmergency = new Button(topRight, SWT.CHECK);
 		bEmergency.setText(Messages.TerminDialog_emergency);
-		bEmergency.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e){
-				if (actPlannable instanceof Termin) {
-					((Termin) actPlannable).set(Termin.FLD_PRIORITY,
-						bEmergency.getSelection() ? "1" : "0");
-				}
-			}
-		});
 		
 		// Balken
 		Composite cBar = new Composite(ret, SWT.BORDER);
@@ -864,10 +855,12 @@ public class TerminDialog extends TitleAreaDialog {
 		int bis = von + niDauer.getValue();
 		String typ = cbTyp.getItem(cbTyp.getSelectionIndex());
 		String status = cbStatus.getItem(cbStatus.getSelectionIndex());
+		String priority = bEmergency.getSelection() ? "1" : "0";
 		Termin actTermin = null;
 		if (actPlannable instanceof Termin.Free) {
 			Termin newTermin = new Termin(agenda.getActResource(),
-				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status);
+				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status,
+				priority);
 			actTermin = newTermin;
 		} else {
 			actTermin = (Termin) actPlannable;
@@ -888,10 +881,10 @@ public class TerminDialog extends TitleAreaDialog {
 			}
 			
 			actTermin.set(new String[] {
-				"BeiWem", "Tag", "Beginn", "Dauer", "Typ", "Status"
+				"BeiWem", "Tag", "Beginn", "Dauer", "Typ", "Status", Termin.FLD_PRIORITY
 			}, new String[] {
 				agenda.getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
-				Integer.toString(von), Integer.toString(bis - von), typ, status
+				Integer.toString(von), Integer.toString(bis - von), typ, status, priority
 			});
 		}
 		lTerminListe.add(actTermin.getLabel());

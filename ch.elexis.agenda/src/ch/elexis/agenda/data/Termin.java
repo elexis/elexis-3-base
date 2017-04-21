@@ -278,6 +278,12 @@ public class Termin extends PersistentObject
 			statusline(statusStandard()));
 	}
 	
+	public Termin(final String bereich, final String Tag, final int von, final int bis,
+		final String typ, final String status, final String priority){
+		this(bereich, Tag, von, bis, typ, status);
+		set(FLD_PRIORITY, priority);
+	}
+	
 	/**
 	 * Einen Termin mit vorgegebener ID erstellen. Wird nur vom Importer gebraucth
 	 */
@@ -302,7 +308,7 @@ public class Termin extends PersistentObject
 	public Object clone(){
 		Termin ret =
 			new Termin(get(FLD_BEREICH), get(FLD_TAG), getStartMinute(), getStartMinute()
-				+ getDauer(), getType(), getStatus());
+				+ getDauer(), getType(), getStatus(), get(FLD_PRIORITY));
 		Kontakt k = getKontakt();
 		if (k != null) {
 			ret.setKontakt(getKontakt());

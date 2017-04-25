@@ -39,6 +39,15 @@
             id="at.medevit.elexis.inbox.ui.command.activatePatient"
             name="activate patient">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.inbox.ui.command.AutoActivePatientHandler"
+            id="at.medevit.elexis.inbox.ui.autoSelectPatient"
+            name="auto select patient">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -63,6 +72,11 @@
                label="Ignorieren"
                style="push">
          </command>
+         <command
+               commandId="at.medevit.elexis.inbox.ui.autoSelectPatient"
+               icon="icon://IMG_PERSON"
+               style="toggle">
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -72,24 +86,6 @@
                icon="rsc/img/user-silhouette-question.png"
                label="Mandant ändern"
                style="push">
-         </command>
-         <command
-               commandId="at.medevit.elexis.inbox.ui.command.activatePatient"
-               icon="icon://IMG_BULLET_GREEN"
-               label="Patient aktivieren"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false"
-                        operator="or">
-                     <instanceof
-                           value="at.medevit.elexis.inbox.ui.part.model.PatientInboxElements">
-                     </instanceof></iterate>
-               </with>
-            </visibleWhen>
          </command>
       </menuContribution>
    </extension>

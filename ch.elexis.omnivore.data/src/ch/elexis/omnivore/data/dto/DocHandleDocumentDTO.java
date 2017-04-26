@@ -12,10 +12,12 @@ import ch.rgw.tools.TimeTool;
 
 public class DocHandleDocumentDTO extends AbstractDocumentDTO {
 	
-	public DocHandleDocumentDTO(){
+	public DocHandleDocumentDTO(String storeId){
+		setStoreId(storeId);
 	}
 	
 	public DocHandleDocumentDTO(DocHandle docHandle, String storeId){
+		this(storeId);
 		String[] fetch = new String[]
 		{
 			DocHandle.FLD_PATID, DocHandle.FLD_TITLE, DocHandle.FLD_MIMETYPE,
@@ -34,12 +36,9 @@ public class DocHandleDocumentDTO extends AbstractDocumentDTO {
 			getTags().add(new TagDocumentDTO(data[3]));
 		}
 		
-		if (StringUtils.isNotEmpty(data[4])) {
-			setCategory(new CategoryDocumentDTO(data[4]));
-		}
+		setCategory(new CategoryDocumentDTO(data[4]));
 		
 		setLastchanged(new Date(Long.valueOf(docHandle.get(DocHandle.FLD_LASTUPDATE))));
 		setCreated(new TimeTool(docHandle.get(DocHandle.FLD_DATE)).getTime());
-		setStoreId(storeId);
 	}
 }

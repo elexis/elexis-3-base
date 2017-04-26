@@ -21,3 +21,4 @@ Import-Package: ch.elexis.omnivore,
 Export-Package: ch.elexis.omnivore.data,
  ch.elexis.omnivore.dialog
 Service-Component: OSGI-INF/ch.elexis.omnivore.data.service.internal.OmnivoreDocumentStore.xml
+Bundle-ActivationPolicy: lazy

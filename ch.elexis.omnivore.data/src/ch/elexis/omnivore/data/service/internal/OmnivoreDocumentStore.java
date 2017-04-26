@@ -24,6 +24,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.dto.CategoryDocumentDTO;
 import ch.elexis.data.dto.TagDocumentDTO;
+import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.dto.DocHandleDocumentDTO;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -91,7 +92,7 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	}
 	
 	@Override
-	public ICategory addCategory(String name){
+	public ICategory createCategory(String name){
 		return new CategoryDocumentDTO(name);
 	}
 	
@@ -103,9 +104,8 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	@Override
 	public List<ITag> getTags(){
 		Stm stm = PersistentObject.getDefaultConnection().getStatement();
-		ResultSet rs = stm
-			.query("select distinct " + DocHandle.FLD_KEYWORDS + " from  " + DocHandle.TABLENAME
-				+ " order by " + DocHandle.FLD_KEYWORDS);
+		ResultSet rs = stm.query("select distinct " + DocHandle.FLD_KEYWORDS + " from  "
+			+ DocHandle.TABLENAME + " order by " + DocHandle.FLD_KEYWORDS);
 		List<ITag> tags = new ArrayList<>();
 		try {
 			while (rs.next()) {
@@ -149,42 +149,48 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	}
 	
 	@Override
-	public IDocument saveDocument(IDocument document){
+	public IDocument saveDocument(IDocument document) throws ElexisException{
 		return save(document, null);
 	}
 	
 	@Override
-	public IDocument saveDocument(IDocument document, InputStream content){
+	public IDocument saveDocument(IDocument document, InputStream content) throws ElexisException{
 		return save(document, content);
 	}
 	
-	private IDocument save(IDocument document, InputStream content){
-		DocHandle doc = DocHandle.load(document.getId());
-		String category = document.getCategory() != null ? document.getCategory().getName() : null;
-		if (doc.exists()) {
-			// update an existing document
-			String[] fetch = new String[] {
-				DocHandle.FLD_PATID, DocHandle.FLD_TITLE, DocHandle.FLD_MIMETYPE, DocHandle.FLD_CAT
-			};
-			String[] data = new String[] {
-				document.getPatientId(), document.getTitle(), document.getMimeType(), category
-			};
-			doc.set(fetch, data);
-		} else {
-			// persist a new document
-			doc = new DocHandle(category, new byte[1], Patient.load(document.getPatientId()),
-				document.getCreated(), document.getTitle(), document.getMimeType(),
+	private IDocument save(IDocument document, InputStream content) throws ElexisException{
+		try {
+			DocHandle doc = DocHandle.load(document.getId());
+			String category =
+				document.getCategory() != null ? document.getCategory().getName() : null;
+			if (doc.exists()) {
+				// update an existing document
+				String[] fetch = new String[] {
+					DocHandle.FLD_PATID, DocHandle.FLD_TITLE, DocHandle.FLD_MIMETYPE,
+					DocHandle.FLD_CAT
+				};
+				String[] data = new String[] {
+					document.getPatientId(), document.getTitle(), document.getMimeType(), category
+				};
+				doc.set(fetch, data);
+			} else {
+				// persist a new document
+				doc = new DocHandle(category, new byte[1], Patient.load(document.getPatientId()),
+					document.getCreated(), document.getTitle(), document.getMimeType(),
 					document.getTags().isEmpty() ? null : document.getTags().get(0).getName());
-		}
-		
-		if (content != null) {
-			try {
+			}
+			
+			if (content != null) {
 				doc.storeContent(IOUtils.toByteArray(content));
-			} catch (PersistenceException | ElexisException | IOException e) {
-				log.error("cannot save document contents", e);
+			}
+			return new DocHandleDocumentDTO(doc, STORE_ID);
+		} catch (PersistenceException | IOException e) {
+			throw new ElexisException("cannot save", e);
+		} finally {
+			if (content != null) {
+				IOUtils.closeQuietly(content);
 			}
 		}
-		return new DocHandleDocumentDTO(doc, STORE_ID);
 	}
 	
 	@Override
@@ -198,5 +204,15 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 			}
 		}
 		return Optional.empty();
+	}
+	
+	@Override
+	public IDocument createDocument(String patientId, String title){
+		DocHandleDocumentDTO docHandleDocumentDTO = new DocHandleDocumentDTO(STORE_ID);
+		ICategory iCategory = createCategory(Constants.DEFAULT_CATEGORY);
+		docHandleDocumentDTO.setCategory(iCategory);
+		docHandleDocumentDTO.setPatientId(patientId);
+		docHandleDocumentDTO.setTitle(title);
+		return docHandleDocumentDTO;
 	}
 }

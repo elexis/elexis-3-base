@@ -1,5 +1,6 @@
 package ch.elexis.omnivore.data.service.internal;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
@@ -198,7 +199,10 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 		DocHandle doc = DocHandle.load(document.getId());
 		if (doc.exists()) {
 			try {
-				return Optional.of(doc.getContentsAsStream());
+				byte[] buf = doc.getContentsAsBytes();
+				if (buf != null) {
+					return Optional.of(new ByteArrayInputStream(buf));
+				}
 			} catch (ElexisException e) {
 				log.error("Cannot load contents of document id: " + document.getId(), e);
 			}
@@ -207,9 +211,10 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	}
 	
 	@Override
-	public IDocument createDocument(String patientId, String title){
+	public IDocument createDocument(String patientId, String title, String categoryName){
 		DocHandleDocumentDTO docHandleDocumentDTO = new DocHandleDocumentDTO(STORE_ID);
-		ICategory iCategory = createCategory(Constants.DEFAULT_CATEGORY);
+		ICategory iCategory = new CategoryDocumentDTO(
+			categoryName != null ? categoryName : Constants.DEFAULT_CATEGORY);
 		docHandleDocumentDTO.setCategory(iCategory);
 		docHandleDocumentDTO.setPatientId(patientId);
 		docHandleDocumentDTO.setTitle(title);

@@ -31,6 +31,7 @@ public class DocHandleDocumentDTO extends AbstractDocumentDTO {
 		setPatientId(data[0]);
 		setTitle(data[1]);
 		setMimeType(data[2]);
+		setExtension(evaluateExtension(data[2]));
 		
 		if (StringUtils.isNotEmpty(data[3])) {
 			getTags().add(new TagDocumentDTO(data[3]));

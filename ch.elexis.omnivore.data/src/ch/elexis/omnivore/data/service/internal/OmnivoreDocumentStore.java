@@ -213,11 +213,16 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	@Override
 	public IDocument createDocument(String patientId, String title, String categoryName){
 		DocHandleDocumentDTO docHandleDocumentDTO = new DocHandleDocumentDTO(STORE_ID);
-		ICategory iCategory = new CategoryDocumentDTO(
-			categoryName != null ? categoryName : Constants.DEFAULT_CATEGORY);
+		ICategory iCategory =
+			categoryName != null ? new CategoryDocumentDTO(categoryName) : getCategoryDefault();
 		docHandleDocumentDTO.setCategory(iCategory);
 		docHandleDocumentDTO.setPatientId(patientId);
 		docHandleDocumentDTO.setTitle(title);
 		return docHandleDocumentDTO;
+	}
+	
+	@Override
+	public ICategory getCategoryDefault(){
+		return new CategoryDocumentDTO(Constants.DEFAULT_CATEGORY);
 	}
 }

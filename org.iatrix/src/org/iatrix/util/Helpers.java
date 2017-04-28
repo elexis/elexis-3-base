@@ -25,7 +25,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.iatrix.data.Problem;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Anschrift;
@@ -33,7 +32,6 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
-import ch.elexis.data.Query;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
@@ -70,72 +68,6 @@ public class Helpers {
 		return result;
 	}
 
-	/**
-	 * Get the latest Konsultation of today
-	 *
-	 * @return today's latest Konsultation
-	 *
-	 *         Same implementation as Patient.getLetzteKons()
-	 */
-	public static Konsultation getTodaysLatestKons(Patient patient){
-		TimeTool today = new TimeTool();
-
-		Fall[] faelle = patient.getFaelle();
-		if ((faelle == null) || (faelle.length == 0)) {
-			return null;
-		}
-
-		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		qbe.add("MandantID", "=", CoreHub.actMandant.getId());
-		qbe.add("Datum", "=", today.toString(TimeTool.DATE_COMPACT));
-
-		qbe.startGroup();
-		boolean termInserted = false;
-		for (Fall fall : faelle) {
-			if (fall.isOpen()) {
-				qbe.add("FallID", "=", fall.getId());
-				qbe.or();
-				termInserted = true;
-			}
-		}
-		if (!termInserted) {
-			return null;
-		}
-		qbe.endGroup();
-
-		qbe.orderBy(true, "Datum");
-		List<Konsultation> list = qbe.execute();
-		if ((list == null) || list.isEmpty()) {
-			return null;
-		} else {
-			if (list.size() == 1) {
-				return list.get(0);
-			} else {
-				// find the latest Konsultation according to the text entry's timestamp
-				long timestamp = -1;
-				Konsultation result = null;
-
-				for (Konsultation k : list) {
-					VersionedResource vr = k.getEintrag();
-					if (vr != null) {
-						ResourceItem ri = vr.getVersion(vr.getHeadVersion());
-						if (ri != null) {
-							if (ri.timestamp > timestamp) {
-								timestamp = ri.timestamp;
-								result = k;
-							}
-						}
-					}
-				}
-				if (result == null) {
-					result = list.get(0);
-				}
-
-				return result;
-			}
-		}
-	}
-
 	private static final DateComparator DATE_COMPARATOR = new DateComparator();
 
 	/**
@@ -155,7 +87,7 @@ public class Helpers {
 			StringBuffer output = new StringBuffer();
 
 			// get list of selected problems
-			List<Problem> problems = new ArrayList<Problem>();
+			List<Problem> problems = new ArrayList<>();
 			System.out.println("TODO problemAssignmentViewer"); // TODO: ngngng
 			/*
 			Problem p = getSelectedProblem();
@@ -227,7 +159,7 @@ public class Helpers {
 			output.append(lineSeparator);
 
 			// consultations
-			List<Konsultation> konsultationen = new ArrayList<Konsultation>();
+			List<Konsultation> konsultationen = new ArrayList<>();
 
 			if (problems.size() > 0) {
 				// get consultations of selected problems
@@ -316,7 +248,7 @@ public class Helpers {
 				String date = problem.getStartDate();
 				String text = problem.getTitle();
 
-				List<String> therapy = new ArrayList<String>();
+				List<String> therapy = new ArrayList<>();
 				String procedure = problem.getProcedere();
 				if (!StringTool.isNothing(procedure)) {
 					therapy.add(procedure.trim());

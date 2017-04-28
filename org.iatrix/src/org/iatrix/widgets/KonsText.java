@@ -79,8 +79,6 @@ public class KonsText implements IJournalArea {
 	private Action versionBackAction;
 	private static final String PATIENT_KEY = "org.iatrix.patient";
 	private boolean konsEditorHasFocus = false;
-	private static boolean creatingKons = false;
-	private static String savedInitialKonsText = null;
 	private final FormToolkit tk;
 	private Composite parent;
 	private Hashtable<String, IKonsExtension> hXrefs;
@@ -114,8 +112,9 @@ public class KonsText implements IJournalArea {
 
 			@Override
 			public void widgetDisposed(DisposeEvent e){
-				logEvent("widgetDisposed");
+				logEvent("widgetDisposed removeKonsTextLock");
 				updateEintrag();
+				removeKonsTextLock();
 				konsEditorHasFocus = false;
 			}
 
@@ -142,7 +141,7 @@ public class KonsText implements IJournalArea {
 				@Override
 				public void keyReleased(KeyEvent e){
 					// create new consultation if required
-					handleInitialKonsText();
+//					handleInitialKonsText();
 				}
 			});
 		}
@@ -205,7 +204,7 @@ public class KonsText implements IJournalArea {
 					// in case the kons text field has the focus.)
 					updateKonsVersionLabel();
 					JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
-					ElexisEventDispatcher.fireSelectionEvent(actKons);
+//					ElexisEventDispatcher.fireSelectionEvent(actKons);
 				} else {
 					// should never happen...
 					if (konsTextLock == null) {
@@ -218,17 +217,6 @@ public class KonsText implements IJournalArea {
 								+ "(info: " + konsTextLock.getKey()
 								+ ". Dieses Problem ist ein Programmfehler. Bitte informieren Sie die Entwickler.)");
 					}
-				}
-			} else {
-				boolean check = (savedInitialKonsText == null) || (text == null)
-					|| savedInitialKonsText.equals(text.getContentsPlaintext());
-				if (check) {
-					log.debug("updateEintrag: " +  actKons.getFall().getPatient().getPersonalia() + " skip forced to " + text.getContentsPlaintext());
-					setKonsText(actKons, actKons.getHeadVersion(), false);
-				} else {
-					log.debug("updateEintrag skipping check " + text.getContentsPlaintext()
-						+ " != initial " + savedInitialKonsText);
-					actKons.updateEintrag(text.getContentsAsXML(), false);
 				}
 			}
 		}
@@ -256,23 +244,6 @@ public class KonsText implements IJournalArea {
 
 		return false;
 
-	}
-
-	/**
-	 * Creates a new consultation if text has been entered, but no consultation is selected.
-	 */
-	private void handleInitialKonsText(){
-		if (actPatient != null && actKons == null && creatingKons == false) {
-			creatingKons = true;
-			logEvent("handleInitialKonsText: creatingKons" + text.getContentsPlaintext());
-			String initialText = text.getContentsAsXML();
-			Konsultation.neueKons(initialText);
-		} else {
-			logEvent("handleInitialKonsText: " +" actKonsPat " + actKons.getFall().getPatient().getId() +
-				" txt: " + text.getContentsPlaintext());
-			text.setData(PATIENT_KEY, actKons.getFall().getPatient().getId());
-			savedInitialKonsText = text.getContentsAsXML();
-		}
 	}
 
 	private void updateKonsLockLabel(){
@@ -343,7 +314,6 @@ public class KonsText implements IJournalArea {
 
 	@Override
 	public synchronized void visible(boolean mode){
-		log.debug("visible mode " + mode);
 	}
 
 	private void makeActions(){
@@ -456,7 +426,6 @@ public class KonsText implements IJournalArea {
 				logEvent("setKons.SAVE_KONS text.isDirty or changed saving Kons from "
 					+ actKons.getDatum() + " is '" + text.getContentsPlaintext() + "'");
 				updateEintrag();
-				savedInitialKonsText = null;
 				text.setData(PATIENT_KEY, null);
 				text.setText("saved kons");
 				removeKonsTextLock();
@@ -466,7 +435,6 @@ public class KonsText implements IJournalArea {
 					logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum()
 						+ " is '" + text.getContentsPlaintext() + "'");
 				}
-				savedInitialKonsText = null;
 			}
 			return;
 		}
@@ -488,28 +456,11 @@ public class KonsText implements IJournalArea {
 					Patient newPat = k.getFall().getPatient();
 					logEvent("setKons.changed actPatient " + actPatient.getId() + " " + actPatient.getPersonalia() + "  != newPat "
 						+ newPat.getId() + " for kons. newPat " + newPat.getPersonalia() + " " + k.getEintrag().getHead());
-					creatingKons = false;
 					actPatient = actKons.getFall().getPatient();
 					setKonsText(k, 0, true);
 					return;
 				}
 			}
-			if (savedInitialKonsText != null && actKons != null) {
-				logEvent("set kons patient key " + text.getData(PATIENT_KEY) + " len "
-					+ savedInitialKonsText.length());
-				if (savedInitialKonsText.length() > 0
-					&& !actKons.getEintrag().toString().equalsIgnoreCase(text.getContentsAsXML())) {
-					logEvent("setKons.text '" + text.getContentsPlaintext() + "'");
-					if (actKons != null && actKons.getEintrag() != null
-						&& actKons.getEintrag().getHead() != null) {
-						logEvent("in DB:" + actKons.getEintrag().getHead().toString());
-					}
-					actKons.updateEintrag(savedInitialKonsText, false);
-				}
-				savedInitialKonsText = null;
-				text.setData(PATIENT_KEY, null);
-			}
-			creatingKons = false;
 
 			if (actKons != null) {
 				createKonsTextLock();
@@ -562,8 +513,14 @@ public class KonsText implements IJournalArea {
 			versionBackAction.setEnabled(version != 0);
 			versionFwdAction.setEnabled(version != b.getHeadVersion());
 			boolean locked =  hasKonsTextLock();
-			logEvent("setKonsText.1 " + b.getId() + " hasLock " + locked + " putCaretToEnd " + putCaretToEnd +
-				" " + lVersion.getText() + " '" + text.getContentsPlaintext() + "'");
+			int strlen = text.getContentsPlaintext().length();
+			int maxLen = strlen < 120 ? strlen : 120;
+			if (!locked)
+				logEvent("setKonsText availabee " + b.getId() + " " + konsTextLock.getLabel() + " putCaretToEnd " + putCaretToEnd +
+					" " + lVersion.getText() + " '" + text.getContentsPlaintext().substring(0, maxLen) + "'");
+			else 
+				logEvent("setKonsText (locked) " + b.getId() + " " + konsTextLock.getLabel() + " putCaretToEnd " + putCaretToEnd +
+					" " + lVersion.getText() + " '" + text.getContentsPlaintext().substring(0, maxLen) + "'");
 
 			if (putCaretToEnd) {
 				// set focus and put caret at end of text

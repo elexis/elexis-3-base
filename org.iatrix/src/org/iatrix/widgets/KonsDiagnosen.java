@@ -84,9 +84,9 @@ public class KonsDiagnosen implements IJournalArea {
 	}
 	private void logEvent(String msg){
 		StringBuilder sb = new StringBuilder(msg + ": ");
-		sb.append(lDiagnosis.getText());
+		sb.append(lDiagnosis.getText()+ " ");
 		if (actKons == null) {
-			sb.append("actKons null");
+			sb.append("actKons null ");
 		} else {
 			sb.append(actKons.getId());
 			Patient pat = actKons.getFall().getPatient();

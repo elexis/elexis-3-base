@@ -16,6 +16,7 @@ package org.iatrix.data;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 import org.iatrix.Iatrix;
 import org.iatrix.views.JournalView;
@@ -41,7 +42,7 @@ public class KonsTextLock {
 	String konsultationId = null;
 	String userId = null;
 	String key = null;
-	String personalia = null;
+	String label = null;
 	boolean lockVar = false; // used only if CFG_USE_KONSTEXT_LOCKING is true
 	boolean traceEnabled = false;
 	boolean useDatabaseLock = false;
@@ -52,7 +53,7 @@ public class KonsTextLock {
 	 */
 	private void trace(String msg){
 		if (traceEnabled)
-			logger.info(msg + key + " u: " + userId + " p: " + personalia);
+			logger.info(msg + key + " u: " + userId );
 	}
 	// constructor
 	public KonsTextLock(Konsultation konsultation, Anwender user){
@@ -66,7 +67,6 @@ public class KonsTextLock {
 
 		konsultationId = konsultation.getId();
 		userId = user.getId();
-		// personalia = actPat.getPersonalia;
 
 		// create key name
 		StringBuffer sb = new StringBuffer();
@@ -80,8 +80,6 @@ public class KonsTextLock {
 		String lockValue =
 			PersistentObject.getConnection().queryString(
 				"SELECT wert from CONFIG WHERE param = " + JdbcLink.wrap(key));
-		// .append(stationMarker).
-		// append(InetAddress.getLocalHost().getHostName());
 		return new Value(lockValue);
 	}
 
@@ -92,6 +90,15 @@ public class KonsTextLock {
 	public String getKey() {
 		return key;
 	}
+
+	/**
+	 * getKey
+	 * @return human readable representation
+	 */
+	public String getLabel() {
+		return label;
+	}
+
 
 	// taken from PersistentObject
 	// return true if lock is ok, false else
@@ -134,15 +141,20 @@ public class KonsTextLock {
 					// System.err.println("DEBUG:   lock() giving up: age = " + age);
 					stm.exec("DELETE FROM CONFIG WHERE param=" + JdbcLink.wrap(key));
 				} else {
+					label = key + " " + oldlock + " " + locktime + " from " + new Date(locktime).toString();
+					trace("lock: failed " + label);
 					return false;
 				}
 			}
 			// Neues Lock erstellen
 			Value lockValue = new Value(userId, identifier);
+			long timestamp = lockValue.getTimestamp();
+			label = lockValue.hostName + "_" + userId + " " + timestamp + " from " + new Date(timestamp).toString();
+
 			// System.err.println("DEBUG:   lock() insert: time = " + lockValue.getTimestamp());
 			String lockstring = lockValue.getLockString();
 			StringBuilder sb = new StringBuilder();
-			sb.append("INSERT INTO CONFIG (param,wert) VALUES (").append(JdbcLink.wrap(key))
+			sb.append("INSERT INTO CONFIG (param, wert) VALUES (").append(JdbcLink.wrap(key))
 				.append(",").append("'").append(lockstring).append("')");
 			stm.exec(sb.toString());
 			// Prüfen, ob wir es wirklich haben, oder ob doch jemand anders schneller war.
@@ -153,7 +165,7 @@ public class KonsTextLock {
 				trace("lock: failed ");
 				return false;
 			}
-			trace("lock: okay ");
+			trace("lock: okay " + label);
 			return true;
 		} finally {
 			PersistentObject.getConnection().releaseStatement(stm);
@@ -274,5 +286,6 @@ public class KonsTextLock {
 		String getIdentifier(){
 			return identifier;
 		}
+		
 	}
 }

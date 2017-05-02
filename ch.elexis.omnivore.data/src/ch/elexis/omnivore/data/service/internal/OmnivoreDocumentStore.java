@@ -1,5 +1,7 @@
 package ch.elexis.omnivore.data.service.internal;
 
+import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +27,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.dto.CategoryDocumentDTO;
-import ch.elexis.data.dto.TagDocumentDTO;
 import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.dto.DocHandleDocumentDTO;
@@ -94,46 +95,6 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	}
 	
 	@Override
-	public ICategory createCategory(String name){
-		return new CategoryDocumentDTO(name);
-	}
-	
-	@Override
-	public void removeCategory(ICategory category) throws IllegalStateException{
-		
-	}
-	
-	@Override
-	public List<ITag> getTags(){
-		Stm stm = PersistentObject.getDefaultConnection().getStatement();
-		ResultSet rs = stm.query("select distinct " + DocHandle.FLD_KEYWORDS + " from  "
-			+ DocHandle.TABLENAME + " order by " + DocHandle.FLD_KEYWORDS);
-		List<ITag> tags = new ArrayList<>();
-		try {
-			while (rs.next()) {
-				String tag = rs.getString(DocHandle.FLD_KEYWORDS);
-				if (tag != null) {
-					tags.add(new TagDocumentDTO(tag));
-				}
-			}
-		} catch (SQLException e) {
-			log.error("Error executing distinct docHandle category selection", e);
-		}
-		PersistentObject.getDefaultConnection().releaseStatement(stm);
-		return tags;
-	}
-	
-	@Override
-	public ITag addTag(String name){
-		return null;
-	}
-	
-	@Override
-	public void removeTag(ITag tag){
-		
-	}
-	
-	@Override
 	public Optional<IDocument> loadDocument(String id){
 		DocHandle doc = DocHandle.load(id);
 		if (doc.exists()) {
@@ -169,17 +130,18 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 				// update an existing document
 				String[] fetch = new String[] {
 					DocHandle.FLD_PATID, DocHandle.FLD_TITLE, DocHandle.FLD_MIMETYPE,
-					DocHandle.FLD_CAT
+					DocHandle.FLD_CAT, DocHandle.FLD_KEYWORDS
 				};
 				String[] data = new String[] {
-					document.getPatientId(), document.getTitle(), document.getMimeType(), category
+					document.getPatientId(), document.getTitle(), document.getMimeType(), category,
+					document.getKeywords()
 				};
 				doc.set(fetch, data);
 			} else {
 				// persist a new document
 				doc = new DocHandle(category, new byte[1], Patient.load(document.getPatientId()),
 					document.getCreated(), document.getTitle(), document.getMimeType(),
-					document.getTags().isEmpty() ? null : document.getTags().get(0).getName());
+					document.getKeywords());
 			}
 			
 			if (content != null) {
@@ -230,6 +192,55 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	@Override
 	public Optional<IPersistentObject> getPersistenceObject(IDocument iDocument){
 		return Optional.of(DocHandle.load(iDocument.getId()));
+	}
+	
+	@Override
+	public ICategory createCategory(String name){
+		if (name != null) {
+			if (findCategoriesByName(name).isEmpty()) {
+				DocHandle.addMainCategory(name);
+			}
+		}
+		return new CategoryDocumentDTO(name);
+		
+	}
+
+	private List<ICategory> findCategoriesByName(String name){
+		Query<DocHandle> query = new Query<>(DocHandle.class);
+		query.add(DocHandle.FLD_CAT, Query.EQUALS, name, true);
+		query.add(DocHandle.FLD_MIMETYPE, Query.EQUALS, CATEGORY_MIMETYPE);
+		List<DocHandle> docs = query.execute();
+		List<ICategory> iCategories = new ArrayList<>();
+		for (DocHandle docHandle : docs) {
+			iCategories.add(new CategoryDocumentDTO(docHandle.getCategoryName()));
+		}
+		return iCategories;
+	}
+	
+	@Override
+	public void removeCategory(IDocument iDocument, String newCategory)
+		throws IllegalStateException{
+		if (iDocument.getId() != null && iDocument.getCategory() != null) {
+			// check if document to category references exists and ignore current iDocument
+			ICategory oldCategory = iDocument.getCategory();
+			Query<DocHandle> query = new Query<>(DocHandle.class);
+			query.add(DocHandle.FLD_CAT, Query.EQUALS, oldCategory.getName(), true);
+			query.add(DocHandle.FLD_MIMETYPE, Query.NOT_EQUAL, CATEGORY_MIMETYPE);
+			query.add(DocHandle.FLD_ID, Query.NOT_EQUAL, iDocument.getId());
+			List<DocHandle> docs = query.execute();
+			if (!docs.isEmpty()) {
+				throw new IllegalStateException(
+					"at least one document to category reference exists with id: "
+						+ docs.get(0).getId());
+			}
+			DocHandle.removeCategory(oldCategory.getName(), newCategory);
+		}
+	}
+	
+	@Override
+	public void renameCategory(ICategory category, String newCategory)
+		throws IllegalStateException{
+		DocHandle.renameCategory(category.getName(), newCategory);
 	}
 	
 }

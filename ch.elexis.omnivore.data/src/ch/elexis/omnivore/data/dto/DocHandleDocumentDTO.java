@@ -2,11 +2,8 @@ package ch.elexis.omnivore.data.dto;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
-
 import ch.elexis.data.dto.AbstractDocumentDTO;
 import ch.elexis.data.dto.CategoryDocumentDTO;
-import ch.elexis.data.dto.TagDocumentDTO;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.rgw.tools.TimeTool;
 
@@ -32,11 +29,7 @@ public class DocHandleDocumentDTO extends AbstractDocumentDTO {
 		setTitle(data[1]);
 		setMimeType(data[2]);
 		setExtension(evaluateExtension(data[2]));
-		
-		if (StringUtils.isNotEmpty(data[3])) {
-			getTags().add(new TagDocumentDTO(data[3]));
-		}
-		
+		setKeywords(data[3]);
 		setCategory(new CategoryDocumentDTO(data[4]));
 		
 		setLastchanged(new Date(Long.valueOf(docHandle.get(DocHandle.FLD_LASTUPDATE))));

@@ -1,6 +1,7 @@
 package at.medevit.elexis.ehc.vacdoc.service;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
+import static ch.elexis.core.constants.XidConstants.EAN;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -14,13 +15,17 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-import at.medevit.elexis.ehc.vacdoc.service.internal.MeineImpfungenServiceImpl;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Anschrift;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 
 public class MeineImpfungenServiceTest {
+	
+	BundleContext context =
+		FrameworkUtil.getBundle(MeineImpfungenServiceTest.class).getBundleContext();
 	
 	private static Patient patient;
 	
@@ -50,6 +55,9 @@ public class MeineImpfungenServiceTest {
 			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PATH));
 		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PASS,
 			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PASS));
+		
+		Mandant mandator = ElexisEventDispatcher.getSelectedMandator();
+		mandator.addXid(EAN, "2000002000001", true);
 	}
 	
 	private static String getAHVNumber(Patient pat){
@@ -82,34 +90,43 @@ public class MeineImpfungenServiceTest {
 	
 	@Test
 	public void isValid(){
-		MeineImpfungenService service = new MeineImpfungenServiceImpl();
+		ServiceReference<MeineImpfungenService> serviceRef = getMeineImpfungenService();
+		MeineImpfungenService service = context.getService(serviceRef);
 		assertTrue(service.isVaild());
+		ungetMeineImpfungenService(serviceRef);
 	}
 	
 	@Test
 	public void getPatients(){
-		MeineImpfungenService service = new MeineImpfungenServiceImpl();
+		ServiceReference<MeineImpfungenService> serviceRef = getMeineImpfungenService();
+		MeineImpfungenService service = context.getService(serviceRef);
 		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
 		assertNotNull(patients);
+		ungetMeineImpfungenService(serviceRef);
 	}
 	
 	@Test
 	public void getDocuments() throws Exception{
-		MeineImpfungenService service = getMeineImpfungenService();
+		ServiceReference<MeineImpfungenService> serviceRef = getMeineImpfungenService();
+		MeineImpfungenService service = context.getService(serviceRef);
 		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
 		List<CdaChVacd> documents = service.getDocuments(patients.get(0));
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());
 		assertNotNull(documents.get(0).getPatient());
 		assertNotNull(documents.get(0).getImmunizations());
+		ungetMeineImpfungenService(serviceRef);
 	}
 	
-	private MeineImpfungenService getMeineImpfungenService(){
-		// Register directly with the service
-		BundleContext context =
-			FrameworkUtil.getBundle(MeineImpfungenServiceTest.class).getBundleContext();
-		ServiceReference<?> reference =
-			context.getServiceReference(MeineImpfungenService.class.getName());
-		return (MeineImpfungenService) context.getService(reference);
+	@SuppressWarnings("unchecked")
+	private ServiceReference<MeineImpfungenService> getMeineImpfungenService(){
+		return
+			(ServiceReference<MeineImpfungenService>) context
+				.getServiceReference(MeineImpfungenService.class.getName());
+	}
+	
+	private void ungetMeineImpfungenService(
+		ServiceReference<MeineImpfungenService> reference){
+		context.ungetService(reference);
 	}
 }

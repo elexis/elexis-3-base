@@ -22,6 +22,7 @@ import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.Name;
 import org.ehealth_connector.common.enums.CodeSystems;
+import org.ehealth_connector.common.enums.LanguageCode;
 import org.ehealth_connector.common.utils.DateUtil;
 import org.ehealth_connector.communication.AffinityDomain;
 import org.ehealth_connector.communication.AtnaConfig;
@@ -37,7 +38,6 @@ import org.ehealth_connector.communication.ch.enums.ClassCode;
 import org.ehealth_connector.communication.ch.enums.ConfidentialityCode;
 import org.ehealth_connector.communication.ch.enums.FormatCode;
 import org.ehealth_connector.communication.ch.enums.HealthcareFacilityTypeCode;
-import org.ehealth_connector.communication.ch.enums.LanguageCode;
 import org.ehealth_connector.communication.ch.enums.MimeType;
 import org.ehealth_connector.communication.ch.enums.PracticeSettingCode;
 import org.ehealth_connector.communication.ch.enums.TypeCode;
@@ -82,16 +82,16 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	public static final String ORGANIZATIONAL_ID = "2.16.756.5.30.1.139.1.1.3.9999";
 	
 	private static final String PDQ_REQUEST_URL =
-		"https://pilot.suisse-open-exchange.healthcare/openempi-admin/services/PDQSupplier_Port_Soap12";
+		"https://test.suisse-open-exchange.healthcare/services/mpi/services/PDQSupplier_Port_Soap12";
 	
 
 	private static final String XDS_REGISTRY_URL =
-		"https://pilot.suisse-open-exchange.healthcare/openxds/services/DocumentRegistry";
+		"https://test.suisse-open-exchange.healthcare/services/registry/services/DocumentRegistry";
 	
 	private static final String XDS_REPOSITORY_URL =
-		"https://pilot.meineimpfungen.ch/ihe/xds/DocumentRepository";
+		"https://test.meineimpfungen.ch/ihe/xds/DocumentRepository";
 	
-	private static final String ATNA_URL = "tls://pilot.suisse-open-exchange.healthcare:5544";
+	private static final String ATNA_URL = "tls://test.suisse-open-exchange.healthcare:5544";
 	
 	private AffinityDomain affinityDomain;
 	
@@ -182,9 +182,9 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		final String keyStorePassword, final String pathTrustStoreJks,
 		final String trustStorePassword){
 		String[] uris = {
-			"https://pilot.meineimpfungen.ch:443",
-			"https://pilot.suisse-open-exchange.healthcare:443",
-			"tls://pilot.suisse-open-exchange.healthcare:5544"
+			"https://test.meineimpfungen.ch:443",
+			"https://test.suisse-open-exchange.healthcare:443",
+			"tls://test.suisse-open-exchange.healthcare:5544"
 		};
 		initCertificatesForSecurityDomain(pathKeyStoreP12, keyStorePassword, pathTrustStoreJks,
 			trustStorePassword, "meineimpfungen", uris);
@@ -371,6 +371,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	public List<org.ehealth_connector.common.Patient> getPatients(Patient elexisPatient){
 		MasterPatientIndexQuery mpiQuery =
 			new MasterPatientIndexQuery(affinityDomain.getPdqDestination());
+		mpiQuery.addDomainToReturn("2.16.756.5.30.1.147.1.1");
 		
 		Name name = new Name(elexisPatient.getVorname(), elexisPatient.getName());
 		mpiQuery.addPatientName(true, name);
@@ -443,7 +444,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 			return false;
 		}
 		
-		metaData.setCodedLanguage(LanguageCode.DEUTSCH);
+		metaData.setCodedLanguage(LanguageCode.GERMAN);
 		
 		metaData.setTypeCode(TypeCode.ELEKTRONISCHER_IMPFAUSWEIS);
 		metaData.setFormatCode(FormatCode.EIMPFDOSSIER);

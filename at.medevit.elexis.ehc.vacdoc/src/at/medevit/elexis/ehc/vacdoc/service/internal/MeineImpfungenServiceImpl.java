@@ -371,7 +371,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	public List<org.ehealth_connector.common.Patient> getPatients(Patient elexisPatient){
 		MasterPatientIndexQuery mpiQuery =
 			new MasterPatientIndexQuery(affinityDomain.getPdqDestination());
-		mpiQuery.addDomainToReturn("2.16.756.5.30.1.147.1.1");
+		mpiQuery.addDomainToReturn(PDQ_REQUEST_PATID_OID);
 		
 		Name name = new Name(elexisPatient.getVorname(), elexisPatient.getName());
 		mpiQuery.addPatientName(true, name);
@@ -407,7 +407,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	@Override
 	public String getBaseUrl(){
-		return "https://pilot.meineimpfungen.ch/";
+		return "https://test.meineimpfungen.ch/";
 	}
 	
 	@Override

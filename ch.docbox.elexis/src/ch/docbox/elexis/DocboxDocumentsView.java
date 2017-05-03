@@ -88,7 +88,7 @@ public class DocboxDocumentsView extends ViewPart implements ISaveablePart2, IAc
 	
 	public CdaMessage selectedCdaMessage;
 	
-	private final ElexisEventListenerImpl reloadListener = new ElexisEventListenerImpl(
+	private final ElexisEventListenerImpl reloadListener = new ElexisUiEventListenerImpl(
 		CdaMessage.class, ElexisEvent.EVENT_RELOAD) {
 		public void runInUi(ElexisEvent ev){
 			if (!tableViewer.getControl().isDisposed()) {
@@ -98,7 +98,8 @@ public class DocboxDocumentsView extends ViewPart implements ISaveablePart2, IAc
 		}
 	};
 	
-	private final ElexisEventListenerImpl updateListener = new ElexisEventListenerImpl(
+	private final ElexisEventListenerImpl updateListener =
+		new ElexisUiEventListenerImpl(
 		CdaMessage.class, ElexisEvent.EVENT_UPDATE) {
 		public void runInUi(ElexisEvent ev){
 			if (!tableViewer.getControl().isDisposed()) {
@@ -130,7 +131,8 @@ public class DocboxDocumentsView extends ViewPart implements ISaveablePart2, IAc
 			
 		};
 	
-	ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
+	ElexisEventListenerImpl eeli_user =
+		new ElexisUiEventListenerImpl(Anwender.class,
 		ElexisEvent.EVENT_USER_CHANGED) {
 		
 		public void runInUi(ElexisEvent ev){

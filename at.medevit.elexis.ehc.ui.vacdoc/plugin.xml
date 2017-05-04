@@ -53,12 +53,10 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="at.medevit.elexis.ehc.ui.vacdoc.handler.OpenMeineImpfungenHandler"
             id="at.medevit.elexis.ehc.ui.vacdoc.OpenMeineImpfungen"
             name="meineimpfungen open patient">
       </command>
       <command
-            defaultHandler="at.medevit.elexis.ehc.ui.vacdoc.handler.UploadMeineImpfungenHandler"
             id="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen"
             name="meineimpfungen upload">
       </command>
@@ -71,6 +69,36 @@
             id="at.medevit.elexis.ehc.ui.vacdoc.preferences.meineimpfungen"
             name="meineimpfungen">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="at.medevit.elexis.ehc.ui.vacdoc.handler.OpenMeineImpfungenHandler"
+            commandId="at.medevit.elexis.ehc.ui.vacdoc.OpenMeineImpfungen">
+         <enabledWhen>
+            <test
+                  property="at.medevit.elexis.ehc.ui.vacdoc.enabled">
+            </test></enabledWhen>
+      </handler>
+      <handler
+            class="at.medevit.elexis.ehc.ui.vacdoc.handler.UploadMeineImpfungenHandler"
+            commandId="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen">
+         <enabledWhen>
+            <test
+                  property="at.medevit.elexis.ehc.ui.vacdoc.enabled">
+            </test>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="at.medevit.elexis.ehc.ui.vacdoc.property.PropertyTester"
+            id="at.medevit.elexis.ehc.ui.vacdoc.propertyTester"
+            namespace="at.medevit.elexis.ehc.ui.vacdoc"
+            properties="enabled"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 
 </plugin>

@@ -15,6 +15,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
+import at.medevit.elexis.ehc.vacdoc.test.AllTests;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Anschrift;
@@ -88,26 +89,35 @@ public class MeineImpfungenServiceTest {
 		return Integer.toString(sum % 10);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void isValid(){
-		ServiceReference<MeineImpfungenService> serviceRef = getMeineImpfungenService();
+		ServiceReference<MeineImpfungenService> serviceRef =
+			(ServiceReference<MeineImpfungenService>) AllTests
+				.getService(MeineImpfungenService.class);
 		MeineImpfungenService service = context.getService(serviceRef);
 		assertTrue(service.isVaild());
-		ungetMeineImpfungenService(serviceRef);
+		AllTests.ungetService(serviceRef);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getPatients(){
-		ServiceReference<MeineImpfungenService> serviceRef = getMeineImpfungenService();
+		ServiceReference<MeineImpfungenService> serviceRef =
+			(ServiceReference<MeineImpfungenService>) AllTests
+				.getService(MeineImpfungenService.class);
 		MeineImpfungenService service = context.getService(serviceRef);
 		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
 		assertNotNull(patients);
-		ungetMeineImpfungenService(serviceRef);
+		AllTests.ungetService(serviceRef);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getDocuments() throws Exception{
-		ServiceReference<MeineImpfungenService> serviceRef = getMeineImpfungenService();
+		ServiceReference<MeineImpfungenService> serviceRef =
+			(ServiceReference<MeineImpfungenService>) AllTests
+				.getService(MeineImpfungenService.class);
 		MeineImpfungenService service = context.getService(serviceRef);
 		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
 		List<CdaChVacd> documents = service.getDocuments(patients.get(0));
@@ -115,18 +125,8 @@ public class MeineImpfungenServiceTest {
 		assertFalse(documents.isEmpty());
 		assertNotNull(documents.get(0).getPatient());
 		assertNotNull(documents.get(0).getImmunizations());
-		ungetMeineImpfungenService(serviceRef);
+		AllTests.ungetService(serviceRef);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private ServiceReference<MeineImpfungenService> getMeineImpfungenService(){
-		return
-			(ServiceReference<MeineImpfungenService>) context
-				.getServiceReference(MeineImpfungenService.class.getName());
-	}
-	
-	private void ungetMeineImpfungenService(
-		ServiceReference<MeineImpfungenService> reference){
-		context.ungetService(reference);
-	}
+
 }

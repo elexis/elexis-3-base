@@ -10,12 +10,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
@@ -45,10 +43,7 @@ import org.ehealth_connector.communication.ch.xd.storedquery.FindDocumentsQuery;
 import org.openhealthtools.ihe.atna.auditor.XDSSourceAuditor;
 import org.openhealthtools.ihe.atna.auditor.context.AuditorModuleConfig;
 import org.openhealthtools.ihe.atna.auditor.context.AuditorModuleContext;
-import org.openhealthtools.ihe.atna.nodeauth.NoSecurityDomainException;
-import org.openhealthtools.ihe.atna.nodeauth.SecurityDomain;
 import org.openhealthtools.ihe.atna.nodeauth.SecurityDomainException;
-import org.openhealthtools.ihe.atna.nodeauth.context.NodeAuthModuleContext;
 import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
 import org.openhealthtools.ihe.xds.metadata.AvailabilityStatusType;
 import org.openhealthtools.ihe.xds.metadata.DocumentEntryType;
@@ -72,6 +67,7 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.services.ISSLStoreService;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
@@ -99,7 +95,13 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private VacdocService vacdocService;
 	
+	private ISSLStoreService sslStoreService;
+	
 	private ElexisEventListener mandantListener;
+	
+	private Optional<KeyStore> currentTrustStore = Optional.empty();
+	
+	private Optional<KeyStore> currentKeyStore = Optional.empty();
 	
 	@Reference
 	public void setVacdocService(VacdocService vacdocService){
@@ -108,6 +110,15 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	public void unsetVacdocService(VacdocService vacdocService){
 		this.vacdocService = null;
+	}
+	
+	@Reference
+	public void setSSLService(ISSLStoreService sslStoreService){
+		this.sslStoreService = sslStoreService;
+	}
+	
+	public void unsetSSLService(ISSLStoreService sslStoreService){
+		this.sslStoreService = null;
 	}
 	
 	@Activate
@@ -127,16 +138,11 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		}
 	}
 	
-	private void updateAffinityDomain(String truststorePath, String truststorePass,
-		String keystorePath, String keystorePass)
+	private void updateAffinityDomain()
 		throws URISyntaxException, SecurityDomainException{
-		// OHT configuration is leaking to system configuration, so prepare to reset
-		Map<String, String> sysProperties = getSystemSSLProperties();
 		
-		initCertificatesForSecurityDomain(keystorePath, keystorePass, truststorePath,
-			truststorePass);
-		affinityDomain = getMeineImpfungenAffinityDomain(truststorePath, truststorePass,
-			keystorePath, keystorePass);
+		affinityDomain = getMeineImpfungenAffinityDomain();
+		
 		AuditorModuleContext ctx = AuditorModuleContext.getContext();
 		AuditorModuleConfig auditorConfig = ctx.getAuditor(XDSSourceAuditor.class).getConfig();
 		try {
@@ -145,23 +151,19 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		} catch (Exception e) {
 			logger.error("Audit configuration problem", e);
 		}
-		
-		restoreSystemSSLProperties(sysProperties);
 	}
 	
-	private AffinityDomain getMeineImpfungenAffinityDomain(String truststorePath,
-		String truststorePass, String keystorePath, String keystorePass) throws URISyntaxException{
+	private AffinityDomain getMeineImpfungenAffinityDomain() throws URISyntaxException{
 		// set secure destinations
-		Destination pdqDestination = new Destination(ORGANIZATIONAL_ID, new URI(PDQ_REQUEST_URL),
-			keystorePath, keystorePass);
+		Destination pdqDestination = new Destination(ORGANIZATIONAL_ID, new URI(PDQ_REQUEST_URL));
 		pdqDestination.setSenderApplicationOid(ORGANIZATIONAL_ID);
 		pdqDestination.setReceiverApplicationOid(PDQ_REQUEST_PATID_OID);
 		pdqDestination.setReceiverFacilityOid(PDQ_REQUEST_PATID_OID);
 		
 		Destination xdsRegistryDestination = new Destination(ORGANIZATIONAL_ID,
-			new URI(XDS_REGISTRY_URL), keystorePath, keystorePass);
+			new URI(XDS_REGISTRY_URL));
 		Destination xdsRepositoryDestination = new Destination(ORGANIZATIONAL_ID,
-			new URI(XDS_REPOSITORY_URL), keystorePath, keystorePass);
+			new URI(XDS_REPOSITORY_URL));
 		xdsRegistryDestination.setReceiverApplicationOid(XDS_REPOSITORY_OID);
 		xdsRegistryDestination.setReceiverFacilityOid(XDS_REPOSITORY_OID);
 		
@@ -178,77 +180,8 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		return ret;
 	}
 	
-	private void initCertificatesForSecurityDomain(final String pathKeyStoreP12,
-		final String keyStorePassword, final String pathTrustStoreJks,
-		final String trustStorePassword){
-		String[] uris = {
-			"https://test.meineimpfungen.ch:443",
-			"https://test.suisse-open-exchange.healthcare:443",
-			"tls://test.suisse-open-exchange.healthcare:5544"
-		};
-		initCertificatesForSecurityDomain(pathKeyStoreP12, keyStorePassword, pathTrustStoreJks,
-			trustStorePassword, "meineimpfungen", uris);
-	}
-	
-	private void initCertificatesForSecurityDomain(final String pathKeyStoreP12,
-		final String keyStorePassword, final String pathTrustStoreJks,
-		final String trustStorePassword, String securityDomainName, String[] uris){
-		
-		java.util.Properties properties = new java.util.Properties();
-		properties.put("javax.net.ssl.keyStoreType", "PKCS12");
-		properties.put("javax.net.ssl.keyStorePassword", keyStorePassword);
-		properties.put("javax.net.ssl.keyStore", pathKeyStoreP12);
-		properties.put("javax.net.ssl.trustStorePassword", trustStorePassword);
-		properties.put("javax.net.ssl.trustStore", pathTrustStoreJks);
-		
-		try {
-			SecurityDomain securityDomain = new SecurityDomain(securityDomainName, properties);
-			NodeAuthModuleContext.getContext().getSecurityDomainManager()
-				.registerSecurityDomain(securityDomain);
-			for (String uri : uris) {
-				NodeAuthModuleContext.getContext().getSecurityDomainManager()
-					.unregisterURItoSecurityDomain(new java.net.URI(uri));
-			}
-			
-			for (String uri : uris) {
-				NodeAuthModuleContext.getContext().getSecurityDomainManager()
-					.registerURItoSecurityDomain(new java.net.URI(uri), securityDomainName);
-			}
-		} catch (NoSecurityDomainException e) {
-			logger.error("error with security domain", e);
-		} catch (URISyntaxException e) {
-			logger.error("error with security domain", e);
-		} catch (SecurityDomainException e) {
-			logger.error("error with security domain", e);
-		}
-	}
-	
-	private void restoreSystemSSLProperties(Map<String, String> sysProperties){
-		Set<String> keys = sysProperties.keySet();
-		for (String key : keys) {
-			String value = sysProperties.get(key);
-			if (value != null) {
-				System.setProperty(key, value);
-			} else {
-				System.clearProperty(key);
-			}
-		}
-	}
-	
-	private Map<String, String> getSystemSSLProperties(){
-		HashMap<String, String> ret = new HashMap<>();
-		ret.put("javax.net.ssl.keyStoreType", System.getProperty("javax.net.ssl.keyStoreType"));
-		ret.put("javax.net.ssl.keyStorePassword",
-			System.getProperty("javax.net.ssl.keyStorePassword"));
-		ret.put("javax.net.ssl.keyStore", System.getProperty("javax.net.ssl.keyStore"));
-		ret.put("javax.net.ssl.trustStorePassword",
-			System.getProperty("javax.net.ssl.trustStorePassword"));
-		ret.put("javax.net.ssl.trustStore", System.getProperty("javax.net.ssl.trustStore"));
-		return ret;
-	}
-	
 	@Override
-	public boolean updateConfiguration(){
+	public synchronized boolean updateConfiguration(){
 		affinityDomain = null;
 		// read the configuration
 		String truststorePath = CoreHub.mandantCfg.get(CONFIG_TRUSTSTORE_PATH, null);
@@ -260,11 +193,25 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		if (truststorePass != null && truststorePath != null && keystorePass != null
 			&& keystorePath != null) {
 			try {
-				updateAffinityDomain(truststorePath, truststorePass, keystorePath, keystorePass);
+				if(!currentTrustStore.isPresent()) {
+					currentTrustStore = sslStoreService.loadKeyStore(truststorePath, truststorePass, "JKS");
+					currentTrustStore.ifPresent(store -> sslStoreService.addTrustStore(store));
+				}
+				// remove previous key store and add new key store
+				currentKeyStore.ifPresent(store -> sslStoreService.removeKeyStore(store));
+				currentKeyStore = sslStoreService.loadKeyStore(keystorePath, keystorePass, "PKCS12");
+				currentKeyStore
+					.ifPresent(store -> sslStoreService.addKeyStore(store, keystorePass));
+				
+				updateAffinityDomain();
 			} catch (SecurityDomainException | URISyntaxException e) {
 				logger.error("Could not update affinity domain.", e);
 				return false;
 			}
+		} else {
+			// remove previous key store
+			currentKeyStore.ifPresent(store -> sslStoreService.removeKeyStore(store));
+			currentKeyStore = Optional.empty();
 		}
 		return true;
 	}

@@ -6,16 +6,16 @@ import org.osgi.service.component.annotations.Reference;
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
 
 @Component
-public class MeineImpfungenServiceComponent {
+public class MeineImpfungenServiceHolder {
 	private static MeineImpfungenService miService;
 	
 	@Reference
 	public void setMeineImpfungenService(MeineImpfungenService miService){
-		MeineImpfungenServiceComponent.miService = miService;
+		MeineImpfungenServiceHolder.miService = miService;
 	}
 	
 	public void unsetMeineImpfungenService(MeineImpfungenService miService){
-		MeineImpfungenServiceComponent.miService = null;
+		MeineImpfungenServiceHolder.miService = null;
 	}
 	
 	public static MeineImpfungenService getService(){

@@ -7,7 +7,7 @@ import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceComponent;
+import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder;
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
@@ -46,7 +46,7 @@ public class MeineImpfungenPreferences extends FieldEditorPreferencePage
 	public boolean performOk(){
 		boolean ret = super.performOk();
 		if (ret) {
-			boolean configOk = MeineImpfungenServiceComponent.getService().updateConfiguration();
+			boolean configOk = MeineImpfungenServiceHolder.getService().updateConfiguration();
 			if (!configOk) {
 				MessageDialog.openError(getShell(), "meineimpfungen",
 					"Es ist ein Fehler aufgetreten, bitte überprüfen Sie die Konfiguration.");

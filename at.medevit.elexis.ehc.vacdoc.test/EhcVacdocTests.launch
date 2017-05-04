@@ -28,7 +28,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="at.medevit.elexis.ehc.vacdoc.test"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Dmeineimpfungen.truststorePath=&quot;C:\meineimpfungen\ihe-pilot-truststore.jks&quot; -Dmeineimpfungen.truststorePass=&quot;trustit&quot; -Dmeineimpfungen.keystorePath=&quot;C:\meineimpfungen\MyVaccines.ch-2000002000001.p12&quot; -Dmeineimpfungen.keystorePass=&quot;test&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Dmeineimpfungen.truststorePath=&quot;C:\meineimpfungen\myvtest-truststore.jks&quot; -Dmeineimpfungen.truststorePass=&quot;trustit&quot; -Dmeineimpfungen.keystorePath=&quot;C:\meineimpfungen\MyVaccines.ch-2000002000001.p12&quot; -Dmeineimpfungen.keystorePass=&quot;test&quot;"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="org.eclipse.platform.ide"/>
 <booleanAttribute key="run_in_ui_thread" value="false"/>

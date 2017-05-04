@@ -1,0 +1,959 @@
+
+443 commits between 3.0.10 (2014.11.07) and 3.1.0 (2017.05.03)
+--------------------------------------------------------------
+   number changes by authors are
+   139: Niklaus Giger
+   108: thomashu
+   100: lamann
+    81: Marco Descher
+     7: Patrick Kaufmann
+     2: marco
+     2: Antoine Kaufmann
+     2: gerry
+     1: Bugra Ergin
+     1: sazgin
+--------------------------------------------------------------
+0ae83e218489548cfb48c4a7f75a91f47f657914             thomashu 2017-05-03 09:17:45 +0200 Revert "[5626] added fop service test fragment"
+d011c310d8807de272182835d601f580e44e9203             thomashu 2017-05-03 09:17:43 +0200 Revert "[5626] updated ocrb and ocra font of fop service"
+2c18d522552cd2858223b04042ba6dea8cbe5b66             thomashu 2017-05-02 23:01:44 +0200 [5782] fixed vat calculations for tarmed xml
+5c85982865c2343110b3bdf223c5b63e931849c4             thomashu 2017-05-02 22:22:07 +0200 [5626] updated ocrb and ocra font of fop service
+4f02ee254affeb66503b62702a561e6b8c4fa013             thomashu 2017-05-02 22:22:00 +0200 [5626] added fop service test fragment
+2e5e1560485bfa5827dc35e5baef0a35dfabe7fc               sazgin 2017-05-02 21:44:54 +0200 [5873] Gegenwaertig selekt. Status wird nicht als gewaehlt angezeigt (#40)
+def0bc3686c8c014d267c7bf468bf25799d8b988        Niklaus Giger 2017-04-29 11:12:21 +0200 [5115]Update KG Iatrix launch configuration
+f3bcc0e1b148cf9330422620ad65551b97728c0f        Niklaus Giger 2017-04-28 21:22:04 +0200 [5115]Remove unused Helper function
+8f81a4adf3d3961dc073706ad548797aecb4daca        Niklaus Giger 2017-04-28 21:21:53 +0200 [5115]Cleanup use of ElexisEventDispatcher and other callbacks
+5527aefa19f7b1edeadc788ff2833ad571e7bd61        Niklaus Giger 2017-04-28 21:20:36 +0200 [5115]Replace Background job by IJobChangeListener in KonsListDisplay
+3d1104240242b19eabaca6d3bce17b31c1ac2e27        Niklaus Giger 2017-04-28 21:20:36 +0200 [5115]Nicer KonsTextLock trace
+330f45f0db5dc761c0fe166bc6525b4974c07d66             thomashu 2017-04-28 20:56:36 +0200 [5924] moved patient activation from inbox context menu to view menu
+a68819fdcd89f04d9d1e75ef3bc060f8de62f3c5             thomashu 2017-03-05 16:36:53 +0100 [5675] reworked pdf lookup of viollier lab importer
+7a90770bff2262087c0856ac8c5511bd24b83f19        Marco Descher 2017-03-03 10:57:44 +0100 [5511] Raise version to ensure binary compatibility (pom update)
+f22e144ffbe604d489c297ec3d789a5c019e299e        Marco Descher 2017-03-03 10:24:51 +0100 [5511] Raise version to ensure binary compatibility
+55ba9be247697b9156e15612fa768360c4df134f             thomashu 2017-02-21 13:31:55 +0100 [5675] less strict pdf filename check on viollier lab import
+aa9fe2eb68cda15cbef0fcd5ce1f1663fef26d78             thomashu 2017-02-10 11:21:18 +0100 [4409] updated context menu id of c.e.c.ui.medication for medietikette
+93c01d340e21eb1691f3ec9cc0a8e36323e15295        Marco Descher 2017-02-10 09:13:16 +0100 [5657] Do not include () to Artikelstamm label
+3741cf2a5ce26affe781251231c702c3fe896596             thomashu 2017-02-09 11:59:16 +0100 [5342] moved migel articles to separate plugin
+7c5e9d0ca61332da6981581ab5b3168cf681396d             thomashu 2017-02-09 11:59:04 +0100 fixed getCode of c.e.b.c.ticode TessinerCode
+bb93c437b3f1e544af93bd6a94177c8978ec1c6b        Marco Descher 2017-02-09 11:59:03 +0100 [4576] Extract TI Code for server re-usage
+c75a78f4aa0cddccf9c96f6ae1dde9424a26e383                gerry 2017-02-09 11:49:19 +0100 correct CodeSystemCode for BAGMedi
+48a3501386d5d895936a5035b7dcebef129b12f5                gerry 2017-02-09 11:49:07 +0100 add EAN and ATC Code to imported data
+366827d9a3b98b250fbd84712951c38ed7ea1634        Niklaus Giger 2017-01-20 17:49:49 +0100 [5322]Fix NPE-Warnings in KG-Iatrix
+6c43bef904935bc920ff2ab5b4fcc1c735560dd7        Niklaus Giger 2017-01-20 17:48:53 +0100 [5124]Update to Java 1.8
+42794cfaae70dc580aac40ab977106928efef580        Marco Descher 2017-01-20 16:20:10 +0100 Fix possible NPEs in c.e.agenda
+1b5e4ec654d7000f3ab8d576ea969a4596ce4ce7             thomashu 2017-01-16 15:40:02 +0100 [5177] updated tarmed xml file extensions for reminder
+1b5e4ec654d7000f3ab8d576ea969a4596ce4ce7             thomashu 2017-01-15 16:26:33 +0100 [5268] fixed NPE on tarmed bill XML export without writing file
+0d9ba83c94fabd19cb81f2923b18343e80a4cebf             thomashu 2017-01-10 09:12:18 +0100 [5500] fixed guarantor address of tarmed XML
+c5673925adb86d1c72084215ae00c3c4dcaab453        Niklaus Giger 2016-12-30 11:00:24 +0100 [5322]Fix displayed shortcut names
+7424f902909071708d9847b5b4e924275175753b        Niklaus Giger 2016-12-29 15:14:43 +0100 [5322]Fix compilation & versions under 3.1
+62fbb7803511673c8dc4dc023e0969b4d87a782f        Niklaus Giger 2016-12-29 13:28:35 +0100 [5480]Fix some view IDs
+d30f0cff20ff41b9e8cd3ab8135bd770fa66b149        Niklaus Giger 2016-12-29 13:28:27 +0100 [5322]Fix F2 and alt-enter for ext_doc. Fix potential NPE
+bd203bfb7ab8896f17854270f23f2981e4818c4b        Niklaus Giger 2016-12-29 13:24:58 +0100 [5477]Fix displaying (in)active item in kons list
+14c8c61dd8cf9b34f72060c508ab3509fbc0eae3        Niklaus Giger 2016-12-29 13:24:57 +0100 [5482]Use EnhancedDatePickerCombo to change date of kons
+a779ad83ed73d99d88b38e3348104a40023b89b8        Niklaus Giger 2016-12-29 13:24:57 +0100 [5477]Nicer log text
+78179865e61583d0ce1a08a18fc48714d9653727        Niklaus Giger 2016-12-29 13:24:50 +0100 [5462]NPE wegen falscher Behandlung wenn Kons == null bei Wechsel der View
+5015a08e9de0789f05419cb5bc7272db7157157d        Niklaus Giger 2016-12-29 13:22:55 +0100 [5480]Added perspective KG iatrix
+62119032b96858b296792746aa9927dd10397585        Niklaus Giger 2016-12-28 16:06:11 +0100 [5198]Removed com.jsigle_noatext which goes to elexis-3-gpl
+0cbbac79d40dbdc361cc847e0ab529eff7f0cbef             thomashu 2016-11-18 11:23:25 +0100 [5042] Artikelstamm obligation is now dependent on SL information
+5388017f85409f66820ec1d3fba70c0fe4e9af46        Marco Descher 2016-11-08 11:54:37 +0100 [5247] Allow correct setting of Artikelstamm VATInfo
+210e6b3ec34db4b45e64b6f581c9aa98ead61f41             thomashu 2016-10-20 19:22:26 +0200 [4864] fixed ch_elexis_agenda_daymsg db table creation
+32e69eed58a8ae0d48fc0099a995bd177399df05             thomashu 2016-10-20 14:21:14 +0200 [4724] fixed DocHandle database table initialization
+3c88d198f27914a5a2b133d9f15c9200666e6f9f        Niklaus Giger 2016-10-07 08:03:23 +0200 [5131]Updated copyright
+801ff8acdeeebf8748d7afe1daea0383935f5800        Niklaus Giger 2016-10-07 08:03:23 +0200 [5131]Fixed feature.xml (link, license)
+434af986d6101a48744b19b525cc0b7d897c821f        Niklaus Giger 2016-10-07 08:03:23 +0200 [5131]Bump GDT version to 3.1
+2f10bc4abe1e2f9966d1c69d0315ccdcdd08d82f        Niklaus Giger 2016-10-07 08:03:22 +0200 [5131]Added GDT plugin/features
+19c6893d849f5265aad08b4edbed6907abc190d1        Niklaus Giger 2016-10-06 18:49:11 +0200 Remove unused Thumbs.db
+8003041a6d1276802df91bcac80386ca2fdd3a20        Niklaus Giger 2016-10-06 18:47:27 +0200 [4896]Silence possible NPE warning
+be7737250745652ec6165a9a3ba223ef477fb5ab        Niklaus Giger 2016-10-06 18:32:15 +0200 [5115]Allow edititing KonsText after changing patients
+e475391521214e50b4e9e39b88471b6549397ca8        Niklaus Giger 2016-10-06 18:32:15 +0200 [5115]Avoid NPE
+7cb8d70be95f0efe4f6d44f09d8cbf09ccbe5f62        Niklaus Giger 2016-10-06 18:32:15 +0200 [5116,5117]Fix creating new kons. Run GUI-Update in UI-Thread
+8ebf9828cc04ba55e2d02dbf7298ce5007b0817f        Niklaus Giger 2016-10-06 18:32:15 +0200 [5116]Avoid nil access
+d2ae4719cead9dcff013309609652c48ce32323d        Niklaus Giger 2016-10-06 18:32:14 +0200 [5115]Fix saveAction
+acfddd2f969dd646b61364e75354798d222cfb59        Niklaus Giger 2016-10-06 18:32:14 +0200 [4807]Minimize updates
+ebed60ccb740e7d38e6fa66528ce02dfa4882107        Niklaus Giger 2016-10-06 18:32:14 +0200 [5115]Better logging
+b5508520af60247e0bfd0853de76d19b16775ae5        Niklaus Giger 2016-10-06 18:31:48 +0200 [5115]Refresh Konstext after changing patient
+0fe2a26b4d1b885c05cbdf88f43aff1481cc8538             thomashu 2016-10-06 09:08:35 +0200 [5097] manually ported changes to 3.1 branch
+f7249b0c298f86bbb969d1a01fafe57039a72c9f             thomashu 2016-10-04 21:06:49 +0200 [5097] change artikelstamm detail to new article signature composite
+79948b382cb761207df101fcfd84f45fb3d0e73c             thomashu 2016-10-04 21:06:49 +0200 [5097] changed automatic vaccination listener to adjuster ext point
+f50238813c3ceb00634ec8c0aafff5c5c391ee02             thomashu 2016-10-04 21:01:51 +0200 [5124] do not ask for confirmation on recurring termin delete
+68ef471f50d7204827d156130308a5fc6445f5cd             thomashu 2016-10-04 21:01:40 +0200 [5124] fixed recurring termin delete
+927d87366c7962319409d7489569ef6668606d25             thomashu 2016-10-04 21:01:31 +0200 [5122] fixed collision detected of recurring termin
+47f532668e74ee5a45dbecf972d6af9849dd3105             thomashu 2016-09-30 11:30:40 +0200 [4895] recurring date can only be created or deleted, not edited
+9872ad9cd41e40cde835ea86fa2c3789ea896bbd             thomashu 2016-09-26 10:40:56 +0200 [4906] added collision detection and ui, to paralell and week agenda
+7118fe7b403e40897462f61f1cb8c1d69e09803d             thomashu 2016-09-26 10:39:27 +0200 [4118] sort Termin list on TerminDialog
+104b7a8e43228b32ede5437f3071d059d921395f        Marco Descher 2016-09-26 10:28:56 +0200 [4852] Disable change service price or amount for billed consultations
+8ac6396ec924237b9fa6125d81aed3d661380aa8             thomashu 2016-09-26 10:26:34 +0200 [4734] add reduction for all services from OP I Tarmed
+d535c54dc52dc3159ad97498f6cdab79fe83006a             thomashu 2016-09-26 10:26:34 +0200 [4734] fixed reduction of services from the OP I Tarmed section
+892a7351ddde2d73540eb2b011818f98d03575f9             thomashu 2016-09-26 09:51:15 +0200 [4995] add lot number to supplement vaccination
+82e01cc23e924130ee47eaba5826407dd9e24752             thomashu 2016-09-26 09:40:07 +0200 [4783] set code 2000 for non pharma tarmed code elements
+ba3e5bd29f8bb98ed7e8b4bf497499a1f22a9c99             thomashu 2016-09-26 09:40:07 +0200 [4783] added code system 406 for non pharma artikelstamm entries
+1e6e307726885b59e0074b14d33835c47a8ce215             thomashu 2016-09-26 09:34:58 +0200 [5058] added session number on tarmed xml bills
+e27beb6a3f00aec242c13f43310526a7fbfd890f        Marco Descher 2016-08-29 08:48:43 +0200 [5032] Fix mepha preferred artikelstamm sorting for postgresdb
+ecb9b60fb71844ac0a6f5c794a954fee30a5f9da        Niklaus Giger 2016-08-24 15:47:01 +0200 [5015]Update a few features to 3.1.0 to avoid installation problems
+92dedd8b8be90977a326ee8f7c16659f1debcbed        Niklaus Giger 2016-08-24 13:03:52 +0200 [4957]cfg was null, NPE when setting preferences
+bffa8160afe268442c5efaade5a0f193f0d70cee             thomashu 2016-08-19 14:17:53 +0200 [4970] dont duplicate agenda Termin on free text change
+c5a9260c27b88c456be7775198c4060850d4a5b6             thomashu 2016-08-18 10:15:02 +0200 [4921] added print_patient_copy attribute for tarmed xml 4.4 output
+910186538ccb1ade7dbf1dd9bc3fe51259f66560        Niklaus Giger 2016-08-04 23:05:34 +0200 [4957]Fix ExcelWrapper
+f1ab9d7e6c68c15893df4fe5e9609e7bcf379e26        Niklaus Giger 2016-08-04 15:53:00 +0200 [4463]Added .gitignore and dll to com.jsigle.noatext_jsl/lib
+4a71d718dc73e486bd5e95fb4d5abfcee2ddd552        Niklaus Giger 2016-08-04 15:09:18 +0200 [4957]Fixed docu link and version
+d16768ca01f8dbea24028afecd0cf8b6b0cdaaa9        Niklaus Giger 2016-08-04 13:44:25 +0200 [4333]DEL removes Verrechenbar
+94d58cce33e8f733439f000034273ef4a7169225        Niklaus Giger 2016-08-04 13:36:45 +0200 [4957]Added Privatrechnung Berchtold
+9e169f1df5299a7c1608969d8d6a70451b1e90cd        Marco Descher 2016-07-22 08:04:01 +0200 [4926] Add default right display appointments to user
+06b0d046706a0270b316a7d03d403112f526d566        Niklaus Giger 2016-07-01 11:00:42 +0200 [4816]Changed tooltip text for active/inactive
+f2a37aae37b7750d4e58ee987bcf1c228d773b84        Niklaus Giger 2016-07-01 11:00:42 +0200 [4816]Improved row names and tooltip texts
+8ef06373af4b3544779abb54dc8d396f72bfd160        Niklaus Giger 2016-07-01 11:00:42 +0200 [4816]Moved view Konsultationen Iatrix to category iatrix
+0d984a2472ed2be0744b83b1d008e6cca1bccb68        Niklaus Giger 2016-07-01 11:00:42 +0200 [4816]Filter in View Fälle affects KG Iatrix, too
+41d3e01757d0029428da81eaf1fd4c53b960d8c6        Niklaus Giger 2016-07-01 11:00:42 +0200 [4816]Allow changing active/inactive, unassign problem. Drag target
+7d0ed13b4c538c4c67340aad31ddc2d12f155967        Niklaus Giger 2016-07-01 11:00:41 +0200 [4816]Allow changing date of selected kons
+ca79bcc78aa35e4a390f6fce9561eed910cf753d        Niklaus Giger 2016-07-01 11:00:41 +0200 [4816]Update after add/change/insert of fixmedi
+be2d6e29841b716f99338be9beab6be4fc83cb70        Niklaus Giger 2016-07-01 10:59:21 +0200 [4807]Cleanup up kons and patient listener
+eb4d6d7648a663e562d0c20c28c91a653bca3a34        Niklaus Giger 2016-07-01 10:59:21 +0200 [4807]Allow fixmedication on operations on problem table
+3440fd6357077cd9e8863334f25657ecc51df2c9        Niklaus Giger 2016-07-01 10:58:17 +0200 [4775]Update kons list after modifying konstext
+1a40d0de4fa855c38de4a47e688d9e34c0f7269c        Niklaus Giger 2016-07-01 10:57:17 +0200 [4776]Fix updating diagnosis text
+1971011db72371f54669b15179d60596fbef289e        Niklaus Giger 2016-07-01 10:55:14 +0200 [4560]reworked synchronisation of KG-Iatrix KonsText
+fc8409aeeeca2d9ea2c8129c4d2418f19f87afd0             thomashu 2016-04-28 13:42:49 +0200 [4653] fixed setting filesystem path to global or local config
+f1cca7c7809aadc379712dfe13f0dcaa9f0e0f78             thomashu 2016-04-28 13:40:48 +0200 [1914] added automatic billing of 39.0020 for x-rays
+fb8c6e0d587e9792177ada6f9e3be476cdbec21a             thomashu 2016-04-28 13:38:50 +0200 [4630] fixed bill export with multiple consultations
+47b12eb3c6c2b7dd2131f890942741d715a4f43f        Niklaus Giger 2016-04-14 20:13:32 +0200 [4559]Update KG-Iatrix KonsAreas before firing SelectionEvent
+cd945e9b0cdc98b077828ccc28c60d78ada5817a        Niklaus Giger 2016-04-14 20:11:03 +0200 [4558]Save savedInitialKonsText if changed
+14e688875c1622c396631976f857bead057153d7        Niklaus Giger 2016-04-14 20:09:31 +0200 [4583]add kg_iatrix launch configuration
+30e2033047af398bdf800c3df441a63ab8e4970b        Niklaus Giger 2016-04-14 20:09:31 +0200 [4583]Change label text
+6401f4b1cfc8d232f467df97fa2b1e7a20a51826             thomashu 2016-04-06 19:01:51 +0200 [4498] fixed agenda day boundary update
+fb2edbb2de7e8bab86ba417fbd659dcd20688a43             thomashu 2016-04-04 13:04:52 +0200 [4034] changed DocHandle.load to never return null
+e56079f940dc65514f1a053ce3b141074f44e039             thomashu 2016-04-04 09:15:01 +0200 [4034] changed Termin.load to never return null
+928aaf2ba1838418ee328b0a297e81eb0581206f        Niklaus Giger 2016-04-03 19:31:39 +0200 [4471]Update org.iatrix.feature to 3.1.0
+c67e0916dcf2e82d9aab37778c83c8a7d47f82f8        Niklaus Giger 2016-04-03 16:37:38 +0200 [4471]Synchronise konsText updates
+edf34b1e8b1c1eca63c374b3de6fc03f3ec9f14e        Niklaus Giger 2016-04-03 15:37:14 +0200 [4471]Update org.iatrix.feature to 3.1.0
+3c9f595acf0e7587a9c5414fa537b36342a30719        Niklaus Giger 2016-04-03 15:37:13 +0200 [4471]Avoid NPE when writing logs
+f4eef64e90ab030c269341fac1f4c3963aabc0f7        Niklaus Giger 2016-03-30 10:32:34 +0200 [4463]Add library jars to com.jsigle.noatext_jsl
+12c70d2ebd579de60a42e58ddac22055d4b3e50a        Niklaus Giger 2016-03-30 10:32:33 +0200 [4463]Added text-plugin com.jsigle.noatext_jsl and corresponding feature
+e3ddc72a3098e6566df0397718059972d29475f4        Niklaus Giger 2016-03-24 11:46:22 +0100 [4441]Add missing com.lowagie.itext to CST-feature
+c0a88ab9a9e2bdf8e33634509a9a8bf038f2a63d             thomashu 2016-03-24 08:41:24 +0100 [3210] toggle side if side required of TarmedLeistung
+93a16c59c66592c05067d381949c90918d73fa6d             thomashu 2016-03-17 20:42:28 +0100 [4411] added download and initialization of tarmed text templates
+6bd48c812801b25ce3318b0048041ada1e06e22c             thomashu 2016-03-17 20:39:03 +0100 [3996] updated medi etiketten printing to handle new medication view
+64b2011c7e1460421f5c2dd84289bfa241fc4b2e             thomashu 2016-03-17 20:33:57 +0100 [4426] added getting invoice response version
+b6b7bc73c2ef76aafb5a3ce853d7f924e3da3f09        Niklaus Giger 2016-03-17 18:41:11 +0100 [4398]Fixed delete
+427f11a4e10dd08f594905a3f909c2a4705a74f1        Niklaus Giger 2016-03-17 17:47:36 +0100 [4441]Remove superfluos ch.gpb.elexis.cst.p2site
+867350e4c4678f5775c7ab9d65dc0ff798ebfa47             thomashu 2016-03-17 17:47:06 +0100 [4398] refactored AgendaActions and removed not used actions
+bbe2890dfb97a4b9f988ef874e9337c97a364106        Niklaus Giger 2016-03-17 13:29:36 +0100 [4441]Added CST plugin from Gemeinschaftspraxis Brunnmatt/Daniel Ludin
+df0eb4725e74ac8eae22706439929f2166a036bc             thomashu 2016-03-17 13:28:06 +0100 [4436] fixed findElement of tarmed and lab CodeSelector implementations
+4a6434fb2a0eaf02859fc4a3a53ca4e93b0dafa4        Niklaus Giger 2016-03-04 20:45:15 +0100 [4422]Fix Hyperlink für Rechnungssteller
+90201cf07c956a281a8df22712bec310081f1956        Niklaus Giger 2016-02-22 11:55:28 +0100 [4401]Fix creating new kons for today
+79af4ddc59d9a88cdb3b164c689f8db8bb9ba6c2        Niklaus Giger 2016-02-22 11:55:28 +0100 [4401]Fix ElexisUiEventListenerImpl to follow changed patients
+10f83bca76bb7e8564aba7b4da1faf55db7d030f        Niklaus Giger 2016-02-22 11:52:45 +0100 [4396]Cobasmira-View may be opened without setting preferences first
+1aefe2b03ff9534ab737fdce9ce95ccfda93d326             thomashu 2016-02-18 13:06:14 +0100 [4290] changed code system code to 402 for billing of drugs
+3407009c45ff01d810b3b0cfa6ececfdd1917cd2             thomashu 2016-02-18 13:05:29 +0100 [4377] fixed reading balance from tarmed xml 4.0
+c50641cc0290cc6ee0a75738ebe8f6ba4fe520b7             thomashu 2016-02-18 13:05:18 +0100 [4038] fixed invalid chars in address on Tarmed XML export
+4ff7c09157f016c02d0ddad735080383acc06470        Marco Descher 2016-01-25 09:55:21 +0100 [3261] Tastaturscanner für Artikelstamm, direkte Übernahme bei GTIN
+c58b20674eaa7684a1f8328964d362547b2bcecf        Niklaus Giger 2016-01-10 16:07:00 +0100 [4292]Update install_repo.sh. Using ROOT_repo
+d0c937e7115fced27c750a6ac29882d9bd54b2fa        Niklaus Giger 2016-01-09 21:24:29 +0100 [4292]Added install_repo.sh. Generate repo.properties
+381e1d30cc1cb290d65fbeb424244fddadd80a4c        Niklaus Giger 2015-12-24 15:20:04 +0100 [4231]Fix import Artikelstamm into emtpy database
+ba6783fc91144048455b92f06e0a862fcb87b6c5        Niklaus Giger 2015-12-20 10:28:59 +0100 [3187]Added Jenkinsfile build.groovy
+3699c95c969a965134c0f1e67e724bff1dadfc0d        Niklaus Giger 2015-12-12 22:48:30 +0100 [664]Umbennenung KG Iatrix
+2f0de83a81fb8e5a3f2c638e362309ba0cb6842d        Niklaus Giger 2015-12-12 22:47:17 +0100 [682]Umbennenung messwerte Iatrix
+f4005325662ce07bd7278e15aa387394ca31c245        Niklaus Giger 2015-12-12 22:36:34 +0100 [3945]Corrected colors. Added tooltip
+46a2fe474e259acbe7a34d4c4ad21e0b79e55db1        Marco Descher 2015-12-10 07:54:10 +0100 [4235] fixed OK in edit vaccination dialog does not work properly
+6366ca995fa7b89c626dce95f3252a4537624dbc        Marco Descher 2015-12-07 14:25:09 +0100 [2081] Mitigate potential NPEs
+53556df5f85f4184d746a16374b3deccfa9989c4        Marco Descher 2015-12-02 09:45:44 +0100 [4197] Remove non-required dependency
+d5e94b77065b0834b5f68dc3e6b6e3e6fc68697b        Marco Descher 2015-12-01 12:05:26 +0100 [3915] Wrong vaccination marker for ATC J07CA01
+6d788c4a501911bc783478fdb9c7f122591a88d9             thomashu 2015-11-30 15:58:05 +0100 [4173] improved lab item and patient resolving
+d0e3b6776703cef6f12a85c401652b6892f6fa98             thomashu 2015-11-30 14:35:48 +0100 [4173] initial import of eurolyser lab importer
+a3fbfe170f4aec13990dcabc4519a253f88760ad        Marco Descher 2015-11-30 10:08:55 +0100 [4191] DBShaker must not remove VERSION entries
+139b55b8e3daa52f63c62e3e3c771db4d2a3429a        Marco Descher 2015-11-30 09:56:10 +0100 [3265] Aufnahme PRODNO in artikelstamm tabelle
+28debfdba842fe587809e8e7d93f9eb5feeb3c26        Marco Descher 2015-11-30 09:01:03 +0100 [4180] Move IArtikelstammItem to a.m.ch.artikelstamm (medcalendar fix)
+25d1255e31f951225e5afd2565edd86a3fc778c3        Marco Descher 2015-11-30 08:40:17 +0100 [4180] Move IArtikelstammItem to a.m.ch.artikelstamm
+95fbd49f71311b5953e75770ca8e2b75d1b726cd        Marco Descher 2015-11-27 10:22:38 +0100 [3855] Fix user/rights for ch.ebanking
+ce8dd1fc400a38c691e4ea1df6c9ce606eaee274        Marco Descher 2015-11-26 20:04:52 +0100 [3577] Anpassungen Impfplan: Edit single entries
+752c7ebf433c37487e15221da066f8ae55b1f32a               lamann 2015-11-26 15:58:14 +0100 [4183] update refs from ca.uhn.hapi.base to it's osgi version
+4f2f1ba9c9d3955dd4c97c5a8f7202b109ec2024               lamann 2015-11-26 14:06:18 +0100 [2963] medCal map update
+356e025e7ca665d9f312622937411fb8ef78a9f7               lamann 2015-11-26 13:23:44 +0100 [4160] fixed umlaut resolution in hl7.allg importer
+f99510b503e692b72ef8554b9fb344268d86428c               lamann 2015-11-25 12:58:33 +0100 [2948] refactored doctor/mandant setting for inbox elements
+9850e0d1fc4a2359e60c2d355c5dd4d052372378        Marco Descher 2015-11-25 08:13:08 +0100 [466] fix build dependencies for de.fhdo.elexis.perspective
+cfa54c586352910ee407d5fca12981c62092e47b               lamann 2015-11-24 16:02:17 +0100 [4171] Show chapter and subchapter numbers of TarmedLeistungen
+35620743fb665028f73e43a1cc3b4d199550f79b               lamann 2015-11-24 13:38:18 +0100 [4174] always remark accountTransaction (even for non resolvable rn's)
+18bb36b27b0b8146a53c9cd93c33763d358f7adc               lamann 2015-11-23 17:39:28 +0100 [3394] Sysmex suggest patient sent and/or selected 
+85d422fc19dfa3894332a8e7edfaedfb93fcc335        Niklaus Giger 2015-11-23 10:40:47 +0100 Revert "[4168]Update to be able to use Maven 3.0.5 and 3.3.x"
+a886480c2018dd17c08b1e866b1a3670311a1cff        Marco Descher 2015-11-23 08:22:40 +0100 [466] refactorings to de.fhdo.elexis.perspective
+2a4322e8dc287c04a6489270587115f099f15c55        Niklaus Giger 2015-11-22 11:31:43 +0100 [4168]Update to be able to use Maven 3.0.5 and 3.3.x
+4fd664ef0bb093fac8770a0e21cc5fe7617b31da        Niklaus Giger 2015-11-22 11:31:43 +0100 Corrected some image name
+fafa140593399fe512393a6aee086b644f0c1cf3             thomashu 2015-11-19 14:00:55 +0100 updated ehc libs and added XDM for vacdoc
+f35f889d27bfcd7e96c59714ee9869a5ed90c0c2               lamann 2015-11-19 10:30:29 +0100 [4160] HL7 Allg. added import encData on preference page
+5d01fe028484f63d64f874684879bd1c5a3a2389               lamann 2015-11-17 15:55:25 +0100 [4128] Fixed tarmed optifier to check parent incompatibility as well
+1674cca734085c1ab50379c34bc7057a626b2057               lamann 2015-11-16 15:58:36 +0100 [4099] trim atcCode to resolve immunisation - support for all DBs
+7b897d2d2fdef1603b63bdbcffb03d67a0934df4        Marco Descher 2015-11-16 12:44:51 +0100 [3673] Set default directory for global inbox
+e225872ae5a1ebf18d797746f69320e49f3dda14        Niklaus Giger 2015-10-29 21:32:48 +0100 wiki_pull_and_commit: 2015-10-29 from http://wiki.elexis.info/
+e1a2568124f91c2a8307bc600375498df1e46fc5        Niklaus Giger 2015-10-29 15:24:51 +0100 wiki_pull_and_commit: 2015-10-29 from http://wiki.elexis.info/
+2626789c15ca48edd28b5542502c3a7a8cc7005e        Marco Descher 2015-10-19 08:57:12 +0200 [4101] Impf-Dialog soll Artikelnamen beinhalten
+510718941932f3ee30d0a302af5c43983bcb7847        Niklaus Giger 2015-10-16 10:55:00 +0200 [4097]Convert docbox files from ISO-8859 -> UTF-8
+b5b19ac873246a798a015392d003dbb9874c43c3        Marco Descher 2015-10-14 10:01:57 +0200 [2112] update default user rights
+c65f7e14a11db915fd509903b742d7b492bd8fc1        Marco Descher 2015-10-08 13:42:55 +0200 [4078] remove dependency to c.e.base.ch.artikel from c.e.archie.wzw
+6bc36f3d0ab29817cdd68ea01f30882c08d86193             thomashu 2015-10-08 09:26:32 +0200 [4082] updated docbox cda message table for longer titles
+11676d38c2a7e340efd4510dc16b56894f2a47ce        Marco Descher 2015-10-07 13:37:52 +0200 [4078] remove non-required dependencies in org.iatrix
+06778fa808afa532c5977d8991a9a47849974e78        Marco Descher 2015-10-07 13:23:00 +0200 [4078] fix c.e.b.ch.arzttarife dependency on on c.e.b.ch.artikel
+4cf57017e6e094772a52fbe6f4a6918daaeb73f5               lamann 2015-10-07 08:53:57 +0200 [4076] Fix format exception by passing sound format info to clip
+59135ea168db8e669d8f373449d8b901784d2a8b               lamann 2015-10-07 08:20:37 +0200 [4077] only skip sound in case of exception in message plugin
+948985bbf67773f4182505a611bb0cd6d0b39b20               lamann 2015-10-06 15:07:42 +0200 [3969] Lab.Viollier import - fix linking of belonging pdfs in lab view
+9acba6eee841ae67302a8b816c84ba37040f2d3d               lamann 2015-10-06 12:31:57 +0200 [2963] Fixed MedCal affiliation of atcCodes to sections/chapters
+b348b43f550586de1ff502c962fabff9d22face5               lamann 2015-10-06 09:09:00 +0200 [4071] avoid trying to modify disposed buttons
+bffb065c70acbff4708d5c5ebbd15afbd425947a               lamann 2015-10-06 08:38:24 +0200 [2963] MedCalendar sections update
+c40afdba895ce71a218dc26a1ed7ec05438a711f        Marco Descher 2015-09-28 13:00:44 +0200 Revert "[2600] fix invalid Perspectives when importing them"
+a26f4606d8bcb538da963157d722893f5cc0ebcf        Marco Descher 2015-09-28 13:00:26 +0200 Revert "[2600] introduce dependency version constraints on org.eclipse.ui"
+9ed6279266f536a4b9c3fe3690c4543b37e1a772        Marco Descher 2015-09-28 12:46:50 +0200 [2600] introduce dependency version constraints on org.eclipse.ui
+a26f4606d8bcb538da963157d722893f5cc0ebcf        Niklaus Giger 2015-09-25 14:32:47 +0200 [2606]Remove symbolic links in doc. They made the jenkins log unreadable
+66446e89672703bf4408757776ebc8c54fe8ef7b               lamann 2015-09-24 17:15:15 +0200 [2600] fix invalid Perspectives when importing them
+00a41efd4c1bd5561223a8a3891c0c7d2f619e10             thomashu 2015-09-24 09:34:23 +0200 removed png due to case changed by doc update
+195e7e83519c4131988d40fc82e12d0e405e64c1             thomashu 2015-09-24 09:34:20 +0200 [4034] changes due to reworked db connection of PersistentObject
+370d0ac845b54d35c47629a3993c1085b557d358        Marco Descher 2015-09-23 15:38:51 +0200 [3855] refactor roles/rights configuration, allow reset to defaults
+425d704545fd0b288033c6fc55dfb907d6f0b754        Niklaus Giger 2015-09-18 18:27:42 +0200 [2606]Corrected iatrix.png
+65c9d7d5ebd26bf14bbe0e2cd1065c934de80fda               lamann 2015-09-17 08:11:31 +0200 [3970] removed synlab.v2 from base
+0d9b8a05b3d292ffc06e59fbb6f267d6086fad94               lamann 2015-09-17 08:06:22 +0200 [4025] BugFix omnivore date setting NPE
+e90da141e84d75f3a09d1b0da2fd386118d95ba1               lamann 2015-09-16 17:16:08 +0200 [3970] initial commit synlab.v2 and synlab pdf import update
+3f6176a3f3c02d4f61c14502e5a89af92618ef29               lamann 2015-09-14 09:51:57 +0200 [4011] enable renaming of findings + validator for findingsname
+bb8cf3db9dfe2c7929cd4976ea1748f37e2ff1a7               lamann 2015-09-11 14:21:22 +0200 [3768] added Eclipse-BundleShape so unpack will take place
+0c888059fff5029a71a94761812404ae52e6ca6b               lamann 2015-09-11 12:37:21 +0200 [3768] initial commit medicosearch connector plugin
+17e6a5646069f5497491676845ec9be6dd832aed               lamann 2015-09-09 15:54:56 +0200 [3974] fixed time calculation in proportional sheet of agenda
+eadb402282efe2458dccbf39f4355b6cc9df332b               lamann 2015-09-09 07:50:36 +0200 [4006] show current time line in agenda parallel view
+e42efbfa3d3ec35721ea0ef97175af0e958e7b7e               lamann 2015-09-08 15:23:58 +0200 [3968] copy appointment via CTRL+Drag&Drop to another area
+63bd4deb16f5c7ed62efa7d44f468f52db7f10e5               lamann 2015-09-07 08:12:26 +0200 [2963] moved SectionComparator of MedCal. signal BETA version
+4ba6d9b4108994f4a290585ae99a30cf2e645912               lamann 2015-09-04 09:28:04 +0200 [2963] medCalendar include maps via lib directory
+b510b2b65dfd3c169830feb085c3cebf079d7410               lamann 2015-09-03 13:04:49 +0200 [2963] initial commit MedCalendar plugin
+4fa349c642cbd3c79fc39bea57d4568d478086d9        Niklaus Giger 2015-09-03 12:07:31 +0200 [3941]KG-Iatrix. Document why we don't remove a case even without a kons
+ede83e09cd423775a875661c3e79ad71ea9152b0               lamann 2015-09-01 11:33:44 +0200 [3907] ZurRose include supplier check when ordering
+2b8c3d3e7191fda10ebe53316471cb6ebf9e7491             thomashu 2015-08-27 15:43:54 +0200 [3967] optimized eal selection dialog
+99a5d68cfaed4b0ea1bd175423e2391714b8e58d               lamann 2015-08-26 07:56:41 +0200 [3950] check if value is null before parsing
+3415bd450e75a2fb0dc27f49a78aa8b5cf00d593        Niklaus Giger 2015-08-25 19:58:12 +0200 [3941]KG-Iatrix. Remove empty case/kons when leaving patient
+366f06d888a9dc3cb58548d7f8144a5ebc6cdabe        Niklaus Giger 2015-08-25 19:58:12 +0200 [3940]KG-Iatrix. Create fall/kons if none present
+4afb60567be09474172d96b6aa1c79bd947278d5        Niklaus Giger 2015-08-25 19:58:12 +0200 [3945]Colorize selected case
+fce723332af21340aeba8167976baa8d14f86abc        Niklaus Giger 2015-08-25 19:58:12 +0200 [3942]KG Iatrix. Correct update after change date of kons
+15fb525e49652fed15ff51a90ed750f4cbd6f9e0               lamann 2015-08-24 08:34:35 +0200 [3315] medication view 1.1 - add epha interaction menu
+6c8b6315e772671916c26fa892d82172f4d1ca9b        Niklaus Giger 2015-08-15 16:02:10 +0200 [2606]Updated Gemfile. Manual corrections for doc_de. Remove obsolete wiki entries
+e2f517dd75c1ab309037e2da04a1b10aa3c3b58d        Niklaus Giger 2015-08-15 15:04:37 +0200 wiki_pull_daily: 2015-08-15 from http://wiki.elexis.info/
+e47f5062f01e5cf660054d7a04bdbd7cfcc0df84        Niklaus Giger 2015-08-15 15:03:01 +0200 [2606]Updated Gemfile
+83fd06a5b2405ebff02203d9e47691ad88215d2c        Marco Descher 2015-08-11 08:53:46 +0200 [3891] Update Elexis_Stammdaten_v003
+74dfc5f32d855bf9d614e2c6aa339df33eb3cd9b        Marco Descher 2015-08-11 08:35:00 +0200 [3891] Update Elexis_Stammdaten_v003
+c6f37cb754363641e3a72340c989e12bc2457f3f        Marco Descher 2015-07-29 14:59:11 +0200 [3908] cobas mira does not read on non-blocking serial input
+8d722d15b4c04ebf726911071e419861f6a26197        Niklaus Giger 2015-07-29 09:21:44 +0200 wiki_pull_daily: Added mediawiki content from http://wiki.elexis.info/api.php
+986d126b8d07afc0839a8fedc83f0728351ca57b        Niklaus Giger 2015-07-29 09:13:35 +0200 [2606]Updated Gemfile
+8da8ab64eca3fb30cd568c4086d0b1e24b2fc247        Marco Descher 2015-07-27 14:08:26 +0200 [3904] Mythic 22 - stop connecting if port is already used
+775563c59241ee6786729377861e1d9e7deb9043               lamann 2015-07-24 09:00:20 +0200 [3772] set legal guardian as guarantor if available
+7c16707ab3769e8814aa78cd7c448c07b1f03895        Niklaus Giger 2015-07-23 10:27:12 +0200 [3883]Big reorganization into smaller classes + some fixes
+3716d5e42a093216c561dca2d55b2b5c1660ef71        Marco Descher 2015-07-23 09:35:48 +0200 [3896] remove cobas mira tests
+ba997262cad10858564c0fa268df0d598a675a32        Marco Descher 2015-07-23 09:32:15 +0200 [3896] Add missing modules for mythic and cobas in pom.xml
+3355446ae487093c069b3b966ad3a216735cafa0        Marco Descher 2015-07-23 09:23:53 +0200 [3896] Merge branch 'labdevice-port' of https://github.com/elexis/elexis-3-base
+d2dbafa685259561522033c99bb26eb0383e3123               lamann 2015-06-23 09:06:23 +0200 [13] fixed cobasmira tests, pom and category xml inclusion
+b2174cd009902b546b4e849f2c4e2716dfe772ba               lamann 2015-06-17 10:12:25 +0200 [13] use basic java utils for CSV resolution in CobasMira plugin
+ee912d6aa9385a3543f827359234fb9b03bb88a6               lamann 2015-06-08 09:00:47 +0200 [13] port of cobasmira and mythic22
+15935429691916e36acbca1b7826bceff96f42ad               lamann 2015-07-21 14:02:37 +0200 [3887] Appointment DnD in 5 min. steps and collision check
+ad798c3797a4090ed11e1c49f1c49755e2ff899e               lamann 2015-07-21 08:48:46 +0200 [3887] Drag&Drop for agenda parallel view
+2f39651befd1210760822bd419996fb6ac847ebf               lamann 2015-07-21 08:12:01 +0200 [3886] provide higher zoom factor for agenda prallel
+fe3ae2dd8746aed53055e135a361e4d491918916        Niklaus Giger 2015-07-17 13:55:41 +0200 [3883]Apply elexis formatter
+1ced46353d9b42f555ca5947bf42aa2ad2b1278b        Niklaus Giger 2015-07-17 13:48:15 +0200 [3883]Use org.slf4j for logging. Removed obsolete comments
+e5c194251b87d1928399107b25a08bc8c4b04c15        Niklaus Giger 2015-07-16 19:32:09 +0200 [3775]KG Iatrix: Improve tooltips for active/inactive icons
+446fcbe2ef638cf35bf84ef3a3112985e7ab8757        Niklaus Giger 2015-07-16 19:32:09 +0200 [3775]KG Iatrix: Fix problem with active/inactive icons
+5ae498f423fe0af5e7a9e3e0c5eed4a9394404e7               lamann 2015-07-16 10:08:30 +0200 [3606] initial commit texttemplate printer/tray settings
+d019ccf4af8a5eee75a2d842e1b45283bc3fb83a               lamann 2015-07-15 08:20:15 +0200 [3854] create ehc directory if not existing
+24a8987497cf956eb871b12b4be48fae8fb181c5             thomashu 2015-07-14 13:07:44 +0200 [3878] fixed a.m.e.weblinks build properties
+5b7d729afcb5a62ec09b9e474f79181033d04245               lamann 2015-07-06 08:00:32 +0200 [3829] update vaccination plan year to 2015
+2e9a886422d891c7216cea1ba5beda7ffeabc4e6             thomashu 2015-07-02 14:03:35 +0200 [3530] fixed calculation of 29.2090 tarmed tarif missing 29.2060
+49977e1cc7e3907b95271c3b36c9cb393399fc44             thomashu 2015-07-02 14:01:32 +0200 [3530] fixed calculation of 29.2090 tarmed tarif
+2bb48f10f19006a962e006a7d62624e1bc0b7e84        Marco Descher 2015-06-29 12:45:57 +0200 [2847] switch schemeId for ui.bindings
+8f22ab34cb7a07a965365613680dde489e05d636        Marco Descher 2015-06-25 10:13:07 +0200 [2112] renamed document ACEs
+9bc889d96a30f04a5989be8e012ab261d85766f4        Niklaus Giger 2015-06-21 19:45:04 +0200 [3756]Avoid NPE if no mandantCfg
+e19f82aadd686011df27d87e4c7fb65f5c9458ad        Niklaus Giger 2015-06-20 16:28:28 +0200 [3187]skip test laborimport.viollier.v2 as it fails on jenkins
+818325106ba8b5a0906f2f77f276985f068301c9        Niklaus Giger 2015-06-20 09:32:31 +0200 [3187]add pom.xml for test of impfplan and ehc.code
+2170cbebaa4e58427c3eb93506dd8834333d0118        Niklaus Giger 2015-06-19 12:02:16 +0200 [3187]Pumped tycho version to 0.23. Moved skipTest to children pom.xml
+b55b211757959bf8279ae679ca3d6a34df37f76d               lamann 2015-06-18 09:43:13 +0200 [3310] deliver correct and all available placeholders of 'Befunde'
+1ea409c77962f275038a2feab8210696a91323bf             thomashu 2015-06-17 15:30:13 +0200 [3780] added date to receipt pdf
+b8ceb448af8665a162da76c8e154c7b014b50d6e               lamann 2015-06-16 14:23:52 +0200 [3777] check if inbox filter is active
+1850202c5c6376aaeb65815a81b2c7b4c4c535c4               lamann 2015-06-16 13:50:41 +0200 [3777] Inbox fixed check application if filter is active & unknown
+ea7b2571975917a4f4b3615137f12a9ce68afd1a               lamann 2015-06-03 09:11:14 +0200 [3701] Docbox performance optimization
+4f7692cdd4783f83afec69e9efd40f5f873f8a97             thomashu 2015-06-02 17:06:59 +0200 [3677] reworked ehc vaccination document import
+84274c818b7b4cbc348a2ef29698fdcf4f462f38             thomashu 2015-06-02 15:38:20 +0200 [3677] initial ehc vaccination document implementation
+bfd351c5c5f57621f390764460cdbdf5534bf5dc             thomashu 2015-06-02 14:55:09 +0200 [3677] reworked ehc core, docbox and examples
+1a7c9f4adff29927993e705a7da22a266dd2c03b               lamann 2015-06-01 14:47:28 +0200 [3606] application text template management (base branch)
+3ce6b162935763fc62bfc51fc9b0209f3dca0b2a             thomashu 2015-05-29 09:41:14 +0200 [3677] updated o.o.mdht.uml.cda.ch lib, ehealthconnector version (455)
+7e75dca0e75d78440035937e2d521d4157d361f5        Marco Descher 2015-05-20 15:33:34 +0200 [3376] skip viollier.v2 test
+00915851827cbd3c6a111993e918a233cc9aebd2        Marco Descher 2015-05-20 15:21:03 +0200 [3376] UI block on DocHandle static initialization
+b4112f2741b32fa20b4314e47c97e2ac6f541cc4        Marco Descher 2015-05-20 14:59:21 +0200 [3376] viollier.v2.test teardown to prevent block
+942fc10bb9db9cf6b0ed8827b54a2109d7ced829        Marco Descher 2015-05-20 14:46:10 +0200 [3376] arzttarife teardown to prevent block
+feea2233d21c515f7c54065a81e9d412e9fbb889        Marco Descher 2015-05-20 13:58:40 +0200 [3376] fix further tests (arzttarife, externe_dokumente, aerztekasse)
+ca0e25c718416ddd91fd955c377d1defb3e6cdf6        Marco Descher 2015-05-20 11:31:10 +0200 [3376] relax viollier.v2_test dependencies
+b0f75a22d54304fd2ec91fee093b84433f5a2048        Marco Descher 2015-05-20 11:05:52 +0200 [3376] fix viollier.v2_test
+58d7d561f9909108254b5a40d6909d2b266622ea        Marco Descher 2015-05-20 10:08:53 +0200 [3376] refactor tycho-surefire for rose and loinc, add test profiles
+4c39006b545aa65b9b157e3ecde50e59d77a1bd7        Marco Descher 2015-05-19 20:56:44 +0200 [3376] fix at.medevit.elexis.loinc_test (second)
+be5b384837d80de481cb49a4cb891bdfe5ad917e        Marco Descher 2015-05-19 20:40:20 +0200 [3376] fix at.medevit.elexis.loinc_test
+b96724beacf95192889ad39d6b3db6a2fd9fca69             thomashu 2015-05-19 09:48:33 +0200 [3683] add menu contribution for roche lab to n.m.connector.viollier
+79a5442aabe8e633568cc0c6f4b2cca1f7891601             thomashu 2015-05-18 13:07:14 +0200 [3677] updated to smaller build of ehealthconnector version (453)
+beeeab9a903e78503103104188ee08991a237c0f             thomashu 2015-05-18 12:51:30 +0200 [3677] updated to newest ehealthconnector version (453)
+964587ee649786bf827ded6c25b98c79b81ff9b3        Marco Descher 2015-05-15 16:32:18 +0200 Update compile env requirements for a.m.atc_codes.test to 1.7 
+e8b074160b2858678b35fe82b07d3fbf2ab7af94        Marco Descher 2015-05-15 13:18:34 +0200 [3315] remove non-required development artefacts
+9e8afb5bf7f7615c998fd8723fa88a2eb35b94c2        Marco Descher 2015-05-15 10:03:05 +0200 [3494] Prevent possible NPE in MessungenUebersicht#setFocus
+11565132b5919b95ff98e25a214f326567c598d0               lamann 2015-05-11 17:13:52 +0200 [3317] privatrechnung reset font after each print run
+f23b15684d29120fb1de58f7dec1c14a2916a967        Marco Descher 2015-05-08 11:11:01 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+53ba7e09f2ca73e4a1039efaa6c28f7ce535eab8               lamann 2015-05-08 08:37:19 +0200 [1754] update agenda day lock times properly 
+ab668e80f2a05e4e6356f8b087ed304e1466c942        Marco Descher 2015-05-08 11:10:52 +0200 [3672] Support long-term cache for Artikelstamm, Tarmed and Physioleist
+3f2386495947ad6ccbc8a28584cfb9aabbd4d784        Marco Descher 2015-05-07 10:44:13 +0200 [3662] Fix viollier tests by enforcing valid database states
+64301d56755ea0336d7ff8b9df0b089afaff9a85        Marco Descher 2015-05-06 14:11:59 +0200 [3662] Revert to older version of Test05_1.HL7
+b5834ed915b831a824e03a10f78b10cd90feba1f        Marco Descher 2015-05-06 13:53:54 +0200 [3662] Fix for unit test concerning local override of refValues
+4e02e3d185114ecab341363cb34e926c5bb06185               lamann 2015-05-06 10:17:05 +0200 [2321] refactored TarmedRequirements - use Xids recepientEAN variable
+8e0eb32f2315212185b4f6769f6d23e093357c41        Marco Descher 2015-05-06 09:53:04 +0200 [3652] Mitigate heap space error in global inbox
+d750e0e7d7b7392583e833e4eb6ea79895cffa2f        Marco Descher 2015-05-04 15:32:19 +0200 [3627] Allow selection of Mepha as preferred provider
+465ad8944ba7906a5f5147dc317f0dd097f02ec3        Marco Descher 2015-05-04 13:51:52 +0200 [3265] speedup ATC cache initialization
+6782b304557488cea0637b880365bbc50e6f3828               lamann 2015-05-04 09:03:37 +0200 [2900] TiCode diagnose search algo optimization
+d671a826e63dedf96b57527ab12af1ea5c19a7a9             thomashu 2015-05-02 10:52:34 +0200 [3644] fix TIMakro handling non TI code makros
+961124c1b0e80c36c1e01c7fae8e7c1ae1427f6b        Niklaus Giger 2015-05-01 14:09:49 +0200 [3662]Make macros work for KG-Iatrax JournalView
+231fcc8d57acd01f1c73089c85329bfe253a2e76               lamann 2015-04-24 12:51:32 +0200 [3167] test fix viollier
+af90476535e38ce7f82a1add4443227b4bfcf90d               lamann 2015-04-24 09:20:44 +0200 [3615] Fixed missing icons of kg iatrix
+2a9bdc418742e3424362874fbb0ee143b76ae7a9               lamann 2015-04-23 13:39:22 +0200 [2900] enable TICode search filter
+a7ec89d50b05e2148f1a7ae8d680ec28daf6a39f               lamann 2015-04-22 17:27:28 +0200 [2955] do not add Leistung if incompatible with existing Leistungen 
+d6a8b8bcaf2773f1933b273abefc6c398f807f8f               lamann 2015-04-22 11:12:48 +0200 [3607] skip zuweiser ean if null
+f5a250f54e60fe5e74e6011a3d4bd9a65c0fceb4               lamann 2015-04-20 11:24:29 +0200 [3545] Fixed - apply 'Anbruch' modifications in Artikelstamm
+2a8cfbbab93aa53711b55f4a1978b55ed24c1a4d               lamann 2015-04-16 15:15:05 +0200 [2615] assure correct insertion of ESRCoding line 
+d8205b068d3f6f738f8cd7858d1312571ef99f07             thomashu 2015-04-15 15:46:17 +0200 [3555] fixed applying security to docbox ws client
+61437bb93e2fe2250697fe94cee24f9e3d8bba1a               lamann 2015-04-15 10:24:45 +0200 [2615] change # of tabs for big subTotals
+82215f7754f37323b4245169a6b79caa39f78e6d               lamann 2015-04-15 08:21:03 +0200 [3539] transmit patient number instead of id for viollier
+ccc985b79f7b7e668860db039b612eb7788ace4b               lamann 2015-04-09 16:48:13 +0200 [2615] tarmed xml4.4 formating changes, vekaNr and diagnoses update
+f3ada03e3783f03515452cd382a63cc5fc2128be               lamann 2015-04-08 15:27:39 +0200 [3510] Inbox update (labels, expand, mandant change, patient activation,
+9841cba9a8e138b791674c64da5e83ae0edaba72               lamann 2015-04-03 11:19:41 +0200 [3548] allow date changing on findings view
+882da5c1744cfead4d8bfa8cbe7331b09b129393               lamann 2015-04-03 09:05:26 +0200 [2615] create extra reminder xml and write entries on tarmed invoice
+37656c62a4128bb8f1423b6dffb4fb7cab9234f5               lamann 2015-04-02 14:52:50 +0200 [2615] include VeKaNumber via F44.VEKANr placeholder
+4c5184b595deebe5413a0be19eecb5971f9e1ccf        Marco Descher 2015-04-01 13:29:02 +0200 [3489] Multiple multi-get optimizations - RC
+60fb923382c14a5adb0359aca44cc5efcd0c17ba               lamann 2015-04-01 08:24:54 +0200 [3539] fixed viollier connector URL
+acda8dbb506d449a85f8246fe8ae662a2dfe74a6               lamann 2015-03-31 16:59:21 +0200 [3514] use POs ExtInfo method 
+501b720311a576ebf930c52d0e74ece0081a5818               lamann 2015-03-31 16:23:18 +0200 [3514] Vaccination plugin update (edit vacc, side option, column width)
+dde3332b48c447d9c8951ae101ef8aaa7541ff63               lamann 2015-03-31 13:02:29 +0200 [3413] fix kons.text update when adding a vaccination
+01852b6c083d9614986c1608f36bab6a521fee61               lamann 2015-03-31 10:09:45 +0200 [3535] added Menveo as vaccination against Meningokokken
+fef2126762441727da7dfbb18be37c016340d320             thomashu 2015-03-30 10:57:29 +0200 [2615] added tarmed 4.4 fields for printing
+7b6c6b29260d04390daee1e133541603cf84f499               lamann 2015-03-27 13:35:23 +0100 [2615] use a.m.e.tarmed.model object for tarmed xml4.4 printing
+7e2b4c11ff44fbbd32401030cb635e282e1c78ee               lamann 2015-03-27 13:30:05 +0100 [2615] enable unmarshalling of jdom documents of 4.4 invoice requests
+26d0746948d955f9640270c7eabe6cfd242630e2             thomashu 2015-03-26 13:53:30 +0100 [3512] fixed name strings for synlab 
+6b27c700b43daf0b59e4bcba0b3101738e84418b             thomashu 2015-03-25 17:56:07 +0100 [3484] remove possible dots from zsr for docbox prescriptions
+de8a8f2679ac3ea42a6edf6697770cb9e6e2ac68             thomashu 2015-03-25 17:38:03 +0100 [3490] fixed mandant setting of labresult inbox element
+5b5af4318d1fab25a1877dbe7c7e4854369839e6             thomashu 2015-03-25 17:02:39 +0100 [3500] fixed inbox label provider if patient is not set
+b83289189337382b0c85ab3880bfff52ebb88134             thomashu 2015-03-25 13:31:24 +0100 [3475] moved cache to content provider
+4a7b47bbb99a8a3997b3ab3c84c1f91766ceb27e             thomashu 2015-03-25 10:24:52 +0100 [3475] wait for whole cache in EAL filter
+4f249ae3a7315aadaff5fae135c91f25bdcbc703             thomashu 2015-03-24 16:21:00 +0100 [3475] refresh the viewer on consultation changes needed
+0198226e3d7f626409efd3af27d992884b9bedda             thomashu 2015-03-24 12:37:26 +0100 [3475] update the viewer async
+3ee569f24fd8918b6cc7ad1ca61397fd36e5d6f8             thomashu 2015-03-24 11:51:53 +0100 [3475] fixed deadlock on cache
+73030191e210c91fd20b7bb4f1390513d9afc44a             thomashu 2015-03-24 10:20:26 +0100 [3486] skip ch.pharmed.phmprescriber_test
+dca7da72d82891633e7f54a5fe0e949cb60ec4e5             thomashu 2015-03-24 09:05:11 +0100 fix build by skipping tarmed.model.tests
+1038bab6dd4426d8616b5c8230ad31ca301bba09             thomashu 2015-03-23 18:09:57 +0100 [3471] fixed build properties
+b398f9c1af81db94d7d5c4fc3183c6b8182dc3cb             thomashu 2015-03-23 18:00:10 +0100 [3475] skip EAL search on consultation change, and speedup by caching
+435553791d44e95c34f43336566d3988481b407c               lamann 2015-03-20 15:13:04 +0100 [3473] set focus on textfield of EAL
+5694cea3e1150c6405b2a67fb9c40681a84c7cf2               lamann 2015-03-20 10:52:58 +0100 [3196] replace all non-numeric signs for IVG case
+6c93973c5607d3794a95d212b14bf70e7abccdb2               lamann 2015-03-20 08:45:34 +0100 [3471] tarmed jaxb util initial commit
+b24f66166d84c325ab16399830dc332b4f3dbbef             thomashu 2015-03-19 17:18:55 +0100 [3454] dont use java8 classes to decode Base64
+5e6df9ea571d899a58ab0b52d6c22134f8916c00             thomashu 2015-03-18 14:33:37 +0100 [3467] reworked inbox view, minimizing complete reloads
+b770f57a79b5264943b7d2568e5444b65352bd2c               lamann 2015-03-17 15:17:27 +0100 [3464] fixed check for unit test so no NP is thrown
+ab7d98a042adf950000ea06da63b0069994c49ab               lamann 2015-03-17 10:22:00 +0100 [3460] fix Termin-beiWem Platzhalter
+9892b82a74bc318a20c4d23fe8989943699e13e5             thomashu 2015-03-16 15:04:38 +0100 [3450] dont reload inbox elements if not visible
+7bb076ffcdf1b1e6459f626a867ae4771410f2b2             thomashu 2015-03-16 14:56:18 +0100 [3451] fixed creation of lab inbox elements
+ad92cd55ef8a57f3515c93512d5c0de76975e11b             thomashu 2015-03-16 12:58:38 +0100 [3318] added possibility to provide cert via fragment
+ef43ff53558da3c645756ebf7e64a12362ef1501               lamann 2015-03-13 16:45:13 +0100 [3331] fix NumberFormatException cause of spaces before/after a value
+6e529578c15edefe385b8166ff2ef0acf79dda8e             thomashu 2015-03-11 15:21:37 +0100 fixing problem with deleted or renamed doc images
+2125a7fcdb6e08684ac97cb0412fd1605ed222cb             thomashu 2015-03-11 15:21:33 +0100 [3318] fixed unmarshalling of TEL element in ED type
+16ecba0f7e6892c41305dd0052c186ea92e5883d               lamann 2015-03-11 13:59:57 +0100 [3158] fixed Reflotron result parsing
+39d2e2df5fb02b0ed2a0bd26d8973c488e026775               lamann 2015-03-11 09:54:24 +0100 [3331] Enable storing of AgendaGross column widths (per user)
+1fc675fc217401e98fc58194242301c4ebab038e        Marco Descher 2015-03-09 14:13:08 +0100 [3385] Fix viollier calling URL
+14c9f44a916c8386c269884e1767da977a0d24d7             thomashu 2015-03-06 10:05:34 +0100 [3318] reworked prescription generation according to feedback
+78b3514a153fc0456a9ff0b7af8d58b5043cf13f             thomashu 2015-02-27 15:56:41 +0100 [3318] fixed CDA generation of docbox prescription
+c3f361aed86c38c2a05842ac2735097f13a99e5c             thomashu 2015-02-27 13:15:13 +0100 [3318] updated docbox ehc implementation
+ee1903ed9b7e19f656504b395b74489d2b7bb6e2               lamann 2015-02-26 09:06:41 +0100 [3346] add missing agenda feature dependencies
+321d9d5bede7a67e087b674dc78af3a97a53d0cb             thomashu 2015-02-25 17:15:16 +0100 [3318] added docbox ws client and updated ehc docbox impl.
+58ed9e248116d27aedb872a09bc20f5803a1ccb2               lamann 2015-02-25 13:30:59 +0100 [3336] Agenda avoid check lock times when creating series appointment
+9329a3f1662ceaa07b01595d331de29116090fb9               lamann 2015-02-24 15:46:37 +0100 [3258] don't add referrer if ZSR is null or empty
+c1459e71d83f1381900df1431b4cac178aaa8d4c             thomashu 2015-02-24 12:25:41 +0100 [2615] reworked tarmed 4.4 printing
+91ac5ebadb9255549ebbde41d452ee3ba3f56d30        Niklaus Giger 2015-02-23 13:06:22 +0100 [2606]Added comment for Gemfile*
+177dfd5b147c8e5555dd0a23bb439cd3bba0d758        Niklaus Giger 2015-02-23 12:48:29 +0100 [2606]Removed ':' from file names
+8d381148b18963e37e385c3be23e016d020b0267        Niklaus Giger 2015-02-19 22:07:17 +0100 [2606]Add documentation from wiki.elexis.info
+7ff8f27328cc18c8a931f97167ff47bdb4e0897d        Niklaus Giger 2015-02-19 22:07:16 +0100 [2606]Add empty doc_de/fr projects
+f7b6fb1143f21332afe2adaa6eae1cd780604f0e               lamann 2015-02-18 16:23:33 +0100 [3353] TarmedXML Exporter update for verison 440
+e5f6d2c7a249bca8877069d69b82352be8db3a14               lamann 2015-02-18 10:44:59 +0100 [3346] included missing agenda dependencies.
+638951d4445404c70c14564428129efafe543437               lamann 2015-02-17 19:05:48 +0100 [3063] Added placeholder for appointments day
+c56a3c0c877c535438cd27cc75a34fb24644a91a             thomashu 2015-02-16 16:23:33 +0100 [3352] add provider and responsible attributes for Migel on tarmed xml
+1f7175ed0d5eb0d624f34d4c4d44fde5da543ac1             thomashu 2015-02-13 09:08:52 +0100 [3342] add provider and responsible attributes for EAL on tarmed xml 
+213117f5b92ae4e7787e0b0537c8f0ccddf367f9               lamann 2015-02-12 11:20:10 +0100 [3161] omnivore sorting keep priority for categories
+dfb7c931d2b30654272cd560b9b7d0e0a818a1db        Marco Descher 2015-02-12 11:01:48 +0100 [3271] Fix NPE in array access
+d7173b9ed1db88df7bcaec3c9c055a12d773e93a        Marco Descher 2015-02-12 10:29:07 +0100 viollier documentation fix
+1f1ef2fe108c38ecb175fb10e997dea5b344f588               lamann 2015-02-12 09:22:52 +0100 [3204] fix use ESR valuta date as booking date instead of current date
+117bd1f13208018f7ff547765326b8bd5f035ab8        Marco Descher 2015-02-11 12:57:25 +0100 [3113] Viollier: fix missing transmit of several values
+281cc54417de99f6644a342eaeb12834070f1256        Marco Descher 2015-02-11 09:04:05 +0100 [2960] global verrechenbar favorites initial commit
+9e8130c02f4403009601d8e094ca798787790208             thomashu 2015-02-09 15:21:17 +0100 [3297] fixed url format for epha.interactions
+185874a235a6e10b6538b856e372273250b80f94        Marco Descher 2015-02-09 10:54:14 +0100 [2960] separate Leistungsblock name and macro
+b09b671fb1765e34973fe4d581c9baba06d13598        Marco Descher 2015-02-06 15:59:07 +0100 Revert "[3320] Revert tycho version update"
+a9911586c2020a0f2837afd838a9e2f4ec5d8af0        Marco Descher 2015-02-06 14:53:02 +0100 [3320] Revert tycho version update
+b09b671fb1765e34973fe4d581c9baba06d13598        Marco Descher 2015-02-06 14:08:55 +0100 [3275] remove default signature from migel
+4829264a37e7f96fecd05b3dac6eced6c154d70c        Marco Descher 2015-02-05 15:52:22 +0100 Fix at.medevit.elexis.impfplan.ui: Unqualified OSGi version
+b9b5bb9b77d7b32089da9dc7753cd058d15c50d5        Marco Descher 2015-02-05 15:45:01 +0100 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+6aab0aec3e405aa0deed674d115cd9683c104968        Marco Descher 2015-02-05 15:31:37 +0100 [2087] Medication-list 1.0
+b9b5bb9b77d7b32089da9dc7753cd058d15c50d5        Marco Descher 2015-02-05 15:44:41 +0100 Fix at.medevit.elexis.epha.interactions: Unqualified OSGi version
+0fde16384ed37c00aae321eb926c28dacb37eefb        Marco Descher 2015-02-05 09:26:42 +0100 [3305] Patch error in ArtikelstammItem#isBlackBoxed
+30ef70404402c5fc59be44ffa6013ae2174ee0fe        Marco Descher 2015-02-05 09:24:15 +0100 [3305] NPEs in ArtikelstammItem#isBlackBoxed
+13067cf088b673a407259bc4ca2e3a889d342b63               lamann 2015-02-04 14:21:58 +0100 [3161]Allow users to save sorting and switched to ViewerComparator
+7a836366a39a70a4cc0f6348cb7fb8b9474cbedd               lamann 2015-02-04 08:41:15 +0100 [3292]fixed minimal table width bug in vaccination view
+01108ad9371ec051bf49d1ca93859ef8b8c9aab3               lamann 2015-02-03 13:45:07 +0100 [2083] tarmed xmlexporter 4.40 change of ICD10 to ICD
+83dc4bbf708198af8aef0c6a3a69e1842ad3e8d2        Marco Descher 2015-01-28 09:13:04 +0100 [3277] NPE in CodeSelectorFactory
+c5bad991d0fcc3c7e28bcbaaf18bb3f2a7ea86b0        Niklaus Giger 2015-01-24 10:30:07 +0100 [3267]Cleanup ch.medshare.elexis_directories. Use slf4j.
+45e81dfe9fe88f45459443bb3ac1212e002139d5        Niklaus Giger 2015-01-24 10:29:26 +0100 [3267]Added more tests to elexis_directories
+690af314b16f8a35bd18a818b10f8c2961aa71fc        Niklaus Giger 2015-01-24 09:58:35 +0100 [3267]Ported jsigle changes from 2.1.7
+2589bec485a884c3a25942e9a3f141e6642d3a45             thomashu 2015-01-23 16:02:25 +0100 [3113] fixed viollier.v2 test date and updated launch config
+844a5c9738ea2db42a326ca4fa61e83e8a3c8b65             thomashu 2015-01-23 14:52:04 +0100 [3113] reworked viollier.v2 using HL7 import of importer.div
+98a3932b09e81d2c063fa3ea500572ea804d69e4        Niklaus Giger 2015-01-17 16:56:51 +0100 [3236]Rename Ilamed -> Synlab
+461f206a99cf9743bb48528e4a457fb6b6dbc457        Niklaus Giger 2015-01-17 15:12:06 +0100 [3224]Rename toolbar to hilotec toolbar
+b631862c0546fa4054a83e34680a552377d105e3        Niklaus Giger 2015-01-17 13:50:21 +0100 Merge pull request #28 from ngiger/merge_hilotec
+b631862c0546fa4054a83e34680a552377d105e3        Niklaus Giger 2015-01-16 14:42:45 +0100 [3231]Fixed NPE if no actPatient. Return if stream is null
+b2ef661a3f03ae2b3463e8ba8eb4f5b0fed9bc65        Niklaus Giger 2015-01-16 14:42:45 +0100 [3224]cleanup versions, pom.xml, features, category
+9152953734e81a6496d51cae70f9f969726649e5     Patrick Kaufmann 2015-01-16 14:42:45 +0100 [3230]Ported opendocument2omnivore
+e5d29060e1188004decb0366634f5d7ce8b80b41        Niklaus Giger 2015-01-16 14:42:45 +0100 [3231]hilotec-opendocument: Add settings that allow
+96bd3743ec3aaeddb4840c9f2963ea919110d1b0     Antoine Kaufmann 2015-01-16 14:42:45 +0100 [3229]opendocument: Ported changes for exporter interface
+dfb53335471f4b5edb5c41bfd80dc0431c1ae0d2     Antoine Kaufmann 2015-01-16 14:42:45 +0100 [3227]Fix typo in category.xml
+ef6fc065d4d85325376faf5c57c15d0550f130a2     Patrick Kaufmann 2015-01-16 14:42:45 +0100 [3228]Changed labels for stickerprefix and toolbar features + added to p2site
+5524b4241b3c935293f34fe0ff14b1639acab20a     Patrick Kaufmann 2015-01-16 14:42:45 +0100 [3228]Added toolbar to main pom
+7b3e0611a5a6a5daf3b56d2fe1f1dd253e3cdcd8     Patrick Kaufmann 2015-01-16 14:42:45 +0100 [3228]Ported Hilotec toolbar
+ae094c6623a8bc5dcad885c4a64bda4d34459db1     Patrick Kaufmann 2015-01-16 14:42:45 +0100 [3227]Stickerprefix ported
+cfe59280fb671ea281c49a49cf695f31f577632d     Patrick Kaufmann 2015-01-16 14:42:44 +0100 [3227]Changes for stickerprefix
+bfde6dd488fbdd04d4bc44c2fc8709c5d33ddb0c     Patrick Kaufmann 2015-01-16 14:42:44 +0100 [3227]Added Stickerprefix classes without user restriction
+2731b3b6594fa4c60f2dc6fd3d7894f298c2ad1b          Bugra Ergin 2015-01-16 14:42:44 +0100 [3226]Added Therapieliste to KGView
+ecdd07bc91db113fc7560ee3410bd2e2bb5524e9        Marco Descher 2015-01-15 13:22:17 +0100 [2961] Article default signature - initial import
+a0d1a731242fb4b6ea0ea25eeb9d03116d5229a6             thomashu 2015-01-14 09:55:44 +0100 [3243] fixed user change event on ESRView
+7323ca9925e8b940e998fa9fa0db1a004bfbd9d1             thomashu 2015-01-08 15:52:27 +0100 [2871] make a.m.c.artikelstamm import more responsive
+b08e0e905d7646906d209ab4e4a471db9543b7f6        Niklaus Giger 2015-01-08 14:58:29 +0100 [3158]Included/corrected reflotron.v2 test
+858623a8ea7af435d85131ca6f9959b5314551c5               lamann 2015-01-08 09:43:25 +0100 [2620] SupplementVaccDialog adaptions and name filter position changed
+bb7dcb9af22222b4678aabb8fc122e497046dbcf               lamann 2015-01-07 14:56:06 +0100 [3158] Reflotron fixed wrong result (value/unit) processing
+6b438e774d09f9fbb3502845db46a2c2bea8e6cd                marco 2015-01-07 14:35:08 +0100 [3193] More resilience to wrong types in Artikelstamm
+08679235b7e0912d8bed026edc3ad132bbfc83dc                marco 2015-01-07 09:45:38 +0100 [3203] ESR View Record selection does not select coresp. Invoice
+c58bfc101b88f4397e06aab0b40db02c0273c024             thomashu 2015-01-05 18:47:51 +0100 [3200] try removing wrong zuschlag for labortarif
+b2e2ce2c931faaddb970a8d8414f04d0acf0985b             thomashu 2015-01-05 17:26:20 +0100 [3200] reworked labortarif for schnelle analysen
+23ae94789c6d087e17700407e48194813c8e1f27        Niklaus Giger 2014-12-29 11:50:37 +0100 [1471]install_build.rb no longer needed
+2c77860b1f011d7d2ef9459aec0839156a435b0d        Niklaus Giger 2014-12-22 22:01:39 +0100 [3037]Don't openEditor in save. open_odf.sh logs milliseconds, too.
+1710b934967db706c363459825990be5a7f5d8a0        Niklaus Giger 2014-12-22 10:35:37 +0100 [3037]Improved test description. Added license
+2e4a69b7ed69ea0a57a0fd9c0095403bb66373d8        Niklaus Giger 2014-12-22 10:35:08 +0100 [3037]Add milliseconds to logging of opendocument
+4af6962b135ab4981d1b8c3ff10e3a3934d2de31        Niklaus Giger 2014-12-22 10:34:22 +0100 [3037]Bump version to 3.1.1 to force reloading
+ec64d563994ab12021a08b2669054712b2318dfd        Niklaus Giger 2014-12-22 09:21:16 +0100 [3037]Make open_odf.sh work under MacOSX
+8db9eb7daa179382f6a450d315fae1722fb059d1        Niklaus Giger 2014-12-22 08:46:21 +0100 [2895]Revert all commits. Did not work
+472b6c7d4562d24370f9eaa2a86d0c1b0730dda1             thomashu 2014-12-18 16:16:51 +0100 [3162] fixed additional excel delimiter of codes
+f580e9142de52f16a06460a0991f296b021e306c             thomashu 2014-12-18 13:59:39 +0100 [3162] updated eal for use with rdus, updated eal optifier for 2015
+ed9fef390c5ddfff7293d4b732ed8a5cf1b89a9f               lamann 2014-12-18 13:58:11 +0100 [2620] realisation vaccination plan 2.0
+00574a9a7f7e030a34a4ae89876deea62ff45f1d               lamann 2014-12-15 15:26:01 +0100 [2620] Adaptions to make vaccinations of c.e.impfplan importable into
+85c6f72fbdbed15ced2c73e709fbae397961a932             thomashu 2014-12-15 10:49:03 +0100 [2615] fixed NPE when creating new tarmed 4.4 bill
+d8bc101f24815c4338bd087e72b38ea9f3389f7c               lamann 2014-12-10 10:16:40 +0100 [3110] build.properties fix to include classes
+45280b1c89e12d274bc779bc349ffa0c6ac9bca1               lamann 2014-11-28 14:21:45 +0100 Revert "[3049] DnD from Outlook attachements enabled"
+545ed7d4c0a368f5be470a8f0a63b0611f64fa1b             thomashu 2014-11-28 11:37:27 +0100 [2615] reworked tarmed 4.4 bill printing
+a17a944645445eafec3223eb19e6c50c5ff10b24               lamann 2014-11-28 10:53:25 +0100 [3049] DnD from Outlook attachements enabled
+9e15ca889526eafcffeaf4c8e25e9f7902fcb3d8               lamann 2014-11-27 13:06:44 +0100 [2851] dependency fix for net.medshare.connector.viollier plugin
+af25a683ef3779d464777064c6ee722a7072f7d5        Marco Descher 2014-11-26 09:40:45 +0100 [3050] Fix obligation setting for ArtikelstammItem
+5398a1004c4bf6b732c1514ea4e9d6e7ba8f137a               lamann 2014-11-25 12:39:24 +0100 [2851] initial commit net.medshare.connectr.viollier
+156f2770f8c4ddbbe649e9911bd24fbeac236a9b        Niklaus Giger 2014-11-20 23:58:43 +0100 [2895]Better logging. Avoid NPE. Make filenames unique.
+a84f137e299cb028ac9c329220a481511d28fa4b        Niklaus Giger 2014-11-20 23:56:12 +0100 [2895]open_odf.sh tests twice before declaring a document as closed
+a17f8e59ad69189c9f1d8209cc53d9df5f932aa8        Niklaus Giger 2014-11-20 19:14:08 +0100 [2895]Add option to allow multiple documents
+b24d2d9da91b2088e11a6c741287b04cb6a4b92e        Niklaus Giger 2014-11-20 11:36:09 +0100 [2989]Use Tycho 0.21. Fix weblinks and loinc_tests
+2b8393846ffb375fe76a33a78a5449261532ce91        Niklaus Giger 2014-11-20 11:20:19 +0100 [2989]Use Tycho 0.21
+c0b8c66f0cf5f59b334bb0ea0619736ebf46a245        Niklaus Giger 2014-11-17 20:12:02 +0100 [2978]Run hearbeat in UI-Thread
+4450ec4204dfeb7da2a25b29a86916347f771193        Niklaus Giger 2014-11-17 20:11:23 +0100 [2978]Config-Options for KonsLock and its tracing.
+784d3d8c0a78abfefac93d25b6bb6c883712f421        Niklaus Giger 2014-11-16 14:09:36 +0100 [2978]Moved KonsTextLock to separate file
+84e00c0bb1da78bc2993bdc8f5886194803fba82        Niklaus Giger 2014-11-16 13:50:08 +0100 [2842]Avoid NPE if actKons is null
+3e30a5f7626302719a21fcf775ec3d5e35773ac8        Niklaus Giger 2014-11-16 10:37:18 +0100 [2842]Avoid NPE if actKons is null
+37b24389f1b4bb2aba3e090c3cb369c11ccd13e0        Niklaus Giger 2014-11-16 00:18:20 +0100 [3007]bei Klick auf Patiententtitel das neue Patientendetail anzeigen (Reverted)
+0f51724a82aaa5960176c3e3eb4d8e54c69db937        Niklaus Giger 2014-11-15 18:58:59 +0100 [2959]Get Konsextension without exception
+b34041154863b78d911d6d4501669fa07036bebf        Niklaus Giger 2014-11-15 18:56:58 +0100 [2959]Applied formatter
+92c689d9c48104388a36aa6ed8898449d5aab8d7        Niklaus Giger 2014-11-15 18:33:24 +0100 [3006]Korrekten Sticker bei KG-Iatrix angezeigen
+353ddedfc9d1d6d931d736372a7ee2e312b74627        Niklaus Giger 2014-11-15 18:28:28 +0100 [3007]bei Klick auf Patiententtitel das neue Patientendetail anzeigen
+
+19 commits between 3.0.9 (2014.10.24) and 3.0.10 (2014.11.07)
+-------------------------------------------------------------
+   number changes by authors are
+     6: Niklaus Giger
+     4: Marco Descher
+     4: lamann
+     4: thomashu
+     1: f.schmid@netzkonzept.ch
+-------------------------------------------------------------
+ba9f29d8448a2313553e2141051dcea56a8fe623             thomashu 2014-11-07 15:10:35 +0100 [2615] changes for tarmed xml 4.4
+2def0fcc7ffa51779915fe7dc1c520ca0b17395f               lamann 2014-11-06 18:51:00 +0100 [2947] FOP Wrapper xmlgraphics-common version update and
+cc012ece854c6103c745b1f04eff1dde0b1ae5f6             thomashu 2014-11-06 14:31:12 +0100 [2615] reintroducing XMLExporter#getRole makes mediport build happy
+9b98b911ddaa64a6d52d22f030c35f3666689fe9             thomashu 2014-11-06 12:45:46 +0100 [2615] divide an conquer for tarmed xml 4.4
+9f91c34e9a9896526ca3e90e224602563f45b168             thomashu 2014-11-06 12:45:44 +0100 [2866] created firststep guid to archie analysis plugins
+5556e0c4c287a33f037f498bf83f7d9bc4ac2b3c        Marco Descher 2014-11-05 13:59:27 +0100 Merge pull request #27 from ngiger/opendocument
+0246424fa618b4c9c14d04a3884c34a25f360de0        Niklaus Giger 2014-11-01 20:34:51 +0100 [2895]Allow opening several ODT files.
+015d21888156d5786edd49f22ac09147a98c005e        Niklaus Giger 2014-10-31 15:27:14 +0100 [2894]Avoid spaces in tempfile for hilotec ODF
+50025a54ac045690e5f25cd593ec790247306286        Marco Descher 2014-11-05 13:41:12 +0100 [2941] Artikelstamm: Bezeichnung -> Artikel oder Wirkstoff
+3df31c90132471ebc20ef2d85d04912623e5e598        Marco Descher 2014-11-05 13:38:15 +0100 [2940] Ease artikelstamm update version verification
+26d83e2b63087a01b123dc3a6baddb8ca8470c3f               lamann 2014-11-05 13:23:46 +0100 [2932] Fix of omnivore date error
+f2b0277923762d6c6a7c49aba3d53bde5e799d83               lamann 2014-11-05 11:02:55 +0100 [2825] HL7.allg importer use sendingFacility for lab linking
+c77682c242d7b944bff71567173f23105da746a5               lamann 2014-11-04 15:56:10 +0100 [2716] Impfplan 1.1 
+cffd23526e01fe43adad8aed04008c687bb2bcb1        Marco Descher 2014-11-04 11:47:11 +0100 ch.elexis.molemax: fix ACLContribution extension point extension
+cb029483f12606e0272127bbbc8896c580acf43a        Niklaus Giger 2014-10-29 21:29:40 +0100 [1888]Updated feature info for impfplan by G. Weirich and F. Marty
+2d37d91d7efb683ce29d5a1482640c2b66f56d9c        Niklaus Giger 2014-10-29 19:50:40 +0100 [1888]Added impfplan feature to category.xml
+1743048957e1faf8499855c1f28f7b8b58647082        Niklaus Giger 2014-10-28 18:48:53 +0100 [1888]Added impfplan feature and build it via maven
+054b3ad2ffdcb34eee764805c357d5b6017e2159 f.schmid@netzkonzept.ch 2014-10-28 18:48:53 +0100 Initial
+43c506040533b3b1a9fa2153e583566454a297c1        Niklaus Giger 2014-10-28 08:28:23 +0100 [2904]Aufnahme PhM Prescriber
+
+98 commits between 3.0.1 (2014.08.07) and 3.0.9 (2014.10.24)
+------------------------------------------------------------
+   number changes by authors are
+    38: lamann
+    25: Marco Descher
+    17: huthomas
+    12: Niklaus Giger
+     6: thomashu
+------------------------------------------------------------
+70abdd71681ad6c0033edf591d95123c04f0950f        Marco Descher 2014-10-24 13:59:56 +0200 [2716] Impfplan v1.1
+f707e5885c85f7f55139155e5ffc5f9ffc1f9318               lamann 2014-10-23 16:20:51 +0200 [2716] Impfplan refactoring, dialog changes, script inclusion and docu
+d7defca27e97ddd6a0160bc10880e4e68c0246ae        Marco Descher 2014-10-23 14:52:36 +0200 [2858] Artikelstamm: sub-menu to filter ATC categories
+5bb631381a9ff11da1cd0340ef16004f2bf83db0               lamann 2014-10-22 11:26:18 +0200 [2766] disable setting of inexisting path & feeback if path not
+c8846565614ef35f921b0ff39fcb4561051a8d79        Niklaus Giger 2014-10-21 21:43:11 +0200 [2841]Updated ilamed to Elexis 3.0. Added feature, pom, etc.
+2d0ca692ea76a2ada7a2acc4ddbe422fde8ccd95        Niklaus Giger 2014-10-21 20:27:15 +0200 [2841]Import ilamed state of Elexis 1.4
+e5cc7cf31f206456992d7a563da5dcc54d1f70d7               lamann 2014-10-21 17:11:25 +0200 [2716] Impflan update (selection highlighting, sorting, ein/nachtragen)
+ceb07cc7e917b3b37c62b637be8579ff8d6922b0        Marco Descher 2014-10-21 09:31:23 +0200 [2857] Optionally show ATC groups containing 0 articles
+124ec09f62eec41ae625390f04b8568ae3e816fc        Marco Descher 2014-10-20 14:15:01 +0200 [2820] ArtikelstammItem from 2.1 does now work again
+12821a603ee4992754da35bc670fee19ab857026        Marco Descher 2014-10-20 11:29:23 +0200 [2806] Provide article-details for artikelstamm in leistungen context
+9a3dc78a6c0a55502dbe5c53d7415bbb89ce1f0f               lamann 2014-10-17 14:38:50 +0200 [2839] dont set flag if unknown
+6209040f990a8aa1cbeedb47ccf54f4c6223559c               lamann 2014-10-15 13:17:32 +0200 [1454] Include new xids of contact
+bcd7343187279d2c7c0562b6b9e2e16c0332673b               lamann 2014-10-15 08:46:23 +0200 [1099] Agenda TerminListView sorting (asc and desc)
+d9696eec46791c6f8cbd8d4a008673a56ce2fc68               lamann 2014-10-14 09:12:47 +0200 [2794] make 'Zeitvorgabe' settings saveable
+a1774e5f37ee6f869981c2c753457fa511a97ce2               lamann 2014-10-13 16:04:56 +0200 [2495] avoid trying to import directories to omnivore
+20266304f010eff30a9931f6cb6fefc2a091f996        Marco Descher 2014-10-13 14:16:43 +0200 [2808] De-Selektion eines ATC Gruppenfilters stellt vorherigen her
+7d3b5511882e28bcca7a04fc19bb06e4a9032b7a        Marco Descher 2014-10-13 11:32:18 +0200 [2805] Falsche Anbruchpackungen-Anzeige
+4a69ba70e7f884fe3bc4cdaeed811fcc5878ac2c        Marco Descher 2014-10-13 10:16:06 +0200 [2760] show number of articles in atc code category
+bad76aab21cf585550beb994fb47a983ddea4f7d        Marco Descher 2014-10-09 16:58:16 +0200 [2760] Provide means to retrieve all known ATCCodes, fix version
+436f29093f3038c3d76af3775c54c2711bae31dc        Marco Descher 2014-10-09 10:38:36 +0200 [2760] Provide means to retrieve all known ATCCodes
+885423914a83ceb199c721f494c2e8617fe06168               lamann 2014-10-08 18:31:02 +0200 [2787] Omnivore make column widths savable
+0aa8991b1d46f1c2321909ba5da6b506f1934fd1               lamann 2014-10-08 17:03:07 +0200 [2680] Do not allow drag&drop of omnivore categories
+a328e3b12bedcd01ebfac7bfd1c999a42824b9d7               lamann 2014-10-08 14:56:20 +0200 [2784] Elexis messages offer autoclear option when answer is pressed
+baa5ea8231e3f2dc057ca57ae711cf69617a56be               lamann 2014-10-08 12:57:43 +0200 [2753] Global Inbox do not set default path
+e1a219225319da879144d31cca3c646d045f79e7               lamann 2014-10-08 11:19:07 +0200 [2782] play sound when message comes in
+14a01b89cc30a7cc591b28287f025c013081f3d8               lamann 2014-10-07 16:11:17 +0200 [2753] Inbox do not auto-create folder if it can't be found
+8fc6835857dffe38c84b0cac00b6dc5194b787fc             thomashu 2014-10-07 11:05:29 +0200 [2767] added name to makro provider c.e.base.diagnosecodes v3.1
+26c58da8618506b6590714832cb15bb2a81ba2cf               lamann 2014-10-06 15:41:40 +0200 [2753] GlobalInbox show possible setting only error when view is loaded
+78a6b940a312eb83ff1deb80bae0f43e0c755fba               lamann 2014-10-06 13:50:07 +0200 [2752] enable search activation via enter key for Artikelstamm and
+9efc63d6747929b1d0f5537b4febab2bffd4344b        Marco Descher 2014-10-06 11:48:05 +0200 [2754] Configurably show prices for articles in Artikelstamm
+7fd7b4d8e20b85d0f6e4edba59858ada8a817d10        Marco Descher 2014-10-06 10:12:06 +0200 [2750] Falsche Lagerhaltung und Anbruchsdarstellung in Artikelstamm
+0e2c63beedcb42ec7028f4870c5c3b47c4a1ebc5               lamann 2014-10-06 08:36:51 +0200 [1914] Add default tax 39.2000 (Tarmed) for x-rays
+25d32d81a0d94882273bfc1e5e8bc3240ac48337               lamann 2014-10-03 09:40:47 +0200 [2649] Afinion preference option for applying received units
+e92f943339faa3c906f362a810991fb7d6e4d29b               lamann 2014-10-03 08:58:27 +0200 [2649] In case Afinion sends unit request application
+4d1da50a574e9208f8ae790610ea7bd76ffb036a               lamann 2014-10-02 16:35:14 +0200 [2671] TarmedOptifier checks 'abbrechnungssystem' if 'gesetz' is empty
+0d3a04189f9d87403ef3e686e6ea4d13d65cd3d4               lamann 2014-10-02 15:35:34 +0200 [2732] Get PackageSize description for Platzhalter from Artikelstamm
+8bfc969201827f87e756514652ada6fa92222e2a        Niklaus Giger 2014-10-02 13:21:03 +0200 [2636]Don't create a second Kons for today
+01f2659afca53bdba123919c4f01da43169bcf2a               lamann 2014-10-02 13:16:45 +0200 [2703] Reflotron do not trim result line before analysing it
+9cb455b7d517d921c23ba4ced7417f0fe23b95c0             thomashu 2014-10-01 21:12:48 +0200 [2615] moved method back to XMLExporter fixing mediport build v.3.1.0
+1c25c8cfa4ebfc6318970809798d9a9e0ba206ec             thomashu 2014-10-01 17:10:31 +0200 [2333] exported CDA document is docbox compatible now a.m.e.ehc.docbox
+f3435124c8911d9372dd3dcb58a491cc6f6b4cf4             thomashu 2014-10-01 15:58:22 +0200 [2333] fixed docbox prototype plugin versioning
+d635f03f363371092ecaa5e8fea25d560414b83f             thomashu 2014-10-01 15:51:07 +0200 [2333] added a.m.e.ehc.docbox prototype implementation to build
+412c2c4d4035f2d88e73b3fda7ec3c2dbd5eed5e               lamann 2014-09-30 14:19:42 +0200 [2690] Don't set LabResult flag as Sysmex does not provide this info
+45ca9566c447e07265405232da530799e1fdd8b5             thomashu 2014-09-30 09:42:51 +0200 [2502] fixed directory initialization a.m.e.ehc.ui
+ca0fad9fed28de5abc560b694e0c3b27d96f2589             huthomas 2014-09-29 15:39:19 +0200 [2615] update to tarmed xml version 4.4
+dc7d4cd8cdc080b8e8b0670f7a5f2cf39935e2b6             huthomas 2014-09-29 15:39:07 +0200 [2333] initial commit of docbox eRezept prototyp
+bb6019b9ef4d633968a9ef0896ed59ab5c710ae3        Marco Descher 2014-09-29 10:48:38 +0200 [2714] Fix invalid package sizes for Artikelstamm items
+1d2c8d5e1703b740bc45c3e80ee85997e0cf7dfa               lamann 2014-09-25 08:54:48 +0200 [2608] include valid timespan in Tarmed exclusions
+048d8118b36ddd1cc1dc6ac54678e1cb5ebc8d11             huthomas 2014-09-23 14:00:29 +0200 [2615] added automatic test for XMLExporter
+802e6f674822feabad3eb417d4011eb7ee98f903               lamann 2014-09-18 17:03:09 +0200 [2629] Enable Omnivore category renaming 
+0e2184847b2d52f3aa6d82ca722b7ca1f978c9c9               lamann 2014-09-18 08:41:45 +0200 [1234] Tarmed if side is required set left per default
+890f347c376247b82821ae21682cb6722e469b35               lamann 2014-09-15 15:13:57 +0200 [2572] Omnivore make settings 'Store in Filesystem?' global
+7dba73ddd155e9fc37b2207d69ba143aabcfc7dd               lamann 2014-09-15 11:24:39 +0200 [2646] do not execute substring(..) if Makro is empty
+2d60f0800ed4684c6da686d9046338485cdae2e4        Marco Descher 2014-09-15 10:54:02 +0200 Merge pull request #25 from ngiger/IATRIX_2638
+2d60f0800ed4684c6da686d9046338485cdae2e4        Niklaus Giger 2014-09-11 21:17:00 +0200 [2638]Fix problem when changing consultation
+75d3d10b21e0837ed7e70b1b9211dbd382576116        Niklaus Giger 2014-09-11 21:17:00 +0200 Only formatting changes
+577488c8b2e336d4231535fd7654e5b716b860f0        Niklaus Giger 2014-09-10 21:39:43 +0200 [1474]Make tests for ch.elexis.laborimport.viollier.v2 run again
+9ef5c0d06753515c6649ccb77e65216d14eb06c1        Niklaus Giger 2014-09-10 21:27:49 +0200 [1474]Make tests for com.hilotec.elexis.messwerte.v2 pass
+2f1b9b33ed8be196a5e5b81d2f1dbe40967c5fcf        Niklaus Giger 2014-09-04 09:31:07 +0200 [1474] call install_build only when ROOT is defined
+8063ce87ab259377749759f8be26339957f8d11a               lamann 2014-08-28 16:48:17 +0200 [2333] populate CDA Rezept with selected Rezept
+baaebb320b786cf4245f1c57b9ba322a7833ab15        Niklaus Giger 2014-08-28 12:29:24 +0200 [2122]Feature Beschreibung enthält Molemax
+103e221499696a42ff46b5740a57f08ac0254458             huthomas 2014-08-27 14:02:39 +0200 [2529] fixed problem when ICD10 table does not exist
+da47cada959e697d18f9a75f10da33f6aebaf6b7        Marco Descher 2014-08-26 10:34:12 +0200 [2090] Fix missing image and copyright information
+c957b3a30069192bc957adbdd5a28ef89b985c16        Marco Descher 2014-08-26 08:53:36 +0200 [2503] Artikelstamm search by EAN/GTIN (missing import)
+7eae21554c20f60be20ec56ea4e91cab1004bdf8        Marco Descher 2014-08-26 08:46:50 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+0f2cfb16f48e4eea25f2032e60ff2f2da4725cb5               lamann 2014-08-26 08:31:41 +0200 [2543] omnivore dragging NPE fixed
+0c24fdfccb20208e21b6d0e85d83f7e1ff79220b        Marco Descher 2014-08-26 08:46:39 +0200 [2503] Artikelstamm search by EAN/GTIN
+c6fed86d338fb5cdad283ce36b52bb11561af349             huthomas 2014-08-25 12:15:02 +0200 [2529] moved loading code from factory to ICD10 load method
+020aa0644c30be3383a09f92834b35aebde859dc        Marco Descher 2014-08-21 15:06:07 +0200 [2090] Vaccination Management add missing pom entry
+418f8fc684cb91901fa979f4aa08464eb68d2923        Marco Descher 2014-08-21 14:59:40 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+8839f3231a5c1f268f1dd571252402ee2342e811             huthomas 2014-08-21 14:31:43 +0200 [2484] added parameters to c.e.connect.afinion
+9493f1168a534a951743926d005de0f9d1a50896        Marco Descher 2014-08-21 14:42:57 +0200 [2090] Vaccination Management, initial checkin 
+36eadd03b4310dd61d2cd1e11bdaa2dee871c835        Marco Descher 2014-08-21 14:22:51 +0200 [2090] Vaccination Management, initial checkin (wip)
+8ee48d0e6d08d9a72afdf93bde54a7fda243abee               lamann 2014-08-20 15:41:56 +0200 [2450] Artikelstamm calc units/packages and parts of packages correctly
+6e5e8b8ed734c1bf91210e157cd956512e934e80               lamann 2014-08-20 11:29:21 +0200 [2092] CDA Rezept example
+296b5c9008c0f188e0ca85004d4465f599e12ace               lamann 2014-08-20 09:49:17 +0200 [1621] allow patients double booking dependent on preferences settings
+418ec1c2caed0eace82633482b254ee144f44659        Niklaus Giger 2014-08-19 21:24:08 +0200 [2122]Meta-Informationen für Elexis 3.0 und manuelle Änderungen
+a34e5bf35e495eb26c5d173c483bfa8a3f811649        Niklaus Giger 2014-08-19 21:08:09 +0200 [2122]Molemax in Elexis 3.0 aufnehmen
+d9e231b3799c7b35bf9de8832fa7c4b6fcbd231b             huthomas 2014-08-17 21:10:42 +0200 [2092] fixed initialization of default xsl in a.m.e.ehc.ui
+baeb448881287af3dd2cff3d23604c5dafde2ae1             huthomas 2014-08-17 20:53:41 +0200 [2092] fixed build properties of a.m.e.ehc.ui
+f99f011c17963f10656c4b21e75c2429c4be711b             huthomas 2014-08-17 20:40:02 +0200 [2092] added ecore dependencies to a.m.e.ehc.feature
+657ef9713dcf126d32bd9579c3e78ccf30b39db6             huthomas 2014-08-17 20:25:04 +0200 [2092] really to update site
+f9b4c128c2c7fa9e9477e9e6f3636a600ff7d444             huthomas 2014-08-17 20:11:38 +0200 [2092] reworked a.m.e.ehc, added feature to p2 site
+0dae1f87f5a3402521805a2840d54b9c164860dc               lamann 2014-08-14 16:13:44 +0200 [1975] Fälle&Kons synchronization with AgendaParallel
+c8c0d71452055176fe0a2a1a6252b19dc5bad090               lamann 2014-08-14 09:16:48 +0200 [1970] AgendaGross von-bis display
+8c975510c413c38b2b259b1472b133df5f627714             huthomas 2014-08-13 16:35:12 +0200 [2092] reworked a.m.e.ehc
+041907681bff3f6e1145fe0c25177e0e79827e47             huthomas 2014-08-13 16:31:31 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+795a9259b900f412c834fc0cc0b1c884c5b8fb57        Marco Descher 2014-08-13 13:07:40 +0200 [2464] Lagerbestand bei Artikelstamm-Verschreibung wird falsch berechnet
+96d89f735b03cced6f1b297e2c38c4af1905c7d5             huthomas 2014-08-13 16:31:12 +0200 [2092] reworked inbox for eHC contributions and fixed copyright
+07a0f397a15a87981404b9bc0fbc9c04a8d516b6               lamann 2014-08-13 10:26:07 +0200 [2460] fixed plugin.xml of Patientenstatistik
+0d2c9354578e18180dcbf330738e643e5ee1f2c6             huthomas 2014-08-12 17:31:21 +0200 adding a.m.e.inbox to base p2 site
+cde47381894054bbf22148afbc81f7cb7e4d06cf             huthomas 2014-08-12 17:22:48 +0200 adding a.m.e.inbox
+52782215f0a189a727ff098af1eefa178bbfae9e               lamann 2014-08-11 16:51:29 +0200 [2440] make ArtikelDetailDialog working with ArtikelstammItems
+7d98ace0888de401fa96d1aa9de62fa6c1429b46        Marco Descher 2014-08-11 14:22:45 +0200 Fix maven build error marker in c.e.base.p2site
+18293ce4d8c13c420d7fee9af56ddc54bcee2822        Marco Descher 2014-08-11 13:46:13 +0200 [2451] ArtikelStamm importer now considers updating values
+5b7581625809d18c4eb573f7dd9476b8c24f6423        Niklaus Giger 2014-08-08 11:06:33 +0200 [1417]Allow building prerelease variant
+c87fb66e2eaeee0d8e3349418afcb333bffe58c7             huthomas 2014-08-07 13:30:12 +0200 [2092] a.m.e.ehc.core initial commit
+cf9d9fc7f3270bf43476b5654fd430b38db90085               lamann 2014-08-07 13:22:59 +0200 [2092] a.m.e.ehc.ui initial commit
+
+8 commits between 3.0.0 (2014.07.31) and 3.0.1 (2014.08.07)
+-----------------------------------------------------------
+   number changes by authors are
+     3: Niklaus Giger
+     3: lamann
+     2: huthomas
+-----------------------------------------------------------
+58835fac04049965f5873a8fd369493d3f566e49               lamann 2014-08-07 12:52:39 +0200 [2364] Omnivore drag&drop document in catetgories
+c727fa8faa949e6a278a091d6a17768fcef1c15a             huthomas 2014-08-07 10:15:05 +0200 [2435] fixed loading of filesystem content c.e.omnivore
+53da72f7e172bb37564e5d091116a6f51aa28821             huthomas 2014-08-06 17:38:09 +0200 [2425] scripting import changes
+a1866e6f395e0ebb3806f563d8feacb70c77f197        Niklaus Giger 2014-08-06 16:25:22 +0200 Added logging of artikelstamm import for Jubula GUI tests
+cb9719828a6a1683e0d1a19d283a8a8c476b0a08        Niklaus Giger 2014-08-06 15:48:16 +0200 Merge branch 'master' of git@github.com:elexis/elexis-3-base.git
+373c6161a7494d23fb9bace9a5257d6e95b449de               lamann 2014-08-05 10:33:10 +0200 [2408] Treat case that no weblink is set in prefs
+33e836bad88f870fa0e651991902c0d0eaa4677c               lamann 2014-08-05 08:27:56 +0200 [1950] include 'Bereich and 'Grund' in appointment label
+583c1ce55309fa5818afa443902c3a056ff305a7        Niklaus Giger 2014-08-03 16:53:24 +0200 Removed no longer needed templates for installing
+
+43 commits between 3.0.0.beta3 (2014.06.18) and 3.0.0 (2014.07.31)
+------------------------------------------------------------------
+   number changes by authors are
+    15: Marco Descher
+    15: lamann
+     9: huthomas
+     4: Niklaus Giger
+------------------------------------------------------------------
+09a7a915894d531d9c1d257e43cad67377feb53a        Niklaus Giger 2014-07-31 12:55:48 +0200 [2407] Corrected links to wiki.elexis.info
+5b9d9936d7d1ea0b7526947d92e4331872ab3536             huthomas 2014-07-29 11:10:31 +0200 [2397] fixed loading of code selector in a.m.c.artikelstamm.elexis.open
+eeb6ea1c1dd874967abd78798aec2cda402226bb             huthomas 2014-07-27 17:54:45 +0200 [2396] skip prescriptions with invalid article a.m.epha.interactions
+eb2ab8b33b85e1622c140f86c8994f6ed1e31373               lamann 2014-07-24 13:28:41 +0200 BugFix Omnivore (standard) assign category correct
+7dfacd9e20a0fbd1acaeaf60dda4e0b7ce45e843               lamann 2014-07-24 13:06:07 +0200 [1574] ask for booking in case of bill status 'InBetreibung'
+a24e4db2e7a6008a9ae5f9bdfa4486ba8ca9487c        Marco Descher 2014-07-24 10:34:14 +0200 Clean omnivore.feature naming
+3dae7211bd0c25ccd841adb5ce180fc0b2a708c6        Niklaus Giger 2014-07-24 08:57:43 +0200 [2385]Adapt pom.xml and category.xml for new Iatrix-Messwerte and Mediport plugin
+dadffc0a417926085c0d7085a26ff837b9b39c07        Niklaus Giger 2014-07-24 08:01:30 +0200 Added plugins donated by Dr. Peter Schönbuchere
+7558fb56178324e1a44b4904bade5a50d5a6094a        Niklaus Giger 2014-07-24 08:01:27 +0200 Added plugins donated by Medshare
+06c29c688e9fde8fd9a61d06aee6555ac0cc4090               lamann 2014-07-23 15:30:12 +0200 [2384] only display 'Lagerbestand' if there is one
+2a3f066bbdde32ffe6c4aa3e7aa28788137b0852        Marco Descher 2014-07-23 15:21:20 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+e7f14c6da4234ea9a63aeebc6fcf658a97a2e763               lamann 2014-07-23 15:10:00 +0200 [2384] Artikelstamm list label update
+a870e9ea630499ea9bf88d645edda837675cd151        Marco Descher 2014-07-23 15:21:09 +0200 Clean dependencies in archie.patientenstatistik
+c92ee37520da7fec3e48380680a4836f177d57e0        Marco Descher 2014-07-23 14:43:42 +0200 [2278] Artikelstamm: deposit VAT info with article
+efaba11ee2302d419f88b52e930f553e17404108               lamann 2014-07-22 14:48:47 +0200 [1951] added more info to print output of agendalist (patient nr. &
+69d4f0bae9c28548ed619a063285c1688ab2a790               lamann 2014-07-22 14:31:36 +0200 [2227] added logs to templator
+73ca234fc44471e334c97973a9d00a267ebb6b36               lamann 2014-07-22 08:36:45 +0200 [2380] cover case that no patient was selected
+208909aa4d55da1e4b8e06877685010e32573efe               lamann 2014-07-17 13:27:03 +0200 [1950] changed 'TerminView' labels in list and fixed view
+07f130f35a3fe5c58d1028c2412c89b65277b386               lamann 2014-07-16 16:02:55 +0200 [1970] BugFix 'AgendaGross' calculate column size correctly
+6eb98e6b46fc4eca80493ec34e4ed07eded4a9bc               lamann 2014-07-10 13:40:29 +0200 [2348] BugFix avoid NullPointer if no patient is set for an appointment
+0262db97c77ed27256547bf057564bb9e210f9b2               lamann 2014-07-09 09:26:48 +0200 [1688] AgendaView allow color definition of locked times
+3cbee647a8120e7082a1af4f20e668cfd28cb212             huthomas 2014-07-08 13:24:29 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+0a547d502a513c0e6c653deebe65c52b14f8fb84        Marco Descher 2014-07-03 09:27:34 +0200 [2090] let ArtikelstammItem satisfy Artikel#getATC_code
+59d3909703b838c2a7ffedd86aa145b527d0b251             huthomas 2014-07-08 13:23:36 +0200 [1819] use Zulassungsnummer to query epha website
+e3335b9c9ff4d448b11741f4ad913958c1683f75               lamann 2014-06-26 15:48:17 +0200 [1970] fixed tabels first column cut off in AgendaGross
+93cd473de82eaadb552c01eff5f970281e60ee6a               lamann 2014-06-26 13:50:04 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+db6a309cd6521d466fd83cc0bacf62d816245f85        Marco Descher 2014-06-26 10:40:02 +0200 [2225] Implement search and filter for ATC codes
+f8b45a8927f096806002a5ea51302f551d1b50ad        Marco Descher 2014-06-26 10:36:56 +0200 [2225] Extend atc-code search capabilities
+7ee6ab144eeeebb62d3252e5d446a41165d98776        Marco Descher 2014-06-25 15:06:40 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+1b11f3f0cb469866aa768424d49d786a1e5b6fa9        Marco Descher 2014-06-25 15:06:32 +0200 [2225] Extend ATC codes with search for names option
+d15032ba6ba55de0a798d13dc72a369a6bb91fce               lamann 2014-06-26 13:49:44 +0200 [1159] assure update of agenda view 'Wochenanzeige'
+57da8219f50b79d882a991d5016a2337745e4aca               lamann 2014-06-25 14:47:24 +0200 [1621] do avoid double booking of patients for appointments
+3a222a2ac5d53d194676429deda4952b499cdd18        Marco Descher 2014-06-25 08:52:54 +0200 [2109] Enable declarative access to ATCCodeService
+0c4c86fba1dfad3b231b811244fb01bc4d1e0d8c             huthomas 2014-06-24 13:47:38 +0200 [2312] set task name when updating LOINC codes
+08804a99dcc6bbf4a9856a864a43248d1716d31a        Marco Descher 2014-06-24 10:53:01 +0200 [2109] ArtikelstammImporter performance optimization
+7d093dc9e6f2f713ae17260b6bf51443e8fcaa05             huthomas 2014-06-22 10:58:33 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+b23a003d0ea781eaf21fca51d60199c7552665cc        Marco Descher 2014-06-20 11:05:09 +0200 [2225] Artikelstamm, test, resp. creation modifications
+872d9c7e6613cc8b5ae3920fbb7d351eae06f1a2        Marco Descher 2014-06-20 11:03:41 +0200 [2225] Artikelstamm, search by ATC code
+cf311c38c5ba15ae1ba0da51a8402f2737d7a46d             huthomas 2014-06-22 10:58:20 +0200 [2306] fixed null check in c.e.omnivore
+599733c2b7b2ff8f245ac20a3baea519e15c7b3f             huthomas 2014-06-20 11:00:10 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+a9b5170cf79b1111cbbe5807a190e13cf5972842        Marco Descher 2014-06-20 10:39:48 +0200 [2225] Artikelstamm: Make ATC codes language shown configurable
+69332afed888af854a917d712fe4d6d21cc86af5        Marco Descher 2014-06-20 10:37:38 +0200 [2225] Update german ATC Codes to include group names
+e2de8e324f0dcb870f36f7899627cc573e07e5d0             huthomas 2014-06-20 10:59:42 +0200 [1952] fixed check for existing diagnosis in c.e.b.ch.arzttarife
+
+46 commits between 3.0.0.beta2 (2014.05.16) and 3.0.0.beta3 (2014.06.18)
+------------------------------------------------------------------------
+   number changes by authors are
+    21: Niklaus Giger
+    13: Marco Descher
+     7: huthomas
+     5: lamann
+------------------------------------------------------------------------
+d1c0c4f7feb2f3f47d69db0fd7c02aaa9e261a7c        Marco Descher 2014-06-18 15:45:13 +0200 [2225] Provide german ATC codes: model preparation in atc_codes
+f7d299ce47f7bf4050ed3b5cc62b501e12dd9bfe        Marco Descher 2014-06-18 13:39:59 +0200 [2158] Artikelstamm delivers wrong tariff value for Tarmed
+b986e0c3563c60389bd192a6081a256bdeca2bf9               lamann 2014-06-18 12:50:43 +0200 [1303] new MediEtikette extension point for FixMediDisplay
+1802727a93d959bf49869be234d3453eb9ba04c1        Niklaus Giger 2014-06-12 09:26:49 +0200 [2274]Skipping two tests (failure or pop-ups). Minimized dependencies
+147b5d5921d3286cacfaf1aefcdfda490eb04bf8        Niklaus Giger 2014-06-11 19:18:56 +0200 Unittests of com.hilotec.elexis.messwerte.v2 depend on beanshell
+4eb15daa2902af916796db8e9581d4fd633ba46d        Niklaus Giger 2014-06-11 18:55:15 +0200 Lucia made unit-tests pass again
+9903151746e172dfaeeeb492a10e35b99cc256da        Marco Descher 2014-06-11 14:20:35 +0200 Merge pull request #24 from ngiger/master
+9903151746e172dfaeeeb492a10e35b99cc256da        Niklaus Giger 2014-06-06 21:27:20 +0200 [2274]Skipping three non-working unit-tests
+ffadfe49a6e17e469b2322be90c34320ae42cbeb        Niklaus Giger 2014-06-06 21:27:20 +0200 [2274]Fixed net.medshare.connector.aerztekasse_test
+fc47a8e86fb466dd989798f1c87c2aa864350f86        Niklaus Giger 2014-06-06 21:27:20 +0200 [2274]Fixed ch.elexis.externe_dokumente
+37b42de5da1d35e7be56cd72a88ee4d80abc0762             huthomas 2014-06-06 21:27:19 +0200 [2267] added new category translations
+caf760d4d94fce6fc9e0ca502edd8ac26bacf83e             huthomas 2014-06-06 21:27:19 +0200 [2268] fixed default max file length c.e.omnivore
+4f91e97eb70c3fbf59d8291ef0b43b756fe8e26c               lamann 2014-06-06 21:27:19 +0200 [2273] avoid inexisting directory error on preference page
+0137e009e6cc6db8cb6d6717d9c971b225301e04               lamann 2014-06-06 21:27:18 +0200 [2272] use InexistingDirectoryOKDirectoryFieldEditor in preference page
+3b56c395fb33d74d7d498d4e038d7ce77d3afaf3        Niklaus Giger 2014-06-06 14:14:51 +0200 Fixed launch, order in assertEquals
+4067a5f0e5eb6adf81ba1c7183cabaaa6cd4eefd        Niklaus Giger 2014-06-06 10:31:28 +0200 Suppress Dialog when running TarmedImport test
+42f281a0e7d5f5e3d21781a109f2a2fb711ea0ca        Niklaus Giger 2014-06-06 01:49:16 +0200 Adding the unit tests to the maven build. Will break the builds
+1444e4dea8a5b6125fdd31ab991573833ca0ab6b        Niklaus Giger 2014-06-06 01:41:02 +0200 Mavenize some projects
+555d4c0f0175b1e403ab1f3b325e8c6313661782        Niklaus Giger 2014-06-06 01:26:30 +0200 ATC-Codes test run now, but have errors
+de46d5afeab8e5e782175311542abc638b4f2f91        Niklaus Giger 2014-06-06 01:22:46 +0200 Hilotec-messwerte-tests run now, but have errors
+f48350396bd80651b80c47c3a5f6933820407e7b        Niklaus Giger 2014-06-06 01:17:49 +0200 erztekasse-tests run now, but have errors
+bd3fde9d4c5715fd8c28610ce6b8bd5940420468        Niklaus Giger 2014-06-06 01:10:57 +0200 Viollier v2-tests run now, but have errors
+b51245d759c5e380b965093b61d62ec170dbf6fc        Niklaus Giger 2014-06-06 01:03:43 +0200 Arzttarife tests work now, but ask for Elexis to restart
+d97a8fa71cc9c2c63946f86832cbf0e56ccd8e1b        Niklaus Giger 2014-06-06 00:55:35 +0200 loinc_test works, but prompts for resource to save
+1e1cf0f9fbad5691d22ff055986cf758fbc639a1             huthomas 2014-06-06 14:46:02 +0200 [2267] added new category translations
+619a4385e98714d801f033fce8ecb56c666609f5             huthomas 2014-06-06 14:39:00 +0200 [2268] fixed default max file length c.e.omnivore
+8a06b75e9fc355b7f8c376d2f5031a0c47bf965c               lamann 2014-06-06 14:35:53 +0200 [2273] avoid inexisting directory error on preference page
+48f4d0c98d6de9f24aa28c9194144c7005036f82               lamann 2014-06-06 14:28:23 +0200 [2272] use InexistingDirectoryOKDirectoryFieldEditor in preference page
+e4f0ab3059ad7fd9ca83b55bfab8504f134a9413        Niklaus Giger 2014-06-06 00:44:18 +0200 Running tests with mvn works now. But has failures. Skipping it
+ea33fdaac76bb9d7ee7c1e8a293ca327711d9ae2        Marco Descher 2014-06-05 13:37:45 +0200 [923] Omnivore drag and drop document export
+2fc3db472ef51bd6fd18a9b67ac590843346d9f5        Marco Descher 2014-06-05 13:05:54 +0200 [923] cleanup DocHandle
+239dec15e192c6a2131d9f6b3e3c5ebe42e68bfd        Marco Descher 2014-06-03 14:21:21 +0200 [2110] fix dataset version management in tarmed
+2aae54b443ec1aa30c9b048dd9e67c03503d97c4             huthomas 2014-05-30 17:19:44 +0200 [1952] fixed XML export, removed code attribute on freetext diagnosis
+6653e717beafcfdcf33e3385c5af9cce1a3877c7        Marco Descher 2014-05-30 10:34:40 +0200 [2234] Fix missing NLS in ebanking.esr
+8dd32f16e2c6dd93d3f0bafa841482ff61ecbeba             huthomas 2014-05-30 09:54:06 +0200 [2256] fixed xsd loading for strict billing validation
+b4614ac660205e6c9936d0321c780598deb0c33d             huthomas 2014-05-26 09:26:39 +0200 [2229] fixed c.e.omnivore misleading error handling
+3ff2b84a5f6d71ea9e1916929ac02c71bb202df8        Niklaus Giger 2014-05-24 23:22:10 +0200 Remove trailing space in ICPC -perspective name
+9c5a4482957a2eecbac010307ad9f36fce15f4e7        Marco Descher 2014-05-22 11:28:46 +0200 [2110] Update reference data import - fix TarmedReferenceImporter test
+2f347c6b9a7c3d697e20c5d03f2d7029535d3fcb        Marco Descher 2014-05-22 11:25:24 +0200 [2110] Update reference data import
+7571b0659ff8cc272f52cea66a7d1b73911efd11        Marco Descher 2014-05-21 15:25:19 +0200 [2109] refactor artikelstamm importer to new update service extpoint
+f4ea906e66a1027ee609aa97ebd15cd002348937        Marco Descher 2014-05-21 13:45:29 +0200 [2109] Update Artikelstamm to 1.1., datasets before 05/14 not importable
+b850f6086e33f6bebe404c541fc6659e9b127eab        Marco Descher 2014-05-21 08:02:52 +0200 Merge pull request #22 from ngiger/fix_global_inbox
+ebf3786ad94dda5fa19209f9c38521d824fe5183        Niklaus Giger 2014-05-19 21:09:46 +0200 [2231]Avoid pop-ups when global inbox is not yet configured
+b1e6e6518287f14f1253060ff1a13fc7d8312a37        Niklaus Giger 2014-05-19 21:08:47 +0200 [2231]Make global-inbox path localizable
+d31368a465de2ca51960fb340f53625ac9f703fc        Marco Descher 2014-05-20 14:57:27 +0200 [2109] Preparations for Artikelstamm v1.1
+df13fac57c2f11eb1eaa1121ccd1bc830b3016ee        Niklaus Giger 2014-05-18 11:58:14 +0200 Added missing dependency to ch.elexis.archie.patientstatistik.feature
+
+230 commits between 2.1.7 (2013.06.26) and 3.0.0.beta2 (2014.05.16)
+-------------------------------------------------------------------
+   number changes by authors are
+    68: Niklaus Giger
+    61: Marco Descher
+    48: huthomas
+    31: lamann
+    21: Marlovits Harald
+     1: Bugra Ergin
+-------------------------------------------------------------------
+7b19473ad56a11e5735a1b9d05435a0bf3c7dfaf        Niklaus Giger 2014-05-16 11:33:05 +0200 buildQualifier picks up now value of repo_variant given in command line
+3b96ab8881ca3bdb53eec4e8d0c2bdbd2589703f        Niklaus Giger 2014-05-15 19:38:20 +0200 Compute buildQualifier for repository using groovy
+79ade6ccca638d29c905effff92fbd9d4180e5be               lamann 2014-05-15 15:49:20 +0200 [2110] c.e.b.ch.arzttarife.test for TarmedReferenceDataImporter
+7ad1ec0c02084c0a5a6340c07c681a2e343e1ae3               lamann 2014-05-15 15:45:30 +0200 [2110] TarmedImporter adaptions to use UI independent and update service
+58ca9d0cffe2df54c8ea86c7bbb7c317e5417dec        Niklaus Giger 2014-05-15 12:35:11 +0200 [2134]Rename view Dokumente->Omnivore and add fressen.gif
+fc9804cb165f2d5f2d07c147ad1ba7158c06d153        Marco Descher 2014-05-14 14:34:10 +0200 Ignore properties-maven-plugin in pom.xml to remove Eclipse build errors
+29d20c193e077bf010eaea0aaf4c0c3df2e3be26        Niklaus Giger 2014-05-12 23:22:16 +0200 [2203]Use properties-maven-plugin for timestamp_format
+2c013ddec12136f1a0863b3fc2644132f60e2a37        Niklaus Giger 2014-05-12 23:22:16 +0200 Add src.includes to build.properties
+3d9a715ee0b4234bb0bf80b5b0ba62378d45cf1f        Niklaus Giger 2014-05-11 13:55:27 +0200 Relax requirement for host in icpc-fragment to fix build error
+8ab5b5b3a7e995dde8f5a0b61671734e000b9186        Niklaus Giger 2014-05-09 12:47:56 +0200 [2203]new qualifier format
+986b91a83e30d3a857294fea6d4cde3fb18e01ca             huthomas 2014-05-06 14:16:00 +0200 [1893] applied patch from 2.1.7 and removed filter of current mandant
+49171515f6fa43d6c9cb42a8aeb2a9fa1dd51f66        Niklaus Giger 2014-05-01 20:41:51 +0200 Add ca.uhn.hapi.base as depencency to Laborimport.medics.v2
+4889cadb39d4ea22a9ee2444adf055985623e833               lamann 2014-04-23 14:22:16 +0200 [1729] date sorting of 'Befunde'
+34b64896af42f036a6cd63b70bd71543fa7915a9               lamann 2014-04-17 17:37:42 +0200 [2108] port of c.e.laborimport.viollier.v2
+d2791e966d53c7ea1aaf008edd5bb2b25966c75b               lamann 2014-04-17 15:33:56 +0200 [2108] port of net.medshare.connector.aerztekasse
+203e6fe8833d5a7e8e62a1dc7e9c0d71c9f306a2               lamann 2014-04-17 10:35:28 +0200 port of c.e.laborimport.medics.v2
+ac7dbfed99d743e4f5b8c9ce3a7b456645711c3c             huthomas 2014-04-15 09:56:03 +0200 [2170] added KonsMakro for TI diagnosis
+35480020de80b1f07e1988c7fa17e0776a3676b4        Marco Descher 2014-04-14 22:13:42 +0200 Merge pull request #21 from hilotec/master
+e430f324d400829f69b7a6aae9502d76d91afb10          Bugra Ergin 2014-04-14 16:32:27 +0200 Fixed java compiler versions (1.5 -> 1.7)
+38a95811a2d1532cd2514bb3537ca52cc2abe82d             huthomas 2014-04-14 20:14:27 +0200 [1952] added handling of freetext diagnosis to Tarmed XML
+6f7faffc843d21158b35be833f2a1666640cf694               lamann 2014-04-08 14:53:15 +0200 [2108] c.e.laborimport.bioanalytica hl7 update
+fa60721c308a5e46ebe21297aabca5e544320194             huthomas 2014-04-03 10:08:05 +0200 fixed swissmedic plugin vendor
+d016ac7a062e19b8237b508b42187e82937cd387        Niklaus Giger 2014-03-28 21:24:44 +0100 Mavenize all projects
+5fa062501090243229f9a4388dcafb554cf30e2e        Marco Descher 2014-03-26 14:49:21 +0100 [1683] add static finder methods to ArtikelstammItem
+4e3fd0090e867c5723b0ad9c49fbdf000c05ca99             huthomas 2014-03-25 16:20:30 +0100 [2132] fixed tooltip text of a.m.elexis.swissmedic menu contribution
+bd2e5c27f1c19c2e8006c2b20da3836a72c8c687        Marco Descher 2014-03-25 16:02:37 +0100 [2130] Update tycho to 0.20.0
+255b9fc2ceb45e46ae52d529015b6a5070238169        Niklaus Giger 2014-03-23 16:26:47 +0100 Fix project name for ch.elexis.archie.patientstatistik
+1e552649be64673f626f642817e01a927ac73695             huthomas 2014-03-21 10:25:27 +0100 [2108] port of c.e.buchhaltung.basis
+ca5dda7bd7b8bcae0acba8cc322c176926ad6fa2        Niklaus Giger 2014-03-14 10:42:03 +0100 Add required com.sun.jna to docbox-feature
+92743c2731991ef800c52d9d99aed5baa3a9fd18        Marco Descher 2014-03-14 09:00:47 +0100 Merge pull request #20 from ngiger/omnivore-2
+92743c2731991ef800c52d9d99aed5baa3a9fd18        Niklaus Giger 2014-03-13 12:46:09 +0100 Applied elexis-formatter, dos2unix
+cf95ee7ad21e653d4d736ef80055fdfd96e6b60f        Niklaus Giger 2014-03-13 12:46:09 +0100 Fix updating from old version
+0a2bba8214adcdf82ed458fd213aaf314746acb6        Niklaus Giger 2014-03-13 12:46:09 +0100 Apply elexis-formatter
+79a5249b12fa51ce4af0ccdfafefdb22ec16ff8b        Niklaus Giger 2014-03-13 12:46:09 +0100 Added xChangeContributor.java
+c6e05af5fdb48f7e46b9558543488133baad347f        Niklaus Giger 2014-03-13 12:46:09 +0100 Export ch.elexis.omnivore.data for OpenDocument
+b0e32b2fd0b6b100bf024ad9758e4eb35ea70e61        Niklaus Giger 2014-03-13 12:46:09 +0100 Integrated categories from omnivore-plus. Improvements by Antoine Kaufmann. Cleanups by me
+9a9d8c8a0f5418e7cb906a62871933afc0ee60d3        Niklaus Giger 2014-03-13 12:46:09 +0100 Refactored code. Renaming consistend with elexis style. Similar to omnivore-plus/direct
+4fa6a70b67d9eaa01842d0edbddc767996079e1a               lamann 2014-03-13 11:17:38 +0100 [2108] port of ch.weirich.templator.pages
+6e56449d9495197d263b38623645bc4a5b890d46               lamann 2014-03-13 09:06:26 +0100 [2111] port c.e.icpc.fire 
+b2e87d43b3b278bc8a0800c35c961c5d23beeeb5               lamann 2014-03-12 16:10:44 +0100 [2111] ch.elexis.support.dbshaker
+cbaf41160fdbf189d2fd6e9803c886330c15ef98               lamann 2014-03-12 14:44:45 +0100 [2111] port of de.fhdo.elexis.perspective
+6941164e4af717db48f65231593853e8cc505b4c               lamann 2014-03-12 13:10:08 +0100 [2111] port of ch.elexis.stickynotes
+02737cff4441e05c742b42edfc5312d5c91d444f               lamann 2014-03-12 09:44:12 +0100 [2111] ch.elexis.base.messages fixes
+cce34828dd01da3e09719839b353a62082b0196e               lamann 2014-03-12 09:25:17 +0100 [2111] port of ch.medshare.elexis_directories
+0cd0e1f80b3b2036a3770a66a7c33b8867c26868               lamann 2014-03-11 17:23:03 +0100 [2108] port of c.e.laborimport_rothen
+d5e15b87a213584b2cc34ab1d06ab07c4f4450fe               lamann 2014-03-11 17:06:26 +0100 [2108] port of c.e.laborimport_rischbern
+e2776679f87ffedae3a883a28b06942dcd61a426             huthomas 2014-03-11 16:10:06 +0100 [2108] fixed com.hilotec.elexis.kgview FavMedikament loading
+eff4c057f0e5d59bedb1978ad62e0163c829b7b4             huthomas 2014-03-11 15:51:20 +0100 [2108] ported com.hilotec.elexis.messwerte.v2
+9426ee4a4b58a915677765de06e85a9c95426c8d             huthomas 2014-03-11 15:37:05 +0100 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+e41dfd96e2b0dc7b574ea05234ed592f28a370ea             huthomas 2014-03-11 14:48:15 +0100 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+9426ee4a4b58a915677765de06e85a9c95426c8d             huthomas 2014-03-11 15:36:43 +0100 [2108] ported com.hilotec.elexis.pluginstatistiken
+48795a2dd0faa6e355124b5cc8fa89da2c392e57             huthomas 2014-03-11 14:22:18 +0100 [2108] added pom for c.e.scripting.beanshell
+30af4512480701496ec0360bf0af53d7e5e947c5             huthomas 2014-03-11 14:47:50 +0100 [2108] moving c.e.scripting.beanshell to core
+47d9742ae55b1f4930e62bdfa4307781803ec6b1             huthomas 2014-03-11 14:20:47 +0100 [2108] ported c.e.scripting.beanshell
+30af4512480701496ec0360bf0af53d7e5e947c5               lamann 2014-03-11 13:45:14 +0100 [2108] add correct feature plugin
+e4ced4d7e528338a40ed1a943fc66f566f70f3fa               lamann 2014-03-11 13:22:09 +0100 [2108] port of c.e.laborimport_lg1
+d1085f8c93953a675fa2c9bc904fc9f1485dbca9             huthomas 2014-03-11 11:20:15 +0100 [2108] ported com.hilotec.elexis.kgview
+6dc97a27a5823cd6b8e058fc1fdabb961f0975a5               lamann 2014-03-07 15:19:29 +0100 [2108] port of c.e.laborimport_labtop
+e8e812d603d26ca7e0efc3e6f7f43c73507ce99b             huthomas 2014-03-07 11:06:50 +0100 [2108] added ch.docbox.elexis to p2 site
+cc37de590ed0825cfa9f49d774f617a732db4b3d             huthomas 2014-03-07 11:04:41 +0100 [2108] ported ch.docbox.elexis
+491baf86d83a103887f41b4209d43facb886c89d               lamann 2014-03-06 21:14:05 +0100 [2108] port of c.e.laborimport_viollier
+1e72baa2112582bc5b19e9437e718012dc0720fb             huthomas 2014-03-06 17:30:20 +0100 [2108] port of waelti.statistics
+eac81fc02aab190b0d1f62e48b62b6e697f51f10               lamann 2014-03-06 16:59:27 +0100 [2108] port of c.e.laborimport.hl7.allg
+2fcd97f8abf23b87abc26a4313fee9270c3b82ac               lamann 2014-03-06 09:00:40 +0100 [2108] port of a.m.e.medietikette
+4d225dd91f54066df62146770586498d629be958               lamann 2014-03-05 16:58:06 +0100 [2108] archie plugin.xml fix
+6e9ecd7fe916185b2d6a794e8760beb5057d423b               lamann 2014-03-05 16:09:02 +0100 [2108] port of c.e.archie.wzw with archie feature dependencies
+f05677736e65330ff4469dca0e00ef385100aa5f        Marco Descher 2014-03-05 15:26:18 +0100 Artikelstamm make atc code dependency non-optional
+22a47272feec3d36180882e606fd1cd7f0011aaf        Marco Descher 2014-03-05 13:19:55 +0100 [2108] fix translation for ch.elexis.notes
+a7ad3f2ecadbacbb5c40816ffed386783f81d594        Marco Descher 2014-03-05 11:27:25 +0100 [2108] fix build for ch.elexis.notes (version qualifier)
+c62fdd12508362dcb9dbea67f1cb00fbf63c322c        Marco Descher 2014-03-05 11:22:13 +0100 [2108] fix build for archie.patientenstatistik
+e01e3207d077034e15891405c0460da1b6a5a788        Marco Descher 2014-03-05 11:21:56 +0100 [2108] port of ch.elexis.notes
+92f0d89d6acfc3a1638d80696a4eb956093ab208               lamann 2014-03-05 10:52:52 +0100 [2108] archie classpath fix
+2094db0d644d7c66c9e09ab0bd95e162ae98d881               lamann 2014-03-05 08:56:03 +0100 [2108] port of c.e.archie.patientstatisik
+6a3f1c0ece1d1a0b1e7ef24272c027f7842c98e9               lamann 2014-03-04 11:44:32 +0100 [2108] port of ch.medshare.connect.abacusjunior
+96a0c87e34fabefe31ee3a5e5ed41572883b16c2               lamann 2014-03-04 11:04:28 +0100 [2108] port of c.e.connect.sysmex
+9521fae8b5e098e6d2afe1d2ccd27c4b6b08ed7b               lamann 2014-03-04 10:24:04 +0100 [2108] port of c.e.connect.mythic
+a236c0c9b2be2b614eeef93eaf522cf48aec06c3               lamann 2014-03-04 09:00:09 +0100 [2108] porting ch.unibe.iam.scg.archie
+cb233be905395ba823c2876aded4f3478fba4115        Marco Descher 2014-02-27 14:01:29 +0100 [2105] Fix incorrect encoding of source files leading to wrong umlaute
+7b898b3e3781af1c77bfeab4fd55422739c95ff4        Marco Descher 2014-02-27 13:40:34 +0100 [2105] Fix incorrect encoding of source files leading to wrong umlaute
+53845ee36aecf4b6be272b235b2f17c51c1da7c5        Marco Descher 2014-02-26 14:56:32 +0100 [2108] port ch.elexis.agenda
+fac1a9be073c4521220b44528965748178bd1e5d             huthomas 2014-02-25 16:55:30 +0100 [2108] added global_inbox to category
+522581e979d24bba6473682c3ddc3f7afd8c18bf             huthomas 2014-02-25 15:03:56 +0100 [2108] added global_inbox to pom.xml
+0884e641c9ed45feb8addb149ff3aec1079deb09             huthomas 2014-02-25 14:22:12 +0100 [2108] ported global_inbox feature
+2c430258e30a6c93b53b6e805e61fb3393c5ed11        Niklaus Giger 2014-02-20 16:18:13 +0100 Use correct beta/release for 3rdparty.libraries
+59dfdbae3e47192f105c04b29f2c254d8e31d0c2               lamann 2014-02-18 18:37:10 +0100 [1040] text update
+a2bee4d5a4cfbe49e1b9a7b1f18550d9cbd7d925        Niklaus Giger 2014-02-14 18:44:11 +0100 Another fix to make fop really installable
+f27a1c9c3c1f37d9e5f9ed00545d0bcbd2d0ef84        Niklaus Giger 2014-02-14 16:56:34 +0100 Fixes for installing c.h.e.opendocument and org.iatrix. Updates for */feature.xml
+315bf421e642156ad3a7cf2ceb36941747fa85c2             huthomas 2014-02-12 11:36:43 +0100 changed dependency from slf4j.api to org.slf4j.api c.n.utilities.comm
+4b8044b597d454825a6870538ce93b5b846f12c6             huthomas 2014-02-12 11:02:54 +0100 dependencies of c.e.laborimport.analytica.feature
+03e7cfd9004a4efd0522cd250465ec5a7bb3a71d             huthomas 2014-02-12 09:42:29 +0100 dependencies of c.e.laborimport.analytica.feature
+60ee212a42aa89b1d16c3453d0bae0ac2668f45d        Niklaus Giger 2014-02-09 16:40:29 +0100 Fix Einstellungen Abrechnung Fachspezialitäten Liste ist leer
+8f9d2942fb2f9a9641133b8204963e5d1c9e8452             huthomas 2014-02-07 09:40:39 +0100 [1819] added a.m.e.decision.feature
+9471fde5b22a00f5bac4730780b9d7b755c074be             huthomas 2014-02-06 23:56:16 +0100 [1819] added a.m.e.swissmedic plugin
+7fa6d0ae7eef634ddbd4b8db04fa6cca661d5a1d             huthomas 2014-02-06 23:07:20 +0100 [1819] ported a.m.e.epha.interactions and a.m.e.weblinks
+26a7978d84cc207e1590e67c83d7923008bbd6bb             huthomas 2014-02-06 22:18:22 +0100 [1819] added a.m.atc_codes to c.e.base.ch.feature
+6ee66f88e14c03ae9ea6ad2f095079248cc98eb6        Marco Descher 2014-01-24 08:06:58 +0100 [1969] base.ch.legacy.feature p2 integration fix
+e9749d6f90b89f69dec41d62338f5628526c2c5c        Marco Descher 2014-01-24 08:04:13 +0100 [1969] base.ch.legacy.feature id fix
+82f5acc0f7c4fe9b60a3a16f11476d0362d16ee8        Marco Descher 2014-01-24 08:01:30 +0100 [1969] base.ch.legacy.feature removes artikel and bag from base.ch
+ae56e74d27e7007e14b73f9b6156fceb2d391b9f        Marco Descher 2014-01-23 22:24:14 +0100 Fix source build.properties for artikelstamm.elexis.open
+c3c218566f173e5f6aab0ed80f8779f4280a6a23        Marco Descher 2014-01-23 15:47:48 +0100 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+1eec1860e8850d08eec4949900c48c960594aa3a             huthomas 2014-01-23 15:22:10 +0100 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+dfb67015f01273d747f5626627cc1971c3b9bfc9             huthomas 2014-01-23 15:12:50 +0100 added invisible libraries category and fixed source feature build
+16f1a41a38cffc80af9b404c3f7917befb10bcfe        Marco Descher 2014-01-23 15:41:39 +0100 [1969] artikelstamm initial check-in, add to base.ch.feature
+34a95b0515e3dd78c891be31ed286bc9e67808f1        Marco Descher 2014-01-23 15:40:45 +0100 Add missing pom.xml to atc_codes
+349fa7cd9a3c396422dd62ce1e9fe99ce3deb356        Marco Descher 2014-01-23 15:40:01 +0100 Add missing pom.xml to atc_codes
+3f1f76acaf69869a012b9d83463b93bc278c3835        Marco Descher 2014-01-23 14:43:14 +0100 [1969] at.medevit.atc.codes(.test) initial checkin
+1751f564e5d6070ac993ab70a7ebfa26df7ccb6a             huthomas 2014-01-23 14:26:42 +0100 added feature for c.e.fop_wrapper
+85f349830dbdc1d31f4a1bcb43f333391bfd12a9        Marco Descher 2014-01-22 09:52:36 +0100 Add featureless fop_wrapper plugin for dependency resolution
+f2f8982b2cbb166e75102f8d68d71452308f5e85             huthomas 2014-01-16 17:59:31 +0100 updated labortarif_2009 exported packages
+292acceb70df654c8fd2dfaf939273e07eef4fa8             huthomas 2014-01-16 17:58:48 +0100 [1969] ported c.e.fop_wrapper
+44cee5de91863fcbb67d2032ffcd490fc558998f             huthomas 2014-01-15 17:49:41 +0100 [1969] ported c.e.connect.afinion
+e7b8d8d54527fcb7f65e56647bc9e05c718fccdc             huthomas 2014-01-15 17:34:50 +0100 [1969] updated c.e.connect.reflotron.v2 to use new importer.div
+06ef8673646701fb89403ebf51526a6b3a4b7c9d             huthomas 2014-01-14 17:57:26 +0100 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+b57f29e5aa9306e3252350c9e62bfa6641a4f9eb        Marco Descher 2014-01-14 16:30:43 +0100 Minor corrections
+48900deadc3971bdbb4fa1a0f6e6ac00dbe69515             huthomas 2014-01-14 16:33:48 +0100 [1969] ported c.e.laborimport.teamw
+6a697f5d55bd1fc913ad03e291889f9e63caee64             huthomas 2014-01-14 13:53:05 +0100 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+ca6a58dbbcccc845f1acca911ccdd11d84ae180f             huthomas 2014-01-14 13:36:04 +0100 [1969] fixed build of c.e.laborimport.analytica
+6a697f5d55bd1fc913ad03e291889f9e63caee64             huthomas 2014-01-14 13:52:46 +0100 [1969] added c.e.laborimport.analytica to category laborexchanges
+a6a96cfd3ae3c30a16ae2c1de6402bd9b026025f             huthomas 2014-01-14 12:58:58 +0100 [1969] ported c.e.laborimport.analytica and c.n.utilities.comm
+bd14b98b31ee1698e4dce458b3eafd8d9810ba17        Marco Descher 2014-01-14 09:40:36 +0100 [1603] Prevent NPE in Labortarif 2009 preferences page
+d2de125877cc85009cd7770e78978d6f2ad98d11             huthomas 2014-01-13 15:03:09 +0100 [1969] ported c.e.laborimport.bioanalytica
+d33ce17af4826bf99d47d38240a0a0dae78fc1b5             huthomas 2014-01-10 11:12:18 +0100 added loinc code feature
+b3d95bded7ccc3da415559fd817560b13e4247be        Marco Descher 2013-12-29 10:54:11 +0100 [1603] bildanzeige.feature pom.xml build fix
+8b35a15bce9e97aac713f123b2ec89d82facc95a        Marco Descher 2013-12-29 10:48:36 +0100 Merge pull request #19 from marlovitsh/ch.elexis.bildanzeige
+8b35a15bce9e97aac713f123b2ec89d82facc95a     Marlovits Harald 2013-12-28 23:45:47 +0100 added entries for ch.elexis.base.konsextension.bildanzeige to
+4959af6d2358ff49850082d61b5f68d7e585ae16     Marlovits Harald 2013-12-28 23:39:16 +0100 added feature project for ch.elexis.base.konsextension.bildanzeige
+17876be9927f676236833d2c6b67775c5d7f851d     Marlovits Harald 2013-12-28 23:36:33 +0100 Converted ch.elexis.bildanzeige to 3.0.0,
+e997ad17a3292564246573759bba92d2e0ffc270        Marco Descher 2013-12-24 12:38:07 +0100 Merge pull request #16 from marlovitsh/ch.elexis.privatnotizen
+70dca933176d2ab3d4331d4c89927880f625d246     Marlovits Harald 2013-12-23 19:15:55 +0100 added entry for ch.elexis.base.konsextension.privatnotizen to pom.xml
+fe14e2ab42fff054ded60d32fba610e2516d442d     Marlovits Harald 2013-12-23 19:14:37 +0100 added feature to category.xml
+b5e44c0253a9c2e3d8982b79438a6c47f380b022     Marlovits Harald 2013-12-23 19:12:22 +0100 added feature for ch.elexis.base.konsextension.privatnotizen
+a69aa9c359a463cdca3d1fb4c2c1a51d28b61dc2     Marlovits Harald 2013-12-23 19:05:06 +0100 converted ch.elexis.privatnotizen to 3.0.0,
+a3d1d52e06042a2e123c5280a05f742ea63bc821        Marco Descher 2013-12-23 15:09:42 +0100 String to constant replacement
+dd2f7adf27e1d1cb31a6288eb000b3b4cfd400b4        Marco Descher 2013-12-23 15:09:34 +0100 Fix EP for omnivore
+506e841c46e1f2224f77447166d98bc453a9325b        Marco Descher 2013-12-22 22:59:17 +0100 [1603] Wrong allocation of RechnungsManager EP
+75ca8c9f7b96563021d93849efae7690ff3acb94        Marco Descher 2013-12-16 07:23:52 +0100 Merge pull request #14 from marlovitsh/ch.elexis.base.befunde
+75ca8c9f7b96563021d93849efae7690ff3acb94     Marlovits Harald 2013-12-16 01:23:17 +0100 added category.xml entry
+56d91a8d6865ee06f1e384d63c54cb08d764c393     Marlovits Harald 2013-12-16 01:22:20 +0100 added pom.xml entry
+f41abcf2bc140d4f32f9018d84acb8c2632519d7     Marlovits Harald 2013-12-16 01:21:14 +0100 added ch.elexis.base.befunde.feature
+e8b3b015b93116156fd7f02d7a6b46890ae5b80f     Marlovits Harald 2013-12-16 01:19:39 +0100 converted ch.elexis.befunde to 3.0.0
+151752e9dbc7486e02fff2ca15d8bb16941fe55f     Marlovits Harald 2013-12-14 10:23:17 +0100 Merge remote-tracking branch 'public_origin/master'
+151752e9dbc7486e02fff2ca15d8bb16941fe55f        Marco Descher 2013-12-13 19:42:55 +0100 Merge pull request #13 from ngiger/more_ports
+151752e9dbc7486e02fff2ca15d8bb16941fe55f        Niklaus Giger 2013-12-13 17:39:50 +0100 Manual changes for reflotron.v2
+5c9041152b55e207d523bf4feab7b4378f853642        Niklaus Giger 2013-12-13 17:39:50 +0100 Called elexis_2_to_3.rb for ch.elexis.connect.reflotron.v2
+0069bdce9d35b557b17c39d3850c2d89899b30c3        Niklaus Giger 2013-12-13 17:39:37 +0100 Added ch.elexis.connect.reflotron.v2 as found in elexis 2.1.7
+a6a9cc15ee5cf2facbede11015b3196ed2993a35        Marco Descher 2013-12-13 14:43:50 +0100 Merge pull request #12 from ngiger/more_ports
+a6a9cc15ee5cf2facbede11015b3196ed2993a35        Niklaus Giger 2013-12-13 11:00:38 +0100 Manual changes for privatrechnung
+6d011fdf1129d61ad69811bb732f9061c1c12c55        Niklaus Giger 2013-12-13 10:26:22 +0100 Called elexis_2_to_3.rb for ch.elexis.privatrechnung
+4d587a86e19c33b375a6a305c6094977d6fe9681        Niklaus Giger 2013-12-13 10:26:22 +0100 Added ch.elexis.privatrechnung as found in elexis 2.1.7
+30b4a3455ea28618c368250a2faea40f712a3452        Marco Descher 2013-12-12 09:05:56 +0100 Fix wrong naming in base.messages/pom.xml
+f09892f78c77bb4829b94c1a0c7eef75116103c2        Marco Descher 2013-12-12 08:59:41 +0100 Added missing base.messages.feature to /pom.xml
+4b34dc10c8872008c192008d912c84c269f70c23        Marco Descher 2013-12-12 08:56:12 +0100 c.e.base.messages p2 integration, package-info fix
+154152a62ef7b0487c1216f337a9897860fd078c        Marco Descher 2013-12-12 08:52:48 +0100 Merge pull request #6 from marlovitsh/ch.elexis.base.messages
+154152a62ef7b0487c1216f337a9897860fd078c     Marlovits Harald 2013-12-12 00:14:28 +0100 added ch.elexis.base.messages to pom.xml
+36d9491b5a9d4fcde2ee9456fdda5b7992827bd3     Marlovits Harald 2013-12-12 00:02:56 +0100 added feature plugin
+5baa95c4815ba07a620c146dc5442cb1a462389e     Marlovits Harald 2013-12-11 22:16:50 +0100 Merge remote-tracking branch 'public_origin/master' into ch.elexis.base.messages
+8d0911f9a42039e4ddc911590021d207e914fc90     Marlovits Harald 2013-12-11 21:19:28 +0100 changed Messages class back to old naming for compatibility reasons,
+1a5f595b9bf686ad088c3be567fc3e192cf1d134     Marlovits Harald 2013-12-09 17:42:03 +0100 converted to 3.0, named from ch.elexis.messages to
+ee264dd74d9df427148f7ba7701087a0733a7e12     Marlovits Harald 2013-12-11 21:48:49 +0100 Merge remote-tracking branch 'public_origin/master'
+ee264dd74d9df427148f7ba7701087a0733a7e12        Marco Descher 2013-12-11 19:55:02 +0100 Merge pull request #11 from ngiger/org.iatrix
+ee264dd74d9df427148f7ba7701087a0733a7e12        Niklaus Giger 2013-12-10 23:10:44 +0100 Forced Copyright to EPL v1.0
+04abde1f24a9b477ff932fce02b7b70eeb17a350        Niklaus Giger 2013-12-10 23:10:44 +0100 Manual changes for org.iatrix
+9ba79028b0c39ac1c805f273beacbfb67b84e9cd        Niklaus Giger 2013-12-10 23:10:44 +0100 Called elexis_2_to_3.rb for org.iatrix
+8e63ce4261f22e07ee7caa03801adf33f07ad07e        Niklaus Giger 2013-12-10 23:10:44 +0100 Added org.iatrix as found in elexis 2.1.7
+9297bc9fae6f195e3a500295d79bdb8e18ae3bab        Marco Descher 2013-12-10 22:28:28 +0100 Omnivore build fix for extension point ServiceRegistry
+7b647a763f268c9beeff4c043c298ac58eb86989        Marco Descher 2013-12-10 22:26:22 +0100 Merge pull request #10 from ngiger/omnivore
+aac0b28be19ecd9d7f5e3f38ad1ed5ccf62e29fe        Niklaus Giger 2013-12-10 21:36:00 +0100 Added omnivore and missing source features in category.xml
+485038a2daff2a70e40b660e73f2ddb5189a8d99        Niklaus Giger 2013-12-10 21:35:28 +0100 Manual changes for omnivore
+c325d2e99ca5166ea452dfdb81d1994d476d4de3        Niklaus Giger 2013-12-10 21:15:43 +0100 Called elexis_2_to_3.rb for ch.elexis.omnivore
+3bc5c7de9e5aab8461a167cfa7906112844125b1        Niklaus Giger 2013-12-10 21:15:43 +0100 Added ch.elexis.omnivore as found in elexis 2.1.7
+6588bc5ca3dc84b7a0d89839b902c64c4411ed07        Marco Descher 2013-12-10 22:23:12 +0100 Merge pull request #9 from ngiger/externe_dokumente
+6588bc5ca3dc84b7a0d89839b902c64c4411ed07        Niklaus Giger 2013-12-10 20:59:11 +0100 Fixed externe_dokuments.tests.
+435e01ee0202539ed38709b0cc181de8571bf4f9        Marco Descher 2013-12-10 17:13:39 +0100 Merge pull request #8 from ngiger/externe_dokumente
+435e01ee0202539ed38709b0cc181de8571bf4f9        Niklaus Giger 2013-12-09 21:18:00 +0100 Manual changes for externe_dokumente
+9ce2d640e97b785b026b77bdb53c5a090342abef        Niklaus Giger 2013-12-09 21:04:07 +0100 Called elexis_2_to_3.rb for ch.elexis.externe_dokumente
+db94a82680cab3c4a4b2b399b8f7c8aab04b2e7f        Niklaus Giger 2013-12-09 21:04:07 +0100 Added ch.elexis.externe_dokumente.tests as found in elexis 2.1.7
+f8c214cad2c2eeb79cbc6919c0892ac217ec5488        Niklaus Giger 2013-12-09 21:04:06 +0100 Added ch.elexis.externe_dokumente as found in elexis 2.1.7
+7745e030e7fa499869fc589ed0b6e229b10f835a        Marco Descher 2013-12-09 14:51:33 +0100 Merge pull request #5 from ngiger/ports
+7745e030e7fa499869fc589ed0b6e229b10f835a        Niklaus Giger 2013-12-09 14:46:48 +0100 Manual changes for ICPC
+818b250af1189a9fb7950d2b0af1b2e9b12303de        Niklaus Giger 2013-12-09 14:08:52 +0100 Called elexis_2_to_3.rb for ch.elexis.icpc
+9fd28c78b14c9664f36806052e67addf970a9013        Niklaus Giger 2013-12-09 14:08:52 +0100 Added ch.elexis.icpc as found in elexis 2.1.7
+709268cd9c914c8160868a5a69e41c8e32019822     Marlovits Harald 2013-12-09 14:48:33 +0100 deleted because of wrong plugin naming
+a4fb32389246f0637fc52f41c31fa80fee8b6064     Marlovits Harald 2013-12-09 00:52:02 +0100 rename to ch.elexis.base.messages
+3cdf3fe4ad543548936e0189b5ee238c9d618445     Marlovits Harald 2013-12-09 00:27:09 +0100 converted from 2.1.7 to 3
+709268cd9c914c8160868a5a69e41c8e32019822             huthomas 2013-12-02 16:43:07 +0100 [2003] Package renaming for classes extending PersistentObject
+41d12081d74969e09fa3d45e116a9357bb15a9e6             huthomas 2013-12-02 14:23:07 +0100 [2003] Package renaming for classes extending PersistentObject
+18f06652f3fed6405b4fb7323b422e504651c96b        Marco Descher 2013-11-29 08:56:12 +0100 [2003] Package renaming for classes extending PersistentObject
+2ba800f5ddf645a397f48d1a74d280c2790da45b             huthomas 2013-11-21 10:56:54 +0100 merged with 2.1.7 up to [5986:c3e1c72584ad]
+b3386962f5c72ef827ef3764ff7ce29b22f0e828        Niklaus Giger 2013-11-17 12:42:57 +0100 Add target javadoc:javadoc to maven build
+899f69d2624d53660f8e35827879075a6542f956        Niklaus Giger 2013-11-16 21:22:22 +0100 Update tycho 0.18.1 -> 0.19.0. Fix Eclipse-upates 4.2->3.8
+725ff0f0293de56e06beac4a3e54a51e26efa032        Niklaus Giger 2013-11-15 16:00:49 +0100 Remove ch.elexis.base.ch.arzttarife/bin
+3e7348acb8298e7838e522030a6769666369496b        Niklaus Giger 2013-11-15 15:34:24 +0100 Clean bin directories when calling mvn clean
+50a91068972b9e585cfaa64c084bbc0a9bd1e587        Niklaus Giger 2013-11-15 15:31:52 +0100 Add hilotec opendocument and medelex text-templator to proposed features
+26c8cdb8113c3ff2317edbe58ae60b5714b94090        Niklaus Giger 2013-11-15 15:20:41 +0100 Remove bin directories
+d0cb4b689cb9f8df32e5a00496026c1676685cc8        Marco Descher 2013-11-15 10:13:27 +0100 Application of 3lexisFormattProfile from elexis-3-core
+c85fe5c3771bd0d0646ca6a87cbeddc702228c25             huthomas 2013-11-14 17:20:12 +0100 Merge pull request #3 from ngiger/text_plugins
+c85fe5c3771bd0d0646ca6a87cbeddc702228c25        Niklaus Giger 2013-11-14 14:29:30 +0100 #1942: Hilotec-Opendocument auf Elexis 3.0 portiert
+b7da6e5100eb82a5d7758b1f91c6ca72e4eda6b7        Niklaus Giger 2013-11-14 14:29:30 +0100 #1942: com.hilotec.elexis.opendocument from 2.1.7 without jars and user docs
+5df31a4ea7cefacc4ff00d97ed911274235ad425        Niklaus Giger 2013-11-14 14:29:29 +0100 #1942: added pom.xml for medelexis-templator
+9d87e571d7643c71ef96e3577b48a33c02b3384a        Niklaus Giger 2013-11-14 14:29:29 +0100 #1942: Adding medelexis-templator from elexis-3-portguide
+d12fec93fe06c270c1fa2b9f69630c542ee65f6b             huthomas 2013-11-14 13:58:22 +0100 Merge pull request #2 from ngiger/master
+d12fec93fe06c270c1fa2b9f69630c542ee65f6b        Niklaus Giger 2013-11-14 13:14:21 +0100 #1941: add ITextPlugin Parameter NOGUI
+710446ae66240c12172ce0a1c632898a33e761cf        Niklaus Giger 2013-09-12 17:59:53 +0200 Fixed loading of createDB.script
+cdd7bbd71465fde3ef8e2febe12016743ac3994a        Niklaus Giger 2013-09-01 10:41:09 +0200 Use correct repo
+9deb59ada36cf91612611bd476deb6fbbdb05d6b        Niklaus Giger 2013-08-31 19:32:06 +0200 Fixed category.xml for p2site
+a4a787e1e485c6cdb2ec694c32cdfae34bc31ed0        Niklaus Giger 2013-08-31 19:23:05 +0200 Create composite repository
+658559ae36deec5da7c55a42d6d991aa2b874b63        Niklaus Giger 2013-08-23 15:44:45 +0200 Added source features to p2-site
+58ab1f6f7f197338c577690dd0e3cb240e0b150e        Niklaus Giger 2013-08-22 08:23:34 +0200 Prettyfied pom.xml. tycho.version 0.18.0 -> tycho-version 0.18.1
+1595ffbb1074ced2816227524ab6d96a601c163d        Marco Descher 2013-08-17 22:21:17 +0200 Fix wrong elexis 3 core repository location in pom.xml
+c398e877e7258ab80fd21fc156611b913f632ac0        Marco Descher 2013-08-11 22:05:14 +0200 update p2 site categories
+2b2b5b4ac82aa762e497dc5081dcad87534f9456        Marco Descher 2013-08-11 22:03:29 +0200 Add base.textplugin
+e0f27fb77ff99683ede1330fa8899d7d49b0057d        Marco Descher 2013-07-24 13:21:44 +0200 Add branding for base.ch.feature
+a656eb9f10c7921a0701bee40125e7ade92b164f        Marco Descher 2013-07-24 13:07:04 +0200 Testing Branding for ch.feature
+51f685dcfea50d4dd2a3cfefb174caaf2ae9f657        Marco Descher 2013-07-24 10:54:09 +0200 Added missing qualifiers to diagnosecodes and medikamente.bag
+31da8f7d64a5ababa37fc0da71955331ffbd3b0f        Marco Descher 2013-07-24 10:51:42 +0200 Update pom.xml to include missing projects
+073852cd31f19199abd574c6a046da5f702e2b63        Marco Descher 2013-07-24 10:50:09 +0200 Update pom.xml for p2site
+12aa494dc2714a1a404ef26e1389c6cc29449593        Marco Descher 2013-07-24 10:46:27 +0200 Update pom.xml to set correct p2site location
+fcec146d4e6406a7c95b63ea65cb08dd8bb945ce        Marco Descher 2013-07-24 10:31:53 +0200 [1603] Added missing pom.xml to diagnosecodes
+d4bb8dfb148ceeceb9b943beb8dfb7695af60537        Marco Descher 2013-07-24 10:31:08 +0200 [1603] Added medikamente.bag to swiss feature
+509689c7a10ed2d9debf65f9b9df052664992edc        Marco Descher 2013-07-24 09:25:10 +0200 Merge branch 'master' of https://github.com/elexis/elexis-3-base.git
+4e2a6df06b5eee227c25d14f01ba38116574f57a        Niklaus Giger 2013-07-24 09:24:32 +0200 Added ch.elexis.base.p2site/.project
+b3f796fb1d54721ddccdf7b4b953cbdd90a9e342        Marco Descher 2013-07-24 09:25:00 +0200 [1603] added diagnosecodes to base.ch.feature
+339061b2d13e30c79d7f3867859a5d196dfd6c49        Niklaus Giger 2013-07-24 00:09:42 +0200 Moved index.html to p2site
+4962df4b4ed0c7cf488b57584208587da3eaa557        Niklaus Giger 2013-07-24 00:07:18 +0200 Added index.html
+0b5da7f9f963dd9bb85cf20b451d9d7d62764363        Niklaus Giger 2013-07-23 23:23:21 +0200 Fixed building p2site. Set all version to 3.0.0-SNAPSHOT/qualifier
+36bb5c76c0e3eb7cea44e7b6cbaec02e5b795281        Niklaus Giger 2013-07-23 12:01:42 +0200 Maven should build p2site. Has NPE in install phase
+75fde33a249cf6dde73140e14513e65ebfaec02b        Niklaus Giger 2013-07-22 20:14:43 +0200 Add support for compiling with maven
+ca9d20d6ab459496a617de79e4feecfd2ba4133c        Niklaus Giger 2013-07-22 20:12:16 +0200 Use slf4j logging
+394bed30be33ef4775cd8c03c3babb1a9f94b60e        Marco Descher 2013-07-22 14:54:27 +0200 change of .gitignore
+80504eb9712bda2098d2beb9160605b1f9a04fa6        Marco Descher 2013-07-19 19:22:18 +0200 [1603] c.e.base.ch.feature initial checkin

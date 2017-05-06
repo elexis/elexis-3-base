@@ -88,7 +88,7 @@ public class KonsProblems implements IJournalArea {
 					List<Problem> konsProblems = Problem.getProblemsOfKonsultation(actKons);
 
 					// we only show active or assigned problems
-					List<Problem> problems = new ArrayList<Problem>();
+					List<Problem> problems = new ArrayList<>();
 
 					// add active problems
 					for (Problem problem : patientProblems) {
@@ -239,9 +239,6 @@ public class KonsProblems implements IJournalArea {
 	public CheckboxTableViewer getProblemAssignmentViewer(){
 		return problemAssignmentViewer;
 	}
-
-	@Override
-	public void setPatient(Patient newPatient){}
 
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){

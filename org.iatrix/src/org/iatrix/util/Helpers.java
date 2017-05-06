@@ -310,4 +310,29 @@ public class Helpers {
 		clipboard.dispose();
 		return clipboardText;
 	}
-}
+	/**
+	 * Compare two consultations to see whether they are from the same day
+	 * and have the same consultation text
+	 * @param thisKons
+	 * @param otherKons
+	 * @return
+	 */
+	public static boolean haveSameContent(Konsultation thisKons, Konsultation otherKons) {
+		if (thisKons == null && otherKons == null ) {
+			return true;
+		}
+		if (thisKons == null || otherKons == null ) {
+			return false;
+		}
+		if (!thisKons.getId().equals(otherKons.getId()))  {
+			return false;
+		}
+		String thisText = thisKons.getEintrag().getVersion(thisKons.getHeadVersion()).data;
+		String otherText = otherKons.getEintrag().getVersion(otherKons.getHeadVersion()).data;
+		if (thisKons.getDatum().equals(otherKons.getDatum()) &&
+			thisText.equals(otherText))
+		{
+			return true;
+		}
+		return false;
+	}}

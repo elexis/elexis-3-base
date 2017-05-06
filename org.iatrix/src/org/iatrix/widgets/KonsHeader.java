@@ -32,6 +32,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.iatrix.views.JournalView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ import com.tiff.common.ui.datepicker.EnhancedDatePickerCombo;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -59,6 +61,7 @@ public class KonsHeader implements IJournalArea {
 	private Hyperlink hlMandant;
 	private Combo cbFall;
 	private Label cbLabel;
+	private Patient actPat = null;
 	private static Logger log = LoggerFactory.getLogger(KonsHeader.class);
 
 	public KonsHeader(Composite konsultationComposite){
@@ -71,12 +74,13 @@ public class KonsHeader implements IJournalArea {
 			new EnhancedDatePickerCombo.ExecuteIfValidInterface() {
 				@Override
 				public void doIt(){
-					System.out.println("hlKonsultationDatum2 " + hlKonsultationDatum.getDate());
-					actKons.setDatum(
-						new TimeTool(hlKonsultationDatum.getDate().getTime()).toString(TimeTool.DATE_GER),
-						false);
-					// JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
-					// ElexisEventDispatcher.fireSelectionEvent(actKons);
+					String new_date = new TimeTool(hlKonsultationDatum.getDate().getTime()).toString(TimeTool.DATE_GER);
+					if (actKons != null && !actKons.getDatum().equals(new_date))  {
+						log.info("fireSelectionEvent from hlKonsultationDatum " + actKons.getDatum() + " => "+ new_date);
+						actKons.setDatum(new_date, false);
+						JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
+						ElexisEventDispatcher.fireSelectionEvent(actKons);
+					}
 				}
 			});
 		hlKonsultationDatum.setToolTipText("Datum der Konsultation ändern");
@@ -145,57 +149,11 @@ public class KonsHeader implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation k, KonsActions op){
-		if (op != KonsActions.ACTIVATE_KONS )
+	public void setKons(Konsultation newKons, KonsActions op){
+		if (newKons == null)
 		{
-			return;
-		}
-		if (k != null)
-		{
-			log.debug("setKons set actKons to " + k.getId() + " vom " + k.getDatum() + " was " + (actKons != null ? actKons.getId() : "null"));
-		} else {
+			actKons = newKons;
 			log.debug("setKons set actKons null");
-		}
-		actKons = k;
-		if (actKons != null) {
-			cbFall.setEnabled(true);
-			StringBuilder sb = new StringBuilder();
-			sb.append(actKons.getDatum());
-			if (actKons.isEditable(false)) {
-				hlKonsultationDatum.setDate(new TimeTool(sb.toString()).getTime());
-				hlKonsultationDatum.setEnabled(true);
-			} else {
-				hlKonsultationDatum.setEnabled(false);
-			}
-			Mandant m = actKons.getMandant();
-			sb = new StringBuilder();
-			if (m == null) {
-				sb.append(ch.elexis.core.ui.views.Messages.KonsDetailView_NotYours); // $NON-NLS-1$
-			} else {
-				Rechnungssteller rs = m.getRechnungssteller();
-				if (rs.getId().equals(m.getId())) {
-					sb.append("(").append(m.getLabel()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					sb.append("(").append(m.getLabel()).append("/").append( //$NON-NLS-1$ //$NON-NLS-2$
-						rs.getLabel()).append(")"); //$NON-NLS-1$
-				}
-			}
-			boolean enabled = CoreHub.acl.request(AccessControlDefaults.KONS_REASSIGN);
-			hlMandant.setBackground(konsFallArea.getBackground());
-			hlMandant.setEnabled(enabled);
-			if (enabled) {
-				hlMandant.setToolTipText(
-						"Sie haben die Erlaubnis, Konsultation jemanden anderem zuzuordnen");
-			} else {
-				hlMandant.setToolTipText(
-						"Sie haben keine Erlaubnis, Konsultation jemanden anderem zuzuordnen");
-			}
-			hlMandant.setText(sb.toString());
-
-			reloadFaelle(actKons);
-
-			log.debug("setKons actKons now " +  actKons.getId() + " Rechnungssteller " + sb + " enabled? " + enabled);
-		} else {
 			cbFall.setEnabled(false);
 
 			hlKonsultationDatum.setEnabled(false);
@@ -205,7 +163,59 @@ public class KonsHeader implements IJournalArea {
 			}
 
 			reloadFaelle(null);
+			konsFallArea.layout();
+			return;
 		}
+
+		log.debug("setKons set actKons to " + newKons.getId() + " vom " + newKons.getDatum() + " was " + (actKons != null ? actKons.getId() : "null"));
+		Patient newPatient = newKons.getFall().getPatient();
+		if (newPatient == null) { return; } // this should never happen as  kons always has a patient
+		log.debug("setPatient " + newPatient.getPersonalia());
+		if (actPat == null || !actPat.getId().equals(newPatient.getId())) {
+			actPat = newPatient;
+			konsFallArea.layout();
+		}
+
+		if (op != KonsActions.ACTIVATE_KONS )
+		{
+			return;
+		}
+		actKons = newKons;
+		if (cbFall.isDisposed()){ return; }
+		cbFall.setEnabled(true);
+		StringBuilder sb = new StringBuilder();
+		sb.append(actKons.getDatum());
+		hlKonsultationDatum.setDate(new TimeTool(actKons.getDatum().toString()).getTime() );
+		log.debug("SetDate Enabled " + actKons.isEditable(false) + " for " + actKons.getId() + " of " + actKons.getDatum());
+		hlKonsultationDatum.setEnabled(actKons.isEditable(false));
+		Mandant m = actKons.getMandant();
+		sb = new StringBuilder();
+		if (m == null) {
+			sb.append(ch.elexis.core.ui.views.Messages.KonsDetailView_NotYours); // $NON-NLS-1$
+		} else {
+			Rechnungssteller rs = m.getRechnungssteller();
+			if (rs.getId().equals(m.getId())) {
+				sb.append("(").append(m.getLabel()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				sb.append("(").append(m.getLabel()).append("/").append( //$NON-NLS-1$ //$NON-NLS-2$
+					rs.getLabel()).append(")"); //$NON-NLS-1$
+			}
+		}
+		boolean enabled = CoreHub.acl.request(AccessControlDefaults.KONS_REASSIGN);
+		hlMandant.setBackground(konsFallArea.getBackground());
+		hlMandant.setEnabled(enabled);
+		if (enabled) {
+			hlMandant.setToolTipText(
+					"Sie haben die Erlaubnis, Konsultation jemanden anderem zuzuordnen");
+		} else {
+			hlMandant.setToolTipText(
+					"Sie haben keine Erlaubnis, Konsultation jemanden anderem zuzuordnen");
+		}
+		hlMandant.setText(sb.toString());
+
+		reloadFaelle(actKons);
+
+		log.debug("setKons actKons now " +  actKons.getId() + " Rechnungssteller " + sb + " enabled? " + enabled);
 		konsFallArea.layout();
 	}
 
@@ -253,12 +263,6 @@ public class KonsHeader implements IJournalArea {
 			cbFall.setToolTipText(explanation);
 			cbFall.getParent().setBackground(color);
 		}
-	}
-
-	@Override
-	public void setPatient(Patient newPatient){
-		log.debug("setPatient " + newPatient);
-		konsFallArea.layout();
 	}
 
 	@Override

@@ -78,7 +78,7 @@ public class KonsTextLock {
 
 	public Value getLockValue(){
 		String lockValue =
-			PersistentObject.getConnection().queryString(
+			PersistentObject.getDefaultConnection().queryString(
 				"SELECT wert from CONFIG WHERE param = " + JdbcLink.wrap(key));
 		return new Value(lockValue);
 	}
@@ -111,7 +111,7 @@ public class KonsTextLock {
 			return lockVar;
 		}
 		trace("lock: start ");
-		Stm stm = PersistentObject.getConnection().getStatement();
+		Stm stm = PersistentObject.getDefaultConnection().getStatement();
 		try {
 			long now = System.currentTimeMillis();
 			// Gibt es das angeforderte Lock schon?
@@ -168,7 +168,7 @@ public class KonsTextLock {
 			trace("lock: okay " + label);
 			return true;
 		} finally {
-			PersistentObject.getConnection().releaseStatement(stm);
+			PersistentObject.getDefaultConnection().releaseStatement(stm);
 		}
 	}
 
@@ -193,7 +193,7 @@ public class KonsTextLock {
 		}
 		trace("unlock: start ");
 		String lock =
-			PersistentObject.getConnection().queryString(
+			PersistentObject.getDefaultConnection().queryString(
 				"SELECT wert from CONFIG WHERE param=" + JdbcLink.wrap(key));
 		if (StringTool.isNothing(lock)) {
 			trace("unlock: failed ");
@@ -203,7 +203,7 @@ public class KonsTextLock {
 		Value lockValue = new Value(lock);
 		String lockIdentifier = lockValue.getIdentifier();
 		if (lockIdentifier != null && lockIdentifier.equals(identifier)) {
-			PersistentObject.getConnection().exec(
+			PersistentObject.getDefaultConnection().exec(
 				"DELETE FROM CONFIG WHERE param=" + JdbcLink.wrap(key));
 			trace("unlock: okay ");
 			return true;

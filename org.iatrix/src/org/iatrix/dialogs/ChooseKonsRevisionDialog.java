@@ -43,7 +43,7 @@ public class ChooseKonsRevisionDialog extends TitleAreaDialog {
 
 	private int selectedVersion = NONE;
 
-	private List<WidgetRow> widgetRows = new ArrayList<WidgetRow>();
+	private List<WidgetRow> widgetRows = new ArrayList<>();
 
 	private Konsultation konsultation;
 
@@ -88,7 +88,7 @@ public class ChooseKonsRevisionDialog extends TitleAreaDialog {
 	 * selection if all radio buttons have the same parent. This is not the case in your layout.
 	 */
 	class RadioGroupListener implements SelectionListener {
-		List<Button> buttons = new ArrayList<Button>();
+		List<Button> buttons = new ArrayList<>();
 
 		@Override
 		public void widgetSelected(SelectionEvent e){
@@ -119,7 +119,6 @@ public class ChooseKonsRevisionDialog extends TitleAreaDialog {
 
 	private void createWidgetRows(Composite parent){
 		if (konsultation != null) {
-			List<ResourceItem> items = new ArrayList<ResourceItem>();
 
 			RadioGroupListener radioGroupListener = new RadioGroupListener();
 

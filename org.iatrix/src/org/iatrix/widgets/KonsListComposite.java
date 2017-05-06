@@ -107,6 +107,7 @@ public class KonsListComposite {
 
 				StringBuilder sb = new StringBuilder();
 				int z = verrechnet.getZahl();
+				// TODO: Ersetzen durch errechnet.getStandardPreis() ??
 				Money preis = new Money(verrechnet.getEffPreis()).multiply(z);
 				sb.append(z).append(" ").append(name).append(" (").append(preis.getAmountAsString())
 					.append(")");
@@ -175,11 +176,12 @@ public class KonsListComposite {
 		}
 		if (actKons != null && row != null && row_kons != null) {
 			// System.out.println("hTitle for "+ row.hTitle.getText() + " " + row_kons.getId());
-			boolean enabled = !row_kons.getId().equals(actKons.getId());
-			if (enabled != row.hTitle.getEnabled()) {
-				log.debug(caller + " hTitle for  " + row.hTitle.getText() + " from "
-						+ msg  + " =>  " + (enabled ? "enabled" : "disabled"));
-				row.hTitle.setEnabled(enabled);
+			boolean konsEditable = row_kons.isEditable(false);
+			boolean disabled = row_kons.getId().equals(actKons.getId()) || !konsEditable;
+			if (disabled == row.hTitle.getEnabled()) {
+				// log.trace(caller + " hTitle for  " + row.hTitle.getText() + " from "
+						// + msg  + " konsEditable " + konsEditable + " =>  " + (disabled ? "disabled" : "ensabled"));
+				row.hTitle.setEnabled(!disabled);
 			}
 		} else if (row != null) {
 			boolean enabled =row.hTitle != null;
@@ -281,7 +283,7 @@ public class KonsListComposite {
 						Konsultation selectedKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 						boolean enableFire = !konsData.konsultation.getId().contentEquals(selectedKons.getId());
 						if (enableFire) {
-							log.debug("fireSelectionEvent "+ konsData.konsultation.getId());
+							log.debug("fireSelectionEvent "+ konsData.konsultation.getId() + " "+ konsData.konsultation.getDatum());
 							ElexisEventDispatcher.fireSelectionEvent(konsData.konsultation);
 						} else {
 							refeshHyperLinks(selectedKons);
@@ -346,17 +348,6 @@ public class KonsListComposite {
 			}
 		}
 
-		void dispose(){
-			// dispose all used controls
-			for (Control control : controls) {
-				if (control != null) {
-					control.dispose();
-				}
-			}
-			controls.clear();
-
-			konsData = null;
-		}
 	}
 
 	public class MyLayout extends Layout implements ILayoutExtension {
@@ -681,6 +672,10 @@ public class KonsListComposite {
 				String lineSeparator = System.getProperty("line.separator");
 
 				konsTitle = konsultation.getLabel();
+				if (!konsultation.isEditable(false)) {
+					konsTitle = konsTitle + " Nicht editierbar (Zugriffsrechte/Verrechnet)";
+				}
+
 				fallTitle = konsultation.getFall().getLabel();
 
 				List<Problem> problems = Problem.getProblemsOfKonsultation(konsultation);

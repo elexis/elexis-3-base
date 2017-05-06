@@ -69,8 +69,8 @@ public class ProblemsTableModel implements KTableModel {
 	private ProblemsTableColorProvider problemsTableColorProvider = new ProblemsTableColorProvider();
 	private Object[] problems = null;
 
-	private final Hashtable<Integer, Integer> colWidths = new Hashtable<Integer, Integer>();
-	private final Hashtable<Integer, Integer> rowHeights = new Hashtable<Integer, Integer>();
+	private final Hashtable<Integer, Integer> colWidths = new Hashtable<>();
+	private final Hashtable<Integer, Integer> rowHeights = new Hashtable<>();
 
 	private final KTableCellRenderer fixedRenderer =
 		new FixedCellRenderer(FixedCellRenderer.STYLE_PUSH | FixedCellRenderer.INDICATION_SORT
@@ -231,7 +231,6 @@ public class ProblemsTableModel implements KTableModel {
 			String text = "";
 			Object obj = m_Model.getContentAt(m_Col, m_Row);
 			if (obj instanceof Problem) {
-				Problem problem = (Problem) obj;
 				text = "test";
 			}
 
@@ -1033,7 +1032,7 @@ public class ProblemsTableModel implements KTableModel {
 
 	private void loadElements(){
 		if (problems == null) {
-			List<Object> elements = new ArrayList<Object>();
+			List<Object> elements = new ArrayList<>();
 
 			if (actPatient != null) {
 				List<Problem> problems = Problem.getProblemsOfPatient(actPatient);

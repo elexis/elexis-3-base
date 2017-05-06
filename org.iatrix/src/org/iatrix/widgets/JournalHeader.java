@@ -70,7 +70,7 @@ import ch.rgw.tools.ExHandler;
  */
 public class JournalHeader implements IJournalArea {
 
-	private Patient patient = null;
+	private Patient actPat = null;
 	private FormToolkit tk;
 	private static Logger log = LoggerFactory.getLogger(JournalHeader.class);
 	private Hyperlink formTitel;
@@ -102,7 +102,7 @@ public class JournalHeader implements IJournalArea {
 		formTitel.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
-				if (patient != null) {
+				if (actPat != null) {
 					try {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 							.showView(PatientDetailView2.ID);
@@ -158,7 +158,7 @@ public class JournalHeader implements IJournalArea {
 		kontoHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
-				if (patient != null) {
+				if (actPat != null) {
 					try {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 							.showView(AccountView.ID);
@@ -181,7 +181,7 @@ public class JournalHeader implements IJournalArea {
 		openBillsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
-				if (patient != null) {
+				if (actPat != null) {
 					try {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 							.showView(BillSummary.ID);
@@ -199,10 +199,10 @@ public class JournalHeader implements IJournalArea {
 	private void setPatientTitel(){
 		String text = "Kein Patient ausgewählt";
 
-		formTitel.setEnabled(patient != null);
+		formTitel.setEnabled(actPat != null);
 
-		if (patient != null) {
-			text = patient.getLabel();
+		if (actPat != null) {
+			text = actPat.getLabel();
 		}
 
 		formTitel.setText(PersistentObject.checkNull(text));
@@ -212,7 +212,7 @@ public class JournalHeader implements IJournalArea {
 	private Composite createStickerWithTooltip(Composite parent, ISticker et){
 		Image img = new UiSticker((Sticker) et).getImage();
 		if (img != null) {} else {
-			if (patient.getGeschlecht().equals(Person.MALE)) {
+			if (actPat.getGeschlecht().equals(Person.MALE)) {
 				img = Images.IMG_MANN.getImage();
 			} else {
 				img = Images.IMG_FRAU.getImage();
@@ -235,15 +235,15 @@ public class JournalHeader implements IJournalArea {
 	private void setRemarkAndSticker(){
 		String text = "";
 
-		if (patient != null) {
-			text = patient.getBemerkung();
+		if (actPat != null) {
+			text = actPat.getBemerkung();
 
 		}
 		for (Control cc : cEtiketten.getChildren()) {
 			cc.dispose();
 		}
-		if (patient != null) {
-			List<ISticker> etis = patient.getStickers();
+		if (actPat != null) {
+			List<ISticker> etis = actPat.getStickers();
 			GridLayout stickerLayout = new GridLayout(etis.size(), false);
 			// save space
 			stickerLayout.horizontalSpacing = 5;
@@ -281,9 +281,9 @@ public class JournalHeader implements IJournalArea {
 				}
 
 				String text = "";
-				if (patient != null) {
-					text = patient.getKontostand().getAmountAsString();
-					tardyPayer = isTardyPayer(patient);
+				if (actPat != null) {
+					text = actPat.getKontostand().getAmountAsString();
+					tardyPayer = isTardyPayer(actPat);
 				}
 
 				kontoLabel.setText(PersistentObject.checkNull(text));
@@ -307,17 +307,17 @@ public class JournalHeader implements IJournalArea {
 	}
 
 	private void openRemarkEditorDialog(){
-		if (patient == null) {
+		if (actPat == null) {
 			return;
 		}
 
-		String initialValue = PersistentObject.checkNull(patient.getBemerkung());
+		String initialValue = PersistentObject.checkNull(actPat.getBemerkung());
 		InputDialog dialog =
 			new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				"Bemerkungen", "Bemerkungen eingeben", initialValue, null);
 		if (dialog.open() == Window.OK) {
 			String text = dialog.getValue();
-			patient.setBemerkung(text);
+			actPat.setBemerkung(text);
 			setRemarkAndSticker();
 		}
 	}
@@ -374,13 +374,6 @@ public class JournalHeader implements IJournalArea {
 		}
 	}
 
-	/*
-	 * Aktuellen Patienten setzen
-	 */
-	@Override
-	public void setPatient(Patient newPatient){
-	}
-
 	@Override
 	/**
 	 * We react only to selected konsultations
@@ -390,8 +383,8 @@ public class JournalHeader implements IJournalArea {
 		Patient newPatient = newKons.getFall().getPatient();
 		if (newPatient == null) { return; } // this should never happen as  kons always has a patient
 		log.debug("setPatient " + newPatient.getPersonalia());
-		if (patient == null || !patient.getId().equals(newPatient.getId())) {
-			patient = newPatient;
+		if (actPat == null || !actPat.getId().equals(newPatient.getId())) {
+			actPat = newPatient;
 			setPatientTitel();
 			setRemarkAndSticker();
 			setKontoText();

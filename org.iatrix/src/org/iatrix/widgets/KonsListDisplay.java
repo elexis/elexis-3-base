@@ -53,7 +53,6 @@ import ch.elexis.data.Query;
  *
  */
 public class KonsListDisplay extends Composite implements IJobChangeListener, IJournalArea {
-	private Patient actPat = null;
 
 	private final FormToolkit toolkit;
 	private final ScrolledForm form;
@@ -65,12 +64,10 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	private static Logger log = LoggerFactory.getLogger(org.iatrix.widgets.KonsListDisplay.class);
 
 	// if false, only show the charges of the latest 2 consultations
-	// default is true (show all charges)
-	private boolean showAllCharges = true;
+	private boolean showAllCharges = false;
 
 	// if false, only show the latest MAX_SHOWN_CONSULTATIONS
-	// default is true (show all consultations)
-	private boolean showAllConsultations = true;
+	private boolean showAllConsultations = false;
 
 	public KonsListDisplay(Composite parent){
 		super(parent, SWT.BORDER);
@@ -96,7 +93,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	 * @param object
 	 */
 	private void reload(boolean showLoading, List<KonsData> konsultationen){
-		if (actPat != null && konsultationen != null) {
+		if (actKons!= null && konsultationen != null) {
 			konsListComposite.setKonsultationen(konsultationen, actKons);
 		} else {
 			if (showLoading) {
@@ -118,26 +115,6 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 		}
 	}
 
-	public void setPatient(Patient newPatient, boolean showAllCharges, boolean showAllConsultations){
-		if (this.actPat == newPatient) {
-			log.debug("skip reloading the same patient for " + newPatient.getId());
-		} else {
-			log.debug("setPatient for " + newPatient.getId());
-			this.actPat = newPatient;
-			this.showAllCharges = showAllCharges;
-			this.showAllConsultations = showAllConsultations;
-
-			dataLoader.cancel();
-
-			if (newPatient != null) {
-				// cause "loading" label to be displayed
-				reload(true, null);
-				dataLoader.setPatient(newPatient, showAllCharges, showAllConsultations);
-				dataLoader.schedule();
-			}
-		}
-	}
-
 	class KonsLoader extends Job {
 
 		String name;
@@ -153,9 +130,9 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 			log.debug("loaderJob KonsLoader created");
 		}
 
-		public void setPatient(Patient patient, boolean showAllCharges,
+		public void setKons(Konsultation kons, boolean showAllCharges,
 			boolean showAllConsultations){
-			this.patient = patient;
+			this.patient = kons.getFall().getPatient();
 			this.showAllCharges = showAllCharges;
 			this.showAllConsultations = showAllConsultations;
 		}
@@ -235,6 +212,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 							new KonsListComposite.KonsData(k, showAllCharges || i < maxShownCharges);
 						konsDataList.add(ks);
 						i++;
+						if (i > maxShownCharges) { break; }
 					}
 				}
 
@@ -262,26 +240,21 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	public void activation(boolean mode){
 	}
 
-	@Override
-	public void setPatient(Patient newPatient){
-	}
-
 	static int savedKonsVersion = -1;
 	static Konsultation actKons = null;
 
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
 		log.debug("setKons " + (newKons != null ? newKons.getId() + " " + newKons.getLabel() + " " + newKons.getLabel() : "null" ));
-		int newKonsVersion = -1;
-		if (newKons !=  null) {
-			newKonsVersion = newKons.getHeadVersion();
-			if (savedKonsVersion != newKonsVersion) {
-				savedKonsVersion = newKons.getHeadVersion();
-				if (newKons != actKons) {
-					actKons = newKons;
-					setPatient(newKons.getFall().getPatient(), showAllCharges,	showAllConsultations);
-				}
-			}
+		if (newKons == null) {
+			actKons = newKons;
+			reload(false, null);
+		} else {
+			actKons = newKons;
+			dataLoader.cancel();
+			reload(true, null);
+			dataLoader.setKons(newKons, showAllCharges, showAllConsultations);
+			dataLoader.schedule();
 		}
 		konsListComposite.refeshHyperLinks(actKons);
 	}
@@ -317,4 +290,10 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	@Override
 	public void sleeping(IJobChangeEvent event) {
 	/* empty */}
+
+	public void setKonsultation(Konsultation newKons, boolean showCharges, boolean showConsultations){
+		showAllCharges = showCharges;
+		showAllConsultations = showConsultations;
+		setKons(newKons, KonsActions.ACTIVATE_KONS);
+	}
 }

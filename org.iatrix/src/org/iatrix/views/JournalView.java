@@ -15,8 +15,6 @@
  ******************************************************************************/
 package org.iatrix.views;
 
-import static ch.elexis.core.data.events.ElexisEvent.EVENT_CREATE;
-import static ch.elexis.core.data.events.ElexisEvent.EVENT_DELETE;
 import static ch.elexis.core.data.events.ElexisEvent.EVENT_DESELECTED;
 import static ch.elexis.core.data.events.ElexisEvent.EVENT_RELOAD;
 import static ch.elexis.core.data.events.ElexisEvent.EVENT_SELECTED;
@@ -40,7 +38,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.iatrix.Iatrix;
-import org.iatrix.data.Problem;
+import org.iatrix.data.KonsTextLock;
 import org.iatrix.util.Constants;
 import org.iatrix.util.Heartbeat;
 import org.iatrix.util.Helpers;
@@ -61,7 +59,6 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
@@ -100,6 +97,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private static Logger log = LoggerFactory.getLogger(JournalView.class);
 	private static Patient actPatient = null;
 	private static Konsultation actKons = null;
+	private static boolean removedStaleKonsLocks = false;
 
 	private FormToolkit tk;
 	private Form form;
@@ -223,16 +221,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		activateContext();
 	}
 
-	private void updateAllPatientAreas(Patient newPatient){
-		logEvent(null, "updateAllPatientAreas: " + newPatient);
-		for (int i = 0; i < allAreas.size(); i++) {
-			IJournalArea a = allAreas.get(i);
-			if (a != null) {
-				a.setPatient(newPatient);
-			}
-		}
-	}
-
 	/**
 	 * Save actual Kons
 	 */
@@ -250,7 +238,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	}
 
 	/**
-	 * Updates all dependent widgets, like header, konsText konsList
+	 * First ste the global variable actKons
+	 * Then updates all dependent widgets, like header, konsText konsList
 	 * @param newKons
 	 * @param op
 	 */
@@ -316,29 +305,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			}
 		};
 
-	private ElexisEventListener eeli_kons_filter = new ElexisEventListener() {
-		private final ElexisEvent eetempl =	new ElexisEvent(null, Konsultation.class,
-				EVENT_UPDATE | EVENT_RELOAD | EVENT_CREATE | EVENT_DELETE);
-
-		@Override
-		public ElexisEvent getElexisEventFilter(){
-			return eetempl;
-		}
-
-		@Override
-		public void catchElexisEvent(ElexisEvent ev){
-			UiDesk.asyncExec(new Runnable() {
-				@Override
-				public void run(){
-					// TODO: Remove this override completely
-					// Konsultation kons = (Konsultation) ev.getObject();
-					// log.debug("catchElexisEvent " + ev.getType() + " kons " + kons.getId());
-					// konsListDisplay.setKons(kons, KonsActions.ACTIVATE_KONS);
-				}
-			});
-		}
-	};
-
 	private final ElexisUiEventListenerImpl eeli_kons =
 			new ElexisUiEventListenerImpl(Konsultation.class,
 				EVENT_SELECTED | EVENT_UPDATE | EVENT_RELOAD) {
@@ -358,14 +324,19 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				msg = "EVENT_RELOAD";
 				break;
 			}
-			logEvent(newKons, "eeli_kons " + msg);
+			if (!removedStaleKonsLocks) {
+				removedStaleKonsLocks = true;
+				KonsTextLock.deleteObsoleteLocks(newKons);
+			}
 			// when we get an update or select event the parameter is always not null
-			if ((actKons == null) || !newKons.getId().equals(actKons.getId())) {
-				updateAllKonsAreas(actKons, KonsActions.SAVE_KONS);
+			if ((actKons == null) || !Helpers.haveSameContent(newKons, actKons)) {
+				logEvent(newKons, "eeli_kons " + msg + " SAVE_KONS");
+				// updateAllKonsAreas(actKons, KonsActions.SAVE_KONS);
 				Patient newPatient = newKons.getFall().getPatient();
 				if (newPatient != actPatient) {
 					displaySelectedPatient(newPatient, "eeli_kons newPatient");
 				}
+				logEvent(newKons, "eeli_kons " + msg + " ACTIVATE_KONS");
 				updateAllKonsAreas(newKons, KonsActions.ACTIVATE_KONS);
 			}
 			actKons = newKons;
@@ -383,10 +354,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private void displaySelectedPatient(Patient selectedPatient, String why){
 		if (selectedPatient == null) {
 			logEvent(null, why + " displaySelectedPatient " + "no patient");
-			setPatient(selectedPatient);
 			actPatient = null;
-			actKons = null;
-			updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
+			updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
 			return;
 
 		} else {
@@ -430,8 +399,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		if (!konsDate.isSameDay(new TimeTool())) {
 			konsultation = konsultation.getFall().neueKonsultation();
 		}
-		setPatient(selectedPatient);
-		actKons = konsultation;
+		// actKons = konsultation;
 		// We do not call updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
 		// as this would overwrite the konstext when we change the patient and continue typing
 		// See Ticket #5696
@@ -471,7 +439,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	@Override
 	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_kons_filter, eeli_kons, eeli_problem,
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem,
 			eeli_pat, eeli_user);
 		super.dispose();
 	}
@@ -552,13 +520,14 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// history display
 		showAllChargesAction = new Action("Alle Leistungen anzeigen", Action.AS_CHECK_BOX) {
 			{
+				setChecked(false);
 				setToolTipText(
 					"Leistungen aller Konsultationen anzeigen, nicht nur der ersten paar.");
 			}
 
 			@Override
 			public void run(){
-				konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
+				konsListDisplay.setKonsultation(actKons, showAllChargesAction.isChecked(),
 					showAllConsultationsAction.isChecked());
 			}
 		};
@@ -568,12 +537,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		showAllConsultationsAction = new Action("Alle Konsultationen anzeigen",
 			Action.AS_CHECK_BOX) {
 			{
+				setChecked(false);
 				setToolTipText("Alle Konsultationen anzeigen");
 			}
 
 			@Override
 			public void run(){
-				konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
+				konsListDisplay.setKonsultation(actKons, showAllChargesAction.isChecked(),
 					showAllConsultationsAction.isChecked());
 			}
 		};
@@ -617,16 +587,17 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	@Override
 	public void visible(boolean mode){
 		if (mode == true) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_kons_filter, eeli_kons, eeli_problem,
-				eeli_pat, eeli_user);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_kons, eeli_problem, eeli_pat,
+				eeli_user);
 
 			displaySelectedPatient(ElexisEventDispatcher.getSelectedPatient(), "view visible");
 			heartbeat.enableListener(true);
 		} else {
 			heartbeat.enableListener(false);
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons_filter, eeli_kons, eeli_problem,
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem,
 				eeli_pat, eeli_user);
-			setPatient(null);
+			// TODO: Braucht es diesen Aufruf wirklich?
+			updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
 		}
 		visibleAllKonsAreas(mode);
 	};
@@ -643,42 +614,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			}
 		}
 		log.debug(sb.toString());
-	}
-
-	/**
-	 * @param newPatient newPatient as given by the callback
-	 */
-	public void setPatient(Patient newPatient){
-		if (actPatient != null && !actPatient.getId().equals(newPatient.getId()))
-			return;
-		String patDetails = newPatient == null ? "null" : newPatient.getId() + ": " + newPatient.getPersonalia();
-		logEvent(null, "setPatient start " + patDetails); // actKons may be null, therefore show full patient info
-		actPatient = newPatient;
-
-		// widgets may be disposed when application is closed
-		if (form.isDisposed()) {
-			return;
-		}
-		updateAllPatientAreas(actPatient);
-
-		if (actPatient != null) {
-			// Pruefe, ob Patient Probleme hat, sonst Standardproblem erstellen
-			List<Problem> problems = Problem.getProblemsOfPatient(actPatient);
-			if (problems.size() == 0) {
-				// logEvent(null, "setPatient noProblems? " + problems + " from KOns " + Problem.getProblemsOfKonsultation(actKons).size());
-				// TODO don't yet do this problems.size() is always 0
-				// Problem.getProblemsOfKonsultation(actKons);
-				// Problem.createStandardProblem(actPatient);
-			}
-		} else {
-			// Kein Patient ausgewaehlt, somit auch keine Konsultation anzeigen
-			updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
-		}
-		if (konsListDisplay != null && actPatient != null) {
-			konsListDisplay.setPatient(actPatient, showAllChargesAction.isChecked(),
-				showAllConsultationsAction.isChecked());
-		}
-		logEvent(actKons, "setPatient done"); // actKons is set, therefore it will display the details
 	}
 
 	/***********************************************************************************************

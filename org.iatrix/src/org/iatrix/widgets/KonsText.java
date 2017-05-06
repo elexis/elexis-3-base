@@ -55,7 +55,6 @@ import ch.elexis.core.ui.util.IKonsMakro;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
@@ -63,7 +62,6 @@ import ch.rgw.tools.VersionedResource.ResourceItem;
 
 public class KonsText implements IJournalArea {
 
-	private static Patient actPatient = null;
 	private static Konsultation actKons = null;
 	private static int konsTextSaverCount = 0;
 	private static Logger log = LoggerFactory.getLogger(org.iatrix.widgets.KonsText.class);
@@ -183,15 +181,8 @@ public class KonsText implements IJournalArea {
 			if (actKons.getFall() == null) {
 				return;
 			}
-			Patient konsPatient = actKons.getFall().getPatient();
 			if (text.isDirty() || textChanged()) {
-				if (actPatient != null && konsPatient.getId().equals(actPatient.getId())) {
-					logEvent("updateEintrag same");
-				} else {
-					logEvent("updateEintrag not same. not skipping. Length is "
-						+ text.getContentsPlaintext().length());
-					//					return;
-				}
+				logEvent("updateEintrag " + actKons.getId());
 				if (hasKonsTextLock()) {
 					actKons.updateEintrag(text.getContentsAsXML(), false);
 					int new_version = actKons.getHeadVersion();
@@ -388,8 +379,6 @@ public class KonsText implements IJournalArea {
 
 	private void updateKonsultation(boolean updateText){
 		if (actKons != null) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(actKons.getDatum());
 			if (updateText) {
 				setKonsText(actKons, actKons.getHeadVersion(), true);
 			}
@@ -398,16 +387,6 @@ public class KonsText implements IJournalArea {
 			setKonsText(null, 0, true);
 			logEvent("updateKonsultation: null");
 		}
-	}
-
-	/*
-	 * Aktuellen Patienten setzen
-	 */
-	@Override
-	public void setPatient(Patient newPatient){
-		// We only change to a selected konsultation
-		// this avoid locking problems between actKons and actPatient
-		return;
 	}
 
 	/**
@@ -445,28 +424,30 @@ public class KonsText implements IJournalArea {
 					+ textChanged() + " actKons vom: " + actKons.getDatum());
 			}
 			removeKonsTextLock();
-			actKons = k;
-			if (actKons == null) {
-				actPatient = null;
+			if (k == null) {
+				actKons = k;
 				logEvent("setKons null");
 			} else {
-				boolean different = actPatient != null && k != null
-					&& !actPatient.getId().equals(k.getFall().getPatient().getId());
-				if (different) {
-					Patient newPat = k.getFall().getPatient();
-					logEvent("setKons.changed actPatient " + actPatient.getId() + " " + actPatient.getPersonalia() + "  != newPat "
-						+ newPat.getId() + " for kons. newPat " + newPat.getPersonalia() + " " + k.getEintrag().getHead());
-					actPatient = actKons.getFall().getPatient();
+				logEvent("setKons " + (actKons == null ? "null" : actKons.getId()) +
+					" => " + k.getId());
+				actKons = k;
+				if (!actKons.isEditable(true)) { // Give feedback to user why consultation cannot be edited
+					logEvent("setKons actKons is not editable");
+					text.setEnabled(false);
 					setKonsText(k, 0, true);
+					updateKonsultation(true);
+					updateKonsLockLabel();
+					lVersion.setText(lVersion.getText() + " Nicht editierbar. (Keine Zugriffsrechte oder schon verrechnet)");
 					return;
+				} else {
+					text.setEnabled(true);
 				}
-			}
-
-			if (actKons != null) {
 				createKonsTextLock();
+				setKonsText(k, 0, true);
 			}
 			updateKonsultation(true);
 			updateKonsLockLabel();
+			updateKonsVersionLabel();
 			saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
 		}
 	}
@@ -478,13 +459,19 @@ public class KonsText implements IJournalArea {
 		if (actKons != null) {
 			int version = actKons.getHeadVersion();
 			logEvent("Update Version Label: " + version);
-
 			VersionedResource vr = actKons.getEintrag();
 			ResourceItem entry = vr.getVersion(version);
 			StringBuilder sb = new StringBuilder();
-			sb.append("rev. ").append(version).append(" vom ")
-				.append(new TimeTool(entry.timestamp).toString(TimeTool.FULL_GER)).append(" (")
-				.append(entry.remark).append(")");
+			if (entry  != null) {
+				String revisionTime = new TimeTool(entry.timestamp).toString(TimeTool.FULL_GER);
+				String revisionDate = new TimeTool(entry.timestamp).toString(TimeTool.DATE_GER);
+				if (!actKons.getDatum().equals(revisionDate)) {
+					sb.append("Kons vom " + actKons.getDatum() + ": ");
+				}
+				sb.append("rev. ").append(version).append(" vom ")
+					.append(revisionTime).append(" (")
+					.append(entry.remark).append(")");
+			}
 			lVersion.setText(sb.toString());
 		} else {
 			lVersion.setText("");
@@ -515,11 +502,12 @@ public class KonsText implements IJournalArea {
 			boolean locked =  hasKonsTextLock();
 			int strlen = text.getContentsPlaintext().length();
 			int maxLen = strlen < 120 ? strlen : 120;
+			String label = (konsTextLock == null) ? "null " : konsTextLock.getLabel();
 			if (!locked)
-				logEvent("setKonsText availabee " + b.getId() + " " + konsTextLock.getLabel() + " putCaretToEnd " + putCaretToEnd +
+				logEvent("setKonsText availabee " + b.getId() + " " + label + " putCaretToEnd " + putCaretToEnd +
 					" " + lVersion.getText() + " '" + text.getContentsPlaintext().substring(0, maxLen) + "'");
 			else 
-				logEvent("setKonsText (locked) " + b.getId() + " " + konsTextLock.getLabel() + " putCaretToEnd " + putCaretToEnd +
+				logEvent("setKonsText (locked) " + b.getId() + " " + label + " putCaretToEnd " + putCaretToEnd +
 					" " + lVersion.getText() + " '" + text.getContentsPlaintext().substring(0, maxLen) + "'");
 
 			if (putCaretToEnd) {
@@ -530,19 +518,11 @@ public class KonsText implements IJournalArea {
 			lVersion.setText("");
 			text.setText("");
 			text.setKons(null);
-
-			if (actPatient == null) {
-				text.setEnabled(false);
-			} else {
-				// enable text, in case user wants to create a new kons by
-				// typing in the empty text field
-				text.setEnabled(true);
-			}
-
+			text.setEnabled(false);
 			displayedVersion = -1;
 			versionBackAction.setEnabled(false);
 			versionFwdAction.setEnabled(false);
-			logEvent("setKonsText.2 " + lVersion.getText() + " " + text.getContentsPlaintext());
+			logEvent("setKonsText null " + lVersion.getText() + " " + text.getContentsPlaintext());
 		}
 	}
 

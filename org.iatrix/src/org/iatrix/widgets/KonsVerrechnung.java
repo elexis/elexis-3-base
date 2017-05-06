@@ -69,7 +69,6 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Query;
@@ -186,6 +185,7 @@ public class KonsVerrechnung implements IJournalArea {
 				Verrechnet verrechnet = (Verrechnet) element;
 				StringBuilder sb = new StringBuilder();
 				int z = verrechnet.getZahl();
+				// TODO: Ersetzen durch errechnet.getStandardPreis() ??
 				Money preis = new Money(verrechnet.getEffPreis()).multiply(z);
 				// double preis = (z * verrechnet.getEffPreisInRappen()) / 100.0;
 				sb.append(z).append(" ").append(verrechnet.getCode()).append(" ")
@@ -407,6 +407,7 @@ public class KonsVerrechnung implements IJournalArea {
 			Money sum = new Money(0);
 			for (Verrechnet leistung : leistungen) {
 				int z = leistung.getZahl();
+				// TODO: Ersetzen durch errechnet.getStandardPreis() ??
 				Money preis = leistung.getEffPreis().multiply(z);
 				sum.addMoney(preis);
 			}
@@ -425,7 +426,7 @@ public class KonsVerrechnung implements IJournalArea {
 		boolean success = false;
 
 		if (actKons != null && !StringTool.isNothing(mnemonic)) {
-			Query<Artikel> query = new Query<Artikel>(Artikel.class);
+			Query<Artikel> query = new Query<>(Artikel.class);
 			if (approximation) {
 				query.add("Eigenname", "LIKE", mnemonic + "%");
 			} else {
@@ -434,14 +435,14 @@ public class KonsVerrechnung implements IJournalArea {
 			List<Artikel> artikels = query.execute();
 
 			if (artikels != null && !artikels.isEmpty()) {
-				List<Artikel> selection = new ArrayList<Artikel>();
+				List<Artikel> selection = new ArrayList<>();
 				if (multi) {
 					selection.addAll(artikels);
 				} else {
 					selection.add(artikels.get(0));
 				}
 
-				List<Result<IVerrechenbar>> results = new ArrayList<Result<IVerrechenbar>>();
+				List<Result<IVerrechenbar>> results = new ArrayList<>();
 				PersistentObjectFactory factory = new PersistentObjectFactory();
 				for (Artikel artikel : artikels) {
 					String typ = artikel.get("Typ");
@@ -551,6 +552,7 @@ public class KonsVerrechnung implements IJournalArea {
 					}
 					
 					// String p=Rechnung.geldFormat.format(verrechnet.getEffPreisInRappen()/100.0);
+					// TODO: Ersetzen durch errechnet.getStandardPreis() ??
 					String p = verrechnet.getEffPreis().getAmountAsString();
 					InputDialog dlg = new InputDialog(
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
@@ -560,6 +562,7 @@ public class KonsVerrechnung implements IJournalArea {
 						Money newPrice;
 						try {
 							newPrice = new Money(dlg.getValue());
+							// TODO: Durch was kann man setPreis ersetzen?
 							verrechnet.setPreis(newPrice);
 							verrechnungViewer.refresh();
 							updateVerrechnungSum();
@@ -604,23 +607,6 @@ public class KonsVerrechnung implements IJournalArea {
 			}
 		};
 
-	}
-
-	private void logEvent(String msg){
-		StringBuilder sb = new StringBuilder(msg + ": ");
-		if (actKons == null) {
-			sb.append("actKons null");
-		} else {
-			sb.append("kons vom " + actKons.getDatum());
-			sb.append(" " + actKons.getFall().getPatient().getPersonalia());
-		}
-		sb.append(" sum: " + hVerrechnung.getText());
-		log.debug(sb.toString());
-	}
-
-	@Override
-	public void setPatient(Patient newPatient){
-		// nothing todo
 	}
 
 	@Override

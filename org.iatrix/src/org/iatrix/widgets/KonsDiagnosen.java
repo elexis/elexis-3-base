@@ -97,11 +97,6 @@ public class KonsDiagnosen implements IJournalArea {
 	}
 
 	@Override
-	public void setPatient(Patient newPatient){
-		// nothing todo. We need a consultation
-	}
-
-	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
 		boolean konsChanged = actKons != null &&
 				newKons != null && actKons.getId() != newKons.getId();

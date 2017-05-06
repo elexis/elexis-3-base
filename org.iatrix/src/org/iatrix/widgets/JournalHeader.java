@@ -58,6 +58,16 @@ import ch.elexis.data.RnStatus;
 import ch.elexis.data.Sticker;
 import ch.rgw.tools.ExHandler;
 
+/**
+ *
+ *  @author niklaus Giger
+ *
+ *  Display the top line of the Journal View with the following elements
+ *  names, sex, date of birth, Sstickers, remarks
+ *  on the right: Link to account with balance
+ *                Link to view "bill overview"
+ *
+ */
 public class JournalHeader implements IJournalArea {
 
 	private Patient patient = null;
@@ -68,6 +78,10 @@ public class JournalHeader implements IJournalArea {
 	private Label kontoLabel;
 	private Color kontoLabelColor; // original color of kontoLabel
 	Composite cEtiketten;
+	/**
+	 * The main SWT for the journal header
+	 * @param formBody
+	 */
 	public JournalHeader(Composite formBody){
 		tk = UiDesk.getToolkit();
 		formBody.setLayout(new GridLayout(1, true));
@@ -237,7 +251,7 @@ public class JournalHeader implements IJournalArea {
 			stickerLayout.marginWidth = 0;
 			stickerLayout.marginHeight = 0;
 			cEtiketten.setLayout(stickerLayout);
-			if (etis != null && etis.size() > 0) {
+			if (etis.size() > 0) {
 				for (ISticker et : etis) {
 					if (et != null) {
 						createStickerWithTooltip(cEtiketten, et);
@@ -322,7 +336,7 @@ public class JournalHeader implements IJournalArea {
 		// if there are such, the patient is a tardy payer
 
 		// find all patient's bills
-		Query<Rechnung> query = new Query<Rechnung>(Rechnung.class);
+		Query<Rechnung> query = new Query<>(Rechnung.class);
 		Fall[] faelle = patient.getFaelle();
 		if ((faelle != null) && (faelle.length > 0)) {
 			query.startGroup();
@@ -365,8 +379,18 @@ public class JournalHeader implements IJournalArea {
 	 */
 	@Override
 	public void setPatient(Patient newPatient){
-		log.debug("setPatient " + (newPatient == null ? "null" : newPatient.getPersonalia()));
-		if (patient != newPatient) {
+	}
+
+	@Override
+	/**
+	 * We react only to selected konsultations
+	 * @param newKons
+	 */
+	public void setKons(Konsultation newKons, KonsActions op){
+		Patient newPatient = newKons.getFall().getPatient();
+		if (newPatient == null) { return; } // this should never happen as  kons always has a patient
+		log.debug("setPatient " + newPatient.getPersonalia());
+		if (patient == null || !patient.getId().equals(newPatient.getId())) {
 			patient = newPatient;
 			setPatientTitel();
 			setRemarkAndSticker();
@@ -374,13 +398,6 @@ public class JournalHeader implements IJournalArea {
 			formTitel.getParent().layout();
 		}
 	}
-
-	@Override
-	/**
-	 * @param newKons.
-	 *            Ignored, as we are only interested in patients
-	 */
-	public void setKons(Konsultation newKons, KonsActions op){}
 
 	@Override
 	public void visible(boolean mode){

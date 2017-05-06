@@ -16,6 +16,9 @@ package org.iatrix.data;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.iatrix.Iatrix;
@@ -24,11 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.util.CreatePrescriptionHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -46,7 +51,58 @@ public class KonsTextLock {
 	boolean lockVar = false; // used only if CFG_USE_KONSTEXT_LOCKING is true
 	boolean traceEnabled = false;
 	boolean useDatabaseLock = false;
-	private final Logger logger = LoggerFactory.getLogger("org.iatrix.KonsTextLock");
+	private static final long MAX_AGE_2_HOURS = 2 * 1000L * 3600L; // 2 hours in milliseconds
+	private final static Logger logger = LoggerFactory.getLogger("org.iatrix.KonsTextLock");
+
+	public static void deleteObsoleteLocks(Konsultation konsultation) {
+		int nrFound = 0;
+		String sql = "SELECT param, wert FROM CONFIG WHERE param like '%_konslock_%'";
+		ResultSet values = null;
+		PreparedStatement pstm = PersistentObject.getDefaultConnection()
+				.getPreparedStatement(sql);
+		try {
+			values = pstm.executeQuery();
+			long now = System.currentTimeMillis();
+			StringBuilder delStm = new StringBuilder("delete from config where param in (");
+			while (values.next()) {
+				String key = values.getString(1);
+				String oldlock = values.getString(2);
+				long locktime = 0;
+				String[] tokens = oldlock.split("#");
+				if (tokens.length >= 1) {
+					try {
+						locktime = Long.parseLong(tokens[0]);
+					} catch (NumberFormatException ex) {
+						break;
+					}
+				}
+				long age = now - locktime;
+				String msg = oldlock + " " + locktime + " from " + new Date(locktime).toString();
+				logger.trace(msg);
+				if (age > MAX_AGE_2_HOURS) { // Älter als zwei Stunden -> Löschen
+					if (nrFound == 0) {
+						delStm.append(" '" + key + "' ");
+					} else {
+						delStm.append(", '" + key + "' ");
+					}
+					nrFound++;
+				}
+			}
+			if (nrFound> 0 ) {
+				logger.info("Deleting " + nrFound + " obsolete _konslock_ from config");
+				delStm.append(")");
+				Stm stm = PersistentObject.getDefaultConnection().getStatement();
+				stm.exec(delStm.toString());
+				PersistentObject.getDefaultConnection().releaseStatement(stm);
+			}
+		} catch (SQLException | JdbcLinkException e) {
+			logger.info(" Error deleting " + e );
+			LoggerFactory.getLogger(CreatePrescriptionHelper.class)
+				.error("Could not find any konslock", e);
+		} finally {
+			PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
+		}
+	}
 
 	/*
 	 * Trace, but prepend some common information
@@ -137,7 +193,7 @@ public class KonsTextLock {
 
 				long locktime = lockValue.getTimestamp();
 				long age = now - locktime;
-				if (age > 2 * 1000L * 3600L) { // Älter als zwei Stunden -> Löschen
+				if (age > MAX_AGE_2_HOURS) { // Älter als zwei Stunden -> Löschen
 					// System.err.println("DEBUG:   lock() giving up: age = " + age);
 					stm.exec("DELETE FROM CONFIG WHERE param=" + JdbcLink.wrap(key));
 				} else {

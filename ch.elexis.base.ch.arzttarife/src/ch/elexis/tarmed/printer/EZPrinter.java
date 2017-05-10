@@ -61,6 +61,26 @@ public class EZPrinter {
 		}
 	}
 	
+	private Kontakt getAddressee(String paymentMode, Fall fall, Patient patient){
+		Kontakt addressee;
+		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
+			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		} else {
+			addressee = fall.getGarant();
+		}
+		
+		Kontakt legalGuardian = patient.getLegalGuardian();
+		if ((addressee == null) || (!addressee.exists()) || legalGuardian != null) {
+			if (legalGuardian != null) {
+				addressee = legalGuardian;
+			} else {
+				addressee = patient;
+			}
+		}
+		addressee.getPostAnschrift(true);
+		return addressee;
+	}
+	
 	private String printer;
 	
 	public Brief doPrint(Rechnung rn, EZPrinterData ezData, TextContainer text, ESR esr,
@@ -95,7 +115,8 @@ public class EZPrinter {
 			|| (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)) {
 			tmpl = TT_TARMED_M3;
 		}
-		actBrief = XMLPrinterUtil.createBrief(tmpl, adressat, text);
+		actBrief =
+			XMLPrinterUtil.createBrief(tmpl, getAddressee(ezData.paymentMode, fall, pat), text);
 		
 		List<Zahlung> extra = rn.getZahlungen();
 		Kontakt bank = Kontakt.load(rs.getInfoString(TarmedACL.getInstance().RNBANK));

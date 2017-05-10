@@ -17,11 +17,18 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.model.IVerify;
+import ch.elexis.core.model.IVerifyConverter;
+import ch.elexis.core.model.IVerifyService;
+import ch.elexis.core.verify.VerifyService;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.RechnungsPrefs;
 import ch.rgw.tools.Result;
@@ -56,6 +63,8 @@ public class TarmedOptifier implements IOptifier {
 	private Verrechnet newVerrechnet;
 	private String newVerrechnetSide;
 	
+	private IVerifyService verifyService = new VerifyService();
+	
 	/**
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
 	 */
@@ -82,23 +91,24 @@ public class TarmedOptifier implements IOptifier {
 	 */
 	
 	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons) {
-		if (!(code instanceof TarmedLeistung)) {
-			return new Result<IVerrechenbar>(Result.SEVERITY.ERROR, LEISTUNGSTYP, Messages.TarmedOptifier_BadType, null,
-					true);
+		try {
+			IVerify iVerify = createNewValidationKontext(kons, code);
+			if (!iVerify.getStatus().isOK()) {
+				return convertStatusToResult(iVerify.getStatus());
+			}
+		} catch (ElexisException e) {
+			return new Result<IVerrechenbar>(Result.SEVERITY.ERROR, LEISTUNGSTYP,
+				Messages.TarmedOptifier_BadType, null, true);
 		}
-
+		
 		bOptify = CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_OPTIFY, true);
 
 		TarmedLeistung tc = (TarmedLeistung) code;
 		List<Verrechnet> lst = kons.getLeistungen();
 		boolean checkBezug = false;
 		boolean bezugOK = true;
-		/*
-		 * TODO Hier checken, ob dieser code mit der Dignität und
-		 * Fachspezialisierung des aktuellen Mandanten usw. vereinbar ist
-		 */
 
-		Hashtable ext = tc.loadExtension();
+		Hashtable<?, ?> ext = tc.loadExtension();
 
 		// Bezug prüfen
 		String bezug = (String) ext.get("Bezug"); //$NON-NLS-1$
@@ -106,26 +116,7 @@ public class TarmedOptifier implements IOptifier {
 			checkBezug = true;
 			bezugOK = false;
 		}
-		// Gültigkeit gemäss Datum prüfen
-		if (bOptify) {
-			TimeTool date = new TimeTool(kons.getDatum());
-			String dVon = ((TarmedLeistung) code).get("GueltigVon"); //$NON-NLS-1$
-			if (!StringTool.isNothing(dVon)) {
-				TimeTool tVon = new TimeTool(dVon);
-				if (date.isBefore(tVon)) {
-					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, NOTYETVALID,
-							code.getCode() + Messages.TarmedOptifier_NotYetValid, null, false);
-				}
-			}
-			String dBis = ((TarmedLeistung) code).get("GueltigBis"); //$NON-NLS-1$
-			if (!StringTool.isNothing(dBis)) {
-				TimeTool tBis = new TimeTool(dBis);
-				if (date.isAfter(tBis)) {
-					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, NOMOREVALID,
-							code.getCode() + Messages.TarmedOptifier_NoMoreValid, null, false);
-				}
-			}
-		}
+		
 		newVerrechnet = null;
 		newVerrechnetSide = null;
 		// Korrekter Fall Typ prüfen, und ggf. den code ändern
@@ -204,47 +195,6 @@ public class TarmedOptifier implements IOptifier {
 			if (tc.requiresSide()) {
 				newVerrechnet.setDetail(TarmedLeistung.SIDE, newVerrechnetSide);
 			}
-			// Exclusionen
-			if (bOptify) {
-				TarmedLeistung newTarmed = (TarmedLeistung) code;
-				for (Verrechnet v : lst) {
-					if (v.getVerrechenbar() instanceof TarmedLeistung) {
-						TarmedLeistung tarmed = (TarmedLeistung) v.getVerrechenbar();
-						if (tarmed != null && tarmed.exists()) {
-							// check if new has an exclusion for this verrechnet
-							// tarmed
-							Result<IVerrechenbar> resCompatible = isCompatible(tarmed, newTarmed);
-							if (resCompatible.isOK()) {
-								// check if existing tarmed has exclusion for
-								// new one
-								resCompatible = isCompatible(newTarmed, tarmed);
-							}
-
-							if (!resCompatible.isOK()) {
-								newVerrechnet.delete();
-								return resCompatible;
-							}
-						}
-					}
-				}
-
-				if (newVerrechnet.getCode().equals("00.0750") || newVerrechnet.getCode().equals("00.0010")) {
-					String excludeCode = null;
-					if (newVerrechnet.getCode().equals("00.0010")) {
-						excludeCode = "00.0750";
-					} else {
-						excludeCode = "00.0010";
-					}
-					for (Verrechnet v : lst) {
-						if (v.getCode().equals(excludeCode)) {
-							newVerrechnet.delete();
-							return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION,
-									"00.0750 ist nicht im Rahmen einer ärztlichen Beratung 00.0010 verrechnenbar.", //$NON-NLS-1$
-									null, false);
-						}
-					}
-				}
-			}
 			newVerrechnet.setDetail(AL, Integer.toString(tc.getAL()));
 			newVerrechnet.setDetail(TL, Integer.toString(tc.getTL()));
 			lst.add(newVerrechnet);
@@ -308,7 +258,7 @@ public class TarmedOptifier implements IOptifier {
 											Messages.TarmedOptifier_codemax + menge + "Mal pro Tag", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 							}
-
+							
 							break;
 						default:
 							break;
@@ -459,6 +409,32 @@ public class TarmedOptifier implements IOptifier {
 			return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 		}
 		return new Result<IVerrechenbar>(null);
+	}
+
+	private IVerify createNewValidationKontext(Konsultation kons, IVerrechenbar tarmedLeistung) throws ElexisException{
+		IVerifyConverter iVerifyConverter = new TarmedVerifyConverter();
+		IVerify iVerify = iVerifyConverter.convert(tarmedLeistung).orElseThrow(() -> new ElexisException("", null));
+		return verifyService.validate(
+			VerifyContext.create(kons, iVerifyConverter), iVerify);
+	}
+	
+	private Result<IVerrechenbar> convertStatusToResult(IStatus status){
+		Result.SEVERITY severity = null;
+		
+		switch (status.getSeverity())
+		{
+			case IStatus.OK:
+				severity = Result.SEVERITY.OK;
+				break;
+			case IStatus.WARNING:
+				severity = Result.SEVERITY.WARNING;
+				break;
+			case IStatus.ERROR:
+				severity = Result.SEVERITY.ERROR;
+				break;
+		}
+		return new Result<IVerrechenbar>(severity, status.getCode(), status.getMessage(), null,
+			false);
 	}
 	
 	/**

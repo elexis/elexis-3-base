@@ -20,7 +20,7 @@ import org.junit.Test;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.model.IVerify;
 import ch.elexis.core.model.IVerifyService;
-import ch.elexis.core.verify.VerifyService;
+import ch.elexis.core.verify.billing.BillingVerifyService;
 import ch.elexis.data.importer.TarmedReferenceDataImporter;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
@@ -158,7 +158,7 @@ public class TarmedOptifierTest {
 	public void testValidateSumexVsExlexis(){
 		int leistungenSize = konsVs.getLeistungen().size();
 		
-		IVerifyService verifyService = new VerifyService();
+		IVerifyService verifyService = new BillingVerifyService();
 		TarmedVerifyConverter tarmedVerifyConverter = new TarmedVerifyConverter();
 
 		//1. case-----------------------------------------------------------------------------

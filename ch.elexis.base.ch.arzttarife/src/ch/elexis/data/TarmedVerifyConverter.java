@@ -8,7 +8,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IVerify;
 import ch.elexis.core.model.IVerifyConverter;
-import ch.elexis.core.model.Verify;
+import ch.elexis.core.model.BillingVerify;
 import ch.elexis.core.types.VerifyType;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 
@@ -16,7 +16,7 @@ public class TarmedVerifyConverter implements IVerifyConverter {
 	
 	@Override
 	public Optional<IVerify> convert(IBillable iBillable){
-		IVerify verify = Verify.create(iBillable, VerifyType.TARMED, 1);
+		IVerify verify = BillingVerify.create(iBillable, VerifyType.TARMED, 1);
 		if (iBillable instanceof TarmedLeistung) {
 			TarmedLeistung tLeistung = (TarmedLeistung) iBillable;
 			Hashtable<?, ?> ext = tLeistung.loadExtension();

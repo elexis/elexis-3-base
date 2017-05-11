@@ -28,7 +28,7 @@ import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.IVerify;
 import ch.elexis.core.model.IVerifyConverter;
 import ch.elexis.core.model.IVerifyService;
-import ch.elexis.core.verify.VerifyService;
+import ch.elexis.core.verify.billing.BillingVerifyService;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.RechnungsPrefs;
 import ch.rgw.tools.Result;
@@ -63,7 +63,7 @@ public class TarmedOptifier implements IOptifier {
 	private Verrechnet newVerrechnet;
 	private String newVerrechnetSide;
 	
-	private IVerifyService verifyService = new VerifyService();
+	private IVerifyService verifyService = new BillingVerifyService();
 	
 	/**
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden

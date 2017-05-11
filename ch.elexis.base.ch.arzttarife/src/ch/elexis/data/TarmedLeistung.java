@@ -84,7 +84,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	private static final String ROW_VERSION = "Version";
 	private static final JdbcLink j = getConnection();
 	
-	Hashtable<String, String> ext;
+	Hashtable<String, String> ext = new Hashtable<String, String>();
 	
 	static {
 		createTables();
@@ -266,14 +266,14 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 			if (res.next()) {
 				byte[] in = res.getBytes(1);
 				if ((in == null) || (in.length == 0)) {
-					ext = new Hashtable<String, String>();
+					ext.clear();
 				} else {
 					ext = StringTool.fold(in, StringTool.GUESS, null);
 				}
 			}
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			ext = new Hashtable<String, String>();
+			log.error("Error loading tarmed extension for id [{}]", getId(), ex);
+			ext.clear();
 		} finally {
 			j.releaseStatement(stm);
 			

@@ -188,21 +188,20 @@ public class ArtikelstammImporter {
 		for (Prescription p : resultPrescription) {
 			if (p.getArtikel() instanceof ArtikelstammItem) {
 				ArtikelstammItem ai = (ArtikelstammItem) p.getArtikel();
-				if (ai == null) {
+				if (ai != null && ai.exists() && ai instanceof ArtikelstammItem) {
+					if (ai.get(ArtikelstammItem.FLD_ITEM_TYPE) == null) {
+						log.error(
+							"[BB] ItemType is null in ArtikelstammItem [{}] from prescription [{}] -> blackboxing.",
+							(ai != null) ? ai.getId() : ai, p.getId());
+					}
+					
+					ai.set(ArtikelstammItem.FLD_BLACKBOXED,
+						BlackBoxReason.IS_REFERENCED_IN_FIXMEDICATION.getNumericalReasonString());
+					
+				} else {
 					log.error("[BB] Unresolvable ArtikelstammItem in prescription [{}], skipping.",
 						p.getId());
-					subMonitor.worked(1);
-					continue;
 				}
-				
-				if (ai.get(ArtikelstammItem.FLD_ITEM_TYPE) == null) {
-					log.error(
-						"[BB] ItemType is null in ArtikelstammItem [{}] from prescription [{}] -> blackboxing.",
-						p.getId(), (ai != null) ? ai.getId() : ai);
-				}
-				
-				ai.set(ArtikelstammItem.FLD_BLACKBOXED,
-					BlackBoxReason.IS_REFERENCED_IN_FIXMEDICATION.getNumericalReasonString());
 			}
 			subMonitor.worked(1);
 		}
@@ -224,22 +223,19 @@ public class ArtikelstammImporter {
 				&& verrechenbar.getCodeSystemName().equals(ArtikelstammConstants.CODESYSTEM_NAME)) {
 				// why do you  load again??? is not vr already ai??
 				ArtikelstammItem ai = ArtikelstammItem.load(verrechenbar.getId());
-				if (ai == null) {
-					log.error(
-						"[BB] Unresolvable ArtikelstammItem in Verrechnet [{}] -> skipping. ",
+				if (ai != null && ai.exists() && ai instanceof ArtikelstammItem) {
+					if (ai.get(ArtikelstammItem.FLD_ITEM_TYPE) == null) {
+						log.warn(
+							"[BB] ItemType is null in ArtikelstammItem [{}] from Verrechnet [{}] -> blackboxing.",
+							ai.getId(), vr.getId());
+					}
+					
+					ai.set(ArtikelstammItem.FLD_BLACKBOXED,
+						BlackBoxReason.IS_REFERENCED_IN_CONSULTATION.getNumericalReasonString());
+				} else {
+					log.error("[BB] Unresolvable ArtikelstammItem in Verrechnet [{}] -> skipping. ",
 						vr.getId());
-					subMonitor.worked(1);
-					continue;
 				}
-				
-				if (ai.get(ArtikelstammItem.FLD_ITEM_TYPE) == null) {
-					log.warn(
-						"[BB] ItemType is null in ArtikelstammItem [{}] from Verrechnet [{}] -> blackboxing.",
-						ai.getId(), vr.getId());
-				}
-				
-				ai.set(ArtikelstammItem.FLD_BLACKBOXED,
-					BlackBoxReason.IS_REFERENCED_IN_CONSULTATION.getNumericalReasonString());
 			}
 			subMonitor2.worked(1);
 		}
@@ -297,7 +293,7 @@ public class ArtikelstammImporter {
 	 * @param importStamm
 	 * @param monitor
 	 */
-	private static void importProductsForExistingItemsIntoDatabase(int version,
+	private static void importProductsForExistingItemsIntoDatabase(int cummulatedVersion,
 		ARTIKELSTAMM importStamm, IProgressMonitor monitor){
 		// delete all product entries not blackboxed
 		purgeProducts();
@@ -332,18 +328,14 @@ public class ArtikelstammImporter {
 				}
 				
 				if (!productItem.isAvailable()) {
-					productItem = new ArtikelstammItem(version, TYPE.X, product.getPRODNO(), null,
-						dscr, StringConstants.EMPTY);
+					productItem = new ArtikelstammItem(cummulatedVersion, TYPE.X,
+						product.getPRODNO(), null, dscr, StringConstants.EMPTY);
 				}
 				
 				productItem.set(new String[] {
-					ArtikelstammItem.FLD_BLACKBOXED, ArtikelstammItem.FLD_DSCR,
-					ArtikelstammItem.FLD_ATC
-				}, StringConstants.ZERO, dscr, product.getATC());
-				String atc = product.getATC();
-				if (atc != null) {
-					productItem.setATCCode(atc);
-				}
+					ArtikelstammItem.FLD_BLACKBOXED, ArtikelstammItem.FLD_CUMMULATED_VERSION,
+					ArtikelstammItem.FLD_DSCR, ArtikelstammItem.FLD_ATC
+				}, StringConstants.ZERO, cummulatedVersion + "", dscr, product.getATC());
 			} else {
 				log.error("[IP] Product is null for [{}]", prodNo);
 			}

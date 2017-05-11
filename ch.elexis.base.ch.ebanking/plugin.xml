@@ -17,6 +17,7 @@
       <view
             category="ch.elexis.abrechnungKategorie"
             class="ch.elexis.base.ch.ebanking.ESRView"
+            icon="rsc/postfinance.ico"
             id="ch.elexis.ebanking_ch.ESRView"
             name="ESR"
             restorable="true">

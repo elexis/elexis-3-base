@@ -39,19 +39,22 @@ echo $0: ROOT_ELEXIS_BASE is $ROOT_ELEXIS_BASE and VARIANT is $VARIANT.
 
 # Check whether we have to backup the old version of the repository
 export old_version_file=${ROOT_ELEXIS_BASE}/${VARIANT}/repo.version
-if [ -f ${old_version_file}  ]
-then
-  source ${old_version_file}
-  if [ ! -d $backup_root/$version-$qualifier ]
+if [ "$VARIANT" == "snapshot" ]; then
+  echo "Skipping backup for variant $VARIANT"
+else
+ if [ -f ${old_version_file}  ]
   then
-    echo "Backup of version found under $ROOT_ELEXIS_BASE/$VARIANT necessary"
-    mkdir -p $backup_root
-    mv -v $ROOT_ELEXIS_BASE/$VARIANT $backup_root/$version-$qualifier
-  else
-    echo Skipping backup as  $backup_root/$version-$qualifier already present
+    source ${old_version_file}
+    if [ ! -d $backup_root/$version-$qualifier ]
+    then
+      echo "Backup of version found under $ROOT_ELEXIS_BASE/$VARIANT necessary"
+      mkdir -p $backup_root
+      mv -v $ROOT_ELEXIS_BASE/$VARIANT $backup_root/$version-$qualifier
+    else
+      echo Skipping backup as  $backup_root/$version-$qualifier already present
+    fi
   fi
 fi
-
 rm -rf ${ROOT_ELEXIS_BASE}/$VARIANT
 cp -rpu *p2site/target/repository/ ${ROOT_ELEXIS_BASE}/$VARIANT
 cp -rpvu *p2site/repo.properties ${ROOT_ELEXIS_BASE}/$VARIANT/repo.version

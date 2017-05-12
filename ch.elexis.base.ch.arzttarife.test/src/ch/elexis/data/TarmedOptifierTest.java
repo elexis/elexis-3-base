@@ -18,9 +18,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.core.model.IVerify;
-import ch.elexis.core.model.IVerifyService;
-import ch.elexis.core.verify.billing.BillingVerifyService;
+import ch.elexis.core.model.BillingVerification;
+import ch.elexis.core.model.IVerificationService;
+import ch.elexis.core.verification.billing.BillingVerificationService;
 import ch.elexis.data.importer.TarmedReferenceDataImporter;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
@@ -158,23 +158,26 @@ public class TarmedOptifierTest {
 	public void testValidateSumexVsExlexis(){
 		int leistungenSize = konsVs.getLeistungen().size();
 		
-		IVerifyService verifyService = new BillingVerifyService();
-		TarmedVerifyConverter tarmedVerifyConverter = new TarmedVerifyConverter();
+		IVerificationService<BillingVerification> iVerificationService =
+			new BillingVerificationService();
+		TarmedVerificationConverter tarmedVerificationConverter = new TarmedVerificationConverter();
 
 		//1. case-----------------------------------------------------------------------------
 		// sumex validation
 		System.setProperty("sumexServerUrl", "http://172.18.0.11:9000");
-		IVerify sumexResult =
-			verifyService.validate(VerifyContext.create(konsVs, tarmedVerifyConverter),
-				tarmedVerifyConverter.convert(tlUltrasound).get());
+		BillingVerification sumexResult =
+			iVerificationService.validate(
+				BillingVerificationContext.create(konsVs, tarmedVerificationConverter),
+				tarmedVerificationConverter.convert(tlUltrasound).get());
 		assertEquals(IStatus.OK, sumexResult.getStatus().getSeverity());
 		assertTrue(sumexResult.getValidatorId().contains("Sumex"));
 		
 		// elexis validation
 		System.setProperty("sumexServerUrl", "");
-		IVerify elexisResult =
-			verifyService.validate(VerifyContext.create(konsVs, tarmedVerifyConverter),
-				tarmedVerifyConverter.convert(tlUltrasound).get());
+		BillingVerification elexisResult =
+			iVerificationService.validate(
+				BillingVerificationContext.create(konsVs, tarmedVerificationConverter),
+				tarmedVerificationConverter.convert(tlUltrasound).get());
 		assertTrue(elexisResult.getValidatorId().contains("Elexis"));
 		assertEquals(IStatus.OK, elexisResult.getStatus().getSeverity());
 		
@@ -189,16 +192,18 @@ public class TarmedOptifierTest {
 		//2. case-----------------------------------------------------------------------------
 		// sumex validation @TODO fails reference code implementation needed!)
 		System.setProperty("sumexServerUrl", "http://172.18.0.11:9000");
-		sumexResult = verifyService.validate(VerifyContext.create(konsVs, tarmedVerifyConverter),
-			tarmedVerifyConverter.convert(tlBaseXRay).get());
+		sumexResult = iVerificationService.validate(
+			BillingVerificationContext.create(konsVs, tarmedVerificationConverter),
+			tarmedVerificationConverter.convert(tlBaseXRay).get());
 		assertEquals(IStatus.ERROR, sumexResult.getStatus().getSeverity());
 		assertTrue(sumexResult.getValidatorId().contains("Sumex"));
 		
 		// elexis validation
 		System.setProperty("sumexServerUrl", "");
 		elexisResult =
-			verifyService.validate(VerifyContext.create(konsVs, tarmedVerifyConverter),
-				tarmedVerifyConverter.convert(tlBaseXRay).get());
+			iVerificationService.validate(
+				BillingVerificationContext.create(konsVs, tarmedVerificationConverter),
+				tarmedVerificationConverter.convert(tlBaseXRay).get());
 		assertTrue(elexisResult.getValidatorId().contains("Elexis"));
 		assertEquals(IStatus.WARNING, elexisResult.getStatus().getSeverity());
 		

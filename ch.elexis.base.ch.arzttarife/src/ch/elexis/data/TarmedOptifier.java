@@ -25,10 +25,9 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.exceptions.ElexisException;
-import ch.elexis.core.model.IVerify;
-import ch.elexis.core.model.IVerifyConverter;
-import ch.elexis.core.model.IVerifyService;
-import ch.elexis.core.verify.billing.BillingVerifyService;
+import ch.elexis.core.model.BillingVerification;
+import ch.elexis.core.model.IVerificationService;
+import ch.elexis.core.verification.billing.BillingVerificationService;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.RechnungsPrefs;
 import ch.rgw.tools.Result;
@@ -63,7 +62,8 @@ public class TarmedOptifier implements IOptifier {
 	private Verrechnet newVerrechnet;
 	private String newVerrechnetSide;
 	
-	private IVerifyService verifyService = new BillingVerifyService();
+	private IVerificationService<BillingVerification> iVerificationService =
+		new BillingVerificationService();
 	
 	/**
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
@@ -92,9 +92,9 @@ public class TarmedOptifier implements IOptifier {
 	
 	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons) {
 		try {
-			IVerify iVerify = createNewValidationKontext(kons, code);
-			if (!iVerify.getStatus().isOK()) {
-				return convertStatusToResult(iVerify.getStatus());
+			BillingVerification billingVerification = createNewVerificationKontext(kons, code);
+			if (!billingVerification.getStatus().isOK()) {
+				return convertStatusToResult(billingVerification.getStatus());
 			}
 		} catch (ElexisException e) {
 			return new Result<IVerrechenbar>(Result.SEVERITY.ERROR, LEISTUNGSTYP,
@@ -411,11 +411,15 @@ public class TarmedOptifier implements IOptifier {
 		return new Result<IVerrechenbar>(null);
 	}
 
-	private IVerify createNewValidationKontext(Konsultation kons, IVerrechenbar tarmedLeistung) throws ElexisException{
-		IVerifyConverter iVerifyConverter = new TarmedVerifyConverter();
-		IVerify iVerify = iVerifyConverter.convert(tarmedLeistung).orElseThrow(() -> new ElexisException("", null));
-		return verifyService.validate(
-			VerifyContext.create(kons, iVerifyConverter), iVerify);
+	private BillingVerification createNewVerificationKontext(Konsultation kons,
+		IVerrechenbar tarmedLeistung) throws ElexisException{
+		TarmedVerificationConverter tarmedVerificationConverter = new TarmedVerificationConverter();
+		BillingVerification billingVerification =
+			tarmedVerificationConverter.convert(tarmedLeistung)
+			.orElseThrow(() -> new ElexisException("", null));
+		return iVerificationService.validate(
+			BillingVerificationContext.create(kons, tarmedVerificationConverter),
+			billingVerification);
 	}
 	
 	private Result<IVerrechenbar> convertStatusToResult(IStatus status){

@@ -96,7 +96,9 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 		if (actKons!= null && konsultationen != null) {
 			konsListComposite.setKonsultationen(konsultationen, actKons);
 		} else {
-			if (showLoading) {
+			if (konsultationen == null) {
+				konsListComposite.setKonsultationen(null, null);
+			} else if (showLoading ) {
 				konsListComposite.setKonsultationen(null, null);
 			}
 		}
@@ -132,7 +134,12 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 
 		public void setKons(Konsultation kons, boolean showAllCharges,
 			boolean showAllConsultations){
-			this.patient = kons.getFall().getPatient();
+			if (kons != null) {
+				this.patient = kons.getFall().getPatient();
+			} else {
+				this.patient = null;
+				dataLoader.cancel();
+			}
 			this.showAllCharges = showAllCharges;
 			this.showAllConsultations = showAllConsultations;
 		}
@@ -140,7 +147,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (konsDataList) {
-				log.debug("loaderJob started");
+				log.debug("loaderJob started patient " + (patient == null ? "null" : patient.getPersonalia()));
 				konsDataList.clear();
 
 				List<Konsultation> konsList = new ArrayList<>();
@@ -246,11 +253,10 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
 		log.debug("setKons " + (newKons != null ? newKons.getId() + " " + newKons.getLabel() + " " + newKons.getLabel() : "null" ));
+		actKons = newKons;
 		if (newKons == null) {
-			actKons = newKons;
 			reload(false, null);
 		} else {
-			actKons = newKons;
 			dataLoader.cancel();
 			reload(true, null);
 			dataLoader.setKons(newKons, showAllCharges, showAllConsultations);

@@ -232,7 +232,7 @@ public class Helpers {
 
 			if (problems.size() == 0) {
 				List<Problem> allProblems = Problem.getProblemsOfPatient(patient);
-				if (problems != null) {
+				if (allProblems != null) {
 					problems.addAll(allProblems);
 				}
 			}

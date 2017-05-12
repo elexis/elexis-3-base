@@ -234,7 +234,7 @@ public class KonsListComposite {
 			}
 			refeshHyperLinks(actKons);
 		} else {
-			loadingLabel.setVisible(true);
+			loadingLabel.setVisible(false);
 			sashLeft.setVisible(false);
 			sashRight.setVisible(false);
 		}
@@ -281,7 +281,8 @@ public class KonsListComposite {
 				public void linkActivated(HyperlinkEvent e){
 					if (actKons != null && konsData.konsultation != null) {
 						Konsultation selectedKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-						boolean enableFire = !konsData.konsultation.getId().contentEquals(selectedKons.getId());
+						boolean enableFire = !konsData.konsultation.getId()
+								.contentEquals(selectedKons == null ? "" : selectedKons.getId());
 						if (enableFire) {
 							log.debug("fireSelectionEvent "+ konsData.konsultation.getId() + " "+ konsData.konsultation.getDatum());
 							ElexisEventDispatcher.fireSelectionEvent(konsData.konsultation);

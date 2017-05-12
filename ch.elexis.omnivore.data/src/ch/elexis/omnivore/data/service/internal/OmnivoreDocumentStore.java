@@ -77,7 +77,8 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	public List<ICategory> getCategories(){
 		Stm stm = PersistentObject.getDefaultConnection().getStatement();
 		ResultSet rs = stm
-			.query("select distinct category from " + DocHandle.TABLENAME + " order by category");
+			.query("select distinct category from " + DocHandle.TABLENAME
+				+ " where deleted = '0' order by category");
 		List<ICategory> categories = new ArrayList<>();
 		try {
 			while (rs.next()) {

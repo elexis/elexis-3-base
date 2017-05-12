@@ -431,7 +431,10 @@ public class KonsText implements IJournalArea {
 				logEvent("setKons " + (actKons == null ? "null" : actKons.getId()) +
 					" => " + k.getId());
 				actKons = k;
-				if (!actKons.isEditable(true)) { // Give feedback to user why consultation cannot be edited
+				if (!actKons.isEditable(false)) {
+					// isEditable(true) would give feedback to user why consultation
+					// cannot be edited, but this often very shortlived as we create/switch
+					// to a newly created kons of today
 					logEvent("setKons actKons is not editable");
 					text.setEnabled(false);
 					setKonsText(k, 0, true);

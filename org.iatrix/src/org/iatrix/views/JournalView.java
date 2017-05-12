@@ -589,8 +589,17 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		if (mode == true) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_kons, eeli_problem, eeli_pat,
 				eeli_user);
+			Konsultation newKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+			if (newKons != null) {
+				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + newKons.getFall().getPatient().getPersonalia();
+				logEvent(newKons, "visible true " + msg);
+				updateAllKonsAreas(newKons, KonsActions.ACTIVATE_KONS);
 
-			displaySelectedPatient(ElexisEventDispatcher.getSelectedPatient(), "view visible");
+			} else
+			{
+				logEvent(newKons, "visible true newKons is null");
+				displaySelectedPatient(ElexisEventDispatcher.getSelectedPatient(), "view visible");
+			}
 			heartbeat.enableListener(true);
 		} else {
 			heartbeat.enableListener(false);

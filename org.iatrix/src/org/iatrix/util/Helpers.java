@@ -327,10 +327,26 @@ public class Helpers {
 		if (!thisKons.getId().equals(otherKons.getId()))  {
 			return false;
 		}
-		String thisText = thisKons.getEintrag().getVersion(thisKons.getHeadVersion()).data;
-		String otherText = otherKons.getEintrag().getVersion(otherKons.getHeadVersion()).data;
-		if (thisKons.getDatum().equals(otherKons.getDatum()) &&
-			thisText.equals(otherText))
+		if (!thisKons.getDatum().equals(otherKons.getDatum())) {
+			return false;
+		}
+		if ( thisKons.getEintrag() == null && otherKons.getEintrag() == null) {
+			return true;
+		}
+		if ( thisKons.getEintrag() == null || otherKons.getEintrag() == null) {
+			return false;
+		}
+		ResourceItem thisResource = thisKons.getEintrag().getVersion(thisKons.getHeadVersion());
+		ResourceItem otherResource = otherKons.getEintrag().getVersion(otherKons.getHeadVersion());
+		if (thisResource == null && otherResource == null) {
+			return true;
+		}
+		if (thisResource == null || otherResource == null) {
+			return false;
+		}
+		String thisText = thisResource.data;
+		String otherText = otherResource.data;
+		if (thisText.equals(otherText))
 		{
 			return true;
 		}

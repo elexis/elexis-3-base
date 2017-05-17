@@ -34,6 +34,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.iatrix.data.Problem;
+import org.iatrix.util.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +177,8 @@ public class KonsListComposite {
 		}
 		if (actKons != null && row != null && row_kons != null) {
 			// System.out.println("hTitle for "+ row.hTitle.getText() + " " + row_kons.getId());
-			boolean konsEditable = row_kons.isEditable(false);
+			boolean konsEditable = Helpers.hasRightToChangeConsultations(row_kons, false);
+
 			boolean disabled = row_kons.getId().equals(actKons.getId()) || !konsEditable;
 			if (disabled == row.hTitle.getEnabled()) {
 				// log.trace(caller + " hTitle for  " + row.hTitle.getText() + " from "
@@ -224,6 +226,7 @@ public class KonsListComposite {
 				row.verrechnung.setData("TEST_COMP_NAME", "KG_Iatrix_klc_row_"+j + "_verrechnung"); // for Jubula
 				row.problems.setData("TEST_COMP_NAME", "KG_Iatrix_klc_row_"+j + "_problems"); // for Jubula
 				row.setKonsData(konsData);
+				row.hTitle.setToolTipText(Helpers.getExplantionForKonsEditIfBillet());
 			}
 			log.debug("refreshAllKons for " + widgetRows.size() + " rows and " + konsultationen.size() +" konsultationen ");
 			loadingLabel.setVisible(false);
@@ -673,7 +676,7 @@ public class KonsListComposite {
 				String lineSeparator = System.getProperty("line.separator");
 
 				konsTitle = konsultation.getLabel();
-				if (!konsultation.isEditable(false)) {
+				if (!Helpers.hasRightToChangeConsultations(konsultation, false)) {
 					konsTitle = konsTitle + " Nicht editierbar (Zugriffsrechte/Verrechnet)";
 				}
 

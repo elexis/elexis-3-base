@@ -313,11 +313,44 @@ public class Helpers {
 		return clipboardText;
 	}
 	/**
+	 * Compare two consultations to see whether have belong to the same patient
+	 * @param thisKons
+	 * @param otherKons
+	 * @return both null || both same getId()
+	 */
+	public static boolean twoKonsSamePatient(Konsultation thisKons, Konsultation otherKons) {
+		if (thisKons == null && otherKons == null ) {
+			return true;
+		}
+		if (thisKons == null || otherKons == null ) {
+			return false;
+		}
+		return thisKons.getFall().getPatient().getId().equals(
+			otherKons.getFall().getPatient().getId());
+	}
+
+	/**
+	 * Compare two consultations to see whether have the same id
+	 * @param thisKons
+	 * @param otherKons
+	 * @return both null || both same getId()
+	 */
+	public static boolean twoKonsEqual(Konsultation thisKons, Konsultation otherKons) {
+		if (thisKons == null && otherKons == null ) {
+			return true;
+		}
+		if (thisKons == null || otherKons == null ) {
+			return false;
+		}
+		return thisKons.getId().equals(otherKons.getId());
+	}
+
+	/**
 	 * Compare two consultations to see whether they are from the same day
 	 * and have the same consultation text
 	 * @param thisKons
 	 * @param otherKons
-	 * @return
+	 * @return sameKonsId AND same konsText
 	 */
 	public static boolean haveSameContent(Konsultation thisKons, Konsultation otherKons) {
 		if (thisKons == null && otherKons == null ) {

@@ -42,6 +42,7 @@ import org.iatrix.data.Problem;
 import org.iatrix.util.Constants;
 import org.iatrix.util.Heartbeat;
 import org.iatrix.util.Heartbeat.IatrixHeartListener;
+import org.iatrix.util.Helpers;
 import org.iatrix.views.JournalView;
 import org.iatrix.views.ProblemView;
 import org.slf4j.Logger;
@@ -693,20 +694,17 @@ public class ProblemArea implements IJournalArea {
 	 */
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
-		if (newKons == null )
+		if (Helpers.twoKonsEqual(actKons, newKons))
 		{
-			actKons = newKons;
-			actPat = null;
-		} else {
+			return;
+		}
+		actKons = newKons;
+		actPat = null;
+		logEvent("setKons");
+		if (newKons != null) {
 			Patient newPatient = newKons.getFall().getPatient();
-			if (newPatient == null) { return; } // this should never happen as  kons always has a patient
-			log.debug("setPatient " + newPatient.getPersonalia());
-			if (actPat == null || !actPat.getId().equals(newPatient.getId())) {
-				actPat = newPatient;
-				actKons = newKons;
 				problemsTableModel.setPatient(newPatient);
 				reloadAndRefresh();
-			}
 		}
 	}
 

@@ -338,6 +338,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				}
 				logEvent(newKons, "eeli_kons " + msg + " ACTIVATE_KONS");
 				updateAllKonsAreas(newKons, KonsActions.ACTIVATE_KONS);
+			} else {
+				// Or we would simply forget to update it after
+				// add items via a konsText makro
+				konsVerrechnung.setKons(newKons, KonsActions.ACTIVATE_KONS);
 			}
 			actKons = newKons;
 		}

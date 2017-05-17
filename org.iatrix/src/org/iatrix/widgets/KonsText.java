@@ -39,6 +39,7 @@ import org.iatrix.data.KonsTextLock;
 import org.iatrix.dialogs.ChooseKonsRevisionDialog;
 import org.iatrix.util.Heartbeat;
 import org.iatrix.util.Heartbeat.IatrixHeartListener;
+import org.iatrix.util.Helpers;
 import org.iatrix.views.JournalView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -431,7 +432,8 @@ public class KonsText implements IJournalArea {
 				logEvent("setKons " + (actKons == null ? "null" : actKons.getId()) +
 					" => " + k.getId());
 				actKons = k;
-				if (!actKons.isEditable(false)) {
+				boolean konsEditable = Helpers.hasRightToChangeConsultations(actKons, false);
+				if (!konsEditable) {
 					// isEditable(true) would give feedback to user why consultation
 					// cannot be edited, but this often very shortlived as we create/switch
 					// to a newly created kons of today

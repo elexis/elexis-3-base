@@ -55,6 +55,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.iatrix.Iatrix;
 import org.iatrix.data.Problem;
+import org.iatrix.util.Helpers;
 import org.iatrix.views.JournalView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -547,7 +548,8 @@ public class KonsVerrechnung implements IJournalArea {
 				if (sel != null) {
 					Verrechnet verrechnet = (Verrechnet) sel;
 					
-					if(!verrechnet.getKons().isEditable(true)) {
+					boolean konsEditable = Helpers.hasRightToChangeConsultations(verrechnet.getKons(), true);
+					if(!konsEditable) {
 						return;
 					}
 					

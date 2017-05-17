@@ -25,6 +25,8 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.iatrix.data.Problem;
 
+import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Anschrift;
@@ -384,4 +386,41 @@ public class Helpers {
 			return true;
 		}
 		return false;
-	}}
+	}
+
+	/**
+	 * Normally, the thext of a Konsultation may only be changed, if the Konsultation has not yet
+	 * been billed. Due to customer demand, this was weakened: A User can have the right
+	 * ADMIN_KONS_EDIT_IF_BILLED and then can edit all Konsultations, even billed ones.
+	 * @param kons the cons to be checked
+	 * @param showError display a message if not editable
+	 * @return user can edit the cons
+	 */
+	public static boolean hasRightToChangeConsultations(Konsultation kons, boolean showError){
+		return CoreHub.acl.request(AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED) || kons.isEditable(showError);
+	}
+	boolean hasRight = CoreHub.acl.request(AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED);
+
+	/**
+	 * Return an explanation a ADMIN_KONS_EDIT_IF_BILLED
+	 * @return Whether user has the right + how to change it
+	 */
+	public static String getExplantionForKonsEditIfBillet(){
+		StringBuilder explanation = new StringBuilder("");
+		if (CoreHub.acl.request(AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED) ) {
+			explanation.append("Sie haben das Recht verrechnete Konsultation zu ändern.");
+		} else {
+			explanation.append("Sie dürfen verrechnete Konsultation nicht ändern.");
+		}
+		explanation.append("\nDas Ändern von verrechneten Konsultation kann in den Einstellungen geändert werden");
+		explanation.append("\nUnter Gruppen und Rechten..");
+		explanation.append("\n  Rollen und Rechten");
+		explanation.append("\n    Recht: main:Konsultations");
+		explanation.append("\n      Verrechnete ändern");
+		explanation.append("\nkönnen Sie den gewünschten Gruppen diese Recht erteilen");
+		explanation.append("\nDieses Recht kann sinnvoll sein, wenn Sie eine Konsultation ");
+		explanation.append("noch editieren wollen, nachdem sie von der MPA schon verrechnet wurde");
+		return explanation.toString();
+	}
+
+}

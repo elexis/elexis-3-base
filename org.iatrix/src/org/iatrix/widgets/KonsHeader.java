@@ -32,6 +32,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.iatrix.util.Helpers;
 import org.iatrix.views.JournalView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,8 +187,9 @@ public class KonsHeader implements IJournalArea {
 		StringBuilder sb = new StringBuilder();
 		sb.append(actKons.getDatum());
 		hlKonsultationDatum.setDate(new TimeTool(actKons.getDatum().toString()).getTime() );
-		log.debug("SetDate Enabled " + actKons.isEditable(false) + " for " + actKons.getId() + " of " + actKons.getDatum());
-		hlKonsultationDatum.setEnabled(actKons.isEditable(false));
+		boolean isEditable = Helpers.hasRightToChangeConsultations(actKons, false);
+		log.debug("SetDate Enabled " + isEditable + " for " + actKons.getId() + " of " + actKons.getDatum());
+		hlKonsultationDatum.setEnabled(isEditable);
 		Mandant m = actKons.getMandant();
 		sb = new StringBuilder();
 		if (m == null) {

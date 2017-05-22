@@ -11,6 +11,7 @@ Import-Package: ch.elexis.core.constants,
  ch.elexis.core.model.prescription,
  ch.elexis.core.services,
  ch.elexis.core.types,
+ ch.elexis.core.ui.exchange,
  ch.elexis.data,
  ch.rgw.tools,
  org.apache.commons.io;version="2.4.0",
@@ -18,8 +19,10 @@ Import-Package: ch.elexis.core.constants,
  org.osgi.service.component.annotations;version="1.2.0",
  org.slf4j
 Require-Bundle: com.google.gson;bundle-version="2.7.0",
- org.eclipse.swt;bundle-version="3.104.2"
+ org.eclipse.swt;bundle-version="3.104.2",
+ at.medevit.ch.artikelstamm.elexis.common;bundle-version="3.2.0"
 Service-Component: OSGI-INF/at.medevit.elexis.emediplan.core.internal.EMediplanServiceImpl.xml
 Bundle-ClassPath: lib/zxing_core-3.3.0.jar,
  .
-Export-Package: at.medevit.elexis.emediplan.core
+Export-Package: at.medevit.elexis.emediplan.core,
+ at.medevit.elexis.emediplan.core.model.chmed16a

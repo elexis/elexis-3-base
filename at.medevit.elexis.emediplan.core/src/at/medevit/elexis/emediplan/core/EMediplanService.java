@@ -13,6 +13,9 @@ package at.medevit.elexis.emediplan.core;
 import java.io.OutputStream;
 import java.util.List;
 
+import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
+import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
+import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
@@ -35,5 +38,22 @@ public interface EMediplanService {
 	 */
 	public void exportEMediplanPdf(Mandant author, Patient patient,
 		List<Prescription> prescriptions, OutputStream output);
+	
+	/**
+	 * Creates a model representation from a base 64 compressed json chunk
+	 * 
+	 * @param chunk
+	 * @return
+	 */
+	public Medication createModelFromChunk(String chunk);
+	
+	/**
+	 * Search for {@link ArtikelstammItem} by EAN or PharamaCode and creates for each
+	 * {@link Posology} a new {@link Medication} entry with a single {@link Posology}
+	 * 
+	 * @param medication
+	 * @return
+	 */
+	public void evalulateArtikelForMedication(Medication medication);
 	
 }

@@ -15,6 +15,7 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
@@ -33,6 +34,11 @@ public class Medicament {
 	public int Subs;
 	public float NbPack;
 	public List<PrivateField> PFields;
+	public transient ArtikelstammItem artikelstammItem;
+	public transient String dosis;
+	public transient String dateFrom;
+	public transient String dateTo;
+	public transient boolean exists;
 	
 	public static List<Medicament> fromPrescriptions(List<Prescription> prescriptions){
 		if (prescriptions != null && !prescriptions.isEmpty()) {

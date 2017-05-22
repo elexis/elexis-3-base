@@ -17,11 +17,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -36,10 +39,15 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -48,21 +56,31 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import at.medevit.elexis.emediplan.core.EMediplanService;
+import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
+import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
+import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.services.IFormattedOutput;
 import ch.elexis.core.services.IFormattedOutputFactory;
 import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
 import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
+import ch.elexis.core.ui.exchange.KontaktMatcher;
+import ch.elexis.core.ui.exchange.KontaktMatcher.CreateMode;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
+import ch.elexis.data.Query;
+import ch.rgw.tools.TimeTool;
 
 @Component
 public class EMediplanServiceImpl implements EMediplanService {
+	private static Logger logger = LoggerFactory.getLogger(EMediplanServiceImpl.class);
 	
 	private Gson gson;
 	
+
 	public EMediplanServiceImpl(){
 		gson = new GsonBuilder().create();
 	}
@@ -191,7 +209,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 	 */
 	protected String getDecodedJsonString(@NonNull String encodedJson){
 		String content = encodedJson.substring(9);
-		byte[] zipped = Base64.getDecoder().decode(content);
+		byte[] zipped = Base64.getMimeDecoder().decode(content);
 		StringBuilder sb = new StringBuilder();
 		try {
 			GZIPInputStream gzip = new GZIPInputStream(new ByteArrayInputStream(zipped));
@@ -221,5 +239,172 @@ public class EMediplanServiceImpl implements EMediplanService {
 		List<Prescription> prescriptions){
 		Medication medication = Medication.fromPrescriptions(author, patient, prescriptions);
 		return Optional.ofNullable(gson.toJson(medication));
+	}
+	
+	@Override
+	public Medication createModelFromChunk(String chunk){
+		String json = getDecodedJsonString(chunk);
+		if (chunk.length() > 8) {
+			logger.debug("json version: " + chunk.substring(5, 8));
+			GsonBuilder gb = new GsonBuilder();
+			gb.registerTypeAdapter(Medication.class, new MedicationDeserializer());
+			Gson g = gb.create();
+			return g.fromJson(json, Medication.class);
+		}
+		else {
+			logger.error("invalid json length - cannot parseable");
+		}
+		
+		return null;
+	}
+	
+	public void evalulateArtikelForMedication(Medication medication){
+		if (medication != null) {
+			evaluatePatient(medication);
+			List<Medicament> medicaments = new ArrayList<>();
+			if (medication.Medicaments != null) {
+				for (Medicament in : medication.Medicaments) {
+					Medicament toAdd = in;
+					if (in.Pos != null) {
+						if (in.Pos.size() > 1) {
+							List<Posology> posologies = new ArrayList<>(in.Pos);
+							
+							for (Posology p : posologies) {
+								try {
+									Gson gson = new Gson();
+									String json = gson.toJson(in);
+									toAdd = gson.fromJson(json, Medicament.class);
+									toAdd.Pos = new ArrayList<>();
+									toAdd.Pos.add(p);
+								} catch (Exception e) {
+									logger.warn("cannot clone medicament id: " + toAdd.Id, e);
+								}
+								evaluateMedicament(medication, medicaments, toAdd);
+							}
+							
+						} else {
+							evaluateMedicament(medication, medicaments, toAdd);
+						}
+					}
+				}
+				medication.Medicaments = medicaments;
+			}
+		}
+	}
+	
+	private void evaluatePatient(Medication medication){
+		if (medication.Patient != null) {
+			String bDate = medication.Patient.BDt;
+			Patient patient = KontaktMatcher.findPatient(medication.Patient.LName,
+				medication.Patient.FName, bDate != null ? bDate.replace("-", "") : null, null, null,
+				null,
+				null, null, CreateMode.ASK);
+			if (patient != null && patient.getId() != null && patient.exists()) {
+				medication.Patient.patientId = patient.getId();
+				medication.Patient.patientLabel = patient.getPersonalia();
+			}
+		}
+		
+	}
+
+	private void evaluateMedicament(Medication medication, List<Medicament> medicaments,
+		Medicament toAdd){
+		if (toAdd.Pos != null && !toAdd.Pos.isEmpty()) {
+			Posology pos = toAdd.Pos.get(0);
+			StringBuffer buf = new StringBuffer();
+			if (pos.D != null) {
+				int size = pos.D.size();
+				for (float f : pos.D) {
+					buf.append((int) f);
+					size--;
+					if (size != 0) {
+						buf.append("-");
+					}
+				}
+			}
+			toAdd.dosis = buf.toString();
+			toAdd.dateFrom = pos.DtFrom;
+			toAdd.dateTo = pos.DtTo;
+		}
+		
+		findArtikelForMedicament(toAdd);
+		
+		// check if db already contains this prescription
+		if (toAdd.artikelstammItem != null && medication.Patient != null
+			&& medication.Patient.patientId != null) {
+			Query<Prescription> qre = new Query<>(Prescription.class);
+			qre.add(Prescription.FLD_PATIENT_ID, Query.LIKE, medication.Patient.patientId);
+			qre.add(Prescription.FLD_ARTICLE, Query.LIKE,
+				toAdd.artikelstammItem.storeToString());
+			qre.add(Prescription.FLD_DOSAGE, Query.LIKE, toAdd.dosis);
+			qre.orderBy(true, PersistentObject.FLD_LASTUPDATE);
+			
+			List<Prescription> execute = qre.execute();
+			if (execute.size() > 0) {
+				TimeTool now = new TimeTool();
+				now.add(TimeTool.SECOND, 5);
+				
+				execute = execute.parallelStream().filter(p -> !p.isStopped(now))
+					.collect(Collectors.toList());
+				if (execute.size() > 0) {
+					toAdd.exists = true;
+				}
+			}
+		}
+		medicaments.add(toAdd);
+	}
+	
+	private void findArtikelForMedicament(Medicament medicament)
+	{
+		Query<ArtikelstammItem> qbe = new Query<>(ArtikelstammItem.class);
+		if (medicament.IdType == 2)
+		{
+			//GTIN
+			ArtikelstammItem artikelstammItem = ArtikelstammItem.findByEANorGTIN(medicament.Id);
+			if (artikelstammItem != null) {
+				medicament.artikelstammItem = artikelstammItem;
+			}
+		}
+		else if (medicament.IdType == 3)
+		{
+			//PHARMACODE
+			ArtikelstammItem artikelstammItem = ArtikelstammItem.findByPharmaCode(medicament.Id);
+			if (artikelstammItem != null)
+			{
+				medicament.artikelstammItem = artikelstammItem;
+			}
+		}
+	}
+
+	public class MedicationDeserializer implements JsonDeserializer<Medication> {
+		
+		Gson g = new GsonBuilder().create();
+		
+		@Override
+		public Medication deserialize(JsonElement json, Type typeOfT,
+			JsonDeserializationContext context){
+			Medication u = null;
+			try {
+				try {
+					u = g.fromJson(json, Medication.class);
+					return u;
+				} catch (JsonSyntaxException e) {
+					/* ignore */
+				}
+				// because version incompatibility of 16A the MedicalData 'Med' attribute will be removed
+				// MedicalData 'Med' has different types in the version 16A 
+				if (json.getAsJsonObject().get("Patient") != null) {
+					json.getAsJsonObject().get("Patient").getAsJsonObject().remove("Med");
+				}
+				u = g.fromJson(json, Medication.class);
+				logger.warn("json parsed successfully - by removing the 'Med' attribute");
+				return u;
+			} catch (Exception e) {
+				logger.error("unexpected json error", e);
+			}
+			return u;
+			
+		}
+		
 	}
 }

@@ -13,6 +13,7 @@ package at.medevit.elexis.emediplan.core;
 import java.io.OutputStream;
 import java.util.List;
 
+import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
@@ -54,6 +55,16 @@ public interface EMediplanService {
 	 * @param medication
 	 * @return
 	 */
-	public void evalulateArtikelForMedication(Medication medication);
+	public void addExistingArticlesToMedication(Medication medication);
+	
+	/**
+	 * Find all existing {@link Prescription} for a {@link Medication}
+	 * 
+	 * @param medication
+	 * @param medicament
+	 * @return
+	 */
+	public List<Prescription> findPresciptionsByMedicament(Medication medication,
+		Medicament medicament);
 	
 }

@@ -1,7 +1,6 @@
 package at.medevit.elexis.emediplan.ui;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -26,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
@@ -36,9 +36,7 @@ import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
-import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 
 public class ImportEMediplanDialog extends TitleAreaDialog {
@@ -65,7 +63,9 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 										(ArtikelstammItem) prescription.getArtikel();
 								} else if (ev.getType() == ElexisEvent.EVENT_DELETE
 									|| ev.getType() == ElexisEvent.EVENT_UPDATE) {
-									if (findPresciptionByMedicament(medicament).size() == 0) {
+									if (EMediplanServiceHolder.getService()
+										.findPresciptionsByMedicament(medication, medicament)
+										.isEmpty()) {
 										medicament.exists = false;
 									}
 									
@@ -318,8 +318,9 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 					Patient patient = Patient.load(medication.Patient.patientId);
 					if (patient != null && patient.exists()) {
 						// find if already exists
-						List<Prescription> execute = findPresciptionByMedicament(medicament);
-						if (execute.size() > 0 || medicament.exists) {
+						List<Prescription> results = EMediplanServiceHolder.getService()
+							.findPresciptionsByMedicament(medication, medicament);
+						if (!results.isEmpty() || medicament.exists) {
 							if (!MessageDialog.openConfirm(getShell(), "Artikel",
 								"Diese Medikation wurde bereits hinzugefügt.\nWollen Sie es erneut hinzufügen ?")) {
 								return;
@@ -340,20 +341,6 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		}
 	}
 	
-	private List<Prescription> findPresciptionByMedicament(Medicament medicament){
-		Query<Prescription> qre = new Query<>(Prescription.class);
-		qre.add(Prescription.FLD_PATIENT_ID, Query.LIKE, medication.Patient.patientId);
-		qre.add(Prescription.FLD_ARTICLE, Query.LIKE, medicament.artikelstammItem.storeToString());
-		qre.add(Prescription.FLD_DOSAGE, Query.LIKE, medicament.dosis);
-		qre.orderBy(true, PersistentObject.FLD_LASTUPDATE);
-		
-		List<Prescription> execute = qre.execute();
-		
-		TimeTool now = new TimeTool();
-		now.add(TimeTool.SECOND, 5);
-		return execute.parallelStream().filter(p -> !p.isStopped(now)).collect(Collectors.toList());
-	}
-
 	private boolean isMedicationExpired(Medicament medicament){
 		if (medicament.dateTo != null) {
 			TimeTool now = new TimeTool();

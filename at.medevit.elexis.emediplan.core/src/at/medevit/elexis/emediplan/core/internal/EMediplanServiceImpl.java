@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -80,7 +81,6 @@ public class EMediplanServiceImpl implements EMediplanService {
 	
 	private Gson gson;
 	
-
 	public EMediplanServiceImpl(){
 		gson = new GsonBuilder().create();
 	}
@@ -258,17 +258,18 @@ public class EMediplanServiceImpl implements EMediplanService {
 		return null;
 	}
 	
-	public void evalulateArtikelForMedication(Medication medication){
+	public void addExistingArticlesToMedication(Medication medication){
 		if (medication != null) {
-			evaluatePatient(medication);
+			findPatientForMedication(medication);
 			List<Medicament> medicaments = new ArrayList<>();
 			if (medication.Medicaments != null) {
 				for (Medicament in : medication.Medicaments) {
 					Medicament toAdd = in;
 					if (in.Pos != null) {
 						if (in.Pos.size() > 1) {
+							// because of the flat representation of all medicaments
+							// for each posology entry a copy of that medicament are created
 							List<Posology> posologies = new ArrayList<>(in.Pos);
-							
 							for (Posology p : posologies) {
 								try {
 									Gson gson = new Gson();
@@ -279,11 +280,10 @@ public class EMediplanServiceImpl implements EMediplanService {
 								} catch (Exception e) {
 									logger.warn("cannot clone medicament id: " + toAdd.Id, e);
 								}
-								evaluateMedicament(medication, medicaments, toAdd);
+								addMedicamentToMedication(medication, medicaments, toAdd);
 							}
-							
 						} else {
-							evaluateMedicament(medication, medicaments, toAdd);
+							addMedicamentToMedication(medication, medicaments, toAdd);
 						}
 					}
 				}
@@ -292,7 +292,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 		}
 	}
 	
-	private void evaluatePatient(Medication medication){
+	private void findPatientForMedication(Medication medication){
 		if (medication.Patient != null) {
 			String bDate = medication.Patient.BDt;
 			Patient patient = KontaktMatcher.findPatient(medication.Patient.LName,
@@ -307,7 +307,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 		
 	}
 
-	private void evaluateMedicament(Medication medication, List<Medicament> medicaments,
+	private void addMedicamentToMedication(Medication medication, List<Medicament> medicaments,
 		Medicament toAdd){
 		if (toAdd.Pos != null && !toAdd.Pos.isEmpty()) {
 			Posology pos = toAdd.Pos.get(0);
@@ -327,34 +327,38 @@ public class EMediplanServiceImpl implements EMediplanService {
 			toAdd.dateTo = pos.DtTo;
 		}
 		
-		findArtikelForMedicament(toAdd);
+		findArticleForMedicament(toAdd);
 		
 		// check if db already contains this prescription
-		if (toAdd.artikelstammItem != null && medication.Patient != null
+		if (!findPresciptionsByMedicament(medication, toAdd).isEmpty()) {
+			toAdd.exists = true;
+		}
+		medicaments.add(toAdd);
+	}
+
+	@Override
+	public List<Prescription> findPresciptionsByMedicament(Medication medication,
+		Medicament medicament){
+		if (medicament.artikelstammItem != null && medication.Patient != null
 			&& medication.Patient.patientId != null) {
 			Query<Prescription> qre = new Query<>(Prescription.class);
 			qre.add(Prescription.FLD_PATIENT_ID, Query.LIKE, medication.Patient.patientId);
 			qre.add(Prescription.FLD_ARTICLE, Query.LIKE,
-				toAdd.artikelstammItem.storeToString());
-			qre.add(Prescription.FLD_DOSAGE, Query.LIKE, toAdd.dosis);
+				medicament.artikelstammItem.storeToString());
+			qre.add(Prescription.FLD_DOSAGE, Query.LIKE, medicament.dosis);
 			qre.orderBy(true, PersistentObject.FLD_LASTUPDATE);
 			
 			List<Prescription> execute = qre.execute();
-			if (execute.size() > 0) {
-				TimeTool now = new TimeTool();
-				now.add(TimeTool.SECOND, 5);
-				
-				execute = execute.parallelStream().filter(p -> !p.isStopped(now))
-					.collect(Collectors.toList());
-				if (execute.size() > 0) {
-					toAdd.exists = true;
-				}
-			}
+			
+			TimeTool now = new TimeTool();
+			now.add(TimeTool.SECOND, 5);
+			return execute.parallelStream().filter(p -> !p.isStopped(now))
+				.collect(Collectors.toList());
 		}
-		medicaments.add(toAdd);
+		return Collections.emptyList();
 	}
 	
-	private void findArtikelForMedicament(Medicament medicament)
+	private void findArticleForMedicament(Medicament medicament)
 	{
 		Query<ArtikelstammItem> qbe = new Query<>(ArtikelstammItem.class);
 		if (medicament.IdType == 2)
@@ -389,16 +393,14 @@ public class EMediplanServiceImpl implements EMediplanService {
 					u = g.fromJson(json, Medication.class);
 					return u;
 				} catch (JsonSyntaxException e) {
-					/* ignore */
+					// because version incompatibility of 16A the MedicalData 'Med' attribute will be removed
+					// MedicalData 'Med' has different types in the version 16A 
+					if (json.getAsJsonObject().get("Patient") != null) {
+						json.getAsJsonObject().get("Patient").getAsJsonObject().remove("Med");
+					}
+					u = g.fromJson(json, Medication.class);
+					logger.warn("json parsed successfully - by removing the 'Med' attribute");
 				}
-				// because version incompatibility of 16A the MedicalData 'Med' attribute will be removed
-				// MedicalData 'Med' has different types in the version 16A 
-				if (json.getAsJsonObject().get("Patient") != null) {
-					json.getAsJsonObject().get("Patient").getAsJsonObject().remove("Med");
-				}
-				u = g.fromJson(json, Medication.class);
-				logger.warn("json parsed successfully - by removing the 'Med' attribute");
-				return u;
 			} catch (Exception e) {
 				logger.error("unexpected json error", e);
 			}

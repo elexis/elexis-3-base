@@ -29,6 +29,7 @@ import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
@@ -333,6 +334,8 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 							Prescription.FLD_DATE_UNTIL
 						}, String.valueOf(entryType.numericValue()), medicament.dateFrom,
 							medicament.dateTo);
+						CoreHub.getLocalLockService().acquireLock(prescription);
+						CoreHub.getLocalLockService().releaseLock(prescription);
 						return;
 					}
 				}

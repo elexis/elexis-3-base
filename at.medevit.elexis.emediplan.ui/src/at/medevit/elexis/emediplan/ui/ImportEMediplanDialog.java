@@ -334,6 +334,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 							Prescription.FLD_DATE_UNTIL
 						}, String.valueOf(entryType.numericValue()), medicament.dateFrom,
 							medicament.dateTo);
+						prescription.setDisposalComment(medicament.TkgRsn);
 						CoreHub.getLocalLockService().acquireLock(prescription);
 						CoreHub.getLocalLockService().releaseLock(prescription);
 						return;

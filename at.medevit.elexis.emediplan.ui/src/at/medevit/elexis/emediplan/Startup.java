@@ -25,18 +25,21 @@ public class Startup implements IStartup {
 			new ElexisEventListenerImpl(BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE) {
 				public void run(ElexisEvent ev){
 					BarcodeScannerMessage b = (BarcodeScannerMessage) ev.getGenericObject();
-					Medication medication =
-						EMediplanServiceHolder.getService().createModelFromChunk(b.getChunk());
-					EMediplanServiceHolder.getService().addExistingArticlesToMedication(medication);
-					if (medication != null) {
-						UiDesk.getDisplay().asyncExec(new Runnable() {
-							public void run(){
-								logger.debug("Opening ImportEMediplanDialog");
-								ImportEMediplanDialog dlg =
-									new ImportEMediplanDialog(UiDesk.getTopShell(), medication);
-								dlg.open();
-							}
-						});
+					if (hasMediplanHeader(b.getChunk())) {
+						Medication medication =
+							EMediplanServiceHolder.getService().createModelFromChunk(b.getChunk());
+						EMediplanServiceHolder.getService()
+							.addExistingArticlesToMedication(medication);
+						if (medication != null) {
+							UiDesk.getDisplay().asyncExec(new Runnable() {
+								public void run(){
+									logger.debug("Opening ImportEMediplanDialog");
+									ImportEMediplanDialog dlg =
+										new ImportEMediplanDialog(UiDesk.getTopShell(), medication);
+									dlg.open();
+								}
+							});
+						}
 					}
 				}
 			};
@@ -44,4 +47,7 @@ public class Startup implements IStartup {
 		
 	}
 	
+	private boolean hasMediplanHeader(String chunk){
+		return chunk.startsWith("CHMED");
+	}
 }

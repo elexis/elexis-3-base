@@ -29,6 +29,8 @@ public class Patient {
 	public List<PatientId> Ids;
 	public List<MedicalData> Med;
 	public List<PrivateField> PFields;
+	public transient String patientId;
+	public transient String patientLabel;
 	
 	public static Patient fromPatient(ch.elexis.data.Patient elexisPatient){
 		Patient ret = new Patient();

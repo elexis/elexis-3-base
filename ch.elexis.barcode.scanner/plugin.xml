@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="ch.elexis.barcode.scanner.internal.InputHandler"
+            commandId="ch.elexis.base.barcode.scanner.ListenerProcess">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="ch.elexis.base.barcode.scanner.ListenerProcess"
+            name="Motorola scanner">
+         <state
+               class="org.eclipse.jface.commands.ToggleState"
+               id="STYLE">
+         </state>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.base.barcode.scanner.PreferencePage"
+            class="ch.elexis.barcode.scanner.internal.PreferencePage"
+            id="ch.elexis.base.barcode.scanner.motorola.preference.PreferencePage"
+            name="Barcode Scanner">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="ch.elexis.base.barcode.scanner.toolbar">
+            <command
+                  commandId="ch.elexis.base.barcode.scanner.ListenerProcess"
+                  icon="rsc/icons/scanner-barcode.png"
+                  label="Barcode Scanner"
+                  style="toggle"
+                  tooltip="Barcode Scanner aktivieren/deaktivieren">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="ch.elexis.barcode.scanner.internal.BarcodeScannerStartup">
+      </startup>
+   </extension>
+
+</plugin>

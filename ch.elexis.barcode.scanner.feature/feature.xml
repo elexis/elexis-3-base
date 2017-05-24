@@ -17,7 +17,7 @@
    </license>
 
    <plugin
-         id="at.medevit.elexis.barcode.scanner"
+         id="ch.elexis.barcode.scanner"
          download-size="0"
          install-size="0"
          version="0.0.0"

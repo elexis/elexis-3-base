@@ -273,6 +273,7 @@
   <module>net.medshare.connector.viollier.feature</module>
   <module>at.medevit.elexis.tarmed.model</module>
   <module>ch.elexis.barcode.scanner</module>
+  <module>ch.elexis.barcode.scanner.feature</module>
 </modules>
 <repositories>
   <repository>

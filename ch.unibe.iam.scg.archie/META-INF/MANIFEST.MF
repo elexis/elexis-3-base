@@ -18,6 +18,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.unibe.iam.scg.archie.ArchieActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: ch.unibe.iam.scg.archie.annotations,
+ ch.unibe.iam.scg.archie.export,
  ch.unibe.iam.scg.archie.model,
  ch.unibe.iam.scg.archie.ui,
  ch.unibe.iam.scg.archie.ui.widgets,

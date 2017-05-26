@@ -95,7 +95,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	public static final String ID = Constants.ID;
 
 	private static Logger log = LoggerFactory.getLogger(JournalView.class);
-	private static Patient actPatient = null;
 	private static Konsultation actKons = null;
 	private static boolean removedStaleKonsLocks = false;
 
@@ -333,7 +332,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				logEvent(newKons, "eeli_kons " + msg + " SAVE_KONS");
 				// updateAllKonsAreas(actKons, KonsActions.SAVE_KONS);
 				Patient newPatient = newKons.getFall().getPatient();
-				if (newPatient != actPatient) {
+				if (newPatient != actKons.getFall().getPatient()) {
 					displaySelectedPatient(newPatient, "eeli_kons newPatient");
 				}
 				logEvent(newKons, "eeli_kons " + msg + " ACTIVATE_KONS");
@@ -358,7 +357,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private void displaySelectedPatient(Patient selectedPatient, String why){
 		if (selectedPatient == null) {
 			logEvent(null, why + " displaySelectedPatient " + "no patient");
-			actPatient = null;
 			updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
 			return;
 
@@ -498,7 +496,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void run(){
-				Helpers.exportToClipboard(actPatient, null); // TODO: selected problem
+				if (actKons != null) {
+					Helpers.exportToClipboard(actKons.getFall().getPatient(), null); // TODO: selected problem
+				}
 			}
 		};
 		exportToClipboardAction.setActionDefinitionId(Constants.EXPORT_CLIPBOARD_COMMAND);
@@ -512,9 +512,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void run(){
-				Email.openMailApplication("", // No default to address
-					null, Helpers.exportToClipboard(actPatient, null), // TODO: selected problem
-					null);
+				if (actKons != null) {
+					Email.openMailApplication("", // No default to address
+						null, Helpers.exportToClipboard(actKons.getFall().getPatient(), null), // TODO: selected problem
+						null);
+				}
 
 			}
 		};

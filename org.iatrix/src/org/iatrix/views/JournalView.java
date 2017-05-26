@@ -332,7 +332,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				logEvent(newKons, "eeli_kons " + msg + " SAVE_KONS");
 				// updateAllKonsAreas(actKons, KonsActions.SAVE_KONS);
 				Patient newPatient = newKons.getFall().getPatient();
-				if (newPatient != actKons.getFall().getPatient()) {
+				if (actKons != null && !newPatient.getId().equals(actKons.getFall().getPatient().getId())) {
 					displaySelectedPatient(newPatient, "eeli_kons newPatient");
 				}
 				logEvent(newKons, "eeli_kons " + msg + " ACTIVATE_KONS");
@@ -413,8 +413,12 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void runInUi(ElexisEvent ev){
-				displaySelectedPatient((Patient) ev.getObject(), "eeli_pat " + ev.getType());
-				// setPatient((Patient) ev.getObject());
+				Patient newPat = (Patient) ev.getObject();
+				if (actKons != null && !actKons.getFall().getPatient().getId().equals(newPat.getId()))
+				{
+					updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
+					displaySelectedPatient(newPat, "eeli_pat " + ev.getType());
+				}
 			}
 		};
 
@@ -600,21 +604,18 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + newKons.getFall().getPatient().getPersonalia();
 				logEvent(newKons, "visible true " + msg);
 				updateAllKonsAreas(newKons, KonsActions.ACTIVATE_KONS);
-
 			} else
 			{
 				logEvent(newKons, "visible true newKons is null");
 				displaySelectedPatient(ElexisEventDispatcher.getSelectedPatient(), "view visible");
 			}
+			visibleAllKonsAreas(mode);
 			heartbeat.enableListener(true);
 		} else {
 			heartbeat.enableListener(false);
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem,
 				eeli_pat, eeli_user);
-			// TODO: Braucht es diesen Aufruf wirklich?
-			updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
 		}
-		visibleAllKonsAreas(mode);
 	};
 
 	private static void logEvent(Konsultation kons, String msg){

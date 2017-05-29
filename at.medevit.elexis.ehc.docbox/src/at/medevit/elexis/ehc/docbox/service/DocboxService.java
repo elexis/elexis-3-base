@@ -377,22 +377,26 @@ public class DocboxService {
 		}
 	}
 
-	public static ByteArrayOutputStream getPrescriptionPdf(CdaCh document){
+	public static ByteArrayOutputStream getPrescriptionPdf(ByteArrayOutputStream cdaOutput){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		URL xslt = null;
 		xslt = DocboxService.class.getResource("/rsc/xsl/prescription.xsl");
 		
-		ByteArrayOutputStream documentXml = new ByteArrayOutputStream();
 		try {
-			CDAUtil.save(document.getDocRoot().getClinicalDocument(), documentXml);
-
-			generatePdf(documentXml, xslt.openStream(), out);
+			generatePdf(new ByteArrayInputStream(cdaOutput.toByteArray()), xslt.openStream(), out);
 		} catch (Exception e) {
 			logger.error("Could not create prescription PDF" + e);
 		}
 
 		return out;
+	}
+	
+	public static ByteArrayOutputStream getPrescriptionPdf(CdaCh cdaPrescription)
+		throws Exception{
+		ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream();
+		CDAUtil.save(cdaPrescription.getDocRoot().getClinicalDocument(), cdaOutput);
+		return getPrescriptionPdf(cdaOutput);
 	}
 	
 	public static String sendPrescription(InputStream xmlFile, InputStream pdfFile){
@@ -406,7 +410,7 @@ public class DocboxService {
 		return message;
 	}
 
-	private static void generatePdf(ByteArrayOutputStream documentXml, InputStream xslt,
+	private static void generatePdf(ByteArrayInputStream documentXml, InputStream xslt,
 		ByteArrayOutputStream pdf){
 
 		FopFactory fopFactory = FopFactory.newInstance();
@@ -422,7 +426,7 @@ public class DocboxService {
 			Transformer transformer = getTransformerForXSLT(xslt);
 			
 			// Setup input for XSLT transformation
-			Source src = new StreamSource(new ByteArrayInputStream(documentXml.toByteArray()));
+			Source src = new StreamSource(documentXml);
 			
 			// Resulting SAX events (the generated FO) must be piped through to
 			// FOP

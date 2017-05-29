@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.ehealth_connector.cda.ch.CdaCh;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.docbox.service.DocboxService;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -37,9 +38,21 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 		if (prescription != null) {
 			CdaCh cdaPrescription = null;
 			ByteArrayOutputStream pdfPrescription = null;
+			ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream();
 			try {
 				cdaPrescription = DocboxService.getPrescriptionDocument(prescription);
-				pdfPrescription = DocboxService.getPrescriptionPdf(cdaPrescription);
+				
+				try {
+					CDAUtil.save(cdaPrescription.getDocRoot().getClinicalDocument(), cdaOutput);
+				} catch (Exception ex) {
+					LoggerFactory.getLogger(getClass())
+						.error("Error creating InputStream for sending", ex);
+					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+						"Das Rezept konnte nicht erstellt werden. " + ex.getMessage());
+					return null;
+				}
+				
+				pdfPrescription = DocboxService.getPrescriptionPdf(cdaOutput);
 			} catch (IllegalStateException e) {
 				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 					"Das Rezept konnte nicht erstellt werden. " + e.getMessage());
@@ -47,14 +60,6 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 			}
 			if (cdaPrescription != null && pdfPrescription != null) {
 				// create InputStreams for sending ...
-				ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream();
-				try {
-					CDAUtil.save(cdaPrescription.getDocRoot().getClinicalDocument(), cdaOutput);
-				} catch (Exception ex) {
-					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-						"Das Rezept konnte nicht erstellt werden. " + ex.getMessage());
-					return null;
-				}
 				ByteArrayInputStream cdaInput = new ByteArrayInputStream(cdaOutput.toByteArray());
 
 				ByteArrayInputStream pdfInput =

@@ -290,20 +290,23 @@ public class XML44Printer {
 	}
 	
 	private Kontakt loadAddressee(String paymentMode){
+		
 		Kontakt addressee;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
+			// TP
 			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		} else {
-			addressee = fall.getGarant();
-		}
-		
-		Kontakt legalGuardian = pat.getLegalGuardian();
-		if ((addressee == null) || (!addressee.exists()) || legalGuardian != null) {
+		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
+			// TG
+			Kontakt legalGuardian = pat.getLegalGuardian();
+			
 			if (legalGuardian != null) {
 				addressee = legalGuardian;
 			} else {
 				addressee = pat;
 			}
+		}
+		else {
+			addressee = fall.getGarant();
 		}
 		addressee.getPostAnschrift(true); // damit sicher eine existiert
 		return addressee;

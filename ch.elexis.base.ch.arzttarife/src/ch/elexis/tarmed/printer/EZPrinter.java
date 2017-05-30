@@ -64,20 +64,21 @@ public class EZPrinter {
 	private Kontakt getAddressee(String paymentMode, Fall fall, Patient patient){
 		Kontakt addressee;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
+			// TP
 			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		} else {
-			addressee = fall.getGarant();
-		}
-		
-		Kontakt legalGuardian = patient.getLegalGuardian();
-		if ((addressee == null) || (!addressee.exists()) || legalGuardian != null) {
+		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
+			// TG
+			Kontakt legalGuardian = patient.getLegalGuardian();
+			
 			if (legalGuardian != null) {
 				addressee = legalGuardian;
 			} else {
 				addressee = patient;
 			}
+		} else {
+			addressee = fall.getGarant();
 		}
-		addressee.getPostAnschrift(true);
+		addressee.getPostAnschrift(true); // damit sicher eine existiert
 		return addressee;
 	}
 	

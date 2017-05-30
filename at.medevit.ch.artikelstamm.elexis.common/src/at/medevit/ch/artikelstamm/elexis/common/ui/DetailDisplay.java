@@ -83,7 +83,7 @@ public class DetailDisplay implements IDetailDisplay {
 			String atcLang = CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
 				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
 			
-			dc = new DetailComposite(parent, SWT.None, atcLang);
+			dc = new DetailComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL, atcLang);
 			
 			addLagerhaltungGroupToComposite(dc);
 			addAdditionalInformation(dc);

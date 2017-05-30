@@ -22,6 +22,7 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -42,10 +43,11 @@ import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.ui.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.ui.internal.DatabindingTextResizeConverter;
 import at.medevit.ch.artikelstamm.ui.internal.IntToStringConverterSelbstbehalt;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.controls.ArticleDefaultSignatureComposite;
 import ch.elexis.data.Artikel;
 
-public class DetailComposite extends Composite {
+public class DetailComposite extends ScrolledComposite {
 	private DataBindingContext m_bindingContext;
 	
 	private WritableValue item = new WritableValue(null, IArtikelstammItem.class);
@@ -74,14 +76,19 @@ public class DetailComposite extends Composite {
 	private Button btnUserDefinedPrice;
 	private Group grpDefaultSignature;
 	private ArticleDefaultSignatureComposite adsc;
+	private Composite mainComposite;
 	
 	public DetailComposite(Composite parent, int style, String atcCodeLanguage){
 		super(parent, style);
 		setLayout(new GridLayout(1, false));
+		setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		
+		mainComposite = new Composite(this, SWT.NONE);
+		mainComposite.setLayout(new GridLayout(1, false));
 		
 		DetailComposite.prefAtcLanguage = atcCodeLanguage;
 		
-		Composite headerComposite = new Composite(this, SWT.NONE);
+		Composite headerComposite = new Composite(mainComposite, SWT.NONE);
 		headerComposite.setLayout(new GridLayout(4, false));
 		headerComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
@@ -116,7 +123,7 @@ public class DetailComposite extends Composite {
 		new Label(headerComposite, SWT.NONE);
 		new Label(headerComposite, SWT.NONE);
 		
-		Group grpPackungsgroessenPreise = new Group(this, SWT.NONE);
+		Group grpPackungsgroessenPreise = new Group(mainComposite, SWT.NONE);
 		grpPackungsgroessenPreise.setText("Preis");
 		grpPackungsgroessenPreise.setLayout(new GridLayout(7, false));
 		grpPackungsgroessenPreise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1,
@@ -162,7 +169,7 @@ public class DetailComposite extends Composite {
 			}
 		});
 		
-		Group grepATCCode = new Group(this, SWT.NONE);
+		Group grepATCCode = new Group(mainComposite, SWT.NONE);
 		grepATCCode.setLayout(new GridLayout(1, false));
 		grepATCCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grepATCCode.setText("ATC-Code");
@@ -173,7 +180,7 @@ public class DetailComposite extends Composite {
 		treeATC.setLayoutData(gd_treeATC);
 		treeATC.setBackground(parent.getBackground());
 		
-		Group grpMarker = new Group(this, SWT.None);
+		Group grpMarker = new Group(mainComposite, SWT.None);
 		grpMarker.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpMarker.setText("Marker");
 		grpMarker.setLayout(new GridLayout(2, false));
@@ -186,7 +193,7 @@ public class DetailComposite extends Composite {
 			.setToolTipText("Artikel wird in Liste pharmazeutischer Präparate mit spezieller Verwendung (LPPV) geführt");
 		btnLPPVEntry.setText("LPPV Eintrag");
 		
-		Group grpLimitations = new Group(this, SWT.None);
+		Group grpLimitations = new Group(mainComposite, SWT.None);
 		grpLimitations.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpLimitations.setText("Einschränkungen");
 		grpLimitations.setLayout(new GridLayout(2, false));
@@ -209,7 +216,7 @@ public class DetailComposite extends Composite {
 		txtLIMITATIONTEXT.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtLIMITATIONTEXT.setBackground(grpLimitations.getBackground());
 		
-		Group grpHersteller = new Group(this, SWT.NONE);
+		Group grpHersteller = new Group(mainComposite, SWT.NONE);
 		grpHersteller.setLayout(new GridLayout(1, false));
 		grpHersteller.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpHersteller.setText("Hersteller");
@@ -217,7 +224,7 @@ public class DetailComposite extends Composite {
 		lblHERSTELLER = new Label(grpHersteller, SWT.NONE);
 		lblHERSTELLER.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-		grpDefaultSignature = new Group(this, SWT.NONE);
+		grpDefaultSignature = new Group(mainComposite, SWT.NONE);
 		grpDefaultSignature.setLayout(new GridLayout(1, false));
 		grpDefaultSignature.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpDefaultSignature.setText("Standard Signatur");
@@ -229,6 +236,13 @@ public class DetailComposite extends Composite {
 		m_bindingContext = initDataBindings();
 		adsc.initDataBindings(m_bindingContext);
 		adsc.setAutoSave(true);
+		
+		this.setContent(mainComposite);
+		this.setExpandHorizontal(true);
+		this.setExpandVertical(true);
+		
+		this.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		this.layout(true, true);
 	}
 
 	@Override
@@ -281,6 +295,9 @@ public class DetailComposite extends Composite {
 			TreeItem root = new TreeItem(treeATC, SWT.None);
 			root.setText(obj.getATCCode());
 		}
+		
+		this.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		this.layout(true, true);
 	}
 	
 	protected DataBindingContext initDataBindings(){

@@ -244,6 +244,10 @@ public class DetailComposite extends ScrolledComposite {
 		this.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		this.layout(true, true);
 	}
+	
+	public Composite getMainComposite(){
+		return mainComposite;
+	}
 
 	@Override
 	protected void checkSubclass(){

@@ -99,6 +99,7 @@ public class KonsText implements IJournalArea {
 			String provider = x.connect(text);
 			hXrefs.put(provider, x);
 		}
+		text.setXrefHandlers(hXrefs);
 		@SuppressWarnings("unchecked")
 		List<IKonsMakro> makros = Extensions.getClasses(
 			Extensions.getExtensions(ExtensionPointConstantsUi.KONSEXTENSION), "KonsMakro", false); //$NON-NLS-1$

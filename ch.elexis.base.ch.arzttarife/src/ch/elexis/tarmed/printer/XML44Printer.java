@@ -355,9 +355,53 @@ public class XML44Printer {
 			
 			text.replace("\\[F44.Datum\\]", gesetzDatum);
 			text.replace("\\[F44.Nummer\\]", gesetzNummer);
+			
+			text.replace("\\[F44.FDatum\\]", getFDatum(body, fall));
+			text.replace("\\[F44.FNummer\\]", getFNummer(body, fall));
+			
 			text.replace("\\[F44.ZSRNIF\\]", gesetzZSRNIF);
 			text.replace("\\[F44.VEKANr\\]", vekaNumber);
 		}
+	}
+	
+	private String getFDatum(BodyType body, Fall fall){
+		if (body.getUvg() != null) {
+			String ret = fall.getInfoString("Unfalldatum");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+		}
+		if (body.getIvg() != null) {
+			String ret = fall.getInfoString("Verfügungsdatum");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+		}
+		return fall.getBeginnDatum();
+	}
+	
+	private String getFNummer(BodyType body, Fall fall){
+		if (body.getUvg() != null) {
+			String ret = fall.getInfoString("Unfall-Nr.");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+			ret = fall.getInfoString("Unfallnummer");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+		}
+		if (body.getIvg() != null) {
+			String ret = fall.getInfoString("Verfügungs-Nr.");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+			ret = fall.getInfoString("Verfügungsnummer");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+		}
+		return fall.getFallNummer();
 	}
 	
 	private void addRemarks(final String remark){

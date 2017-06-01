@@ -103,7 +103,7 @@ public class DetailDisplay implements IDetailDisplay {
 	}
 	
 	private void addDataSetStateLabelToComposite(DetailComposite dc){
-		Composite ret = new Composite(dc, SWT.None);
+		Composite ret = new Composite(dc.getMainComposite(), SWT.None);
 		ret.setLayout(new GridLayout(2, false));
 		ret.setLayoutData(new GridData(SWT.FILL, SWT.VERTICAL, true, false));
 		
@@ -168,7 +168,7 @@ public class DetailDisplay implements IDetailDisplay {
 	private void addLagerhaltungGroupToComposite(final DetailComposite dc){
 		DataBindingContext bindingContext = new DataBindingContext();
 		
-		Group grpLagerhaltung = new Group(dc, SWT.NONE);
+		Group grpLagerhaltung = new Group(dc.getMainComposite(), SWT.NONE);
 		grpLagerhaltung.setText("Lagerhaltung");
 		grpLagerhaltung.setLayout(new GridLayout(4, false));
 		grpLagerhaltung.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));

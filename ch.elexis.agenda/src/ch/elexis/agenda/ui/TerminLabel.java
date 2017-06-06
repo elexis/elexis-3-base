@@ -115,7 +115,9 @@ public class TerminLabel extends Composite {
 						}
 					}
 				});
-				refresh();
+				if (!TerminLabel.this.isDisposed()) {
+					refresh();
+				}
 			}
 			
 			@Override

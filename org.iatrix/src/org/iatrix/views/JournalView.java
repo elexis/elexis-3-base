@@ -253,7 +253,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// It is a bad idea to skip updating the kons, when the Id matches
 		// Some changes, e.g. when date of actual kons are possible even when the compare matches.
 		// Therefore we return only when we have nothing to update savedKonst == newKons?" + newId + " konsId match? " + savedKonsId.equals(newId));
-		logEvent(newKons, "updateAllKonsAreas: newKons");
+		logEvent(newKons, "updateAllKonsAreas: newKons op is " + op);
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
@@ -340,7 +340,15 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			} else {
 				// Or we would simply forget to update it after
 				// add items via a konsText makro
-				konsVerrechnung.setKons(newKons, KonsActions.ACTIVATE_KONS);
+				if ( ev.getType() == EVENT_RELOAD) {
+					updateAllKonsAreas(newKons, KonsActions.EVENT_RELOAD);
+				}
+				if ( ev.getType() == EVENT_UPDATE) {
+					updateAllKonsAreas(newKons, KonsActions.EVENT_UPDATE);
+				}
+				if ( ev.getType() == EVENT_SELECTED) {
+					updateAllKonsAreas(newKons, KonsActions.EVENT_SELECTED);
+				}
 			}
 			actKons = newKons;
 		}

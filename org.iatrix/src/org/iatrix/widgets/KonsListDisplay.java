@@ -33,6 +33,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.iatrix.Iatrix;
+import org.iatrix.util.Helpers;
 import org.iatrix.widgets.KonsListComposite.KonsData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -252,17 +253,19 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
-		log.debug("setKons " + (newKons != null ? newKons.getId() + " " + newKons.getLabel() + " " + newKons.getLabel() : "null" ));
-		actKons = newKons;
-		if (newKons == null) {
-			reload(false, null);
-		} else {
-			dataLoader.cancel();
-			reload(true, null);
-			dataLoader.setKons(newKons, showAllCharges, showAllConsultations);
-			dataLoader.schedule();
+		if (!Helpers.twoKonsEqual(newKons, actKons)) {
+			log.debug("setKons " + (newKons != null ? newKons.getId() + " " + newKons.getLabel() + " " + newKons.getLabel() : "null" ));
+			actKons = newKons;
+			if (newKons == null) {
+				reload(false, null);
+			} else {
+				dataLoader.cancel();
+				reload(true, null);
+				dataLoader.setKons(newKons, showAllCharges, showAllConsultations);
+				dataLoader.schedule();
+			}
+			konsListComposite.refeshHyperLinks(actKons);
 		}
-		konsListComposite.refeshHyperLinks(actKons);
 	}
 
 	@Override

@@ -115,7 +115,6 @@ public class TerminLabel extends Composite {
 						}
 					}
 				});
-				refresh();
 			}
 			
 			@Override

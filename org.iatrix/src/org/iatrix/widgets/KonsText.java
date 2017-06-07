@@ -22,16 +22,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -77,7 +71,6 @@ public class KonsText implements IJournalArea {
 	private Action versionFwdAction;
 	private Action versionBackAction;
 	private static final String PATIENT_KEY = "org.iatrix.patient";
-	private boolean konsEditorHasFocus = false;
 	private final FormToolkit tk;
 	private Composite parent;
 	private Hashtable<String, IKonsExtension> hXrefs;
@@ -115,37 +108,9 @@ public class KonsText implements IJournalArea {
 				logEvent("widgetDisposed removeKonsTextLock");
 				updateEintrag();
 				removeKonsTextLock();
-				konsEditorHasFocus = false;
 			}
 
 		});
-		text.getControl().addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e){
-				logEvent("focusGained");
-				konsEditorHasFocus = true;
-			}
-
-			@Override
-			public void focusLost(FocusEvent e){
-				logEvent("focusLost updateEintrag");
-				updateEintrag();
-				konsEditorHasFocus = false;
-			}
-		});
-		Control control = text.getControl();
-		if (control instanceof StyledText) {
-			StyledText styledText = (StyledText) control;
-
-			styledText.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyReleased(KeyEvent e){
-					// create new consultation if required
-//					handleInitialKonsText();
-				}
-			});
-		}
-
 		tk.adapt(text);
 
 		lVersion = tk.createLabel(konsultationTextComposite, "<aktuell>");
@@ -184,20 +149,17 @@ public class KonsText implements IJournalArea {
 				return;
 			}
 			if (text.isDirty() || textChanged()) {
-				logEvent("updateEintrag " + actKons.getId());
+				logEvent("updateEintrag " + actKons.getId() + " dirty " + text.isDirty() + " changed " + textChanged());
 				if (hasKonsTextLock()) {
-					actKons.updateEintrag(text.getContentsAsXML(), false);
-					int new_version = actKons.getHeadVersion();
-					logEvent("updateEintrag saved rev. " + new_version + " "
-						+ text.getContentsPlaintext());
-					text.setDirty(false);
-
-					// update kons version label
-					// (we would get an objectChanged event, but this event isn't processed
-					// in case the kons text field has the focus.)
-					updateKonsVersionLabel();
-					JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
-//					ElexisEventDispatcher.fireSelectionEvent(actKons);
+					if (!actKons.isEditable(false)) {
+						logEvent("updateEintrag actKons is NOT editable!!!!. Skipping");
+					} else  {
+						actKons.updateEintrag(text.getContentsAsXML(), false);
+						int new_version = actKons.getHeadVersion();
+						logEvent("updateEintrag saved rev. " + new_version + " "
+								+ text.getContentsPlaintext());
+						text.setDirty(false);
+					}
 				} else {
 					// should never happen...
 					if (konsTextLock == null) {
@@ -549,15 +511,18 @@ public class KonsText implements IJournalArea {
 
 	@Override
 	public synchronized void activation(boolean mode){
+		logEvent("activation: " + mode);
+		if (!mode) {
+			updateEintrag();
+		}
 	}
 
 	public synchronized void registerUpdateHeartbeat(){
 		Heartbeat heat = Heartbeat.getInstance();
 		heat.addListener(new IatrixHeartListener() {
-			private int konsTextSaverPeriod;
-
 			@Override
 			public void heartbeat(){
+				int konsTextSaverPeriod = Heartbeat.getKonsTextSaverPeriod();
 				logEvent("Period: " + konsTextSaverPeriod);
 				if (!(konsTextSaverPeriod > 0)) {
 					// auto-save disabled
@@ -570,13 +535,10 @@ public class KonsText implements IJournalArea {
 				konsTextSaverCount++;
 				konsTextSaverCount %= konsTextSaverPeriod;
 
-				logEvent("konsTextSaverCount = " + konsTextSaverCount + " konsEditorHasFocus: "
-					+ konsEditorHasFocus);
+				logEvent("konsTextSaverCount = " + konsTextSaverCount);
 				if (konsTextSaverCount == 0) {
-					if (konsEditorHasFocus) {
-						logEvent("Auto Save Kons Text");
-						updateEintrag();
-					}
+					logEvent("Auto Save Kons Text");
+					updateEintrag();
 				}
 			}
 		});

@@ -41,7 +41,7 @@ public class Heartbeat implements HeartListener {
 	private static Heartbeat theHeartbeat;
 
 	private Heartbeat(){
-		iatrixListener = new CopyOnWriteArrayList<IatrixHeartListener>();
+		iatrixListener = new CopyOnWriteArrayList<>();
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class Heartbeat implements HeartListener {
 	 * @return the calculated period interval, or 1 if there are invalid configuration values, or 0
 	 *         if autos-save is disabled
 	 */
-	public int getKonsTextSaverPeriod(){
+	public static int getKonsTextSaverPeriod(){
 		int timePeriod =
 			CoreHub.userCfg.get(Iatrix.CFG_AUTO_SAVE_PERIOD, Iatrix.CFG_AUTO_SAVE_PERIOD_DEFAULT);
 		if (timePeriod == 0) {

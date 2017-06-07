@@ -42,6 +42,9 @@ public interface IJournalArea {
 
 	public enum KonsActions {
 		ACTIVATE_KONS,
+		EVENT_UPDATE,
+		EVENT_RELOAD,
+		EVENT_SELECTED,
 		SAVE_KONS
 	}
 	/**

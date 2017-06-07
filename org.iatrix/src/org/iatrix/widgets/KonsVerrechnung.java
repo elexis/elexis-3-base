@@ -613,7 +613,7 @@ public class KonsVerrechnung implements IJournalArea {
 
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
-		if (KonsActions.ACTIVATE_KONS == op) {
+		if (KonsActions.ACTIVATE_KONS == op || KonsActions.EVENT_UPDATE  == op) {
 			actKons = newKons;
 			updateKonsultation(false);
 			verrechnungViewer.refresh();

@@ -101,7 +101,6 @@ public class TerminLabel extends Composite {
 				} else {
 					new TerminDialog(getTermin()).open();
 				}
-				refresh();
 			}
 			
 			@Override

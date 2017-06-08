@@ -58,7 +58,15 @@ public class AddLabInboxElement implements Runnable {
 		if (doctor == null) {
 			if (assignedMandant == null) {
 				// if stammarzt and assigned contact is null use active mandant
-				assignedMandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+				try {
+					Thread.sleep(1500);
+					assignedMandant = loadAssignedMandant();
+				} catch (InterruptedException e) {
+					/* ignore */
+				}
+				if (assignedMandant == null) {
+					assignedMandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+				}
 			}
 		} else {
 			// stammarzt is defined

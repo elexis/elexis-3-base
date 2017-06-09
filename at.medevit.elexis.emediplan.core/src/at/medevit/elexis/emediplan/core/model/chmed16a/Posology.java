@@ -38,6 +38,7 @@ public class Posology {
 		ArrayList<Float> floats = Prescription.getDoseAsFloats(prescription.getDosis());
 		if (floats != null && !floats.isEmpty()) {
 			posology.TT = TakingTime.fromFloats(floats, prescription.isReserveMedication());
+			posology.D = floats;
 		}
 		ret.add(posology);
 		return ret;

@@ -40,6 +40,9 @@ public class Medicament {
 	public transient String dateTo;
 	public transient boolean exists;
 	
+	public static final String FREETEXT_PREFIX = "[Dosis: ";
+	public static final String FREETEXT_POSTFIX = "]";
+	
 	public static List<Medicament> fromPrescriptions(List<Prescription> prescriptions){
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			List<Medicament> ret = new ArrayList<>();
@@ -47,15 +50,39 @@ public class Medicament {
 				Medicament medicament = new Medicament();
 				medicament.Unit = "";
 				medicament.AutoMed = 0;
+				medicament.AppInstr = prescription.getBemerkung();
+				medicament.TkgRsn = prescription.getDisposalComment();
 				Artikel article = prescription.getArtikel();
 				medicament.IdType = getIdType(article);
 				medicament.Id = getId(article);
 				medicament.Pos = Posology.fromPrescription(prescription);
+				
+				// check if it has freetext dosis
+				if (medicament.Pos != null && !medicament.Pos.isEmpty()
+					&& (medicament.Pos.get(0).D == null || medicament.Pos.get(0).D.isEmpty())) {
+					String freeTextDosis = getDosageAsFreeText(prescription.getDosis());
+					if (freeTextDosis != null) {
+						medicament.AppInstr += (FREETEXT_PREFIX + freeTextDosis + FREETEXT_POSTFIX);
+					}
+				}
+				
 				String prescriptorId = prescription.get(Prescription.FLD_PRESCRIPTOR);
 				medicament.PrscBy = getPrescriptorEAN(prescriptorId);
 				ret.add(medicament);
 			}
 			return ret;
+		}
+		return null;
+	}
+	
+	private static String getDosageAsFreeText(String dosis){
+		if (dosis != null && !dosis.isEmpty()) {
+			String[] signature = Prescription.getSignatureAsStringArray(dosis);
+			boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty()
+				&& signature[2].isEmpty() && signature[3].isEmpty();
+			if (isFreetext) {
+				return signature[0];
+			}
 		}
 		return null;
 	}

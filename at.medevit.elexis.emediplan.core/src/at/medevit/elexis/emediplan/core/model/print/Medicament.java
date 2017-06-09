@@ -60,6 +60,7 @@ public class Medicament {
 		ret.endDate = prescription.getEndDate();
 		
 		ret.remarks = prescription.getBemerkung();
+		ret.reason = prescription.getDisposalComment();
 		
 		String prescriptorId = prescription.get(Prescription.FLD_PRESCRIPTOR);
 		ret.prescriptor = getPrescriptorLabel(prescriptorId);

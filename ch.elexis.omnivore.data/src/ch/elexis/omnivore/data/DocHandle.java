@@ -911,6 +911,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			setBinary(FLD_DOC, null);
 		} catch (IOException ios) {
 			ExHandler.handle(ios);
+			log.warn("Exporting dochandle [{}] to filesystem fails.", getId(), ios);
 			SWTHelper.showError(Messages.DocHandle_writeErrorCaption2,
 				Messages.DocHandle_writeErrorCaption2, ios.getMessage());
 			return false;

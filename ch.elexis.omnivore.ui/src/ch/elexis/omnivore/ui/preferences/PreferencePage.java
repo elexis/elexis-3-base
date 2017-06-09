@@ -20,6 +20,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,6 +39,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import static ch.elexis.omnivore.PreferenceConstants.*;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.omnivore.data.Preferences;
+import ch.elexis.omnivore.ui.jobs.OutsourceUiJob;
 
 //FIXME: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.
 //FIXME: We want a layout that will use all the available space, auto re-size input fields etc., have nested elements, and still NOT result in "dialog has invalid data" error messages.
@@ -103,12 +106,23 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	
 	private Button btnSaveColumnWidths;
 	private Button btnSaveSortDirection;
+	private Button outsource;
+	
+	boolean storeFs = Preferences.storeInFilesystem();
+	boolean basePathSet = false;
 	
 	public PreferencePage(){
 		super(GRID);
 		
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 		setDescription(Messages.Preferences_omnivore);
+		
+		String basePath = Preferences.getBasepath();
+		if (basePath != null) {
+			if (basePath.length() > 0) {
+				basePathSet = true;
+			}
+		}
 	}
 	
 	@Override
@@ -186,6 +200,19 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		Preferences.getBasepath();
 		dfStorePath.setEmptyStringAllowed(true);
 		addField(dfStorePath);
+		
+		Label label = new Label(gAllOmnivorePrefs, SWT.NONE);
+		label.setText("Datenbankeinträge auf Filesystem auslagern");
+		outsource = new Button(gAllOmnivorePrefs, SWT.PUSH);
+		outsource.setText("Auslagern");
+		outsource.setEnabled(false);
+		outsource.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				OutsourceUiJob job = new OutsourceUiJob();
+				job.execute(getShell());
+			}
+		});
 		
 		Group gPathForMaxChars = new Group(gGeneralOptions, SWT.NONE);
 		gPathForMaxChars.setLayout(new FillLayout());
@@ -328,6 +355,15 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 					PREFERENCE_cotf_parameters_messages[2], 10, gCotfRule));
 			}
 		}
+		
+		enableOutsourceButton();
+	}
+	
+	private void enableOutsourceButton(){
+		if (storeFs && basePathSet)
+			outsource.setEnabled(true);
+		else
+			outsource.setEnabled(false);
 	}
 	
 	private void updateFSSettingsStore(){

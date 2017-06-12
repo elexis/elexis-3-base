@@ -323,6 +323,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 				}
 			}
 			toAdd.dosis = buf.toString();
+			transformAppInstrToFreeTextDosage(toAdd);
 			toAdd.dateFrom = pos.DtFrom;
 			toAdd.dateTo = pos.DtTo;
 		}
@@ -334,6 +335,19 @@ public class EMediplanServiceImpl implements EMediplanService {
 			toAdd.exists = true;
 		}
 		medicaments.add(toAdd);
+	}
+
+	private void transformAppInstrToFreeTextDosage(Medicament toAdd){
+		if (toAdd.dosis.isEmpty() && toAdd.AppInstr != null) {
+			String[] split = toAdd.AppInstr.split("\\" + Medicament.FREETEXT_PREFIX);
+			if (split.length > 1) {
+				toAdd.AppInstr = split[0];
+				int idx = split[1].lastIndexOf(Medicament.FREETEXT_POSTFIX);
+				if (idx > 0) {
+					toAdd.dosis = split[1].substring(0, idx);
+				}
+			}
+		}
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public class Patient {
 		ret.LName = elexisPatient.getName();
 		String dob = elexisPatient.getGeburtsdatum();
 		if (dob != null && !dob.isEmpty()) {
-			ret.BDt = new TimeTool().toString(TimeTool.DATE_ISO);
+			ret.BDt = new TimeTool(dob).toString(TimeTool.DATE_ISO);
 		}
 		ch.elexis.core.types.Gender gender = elexisPatient.getGender();
 		switch (gender) {

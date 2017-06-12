@@ -52,21 +52,13 @@ public class AddLabInboxElement implements Runnable {
 		
 		Patient patient = labResult.getPatient();
 		Kontakt doctor = labResult.getPatient().getStammarzt();
-		Mandant assignedMandant = loadAssignedMandant();
+		Mandant assignedMandant = loadAssignedMandant(true);
 		
 		// patient has NO stammarzt 
 		if (doctor == null) {
 			if (assignedMandant == null) {
 				// if stammarzt and assigned contact is null use active mandant
-				try {
-					Thread.sleep(1500);
-					assignedMandant = loadAssignedMandant();
-				} catch (InterruptedException e) {
-					/* ignore */
-				}
-				if (assignedMandant == null) {
-					assignedMandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-				}
+				assignedMandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 			}
 		} else {
 			// stammarzt is defined
@@ -83,13 +75,25 @@ public class AddLabInboxElement implements Runnable {
 		}
 	}
 	
-	private Mandant loadAssignedMandant(){
+	private Mandant loadAssignedMandant(boolean retry){
 		List<LabOrder> orders =
 			LabOrder.getLabOrders(labResult.getPatient(), null, null, labResult, null, null, null);
 		if (orders != null && !orders.isEmpty()) {
 			String mandantId = orders.get(0).get(LabOrder.FLD_MANDANT);
 			if (mandantId != null && !mandantId.isEmpty()) {
 				return Mandant.load(mandantId);
+			}
+		}
+		
+		// sometimes the mandant is persisted delayed from another thread - we have to try again to fetch the mandant id
+		if (retry)
+		{
+			try {
+				Thread.sleep(1500);
+				return loadAssignedMandant(false);
+			}
+			 catch (InterruptedException e) {
+				/* ignore */
 			}
 		}
 		return null;

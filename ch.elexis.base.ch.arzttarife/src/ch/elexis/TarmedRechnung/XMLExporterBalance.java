@@ -124,7 +124,8 @@ public class XMLExporterBalance {
 		balance.mDue.roundTo5();
 
 		element.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(balance.mDue));
-		element.setAttribute(ATTR_AMOUNT_OBLIGATIONS, XMLTool.moneyToXmlDouble(balance.mTotal));
+		element.setAttribute(ATTR_AMOUNT_OBLIGATIONS,
+			XMLTool.moneyToXmlDouble(services.getObligationsMoney()));
 		
 		Element vat = new Element(XMLExporter.ELEMENT_VAT, XMLExporter.nsinvoice);
 		

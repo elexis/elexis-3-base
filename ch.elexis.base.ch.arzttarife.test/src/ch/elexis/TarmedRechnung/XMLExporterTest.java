@@ -126,6 +126,40 @@ public class XMLExporterTest {
 	}
 	
 	@Test
+	public void doExportObligationTest() throws IOException{
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario.getRechnungen());
+		assertFalse(szenario.getRechnungen().isEmpty());
+		XMLExporter exporter = new XMLExporter();
+		List<Rechnung> rechnungen = szenario.getRechnungen();
+		for (Rechnung rechnung : rechnungen) {
+			Document result =
+				exporter.doExport(rechnung, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			assertNotNull(result);
+			if (rechnung.getStatus() == RnStatus.FEHLERHAFT) {
+				printFaildDocument(result);
+				fail();
+			}
+			// check if the amount_obligations amount of the balance element is correct
+			Element root = result.getRootElement();
+			Iterator<?> iter = root.getDescendants(new ElementFilter("balance"));
+			assertTrue(iter.hasNext());
+			while (iter.hasNext()) {
+				Element balance = (Element) iter.next();
+				Attribute amount = balance.getAttribute("amount");
+				Attribute obligations = balance.getAttribute("amount_obligations");
+				assertNotNull(amount);
+				assertNotNull(obligations);
+				Double amountDouble = Double.parseDouble(amount.getValue());
+				Double obligationsDouble = Double.parseDouble(obligations.getValue());
+				assertTrue(amountDouble > 0.0D);
+				assertTrue(obligationsDouble > 0.0D);
+				assertTrue(amountDouble > obligationsDouble);
+			}
+		}
+	}
+	
+	@Test
 	public void doExportExisting4Test() throws IOException{
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
 		

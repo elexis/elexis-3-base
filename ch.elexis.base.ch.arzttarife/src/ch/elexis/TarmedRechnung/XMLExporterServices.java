@@ -94,6 +94,8 @@ public class XMLExporterServices {
 	private Money mPhysio;
 	private Money mMedikament;
 	
+	private Money mObligations;
+	
 	boolean initialized = false;
 	
 	public XMLExporterServices(Element services){
@@ -106,6 +108,8 @@ public class XMLExporterServices {
 		mMigel = new Money();
 		mPhysio = new Money();
 		mMedikament = new Money();
+		
+		mObligations = new Money();
 	}
 	
 	public Element getElement(){
@@ -194,6 +198,13 @@ public class XMLExporterServices {
 		return mMedikament;
 	}
 	
+	public Money getObligationsMoney(){
+		if (!initialized) {
+			initFromElement();
+		}
+		return mObligations;
+	}
+	
 	public void negateAll(){
 		@SuppressWarnings("unchecked")
 		List<Element> sr = servicesElement.getChildren();
@@ -228,6 +239,11 @@ public class XMLExporterServices {
 						mPhysio.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
 					} else if (element.getName().equals(ELEMENT_RECORD_OTHER)) {
 						mUebrige.addAmount(element.getAttributeValue(XMLExporter.ATTR_AMOUNT));
+					}
+					
+					String obligation = element.getAttributeValue(ATTR_OBLIGATION);
+					if (obligation != null && TARMED_TRUE.equals(obligation)) {
+						mObligations.addAmount(obligation);
 					}
 				} catch (ParseException e) {
 					logger.error("Error parsing services " + e);
@@ -361,8 +377,13 @@ public class XMLExporterServices {
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 22590 //$NON-NLS-1$
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 22620
 					
-					el.setAttribute(ATTR_OBLIGATION,
-						Boolean.toString(TarmedLeistung.isObligation(verrechnet)));
+					if (TarmedLeistung.isObligation(verrechnet)) {
+						el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
+						ret.mObligations.addMoney(mAmountLocal);
+					} else {
+						el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE); // 28630
+					}
+					
 					if (!bRFE) {
 						List<RFE> rfes = RFE.getRfeForKons(konsultation.getId());
 						if (rfes.size() > 0) {
@@ -394,6 +415,8 @@ public class XMLExporterServices {
 						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
+					ret.mObligations.addMoney(mAmountLocal);
+					
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					ret.mAnalysen.addMoney(mAmountLocal);
 				} else if (v instanceof LaborLeistung) {
@@ -412,6 +435,8 @@ public class XMLExporterServices {
 						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590 //$NON-NLS-1$
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
+					ret.mObligations.addMoney(mAmountLocal);
+					
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					ret.mAnalysen.addMoney(mAmountLocal);
 				} else if ("Medikamente".equals(v.getCodeSystemName()) //$NON-NLS-1$
@@ -455,6 +480,7 @@ public class XMLExporterServices {
 					String ckzl = art.getExt("Kassentyp"); // cf. MedikamentImporter#KASSENTYP
 					if (ckzl.equals("1")) {
 						el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
+						ret.mObligations.addMoney(mAmountLocal);
 					} else {
 						el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE);
 					}
@@ -482,6 +508,8 @@ public class XMLExporterServices {
 						XMLTool.moneyToXmlDouble(mAmountLocal));
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
+					ret.mObligations.addMoney(mAmountLocal);
+					
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
 					ret.mMigel.addMoney(mAmountLocal);
 				} else if (v instanceof PhysioLeistung) {
@@ -499,6 +527,8 @@ public class XMLExporterServices {
 						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
+					ret.mObligations.addMoney(mAmountLocal);
+					
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					// get EAN provider
 					String ean = TarmedRequirements.getEAN(konsultation.getMandant());
@@ -559,4 +589,5 @@ public class XMLExporterServices {
 		ret.initialized = true;
 		return ret;
 	}
+	
 }

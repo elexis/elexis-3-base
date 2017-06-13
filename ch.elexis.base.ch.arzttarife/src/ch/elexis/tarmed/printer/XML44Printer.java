@@ -297,12 +297,16 @@ public class XML44Printer {
 			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
 		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
 			// TG
-			Kontakt legalGuardian = pat.getLegalGuardian();
-			
-			if (legalGuardian != null) {
-				addressee = legalGuardian;
+			Kontakt invoiceReceiver = fall.getGarant();
+			if (invoiceReceiver.equals(pat)) {
+				Kontakt legalGuardian = pat.getLegalGuardian();
+				if (legalGuardian != null) {
+					addressee = legalGuardian;
+				} else {
+					addressee = pat;
+				}
 			} else {
-				addressee = pat;
+				addressee = invoiceReceiver;
 			}
 		}
 		else {

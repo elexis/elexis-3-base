@@ -68,12 +68,16 @@ public class EZPrinter {
 			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
 		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
 			// TG
-			Kontakt legalGuardian = patient.getLegalGuardian();
-			
-			if (legalGuardian != null) {
-				addressee = legalGuardian;
+			Kontakt invoiceReceiver = fall.getGarant();
+			if (invoiceReceiver.equals(patient)) {
+				Kontakt legalGuardian = patient.getLegalGuardian();
+				if (legalGuardian != null) {
+					addressee = legalGuardian;
+				} else {
+					addressee = patient;
+				}
 			} else {
-				addressee = patient;
+				addressee = invoiceReceiver;
 			}
 		} else {
 			addressee = fall.getGarant();

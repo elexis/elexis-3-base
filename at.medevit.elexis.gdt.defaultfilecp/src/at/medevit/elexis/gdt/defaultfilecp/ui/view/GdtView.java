@@ -1,6 +1,7 @@
 package at.medevit.elexis.gdt.defaultfilecp.ui.view;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -23,12 +24,27 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.data.GDTProtokoll;
 import at.medevit.elexis.gdt.defaultfilecp.FileCommPartner;
+import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 
 public class GdtView extends ViewPart {
+	
+	private Map<String, Button> mapExaminations = new HashMap<String, Button>();
+	private Composite composite;
+	
+	private final ElexisUiEventListenerImpl eeli_pat =
+		new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
+			
+			@Override
+			public void runInUi(ElexisEvent ev){
+				refreshLastExaminations();
+			}
+		};
 	
 	public GdtView(){
 		
@@ -40,7 +56,7 @@ public class GdtView extends ViewPart {
 		ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
-		Composite composite = new Composite(sc, SWT.NONE);
+		composite = new Composite(sc, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		
 		sc.setContent(composite);
@@ -51,10 +67,10 @@ public class GdtView extends ViewPart {
 		sc.setExpandVertical(true);
 		sc.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-
+	
 	private void createContents(Composite composite){
-		for (String id : FileCommPartner.getAllFileCommPartnersArray())
-		{
+		mapExaminations.clear();
+		for (String id : FileCommPartner.getAllFileCommPartnersArray()) {
 			FileCommPartner fileCommPartner = new FileCommPartner(id);
 			String fileCommPartnerName =
 				fileCommPartner.getSettings().get(fileCommPartner.getFileTransferName(), "");
@@ -71,11 +87,13 @@ public class GdtView extends ViewPart {
 			label.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY));
 			
 			label = new Label(content, SWT.NONE);
-			label.setText("Gerätename " + fileCommPartnerName);
+			label.setText("Gerät: " + fileCommPartnerName);
 			label.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			
 			Button btnNewExamination = new Button(content, SWT.PUSH);
-			btnNewExamination.setText("Neue Untersuchung anfordern");
+			btnNewExamination.setText("");
+			btnNewExamination.setImage(Images.IMG_SYSTEM_MONITOR.getImage());
+			btnNewExamination.setToolTipText("Neue Untersuchung anfordern");
 			btnNewExamination.setData(fileCommPartner.getId());
 			btnNewExamination.addSelectionListener(new SelectionAdapter() {
 				
@@ -83,8 +101,7 @@ public class GdtView extends ViewPart {
 				public void widgetSelected(SelectionEvent event){
 					if (ElexisEventDispatcher.getSelectedPatient() == null) {
 						openPatientNotSelectedDialog();
-					}
-					else {
+					} else {
 						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
 							.getService(ICommandService.class);
 						Command command = commandService
@@ -108,9 +125,11 @@ public class GdtView extends ViewPart {
 					
 				}
 			});
-				
+			
 			Button btnBaseDataRequest = new Button(content, SWT.PUSH);
-			btnBaseDataRequest.setText("Stammdaten übermitteln");
+			btnBaseDataRequest.setText("");
+			btnBaseDataRequest.setImage(Images.IMG_USER_IDLE.getImage());
+			btnBaseDataRequest.setToolTipText("Stammdaten übermitteln");
 			btnBaseDataRequest.setData(fileCommPartner.getId());
 			btnBaseDataRequest.addSelectionListener(new SelectionAdapter() {
 				
@@ -144,8 +163,16 @@ public class GdtView extends ViewPart {
 				}
 			});
 			
-			Button btnShowLastExamination = new Button(content, SWT.PUSH);
-			btnShowLastExamination.setText("Letzte Untersuchung anzeigen");
+			// tooltips are not shown for disabled buttons therefore we use a composite as wrapper with that tooltip
+			String lastExaminationToolTip = "Letzte Untersuchung anzeigen";
+			Composite lastExaminationComposite = new Composite(content, SWT.NONE);
+			lastExaminationComposite.setLayout(new GridLayout(1, false));
+			lastExaminationComposite.setToolTipText(lastExaminationToolTip);
+			
+			Button btnShowLastExamination = new Button(lastExaminationComposite, SWT.PUSH);
+			btnShowLastExamination.setText("");
+			btnShowLastExamination.setToolTipText(lastExaminationToolTip);
+			btnShowLastExamination.setImage(Images.IMG_EYE_WO_SHADOW.getImage());
 			btnShowLastExamination.setData(lastExaminationId);
 			btnShowLastExamination.setEnabled(lastExaminationId != null);
 			btnShowLastExamination.addSelectionListener(new SelectionAdapter() {
@@ -176,12 +203,15 @@ public class GdtView extends ViewPart {
 				
 			});
 			
+			if (id != null) {
+				mapExaminations.put(id, btnShowLastExamination);
+			}
+			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
 		}
 	}
 	
 	@Override
-	public void setFocus(){
-	}
+	public void setFocus(){}
 	
 	private String getLabel(FileCommPartner fileCommPartner){
 		return fileCommPartner.getSettings().get(fileCommPartner.getFileTransferName(), "") + " ("
@@ -191,8 +221,7 @@ public class GdtView extends ViewPart {
 	}
 	
 	private void openPatientNotSelectedDialog(){
-		MessageDialog.openError(getSite().getShell(), "Error",
-			"Kein Patient ausgewählt.");
+		MessageDialog.openError(getSite().getShell(), "Error", "Kein Patient ausgewählt.");
 	}
 	
 	public String getLastExaminationId(FileCommPartner fileCommPartner){
@@ -210,5 +239,28 @@ public class GdtView extends ViewPart {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
+	}
+	
+	private void refreshLastExaminations(){
+		if (mapExaminations != null) {
+			for (String id : mapExaminations.keySet()) {
+				Button btn = mapExaminations.get(id);
+				if (btn != null) {
+					String exId = getLastExaminationId(new FileCommPartner(id));
+					btn.setData(exId);
+					btn.setEnabled(exId != null);
+				}
+			}
+			
+			if (composite != null) {
+				composite.layout(true);
+			}
+		}
 	}
 }

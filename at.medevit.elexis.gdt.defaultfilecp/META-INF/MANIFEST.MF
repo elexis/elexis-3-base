@@ -11,3 +11,4 @@ Require-Bundle: at.medevit.elexis.gdt;bundle-version="1.0.3",
  ch.elexis.core.data,
  ch.elexis.core.ui,
  org.eclipse.core.runtime;bundle-version="3.8.0"
+Import-Package: ch.elexis.core.ui.icons

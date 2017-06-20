@@ -274,6 +274,7 @@
   <module>at.medevit.elexis.tarmed.model</module>
   <module>ch.elexis.barcode.scanner</module>
   <module>ch.elexis.barcode.scanner.feature</module>
+  <module>ch.elexis.ebanking</module>
 </modules>
 <repositories>
   <repository>

@@ -22,5 +22,7 @@ Export-Package: ch.elexis.base.ch.ebanking.esr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.base.ch.ebanking.Activator
-Import-Package: org.eclipse.core.databinding.observable.list,
+Import-Package: ch.elexis.ebanking.parser,
+ org.apache.commons.io,
+ org.eclipse.core.databinding.observable.list,
  org.slf4j;version="1.6.4"

@@ -13,7 +13,7 @@
     <repo_name>elexis.3.base</repo_name>
     <repo_variant>snapshot</repo_variant>
     <useBranch>master</useBranch>
-    <nonElexisP2variant>snapshot</nonElexisP2variant>
+    <nonElexisP2variant>${repo_variant}</nonElexisP2variant>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
   <packaging>pom</packaging>

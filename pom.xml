@@ -12,8 +12,7 @@
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <repo_name>elexis.3.base</repo_name>
     <repo_variant>snapshot</repo_variant>
-    <useBranch>master</useBranch>
-    <nonElexisP2variant>${repo_variant}</nonElexisP2variant>
+    <useBranch>3.2</useBranch>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
   <packaging>pom</packaging>
@@ -26,10 +25,6 @@
 					<value>prerelease</value>
 				</property>
 			</activation>
-			<properties>
-				<nonElexisP2variant>release</nonElexisP2variant>
-				<useBranch>release</useBranch>
-			</properties>
 		</profile>
 		<profile>
 			<id>release</id>
@@ -39,10 +34,6 @@
 					<value>release</value>
 				</property>
 			</activation>
-			<properties>
-				<nonElexisP2variant>release</nonElexisP2variant>
-				<useBranch>release</useBranch>
-			</properties>
 		</profile>
 		<!-- activate operating system dependent testing vm args -->
 		<profile>
@@ -281,19 +272,14 @@
     <url>http://download.elexis.info/elexis.3.core/${repo_variant}/</url>
     <layout>p2</layout>
   </repository>
-  <!--repository>
-<id>my_local_mirror</id>
-<url>file:///opt/mirror.4.elexis/target/repository/</url>
-<layout>p2</layout>
-</repository-->
   <repository>
-    <id>mirror.4.elexis.${repo_variant}</id>
-    <url>http://download.elexis.info/mirror.4.elexis/${nonElexisP2variant}/</url>
+    <id>mirror.4.elexis</id>
+    <url>http://download.elexis.info/mirror.4.elexis/${useBranch}/</url>
     <layout>p2</layout>
   </repository>
   <repository>
     <id>elexis.3.3rdparty.libraries</id>
-    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/${nonElexisP2variant}</url>
+    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/${useBranch}</url>
     <layout>p2</layout>
   </repository>
 </repositories>

@@ -534,9 +534,9 @@ public class XML44Printer {
 		}
 		
 		if (rec.isObligation()) {
-			sb.append("0\t"); //$NON-NLS-1$
-		} else {
 			sb.append("1\t"); //$NON-NLS-1$
+		} else {
+			sb.append("0\t"); //$NON-NLS-1$
 		}
 		
 		double amount = rec.getAmount();
@@ -599,9 +599,9 @@ public class XML44Printer {
 		}
 		
 		if (tarmed.isObligation()) {
-			sb.append("0\t"); //$NON-NLS-1$
-		} else {
 			sb.append("1\t"); //$NON-NLS-1$
+		} else {
+			sb.append("0\t"); //$NON-NLS-1$
 		}
 		
 		double amount = tarmed.getAmount();

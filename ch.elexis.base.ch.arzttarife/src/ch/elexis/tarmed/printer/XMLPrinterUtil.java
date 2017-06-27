@@ -58,9 +58,9 @@ public class XMLPrinterUtil {
 			if (scale == 0)
 				return 0;
 			else if (scale < 7)
-				return 2;
-			else
 				return 1;
+			else
+				return 2;
 		}
 		return 0;
 	}

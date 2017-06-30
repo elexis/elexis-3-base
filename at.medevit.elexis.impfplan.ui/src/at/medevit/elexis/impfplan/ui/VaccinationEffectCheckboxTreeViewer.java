@@ -2,6 +2,7 @@ package at.medevit.elexis.impfplan.ui;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateProvider;
@@ -49,8 +50,9 @@ public class VaccinationEffectCheckboxTreeViewer extends CheckboxTreeViewer
 	public String getCheckedElementsAsCommaSeparatedString(){
 		Object[] checkedElements = getCheckedElements();
 		List<Object> list = Arrays.asList(checkedElements);
-		return list.stream().map(o -> (DiseaseDefinition) o).map(o -> o.getATCCode())
-			.reduce((u, t) -> u + StringConstants.COMMA + t).get();
+		Optional<String> ret = list.stream().map(o -> (DiseaseDefinition) o)
+			.map(o -> o.getATCCode()).reduce((u, t) -> u + StringConstants.COMMA + t);
+		return ret.orElse("");
 	}
 	
 	private class DiseaseTreeContentProvider implements ITreeContentProvider {

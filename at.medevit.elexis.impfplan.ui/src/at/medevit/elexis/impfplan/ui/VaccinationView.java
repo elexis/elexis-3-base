@@ -212,6 +212,11 @@ public class VaccinationView extends ViewPart {
 		}
 		vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations,
 			new TimeTool(pat.getGeburtsdatum()));
+		// workaround for layout after patient changed
+		if (patientChanged) {
+			vaccinationComposite.update();
+			vaccinationComposite.redraw();
+		}
 	}
 	
 	public void sortVaccinationsByName(){

@@ -483,7 +483,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			userColWidth = ucw.split(",");
 		}
 		
-		for (int i = 0; i < treeColumns.length; i++) {
+		for (int i = 0; i < treeColumns.length && (i < userColWidth.length); i++) {
 			treeColumns[i].setWidth(Integer.parseInt(userColWidth[i]));
 		}
 	}

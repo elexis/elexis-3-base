@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -98,7 +99,9 @@ public class AgendaGross extends BaseAgendaView {
 	public void create(Composite parent){
 		parent.setLayout(new FillLayout());
 		
-		Composite ret = new Composite(parent, SWT.NONE);
+		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
+		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		Composite ret = new Composite(sash, SWT.NONE);
 		ret.setLayout(new FormLayout());
 		// Button tv=new Button(ret,SWT.PUSH);
 		cButtons = new Composite(ret, SWT.BORDER);
@@ -131,14 +134,14 @@ public class AgendaGross extends BaseAgendaView {
 		FormData fdTV = new FormData();
 		fdTV.left = new FormAttachment(0, 0);
 		fdTV.top = new FormAttachment(cButtons, 0);
-		fdTV.right = new FormAttachment(right, 4);
+		fdTV.right = new FormAttachment(100, 0);
 		fdTV.bottom = new FormAttachment(100, -4);
-		// fdTV.bottom=new FormAttachment(0,0);
 		tv.getControl().setLayoutData(fdTV);
 		
 		// fdRight.left=new FormAttachment(tv,5);
 		// fdRight.bottom=new FormAttachment(0,0);
 		
+		right.setParent(sash);
 		right.setLayout(new GridLayout());
 		cal = new DatePicker(right, SWT.NONE);
 		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));

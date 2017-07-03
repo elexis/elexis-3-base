@@ -33,7 +33,7 @@ public class XmlUtil {
 	public static boolean marshallFireReport(Report report, OutputStream outStream){
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Report.class);
-			Marshaller marshaller = initMarshaller(jaxbContext, "/rsc/fire_20141202.xsd");
+			Marshaller marshaller = initMarshaller(jaxbContext, "/rsc/fireDbDe_20170322.xsd");
 			marshaller.marshal(report, outStream);
 			return true;
 		} catch (JAXBException e) {

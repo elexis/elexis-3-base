@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.07.11 um 09:24:40 AM CEST 
+// Generiert: 2017.07.03 um 12:21:08 PM CEST 
 //
 
 
@@ -11,13 +11,16 @@ package ch.elexis.icpc.fire.model;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 
 /**
  * <p>Java-Klasse für tConsultation complex type.
@@ -66,6 +69,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;/element>
  *       &lt;/sequence>
  *       &lt;attribute name="date" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
+ *       &lt;attribute name="versNr" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" />
  *       &lt;attribute name="patId" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" />
  *       &lt;attribute name="docId" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" />
  *       &lt;attribute name="consType" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -89,17 +93,21 @@ public class TConsultation {
     protected TConsultation.Diagnoses diagnoses;
     protected TConsultation.Labors labors;
     protected TConsultation.Medis medis;
-    @XmlAttribute(name = "date")
+	@XmlAttribute(name = "date", required = true)
     @XmlSchemaType(name = "dateTime")
+	@XmlJavaTypeAdapter(DateAdapter.class)
     protected XMLGregorianCalendar date;
+    @XmlAttribute(name = "versNr")
+    @XmlSchemaType(name = "unsignedLong")
+    protected BigInteger versNr;
     @XmlAttribute(name = "patId")
     @XmlSchemaType(name = "unsignedLong")
     protected BigInteger patId;
     @XmlAttribute(name = "docId")
     @XmlSchemaType(name = "unsignedLong")
     protected BigInteger docId;
-    @XmlAttribute(name = "consType")
-    protected String consType;
+	@XmlAttribute(name = "consType", required = true)
+	protected String consType = "0";
 
     /**
      * Ruft den Wert der vital-Eigenschaft ab.
@@ -219,6 +227,30 @@ public class TConsultation {
      */
     public void setDate(XMLGregorianCalendar value) {
         this.date = value;
+    }
+
+    /**
+     * Ruft den Wert der versNr-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getVersNr() {
+        return versNr;
+    }
+
+    /**
+     * Legt den Wert der versNr-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setVersNr(BigInteger value) {
+        this.versNr = value;
     }
 
     /**

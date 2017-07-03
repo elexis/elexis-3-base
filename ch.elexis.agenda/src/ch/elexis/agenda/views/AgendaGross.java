@@ -25,10 +25,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -80,7 +76,6 @@ public class AgendaGross extends BaseAgendaView {
 	
 	DatePicker cal;
 	Composite cButtons;
-	Composite right;
 	Text dayMessage;
 	Text terminDetail;
 	Label lbDetails;
@@ -97,26 +92,17 @@ public class AgendaGross extends BaseAgendaView {
 	
 	@Override
 	public void create(Composite parent){
-		parent.setLayout(new FillLayout());
+		parent.setLayout(new GridLayout());
+		
+		cButtons = new Composite(parent, SWT.BORDER);
+		RowLayout rl = new RowLayout();
+		cButtons.setLayout(rl);
+		cButtons.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
+		sash.setLayout(new GridLayout());
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Composite ret = new Composite(sash, SWT.NONE);
-		ret.setLayout(new FormLayout());
-		// Button tv=new Button(ret,SWT.PUSH);
-		cButtons = new Composite(ret, SWT.BORDER);
-		cButtons.setLayout(new RowLayout());
-		FormData fdTop = new FormData();
-		fdTop.top = new FormAttachment(0, 3);
-		fdTop.left = new FormAttachment(0, 3);
-		fdTop.right = new FormAttachment(100, -3);
-		cButtons.setLayoutData(fdTop);
-		right = new Composite(ret, SWT.BORDER);
-		FormData fdRight = new FormData();
-		fdRight.right = new FormAttachment(100, -5);
-		fdRight.top = new FormAttachment(cButtons, 0);
-		fdRight.bottom = new FormAttachment(100, -5);
-		right.setLayoutData(fdRight);
+
 		String[] bereiche =
 			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
 				.split(","); //$NON-NLS-1$
@@ -130,19 +116,17 @@ public class AgendaGross extends BaseAgendaView {
 				bChange[i].setSelection(true);
 			}
 		}
-		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
-		FormData fdTV = new FormData();
-		fdTV.left = new FormAttachment(0, 0);
-		fdTV.top = new FormAttachment(cButtons, 0);
-		fdTV.right = new FormAttachment(100, 0);
-		fdTV.bottom = new FormAttachment(100, -4);
-		tv.getControl().setLayoutData(fdTV);
 		
-		// fdRight.left=new FormAttachment(tv,5);
-		// fdRight.bottom=new FormAttachment(0,0);
+		Composite ret = new Composite(sash, SWT.NONE);
+		Composite right = new Composite(sash, SWT.BORDER);
 		
-		right.setParent(sash);
+		ret.setLayout(new GridLayout());
 		right.setLayout(new GridLayout());
+		right.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		
+		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
+		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		
 		cal = new DatePicker(right, SWT.NONE);
 		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cal.setDate(agenda.getActDate().getTime());
@@ -185,10 +169,6 @@ public class AgendaGross extends BaseAgendaView {
 		lbDetails.setText("-"); //$NON-NLS-1$
 		lbDetails.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		lbDayString = new Label(ret, SWT.NONE);
-		FormData fdBottom = new FormData();
-		fdBottom.left = new FormAttachment(0, 0);
-		fdBottom.bottom = new FormAttachment(100, 0);
-		fdBottom.right = new FormAttachment(100, 0);
 		
 		tv.setLabelProvider(new AgendaLabelProvider());
 		Table table = tv.getTable();

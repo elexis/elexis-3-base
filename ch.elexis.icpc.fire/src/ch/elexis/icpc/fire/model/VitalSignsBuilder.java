@@ -28,18 +28,23 @@ public class VitalSignsBuilder {
 			xc.setPatient(consultation.getFall().getPatient());
 			TVital ret = config.getFactory().createTVital();
 			Optional<Float> bauchumfang = getBauchumfang();
-			bauchumfang.ifPresent(value -> ret.setBauchumfang(value));
 			Optional<Integer> bpDiast = getBpDiast();
-			bpDiast.ifPresent(value -> ret.setBpDiast(value));
 			Optional<Integer> bpSyst = getBpSyst();
-			bpSyst.ifPresent(value -> ret.setBpSyst(value));
 			Optional<Float> gewicht = getGewicht();
-			gewicht.ifPresent(value -> ret.setGewicht(value));
 			Optional<Float> groesse = getGroesse();
-			groesse.ifPresent(value -> ret.setGroesse(value));
 			Optional<Integer> puls = getPuls();
-			puls.ifPresent(value -> ret.setPuls(value));
-			return Optional.of(ret);
+			
+			if (bauchumfang.isPresent() || bpDiast.isPresent() || bpSyst.isPresent()
+				|| gewicht.isPresent() || groesse.isPresent() || puls.isPresent()) {
+				bauchumfang.ifPresent(value -> ret.setBauchumfang(value));
+				bpDiast.ifPresent(value -> ret.setBpDiast(value));
+				bpSyst.ifPresent(value -> ret.setBpSyst(value));
+				gewicht.ifPresent(value -> ret.setGewicht(value));
+				groesse.ifPresent(value -> ret.setGroesse(value));
+				puls.ifPresent(value -> ret.setPuls(value));
+				return Optional.of(ret);
+			}
+			
 		}
 		return Optional.empty();
 	}

@@ -13,12 +13,15 @@ public class DateAdapter extends XmlAdapter<String, XMLGregorianCalendar> {
 	
 	
 	//YYYY-MM-DDTHH:MM:SS
-	private final String DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss";
+	private final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 	
 	@Override
 	public String marshal(XMLGregorianCalendar calendar) throws Exception{
-		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-		return dateFormat.format(calendar.toGregorianCalendar().getTime());
+		if (calendar != null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+			return dateFormat.format(calendar.toGregorianCalendar().getTime());
+		}
+		return null;
 	}
 	
 	@Override

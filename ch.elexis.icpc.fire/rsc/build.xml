@@ -5,7 +5,7 @@
 			<arg value="../src-gen" />
 			<arg value="-p" />
 			<arg value="ch.elexis.icpc.fire.model" />
-			<arg value="fire_20141202.xsd" />
+			<arg value="fireDbDe_20170322.xsd" />
 		</java>
 	</target>
 </project>

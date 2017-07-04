@@ -2,19 +2,23 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.07.11 um 09:24:40 AM CEST 
+// Generiert: 2017.07.03 um 12:21:08 PM CEST 
 //
 
 
 package ch.elexis.icpc.fire.model;
 
 import java.math.BigInteger;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import ch.elexis.icpc.fire.model.jaxb.BooleanAdapter;
 
 
 /**
@@ -55,6 +59,7 @@ public class TPatient {
     @XmlSchemaType(name = "unsignedShort")
     protected Integer birthYear;
     @XmlAttribute(name = "gender")
+	@XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean gender;
     @XmlAttribute(name = "docId")
     @XmlSchemaType(name = "unsignedLong")

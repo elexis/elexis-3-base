@@ -88,7 +88,10 @@ public class MedisBuilder {
 					medis.getMedi().add(tMedi);
 				}
 			}
-			return Optional.of(medis);
+			if (!medis.getMedi().isEmpty()) {
+				return Optional.of(medis);
+			}
+			
 		}
 		return Optional.empty();
 	}

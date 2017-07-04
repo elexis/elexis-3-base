@@ -330,12 +330,12 @@
    <feature url="features/ch.elexis.stickynotes.feature_3.0.0.qualifier.jar" id="ch.elexis.stickynotes.feature" version="3.0.0.qualifier">
       <category name="organisation"/>
    </feature>
-   <feature url="features/de.fhdo.elexis.perspective.feature.source_3.0.0.qualifier.jar" id="de.fhdo.elexis.perspective.feature.source" version="3.0.0.qualifier">
+   <!-- TODO: feature url="features/de.fhdo.elexis.perspective.feature.source_3.0.0.qualifier.jar" id="de.fhdo.elexis.perspective.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
    <feature url="features/de.fhdo.elexis.perspective.feature_3.0.0.qualifier.jar" id="de.fhdo.elexis.perspective.feature" version="3.0.0.qualifier">
       <category name="divers"/>
-   </feature>
+   </feature -->
    <feature url="features/ch.elexis.support.dbshaker.feature.source_3.0.0.qualifier.jar" id="ch.elexis.support.dbshaker.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>

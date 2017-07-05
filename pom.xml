@@ -251,25 +251,14 @@
 <repositories>
   <repository>
     <id>elexis.3.target.${useBranch}</id>
-    <!--url>file:///opt/elexis-3/elexis-3-core/ch.elexis.target/prepare/REPO/</url  damit lief es-->
-    <url>https://download.elexis.info/elexis/p2/master/target</url>
+    <url>http://download.elexis.info/elexis/p2/master/target</url>
     <layout>p2</layout>
   </repository>
    <repository>
     <id>elexis.3.core.${useBranch}</id>
-    <url>https://download.elexis.info/elexis/p2/${useBranch}/elexis-3-core/repository/</url>
+    <url>http://download.elexis.info/elexis/p2/${useBranch}/elexis-3-core/repository/</url>
     <layout>p2</layout>
   </repository>
-  <!--repository>
-      <id>mirror.4.elexis.${useBranch}</id><!- - Gebraucht z.B. wegen org.junit - ->
-      <url>http://download.elexis.info/mirror.4.elexis/3.2/</url>
-     <layout>p2</layout>
-   </repository>
-  <repository>
-    <id>elexis.3.3rdparty.libraries</id> <!- - Gebraucht z.B. wegen  jfree.chart-swt - ->
-    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/3.1.0</url>
-    <layout>p2</layout>
-  </repository -->
 </repositories>
 <build>
   <plugins>

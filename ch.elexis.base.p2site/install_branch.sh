@@ -3,22 +3,29 @@
 set -e
 
 if [ -z "$GIT_BRANCH" ]; then
-  echo no GIT_BRANCH defined
+  echo no GIT_BRANCH (e.g. origin/master) defined
   exit 1
 fi
-PROJECT_NAME=`echo $GIT_BRANCH | cut -d '/' -f1`
+if [ -z "$1" ]; then
+  echo "Please pass the PROJECT_NAME as parameter"
+  exit 2
+fi
+PROJECT_NAME="$1"
 PROJECT_BRANCH=`echo $GIT_BRANCH | cut -d '/' -f2`
 
 if [ -z "$P2_ROOT" ]
 then
   export P2_ROOT=/home/jenkins/downloads/p2
 fi
+if [ -z "${PROJECT_BRANCH}" ]; then
+  echo "Could not determine the PROJECT_BRANCH"
+  exit 2
+fi
 if [ ! -d "$P2_ROOT" ]
 then
   echo P2_ROOT $P2_ROOT does not exit. Aborting
   exit 1
 fi
-
 
 TARGETDIRECTORY=${P2_ROOT}/${PROJECT_BRANCH}/${PROJECT_NAME}
 mkdir -p $TARGETDIRECTORY

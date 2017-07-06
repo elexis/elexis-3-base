@@ -36,7 +36,7 @@ echo $0: TARGETDIRECTORY is $TARGETDIRECTORY and PROJECT_BRANCH is $PROJECT_BRAN
 
 rm -rf ${TARGETDIRECTORY}
 mkdir -p  ${TARGETDIRECTORY}
-cp -rpu *p2site/target/repository ${TARGETDIRECTORY}
+cp -rpu *p2site/target/repository/* ${TARGETDIRECTORY}
 cp -rpvu *p2site/repo.properties ${TARGETDIRECTORY}/repo.version
 export title="Elexis-3-Base P2-repository ($PROJECT_BRANCH)"
 echo "Creating repository $TARGETDIRECTORY/index.html"
@@ -47,8 +47,8 @@ tee  ${TARGETDIRECTORY}/index.html <<EOF
   <body>
     <h1>$title</h1>
     <ul>
-      <li><a href="repository/plugins">plugins</a></li>
-      <li><a href="repository/features">features</a></li>
+      <li><a href="plugins">plugins</a></li>
+      <li><a href="features">features</a></li>
     </ul>
     </p>
     <p>Installed `date`

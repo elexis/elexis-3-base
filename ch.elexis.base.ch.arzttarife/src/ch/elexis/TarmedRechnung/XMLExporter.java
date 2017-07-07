@@ -533,9 +533,11 @@ public class XMLExporter implements IRnOutputter {
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
 		XMLExporterBalance xmlBalance = new XMLExporterBalance(balance);
+		// fix for erroneous bills without amount_prepaid (https://redmine.medelexis.ch/issues/6624)
+		tryToFixPrepaid(xmlBalance, mPaid);
 		if (!mPaid.equals(xmlBalance.getPrepaid())) {
 			xmlBalance.setPrepaid(mPaid);
-			Money mDue = xmlBalance.getAmountObligations();
+			Money mDue = xmlBalance.getAmount();
 			mDue.subtractMoney(mPaid);
 			mDue.roundTo5();
 			xmlBalance.setDue(mDue);
@@ -552,6 +554,22 @@ public class XMLExporter implements IRnOutputter {
 			xmlBalance.negateAmountObligations();
 			xmlBalance.setDue(new Money());
 			xmlBalance.setPrepaid(new Money());
+		}
+	}
+	
+	private void tryToFixPrepaid(XMLExporterBalance xmlBalance, Money mPaid){
+		if (!xmlBalance.hasPrepaid()) {
+			xmlBalance.setPrepaid(mPaid);
+		}
+		Money xmlAmount = xmlBalance.getAmount();
+		Money xmlDue = xmlBalance.getDue();
+		Money xmlPrepaid = xmlBalance.getPrepaid();
+		double diffDouble =
+			xmlAmount.doubleValue() - (xmlPrepaid.doubleValue() + xmlDue.doubleValue());
+		// this is an erroneous bill
+		if (Math.abs(diffDouble) > 1) {
+			xmlBalance
+				.setDue(new Money(xmlAmount.doubleValue() - xmlPrepaid.doubleValue()).roundTo5());
 		}
 	}
 	

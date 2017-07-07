@@ -85,6 +85,11 @@ public class XMLExporterBalance {
 			XMLTool.moneyToXmlDouble(money));
 	}
 
+	public boolean hasPrepaid(){
+		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT_PREPAID);
+		return attrValue != null && !attrValue.isEmpty();
+	}
+	
 	public Element getElement(){
 		return balanceElement;
 	}

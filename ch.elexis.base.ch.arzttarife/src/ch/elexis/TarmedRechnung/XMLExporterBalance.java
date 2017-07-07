@@ -20,7 +20,7 @@ public class XMLExporterBalance {
 	
 	private Money mDue;
 	private Money mTotal = new Money();
-
+	
 	public XMLExporterBalance(Element balance){
 		this.balanceElement = balance;
 	}
@@ -118,12 +118,16 @@ public class XMLExporterBalance {
 			.addMoney(services.getKantMoney()).addMoney(services.getPhysioMoney())
 			.addMoney(services.getMigelMoney());
 
+		element.setAttribute(XMLExporter.ATTR_AMOUNT_PREPAID,
+			XMLTool.moneyToXmlDouble(new Money(rechnung.getAnzahlung())));
+		
 		element.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(balance.mTotal));
 		balance.mDue = new Money(balance.mTotal);
 		balance.mDue.subtractMoney(rechnung.getAnzahlung());
 		balance.mDue.roundTo5();
-
 		element.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(balance.mDue));
+
+		
 		element.setAttribute(ATTR_AMOUNT_OBLIGATIONS,
 			XMLTool.moneyToXmlDouble(services.getObligationsMoney()));
 		

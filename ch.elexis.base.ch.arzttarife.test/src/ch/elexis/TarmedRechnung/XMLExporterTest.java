@@ -349,6 +349,46 @@ public class XMLExporterTest {
 		assertEquals("5217.76", amount);
 	}
 	
+	@Test
+	public void fixErrorneousBill44Test() throws IOException{
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		Rechnung erroneous = szenario.getExistingRechnung(TestData.ERRONEOUS_44_1_RNR);
+		XMLExporter exporter = new XMLExporter();
+		Document result =
+			exporter.doExport(erroneous, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+		assertNotNull(result);
+		if (erroneous.getStatus() == RnStatus.FEHLERHAFT) {
+			printFaildDocument(result);
+			fail();
+		}
+		Element payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
+		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
+		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$	
+		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
+		assertEquals("4000.00", prepaid);
+		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
+		assertEquals("1217.75", due);
+		String amount = balance.getAttributeValue("amount");//$NON-NLS-1$
+		assertEquals("5217.76", amount);
+		
+		erroneous.addZahlung(new Money(10.0), "test", new TimeTool());
+		result = exporter.doExport(erroneous, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+		assertNotNull(result);
+		if (erroneous.getStatus() == RnStatus.FEHLERHAFT) {
+			printFaildDocument(result);
+			fail();
+		}
+		payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
+		body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
+		balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
+		prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
+		assertEquals("4010.00", prepaid);
+		due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
+		assertEquals("1207.75", due);
+		amount = balance.getAttributeValue("amount");//$NON-NLS-1$
+		assertEquals("5217.76", amount);
+	}
+	
 	private String getTempDestination(){
 		return CoreHub.getTempDir().getAbsolutePath() + File.separator + "tarmedTest.xml";
 	}

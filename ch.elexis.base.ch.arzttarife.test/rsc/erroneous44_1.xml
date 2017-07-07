@@ -14,7 +14,7 @@
           <invoice:depends_on name="Elexis TarmedVerifier" version="320" />
         </invoice:generator>
       </invoice:prolog>
-      <invoice:balance currency="CHF" amount="5217.76" amount_due="1217.75" amount_obligations="17.76">
+      <invoice:balance currency="CHF" amount="5217.76" amount_prepaid="4000.00" amount_due="-3982.24" amount_obligations="17.76">
         <invoice:vat vat="260.98">
           <invoice:vat_rate vat_rate="0.00" amount="17.76" vat="0.00" />
           <invoice:vat_rate vat_rate="2.50" amount="2500.00" vat="60.98" />

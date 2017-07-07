@@ -30,13 +30,19 @@ import ch.elexis.data.TICode;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.tarmedprefs.TarmedRequirements;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.TimeTool;
 
 public class TestData {
 	
 	public static final String EXISTING_44_RNR = "4400";
 	
+	public static final String EXISTING_44_2_RNR = "4402";
+	
 	public static String EXISTING_4_RNR = "4000";
+	
+	public static String EXISTING_4_2_RNR = "4002";
 	
 	private static TestSzenario testSzenarioInstance = null;
 	
@@ -111,10 +117,22 @@ public class TestData {
 			NamedBlob blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_4_RNR);
 			blob.putString(stringWriter.toString());
 			
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing4_2.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_4_2_RNR);
+			blob.putString(stringWriter.toString());
+			
 			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing44_1.xml");
 			stringWriter = new StringWriter();
 			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
 			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_44_RNR);
+			blob.putString(stringWriter.toString());
+			
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing44_2.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_44_2_RNR);
 			blob.putString(stringWriter.toString());
 		}
 		
@@ -272,14 +290,44 @@ public class TestData {
 		public Rechnung getExistingRechnung(String rechnungNr){
 			Konsultation kons = createKons(faelle.get(0), mandanten.get(0));
 			kons.addDiagnose(TICode.getFromCode("A1"));
-			for (IVerrechenbar leistung : leistungen) {
-				Result<IVerrechenbar> result = kons.addLeistung(leistung);
-				if (!result.isOK()) {
-					throw new IllegalStateException(result.toString());
+			// add leistungen according to rsc/*.xml
+			if (rechnungNr.equals(EXISTING_4_RNR) || rechnungNr.equals(EXISTING_4_2_RNR)) {
+				for (IVerrechenbar leistung : leistungen) {
+					if (leistung instanceof TarmedLeistung
+						&& leistung.getCode().equals("00.0010")) {
+						Result<IVerrechenbar> result = kons.addLeistung(leistung);
+						if (!result.isOK()) {
+							throw new IllegalStateException(result.toString());
+						}
+					}
 				}
+			} else if (rechnungNr.equals(EXISTING_44_RNR) || rechnungNr.equals(EXISTING_44_2_RNR)) {
+				for (IVerrechenbar leistung : leistungen) {
+					if (leistung instanceof TarmedLeistung
+						&& leistung.getCode().equals("00.0010")) {
+						Result<IVerrechenbar> result = kons.addLeistung(leistung);
+						if (!result.isOK()) {
+							throw new IllegalStateException(result.toString());
+						}
+					} else if (leistung instanceof Eigenleistung
+						&& (leistung.getCode().equals("GA") || leistung.getCode().equals("GB"))) {
+						Result<IVerrechenbar> result = kons.addLeistung(leistung);
+						if (!result.isOK()) {
+							throw new IllegalStateException(result.toString());
+						}
+					}
+				}
+				
 			}
 			Result<Rechnung> result = Rechnung.build(Collections.singletonList(kons));
 			Rechnung ret = result.get();
+			
+			// add prepaid according to rsc/*.xml
+			if (rechnungNr.equals(EXISTING_4_2_RNR)) {
+				ret.addZahlung(new Money(10.00), "test", new TimeTool());
+			} else if (rechnungNr.equals(EXISTING_44_2_RNR)) {
+				ret.addZahlung(new Money(4000.00), "test", new TimeTool());
+			}
 			
 			ret.set(Rechnung.BILL_NUMBER, rechnungNr);
 			

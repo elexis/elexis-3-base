@@ -35,6 +35,11 @@ public class Medical extends Artikel {
 	}
 	
 	@Override
+	public String getCodeSystemCode(){
+		return "400";
+	}
+	
+	@Override
 	public String getCode(){
 		return getPharmaCode();
 	}

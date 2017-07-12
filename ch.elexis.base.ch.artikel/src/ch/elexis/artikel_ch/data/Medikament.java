@@ -32,6 +32,11 @@ public class Medikament extends Artikel {
 	}
 	
 	@Override
+	public String getCodeSystemCode(){
+		return "400";
+	}
+	
+	@Override
 	public String getLabel(){
 		return get("Name"); //$NON-NLS-1$
 	}

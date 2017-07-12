@@ -30,42 +30,50 @@ public class Startup implements IStartup {
 				public void run(ElexisEvent ev){
 					BarcodeScannerMessage b = (BarcodeScannerMessage) ev.getGenericObject();
 					if (hasMediplanHeader(b.getChunk())) {
-						Medication medication =
-							EMediplanServiceHolder.getService().createModelFromChunk(b.getChunk());
-						EMediplanServiceHolder.getService()
-							.addExistingArticlesToMedication(medication);
-						if (medication != null) {
-							if (medication.Patient != null
-								&& medication.Patient.patientId != null) {
-								Patient patient = Patient.load(medication.Patient.patientId);
-								if (patient.exists()) {
-									ElexisEventDispatcher.fireSelectionEvent(patient);
-									
-									UiDesk.getDisplay().asyncExec(new Runnable() {
-										public void run(){
-											try {
-												PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-													.getActivePage()
-													.showView(MedicationView.PART_ID);
-											} catch (PartInitException e) {
-												logger.warn("cannot open view with id: "
-													+ MedicationView.PART_ID, e);
-											}
-											logger.debug("Opening ImportEMediplanDialog");
-											ImportEMediplanDialog dlg = new ImportEMediplanDialog(
-												UiDesk.getTopShell(), medication);
-											dlg.open();
-										}
-									});
-								}
-							}
-							
-						}
+						openEMediplanImportDialog(b.getChunk(), null);
 					}
 				}
 			};
 		ElexisEventDispatcher.getInstance().addListeners(elexisEventListenerImpl);
 		
+	}
+	
+	public static void openEMediplanImportDialog(String chunk, String selectedPatientId)
+	{
+		Medication medication =
+			EMediplanServiceHolder.getService().createModelFromChunk(chunk);
+		
+		// from inbox the patient id is available
+		if (selectedPatientId != null && medication.Patient != null) {
+			medication.Patient.patientId = selectedPatientId;
+		}
+		
+		EMediplanServiceHolder.getService().addExistingArticlesToMedication(medication);
+		if (medication != null) {
+			if (medication.Patient != null && medication.Patient.patientId != null) {
+				Patient patient = Patient.load(medication.Patient.patientId);
+				if (patient.exists()) {
+					ElexisEventDispatcher.fireSelectionEvent(patient);
+					
+					UiDesk.getDisplay().asyncExec(new Runnable() {
+						public void run(){
+							try {
+								PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+									.showView(MedicationView.PART_ID);
+							} catch (PartInitException e) {
+								logger.warn("cannot open view with id: " + MedicationView.PART_ID,
+									e);
+							}
+							logger.debug("Opening ImportEMediplanDialog");
+							ImportEMediplanDialog dlg =
+								new ImportEMediplanDialog(UiDesk.getTopShell(), medication,
+									selectedPatientId == null);
+							dlg.open();
+						}
+					});
+				}
+			}
+		}
 	}
 	
 	private boolean hasMediplanHeader(String chunk){

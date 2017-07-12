@@ -35,6 +35,8 @@ public class Medication {
 	public String ValBy;
 	public String ValDt;
 	
+	public transient String chunk;
+	
 	/**
 	 * Create a complete CHMED16A model from the provided {@link Prescription} of one
 	 * {@link ch.elexis.data.Patient}.
@@ -60,5 +62,12 @@ public class Medication {
 			ret.Medicaments = Medicament.fromPrescriptions(prescriptions);
 		}
 		return ret;
+	}
+	
+	public String getNamedBlobId(){
+		if (Id == null) {
+			throw new IllegalStateException("id cannot be null");
+		}
+		return "Med_" + Id;
 	}
 }

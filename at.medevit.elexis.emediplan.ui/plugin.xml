@@ -28,5 +28,12 @@
             class="at.medevit.elexis.emediplan.Startup">
       </startup>
    </extension>
+   <extension
+         point="at.medevit.elexis.inbox.ui.elementsui">
+      <uiprovider
+            class="at.medevit.elexis.emediplan.inbox.EMediplanUiProvider"
+            id="at.medevit.elexis.emediplan.inbox.uiprovider">
+      </uiprovider>
+   </extension>
 
 </plugin>

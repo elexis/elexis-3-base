@@ -14,12 +14,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -27,6 +29,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
+import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament.State;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
@@ -36,6 +39,7 @@ import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.TimeTool;
@@ -45,6 +49,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	
 	private TableViewer tableViewer;
 	private Table table;
+	private boolean showInboxBtn = true;
 	
 	private ElexisEventListener eeli_presc = new ElexisUiEventListenerImpl(Prescription.class,
 		ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE) {
@@ -55,23 +60,9 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 					String patientId = prescription.get(Prescription.FLD_PATIENT_ID);
 					if (patientId.equals(medication.Patient.patientId))
 						for (Medicament medicament : medication.Medicaments) {
-							if (prescription.getArtikel().equals(medicament.artikelstammItem)) {
-								if ((ev.getType() == ElexisEvent.EVENT_CREATE
-									|| ev.getType() == ElexisEvent.EVENT_UPDATE)
-									&& prescription.getDosis().equals(medicament.dosis)) {
-									medicament.exists = true;
-									medicament.artikelstammItem =
-										(ArtikelstammItem) prescription.getArtikel();
-								} else if (ev.getType() == ElexisEvent.EVENT_DELETE
-									|| ev.getType() == ElexisEvent.EVENT_UPDATE) {
-									if (EMediplanServiceHolder.getService()
-										.findPresciptionsByMedicament(medication, medicament)
-										.isEmpty()) {
-										medicament.exists = false;
-									}
-									
-								}
-							}
+							EMediplanServiceHolder.getService()
+								.setPresciptionsToMedicament(medication, medicament);
+							
 						}
 					tableViewer.refresh();
 				}
@@ -80,16 +71,18 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		}
 	};
 		
-	public ImportEMediplanDialog(Shell parentShell, Medication medication){
+	public ImportEMediplanDialog(Shell parentShell, Medication medication, boolean showInboxBtn){
 		super(parentShell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.MODELESS | SWT.RESIZE);
 		this.medication = medication;
+		this.showInboxBtn = showInboxBtn;
 	}
 	
 	@Override
 	public void create(){
 		super.create();
 		setTitle("eMediplan Import");
+		
 		if (medication.Patient != null) {
 			setMessage("Patient: " + medication.Patient.patientLabel);
 		}
@@ -123,6 +116,27 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		tableViewer.getTable().setMenu(menu);
 		
 		tableViewer.setInput(getInput());
+		
+		Button button = new Button(parent, SWT.PUSH);
+		button.setVisible(showInboxBtn);
+		button.setText("In Inbox ablegen");
+		button.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, true, 1, 1));
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				if (EMediplanServiceHolder.getService().createInboxEntry(medication,
+					ElexisEventDispatcher.getSelectedMandator())) {
+					MessageDialog.openInformation(getShell(), "Medikationsplan",
+						"Der Medikationsplan wurde erfolgreich in die Inbox hinzugefügt.");
+					close();
+				}
+				else {
+					MessageDialog.openError(getShell(), "Medikationsplan",
+						"Der Medikationsplan konnte nicht in die Inbox hinzugefügt werden.\nÜberprüfen Sie das LOG File.");
+				}
+				
+			}
+		});
 		ElexisEventDispatcher.getInstance().addListeners(eeli_presc);
 		
 		return area;
@@ -168,38 +182,28 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 			    if (element instanceof Medicament) {
 					Medicament medicament = (Medicament) element;
 					if (medicament.artikelstammItem == null) {
-			            return new Color(Display.getDefault(), 0xFF, 0xDD, 0xDD);
+						return UiDesk.getColorFromRGB("FFDDDD");
 			        }
-					else if (medicament.exists) {
-						return new Color(Display.getDefault(), 0xFF, 0xFE, 0xC3);
+					else if (State.GTIN_SAME_DOSAGE.equals(medicament.state)) {
+						return UiDesk.getColorFromRGB("D3D3D3");
 			        }
+					else if (State.ATC.equals(medicament.state)
+						|| State.ATC_SAME_DOSAGE.equals(medicament.state)) {
+						return UiDesk.getColorFromRGB("CBFF99");
+					}
+					else if (State.ATC.equals(medicament.state)
+						|| State.GTIN.equals(medicament.state)) {
+						return UiDesk.getColorFromRGB("FFFEC3");
+					}
 			    }
-				return new Color(Display.getDefault(), 0xFF, 0xFF, 0xFF);
+				return UiDesk.getColorFromRGB("FFFFFF");
 			}
 			
 			@Override
 			public String getToolTipText(Object element){
 				if (element instanceof Medicament) {
 					Medicament medicament = (Medicament) element;
-					if (medicament.artikelstammItem == null) {
-						return "Dieser Artikel wurde nicht gefunden.";
-					} else  {
-						StringBuffer buf = new StringBuffer();
-						if (medicament.exists)
-						{
-							buf.append("Diese Medikation existiert bereits in Elexis.");
-						}
-						if (isMedicationExpired(medicament))
-						{
-							if (buf.length() > 0) {
-								buf.append("\n");
-							}
-							buf.append("Diese Medikation ist bereits abgelaufen.");
-						}
-						if (buf.length() > 0) {
-							return buf.toString();
-						}
-					}
+					return medicament.stateInfo;
 				}
 				return super.getToolTipText(element);
 			}
@@ -208,7 +212,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 			public Color getForeground(Object element){
 				if (element instanceof Medicament) {
 					Medicament medicament = (Medicament) element;
-					if (isMedicationExpired(medicament)) {
+					if (medicament.isMedicationExpired()) {
 						return UiDesk.getColor(UiDesk.COL_RED);
 					}
 				}
@@ -278,7 +282,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	private class ActionFixMedication extends Action {
 		@Override
 		public ImageDescriptor getImageDescriptor(){
-			return null;
+			return Images.IMG_FIX_MEDI.getImageDescriptor();
 		}
 		
 		@Override
@@ -296,7 +300,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	private class ActionReserveMedication extends Action {
 		@Override
 		public ImageDescriptor getImageDescriptor(){
-			return null;
+			return Images.IMG_RESERVE_MEDI.getImageDescriptor();
 		}
 		
 		@Override
@@ -314,46 +318,60 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	public void insertArticle(StructuredSelection selection, EntryType entryType){
 		if (selection != null && selection.getFirstElement() instanceof Medicament) {
 			Medicament medicament = (Medicament) selection.getFirstElement();
-			if (medicament.artikelstammItem != null) {
-				if (medication.Patient != null && medication.Patient.patientId != null) {
-					Patient patient = Patient.load(medication.Patient.patientId);
-					if (patient != null && patient.exists()) {
-						// find if already exists
-						List<Prescription> results = EMediplanServiceHolder.getService()
-							.findPresciptionsByMedicament(medication, medicament);
-						if (!results.isEmpty() || medicament.exists) {
-							if (!MessageDialog.openConfirm(getShell(), "Artikel",
-								"Diese Medikation wurde bereits hinzugefügt.\nWollen Sie es erneut hinzufügen ?")) {
-								return;
-							}
-						}
-						Prescription prescription = new Prescription(medicament.artikelstammItem,
-							patient, medicament.dosis, medicament.AppInstr);
-						prescription.set(new String[] {
-							Prescription.FLD_PRESC_TYPE, Prescription.FLD_DATE_FROM,
-							Prescription.FLD_DATE_UNTIL
-						}, String.valueOf(entryType.numericValue()), medicament.dateFrom,
-							medicament.dateTo);
-						prescription.setDisposalComment(medicament.TkgRsn);
-						CoreHub.getLocalLockService().acquireLock(prescription);
-						CoreHub.getLocalLockService().releaseLock(prescription);
-						return;
-					}
+			
+			Patient patient = null;
+			
+			if (medication.Patient != null && medication.Patient.patientId != null) {
+				patient = Patient.load(medication.Patient.patientId);
+				if (patient != null && !patient.exists()) {
+					patient = null;
 				}
+			}
+			
+			if (patient != null) {
+				EMediplanServiceHolder.getService().setPresciptionsToMedicament(medication,
+					medicament);
+				if (medicament.artikelstammItem != null) {
+					if (State.GTIN_SAME_DOSAGE.equals(medicament.state)) {
+						MessageDialog.openWarning(getShell(), "Artikel", medicament.stateInfo
+							+ "\n\nDas Medikament kann nicht zweimal verordnet werden.");
+					} else if (medicament.isMedicationExpired()) {
+						MessageDialog.openWarning(getShell(), "Artikel", medicament.stateInfo
+							+ "\n\nDas Medikament kann nicht hinzugefügt werden.");
+						
+					} else if (medicament.foundPrescription != null) {
+						// update prescription
+						if (MessageDialog.openConfirm(getShell(), "Artikel", medicament.stateInfo
+							+ "\n\nWollen Sie dieses Medikament hinzufügen und die bestehende Medikation historisieren ?")) {
+							medicament.foundPrescription.stop(new TimeTool());
+							medicament.foundPrescription.setStopReason("EMediplan Import");
+							createPrescription(entryType, medicament, patient);
+						}
+					} else {
+						// create new prescription
+						createPrescription(entryType, medicament, patient);
+					}
+				} else {
+					MessageDialog.openWarning(getShell(), "Artikel",
+						medicament.stateInfo + "\n\nDas Medikament kann nicht hinzugefügt werden.");
+				}
+				
+			} else {
 				MessageDialog.openError(getShell(), "Error", "Kein Patient ausgewählt.");
 			}
 		}
 	}
 	
-	private boolean isMedicationExpired(Medicament medicament){
-		if (medicament.dateTo != null) {
-			TimeTool now = new TimeTool();
-			now.add(TimeTool.SECOND, 5);
-			if (new TimeTool(medicament.dateTo).isBefore(now)) {
-				return true;
-			}
-		}
-		return false;
+	private void createPrescription(EntryType entryType, Medicament medicament, Patient patient){
+		Prescription prescription = new Prescription(medicament.artikelstammItem, patient,
+			medicament.dosis, medicament.AppInstr);
+		prescription.set(new String[] {
+			Prescription.FLD_PRESC_TYPE, Prescription.FLD_DATE_FROM, Prescription.FLD_DATE_UNTIL
+		}, String.valueOf(entryType.numericValue()), medicament.dateFrom, medicament.dateTo);
+		prescription.setDisposalComment(medicament.TkgRsn);
+		CoreHub.getLocalLockService().acquireLock(prescription);
+		CoreHub.getLocalLockService().releaseLock(prescription);
+		MessageDialog.openInformation(getShell(), "Artikel",
+			"Das Medikament wurde erfolgreich hinzugefügt.");
 	}
-	
 }

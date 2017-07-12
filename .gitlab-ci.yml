@@ -5,6 +5,7 @@ stages:
     - trigger_other_builds
 
 build:
+  stage: build
   script: "mvn clean verify -Dmaven.test.skip=true"
   artifacts:
     paths:

@@ -36,10 +36,10 @@ public class BefundePerspektive implements IPerspectiveFactory {
 	public static final String ID = "ch.elexis.befunde.perspektive"; //$NON-NLS-1$
 	
 	public void createInitialLayout(IPageLayout layout){
-		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(false);
-		IFolderLayout folder = layout.createFolder("folder", IPageLayout.RIGHT, 1.0f, editorArea); //$NON-NLS-1$
+	
+		IFolderLayout folder = layout.createFolder("folder", IPageLayout.TOP, 1.0f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
 		// folder.addView(MesswerteView.ID);
 		folder.addView(FindingsView.ID);
 	}

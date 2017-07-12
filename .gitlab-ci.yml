@@ -6,7 +6,8 @@ stages:
 
 build:
   stage: build
-  script: "mvn clean verify -Dmaven.test.skip=true"
+  script:
+    - mvn clean verify
   artifacts:
     paths:
     - ch.elexis.base.p2site/target/*.zip

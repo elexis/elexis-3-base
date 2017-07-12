@@ -1,5 +1,7 @@
 h1. elexis-3-base
 
+<a href="https://gitlab.medelexis.ch/elexis/elexis-3-base/commits/master"><img alt="build status" src="https://gitlab.medelexis.ch/elexis/elexis-3-base/badges/master/build.svg" /></a>
+
 Elexis 3 Base Repository
 
 h2. developer info

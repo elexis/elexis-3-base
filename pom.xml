@@ -269,7 +269,7 @@
 <repositories>
   <repository>
     <id>elexis.3.core.${repo_variant}</id>
-    <url>http://download.elexis.info/elexis.3.core/${repo_variant}/</url>
+    <url>https://download.elexis.info/elexis/3.2/elexis.3.core/${repo_variant}/</url>
     <layout>p2</layout>
   </repository>
   <repository>

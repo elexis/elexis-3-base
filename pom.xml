@@ -262,6 +262,72 @@
 </repositories>
 <build>
   <plugins>
+			<plugin>
+				<!--https://books.sonatype.com/mcookbook/reference/ch02s03.html#ex-groovy-script-ex -->
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<scripts>
+								<script><![CDATA[
+  import java.text.SimpleDateFormat;
+  HINT_GENERATED    = "# Generated from pom.xml groovy shell using gmavenplus-plugin\n"
+  // Returns the current branchName
+  public String getBranchVersion() {
+      branch="git rev-parse --abbrev-ref HEAD".execute().text.replaceAll("\n", '')
+      elexis_version = "${project.version}".replace("-SNAPSHOT", ".") + new SimpleDateFormat("yyyyMMdd-HHmm").format(Calendar.getInstance().getTime())
+      tags =  "git tag --contains ".execute().text.split("\n")
+      for ( i in tags ) {
+          if (i ==~/release\/(.*)/ ) {
+              elexis_version = (i=~ /release\//).replaceFirst("")
+              break
+          }
+      }
+      // Set property git_branch, but this property cannot be used in maven/pom.xml
+      // But it is used to invoke the modification only once per run
+      System.setProperty("git_branch",  branch)
+      System.setProperty("elexis_version",  elexis_version)
+      return branch;
+  }
+
+  // Write a repo.properties file
+  public void createRepoProperties(String repo_properties_name, String branch) {
+    // Now we are have the info to crate teh repo.properties
+    repo_version_file = new File(repo_properties_name)
+    repo_version_file.write(HINT_GENERATED)
+    repo_version_file.append("repoVariant=${branch}\n")
+    repo_version_file.append("project.id=${project.id}\n")
+    repo_version_file.append("project.name=${project.name}\n")
+    repo_version_file.append("project.version=${project.version}\n")
+    repo_version_file.append("projectVersion=${elexis_version}\n")
+    println("Created ${repo_properties_name}")
+  }
+
+if ( System.getProperty("git_branch") == null ) {
+  branch = getBranchVersion()
+  createRepoProperties('ch.elexis.base.p2site/repo.properties', branch)
+}
+]]></script>
+							</scripts>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+						<!-- any version of Groovy \>= 1.5.0 should work here -->
+						<version>2.4.4</version>
+						<scope>runtime</scope>
+					</dependency>
+				</dependencies>
+			</plugin>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-checkstyle-plugin</artifactId>

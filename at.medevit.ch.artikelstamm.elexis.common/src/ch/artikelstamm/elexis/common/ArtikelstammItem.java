@@ -315,48 +315,54 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public void einzelAbgabe(final int n){
-		int anbruch = getBruchteile();
-		int ve = getVerkaufseinheit();
-		int vk = getVerpackungsEinheit();
-		if (vk == 0) {
-			if (ve != 0) {
-				vk = ve;
+		if (isLagerartikel())
+		{
+			int anbruch = getBruchteile();
+			int ve = getVerkaufseinheit();
+			int vk = getVerpackungsEinheit();
+			if (vk == 0) {
+				if (ve != 0) {
+					vk = ve;
+				}
 			}
-		}
-		if (ve == 0) {
-			if (vk != 0) {
-				ve = vk;
-				setVerkaufseinheit(ve);
+			if (ve == 0) {
+				if (vk != 0) {
+					ve = vk;
+					setVerkaufseinheit(ve);
+				}
 			}
-		}
-		int num = n * ve;
-		if (vk == ve) {
-			setIstbestand(getIstbestand() - n);
-		} else {
-			int rest = anbruch - num;
-			while (rest < 0) {
-				rest = rest + vk;
-				setIstbestand(getIstbestand() - 1);
+			int num = n * ve;
+			if (vk == ve) {
+				setIstbestand(getIstbestand() - n);
+			} else {
+				int rest = anbruch - num;
+				while (rest < 0) {
+					rest = rest + vk;
+					setIstbestand(getIstbestand() - 1);
+				}
+				setBruchteile(rest);
 			}
-			setBruchteile(rest);
 		}
 	}
 	
 	@Override
 	public void einzelRuecknahme(int n){
-		int anbruch = getBruchteile();
-		int ve = getVerkaufseinheit();
-		int vk = getVerpackungsEinheit();
-		int num = n * ve;
-		if (vk == ve) {
-			setIstbestand(getIstbestand() + n);
-		} else {
-			int rest = anbruch + num;
-			while (rest >= vk) {
-				rest = rest - vk;
-				setIstbestand(getIstbestand() + 1);
+		if (isLagerartikel())
+		{
+			int anbruch = getBruchteile();
+			int ve = getVerkaufseinheit();
+			int vk = getVerpackungsEinheit();
+			int num = n * ve;
+			if (vk == ve) {
+				setIstbestand(getIstbestand() + n);
+			} else {
+				int rest = anbruch + num;
+				while (rest >= vk) {
+					rest = rest - vk;
+					setIstbestand(getIstbestand() + 1);
+				}
+				setBruchteile(rest);
 			}
-			setBruchteile(rest);
 		}
 	}
 	

@@ -694,17 +694,16 @@ public class ProblemArea implements IJournalArea {
 	 */
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
-		if (Helpers.twoKonsEqual(actKons, newKons))
+		if (Helpers.twoKonsEqual(actKons, newKons) && op  == KonsActions.ACTIVATE_KONS)
 		{
 			return;
 		}
 		actKons = newKons;
 		actPat = null;
 		logEvent("setKons");
+		problemsTableModel.setKons(newKons);
 		if (newKons != null) {
-			Patient newPatient = newKons.getFall().getPatient();
-				problemsTableModel.setPatient(newPatient);
-				reloadAndRefresh();
+			reloadAndRefresh();
 		}
 	}
 

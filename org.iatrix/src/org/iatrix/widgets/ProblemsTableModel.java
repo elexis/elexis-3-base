@@ -42,11 +42,13 @@ import org.iatrix.util.Constants;
 import org.iatrix.util.DateComparator;
 import org.iatrix.util.NumberComparator;
 import org.iatrix.util.StatusComparator;
+import org.iatrix.views.JournalView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
@@ -750,6 +752,8 @@ public class ProblemsTableModel implements KTableModel {
 	 */
 	private boolean heartbeatProblemEnabled = true;
 
+	private Konsultation actKons;
+
 	public void heartbeatProblem(){
 		log.debug("heartbeatProblem enabled " + heartbeatProblemEnabled);
 		if (heartbeatProblemEnabled) {
@@ -1229,9 +1233,9 @@ public class ProblemsTableModel implements KTableModel {
 			if (isNew) {
 				reload();
 				refresh();
-				// TODO: ngng
 				problemsKTable.refresh();
 			}
+ 			JournalView.updateAllKonsAreas(actKons, IJournalArea.KonsActions.EVENT_UPDATE);
 		}
 	}
 
@@ -1289,7 +1293,8 @@ public class ProblemsTableModel implements KTableModel {
 
 	static class DummyProblem {}
 
-	public void setPatient(Patient newPatient){
-		actPatient = newPatient;
+	public void setKons(Konsultation newKons) {
+		actKons = newKons;
+		actPatient = newKons == null ? null :  newKons.getFall().getPatient();
 	}
 }

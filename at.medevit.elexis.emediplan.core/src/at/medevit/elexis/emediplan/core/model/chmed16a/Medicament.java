@@ -19,6 +19,7 @@ import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
+import ch.rgw.tools.TimeTool;
 
 public class Medicament {
 	public String Id;
@@ -38,7 +39,9 @@ public class Medicament {
 	public transient String dosis;
 	public transient String dateFrom;
 	public transient String dateTo;
-	public transient boolean exists;
+	public transient State state = State.NEW;
+	public transient Prescription foundPrescription;
+	public transient String stateInfo = "";
 	
 	public static final String FREETEXT_PREFIX = "[Dosis: ";
 	public static final String FREETEXT_POSTFIX = "]";
@@ -129,5 +132,25 @@ public class Medicament {
 		}
 		throw new IllegalStateException(
 			"No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]");
+	}
+	
+	public enum State {
+			// prioritized order dont change it
+			NEW, ATC, ATC_SAME_DOSAGE, GTIN, GTIN_SAME_DOSAGE;
+		
+		public static boolean isHigherState(State current, State newState){
+			return current.ordinal() < newState.ordinal();
+		}
+	}
+	
+	public boolean isMedicationExpired(){
+		if (dateTo != null) {
+			TimeTool now = new TimeTool();
+			now.add(TimeTool.SECOND, 5);
+			if (new TimeTool(dateTo).isBefore(now)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

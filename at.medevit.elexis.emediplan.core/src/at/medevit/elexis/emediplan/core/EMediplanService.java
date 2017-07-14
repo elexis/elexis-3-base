@@ -58,13 +58,22 @@ public interface EMediplanService {
 	public void addExistingArticlesToMedication(Medication medication);
 	
 	/**
-	 * Find all existing {@link Prescription} for a {@link Medication}
+	 * Set all existing {@link Prescription} for a {@link Medication}
 	 * 
 	 * @param medication
 	 * @param medicament
 	 * @return
 	 */
-	public List<Prescription> findPresciptionsByMedicament(Medication medication,
+	public void setPresciptionsToMedicament(Medication medication,
 		Medicament medicament);
+	
+	/**
+	 * Adds the medication to the Inbox
+	 * 
+	 * @param medication
+	 * @param mandant
+	 * @return
+	 */
+	public boolean createInboxEntry(Medication medication, Mandant mandant);
 	
 }

@@ -20,7 +20,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -40,6 +39,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +58,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import at.medevit.elexis.emediplan.core.EMediplanService;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
+import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament.State;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
+import at.medevit.elexis.inbox.model.IInboxElementService;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.services.IFormattedOutput;
@@ -68,7 +70,9 @@ import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
 import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
 import ch.elexis.core.ui.exchange.KontaktMatcher.CreateMode;
+import ch.elexis.data.Artikel;
 import ch.elexis.data.Mandant;
+import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
@@ -78,6 +82,8 @@ import ch.rgw.tools.TimeTool;
 @Component
 public class EMediplanServiceImpl implements EMediplanService {
 	private static Logger logger = LoggerFactory.getLogger(EMediplanServiceImpl.class);
+	
+	private IInboxElementService service;
 	
 	private Gson gson;
 	
@@ -249,7 +255,9 @@ public class EMediplanServiceImpl implements EMediplanService {
 			GsonBuilder gb = new GsonBuilder();
 			gb.registerTypeAdapter(Medication.class, new MedicationDeserializer());
 			Gson g = gb.create();
-			return g.fromJson(json, Medication.class);
+			Medication m = g.fromJson(json, Medication.class);
+			m.chunk = chunk;
+			return m;
 		}
 		else {
 			logger.error("invalid json length - cannot parseable");
@@ -294,11 +302,19 @@ public class EMediplanServiceImpl implements EMediplanService {
 	
 	private void findPatientForMedication(Medication medication){
 		if (medication.Patient != null) {
-			String bDate = medication.Patient.BDt;
-			Patient patient = KontaktMatcher.findPatient(medication.Patient.LName,
-				medication.Patient.FName, bDate != null ? bDate.replace("-", "") : null, null, null,
-				null,
-				null, null, CreateMode.ASK);
+			Patient patient = null;
+			// if the chunk are from the inbox the elexis patient id is also available
+			if (medication.Patient.patientId != null) {
+				patient = Patient.load(medication.Patient.patientId);
+			}
+			// try to find patient by birthdate firstname and lastname
+			if (patient == null) {
+				String bDate = medication.Patient.BDt;
+				patient = KontaktMatcher.findPatient(medication.Patient.LName,
+					medication.Patient.FName, bDate != null ? bDate.replace("-", "") : null, null,
+					null, null, null, null, CreateMode.ASK);
+			}
+			
 			if (patient != null && patient.getId() != null && patient.exists()) {
 				medication.Patient.patientId = patient.getId();
 				medication.Patient.patientLabel = patient.getPersonalia();
@@ -331,9 +347,8 @@ public class EMediplanServiceImpl implements EMediplanService {
 		findArticleForMedicament(toAdd);
 		
 		// check if db already contains this prescription
-		if (!findPresciptionsByMedicament(medication, toAdd).isEmpty()) {
-			toAdd.exists = true;
-		}
+		setPresciptionsToMedicament(medication, toAdd);
+		
 		medicaments.add(toAdd);
 	}
 
@@ -351,25 +366,101 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 
 	@Override
-	public List<Prescription> findPresciptionsByMedicament(Medication medication,
+	public void setPresciptionsToMedicament(Medication medication,
 		Medicament medicament){
-		if (medicament.artikelstammItem != null && medication.Patient != null
+		if (medication.Patient != null
 			&& medication.Patient.patientId != null) {
-			Query<Prescription> qre = new Query<>(Prescription.class);
-			qre.add(Prescription.FLD_PATIENT_ID, Query.LIKE, medication.Patient.patientId);
-			qre.add(Prescription.FLD_ARTICLE, Query.LIKE,
-				medicament.artikelstammItem.storeToString());
-			qre.add(Prescription.FLD_DOSAGE, Query.LIKE, medicament.dosis);
-			qre.orderBy(true, PersistentObject.FLD_LASTUPDATE);
-			
-			List<Prescription> execute = qre.execute();
-			
-			TimeTool now = new TimeTool();
-			now.add(TimeTool.SECOND, 5);
-			return execute.parallelStream().filter(p -> !p.isStopped(now))
-				.collect(Collectors.toList());
+			if (medicament.artikelstammItem != null) {
+				Query<Prescription> qre = new Query<>(Prescription.class);
+				qre.add(Prescription.FLD_PATIENT_ID, Query.LIKE, medication.Patient.patientId);
+				qre.orderBy(true, PersistentObject.FLD_LASTUPDATE);
+				
+				List<Prescription> execute = qre.execute();
+				
+				TimeTool now = new TimeTool();
+				now.add(TimeTool.SECOND, 5);
+				
+				List<Prescription> patientPrescriptions = execute.parallelStream()
+					.filter(p -> !p.isStopped(now)).collect(Collectors.toList());
+				
+				setMedicamentState(medicament, patientPrescriptions);
+			}
+			setMedicamentStateInfo(medicament);
 		}
-		return Collections.emptyList();
+		
+	}
+	
+	private void setMedicamentState(Medicament medicament, List<Prescription> patientPrescriptions){
+		// reset state
+		medicament.state = State.NEW;
+		medicament.foundPrescription = null;
+		
+		for (Prescription prescription : patientPrescriptions) {
+			Artikel artikel = prescription.getArtikel();
+			
+			if (checkATCEquality(medicament.artikelstammItem.getATCCode(), artikel.getATC_code())) {
+				if (State.isHigherState(medicament.state, State.ATC)) {
+					medicament.state = State.ATC;
+					medicament.foundPrescription = prescription;
+				}
+				
+				if (prescription.getDosis().equals(medicament.dosis)) {
+					if (State.isHigherState(medicament.state, State.ATC_SAME_DOSAGE)) {
+						medicament.state = State.ATC_SAME_DOSAGE;
+						medicament.foundPrescription = prescription;
+					}
+				}
+			}
+			if (medicament.artikelstammItem.getGTIN().equals(artikel.getGTIN())) {
+				if (State.isHigherState(medicament.state, State.GTIN)) {
+					medicament.state = State.GTIN;
+					medicament.foundPrescription = prescription;
+				}
+				
+				if (prescription.getDosis().equals(medicament.dosis)) {
+					if (State.isHigherState(medicament.state, State.GTIN_SAME_DOSAGE)) {
+						medicament.state = State.GTIN_SAME_DOSAGE;
+						medicament.foundPrescription = prescription;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	private void setMedicamentStateInfo(Medicament medicament){
+		StringBuffer buf = new StringBuffer();
+		
+		if (medicament.artikelstammItem == null) {
+			buf.append("Der Artikel wurde nicht gefunden.");
+		} else if (medicament.isMedicationExpired()) {
+			buf.append("Diese Medikation ist bereits am " + medicament.dateTo + " abgelaufen.");
+		} else {
+			if (State.GTIN_SAME_DOSAGE.equals(medicament.state)
+				|| State.GTIN.equals(medicament.state)) {
+				buf.append("Dieses Medikament existiert bereits in Elexis.");
+			} else if (State.ATC_SAME_DOSAGE.equals(medicament.state)
+				|| State.ATC.equals(medicament.state)) {
+				buf.append("Medikament mit gleicher Indikation bereits vorhanden.");
+				if (medicament.foundPrescription != null
+					&& medicament.foundPrescription.getArtikel() != null) {
+					buf.append("\n(" + medicament.foundPrescription.getArtikel().getName() + ")");
+				}
+			} else if (State.NEW.equals(medicament.state)) {
+				buf.append("Neues Medikament");
+			}
+			if (State.ATC.equals(medicament.state) || State.GTIN.equals(medicament.state)) {
+				buf.append("\nÄnderung bei der Dosierung.");
+			}
+		}
+		medicament.stateInfo = buf.toString();
+	}
+	
+	private boolean checkATCEquality(String atc1, String atc2){
+		if (atc1 != null && atc1.length() > 3 && atc2 != null) {
+			return atc2.startsWith(atc1.substring(0, 4));
+		}
+		return atc1 != null && atc1.equals(atc2);
 	}
 	
 	private void findArticleForMedicament(Medicament medicament)
@@ -422,5 +513,46 @@ public class EMediplanServiceImpl implements EMediplanService {
 			
 		}
 		
+	}
+	
+	@Override
+	public boolean createInboxEntry(Medication medication, Mandant mandant){
+		
+		if (service == null) {
+			throw new IllegalStateException("No IInboxElementService for inbox defined");
+		}
+		
+		if (medication != null) {
+			if (medication.chunk != null && medication.Patient != null
+				&& medication.Patient.patientId != null) {
+				Patient patient = Patient.load(medication.Patient.patientId);
+				NamedBlob namedBlob = NamedBlob.load(medication.getNamedBlobId());
+				namedBlob.putString(medication.chunk);
+				
+				if (namedBlob != null && patient.exists()) {
+					service.createInboxElement(patient, mandant, namedBlob);
+					return true;
+				}
+			}
+			
+			StringBuffer buf = new StringBuffer("cannot add medication to list:");
+			buf.append("[");
+			buf.append("med chunk:" + medication.chunk);
+			buf.append("med patient id:"
+				+ (medication.Patient != null ? medication.Patient.patientId : "null"));
+			
+			buf.append("]");
+			logger.warn(buf.toString());
+		} else {
+			logger.error("cannot add medication to list: medication is null");
+		}
+		
+		return false;
+	}
+	
+
+	@Reference(unbind = "-")
+	public void setService(IInboxElementService service){
+		this.service = service;
 	}
 }

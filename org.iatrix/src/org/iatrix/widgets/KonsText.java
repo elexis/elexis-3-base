@@ -22,6 +22,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridLayout;
@@ -143,35 +146,69 @@ public class KonsText implements IJournalArea {
 		return versionBackAction;
 	}
 
+	private void showUnableToSaveKons(String plain, String errMsg) {
+		logEvent("showUnableToSaveKons errMsg: " + errMsg + " plain: " + plain);
+		boolean added = false;
+		try {
+			Clipboard clipboard = new Clipboard(UiDesk.getDisplay());
+			TextTransfer textTransfer = TextTransfer.getInstance();
+			Transfer[] transfers = new Transfer[] {	textTransfer };
+			Object[] data = new Object[] { plain };
+			clipboard.setContents(data, transfers);
+			clipboard.dispose();
+			added = true;
+		} catch (Exception ex) {
+			log.error("Fehlerhaftes clipboard " + plain);
+		}
+		StringBuilder sb = new StringBuilder();
+		if (plain.length() > 0 && added) {
+			sb.append("Inhalt wurde in die Zwischenablage aufgenommen\n");
+		}
+		sb.append("Patient: " + actKons.getFall().getPatient().getPersonalia()+ "\n");
+		if (plain.length() == 0 ) {
+				sb.append("Inhalt war leer");
+		} else {
+			sb.append("\nInhalt ist:\n---------------------------------------------------\n");
+			sb.append(plain);
+			sb.append("\n----------------------------------------------------------------\n");
+		}
+		SWTHelper.alert("Konnte Konsultationstext nicht abspeichern", sb.toString());
+	}
 	public synchronized void updateEintrag(){
 		if (actKons != null) {
 			if (actKons.getFall() == null) {
 				return;
 			}
 			if (text.isDirty() || textChanged()) {
-				logEvent("updateEintrag " + actKons.getId() + " dirty " + text.isDirty() + " changed " + textChanged());
+				int old_version = actKons.getHeadVersion();
+				String plain = text.getContentsPlaintext();
+				logEvent("updateEintrag old_version " + old_version + " " +
+				actKons.getId() + " dirty " + text.isDirty() + " changed " + textChanged());
 				if (hasKonsTextLock()) {
 					if (!actKons.isEditable(false)) {
-						logEvent("updateEintrag actKons is NOT editable!!!!. Skipping");
+						String notEditable = "Aktuelle Konsultation kannn nicht editiert werden";
+						showUnableToSaveKons(plain, notEditable);
 					} else  {
 						actKons.updateEintrag(text.getContentsAsXML(), false);
 						int new_version = actKons.getHeadVersion();
-						logEvent("updateEintrag saved rev. " + new_version + " "
-								+ text.getContentsPlaintext());
-						text.setDirty(false);
+						if (new_version <= old_version ||
+								actKons.getEintrag().getHead().contentEquals(plain)
+								) {
+							String errMsg = "Unable to update: old_version " +
+									old_version + " new_version " + new_version;
+							logEvent("updateEintrag " + errMsg + text.getContentsPlaintext());
+							showUnableToSaveKons(plain, errMsg);
+						} else {
+							logEvent("updateEintrag saved rev. " + new_version + " plain: " + plain);
+							text.setDirty(false);
+						}
 					}
 				} else {
 					// should never happen...
-					if (konsTextLock == null) {
-						logEvent("updateEintrag Konsultation gesperrt. konsTextLock null.");
-					} else {
-						logEvent("updateEintrag Konsultation gesperrt. " + " key "
-							+ konsTextLock.getKey() + " lock " + konsTextLock.getLockValue());
-						SWTHelper.alert("Konsultation gesperrt",
-							"Der Text kann nicht gespeichert werden, weil die Konsultation durch einen anderen Benutzer gesperrt ist."
-								+ "(info: " + konsTextLock.getKey()
-								+ ". Dieses Problem ist ein Programmfehler. Bitte informieren Sie die Entwickler.)");
-					}
+					String errMsg = "Konsultation gesperrt old_version " + old_version +
+							"konsTextLock " + (konsTextLock == null ? "null" :
+							"key " + konsTextLock.getKey() + " lock " + konsTextLock.getLockValue());
+					showUnableToSaveKons(plain, errMsg);
 				}
 			}
 		}
@@ -426,11 +463,12 @@ public class KonsText implements IJournalArea {
 	private void updateKonsVersionLabel(){
 		if (actKons != null) {
 			int version = actKons.getHeadVersion();
-			logEvent("Update Version Label: " + version);
 			VersionedResource vr = actKons.getEintrag();
 			ResourceItem entry = vr.getVersion(version);
 			StringBuilder sb = new StringBuilder();
-			if (entry  != null) {
+			if (entry  == null) {
+				sb.append(actKons.getLabel() + " (neu)");
+			} else {
 				String revisionTime = new TimeTool(entry.timestamp).toString(TimeTool.FULL_GER);
 				String revisionDate = new TimeTool(entry.timestamp).toString(TimeTool.DATE_GER);
 				if (!actKons.getDatum().equals(revisionDate)) {
@@ -439,8 +477,13 @@ public class KonsText implements IJournalArea {
 				sb.append("rev. ").append(version).append(" vom ")
 					.append(revisionTime).append(" (")
 					.append(entry.remark).append(")");
+				TimeTool konsDate = new TimeTool(actKons.getDatum());
+				if (version == -1 && konsDate.isSameDay(new TimeTool())) {
+					sb.append(" (NEU)");
+				}
 			}
 			lVersion.setText(sb.toString());
+			logEvent("UpdateVersionLabel: " + sb.toString());
 		} else {
 			lVersion.setText("");
 		}

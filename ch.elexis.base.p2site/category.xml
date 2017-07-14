@@ -24,10 +24,10 @@
    <feature url="features/ch.elexis.externe_dokumente.feature.source_3.0.0.qualifier.jar" id="ch.elexis.externe_dokumente.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.icpc.feature.source_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature.source" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.icpc.feature.source_3.2.0.qualifier.jar" id="ch.elexis.icpc.feature.source" version="3.2.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.icpc.feature_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.icpc.feature_3.2.0.qualifier.jar" id="ch.elexis.icpc.feature" version="3.2.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
    <feature url="features/ch.elexis.omnivore.feature.source_3.2.0.qualifier.jar" id="ch.elexis.omnivore.feature.source" version="3.2.0.qualifier">
@@ -342,10 +342,10 @@
    <feature url="features/ch.elexis.support.dbshaker.feature_3.0.0.qualifier.jar" id="ch.elexis.support.dbshaker.feature" version="3.0.0.qualifier">
       <category name="support"/>
    </feature>
-   <feature url="features/ch.elexis.icpc.fire.feature.source_3.0.0.qualifier.jar" id="ch.elexis.icpc.fire.feature.source" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.icpc.fire.feature.source_3.2.0.qualifier.jar" id="ch.elexis.icpc.fire.feature.source" version="3.2.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.icpc.fire.feature_3.0.0.qualifier.jar" id="ch.elexis.icpc.fire.feature" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.icpc.fire.feature_3.2.0.qualifier.jar" id="ch.elexis.icpc.fire.feature" version="3.2.0.qualifier">
       <category name="statistics"/>
    </feature>
    <feature url="features/ch.weirich.templator.pages.feature.source_3.0.0.qualifier.jar" id="ch.weirich.templator.pages.feature.source" version="3.0.0.qualifier">

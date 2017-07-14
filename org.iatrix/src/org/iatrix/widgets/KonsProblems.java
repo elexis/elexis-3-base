@@ -242,7 +242,7 @@ public class KonsProblems implements IJournalArea {
 
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){
-		if (op == KonsActions.ACTIVATE_KONS) {
+		if (op == KonsActions.ACTIVATE_KONS || op == KonsActions.EVENT_UPDATE) {
 			actKons = newKons;
 			updateProblemAssignmentViewer();
 		}

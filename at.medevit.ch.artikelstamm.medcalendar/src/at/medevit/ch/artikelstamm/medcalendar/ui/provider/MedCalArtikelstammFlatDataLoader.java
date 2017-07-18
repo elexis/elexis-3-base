@@ -85,7 +85,7 @@ public class MedCalArtikelstammFlatDataLoader extends FlatDataLoader implements
 			medCalQueryFilter.setSectionFilter(filterValue);
 			addQueryFilter(medCalQueryFilter);
 		}
-		dj.launch(0);
+		job.schedule();
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class MedCalArtikelstammFlatDataLoader extends FlatDataLoader implements
 			removeQueryFilter(medCalQueryFilter);
 			medCalQueryFilter.setSectionFilter(null);
 		}
-		dj.launch(0);
+		job.schedule();
 	}
 	
 	/**
@@ -204,7 +204,7 @@ public class MedCalArtikelstammFlatDataLoader extends FlatDataLoader implements
 	 */
 	public void setUseMephaPrefferedProviderSorter(boolean doPreferMepha){
 		this.useMephaPreferredSorter = doPreferMepha;
-		dj.launch(0);
+		job.schedule();
 	}
 	
 	/**

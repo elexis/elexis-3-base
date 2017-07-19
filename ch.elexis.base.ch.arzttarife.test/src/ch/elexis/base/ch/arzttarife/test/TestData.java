@@ -40,11 +40,15 @@ public class TestData {
 	
 	public static final String EXISTING_44_2_RNR = "4402";
 	
+	public static final String EXISTING_44_3_RNR = "4403";
+	
 	public static final String ERRONEOUS_44_1_RNR = "4412";
 	
 	public static String EXISTING_4_RNR = "4000";
 	
 	public static String EXISTING_4_2_RNR = "4002";
+	
+	public static String EXISTING_4_3_RNR = "4003";
 	
 	private static TestSzenario testSzenarioInstance = null;
 	
@@ -125,10 +129,22 @@ public class TestData {
 			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_4_2_RNR);
 			blob.putString(stringWriter.toString());
 			
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing4_3.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_4_3_RNR);
+			blob.putString(stringWriter.toString());
+			
 			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing44_1.xml");
 			stringWriter = new StringWriter();
 			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
 			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_44_RNR);
+			blob.putString(stringWriter.toString());
+			
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing44_3.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_44_3_RNR);
 			blob.putString(stringWriter.toString());
 			
 			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing44_2.xml");
@@ -299,7 +315,8 @@ public class TestData {
 			Konsultation kons = createKons(faelle.get(0), mandanten.get(0));
 			kons.addDiagnose(TICode.getFromCode("A1"));
 			// add leistungen according to rsc/*.xml
-			if (rechnungNr.equals(EXISTING_4_RNR) || rechnungNr.equals(EXISTING_4_2_RNR)) {
+			if (rechnungNr.equals(EXISTING_4_RNR) || rechnungNr.equals(EXISTING_4_2_RNR)
+				|| rechnungNr.equals(EXISTING_4_3_RNR)) {
 				for (IVerrechenbar leistung : leistungen) {
 					if (leistung instanceof TarmedLeistung
 						&& leistung.getCode().equals("00.0010")) {
@@ -310,7 +327,7 @@ public class TestData {
 					}
 				}
 			} else if (rechnungNr.equals(EXISTING_44_RNR) || rechnungNr.equals(EXISTING_44_2_RNR)
-				|| rechnungNr.equals(ERRONEOUS_44_1_RNR)) {
+				|| rechnungNr.equals(ERRONEOUS_44_1_RNR) || rechnungNr.equals(EXISTING_44_3_RNR)) {
 				for (IVerrechenbar leistung : leistungen) {
 					if (leistung instanceof TarmedLeistung
 						&& leistung.getCode().equals("00.0010")) {

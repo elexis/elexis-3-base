@@ -145,6 +145,7 @@ public class XMLExporter implements IRnOutputter {
 	public static final String ATTR_AMOUNT_TARMED_MT = "amount_tarmed.mt"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_TARMED = "amount_tarmed"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT = "amount"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_REMINDER = "amount_reminder"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_TT = "amount_tt"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_MT = "amount_mt"; //$NON-NLS-1$
 	public static final String ATTR_QUANTITY = "quantity"; //$NON-NLS-1$
@@ -439,9 +440,8 @@ public class XMLExporter implements IRnOutputter {
 		
 		root.addContent(payload);
 		
-		if (rn.setBetrag(xmlBalance.getTotal().roundTo5()) == false) {
+		if (rn.setBetrag(xmlBalance.getAmount().roundTo5()) == false) {
 			rn.reject(RnStatus.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
-			
 		} else if (doVerify) {
 			new Validator().checkBill(this, new Result<Rechnung>());
 		}
@@ -551,7 +551,31 @@ public class XMLExporter implements IRnOutputter {
 		reminder.setAttribute(ATTR_REQUEST_ID, rechnung.getRnId()); //$NON-NLS-1$
 		reminder.setAttribute(ATTR_REMINDER_LEVEL, reminderLevel); //$NON-NLS-1$
 		
+		// add amount reminder and recalculate amount due
+		Element body = payload.getChild("body", XMLExporter.nsinvoice);
+		if (body != null) {
+			Element balance = body.getChild("balance", XMLExporter.nsinvoice);
+			Money amountReminder = rechnung.getRemindersBetrag();
+			balance.setAttribute(XMLExporter.ATTR_AMOUNT_REMINDER,
+				XMLTool.moneyToXmlDouble(amountReminder));
+			// rewrite amount due
+			Money mDue = new Money(rechnung.getBetrag());
+			mDue.addMoney(amountReminder);
+			mDue.subtractMoney(rechnung.getAnzahlung());
+			balance.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue));
+		}
+		
 		if (firstReminder) {
+			@SuppressWarnings("unchecked")
+			List<Element> children = payload.getChildren();
+			for (int i = 0; i < children.size(); i++) {
+				if (children.get(i).getName().equals("invoice")) {
+					// addContent index is not 0 based
+					payload.addContent(i + 2, reminder);
+					return;
+				}
+			}
+			logger.warn("No invoice element found, adding reminder at index 1");
 			payload.addContent(1, reminder);
 		}
 	}
@@ -568,6 +592,7 @@ public class XMLExporter implements IRnOutputter {
 		if (!mPaid.equals(xmlBalance.getPrepaid())) {
 			xmlBalance.setPrepaid(mPaid);
 			Money mDue = xmlBalance.getAmount();
+			mDue.addMoney(xmlBalance.getReminder());
 			mDue.subtractMoney(mPaid);
 			mDue.roundTo5();
 			xmlBalance.setDue(mDue);
@@ -594,12 +619,16 @@ public class XMLExporter implements IRnOutputter {
 		Money xmlAmount = xmlBalance.getAmount();
 		Money xmlDue = xmlBalance.getDue();
 		Money xmlPrepaid = xmlBalance.getPrepaid();
+		Money xmlReminder = xmlBalance.getReminder();
+		
 		double diffDouble =
-			xmlAmount.doubleValue() - (xmlPrepaid.doubleValue() + xmlDue.doubleValue());
+			(xmlAmount.doubleValue() + xmlReminder.doubleValue())
+				- (xmlPrepaid.doubleValue() + xmlDue.doubleValue());
 		// this is an erroneous bill
 		if (Math.abs(diffDouble) > 1) {
 			xmlBalance
-				.setDue(new Money(xmlAmount.doubleValue() - xmlPrepaid.doubleValue()).roundTo5());
+				.setDue(new Money((xmlAmount.doubleValue() + xmlReminder.doubleValue())
+					- xmlPrepaid.doubleValue()).roundTo5());
 		}
 	}
 	
@@ -611,10 +640,14 @@ public class XMLExporter implements IRnOutputter {
 		Element balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
 		Money anzInBill = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_prepaid"));//$NON-NLS-1$
 		if (!mPaid.equals(anzInBill)) {
+			Money mAmount = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount"));//$NON-NLS-1$
+			// never pay more than the total on XML bill, those cases are handled in Elexis Rechnung and UI
+			if (mPaid.isMoreThan(mAmount)) {
+				mPaid = mAmount;
+			}
 			balance.setAttribute("amount_prepaid", XMLTool.moneyToXmlDouble(mPaid));//$NON-NLS-1$
-			Money mDue = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));//$NON-NLS-1$
-			mDue.subtractMoney(mPaid);
-			mDue.roundTo5();
+			
+			Money mDue = new Money(mAmount).subtractMoney(mPaid).roundTo5();
 			balance.setAttribute("amount_due", XMLTool.moneyToXmlDouble(mDue));//$NON-NLS-1$
 		}
 		if (type.equals(IRnOutputter.TYPE.COPY)) {

@@ -27,6 +27,7 @@ import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.rgw.tools.Money;
@@ -373,6 +374,125 @@ public class XMLExporterTest {
 		assertEquals("1207.75", due);
 		amount = balance.getAttributeValue("amount");//$NON-NLS-1$
 		assertEquals("5217.76", amount);
+	}
+	
+	@Test
+	public void doExportReminder4Test() throws IOException{
+		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
+		
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_4_3_RNR);
+		// set reminder booking and state
+		existing.addZahlung(new Money(10.0).multiply(-1.0),
+			ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
+		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
+		// output the bill
+		XMLExporter exporter = new XMLExporter();
+		Document result =
+			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		assertNotNull(result);
+		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+			printFaildDocument(result);
+			fail();
+		}
+		Element invoice = result.getRootElement().getChild("invoice", namespace);//$NON-NLS-1$
+		Element balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
+		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
+		assertEquals("0.00", prepaid);
+		String amount = balance.getAttributeValue("amount");//$NON-NLS-1$
+		assertEquals("17.76", amount);
+		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
+		assertEquals("17.75", due);
+		// customer pays including reminder fee
+		existing.addZahlung(new Money(27.75), "", null);
+		result =
+			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		assertNotNull(result);
+		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+			printFaildDocument(result);
+			fail();
+		}
+		invoice = result.getRootElement().getChild("invoice", namespace);//$NON-NLS-1$
+		balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
+		prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
+		assertEquals("17.76", prepaid);
+		amount = balance.getAttributeValue("amount");//$NON-NLS-1$
+		assertEquals("17.76", amount);
+		due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
+		assertEquals("0.00", due);
+		assertEquals(existing.getInvoiceState(), InvoiceState.PAID);
+	}
+	
+	@Test
+	public void doExportReminder44Test() throws IOException{
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_44_3_RNR);
+		// set reminder booking and state
+		existing.addZahlung(new Money(10.0).multiply(-1.0),
+			ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
+		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
+		// output the bill
+		XMLExporter exporter = new XMLExporter();
+		Document result =
+			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		assertNotNull(result);
+		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+			printFaildDocument(result);
+			fail();
+		}
+		Element payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
+		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
+		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
+		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
+		assertEquals("0.00", prepaid);
+		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
+		assertEquals("5227.76", due);
+		String amount = balance.getAttributeValue("amount");//$NON-NLS-1$
+		assertEquals("5217.76", amount);
+		String reminder = balance.getAttributeValue("amount_reminder");
+		assertEquals("10.00", reminder);
+		// set reminder booking and state
+		existing.addZahlung(new Money(10.0).multiply(-1.0),
+			ch.elexis.data.Messages.Rechnung_Mahngebuehr2, null);
+		existing.setStatus(InvoiceState.DEMAND_NOTE_2.numericValue());
+		// output the bill
+		exporter = new XMLExporter();
+		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		assertNotNull(result);
+		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+			printFaildDocument(result);
+			fail();
+		}
+		payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
+		body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
+		balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
+		prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
+		assertEquals("0.00", prepaid);
+		due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
+		assertEquals("5237.76", due);
+		amount = balance.getAttributeValue("amount");//$NON-NLS-1$
+		assertEquals("5217.76", amount);
+		reminder = balance.getAttributeValue("amount_reminder");
+		assertEquals("20.00", reminder);
+		// customer pays without reminder fee
+		existing.addZahlung(new Money(5217.76), "", null);
+		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		assertNotNull(result);
+		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+			printFaildDocument(result);
+			fail();
+		}
+		payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
+		body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
+		balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
+		prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
+		assertEquals("5217.76", prepaid);
+		due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
+		assertEquals("20.00", due);
+		amount = balance.getAttributeValue("amount");//$NON-NLS-1$
+		assertEquals("5217.76", amount);
+		reminder = balance.getAttributeValue("amount_reminder");
+		assertEquals("20.00", reminder);
 	}
 	
 	private String getTempDestination(){

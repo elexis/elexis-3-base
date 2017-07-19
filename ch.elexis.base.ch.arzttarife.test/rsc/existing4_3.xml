@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invoice:request xmlns:invoice="http://www.xmlData.ch/xmlInvoice/XSD" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd" role="production">
+  <invoice:header>
+    <invoice:sender ean_party="2000000000002" />
+    <invoice:intermediate ean_party="2000000000000" />
+    <invoice:recipient ean_party="2000000000000" />
+  </invoice:header>
+  <invoice:prolog>
+    <invoice:package version="300" id="0">Elexis</invoice:package>
+    <invoice:generator>
+      <invoice:software version="100" id="0">JDOM</invoice:software>
+    </invoice:generator>
+    <invoice:validator focus="tarmed" version_software="300" version_db="401" id="0">Elexis TarmedVerifier</invoice:validator>
+  </invoice:prolog>
+  <invoice:invoice invoice_timestamp="1415349992" invoice_id="000001000001" invoice_date="2014-11-07T00:00:00" resend="false" case_id="n39afe1571cbd74e8024">
+    <invoice:balance currency="CHF" amount="17.76" amount_prepaid="10.00" amount_due="7.75" amount_tarmed="17.76" unit_tarmed.mt="9.57" amount_tarmed.mt="9.57" unit_tarmed.tt="8.19" amount_tarmed.tt="8.19" amount_cantonal="0.00" amount_unclassified="0.00" amount_lab="0.00" amount_physio="0.00" amount_drug="0.00" amount_migel="0.00" amount_obligations="17.76">
+      <invoice:vat vat="0.00">
+        <invoice:vat_rate vat_rate="0.00" amount="17.76" vat="0.00" />
+      </invoice:vat>
+    </invoice:balance>
+    <invoice:esr9 participant_number="01-12648-2" type="16or27" reference_number="15 45300 00000 00000 00100 00018" coding_line="0100000017758&gt;154530000000000000010000018+ 010126482&gt;" />
+    <invoice:tiers_garant payment_periode="P30D">
+      <invoice:biller ean_party="2000000000002" zsr="C000002" specialty="Allgemein">
+        <invoice:company>
+          <invoice:companyname>Mandant.tarmed</invoice:companyname>
+          <invoice:postal>
+            <invoice:zip>0000</invoice:zip>
+            <invoice:city>Unbekannt</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-555 55 55</invoice:phone>
+          </invoice:telecom>
+        </invoice:company>
+      </invoice:biller>
+      <invoice:provider ean_party="2000000000002" zsr="C000002" specialty="Allgemein">
+        <invoice:company>
+          <invoice:companyname>Mandant.tarmed</invoice:companyname>
+          <invoice:postal>
+            <invoice:zip>0000</invoice:zip>
+            <invoice:city>Unbekannt</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-555 55 55</invoice:phone>
+          </invoice:telecom>
+        </invoice:company>
+      </invoice:provider>
+      <invoice:patient gender="female" birthdate="1957-04-14T00:00:00">
+        <invoice:person>
+          <invoice:familyname>Spitzkiel</invoice:familyname>
+          <invoice:givenname>Beatrice</invoice:givenname>
+          <invoice:postal>
+            <invoice:zip>0000</invoice:zip>
+            <invoice:city>Unbekannt</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-555 55 55</invoice:phone>
+          </invoice:telecom>
+        </invoice:person>
+      </invoice:patient>
+      <invoice:guarantor>
+        <invoice:person>
+          <invoice:familyname>Spitzkiel</invoice:familyname>
+          <invoice:givenname>Beatrice</invoice:givenname>
+          <invoice:postal>
+            <invoice:zip>0000</invoice:zip>
+            <invoice:city>Unbekannt</invoice:city>
+          </invoice:postal>
+          <invoice:telecom>
+            <invoice:phone>555-555 55 55</invoice:phone>
+          </invoice:telecom>
+        </invoice:person>
+      </invoice:guarantor>
+    </invoice:tiers_garant>
+    <invoice:detail date_begin="2014-11-07T00:00:00" date_end="2014-11-07T00:00:00" canton="AG" service_locality="practice">
+      <invoice:diagnosis type="by_contract" code="A1" />
+      <invoice:mvg reason="disease" patient_id="l7d9506955872ad3b018" case_date="2014-11-07T00:00:00" />
+      <invoice:services>
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ean_provider="2000000000002" ean_responsible="2000000000002" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="9.57" unit_factor.mt="1.00" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="9.57" unit.tt="8.19" unit_factor.tt="1.00" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="8.19" amount="17.76" vat_rate="0.0" validate="true" obligation="true" record_id="1" number="1" quantity="1.0" date_begin="2014-11-07T00:00:00" code="00.0010">Konsultation, erste 5 Min. (Grundkonsultation)</invoice:record_tarmed>
+      </invoice:services>
+    </invoice:detail>
+  </invoice:invoice>
+</invoice:request>

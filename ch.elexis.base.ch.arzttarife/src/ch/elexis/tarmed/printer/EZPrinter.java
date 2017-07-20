@@ -91,7 +91,7 @@ public class EZPrinter {
 	public Brief doPrint(Rechnung rn, EZPrinterData ezData, TextContainer text, ESR esr,
 		IProgressMonitor monitor){
 		
-		Money mEZDue = new Money(ezData.due); // XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));
+		Money mEZDue = new Money(ezData.due);
 		mEZDue.addMoney(ezData.paid);
 		
 		Brief actBrief;

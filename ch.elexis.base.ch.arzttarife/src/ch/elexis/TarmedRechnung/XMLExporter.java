@@ -637,6 +637,7 @@ public class XMLExporter implements IRnOutputter {
 		Money mPaid = rn.getAnzahlung();
 
 		Element invoice = root.getChild("invoice", namespace);//$NON-NLS-1$
+		fixCanton(invoice, namespace);
 		Element balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
 		Money anzInBill = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_prepaid"));//$NON-NLS-1$
 		if (!mPaid.equals(anzInBill)) {
@@ -686,6 +687,14 @@ public class XMLExporter implements IRnOutputter {
 			if (payant != null) {
 				payant.setAttribute("purpose", ELEMENT_ANNULMENT); //$NON-NLS-1$
 			}
+		}
+	}
+	
+	private void fixCanton(Element invoice, Namespace namespace){
+		Element detail = invoice.getChild("detail", namespace);
+		String canton = detail.getAttributeValue("canton", namespace);
+		if (canton == null || canton.isEmpty()) {
+			detail.setAttribute("canton", "AG");
 		}
 	}
 	

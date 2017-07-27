@@ -46,7 +46,6 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	private static final String SIDE = "Seite";
 	
 	private static int HEADER_HEIGHT = -1;
-	private static final int DISTANCE_BETWEEN_DISEASES = 19;
 	private static final int SEPARATOR_WIDTH_BASE_EXTENDED = 2;
 	private static final int OFFSET = 15;
 	
@@ -63,6 +62,8 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	private int separatorBoundary, locationOfLotNrBorder, locationOfDocBorder,
 			locationOfDateBorder, locationOfAgeBorder, locationOfFirstDisease,
 			locationOfSideBorder;
+	
+	private int distanceBetweenDiseases = 19;
 	
 	private int lengthOfBasisimpfungen, lengthOfDoctor, lengthOfLotNr, lengthOfDateString,
 			lengthOfSide, leftStart;
@@ -94,15 +95,50 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		boldFont = boldDescriptor.createFont(disp);
 		headerFont = new Font(disp, "Helvetica", 16, SWT.BOLD);
 		
-		fontHeightDefaultFont = defaultFont.getFontData()[0].getHeight() + 5;
-		fontHeightBoldFont = boldFont.getFontData()[0].getHeight() + 5;
+		distanceBetweenDiseases = (int) (distanceBetweenDiseases * getScaleFactor());
 		
-		entryHeight = (fontHeightBoldFont + 4);
+		fontHeightDefaultFont =
+			(int) ((defaultFont.getFontData()[0].getHeight() + 5) * getScaleFactor());
+		fontHeightBoldFont = (int) ((boldFont.getFontData()[0].getHeight() + 5) * getScaleFactor());
+		
+		entryHeight = (int) ((fontHeightBoldFont + 4) * getScaleFactor());
 		defaultEntryHeight = entryHeight;
 		
 		naviVacMap = new TreeMap<Integer, Vaccination>();
 		selectedVacc = null;
 		showSide = CoreHub.userCfg.get(PreferencePage.VAC_SHOW_SIDE, false);
+	}
+	
+	private boolean shouldScale(){
+		String osName = System.getProperty("os.name").toLowerCase();
+		if (osName.startsWith("win")) {
+			if (getWindowsVersion() < 10) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private double getWindowsVersion(){
+		String osVersion = System.getProperty("os.version").toLowerCase();
+		try {
+			return Double.valueOf(osVersion);
+		} catch (NumberFormatException e) {
+			// ignore default is 6.1 (Win 7)
+		}
+		return 6.1;
+	}
+	
+	public double getScaleFactor(){
+		if (shouldScale()) {
+			int dpi = Display.getDefault().getDPI().x;
+			if (dpi == 120) {
+				return 1.25;
+			} else if (dpi == 144) {
+				return 1.5;
+			}
+		}
+		return 1;
 	}
 	
 	@Override
@@ -194,12 +230,12 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	private int determineMinWidth(GC gc, boolean wrapText){
 		int minWidth = 0;
 		
-		lengthOfBasisimpfungen = _vphd.base.size() * DISTANCE_BETWEEN_DISEASES;
+		lengthOfBasisimpfungen = _vphd.base.size() * distanceBetweenDiseases;
 		lengthOfDoctor = determineMaxAdministratorLabelLength(gc, wrapText) + OFFSET;
 		lengthOfLotNr = determineMaxLotNr(gc, wrapText) + OFFSET;
 		lengthOfDateString = gc.textExtent("09.07.2014").x + OFFSET;
 		leftStart =
-			_vphd.extended.size() * DISTANCE_BETWEEN_DISEASES + SEPARATOR_WIDTH_BASE_EXTENDED;
+			_vphd.extended.size() * distanceBetweenDiseases + SEPARATOR_WIDTH_BASE_EXTENDED;
 		int lNames = determineMaxVaccNameLength(gc);
 		
 		gc.setFont(headerFont);
@@ -253,7 +289,8 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		gc.setFont(boldFont);
 		
 		// age
-		locationOfAgeBorder = width - lengthOfBasisimpfungen - leftStart - (20 + 15);
+		locationOfAgeBorder =
+			(int) (width - lengthOfBasisimpfungen - leftStart - ((20 + 15) * getScaleFactor()));
 		gc.drawText(AGE, locationOfAgeBorder + 2, HEADER_HEIGHT - fontHeightDefaultFont - 2);
 		
 		// side if settings say so
@@ -281,14 +318,14 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		gc.setFont(defaultFont);
 		
 		// extended diseases
-		int spaceCounter = -DISTANCE_BETWEEN_DISEASES;
+		int spaceCounter = -distanceBetweenDiseases;
 		for (String val : _vphd.extended) {
 			if (alternator) {
 				gc.setBackground(COLOR_BOTTOM);
 			} else {
 				gc.setBackground(COLOR_WHITE);
 			}
-			gc.fillRectangle(width + spaceCounter, 0, DISTANCE_BETWEEN_DISEASES, eh());
+			gc.fillRectangle(width + spaceCounter, 0, distanceBetweenDiseases, eh());
 			gc.drawLine(width + spaceCounter, 0, width + spaceCounter, eh());
 			
 			diseaseBoundaries
@@ -298,7 +335,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			GraphicsUtil.drawVerticalText(diseaseLabel, display, width + spaceCounter + 3,
 				HEADER_HEIGHT - 3, gc, SWT.UP | SWT.BOTTOM);
 			
-			spaceCounter -= DISTANCE_BETWEEN_DISEASES;
+			spaceCounter -= distanceBetweenDiseases;
 			alternator = !alternator;
 		}
 		gc.setBackground(COLOR_WHITE);
@@ -309,7 +346,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		gc.fillRectangle(separatorBoundary, 0, SEPARATOR_WIDTH_BASE_EXTENDED, eh());
 		
 		// Basisimpfungen
-		spaceCounter = -DISTANCE_BETWEEN_DISEASES;
+		spaceCounter = -distanceBetweenDiseases;
 		locationOfFirstDisease = width - lengthOfBasisimpfungen - leftStart;
 		for (String baseDisease : _vphd.base) {
 			if (alternator) {
@@ -317,7 +354,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			} else {
 				gc.setBackground(COLOR_WHITE);
 			}
-			gc.fillRectangle(width + spaceCounter - leftStart, 0, DISTANCE_BETWEEN_DISEASES, eh());
+			gc.fillRectangle(width + spaceCounter - leftStart, 0, distanceBetweenDiseases, eh());
 			gc.drawLine(width + spaceCounter - leftStart, 0, width + spaceCounter - leftStart,
 				eh());
 			
@@ -328,7 +365,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			GraphicsUtil.drawVerticalText(diseaseLabel, display,
 				width + spaceCounter + 3 - leftStart, HEADER_HEIGHT - 3, gc, SWT.UP | SWT.BOTTOM);
 			
-			spaceCounter -= DISTANCE_BETWEEN_DISEASES;
+			spaceCounter -= distanceBetweenDiseases;
 			alternator = !alternator;
 		}
 		gc.setBackground(COLOR_WHITE);

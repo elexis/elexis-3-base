@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -538,15 +539,16 @@ public class XMLExporter implements IRnOutputter {
 		if (firstReminder) {
 			@SuppressWarnings("unchecked")
 			List<Element> children = payload.getChildren();
+			List<Element> newChildren = new ArrayList<>();
 			for (int i = 0; i < children.size(); i++) {
+				newChildren.add(children.get(i));
+				// add reminder after invoice
 				if (children.get(i).getName().equals("invoice")) {
-					// addContent index is not 0 based
-					payload.addContent(i + 1, reminder);
-					return;
+					newChildren.add(reminder);
 				}
 			}
-			logger.warn("No invoice element found, adding reminder at index 1");
-			payload.addContent(1, reminder);
+			payload.removeContent();
+			payload.setContent(newChildren);
 		}
 	}
 	

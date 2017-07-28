@@ -541,7 +541,7 @@ public class XMLExporter implements IRnOutputter {
 			for (int i = 0; i < children.size(); i++) {
 				if (children.get(i).getName().equals("invoice")) {
 					// addContent index is not 0 based
-					payload.addContent(i + 2, reminder);
+					payload.addContent(i + 1, reminder);
 					return;
 				}
 			}

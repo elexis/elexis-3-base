@@ -27,7 +27,6 @@ import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.model.InvoiceState;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.rgw.tools.Money;
@@ -385,7 +384,7 @@ public class XMLExporterTest {
 		// set reminder booking and state
 		existing.addZahlung(new Money(10.0).multiply(-1.0),
 			ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
-		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
+		existing.setStatus(RnStatus.MAHNUNG_1);
 		// output the bill
 		XMLExporter exporter = new XMLExporter();
 		Document result =
@@ -420,7 +419,7 @@ public class XMLExporterTest {
 		assertEquals("17.76", amount);
 		due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("0.00", due);
-		assertEquals(existing.getInvoiceState(), InvoiceState.PAID);
+		assertEquals(existing.getStatus(), RnStatus.BEZAHLT);
 	}
 	
 	@Test
@@ -430,7 +429,7 @@ public class XMLExporterTest {
 		// set reminder booking and state
 		existing.addZahlung(new Money(10.0).multiply(-1.0),
 			ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
-		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
+		existing.setStatus(RnStatus.MAHNUNG_1);
 		// output the bill
 		XMLExporter exporter = new XMLExporter();
 		Document result =
@@ -454,7 +453,7 @@ public class XMLExporterTest {
 		// set reminder booking and state
 		existing.addZahlung(new Money(10.0).multiply(-1.0),
 			ch.elexis.data.Messages.Rechnung_Mahngebuehr2, null);
-		existing.setStatus(InvoiceState.DEMAND_NOTE_2.numericValue());
+		existing.setStatus(RnStatus.MAHNUNG_2);
 		// output the bill
 		exporter = new XMLExporter();
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);

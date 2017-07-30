@@ -18,7 +18,6 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-          <skipTests>true</skipTests> <!-- TODO: Fix errors by referencing ch.elexis.core.model.InvoiceState -->
 					<showEclipseLog>true</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>

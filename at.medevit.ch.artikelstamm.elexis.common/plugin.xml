@@ -28,13 +28,6 @@
     </Factory>
  </extension>
  <extension
-       point="ch.elexis.core.data.referenceDataImporter">
-    <importer
-          class="at.medevit.ch.artikelstamm.elexis.common.importer.ArtikelstammReferenceDataImporter"
-          referenceDataId="artikelstamm">
-    </importer>
- </extension>
- <extension
        point="org.eclipse.ui.handlers">
     <handler
           class="at.medevit.ch.artikelstamm.elexis.common.ui.handlers.OpenArticelDetailDialogHandler"

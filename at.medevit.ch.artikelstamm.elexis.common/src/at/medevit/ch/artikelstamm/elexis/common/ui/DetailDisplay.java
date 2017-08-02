@@ -126,19 +126,6 @@ public class DetailDisplay implements IDetailDisplay {
 		// Overwritten by subclasses
 	}
 	
-	private String dataQualityToString(int dq){
-		switch (dq) {
-		case 1:
-			return "v1";
-		case 2:
-			return "v1b";
-		case 3:
-			return "v2";
-		default:
-			return "unknown";
-		}
-	}
-	
 	/**
 	 * This method adds the Elexis v2.1 aspect of stock to the detail display. As this functionality
 	 * is specific to Elexis v2.1 it is not included in the base {@link DetailComposite}

@@ -136,7 +136,7 @@ public class Medicament {
 	
 	public enum State {
 			// prioritized order dont change it
-			NEW, ATC, ATC_SAME_DOSAGE, GTIN, GTIN_SAME_DOSAGE;
+			NEW, ATC, ATC_SAME, ATC_SAME_DOSAGE, GTIN_SAME, GTIN_SAME_DOSAGE;
 		
 		public static boolean isHigherState(State current, State newState){
 			return current.ordinal() < newState.ordinal();

@@ -405,6 +405,9 @@
    <feature url="features/ch.elexis.connector.medicosearch.feature_3.0.0.qualifier.jar" id="ch.elexis.connector.medicosearch.feature" version="3.0.0.qualifier">
       <category name="dataexchange"/>
    </feature>
+   <feature url="features/ch.novcom.elexis.mednet.plugin.feature_3.0.0.qualifier.jar" id="ch.novcom.elexis.mednet.plugin.feature" version="3.0.0.qualifier">
+      <category name="dataexchange"/>
+   </feature>
    <feature url="features/ch.elexis.laborimport.eurolyser.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.eurolyser.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>

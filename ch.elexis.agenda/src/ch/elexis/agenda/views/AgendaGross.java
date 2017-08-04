@@ -18,16 +18,13 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -39,6 +36,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+
+import com.tiff.common.ui.datepicker.DatePicker;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.BereichSelectionHandler;
@@ -62,8 +61,6 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
-import com.tiff.common.ui.datepicker.DatePicker;
-
 /**
  * A larger view for the agenda with more features than the compact "TagesView"
  * 
@@ -79,7 +76,6 @@ public class AgendaGross extends BaseAgendaView {
 	
 	DatePicker cal;
 	Composite cButtons;
-	Composite right;
 	Text dayMessage;
 	Text terminDetail;
 	Label lbDetails;
@@ -96,24 +92,17 @@ public class AgendaGross extends BaseAgendaView {
 	
 	@Override
 	public void create(Composite parent){
-		parent.setLayout(new FillLayout());
+		parent.setLayout(new GridLayout());
 		
-		Composite ret = new Composite(parent, SWT.NONE);
-		ret.setLayout(new FormLayout());
-		// Button tv=new Button(ret,SWT.PUSH);
-		cButtons = new Composite(ret, SWT.BORDER);
-		cButtons.setLayout(new RowLayout());
-		FormData fdTop = new FormData();
-		fdTop.top = new FormAttachment(0, 3);
-		fdTop.left = new FormAttachment(0, 3);
-		fdTop.right = new FormAttachment(100, -3);
-		cButtons.setLayoutData(fdTop);
-		right = new Composite(ret, SWT.BORDER);
-		FormData fdRight = new FormData();
-		fdRight.right = new FormAttachment(100, -5);
-		fdRight.top = new FormAttachment(cButtons, 0);
-		fdRight.bottom = new FormAttachment(100, -5);
-		right.setLayoutData(fdRight);
+		cButtons = new Composite(parent, SWT.BORDER);
+		RowLayout rl = new RowLayout();
+		cButtons.setLayout(rl);
+		cButtons.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
+		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
+		sash.setLayout(new GridLayout());
+		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+
 		String[] bereiche =
 			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
 				.split(","); //$NON-NLS-1$
@@ -127,19 +116,17 @@ public class AgendaGross extends BaseAgendaView {
 				bChange[i].setSelection(true);
 			}
 		}
-		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
-		FormData fdTV = new FormData();
-		fdTV.left = new FormAttachment(0, 0);
-		fdTV.top = new FormAttachment(cButtons, 0);
-		fdTV.right = new FormAttachment(right, 4);
-		fdTV.bottom = new FormAttachment(100, -4);
-		// fdTV.bottom=new FormAttachment(0,0);
-		tv.getControl().setLayoutData(fdTV);
 		
-		// fdRight.left=new FormAttachment(tv,5);
-		// fdRight.bottom=new FormAttachment(0,0);
+		Composite ret = new Composite(sash, SWT.NONE);
+		Composite right = new Composite(sash, SWT.BORDER);
 		
+		ret.setLayout(new GridLayout());
 		right.setLayout(new GridLayout());
+		right.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		
+		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
+		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		
 		cal = new DatePicker(right, SWT.NONE);
 		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cal.setDate(agenda.getActDate().getTime());
@@ -182,10 +169,6 @@ public class AgendaGross extends BaseAgendaView {
 		lbDetails.setText("-"); //$NON-NLS-1$
 		lbDetails.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		lbDayString = new Label(ret, SWT.NONE);
-		FormData fdBottom = new FormData();
-		fdBottom.left = new FormAttachment(0, 0);
-		fdBottom.bottom = new FormAttachment(100, 0);
-		fdBottom.right = new FormAttachment(100, 0);
 		
 		tv.setLabelProvider(new AgendaLabelProvider());
 		Table table = tv.getTable();
@@ -321,8 +304,6 @@ public class AgendaGross extends BaseAgendaView {
 		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable ip = (IPlannable) element;
-				if (ip.isRecurringDate())
-					ip = new SerienTermin(ip).getRootTermin();
 				switch (columnIndex) {
 				case 0:
 					return Plannables.getStartTimeAsString(ip);
@@ -333,7 +314,8 @@ public class AgendaGross extends BaseAgendaView {
 				case 3:
 					return ip.getStatus();
 				case 4:
-					return ip.getTitle();
+					return ip.isRecurringDate() ? new SerienTermin(ip).getRootTermin().getTitle()
+							: ip.getTitle();
 				case 5:
 					if (ip instanceof Termin) {
 						Termin termin = (Termin) ip;
@@ -377,7 +359,13 @@ public class AgendaGross extends BaseAgendaView {
 		TimeSpan ts = t.getTimeSpan();
 		sb.append(ts.from.toString(TimeTool.TIME_SMALL))
 			.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-			.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
+			.append(" ");
+		if (t.isRecurringDate()) {
+			sb.append(new SerienTermin(t).getRootTermin().getPersonalia());
+		} else {
+			sb.append(t.getPersonalia());
+		}
+		sb.append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
 			.append(t.getType())
 			.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());

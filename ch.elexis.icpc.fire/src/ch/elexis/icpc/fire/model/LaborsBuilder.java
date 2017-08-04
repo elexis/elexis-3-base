@@ -75,7 +75,10 @@ public class LaborsBuilder {
 					labors.getLabor().add(tLabor);
 				}
 			}
-			return Optional.of(labors);
+			if (!labors.getLabor().isEmpty()) {
+				return Optional.of(labors);
+			}
+			
 		}
 		
 		return Optional.empty();

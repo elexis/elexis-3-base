@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -58,6 +60,7 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.data.Termin.Free;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.agenda.util.TimeInput;
@@ -65,6 +68,7 @@ import ch.elexis.agenda.util.TimeInput.TimeInputListener;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -73,6 +77,7 @@ import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.util.NumberInput;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
@@ -108,7 +113,7 @@ public class TerminDialog extends TitleAreaDialog {
 	List lTerminListe;
 	// Button bPrev,bNext;
 	Button bLocked, bSerie;
-	Button bSave, bDelete, bChange, bPrint, bFuture;
+	Button bSave, bDelete, bChange, bPrint, bFuture, bEmergency;
 	Slider slider;
 	DayOverview dayBar;
 	
@@ -143,6 +148,33 @@ public class TerminDialog extends TitleAreaDialog {
 		tMap = Plannables.getTimePrefFor(agenda.getActResource());
 		tMap.put(Termin.typFrei(), "0"); //$NON-NLS-1$
 		tMap.put(Termin.typReserviert(), "0"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Use this constructor for creating a new {@link Termin} from a date and for a resource.
+	 * 
+	 * @param date
+	 * @param resource
+	 * @param patient
+	 */
+	public TerminDialog(@NonNull TimeTool date, @NonNull String resource, Patient patient){
+		super(UiDesk.getTopShell());
+		Free act = new Termin.Free(date.toString(TimeTool.DATE_COMPACT),
+			date.get(TimeTool.HOUR_OF_DAY) * 60 + date.get(TimeTool.MINUTE), 30);
+		actKontakt = patient;
+		Color green = UiDesk.getColor(UiDesk.COL_GREEN);
+		if (green == null) {
+			UiDesk.getColorRegistry().put(UiDesk.COL_GREEN, new RGB(0, 255, 0));
+		}
+		actPlannable = act;
+		agenda.setActResource(resource);
+		tMap = Plannables.getTimePrefFor(agenda.getActResource());
+		tMap.put(Termin.typFrei(), "0"); //$NON-NLS-1$
+		tMap.put(Termin.typReserviert(), "0"); //$NON-NLS-1$
+	}
+	
+	public static void setActResource(String resource){
+		Activator.getDefault().setActResource(resource);
 	}
 	
 	@Override
@@ -329,6 +361,10 @@ public class TerminDialog extends TitleAreaDialog {
 		});
 		bFuture = new Button(topRight, SWT.CHECK);
 		bFuture.setText(Messages.TerminDialog_past);
+		
+		bEmergency = new Button(topRight, SWT.CHECK);
+		bEmergency.setText(Messages.TerminDialog_emergency);
+		
 		// Balken
 		Composite cBar = new Composite(ret, SWT.BORDER);
 		cBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -555,6 +591,7 @@ public class TerminDialog extends TitleAreaDialog {
 			setCombo(cbStatus, actTermin.getStatus(), 0);
 			bLocked.setSelection(actTermin.getFlag(Termin.SW_LOCKED));
 			niDauer.getControl().setSelection(actPlannable.getDurationInMinutes());
+			bEmergency.setSelection(StringUtils.equals(actTermin.get(Termin.FLD_PRIORITY), "1"));
 		}
 		dayBar.redraw();
 		slider.set();
@@ -569,13 +606,13 @@ public class TerminDialog extends TitleAreaDialog {
 		
 		if (!mode) {
 			slider.setBackground(UiDesk.getColor(UiDesk.COL_DARKGREY)); //$NON-NLS-1$
-			msg = Messages.TerminDialog_editTermins + "\n" + Messages.TerminDialog_collision;
+			msg = Messages.TerminDialog_editTermins + "\n\t" + Messages.TerminDialog_collision;
 		}
 		
 		getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run(){
-				setMessage(msg);
+				setMessage(msg, mode ? IMessageProvider.NONE : IMessageProvider.ERROR);
 			}
 		});
 	}
@@ -818,10 +855,12 @@ public class TerminDialog extends TitleAreaDialog {
 		int bis = von + niDauer.getValue();
 		String typ = cbTyp.getItem(cbTyp.getSelectionIndex());
 		String status = cbStatus.getItem(cbStatus.getSelectionIndex());
+		String priority = bEmergency.getSelection() ? "1" : "0";
 		Termin actTermin = null;
 		if (actPlannable instanceof Termin.Free) {
 			Termin newTermin = new Termin(agenda.getActResource(),
-				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status);
+				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status,
+				priority);
 			actTermin = newTermin;
 		} else {
 			actTermin = (Termin) actPlannable;
@@ -842,10 +881,10 @@ public class TerminDialog extends TitleAreaDialog {
 			}
 			
 			actTermin.set(new String[] {
-				"BeiWem", "Tag", "Beginn", "Dauer", "Typ", "Status"
+				"BeiWem", "Tag", "Beginn", "Dauer", "Typ", "Status", Termin.FLD_PRIORITY
 			}, new String[] {
 				agenda.getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
-				Integer.toString(von), Integer.toString(bis - von), typ, status
+				Integer.toString(von), Integer.toString(bis - von), typ, status, priority
 			});
 		}
 		lTerminListe.add(actTermin.getLabel());

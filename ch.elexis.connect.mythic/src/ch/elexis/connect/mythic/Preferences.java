@@ -57,17 +57,24 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		ports.setText(CoreHub.localCfg.get(PORT, "COM1"));
 		new Label(ret, SWT.NONE).setText("Geschwindigkeit");
 		speed = new Text(ret, SWT.BORDER);
-		speed.setText(param[0]);
+		speed.setText(getParamText(param, 0));
 		new Label(ret, SWT.NONE).setText("Datenbits");
 		data = new Text(ret, SWT.BORDER);
-		data.setText(param[1]);
+		data.setText(getParamText(param, 1));
 		new Label(ret, SWT.NONE).setText("Parity");
 		parity = new Button(ret, SWT.CHECK);
-		parity.setSelection(!param[2].equalsIgnoreCase("n"));
+		parity.setSelection(!getParamText(param, 2).equalsIgnoreCase("n"));
 		new Label(ret, SWT.NONE).setText("Stopbits");
 		stop = new Text(ret, SWT.BORDER);
-		stop.setText(param[3]);
+		stop.setText(getParamText(param, 3));
 		return ret;
+	}
+
+	private String getParamText(String[] param, int idx){
+		if (idx < param.length) {
+			return param[idx];
+		}
+		return "";
 	}
 	
 	public void init(final IWorkbench workbench){

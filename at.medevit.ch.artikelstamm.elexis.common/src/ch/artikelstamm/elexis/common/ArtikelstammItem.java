@@ -14,7 +14,6 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +22,7 @@ import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.BlackBoxReason;
+import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
 import ch.elexis.core.constants.StringConstants;
@@ -179,7 +179,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			}
 		}
 		
-		Artikel.transferAllStockInformationToNew32StockModel(new Query<ArtikelstammItem>(ArtikelstammItem.class), ArtikelstammItem.class);
+		Artikel.transferAllStockInformationToNew32StockModel(
+			new Query<ArtikelstammItem>(ArtikelstammItem.class), ArtikelstammItem.class);
 	}
 	
 	@Override
@@ -222,7 +223,13 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 */
 	public ArtikelstammItem(int version, TYPE type, String gtin, BigInteger code, String dscr,
 		String addscr){
-				
+		
+		if (dscr.length() > 100) {
+			dscr = dscr.substring(0, 100);
+			log.warn("Delimiting dscr to 100 chars for [{}] info [{}]", dscr,
+				type + "/" + version + "/" + code);
+		}
+		
 		if (TYPE.X == type) {
 			// Product
 			create(gtin);
@@ -494,6 +501,29 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	// --------------------
 	
 	/**
+	 * 
+	 * @return the data source this set is populated from
+	 * @throws IllegalArgumentException
+	 *             if not yet set
+	 * @since 3.3
+	 */
+	public static DATASOURCEType getDatasourceType(){
+		String dst = load(VERSION_ENTRY_ID).get(FLD_ADDDSCR);
+		return DATASOURCEType.fromValue(dst);
+	}
+	
+	/**
+	 * Set the data-source information. Do execute only ONCE!
+	 * 
+	 * @param datasource
+	 * @since 3.3
+	 */
+	public static void setDataSourceType(DATASOURCEType datasource){
+		log.info("Setting data source type [{}]", datasource.value());
+		load(VERSION_ENTRY_ID).set(FLD_ADDDSCR, datasource.value());
+	}
+	
+	/**
 	 * @param stammType
 	 * @return The version of the current imported data-set
 	 */
@@ -532,13 +562,6 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		stm.exec("DELETE FROM " + TABLENAME + " WHERE ID IN (" + string + ")");
 		getConnection().releaseStatement(stm);
 		
-		return true;
-	}
-	
-	public static boolean purgeProducts(){
-		Stm stm = getConnection().getStatement();
-		stm.exec("DELETE FROM " + TABLENAME + " WHERE TYPE = '" + TYPE.X.name() + "'");
-		getConnection().releaseStatement(stm);
 		return true;
 	}
 	
@@ -725,8 +748,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	/**
 	 * @param ean
 	 *            the European Article Number or GTIN
-	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if not
-	 *         found
+	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if none or multiple found
 	 */
 	public static @Nullable ArtikelstammItem findByEANorGTIN(@NonNull String ean){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
@@ -760,4 +782,5 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	public int getCacheTime(){
 		return DBConnection.CACHE_TIME_MAX;
 	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 MEDEVIT.
+ * Copyright (c) 2013-2017 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,8 @@ public class ArtikelstammImporterPage extends ImporterPage {
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		log.info("ArtikelstammImporterPage. doImport " + results[0]);
-		ArtikelstammReferenceDataImporter ardi = new ArtikelstammReferenceDataImporter();
-		return ardi.performImport(monitor, new FileInputStream(results[0]), null);
+		log.info("ArtikelstammImporterPage.doImport " + results[0]);
+		return ArtikelstammImporter.performImport(monitor, new FileInputStream(results[0]), null);
 	}
 	
 	@Override

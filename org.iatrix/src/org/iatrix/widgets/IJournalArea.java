@@ -16,7 +16,6 @@
 package org.iatrix.widgets;
 
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
 
 /**
  * A small helper class. Areas may add code to properly update their part. The following callbacks
@@ -41,17 +40,11 @@ public interface IJournalArea {
 	 */
 	public void activation(boolean mode);
 
-	/**
-	 * Callback für JournalArea: Aktuellen Patienten setzen.
-	 *
-	 * @param newPatient
-	 *            to set may be null
-	 */
-
-	public void setPatient(Patient newPatient);
-
 	public enum KonsActions {
 		ACTIVATE_KONS,
+		EVENT_UPDATE,
+		EVENT_RELOAD,
+		EVENT_SELECTED,
 		SAVE_KONS
 	}
 	/**

@@ -83,7 +83,7 @@ public class DetailDisplay implements IDetailDisplay {
 			String atcLang = CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
 				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
 			
-			dc = new DetailComposite(parent, SWT.None, atcLang);
+			dc = new DetailComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL, atcLang);
 			
 			addLagerhaltungGroupToComposite(dc);
 			addAdditionalInformation(dc);
@@ -97,7 +97,7 @@ public class DetailDisplay implements IDetailDisplay {
 	}
 	
 	private void addDataSetStateLabelToComposite(DetailComposite dc){
-		Composite ret = new Composite(dc, SWT.None);
+		Composite ret = new Composite(dc.getMainComposite(), SWT.None);
 		ret.setLayout(new GridLayout(2, false));
 		ret.setLayoutData(new GridData(SWT.FILL, SWT.VERTICAL, true, false));
 		
@@ -126,19 +126,6 @@ public class DetailDisplay implements IDetailDisplay {
 		// Overwritten by subclasses
 	}
 	
-	private String dataQualityToString(int dq){
-		switch (dq) {
-		case 1:
-			return "v1";
-		case 2:
-			return "v1b";
-		case 3:
-			return "v2";
-		default:
-			return "unknown";
-		}
-	}
-	
 	/**
 	 * This method adds the Elexis v2.1 aspect of stock to the detail display. As this functionality
 	 * is specific to Elexis v2.1 it is not included in the base {@link DetailComposite}
@@ -149,7 +136,7 @@ public class DetailDisplay implements IDetailDisplay {
 	private void addLagerhaltungGroupToComposite(final DetailComposite dc){
 		DataBindingContext bindingContext = new DataBindingContext();
 		
-		Group grpLagerhaltung = new Group(dc, SWT.NONE);
+		Group grpLagerhaltung = new Group(dc.getMainComposite(), SWT.NONE);
 		grpLagerhaltung.setText("Lagerhaltung");
 		grpLagerhaltung.setLayout(new GridLayout(4, false));
 		grpLagerhaltung.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));

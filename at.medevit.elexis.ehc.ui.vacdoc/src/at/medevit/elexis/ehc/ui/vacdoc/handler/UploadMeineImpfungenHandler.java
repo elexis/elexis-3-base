@@ -19,7 +19,7 @@ import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.common.Identificator;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceComponent;
+import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder;
 import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
@@ -52,7 +52,7 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 								IProgressMonitor.UNKNOWN);
 							
 							List<org.ehealth_connector.common.Patient> patients =
-								MeineImpfungenServiceComponent.getService().getPatients(patient);
+								MeineImpfungenServiceHolder.getService().getPatients(patient);
 							if (patients != null && !patients.isEmpty()) {
 								if (patients.size() == 1) {
 									CdaChVacd document =
@@ -62,7 +62,7 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 										patients.get(0));
 									VacdocServiceComponent.getService().addVaccinations(document,
 										Collections.singletonList(selectedVacination));
-									boolean success = MeineImpfungenServiceComponent.getService()
+									boolean success = MeineImpfungenServiceHolder.getService()
 										.uploadDocument(document);
 									if (!success) {
 										MessageDialog.openError(HandlerUtil.getActiveShell(event),
@@ -115,15 +115,5 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 				"meineimpfungen nicht verfügbar");
 		}
 		return null;
-	}
-	
-	@Override
-	public boolean isEnabled(){
-		try {
-			return MeineImpfungenServiceComponent.getService().isVaild();
-		} catch (IllegalStateException ise) {
-			// do nothing, false is returned
-		}
-		return false;
 	}
 }

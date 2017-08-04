@@ -23,14 +23,18 @@ Require-Bundle: org.eclipse.core.jobs,
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0",
- commons-io;bundle-version="1.1.0",
- commons-lang;bundle-version="2.0.0",
- commons-logging;bundle-version="1.1.1"
+ commons-logging;bundle-version="1.1.1",
+ org.apache.commons.io;bundle-version="2.4.0",
+ org.apache.commons.lang;bundle-version="2.6.0",
+ edu.emory.mathcs.backport;bundle-version="3.1.0"
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/ical4j-1.0.1.jar
 Export-Package: ch.elexis.agenda.data,
  ch.elexis.agenda.externalaccess,
- ch.elexis.agenda.util
+ ch.elexis.agenda.series,
+ ch.elexis.agenda.series.ui,
+ ch.elexis.agenda.util,
+ ch.elexis.dialogs
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.slf4j;version="1.6.6"

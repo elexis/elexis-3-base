@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.core.types.Gender;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
@@ -47,6 +49,14 @@ public class ReportBuilder {
 			consultation.ifPresent(c -> report.getConsultations().getConsultation().add(c));
 			consultation.ifPresent(c -> c.setDocId(docId));
 			consultation.ifPresent(c -> c.setPatId(patId));
+			consultation.ifPresent(c -> {
+				try {
+					c.setDate(
+						XmlUtil.getXmlGregorianCalendar(new TimeTool(konsultation.getDatum())));
+				} catch (DatatypeConfigurationException e) {
+					LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e);
+				}
+			});
 		}
 	}
 	

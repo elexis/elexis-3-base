@@ -272,7 +272,7 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 			atcQueryFilter.setAtcFilter(filterValue);
 			addQueryFilter(atcQueryFilter);
 		}
-		dj.launch(0);
+		job.schedule();
 	}
 	
 	/**
@@ -285,7 +285,7 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 			removeQueryFilter(atcQueryFilter);
 			atcQueryFilter.setAtcFilter(null);
 		}
-		dj.launch(0);
+		job.schedule();
 	}
 	
 	/**
@@ -305,6 +305,6 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 	 */
 	public void setUseMephaPrefferedProviderSorter(boolean doPreferMepha){
 		this.useMephaPreferredSorter = doPreferMepha;
-		dj.launch(0);
+		job.schedule();
 	}
 }

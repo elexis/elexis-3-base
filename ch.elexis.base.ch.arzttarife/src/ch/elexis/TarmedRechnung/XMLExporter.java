@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -145,6 +146,7 @@ public class XMLExporter implements IRnOutputter {
 	public static final String ATTR_AMOUNT_TARMED_MT = "amount_tarmed.mt"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_TARMED = "amount_tarmed"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT = "amount"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_REMINDER = "amount_reminder"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_TT = "amount_tt"; //$NON-NLS-1$
 	public static final String ATTR_AMOUNT_MT = "amount_mt"; //$NON-NLS-1$
 	public static final String ATTR_QUANTITY = "quantity"; //$NON-NLS-1$
@@ -439,9 +441,8 @@ public class XMLExporter implements IRnOutputter {
 		
 		root.addContent(payload);
 		
-		if (rn.setBetrag(xmlBalance.getTotal().roundTo5()) == false) {
+		if (rn.setBetrag(xmlBalance.getAmount().roundTo5()) == false) {
 			rn.reject(RnStatus.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
-			
 		} else if (doVerify) {
 			new Validator().checkBill(this, new Result<Rechnung>());
 		}
@@ -551,8 +552,33 @@ public class XMLExporter implements IRnOutputter {
 		reminder.setAttribute(ATTR_REQUEST_ID, rechnung.getRnId()); //$NON-NLS-1$
 		reminder.setAttribute(ATTR_REMINDER_LEVEL, reminderLevel); //$NON-NLS-1$
 		
+		// add amount reminder and recalculate amount due
+		Element body = payload.getChild("body", XMLExporter.nsinvoice);
+		if (body != null) {
+			Element balance = body.getChild("balance", XMLExporter.nsinvoice);
+			Money amountReminder = rechnung.getRemindersBetrag();
+			balance.setAttribute(XMLExporter.ATTR_AMOUNT_REMINDER,
+				XMLTool.moneyToXmlDouble(amountReminder));
+			// rewrite amount due
+			Money mDue = new Money(rechnung.getBetrag());
+			mDue.addMoney(amountReminder);
+			mDue.subtractMoney(rechnung.getAnzahlung());
+			balance.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue));
+		}
+		
 		if (firstReminder) {
-			payload.addContent(1, reminder);
+			@SuppressWarnings("unchecked")
+			List<Element> children = payload.getChildren();
+			List<Element> newChildren = new ArrayList<>();
+			for (int i = 0; i < children.size(); i++) {
+				newChildren.add(children.get(i));
+				// add reminder after invoice
+				if (children.get(i).getName().equals("invoice")) {
+					newChildren.add(reminder);
+				}
+			}
+			payload.removeContent();
+			payload.setContent(newChildren);
 		}
 	}
 	
@@ -563,9 +589,12 @@ public class XMLExporter implements IRnOutputter {
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
 		XMLExporterBalance xmlBalance = new XMLExporterBalance(balance);
+		// fix for erroneous bills without amount_prepaid (https://redmine.medelexis.ch/issues/6624)
+		tryToFixPrepaid(xmlBalance, mPaid);
 		if (!mPaid.equals(xmlBalance.getPrepaid())) {
 			xmlBalance.setPrepaid(mPaid);
-			Money mDue = xmlBalance.getAmountObligations();
+			Money mDue = xmlBalance.getAmount();
+			mDue.addMoney(xmlBalance.getReminder());
 			mDue.subtractMoney(mPaid);
 			mDue.roundTo5();
 			xmlBalance.setDue(mDue);
@@ -585,18 +614,43 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
+	private void tryToFixPrepaid(XMLExporterBalance xmlBalance, Money mPaid){
+		if (!xmlBalance.hasPrepaid()) {
+			xmlBalance.setPrepaid(mPaid);
+		}
+		Money xmlAmount = xmlBalance.getAmount();
+		Money xmlDue = xmlBalance.getDue();
+		Money xmlPrepaid = xmlBalance.getPrepaid();
+		Money xmlReminder = xmlBalance.getReminder();
+		
+		double diffDouble =
+			(xmlAmount.doubleValue() + xmlReminder.doubleValue())
+				- (xmlPrepaid.doubleValue() + xmlDue.doubleValue());
+		// this is an erroneous bill
+		if (Math.abs(diffDouble) > 1) {
+			xmlBalance
+				.setDue(new Money((xmlAmount.doubleValue() + xmlReminder.doubleValue())
+					- xmlPrepaid.doubleValue()).roundTo5());
+		}
+	}
+	
 	private void updateExisting4Xml(Element root, TYPE type, Rechnung rechnung){
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
 		Money mPaid = rn.getAnzahlung();
 
 		Element invoice = root.getChild("invoice", namespace);//$NON-NLS-1$
+		fixCanton(invoice, namespace);
 		Element balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
 		Money anzInBill = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_prepaid"));//$NON-NLS-1$
 		if (!mPaid.equals(anzInBill)) {
+			Money mAmount = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount"));//$NON-NLS-1$
+			// never pay more than the total on XML bill, those cases are handled in Elexis Rechnung and UI
+			if (mPaid.isMoreThan(mAmount)) {
+				mPaid = mAmount;
+			}
 			balance.setAttribute("amount_prepaid", XMLTool.moneyToXmlDouble(mPaid));//$NON-NLS-1$
-			Money mDue = XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));//$NON-NLS-1$
-			mDue.subtractMoney(mPaid);
-			mDue.roundTo5();
+			
+			Money mDue = new Money(mAmount).subtractMoney(mPaid).roundTo5();
 			balance.setAttribute("amount_due", XMLTool.moneyToXmlDouble(mDue));//$NON-NLS-1$
 		}
 		if (type.equals(IRnOutputter.TYPE.COPY)) {
@@ -635,6 +689,14 @@ public class XMLExporter implements IRnOutputter {
 			if (payant != null) {
 				payant.setAttribute("purpose", ELEMENT_ANNULMENT); //$NON-NLS-1$
 			}
+		}
+	}
+	
+	private void fixCanton(Element invoice, Namespace namespace){
+		Element detail = invoice.getChild("detail", namespace);
+		String canton = detail.getAttributeValue("canton", namespace);
+		if (canton == null || canton.isEmpty()) {
+			detail.setAttribute("canton", "AG");
 		}
 	}
 	
@@ -839,7 +901,7 @@ public class XMLExporter implements IRnOutputter {
 			
 			void add(double amount){
 				this.sumamount += amount;
-				sumvat += (amount / (100.0)) * scale;
+				sumvat += (amount / (100.0 + scale)) * scale;
 			}
 			
 			@Override
@@ -863,7 +925,7 @@ public class XMLExporter implements IRnOutputter {
 				rates.put(new Double(scale), element);
 			}
 			element.add(amount);
-			sumvat += (amount / (100.0)) * scale;
+			sumvat += (amount / (100.0 + scale)) * scale;
 		}
 	}
 	

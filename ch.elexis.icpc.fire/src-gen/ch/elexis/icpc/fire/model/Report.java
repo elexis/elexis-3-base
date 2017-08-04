@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.07.11 um 09:24:40 AM CEST 
+// Generiert: 2017.07.03 um 12:21:08 PM CEST 
 //
 
 
@@ -94,10 +94,10 @@ public class Report {
     protected Report.Doctors doctors;
     @XmlAttribute(name = "exportDate")
 	@XmlSchemaType(name = "dateTime")
-    @XmlJavaTypeAdapter(DateAdapter.class)
+	@XmlJavaTypeAdapter(DateAdapter.class)
     protected XMLGregorianCalendar exportDate;
     @XmlAttribute(name = "exportDelay")
-    protected Long exportDelay;
+	protected Long exportDelay = 168l;
 
     /**
      * Ruft den Wert der consultations-Eigenschaft ab.

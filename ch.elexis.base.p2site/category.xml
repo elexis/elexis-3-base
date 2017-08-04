@@ -24,10 +24,10 @@
    <feature url="features/ch.elexis.externe_dokumente.feature.source_3.0.0.qualifier.jar" id="ch.elexis.externe_dokumente.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.icpc.feature.source_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature.source" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.icpc.feature.source_3.2.0.qualifier.jar" id="ch.elexis.icpc.feature.source" version="3.2.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.icpc.feature_3.0.0.qualifier.jar" id="ch.elexis.icpc.feature" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.icpc.feature_3.2.0.qualifier.jar" id="ch.elexis.icpc.feature" version="3.2.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
    <feature url="features/ch.elexis.omnivore.feature.source_3.2.0.qualifier.jar" id="ch.elexis.omnivore.feature.source" version="3.2.0.qualifier">
@@ -330,22 +330,22 @@
    <feature url="features/ch.elexis.stickynotes.feature_3.0.0.qualifier.jar" id="ch.elexis.stickynotes.feature" version="3.0.0.qualifier">
       <category name="organisation"/>
    </feature>
-   <feature url="features/de.fhdo.elexis.perspective.feature.source_3.0.0.qualifier.jar" id="de.fhdo.elexis.perspective.feature.source" version="3.0.0.qualifier">
+   <!-- TODO: feature url="features/de.fhdo.elexis.perspective.feature.source_3.0.0.qualifier.jar" id="de.fhdo.elexis.perspective.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
    <feature url="features/de.fhdo.elexis.perspective.feature_3.0.0.qualifier.jar" id="de.fhdo.elexis.perspective.feature" version="3.0.0.qualifier">
       <category name="divers"/>
-   </feature>
+   </feature -->
    <feature url="features/ch.elexis.support.dbshaker.feature.source_3.0.0.qualifier.jar" id="ch.elexis.support.dbshaker.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
    <feature url="features/ch.elexis.support.dbshaker.feature_3.0.0.qualifier.jar" id="ch.elexis.support.dbshaker.feature" version="3.0.0.qualifier">
       <category name="support"/>
    </feature>
-   <feature url="features/ch.elexis.icpc.fire.feature.source_3.0.0.qualifier.jar" id="ch.elexis.icpc.fire.feature.source" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.icpc.fire.feature.source_3.2.0.qualifier.jar" id="ch.elexis.icpc.fire.feature.source" version="3.2.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.icpc.fire.feature_3.0.0.qualifier.jar" id="ch.elexis.icpc.fire.feature" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.icpc.fire.feature_3.2.0.qualifier.jar" id="ch.elexis.icpc.fire.feature" version="3.2.0.qualifier">
       <category name="statistics"/>
    </feature>
    <feature url="features/ch.weirich.templator.pages.feature.source_3.0.0.qualifier.jar" id="ch.weirich.templator.pages.feature.source" version="3.0.0.qualifier">
@@ -381,7 +381,7 @@
    <feature url="features/at.medevit.elexis.inbox.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.inbox.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
-   <feature url="features/at.medevit.elexis.ehc.feature_3.0.0.qualifier.jar" id="at.medevit.elexis.ehc.feature" version="3.0.0.qualifier">
+   <feature url="features/at.medevit.elexis.ehc.feature_3.3.0.qualifier.jar" id="at.medevit.elexis.ehc.feature" version="3.3.0.qualifier">
       <category name="dataexchange"/>
    </feature>
    <feature url="features/net.medshare.connector.viollier.feature_3.0.0.qualifier.jar" id="net.medshare.connector.viollier.feature" version="3.0.0.qualifier">
@@ -413,6 +413,15 @@
    </feature>
    <feature url="features/ch.gpb.elexis.cst.feature_1.0.0.qualifier.jar" id="ch.gpb.elexis.cst.feature" version="1.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.emediplan.feature_1.0.0.qualifier.jar" id="at.medevit.elexis.emediplan.feature" version="1.0.0.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.agenda.feature_1.0.0.qualifier.jar" id="at.medevit.elexis.agenda.feature" version="1.0.0.qualifier">
+      <category name="organisation"/>
+   </feature>
+   <feature url="features/ch.elexis.barcode.scanner.feature_3.2.0.qualifier.jar" id="ch.elexis.barcode.scanner.feature" version="3.2.0.qualifier">
+      <category name="libraries"/>
    </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">

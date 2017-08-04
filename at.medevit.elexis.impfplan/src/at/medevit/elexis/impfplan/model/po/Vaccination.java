@@ -155,9 +155,8 @@ public class Vaccination extends PersistentObject {
 	
 	public String getDateOfAdministrationLabel(){
 		String doa = get(FLD_DOA);
-		if (doa.contains("0000")) {
-			doa = doa.replace("0000", "");
-			return doa;
+		if (doa.endsWith("0000")) {
+			return doa.substring(0, doa.length() - 4);
 		}
 		TimeTool ttDoA = new TimeTool(doa);
 		return ttDoA.toString(TimeTool.DATE_GER);

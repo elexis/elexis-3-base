@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -115,7 +116,7 @@ public class Termin extends PersistentObject
 		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT + "=PatID", FLD_TAG, FLD_BEGINN, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			FLD_DAUER, FLD_GRUND, "Typ=TerminTyp", FLD_TERMINSTATUS + "=TerminStatus", FLD_CREATOR, //$NON-NLS-1$ //$NON-NLS-2$
 			"ErstelltWann=Angelegt", FLD_LASTEDIT, "PalmID", "flags", FLD_DELETED, FLD_EXTENSION, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			FLD_LINKGROUP, FLD_STATUSHIST); //$NON-NLS-1$
+			FLD_LINKGROUP, FLD_STATUSHIST, FLD_PRIORITY); //$NON-NLS-1$
 		TimeTool.setDefaultResolution(60000);
 		TerminTypes = CoreHub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
 		TerminStatus = CoreHub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
@@ -277,6 +278,12 @@ public class Termin extends PersistentObject
 			statusline(statusStandard()));
 	}
 	
+	public Termin(final String bereich, final String Tag, final int von, final int bis,
+		final String typ, final String status, final String priority){
+		this(bereich, Tag, von, bis, typ, status);
+		set(FLD_PRIORITY, priority);
+	}
+	
 	/**
 	 * Einen Termin mit vorgegebener ID erstellen. Wird nur vom Importer gebraucth
 	 */
@@ -301,8 +308,11 @@ public class Termin extends PersistentObject
 	public Object clone(){
 		Termin ret =
 			new Termin(get(FLD_BEREICH), get(FLD_TAG), getStartMinute(), getStartMinute()
-				+ getDauer(), getType(), getStatus());
-		ret.setKontakt(getKontakt());
+				+ getDauer(), getType(), getStatus(), get(FLD_PRIORITY));
+		Kontakt k = getKontakt();
+		if (k != null) {
+			ret.setKontakt(getKontakt());
+		}
 		return ret;
 	}
 	
@@ -446,7 +456,12 @@ public class Termin extends PersistentObject
 					Messages.Termin_thisAppIsPartOfSerie, MessageDialog.QUESTION, new String[] {
 						Messages.Termin_yes, Messages.Termin_no
 					}, 1);
-			confirmed = (msd.open() == Dialog.OK);
+			int retval = msd.open();
+			if (retval == SWT.DEFAULT)
+			{
+				return false;
+			}
+			confirmed = (retval == Dialog.OK);
 		}
 		if (isLinked) {
 			List<Termin> linked = getLinked(this);
@@ -531,6 +546,10 @@ public class Termin extends PersistentObject
 	 * Mehrzeiliger String der die History der Statusaenderungen dieses Termins abrufen
 	 */
 	public String getStatusHistoryDesc(){
+		return getStatusHistoryDesc(false);
+	}
+	
+	public String getStatusHistoryDesc(boolean fullTime){
 		StringBuilder sb = new StringBuilder();
 		
 		String lines[] = get(FLD_STATUSHIST).split(StringTool.lf);
@@ -540,8 +559,13 @@ public class Termin extends PersistentObject
 				continue;
 			
 			TimeTool tt = new TimeTool(checkZero(f[0]), 60000);
-			sb.append(tt.toString(TimeTool.TIME_SMALL)).append(": ").append(f[1])
+			if (fullTime) {
+				sb.append(tt.toString(TimeTool.FULL_GER)).append(": ").append(f[1])
+					.append(StringTool.lf);
+			} else {
+				sb.append(tt.toString(TimeTool.TIME_SMALL)).append(": ").append(f[1])
 				.append(StringTool.lf);
+			}
 		}
 		
 		return sb.toString();

@@ -117,7 +117,6 @@ public class EnhancedTextFieldRO extends Composite {
 		// Obsoleted, do not rely
 	}
 
-	@SuppressWarnings("unchecked")
 	void doFormatXML(String tx){
 		samdas = new Samdas(tx);
 		record = samdas.getRecord();
@@ -125,8 +124,8 @@ public class EnhancedTextFieldRO extends Composite {
 		text.setText(record.getText());
 		int textlen = text.getCharCount();
 		markups = record.getMarkups();
-		links = new ArrayList<Samdas.XRef>(xrefs.size());
-		ranges = new ArrayList<Samdas.Range>(xrefs.size() + markups.size());
+		links = new ArrayList<>(xrefs.size());
+		ranges = new ArrayList<>(xrefs.size() + markups.size());
 		for (Samdas.Markup m : markups) {
 			String type = m.getType();
 			StyleRange n = new StyleRange();

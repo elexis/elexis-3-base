@@ -58,9 +58,19 @@ import ch.elexis.data.RnStatus;
 import ch.elexis.data.Sticker;
 import ch.rgw.tools.ExHandler;
 
+/**
+ *
+ *  @author niklaus Giger
+ *
+ *  Display the top line of the Journal View with the following elements
+ *  names, sex, date of birth, Sstickers, remarks
+ *  on the right: Link to account with balance
+ *                Link to view "bill overview"
+ *
+ */
 public class JournalHeader implements IJournalArea {
 
-	private Patient patient = null;
+	private Patient actPat = null;
 	private FormToolkit tk;
 	private static Logger log = LoggerFactory.getLogger(JournalHeader.class);
 	private Hyperlink formTitel;
@@ -68,6 +78,10 @@ public class JournalHeader implements IJournalArea {
 	private Label kontoLabel;
 	private Color kontoLabelColor; // original color of kontoLabel
 	Composite cEtiketten;
+	/**
+	 * The main SWT for the journal header
+	 * @param formBody
+	 */
 	public JournalHeader(Composite formBody){
 		tk = UiDesk.getToolkit();
 		formBody.setLayout(new GridLayout(1, true));
@@ -88,7 +102,7 @@ public class JournalHeader implements IJournalArea {
 		formTitel.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
-				if (patient != null) {
+				if (actPat != null) {
 					try {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 							.showView(PatientDetailView2.ID);
@@ -144,7 +158,7 @@ public class JournalHeader implements IJournalArea {
 		kontoHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
-				if (patient != null) {
+				if (actPat != null) {
 					try {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 							.showView(AccountView.ID);
@@ -167,7 +181,7 @@ public class JournalHeader implements IJournalArea {
 		openBillsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
-				if (patient != null) {
+				if (actPat != null) {
 					try {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 							.showView(BillSummary.ID);
@@ -185,10 +199,10 @@ public class JournalHeader implements IJournalArea {
 	private void setPatientTitel(){
 		String text = "Kein Patient ausgewählt";
 
-		formTitel.setEnabled(patient != null);
+		formTitel.setEnabled(actPat != null);
 
-		if (patient != null) {
-			text = patient.getLabel();
+		if (actPat != null) {
+			text = actPat.getLabel();
 		}
 
 		formTitel.setText(PersistentObject.checkNull(text));
@@ -198,7 +212,7 @@ public class JournalHeader implements IJournalArea {
 	private Composite createStickerWithTooltip(Composite parent, ISticker et){
 		Image img = new UiSticker((Sticker) et).getImage();
 		if (img != null) {} else {
-			if (patient.getGeschlecht().equals(Person.MALE)) {
+			if (actPat.getGeschlecht().equals(Person.MALE)) {
 				img = Images.IMG_MANN.getImage();
 			} else {
 				img = Images.IMG_FRAU.getImage();
@@ -221,15 +235,15 @@ public class JournalHeader implements IJournalArea {
 	private void setRemarkAndSticker(){
 		String text = "";
 
-		if (patient != null) {
-			text = patient.getBemerkung();
+		if (actPat != null) {
+			text = actPat.getBemerkung();
 
 		}
 		for (Control cc : cEtiketten.getChildren()) {
 			cc.dispose();
 		}
-		if (patient != null) {
-			List<ISticker> etis = patient.getStickers();
+		if (actPat != null) {
+			List<ISticker> etis = actPat.getStickers();
 			GridLayout stickerLayout = new GridLayout(etis.size(), false);
 			// save space
 			stickerLayout.horizontalSpacing = 5;
@@ -237,7 +251,7 @@ public class JournalHeader implements IJournalArea {
 			stickerLayout.marginWidth = 0;
 			stickerLayout.marginHeight = 0;
 			cEtiketten.setLayout(stickerLayout);
-			if (etis != null && etis.size() > 0) {
+			if (etis.size() > 0) {
 				for (ISticker et : etis) {
 					if (et != null) {
 						createStickerWithTooltip(cEtiketten, et);
@@ -267,9 +281,9 @@ public class JournalHeader implements IJournalArea {
 				}
 
 				String text = "";
-				if (patient != null) {
-					text = patient.getKontostand().getAmountAsString();
-					tardyPayer = isTardyPayer(patient);
+				if (actPat != null) {
+					text = actPat.getKontostand().getAmountAsString();
+					tardyPayer = isTardyPayer(actPat);
 				}
 
 				kontoLabel.setText(PersistentObject.checkNull(text));
@@ -293,17 +307,17 @@ public class JournalHeader implements IJournalArea {
 	}
 
 	private void openRemarkEditorDialog(){
-		if (patient == null) {
+		if (actPat == null) {
 			return;
 		}
 
-		String initialValue = PersistentObject.checkNull(patient.getBemerkung());
+		String initialValue = PersistentObject.checkNull(actPat.getBemerkung());
 		InputDialog dialog =
 			new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				"Bemerkungen", "Bemerkungen eingeben", initialValue, null);
 		if (dialog.open() == Window.OK) {
 			String text = dialog.getValue();
-			patient.setBemerkung(text);
+			actPat.setBemerkung(text);
 			setRemarkAndSticker();
 		}
 	}
@@ -322,7 +336,7 @@ public class JournalHeader implements IJournalArea {
 		// if there are such, the patient is a tardy payer
 
 		// find all patient's bills
-		Query<Rechnung> query = new Query<Rechnung>(Rechnung.class);
+		Query<Rechnung> query = new Query<>(Rechnung.class);
 		Fall[] faelle = patient.getFaelle();
 		if ((faelle != null) && (faelle.length > 0)) {
 			query.startGroup();
@@ -360,27 +374,23 @@ public class JournalHeader implements IJournalArea {
 		}
 	}
 
-	/*
-	 * Aktuellen Patienten setzen
-	 */
 	@Override
-	public void setPatient(Patient newPatient){
-		log.debug("setPatient " + (newPatient == null ? "null" : newPatient.getPersonalia()));
-		if (patient != newPatient) {
-			patient = newPatient;
+	/**
+	 * We react only to selected konsultations
+	 * @param newKons
+	 */
+	public void setKons(Konsultation newKons, KonsActions op){
+		Patient newPatient = newKons.getFall().getPatient();
+		if (newPatient == null) { return; } // this should never happen as  kons always has a patient
+		log.debug("setPatient " + newPatient.getPersonalia());
+		if (actPat == null || !actPat.getId().equals(newPatient.getId())) {
+			actPat = newPatient;
 			setPatientTitel();
 			setRemarkAndSticker();
 			setKontoText();
 			formTitel.getParent().layout();
 		}
 	}
-
-	@Override
-	/**
-	 * @param newKons.
-	 *            Ignored, as we are only interested in patients
-	 */
-	public void setKons(Konsultation newKons, KonsActions op){}
 
 	@Override
 	public void visible(boolean mode){

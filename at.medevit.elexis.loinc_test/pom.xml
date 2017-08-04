@@ -19,6 +19,7 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
 					<showEclipseLog>true</showEclipseLog>
+                    <skipTests>true</skipTests> <!-- TODO: -->
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
 				</configuration>

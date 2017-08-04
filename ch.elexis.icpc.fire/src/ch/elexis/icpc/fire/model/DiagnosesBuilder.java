@@ -38,7 +38,10 @@ public class DiagnosesBuilder {
 					ret.getDiagnose().add(tDiag);
 				}
 			}
-			return Optional.of(ret);
+			if (!ret.getDiagnose().isEmpty()) {
+				return Optional.of(ret);
+			}
+			
 		}
 		return Optional.empty();
 	}

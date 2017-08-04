@@ -25,6 +25,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.iatrix.data.Problem;
 
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
@@ -33,7 +34,6 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
-import ch.elexis.data.Query;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
@@ -70,72 +70,6 @@ public class Helpers {
 		return result;
 	}
 
-	/**
-	 * Get the latest Konsultation of today
-	 *
-	 * @return today's latest Konsultation
-	 *
-	 *         Same implementation as Patient.getLetzteKons()
-	 */
-	public static Konsultation getTodaysLatestKons(Patient patient){
-		TimeTool today = new TimeTool();
-
-		Fall[] faelle = patient.getFaelle();
-		if ((faelle == null) || (faelle.length == 0)) {
-			return null;
-		}
-
-		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		qbe.add("MandantID", "=", CoreHub.actMandant.getId());
-		qbe.add("Datum", "=", today.toString(TimeTool.DATE_COMPACT));
-
-		qbe.startGroup();
-		boolean termInserted = false;
-		for (Fall fall : faelle) {
-			if (fall.isOpen()) {
-				qbe.add("FallID", "=", fall.getId());
-				qbe.or();
-				termInserted = true;
-			}
-		}
-		if (!termInserted) {
-			return null;
-		}
-		qbe.endGroup();
-
-		qbe.orderBy(true, "Datum");
-		List<Konsultation> list = qbe.execute();
-		if ((list == null) || list.isEmpty()) {
-			return null;
-		} else {
-			if (list.size() == 1) {
-				return list.get(0);
-			} else {
-				// find the latest Konsultation according to the text entry's timestamp
-				long timestamp = -1;
-				Konsultation result = null;
-
-				for (Konsultation k : list) {
-					VersionedResource vr = k.getEintrag();
-					if (vr != null) {
-						ResourceItem ri = vr.getVersion(vr.getHeadVersion());
-						if (ri != null) {
-							if (ri.timestamp > timestamp) {
-								timestamp = ri.timestamp;
-								result = k;
-							}
-						}
-					}
-				}
-				if (result == null) {
-					result = list.get(0);
-				}
-
-				return result;
-			}
-		}
-	}
-
 	private static final DateComparator DATE_COMPARATOR = new DateComparator();
 
 	/**
@@ -155,7 +89,7 @@ public class Helpers {
 			StringBuffer output = new StringBuffer();
 
 			// get list of selected problems
-			List<Problem> problems = new ArrayList<Problem>();
+			List<Problem> problems = new ArrayList<>();
 			System.out.println("TODO problemAssignmentViewer"); // TODO: ngngng
 			/*
 			Problem p = getSelectedProblem();
@@ -227,7 +161,7 @@ public class Helpers {
 			output.append(lineSeparator);
 
 			// consultations
-			List<Konsultation> konsultationen = new ArrayList<Konsultation>();
+			List<Konsultation> konsultationen = new ArrayList<>();
 
 			if (problems.size() > 0) {
 				// get consultations of selected problems
@@ -300,7 +234,7 @@ public class Helpers {
 
 			if (problems.size() == 0) {
 				List<Problem> allProblems = Problem.getProblemsOfPatient(patient);
-				if (problems != null) {
+				if (allProblems != null) {
 					problems.addAll(allProblems);
 				}
 			}
@@ -316,7 +250,7 @@ public class Helpers {
 				String date = problem.getStartDate();
 				String text = problem.getTitle();
 
-				List<String> therapy = new ArrayList<String>();
+				List<String> therapy = new ArrayList<>();
 				String procedure = problem.getProcedere();
 				if (!StringTool.isNothing(procedure)) {
 					therapy.add(procedure.trim());
@@ -378,4 +312,115 @@ public class Helpers {
 		clipboard.dispose();
 		return clipboardText;
 	}
+	/**
+	 * Compare two consultations to see whether have belong to the same patient
+	 * @param thisKons
+	 * @param otherKons
+	 * @return both null || both same getId()
+	 */
+	public static boolean twoKonsSamePatient(Konsultation thisKons, Konsultation otherKons) {
+		if (thisKons == null && otherKons == null ) {
+			return true;
+		}
+		if (thisKons == null || otherKons == null ) {
+			return false;
+		}
+		return thisKons.getFall().getPatient().getId().equals(
+			otherKons.getFall().getPatient().getId());
+	}
+
+	/**
+	 * Compare two consultations to see whether have the same id
+	 * @param thisKons
+	 * @param otherKons
+	 * @return both null || both same getId()
+	 */
+	public static boolean twoKonsEqual(Konsultation thisKons, Konsultation otherKons) {
+		if (thisKons == null && otherKons == null ) {
+			return true;
+		}
+		if (thisKons == null || otherKons == null ) {
+			return false;
+		}
+		return thisKons.getId().equals(otherKons.getId());
+	}
+
+	/**
+	 * Compare two consultations to see whether they are from the same day
+	 * and have the same consultation text
+	 * @param thisKons
+	 * @param otherKons
+	 * @return sameKonsId AND same konsText
+	 */
+	public static boolean haveSameContent(Konsultation thisKons, Konsultation otherKons) {
+		if (thisKons == null && otherKons == null ) {
+			return true;
+		}
+		if (thisKons == null || otherKons == null ) {
+			return false;
+		}
+		if (!thisKons.getId().equals(otherKons.getId()))  {
+			return false;
+		}
+		if (!thisKons.getDatum().equals(otherKons.getDatum())) {
+			return false;
+		}
+		if ( thisKons.getEintrag() == null && otherKons.getEintrag() == null) {
+			return true;
+		}
+		if ( thisKons.getEintrag() == null || otherKons.getEintrag() == null) {
+			return false;
+		}
+		ResourceItem thisResource = thisKons.getEintrag().getVersion(thisKons.getHeadVersion());
+		ResourceItem otherResource = otherKons.getEintrag().getVersion(otherKons.getHeadVersion());
+		if (thisResource == null && otherResource == null) {
+			return true;
+		}
+		if (thisResource == null || otherResource == null) {
+			return false;
+		}
+		String thisText = thisResource.data;
+		String otherText = otherResource.data;
+		if (thisText.equals(otherText))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Normally, the thext of a Konsultation may only be changed, if the Konsultation has not yet
+	 * been billed. Due to customer demand, this was weakened: A User can have the right
+	 * ADMIN_KONS_EDIT_IF_BILLED and then can edit all Konsultations, even billed ones.
+	 * @param kons the cons to be checked
+	 * @param showError display a message if not editable
+	 * @return user can edit the cons
+	 */
+	public static boolean hasRightToChangeConsultations(Konsultation kons, boolean showError){
+		return CoreHub.acl.request(AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED) || kons.isEditable(showError);
+	}
+	boolean hasRight = CoreHub.acl.request(AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED);
+
+	/**
+	 * Return an explanation a ADMIN_KONS_EDIT_IF_BILLED
+	 * @return Whether user has the right + how to change it
+	 */
+	public static String getExplantionForKonsEditIfBillet(){
+		StringBuilder explanation = new StringBuilder("");
+		if (CoreHub.acl.request(AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED) ) {
+			explanation.append("Sie haben das Recht verrechnete Konsultation zu ändern.");
+		} else {
+			explanation.append("Sie dürfen verrechnete Konsultation nicht ändern.");
+		}
+		explanation.append("\nDas Ändern von verrechneten Konsultation kann in den Einstellungen geändert werden");
+		explanation.append("\nUnter Gruppen und Rechten..");
+		explanation.append("\n  Rollen und Rechten");
+		explanation.append("\n    Recht: main:Konsultations");
+		explanation.append("\n      Verrechnete ändern");
+		explanation.append("\nkönnen Sie den gewünschten Gruppen diese Recht erteilen");
+		explanation.append("\nDieses Recht kann sinnvoll sein, wenn Sie eine Konsultation ");
+		explanation.append("noch editieren wollen, nachdem sie von der MPA schon verrechnet wurde");
+		return explanation.toString();
+	}
+
 }

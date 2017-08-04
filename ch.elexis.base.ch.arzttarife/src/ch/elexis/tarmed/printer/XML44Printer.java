@@ -119,6 +119,11 @@ public class XML44Printer {
 		ret.amountUnclassified = xmlServices.getOtherMoney();
 		
 		ret.due = new Money(balance.getAmountDue());
+		// Subtract reminder if present, will be added by EZPrinter
+		double dReminder = balance.getAmountReminder();
+		if (dReminder > 0) {
+			ret.due.subtractMoney(new Money(dReminder));
+		}
 		ret.paid = new Money(balance.getAmountPrepaid());
 		
 		GarantType eTiers = body.getTiersGarant();
@@ -290,20 +295,27 @@ public class XML44Printer {
 	}
 	
 	private Kontakt loadAddressee(String paymentMode){
+		
 		Kontakt addressee;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
+			// TP
 			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		} else {
-			addressee = fall.getGarant();
-		}
-		
-		Kontakt legalGuardian = pat.getLegalGuardian();
-		if ((addressee == null) || (!addressee.exists()) || legalGuardian != null) {
-			if (legalGuardian != null) {
-				addressee = legalGuardian;
+		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
+			// TG
+			Kontakt invoiceReceiver = fall.getGarant();
+			if (invoiceReceiver.equals(pat)) {
+				Kontakt legalGuardian = pat.getLegalGuardian();
+				if (legalGuardian != null) {
+					addressee = legalGuardian;
+				} else {
+					addressee = pat;
+				}
 			} else {
-				addressee = pat;
+				addressee = invoiceReceiver;
 			}
+		}
+		else {
+			addressee = fall.getGarant();
 		}
 		addressee.getPostAnschrift(true); // damit sicher eine existiert
 		return addressee;
@@ -352,9 +364,53 @@ public class XML44Printer {
 			
 			text.replace("\\[F44.Datum\\]", gesetzDatum);
 			text.replace("\\[F44.Nummer\\]", gesetzNummer);
+			
+			text.replace("\\[F44.FDatum\\]", getFDatum(body, fall));
+			text.replace("\\[F44.FNummer\\]", getFNummer(body, fall));
+			
 			text.replace("\\[F44.ZSRNIF\\]", gesetzZSRNIF);
 			text.replace("\\[F44.VEKANr\\]", vekaNumber);
 		}
+	}
+	
+	private String getFDatum(BodyType body, Fall fall){
+		if (body.getUvg() != null) {
+			String ret = fall.getInfoString("Unfalldatum");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+		}
+		if (body.getIvg() != null) {
+			String ret = fall.getInfoString("Verfügungsdatum");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+		}
+		return fall.getBeginnDatum();
+	}
+	
+	private String getFNummer(BodyType body, Fall fall){
+		if (body.getUvg() != null) {
+			String ret = fall.getInfoString("Unfall-Nr.");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+			ret = fall.getInfoString("Unfallnummer");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+		}
+		if (body.getIvg() != null) {
+			String ret = fall.getInfoString("Verfügungs-Nr.");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+			ret = fall.getInfoString("Verfügungsnummer");
+			if (ret != null && !ret.isEmpty()) {
+				return ret;
+			}
+		}
+		return fall.getFallNummer();
 	}
 	
 	private void addRemarks(final String remark){
@@ -483,9 +539,9 @@ public class XML44Printer {
 		}
 		
 		if (rec.isObligation()) {
-			sb.append("0\t"); //$NON-NLS-1$
-		} else {
 			sb.append("1\t"); //$NON-NLS-1$
+		} else {
+			sb.append("0\t"); //$NON-NLS-1$
 		}
 		
 		double amount = rec.getAmount();
@@ -548,9 +604,9 @@ public class XML44Printer {
 		}
 		
 		if (tarmed.isObligation()) {
-			sb.append("0\t"); //$NON-NLS-1$
-		} else {
 			sb.append("1\t"); //$NON-NLS-1$
+		} else {
+			sb.append("0\t"); //$NON-NLS-1$
 		}
 		
 		double amount = tarmed.getAmount();
@@ -590,7 +646,13 @@ public class XML44Printer {
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, secondLine); //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Währung:\t\t"); //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "CHF\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "\t\t\t\t\t"); //$NON-NLS-1$
+		if (balance.getAmountReminder() > 0) {
+			cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Mahngebühr:\t"); //$NON-NLS-1$
+			cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false,
+				df.format(balance.getAmountReminder()) + "\t\t\t"); //$NON-NLS-1$
+		} else {
+			cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, "\t\t\t\t\t"); //$NON-NLS-1$
+		}
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "davon PFL:\t"); //$NON-NLS-1$
 		cursor =
 			XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false,

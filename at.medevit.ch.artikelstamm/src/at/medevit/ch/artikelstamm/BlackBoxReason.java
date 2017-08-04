@@ -13,7 +13,7 @@ package at.medevit.ch.artikelstamm;
 public enum BlackBoxReason {
 	
 	NOT_BLACKBOXED(0), IS_ON_STOCK(1), IS_REFERENCED_IN_FIXMEDICATION(2),
-		IS_REFERENCED_IN_CONSULTATION(3);
+		IS_REFERENCED_IN_CONSULTATION(3), INACTIVE(9);
 	
 	private int numercialReason;
 	
@@ -40,6 +40,8 @@ public enum BlackBoxReason {
 			return "Artikel ist als Fixmedikation geführt";
 		case 3:
 			return "Artikel ist in einer Konsultation verschrieben";
+		case 9:
+			return "Artikel ist inaktiv";
 		default:
 			return "Invalid value";
 		}

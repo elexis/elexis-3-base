@@ -12,6 +12,7 @@ package at.medevit.elexis.inbox.ui.part;
 
 import java.util.List;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -19,8 +20,11 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -34,6 +38,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 
 import at.medevit.elexis.inbox.model.IInboxElementService;
@@ -41,12 +47,15 @@ import at.medevit.elexis.inbox.model.IInboxElementService.State;
 import at.medevit.elexis.inbox.model.IInboxUpdateListener;
 import at.medevit.elexis.inbox.model.InboxElement;
 import at.medevit.elexis.inbox.ui.InboxServiceComponent;
+import at.medevit.elexis.inbox.ui.command.AutoActivePatientHandler;
 import at.medevit.elexis.inbox.ui.part.action.InboxFilterAction;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementLabelProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
+import at.medevit.elexis.inbox.ui.preferences.Preferences;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
@@ -70,6 +79,7 @@ public class InboxView extends ViewPart {
 		}
 	};
 	private InboxElementContentProvider contentProvider;
+	private boolean setAutoSelectPatient;
 	
 	@Override
 	public void createPartControl(Composite parent){
@@ -156,6 +166,26 @@ public class InboxView extends ViewPart {
 			}
 		});
 		
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				ISelection selection = event.getSelection();
+				if (selection instanceof StructuredSelection && !selection.isEmpty()) {
+					if (setAutoSelectPatient) {
+						Object selectedElement =
+							((StructuredSelection) selection).getFirstElement();
+						if (selectedElement instanceof InboxElement) {
+							ElexisEventDispatcher
+								.fireSelectionEvent(((InboxElement) selectedElement).getPatient());
+						} else if (selectedElement instanceof PatientInboxElements) {
+							ElexisEventDispatcher.fireSelectionEvent(
+								((PatientInboxElements) selectedElement).getPatient());
+						}
+					}
+				}
+			}
+		});
+		
 		addFilterActions(menuManager);
 		
 		InboxServiceComponent.getService().addUpdateListener(new IInboxUpdateListener() {
@@ -178,6 +208,17 @@ public class InboxView extends ViewPart {
 		
 		ElexisEventDispatcher.getInstance().addListeners(mandantChanged);
 		getSite().setSelectionProvider(viewer);
+		
+		setAutoSelectPatientState(CoreHub.userCfg.get(Preferences.INBOX_PATIENT_AUTOSELECT, false));
+	}
+	
+	public void setAutoSelectPatientState(boolean value){
+		setAutoSelectPatient = value;
+		ICommandService service =
+			(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		Command command = service.getCommand(AutoActivePatientHandler.CMD_ID);
+		command.getState(AutoActivePatientHandler.STATE_ID).setValue(value);
+		CoreHub.userCfg.set(Preferences.INBOX_PATIENT_AUTOSELECT, value);
 	}
 	
 	private void addFilterActions(ToolBarManager menuManager){

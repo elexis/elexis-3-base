@@ -3,6 +3,7 @@
    <service>
       <provide interface="at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService"/>
    </service>
+   <reference bind="setSSLService" cardinality="1..1" interface="ch.elexis.core.services.ISSLStoreService" name="SSLService" policy="static" unbind="unsetSSLService"/>
    <reference bind="setVacdocService" cardinality="1..1" interface="at.medevit.elexis.ehc.vacdoc.service.VacdocService" name="VacdocService" policy="static" unbind="unsetVacdocService"/>
    <implementation class="at.medevit.elexis.ehc.vacdoc.service.internal.MeineImpfungenServiceImpl"/>
 </scr:component>

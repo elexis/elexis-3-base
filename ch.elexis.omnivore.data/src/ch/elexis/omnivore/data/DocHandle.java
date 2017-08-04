@@ -355,29 +355,36 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	}
 	
 	private void store(byte[] doc){
+		try {
+			storeContent(doc);
+		} catch (PersistenceException e) {
+			SWTHelper.showError(Messages.DocHandle_writeErrorCaption,
+				Messages.DocHandle_writeErrorText + "; " + e.getMessage());
+			delete();
+		} catch (ElexisException e) {
+			ExHandler.handle(e);
+			SWTHelper.showError(Messages.DocHandle_73, Messages.DocHandle_writeErrorHeading,
+				MessageFormat.format(Messages.DocHandle_writeErrorText2 + e.getCause(),
+					e.getMessage()));
+			delete();
+		}
+	}
+	
+	public void storeContent(byte[] doc) throws PersistenceException, ElexisException{
 		File file = getStorageFile(false);
 		if (file == null) {
-			try {
-				setBinary(FLD_DOC, doc);
-			} catch (PersistenceException pe) {
-				SWTHelper.showError(Messages.DocHandle_writeErrorCaption,
-					Messages.DocHandle_writeErrorText + "; " + pe.getMessage());
-				delete();
-			}
+			setBinary(FLD_DOC, doc);
 		} else {
 			try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(file))) {
 				bout.write(doc);
-			} catch (Exception ex) {
-				ExHandler.handle(ex);
-				SWTHelper.showError(Messages.DocHandle_73, Messages.DocHandle_writeErrorHeading,
-					MessageFormat.format(Messages.DocHandle_writeErrorText2 + ex.getMessage(),
-						file.getAbsolutePath()));
-				delete();
+			}
+			catch (Exception e) {
+				throw new ElexisException(file.getAbsolutePath(), e);
 			}
 		}
-		
 	}
 	
+
 	/**
 	 * If force is set or the preference Preferences.STOREFS is true a new File object is created.
 	 * Else the file is a BLOB in the db and null is returned.
@@ -904,6 +911,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			setBinary(FLD_DOC, null);
 		} catch (IOException ios) {
 			ExHandler.handle(ios);
+			log.warn("Exporting dochandle [{}] to filesystem fails.", getId(), ios);
 			SWTHelper.showError(Messages.DocHandle_writeErrorCaption2,
 				Messages.DocHandle_writeErrorCaption2, ios.getMessage());
 			return false;

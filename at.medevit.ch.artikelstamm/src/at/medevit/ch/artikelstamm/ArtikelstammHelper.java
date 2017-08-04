@@ -41,7 +41,7 @@ import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 public class ArtikelstammHelper {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammHelper.class);
 	
-	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v4.xsd";
+	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v5.xsd";
 	private static URL schemaLocationUrl = null;
 	
 	private static SchemaFactory schemaFactory = SchemaFactory

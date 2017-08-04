@@ -19,12 +19,10 @@ public class InboxServiceComponent {
 		return service;
 	}
 	
-	// Method will be used by DS to set the quote service
 	public synchronized void setService(IInboxElementService service){
 		InboxServiceComponent.service = service;
 	}
 	
-	// Method will be used by DS to unset the quote service
 	public synchronized void unsetService(IInboxElementService service){
 		if (InboxServiceComponent.service == service) {
 			InboxServiceComponent.service = null;

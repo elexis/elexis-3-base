@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch debugParallel.html",
+            "type": "firefox",
+            "request": "launch",
+            "file": "${workspaceRoot}/html/debugParallel.html"
+        },
+        {
+            "name": "Launch localhost",
+            "type": "firefox",
+            "request": "launch",
+            "url": "http://localhost/html/debugParallel.html",
+            "webRoot": "${workspaceRoot}"
+        },
+        {
+            "name": "Attach",
+            "type": "firefox",
+            "request": "attach"
+        },
+        {
+            "name": "Launch addon",
+            "type": "firefox",
+            "request": "launch",
+            "addonType": "addonSdk",
+            "addonPath": "${workspaceRoot}"
+        }
+    ]
+}

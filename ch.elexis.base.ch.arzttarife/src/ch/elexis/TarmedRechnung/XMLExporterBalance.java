@@ -19,8 +19,8 @@ public class XMLExporterBalance {
 	private Element balanceElement;
 	
 	private Money mDue;
-	private Money mTotal = new Money();
-
+	private Money mAmount = new Money();
+	
 	public XMLExporterBalance(Element balance){
 		this.balanceElement = balance;
 	}
@@ -42,22 +42,14 @@ public class XMLExporterBalance {
 		balanceElement.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue));
 	}
 
-	public Money getTotal(){
-		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT);
-		if (attrValue != null && !attrValue.isEmpty()) {
-			mTotal = XMLTool.xmlDoubleToMoney(attrValue);
-		} else {
-			mTotal = new Money();
-		}
-		return mTotal;
-	}
-
 	public Money getAmount(){
 		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT);
 		if (attrValue != null && !attrValue.isEmpty()) {
-			return XMLTool.xmlDoubleToMoney(attrValue);
+			mAmount = XMLTool.xmlDoubleToMoney(attrValue);
+		} else {
+			mAmount = new Money();
 		}
-		return new Money();
+		return mAmount;
 	}
 	
 	public void setAmount(Money money){
@@ -72,6 +64,14 @@ public class XMLExporterBalance {
 		return new Money();
 	}
 
+	public Money getReminder(){
+		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT_REMINDER);
+		if (attrValue != null && !attrValue.isEmpty()) {
+			return XMLTool.xmlDoubleToMoney(attrValue);
+		}
+		return new Money();
+	}
+	
 	public Money getPrepaid(){
 		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT_PREPAID);
 		if (attrValue != null && !attrValue.isEmpty()) {
@@ -85,6 +85,11 @@ public class XMLExporterBalance {
 			XMLTool.moneyToXmlDouble(money));
 	}
 
+	public boolean hasPrepaid(){
+		String attrValue = balanceElement.getAttributeValue(XMLExporter.ATTR_AMOUNT_PREPAID);
+		return attrValue != null && !attrValue.isEmpty();
+	}
+	
 	public Element getElement(){
 		return balanceElement;
 	}
@@ -101,7 +106,8 @@ public class XMLExporterBalance {
 		VatRateSum vatSummer, XMLExporter xmlExporter){
 		
 		Mandant actMandant = rechnung.getMandant();
-
+		Money reminders = rechnung.getRemindersBetrag();
+		
 		Element element = new Element(XMLExporter.ELEMENT_BALANCE, XMLExporter.nsinvoice);
 		XMLExporterBalance balance = new XMLExporterBalance(element);
 		
@@ -113,18 +119,31 @@ public class XMLExporterBalance {
 		}
 		element.setAttribute("currency", curr);
 		
-		balance.mTotal.addMoney(services.getTarmedMoney()).addMoney(services.getAnalysenMoney())
+		balance.mAmount.addMoney(services.getTarmedMoney()).addMoney(services.getAnalysenMoney())
 			.addMoney(services.getMedikamentMoney()).addMoney(services.getUebrigeMoney())
 			.addMoney(services.getKantMoney()).addMoney(services.getPhysioMoney())
 			.addMoney(services.getMigelMoney());
 
-		element.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(balance.mTotal));
-		balance.mDue = new Money(balance.mTotal);
+		element.setAttribute(XMLExporter.ATTR_AMOUNT_PREPAID,
+			XMLTool.moneyToXmlDouble(new Money(rechnung.getAnzahlung())));
+		
+		if (!reminders.isZero()) {
+			element.setAttribute(XMLExporter.ATTR_AMOUNT_REMINDER,
+				XMLTool.moneyToXmlDouble(reminders));
+		}
+		
+		element.setAttribute(XMLExporter.ATTR_AMOUNT, XMLTool.moneyToXmlDouble(balance.mAmount));
+		balance.mDue = new Money(balance.mAmount);
+		if (!reminders.isZero()) {
+			balance.mDue.addMoney(reminders);
+		}
 		balance.mDue.subtractMoney(rechnung.getAnzahlung());
 		balance.mDue.roundTo5();
-
 		element.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(balance.mDue));
-		element.setAttribute(ATTR_AMOUNT_OBLIGATIONS, XMLTool.moneyToXmlDouble(balance.mTotal));
+
+		
+		element.setAttribute(ATTR_AMOUNT_OBLIGATIONS,
+			XMLTool.moneyToXmlDouble(services.getObligationsMoney()));
 		
 		Element vat = new Element(XMLExporter.ELEMENT_VAT, XMLExporter.nsinvoice);
 		

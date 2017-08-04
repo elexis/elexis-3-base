@@ -61,12 +61,37 @@ public class EZPrinter {
 		}
 	}
 	
+	private Kontakt getAddressee(String paymentMode, Fall fall, Patient patient){
+		Kontakt addressee;
+		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
+			// TP
+			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
+			// TG
+			Kontakt invoiceReceiver = fall.getGarant();
+			if (invoiceReceiver.equals(patient)) {
+				Kontakt legalGuardian = patient.getLegalGuardian();
+				if (legalGuardian != null) {
+					addressee = legalGuardian;
+				} else {
+					addressee = patient;
+				}
+			} else {
+				addressee = invoiceReceiver;
+			}
+		} else {
+			addressee = fall.getGarant();
+		}
+		addressee.getPostAnschrift(true); // damit sicher eine existiert
+		return addressee;
+	}
+	
 	private String printer;
 	
 	public Brief doPrint(Rechnung rn, EZPrinterData ezData, TextContainer text, ESR esr,
 		IProgressMonitor monitor){
 		
-		Money mEZDue = new Money(ezData.due); // XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));
+		Money mEZDue = new Money(ezData.due);
 		mEZDue.addMoney(ezData.paid);
 		
 		Brief actBrief;
@@ -74,16 +99,8 @@ public class EZPrinter {
 		Patient pat = fall.getPatient();
 		Mandant mnd = rn.getMandant();
 		Rechnungssteller rs = mnd.getRechnungssteller();
-		Kontakt adressat;
+		Kontakt addressee = getAddressee(ezData.paymentMode, fall, pat);
 		
-		if (ezData.paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
-			adressat = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		} else {
-			adressat = fall.getGarant();
-		}
-		if ((adressat == null) || (!adressat.exists())) {
-			adressat = pat;
-		}
 		String tmpl = TT_TARMED_EZ; //$NON-NLS-1$
 		if ((rn.getStatus() == RnStatus.MAHNUNG_1)
 			|| (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
@@ -95,7 +112,8 @@ public class EZPrinter {
 			|| (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)) {
 			tmpl = TT_TARMED_M3;
 		}
-		actBrief = XMLPrinterUtil.createBrief(tmpl, adressat, text);
+		actBrief =
+			XMLPrinterUtil.createBrief(tmpl, addressee, text);
 		
 		List<Zahlung> extra = rn.getZahlungen();
 		Kontakt bank = Kontakt.load(rs.getInfoString(TarmedACL.getInstance().RNBANK));
@@ -137,7 +155,8 @@ public class EZPrinter {
 		text.getPlugin().setFont("Serif", SWT.NORMAL, 9); //$NON-NLS-1$
 		text.replace("\\[Leistungen\\]", sb.toString());
 		
-		if (esr.printBESR(bank, adressat, rs, mEZDue.roundTo5().getCentsAsString(), text) == false) {
+		if (esr.printBESR(bank, addressee, rs,
+			mEZDue.roundTo5().getCentsAsString(), text) == false) {
 			return actBrief;
 		}
 		printer = CoreHub.localCfg.get("Drucker/A4ESR/Name", null); //$NON-NLS-1$

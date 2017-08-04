@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="at.medevit.elexis.agenda.feature"
+      label="Agenda (Web)"
+      version="1.0.0.qualifier">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import feature="ch.elexis.agenda.feature" version="3.0.0.qualifier"/>
+   </requires>
+
+   <plugin
+         id="at.medevit.elexis.agenda.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>

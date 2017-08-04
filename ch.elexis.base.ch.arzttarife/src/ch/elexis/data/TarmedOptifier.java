@@ -49,6 +49,7 @@ public class TarmedOptifier implements IOptifier {
 	public static final int NOMOREVALID = 8;
 	
 	private static final String CHAPTER_XRAY = "39.02";
+	private static final String CHAPTER_ULTRA = "39.03";
 	private static final String DEFAULT_TAX_XRAY_ROOM = "39.2000";
 	
 	boolean bOptify = true;
@@ -323,9 +324,11 @@ public class TarmedOptifier implements IOptifier {
 		// default xray tax will only be added once (see above)
 		if (!tc.getCode().equals(DEFAULT_TAX_XRAY_ROOM) && !tc.getCode().matches("39.002[01]")
 			&& tc.getParent().startsWith(CHAPTER_XRAY)) {
-			add(TarmedLeistung.getFromCode(DEFAULT_TAX_XRAY_ROOM), kons);
-			// add 39.0020, will be changed according to case (see above)
-			add(TarmedLeistung.getFromCode("39.0020"), kons);
+			if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_OPTIFY_XRAY, true)) {
+				add(TarmedLeistung.getFromCode(DEFAULT_TAX_XRAY_ROOM), kons);
+				// add 39.0020, will be changed according to case (see above)
+				add(TarmedLeistung.getFromCode("39.0020"), kons);
+			}
 		}
 		
 		// Interventionelle Schmerztherapie: Zuschlag cervical und thoracal
@@ -393,6 +396,13 @@ public class TarmedOptifier implements IOptifier {
 			newVerrechnet.setDetail(TL, Double.toString(sumTL));
 			newVerrechnet.setPrimaryScaleFactor(0.5);
 		}
+
+		// Zuschlag fuer Ultraschall
+		 if (tc.getParent().startsWith(CHAPTER_ULTRA)) {
+			 TarmedLeistung tl = (TarmedLeistung) TarmedLeistung.getFromCode("39.3800");
+			 add(tl, kons);
+		}
+
 		// Notfall-Zuschläge
 		if (tcid.startsWith("00.25")) { //$NON-NLS-1$
 			double sum = 0.0;

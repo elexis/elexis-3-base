@@ -28,10 +28,17 @@
     </Factory>
  </extension>
  <extension
-       point="ch.elexis.core.data.referenceDataImporter">
-    <importer
-          class="at.medevit.ch.artikelstamm.elexis.common.importer.ArtikelstammReferenceDataImporter"
-          referenceDataId="artikelstamm">
-    </importer>
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="at.medevit.ch.artikelstamm.elexis.common.ui.handlers.OpenArticelDetailDialogHandler"
+          commandId="ch.elexis.core.ui.medication.OpenArticelDetailDialog">
+       <activeWhen>
+          <not>
+             <test
+                   property="ch.elexis.core.ui.medication.property.isDefaultArticle">
+             </test>
+          </not>
+       </activeWhen>
+    </handler>
  </extension>
 </plugin>

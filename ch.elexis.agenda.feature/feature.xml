@@ -47,7 +47,7 @@
          unpack="false"/>
 
    <plugin
-         id="commons-io"
+         id="ch.elexis.fop_wrapper"
          download-size="0"
          install-size="0"
          version="0.0.0"

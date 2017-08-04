@@ -5,45 +5,18 @@
   <artifactId>elexis-3-base</artifactId>
   <version>3.0.0-SNAPSHOT</version>
   <properties>
-    <tycho-version>0.23.0</tycho-version>
+    <tycho-version>1.0.0</tycho-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tycho-extras.version>${tycho-version}</tycho-extras.version>
     <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <repo_name>elexis.3.base</repo_name>
-    <repo_variant>snapshot</repo_variant>
     <useBranch>master</useBranch>
-    <nonElexisP2variant>snapshot</nonElexisP2variant>
+    <nonElexisP2variant>master</nonElexisP2variant>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
   <packaging>pom</packaging>
 	<profiles>
-		<profile>
-			<id>prerelease</id>
-			<activation>
-				<property>
-					<name>repo_variant</name>
-					<value>prerelease</value>
-				</property>
-			</activation>
-			<properties>
-				<nonElexisP2variant>release</nonElexisP2variant>
-				<useBranch>release</useBranch>
-			</properties>
-		</profile>
-		<profile>
-			<id>release</id>
-			<activation>
-				<property>
-					<name>repo_variant</name>
-					<value>release</value>
-				</property>
-			</activation>
-			<properties>
-				<nonElexisP2variant>release</nonElexisP2variant>
-				<useBranch>release</useBranch>
-			</properties>
-		</profile>
 		<!-- activate operating system dependent testing vm args -->
 		<profile>
 			<id>mac-surefire-tests</id>
@@ -109,6 +82,11 @@
   <module>at.medevit.elexis.ehc.ui.docbox</module>
   <module>at.medevit.elexis.ehc.ui.example</module>
   <module>at.medevit.elexis.ehc.feature</module>
+  <module>at.medevit.elexis.agenda.ui</module>
+  <module>at.medevit.elexis.agenda.feature</module>
+  <module>at.medevit.elexis.emediplan.core</module>
+  <module>at.medevit.elexis.emediplan.ui</module>
+  <module>at.medevit.elexis.emediplan.feature</module>
   <module>at.medevit.ch.artikelstamm.elexis.common</module>
   <module>at.medevit.ch.artikelstamm.elexis.open</module>
   <module>at.medevit.ch.artikelstamm.ui</module>
@@ -238,8 +216,8 @@
   <module>com.hilotec.elexis.stickerprefix</module>
   <module>com.hilotec.elexis.toolbar.feature</module>
   <module>com.hilotec.elexis.toolbar</module>
-  <module>de.fhdo.elexis.perspective</module>
-  <module>de.fhdo.elexis.perspective.feature</module>
+  <!--module>de.fhdo.elexis.perspective</module>
+  <module>de.fhdo.elexis.perspective.feature</module-->
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
   <module>org.iatrix.bestellung.rose</module>
@@ -268,31 +246,89 @@
   <module>net.medshare.connector.viollier.feature</module>
   <module>at.medevit.elexis.tarmed.model</module>
   <module>ch.novcom.mednet.elexis</module>
+  <module>ch.elexis.barcode.scanner</module>
+  <module>ch.elexis.barcode.scanner.feature</module>
 </modules>
 <repositories>
   <repository>
-    <id>elexis.3.core.${repo_variant}</id>
-    <url>http://download.elexis.info/elexis.3.core/${repo_variant}/</url>
+    <id>elexis.3.target.${useBranch}</id>
+    <url>http://download.elexis.info/elexis/p2/master/target</url>
     <layout>p2</layout>
   </repository>
-  <!--repository>
-<id>my_local_mirror</id>
-<url>file:///opt/mirror.4.elexis/target/repository/</url>
-<layout>p2</layout>
-</repository-->
-  <repository>
-    <id>mirror.4.elexis.${repo_variant}</id>
-    <url>http://download.elexis.info/mirror.4.elexis/${nonElexisP2variant}/</url>
-    <layout>p2</layout>
-  </repository>
-  <repository>
-    <id>elexis.3.3rdparty.libraries</id>
-    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/${nonElexisP2variant}</url>
+   <repository>
+    <id>elexis.3.core.${useBranch}</id>
+    <url>http://download.elexis.info/elexis/p2/${useBranch}/elexis-3-core</url>
     <layout>p2</layout>
   </repository>
 </repositories>
 <build>
   <plugins>
+			<plugin>
+				<!--https://books.sonatype.com/mcookbook/reference/ch02s03.html#ex-groovy-script-ex -->
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<scripts>
+								<script><![CDATA[
+  import java.text.SimpleDateFormat;
+  HINT_GENERATED    = "# Generated from pom.xml groovy shell using gmavenplus-plugin\n"
+  // Returns the current branchName
+  public String getBranchVersion() {
+      branch="git rev-parse --abbrev-ref HEAD".execute().text.replaceAll("\n", '')
+      elexis_version = "${project.version}".replace("-SNAPSHOT", ".") + new SimpleDateFormat("yyyyMMdd-HHmm").format(Calendar.getInstance().getTime())
+      tags =  "git tag --contains ".execute().text.split("\n")
+      for ( i in tags ) {
+          if (i ==~/release\/(.*)/ ) {
+              elexis_version = (i=~ /release\//).replaceFirst("")
+              break
+          }
+      }
+      // Set property git_branch, but this property cannot be used in maven/pom.xml
+      // But it is used to invoke the modification only once per run
+      System.setProperty("git_branch",  branch)
+      System.setProperty("elexis_version",  elexis_version)
+      return branch;
+  }
+
+  // Write a repo.properties file
+  public void createRepoProperties(String repo_properties_name, String branch) {
+    // Now we are have the info to crate teh repo.properties
+    repo_version_file = new File(repo_properties_name)
+    repo_version_file.write(HINT_GENERATED)
+    repo_version_file.append("repoVariant=${branch}\n")
+    repo_version_file.append("project.id=${project.id}\n")
+    repo_version_file.append("project.name=${project.name}\n")
+    repo_version_file.append("project.version=${project.version}\n")
+    repo_version_file.append("projectVersion=${elexis_version}\n")
+    println("Created ${repo_properties_name}")
+  }
+
+if ( System.getProperty("git_branch") == null ) {
+  branch = getBranchVersion()
+  createRepoProperties('ch.elexis.base.p2site/repo.properties', branch)
+}
+]]></script>
+							</scripts>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-all</artifactId>
+						<!-- any version of Groovy \>= 1.5.0 should work here -->
+						<version>2.4.4</version>
+						<scope>runtime</scope>
+					</dependency>
+				</dependencies>
+			</plugin>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-checkstyle-plugin</artifactId>
@@ -307,28 +343,6 @@
           <suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
         </configuration>
 			<version>2.17</version>
-		</plugin>
-		<plugin>
-			<groupId>com.github.goldin</groupId>
-			<artifactId>properties-maven-plugin</artifactId>
-			<version>0.2.5</version>
-			<executions>
-				<execution>
-					<id>set-properties</id>
-					<phase>validate</phase>
-					<goals>
-						<goal>set-properties</goal>
-					</goals>
-					<configuration>
-						<properties>
-							<property>
-								<name>timestamp_format</name>
-								<value>{{"'" + "${repo_variant}".substring(0,1).replaceFirst('s','a').replaceFirst('p','r')+"'yyyyMMdd-HHmm" }}</value>
-							</property>
-						</properties>
-					</configuration>
-				</execution>
-			</executions>
 		</plugin>
 		<plugin>
       <groupId>org.eclipse.tycho.extras</groupId>
@@ -353,6 +367,8 @@
               <plugin id="jfree.chart-swt"/>
               <plugin id="jfree.jcommon"/>
               <plugin id="junit"/>
+              <plugin id="edu.emory.mathcs.backport"/>            
+              <plugin id="org.apache.commons.io"/>
               <plugin id="org.apache.commons.exec"/>
               <plugin id="org.apache.commons.logging"/>
               <plugin id="org.apache.httpcomponents.httpclient"/>
@@ -521,7 +537,7 @@ Without it Maven would put two versions of each class file into the jars
         </dependencies>
         <configuration>
           <strictBinIncludes>false</strictBinIncludes>
-          <format>${timestamp_format}</format>
+          <format>yyyyMMdd-HHmm</format>
           <timestampProvider>jgit</timestampProvider>
           <jgit.ignore>pom.xml</jgit.ignore>
           <jgit.dirtyWorkingTree>warning</jgit.dirtyWorkingTree>

@@ -14,5 +14,6 @@ Require-Bundle: at.medevit.elexis.inbox;bundle-version="1.0.0",
 Service-Component: OSGI-INF/inboxConsumer.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.model,
+ ch.rgw.io,
  org.slf4j
 Export-Package: at.medevit.elexis.inbox.ui.part.provider

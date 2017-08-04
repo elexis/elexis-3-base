@@ -66,14 +66,14 @@ public class OldProblem extends PersistentObject {
 	 * Return a list of old-style problems. This serves for compatibility purposes.
 	 */
 	public static List<OldProblem> getOldProblems(){
-		Stm stm = getConnection().getStatement();
+		Stm stm = getDefaultConnection().getStatement();
 		String sql = "SELECT ID FROM " + PROBLEM_TABLENAME + ";";
 		List<String> ids = stm.queryList(sql.toString(), new String[] {
 			"ID"
 		});
-		getConnection().releaseStatement(stm);
+		getDefaultConnection().releaseStatement(stm);
 
-		List<OldProblem> problems = new ArrayList<OldProblem>();
+		List<OldProblem> problems = new ArrayList<>();
 		for (String id : ids) {
 			OldProblem problem = load(id);
 			problems.add(problem);

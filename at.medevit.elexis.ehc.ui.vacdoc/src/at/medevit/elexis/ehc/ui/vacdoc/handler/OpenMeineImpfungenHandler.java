@@ -17,7 +17,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.ehealth_connector.common.Identificator;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceComponent;
+import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder;
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
@@ -40,12 +40,12 @@ public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandl
 								IProgressMonitor.UNKNOWN);
 							
 							List<org.ehealth_connector.common.Patient> patients =
-								MeineImpfungenServiceComponent.getService().getPatients(patient);
+								MeineImpfungenServiceHolder.getService().getPatients(patient);
 							if (patients != null && !patients.isEmpty()) {
 								if (patients.size() == 1) {
 									StringBuilder link = new StringBuilder();
 									link.append(
-										MeineImpfungenServiceComponent.getService().getBaseUrl());
+										MeineImpfungenServiceHolder.getService().getBaseUrl());
 									if (link.lastIndexOf("/") != (link.length() - 1)) {
 										link.append("/");
 									}
@@ -97,15 +97,5 @@ public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandl
 			}
 		}
 		return Optional.empty();
-	}
-	
-	@Override
-	public boolean isEnabled(){
-		try {
-			return MeineImpfungenServiceComponent.getService().isVaild();
-		} catch (IllegalStateException ise) {
-			// do nothing, false is returned
-		}
-		return false;
 	}
 }

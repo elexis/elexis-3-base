@@ -113,10 +113,8 @@ public class DocumentImporter {
 		boolean success = false;
 		Patient patient = null;
 		
-		MedNet.getLogger().logp(
-			Level.INFO,
-			DocumentImporter.class.getName(),
-			"importDocument",
+		MedNet.getLogger().info(
+			"importDocument "+
 			"import following documents." 
 					+   " HL7: "+ hl7File == null ? "" : hl7File.toString()
 					+" -- PDF: "+ pdfFile == null ? "" : pdfFile.toString()
@@ -137,10 +135,10 @@ public class DocumentImporter {
 				success = true;
 				for (String error : hl7OruR01.getErrorList()) {
 					success = false;
-					MedNet.getLogger().logp(Level.SEVERE, DocumentImporter.class.getName(), "process","HL7 error: "+ error);
+					MedNet.getLogger().error("process HL7 error: "+ error);
 				}
 				for (String warn : hl7OruR01.getWarningList()) {
-					MedNet.getLogger().logp(Level.WARNING, DocumentImporter.class.getName(), "process","HL7 warning: "+ warn);
+					MedNet.getLogger().warn("process HL7 warning: "+ warn);
 				}
 				
 				//If the HL7 has successfully been parsed, we can look for the Patient
@@ -174,10 +172,10 @@ public class DocumentImporter {
 				}
 			} catch (ElexisException ex) {
 				success = false;
-				MedNet.getLogger().logp(Level.SEVERE, DocumentImporter.class.getName(), "process","Elexis Exception importing the hl7. ", ex);
+				MedNet.getLogger().error("process Elexis Exception importing the hl7. ", ex);
 			} catch (Exception ex) {
 				success = false;
-				MedNet.getLogger().logp(Level.SEVERE, DocumentImporter.class.getName(), "process","Exception importing the hl7. ", ex);
+				MedNet.getLogger().error("process Exception importing the hl7. ", ex);
 			}
 		}
 		
@@ -243,7 +241,7 @@ public class DocumentImporter {
 						DocumentImporter.documentDateTimeParser.parse(documentDateTime);
 					}
 					catch(ParseException pe){
-						MedNet.getLogger().logp(Level.WARNING, DocumentImporter.class.getName(), "process","Unable to parse documentDateTime:"+documentDateTime, pe);
+						MedNet.getLogger().warn("process Unable to parse documentDateTime:"+documentDateTime, pe);
 					}
 					
 					documentManager.addDocument(
@@ -327,7 +325,7 @@ public class DocumentImporter {
 					) {
 				patient = DocumentImporter.getPatientFromDB(lastname, firstname, birthdate, sex);
 				if (patient != null) {
-					MedNet.getLogger().logp(Level.FINE, DocumentImporter.class.getName(), "getPatient()","Patient found in the database. "+patient.getLabel());
+					MedNet.getLogger().debug("getPatient() Patient found in the database. "+patient.getLabel());
 				}
 			}
 			
@@ -337,9 +335,9 @@ public class DocumentImporter {
 				if (askUser)
 					patient = DocumentImporter.patientSelectorDialog(lastname, firstname, birthdate, sex);
 				if (patient != null) {
-					MedNet.getLogger().logp(Level.FINE, DocumentImporter.class.getName(), "getPatient()","Patient identified by the user. "+patient.getLabel());
+					MedNet.getLogger().debug("getPatient() Patient identified by the user. "+patient.getLabel());
 				} else {
-					MedNet.getLogger().logp(Level.WARNING, DocumentImporter.class.getName(), "getPatient()","Patient idnetification aborded by the user. ");
+					MedNet.getLogger().warn("getPatient() Patient idnetification aborded by the user. ");
 				}
 			}
 		}
@@ -369,7 +367,7 @@ public class DocumentImporter {
 					DocumentImporter.birthdateParser.parse(birthdate)
 					);
 		} catch (ParseException e) {
-			MedNet.getLogger().logp(Level.SEVERE, DocumentImporter.class.getName(), "patientSelectorDialog()","Unable to parse birthdate "+birthdate);
+			MedNet.getLogger().error("patientSelectorDialog() Unable to parse birthdate "+birthdate);
 		}
 		
 		retVal =
@@ -402,7 +400,7 @@ public class DocumentImporter {
 		}
 		else if(result.size() >= 1){
 			//If the get more than one Patient, we should log it
-			MedNet.getLogger().logp(Level.SEVERE, DocumentImporter.class.getName(), "getPatientFromDB()","Multiple patients found with the id :" +patId);
+			MedNet.getLogger().error("getPatientFromDB() Multiple patients found with the id :" +patId);
 			return null;
 		}
 		else {
@@ -448,10 +446,8 @@ public class DocumentImporter {
 		}
 		else if(result.size() >= 1){
 			//If the get more than one Patient, we should log it
-			MedNet.getLogger().logp(
-					Level.SEVERE,
-					DocumentImporter.class.getName(),
-					"getPatientFromDB()",
+			MedNet.getLogger().error(
+					"getPatientFromDB() " +
 					"Multiple patients found for :" 
 						+lastname+" "
 						+firstname+" "
@@ -482,12 +478,12 @@ public class DocumentImporter {
 			if ("".equals(DocumentImporter.getExternalPID(institutionID,patient))) {
 				new Xid(patient, institutionID, id);
 				success = true;
-				MedNet.getLogger().logp(Level.INFO, DocumentImporter.class.getName(), "addFillerPIDToXID()","Add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel());
+				MedNet.getLogger().info("addFillerPIDToXID() Add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel());
 			}
 			return success;
 			
 		} catch (XIDException e) {
-			MedNet.getLogger().logp(Level.INFO, DocumentImporter.class.getName(), "addFillerPIDToXID()","Unable to add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel()+". Exception: ",e);
+			MedNet.getLogger().info("addFillerPIDToXID() Unable to add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel()+". Exception: ",e);
 			return success;
 		}
 	}

@@ -44,10 +44,10 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	Text exePath;
 	private Button exePathSelection;
 	
-	Text logsPath;
+	/*Text logsPath;
 	private Button logsPathSelection;
 	
-	private Combo logLevel;
+	private Combo logLevel;*/
 	/**
 	 * Standard Constructor
 	 */
@@ -91,7 +91,7 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 			}
 		});
 		
-		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelLogsPath);
+	/*	WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelLogsPath);
 		logsPath = new Text(ret, SWT.BORDER);
 		logsPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		logsPath.setTextLimit(80);
@@ -117,7 +117,7 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 		logLevel.setEnabled(false);
 	    for ( String level : MedNetSettings.getAvailableLogLevels()){
 	    	logLevel.add(level);
-	    }
+	    }*/
 	    
 		
 		return ret;
@@ -132,7 +132,7 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public boolean performOk(){
 		MedNet.getSettings().setExePath(Paths.get(exePath.getText()));
-		MedNet.getSettings().setLogsPath(Paths.get(logsPath.getText()));
+	//	MedNet.getSettings().setLogsPath(Paths.get(logsPath.getText()));
 		MedNet.getSettings().saveSettings();
 		return true;
 	}

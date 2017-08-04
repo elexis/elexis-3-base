@@ -87,7 +87,7 @@ public class PatientDocumentManager {
 			this.omnivoreDocManager = (IDocumentManager) omnivore;
 		}
 		else {
-			MedNet.getLogger().logp(Level.SEVERE, PatientDocumentManager.class.getName(), "initDocumentManager","Omnivore has not been loaded");
+			MedNet.getLogger().error("initDocumentManager Omnivore has not been loaded");
 		}
 	}
 	
@@ -111,9 +111,9 @@ public class PatientDocumentManager {
 			if (!catExists) {
 				Boolean success = this.omnivoreDocManager.addCategorie(category);
 				if (success) {
-					MedNet.getLogger().logp(Level.INFO, PatientDocumentManager.class.getName(), "checkCreateCategory","New Document category created in Omnivore: " + category);
+					MedNet.getLogger().info("checkCreateCategory New Document category created in Omnivore: " + category);
 				} else {
-					MedNet.getLogger().logp(Level.SEVERE, PatientDocumentManager.class.getName(), "checkCreateCategory","Failed creating new document category in Omnivore: " + category);
+					MedNet.getLogger().error("checkCreateCategory Failed creating new document category in Omnivore: " + category);
 				}
 			}
 		}
@@ -184,10 +184,8 @@ public class PatientDocumentManager {
 		}
 		else {
 			//If the document already exists, log it
-			MedNet.getLogger().logp(
-					Level.WARNING,
-					PatientDocumentManager.class.getName(),
-					"addDocumentToOmnivore",
+			MedNet.getLogger().warn(
+					"addDocumentToOmnivore " + 
 					"This document already exists in the omnivore database. It will not be imported: " + title +" "+file.toString()
 			);
 			return false;
@@ -359,10 +357,8 @@ public class PatientDocumentManager {
 					overwriteResults
 				|| (labResult.getObservationTime().getTimeInMillis() < documentDate.getTimeInMillis())
 				) {
-				MedNet.getLogger().logp(
-						Level.WARNING,
-						PatientDocumentManager.class.getName(),
-						"saveFileAsLaborItem",
+				MedNet.getLogger().warn(
+						"saveFileAsLaborItem " +
 						"An older version of this document will be overwritten:"
 								+ labItem.getKuerzel() + "-" 
 								+ labItem.getName() + " " 
@@ -377,10 +373,8 @@ public class PatientDocumentManager {
 				saved = true;
 			} else {
 				
-				MedNet.getLogger().logp(
-					Level.WARNING,
-					PatientDocumentManager.class.getName(),
-					"saveFileAsLaborItem",
+				MedNet.getLogger().warn(
+					"saveFileAsLaborItem "+
 					"An new version of this document is still in the database:"
 							+ labItem.getKuerzel() + "-" 
 							+ labItem.getName() + " " 
@@ -403,10 +397,8 @@ public class PatientDocumentManager {
 				this.addDocumentToOmnivore(title, institutionName, dateTimeDocumentString, file);
 				
 				
-				MedNet.getLogger().logp(
-						Level.INFO,
-						PatientDocumentManager.class.getName(),
-						"saveFileAsLaborItem",
+				MedNet.getLogger().info(
+						"saveFileAsLaborItem " +
 						"Document successfully saved to omnivore:"+ title 
 						);
 			} catch (ElexisException e) {
@@ -437,19 +429,15 @@ public class PatientDocumentManager {
 			return results.get(0);
 		} 
 		else if (results.size() <= 0){
-			MedNet.getLogger().logp(
-					Level.WARNING,
-					PatientDocumentManager.class.getName(),
-					"getInstitution",
+			MedNet.getLogger().warn(
+					"getInstitution " +
 					"No institution with following id found:"+id
 			);
 			return null;
 		}
 		else {
-			MedNet.getLogger().logp(
-					Level.WARNING,
-					PatientDocumentManager.class.getName(),
-					"getInstitution",
+			MedNet.getLogger().warn(
+					"getInstitution " +
 					"More than one institution with following id found:"+id
 			);
 			return null;

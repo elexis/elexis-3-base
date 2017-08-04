@@ -15,7 +15,9 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.novcom.elexis.mednet.plugin.logging.LogFileHandler;
 
@@ -36,10 +38,10 @@ public class MedNet {
 	 */
 	public static Logger getLogger(){
 		if (MedNet.logger == null) {
-			MedNet.logger = Logger.getLogger("MedNet");
-			LogFileHandler fileHandler = new LogFileHandler(MedNet.getSettings().getLogsPath());
+			MedNet.logger = LoggerFactory.getLogger("MedNet");
+			/*LogFileHandler fileHandler = new LogFileHandler(MedNet.getSettings().getLogsPath());
 			fileHandler.setLevel(MedNet.getSettings().getLogsLevel());
-			MedNet.logger.addHandler(fileHandler);
+			MedNet.logger.addHandler(fileHandler);*/
 		}
 		
 		return logger;
@@ -57,7 +59,7 @@ public class MedNet {
 	 * Call the MedNet function -getResults that will download documents
 	 */
 	public static void getDocuments(){
-		MedNet.getLogger().entering(MedNet.class.getName(), "getDocuments()");
+		MedNet.getLogger().debug("getDocuments()");
 		
 		//Prepare the parameters List
 		ArrayList<String> command = new ArrayList<String>();
@@ -77,17 +79,17 @@ public class MedNet {
 	            
 				//If it returns 0 -> All is OK the files has successfully been received
 				if(exitValue >= 0 ){
-					MedNet.getLogger().logp(Level.FINE, MedNet.class.getName(), "getResults()","Successful");
+					MedNet.getLogger().debug("getResults() Successful");
 				}
 				else {
-					MedNet.getLogger().logp(Level.SEVERE, MedNet.class.getName(), "getResults()","Failed");
+					MedNet.getLogger().debug("getResults() Failed");
 				}
 	            
 	        } catch (InterruptedException ie) {
-	        	MedNet.getLogger().logp(Level.WARNING, MedNet.class.getName(), "getResults()","Has been interrupted");
+	        	MedNet.getLogger().warn("getResults() Has been interrupted");
 	        }
 		} catch (IOException ioe) {
-        	MedNet.getLogger().logp(Level.SEVERE, MedNet.class.getName(), "getResults()","IOException: ", ioe);
+        	MedNet.getLogger().error("getResults() IOException: ", ioe);
         }
 		
 	}
@@ -97,7 +99,7 @@ public class MedNet {
 	 * pass the gdt file set in the settings as parameter if it exists
 	 */
 	public static void openFormview(){
-		MedNet.getLogger().entering(MedNet.class.getName(), "openFormview()");
+		MedNet.getLogger().debug("openFormview()");
 		
 		//Prepare the parameters List
 		ArrayList<String> command = new ArrayList<String>();
@@ -119,17 +121,17 @@ public class MedNet {
 	            
 				//If it returns 0 -> All is OK the files has successfully been received
 				if(exitValue >= 0 ){
-		        	MedNet.getLogger().logp(Level.FINE, MedNet.class.getName(), "openFormview()","Successful");
+		        	MedNet.getLogger().debug("openFormview() Successful");
 				}
 				else {
-		        	MedNet.getLogger().logp(Level.SEVERE, MedNet.class.getName(), "openFormview()","Failed");
+		        	MedNet.getLogger().debug("openFormview() Failed");
 				}
 	            
 	        } catch (InterruptedException ie) {
-	        	MedNet.getLogger().logp(Level.WARNING, MedNet.class.getName(), "openFormview()","Has been interrupted");
+	        	MedNet.getLogger().debug("openFormview() Has been interrupted");
 	        }
 		} catch (IOException ioe) {
-        	MedNet.getLogger().logp(Level.SEVERE, MedNet.class.getName(), "openFormview()","IOException: ", ioe);
+        	MedNet.getLogger().error("openFormview() IOException: ", ioe);
         }
 		
 	}

@@ -58,7 +58,7 @@ public class DocumentImporterPage extends ImporterPage {
 	 */
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		MedNet.getLogger().entering(getClass().getName(), "doImport()");
+		MedNet.getLogger().debug("doImport()");
 		
 		//List the path were we will have to collect the files to import
 		List<DocumentSettingRecord> receivingsPaths = DocumentSettingRecord.getAllDocumentSettingRecords();
@@ -69,7 +69,7 @@ public class DocumentImporterPage extends ImporterPage {
 			monitor.beginTask(MedNetMessages.DocumentImporterPage_callMedNet,(receivingsPaths.size()+1)*100);
 		}
 
-		MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","call MedNet getResults()");
+		MedNet.getLogger().info("doImport() call MedNet getResults()");
 		
 		//Call MedNet
 		MedNet.getDocuments();
@@ -85,12 +85,12 @@ public class DocumentImporterPage extends ImporterPage {
 			
 			if(monitor != null && monitor.isCanceled()){
 				//If the monitor has been canceled we should breakMedNetLogger.getLogger().println(
-				MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","import canceled");
+				MedNet.getLogger().info("doImport() import canceled");
 				break;
 			}
 			
 
-			MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","Processing Institution "+documentSettingItem.getInstitutionName());
+			MedNet.getLogger().info("doImport() Processing Institution "+documentSettingItem.getInstitutionName());
 			//We write to the monitor the name of the institution we will check
 			if(monitor != null){
 				monitor.subTask(
@@ -110,7 +110,7 @@ public class DocumentImporterPage extends ImporterPage {
 			if(!Files.exists(directory) || Files.isDirectory(directory)){
 				//If this directory doesn't exists or is not a directory
 				//continue
-				MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","The following directory is not valid:"+directory.toString());
+				MedNet.getLogger().info("doImport() The following directory is not valid:"+directory.toString());
 				if(monitor != null){
 					monitor.worked(100);
 				}
@@ -118,7 +118,7 @@ public class DocumentImporterPage extends ImporterPage {
 			else if(!Files.exists(archiveDir) || Files.isDirectory(archiveDir)){
 				//If this directory doesn't exists or is not a directory
 				//continue
-				MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","The following directory is not valid:"+archiveDir.toString());
+				MedNet.getLogger().info("doImport() The following directory is not valid:"+archiveDir.toString());
 				if(monitor != null){
 					monitor.worked(100);
 				}
@@ -127,7 +127,7 @@ public class DocumentImporterPage extends ImporterPage {
 			else if(!Files.exists(errorDir) || Files.isDirectory(errorDir)){
 				//If this directory doesn't exists or is not a directory
 				//continue
-				MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","The following directory is not valid:"+errorDir.toString());
+				MedNet.getLogger().info("doImport() The following directory is not valid:"+errorDir.toString());
 				if(monitor != null){
 					monitor.worked(100);
 				}
@@ -356,7 +356,7 @@ public class DocumentImporterPage extends ImporterPage {
 								Files.move(pair.hl7, archiveDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch(IOException ioe){
-								MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","IOException moving this file to the archive "+pair.hl7.toString(), ioe);
+								MedNet.getLogger().info("doImport() IOException moving this file to the archive "+pair.hl7.toString(), ioe);
 							}
 						}
 						if (pair.pdf != null){
@@ -364,7 +364,7 @@ public class DocumentImporterPage extends ImporterPage {
 								Files.move(pair.pdf, archiveDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch(IOException ioe){
-								MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","IOException moving this file to the archive "+pair.pdf.toString(), ioe);
+								MedNet.getLogger().info("doImport() IOException moving this file to the archive "+pair.pdf.toString(), ioe);
 							}
 						}
 					} else {
@@ -373,7 +373,7 @@ public class DocumentImporterPage extends ImporterPage {
 								Files.move(pair.hl7, errorDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch(IOException ioe){
-								MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","IOException moving this file to the error "+pair.hl7.toString(), ioe);
+								MedNet.getLogger().info("doImport() IOException moving this file to the error "+pair.hl7.toString(), ioe);
 							}
 							errorMovedCount++;
 						}
@@ -382,7 +382,7 @@ public class DocumentImporterPage extends ImporterPage {
 								Files.move(pair.pdf, errorDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch(IOException ioe){
-								MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","IOException moving this file to the error "+pair.pdf.toString(), ioe);
+								MedNet.getLogger().info("doImport() IOException moving this file to the error "+pair.pdf.toString(), ioe);
 							}
 							errorMovedCount++;
 						}
@@ -424,7 +424,7 @@ public class DocumentImporterPage extends ImporterPage {
 			}
 		}
 		
-		MedNet.getLogger().logp(Level.INFO, getClass().getName(), "doImport()","Import completed");
+		MedNet.getLogger().info("doImport() Import completed");
 		
 		
 		return Status.OK_STATUS;
@@ -439,7 +439,7 @@ public class DocumentImporterPage extends ImporterPage {
 	 */
 	private void deleteOldArchivFiles( DocumentSettingRecord documentSettingItem){
 		
-		MedNet.getLogger().logp(Level.INFO, getClass().getName(), "deleteOldArchivFiles()","Purge archive dir "+documentSettingItem.getArchivingPath().toString());
+		MedNet.getLogger().info("deleteOldArchivFiles() Purge archive dir "+documentSettingItem.getArchivingPath().toString());
 		
 		//Prepare the FileTime representing the limit. All the files older than this limit will be deleted
 		Calendar cal = Calendar.getInstance();
@@ -456,19 +456,19 @@ public class DocumentImporterPage extends ImporterPage {
 				for(Path path : fileStream){
 					try{
 						Files.delete(path);
-						MedNet.getLogger().logp(Level.INFO, getClass().getName(), "deleteOldArchivFiles()","Following file has been deleted "+path.toString());
+						MedNet.getLogger().info("deleteOldArchivFiles() Following file has been deleted "+path.toString());
 					}
 					catch (IOException ioe) {
-						MedNet.getLogger().logp(Level.SEVERE, getClass().getName(), "deleteOldArchivFiles()","IOException deleting file "+path.toString(), ioe);
+						MedNet.getLogger().error("deleteOldArchivFiles() IOException deleting file "+path.toString(), ioe);
 					}			
 				}
 			}
 			catch (IOException ex) {
-				MedNet.getLogger().logp(Level.SEVERE, getClass().getName(), "deleteOldArchivFiles()","IOException walking throw archiv directory "+archivDir.toString(), ex);
+				MedNet.getLogger().error("deleteOldArchivFiles() IOException walking throw archiv directory "+archivDir.toString(), ex);
 			}
 		}
 		
-		MedNet.getLogger().logp(Level.INFO, getClass().getName(), "deleteOldArchivFiles()","Purge of following archive completed"+archivDir.toString());
+		MedNet.getLogger().info("deleteOldArchivFiles() Purge of following archive completed"+archivDir.toString());
 		
 	}
 	

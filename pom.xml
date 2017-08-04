@@ -651,7 +651,7 @@ Without it Maven would put two versions of each class file into the jars
                   </goals>
                 </pluginExecutionFilter>
                 <action>
-                  <ignore></ignore>
+                  <ignore/>
                 </action>
               </pluginExecution>
             </pluginExecutions>

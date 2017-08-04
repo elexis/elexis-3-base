@@ -188,7 +188,7 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 				return Integer.parseInt(this.get(DocumentSettingRecord.FLD_PURGE_INTERVAL));
 			}
 			catch(NumberFormatException nfe){
-				MedNet.getLogger().logp(Level.WARNING, DocumentSettingRecord.class.getName(), "getPurgeInterval","PurgeInterval is not numeric value. "+ interval);
+				MedNet.getLogger().warn("getPurgeInterval PurgeInterval is not numeric value. "+ interval);
 				return DocumentSettingRecord.DEFAULT_PURGE_INTERVAL;
 			}
 		}

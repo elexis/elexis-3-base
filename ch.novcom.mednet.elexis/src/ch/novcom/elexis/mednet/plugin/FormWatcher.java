@@ -130,22 +130,22 @@ public class FormWatcher {
 				
 				if(success){
 					//Archiv the file
-					MedNet.getLogger().logp(Level.INFO, getClass().getName(), "importForm()","Successfully imported document: "+file.toString());
+					MedNet.getLogger().info("importForm() Successfully imported document: "+file.toString());
 					Files.move(file, MedNet.getSettings().getFormsArchivePath().resolve(file.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
 				}
 				else {
 					//Move the file to the error folder
-					MedNet.getLogger().logp(Level.SEVERE, getClass().getName(), "importForm()","Failed importing document: "+file.toString());
+					MedNet.getLogger().error("importForm() Failed importing document: "+file.toString());
 					Files.move(file, MedNet.getSettings().getFormsErrorPath().resolve(file.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
 				}
 				
 				
 			} catch (IOException e) {
-				MedNet.getLogger().logp(Level.SEVERE, getClass().getName(), "importForm()","IOException importing document: "+file.toString()+" ",e);
+				MedNet.getLogger().error("importForm() IOException importing document: "+file.toString()+" ",e);
 			}
 		}
 		else {
-			MedNet.getLogger().logp(Level.WARNING, getClass().getName(), "importForm()","Following file is not valid: "+file.toString());
+			MedNet.getLogger().warn("importForm() Following file is not valid: "+file.toString());
 		}
 	}
 

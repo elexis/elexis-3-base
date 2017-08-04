@@ -86,7 +86,7 @@ public class OpenFormView extends AbstractHandler {
 		}
 		catch(IOException ioe){
 			//If there are some ioeException logs it
-			MedNet.getLogger().logp(Level.SEVERE, DocumentImporter.class.getName(), "execute","IOException creating gdtFile.",ioe);
+			MedNet.getLogger().error("execute IOException creating gdtFile.",ioe);
 		}
 		
 		//and we call mednet

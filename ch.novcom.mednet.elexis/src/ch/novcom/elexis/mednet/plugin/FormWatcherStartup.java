@@ -24,7 +24,7 @@ public class FormWatcherStartup implements IStartup {
 		try {
 			new FormWatcher().processEvents();
 		} catch (IOException e) {
-			MedNet.getLogger().logp(Level.SEVERE, getClass().getName(), "earlyStartup()","IOException initializing FormWatcher",e);
+			MedNet.getLogger().error("earlyStartup() IOException initializing FormWatcher",e);
 		}
 	}
 }

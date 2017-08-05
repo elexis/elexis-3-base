@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
@@ -52,6 +53,7 @@ import org.iatrix.widgets.KonsProblems;
 import org.iatrix.widgets.KonsText;
 import org.iatrix.widgets.KonsVerrechnung;
 import org.iatrix.widgets.ProblemArea;
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,6 +132,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	@Override
 	public void createPartControl(Composite parent){
+		Bundle bundle = Platform.getBundle("org.iatrix");
+		log.info("VERSION: " + bundle.getVersion().toString());
 		parent.setLayout(new FillLayout());
 		heartbeat = Heartbeat.getInstance();
 		tk = UiDesk.getToolkit();
@@ -446,7 +450,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 */
 	private void activateContext(){
 		IContextService contextService =
-				(IContextService) getSite().getService(IContextService.class);
+				getSite().getService(IContextService.class);
 		contextService.activateContext(Constants.VIEW_CONTEXT_ID);
 	}
 

@@ -116,7 +116,7 @@ public class TestElexisDirectories {
 	public void test_anne_muller_bern() throws IOException{
 		File base = get_ressource_path();
 		Assert.assertTrue(base.exists());
-		File to_test = new File(base, "anne_müller_bern.html");
+		File to_test = new File(base, "anne_mueller_bern.html");
 		Assert.assertTrue(to_test.exists());
 		compare_file_to_kontacts(to_test, null);
 	}

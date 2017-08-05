@@ -11,30 +11,11 @@
     <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <repo_name>elexis.3.base</repo_name>
-    <repo_variant>snapshot</repo_variant>
-    <useBranch>3.2</useBranch>
+    <repo_variant>beta</repo_variant>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
   <packaging>pom</packaging>
 	<profiles>
-		<profile>
-			<id>prerelease</id>
-			<activation>
-				<property>
-					<name>repo_variant</name>
-					<value>prerelease</value>
-				</property>
-			</activation>
-		</profile>
-		<profile>
-			<id>release</id>
-			<activation>
-				<property>
-					<name>repo_variant</name>
-					<value>release</value>
-				</property>
-			</activation>
-		</profile>
 		<!-- activate operating system dependent testing vm args -->
 		<profile>
 			<id>mac-surefire-tests</id>
@@ -274,12 +255,12 @@
   </repository>
   <repository>
     <id>mirror.4.elexis</id>
-    <url>http://download.elexis.info/mirror.4.elexis/${useBranch}/</url>
+    <url>http://download.elexis.info/mirror.4.elexis/3.2/</url>
     <layout>p2</layout>
   </repository>
   <repository>
     <id>elexis.3.3rdparty.libraries</id>
-    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/${useBranch}</url>
+    <url>http://download.elexis.info/elexis.3.3rdparty.libraries/3.2</url>
     <layout>p2</layout>
   </repository>
 </repositories>

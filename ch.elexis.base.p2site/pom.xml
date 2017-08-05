@@ -176,30 +176,4 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
       	</plugins>
       </pluginManagement>
     </build>
-  <profiles>
-    <profile>
-      <id>prerelease</id>
-      <activation>
-        <property>
-          <name>repo_variant</name>
-          <value>prerelease</value>
-        </property>
-      </activation>
-      <properties>
-        <useBranch>release</useBranch>
-      </properties>
-    </profile>
-    <profile>
-      <id>release</id>
-      <activation>
-        <property>
-          <name>repo_variant</name>
-          <value>release</value>
-        </property>
-      </activation>
-      <properties>
-        <useBranch>release</useBranch>
-      </properties>
-    </profile>
-  </profiles>
 </project>

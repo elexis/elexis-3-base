@@ -1,5 +1,7 @@
 h1. elexis-3-base
 
+*BETA* This branch only supports building beta versions. It is only used by the Medelexis AG for one customer.
+
 Elexis 3 Base Repository
 
 h2. developer info

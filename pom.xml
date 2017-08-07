@@ -249,8 +249,8 @@
 </modules>
 <repositories>
   <repository>
-    <id>elexis.3.core.${repo_variant}</id>
-    <url>https://download.elexis.info/elexis/3.2/elexis.3.core/${repo_variant}/</url>
+    <id>elexis.3.core.beta</id>
+    <url>https://download.elexis.info/elexis.3.core/beta/</url>
     <layout>p2</layout>
   </repository>
   <repository>
@@ -296,7 +296,7 @@
 						<properties>
 							<property>
 								<name>timestamp_format</name>
-								<value>{{"'" + "${repo_variant}".substring(0,1).replaceFirst('s','a').replaceFirst('p','r')+"'yyyyMMdd-HHmm" }}</value>
+								<value>{{"'" + "beta".substring(0,1).replaceFirst('s','a').replaceFirst('p','r')+"'yyyyMMdd-HHmm" }}</value>
 							</property>
 						</properties>
 					</configuration>

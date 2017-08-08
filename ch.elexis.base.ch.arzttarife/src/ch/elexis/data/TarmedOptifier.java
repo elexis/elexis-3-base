@@ -417,8 +417,8 @@ public class TarmedOptifier implements IOptifier {
 			newVerrechnet.setPrimaryScaleFactor(0.7);
 		}
 
-		// Zuschlag fuer Ultraschall
-		 if (tc.getParent().startsWith(CHAPTER_ULTRA)) {
+		// Zuschlag fuer Ultraschall  & check also 39.3800 is not added twice
+		if (tc.getParent().startsWith(CHAPTER_ULTRA) && !tc.getCode().equals("39.3800")) {
 			 TarmedLeistung tl = (TarmedLeistung) TarmedLeistung.getFromCode("39.3800");
 			 add(tl, kons);
 		}

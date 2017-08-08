@@ -783,4 +783,12 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return DBConnection.CACHE_TIME_MAX;
 	}
 
+	@Override
+	public String getProductId(){
+		if (isProduct()) {
+			return getId();
+		}
+		return checkNull(get(FLD_PRODNO));
+	}
+	
 }

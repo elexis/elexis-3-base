@@ -32,6 +32,7 @@ import org.eclipse.ui.IViewSite;
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
+import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
@@ -43,9 +44,9 @@ import ch.elexis.data.PersistentObject;
 public class DetailDisplay implements IDetailDisplay {
 	
 	private UpdateValueStrategy integerToString =
-		new UpdateValueStrategy().setConverter(NumberToStringConverter.fromInteger(true));
+		new UpdateValueStrategy().setConverter(NumberToStringConverter.fromInteger(false));
 	private UpdateValueStrategy stringToInteger =
-		new UpdateValueStrategy().setConverter(StringToNumberConverter.toInteger(true));
+		new UpdateValueStrategy().setConverter(StringToNumberConverter.toInteger(false));
 	
 	protected WritableValue item = new WritableValue(null, ArtikelstammItem.class);
 	
@@ -65,11 +66,16 @@ public class DetailDisplay implements IDetailDisplay {
 		if (dc != null) {
 			dc.setItem(ai);
 		}
-		if (sdc != null) {
+		if (sdc != null && !sdc.isDisposed()) {
 			sdc.setArticle(ai);
 		}
-		txtStkProAbgabe.setEnabled(!ai.isProduct());
-		txtStkProPack.setEnabled(!ai.isProduct());
+		if (!txtStkProAbgabe.isDisposed()) {
+			txtStkProAbgabe.setEnabled(!ai.isProduct());
+		}
+		if (!txtStkProPack.isDisposed()) {
+			txtStkProPack.setEnabled(!ai.isProduct());
+		}
+		
 	}
 	
 	@Override
@@ -112,6 +118,16 @@ public class DetailDisplay implements IDetailDisplay {
 		if (creationDate != null) {
 			sb.append(" / " + ArtikelstammHelper.monthAndYearWritten.format(creationDate));
 		}
+		
+		// the default datasource is oddb2xml
+		DATASOURCEType datasourceType = DATASOURCEType.ODDB_2_XML;
+		try {
+			datasourceType = ArtikelstammItem.getDatasourceType();
+		} catch (IllegalArgumentException e) {
+			/** ignore **/
+		}
+		sb.append(" / " + datasourceType.value());
+		
 		label.setText("Datensatz-Basis: " + sb.toString());
 		
 		addUpdateLabelToBottom(ret);

@@ -27,7 +27,7 @@ public class DatabindingTextResizeConverter implements IConverter {
 	public Object convert(Object fromObject){
 		text.getParent().getParent().layout();
 		
-		return null;
+		return text.getSize();
 	}
 	
 }

@@ -396,6 +396,26 @@ public class TarmedOptifier implements IOptifier {
 			newVerrechnet.setDetail(TL, Double.toString(sumTL));
 			newVerrechnet.setPrimaryScaleFactor(0.5);
 		}
+		// Zuschläge für 04.0620 sollte sich diese mit 70% auf die Positionen 04.0630 & 04.0640 beziehen
+		else if (tcid.equals("04.0620")) {
+			double sumAL = 0.0;
+			double sumTL = 0.0;
+			for (Verrechnet v : lst) {
+				if (v.getVerrechenbar() instanceof TarmedLeistung) {
+					TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+					String tlc = tl.getCode();
+					int z = v.getZahl();
+					if (tlc.equals("04.0610") || tlc.equals("04.0630") || tlc.equals("04.0640")) {
+						sumAL += tl.getAL() * z;
+						sumTL += tl.getTL() * z;
+					}
+				}
+			}
+			newVerrechnet.setTP(sumAL + sumTL);
+			newVerrechnet.setDetail(AL, Double.toString(sumAL));
+			newVerrechnet.setDetail(TL, Double.toString(sumTL));
+			newVerrechnet.setPrimaryScaleFactor(0.7);
+		}
 
 		// Zuschlag fuer Ultraschall
 		 if (tc.getParent().startsWith(CHAPTER_ULTRA)) {

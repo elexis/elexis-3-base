@@ -57,21 +57,21 @@ public class DetailComposite extends ScrolledComposite {
 	public static String prefAtcLanguage = null;
 	
 	private Label lblDSCR;
-	private Text lblPHZNR;
-	private Text lblGTIN;
+	private Text txtPHZNR;
+	private Text txtGTIN;
 	private Label lblHERSTELLER;
 	private Label lblEXFACTORYPRICE;
 	private Text txtPUBLICPRICE;
 	private Tree treeATC;
 	private Label lblAbgabekategorie;
-	private Text lblABGABEKATEGORIE;
+	private Text txtABGABEKATEGORIE;
 	private Label lblSelbstbehalt;
 	private Text lblSELBSTBEHALT;
 	private Button btnCheckIsNarcotic;
 	private Button btnLPPVEntry;
 	private Button btnlLimitation;
 	private Label lblLimitationspunkte;
-	private Text lblLIMITATIONPOINTS;
+	private Text txtLIMITATIONPOINTS;
 	private Label lblLimitationstext;
 	private Text txtLIMITATIONTEXT;
 	private Text txtProductNr;
@@ -115,16 +115,18 @@ public class DetailComposite extends ScrolledComposite {
 		lblGtin.setToolTipText("European Article Number / Global Trade Index Number");
 		lblGtin.setText("EAN/GTIN");
 		
-		lblGTIN = new Text(topComposite, SWT.READ_ONLY);
-		lblGTIN.setLayoutData(gdd2);
+		txtGTIN = new Text(topComposite, SWT.READ_ONLY);
+		txtGTIN.setLayoutData(gdd2);
+		txtGTIN.setBackground(topComposite.getBackground());
 		
 		Label lblPhznr = new Label(topComposite, SWT.NONE);
 		lblPhznr.setToolTipText("Pharmacode");
 		lblPhznr.setLayoutData(gdd);
 		lblPhznr.setText("Pharmacode");
 		
-		lblPHZNR = new Text(topComposite, SWT.READ_ONLY);
-		lblPHZNR.setLayoutData(gdd2);
+		txtPHZNR = new Text(topComposite, SWT.READ_ONLY);
+		txtPHZNR.setLayoutData(gdd2);
+		txtPHZNR.setBackground(topComposite.getBackground());
 		
 		final Label lblProductNr = new Label(topComposite, SWT.NONE);
 		lblProductNr.setToolTipText("Produktnummer");
@@ -133,6 +135,7 @@ public class DetailComposite extends ScrolledComposite {
 		
 		txtProductNr = new Text(topComposite, SWT.READ_ONLY);
 		txtProductNr.setLayoutData(gdd2);
+		txtProductNr.setBackground(topComposite.getBackground());
 		txtProductNr.addModifyListener(new ModifyListener() {
 			
 			@Override
@@ -144,8 +147,9 @@ public class DetailComposite extends ScrolledComposite {
 		lblAbgabekategorie = new Label(headerComposite, SWT.NONE);
 		lblAbgabekategorie.setText("Abgabekategorie");
 		
-		lblABGABEKATEGORIE = new Text(headerComposite, SWT.READ_ONLY);
-		lblABGABEKATEGORIE.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		txtABGABEKATEGORIE = new Text(headerComposite, SWT.READ_ONLY);
+		txtABGABEKATEGORIE.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		txtABGABEKATEGORIE.setBackground(topComposite.getBackground());
 		new Label(headerComposite, SWT.NONE);
 		new Label(headerComposite, SWT.NONE);
 		
@@ -231,8 +235,9 @@ public class DetailComposite extends ScrolledComposite {
 		lblLimitationspunkte = new Label(grpLimitations, SWT.NONE);
 		lblLimitationspunkte.setText("Limitationspunkte");
 		
-		lblLIMITATIONPOINTS = new Text(grpLimitations, SWT.READ_ONLY);
-		lblLIMITATIONPOINTS.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtLIMITATIONPOINTS = new Text(grpLimitations, SWT.READ_ONLY);
+		txtLIMITATIONPOINTS.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtLIMITATIONPOINTS.setBackground(grpLimitations.getBackground());
 		
 		lblLimitationstext = new Label(grpLimitations, SWT.NONE);
 		lblLimitationstext.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
@@ -343,14 +348,14 @@ public class DetailComposite extends ScrolledComposite {
 		bindingContext.bindValue(observeTextLblDSCRObserveWidget, itemDSCRObserveDetailValue,
 			new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 		//
-		IObservableValue observeTextLblGTINObserveWidget = WidgetProperties.text().observe(lblGTIN);
+		IObservableValue observeTextLblGTINObserveWidget = WidgetProperties.text().observe(txtGTIN);
 		IObservableValue itemGTINObserveDetailValue =
 			PojoProperties.value(IArtikelstammItem.class, "GTIN", String.class).observeDetail(item);
 		bindingContext.bindValue(observeTextLblGTINObserveWidget, itemGTINObserveDetailValue,
 			new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 		//
 		IObservableValue observeTextLblPHZNRObserveWidget =
-			WidgetProperties.text().observe(lblPHZNR);
+			WidgetProperties.text().observe(txtPHZNR);
 		IObservableValue itemPHARObserveDetailValue =
 			PojoProperties.value(IArtikelstammItem.class, "PHAR", String.class).observeDetail(item);
 		bindingContext.bindValue(observeTextLblPHZNRObserveWidget, itemPHARObserveDetailValue,
@@ -390,7 +395,7 @@ public class DetailComposite extends ScrolledComposite {
 			itemPublicPriceObserveDetailValue, strategy_2, null);
 		//
 		IObservableValue observeTextLblABGABEKATEGORIEObserveWidget =
-			WidgetProperties.text().observe(lblABGABEKATEGORIE);
+			WidgetProperties.text().observe(txtABGABEKATEGORIE);
 		IObservableValue itemSwissmedicCategoryObserveDetailValue =
 			PojoProperties.value(IArtikelstammItem.class, "swissmedicCategory", String.class)
 				.observeDetail(item);
@@ -426,7 +431,7 @@ public class DetailComposite extends ScrolledComposite {
 			itemLimitationTextObserveDetailValue, null, null);
 		//
 		IObservableValue observeTextLblLIMITATIONPOINTSObserveWidget =
-			WidgetProperties.text().observe(lblLIMITATIONPOINTS);
+			WidgetProperties.text().observe(txtLIMITATIONPOINTS);
 		IObservableValue itemLimitationPointsObserveDetailValue =
 			PojoProperties.value(IArtikelstammItem.class, "limitationPoints", String.class)
 				.observeDetail(item);

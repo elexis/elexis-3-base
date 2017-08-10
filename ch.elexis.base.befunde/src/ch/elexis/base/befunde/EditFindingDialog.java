@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -25,6 +26,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+
+import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -38,8 +41,6 @@ import ch.elexis.data.Script;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-
-import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class EditFindingDialog extends TitleAreaDialog {
 	Messwert mw;
@@ -56,17 +57,21 @@ public class EditFindingDialog extends TitleAreaDialog {
 		mw = m;
 		name = n;
 		names = Messwert.getSetup().getMap(Messwert.FLD_BEFUNDE);
-		flds = ((String) names.get(n + Messwert._FIELDS)).split(Messwert.SETUP_SEPARATOR);
-		multiline = new boolean[flds.length];
-		values = new String[flds.length];
-		inputs = new Text[flds.length];
-		for (int i = 0; i < flds.length; i++) {
-			String[] line = flds[i].split(Messwert.SETUP_CHECKSEPARATOR);
-			flds[i] = line[0];
-			if (line.length < 2) {
-				multiline[i] = false;
-			} else {
-				multiline[i] = line[1].equals("m") ? true : false; //$NON-NLS-1$
+		String key = n + Messwert._FIELDS;
+		
+		if (names.containsKey(key)) {
+			flds = ((String) names.get(key)).split(Messwert.SETUP_SEPARATOR);
+			multiline = new boolean[flds.length];
+			values = new String[flds.length];
+			inputs = new Text[flds.length];
+			for (int i = 0; i < flds.length; i++) {
+				String[] line = flds[i].split(Messwert.SETUP_CHECKSEPARATOR);
+				flds[i] = line[0];
+				if (line.length < 2) {
+					multiline[i] = false;
+				} else {
+					multiline[i] = line[1].equals("m") ? true : false; //$NON-NLS-1$
+				}
 			}
 		}
 	}
@@ -89,21 +94,27 @@ public class EditFindingDialog extends TitleAreaDialog {
 					values[i] = (String) vals.get(flds[i]);
 				}
 			}
-			for (int i = 0; i < flds.length; i++) {
-				final String[] heading = flds[i].split("=", 2); //$NON-NLS-1$
-				if (heading.length == 1) {
-					new Label(ret, SWT.NONE).setText(flds[i]);
-				} else {
-					Label hl =
-						SWTHelper.createHyperlink(ret, heading[0],
+			if (flds != null) {
+				for (int i = 0; i < flds.length; i++) {
+					final String[] heading = flds[i].split("=", 2); //$NON-NLS-1$
+					if (heading.length == 1) {
+						new Label(ret, SWT.NONE).setText(flds[i]);
+					} else {
+						Label hl = SWTHelper.createHyperlink(ret, heading[0],
 							new ScriptListener(heading[1], i));
-					hl.setForeground(UiDesk.getColor(UiDesk.COL_BLUE));
+						hl.setForeground(UiDesk.getColor(UiDesk.COL_BLUE));
+					}
+					inputs[i] = SWTHelper.createText(ret, multiline[i] ? 4 : 1, SWT.NONE);
+					inputs[i].setText(values[i] == null ? "" : values[i]); //$NON-NLS-1$
+					if (heading.length > 1) {
+						inputs[i].setEditable(false);
+					}
 				}
-				inputs[i] = SWTHelper.createText(ret, multiline[i] ? 4 : 1, SWT.NONE);
-				inputs[i].setText(values[i] == null ? "" : values[i]); //$NON-NLS-1$
-				if (heading.length > 1) {
-					inputs[i].setEditable(false);
-				}
+			}
+			else {
+				MessageDialog.openWarning(getParentShell(), "Warnung",
+					"Es sind keine Metriken für die Messung " + name + " vorhanden.");
+				close();
 			}
 		}
 		return ret;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="elementsui" name="Elementsui" schema="schema/elementsui.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -61,6 +62,13 @@
                style="toggle">
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="at.medevit.elexis.outbox.ui.elementsui">
+      <uiprovider
+            class="at.medevit.elexis.outbox.ui.DefaultOutboxElementLabelProvider"
+            id="at.medevit.elexis.outbox.ui.defaultOutboxElementLabelProvider">
+      </uiprovider>
    </extension>
 
 </plugin>

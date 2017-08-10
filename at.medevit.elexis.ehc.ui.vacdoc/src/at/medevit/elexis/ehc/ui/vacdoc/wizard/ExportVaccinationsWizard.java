@@ -10,7 +10,7 @@ public class ExportVaccinationsWizard extends Wizard {
 	private ExportVaccinationsWizardPage1 vaccinationsMainPage;
 
 	public ExportVaccinationsWizard(){
-		setWindowTitle("Impfungen export");
+		setWindowTitle("Impfungen export als XDM oder CDA");
 	}
 
 	@Override

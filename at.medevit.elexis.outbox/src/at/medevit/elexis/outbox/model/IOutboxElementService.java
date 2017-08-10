@@ -15,23 +15,22 @@ import java.util.List;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 
 public interface IOutboxElementService {
 	// do not change order, as we save the ordinal to the db, only adding new state is allowed
 	public enum State {
 		NEW, SEEN;
 	}
-
+	
 	/**
 	 * Create a new OutboxElement and tell registered listeners about it.
 	 * 
 	 * @param mandant
 	 * @param patient
-	 * @param state
+	 * @param uri
 	 * @return
 	 */
-	public void createOutboxElement(Patient patient, Kontakt mandant, PersistentObject object);
+	public void createOutboxElement(Patient patient, Kontakt mandant, String uri);
 	
 	/**
 	 * Change the state of a OutboxElement and tell registered listeners about it.

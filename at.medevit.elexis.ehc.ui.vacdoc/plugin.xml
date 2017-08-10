@@ -48,6 +48,12 @@
                label="export nach meineimpfungen"
                style="push">
          </command>
+         <command
+               commandId="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler"
+               icon="rsc/meineimpfungenlogo_16x16.png"
+               label="CDA in Outbox"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -57,8 +63,8 @@
             name="meineimpfungen open patient">
       </command>
       <command
-            id="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen"
-            name="meineimpfungen upload">
+            id="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler"
+            name="outbox cda handler">
       </command>
    </extension>
    <extension
@@ -88,6 +94,10 @@
                   property="at.medevit.elexis.ehc.ui.vacdoc.enabled">
             </test>
          </enabledWhen>
+      </handler>
+      <handler
+            class="at.medevit.elexis.ehc.ui.vacdoc.handler.CdaOutboxHandler"
+            commandId="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler">
       </handler>
    </extension>
    <extension

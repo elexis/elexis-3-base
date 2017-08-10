@@ -9,15 +9,14 @@ import at.medevit.elexis.outbox.model.OutboxElement;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 
 public class OutboxElementService implements IOutboxElementService {
 	HashSet<IOutboxUpdateListener> listeners = new HashSet<IOutboxUpdateListener>();
 	
 	@Override
-	public void createOutboxElement(Patient patient, Kontakt mandant, PersistentObject object){
-		OutboxElement element = new OutboxElement(patient, mandant, object);
+	public void createOutboxElement(Patient patient, Kontakt mandant, String uri){
+		OutboxElement element = new OutboxElement(patient, mandant, uri);
 		fireUpdate(element);
 		
 	}

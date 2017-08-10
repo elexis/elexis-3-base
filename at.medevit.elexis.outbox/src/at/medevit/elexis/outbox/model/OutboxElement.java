@@ -10,6 +10,9 @@
  *******************************************************************************/
 package at.medevit.elexis.outbox.model;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Kontakt;
@@ -28,7 +31,7 @@ public class OutboxElement extends PersistentObject {
 	public static final String FLD_PATIENT = "patient"; //$NON-NLS-1$
 	public static final String FLD_MANDANT = "mandant"; //$NON-NLS-1$
 	public static final String FLD_STATE = "state"; //$NON-NLS-1$
-	public static final String FLD_OBJECT = "object"; //$NON-NLS-1$
+	public static final String FLD_URI = "uri"; //$NON-NLS-1$
 	
 	public static String getStateLabel(State state){
 		switch (state) {
@@ -51,7 +54,7 @@ public class OutboxElement extends PersistentObject {
 			"patient VARCHAR(128)," + //$NON-NLS-1$
 			"mandant VARCHAR(128)," + //$NON-NLS-1$
 			"state VARCHAR(1)," + //$NON-NLS-1$
-			"object VARCHAR(128)" + //$NON-NLS-1$
+			"uri VARCHAR(255)" + //$NON-NLS-1$
 			
 			");" + //$NON-NLS-1$
 			"CREATE INDEX outbox1 ON " + TABLENAME + " (" + FLD_PATIENT + ");" + //$NON-NLS-1$
@@ -60,7 +63,7 @@ public class OutboxElement extends PersistentObject {
 	// @formatter:on
 	
 	static {
-		addMapping(TABLENAME, FLD_PATIENT, FLD_MANDANT, FLD_STATE, FLD_OBJECT);
+		addMapping(TABLENAME, FLD_PATIENT, FLD_MANDANT, FLD_STATE, FLD_URI);
 		
 		if (!tableExists(TABLENAME)) {
 			createOrModifyTable(create);
@@ -79,11 +82,11 @@ public class OutboxElement extends PersistentObject {
 		super(id);
 	}
 	
-	public OutboxElement(Patient patient, Kontakt mandant, PersistentObject object){
+	public OutboxElement(Patient patient, Kontakt mandant, String uri){
 		create(null);
 		set(FLD_PATIENT, patient != null ? patient.getId() : "");
 		set(FLD_MANDANT, mandant.getId());
-		set(FLD_OBJECT, object.storeToString());
+		set(FLD_URI, uri);
 		set(FLD_STATE, Integer.toString(State.NEW.ordinal()));
 	}
 	
@@ -97,26 +100,34 @@ public class OutboxElement extends PersistentObject {
 	
 	@Override
 	public String getLabel(){
-		PersistentObject object = CoreHub.poFactory.createFromString(get(FLD_OBJECT));
-		if (object != null && object.exists()) {
-			return object.getLabel();
-		} else {
-			return "OutboxElement " + this.getId() + " with no object.";
+		String uri = getUri();
+		OutboxElementType outboxElementType = OutboxElementType.parseType(uri);
+		switch (outboxElementType) {
+		case DB:
+			String refPO = uri.substring(OutboxElementType.DB.getPrefix().length());
+			PersistentObject object = CoreHub.poFactory.createFromString(refPO);
+			if (object != null && object.exists()) {
+				return object.getLabel();
+			}
+			break;
+		case FILE:
+			String refFile = uri.substring(OutboxElementType.FILE.getPrefix().length());
+			Path p = Paths.get(refFile);
+			return p.getFileName().toString();
+		case OTHER:
+		default:
+			break;
 		}
+		return "OutboxElement " + this.getId() + " with no object.";
 	}
 	
 	/**
-	 * Loads the PersistentObject and returns it, if it exists in the db. Else null is returned.
+	 * Returns the URI
 	 * 
 	 * @return
 	 */
-	public Object getObject(){
-		PersistentObject object = CoreHub.poFactory.createFromString(get(FLD_OBJECT));
-		if (object != null && object.exists()) {
-			return object;
-		} else {
-			return null;
-		}
+	public String getUri(){
+		return get(FLD_URI);
 	}
 	
 	@Override

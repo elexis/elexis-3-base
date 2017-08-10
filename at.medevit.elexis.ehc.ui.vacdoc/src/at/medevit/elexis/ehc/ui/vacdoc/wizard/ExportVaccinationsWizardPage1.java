@@ -3,7 +3,9 @@ package at.medevit.elexis.ehc.ui.vacdoc.wizard;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -22,14 +24,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
+import at.medevit.elexis.ehc.ui.vacdoc.service.OutboxElementServiceHolder;
 import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
+import at.medevit.elexis.outbox.model.OutboxElementType;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Mandant;
@@ -42,6 +47,8 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	private TableViewer contentViewer;
 	
 	private Patient selectedPatient;
+	
+	private Button [] btnTypes = new Button[2];
 	
 	protected ExportVaccinationsWizardPage1(String pageName){
 		super(pageName);
@@ -84,6 +91,19 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 			}
 		});
 		
+		Composite c = new Composite(composite, SWT.RIGHT_TO_LEFT);
+		c.setLayout(new GridLayout(2, false));
+		c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
+	
+		btnTypes[0] = new Button(c, SWT.RADIO);
+		btnTypes[0].setText("CDA");
+		btnTypes[1] = new Button(c, SWT.RADIO);
+		btnTypes[1].setText("XDM");
+		
+		// defaults
+		btnTypes[1].setSelection(true);
+		btnTypes[0].setSelection(false);
 		setControl(composite);
 	}
 	
@@ -145,15 +165,12 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 			CdaChVacd document = service.getVacdocDocument(elexisPatient, elexisMandant);
 			
 			service.addVaccinations(document, getSelectedVaccinations());
-			
-			// write a XDM document for exchange
-			InputStream xdmDocumentStream = service.getXdmAsStream(document);
-			outputFile =
-				outputDir + File.separator + getVaccinationsFileName(elexisPatient) + ".xdm";
-			FileOutputStream outputStream = new FileOutputStream(outputFile);
-			IOUtils.copy(xdmDocumentStream, outputStream);
-			xdmDocumentStream.close();
-			outputStream.close();
+			if (btnTypes[0] != null && btnTypes[0].getSelection()) {
+				// TODO write as cda
+			} else {
+				outputFile = writeAsXDM(elexisPatient, outputDir, service, document);
+			}
+			createOutboxElement(elexisPatient, elexisMandant, outputFile);
 		} catch (Exception e) {
 			ExportVaccinationsWizard.logger.error("Export failed.", e);
 			MessageDialog.openError(getShell(), "Error",
@@ -162,6 +179,24 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 			return false;
 		}
 		return true;
+	}
+	
+	private void createOutboxElement(Patient patient, Mandant mandant, String outputFile){
+		OutboxElementServiceHolder.getService().createOutboxElement(patient, mandant, OutboxElementType.FILE.getPrefix() +  outputFile);
+	}
+
+	private String writeAsXDM(Patient elexisPatient, String outputDir, VacdocService service,
+		CdaChVacd document) throws Exception, FileNotFoundException, IOException{
+		String outputFile;
+		// write a XDM document for exchange
+		InputStream xdmDocumentStream = service.getXdmAsStream(document);
+		outputFile =
+			outputDir + File.separator + getVaccinationsFileName(elexisPatient) + ".xdm";
+		FileOutputStream outputStream = new FileOutputStream(outputFile);
+		IOUtils.copy(xdmDocumentStream, outputStream);
+		xdmDocumentStream.close();
+		outputStream.close();
+		return outputFile;
 	}
 	
 	private String getVaccinationsFileName(Patient patient){

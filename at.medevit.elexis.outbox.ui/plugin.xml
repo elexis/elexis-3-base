@@ -38,6 +38,11 @@
                id="org.eclipse.ui.commands.toggleState">
          </state>
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.OutboxSendHandler"
+            id="at.medevit.elexis.outbox.ui.command.sendAsMail"
+            name="send">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -61,6 +66,24 @@
                icon="icon://IMG_PERSON"
                style="toggle">
          </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:at.medevit.elexis.outbox.ui.view">
+         <menu
+               icon="icon://IMG_MAIL_SEND"
+               label="Versenden">
+            <command
+                  commandId="at.medevit.elexis.outbox.ui.command.sendAsMail"
+                  label="als E-Mail"
+                  style="push">
+            </command>
+            <command
+                  commandId="at.medevit.elexis.outbox.ui.command.sendAsMail"
+                  label="als XDM E-Mail"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension

@@ -102,6 +102,22 @@ public class OutboxElement extends PersistentObject {
 	
 	@Override
 	public String getLabel(){
+		Object element = getObject();
+		if (element instanceof PersistentObject) {
+			return ((PersistentObject) element).getLabel();
+		}
+		else if (element instanceof Path) {
+			return ((Path) element).getFileName().toString();
+		}
+		return "OutboxElement " + this.getId() + " with no object.";
+	}
+	
+	/**
+	 * Returns the underlying object as {@link PersistentObject} or as {@link Path}
+	 * 
+	 * @return
+	 */
+	public Object getObject(){
 		String uri = getUri();
 		OutboxElementType outboxElementType = OutboxElementType.parseType(uri);
 		switch (outboxElementType) {
@@ -109,18 +125,18 @@ public class OutboxElement extends PersistentObject {
 			String refPO = uri.substring(OutboxElementType.DB.getPrefix().length());
 			PersistentObject object = CoreHub.poFactory.createFromString(refPO);
 			if (object != null && object.exists()) {
-				return object.getLabel();
+				return object;
 			}
 			break;
 		case FILE:
 			String refFile = uri.substring(OutboxElementType.FILE.getPrefix().length());
 			Path p = Paths.get(refFile);
-			return p.getFileName().toString();
+			return p.toFile();
 		case OTHER:
 		default:
 			break;
 		}
-		return "OutboxElement " + this.getId() + " with no object.";
+		return null;
 	}
 	
 	/**

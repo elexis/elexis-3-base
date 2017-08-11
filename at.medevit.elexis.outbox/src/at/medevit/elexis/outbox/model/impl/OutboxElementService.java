@@ -1,15 +1,29 @@
 package at.medevit.elexis.outbox.model.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.io.IOUtils;
 
 import at.medevit.elexis.outbox.model.IOutboxElementService;
 import at.medevit.elexis.outbox.model.IOutboxUpdateListener;
 import at.medevit.elexis.outbox.model.OutboxElement;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.data.Brief;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.omnivore.data.DocHandle;
 
 public class OutboxElementService implements IOutboxElementService {
 	HashSet<IOutboxUpdateListener> listeners = new HashSet<IOutboxUpdateListener>();
@@ -73,4 +87,43 @@ public class OutboxElementService implements IOutboxElementService {
 		System.out.println("deactive providers");
 	}
 	
+	@Override
+	public InputStream getContentsAsStream(OutboxElement outboxElement)
+		throws IOException{
+		Object object = outboxElement.getObject();
+		if (object instanceof PersistentObject) {
+			PersistentObject po = (PersistentObject) object;
+			if (po instanceof Brief)
+			{
+				byte[] contents = ((Brief) po).loadBinary();
+				return new ByteArrayInputStream(contents);
+			} else if (po instanceof DocHandle) {
+				byte[] contents = ((DocHandle) po).getContents();
+				return new ByteArrayInputStream(contents);
+			}
+		} else if (object instanceof Path) {
+			Path path = (Path) object;
+			return Files.newInputStream(path);
+		}
+		return null;
+	}
+	
+	@Override
+	public Optional<File> getTempFileWithContents(File folder, OutboxElement outboxElement)
+		throws IOException{
+		Object object = outboxElement.getObject();
+		File tmpDir = CoreHub.getTempDir();
+		InputStream in = getContentsAsStream(outboxElement);
+		if (in != null) {
+			if (folder != null && folder.exists()) {
+				File tmpFile = new File(folder, outboxElement.getLabel());
+				try (FileOutputStream fout = new FileOutputStream(tmpFile)) {
+					IOUtils.copy(in, fout);
+					IOUtils.closeQuietly(in);
+					return Optional.of(tmpFile);
+				}
+			}
+		}
+		return Optional.empty();
+	}
 }

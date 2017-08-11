@@ -10,7 +10,11 @@
  *******************************************************************************/
 package at.medevit.elexis.outbox.model;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
@@ -66,4 +70,25 @@ public interface IOutboxElementService {
 	 * @param listener
 	 */
 	public void removeUpdateListener(IOutboxUpdateListener listener);
+	
+
+	/**
+	 * Returns the contents as {@link InputStream}
+	 * 
+	 * @param outboxElement
+	 * @return
+	 */
+	public InputStream getContentsAsStream(OutboxElement outboxElement)
+		throws IOException;
+	
+	/**
+	 * Returns the created temp file with the contents in it.
+	 * 
+	 * @param folder
+	 *            the location for temp files
+	 * @param outboxElement
+	 * @return
+	 */
+	public Optional<File> getTempFileWithContents(File folder, OutboxElement outboxElement)
+		throws IOException;
 }

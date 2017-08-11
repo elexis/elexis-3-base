@@ -168,15 +168,14 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 			switch (exportType) {
 			case CDA:
 				outputFile = writeAsCDA(elexisPatient, outputDir, service, document);
+				createOutboxElement(elexisPatient, elexisMandant, outputFile);
 				break;
 			case XDM:
 				outputFile = writeAsXDM(elexisPatient, outputDir, service, document);
 				break;
 			default:
 				break;
-			
 			}
-			createOutboxElement(elexisPatient, elexisMandant, outputFile);
 		} catch (Exception e) {
 			ExportVaccinationsWizard.logger.error("Export failed.", e);
 			MessageDialog.openError(getShell(), "Error",

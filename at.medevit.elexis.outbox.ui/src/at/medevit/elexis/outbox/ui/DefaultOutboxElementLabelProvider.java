@@ -64,9 +64,9 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 			OutboxElementType elementType =
 				OutboxElementType.parseType(((OutboxElement) element).getUri());
 			if (OutboxElementType.FILE.equals(elementType)) {
-				return Images.IMG_BULLET_GREY.getImage();
-			} else if (OutboxElementType.DB.equals(elementType)) {
 				return Images.IMG_BULLET_YELLOW.getImage();
+			} else if (OutboxElementType.DB.equals(elementType)) {
+				return Images.IMG_BULLET_GREY.getImage();
 			}
 			return null;
 		}

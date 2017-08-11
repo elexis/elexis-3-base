@@ -48,9 +48,12 @@
                label="export nach meineimpfungen"
                style="push">
          </command>
+         <separator
+               name="at.medevit.elexis.ehc.ui.vacdoc.separator1"
+               visible="true">
+         </separator>
          <command
                commandId="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler"
-               icon="rsc/meineimpfungenlogo_16x16.png"
                label="CDA in Outbox"
                style="push">
          </command>

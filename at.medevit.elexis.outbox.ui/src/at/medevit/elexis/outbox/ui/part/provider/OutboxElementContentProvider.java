@@ -71,7 +71,7 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 		PatientOutboxElements patientOutboxElements = map.get(patient);
 		// remove seen and add unseen
 		if (patientOutboxElements != null) {
-			if (outboxElement.getState() == State.SEEN) {
+			if (outboxElement.getState() == State.SEEN || outboxElement.getState() == State.SENT) {
 				patientOutboxElements.removeElement(outboxElement);
 			} else {
 				Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();

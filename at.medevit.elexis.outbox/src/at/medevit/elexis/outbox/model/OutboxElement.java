@@ -39,6 +39,8 @@ public class OutboxElement extends PersistentObject {
 			return "Neu";
 		case SEEN:
 			return "Gesehen";
+		case SENT:
+			return "Versendet";
 		default:
 			return "???";
 		}

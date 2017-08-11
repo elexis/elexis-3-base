@@ -19,7 +19,7 @@ import ch.elexis.data.Patient;
 public interface IOutboxElementService {
 	// do not change order, as we save the ordinal to the db, only adding new state is allowed
 	public enum State {
-		NEW, SEEN;
+			NEW, SEEN, SENT;
 	}
 	
 	/**

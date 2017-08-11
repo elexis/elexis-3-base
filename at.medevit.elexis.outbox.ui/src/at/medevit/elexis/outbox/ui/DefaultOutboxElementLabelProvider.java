@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import at.medevit.elexis.outbox.model.OutboxElement;
 import at.medevit.elexis.outbox.model.OutboxElementType;
 import at.medevit.elexis.outbox.ui.part.provider.IOutboxElementUiProvider;
+import ch.elexis.core.ui.icons.Images;
 
 public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvider {
 	
@@ -17,11 +18,10 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 	public DefaultOutboxElementLabelProvider(){
 		labelProvider = new DefaultLabelProvider();
 	}
-
 	
 	@Override
 	public ImageDescriptor getFilterImage(){
-		return null; // TODO
+		return null;
 	}
 	
 	@Override
@@ -37,7 +37,6 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 	
 	@Override
 	public IColorProvider getColorProvider(){
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -62,6 +61,13 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 		
 		@Override
 		public Image getImage(Object element){
+			OutboxElementType elementType =
+				OutboxElementType.parseType(((OutboxElement) element).getUri());
+			if (OutboxElementType.FILE.equals(elementType)) {
+				return Images.IMG_BULLET_GREY.getImage();
+			} else if (OutboxElementType.DB.equals(elementType)) {
+				return Images.IMG_BULLET_YELLOW.getImage();
+			}
 			return null;
 		}
 	}

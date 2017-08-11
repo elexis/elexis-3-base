@@ -9,8 +9,15 @@ public class ExportVaccinationsWizard extends Wizard {
 
 	private ExportVaccinationsWizardPage1 vaccinationsMainPage;
 
+	private final ExportType exportType;
+	
+	public ExportVaccinationsWizard(ExportType exportType){
+		this.exportType = exportType;
+		setWindowTitle("Impfungen export als " + exportType.name());
+	}
+	
 	public ExportVaccinationsWizard(){
-		setWindowTitle("Impfungen export als XDM oder CDA");
+		this(ExportType.XDM);
 	}
 
 	@Override
@@ -21,7 +28,11 @@ public class ExportVaccinationsWizard extends Wizard {
 	@Override
 	public void addPages(){
 		super.addPages();
-		vaccinationsMainPage = new ExportVaccinationsWizardPage1("Impfungen auswählen");
+		vaccinationsMainPage = new ExportVaccinationsWizardPage1("Impfungen auswählen", exportType);
 		addPage(vaccinationsMainPage);
+	}
+	
+	public enum ExportType {
+			CDA, XDM
 	}
 }

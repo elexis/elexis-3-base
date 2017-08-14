@@ -189,6 +189,7 @@
 						</fo:table-header>
 						<fo:table-body>
 							<xsl:apply-templates select="fix/medicament" />
+							<xsl:apply-templates select="symptomatic/medicament" />
 						</fo:table-body>
 					</fo:table>
 
@@ -214,30 +215,6 @@
 							</fo:table-body>
 						</fo:table>
 					</xsl:if>
-					
-					<xsl:if test="count(symptomatic/medicament) > 0">
-						<fo:block padding-top="3mm" padding-bottom="1mm"
-							font-size="8pt" font-weight="bold">
-							Symptomatische Medikation
-						</fo:block>
-						<fo:table font-size="8pt" table-layout="fixed" width="100%">
-							<fo:table-column column-width="23%" />
-							<fo:table-column column-width="5%" />
-							<fo:table-column column-width="5%" />
-							<fo:table-column column-width="5%" />
-							<fo:table-column column-width="5%" />
-							<fo:table-column column-width="5%" />
-							<fo:table-column column-width="6%" />
-							<fo:table-column column-width="6%" />
-							<fo:table-column column-width="20%" />
-							<fo:table-column column-width="10%" />
-							<fo:table-column column-width="10%" />
-							<fo:table-body>
-								<xsl:apply-templates select="symptomatic/medicament" />
-							</fo:table-body>
-						</fo:table>
-					</xsl:if>
-
 					<fo:block id="last-page" />
 				</fo:flow>
 			</fo:page-sequence>

@@ -26,6 +26,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.model.OutboxElement;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
 import ch.elexis.core.data.activator.CoreHub;
@@ -93,8 +94,16 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 				ParameterizedCommand parametrizedCommmand =
 					ParameterizedCommand.generateCommand(sendMailCommand, params);
 				
-				PlatformUI.getWorkbench().getService(IHandlerService.class)
+				Object obj = PlatformUI.getWorkbench().getService(IHandlerService.class)
 					.executeCommand(parametrizedCommmand, null);
+				if (Boolean.TRUE.equals(obj)) {
+					for (Object iOutboxElement : iOutboxElements) {
+						if (iOutboxElement instanceof OutboxElement) {
+							OutboxServiceComponent.getService().changeOutboxElementState(
+								(OutboxElement) iOutboxElement, State.SENT);
+						}
+					}
+				}
 			} catch (Exception ex) {
 				throw new RuntimeException("ch.elexis.core.mail.ui.sendMail not found", ex);
 			}

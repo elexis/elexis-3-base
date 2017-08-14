@@ -48,6 +48,11 @@
             id="at.medevit.elexis.outbox.ui.command.entfernen"
             name="entfernen">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.CreateOutboxElementHandler"
+            id="at.medevit.elexis.outbox.ui.command.createElement"
+            name="create element">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -94,6 +99,16 @@
                   style="push">
             </command>
          </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.core.ui.documents.views.DocumentsView">
+         <command
+               commandId="at.medevit.elexis.outbox.ui.command.createElement"
+               icon="rsc/img/outbox_into.png"
+               label="in Outbox"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension

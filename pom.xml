@@ -133,6 +133,8 @@
   <module>at.medevit.elexis.inbox.ui</module>
   <module>at.medevit.elexis.inbox.core.ui</module>
   <module>at.medevit.elexis.inbox.core.elements</module>
+  <module>at.medevit.elexis.outbox</module>
+  <module>at.medevit.elexis.outbox.ui</module>
   <module>at.medevit.elexis.inbox.feature</module>
   <module>ch.elexis.laborimport_labtop</module>
   <module>ch.elexis.laborimport_labtop.feature</module>

@@ -52,7 +52,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 			// precondition
 			if (patientIds.size() > 1) {
 				MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "Warnung",
-					"Es dürfen nur Outbox Elemente eines Patienten ausgewählt werden.");
+					"Es dürfen nur Outbox Elemente eines Patienten zum Versenden ausgewählt werden.");
 				return null;
 			}
 			String patientId = patientIds.stream().findFirst().orElse(null);

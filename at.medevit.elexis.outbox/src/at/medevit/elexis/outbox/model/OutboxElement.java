@@ -37,8 +37,6 @@ public class OutboxElement extends PersistentObject {
 		switch (state) {
 		case NEW:
 			return "Neu";
-		case SEEN:
-			return "Gesehen";
 		case SENT:
 			return "Versendet";
 		default:
@@ -131,7 +129,7 @@ public class OutboxElement extends PersistentObject {
 		case FILE:
 			String refFile = uri.substring(OutboxElementType.FILE.getPrefix().length());
 			Path p = Paths.get(refFile);
-			return p.toFile();
+			return p;
 		case OTHER:
 		default:
 			break;

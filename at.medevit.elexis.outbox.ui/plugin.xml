@@ -43,6 +43,11 @@
             id="at.medevit.elexis.outbox.ui.command.sendAsMail"
             name="send">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.OutboxDeleteHandler"
+            id="at.medevit.elexis.outbox.ui.command.entfernen"
+            name="entfernen">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -70,6 +75,11 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:at.medevit.elexis.outbox.ui.view">
+         <command
+               commandId="at.medevit.elexis.outbox.ui.command.entfernen"
+               label="Entfernen"
+               style="push">
+         </command>
          <menu
                icon="icon://IMG_MAIL_SEND"
                label="Versenden">

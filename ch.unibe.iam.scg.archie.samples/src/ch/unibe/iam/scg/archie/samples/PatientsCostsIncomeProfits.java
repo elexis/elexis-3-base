@@ -105,7 +105,16 @@ public class PatientsCostsIncomeProfits extends AbstractTimeSeries {
 		}
 
 		// Get all Consultation which happened in the specified date range.
-		final List<Konsultation> consultations = query.execute();
+		final List<Konsultation> res = query.execute();
+		
+		List<Konsultation> consultations = new ArrayList<>();
+		for (Konsultation k : res)
+		{
+			if ("feafa15e9bd30e70d0263".equals(k.getFall().getPatient().getId()))
+			{
+				consultations.add(k);
+			}
+		}
 
 		// start the task
 		monitor.beginTask(Messages.CALCULATING, consultations.size());
@@ -127,6 +136,13 @@ public class PatientsCostsIncomeProfits extends AbstractTimeSeries {
 
 			Patient currentPatient = consultation.getFall().getPatient();
 			PersonWrapper person = new PersonWrapper(currentPatient);
+
+			System.out.println(consultation.getRechnung() != null ? consultation.getRechnung().getStatus()
+					: "NULL:" + consultation.getId());
+			if (consultation.getRechnung() == null) {
+				continue;
+			}
+			// System.out.println(consultation.getFall().getPatient().getId());
 
 			// Patient isn't in our our TreeMap so far, add him and this
 			// consultation data.

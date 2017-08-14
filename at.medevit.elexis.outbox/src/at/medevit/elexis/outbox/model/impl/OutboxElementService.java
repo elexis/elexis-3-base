@@ -111,7 +111,6 @@ public class OutboxElementService implements IOutboxElementService {
 	@Override
 	public Optional<File> getTempFileWithContents(File folder, OutboxElement outboxElement)
 		throws IOException{
-		Object object = outboxElement.getObject();
 		File tmpDir = CoreHub.getTempDir();
 		InputStream in = getContentsAsStream(outboxElement);
 		if (in != null) {
@@ -125,5 +124,13 @@ public class OutboxElementService implements IOutboxElementService {
 			}
 		}
 		return Optional.empty();
+	}
+	
+	@Override
+	public void deleteOutboxElement(OutboxElement outboxElement){
+		if (outboxElement != null) {
+			outboxElement.delete();
+			fireUpdate(outboxElement);
+		}
 	}
 }

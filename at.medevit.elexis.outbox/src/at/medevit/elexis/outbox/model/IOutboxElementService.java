@@ -23,7 +23,7 @@ import ch.elexis.data.Patient;
 public interface IOutboxElementService {
 	// do not change order, as we save the ordinal to the db, only adding new state is allowed
 	public enum State {
-			NEW, SEEN, SENT;
+			NEW, SENT;
 	}
 	
 	/**
@@ -35,6 +35,14 @@ public interface IOutboxElementService {
 	 * @return
 	 */
 	public void createOutboxElement(Patient patient, Kontakt mandant, String uri);
+	
+	/**
+	 * Delete OutboxElement and tell registered listeners about it.
+	 * 
+	 * @param outboxElement
+	 * @return
+	 */
+	public void deleteOutboxElement(OutboxElement outboxElement);
 	
 	/**
 	 * Change the state of a OutboxElement and tell registered listeners about it.

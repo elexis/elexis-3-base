@@ -16,7 +16,7 @@ public class ExpandAllCommand extends AbstractHandler implements IHandler {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (part instanceof OutboxView) {
 			OutboxView view = (OutboxView) part;
-			view.getCheckboxTreeViewer().expandAll();
+			view.getTreeViewer().expandAll();
 		}
 		return null;
 	}

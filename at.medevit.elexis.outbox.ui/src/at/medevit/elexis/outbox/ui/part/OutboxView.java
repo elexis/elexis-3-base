@@ -5,10 +5,7 @@ import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -17,6 +14,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -33,7 +31,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 
 import at.medevit.elexis.outbox.model.IOutboxElementService;
-import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.model.IOutboxUpdateListener;
 import at.medevit.elexis.outbox.model.OutboxElement;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
@@ -54,7 +51,7 @@ import ch.elexis.data.Mandant;
 public class OutboxView extends ViewPart {
 	
 	private Text filterText;
-	private CheckboxTreeViewer viewer;
+	private TreeViewer viewer;
 	
 	private boolean reloadPending;
 	
@@ -100,7 +97,7 @@ public class OutboxView extends ViewPart {
 		menuManager.createControl(filterComposite);
 		
 		viewer =
-			new CheckboxTreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			new TreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd);
 		
@@ -112,35 +109,6 @@ public class OutboxView extends ViewPart {
 		viewer.setContentProvider(contentProvider);
 		
 		viewer.setLabelProvider(new OutboxElementLabelProvider());
-		
-		viewer.addCheckStateListener(new ICheckStateListener() {
-			
-			public void checkStateChanged(CheckStateChangedEvent event){
-				if (event.getElement() instanceof PatientOutboxElements) {
-					PatientOutboxElements patientOutbox =
-						(PatientOutboxElements) event.getElement();
-					for (OutboxElement outboxElement : patientOutbox.getElements()) {
-						if (!filter.isActive() || filter.isSelect(outboxElement)) {
-							State newState = toggleOutboxElementState(outboxElement);
-							if (newState == State.NEW) {
-								viewer.setChecked(outboxElement, false);
-							} else {
-								viewer.setChecked(outboxElement, true);
-							}
-							contentProvider.refreshElement(outboxElement);
-						}
-					}
-					contentProvider.refreshElement(patientOutbox);
-				} else if (event.getElement() instanceof OutboxElement) {
-					OutboxElement outboxElement = (OutboxElement) event.getElement();
-					if (!filter.isActive() || filter.isSelect(outboxElement)) {
-						toggleOutboxElementState(outboxElement);
-						contentProvider.refreshElement(outboxElement);
-					}
-				}
-				viewer.refresh(false);
-			}
-		});
 		
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
@@ -226,17 +194,6 @@ public class OutboxView extends ViewPart {
 		menuManager.update(true);
 	}
 	
-	private State toggleOutboxElementState(OutboxElement outboxElement){
-		if (outboxElement.getState() == State.NEW) {
-			outboxElement.setState(State.SEEN);
-			return State.SEEN;
-		} else if (outboxElement.getState() == State.SEEN) {
-			outboxElement.setState(State.NEW);
-			return State.NEW;
-		}
-		return State.NEW;
-	}
-	
 	@Override
 	public void setFocus(){
 		filterText.setFocus();
@@ -314,7 +271,7 @@ public class OutboxView extends ViewPart {
 		super.dispose();
 	}
 	
-	public CheckboxTreeViewer getCheckboxTreeViewer(){
+	public TreeViewer getTreeViewer(){
 		return viewer;
 	}
 }

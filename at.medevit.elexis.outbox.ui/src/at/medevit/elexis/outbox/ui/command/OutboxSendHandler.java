@@ -20,8 +20,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.outbox.model.OutboxElement;
@@ -52,7 +54,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 			// precondition
 			if (patientIds.size() > 1) {
 				MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "Warnung",
-					"Es dürfen nur Outbox Elemente eines Patienten zum Versenden ausgewählt werden.");
+					"Es dürfen nur Outbox Elemente eines Patienten ausgewählt werden.");
 				return null;
 			}
 			String patientId = patientIds.stream().findFirst().orElse(null);
@@ -90,7 +92,9 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 				
 				ParameterizedCommand parametrizedCommmand =
 					ParameterizedCommand.generateCommand(sendMailCommand, params);
-				parametrizedCommmand.executeWithChecks(null, null);
+				
+				PlatformUI.getWorkbench().getService(IHandlerService.class)
+					.executeCommand(parametrizedCommmand, null);
 			} catch (Exception ex) {
 				throw new RuntimeException("ch.elexis.core.mail.ui.sendMail not found", ex);
 			}
@@ -129,7 +133,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		StringBuilder sb = new StringBuilder();
 		for (File file : attachments) {
 			if (sb.length() > 0) {
-				sb.append(",");
+				sb.append(":::");
 			}
 			sb.append(file.getAbsolutePath());
 		}

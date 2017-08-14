@@ -12,9 +12,13 @@ package at.medevit.elexis.outbox.model;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
+import at.medevit.elexis.outbox.model.impl.DocumentStoreServiceHolder;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.documents.DocumentStore;
+import ch.elexis.core.model.IDocument;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -101,7 +105,11 @@ public class OutboxElement extends PersistentObject {
 	@Override
 	public String getLabel(){
 		Object element = getObject();
-		if (element instanceof PersistentObject) {
+		if (element instanceof IDocument) {
+			String lbl = ((IDocument) element).getLabel();
+			String ext = ((IDocument) element).getExtension();
+			return lbl.endsWith(ext) ? lbl : lbl + "." + ext.toLowerCase();
+		} else if (element instanceof PersistentObject) {
 			return ((PersistentObject) element).getLabel();
 		}
 		else if (element instanceof Path) {
@@ -111,7 +119,7 @@ public class OutboxElement extends PersistentObject {
 	}
 	
 	/**
-	 * Returns the underlying object as {@link PersistentObject} or as {@link Path}
+	 * Returns the underlying object as {@link PersistentObject}, {@link Path} or {@link IDocument}
 	 * 
 	 * @return
 	 */
@@ -130,6 +138,16 @@ public class OutboxElement extends PersistentObject {
 			String refFile = uri.substring(OutboxElementType.FILE.getPrefix().length());
 			Path p = Paths.get(refFile);
 			return p;
+		case DOC:
+			String refDoc = uri.substring(OutboxElementType.DOC.getPrefix().length());
+			String[] splits = refDoc.split(DocumentStore.ID_WITH_STOREID_SPLIT);
+			if (splits.length == 2) {
+				Optional<IDocument> doc =
+					DocumentStoreServiceHolder.getService().loadDocument(splits[0], splits[1]);
+				if (doc.isPresent()) {
+					return doc.get();
+				}
+			}
 		case OTHER:
 		default:
 			break;

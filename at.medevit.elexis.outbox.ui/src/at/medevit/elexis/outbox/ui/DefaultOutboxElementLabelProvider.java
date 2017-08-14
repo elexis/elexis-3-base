@@ -44,7 +44,8 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 	public boolean isProviderFor(OutboxElement element){
 		OutboxElementType elementType = OutboxElementType.parseType(element.getUri());
 		return OutboxElementType.FILE.equals(elementType)
-			|| OutboxElementType.DB.equals(elementType);
+			|| OutboxElementType.DB.equals(elementType)
+			|| OutboxElementType.DOC.equals(elementType);
 	}
 	
 	@Override
@@ -65,8 +66,10 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 				OutboxElementType.parseType(((OutboxElement) element).getUri());
 			if (OutboxElementType.FILE.equals(elementType)) {
 				return Images.IMG_BULLET_YELLOW.getImage();
-			} else if (OutboxElementType.DB.equals(elementType)) {
+			} else if (OutboxElementType.DOC.equals(elementType)) {
 				return Images.IMG_BULLET_GREY.getImage();
+			} else if (OutboxElementType.DB.equals(elementType)) {
+				return Images.IMG_BULLET_GREEN.getImage();
 			}
 			return null;
 		}

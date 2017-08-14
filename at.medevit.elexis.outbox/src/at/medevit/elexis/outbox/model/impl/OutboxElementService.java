@@ -1,6 +1,5 @@
 package at.medevit.elexis.outbox.model.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,13 +16,12 @@ import at.medevit.elexis.outbox.model.IOutboxElementService;
 import at.medevit.elexis.outbox.model.IOutboxUpdateListener;
 import at.medevit.elexis.outbox.model.OutboxElement;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.data.Brief;
+import ch.elexis.core.model.IDocument;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.omnivore.data.DocHandle;
 
 public class OutboxElementService implements IOutboxElementService {
 	HashSet<IOutboxUpdateListener> listeners = new HashSet<IOutboxUpdateListener>();
@@ -92,18 +90,17 @@ public class OutboxElementService implements IOutboxElementService {
 		throws IOException{
 		Object object = outboxElement.getObject();
 		if (object instanceof PersistentObject) {
-			PersistentObject po = (PersistentObject) object;
-			if (po instanceof Brief)
-			{
-				byte[] contents = ((Brief) po).loadBinary();
-				return new ByteArrayInputStream(contents);
-			} else if (po instanceof DocHandle) {
-				byte[] contents = ((DocHandle) po).getContents();
-				return new ByteArrayInputStream(contents);
-			}
+			throw new UnsupportedOperationException("Wird nicht unterstützt.");
 		} else if (object instanceof Path) {
 			Path path = (Path) object;
 			return Files.newInputStream(path);
+		}
+		else if (object instanceof IDocument) {
+			Optional<InputStream> in =
+				DocumentStoreServiceHolder.getService().loadContent((IDocument) object);
+			if (in.isPresent()) {
+				return in.get();
+			}
 		}
 		return null;
 	}
@@ -119,6 +116,7 @@ public class OutboxElementService implements IOutboxElementService {
 				try (FileOutputStream fout = new FileOutputStream(tmpFile)) {
 					IOUtils.copy(in, fout);
 					IOUtils.closeQuietly(in);
+					tmpFile.deleteOnExit();
 					return Optional.of(tmpFile);
 				}
 			}

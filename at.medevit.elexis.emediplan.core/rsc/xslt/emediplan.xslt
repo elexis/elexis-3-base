@@ -110,89 +110,90 @@
 						</fo:table-body>
 					</fo:table>
 
-					<fo:block padding-top="1mm" padding-bottom="1mm"
-						font-size="8pt">
-						Letzter Stand:
-						<xsl:value-of select="date" />
-					</fo:block>
-
-					<fo:table font-size="8pt" table-layout="fixed" width="100%">
-						<fo:table-column column-width="23%" />
-						<fo:table-column column-width="5%" />
-						<fo:table-column column-width="5%" />
-						<fo:table-column column-width="5%" />
-						<fo:table-column column-width="5%" />
-						<fo:table-column column-width="5%" />
-						<fo:table-column column-width="6%" />
-						<fo:table-column column-width="6%" />
-						<fo:table-column column-width="20%" />
-						<fo:table-column column-width="10%" />
-						<fo:table-column column-width="10%" />
-						<fo:table-header>
-							<fo:table-row font-weight="bold">
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Medikament
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Morgen
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Mittag
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Abend
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Nacht
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Einheit
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Art der Medikation
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Von bis und mit
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Anwendungsinstruktion
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Anwendungsgrund
-									</fo:block>
-								</fo:table-cell>
-								<fo:table-cell xsl:use-attribute-sets="simpleBorder">
-									<fo:block margin="1mm">
-										Verordnet durch
-									</fo:block>
-								</fo:table-cell>
-							</fo:table-row>
-						</fo:table-header>
-						<fo:table-body>
-							<xsl:apply-templates select="fix/medicament" />
-							<xsl:apply-templates select="symptomatic/medicament" />
-						</fo:table-body>
-					</fo:table>
-
+					<xsl:if test="count(fix/medicament) > 0 or count(symptomatic/medicament) > 0 ">
+						<fo:block padding-top="1mm" padding-bottom="1mm"
+							font-size="8pt">
+							Letzter Stand:
+							<xsl:value-of select="date" />
+						</fo:block>
+	
+						<fo:table font-size="8pt" table-layout="fixed" width="100%">
+							<fo:table-column column-width="23%" />
+							<fo:table-column column-width="5%" />
+							<fo:table-column column-width="5%" />
+							<fo:table-column column-width="5%" />
+							<fo:table-column column-width="5%" />
+							<fo:table-column column-width="5%" />
+							<fo:table-column column-width="6%" />
+							<fo:table-column column-width="6%" />
+							<fo:table-column column-width="20%" />
+							<fo:table-column column-width="10%" />
+							<fo:table-column column-width="10%" />
+							<fo:table-header>
+								<fo:table-row font-weight="bold">
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Medikament
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Morgen
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Mittag
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Abend
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Nacht
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Einheit
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Art der Medikation
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Von bis und mit
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Anwendungsinstruktion
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Anwendungsgrund
+										</fo:block>
+									</fo:table-cell>
+									<fo:table-cell xsl:use-attribute-sets="simpleBorder">
+										<fo:block margin="1mm">
+											Verordnet durch
+										</fo:block>
+									</fo:table-cell>
+								</fo:table-row>
+							</fo:table-header>
+							<fo:table-body>
+								<xsl:apply-templates select="fix/medicament" />
+								<xsl:apply-templates select="symptomatic/medicament" />
+							</fo:table-body>
+						</fo:table>
+					</xsl:if>
 					<xsl:if test="count(reserve/medicament) > 0">
 						<fo:block padding-top="3mm" padding-bottom="1mm"
 							font-size="8pt" font-weight="bold">

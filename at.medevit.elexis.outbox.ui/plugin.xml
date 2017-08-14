@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="elementsui" name="Elementsui" schema="schema/elementsui.exsd"/>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="at.medevit.elexis.outbox.ui.part.OutboxView"
+            icon="rsc/img/outbox_into.png"
+            id="at.medevit.elexis.outbox.ui.view"
+            name="Outbox"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.ReloadViewCommand"
+            id="at.medevit.elexis.outbox.ui.command.reload"
+            name="reload">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.ExpandAllCommand"
+            id="at.medevit.elexis.outbox.ui.command.expandAll"
+            name="expand all">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.ActivatePatientCommand"
+            id="at.medevit.elexis.outbox.ui.command.activatePatient"
+            name="activate patient">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.AutoActivePatientHandler"
+            id="at.medevit.elexis.outbox.ui.autoSelectPatient"
+            name="auto select patient">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.OutboxSendHandler"
+            id="at.medevit.elexis.outbox.ui.command.sendAsMail"
+            name="send">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.outbox.ui.command.OutboxDeleteHandler"
+            id="at.medevit.elexis.outbox.ui.command.entfernen"
+            name="entfernen">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:at.medevit.elexis.outbox.ui.view">
+         <command
+               commandId="at.medevit.elexis.outbox.ui.command.reload"
+               icon="rsc/img/refresh.gif"
+               label="Neu laden"
+               style="push">
+         </command>
+         <command
+               commandId="at.medevit.elexis.outbox.ui.command.expandAll"
+               icon="icon://IMG_ARROWDOWN"
+               label="Alle Aufklappen"
+               style="push">
+         </command>
+         <command
+               commandId="at.medevit.elexis.outbox.ui.autoSelectPatient"
+               icon="icon://IMG_PERSON"
+               style="toggle">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:at.medevit.elexis.outbox.ui.view">
+         <command
+               commandId="at.medevit.elexis.outbox.ui.command.entfernen"
+               label="Entfernen"
+               style="push">
+         </command>
+         <menu
+               icon="icon://IMG_MAIL_SEND"
+               label="Versenden">
+            <command
+                  commandId="at.medevit.elexis.outbox.ui.command.sendAsMail"
+                  label="als E-Mail"
+                  style="push">
+            </command>
+            <command
+                  commandId="at.medevit.elexis.outbox.ui.command.sendAsMail"
+                  label="als XDM E-Mail"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="at.medevit.elexis.outbox.ui.elementsui">
+      <uiprovider
+            class="at.medevit.elexis.outbox.ui.DefaultOutboxElementLabelProvider"
+            id="at.medevit.elexis.outbox.ui.defaultOutboxElementLabelProvider">
+      </uiprovider>
+   </extension>
+
+</plugin>

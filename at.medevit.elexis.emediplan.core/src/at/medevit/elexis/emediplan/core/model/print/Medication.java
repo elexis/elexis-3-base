@@ -45,6 +45,10 @@ public class Medication {
 	@XmlElement(name = "medicament")
 	List<Medicament> reserveMedication;
 	
+	@XmlElementWrapper(name = "symptomatic")
+	@XmlElement(name = "medicament")
+	List<Medicament> symptomaticMedication;
+	
 	public static Medication fromPrescriptions(@NonNull Mandant author,
 		@NonNull ch.elexis.data.Patient patient, @NonNull List<Prescription> prescriptions){
 		Medication ret = new Medication();
@@ -65,6 +69,12 @@ public class Medication {
 					ret.reserveMedication = new ArrayList<>();
 				}
 				ret.reserveMedication.add(Medicament.fromPrescription(prescription));
+			}
+			else if (type == EntryType.SYMPTOMATIC_MEDICATION) {
+				if (ret.symptomaticMedication == null) {
+					ret.symptomaticMedication = new ArrayList<>();
+				}
+				ret.symptomaticMedication.add(Medicament.fromPrescription(prescription));
 			}
 		}
 		

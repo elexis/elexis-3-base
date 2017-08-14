@@ -404,16 +404,22 @@ public class EMediplanServiceImpl implements EMediplanService {
 					medicament.foundPrescription = prescription;
 				}
 				
-				if (prescription.getDosis().equals(medicament.dosis)) {
-					if (State.isHigherState(medicament.state, State.ATC_SAME_DOSAGE)) {
-						medicament.state = State.ATC_SAME_DOSAGE;
-						medicament.foundPrescription = prescription;
+				if (medicament.artikelstammItem.getATCCode().equals(artikel.getATC_code())
+					&& State.isHigherState(medicament.state, State.ATC_SAME)) {
+					medicament.state = State.ATC_SAME;
+					medicament.foundPrescription = prescription;
+					
+					if (prescription.getDosis().equals(medicament.dosis)) {
+						if (State.isHigherState(medicament.state, State.ATC_SAME_DOSAGE)) {
+							medicament.state = State.ATC_SAME_DOSAGE;
+							medicament.foundPrescription = prescription;
+						}
 					}
 				}
 			}
 			if (medicament.artikelstammItem.getGTIN().equals(artikel.getGTIN())) {
-				if (State.isHigherState(medicament.state, State.GTIN)) {
-					medicament.state = State.GTIN;
+				if (State.isHigherState(medicament.state, State.GTIN_SAME)) {
+					medicament.state = State.GTIN_SAME;
 					medicament.foundPrescription = prescription;
 				}
 				
@@ -437,11 +443,13 @@ public class EMediplanServiceImpl implements EMediplanService {
 			buf.append("Diese Medikation ist bereits am " + medicament.dateTo + " abgelaufen.");
 		} else {
 			if (State.GTIN_SAME_DOSAGE.equals(medicament.state)
-				|| State.GTIN.equals(medicament.state)) {
+				|| State.GTIN_SAME.equals(medicament.state)) {
 				buf.append("Dieses Medikament existiert bereits in Elexis.");
 			} else if (State.ATC_SAME_DOSAGE.equals(medicament.state)
-				|| State.ATC.equals(medicament.state)) {
-				buf.append("Medikament mit gleicher Indikation bereits vorhanden.");
+				|| State.ATC.equals(medicament.state) || State.ATC_SAME.equals(medicament.state)) {
+				buf.append(State.ATC.equals(medicament.state)
+						? "Medikament aus gleicher Wirkstoffgruppe bereits vorhanden."
+						: "Medikament mit gleichem Wirkstoff bereits vorhanden.");
 				if (medicament.foundPrescription != null
 					&& medicament.foundPrescription.getArtikel() != null) {
 					buf.append("\n(" + medicament.foundPrescription.getArtikel().getName() + ")");
@@ -449,7 +457,8 @@ public class EMediplanServiceImpl implements EMediplanService {
 			} else if (State.NEW.equals(medicament.state)) {
 				buf.append("Neues Medikament");
 			}
-			if (State.ATC.equals(medicament.state) || State.GTIN.equals(medicament.state)) {
+			if (State.ATC_SAME.equals(medicament.state)
+				|| State.GTIN_SAME.equals(medicament.state)) {
 				buf.append("\nÄnderung bei der Dosierung.");
 			}
 		}
@@ -465,7 +474,6 @@ public class EMediplanServiceImpl implements EMediplanService {
 	
 	private void findArticleForMedicament(Medicament medicament)
 	{
-		Query<ArtikelstammItem> qbe = new Query<>(ArtikelstammItem.class);
 		if (medicament.IdType == 2)
 		{
 			//GTIN

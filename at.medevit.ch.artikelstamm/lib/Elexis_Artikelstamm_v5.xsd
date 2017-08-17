@@ -405,8 +405,14 @@
 										</xs:element>
 										<xs:element name="SALECD"
 											type="SALECDType" minOccurs="1" maxOccurs="1">
+											<xs:annotation>
+												<xs:documentation></xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="DOSAGE_FORM"
+											type="xs:string" minOccurs="0" maxOccurs="1">
                                             <xs:annotation>
-                                            	<xs:documentation></xs:documentation>
+                                            	<xs:documentation>Die Darreichungsform dieses Items. zB Tablette(n) oder Spritze(n)</xs:documentation>
                                             </xs:annotation>
 										</xs:element>
 									</xs:sequence>

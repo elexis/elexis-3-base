@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.08.01 um 02:12:39 PM CEST 
+// Generiert: 2017.08.17 um 01:32:57 PM CEST 
 //
 
 
@@ -169,6 +169,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                             &lt;element name="PRODNO" type="{http://elexis.ch/Elexis_Artikelstamm_v5}PRODNOType" minOccurs="0"/>
  *                             &lt;element name="MEASURE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *                             &lt;element name="SALECD" type="{http://elexis.ch/Elexis_Artikelstamm_v5}SALECDType"/>
+ *                             &lt;element name="DOSAGE_FORM" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *                           &lt;/sequence>
  *                           &lt;attribute name="PHARMATYPE">
  *                             &lt;simpleType>
@@ -453,6 +454,7 @@ public class ARTIKELSTAMM {
      *                   &lt;element name="PRODNO" type="{http://elexis.ch/Elexis_Artikelstamm_v5}PRODNOType" minOccurs="0"/>
      *                   &lt;element name="MEASURE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
      *                   &lt;element name="SALECD" type="{http://elexis.ch/Elexis_Artikelstamm_v5}SALECDType"/>
+     *                   &lt;element name="DOSAGE_FORM" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
      *                 &lt;/sequence>
      *                 &lt;attribute name="PHARMATYPE">
      *                   &lt;simpleType>
@@ -601,6 +603,7 @@ public class ARTIKELSTAMM {
          *         &lt;element name="PRODNO" type="{http://elexis.ch/Elexis_Artikelstamm_v5}PRODNOType" minOccurs="0"/>
          *         &lt;element name="MEASURE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
          *         &lt;element name="SALECD" type="{http://elexis.ch/Elexis_Artikelstamm_v5}SALECDType"/>
+         *         &lt;element name="DOSAGE_FORM" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
          *       &lt;/sequence>
          *       &lt;attribute name="PHARMATYPE">
          *         &lt;simpleType>
@@ -638,7 +641,8 @@ public class ARTIKELSTAMM {
             "narcoticcas",
             "prodno",
             "measure",
-            "salecd"
+            "salecd",
+            "dosageform"
         })
         public static class ITEM {
 
@@ -683,6 +687,8 @@ public class ARTIKELSTAMM {
             @XmlElement(name = "SALECD", required = true)
             @XmlSchemaType(name = "string")
             protected SALECDType salecd;
+            @XmlElement(name = "DOSAGE_FORM")
+            protected String dosageform;
             @XmlAttribute(name = "PHARMATYPE")
             protected String pharmatype;
 
@@ -1164,6 +1170,30 @@ public class ARTIKELSTAMM {
              */
             public void setSALECD(SALECDType value) {
                 this.salecd = value;
+            }
+
+            /**
+             * Ruft den Wert der dosageform-Eigenschaft ab.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public String getDOSAGEFORM() {
+                return dosageform;
+            }
+
+            /**
+             * Legt den Wert der dosageform-Eigenschaft fest.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setDOSAGEFORM(String value) {
+                this.dosageform = value;
             }
 
             /**

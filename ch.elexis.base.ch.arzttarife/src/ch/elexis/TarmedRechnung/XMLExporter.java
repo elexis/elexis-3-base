@@ -183,6 +183,9 @@ public class XMLExporter implements IRnOutputter {
 	private String outputDir;
 	
 	private XMLExporterEsr9 esr9;
+	
+	// default true, keep old behavior
+	private boolean printAtIntermediate = true;
 	public static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$
 	
 	/**
@@ -248,6 +251,14 @@ public class XMLExporter implements IRnOutputter {
 	@Override
 	public boolean canStorno(final Rechnung rn){
 		return true;
+	}
+	
+	public boolean isPrintAtIntermediate(){
+		return printAtIntermediate;
+	}
+	
+	public void setPrintAtIntermediate(boolean value){
+		printAtIntermediate = value;
 	}
 	
 	private void negate(Element el, String attr){
@@ -554,7 +565,17 @@ public class XMLExporter implements IRnOutputter {
 	
 	private void updateExisting44Xml(Element root, TYPE type, Rechnung rechnung){
 		Money mPaid = rn.getAnzahlung();
-		
+		// update processing
+		Element processing = root.getChild("processing", XMLExporter.nsinvoice);//$NON-NLS-1$
+		String intermediatePrint =
+			processing.getAttributeValue(XMLExporterProcessing.ATTR_INTERMEDIAT_PRINT);
+		if(("1".equals(intermediatePrint) || "true".equals(intermediatePrint)) && !isPrintAtIntermediate()) {
+			processing.setAttribute(XMLExporterProcessing.ATTR_INTERMEDIAT_PRINT, "0");
+		} else if (("0".equals(intermediatePrint) || "false".equals(intermediatePrint))
+			&& isPrintAtIntermediate()) {
+			processing.setAttribute(XMLExporterProcessing.ATTR_INTERMEDIAT_PRINT, "1");
+		}
+		// update payload and balance
 		Element payload = root.getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$

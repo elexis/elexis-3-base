@@ -14,7 +14,7 @@ import ch.rgw.tools.XMLTool;
 public class XMLExporterProcessing {
 	
 	private static final String ELEMENT_PROCESSING = "processing"; //$NON-NLS-1$
-	private static final String ATTR_INTERMEDIAT_PRINT = "print_at_intermediate"; //$NON-NLS-1$
+	public static final String ATTR_INTERMEDIAT_PRINT = "print_at_intermediate"; //$NON-NLS-1$
 	private static final String ATTR_PATIENT_COPY_PRINT = "print_patient_copy"; //$NON-NLS-1$
 
 	private static final String ELEMENT_TRANSPORT = "transport"; //$NON-NLS-1$
@@ -70,7 +70,8 @@ public class XMLExporterProcessing {
 
 		Element element = null;
 		element = new Element(ELEMENT_PROCESSING, XMLExporter.nsinvoice);
-		element.setAttribute(ATTR_INTERMEDIAT_PRINT, "1");
+		element.setAttribute(ATTR_INTERMEDIAT_PRINT,
+			xmlExporter.isPrintAtIntermediate() ? "1" : "0");
 
 		if (actFall.getCopyForPatient()) {
 			element.setAttribute(ATTR_PATIENT_COPY_PRINT, "1");

@@ -12,7 +12,6 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -25,7 +24,7 @@ public class TarmedOptifierTest {
 	private static Patient patGrissemann, patStermann;
 	private static Konsultation konsGriss, konsSter;
 	private static TarmedLeistung tlBaseFirst5Min, tlBaseXRay, tlBaseRadiologyHospital,
-			tlUltrasound, tlTapingCat1, tlSkullSono, tlBaseTech;
+			tlUltrasound, tlTapingCat1;
 			
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
@@ -39,9 +38,6 @@ public class TarmedOptifierTest {
 		tlBaseRadiologyHospital = (TarmedLeistung) TarmedLeistung.getFromCode("39.0015");
 		tlUltrasound = (TarmedLeistung) TarmedLeistung.getFromCode("39.3005");
 		tlTapingCat1 = (TarmedLeistung) TarmedLeistung.getFromCode("01.0110");
-		tlSkullSono = (TarmedLeistung) TarmedLeistung.getFromCode("39.3200");
-		tlBaseTech = (TarmedLeistung) TarmedLeistung.getFromCode("39.3800");
-		
 		
 		//Patient Grissemann with case and consultation
 		patGrissemann = new Patient("Grissemann", "Christoph", "17.05.1966", Patient.MALE);
@@ -121,26 +117,5 @@ public class TarmedOptifierTest {
 		
 		resCompatible = optifier.isCompatible(tlBaseFirst5Min, tlBaseRadiologyHospital);
 		assertTrue(resCompatible.isOK());
-		
-		resCompatible = optifier.isCompatible(tlSkullSono, tlBaseTech);
-		assertTrue(resCompatible.isOK());
-	}
-	
-	@Test
-	public void testUltraAutoBaseTech()
-	{
-		int sizeInit = konsSter.getLeistungen().size();
-		konsSter.addLeistung(tlSkullSono);
-		Assert.assertEquals(sizeInit + 2, konsSter.getLeistungen().size());
-		boolean found = false;
-		for (Verrechnet verrechnet : konsSter.getLeistungen())
-		{
-			if (verrechnet.getVerrechenbar().getCode().equals(tlBaseTech.getCode()))
-			{
-				found = true;
-				break;
-			}
-		}
-		Assert.assertTrue(found);	
 	}
 }

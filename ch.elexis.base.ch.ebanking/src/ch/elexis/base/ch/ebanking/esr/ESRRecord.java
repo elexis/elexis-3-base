@@ -17,6 +17,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
+import ch.elexis.ebanking.parser.Camt054Record;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -252,6 +253,89 @@ public class ESRRecord extends PersistentObject {
 		set(new String[] {
 			FLD_DATE, "Eingelesen", "Verarbeitet", "Gutgeschrieben", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"BetragInRp", CODE, RECHNUNGS_ID, PATIENT_ID, MANDANT_ID, FLD_REJECT_CODE, "File"}, vals); //$NON-NLS-1$ //$NON-NLS-2$
+		
+	}
+	
+	/**
+	 * Creates a {@link ESRRecord} from a {@link Camt054Record}
+	 * 
+	 * @param file
+	 * @param camt054Record
+	 */
+	public ESRRecord(String file, Camt054Record camt054Record){
+		super.create(null);
+		Mandant m;
+		Rechnung rn = null;
+		String mandantID;
+		REJECT rejectCode;
+		
+		String[] vals = new String[11];
+		vals[0] = new TimeTool().toString(TimeTool.DATE_COMPACT);
+		
+		vals[1] = new TimeTool(camt054Record.getBookingDate()).toString(TimeTool.DATE_GER);
+		vals[2] = new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER);//TODO verarbeit = gutschrift ?
+		vals[3] = new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER);
+		vals[10] = file;
+		
+		rejectCode = REJECT.OK;
+		MODE mode = MODE.Unbekannt; //TODO woher ?
+		
+		vals[5] = Integer.toString(mode.ordinal());
+		vals[4] = camt054Record.getAmount(); //betrag
+			
+			// Von der RechnungsNummer führende Nullen wegbringen
+		int rnnr = Integer.parseInt(camt054Record.getReference().substring(POSITION_RN_NR, 26));
+			Query<Rechnung> qbe_r = new Query<Rechnung>(Rechnung.class);
+			String rnid = qbe_r.findSingle("RnNummer", "=", Integer.toString(rnnr)); //$NON-NLS-1$ //$NON-NLS-2$
+			if (rnid == null) {
+				rejectCode = REJECT.RN_NUMMER;
+				vals[6] = ""; //$NON-NLS-1$
+				mandantID = ""; //$NON-NLS-1$
+			} else {
+				vals[6] = rnid;
+				rn = Rechnung.load(rnid);
+				if (rn == null) {
+					rejectCode = REJECT.RN_NUMMER;
+					vals[6] = ""; //$NON-NLS-1$
+					mandantID = ""; //$NON-NLS-1$
+				} else {
+					m = rn.getMandant();
+					if (m == null) {
+						rejectCode = REJECT.MANDANT;
+						vals[6] = ""; //$NON-NLS-1$
+						mandantID = ""; //$NON-NLS-1$
+					} else {
+						mandantID = m.getId();
+					}
+				}
+				
+			}
+		String PatNr = camt054Record.getReference().substring(POSITION_PAT_NR, POSITION_RN_NR);
+			long patnr = Long.parseLong(PatNr); // führende Nullen wegbringen
+			String PatID = new Query<Patient>(Patient.class).findSingle("PatientNr", "=", //$NON-NLS-1$//$NON-NLS-2$
+				Long.toString(patnr));
+			if (PatID == null) {
+				if (rejectCode == REJECT.OK) {
+					rejectCode = REJECT.PAT_NUMMER;
+				}
+				vals[7] = ""; //$NON-NLS-1$
+			} else if ((rn != null) && (!rn.getFall().getPatient().getId().equals(PatID))) {
+				if (rejectCode == REJECT.OK) {
+					rejectCode = REJECT.PAT_FALSCH;
+				}
+				vals[7] = ""; //$NON-NLS-1$
+			} else {
+				
+				vals[7] = PatID;
+				
+			}
+			vals[8] = mandantID;
+		
+		vals[9] = Integer.toString(rejectCode.ordinal());
+		set(new String[] {
+			FLD_DATE, "Eingelesen", "Verarbeitet", "Gutgeschrieben", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"BetragInRp", CODE, RECHNUNGS_ID, PATIENT_ID, MANDANT_ID, FLD_REJECT_CODE, "File" //$NON-NLS-1$//$NON-NLS-2$
+		}, vals);
 		
 	}
 	

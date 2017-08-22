@@ -23,6 +23,7 @@ import ch.elexis.core.ui.constants.UiResourceConstants;
 import ch.elexis.core.ui.contacts.views.KontaktDetailView;
 import ch.elexis.core.ui.contacts.views.KontakteView;
 import ch.elexis.core.ui.contacts.views.PatientDetailView2;
+import ch.elexis.core.ui.fastview.ElexisFastViewUtil;
 import ch.elexis.core.ui.laboratory.views.LabNotSeenView;
 import ch.elexis.core.ui.laboratory.views.LaborView;
 import ch.elexis.core.ui.medication.views.DauerMediView;
@@ -133,21 +134,12 @@ public class KgIatrixPerspective implements IPerspectiveFactory {
 		rightbottom.addView(MedicationView.PART_ID);
 
 		/**
-		 * Ganz unten kommt der Balken mit den Knöpfen
-		 *   "Show View as Fast View"
-		 * Es können keine hinzugefügt werden, welche oben schon
-		 * an einen Folder gebunden sind.
-		 */
-		layout.addFastView(LeistungenView.ID, 0.5f);
-		layout.addFastView(DiagnosenView.ID, 0.5f);
-		layout.addFastView("org.iatrix.help.wiki.views.WikiView");
-		layout.addFastView(AccountView.ID);
-		layout.addFastView(BillSummary.ID);
-		layout.addFastView(PatientDetailView2.ID);
-		// layout.addFastView(RechnungsListeView.ID);
-		layout.addFastView(KontaktDetailView.ID);
-		layout.addFastView(RezeptBlatt.ID);
-		// layout.addFastView(RezepteView.ID);
+		 * Ganz unten kommt der Balken mit den Knöpfen "Show View as Fast View" Es können keine
+		 * hinzugefügt werden, welche oben schon an einen Folder gebunden sind.
+		 **/
+		ElexisFastViewUtil.addToFastViewAfterPerspectiveOpened(ID, LeistungenView.ID,
+			DiagnosenView.ID, "org.iatrix.help.wiki.views.WikiView", AccountView.ID, BillSummary.ID,
+			PatientDetailView2.ID, KontaktDetailView.ID, RezeptBlatt.ID);
 
 		/**
 		 * Add some shortcuts for Iatrix-Views

@@ -29,13 +29,15 @@
 										<xs:element name="PRODNO"
 											type="PRODNOType" minOccurs="1" maxOccurs="1">
 										</xs:element>
-										<xs:element name="DSCR"
+                                        <xs:element name="SALECD" type="SALECDType" minOccurs="1" maxOccurs="1">
+										</xs:element>
+                                        <xs:element name="DSCR"
 											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
 										<xs:element name="DSCRF"
 											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
-										<xs:element name="ATC"
+                                        <xs:element name="ATC"
 											nillable="false" maxOccurs="1" minOccurs="0">
 											<xs:annotation>
 												<xs:documentation
@@ -157,7 +159,12 @@
 										</xs:element>
 
 
-										<xs:element name="DSCR"
+                                        <xs:element name="SALECD" type="SALECDType" minOccurs="1" maxOccurs="1">
+											<xs:annotation>
+												<xs:documentation></xs:documentation>
+											</xs:annotation>
+										</xs:element>
+                                        <xs:element name="DSCR"
 											nillable="false" type="DSCRType" minOccurs="1"
 											maxOccurs="1">
 											<xs:annotation>
@@ -240,11 +247,36 @@
 										<xs:element name="PKG_SIZE"
 											type="xs:int" maxOccurs="1" minOccurs="0">
 										</xs:element>
-										<xs:element
-											name="PKG_SIZE_STRING" type="xs:string" minOccurs="0"
+                                        <xs:element name="MEASURE" type="xs:string" minOccurs="0" maxOccurs="1">
+											<xs:annotation>
+												<xs:documentation>
+													Measurement Unit,
+													e.g. Pills or
+													milliliters
+												</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+                                        <xs:element
+											name="MEASUREF" type="xs:string" minOccurs="0"
 											maxOccurs="1">
 										</xs:element>
-										<xs:element name="SL_ENTRY"
+                                        <xs:element name="DOSAGE_FORM" type="xs:string" minOccurs="0" maxOccurs="1">
+											<xs:annotation>
+												<xs:documentation>
+													Die Darreichungsform
+													dieses Items. zB
+													Tablette(n) oder
+													Spritze(n)
+												</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+                                        <xs:element name="DOSAGE_FORMF" type="xs:string" minOccurs="0" maxOccurs="1">
+                                            <xs:annotation>
+                                            	<xs:documentation>Die Darreichungsform dieses Items. zB Tablette(n) oder Spritze(n) in französicher Sprache
+										</xs:documentation>
+                                            </xs:annotation>
+										</xs:element>
+                                        <xs:element name="SL_ENTRY"
 											type="xs:boolean" minOccurs="0" maxOccurs="1">
 											<xs:annotation>
 												<xs:documentation>
@@ -392,28 +424,6 @@
 													Artikels
 												</xs:documentation>
 											</xs:annotation>
-										</xs:element>
-										<xs:element name="MEASURE"
-											type="xs:string" minOccurs="0" maxOccurs="1">
-											<xs:annotation>
-												<xs:documentation>
-													Measurement Unit,
-													e.g. Pills or
-													milliliters
-												</xs:documentation>
-											</xs:annotation>
-										</xs:element>
-										<xs:element name="SALECD"
-											type="SALECDType" minOccurs="1" maxOccurs="1">
-											<xs:annotation>
-												<xs:documentation></xs:documentation>
-											</xs:annotation>
-										</xs:element>
-										<xs:element name="DOSAGE_FORM"
-											type="xs:string" minOccurs="0" maxOccurs="1">
-                                            <xs:annotation>
-                                            	<xs:documentation>Die Darreichungsform dieses Items. zB Tablette(n) oder Spritze(n)</xs:documentation>
-                                            </xs:annotation>
 										</xs:element>
 									</xs:sequence>
 

@@ -52,11 +52,13 @@ public abstract class POSelectionListener<P extends PersistentObject> implements
 			// PO nicht mehr ausgewaehlt
 			runDeselected(current);
 			current = null;
-		} else if (ev.getType() == ElexisEvent.EVENT_DELETE && k != null && current.equals(k)) {
+		} else if (ev.getType() == ElexisEvent.EVENT_DELETE && k != null && current != null
+			&& current.equals(k)) {
 			// PO geloescht
 			runDeselected(current);
 			current = null;
-		} else if (ev.getType() == ElexisEvent.EVENT_SELECTED && ! current.equals(k)) {
+		} else if (ev.getType() == ElexisEvent.EVENT_SELECTED && current != null
+			&& !current.equals(k)) {
 			// Wenn noch ein anderer ausgewaehlt war (sollte nicht passieren)
 			if (current != null)
 				runDeselected(current);
@@ -72,7 +74,7 @@ public abstract class POSelectionListener<P extends PersistentObject> implements
 	}
 	
 	private void runDeselected(final P kons){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				deselected(kons);
 			}
@@ -80,7 +82,7 @@ public abstract class POSelectionListener<P extends PersistentObject> implements
 	}
 	
 	private void runSelected(final P kons){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				selected(kons);
 			}

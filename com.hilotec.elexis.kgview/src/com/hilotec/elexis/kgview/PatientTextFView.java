@@ -36,7 +36,7 @@ public abstract class PatientTextFView extends SimpleTextFView implements Elexis
 	}
 	
 	public void catchElexisEvent(final ElexisEvent ev){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				Patient p = (Patient) ev.getObject();
 				if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {

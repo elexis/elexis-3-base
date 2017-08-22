@@ -29,6 +29,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.hilotec.elexis.kgview.data.KonsData;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -47,8 +49,6 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-
-import com.hilotec.elexis.kgview.data.KonsData;
 
 /**
  * Helper-Klasse fuers automatische scrollen mit anpassbarer Geschwindigkeit.
@@ -354,7 +354,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	}
 	
 	public void catchElexisEvent(final ElexisEvent ev){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			@Override
 			public void run(){
 				Patient p = (Patient) ev.getObject();

@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
+import com.hilotec.elexis.kgview.data.KonsData;
+
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
@@ -27,8 +29,6 @@ import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
-
-import com.hilotec.elexis.kgview.data.KonsData;
 
 public class Therapieliste extends ViewPart implements ElexisEventListener {
 	final public static String ID = "com.hilotec.elexis.kgview.Therapieliste";
@@ -147,7 +147,7 @@ public class Therapieliste extends ViewPart implements ElexisEventListener {
 	}
 	
 	public void catchElexisEvent(ElexisEvent ev){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				tv.refresh();
 			}

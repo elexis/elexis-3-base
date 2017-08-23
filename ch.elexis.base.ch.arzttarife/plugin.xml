@@ -14,6 +14,12 @@
             id="ch.elexis.arzttarife_ch.physioprefs"
             name="Physiotherapie">
       </page>
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.elexis.tarmedprefs.ComplementaryPrefs"
+            id="ch.elexis.arzttarife_ch.complementary"
+            name="Komplementärmedizin">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -59,6 +65,14 @@
             ElementFactory="ch.elexis.data.ArzttarifFactory"
             ImporterClass="ch.elexis.data.PhysioImporter"
             name=" Physio-Leistung">
+      </Leistung>
+      <Leistung
+            CodeDetailDisplay="ch.elexis.views.ComplementaryDetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.ComplementaryCodeSelectorFactory"
+            ComparatorClass="ch.elexis.data.ComplementaryComparator"
+            ElementFactory="ch.elexis.data.ArzttarifFactory"
+            ImporterClass="ch.elexis.data.ComplementaryImporter"
+            name="Komplementärmedizin">
       </Leistung>
    </extension>
    <extension

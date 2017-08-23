@@ -18,7 +18,7 @@ deploy_master_snapshot:
     script:
     - wget https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/upload-dav.sh; chmod +x upload-dav.sh
     - mkdir upload; unzip ch.elexis.base.p2site/target/ch.elexis.base.p2site*.zip -d upload/
-    - ./upload-dav.sh upload/ https://download.elexis.info/elexis/p2/ $CI_COMMIT_REF_NAME/elexis-3-base $DEPLOY_USER $DEPLOY_PASSWORD
+    - ./upload-dav.sh upload/ https://download.elexis.info/elexis/ $CI_COMMIT_REF_NAME/p2/elexis-3-base $DEPLOY_USER $DEPLOY_PASSWORD
     - rm -Rf upload/
     - rm upload-dav.sh
     environment:

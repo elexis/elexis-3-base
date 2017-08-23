@@ -69,6 +69,26 @@
             id="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler"
             name="outbox cda handler">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.ehc.ui.vacdoc.handler.CreateXdmHandler"
+            id="at.medevit.elexis.ehc.ui.vacdoc.CreateXdmHandler"
+            name="xdm handler">
+         <commandParameter
+               id="at.medevit.elexis.ehc.ui.vacdoc.attachments"
+               name="patient id"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="at.medevit.elexis.ehc.ui.vacdoc.patient.id"
+               name="patient id"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="at.medevit.elexis.ehc.ui.vacdoc.tmp.dir"
+               name="temp directory"
+               optional="true">
+         </commandParameter>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

@@ -15,7 +15,10 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -67,6 +70,12 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 
 	private void sendOutboxElements(ExecutionEvent event, Patient patient, List<?> iOutboxElements){
 		List<File> attachments = new ArrayList<>();
+		File tmpDir = CoreHub.getTempDir();
+		attachmentsFolder = new File(tmpDir, "_outbox" + System.currentTimeMillis() + "_");
+		if (!attachmentsFolder.exists()) {
+			attachmentsFolder.mkdir();
+		}
+		
 		for (Object iOutboxElement : iOutboxElements) {
 			if (iOutboxElement instanceof OutboxElement)
 			{
@@ -81,28 +90,39 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 				.getActiveWorkbenchWindow(event).getService(ICommandService.class);
 			try {
 				String attachmentsString = getAttachmentsString(attachments);
-				Command sendMailCommand =
-					commandService.getCommand("ch.elexis.core.mail.ui.sendMail");
 				
-				HashMap<String, String> params = new HashMap<String, String>();
-				params.put("ch.elexis.core.mail.ui.sendMail.attachments", attachmentsString);
-				if (patient != null) {
-					params.put("ch.elexis.core.mail.ui.sendMail.subject",
-						"Patient: " + patient.getLabel());
-				}
-				
-				ParameterizedCommand parametrizedCommmand =
-					ParameterizedCommand.generateCommand(sendMailCommand, params);
-				
-				Object obj = PlatformUI.getWorkbench().getService(IHandlerService.class)
-					.executeCommand(parametrizedCommmand, null);
-				if (Boolean.TRUE.equals(obj)) {
-					for (Object iOutboxElement : iOutboxElements) {
-						if (iOutboxElement instanceof OutboxElement) {
-							OutboxServiceComponent.getService().changeOutboxElementState(
-								(OutboxElement) iOutboxElement, State.SENT);
+				// send as xdm
+				if (event.getCommand().getId().endsWith("sendAsMailXDM")) {
+					Object obj = createXDM(patient, commandService, attachmentsString);
+					if (obj instanceof String) {
+						if (openSendMailDlg(patient, iOutboxElements, commandService,
+							(String) obj)) {
+							for (Object iOutboxElement : iOutboxElements) {
+								if (iOutboxElement instanceof OutboxElement) {
+									OutboxElement outboxElement = (OutboxElement) iOutboxElement;
+									// only xml files are sent as xdm
+									if (outboxElement.getLabel().toLowerCase().endsWith("xml")) {
+										OutboxServiceComponent.getService()
+											.changeOutboxElementState(
+												(OutboxElement) iOutboxElement, State.SENT);
+									}
+								}
+							}
 						}
 					}
+				}
+				else {
+					// send as files
+					if (openSendMailDlg(patient, iOutboxElements, commandService,
+						attachmentsString)) {
+						for (Object iOutboxElement : iOutboxElements) {
+							if (iOutboxElement instanceof OutboxElement) {
+								OutboxServiceComponent.getService().changeOutboxElementState(
+									(OutboxElement) iOutboxElement, State.SENT);
+							}
+						}
+					}
+					
 				}
 			} catch (Exception ex) {
 				throw new RuntimeException("ch.elexis.core.mail.ui.sendMail not found", ex);
@@ -110,13 +130,61 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		}
 		removeTempAttachments();
 	}
+
+	private Object createXDM(Patient patient, ICommandService commandService,
+		String attachmentsString)
+		throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException{
+		Command xdmCommand = commandService
+			.getCommand("at.medevit.elexis.ehc.ui.vacdoc.CreateXdmHandler");
+		if (xdmCommand.isDefined()) {
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("at.medevit.elexis.ehc.ui.vacdoc.tmp.dir",
+				attachmentsFolder.getAbsolutePath());
+			params.put("at.medevit.elexis.ehc.ui.vacdoc.attachments",
+				attachmentsString);
+			if (patient != null) {
+				params.put("at.medevit.elexis.ehc.ui.vacdoc.patient.id", patient.getId());
+			}
+			ParameterizedCommand parametrizedCommmand =
+				ParameterizedCommand.generateCommand(xdmCommand, params);
+			if (parametrizedCommmand != null) {
+				Object obj = PlatformUI.getWorkbench().getService(IHandlerService.class)
+					.executeCommand(parametrizedCommmand, null);
+				return obj;
+			}
+		}
+		else {
+			MessageDialog.openError(Display.getCurrent().getActiveShell(), "Fehler",
+				"Es wurde kein Plugin zum erstellen von XDM Dateien gefunden.");
+		}
+		
+		return null;
+	}
+
+	private boolean openSendMailDlg(Patient patient, List<?> iOutboxElements,
+		ICommandService commandService,
+		String attachmentsString)
+		throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException{
+		Command sendMailCommand =
+			commandService.getCommand("ch.elexis.core.mail.ui.sendMail");
+		
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("ch.elexis.core.mail.ui.sendMail.attachments", attachmentsString);
+		if (patient != null) {
+			params.put("ch.elexis.core.mail.ui.sendMail.subject",
+				"Patient: " + patient.getLabel());
+		}
+		
+		ParameterizedCommand parametrizedCommmand =
+			ParameterizedCommand.generateCommand(sendMailCommand, params);
+		
+		Object obj = PlatformUI.getWorkbench().getService(IHandlerService.class)
+			.executeCommand(parametrizedCommmand, null);
+		return Boolean.TRUE.equals(obj);
+	}
 	
 	private Optional<File> getTempFile(OutboxElement outboxElement){
 		try {
-			File tmpDir = CoreHub.getTempDir();
-			attachmentsFolder = new File(tmpDir, "_outbox" + System.currentTimeMillis() + "_");
-			attachmentsFolder.mkdir();
-			
 			return OutboxServiceComponent.getService().getTempFileWithContents(attachmentsFolder,
 				outboxElement);
 		} catch (IOException e) {

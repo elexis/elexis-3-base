@@ -254,12 +254,12 @@
 <repositories>
   <repository>
     <id>elexis.3.target.${useBranch}</id>
-    <url>http://download.elexis.info/elexis/p2/master/target</url>
+    <url>http://download.elexis.info/elexis/${useBranch}/p2/target</url>
     <layout>p2</layout>
   </repository>
    <repository>
     <id>elexis.3.core.${useBranch}</id>
-    <url>http://download.elexis.info/elexis/p2/${useBranch}/elexis-3-core</url>
+    <url>http://download.elexis.info/elexis/${useBranch}/p2/elexis-3-core</url>
     <layout>p2</layout>
   </repository>
 </repositories>

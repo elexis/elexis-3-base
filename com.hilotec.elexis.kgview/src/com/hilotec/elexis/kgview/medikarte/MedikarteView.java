@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
+import com.hilotec.elexis.kgview.data.FavMedikament;
+import com.hilotec.elexis.kgview.medikarte.MedikarteEintragComparator.Sortierung;
+
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
@@ -36,9 +39,6 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
-
-import com.hilotec.elexis.kgview.data.FavMedikament;
-import com.hilotec.elexis.kgview.medikarte.MedikarteEintragComparator.Sortierung;
 
 public class MedikarteView extends ViewPart implements ElexisEventListener {
 	public static final String ID = "com.hilotec.elexis.kgview.MedikarteView";
@@ -332,7 +332,7 @@ public class MedikarteView extends ViewPart implements ElexisEventListener {
 	}
 	
 	public void catchElexisEvent(final ElexisEvent ev){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				if (ev.getObjectClass().equals(Patient.class)) {
 					Patient p = (Patient) ev.getObject();

@@ -22,6 +22,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
+import com.hilotec.elexis.kgview.Preferences;
+import com.hilotec.elexis.kgview.data.FavMedikament;
+
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
@@ -33,9 +36,6 @@ import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-
-import com.hilotec.elexis.kgview.Preferences;
-import com.hilotec.elexis.kgview.data.FavMedikament;
 
 /**
  * Liste der Favorisierten Medikamente anzeigen. Bietet die Möglichkeit zu suchen, neue Eintraege zu
@@ -311,7 +311,7 @@ public class FavMedikamentListe extends ViewPart implements ElexisEventListener 
 	
 	@Override
 	public void catchElexisEvent(ElexisEvent ev){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				refresh();
 			}

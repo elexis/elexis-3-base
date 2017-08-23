@@ -37,6 +37,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import com.hilotec.elexis.kgview.data.KonsData;
+
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
@@ -50,8 +52,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.IcpcCode;
 import ch.rgw.tools.StringTool;
-
-import com.hilotec.elexis.kgview.data.KonsData;
 
 /*
  * Helper class to draw multiline tree items, kind of ugly, but according
@@ -965,7 +965,7 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 	}
 	
 	public void catchElexisEvent(final ElexisEvent ev){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 					updateTree((Patient) ev.getObject());

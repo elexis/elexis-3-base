@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import com.hilotec.elexis.kgview.data.KonsData;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -33,8 +35,6 @@ import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-
-import com.hilotec.elexis.kgview.data.KonsData;
 
 /**
  * Einfache Konsultationsliste die aber auch auf Konsultationszeiten Ruecksicht nimmt beim
@@ -196,7 +196,7 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 	public void setFocus(){}
 	
 	public void catchElexisEvent(ElexisEvent ev){
-		UiDesk.syncExec(new Runnable() {
+		UiDesk.asyncExec(new Runnable() {
 			public void run(){
 				tv.refresh();
 			}

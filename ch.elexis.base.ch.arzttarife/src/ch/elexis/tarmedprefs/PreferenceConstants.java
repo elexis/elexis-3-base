@@ -22,4 +22,7 @@ public class PreferenceConstants {
 	public static final String RNN_EXPORTDIR = "TarmedExport_Directory"; //$NON-NLS-1$
 	public static final String RNN_RELAXED = "TarmedRnn_relaxed"; //$NON-NLS-1$
 	public static final String RNN_SAVECOPY = "TarmedRnn_Savecopy"; //$NON-NLS-1$
+	
+	public static final String COMPLEMENTARY_HOURLY_WAGE = "arzttarife/complementary/hourlywage"; //$NON-NLS-1$
+	public static final String COMPLEMENTARY_FIXTOVVG = "arzttarife/complementary/fixtovvg"; //$NON-NLS-1$
 }

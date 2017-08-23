@@ -52,7 +52,6 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		public void selectionChanged(SelectionChangedEvent event){
 			TreeViewer tv = (TreeViewer) event.getSource();
 			StructuredSelection ss = (StructuredSelection) tv.getSelection();
-			System.out.println(ss.getFirstElement());
 			if (ss.isEmpty()) {
 				tvfa.updateSelection(null);
 				return;

@@ -448,7 +448,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 */
 	private void activateContext(){
 		IContextService contextService =
-				getSite().getService(IContextService.class);
+				(IContextService) getSite().getService(IContextService.class);
 		contextService.activateContext(Constants.VIEW_CONTEXT_ID);
 	}
 

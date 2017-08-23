@@ -7,7 +7,7 @@ stages:
 build:
   stage: build
   script:
-    - xvfb-run mvn clean verify
+    - xvfb-run mvn clean verify -Dgit.branch=$CI_COMMIT_REF_NAME
   artifacts:
     paths:
     - ch.elexis.base.p2site/target/*.zip

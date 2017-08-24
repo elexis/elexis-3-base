@@ -8,7 +8,6 @@
      2: Niklaus Giger
      1: sazgin
 ---------------------------------------------------------------------------
-829b27783c15bae488c6ecdd5eb8765d3e139e1d 2017-08-16 16:07:23 +0200             thomashu [6402] added LocalLock and file open test to global inbox file import
 f9815b11fd9354004e9039b32f88855f2003dd8c 2017-08-23 20:25:11 +0200        Niklaus Giger [5507]Update changelog
 8639f9bcdba5980a61638e708f642c8adbd3336d 2017-08-17 13:22:24 +0200             thomashu [6782] make print at intermediate set able in XMLExporter
 05c9ca22cfdca725c4f5aa1e7101256fc153521e 2017-08-21 16:44:38 +0200             thomashu [5652] manually reverted, see 6814

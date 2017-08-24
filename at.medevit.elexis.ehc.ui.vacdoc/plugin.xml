@@ -54,6 +54,7 @@
          </separator>
          <command
                commandId="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler"
+               icon="rsc/outbox_into.png"
                label="CDA in Outbox"
                style="push">
          </command>

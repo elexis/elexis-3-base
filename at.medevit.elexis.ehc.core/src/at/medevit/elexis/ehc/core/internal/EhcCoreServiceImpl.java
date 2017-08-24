@@ -13,10 +13,16 @@ package at.medevit.elexis.ehc.core.internal;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.ehealth_connector.cda.ch.AbstractCdaCh;
@@ -156,5 +162,79 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 			}
 		}
 		return ret;
+	}
+	
+	@Override
+	public String createXdmContainer(Patient patient, Mandant mandant, List<File> attachments,
+		String xdmPath){
+		if (patient != null && mandant != null && attachments != null && xdmPath != null) {
+			ConvenienceCommunication conCom = new ConvenienceCommunication();
+			org.ehealth_connector.common.Patient ehealthPatient =
+				EhcCoreMapper.getEhcPatient(patient);
+			StringBuilder retInfo = new StringBuilder();
+			retInfo.append(xdmPath);
+			for (File f : attachments) {
+				try {
+					if (f.exists()) {
+						String attachmentPath = f.getAbsolutePath();
+						DocumentDescriptor dc = null;
+						if (attachmentPath.toLowerCase().endsWith("xml")) {
+							if (isCdaDocument(f)) {
+								dc = DocumentDescriptor.CDA_R2;
+							} else {
+								dc = DocumentDescriptor.XML;
+							}
+						} else if (attachmentPath.toLowerCase().endsWith("pdf")) {
+							dc = DocumentDescriptor.PDF;
+						} else {
+							dc = new DocumentDescriptor(
+								FilenameUtils.getExtension(attachmentPath),
+								Files.probeContentType(f.toPath()));
+						}
+						
+						FileInputStream in = FileUtils.openInputStream(f);
+						DocumentMetadata metaData = conCom.addDocument(dc, in);
+						metaData.setPatient(ehealthPatient);
+						IOUtils.closeQuietly(in);
+						retInfo.append(":::");
+						retInfo.append(attachmentPath);
+						
+					} else {
+						LoggerFactory.getLogger(EhcCoreService.class)
+							.warn("creating xdm - patient [{}] - file does not exists [{}]",
+								patient.getId(), f.getAbsolutePath());
+					}
+				} catch (IOException e) {
+					LoggerFactory.getLogger(EhcCoreService.class).error(
+						"creating xdm - patient [{}] - cannot add file [{}]", patient.getId(),
+						f.getAbsolutePath(), e);
+				}
+			}
+			try {
+				conCom.createXdmContents(xdmPath);
+				if (retInfo.toString().contains(":::")) {
+					return retInfo.toString();
+				}
+			} catch (Exception e) {
+				LoggerFactory.getLogger(EhcCoreService.class).error(
+					"creating xdm - patient [{}] - cannot create xdm contents", patient.getId(), e);
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean isCdaDocument(File file){
+		if (file != null) {
+			try {
+				FileInputStream in = FileUtils.openInputStream(file);
+				ClinicalDocument c = CDAUtil.load(in);
+				IOUtils.closeQuietly(in);
+				return c != null;
+			} catch (Exception e) {
+				/* ignore */
+			}
+		}
+		return false;
 	}
 }

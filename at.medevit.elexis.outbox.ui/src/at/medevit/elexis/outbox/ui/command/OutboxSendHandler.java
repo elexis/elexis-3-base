@@ -77,11 +77,11 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		}
 		
 		for (Object iOutboxElement : iOutboxElements) {
-			if (iOutboxElement instanceof OutboxElement)
-			{
-				Optional<File> tmpFile = getTempFile((OutboxElement) iOutboxElement);
+			if (iOutboxElement instanceof OutboxElement) {
+				Optional<File> tmpFile = createTempFile((OutboxElement) iOutboxElement);
 				if (tmpFile.isPresent()) {
-					attachments.add(tmpFile.get());
+					File file = tmpFile.get();
+					attachments.add(file);
 				}
 			}
 		}
@@ -90,47 +90,81 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 				.getActiveWorkbenchWindow(event).getService(ICommandService.class);
 			try {
 				String attachmentsString = getAttachmentsString(attachments);
-				
-				// send as xdm
 				if (event.getCommand().getId().endsWith("sendAsMailXDM")) {
+					// send as xdm
 					Object obj = createXDM(patient, commandService, attachmentsString);
 					if (obj instanceof String) {
-						if (openSendMailDlg(patient, iOutboxElements, commandService,
-							(String) obj)) {
-							for (Object iOutboxElement : iOutboxElements) {
-								if (iOutboxElement instanceof OutboxElement) {
-									OutboxElement outboxElement = (OutboxElement) iOutboxElement;
-									// only xml files are sent as xdm
-									if (outboxElement.getLabel().toLowerCase().endsWith("xml")) {
-										OutboxServiceComponent.getService()
-											.changeOutboxElementState(
-												(OutboxElement) iOutboxElement, State.SENT);
-									}
-								}
-							}
-						}
+						sendMailWithXdm(patient, iOutboxElements, commandService, (String) obj);
 					}
-				}
-				else {
+					else {
+						MessageDialog.openError(Display.getCurrent().getActiveShell(), "Fehler",
+							"Der XDM Container konnte nicht erzeugt werden.\nBitte überprüfen Sie die Log Datei.");
+					}
+				} else {
 					// send as files
-					if (openSendMailDlg(patient, iOutboxElements, commandService,
-						attachmentsString)) {
-						for (Object iOutboxElement : iOutboxElements) {
-							if (iOutboxElement instanceof OutboxElement) {
-								OutboxServiceComponent.getService().changeOutboxElementState(
-									(OutboxElement) iOutboxElement, State.SENT);
-							}
-						}
-					}
+					sendMailWithFiles(patient, iOutboxElements, commandService, attachmentsString);
 					
 				}
 			} catch (Exception ex) {
 				throw new RuntimeException("ch.elexis.core.mail.ui.sendMail not found", ex);
 			}
 		}
+		// cleanup
 		removeTempAttachments();
 	}
 
+	private void sendMailWithFiles(Patient patient, List<?> iOutboxElements,
+		ICommandService commandService, String attachmentsString)
+		throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException{
+		if (openSendMailDlg(patient, iOutboxElements, commandService,
+			attachmentsString)) {
+			for (Object iOutboxElement : iOutboxElements) {
+				if (iOutboxElement instanceof OutboxElement) {
+					OutboxServiceComponent.getService().changeOutboxElementState(
+						(OutboxElement) iOutboxElement, State.SENT);
+				}
+			}
+		}
+	}
+
+	private void sendMailWithXdm(Patient patient, List<?> iOutboxElements,
+		ICommandService commandService,
+		String retInfo)
+		throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException{
+		String[] retInfos = retInfo.split(":::");
+		// a retInfo must contain at least one xdm and one attachment
+		if (retInfos.length > 1
+			&& openSendMailDlg(patient, iOutboxElements, commandService, retInfos[0])) {
+			
+			StringBuilder warnings = new StringBuilder();
+			for (Object iOutboxElement : iOutboxElements) {
+				if (iOutboxElement instanceof OutboxElement) {
+					OutboxElement outboxElement = (OutboxElement) iOutboxElement;
+					String lblOutBoxElement = outboxElement.getLabel();
+					
+					// check if outbox element is sent
+					boolean outboxElementSent = false;
+					for (String info : retInfos) {
+						if (info.endsWith(lblOutBoxElement)) {
+							outboxElementSent = true;
+						}
+					}
+					if (outboxElementSent) {
+						OutboxServiceComponent.getService()
+							.changeOutboxElementState((OutboxElement) iOutboxElement, State.SENT);
+					} else {
+						warnings.append("\n");
+						warnings.append(lblOutBoxElement);
+					}
+				}
+			}
+			if (warnings.length() > 0) {
+				MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "Warnung",
+					"Folgende Outbox Elemente konnten nicht versendet werden:\n" + warnings);
+			}
+		}
+	}
+	
 	private Object createXDM(Patient patient, ICommandService commandService,
 		String attachmentsString)
 		throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException{
@@ -183,9 +217,9 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		return Boolean.TRUE.equals(obj);
 	}
 	
-	private Optional<File> getTempFile(OutboxElement outboxElement){
+	private Optional<File> createTempFile(OutboxElement outboxElement){
 		try {
-			return OutboxServiceComponent.getService().getTempFileWithContents(attachmentsFolder,
+			return OutboxServiceComponent.getService().createTempFileWithContents(attachmentsFolder,
 				outboxElement);
 		} catch (IOException e) {
 			MessageDialog.openError(Display.getCurrent().getActiveShell(), "Fehler",

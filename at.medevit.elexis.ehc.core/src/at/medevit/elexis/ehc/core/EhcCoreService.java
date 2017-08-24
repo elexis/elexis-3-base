@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 
 import ch.elexis.data.Mandant;
@@ -89,4 +90,29 @@ public interface EhcCoreService {
 	 * @return
 	 */
 	public List<org.ehealth_connector.common.Patient> getXdmPatients(File file);
+	
+	/**
+	 * Creates a new xdm container with the files for a patient
+	 * 
+	 * Since {@link DocumentDescriptor} are generated of attachments only the types CDA_R2 and PDF
+	 * are mainly supported for other types the file mimetype and the file extension will be
+	 * evaluated for creating a new {@link DocumentDescriptor}.
+	 *
+	 * @param patient
+	 * @param mandant
+	 * @param attachments
+	 * @param xdmPath
+	 * @return returns a ':::' separated string of the xdm file and at least one attachment or
+	 *         returns null
+	 */
+	public String createXdmContainer(Patient patient, Mandant mandant, List<File> attachments,
+		String xdmPath);
+	
+	/**
+	 * Checks if the file is a cda document
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public boolean isCdaDocument(File file);
 }

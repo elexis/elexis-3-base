@@ -1,7 +1,7 @@
 package at.medevit.elexis.outbox.model;
 
 public enum OutboxElementType {
-		FILE("FILE://"), DB("DB://"), DOC("DOC://"), OTHER("");
+		FILE("FILE://"), DB(""), DOC("DOC://");
 	private final String prefix;
 	
 	private OutboxElementType(String prefix){
@@ -19,10 +19,11 @@ public enum OutboxElementType {
 				
 			} else if (uri.startsWith(DOC.getPrefix())) {
 				return DOC;
-			} else if (uri.startsWith(DB.getPrefix())) {
+			}
+			else if (uri.contains("::")) {
 				return DB;
 			}
 		}
-		return OTHER;
+		return null;
 	}
 }

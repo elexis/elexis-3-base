@@ -126,31 +126,32 @@ public class OutboxElement extends PersistentObject {
 	public Object getObject(){
 		String uri = getUri();
 		OutboxElementType outboxElementType = OutboxElementType.parseType(uri);
-		switch (outboxElementType) {
-		case DB:
-			String refPO = uri.substring(OutboxElementType.DB.getPrefix().length());
-			PersistentObject object = CoreHub.poFactory.createFromString(refPO);
-			if (object != null && object.exists()) {
-				return object;
-			}
-			break;
-		case FILE:
-			String refFile = uri.substring(OutboxElementType.FILE.getPrefix().length());
-			Path p = Paths.get(refFile);
-			return p;
-		case DOC:
-			String refDoc = uri.substring(OutboxElementType.DOC.getPrefix().length());
-			String[] splits = refDoc.split(DocumentStore.ID_WITH_STOREID_SPLIT);
-			if (splits.length == 2) {
-				Optional<IDocument> doc =
-					DocumentStoreServiceHolder.getService().loadDocument(splits[0], splits[1]);
-				if (doc.isPresent()) {
-					return doc.get();
+		if (outboxElementType != null) {
+			switch (outboxElementType) {
+			case DB:
+				String refPO = uri;
+				PersistentObject object = CoreHub.poFactory.createFromString(refPO);
+				if (object != null && object.exists()) {
+					return object;
 				}
+				break;
+			case FILE:
+				String refFile = uri.substring(OutboxElementType.FILE.getPrefix().length());
+				Path p = Paths.get(refFile);
+				return p;
+			case DOC:
+				String refDoc = uri.substring(OutboxElementType.DOC.getPrefix().length());
+				String[] splits = refDoc.split(DocumentStore.ID_WITH_STOREID_SPLIT);
+				if (splits.length == 2) {
+					Optional<IDocument> doc =
+						DocumentStoreServiceHolder.getService().loadDocument(splits[0], splits[1]);
+					if (doc.isPresent()) {
+						return doc.get();
+					}
+				}
+			default:
+				break;
 			}
-		case OTHER:
-		default:
-			break;
 		}
 		return null;
 	}

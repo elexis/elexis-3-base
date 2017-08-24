@@ -7,12 +7,11 @@ import at.medevit.elexis.outbox.model.OutboxElement;
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 	
 	public PropertyTester(){
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue){
-		if ("enabled".equals(property)) { //$NON-NLS-1$
+		if ("enabled".equals(property)) {
 			try {
 				if (receiver instanceof List<?>) {
 					List<?> receiverAsList = (List<?>) receiver;
@@ -20,7 +19,9 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 						if (o instanceof OutboxElement) {
 							OutboxElement outboxElement = (OutboxElement) o;
 							String lbl = outboxElement.getLabel();
-							if (lbl == null || !lbl.toLowerCase().endsWith(".xml")) {
+							// because of an issue in ehealth DocumentDescriptor we can only handle pdf and xml files.
+							if (lbl == null || (!lbl.toLowerCase().endsWith(".xml")
+								&& !lbl.toLowerCase().endsWith(".pdf"))) {
 								return false;
 							}
 						}

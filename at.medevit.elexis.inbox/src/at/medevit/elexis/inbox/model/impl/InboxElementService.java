@@ -113,6 +113,7 @@ public class InboxElementService implements IInboxElementService {
 					} catch (IOException e) {
 						LoggerFactory.getLogger(InboxElementService.class).error("file copy error",
 							e);
+						return;
 					}
 				}
 				InboxElement element =

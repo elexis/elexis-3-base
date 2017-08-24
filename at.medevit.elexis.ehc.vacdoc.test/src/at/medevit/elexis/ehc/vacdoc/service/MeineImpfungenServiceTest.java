@@ -48,10 +48,6 @@ public class MeineImpfungenServiceTest {
 		if (ahvNumber == null || ahvNumber.isEmpty()) {
 			addAHVNumber(patient, 1);
 		}
-		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH,
-			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH));
-		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS,
-			System.getProperty(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS));
 		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PATH,
 			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PATH));
 		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PASS,

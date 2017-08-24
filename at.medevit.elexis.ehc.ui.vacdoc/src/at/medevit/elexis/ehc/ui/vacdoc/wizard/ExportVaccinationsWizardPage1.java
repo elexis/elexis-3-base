@@ -26,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
@@ -99,10 +98,6 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		Composite c = new Composite(composite, SWT.RIGHT_TO_LEFT);
 		c.setLayout(new GridLayout(2, false));
 		c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Button btnType = new Button(c, SWT.RADIO);
-		btnType.setText("Export als " + exportType.name());
-		btnType.setSelection(true);
 		
 		setControl(composite);
 	}

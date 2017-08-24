@@ -106,7 +106,7 @@ public class OutboxElementService implements IOutboxElementService {
 	}
 	
 	@Override
-	public Optional<File> getTempFileWithContents(File folder, OutboxElement outboxElement)
+	public Optional<File> createTempFileWithContents(File folder, OutboxElement outboxElement)
 		throws IOException{
 		File tmpDir = CoreHub.getTempDir();
 		InputStream in = getContentsAsStream(outboxElement);

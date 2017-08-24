@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -30,6 +31,11 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -41,6 +47,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
@@ -60,6 +67,7 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Mandant;
+import ch.elexis.data.Patient;
 
 public class InboxView extends ViewPart {
 	
@@ -186,6 +194,59 @@ public class InboxView extends ViewPart {
 			}
 		});
 		
+		final Transfer[] dropTransferTypes = new Transfer[] {
+			FileTransfer.getInstance()
+		};
+		viewer.addDropSupport(DND.DROP_COPY, dropTransferTypes, new DropTargetAdapter() {
+			
+			@Override
+			public void dragEnter(DropTargetEvent event){
+				event.detail = DND.DROP_COPY;
+			}
+			
+			@Override
+			public void drop(DropTargetEvent event){
+				if (dropTransferTypes[0].isSupportedType(event.currentDataType)) {
+					String[] files = (String[]) event.data;
+					Patient patient = null;
+					
+					if (event.item != null) {
+						Object data = event.item.getData();
+						if (data instanceof InboxElement) {
+							patient = ((InboxElement) data).getPatient();
+						}
+						else if (data instanceof PatientInboxElements) {
+							patient = ((PatientInboxElements) data).getPatient();
+						}
+					}
+					
+					if (patient == null) {
+						// fallback
+						patient = ElexisEventDispatcher.getSelectedPatient();
+					}
+					if (patient != null) {
+						if (files != null) {
+							for (String file : files) {
+								try {
+									InboxServiceComponent.getService().createInboxElement(patient,
+										ElexisEventDispatcher.getSelectedMandator(), file, true);
+								} catch (Exception e) {
+									LoggerFactory.getLogger(InboxView.class).warn("drop error", e);
+								}
+							}
+						}
+						
+						viewer.refresh();
+					} else {
+						MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "Warnung",
+							"Bitte wählen Sie zuerst einen Patienten aus.");
+					}
+					
+				}
+			}
+			
+		});
+							
 		addFilterActions(menuManager);
 		
 		InboxServiceComponent.getService().addUpdateListener(new IInboxUpdateListener() {

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.model;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Kontakt;
@@ -80,10 +83,14 @@ public class InboxElement extends PersistentObject {
 	}
 	
 	public InboxElement(Patient patient, Kontakt mandant, PersistentObject object){
+		this(patient, mandant, object.storeToString());
+	}
+	
+	public InboxElement(Patient patient, Kontakt mandant, String element){
 		create(null);
 		set(FLD_PATIENT, patient != null ? patient.getId() : "");
 		set(FLD_MANDANT, mandant.getId());
-		set(FLD_OBJECT, object.storeToString());
+		set(FLD_OBJECT, element);
 		set(FLD_STATE, Integer.toString(State.NEW.ordinal()));
 	}
 	
@@ -97,12 +104,13 @@ public class InboxElement extends PersistentObject {
 	
 	@Override
 	public String getLabel(){
-		PersistentObject object = CoreHub.poFactory.createFromString(get(FLD_OBJECT));
-		if (object != null && object.exists()) {
-			return object.getLabel();
-		} else {
-			return "InboxElement " + this.getId() + " with no object.";
+		Object element = getObject();
+		if (element instanceof PersistentObject) {
+			return ((PersistentObject) element).getLabel();
+		} else if (element instanceof Path) {
+			return ((Path) element).getFileName().toString();
 		}
+		return "InboxElement " + this.getId() + " with no object.";
 	}
 	
 	/**
@@ -111,14 +119,29 @@ public class InboxElement extends PersistentObject {
 	 * @return
 	 */
 	public Object getObject(){
-		PersistentObject object = CoreHub.poFactory.createFromString(get(FLD_OBJECT));
-		if (object != null && object.exists()) {
-			return object;
-		} else {
-			return null;
+		String uri = get(FLD_OBJECT);
+		InboxElementType inboxElementType = InboxElementType.parseType(uri);
+		
+		if (inboxElementType != null) {
+			switch (inboxElementType) {
+			case DB:
+				PersistentObject object = CoreHub.poFactory.createFromString(uri);
+				if (object != null && object.exists()) {
+					return object;
+				}
+				break;
+			case FILE:
+				String refFile = uri.substring(InboxElementType.FILE.getPrefix().length());
+				Path p = Paths.get(refFile);
+				return p;
+			default:
+				break;
+			}
 		}
+		return null;
 	}
 	
+
 	@Override
 	protected String getTableName(){
 		return TABLENAME;

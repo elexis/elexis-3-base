@@ -7,6 +7,10 @@
             class="at.medevit.elexis.inbox.core.ui.LabResultUiProvider"
             id="at.medevit.elexis.inbox.core.ui.uiprovider">
       </uiprovider>
+      <uiprovider
+            class="at.medevit.elexis.inbox.core.ui.FileUiProvider"
+            id="at.medevit.elexis.inbox.core.ui.uiprovider.file">
+      </uiprovider>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

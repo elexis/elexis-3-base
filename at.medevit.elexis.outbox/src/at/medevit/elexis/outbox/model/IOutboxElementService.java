@@ -97,6 +97,6 @@ public interface IOutboxElementService {
 	 * @param outboxElement
 	 * @return
 	 */
-	public Optional<File> getTempFileWithContents(File folder, OutboxElement outboxElement)
+	public Optional<File> createTempFileWithContents(File folder, OutboxElement outboxElement)
 		throws IOException;
 }

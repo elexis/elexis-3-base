@@ -158,12 +158,6 @@ public class GDTProtokollView extends ViewPart {
 	}
 	
 	private void initTableViewer(Composite parent){
-		// check parent
-		if (parent.getChildren().length > 0) {
-			throw new RuntimeException(
-				"The parent composite for the table needs to be empty for TableColumnLayout.");
-		}
-		
 		this.tableViewer =
 			new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER
 				| SWT.FULL_SELECTION);

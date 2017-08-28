@@ -647,6 +647,10 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return getVKPreis().doubleValue();
 	}
 	
+	/**
+	 * <b>use only when setting the price manually for an override.</b> user defined prices are
+	 * represented in negative values, we always need positive values however
+	 */
 	@Override
 	public void setPublicPrice(Double amount){
 		if (amount < 0)

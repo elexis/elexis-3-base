@@ -689,14 +689,20 @@ public class DocboxCDA {
 		
 		if (isOidMedelexisProjectAvailable()) {
 			SC modelName = new SC();
-			modelName.setCode("herstellerKey");
+			modelName.setCode("medelexis");
 			modelName.setCodeSystem("2.16.756.5.30.1.105.4");
 			modelName.setContent("medelexis");
+			assignedDevice.setManufacturerModelName(modelName);
+		} else {
+			SC modelName = new SC();
+			modelName.setCode("elexis");
+			modelName.setCodeSystem("2.16.756.5.30.1.105.4");
+			modelName.setContent("elexis");
 			assignedDevice.setManufacturerModelName(modelName);
 		}
 		
 		SC softwareName = new SC();
-		softwareName.setCode("softwareKey");
+		softwareName.setCode("elexis");
 		softwareName.setCodeSystem("2.16.756.5.30.1.105.4");
 		softwareName.setContent("elexis");
 		assignedDevice.setSoftwareName(softwareName);

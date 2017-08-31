@@ -16,8 +16,8 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
+import ch.elexis.core.ui.compatibility.ElexisFastViewUtil;
 import ch.elexis.core.ui.constants.UiResourceConstants;
-import ch.elexis.core.ui.fastview.ElexisFastViewUtil;
 import ch.elexis.core.ui.laboratory.views.LaborView;
 import ch.elexis.core.ui.medication.views.DauerMediView;
 import ch.elexis.core.ui.views.AUF2;

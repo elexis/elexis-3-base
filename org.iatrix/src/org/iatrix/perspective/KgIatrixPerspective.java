@@ -19,11 +19,11 @@ import org.iatrix.IatrixActivator;
 import org.iatrix.views.JournalView;
 import org.iatrix.views.KonsListView;
 
+import ch.elexis.core.ui.compatibility.ElexisFastViewUtil;
 import ch.elexis.core.ui.constants.UiResourceConstants;
 import ch.elexis.core.ui.contacts.views.KontaktDetailView;
 import ch.elexis.core.ui.contacts.views.KontakteView;
 import ch.elexis.core.ui.contacts.views.PatientDetailView2;
-import ch.elexis.core.ui.fastview.ElexisFastViewUtil;
 import ch.elexis.core.ui.laboratory.views.LabNotSeenView;
 import ch.elexis.core.ui.laboratory.views.LaborView;
 import ch.elexis.core.ui.medication.views.DauerMediView;

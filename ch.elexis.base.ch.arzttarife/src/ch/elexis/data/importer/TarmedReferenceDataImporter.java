@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.healthmarketscience.jackcess.Database;
+
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
@@ -50,8 +52,6 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
-
-import com.healthmarketscience.jackcess.Database;
 
 public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	private static final Logger logger = LoggerFactory.getLogger(TarmedReferenceDataImporter.class);
@@ -223,31 +223,60 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 					"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
-				// get LNR_MASTER
+				// get LEISTUNG_HIERARCHIE
 				rsub =
 					stmCached.query(String.format(
-						"SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_SLAVE=%s", ImportPrefix,
+						"SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_MASTER=%s", ImportPrefix,
 						JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
 				validResults = getValidValueMaps(rsub, validFrom);
 				if (!validResults.isEmpty()) {
-					// importing all bezugs ziffer will mess up tarmed bill -> just import 1st
-					// StringBuilder sb = new StringBuilder();
-					// for (Map<String, String> map : validResults) {
-					// if (sb.length() == 0)
-					// sb.append(map.get("LNR_MASTER"));
-					// else
-					// sb.append(", " + map.get("LNR_MASTER"));
-					// }
-					Map<String, String> what = validResults.get(0);
-					if (what != null) {
-						String content = what.get("LNR_MASTER"); //$NON-NLS-1$
-						if (content != null)
-							ext.put("Bezug", content); //$NON-NLS-1$
+					// do not import directly as bezug, that will lead to incorrect bills
+					StringBuilder sb = new StringBuilder();
+					for (Map<String, String> map : validResults) {
+						if (sb.length() == 0)
+							sb.append(map.get("LNR_SLAVE"));
+						else
+							sb.append(", " + map.get("LNR_SLAVE"));
 					}
+					ext.put(TarmedLeistung.EXT_FLD_HIERARCHY_SLAVES, sb.toString());
 				}
 				rsub.close();
 				
-				// get LNR_SLAVE, TYP
+				// get LEISTUNG_GRUPPEN
+				rsub =
+					stmCached.query(String.format("SELECT * FROM %sLEISTUNG_GRUPPEN WHERE LNR=%s",
+						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				validResults = getValidValueMaps(rsub, validFrom);
+				if (!validResults.isEmpty()) {
+					StringBuilder sb = new StringBuilder();
+					for (Map<String, String> map : validResults) {
+						if (sb.length() == 0)
+							sb.append(map.get("GRUPPE"));
+						else
+							sb.append(", " + map.get("GRUPPE"));
+					}
+					ext.put(TarmedLeistung.EXT_FLD_SERVICE_GROUPS, sb.toString());
+				}
+				rsub.close();
+				
+				// get LEISTUNG_BLOECKE
+				rsub =
+					stmCached.query(String.format("SELECT * FROM %sLEISTUNG_BLOECKE WHERE LNR=%s",
+						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				validResults = getValidValueMaps(rsub, validFrom);
+				if (!validResults.isEmpty()) {
+					StringBuilder sb = new StringBuilder();
+					for (Map<String, String> map : validResults) {
+						if (sb.length() == 0)
+							sb.append(map.get("BLOCK"));
+						else
+							sb.append(", " + map.get("BLOCK"));
+					}
+					ext.put(TarmedLeistung.EXT_FLD_SERVICE_BLOCKS, sb.toString());
+				}
+				rsub.close();
+				
+				// get LEISTUNG_KOMBINATION
 				rsub =
 					stmCached.query(String.format(
 						"SELECT * FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER=%s", ImportPrefix,

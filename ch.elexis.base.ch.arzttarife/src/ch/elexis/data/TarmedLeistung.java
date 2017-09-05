@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
@@ -57,6 +58,10 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public static final String FLD_TEXT = "Text";
 	public static final String FLD_NICK = "Nick";
 	public static final String FLD_PARENT = "Parent";
+	
+	public static final String EXT_FLD_HIERARCHY_SLAVES = "HierarchySlaves";
+	public static final String EXT_FLD_SERVICE_GROUPS = "ServiceGroups";
+	public static final String EXT_FLD_SERVICE_BLOCKS = "ServiceBlocks";
 	
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
 	
@@ -648,5 +653,45 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	@Override
 	public int getCacheTime(){
 		return DBConnection.CACHE_TIME_MAX;
+	}
+	
+	/**
+	 * Get the list of codes of the possible slave services allowed by tarmed.
+	 * 
+	 * @return
+	 */
+	public List<String> getHierarchy(){
+		return getExtStringListField(TarmedLeistung.EXT_FLD_HIERARCHY_SLAVES);
+	}
+	
+	private List<String> getExtStringListField(String extKey){
+		List<String> ret = new ArrayList<>();
+		loadExtension();
+		String values = ext.get(extKey);
+		if (values != null && !values.isEmpty()) {
+			String[] parts = values.split(", ");
+			for (String string : parts) {
+				ret.add(string);
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Get the list of service groups this service is part of.
+	 * 
+	 * @return
+	 */
+	public List<String> getServiceGroups(){
+		return getExtStringListField(TarmedLeistung.EXT_FLD_SERVICE_GROUPS);
+	}
+	
+	/**
+	 * Get the list of service blocks this service is part of.
+	 * 
+	 * @return
+	 */
+	public List<String> getServiceBlocks(){
+		return getExtStringListField(TarmedLeistung.EXT_FLD_SERVICE_BLOCKS);
 	}
 }

@@ -3,6 +3,7 @@ package ch.elexis.data;
 import java.util.List;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.interfaces.IFall;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.importer.ComplementaryReferenceDataImporter;
@@ -94,7 +95,7 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 	}
 	
 	@Override
-	public int getTP(TimeTool date, Fall fall){
+	public int getTP(TimeTool date, IFall fall){
 		// configured hourly wage, or fixed value, in cents
 		if (isFixedValueSet()) {
 			return getFixedValue() * 100;
@@ -151,7 +152,7 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 	}
 	
 	@Override
-	public double getFactor(TimeTool date, Fall fall){
+	public double getFactor(TimeTool date, IFall fall){
 		return 1;
 	}
 	

@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -70,6 +71,9 @@ public class TarmedOptifierTest {
 		assertEquals(IStatus.OK, retStatus.getCode());
 	}
 	
+	private TarmedLeistung additionalService;
+	private TarmedLeistung mainService;
+	
 	@Test
 	public void testAddCompatibleAndIncompatible(){
 		Result<IVerrechenbar> resultGriss = optifier.add(tlUltrasound, konsGriss);
@@ -117,5 +121,59 @@ public class TarmedOptifierTest {
 		
 		resCompatible = optifier.isCompatible(tlBaseFirst5Min, tlBaseRadiologyHospital);
 		assertTrue(resCompatible.isOK());
+	}
+	
+	@Test
+	public void testSetBezug(){
+		additionalService = (TarmedLeistung) TarmedLeistung.getFromCode("39.5010");
+		mainService = (TarmedLeistung) TarmedLeistung.getFromCode("39.5060");
+		// additional without main, not allowed
+		Result<IVerrechenbar> resultSter = optifier.add(additionalService, konsSter);
+		assertFalse(resultSter.isOK());
+		// additional after main, allowed
+		resultSter = optifier.add(mainService, konsSter);
+		assertTrue(resultSter.isOK());
+		assertTrue(getVerrechent(konsSter, mainService).isPresent());
+		
+		resultSter = optifier.add(additionalService, konsSter);
+		assertTrue(resultSter.isOK());
+		assertTrue(getVerrechent(konsSter, additionalService).isPresent());
+		
+		// another additional, not allowed
+		resultSter = optifier.add(additionalService, konsSter);
+		assertFalse(resultSter.isOK());
+		assertTrue(getVerrechent(konsSter, additionalService).isPresent());
+		
+		// remove, and add again
+		Optional<Verrechnet> verrechnet = getVerrechent(konsSter, additionalService);
+		assertTrue(verrechnet.isPresent());
+		Result<Verrechnet> result = optifier.remove(verrechnet.get(), konsSter);
+		assertTrue(result.isOK());
+		resultSter = optifier.add(additionalService, konsSter);
+		assertTrue(resultSter.isOK());
+		// add another main and additional
+		resultSter = optifier.add(mainService, konsSter);
+		assertTrue(resultSter.isOK());
+		assertTrue(getVerrechent(konsSter, mainService).isPresent());
+		
+		resultSter = optifier.add(additionalService, konsSter);
+		assertTrue(resultSter.isOK());
+		assertTrue(getVerrechent(konsSter, additionalService).isPresent());
+		
+		// remove main service, should also remove additional service
+		verrechnet = getVerrechent(konsSter, mainService);
+		result = optifier.remove(verrechnet.get(), konsSter);
+		assertTrue(result.isOK());
+		assertFalse(getVerrechent(konsSter, mainService).isPresent());
+		assertFalse(getVerrechent(konsSter, additionalService).isPresent());
+	}
+	
+	private Optional<Verrechnet> getVerrechent(Konsultation kons, TarmedLeistung leistung){
+		for (Verrechnet verrechnet : kons.getLeistungen()) {
+			if (verrechnet.getCode().equals(leistung.getCode())) {
+				return Optional.of(verrechnet);
+			}
+		}
+		return Optional.empty();
 	}
 }

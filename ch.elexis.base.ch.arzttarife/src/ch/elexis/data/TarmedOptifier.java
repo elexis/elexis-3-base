@@ -14,6 +14,7 @@ package ch.elexis.data;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +23,8 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.data.importer.TarmedLeistungLimits;
+import ch.elexis.data.importer.TarmedLeistungLimits.LimitsEinheit;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.RechnungsPrefs;
 import ch.rgw.tools.Result;
@@ -90,8 +93,6 @@ public class TarmedOptifier implements IOptifier {
 
 		TarmedLeistung tc = (TarmedLeistung) code;
 		List<Verrechnet> lst = kons.getLeistungen();
-		boolean checkBezug = false;
-		boolean bezugOK = true;
 		/*
 		 * TODO Hier checken, ob dieser code mit der Dignität und
 		 * Fachspezialisierung des aktuellen Mandanten usw. vereinbar ist
@@ -99,12 +100,6 @@ public class TarmedOptifier implements IOptifier {
 
 		Hashtable ext = tc.loadExtension();
 
-		// Bezug prüfen
-		String bezug = (String) ext.get("Bezug"); //$NON-NLS-1$
-		if (!StringTool.isNothing(bezug)) {
-			checkBezug = true;
-			bezugOK = false;
-		}
 		// Gültigkeit gemäss Datum prüfen
 		if (bOptify) {
 			TimeTool date = new TimeTool(kons.getDatum());
@@ -155,7 +150,7 @@ public class TarmedOptifier implements IOptifier {
 
 		if (tc.getCode().matches("35.0020")) {
 			List<Verrechnet> opCodes = getOPList(lst);
-			List<Verrechnet> opReduction = getOPReduction(lst);
+			List<Verrechnet> opReduction = getVerrechnetMatchingCode(lst, "35.0020");
 			// updated reductions to codes, and get not yet reduced codes
 			List<Verrechnet> availableCodes = updateOPReductions(opCodes, opReduction);
 			if (availableCodes.isEmpty()) {
@@ -176,18 +171,7 @@ public class TarmedOptifier implements IOptifier {
 				if (!tc.requiresSide()) {
 					newVerrechnet = v;
 					newVerrechnet.setZahl(newVerrechnet.getZahl() + 1);
-				}
-				if (bezugOK) {
 					break;
-				}
-			}
-			// "Nur zusammen mit" - Bedingung erfüllt ?
-			if (checkBezug && bOptify) {
-				if (v.getCode().equals(bezug)) {
-					bezugOK = true;
-					if (newVerrechnet != null) {
-						break;
-					}
 				}
 			}
 		}
@@ -249,15 +233,45 @@ public class TarmedOptifier implements IOptifier {
 			lst.add(newVerrechnet);
 		}
 		
-		/*
-		 * Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten ->
-		 * vorerst raus // "Zusammen mit" - Bedingung nicht erfüllt ->
-		 * Hauptziffer einfügen. if(checkBezug){ if(bezugOK==false){
-		 * TarmedLeistung tl=TarmedLeistung.load(bezug); Result<IVerrechenbar>
-		 * r1=add(tl,kons); if(!r1.isOK()){
-		 * r1.add(Log.WARNINGS,KOMBINATION,code.getCode()+" nur zusammen mit
-		 * "+bezug,null,false); //$NON-NLS-1$ return r1; } } }
-		 */
+		// set bezug of zuschlagsleistung and referenzleistung
+		if (shouldDetermineReference(tc)) {
+			// lookup available masters
+			List<Verrechnet> masters = getPossibleMasters(newVerrechnet, lst);
+			if (masters.isEmpty()) {
+				int zahl = newVerrechnet.getZahl();
+				if (zahl > 1) {
+					newVerrechnet.setZahl(zahl - 1);
+				} else {
+					newVerrechnet.delete();
+				}
+				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KOMBINATION,
+					"Für die Zuschlagsleitung " + code.getCode()
+						+ " konnte keine Hauptleistung gefunden werden.",
+					null, false);
+			}
+			if (!masters.isEmpty()) {
+				String bezug = newVerrechnet.getDetail("Bezug");
+				if (bezug == null) {
+					// set bezug to first available master
+					newVerrechnet.setDetail("Bezug", masters.get(0).getCode());
+				} else {
+					boolean found = false;
+					// lookup matching, or create new Verrechnet
+					for (Verrechnet mVerr : masters) {
+						if (mVerr.getCode().equals(bezug)) {
+							// just mark as found as amount is already increased
+							found = true;
+						}
+					}
+					if (!found) {
+						// create a new Verrechent and decrease amount
+						newVerrechnet.setZahl(newVerrechnet.getZahl() - 1);
+						newVerrechnet = new Verrechnet(code, kons, 1);
+						newVerrechnet.setDetail("Bezug", masters.get(0).getCode());
+					}
+				}
+			}
+		}
 
 		// Prüfen, ob zu oft verrechnet - diese Version prüft nur "pro
 		// Sitzung" und "pro Tag".
@@ -476,6 +490,73 @@ public class TarmedOptifier implements IOptifier {
 		return new Result<IVerrechenbar>(null);
 	}
 	
+	private boolean shouldDetermineReference(TarmedLeistung tc){
+		String typ = tc.getServiceTyp();
+		boolean becauseOfType = typ.equals("Z");
+		if (becauseOfType) {
+			String text = tc.getText();
+			return text.startsWith("+") || text.startsWith("-");
+		}
+		return false;
+	}
+	
+	private List<Verrechnet> getAvailableMasters(TarmedLeistung slave, List<Verrechnet> lst){
+		List<Verrechnet> ret = new LinkedList<Verrechnet>();
+		for (Verrechnet v : lst) {
+			if (v.getVerrechenbar() instanceof TarmedLeistung) {
+				TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+				if (tl.getHierarchy().contains(slave.getCode())) { //$NON-NLS-1$
+					ret.add(v);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	private List<Verrechnet> getPossibleMasters(Verrechnet slave, List<Verrechnet> lst){
+		TarmedLeistung slaveTarmed = (TarmedLeistung) slave.getVerrechenbar();
+		// lookup available masters
+		List<Verrechnet> masters = getAvailableMasters(slaveTarmed, lst);
+		// lookup other slaves with same code
+		List<Verrechnet> slaves = getVerrechnetMatchingCode(lst, slave.getCode());
+		// check which masters are left to be referenced
+		int maxPerMaster = getMaxPerMaster(slaveTarmed);
+		if (maxPerMaster > 0) {
+			for (Verrechnet sVerr : slaves) {
+				String bezug = sVerr.getDetail("Bezug");
+				// slave already verr at this time, so decrease
+				int sVerrZahl = sVerr.getZahl();
+				if (sVerrZahl > 0 && slave == sVerr) {
+					sVerrZahl--;
+				}
+				if (bezug != null) {
+					for (Iterator<Verrechnet> iterator = masters.iterator(); iterator.hasNext();) {
+						Verrechnet mVerr = (Verrechnet) iterator.next();
+						if (mVerr.getCode().equals(bezug)) {
+							if (sVerrZahl >= (mVerr.getZahl() * maxPerMaster)) {
+								iterator.remove();
+							}
+						}
+					}
+				}
+			}
+		}
+		return masters;
+	}
+	
+	private int getMaxPerMaster(TarmedLeistung slave){
+		String lim = (String) slave.loadExtension().get("limits");
+		List<TarmedLeistungLimits> limits = TarmedLeistungLimits.of(lim);
+		for (TarmedLeistungLimits limit : limits) {
+			if (limit.getEinheit() == LimitsEinheit.HAUPTLEISTUNG) {
+				// only an integer makes sense here
+				return (int) limit.getMenge();
+			}
+		}
+		// default to unknown
+		return -1;
+	}
+	
 	/**
 	 * Create a new mapping between an OP I reduction (35.0020) and a service from the OP I section.
 	 * 
@@ -501,7 +582,7 @@ public class TarmedOptifier implements IOptifier {
 	 * @param opCodes
 	 *            list of all available OP I codes see {@link #getOPList(List)}
 	 * @param opReduction
-	 *            list of all available reduction codes see {@link #getOPReduction(List)}
+	 *            list of all available reduction codes see {@link #getVerrechnetMatchingCode(List)}
 	 * @return list of not unmapped OP I codes
 	 */
 	private List<Verrechnet> updateOPReductions(List<Verrechnet> opCodes,
@@ -550,12 +631,24 @@ public class TarmedOptifier implements IOptifier {
 		return ret;
 	}
 	
-	private List<Verrechnet> getOPReduction(List<Verrechnet> lst){
+	private List<Verrechnet> getVerrechnetMatchingCode(List<Verrechnet> lst, String code){
 		List<Verrechnet> ret = new ArrayList<Verrechnet>();
 		for (Verrechnet v : lst) {
 			if (v.getVerrechenbar() instanceof TarmedLeistung) {
 				TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
-				if (tl.getCode().equals("35.0020")) { //$NON-NLS-1$
+				if (tl.getCode().equals(code)) { //$NON-NLS-1$
+					ret.add(v);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	private List<Verrechnet> getVerrechnetWithBezugMatchingCode(List<Verrechnet> lst, String code){
+		List<Verrechnet> ret = new ArrayList<Verrechnet>();
+		for (Verrechnet v : lst) {
+			if (v.getVerrechenbar() instanceof TarmedLeistung) {
+				if (code.equals(v.getDetail("Bezug"))) { //$NON-NLS-1$
 					ret.add(v);
 				}
 			}
@@ -640,6 +733,15 @@ public class TarmedOptifier implements IOptifier {
 		List<Verrechnet> l = kons.getLeistungen();
 		l.remove(code);
 		code.delete();
+		// if no more left, check for bezug and remove
+		List<Verrechnet> left = getVerrechnetMatchingCode(l, code.getCode());
+		if (left.isEmpty()) {
+			List<Verrechnet> verrechnetWithBezug =
+				getVerrechnetWithBezugMatchingCode(kons.getLeistungen(), code.getCode());
+			for (Verrechnet verrechnet : verrechnetWithBezug) {
+				remove(verrechnet, kons);
+			}
+		}
 		return new Result<Verrechnet>(code);
 	}
 

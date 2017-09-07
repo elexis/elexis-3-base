@@ -694,4 +694,9 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public List<String> getServiceBlocks(){
 		return getExtStringListField(TarmedLeistung.EXT_FLD_SERVICE_BLOCKS);
 	}
+	
+	public String getServiceTyp(){
+		loadExtension();
+		return ext.get("LEISTUNG_TYP");
+	}
 }

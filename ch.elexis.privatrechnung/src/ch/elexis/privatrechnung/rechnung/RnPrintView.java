@@ -50,7 +50,6 @@ public class RnPrintView extends ViewPart {
 	private static NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
 	
 	final static String ID = "ch.elexis.privatrechnung.view";
-	String templateBill, templateESR;
 	TextContainer tc;
 	Fall fall;
 	
@@ -180,7 +179,8 @@ public class RnPrintView extends ViewPart {
 		
 		String toPrinter = CoreHub.localCfg.get("Drucker/A4/Name", null);
 		tc.getPlugin().print(toPrinter, null, false);
-		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());
+		tc.createFromTemplateName(null, PrivaterechnungTextTemplateRequirement.getESRTemplate(),
+			Brief.RECHNUNG, adressat, rn.getNr());
 		fillFields();
 		ESR esr =
 			new ESR(CoreHub.globalCfg.get(PreferenceConstants.esrIdentity, ""),

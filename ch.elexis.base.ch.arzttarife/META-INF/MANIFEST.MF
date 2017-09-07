@@ -26,7 +26,9 @@ Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.tarmedprefs,
  ch.elexis.views
 Bundle-ClassPath: .
-Import-Package: org.jdom,
+Import-Package: 
+ ch.elexis.core.verification.billing,
+ org.jdom,
  org.jdom.input,
  org.jdom.output,
  org.jdom.transform,

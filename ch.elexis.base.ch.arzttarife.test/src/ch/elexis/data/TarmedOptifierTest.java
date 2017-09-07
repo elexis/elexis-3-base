@@ -13,16 +13,21 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.model.BillingVerification;
+import ch.elexis.core.model.IVerificationService;
+import ch.elexis.core.verification.billing.BillingVerificationService;
 import ch.elexis.data.importer.TarmedReferenceDataImporter;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.Result.SEVERITY;
 
 public class TarmedOptifierTest {
 	private static TarmedOptifier optifier;
 	private static Patient patGrissemann, patStermann;
-	private static Konsultation konsGriss, konsSter;
+	private static Konsultation konsGriss, konsSter, konsVs;
 	private static TarmedLeistung tlBaseFirst5Min, tlBaseXRay, tlBaseRadiologyHospital,
 			tlUltrasound, tlTapingCat1;
 			
@@ -49,13 +54,17 @@ public class TarmedOptifierTest {
 		konsGriss.addLeistung(tlBaseFirst5Min);
 		
 		//Patient Stermann with case and consultation
-		patStermann = new Patient("Stermann", "Dirk", "07.12.1965", Patient.MALE);
+		patStermann = new Patient("Stermann", "Dirk", "07.12.1965", Patient.FEMALE);
 		Fall fallSter = patStermann.neuerFall("Testfall Stermann", Fall.getDefaultCaseReason(),
 			Fall.getDefaultCaseLaw());
 		fallSter.setInfoElement("Kostenträger", patStermann.getId());
 		konsSter = new Konsultation(fallSter);
 		konsSter.addDiagnose(TICode.getFromCode("T1"));
 		konsSter.addLeistung(tlBaseFirst5Min);
+		
+		konsVs = new Konsultation(fallSter);
+		konsVs.addDiagnose(TICode.getFromCode("T1"));
+		konsVs.addLeistung(tlBaseFirst5Min);
 	}
 	
 	private static void importTarmedReferenceData() throws FileNotFoundException{
@@ -117,5 +126,71 @@ public class TarmedOptifierTest {
 		
 		resCompatible = optifier.isCompatible(tlBaseFirst5Min, tlBaseRadiologyHospital);
 		assertTrue(resCompatible.isOK());
+	}
+	
+	@Test
+	@Ignore("reference code implementation for sumex needed")
+	public void testValidateSumexVsExlexis(){
+		int leistungenSize = konsVs.getLeistungen().size();
+		
+		IVerificationService<BillingVerification> iVerificationService =
+			new BillingVerificationService();
+		TarmedVerificationConverter tarmedVerificationConverter = new TarmedVerificationConverter();
+
+		//1. case-----------------------------------------------------------------------------
+		// sumex validation
+		System.setProperty("sumexServerUrl", "http://172.18.0.11:9000");
+		BillingVerification sumexResult =
+			iVerificationService.validate(
+				BillingVerificationContext.create(konsVs, tarmedVerificationConverter),
+				tarmedVerificationConverter.convert(tlUltrasound).get());
+		assertEquals(IStatus.OK, sumexResult.getStatus().getSeverity());
+		assertTrue(sumexResult.getValidatorId().contains("Sumex"));
+		
+		// elexis validation
+		System.setProperty("sumexServerUrl", "");
+		BillingVerification elexisResult =
+			iVerificationService.validate(
+				BillingVerificationContext.create(konsVs, tarmedVerificationConverter),
+				tarmedVerificationConverter.convert(tlUltrasound).get());
+		assertTrue(elexisResult.getValidatorId().contains("Elexis"));
+		assertEquals(IStatus.OK, elexisResult.getStatus().getSeverity());
+		
+		// check if no new leistungen was added
+		assertEquals(leistungenSize, konsVs.getLeistungen().size());
+		
+		// finally add new leistung
+		assertEquals(SEVERITY.OK, konsVs.addLeistung(tlUltrasound).getSeverity());
+		leistungenSize = konsVs.getLeistungen().size();
+		//------------------------------------------------------------------------------
+		
+		//2. case-----------------------------------------------------------------------------
+		// sumex validation @TODO fails reference code implementation needed!)
+		System.setProperty("sumexServerUrl", "http://172.18.0.11:9000");
+		sumexResult = iVerificationService.validate(
+			BillingVerificationContext.create(konsVs, tarmedVerificationConverter),
+			tarmedVerificationConverter.convert(tlBaseXRay).get());
+		assertEquals(IStatus.ERROR, sumexResult.getStatus().getSeverity());
+		assertTrue(sumexResult.getValidatorId().contains("Sumex"));
+		
+		// elexis validation
+		System.setProperty("sumexServerUrl", "");
+		elexisResult =
+			iVerificationService.validate(
+				BillingVerificationContext.create(konsVs, tarmedVerificationConverter),
+				tarmedVerificationConverter.convert(tlBaseXRay).get());
+		assertTrue(elexisResult.getValidatorId().contains("Elexis"));
+		assertEquals(IStatus.WARNING, elexisResult.getStatus().getSeverity());
+		
+		// check if no new leistungen was added
+		assertEquals(leistungenSize, konsVs.getLeistungen().size());
+		
+		// check if both validators has the same result
+		assertEquals(elexisResult.getStatus().getMessage(), sumexResult.getStatus().getMessage());
+		
+		// finally add new leistung
+		assertEquals(SEVERITY.WARNING, konsVs.addLeistung(tlBaseXRay).getSeverity());
+		assertEquals(leistungenSize, konsVs.getLeistungen().size());
+		//------------------------------------------------------------------------------
 	}
 }

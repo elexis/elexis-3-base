@@ -35,6 +35,7 @@ import at.medevit.elexis.agenda.ui.function.EventDropFunction;
 import at.medevit.elexis.agenda.ui.function.EventResizeFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
+import ch.elexis.core.data.activator.CoreHub;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
 	private List<String> selectedResources = new ArrayList<>();
@@ -103,6 +104,13 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 			@Override
 			public void changed(ProgressEvent event){
 				if (event.current == 0 && event.total == 0) {
+					
+					String dayStartsAt =
+						CoreHub.globalCfg.get("agenda/beginnStundeTagesdarstellung", "0000");
+					String dayEndsAt =
+						CoreHub.globalCfg.get("agenda/endStundeTagesdarstellung", "2359");
+					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
+					
 					initializeResources();
 					if (currentSpanSize != null) {
 						setSelectedSpanSize(currentSpanSize);

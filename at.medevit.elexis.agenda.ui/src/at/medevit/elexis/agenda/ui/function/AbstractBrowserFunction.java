@@ -13,13 +13,10 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 	}
 	
 	public void updateCalendarHeight(){
-		int estimatedHeaderSize = 125;
-		String updateHeight = "$('#calendar').fullCalendar('option', 'contentHeight', %d);";
-		
+		String updateHeight =
+			"$('#calendar').fullCalendar('option', 'contentHeight', (%d - $('#calendar').find('.fc-view-container').offset().top));";
 		int browserHeight = getBrowser().getBounds().height;
-		if (browserHeight > (2 * estimatedHeaderSize)) {
-			getBrowser().execute(String.format(updateHeight, browserHeight - estimatedHeaderSize));
-		}
+		getBrowser().execute(String.format(updateHeight, browserHeight));
 	}
 	
 	public void redraw(){

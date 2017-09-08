@@ -13,10 +13,11 @@
 package ch.elexis.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.constants.Preferences;
@@ -506,35 +507,62 @@ public class TarmedOptifier implements IOptifier {
 		return ret;
 	}
 	
-	private List<Verrechnet> getPossibleMasters(Verrechnet slave, List<Verrechnet> lst){
-		TarmedLeistung slaveTarmed = (TarmedLeistung) slave.getVerrechenbar();
+	private List<Verrechnet> getPossibleMasters(Verrechnet newSlave, List<Verrechnet> lst){
+		TarmedLeistung slaveTarmed = (TarmedLeistung) newSlave.getVerrechenbar();
 		// lookup available masters
 		List<Verrechnet> masters = getAvailableMasters(slaveTarmed, lst);
-		// lookup other slaves with same code
-		List<Verrechnet> slaves = getVerrechnetMatchingCode(lst, slave.getCode());
 		// check which masters are left to be referenced
 		int maxPerMaster = getMaxPerMaster(slaveTarmed);
 		if (maxPerMaster > 0) {
-			for (Verrechnet sVerr : slaves) {
-				String bezug = sVerr.getDetail("Bezug");
-				// slave already verr at this time, so decrease
-				int sVerrZahl = sVerr.getZahl();
-				if (sVerrZahl > 0 && slave == sVerr) {
-					sVerrZahl--;
-				}
-				if (bezug != null) {
-					for (Iterator<Verrechnet> iterator = masters.iterator(); iterator.hasNext();) {
-						Verrechnet mVerr = (Verrechnet) iterator.next();
-						if (mVerr.getCode().equals(bezug)) {
-							if (sVerrZahl >= (mVerr.getZahl() * maxPerMaster)) {
-								iterator.remove();
-							}
-						}
+			Map<Verrechnet, List<Verrechnet>> masterSlavesMap = getMasterToSlavesMap(newSlave, lst);
+			for (Verrechnet master : masterSlavesMap.keySet()) {
+				int masterCount = master.getZahl();
+				int slaveCount = 0;
+				for(Verrechnet slave : masterSlavesMap.get(master)) {
+					slaveCount += slave.getZahl();
+					if(slave == newSlave) {
+						slaveCount--;
 					}
+				}
+				if (masterCount <= (slaveCount * maxPerMaster)) {
+					masters.remove(master);
 				}
 			}
 		}
 		return masters;
+	}
+	
+	/**
+	 * Creates a map of masters associated to slaves by the Bezug. This map will not contain the
+	 * newSlave, as it has no Bezug set yet.
+	 * 
+	 * @param newSlave
+	 * @param lst
+	 * @return
+	 */
+	private Map<Verrechnet, List<Verrechnet>> getMasterToSlavesMap(Verrechnet newSlave,
+		List<Verrechnet> lst){
+		Map<Verrechnet, List<Verrechnet>> ret = new HashMap<>();
+		TarmedLeistung slaveTarmed = (TarmedLeistung) newSlave.getVerrechenbar();
+		// lookup available masters
+		List<Verrechnet> masters = getAvailableMasters(slaveTarmed, lst);
+		for (Verrechnet verrechnet : masters) {
+			ret.put(verrechnet, new ArrayList<Verrechnet>());
+		}
+		// lookup other slaves with same code
+		List<Verrechnet> slaves = getVerrechnetMatchingCode(lst, newSlave.getCode());
+		// add slaves to separate master list
+		for (Verrechnet slave : slaves) {
+			String bezug = slave.getDetail("Bezug");
+			if (bezug != null && !bezug.isEmpty()) {
+				for (Verrechnet master : ret.keySet()) {
+					if (master.getCode().equals(bezug)) {
+						ret.get(master).add(slave);
+					}
+				}
+			}
+		}
+		return ret;
 	}
 	
 	private int getMaxPerMaster(TarmedLeistung slave){

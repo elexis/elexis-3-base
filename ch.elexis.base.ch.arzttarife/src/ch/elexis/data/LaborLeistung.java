@@ -15,10 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.data.Fall;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.VerrechenbarAdapter;
-import ch.elexis.data.Xid;
+import ch.elexis.core.data.interfaces.IFall;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -116,11 +113,11 @@ public class LaborLeistung extends VerrechenbarAdapter {
 		return true;
 	}
 	
-	public int getTP(final TimeTool date, final Fall fall){
+	public int getTP(final TimeTool date, final IFall fall){
 		return checkZero(get("VK_Preis")) * 100; //$NON-NLS-1$
 	}
 	
-	public double getFactor(final TimeTool date, final Fall fall){
+	public double getFactor(final TimeTool date, final IFall fall){
 		double ret = getVKMultiplikator(date, "EAL"); //$NON-NLS-1$
 		if (ret == 1.0) { // compatibility layer
 			ret = getVKMultiplikator(date, "ch.elexis.data.LaborLeistung"); //$NON-NLS-1$

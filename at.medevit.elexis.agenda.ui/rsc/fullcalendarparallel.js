@@ -372,7 +372,7 @@ ParallelView = View.extend({
 		var scrollTime = moment.duration(this.opt('scrollTime'));
 	
 		var now =  this.calendar.getNow();
-		if (now >= this.intervalStart && now < this.intervalEnd) 
+		if (now._d.getUTCHours() >= 12 && now >= this.intervalStart && now < this.intervalEnd) 
 		{
 			scrollTime =  moment.duration("12:00:00");
 		}

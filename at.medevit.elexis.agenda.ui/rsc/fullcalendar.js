@@ -13984,7 +13984,7 @@ var AgendaView = FC.AgendaView = View.extend({
 		
 		// scrolls to 12:00:00 if current day is selected
 		var now =  this.calendar.getNow();
-		if (now >= this.intervalStart && now < this.intervalEnd) 
+		if (now._d.getUTCHours() >= 12 && now >= this.intervalStart && now < this.intervalEnd) 
 		{
 			scrollTime =  moment.duration("12:00:00");
 		}

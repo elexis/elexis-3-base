@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,16 +45,19 @@ import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.status.ElexisStatus;
+import ch.elexis.core.data.util.LocalLock;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.TimeTool;
 
 public class ArtikelstammImporter {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporter.class);
 	
 	private static Map<String, PRODUCT> products = new HashMap<String, PRODUCT>();
 	private static Map<String, LIMITATION> limitations = new HashMap<String, LIMITATION>();
-	
+	private static volatile boolean userCanceled = false;
 	/**
 	 * 
 	 * @param monitor
@@ -64,71 +69,101 @@ public class ArtikelstammImporter {
 	 */
 	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
 		Integer newVersion){
+		LocalLock lock = new LocalLock("ArtikelstammImporter");
 		
-		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
-		
-		subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
-		ARTIKELSTAMM importStamm = null;
-		try {
-			importStamm = ArtikelstammHelper.unmarshallInputStream(input);
-		} catch (JAXBException | SAXException je) {
-			String msg = "Fehler beim Einlesen der Import-Datei";
-			Status status = new ElexisStatus(IStatus.ERROR, PluginConstants.PLUGIN_ID,
-				ElexisStatus.CODE_NOFEEDBACK, msg, je);
-			StatusManager.getManager().handle(status, StatusManager.SHOW);
-			log.error(msg, je);
-			return Status.CANCEL_STATUS;
+		if (!lock.tryLock()) {
+			UiDesk.syncExec(new Runnable() {
+				
+				@Override
+				public void run(){
+					if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "",
+						"Der Importer ist durch einen anderen Benutzer gestartet.\nDie Artikelstammeinträge werden bereits importiert.\n\n"
+							+ "Startzeit: "
+							+ new TimeTool(lock.getLockCurrentMillis()).toString(TimeTool.LARGE_GER)
+							+ "\nGestartet durch: " + lock.getLockMessage()
+							+ "\n\nWollen Sie den Importer trotzdem nochmal starten ?")) {
+						lock.unlock();
+						lock.tryLock();
+						userCanceled = false;
+					} else {
+						userCanceled = true;
+					}
+				}
+			});
 		}
-		subMonitor.worked(10);
-		
+		if (userCanceled) {
+			userCanceled = false;
+			return Status.OK_STATUS;
+		}
 		try {
-			DATASOURCEType datasourceType = ArtikelstammItem.getDatasourceType();
-			String message = "Trying to import dataset sourced [" + importStamm.getDATASOURCE().value()
-					+ "] while existent database is sourced [" + datasourceType.value()
-					+ "]. Please contact support. Exiting.";
-			if (importStamm.getDATASOURCE() != datasourceType) {
-				log.error(message);
-				return new Status(Status.ERROR, PluginConstants.PLUGIN_ID,
-					message);
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+			
+			subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
+			ARTIKELSTAMM importStamm = null;
+			try {
+				importStamm = ArtikelstammHelper.unmarshallInputStream(input);
+			} catch (JAXBException | SAXException je) {
+				String msg = "Fehler beim Einlesen der Import-Datei";
+				Status status = new ElexisStatus(IStatus.ERROR, PluginConstants.PLUGIN_ID,
+					ElexisStatus.CODE_NOFEEDBACK, msg, je);
+				StatusManager.getManager().handle(status, StatusManager.SHOW);
+				log.error(msg, je);
+				lock.unlock();
+				return Status.CANCEL_STATUS;
 			}
-		} catch (IllegalArgumentException iae) {
-			ArtikelstammItem.setDataSourceType(importStamm.getDATASOURCE());
+			subMonitor.worked(10);
+			
+			try {
+				DATASOURCEType datasourceType = ArtikelstammItem.getDatasourceType();
+				String message = "Trying to import dataset sourced ["
+					+ importStamm.getDATASOURCE().value() + "] while existent database is sourced ["
+					+ datasourceType.value() + "]. Please contact support. Exiting.";
+				if (importStamm.getDATASOURCE() != datasourceType) {
+					log.error(message);
+					lock.unlock();
+					return new Status(Status.ERROR, PluginConstants.PLUGIN_ID, message);
+				}
+			} catch (IllegalArgumentException iae) {
+				ArtikelstammItem.setDataSourceType(importStamm.getDATASOURCE());
+			}
+			
+			int currentVersion = ArtikelstammItem.getCurrentVersion();
+			
+			log.info("[PI] Aktualisiere v" + currentVersion + " auf v" + newVersion);
+			
+			subMonitor.setTaskName("Lese Produkte und Limitationen...");
+			populateProducsAndLimitationsMap(importStamm);
+			subMonitor.worked(5);
+			
+			subMonitor.setTaskName("Setze alle Elemente auf inaktiv...");
+			inactivateNonBlackboxedItems();
+			subMonitor.worked(5);
+			
+			long startTime = System.currentTimeMillis();
+			subMonitor.setTaskName(
+				"Importiere Artikelstamm " + importStamm.getCREATIONDATETIME().getMonth() + "/"
+					+ importStamm.getCREATIONDATETIME().getYear());
+			
+			updateOrAddItems(newVersion, importStamm, subMonitor.split(50));
+			updateOrAddProducts(newVersion, importStamm, subMonitor.split(20));
+			
+			// update the version number for type importStammType
+			subMonitor.setTaskName("Setze neue Versionsnummer");
+			
+			ArtikelstammItem.setCurrentVersion(newVersion);
+			ArtikelstammItem.setImportSetCreationDate(
+				importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime());
+			
+			subMonitor.worked(5);
+			long endTime = System.currentTimeMillis();
+			ElexisEventDispatcher.reload(ArtikelstammItem.class);
+			
+			log.info("[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) + "sec");
+			
+			ATCCodeCache.rebuildCache(subMonitor.split(5));
+		} finally {
+			lock.unlock();
 		}
-		
-		int currentVersion = ArtikelstammItem.getCurrentVersion();
-		
-		log.info("[PI] Aktualisiere v" + currentVersion + " auf v" + newVersion);
-		
-		subMonitor.setTaskName("Lese Produkte und Limitationen...");
-		populateProducsAndLimitationsMap(importStamm);
-		subMonitor.worked(5);
-		
-		subMonitor.setTaskName("Setze alle Elemente auf inaktiv...");
-		inactivateNonBlackboxedItems();
-		subMonitor.worked(5);
-		
-		long startTime = System.currentTimeMillis();
-		subMonitor
-			.setTaskName("Importiere Artikelstamm " + importStamm.getCREATIONDATETIME().getMonth()
-				+ "/" + importStamm.getCREATIONDATETIME().getYear());
-		
-		updateOrAddItems(newVersion, importStamm, subMonitor.split(50));
-		updateOrAddProducts(newVersion, importStamm, subMonitor.split(20));
-		
-		// update the version number for type importStammType
-		subMonitor.setTaskName("Setze neue Versionsnummer");
-		
-		ArtikelstammItem.setCurrentVersion(newVersion);
-		ArtikelstammItem.setImportSetCreationDate(
-			importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime());
-		
-		subMonitor.worked(5);
-		long endTime = System.currentTimeMillis();
-		ElexisEventDispatcher.reload(ArtikelstammItem.class);
-		
-		log.info("[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) + "sec");
-		
-		ATCCodeCache.rebuildCache(subMonitor.split(5));
 		
 		return Status.OK_STATUS;
 	}
@@ -235,12 +270,12 @@ public class ArtikelstammImporter {
 			if (result.size() == 1) {
 				foundItem = result.get(0);
 			} else if (result.size() > 1) {
-				log.warn("[II] Found multiple items for GTIN ["+item.getGTIN()+"]");
+				log.warn("[II] Found multiple items for GTIN [" + item.getGTIN() + "]");
 				// Is the case in Stauffacher DB, where legacy articles have been imported
 				for (ArtikelstammItem artikelstammItem : result) {
 					if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE) {
 						foundItem = artikelstammItem;
-						log.warn("[II] Selected ID ["+foundItem.getId()+"] to update.");
+						log.warn("[II] Selected ID [" + foundItem.getId() + "] to update.");
 					}
 				}
 			}

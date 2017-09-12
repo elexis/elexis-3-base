@@ -1,6 +1,8 @@
 package ch.elexis.TarmedRechnung;
 
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
@@ -12,6 +14,8 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.XMLTool;
 
 public class XMLExporterProcessing {
+	
+	private static Logger logger = LoggerFactory.getLogger(XMLExporterProcessing.class);
 	
 	private static final String ELEMENT_PROCESSING = "processing"; //$NON-NLS-1$
 	public static final String ATTR_INTERMEDIAT_PRINT = "print_at_intermediate"; //$NON-NLS-1$
@@ -50,11 +54,14 @@ public class XMLExporterProcessing {
 		
 		String kEAN = TarmedRequirements.getEAN(kostentraeger); // (String)kostentraeger.
 		String rEAN = TarmedRequirements.getRecipientEAN(kostentraeger);
+		logger.debug("Kostentraeger EAN [" + kEAN + "]");
+		logger.debug("Recipient EAN [" + rEAN + "]");
 		if (rEAN.equals("unknown")) { //$NON-NLS-1$
 			rEAN = kEAN;
 		}
 		
 		String iEAN = xmlExporter.getIntermediateEAN(actFall);
+		logger.debug("Intermediate EAN [" + iEAN + "]");
 		if (StringTool.isNothing(iEAN)) {
 			// make validator happy
 			if (!rEAN.matches("(20[0-9]{11}|76[0-9]{11})")) { //$NON-NLS-1$
@@ -81,6 +88,7 @@ public class XMLExporterProcessing {
 		transport.setAttribute(ATTR_TRANSPORT_FROM, xmlExporter.getSenderEAN(actMandant));
 		transport.setAttribute(ATTR_TRANSPORT_TO, rEAN);
 
+		logger.debug("Using intermediate EAN [" + iEAN + "]");
 		Element via = new Element(ELEMENT_TRANSPORT_VIA, XMLExporter.nsinvoice);
 		via.setAttribute(ATTR_TRANSPORT_VIA_VIA, iEAN);
 		via.setAttribute(ATTR_TRANSPORT_VIA_SEQ, "1");

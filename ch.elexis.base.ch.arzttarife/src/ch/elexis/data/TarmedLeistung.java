@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -647,8 +648,32 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	 * 
 	 * @return
 	 */
-	public List<String> getHierarchy(){
-		return getExtStringListField(TarmedLeistung.EXT_FLD_HIERARCHY_SLAVES);
+	public List<String> getHierarchy(TimeTool date){
+		List<String> ret = new ArrayList<>();
+		List<String> hierarchy = getExtStringListField(TarmedLeistung.EXT_FLD_HIERARCHY_SLAVES);
+		if (!hierarchy.isEmpty()) {
+			for (String string : hierarchy) {
+				int dateStart = string.indexOf('[');
+				String datesString = string.substring(dateStart + 1, string.length() - 1);
+				String codeString = string.substring(0, dateStart);
+				if (isDateWithinDatesString(date, datesString)) {
+					ret.add(codeString);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	private boolean isDateWithinDatesString(TimeTool date, String datesString){
+		String[] parts = datesString.split("\\|");
+		if (parts.length == 2) {
+			LocalDate from = LocalDate.parse(parts[0]);
+			LocalDate to = LocalDate.parse(parts[1]);
+			LocalDate localDate = date.toLocalDate();
+			return (from.isBefore(localDate) || from.isEqual(localDate))
+				&& (to.isAfter(localDate) || to.isEqual(localDate));
+		}
+		return false;
 	}
 	
 	private List<String> getExtStringListField(String extKey){
@@ -669,8 +694,20 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	 * 
 	 * @return
 	 */
-	public List<String> getServiceGroups(){
-		return getExtStringListField(TarmedLeistung.EXT_FLD_SERVICE_GROUPS);
+	public List<String> getServiceGroups(TimeTool date){
+		List<String> ret = new ArrayList<>();
+		List<String> groups = getExtStringListField(TarmedLeistung.EXT_FLD_SERVICE_GROUPS);
+		if (!groups.isEmpty()) {
+			for (String string : groups) {
+				int dateStart = string.indexOf('[');
+				String datesString = string.substring(dateStart + 1, string.length() - 1);
+				String groupString = string.substring(0, dateStart);
+				if (isDateWithinDatesString(date, datesString)) {
+					ret.add(groupString);
+				}
+			}
+		}
+		return ret;
 	}
 	
 	/**
@@ -678,8 +715,20 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	 * 
 	 * @return
 	 */
-	public List<String> getServiceBlocks(){
-		return getExtStringListField(TarmedLeistung.EXT_FLD_SERVICE_BLOCKS);
+	public List<String> getServiceBlocks(TimeTool date){
+		List<String> ret = new ArrayList<>();
+		List<String> blocks = getExtStringListField(TarmedLeistung.EXT_FLD_SERVICE_BLOCKS);
+		if (!blocks.isEmpty()) {
+			for (String string : blocks) {
+				int dateStart = string.indexOf('[');
+				String datesString = string.substring(dateStart + 1, string.length() - 1);
+				String blockString = string.substring(0, dateStart);
+				if (isDateWithinDatesString(date, datesString)) {
+					ret.add(blockString);
+				}
+			}
+		}
+		return ret;
 	}
 	
 	public String getServiceTyp(){

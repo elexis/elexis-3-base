@@ -133,7 +133,8 @@ public class TarmedDetailDialog extends Dialog {
 		} else {
 			cSide.select(2);
 		}
-		if (tl.getServiceTyp().equals("Z") || tl.getServiceTyp().equals("R")) {
+		if (tl.getServiceTyp().equals("Z") || tl.getServiceTyp().equals("R")
+			|| tl.getServiceTyp().equals("B")) {
 			new Label(ret, SWT.NONE);
 			new Label(ret, SWT.NONE);
 			new Label(ret, SWT.NONE).setText("Bezug");

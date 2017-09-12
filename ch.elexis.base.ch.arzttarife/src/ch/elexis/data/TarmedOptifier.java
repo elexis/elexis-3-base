@@ -246,8 +246,8 @@ public class TarmedOptifier implements IOptifier {
 					newVerrechnet.delete();
 				}
 				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KOMBINATION,
-					"Für die Zuschlagsleitung " + code.getCode()
-						+ " konnte keine Hauptleistung gefunden werden.",
+					"Für die Zuschlagsleistung " + code.getCode()
+						+ " konnte keine passende Hauptleistung gefunden werden.",
 					null, false);
 			}
 			if (!masters.isEmpty()) {
@@ -503,10 +503,14 @@ public class TarmedOptifier implements IOptifier {
 	
 	private List<Verrechnet> getAvailableMasters(TarmedLeistung slave, List<Verrechnet> lst){
 		List<Verrechnet> ret = new LinkedList<Verrechnet>();
+		TimeTool konsDate = null;
 		for (Verrechnet v : lst) {
+			if (konsDate == null) {
+				konsDate = new TimeTool(v.getKons().getDatum());
+			}
 			if (v.getVerrechenbar() instanceof TarmedLeistung) {
 				TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
-				if (tl.getHierarchy().contains(slave.getCode())) { //$NON-NLS-1$
+				if (tl.getHierarchy(konsDate).contains(slave.getCode())) { //$NON-NLS-1$
 					ret.add(v);
 				}
 			}

@@ -370,13 +370,6 @@ ParallelView = View.extend({
 	// Computes the initial pre-configured scroll state prior to allowing the user to change it
 	computeInitialScroll: function () {
 		var scrollTime = moment.duration(this.opt('scrollTime'));
-	
-		var now =  this.calendar.getNow();
-		if (now._d.getUTCHours() >= 12 && now >= this.intervalStart && now < this.intervalEnd) 
-		{
-			scrollTime =  moment.duration("12:00:00");
-		}
-
 		var top = this.resourceGrid.computeTimeTop(scrollTime);
 
 		// zoom can give weird floating-point values. rather scroll a little bit further

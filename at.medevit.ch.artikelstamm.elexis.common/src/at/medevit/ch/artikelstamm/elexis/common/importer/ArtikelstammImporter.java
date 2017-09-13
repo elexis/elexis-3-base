@@ -58,6 +58,7 @@ public class ArtikelstammImporter {
 	private static Map<String, PRODUCT> products = new HashMap<String, PRODUCT>();
 	private static Map<String, LIMITATION> limitations = new HashMap<String, LIMITATION>();
 	private static volatile boolean userCanceled = false;
+	
 	/**
 	 * 
 	 * @param monitor
@@ -280,6 +281,8 @@ public class ArtikelstammImporter {
 				}
 			}
 			
+			boolean keepOverriddenPublicPrice = false;
+			
 			if (foundItem == null) {
 				String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
 				
@@ -289,9 +292,13 @@ public class ArtikelstammImporter {
 				foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(),
 					item.getPHAR(), trimmedDscr, StringConstants.EMPTY);
 				log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
+			} else {
+				// check if article has overridden public price
+				keepOverriddenPublicPrice = foundItem.isUserDefinedPrice();
 			}
 			log.trace("[II] Updating article " + foundItem.getId() + " (" + item.getDSCR() + ")");
-			setValuesOnArtikelstammItem(foundItem, item, newVersion);
+			
+			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice);
 			
 			subMonitor.worked(1);
 		}
@@ -299,7 +306,7 @@ public class ArtikelstammImporter {
 	}
 	
 	private static void setValuesOnArtikelstammItem(ArtikelstammItem ai, ITEM item,
-		final int cummulatedVersion){
+		final int cummulatedVersion, boolean keepOverriddenPublicPrice){
 		List<String> fields = new ArrayList<>();
 		List<String> values = new ArrayList<>();
 		
@@ -366,8 +373,14 @@ public class ArtikelstammImporter {
 		fields.add(ArtikelstammItem.FLD_PEXF);
 		values.add((item.getPEXF() != null) ? item.getPEXF().toString() : null);
 		
-		fields.add(ArtikelstammItem.FLD_PPUB);
-		values.add((item.getPPUB() != null) ? item.getPPUB().toString() : null);
+		if (!keepOverriddenPublicPrice) {
+			fields.add(ArtikelstammItem.FLD_PPUB);
+			values.add((item.getPPUB() != null) ? item.getPPUB().toString() : null);
+		} else {
+			ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PPUB_OVERRIDE_STORE,
+				item.getPPUB().toString());
+			log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB());
+		}
 		
 		fields.add(ArtikelstammItem.FLD_SL_ENTRY);
 		values.add((item.isSLENTRY() != null && item.isSLENTRY()) ? StringConstants.ONE

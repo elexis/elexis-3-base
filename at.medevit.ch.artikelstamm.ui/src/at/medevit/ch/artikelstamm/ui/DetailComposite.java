@@ -192,8 +192,7 @@ public class DetailComposite extends ScrolledComposite {
 		btnUserDefinedPrice.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				IArtikelstammItem ai = (IArtikelstammItem) item.getValue();
-				ai.setPublicPrice(ai.getPublicPrice());
+				item.getValue().setUserDefinedPrice(btnUserDefinedPrice.getSelection());
 				m_bindingContext.updateTargets();
 				txtPUBLICPRICE.setFocus();
 			}

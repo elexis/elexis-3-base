@@ -490,7 +490,9 @@ public class XMLExporter implements IRnOutputter {
 		// Payments, state changes, obligations
 		NamedBlob blob = NamedBlob.load(PREFIX + rechnung.getNr());
 		SAXBuilder builder = new SAXBuilder();
-
+		// initialize variables
+		actFall = rechnung.getFall();
+		actMandant = rechnung.getMandant();
 		try {
 			Document ret = builder.build(new StringReader(blob.getString()));
 			Element root = ret.getRootElement();

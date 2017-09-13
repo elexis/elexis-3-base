@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Display;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.model.Event;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.data.TerminUtil;
@@ -26,9 +27,12 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	
 	private Set<String> resources = new HashSet<String>();
 	
+	private ScriptingHelper scriptingHelper;
+	
 	public LoadEventsFunction(Browser browser, String name){
 		super(browser, name);
 		gson = new GsonBuilder().create();
+		scriptingHelper = new ScriptingHelper(browser);
 	}
 	
 	public Object function(Object[] arguments){
@@ -46,6 +50,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 				public void run(){
 					// update calendar height
 					updateCalendarHeight();
+					scriptingHelper.scrollToNow();
 				}
 			});
 			return gson.toJson(events);

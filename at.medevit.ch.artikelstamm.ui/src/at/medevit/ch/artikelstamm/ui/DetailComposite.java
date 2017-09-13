@@ -52,7 +52,8 @@ import ch.elexis.data.Artikel;
 public class DetailComposite extends ScrolledComposite {
 	private DataBindingContext m_bindingContext;
 	
-	private WritableValue item = new WritableValue(null, IArtikelstammItem.class);
+	private WritableValue<IArtikelstammItem> item =
+		new WritableValue<IArtikelstammItem>(null, IArtikelstammItem.class);
 	
 	public static String prefAtcLanguage = null;
 	

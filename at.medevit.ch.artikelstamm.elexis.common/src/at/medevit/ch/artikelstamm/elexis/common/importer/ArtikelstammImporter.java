@@ -377,9 +377,11 @@ public class ArtikelstammImporter {
 			fields.add(ArtikelstammItem.FLD_PPUB);
 			values.add((item.getPPUB() != null) ? item.getPPUB().toString() : null);
 		} else {
-			ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PPUB_OVERRIDE_STORE,
-				item.getPPUB().toString());
-			log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB());
+			if(item.getPPUB()!=null) {
+				ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PPUB_OVERRIDE_STORE,
+					item.getPPUB().toString());
+				log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB());
+			}
 		}
 		
 		fields.add(ArtikelstammItem.FLD_SL_ENTRY);

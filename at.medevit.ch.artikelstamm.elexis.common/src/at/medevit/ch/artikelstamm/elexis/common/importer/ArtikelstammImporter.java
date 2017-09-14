@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2014 MEDEVIT.
+ * Copyright (c) 2013-2017 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -38,29 +40,60 @@ import ch.artikelstamm.elexis.common.BlackBoxReason;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.status.ElexisStatus;
+import ch.elexis.core.data.util.LocalLock;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.TimeTool;
 
 public class ArtikelstammImporter {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporter.class);
-	
+
+	private static volatile boolean userCanceled = false;
+
 	/**
 	 * 
 	 * @param monitor
 	 * @param input
 	 * @param version
-	 *            if <code>null</code> use the version from the import file, else the provided
-	 *            version value
+	 *            if <code>null</code> use the version from the import file,
+	 *            else the provided version value
 	 * @return
 	 */
-	public static IStatus performImport(IProgressMonitor monitor, InputStream input, Integer version){
+	public static IStatus performImport(IProgressMonitor monitor, InputStream input, Integer version) {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
+		final LocalLock lock = new LocalLock("ArtikelstammImporter");
+		if (!lock.tryLock()) {
+			UiDesk.syncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "",
+							"Der Importer ist durch einen anderen Benutzer gestartet.\nDie Artikelstammeinträge werden bereits importiert.\n\n"
+									+ "Startzeit: "
+									+ new TimeTool(lock.getLockCurrentMillis()).toString(TimeTool.LARGE_GER)
+									+ "\nGestartet durch: " + lock.getLockMessage()
+									+ "\n\nWollen Sie den Importer trotzdem nochmal starten ?")) {
+						lock.unlock();
+						lock.tryLock();
+						userCanceled = false;
+					} else {
+						userCanceled = true;
+					}
+				}
+			});
+		}
+		if (userCanceled) {
+			userCanceled = false;
+			return Status.OK_STATUS;
+		}
+
 		String msg = "Aktualisierung des Artikelstamms";
 		log.info(msg + " ");
 		monitor.beginTask(msg, 6);
@@ -75,6 +108,7 @@ public class ArtikelstammImporter {
 					ElexisStatus.CODE_NOFEEDBACK, msg, je);
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
 			log.info(msg);
+			lock.unlock();
 			return Status.CANCEL_STATUS;
 		}
 		monitor.worked(1);
@@ -123,7 +157,8 @@ public class ArtikelstammImporter {
 		
 		ATCCodeCache.rebuildCache(new SubProgressMonitor(monitor, 1));
 		monitor.done();
-		
+
+		lock.unlock();
 		return Status.OK_STATUS;
 	}
 	

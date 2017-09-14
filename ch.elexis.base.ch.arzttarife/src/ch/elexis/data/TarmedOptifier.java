@@ -26,6 +26,7 @@ import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.importer.TarmedLeistungLimits;
 import ch.elexis.data.importer.TarmedLeistungLimits.LimitsEinheit;
+import ch.elexis.data.importer.TarmedReferenceDataImporter;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.RechnungsPrefs;
 import ch.rgw.tools.Result;
@@ -235,7 +236,7 @@ public class TarmedOptifier implements IOptifier {
 		}
 		
 		// set bezug of zuschlagsleistung and referenzleistung
-		if (shouldDetermineReference(tc)) {
+		if (isReferenceInfoAvailable() && shouldDetermineReference(tc)) {
 			// lookup available masters
 			List<Verrechnet> masters = getPossibleMasters(newVerrechnet, lst);
 			if (masters.isEmpty()) {
@@ -489,6 +490,11 @@ public class TarmedOptifier implements IOptifier {
 			return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 		}
 		return new Result<IVerrechenbar>(null);
+	}
+	
+	private boolean isReferenceInfoAvailable(){
+		return CoreHub.globalCfg.get(TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE,
+			false);
 	}
 	
 	private boolean shouldDetermineReference(TarmedLeistung tc){

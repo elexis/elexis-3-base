@@ -58,6 +58,9 @@ import ch.rgw.tools.TimeTool;
 public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	private static final Logger logger = LoggerFactory.getLogger(TarmedReferenceDataImporter.class);
 	
+	public static final String CFG_REFERENCEINFO_AVAILABLE =
+		"ch.elexis.data.importer.TarmedReferenceDataImporter/referenceinfoavailable";
+	
 	private static final String ImportPrefix = "TARMED_IMPORT_";
 	
 	private JdbcLink pj;
@@ -371,7 +374,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 			} else {
 				TarmedLeistung.setVersion(version.toString());
 			}
-			
+			CoreHub.globalCfg.set(TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE, true);
 			ipm.done();
 			String message = Messages.TarmedImporter_successMessage;
 			if (updateBlockWarning) {

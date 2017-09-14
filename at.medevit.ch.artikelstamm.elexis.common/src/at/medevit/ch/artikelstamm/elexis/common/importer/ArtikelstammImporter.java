@@ -301,7 +301,7 @@ public class ArtikelstammImporter {
 				ai =
 					new ArtikelstammItem(importStamm.getCUMULVER(), importStammType,
 						item.getGTIN(), item.getPHAR(), item.getDSCR(), item.getADDSCR());
-				setValuesOnArtikelstammItem(ai, item, false, -1);
+				setValuesOnArtikelstammItem(ai, item, false, -1, false);
 			} else if (foundElements == 1) {
 				String itemId =
 					PersistentObject.getConnection().queryString(
@@ -310,7 +310,7 @@ public class ArtikelstammImporter {
 							+ JdbcLink.wrap(itemUuid + "%"));
 				ai = ArtikelstammItem.load(itemId);
 				log.info("Updating article " + ai.getId() + " (" + item.getDSCR() + ")");
-				setValuesOnArtikelstammItem(ai, item, true, importStamm.getCUMULVER());
+				setValuesOnArtikelstammItem(ai, item, true, importStamm.getCUMULVER(), ai.isUserDefinedPrice());
 			} else {
 				log.error("Found " + foundElements + " items for " + itemUuid + ".");
 			}
@@ -321,7 +321,7 @@ public class ArtikelstammImporter {
 	}
 	
 	private static void setValuesOnArtikelstammItem(ArtikelstammItem ai, ITEM item,
-		boolean allValues, final int cummulatedVersion){
+		boolean allValues, final int cummulatedVersion, boolean keepOverriddenPublicPrice){
 		List<String> fields = new ArrayList<>();
 		List<String> values = new ArrayList<>();
 		
@@ -357,9 +357,15 @@ public class ArtikelstammImporter {
 			fields.add(ArtikelstammItem.FLD_PEXF);
 			values.add(item.getPEXF().toString());
 		}
-		if (item.getPPUB() != null) {
+		if (!keepOverriddenPublicPrice) {
 			fields.add(ArtikelstammItem.FLD_PPUB);
-			values.add(item.getPPUB().toString());
+			values.add((item.getPPUB() != null) ? item.getPPUB().toString() : null);
+		} else {
+			if (item.getPPUB() != null) {
+				ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PPUB_OVERRIDE_STORE,
+						item.getPPUB().toString());
+				log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB());
+			}
 		}
 		if (item.isSLENTRY() != null) {
 			fields.add(ArtikelstammItem.FLD_SL_ENTRY);

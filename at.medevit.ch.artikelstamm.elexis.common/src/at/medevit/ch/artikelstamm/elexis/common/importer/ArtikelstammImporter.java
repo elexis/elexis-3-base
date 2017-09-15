@@ -46,6 +46,7 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.core.data.util.LocalLock;
+import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -65,12 +66,12 @@ public class ArtikelstammImporter {
 	 * @param monitor
 	 * @param input
 	 * @param version
-	 *            if <code>null</code> use the version from the import file, else the provided
-	 *            version value
+	 *            the version to set. If <code>null</code> the current version will be simply
+	 *            increased by one
 	 * @return
 	 */
 	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
-		Integer newVersion){
+		@Nullable Integer newVersion){
 		LocalLock lock = new LocalLock("ArtikelstammImporter");
 		
 		if (!lock.tryLock()) {
@@ -99,6 +100,12 @@ public class ArtikelstammImporter {
 		}
 		try {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+			
+			if (newVersion == null) {
+				newVersion = ArtikelstammItem.getCurrentVersion();
+				newVersion++;
+				log.info("[PI] No newVersion provided. Setting to [{}].", newVersion);
+			}
 			
 			subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
 			ARTIKELSTAMM importStamm = null;

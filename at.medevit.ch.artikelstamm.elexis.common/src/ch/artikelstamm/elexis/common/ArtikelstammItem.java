@@ -798,7 +798,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public Integer getDeductible(){
 		// Medikament wenn SL nicht 20 % dann 10 %
-		String val = get(FLD_DEDUCTIBLE).trim();
+		String val = get(FLD_DEDUCTIBLE);
 		if (val == null || val.length() < 1)
 			if (isInSLList()) {
 				return 0;
@@ -806,8 +806,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 				return -1;
 			}
 		try {
-			return new Integer(val);
+			return new Integer(val.trim());
 		} catch (NumberFormatException nfe) {
+			log.warn("Error parsing deductible [{}]", val.trim());
 			return 0;
 		}
 	}

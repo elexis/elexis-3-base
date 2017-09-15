@@ -49,6 +49,7 @@ import ch.elexis.core.data.util.LocalLock;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
@@ -173,9 +174,10 @@ public class ArtikelstammImporter {
 		log.debug("[BB] Setting all items inactive...");
 		Stm stm = PersistentObject.getConnection().getStatement();
 		stm.exec("UPDATE " + ArtikelstammItem.TABLENAME + " SET " + ArtikelstammItem.FLD_BLACKBOXED
-			+ Query.EQUALS + BlackBoxReason.INACTIVE.getNumercialReason() + " WHERE "
-			+ ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
-			+ BlackBoxReason.NOT_BLACKBOXED.getNumercialReason());
+			+ Query.EQUALS
+			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()))
+			+ " WHERE " + ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
+			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason())));
 		PersistentObject.getConnection().releaseStatement(stm);
 	}
 	

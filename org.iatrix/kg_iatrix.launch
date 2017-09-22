@@ -40,7 +40,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-oracle"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dosgi.console.enable.builtin=true &#10;-Xms256m -Xmx1024m &#10;-Duser.language=de &#10;-Duser.region=CH &#10;-Dfile.encoding=utf-8"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dosgi.console.enable.builtin=true &#10;-Xms256m -Xmx1024m &#10;-Duser.language=de &#10;-Duser.region=CH &#10;-Dfile.encoding=utf-8&#10;-Dch.elexis.username=sbu&#10; -Dch.elexis.password=sbu&#10;-Dch.elexis.dbUser=elexis &#10;-Dch.elexis.dbPw=elexisTest&#10;-Dch.elexis.dbFlavor=postgresql&#10;-Dch.elexis.dbSpec=jdbc:postgresql://localhost/sbu31"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="ch.elexis.core.application.product"/>
 <stringAttribute key="productFile" value="/ch.elexis.core.application/Elexis.product"/>

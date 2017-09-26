@@ -19,6 +19,7 @@ public class ScriptingHelper {
 		String slotDuration = "$('#calendar').fullCalendar('option', 'slotDuration', '%s');";
 		String script = String.format(slotDuration, size.getCalendarString());
 		browser.execute(script);
+		scrollToNow();
 	}
 	
 	/**
@@ -55,6 +56,7 @@ public class ScriptingHelper {
 		String script = String.format(endsAt, parseTime(dayEndsAt))
 			+ String.format(startAt, parseTime(dayStartsAt));
 		browser.execute(script);
+		scrollToNow();
 	}
 	
 	public void setSelectedDate(LocalDate date){
@@ -71,6 +73,12 @@ public class ScriptingHelper {
 	public void initializeResources(List<String> selectedResources){
 		String updateResourceIds = "$('#calendar').fullCalendar('getView').setResourceIds(%s);";
 		String script = String.format(updateResourceIds, getResourceIdsString(selectedResources));
+		browser.execute(script);
+	}
+	
+	public void scrollToNow(){
+		String script =
+			"var now = $('#calendar').fullCalendar('getNow'); if (now._d.getUTCHours() >= 12 && now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top );}  , 500 );}";
 		browser.execute(script);
 	}
 	

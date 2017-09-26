@@ -87,6 +87,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	/** Produkt-Nummer */ 	  	public static final String FLD_PRODNO = "PRODNO";
 	
 	public static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE";
+	public static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE ="PPUB_OVERRIDE_STORE";
 	
 	/** Definition of the database table */
 	static final String createDB =
@@ -353,16 +354,65 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		}
 		return false;
 	}
+		
+	/**
+	 * De-/activate the manual price override.
+	 * 
+	 * @param activate
+	 */
+	public void setUserDefinedPrice(boolean activate){
+		if (activate) {
+			String ppub = get(FLD_PPUB);
+			setExtInfoStoredObjectByKey(EXTINFO_VAL_PPUB_OVERRIDE_STORE, ppub);
+			double value = 0;
+			try {
+				value = Double.valueOf(ppub);
+			} catch (NumberFormatException nfe) {
+				log.error("Error #setUserDefinedPrice [{}] value is [{}], setting 0", getId(),
+					ppub);
+			}
+			setUserDefinedPriceValue(value);
+		} else {
+			String ppubStored =
+				(String) getExtInfoStoredObjectByKey(EXTINFO_VAL_PPUB_OVERRIDE_STORE);
+			set(FLD_PPUB, ppubStored);
+			setExtInfoStoredObjectByKey(EXTINFO_VAL_PPUB_OVERRIDE_STORE, null);
+		}
+	}
+	
+	/**
+	 * Set the price as user-defined (i.e. overridden) price. This will internally store the price
+	 * as negative value.
+	 * 
+	 * @param value
+	 */
+	public void setUserDefinedPriceValue(Double value){
+		if (value < 0) {
+			throw new IllegalArgumentException("value must not be lower than 0");
+		}
+		set(FLD_PPUB, "-" + value);
+	}
+	
+	/**
+	 * @return the overridden public price value if overridden and not null. If the price
+	 * was not overridden, also <code>null</code> is returned.
+	 */
+	public Double getUserDefinedPriceValue(){
+		String ppub = get(FLD_PPUB);
+		if (ppub != null && ppub.startsWith("-")) {
+			try {
+				return Double.valueOf(ppub);
+			} catch (NumberFormatException nfe) {
+				log.error("Error #getUserDefinedPrice [{}] value is [{}], setting 0", getId(),
+					ppub);
+			}
+		}
+		return null;
+	}
 	
 	@Override
 	public boolean isUserDefinedPrice(){
-		String value = get(FLD_PPUB);
-		if (value != null && !value.isEmpty()) {
-			double pricePub = Double.parseDouble(value);
-			// we need to differentiate -0.0 and 0.0
-			return Double.doubleToRawLongBits(pricePub) < 0;
-		}
-		return false;
+		return getUserDefinedPriceValue() != null;
 	}
 	
 	public void overrideVatInfo(VatInfo overridenVat){
@@ -647,15 +697,13 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return getVKPreis().doubleValue();
 	}
 	
-	/**
-	 * <b>use only when setting the price manually for an override.</b> user defined prices are
-	 * represented in negative values, we always need positive values however
-	 */
 	@Override
 	public void setPublicPrice(Double amount){
-		if (amount < 0)
-			throw new IllegalArgumentException("No negative values allowed");
-		set(FLD_PPUB, "-" + amount);
+		if (isUserDefinedPrice()) {
+			setUserDefinedPriceValue(amount);
+		} else {
+			set(FLD_PPUB, Double.toString(amount));
+		}
 	}
 	
 	@Override
@@ -677,7 +725,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	@Override
 	public Integer getDeductible(){
 		// Medikament wenn SL nicht 20 % dann 10 %
-		String val = get(FLD_DEDUCTIBLE).trim();
+		String val = get(FLD_DEDUCTIBLE);
 		if (val == null || val.length() < 1)
 			if (isInSLList()) {
 				return 0;
@@ -685,8 +733,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 				return -1;
 			}
 		try {
-			return new Integer(val);
+			return new Integer(val.trim());
 		} catch (NumberFormatException nfe) {
+			log.warn("Error parsing deductible [{}]", val.trim());
 			return 0;
 		}
 	}

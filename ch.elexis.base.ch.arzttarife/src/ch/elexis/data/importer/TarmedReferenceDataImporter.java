@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -55,6 +57,9 @@ import ch.rgw.tools.TimeTool;
 
 public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	private static final Logger logger = LoggerFactory.getLogger(TarmedReferenceDataImporter.class);
+	
+	public static final String CFG_REFERENCEINFO_AVAILABLE =
+		"ch.elexis.data.importer.TarmedReferenceDataImporter/referenceinfoavailable";
 	
 	private static final String ImportPrefix = "TARMED_IMPORT_";
 	
@@ -136,24 +141,24 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 				String.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE=%s", ImportPrefix, lang))) {
 				while (res != null && res.next()) {
 					String code = res.getString("KNR"); //$NON-NLS-1$
+					// filter no longer valid chapters
+					LocalDate to = getLocalDate(res, "GUELTIG_BIS");
+					if (to.isBefore(LocalDate.now())) {
+						continue;
+					}
 					
 					if (code.trim().equals("I")) { //$NON-NLS-1$
 						continue;
 					}
-					TarmedLeistung tl = TarmedLeistung.load(code);
 					String txt = convert(res, "BEZ_255"); //$NON-NLS-1$
 					int subcap = code.lastIndexOf('.');
 					String parent = "NIL"; //$NON-NLS-1$
 					if (subcap != -1) {
 						parent = code.substring(0, subcap);
 					}
-					if ((!tl.exists()) || (!parent.equals(tl.get("Parent")))) { //$NON-NLS-1$
-						tl = new TarmedLeistung(code, parent, "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					}
-					if (tl.exists()) {
-						tl.setText(txt);
-						tl.flushExtension();
-					}
+					TarmedLeistung tl = new TarmedLeistung(code, parent, "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					tl.setText(txt);
+					tl.flushExtension();
 					ipm.worked(1);
 				}
 			}
@@ -228,15 +233,21 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 					stmCached.query(String.format(
 						"SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_MASTER=%s", ImportPrefix,
 						JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
-				validResults = getValidValueMaps(rsub, validFrom);
+				validResults = getAllValueMaps(rsub);
 				if (!validResults.isEmpty()) {
 					// do not import directly as bezug, that will lead to incorrect bills
 					StringBuilder sb = new StringBuilder();
 					for (Map<String, String> map : validResults) {
-						if (sb.length() == 0)
+						if (sb.length() == 0) {
 							sb.append(map.get("LNR_SLAVE"));
-						else
+						} else {
 							sb.append(", " + map.get("LNR_SLAVE"));
+						}
+						LocalDate from = getLocalDate(map, "GUELTIG_VON");
+						LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"),
+							DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.S"));
+						sb.append("[").append(from.toString()).append("|").append(to.toString())
+							.append("]");
 					}
 					ext.put(TarmedLeistung.EXT_FLD_HIERARCHY_SLAVES, sb.toString());
 				}
@@ -246,14 +257,20 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 				rsub =
 					stmCached.query(String.format("SELECT * FROM %sLEISTUNG_GRUPPEN WHERE LNR=%s",
 						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
-				validResults = getValidValueMaps(rsub, validFrom);
+				validResults = getAllValueMaps(rsub);
 				if (!validResults.isEmpty()) {
 					StringBuilder sb = new StringBuilder();
 					for (Map<String, String> map : validResults) {
-						if (sb.length() == 0)
+						if (sb.length() == 0) {
 							sb.append(map.get("GRUPPE"));
-						else
+						} else {
 							sb.append(", " + map.get("GRUPPE"));
+						}
+						LocalDate from = getLocalDate(map, "GUELTIG_VON");
+						LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"),
+							DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.S"));
+						sb.append("[").append(from.toString()).append("|").append(to.toString())
+							.append("]");
 					}
 					ext.put(TarmedLeistung.EXT_FLD_SERVICE_GROUPS, sb.toString());
 				}
@@ -263,14 +280,20 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 				rsub =
 					stmCached.query(String.format("SELECT * FROM %sLEISTUNG_BLOECKE WHERE LNR=%s",
 						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
-				validResults = getValidValueMaps(rsub, validFrom);
+				validResults = getAllValueMaps(rsub);
 				if (!validResults.isEmpty()) {
 					StringBuilder sb = new StringBuilder();
 					for (Map<String, String> map : validResults) {
-						if (sb.length() == 0)
+						if (sb.length() == 0) {
 							sb.append(map.get("BLOCK"));
-						else
+						} else {
 							sb.append(", " + map.get("BLOCK"));
+						}
+						LocalDate from = getLocalDate(map, "GUELTIG_VON");
+						LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"),
+							DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.S"));
+						sb.append("[").append(from.toString()).append("|").append(to.toString())
+							.append("]");
 					}
 					ext.put(TarmedLeistung.EXT_FLD_SERVICE_BLOCKS, sb.toString());
 				}
@@ -351,7 +374,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 			} else {
 				TarmedLeistung.setVersion(version.toString());
 			}
-			
+			CoreHub.globalCfg.set(TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE, true);
 			ipm.done();
 			String message = Messages.TarmedImporter_successMessage;
 			if (updateBlockWarning) {
@@ -507,6 +530,17 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 			pj.releaseStatement(stm);
 			cacheDb.releaseStatement(stmCached);
 		}
+	}
+	
+	private DateTimeFormatter tarmedFormatter =
+		DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.S");
+	
+	private LocalDate getLocalDate(ResultSet res, String name) throws SQLException{
+		return LocalDate.parse(res.getString(name), tarmedFormatter);
+	}
+	
+	private LocalDate getLocalDate(Map<String, String> map, String name){
+		return LocalDate.parse(map.get(name), tarmedFormatter);
 	}
 	
 	private String convert(ResultSet res, String field) throws Exception{

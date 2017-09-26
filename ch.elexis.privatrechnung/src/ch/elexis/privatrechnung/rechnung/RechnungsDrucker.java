@@ -31,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -119,6 +120,8 @@ public class RechnungsDrucker implements IRnOutputter {
 						int errors = 0;
 						for (Rechnung rn : rnn) {
 							try {
+								// select Rechnung before printing for correct placeholder replacement
+								ElexisEventDispatcher.fireSelectionEvent(rn);
 								result.add(rnp.doPrint(rn));
 								monitor.worked(10);
 								if (!result.isOK()) {

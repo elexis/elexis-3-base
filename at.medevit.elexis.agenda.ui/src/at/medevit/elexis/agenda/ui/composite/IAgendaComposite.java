@@ -7,6 +7,7 @@ public interface IAgendaComposite {
 	
 	public enum AgendaSpanSize {
 			MIN5("5 min", "00:05:00"), MIN10("10 min", "00:10:00"), MIN15("15 min", "00:15:00"),
+			MIN20("20 min", "00:20:00"),
 			MIN30("30 min", "00:30:00");
 		
 		private String label;

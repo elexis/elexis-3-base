@@ -462,13 +462,13 @@
 				</xs:annotation>
 			</xs:attribute>
 
-			<xs:attribute name="BUILD_DATETIME" type="xs:dateTime">
+			<xs:attribute name="BUILD_DATETIME" type="xs:dateTime" use="required">
 				<xs:annotation>
 					<xs:documentation>Der Zeitpunkt zu dem dieser Datensatz erstellt wurde.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name="DATA_SOURCE" type="DATASOURCEType">
+			<xs:attribute name="DATA_SOURCE" type="DATASOURCEType" use="required">
 				<xs:annotation>
 					<xs:documentation></xs:documentation>
 				</xs:annotation></xs:attribute>

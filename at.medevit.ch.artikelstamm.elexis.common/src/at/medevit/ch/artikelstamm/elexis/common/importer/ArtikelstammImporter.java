@@ -46,9 +46,11 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.core.data.util.LocalLock;
+import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
@@ -58,17 +60,18 @@ public class ArtikelstammImporter {
 	private static Map<String, PRODUCT> products = new HashMap<String, PRODUCT>();
 	private static Map<String, LIMITATION> limitations = new HashMap<String, LIMITATION>();
 	private static volatile boolean userCanceled = false;
+	
 	/**
 	 * 
 	 * @param monitor
 	 * @param input
 	 * @param version
-	 *            if <code>null</code> use the version from the import file, else the provided
-	 *            version value
+	 *            the version to set. If <code>null</code> the current version will be simply
+	 *            increased by one
 	 * @return
 	 */
 	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
-		Integer newVersion){
+		@Nullable Integer newVersion){
 		LocalLock lock = new LocalLock("ArtikelstammImporter");
 		
 		if (!lock.tryLock()) {
@@ -97,6 +100,12 @@ public class ArtikelstammImporter {
 		}
 		try {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+			
+			if (newVersion == null) {
+				newVersion = ArtikelstammItem.getCurrentVersion();
+				newVersion++;
+				log.info("[PI] No newVersion provided. Setting to [{}].", newVersion);
+			}
 			
 			subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
 			ARTIKELSTAMM importStamm = null;
@@ -172,9 +181,10 @@ public class ArtikelstammImporter {
 		log.debug("[BB] Setting all items inactive...");
 		Stm stm = PersistentObject.getConnection().getStatement();
 		stm.exec("UPDATE " + ArtikelstammItem.TABLENAME + " SET " + ArtikelstammItem.FLD_BLACKBOXED
-			+ Query.EQUALS + BlackBoxReason.INACTIVE.getNumercialReason() + " WHERE "
-			+ ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
-			+ BlackBoxReason.NOT_BLACKBOXED.getNumercialReason());
+			+ Query.EQUALS
+			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()))
+			+ " WHERE " + ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
+			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason())));
 		PersistentObject.getConnection().releaseStatement(stm);
 	}
 	
@@ -280,6 +290,8 @@ public class ArtikelstammImporter {
 				}
 			}
 			
+			boolean keepOverriddenPublicPrice = false;
+			
 			if (foundItem == null) {
 				String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
 				
@@ -289,9 +301,13 @@ public class ArtikelstammImporter {
 				foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(),
 					item.getPHAR(), trimmedDscr, StringConstants.EMPTY);
 				log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
+			} else {
+				// check if article has overridden public price
+				keepOverriddenPublicPrice = foundItem.isUserDefinedPrice();
 			}
 			log.trace("[II] Updating article " + foundItem.getId() + " (" + item.getDSCR() + ")");
-			setValuesOnArtikelstammItem(foundItem, item, newVersion);
+			
+			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice);
 			
 			subMonitor.worked(1);
 		}
@@ -299,7 +315,7 @@ public class ArtikelstammImporter {
 	}
 	
 	private static void setValuesOnArtikelstammItem(ArtikelstammItem ai, ITEM item,
-		final int cummulatedVersion){
+		final int cummulatedVersion, boolean keepOverriddenPublicPrice){
 		List<String> fields = new ArrayList<>();
 		List<String> values = new ArrayList<>();
 		
@@ -366,8 +382,16 @@ public class ArtikelstammImporter {
 		fields.add(ArtikelstammItem.FLD_PEXF);
 		values.add((item.getPEXF() != null) ? item.getPEXF().toString() : null);
 		
-		fields.add(ArtikelstammItem.FLD_PPUB);
-		values.add((item.getPPUB() != null) ? item.getPPUB().toString() : null);
+		if (!keepOverriddenPublicPrice) {
+			fields.add(ArtikelstammItem.FLD_PPUB);
+			values.add((item.getPPUB() != null) ? item.getPPUB().toString() : null);
+		} else {
+			if(item.getPPUB()!=null) {
+				ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PPUB_OVERRIDE_STORE,
+					item.getPPUB().toString());
+				log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB());
+			}
+		}
 		
 		fields.add(ArtikelstammItem.FLD_SL_ENTRY);
 		values.add((item.isSLENTRY() != null && item.isSLENTRY()) ? StringConstants.ONE

@@ -115,34 +115,36 @@ public class TarmedReferenceDataImporterTest {
 		String validExclusion = echoKardiografie.getExclusion();
 		assertEquals(codeEchokardiografieIncompatible, validExclusion);
 		
+		TimeTool now = new TimeTool();
+		
 		// hierarchy
 		TarmedLeistung hierarchyMaster =
 			(TarmedLeistung) TarmedLeistung.getFromCode(codeHierarchyMaster);
-		List<String> slaves = hierarchyMaster.getHierarchy();
+		List<String> slaves = hierarchyMaster.getHierarchy(now);
 		assertNotNull(slaves);
 		assertTrue(slaves.contains(codeHierarchySlave));
 		TarmedLeistung hierarchyNotMaster =
 			(TarmedLeistung) TarmedLeistung.getFromCode(codeHierarchyNotMaster);
-		slaves = hierarchyNotMaster.getHierarchy();
+		slaves = hierarchyNotMaster.getHierarchy(now);
 		assertNotNull(slaves);
 		assertFalse(slaves.contains(codeHierarchySlave));
 		
 		// groups
 		TarmedLeistung inGroup = (TarmedLeistung) TarmedLeistung.getFromCode(codeInGroup);
-		List<String> groups = inGroup.getServiceGroups();
+		List<String> groups = inGroup.getServiceGroups(now);
 		assertNotNull(groups);
 		assertTrue(groups.contains(codeGroup));
 		TarmedLeistung notInGroup = (TarmedLeistung) TarmedLeistung.getFromCode(codeNotInGroup);
-		groups = notInGroup.getServiceGroups();
+		groups = notInGroup.getServiceGroups(now);
 		assertFalse(groups.contains(codeGroup));
 		
 		// blocks
 		TarmedLeistung inBlock = (TarmedLeistung) TarmedLeistung.getFromCode(codeInBlock);
-		List<String> blocks = inBlock.getServiceBlocks();
+		List<String> blocks = inBlock.getServiceBlocks(now);
 		assertNotNull(blocks);
 		assertTrue(blocks.contains(codeBlock));
 		TarmedLeistung notInBlock = (TarmedLeistung) TarmedLeistung.getFromCode(codeNotInBlock);
-		blocks = notInBlock.getServiceBlocks();
+		blocks = notInBlock.getServiceBlocks(now);
 		assertFalse(blocks.contains(codeBlock));
 	}
 }

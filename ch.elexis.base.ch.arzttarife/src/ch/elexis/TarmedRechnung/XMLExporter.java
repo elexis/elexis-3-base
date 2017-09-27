@@ -490,7 +490,9 @@ public class XMLExporter implements IRnOutputter {
 		// Payments, state changes, obligations
 		NamedBlob blob = NamedBlob.load(PREFIX + rechnung.getNr());
 		SAXBuilder builder = new SAXBuilder();
-
+		// initialize variables
+		actFall = rechnung.getFall();
+		actMandant = rechnung.getMandant();
 		try {
 			Document ret = builder.build(new StringReader(blob.getString()));
 			Element root = ret.getRootElement();
@@ -595,16 +597,28 @@ public class XMLExporter implements IRnOutputter {
 	
 	private void updateExisting44Xml(Element root, TYPE type, Rechnung rechnung){
 		Money mPaid = rn.getAnzahlung();
-		// update processing
+		// update processing, print_at_intermediate and transport via EAN
 		Element processing = root.getChild("processing", XMLExporter.nsinvoice);//$NON-NLS-1$
 		String intermediatePrint =
 			processing.getAttributeValue(XMLExporterProcessing.ATTR_INTERMEDIAT_PRINT);
-		if(("1".equals(intermediatePrint) || "true".equals(intermediatePrint)) && !isPrintAtIntermediate()) {
+		if (("1".equals(intermediatePrint) || "true".equals(intermediatePrint))
+			&& !isPrintAtIntermediate()) {
 			processing.setAttribute(XMLExporterProcessing.ATTR_INTERMEDIAT_PRINT, "0");
 		} else if (("0".equals(intermediatePrint) || "false".equals(intermediatePrint))
 			&& isPrintAtIntermediate()) {
 			processing.setAttribute(XMLExporterProcessing.ATTR_INTERMEDIAT_PRINT, "1");
 		}
+		Element transport =
+			processing.getChild(XMLExporterProcessing.ELEMENT_TRANSPORT, XMLExporter.nsinvoice);
+		if (transport != null) {
+			Element via = transport.getChild(XMLExporterProcessing.ELEMENT_TRANSPORT_VIA,
+				XMLExporter.nsinvoice);
+			String iEAN = XMLExporterProcessing.getIntermediateEAN(rechnung, this);
+			if (iEAN != null && !iEAN.isEmpty()) {
+				via.setAttribute(XMLExporterProcessing.ATTR_TRANSPORT_VIA_VIA, iEAN);
+			}
+		}
+		
 		// update payload and balance
 		Element payload = root.getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$

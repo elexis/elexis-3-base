@@ -91,6 +91,9 @@ public class Camt054Parser {
 				//Entspricht dem Gutschriftdatum
 				DateAndDateTimeChoice valDate = reportEntry8.getValDt();
 				
+				//RvslInd Optional Sofern es sich um eine ESR-Storno handelt, wird «true» geliefert, sonst «false» oder Element nicht mitliefern.
+				boolean storno = Boolean.TRUE.equals(reportEntry8.isRvslInd());
+				
 				//TODO
 				// BTC besteht aus 3 Feldern: Domain, Family und Sub-Family. Folgende Codes werden verwendet: Gutschrift: Domain = PMNT / Family = RCDT / Sub-Family = VCOM Storno: Domain = PMNT / Family = RCDT / Sub-Family = CAJT 
 				BankTransactionCodeStructure4 bankTransactionCodeStructure4 =
@@ -123,13 +126,18 @@ public class Camt054Parser {
 							
 							//ESR-Referenznummer oder Creditor Reference nach ISO11649
 							String ref = creditorReferenceInformation2.getRef();
-							records.add(new Camt054Record(
+							records.add(new Camt054Record(storno ? "005" : "002",
 								amount.toString().replaceAll("[\\.,]", ""), ref, esrTn,
 								bookingDate.getDt().toGregorianCalendar().getTime(),
 								valDate.getDt().toGregorianCalendar().getTime()));
 						}
 					}
 				}
+				
+				// sammelgutschrift
+				records.add(new Camt054Record("999", entryAmt != null ? entryAmt.getValue().toString().replaceAll("[\\.,]", "") : null,
+					null, esrTn, bookingDate.getDt().toGregorianCalendar().getTime(),
+					valDate.getDt().toGregorianCalendar().getTime()));
 			}
 			
 		}

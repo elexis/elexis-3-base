@@ -8,7 +8,7 @@ import junit.framework.TestSuite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	Test_Camt054Parser.class
+	Test_Camt054Parser.class, Test_Camt054andEsr.class
 })
 public class AllTests {
 	public static Test suite() throws ClassNotFoundException{

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.ebanking.parser.Camet054Exception;
 import ch.elexis.ebanking.parser.Camt054Parser;
 import ch.elexis.ebanking.parser.Camt054Record;
-import junit.framework.Assert;
+
 
 public class Test_Camt054Parser {
 	
@@ -36,15 +37,18 @@ public class Test_Camt054Parser {
 	
 	@Test
 	public void testInvalidRecords() {
-		testInvalidRecord(null, null, null, null, null);
-		testInvalidRecord("-1000", null, null, null, null);
-		testInvalidRecord("1000", null, null, null, null);
-		testInvalidRecord("1000", "12345678901234567890123456", null, null, null);
-		testInvalidRecord("1000", "123456789012345678901234567", null, new Date(-1), null);
-		testInvalidRecord("1000", "123456789012345678901234567", null, new Date(), new Date(-1));
+		testInvalidRecord(null, null, null, null, null, null);
+		testInvalidRecord("002", null, null, null, null, null);
+		testInvalidRecord("002", "-1000", null, null, null, null);
+		testInvalidRecord("002", "1000", null, null, null, null);
+		testInvalidRecord("002", "1000", "12345678901234567890123456", null, null, null);
+		testInvalidRecord("002", "1000", "123456789012345678901234567", null, new Date(-1), null);
+		testInvalidRecord("999", "1000", "123456789012345678901234567", null, new Date(),
+			new Date(-1));
 		
 		try {
-			Camt054Record valid = new Camt054Record("1000", "123456789012345678901234567", null,
+			Camt054Record valid = new Camt054Record("002", "1000", "123456789012345678901234567",
+				null,
 				new Date(), new Date());
 			Assert.assertNotNull(valid);
 		} catch (Camet054Exception e) {
@@ -54,10 +58,12 @@ public class Test_Camt054Parser {
 		
 	}
 	
-	private void testInvalidRecord(String amount, String reference, String tn, Date bookingDate,
+	private void testInvalidRecord(String mode, String amount, String reference, String tn,
+		Date bookingDate,
 		Date valueDate){
 		try {
-			Camt054Record camt054Record = new Camt054Record(amount, reference, tn, bookingDate, valueDate);
+			Camt054Record camt054Record =
+				new Camt054Record(mode, amount, reference, tn, bookingDate, valueDate);
 			fail("not valid");
 		} catch (Camet054Exception e) {
 			/*ignore*/

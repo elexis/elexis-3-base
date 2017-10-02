@@ -26,13 +26,13 @@ import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.data.interfaces.IFall;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.optifier.NoObligationOptifier;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.DBConnection;
-import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
@@ -468,7 +468,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	@Override
-	public int getPreis(TimeTool dat, Fall fall){
+	public int getPreis(TimeTool dat, IFall fall){
 		double vkPreis = checkZeroDouble(getVKPreis().getCentsAsString());
 		double pkgSize = checkZeroDouble(get(FLD_PKG_SIZE));
 		double vkUnits = checkZeroDouble(get(VERKAUFSEINHEIT));
@@ -480,12 +480,12 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	@Override
-	public int getTP(TimeTool date, Fall fall){
+	public int getTP(TimeTool date, IFall fall){
 		return getPreis(date, fall);
 	}
 	
 	@Override
-	public double getFactor(TimeTool date, Fall fall){
+	public double getFactor(TimeTool date, IFall fall){
 		// TODO
 		return 1;
 	}

@@ -14,7 +14,7 @@ package ch.berchtold.emanuel.privatrechnung.data;
 
 import java.util.List;
 
-import ch.elexis.data.Fall;
+import ch.elexis.core.data.interfaces.IFall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.VerrechenbarAdapter;
 import ch.elexis.data.Xid;
@@ -191,14 +191,14 @@ public class Leistung extends VerrechenbarAdapter {
 	 * that is in effect at the given date and that migh depend from the "Fall-Type" and the billing
 	 * type.
 	 */
-	public double getFactor(final TimeTool date, final Fall fall){
+	public double getFactor(final TimeTool date, final IFall fall){
 		return getVKMultiplikator(date, fall);
 	}
 	
 	/**
 	 * base price at a given date for this service
 	 */
-	public int getTP(final TimeTool date, final Fall fall){
+	public int getTP(final TimeTool date, final IFall fall){
 		return checkZero(get("Preis"));
 	}
 	

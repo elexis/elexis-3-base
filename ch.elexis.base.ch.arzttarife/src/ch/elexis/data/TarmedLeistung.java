@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 
+import ch.elexis.core.data.interfaces.IFall;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.data.util.PlatformHelper;
@@ -507,7 +508,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		return checkNull(exclusions);
 	}
 	
-	public int getTP(final TimeTool date, final Fall fall){
+	public int getTP(final TimeTool date, final IFall fall){
 		loadExtension();
 		String t = ext.get(FLD_TP_TL); //$NON-NLS-1$
 		String a = ext.get(FLD_TP_AL); //$NON-NLS-1$
@@ -526,7 +527,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		return (int) Math.round((tl + al) * 100.0);
 	}
 	
-	public double getFactor(final TimeTool date, final Fall fall){
+	public double getFactor(final TimeTool date, final IFall fall){
 		return getVKMultiplikator(date, fall);
 	}
 	

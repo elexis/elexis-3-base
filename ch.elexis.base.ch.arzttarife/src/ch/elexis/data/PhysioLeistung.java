@@ -12,6 +12,7 @@ package ch.elexis.data;
 
 import java.util.List;
 
+import ch.elexis.core.data.interfaces.IFall;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.optifier.NoObligationOptifier;
 import ch.rgw.tools.TimeTool;
@@ -72,11 +73,11 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 		};
 	}
 	
-	public double getFactor(TimeTool date, Fall fall){
+	public double getFactor(TimeTool date, IFall fall){
 		return getVKMultiplikator(date, fall);
 	}
 	
-	public int getTP(TimeTool date, Fall fall){
+	public int getTP(TimeTool date, IFall fall){
 		return checkZero(get(FLD_TP));
 	}
 	

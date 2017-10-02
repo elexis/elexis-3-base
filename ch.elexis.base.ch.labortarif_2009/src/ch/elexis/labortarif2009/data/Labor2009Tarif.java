@@ -13,9 +13,9 @@ package ch.elexis.labortarif2009.data;
 
 import java.util.List;
 
+import ch.elexis.core.data.interfaces.IFall;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
-import ch.elexis.data.Fall;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
 import ch.rgw.tools.StringTool;
@@ -163,12 +163,12 @@ public class Labor2009Tarif extends UiVerrechenbarAdapter {
 		return XIDDOMAIN;
 	}
 	
-	public double getFactor(TimeTool date, Fall fall){
+	public double getFactor(TimeTool date, IFall fall){
 		double ret = getVKMultiplikator(date, MULTIPLICATOR_NAME);
 		return ret;
 	}
 	
-	public int getTP(TimeTool date, Fall fall){
+	public int getTP(TimeTool date, IFall fall){
 		double tp = checkZeroDouble(get(FLD_TP));
 		return (int) Math.round(tp * 100.0);
 	}

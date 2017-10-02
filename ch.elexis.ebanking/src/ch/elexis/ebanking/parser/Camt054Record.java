@@ -20,7 +20,9 @@ public class Camt054Record {
 	private Date bookingDate;
 	private Date valuDate;
 	
-	public Camt054Record(String amount, String reference, String tn, Date bookingDate,
+	private String mode;
+	
+	public Camt054Record(String mode, String amount, String reference, String tn, Date bookingDate,
 		Date valueDate) throws Camet054Exception{
 		super();
 		this.amount = amount;
@@ -28,6 +30,7 @@ public class Camt054Record {
 		this.tn = tn;
 		this.bookingDate = bookingDate;
 		this.valuDate = valueDate;
+		this.mode = mode;
 		
 		validate();
 	}
@@ -41,7 +44,8 @@ public class Camt054Record {
 			throw new Camet054Exception("amount not valid", e);
 		}
 		
-		if (reference == null || reference.length() != 27) {
+		// sammelbuchungen hat keine eigene esr laut testfiles
+		if (!"999".equals(mode) && (reference == null || reference.length() != 27)) {
 			throw new Camet054Exception("reference is not valid: " + reference);
 		}
 		
@@ -54,6 +58,13 @@ public class Camt054Record {
 		}
 	}
 	
+	public void setMode(String mode){
+		this.mode = mode;
+	}
+	
+	public String getMode(){
+		return mode;
+	}
 	public String getAmount(){
 		return amount;
 	}
@@ -96,7 +107,7 @@ public class Camt054Record {
 	
 	@Override
 	public String toString(){
-		return "Camt054Record [amount=" + amount + ", reference=" + reference + ", tn=" + tn
-			+ ", bookingDate=" + bookingDate + ", valuDate=" + valuDate + "]";
+		return "Camt054Record [mode=" + mode + ", reference=" + reference + ", amount=" + amount
+			+ ", tn=" + tn + ", bookingDate=" + bookingDate + ", valuDate=" + valuDate + "]";
 	}
 }

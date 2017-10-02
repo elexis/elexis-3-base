@@ -269,22 +269,36 @@ public class ESRRecord extends PersistentObject {
 		String mandantID;
 		REJECT rejectCode;
 		
+		// Code/Modus.
+		MODE mode = MODE.Unbekannt;
+		String smd = camt054Record.getMode();
+		if (smd != null) {
+			if (smd.equals("002")) { //$NON-NLS-1$
+				mode = MODE.Gutschrift_edv;
+			} else if (smd.equals("005")) { //$NON-NLS-1$
+				mode = MODE.Storno_edv;
+			} else if (smd.equals("999")) { //$NON-NLS-1$
+				mode = MODE.Summenrecord;
+			}
+		}
+		
 		String[] vals = new String[11];
 		vals[0] = new TimeTool().toString(TimeTool.DATE_COMPACT);
-		
-		vals[1] = new TimeTool(camt054Record.getBookingDate()).toString(TimeTool.DATE_GER);
-		vals[2] = new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER);//TODO verarbeit = gutschrift ?
+		vals[1] = new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER);//TODO eingelesen datum ?
+		vals[2] = new TimeTool(camt054Record.getBookingDate()).toString(TimeTool.DATE_GER); //TODO laut docu buchungsdatum = verarbeitungsdatum
 		vals[3] = new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER);
 		vals[10] = file;
 		
 		rejectCode = REJECT.OK;
-		MODE mode = MODE.Unbekannt; //TODO woher ?
 		
 		vals[5] = Integer.toString(mode.ordinal());
 		vals[4] = camt054Record.getAmount(); //betrag
-			
+		
+		if (mode.equals(MODE.Summenrecord)) {
+			// nothing to do
+		} else {
 			// Von der RechnungsNummer führende Nullen wegbringen
-		int rnnr = Integer.parseInt(camt054Record.getReference().substring(POSITION_RN_NR, 26));
+			int rnnr = Integer.parseInt(camt054Record.getReference().substring(POSITION_RN_NR, 26));
 			Query<Rechnung> qbe_r = new Query<Rechnung>(Rechnung.class);
 			String rnid = qbe_r.findSingle("RnNummer", "=", Integer.toString(rnnr)); //$NON-NLS-1$ //$NON-NLS-2$
 			if (rnid == null) {
@@ -310,7 +324,7 @@ public class ESRRecord extends PersistentObject {
 				}
 				
 			}
-		String PatNr = camt054Record.getReference().substring(POSITION_PAT_NR, POSITION_RN_NR);
+			String PatNr = camt054Record.getReference().substring(POSITION_PAT_NR, POSITION_RN_NR);
 			long patnr = Long.parseLong(PatNr); // führende Nullen wegbringen
 			String PatID = new Query<Patient>(Patient.class).findSingle("PatientNr", "=", //$NON-NLS-1$//$NON-NLS-2$
 				Long.toString(patnr));
@@ -330,7 +344,7 @@ public class ESRRecord extends PersistentObject {
 				
 			}
 			vals[8] = mandantID;
-		
+		}
 		vals[9] = Integer.toString(rejectCode.ordinal());
 		set(new String[] {
 			FLD_DATE, "Eingelesen", "Verarbeitet", "Gutgeschrieben", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

@@ -1,32 +1,22 @@
 # Build script used by gitlab.medelexis.ch
+variables:
+   ORIGIN_BRANCH: "3.3"
+
 stages:
     - build
-    - deploy
     - trigger_other_builds
 
 build:
   stage: build
   script:
-    - xvfb-run mvn clean verify -Dgit.branch=$CI_COMMIT_REF_NAME
-  artifacts:
-    paths:
-    - ch.elexis.base.p2site/target/*.zip
-    expire_in: 1 day
-
-deploy_master_snapshot:
-    stage: deploy
-    script:
-    - wget https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/upload-dav.sh; chmod +x upload-dav.sh
-    - mkdir upload; unzip ch.elexis.base.p2site/target/ch.elexis.base.p2site*.zip -d upload/
-    - ./upload-dav.sh upload/ https://download.elexis.info/elexis/ $CI_COMMIT_REF_NAME/p2/elexis-3-base $DEPLOY_USER $DEPLOY_PASSWORD
-    - rm -Rf upload/
-    - rm upload-dav.sh
-    environment:
-        name: elexis-3-base/$CI_COMMIT_REF_NAME
-        url: http://download.elexis.info/elexis/p2/$CI_COMMIT_REF_NAME/elexis-3-base
-    only:
-    - master@elexis/elexis-3-base
-    - /^\d*[.]\d*$/@elexis/elexis-3-base
+  - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/target/ -o /dev/null) == '200' ]; then export BUILD_TARGET_BRANCH=$CI_COMMIT_REF_NAME; fi 
+  - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-core/ -o /dev/null) == '200' ]; then export BUILD_CORE_BRANCH=$CI_COMMIT_REF_NAME; fi 
+  - xvfb-run mvn clean verify ${BUILD_TARGET_BRANCH:+-Dgit.target.branch=$BUILD_TARGET_BRANCH} ${BUILD_CORE_BRANCH:+-Dgit.core.branch=$BUILD_CORE_BRANCH}
+  - jo token="$WEBHOOK_TOKEN" info="elexis-3-base $CI_JOB_ID $ORIGIN_BRANCH $CI_COMMIT_REF_NAME $CI_COMMIT_SHA" binary=%$(find ch.elexis.base.p2site/target/ch.elexis.base.p2site*.zip) destDir=elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-base | curl -k -H "Content-Type:application/json" -X POST -d @- $WEBHOOK_URL/deploy-zip
+  only:
+  - master@elexis/elexis-3-base
+  - /^\d*[.]\d*$/@elexis/elexis-3-base
+  - /^[bf]\d*$/@elexis/elexis-3-base
 
 trigger_medelexis-3-application_build:
     stage: trigger_other_builds
@@ -35,3 +25,4 @@ trigger_medelexis-3-application_build:
     only:
     - master@elexis/elexis-3-base
     - /^\d*[.]\d*$/@elexis/elexis-3-base
+    - /^[bf]\d*$/@elexis/elexis-3-base

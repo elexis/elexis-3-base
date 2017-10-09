@@ -21,6 +21,8 @@ import at.medevit.elexis.loinc.ui.LoincServiceComponent;
 
 public class LoincSelektor extends FilteredItemsSelectionDialog {
 	
+	private boolean ignoreErrors;
+	
 	public LoincSelektor(Shell shell){
 		super(shell);
 		setTitle("LOINC Code Selektion");
@@ -34,6 +36,21 @@ public class LoincSelektor extends FilteredItemsSelectionDialog {
 				return ((LoincCode) element).getLabel();
 			}
 		});
+	}
+	
+	public LoincSelektor(Shell shell, Object data){
+		this(shell);
+		if (data instanceof String && data.equals("ignoreErrors")) {
+			ignoreErrors = true;
+		}
+		
+	}
+	
+	@Override
+	protected void updateButtonsEnableState(IStatus status){
+		if (!ignoreErrors) {
+			super.updateButtonsEnableState(status);
+		}
 	}
 	
 	@Override
@@ -56,6 +73,14 @@ public class LoincSelektor extends FilteredItemsSelectionDialog {
 	@Override
 	protected IStatus validateItem(Object item){
 		return Status.OK_STATUS;
+	}
+	
+	@Override
+	protected void okPressed(){
+		if (ignoreErrors) {
+			updateStatus(Status.OK_STATUS);
+		}
+		super.okPressed();
 	}
 	
 	@Override
@@ -104,7 +129,7 @@ public class LoincSelektor extends FilteredItemsSelectionDialog {
 		LoincCode code = (LoincCode) item;
 		return code.getLabel();
 	}
-
+	
 	@Override
 	protected Control createExtendedContentArea(Composite parent){
 		// TODO Auto-generated method stub

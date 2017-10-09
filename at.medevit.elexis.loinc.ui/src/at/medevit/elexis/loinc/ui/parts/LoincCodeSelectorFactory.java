@@ -30,7 +30,7 @@ public class LoincCodeSelectorFactory extends CodeSelectorFactory {
 	
 	@Override
 	public SelectionDialog getSelectionDialog(Shell parent, Object data){
-		return new LoincSelektor(parent);
+		return new LoincSelektor(parent, data);
 	}
 	
 	@Override

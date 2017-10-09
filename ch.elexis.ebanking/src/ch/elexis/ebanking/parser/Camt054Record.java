@@ -19,10 +19,12 @@ public class Camt054Record {
 	
 	private Date bookingDate;
 	private Date valuDate;
+	private Date readDate;
 	
 	private String mode;
 	
-	public Camt054Record(String mode, String amount, String reference, String tn, Date bookingDate,
+	public Camt054Record(String mode, String amount, String reference, String tn, Date readDate,
+		Date bookingDate,
 		Date valueDate) throws Camet054Exception{
 		super();
 		this.amount = amount;
@@ -30,6 +32,7 @@ public class Camt054Record {
 		this.tn = tn;
 		this.bookingDate = bookingDate;
 		this.valuDate = valueDate;
+		this.readDate = readDate;
 		this.mode = mode;
 		
 		validate();
@@ -55,6 +58,10 @@ public class Camt054Record {
 		
 		if (valuDate == null || valuDate.before(new Date(0))) {
 			throw new Camet054Exception("valu date is not valid: " + valuDate);
+		}
+		
+		if (readDate == null || readDate.before(new Date(0))) {
+			throw new Camet054Exception("read date is not valid: " + readDate);
 		}
 	}
 	
@@ -105,9 +112,14 @@ public class Camt054Record {
 		this.valuDate = valuDate;
 	}
 	
+	public Date getReadDate(){
+		return readDate;
+	}
+	
 	@Override
 	public String toString(){
 		return "Camt054Record [mode=" + mode + ", reference=" + reference + ", amount=" + amount
-			+ ", tn=" + tn + ", bookingDate=" + bookingDate + ", valuDate=" + valuDate + "]";
+			+ ", tn=" + tn + ", bookingDate=" + bookingDate + ", valuDate=" + valuDate
+			+ ", readDate=" + readDate + "]";
 	}
 }

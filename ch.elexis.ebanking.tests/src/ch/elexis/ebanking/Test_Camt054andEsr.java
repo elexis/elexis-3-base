@@ -4,30 +4,36 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.elexis.base.ch.ebanking.esr.ESRFile;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
+import ch.elexis.base.ch.ebanking.esr.ESRRecord.MODE;
+import ch.elexis.data.Patient;
 import ch.elexis.ebanking.parser.Camet054Exception;
 import ch.rgw.tools.Result;
 
-
 public class Test_Camt054andEsr {
 	
-	private boolean ingoreDates = false; //TODO dates are not identical esr11 vs camt054
+	private boolean ignoreSumRecordDates = true; // dates are not identical for sum records esr11 vs camt054
+	
+	@BeforeClass
+	public static void init(){
+		Patient p = new Patient("Test", "Nachname", "11.11.1999", "m");
+		p.set(Patient.FLD_PATID, "5624");
+		
+		Assert.assertTrue(Patient.loadByPatientID("5624").exists());
+	}
 	
 	@Test
 	public void testReadRecords() throws Camet054Exception, IOException{
-		
-		InputStream in = getInputStreamCamt();
-		
 		// read camt
 		Result<List<ESRRecord>> optionalCamtRecords = readCamtFile();
 		assertTrue(optionalCamtRecords.isOK());
@@ -50,25 +56,32 @@ public class Test_Camt054andEsr {
 		
 		// compare camt with esr
 		Assert.assertTrue(optionalCamtRecords.get().size() == optionalEsrV11Records.get().size());
-		int i = 0;
-		for (ESRRecord l : optionalCamtRecords.get()) {
-			Assert.assertEquals(getTextFromRecord(l).toString(),
-				getTextFromRecord(optionalEsrV11Records.get().get(i++)).toString());
-		}
 		
-		in.close();
+		for (ESRRecord l : optionalCamtRecords.get()) {
+			boolean found = false;
+			
+			for (ESRRecord l2 : optionalEsrV11Records.get()) {
+				if (getTextFromRecord(l2).toString().equals(getTextFromRecord(l).toString())) {
+					found = true;
+				}
+			}
+			if (!found) {
+				System.out.println("NOT EQUAL:" + getTextFromRecord(l));
+			}
+			Assert.assertTrue(found);
+		}
 	}
-
+	
 	private StringBuilder getTextFromRecord(ESRRecord l){
 		StringBuilder builder = new StringBuilder();
 		builder.append("esr:" + l.getESRCode());
 		builder.append("|patient:");
-		builder.append(l.getPatient().getLabel());
+		builder.append(l.getPatient().exists() ? l.getPatient().getLabel() : "NULL");
 		builder.append("|rechnung:");
 		builder.append(l.getRechnung() != null ? l.getRechnung().getRnId() : "NULL");
 		builder.append("|betrag:");
 		builder.append(l.getBetrag().toString());
-		if (!ingoreDates) {
+		if (!MODE.Summenrecord.equals(l.getTyp()) || !ignoreSumRecordDates) {
 			builder.append("|einlesedatum:");
 			builder.append(l.getEinlesedatatum());
 			builder.append("|verarbeitungsdatum:");
@@ -84,19 +97,14 @@ public class Test_Camt054andEsr {
 		builder.append(l.getTyp());
 		return builder;
 	}
-	
-	private InputStream getInputStreamCamt(){
-		return Test_Camt054andEsr.class.getResourceAsStream(
-			"/rsc/camt.054-ESR-TESTFILE.xml");
-	}
+
 	
 	public Result<List<ESRRecord>> readCamtFile(){
 		
 		try {
-			File file = File.createTempFile("camt.054-ESR-TESTFILE", ".xml");
-			FileUtils.copyInputStreamToFile(
-				Test_Camt054andEsr.class.getResourceAsStream("/rsc/camt.054-ESR-TESTFILE.xml"),
-				file);
+			File file = File.createTempFile("test1", ".xml");
+			FileUtils.copyInputStreamToFile(Test_Camt054andEsr.class
+				.getResourceAsStream("/rsc/Testfile1_1.xml"), file);
 			file.deleteOnExit();
 			Assert.assertTrue(file.exists());
 			ESRFile esrFile = new ESRFile();
@@ -110,9 +118,9 @@ public class Test_Camt054andEsr {
 	public Result<List<ESRRecord>> readEsrFile(){
 		
 		try {
-			File file = File.createTempFile("ESR_TESTFILE", ".v11");
-			FileUtils.copyInputStreamToFile(
-				Test_Camt054andEsr.class.getResourceAsStream("/rsc/ESR_TESTFILE.v11"), file);
+			File file = File.createTempFile("test2", ".v11");
+			FileUtils.copyInputStreamToFile(Test_Camt054andEsr.class
+				.getResourceAsStream("/rsc/Testfile1_0.v11"), file);
 			file.deleteOnExit();
 			Assert.assertTrue(file.exists());
 			ESRFile esrFile = new ESRFile();

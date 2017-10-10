@@ -284,8 +284,8 @@ public class ESRRecord extends PersistentObject {
 		
 		String[] vals = new String[11];
 		vals[0] = new TimeTool().toString(TimeTool.DATE_COMPACT);
-		vals[1] = new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER);//TODO eingelesen datum ?
-		vals[2] = new TimeTool(camt054Record.getBookingDate()).toString(TimeTool.DATE_GER); //TODO laut docu buchungsdatum = verarbeitungsdatum
+		vals[1] = new TimeTool(camt054Record.getReadDate()).toString(TimeTool.DATE_GER);
+		vals[2] = new TimeTool(camt054Record.getBookingDate()).toString(TimeTool.DATE_GER);
 		vals[3] = new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER);
 		vals[10] = file;
 		

@@ -37,22 +37,23 @@ public class Test_Camt054Parser {
 	
 	@Test
 	public void testInvalidRecords() {
-		testInvalidRecord(null, null, null, null, null, null);
-		testInvalidRecord("002", null, null, null, null, null);
-		testInvalidRecord("002", "-1000", null, null, null, null);
-		testInvalidRecord("002", "1000", null, null, null, null);
-		testInvalidRecord("002", "1000", "12345678901234567890123456", null, null, null);
-		testInvalidRecord("002", "1000", "123456789012345678901234567", null, new Date(-1), null);
+		testInvalidRecord(null, null, null, null, null, null, null);
+		testInvalidRecord("002", null, null, null, null, null, null);
+		testInvalidRecord("002", "-1000", null, null, null, null, null);
+		testInvalidRecord("002", "1000", null, null, null, null, null);
+		testInvalidRecord("002", "1000", "12345678901234567890123456", null, null, null, null);
+		testInvalidRecord("002", "1000", "123456789012345678901234567", null, new Date(-1), null,
+			null);
 		testInvalidRecord("999", "1000", "123456789012345678901234567", null, new Date(),
-			new Date(-1));
+			new Date(-1), new Date(-1));
 		
 		try {
 			Camt054Record valid = new Camt054Record("002", "1000", "123456789012345678901234567",
 				null,
-				new Date(), new Date());
+				new Date(), new Date(), new Date());
 			Assert.assertNotNull(valid);
 		} catch (Camet054Exception e) {
-			fail("not valid");
+			fail("not valid " + e.getMessage());
 			
 		}
 		
@@ -60,10 +61,10 @@ public class Test_Camt054Parser {
 	
 	private void testInvalidRecord(String mode, String amount, String reference, String tn,
 		Date bookingDate,
-		Date valueDate){
+		Date valueDate, Date readDate){
 		try {
 			Camt054Record camt054Record =
-				new Camt054Record(mode, amount, reference, tn, bookingDate, valueDate);
+				new Camt054Record(mode, amount, reference, tn, bookingDate, valueDate, readDate);
 			fail("not valid");
 		} catch (Camet054Exception e) {
 			/*ignore*/

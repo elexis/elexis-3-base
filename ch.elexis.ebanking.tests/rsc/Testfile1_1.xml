@@ -1,0 +1,954 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.054.001.04">
+   <BkToCstmrDbtCdtNtfctn>
+      <GrpHdr>
+         <MsgId>MSG-C054-171009023700-01</MsgId>
+         <CreDtTm>2017-10-09T14:37:00.974+02:00</CreDtTm>
+         <MsgRcpt>
+            <Nm>Blaser Stefanie</Nm>
+         </MsgRcpt>
+         <AddtlInf>PRODUCTIVE</AddtlInf>
+      </GrpHdr>
+      <Ntfctn>
+         <Id>NTF-C054-171009023700-01</Id>
+         <ElctrncSeqNb>1</ElctrncSeqNb>
+         <CreDtTm>2017-10-09T14:37:00.980+02:00</CreDtTm>
+         <Acct>
+            <Id>
+               <IBAN>CH1581360000009705990</IBAN>
+            </Id>
+            <Svcr>
+               <FinInstnId>
+                  <Nm>Raiffeisenbank Muotathal</Nm>
+               </FinInstnId>
+            </Svcr>
+         </Acct>
+         <Ntry>
+            <NtryRef>010062182</NtryRef>
+            <Amt Ccy="CHF">4656.2</Amt>
+            <CdtDbtInd>CRDT</CdtDbtInd>
+            <RvslInd>false</RvslInd>
+            <Sts>BOOK</Sts>
+            <BookgDt>
+               <Dt>2017-10-09+02:00</Dt>
+            </BookgDt>
+            <ValDt>
+               <Dt>2017-10-09+02:00</Dt>
+            </ValDt>
+            <BkTxCd>
+               <Domn>
+                  <Cd>PMNT</Cd>
+                  <Fmly>
+                     <Cd>RCDT</Cd>
+                     <SubFmlyCd>VCOM</SubFmlyCd>
+                  </Fmly>
+               </Domn>
+               <Prtry>
+                  <Cd>1000</Cd>
+               </Prtry>
+            </BkTxCd>
+            <Chrgs>
+               <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+            </Chrgs>
+            <NtryDtls>
+               <Btch>
+                  <NbOfTxs>19</NbOfTxs>
+               </Btch>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>E2E1110948671</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">123.05</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>SWICA Krankenver.AG Winterthur</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000056240217126</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251360</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">77.3</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000025700216450</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>E2E1110948660</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">93.35</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>SWICA Krankenver.AG Winterthur</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000009090216048</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251471</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">65.85</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000014520212498</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>SANI1207919983</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">348.15</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Sanitas Hauptsitz</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000065920208031</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>E2E1110948647</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">273.45</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>SWICA Krankenver.AG Winterthur</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000033220215812</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>E2E1110948682</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">154.55</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>SWICA Krankenver.AG Winterthur</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000065190217216</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038252067</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">225.55</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000029100213345</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038252393</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">219</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000001850215856</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251141</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">137.25</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000067500213282</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251778</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">130.5</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000016550213260</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251970</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">475.2</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000024820212438</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251868</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">810.25</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000019660213983</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251250</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">517.45</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000028240210562</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251579</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">251</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000028040216918</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038252248</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">356.05</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000017490214400</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>HEL20038251691</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>0000  0000</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">299.8</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>Helsana Versicherungen AG</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000006950211027</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-06T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>NOTPROVIDED</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>9999  9999</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">83.9</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>NOTPROVIDED</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000036470204243</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-09T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+               <TxDtls>
+                  <Refs>
+                     <AcctSvcrRef>8778525</AcctSvcrRef>
+                     <EndToEndId>NOTPROVIDED</EndToEndId>
+                     <Prtry>
+                        <Tp>01</Tp>
+                        <Ref>9999  9999</Ref>
+                     </Prtry>
+                  </Refs>
+                  <Amt Ccy="CHF">14.55</Amt>
+                  <CdtDbtInd>CRDT</CdtDbtInd>
+                  <BkTxCd>
+                     <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                           <Cd>RCDT</Cd>
+                           <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                     </Domn>
+                     <Prtry>
+                        <Cd>1000</Cd>
+                     </Prtry>
+                  </BkTxCd>
+                  <Chrgs>
+                     <TtlChrgsAndTaxAmt Ccy="CHF">0</TtlChrgsAndTaxAmt>
+                  </Chrgs>
+                  <RltdPties>
+                     <Dbtr>
+                        <Nm>NOTPROVIDED</Nm>
+                     </Dbtr>
+                  </RltdPties>
+                  <RmtInf>
+                     <Strd>
+                        <CdtrRefInf>
+                           <Tp>
+                              <CdOrPrtry>
+                                 <Prtry>ISR Reference</Prtry>
+                              </CdOrPrtry>
+                           </Tp>
+                           <Ref>970599013600000036470204238</Ref>
+                        </CdtrRefInf>
+                     </Strd>
+                  </RmtInf>
+                  <RltdDts>
+                     <AccptncDtTm>2017-10-09T00:00:00.000+02:00</AccptncDtTm>
+                  </RltdDts>
+               </TxDtls>
+            </NtryDtls>
+         </Ntry>
+      </Ntfctn>
+   </BkToCstmrDbtCdtNtfctn>
+</Document>

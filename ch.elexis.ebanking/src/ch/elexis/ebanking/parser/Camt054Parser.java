@@ -9,16 +9,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
 
-import camt.AccountIdentification4Choice;
 import camt.AccountNotification12;
 import camt.ActiveOrHistoricCurrencyAndAmount;
-import camt.BankTransactionCodeStructure4;
-import camt.BatchInformation2;
-import camt.CashAccount25;
 import camt.CreditorReferenceInformation2;
 import camt.DateAndDateTimeChoice;
 import camt.Document;
@@ -28,6 +25,7 @@ import camt.ObjectFactory;
 import camt.RemittanceInformation11;
 import camt.ReportEntry8;
 import camt.StructuredRemittanceInformation13;
+import camt.TransactionDates2;
 
 public class Camt054Parser {
 	/**
@@ -38,6 +36,7 @@ public class Camt054Parser {
 	 * @return document holding CAMT.054 parsed bank statement
 	 * @throws JAXBException
 	 */
+	@SuppressWarnings("unchecked")
 	public Document parse(InputStream inputStream) throws Camet054Exception{
 		try {
 			JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
@@ -70,13 +69,12 @@ public class Camt054Parser {
 		List<Camt054Record> records = new ArrayList<>();
 		Document doc = parse(inputStream);
 		List<AccountNotification12> notifications = doc.getBkToCstmrDbtCdtNtfctn().getNtfctn();
+		
 		for (AccountNotification12 accountNotification12 : notifications) {
-			
-			// B-LEVEL
-			CashAccount25 cashAccount25 = accountNotification12.getAcct();
-			AccountIdentification4Choice accountIdentification4Choice = cashAccount25.getId();
-			//Entspricht dem Gutschriftskonto, nicht der Teilnehmernummer oder ESR- IBAN.
-			String iban = accountIdentification4Choice.getIBAN();
+
+			// B- LEVEL
+			//Erstellungsdatum und -zeit des Kontoauszugs
+			XMLGregorianCalendar credDate = accountNotification12.getCreDtTm();
 			
 			// C-LEVEL
 			List<ReportEntry8> reportEntry8s = accountNotification12.getNtry();
@@ -94,31 +92,27 @@ public class Camt054Parser {
 				//RvslInd Optional Sofern es sich um eine ESR-Storno handelt, wird «true» geliefert, sonst «false» oder Element nicht mitliefern.
 				boolean storno = Boolean.TRUE.equals(reportEntry8.isRvslInd());
 				
-				//TODO
-				// BTC besteht aus 3 Feldern: Domain, Family und Sub-Family. Folgende Codes werden verwendet: Gutschrift: Domain = PMNT / Family = RCDT / Sub-Family = VCOM Storno: Domain = PMNT / Family = RCDT / Sub-Family = CAJT 
-				BankTransactionCodeStructure4 bankTransactionCodeStructure4 =
-					reportEntry8.getBkTxCd();
-				
-				//TODO optional field for teilnehmernummer ?
+				//optional field for teilnehmernummer 
 				String esrTn = reportEntry8.getNtryRef();
 				
 				//D-LEVEL
 				List<EntryDetails7> entryDetails7s = reportEntry8.getNtryDtls();
 				for (EntryDetails7 entryDetails7 : entryDetails7s) {
-					BatchInformation2 batchInformation2 = entryDetails7.getBtch();
 					List<EntryTransaction8> entryTransaction8s = entryDetails7.getTxDtls();
 					for (EntryTransaction8 entryTransaction8 : entryTransaction8s) {
 						ActiveOrHistoricCurrencyAndAmount activeOrHistoricCurrencyAndAmount =
 							entryTransaction8.getAmt();
-						//waehrung
-						String currency = activeOrHistoricCurrencyAndAmount.getCcy();
+						
 						// wert
 						BigDecimal amount = activeOrHistoricCurrencyAndAmount.getValue();
-						
 						RemittanceInformation11 remittanceInformation11 =
 							entryTransaction8.getRmtInf();
 						List<StructuredRemittanceInformation13> structuredRemittanceInformation13s =
 							remittanceInformation11.getStrd();
+						
+						// Aufgabedatum
+						TransactionDates2 transactionDates2 = entryTransaction8.getRltdDts();
+						XMLGregorianCalendar readDate = transactionDates2.getAccptncDtTm();
 						
 						for (StructuredRemittanceInformation13 structuredRemittanceInformation13 : structuredRemittanceInformation13s) {
 							CreditorReferenceInformation2 creditorReferenceInformation2 =
@@ -127,7 +121,9 @@ public class Camt054Parser {
 							//ESR-Referenznummer oder Creditor Reference nach ISO11649
 							String ref = creditorReferenceInformation2.getRef();
 							records.add(new Camt054Record(storno ? "005" : "002",
-								amount.toString().replaceAll("[\\.,]", ""), ref, esrTn,
+								amount.movePointRight(2).toString().replaceAll("[\\.,]", ""), ref,
+								esrTn,
+								readDate.toGregorianCalendar().getTime(),
 								bookingDate.getDt().toGregorianCalendar().getTime(),
 								valDate.getDt().toGregorianCalendar().getTime()));
 						}
@@ -135,9 +131,12 @@ public class Camt054Parser {
 				}
 				
 				// sammelgutschrift
-				records.add(new Camt054Record("999", entryAmt != null ? entryAmt.getValue().toString().replaceAll("[\\.,]", "") : null,
-					null, esrTn, bookingDate.getDt().toGregorianCalendar().getTime(),
-					valDate.getDt().toGregorianCalendar().getTime()));
+				records.add(new Camt054Record("999",
+					entryAmt != null ? entryAmt.getValue().movePointRight(2).toString()
+						.replaceAll("[\\.,]", "") : null,
+					null, esrTn, credDate.toGregorianCalendar().getTime(),
+					credDate.toGregorianCalendar().getTime(),
+					credDate.toGregorianCalendar().getTime()));
 			}
 			
 		}

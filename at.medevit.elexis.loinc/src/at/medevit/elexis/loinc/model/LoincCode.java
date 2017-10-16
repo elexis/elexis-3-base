@@ -14,6 +14,7 @@ public class LoincCode extends PersistentObject
 	public static final String VERSION = "1.0.0"; //$NON-NLS-1$
 	
 	public static final String VERSIONTOPID = "TOP2000VERSION"; //$NON-NLS-1$
+	public static final String VERSIONCLINICALID = "CLINICALVERSION"; //$NON-NLS-1$
 	public static final String VERSIONID = "VERSION"; //$NON-NLS-1$
 	
 	public static final String FLD_CODE = "code"; //$NON-NLS-1$
@@ -38,7 +39,8 @@ public class LoincCode extends PersistentObject
 			");" + //$NON-NLS-1$
 			"CREATE INDEX loinc1 ON " + TABLENAME + " (" + FLD_CODE + ");" + //$NON-NLS-1$
 			"INSERT INTO " + TABLENAME + " (ID," + FLD_CODE + ") VALUES (" + JdbcLink.wrap(VERSIONID) + "," + JdbcLink.wrap(VERSION) + ");" + //$NON-NLS-1$
-			"INSERT INTO " + TABLENAME + " (ID," + FLD_CODE + ") VALUES (" + JdbcLink.wrap(VERSIONTOPID) + "," + JdbcLink.wrap("0.0.0") + ");"; //$NON-NLS-1$
+			"INSERT INTO " + TABLENAME + " (ID," + FLD_CODE + ") VALUES (" + JdbcLink.wrap(VERSIONTOPID) + "," + JdbcLink.wrap("0.0.0") + ");" + //$NON-NLS-1$
+			"INSERT INTO " + TABLENAME + " (ID," + FLD_CODE + ") VALUES (" + JdbcLink.wrap(VERSIONCLINICALID) + "," + JdbcLink.wrap("0.0.0") + ");"; //$NON-NLS-1$
 	// @formatter:on
 	
 	static {
@@ -109,14 +111,17 @@ public class LoincCode extends PersistentObject
 		return get(FLD_LONGNAME);
 	}
 	
-	public static VersionInfo getTop2000Verion(){
-		LoincCode top2000version = load(VERSIONTOPID);
-		return new VersionInfo(top2000version.get(FLD_CODE));
+	public static VersionInfo getDataVersion(String versionId){
+		LoincCode dataVersion = load(versionId);
+		return new VersionInfo(dataVersion.get(FLD_CODE));
 	}
 	
-	public static void setTop2000Version(String version){
-		LoincCode top2000version = load(VERSIONTOPID);
-		top2000version.set(LoincCode.FLD_CODE, version);
+	public static void setDataVersion(String versionId, String version){
+		LoincCode dataVersion = load(versionId);
+		if (!dataVersion.exists()) {
+			dataVersion.create(versionId);
+		}
+		dataVersion.set(dataVersion.FLD_CODE, version);
 	}
 	
 	public List<Object> getActions(Object context){

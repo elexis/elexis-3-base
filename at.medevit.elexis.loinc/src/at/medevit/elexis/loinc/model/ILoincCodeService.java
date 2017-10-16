@@ -41,8 +41,8 @@ public interface ILoincCodeService {
 		throws IOException;
 
 	/**
-	 * Import the top 2000 SI LOINC codes from included csv file, and update if the file has been
-	 * updated.
+	 * Import the data (top 2000 SI LOINC) codes from included csv files, and update if the file has
+	 * been updated.
 	 */
-	public void updateTop2000();
+	public void updateData();
 }

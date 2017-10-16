@@ -48,7 +48,7 @@ public class LoincCodeServiceTest {
 	public static void before() throws IOException{
 		LoincCodeService service = new LoincCodeService();
 		assertNotNull(service);
-		service.importFromCsv(loadTop2000(), getFieldMapping());
+		service.updateData();
 		List<LoincCode> codes = service.getAllCodes();
 		assertTrue(codes.size() > 0);
 
@@ -90,7 +90,7 @@ public class LoincCodeServiceTest {
 	}
 
 	@Test
-	public void testUpdateTop2000(){
+	public void testUpdateData(){
 		LoincCodeService service = new LoincCodeService();
 
 		List<LoincCode> all = service.getAllCodes();
@@ -100,14 +100,16 @@ public class LoincCodeServiceTest {
 
 		all = service.getAllCodes();
 		assertEquals(0, all.size());
-		LoincCode.setTop2000Version("100.0.0");
-		service.updateTop2000();
+		LoincCode.setDataVersion(LoincCode.VERSIONTOPID, "100.0.0");
+		LoincCode.setDataVersion(LoincCode.VERSIONCLINICALID, "100.0.0");
+		service.updateData();
 
 		all = service.getAllCodes();
 		assertEquals(0, all.size());
 
-		LoincCode.setTop2000Version("0.0.0");
-		service.updateTop2000();
+		LoincCode.setDataVersion(LoincCode.VERSIONTOPID, "0.0.0");
+		LoincCode.setDataVersion(LoincCode.VERSIONCLINICALID, "0.0.0");
+		service.updateData();
 
 		all = service.getAllCodes();
 		assertTrue((all.size() > 1500) && (all.size() < 2500));

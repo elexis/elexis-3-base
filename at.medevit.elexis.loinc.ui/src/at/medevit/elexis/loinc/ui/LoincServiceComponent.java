@@ -20,20 +20,19 @@ public class LoincServiceComponent {
 	public static ILoincCodeService getService(){
 		logger.info("Get updated " + updated + " service " + service);
 		if (!updated) {
-			// The login job
+			// the update job
 			final IRunnableWithProgress job = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException{
-					monitor.setTaskName("Updating LOINC Top 2000");
-					service.updateTop2000();
+					monitor.setTaskName("Updating Data");
+					service.updateData();
 				}
 			};
-			
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				
 				@Override
 				public void run(){
 					try {
 						PlatformUI.getWorkbench().getProgressService().busyCursorWhile(job);
+						updated = true;
 					} catch (InvocationTargetException e) {
 						throw new IllegalStateException("Update failed." + e);
 					} catch (InterruptedException e) {

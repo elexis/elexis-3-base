@@ -462,7 +462,11 @@ public class XMLExporterServices {
 					// end corrections
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(einzelpreis));
 					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
+					if ("true".equals(verrechnet.getDetail(Verrechnet.INDICATED))) {
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "207");
+					} else {
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
+					}
 					if ("402".equals(v.getCodeSystemCode())) { // GTIN-basiert //$NON-NLS-1$
 						String gtin = ((Artikel) v).getEAN();
 						el.setAttribute(XMLExporter.ATTR_CODE, gtin);

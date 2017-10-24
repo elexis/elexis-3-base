@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import org.eclipse.swt.browser.Browser;
 
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
+import ch.elexis.data.Kontakt;
 import ch.rgw.tools.TimeTool;
 
 public class EventDropFunction extends AbstractBrowserFunction {
@@ -28,14 +30,26 @@ public class EventDropFunction extends AbstractBrowserFunction {
 				
 				@Override
 				public void lockAcquired(){
+					Termin current = termin;
+					if (arguments.length >= 5 && Boolean.TRUE.equals(arguments[4])) {
+						current = (Termin) termin.clone();
+						if (termin.isRecurringDate() && termin.getKontakt() == null) {
+							// take kontakt from root termin
+							Kontakt k = new SerienTermin(termin).getRootTermin().getKontakt();
+							if (k != null) {
+								current.setKontakt(k);
+							}
+						}
+					}
+					
 					LocalDateTime startDate = getDateTimeArg(arguments[1]);
-					termin.setStartTime(new TimeTool(startDate));
+					current.setStartTime(new TimeTool(startDate));
 					LocalDateTime endDate = getDateTimeArg(arguments[2]);
-					termin.setEndTime(new TimeTool(endDate));
-					if (arguments.length >= 4) {
+					current.setEndTime(new TimeTool(endDate));
+					if (arguments.length >= 4 && arguments[3] != null) {
 						String bereich = (String) arguments[3];
-						if (bereich != null && !bereich.isEmpty()) {
-							termin.setBereich(bereich);
+						if (!bereich.isEmpty()) {
+							current.setBereich(bereich);
 						}
 					}
 					ElexisEventDispatcher.reload(Termin.class);
@@ -48,5 +62,4 @@ public class EventDropFunction extends AbstractBrowserFunction {
 		return null;
 	}
 	
-
 }

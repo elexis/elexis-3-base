@@ -29,7 +29,7 @@
 				events: loadEventsCallback,
 				dayClick: dayClickCallback,
 				eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
-					eventDropFunction(event.id, event.start.format(), event.end.format());
+					eventDropFunction(event.id, event.start.format(), event.end.format(), null, jsEvent.ctrlKey);
 				},
 				eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
 					eventResizeFunction(event.id, event.start.format(), event.end.format());

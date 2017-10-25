@@ -6,6 +6,7 @@ import org.eclipse.swt.browser.Browser;
 
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.series.SerienTermin;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
@@ -31,6 +32,8 @@ public class EventDropFunction extends AbstractBrowserFunction {
 				@Override
 				public void lockAcquired(){
 					Termin current = termin;
+					
+					// do copy
 					if (arguments.length >= 5 && Boolean.TRUE.equals(arguments[4])) {
 						current = (Termin) termin.clone();
 						if (termin.isRecurringDate() && termin.getKontakt() == null) {
@@ -42,6 +45,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						}
 					}
 					
+					// moving
 					LocalDateTime startDate = getDateTimeArg(arguments[1]);
 					current.setStartTime(new TimeTool(startDate));
 					LocalDateTime endDate = getDateTimeArg(arguments[2]);
@@ -52,6 +56,17 @@ public class EventDropFunction extends AbstractBrowserFunction {
 							current.setBereich(bereich);
 						}
 					}
+					
+					// checks if that termin is copied
+					if (!current.equals(termin)) {
+						if (CoreHub.getLocalLockService().acquireLock(current).isOk()) {
+							CoreHub.getLocalLockService().releaseLock(current);
+						} else {
+							// should not happened - no lock - delete the copied termin
+							current.delete();
+						}
+					}
+					
 					ElexisEventDispatcher.reload(Termin.class);
 					redraw();
 				}

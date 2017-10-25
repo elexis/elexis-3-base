@@ -305,14 +305,20 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 		}
 		this.charts.clear();
 
-		// Dispose any children if available
-		if (this.container != null) {
-			for (Control child : this.container.getChildren()) {
-				child.dispose();
-			}
-		}
+		
 
-		this.initialize(); // re-initialize
+		UiDesk.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				// Dispose any children if available
+				if (container != null) {
+					for (Control child : container.getChildren()) {
+						child.dispose();
+					}
+				}
+
+				initialize(); // re-initialize
+			}
+		});
 
 		// reset action states
 		this.refreshChartsAction.setEnabled(false);

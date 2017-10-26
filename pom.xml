@@ -11,7 +11,7 @@
     <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <repo_name>elexis.3.base</repo_name>
-    <repo_variant>snapshot</repo_variant>
+    <repo_variant>prerelease</repo_variant>
     <useBranch>master</useBranch>
     <nonElexisP2variant>snapshot</nonElexisP2variant>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
@@ -264,8 +264,6 @@
   <module>net.medshare.connector.viollier</module>
   <module>net.medshare.connector.viollier.feature</module>
   <module>at.medevit.elexis.tarmed.model</module>
-  <module>ch.elexis.barcode.scanner</module>
-  <module>ch.elexis.barcode.scanner.feature</module>
   <module>ch.elexis.ebanking</module>
 </modules>
 <repositories>

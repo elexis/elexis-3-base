@@ -3,6 +3,7 @@ package ch.elexis.base.ch.diagnosecodes.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.util.IKonsMakro;
 import ch.elexis.data.Konsultation;
@@ -24,12 +25,13 @@ public class TIMakro implements IKonsMakro {
 			TICode tiCode = TICode.getFromCode(makro);
 			if (tiCode != null) {
 				actKons.addDiagnose(tiCode);
+				return StringConstants.EMPTY;
 			}
 		} catch (Exception e) {
 			logger.debug("Could not resolve TI Code [" + makro + "]");
 		}
 		
-		return "";
+		return null;
 	}
 	
 }

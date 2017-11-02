@@ -3161,6 +3161,11 @@ var HitDragListener = DragListener.extend({
 				this.handleHitOver(hit);
 			}
 		}
+		// custom implementation for copy
+		if (ev.ctrlKey)
+		{
+			$('.fc-event').css( 'cursor', 'copy' );
+		}
 	},
 
 

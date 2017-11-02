@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.07.03 um 12:21:08 PM CEST 
+// Generiert: 2017.10.31 um 06:30:04 PM CET 
 //
 
 
@@ -66,13 +66,11 @@ public class TPatient {
     protected BigInteger docId;
 
     /**
-     * Ruft den Wert der status-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TStatus }
-     *     
-     */
+	 * Ruft den Wert der status-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link TStatus }
+	 * 
+	 */
     public TStatus getStatus() {
         return status;
     }

@@ -2,30 +2,38 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.07.03 um 12:21:08 PM CEST 
+// Generiert: 2017.10.31 um 06:30:04 PM CET 
 //
 
 
 package ch.elexis.icpc.fire.model;
+
+import java.math.BigInteger;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 
 
 /**
- * <p>Java-Klasse für tMedi complex type.
+ * <p>
+ * Java-Klasse für tMedi complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="tMedi">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;attribute name="pharmacode" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
+ *       &lt;attribute name="GTIN" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" />
  *       &lt;attribute name="atc" type="{}tString7" />
  *       &lt;attribute name="dosisMo" type="{http://www.w3.org/2001/XMLSchema}float" />
  *       &lt;attribute name="dosisMi" type="{http://www.w3.org/2001/XMLSchema}float" />
@@ -38,7 +46,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *       &lt;attribute name="folgeMedPharmacode" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
  *       &lt;attribute name="folgeMedAtc" type="{}tString7" />
  *       &lt;attribute name="selbstdisp" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/restriction>
+ *     &lt;/restriction>	
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
@@ -52,6 +60,9 @@ public class TMedi {
     @XmlAttribute(name = "pharmacode", required = true)
     @XmlSchemaType(name = "unsignedInt")
     protected long pharmacode;
+    @XmlAttribute(name = "GTIN", required = true)
+    @XmlSchemaType(name = "unsignedLong")
+    protected BigInteger gtin;
     @XmlAttribute(name = "atc")
     protected String atc;
     @XmlAttribute(name = "dosisMo")
@@ -64,9 +75,11 @@ public class TMedi {
     protected Float dosisNa;
     @XmlAttribute(name = "beginDate")
     @XmlSchemaType(name = "date")
+	@XmlJavaTypeAdapter(DateAdapter.class)
     protected XMLGregorianCalendar beginDate;
     @XmlAttribute(name = "endDate")
     @XmlSchemaType(name = "date")
+	@XmlJavaTypeAdapter(DateAdapter.class)
     protected XMLGregorianCalendar endDate;
     @XmlAttribute(name = "stopGrund")
     @XmlSchemaType(name = "unsignedByte")
@@ -95,6 +108,30 @@ public class TMedi {
      */
     public void setPharmacode(long value) {
         this.pharmacode = value;
+    }
+
+    /**
+     * Ruft den Wert der gtin-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getGTIN() {
+        return gtin;
+    }
+
+    /**
+     * Legt den Wert der gtin-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setGTIN(BigInteger value) {
+        this.gtin = value;
     }
 
     /**

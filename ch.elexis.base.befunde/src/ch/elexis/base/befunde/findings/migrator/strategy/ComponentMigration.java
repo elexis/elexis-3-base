@@ -86,7 +86,7 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 						ObservationType componentType =
 							component.getTypeFromExtension(ObservationType.class);
 						if (componentType == ObservationType.NUMERIC) {
-							component.setNumericValue(Optional.ofNullable(values.get(i)));
+							component.setNumericValue(values.get(i));
 							observation.updateComponent(component);
 							valuesSet++;
 						}
@@ -115,7 +115,7 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 					ObservationType componentType =
 						observationComponent.getTypeFromExtension(ObservationType.class);
 					if (componentType == ObservationType.TEXT) {
-						observationComponent.setStringValue(Optional.ofNullable(value));
+						observationComponent.setStringValue(value);
 						return true;
 					}
 				}
@@ -146,12 +146,12 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 		if (type == ObservationType.NUMERIC) {
 			BigDecimal value =
 				NumericMigration.getValue(messwert.getResult(mapping.getLocalBefundField()));
-			observationComponent.setNumericValue(Optional.ofNullable(value));
+			observationComponent.setNumericValue(value);
 			return true;
 		} else if (type == ObservationType.TEXT) {
 			String value =
 				TextMigration.getValue(messwert.getResult(mapping.getLocalBefundField()));
-			observationComponent.setStringValue(Optional.ofNullable(value));
+			observationComponent.setStringValue(value);
 			return true;
 		}
 		return false;

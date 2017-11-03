@@ -184,7 +184,8 @@ public class MesswertMigrator implements IMigratorContribution {
 						+ originuri + "';");
 				while ((result != null) && result.next()) {
 					String id = result.getString(1);
-					findingsService.findById(id, IObservation.class, true);
+					findingsService.findById(id, IObservation.class, true)
+						.ifPresent(o -> ret.add(o));
 				}
 			} catch (SQLException e) {
 				LoggerFactory.getLogger(getClass()).error("Error on migrated lookup", e);

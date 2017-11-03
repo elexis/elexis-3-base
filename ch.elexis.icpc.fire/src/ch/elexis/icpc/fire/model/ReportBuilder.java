@@ -99,6 +99,15 @@ public class ReportBuilder {
 			TDoctor tDoctor = fireConfig.getFactory().createTDoctor();
 			tDoctor.setId(docId);
 			tDoctor.setSystem("Elexis");
+			tDoctor.setFirstName(mandant.getVorname());
+			tDoctor.setLastName(mandant.getName());
+			
+			try {
+				tDoctor.setGeburtstag(
+					XmlUtil.getXmlGregorianCalendar(new TimeTool(mandant.getGeburtsdatum())));
+			} catch (DatatypeConfigurationException e) {
+				LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e);
+			}
 			
 			report.getDoctors().getDoctor().add(tDoctor);
 			doctors.put(docId, tDoctor);

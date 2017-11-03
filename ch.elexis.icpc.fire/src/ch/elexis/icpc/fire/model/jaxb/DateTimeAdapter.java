@@ -9,11 +9,11 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-public class DateAdapter extends XmlAdapter<String, XMLGregorianCalendar> {
+public class DateTimeAdapter extends XmlAdapter<String, XMLGregorianCalendar> {
 	
 	
-	//YYYY-MM-DD
-	private final String DATE_FORMAT = "yyyy-MM-dd";
+	//YYYY-MM-DDTHH:MM:SS
+	private final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 	
 	@Override
 	public String marshal(XMLGregorianCalendar calendar) throws Exception{

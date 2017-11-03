@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.07.03 um 12:21:08 PM CEST 
+// Generiert: 2017.10.31 um 06:30:04 PM CET 
 //
 
 
@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;attribute name="bpSyst" type="{http://www.w3.org/2001/XMLSchema}unsignedShort" />
  *       &lt;attribute name="bpDiast" type="{http://www.w3.org/2001/XMLSchema}unsignedShort" />
+ *       &lt;attribute name="bpSyst_home" type="{http://www.w3.org/2001/XMLSchema}unsignedShort" />
+ *       &lt;attribute name="bpDiast_home" type="{http://www.w3.org/2001/XMLSchema}unsignedShort" />
  *       &lt;attribute name="groesse" type="{http://www.w3.org/2001/XMLSchema}float" />
  *       &lt;attribute name="gewicht" type="{http://www.w3.org/2001/XMLSchema}float" />
  *       &lt;attribute name="puls" type="{http://www.w3.org/2001/XMLSchema}unsignedShort" />
@@ -48,6 +50,12 @@ public class TVital {
     @XmlAttribute(name = "bpDiast")
     @XmlSchemaType(name = "unsignedShort")
     protected Integer bpDiast;
+    @XmlAttribute(name = "bpSyst_home")
+    @XmlSchemaType(name = "unsignedShort")
+    protected Integer bpSystHome;
+    @XmlAttribute(name = "bpDiast_home")
+    @XmlSchemaType(name = "unsignedShort")
+    protected Integer bpDiastHome;
     @XmlAttribute(name = "groesse")
     protected Float groesse;
     @XmlAttribute(name = "gewicht")
@@ -106,6 +114,54 @@ public class TVital {
      */
     public void setBpDiast(Integer value) {
         this.bpDiast = value;
+    }
+
+    /**
+     * Ruft den Wert der bpSystHome-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getBpSystHome() {
+        return bpSystHome;
+    }
+
+    /**
+     * Legt den Wert der bpSystHome-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setBpSystHome(Integer value) {
+        this.bpSystHome = value;
+    }
+
+    /**
+     * Ruft den Wert der bpDiastHome-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getBpDiastHome() {
+        return bpDiastHome;
+    }
+
+    /**
+     * Legt den Wert der bpDiastHome-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setBpDiastHome(Integer value) {
+        this.bpDiastHome = value;
     }
 
     /**

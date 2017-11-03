@@ -1,10 +1,13 @@
 package ch.elexis.icpc.fire.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
@@ -49,7 +52,7 @@ public class MedisBuilder {
 					}
 					String stopDateString = prescription.getEndDate();
 					if (stopDateString != null && !stopDateString.isEmpty()) {
-						tMedi.setBeginDate(
+						tMedi.setEndDate(
 							XmlUtil.getXmlGregorianCalendar(new TimeTool(stopDateString)));
 					}
 					
@@ -64,6 +67,17 @@ public class MedisBuilder {
 							tMedi.setPharmacode(numericPharmacode);
 						} catch (NumberFormatException e) {
 							//ignore and skip
+						}
+					}
+					
+					String gtin = articel.getGTIN();
+					if (gtin != null && !gtin.isEmpty()) {
+						try {
+							long gtinL = Long.valueOf(gtin);
+							tMedi.setGTIN(BigInteger.valueOf(gtinL));
+						} catch (NumberFormatException e) {
+							LoggerFactory.getLogger(MedisBuilder.class)
+								.warn("no numeric gtin found", e);
 						}
 					}
 					
@@ -83,6 +97,14 @@ public class MedisBuilder {
 						if (size > 3) {
 							tMedi.setDosisNa(floatDosis.get(3));
 						}
+					}
+					
+					String stopReason = prescription.getStopReason();
+					if (stopReason != null && !stopReason.isEmpty()) {
+						tMedi.setStopGrund((short) 99);
+					}
+					else {
+						tMedi.setStopGrund((short) 0);
 					}
 					
 					medis.getMedi().add(tMedi);

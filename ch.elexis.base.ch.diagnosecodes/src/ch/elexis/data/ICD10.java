@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.model.IDiagnose;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 

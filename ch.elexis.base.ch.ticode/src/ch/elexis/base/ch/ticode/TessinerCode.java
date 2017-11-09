@@ -14,14 +14,17 @@ package ch.elexis.base.ch.ticode;
 
 import java.util.Hashtable;
 
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IDiagnose;
+
 /**
  * Copy of the ch.elexis.data.TICode class, but without PersistentObject dependencies.
  * 
  * @author Gerry
  * @since 3.2.0
  */
-public class TessinerCode {
-	public static final String CODESYSTEM_NAME = "TI-Code";
+public class TessinerCode implements ICodeElement, IDiagnose {
+	public static final String CODESYSTEM_NAME = "TI-Code"; //$NON-NLS-1$
 	private static Hashtable<String, TessinerCode> hash = new Hashtable<String, TessinerCode>();
 	private String text;
 	private String code;
@@ -44,7 +47,7 @@ public class TessinerCode {
 	}
 	
 	public String getCodeSystemName(){
-		return CODESYSTEM_NAME; //$NON-NLS-1$
+		return CODESYSTEM_NAME; 
 	}
 	
 	public static TessinerCode load(String code){
@@ -247,4 +250,10 @@ public class TessinerCode {
 			Messages.TICode_neoplastic, Messages.TICode_professional
 		}
 	};
+
+	@Override
+	public String getId(){
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

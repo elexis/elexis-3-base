@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 
+import ch.elexis.core.model.IDiagnose;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Verrechnet;

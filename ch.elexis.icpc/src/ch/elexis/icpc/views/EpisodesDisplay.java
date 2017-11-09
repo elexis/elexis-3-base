@@ -33,8 +33,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IDiagnose;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;

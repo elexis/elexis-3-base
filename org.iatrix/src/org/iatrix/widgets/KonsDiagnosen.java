@@ -27,7 +27,7 @@ import org.iatrix.util.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.model.IDiagnose;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;

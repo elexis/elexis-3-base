@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.model.IDiagnose;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;

@@ -65,7 +65,7 @@ public class ExportFireHandler extends AbstractHandler {
 	
 	public ExportFireHandler(){
 		String id =
-			new Query<Sticker>(Sticker.class).findSingle(Sticker.NAME, Query.EQUALS,
+			new Query<Sticker>(Sticker.class).findSingle(Sticker.FLD_NAME, Query.EQUALS,
 				FIRESTICKERNAME);
 		if (id == null) {
 			fireSticker = new Sticker(FIRESTICKERNAME, "0066CC", "C0C0C0");

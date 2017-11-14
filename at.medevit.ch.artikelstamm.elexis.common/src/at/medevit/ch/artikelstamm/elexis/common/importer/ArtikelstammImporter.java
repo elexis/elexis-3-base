@@ -101,12 +101,6 @@ public class ArtikelstammImporter {
 		try {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 			
-			if (newVersion == null) {
-				newVersion = ArtikelstammItem.getCurrentVersion();
-				newVersion++;
-				log.info("[PI] No newVersion provided. Setting to [{}].", newVersion);
-			}
-			
 			subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
 			ARTIKELSTAMM importStamm = null;
 			try {
@@ -121,6 +115,13 @@ public class ArtikelstammImporter {
 				return Status.CANCEL_STATUS;
 			}
 			subMonitor.worked(10);
+			
+			if (newVersion == null) {
+				int month = importStamm.getBUILDDATETIME().getMonth();
+				int year = importStamm.getBUILDDATETIME().getYear();
+				newVersion = Integer.valueOf("" + (year - 2000) + month);
+				log.info("[PI] No newVersion provided. Setting to [{}].", newVersion);
+			}
 			
 			try {
 				DATASOURCEType datasourceType = ArtikelstammItem.getDatasourceType();

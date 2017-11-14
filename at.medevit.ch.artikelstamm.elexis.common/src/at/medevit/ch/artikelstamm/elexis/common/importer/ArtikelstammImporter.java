@@ -97,6 +97,12 @@ public class ArtikelstammImporter {
 		
 		int currentVersion = ArtikelstammItem.getCurrentVersion();
 		
+		if (newVersion == null) {
+			int month = importStamm.getBUILDDATETIME().getMonth();
+			int year = importStamm.getBUILDDATETIME().getYear();
+			newVersion = Integer.valueOf("" + (year - 2000) + month);
+		}
+		
 		log.info("[PI] Aktualisiere v" + currentVersion + " auf v" + newVersion);
 		
 		subMonitor.setTaskName("Lese Produkte und Limitationen...");

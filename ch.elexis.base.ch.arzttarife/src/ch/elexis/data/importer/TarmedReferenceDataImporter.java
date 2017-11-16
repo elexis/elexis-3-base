@@ -29,8 +29,6 @@ import org.eclipse.core.runtime.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.healthmarketscience.jackcess.Database;
-
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
@@ -68,7 +66,6 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	// we create a temporary H2 DB
 	Stm source, dest;
 	private String lang;
-	private Database mdbDB;
 	private AccessWrapper aw;
 	private String mdbFilename;
 	private Set<String> cachedDbTables = null;
@@ -109,7 +106,6 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 		if (openAccessDatabase(ipm, input) != Status.OK_STATUS
 			|| deleteCachedAccessTables(ipm) != Status.OK_STATUS
 			|| importAllAccessTables(ipm) != Status.OK_STATUS) {
-			mdbDB = null;
 			cachedDbTables = null;
 			return Status.CANCEL_STATUS;
 		}
@@ -396,10 +392,8 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 				pj.releaseStatement(dest);
 			}
 			if (deleteCachedAccessTables(ipm) != Status.OK_STATUS) {
-				mdbDB = null;
 				return Status.CANCEL_STATUS;
 			}
-			mdbDB = null;
 		}
 		return Status.CANCEL_STATUS;
 		
@@ -447,11 +441,11 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 			iter = cachedDbTables.iterator();
 			while (iter.hasNext()) {
 				tablename = iter.next();
-				totRows += mdbDB.getTable(tablename).getRowCount();
+				totRows += aw.getDatabase().getTable(tablename).getRowCount();
 			}
 			monitor.beginTask(Messages.TarmedImporter_importLstg, (int) (totRows * weight)
-				+ mdbDB.getTable("LEISTUNG").getRowCount()
-				+ mdbDB.getTable("KAPITEL_TEXT").getRowCount());
+				+ aw.getDatabase().getTable("LEISTUNG").getRowCount()
+				+ aw.getDatabase().getTable("KAPITEL_TEXT").getRowCount());
 			
 			int j = 0;
 			iter = cachedDbTables.iterator();
@@ -460,7 +454,8 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 				tablename = iter.next();
 				String msg =
 					String.format(Messages.TarmedImporter_convertTable, tablename, ImportPrefix
-						+ tablename, j, nrTables, mdbDB.getTable(tablename).getRowCount(),
+						+ tablename, j, nrTables,
+						aw.getDatabase().getTable(tablename).getRowCount(),
 						mdbFilename);
 				monitor.subTask(msg);
 				try {
@@ -485,8 +480,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 		try {
 			aw = new AccessWrapper(file);
 			aw.setPrefixForImportedTableNames(ImportPrefix);
-			mdbDB = Database.open(file, true, Database.DEFAULT_AUTO_SYNC);
-			cachedDbTables = mdbDB.getTableNames();
+			cachedDbTables = aw.getDatabase().getTableNames();
 		} catch (IOException e) {
 			logger.error("Failed to open access file " + file, e);
 			return Status.CANCEL_STATUS;

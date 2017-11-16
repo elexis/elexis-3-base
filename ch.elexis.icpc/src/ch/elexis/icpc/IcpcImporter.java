@@ -18,7 +18,6 @@ import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,14 +25,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
 import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.DatabaseBuilder;
+import com.healthmarketscience.jackcess.Row;
 import com.healthmarketscience.jackcess.Table;
 
-import ch.elexis.data.PersistentObject;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
-import ch.rgw.tools.JdbcLink.Stm;
 
 public class IcpcImporter extends ImporterPage {
 	// ImporterPage.DBBasedImporter dbi;
@@ -70,7 +70,7 @@ public class IcpcImporter extends ImporterPage {
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		monitor.beginTask("Importiere ICPC-2", 727);
-		Database db = Database.open(new File(results[0]));
+		Database db = new DatabaseBuilder().setReadOnly(true).open(new File(results[0]));
 		monitor.worked(1);
 		pj = PersistentObject.getConnection();
 		
@@ -87,9 +87,9 @@ public class IcpcImporter extends ImporterPage {
 		monitor.worked(1);
 		try {
 			Table table = db.getTable("ICPC2eGM");
-			Iterator<Map<String, Object>> it = table.iterator();
+			Iterator<Row> it = table.iterator();
 			while (it.hasNext()) {
-				Map<String, Object> row = it.next();
+				Row row = it.next();
 				ps.setString(1, (String) row.get("CODE")); // id
 				ps.setObject(2, row.get("COMPONENT")); // component
 				ps.setString(3, (String) row.get("TEXT"));// txt

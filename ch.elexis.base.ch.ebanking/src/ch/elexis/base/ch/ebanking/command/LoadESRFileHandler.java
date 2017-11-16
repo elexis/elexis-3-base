@@ -12,17 +12,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.IElementUpdater;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.UIElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.ebanking.ESRView;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.base.ch.ebanking.esr.ESRFile;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.Messages;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.AccountTransaction;
@@ -131,6 +136,7 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 									}
 								}
 								monitor.done();
+								updateEsrView(event);
 							} else {
 								ResultAdapter.displayResult(result, Messages.ESRView_errorESR);
 							}
@@ -155,6 +161,26 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 	public void updateElement(UIElement element, Map parameters){
 		element.setIcon(Images.IMG_IMPORT.getImageDescriptor());
 		element.setTooltip(Messages.ESRView_read_ESR_explain);
+	}
+	
+	private void updateEsrView(ExecutionEvent event){
+		UiDesk.asyncExec(new Runnable() {
+			
+			@Override
+			public void run(){
+				IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+				if (window != null) {
+					IWorkbenchPage page = window.getActivePage();
+					if (page != null) {
+						ESRView view = (ESRView) page.findView(ESRView.ID);
+						if (view != null) {
+							view.updateView();
+						}
+					}
+				}
+				
+			}
+		});
 	}
 	
 }

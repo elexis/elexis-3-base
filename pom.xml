@@ -219,8 +219,6 @@
   <module>com.hilotec.elexis.stickerprefix</module>
   <module>com.hilotec.elexis.toolbar.feature</module>
   <module>com.hilotec.elexis.toolbar</module>
-  <!--module>de.fhdo.elexis.perspective</module>
-  <module>de.fhdo.elexis.perspective.feature</module-->
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
   <module>org.iatrix.bestellung.rose</module>

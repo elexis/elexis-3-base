@@ -139,7 +139,7 @@
 <xs:complexType name="tStatus">
 	<xs:attribute name="smoke" type="tSmokerType"  use="required"/>
 	<xs:attribute name="death" type="xs:boolean" use="required"/> 
-	<xs:attribute name="mc" type="xs:boolean" use="required"/> 
+	<xs:attribute name="mc" type="tString255" use="required"/> 
 	<xs:attribute name="insurer" type="tString255" use="required"/>
 	<xs:attribute name="doctorPatientRelation" type="xs:boolean" use="required"/>
 </xs:complexType>

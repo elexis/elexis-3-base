@@ -59,6 +59,7 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class ESRView extends ViewPart {
@@ -250,7 +251,7 @@ public class ESRView extends ViewPart {
 				Rechnung r2 = ((ESRRecord) e2).getRechnung();
 				String rNr1 = (r1 != null) ? r1.getNr() : "";
 				String rNr2 = (r2 != null) ? r2.getNr() : "";
-				return rNr1.compareTo(rNr2);
+				return StringTool.compareNumericStrings(rNr1, rNr2);
 			}
 		};
 		

@@ -309,13 +309,12 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		};
 
 	private final ElexisUiEventListenerImpl eeli_kons =
-			new ElexisUiEventListenerImpl(Konsultation.class,
-				EVENT_SELECTED | EVENT_UPDATE | EVENT_RELOAD) {
+			new ElexisUiEventListenerImpl(Konsultation.class) {
 
 		@Override
 		public void runInUi(ElexisEvent ev){
 			Konsultation newKons = (Konsultation) ev.getObject();
-			String msg = "unknown";
+			String msg = "";
 			switch (ev.getType()) {
 			case EVENT_SELECTED:
 				msg = "EVENT_SELECTED";
@@ -326,18 +325,24 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			case EVENT_RELOAD:
 				msg = "EVENT_RELOAD";
 				break;
-			}
+			case EVENT_DESELECTED:
+				msg = "EVENT_DESELECTED";
+				break;
+				}
 			if (!removedStaleKonsLocks) {
 				removedStaleKonsLocks = true;
 				KonsTextLock.deleteObsoleteLocks(newKons);
 			}
+			log.debug(String.format("eeli_pat %s %s", msg, ev.toString()),  newKons);
 			// when we get an update or select event the parameter is always not null
 			if ((actKons == null) || !Helpers.haveSameContent(newKons, actKons)) {
 				logEvent(newKons, "eeli_kons " + msg + " SAVE_KONS");
 				// updateAllKonsAreas(actKons, KonsActions.SAVE_KONS);
-				Patient newPatient = newKons.getFall().getPatient();
-				if (actKons != null && !newPatient.getId().equals(actKons.getFall().getPatient().getId())) {
-					displaySelectedPatient(newPatient, "eeli_kons newPatient");
+				if (newKons != null) {
+					Patient newPatient = newKons.getFall().getPatient();
+					if (actKons != null && !newPatient.getId().equals(actKons.getFall().getPatient().getId())) {
+						displaySelectedPatient(newPatient, "eeli_kons newPatient");
+					}
 				}
 				logEvent(newKons, "eeli_kons " + msg + " ACTIVATE_KONS");
 				updateAllKonsAreas(newKons, KonsActions.ACTIVATE_KONS);
@@ -421,11 +426,27 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	private final ElexisUiEventListenerImpl eeli_pat =
 		// Soll hier auch noch auf RELOAD und UPDATE reagiert werden
-		new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_RELOAD | ElexisEvent.EVENT_UPDATE) {
+		new ElexisUiEventListenerImpl(Patient.class) {
 
 			@Override
 			public void runInUi(ElexisEvent ev){
 				Patient newPat = (Patient) ev.getObject();
+				String msg = "";
+				switch (ev.getType()) {
+				case EVENT_SELECTED:
+					msg = "EVENT_SELECTED";
+					break;
+				case EVENT_UPDATE:
+					msg = "EVENT_UPDATE";
+					break;
+				case EVENT_DESELECTED:
+					msg = "EVENT_DESELECTED";
+					break;
+				case EVENT_RELOAD:
+					msg = "EVENT_RELOAD";
+					break;
+				}
+				log.debug(String.format("eeli_pat %d %s", ev.getType(), msg) +  newPat);
 				if (actKons != null && !actKons.getFall().getPatient().getId().equals(newPat.getId()))
 				{
 					updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);

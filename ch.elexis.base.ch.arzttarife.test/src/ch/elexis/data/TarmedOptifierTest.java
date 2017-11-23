@@ -230,6 +230,21 @@ public class TarmedOptifierTest {
 		}
 		
 		Result<IVerrechenbar> result = konsGriss.addLeistung(tlGroupLimit2);
+		assertTrue(result.isOK());
+		
+		result = konsSter.addLeistung(tlGroupLimit1);
+		assertTrue(result.isOK());
+		
+		for (int i = 0; i < 23; i++) {
+			result = konsGriss.addLeistung(tlGroupLimit1);
+			assertTrue(result.isOK());
+		}
+		for (int i = 0; i < 23; i++) {
+			result = konsSter.addLeistung(tlGroupLimit2);
+			assertTrue(result.isOK());
+		}
+		
+		result = konsGriss.addLeistung(tlGroupLimit2);
 		assertFalse(result.isOK());
 		
 		result = konsSter.addLeistung(tlGroupLimit1);

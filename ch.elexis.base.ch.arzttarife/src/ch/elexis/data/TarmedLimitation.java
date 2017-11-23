@@ -305,13 +305,15 @@ public class TarmedLimitation {
 	}
 	
 	// @formatter:off
-	private static final String VERRECHNET_BYMANDANT_ANDCODE_DURING = "SELECT leistungen.ID FROM leistungen, behandlungen"
+	private static final String VERRECHNET_BYMANDANT_ANDCODE_DURING = "SELECT leistungen.ID FROM leistungen, behandlungen, faelle"
 	+ " WHERE leistungen.deleted = '0'" 
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
 	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
+	+ " AND faelle.ID = behandlungen.fallID"
+	+ " AND faelle.PatientID = ?"
 	+ " AND leistungen.LEISTG_CODE like ?"
-	+ " AND  behandlungen.Datum >= ?"
+	+ " AND behandlungen.Datum >= ?"
 	+ " AND behandlungen.MandantID = ?";
 	// @formatter:on
 	
@@ -323,9 +325,10 @@ public class TarmedLimitation {
 			PreparedStatement pstm = PersistentObject.getDefaultConnection()
 				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE_DURING);
 			try {
-				pstm.setString(1, code + "%");
-				pstm.setString(2, fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-				pstm.setString(3, mandant.getId());
+				pstm.setString(1, kons.getFall().getPatient().getId());
+				pstm.setString(2, code + "%");
+				pstm.setString(3, fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+				pstm.setString(4, mandant.getId());
 				ResultSet resultSet = pstm.executeQuery();
 				while (resultSet.next()) {
 					ret.add(Verrechnet.load(resultSet.getString(1)));

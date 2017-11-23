@@ -92,7 +92,7 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 	// container for hKonsultationDatum, hlMandant, cbFall
 	
 	// Parts (from top to bottom that make up our display
-	private JournalHeader formHeader = null; // Patient name, sex, birthday, remarks, sticker, account, balance, account overview
+	private JournalHeader journalHeader = null; // Patient name, sex, birthday, remarks, sticker, account, balance, account overview
 	private KTable problemsKTable = null; // On top
 	private ProblemArea problemsArea = null; // KTable with Date, nr, diagnosis, therapy, code, activ/inactiv
 	private ViewMenus menus;
@@ -117,7 +117,7 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 		Composite formBody = form.getBody();
 		
 		formBody.setLayout(new GridLayout(1, true));
-		formHeader = new JournalHeader(formBody);
+		journalHeader = new JournalHeader(formBody);
 		
 		SashForm mainSash = new SashForm(form.getBody(), SWT.VERTICAL);
 		mainSash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -129,7 +129,7 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 		problemsArea = new ProblemArea(topArea, IatrixOverview.this.getPartName(), getViewSite());
 		problemsKTable = problemsArea.getProblemKTable();
 		allAreas = new ArrayList<>();
-		allAreas.add(formHeader);
+		allAreas.add(journalHeader);
 		allAreas.add(problemsArea);
 		makeActions();
 		menus = new ViewMenus(getViewSite());
@@ -345,9 +345,11 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 			}
 			Patient newPat = (Patient) ev.getObject();
 			log.debug(String.format("eeli_pat %d %s %s actKons null: %s", ev.getType(), msg,  newPat.toString(), actKons == null));
-			if (actKons != null || actKons.getFall().getPatient().getId().equals(newPat.getId())) {
+			if (actKons != null && actKons.getFall().getPatient().getId().equals(newPat.getId())) {
 				log.debug(String.format("eeli_pat %d %s %s nothing todo", ev.getType(), msg,  newPat.toString()));
 			} else {
+				journalHeader.setPatient(newPat);
+				problemsArea.setPatient(newPat);
 				actKons = newPat.getLetzteKons(false);
 				updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
 				displaySelectedPatient(newPat, "eeli_pat " + ev.getType());

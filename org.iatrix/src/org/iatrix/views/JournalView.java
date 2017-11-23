@@ -451,6 +451,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				{
 					updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
 					displaySelectedPatient(newPat, "eeli_pat " + ev.getType());
+				} else {
+					formHeader.setPatient(newPat);
+					problemsArea.setPatient(newPat);
 				}
 			}
 		};

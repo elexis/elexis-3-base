@@ -374,14 +374,8 @@ public class JournalHeader implements IJournalArea {
 		}
 	}
 
-	@Override
-	/**
-	 * We react only to selected konsultations
-	 * @param newKons
-	 */
-	public void setKons(Konsultation newKons, KonsActions op){
-		Patient newPatient = newKons.getFall().getPatient();
-		if (newPatient == null) { return; } // this should never happen as  kons always has a patient
+	public void setPatient(Patient newPatient){
+		if (newPatient == null) { return; }
 		log.debug("setPatient " + newPatient.getPersonalia());
 		if (actPat == null || !actPat.getId().equals(newPatient.getId())) {
 			actPat = newPatient;
@@ -390,6 +384,16 @@ public class JournalHeader implements IJournalArea {
 			setKontoText();
 			formTitel.getParent().layout();
 		}
+	}
+	@Override
+	/**
+	 * We react only to selected konsultations
+	 * @param newKons
+	 */
+	public void setKons(Konsultation newKons, KonsActions op){
+		Patient newPatient = newKons.getFall().getPatient();
+		if (newPatient == null) { return; } // this should never happen as  kons always has a patient
+		setPatient(newPatient);
 	}
 
 	@Override

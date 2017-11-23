@@ -727,4 +727,10 @@ public class ProblemArea implements IJournalArea {
 			setKons(null, KonsActions.ACTIVATE_KONS);
 		}
 	}
+	public void setPatient(Patient newPat){
+		logEvent("setPatient: " + newPat);
+		actPat = newPat;
+		actKons = null;
+		problemsTableModel.setKons(actKons);
+	}
 }

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.buchhaltung.util.DateTool;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
@@ -25,6 +26,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.data.AccountTransaction;
+import ch.elexis.data.Anschrift;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
@@ -109,6 +111,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		int step = total / sum;
 		monitor.worked(20 * step);
 		PatientIdFormatter pif = new PatientIdFormatter(8);
+		long time = System.currentTimeMillis();
 		for (Konsultation cons : consultations) {
 			Patient patient = cons.getFall().getPatient();
 			Mandant mandant = cons.getMandant();
@@ -117,14 +120,22 @@ public class AlleLeistungen extends AbstractTimeSeries {
 				&& cons.getStatus() <= RnStatus.NICHT_VON_IHNEN)
 				billState = Messages.AlleLeistungen_NoBill;
 			
-			List<Verrechnet> activities = cons.getLeistungen();
+			String[] cachedData = performanceOptimization(patient, mandant);
+			List<Verrechnet> activities = cons.getLeistungen(new String[] {
+				Verrechnet.USERID, Verrechnet.LEISTG_TXT, Verrechnet.SCALE_SELLING,
+				Verrechnet.COUNT,
+				Verrechnet.SCALE2, Verrechnet.COST_BUYING, Verrechnet.PRICE_SELLING,
+				Verrechnet.SCALE_TP_SELLING
+			});
+			
 			if (mandant != null && patient != null && activities != null && !activities.isEmpty()) {
 				for (Verrechnet verrechnet : activities) {
 					IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
 					Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
 					int index = 0;
-					row[index++] = mandant.getRechnungssteller().getLabel();
-					row[index++] = mandant.getMandantLabel();
+					row[index++] = cachedData[0];
+					row[index++] = cachedData[1];
+					
 					if (hasUserId) { //$NON-NLS-1$
 						String userid = verrechnet.get("userID"); //$NON-NLS-1$
 						Kontakt user = Kontakt.load(userid);
@@ -133,16 +144,15 @@ public class AlleLeistungen extends AbstractTimeSeries {
 						else
 							row[index++] = ""; //$NON-NLS-1$
 					}
-					row[index++] =
-						(patient.getStammarzt() != null) ? patient.getStammarzt().getLabel() : ""; //$NON-NLS-1$
+					row[index++] = cachedData[2];
 					row[index++] = new DateTool(cons.getDatum());
 					row[index++] = patient.getName();
 					row[index++] = patient.getVorname();
 					row[index++] = pif.format(patient.get(Patient.FLD_PATID));
 					row[index++] = new DateTool(patient.getGeburtsdatum());
 					row[index++] = patient.getGeschlecht();
-					row[index++] = patient.getAnschrift().getPlz();
-					row[index++] = patient.getAnschrift().getOrt();
+					row[index++] = cachedData[3];
+					row[index++] = cachedData[4];
 					row[index++] = verrechnet.getText();
 					
 					if (verrechenbar != null) {
@@ -195,6 +205,10 @@ public class AlleLeistungen extends AbstractTimeSeries {
 			monitor.worked(step);
 		}
 		
+		LoggerFactory.getLogger(AlleLeistungen.class)
+			.debug("calculation of konsultations size: " + consultations.size() + " took "
+			+ Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds.");
+		
 		// Set content.
 		this.dataSet.setContent(result);
 		
@@ -203,7 +217,33 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		
 		return Status.OK_STATUS;
 	}
-	
+
+	private String[] performanceOptimization(Patient patient, Mandant mandant){
+		// performance optimization
+		if (patient != null) {
+			patient.get(false, Patient.NAME, Patient.FIRSTNAME, Patient.BIRTHDATE, Patient.SEX,
+				Patient.FLD_PATID);
+		}
+		String[] data = new String[] {
+			"", "", "", "", ""
+		};
+		if (mandant != null) {
+			data[0] = mandant.getRechnungssteller().getLabel();
+			data[1] = mandant.getMandantLabel();
+		}
+		if (patient != null) {
+			Kontakt stammArzt = patient.getStammarzt();
+			if (stammArzt != null) {
+				data[2] = stammArzt.getLabel();
+			}
+			Anschrift anschrift = patient.getAnschrift();
+			data[3] = anschrift.getPlz();
+			data[4] = anschrift.getOrt();
+			
+		}
+		return data;
+	}
+
 	private String getClassName(Verrechnet verrechnet){
 		String fullname = verrechnet.get(Verrechnet.CLASS);
 		if (fullname != null && !fullname.isEmpty() && fullname.lastIndexOf('.') != -1)

@@ -302,35 +302,28 @@ public class XMLExporterServices {
 				}
 				if (v instanceof TarmedLeistung) {
 					TarmedLeistung tl = (TarmedLeistung) v;
-					String arzl = verrechnet.getDetail(AL);
-					String tecl = verrechnet.getDetail(TL);
 					double primaryScale = verrechnet.getPrimaryScaleFactor();
 					double secondaryScale = verrechnet.getSecondaryScaleFactor();
 					
-					double tlTl, tlAL, mult;
+					double tlTL, tlAL, mult;
 					mult = tl.getVKMultiplikator(tt, rechnung.getFall());
-					if ((arzl != null && !arzl.isEmpty()) && (tecl != null && !tecl.isEmpty())) {
-						tlTl = Double.parseDouble(tecl);
-						tlAL = Double.parseDouble(arzl);
-						
-					} else {
-						tlTl = tl.getTL();
-						tlAL = tl.getAL();
-					}
+					
+					tlAL = TarmedLeistung.getAL(verrechnet);
+					tlTL = TarmedLeistung.getTL(verrechnet);
 					// build monetary values of this TarmedLeistung
 					Money mAL = new Money(
 						(int) Math.round(tlAL * mult * zahl * primaryScale * secondaryScale));
 					Money mTL = new Money(
-						(int) Math.round(tlTl * mult * zahl * primaryScale * secondaryScale));
+						(int) Math.round(tlTL * mult * zahl * primaryScale * secondaryScale));
 					Money mAmountLocal = new Money((int) Math
-						.round((tlAL + tlTl) * mult * zahl * primaryScale * secondaryScale));
+						.round((tlAL + tlTL) * mult * zahl * primaryScale * secondaryScale));
 						
 					// sum tax points and monetary value
-					ret.tpTarmedTL += tlTl * zahl;
+					ret.tpTarmedTL += tlTL * zahl;
 					ret.tpTarmedAL += tlAL * zahl;
 					
 					ret.sumTarmedAL += tlAL * mult * zahl * primaryScale * secondaryScale;
-					ret.sumTarmedTL += tlTl * mult * zahl * primaryScale * secondaryScale;
+					ret.sumTarmedTL += tlTL * mult * zahl * primaryScale * secondaryScale;
 					
 					ret.mTarmed.addCent(mAmountLocal.getCents());
 					
@@ -365,7 +358,7 @@ public class XMLExporterServices {
 						XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22500
 					el.setAttribute(XMLExporter.ATTR_AMOUNT_MT, XMLTool.moneyToXmlDouble(mAL)); // 22510
 					
-					el.setAttribute(ATTR_UNIT_TT, XMLTool.doubleToXmlDouble(tlTl / 100.0, 2)); // 22520
+					el.setAttribute(ATTR_UNIT_TT, XMLTool.doubleToXmlDouble(tlTL / 100.0, 2)); // 22520
 					el.setAttribute(ATTR_UNIT_FACTOR_TT, XMLTool.doubleToXmlDouble(mult, 2)); // 22530
 					el.setAttribute(ATTR_SCALE_FACTOR_TT,
 						XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22540

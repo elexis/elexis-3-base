@@ -240,17 +240,18 @@ public class PatientenHitlist extends BaseStats {
 					double cost = v.getNettoPreis().doubleValue() * v.getZahl();
 					costTotal += cost;
 					if (vv instanceof TarmedLeistung) {
+						int tarmedAl = TarmedLeistung.getAL(v);
+						int tarmedTl = TarmedLeistung.getTL(v);
+						
 						TarmedLeistung tl = (TarmedLeistung) vv;
 						if (tl.getCode().equals("00.0060")) {
 							numVisits++;
 						}
 						double cal =
-							Math.round(v.getZahl() * tl.getAL() * tl.getFactor(kdate, fall))
-								/ 100.0;
+							Math.round(v.getZahl() * tarmedAl * tl.getFactor(kdate, fall)) / 100.0;
 						costTarmedAL += cal;
 						double ctl =
-							Math.round(v.getZahl() * tl.getTL() * tl.getFactor(kdate, fall))
-								/ 100.0;
+							Math.round(v.getZahl() * tarmedTl * tl.getFactor(kdate, fall)) / 100.0;
 						costTarmedTL += ctl;
 					} else if (vv instanceof PhysioLeistung) {
 						costPhysio += cost;

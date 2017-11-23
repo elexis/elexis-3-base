@@ -306,7 +306,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public Money getKosten(final TimeTool dat){
-		double vkt = checkZeroDouble(getTP(dat, null) + "");
+		double vkt = checkZeroDouble(getTP(dat, (IFall) null) + "");
 		double vpe = checkZeroDouble(get(FLD_PKG_SIZE));
 		double vke = checkZeroDouble(get(VERKAUFSEINHEIT));
 		if (vpe != vke) {
@@ -520,6 +520,10 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public String getCode(){
+		String gtin = getGTIN();
+		if (gtin != null && gtin.length() > 3) {
+			return gtin;
+		}
 		return get(FLD_PHAR);
 	}
 	

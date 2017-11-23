@@ -49,8 +49,6 @@ public class TarmedDetailDialog extends Dialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent){
-		// Composite ret=td.createDisplay(parent, null);
-		// td.display(tl);
 		TarmedLeistung tl = (TarmedLeistung) verrechnet.getVerrechenbar();
 		Composite ret = (Composite) super.createDialogArea(parent);
 		ret.setLayout(new GridLayout(8, false));
@@ -58,18 +56,10 @@ public class TarmedDetailDialog extends Dialog {
 		Label lTitle = new Label(ret, SWT.WRAP);
 		lTitle.setText(tl.getText());
 		lTitle.setLayoutData(SWTHelper.getFillGridData(8, true, 1, true));
-		double tpAL = tl.getAL() / 100.0;
-		double tpTL = tl.getTL() / 100.0;
-		String arzl = verrechnet.getDetail("AL");
-		String tecl = verrechnet.getDetail("TL");
 		double primaryScale = verrechnet.getPrimaryScaleFactor();
 		double secondaryScale = verrechnet.getSecondaryScaleFactor();
-		if (arzl != null) {
-			tpAL = Double.parseDouble(arzl) / 100.0;
-		}
-		if (tecl != null) {
-			tpTL = Double.parseDouble(tecl) / 100.0;
-		}
+		double tpAL = TarmedLeistung.getAL(verrechnet) / 100.0;
+		double tpTL = TarmedLeistung.getTL(verrechnet) / 100.0;
 		double tpw = verrechnet.getTPW();
 		Money mAL = new Money(tpAL * tpw * primaryScale * secondaryScale);
 		Money mTL = new Money(tpTL * tpw * primaryScale * secondaryScale);

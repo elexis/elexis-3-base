@@ -10,6 +10,10 @@
  ******************************************************************************/
 package ch.elexis.views;
 
+import java.util.List;
+
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 
 import ch.elexis.core.data.events.ElexisEvent;
@@ -18,17 +22,23 @@ import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.TarmedLeistung;
 import ch.rgw.tools.TimeTool;
 
 public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 	private CommonViewer commonViewer;
 	private StructuredViewer viewer;
 	
+	private TarmedLawFilter lawFilter = new TarmedLawFilter();
 	private TarmedValidDateFilter validDateFilter = new TarmedValidDateFilter();
-	private FilterKonsultationListener konsFilter = new FilterKonsultationListener(
-		Konsultation.class);
+	private FilterKonsultationListener konsFilter =
+		new FilterKonsultationListener(Konsultation.class);
+	
+	private Konsultation previousKons;
+	private boolean dirty;
 	
 	public TarmedSelectorPanelProvider(CommonViewer cv,
 		FieldDescriptor<? extends PersistentObject>[] fields, boolean bExlusive){
@@ -40,11 +50,60 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 	public void setFocus(){
 		super.setFocus();
 		if (viewer == null) {
+			Konsultation selectedKons =
+				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+			
 			viewer = commonViewer.getViewerWidget();
+			IContentProvider contentProvider = viewer.getContentProvider();
+			if (contentProvider instanceof TarmedCodeSelectorContentProvider) {
+				if (selectedKons != null) {
+					updateLawFilter(selectedKons);
+				}
+				viewer.addFilter(lawFilter);
+			}
+			if (selectedKons != null) {
+				updateValidFilter(selectedKons);
+			}
 			viewer.addFilter(validDateFilter);
 			ElexisEventDispatcher.getInstance().addListeners(konsFilter);
-			// call with null, event is not used in listener impl.
-			konsFilter.catchElexisEvent(null);
+		}
+		refreshViewer();
+	}
+	
+	private void refreshViewer() {
+		if (viewer != null && dirty) {
+			dirty = false;
+			viewer.getControl().setRedraw(false);
+			viewer.setSelection(new StructuredSelection());
+			viewer.refresh();
+			viewer.getControl().setRedraw(true);
+		}
+	}
+	
+	private void updateValidFilter(Konsultation kons){
+		validDateFilter.setValidDate(new TimeTool(kons.getDatum()));
+	}
+	
+	private void updateLawFilter(Konsultation kons){
+		List<String> laws = TarmedLeistung.getAvailableLaws();
+		Fall fall = kons.getFall();
+		String law = "";
+		if (fall != null) {
+			String konsLaw = fall.getRequiredString("Gesetz");
+			for (String available : laws) {
+				if (available.equalsIgnoreCase(konsLaw)) {
+					law = available;
+					break;
+				}
+			}
+		}
+		lawFilter.setLaw(law);
+	}
+	
+	private void updateDirty(Konsultation kons){
+		if (kons != previousKons) {
+			dirty = true;
+			previousKons = kons;
 		}
 	}
 	
@@ -58,18 +117,29 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 		public void runInUi(ElexisEvent ev){
 			Konsultation selectedKons =
 				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			// apply the filter
 			if (selectedKons != null) {
-				validDateFilter.setValidDate(new TimeTool(selectedKons.getDatum()));
-				viewer.getControl().setRedraw(false);
-				viewer.refresh();
-				viewer.getControl().setRedraw(true);
+				IContentProvider contentProvider = viewer.getContentProvider();
+				if (contentProvider instanceof TarmedCodeSelectorContentProvider) {
+					updateLawFilter(selectedKons);
+				}
+				updateValidFilter(selectedKons);
+				updateDirty(selectedKons);
 			} else {
+				// clear filters
+				IContentProvider contentProvider = viewer.getContentProvider();
+				if (contentProvider instanceof TarmedCodeSelectorContentProvider) {
+					lawFilter.setLaw(null);
+				}
 				validDateFilter.setValidDate(null);
-				viewer.getControl().setRedraw(false);
-				viewer.refresh();
-				viewer.getControl().setRedraw(true);
+				updateDirty(null);
 			}
 		}
+	}
+	
+	public void toggleFilters(){
+		validDateFilter.setDoFilter(!validDateFilter.getDoFilter());
+		lawFilter.setDoFilter(!lawFilter.getDoFilter());
+		dirty = true;
+		refreshViewer();
 	}
 }

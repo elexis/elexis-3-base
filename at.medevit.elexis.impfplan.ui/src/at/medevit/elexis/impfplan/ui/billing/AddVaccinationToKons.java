@@ -17,13 +17,13 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
+import ch.rgw.tools.TimeTool;
 
 public class AddVaccinationToKons {
 	private static final String TARMED_5MIN_TARIF = "00.0010";
 	
 	private static Object selectKonsLock = new Object();
 	private Konsultation kons;
-	private static IVerrechenbar consVerrechenbar;
 	private Patient patient;
 	private Artikel art;
 	
@@ -32,10 +32,6 @@ public class AddVaccinationToKons {
 		this.art = art;
 		if (art == null) {
 			art = ArtikelstammItem.findByEANorGTIN(ean);
-		}
-		
-		if (consVerrechenbar == null) {
-			consVerrechenbar = TarmedLeistung.getFromCode(TARMED_5MIN_TARIF);
 		}
 	}
 	
@@ -79,6 +75,7 @@ public class AddVaccinationToKons {
 							break;
 						}
 					}
+					IVerrechenbar consVerrechenbar = getKonsVerrechenbar(kons);
 					if (addedCons && (consVerrechenbar != null)) {
 						kons.addLeistung(consVerrechenbar);
 					}
@@ -86,6 +83,15 @@ public class AddVaccinationToKons {
 			});
 			return kons;
 		}
+	}
+	
+	private IVerrechenbar getKonsVerrechenbar(Konsultation kons){
+		TimeTool date = new TimeTool(kons.getDatum());
+		if (kons.getFall() != null) {
+			String law = kons.getFall().getRequiredString("Gesetz");
+			return TarmedLeistung.getFromCode(TARMED_5MIN_TARIF, date, law);
+		}
+		return null;
 	}
 	
 	/**

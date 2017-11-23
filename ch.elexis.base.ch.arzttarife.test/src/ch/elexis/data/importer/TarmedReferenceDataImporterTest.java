@@ -13,12 +13,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.junit.Test;
 
+import ch.elexis.data.TarmedGroup;
 import ch.elexis.data.TarmedLeistung;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
@@ -41,6 +43,9 @@ public class TarmedReferenceDataImporterTest {
 	private String codeGroup = "33";
 	private String codeInGroup = "39.0370";
 	private String codeNotInGroup = "39.3005";
+	
+	private String codeLimitGroup = "31";
+	private String codeLimitInGroup = "02.0310";
 	
 	private String codeBlock = "04";
 	private String codeInBlock = "15.0720";
@@ -93,11 +98,10 @@ public class TarmedReferenceDataImporterTest {
 			(Status) importer.performImport(new NullProgressMonitor(), tarmedInStream, null);
 		assertEquals(IStatus.OK, retStatus.getCode());
 		
-		JdbcLink cacheDb = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:tarmed_import", "hsql");
-		cacheDb.connect("", "");
-		
 		// exclusion
-		TarmedLeistung echoKardiografie = TarmedLeistung.load(codeEchokardiografie);
+		TarmedLeistung echoKardiografie =
+			(TarmedLeistung) TarmedLeistung.getFromCode(codeEchokardiografie, new TimeTool(), null);
+		assertTrue(echoKardiografie.exists());
 		assertEquals(codeEchokardiografie, echoKardiografie.getCode());
 		
 		TimeTool time = new TimeTool("31.12.2000");
@@ -119,31 +123,47 @@ public class TarmedReferenceDataImporterTest {
 		
 		// hierarchy
 		TarmedLeistung hierarchyMaster =
-			(TarmedLeistung) TarmedLeistung.getFromCode(codeHierarchyMaster);
+			(TarmedLeistung) TarmedLeistung.getFromCode(codeHierarchyMaster, new TimeTool(), null);
 		List<String> slaves = hierarchyMaster.getHierarchy(now);
 		assertNotNull(slaves);
 		assertTrue(slaves.contains(codeHierarchySlave));
 		TarmedLeistung hierarchyNotMaster =
-			(TarmedLeistung) TarmedLeistung.getFromCode(codeHierarchyNotMaster);
+			(TarmedLeistung) TarmedLeistung.getFromCode(codeHierarchyNotMaster, new TimeTool(),
+				null);
 		slaves = hierarchyNotMaster.getHierarchy(now);
 		assertNotNull(slaves);
 		assertFalse(slaves.contains(codeHierarchySlave));
 		
 		// groups
-		TarmedLeistung inGroup = (TarmedLeistung) TarmedLeistung.getFromCode(codeInGroup);
+		TarmedLeistung inGroup =
+			(TarmedLeistung) TarmedLeistung.getFromCode(codeInGroup, new TimeTool(), null);
 		List<String> groups = inGroup.getServiceGroups(now);
 		assertNotNull(groups);
 		assertTrue(groups.contains(codeGroup));
-		TarmedLeistung notInGroup = (TarmedLeistung) TarmedLeistung.getFromCode(codeNotInGroup);
+		TarmedLeistung notInGroup =
+			(TarmedLeistung) TarmedLeistung.getFromCode(codeNotInGroup, new TimeTool(), null);
 		groups = notInGroup.getServiceGroups(now);
 		assertFalse(groups.contains(codeGroup));
 		
+		// group limits
+		TarmedLeistung limitInGroup =
+			(TarmedLeistung) TarmedLeistung.getFromCode(codeLimitInGroup, new TimeTool(), null);
+		groups = limitInGroup.getServiceGroups(now);
+		assertTrue(groups.contains("31"));
+		Optional<TarmedGroup> tarmedGroup =
+			TarmedGroup.find("31", inGroup.get(TarmedLeistung.FLD_LAW), inGroup.getGueltigVon());
+		assertTrue(tarmedGroup.isPresent());
+		String limits = tarmedGroup.get().loadExtension().get("limits");
+		assertTrue(limits != null && !limits.isEmpty());
+		
 		// blocks
-		TarmedLeistung inBlock = (TarmedLeistung) TarmedLeistung.getFromCode(codeInBlock);
+		TarmedLeistung inBlock =
+			(TarmedLeistung) TarmedLeistung.getFromCode(codeInBlock, new TimeTool(), null);
 		List<String> blocks = inBlock.getServiceBlocks(now);
 		assertNotNull(blocks);
 		assertTrue(blocks.contains(codeBlock));
-		TarmedLeistung notInBlock = (TarmedLeistung) TarmedLeistung.getFromCode(codeNotInBlock);
+		TarmedLeistung notInBlock =
+			(TarmedLeistung) TarmedLeistung.getFromCode(codeNotInBlock, new TimeTool(), null);
 		blocks = notInBlock.getServiceBlocks(now);
 		assertFalse(blocks.contains(codeBlock));
 	}

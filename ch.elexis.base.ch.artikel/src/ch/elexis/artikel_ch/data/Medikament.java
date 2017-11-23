@@ -18,6 +18,8 @@ import ch.elexis.data.Query;
 
 public class Medikament extends Artikel {
 	
+	public static final String CODESYSTEM_NAME = "Medikamente";
+	
 	static {
 		transferAllStockInformationToNew32StockModel(new Query<Medikament>(Medikament.class),
 			Medikament.class);
@@ -34,7 +36,7 @@ public class Medikament extends Artikel {
 	
 	@Override
 	public String getCodeSystemName(){
-		return "Medikamente";
+		return CODESYSTEM_NAME;
 	}
 	
 	@Override

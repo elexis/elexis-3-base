@@ -19,6 +19,8 @@ import ch.elexis.data.Query;
 
 public class Medical extends Artikel {
 	
+	public static final String CODESYSTEM_NAME = "Medicals";
+	
 	private static IOptifier noObligationOptifier = new NoObligationOptifier();
 	
 	static {
@@ -37,7 +39,7 @@ public class Medical extends Artikel {
 	
 	@Override
 	public String getCodeSystemName(){
-		return "Medicals"; //$NON-NLS-1$
+		return CODESYSTEM_NAME; //$NON-NLS-1$
 	}
 	
 	@Override

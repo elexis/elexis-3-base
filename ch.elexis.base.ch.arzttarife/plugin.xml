@@ -92,12 +92,37 @@
             class="ch.elexis.data.importer.TarmedReferenceDataImporter"
             referenceDataId="tarmed">
       </importer>
+      <importer
+            class="ch.elexis.data.importer.KVGTarmedReferenceDataImporter"
+            referenceDataId="tarmed_kvg">
+      </importer>
    </extension>
    <extension
          point="ch.elexis.core.ui.TextTemplateRequirement">
       <TextTemplateRequirement
             element="ch.elexis.tarmed.printer.TarmedTemplateRequirement">
       </TextTemplateRequirement>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.core.ui.views.codesystems.BlockSelector">
+         <command
+               commandId="ch.elexis.base.ch.arzttarife.ui.command.updateLeistungsblock"
+               label="Tarmed aktualisieren"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.UpdateLeistungsblock"
+            description="Update the TarmedLeistung of the Leistungsblock"
+            id="ch.elexis.base.ch.arzttarife.ui.command.updateLeistungsblock"
+            name="Update Leistungsblock">
+      </command>
    </extension>
 
 </plugin>

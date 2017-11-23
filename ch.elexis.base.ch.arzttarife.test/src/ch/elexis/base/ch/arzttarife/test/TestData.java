@@ -161,11 +161,11 @@ public class TestData {
 		}
 		
 		private void createLeistungen(){
-			TarmedLeistung leistung = new TarmedLeistung("00", null, "NIL", "", "", "");
+			TarmedLeistung leistung = new TarmedLeistung("00", null, "NIL", "", "", "", true);
 			leistung.setText("Grundleistungen");
 			
-			leistung =
-				new TarmedLeistung("00.0010-20010101", "00.0010", "00", "9999", "FMH05", "0001");
+			leistung = new TarmedLeistung("00.0010-20010101", "00.0010", "00", "9999", "FMH05",
+				"0001", false);
 			leistung.setText("Konsultation, erste 5 Min. (Grundkonsultation)");
 			leistung.set(TarmedLeistung.FLD_GUELTIG_VON, "20010101");
 			leistung.set(TarmedLeistung.FLD_GUELTIG_BIS, "21991231");
@@ -191,7 +191,7 @@ public class TestData {
 			ext.put("exclusion",
 				"00.0060,00.0110,02.0010,02.0020,02.0030,02.0040,02.0050,08.0500,12");
 			
-			leistung.flushExtension();
+			leistung.setExtension(ext);
 			
 			leistungen.add(leistung);
 			

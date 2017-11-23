@@ -12,22 +12,24 @@
 
 package ch.elexis.data;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.data.importer.TarmedLeistungLimits;
-import ch.elexis.data.importer.TarmedLeistungLimits.LimitsEinheit;
+import ch.elexis.data.TarmedLimitation.LimitationUnit;
+import ch.elexis.data.importer.TarmedLeistungAge;
 import ch.elexis.data.importer.TarmedReferenceDataImporter;
-import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.RechnungsPrefs;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
@@ -52,6 +54,7 @@ public class TarmedOptifier implements IOptifier {
 	public static final int LEISTUNGSTYP = 6;
 	public static final int NOTYETVALID = 7;
 	public static final int NOMOREVALID = 8;
+	public static final int PATIENTAGE = 9;
 	
 	private static final String CHAPTER_XRAY = "39.02";
 	private static final String DEFAULT_TAX_XRAY_ROOM = "39.2000";
@@ -100,9 +103,9 @@ public class TarmedOptifier implements IOptifier {
 		 * Fachspezialisierung des aktuellen Mandanten usw. vereinbar ist
 		 */
 
-		Hashtable ext = tc.loadExtension();
+		Hashtable<String, String> ext = tc.loadExtension();
 
-		// Gültigkeit gemäss Datum prüfen
+		// Gültigkeit gemäss Datum und Alter prüfen
 		if (bOptify) {
 			TimeTool date = new TimeTool(kons.getDatum());
 			String dVon = ((TarmedLeistung) code).get("GueltigVon"); //$NON-NLS-1$
@@ -121,6 +124,14 @@ public class TarmedOptifier implements IOptifier {
 							code.getCode() + Messages.TarmedOptifier_NoMoreValid, null, false);
 				}
 			}
+			String ageLimits = ext.get(TarmedLeistung.EXT_FLD_SERVICE_AGE);
+			if (ageLimits != null && !ageLimits.isEmpty()) {
+				String errorMessage = checkAge(ageLimits, kons);
+				if (errorMessage != null) {
+					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, PATIENTAGE,
+						errorMessage, null, false);
+				}
+			}
 		}
 		newVerrechnet = null;
 		newVerrechnetSide = null;
@@ -132,21 +143,21 @@ public class TarmedOptifier implements IOptifier {
 			}
 
 			if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0011")) {
-				return this.add(TarmedLeistung.getFromCode("39.0010"), kons);
+				return this.add(getKonsVerrechenbar("39.0010", kons), kons);
 			} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0010")) {
-				return this.add(TarmedLeistung.getFromCode("39.0011"), kons);
+				return this.add(getKonsVerrechenbar("39.0011", kons), kons);
 			}
 
 			if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0016")) {
-				return this.add(TarmedLeistung.getFromCode("39.0015"), kons);
+				return this.add(getKonsVerrechenbar("39.0015", kons), kons);
 			} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0015")) {
-				return this.add(TarmedLeistung.getFromCode("39.0016"), kons);
+				return this.add(getKonsVerrechenbar("39.0016", kons), kons);
 			}
 
 			if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0021")) {
-				return this.add(TarmedLeistung.getFromCode("39.0020"), kons);
+				return this.add(getKonsVerrechenbar("39.0020", kons), kons);
 			} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0020")) {
-				return this.add(TarmedLeistung.getFromCode("39.0021"), kons);
+				return this.add(getKonsVerrechenbar("39.0021", kons), kons);
 			}
 		}
 
@@ -198,11 +209,12 @@ public class TarmedOptifier implements IOptifier {
 						if (tarmed != null && tarmed.exists()) {
 							// check if new has an exclusion for this verrechnet
 							// tarmed
-							Result<IVerrechenbar> resCompatible = isCompatible(tarmed, newTarmed);
+							Result<IVerrechenbar> resCompatible =
+								isCompatible(tarmed, newTarmed, kons);
 							if (resCompatible.isOK()) {
 								// check if existing tarmed has exclusion for
 								// new one
-								resCompatible = isCompatible(newTarmed, tarmed);
+								resCompatible = isCompatible(newTarmed, tarmed, kons);
 							}
 
 							if (!resCompatible.isOK()) {
@@ -212,7 +224,7 @@ public class TarmedOptifier implements IOptifier {
 						}
 					}
 				}
-
+				
 				if (newVerrechnet.getCode().equals("00.0750") || newVerrechnet.getCode().equals("00.0010")) {
 					String excludeCode = null;
 					if (newVerrechnet.getCode().equals("00.0010")) {
@@ -230,7 +242,7 @@ public class TarmedOptifier implements IOptifier {
 					}
 				}
 			}
-			newVerrechnet.setDetail(AL, Integer.toString(tc.getAL()));
+			newVerrechnet.setDetail(AL, Integer.toString(tc.getAL(kons.getMandant())));
 			newVerrechnet.setDetail(TL, Integer.toString(tc.getTL()));
 			lst.add(newVerrechnet);
 		}
@@ -275,62 +287,9 @@ public class TarmedOptifier implements IOptifier {
 			}
 		}
 
-		// Prüfen, ob zu oft verrechnet - diese Version prüft nur "pro
-		// Sitzung" und "pro Tag".
-		if (bOptify) {
-			String lim = (String) ext.get("limits"); //$NON-NLS-1$
-			if (lim != null) {
-				String[] lin = lim.split("#"); //$NON-NLS-1$
-				for (String line : lin) {
-					String[] f = line.split(","); //$NON-NLS-1$
-					if (f.length == 5) {
-						Integer limitCode = Integer.parseInt(f[4].trim());
-						switch (limitCode) {
-						case 10: // Pro Seite
-						case 7: // Pro Sitzung
-							if (newVerrechnet.getCode().equals("00.0020")) {
-								if (CoreHub.mandantCfg != null
-										&& CoreHub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY, false)) {
-									break;
-								}
-							}
-							// todo check if electronic billing
-							if (f[2].equals("1") && f[0].equals("<=")) {
-								int menge = Math.round(Float.parseFloat(f[1]));
-								if (newVerrechnet.getZahl() > menge) {
-									newVerrechnet.setZahl(menge);
-									if (limitCode == 7) {
-									return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KUMULATION,
-											Messages.TarmedOptifier_codemax + menge
-													+ Messages.TarmedOptifier_perSession,
-											null, false);
-									} else if (limitCode == 10) {
-										return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
-											KUMULATION, Messages.TarmedOptifier_codemax + menge
-												+ Messages.TarmedOptifier_perSide,
-											null, false);
-									}
-								}
-							}
-							break;
-						case 21: // Pro Tag
-							if (f[2].equals("1") && f[0].equals("<=")) { // 1
-																			// Tag
-								int menge = Math.round(Float.parseFloat(f[1]));
-								if (newVerrechnet.getZahl() > menge) {
-									newVerrechnet.setZahl(menge);
-									return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KUMULATION,
-											Messages.TarmedOptifier_codemax + menge + "Mal pro Tag", null, false); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-							}
-
-							break;
-						default:
-							break;
-						}
-					}
-				}
-			}
+		Result<IVerrechenbar> limitResult = checkLimitations(kons, tc, newVerrechnet);
+		if (!limitResult.isOK()) {
+			return limitResult;
 		}
 
 		String tcid = code.getCode();
@@ -340,9 +299,9 @@ public class TarmedOptifier implements IOptifier {
 		if (!tc.getCode().equals(DEFAULT_TAX_XRAY_ROOM) && !tc.getCode().matches("39.002[01]")
 			&& tc.getParent().startsWith(CHAPTER_XRAY)) {
 			if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_OPTIFY_XRAY, true)) {
-				add(TarmedLeistung.getFromCode(DEFAULT_TAX_XRAY_ROOM), kons);
+				add(getKonsVerrechenbar(DEFAULT_TAX_XRAY_ROOM, kons), kons);
 				// add 39.0020, will be changed according to case (see above)
-				add(TarmedLeistung.getFromCode("39.0020"), kons);
+				add(getKonsVerrechenbar("39.0020", kons), kons);
 			}
 		}
 		
@@ -356,7 +315,7 @@ public class TarmedOptifier implements IOptifier {
 					String tlc = tl.getCode();
 					double z = v.getZahl();
 					if (tlc.matches("29.20[12345678]0") || (tlc.equals("29.2200"))) {
-						sumAL += (z * tl.getAL()) / 2;
+						sumAL += (z * tl.getAL(kons.getMandant())) / 2;
 						sumTL += (z * tl.getTL()) / 4;
 					}
 				}
@@ -375,8 +334,8 @@ public class TarmedOptifier implements IOptifier {
 					if (p != null) {
 						String alter = p.getAlter();
 						if (Integer.parseInt(alter) < 6) {
-							TarmedLeistung tl = (TarmedLeistung) TarmedLeistung.getFromCode("00.0040",
-									new TimeTool(kons.getDatum()));
+							TarmedLeistung tl =
+								(TarmedLeistung) getKonsVerrechenbar("00.0040", kons);
 							add(tl, kons);
 						}
 					}
@@ -395,7 +354,7 @@ public class TarmedOptifier implements IOptifier {
 					int z = v.getZahl();
 					if (tlc.equals("04.1910") || tlc.equals("04.1920") || tlc.equals("04.1940") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							|| tlc.equals("04.1950")) { //$NON-NLS-1$
-						sumAL += tl.getAL() * z;
+						sumAL += tl.getAL(kons.getMandant()) * z;
 						sumTL += tl.getTL() * z;
 						// double al = (tl.getAL() * 15) / 10.0;
 						// double tel = (tl.getTL() * 15) / 10.0;
@@ -421,7 +380,7 @@ public class TarmedOptifier implements IOptifier {
 					String tlc = tl.getCode();
 					int z = v.getZahl();
 					if (tlc.equals("04.0610") || tlc.equals("04.0630") || tlc.equals("04.0640")) {
-						sumAL += tl.getAL() * z;
+						sumAL += tl.getAL(kons.getMandant()) * z;
 						sumTL += tl.getTL() * z;
 					}
 				}
@@ -449,7 +408,7 @@ public class TarmedOptifier implements IOptifier {
 						if (tl.getCode().startsWith("00.25")) { //$NON-NLS-1$
 							continue;
 						}
-						sum += (tl.getAL() * v.getZahl());
+						sum += (tl.getAL(kons.getMandant()) * v.getZahl());
 						// int summand = tl.getAL() >> 2; // TODO ev. float?
 						// -> Rundung?
 						// ((sum.addCent(summand * v.getZahl());
@@ -472,7 +431,7 @@ public class TarmedOptifier implements IOptifier {
 						}
 						// int summand = tl.getAL() >> 1;
 						// sum.addCent(summand * v.getZahl());
-						sum += (tl.getAL() * v.getZahl());
+						sum += (tl.getAL(kons.getMandant()) * v.getZahl());
 					}
 				}
 				// check.setPreis(sum.multiply(factor));
@@ -490,6 +449,92 @@ public class TarmedOptifier implements IOptifier {
 			return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 		}
 		return new Result<IVerrechenbar>(null);
+	}
+	
+	private Result<IVerrechenbar> checkLimitations(Konsultation kons, TarmedLeistung tarmedLeistung,
+		Verrechnet newVerrechnet){
+		if (bOptify) {
+			// service limitations
+			List<TarmedLimitation> limitations = tarmedLeistung.getLimitations();
+			for (TarmedLimitation tarmedLimitation : limitations) {
+				if (tarmedLimitation.isTestable()) {
+					Result<IVerrechenbar> result = tarmedLimitation.test(kons, newVerrechnet);
+					if (!result.isOK()) {
+						return result;
+					}
+				}
+			}
+			// group limitations
+			TimeTool date = new TimeTool(kons.getDatum());
+			List<String> groups = tarmedLeistung.getServiceGroups(date);
+			for (String groupName : groups) {
+				Optional<TarmedGroup> group =
+					TarmedGroup.find(groupName, tarmedLeistung.get(TarmedLeistung.FLD_LAW), date);
+				if (group.isPresent()) {
+					limitations = group.get().getLimitations();
+					for (TarmedLimitation tarmedLimitation : limitations) {
+						if (tarmedLimitation.isTestable()) {
+							Result<IVerrechenbar> result =
+								tarmedLimitation.test(kons, newVerrechnet);
+							if (!result.isOK()) {
+								return result;
+							}
+						}
+					}
+				}
+			}
+		}
+		return new Result<IVerrechenbar>(null);
+	}
+	
+	private String checkAge(String limitsString, Konsultation kons){
+		LocalDateTime consDate = new TimeTool(kons.getDatum()).toLocalDateTime();
+		Patient patient = kons.getFall().getPatient();
+		long patientAgeDays = patient.getAgeAt(consDate, ChronoUnit.DAYS);
+		
+		List<TarmedLeistungAge> ageLimits = TarmedLeistungAge.of(limitsString);
+		for (TarmedLeistungAge tarmedLeistungAge : ageLimits) {
+			if (tarmedLeistungAge.isValidOn(consDate.toLocalDate())) {
+				// if only one of the limits is set, check only that limit
+				if (tarmedLeistungAge.getFromDays() >= 0 && !(tarmedLeistungAge.getToDays() >= 0)) {
+					if (patientAgeDays < tarmedLeistungAge.getFromDays()) {
+						return "Patient ist zu jung, verrechenbar ab "
+							+ tarmedLeistungAge.getFromText();
+					}
+				} else if (tarmedLeistungAge.getToDays() >= 0
+					&& !(tarmedLeistungAge.getFromDays() >= 0)) {
+					if (patientAgeDays > tarmedLeistungAge.getToDays()) {
+						return "Patient ist zu alt, verrechenbar bis "
+							+ tarmedLeistungAge.getToText();
+					}
+				} else if (tarmedLeistungAge.getToDays() >= 0
+					&& tarmedLeistungAge.getFromDays() >= 0) {
+					if (tarmedLeistungAge.getToDays() < tarmedLeistungAge.getFromDays()) {
+						if (patientAgeDays > tarmedLeistungAge.getToDays()
+							&& patientAgeDays < tarmedLeistungAge.getFromDays()) {
+							return "Patienten Alter nicht ok, verrechenbar "
+								+ tarmedLeistungAge.getText();
+						}
+					} else {
+						if (patientAgeDays > tarmedLeistungAge.getToDays()
+							|| patientAgeDays < tarmedLeistungAge.getFromDays()) {
+							return "Patienten Alter nicht ok, verrechenbar "
+								+ tarmedLeistungAge.getText();
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	private IVerrechenbar getKonsVerrechenbar(String code, Konsultation kons){
+		TimeTool date = new TimeTool(kons.getDatum());
+		if (kons.getFall() != null) {
+			String law = kons.getFall().getRequiredString("Gesetz");
+			return TarmedLeistung.getFromCode(code, date, law);
+		}
+		return null;
 	}
 	
 	private boolean isReferenceInfoAvailable(){
@@ -583,12 +628,11 @@ public class TarmedOptifier implements IOptifier {
 	}
 	
 	private int getMaxPerMaster(TarmedLeistung slave){
-		String lim = (String) slave.loadExtension().get("limits");
-		List<TarmedLeistungLimits> limits = TarmedLeistungLimits.of(lim);
-		for (TarmedLeistungLimits limit : limits) {
-			if (limit.getEinheit() == LimitsEinheit.HAUPTLEISTUNG) {
+		List<TarmedLimitation> limits = slave.getLimitations();
+		for (TarmedLimitation limit : limits) {
+			if (limit.getLimitationUnit() == LimitationUnit.MAINSERVICE) {
 				// only an integer makes sense here
-				return (int) limit.getMenge();
+				return (int) limit.getAmount();
 			}
 		}
 		// default to unknown
@@ -742,20 +786,34 @@ public class TarmedOptifier implements IOptifier {
 	 *            the tarmed and it's parents code are check whether they have to be excluded
 	 * @param tarmed
 	 *            TarmedLeistung who incompatibilities are examined
+	 * @param kons
+	 *            {@link Konsultation} providing context
 	 * @return true OK if they are compatible, WARNING if it matches an exclusion case
 	 */
-	public Result<IVerrechenbar> isCompatible(TarmedLeistung tarmedCode, TarmedLeistung tarmed){
-		String notCompatible = tarmed.getExclusion();
-		
-		// there are some exclusions to consider
-		if (!StringTool.isNothing(notCompatible)) {
-			String code = tarmedCode.getCode();
-			String codeParent = tarmedCode.getParent();
-			for (String nc : notCompatible.split(",")) {
-				if (code.equals(nc) || codeParent.startsWith(nc)) {
-					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION,
-						tarmed.getCode() + " nicht kombinierbar mit " + code, //$NON-NLS-1$
-						null, false);
+	public Result<IVerrechenbar> isCompatible(TarmedLeistung tarmedCode, TarmedLeistung tarmed,
+		Konsultation kons){
+		TimeTool date = new TimeTool(kons.getDatum());
+		List<TarmedExclusion> exclusions = tarmed.getExclusions(kons);
+		for (TarmedExclusion tarmedExclusion : exclusions) {
+			if (tarmedExclusion.isMatching(tarmedCode, date)) {
+				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION,
+					tarmed.getCode() + " nicht kombinierbar mit " + tarmedExclusion.toString(), //$NON-NLS-1$
+					null, false);
+			}
+		}
+		List<String> groups = tarmed.getServiceGroups(date);
+		for (String groupName : groups) {
+			Optional<TarmedGroup> group =
+				TarmedGroup.find(groupName, tarmed.get(TarmedLeistung.FLD_LAW), date);
+			if (group.isPresent()) {
+				List<TarmedExclusion> groupExclusions = group.get().getExclusions(kons);
+				for (TarmedExclusion tarmedExclusion : groupExclusions) {
+					if (tarmedExclusion.isMatching(tarmedCode, date)) {
+						return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION,
+							tarmed.getCode() + " nicht kombinierbar mit " //$NON-NLS-1$
+								+ tarmedExclusion.toString(),
+							null, false);
+					}
 				}
 			}
 		}

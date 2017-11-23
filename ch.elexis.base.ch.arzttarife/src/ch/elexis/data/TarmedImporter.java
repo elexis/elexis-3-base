@@ -19,6 +19,11 @@ import java.io.FileInputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -33,6 +38,7 @@ import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.ui.importer.div.importers.AccessWrapper;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.importer.KVGTarmedReferenceDataImporter;
 import ch.elexis.data.importer.TarmedReferenceDataImporter;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -62,6 +68,11 @@ public class TarmedImporter extends ImporterPage {
 	// then real import
 	boolean updateIDs = false;
 	
+	String selectedLaw = "";
+	String[] availableLaws = new String[] {
+		"", "KVG", "UVG", "MVG", "IVG"
+	};
+	
 	public TarmedImporter(){}
 	
 	@Override
@@ -76,8 +87,17 @@ public class TarmedImporter extends ImporterPage {
 	 * @see ch.elexis.util.ImporterPage#doImport(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
-		TarmedReferenceDataImporter trdImporter = new TarmedReferenceDataImporter();
+		TarmedReferenceDataImporter trdImporter = getImporter();
 		return trdImporter.performImport(monitor, new FileInputStream(results[0]), null);
+	}
+	
+	private TarmedReferenceDataImporter getImporter(){
+		// special importers since Tarmed 1.09
+		if ("KVG".equals(selectedLaw)) {
+			return new KVGTarmedReferenceDataImporter();
+		}
+		// default importer
+		return new TarmedReferenceDataImporter();
 	}
 	
 	@Override
@@ -95,16 +115,45 @@ public class TarmedImporter extends ImporterPage {
 		updateIDsComposite.setLayout(new FormLayout());
 		
 		Label lbl = new Label(updateIDsComposite, SWT.NONE);
-		lbl.setText(Messages.TarmedImporter_updateOldIDEntries);
-		final Button updateIDsBtn = new Button(updateIDsComposite, SWT.CHECK);
+		lbl.setText("Gesetz des Datensatz (relevant ab Tarmed 1.09)");
+		final ComboViewer lawCombo = new ComboViewer(updateIDsComposite, SWT.BORDER);
+		
+		lawCombo.setContentProvider(ArrayContentProvider.getInstance());
+		lawCombo.setInput(availableLaws);
+		lawCombo.setSelection(new StructuredSelection(selectedLaw));
+		lawCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				StructuredSelection selection = (StructuredSelection) event.getSelection();
+				if (selection != null && !selection.isEmpty()) {
+					selectedLaw = (String) selection.getFirstElement();
+				} else {
+					selectedLaw = "";
+				}
+			}
+		});
 		
 		FormData fd = new FormData();
-		fd.top = new FormAttachment(0, 0);
+		fd.top = new FormAttachment(0, 5);
 		fd.left = new FormAttachment(0, 0);
 		lbl.setLayoutData(fd);
 		
 		fd = new FormData();
 		fd.top = new FormAttachment(0, 0);
+		fd.left = new FormAttachment(lbl, 5);
+		lawCombo.getCombo().setLayoutData(fd);
+		
+		lbl = new Label(updateIDsComposite, SWT.NONE);
+		lbl.setText(Messages.TarmedImporter_updateOldIDEntries);
+		final Button updateIDsBtn = new Button(updateIDsComposite, SWT.CHECK);
+		
+		fd = new FormData();
+		fd.top = new FormAttachment(lawCombo.getControl(), 5);
+		fd.left = new FormAttachment(0, 0);
+		lbl.setLayoutData(fd);
+		
+		fd = new FormData();
+		fd.top = new FormAttachment(lawCombo.getControl(), 5);
 		fd.left = new FormAttachment(lbl, 5);
 		updateIDsBtn.setLayoutData(fd);
 		
@@ -118,7 +167,6 @@ public class TarmedImporter extends ImporterPage {
 				updateIDs = updateIDsBtn.getSelection();
 			}
 		});
-		
 		return fis;
 	}
 }

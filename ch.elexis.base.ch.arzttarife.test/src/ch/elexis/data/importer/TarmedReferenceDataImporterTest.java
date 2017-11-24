@@ -167,4 +167,26 @@ public class TarmedReferenceDataImporterTest {
 		blocks = notInBlock.getServiceBlocks(now);
 		assertFalse(blocks.contains(codeBlock));
 	}
+	
+	@Test
+	public void currentVersion(){
+		TarmedLeistung.setVersion("1");
+		assertEquals(1, TarmedLeistung.getCurrentVersion());
+		assertEquals(1, TarmedLeistung.getCurrentVersion(""));
+		assertEquals(1, TarmedLeistung.getCurrentVersion(null));
+		
+		TarmedLeistung.setVersion("2", "kvg");
+		assertEquals(2, TarmedLeistung.getCurrentVersion("kvg"));
+		assertEquals(1, TarmedLeistung.getCurrentVersion(""));
+		
+		TarmedLeistung.setVersion("3", "uvg");
+		assertEquals(3, TarmedLeistung.getCurrentVersion("uvg"));
+		assertEquals(2, TarmedLeistung.getCurrentVersion("kvg"));
+		assertEquals(1, TarmedLeistung.getCurrentVersion(""));
+		
+		TarmedLeistung.setVersion("3", "kvg");
+		assertEquals(3, TarmedLeistung.getCurrentVersion("uvg"));
+		assertEquals(3, TarmedLeistung.getCurrentVersion("kvg"));
+		assertEquals(1, TarmedLeistung.getCurrentVersion(""));
+	}
 }

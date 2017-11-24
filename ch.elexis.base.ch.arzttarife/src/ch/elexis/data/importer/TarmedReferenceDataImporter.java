@@ -64,7 +64,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	
 	@Override
 	public int getCurrentVersion(){
-		return TarmedLeistung.getCurrentVersion();
+		return TarmedLeistung.getCurrentVersion(getLaw());
 	}
 	
 	@Override
@@ -127,9 +127,10 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 								
 								if (version == null) {
 									TarmedLeistung
-										.setVersion(new TimeTool().toString(TimeTool.DATE_COMPACT));
+										.setVersion(new TimeTool().toString(TimeTool.DATE_COMPACT),
+											getLaw());
 								} else {
-									TarmedLeistung.setVersion(version.toString());
+									TarmedLeistung.setVersion(version.toString(), getLaw());
 								}
 								CoreHub.globalCfg.set(
 									TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE, true);

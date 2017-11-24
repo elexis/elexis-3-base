@@ -783,13 +783,45 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		return VatInfo.VAT_CH_ISTREATMENT;
 	}
 	
+	private static final String DATASET_VERSION_SEPARATOR = "|";
+	private static final String DATASET_LAW_SEPARATOR = ":=:";
+	
 	/**
 	 * @return the current data set version of the tarmed database
 	 * @see http://tarmedsuisse.ch/
 	 */
 	public static int getCurrentVersion(){
+		return getCurrentVersion("");
+	}
+	
+	/**
+	 * @return the current data set version of the tarmed database, for the specified law
+	 * @see http://tarmedsuisse.ch/
+	 * @since 3.4
+	 */
+	public static int getCurrentVersion(String law){
 		TarmedLeistung version = load(ROW_VERSION);
-		String versionVal = version.get(FLD_CODE);
+		// read from code if no law specified, old behavior
+		if (law == null || law.isEmpty()) {
+			String versionVal = version.get(FLD_CODE);
+			return getVersionAsInt(versionVal);
+		} else {
+			// read from text if law specified 
+			String versionVal = version.get(FLD_TEXT);
+			String[] parts = versionVal.split("\\" + DATASET_VERSION_SEPARATOR);
+			for (String part : parts) {
+				String[] subParts = part.split(DATASET_LAW_SEPARATOR);
+				if (subParts.length == 2) {
+					if (law.equals(subParts[0])) {
+						return getVersionAsInt(subParts[1]);
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	private static int getVersionAsInt(String versionVal){
 		try {
 			return Integer.parseInt(versionVal);
 		} catch (NumberFormatException nfe) {
@@ -802,13 +834,56 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	 *            sets the version of the contained data set
 	 */
 	public static void setVersion(String versionVal){
+		setVersion(versionVal, "");
+	}
+	
+	/**
+	 * Set the current data set version of the tarmed database, for the specified law
+	 * 
+	 * @param versionVal
+	 * @param law
+	 * @since 3.4
+	 */
+	public static void setVersion(String versionVal, String law){
 		TarmedLeistung version = load(ROW_VERSION);
-		if (!version.exists()) {
-			version = new TarmedLeistung();
-			version.create(ROW_VERSION);
-			version.set(FLD_NICK, VERSION);
+		// write to code if no law specified, old behavior
+		if (law == null || law.isEmpty()) {
+			if (!version.exists()) {
+				version = new TarmedLeistung();
+				version.create(ROW_VERSION);
+				version.set(FLD_NICK, VERSION);
+			}
+			version.set(FLD_CODE, versionVal);
+		} else {
+			boolean found = false;
+			StringBuilder sb = new StringBuilder();
+			// read and replace Version for specified law 
+			String oldVersions = version.get(FLD_TEXT);
+			String[] parts = oldVersions.split("\\" + DATASET_VERSION_SEPARATOR);
+			for (String part : parts) {
+				String[] subParts = part.split(DATASET_LAW_SEPARATOR);
+				if (subParts.length == 2) {
+					if (sb.length() > 0) {
+						sb.append(DATASET_VERSION_SEPARATOR);
+					}
+					sb.append(subParts[0]);
+					if (law.equals(subParts[0])) {
+						sb.append(DATASET_LAW_SEPARATOR).append(versionVal);
+						found = true;
+					} else {
+						sb.append(DATASET_LAW_SEPARATOR).append(subParts[1]);
+					}
+				}
+			}
+			// if not found, add new version string
+			if (!found) {
+				if (sb.length() > 0) {
+					sb.append(DATASET_VERSION_SEPARATOR);
+				}
+				sb.append(law).append(DATASET_LAW_SEPARATOR).append(versionVal);
+			}
+			version.set(FLD_TEXT, sb.toString());
 		}
-		version.set(FLD_CODE, versionVal);
 	}
 	
 	@Override

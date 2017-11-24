@@ -94,7 +94,11 @@
       </importer>
       <importer
             class="ch.elexis.data.importer.KVGTarmedReferenceDataImporter"
-            referenceDataId="tarmed_kvg">
+            referenceDataId="tarmed_kvg_34">
+      </importer>
+      <importer
+            class="ch.elexis.data.importer.TarmedReferenceDataImporter"
+            referenceDataId="tarmed_34">
       </importer>
    </extension>
    <extension

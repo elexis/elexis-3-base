@@ -3,10 +3,9 @@
   <parent>
     <groupId>ch.elexis.base</groupId>
     <artifactId>elexis-3-base</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.4.0-SNAPSHOT</version>
   </parent>
   <artifactId>at.medevit.elexis.emediplan.core</artifactId>
   <packaging>eclipse-plugin</packaging>
-  
   <version>1.0.0-SNAPSHOT</version>
 </project>

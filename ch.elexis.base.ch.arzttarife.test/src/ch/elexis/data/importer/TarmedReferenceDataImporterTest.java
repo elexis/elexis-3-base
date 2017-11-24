@@ -20,7 +20,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.junit.Test;
 
+import ch.elexis.data.TarmedExclusive;
 import ch.elexis.data.TarmedGroup;
+import ch.elexis.data.TarmedKumulation;
+import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
 import ch.elexis.data.TarmedLeistung;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
@@ -166,6 +169,14 @@ public class TarmedReferenceDataImporterTest {
 			(TarmedLeistung) TarmedLeistung.getFromCode(codeNotInBlock, new TimeTool(), null);
 		blocks = notInBlock.getServiceBlocks(now);
 		assertFalse(blocks.contains(codeBlock));
+		
+		// block kumulation, exclusives
+		List<TarmedExclusive> exclusives =
+			TarmedKumulation.getExclusives("01", TarmedKumulationType.BLOCK, new TimeTool(), null);
+		assertFalse(exclusives.isEmpty());
+		exclusives.get(0).isMatching(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.1345", new TimeTool(), null),
+			new TimeTool());
 	}
 	
 	@Test

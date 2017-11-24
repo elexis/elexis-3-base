@@ -108,12 +108,17 @@ public class TarmedOptifierTest {
 	
 	@Test
 	public void testAddCompatibleAndIncompatible(){
+		clearKons(konsGriss);
 		Result<IVerrechenbar> resultGriss = optifier.add(tlUltrasound, konsGriss);
 		assertTrue(resultGriss.isOK());
 		resultGriss = optifier.add(tlBaseXRay, konsGriss);
 		assertFalse(resultGriss.isOK());
 		resultGriss = optifier.add(tlTapingCat1, konsGriss);
+		assertFalse(resultGriss.isOK());
+		resultGriss =
+			optifier.add(TarmedLeistung.getFromCode("39.3830", new TimeTool(), null), konsGriss);
 		assertTrue(resultGriss.isOK());
+		resetKons(konsGriss);
 	}
 	
 	@Test
@@ -154,10 +159,45 @@ public class TarmedOptifierTest {
 		
 		resCompatible = optifier.isCompatible(tlBaseFirst5Min, tlBaseRadiologyHospital, konsSter);
 		assertTrue(resCompatible.isOK());
+		
+		clearKons(konsSter);
+		resCompatible = optifier.isCompatible(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", new TimeTool(), null),
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.1345", new TimeTool(), null), konsSter);
+		assertFalse(resCompatible.isOK());
+		resText = "";
+		if (!resCompatible.getMessages().isEmpty()) {
+			resText = resCompatible.getMessages().get(0).getText();
+		}
+		assertEquals("00.1345 nicht kombinierbar mit 00.0010, wegen Block Kumulation", resText);
+		
+		resCompatible = optifier.isCompatible(
+			(TarmedLeistung) TarmedLeistung.getFromCode("01.0265", new TimeTool(), null),
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.1345", new TimeTool(), null), konsSter);
+		assertTrue(resCompatible.isOK());
+		
+		resCompatible = optifier.isCompatible(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0510", new TimeTool(), null),
+			(TarmedLeistung) TarmedLeistung.getFromCode("03.0020", new TimeTool(), null), konsSter);
+		assertFalse(resCompatible.isOK());
+		resText = "";
+		if (!resCompatible.getMessages().isEmpty()) {
+			resText = resCompatible.getMessages().get(0).getText();
+		}
+		assertEquals("03.0020 nicht kombinierbar mit 00.0510, wegen Block Kumulation", resText);
+		
+		resCompatible = optifier.isCompatible(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.2510", new TimeTool(), null),
+			(TarmedLeistung) TarmedLeistung.getFromCode("03.0020", new TimeTool(), null), konsSter);
+		assertTrue(resCompatible.isOK());
+		
+		resetKons(konsSter);
 	}
 	
 	@Test
 	public void testSetBezug(){
+		clearKons(konsSter);
+		
 		additionalService =
 			(TarmedLeistung) TarmedLeistung.getFromCode("39.5010", new TimeTool(), null);
 		mainService = (TarmedLeistung) TarmedLeistung.getFromCode("39.5060", new TimeTool(), null);
@@ -200,6 +240,8 @@ public class TarmedOptifierTest {
 		assertTrue(result.isOK());
 		assertFalse(getVerrechent(konsSter, mainService).isPresent());
 		assertFalse(getVerrechent(konsSter, additionalService).isPresent());
+		
+		resetKons(konsSter);
 	}
 	
 	@Test

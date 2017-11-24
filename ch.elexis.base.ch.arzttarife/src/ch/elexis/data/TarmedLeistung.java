@@ -33,7 +33,7 @@ import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
-import ch.elexis.data.TarmedExclusion.TarmedExclusionType;
+import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
 import ch.elexis.views.TarmedDetailDialog;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.JdbcLink;
@@ -675,7 +675,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	 */
 	public List<TarmedExclusion> getExclusions(TimeTool date){
 		return TarmedKumulation.getExclusions(getCode(),
-			isChapter() ? TarmedExclusionType.CHAPTER : TarmedExclusionType.SERVICE, date,
+			isChapter() ? TarmedKumulationType.CHAPTER : TarmedKumulationType.SERVICE, date,
 			get(TarmedLeistung.FLD_LAW));
 	}
 	

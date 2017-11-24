@@ -5,12 +5,12 @@ import java.util.List;
 import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
 import ch.rgw.tools.TimeTool;
 
-public class TarmedExclusion {
+public class TarmedExclusive {
 	
 	private String slaveCode;
 	private TarmedKumulationType slaveType;
 	
-	public TarmedExclusion(TarmedKumulation kumulation){
+	public TarmedExclusive(TarmedKumulation kumulation){
 		slaveCode = kumulation.getSlaveCode();
 		slaveType = TarmedKumulationType.ofArt(kumulation.getSlaveArt());
 	}
@@ -23,6 +23,9 @@ public class TarmedExclusion {
 		} else if (slaveType == TarmedKumulationType.GROUP) {
 			List<String> groups = tarmedLeistung.getServiceGroups(date);
 			return groups.contains(slaveCode);
+		} else if (slaveType == TarmedKumulationType.BLOCK) {
+			List<String> blocks = tarmedLeistung.getServiceBlocks(date);
+			return blocks.contains(slaveCode);
 		}
 		return false;
 	}
@@ -52,5 +55,9 @@ public class TarmedExclusion {
 		StringBuilder sb = new StringBuilder();
 		sb.append(TarmedKumulationType.toString(slaveType)).append(" ").append(slaveCode);
 		return sb.toString();
+	}
+	
+	public TarmedKumulationType getSlaveType(){
+		return slaveType;
 	}
 }

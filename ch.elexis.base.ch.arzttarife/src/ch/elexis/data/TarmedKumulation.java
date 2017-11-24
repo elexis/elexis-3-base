@@ -4,13 +4,53 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import ch.elexis.data.TarmedExclusion.TarmedExclusionType;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 public class TarmedKumulation extends PersistentObject {
+	
+	public enum TarmedKumulationType {
+			SERVICE("L"), GROUP("G"), CHAPTER("K"), BLOCK("B");
+		
+		private String art;
+		
+		TarmedKumulationType(String art){
+			this.art = art;
+		}
+		
+		public String getArt(){
+			return art;
+		}
+		
+		public static TarmedKumulationType ofArt(String slaveArt){
+			if ("L".equals(slaveArt)) {
+				return SERVICE;
+			} else if ("G".equals(slaveArt)) {
+				return GROUP;
+			} else if ("K".equals(slaveArt)) {
+				return CHAPTER;
+			} else if ("B".equals(slaveArt)) {
+				return BLOCK;
+			}
+			return null;
+		}
+		
+		public static String toString(TarmedKumulationType type){
+			if (type == SERVICE) {
+				return "Leistung";
+			} else if (type == GROUP) {
+				return "Gruppe";
+			} else if (type == CHAPTER) {
+				return "Kapitel";
+			} else if (type == BLOCK) {
+				return "Block";
+			}
+			return null;
+		}
+	}
+	
 	private static final String TABLENAME = "TARMED_KUMULATION"; //$NON-NLS-1$
 	private static final String VERSION = "1.1.0";
 	
@@ -164,7 +204,7 @@ public class TarmedKumulation extends PersistentObject {
 	 * @return
 	 */
 	public static List<TarmedExclusion> getExclusions(String mastercode,
-		TarmedExclusionType masterType, TimeTool date, String law){
+		TarmedKumulationType masterType, TimeTool date, String law){
 		Query<TarmedKumulation> query = new Query<TarmedKumulation>(TarmedKumulation.class);
 		query.add(TarmedKumulation.FLD_MASTER_CODE, Query.EQUALS, mastercode);
 		query.add(TarmedKumulation.FLD_MASTER_ART, Query.EQUALS, masterType.getArt());
@@ -179,6 +219,35 @@ public class TarmedKumulation extends PersistentObject {
 		}
 		exclusions = exclusions.stream().filter(k -> k.isValidKumulation(date)).collect(Collectors.toList());
 		return exclusions.stream().map(k -> new TarmedExclusion(k)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Get {@link TarmedExclusion} objects for all exclusions defined as {@link TarmedKumulation},
+	 * with code as master code and master type.
+	 * 
+	 * @param mastercode
+	 * @param masterType
+	 * @param date
+	 * @param law
+	 * @return
+	 */
+	public static List<TarmedExclusive> getExclusives(String mastercode,
+		TarmedKumulationType masterType, TimeTool date, String law){
+		Query<TarmedKumulation> query = new Query<TarmedKumulation>(TarmedKumulation.class);
+		query.add(TarmedKumulation.FLD_MASTER_CODE, Query.EQUALS, mastercode);
+		query.add(TarmedKumulation.FLD_MASTER_ART, Query.EQUALS, masterType.getArt());
+		if (law != null && !law.isEmpty()) {
+			query.add(TarmedKumulation.FLD_LAW, Query.EQUALS, law);
+		}
+		query.add(TarmedKumulation.FLD_TYP, Query.EQUALS, TarmedKumulation.TYP_EXCLUSIVE);
+		
+		List<TarmedKumulation> exclusives = query.execute();
+		if (exclusives == null || exclusives.isEmpty()) {
+			return Collections.emptyList();
+		}
+		exclusives =
+			exclusives.stream().filter(k -> k.isValidKumulation(date)).collect(Collectors.toList());
+		return exclusives.stream().map(k -> new TarmedExclusive(k)).collect(Collectors.toList());
 	}
 	
 	/**

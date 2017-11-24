@@ -27,6 +27,7 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
 import ch.elexis.data.TarmedLimitation.LimitationUnit;
 import ch.elexis.data.importer.TarmedLeistungAge;
 import ch.elexis.data.importer.TarmedReferenceDataImporter;
@@ -55,6 +56,7 @@ public class TarmedOptifier implements IOptifier {
 	public static final int NOTYETVALID = 7;
 	public static final int NOMOREVALID = 8;
 	public static final int PATIENTAGE = 9;
+	public static final int EXKLUSIVE = 10;
 	
 	private static final String CHAPTER_XRAY = "39.02";
 	private static final String DEFAULT_TAX_XRAY_ROOM = "39.2000";
@@ -817,7 +819,50 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 		}
+		List<String> blocks = tarmed.getServiceBlocks(date);
+		for (String blockName : blocks) {
+			List<TarmedExclusive> exclusives = TarmedKumulation.getExclusives(blockName,
+				TarmedKumulationType.BLOCK, date, tarmed.get(TarmedLeistung.FLD_LAW));
+			// currently only test blocks exclusives, exclude hierarchy matches
+			if (canHandleAllExculives(exclusives)
+				&& !isMatchingHierarchy(tarmedCode, tarmed, date)) {
+				boolean included = false;
+				for (TarmedExclusive tarmedExclusive : exclusives) {
+					if (tarmedExclusive.isMatching(tarmedCode, date)) {
+						included = true;
+					}
+				}
+				if (!included) {
+					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSIVE,
+						tarmed.getCode() + " nicht kombinierbar mit " //$NON-NLS-1$
+							+ tarmedCode.getCode() + ", wegen Block Kumulation",
+						null, false);
+				}
+			}
+		}
 		return new Result<IVerrechenbar>(Result.SEVERITY.OK, OK, "compatible", null, false);
+	}
+	
+	private boolean isMatchingHierarchy(TarmedLeistung tarmedCode, TarmedLeistung tarmed,
+		TimeTool date){
+		return tarmed.getHierarchy(date).contains(tarmedCode.getCode());
+	}
+	
+	/**
+	 * Test if we can handle all {@link TarmedExclusive}.
+	 * 
+	 * @param exclusives
+	 * @return
+	 */
+	private boolean canHandleAllExculives(List<TarmedExclusive> exclusives){
+		for (TarmedExclusive tarmedExclusive : exclusives) {
+			if (tarmedExclusive.getSlaveType() != TarmedKumulationType.BLOCK
+				&& tarmedExclusive.getSlaveType() != TarmedKumulationType.CHAPTER
+				&& tarmedExclusive.getSlaveType() != TarmedKumulationType.SERVICE) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/**

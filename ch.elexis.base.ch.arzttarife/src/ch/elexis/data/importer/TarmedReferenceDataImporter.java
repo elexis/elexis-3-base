@@ -111,38 +111,44 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 						GroupImporter groupImporter = getGroupImporter();
 						ret = groupImporter.doImport(ipm);
 						if (ret.isOK()) {
-							ServiceImporter serviceImporter = getServiceImporter(chapterImporter);
-							serviceImporter.setServiceCount(servicesCount);
-							ret = serviceImporter.doImport(ipm);
+							BlockImporter blockImporter = getBlockImporter();
+							blockImporter.doImport(ipm);
 							if (ret.isOK()) {
-								IStatus updateVerrechnetResult = Status.OK_STATUS;
-								IStatus updateBlockResult = Status.OK_STATUS;
-								IStatus updateStatistics = Status.OK_STATUS;
-								if (updateIDs) {
-									IdsUpdater idsUpdater = new IdsUpdater(getLaw());
-									updateVerrechnetResult = idsUpdater.updateVerrechnet(ipm);
-									updateBlockResult = idsUpdater.udpateLeistungsBlock(ipm);
-									updateStatistics = idsUpdater.updateStatistics(ipm);
-								}
-								
-								if (version == null) {
-									TarmedLeistung
-										.setVersion(new TimeTool().toString(TimeTool.DATE_COMPACT),
+								ServiceImporter serviceImporter =
+									getServiceImporter(chapterImporter);
+								serviceImporter.setServiceCount(servicesCount);
+								ret = serviceImporter.doImport(ipm);
+								if (ret.isOK()) {
+									IStatus updateVerrechnetResult = Status.OK_STATUS;
+									IStatus updateBlockResult = Status.OK_STATUS;
+									IStatus updateStatistics = Status.OK_STATUS;
+									if (updateIDs) {
+										IdsUpdater idsUpdater = new IdsUpdater(getLaw());
+										updateVerrechnetResult = idsUpdater.updateVerrechnet(ipm);
+										updateBlockResult = idsUpdater.udpateLeistungsBlock(ipm);
+										updateStatistics = idsUpdater.updateStatistics(ipm);
+									}
+									
+									if (version == null) {
+										TarmedLeistung.setVersion(
+											new TimeTool().toString(TimeTool.DATE_COMPACT),
 											getLaw());
-								} else {
-									TarmedLeistung.setVersion(version.toString(), getLaw());
-								}
-								CoreHub.globalCfg.set(
-									TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE, true);
-								ipm.done();
-								String message = Messages.TarmedImporter_successMessage;
-								if (!updateBlockResult.isOK()) {
-									message =
-										message + "\n" + Messages.TarmedImporter_updateBlockWarning;
-								}
-								if (showRestartDialog) {
-									SWTHelper.showInfo(Messages.TarmedImporter_successTitle,
-										message);
+									} else {
+										TarmedLeistung.setVersion(version.toString(), getLaw());
+									}
+									CoreHub.globalCfg.set(
+										TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE,
+										true);
+									ipm.done();
+									String message = Messages.TarmedImporter_successMessage;
+									if (!updateBlockResult.isOK()) {
+										message = message + "\n"
+											+ Messages.TarmedImporter_updateBlockWarning;
+									}
+									if (showRestartDialog) {
+										SWTHelper.showInfo(Messages.TarmedImporter_successTitle,
+											message);
+									}
 								}
 							}
 						}
@@ -159,7 +165,21 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 		return ret;
 	}
 	
-	private GroupImporter getGroupImporter(){
+	/**
+	 * Get the {@link BlockImporter} to use, should be overridden for special implementations.
+	 * 
+	 * @return
+	 */
+	protected BlockImporter getBlockImporter(){
+		return new BlockImporter(cacheDb, lang, getLaw());
+	}
+	
+	/**
+	 * Get the {@link GroupImporter} to use, should be overridden for special implementations.
+	 * 
+	 * @return
+	 */
+	protected GroupImporter getGroupImporter(){
 		return new GroupImporter(cacheDb, lang, getLaw());
 	}
 	

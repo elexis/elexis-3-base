@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import ch.elexis.data.TarmedExclusion.TarmedExclusionType;
+import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -199,7 +199,7 @@ public class TarmedGroup extends PersistentObject {
 	 * @return
 	 */
 	public List<TarmedExclusion> getExclusions(TimeTool date){
-		return TarmedKumulation.getExclusions(getCode(), TarmedExclusionType.GROUP, date,
+		return TarmedKumulation.getExclusions(getCode(), TarmedKumulationType.GROUP, date,
 			get(TarmedLeistung.FLD_LAW));
 	}
 	

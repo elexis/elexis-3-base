@@ -11,9 +11,8 @@
     <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <repo_name>elexis.3.base</repo_name>
-    <git.core.branch>master</git.core.branch>
-    <git.target.branch>master</git.target.branch>
-    <nonElexisP2variant>master</nonElexisP2variant>
+    <git.core.branch>3.4</git.core.branch>
+    <git.target.branch>3.4</git.target.branch>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
   <packaging>pom</packaging>

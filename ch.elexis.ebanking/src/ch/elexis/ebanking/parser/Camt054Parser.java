@@ -125,22 +125,21 @@ public class Camt054Parser {
 							for (StructuredRemittanceInformation13 structuredRemittanceInformation13 : structuredRemittanceInformation13s) {
 								CreditorReferenceInformation2 creditorReferenceInformation2 =
 									structuredRemittanceInformation13.getCdtrRefInf();
-								String ref = null;
-								if (creditorReferenceInformation2 != null) {
-									//ESR-Referenznummer oder Creditor Reference nach ISO11649
-									ref = creditorReferenceInformation2.getRef();
-									records.add(new Camt054Record(storno ? "005" : "002",
-										amount != null ? amount.movePointRight(2).toString()
-											.replaceAll("[\\.,]", "") : "",
-										ref, esrTn,
-										readDate != null ? readDate.toGregorianCalendar().getTime()
-												: null,
-										bookingDate != null ? bookingDate.getDt()
-											.toGregorianCalendar().getTime() : null,
-										valDate != null
-												? valDate.getDt().toGregorianCalendar().getTime()
-												: null));
-								}
+								//ESR-Referenznummer oder Creditor Reference nach ISO11649
+								String ref = creditorReferenceInformation2 != null
+										? creditorReferenceInformation2.getRef() : null;
+								records.add(new Camt054Record(storno ? "005" : "002",
+									amount != null ? amount.movePointRight(2).toString()
+										.replaceAll("[\\.,]", "") : "",
+									ref, esrTn,
+									readDate != null ? readDate.toGregorianCalendar().getTime()
+											: null,
+									bookingDate != null
+											? bookingDate.getDt().toGregorianCalendar().getTime()
+											: null,
+									valDate != null
+											? valDate.getDt().toGregorianCalendar().getTime()
+											: null));
 							}
 						}
 					}

@@ -27,9 +27,6 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.medshare.connector.aerztekasse.MessagesAK;
-import net.medshare.connector.aerztekasse.data.AerztekasseSettings;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -45,6 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.core.data.activator.CoreHub;
@@ -54,6 +52,8 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
+import net.medshare.connector.aerztekasse.MessagesAK;
+import net.medshare.connector.aerztekasse.data.AerztekasseSettings;
 
 public class InvoiceOutputter extends XMLExporter {
 	
@@ -360,15 +360,17 @@ public class InvoiceOutputter extends XMLExporter {
 			while ((line = input.readLine()) != null) {
 				writer.append(line);
 				writer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+				writer.flush();
 				parseHttpPostResponse(line);
 			}
-			writer.flush();
 			writer.close();
 			fout.flush();
 			fout.close();
 			
 			returnValue = true;
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			LoggerFactory.getLogger(InvoiceOutputter.class).error("invoice output failure", e);
+		}
 		return returnValue;
 	}
 	

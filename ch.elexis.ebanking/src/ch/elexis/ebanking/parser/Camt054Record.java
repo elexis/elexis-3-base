@@ -52,15 +52,15 @@ public class Camt054Record {
 			throw new Camet054Exception("reference is not valid: " + reference);
 		}
 		
-		if (bookingDate == null || bookingDate.before(new Date(0))) {
+		if (bookingDate != null && bookingDate.before(new Date(0))) {
 			throw new Camet054Exception("booking date is not valid: " + bookingDate);
 		}
 		
-		if (valuDate == null || valuDate.before(new Date(0))) {
+		if (valuDate != null && valuDate.before(new Date(0))) {
 			throw new Camet054Exception("valu date is not valid: " + valuDate);
 		}
 		
-		if (readDate == null || readDate.before(new Date(0))) {
+		if (readDate != null && readDate.before(new Date(0))) {
 			throw new Camet054Exception("read date is not valid: " + readDate);
 		}
 	}

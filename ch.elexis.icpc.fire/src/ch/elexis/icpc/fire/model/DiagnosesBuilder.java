@@ -37,6 +37,15 @@ public class DiagnosesBuilder {
 					tDiag.setDescription(diag.getText());
 					ret.getDiagnose().add(tDiag);
 				}
+				
+				IcpcCode reason = enc.getRFE();
+				if (reason != null)
+				{
+					TDiagnose tReason = config.getFactory().createTDiagnose();
+					tReason.setIcpc(reason.getCode());
+					tReason.setDescription(reason.getText());
+					ret.getReason().add(tReason);
+				}
 			}
 			if (!ret.getDiagnose().isEmpty()) {
 				return Optional.of(ret);

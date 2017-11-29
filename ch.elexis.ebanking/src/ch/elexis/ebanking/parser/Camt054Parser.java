@@ -107,25 +107,40 @@ public class Camt054Parser {
 						BigDecimal amount = activeOrHistoricCurrencyAndAmount.getValue();
 						RemittanceInformation11 remittanceInformation11 =
 							entryTransaction8.getRmtInf();
-						List<StructuredRemittanceInformation13> structuredRemittanceInformation13s =
-							remittanceInformation11.getStrd();
-						
-						// Aufgabedatum
-						TransactionDates2 transactionDates2 = entryTransaction8.getRltdDts();
-						XMLGregorianCalendar readDate = transactionDates2.getAccptncDtTm();
-						
-						for (StructuredRemittanceInformation13 structuredRemittanceInformation13 : structuredRemittanceInformation13s) {
-							CreditorReferenceInformation2 creditorReferenceInformation2 =
-								structuredRemittanceInformation13.getCdtrRefInf();
+						if (remittanceInformation11 != null) {
+							List<StructuredRemittanceInformation13> structuredRemittanceInformation13s =
+								remittanceInformation11.getStrd();
 							
-							//ESR-Referenznummer oder Creditor Reference nach ISO11649
-							String ref = creditorReferenceInformation2.getRef();
-							records.add(new Camt054Record(storno ? "005" : "002",
-								amount.movePointRight(2).toString().replaceAll("[\\.,]", ""), ref,
-								esrTn,
-								readDate.toGregorianCalendar().getTime(),
-								bookingDate.getDt().toGregorianCalendar().getTime(),
-								valDate.getDt().toGregorianCalendar().getTime()));
+							// Aufgabedatum
+							XMLGregorianCalendar readDate = null;
+							TransactionDates2 transactionDates2 = entryTransaction8.getRltdDts();
+							if (transactionDates2 != null) {
+								readDate = transactionDates2.getAccptncDtTm();
+							}
+							if (readDate == null) {
+								// if readdate is not set we use the booking date if possible
+								readDate = bookingDate != null ? bookingDate.getDt() : null;
+							}
+							
+							for (StructuredRemittanceInformation13 structuredRemittanceInformation13 : structuredRemittanceInformation13s) {
+								CreditorReferenceInformation2 creditorReferenceInformation2 =
+									structuredRemittanceInformation13.getCdtrRefInf();
+								//ESR-Referenznummer oder Creditor Reference nach ISO11649
+								String ref = creditorReferenceInformation2 != null
+										? creditorReferenceInformation2.getRef() : null;
+								records.add(new Camt054Record(storno ? "005" : "002",
+									amount != null ? amount.movePointRight(2).toString()
+										.replaceAll("[\\.,]", "") : "",
+									ref, esrTn,
+									readDate != null ? readDate.toGregorianCalendar().getTime()
+											: null,
+									bookingDate != null
+											? bookingDate.getDt().toGregorianCalendar().getTime()
+											: null,
+									valDate != null
+											? valDate.getDt().toGregorianCalendar().getTime()
+											: null));
+							}
 						}
 					}
 				}

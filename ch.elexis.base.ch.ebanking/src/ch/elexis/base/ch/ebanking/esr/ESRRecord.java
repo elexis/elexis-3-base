@@ -284,9 +284,9 @@ public class ESRRecord extends PersistentObject {
 		
 		String[] vals = new String[11];
 		vals[0] = new TimeTool().toString(TimeTool.DATE_COMPACT);
-		vals[1] = new TimeTool(camt054Record.getReadDate()).toString(TimeTool.DATE_GER);
-		vals[2] = new TimeTool(camt054Record.getBookingDate()).toString(TimeTool.DATE_GER);
-		vals[3] = new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER);
+		vals[1] = camt054Record.getReadDate() != null ? new TimeTool(camt054Record.getReadDate()).toString(TimeTool.DATE_GER) : "";
+		vals[2] = camt054Record.getBookingDate() != null ?  new TimeTool(camt054Record.getBookingDate()).toString(TimeTool.DATE_GER) : "";
+		vals[3] = camt054Record.getValuDate() != null ? new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER) : "";
 		vals[10] = file;
 		
 		rejectCode = REJECT.OK;

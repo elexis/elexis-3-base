@@ -584,7 +584,7 @@ public class TarmedOptifier implements IOptifier {
 				int slaveCount = 0;
 				for(Verrechnet slave : masterSlavesMap.get(master)) {
 					slaveCount += slave.getZahl();
-					if(slave == newSlave) {
+					if(slave.equals(newSlave)) {
 						slaveCount--;
 					}
 				}

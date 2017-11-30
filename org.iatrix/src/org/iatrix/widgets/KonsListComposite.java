@@ -42,7 +42,6 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -96,7 +95,7 @@ public class KonsListComposite {
 				if (verrechenbar != null) {
 					String vClass = verrechenbar.getClass().getName();
 					if (vClass.equals("ch.elexis.data.TarmedLeistung")) {
-						String nick = ((PersistentObject) verrechnet.getVerrechenbar()).get("Nick");
+						String nick = verrechenbar.getText();
 						if (!StringTool.isNothing(nick)) {
 							name = nick;
 						}

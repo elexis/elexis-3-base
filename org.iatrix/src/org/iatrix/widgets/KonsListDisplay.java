@@ -70,6 +70,8 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	// if false, only show the latest MAX_SHOWN_CONSULTATIONS
 	private boolean showAllConsultations = false;
 
+	private Konsultation actKons = null;
+
 	public KonsListDisplay(Composite parent){
 		super(parent, SWT.BORDER);
 
@@ -242,14 +244,17 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 
 	@Override
 	public void visible(boolean mode){
+		if (mode) {
+			 setKons(actKons, KonsActions.ACTIVATE_KONS);
+		}
 	}
 
 	@Override
 	public void activation(boolean mode){
+		if (mode) {
+			 setKons(actKons, KonsActions.ACTIVATE_KONS);
+		}
 	}
-
-	static int savedKonsVersion = -1;
-	static Konsultation actKons = null;
 
 	@Override
 	public void setKons(Konsultation newKons, KonsActions op){

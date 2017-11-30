@@ -246,7 +246,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 * @param newKons
 	 * @param op
 	 */
-	public static void updateAllKonsAreas(Konsultation newKons, IJournalArea.KonsActions op){
+	public synchronized static void updateAllKonsAreas(Konsultation newKons, IJournalArea.KonsActions op){
 		/*
 		 * Not yet sure whether comparing only the id or the whole cons is better
 		 */
@@ -266,7 +266,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 	}
 
-	private void activateAllKonsAreas(boolean mode){
+	private synchronized void activateAllKonsAreas(boolean mode){
 		logEvent(null, "activateAllKonsAreas: " + mode);
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
@@ -276,7 +276,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		}
 	}
 
-	private void visibleAllKonsAreas(boolean mode){
+	private synchronized void visibleAllKonsAreas(boolean mode){
 		logEvent(null, "visibleAllKonsAreas: " + mode);
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);

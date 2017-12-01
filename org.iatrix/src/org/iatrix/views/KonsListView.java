@@ -26,6 +26,7 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 import org.iatrix.Iatrix;
+import org.iatrix.widgets.IJournalArea.KonsActions;
 import org.iatrix.widgets.KonsListDisplay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,8 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 		if (newKons != null) {
 			newPat = newKons.getFall().getPatient();
 			if (!newPat.getId().equals(actPatId)) {
+				log.debug("KonstListView " +  newPat + " " + newPat.getPersonalia() + " hasSameId " + actPatId);
+			} else {
 				actPatId  = newPat.getId();
 				setPatientTitel(newPat);
 				log.debug("KonstListView " +  newKons.getLabel() + " for " + newPat.getPersonalia());
@@ -80,7 +83,8 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 			actPatId = (newPat != null) ? newPat.getId() : null;
 			setPatientTitel(newPat);
 		}
-		konsListDisplay.setKonsultation(actKons, showAllChargesAction.isChecked(),
+		konsListDisplay.setPatient(newPat, KonsActions.ACTIVATE_KONS);
+		konsListDisplay.highlightActKons(actKons, showAllChargesAction.isChecked(),
 			showAllConsultationsAction.isChecked());
 	}
 	private final ElexisUiEventListenerImpl eeli_pat =
@@ -164,7 +168,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 			@Override
 			public void run(){
 				boolean showAllCharges = this.isChecked();
-				konsListDisplay.setKonsultation(actKons,
+				konsListDisplay.highlightActKons(actKons,
 					showAllCharges, showAllConsultationsAction.isChecked());
 			}
 		};
@@ -179,7 +183,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 
 				@Override
 				public void run(){
-					konsListDisplay.setKonsultation(actKons,
+					konsListDisplay.highlightActKons(actKons,
 						showAllChargesAction.isChecked(), showAllConsultationsAction.isChecked());
 				}
 			};
@@ -217,7 +221,6 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 			if (newKons != null) {
 				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + newKons.getFall().getPatient().getPersonalia();
 				log.debug("visible true " + msg);
-				displaySelectedConsultation(newKons);
 			} else {
 				log.debug("visible true newKons is null");
 				Patient newPat = ElexisEventDispatcher.getSelectedPatient();

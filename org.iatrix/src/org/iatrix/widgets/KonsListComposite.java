@@ -158,9 +158,8 @@ public class KonsListComposite {
 		composite.setLayoutData(layoutData);
 	}
 
-	public void setKonsultationen(List<KonsData> konsultationen, Konsultation actKons){
+	public void setKonsultationen(List<KonsData> konsultationen){
 		this.konsultationen = konsultationen;
-		this.actKons = actKons;
 		refreshAllKons();
 	}
 
@@ -674,7 +673,7 @@ public class KonsListComposite {
 			if (konsultation != null) {
 				String lineSeparator = System.getProperty("line.separator");
 
-				konsTitle = konsultation.getLabel();
+				konsTitle = konsultation.getLabel() + " für " + konsultation.getFall().getPatient().getPersonalia();
 				if (!Helpers.hasRightToChangeConsultations(konsultation, false)) {
 					konsTitle = konsTitle + " Nicht editierbar (Zugriffsrechte/Verrechnet)";
 				}

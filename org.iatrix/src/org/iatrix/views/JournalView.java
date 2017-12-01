@@ -573,7 +573,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void run(){
-				konsListDisplay.setKonsultation(actKons, showAllChargesAction.isChecked(),
+				konsListDisplay.highlightActKons(actKons, showAllChargesAction.isChecked(),
 					showAllConsultationsAction.isChecked());
 			}
 		};
@@ -589,7 +589,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 			@Override
 			public void run(){
-				konsListDisplay.setKonsultation(actKons, showAllChargesAction.isChecked(),
+				konsListDisplay.highlightActKons(actKons, showAllChargesAction.isChecked(),
 					showAllConsultationsAction.isChecked());
 			}
 		};

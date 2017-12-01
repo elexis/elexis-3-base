@@ -73,16 +73,14 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 			if (!newPat.getId().equals(actPatId)) {
 				log.debug("KonstListView " +  newPat + " " + newPat.getPersonalia() + " hasSameId " + actPatId);
 			} else {
-				actPatId  = newPat.getId();
-				setPatientTitel(newPat);
 				log.debug("KonstListView " +  newKons.getLabel() + " for " + newPat.getPersonalia());
 			}
 		} else {
 			newPat = ElexisEventDispatcher.getSelectedPatient();
 			log.debug("KonstListView new kons is null newPat is " + newPat);
-			actPatId = (newPat != null) ? newPat.getId() : null;
-			setPatientTitel(newPat);
 		}
+		actPatId = (newPat != null) ? newPat.getId() : null;
+		setPatientTitel(newPat);
 		konsListDisplay.setPatient(newPat, KonsActions.ACTIVATE_KONS);
 		konsListDisplay.highlightActKons(actKons, showAllChargesAction.isChecked(),
 			showAllConsultationsAction.isChecked());

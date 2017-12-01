@@ -255,18 +255,21 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 
 	public void setPatient(Patient newPatient, KonsActions op){
 		if (newPatient == null ) {
+			actPat = newPatient;
 			log.debug("setPatient is null");
 			dataLoader.cancel();
 			reload(false, null);
 			return;
 		}
-		if (actPat ==  null && !(actPat != null && newPatient.getId().equals(actPat.getId()))) {
-			log.debug("setPatient " + newPatient.getPersonalia());
+		if (actPat ==  null || (!newPatient.getId().equals(actPat.getId()))){
 			actPat = newPatient;
+			log.debug("setPatient " + newPatient.getPersonalia());
 			dataLoader.cancel();
 			reload(true, null);
 			dataLoader.setPatient(newPatient, showAllCharges, showAllConsultations);
 			dataLoader.schedule();
+		} else {
+			log.debug("setPatient skip reloading" + newPatient.getPersonalia());
 		}
 	}
 

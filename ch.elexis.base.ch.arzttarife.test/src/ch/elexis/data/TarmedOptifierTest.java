@@ -34,7 +34,7 @@ public class TarmedOptifierTest {
 	private static Patient patGrissemann, patStermann, patOneYear;
 	private static Konsultation konsGriss, konsSter, konsOneYear;
 	private static TarmedLeistung tlBaseFirst5Min, tlBaseXRay, tlBaseRadiologyHospital,
-			tlUltrasound, tlTapingCat1, tlAgeTo1Month, tlAgeTo7Years, tlAgeFrom7Years,
+			tlUltrasound, tlAgeTo1Month, tlAgeTo7Years, tlAgeFrom7Years,
 			tlGroupLimit1, tlGroupLimit2;
 			
 	@BeforeClass
@@ -50,7 +50,6 @@ public class TarmedOptifierTest {
 		tlBaseRadiologyHospital =
 			(TarmedLeistung) TarmedLeistung.getFromCode("39.0015", new TimeTool(), null);
 		tlUltrasound = (TarmedLeistung) TarmedLeistung.getFromCode("39.3005", new TimeTool(), null);
-		tlTapingCat1 = (TarmedLeistung) TarmedLeistung.getFromCode("01.0110", new TimeTool(), null);
 		
 		tlAgeTo1Month =
 			(TarmedLeistung) TarmedLeistung.getFromCode("00.0870", new TimeTool(), null);
@@ -109,12 +108,15 @@ public class TarmedOptifierTest {
 	@Test
 	public void testAddCompatibleAndIncompatible(){
 		clearKons(konsGriss);
-		Result<IVerrechenbar> resultGriss = optifier.add(tlUltrasound, konsGriss);
+		Result<IVerrechenbar> resultGriss =
+			optifier.add(TarmedLeistung.getFromCode("39.3005", new TimeTool(), null), konsGriss);
 		assertTrue(resultGriss.isOK());
-		resultGriss = optifier.add(tlBaseXRay, konsGriss);
+		resultGriss =
+			optifier.add(TarmedLeistung.getFromCode("39.0020", new TimeTool(), null), konsGriss);
 		assertFalse(resultGriss.isOK());
-		resultGriss = optifier.add(tlTapingCat1, konsGriss);
-		assertFalse(resultGriss.isOK());
+		resultGriss =
+			optifier.add(TarmedLeistung.getFromCode("01.0110", new TimeTool(), null), konsGriss);
+		assertTrue(resultGriss.isOK());
 		resultGriss =
 			optifier.add(TarmedLeistung.getFromCode("39.3830", new TimeTool(), null), konsGriss);
 		assertTrue(resultGriss.isOK());

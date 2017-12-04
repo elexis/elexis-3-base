@@ -821,6 +821,9 @@ public class TarmedOptifier implements IOptifier {
 		}
 		List<String> blocks = tarmed.getServiceBlocks(date);
 		for (String blockName : blocks) {
+			if (skipBlockExclusives(blockName)) {
+				continue;
+			}
 			List<TarmedExclusive> exclusives = TarmedKumulation.getExclusives(blockName,
 				TarmedKumulationType.BLOCK, date, tarmed.get(TarmedLeistung.FLD_LAW));
 			// currently only test blocks exclusives, exclude hierarchy matches
@@ -841,6 +844,18 @@ public class TarmedOptifier implements IOptifier {
 			}
 		}
 		return new Result<IVerrechenbar>(Result.SEVERITY.OK, OK, "compatible", null, false);
+	}
+	
+	private boolean skipBlockExclusives(String blockName){
+		try {
+			Integer blockNumber = Integer.valueOf(blockName);
+			if (blockNumber > 50 && blockNumber < 60) {
+				return true;
+			}
+		} catch (NumberFormatException nfe) {
+			// ignore and do not skip
+		}
+		return false;
 	}
 	
 	private boolean isMatchingHierarchy(TarmedLeistung tarmedCode, TarmedLeistung tarmed,

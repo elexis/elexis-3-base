@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -126,7 +125,7 @@ public class BAGMediImporter extends ImporterPage {
 		BAGMedi imp = null;
 		// Kein Pharmacode, dann nach Name suchen
 		if (StringTool.isNothing(row[2].trim())) {
-			String mid = qbe.findSingle(Artikel.FLD_NAME, "=", StringEscapeUtils.escapeSql(row[7]));
+			String mid = qbe.findOne(Artikel.FLD_NAME, "=", row[7]);
 			if (mid != null) {
 				imp = BAGMedi.load(mid);
 			}

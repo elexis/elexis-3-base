@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "ch.elexis.impfplan.view.messages"; //$NON-NLS-1$
 	public static String AddVaccinationDialog_dateOnlyAbout;
 	public static String AddVaccinationDialog_enterVaccinationText;
+	public static String AddVaccinationDialog_enterVaccinationTextError;
 	public static String AddVaccinationDialog_enterVaccinationTitle;
 	public static String EditVaccinationDialog_ageFromTo;
 	public static String EditVaccinationDialog_defineVaccination;

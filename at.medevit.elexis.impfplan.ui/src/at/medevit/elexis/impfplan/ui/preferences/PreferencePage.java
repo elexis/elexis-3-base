@@ -142,7 +142,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		VaccinationView vaccView =
 			(VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.findView(VaccinationView.PART_ID);
-		vaccView.updateUi(true); // as query needs to be ordered
+		if (vaccView != null) {
+			vaccView.updateUi(true); // as query needs to be ordered
+		}
 		return super.performOk();
 	}
 }

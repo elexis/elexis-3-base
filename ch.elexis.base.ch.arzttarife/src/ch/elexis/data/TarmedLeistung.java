@@ -396,8 +396,6 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		return getFromCode(code, date, "");
 	}
 	
-	private static List<String> availableLawsCache;
-	
 	/**
 	 * Query for a {@link TarmedLeistung} using the code. The returned {@link TarmedLeistung} will
 	 * be valid on date, and will be from the cataloge specified by law.
@@ -419,7 +417,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 				TarmedLeistung.FLD_LAW, TarmedLeistung.FLD_ISCHAPTER
 			});
 		if (law != null) {
-			if (!availableLawsCache.contains(law)) {
+			if (!isAvailableLaw(law)) {
 				query.startGroup();
 				query.add(FLD_LAW, Query.EQUALS, "");
 				query.or();
@@ -1049,6 +1047,20 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		}
 		return true;
 	}
+	
+	public static boolean isAvailableLaw(String law){
+		if (availableLawsCache == null) {
+			availableLawsCache = getAvailableLaws();
+		}
+		for (String available : availableLawsCache) {
+			if (available.equalsIgnoreCase(law)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static List<String> availableLawsCache;
 	
 	public static List<String> getAvailableLaws(){
 		List<String> ret = new ArrayList<>();

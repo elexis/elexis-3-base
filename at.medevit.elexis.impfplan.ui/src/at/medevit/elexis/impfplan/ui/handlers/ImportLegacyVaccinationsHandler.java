@@ -51,20 +51,32 @@ public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 			Map<Vaccination, ErrorCode> errorMap = ivProgress.getErrorMap();
 			
 			if (!errorMap.isEmpty()) {
-				sb.append("Fehler beim Import:\n");
+				
 				for (Vaccination vacc : errorMap.keySet()) {
 					ErrorCode eCode = errorMap.get(vacc);
 					// show id in case patient could not be resolved
 					if (eCode.equals(ErrorCode.PATIENT_NOTFOUND)) {
+						if (vacc.getPatientId().isEmpty() && vacc.getVaccinationType() == null) {
+							// since a bug #8853 in impfplan trash entries with no patientid and vaccination type can exists.
+							// we only log this out
+							log.warn(
+								"Import warn: patientId and vaccinationType is null for vaccination id: "
+									+ vacc.getId());
+							continue;
+						}
 						sb.append(vacc.getPatientId() + " : "
-							+ vacc.getVaccinationType().getLabel() + " - " + eCode.toString());
-						
+							+ (vacc.getVaccinationType() != null
+									? vacc.getVaccinationType().getLabel() : "VaccType [NULL]")
+							+ " - " + eCode.toString());
 					} else {
 						sb.append(vacc.getLabel() + " - " + eCode.toString());
 					}
 					sb.append("\n");
 				}
-				sb.append("\n");
+				if (sb.length() > 0) {
+					sb.insert(0, "Fehler beim Import:\n");
+					sb.append("\n");
+				}
 			}
 			
 			if (!alreadyImported.isEmpty()) {

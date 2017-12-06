@@ -499,7 +499,8 @@ public class ServiceImporter {
 			ResultSet rsub = subStm
 				.query(String.format("SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE=%s AND LNR=%s",
 					TarmedReferenceDataImporter.ImportPrefix, lang, JdbcLink.wrap(code))); //$NON-NLS-1$
-			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
+			List<Map<String, String>> validResults =
+				ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
 				Map<String, String> row = ImporterUtil.getLatestMap(validResults);
 				ret[0] = row.get("BEZ_255"); //$NON-NLS-1$

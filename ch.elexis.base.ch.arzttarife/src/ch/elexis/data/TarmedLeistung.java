@@ -396,6 +396,8 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		return getFromCode(code, date, "");
 	}
 	
+	private static List<String> availableLawsCache;
+	
 	/**
 	 * Query for a {@link TarmedLeistung} using the code. The returned {@link TarmedLeistung} will
 	 * be valid on date, and will be from the cataloge specified by law.
@@ -408,12 +410,24 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	 */
 	public static IVerrechenbar getFromCode(@NonNull
 	final String code, @NonNull TimeTool date, @Nullable String law){
-		Query<TarmedLeistung> query = new Query<TarmedLeistung>(TarmedLeistung.class, FLD_CODE, code, TarmedLeistung.TABLENAME, new String[] {
-			TarmedLeistung.FLD_GUELTIG_VON, TarmedLeistung.FLD_GUELTIG_BIS,
+		if (availableLawsCache == null) {
+			availableLawsCache = getAvailableLaws();
+		}
+		Query<TarmedLeistung> query = new Query<TarmedLeistung>(TarmedLeistung.class, FLD_CODE,
+			code, TarmedLeistung.TABLENAME, new String[] {
+				TarmedLeistung.FLD_GUELTIG_VON, TarmedLeistung.FLD_GUELTIG_BIS,
 				TarmedLeistung.FLD_LAW, TarmedLeistung.FLD_ISCHAPTER
-		});
+			});
 		if (law != null) {
-			query.add(FLD_LAW, Query.EQUALS, law, true);
+			if (!availableLawsCache.contains(law)) {
+				query.startGroup();
+				query.add(FLD_LAW, Query.EQUALS, "");
+				query.or();
+				query.add(FLD_LAW, Query.EQUALS, null);
+				query.endGroup();
+			} else {
+				query.add(FLD_LAW, Query.EQUALS, law, true);
+			}
 		}
 		List<TarmedLeistung> leistungen = query.execute();
 		for (TarmedLeistung tarmedLeistung : leistungen) {

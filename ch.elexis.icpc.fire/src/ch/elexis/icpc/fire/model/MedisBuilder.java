@@ -9,6 +9,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
@@ -107,6 +108,8 @@ public class MedisBuilder {
 						tMedi.setStopGrund((short) 0);
 					}
 					
+					tMedi.setMediDauer(getType(prescription.getEntryType()));
+					
 					medis.getMedi().add(tMedi);
 				}
 			}
@@ -116,6 +119,19 @@ public class MedisBuilder {
 			
 		}
 		return Optional.empty();
+	}
+	
+	private String getType(EntryType entryType){
+		switch (entryType) {
+		case FIXED_MEDICATION:
+			return "Fix";
+		case RESERVE_MEDICATION:
+			return "Reserve";
+		case SYMPTOMATIC_MEDICATION:
+			return "Symptom";
+		default:
+			return "";
+		}
 	}
 	
 }

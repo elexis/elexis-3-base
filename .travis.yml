@@ -1,7 +1,9 @@
 ---
 language: java
-script: 
-  - mvn --quiet -V clean verify
+
+install: mvn --batch-mode -V --quiet -DskipTests=true -Dmaven.javadoc.skip=true validate
+
+script: mvn --batch-mode -V clean verify
   
 notifications:
   email:

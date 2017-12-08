@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ch.elexis.base.tests</artifactId>
+    <name>Elexis-Server tests</name>
+    <packaging>pom</packaging>
+
+    <parent>
+      <groupId>ch.elexis.base</groupId>
+      <artifactId>elexis-3-base</artifactId>
+      <version>3.5.0-SNAPSHOT</version>
+    </parent>
+   <properties>
+      <show.eclipse.log>true</show.eclipse.log>
+      <elexis.ui.test.vmargs>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</elexis.ui.test.vmargs>
+    </properties>
+
+    <modules>
+      <module>at.medevit.atc_codes.test</module>
+      <module>at.medevit.ch.artikelstamm.medcalendar.test</module>
+      <module>at.medevit.elexis.cobasmira.tests</module>
+      <module>at.medevit.elexis.ehc.core.test</module>
+      <module>at.medevit.elexis.ehc.vacdoc.test</module>
+      <module>at.medevit.elexis.emediplan.core.test</module>
+      <module>at.medevit.elexis.impfplan.test</module>
+      <module>at.medevit.elexis.loinc_test</module>
+      <module>at.medevit.elexis.tarmed.model.tests</module>
+      <module>ch.elexis.base.ch.arzttarife.test</module>
+      <module>ch.elexis.base.ch.ebanking.test</module>
+      <module>ch.elexis.connect.reflotron.v2test</module>
+      <module>ch.elexis.ebanking.tests</module>
+      <module>ch.elexis.externe_dokumente.tests</module>
+      <module>ch.elexis.fop.service.test</module>
+      <module>ch.elexis.laborimport.viollier.v2_test</module>
+      <module>ch.medshare.elexis_directories.test</module>
+      <module>ch.pharmed.phmprescriber_test</module>
+      <module>com.hilotec.elexis.messwerte.v2_test</module>
+      <module>net.medshare.connector.aerztekasse_test</module>
+      <module>net.medshare.connector.viollier_test</module>
+      <module>org.iatrix.bestellung.rose_test</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

@@ -19,7 +19,7 @@
 				<configuration>
           <skipTests>true</skipTests> <!-- TODO: Fix prompting for user input when finishing. . -->
 					<useUIHarness>true</useUIHarness>
-					<showEclipseLog>true</showEclipseLog>
+					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
 				</configuration>

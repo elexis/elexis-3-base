@@ -20,7 +20,7 @@
           <skipTests>true</skipTests> <!-- TODO:  Fix Missing requirement: at.medevit.elexis.cobasmira.tests 3.0.0.qualifier requires 'bundle at.medevit.elexis.cobasmira 3.0.0.qualifier' but it could not be found
  -->
 					<useUIHarness>false</useUIHarness>
-					<showEclipseLog>true</showEclipseLog>
+					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
 				</configuration>
 			</plugin>

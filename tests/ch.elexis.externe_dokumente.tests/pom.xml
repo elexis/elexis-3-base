@@ -19,7 +19,7 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
                     <skipTests>true</skipTests> <!-- Warum löuft das mit 3.3 nicht mehr? TODO: -->
-					<showEclipseLog>true</showEclipseLog>
+					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
 				</configuration>

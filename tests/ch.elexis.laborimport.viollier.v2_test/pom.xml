@@ -20,7 +20,7 @@
           <skipTests>true</skipTests> <!-- TODO: Fails for unknown reason on the jenkins. Not locally. -->
           <useUIThread>true</useUIThread>
           <useUIHarness>true</useUIHarness>
-					<showEclipseLog>true</showEclipseLog>
+					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
 				</configuration>

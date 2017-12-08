@@ -17,10 +17,11 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<showEclipseLog>true</showEclipseLog>
-                    <skipTests>true</skipTests> <!-- TODO: -->
+					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
+                    <skipTests>true</skipTests> <!-- TODO: Fix error LoincCodeServiceTest.teardown:31 » Injection java.lang.NullPointerException -->
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
+					<useUIThread>true</useUIThread>
 				</configuration>
 			</plugin>
 		</plugins>

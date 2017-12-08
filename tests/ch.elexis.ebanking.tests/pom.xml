@@ -19,7 +19,7 @@
 				<configuration>
                   <skipTests>true</skipTests>  <!-- TODO:: Tests in error: Test_Camt054andEsr.init:29 ExceptionInInitializer --> 
 					<useUIHarness>false</useUIHarness>
-					<showEclipseLog>true</showEclipseLog>
+					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
 				</configuration>
 			</plugin>

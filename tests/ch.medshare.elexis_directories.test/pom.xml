@@ -18,7 +18,7 @@
           <useUIHarness>false</useUIHarness>
           <application>ch.elexis.core.application.ElexisApp</application>
           <useUIThread>false</useUIThread>
-          <showEclipseLog>true</showEclipseLog>
+          <showEclipseLog>${show.eclipse.log}</showEclipseLog>
         </configuration>
       </plugin>
     </plugins>

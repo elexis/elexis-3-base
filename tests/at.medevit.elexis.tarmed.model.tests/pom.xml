@@ -22,7 +22,7 @@
           <argLine>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
           <useUIThread>true</useUIThread>
           <useUIHarness>true</useUIHarness>
-          <showEclipseLog>true</showEclipseLog>
+          <showEclipseLog>${show.eclipse.log}</showEclipseLog>
           <dependencies>
             <dependency>
               <type>eclipse-feature</type>

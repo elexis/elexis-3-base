@@ -19,9 +19,9 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
                     <skipTests>true</skipTests> <!-- läuft manchmal durch und machmal nicht TODO: -->
-                    <showEclipseLog>true</showEclipseLog>
+                    <showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
-					<argLine>${elexis.ui.test.vmargs}</argLine>
+                    <argLine>${elexis.ui.test.vmargs}</argLine>
 				</configuration>
 			</plugin>
 		</plugins>

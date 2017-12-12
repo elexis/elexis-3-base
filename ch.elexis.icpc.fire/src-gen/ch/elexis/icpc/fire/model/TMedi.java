@@ -2,14 +2,13 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.11.17 um 10:56:23 AM CET 
+// Generiert: 2017.12.07 um 12:49:37 PM CET 
 //
 
 
 package ch.elexis.icpc.fire.model;
 
 import java.math.BigInteger;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -20,13 +19,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 
-
 /**
- * <p>
- * Java-Klasse für tMedi complex type.
+ * <p>Java-Klasse für tMedi complex type.
  * 
- * <p>
- * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="tMedi">
@@ -42,11 +38,13 @@ import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
  *       &lt;attribute name="beginDate" type="{http://www.w3.org/2001/XMLSchema}date" />
  *       &lt;attribute name="endDate" type="{http://www.w3.org/2001/XMLSchema}date" />
  *       &lt;attribute name="stopGrund" type="{http://www.w3.org/2001/XMLSchema}unsignedByte" />
+ *       &lt;attribute name="mediDauer" type="{}tString50" />
  *       &lt;attribute name="therapieWechsel" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="folgeMedPharmacode" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
  *       &lt;attribute name="folgeMedAtc" type="{}tString7" />
+ *       &lt;attribute name="folgeMedGtin" type="{}tString50" />
  *       &lt;attribute name="selbstdisp" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/restriction>	
+ *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
@@ -84,6 +82,8 @@ public class TMedi {
     @XmlAttribute(name = "stopGrund")
     @XmlSchemaType(name = "unsignedByte")
     protected Short stopGrund;
+    @XmlAttribute(name = "mediDauer")
+    protected String mediDauer;
     @XmlAttribute(name = "therapieWechsel")
     protected Boolean therapieWechsel;
     @XmlAttribute(name = "folgeMedPharmacode")
@@ -91,6 +91,8 @@ public class TMedi {
     protected Long folgeMedPharmacode;
     @XmlAttribute(name = "folgeMedAtc")
     protected String folgeMedAtc;
+    @XmlAttribute(name = "folgeMedGtin")
+    protected String folgeMedGtin;
     @XmlAttribute(name = "selbstdisp")
     protected Boolean selbstdisp;
 
@@ -327,6 +329,30 @@ public class TMedi {
     }
 
     /**
+     * Ruft den Wert der mediDauer-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMediDauer() {
+        return mediDauer;
+    }
+
+    /**
+     * Legt den Wert der mediDauer-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMediDauer(String value) {
+        this.mediDauer = value;
+    }
+
+    /**
      * Ruft den Wert der therapieWechsel-Eigenschaft ab.
      * 
      * @return
@@ -396,6 +422,30 @@ public class TMedi {
      */
     public void setFolgeMedAtc(String value) {
         this.folgeMedAtc = value;
+    }
+
+    /**
+     * Ruft den Wert der folgeMedGtin-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFolgeMedGtin() {
+        return folgeMedGtin;
+    }
+
+    /**
+     * Legt den Wert der folgeMedGtin-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFolgeMedGtin(String value) {
+        this.folgeMedGtin = value;
     }
 
     /**

@@ -42,7 +42,6 @@ import org.iatrix.data.Problem;
 import org.iatrix.util.Constants;
 import org.iatrix.util.Heartbeat;
 import org.iatrix.util.Heartbeat.IatrixHeartListener;
-import org.iatrix.util.Helpers;
 import org.iatrix.views.JournalView;
 import org.iatrix.views.ProblemView;
 import org.slf4j.Logger;
@@ -520,7 +519,7 @@ public class ProblemArea implements IJournalArea {
 					int row = rowIndex + problemsTableModel.getFixedHeaderRowCount();
 					problemsKTable.setSelection(col, row, true);
 				}
-				ElexisEventDispatcher.fireSelectionEvents(actKons);
+				ElexisEventDispatcher.fireSelectionEvents(actPat);
 			}
 		};
 
@@ -617,17 +616,14 @@ public class ProblemArea implements IJournalArea {
 		return deleteFixmedikationAction;
 	}
 
-	private Konsultation actKons;
 	private boolean heartbeatProblemEnabled;
 
 	private void logEvent(String msg){
 		StringBuilder sb = new StringBuilder(msg + ": ");
-		if (actKons == null) {
-			sb.append("actKons null");
+		if (actPat == null) {
+			sb.append("actPat null");
 		} else {
-			sb.append(actKons.getId());
-			sb.append(" kons vom " + actKons.getDatum());
-			sb.append(" " + actKons.getFall().getPatient().getPersonalia());
+			sb.append(" " + actPat.getPersonalia());
 		}
 		log.debug(sb.toString());
 	}
@@ -693,17 +689,14 @@ public class ProblemArea implements IJournalArea {
 	 * Aktuelle Konsultation und Patienten setzen
 	 */
 	@Override
-	public void setKons(Konsultation newKons, KonsActions op){
-		if (Helpers.twoKonsEqual(actKons, newKons) && op  == KonsActions.ACTIVATE_KONS)
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		if (newPatient == null || actPat == null || !newPatient.getId().equals(actPat.getId()))
 		{
-			return;
-		}
-		actKons = newKons;
-		actPat = null;
-		logEvent("setKons");
-		problemsTableModel.setKons(newKons);
-		if (newKons != null) {
+			actPat = newPatient;
+			problemsTableModel.setKons(newPatient, newKons);
 			reloadAndRefresh();
+		} else {
+			problemsTableModel.setKons(newPatient, newKons);
 		}
 	}
 
@@ -722,15 +715,7 @@ public class ProblemArea implements IJournalArea {
 	public void activation(boolean mode){
 		if (mode == true) {
 			log.debug("activation " + mode);
-			setKons((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class),KonsActions.ACTIVATE_KONS);
-		} else {
-			setKons(null, KonsActions.ACTIVATE_KONS);
+			setKons(null,(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class), KonsActions.ACTIVATE_KONS);
 		}
-	}
-	public void setPatient(Patient newPat){
-		logEvent("setPatient: " + newPat);
-		actPat = newPat;
-		actKons = null;
-		problemsTableModel.setKons(actKons);
 	}
 }

@@ -52,14 +52,20 @@ public abstract class POSelectionListener<P extends PersistentObject> implements
 			// PO nicht mehr ausgewaehlt
 			runDeselected(current);
 			current = null;
-		} else if (ev.getType() == ElexisEvent.EVENT_DELETE && k != null && current.equals(k)) {
-			// PO geloescht
-			runDeselected(current);
-			current = null;
-		} else if (ev.getType() == ElexisEvent.EVENT_SELECTED && ! current.equals(k)) {
-			// Wenn noch ein anderer ausgewaehlt war (sollte nicht passieren)
-			if (current != null)
+		} else if (ev.getType() == ElexisEvent.EVENT_DELETE && k != null) {
+			if(current != null && current.equals(k)) {
+				// PO geloescht
 				runDeselected(current);
+				current = null;
+			}
+		} else if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+			if(current != null && current.equals(k)) {
+				return;
+			}
+			// Wenn noch ein anderer ausgewaehlt war (sollte nicht passieren)
+			if (current != null) {
+				runDeselected(current);
+			}
 			current = k;
 			runSelected(k);
 		}

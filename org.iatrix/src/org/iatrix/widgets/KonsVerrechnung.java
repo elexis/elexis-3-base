@@ -419,6 +419,7 @@ public class KonsVerrechnung implements IJournalArea {
 		}
 
 		hVerrechnung.setText(sb.toString());
+		hVerrechnung.update();
 	}
 
 	/**

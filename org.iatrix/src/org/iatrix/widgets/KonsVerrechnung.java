@@ -70,6 +70,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Query;
@@ -488,7 +489,7 @@ public class KonsVerrechnung implements IJournalArea {
 		return success;
 	}
 
-	public void updateKonsultation(boolean updateText){
+	public void updateKonsultation(){
 		if (actKons != null) {
 			hVerrechnung.setEnabled(true);
 			tVerrechnungKuerzel.setEnabled(true);
@@ -612,10 +613,10 @@ public class KonsVerrechnung implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation newKons, KonsActions op){
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
 		if (KonsActions.ACTIVATE_KONS == op || KonsActions.EVENT_UPDATE  == op) {
 			actKons = newKons;
-			updateKonsultation(false);
+			updateKonsultation();
 			verrechnungViewer.refresh();
 			updateVerrechnungSum();
 		}

@@ -375,9 +375,8 @@ public class JournalHeader implements IJournalArea {
 	}
 
 	public void setPatient(Patient newPatient){
-		if (newPatient == null) { return; }
-		log.debug("setPatient " + newPatient.getPersonalia());
-		if (actPat == null || !actPat.getId().equals(newPatient.getId())) {
+		log.debug("setPatient " + ((newPatient == null) ? " null " : newPatient.getPersonalia()));
+		if (actPat == null || (newPatient == null) || !actPat.getId().equals(newPatient.getId())) {
 			actPat = newPatient;
 			setPatientTitel();
 			setRemarkAndSticker();
@@ -390,10 +389,12 @@ public class JournalHeader implements IJournalArea {
 	 * We react only to selected konsultations
 	 * @param newKons
 	 */
-	public void setKons(Konsultation newKons, KonsActions op){
-		Patient newPatient = newKons.getFall().getPatient();
-		if (newPatient == null) { return; } // this should never happen as  kons always has a patient
-		setPatient(newPatient);
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		if (newKons == null || newPatient == null) {
+			setPatient(null);
+		} else {
+			setPatient(newPatient);
+		}
 	}
 
 	@Override

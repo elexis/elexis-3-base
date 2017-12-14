@@ -1235,7 +1235,7 @@ public class ProblemsTableModel implements KTableModel {
 				refresh();
 				problemsKTable.refresh();
 			}
- 			JournalView.updateAllKonsAreas(actKons, IJournalArea.KonsActions.EVENT_UPDATE);
+			JournalView.updateAllKonsAreas(null, actKons, IJournalArea.KonsActions.EVENT_UPDATE);
 		}
 	}
 
@@ -1293,8 +1293,8 @@ public class ProblemsTableModel implements KTableModel {
 
 	static class DummyProblem {}
 
-	public void setKons(Konsultation newKons) {
+	public void setKons(Patient newPatient, Konsultation newKons) {
 		actKons = newKons;
-		actPatient = newKons == null ? null :  newKons.getFall().getPatient();
+		actPatient = newPatient;
 	}
 }

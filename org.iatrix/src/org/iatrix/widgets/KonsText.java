@@ -53,6 +53,7 @@ import ch.elexis.core.ui.util.IKonsMakro;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
@@ -201,6 +202,7 @@ public class KonsText implements IJournalArea {
 						} else {
 							logEvent("updateEintrag saved rev. " + new_version + " plain: " + plain);
 							text.setDirty(false);
+							// TODO: Warum merkt das KonsListView trotzdem nicht ?? ElexisEventDispatcher.fireSelectionEvent(actKons);
 						}
 					}
 				} else {
@@ -220,12 +222,11 @@ public class KonsText implements IJournalArea {
 	 * @return true, if the text changed, false else
 	 */
 	private boolean textChanged(){
-		if (actKons == null) {
+		if (actKons == null || text == null) {
 			return false;
 		}
 		String dbEintrag = actKons.getEintrag().getHead();
 		String textEintrag = text.getContentsAsXML();
-
 		if (textEintrag != null) {
 			if (!textEintrag.equals(dbEintrag)) {
 				// text differs from db entry
@@ -233,9 +234,7 @@ public class KonsText implements IJournalArea {
 				return true;
 			}
 		}
-
 		return false;
-
 	}
 
 	private void updateKonsLockLabel(){
@@ -373,7 +372,7 @@ public class KonsText implements IJournalArea {
 			public void run(){
 				logEvent("saveAction: ");
 				updateEintrag();
-				JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
+				JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.SAVE_KONS);
 			}
 		};
 	};
@@ -395,12 +394,11 @@ public class KonsText implements IJournalArea {
 	 *
 	 * Wenn eine Konsultation gesetzt wird stellen wir sicher, dass der gesetzte Patient zu dieser
 	 * Konsultation gehoert. Falls nicht, wird ein neuer Patient gesetzt.
-	 *
 	 * @param putCaretToEnd
 	 *            if true, activate text field ant put caret to the end
 	 */
 	@Override
-	public synchronized void setKons(Konsultation k, KonsActions op){
+	public synchronized void setKons(Patient newPatient, Konsultation k, KonsActions op){
 		if (op == KonsActions.SAVE_KONS) {
 			if (text.isDirty() || textChanged()) {
 				logEvent("setKons.SAVE_KONS text.isDirty or changed saving Kons from "

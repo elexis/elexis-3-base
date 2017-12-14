@@ -241,7 +241,7 @@ public class KonsProblems implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation newKons, KonsActions op){
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
 		if (op == KonsActions.ACTIVATE_KONS || op == KonsActions.EVENT_UPDATE) {
 			actKons = newKons;
 			updateProblemAssignmentViewer();
@@ -253,12 +253,6 @@ public class KonsProblems implements IJournalArea {
 
 	@Override
 	public void activation(boolean mode){
-		if (mode == true) {
-			log.debug("activation " + mode);
-			setKons((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class), KonsActions.ACTIVATE_KONS);
-		} else {
-			setKons(null, KonsActions.ACTIVATE_KONS);
-		}
 	}
 
 	private void logEvent(String msg){

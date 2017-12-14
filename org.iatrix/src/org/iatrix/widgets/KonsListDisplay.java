@@ -33,12 +33,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.iatrix.Iatrix;
+import org.iatrix.util.Helpers;
 import org.iatrix.widgets.KonsListComposite.KonsData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.actions.ObjectFilterRegistry;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
@@ -71,6 +71,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	private boolean showAllConsultations = false;
 
 	private Patient actPat = null;
+	private Konsultation actKons = null;
 
 	public KonsListDisplay(Composite parent){
 		super(parent, SWT.BORDER);
@@ -242,18 +243,19 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	@Override
 	public void visible(boolean mode){
 		if (mode) {
-			setPatient(actPat, KonsActions.ACTIVATE_KONS);
+			setKons(actPat, actKons,  KonsActions.ACTIVATE_KONS);
 		}
 	}
 
 	@Override
 	public void activation(boolean mode){
 		if (mode) {
-			setPatient(actPat, KonsActions.ACTIVATE_KONS);
+			setKons(actPat, actKons,  KonsActions.ACTIVATE_KONS);
 		}
 	}
 
-	public void setPatient(Patient newPatient, KonsActions op){
+	@Override
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
 		if (newPatient == null ) {
 			actPat = newPatient;
 			log.debug("setPatient is null");
@@ -261,24 +263,20 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 			reload(false, null);
 			return;
 		}
-		if (actPat ==  null || (!newPatient.getId().equals(actPat.getId()))){
+		if (actPat ==  null ||
+				op == KonsActions.SAVE_KONS ||
+				!newPatient.getId().equals(actPat.getId()) ||
+				!Helpers.twoKonsEqual(actKons, newKons)){
 			actPat = newPatient;
-			log.debug("setPatient " + newPatient.getPersonalia());
+			log.debug("setPatient " + newPatient.getPersonalia()+ " op " + op);
 			dataLoader.cancel();
 			reload(true, null);
 			dataLoader.setPatient(newPatient, showAllCharges, showAllConsultations);
 			dataLoader.schedule();
 		} else {
-			log.debug("setPatient skip reloading" + newPatient.getPersonalia());
+			log.debug("setPatient skip reloading" + newPatient.getPersonalia() + " op " + op);
 		}
-	}
-
-	@Override
-	public void setKons(Konsultation newKons, KonsActions op){
-		if (newKons == null) {
-			setPatient(ElexisEventDispatcher.getSelectedPatient(), op);
-		} else {
-			setPatient(newKons.getFall().getPatient(), op);
+		if (newKons!= null) {
 			konsListComposite.refeshHyperLinks(newKons);
 		}
 	}
@@ -318,6 +316,5 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	public void highlightActKons(Konsultation newKons, boolean showCharges, boolean showConsultations){
 		showAllCharges = showCharges;
 		showAllConsultations = showConsultations;
-		setKons(newKons, KonsActions.ACTIVATE_KONS);
 	}
 }

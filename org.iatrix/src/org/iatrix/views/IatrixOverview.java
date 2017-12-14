@@ -173,7 +173,7 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
-				a.setKons(newKons, op);
+				a.setKons(newKons.getFall().getPatient(), newKons, op);
 			}
 		}
 	}
@@ -349,8 +349,8 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 				log.debug(String.format("eeli_pat %d %s %s nothing todo", ev.getType(), msg,  newPat.toString()));
 			} else {
 				journalHeader.setPatient(newPat);
-				problemsArea.setPatient(newPat);
 				actKons = newPat.getLetzteKons(false);
+				problemsArea.setKons(newPat, actKons, KonsActions.ACTIVATE_KONS);
 				updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
 				displaySelectedPatient(newPat, "eeli_pat " + ev.getType());
 				log.debug(String.format("eeli_pat %d %s %s %s changed", ev.getType(), msg, actKons, newPat.getPersonalia()));

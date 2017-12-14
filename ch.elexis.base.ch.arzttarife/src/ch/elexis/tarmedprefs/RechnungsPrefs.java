@@ -66,6 +66,7 @@ import ch.elexis.data.Query;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.TarmedLeistung.MandantType;
 import ch.elexis.data.TrustCenters;
+import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
 
 public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferencePage {
@@ -192,6 +193,23 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			}
 		});
 		cvMandantType.getCombo().setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
+		// bills electronically
+		bBillsElec = new Button(adrs, SWT.CHECK);
+		bBillsElec.setText("Bills electronically");
+		if (actMandant != null) {
+			bBillsElec.setSelection(CoreHub.getUserSetting(actMandant)
+				.get(PreferenceConstants.BILL_ELECTRONICALLY, false));
+		}
+		bBillsElec.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				Settings settings = CoreHub.getUserSetting(actMandant);
+				settings.set(PreferenceConstants.BILL_ELECTRONICALLY,
+					bBillsElec.getSelection());
+				settings.flush();
+			}
+		});
 		
 		// Finanzinstitut
 		// TODO better layout
@@ -329,19 +347,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		gResponsible.setLayout(new FillLayout());
 		gResponsible.setText("Responsible Doctor");
 		responsible = new ResponsibleComposite(gResponsible, SWT.NONE);
-
-		// bills electronically
-		bBillsElec = new Button(ret, SWT.CHECK);
-		bBillsElec.setText("Bills electronically");
-		bBillsElec.setSelection(CoreHub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY,
-			false));
-		bBillsElec.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				CoreHub.mandantCfg.set(PreferenceConstants.BILL_ELECTRONICALLY,
-					bBillsElec.getSelection());
-			}
-		});
+		
 		/*
 		 * bUseEDA=new Button(gTC,SWT.CHECK); bUseEDA.setText(Messages.getString(
 		 * "RechnungsPrefs.TrustCewntereDA")); //$NON-NLS-1$ bUseEDA.addSelectionListener(new
@@ -612,6 +618,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		//bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
 		//bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
 		cbTC.setText(TarmedRequirements.getTCName(actMandant)); // actMandant.getInfoString(PreferenceConstants.TARMEDTC));
+		
+		bBillsElec.setSelection(
+			CoreHub.getUserSetting(actMandant).get(PreferenceConstants.BILL_ELECTRONICALLY, false));
 		
 		responsible.setMandant(m);
 	}

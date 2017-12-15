@@ -165,11 +165,8 @@
    <feature url="features/ch.elexis.global_inbox.feature_3.0.0.qualifier.jar" id="ch.elexis.global_inbox.feature" version="3.0.0.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
-   <feature url="features/ch.elexis.agenda.feature.source_3.0.0.qualifier.jar" id="ch.elexis.agenda.feature.source" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.agenda.feature.source_3.2.0.qualifier.jar" id="ch.elexis.agenda.feature.source" version="3.2.0.qualifier">
       <category name="sources"/>
-   </feature>
-   <feature url="features/ch.elexis.agenda.feature_3.0.0.qualifier.jar" id="ch.elexis.agenda.feature" version="3.0.0.qualifier">
-      <category name="organisation"/>
    </feature>
    <feature url="features/ch.unibe.iam.scg.archie.feature.source_3.0.0.qualifier.jar" id="ch.unibe.iam.scg.archie.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
@@ -416,6 +413,9 @@
    </feature>
    <feature url="features/ch.elexis.barcode.scanner.feature_3.2.0.qualifier.jar" id="ch.elexis.barcode.scanner.feature" version="3.2.0.qualifier">
       <category name="libraries"/>
+   </feature>
+   <feature url="features/ch.elexis.agenda.feature_3.2.0.qualifier.jar" id="ch.elexis.agenda.feature" version="3.2.0.qualifier">
+      <category name="organisation"/>
    </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">

@@ -6,6 +6,6 @@
     <version>3.4.0-SNAPSHOT</version>
   </parent>
   <artifactId>at.medevit.elexis.tarmed.model</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

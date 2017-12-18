@@ -7,5 +7,5 @@
   </parent>
   <artifactId>at.medevit.elexis.emediplan.feature</artifactId>
   <packaging>eclipse-feature</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.100-SNAPSHOT</version>
 </project>

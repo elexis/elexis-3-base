@@ -54,7 +54,7 @@ public class TarmedExtension extends PersistentObject {
 		+ "Code					VARCHAR(32),"
 		+ "limits	 			BLOB," 
 		+ "med_interpret		TEXT," 
-		+ "tech_interpret 		TEXT," 
+		+ "tech_interpret 		TEXT" 
 		+ ");"
 		+ "CREATE INDEX tarmed4 on " + TABLENAME + " (" + FLD_CODE + ");"		
 		+ "INSERT INTO " + TABLENAME + " (ID, " + FLD_CODE + ") VALUES (" + JdbcLink.wrap(TarmedLeistung.ROW_VERSION) + ", " + JdbcLink.wrap(VERSION) + ");";

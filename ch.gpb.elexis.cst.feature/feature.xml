@@ -2,7 +2,7 @@
 <feature
       id="ch.gpb.elexis.cst.feature"
       label="Cellsymbiosistherapie-Elexis-Plugin von Gemeinschaftspraxis Brunnmatt/Daniel Ludin"
-      version="1.0.0.qualifier"
+      version="1.0.100.qualifier"
       provider-name="elexis.info">
 
    <description>

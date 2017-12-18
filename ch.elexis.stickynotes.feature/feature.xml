@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.stickynotes.feature"
       label="Elexis Haftnotizen"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="elexis.info">
 
    <description>

@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.laborimport.bioanalytica.feature"
       label="Laborimport Bioanalytica"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="elexis.info">
 
   <description>

@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.global_inbox.feature"
       label="Global Inbox"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="weirich@elexis.ch">
 
    <description>

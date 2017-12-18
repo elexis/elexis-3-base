@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.barcode.scanner.feature"
       label="Barcode Scanner"
-      version="3.2.0.qualifier">
+      version="3.2.100.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]

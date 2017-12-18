@@ -2,7 +2,7 @@
 <feature
       id="com.hilotec.elexis.toolbar.feature"
       label="Toolbar von Hilotec"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="hilotec.com">
 
    <description url="http://www.hilotec.com/">

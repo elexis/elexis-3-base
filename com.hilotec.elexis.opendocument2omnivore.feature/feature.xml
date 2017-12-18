@@ -2,7 +2,7 @@
 <feature
       id="com.hilotec.elexis.opendocument2omnivore.feature"
       label="Omnivore-Schnittstelle fuer OpenDocument-Plugin"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="ch.medelexis">
 
    <description url="http://www.hilotec.com/">

@@ -493,7 +493,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	
 	@Override
 	public boolean isDragOK(){
-		return (!StringTool.isNothing(getDigniQuali().trim()));
+		return !isChapter();
 	}
 	
 	/**

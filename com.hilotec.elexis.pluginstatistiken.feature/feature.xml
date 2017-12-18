@@ -2,7 +2,7 @@
 <feature
       id="com.hilotec.elexis.pluginstatistiken.feature"
       label="Hilotec Messwerte Statistik"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="hilotec.com">
 
    <description>

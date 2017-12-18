@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.base.konsextension.privatnotizen.feature"
       label="Privatnotizen für Konsultation"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="elexis.ch">
 
   <description>

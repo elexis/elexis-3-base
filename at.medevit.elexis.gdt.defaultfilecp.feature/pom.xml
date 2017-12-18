@@ -23,5 +23,5 @@
   </parent>
   <artifactId>at.medevit.elexis.gdt.defaultfilecp.feature</artifactId>
   <packaging>eclipse-feature</packaging>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.1.100-SNAPSHOT</version>
 </project>

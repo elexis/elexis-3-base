@@ -117,13 +117,13 @@
    <feature url="features/ch.elexis.laborimport.bioanalytica.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.bioanalytica.feature" version="3.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
-   <feature url="features/ch.elexis.laborimport.analytica.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.analytica.feature" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.laborimport.analytica.feature_3.1.100.qualifier.jar" id="ch.elexis.laborimport.analytica.feature" version="3.1.100.qualifier">
       <category name="laborexchanges"/>
    </feature>
    <feature url="features/ch.elexis.laborimport.analytica.feature.source_3.0.0.qualifier.jar" id="ch.elexis.laborimport.analytica.feature.source" version="3.0.0.qualifier">
       <category name="sources"/>
    </feature>
-   <feature url="features/ch.elexis.laborimport.teamw.feature.source_3.0.0.qualifier.jar" id="ch.elexis.laborimport.teamw.feature.source" version="3.0.0.qualifier">
+   <feature url="features/ch.elexis.laborimport.teamw.feature.source_3.1.100.qualifier.jar" id="ch.elexis.laborimport.teamw.feature.source" version="3.1.100.qualifier">
       <category name="sources"/>
    </feature>
    <feature url="features/ch.elexis.laborimport.teamw.feature_3.0.0.qualifier.jar" id="ch.elexis.laborimport.teamw.feature" version="3.0.0.qualifier">

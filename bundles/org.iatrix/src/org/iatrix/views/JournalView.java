@@ -61,6 +61,7 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
@@ -317,7 +318,20 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			}
 		};
 
-	private final ElexisUiEventListenerImpl eeli_kons =
+		private final ElexisEventListener eeli_update = new ElexisUiEventListenerImpl(
+			Konsultation.class, ElexisEvent.EVENT_UPDATE) {
+			@Override
+			public void runInUi(ElexisEvent ev){
+				Konsultation actKons =
+					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				if (actKons != null) {
+					konsVerrechnung.setKons(actKons.getFall().getPatient(), actKons, KonsActions.EVENT_UPDATE);
+				}
+				log.debug(String.format("eeli_pat %s ", ev.toString()),  actKons);
+			}
+		};
+
+		private final ElexisUiEventListenerImpl eeli_kons =
 			new ElexisUiEventListenerImpl(Konsultation.class) {
 
 		@Override
@@ -642,7 +656,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	public void visible(boolean mode){
 		if (mode == true) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_kons, eeli_problem, eeli_pat,
-				eeli_user);
+				eeli_user, eeli_update);
 			Konsultation newKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if (newKons != null) {
 				Patient newPatient = newKons.getFall().getPatient();
@@ -659,7 +673,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		} else {
 			heartbeat.enableListener(false);
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem,
-				eeli_pat, eeli_user);
+				eeli_pat, eeli_user,  eeli_update);
 		}
 	};
 

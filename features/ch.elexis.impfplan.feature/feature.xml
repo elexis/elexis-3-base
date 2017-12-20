@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.impfplan.feature"
       label="Elexis Impfplan (G. Weirich)"
-      version="3.0.1.qualifier"
+      version="3.0.100.qualifier"
       provider-name="elexis.info">
 
    <description>

@@ -2,7 +2,7 @@
 <feature
       id="net.medshare.connector.viollier.feature"
       label="Viollier Portal Connector"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="medshare.net">
 
    <description url="http://www.example.com/description">

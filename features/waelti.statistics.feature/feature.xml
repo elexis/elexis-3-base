@@ -2,7 +2,7 @@
 <feature
       id="waelti.statistics.feature"
       label="Statistics M. Wälti"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="Waelti Michael">
 
    <description>

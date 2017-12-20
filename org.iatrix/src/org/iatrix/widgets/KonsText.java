@@ -149,6 +149,10 @@ public class KonsText implements IJournalArea {
 
 	private void showUnableToSaveKons(String plain, String errMsg) {
 		logEvent("showUnableToSaveKons errMsg: " + errMsg + " plain: " + plain);
+		if (plain.length() == 0 ) {
+			log.warn("showUnableToSaveKons Inhalt war leer");
+			return;
+		}
 		boolean added = false;
 		try {
 			Clipboard clipboard = new Clipboard(UiDesk.getDisplay());
@@ -166,13 +170,9 @@ public class KonsText implements IJournalArea {
 			sb.append("Inhalt wurde in die Zwischenablage aufgenommen\n");
 		}
 		sb.append("Patient: " + actKons.getFall().getPatient().getPersonalia()+ "\n");
-		if (plain.length() == 0 ) {
-				sb.append("Inhalt war leer");
-		} else {
-			sb.append("\nInhalt ist:\n---------------------------------------------------\n");
-			sb.append(plain);
-			sb.append("\n----------------------------------------------------------------\n");
-		}
+		sb.append("\nInhalt ist:\n---------------------------------------------------\n");
+		sb.append(plain);
+		sb.append("\n----------------------------------------------------------------\n");
 		SWTHelper.alert("Konnte Konsultationstext nicht abspeichern", sb.toString());
 	}
 	public synchronized void updateEintrag(){

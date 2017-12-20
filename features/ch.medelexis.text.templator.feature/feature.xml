@@ -2,7 +2,7 @@
 <feature
       id="ch.medelexis.text.templator.feature"
       label="Textplugin auf Template-Basis (Mac Kompatibel)"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="ch.medelexis">
 
    <description>

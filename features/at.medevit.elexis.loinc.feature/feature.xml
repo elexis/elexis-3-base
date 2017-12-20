@@ -2,21 +2,20 @@
 <feature
       id="at.medevit.elexis.loinc.feature"
       label="LOINC Codesystem"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="medevit.at">
 
-  <description>
-  Unterstützung für die LOINC-Klassifikation. Mehr Info unter http://wiki.elexis.info/at.medevit.elexis.loinc.feature.feature.group
-  </description>
+   <description>
+      Unterstützung für die LOINC-Klassifikation. Mehr Info unter http://wiki.elexis.info/at.medevit.elexis.loinc.feature.feature.group
+   </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
       Eclipse Public License v1.0
    </license>
-
 
    <plugin
          id="at.medevit.elexis.loinc"

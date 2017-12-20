@@ -3,8 +3,65 @@ package ch.elexis.base.l10n;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.base.l10n.messages";
-
+	public static String Plannables_databaseError;
+	public static String Plannables_errorInAppointmentText;
+	public static String TermineLockedTimesUpdater_0;
+	public static String TermineLockedTimesUpdater_4;
+	public static String TermineLockedTimesUpdater_5;
+	public static String TermineLockedTimesUpdater_6;
+	public static String TermineLockedTimesUpdater_7;
+	
+	public static String AgendaWeek_selectWeek;
+	public static String AgendaWeek_setZoomFactor;
+	public static String AgendaWeek_showCalendarToSelect;
+	public static String AgendaWeek_showNextWeek;
+	public static String AgendaWeek_showPreviousWeek;
+	public static String AgendaWeek_weekBackward;
+	public static String AgendaWeek_weekForward;
+	public static String AgendaWeek_zoom;
+	public static String ColumnHeader_configureDisplay;
+	public static String ColumnHeader_displayWeekdays;
+	public static String ColumnHeader_pleaseSelectWeekdays;
+	public static String ColumnHeader_selectDaysToDisplay;
+	
+	public static String AgendaParallel_dayBack;
+	public static String AgendaParallel_dayForward;
+	public static String AgendaParallel_selectDay;
+	public static String AgendaParallel_setZoomFactor;
+	public static String AgendaParallel_showCalendarForSelcetion;
+	public static String AgendaParallel_showNextDay;
+	public static String AgendaParallel_showPreviousDay;
+	public static String AgendaParallel_zoom;
+	public static String ColumnHeader_Mandantors;
+	public static String ColumnHeader_mandatorsForParallelView;
+	public static String ColumnHeader_selectMandators;
+	public static String ColumnHeader_selectMandatorToShow;
+	public static String TerminListView_noPatientSelected;
+	
+	public static String AgendaDruck_printDirectly;
+	public static String AgendaDruck_printerForCards;
+	public static String AgendaDruck_settingsForPrint;
+	public static String AgendaDruck_templateForCards;
+	public static String AgendaDruck_TrayForCards;
+	public static String PreferenceConstants_appointmentCard;
+	
+	public static String Import_Agenda_cancelled;
+	public static String Import_Agenda_creatingTables;
+	public static String Import_Agenda_errorsDuringImport;
+	public static String Import_Agenda_importFromJavaAgenda;
+	public static String Import_Agenda_importingAgenda;
+	public static String Import_Agenda_importingApps;
+	public static String Import_Agenda_importWasCancelled;
+	public static String TagesNachricht_29;
+	
+	public static String ACLContributor_acl_administer;
+	public static String ACLContributor_acl_changeAppointments;
+	public static String ACLContributor_acl_daylimits;
+	public static String ACLContributor_acl_deleteAppointments;
+	public static String ACLContributor_acl_lockappointments;
+	public static String ACLContributor_acl_showAppointments;
+	public static String ACLContributor_acl_use;
+	
 	public static String TagesView_showToday;
 	public static String TagesView_previousDay;
 	public static String TagesView_selectDay;
@@ -174,8 +231,4 @@ public class Messages extends NLS {
 	public static String Tageseinteilung_lblEditValuesFor_text;
 	public static String Tageseinteilung_lblChangedValuesAre_text;
 	public static String Tageseinteilung_btnNewButton_text;
-	
-	static { // load message values from bundle file
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
 }

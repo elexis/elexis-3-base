@@ -11,28 +11,8 @@
  *******************************************************************************/
 package ch.elexis.agenda;
 
-import ch.elexis.base.l10n.Messages;
-
 public final class Messages{
 		
-	public static String TagesView_showToday = ch.elexis.base.l10n.Messages.TagesView_showToday;
-	public static String TagesView_previousDay = ch.elexis.base.l10n.Messages.TagesView_previousDay;
-	public static String TagesView_selectDay = ch.elexis.base.l10n.Messages.TagesView_selectDay;
-	public static String TagesView_nextDay = ch.elexis.base.l10n.Messages.TagesView_nextDay;
-	public static String TagesView_printDay = ch.elexis.base.l10n.Messages.TagesView_printDay;
-	public static String TagesView_14 = ch.elexis.base.l10n.Messages.TagesView_14;
-	public static String TagesView_lockPeriod = ch.elexis.base.l10n.Messages.TagesView_lockPeriod;
-	public static String TagesView_changeTermin = ch.elexis.base.l10n.Messages.TagesView_changeTermin;
-	public static String TagesView_changeThisTermin = ch.elexis.base.l10n.Messages.TagesView_changeThisTermin;
-	public static String TagesView_shortenTermin = ch.elexis.base.l10n.Messages.TagesView_shortenTermin;
-	public static String TagesView_enlargeTermin = ch.elexis.base.l10n.Messages.TagesView_enlargeTermin;
-	public static String TagesView_newTermin = ch.elexis.base.l10n.Messages.TagesView_newTermin;
-	public static String TagesView_newWindow = ch.elexis.base.l10n.Messages.TagesView_newWindow;
-	public static String TagesView_createNewTermin = ch.elexis.base.l10n.Messages.TagesView_createNewTermin;
-	public static String TagesView_bereich = ch.elexis.base.l10n.Messages.TagesView_bereich;
-	public static String TagesView_selectBereich = ch.elexis.base.l10n.Messages.TagesView_selectBereich;
-	public static String TagesView_praxis = ch.elexis.base.l10n.Messages.TagesView_praxis;
-
 	public static String TagesView_showToday = ch.elexis.base.l10n.Messages.TagesView_showToday;
 	public static String TagesView_previousDay = ch.elexis.base.l10n.Messages.TagesView_previousDay;
 	public static String TagesView_selectDay = ch.elexis.base.l10n.Messages.TagesView_selectDay;

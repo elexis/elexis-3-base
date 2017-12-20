@@ -4,6 +4,8 @@ public class PreferenceConstants {
 	
 	public static final String PREFBASE = Constants.PLUGIN_ID + "/";
 	public static final String STOREFSGLOBAL = PREFBASE + "store_in_fs_global";
+	@Deprecated
+	public static final String STOREFSGLOBAL_V31 = PREFBASE + "/store_in_fs_global"; // workaround for bug https://redmine.medelexis.ch/issues/9501
 	public static final String STOREFS = PREFBASE + "store_in_fs";
 	public static final String BASEPATH = PREFBASE + "basepath";
 	public static final String CATEGORIES = PREFBASE + "categories";

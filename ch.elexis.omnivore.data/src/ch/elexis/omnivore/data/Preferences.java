@@ -11,6 +11,7 @@ import static ch.elexis.omnivore.PreferenceConstants.PREF_MAX_FILENAME_LENGTH;
 import static ch.elexis.omnivore.PreferenceConstants.PREF_SRC_PATTERN;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFS;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL;
+import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL_V31;
 import static ch.elexis.omnivore.PreferenceConstants.nPREF_DEST_DIR;
 import static ch.elexis.omnivore.PreferenceConstants.nPREF_SRC_PATTERN;
 
@@ -28,6 +29,14 @@ public class Preferences {
 	 */
 	private static void initGlobalConfig(){
 		if (fsSettingsStore == null) {
+			
+			//  workaround for bug https://redmine.medelexis.ch/issues/9501 -> migrate old key to new key
+			if (CoreHub.globalCfg.get(STOREFSGLOBAL_V31, null) != null
+				&& CoreHub.globalCfg.get(STOREFSGLOBAL, null) == null) {
+				CoreHub.globalCfg.set(STOREFSGLOBAL,
+					CoreHub.globalCfg.get(STOREFSGLOBAL_V31, false));
+			}
+			
 			boolean isGlobal = CoreHub.globalCfg.get(STOREFSGLOBAL, false);
 			if (isGlobal) {
 				fsSettingsStore = new SettingsPreferenceStore(CoreHub.globalCfg);

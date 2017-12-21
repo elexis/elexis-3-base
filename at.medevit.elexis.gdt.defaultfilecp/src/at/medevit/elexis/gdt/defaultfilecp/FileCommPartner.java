@@ -2,6 +2,7 @@ package at.medevit.elexis.gdt.defaultfilecp;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.activator.CoreHubHelper;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.rgw.io.Settings;
 
@@ -38,6 +39,23 @@ public class FileCommPartner {
 		preferenceStore =
 			new SettingsPreferenceStore(FileCommPartner.isFileTransferGlobalConfigured()
 					? CoreHub.globalCfg : CoreHub.localCfg);
+		
+		// in the past v3.1 the default key was locally configured as an other key
+		// we need to transfer the old key to the new one
+		if (DEFAULT_COMM_PARTNER_ID.equals(id) && !isFileTransferGlobalConfigured()) {
+			CoreHubHelper.transformConfigKey("GDT/defaultfilecp/fileTransferDirectory",
+				getFileTransferDirectory(), false);
+			CoreHubHelper.transformConfigKey("GDT/defaultfilecp/fileTransferDirectory",
+				getFileTransferInDirectory(), false);
+			CoreHubHelper.transformConfigKey("GDT/defaultfilecp/fileTransferDirectory",
+				getFileTransferOutDirectory(), false);
+			CoreHubHelper.transformConfigKey("GDT/defaultfilecp/fileTransferUsedType",
+				getFileTransferUsedType(), false);
+			CoreHubHelper.transformConfigKey("GDT/defaultfilecp/longIDReceiver",
+				getFileTransferIdReceiver(), false);
+			CoreHubHelper.transformConfigKey("GDT/defaultfilecp/executable",
+				getFileTransferExecuteable(), false);
+		}
 	}
 	
 	public static String[][] comboCharsetSelektor = new String[][] {

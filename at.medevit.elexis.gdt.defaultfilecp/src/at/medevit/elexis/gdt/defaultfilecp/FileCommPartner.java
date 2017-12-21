@@ -9,7 +9,6 @@ import ch.rgw.io.Settings;
 public class FileCommPartner {
 	
 	public static final String DEFAULT_COMM_PARTNER_ID = "DEFAULT";
-	public static final String DEFAULT_COMM_PARTNER_IDV31 = "defaultfilecp";
 	private static final String CFG_GDT = "GDT";
 	private static final String FILETRANSFER_NAME = "fileTransferName";
 	private static final String FILETRANSFER_USED_TYPE = "fileTransferUsedType";

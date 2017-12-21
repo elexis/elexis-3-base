@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core.ui.icons;bundle-version="3.0.0",
  org.eclipse.jface,
  ch.rgw.utility,
- ch.elexis.core;bundle-version="3.0.0"
+ ch.elexis.core;bundle-version="3.0.0",
+ ch.elexis.base.l10n;bundle-version="3.5.0"
 Eclipse-LazyStart: true
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -345,45 +345,6 @@ if ( System.getProperty("git_branch") == null ) {
         </configuration>
 			<version>2.17</version>
 		</plugin>
-		<plugin>
-      <groupId>org.eclipse.tycho.extras</groupId>
-      <artifactId>tycho-source-feature-plugin</artifactId>
-      <version>${tycho-extras.version}</version>
-      <executions>
-        <execution>
-          <id>source-feature</id>
-          <phase>package</phase>
-          <goals>
-            <goal>source-feature</goal>
-          </goals>
-          <configuration>
-            <excludes>
-              <plugin id="bcprov"/>
-              <plugin id="bouncycastle.bcprov"/>
-              <plugin id="bouncycastle.bcprov-jdk14"/>
-              <plugin id="de.kupzog.ktable"/>
-              <plugin id="javax.xml"/>
-              <plugin id="jfree.chart"/>
-              <plugin id="jfree.chart-experimental"/>
-              <plugin id="jfree.chart-swt"/>
-              <plugin id="jfree.jcommon"/>
-              <plugin id="junit"/>
-              <plugin id="edu.emory.mathcs.backport"/>            
-              <plugin id="org.apache.commons.io"/>
-              <plugin id="org.apache.commons.exec"/>
-              <plugin id="org.apache.commons.logging"/>
-              <plugin id="org.apache.httpcomponents.httpclient"/>
-              <plugin id="org.apache.httpcomponents.httpcore"/>
-              <plugin id="org.apache.xerces"/>
-              <plugin id="org.apache.xml.resolver"/>
-              <plugin id="org.apache.xml.serializer"/>
-              <plugin id="xerces.Impl"/>
-              <plugin id="xml-apis"/>
-            </excludes>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
     <plugin>
       <groupId>org.eclipse.tycho</groupId>
       <artifactId>tycho-p2-plugin</artifactId>
@@ -450,18 +411,6 @@ if ( System.getProperty("git_branch") == null ) {
           </environment>
         </environments>
       </configuration>
-    </plugin>
-    <plugin>
-      <groupId>org.eclipse.tycho</groupId>
-      <artifactId>tycho-source-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>plugin-source</id>
-          <goals>
-            <goal>plugin-source</goal>
-          </goals>
-        </execution>
-      </executions>
     </plugin>
   </plugins>
   <pluginManagement>
@@ -548,14 +497,6 @@ Without it Maven would put two versions of each class file into the jars
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-surefire-plugin</artifactId>
         <version>${tycho-version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-source-plugin</artifactId>
-        <version>${tycho-version}</version>
-        <configuration>
-          <strictSrcIncludes>false</strictSrcIncludes>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>

@@ -14,4 +14,5 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0",
- ch.unibe.iam.scg.archie;bundle-version="3.0.0"
+ ch.unibe.iam.scg.archie;bundle-version="3.0.0",
+ ch.elexis.base.l10n;bundle-version="3.5.0"

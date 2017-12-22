@@ -9,5 +9,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: ch.rgw.tools
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.jface
+ org.eclipse.jface,
+ ch.elexis.base.messages;bundle-version="3.0.0",
+ ch.elexis.core.l10n;bundle-version="3.5.0"
 Bundle-Vendor: designchuchi.ch

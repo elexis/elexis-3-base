@@ -23,13 +23,7 @@ import org.eclipse.osgi.util.NLS;
  * @version $Rev: 700 $
  */
 public final class Messages extends NLS {
-
-	private static final String BUNDLE_NAME = "ch.unibe.iam.scg.archie.samples.i18n.messages"; //$NON-NLS-1$
-
-	// General
 	public static String CALCULATING;
-	
-	// User Overview
 	public static String USER_OVERVIEW_TITLE;
 	public static String USER_OVERVIEW_DESCRIPTION;
 	public static String USER_OVERVIEW_USER;
@@ -41,8 +35,6 @@ public final class Messages extends NLS {
 	public static String USER_OVERVIEW_YES;
 	public static String USER_OVERVIEW_NO;
 	public static String USER_OVERVIEW_UNDEFINED;
-	
-	// Consultations Statistics 
 	public static String CONSULTATION_STATS_TITLE;
 	public static String CONSULTATION_STATS_DESCRIPTION;
 	public static String CONSULTATION_STATS_AGE_GROUP;
@@ -51,11 +43,8 @@ public final class Messages extends NLS {
 	public static String CONSULTATION_STATS_AVERAGE_COSTS;
 	public static String CONSULTATION_STATS_TOTAL_PROFITS;
 	public static String CONSULTATION_STATS_AVERAGE_PROFITS;
-
 	public static String CONSULTATION_STATS_REGEX_MESSAGE = "";
 	public static String CONSULTATION_STATS_COHORT_SIZE_EXCEPTION;
-	
-	// Consultations Time Statistics 
 	public static String CONSULTATION_TIME_STATS_TITLE;
 	public static String CONSULTATION_TIME_STATS_DESCRIPTION;
 	public static String CONSULTATION_TIME_STATS_HEADING_TIME_TOTAL;
@@ -64,8 +53,6 @@ public final class Messages extends NLS {
 	public static String CONSULTATION_TIME_STATS_HEADING_INCOME;
 	public static String CONSULTATION_TIME_STATS_HEADING_SPENDING;
 	public static String CONSULTATION_TIME_STATS_HEADING_PROFIT;
-	
-	// Patient Profits Statistics
 	public static String PATIENTS_PROFITS_TITLE;
 	public static String PATIENTS_PROFITS_DESCRIPTION;
 	public static String PATIENTS_PROFITS_HEADING_PATIENT;
@@ -73,15 +60,11 @@ public final class Messages extends NLS {
 	public static String PATIENTS_PROFITS_HEADING_INCOME;
 	public static String PATIENTS_PROFITS_HEADING_PROFIT;
 	public static String PATIENTS_PROFITS_ONLY_FOR_MANDAT;
-	
-	// Prescription Overview
 	public static String PRESCRIPTIONS_OVERVIEW_TITLE;
 	public static String PRESCRIPTIONS_OVERVIEW_DESCRIPTION;
 	public static String PRESCRIPTIONS_OVERVIEW_HEADING_NAME;
 	public static String PRESCRIPTIONS_OVERVIEW_HEADING_COUNT;
 	public static String PRESCRIPTIONS_OVERVIEW_HEADING_AVG_TIME;
-	
-	// Service Statistics
 	public static String SERVICES_TITLE;
 	public static String SERVICES_DESCRIPTION;
 	public static String SERVICES_HEADING_CODESYSTEM;
@@ -90,8 +73,6 @@ public final class Messages extends NLS {
 	public static String SERVICES_HEADING_COSTS;
 	public static String SERVICES_HEADING_INCOME;
 	public static String SERVICES_HEADING_PROFITS;
-	
-	// Diagnoses Statistics
 	public static String DIAGNOSES_TITLE;
 	public static String DIAGNOSES_DESCRIPTION;
 	public static String DIAGNOSES_HEADING_DIAGNOSE;
@@ -100,10 +81,4 @@ public final class Messages extends NLS {
 	public static String DIAGNOSES_HEADING_AGE_MAX;
 	public static String DIAGNOSES_HEADING_AGE_AVG;
 	public static String DIAGNOSES_HEADING_AGE_MED;
-
-	static {
-		// Load message values from bundle file.
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-
 }

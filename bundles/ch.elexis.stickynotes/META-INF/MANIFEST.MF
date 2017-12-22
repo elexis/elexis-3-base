@@ -12,5 +12,6 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.0.0",
  ch.elexis.core;bundle-version="3.0.0",
  ch.elexis.base.ch.diagnosecodes,
  ch.elexis.core.data,
- ch.elexis.core.ui
+ ch.elexis.core.ui,
+ ch.elexis.base.l10n;bundle-version="3.5.0"
 Bundle-Localization: plugin

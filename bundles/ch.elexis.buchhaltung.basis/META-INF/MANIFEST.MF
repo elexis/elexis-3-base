@@ -13,4 +13,5 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.rgw.utility;bundle-version="3.0.0",
  ch.elexis.base.ch.arzttarife;bundle-version="3.0.0";resolution:=optional,
- ch.elexis.core.ui;bundle-version="3.0.0"
+ ch.elexis.core.ui;bundle-version="3.0.0",
+ ch.elexis.base.l10n;bundle-version="3.5.0"

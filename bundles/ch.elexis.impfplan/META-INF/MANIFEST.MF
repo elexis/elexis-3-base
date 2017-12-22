@@ -13,7 +13,8 @@ Require-Bundle: ch.rgw.utility,
  ch.elexis.core.data,
  ch.elexis.core.ui,
  org.jdom,
- ch.elexis.core.ui.icons
+ ch.elexis.core.ui.icons,
+ ch.elexis.base.l10n;bundle-version="3.5.0"
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: ch.elexis.impfplan.model

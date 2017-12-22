@@ -12,7 +12,8 @@ Require-Bundle: ch.rgw.utility,
  ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
- org.slf4j.api
+ org.slf4j.api,
+ ch.elexis.base.l10n;bundle-version="3.5.0"
 Bundle-ClassPath: .
 Export-Package: ch.elexis.laborimport.analytica
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

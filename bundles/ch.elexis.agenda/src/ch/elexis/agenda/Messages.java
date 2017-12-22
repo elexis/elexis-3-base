@@ -11,7 +11,8 @@
  *******************************************************************************/
 package ch.elexis.agenda;
 
-public class Messages{
+public final class Messages{
+		
 	public static String TagesView_showToday = ch.elexis.base.l10n.Messages.TagesView_showToday;
 	public static String TagesView_previousDay = ch.elexis.base.l10n.Messages.TagesView_previousDay;
 	public static String TagesView_selectDay = ch.elexis.base.l10n.Messages.TagesView_selectDay;

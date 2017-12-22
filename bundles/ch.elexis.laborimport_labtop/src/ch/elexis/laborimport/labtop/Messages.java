@@ -14,14 +14,10 @@ package ch.elexis.laborimport.labtop;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.laborimport.labtop.messages"; //$NON-NLS-1$
-	public static String PreferencePage_DownloadDir;
-	public static String PreferencePage_JMedTrasferJar;
-	public static String PreferencePage_JMedTrasferJni;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-	
-	private Messages(){}
+	public static String PreferencePage_DownloadDir =
+		ch.elexis.base.l10n.Messages.PreferencePage_DownloadDir;
+	public static String PreferencePage_JMedTrasferJar =
+		ch.elexis.base.l10n.Messages.PreferencePage_JMedTrasferJar;
+	public static String PreferencePage_JMedTrasferJni =
+		ch.elexis.base.l10n.Messages.PreferencePage_JMedTrasferJni;
 }

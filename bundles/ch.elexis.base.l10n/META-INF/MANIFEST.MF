@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: I18n
+Bundle-Name: I10n
 Bundle-SymbolicName: ch.elexis.base.l10n;singleton:=true
 Bundle-Version: 3.5.0.qualifier
 Bundle-ClassPath: .

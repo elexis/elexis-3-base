@@ -14,12 +14,5 @@ package ch.elexis.base.ch.artikel.views;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.base.ch.artikel.views.messages"; //$NON-NLS-1$
-	public static String MedikamentDetailDisplay_Title;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-	
-	private Messages(){}
+	public static String  MedikamentDetailDisplay_Title = ch.elexis.base.l10n.Messages.MedikamentDetailDisplay_Title;
 }

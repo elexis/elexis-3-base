@@ -69,6 +69,10 @@
     <module>ch.elexis.base.konsextension.bildanzeige</module>
     <module>ch.elexis.base.konsextension.privatnotizen</module>
     <module>ch.elexis.base.l10n</module>
+    <module>ch.elexis.base.l10n.de</module>
+    <module>ch.elexis.base.l10n.en</module>
+    <module>ch.elexis.base.l10n.fr</module>
+    <module>ch.elexis.base.l10n.it</module>
     <module>ch.elexis.base.messages</module>
     <module>ch.elexis.base.textplugin</module>
     <module>ch.elexis.buchhaltung.basis</module>

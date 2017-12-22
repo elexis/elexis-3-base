@@ -2,7 +2,7 @@
 <feature
       id="com.hilotec.elexis.opendocument.feature"
       label="Textplugin für OpenDocument kompatible Textprogramme (von Hilotec)"
-      version="3.1.1.qualifier"
+      version="3.1.100.qualifier"
       provider-name="ch.medelexis">
 
    <description>

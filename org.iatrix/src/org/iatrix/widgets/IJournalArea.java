@@ -16,6 +16,7 @@
 package org.iatrix.widgets;
 
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Patient;
 
 /**
  * A small helper class. Areas may add code to properly update their part. The following callbacks
@@ -59,8 +60,10 @@ public interface IJournalArea {
 	 */
 	/**
 	 *
+	 * @param newPatient
+	 * 			 may be. Caller is reponsible that it belongs to the newKons if newKons is not null
 	 * @param newKons
-	 *            to set may be null
+	 *           may be null, eg. when a new patient is creted which has no kons.
 	 */
-	public void setKons(Konsultation newKons, KonsActions op);
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op);
 }

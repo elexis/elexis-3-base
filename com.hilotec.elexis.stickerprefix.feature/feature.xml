@@ -2,7 +2,7 @@
 <feature
       id="com.hilotec.elexis.stickerprefix.feature"
       label="Sticker Prefix"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="hilotec.com">
 
    <description url="http://www.example.com/description">

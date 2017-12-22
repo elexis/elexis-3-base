@@ -10,8 +10,6 @@
  ******************************************************************************/
 package ch.elexis.views;
 
-import java.util.List;
-
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -85,16 +83,12 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 	}
 	
 	private void updateLawFilter(Konsultation kons){
-		List<String> laws = TarmedLeistung.getAvailableLaws();
 		Fall fall = kons.getFall();
 		String law = "";
 		if (fall != null) {
 			String konsLaw = fall.getRequiredString("Gesetz");
-			for (String available : laws) {
-				if (available.equalsIgnoreCase(konsLaw)) {
-					law = available;
-					break;
-				}
+			if (TarmedLeistung.isAvailableLaw(konsLaw)) {
+				law = konsLaw;
 			}
 		}
 		lawFilter.setLaw(law);

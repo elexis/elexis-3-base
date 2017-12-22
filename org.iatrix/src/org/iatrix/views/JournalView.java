@@ -61,6 +61,7 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
@@ -235,7 +236,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
-				a.setKons(actKons, KonsActions.SAVE_KONS);
+				a.setKons(actKons.getFall().getPatient(), actKons, KonsActions.SAVE_KONS);
 			}
 		}
 	}
@@ -243,17 +244,26 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	/**
 	 * First ste the global variable actKons
 	 * Then updates all dependent widgets, like header, konsText konsList
+	 * @param newPatient TODO
 	 * @param newKons
 	 * @param op
 	 */
-	public synchronized static void updateAllKonsAreas(Konsultation newKons, IJournalArea.KonsActions op){
+	public synchronized static void updateAllKonsAreas(Patient newPatient, Konsultation newKons, IJournalArea.KonsActions op){
+		// Some sanity checks
+		if (newKons != null && newPatient == null)
+		{
+			newKons = null;
+			log.warn("Programming error newKons != null && newPatient == null");
+		}
+		if (newKons != null && newPatient != null && !newPatient.getId().equals(newKons.getFall().getPatient().getId()))
+		{
+			newKons = null;
+			log.warn("Programming fix NON matching patients " + op);
+		}
 		/*
 		 * Not yet sure whether comparing only the id or the whole cons is better
 		 */
 		actKons = newKons;
-		if (newKons == null) {
-			return;
-		}
 		// It is a bad idea to skip updating the kons, when the Id matches
 		// Some changes, e.g. when date of actual kons are possible even when the compare matches.
 		// Therefore we return only when we have nothing to update savedKonst == newKons?" + newId + " konsId match? " + savedKonsId.equals(newId));
@@ -261,7 +271,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
-				a.setKons(newKons, op);
+				a.setKons(newPatient, newKons, op);
 			}
 		}
 	}
@@ -308,7 +318,20 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			}
 		};
 
-	private final ElexisUiEventListenerImpl eeli_kons =
+		private final ElexisEventListener eeli_update = new ElexisUiEventListenerImpl(
+			Konsultation.class, ElexisEvent.EVENT_UPDATE) {
+			@Override
+			public void runInUi(ElexisEvent ev){
+				Konsultation actKons =
+					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				if (actKons != null) {
+					konsVerrechnung.setKons(actKons.getFall().getPatient(), actKons, KonsActions.EVENT_UPDATE);
+				}
+				log.debug(String.format("eeli_pat %s ", ev.toString()),  actKons);
+			}
+		};
+
+		private final ElexisUiEventListenerImpl eeli_kons =
 			new ElexisUiEventListenerImpl(Konsultation.class) {
 
 		@Override
@@ -335,28 +358,32 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			}
 			log.debug(String.format("eeli_pat %s %s", msg, ev.toString()),  newKons);
 			// when we get an update or select event the parameter is always not null
+			Patient newPatient = null;
+			if (newKons != null) {
+				newPatient = newKons.getFall().getPatient();
+			}
 			if ((actKons == null) || !Helpers.haveSameContent(newKons, actKons)) {
 				logEvent(newKons, "eeli_kons " + msg + " SAVE_KONS");
 				// updateAllKonsAreas(actKons, KonsActions.SAVE_KONS);
 				if (newKons != null) {
-					Patient newPatient = newKons.getFall().getPatient();
+					newPatient = newKons.getFall().getPatient();
 					if (actKons != null && !newPatient.getId().equals(actKons.getFall().getPatient().getId())) {
 						displaySelectedPatient(newPatient, "eeli_kons newPatient");
 					}
 				}
 				logEvent(newKons, "eeli_kons " + msg + " ACTIVATE_KONS");
-				updateAllKonsAreas(newKons, KonsActions.ACTIVATE_KONS);
+				updateAllKonsAreas(newPatient, newKons, KonsActions.ACTIVATE_KONS);
 			} else {
 				// Or we would simply forget to update it after
 				// add items via a konsText makro
 				if ( ev.getType() == EVENT_RELOAD) {
-					updateAllKonsAreas(newKons, KonsActions.EVENT_RELOAD);
+					updateAllKonsAreas(newPatient, newKons, KonsActions.EVENT_RELOAD);
 				}
 				if ( ev.getType() == EVENT_UPDATE) {
-					updateAllKonsAreas(newKons, KonsActions.EVENT_UPDATE);
+					updateAllKonsAreas(newPatient, newKons, KonsActions.EVENT_UPDATE);
 				}
 				if ( ev.getType() == EVENT_SELECTED) {
-					updateAllKonsAreas(newKons, KonsActions.EVENT_SELECTED);
+					updateAllKonsAreas(newPatient, newKons, KonsActions.EVENT_SELECTED);
 				}
 			}
 			actKons = newKons;
@@ -374,11 +401,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private void displaySelectedPatient(Patient selectedPatient, String why){
 		if (selectedPatient == null) {
 			logEvent(null, why + " displaySelectedPatient " + "no patient");
-			updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
+			updateAllKonsAreas(null, null, KonsActions.ACTIVATE_KONS);
 			return;
 
 		} else {
-			logEvent(null, why + " displaySelectedPatient " + selectedPatient.getId() + selectedPatient.getPersonalia());
+			logEvent(actKons, why + " displaySelectedPatient " + selectedPatient.getId() + selectedPatient.getPersonalia());
 		}
 
 		showAllChargesAction.setChecked(false);
@@ -422,6 +449,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// We do not call updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
 		// as this would overwrite the konstext when we change the patient and continue typing
 		// See Ticket #5696
+		updateAllKonsAreas(selectedPatient, konsultation, KonsActions.ACTIVATE_KONS);
+
 	}
 
 	private final ElexisUiEventListenerImpl eeli_pat =
@@ -446,15 +475,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					msg = "EVENT_RELOAD";
 					break;
 				}
-				log.debug(String.format("eeli_pat %d %s", ev.getType(), msg) +  newPat);
-				if (actKons != null && !actKons.getFall().getPatient().getId().equals(newPat.getId()))
-				{
-					updateAllKonsAreas(null, KonsActions.ACTIVATE_KONS);
-					displaySelectedPatient(newPat, "eeli_pat " + ev.getType());
-				} else {
-					formHeader.setPatient(newPat);
-					problemsArea.setPatient(newPat);
-				}
+				log.debug(String.format("eeli_pat %d %s %s", ev.getType(), msg, newPat.getPersonalia()));
+				displaySelectedPatient(newPat, "eeli_pat " + ev.getType());
 			}
 		};
 
@@ -634,12 +656,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	public void visible(boolean mode){
 		if (mode == true) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_kons, eeli_problem, eeli_pat,
-				eeli_user);
+				eeli_user, eeli_update);
 			Konsultation newKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if (newKons != null) {
-				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + newKons.getFall().getPatient().getPersonalia();
+				Patient newPatient = newKons.getFall().getPatient();
+				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + newPatient.getPersonalia();
 				logEvent(newKons, "visible true " + msg);
-				updateAllKonsAreas(newKons, KonsActions.ACTIVATE_KONS);
+				updateAllKonsAreas(newPatient, newKons, KonsActions.ACTIVATE_KONS);
 			} else
 			{
 				logEvent(newKons, "visible true newKons is null");
@@ -650,7 +673,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		} else {
 			heartbeat.enableListener(false);
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem,
-				eeli_pat, eeli_user);
+				eeli_pat, eeli_user,  eeli_update);
 		}
 	};
 

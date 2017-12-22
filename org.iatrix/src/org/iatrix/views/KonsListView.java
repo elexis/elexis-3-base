@@ -81,9 +81,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 		}
 		actPatId = (newPat != null) ? newPat.getId() : null;
 		setPatientTitel(newPat);
-		konsListDisplay.setPatient(newPat, KonsActions.ACTIVATE_KONS);
-		konsListDisplay.highlightActKons(actKons, showAllChargesAction.isChecked(),
-			showAllConsultationsAction.isChecked());
+		konsListDisplay.setKons(newPat, actKons,KonsActions.ACTIVATE_KONS);
 	}
 	private final ElexisUiEventListenerImpl eeli_pat =
 			new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED  | ElexisEvent.EVENT_DESELECTED |

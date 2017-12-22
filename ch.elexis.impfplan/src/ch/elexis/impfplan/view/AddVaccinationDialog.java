@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -77,7 +78,9 @@ public class AddVaccinationDialog extends TitleAreaDialog {
 	protected void okPressed(){
 		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 		if (sel.isEmpty()) {
-			result = null;
+			MessageDialog.openError(getShell(), Messages.AddVaccinationDialog_enterVaccinationTitle,
+				Messages.AddVaccinationDialog_enterVaccinationTextError + ".");
+			return;
 		}
 		result = (VaccinationType) sel.getFirstElement();
 		date = new TimeTool(di.getDate());

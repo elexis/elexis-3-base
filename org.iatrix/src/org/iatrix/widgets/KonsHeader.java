@@ -79,7 +79,7 @@ public class KonsHeader implements IJournalArea {
 					if (actKons != null && !actKons.getDatum().equals(new_date))  {
 						log.info("fireSelectionEvent from hlKonsultationDatum " + actKons.getDatum() + " => "+ new_date);
 						actKons.setDatum(new_date, false);
-						JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
+						JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.ACTIVATE_KONS);
 						ElexisEventDispatcher.fireSelectionEvent(actKons);
 					}
 				}
@@ -104,7 +104,7 @@ public class KonsHeader implements IJournalArea {
 				});
 				if (ksl.open() == Dialog.OK) {
 					actKons.setMandant((Mandant) ksl.getSelection());
-					setKons(actKons, KonsActions.ACTIVATE_KONS);
+					setKons(null, actKons, KonsActions.ACTIVATE_KONS);
 				}
 			}
 
@@ -139,7 +139,7 @@ public class KonsHeader implements IJournalArea {
 					if (msd.open() == 0) {
 						// TODO check compatibility of assigned problems
 						actKons.setFall(nFall);
-						setKons(actKons, KonsActions.ACTIVATE_KONS);
+						setKons(null, actKons, KonsActions.ACTIVATE_KONS);
 					}
 				}
 			}
@@ -150,8 +150,8 @@ public class KonsHeader implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation newKons, KonsActions op){
-		if (newKons == null)
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		if (newKons == null || newPatient == null)
 		{
 			actKons = newKons;
 			log.debug("setKons set actKons null");
@@ -169,8 +169,6 @@ public class KonsHeader implements IJournalArea {
 		}
 
 		log.debug("setKons set actKons to " + newKons.getId() + " vom " + newKons.getDatum() + " was " + (actKons != null ? actKons.getId() : "null"));
-		Patient newPatient = newKons.getFall().getPatient();
-		if (newPatient == null) { return; } // this should never happen as  kons always has a patient
 		log.debug("setPatient " + newPatient.getPersonalia());
 		if (actPat == null || !actPat.getId().equals(newPatient.getId())) {
 			actPat = newPatient;

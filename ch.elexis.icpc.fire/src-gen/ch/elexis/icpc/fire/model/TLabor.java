@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.11.17 um 10:56:23 AM CET 
+// Generiert: 2017.12.07 um 12:49:37 PM CET 
 //
 
 
@@ -19,11 +19,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 
 /**
- * <p>
- * Java-Klasse für tLabor complex type.
+ * <p>Java-Klasse für tLabor complex type.
  * 
- * <p>
- * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="tLabor">
@@ -42,7 +40,7 @@ import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
  *       &lt;attribute name="abnormalFlag" type="{}tString50" />
  *       &lt;attribute name="extern_ind" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
- *   &lt;/complexContent>	
+ *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
  * 

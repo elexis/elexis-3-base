@@ -29,6 +29,8 @@ public class TarmedLimitation {
 	
 	private int electronicBilling;
 	
+	private boolean skip = false;
+	
 	private TarmedLeistung tarmedLeistung;
 	private TarmedGroup tarmedGroup;
 	
@@ -423,6 +425,9 @@ public class TarmedLimitation {
 	}
 	
 	private boolean shouldSkipTest(){
+		if (skip) {
+			return skip;
+		}
 		return shouldSkipElectronicBilling();
 	}
 	
@@ -442,5 +447,9 @@ public class TarmedLimitation {
 	
 	public int getAmount(){
 		return amount;
+	}
+	
+	public void setSkip(boolean value){
+		this.skip = true;
 	}
 }

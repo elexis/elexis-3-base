@@ -62,6 +62,8 @@ public class ChapterImporter {
 					if (code.trim().equals("I")) { //$NON-NLS-1$
 						continue;
 					}
+					validFrom.set(res.getString("GUELTIG_VON"));
+					validTo.set(res.getString("GUELTIG_BIS"));
 					
 					int subcap = code.lastIndexOf('.');
 					String parentId = "NIL"; //$NON-NLS-1$
@@ -69,8 +71,6 @@ public class ChapterImporter {
 						String parentCode = code.substring(0, subcap);
 						parentId = getParentId(parentCode);
 					}
-					validFrom.set(res.getString("GUELTIG_VON"));
-					validTo.set(res.getString("GUELTIG_BIS"));
 					String id = getId(res);
 					TarmedLeistung tl = new TarmedLeistung(id, code, parentId, "", "", "", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					
@@ -110,8 +110,48 @@ public class ChapterImporter {
 		logger.debug("Imported " + tl.getLabel());
 	}
 	
-	private String getParentId(String parentCode){
-		return parentCode + "-" + validFrom.toString(TimeTool.DATE_COMPACT) //$NON-NLS-1$
+	private String getParentId(String parentCode) throws SQLException{
+		Stm source = null;
+		List<TimeTool> parentValidFroms = new ArrayList<>();
+		try {
+			source = cacheDb.getStatement();
+			try (ResultSet res = source
+				.query(String.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE=%s AND KNR=%s", //$NON-NLS-1$
+					TarmedReferenceDataImporter.ImportPrefix, lang, JdbcLink.wrap(parentCode)))) {
+				while (res != null && res.next()) {
+					String code = res.getString("KNR"); //$NON-NLS-1$
+					if (code.trim().equals("I")) { //$NON-NLS-1$
+						continue;
+					}
+					parentValidFroms.add(new TimeTool(res.getString("GUELTIG_VON")));
+				}
+			}
+		} finally {
+			if (source != null) {
+				cacheDb.releaseStatement(source);
+			}
+		}
+		if (parentValidFroms.isEmpty()) {
+			throw new IllegalStateException("No parent valid from found for " + parentCode);
+		}
+		// determine the lates matching parent valid from
+		TimeTool latestParentValidFrom = null;
+		for (TimeTool parentValidFrom : parentValidFroms) {
+			if (latestParentValidFrom == null && parentValidFrom.isBeforeOrEqual(validFrom)) {
+				latestParentValidFrom = parentValidFrom;
+				continue;
+			}
+			if (parentValidFrom.isBeforeOrEqual(validFrom)
+				&& parentValidFrom.isAfter(latestParentValidFrom)) {
+				latestParentValidFrom = parentValidFrom;
+			}
+		}
+		if (latestParentValidFrom == null) {
+			throw new IllegalStateException("No parent valid from found for " + parentCode + " in "
+				+ parentValidFroms.size() + " values");
+		}
+		
+		return parentCode + "-" + latestParentValidFrom.toString(TimeTool.DATE_COMPACT) //$NON-NLS-1$
 			+ getLawIdExtension();
 	}
 	

@@ -27,6 +27,7 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 	
 	public static final String XIDDOMAIN = "www.xid.ch/id/complementary";
 	private static final String CODESYSTEMCODE = "590";
+	public static final String CODESYSTEMNAME = "Komplementärmedizin";
 	
 	//@formatter:off
 	private static final String createDB = "CREATE TABLE " + TABLENAME + " (" +
@@ -152,6 +153,11 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 	}
 	
 	@Override
+	public boolean isDragOK(){
+		return true;
+	}
+	
+	@Override
 	public double getFactor(TimeTool date, IFall fall){
 		return 1;
 	}
@@ -179,7 +185,7 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 	
 	@Override
 	public String getCodeSystemName(){
-		return "Komplementärmedizin";
+		return CODESYSTEMNAME;
 	}
 	
 	@Override

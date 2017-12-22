@@ -98,7 +98,11 @@ public class KonsDiagnosen implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation newKons, KonsActions op){
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		if (newPatient == null || newKons == null) {
+			actKons = null;
+			updateKonsultation(true);
+		}
 		boolean konsChanged = !Helpers.twoKonsSamePatient(actKons,  newKons);
 		logEvent("setKons " + (newKons != null ? newKons.getId() +
 				" vom " + newKons.getDatum() : "null") +

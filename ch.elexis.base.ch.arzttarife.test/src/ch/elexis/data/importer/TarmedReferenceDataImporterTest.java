@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.junit.Test;
 
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.TarmedExclusive;
 import ch.elexis.data.TarmedGroup;
 import ch.elexis.data.TarmedKumulation;
@@ -177,7 +179,23 @@ public class TarmedReferenceDataImporterTest {
 		exclusives.get(0).isMatching(
 			(TarmedLeistung) TarmedLeistung.getFromCode("00.1345", new TimeTool(), null),
 			new TimeTool());
+		
+		// parents #9212
+		PreparedStatement stm = PersistentObject.getDefaultConnection().getPreparedStatement(testParentsSql);
+		try {
+			ResultSet result = stm.executeQuery();
+			assertFalse(result.next());
+		} catch (SQLException se) {
+			throw se;
+		} finally {
+			if (stm != null) {
+				PersistentObject.getDefaultConnection().releasePreparedStatement(stm);
+			}
+		}
 	}
+	
+	private static String testParentsSql =
+		"SELECT * FROM TARMED WHERE PARENT NOT IN (SELECT ID FROM TARMED) AND PARENT NOT LIKE 'NIL'";
 	
 	@Test
 	public void currentVersion(){

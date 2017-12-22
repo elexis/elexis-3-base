@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.agenda.feature"
       label="Agenda (Web)"
-      version="1.0.0.qualifier">
+      version="1.0.100.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -17,7 +17,7 @@
    </license>
 
    <requires>
-      <import feature="ch.elexis.agenda.feature" version="3.0.0.qualifier"/>
+      <import feature="ch.elexis.agenda.feature" version="3.2.0.qualifier"/>
    </requires>
 
    <plugin

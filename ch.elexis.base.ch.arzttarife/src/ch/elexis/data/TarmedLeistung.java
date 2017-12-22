@@ -34,6 +34,7 @@ import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
 import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
+import ch.elexis.data.TarmedLimitation.LimitationUnit;
 import ch.elexis.views.TarmedDetailDialog;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.JdbcLink;
@@ -408,12 +409,24 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	 */
 	public static IVerrechenbar getFromCode(@NonNull
 	final String code, @NonNull TimeTool date, @Nullable String law){
-		Query<TarmedLeistung> query = new Query<TarmedLeistung>(TarmedLeistung.class, FLD_CODE, code, TarmedLeistung.TABLENAME, new String[] {
-			TarmedLeistung.FLD_GUELTIG_VON, TarmedLeistung.FLD_GUELTIG_BIS,
+		if (availableLawsCache == null) {
+			availableLawsCache = getAvailableLaws();
+		}
+		Query<TarmedLeistung> query = new Query<TarmedLeistung>(TarmedLeistung.class, FLD_CODE,
+			code, TarmedLeistung.TABLENAME, new String[] {
+				TarmedLeistung.FLD_GUELTIG_VON, TarmedLeistung.FLD_GUELTIG_BIS,
 				TarmedLeistung.FLD_LAW, TarmedLeistung.FLD_ISCHAPTER
-		});
+			});
 		if (law != null) {
-			query.add(FLD_LAW, Query.EQUALS, law, true);
+			if (!isAvailableLaw(law)) {
+				query.startGroup();
+				query.add(FLD_LAW, Query.EQUALS, "");
+				query.or();
+				query.add(FLD_LAW, Query.EQUALS, null);
+				query.endGroup();
+			} else {
+				query.add(FLD_LAW, Query.EQUALS, law, true);
+			}
 		}
 		List<TarmedLeistung> leistungen = query.execute();
 		for (TarmedLeistung tarmedLeistung : leistungen) {
@@ -481,7 +494,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	
 	@Override
 	public boolean isDragOK(){
-		return (!StringTool.isNothing(getDigniQuali().trim()));
+		return !isChapter();
 	}
 	
 	/**
@@ -1036,6 +1049,20 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		return true;
 	}
 	
+	public static boolean isAvailableLaw(String law){
+		if (availableLawsCache == null) {
+			availableLawsCache = getAvailableLaws();
+		}
+		for (String available : availableLawsCache) {
+			if (available.equalsIgnoreCase(law)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static List<String> availableLawsCache;
+	
 	public static List<String> getAvailableLaws(){
 		List<String> ret = new ArrayList<>();
 		DBConnection connection = PersistentObject.getDefaultConnection();
@@ -1065,8 +1092,33 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 			for (String line : lines) {
 				ret.add(TarmedLimitation.of(line).setTarmedLeistung(this));
 			}
+			fix9533(ret);
 			return ret;
 		}
 		return Collections.emptyList();
+	}
+	
+	/**
+	 * Method marks {@link LimitationUnit#COVERAGE} {@link TarmedLimitation} as skip if in
+	 * combination with a {@link LimitationUnit#SESSION}. This is a WORKAROUND and should be REMOVED
+	 * after reason is fixed.
+	 * 
+	 * @param ret
+	 */
+	private void fix9533(List<TarmedLimitation> ret){
+		boolean sessionfound = false;
+		for (TarmedLimitation tarmedLimitation : ret) {
+			if(tarmedLimitation.getLimitationUnit() == LimitationUnit.SESSION) {
+				sessionfound = true;
+				break;
+			}
+		}
+		if (sessionfound) {
+			for (TarmedLimitation tarmedLimitation : ret) {
+				if (tarmedLimitation.getLimitationUnit() == LimitationUnit.COVERAGE) {
+					tarmedLimitation.setSkip(true);
+				}
+			}
+		}
 	}
 }

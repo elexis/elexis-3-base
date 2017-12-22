@@ -31,5 +31,6 @@ Export-Package: at.medevit.ch.artikelstamm.elexis.common.importer,
  at.medevit.ch.artikelstamm.elexis.common.ui.provider,
  ch.artikelstamm.elexis.common
 Service-Component: OSGI-INF/atccodeserviceconsumer.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.elexis.common.service.ArtikelstammCodeElementService.xml
+ OSGI-INF/at.medevit.ch.artikelstamm.elexis.common.service.ArtikelstammCodeElementService.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.elexis.common.service.ArticleService.xml
 Bundle-ActivationPolicy: lazy

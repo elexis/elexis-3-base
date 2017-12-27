@@ -1,20 +1,12 @@
 package ch.medshare.mediport.gui;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 public class Messages {
-	private static final String BUNDLE_NAME = "ch.medshare.mediport.gui.messages"; //$NON-NLS-1$
-	
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-	
-	private Messages(){}
-	
-	public static String getString(String key){
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
+  public static String ShowErrorInvoices_title_Antworten = ch.elexis.base.l10n.Messages.ShowErrorInvoices_title_Antworten;
+  public static String ShowErrorInvoices_msg_Rechnungsantworten = ch.elexis.base.l10n.Messages.ShowErrorInvoices_msg_Rechnungsantworten;
+  public static String ShowErrorInvoices_msg2_Rechnungsantworten = ch.elexis.base.l10n.Messages.ShowErrorInvoices_msg2_Rechnungsantworten;
+  public static String ErrorInvoiceForm_title_VerzeichnisOeffnen = ch.elexis.base.l10n.Messages.ErrorInvoiceForm_title_VerzeichnisOeffnen;
+  public static String ErrorInvoiceForm_msg_Fehlerverzeichnis = ch.elexis.base.l10n.Messages.ErrorInvoiceForm_msg_Fehlerverzeichnis;
+  public static String ErrorInvoiceForm_msg_copyStylesheet = ch.elexis.base.l10n.Messages.ErrorInvoiceForm_msg_copyStylesheet;
+  public static String ErrorInvoiceForm_error_copyStylesheet = ch.elexis.base.l10n.Messages.ErrorInvoiceForm_error_copyStylesheet;
+  public static String ErrorInvoiceForm_msg_Antwortverzeichnis = ch.elexis.base.l10n.Messages.ErrorInvoiceForm_msg_Antwortverzeichnis;
 }

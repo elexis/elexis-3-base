@@ -25,7 +25,7 @@ public class YearlySeriesComposite extends Composite {
 		
 		Label lblAtThe = new Label(this, SWT.NONE);
 		lblAtThe.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblAtThe.setText(Messages.getString("YearlySeriesComposite.lblAtThe.text")); //$NON-NLS-1$
+		lblAtThe.setText(Messages.YearlySeriesComposite_lblAtThe_text); //$NON-NLS-1$
 		
 		txtDay = new Text(this, SWT.BORDER);
 		txtDay.setTextLimit(2);
@@ -36,7 +36,7 @@ public class YearlySeriesComposite extends Composite {
 		
 		Label lblAtMonth = new Label(this, SWT.NONE);
 		lblAtMonth.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblAtMonth.setText(Messages.getString("YearlySeriesComposite.lblAtMonth.text")); //$NON-NLS-1$
+		lblAtMonth.setText(Messages.YearlySeriesComposite_lblAtMonth_text); //$NON-NLS-1$
 		
 		txtMonth = new Text(this, SWT.BORDER);
 		txtMonth.setTextLimit(2);

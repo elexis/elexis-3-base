@@ -121,7 +121,7 @@ public class Importer extends ImporterPage {
 	
 	private Result<?> importDirectFtp(){
 		Result<String> result =
-			new Result<String>(ch.elexis.laborimport.analytica.Messages.getString("Importer.ok")); //$NON-NLS-1$
+			new Result<String>(ch.elexis.laborimport.analytica.Messages.Importer_ok); //$NON-NLS-1$
 			
 		String ftpHost =
 			CoreHub.globalCfg.get(PreferencePage.FTP_HOST, PreferencePage.DEFAULT_FTP_HOST);
@@ -158,12 +158,12 @@ public class Importer extends ImporterPage {
 			}
 			
 			String header = MessageFormat.format(
-				ch.elexis.laborimport.analytica.Messages.getString("Importer.import.header"), //$NON-NLS-1$
+				ch.elexis.laborimport.analytica.Messages.Importer_import_header, //$NON-NLS-1$
 				new Object[] {
 					MY_LAB
 			});
 			String question = MessageFormat.format(
-				ch.elexis.laborimport.analytica.Messages.getString("Importer.import.message"), //$NON-NLS-1$
+				ch.elexis.laborimport.analytica.Messages.Importer_import_message, //$NON-NLS-1$
 				new Object[] {
 					hl7FileList.size(), downloadDir
 			});
@@ -176,11 +176,11 @@ public class Importer extends ImporterPage {
 		} catch (IOException e) {
 			result = new Result<String>(SEVERITY.ERROR, 1, e.getMessage(), MY_LAB, true);
 			ResultAdapter.displayResult(result,
-				ch.elexis.laborimport.analytica.Messages.getString("Importer.error.import")); //$NON-NLS-1$
+				ch.elexis.laborimport.analytica.Messages.Importer_error_import); //$NON-NLS-1$
 		} catch (FtpSemaException e) {
 			result = new Result<String>(SEVERITY.WARNING, 1, e.getMessage(), MY_LAB, true);
 			ResultAdapter.displayResult(result,
-				ch.elexis.laborimport.analytica.Messages.getString("Importer.error.import")); //$NON-NLS-1$
+				ch.elexis.laborimport.analytica.Messages.Importer_error_import); //$NON-NLS-1$
 		}
 		
 		return result;
@@ -210,12 +210,12 @@ public class Importer extends ImporterPage {
 	
 	@Override
 	public String getDescription(){
-		return ch.elexis.laborimport.analytica.Messages.getString("Importer.title.description"); //$NON-NLS-1$
+		return ch.elexis.laborimport.analytica.Messages.Importer_title_description; //$NON-NLS-1$
 	}
 	
 	@Override
 	public String getTitle(){
-		return ch.elexis.laborimport.analytica.Messages.getString("Importer.lab") + MY_LAB; //$NON-NLS-1$
+		return ch.elexis.laborimport.analytica.Messages.Importer_lab + MY_LAB; //$NON-NLS-1$
 	}
 	
 	String getBasePath(){
@@ -251,11 +251,11 @@ public class Importer extends ImporterPage {
 			
 			bFile = new Button(this, SWT.RADIO);
 			bFile.setText(
-				ch.elexis.laborimport.analytica.Messages.getString("Importer.label.importFile")); //$NON-NLS-1$
+				ch.elexis.laborimport.analytica.Messages.Importer_label_importFile); //$NON-NLS-1$
 			bFile.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			
 			Label lFile = new Label(this, SWT.NONE);
-			lFile.setText("    " + Messages.getString("ImporterPage.file")); //$NON-NLS-1$ //$NON-NLS-2$
+			lFile.setText("    " + Messages.ImporterPage_file); //$NON-NLS-1$ //$NON-NLS-2$
 			GridData gd = SWTHelper.getFillGridData(1, false, 1, false);
 			gd.horizontalAlignment = GridData.END;
 			gd.widthHint = lFile.getSize().x + 20;
@@ -264,13 +264,13 @@ public class Importer extends ImporterPage {
 			tFilename.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			
 			Button bBrowse = new Button(this, SWT.PUSH);
-			bBrowse.setText(Messages.getString("ImporterPage.browse")); //$NON-NLS-1$
+			bBrowse.setText(Messages.ImporterPage_browse); //$NON-NLS-1$
 			
 			String direktHerkunft =
-				ch.elexis.laborimport.analytica.Messages.getString("Importer.ftp.label"); //$NON-NLS-1$
+				ch.elexis.laborimport.analytica.Messages.Importer_ftp_label; //$NON-NLS-1$
 			bDirect = new Button(this, SWT.RADIO);
 			bDirect.setText(
-				ch.elexis.laborimport.analytica.Messages.getString("Importer.label.importDirect") //$NON-NLS-1$
+				ch.elexis.laborimport.analytica.Messages.Importer_label_importDirect //$NON-NLS-1$
 					+ " (" + direktHerkunft + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			bDirect.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			
@@ -357,7 +357,7 @@ public class Importer extends ImporterPage {
 						"*" //$NON-NLS-1$
 					});
 					fdl.setFilterNames(new String[] {
-						Messages.getString("ImporterPage.allFiles") //$NON-NLS-1$
+						Messages.ImporterPage_allFiles //$NON-NLS-1$
 					});
 					String filename = fdl.open();
 					if (filename == null) {

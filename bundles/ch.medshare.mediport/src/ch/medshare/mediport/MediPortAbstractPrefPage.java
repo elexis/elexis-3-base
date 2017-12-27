@@ -21,28 +21,28 @@ public abstract class MediPortAbstractPrefPage extends PreferencePage implements
 	
 	public static final String MEDIDATA_EAN = "7601001304307"; // EAN der MediData
 	
-	public static final String LBL_NEW_KEY = Messages.getString("MediPortAbstractPrefPage.lbl.Neu"); // production/test //$NON-NLS-1$
+	public static final String LBL_NEW_KEY = Messages.MediPortAbstractPrefPage_lbl_Neu; // production/test
 	
 	public static final String LBL_DOC_NO_PRINT =
-		Messages.getString("MediPortAbstractPrefPage.lbl.Nein"); //$NON-NLS-1$
+		Messages.MediPortAbstractPrefPage_lbl_Nein;
 	public static final String LBL_DOC_PRINT_COPY =
-		Messages.getString("MediPortAbstractPrefPage.lbl.Ja"); //$NON-NLS-1$
+		Messages.MediPortAbstractPrefPage_lbl_Ja;
 	
 	public static final String TIER_PAYANT = "Tiers_Payant"; //$NON-NLS-1$
 	public static final String TIER_GARANT_MANUELL = "Tiers_Garant_Manuell"; //$NON-NLS-1$
 	public static final String TIER_GARANT_DIRECT = "Tiers_Garant_Direct"; //$NON-NLS-1$
 	
 	public static final String LBL_DIST_TYPE_B =
-		Messages.getString("MediPortAbstractPrefPage.lbl.BPost"); //$NON-NLS-1$
+		Messages.MediPortAbstractPrefPage_lbl_BPost;
 	public static final String LBL_DIST_TYPE_A =
-		Messages.getString("MediPortAbstractPrefPage.lbl.APost"); //$NON-NLS-1$
+		Messages.MediPortAbstractPrefPage_lbl_APost;
 	
 	public static final String LBL_LANGUAGE_D =
-		Messages.getString("MediPortAbstractPrefPage.lbl.Deutsch"); //$NON-NLS-1$
+		Messages.MediPortAbstractPrefPage_lbl_Deutsch;
 	public static final String LBL_LANGUAGE_F =
-		Messages.getString("MediPortAbstractPrefPage.lbl.Franzoesisch"); //$NON-NLS-1$
+		Messages.MediPortAbstractPrefPage_lbl_Franzoesisch;
 	public static final String LBL_LANGUAGE_I =
-		Messages.getString("MediPortAbstractPrefPage.lbl.Italienisch"); //$NON-NLS-1$
+		Messages.MediPortAbstractPrefPage_lbl_Italienisch;
 	
 	public static final String LBL_SERVER_PRODUCTION = "production"; //$NON-NLS-1$
 	public static final String LBL_SERVER_TEST = "test"; //$NON-NLS-1$
@@ -52,9 +52,9 @@ public abstract class MediPortAbstractPrefPage extends PreferencePage implements
 	
 	public static final String LBL_SERVER_URL_PRODUKTIV =
 		VALUE_SERVER_URL_PRODUKTIV
-			+ ":" + Messages.getString("MediPortAbstractPrefPage.lbl.ProduktivServer"); //$NON-NLS-1$ //$NON-NLS-2$
+			+ ":" + Messages.MediPortAbstractPrefPage_lbl_ProduktivServer; //$NON-NLS-1$
 	public static final String LBL_SERVER_URL_TEST =
-		VALUE_SERVER_URL_TEST + ":" + Messages.getString("MediPortAbstractPrefPage.lbl.TestServer"); //$NON-NLS-1$ //$NON-NLS-2$
+		VALUE_SERVER_URL_TEST + ":" + Messages.MediPortAbstractPrefPage_lbl_TestServer; //$NON-NLS-1$
 	
 	protected final SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
 	
@@ -65,8 +65,7 @@ public abstract class MediPortAbstractPrefPage extends PreferencePage implements
 		try {
 			props = MPCProperties.reload();
 		} catch (IOException e) {
-			MessageDialog.openError(new Shell(), Messages
-				.getString("MediPortAbstractPrefPage.error.title.LoadConfiguration"), //$NON-NLS-1$
+			MessageDialog.openError(new Shell(), Messages.MediPortAbstractPrefPage_error_title_LoadConfiguration,
 				e.getMessage());
 		}
 	}

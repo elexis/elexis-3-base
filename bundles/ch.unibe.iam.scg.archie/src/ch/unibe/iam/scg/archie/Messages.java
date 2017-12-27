@@ -90,11 +90,6 @@ public class Messages extends NLS {
     public static String STATISTICS_LIST_TITLE;
     public static String STATISTIC_PARAMETERS_TITLE;
     public static String UNKNOWN;
-    public static String VIEW_CHART;
-    public static String VIEW_DASHBOARD;
-    public static String VIEW_MAIN;
-    public static String VIEW_PROGRESS;
-    public static String VIEW_SIDEBAR;
     public static String WORKING;
 
     static { // load message values from bundle file

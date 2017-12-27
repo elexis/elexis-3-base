@@ -52,7 +52,7 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
-import net.medshare.connector.aerztekasse.MessagesAK;
+import net.medshare.connector.aerztekasse.Messages;
 import net.medshare.connector.aerztekasse.data.AerztekasseSettings;
 
 public class InvoiceOutputter extends XMLExporter {
@@ -109,7 +109,7 @@ public class InvoiceOutputter extends XMLExporter {
 					@Override
 					public void run(final IProgressMonitor monitor){
 						boolean abort = false;
-						monitor.beginTask(MessagesAK.InvoiceOutputter_DoExport, rnn.size() * 3);
+						monitor.beginTask(Messages.InvoiceOutputter_DoExport, rnn.size() * 3);
 						File f = new File(outputDir);
 						f.mkdirs();
 						
@@ -126,7 +126,7 @@ public class InvoiceOutputter extends XMLExporter {
 							fileNamesXml.add(fileNameXml);
 							if (doExport(rn, filePathXml, type, false) == null) {
 								ret.add(Result.SEVERITY.ERROR, 1,
-									MessagesAK.InvoiceOutputter_ErrorInInvoice + rn.getNr(), rn,
+									Messages.InvoiceOutputter_ErrorInInvoice + rn.getNr(), rn,
 									true);
 								abort = true;
 								break;
@@ -201,9 +201,9 @@ public class InvoiceOutputter extends XMLExporter {
 										}
 										transmittedInvoicesCount++;
 										transmittedInvoices +=
-											MessagesAK.InvoiceOutputter_SuccessInvoiceNr
+											Messages.InvoiceOutputter_SuccessInvoiceNr
 												+ rn.getNr() + " : " //$NON-NLS-1$
-												+ MessagesAK.InvoiceOutputter_NewState + " : " //$NON-NLS-1$
+												+ Messages.InvoiceOutputter_NewState + " : " //$NON-NLS-1$
 												+ RnStatus.getStatusText(rn.getStatus());
 										
 										monitor.worked(1);
@@ -215,11 +215,11 @@ public class InvoiceOutputter extends XMLExporter {
 									// Übermittlung an Ärztekasse fehlgeschlagen
 									for (Rechnung rn : rnn) {
 										rn.reject(RnStatus.REJECTCODE.REJECTED_BY_PEER,
-											MessagesAK.InvoiceOutputter_TransmissionFailed
+											Messages.InvoiceOutputter_TransmissionFailed
 												+ " " + responseState + "/" + responseError); //$NON-NLS-1$ //$NON-NLS-2$
 										failedInvoicesCount++;
 										failedInvoices +=
-											MessagesAK.InvoiceOutputter_FailureInvoiceNr
+											Messages.InvoiceOutputter_FailureInvoiceNr
 												+ rn.getNr() + " : " //$NON-NLS-1$
 												+ " " + responseState + "/" + responseError; //$NON-NLS-1$ //$NON-NLS-2$
 										
@@ -234,7 +234,7 @@ public class InvoiceOutputter extends XMLExporter {
 								Iterator<Rechnung> ir = rnn.iterator();
 								Rechnung r = ir.next();
 								ret.add(Result.SEVERITY.ERROR, 1,
-									MessagesAK.InvoiceOutputter_ErrorHttpPost, r, true);
+									Messages.InvoiceOutputter_ErrorHttpPost, r, true);
 							}
 							
 						}
@@ -256,26 +256,26 @@ public class InvoiceOutputter extends XMLExporter {
 			for (Result<Rechnung>.msg errorMsg : ret.getMessages()) {
 				errorStr += errorMsg.getText() + "\n"; //$NON-NLS-1$
 			}
-			SWTHelper.alert(MessagesAK.InvoiceOutputter_ErrorInvoice + ret.get().getNr(), errorStr);
+			SWTHelper.alert(Messages.InvoiceOutputter_ErrorInvoice + ret.get().getNr(), errorStr);
 		}
 		
 		if (failedInvoicesCount > 0) {
 			if ((transmittedInvoicesCount + failedInvoicesCount) < 10) {
-				SWTHelper.showError(MessagesAK.InvoiceOutputter_TransmittedInvoicesTitle,
-					MessagesAK.InvoiceOutputter_TransmittedInvoices + transmittedInvoices
+				SWTHelper.showError(Messages.InvoiceOutputter_TransmittedInvoicesTitle,
+					Messages.InvoiceOutputter_TransmittedInvoices + transmittedInvoices
 						+ failedInvoices);
 			} else {
-				SWTHelper.showError(MessagesAK.InvoiceOutputter_TransmittedInvoicesTitle,
-					MessageFormat.format(MessagesAK.InvoiceOutputter_TransmisionAKFailure,
+				SWTHelper.showError(Messages.InvoiceOutputter_TransmittedInvoicesTitle,
+					MessageFormat.format(Messages.InvoiceOutputter_TransmisionAKFailure,
 						failedInvoicesCount, transmittedInvoicesCount));
 			}
 		} else {
 			if (transmittedInvoicesCount < 10) {
-				SWTHelper.showInfo(MessagesAK.InvoiceOutputter_TransmittedInvoicesTitle,
-					MessagesAK.InvoiceOutputter_TransmittedInvoices + transmittedInvoices);
+				SWTHelper.showInfo(Messages.InvoiceOutputter_TransmittedInvoicesTitle,
+					Messages.InvoiceOutputter_TransmittedInvoices + transmittedInvoices);
 			} else {
-				SWTHelper.showInfo(MessagesAK.InvoiceOutputter_TransmittedInvoicesTitle,
-					MessageFormat.format(MessagesAK.InvoiceOutputter_TransmisionAKSuccess,
+				SWTHelper.showInfo(Messages.InvoiceOutputter_TransmittedInvoicesTitle,
+					MessageFormat.format(Messages.InvoiceOutputter_TransmisionAKSuccess,
 						transmittedInvoicesCount));
 			}
 		}
@@ -284,7 +284,7 @@ public class InvoiceOutputter extends XMLExporter {
 	
 	@Override
 	public String getDescription(){
-		return MessagesAK.InvoiceOutputter_TransmisionAK;
+		return Messages.InvoiceOutputter_TransmisionAK;
 	}
 	
 	@Override
@@ -294,7 +294,7 @@ public class InvoiceOutputter extends XMLExporter {
 		Composite ret = new Composite(compParent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
 		Label l = new Label(ret, SWT.NONE);
-		l.setText(MessagesAK.InvoiceOutputter_InvoiceOutputDir);
+		l.setText(Messages.InvoiceOutputter_InvoiceOutputDir);
 		l.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		final Text text = new Text(ret, SWT.READ_ONLY | SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -311,7 +311,7 @@ public class InvoiceOutputter extends XMLExporter {
 				}
 			}
 		});
-		b.setText(MessagesAK.InvoiceOutputter_ChangeDir);
+		b.setText(Messages.InvoiceOutputter_ChangeDir);
 		text.setText(outputDir);
 		return ret;
 	}

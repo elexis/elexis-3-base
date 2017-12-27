@@ -32,7 +32,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	Button parity, log;
 	
 	public Preferences(){
-		super(Messages.getString("AbacusJuniorAction.ButtonName"));
+		super(Messages.AbacusJuniorAction_ButtonName);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
 	
@@ -44,24 +44,24 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Port"));
+		new Label(ret, SWT.NONE).setText(Messages.Preferences_Port);
 		ports = new Combo(ret, SWT.SINGLE);
 		ports.setItems(Connection.getComPorts());
 		ports.setText(CoreHub.localCfg.get(PORT,
-			Messages.getString("AbacusJuniorAction.DefaultPort")));
-		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Baud"));
+			Messages.AbacusJuniorAction_DefaultPort));
+		new Label(ret, SWT.NONE).setText(Messages.Preferences_Baud);
 		speed = new Text(ret, SWT.BORDER);
 		speed.setText(param[0]);
-		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Databits"));
+		new Label(ret, SWT.NONE).setText(Messages.Preferences_Databits);
 		data = new Text(ret, SWT.BORDER);
 		data.setText(param[1]);
-		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Parity"));
+		new Label(ret, SWT.NONE).setText(Messages.Preferences_Parity);
 		parity = new Button(ret, SWT.CHECK);
 		parity.setSelection(!param[2].equalsIgnoreCase("n"));
-		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Stopbits"));
+		new Label(ret, SWT.NONE).setText(Messages.Preferences_Stopbits);
 		stop = new Text(ret, SWT.BORDER);
 		stop.setText(param[3]);
-		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Log"));
+		new Label(ret, SWT.NONE).setText(Messages.Preferences_Log);
 		log = new Button(ret, SWT.CHECK);
 		log.setSelection(CoreHub.localCfg.get(LOG, "n").equalsIgnoreCase("y"));
 		return ret;

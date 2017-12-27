@@ -1,20 +1,6 @@
 package ch.medshare.util;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 public class Messages {
-	private static final String BUNDLE_NAME = "ch.medshare.util.messages"; //$NON-NLS-1$
-	
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-	
-	private Messages(){}
-	
-	public static String getString(String key){
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
+	public static String UtilFile_error_msg_invalidPath = ch.elexis.base.l10n.Messages.UtilFile_error_msg_invalidPath;
+	public static String UtilFile_error_msg_creationFailed = ch.elexis.base.l10n.Messages.UtilFile_error_msg_creationFailed;
 }

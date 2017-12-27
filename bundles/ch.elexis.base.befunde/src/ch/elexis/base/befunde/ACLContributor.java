@@ -18,11 +18,11 @@ import ch.elexis.core.model.RoleConstants;
 
 public class ACLContributor implements IACLContributor {
 	public static final ACE ACE_BEFUNDE =
-		new ACE(ACE.ACE_ROOT, "Messwert", Messages.getString("ACLContributor.messwertACLName")); //$NON-NLS-1$ //$NON-NLS-2$
+		new ACE(ACE.ACE_ROOT, "Messwert", Messages.ACLContributor_messwertACLName); //$NON-NLS-1$ 
 	public static final ACE DELETE_PARAM = new ACE(AccessControlDefaults.DELETE, "Messwertrubrik", //$NON-NLS-1$
-		Messages.getString("ACLContributor.messwertRubrikACLName")); //$NON-NLS-1$
+		Messages.ACLContributor_messwertRubrikACLName);
 	public static final ACE ADD_PARAM = new ACE(ACE_BEFUNDE, "Befund zufügen", //$NON-NLS-1$
-		Messages.getString("ACLContributor.addMesswertACLName")); //$NON-NLS-1$
+		Messages.ACLContributor_addMesswertACLName);
 		
 	public ACE[] getACL(){
 		return new ACE[] {

@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.Extensions;
+import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
 import ch.elexis.core.ui.icons.Images;
@@ -192,11 +193,11 @@ public class KonsText implements IJournalArea {
 					} else  {
 						actKons.updateEintrag(text.getContentsAsXML(), false);
 						int new_version = actKons.getHeadVersion();
-						if (new_version <= old_version ||
-								!actKons.getEintrag().getHead().contentEquals(plain)
-								) {
+						String samdasText = (new Samdas(actKons.getEintrag().getHead()).getRecordText());
+						if (new_version <= old_version || !plain.equals(samdasText)) {
 							String errMsg = "Unable to update: old_version " +
-									old_version + " new_version " + new_version;
+									old_version + " " + plain +
+									" new_version " + new_version + " " + samdasText ;
 							logEvent("updateEintrag " + errMsg + plain);
 							showUnableToSaveKons(plain, errMsg);
 						} else {

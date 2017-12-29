@@ -1294,6 +1294,8 @@ public class ProblemsTableModel implements KTableModel {
 	static class DummyProblem {}
 
 	public void setKons(Patient newPatient, Konsultation newKons) {
+		log.debug("newPat " + (newPatient == null ? "null" :  newPatient.getPersonalia()) +
+			" newKons " + (newKons == null ? "null" : newKons.getDatum())) ;
 		actKons = newKons;
 		actPatient = newPatient;
 	}

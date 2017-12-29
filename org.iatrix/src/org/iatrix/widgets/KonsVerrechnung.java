@@ -615,12 +615,10 @@ public class KonsVerrechnung implements IJournalArea {
 
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
-		if (KonsActions.ACTIVATE_KONS == op || KonsActions.EVENT_UPDATE  == op) {
-			actKons = newKons;
-			updateKonsultation();
-			verrechnungViewer.refresh();
-			updateVerrechnungSum();
-		}
+		actKons = newKons;
+		updateKonsultation();
+		verrechnungViewer.refresh();
+		updateVerrechnungSum();
 	}
 
 	@Override

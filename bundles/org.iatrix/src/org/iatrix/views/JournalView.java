@@ -327,7 +327,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				if (actKons != null) {
 					konsVerrechnung.setKons(actKons.getFall().getPatient(), actKons, KonsActions.EVENT_UPDATE);
 				}
-				log.debug(String.format("eeli_pat %s ", ev.toString()),  actKons);
+				log.debug(String.format("eeli_update %s ", ev.toString()),  actKons);
 			}
 		};
 
@@ -356,14 +356,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				removedStaleKonsLocks = true;
 				KonsTextLock.deleteObsoleteLocks(newKons);
 			}
-			log.debug(String.format("eeli_pat %s %s", msg, ev.toString()),  newKons);
+			log.debug(String.format("runInUi act %s new %s %s", actKons, msg, ev.toString()),  newKons);
 			// when we get an update or select event the parameter is always not null
 			Patient newPatient = null;
 			if (newKons != null) {
 				newPatient = newKons.getFall().getPatient();
 			}
 			if ((actKons == null) || !Helpers.haveSameContent(newKons, actKons)) {
-				logEvent(newKons, "eeli_kons " + msg + " SAVE_KONS");
 				// updateAllKonsAreas(actKons, KonsActions.SAVE_KONS);
 				if (newKons != null) {
 					newPatient = newKons.getFall().getPatient();
@@ -371,7 +370,6 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 						displaySelectedPatient(newPatient, "eeli_kons newPatient");
 					}
 				}
-				logEvent(newKons, "eeli_kons " + msg + " ACTIVATE_KONS");
 				updateAllKonsAreas(newPatient, newKons, KonsActions.ACTIVATE_KONS);
 			} else {
 				// Or we would simply forget to update it after
@@ -455,7 +453,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	private final ElexisUiEventListenerImpl eeli_pat =
 		// Soll hier auch noch auf RELOAD und UPDATE reagiert werden
-		new ElexisUiEventListenerImpl(Patient.class) {
+		new ElexisUiEventListenerImpl(Patient.class,
+			ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_RELOAD)
+	{
 
 			@Override
 			public void runInUi(ElexisEvent ev){
@@ -475,8 +475,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					msg = "EVENT_RELOAD";
 					break;
 				}
-				log.debug(String.format("eeli_pat %d %s %s", ev.getType(), msg, newPat.getPersonalia()));
-				displaySelectedPatient(newPat, "eeli_pat " + ev.getType());
+				log.debug(String.format("eeli_pat 1: %d %s %s", ev.getType(), msg, newPat.getPersonalia()));
+				displaySelectedPatient(newPat, "eeli_pat 2: " + ev.getType());
 			}
 		};
 

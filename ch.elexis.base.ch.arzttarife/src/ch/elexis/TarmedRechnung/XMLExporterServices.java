@@ -598,8 +598,11 @@ public class XMLExporterServices {
 	private static String getServiceCode(Verrechnet verrechnet){
 		String ret = verrechnet.getCode();
 		IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
-		if (verrechenbar != null && verrechenbar.getId().equals(ret)) {
-			ret = "";
+		if (verrechenbar instanceof Eigenleistung || (verrechenbar instanceof Artikel
+			&& ((Artikel) verrechenbar).get(Artikel.FLD_TYP).equals("Eigenartikel"))) {
+			if (verrechenbar.getId().equals(ret)) {
+				ret = "";
+			}
 		}
 		return ret;
 	}

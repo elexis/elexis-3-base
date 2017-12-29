@@ -1235,7 +1235,7 @@ public class ProblemsTableModel implements KTableModel {
 				refresh();
 				problemsKTable.refresh();
 			}
-			JournalView.updateAllKonsAreas(null, actKons, IJournalArea.KonsActions.EVENT_UPDATE);
+			JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, IJournalArea.KonsActions.EVENT_UPDATE);
 		}
 	}
 
@@ -1294,6 +1294,8 @@ public class ProblemsTableModel implements KTableModel {
 	static class DummyProblem {}
 
 	public void setKons(Patient newPatient, Konsultation newKons) {
+		log.debug("newPat " + (newPatient == null ? "null" :  newPatient.getPersonalia()) +
+			" newKons " + (newKons == null ? "null" : newKons.getDatum())) ;
 		actKons = newKons;
 		actPatient = newPatient;
 	}

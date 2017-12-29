@@ -193,11 +193,11 @@ public class KonsText implements IJournalArea {
 						actKons.updateEintrag(text.getContentsAsXML(), false);
 						int new_version = actKons.getHeadVersion();
 						if (new_version <= old_version ||
-								actKons.getEintrag().getHead().contentEquals(plain)
+								!actKons.getEintrag().getHead().contentEquals(plain)
 								) {
 							String errMsg = "Unable to update: old_version " +
 									old_version + " new_version " + new_version;
-							logEvent("updateEintrag " + errMsg + text.getContentsPlaintext());
+							logEvent("updateEintrag " + errMsg + plain);
 							showUnableToSaveKons(plain, errMsg);
 						} else {
 							logEvent("updateEintrag saved rev. " + new_version + " plain: " + plain);

@@ -1235,7 +1235,7 @@ public class ProblemsTableModel implements KTableModel {
 				refresh();
 				problemsKTable.refresh();
 			}
-			JournalView.updateAllKonsAreas(null, actKons, IJournalArea.KonsActions.EVENT_UPDATE);
+			JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, IJournalArea.KonsActions.EVENT_UPDATE);
 		}
 	}
 

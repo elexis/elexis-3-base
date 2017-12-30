@@ -68,7 +68,7 @@ public class Probe {
 	 */
 	public String write(Patient patient) throws PackageException{
 		if (resultat == null || resultat.isEmpty()) {
-			throw new PackageException(Messages.getString("Probe.ResultatMsg")); //$NON-NLS-1$
+			throw new PackageException(Messages.getString("Probe_ResultatMsg")); //$NON-NLS-1$
 		}
 		
 		isEnzym = false;
@@ -131,7 +131,7 @@ public class Probe {
 		}
 		
 		if (split.length < 3) {
-			throw new PackageException(Messages.getString("Probe.ResultatMsg")); //$NON-NLS-1$
+			throw new PackageException(Messages.getString("Probe_ResultatMsg")); //$NON-NLS-1$
 		}
 		return split;
 		

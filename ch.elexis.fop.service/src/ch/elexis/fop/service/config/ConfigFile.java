@@ -72,26 +72,26 @@ public class ConfigFile {
 			rendererPS.setAttribute("mime", "application/postscript");
 			renderers.appendChild(rendererPS);
 			
-			Element fontsPDF = doc.createElement("fonts");
-			Element fontsPS = doc.createElement("fonts");
-			
-			Element autodetect = doc.createElement("auto-detect");
-			Element directory = doc.createElement("directory");
-			directory.setAttribute("recursive", "true");
-			directory.setTextContent(fonts.getAbsolutePath());
-			
-			fontsPDF.appendChild(directory.cloneNode(true));
-			fontsPDF.appendChild(autodetect.cloneNode(true));
-				
-			fontsPS.appendChild(directory.cloneNode(true));
-			fontsPS.appendChild(autodetect.cloneNode(true));
-			
-			rendererPDF.appendChild(fontsPDF);
-			rendererPS.appendChild(fontsPS);		
+			rendererPDF.appendChild(getFontsDirectoryElement(fonts));
+			rendererPS.appendChild(getFontsDirectoryElement(fonts));
 		} catch (ParserConfigurationException e) {
 			LoggerFactory.getLogger(ConfigFile.class).error("Error during FOP configuration.", e);
 			throw new IllegalStateException(e);
 		}
+	}
+	
+	Element getFontsDirectoryElement(File fonts){
+		Element ret = doc.createElement("fonts");
+		
+		Element autodetect = doc.createElement("auto-detect");
+		Element directory = doc.createElement("directory");
+		directory.setAttribute("recursive", "true");
+		directory.setTextContent(fonts.getAbsolutePath());
+		
+		ret.appendChild(directory.cloneNode(true));
+		ret.appendChild(autodetect.cloneNode(true));
+		
+		return ret;
 	}
 	
 	private String getAsString(){

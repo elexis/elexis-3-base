@@ -16,17 +16,18 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
+import ch.elexis.core.ui.compatibility.ElexisFastViewUtil;
+import ch.elexis.core.ui.constants.UiResourceConstants;
+import ch.elexis.core.ui.laboratory.views.LaborView;
+import ch.elexis.core.ui.medication.views.DauerMediView;
 import ch.elexis.core.ui.views.AUF2;
 import ch.elexis.core.ui.views.AUFZeugnis;
-import ch.elexis.core.ui.medication.views.DauerMediView;
 import ch.elexis.core.ui.views.FaelleView;
 import ch.elexis.core.ui.views.FallDetailView;
 import ch.elexis.core.ui.views.KompendiumView;
 import ch.elexis.core.ui.views.KonsDetailView;
 import ch.elexis.core.ui.views.KonsListe;
 import ch.elexis.core.ui.views.PatHeuteView;
-import ch.elexis.core.ui.laboratory.views.LaborView;
-import ch.elexis.core.ui.constants.UiResourceConstants;
 import ch.elexis.core.ui.views.ReminderView;
 import ch.elexis.core.ui.views.RezeptBlatt;
 import ch.elexis.core.ui.views.RezepteView;
@@ -42,7 +43,7 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(false);
 		layout.addView(EpisodesView.ID, IPageLayout.LEFT, 0.2f, editorArea);
-		IFolderLayout ifr = layout.createFolder("zentrum", IPageLayout.RIGHT, 1.0f, editorArea); //$NON-NLS-1$
+		IFolderLayout ifr = layout.createFolder("zentrum", IPageLayout.RIGHT, 0.95f, editorArea); //$NON-NLS-1$
 		IFolderLayout obenrechts =
 			layout.createFolder("obenrechts", IPageLayout.RIGHT, 0.7f, "zentrum");
 		obenrechts.addView(EncounterView.ID);
@@ -69,9 +70,8 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		bfr.addView(AUF2.ID);
 		bfr.addView(RezepteView.ID);
 		
-		layout.addFastView(UiResourceConstants.PatientenListeView_ID);
-		layout.addFastView(DiagnosenView.ID);
-		layout.addFastView(LeistungenView.ID);
+		ElexisFastViewUtil.addToFastViewAfterPerspectiveOpened(ID,
+			UiResourceConstants.PatientenListeView_ID, DiagnosenView.ID, LeistungenView.ID);
 		
 		layout.addShowViewShortcut(EpisodesView.ID);
 		layout.addShowViewShortcut(EncounterView.ID);
@@ -81,5 +81,4 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		layout.addShowViewShortcut(ReminderView.ID);
 		layout.addShowViewShortcut(DauerMediView.ID);
 	}
-	
 }

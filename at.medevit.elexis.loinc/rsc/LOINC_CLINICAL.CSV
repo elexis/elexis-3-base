@@ -1,0 +1,89 @@
+LOINC_NUM,LONGNAME,SHORTNAME,CLASS
+8302-2,Body height,Body height,CLIN
+8306-3,Body height --lying,Body height,CLIN
+3137-7,Body height Measured,Body height,CLIN
+8308-9,Body height --standing,Body height,CLIN
+3138-5,Body height Stated,Body height,CLIN
+29463-7,Body weight,Body weight,CLIN
+75292-3,Body weight - Reported --usual,Body weight,CLIN
+3141-9,Body weight Measured,Body weight,CLIN
+8350-1,Body weight Measured --with clothes,Body weight,CLIN
+8351-9,Body weight Measured --without clothes,Body weight,CLIN
+3142-7,Body weight Stated,Body weight,CLIN
+79348-9,Body weight --used for drug calculation,Body weight,CLIN
+9843-4,Head Occipital-frontal circumference,Circumference.occipital-frontal,CLIN
+8290-9,Head Occipital-frontal circumference --at birth- by Tape measure,Circumference.occipital-frontal,CLIN
+8291-7,Head Occipital-frontal circumference --at birth- by US,Circumference.occipital-frontal,CLIN
+8287-5,Head Occipital-frontal circumference by Tape measure,Circumference.occipital-frontal,CLIN
+8288-3,Head Occipital-frontal circumference by US,Circumference.occipital-frontal,CLIN
+60955-2,Airway temperature,Body temperature,CLIN
+60835-6,Arterial blood temperature,Body temperature,CLIN
+8328-7,Axillary temperature,Body temperature,CLIN
+76278-1,Bladder temperature via Foley,Body temperature,CLIN
+60834-9,Blood temperature,Body temperature,CLIN
+8310-5,Body temperature,Body temperature,CLIN
+8329-5,Body temperature - Core,Body temperature,CLIN
+8330-3,Body temperature - Intravascular,Body temperature,CLIN
+75539-7,Body temperature - Temporal artery,Body temperature,CLIN
+8334-5,Body temperature - Urinary bladder,Body temperature,CLIN
+8309-7,Body temperature from Pediatric incubator,Body temperature,CLIN
+76011-6,Ear temperature,Body temperature,CLIN
+60836-4,Esophageal temperature,Body temperature,CLIN
+61009-7,Myocardial temperature,Body temperature,CLIN
+76010-8,Nasal temperature,Body temperature,CLIN
+60838-0,Nasopharyngeal temperature,Body temperature,CLIN
+8331-1,Oral temperature,Body temperature,CLIN
+8332-9,Rectal temperature,Body temperature,CLIN
+8333-7,Tympanic membrane temperature,Body temperature,CLIN
+75987-8,Venous blood temperature,Body temperature,CLIN
+9279-1,Respiratory rate,Breaths,CLIN
+76170-0,Respiratory rate by Acoustic measurement,Breaths,CLIN
+76171-8,Respiratory rate by Airway flow measurement,Breaths,CLIN
+76172-6,Respiratory rate by Carbon dioxide measurement,Breaths,CLIN
+76270-8,Respiratory rate by Impedance.transthoracic,Breaths,CLIN
+76174-2,Respiratory rate by Pulse oximetry.plethysmograph,Breaths,CLIN
+8867-4,Heart rate,Heart rate,CLIN
+73795-7,Heart rate Blood Postductal Pulse oximetry,Heart rate,CLIN
+73799-9,Heart rate Blood Preductal Pulse oximetry,Heart rate,CLIN
+76477-9,Heart rate by Noninvasive,Heart rate,CLIN
+8889-8,Heart rate by Pulse oximetry,Heart rate,CLIN
+76476-1,Heart rate by Transthoracic impedance,Heart rate,CLIN
+8890-6,Heart rate Cardiac apex by Auscultation,Heart rate,CLIN
+8891-4,Heart rate Cardiac apex by palpation,Heart rate,CLIN
+60978-4,Heart rate Intra arterial line by Invasive,Heart rate,CLIN
+8893-0,Heart rate Peripheral artery by palpation,Heart rate,CLIN
+8892-2,Heart rate Peripheral artery by US.doppler,Heart rate,CLIN
+8496-2,Brachial artery Diastolic blood pressure,Intravascular diastolic,CLIN
+8462-4,Diastolic blood pressure,Intravascular diastolic,CLIN
+75995-1,Diastolic blood pressure by Continuous non-invasive monitoring,Intravascular diastolic,CLIN
+76535-4,Diastolic blood pressure by Noninvasive,Intravascular diastolic,CLIN
+76213-8,Invasive Diastolic blood pressure,Intravascular diastolic,CLIN
+8502-7,Brachial artery Mean blood pressure,Intravascular mean,CLIN
+76214-6,Invasive Mean blood pressure,Intravascular mean,CLIN
+8478-0,Mean blood pressure,Intravascular mean,CLIN
+75996-9,Mean blood pressure by Continuous non-invasive monitoring,Intravascular mean,CLIN
+76536-2,Mean blood pressure by Noninvasive,Intravascular mean,CLIN
+8508-4,Brachial artery Systolic blood pressure,Intravascular systolic,CLIN
+76215-3,Invasive Systolic blood pressure,Intravascular systolic,CLIN
+8480-6,Systolic blood pressure,Intravascular systolic,CLIN
+75997-7,Systolic blood pressure by Continuous non-invasive monitoring,Intravascular systolic,CLIN
+76534-7,Systolic blood pressure by Noninvasive,Intravascular systolic,CLIN
+8479-8,Systolic blood pressure by palpation,Intravascular systolic,CLIN
+2710-2,Deprecated Oxygen saturation in Capillary blood by Oximetry,Oxygen saturation,CLIN
+51733-4,Oxygen saturation Calculated from oxygen partial pressure in Arterial blood,Oxygen saturation,CLIN
+2713-6,Oxygen saturation Calculated from oxygen partial pressure in Blood,Oxygen saturation,CLIN
+51732-6,Oxygen saturation Calculated from oxygen partial pressure in Capillary blood,Oxygen saturation,CLIN
+74105-8,Oxygen saturation Calculated from oxygen partial pressure in Mixed venous blood,Oxygen saturation,CLIN
+51731-8,Oxygen saturation Calculated from oxygen partial pressure in Venous blood,Oxygen saturation,CLIN
+2708-6,Oxygen saturation in Arterial blood,Oxygen saturation,CLIN
+59408-5,Oxygen saturation in Arterial blood by Pulse oximetry,Oxygen saturation,CLIN
+28642-7,Oxygen saturation in Arterial cord blood,Oxygen saturation,CLIN
+20564-1,Oxygen saturation in Blood,Oxygen saturation,CLIN
+59418-4,Oxygen saturation in Blood Postductal by Pulse oximetry,Oxygen saturation,CLIN
+59407-7,Oxygen saturation in Blood Preductal by Pulse oximetry,Oxygen saturation,CLIN
+2709-4,Oxygen saturation in Capillary blood,Oxygen saturation,CLIN
+68363-1,Oxygen saturation in Cord blood,Oxygen saturation,CLIN
+19224-5,Oxygen saturation in Mixed venous blood,Oxygen saturation,CLIN
+2711-0,Oxygen saturation in Venous blood,Oxygen saturation,CLIN
+28643-5,Oxygen saturation in Venous cord blood,Oxygen saturation,CLIN
+85354-9,Blood pressure panel with all children optional ,BP pnl w all optional,CLIN

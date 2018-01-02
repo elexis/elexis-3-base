@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IDiagnose;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;

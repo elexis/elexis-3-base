@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ch.elexis.base</groupId>
   <artifactId>elexis-3-base</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.4.0-SNAPSHOT</version>
   <properties>
     <tycho-version>1.0.0</tycho-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -11,7 +11,8 @@
     <juno-repo.url>http://download.eclipse.org/releases/juno</juno-repo.url>
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <repo_name>elexis.3.base</repo_name>
-    <useBranch>master</useBranch>
+    <git.core.branch>master</git.core.branch>
+    <git.target.branch>master</git.target.branch>
     <nonElexisP2variant>master</nonElexisP2variant>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
@@ -133,6 +134,8 @@
   <module>at.medevit.elexis.inbox.ui</module>
   <module>at.medevit.elexis.inbox.core.ui</module>
   <module>at.medevit.elexis.inbox.core.elements</module>
+  <module>at.medevit.elexis.outbox</module>
+  <module>at.medevit.elexis.outbox.ui</module>
   <module>at.medevit.elexis.inbox.feature</module>
   <module>ch.elexis.laborimport_labtop</module>
   <module>ch.elexis.laborimport_labtop.feature</module>
@@ -216,8 +219,6 @@
   <module>com.hilotec.elexis.stickerprefix</module>
   <module>com.hilotec.elexis.toolbar.feature</module>
   <module>com.hilotec.elexis.toolbar</module>
-  <!--module>de.fhdo.elexis.perspective</module>
-  <module>de.fhdo.elexis.perspective.feature</module-->
   <module>org.iatrix</module>
   <module>org.iatrix.feature</module>
   <module>org.iatrix.bestellung.rose</module>
@@ -248,16 +249,17 @@
   <module>ch.novcom.mednet.elexis</module>
   <module>ch.elexis.barcode.scanner</module>
   <module>ch.elexis.barcode.scanner.feature</module>
+  <module>ch.elexis.ebanking</module>
 </modules>
 <repositories>
   <repository>
-    <id>elexis.3.target.${useBranch}</id>
-    <url>http://download.elexis.info/elexis/p2/master/target</url>
+    <id>elexis.3.target</id>
+    <url>http://download.elexis.info/elexis/${git.target.branch}/p2/target</url>
     <layout>p2</layout>
   </repository>
    <repository>
-    <id>elexis.3.core.${useBranch}</id>
-    <url>http://download.elexis.info/elexis/p2/${useBranch}/elexis-3-core</url>
+    <id>elexis.3.core</id>
+    <url>http://download.elexis.info/elexis/${git.core.branch}/p2/elexis-3-core</url>
     <layout>p2</layout>
   </repository>
 </repositories>
@@ -344,45 +346,6 @@ if ( System.getProperty("git_branch") == null ) {
         </configuration>
 			<version>2.17</version>
 		</plugin>
-		<plugin>
-      <groupId>org.eclipse.tycho.extras</groupId>
-      <artifactId>tycho-source-feature-plugin</artifactId>
-      <version>${tycho-extras.version}</version>
-      <executions>
-        <execution>
-          <id>source-feature</id>
-          <phase>package</phase>
-          <goals>
-            <goal>source-feature</goal>
-          </goals>
-          <configuration>
-            <excludes>
-              <plugin id="bcprov"/>
-              <plugin id="bouncycastle.bcprov"/>
-              <plugin id="bouncycastle.bcprov-jdk14"/>
-              <plugin id="de.kupzog.ktable"/>
-              <plugin id="javax.xml"/>
-              <plugin id="jfree.chart"/>
-              <plugin id="jfree.chart-experimental"/>
-              <plugin id="jfree.chart-swt"/>
-              <plugin id="jfree.jcommon"/>
-              <plugin id="junit"/>
-              <plugin id="edu.emory.mathcs.backport"/>            
-              <plugin id="org.apache.commons.io"/>
-              <plugin id="org.apache.commons.exec"/>
-              <plugin id="org.apache.commons.logging"/>
-              <plugin id="org.apache.httpcomponents.httpclient"/>
-              <plugin id="org.apache.httpcomponents.httpcore"/>
-              <plugin id="org.apache.xerces"/>
-              <plugin id="org.apache.xml.resolver"/>
-              <plugin id="org.apache.xml.serializer"/>
-              <plugin id="xerces.Impl"/>
-              <plugin id="xml-apis"/>
-            </excludes>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
     <plugin>
       <groupId>org.eclipse.tycho</groupId>
       <artifactId>tycho-p2-plugin</artifactId>
@@ -449,18 +412,6 @@ if ( System.getProperty("git_branch") == null ) {
           </environment>
         </environments>
       </configuration>
-    </plugin>
-    <plugin>
-      <groupId>org.eclipse.tycho</groupId>
-      <artifactId>tycho-source-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>plugin-source</id>
-          <goals>
-            <goal>plugin-source</goal>
-          </goals>
-        </execution>
-      </executions>
     </plugin>
   </plugins>
   <pluginManagement>
@@ -547,14 +498,6 @@ Without it Maven would put two versions of each class file into the jars
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-surefire-plugin</artifactId>
         <version>${tycho-version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-source-plugin</artifactId>
-        <version>${tycho-version}</version>
-        <configuration>
-          <strictSrcIncludes>false</strictSrcIncludes>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>

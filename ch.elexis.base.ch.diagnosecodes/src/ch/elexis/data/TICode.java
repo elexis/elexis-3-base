@@ -18,16 +18,17 @@ import java.util.Hashtable;
 import java.util.List;
 
 import ch.elexis.base.ch.ticode.TessinerCode;
-import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IDiagnose;
 /**
  * Die Tessinercodes werden nicht in der Datenbank vorgehalten, sondern sind aus Effizientgründen
  * hier in dieser Klasse fest verdrahtet. Die Klasse ist trotzdem im data-Package, um die
  * Programmierkonsistenz zu wahren.
  * 
  * @author Gerry
- * 
+ * @deprecated please switch to ch.elexis.base.ch.ticode
  */
-public class TICode extends PersistentObject implements IDiagnose {
+public class TICode extends PersistentObject implements ICodeElement, IDiagnose {
 	private static Hashtable<String, TICode> hash = new Hashtable<String, TICode>();
 	private String Text;
 	

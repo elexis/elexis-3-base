@@ -2,20 +2,23 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.07.03 um 12:21:08 PM CEST 
+// Generiert: 2017.12.07 um 12:49:37 PM CET 
 //
 
 
 package ch.elexis.icpc.fire.model;
 
 import java.math.BigInteger;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 
 /**
  * <p>Java-Klasse für tDoctor complex type.
@@ -63,6 +66,7 @@ public class TDoctor {
     protected String system;
     @XmlAttribute(name = "geburtstag")
     @XmlSchemaType(name = "date")
+	@XmlJavaTypeAdapter(DateAdapter.class)
     protected XMLGregorianCalendar geburtstag;
 
     /**

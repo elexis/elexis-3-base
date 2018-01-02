@@ -42,7 +42,6 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -96,7 +95,7 @@ public class KonsListComposite {
 				if (verrechenbar != null) {
 					String vClass = verrechenbar.getClass().getName();
 					if (vClass.equals("ch.elexis.data.TarmedLeistung")) {
-						String nick = ((PersistentObject) verrechnet.getVerrechenbar()).get("Nick");
+						String nick = verrechenbar.getText();
 						if (!StringTool.isNothing(nick)) {
 							name = nick;
 						}
@@ -159,9 +158,8 @@ public class KonsListComposite {
 		composite.setLayoutData(layoutData);
 	}
 
-	public void setKonsultationen(List<KonsData> konsultationen, Konsultation actKons){
+	public void setKonsultationen(List<KonsData> konsultationen){
 		this.konsultationen = konsultationen;
-		this.actKons = actKons;
 		refreshAllKons();
 	}
 
@@ -232,9 +230,6 @@ public class KonsListComposite {
 			loadingLabel.setVisible(false);
 			sashLeft.setVisible(konsultationen.size() > 0);
 			sashRight.setVisible(konsultationen.size() > 0);
-			if (actKons == null && (actKons = konsultationen.get(0).konsultation) != null) {
-				log.debug("refreshAllKons for " + widgetRows.size() + " setting actKons to " + actKons.getId());
-			}
 			refeshHyperLinks(actKons);
 		} else {
 			loadingLabel.setVisible(false);
@@ -675,7 +670,7 @@ public class KonsListComposite {
 			if (konsultation != null) {
 				String lineSeparator = System.getProperty("line.separator");
 
-				konsTitle = konsultation.getLabel();
+				konsTitle = konsultation.getLabel() + " für " + konsultation.getFall().getPatient().getPersonalia();
 				if (!Helpers.hasRightToChangeConsultations(konsultation, false)) {
 					konsTitle = konsTitle + " Nicht editierbar (Zugriffsrechte/Verrechnet)";
 				}

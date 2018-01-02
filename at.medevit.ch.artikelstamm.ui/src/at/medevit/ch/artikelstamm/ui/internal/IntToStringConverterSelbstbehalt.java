@@ -10,10 +10,12 @@ public class IntToStringConverterSelbstbehalt extends Converter {
 	
 	@Override
 	public Object convert(Object fromObject){
-		int value = (Integer) fromObject;
-		if (value >= 0)
-			return value + "";
-		return "--";
+		if (fromObject instanceof Integer) {
+			int value = (Integer) fromObject;
+			if (value >= 0)
+				return value + "";
+		}
+		return null;
 	}
 	
 }

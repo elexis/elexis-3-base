@@ -123,7 +123,19 @@ public interface IArtikelstammItem {
 	public boolean isCalculatedPrice();
 	
 	/**
+	 * De-/activate the manual price override.
+	 * 
+	 * @param selection
+	 */
+	public void setUserDefinedPrice(boolean selection);
+	
+	/**
 	 * @return whether this price is set by the user
 	 */
 	public boolean isUserDefinedPrice();
+	
+	/**
+	 * @return referenced product id or for type product the id itself
+	 */
+	public String getProductId();
 }

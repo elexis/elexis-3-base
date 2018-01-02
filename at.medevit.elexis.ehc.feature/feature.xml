@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.ehc.feature"
       label="e Health Connector for Elexis"
-      version="3.3.0.qualifier"
+      version="3.3.100.qualifier"
       provider-name="medevit">
 
    <description url="http://www.example.com/description">
@@ -19,6 +19,8 @@
 
    <requires>
       <import feature="at.medevit.elexis.inbox.feature" version="3.0.0.qualifier"/>
+      <import plugin="org.eclipse.emf.ecore.xmi"/>
+      <import plugin="org.eclipse.emf.ecore"/>
    </requires>
 
    <plugin
@@ -30,20 +32,6 @@
 
    <plugin
          id="at.medevit.elexis.ehc.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.emf.ecore"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.emf.ecore.xmi"
          download-size="0"
          install-size="0"
          version="0.0.0"

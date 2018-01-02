@@ -11,11 +11,10 @@
         Lucia Amman, bug fixes and improvements
     Sponsors: M. + P. Richter
  -->
-
 <feature
       id="at.medevit.elexis.gdt.feature"
       label="Unterstützung Gerätedatenträger GDT"
-      version="3.1.0.qualifier"
+      version="3.1.100.qualifier"
       provider-name="medevit.at">
 
    <description url="http://www.medelexis.ch">

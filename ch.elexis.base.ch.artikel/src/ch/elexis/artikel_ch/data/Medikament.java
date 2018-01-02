@@ -14,14 +14,10 @@ package ch.elexis.artikel_ch.data;
 import java.util.Map;
 
 import ch.elexis.data.Artikel;
-import ch.elexis.data.Query;
 
 public class Medikament extends Artikel {
 	
-	static {
-		transferAllStockInformationToNew32StockModel(new Query<Medikament>(Medikament.class),
-			Medikament.class);
-	}
+	public static final String CODESYSTEM_NAME = "Medikamente";
 	
 	@Override
 	protected String getConstraint(){
@@ -34,7 +30,7 @@ public class Medikament extends Artikel {
 	
 	@Override
 	public String getCodeSystemName(){
-		return "Medikamente";
+		return CODESYSTEM_NAME;
 	}
 	
 	@Override

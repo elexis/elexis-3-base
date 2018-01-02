@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.molemax.feature"
       label="Molemax: Aufzeichnung von Hautbildern und Dokumentation der Entwicklung"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="ch.elexis">
 
   <description>

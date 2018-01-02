@@ -2,7 +2,7 @@
 <feature
       id="ch.weirich.templator.pages.feature"
       label="Templator Add-On für Apple iWork Pages"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="weirich@elexis.ch">
 
    <description>

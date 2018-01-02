@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="at.medevit.elexis.inbox.feature"
-      label="Inbox"
-      version="3.0.0.qualifier"
+      label="Inbox &amp; Outbox"
+      version="3.0.100.qualifier"
       provider-name="medevit.at">
 
    <description url="http://www.medelexis.ch">
@@ -41,6 +41,20 @@
 
    <plugin
          id="at.medevit.elexis.inbox.core.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="at.medevit.elexis.outbox"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="at.medevit.elexis.outbox.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

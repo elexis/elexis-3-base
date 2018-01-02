@@ -1,6 +1,7 @@
 package at.medevit.elexis.ehc.ui.vacdoc.preferences;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -25,12 +26,15 @@ public class MeineImpfungenPreferences extends FieldEditorPreferencePage
 	@Override
 	protected void createFieldEditors(){
 		FieldEditor editor;
-		editor = new FileFieldEditor(MeineImpfungenService.CONFIG_TRUSTSTORE_PATH, "Truststore",
-			getFieldEditorParent());
-		addField(editor);
 		
-		editor = new PasswordFieldEditor(MeineImpfungenService.CONFIG_TRUSTSTORE_PASS,
-			"Truststore Passwort", getFieldEditorParent());
+		editor = new ComboFieldEditor(MeineImpfungenService.CONFIG_ENDPOINT, "Betriebsart",
+			new String[][] {
+				{
+					"Produktiv", MeineImpfungenService.ENDPOINT_PRODUCTIV
+				}, {
+					"Test", MeineImpfungenService.ENDPOINT_TEST
+				}
+			}, getFieldEditorParent());
 		addField(editor);
 		
 		editor = new FileFieldEditor(MeineImpfungenService.CONFIG_KEYSTORE_PATH, "Keystore",

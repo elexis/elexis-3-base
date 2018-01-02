@@ -16,7 +16,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.elexis.data.Artikel;
-import ch.elexis.data.Query;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
@@ -25,11 +24,6 @@ public class MiGelArtikel extends Artikel {
 	public static final String MIGEL_NAME = "MiGeL";
 	
 	static Pattern pattern = Pattern.compile("([a-z0-9A-Z])([A-Z][a-z])");
-	
-	static {
-		transferAllStockInformationToNew32StockModel(new Query<MiGelArtikel>(MiGelArtikel.class),
-			MiGelArtikel.class);
-	}
 	
 	public MiGelArtikel(String code, String text, String unit, Money price){
 		create(MIGEL_NAME + code); //$NON-NLS-1$

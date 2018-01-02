@@ -25,6 +25,13 @@
             fastViewWidthRatio="0.2"
             id="org.iatrix.views.JournalView"
             name="KG Iatrix"/>
+      <view
+            allowMultiple="true"
+            category="org.iatrix"
+            class="org.iatrix.views.IatrixOverview"
+            fastViewWidthRatio="0.2"
+            id="org.iatrix.views.IatrixOverview"
+            name="Iatrix Patientenübersicht"/>
       <category
             id="org.iatrix"
             name="Iatrix"/>

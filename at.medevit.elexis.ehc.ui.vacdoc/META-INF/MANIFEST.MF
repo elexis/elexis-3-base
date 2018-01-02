@@ -16,8 +16,11 @@ Require-Bundle: at.medevit.elexis.ehc.vacdoc;bundle-version="1.0.0",
  ch.elexis.core.ui,
  org.eclipse.core.expressions;bundle-version="3.4.400"
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.commons.io,
+Import-Package: at.medevit.elexis.outbox.model,
+ org.apache.commons.io,
  org.eclipse.core.runtime;version="3.4.0",
  org.osgi.service.component.annotations;version="1.2.0"
 Service-Component: OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent.xml,
- OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder.xml
+ OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder.xml,
+ OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.OutboxElementServiceHolder.xml,
+ OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.EhcCoreServiceHolder.xml

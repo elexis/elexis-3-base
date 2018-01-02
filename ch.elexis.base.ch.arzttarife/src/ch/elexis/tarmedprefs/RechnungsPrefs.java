@@ -20,6 +20,13 @@ import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -56,7 +63,10 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
+import ch.elexis.data.TarmedLeistung;
+import ch.elexis.data.TarmedLeistung.MandantType;
 import ch.elexis.data.TrustCenters;
+import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
 
 public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferencePage {
@@ -93,6 +103,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	// Button bWithImage;
 	
 	private ResponsibleComposite responsible;
+	private ComboViewer cvMandantType;
 
 	static TarmedACL ta = TarmedACL.getInstance();
 	
@@ -150,6 +161,55 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		hTreat.addHyperlinkListener(hDetailListener);
 		tTreat = new Text(adrs, SWT.BORDER | SWT.READ_ONLY);
 		tTreat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
+		Label lMandantType = new Label(adrs, SWT.NONE);
+		lMandantType.setText(Messages.getString("RechnungsPrefs.MandantType")); //$NON-NLS-1$
+		lMandantType.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
+		cvMandantType = new ComboViewer(adrs);
+		cvMandantType.setContentProvider(new ArrayContentProvider());
+		cvMandantType.setLabelProvider(new LabelProvider() {
+			public String getText(Object element){
+				if (element instanceof MandantType) {
+					return Messages
+						.getString("RechnungsPrefs.MandantType." + ((MandantType) element).name());
+				}
+				return element.toString();
+			};
+		});
+		cvMandantType.setInput(MandantType.values());
+		cvMandantType.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				ISelection selection = event.getSelection();
+				if (selection instanceof StructuredSelection && !selection.isEmpty()) {
+					Object element = ((StructuredSelection) selection).getFirstElement();
+					if (element instanceof MandantType) {
+						if (actMandant != null) {
+							TarmedLeistung.setMandantType(actMandant, (MandantType) element);
+						}
+					}
+				}
+			}
+		});
+		cvMandantType.getCombo().setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
+		// bills electronically
+		bBillsElec = new Button(adrs, SWT.CHECK);
+		bBillsElec.setText("Bills electronically");
+		if (actMandant != null) {
+			bBillsElec.setSelection(CoreHub.getUserSetting(actMandant)
+				.get(PreferenceConstants.BILL_ELECTRONICALLY, false));
+		}
+		bBillsElec.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				Settings settings = CoreHub.getUserSetting(actMandant);
+				settings.set(PreferenceConstants.BILL_ELECTRONICALLY,
+					bBillsElec.getSelection());
+				settings.flush();
+			}
+		});
 		
 		// Finanzinstitut
 		// TODO better layout
@@ -287,19 +347,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		gResponsible.setLayout(new FillLayout());
 		gResponsible.setText("Responsible Doctor");
 		responsible = new ResponsibleComposite(gResponsible, SWT.NONE);
-
-		// bills electronically
-		bBillsElec = new Button(ret, SWT.CHECK);
-		bBillsElec.setText("Bills electronically");
-		bBillsElec.setSelection(CoreHub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY,
-			false));
-		bBillsElec.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				CoreHub.mandantCfg.set(PreferenceConstants.BILL_ELECTRONICALLY,
-					bBillsElec.getSelection());
-			}
-		});
+		
 		/*
 		 * bUseEDA=new Button(gTC,SWT.CHECK); bUseEDA.setText(Messages.getString(
 		 * "RechnungsPrefs.TrustCewntereDA")); //$NON-NLS-1$ bUseEDA.addSelectionListener(new
@@ -550,6 +598,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		actMandant = m;
 		
 		tTreat.setText(actMandant.getLabel());
+		cvMandantType
+			.setSelection(new StructuredSelection(TarmedLeistung.getMandantType(actMandant)));
 		
 		actBank = Kontakt.load(actMandant.getInfoString(ta.RNBANK));
 		if (actBank != null && actBank.isValid()) {
@@ -568,6 +618,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		//bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
 		//bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
 		cbTC.setText(TarmedRequirements.getTCName(actMandant)); // actMandant.getInfoString(PreferenceConstants.TARMEDTC));
+		
+		bBillsElec.setSelection(
+			CoreHub.getUserSetting(actMandant).get(PreferenceConstants.BILL_ELECTRONICALLY, false));
 		
 		responsible.setMandant(m);
 	}

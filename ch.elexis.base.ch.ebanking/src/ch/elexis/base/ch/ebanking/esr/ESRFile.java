@@ -14,14 +14,18 @@ package ch.elexis.base.ch.ebanking.esr;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import ch.elexis.data.Query;
+import ch.elexis.ebanking.parser.Camt054Parser;
+import ch.elexis.ebanking.parser.Camt054Record;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
@@ -70,34 +74,57 @@ public class ESRFile {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4,
 				Messages.ESRFile_file_already_read, null, true);
 		}
-		try {
-			InputStreamReader ir = new InputStreamReader(new FileInputStream(file));
-			BufferedReader br = new BufferedReader(ir);
-			String in;
-			// String date=new TimeTool().toString(TimeTool.DATE_COMPACT);
-			LinkedList<String> records = new LinkedList<String>();
-			while ((in = br.readLine()) != null) {
-				for (int i = 0; i < in.length(); i += 128) {
-					int eidx = i + 125;
-					if (eidx >= in.length()) {
-						eidx = in.length() - 1;
-					}
-					records.add(in.substring(i, eidx));
-				}
-			}
-			for (String s : records) {
-				ESRRecord esr = new ESRRecord(hash, s);
-				list.add(esr);
-				monitor.worked(1);
-			}
-			return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false); //$NON-NLS-1$
+		String fileName = file.getName();
+		if ("xml".equalsIgnoreCase(FilenameUtils.getExtension(fileName))) {
 			
-		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3,
-				Messages.ESRFile_ExceptionParsing, list, true);
+			try (InputStream inputStream = new FileInputStream(file)) {
+				Camt054Parser camt054Parser = new Camt054Parser();
+				List<Camt054Record> inputs = camt054Parser.parseRecords(inputStream);
+				
+				for (Camt054Record camt054Record : inputs) {
+					ESRRecord esr = new ESRRecord(hash, camt054Record);
+					list.add(esr);
+					monitor.worked(1);
+					
+				}
+				return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false); //$NON-NLS-1$
+			}
+			catch (Exception ex) {
+				ExHandler.handle(ex);
+				return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3,
+					Messages.ESRFile_ExceptionParsing, list, true);
+			}
 		}
-		
+		else
+		{
+			try (InputStreamReader ir = new InputStreamReader(new FileInputStream(file));
+					BufferedReader br = new BufferedReader(ir))
+				{
+					String in;
+					// String date=new TimeTool().toString(TimeTool.DATE_COMPACT);
+					LinkedList<String> records = new LinkedList<String>();
+					while ((in = br.readLine()) != null) {
+						for (int i = 0; i < in.length(); i += 128) {
+							int eidx = i + 125;
+							if (eidx >= in.length()) {
+								eidx = in.length() - 1;
+							}
+							records.add(in.substring(i, eidx));
+						}
+					}
+					for (String s : records) {
+						ESRRecord esr = new ESRRecord(hash, s);
+						list.add(esr);
+						monitor.worked(1);
+					}
+				
+				return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false); //$NON-NLS-1$
+			} catch (Exception ex) {
+				ExHandler.handle(ex);
+				return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3,
+					Messages.ESRFile_ExceptionParsing, list, true);
+			}
+		}
 	}
 	
 	public List<ESRRecord> getLastResult(){

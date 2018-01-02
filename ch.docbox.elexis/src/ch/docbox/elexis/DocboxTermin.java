@@ -53,10 +53,16 @@ public class DocboxTermin {
 	
 	public boolean loadTermin(String id){
 		elexisTermin = Termin.load(id);
+		if(!elexisTermin.exists()) {
+			elexisTermin = null;
+		}
 		if (elexisTermin != null && elexisTermin.isDeleted()) {
 			elexisTermin.undelete();
 		}
 		elexisTerminDayAfter = Termin.load(id + "2");
+		if(!elexisTerminDayAfter.exists()) {
+			elexisTerminDayAfter = null;
+		}
 		if (elexisTerminDayAfter != null && elexisTerminDayAfter.isDeleted()) {
 			elexisTerminDayAfter.undelete();
 		}

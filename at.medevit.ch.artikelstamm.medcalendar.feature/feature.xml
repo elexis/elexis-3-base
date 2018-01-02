@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.ch.artikelstamm.medcalendar.feature"
       label="MedKalendar (BETA)"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="medevit.at">
 
    <description url="http://www.example.com/description">

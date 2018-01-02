@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.buchhaltung.util.DateTool;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
@@ -82,6 +83,7 @@ public class FakturaJournal extends AbstractTimeSeries {
 		monitor.worked(20 * step);
 		PatientIdFormatter pif = new PatientIdFormatter(8);
 		String actMnId = CoreHub.actMandant.getId();
+		long time = System.currentTimeMillis();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
 			if (pat != null) {
@@ -118,6 +120,10 @@ public class FakturaJournal extends AbstractTimeSeries {
 			}
 			monitor.worked(step);
 		}
+		
+		LoggerFactory.getLogger(FakturaJournal.class)
+			.debug("calculation of account transactions size: " + transactions.size() + " took "
+				+ Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds.");
 		
 		// Set content.
 		this.dataSet.setContent(result);

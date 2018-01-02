@@ -16,24 +16,32 @@ package org.iatrix.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 import org.iatrix.Iatrix;
+import org.iatrix.widgets.IJournalArea.KonsActions;
 import org.iatrix.widgets.KonsListDisplay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 
 /**
  * View for showing Konsultationen
@@ -47,17 +55,33 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 	private static Logger log = LoggerFactory.getLogger(KonsListView.class);
 
 	KonsListDisplay konsListDisplay;
+	private FormToolkit tk;
+	private Form form;
+	private Label formTitel;
 
 	private Action showAllChargesAction;
 	private Action showAllConsultationsAction;
 	private Konsultation actKons = null;
 
-	private void displaySelectedConsultation(Konsultation newKons) {
+	private String actPatId = null;
+
+	private synchronized void displaySelectedConsultation(Konsultation newKons) {
 		actKons = newKons;
-		log.debug("KonstListView " + (newKons == null ? "null" : newKons.getLabel() + " for " +
-		newKons.getFall().getPatient().getPersonalia()));
-		konsListDisplay.setKonsultation(actKons, showAllChargesAction.isChecked(),
-			showAllConsultationsAction.isChecked());
+		Patient newPat = null;
+		if (newKons != null) {
+			newPat = newKons.getFall().getPatient();
+			if (!newPat.getId().equals(actPatId)) {
+				log.debug("KonstListView " +  newPat + " " + newPat.getPersonalia() + " hasSameId " + actPatId);
+			} else {
+				log.debug("KonstListView " +  newKons.getLabel() + " for " + newPat.getPersonalia());
+			}
+		} else {
+			newPat = ElexisEventDispatcher.getSelectedPatient();
+			log.debug("KonstListView new kons is null newPat is " + newPat);
+		}
+		actPatId = (newPat != null) ? newPat.getId() : null;
+		setPatientTitel(newPat);
+		konsListDisplay.setKons(newPat, actKons,KonsActions.ACTIVATE_KONS);
 	}
 	private final ElexisUiEventListenerImpl eeli_pat =
 			new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED  | ElexisEvent.EVENT_DESELECTED |
@@ -65,14 +89,11 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 
 				@Override
 				public void runInUi(ElexisEvent ev){
+					log.debug("eeli_pat " +ev);
 					Patient newPat = (Patient) ev.getObject();
 					Konsultation newCons = null;
 					if (newPat != null ) {
 						newCons = newPat.getLetzteKons(false);
-						log.debug("eeli_pat " + newPat.getPersonalia() + " newCons " + (newCons == null ? "null":
-							newCons.getId() + " " + newCons.getLabel()));
-					} else {
-						log.debug("eeli_pat newCons is null");
 					}
 					displaySelectedConsultation(newCons);
 				}
@@ -81,26 +102,41 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 	private final ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(Konsultation.class) {
 		@Override
 		public void runInUi(ElexisEvent ev){
+			log.debug("eeli_kons " +ev);
 			Konsultation newKons = (Konsultation) ev.getObject();
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				String konsInfo = newKons.getFall().getPatient().getPersonalia() + " "
-						+ newKons.getId() + " " + newKons.getLabel();
-				log.debug("eeli_kons EVENT_SELECTED " + konsInfo);
 				showAllChargesAction.setChecked(false);
 				showAllConsultationsAction.setChecked(false);
 				displaySelectedConsultation(newKons);
 
 			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-				log.debug("eeli_kons EVENT_DESELECTED null") ;
 				displaySelectedConsultation(null);
 			}
 		}
 	};
 
+	private synchronized void setPatientTitel(Patient patient){
+		String text = "Kein Patient ausgewählt";
+		formTitel.setEnabled(patient != null);
+		if (patient != null) {
+			text = patient.getLabel();
+		}
+		formTitel.setText(PersistentObject.checkNull(text));
+		formTitel.setFont(UiDesk.getFont("Helvetica", 14, SWT.BOLD));
+		formTitel.getParent().layout();
+	}
+
 	@Override
 	public void createPartControl(Composite parent){
-		parent.setLayout(new FillLayout());
-		konsListDisplay = new KonsListDisplay(parent);
+		tk = UiDesk.getToolkit();
+		form = tk.createForm(parent);
+		Composite formBody = form.getBody();
+		formBody.setLayout(new GridLayout(1, true));
+		formBody.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+
+		formTitel = tk.createLabel(formBody, "Leer");
+		konsListDisplay = new KonsListDisplay(formBody);
+		konsListDisplay.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
 		makeActions();
 
@@ -115,7 +151,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 	 */
 	private void activateContext(){
 		IContextService contextService =
-			(IContextService) getSite().getService(IContextService.class);
+			getSite().getService(IContextService.class);
 		contextService.activateContext(VIEW_CONTEXT_ID);
 	}
 
@@ -128,7 +164,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 			@Override
 			public void run(){
 				boolean showAllCharges = this.isChecked();
-				konsListDisplay.setKonsultation(actKons,
+				konsListDisplay.highlightActKons(actKons,
 					showAllCharges, showAllConsultationsAction.isChecked());
 			}
 		};
@@ -143,7 +179,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 
 				@Override
 				public void run(){
-					konsListDisplay.setKonsultation(actKons,
+					konsListDisplay.highlightActKons(actKons,
 						showAllChargesAction.isChecked(), showAllConsultationsAction.isChecked());
 				}
 			};
@@ -175,13 +211,12 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 
 	@Override
 	public void visible(boolean mode){
-		if (mode == true) {
+		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_kons);
 			Konsultation newKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if (newKons != null) {
 				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + newKons.getFall().getPatient().getPersonalia();
 				log.debug("visible true " + msg);
-				displaySelectedConsultation(newKons);
 			} else {
 				log.debug("visible true newKons is null");
 				Patient newPat = ElexisEventDispatcher.getSelectedPatient();

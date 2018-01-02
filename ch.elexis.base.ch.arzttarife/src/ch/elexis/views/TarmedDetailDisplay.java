@@ -48,7 +48,8 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 	private String[] retrieve = {
 		"DigniQuanti", "DigniQuali", "Sparte", "Anaesthesie", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		"TP_AL", "TP_TL", "TP_ASSI", "ANZ_ASSI", "LSTGIMES_MIN", "VBNB_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		"BEFUND_MIN", "WECHSEL_MIN", "RAUM_MIN", "Bezug", "Nick"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		"BEFUND_MIN", "WECHSEL_MIN", "RAUM_MIN", "Bezug", "Nickname" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
+	};
 	
 	private Text[] inputs = new Text[fields.length];
 	private FormText medinter, techinter, exclusion, inclusion, limits;
@@ -75,7 +76,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 			@Override
 			public void focusLost(FocusEvent e){
 				if (actCode != null) {
-					actCode.set("Nick", inputs[last].getText()); //$NON-NLS-1$
+					actCode.set("Nickname", inputs[last].getText()); //$NON-NLS-1$
 				}
 			}
 			
@@ -122,7 +123,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				}
 				inputs[i].setText(val);
 			}
-			inputs[fields.length - 1].setText(actCode.get("Nick")); //$NON-NLS-1$
+			inputs[fields.length - 1].setText(actCode.get("Nickname")); //$NON-NLS-1$
 			medinter.setText(actCode.getMedInterpretation(), false, false);
 			techinter.setText(actCode.getTechInterpretation(), false, false);
 			String excl = ext.get("exclusion"); //$NON-NLS-1$

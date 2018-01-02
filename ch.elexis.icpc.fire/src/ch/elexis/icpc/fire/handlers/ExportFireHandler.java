@@ -65,7 +65,7 @@ public class ExportFireHandler extends AbstractHandler {
 	
 	public ExportFireHandler(){
 		String id =
-			new Query<Sticker>(Sticker.class).findSingle(Sticker.NAME, Query.EQUALS,
+			new Query<Sticker>(Sticker.class).findSingle(Sticker.FLD_NAME, Query.EQUALS,
 				FIRESTICKERNAME);
 		if (id == null) {
 			fireSticker = new Sticker(FIRESTICKERNAME, "0066CC", "C0C0C0");
@@ -85,7 +85,12 @@ public class ExportFireHandler extends AbstractHandler {
 		}
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 		TimeTool ttFrom = new TimeTool(lastupdate);
-		qbe.add(Konsultation.DATE, Query.GREATER_OR_EQUAL, ttFrom.toString(TimeTool.DATE_COMPACT));
+		ttFrom.addHours(Report.EXPORT_DELAY * -1);
+		qbe.add(Konsultation.DATE, Query.GREATER, ttFrom.toString(TimeTool.DATE_COMPACT));
+		TimeTool ttTo = new TimeTool();
+		ttTo.addHours(Report.EXPORT_DELAY * -1);
+		qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL,
+			ttTo.toString(TimeTool.DATE_COMPACT));
 		List<Konsultation> konsen = qbe.execute();
 		if (konsen.size() > 0) {
 			FileDialog fd = new FileDialog(Hub.getActiveShell(), SWT.SAVE);

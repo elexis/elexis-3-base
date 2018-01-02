@@ -116,10 +116,16 @@ public class Messages extends NLS {
 	public static String TarmedImporter_connecting;
 	public static String TarmedOptifier_perSession;
 	public static String TarmedOptifier_perSide;
+	public static String TarmedOptifier_perDay;
+	public static String TarmedOptifier_perWeeks;
+	public static String TarmedOptifier_perMonth;
+	public static String TarmedOptifier_perYears;
+	public static String TarmedOptifier_perCoverage;
 	public static String TarmedImporter_deleteOldData;
 	public static String TarmedImporter_definitions;
 	public static String TarmedImporter_chapter;
 	public static String TarmedOptifier_codemax;
+	public static String TarmedOptifier_groupmax;
 	public static String TarmedOptifier_BadType;
 	public static String TarmedOptifier_NoMoreValid;
 	

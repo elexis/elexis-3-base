@@ -36,7 +36,7 @@
 				events: loadEventsCallback,
 				dayClick: dayClickCallback,
 				eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
-					eventDropFunction(event.id, event.start.format(), event.end.format(), event.resource);
+					eventDropFunction(event.id, event.start.format(), event.end.format(), event.resource, jsEvent.ctrlKey);
 				},
 				eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
 					eventResizeFunction(event.id, event.start.format(), event.end.format());
@@ -118,7 +118,7 @@
 	</script>
 	<style>
 		body {
-			margin: 40px 10px;
+			margin: 10px 0 0 0;
 			padding: 0;
 			font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
 			font-size: 14px;

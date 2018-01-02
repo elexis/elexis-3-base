@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.base.ch.feature"
       label="Elexis Swiss OpenSource Feature"
-      version="3.2.0.qualifier"
+      version="3.2.100.qualifier"
       provider-name="elexis.info"
       plugin="ch.elexis.base.ch.feature.branding">
 
@@ -29,6 +29,13 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="ch.elexis.ebanking"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
    <plugin
          id="ch.elexis.base.ch.arzttarife"
          download-size="0"

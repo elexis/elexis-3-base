@@ -41,6 +41,7 @@ import org.hl7.v3.PN;
 import org.hl7.v3.POCDMT000040AssignedAuthor;
 import org.hl7.v3.POCDMT000040AssignedCustodian;
 import org.hl7.v3.POCDMT000040Author;
+import org.hl7.v3.POCDMT000040AuthoringDevice;
 import org.hl7.v3.POCDMT000040ClinicalDocument;
 import org.hl7.v3.POCDMT000040Component2;
 import org.hl7.v3.POCDMT000040Component3;
@@ -56,6 +57,7 @@ import org.hl7.v3.POCDMT000040Person;
 import org.hl7.v3.POCDMT000040RecordTarget;
 import org.hl7.v3.POCDMT000040Section;
 import org.hl7.v3.POCDMT000040StructuredBody;
+import org.hl7.v3.SC;
 import org.hl7.v3.ST;
 import org.hl7.v3.StrucDocBr;
 import org.hl7.v3.StrucDocLinkHtml;
@@ -65,6 +67,9 @@ import org.hl7.v3.TS;
 import org.hl7.v3.XInformationRecipient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.data.activator.CoreHub;
 
 /**
  * Utility to generate a CDA V1.1 compliant document according to the CDA-CH standard described at
@@ -636,6 +641,11 @@ public class DocboxCDA {
 		
 		structureBody.getComponent().addAll(listComponent);
 		
+		// add patient master data id, if available
+		if (isElexisInstallationIdAvailable() || isOidMedelexisProjectAvailable()) {
+			structureBody.getComponent().add(createPatientMasterDataId());
+		}
+		
 		cda.getAuthor().add(author);
 		cda.setCustodian(custodian);
 		
@@ -646,6 +656,83 @@ public class DocboxCDA {
 		cda.getRecordTarget().add(recordTarget);
 		
 		return cda;
+	}
+	
+	private POCDMT000040Component3 createPatientMasterDataId(){
+		POCDMT000040Component3 component = new POCDMT000040Component3();
+		POCDMT000040Section section = new POCDMT000040Section();
+		
+		CD cd = new CD();
+		cd.setCode("SOFTWARE");
+		cd.setCodeSystem("2.16.756.5.30.1.105.2.2");
+		
+		CE ce = new CE();
+		ce.getNullFlavor().add("NA");
+		ce.getTranslation().add(cd);
+		section.setCode(ce);
+		
+		POCDMT000040Author author = new POCDMT000040Author();
+		POCDMT000040AssignedAuthor assignedAuthor = new POCDMT000040AssignedAuthor();
+		POCDMT000040AuthoringDevice assignedDevice = new POCDMT000040AuthoringDevice();
+		
+		if (isOidMedelexisProjectAvailable()) {
+			II ii = new II();
+			ii.setExtension(getOidMedelexisProject());
+			ii.setRoot("2.16.756.5.30.1.105.4.1.1");
+			assignedDevice.getTemplateId().add(ii);
+		} else {
+			II ii = new II();
+			ii.setExtension(getElexisInstallationId());
+			ii.setRoot("2.16.756.5.30.1.105.4.1.2");
+			assignedDevice.getTemplateId().add(ii);
+		}
+		
+		if (isOidMedelexisProjectAvailable()) {
+			SC modelName = new SC();
+			modelName.setCode("medelexis");
+			modelName.setCodeSystem("2.16.756.5.30.1.105.4");
+			modelName.setContent("medelexis");
+			assignedDevice.setManufacturerModelName(modelName);
+		} else {
+			SC modelName = new SC();
+			modelName.setCode("elexis");
+			modelName.setCodeSystem("2.16.756.5.30.1.105.4");
+			modelName.setContent("elexis");
+			assignedDevice.setManufacturerModelName(modelName);
+		}
+		
+		SC softwareName = new SC();
+		softwareName.setCode("elexis");
+		softwareName.setCodeSystem("2.16.756.5.30.1.105.4");
+		softwareName.setContent("elexis");
+		assignedDevice.setSoftwareName(softwareName);
+		
+		assignedAuthor.setAssignedAuthoringDevice(assignedDevice);
+		author.setAssignedAuthor(assignedAuthor);
+		section.getAuthor().add(author);
+		component.setSection(section);
+		return component;
+	}
+	
+	private String getElexisInstallationId(){
+		return CoreHub.globalCfg.get(Preferences.INSTALLATION_TIMESTAMP, null);
+	}
+	
+	private boolean isElexisInstallationIdAvailable(){
+		return CoreHub.globalCfg.get(Preferences.INSTALLATION_TIMESTAMP, null) != null;
+	}
+	
+	private boolean isOidMedelexisProjectAvailable(){
+		return CoreHub.localCfg.get(ch.elexis.core.constants.Preferences.SOFTWARE_OID, null) != null
+			&& CoreHub.localCfg.get("medelexis/projectid", null) != null;
+	}
+	
+	private String getOidMedelexisProject(){
+		String oid = CoreHub.localCfg.get(ch.elexis.core.constants.Preferences.SOFTWARE_OID, null);
+		String projectId = CoreHub.localCfg.get("medelexis/projectid", null);
+		// docbox OID ends with 105
+		return oid + "." + ch.elexis.core.constants.Preferences.OID_SUBDOMAIN_PATIENTMASTERDATA
+			+ "." + projectId;
 	}
 	
 	static synchronized Marshaller getCdaMarshaller(){

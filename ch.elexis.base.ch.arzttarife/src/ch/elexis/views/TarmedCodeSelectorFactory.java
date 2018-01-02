@@ -12,7 +12,9 @@
 
 package ch.elexis.views;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -23,6 +25,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import ch.elexis.core.ui.actions.ReadOnceTreeLoader;
 import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -30,6 +33,7 @@ import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -37,7 +41,6 @@ import ch.elexis.data.TarmedLeistung;
 
 public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
-	ReadOnceTreeLoader tdl;
 	CommonViewer cv;
 	FieldDescriptor<?>[] fields = {
 		new FieldDescriptor<TarmedLeistung>("Ziffer", TarmedLeistung.FLD_CODE, Typ.STRING, null),
@@ -52,7 +55,6 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		public void selectionChanged(SelectionChangedEvent event){
 			TreeViewer tv = (TreeViewer) event.getSource();
 			StructuredSelection ss = (StructuredSelection) tv.getSelection();
-			System.out.println(ss.getFirstElement());
 			if (ss.isEmpty()) {
 				tvfa.updateSelection(null);
 				return;
@@ -84,15 +86,37 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		}
 		slp = new TarmedSelectorPanelProvider(cv, fields, true);
 		
+		slp.addActions(new Action() {
+			
+			@Override
+			public String getToolTipText(){
+				return "Kontext (Konsultation, Fall, etc.) Filter (de)aktivieren";
+			}
+			
+			@Override
+			public ImageDescriptor getImageDescriptor(){
+				return Images.IMG_FILTER.getImageDescriptor();
+			}
+			
+			@Override
+			public void run(){
+				((TarmedSelectorPanelProvider) slp).toggleFilters();
+			}
+		});
+		
 		MenuManager menu = new MenuManager();
 		menu.add(tvfa);
 		cv.setContextMenu(menu);
 		
-		tdl =
-			new ReadOnceTreeLoader(cv, new Query<TarmedLeistung>(TarmedLeistung.class), "Parent",
-				"ID");
+		ICommonViewerContentProvider contentProvider = new ReadOnceTreeLoader(cv,
+			new Query<TarmedLeistung>(TarmedLeistung.class), "Parent", "ID");
+		if (TarmedLeistung.hasParentIdReference()) {
+			contentProvider = new TarmedCodeSelectorContentProvider(cv);
+		}
+		
 		ViewerConfigurer vc =
-			new ViewerConfigurer(tdl, new DefaultLabelProvider(), slp,
+			new ViewerConfigurer(contentProvider,
+				new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 		return vc;
@@ -106,8 +130,6 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	@Override
 	public void dispose(){
 		cv.dispose();
-		tdl.dispose();
-		
 	}
 	
 	@Override

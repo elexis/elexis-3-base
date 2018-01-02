@@ -129,11 +129,15 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 			List<Prescription> ret = new ArrayList<Prescription>();
 			ret.addAll(patient.getMedication(EntryType.FIXED_MEDICATION));
 			ret.addAll(patient.getMedication(EntryType.RESERVE_MEDICATION));
+			ret.addAll(patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION));
 			return ret;
 		} else if ("fix".equals(medicationType)) {
 			return patient.getMedication(EntryType.FIXED_MEDICATION);
 		} else if ("reserve".equals(medicationType)) {
 			return patient.getMedication(EntryType.RESERVE_MEDICATION);
+		}
+		else if ("symptomatic".equals(medicationType)) {
+			return patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION);
 		}
 		return Collections.emptyList();
 	}

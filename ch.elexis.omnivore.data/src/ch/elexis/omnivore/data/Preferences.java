@@ -17,6 +17,7 @@ import static ch.elexis.omnivore.PreferenceConstants.nPREF_SRC_PATTERN;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.activator.CoreHubHelper;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class Preferences {
@@ -28,6 +29,29 @@ public class Preferences {
 	 */
 	private static void initGlobalConfig(){
 		if (fsSettingsStore == null) {
+			
+			//  workaround for bug https://redmine.medelexis.ch/issues/9501 -> migrate old key to new key
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs_global",
+				STOREFSGLOBAL, true);
+			// bug from omnivore
+			CoreHubHelper.transformConfigKey("ch.elexis.omnivore//store_in_fs_global",
+				STOREFSGLOBAL, true);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs", STOREFS, true);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs", STOREFS, false);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/basepath", BASEPATH, true);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/basepath", BASEPATH, false);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/categories", STOREFS, false);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/date_modifiable", STOREFS,
+				false);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/columnwidths", STOREFS,
+				false);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/savecolwidths", STOREFS,
+				false);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/sortdirection", STOREFS,
+				false);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/savesortdirection", STOREFS,
+				false);
+			
 			boolean isGlobal = CoreHub.globalCfg.get(STOREFSGLOBAL, false);
 			if (isGlobal) {
 				fsSettingsStore = new SettingsPreferenceStore(CoreHub.globalCfg);

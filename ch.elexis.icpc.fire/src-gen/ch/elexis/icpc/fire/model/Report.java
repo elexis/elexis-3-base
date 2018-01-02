@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.07.03 um 12:21:08 PM CEST 
+// Generiert: 2017.12.07 um 12:49:37 PM CET 
 //
 
 
@@ -21,8 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
-
+import ch.elexis.icpc.fire.model.jaxb.DateTimeAdapter;
 
 /**
  * <p>Java-Klasse für anonymous complex type.
@@ -85,19 +84,21 @@ import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 })
 @XmlRootElement(name = "report")
 public class Report {
+	
+	public static int EXPORT_DELAY = 168;
 
     @XmlElement(required = true)
     protected Report.Consultations consultations;
     @XmlElement(required = true)
     protected Report.Patients patients;
     @XmlElement(required = true)
-    protected Report.Doctors doctors;
+	protected Report.Doctors doctors;
     @XmlAttribute(name = "exportDate")
-	@XmlSchemaType(name = "dateTime")
-	@XmlJavaTypeAdapter(DateAdapter.class)
+    @XmlSchemaType(name = "dateTime")
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
     protected XMLGregorianCalendar exportDate;
     @XmlAttribute(name = "exportDelay")
-	protected Long exportDelay = 168l;
+	protected Long exportDelay = Long.valueOf(EXPORT_DELAY);
 
     /**
      * Ruft den Wert der consultations-Eigenschaft ab.

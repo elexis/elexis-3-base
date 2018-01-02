@@ -12,8 +12,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class DateAdapter extends XmlAdapter<String, XMLGregorianCalendar> {
 	
 	
-	//YYYY-MM-DDTHH:MM:SS
-	private final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+	//YYYY-MM-DD
+	private final String DATE_FORMAT = "yyyy-MM-dd";
 	
 	@Override
 	public String marshal(XMLGregorianCalendar calendar) throws Exception{

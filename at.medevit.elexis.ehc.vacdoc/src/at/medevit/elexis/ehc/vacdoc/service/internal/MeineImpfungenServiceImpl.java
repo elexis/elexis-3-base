@@ -77,17 +77,28 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	// use dummy sub id of ehc dev OID for now -> TODO get an Elexis OID
 	public static final String ORGANIZATIONAL_ID = "2.16.756.5.30.1.139.1.1.3.9999";
 	
-	private static final String PDQ_REQUEST_URL =
+	private static final String TEST_PDQ_REQUEST_URL =
 		"https://test.suisse-open-exchange.healthcare/services/mpi/services/PDQSupplier_Port_Soap12";
 	
-
-	private static final String XDS_REGISTRY_URL =
+	private static final String TEST_XDS_REGISTRY_URL =
 		"https://test.suisse-open-exchange.healthcare/services/registry/services/DocumentRegistry";
 	
-	private static final String XDS_REPOSITORY_URL =
+	private static final String TEST_XDS_REPOSITORY_URL =
 		"https://test.meineimpfungen.ch/ihe/xds/DocumentRepository";
 	
-	private static final String ATNA_URL = "tls://test.suisse-open-exchange.healthcare:5544";
+	private static final String TEST_ATNA_URL = "tls://test.suisse-open-exchange.healthcare:5544";
+	
+	private static final String PRODUCTIV_PDQ_REQUEST_URL =
+		"https://suisse-open-exchange.healthcare/services/mpi/services/PDQSupplier_Port_Soap12";
+	
+	private static final String PRODUCTIV_XDS_REGISTRY_URL =
+		"https://suisse-open-exchange.healthcare/services/registry/services/DocumentRegistry";
+	
+	private static final String PRODUCTIV_XDS_REPOSITORY_URL =
+		"https://meineimpfungen.ch/ihe/xds/DocumentRepository";
+	
+	private static final String PRODUCTIV_ATNA_URL =
+		"tls://suisse-open-exchange.healthcare:5544";
 	
 	private AffinityDomain affinityDomain;
 	
@@ -138,8 +149,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		}
 	}
 	
-	private void updateAffinityDomain()
-		throws URISyntaxException, SecurityDomainException{
+	private void updateAffinityDomain() throws URISyntaxException, SecurityDomainException{
 		
 		affinityDomain = getMeineImpfungenAffinityDomain();
 		
@@ -155,15 +165,15 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private AffinityDomain getMeineImpfungenAffinityDomain() throws URISyntaxException{
 		// set secure destinations
-		Destination pdqDestination = new Destination(ORGANIZATIONAL_ID, new URI(PDQ_REQUEST_URL));
+		Destination pdqDestination = new Destination(ORGANIZATIONAL_ID, new URI(getPdqUrl()));
 		pdqDestination.setSenderApplicationOid(ORGANIZATIONAL_ID);
 		pdqDestination.setReceiverApplicationOid(PDQ_REQUEST_PATID_OID);
 		pdqDestination.setReceiverFacilityOid(PDQ_REQUEST_PATID_OID);
 		
-		Destination xdsRegistryDestination = new Destination(ORGANIZATIONAL_ID,
-			new URI(XDS_REGISTRY_URL));
-		Destination xdsRepositoryDestination = new Destination(ORGANIZATIONAL_ID,
-			new URI(XDS_REPOSITORY_URL));
+		Destination xdsRegistryDestination =
+			new Destination(ORGANIZATIONAL_ID, new URI(getXdsRegistryUrl()));
+		Destination xdsRepositoryDestination =
+			new Destination(ORGANIZATIONAL_ID, new URI(getXdsRepositoryUrl()));
 		xdsRegistryDestination.setReceiverApplicationOid(XDS_REPOSITORY_OID);
 		xdsRegistryDestination.setReceiverFacilityOid(XDS_REPOSITORY_OID);
 		
@@ -174,32 +184,60 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		ret.setPixDestination(pdqDestination);
 		
 		AtnaConfig atnaConfig = new AtnaConfig();
-		atnaConfig.setAuditRepositoryUri(ATNA_URL);
+		atnaConfig.setAuditRepositoryUri(getAtnaUrl());
 		atnaConfig.setAuditSourceId("EHC-Elexis");
 		ret.setAtnaConfig(atnaConfig);
 		return ret;
+	}
+	
+	private String getAtnaUrl(){
+		if (ENDPOINT_PRODUCTIV.equals(CoreHub.mandantCfg.get(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			return PRODUCTIV_ATNA_URL;
+		}
+		return TEST_ATNA_URL;
+	}
+	
+	private String getXdsRepositoryUrl(){
+		if (ENDPOINT_PRODUCTIV.equals(CoreHub.mandantCfg.get(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			return PRODUCTIV_XDS_REPOSITORY_URL;
+		}
+		return TEST_XDS_REPOSITORY_URL;
+	}
+	
+	private String getXdsRegistryUrl(){
+		if (ENDPOINT_PRODUCTIV.equals(CoreHub.mandantCfg.get(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			return PRODUCTIV_XDS_REGISTRY_URL;
+		}
+		return TEST_XDS_REGISTRY_URL;
+	}
+	
+	private String getPdqUrl(){
+		if (ENDPOINT_PRODUCTIV.equals(CoreHub.mandantCfg.get(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			return PRODUCTIV_PDQ_REQUEST_URL;
+		}
+		return TEST_PDQ_REQUEST_URL;
 	}
 	
 	@Override
 	public synchronized boolean updateConfiguration(){
 		affinityDomain = null;
 		// read the configuration
-		String truststorePath = CoreHub.mandantCfg.get(CONFIG_TRUSTSTORE_PATH, null);
-		String truststorePass = CoreHub.mandantCfg.get(CONFIG_TRUSTSTORE_PASS, null);
+		String endpoint = CoreHub.mandantCfg.get(CONFIG_ENDPOINT, ENDPOINT_TEST);
 		
 		String keystorePath = CoreHub.mandantCfg.get(CONFIG_KEYSTORE_PATH, null);
 		String keystorePass = CoreHub.mandantCfg.get(CONFIG_KEYSTORE_PASS, null);
 		
-		if (truststorePass != null && truststorePath != null && keystorePass != null
-			&& keystorePath != null) {
+		if (keystorePass != null && keystorePath != null) {
 			try {
-				if(!currentTrustStore.isPresent()) {
-					currentTrustStore = sslStoreService.loadKeyStore(truststorePath, truststorePass, "JKS");
+				if (!currentTrustStore.isPresent()) {
+					currentTrustStore =
+						sslStoreService.loadKeyStore(getKeyStore(endpoint), "trustit", "JKS");
 					currentTrustStore.ifPresent(store -> sslStoreService.addTrustStore(store));
 				}
 				// remove previous key store and add new key store
 				currentKeyStore.ifPresent(store -> sslStoreService.removeKeyStore(store));
-				currentKeyStore = sslStoreService.loadKeyStore(keystorePath, keystorePass, "PKCS12");
+				currentKeyStore =
+					sslStoreService.loadKeyStore(keystorePath, keystorePass, "PKCS12");
 				currentKeyStore
 					.ifPresent(store -> sslStoreService.addKeyStore(store, keystorePass));
 				
@@ -214,6 +252,13 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 			currentKeyStore = Optional.empty();
 		}
 		return true;
+	}
+	
+	private InputStream getKeyStore(String endpoint){
+		if (ENDPOINT_PRODUCTIV.equals(endpoint)) {
+			return getClass().getResourceAsStream("/rsc/myvaccines-truststore.jks");
+		}
+		return getClass().getResourceAsStream("/rsc/myvtest-truststore.jks");
 	}
 	
 	@Override
@@ -354,6 +399,9 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	@Override
 	public String getBaseUrl(){
+		if (ENDPOINT_PRODUCTIV.equals(CoreHub.mandantCfg.get(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			return "https://meineimpfungen.ch/";
+		}
 		return "https://test.meineimpfungen.ch/";
 	}
 	
@@ -361,8 +409,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	public boolean uploadDocument(CdaChVacd document){
 		XDSResponseType response = null;
 		try {
-			ConvenienceCommunicationCh convComm =
-				new ConvenienceCommunicationCh(affinityDomain);
+			ConvenienceCommunicationCh convComm = new ConvenienceCommunicationCh(affinityDomain);
 			DocumentMetadataCh metaData = convComm.addChDocument(DocumentDescriptor.CDA_R2,
 				getDocumentAsInputStream(document));
 			
@@ -429,7 +476,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		}
 		
 		@Override
-		public void run(ElexisEvent ev) {
+		public void run(ElexisEvent ev){
 			updateConfiguration();
 		}
 	}

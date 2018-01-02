@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.07.03 um 12:21:08 PM CEST 
+// Generiert: 2017.12.07 um 12:49:37 PM CET 
 //
 
 
@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
+import ch.elexis.icpc.fire.model.jaxb.DateTimeAdapter;
 
 /**
  * <p>Java-Klasse für tConsultation complex type.
@@ -38,7 +38,7 @@ import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="reason" type="{}tDiagnose" maxOccurs="2" minOccurs="0"/>
+ *                   &lt;element name="reason" type="{}tDiagnose" maxOccurs="unbounded" minOccurs="0"/>
  *                   &lt;element name="diagnose" type="{}tDiagnose" maxOccurs="unbounded" minOccurs="0"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
@@ -69,7 +69,6 @@ import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
  *         &lt;/element>
  *       &lt;/sequence>
  *       &lt;attribute name="date" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *       &lt;attribute name="versNr" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" />
  *       &lt;attribute name="patId" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" />
  *       &lt;attribute name="docId" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" />
  *       &lt;attribute name="consType" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -93,20 +92,17 @@ public class TConsultation {
     protected TConsultation.Diagnoses diagnoses;
     protected TConsultation.Labors labors;
     protected TConsultation.Medis medis;
-	@XmlAttribute(name = "date", required = true)
+    @XmlAttribute(name = "date")
     @XmlSchemaType(name = "dateTime")
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
     protected XMLGregorianCalendar date;
-    @XmlAttribute(name = "versNr")
-    @XmlSchemaType(name = "unsignedLong")
-    protected BigInteger versNr;
     @XmlAttribute(name = "patId")
     @XmlSchemaType(name = "unsignedLong")
     protected BigInteger patId;
     @XmlAttribute(name = "docId")
     @XmlSchemaType(name = "unsignedLong")
     protected BigInteger docId;
-	@XmlAttribute(name = "consType", required = true)
+	@XmlAttribute(name = "consType")
 	protected String consType = "0";
 
     /**
@@ -230,30 +226,6 @@ public class TConsultation {
     }
 
     /**
-     * Ruft den Wert der versNr-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getVersNr() {
-        return versNr;
-    }
-
-    /**
-     * Legt den Wert der versNr-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setVersNr(BigInteger value) {
-        this.versNr = value;
-    }
-
-    /**
      * Ruft den Wert der patId-Eigenschaft ab.
      * 
      * @return
@@ -336,7 +308,7 @@ public class TConsultation {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="reason" type="{}tDiagnose" maxOccurs="2" minOccurs="0"/>
+     *         &lt;element name="reason" type="{}tDiagnose" maxOccurs="unbounded" minOccurs="0"/>
      *         &lt;element name="diagnose" type="{}tDiagnose" maxOccurs="unbounded" minOccurs="0"/>
      *       &lt;/sequence>
      *     &lt;/restriction>

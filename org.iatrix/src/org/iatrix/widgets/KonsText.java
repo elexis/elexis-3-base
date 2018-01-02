@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.Extensions;
+import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
 import ch.elexis.core.ui.icons.Images;
@@ -53,6 +54,7 @@ import ch.elexis.core.ui.util.IKonsMakro;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
@@ -148,6 +150,10 @@ public class KonsText implements IJournalArea {
 
 	private void showUnableToSaveKons(String plain, String errMsg) {
 		logEvent("showUnableToSaveKons errMsg: " + errMsg + " plain: " + plain);
+		if (plain.length() == 0 ) {
+			log.warn("showUnableToSaveKons Inhalt war leer");
+			return;
+		}
 		boolean added = false;
 		try {
 			Clipboard clipboard = new Clipboard(UiDesk.getDisplay());
@@ -165,13 +171,9 @@ public class KonsText implements IJournalArea {
 			sb.append("Inhalt wurde in die Zwischenablage aufgenommen\n");
 		}
 		sb.append("Patient: " + actKons.getFall().getPatient().getPersonalia()+ "\n");
-		if (plain.length() == 0 ) {
-				sb.append("Inhalt war leer");
-		} else {
-			sb.append("\nInhalt ist:\n---------------------------------------------------\n");
-			sb.append(plain);
-			sb.append("\n----------------------------------------------------------------\n");
-		}
+		sb.append("\nInhalt ist:\n---------------------------------------------------\n");
+		sb.append(plain);
+		sb.append("\n----------------------------------------------------------------\n");
 		SWTHelper.alert("Konnte Konsultationstext nicht abspeichern", sb.toString());
 	}
 	public synchronized void updateEintrag(){
@@ -191,16 +193,17 @@ public class KonsText implements IJournalArea {
 					} else  {
 						actKons.updateEintrag(text.getContentsAsXML(), false);
 						int new_version = actKons.getHeadVersion();
-						if (new_version <= old_version ||
-								actKons.getEintrag().getHead().contentEquals(plain)
-								) {
+						String samdasText = (new Samdas(actKons.getEintrag().getHead()).getRecordText());
+						if (new_version <= old_version || !plain.equals(samdasText)) {
 							String errMsg = "Unable to update: old_version " +
-									old_version + " new_version " + new_version;
-							logEvent("updateEintrag " + errMsg + text.getContentsPlaintext());
+									old_version + " " + plain +
+									" new_version " + new_version + " " + samdasText ;
+							logEvent("updateEintrag " + errMsg + plain);
 							showUnableToSaveKons(plain, errMsg);
 						} else {
 							logEvent("updateEintrag saved rev. " + new_version + " plain: " + plain);
 							text.setDirty(false);
+							// TODO: Warum merkt das KonsListView trotzdem nicht ?? ElexisEventDispatcher.fireSelectionEvent(actKons);
 						}
 					}
 				} else {
@@ -220,12 +223,11 @@ public class KonsText implements IJournalArea {
 	 * @return true, if the text changed, false else
 	 */
 	private boolean textChanged(){
-		if (actKons == null) {
+		if (actKons == null || text == null) {
 			return false;
 		}
 		String dbEintrag = actKons.getEintrag().getHead();
 		String textEintrag = text.getContentsAsXML();
-
 		if (textEintrag != null) {
 			if (!textEintrag.equals(dbEintrag)) {
 				// text differs from db entry
@@ -233,9 +235,7 @@ public class KonsText implements IJournalArea {
 				return true;
 			}
 		}
-
 		return false;
-
 	}
 
 	private void updateKonsLockLabel(){
@@ -373,7 +373,7 @@ public class KonsText implements IJournalArea {
 			public void run(){
 				logEvent("saveAction: ");
 				updateEintrag();
-				JournalView.updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
+				JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.SAVE_KONS);
 			}
 		};
 	};
@@ -395,12 +395,11 @@ public class KonsText implements IJournalArea {
 	 *
 	 * Wenn eine Konsultation gesetzt wird stellen wir sicher, dass der gesetzte Patient zu dieser
 	 * Konsultation gehoert. Falls nicht, wird ein neuer Patient gesetzt.
-	 *
 	 * @param putCaretToEnd
 	 *            if true, activate text field ant put caret to the end
 	 */
 	@Override
-	public synchronized void setKons(Konsultation k, KonsActions op){
+	public synchronized void setKons(Patient newPatient, Konsultation k, KonsActions op){
 		if (op == KonsActions.SAVE_KONS) {
 			if (text.isDirty() || textChanged()) {
 				logEvent("setKons.SAVE_KONS text.isDirty or changed saving Kons from "

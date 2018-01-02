@@ -27,7 +27,7 @@ import org.iatrix.util.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.model.IDiagnose;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -98,7 +98,11 @@ public class KonsDiagnosen implements IJournalArea {
 	}
 
 	@Override
-	public void setKons(Konsultation newKons, KonsActions op){
+	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		if (newPatient == null || newKons == null) {
+			actKons = null;
+			updateKonsultation(true);
+		}
 		boolean konsChanged = !Helpers.twoKonsSamePatient(actKons,  newKons);
 		logEvent("setKons " + (newKons != null ? newKons.getId() +
 				" vom " + newKons.getDatum() : "null") +

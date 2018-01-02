@@ -61,6 +61,8 @@ public enum BlackBoxReason {
 			return IS_REFERENCED_IN_FIXMEDICATION;
 		case 3:
 			return IS_REFERENCED_IN_CONSULTATION;
+		case 9:
+			return INACTIVE;
 		default:
 			return null;
 		}

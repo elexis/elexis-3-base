@@ -164,6 +164,7 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 		if (viewer == null) {
 			viewer = commonViewer.getViewerWidget();
 			Query<Labor2009Tarif> qbe = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+			qbe.add(Labor2009Tarif.FLD_ID, Query.NOT_EQUAL, "1");
 			viewer.setInput(qbe.execute());
 			viewer.addFilter(filter);
 			txtFilter.addKeyListener(new FilterKeyListener(txtFilter));

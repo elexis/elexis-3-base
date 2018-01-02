@@ -208,16 +208,19 @@ public class SideBarComposite extends Composite {
 		if (parts.length > 0 && !parts[0].isEmpty()) {
 			selectedResources.clear();
 			selectedResources.addAll(Arrays.asList(parts));
+			List<String> selections = new ArrayList<>();
 			// update button selection
 			for (Control child : getChildren()) {
 				if (child instanceof Button) {
 					if (selectedResources.contains(((Button) child).getText())) {
 						((Button) child).setSelection(true);
+						selections.add(((Button) child).getText());
 					} else {
 						((Button) child).setSelection(false);
 					}
 				}
 			}
+			selectedResources = selections;
 		}
 	}
 	

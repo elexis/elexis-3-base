@@ -28,10 +28,22 @@ public interface IInboxElementService {
 	 * 
 	 * @param mandant
 	 * @param patient
-	 * @param state
+	 * @param object
 	 * @return
 	 */
 	public void createInboxElement(Patient patient, Kontakt mandant, PersistentObject object);
+	
+	/**
+	 * Create a new InboxElement and tell registered listeners about it.
+	 * 
+	 * @param mandant
+	 * @param patient
+	 * @param file
+	 * @param copyFile
+	 * @return
+	 */
+	public void createInboxElement(Patient patient, Kontakt mandant, String file,
+		boolean copyFile);
 	
 	/**
 	 * Change the state of a InboxElement and tell registered listeners about it.

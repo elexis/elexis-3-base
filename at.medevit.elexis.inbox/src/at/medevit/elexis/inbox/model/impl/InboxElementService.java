@@ -10,12 +10,19 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.model.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import at.medevit.elexis.inbox.model.IInboxUpdateListener;
 import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.InboxElementType;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -84,4 +91,35 @@ public class InboxElementService implements IInboxElementService {
 		System.out.println("deactive providers");
 	}
 	
+	@Override
+	public void createInboxElement(Patient patient, Kontakt mandant, String file, boolean copyFile){
+		String path = file;
+		if (path != null) {
+			File src = new File(path);
+			if (src.exists()) {
+				if (copyFile) {
+					try {
+						StringBuilder pathBuilder = new StringBuilder();
+						pathBuilder.append("inbox");
+						pathBuilder.append(File.separator);
+						pathBuilder.append(patient.getPatCode());
+						pathBuilder.append("_");
+						pathBuilder.append(System.currentTimeMillis());
+						pathBuilder.append("_");
+						pathBuilder.append(src.getName());
+						File dest = new File(CoreHub.getWritableUserDir(), pathBuilder.toString());
+						FileUtils.copyFile(src, dest);
+						path = dest.getAbsolutePath();
+					} catch (IOException e) {
+						LoggerFactory.getLogger(InboxElementService.class).error("file copy error",
+							e);
+						return;
+					}
+				}
+				InboxElement element =
+					new InboxElement(patient, mandant, InboxElementType.FILE.getPrefix() + path);
+				fireUpdate(element);
+			}
+		}
+	}
 }

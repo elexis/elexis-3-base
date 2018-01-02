@@ -38,6 +38,12 @@
             name="medkey-RFE"
             restorable="true">
       </view>
+      <view
+            category="ch.elexis.abrechnungKategorie"
+            class="ch.elexis.views.ComplementaryPrintView"
+            id="ch.elexis.arzttarife_ch.complementaryprintview"
+            name="Rechnung Drucken">
+      </view>
    </extension>
    <extension
          point="ch.elexis.core.data.PersistentReference">
@@ -85,6 +91,10 @@
             name="Tarmed-XML-Export"
             outputter="ch.elexis.TarmedRechnung.XMLExporter">
       </Rechnung>
+      <Rechnung
+            name="Komplementär-Drucker"
+            outputter="ch.elexis.TarmedRechnung.ComplementaryDrucker">
+      </Rechnung>
    </extension>
    <extension
          point="ch.elexis.core.data.referenceDataImporter">
@@ -101,6 +111,9 @@
          point="ch.elexis.core.ui.TextTemplateRequirement">
       <TextTemplateRequirement
             element="ch.elexis.tarmed.printer.TarmedTemplateRequirement">
+      </TextTemplateRequirement>
+      <TextTemplateRequirement
+            element="ch.elexis.tarmed.printer.ComplementaryTemplateRequirement">
       </TextTemplateRequirement>
    </extension>
    <extension

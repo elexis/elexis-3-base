@@ -22,6 +22,7 @@ public class XML44Services {
 	private Money labMoney;
 	private Money paramedMoney;
 	private Money otherMoney;
+	private Money complementaryMoney;
 	
 	public XML44Services(ServicesType services){
 		this.services = services;
@@ -32,6 +33,7 @@ public class XML44Services {
 		labMoney = new Money();
 		paramedMoney = new Money();
 		otherMoney = new Money();
+		complementaryMoney = new Money();
 		initMoneyAmounts();
 	}
 	
@@ -58,7 +60,12 @@ public class XML44Services {
 				paramedMoney.addAmount(param.getAmount());
 			} else if (rec instanceof RecordOtherType) {
 				RecordOtherType other = (RecordOtherType) rec;
-				otherMoney.addAmount(other.getAmount());
+				String type = other.getTariffType();
+				if (type.equals("590")) {
+					complementaryMoney.addAmount(other.getAmount());
+				} else {
+					otherMoney.addAmount(other.getAmount());
+				}
 			}
 		}
 	}
@@ -91,4 +98,7 @@ public class XML44Services {
 		return otherMoney;
 	}
 	
+	public Money getComplementaryMoney(){
+		return complementaryMoney;
+	}
 }

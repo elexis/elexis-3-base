@@ -241,7 +241,7 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 								valid = false; 
 							}
 						} else {
-							if (!"vvg".equals(gesetz)) {
+							if (!"vvg".equalsIgnoreCase(gesetz)) {
 								valid = false;
 							}
 						}

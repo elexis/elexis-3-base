@@ -248,7 +248,6 @@
   <module>net.medshare.connector.viollier</module>
   <module>net.medshare.connector.viollier.feature</module>
   <module>at.medevit.elexis.tarmed.model</module>
-  <module>ch.novcom.mednet.elexis</module>
   <module>ch.elexis.barcode.scanner</module>
   <module>ch.elexis.barcode.scanner.feature</module>
   <module>ch.elexis.ebanking</module>

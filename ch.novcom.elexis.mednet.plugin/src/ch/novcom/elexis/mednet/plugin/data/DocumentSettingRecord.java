@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.logging.Level;
 
 
 import ch.elexis.data.PersistentObject;

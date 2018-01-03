@@ -13,7 +13,6 @@ package ch.novcom.elexis.mednet.plugin.ui.commands;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.logging.Level;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -24,14 +23,12 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
-import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6301;
-
+import at.medevit.elexis.gdt.tools.GDTSatzNachrichtHelper;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 import ch.novcom.elexis.mednet.plugin.MedNet;
-import ch.novcom.elexis.mednet.plugin.data.DocumentImporter;
 
 public class OpenFormView extends AbstractHandler {
 

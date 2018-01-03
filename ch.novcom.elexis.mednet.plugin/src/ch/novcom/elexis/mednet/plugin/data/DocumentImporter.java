@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -222,7 +221,7 @@ public class DocumentImporter {
 			}
 			
 			//If there is no hl7 File we first should search for the Patient
-			if(hl7File == null){
+			if(patient == null){
 				//Search the Patient
 				patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName ,patientBirthDate, "", askUser);
 			}
@@ -259,6 +258,11 @@ public class DocumentImporter {
 		
 		return success;
 	}
+	
+	
+	
+	
+	
 	
 	/**
 	 * Try to get a patient using the information contained in the observation fields of an hl7

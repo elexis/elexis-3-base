@@ -19,10 +19,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -31,7 +29,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.WidgetFactory;
 import ch.novcom.elexis.mednet.plugin.MedNet;
-import ch.novcom.elexis.mednet.plugin.MedNetSettings;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 

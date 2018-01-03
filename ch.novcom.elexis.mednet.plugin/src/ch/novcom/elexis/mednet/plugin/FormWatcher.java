@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
 
 import ch.novcom.elexis.mednet.plugin.data.DocumentImporter;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
@@ -121,10 +120,11 @@ public class FormWatcher {
         	){
 			try {
 				boolean success = DocumentImporter.process(
-						null,
+						(Path) null,
 						file,
 						MedNetMessages.FormWatcher_DocumentInstitutionID,
 						MedNetMessages.FormWatcher_DocumentInstitutionName,
+						"Cat TODO",
 						false
 				);
 				
@@ -144,9 +144,13 @@ public class FormWatcher {
 				MedNet.getLogger().error("importForm() IOException importing document: "+file.toString()+" ",e);
 			}
 		}
-		else {
+		else if (file != null){
 			MedNet.getLogger().warn("importForm() Following file is not valid: "+file.toString());
 		}
+		else {
+			MedNet.getLogger().warn("importForm() the file is null ");
+		}
+		
 	}
 
 	

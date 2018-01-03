@@ -12,7 +12,6 @@
 package ch.novcom.elexis.mednet.plugin;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 import org.eclipse.ui.IStartup;
 

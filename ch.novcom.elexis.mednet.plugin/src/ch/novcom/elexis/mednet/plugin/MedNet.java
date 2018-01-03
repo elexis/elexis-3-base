@@ -14,12 +14,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.novcom.elexis.mednet.plugin.logging.LogFileHandler;
 
 /**
  * Integrate the calls to the MedNet functions

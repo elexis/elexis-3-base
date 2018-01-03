@@ -10,23 +10,18 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.data;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.data.Kontakt;
@@ -36,9 +31,7 @@ import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.novcom.elexis.mednet.plugin.MedNet;
-import ch.novcom.elexis.mednet.plugin.MedNetSettings;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
-import ch.rgw.io.FileTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
@@ -61,9 +54,6 @@ public class PatientDocumentManager {
 	private IDocumentManager omnivoreDocManager;
 	
 	private boolean overwriteResults = false;
-	
-	private static SimpleDateFormat FIELD_DATE_FORMATTER = new SimpleDateFormat("yyyyMMdd");
-	private static SimpleDateFormat SIMPLE_DATE_FORMATTER = new SimpleDateFormat("yyyyMMdd");
 	
 	private static SimpleDateFormat LABRESULT_TIMESTAMP_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss");
 	private static SimpleDateFormat LABRESULT_TIME_FORMATTER = new SimpleDateFormat("HHmmss");
@@ -419,7 +409,6 @@ public class PatientDocumentManager {
 	 */
 	public static Kontakt getInstitution(String id){
 		
-		Labor labor = null;
 		Query<Kontakt> qbe = new Query<Kontakt>(Labor.class);
 		qbe.startGroup();
 		qbe.add(Kontakt.FLD_ID, Query.EQUALS, id);

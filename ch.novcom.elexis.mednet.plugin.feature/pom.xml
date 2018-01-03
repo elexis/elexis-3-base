@@ -5,8 +5,7 @@
 <artifactId>elexis-3-base</artifactId>
 <version>3.0.0-SNAPSHOT</version>
 </parent>
-<groupId>ch.elexis.base</groupId>
-<artifactId>ch.novcom.elexis.mednet.plugin</artifactId>
+<artifactId>ch.novcom.elexis.mednet.plugin.feature</artifactId>
 <version>3.2.0-SNAPSHOT</version>
 <packaging>eclipse-plugin</packaging>
 

@@ -22,7 +22,6 @@
     <module>at.medevit.elexis.agenda.ui</module>
     <module>at.medevit.elexis.cobasmira</module>
     <module>at.medevit.elexis.cobasmira.feature</module>
-    <module>at.medevit.elexis.cobasmira.tests</module>
     <module>at.medevit.elexis.decision.feature</module>
     <module>at.medevit.elexis.ehc.core</module>
     <module>at.medevit.elexis.ehc.core.test</module>
@@ -33,9 +32,7 @@
     <module>at.medevit.elexis.ehc.ui.example</module>
     <module>at.medevit.elexis.ehc.ui.vacdoc</module>
     <module>at.medevit.elexis.ehc.vacdoc</module>
-    <module>at.medevit.elexis.ehc.vacdoc.test</module>
     <module>at.medevit.elexis.emediplan.core</module>
-    <module>at.medevit.elexis.emediplan.core.test</module>
     <module>at.medevit.elexis.emediplan.feature</module>
     <module>at.medevit.elexis.emediplan.ui</module>
     <module>at.medevit.elexis.epha.interactions</module>
@@ -83,7 +80,6 @@
     <module>ch.elexis.base.ch.arzttarife.test</module>
     <module>ch.elexis.base.ch.diagnosecodes</module>
     <module>ch.elexis.base.ch.ebanking</module>
-    <module>ch.elexis.base.ch.ebanking.test</module>
     <module>ch.elexis.base.ch.feature</module>
     <module>ch.elexis.base.ch.feature.branding</module>
     <module>ch.elexis.base.ch.labortarif_2009</module>
@@ -115,12 +111,10 @@
     <module>ch.elexis.connector.medicosearch.feature</module>
     <module>ch.elexis.docbox.ws.client</module>
     <module>ch.elexis.ebanking</module>
-    <module>ch.elexis.ebanking.tests</module>
     <module>ch.elexis.externe_dokumente</module>
     <module>ch.elexis.externe_dokumente.feature</module>
     <module>ch.elexis.externe_dokumente.tests</module>
     <module>ch.elexis.fop.service</module>
-    <module>ch.elexis.fop.service.test</module>
     <module>ch.elexis.fop_wrapper</module>
     <module>ch.elexis.fop_wrapper.feature</module>
     <module>ch.elexis.global_inbox</module>
@@ -192,7 +186,6 @@
     <module>ch.pharmed.phmprescriber_test</module>
     <module>ch.unibe.iam.scg.archie</module>
     <module>ch.unibe.iam.scg.archie.feature</module>
-    <module>ch.unibe.iam.scg.archie.samples</module>
     <module>ch.weirich.templator.pages</module>
     <module>ch.weirich.templator.pages.feature</module>
     <module>com.hilotec.elexis.kgview</module>

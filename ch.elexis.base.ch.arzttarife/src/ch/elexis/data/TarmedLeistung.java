@@ -524,7 +524,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 			MandantType type = getMandantType(mandant);
 			if (type == MandantType.PRACTITIONER) {
 				double alScaling = checkZeroDouble(map.get(EXT_FLD_F_AL_R));
-				if (scaling > 0.1) {
+				if (alScaling > 0.1) {
 					scaling *= alScaling;
 				}
 			}

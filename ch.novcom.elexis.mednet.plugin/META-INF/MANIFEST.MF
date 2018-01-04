@@ -15,13 +15,12 @@ Export-Package: ch.novcom.elexis.mednet.plugin,
 Bundle-Vendor: novcom AG
 Require-Bundle: org.eclipse.core.runtime,
  ch.rgw.utility,
- ch.elexis.core,
+ ch.elexis.core;bundle-version="3.2.0",
  ch.elexis.core.ui,
  ch.elexis.core.data,
- ch.elexis.core.ui.laboratory,
- ch.elexis.core.importer.div,
- ch.elexis.core.ui.importer.div,
  ch.elexis.core.hl7.v2x,
+ ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
  org.eclipse.ui,
- at.medevit.elexis.gdt,
- at.medevit.elexis.gdt.defaultfilecp
+ at.medevit.elexis.gdt;bundle-version="3.1.0",
+ at.medevit.elexis.gdt.defaultfilecp;bundle-version="3.1.0"
+

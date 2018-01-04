@@ -350,6 +350,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				break;
 			case EVENT_DESELECTED:
 				msg = "EVENT_DESELECTED";
+				Konsultation selected_kons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				log.debug("runInUi selected_kons is now: " + selected_kons);
+				newKons = selected_kons;
 				break;
 				}
 			if (!removedStaleKonsLocks) {
@@ -671,6 +674,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			visibleAllKonsAreas(mode);
 			heartbeat.enableListener(true);
 		} else {
+			logEvent(actKons, "visible false");
 			heartbeat.enableListener(false);
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons, eeli_problem,
 				eeli_pat, eeli_user,  eeli_update);

@@ -19,6 +19,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -72,7 +73,7 @@ public class KonsText implements IJournalArea {
 	private static String unable_to_save_kons_id = "";
 	int displayedVersion;
 	private Action purgeAction;
-	private Action saveAction;
+	private IAction saveAction;
 	private Action chooseVersionAction;
 	private Action versionFwdAction;
 	private Action versionBackAction;
@@ -133,7 +134,7 @@ public class KonsText implements IJournalArea {
 		return purgeAction;
 	}
 
-	public Action getSaveAction(){
+	public IAction getSaveAction(){
 		return saveAction;
 	}
 
@@ -220,6 +221,7 @@ public class KonsText implements IJournalArea {
 			}
 		}
 		text.setDirty(false);
+		updateKonsVersionLabel();
 	}
 
 	/**
@@ -368,10 +370,10 @@ public class KonsText implements IJournalArea {
 			}
 		};
 
-		saveAction = new Action("Eintrag sichern") {
+		saveAction = new Action("Konstext sichern") {
 			{
 				setImageDescriptor(Images.IMG_DISK.getImageDescriptor());
-				setToolTipText("Text explizit speichern");
+				setToolTipText("Konsultationstext explizit speichern");
 			}
 
 			@Override

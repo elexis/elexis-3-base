@@ -122,6 +122,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private IAction exportToClipboardAction;
 	private IAction sendEmailAction;
 	private IAction addKonsultationAction;
+	private IAction saveKonsultationAction;
 	private Action showAllChargesAction;
 	private Action showAllConsultationsAction;
 
@@ -204,18 +205,18 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				GlobalActions.delKonsAction, problemsArea.delProblemAction, exportToClipboardAction, sendEmailAction,
 				konsTextComposite.getVersionForwardAction(), konsTextComposite.getVersionBackAction(),
 				konsTextComposite.getChooseVersionAction(), konsTextComposite.getPurgeAction(),
-				konsTextComposite.getSaveAction(), showAllConsultationsAction, showAllChargesAction,
+				saveKonsultationAction, showAllConsultationsAction, showAllChargesAction,
 				problemsArea.addFixmedikationAction);
 		} else {
 			menus.createMenu(addKonsultationAction, GlobalActions.redateAction, problemsArea.addProblemAction,
 				GlobalActions.delKonsAction, problemsArea.delProblemAction, exportToClipboardAction, sendEmailAction,
 				konsTextComposite.getVersionForwardAction(), konsTextComposite.getVersionBackAction(),
-				konsTextComposite.getChooseVersionAction(), konsTextComposite.getSaveAction(),
+				konsTextComposite.getChooseVersionAction(), saveKonsultationAction,
 				showAllConsultationsAction, showAllChargesAction, problemsArea.addFixmedikationAction);
 		}
 
 		menus.createToolbar(sendEmailAction, exportToClipboardAction, addKonsultationAction,
-			problemsArea.getAddProblemAction(), konsTextComposite.getSaveAction());
+			problemsArea.getAddProblemAction(), saveKonsultationAction);
 		menus.createViewerContextMenu(konsProblems.getProblemAssignmentViewer(), konsProblems.unassignProblemAction);
 		menus.createViewerContextMenu(konsVerrechnung.getVerrechnungViewer(),
 			konsVerrechnung.changeVerrechnetPreisAction, konsVerrechnung.changeVerrechnetZahlAction,
@@ -546,6 +547,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		};
 		addKonsultationAction.setActionDefinitionId(Constants.NEWCONS_COMMAND);
 		GlobalActions.registerActionHandler(this, addKonsultationAction);
+
+		saveKonsultationAction = konsTextComposite.getSaveAction();
+		saveKonsultationAction.setActionDefinitionId(Constants.SAVECONS_COMMAND);
+		GlobalActions.registerActionHandler(this, saveKonsultationAction);
 
 		// Probleme
 		if (problemsArea != null) {

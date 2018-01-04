@@ -70,6 +70,7 @@ public class Constants {
 	public static final String ID = "org.iatrix.views.JournalView"; //$NON-NLS-1$
 	public static final String VIEW_CONTEXT_ID = "org.iatrix.view.context"; //$NON-NLS-1$
 	public static final String NEWCONS_COMMAND = "org.iatrix.commands.newcons"; //$NON-NLS-1$
+	public static final String SAVECONS_COMMAND = "org.iatrix.commands.savecons"; //$NON-NLS-1$
 	public static final String NEWPROBLEM_COMMAND = "org.iatrix.commands.newproblem"; //$NON-NLS-1$
 	public static final String EXPORT_CLIPBOARD_COMMAND = "org.iatrix.commands.export_clipboard"; //$NON-NLS-1$
 	public static final String EXPORT_SEND_EMAIL_COMMAND = "org.iatrix.commands.send_email"; //$NON-NLS-1$

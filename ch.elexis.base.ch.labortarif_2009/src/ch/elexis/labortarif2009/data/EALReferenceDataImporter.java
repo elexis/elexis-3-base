@@ -16,7 +16,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -89,7 +91,7 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 				String[] line = exw.getRow(1).toArray(new String[0]);
 				// determine format of file according to year of tarif
 				int formatYear = getFormatYear(line);
-				if (formatYear != 2011 && formatYear != 2012)
+				if (formatYear != 2011 && formatYear != 2012 && formatYear != 2018)
 					return new Status(Status.ERROR, "ch.elexis.labotarif.ch2009", //$NON-NLS-1$
 						"unknown file format"); //$NON-NLS-1$
 					
@@ -101,6 +103,8 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 						fillImportedValues2011(line);
 					else if (formatYear == 2012)
 						fillImportedValues2012(line);
+					else if (formatYear == 2018)
+						fillImportedValues2018(line);
 					
 					if (importedValues.size() > 0) {
 						updateOrCreateFromImportedValues();
@@ -228,9 +232,29 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 	private String concatChapter(Labor2009Tarif existing, String chapter){
 		String existingChapter = existing.get(Labor2009Tarif.FLD_CHAPTER);
 		if (existingChapter != null && !existingChapter.isEmpty()) {
-			return existingChapter + ", " + chapter;
+			return chaptersMakeUnique(existingChapter + ", " + chapter);
 		} else {
-			return chapter;
+			return chaptersMakeUnique(chapter);
+		}
+	}
+	
+	private String chaptersMakeUnique(String chapters){
+		String[] parts = chapters.split(", ");
+		if (parts != null && parts.length > 1) {
+			StringBuilder sb = new StringBuilder();
+			HashSet<String> set = new HashSet<>();
+			set.addAll(Arrays.asList(parts));
+			String[] array = set.toArray(new String[set.size()]);
+			Arrays.sort(array);
+			for (String string : array) {
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append(string);
+			}
+			return sb.toString();
+		} else {
+			return chapters;
 		}
 	}
 
@@ -262,6 +286,21 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 			StringTool.limitLength(StringTool.getSafe(line, 4), 254));
 		importedValues.put(Labor2009Tarif.FLD_LIMITATIO, StringTool.getSafe(line, 5));
 		importedValues.put(Labor2009Tarif.FLD_FACHBEREICH, StringTool.getSafe(line, 6));
+	}
+	
+	private void fillImportedValues2018(String[] line){
+		importedValues.clear();
+		importedValues.put(Labor2009Tarif.FLD_CHAPTER, StringTool.getSafe(line, 0));
+		// convert code to nnnn.mm
+		String code = convertCodeString(StringTool.getSafe(line, 1));
+		
+		importedValues.put(Labor2009Tarif.FLD_CODE, code);
+		importedValues.put(Labor2009Tarif.FLD_TP,
+			convertLocalizedNumericString(StringTool.getSafe(line, 2)).toString());
+		importedValues.put(Labor2009Tarif.FLD_NAME,
+			StringTool.limitLength(StringTool.getSafe(line, 3), 254));
+		importedValues.put(Labor2009Tarif.FLD_LIMITATIO, StringTool.getSafe(line, 4));
+		importedValues.put(Labor2009Tarif.FLD_FACHBEREICH, StringTool.getSafe(line, 5));
 	}
 	
 	private void closeAllOlder(){
@@ -325,12 +364,23 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 	private int getFormatYear(String[] line){
 		String fach2011 = StringTool.getSafe(line, 6);
 		String fach2012 = StringTool.getSafe(line, 7);
-		if (fach2012.equals("") && !fach2011.equals(""))
-			return 2011;
-		else if (fach2011.equals("") && !fach2012.equals(""))
+		String code2018 = StringTool.getSafe(line, 1);
+		if (fach2012.equals("") && !fach2011.equals("")) {
+			if (isCode(code2018)) {
+				return 2018;
+			} else {
+				return 2011;
+			}
+		} else if (fach2011.equals("") && !fach2012.equals("")) {
 			return 2012;
-		else
-			return -1;
+		}
+		return -1;
+	}
+	
+	private boolean isCode(String code2018){
+		code2018 = code2018.replaceAll("[\\.,']", "");
+		Integer value = Integer.valueOf(code2018);
+		return value >= 1000;
 	}
 
 	@Override

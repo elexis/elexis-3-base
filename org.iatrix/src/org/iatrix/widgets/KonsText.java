@@ -19,6 +19,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -69,9 +70,10 @@ public class KonsText implements IJournalArea {
 	private static Label lVersion = null;
 	private static Label lKonsLock = null;
 	private static KonsTextLock konsTextLock = null;
+	private static String unable_to_save_kons_id = "";
 	int displayedVersion;
 	private Action purgeAction;
-	private Action saveAction;
+	private IAction saveAction;
 	private Action chooseVersionAction;
 	private Action versionFwdAction;
 	private Action versionBackAction;
@@ -132,7 +134,7 @@ public class KonsText implements IJournalArea {
 		return purgeAction;
 	}
 
-	public Action getSaveAction(){
+	public IAction getSaveAction(){
 		return saveAction;
 	}
 
@@ -195,14 +197,17 @@ public class KonsText implements IJournalArea {
 						int new_version = actKons.getHeadVersion();
 						String samdasText = (new Samdas(actKons.getEintrag().getHead()).getRecordText());
 						if (new_version <= old_version || !plain.equals(samdasText)) {
-							String errMsg = "Unable to update: old_version " +
-									old_version + " " + plain +
-									" new_version " + new_version + " " + samdasText ;
-							logEvent("updateEintrag " + errMsg + plain);
-							showUnableToSaveKons(plain, errMsg);
+							if (!unable_to_save_kons_id.equals(actKons.getId())) {
+								String errMsg = "Unable to update: old_version " +
+										old_version + " " + plain +
+										" new_version " + new_version + " " + samdasText ;
+								logEvent("updateEintrag " + errMsg + plain);
+								showUnableToSaveKons(plain, errMsg);
+								unable_to_save_kons_id = actKons.getId();
+							}
 						} else {
+							unable_to_save_kons_id = "";
 							logEvent("updateEintrag saved rev. " + new_version + " plain: " + plain);
-							text.setDirty(false);
 							// TODO: Warum merkt das KonsListView trotzdem nicht ?? ElexisEventDispatcher.fireSelectionEvent(actKons);
 						}
 					}
@@ -215,6 +220,8 @@ public class KonsText implements IJournalArea {
 				}
 			}
 		}
+		text.setDirty(false);
+		updateKonsVersionLabel();
 	}
 
 	/**
@@ -363,10 +370,10 @@ public class KonsText implements IJournalArea {
 			}
 		};
 
-		saveAction = new Action("Eintrag sichern") {
+		saveAction = new Action("Konstext sichern") {
 			{
 				setImageDescriptor(Images.IMG_DISK.getImageDescriptor());
-				setToolTipText("Text explizit speichern");
+				setToolTipText("Konsultationstext explizit speichern");
 			}
 
 			@Override
@@ -418,10 +425,15 @@ public class KonsText implements IJournalArea {
 			return;
 		}
 		if (op == KonsActions.ACTIVATE_KONS) {
+			boolean hasTextChanges = false;
 			// make sure to unlock the kons edit field and release the lock
 			if (text != null && actKons != null) {
-				logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " textChanged "
-					+ textChanged() + " actKons vom: " + actKons.getDatum());
+				hasTextChanges = textChanged() ;
+				logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " hasTextChanges "
+					+ hasTextChanges + " actKons vom: " + actKons.getDatum());
+				if (hasTextChanges) {
+					updateEintrag();
+				}
 			}
 			removeKonsTextLock();
 			if (k == null) {

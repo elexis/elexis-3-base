@@ -13,7 +13,7 @@ package ch.novcom.elexis.mednet.plugin.messages;
 import org.eclipse.osgi.util.NLS;
 
 public class MedNetMessages extends NLS {
-	private static final String BUNDLE_NAME = "ch.novcom.elexis.mednet.plugin.mednetmessages";
+	private static final String BUNDLE_NAME = "ch.novcom.elexis.mednet.plugin.messages.messages";
 		
 	public static String FormWatcher_DocumentInstitutionID;
 	public static String FormWatcher_DocumentInstitutionName;

@@ -23,6 +23,7 @@ import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.LaborLeistung;
 import ch.elexis.data.PhysioLeistung;
@@ -577,8 +578,8 @@ public class XMLExporterServices {
 				}
 				// 22330 set code if still empty
 				if (el.getAttribute(XMLExporter.ATTR_CODE) == null) {
-					XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE, v.getCode(),
-						StringConstants.ZERO); // 22330
+					XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE,
+						getServiceCode(verrechnet), StringConstants.ZERO); // 22330
 				}
 				ret.servicesElement.addContent(el);
 			}
@@ -587,4 +588,22 @@ public class XMLExporterServices {
 		return ret;
 	}
 	
+	/**
+	 * Filter codes of {@link Verrechnet} where ID is used as code. This is relevant for
+	 * {@link Eigenleistung} and Eigenartikel.
+	 * 
+	 * @param lst
+	 * @return
+	 */
+	private static String getServiceCode(Verrechnet verrechnet){
+		String ret = verrechnet.getCode();
+		IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
+		if (verrechenbar instanceof Eigenleistung || (verrechenbar instanceof Artikel
+			&& ((Artikel) verrechenbar).get(Artikel.FLD_TYP).equals("Eigenartikel"))) {
+			if (verrechenbar.getId().equals(ret)) {
+				ret = "";
+			}
+		}
+		return ret;
+	}
 }

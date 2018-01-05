@@ -145,7 +145,13 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 						new SerienTerminDialog(UiDesk.getTopShell(), st).open();
 						tv.refresh(true);
 					} else {
-						terminAendernAction.run();
+						if (pl instanceof Termin.Free) {
+							// locking of new Termin is handled by TerminDialog
+							TerminDialog dlg = new TerminDialog(pl);
+							dlg.open();
+						} else {
+							terminAendernAction.run();
+						}
 						tv.refresh(true);
 					}
 					

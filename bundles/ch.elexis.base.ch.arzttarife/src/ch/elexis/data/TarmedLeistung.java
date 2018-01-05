@@ -34,6 +34,7 @@ import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
 import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
+import ch.elexis.data.TarmedLimitation.LimitationUnit;
 import ch.elexis.views.TarmedDetailDialog;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.JdbcLink;
@@ -523,7 +524,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 			MandantType type = getMandantType(mandant);
 			if (type == MandantType.PRACTITIONER) {
 				double alScaling = checkZeroDouble(map.get(EXT_FLD_F_AL_R));
-				if (scaling > 0.1) {
+				if (alScaling > 0.1) {
 					scaling *= alScaling;
 				}
 			}
@@ -1091,8 +1092,33 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 			for (String line : lines) {
 				ret.add(TarmedLimitation.of(line).setTarmedLeistung(this));
 			}
+			fix9533(ret);
 			return ret;
 		}
 		return Collections.emptyList();
+	}
+	
+	/**
+	 * Method marks {@link LimitationUnit#COVERAGE} {@link TarmedLimitation} as skip if in
+	 * combination with a {@link LimitationUnit#SESSION}. This is a WORKAROUND and should be REMOVED
+	 * after reason is fixed.
+	 * 
+	 * @param ret
+	 */
+	private void fix9533(List<TarmedLimitation> ret){
+		boolean sessionfound = false;
+		for (TarmedLimitation tarmedLimitation : ret) {
+			if(tarmedLimitation.getLimitationUnit() == LimitationUnit.SESSION) {
+				sessionfound = true;
+				break;
+			}
+		}
+		if (sessionfound) {
+			for (TarmedLimitation tarmedLimitation : ret) {
+				if (tarmedLimitation.getLimitationUnit() == LimitationUnit.COVERAGE) {
+					tarmedLimitation.setSkip(true);
+				}
+			}
+		}
 	}
 }

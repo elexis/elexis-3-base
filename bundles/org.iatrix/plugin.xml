@@ -83,6 +83,12 @@
             sequence="M1+K">
       </key>
       <key
+            commandId="org.iatrix.commands.savecons"
+            contextId="org.iatrix.view.context"
+            schemeId="ch.elexis.ui.keybindingScheme"
+            sequence="M1+S">
+      </key>
+      <key
             commandId="org.iatrix.commands.export_clipboard"
             contextId="org.iatrix.view.context"
             schemeId="ch.elexis.ui.keybindingScheme"
@@ -125,6 +131,11 @@
             categoryId="org.iatrix.commands.category"
             id="org.iatrix.commands.newcons"
             name="%iatrix.commands.newcons">
+      </command>
+      <command
+            categoryId="org.iatrix.commands.category"
+            id="org.iatrix.commands.savecons"
+            name="%iatrix.commands.savecons">
       </command>
       <category
             id="org.iatrix.commands.category"

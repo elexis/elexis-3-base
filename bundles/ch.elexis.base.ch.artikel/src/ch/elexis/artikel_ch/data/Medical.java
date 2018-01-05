@@ -15,18 +15,12 @@ import java.util.Map;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.ui.optifier.NoObligationOptifier;
 import ch.elexis.data.Artikel;
-import ch.elexis.data.Query;
 
 public class Medical extends Artikel {
 	
 	public static final String CODESYSTEM_NAME = "Medicals";
 	
 	private static IOptifier noObligationOptifier = new NoObligationOptifier();
-	
-	static {
-		transferAllStockInformationToNew32StockModel(new Query<Medical>(Medical.class),
-			Medical.class);
-	}
 	
 	@Override
 	protected String getConstraint(){

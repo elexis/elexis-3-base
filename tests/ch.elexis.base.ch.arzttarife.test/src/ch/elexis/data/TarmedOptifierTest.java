@@ -347,6 +347,31 @@ public class TarmedOptifierTest {
 		assertEquals(17.76, amount.getAmount(), 0.01);
 	}
 	
+	/**
+	 * Test combination of session limit with coverage limit.
+	 */
+	@Test
+	public void test9533(){
+		clearKons(konsGriss);
+		
+		Result<IVerrechenbar> result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("02.0010", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("02.0010", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("02.0010", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		resetKons(konsGriss);
+	}
+	
 	private void setUpDignitaet(Konsultation kons){
 		Hashtable<String, String> extension = tlBaseFirst5Min.loadExtension();
 		// set reduce factor

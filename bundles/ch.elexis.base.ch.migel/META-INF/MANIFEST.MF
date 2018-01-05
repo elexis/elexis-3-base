@@ -16,4 +16,7 @@ Import-Package: ch.elexis.core.model,
  ch.rgw.tools,
  org.eclipse.core.runtime,
  org.eclipse.core.runtime.jobs,
- org.eclipse.osgi.util
+ org.eclipse.osgi.util,
+ org.osgi.service.component.annotations;version="1.2.0"
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/ch.elexis.artikel_ch.data.service.MiGelCodeElementService.xml

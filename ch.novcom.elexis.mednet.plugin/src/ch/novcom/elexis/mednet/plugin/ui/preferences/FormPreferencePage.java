@@ -83,7 +83,9 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		gdtPath = new Text(ret, SWT.BORDER);
 		gdtPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gdtPath.setTextLimit(80);
-		gdtPath.setText(MedNet.getSettings().getFormsGDTPath().toString());
+		if(MedNet.getSettings().getFormsGDTPath() != null) {
+			gdtPath.setText(MedNet.getSettings().getFormsGDTPath().toString());
+		}
 		gdtPath.setEnabled(false);
 		
 		gdtPathSelection = new Button(ret, SWT.PUSH);
@@ -104,7 +106,9 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		formsPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		formsPath.setTextLimit(80);
 		formsPath.setEnabled(false);
-		formsPath.setText(MedNet.getSettings().getFormsPath().toString());
+		if(MedNet.getSettings().getFormsPath() != null) {
+			formsPath.setText(MedNet.getSettings().getFormsPath().toString());
+		}
 		
 		formsPathSelection = new Button(ret, SWT.PUSH);
 		formsPathSelection.setText("..."); //$NON-NLS-1$
@@ -123,7 +127,9 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		errorPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		errorPath.setTextLimit(80);
 		errorPath.setEnabled(false);
-		errorPath.setText(MedNet.getSettings().getFormsErrorPath().toString());
+		if(MedNet.getSettings().getFormsErrorPath() != null) {
+			errorPath.setText(MedNet.getSettings().getFormsErrorPath().toString());
+		}
 		
 		errorPathSelection = new Button(ret, SWT.PUSH);
 		errorPathSelection.setText("..."); //$NON-NLS-1$
@@ -142,7 +148,9 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		archivePath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		archivePath.setTextLimit(80);
 		archivePath.setEnabled(false);
-		archivePath.setText(MedNet.getSettings().getFormsArchivePath().toString());
+		if(MedNet.getSettings().getFormsArchivePath() != null) {
+			archivePath.setText(MedNet.getSettings().getFormsArchivePath().toString());
+		}
 		
 		archivePathSelection = new Button(ret, SWT.PUSH);
 		archivePathSelection.setText("..."); //$NON-NLS-1$

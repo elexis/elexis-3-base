@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.rgw.io.Settings;
 
@@ -47,6 +48,11 @@ public class MedNetSettings {
 	Path formsErrorPath;
 	Path formsArchivePath;
 	int formsArchivePurgeInterval;
+	
+	
+	public MedNetSettings(){
+		loadSettings();
+	}
 	
 	public Path getExePath() {
 		return this.exePath;
@@ -117,23 +123,67 @@ public class MedNetSettings {
 	 * Lädt die aktuell gespeicherten Einstellungen
 	 */
 	public void loadSettings(){
-		String temp;
 		
 		// Globale Settings
-		exePath = Paths.get(configuration.get(cfgExePath, "")); //$NON-NLS-1$
+		String exePathString = configuration.get(cfgExePath, "");
+		if(	exePathString != null && 
+			!exePathString.isEmpty()	) {
+			exePath = Paths.get(exePathString); //$NON-NLS-1$
+		}
+		
 		//logsPath = Paths.get(configuration.get(cfgLogsPath, "")); //$NON-NLS-1$
 		//logsLevel = logLevelFromString(configuration.get(cfgLogsLevel, "")); //$NON-NLS-1$
-		formsGDTPath = Paths.get(configuration.get(cfgFormsGDTPath, "")); //$NON-NLS-1$
-		formsPath = Paths.get(configuration.get(cfgFormsPath, "")); //$NON-NLS-1$
-		formsArchivePath = Paths.get(configuration.get(cfgFormsArchivePath, "")); //$NON-NLS-1$
+		String formsGDTPathString = configuration.get(cfgFormsGDTPath, "");
+		if(	formsGDTPathString != null && 
+				!formsGDTPathString.isEmpty()	) {
+			formsGDTPath = Paths.get(formsGDTPathString); //$NON-NLS-1$
+		}
+		else {
+			formsGDTPath = null;
+		}
+		
+		
+		String formsPathString =configuration.get(cfgFormsPath, "");
+		if(	formsPathString != null && 
+			!formsPathString.isEmpty()	) {
+			formsPath = Paths.get(formsPathString); //$NON-NLS-1$
+		}
+		else {
+			formsPath = null;
+		}
+		
+		
+		String formsArchivePathString = configuration.get(cfgFormsArchivePath, "");
 
-		temp = configuration.get(cfgFormsArchivePurgeInterval, ""); //$NON-NLS-1$
-		try {
-			formsArchivePurgeInterval = Integer.parseInt(temp);
-		} catch (Exception e) {}
+		if(	formsArchivePathString != null && 
+			!formsArchivePathString.isEmpty()	) {
+			formsArchivePath = Paths.get(formsArchivePathString); //$NON-NLS-1$
+		}
+		else {
+			formsArchivePath = null;
+		}
+
+		String cfgFormsArchivePurgeIntervalString = configuration.get(cfgFormsArchivePurgeInterval, ""); //$NON-NLS-1$
+		if(	cfgFormsArchivePurgeIntervalString != null && 
+				!cfgFormsArchivePurgeIntervalString.isEmpty()	) {
+			try {
+				formsArchivePurgeInterval = Integer.parseInt(cfgFormsArchivePurgeIntervalString);
+			} catch (Exception e) {
+				formsArchivePurgeInterval = -1 ;
+			}
+		}
+		else {
+			formsArchivePurgeInterval = -1 ;
+		}
 		
-		formsErrorPath = Paths.get(configuration.get(cfgFormsErrorPath, "")); //$NON-NLS-1$
-		
+		String formsErrorPathString = configuration.get(cfgFormsErrorPath, "");
+		if(	formsErrorPathString != null && 
+			!formsErrorPathString.isEmpty()	) {
+			formsErrorPath = Paths.get(formsErrorPathString); //$NON-NLS-1$
+		}
+		else {
+			formsErrorPath = null;
+		}
 	}
 	
 	/**
@@ -142,17 +192,26 @@ public class MedNetSettings {
 	public void saveSettings(){
 		
 		// Globale Settings
-		configuration.set(cfgExePath, exePath.toString());
+		if(exePath != null) {
+			configuration.set(cfgExePath, exePath.toString());
+		}
 		//configuration.set(cfgLogsPath, logsPath.toString());
 		//configuration.set(cfgLogsLevel, logLevelToString(logsLevel));
-		configuration.set(cfgFormsGDTPath, formsGDTPath.toString());
-		configuration.set(cfgFormsPath, formsPath.toString());
-		configuration.set(cfgFormsArchivePath, formsArchivePath.toString());
+		if(formsGDTPath != null) {
+			configuration.set(cfgFormsGDTPath, formsGDTPath.toString());
+		}
+		if(formsPath != null) {
+			configuration.set(cfgFormsPath, formsPath.toString());
+		}
+		if(formsArchivePath != null) {
+			configuration.set(cfgFormsArchivePath, formsArchivePath.toString());
+		}
 		configuration.set(cfgFormsArchivePurgeInterval, formsArchivePurgeInterval);
-		configuration.set(cfgFormsErrorPath, formsErrorPath.toString());
+		if(formsErrorPath != null) {
+			configuration.set(cfgFormsErrorPath, formsErrorPath.toString());
+		}
 		
 		configuration.flush();
-		
 	}
 	
 	public static String[] getAvailableLogLevels(){

@@ -14,8 +14,10 @@ package ch.novcom.elexis.mednet.plugin.data;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -45,12 +47,12 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 	
 
 	private static final String index1SQL =
-			"CREATE UNIQUE INDEX " + DocumentSettingRecord.TABLENAME + "_idx_Path on " + DocumentSettingRecord.TABLENAME + "(" + FLD_PATH +");";
+			"CREATE UNIQUE INDEX " + DocumentSettingRecord.TABLENAME + "_idx_Path on " + DocumentSettingRecord.TABLENAME + "(" + DocumentSettingRecord.FLD_PATH +");";
 	
 	private static final String createTable = "CREATE TABLE "
 			+ DocumentSettingRecord.TABLENAME + "("
 			+ PersistentObject.FLD_ID + " VARCHAR(25) primary key,"
-			+ DocumentSettingRecord.FLD_INSTITUTION_ID + "VARCHAR(25),"
+			+ DocumentSettingRecord.FLD_INSTITUTION_ID + " VARCHAR(25),"
 			+ DocumentSettingRecord.FLD_INSTITUTION_NAME + " VARCHAR(255),"
 			+ DocumentSettingRecord.FLD_CATEGORY + " VARCHAR(255),"
 			+ DocumentSettingRecord.FLD_PATH + " VARCHAR(255),"
@@ -114,10 +116,10 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 		
 	}
 	
-	protected DocumentSettingRecord(){
+	public DocumentSettingRecord(){
 	}
 	
-	protected DocumentSettingRecord(String id){
+	public DocumentSettingRecord(String id){
 		super(id);
 	}
 	

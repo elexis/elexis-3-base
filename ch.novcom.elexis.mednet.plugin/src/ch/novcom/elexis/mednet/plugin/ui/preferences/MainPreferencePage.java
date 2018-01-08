@@ -65,16 +65,28 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(3, false));
+
+/*		ret.setLayoutData(new GridData(SWT.FILL, SWT.BORDER, true, false, 3, 1));
+		ret.setLayout(new GridLayout(3, false));
+
+		GridData gridData1Col = SWTHelper.getFillGridData(1, true, 1, false);
+		gridData1Col.widthHint = 120;
+		GridData gridData2Col = SWTHelper.getFillGridData(2, true, 1, false);
+		GridData gridData3Col = SWTHelper.getFillGridData(3, true, 1, false);*/
 		
 		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelExePath);
 		exePath = new Text(ret, SWT.BORDER);
 		exePath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		//exePath.setLayoutData(gridData2Col);
 		exePath.setTextLimit(80);
 		exePath.setEnabled(false);
-		exePath.setText(MedNet.getSettings().getExePath().toString());
+		if(MedNet.getSettings().getExePath() != null) {
+			exePath.setText(MedNet.getSettings().getExePath().toString());
+		}
 		
 		exePathSelection = new Button(ret, SWT.PUSH);
-		exePathSelection.setText("..."); //$NON-NLS-1$
+		exePathSelection.setText("...");
+		//exePathSelection.setLayoutData(gridData3Col);
 		exePathSelection.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){

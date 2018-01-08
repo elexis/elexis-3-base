@@ -13,6 +13,8 @@ package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import java.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -221,6 +223,7 @@ public class DocumentPreferencePage extends PreferencePage implements
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				try {
+					JOptionPane.showConfirmDialog(null,"New clicked");
 					// execute the command
 					IHandlerService handlerService =
 						(IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
@@ -228,6 +231,7 @@ public class DocumentPreferencePage extends PreferencePage implements
 					
 					handlerService.executeCommand(DocumentSettingRecordCreate.COMMANDID, null);
 				} catch (Exception ex) {
+					JOptionPane.showConfirmDialog(null,"Exception "+ex.getMessage());
 					throw new RuntimeException(DocumentSettingRecordCreate.COMMANDID, ex);
 				}
 				tableViewer.refresh();

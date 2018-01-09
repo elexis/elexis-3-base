@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.eclipse.jface.action.Action;
@@ -30,14 +31,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-
-import com.tiff.common.ui.datepicker.DatePicker;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.BereichSelectionHandler;
@@ -74,7 +74,7 @@ public class AgendaGross extends BaseAgendaView {
 		60, 60, 105, 80, 300, 200
 	};
 	
-	DatePicker cal;
+	DateTime calendar;
 	Composite cButtons;
 	Text dayMessage;
 	Text terminDetail;
@@ -127,9 +127,11 @@ public class AgendaGross extends BaseAgendaView {
 		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
 		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
-		cal = new DatePicker(right, SWT.NONE);
-		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		cal.setDate(agenda.getActDate().getTime());
+		calendar = new DateTime(right, SWT.CALENDAR);
+		calendar.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		calendar.setDate(agenda.getActDate().get(TimeTool.YEAR),
+			agenda.getActDate().get(TimeTool.MONTH),
+			agenda.getActDate().get(TimeTool.DAY_OF_MONTH));
 		Button bToday = new Button(right, SWT.PUSH);
 		bToday.setText(Messages.AgendaGross_today);
 		bToday.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -138,7 +140,8 @@ public class AgendaGross extends BaseAgendaView {
 			public void widgetSelected(SelectionEvent arg0){
 				TimeTool dat = new TimeTool();
 				agenda.setActDate(dat);
-				cal.setDate(agenda.getActDate().getTime());
+				calendar.setDate(dat.get(TimeTool.YEAR), dat.get(TimeTool.MONTH),
+					dat.get(TimeTool.DAY_OF_MONTH));
 				updateDate();
 			}
 			
@@ -147,7 +150,7 @@ public class AgendaGross extends BaseAgendaView {
 		
 		// set text field's maximum width to the width of the calendar
 		GridData gd = (GridData) dayMessage.getLayoutData();
-		gd.widthHint = cal.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.widthHint = calendar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 		
 		dayMessage.addFocusListener(new FocusAdapter() {
 			
@@ -180,11 +183,13 @@ public class AgendaGross extends BaseAgendaView {
 		}
 		table.setHeaderVisible(true);
 		makePrivateActions();
-		cal.addSelectionListener(new SelectionAdapter() {
+		calendar.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0){
-				agenda.setActDate(new TimeTool(cal.getDate().getTime()));
+				LocalDate localDate =
+					LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
+				agenda.setActDate(new TimeTool(localDate));
 				updateDate();
 			}
 			

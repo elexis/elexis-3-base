@@ -36,6 +36,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
@@ -48,6 +50,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
@@ -69,6 +72,7 @@ import ch.rgw.tools.TimeTool;
  */
 public class AgendaGross extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.largeview"; //$NON-NLS-1$
+	public static final String CFG_VERTRELATION = "vertrelation"; //$NON-NLS-1$
 	private static final String SEPARATOR = ",";
 	private static final int[] DEFAULT_COLUMN_WIDTHS = {
 		60, 60, 105, 80, 300, 200
@@ -80,6 +84,8 @@ public class AgendaGross extends BaseAgendaView {
 	Text terminDetail;
 	Label lbDetails;
 	Label lbDayString;
+	private int[] sashWeights = null;
+	private SashForm sash;
 	private static Button[] bChange;
 	
 	private static final String[] columnTitles = {
@@ -99,7 +105,7 @@ public class AgendaGross extends BaseAgendaView {
 		cButtons.setLayout(rl);
 		cButtons.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
-		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
+		sash = new SashForm(parent, SWT.HORIZONTAL);
 		sash.setLayout(new GridLayout());
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
@@ -194,6 +200,10 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			
 		});
+		
+		sash.setWeights(sashWeights == null ? new int[] {
+			70, 30
+		} : sashWeights);
 		
 		// set initial widget values
 		initialize();
@@ -441,4 +451,31 @@ public class AgendaGross extends BaseAgendaView {
 		
 	}
 	
+	@Override
+	public void saveState(IMemento memento){
+		int[] w = sash.getWeights();
+		memento.putString(CFG_VERTRELATION,
+			Integer.toString(w[0]) + StringConstants.COMMA + Integer.toString(w[1]));
+		
+		super.saveState(memento);
+	}
+	
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException{
+		if (memento == null) {
+			sashWeights = new int[] {
+				70, 30
+			};
+		} else {
+			String state = memento.getString(CFG_VERTRELATION);
+			if (state == null) {
+				state = "70,30"; //$NON-NLS-1$
+			}
+			String[] sw = state.split(StringConstants.COMMA);
+			sashWeights = new int[] {
+				Integer.parseInt(sw[0]), Integer.parseInt(sw[1])
+			};
+		}
+		super.init(site, memento);
+	}
 }

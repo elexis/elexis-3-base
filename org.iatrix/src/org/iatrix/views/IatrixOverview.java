@@ -183,7 +183,7 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
-				a.activation(mode);
+				a.activation(mode, actKons == null ? null : actKons.getFall().getPatient(), actKons);
 			}
 		}
 	}

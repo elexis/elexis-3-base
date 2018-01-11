@@ -576,9 +576,11 @@ public class KonsText implements IJournalArea {
 	}
 
 	@Override
-	public synchronized void activation(boolean mode){
+	public synchronized void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		logEvent("activation: " + mode);
-		if (!mode) {
+		if (mode == true) {
+			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
+		} else {
 			updateEintrag();
 		}
 	}

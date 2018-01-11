@@ -370,7 +370,7 @@ public class AgendaGross extends BaseAgendaView {
 			.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append( //$NON-NLS-2$
+		sb.append(StringTool.unNull(t.get(Termin.FLD_CREATOR))).append("/").append(
 			t.getCreateTime().toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
 		ElexisEventDispatcher.fireSelectionEvent(t);

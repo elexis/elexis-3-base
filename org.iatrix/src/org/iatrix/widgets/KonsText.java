@@ -55,6 +55,7 @@ import ch.elexis.core.ui.util.IKonsMakro;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.TimeTool;
@@ -333,7 +334,6 @@ public class KonsText implements IJournalArea {
 					"Konsultationstext ersetzen",
 					"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine frühere Version desselben Eintrags ersetzen?")) {
 					setKonsText(actKons, displayedVersion - 1, false);
-					text.setDirty(true);
 				}
 			}
 		};
@@ -345,7 +345,6 @@ public class KonsText implements IJournalArea {
 					"Konsultationstext ersetzen",
 					"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine spätere Version desselben Eintrags ersetzen?")) {
 					setKonsText(actKons, displayedVersion + 1, false);
-					text.setDirty(true);
 				}
 			}
 		};
@@ -363,7 +362,6 @@ public class KonsText implements IJournalArea {
 						"Wollen Sie wirklich den aktuellen Konsultationstext gegen die Version "
 							+ selectedVersion + " desselben Eintrags ersetzen?")) {
 						setKonsText(actKons, selectedVersion, false);
-						text.setDirty(true);
 					}
 				}
 
@@ -449,16 +447,15 @@ public class KonsText implements IJournalArea {
 					// cannot be edited, but this often very shortlived as we create/switch
 					// to a newly created kons of today
 					logEvent("setKons actKons is not editable");
-					text.setEnabled(false);
 					setKonsText(k, 0, true);
 					updateKonsultation(true);
 					updateKonsLockLabel();
+					updateKonsVersionLabel();
 					lVersion.setText(lVersion.getText() + " Nicht editierbar. (Keine Zugriffsrechte oder schon verrechnet)");
 					return;
-				} else {
-					text.setEnabled(true);
+				} else if (actKons.getMandant().getId().contentEquals(CoreHub.actMandant.getId())) {
+					createKonsTextLock();
 				}
-				createKonsTextLock();
 				setKonsText(k, 0, true);
 			}
 			updateKonsultation(true);
@@ -472,7 +469,9 @@ public class KonsText implements IJournalArea {
 	 * Set the version label to reflect the current kons' latest version Called by: updateEintrag()
 	 */
 	private void updateKonsVersionLabel(){
+		text.setEnabled(false);
 		if (actKons != null) {
+			Mandant m = actKons.getMandant();
 			int version = actKons.getHeadVersion();
 			VersionedResource vr = actKons.getEintrag();
 			ResourceItem entry = vr.getVersion(version);
@@ -493,10 +492,22 @@ public class KonsText implements IJournalArea {
 					sb.append(" (NEU)");
 				}
 			}
+			if (m.getId().contentEquals(CoreHub.actMandant.getId()) && Helpers.hasRightToChangeConsultations(actKons, false)) {
+				sb.append(" von Ihnen ");
+				text.setEnabled(actKons.isEditable(false));
+			} else {
+				sb.append(" NICHT von Ihnen");
+				text.setEnabled(false);
+			}
 			lVersion.setText(sb.toString());
-			logEvent("UpdateVersionLabel: " + sb.toString());
+			logEvent(String.format("UpdateVersionLabel: %s editable? %s dirty? %s", sb.toString(), actKons.isEditable(false), text.isDirty()));
 		} else {
 			lVersion.setText("");
+		}
+		if (text.isEnabled() && text.isDirty()) {
+			text.getControl().setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+		} else {
+			text.getControl().setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		}
 	}
 
@@ -517,7 +528,6 @@ public class KonsText implements IJournalArea {
 			}
 			text.setText(PersistentObject.checkNull(ntext));
 			text.setKons(b);
-			text.setEnabled(hasKonsTextLock());
 			displayedVersion = version;
 			versionBackAction.setEnabled(version != 0);
 			versionFwdAction.setEnabled(version != b.getHeadVersion());
@@ -540,8 +550,8 @@ public class KonsText implements IJournalArea {
 			lVersion.setText("");
 			text.setText("");
 			text.setKons(null);
-			text.setEnabled(false);
 			displayedVersion = -1;
+			updateKonsVersionLabel();
 			versionBackAction.setEnabled(false);
 			versionFwdAction.setEnabled(false);
 			logEvent("setKonsText null " + lVersion.getText() + " " + text.getContentsPlaintext());
@@ -577,7 +587,8 @@ public class KonsText implements IJournalArea {
 			@Override
 			public void heartbeat(){
 				int konsTextSaverPeriod = Heartbeat.getKonsTextSaverPeriod();
-				logEvent("Period: " + konsTextSaverPeriod);
+				logEvent("Period: " + konsTextSaverPeriod + " dirty? " + text.isDirty());
+
 				if (!(konsTextSaverPeriod > 0)) {
 					// auto-save disabled
 					return;

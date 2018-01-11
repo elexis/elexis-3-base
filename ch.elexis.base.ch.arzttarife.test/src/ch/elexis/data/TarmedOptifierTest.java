@@ -31,8 +31,8 @@ import ch.rgw.tools.TimeTool;
 
 public class TarmedOptifierTest {
 	private static TarmedOptifier optifier;
-	private static Patient patGrissemann, patStermann, patOneYear;
-	private static Konsultation konsGriss, konsSter, konsOneYear;
+	private static Patient patGrissemann, patStermann, patOneYear, patBelow75;
+	private static Konsultation konsGriss, konsSter, konsOneYear, konsBelow75;
 	private static TarmedLeistung tlBaseFirst5Min, tlBaseXRay, tlBaseRadiologyHospital,
 			tlUltrasound, tlAgeTo1Month, tlAgeTo7Years, tlAgeFrom7Years,
 			tlGroupLimit1, tlGroupLimit2;
@@ -85,9 +85,20 @@ public class TarmedOptifierTest {
 		patOneYear = new Patient("One", "Year", dob, Patient.MALE);
 		Fall fallOneYear = patOneYear.neuerFall("Testfall One", Fall.getDefaultCaseReason(),
 			Fall.getDefaultCaseLaw());
-		fallSter.setInfoElement("Kostenträger", patOneYear.getId());
+		fallOneYear.setInfoElement("Kostenträger", patOneYear.getId());
 		konsOneYear = new Konsultation(fallOneYear);
 		resetKons(konsOneYear);
+		
+		//Patient below75 with case and consultation
+		dob = LocalDate.now().minusYears(74).minusDays(350)
+			.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+		patBelow75 = new Patient("One", "Year", dob, Patient.MALE);
+		Fall fallBelow75 = patBelow75.neuerFall("Testfall below 75", Fall.getDefaultCaseReason(),
+			Fall.getDefaultCaseLaw());
+		fallBelow75.setInfoElement("Kostenträger", patBelow75.getId());
+		konsBelow75 = new Konsultation(fallBelow75);
+		resetKons(konsBelow75);
+		
 	}
 	
 	private static void importTarmedReferenceData() throws FileNotFoundException{
@@ -248,7 +259,6 @@ public class TarmedOptifierTest {
 	
 	@Test
 	public void testOneYear(){
-		// additional without main, not allowed
 		Result<IVerrechenbar> result = optifier.add(tlAgeTo1Month, konsOneYear);
 		assertFalse(result.isOK());
 		
@@ -257,6 +267,25 @@ public class TarmedOptifierTest {
 		
 		result = optifier.add(tlAgeFrom7Years, konsOneYear);
 		assertFalse(result.isOK());
+	}
+	
+	@Test
+	public void testBelow75(){
+		TarmedLeistung tl =
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null);
+		// add age restriction to 75 years with 0 tolerance, for the test, like in tarmed 1.09
+		Hashtable<String, String> ext = tl.loadExtension();
+		String origAgeLimits = ext.get(TarmedLeistung.EXT_FLD_SERVICE_AGE);
+		ext.put(TarmedLeistung.EXT_FLD_SERVICE_AGE, origAgeLimits + (origAgeLimits.isEmpty()
+				? "-1|0|75|0|26[2006-04-01|2199-12-31]" : ", -1|0|75|0|26[2006-04-01|2199-12-31]"));
+		tl.setExtension(ext);
+		
+		Result<IVerrechenbar> result = optifier.add(tl, konsBelow75);
+		assertTrue(result.isOK());
+		resetKons(konsBelow75);
+		
+		ext.put(TarmedLeistung.EXT_FLD_SERVICE_AGE, origAgeLimits);
+		tl.setExtension(ext);
 	}
 	
 	@Test

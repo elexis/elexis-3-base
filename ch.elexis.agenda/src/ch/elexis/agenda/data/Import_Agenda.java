@@ -107,9 +107,9 @@ public class Import_Agenda extends ImporterPage {
 					new Termin(
 						rs.getString("ID"), dest_bereich, rs.getString("Tag"), von, bis, rs.getString("TerminTyp"), rs.getString("TerminStatus")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				t.set(new String[] {
-					"Grund", "ErstelltWann", "ErstelltVon"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					"Grund", "ErstelltWann", Termin.FLD_CREATOR}, //$NON-NLS-1$ //$NON-NLS-2$
 					rs.getString("Grund"), rs.getString("Angelegt"), //$NON-NLS-1$ //$NON-NLS-2$
-					rs.getString("ErstelltVon")); //$NON-NLS-1$
+					rs.getString(Termin.FLD_CREATOR));
 				
 				String pers = rs.getString("Personalien"); //$NON-NLS-1$
 				String[] px = Termin.findID(pers);

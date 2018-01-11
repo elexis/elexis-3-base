@@ -409,7 +409,7 @@ public class ProblemsTableModel implements KTableModel {
 			boolean fixed, boolean clicked, KTableModel model){
 			Color backColor;
 			Color borderColor;
-
+			highlightColor = display.getSystemColor(SWT.COLOR_LIST_SELECTION);
 			Image image = null;
 			if (content instanceof Image) {
 				image = (Image) content;
@@ -516,8 +516,6 @@ public class ProblemsTableModel implements KTableModel {
 		public void drawCell(GC gc, Rectangle rect, int col, int row, Object content, boolean focus,
 			boolean fixed, boolean clicked, KTableModel model){
 			Color textColor;
-			Color backColor;
-			Color borderColor;
 
 			String text;
 			if (content instanceof String) {
@@ -532,14 +530,14 @@ public class ProblemsTableModel implements KTableModel {
 				textColor = problemsTableColorProvider.getForegroundColor(col, row);
 			}
 
+			Color backColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+			highlightColor = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 			if (isSelected(row) && ((ProblemsTableModel) model).isHighlightRow()) {
 				backColor = highlightColor;
 			} else if (focus && ((ProblemsTableModel) model).isHighlightSelection()) {
 				backColor = highlightColor;
-			} else {
-				backColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 			}
-			borderColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			Color borderColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 
 			gc.setForeground(borderColor);
 			gc.drawLine(rect.x, rect.y + rect.height, rect.x + rect.width, rect.y + rect.height);

@@ -493,7 +493,8 @@ public class KonsText implements IJournalArea {
 				}
 			}
 			sb.append(Helpers.hasRightToChangeConsultations(actKons, false) ? "" : " Kein Recht ");
-			if (m.getId().contentEquals(CoreHub.actUser.getId()) && Helpers.hasRightToChangeConsultations(actKons, false)) {
+			// TODO: Allow administrators to change the konsText
+			if (actKons.getAuthor().contentEquals(CoreHub.actUser.getLabel()) && Helpers.hasRightToChangeConsultations(actKons, false)) {
 				sb.append(" von Ihnen ");
 				text.setEnabled(actKons.isEditable(false));
 			} else {
@@ -501,7 +502,7 @@ public class KonsText implements IJournalArea {
 				text.setEnabled(false);
 			}
 			lVersion.setText(sb.toString());
-			logEvent(String.format("UpdateVersionLabel: %s editable? %s dirty? %s", sb.toString(), actKons.isEditable(false), text.isDirty()));
+			logEvent(String.format("UpdateVersionLabel: %s author <%s> >actUser <%s> editable? %s dirty? %s", sb.toString(), actKons.getAuthor(),CoreHub.actUser.getLabel(), actKons.isEditable(false), text.isDirty()));
 		} else {
 			lVersion.setText("");
 		}

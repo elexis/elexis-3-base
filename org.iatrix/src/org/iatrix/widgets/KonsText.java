@@ -492,7 +492,8 @@ public class KonsText implements IJournalArea {
 					sb.append(" (NEU)");
 				}
 			}
-			if (m.getId().contentEquals(CoreHub.actMandant.getId()) && Helpers.hasRightToChangeConsultations(actKons, false)) {
+			sb.append(Helpers.hasRightToChangeConsultations(actKons, false) ? "" : " Kein Recht ");
+			if (m.getId().contentEquals(CoreHub.actUser.getId()) && Helpers.hasRightToChangeConsultations(actKons, false)) {
 				sb.append(" von Ihnen ");
 				text.setEnabled(actKons.isEditable(false));
 			} else {

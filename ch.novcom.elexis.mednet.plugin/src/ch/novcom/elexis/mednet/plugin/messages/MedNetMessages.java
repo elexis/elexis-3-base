@@ -56,6 +56,7 @@ public class MedNetMessages extends NLS {
 	public static String DocumentSettingRecordEditDialog_NoPath;
 	public static String DocumentSettingRecordEditDialog_NoErrorPath;
 	public static String DocumentSettingRecordEditDialog_NoArchivingPath;
+	public static String DocumentSettingRecordEditDialog_NotValidPath;
 	public static String DocumentSettingRecordEditDialog_NoPurgeInterval;
 	
 	public static String DocumentPreferences_institutionID;

@@ -42,9 +42,6 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 	
 	private int defaultPurgeInterval = 30;
 	
-	private Text  gdtPath;
-	private Button gdtPathSelection;
-	
 	private Text  formsPath;
 	private Button formsPathSelection;
 	
@@ -78,28 +75,6 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(3, false));
-		
-		WidgetFactory.createLabel(ret, MedNetMessages.FormPreferences_labelGDTPath);
-		gdtPath = new Text(ret, SWT.BORDER);
-		gdtPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		gdtPath.setTextLimit(80);
-		if(MedNet.getSettings().getFormsGDTPath() != null) {
-			gdtPath.setText(MedNet.getSettings().getFormsGDTPath().toString());
-		}
-		gdtPath.setEnabled(false);
-		
-		gdtPathSelection = new Button(ret, SWT.PUSH);
-		gdtPathSelection.setText("..."); //$NON-NLS-1$
-		gdtPathSelection.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setText(MedNetMessages.FormPreferences_labelGDTPath);
-		        String selected = dialog.open();
-		        gdtPath.setText(selected);
-			}
-		});
-		
 		
 		WidgetFactory.createLabel(ret, MedNetMessages.FormPreferences_labelFormsPath);
 		formsPath = new Text(ret, SWT.BORDER);
@@ -212,7 +187,6 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public boolean performOk(){
 
-		MedNet.getSettings().setFormsGDTPath(Paths.get(gdtPath.getText()));
 		MedNet.getSettings().setFormsPath(Paths.get(formsPath.getText()));
 		MedNet.getSettings().setFormsErrorPath(Paths.get(errorPath.getText()));
 		MedNet.getSettings().setFormsArchivePath(Paths.get(archivePath.getText()));

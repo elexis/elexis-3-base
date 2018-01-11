@@ -10,6 +10,8 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.dialog;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -30,6 +32,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.WidgetFactory;
 import ch.elexis.core.ui.views.controls.LaborSelectionComposite;
 import ch.elexis.data.Kontakt;
+import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.data.DocumentSettingRecord;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
@@ -85,12 +88,12 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 
 		WidgetFactory.createLabel(result, MedNetMessages.DocumentSettingRecordEditDialog_labelInstitution);
 		this.institutionSelection = new LaborSelectionComposite(result, SWT.NONE);
-		this.institutionSelection.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		this.institutionSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 
 		WidgetFactory.createLabel(result, MedNetMessages.DocumentSettingRecordEditDialog_labelCategory);
 		this.category = new Text(result, SWT.BORDER);
-		this.category.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		this.category.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		this.category.setTextLimit(80);
 		
 		WidgetFactory.createLabel(result, MedNetMessages.DocumentSettingRecordEditDialog_labelDocumentPath);
@@ -115,6 +118,7 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		this.errorPath = new Text(result, SWT.BORDER);
 		this.errorPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.errorPath.setTextLimit(80);
+		this.errorPath.setEnabled(false);
 
 		this.errorPathSelection = new Button(result, SWT.PUSH);
 		this.errorPathSelection.setText("..."); //$NON-NLS-1$
@@ -133,6 +137,7 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		this.archivingPath = new Text(result, SWT.BORDER);
 		this.archivingPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.archivingPath.setTextLimit(80);
+		this.archivingPath.setEnabled(false);
 		
 		this.archivingPathSelection = new Button(result, SWT.PUSH);
 		this.archivingPathSelection.setText("..."); //$NON-NLS-1$
@@ -178,7 +183,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 	        }
 	    });
 		
-
 		if (record != null) {
 			this.institutionId.setText(record.getInstitutionID());
 			this.institutionName.setText(record.getInstitutionName());
@@ -187,6 +191,18 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			this.errorPath.setText(record.getErrorPath().toString());
 			this.archivingPath.setText(record.getArchivingPath().toString());
 			this.purgeInterval.setText(String.valueOf(record.getPurgeInterval()));
+		}
+		else {
+			if(			MedNet.getSettings().getExePath() != null
+					&&	MedNet.getSettings().getExePath().getParent() != null
+					&&	Files.isDirectory(MedNet.getSettings().getExePath().getParent())
+					) {
+				Path defaultDocumentPath = MedNet.getSettings().getExePath().getParent().resolve("interfaces").resolve("results");
+				this.documentPath.setText(defaultDocumentPath.toString());
+				this.errorPath.setText(defaultDocumentPath.resolve("error").toString());
+				this.archivingPath.setText(defaultDocumentPath.resolve("archive").toString());
+			}
+			this.purgeInterval.setText(String.valueOf(DocumentSettingRecord.DEFAULT_PURGE_INTERVAL));
 		}
 		
 		
@@ -217,12 +233,24 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			setErrorMessage(MedNetMessages.DocumentSettingRecordEditDialog_NoPath);
 			return;
 		}
+		if(!Files.isDirectory(Paths.get(this.documentPath.getText()))) {
+			setErrorMessage(String.format(MedNetMessages.DocumentSettingRecordEditDialog_NotValidPath,this.documentPath.getText()));
+			return;
+		}
 		if(this.errorPath.getText() == null || errorPath.getText().isEmpty()){
 			setErrorMessage(MedNetMessages.DocumentSettingRecordEditDialog_NoErrorPath);
 			return;
 		}
+		if(!Files.isDirectory(Paths.get(this.errorPath.getText()))) {
+			setErrorMessage(String.format(MedNetMessages.DocumentSettingRecordEditDialog_NotValidPath,this.errorPath.getText()));
+			return;
+		}
 		if(this.archivingPath.getText() == null || archivingPath.getText().isEmpty()){
 			setErrorMessage(MedNetMessages.DocumentSettingRecordEditDialog_NoArchivingPath);
+			return;
+		}
+		if(!Files.isDirectory(Paths.get(this.archivingPath.getText()))) {
+			setErrorMessage(String.format(MedNetMessages.DocumentSettingRecordEditDialog_NotValidPath,this.archivingPath.getText()));
 			return;
 		}
 		if(this.purgeInterval.getText() == null || purgeInterval.getText().isEmpty()){

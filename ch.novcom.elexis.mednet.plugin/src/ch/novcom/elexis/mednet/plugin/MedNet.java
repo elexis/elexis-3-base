@@ -12,6 +12,7 @@ package ch.novcom.elexis.mednet.plugin;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -76,17 +77,17 @@ public class MedNet {
 	            
 				//If it returns 0 -> All is OK the files has successfully been received
 				if(exitValue >= 0 ){
-					MedNet.getLogger().debug("getResults() Successful");
+					MedNet.getLogger().debug("getDocuments() Successful");
 				}
 				else {
-					MedNet.getLogger().debug("getResults() Failed");
+					MedNet.getLogger().debug("getDocuments() Failed");
 				}
 	            
 	        } catch (InterruptedException ie) {
-	        	MedNet.getLogger().warn("getResults() Has been interrupted");
+	        	MedNet.getLogger().warn("getDocuments() Has been interrupted");
 	        }
 		} catch (IOException ioe) {
-        	MedNet.getLogger().error("getResults() IOException: ", ioe);
+        	MedNet.getLogger().error("getDocuments() IOException: ", ioe);
         }
 		
 	}
@@ -95,15 +96,15 @@ public class MedNet {
 	 * Call the MedNet function -openformview that will open the formview 
 	 * pass the gdt file set in the settings as parameter if it exists
 	 */
-	public static void openFormview(){
+	public static void openFormview(Path gdtFile){
 		MedNet.getLogger().debug("openFormview()");
 		
 		//Prepare the parameters List
 		ArrayList<String> command = new ArrayList<String>();
 		command.add(MedNet.getSettings().getExePath().toString());
 		command.add("-openformview");
-		if(Files.exists(MedNet.getSettings().getFormsGDTPath()) &&Files.isRegularFile(MedNet.getSettings().getFormsGDTPath())){
-			command.add("-patientinfo:\""+MedNet.getSettings().getFormsGDTPath().toString()+"\"");
+		if(gdtFile != null && Files.exists(gdtFile) && Files.isRegularFile(gdtFile)){
+			command.add("-patientinfo:\""+gdtFile.toString()+"\"");
 		}
 		ProcessBuilder probuilder = new ProcessBuilder( command );
 		probuilder.directory(MedNet.getSettings().getExePath().getParent().toFile());

@@ -12,6 +12,8 @@ package ch.novcom.elexis.mednet.plugin.ui.commands;
 
 import java.util.HashMap;
 
+import javax.swing.JOptionPane;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -36,17 +38,29 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		try {
+
+			
 			// get the parameter
-			String param = event.getParameter(PARAMETERID);
+			String param = event.getParameter(DocumentSettingRecordEdit.PARAMETERID);
 			PersistentObject documentSettingRecord =
-				(PersistentObject) event.getCommand().getParameterType(PARAMETERID)
+				(PersistentObject) event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID)
 					.getValueConverter().convertToObject(param);
+			
+			JOptionPane.showMessageDialog(null,"Open Edit View "+event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID)+ "  "+param);
+			if(documentSettingRecord != null) {
+				JOptionPane.showMessageDialog(null,"Open Edit View TESTING "+documentSettingRecord.exportData());
+			}
+			else {
+				JOptionPane.showMessageDialog(null,"Null");
+			}
+			
 			// create and open the dialog with the parameter
 			Shell parent = HandlerUtil.getActiveShell(event);
+			
 			DocumentSettingRecordEditDialog dialog = new DocumentSettingRecordEditDialog(parent, (DocumentSettingRecord) documentSettingRecord);
 			dialog.open();
 		} catch (Exception ex) {
-			throw new RuntimeException(COMMANDID, ex);
+			throw new RuntimeException(DocumentSettingRecordEdit.COMMANDID, ex);
 		}
 		return null;
 	}
@@ -56,20 +70,27 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 			// get the command
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			ICommandService cmdService = (ICommandService) window.getService(ICommandService.class);
-			Command cmd = cmdService.getCommand(COMMANDID);
+			Command cmd = cmdService.getCommand(DocumentSettingRecordEdit.COMMANDID);
 			// create the parameter
 			HashMap<String, Object> param = new HashMap<String, Object>();
-			param.put(PARAMETERID, parameter);
+			param.put(DocumentSettingRecordEdit.PARAMETERID, parameter);
 			// build the parameterized command
 			ParameterizedCommand pc = ParameterizedCommand.generateCommand(cmd, param);
+			
+			JOptionPane.showMessageDialog(null, "Open with Param " + pc.toString() + " "+ ((DocumentSettingRecord)parameter).getLabel());
+			
 			// execute the command
 			IHandlerService handlerService =
 				(IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 					.getService(IHandlerService.class);
 			handlerService.executeCommand(pc, null);
 		} catch (Exception ex) {
-			throw new RuntimeException(COMMANDID, ex);
+			throw new RuntimeException(DocumentSettingRecordEdit.COMMANDID, ex);
 		}
 	}
 	
 }
+
+
+
+

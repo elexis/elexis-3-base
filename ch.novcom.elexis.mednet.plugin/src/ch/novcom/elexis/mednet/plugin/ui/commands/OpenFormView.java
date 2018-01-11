@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -63,8 +64,10 @@ public class OpenFormView extends AbstractHandler {
 			pat.getName(),
 			pat.getVorname(),
 			pat.getGeburtsdatum(),
-			null, pat.get(Patient.TITLE),
-			null, pat.get(Patient.FLD_ZIP) + " " + pat.get(Patient.FLD_PLACE),
+			null, 
+			pat.get(Patient.TITLE),
+			null,
+			pat.get(Patient.FLD_ZIP) + " " + pat.get(Patient.FLD_PLACE),
 			pat.get(Patient.FLD_STREET),
 			null,
 			GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)),
@@ -77,17 +80,22 @@ public class OpenFormView extends AbstractHandler {
 			GDTConstants.GDT_VERSION
 		);
 		
+		File file = null;
 		//Finally we can write this GDT to a file
 		try {
-			Files.write(MedNet.getSettings().getFormsGDTPath(), String.join("\n",gdt6301.getMessage()).getBytes(OpenFormView.GDT_ENCODING));
+			file = File.createTempFile("mednet-"+pat.get(Patient.FLD_PATID)+"-", ".gdt");
+			file.deleteOnExit();
+			Files.write(file.toPath(), String.join("\n",gdt6301.getMessage()).getBytes(OpenFormView.GDT_ENCODING));
 		}
 		catch(IOException ioe){
 			//If there are some ioeException logs it
 			MedNet.getLogger().error("execute IOException creating gdtFile.",ioe);
+			MedNet.openFormview(null);
+			return null;
 		}
 		
 		//and we call mednet
-		MedNet.openFormview();
+		MedNet.openFormview(file.toPath());
 		return null;
 	}
 	

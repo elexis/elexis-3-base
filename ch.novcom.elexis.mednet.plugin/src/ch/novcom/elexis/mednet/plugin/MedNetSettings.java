@@ -34,7 +34,6 @@ public class MedNetSettings {
 	public static final String cfgExePath = cfgBase + "/exe"; //$NON-NLS-1$
 	public static final String cfgLogsPath = cfgBase + "/logs/path"; //$NON-NLS-1$
 	public static final String cfgLogsLevel = cfgBase + "/logs/level"; //$NON-NLS-1$
-	public static final String cfgFormsGDTPath = cfgBase + "/forms/gdt"; //$NON-NLS-1$
 	public static final String cfgFormsPath = cfgBase + "/forms/in"; //$NON-NLS-1$
 	public static final String cfgFormsErrorPath = cfgBase + "/forms/error"; //$NON-NLS-1$
 	public static final String cfgFormsArchivePath = cfgBase + "/forms/archive"; //$NON-NLS-1$
@@ -43,7 +42,6 @@ public class MedNetSettings {
 	Path exePath;
 	Path logsPath;
 	Level logsLevel;
-	Path formsGDTPath;
 	Path formsPath;
 	Path formsErrorPath;
 	Path formsArchivePath;
@@ -79,14 +77,6 @@ public class MedNetSettings {
 		this.logsLevel = level;
 	}*/
 	
-	public Path getFormsGDTPath() {
-		return this.formsGDTPath;
-	}
-
-	public void setFormsGDTPath(Path path) {
-		this.formsGDTPath = path;
-	}
-
 	public Path getFormsPath() {
 		return this.formsPath;
 	}
@@ -133,14 +123,6 @@ public class MedNetSettings {
 		
 		//logsPath = Paths.get(configuration.get(cfgLogsPath, "")); //$NON-NLS-1$
 		//logsLevel = logLevelFromString(configuration.get(cfgLogsLevel, "")); //$NON-NLS-1$
-		String formsGDTPathString = configuration.get(cfgFormsGDTPath, "");
-		if(	formsGDTPathString != null && 
-				!formsGDTPathString.isEmpty()	) {
-			formsGDTPath = Paths.get(formsGDTPathString); //$NON-NLS-1$
-		}
-		else {
-			formsGDTPath = null;
-		}
 		
 		
 		String formsPathString =configuration.get(cfgFormsPath, "");
@@ -197,9 +179,6 @@ public class MedNetSettings {
 		}
 		//configuration.set(cfgLogsPath, logsPath.toString());
 		//configuration.set(cfgLogsLevel, logLevelToString(logsLevel));
-		if(formsGDTPath != null) {
-			configuration.set(cfgFormsGDTPath, formsGDTPath.toString());
-		}
 		if(formsPath != null) {
 			configuration.set(cfgFormsPath, formsPath.toString());
 		}

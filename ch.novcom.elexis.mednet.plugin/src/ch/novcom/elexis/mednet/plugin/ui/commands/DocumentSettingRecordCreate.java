@@ -10,8 +10,6 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.commands;
 
-import javax.swing.JOptionPane;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -26,9 +24,6 @@ public class DocumentSettingRecordCreate extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
-		
-		JOptionPane.showConfirmDialog(null,"EDIT");
-		
 		try {
 			// create and open the dialog
 			Shell parent = HandlerUtil.getActiveShell(event);

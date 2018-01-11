@@ -13,8 +13,6 @@ package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import java.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -154,8 +152,6 @@ public class DocumentPreferencePage extends PreferencePage implements
 				Object o = sel.getFirstElement();
 				if (o instanceof DocumentSettingRecord) {
 					DocumentSettingRecord li = (DocumentSettingRecord) o;
-					
-					
 					DocumentSettingRecordEdit.executeWithParams(li);
 					tableViewer.refresh();
 				}
@@ -223,7 +219,6 @@ public class DocumentPreferencePage extends PreferencePage implements
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				try {
-					JOptionPane.showConfirmDialog(null,"New clicked");
 					// execute the command
 					IHandlerService handlerService =
 						(IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
@@ -231,7 +226,6 @@ public class DocumentPreferencePage extends PreferencePage implements
 					
 					handlerService.executeCommand(DocumentSettingRecordCreate.COMMANDID, null);
 				} catch (Exception ex) {
-					JOptionPane.showConfirmDialog(null,"Exception "+ex.getMessage());
 					throw new RuntimeException(DocumentSettingRecordCreate.COMMANDID, ex);
 				}
 				tableViewer.refresh();
@@ -249,6 +243,7 @@ public class DocumentPreferencePage extends PreferencePage implements
 					if (MessageDialog.openQuestion(getShell(), MedNetMessages.DocumentPreferences_delete,
 						MessageFormat.format(MedNetMessages.DocumentPreferences_reallyDelete,
 							li.getLabel()))) {
+						
 						if (deleteRecord(li)) {
 							li.delete();
 							tableViewer.remove(li);
@@ -292,21 +287,21 @@ public class DocumentPreferencePage extends PreferencePage implements
 	
 	private boolean deleteRecord(DocumentSettingRecord li){
 		boolean ret = true;
+		
 		Query<DocumentSettingRecord> qbe = new Query<DocumentSettingRecord>(DocumentSettingRecord.class);
 		qbe.add(DocumentSettingRecord.FLD_INSTITUTION_ID, "=", li.getInstitutionID()); //$NON-NLS-1$ //$NON-NLS-2$
 		List<DocumentSettingRecord> list = qbe.execute();
 		for (DocumentSettingRecord po : list) {
-			if (CoreHub.getLocalLockService().acquireLock(po).isOk()) {
+			// TODO Restore this point  
+			//if (CoreHub.getLocalLockService().acquireLock(po).isOk()) {
 				po.delete();
-				CoreHub.getLocalLockService().releaseLock(po);
+			/*	CoreHub.getLocalLockService().releaseLock(po);
 			} else {
 				ret = false;
-			}
+			}*/
 		}
 		return ret;
-	}
-	
-	
+	}	
 
 	@Override
 	public Point computeSize(){

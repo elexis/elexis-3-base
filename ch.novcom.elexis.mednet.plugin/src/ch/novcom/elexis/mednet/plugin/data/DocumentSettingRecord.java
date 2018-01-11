@@ -14,10 +14,8 @@ package ch.novcom.elexis.mednet.plugin.data;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -46,8 +44,10 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 	static final String TABLENAME = "MEDNET_DOCUMENT_SETTINGS";
 	
 
-	private static final String index1SQL =
-			"CREATE UNIQUE INDEX " + DocumentSettingRecord.TABLENAME + "_idx_Path on " + DocumentSettingRecord.TABLENAME + "(" + DocumentSettingRecord.FLD_PATH +");";
+//We cannot put any Unique index on the Path column. Since deleted records are keept in the database and just marked as deleted
+// 	private static final String index1SQL =
+//			"CREATE UNIQUE INDEX " + DocumentSettingRecord.TABLENAME + "_idx_Path on " + DocumentSettingRecord.TABLENAME + "(" + DocumentSettingRecord.FLD_PATH +");";
+
 	
 	private static final String createTable = "CREATE TABLE "
 			+ DocumentSettingRecord.TABLENAME + "("
@@ -61,8 +61,8 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 			+ DocumentSettingRecord.FLD_PURGE_INTERVAL + " VARCHAR(16),"
 			+ PersistentObject.FLD_LASTUPDATE + " BIGINT,"
 			+ PersistentObject.FLD_DELETED + " CHAR(1) default '0'"
-			+ ");"
-			+ index1SQL;
+			+ ");";
+			//+ index1SQL;
 	
 	@Override
 	protected String getTableName(){

@@ -106,7 +106,7 @@ public class DocumentImporterPage extends ImporterPage {
 			Path directory = documentSettingItem.getPath();
 			Path archiveDir = documentSettingItem.getArchivingPath();
 			Path errorDir = documentSettingItem.getErrorPath();
-			if(!Files.exists(directory) || Files.isDirectory(directory)){
+			if(!Files.exists(directory) || !Files.isDirectory(directory)){
 				//If this directory doesn't exists or is not a directory
 				//continue
 				MedNet.getLogger().info("doImport() The following directory is not valid:"+directory.toString());
@@ -114,7 +114,7 @@ public class DocumentImporterPage extends ImporterPage {
 					monitor.worked(100);
 				}
 			}
-			else if(!Files.exists(archiveDir) || Files.isDirectory(archiveDir)){
+			else if(!Files.exists(archiveDir) || !Files.isDirectory(archiveDir)){
 				//If this directory doesn't exists or is not a directory
 				//continue
 				MedNet.getLogger().info("doImport() The following directory is not valid:"+archiveDir.toString());
@@ -123,7 +123,7 @@ public class DocumentImporterPage extends ImporterPage {
 				}
 				
 			}
-			else if(!Files.exists(errorDir) || Files.isDirectory(errorDir)){
+			else if(!Files.exists(errorDir) || !Files.isDirectory(errorDir)){
 				//If this directory doesn't exists or is not a directory
 				//continue
 				MedNet.getLogger().info("doImport() The following directory is not valid:"+errorDir.toString());

@@ -28,23 +28,23 @@
         category="ch.novcom.elexis.mednet.plugin.ui.preferences"
         class="ch.novcom.elexis.mednet.plugin.ui.preferences.FormPreferencePage"
         id="ch.novcom.elexis.mednet.plugin.ui.preferences.form"
-        name="%preferences.receiving">
+        name="%preferences.forms">
 		</page>
 		<page
         category="ch.novcom.elexis.mednet.plugin.ui.preferences"
         class="ch.novcom.elexis.mednet.plugin.ui.preferences.DocumentPreferencePage"
         id="ch.novcom.elexis.mednet.plugin.ui.preferences.receiving"
-        name="%preferences.forms">
+        name="%preferences.receiving">
 		</page>
 	</extension>
- <extension
+ 	<extension
        point="org.eclipse.ui.commands">
-       <command
+      <command
             defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.DocumentSettingRecordEdit"
-            id="ch.novcom.elexis.mednet.plugin.data.mednetreceivingconfitem.edit"
+            id="ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit"
             name="Edit Receiving Item">
          	<commandParameter
-               id="ch.novcom.elexis.mednet.plugin.data.mednetreceivingconfitem.edit.selected"
+               id="ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit.selected"
                name="Selected Receiving Item"
                optional="true"
                typeId="ch.elexis.PersistentObjectType">
@@ -52,8 +52,8 @@
       </command>
       <command
             defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.DocumentSettingRecordCreate"
-            id="ch.novcom.elexis.mednet.plugin.data.mednetreceivingconfitem.create"
-            name="Create Receiving Item">
+            id="ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.create"
+            name="Create Document Record Item">
       </command>
       
       <command
@@ -68,9 +68,9 @@
             name="Open Form View">
       </command>
        
- </extension>
+ 	</extension>
  
- <extension
+ 	<extension
        point="org.eclipse.ui.menus">
     <menuContribution
           allPopups="false"
@@ -115,6 +115,6 @@
        </command>
 	</menuContribution>
     
-</extension>
+	</extension>
  
 </plugin>

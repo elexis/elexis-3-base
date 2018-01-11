@@ -49,8 +49,8 @@ public class OpenOfficeProcessor implements IProcessor {
 		File tmpl = schema.getTemplateFile();
 		if (!tmpl.exists()) {
 			log.warn("Template " + schema + " missing");
-			SWTHelper.alert("Template missing", MessageFormat.format(
-				"Konnte Vorlagedatei {0} nicht öffnen", tmpl.getAbsolutePath()));
+			SWTHelper.alert("Template missing", MessageFormat
+				.format("Konnte Vorlagedatei {0} nicht öffnen", tmpl.getAbsolutePath()));
 			return false;
 		}
 		try {
@@ -78,9 +78,13 @@ public class OpenOfficeProcessor implements IProcessor {
 			if (i != -1) {
 				param = param.substring(0, i) + output.getAbsolutePath() + param.substring(i + 1);
 			}
-			/* Process process = */Runtime.getRuntime().exec(new String[] {
-				cmd, param
-			});
+			String[] params_ = param.split(" +");
+			String[] params = new String[params_.length + 1];
+			params[0] = cmd;
+			for (i = 0; i < params_.length; i++) {
+				params[i + 1] = params_[i];
+			}
+			/* Process process = */ Runtime.getRuntime().exec(params);	
 			return true;
 		} catch (Exception e) {
 			ExHandler.handle(e);

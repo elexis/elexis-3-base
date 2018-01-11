@@ -256,7 +256,7 @@ public class TagesView extends BaseAgendaView {
 		sb.append("\n--------\n").append(t.getStatusHistoryDesc());
 		tDetail.setText(sb.toString());
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append( //$NON-NLS-2$
+		sb.append(StringTool.unNull(t.get(Termin.FLD_CREATOR))).append("/").append( //$NON-NLS-2$
 			t.getCreateTime().toString(TimeTool.FULL_GER));
 		lCreator.setText(sb.toString());
 		agenda.dispatchTermin(t);

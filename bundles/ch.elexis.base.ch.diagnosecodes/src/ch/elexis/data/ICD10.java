@@ -22,6 +22,9 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 
 public class ICD10 extends PersistentObject implements IDiagnose {
+	
+	public static final String CODESYSTEM_NAME = "ICD-10";
+	
 	public static final String VERSION = "1.0.2";
 	public static final String TABLENAME = "ICD10";
 	
@@ -148,7 +151,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	}
 	
 	public String getCodeSystemName(){
-		return "ICD-10"; //$NON-NLS-1$
+		return CODESYSTEM_NAME; //$NON-NLS-1$
 	}
 	
 	@SuppressWarnings("unchecked")

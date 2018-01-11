@@ -1,6 +1,8 @@
 package ch.elexis.data.importer;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,17 +18,17 @@ public class TarmedLeistungAge {
 	private String fromText;
 	private String toText;
 	
-	private TarmedLeistungAge(String datesString, String ageString){
+	private TarmedLeistungAge(String datesString, String ageString, LocalDateTime consDate){
 		parseDatesString(datesString);
-		parseAgeString(ageString);
+		parseAgeString(ageString, consDate);
 	}
 	
-	private void parseAgeString(String ageString){
+	private void parseAgeString(String ageString, LocalDateTime consDate){
 		String[] parts = ageString.split("\\|");
 		if (parts.length == 5) {
-			fromDays = getAsDays(parts[0], parts[1], parts[4], false);
+			fromDays = getAsDays(parts[0], parts[1], parts[4], consDate, false);
 			fromText = getAsText(parts[0], parts[1], parts[4]);
-			toDays = getAsDays(parts[2], parts[3], parts[4], true);
+			toDays = getAsDays(parts[2], parts[3], parts[4], consDate, true);
 			toText = getAsText(parts[2], parts[3], parts[4]);
 		} else {
 			fromDays = -1;
@@ -54,16 +56,19 @@ public class TarmedLeistungAge {
 		return sb.toString();
 	}
 	
-	private long getAsDays(String age, String tolerance, String unit, boolean positiveTolerance){
+	private long getAsDays(String age, String tolerance, String unit, LocalDateTime consDate,
+		boolean positiveTolerance){
 		if (age.equals("-1")) {
 			return -1;
 		}
 		try {
 			int ageInt = Integer.parseInt(age);
 			if (unit.equals("26")) {
-				ageInt *= 365;
+				LocalDateTime beforeCons = consDate.minus(ageInt, ChronoUnit.YEARS);
+				ageInt = (int) ChronoUnit.DAYS.between(beforeCons, consDate);
 			} else if (unit.equals("23")) {
-				ageInt *= 30;
+				LocalDateTime beforeCons = consDate.minus(ageInt, ChronoUnit.MONTHS);
+				ageInt = (int) ChronoUnit.DAYS.between(beforeCons, consDate);
 			}
 			int toleanceInt = Integer.parseInt(tolerance);
 			if (positiveTolerance) {
@@ -95,19 +100,20 @@ public class TarmedLeistungAge {
 	}
 	
 	/**
-	 * Create {@link TarmedLeistungAge} objects for the age String.
+	 * Create {@link TarmedLeistungAge} objects for the ages String, relative to the consDate.
 	 * 
-	 * @param limits
+	 * @param ages
+	 * @param consDate
 	 * @return
 	 */
-	public static List<TarmedLeistungAge> of(String ages){
+	public static List<TarmedLeistungAge> of(String ages, LocalDateTime consDate){
 		List<TarmedLeistungAge> ret = new ArrayList<>();
 		if (ages != null && !ages.isEmpty()) {
 			String[] singleAge = ages.split(", ");
 			for (String string : singleAge) {
 				String[] validParts = isValidAgeString(string);
 				if (validParts != null && validParts.length == 2) {
-					ret.add(new TarmedLeistungAge(validParts[0], validParts[1]));
+					ret.add(new TarmedLeistungAge(validParts[0], validParts[1], consDate));
 				} else {
 					LoggerFactory.getLogger(TarmedLeistungAge.class)
 						.warn("Could not parse age string [" + string + "]");

@@ -282,7 +282,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
-				a.activation(mode);
+				a.activation(mode, actKons == null ? null : actKons.getFall().getPatient(), actKons);
 			}
 		}
 	}

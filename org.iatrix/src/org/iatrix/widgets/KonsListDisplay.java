@@ -248,7 +248,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	}
 
 	@Override
-	public void activation(boolean mode){
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		if (mode) {
 			setKons(actPat, actKons,  KonsActions.ACTIVATE_KONS);
 		}

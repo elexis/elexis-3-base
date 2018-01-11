@@ -402,7 +402,10 @@ public class JournalHeader implements IJournalArea {
 	}
 
 	@Override
-	public void activation(boolean mode){
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
+		if (mode) {
+			setKons(selectedPat, selectedKons,  KonsActions.ACTIVATE_KONS);
+		}
 	}
 
 }

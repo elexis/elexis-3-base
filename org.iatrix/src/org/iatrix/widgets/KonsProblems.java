@@ -252,7 +252,10 @@ public class KonsProblems implements IJournalArea {
 	public void visible(boolean mode){}
 
 	@Override
-	public void activation(boolean mode){
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
+		if (mode == true) {
+			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
+		}
 	}
 
 	private void logEvent(String msg){

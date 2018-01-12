@@ -79,6 +79,8 @@ public class KonsListComposite {
 	private List<KonsData> konsultationen;
 
 	private Konsultation actKons;
+
+	private boolean dontShowActiveKons = false;
 	private static LabelProvider verrechnetLabelProvider;
 
 	{
@@ -116,8 +118,9 @@ public class KonsListComposite {
 		};
 	}
 
-	public KonsListComposite(Composite parent, FormToolkit toolkit){
+	public KonsListComposite(Composite parent, FormToolkit toolkit, boolean dontShowActKonsultation){
 		composite = toolkit.createComposite(parent);
+		this.dontShowActiveKons = dontShowActKonsultation;
 		this.toolkit = toolkit;
 
 		composite.setLayout(new MyLayout());
@@ -182,6 +185,11 @@ public class KonsListComposite {
 				// log.trace(caller + " hTitle for  " + row.hTitle.getText() + " from "
 						// + msg  + " konsEditable " + konsEditable + " =>  " + (disabled ? "disabled" : "ensabled"));
 				row.hTitle.setEnabled(!disabled);
+				if (!row.hTitle.getEnabled() && dontShowActiveKons) {
+					// Here we suppress displaying the actKons, which is displyed in detail above
+					// log.debug(String.format("%s show %s" , msg, row.hTitle.getText()));
+					row.setKonsData(null);
+				}
 			}
 		} else if (row != null) {
 			boolean enabled =row.hTitle != null;

@@ -36,6 +36,7 @@ import ch.elexis.hl7.v22.HL7_ORU_R01;
 import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.MedNetLabItemResolver;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
+import ch.rgw.io.FileTool;
 
 
 /**
@@ -45,8 +46,8 @@ import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
  */
 public class DocumentImporter {
 
-	private final static Pattern documentFilenamePattern = Pattern.compile("^([^_]*_)*(?<uniqueMessageId>[^_]+)_(?<caseNr>[^_]*)_(?<transactionDateTime>[^_]*)_(?<orderNr>[^_]+)_(?<samplingDateTime>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientBirthdate>[^_]*)_(?<PatientId>[^_]*)_(?<recipient>\\d+)$");
-	private final static Pattern formFilenamePattern = Pattern.compile("^(?<transactionDateTime>[^_]*)_(?<sender>[^_]*)_(?<PatientId>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientFirstName>[^_]*)_(?<PatientBirthdate>[^_]*)_(?<formGroupId>[^_]*)_(?<formId>[^_]*)_(?<orderNr>[^_]*)$");
+	private final static Pattern documentFilenamePattern = Pattern.compile("^([^_]*_)*(?<uniqueMessageId>[^_]+)_(?<caseNr>[^_]*)_(?<transactionDateTime>[^_]*)_(?<orderNr>[^_]+)_(?<samplingDateTime>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<PatientId>[^_]*)_(?<recipient>\\d+)$");
+	private final static Pattern formFilenamePattern = Pattern.compile("^(?<transactionDateTime>[0-9]{14})_(?<sender>[^_]*)_(?<PatientId>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientFirstName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<formGroupId>[^_]*)_(?<formId>[^_]*)_(?<orderNr>[^_]*)$");
 	private final static SimpleDateFormat documentDateTimeParser = new SimpleDateFormat("yyyyMMddHHmmss");
 
 	private final static SimpleDateFormat birthdateParser = new SimpleDateFormat("yyyyMMdd");
@@ -115,8 +116,8 @@ public class DocumentImporter {
 		MedNet.getLogger().info(
 			"importDocument "+
 			"import following documents." 
-					+   " HL7: "+ hl7File == null ? "" : hl7File.toString()
-					+" -- PDF: "+ pdfFile == null ? "" : pdfFile.toString()
+					+   " HL7: "+ (hl7File == null ? "" : hl7File.toString())
+					+" -- PDF: "+ (pdfFile == null ? "" : pdfFile.toString())
 		);
 		
 		//If we have an hl7 File try first to import the hl7 and to get all the Patient informations
@@ -129,7 +130,9 @@ public class DocumentImporter {
 			//Read HL7 file
 			try {
 				//Parse the HL7 File
-				String text = String.join("\n", Files.readAllLines(hl7File, DocumentImporter.HL7_ENCODING));
+				//String text = String.join("\n", Files.readAllLines(hl7File, DocumentImporter.HL7_ENCODING));
+				String text = FileTool.readTextFile(hl7File.toFile(), DocumentImporter.HL7_ENCODING.name());
+				
 				observation = hl7OruR01.readObservation(text);
 				success = true;
 				for (String error : hl7OruR01.getErrorList()) {
@@ -155,7 +158,7 @@ public class DocumentImporter {
 								hl7File.toFile(),
 								null,
 								new MedNetLabItemResolver(institutionName),
-							false
+								false
 							);
 						
 						//If the import was not successful we will have an Exception
@@ -191,6 +194,7 @@ public class DocumentImporter {
 			String patientFirstName = "";
 			String patientBirthDate = "";
 			String orderNr = "";
+			
 			Matcher filenameMatcher = documentFilenamePattern.matcher(getBaseName(pdfFile));
 			
 			if(filenameMatcher.matches()){
@@ -199,25 +203,6 @@ public class DocumentImporter {
 				patientLastName = filenameMatcher.group("PatientLastName");
 				patientBirthDate = filenameMatcher.group("PatientBirthdate");
 				orderNr = filenameMatcher.group("orderNr");
-			}
-			else {
-				//If it is not a document, maybe it is a form
-				filenameMatcher = formFilenamePattern.matcher(getBaseName(pdfFile));
-				
-				if(filenameMatcher.matches()){
-					documentDateTime = filenameMatcher.group("transactionDateTime");
-					patientId = filenameMatcher.group("PatientId");
-					patientLastName = filenameMatcher.group("PatientLastName");
-					patientLastName = filenameMatcher.group("PatientFirstName");
-					patientBirthDate = filenameMatcher.group("PatientBirthdate");
-					orderNr = filenameMatcher.group("orderNr");
-					
-					//Since the forms are not linked with institution
-					//The function has been called without institutionName
-					//The function documentManager.saveLaborItem will use the institutionName as a Category
-					//That's why we set the institutionName to "Form"
-					institutionName = MedNetMessages.DocumentImporter_DocumentDefaultCategory;
-				}
 			}
 			
 			//If there is no hl7 File we first should search for the Patient
@@ -252,6 +237,12 @@ public class DocumentImporter {
 							documentDateTimeObj
 							);
 					
+					if(hl7File == null) {
+						success = true;
+					}
+				}
+				else {
+					MedNet.getLogger().warn("No DocumentManager available");
 				}
 			}
 		}
@@ -259,7 +250,107 @@ public class DocumentImporter {
 		return success;
 	}
 	
-	
+	/**
+	 * Import an hl7 and a pdfFile
+	 * @param hl7File the hl7 to import
+	 * @param pdfFile the pdf to import
+	 * @param institutionId the kontaktId of the institution
+	 * @param institutionName Institution Name
+	 * @param overwriteOlderEntries
+	 *            true if the document should be overwritten. Even if a newer version exists
+	 *            By default it is false
+	 * @param askUser
+	 *            true (default), if the user interface will be shown to select the patient
+	 * 
+	 * @return true if the import was successful
+	 * @throws IOException
+	 */
+	public static boolean processForm(
+			Path pdfFile,
+			String institutionId,
+			String institutionName,
+			String category,
+			boolean overwriteOlderEntries,
+			boolean askUser
+		) throws IOException{
+		
+		boolean success = false;
+		Patient patient = null;
+		
+		MedNet.getLogger().info(
+			"importDocument "+
+			"import following documents." 
+					+" -- PDF: "+ (pdfFile == null ? "" : pdfFile.toString())
+		);
+		
+		//If there is a PDF File
+		if (	pdfFile != null 
+			&&	Files.exists(pdfFile)
+			&&	Files.isRegularFile(pdfFile)
+			) {
+			
+			//Pick the most informations from the PDF Filename
+			String documentDateTime = "";
+			String patientId = "";
+			String patientLastName = "";
+			String patientFirstName = "";
+			String patientBirthDate = "";
+			String orderNr = "";
+			
+			//If it is not a document, maybe it is a form
+			Matcher filenameMatcher = formFilenamePattern.matcher(getBaseName(pdfFile));
+				
+			if(filenameMatcher.matches()){
+				documentDateTime = filenameMatcher.group("transactionDateTime");
+				patientId = filenameMatcher.group("PatientId");
+				patientLastName = filenameMatcher.group("PatientLastName");
+				patientLastName = filenameMatcher.group("PatientFirstName");
+				patientBirthDate = filenameMatcher.group("PatientBirthdate");
+				orderNr = filenameMatcher.group("orderNr");
+				
+				//Since the forms are not linked with institution
+				//The function has been called without institutionName
+				//The function documentManager.saveLaborItem will use the institutionName as a Category
+				//That's why we set the institutionName to "Form"
+				institutionName = MedNetMessages.DocumentImporter_DocumentDefaultCategory;
+			}
+			
+			//search for the Patient
+			patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName ,patientBirthDate, "", askUser);
+			
+			//If we found a patient we can add the PDF
+			if(patient != null){
+			
+				//Initialize a DocumentManager
+				PatientDocumentManager documentManager = new PatientDocumentManager(patient);	
+				
+				if (documentManager != null) {
+					//Save the PDF file into Omnivore
+					
+					Date documentDateTimeObj = new Date();
+					try{
+						DocumentImporter.documentDateTimeParser.parse(documentDateTime);
+					}
+					catch(ParseException pe){
+						MedNet.getLogger().warn("process Unable to parse documentDateTime:"+documentDateTime, pe);
+					}
+					
+					documentManager.addDocument(
+							institutionId,
+							institutionName,
+							category,
+							orderNr,
+							pdfFile,
+							documentDateTimeObj
+							);
+					
+					success = true;
+				}
+			}
+		}
+		
+		return success;
+	}
 	
 	
 	

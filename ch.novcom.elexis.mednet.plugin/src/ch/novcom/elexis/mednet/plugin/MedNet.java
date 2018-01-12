@@ -111,23 +111,7 @@ public class MedNet {
 		
 		try {
 			Process process = probuilder.start();
-			
-	        //Wait to get exit value
-	        int exitValue =1;
-	        try {
-	            exitValue = process.waitFor();
-	            
-				//If it returns 0 -> All is OK the files has successfully been received
-				if(exitValue >= 0 ){
-		        	MedNet.getLogger().debug("openFormview() Successful");
-				}
-				else {
-		        	MedNet.getLogger().debug("openFormview() Failed");
-				}
-	            
-	        } catch (InterruptedException ie) {
-	        	MedNet.getLogger().debug("openFormview() Has been interrupted");
-	        }
+			//We don't wait for openFormView to close
 		} catch (IOException ioe) {
         	MedNet.getLogger().error("openFormview() IOException: ", ioe);
         }

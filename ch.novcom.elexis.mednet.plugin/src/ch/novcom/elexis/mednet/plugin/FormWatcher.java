@@ -119,12 +119,12 @@ public class FormWatcher {
         		&& 	file.getFileName().toString().toLowerCase().endsWith(".pdf")
         	){
 			try {
-				boolean success = DocumentImporter.process(
-						(Path) null,
+				boolean success = DocumentImporter.processForm(
 						file,
 						MedNetMessages.FormWatcher_DocumentInstitutionID,
 						MedNetMessages.FormWatcher_DocumentInstitutionName,
 						"Cat TODO",
+						false,
 						false
 				);
 				

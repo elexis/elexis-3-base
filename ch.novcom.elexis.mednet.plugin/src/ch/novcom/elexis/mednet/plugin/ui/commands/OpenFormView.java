@@ -10,10 +10,14 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.commands;
 
+import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -26,6 +30,7 @@ import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6301;
 import at.medevit.elexis.gdt.tools.GDTSatzNachrichtHelper;
+import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
@@ -36,6 +41,10 @@ public class OpenFormView extends AbstractHandler {
 	private static Charset GDT_ENCODING = Charset.forName("ISO-8859-1");
 	
 	public static final String ID = "ch.novcom.elexis.mednet.plugin.ui.commands.openformview";
+	
+	protected final static SimpleDateFormat fromDatabase = new SimpleDateFormat("dd.MM.yyyy");
+	protected final static SimpleDateFormat toGDT = new SimpleDateFormat("ddMMyyyy");
+	
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
@@ -58,15 +67,24 @@ public class OpenFormView extends AbstractHandler {
 			return null;
 		}
 		
+		String socialSecurityNumber = pat.getXid(XidConstants.DOMAIN_AHV); // AHV-Nummer
+		String birthdate = "";
+		try {
+			birthdate = OpenFormView.toGDT.format(OpenFormView.fromDatabase.parse(pat.getGeburtsdatum()));
+		}
+		catch(ParseException pe) {
+			MedNet.getLogger().error("OpenFormView : unable to parse birthdate "+ pat.getGeburtsdatum() );
+		}
+		
 		//If we have the selected Patient, we can create a simple GDT File
 		GDTSatzNachricht6301 gdt6301 = new GDTSatzNachricht6301(
 			pat.get(Patient.FLD_PATID),
 			pat.getName(),
 			pat.getVorname(),
-			pat.getGeburtsdatum(),
+			birthdate,
 			null, 
 			pat.get(Patient.TITLE),
-			null,
+			socialSecurityNumber,
 			pat.get(Patient.FLD_ZIP) + " " + pat.get(Patient.FLD_PLACE),
 			pat.get(Patient.FLD_STREET),
 			null,

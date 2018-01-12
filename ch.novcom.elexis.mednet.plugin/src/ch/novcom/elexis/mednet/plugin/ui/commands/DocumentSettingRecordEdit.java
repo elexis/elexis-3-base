@@ -77,7 +77,7 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 			// build the parameterized command
 			ParameterizedCommand pc = ParameterizedCommand.generateCommand(cmd, param);
 			
-			JOptionPane.showMessageDialog(null, "Open with Param " + pc.toString() + " "+ ((DocumentSettingRecord)parameter).getLabel());
+			JOptionPane.showMessageDialog(null, "Open with Param " + pc.toString() + " \n Label : "+ ((DocumentSettingRecord)parameter).getLabel());
 			
 			// execute the command
 			IHandlerService handlerService =
@@ -90,6 +90,7 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 	}
 	
 }
+
 
 
 

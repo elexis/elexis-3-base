@@ -18,6 +18,7 @@
 ** Change the konstext in oned
 ** Switch in the lower part to a different konsultation
 ** Verify that the changes got correctly applied and that the list is correctly updated.
+** Verify that the konsText, verrechnungen, problem, etc adapt when changing konsultations
 
 * Open a kons
 ** Drop a verrechenbar item into the verrechnbar

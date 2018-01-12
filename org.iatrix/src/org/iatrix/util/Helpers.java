@@ -423,4 +423,20 @@ public class Helpers {
 		return explanation.toString();
 	}
 
+	/**
+	 * Allowed combinations of actPat/actKons are:
+	 * actPat == null, actKons == null when starting up or no patient selected
+	 * actPat != null, actKons != null when working inside KG iatrix and a kons is selected
+	 * actPat != null, actKons == null  KG Iatrix not active, eg. before dropping something into Verrechnung
+	 * forbidden is: actPat == null &&  actKons  != nullW
+	 *
+	 * @return false if actPat == null &&  actKons  != null
+	 */
+	public static boolean checkActPatKons(Patient actPat, Konsultation actKons) {
+		if (actPat == null &&  actKons  != null) {
+			System.out.println(String.format("Inkonsistent state of actPat %s and actKons %s", actPat, actKons));
+			return false;
+		}
+		return true;
+	}
 }

@@ -56,35 +56,6 @@ public class DocumentImporter {
 	
 	private static Charset HL7_ENCODING = Charset.forName("ISO-8859-1");
 	
-	
-	/**
-	 * Try to import an hl7 and a pdf
-	 * @param the hl7File to import
-	 * @param the pdfFile to import
-	 * @param institutionId
-	 * @param institutionName
-	 * @throws IOException
-	 */
-	public static boolean process(
-			Path hl7File,
-			Path pdfFile,
-			String institutionId,
-			String institutionName,
-			String category,
-			boolean overwriteOlderEntries
-		) throws IOException{
-		return process(
-				hl7File,
-				pdfFile,
-				institutionId,
-				institutionName,
-				category,
-				overwriteOlderEntries,
-				true
-		);
-		
-	}
-	
 	/**
 	 * Import an hl7 and a pdfFile
 	 * @param hl7File the hl7 to import
@@ -222,11 +193,13 @@ public class DocumentImporter {
 					
 					Date documentDateTimeObj = new Date();
 					try{
-						DocumentImporter.documentDateTimeParser.parse(documentDateTime);
+						documentDateTimeObj = DocumentImporter.documentDateTimeParser.parse(documentDateTime);
 					}
 					catch(ParseException pe){
 						MedNet.getLogger().warn("process Unable to parse documentDateTime:"+documentDateTime, pe);
 					}
+					
+					String keywords = orderNr;
 					
 					documentManager.addDocument(
 							institutionId,
@@ -234,8 +207,10 @@ public class DocumentImporter {
 							category,
 							orderNr,
 							pdfFile,
-							documentDateTimeObj
+							documentDateTimeObj, 
+							keywords
 							);
+					
 					
 					if(hl7File == null) {
 						success = true;
@@ -267,10 +242,7 @@ public class DocumentImporter {
 	 */
 	public static boolean processForm(
 			Path pdfFile,
-			String institutionId,
-			String institutionName,
 			String category,
-			boolean overwriteOlderEntries,
 			boolean askUser
 		) throws IOException{
 		
@@ -308,11 +280,6 @@ public class DocumentImporter {
 				patientBirthDate = filenameMatcher.group("PatientBirthdate");
 				orderNr = filenameMatcher.group("orderNr");
 				
-				//Since the forms are not linked with institution
-				//The function has been called without institutionName
-				//The function documentManager.saveLaborItem will use the institutionName as a Category
-				//That's why we set the institutionName to "Form"
-				institutionName = MedNetMessages.DocumentImporter_DocumentDefaultCategory;
 			}
 			
 			//search for the Patient
@@ -329,19 +296,20 @@ public class DocumentImporter {
 					
 					Date documentDateTimeObj = new Date();
 					try{
-						DocumentImporter.documentDateTimeParser.parse(documentDateTime);
+						documentDateTimeObj = DocumentImporter.documentDateTimeParser.parse(documentDateTime);
 					}
 					catch(ParseException pe){
 						MedNet.getLogger().warn("process Unable to parse documentDateTime:"+documentDateTime, pe);
 					}
 					
-					documentManager.addDocument(
-							institutionId,
-							institutionName,
+					String keywords = orderNr;
+					
+					documentManager.addForm(
 							category,
 							orderNr,
 							pdfFile,
-							documentDateTimeObj
+							documentDateTimeObj,
+							keywords
 							);
 					
 					success = true;

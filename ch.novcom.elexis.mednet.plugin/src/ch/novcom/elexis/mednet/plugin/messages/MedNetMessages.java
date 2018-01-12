@@ -15,8 +15,7 @@ import org.eclipse.osgi.util.NLS;
 public class MedNetMessages extends NLS {
 	private static final String BUNDLE_NAME = "ch.novcom.elexis.mednet.plugin.messages.messages";
 		
-	public static String FormWatcher_DocumentInstitutionID;
-	public static String FormWatcher_DocumentInstitutionName;
+	public static String FormWatcher_FormCategory;
 	
 	public static String DocumentImporterPage_callMedNet;
 	public static String DocumentImporterPage_checkInstitution;
@@ -39,6 +38,9 @@ public class MedNetMessages extends NLS {
 	public static String PatientDocumentManager_omnivoreNotInitialized;
 	public static String PatientDocumentManager_LabResultTitle;
 	public static String PatientDocumentManager_LabResultTitleTransactionFormat;
+	public static String PatientDocumentManager_documentId;
+	public static String PatientDocumentManager_documentTitel;
+	public static String PatientDocumentManager_FormTitle;
 	
 	public static String PatientLabor_errorAddingDocumentToOmnivore;
 	

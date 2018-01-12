@@ -345,7 +345,8 @@ public class DocumentImporterPage extends ImporterPage {
 							documentSettingItem.getInstitutionID(),
 							documentSettingItem.getInstitutionName(),
 							documentSettingItem.getCategory(),
-							settingOverwrite
+							settingOverwrite,
+							true
 					);
 					
 					if (success) {

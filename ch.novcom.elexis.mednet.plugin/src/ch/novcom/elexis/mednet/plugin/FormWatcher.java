@@ -121,11 +121,8 @@ public class FormWatcher {
 			try {
 				boolean success = DocumentImporter.processForm(
 						file,
-						MedNetMessages.FormWatcher_DocumentInstitutionID,
-						MedNetMessages.FormWatcher_DocumentInstitutionName,
-						"Cat TODO",
-						false,
-						false
+						MedNetMessages.FormWatcher_FormCategory,
+						true
 				);
 				
 				if(success){

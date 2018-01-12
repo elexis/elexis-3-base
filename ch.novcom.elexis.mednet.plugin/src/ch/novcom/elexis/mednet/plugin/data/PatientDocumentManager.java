@@ -11,6 +11,7 @@
 package ch.novcom.elexis.mednet.plugin.data;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
+import ch.rgw.io.FileTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
@@ -141,7 +143,8 @@ public class PatientDocumentManager {
 			final String title,
 			final String category,
 			final String dateStr,
-			final Path file
+			final Path file,
+			final String keywords
 		) throws IOException, ElexisException{
 		
 		this.checkCreateCategory(category);
@@ -159,6 +162,7 @@ public class PatientDocumentManager {
 		
 		//If no document has been found, we can add it to the database
 		if (documentList == null || documentList.size() == 0) {
+			
 			this.omnivoreDocManager.addDocument(
 				new GenericDocument(
 						this.patient,
@@ -166,8 +170,8 @@ public class PatientDocumentManager {
 						category,
 						file.toFile(),
 						dateStr,
-						file.getFileName().toString(),
-						DocumentImporter.getExtension(file)
+						keywords,
+						FileTool.getExtension(file.getFileName().toString())
 				)
 			);
 			return true;
@@ -255,7 +259,8 @@ public class PatientDocumentManager {
 			String category,
 			String orderId,
 			Path file,
-			Date documentDateTime
+			Date documentDateTime,
+			String keywords
 		) throws IOException{
 		
 		//First of all check if Omnivore exists
@@ -277,22 +282,24 @@ public class PatientDocumentManager {
 
 		//Get the kontakt linked with the institution
 		Kontakt institution = null;
+		String group = "";
 		if(institutionId != null && !institutionId.isEmpty()){
-			PatientDocumentManager.getInstitution(institutionId);
+			institution = PatientDocumentManager.getInstitution(institutionId);
+			group = institution.getLabel();
 		}
 		
 		//If no LabItem has been found, create one
 		if (labItem == null) {
 			labItem =
 				new LabItem(
-						category, //As a test code we use the category
-						category, //As a test name we use the category
+						MedNetMessages.PatientDocumentManager_documentId, //Test Code
+						MedNetMessages.PatientDocumentManager_documentTitel, //Test Name
 						institution, //If institution is empty, the labitem will be linked to the internal laboratory
 						"",
 						"",
 						"pdf",
 						LabItemTyp.DOCUMENT,
-						category ,//As a group we use the category
+						group ,
 						DEFAULT_PRIO
 				);
 		}
@@ -307,9 +314,10 @@ public class PatientDocumentManager {
 		String title = 
 				MessageFormat.format(
 						MedNetMessages.PatientDocumentManager_LabResultTitle,
+						orderId,
+						dateTimeFormatter.format(documentDateTime),
 						DocumentImporter.getBaseName(file),
 						DocumentImporter.getExtension(file),
-						dateTimeFormatter.format(documentDateTime),
 						category
 				);
 		
@@ -317,7 +325,7 @@ public class PatientDocumentManager {
 		//Limit the length of the title
 		//If it is too long, cut it
 		if (title.length() > MAX_LEN_RESULT)
-			title = "..." + title.substring(title.length() - MAX_LEN_RESULT + 3, title.length());
+			title = title.substring(0,title.length() - MAX_LEN_RESULT - 3) + "..."  ;
 		
 		
 		//Since the labResult Object uses TimeTool,
@@ -336,13 +344,14 @@ public class PatientDocumentManager {
 			labResult.set(FLD_ORGIN, orderId);
 			labResult.set(LabResult.TIME, documentTime);
 			labResult.setObservationTime(documentDate);
+			MedNet.getLogger().debug("Document Date" + documentDate.toLocalDateTime().toString());
 			saved = true;
 		} else {
 			//If there is already a labresult
 			//We should check if we should overwrite it
 			
 			//If the option overwrite results is set to true, we overwrite the result
-			//If the given document is new than the one in the database
+			//If the given document is newer than the one in the database
 			if (
 					overwriteResults
 				|| (labResult.getObservationTime().getTimeInMillis() < documentDate.getTimeInMillis())
@@ -384,7 +393,7 @@ public class PatientDocumentManager {
 				String dateTimeDocumentString = documentDate.toString(TimeTool.DATE_GER);
 				
 				// Zu Dokumentablage hinzufügen
-				this.addDocumentToOmnivore(title, institutionName, dateTimeDocumentString, file);
+				this.addDocumentToOmnivore(title, institutionName, dateTimeDocumentString, file, keywords);
 				
 				
 				MedNet.getLogger().info(
@@ -401,6 +410,92 @@ public class PatientDocumentManager {
 			}
 		}
 	}
+	
+	
+	
+	/**
+	 * 
+	 * Save a LaborItem to the Database
+	 * @param institutionId
+	 * @param institutionName
+	 * @param category
+	 * @param orderId
+	 * @param file
+	 * @param documentDateTime
+	 * @param keyword
+	 * @throws IOException
+	 */
+	public void addForm(
+			String category,
+			String orderId,
+			Path file,
+			Date documentDateTime,
+			String keywords
+		) throws IOException{
+		
+		//First of all check if Omnivore exists
+		if (this.omnivoreDocManager == null) {
+			throw new IOException(
+				MessageFormat.format(
+						MedNetMessages.PatientDocumentManager_omnivoreNotInitialized,
+						file.toString(),
+						this.patient.getLabel()
+				)
+			);
+		}
+		
+		//Create the category if doesn't exists
+		this.checkCreateCategory(category);
+		
+		//Finally create a new laboratory Result to save to the database
+		
+		//First of all define a title we will use for this result:
+		//Set a title to the document
+		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(MedNetMessages.PatientDocumentManager_LabResultTitleTransactionFormat);
+		
+		String title = 
+				MessageFormat.format(
+						MedNetMessages.PatientDocumentManager_FormTitle,
+						orderId,
+						dateTimeFormatter.format(documentDateTime),
+						DocumentImporter.getBaseName(file),
+						DocumentImporter.getExtension(file),
+						category
+				);
+		
+		//Limit the length of the title
+		//If it is too long, cut it
+		if (title.length() > MAX_LEN_RESULT)
+			title = title.substring(0,title.length() - MAX_LEN_RESULT - 3) + "..."  ;
+		
+		//Since the labResult Object uses TimeTool,
+		//We will convert the documentDateTime into a TimeTool
+		TimeTool documentDate = new TimeTool();
+		documentDate.setTime(documentDateTime);
+		
+		//Archive the document into Omnivore
+		// Dokument in Omnivore archivieren
+		try {
+			String dateTimeDocumentString = documentDate.toString(TimeTool.DATE_GER);
+			
+			// Zu Dokumentablage hinzufügen
+			this.addDocumentToOmnivore(title, category, dateTimeDocumentString, file, keywords);
+			
+			MedNet.getLogger().info(
+					"addForm " +
+					"Document successfully saved to omnivore:"+ title 
+					);
+		} catch (ElexisException e) {
+			throw new IOException(
+				MessageFormat.format(
+					MedNetMessages.PatientLabor_errorAddingDocumentToOmnivore, file.toString()
+				),
+				e
+			);
+		}
+		
+	}
+	
 	
 	/**
 	 * This function will return the contact corresponding to the given institution id

@@ -27,4 +27,5 @@ Bundle-ClassPath: .
 Export-Package: at.medevit.elexis.gdt.constants,
  at.medevit.elexis.gdt.data,
  at.medevit.elexis.gdt.interfaces,
- at.medevit.elexis.gdt.messages
+ at.medevit.elexis.gdt.messages,
+ at.medevit.elexis.gdt.tools

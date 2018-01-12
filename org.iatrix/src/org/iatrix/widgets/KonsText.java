@@ -422,47 +422,45 @@ public class KonsText implements IJournalArea {
 			}
 			return;
 		}
-		if (op == KonsActions.ACTIVATE_KONS) {
-			boolean hasTextChanges = false;
-			// make sure to unlock the kons edit field and release the lock
-			if (text != null && actKons != null) {
-				hasTextChanges = textChanged() ;
-				logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " hasTextChanges "
-					+ hasTextChanges + " actKons vom: " + actKons.getDatum());
-				if (hasTextChanges) {
-					updateEintrag();
-				}
+		boolean hasTextChanges = false;
+		// make sure to unlock the kons edit field and release the lock
+		if (text != null && actKons != null) {
+			hasTextChanges = textChanged() ;
+			logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " hasTextChanges "
+				+ hasTextChanges + " actKons vom: " + actKons.getDatum());
+			if (hasTextChanges) {
+				updateEintrag();
 			}
-			removeKonsTextLock();
-			if (k == null) {
-				actKons = k;
-				logEvent("setKons null");
-			} else {
-				logEvent("setKons " + (actKons == null ? "null" : actKons.getId()) +
-					" => " + k.getId());
-				actKons = k;
-				boolean konsEditable = Helpers.hasRightToChangeConsultations(actKons, false);
-				if (!konsEditable) {
-					// isEditable(true) would give feedback to user why consultation
-					// cannot be edited, but this often very shortlived as we create/switch
-					// to a newly created kons of today
-					logEvent("setKons actKons is not editable");
-					setKonsText(k, 0, true);
-					updateKonsultation(true);
-					updateKonsLockLabel();
-					updateKonsVersionLabel();
-					lVersion.setText(lVersion.getText() + " Nicht editierbar. (Keine Zugriffsrechte oder schon verrechnet)");
-					return;
-				} else if (actKons.getMandant().getId().contentEquals(CoreHub.actMandant.getId())) {
-					createKonsTextLock();
-				}
-				setKonsText(k, 0, true);
-			}
-			updateKonsultation(true);
-			updateKonsLockLabel();
-			updateKonsVersionLabel();
-			saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
 		}
+		removeKonsTextLock();
+		if (k == null) {
+			actKons = k;
+			logEvent("setKons null");
+		} else {
+			logEvent("setKons " + (actKons == null ? "null" : actKons.getId()) +
+				" => " + k.getId());
+			actKons = k;
+			boolean konsEditable = Helpers.hasRightToChangeConsultations(actKons, false);
+			if (!konsEditable) {
+				// isEditable(true) would give feedback to user why consultation
+				// cannot be edited, but this often very shortlived as we create/switch
+				// to a newly created kons of today
+				logEvent("setKons actKons is not editable");
+				setKonsText(k, 0, true);
+				updateKonsultation(true);
+				updateKonsLockLabel();
+				updateKonsVersionLabel();
+				lVersion.setText(lVersion.getText() + " Nicht editierbar. (Keine Zugriffsrechte oder schon verrechnet)");
+				return;
+			} else if (actKons.getMandant().getId().contentEquals(CoreHub.actMandant.getId())) {
+				createKonsTextLock();
+			}
+			setKonsText(k, 0, true);
+		}
+		updateKonsultation(true);
+		updateKonsLockLabel();
+		updateKonsVersionLabel();
+		saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
 	}
 
 	/**
@@ -578,10 +576,24 @@ public class KonsText implements IJournalArea {
 	@Override
 	public synchronized void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		logEvent("activation: " + mode);
+		/* Mein alte Lösung
 		if (mode == true) {
 			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
 		} else {
 			updateEintrag();
+		}
+		Nachher neu die von Thomas aus KonsDetailView */
+		if (mode == false) {
+			// save entry on deactivation if text was edited
+			if (actKons != null && (text.isDirty())) {
+				actKons.updateEintrag(text.getContentsAsXML(), false);
+				text.setDirty(false);
+			}
+		} else {
+			// load newest version on activation, if there are no local changes
+			if (actKons != null && !text.isDirty()) {
+				setKonsText(actKons, actKons.getHeadVersion(), true);
+			}
 		}
 	}
 

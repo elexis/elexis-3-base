@@ -134,14 +134,14 @@ public class ChapterImporter {
 		if (parentValidFroms.isEmpty()) {
 			throw new IllegalStateException("No parent valid from found for " + parentCode);
 		}
-		// determine the lates matching parent valid from
+		// determine the latest matching parent valid from
 		TimeTool latestParentValidFrom = null;
 		for (TimeTool parentValidFrom : parentValidFroms) {
 			if (latestParentValidFrom == null && parentValidFrom.isBeforeOrEqual(validFrom)) {
 				latestParentValidFrom = parentValidFrom;
 				continue;
 			}
-			if (parentValidFrom.isBeforeOrEqual(validFrom)
+			if (parentValidFrom.isBeforeOrEqual(validTo)
 				&& parentValidFrom.isAfter(latestParentValidFrom)) {
 				latestParentValidFrom = parentValidFrom;
 			}

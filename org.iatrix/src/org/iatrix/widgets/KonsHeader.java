@@ -151,7 +151,7 @@ public class KonsHeader implements IJournalArea {
 
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
-		if (newKons == null || newPatient == null)
+		if (newPatient == null || (newKons == null && newPatient != null))
 		{
 			actKons = newKons;
 			log.debug("setKons set actKons null");
@@ -167,15 +167,12 @@ public class KonsHeader implements IJournalArea {
 			konsFallArea.layout();
 			return;
 		}
-
-		log.debug("setKons set actKons to " + newKons.getId() + " vom " + newKons.getDatum() + " was " + (actKons != null ? actKons.getId() : "null"));
-		log.debug("setPatient " + newPatient.getPersonalia());
-		if (actPat == null || !actPat.getId().equals(newPatient.getId())) {
+		if (actPat == null || (newPatient != null && !actPat.getId().equals(newPatient.getId()))) {
 			actPat = newPatient;
 			konsFallArea.layout();
 		}
 
-		if (op != KonsActions.ACTIVATE_KONS )
+		if (op == KonsActions.SAVE_KONS)
 		{
 			return;
 		}
@@ -215,7 +212,8 @@ public class KonsHeader implements IJournalArea {
 
 		reloadFaelle(actKons);
 
-		log.debug("setKons actKons now " +  actKons.getId() + " Rechnungssteller " + sb + " enabled? " + enabled);
+		log.debug(String.format("setKons actKons now %s vom %s Rechnungssteller %s enabled? %s",
+			actKons.getId(), actKons.getLabel(), sb.toString(), enabled));
 		konsFallArea.layout();
 	}
 

@@ -72,9 +72,16 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 
 	private Patient actPat = null;
 	private Konsultation actKons = null;
+	protected boolean dontShowActiveKons = false;
 
-	public KonsListDisplay(Composite parent){
+	/**
+	 *
+	 * @param parent              The composite to place the list into
+	 * @param setShowActiveKons   JournalView wants to display all Kons, KG Iatrix wants to suppress the actKons
+	 */
+	public KonsListDisplay(Composite parent, boolean setShowActiveKons){
 		super(parent, SWT.BORDER);
+		dontShowActiveKons = setShowActiveKons;
 
 		setLayout(new FillLayout());
 
@@ -84,7 +91,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 
 		formBody.setLayout(new TableWrapLayout());
 
-		konsListComposite = new KonsListComposite(formBody, toolkit);
+		konsListComposite = new KonsListComposite(formBody, toolkit, dontShowActiveKons);
 		konsListComposite.setLayoutData(SWTHelper.getFillTableWrapData(1, true, 1, false));
 
 		dataLoader = new KonsLoader(actPat);
@@ -248,7 +255,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 	}
 
 	@Override
-	public void activation(boolean mode){
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		if (mode) {
 			setKons(actPat, actKons,  KonsActions.ACTIVATE_KONS);
 		}
@@ -268,13 +275,19 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 				!newPatient.getId().equals(actPat.getId()) ||
 				!Helpers.twoKonsEqual(actKons, newKons)){
 			actPat = newPatient;
-			log.debug("setPatient " + newPatient.getPersonalia()+ " op " + op);
+			actKons = newKons;
+			log.debug(String.format("setPatient %s op %s newKons %s ",
+				newPatient == null ? "null" : newPatient.getPersonalia(), op, 
+				newKons == null ? "null" : newKons.getLabel()));
 			dataLoader.cancel();
 			reload(true, null);
 			dataLoader.setPatient(newPatient, showAllCharges, showAllConsultations);
 			dataLoader.schedule();
 		} else {
-			log.debug("setPatient skip reloading" + newPatient.getPersonalia() + " op " + op);
+			if (newKons!= null) {
+				log.debug(String.format("setPatient skip reloading %s op %s vom %s ", newPatient.getPersonalia(), op, newKons.getLabel()));
+			}
+			return;
 		}
 		if (newKons!= null) {
 			konsListComposite.refeshHyperLinks(newKons);

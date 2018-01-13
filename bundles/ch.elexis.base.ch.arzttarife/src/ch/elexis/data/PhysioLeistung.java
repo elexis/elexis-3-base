@@ -141,4 +141,19 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	public int getCacheTime(){
 		return DBConnection.CACHE_TIME_MAX;
 	}
+	
+	/**
+	 * Load a {@link PhysioLeistung} from code.
+	 * 
+	 * @param code
+	 * @return
+	 */
+	public static PhysioLeistung getFromCode(String code){
+		Query<PhysioLeistung> query = new Query<>(PhysioLeistung.class);
+		String found = query.findSingle(FLD_ZIFFER, Query.EQUALS, code);
+		if(found != null && !found.isEmpty()) {
+			return PhysioLeistung.load(found);
+		}
+		return null;
+	}
 }

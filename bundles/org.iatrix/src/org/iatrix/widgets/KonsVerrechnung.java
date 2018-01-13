@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
@@ -82,7 +83,8 @@ import ch.rgw.tools.StringTool;
 
 public class KonsVerrechnung implements IJournalArea {
 
-	private Konsultation actKons = null;
+	private Patient actPat = null;
+	private Konsultation lastSelectedKons = null;
 	private FormToolkit tk;
 	private static Logger log = LoggerFactory.getLogger(KonsVerrechnung.class);
 	public IAction delVerrechnetAction;
@@ -160,8 +162,8 @@ public class KonsVerrechnung implements IJournalArea {
 		verrechnungViewer.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement){
-				if (actKons != null) {
-					List<Verrechnet> lgl = actKons.getLeistungen();
+				if (lastSelectedKons != null) {
+					List<Verrechnet> lgl = lastSelectedKons.getLeistungen();
 					return lgl.toArray();
 				}
 				return new Object[0];
@@ -280,7 +282,7 @@ public class KonsVerrechnung implements IJournalArea {
 					PersistentObject dropped = CoreHub.poFactory.createFromString(obj);
 					if (dropped instanceof Problem) {
 						Problem problem = (Problem) dropped;
-						problem.addToKonsultation(actKons);
+						problem.addToKonsultation(lastSelectedKons);
 
 						// TODO: updateProblemAssignmentViewer();
 						// TODO: setDiagnosenText(actKons);
@@ -323,6 +325,7 @@ public class KonsVerrechnung implements IJournalArea {
 			/* Erst das Loslassen interessiert uns wieder */
 			@Override
 			public void drop(DropTargetEvent event){
+				Helpers.checkActPatKons(actPat, lastSelectedKons);
 				String drp = (String) event.data;
 				String[] dl = drp.split(",");
 				for (String obj : dl) {
@@ -332,13 +335,28 @@ public class KonsVerrechnung implements IJournalArea {
 							SWTHelper.alert("Fehlende Rechte",
 								"Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
 						} else {
-							Result<IVerrechenbar> result =
-								actKons.addLeistung((IVerrechenbar) dropped);
-							if (!result.isOK()) {
-								SWTHelper.alert("Diese Verrechnung it ungültig", result.toString());
+							Konsultation selected_kons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+							if (lastSelectedKons == null ) {
+								String msg  = "Die zuletze ausgewählte Konsultation is leer? Weshalb?";
+								log.error(msg);
+								SWTHelper.alert("Programmierfehler ", msg);
+							} else {
+								IVerrechenbar droppedItem = (IVerrechenbar) dropped;
+								Result<IVerrechenbar> result =
+									lastSelectedKons.addLeistung(droppedItem);
+								if (!result.isOK()) {
+									SWTHelper.alert("Diese Verrechnung it ungültig", result.toString());
+								}
+								log.debug(String.format("dtarget verrechenbar pat %s kons id %s deleted? %s '%s' dropped %s",
+									actPat.getPersonalia(),
+									lastSelectedKons.getId(),
+									lastSelectedKons.isDeleted(),
+									lastSelectedKons.getLabel(),
+									droppedItem.getText()));
+								verrechnungViewer.refresh();
+								updateVerrechnungSum();
+								lastSelectedKons.undelete();
 							}
-							verrechnungViewer.refresh();
-							updateVerrechnungSum();
 						}
 					}
 				}
@@ -360,6 +378,7 @@ public class KonsVerrechnung implements IJournalArea {
 
 			@Override
 			public void codeSelected(PersistentObject po){
+				Helpers.checkActPatKons(actPat, lastSelectedKons);
 				if (po instanceof IVerrechenbar) {
 					if (CoreHub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
 						SWTHelper.alert("Fehlende Rechte",
@@ -367,12 +386,15 @@ public class KonsVerrechnung implements IJournalArea {
 					} else {
 						IVerrechenbar verrechenbar = (IVerrechenbar) po;
 
-						if (actKons != null) {
-							Result<IVerrechenbar> result = actKons.addLeistung(verrechenbar);
+						if (lastSelectedKons != null) {
+							Result<IVerrechenbar> result = lastSelectedKons.addLeistung(verrechenbar);
 							if (!result.isOK()) {
 								SWTHelper.alert("Diese Verrechnung ist ungültig",
 									result.toString());
 							} else {
+								log.debug(String.format("konsultationVerrechnungCodeSelectorTarget pat %s kons %s isDragOK %s verrechenbar %s", actPat, lastSelectedKons,
+									lastSelectedKons.isDragOK(),
+									verrechenbar.getText()));
 								if (CoreHub.userCfg.get(Iatrix.CFG_CODE_SELECTION_AUTOCLOSE,
 									Iatrix.CFG_CODE_SELECTION_AUTOCLOSE_DEFAULT)) {
 									// re-activate this view
@@ -404,8 +426,8 @@ public class KonsVerrechnung implements IJournalArea {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Verrechnung");
 
-		if (actKons != null) {
-			List<Verrechnet> leistungen = actKons.getLeistungen();
+		if (lastSelectedKons != null) {
+			List<Verrechnet> leistungen = lastSelectedKons.getLeistungen();
 			Money sum = new Money(0);
 			for (Verrechnet leistung : leistungen) {
 				int z = leistung.getZahl();
@@ -418,6 +440,7 @@ public class KonsVerrechnung implements IJournalArea {
 			sb.append(")");
 		}
 
+		log.debug(String.format("pat %s kons %s sum is now %s", actPat, lastSelectedKons, sb.toString()));
 		hVerrechnung.setText(sb.toString());
 		hVerrechnung.update();
 	}
@@ -428,7 +451,7 @@ public class KonsVerrechnung implements IJournalArea {
 	private boolean addLeistungByMnemonic(String mnemonic, boolean approximation, boolean multi){
 		boolean success = false;
 
-		if (actKons != null && !StringTool.isNothing(mnemonic)) {
+		if (lastSelectedKons != null && !StringTool.isNothing(mnemonic)) {
 			Query<Artikel> query = new Query<>(Artikel.class);
 			if (approximation) {
 				query.add("Eigenname", "LIKE", mnemonic + "%");
@@ -459,7 +482,7 @@ public class KonsVerrechnung implements IJournalArea {
 
 					PersistentObject po = factory.createFromString(typ + "::" + id);
 					if (po instanceof IVerrechenbar) {
-						Result<IVerrechenbar> result = actKons.addLeistung((IVerrechenbar) po);
+						Result<IVerrechenbar> result = lastSelectedKons.addLeistung((IVerrechenbar) po);
 						if (!result.isOK()) {
 							results.add(result);
 						}
@@ -491,11 +514,12 @@ public class KonsVerrechnung implements IJournalArea {
 	}
 
 	public void updateKonsultation(){
-		if (actKons != null) {
+		if (lastSelectedKons != null) {
 			hVerrechnung.setEnabled(true);
 			tVerrechnungKuerzel.setEnabled(true);
-			log.debug("Konsultation: " + actKons.getId());
+			log.debug(String.format("Konsultation: %s %s ", lastSelectedKons.getId(), lastSelectedKons.getLabel()));
 		} else {
+			log.debug("Konsultation is null ");
 			hVerrechnung.setEnabled(false);
 			tVerrechnungKuerzel.setEnabled(false);
 			log.debug("Konsultation: null");
@@ -523,7 +547,7 @@ public class KonsVerrechnung implements IJournalArea {
 			for (Object obj : sel.toArray()) {
 				if (obj instanceof Verrechnet) {
 					Verrechnet verrechnet = (Verrechnet) obj;
-					Result<Verrechnet> result = actKons.removeLeistung(verrechnet);
+					Result<Verrechnet> result = lastSelectedKons.removeLeistung(verrechnet);
 					if (!result.isOK()) {
 						SWTHelper.alert("Leistungsposition kann nicht entfernt werden",
 							result.toString());
@@ -615,10 +639,40 @@ public class KonsVerrechnung implements IJournalArea {
 
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
-		actKons = newKons;
-		updateKonsultation();
-		verrechnungViewer.refresh();
-		updateVerrechnungSum();
+		boolean sameKons = Helpers.twoKonsEqual(newKons, lastSelectedKons);
+		Helpers.checkActPatKons(actPat, lastSelectedKons);
+		log.debug(String.format("sameKons %s newPat %s newKons %s lastSelectedKons %s",
+			sameKons,
+			newPatient == null ? "null" : newPatient.getPersonalia(),
+			newKons == null ? "null" : newKons.getLabel(),
+			lastSelectedKons == null ? "null" : lastSelectedKons.getLabel()));
+		if (sameKons) {
+			// log.debug(String.format("is sameKons  %s  %s", newKons, lastSelectedKons));
+			return;
+			}
+		if (newKons != null && newPatient != null) {
+			log.debug(String.format("set lastSelectedKons  %s newPat %s", newKons.getLabel(),
+				newPatient.getPersonalia()));
+			lastSelectedKons = newKons;
+			actPat = newPatient;
+			updateKonsultation();
+			verrechnungViewer.refresh();
+			updateVerrechnungSum();
+		} else {
+			if (newPatient != null && newKons != null) {
+				actPat = newPatient;
+				lastSelectedKons = newKons;
+				log.debug(String.format("sameKons2 %s newPat %s newKons %s", sameKons, newPatient.getPersonalia(),
+							newKons == null ? "null" :newKons.getLabel()));
+			} else {
+				log.debug(String.format("sameKons3 %s newPat %s newKons %s lastSelectedKons %s",
+					sameKons,
+					newPatient == null ? "null" : newPatient.getPersonalia(),
+					newKons == null ? "null" : newKons.getLabel(),
+					lastSelectedKons == null ? "null" : lastSelectedKons.getLabel()));
+			}
+		}
+		Helpers.checkActPatKons(actPat, lastSelectedKons);
 	}
 
 	@Override
@@ -627,8 +681,10 @@ public class KonsVerrechnung implements IJournalArea {
 	}
 
 	@Override
-	public void activation(boolean mode){
-		// nothing todo
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
+		if (mode == true) {
+			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
+		}
 	}
 
 	public TableViewer getVerrechnungViewer(){

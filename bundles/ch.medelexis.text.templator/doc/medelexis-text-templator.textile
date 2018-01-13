@@ -29,7 +29,18 @@ Diese beschreibt, wie Elexis die Schablone befüllen soll:
  
 !bild2.png!
 
-Die Prozessoranweisung übernimmt die Rolle der bisherigen Dokumentvorlagen, und hier finden Sie auch die Elexis-Platzhalter wieder. Beispielsweise besagt die Zeile @<field name="datum">[Datum.heute]</field>@, dass der Prozessor den starren Platzhalter {{datum}} in der Schablone gegen den Inhalt der Elexis-Variablen [Datum.heute] zum Zeitpunkt des Druckens ersetzen soll. Sie können eine solche XML-Prozessoranweisung nach Elexis importieren (Im Textfenster Dreiecksmenü rechts und "Text importieren", und dann als Vorlage oder Systemvorlage speichern. Wenn Sie eine solche Dokumentvorlage in Elexis ansehen ("Vorlage öffnen"), dann sehen Sie etwas in der Art wie hier:
+Die Prozessoranweisung übernimmt die Rolle der bisherigen Dokumentvorlagen, und hier finden Sie auch die Elexis-Platzhalter wieder. Beispielsweise besagt die Zeile @<field name="datum">[Datum.heute]</field>@, dass der Prozessor den starren Platzhalter {{datum}} in der Schablone gegen den Inhalt der Elexis-Variablen [Datum.heute] zum Zeitpunkt des Druckens ersetzen soll. 
+
+Sie können eine solche XML-Prozessoranweisung wie folgt nach Elexis importieren:
+
+In der View Briefe:
+# Dreiecksmenü rechts auswählen
+# Dokument importieren
+# Das xml mit der ProcessingInstruction auswählen
+# Als Schablone das odt Dokument setzen
+# Als Vorlage oder Systemvorlage speichern 
+
+Wenn Sie eine solche Dokumentvorlage in Elexis ansehen ("Vorlage öffnen"), dann sehen Sie etwas in der Art wie hier:
  
 !bild4.png!
 

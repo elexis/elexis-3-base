@@ -145,7 +145,7 @@ public class DocboxTermin {
 			if (!twoday) {
 				elexisTermin.set(
 					new String[] {
-						"BeiWem", "Tag", "Beginn", "Typ", "Status", "ErstelltVon", "Dauer"
+						"BeiWem", "Tag", "Beginn", "Typ", "Status", Termin.FLD_CREATOR, "Dauer"
 					},
 					new String[] {
 						bereich, ttFrom.toString(TimeTool.DATE_COMPACT),
@@ -158,7 +158,7 @@ public class DocboxTermin {
 // showing up
 				elexisTermin.set(
 					new String[] {
-						"BeiWem", "Tag", "Beginn", "Typ", "Status", "ErstelltVon", "Dauer"
+						"BeiWem", "Tag", "Beginn", "Typ", "Status", Termin.FLD_CREATOR, "Dauer"
 					},
 					new String[] {
 						bereich, ttFrom.toString(TimeTool.DATE_COMPACT),
@@ -168,7 +168,7 @@ public class DocboxTermin {
 					});
 				elexisTerminDayAfter.set(
 					new String[] {
-						"BeiWem", "Tag", "Beginn", "Typ", "Status", "ErstelltVon", "Dauer"
+						"BeiWem", "Tag", "Beginn", "Typ", "Status", Termin.FLD_CREATOR, "Dauer"
 					},
 					new String[] {
 						bereich,
@@ -281,7 +281,7 @@ public class DocboxTermin {
 	
 	static public List<DocboxTermin> getDocboxTermine(){
 		Query<Termin> terminQuery = new Query<Termin>(Termin.class);
-		terminQuery.add("ErstelltVon", "=", UserDocboxPreferences.getDocboxLoginID(false));
+		terminQuery.add(Termin.FLD_CREATOR, "=", UserDocboxPreferences.getDocboxLoginID(false));
 		terminQuery.add("Tag", ">=", new TimeTool().toString(TimeTool.DATE_COMPACT));
 		if (UserDocboxPreferences.getAgendaSettingsPerUser()) {
 			terminQuery.add("BeiWem", "=", UserDocboxPreferences.getAppointmentsBereich());

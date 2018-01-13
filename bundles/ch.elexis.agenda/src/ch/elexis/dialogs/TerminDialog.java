@@ -79,6 +79,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.data.User;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -905,7 +906,8 @@ public class TerminDialog extends TitleAreaDialog {
 					lockTermin.set("Wer", tName.getText()); //$NON-NLS-1$
 				}
 				lockTermin.setGrund(tGrund.getText());
-				lockTermin.set("ErstelltVon", CoreHub.actUser.getLabel()); //$NON-NLS-1$
+				lockTermin.set(Termin.FLD_CREATOR,
+					ElexisEventDispatcher.getSelected(User.class).getLabel());
 				
 				if (bLocked.getSelection()) {
 					lockTermin.setFlag(Termin.SW_LOCKED);

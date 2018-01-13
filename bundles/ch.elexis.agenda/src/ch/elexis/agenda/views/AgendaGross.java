@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.eclipse.jface.action.Action;
@@ -30,14 +31,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-
-import com.tiff.common.ui.datepicker.DatePicker;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.BereichSelectionHandler;
@@ -48,6 +50,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
@@ -69,17 +72,20 @@ import ch.rgw.tools.TimeTool;
  */
 public class AgendaGross extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.largeview"; //$NON-NLS-1$
+	public static final String CFG_VERTRELATION = "vertrelation"; //$NON-NLS-1$
 	private static final String SEPARATOR = ",";
 	private static final int[] DEFAULT_COLUMN_WIDTHS = {
 		60, 60, 105, 80, 300, 200
 	};
 	
-	DatePicker cal;
+	DateTime calendar;
 	Composite cButtons;
 	Text dayMessage;
 	Text terminDetail;
 	Label lbDetails;
 	Label lbDayString;
+	private int[] sashWeights = null;
+	private SashForm sash;
 	private static Button[] bChange;
 	
 	private static final String[] columnTitles = {
@@ -99,7 +105,7 @@ public class AgendaGross extends BaseAgendaView {
 		cButtons.setLayout(rl);
 		cButtons.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
-		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
+		sash = new SashForm(parent, SWT.HORIZONTAL);
 		sash.setLayout(new GridLayout());
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
@@ -127,9 +133,11 @@ public class AgendaGross extends BaseAgendaView {
 		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
 		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
-		cal = new DatePicker(right, SWT.NONE);
-		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		cal.setDate(agenda.getActDate().getTime());
+		calendar = new DateTime(right, SWT.CALENDAR);
+		calendar.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		calendar.setDate(agenda.getActDate().get(TimeTool.YEAR),
+			agenda.getActDate().get(TimeTool.MONTH),
+			agenda.getActDate().get(TimeTool.DAY_OF_MONTH));
 		Button bToday = new Button(right, SWT.PUSH);
 		bToday.setText(Messages.AgendaGross_today);
 		bToday.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -138,7 +146,8 @@ public class AgendaGross extends BaseAgendaView {
 			public void widgetSelected(SelectionEvent arg0){
 				TimeTool dat = new TimeTool();
 				agenda.setActDate(dat);
-				cal.setDate(agenda.getActDate().getTime());
+				calendar.setDate(dat.get(TimeTool.YEAR), dat.get(TimeTool.MONTH),
+					dat.get(TimeTool.DAY_OF_MONTH));
 				updateDate();
 			}
 			
@@ -147,7 +156,7 @@ public class AgendaGross extends BaseAgendaView {
 		
 		// set text field's maximum width to the width of the calendar
 		GridData gd = (GridData) dayMessage.getLayoutData();
-		gd.widthHint = cal.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.widthHint = calendar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 		
 		dayMessage.addFocusListener(new FocusAdapter() {
 			
@@ -180,15 +189,21 @@ public class AgendaGross extends BaseAgendaView {
 		}
 		table.setHeaderVisible(true);
 		makePrivateActions();
-		cal.addSelectionListener(new SelectionAdapter() {
+		calendar.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0){
-				agenda.setActDate(new TimeTool(cal.getDate().getTime()));
+				LocalDate localDate =
+					LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
+				agenda.setActDate(new TimeTool(localDate));
 				updateDate();
 			}
 			
 		});
+		
+		sash.setWeights(sashWeights == null ? new int[] {
+			70, 30
+		} : sashWeights);
 		
 		// set initial widget values
 		initialize();
@@ -370,7 +385,7 @@ public class AgendaGross extends BaseAgendaView {
 			.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append( //$NON-NLS-2$
+		sb.append(StringTool.unNull(t.get(Termin.FLD_CREATOR))).append("/").append(
 			t.getCreateTime().toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
 		ElexisEventDispatcher.fireSelectionEvent(t);
@@ -436,4 +451,31 @@ public class AgendaGross extends BaseAgendaView {
 		
 	}
 	
+	@Override
+	public void saveState(IMemento memento){
+		int[] w = sash.getWeights();
+		memento.putString(CFG_VERTRELATION,
+			Integer.toString(w[0]) + StringConstants.COMMA + Integer.toString(w[1]));
+		
+		super.saveState(memento);
+	}
+	
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException{
+		if (memento == null) {
+			sashWeights = new int[] {
+				70, 30
+			};
+		} else {
+			String state = memento.getString(CFG_VERTRELATION);
+			if (state == null) {
+				state = "70,30"; //$NON-NLS-1$
+			}
+			String[] sw = state.split(StringConstants.COMMA);
+			sashWeights = new int[] {
+				Integer.parseInt(sw[0]), Integer.parseInt(sw[1])
+			};
+		}
+		super.init(site, memento);
+	}
 }

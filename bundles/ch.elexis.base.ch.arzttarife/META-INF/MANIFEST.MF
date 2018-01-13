@@ -37,5 +37,6 @@ Import-Package: org.apache.commons.lang,
  org.slf4j;version="1.7.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.service.TarmedCodeElementService.xml,
- OSGI-INF/ch.elexis.base.ch.arzttarife.service.ComplementaryCodeElementService.xml
+ OSGI-INF/ch.elexis.base.ch.arzttarife.service.ComplementaryCodeElementService.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.service.PhysioCodeElementService.xml
 Bundle-ActivationPolicy: lazy

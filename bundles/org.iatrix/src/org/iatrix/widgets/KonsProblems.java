@@ -40,6 +40,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.iatrix.actions.IatrixEventHelper;
 import org.iatrix.data.Problem;
 import org.iatrix.util.DateComparator;
+import org.iatrix.util.Helpers;
 import org.iatrix.views.IatrixViewTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -242,7 +243,7 @@ public class KonsProblems implements IJournalArea {
 
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
-		if (op == KonsActions.ACTIVATE_KONS || op == KonsActions.EVENT_UPDATE) {
+		if (op != KonsActions.SAVE_KONS && !Helpers.twoKonsEqual(newKons, actKons)) {
 			actKons = newKons;
 			updateProblemAssignmentViewer();
 		}
@@ -252,7 +253,10 @@ public class KonsProblems implements IJournalArea {
 	public void visible(boolean mode){}
 
 	@Override
-	public void activation(boolean mode){
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
+		if (mode == true) {
+			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
+		}
 	}
 
 	private void logEvent(String msg){

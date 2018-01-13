@@ -164,12 +164,13 @@ public class TarmedLimitation {
 				+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perDay);
 		} else if (limitationUnit == LimitationUnit.WEEK) {
 			if (tarmedGroup != null) {
-				sb.append(String.format(
-					ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
-					tarmedGroup.getCode())
-					+ amount
-					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perWeeks,
-						limitationAmount));
+				sb.append(
+					String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
+						tarmedGroup.getCode())
+						+ amount
+						+ String.format(
+							ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perWeeks,
+							limitationAmount));
 			} else {
 				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
 					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perWeeks,
@@ -177,12 +178,13 @@ public class TarmedLimitation {
 			}
 		} else if (limitationUnit == LimitationUnit.MONTH) {
 			if (tarmedGroup != null) {
-				sb.append(String.format(
-					ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
-					tarmedGroup.getCode())
-					+ amount
-					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perMonth,
-						limitationAmount));
+				sb.append(
+					String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
+						tarmedGroup.getCode())
+						+ amount
+						+ String.format(
+							ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perMonth,
+							limitationAmount));
 			} else {
 				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
 					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perMonth,
@@ -190,12 +192,13 @@ public class TarmedLimitation {
 			}
 		} else if (limitationUnit == LimitationUnit.YEAR) {
 			if (tarmedGroup != null) {
-				sb.append(String.format(
-					ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
-					tarmedGroup.getCode())
-					+ amount
-					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perYears,
-						limitationAmount));
+				sb.append(
+					String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
+						tarmedGroup.getCode())
+						+ amount
+						+ String.format(
+							ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perYears,
+							limitationAmount));
 			} else {
 				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
 					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perYears,
@@ -238,8 +241,8 @@ public class TarmedLimitation {
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<Verrechnet> verrechnetByCoverage = getVerrechnetByCoverageAndCode(kons,
-					tarmedLeistung.getCode());
+				List<Verrechnet> verrechnetByCoverage =
+					getVerrechnetByCoverageAndCode(kons, tarmedLeistung.getCode());
 				if (getVerrechnetCount(verrechnetByCoverage) > amount) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
@@ -377,16 +380,23 @@ public class TarmedLimitation {
 		return ret;
 	}
 	
-	private LocalDate getDuringStartDate(Konsultation kons){
+	private LocalDate getDuringStartDate(Konsultation kons) {
 		LocalDate konsDate = new TimeTool(kons.getDatum()).toLocalDate();
+		LocalDate ret = null;
 		if (limitationUnit == LimitationUnit.WEEK) {
-			return konsDate.minus(limitationAmount, ChronoUnit.WEEKS);
+			ret = konsDate.minus(limitationAmount, ChronoUnit.WEEKS);
 		} else if (limitationUnit == LimitationUnit.MONTH) {
-			return konsDate.minus(limitationAmount, ChronoUnit.MONTHS);
+			ret = konsDate.minus(limitationAmount, ChronoUnit.MONTHS);
 		} else if (limitationUnit == LimitationUnit.YEAR) {
-			return konsDate.minus(limitationAmount, ChronoUnit.YEARS);
+			ret = konsDate.minus(limitationAmount, ChronoUnit.YEARS);
 		}
-		return null;
+		if (tarmedLeistung != null && ret != null) {
+			LocalDate leistungDate = tarmedLeistung.getGueltigVon().toLocalDate();
+			if (ret.isBefore(leistungDate)) {
+				ret = leistungDate;
+			}
+		}
+		return ret;
 	}
 	
 	private Result<IVerrechenbar> testDay(Konsultation kons, Verrechnet verrechnet){

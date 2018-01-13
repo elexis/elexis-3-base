@@ -494,7 +494,7 @@ public class TarmedOptifier implements IOptifier {
 		Patient patient = kons.getFall().getPatient();
 		long patientAgeDays = patient.getAgeAt(consDate, ChronoUnit.DAYS);
 		
-		List<TarmedLeistungAge> ageLimits = TarmedLeistungAge.of(limitsString);
+		List<TarmedLeistungAge> ageLimits = TarmedLeistungAge.of(limitsString, consDate);
 		for (TarmedLeistungAge tarmedLeistungAge : ageLimits) {
 			if (tarmedLeistungAge.isValidOn(consDate.toLocalDate())) {
 				// if only one of the limits is set, check only that limit

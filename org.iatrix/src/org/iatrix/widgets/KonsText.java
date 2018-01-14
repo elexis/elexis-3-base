@@ -239,7 +239,7 @@ public class KonsText implements IJournalArea {
 		if (textEintrag != null) {
 			if (!textEintrag.equals(dbEintrag)) {
 				// text differs from db entry
-				logEvent("saved text != db entry");
+				logEvent(String.format("%s: saved text != db entry", actKons.getId()));
 				return true;
 			}
 		}
@@ -405,10 +405,11 @@ public class KonsText implements IJournalArea {
 	 */
 	@Override
 	public synchronized void setKons(Patient newPatient, Konsultation k, KonsActions op){
+		Helpers.checkActPatKons(newPatient, k);
 		if (op == KonsActions.SAVE_KONS) {
 			if (text.isDirty() || textChanged()) {
 				logEvent("setKons.SAVE_KONS text.isDirty or changed saving Kons from "
-					+ actKons.getDatum() + " is '" + text.getContentsPlaintext() + "'");
+					+ actKons.getDatum() + " is '" + text.getContentsPlaintext() + "' by " + actKons.getAuthor());
 				updateEintrag();
 				text.setData(PATIENT_KEY, null);
 				text.setText("saved kons");
@@ -417,7 +418,7 @@ public class KonsText implements IJournalArea {
 			} else {
 				if (actKons != null && text != null) {
 					logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum()
-						+ " is '" + text.getContentsPlaintext() + "'");
+						+ " is '" + text.getContentsPlaintext() + "' by"+ actKons.getAuthor());
 				}
 			}
 			return;
@@ -492,11 +493,11 @@ public class KonsText implements IJournalArea {
 			}
 			sb.append(Helpers.hasRightToChangeConsultations(actKons, false) ? "" : " Kein Recht ");
 			// TODO: Allow administrators to change the konsText
-			if (actKons.getAuthor().contentEquals(CoreHub.actUser.getLabel()) && Helpers.hasRightToChangeConsultations(actKons, false)) {
-				sb.append(" von Ihnen ");
+			if (Helpers.userMayEditKons(actKons)) {
+				sb.append(" editierbar");
 				text.setEnabled(actKons.isEditable(false));
 			} else {
-				sb.append(" NICHT von Ihnen");
+				sb.append(" NICHT editierbar");
 				text.setEnabled(false);
 			}
 			lVersion.setText(sb.toString());

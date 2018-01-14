@@ -101,6 +101,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private static Patient actPat = null;
 	private static Konsultation actKons = null;
 	private static boolean removedStaleKonsLocks = false;
+	private static boolean createNewKonsOnEntry = false;
 
 	private FormToolkit tk;
 	private Form form;
@@ -249,9 +250,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	/**
 	 * First ste the global variable actKons
 	 * Then updates all dependent widgets, like header, konsText konsList
-	 * @param newPatient TODO
-	 * @param newKons
-	 * @param op
+	 * @param newPatient patient
+	 * @param newKons    konsultation, can be null if event deselect
+	 * @param op         ACTIVATED or not
 	 */
 	public synchronized static void updateAllKonsAreas(Patient newPatient, Konsultation newKons, IJournalArea.KonsActions op){
 		// Some sanity checks
@@ -415,7 +416,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// If nothing found or not of today, create a new konsultation
 		Konsultation konsultation = null;
 		konsultation = selectedPatient.getLetzteKons(false);
-		if (konsultation == null) {
+		if (konsultation == null && createNewKonsOnEntry) {
 			Fall[] faelle = selectedPatient.getFaelle();
 			if (faelle.length == 0) {
 				konsultation = selectedPatient.createFallUndKons();
@@ -441,9 +442,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				}
 			}
 		}
-		TimeTool konsDate = new TimeTool(konsultation.getDatum());
-		if (!konsDate.isSameDay(new TimeTool())) {
-			konsultation = konsultation.getFall().neueKonsultation();
+		if (konsultation != null) {
+			TimeTool konsDate = new TimeTool(konsultation.getDatum());
+			if (!konsDate.isSameDay(new TimeTool())) {
+				konsultation = konsultation.getFall().neueKonsultation();
+			}
 		}
 		// actKons = konsultation;
 		// We do not call updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
@@ -644,8 +647,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				return;
 			}
 			boolean noLeistungen = actKons.getLeistungen() == null || actKons.getLeistungen().isEmpty();
-			log.debug(String.format("Delete the kons? %s %s noLeistungen %s", actKons.getId(), konsTextComposite.getPlainText().length(), noLeistungen));
-			if (konsTextComposite.getPlainText().length() == 0 && (noLeistungen)) {
+			TimeTool konsDate = new TimeTool(actKons.getDatum());
+			boolean ofToday = konsDate.isSameDay(new TimeTool());
+			log.debug(String.format("Delete the kons? %s %s noLeistungen %s from %s ofToday %s", actKons.getId(),
+				konsTextComposite.getPlainText().length(), noLeistungen, actKons.getLabel(), ofToday));
+			if (konsTextComposite.getPlainText().length() == 0 && (noLeistungen) && ofToday) {
 				Fall f = actKons.getFall();
 				Konsultation[] ret = f.getBehandlungen(false);
 				actKons.delete(true);

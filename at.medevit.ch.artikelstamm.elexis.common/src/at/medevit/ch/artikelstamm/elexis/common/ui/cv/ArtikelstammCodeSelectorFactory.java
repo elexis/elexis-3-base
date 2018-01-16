@@ -43,6 +43,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 //import ch.elexis.core.ui.actions.AddVerrechenbarContributionItem;
 import ch.elexis.core.ui.actions.FlatDataLoader;
+import ch.elexis.core.ui.actions.PersistentObjectLoader.QueryFilter;
 import ch.elexis.core.ui.actions.ScannerEvents;
 import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.icons.Images;
@@ -110,10 +111,13 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		mppsa.setChecked(
 			CoreHub.globalCfg.get(MephaPrefferedProviderSorterAction.CFG_PREFER_MEPHA, false));
 		SupportedATCFilteringAction safa = new SupportedATCFilteringAction(fdl);
+		FilterBlackboxAction fiblabo = new FilterBlackboxAction(fdl);
 		
 		List<IAction> actionList = new ArrayList<>();
 		actionList.add(mppsa);
 		actionList.add(safa);
+		actionList.add(fiblabo);
+		
 		populateSelectorPanel(slp, fdl, actionList);
 		slp.addActions(actionList.toArray(new IAction[actionList.size()]));
 		

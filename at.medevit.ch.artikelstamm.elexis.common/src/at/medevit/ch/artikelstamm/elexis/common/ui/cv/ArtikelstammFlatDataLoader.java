@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.TableViewer;
 
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeService;
+import at.medevit.ch.artikelstamm.BlackBoxReason;
 import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCache;
@@ -115,6 +116,7 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 			return atcFilter != null;
 		}
 	}
+	
 	
 	@Override
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){

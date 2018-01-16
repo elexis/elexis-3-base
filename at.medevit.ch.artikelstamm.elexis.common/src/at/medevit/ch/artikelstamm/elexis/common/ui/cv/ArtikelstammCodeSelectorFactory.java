@@ -106,14 +106,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		Query<ArtikelstammItem> qbe = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		ArtikelstammFlatDataLoader fdl = new ArtikelstammFlatDataLoader(cv, qbe, slp);
 		
-		MephaPrefferedProviderSorterAction mppsa = new MephaPrefferedProviderSorterAction(fdl);
-		mppsa.setChecked(
-			CoreHub.globalCfg.get(MephaPrefferedProviderSorterAction.CFG_PREFER_MEPHA, false));
-		SupportedATCFilteringAction safa = new SupportedATCFilteringAction(fdl);
-		
 		List<IAction> actionList = new ArrayList<>();
-		actionList.add(mppsa);
-		actionList.add(safa);
 		populateSelectorPanel(slp, fdl, actionList);
 		slp.addActions(actionList.toArray(new IAction[actionList.size()]));
 		
@@ -123,13 +116,15 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		ILabelDecorator decorator =
 			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
 		
-		String atcLang = CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
-			ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
-		ATCArtikelstammDecoratingLabelProvider adlp = new ATCArtikelstammDecoratingLabelProvider(
-			new LagerhaltungArtikelstammLabelProvider(), decorator, atcLang);
+		String atcLang =
+			CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+		ATCArtikelstammDecoratingLabelProvider adlp =
+			new ATCArtikelstammDecoratingLabelProvider(new LagerhaltungArtikelstammLabelProvider(),
+				decorator, atcLang);
 		
 		ViewerConfigurer vc = new ViewerConfigurer(fdl, adlp,
-			// new MedINDEXArticleControlFieldProvider(cv),
+		// new MedINDEXArticleControlFieldProvider(cv),
 			slp, new ViewerConfigurer.DefaultButtonProvider(), swp, fdl);
 		
 		// the dropdown menu on the viewer
@@ -138,8 +133,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 			ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesAction) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
-				setToolTipText(
-					ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesTooltip);
+				setToolTipText(ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesTooltip);
 			}
 			
 			@Override
@@ -155,25 +149,26 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		
 		//		menu.add(new AddVerrechenbarContributionItem(cov));
 		
-		MenuManager subMenu = new MenuManager("ATC Gruppen-Selektion",
-			Images.IMG_CATEGORY_GROUP.getImageDescriptor(), null) {
-			@Override
-			public boolean isDynamic(){
-				return true;
-			}
-			
-			@Override
-			public boolean isVisible(){
-				StructuredSelection structuredSelection =
-					new StructuredSelection(cov.getSelection());
-				Object element = structuredSelection.getFirstElement();
-				if (element instanceof ArtikelstammItem) {
-					ArtikelstammItem ai = (ArtikelstammItem) element;
-					return (ai.getATCCode() != null && ai.getATCCode().length() > 0);
+		MenuManager subMenu =
+			new MenuManager("ATC Gruppen-Selektion",
+				Images.IMG_CATEGORY_GROUP.getImageDescriptor(), null) {
+				@Override
+				public boolean isDynamic(){
+					return true;
 				}
-				return false;
-			}
-		};
+				
+				@Override
+				public boolean isVisible(){
+					StructuredSelection structuredSelection =
+						new StructuredSelection(cov.getSelection());
+					Object element = structuredSelection.getFirstElement();
+					if (element instanceof ArtikelstammItem) {
+						ArtikelstammItem ai = (ArtikelstammItem) element;
+						return (ai.getATCCode() != null && ai.getATCCode().length() > 0);
+					}
+					return false;
+				}
+			};
 		subMenu.add(new ATCMenuContributionItem(cov, fdl));
 		menu.add(subMenu);
 		
@@ -208,22 +203,31 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 	 * @param slp2
 	 */
 	public void populateSelectorPanel(SelectorPanelProvider slp, FlatDataLoader fdl,
-		List<IAction> actionList){}
+		List<IAction> actionList){
+		ArtikelstammFlatDataLoader afdl = (ArtikelstammFlatDataLoader) fdl;
+		
+		MephaPrefferedProviderSorterAction mppsa = new MephaPrefferedProviderSorterAction(afdl);
+		mppsa.setChecked(
+			CoreHub.globalCfg.get(MephaPrefferedProviderSorterAction.CFG_PREFER_MEPHA, false));
+		actionList.add(mppsa);
+		actionList.add(new SupportedATCFilteringAction(afdl));
+		actionList.add(new BlackboxViewerFilterAction(fdl, slp));
+	}
 	
 	private class AControlFieldListener implements ControlFieldListener {
 		private SelectorPanelProvider slp;
-		
+
 		public AControlFieldListener(SelectorPanelProvider slp){
 			this.slp = slp;
 		}
-		
+
 		@Override
 		public void changed(HashMap<String, String> values){
 			String val = values.get(DISP_NAME);
-			if (val != null && val.length() == 13 && StringUtils.isNumeric(val)) {
+			if (val != null && val.length() == 13 && StringUtils.isNumeric(val)) {	
 				List<ArtikelstammItem> result = new Query<ArtikelstammItem>(ArtikelstammItem.class,
 					ArtikelstammItem.FLD_GTIN, val).execute();
-				if (result != null && result.size() == 1) {
+				if (result!=null && result.size()==1) {
 					KonsDetailView detailView = getKonsDetailView();
 					Konsultation kons =
 						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);

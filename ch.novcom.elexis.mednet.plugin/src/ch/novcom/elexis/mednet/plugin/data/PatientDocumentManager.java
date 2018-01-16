@@ -1,22 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2017 novcom AG
+ * Copyright (c) 2018 novcom AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Gutknecht
+ *     David Gutknecht - novcom AG
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.data;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
@@ -31,7 +33,6 @@ import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.TimeSpan;
@@ -41,14 +42,18 @@ import ch.rgw.tools.TimeTool;
 /**
  * This class is used to import a Documents to a Patient
  * It is used by the DocumentImporter class
- * @author David Gutknecht
  *
  */
 public class PatientDocumentManager {
+	/**
+	 * Logger used to log all activities of the module
+	 */
+	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentImporter.class.getName());
 	
 	public static String DEFAULT_PRIO = "50";
 	
 	private static String FLD_ORGIN = "Quelle";
+	
 	private static int MAX_LEN_RESULT = 80; // Length of the column LABORWERTE.Result
 	
 	private final Patient patient;
@@ -74,12 +79,13 @@ public class PatientDocumentManager {
 	 * Try to initialize Omnivore
 	 */
 	private void initDocumentManager(){
+		String logPrefix = "initDocumentManager() - ";//$NON-NLS-1$
 		Object omnivore = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 		if (omnivore != null) {
 			this.omnivoreDocManager = (IDocumentManager) omnivore;
 		}
 		else {
-			MedNet.getLogger().error("initDocumentManager Omnivore has not been loaded");
+			LOGGER.error(logPrefix+"Omnivore has not been loaded");//$NON-NLS-1$
 		}
 	}
 	
@@ -88,6 +94,7 @@ public class PatientDocumentManager {
 	 * If not, create it
 	 */
 	private void checkCreateCategory(final String category){
+		String logPrefix = "checkCreateCategory() - ";//$NON-NLS-1$
 		if (category != null) {
 			boolean catExists = false;
 			String[] categories = this.omnivoreDocManager.getCategories();
@@ -103,31 +110,14 @@ public class PatientDocumentManager {
 			if (!catExists) {
 				Boolean success = this.omnivoreDocManager.addCategorie(category);
 				if (success) {
-					MedNet.getLogger().info("checkCreateCategory New Document category created in Omnivore: " + category);
+					LOGGER.info(logPrefix+"New Document category created in Omnivore: " + category);//$NON-NLS-1$
 				} else {
-					MedNet.getLogger().error("checkCreateCategory Failed creating new document category in Omnivore: " + category);
+					LOGGER.error(logPrefix+"Failed creating new document category in Omnivore: " + category);//$NON-NLS-1$
 				}
 			}
 		}
 	}
-	
-	/**
-	 * Add a new document to Omnivore
-	 * 
-	 * @param title
-	 *            Titel des Dokuments
-	 * @param category
-	 *            Gewünschte Kategorie, unter welcher das Dokument abgelegt werden soll
-	 * @param dateStr
-	 *            Zeitstempel des Dokuments
-	 * @param file
-	 *            Eigentliches Dokumente, das archiviert werden soll
-	 * @param keywords
-	 *            Schlüsselwörter zum Dokument
-	 * @return true bei Erfolg. Sonst false
-	 * @throws IOException
-	 * @throws ElexisException
-	 */
+
 	/**
 	 * Add a new document to Omnivore
 	 * @param title
@@ -146,6 +136,7 @@ public class PatientDocumentManager {
 			final Path file,
 			final String keywords
 		) throws IOException, ElexisException{
+		String logPrefix = "addDocumentToOmnivore() - ";//$NON-NLS-1$
 		
 		this.checkCreateCategory(category);
 		
@@ -178,10 +169,7 @@ public class PatientDocumentManager {
 		}
 		else {
 			//If the document already exists, log it
-			MedNet.getLogger().warn(
-					"addDocumentToOmnivore " + 
-					"This document already exists in the omnivore database. It will not be imported: " + title +" "+file.toString()
-			);
+			LOGGER.warn(logPrefix+"This document already exists in the omnivore database. It will not be imported: " + title +" "+file.toString());//$NON-NLS-1$
 			return false;
 		}
 	}
@@ -222,13 +210,13 @@ public class PatientDocumentManager {
 	 */
 	private LabResult getLabResult(LabItem labItem, String value, Date date){
 		Query<LabResult> qli = new Query<LabResult>(LabResult.class);
-		qli.add(LabResult.ITEM_ID, "=", labItem.getId());
+		qli.add(LabResult.ITEM_ID, "=", labItem.getId());//$NON-NLS-1$
 		qli.and();
-		qli.add(LabResult.OBSERVATIONTIME, "=", PatientDocumentManager.LABRESULT_TIMESTAMP_FORMATTER.format(date));
+		qli.add(LabResult.OBSERVATIONTIME, "=", PatientDocumentManager.LABRESULT_TIMESTAMP_FORMATTER.format(date));//$NON-NLS-1$
 		qli.and();
-		qli.add(LabResult.PATIENT_ID, "=", patient.getId());
+		qli.add(LabResult.PATIENT_ID, "=", patient.getId());//$NON-NLS-1$
 		qli.and();
-		qli.add(LabResult.RESULT, "=", value);
+		qli.add(LabResult.RESULT, "=", value);//$NON-NLS-1$
 		
 		LabResult labResult = null;
 		List<LabResult> resultList = qli.execute();
@@ -262,6 +250,7 @@ public class PatientDocumentManager {
 			Date documentDateTime,
 			String keywords
 		) throws IOException{
+		String logPrefix = "addDocument() - ";//$NON-NLS-1$
 		
 		//First of all check if Omnivore exists
 		if (this.omnivoreDocManager == null) {
@@ -301,7 +290,7 @@ public class PatientDocumentManager {
 						LabItemTyp.DOCUMENT,
 						group ,
 						DEFAULT_PRIO
-				);
+				);//$NON-NLS-1$
 		}
 		
 		
@@ -325,7 +314,7 @@ public class PatientDocumentManager {
 		//Limit the length of the title
 		//If it is too long, cut it
 		if (title.length() > MAX_LEN_RESULT)
-			title = title.substring(0,title.length() - MAX_LEN_RESULT - 3) + "..."  ;
+			title = title.substring(0,title.length() - MAX_LEN_RESULT - 3) + "..."  ;//$NON-NLS-1$
 		
 		
 		//Since the labResult Object uses TimeTool,
@@ -344,7 +333,6 @@ public class PatientDocumentManager {
 			labResult.set(FLD_ORGIN, orderId);
 			labResult.set(LabResult.TIME, documentTime);
 			labResult.setObservationTime(documentDate);
-			MedNet.getLogger().debug("Document Date" + documentDate.toLocalDateTime().toString());
 			saved = true;
 		} else {
 			//If there is already a labresult
@@ -356,8 +344,7 @@ public class PatientDocumentManager {
 					overwriteResults
 				|| (labResult.getObservationTime().getTimeInMillis() < documentDate.getTimeInMillis())
 				) {
-				MedNet.getLogger().warn(
-						"saveFileAsLaborItem " +
+				LOGGER.warn(logPrefix+
 						"An older version of this document will be overwritten:"
 								+ labItem.getKuerzel() + "-" 
 								+ labItem.getName() + " " 
@@ -365,15 +352,15 @@ public class PatientDocumentManager {
 								+ documentDate.toDBString(true)+ " " 
 								+ labResult.getResult()+ " " 
 								+ title+ " " 
-						);
+						);//$NON-NLS-1$
 				labResult.setResult(title);
 				labResult.set(LabResult.TIME, documentTime);
 				labResult.setObservationTime(documentDate);
 				saved = true;
 			} else {
 				
-				MedNet.getLogger().warn(
-					"saveFileAsLaborItem "+
+				LOGGER.warn(
+					logPrefix+
 					"An new version of this document is still in the database:"
 							+ labItem.getKuerzel() + "-" 
 							+ labItem.getName() + " " 
@@ -381,25 +368,23 @@ public class PatientDocumentManager {
 							+ documentDate.toDBString(true)+ " " 
 							+ labResult.getResult()+ " " 
 							+ title+ " " 
-					);
+					);//$NON-NLS-1$
 			}
 		}
 		
 		//If we were able to create a labResult
 		//We can archive the document into Omnivore
 		if (saved) {
-			// Dokument in Omnivore archivieren
 			try {
 				String dateTimeDocumentString = documentDate.toString(TimeTool.DATE_GER);
 				
-				// Zu Dokumentablage hinzufügen
 				this.addDocumentToOmnivore(title, institutionName, dateTimeDocumentString, file, keywords);
 				
 				
-				MedNet.getLogger().info(
-						"saveFileAsLaborItem " +
+				LOGGER.info(
+						logPrefix+
 						"Document successfully saved to omnivore:"+ title 
-						);
+						);//$NON-NLS-1$
 			} catch (ElexisException e) {
 				throw new IOException(
 					MessageFormat.format(
@@ -432,6 +417,7 @@ public class PatientDocumentManager {
 			Date documentDateTime,
 			String keywords
 		) throws IOException{
+		String logPrefix = "addForm() - ";//$NON-NLS-1$
 		
 		//First of all check if Omnivore exists
 		if (this.omnivoreDocManager == null) {
@@ -466,7 +452,7 @@ public class PatientDocumentManager {
 		//Limit the length of the title
 		//If it is too long, cut it
 		if (title.length() > MAX_LEN_RESULT)
-			title = title.substring(0,title.length() - MAX_LEN_RESULT - 3) + "..."  ;
+			title = title.substring(0,title.length() - MAX_LEN_RESULT - 3) + "..."  ;//$NON-NLS-1$
 		
 		//Since the labResult Object uses TimeTool,
 		//We will convert the documentDateTime into a TimeTool
@@ -474,17 +460,15 @@ public class PatientDocumentManager {
 		documentDate.setTime(documentDateTime);
 		
 		//Archive the document into Omnivore
-		// Dokument in Omnivore archivieren
 		try {
 			String dateTimeDocumentString = documentDate.toString(TimeTool.DATE_GER);
 			
-			// Zu Dokumentablage hinzufügen
 			this.addDocumentToOmnivore(title, category, dateTimeDocumentString, file, keywords);
 			
-			MedNet.getLogger().info(
-					"addForm " +
+			LOGGER.info(
+					logPrefix +
 					"Document successfully saved to omnivore:"+ title 
-					);
+					);//$NON-NLS-1$
 		} catch (ElexisException e) {
 			throw new IOException(
 				MessageFormat.format(
@@ -500,9 +484,10 @@ public class PatientDocumentManager {
 	/**
 	 * This function will return the contact corresponding to the given institution id
 	 * @param id
-	 * @return the Kontakt or null if nothing or multiple kontakts has been found
+	 * @return the contact or null if nothing or multiple contacts has been found
 	 */
 	public static Kontakt getInstitution(String id){
+		String logPrefix = "getInstitution() - ";//$NON-NLS-1$
 		
 		Query<Kontakt> qbe = new Query<Kontakt>(Labor.class);
 		qbe.startGroup();
@@ -513,15 +498,15 @@ public class PatientDocumentManager {
 			return results.get(0);
 		} 
 		else if (results.size() <= 0){
-			MedNet.getLogger().warn(
-					"getInstitution " +
+			LOGGER.warn(
+					logPrefix +
 					"No institution with following id found:"+id
 			);
 			return null;
 		}
 		else {
-			MedNet.getLogger().warn(
-					"getInstitution " +
+			LOGGER.warn(
+					logPrefix +
 					"More than one institution with following id found:"+id
 			);
 			return null;

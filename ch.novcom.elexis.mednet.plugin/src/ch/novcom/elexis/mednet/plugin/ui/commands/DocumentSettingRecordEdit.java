@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2017 novcom AG
+ * Copyright (c) 2018 novcom AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Gutknecht
+ *     David Gutknecht - novcom AG
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.commands;
 
@@ -30,10 +30,12 @@ import ch.elexis.data.PersistentObject;
 import ch.novcom.elexis.mednet.plugin.data.DocumentSettingRecord;
 import ch.novcom.elexis.mednet.plugin.ui.dialog.DocumentSettingRecordEditDialog;
 
+//TODO FIX A BUG BY EDITING
+
 public class DocumentSettingRecordEdit extends AbstractHandler {
 	
-	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit";
-	public static final String PARAMETERID = "ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit.selected";
+	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit";//$NON-NLS-1$
+	public static final String PARAMETERID = "ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit.selected";//$NON-NLS-1$
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
@@ -46,12 +48,12 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 				(PersistentObject) event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID)
 					.getValueConverter().convertToObject(param);
 			
-			JOptionPane.showMessageDialog(null,"Open Edit View "+event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID)+ "  "+param);
+			JOptionPane.showMessageDialog(null,"Open Edit View "+event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID)+ "  "+param);//$NON-NLS-1$
 			if(documentSettingRecord != null) {
-				JOptionPane.showMessageDialog(null,"Open Edit View TESTING "+documentSettingRecord.exportData());
+				JOptionPane.showMessageDialog(null,"Open Edit View TESTING "+documentSettingRecord.exportData());//$NON-NLS-1$
 			}
 			else {
-				JOptionPane.showMessageDialog(null,"Null");
+				JOptionPane.showMessageDialog(null,"Null");//$NON-NLS-1$
 			}
 			
 			// create and open the dialog with the parameter
@@ -77,7 +79,7 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 			// build the parameterized command
 			ParameterizedCommand pc = ParameterizedCommand.generateCommand(cmd, param);
 			
-			JOptionPane.showMessageDialog(null, "Open with Param " + pc.toString() + " \n Label : "+ ((DocumentSettingRecord)parameter).getLabel());
+			JOptionPane.showMessageDialog(null, "Open with Param " + pc.toString() + " \n Label : "+ ((DocumentSettingRecord)parameter).getLabel());//$NON-NLS-1$
 			
 			// execute the command
 			IHandlerService handlerService =

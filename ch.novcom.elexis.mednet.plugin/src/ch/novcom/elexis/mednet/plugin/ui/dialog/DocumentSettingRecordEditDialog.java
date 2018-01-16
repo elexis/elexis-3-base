@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2017 novcom AG
+ * Copyright (c) 2018 novcom AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Gutknecht
+ *     David Gutknecht - novcom AG
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.dialog;
 
@@ -39,21 +39,20 @@ import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 /**
  * Dialog for editing or creating a DocumentSetting record
- * @author David Gutknecht
  *
  */
 public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 	
-	LaborSelectionComposite institutionSelection;
-	Text institutionId;
-	Text institutionName;
-	Text category;
-	Text documentPath;
-	Text errorPath;
-	Text archivingPath;
-	Text purgeInterval;
+	private LaborSelectionComposite institutionSelection;
+	private Text institutionId;
+	private Text institutionName;
+	private Text category;
+	private Text documentPath;
+	private Text errorPath;
+	private Text archivingPath;
+	private Text purgeInterval;
 	
-	DocumentSettingRecord record;
+	private DocumentSettingRecord record;
 	
 	private Button documentPathSelection;
 	private Button errorPathSelection;
@@ -74,18 +73,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		result.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		result.setLayout(new GridLayout(3, false));
 		
-		
-		/*WidgetFactory.createLabel(ret, MedNetMessages.DocumentSettingRecordEditDialog_labelInstitutionId);
-		institutionId = new Text(ret, SWT.BORDER);
-		institutionId.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		institutionId.setTextLimit(80);
-		
-		WidgetFactory.createLabel(ret, MedNetMessages.DocumentSettingRecordEditDialog_labelInstitutionName);
-		institutionName = new Text(ret, SWT.BORDER);
-		institutionName.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		institutionName.setTextLimit(80);*/
-		
-
 		WidgetFactory.createLabel(result, MedNetMessages.DocumentSettingRecordEditDialog_labelInstitution);
 		this.institutionSelection = new LaborSelectionComposite(result, SWT.NONE);
 		this.institutionSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
@@ -151,7 +138,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			}
 		});
 		
-
 		WidgetFactory.createLabel(result, MedNetMessages.DocumentSettingRecordEditDialog_labelPurgeInterval);
 		this.purgeInterval = new Text(result, SWT.BORDER);
 		this.purgeInterval.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
@@ -213,14 +199,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed(){
 		
-		/*if(institutionId.getText() == null || institutionId.getText().isEmpty()){
-			setErrorMessage(MedNetMessages.DocumentSettingRecordEditDialog_NoInstitutionID);
-			return;
-		}
-		if(institutionName.getText() == null || institutionName.getText().isEmpty()){
-			setErrorMessage(MedNetMessages.DocumentSettingRecordEditDialog_NoInstitutionName);
-			return;
-		}*/
 		if(this.institutionSelection.getKontakt() == null){
 			setErrorMessage(MedNetMessages.DocumentSettingRecordEditDialog_NoInstitution);
 			return;
@@ -263,8 +241,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			this.record = new DocumentSettingRecord(
 					this.institutionSelection.getKontakt().getId(),
 					this.institutionSelection.getKontakt().getLabel(),
-					/*institutionId.getText(),*/
-					/*institutionName.getText(),*/
 					this.category.getText(),
 					Paths.get(this.documentPath.getText()),
 					Paths.get(this.errorPath.getText()),
@@ -299,14 +275,9 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 	}
 	
 	public void setInstitutionIdText(String id){
-		/*institutionId.setText(string);*/
 		this.institutionSelection.setKontakt(Kontakt.load(id));
 	}
 	
-	/*public void setInstitutionNameText(String string){
-		institutionName.setText(string);
-	}*/
-
 	public void setCategory(String string){
 		this.category.setText(string);
 	}

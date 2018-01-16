@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2017 novcom AG
+ * Copyright (c) 2018 novcom AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Gutknecht
+ *     David Gutknecht - novcom AG
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
@@ -41,10 +41,6 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	Text exePath;
 	private Button exePathSelection;
 	
-	/*Text logsPath;
-	private Button logsPathSelection;
-	
-	private Combo logLevel;*/
 	/**
 	 * Standard Constructor
 	 */
@@ -65,19 +61,10 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(3, false));
-
-/*		ret.setLayoutData(new GridData(SWT.FILL, SWT.BORDER, true, false, 3, 1));
-		ret.setLayout(new GridLayout(3, false));
-
-		GridData gridData1Col = SWTHelper.getFillGridData(1, true, 1, false);
-		gridData1Col.widthHint = 120;
-		GridData gridData2Col = SWTHelper.getFillGridData(2, true, 1, false);
-		GridData gridData3Col = SWTHelper.getFillGridData(3, true, 1, false);*/
 		
 		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelExePath);
 		exePath = new Text(ret, SWT.BORDER);
 		exePath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		//exePath.setLayoutData(gridData2Col);
 		exePath.setTextLimit(80);
 		exePath.setEnabled(false);
 		if(MedNet.getSettings().getExePath() != null) {
@@ -86,7 +73,6 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 		
 		exePathSelection = new Button(ret, SWT.PUSH);
 		exePathSelection.setText("...");
-		//exePathSelection.setLayoutData(gridData3Col);
 		exePathSelection.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -100,34 +86,6 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 			}
 		});
 		
-	/*	WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelLogsPath);
-		logsPath = new Text(ret, SWT.BORDER);
-		logsPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		logsPath.setTextLimit(80);
-		logsPath.setEnabled(false);
-		logsPath.setText(MedNet.getSettings().getLogsPath().toString());
-		
-		logsPathSelection = new Button(ret, SWT.PUSH);
-		logsPathSelection.setText("..."); //$NON-NLS-1$
-		logsPathSelection.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setText(MedNetMessages.MainPreferences_labelLogsPath);
-		        String selected = dialog.open();
-		        logsPath.setText(selected);
-			}
-		});
-		
-		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelLogsLevel);
-		logLevel = new Combo(ret, SWT.NULL);
-		logLevel.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		logLevel.setTextLimit(80);
-		logLevel.setEnabled(false);
-	    for ( String level : MedNetSettings.getAvailableLogLevels()){
-	    	logLevel.add(level);
-	    }*/
-	    
 		
 		return ret;
 		
@@ -141,7 +99,6 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public boolean performOk(){
 		MedNet.getSettings().setExePath(Paths.get(exePath.getText()));
-	//	MedNet.getSettings().setLogsPath(Paths.get(logsPath.getText()));
 		MedNet.getSettings().saveSettings();
 		return true;
 	}

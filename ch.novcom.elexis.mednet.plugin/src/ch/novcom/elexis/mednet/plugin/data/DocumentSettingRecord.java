@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2017 novcom AG
+ * Copyright (c) 2018 novcom AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Gutknecht
+ *     David Gutknecht - novcom AG
  *******************************************************************************/
 
 package ch.novcom.elexis.mednet.plugin.data;
@@ -16,20 +16,24 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 
 /**
  * This object represents a DocumentSettingRecord from the database
  * This manage the Creation of the Table
- * @author David Gutknecht
  *
  */
 public class DocumentSettingRecord extends PersistentObject implements Comparable<DocumentSettingRecord> {
+	/**
+	 * Logger used to log all activities of the module
+	 */
+	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentSettingRecord.class.getName());
 
 	//The different field names
 	public static final String FLD_INSTITUTION_ID = "InstitutionID";
@@ -48,7 +52,7 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 // 	private static final String index1SQL =
 //			"CREATE UNIQUE INDEX " + DocumentSettingRecord.TABLENAME + "_idx_Path on " + DocumentSettingRecord.TABLENAME + "(" + DocumentSettingRecord.FLD_PATH +");";
 
-	
+
 	private static final String createTable = "CREATE TABLE "
 			+ DocumentSettingRecord.TABLENAME + "("
 			+ PersistentObject.FLD_ID + " VARCHAR(25) primary key,"
@@ -180,6 +184,7 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 	
 	
 	public int getPurgeInterval(){
+		String logPrefix = "getPurgeInterval() - ";//$NON-NLS-1$
 		String interval = this.get(DocumentSettingRecord.FLD_PURGE_INTERVAL);
 		if(interval == null || interval.isEmpty()){
 			return DocumentSettingRecord.DEFAULT_PURGE_INTERVAL;
@@ -189,7 +194,7 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 				return Integer.parseInt(this.get(DocumentSettingRecord.FLD_PURGE_INTERVAL));
 			}
 			catch(NumberFormatException nfe){
-				MedNet.getLogger().warn("getPurgeInterval PurgeInterval is not numeric value. "+ interval);
+				LOGGER.warn(logPrefix+"PurgeInterval is not numeric value. "+ interval);//$NON-NLS-1$
 				return DocumentSettingRecord.DEFAULT_PURGE_INTERVAL;
 			}
 		}

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2017 novcom AG
+ * Copyright (c) 2018 novcom AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Gutknecht
+ *     David Gutknecht - novcom AG
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 import java.io.IOException;
@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -31,6 +30,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.novcom.elexis.mednet.plugin.data.DocumentImporter;
@@ -43,13 +45,23 @@ import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
  * 
  */
 public class DocumentImporterPage extends ImporterPage {
-
-	private boolean settingOverwrite = false;
-
-	protected final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"); //$NON-NLS-1$
-
-	private final static Pattern hl7FilenamePattern = Pattern.compile("^([^_]*_)*(?<transactionDateTime>[^_]+)_(?<orderNr>[^_]+)_(?<recipient>\\d+)$");
-	private final static Pattern pdfFilenamePattern = Pattern.compile("^([^_]*_)*(?<uniqueMessageId>[^_]+)_(?<caseNr>[^_]*)_(?<transactionDateTime>[^_]*)_(?<orderNr>[^_]+)_(?<samplingDateTime>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientBirthdate>[^_]*)_(?<PatientId>[^_]*)_(?<recipient>\\d+)$");
+	/**
+	 * Logger used to log all activities of the module
+	 */
+	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentImporterPage.class.getName());
+	
+	/**
+	 * The standard way used when importing files. 
+	 */
+	private final static boolean OVERWRITEOLDERENTRIES = true;
+	/**
+	 * The way HL7 filenames are built in some old Versions of the conversion module
+	 */
+	private final static Pattern hl7FilenamePattern = Pattern.compile("^([^_]*_)*(?<transactionDateTime>[^_]+)_(?<orderNr>[^_]+)_(?<recipient>\\d+)$"); //$NON-NLS-1$
+	/**
+	 * The way PDF are built in all result transmission cases, and in most HL7 transmission cases
+	 */
+	private final static Pattern pdfFilenamePattern = Pattern.compile("^([^_]*_)*(?<uniqueMessageId>[^_]+)_(?<caseNr>[^_]*)_(?<transactionDateTime>[^_]*)_(?<orderNr>[^_]+)_(?<samplingDateTime>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientBirthdate>[^_]*)_(?<PatientId>[^_]*)_(?<recipient>\\d+)$"); //$NON-NLS-1$
 	
 	
 	/**
@@ -57,7 +69,7 @@ public class DocumentImporterPage extends ImporterPage {
 	 */
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		MedNet.getLogger().debug("doImport()");
+		String logPrefix = "doImport() - ";
 		
 		//List the path were we will have to collect the files to import
 		List<DocumentSettingRecord> receivingsPaths = DocumentSettingRecord.getAllDocumentSettingRecords();
@@ -68,7 +80,7 @@ public class DocumentImporterPage extends ImporterPage {
 			monitor.beginTask(MedNetMessages.DocumentImporterPage_callMedNet,(receivingsPaths.size()+1)*100);
 		}
 
-		MedNet.getLogger().info("doImport() call MedNet getResults()");
+		LOGGER.info(logPrefix+"call MedNet getResults()");//$NON-NLS-1$
 		
 		//Call MedNet
 		MedNet.getDocuments();
@@ -76,20 +88,18 @@ public class DocumentImporterPage extends ImporterPage {
 		if(monitor != null){
 			monitor.worked(100);
 		}
+		
 		//We can have multiple Download Folders.
 		//We will process them One after the other
-		
-		
 		for(DocumentSettingRecord documentSettingItem: receivingsPaths){
 			
 			if(monitor != null && monitor.isCanceled()){
-				//If the monitor has been canceled we should breakMedNetLogger.getLogger().println(
-				MedNet.getLogger().info("doImport() import canceled");
+				//If the monitor has been canceled we should break
+				LOGGER.info(logPrefix+"import canceled");//$NON-NLS-1$
 				break;
 			}
 			
-
-			MedNet.getLogger().info("doImport() Processing Institution "+documentSettingItem.getInstitutionName());
+			LOGGER.info(logPrefix+"Processing Institution "+documentSettingItem.getInstitutionName());//$NON-NLS-1$
 			//We write to the monitor the name of the institution we will check
 			if(monitor != null){
 				monitor.subTask(
@@ -100,16 +110,15 @@ public class DocumentImporterPage extends ImporterPage {
 				);
 			}
 			
-			
 			//List all the hl7 and pdf files from this folder
-			
 			Path directory = documentSettingItem.getPath();
 			Path archiveDir = documentSettingItem.getArchivingPath();
 			Path errorDir = documentSettingItem.getErrorPath();
+			
 			if(!Files.exists(directory) || !Files.isDirectory(directory)){
 				//If this directory doesn't exists or is not a directory
 				//continue
-				MedNet.getLogger().info("doImport() The following directory is not valid:"+directory.toString());
+				LOGGER.warn(logPrefix+"The following directory is not valid:"+directory.toString());//$NON-NLS-1$
 				if(monitor != null){
 					monitor.worked(100);
 				}
@@ -117,16 +126,15 @@ public class DocumentImporterPage extends ImporterPage {
 			else if(!Files.exists(archiveDir) || !Files.isDirectory(archiveDir)){
 				//If this directory doesn't exists or is not a directory
 				//continue
-				MedNet.getLogger().info("doImport() The following directory is not valid:"+archiveDir.toString());
+				LOGGER.warn(logPrefix+"The following directory is not valid:"+archiveDir.toString());//$NON-NLS-1$
 				if(monitor != null){
 					monitor.worked(100);
 				}
-				
 			}
 			else if(!Files.exists(errorDir) || !Files.isDirectory(errorDir)){
 				//If this directory doesn't exists or is not a directory
 				//continue
-				MedNet.getLogger().info("doImport() The following directory is not valid:"+errorDir.toString());
+				LOGGER.warn(logPrefix+"The following directory is not valid:"+errorDir.toString());//$NON-NLS-1$
 				if(monitor != null){
 					monitor.worked(100);
 				}
@@ -139,7 +147,7 @@ public class DocumentImporterPage extends ImporterPage {
 			        public boolean accept(Path entry) throws IOException 
 			        {
 			            return 		Files.isRegularFile(entry)
-			            		&&	entry.getFileName().toString().toLowerCase().endsWith(".hl7");
+			            		&&	entry.getFileName().toString().toLowerCase().endsWith(".hl7");//$NON-NLS-1$
 			        }
 			    });
 				
@@ -148,13 +156,12 @@ public class DocumentImporterPage extends ImporterPage {
 					hl7Files.add(file);
 				}
 				
-				
 				DirectoryStream<Path> pdfStream = Files.newDirectoryStream(directory, new DirectoryStream.Filter<Path>() {
 			        @Override
 			        public boolean accept(Path entry) throws IOException 
 			        {
 			            return 		Files.isRegularFile(entry)
-			            		&&	entry.getFileName().toString().toLowerCase().endsWith(".pdf");
+			            		&&	entry.getFileName().toString().toLowerCase().endsWith(".pdf");//$NON-NLS-1$
 			        }
 			    });
 				
@@ -202,7 +209,7 @@ public class DocumentImporterPage extends ImporterPage {
 								pair.fileTime = hl7FileTime;
 							}
 							
-							//Remove the hl7 and the pdf Files from the lists
+							//Remove the hl7 and the pdf Files from the queue
 							pdfFilesIterator.remove();
 							hl7FilesIterator.remove();
 							
@@ -211,9 +218,9 @@ public class DocumentImporterPage extends ImporterPage {
 						}
 					}
 				}
-				
-				distinguishedFileNameLoop:
+
 				//If we were not able to link hl7 and PDF with their filenames, use the Transaction we find in the PDF filename and in the HL7 fileName
+				distinguishedFileNameLoop:
 				for(ListIterator<Path> hl7FilesIterator = hl7Files.listIterator(); hl7FilesIterator.hasNext();){
 
 					if(monitor != null && monitor.isCanceled()){
@@ -230,9 +237,9 @@ public class DocumentImporterPage extends ImporterPage {
 					//If the HL7 has not the same structure as the pdf, maybe it is the old structure
 					Matcher filenameMatcher = hl7FilenamePattern.matcher(hl7FileName);
 					if(filenameMatcher.matches()){
-						hl7_transactionDateTime = filenameMatcher.group("transactionDateTime");
-						hl7_orderNr = filenameMatcher.group("orderNr");
-						hl7_recipient = filenameMatcher.group("recipient");
+						hl7_transactionDateTime = filenameMatcher.group("transactionDateTime");//$NON-NLS-1$
+						hl7_orderNr = filenameMatcher.group("orderNr");//$NON-NLS-1$
+						hl7_recipient = filenameMatcher.group("recipient");//$NON-NLS-1$
 					}
 					
 					//Look for a pdf with the sameTransactionDateTime, orderNr and recipientNr
@@ -246,9 +253,9 @@ public class DocumentImporterPage extends ImporterPage {
 						
 						filenameMatcher = pdfFilenamePattern.matcher(pdfFileName);
 						if(filenameMatcher.matches()){
-							String pdf_transactionDateTime = filenameMatcher.group("transactionDateTime");
-							String pdf_orderNr = filenameMatcher.group("orderNr");
-							String pdf_recipient = filenameMatcher.group("recipient");
+							String pdf_transactionDateTime = filenameMatcher.group("transactionDateTime");//$NON-NLS-1$
+							String pdf_orderNr = filenameMatcher.group("orderNr");//$NON-NLS-1$
+							String pdf_recipient = filenameMatcher.group("recipient");//$NON-NLS-1$
 							
 							if(		hl7_transactionDateTime.equals(pdf_transactionDateTime)
 								&&	hl7_orderNr.equals(pdf_orderNr)
@@ -312,7 +319,6 @@ public class DocumentImporterPage extends ImporterPage {
 				Collections.sort(pairList, new FilePairDateComparator());
 				
 				//Then we are ready for importing the files in the database
-
 				int errorCount = 0;
 				int errorMovedCount = 0;
 				for(FilePair pair : pairList){
@@ -345,18 +351,19 @@ public class DocumentImporterPage extends ImporterPage {
 							documentSettingItem.getInstitutionID(),
 							documentSettingItem.getInstitutionName(),
 							documentSettingItem.getCategory(),
-							settingOverwrite,
+							OVERWRITEOLDERENTRIES,
 							true
 					);
 					
+					
 					if (success) {
-						// Archivieren
+						//If the import was successfull we can archive the files 
 						if (pair.hl7 != null){
 							try {
 								Files.move(pair.hl7, archiveDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch(IOException ioe){
-								MedNet.getLogger().info("doImport() IOException moving this file to the archive "+pair.hl7.toString(), ioe);
+								LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.hl7.toString(), ioe);//$NON-NLS-1$
 							}
 						}
 						if (pair.pdf != null){
@@ -364,16 +371,17 @@ public class DocumentImporterPage extends ImporterPage {
 								Files.move(pair.pdf, archiveDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch(IOException ioe){
-								MedNet.getLogger().info("doImport() IOException moving this file to the archive "+pair.pdf.toString(), ioe);
+								LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.pdf.toString(), ioe);//$NON-NLS-1$
 							}
 						}
 					} else {
+						//If the import was not successful we move the files to the error folder 
 						if (pair.hl7 != null){
 							try {
 								Files.move(pair.hl7, errorDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch(IOException ioe){
-								MedNet.getLogger().info("doImport() IOException moving this file to the error "+pair.hl7.toString(), ioe);
+								LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.hl7.toString(), ioe);//$NON-NLS-1$
 							}
 							errorMovedCount++;
 						}
@@ -382,7 +390,7 @@ public class DocumentImporterPage extends ImporterPage {
 								Files.move(pair.pdf, errorDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch(IOException ioe){
-								MedNet.getLogger().info("doImport() IOException moving this file to the error "+pair.pdf.toString(), ioe);
+								LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.pdf.toString(), ioe);//$NON-NLS-1$
 							}
 							errorMovedCount++;
 						}
@@ -418,13 +426,12 @@ public class DocumentImporterPage extends ImporterPage {
 						);
 				}
 				
-				//Clear old archivFiles
-				this.deleteOldArchivFiles(documentSettingItem);
-				
+				//Clear old archived files
+				this.deleteOldArchiveFiles(documentSettingItem);
 			}
 		}
 		
-		MedNet.getLogger().info("doImport() Import completed");
+		LOGGER.info(logPrefix+"Import completed");
 		
 		
 		return Status.OK_STATUS;
@@ -434,14 +441,18 @@ public class DocumentImporterPage extends ImporterPage {
 	
 	
 	/**
-	 * Anhand der Einstellungen (Default 30 Tage) werden alle Dateien im Archiv Verzeichnis gelöscht
-	 * die älter als die konfigurierten Tage sind.
+	 * This function is called after each import procedure, in order to clean the archive, and remove
+	 * all the old files.
+	 * The number of days a file should stay in the archive is given by the documentSettingItem.
+	 * By default it is 30 Days.
+	 * @param documentSettingsItem specify the archive folder to check and also the number of days the files should be kept in it
 	 */
-	private void deleteOldArchivFiles( DocumentSettingRecord documentSettingItem){
+	private void deleteOldArchiveFiles( DocumentSettingRecord documentSettingItem){
+		String logPrefix = "deleteOldArchivFiles() - ";
+		LOGGER.info(logPrefix+"Purge archive dir "+documentSettingItem.getArchivingPath().toString());//$NON-NLS-1$
 		
-		MedNet.getLogger().info("deleteOldArchivFiles() Purge archive dir "+documentSettingItem.getArchivingPath().toString());
-		
-		//Prepare the FileTime representing the limit. All the files older than this limit will be deleted
+		//Prepare the FileTime representing the limit.
+		//All the files older than this limit will be deleted
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, 0-documentSettingItem.getPurgeInterval());
 		FileTime timeLimit = FileTime.fromMillis(cal.getTimeInMillis());
@@ -456,22 +467,21 @@ public class DocumentImporterPage extends ImporterPage {
 				for(Path path : fileStream){
 					try{
 						Files.delete(path);
-						MedNet.getLogger().info("deleteOldArchivFiles() Following file has been deleted "+path.toString());
+						LOGGER.info(logPrefix+"Following file has been deleted "+path.toString());//$NON-NLS-1$
 					}
 					catch (IOException ioe) {
-						MedNet.getLogger().error("deleteOldArchivFiles() IOException deleting file "+path.toString(), ioe);
+						LOGGER.error(logPrefix+"IOException deleting file "+path.toString(), ioe);//$NON-NLS-1$
 					}			
 				}
 			}
 			catch (IOException ex) {
-				MedNet.getLogger().error("deleteOldArchivFiles() IOException walking throw archiv directory "+archivDir.toString(), ex);
+				LOGGER.error(logPrefix+"IOException walking throw archiv directory "+archivDir.toString(), ex);//$NON-NLS-1$
 			}
 		}
 		
-		MedNet.getLogger().info("deleteOldArchivFiles() Purge of following archive completed"+archivDir.toString());
+		LOGGER.info(logPrefix+"Purge of following archive completed"+archivDir.toString());//$NON-NLS-1$
 		
 	}
-	
 	
 	
 
@@ -495,16 +505,16 @@ public class DocumentImporterPage extends ImporterPage {
 		return MedNetMessages.DocumentImporterPage_descriptionImport;
 	}
 
+	
 	@Override
 	public Composite createPage(Composite parent) {
+		//We don't need to create any Page
 		return null;
 	}
 	
 	
 	/**
 	 * This class represents a pair of two files, hl7 and pdf
-	 * @author david.gutknecht
-	 *
 	 */
 	private class FilePair{
 		Path hl7 = null;
@@ -514,7 +524,6 @@ public class DocumentImporterPage extends ImporterPage {
 	
 	/**
 	 * A comparator in order to compare the files using the fileTime
-	 * @author david.gutknecht
 	 *
 	 */
 	private class FilePairDateComparator implements Comparator<FilePair>{
@@ -528,8 +537,6 @@ public class DocumentImporterPage extends ImporterPage {
 	
 	/**
 	 * A DirectoryStream.Filter that looks for files older than the given TimeLimit
-	 * @author david.gutknecht
-	 *
 	 */
 	private class TimeFilter implements DirectoryStream.Filter<Path> {
 		

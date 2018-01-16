@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2017 novcom AG
+ * Copyright (c) 2018 novcom AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Gutknecht
+ *     David Gutknecht - novcom AG
  *******************************************************************************/
 
 package ch.novcom.elexis.mednet.plugin.data;
@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
@@ -33,7 +36,6 @@ import ch.elexis.data.Xid;
 import ch.elexis.data.Xid.XIDException;
 import ch.elexis.hl7.model.ObservationMessage;
 import ch.elexis.hl7.v22.HL7_ORU_R01;
-import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.MedNetLabItemResolver;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 import ch.rgw.io.FileTool;
@@ -45,16 +47,44 @@ import ch.rgw.io.FileTool;
  *
  */
 public class DocumentImporter {
+	/**
+	 * Logger used to log all activities of the module
+	 */
+	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentImporter.class.getName());
 
-	private final static Pattern documentFilenamePattern = Pattern.compile("^([^_]*_)*(?<uniqueMessageId>[^_]+)_(?<caseNr>[^_]*)_(?<transactionDateTime>[^_]*)_(?<orderNr>[^_]+)_(?<samplingDateTime>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<PatientId>[^_]*)_(?<recipient>\\d+)$");
-	private final static Pattern formFilenamePattern = Pattern.compile("^(?<transactionDateTime>[0-9]{14})_(?<sender>[^_]*)_(?<PatientId>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientFirstName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<formGroupId>[^_]*)_(?<formId>[^_]*)_(?<orderNr>[^_]*)$");
-	private final static SimpleDateFormat documentDateTimeParser = new SimpleDateFormat("yyyyMMddHHmmss");
+	/**
+	 * The filename structure of the document that can be imported
+	 * this is useful to extract different informations without looking at the content of the file
+	 * It can also be used if a PDF has no HL7 linked to it.
+	 */
+	private final static Pattern documentFilenamePattern = Pattern.compile("^([^_]*_)*(?<uniqueMessageId>[^_]+)_(?<caseNr>[^_]*)_(?<transactionDateTime>[^_]*)_(?<orderNr>[^_]+)_(?<samplingDateTime>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<PatientId>[^_]*)_(?<recipient>\\d+)$");//$NON-NLS-1$
+	/**
+	 * The filename structure of the Forms that can be imported
+	 * This is important to identify which patient the file should be added
+	 */
+	private final static Pattern formFilenamePattern = Pattern.compile("^(?<transactionDateTime>[0-9]{14})_(?<sender>[^_]*)_(?<PatientId>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientFirstName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<formGroupId>[^_]*)_(?<formId>[^_]*)_(?<orderNr>[^_]*)$");//$NON-NLS-1$
+	
+	/**
+	 * This DateFormat is used to convert the transactionDateTime available in the filenames of the files to import
+	 * into a DateTime Object.
+	 */
+	private final static SimpleDateFormat documentDateTimeParser = new SimpleDateFormat("yyyyMMddHHmmss");//$NON-NLS-1$
 
-	private final static SimpleDateFormat birthdateParser = new SimpleDateFormat("yyyyMMdd");
-	private final static SimpleDateFormat birthdateHumanReadableFormatter = new SimpleDateFormat("dd-MM-yyyy");
+	/**
+	 * This DateFormat is used to convert the birthdate available in the filename of the files to import into 
+	 * a Date Object
+	 */
+	private final static SimpleDateFormat birthdateParser = new SimpleDateFormat("yyyyMMdd");//$NON-NLS-1$
 	
+	/**
+	 * This DateFormat is used to convert a Date Object into a format that can be used by the elexis KontaktSelektor
+	 */
+	private final static SimpleDateFormat birthdateHumanReadableFormatter = new SimpleDateFormat("dd-MM-yyyy");//$NON-NLS-1$
 	
-	private static Charset HL7_ENCODING = Charset.forName("ISO-8859-1");
+	/**
+	 * Default HL7_ENCODING
+	 */
+	private static Charset HL7_ENCODING = Charset.forName("ISO-8859-1");//$NON-NLS-1$
 	
 	/**
 	 * Import an hl7 and a pdfFile
@@ -66,8 +96,7 @@ public class DocumentImporter {
 	 *            true if the document should be overwritten. Even if a newer version exists
 	 *            By default it is false
 	 * @param askUser
-	 *            true (default), if the user interface will be shown to select the patient
-	 * 
+	 *            true (default), if the patient cannot been identified, show a dialog to select the patient
 	 * @return true if the import was successful
 	 * @throws IOException
 	 */
@@ -80,16 +109,17 @@ public class DocumentImporter {
 			boolean overwriteOlderEntries,
 			boolean askUser
 		) throws IOException{
+		String logPrefix = "process() - ";//$NON-NLS-1$
 		
 		boolean success = false;
 		Patient patient = null;
-		
-		MedNet.getLogger().info(
-			"importDocument "+
-			"import following documents." 
-					+   " HL7: "+ (hl7File == null ? "" : hl7File.toString())
-					+" -- PDF: "+ (pdfFile == null ? "" : pdfFile.toString())
-		);
+
+		if(hl7File != null) {
+			LOGGER.info(logPrefix + "Import document -- HL7: "+ hl7File.toString());//$NON-NLS-1$
+		}
+		if(pdfFile != null) {
+			LOGGER.info(logPrefix + "Import document -- PDF: "+ pdfFile.toString());//$NON-NLS-1$
+		}
 		
 		//If we have an hl7 File try first to import the hl7 and to get all the Patient informations
 		if(hl7File != null && Files.exists(hl7File) && Files.isRegularFile(hl7File)){
@@ -108,10 +138,10 @@ public class DocumentImporter {
 				success = true;
 				for (String error : hl7OruR01.getErrorList()) {
 					success = false;
-					MedNet.getLogger().error("process HL7 error: "+ error);
+					LOGGER.error(logPrefix + "HL7 error: "+ error);//$NON-NLS-1$
 				}
 				for (String warn : hl7OruR01.getWarningList()) {
-					MedNet.getLogger().warn("process HL7 warning: "+ warn);
+					LOGGER.warn(logPrefix + "HL7 warning: "+ warn);//$NON-NLS-1$
 				}
 				
 				//If the HL7 has successfully been parsed, we can look for the Patient
@@ -134,7 +164,6 @@ public class DocumentImporter {
 						
 						//If the import was not successful we will have an Exception
 						
-						
 						//If the HL7 contains the pid of the filler, store it in the XID
 						if (!observation.getAlternatePatientId().isEmpty()) {
 							DocumentImporter.addInstitutionPIDToXID(institutionId, institutionName, observation.getAlternatePatientId(), patient);
@@ -145,10 +174,10 @@ public class DocumentImporter {
 				}
 			} catch (ElexisException ex) {
 				success = false;
-				MedNet.getLogger().error("process Elexis Exception importing the hl7. ", ex);
+				LOGGER.error(logPrefix + "Elexis Exception importing the hl7. ", ex);//$NON-NLS-1$
 			} catch (Exception ex) {
 				success = false;
-				MedNet.getLogger().error("process Exception importing the hl7. ", ex);
+				LOGGER.error(logPrefix + "Exception importing the hl7. ", ex);//$NON-NLS-1$
 			}
 		}
 		
@@ -196,7 +225,7 @@ public class DocumentImporter {
 						documentDateTimeObj = DocumentImporter.documentDateTimeParser.parse(documentDateTime);
 					}
 					catch(ParseException pe){
-						MedNet.getLogger().warn("process Unable to parse documentDateTime:"+documentDateTime, pe);
+						LOGGER.warn(logPrefix + "Unable to parse documentDateTime:"+documentDateTime, pe);//$NON-NLS-1$
 					}
 					
 					String keywords = orderNr;
@@ -216,9 +245,7 @@ public class DocumentImporter {
 						success = true;
 					}
 				}
-				else {
-					MedNet.getLogger().warn("No DocumentManager available");
-				}
+				
 			}
 		}
 		
@@ -226,16 +253,11 @@ public class DocumentImporter {
 	}
 	
 	/**
-	 * Import an hl7 and a pdfFile
-	 * @param hl7File the hl7 to import
+	 * Import a Form
 	 * @param pdfFile the pdf to import
-	 * @param institutionId the kontaktId of the institution
-	 * @param institutionName Institution Name
-	 * @param overwriteOlderEntries
-	 *            true if the document should be overwritten. Even if a newer version exists
-	 *            By default it is false
+	 * @param category the category were the Form will be saved
 	 * @param askUser
-	 *            true (default), if the user interface will be shown to select the patient
+	 *            true (default), if the patient cannot been identified, show a dialog to select the patient
 	 * 
 	 * @return true if the import was successful
 	 * @throws IOException
@@ -245,21 +267,18 @@ public class DocumentImporter {
 			String category,
 			boolean askUser
 		) throws IOException{
+		String logPrefix = "processForm() - ";//$NON-NLS-1$
 		
 		boolean success = false;
 		Patient patient = null;
 		
-		MedNet.getLogger().info(
-			"importDocument "+
-			"import following documents." 
-					+" -- PDF: "+ (pdfFile == null ? "" : pdfFile.toString())
-		);
 		
 		//If there is a PDF File
 		if (	pdfFile != null 
 			&&	Files.exists(pdfFile)
 			&&	Files.isRegularFile(pdfFile)
 			) {
+			LOGGER.info(logPrefix+"import form -- PDF: "+pdfFile.toString());//$NON-NLS-1$
 			
 			//Pick the most informations from the PDF Filename
 			String documentDateTime = "";
@@ -299,7 +318,7 @@ public class DocumentImporter {
 						documentDateTimeObj = DocumentImporter.documentDateTimeParser.parse(documentDateTime);
 					}
 					catch(ParseException pe){
-						MedNet.getLogger().warn("process Unable to parse documentDateTime:"+documentDateTime, pe);
+						LOGGER.warn("process Unable to parse documentDateTime:"+documentDateTime, pe);
 					}
 					
 					String keywords = orderNr;
@@ -316,6 +335,12 @@ public class DocumentImporter {
 				}
 			}
 		}
+		else if(pdfFile != null){
+			LOGGER.error(logPrefix+"following file is not valid: "+pdfFile.toString());//$NON-NLS-1$
+		}
+		else {
+			LOGGER.error(logPrefix+"the file is null");//$NON-NLS-1$
+		}
 		
 		return success;
 	}
@@ -325,9 +350,9 @@ public class DocumentImporter {
 	
 	/**
 	 * Try to get a patient using the information contained in the observation fields of an hl7
-	 * If has not been found the user will be asked for delivering the patient
+	 * If it has not been found the user will be asked for delivering the patient
 	 * @see {@link #getPatient(String, String, String, String, String, boolean) getPatient}
-	 * @param observation
+	 * @param observation an ObservationMessage
 	 * @param institutionID
 	 * @param askUser
 	 *            true (default), if the user interface will be shown to select the patient
@@ -349,7 +374,6 @@ public class DocumentImporter {
 	 * Try to get a patient using the given informations.
 	 * First with the id, if the id is empty or it has not been found, try using the other parameters
 	 * If no patient has been found, the user will be asked for delivering the patient
-	 * 
 	 * @param id
 	 * @param lastname
 	 * @param firstname
@@ -366,6 +390,7 @@ public class DocumentImporter {
 			String birthdate,
 			String sex,
 			boolean askUser){
+		String logPrefix = "getPatient() - ";//$NON-NLS-1$
 		
 		Patient patient = null;
 		
@@ -388,7 +413,7 @@ public class DocumentImporter {
 					) {
 				patient = DocumentImporter.getPatientFromDB(lastname, firstname, birthdate, sex);
 				if (patient != null) {
-					MedNet.getLogger().debug("getPatient() Patient found in the database. "+patient.getLabel());
+					LOGGER.debug(logPrefix+"Patient found in the database. "+patient.getLabel());//$NON-NLS-1$
 				}
 			}
 			
@@ -398,9 +423,9 @@ public class DocumentImporter {
 				if (askUser)
 					patient = DocumentImporter.patientSelectorDialog(lastname, firstname, birthdate, sex);
 				if (patient != null) {
-					MedNet.getLogger().debug("getPatient() Patient identified by the user. "+patient.getLabel());
+					LOGGER.debug(logPrefix+"Patient identified by the user. "+patient.getLabel());//$NON-NLS-1$
 				} else {
-					MedNet.getLogger().warn("getPatient() Patient idnetification aborded by the user. ");
+					LOGGER.warn(logPrefix+"Patient identification aborded by the user. ");//$NON-NLS-1$
 				}
 			}
 		}
@@ -422,6 +447,7 @@ public class DocumentImporter {
 			String firstname,
 			String birthdate,
 			String sex){
+		String logPrefix = "patientSelectorDialog() - ";//$NON-NLS-1$
 		Patient retVal = null;
 		
 		String birthdateString = birthdate;
@@ -430,7 +456,7 @@ public class DocumentImporter {
 					DocumentImporter.birthdateParser.parse(birthdate)
 					);
 		} catch (ParseException e) {
-			MedNet.getLogger().error("patientSelectorDialog() Unable to parse birthdate "+birthdate);
+			LOGGER.error(logPrefix+"Unable to parse birthdate "+birthdate);//$NON-NLS-1$
 		}
 		
 		retVal =
@@ -454,6 +480,7 @@ public class DocumentImporter {
 	 * @return List der gefundenen Patienten
 	 */
 	private static Patient getPatientFromDB(final String patId){
+		String logPrefix = "getPatientFromDB() - ";//$NON-NLS-1$
 		Query<Patient> patientQuery = new Query<Patient>(Patient.class);
 		patientQuery.add(Patient.FLD_PATID, Query.EQUALS, patId);
 		
@@ -463,7 +490,7 @@ public class DocumentImporter {
 		}
 		else if(result.size() >= 1){
 			//If the get more than one Patient, we should log it
-			MedNet.getLogger().error("getPatientFromDB() Multiple patients found with the id :" +patId);
+			LOGGER.error(logPrefix+"Multiple patients found with the id :" +patId);//$NON-NLS-1$
 			return null;
 		}
 		else {
@@ -509,7 +536,7 @@ public class DocumentImporter {
 		}
 		else if(result.size() >= 1){
 			//If the get more than one Patient, we should log it
-			MedNet.getLogger().error(
+			LOGGER.error(
 					"getPatientFromDB() " +
 					"Multiple patients found for :" 
 						+lastname+" "
@@ -535,18 +562,19 @@ public class DocumentImporter {
 	 * @return true if it was successful
 	 */
 	private static boolean addInstitutionPIDToXID(String institutionID, String institutionName, String id, Patient patient){
+		String logPrefix = "addInstitutionPIDToXID() - ";//$NON-NLS-1$
 		boolean success = false;
 		try {
 			Xid.localRegisterXIDDomainIfNotExists(institutionID, "externePID", Xid.ASSIGNMENT_LOCAL);
 			if ("".equals(DocumentImporter.getExternalPID(institutionID,patient))) {
 				new Xid(patient, institutionID, id);
 				success = true;
-				MedNet.getLogger().info("addFillerPIDToXID() Add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel());
+				LOGGER.info(logPrefix+"Add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel());
 			}
 			return success;
 			
 		} catch (XIDException e) {
-			MedNet.getLogger().info("addFillerPIDToXID() Unable to add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel()+". Exception: ",e);
+			LOGGER.error(logPrefix+"Unable to add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel()+". Exception: ",e);
 			return success;
 		}
 	}
@@ -570,7 +598,6 @@ public class DocumentImporter {
 		}
 		
 	}
-	
 	
 	/**
 	 * Returns the BaseName of a Path Object

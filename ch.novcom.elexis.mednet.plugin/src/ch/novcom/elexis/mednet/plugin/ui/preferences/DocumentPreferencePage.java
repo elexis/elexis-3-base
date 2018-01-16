@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2017 novcom AG
+ * Copyright (c) 2018 novcom AG
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Gutknecht
+ *     David Gutknecht - novcom AG
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
@@ -56,8 +56,6 @@ import ch.novcom.elexis.mednet.plugin.ui.commands.DocumentSettingRecordEdit;
 
 /**
  * Configuration for the Document part of MedNet
- * @author David Gutknecht
- *
  */
 public class DocumentPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
@@ -305,7 +303,6 @@ public class DocumentPreferencePage extends PreferencePage implements
 
 	@Override
 	public Point computeSize(){
-		// TODO Auto-generated method stub
 		return new Point(350, 350);
 	}
 }

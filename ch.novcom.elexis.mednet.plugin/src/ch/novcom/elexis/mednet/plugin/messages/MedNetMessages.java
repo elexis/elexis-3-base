@@ -22,11 +22,12 @@ public class MedNetMessages extends NLS {
 	public static String DocumentImporterPage_parseFile;
 	public static String DocumentImporterPage_ErrorWhileParsingFile;
 	public static String DocumentImporterPage_errorTitle;
-	public static String DocumentImporterPage_errorMsgVerarbeitung;
 	public static String DocumentImporterPage_ImportCompletedTitle;
 	public static String DocumentImporterPage_ImportCompletedSSuccessText;
 	public static String DocumentImporterPage_titleImport;
 	public static String DocumentImporterPage_descriptionImport;
+	public static String DocumentImporterPage_FileFailure;
+	public static String DocumentImporterPage_ImportError;
 	
 	public static String DocumentImporter_Document;
 	public static String DocumentImporter_DocumentDefaultCategory;

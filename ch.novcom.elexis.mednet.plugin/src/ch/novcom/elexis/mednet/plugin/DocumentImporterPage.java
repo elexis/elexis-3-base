@@ -89,6 +89,8 @@ public class DocumentImporterPage extends ImporterPage {
 			monitor.worked(100);
 		}
 		
+		List<String> failures = new ArrayList<String>();
+		
 		//We can have multiple Download Folders.
 		//We will process them One after the other
 		for(DocumentSettingRecord documentSettingItem: receivingsPaths){
@@ -310,7 +312,7 @@ public class DocumentImporterPage extends ImporterPage {
 					}
 					
 					FilePair pair = new FilePair();
-					pair.hl7 = pdfFile;
+					pair.pdf = pdfFile;
 					pair.fileTime = Files.getLastModifiedTime(pdfFile);
 					pairList.add(pair);
 				}
@@ -319,8 +321,6 @@ public class DocumentImporterPage extends ImporterPage {
 				Collections.sort(pairList, new FilePairDateComparator());
 				
 				//Then we are ready for importing the files in the database
-				int errorCount = 0;
-				int errorMovedCount = 0;
 				for(FilePair pair : pairList){
 					if(monitor != null && monitor.isCanceled()){
 						break;
@@ -357,7 +357,7 @@ public class DocumentImporterPage extends ImporterPage {
 					
 					
 					if (success) {
-						//If the import was successfull we can archive the files 
+						//If the import was successful we can archive the files 
 						if (pair.hl7 != null){
 							try {
 								Files.move(pair.hl7, archiveDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
@@ -383,7 +383,6 @@ public class DocumentImporterPage extends ImporterPage {
 							catch(IOException ioe){
 								LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.hl7.toString(), ioe);//$NON-NLS-1$
 							}
-							errorMovedCount++;
 						}
 						if (pair.pdf != null){
 							try{
@@ -392,14 +391,18 @@ public class DocumentImporterPage extends ImporterPage {
 							catch(IOException ioe){
 								LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.pdf.toString(), ioe);//$NON-NLS-1$
 							}
-							errorMovedCount++;
 						}
-						errorCount++;
+						
 						if(monitor != null){
 							monitor.subTask(MessageFormat.format(
 									MedNetMessages.DocumentImporterPage_ErrorWhileParsingFile, filename)
 							);
 						}
+						
+						failures.add(MessageFormat.format(
+								MedNetMessages.DocumentImporterPage_FileFailure, documentSettingItem.getInstitutionName(), pair.toString())
+						);
+						
 					}	
 					
 				}
@@ -408,28 +411,29 @@ public class DocumentImporterPage extends ImporterPage {
 					monitor.worked(100);
 				}
 				
-				if (errorCount > 0) {
-					//If we had errors, open a MessageBox
-					SWTHelper.showError(
-						MedNetMessages.DocumentImporterPage_errorTitle,
-						MessageFormat.format(
-								MedNetMessages.DocumentImporterPage_errorMsgVerarbeitung,
-								errorCount,
-								errorMovedCount,
-								documentSettingItem.getErrorPath()
-						)
-					);
-				} else {
-						SWTHelper.showInfo(
-							MedNetMessages.DocumentImporterPage_ImportCompletedTitle,
-							MedNetMessages.DocumentImporterPage_ImportCompletedSSuccessText
-						);
-				}
-				
 				//Clear old archived files
 				this.deleteOldArchiveFiles(documentSettingItem);
 			}
 		}
+		
+		if(failures.size() <= 0) {
+			//If everything has been successfully imported 
+			SWTHelper.showInfo(
+				MedNetMessages.DocumentImporterPage_ImportCompletedTitle,
+				MedNetMessages.DocumentImporterPage_ImportCompletedSSuccessText
+			);
+		}
+		else {
+			//If we had errors, open a MessageBox
+			SWTHelper.showError(
+				MedNetMessages.DocumentImporterPage_errorTitle,
+				MessageFormat.format(
+						MedNetMessages.DocumentImporterPage_ImportError,
+						String.join("\n",failures)
+				)
+			);
+		}
+		
 		
 		LOGGER.info(logPrefix+"Import completed");
 		
@@ -520,6 +524,17 @@ public class DocumentImporterPage extends ImporterPage {
 		Path hl7 = null;
 		Path pdf = null;
 		FileTime fileTime = null;
+		
+		public String toString(){
+			List<String> files = new ArrayList<String>();
+			if(hl7 != null) {
+				files.add(hl7.getFileName().toString());
+			}
+			if(pdf != null) {
+				files.add(pdf.getFileName().toString());
+			}
+			return String.join(", ",files);
+		}
 	}
 	
 	/**

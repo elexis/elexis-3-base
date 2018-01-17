@@ -111,7 +111,7 @@ public class DocumentImporter {
 		) throws IOException{
 		String logPrefix = "process() - ";//$NON-NLS-1$
 		
-		boolean success = false;
+		boolean success = true;
 		Patient patient = null;
 
 		if(hl7File != null) {
@@ -135,7 +135,6 @@ public class DocumentImporter {
 				String text = FileTool.readTextFile(hl7File.toFile(), DocumentImporter.HL7_ENCODING.name());
 				
 				observation = hl7OruR01.readObservation(text);
-				success = true;
 				for (String error : hl7OruR01.getErrorList()) {
 					success = false;
 					LOGGER.error(logPrefix + "HL7 error: "+ error);//$NON-NLS-1$
@@ -168,6 +167,9 @@ public class DocumentImporter {
 						if (!observation.getAlternatePatientId().isEmpty()) {
 							DocumentImporter.addInstitutionPIDToXID(institutionId, institutionName, observation.getAlternatePatientId(), patient);
 						}
+						
+						success = true;
+						
 					} else {
 						success = false;
 					}
@@ -182,7 +184,8 @@ public class DocumentImporter {
 		}
 		
 		//If there is a PDF File
-		if (	pdfFile != null 
+		if (	success //It doesn t make sense to import the pdf if the import of the HL7 didn't work
+			&&	pdfFile != null 
 			&&	Files.exists(pdfFile)
 			&&	Files.isRegularFile(pdfFile)
 			) {
@@ -240,12 +243,13 @@ public class DocumentImporter {
 							keywords
 							);
 					
+					success = true;
 					
-					if(hl7File == null) {
-						success = true;
-					}
 				}
 				
+			}
+			else {
+				success = false;
 			}
 		}
 		

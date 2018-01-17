@@ -120,7 +120,7 @@ public class KonsDiagnosen implements IJournalArea {
 	}
 
 	@Override
-	public void activation(boolean mode){
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		if (mode == false) {
 			setDiagnosenText(null);
 		}

@@ -545,7 +545,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		String alString = verrechnet.getDetail(EXT_VERRRECHNET_AL);
 		if (alString != null) {
 			try {
-				return Integer.parseInt(alString);
+				return (int) Double.parseDouble(alString);
 			} catch (NumberFormatException ne) {
 				// ignore, try resolve from IVerrechenbar
 			}
@@ -572,7 +572,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		String tlString = verrechnet.getDetail(EXT_VERRRECHNET_TL);
 		if (tlString != null) {
 			try {
-				return Integer.parseInt(tlString);
+				return (int) Double.parseDouble(tlString);
 			} catch (NumberFormatException ne) {
 				// ignore, try resolve from IVerrechenbar
 			}

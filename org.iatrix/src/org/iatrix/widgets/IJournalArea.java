@@ -36,10 +36,12 @@ public interface IJournalArea {
 
 	/**
 	 *
+	 * @param selectedPat  The select patient (may be null)
+	 * @param selectedKons if the selectedPat != null then one his konsultations might be selected
 	 * @param mode.
 	 *            True on startup, false on teardown
 	 */
-	public void activation(boolean mode);
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons);
 
 	public enum KonsActions {
 		ACTIVATE_KONS,

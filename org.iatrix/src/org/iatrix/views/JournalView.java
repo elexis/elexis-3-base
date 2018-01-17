@@ -98,8 +98,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	public static final String ID = Constants.ID;
 
 	private static Logger log = LoggerFactory.getLogger(JournalView.class);
+	private static Patient actPat = null;
 	private static Konsultation actKons = null;
 	private static boolean removedStaleKonsLocks = false;
+	private static boolean createNewKonsOnEntry = false;
 
 	private FormToolkit tk;
 	private Form form;
@@ -131,6 +133,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	private KonsHeader konsHeader;
 
 	private Heartbeat heartbeat;
+
+	private boolean setShowActiveKons;
 
 	@Override
 	public void createPartControl(Composite parent){
@@ -184,7 +188,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		Composite bottomArea = tk.createComposite(mainSash, SWT.NONE);
 		bottomArea.setLayout(new FillLayout());
 		bottomArea.setBackground(bottomArea.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		konsListDisplay = new KonsListDisplay(bottomArea);
+		konsListDisplay = new KonsListDisplay(bottomArea, true);
 
 		mainSash.setWeights(new int[] {
 			20, 40, 30
@@ -230,6 +234,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 * Save actual Kons
 	 */
 	public static void saveActKonst(){
+		Helpers.checkActPatKons(actPat, actKons);
 		if (actKons == null) {
 			return;
 		}
@@ -245,21 +250,22 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	/**
 	 * First ste the global variable actKons
 	 * Then updates all dependent widgets, like header, konsText konsList
-	 * @param newPatient TODO
-	 * @param newKons
-	 * @param op
+	 * @param newPatient patient
+	 * @param newKons    konsultation, can be null if event deselect
+	 * @param op         ACTIVATED or not
 	 */
 	public synchronized static void updateAllKonsAreas(Patient newPatient, Konsultation newKons, IJournalArea.KonsActions op){
 		// Some sanity checks
 		if (newKons != null && newPatient == null)
 		{
-			newKons = null;
+			actPat = newKons.getFall().getPatient();
 			log.warn("Programming error newKons != null && newPatient == null");
 		}
 		if (newKons != null && newPatient != null && !newPatient.getId().equals(newKons.getFall().getPatient().getId()))
 		{
-			newKons = null;
-			log.warn("Programming fix NON matching patients " + op);
+			actPat = newKons.getFall().getPatient();
+			log.warn("Discoevered changed patient " + op  + " actPat " + actPat.getPersonalia());
+		} else {
 		}
 		/*
 		 * Not yet sure whether comparing only the id or the whole cons is better
@@ -268,27 +274,33 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// It is a bad idea to skip updating the kons, when the Id matches
 		// Some changes, e.g. when date of actual kons are possible even when the compare matches.
 		// Therefore we return only when we have nothing to update savedKonst == newKons?" + newId + " konsId match? " + savedKonsId.equals(newId));
+		Helpers.checkActPatKons(actPat, actKons);
 		logEvent(newKons, "updateAllKonsAreas: newKons op is " + op);
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
-				a.setKons(newPatient, newKons, op);
+				Helpers.checkActPatKons(actPat, actKons);
+				// actPat != null and newKons == null means EVENT-Deselect konsultation
+				a.setKons(actPat, newKons, op);
 			}
 		}
 	}
 
 	private synchronized void activateAllKonsAreas(boolean mode){
 		logEvent(null, "activateAllKonsAreas: " + mode);
+		Helpers.checkActPatKons(actPat, actKons);
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
-				a.activation(mode);
+				Helpers.checkActPatKons(actPat, actKons);
+				a.activation(mode, actPat, actKons);
 			}
 		}
 	}
 
 	private synchronized void visibleAllKonsAreas(boolean mode){
 		logEvent(null, "visibleAllKonsAreas: " + mode);
+		Helpers.checkActPatKons(actPat, actKons);
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
@@ -325,6 +337,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			public void runInUi(ElexisEvent ev){
 				Konsultation actKons =
 					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				Helpers.checkActPatKons(actPat, actKons);
 				if (actKons != null) {
 					konsVerrechnung.setKons(actKons.getFall().getPatient(), actKons, KonsActions.EVENT_UPDATE);
 				}
@@ -352,9 +365,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			case EVENT_DESELECTED:
 				msg = "EVENT_DESELECTED";
 				Konsultation selected_kons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-				log.debug("runInUi selected_kons is now: " + selected_kons);
+				log.debug(String.format("runInUi %s selected_kons is now: %s", msg, selected_kons));
 				newKons = selected_kons;
-				break;
+				updateAllKonsAreas(actPat, newKons, KonsActions.ACTIVATE_KONS);
+				return;
 				}
 			if (!removedStaleKonsLocks) {
 				removedStaleKonsLocks = true;
@@ -362,35 +376,20 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			}
 			log.debug(String.format("runInUi act %s new %s %s", actKons, msg, ev.toString()),  newKons);
 			// when we get an update or select event the parameter is always not null
-			Patient newPatient = null;
 			if (newKons != null) {
-				newPatient = newKons.getFall().getPatient();
-			}
-			if ((actKons == null) || !Helpers.haveSameContent(newKons, actKons)) {
-				// updateAllKonsAreas(actKons, KonsActions.SAVE_KONS);
-				if (newKons != null) {
-					newPatient = newKons.getFall().getPatient();
-					if (actKons != null && !newPatient.getId().equals(actKons.getFall().getPatient().getId())) {
-						displaySelectedPatient(newPatient, "eeli_kons newPatient");
-					}
-				}
-				updateAllKonsAreas(newPatient, newKons, KonsActions.ACTIVATE_KONS);
-			} else {
-				// Or we would simply forget to update it after
-				// add items via a konsText makro
-				if ( ev.getType() == EVENT_RELOAD) {
-					updateAllKonsAreas(newPatient, newKons, KonsActions.EVENT_RELOAD);
-				}
-				if ( ev.getType() == EVENT_UPDATE) {
-					updateAllKonsAreas(newPatient, newKons, KonsActions.EVENT_UPDATE);
-				}
-				if ( ev.getType() == EVENT_SELECTED) {
-					updateAllKonsAreas(newPatient, newKons, KonsActions.EVENT_SELECTED);
-				}
+				actPat = newKons.getFall().getPatient();
 			}
 			actKons = newKons;
+			if ( ev.getType() == EVENT_RELOAD) {
+				updateAllKonsAreas(actPat, newKons, KonsActions.EVENT_RELOAD);
+			}
+			if ( ev.getType() == EVENT_UPDATE) {
+				updateAllKonsAreas(actPat, newKons, KonsActions.EVENT_UPDATE);
+			}
+			if ( ev.getType() == EVENT_SELECTED) {
+				updateAllKonsAreas(actPat, newKons, KonsActions.EVENT_SELECTED);
+			}
 		}
-
 	};
 
 	/**
@@ -417,7 +416,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		// If nothing found or not of today, create a new konsultation
 		Konsultation konsultation = null;
 		konsultation = selectedPatient.getLetzteKons(false);
-		if (konsultation == null) {
+		if (konsultation == null && createNewKonsOnEntry) {
 			Fall[] faelle = selectedPatient.getFaelle();
 			if (faelle.length == 0) {
 				konsultation = selectedPatient.createFallUndKons();
@@ -443,9 +442,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				}
 			}
 		}
-		TimeTool konsDate = new TimeTool(konsultation.getDatum());
-		if (!konsDate.isSameDay(new TimeTool())) {
-			konsultation = konsultation.getFall().neueKonsultation();
+		if (konsultation != null) {
+			TimeTool konsDate = new TimeTool(konsultation.getDatum());
+			if (!konsDate.isSameDay(new TimeTool())) {
+				konsultation = konsultation.getFall().neueKonsultation();
+			}
 		}
 		// actKons = konsultation;
 		// We do not call updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
@@ -474,12 +475,14 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 					break;
 				case EVENT_DESELECTED:
 					msg = "EVENT_DESELECTED";
-					break;
+					log.debug(String.format("eeli_pat 1: %d %s %s", ev.getType(), msg, newPat.getPersonalia()));
+					return;
 				case EVENT_RELOAD:
 					msg = "EVENT_RELOAD";
 					break;
 				}
 				log.debug(String.format("eeli_pat 1: %d %s %s", ev.getType(), msg, newPat.getPersonalia()));
+				actPat = newPat;
 				displaySelectedPatient(newPat, "eeli_pat 2: " + ev.getType());
 			}
 		};
@@ -629,6 +632,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 
 	@Override
 	public void activation(boolean mode){
+		Helpers.checkActPatKons(actPat, actKons);
 		Konsultation selected_kons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 		if (selected_kons != null && actKons != null && !selected_kons.getId().equals(actKons.getId())) {
 			// this should never happen
@@ -643,8 +647,11 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				return;
 			}
 			boolean noLeistungen = actKons.getLeistungen() == null || actKons.getLeistungen().isEmpty();
-			log.debug("Delete the kons? " + konsTextComposite.getPlainText().length() + " noLeistungen " + noLeistungen);
-			if (konsTextComposite.getPlainText().length() == 0 && (noLeistungen)) {
+			TimeTool konsDate = new TimeTool(actKons.getDatum());
+			boolean ofToday = konsDate.isSameDay(new TimeTool());
+			log.debug(String.format("Delete the kons? %s %s noLeistungen %s from %s ofToday %s", actKons.getId(),
+				konsTextComposite.getPlainText().length(), noLeistungen, actKons.getLabel(), ofToday));
+			if (konsTextComposite.getPlainText().length() == 0 && (noLeistungen) && ofToday) {
 				Fall f = actKons.getFall();
 				Konsultation[] ret = f.getBehandlungen(false);
 				actKons.delete(true);
@@ -667,10 +674,10 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				eeli_user, eeli_update);
 			Konsultation newKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if (newKons != null) {
-				Patient newPatient = newKons.getFall().getPatient();
-				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + newPatient.getPersonalia();
+				actPat = newKons.getFall().getPatient();
+				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + actPat.getPersonalia();
 				logEvent(newKons, "visible true " + msg);
-				updateAllKonsAreas(newPatient, newKons, KonsActions.ACTIVATE_KONS);
+				updateAllKonsAreas(actPat, newKons, KonsActions.ACTIVATE_KONS);
 			} else
 			{
 				logEvent(newKons, "visible true newKons is null");

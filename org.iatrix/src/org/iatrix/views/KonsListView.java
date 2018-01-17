@@ -135,7 +135,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 		formBody.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
 		formTitel = tk.createLabel(formBody, "Leer");
-		konsListDisplay = new KonsListDisplay(formBody);
+		konsListDisplay = new KonsListDisplay(formBody, false);
 		konsListDisplay.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
 		makeActions();

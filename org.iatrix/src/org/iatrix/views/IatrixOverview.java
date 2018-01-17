@@ -85,6 +85,7 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 	public static final String ID = Constants.ID;
 	
 	private static Logger log = LoggerFactory.getLogger(IatrixOverview.class);
+	private static Patient actPat= null;
 	private static Konsultation actKons = null;
 	private FormToolkit tk;
 	private Form form;
@@ -183,7 +184,7 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 		for (int i = 0; i < allAreas.size(); i++) {
 			IJournalArea a = allAreas.get(i);
 			if (a != null) {
-				a.activation(mode);
+				a.activation(mode, actKons == null ? null : actKons.getFall().getPatient(), actKons);
 			}
 		}
 	}
@@ -348,12 +349,14 @@ public class IatrixOverview extends ViewPart implements IActivationListener, ISa
 			if (actKons != null && actKons.getFall().getPatient().getId().equals(newPat.getId())) {
 				log.debug(String.format("eeli_pat %d %s %s nothing todo", ev.getType(), msg,  newPat.toString()));
 			} else {
-				journalHeader.setPatient(newPat);
-				actKons = newPat.getLetzteKons(false);
-				problemsArea.setKons(newPat, actKons, KonsActions.ACTIVATE_KONS);
+				if (actPat == null || newPat.getId().contentEquals(actPat.getId())) {
+					actPat = newPat;
+					actKons = newPat.getLetzteKons(false);
+				}
+				problemsArea.setKons(actPat, actKons, KonsActions.ACTIVATE_KONS);
 				updateAllKonsAreas(actKons, KonsActions.ACTIVATE_KONS);
-				displaySelectedPatient(newPat, "eeli_pat " + ev.getType());
-				log.debug(String.format("eeli_pat %d %s %s %s changed", ev.getType(), msg, actKons, newPat.getPersonalia()));
+				displaySelectedPatient(actPat, "eeli_pat " + ev.getType());
+				log.debug(String.format("eeli_pat %d %s %s %s changed", ev.getType(), msg, actKons, actPat.getPersonalia()));
 			}
 		}
 	};

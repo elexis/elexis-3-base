@@ -712,10 +712,9 @@ public class ProblemArea implements IJournalArea {
 	public void visible(boolean mode){}
 
 	@Override
-	public void activation(boolean mode){
+	public void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		if (mode == true) {
-			log.debug("activation " + mode);
-			setKons(null,(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class), KonsActions.ACTIVATE_KONS);
+			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
 		}
 	}
 }

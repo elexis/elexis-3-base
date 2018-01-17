@@ -239,7 +239,7 @@ public class KonsText implements IJournalArea {
 		if (textEintrag != null) {
 			if (!textEintrag.equals(dbEintrag)) {
 				// text differs from db entry
-				logEvent("saved text != db entry");
+				logEvent(String.format("%s: saved text != db entry", actKons.getId()));
 				return true;
 			}
 		}
@@ -405,10 +405,11 @@ public class KonsText implements IJournalArea {
 	 */
 	@Override
 	public synchronized void setKons(Patient newPatient, Konsultation k, KonsActions op){
+		Helpers.checkActPatKons(newPatient, k);
 		if (op == KonsActions.SAVE_KONS) {
 			if (text.isDirty() || textChanged()) {
 				logEvent("setKons.SAVE_KONS text.isDirty or changed saving Kons from "
-					+ actKons.getDatum() + " is '" + text.getContentsPlaintext() + "'");
+					+ actKons.getDatum() + " is '" + text.getContentsPlaintext() + "' by " + actKons.getAuthor());
 				updateEintrag();
 				text.setData(PATIENT_KEY, null);
 				text.setText("saved kons");
@@ -417,52 +418,50 @@ public class KonsText implements IJournalArea {
 			} else {
 				if (actKons != null && text != null) {
 					logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum()
-						+ " is '" + text.getContentsPlaintext() + "'");
+						+ " is '" + text.getContentsPlaintext() + "' by"+ actKons.getAuthor());
 				}
 			}
 			return;
 		}
-		if (op == KonsActions.ACTIVATE_KONS) {
-			boolean hasTextChanges = false;
-			// make sure to unlock the kons edit field and release the lock
-			if (text != null && actKons != null) {
-				hasTextChanges = textChanged() ;
-				logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " hasTextChanges "
-					+ hasTextChanges + " actKons vom: " + actKons.getDatum());
-				if (hasTextChanges) {
-					updateEintrag();
-				}
+		boolean hasTextChanges = false;
+		// make sure to unlock the kons edit field and release the lock
+		if (text != null && actKons != null) {
+			hasTextChanges = textChanged() ;
+			logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " hasTextChanges "
+				+ hasTextChanges + " actKons vom: " + actKons.getDatum());
+			if (hasTextChanges) {
+				updateEintrag();
 			}
-			removeKonsTextLock();
-			if (k == null) {
-				actKons = k;
-				logEvent("setKons null");
-			} else {
-				logEvent("setKons " + (actKons == null ? "null" : actKons.getId()) +
-					" => " + k.getId());
-				actKons = k;
-				boolean konsEditable = Helpers.hasRightToChangeConsultations(actKons, false);
-				if (!konsEditable) {
-					// isEditable(true) would give feedback to user why consultation
-					// cannot be edited, but this often very shortlived as we create/switch
-					// to a newly created kons of today
-					logEvent("setKons actKons is not editable");
-					setKonsText(k, 0, true);
-					updateKonsultation(true);
-					updateKonsLockLabel();
-					updateKonsVersionLabel();
-					lVersion.setText(lVersion.getText() + " Nicht editierbar. (Keine Zugriffsrechte oder schon verrechnet)");
-					return;
-				} else if (actKons.getMandant().getId().contentEquals(CoreHub.actMandant.getId())) {
-					createKonsTextLock();
-				}
-				setKonsText(k, 0, true);
-			}
-			updateKonsultation(true);
-			updateKonsLockLabel();
-			updateKonsVersionLabel();
-			saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
 		}
+		removeKonsTextLock();
+		if (k == null) {
+			actKons = k;
+			logEvent("setKons null");
+		} else {
+			logEvent("setKons " + (actKons == null ? "null" : actKons.getId()) +
+				" => " + k.getId());
+			actKons = k;
+			boolean konsEditable = Helpers.hasRightToChangeConsultations(actKons, false);
+			if (!konsEditable) {
+				// isEditable(true) would give feedback to user why consultation
+				// cannot be edited, but this often very shortlived as we create/switch
+				// to a newly created kons of today
+				logEvent("setKons actKons is not editable");
+				setKonsText(k, 0, true);
+				updateKonsultation(true);
+				updateKonsLockLabel();
+				updateKonsVersionLabel();
+				lVersion.setText(lVersion.getText() + " Nicht editierbar. (Keine Zugriffsrechte oder schon verrechnet)");
+				return;
+			} else if (actKons.getMandant().getId().contentEquals(CoreHub.actMandant.getId())) {
+				createKonsTextLock();
+			}
+			setKonsText(k, 0, true);
+		}
+		updateKonsultation(true);
+		updateKonsLockLabel();
+		updateKonsVersionLabel();
+		saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
 	}
 
 	/**
@@ -492,15 +491,17 @@ public class KonsText implements IJournalArea {
 					sb.append(" (NEU)");
 				}
 			}
-			if (m.getId().contentEquals(CoreHub.actMandant.getId()) && Helpers.hasRightToChangeConsultations(actKons, false)) {
-				sb.append(" von Ihnen ");
+			sb.append(Helpers.hasRightToChangeConsultations(actKons, false) ? "" : " Kein Recht ");
+			// TODO: Allow administrators to change the konsText
+			if (Helpers.userMayEditKons(actKons)) {
+				sb.append(" editierbar");
 				text.setEnabled(actKons.isEditable(false));
 			} else {
-				sb.append(" NICHT von Ihnen");
+				sb.append(" NICHT editierbar");
 				text.setEnabled(false);
 			}
 			lVersion.setText(sb.toString());
-			logEvent(String.format("UpdateVersionLabel: %s editable? %s dirty? %s", sb.toString(), actKons.isEditable(false), text.isDirty()));
+			logEvent(String.format("UpdateVersionLabel: %s author <%s> >actUser <%s> editable? %s dirty? %s", sb.toString(), actKons.getAuthor(),CoreHub.actUser.getLabel(), actKons.isEditable(false), text.isDirty()));
 		} else {
 			lVersion.setText("");
 		}
@@ -574,10 +575,26 @@ public class KonsText implements IJournalArea {
 	}
 
 	@Override
-	public synchronized void activation(boolean mode){
+	public synchronized void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		logEvent("activation: " + mode);
-		if (!mode) {
+		/* Mein alte Lösung
+		if (mode == true) {
+			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
+		} else {
 			updateEintrag();
+		}
+		Nachher neu die von Thomas aus KonsDetailView */
+		if (mode == false) {
+			// save entry on deactivation if text was edited
+			if (actKons != null && (text.isDirty())) {
+				actKons.updateEintrag(text.getContentsAsXML(), false);
+				text.setDirty(false);
+			}
+		} else {
+			// load newest version on activation, if there are no local changes
+			if (actKons != null && !text.isDirty()) {
+				setKonsText(actKons, actKons.getHeadVersion(), true);
+			}
 		}
 	}
 

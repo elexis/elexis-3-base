@@ -162,9 +162,12 @@ public class PatientDocumentManager {
 						file.toFile(),
 						dateStr,
 						keywords,
-						FileTool.getExtension(file.getFileName().toString())
+						null 
 				)
 			);
+			//If the document has successfully been added
+			LOGGER.debug(logPrefix+"This document has successfully been added to the omnivore database."+file.toString());//$NON-NLS-1$
+			
 			return true;
 		}
 		else {

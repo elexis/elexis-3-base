@@ -273,7 +273,9 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			try {
 				if (l.equals(HINZU)) {
 					site.getPage().showView(LeistungenView.ID);
-					CodeSelectorHandler.getInstance().setCodeSelectorTarget(target);
+					if (target != null) {
+						CodeSelectorHandler.getInstance().setCodeSelectorTarget(target);
+					}
 				} else if (l.equals(LISTE)) {
 
 					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);

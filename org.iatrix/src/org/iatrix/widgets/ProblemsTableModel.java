@@ -152,10 +152,12 @@ public class ProblemsTableModel implements KTableModel {
 
 		@Override
 		public void close(boolean save){
-			if (save)
+			if (save && m_Text != null)
 				m_Model.setContentAt(m_Col, m_Row, m_Text.getText());
-			m_Text.removeKeyListener(keyListener);
-			m_Text.removeTraverseListener(travListener);
+			if (m_Text != null)
+				m_Text.removeKeyListener(keyListener);
+			if (m_Text != null)
+				m_Text.removeTraverseListener(travListener);
 			super.close(save);
 			m_Text = null;
 		}
@@ -339,8 +341,10 @@ public class ProblemsTableModel implements KTableModel {
 				if (m_Text != null) {
 					if (save)
 						m_Model.setContentAt(m_Col, m_Row, m_Text.getText());
-					m_Text.removeKeyListener(keyListener);
-					m_Text.removeTraverseListener(travListener);
+					if (m_Text != null) // At least this was need
+						m_Text.removeKeyListener(keyListener);
+					if (m_Text != null)
+						m_Text.removeTraverseListener(travListener);
 				}
 				m_Text = null;
 			}

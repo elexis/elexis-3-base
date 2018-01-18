@@ -445,7 +445,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		if (konsultation != null) {
 			TimeTool konsDate = new TimeTool(konsultation.getDatum());
 			if (!konsDate.isSameDay(new TimeTool())) {
-				konsultation = konsultation.getFall().neueKonsultation();
+				// konsultation = konsultation.getFall().neueKonsultation();
 			}
 		}
 		// actKons = konsultation;

@@ -349,10 +349,16 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 		sb.append("<br/><br/>");
 	}
 	
-	private String cleanUp(String text){
-		return text.replace(">", "&gt;").replace("<", "&lt;").replace("\n", "<br/>");
-	}
-	
+    private String cleanUp(String text){
+        return text
+                .replace("&", "&amp;")
+                .replace(">", "&gt;")
+                .replace("<", "&lt;")
+                .replace("\n", "<br/>")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
+    }	
+
 	public void catchElexisEvent(final ElexisEvent ev){
 		UiDesk.asyncExec(new Runnable() {
 			@Override

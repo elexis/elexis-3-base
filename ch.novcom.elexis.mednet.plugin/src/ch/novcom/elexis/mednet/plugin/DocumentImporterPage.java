@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +88,9 @@ public class DocumentImporterPage extends ImporterPage {
 			monitor.worked(100);
 		}
 		
-		List<String> failures = new ArrayList<String>();
+		List<String> importFailures = new ArrayList<String>();
+		List<String> importSuccess = new ArrayList<String>();
+		
 		
 		//We can have multiple Download Folders.
 		//We will process them One after the other
@@ -374,6 +375,11 @@ public class DocumentImporterPage extends ImporterPage {
 								LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.pdf.toString(), ioe);//$NON-NLS-1$
 							}
 						}
+						
+						importSuccess.add(MessageFormat.format(
+								MedNetMessages.DocumentImporterPage_FileSuccess, documentSettingItem.getInstitutionName(), pair.toString())
+						);
+						
 					} else {
 						//If the import was not successful we move the files to the error folder 
 						if (pair.hl7 != null){
@@ -399,7 +405,7 @@ public class DocumentImporterPage extends ImporterPage {
 							);
 						}
 						
-						failures.add(MessageFormat.format(
+						importFailures.add(MessageFormat.format(
 								MedNetMessages.DocumentImporterPage_FileFailure, documentSettingItem.getInstitutionName(), pair.toString())
 						);
 						
@@ -416,12 +422,20 @@ public class DocumentImporterPage extends ImporterPage {
 			}
 		}
 		
-		if(failures.size() <= 0) {
+		
+		
+		if(importFailures.size() <= 0) {
+			
 			//If everything has been successfully imported 
 			SWTHelper.showInfo(
 				MedNetMessages.DocumentImporterPage_ImportCompletedTitle,
-				MedNetMessages.DocumentImporterPage_ImportCompletedSSuccessText
+				MessageFormat.format(
+						MedNetMessages.DocumentImporterPage_ImportCompletedSSuccessText,
+						String.valueOf(importSuccess.size()),
+						String.join("\n",importSuccess)
+				)
 			);
+			
 		}
 		else {
 			//If we had errors, open a MessageBox
@@ -429,9 +443,15 @@ public class DocumentImporterPage extends ImporterPage {
 				MedNetMessages.DocumentImporterPage_errorTitle,
 				MessageFormat.format(
 						MedNetMessages.DocumentImporterPage_ImportError,
-						String.join("\n",failures)
+						String.valueOf(importSuccess.size()),
+						String.valueOf(importFailures.size()),
+						String.join("\n",importFailures)
 				)
 			);
+			
+		}
+		if(monitor != null){
+			monitor.done();
 		}
 		
 		
@@ -545,7 +565,15 @@ public class DocumentImporterPage extends ImporterPage {
 		
 		@Override
 		public int compare(FilePair pair1, FilePair pair2) throws NullPointerException {
-			return pair1.fileTime.compareTo(pair2.fileTime);
+			if(pair1 == null || pair1.fileTime == null) {
+				return -1;
+			}
+			else if(pair2 == null || pair2.fileTime == null) {
+				return 1;
+			}
+			else {
+				return pair1.fileTime.compareTo(pair2.fileTime);
+			}
 		}
 
 	}

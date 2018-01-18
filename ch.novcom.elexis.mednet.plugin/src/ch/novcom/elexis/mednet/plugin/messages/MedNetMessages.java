@@ -27,6 +27,7 @@ public class MedNetMessages extends NLS {
 	public static String DocumentImporterPage_titleImport;
 	public static String DocumentImporterPage_descriptionImport;
 	public static String DocumentImporterPage_FileFailure;
+	public static String DocumentImporterPage_FileSuccess;
 	public static String DocumentImporterPage_ImportError;
 	
 	public static String DocumentImporter_Document;

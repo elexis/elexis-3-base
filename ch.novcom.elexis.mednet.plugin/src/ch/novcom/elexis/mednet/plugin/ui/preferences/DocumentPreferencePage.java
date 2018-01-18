@@ -64,7 +64,6 @@ public class DocumentPreferencePage extends PreferencePage implements
 	private Table table;
 	
 	private String[] tableheaders = {
-			MedNetMessages.DocumentPreferences_institutionID,
 			MedNetMessages.DocumentPreferences_institutionName,
 			MedNetMessages.DocumentPreferences_category,
 			MedNetMessages.DocumentPreferences_path,
@@ -74,7 +73,7 @@ public class DocumentPreferencePage extends PreferencePage implements
 		};
 
 	private int[] tableColwidth = {
-		8, 14, 14, 20, 20, 20, 4
+		14, 14, 20, 20, 20, 4
 	};
 	/**
 	 * Standard Constructor
@@ -170,18 +169,16 @@ public class DocumentPreferencePage extends PreferencePage implements
 			
 			switch (columnIndex) {
 			case 0:
-				return documentSettingRecord.getInstitutionID();
-			case 1:
 				return documentSettingRecord.getInstitutionName();
-			case 2:
+			case 1:
 				return documentSettingRecord.getCategory();
-			case 3:
+			case 2:
 				return documentSettingRecord.getPath().toString();
-			case 4:
+			case 3:
 				return documentSettingRecord.getErrorPath().toString();
-			case 5:
+			case 4:
 				return documentSettingRecord.getArchivingPath().toString();
-			case 6:
+			case 5:
 				return String.valueOf(documentSettingRecord.getPurgeInterval());
 			default:
 				return "?col?"; //$NON-NLS-1$

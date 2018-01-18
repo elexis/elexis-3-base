@@ -10,9 +10,7 @@
  *******************************************************************************/
 
 package ch.novcom.elexis.mednet.plugin.data;
-
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
@@ -26,20 +24,16 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.data.Xid;
-import ch.elexis.data.Xid.XIDException;
-import ch.elexis.hl7.model.ObservationMessage;
-import ch.elexis.hl7.v22.HL7_ORU_R01;
 import ch.novcom.elexis.mednet.plugin.MedNetLabItemResolver;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
-import ch.rgw.io.FileTool;
-
+import ch.rgw.tools.Result;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Manage the import of HL7 and PDF Documents into the Patient
@@ -81,10 +75,6 @@ public class DocumentImporter {
 	 */
 	private final static SimpleDateFormat birthdateHumanReadableFormatter = new SimpleDateFormat("dd-MM-yyyy");//$NON-NLS-1$
 	
-	/**
-	 * Default HL7_ENCODING
-	 */
-	private static Charset HL7_ENCODING = Charset.forName("ISO-8859-1");//$NON-NLS-1$
 	
 	/**
 	 * Import an hl7 and a pdfFile
@@ -123,64 +113,35 @@ public class DocumentImporter {
 		
 		//If we have an hl7 File try first to import the hl7 and to get all the Patient informations
 		if(hl7File != null && Files.exists(hl7File) && Files.isRegularFile(hl7File)){
-			HL7_ORU_R01 hl7OruR01 = new HL7_ORU_R01();
-			ObservationMessage observation = null;
 			
 			HL7Parser hlp = new DefaultHL7Parser(institutionId);
-			
-			//Read HL7 file
 			try {
-				//Parse the HL7 File
-				//String text = String.join("\n", Files.readAllLines(hl7File, DocumentImporter.HL7_ENCODING));
-				String text = FileTool.readTextFile(hl7File.toFile(), DocumentImporter.HL7_ENCODING.name());
+				//Import the HL7. If the patient has not been found in the DB, the parser will ask for it 
+				Result<?> res = hlp.importFile(
+					hl7File.toFile(),
+					null,
+					new MedNetLabItemResolver(institutionName),
+					false
+				);
 				
-				observation = hl7OruR01.readObservation(text);
-				for (String error : hl7OruR01.getErrorList()) {
-					success = false;
-					LOGGER.error(logPrefix + "HL7 error: "+ error);//$NON-NLS-1$
+				if(res.isOK()) {
+					//If the result has successfully been imported
+					//Get the Patient found in the HL7 or selected by the user
+					IPatient ipat = hlp.hl7Reader.getPatient();
+					patient = DocumentImporter.getPatient(ipat.getId(), ipat.getFamilyName(), ipat.getFirstName() , ipat.getDateOfBirth().toString(TimeTool.DATE_COMPACT), ipat.getGender().value(), false);
+					success = true;
 				}
-				for (String warn : hl7OruR01.getWarningList()) {
-					LOGGER.warn(logPrefix + "HL7 warning: "+ warn);//$NON-NLS-1$
-				}
+				else {
+					//If the import was not successful
+					LOGGER.error(logPrefix + "Unable to import the hl7.");//$NON-NLS-1$
+				}					
 				
-				//If the HL7 has successfully been parsed, we can look for the Patient
-				if (success == true) {
-					
-					//Try to get the patient using all the informations contained in the observation field of the hl7
-					//orderNr Placer
-					//orderNr Filler
-					//external Patient ID
-					patient = DocumentImporter.getPatient(observation, institutionId, askUser);
-					if (patient != null) {
-						
-						//If the patient has been found, import the file
-							hlp.importFile(
-								hl7File.toFile(),
-								null,
-								new MedNetLabItemResolver(institutionName),
-								false
-							);
-						
-						//If the import was not successful we will have an Exception
-						
-						//If the HL7 contains the pid of the filler, store it in the XID
-						if (!observation.getAlternatePatientId().isEmpty()) {
-							DocumentImporter.addInstitutionPIDToXID(institutionId, institutionName, observation.getAlternatePatientId(), patient);
-						}
-						
-						success = true;
-						
-					} else {
-						success = false;
-					}
-				}
-			} catch (ElexisException ex) {
-				success = false;
-				LOGGER.error(logPrefix + "Elexis Exception importing the hl7. ", ex);//$NON-NLS-1$
+				
 			} catch (Exception ex) {
 				success = false;
 				LOGGER.error(logPrefix + "Exception importing the hl7. ", ex);//$NON-NLS-1$
 			}
+			
 		}
 		
 		//If there is a PDF File
@@ -347,30 +308,6 @@ public class DocumentImporter {
 		}
 		
 		return success;
-	}
-	
-	
-	
-	
-	/**
-	 * Try to get a patient using the information contained in the observation fields of an hl7
-	 * If it has not been found the user will be asked for delivering the patient
-	 * @see {@link #getPatient(String, String, String, String, String, boolean) getPatient}
-	 * @param observation an ObservationMessage
-	 * @param institutionID
-	 * @param askUser
-	 *            true (default), if the user interface will be shown to select the patient
-	 * @return
-	 */
-	private static Patient getPatient(final ObservationMessage observation, String institutionID, boolean askUser){
-		return getPatient(
-				observation.getPatientId(),
-				observation.getPatientLastName(),
-				observation.getPatientFirstName(),
-				observation.getPatientBirthdate(),
-				observation.getPatientSex(),
-				askUser
-				);
 	}
 	
 	/**
@@ -556,52 +493,6 @@ public class DocumentImporter {
 		
 	}
 	
-	
-	/**
-	 * If the Patient has an external id by an Institution, this reference will be added to the Xid table
-	 * @param institutionID the institution Kontakt id
-	 * @param institutionName the institution name
-	 * @param id the id of the patient by this institution
-	 * @param patient the patient this number should be linked
-	 * @return true if it was successful
-	 */
-	private static boolean addInstitutionPIDToXID(String institutionID, String institutionName, String id, Patient patient){
-		String logPrefix = "addInstitutionPIDToXID() - ";//$NON-NLS-1$
-		boolean success = false;
-		try {
-			Xid.localRegisterXIDDomainIfNotExists(institutionID, "externePID", Xid.ASSIGNMENT_LOCAL);
-			if ("".equals(DocumentImporter.getExternalPID(institutionID,patient))) {
-				new Xid(patient, institutionID, id);
-				success = true;
-				LOGGER.info(logPrefix+"Add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel());
-			}
-			return success;
-			
-		} catch (XIDException e) {
-			LOGGER.error(logPrefix+"Unable to add the Xid "+id+" for " + institutionName +" to the patient"+patient.getLabel()+". Exception: ",e);
-			return success;
-		}
-	}
-	
-	/**
-	 * Return the id an institution gives to a patient
-	 * @param the institution
-	 * @param the patient
-	 * @return the id found or an empty string
-	 */
-	public static String getExternalPID(String institutionID, Patient patient){
-		
-		Query<Xid> patientExternePIDQuery = new Query<Xid>(Xid.class);
-		patientExternePIDQuery.add(Xid.FLD_OBJECT, Query.EQUALS, patient.getId());
-		patientExternePIDQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, institutionID);
-		List<Xid> patienten = patientExternePIDQuery.execute();
-		if (patienten.isEmpty()) {
-			return "";
-		} else {
-			return ((Xid) patienten.get(0)).getDomainId();
-		}
-		
-	}
 	
 	/**
 	 * Returns the BaseName of a Path Object

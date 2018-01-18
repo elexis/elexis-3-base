@@ -34,7 +34,6 @@ import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
-import ch.rgw.io.FileTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 

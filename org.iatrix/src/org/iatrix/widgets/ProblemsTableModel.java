@@ -40,6 +40,7 @@ import org.iatrix.actions.IatrixEventHelper;
 import org.iatrix.data.Problem;
 import org.iatrix.util.Constants;
 import org.iatrix.util.DateComparator;
+import org.iatrix.util.Helpers;
 import org.iatrix.util.NumberComparator;
 import org.iatrix.util.StatusComparator;
 import org.iatrix.views.JournalView;
@@ -334,11 +335,15 @@ public class ProblemsTableModel implements KTableModel {
 
 		@Override
 		public void close(boolean save){
-			if (save)
-				m_Model.setContentAt(m_Col, m_Row, m_Text.getText());
-			m_Text.removeKeyListener(keyListener);
-			m_Text.removeTraverseListener(travListener);
-			m_Text = null;
+			if (m_Model!= null) {
+				if (m_Text != null) {
+					if (save)
+						m_Model.setContentAt(m_Col, m_Row, m_Text.getText());
+					m_Text.removeKeyListener(keyListener);
+					m_Text.removeTraverseListener(travListener);
+				}
+				m_Text = null;
+			}
 			super.close(save);
 		}
 
@@ -1292,6 +1297,7 @@ public class ProblemsTableModel implements KTableModel {
 	static class DummyProblem {}
 
 	public void setKons(Patient newPatient, Konsultation newKons) {
+		Helpers.checkActPatKons(newPatient, newKons);
 		log.debug("newPat " + (newPatient == null ? "null" :  newPatient.getPersonalia()) +
 			" newKons " + (newKons == null ? "null" : newKons.getDatum())) ;
 		actKons = newKons;

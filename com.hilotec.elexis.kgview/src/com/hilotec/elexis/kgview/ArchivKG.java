@@ -29,8 +29,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import com.hilotec.elexis.kgview.data.KonsData;
-
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -49,6 +47,8 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+
+import com.hilotec.elexis.kgview.data.KonsData;
 
 /**
  * Helper-Klasse fuers automatische scrollen mit anpassbarer Geschwindigkeit.
@@ -266,21 +266,27 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	/**
 	 * ArchivKG zum angegebenen Patienten laden.
 	 */
-	private void loadPatient(Patient pat){
+	private void loadPatient(final Patient pat){
 		if (pat == null) {
 			text.setText("Kein Patient ausgewählt!");
 			return;
 		}
 		
 		// Inhalt fuer Textfeld generieren
-		StringBuilder sb = new StringBuilder();
-		sb.append("<form>");
-		for (Konsultation k : getKonsultationen(pat, sortRev)) {
-			processKonsultation(k, sb);
-		}
-		sb.append("</form>");
-		text.setText(sb.toString());
-	}
+		
+		UiDesk.asyncExec(new Runnable() {
+			@Override
+			public void run(){
+				StringBuilder sb = new StringBuilder();
+				sb.append("<form>");
+				for (Konsultation k : getKonsultationen(pat, sortRev)) {
+					processKonsultation(k, sb);
+				}
+				sb.append("</form>");
+				text.setText(sb.toString());
+			}
+		});  
+}
 	
 	/**
 	 * Neu laden
@@ -350,11 +356,17 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	}
 	
 	private String cleanUp(String text){
-		return text.replace(">", "&gt;").replace("<", "&lt;").replace("\n", "<br/>");
+		return text
+				.replace("&", "&amp;")
+				.replace(">", "&gt;")
+				.replace("<", "&lt;")
+				.replace("\n", "<br/>")
+				.replace("\"", "&quot;")
+				.replace("'", "&apos;");
 	}
 	
 	public void catchElexisEvent(final ElexisEvent ev){
-		UiDesk.asyncExec(new Runnable() {
+		UiDesk.syncExec(new Runnable() {
 			@Override
 			public void run(){
 				Patient p = (Patient) ev.getObject();

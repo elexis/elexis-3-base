@@ -36,6 +36,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.iatrix.util.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -379,6 +380,7 @@ public class JournalHeader implements IJournalArea {
 	 * @param newKons
 	 */
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		Helpers.checkActPatKons(newPatient, newKons);
 		if (actPat == null || (newPatient == null) || !actPat.getId().equals(newPatient.getId())) {
 			actPat = newPatient;
 			setPatientTitel();

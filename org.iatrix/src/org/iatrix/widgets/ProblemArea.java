@@ -159,7 +159,7 @@ public class ProblemArea implements IJournalArea {
 							case Constants.DIAGNOSEN:
 								// open diagnosis selector
 
-								if (problem != null) {
+								if (problem != null && problemDiagnosesCodeSelectorTarget != null) {
 									try {
 										log.debug("doe problemDiagnosesCodeSelectorTarget");
 										// register as ICodeSelectorTarget
@@ -547,8 +547,10 @@ public class ProblemArea implements IJournalArea {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 							.showView(LeistungenView.ID);
 						// register as ICodeSelectorTarget
-						CodeSelectorHandler.getInstance()
-							.setCodeSelectorTarget(problemFixmedikationCodeSelectorTarget);
+						if (problemFixmedikationCodeSelectorTarget != null) {
+							CodeSelectorHandler.getInstance()
+								.setCodeSelectorTarget(problemFixmedikationCodeSelectorTarget);
+						}
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 						log.error("Fehler beim Anzeigen der Artikel " + ex.getMessage());

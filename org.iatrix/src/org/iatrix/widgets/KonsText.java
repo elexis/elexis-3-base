@@ -309,7 +309,8 @@ public class KonsText implements IJournalArea {
 	 * @return true, if we own the lock, false else
 	 */
 	private synchronized boolean hasKonsTextLock(){
-		return (konsTextLock != null && konsTextLock.isLocked());
+		return true;
+		// return (konsTextLock != null && konsTextLock.isLocked());
 	}
 
 	@Override

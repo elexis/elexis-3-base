@@ -29,8 +29,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import com.hilotec.elexis.kgview.data.KonsData;
-
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -49,6 +47,8 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+
+import com.hilotec.elexis.kgview.data.KonsData;
 
 /**
  * Helper-Klasse fuers automatische scrollen mit anpassbarer Geschwindigkeit.
@@ -271,35 +271,22 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 			text.setText("Kein Patient ausgewählt!");
 			return;
 		}
-//		trying to update UI from main thread seems to throw InterruptedException. 
-//		We then run the async runnable in another runnable to avoid this
-		Runnable runnable = new Runnable() {
-			public void run() {
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+		
+		// Inhalt fuer Textfeld generieren
+		
+		UiDesk.asyncExec(new Runnable() {
+			@Override
+			public void run(){
+				StringBuilder sb = new StringBuilder();
+				sb.append("<form>");
+				for (Konsultation k : getKonsultationen(pat, sortRev)) {
+					processKonsultation(k, sb);
 				}
-
-				// this will print to the console, because the UI display thread is not involved
-				System.out.println("ArchivKG - Konsultationen holen");
-				UiDesk.asyncExec(new Runnable() {
-					@Override
-					public void run(){
-						// Inhalt fuer Textfeld generieren
-						StringBuilder sb = new StringBuilder();
-						sb.append("<form>");
-						for (Konsultation k : getKonsultationen(pat, sortRev)) {
-							processKonsultation(k, sb);
-						}
-						sb.append("</form>");
-						text.setText(sb.toString());
-					}
-				});     
+				sb.append("</form>");
+				text.setText(sb.toString());
 			}
-		};
-		new Thread(runnable).start();
-	}
+		});  
+}
 	
 	/**
 	 * Neu laden
@@ -379,7 +366,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	}
 	
 	public void catchElexisEvent(final ElexisEvent ev){
-		UiDesk.asyncExec(new Runnable() {
+		UiDesk.syncExec(new Runnable() {
 			@Override
 			public void run(){
 				Patient p = (Patient) ev.getObject();

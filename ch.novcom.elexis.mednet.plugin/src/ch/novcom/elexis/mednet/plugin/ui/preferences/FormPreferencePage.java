@@ -11,6 +11,8 @@
 package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
 
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -80,7 +82,7 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		formsPath = new Text(ret, SWT.BORDER);
 		formsPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		formsPath.setTextLimit(80);
-		formsPath.setEnabled(false);
+		//formsPath.setEnabled(false);
 		if(MedNet.getSettings().getFormsPath() != null) {
 			formsPath.setText(MedNet.getSettings().getFormsPath().toString());
 		}
@@ -92,6 +94,14 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 			public void widgetSelected(SelectionEvent e){
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setText(MedNetMessages.FormPreferences_labelFormsPath);
+
+				if(!formsPath.getText().isEmpty()) {
+					dialog.setFilterPath(formsPath.getText());	
+				}
+				else if(	MedNet.getSettings().getExePath() != null ){
+					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");
+				}
+				
 		        String selected = dialog.open();
 		        formsPath.setText(selected);
 			}
@@ -101,7 +111,7 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		errorPath = new Text(ret, SWT.BORDER);
 		errorPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		errorPath.setTextLimit(80);
-		errorPath.setEnabled(false);
+		//errorPath.setEnabled(false);
 		if(MedNet.getSettings().getFormsErrorPath() != null) {
 			errorPath.setText(MedNet.getSettings().getFormsErrorPath().toString());
 		}
@@ -113,6 +123,17 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 			public void widgetSelected(SelectionEvent e){
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setText(MedNetMessages.FormPreferences_labelErrorPath);
+
+				if(!errorPath.getText().isEmpty()) {
+					dialog.setFilterPath(errorPath.getText());	
+				}
+				else if(!formsPath.getText().isEmpty()) {
+					dialog.setFilterPath(formsPath.getText());//$NON-NLS-1$
+				}
+				else if(	MedNet.getSettings().getExePath() != null ){
+					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");
+				}
+				
 		        String selected = dialog.open();
 		        errorPath.setText(selected);
 			}
@@ -122,7 +143,7 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		archivePath = new Text(ret, SWT.BORDER);
 		archivePath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		archivePath.setTextLimit(80);
-		archivePath.setEnabled(false);
+		//archivePath.setEnabled(false);
 		if(MedNet.getSettings().getFormsArchivePath() != null) {
 			archivePath.setText(MedNet.getSettings().getFormsArchivePath().toString());
 		}
@@ -134,6 +155,15 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 			public void widgetSelected(SelectionEvent e){
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setText(MedNetMessages.FormPreferences_labelArchivePath);
+				if(!archivePath.getText().isEmpty()) {
+					dialog.setFilterPath(archivePath.getText());	
+				}
+				else if(!formsPath.getText().isEmpty()) {
+					dialog.setFilterPath(formsPath.getText());//$NON-NLS-1$
+				}
+				else if(	MedNet.getSettings().getExePath() != null ){
+					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");
+				}
 		        String selected = dialog.open();
 		        archivePath.setText(selected);
 			}
@@ -187,6 +217,33 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public boolean performOk(){
 
+
+		if(this.formsPath.getText() == null || formsPath.getText().isEmpty()){
+			this.setErrorMessage(MedNetMessages.FormPreferences_NoPath);
+			return false;
+		}
+		if(!Files.isDirectory(Paths.get(this.formsPath.getText()))) {
+			this.setErrorMessage(String.format(MedNetMessages.FormPreferences_NotValidPath,this.formsPath.getText()));
+			return false;
+		}
+		if(this.errorPath.getText() == null || errorPath.getText().isEmpty()){
+			this.setErrorMessage(MedNetMessages.FormPreferences_NoErrorPath);
+			return false;
+		}
+		if(!Files.isDirectory(Paths.get(this.errorPath.getText()))) {
+			this.setErrorMessage(String.format(MedNetMessages.FormPreferences_NotValidPath,this.errorPath.getText()));
+			return false;
+		}
+		if(this.archivePath.getText() == null || archivePath.getText().isEmpty()){
+			this.setErrorMessage(MedNetMessages.FormPreferences_NoArchivingPath);
+			return false;
+		}
+		if(!Files.isDirectory(Paths.get(this.archivePath.getText()))) {
+			this.setErrorMessage(String.format(MedNetMessages.FormPreferences_NotValidPath,this.archivePath.getText()));
+			return false;
+		}
+		
+		
 		MedNet.getSettings().setFormsPath(Paths.get(formsPath.getText()));
 		MedNet.getSettings().setFormsErrorPath(Paths.get(errorPath.getText()));
 		MedNet.getSettings().setFormsArchivePath(Paths.get(archivePath.getText()));
@@ -198,7 +255,9 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 			MedNet.getSettings().setFormsArchivePurgeInterval(Integer.parseInt(purgeInterval.getText()));
 		}
 		
+		
 		MedNet.getSettings().saveSettings();
+		this.setErrorMessage(null);
 		return true;
 	}
 	

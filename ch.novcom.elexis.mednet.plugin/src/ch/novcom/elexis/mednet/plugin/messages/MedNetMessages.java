@@ -30,8 +30,6 @@ public class MedNetMessages extends NLS {
 	public static String DocumentImporterPage_FileSuccess;
 	public static String DocumentImporterPage_ImportError;
 	
-	public static String DocumentImporter_Document;
-	public static String DocumentImporter_DocumentDefaultCategory;
 	public static String DocumentImporter_SelectPatient;
 	public static String DocumentImporter_WhoIs;
 	
@@ -85,6 +83,10 @@ public class MedNetMessages extends NLS {
 	public static String FormPreferences_labelErrorPath;
 	public static String FormPreferences_labelArchivePath;
 	public static String FormPreferences_labelPurgeInterval;
+	public static String FormPreferences_NoPath;
+	public static String FormPreferences_NoErrorPath;
+	public static String FormPreferences_NoArchivingPath;
+	public static String FormPreferences_NotValidPath;
 	
 	public static String MainPreferences_labelExePath;
 	public static String MainPreferences_labelLogsPath;

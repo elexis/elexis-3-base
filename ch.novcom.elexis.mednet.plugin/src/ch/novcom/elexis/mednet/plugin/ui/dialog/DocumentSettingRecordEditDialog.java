@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.dialog;
 
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,7 +88,7 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		this.documentPath = new Text(result, SWT.BORDER);
 		this.documentPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.documentPath.setTextLimit(80);
-		this.documentPath.setEnabled(false);
+		//this.documentPath.setEnabled(false);
 		
 		this.documentPathSelection = new Button(result, SWT.PUSH);
 		this.documentPathSelection.setText("..."); //$NON-NLS-1$
@@ -96,6 +97,12 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e){
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setText(MedNetMessages.DocumentSettingRecordEditDialog_labelDocumentPath);
+				if(!documentPath.getText().isEmpty()) {
+					dialog.setFilterPath(documentPath.getText());	
+				}
+				else if(	MedNet.getSettings().getExePath() != null ){
+					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");//$NON-NLS-1$
+				}
 		        String selected = dialog.open();
 		        documentPath.setText(selected);
 			}
@@ -105,7 +112,7 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		this.errorPath = new Text(result, SWT.BORDER);
 		this.errorPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.errorPath.setTextLimit(80);
-		this.errorPath.setEnabled(false);
+		//this.errorPath.setEnabled(false);
 
 		this.errorPathSelection = new Button(result, SWT.PUSH);
 		this.errorPathSelection.setText("..."); //$NON-NLS-1$
@@ -114,6 +121,17 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e){
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setText(MedNetMessages.DocumentSettingRecordEditDialog_labelErrorPath);
+
+				if(!errorPath.getText().isEmpty()) {
+					dialog.setFilterPath(errorPath.getText());	
+				}
+				else if(!documentPath.getText().isEmpty()) {
+					dialog.setFilterPath(documentPath.getText());//$NON-NLS-1$
+				}
+				else if(	MedNet.getSettings().getExePath() != null ){
+					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");
+				}
+				
 		        String selected = dialog.open();
 		        errorPath.setText(selected);
 			}
@@ -124,7 +142,7 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		this.archivingPath = new Text(result, SWT.BORDER);
 		this.archivingPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.archivingPath.setTextLimit(80);
-		this.archivingPath.setEnabled(false);
+		//this.archivingPath.setEnabled(false);
 		
 		this.archivingPathSelection = new Button(result, SWT.PUSH);
 		this.archivingPathSelection.setText("..."); //$NON-NLS-1$
@@ -133,6 +151,17 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e){
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setText(MedNetMessages.DocumentSettingRecordEditDialog_labelArchivingPath);
+
+				if(!archivingPath.getText().isEmpty()) {
+					dialog.setFilterPath(archivingPath.getText());	
+				}
+				else if(!documentPath.getText().isEmpty()) {
+					dialog.setFilterPath(documentPath.getText());//$NON-NLS-1$
+				}
+				else if(	MedNet.getSettings().getExePath() != null ){
+					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");
+				}
+				
 		        String selected = dialog.open();
 		        archivingPath.setText(selected);
 			}

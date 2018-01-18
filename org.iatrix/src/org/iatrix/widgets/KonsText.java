@@ -78,7 +78,6 @@ public class KonsText implements IJournalArea {
 	private Action chooseVersionAction;
 	private Action versionFwdAction;
 	private Action versionBackAction;
-	private static final String PATIENT_KEY = "org.iatrix.patient";
 	private final FormToolkit tk;
 	private Composite parent;
 	private Hashtable<String, IKonsExtension> hXrefs;
@@ -208,7 +207,8 @@ public class KonsText implements IJournalArea {
 							}
 						} else {
 							unable_to_save_kons_id = "";
-							logEvent("updateEintrag saved rev. " + new_version + " plain: " + plain);
+							logEvent(String.format("updateEintrag saved rev. %s changed %s plain: %s",
+							new_version, textChanged(), plain ));
 							// TODO: Warum merkt das KonsListView trotzdem nicht ?? ElexisEventDispatcher.fireSelectionEvent(actKons);
 						}
 					}
@@ -411,10 +411,6 @@ public class KonsText implements IJournalArea {
 				logEvent("setKons.SAVE_KONS text.isDirty or changed saving Kons from "
 					+ actKons.getDatum() + " is '" + text.getContentsPlaintext() + "' by " + actKons.getAuthor());
 				updateEintrag();
-				text.setData(PATIENT_KEY, null);
-				text.setText("saved kons");
-				removeKonsTextLock();
-				actKons = null; // Setting it to null made clicking twice for a kons in the kons history the kontext disapper
 			} else {
 				if (actKons != null && text != null) {
 					logEvent("setKons.SAVE_KONS nothing to save for Kons from " + actKons.getDatum()
@@ -427,13 +423,15 @@ public class KonsText implements IJournalArea {
 		// make sure to unlock the kons edit field and release the lock
 		if (text != null && actKons != null) {
 			hasTextChanges = textChanged() ;
-			logEvent("setKons.ACTIVATE_KONS text.isDirty " + text.isDirty() + " hasTextChanges "
-				+ hasTextChanges + " actKons vom: " + actKons.getDatum());
+			logEvent(String.format("setKons.ACTIVATE_KONS same? %s text.isDirty %s hasTextChanges %s actKons vom:  %s",
+				Helpers.twoKonsEqual(actKons, k), text.isDirty(), hasTextChanges, actKons.getDatum()));
 			if (hasTextChanges) {
 				updateEintrag();
 			}
 		}
-		removeKonsTextLock();
+		if (!Helpers.twoKonsEqual(actKons, k)) {
+			removeKonsTextLock();
+		}
 		if (k == null) {
 			actKons = k;
 			logEvent("setKons null");
@@ -441,13 +439,13 @@ public class KonsText implements IJournalArea {
 			logEvent("setKons " + (actKons == null ? "null" : actKons.getId()) +
 				" => " + k.getId());
 			actKons = k;
+			setKonsText(actKons, actKons.getHeadVersion(), true);
 			boolean konsEditable = Helpers.hasRightToChangeConsultations(actKons, false);
 			if (!konsEditable) {
 				// isEditable(true) would give feedback to user why consultation
 				// cannot be edited, but this often very shortlived as we create/switch
 				// to a newly created kons of today
 				logEvent("setKons actKons is not editable");
-				setKonsText(k, 0, true);
 				updateKonsultation(true);
 				updateKonsLockLabel();
 				updateKonsVersionLabel();
@@ -456,7 +454,6 @@ public class KonsText implements IJournalArea {
 			} else if (actKons.getMandant().getId().contentEquals(CoreHub.actMandant.getId())) {
 				createKonsTextLock();
 			}
-			setKonsText(k, 0, true);
 		}
 		updateKonsultation(true);
 		updateKonsLockLabel();
@@ -512,11 +509,11 @@ public class KonsText implements IJournalArea {
 		}
 	}
 
-	private synchronized void setKonsText(Konsultation b, int version, boolean putCaretToEnd){
-		if (b != null) {
+	private synchronized void setKonsText(Konsultation aNewKons, int version, boolean putCaretToEnd){
+		if (aNewKons != null) {
 			String ntext = "";
-			if ((version >= 0) && (version <= b.getHeadVersion())) {
-				VersionedResource vr = b.getEintrag();
+			if ((version >= 0) && (version <= aNewKons.getHeadVersion())) {
+				VersionedResource vr = aNewKons.getEintrag();
 				ResourceItem entry = vr.getVersion(version);
 				ntext = entry.data;
 				StringBuilder sb = new StringBuilder();
@@ -528,19 +525,19 @@ public class KonsText implements IJournalArea {
 				lVersion.setText("");
 			}
 			text.setText(PersistentObject.checkNull(ntext));
-			text.setKons(b);
+			text.setKons(aNewKons);
 			displayedVersion = version;
 			versionBackAction.setEnabled(version != 0);
-			versionFwdAction.setEnabled(version != b.getHeadVersion());
+			versionFwdAction.setEnabled(version != aNewKons.getHeadVersion());
 			boolean locked =  hasKonsTextLock();
 			int strlen = text.getContentsPlaintext().length();
 			int maxLen = strlen < 120 ? strlen : 120;
 			String label = (konsTextLock == null) ? "null " : konsTextLock.getLabel();
 			if (!locked)
-				logEvent("setKonsText availabee " + b.getId() + " " + label + " putCaretToEnd " + putCaretToEnd +
+				logEvent("setKonsText available " + aNewKons.getId() + " " + label + " putCaretToEnd " + putCaretToEnd +
 					" " + lVersion.getText() + " '" + text.getContentsPlaintext().substring(0, maxLen) + "'");
 			else 
-				logEvent("setKonsText (locked) " + b.getId() + " " + label + " putCaretToEnd " + putCaretToEnd +
+				logEvent("setKonsText (locked) " + aNewKons.getId() + " " + label + " putCaretToEnd " + putCaretToEnd +
 					" " + lVersion.getText() + " '" + text.getContentsPlaintext().substring(0, maxLen) + "'");
 
 			if (putCaretToEnd) {

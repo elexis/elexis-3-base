@@ -207,8 +207,6 @@ public class KonsText implements IJournalArea {
 							}
 						} else {
 							unable_to_save_kons_id = "";
-							logEvent(String.format("updateEintrag saved rev. %s changed %s plain: %s",
-							new_version, textChanged(), plain ));
 							// TODO: Warum merkt das KonsListView trotzdem nicht ?? ElexisEventDispatcher.fireSelectionEvent(actKons);
 						}
 					}
@@ -534,12 +532,14 @@ public class KonsText implements IJournalArea {
 			int strlen = text.getContentsPlaintext().length();
 			int maxLen = strlen < 120 ? strlen : 120;
 			String label = (konsTextLock == null) ? "null " : konsTextLock.getLabel();
-			if (!locked)
-				logEvent("setKonsText available " + aNewKons.getId() + " " + label + " putCaretToEnd " + putCaretToEnd +
-					" " + lVersion.getText() + " '" + text.getContentsPlaintext().substring(0, maxLen) + "'");
-			else 
-				logEvent("setKonsText (locked) " + aNewKons.getId() + " " + label + " putCaretToEnd " + putCaretToEnd +
-					" " + lVersion.getText() + " '" + text.getContentsPlaintext().substring(0, maxLen) + "'");
+			String desc = String.format("setKonsText len %s id %s toEnd %s %s plain '%s'",
+				strlen, aNewKons.getId(), putCaretToEnd, lVersion.getText(),
+				text.getContentsPlaintext().substring(0, maxLen));
+			if (locked) {
+				logEvent("setKonsText hasKonsTextLock " + desc);
+			} else {
+				logEvent("setKonsText (locked) " + desc);
+			}
 
 			if (putCaretToEnd) {
 				// set focus and put caret at end of text

@@ -1242,7 +1242,8 @@ public class ProblemsTableModel implements KTableModel {
 				refresh();
 				problemsKTable.refresh();
 			}
-			JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, IJournalArea.KonsActions.EVENT_UPDATE);
+			log.debug("setContentAt row {} col {} set to '{}' value {}", rowIndex, colIndex, problem, value);
+			JournalView.updateKonsProblems(actKons.getFall().getPatient(), actKons, IJournalArea.KonsActions.EVENT_UPDATE);
 		}
 	}
 

@@ -229,15 +229,16 @@ public class KonsText implements IJournalArea {
 	 * @return true, if the text changed, false else
 	 */
 	private boolean textChanged(){
-		if (actKons == null || text == null) {
+		if (actKons == null || text == null || actKons.getEintrag() == null) {
 			return false;
 		}
 		String dbEintrag = actKons.getEintrag().getHead();
 		String textEintrag = text.getContentsAsXML();
 		if (textEintrag != null) {
-			if (!textEintrag.equals(dbEintrag)) {
+			if ( dbEintrag  != null && !textEintrag.equals(dbEintrag)) {
 				// text differs from db entry
-				logEvent(String.format("%s: saved text != db entry", actKons.getId()));
+				log.debug("textChanged {}: saved text != db entry. Length {} == {}?. Is now '{}'", actKons.getId(),
+					textEintrag.length(), dbEintrag.length(), getPlainBegining());
 				return true;
 			}
 		}
@@ -375,9 +376,11 @@ public class KonsText implements IJournalArea {
 
 			@Override
 			public void run(){
-				logEvent("saveAction: ");
-				updateEintrag();
-				JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.SAVE_KONS);
+				logEvent("saveAction: " + actKons);
+				if (actKons != null) {
+					updateEintrag();
+					JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.SAVE_KONS);
+				}
 			}
 		};
 	};
@@ -422,8 +425,8 @@ public class KonsText implements IJournalArea {
 		// make sure to unlock the kons edit field and release the lock
 		if (text != null && actKons != null) {
 			hasTextChanges = textChanged() ;
-			logEvent(String.format("setKons.ACTIVATE_KONS same? %s text.isDirty %s hasTextChanges %s actKons vom:  %s",
-				Helpers.twoKonsEqual(actKons, k), text.isDirty(), hasTextChanges, actKons.getDatum()));
+			logEvent(String.format("op %s same? %s text.isDirty %s hasTextChanges %s actKons vom:  %s",
+				op, Helpers.twoKonsEqual(actKons, k), text.isDirty(), hasTextChanges, actKons.getDatum()));
 			if (hasTextChanges) {
 				updateEintrag();
 			}
@@ -458,6 +461,9 @@ public class KonsText implements IJournalArea {
 		updateKonsLockLabel();
 		updateKonsVersionLabel();
 		saveAction.setEnabled(konsTextLock == null || hasKonsTextLock());
+		if (op == KonsActions.EVENT_SELECTED) {
+			text.setFocus();
+		}
 	}
 
 	/**
@@ -523,18 +529,15 @@ public class KonsText implements IJournalArea {
 			} else {
 				lVersion.setText("");
 			}
+			String desc = String.format("setKonsText version %s => %s. toEnd %s. Len %s => %s. id: %s",
+				aNewKons.getHeadVersion(), version,putCaretToEnd, getPlainText().length(),
+				ntext.length(), aNewKons.getId());
 			text.setText(PersistentObject.checkNull(ntext));
 			text.setKons(aNewKons);
 			displayedVersion = version;
 			versionBackAction.setEnabled(version != 0);
 			versionFwdAction.setEnabled(version != aNewKons.getHeadVersion());
 			boolean locked =  hasKonsTextLock();
-			int strlen = text.getContentsPlaintext().length();
-			int maxLen = strlen < 120 ? strlen : 120;
-			String label = (konsTextLock == null) ? "null " : konsTextLock.getLabel();
-			String desc = String.format("setKonsText len %s id %s toEnd %s %s plain '%s'",
-				strlen, aNewKons.getId(), putCaretToEnd, lVersion.getText(),
-				text.getContentsPlaintext().substring(0, maxLen));
 			if (locked) {
 				logEvent("setKonsText hasKonsTextLock " + desc);
 			} else {
@@ -629,5 +632,11 @@ public class KonsText implements IJournalArea {
 			return "";
 		}
 		return text.getContentsPlaintext();
+	}
+
+	private String getPlainBegining() {
+		String plain = getPlainText();
+		int strlen = plain.length();
+		return plain.substring(0, strlen < 120 ? strlen : 120);
 	}
 }

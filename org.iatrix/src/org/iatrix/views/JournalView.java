@@ -364,20 +364,26 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		@Override
 		public void runInUi(ElexisEvent ev){
 			Konsultation newKons = (Konsultation) ev.getObject();
-			log.debug("runInUi act {} new {} {}", actKons, ev.getType(), newKons.getLabel());
+			String msg = "";
 			switch (ev.getType()) {
 			case EVENT_SELECTED:
+				msg = "EVENT_SELECTED";
 				break;
 			case EVENT_UPDATE:
+				msg = "EVENT_SELECTED";
 				break;
 			case EVENT_RELOAD:
+				msg = "EVENT_SELECTED";
 				break;
 			case EVENT_DESELECTED:
+				msg = "EVENT_SELECTED";
 				Konsultation selected_kons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				log.debug(String.format("runInUi %s selected_kons is now: %s", msg, selected_kons));
 				newKons = selected_kons;
 				updateAllKonsAreas(actPat, newKons, KonsActions.ACTIVATE_KONS);
 				return;
 				}
+			log.debug(String.format("runInUi act %s new %s %s", actKons, msg, ev.toString()),  newKons);
 			if (!removedStaleKonsLocks) {
 				removedStaleKonsLocks = true;
 				KonsTextLock.deleteObsoleteLocks(newKons);

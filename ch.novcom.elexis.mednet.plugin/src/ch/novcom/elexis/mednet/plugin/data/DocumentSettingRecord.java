@@ -43,6 +43,7 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 	public static final String FLD_ERROR_PATH = "ErrorPath";
 	public static final String FLD_ARCHIVING_PATH = "ArchivingPath";
 	public static final String FLD_PURGE_INTERVAL = "PurgeInterval";
+	public static final String FLD_XID_DOMAIN = "xid_domain";
 	public static final int DEFAULT_PURGE_INTERVAL = 30;
 	
 	static final String TABLENAME = "MEDNET_DOCUMENT_SETTINGS";
@@ -63,6 +64,7 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 			+ DocumentSettingRecord.FLD_ERROR_PATH + " VARCHAR(255),"
 			+ DocumentSettingRecord.FLD_ARCHIVING_PATH + " VARCHAR(255),"
 			+ DocumentSettingRecord.FLD_PURGE_INTERVAL + " VARCHAR(16),"
+			+ DocumentSettingRecord.FLD_XID_DOMAIN + " VARCHAR(255),"
 			+ PersistentObject.FLD_LASTUPDATE + " BIGINT,"
 			+ PersistentObject.FLD_DELETED + " CHAR(1) default '0'"
 			+ ");";
@@ -82,7 +84,8 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 			DocumentSettingRecord.FLD_PATH,
 			DocumentSettingRecord.FLD_ERROR_PATH,
 			DocumentSettingRecord.FLD_ARCHIVING_PATH,
-			DocumentSettingRecord.FLD_PURGE_INTERVAL
+			DocumentSettingRecord.FLD_PURGE_INTERVAL,
+			DocumentSettingRecord.FLD_XID_DOMAIN
 		);
 		if(!PersistentObject.tableExists(TABLENAME)){
 			DocumentSettingRecord.createOrModifyTable(createTable);
@@ -96,7 +99,8 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 			Path path,
 			Path errorPath,
 			Path archivingPath,
-			int purgeInterval
+			int purgeInterval,
+			String xidDomain
 		){
 		
 		create(null);
@@ -107,7 +111,8 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 				FLD_PATH,
 				FLD_ERROR_PATH,
 				FLD_ARCHIVING_PATH,
-				FLD_PURGE_INTERVAL
+				FLD_PURGE_INTERVAL,
+				FLD_XID_DOMAIN
 			}, 
 			institutionID,
 			institutionName,
@@ -115,7 +120,8 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 			path.toString(),
 			errorPath.toString(),
 			archivingPath.toString(),
-			String.valueOf(purgeInterval)
+			String.valueOf(purgeInterval),
+			xidDomain
 		);
 		
 	}
@@ -204,6 +210,14 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 		this.set(DocumentSettingRecord.FLD_PURGE_INTERVAL, Integer.toString(purgeInterval));
 	}
 	
+	public String getXIDDomain(){
+		return PersistentObject.checkNull(this.get(DocumentSettingRecord.FLD_XID_DOMAIN));
+	}
+	
+	public void setXIDDomain(String xidDomain){
+		this.set(DocumentSettingRecord.FLD_XID_DOMAIN, xidDomain);
+	}
+	
 	
 	@Override
 	public String getLabel(){
@@ -214,7 +228,8 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 				DocumentSettingRecord.FLD_PATH,
 				DocumentSettingRecord.FLD_ERROR_PATH,
 				DocumentSettingRecord.FLD_ARCHIVING_PATH,
-				DocumentSettingRecord.FLD_PURGE_INTERVAL
+				DocumentSettingRecord.FLD_PURGE_INTERVAL,
+				DocumentSettingRecord.FLD_XID_DOMAIN
 		};
 		String[] vals = new String[fields.length];
 		this.get(fields, vals);
@@ -227,7 +242,8 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 			vals[3],
 			vals[4],
 			vals[5],
-			vals[6]
+			vals[6],
+			vals[7]
 		);
 		
 	}
@@ -296,7 +312,8 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 			String category,
 			String receivingPath,
 			String errorPath,
-			String archivingPath
+			String archivingPath,
+			String xidDomain
 			){
 		Query<DocumentSettingRecord> qbe = new Query<DocumentSettingRecord>(DocumentSettingRecord.class);
 		if (institutionId != null && institutionId.length() > 0) {
@@ -316,6 +333,9 @@ public class DocumentSettingRecord extends PersistentObject implements Comparabl
 		}
 		if (archivingPath != null && archivingPath.length() > 0) {
 			qbe.add(DocumentSettingRecord.FLD_ARCHIVING_PATH, "=", archivingPath, true);
+		}
+		if (xidDomain != null && xidDomain.length() > 0) {
+			qbe.add(DocumentSettingRecord.FLD_XID_DOMAIN, "=", xidDomain, true);
 		}
 		return qbe.execute();
 	}

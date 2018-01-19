@@ -121,7 +121,7 @@ public class DocumentPreferencePage extends PreferencePage implements
 			/*tc.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e){
-					receivingTableViewer.refresh(true);
+					tableViewer.refresh(true);
 				}
 				
 			});*/

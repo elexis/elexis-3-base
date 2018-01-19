@@ -12,7 +12,6 @@ package ch.novcom.elexis.mednet.plugin.ui.dialog;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -52,6 +51,7 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 	private Text errorPath;
 	private Text archivingPath;
 	private Text purgeInterval;
+	private Text xidDomain;
 	
 	private DocumentSettingRecord record;
 	
@@ -88,7 +88,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		this.documentPath = new Text(result, SWT.BORDER);
 		this.documentPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.documentPath.setTextLimit(80);
-		//this.documentPath.setEnabled(false);
 		
 		this.documentPathSelection = new Button(result, SWT.PUSH);
 		this.documentPathSelection.setText("..."); //$NON-NLS-1$
@@ -112,7 +111,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		this.errorPath = new Text(result, SWT.BORDER);
 		this.errorPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.errorPath.setTextLimit(80);
-		//this.errorPath.setEnabled(false);
 
 		this.errorPathSelection = new Button(result, SWT.PUSH);
 		this.errorPathSelection.setText("..."); //$NON-NLS-1$
@@ -142,7 +140,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		this.archivingPath = new Text(result, SWT.BORDER);
 		this.archivingPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.archivingPath.setTextLimit(80);
-		//this.archivingPath.setEnabled(false);
 		
 		this.archivingPathSelection = new Button(result, SWT.PUSH);
 		this.archivingPathSelection.setText("..."); //$NON-NLS-1$
@@ -198,6 +195,27 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 	        }
 	    });
 		
+		
+
+		WidgetFactory.createLabel(result, MedNetMessages.DocumentSettingRecordEditDialog_labelXIDDomain);
+		this.xidDomain = new Text(result, SWT.BORDER);
+		this.xidDomain.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		this.xidDomain.setTextLimit(80);
+		this.xidDomain.addVerifyListener(new VerifyListener() {
+	        @Override
+	        public void verifyText(VerifyEvent e) {
+	            Text text = (Text)e.getSource();
+	            // get old text and create new text by using the VerifyEvent.text
+	            final String oldS = text.getText();
+	            String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
+
+	            if ( newS.matches(".*[;#].*") ) {
+	            	e.doit = false;
+	            }
+	        }
+	    });
+		
+		
 		if (record != null) {
 			this.institutionId.setText(record.getInstitutionID());
 			this.institutionName.setText(record.getInstitutionName());
@@ -206,9 +224,10 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			this.errorPath.setText(record.getErrorPath().toString());
 			this.archivingPath.setText(record.getArchivingPath().toString());
 			this.purgeInterval.setText(String.valueOf(record.getPurgeInterval()));
+			this.xidDomain.setText(String.valueOf(record.getXIDDomain()));
 		}
 		else {
-			if(			MedNet.getSettings().getExePath() != null
+			/*if(			MedNet.getSettings().getExePath() != null
 					&&	MedNet.getSettings().getExePath().getParent() != null
 					&&	Files.isDirectory(MedNet.getSettings().getExePath().getParent())
 					) {
@@ -216,8 +235,9 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 				this.documentPath.setText(defaultDocumentPath.toString());
 				this.errorPath.setText(defaultDocumentPath.resolve("error").toString());
 				this.archivingPath.setText(defaultDocumentPath.resolve("archive").toString());
-			}
+			}*/
 			this.purgeInterval.setText(String.valueOf(DocumentSettingRecord.DEFAULT_PURGE_INTERVAL));
+			this.xidDomain.setText("");
 		}
 		
 		
@@ -260,7 +280,7 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			setErrorMessage(String.format(MedNetMessages.DocumentSettingRecordEditDialog_NotValidPath,this.archivingPath.getText()));
 			return;
 		}
-		if(this.purgeInterval.getText() == null || purgeInterval.getText().isEmpty()){
+		if(this.purgeInterval.getText() == null || this.purgeInterval.getText().isEmpty()){
 			setErrorMessage(MedNetMessages.DocumentSettingRecordEditDialog_NoPurgeInterval);
 			return;
 		}
@@ -269,12 +289,13 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		if (this.record == null) {
 			this.record = new DocumentSettingRecord(
 					this.institutionSelection.getKontakt().getId(),
-					this.institutionSelection.getKontakt().getLabel(),
+					this.institutionSelection.getKontakt().getLabel(true),
 					this.category.getText(),
 					Paths.get(this.documentPath.getText()),
 					Paths.get(this.errorPath.getText()),
 					Paths.get(this.archivingPath.getText()),
-					Integer.parseInt(this.purgeInterval.getText())
+					Integer.parseInt(this.purgeInterval.getText()),
+					this.xidDomain.getText()
 			);
 			//mapping.persistTransientLabMappings(result);
 		}
@@ -287,15 +308,17 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 							DocumentSettingRecord.FLD_PATH,
 							DocumentSettingRecord.FLD_ERROR_PATH,
 							DocumentSettingRecord.FLD_ARCHIVING_PATH,
-							DocumentSettingRecord.FLD_PURGE_INTERVAL
+							DocumentSettingRecord.FLD_PURGE_INTERVAL,
+							DocumentSettingRecord.FLD_XID_DOMAIN
 						}, 
 						this.institutionSelection.getKontakt().getId(),
-						this.institutionSelection.getKontakt().getLabel(),
+						this.institutionSelection.getKontakt().getLabel(true),
 						this.category.getText(),
 						this.documentPath.getText(),
 						this.errorPath.getText(),
 						this.archivingPath.getText(),
-						String.valueOf(this.purgeInterval.getText())
+						String.valueOf(this.purgeInterval.getText()),
+						this.xidDomain.getText()
 			);
 			
 		}
@@ -320,8 +343,12 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 	public void setArchivingPathText(String string){
 		this.archivingPath.setText(string);
 	}
-	public void setpurgeIntervalText(String string){
+	public void setPurgeIntervalText(String string){
 		this.purgeInterval.setText(string);
+	}
+
+	public void setXIDDomainText(String string){
+		this.xidDomain.setText(string);
 	}
 	
 }

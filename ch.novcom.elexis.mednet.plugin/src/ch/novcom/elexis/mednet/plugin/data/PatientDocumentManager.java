@@ -49,7 +49,7 @@ public class PatientDocumentManager {
 	 */
 	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentImporter.class.getName());
 	
-	public static String DEFAULT_PRIO = "50";
+	public static String DEFAULT_PRIO = "0";
 	
 	private static String FLD_ORGIN = "Quelle";
 	
@@ -269,14 +269,14 @@ public class PatientDocumentManager {
 		this.checkCreateCategory(category);
 		
 		//Check if there is already a labitem of this category
-		LabItem labItem = getLabItem(institutionId, category, LabItemTyp.DOCUMENT);
+		LabItem labItem = getLabItem(institutionId, MedNetMessages.PatientDocumentManager_documentId, LabItemTyp.DOCUMENT);
 
 		//Get the kontakt linked with the institution
 		Kontakt institution = null;
 		String group = "";
 		if(institutionId != null && !institutionId.isEmpty()){
 			institution = PatientDocumentManager.getInstitution(institutionId);
-			group = institution.getLabel();
+			group = institution.getLabel(true);
 		}
 		
 		//If no LabItem has been found, create one

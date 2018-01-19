@@ -352,6 +352,7 @@ public class DocumentImporterPage extends ImporterPage {
 							documentSettingItem.getInstitutionID(),
 							documentSettingItem.getInstitutionName(),
 							documentSettingItem.getCategory(),
+							documentSettingItem.getXIDDomain(),
 							OVERWRITEOLDERENTRIES,
 							true
 					);

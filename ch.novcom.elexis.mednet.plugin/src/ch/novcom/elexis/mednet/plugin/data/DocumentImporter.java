@@ -10,7 +10,9 @@
  *******************************************************************************/
 
 package ch.novcom.elexis.mednet.plugin.data;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
@@ -21,6 +23,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +34,8 @@ import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.data.Xid;
+import ch.elexis.data.Xid.XIDException;
 import ch.novcom.elexis.mednet.plugin.MedNetLabItemResolver;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 import ch.rgw.tools.Result;
@@ -75,6 +81,16 @@ public class DocumentImporter {
 	 */
 	private final static SimpleDateFormat birthdateHumanReadableFormatter = new SimpleDateFormat("dd-MM-yyyy");//$NON-NLS-1$
 	
+	/**
+	 * The Pattern to search for laboratory PID in the HL7 if xidDomain is set 
+	 */
+	private final static Pattern hl7PatientPattern = Pattern.compile("^PID\\|[^\\|]*\\|(?<id>[^\\|]*)\\|(?<institutionId>[^\\|]*)\\|[^\\|]*\\|(?<lastname>[^\\|\\^]*)\\^?(?<firstname>[^\\|\\^]*)[^\\|]*\\|[^\\|]*\\|(?<birthdate>[^\\|]*)\\|(?<gender>[^\\|]*)\\|.*$");
+	
+	/**
+	 * The default encoding for opening HL7
+	 */
+	private final static Charset DEFAULT_HL7_INPUTENCODING = Charset.forName("ISO-8859-1");
+	
 	
 	/**
 	 * Import an hl7 and a pdfFile
@@ -96,6 +112,7 @@ public class DocumentImporter {
 			String institutionId,
 			String institutionName,
 			String category,
+			String xidDomain,
 			boolean overwriteOlderEntries,
 			boolean askUser
 		) throws IOException{
@@ -134,12 +151,86 @@ public class DocumentImporter {
 				else {
 					//If the import was not successful
 					LOGGER.error(logPrefix + "Unable to import the hl7.");//$NON-NLS-1$
+					success = false;
 				}					
 				
 				
 			} catch (Exception ex) {
 				success = false;
 				LOGGER.error(logPrefix + "Exception importing the hl7. ", ex);//$NON-NLS-1$
+			}
+			
+			
+			if(		success
+				&&	patient != null
+				&&	xidDomain != null 
+				&&	!xidDomain.isEmpty()) {
+			
+				
+				
+				String patient_institutionId = null;
+				
+				//if xid_Domain is set, we should extract the institution Patient ID
+				//We look for the Patient Informations and Order informations in the file
+				try {
+					BufferedReader lineReader = Files.newBufferedReader(hl7File, DocumentImporter.DEFAULT_HL7_INPUTENCODING);
+					
+					//The informations we are looking for is in the first 4 lines.
+					//We don't need to read more
+					int nbMatches = 0;
+					for(int i=0; 
+									i<4 
+								&&	lineReader.ready()
+								&&	nbMatches < 3
+							;
+						i++
+						){
+						String line = lineReader.readLine();
+						
+						Matcher patientMatcher = DocumentImporter.hl7PatientPattern.matcher(line);
+						if (patientMatcher.matches()){
+							nbMatches ++;
+							patient_institutionId = patientMatcher.group("institutionId");//$NON-NLS-1$
+							break;
+						}
+					}
+					lineReader.close();
+					
+				} catch (IOException ioe) {
+					LOGGER.error(logPrefix + "Unable to load the hl7 file. ", ioe);//$NON-NLS-1$
+				}
+				
+
+				JOptionPane.showMessageDialog(null, patient_institutionId );
+				
+				if(patient_institutionId != null && !patient_institutionId.isEmpty()) {
+					try {
+						Xid.localRegisterXIDDomainIfNotExists(xidDomain, institutionName , Xid.ASSIGNMENT_LOCAL);
+						String db_patient_institutionId = DocumentImporter.getInstitutionXID(xidDomain, patient);
+						if(db_patient_institutionId == null) {
+							new Xid(patient, xidDomain, patient_institutionId);
+							LOGGER.info(
+								MessageFormat.format("xid {0} ({2}) successfully saved to Patient {1}", patient_institutionId,
+									patient.getLabel(), institutionName)
+							);
+						}
+						else if( db_patient_institutionId.equals(patient_institutionId)) {
+							//If the institution ID we have in the database is not the same as the one we got,
+							//Update the one we got
+							DocumentImporter.deleteInstitutionXID(xidDomain, patient);
+							new Xid(patient, xidDomain, patient_institutionId);
+							LOGGER.info(
+									MessageFormat.format("xid {0} ({2}) from Patient {1} successfully updated (old value {3})", patient_institutionId,
+										patient.getLabel(), institutionName, db_patient_institutionId)
+								);
+						}
+					} catch (XIDException e) {
+						LOGGER.error(
+							MessageFormat.format("xid {0} ({2}) has not been saved to Patient {1}", patient_institutionId,
+								patient.getLabel(),institutionName),e);
+					}
+				}
+				
 			}
 			
 		}
@@ -526,5 +617,36 @@ public class DocumentImporter {
 		}
 		
 	}
+	
+
+	public static String getInstitutionXID(String xidDomain, Patient patient){
+		
+		Query<Xid> patientInstitutionXIDQuery = new Query<Xid>(Xid.class);
+		patientInstitutionXIDQuery.add(Xid.FLD_OBJECT, Query.EQUALS, patient.getId());
+		patientInstitutionXIDQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, xidDomain);
+		List<Xid> patienten = patientInstitutionXIDQuery.execute();
+		if (patienten.isEmpty()) {
+			return null;
+		} else {
+			return ((Xid) patienten.get(0)).getDomainId();
+		}
+		
+	}
+	
+	public static void deleteInstitutionXID(String xidDomain, Patient patient){
+		
+		Query<Xid> patientInstitutionXIDQuery = new Query<Xid>(Xid.class);
+		patientInstitutionXIDQuery.add(Xid.FLD_OBJECT, Query.EQUALS, patient.getId());
+		patientInstitutionXIDQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, xidDomain);
+		List<Xid> patientenXids = patientInstitutionXIDQuery.execute();
+		if (patientenXids.isEmpty()) {
+			return ;
+		} else {
+			for (Xid xid : patientenXids) {
+				xid.delete();
+			}
+		}		
+	}
+	
 	
 }

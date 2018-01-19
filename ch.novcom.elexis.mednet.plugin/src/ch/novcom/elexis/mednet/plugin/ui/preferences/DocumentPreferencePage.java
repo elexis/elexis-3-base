@@ -118,13 +118,12 @@ public class DocumentPreferencePage extends PreferencePage implements
 			tc.setText(tableheaders[i]);
 			tableColumnLayout.setColumnData(tc, new ColumnWeightData(tableColwidth[i], true));
 			tc.setData(i);
-			/*tc.addSelectionListener(new SelectionAdapter() {
+			tc.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e){
 					tableViewer.refresh(true);
 				}
-				
-			});*/
+			});
 		}
 
 		table.setHeaderVisible(true);
@@ -157,9 +156,7 @@ public class DocumentPreferencePage extends PreferencePage implements
 		});
 		
 		tableViewer.setInput(this);
-		
 		return tableComposite;
-		
 	}
 
 	static class ReceivingListLabelProvider extends ColumnLabelProvider implements ITableLabelProvider {
@@ -191,16 +188,6 @@ public class DocumentPreferencePage extends PreferencePage implements
 			return null;
 		}
 		
-		/*
-		@Override
-		public Color getBackground(Object element){
-			DocumentSettingItem receivingConfItem = (DocumentSettingItem) element;
-			if (receivingConfItem.isVisible()) {
-				return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-			} else {
-				return Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
-			}
-		}*/
 	};
 	
 

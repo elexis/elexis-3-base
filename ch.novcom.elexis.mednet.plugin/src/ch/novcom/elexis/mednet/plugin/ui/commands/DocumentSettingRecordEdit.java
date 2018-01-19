@@ -12,7 +12,6 @@ package ch.novcom.elexis.mednet.plugin.ui.commands;
 
 import java.util.HashMap;
 
-import javax.swing.JOptionPane;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
@@ -40,21 +39,12 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		try {
-
 			
 			// get the parameter
 			String param = event.getParameter(DocumentSettingRecordEdit.PARAMETERID);
-			PersistentObject documentSettingRecord =
-				(PersistentObject) event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID)
-					.getValueConverter().convertToObject(param);
 			
-			JOptionPane.showMessageDialog(null,"Open Edit View "+event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID)+ "  "+param);//$NON-NLS-1$
-			if(documentSettingRecord != null) {
-				JOptionPane.showMessageDialog(null,"Open Edit View TESTING "+documentSettingRecord.exportData());//$NON-NLS-1$
-			}
-			else {
-				JOptionPane.showMessageDialog(null,"Null");//$NON-NLS-1$
-			}
+			PersistentObject documentSettingRecord =
+				(PersistentObject) event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID).getValueConverter().convertToObject(param);
 			
 			// create and open the dialog with the parameter
 			Shell parent = HandlerUtil.getActiveShell(event);
@@ -78,8 +68,6 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 			param.put(DocumentSettingRecordEdit.PARAMETERID, parameter);
 			// build the parameterized command
 			ParameterizedCommand pc = ParameterizedCommand.generateCommand(cmd, param);
-			
-			JOptionPane.showMessageDialog(null, "Open with Param " + pc.toString() + " \n Label : "+ ((DocumentSettingRecord)parameter).getLabel());//$NON-NLS-1$
 			
 			// execute the command
 			IHandlerService handlerService =

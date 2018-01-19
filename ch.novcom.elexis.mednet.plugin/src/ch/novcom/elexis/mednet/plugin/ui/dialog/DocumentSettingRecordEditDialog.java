@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.WidgetFactory;
-import ch.elexis.core.ui.views.controls.LaborSelectionComposite;
+import ch.elexis.core.ui.views.controls.KontaktSelectionComposite;
 import ch.elexis.data.Kontakt;
 import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.data.DocumentSettingRecord;
@@ -43,7 +43,8 @@ import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
  */
 public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 	
-	private LaborSelectionComposite institutionSelection;
+	//private LaborSelectionComposite institutionSelection;
+	private KontaktSelectionComposite institutionSelection;
 	private Text institutionId;
 	private Text institutionName;
 	private Text category;
@@ -75,7 +76,7 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 		result.setLayout(new GridLayout(3, false));
 		
 		WidgetFactory.createLabel(result, MedNetMessages.DocumentSettingRecordEditDialog_labelInstitution);
-		this.institutionSelection = new LaborSelectionComposite(result, SWT.NONE);
+		this.institutionSelection = new KontaktSelectionComposite(result, SWT.NONE);
 		this.institutionSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 
@@ -227,15 +228,6 @@ public class DocumentSettingRecordEditDialog extends TitleAreaDialog {
 			this.xidDomain.setText(String.valueOf(record.getXIDDomain()));
 		}
 		else {
-			/*if(			MedNet.getSettings().getExePath() != null
-					&&	MedNet.getSettings().getExePath().getParent() != null
-					&&	Files.isDirectory(MedNet.getSettings().getExePath().getParent())
-					) {
-				Path defaultDocumentPath = MedNet.getSettings().getExePath().getParent().resolve("interfaces").resolve("results");
-				this.documentPath.setText(defaultDocumentPath.toString());
-				this.errorPath.setText(defaultDocumentPath.resolve("error").toString());
-				this.archivingPath.setText(defaultDocumentPath.resolve("archive").toString());
-			}*/
 			this.purgeInterval.setText(String.valueOf(DocumentSettingRecord.DEFAULT_PURGE_INTERVAL));
 			this.xidDomain.setText("");
 		}

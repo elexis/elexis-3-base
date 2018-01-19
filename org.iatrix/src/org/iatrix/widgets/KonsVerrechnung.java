@@ -643,12 +643,13 @@ public class KonsVerrechnung implements IJournalArea {
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
 		Helpers.checkActPatKons(newPatient, newKons);
 		boolean sameKons = Helpers.twoKonsEqual(newKons, lastSelectedKons);
-		log.debug(String.format("sameKons %s newPat %s newKons %s lastSelectedKons %s",
+		log.debug(String.format("op %s sameKons %s newPat %s newKons %s lastSelectedKons %s",
+			op,
 			sameKons,
 			newPatient == null ? "null" : newPatient.getPersonalia(),
 			newKons == null ? "null" : newKons.getLabel(),
 			lastSelectedKons == null ? "null" : lastSelectedKons.getLabel()));
-		if (sameKons) {
+		if (sameKons && op != KonsActions.EVENT_UPDATE ) {
 			// log.debug(String.format("is sameKons  %s  %s", newKons, lastSelectedKons));
 			return;
 			}

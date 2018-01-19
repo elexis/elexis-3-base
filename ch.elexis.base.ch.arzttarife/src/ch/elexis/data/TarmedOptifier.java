@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang.StringUtils;
+
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
@@ -492,6 +494,10 @@ public class TarmedOptifier implements IOptifier {
 	private String checkAge(String limitsString, Konsultation kons){
 		LocalDateTime consDate = new TimeTool(kons.getDatum()).toLocalDateTime();
 		Patient patient = kons.getFall().getPatient();
+		String geburtsdatum = patient.getGeburtsdatum();
+		if(StringUtils.isEmpty(geburtsdatum)) {
+			return "Patienten Alter nicht ok, kein Geburtsdatum angegeben";
+		}
 		long patientAgeDays = patient.getAgeAt(consDate, ChronoUnit.DAYS);
 		
 		List<TarmedLeistungAge> ageLimits = TarmedLeistungAge.of(limitsString, consDate);

@@ -264,7 +264,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		if (newKons != null && newPatient != null && !newPatient.getId().equals(newKons.getFall().getPatient().getId()))
 		{
 			actPat = newKons.getFall().getPatient();
-			log.warn("Discoevered changed patient " + op  + " actPat " + actPat.getPersonalia());
+			log.warn("Discovered changed patient " + op  + " actPat " + actPat.getPersonalia());
 		} else {
 		}
 		/*
@@ -283,6 +283,19 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				// actPat != null and newKons == null means EVENT-Deselect konsultation
 				a.setKons(actPat, newKons, op);
 			}
+		}
+	}
+
+	public synchronized static void updateKonsProblems(Patient newPatient, Konsultation newKons, IJournalArea.KonsActions op){
+		if (Helpers.twoKonsEqual(actKons, newKons)) {
+			for (int i = 0; i < allAreas.size(); i++) {
+				IJournalArea a = allAreas.get(i);
+				if (a != null && a.getClass().equals(KonsProblems.class)) {
+					a.setKons(newPatient, newKons, op);
+				}
+			}
+		} else {
+			updateAllKonsAreas(newPatient, newKons, op);
 		}
 	}
 
@@ -357,24 +370,24 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				msg = "EVENT_SELECTED";
 				break;
 			case EVENT_UPDATE:
-				msg = "EVENT_UPDATE";
+				msg = "EVENT_SELECTED";
 				break;
 			case EVENT_RELOAD:
-				msg = "EVENT_RELOAD";
+				msg = "EVENT_SELECTED";
 				break;
 			case EVENT_DESELECTED:
-				msg = "EVENT_DESELECTED";
+				msg = "EVENT_SELECTED";
 				Konsultation selected_kons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 				log.debug(String.format("runInUi %s selected_kons is now: %s", msg, selected_kons));
 				newKons = selected_kons;
 				updateAllKonsAreas(actPat, newKons, KonsActions.ACTIVATE_KONS);
 				return;
 				}
+			log.debug(String.format("runInUi act %s new %s %s", actKons, msg, ev.toString()),  newKons);
 			if (!removedStaleKonsLocks) {
 				removedStaleKonsLocks = true;
 				KonsTextLock.deleteObsoleteLocks(newKons);
 			}
-			log.debug(String.format("runInUi act %s new %s %s", actKons, msg, ev.toString()),  newKons);
 			// when we get an update or select event the parameter is always not null
 			if (newKons != null) {
 				actPat = newKons.getFall().getPatient();
@@ -445,7 +458,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 		if (konsultation != null) {
 			TimeTool konsDate = new TimeTool(konsultation.getDatum());
 			if (!konsDate.isSameDay(new TimeTool())) {
-				konsultation = konsultation.getFall().neueKonsultation();
+				// konsultation = konsultation.getFall().neueKonsultation();
 			}
 		}
 		// actKons = konsultation;

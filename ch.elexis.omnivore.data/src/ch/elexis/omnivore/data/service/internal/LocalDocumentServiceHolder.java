@@ -30,7 +30,7 @@ public class LocalDocumentServiceHolder {
 	private static Optional<ILocalDocumentService> localDocumentService;
 	
 	@Reference
-	public static void bind(ILocalDocumentService service){
+	public void bind(ILocalDocumentService service){
 		LocalDocumentServiceHolder.localDocumentService = Optional.ofNullable(service);
 		
 		service.registerSaveHandler(DocHandle.class, new ISaveHandler() {
@@ -70,7 +70,7 @@ public class LocalDocumentServiceHolder {
 		});
 	}
 	
-	public static void unbind(ILocalDocumentService service){
+	public void unbind(ILocalDocumentService service){
 		LocalDocumentServiceHolder.localDocumentService = Optional.empty();
 	}
 	

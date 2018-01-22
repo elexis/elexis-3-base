@@ -42,6 +42,7 @@ import org.iatrix.data.Problem;
 import org.iatrix.util.Constants;
 import org.iatrix.util.Heartbeat;
 import org.iatrix.util.Heartbeat.IatrixHeartListener;
+import org.iatrix.util.Helpers;
 import org.iatrix.views.JournalView;
 import org.iatrix.views.ProblemView;
 import org.slf4j.Logger;
@@ -158,7 +159,7 @@ public class ProblemArea implements IJournalArea {
 							case Constants.DIAGNOSEN:
 								// open diagnosis selector
 
-								if (problem != null) {
+								if (problem != null && problemDiagnosesCodeSelectorTarget != null) {
 									try {
 										log.debug("doe problemDiagnosesCodeSelectorTarget");
 										// register as ICodeSelectorTarget
@@ -226,8 +227,7 @@ public class ProblemArea implements IJournalArea {
 				switch (colIndex) {
 				case Constants.DIAGNOSEN:
 					// open diagnosis selector
-
-					if (problem != null) {
+					if (problem != null && problemDiagnosesCodeSelectorTarget != null) {
 						try {
 							// register as ICodeSelectorTarget
 							log.debug("problemDiagnosesCodeSelectorTarget");
@@ -547,8 +547,10 @@ public class ProblemArea implements IJournalArea {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 							.showView(LeistungenView.ID);
 						// register as ICodeSelectorTarget
-						CodeSelectorHandler.getInstance()
-							.setCodeSelectorTarget(problemFixmedikationCodeSelectorTarget);
+						if (problemFixmedikationCodeSelectorTarget != null) {
+							CodeSelectorHandler.getInstance()
+								.setCodeSelectorTarget(problemFixmedikationCodeSelectorTarget);
+						}
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 						log.error("Fehler beim Anzeigen der Artikel " + ex.getMessage());
@@ -690,6 +692,7 @@ public class ProblemArea implements IJournalArea {
 	 */
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		Helpers.checkActPatKons(newPatient, newKons);
 		if (newPatient == null || actPat == null || !newPatient.getId().equals(actPat.getId()))
 		{
 			actPat = newPatient;

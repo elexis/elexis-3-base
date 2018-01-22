@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,9 +197,6 @@ public class DocumentImporter {
 				} catch (IOException ioe) {
 					LOGGER.error(logPrefix + "Unable to load the hl7 file. ", ioe);//$NON-NLS-1$
 				}
-				
-
-				JOptionPane.showMessageDialog(null, patient_institutionId );
 				
 				if(patient_institutionId != null && !patient_institutionId.isEmpty()) {
 					try {

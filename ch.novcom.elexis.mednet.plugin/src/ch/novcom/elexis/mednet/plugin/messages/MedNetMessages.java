@@ -62,7 +62,6 @@ public class MedNetMessages extends NLS {
 	public static String DocumentSettingRecordEditDialog_NotValidPath;
 	public static String DocumentSettingRecordEditDialog_NoPurgeInterval;
 	
-	public static String DocumentPreferences_institutionID;
 	public static String DocumentPreferences_institutionName;
 	public static String DocumentPreferences_category;
 	public static String DocumentPreferences_path;
@@ -79,7 +78,6 @@ public class MedNetMessages extends NLS {
 	public static String DocumentPreferences_deleteAllExplain;
 	public static String DocumentPreferences_deleteAllFailed;
 			
-	public static String FormPreferences_labelGDTPath;
 	public static String FormPreferences_labelFormsPath;
 	public static String FormPreferences_labelErrorPath;
 	public static String FormPreferences_labelArchivePath;

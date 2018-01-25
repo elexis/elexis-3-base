@@ -41,6 +41,7 @@ import com.tiff.common.ui.datepicker.EnhancedDatePickerCombo;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
@@ -84,10 +85,12 @@ public class KonsHeader implements IJournalArea {
 				public void doIt(){
 					String new_date = new TimeTool(hlKonsultationDatum.getDate().getTime()).toString(TimeTool.DATE_GER);
 					if (actKons != null && !actKons.getDatum().equals(new_date))  {
-						log.info("fireSelectionEvent from hlKonsultationDatum " + actKons.getDatum() + " => "+ new_date);
+						log.info("fire EVENT_UPDATE from hlKonsultationDatum " + actKons.getDatum() + " => "+ new_date);
 						actKons.setDatum(new_date, false);
-						JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.ACTIVATE_KONS);
-						ElexisEventDispatcher.fireSelectionEvent(actKons);
+						JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.EVENT_UPDATE);
+						ElexisEventDispatcher.getInstance().fire(
+                            new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
+						setKonsDate();
 					}
 				}
 			});
@@ -197,13 +200,23 @@ public class KonsHeader implements IJournalArea {
 		}
 	}
 
+	private void setKonsDate() {
+		hlKonsultationDatum.setDate(new TimeTool(actKons.getDatum().toString()).getTime() );
+		boolean isEditable = Helpers.hasRightToChangeConsultations(actKons, false);
+		log.debug("SetDate Enabled " + isEditable + " for " + actKons.getId() + " setVisible/parent of " + actKons.getDatum());
+		hlKonsultationDatum.setEnabled(isEditable);
+		hlKonsultationDatum.setVisible(true);
+		hlKonsultationDatum.redraw();
+		hlKonsultationDatum.update();
+	}
+
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
 		Helpers.checkActPatKons(newPatient, newKons);
 		if (newPatient == null || (newKons == null && newPatient != null))
 		{
 			actKons = newKons;
-			log.debug("setKons set actKons null");
+			log.debug("setKons set actKons null {}", op);
 			cbFall.setEnabled(false);
 
 			hlKonsultationDatum.setEnabled(false);
@@ -234,10 +247,6 @@ public class KonsHeader implements IJournalArea {
 		cbFall.setEnabled(true);
 		StringBuilder sb = new StringBuilder();
 		sb.append(actKons.getDatum());
-		hlKonsultationDatum.setDate(new TimeTool(actKons.getDatum().toString()).getTime() );
-		boolean isEditable = Helpers.hasRightToChangeConsultations(actKons, false);
-		log.debug("SetDate Enabled " + isEditable + " for " + actKons.getId() + " of " + actKons.getDatum());
-		hlKonsultationDatum.setEnabled(isEditable);
 		Mandant m = actKons.getMandant();
 		sb = new StringBuilder();
 		if (m == null) {
@@ -280,9 +289,10 @@ public class KonsHeader implements IJournalArea {
 		}
 
 		reloadFaelle(actKons);
+		setKonsDate();
 
-		log.debug(String.format("setKons actKons now %s vom %s Rechnungssteller %s enabled? %s",
-			actKons.getId(), actKons.getLabel(), sb.toString(), enabled));
+		log.debug("setKons {} actKons now {} vom {} Rechnungssteller {} enabled? {}",
+			op, actKons.getId(), actKons.getLabel(), sb.toString(), enabled);
 		konsFallArea.layout();
 	}
 

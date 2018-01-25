@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.text.model.Samdas;
@@ -194,6 +195,8 @@ public class KonsText implements IJournalArea {
 						showUnableToSaveKons(plain, notEditable);
 					} else  {
 						actKons.updateEintrag(text.getContentsAsXML(), false);
+						ElexisEventDispatcher.getInstance().fire(
+                            new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 						int new_version = actKons.getHeadVersion();
 						String samdasText = (new Samdas(actKons.getEintrag().getHead()).getRecordText());
 						if (new_version <= old_version || !plain.equals(samdasText)) {
@@ -207,7 +210,6 @@ public class KonsText implements IJournalArea {
 							}
 						} else {
 							unable_to_save_kons_id = "";
-							// TODO: Warum merkt das KonsListView trotzdem nicht ?? ElexisEventDispatcher.fireSelectionEvent(actKons);
 						}
 					}
 				} else {
@@ -323,7 +325,8 @@ public class KonsText implements IJournalArea {
 			@Override
 			public void run(){
 				actKons.purgeEintrag();
-				ElexisEventDispatcher.fireSelectionEvent(actKons);
+				ElexisEventDispatcher.getInstance().fire(
+                    new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 			}
 		};
 		versionBackAction = new Action("Vorherige Version") {

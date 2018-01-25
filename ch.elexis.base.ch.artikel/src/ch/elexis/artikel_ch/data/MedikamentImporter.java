@@ -25,8 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -91,7 +89,7 @@ public class MedikamentImporter extends ImporterPage {
 			String cmut = new String(in.substring(2, 3));
 			
 			// Pharmacode (PHAR) - 7stellig
-			String phar = new String(in.substring(3, 10)).trim();
+			String phar = new String(in.substring(3, 10));
 			
 			// EAN - 13stellig
 			String ean = new String(in.substring(83, 96)); // EAN

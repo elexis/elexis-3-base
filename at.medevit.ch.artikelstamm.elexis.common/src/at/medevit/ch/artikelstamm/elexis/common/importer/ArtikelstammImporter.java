@@ -272,13 +272,15 @@ public class ArtikelstammImporter {
 		
 		log.debug("[II] Update or import {} items...", importItemList.size());
 		for (ITEM item : importItemList) {
-			
+			String pharmaCode = String.format("%07d", item.getPHAR());
 			Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 			qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, item.getGTIN());
-			
 			ArtikelstammItem foundItem = null;
 			List<ArtikelstammItem> result = qre.execute();
-			if (result.size() == 1) {
+			if (result.size() == 0) {
+				foundItem =  ArtikelstammItem.loadByPHARNo(pharmaCode);
+				log.debug("[II] Found using loadByPHARNo {} item {}", pharmaCode,foundItem == null ? "null"  : foundItem.getId());
+			} else if (result.size() == 1) {
 				foundItem = result.get(0);
 			} else if (result.size() > 1) {
 				log.warn("[II] Found multiple items for GTIN [" + item.getGTIN() + "]");
@@ -309,9 +311,9 @@ public class ArtikelstammImporter {
 			log.trace("[II] Updating article " + foundItem.getId() + " (" + item.getDSCR() + ")");
 			
 			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice);
-			
 			subMonitor.worked(1);
 		}
+
 		subMonitor.done();
 	}
 	
@@ -324,7 +326,7 @@ public class ArtikelstammImporter {
 		values.add(cummulatedVersion + "");
 		
 		fields.add(ArtikelstammItem.FLD_PHAR);
-		values.add((item.getPHAR() != null) ? item.getPHAR().toString() : null);
+		values.add((item.getPHAR() != null) ? String.format("%07d", item.getPHAR()) : null);
 		
 		fields.add(ArtikelstammItem.FLD_BLACKBOXED);
 		SALECDType salecd = item.getSALECD();

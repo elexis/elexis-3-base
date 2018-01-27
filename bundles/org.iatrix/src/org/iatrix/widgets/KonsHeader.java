@@ -41,7 +41,9 @@ import com.tiff.common.ui.datepicker.EnhancedDatePickerCombo;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -51,7 +53,10 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnungssteller;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionedResource;
+import ch.rgw.tools.VersionedResource.ResourceItem;
 
 public class KonsHeader implements IJournalArea {
 
@@ -60,6 +65,9 @@ public class KonsHeader implements IJournalArea {
 	private Composite konsFallArea;
 	private EnhancedDatePickerCombo hlKonsultationDatum = null ;
 	private Hyperlink hlMandant;
+	private Hyperlink hlAuthor;
+	private String hlAuthorLabel = "Ersteller";
+	private String hlAuthorLabelOkay = "von Ihnen";
 	private Combo cbFall;
 	private Label cbLabel;
 	private Patient actPat = null;
@@ -69,7 +77,7 @@ public class KonsHeader implements IJournalArea {
 		tk = UiDesk.getToolkit();
 		konsFallArea = tk.createComposite(konsultationComposite);
 		konsFallArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		konsFallArea.setLayout(new GridLayout(3, false));
+		konsFallArea.setLayout(new GridLayout(4, false));
 
 		hlKonsultationDatum = new EnhancedDatePickerCombo(konsFallArea, SWT.NONE,
 			new EnhancedDatePickerCombo.ExecuteIfValidInterface() {
@@ -77,10 +85,12 @@ public class KonsHeader implements IJournalArea {
 				public void doIt(){
 					String new_date = new TimeTool(hlKonsultationDatum.getDate().getTime()).toString(TimeTool.DATE_GER);
 					if (actKons != null && !actKons.getDatum().equals(new_date))  {
-						log.info("fireSelectionEvent from hlKonsultationDatum " + actKons.getDatum() + " => "+ new_date);
+						log.info("fire EVENT_UPDATE from hlKonsultationDatum " + actKons.getDatum() + " => "+ new_date);
 						actKons.setDatum(new_date, false);
-						JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.ACTIVATE_KONS);
-						ElexisEventDispatcher.fireSelectionEvent(actKons);
+						JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.EVENT_UPDATE);
+						ElexisEventDispatcher.getInstance().fire(
+                            new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
+						setKonsDate();
 					}
 				}
 			});
@@ -91,7 +101,7 @@ public class KonsHeader implements IJournalArea {
 		if (actKons != null) {
 			actKons.setDatum(hlKonsultationDatum.getText(), false);
 		}
-		hlMandant = tk.createHyperlink(konsFallArea, "", SWT.NONE);
+		hlMandant = tk.createHyperlink(konsFallArea, StringTool.leer, SWT.NONE);
 		hlMandant.setText("--"); //$NON-NLS-1$
 		hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
@@ -104,10 +114,38 @@ public class KonsHeader implements IJournalArea {
 				});
 				if (ksl.open() == Dialog.OK) {
 					actKons.setMandant((Mandant) ksl.getSelection());
-					setKons(null, actKons, KonsActions.ACTIVATE_KONS);
+					setKons(actPat, actKons, KonsActions.ACTIVATE_KONS);
 				}
 			}
 
+		});
+
+		String autherOverride = "Ersteller der Konsultation überschreiben";
+		hlAuthor = tk.createHyperlink(konsFallArea, StringTool.leer, SWT.NONE);
+		hlAuthor.setText("--"); //$NON-NLS-1$
+		hlAuthor.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e){
+				if (actKons != null) {
+					VersionedResource resource = actKons.getEintrag();
+					if (resource != null) {
+						ResourceItem item = resource.getVersion(resource.getHeadVersion());
+						int version = resource.getHeadVersion();
+						String actUser = CoreHub.actUser.getLabel();
+						String actLabel = actKons.getLabel();
+						String actAuthor = actKons.getAuthor();
+						if (MessageDialog.openConfirm(
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+							autherOverride,
+							String.format("Wollen Sie wirklich für die aktuelle Konsultation %s mit der " +
+							"Version %s den aktuellen Ersteller (%s) durch Sie (%s)\nüberschreiben? (Keine Wirkung im Moment)",
+								actLabel, version, actAuthor, actUser))) {
+							// setKonsAuthor(actKons, actUser);
+							// JournalView.updateAllKonsAreas(actKons.getFall().getPatient(), actKons, KonsActions.ACTIVATE_KONS);
+						}
+					}
+				}
+			}
 		});
 
 		Composite fallArea = tk.createComposite(konsFallArea);
@@ -139,28 +177,56 @@ public class KonsHeader implements IJournalArea {
 					if (msd.open() == 0) {
 						// TODO check compatibility of assigned problems
 						actKons.setFall(nFall);
-						setKons(null, actKons, KonsActions.ACTIVATE_KONS);
+						setKons(actPat, actKons, KonsActions.ACTIVATE_KONS);
 					}
 				}
 			}
 		});
 		tk.adapt(cbFall);
 		cbFall.setEnabled(false);
+	}
 
+	private void setKonsAuthor(Konsultation kons, String newAuthor) {
+		VersionedResource resource = kons.getEintrag();
+		if (resource != null) {
+			ResourceItem item = resource.getVersion(resource.getHeadVersion());
+			if (item != null) {
+				item.remark = newAuthor;
+			}
+			String samdasText = (new Samdas(actKons.getEintrag().getHead()).getRecordText());
+			String newText =  samdasText + " => " + newAuthor;
+			log.debug(String.format("setKonsAuthor for id %s txt %s", kons.getId(), newText));
+			kons.updateEintrag(newText, false);
+		}
+	}
+
+	private void setKonsDate() {
+		hlKonsultationDatum.setDate(new TimeTool(actKons.getDatum().toString()).getTime() );
+		boolean isEditable = Helpers.hasRightToChangeConsultations(actKons, false);
+		log.debug("SetDate Enabled " + isEditable + " for " + actKons.getId() + " setVisible/parent of " + actKons.getDatum());
+		hlKonsultationDatum.setEnabled(isEditable);
+		hlKonsultationDatum.setVisible(true);
+		hlKonsultationDatum.redraw();
+		hlKonsultationDatum.update();
 	}
 
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		Helpers.checkActPatKons(newPatient, newKons);
 		if (newPatient == null || (newKons == null && newPatient != null))
 		{
 			actKons = newKons;
-			log.debug("setKons set actKons null");
+			log.debug("setKons set actKons null {}", op);
 			cbFall.setEnabled(false);
 
 			hlKonsultationDatum.setEnabled(false);
 			if (hlMandant != null) {
-				hlMandant.setText("");
+				hlMandant.setText(StringTool.leer);
 				hlMandant.setEnabled(false);
+			}
+			if (hlAuthor != null) {
+				hlAuthor.setText(StringTool.leer);
+				hlAuthor.setEnabled(false);
 			}
 
 			reloadFaelle(null);
@@ -181,10 +247,6 @@ public class KonsHeader implements IJournalArea {
 		cbFall.setEnabled(true);
 		StringBuilder sb = new StringBuilder();
 		sb.append(actKons.getDatum());
-		hlKonsultationDatum.setDate(new TimeTool(actKons.getDatum().toString()).getTime() );
-		boolean isEditable = Helpers.hasRightToChangeConsultations(actKons, false);
-		log.debug("SetDate Enabled " + isEditable + " for " + actKons.getId() + " of " + actKons.getDatum());
-		hlKonsultationDatum.setEnabled(isEditable);
 		Mandant m = actKons.getMandant();
 		sb = new StringBuilder();
 		if (m == null) {
@@ -209,11 +271,28 @@ public class KonsHeader implements IJournalArea {
 					"Sie haben keine Erlaubnis, Konsultation jemanden anderem zuzuordnen");
 		}
 		hlMandant.setText(sb.toString());
+		hlAuthor.setBackground(konsFallArea.getBackground());
+		if (Helpers.userIsKonsAuthor(actKons)) {
+			hlAuthor.setEnabled(false);
+			hlAuthor.setText(hlAuthorLabelOkay);
+		} else {
+			hlAuthor.setText(hlAuthorLabel);
+			hlAuthor.setEnabled(enabled);
+		}
+		if (hlAuthor.isEnabled()) {
+			hlAuthor.setToolTipText(
+				String.format("Sie können den Autor (%s) der aktuellen Konsultation auf Sie (%s) umschreiben",
+					actKons.getAuthor(),
+					CoreHub.actUser.getLabel()));
+		} else {
+			hlAuthor.setToolTipText(StringTool.leer);
+		}
 
 		reloadFaelle(actKons);
+		setKonsDate();
 
-		log.debug(String.format("setKons actKons now %s vom %s Rechnungssteller %s enabled? %s",
-			actKons.getId(), actKons.getLabel(), sb.toString(), enabled));
+		log.debug("setKons {} actKons now {} vom {} Rechnungssteller {} enabled? {}",
+			op, actKons.getId(), actKons.getLabel(), sb.toString(), enabled);
 		konsFallArea.layout();
 	}
 

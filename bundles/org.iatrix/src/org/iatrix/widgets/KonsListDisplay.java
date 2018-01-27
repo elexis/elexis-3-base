@@ -263,6 +263,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		Helpers.checkActPatKons(newPatient, newKons);
 		if (newPatient == null ) {
 			actPat = newPatient;
 			log.debug("setPatient is null");

@@ -596,8 +596,10 @@ public class KonsText implements IJournalArea {
 		Nachher neu die von Thomas aus KonsDetailView */
 		if (mode == false) {
 			// save entry on deactivation if text was edited
-			if (actKons != null && (text.isDirty())) {
+			if (actKons != null && (text.isDirty()) || textChanged()) {
 				actKons.updateEintrag(text.getContentsAsXML(), false);
+				logEvent(String.format("updateEintrag activation vers %s dtext.isDirty ",
+					actKons.getHeadVersion()));
 				text.setDirty(false);
 			}
 		} else {

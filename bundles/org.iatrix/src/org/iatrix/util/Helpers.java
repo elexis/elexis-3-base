@@ -439,4 +439,20 @@ public class Helpers {
 		}
 		return true;
 	}
+	/**
+	 * @param konsultation the concerned consultations
+	 * 
+	 * @return whether user may is the author of this consultation
+	 */
+	public static boolean userIsKonsAuthor(Konsultation kons){
+		return kons.getAuthor().isEmpty() || kons.getAuthor().contentEquals(CoreHub.actUser.getLabel()) ;
+	}
+	/**
+	 * @param konsultation the concerned consultations
+	 * 
+	 * @return whether user may edit this consultation
+	 */
+	public static boolean userMayEditKons(Konsultation kons){
+		return userIsKonsAuthor(kons) && hasRightToChangeConsultations(kons, false) ;
+	}
 }

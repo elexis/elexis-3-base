@@ -542,10 +542,22 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	 * @since 3.4
 	 */
 	public static int getAL(Verrechnet verrechnet){
+		// if price was changed, use TP as AL
+		boolean changedPrice = verrechnet.isChangedPrice();
+		if (changedPrice) {
+			String tpString = verrechnet.get(Verrechnet.SCALE_TP_SELLING);
+			if (tpString != null) {
+				try {
+					return (int) Double.parseDouble(tpString);
+				} catch (NumberFormatException ne) {
+					// ignore, try resolve from IVerrechenbar
+				}
+			}
+		}
 		String alString = verrechnet.getDetail(EXT_VERRRECHNET_AL);
 		if (alString != null) {
 			try {
-				return Integer.parseInt(alString);
+				return (int) Double.parseDouble(alString);
 			} catch (NumberFormatException ne) {
 				// ignore, try resolve from IVerrechenbar
 			}
@@ -572,7 +584,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 		String tlString = verrechnet.getDetail(EXT_VERRRECHNET_TL);
 		if (tlString != null) {
 			try {
-				return Integer.parseInt(tlString);
+				return (int) Double.parseDouble(tlString);
 			} catch (NumberFormatException ne) {
 				// ignore, try resolve from IVerrechenbar
 			}

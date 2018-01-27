@@ -24,3 +24,13 @@
 ** Drop a verrechenbar item into the verrechnbar
 ** The total must be updated
 
+Testing changing assigned user
+* Select a kons not being from you with an empty content
+** Change author to you
+** Verify that the labels change
+** Change to another konsultation
+** Verify that the labels change
+** Change back to your konsultation
+** Show the attributes you als author?
+* Repeat the same with a  konsultation which has text in it
+

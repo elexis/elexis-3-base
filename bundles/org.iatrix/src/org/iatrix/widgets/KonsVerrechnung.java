@@ -115,10 +115,12 @@ public class KonsVerrechnung implements IJournalArea {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
 				try {
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-						.showView(LeistungenView.ID);
-					CodeSelectorHandler.getInstance()
-						.setCodeSelectorTarget(konsultationVerrechnungCodeSelectorTarget);
+					if (konsultationVerrechnungCodeSelectorTarget != null) {
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(LeistungenView.ID);
+						CodeSelectorHandler.getInstance()
+							.setCodeSelectorTarget(konsultationVerrechnungCodeSelectorTarget);
+					}
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 					log.error("Fehler beim Starten des Leistungscodes " + ex.getMessage());
@@ -639,14 +641,15 @@ public class KonsVerrechnung implements IJournalArea {
 
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
+		Helpers.checkActPatKons(newPatient, newKons);
 		boolean sameKons = Helpers.twoKonsEqual(newKons, lastSelectedKons);
-		Helpers.checkActPatKons(actPat, lastSelectedKons);
-		log.debug(String.format("sameKons %s newPat %s newKons %s lastSelectedKons %s",
+		log.debug(String.format("op %s sameKons %s newPat %s newKons %s lastSelectedKons %s",
+			op,
 			sameKons,
 			newPatient == null ? "null" : newPatient.getPersonalia(),
 			newKons == null ? "null" : newKons.getLabel(),
 			lastSelectedKons == null ? "null" : lastSelectedKons.getLabel()));
-		if (sameKons) {
+		if (sameKons && op != KonsActions.EVENT_UPDATE ) {
 			// log.debug(String.format("is sameKons  %s  %s", newKons, lastSelectedKons));
 			return;
 			}

@@ -20,5 +20,7 @@ public class Messages extends NLS {
 	public static String  MiGelImporter_ModeUpdateAdd = ch.elexis.base.l10n.Messages.MiGelImporter_ModeUpdateAdd;
 	public static String  MiGelImporter_PleaseSelectFile = ch.elexis.base.l10n.Messages.MiGelImporter_PleaseSelectFile;
 	public static String  MiGelImporter_ReadMigel = ch.elexis.base.l10n.Messages.MiGelImporter_ReadMigel;
-	public static String  MiGelDetailDisplay_PriceUnit = ch.elexis.base.l10n.Messages.MiGelDetailDisplay_PriceUnit;
+	public static String  MiGelDetailDisplay_Price = ch.elexis.base.l10n.Messages.MiGelDetailDisplay_Price;
+	public static String  MiGelDetailDisplay_Unit = ch.elexis.base.l10n.Messages.MiGelDetailDisplay_Unit;
+	public static String  MiGelDetailDisplay_Amount = ch.elexis.base.l10n.Messages.MiGelDetailDisplay_Amount;
 }

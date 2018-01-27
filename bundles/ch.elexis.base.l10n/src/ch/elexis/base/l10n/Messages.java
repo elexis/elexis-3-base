@@ -1159,7 +1159,9 @@ public class Messages extends NLS {
 	public static String MesswerteView_enterNewValue;
 	public static String MesswerteView_new;
 	public static String MesswerteView_noPatSelected;
-	public static String MiGelDetailDisplay_PriceUnit;
+	public static String MiGelDetailDisplay_Price;
+	public static String MiGelDetailDisplay_Unit;
+	public static String MiGelDetailDisplay_Amount;
 	public static String MiGelImporter_ClearAllData;
 	public static String MiGelImporter_ModeCreateNew;
 	public static String MiGelImporter_ModeUpdateAdd;

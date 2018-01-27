@@ -337,6 +337,8 @@ public class KonsText implements IJournalArea {
 					"Konsultationstext ersetzen",
 					"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine frühere Version desselben Eintrags ersetzen?")) {
 					setKonsText(actKons, displayedVersion - 1, false);
+					ElexisEventDispatcher.getInstance().fire(
+                        new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 				}
 			}
 		};
@@ -348,6 +350,8 @@ public class KonsText implements IJournalArea {
 					"Konsultationstext ersetzen",
 					"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine spätere Version desselben Eintrags ersetzen?")) {
 					setKonsText(actKons, displayedVersion + 1, false);
+					ElexisEventDispatcher.getInstance().fire(
+                        new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 				}
 			}
 		};
@@ -365,6 +369,8 @@ public class KonsText implements IJournalArea {
 						"Wollen Sie wirklich den aktuellen Konsultationstext gegen die Version "
 							+ selectedVersion + " desselben Eintrags ersetzen?")) {
 						setKonsText(actKons, selectedVersion, false);
+						ElexisEventDispatcher.getInstance().fire(
+                            new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 					}
 				}
 

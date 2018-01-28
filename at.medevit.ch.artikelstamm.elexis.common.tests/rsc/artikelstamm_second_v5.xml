@@ -114,5 +114,24 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <PEXF>34.23</PEXF>
             <PPUB>54.70</PPUB>
         </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680651600014</GTIN>
+            <PHAR>6571270</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>LYNPARZA Kaps 50 mg 448 Stk</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <COMP>
+                <NAME>AstraZeneca AG</NAME>
+                <GLN/>
+            </COMP>
+            <PKG_SIZE>4</PKG_SIZE>
+            <MEASURE>Kapsel(n)</MEASURE>
+            <MEASUREF>Kapsel(n)</MEASUREF>
+            <DOSAGE_FORM>Kapseln</DOSAGE_FORM>
+            <DOSAGE_FORMF>Capsules</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>A</IKSCAT>
+            <PRODNO>6516001</PRODNO>
+        </ITEM>
     </ITEMS>
 </ARTIKELSTAMM>

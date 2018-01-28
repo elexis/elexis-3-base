@@ -168,9 +168,10 @@ public class ArtikelstammImporter {
 			long endTime = System.currentTimeMillis();
 			ElexisEventDispatcher.reload(ArtikelstammItem.class);
 			
-			log.info("[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) + "sec");
+			log.info("[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) + "sec. Will rebuild ATCCodeCache");
 			
 			ATCCodeCache.rebuildCache(subMonitor.split(5));
+			log.info("[PI] Artikelstamm finished rebuilding ATCCodeCache");
 		} finally {
 			lock.unlock();
 		}
@@ -294,6 +295,7 @@ public class ArtikelstammImporter {
 			}
 			
 			boolean keepOverriddenPublicPrice = false;
+			boolean keepOverriddenPkgSize = false;
 			
 			if (foundItem == null) {
 				String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
@@ -307,10 +309,11 @@ public class ArtikelstammImporter {
 			} else {
 				// check if article has overridden public price
 				keepOverriddenPublicPrice = foundItem.isUserDefinedPrice();
+				keepOverriddenPkgSize = foundItem.isUserDefinedPkgSize();
 			}
 			log.trace("[II] Updating article " + foundItem.getId() + " (" + item.getDSCR() + ")");
 			
-			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice);
+			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice, keepOverriddenPkgSize);
 			subMonitor.worked(1);
 		}
 
@@ -318,7 +321,7 @@ public class ArtikelstammImporter {
 	}
 	
 	private static void setValuesOnArtikelstammItem(ArtikelstammItem ai, ITEM item,
-		final int cummulatedVersion, boolean keepOverriddenPublicPrice){
+		final int cummulatedVersion, boolean keepOverriddenPublicPrice, boolean keepOverriddenPkgSize){
 		List<String> fields = new ArrayList<>();
 		List<String> values = new ArrayList<>();
 		
@@ -417,13 +420,20 @@ public class ArtikelstammImporter {
 		values.add(
 			(item.isLPPV() != null && item.isLPPV()) ? StringConstants.ONE : StringConstants.ZERO);
 		
-		String pkgSize = (item.getPKGSIZE() != null) ? item.getPKGSIZE().toString() : null;
-		fields.add(ArtikelstammItem.FLD_PKG_SIZE);
-		values.add((pkgSize != null && pkgSize.length() > 6) ? pkgSize.substring(0, 6).toString()
-				: pkgSize);
-		if (pkgSize != null && pkgSize.length() > 6) {
-			log.warn("[II] Delimited pkg size for [{}] being [{}] to 6 characters.", ai.getId(),
-				item.getPKGSIZE().toString());
+		if (!keepOverriddenPkgSize) {
+			String pkgSize = (item.getPKGSIZE() != null) ? item.getPKGSIZE().toString() : null;
+			values.add((pkgSize != null && pkgSize.length() > 6) ? pkgSize.substring(0, 6).toString()
+					: pkgSize);
+			if (pkgSize != null && pkgSize.length() > 6) {
+				log.warn("[II] Delimited pkg size for [{}] being [{}] to 6 characters.", ai.getId(),
+					item.getPKGSIZE().toString());
+			}
+		} else {
+			if(item.getPKGSIZE()!=null) {
+				ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE,
+					item.getPKGSIZE().toString());
+				log.info("[II] [{}] Updating PKG_SIZE override store to [{}]", ai.getId(), item.getPKGSIZE());
+			}
 		}
 		
 		ai.set(fields.toArray(new String[0]), values.toArray(new String[0]));

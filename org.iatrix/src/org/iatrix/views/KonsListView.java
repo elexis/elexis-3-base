@@ -39,6 +39,7 @@ import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -98,6 +99,17 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 					displaySelectedConsultation(newCons);
 				}
 			};
+
+	private final ElexisUiEventListenerImpl eeli_fall = new ElexisUiEventListenerImpl(Fall.class,
+			ElexisEvent.EVENT_SELECTED) {
+			@Override
+			public void runInUi(ElexisEvent ev){
+				Fall fall = (Fall) ev.getObject();
+				boolean isSamePatient = actPatId != null && fall != null && actPatId.equals(fall.getPatient().getId());
+				log.debug("eeli_fall {} fall {} same {}", ev.getType(), fall == null ? "null" :  fall.getLabel(), isSamePatient);
+				konsListDisplay.setShowAllCases(!isSamePatient);
+			}
+		};
 
 	private final ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(Konsultation.class) {
 		@Override
@@ -212,7 +224,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 	@Override
 	public void visible(boolean mode){
 		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_kons);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_fall, eeli_kons);
 			Konsultation newKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if (newKons != null) {
 				String msg = newKons.getId()+ " " + newKons.getLabel() + " " + newKons.getFall().getPatient().getPersonalia();
@@ -227,7 +239,7 @@ public class KonsListView extends ViewPart implements IActivationListener, ISave
 			}
 			displaySelectedConsultation(newKons);
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_kons);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_fall, eeli_kons);
 		}
 	}
 

@@ -39,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.actions.KonsFilter;
 import ch.elexis.core.ui.actions.ObjectFilterRegistry;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
@@ -66,6 +68,7 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 
 	// if false, only show the charges of the latest 2 consultations
 	private boolean showAllCharges = false;
+	private boolean showAllCases = true;
 
 	// if false, only show the latest MAX_SHOWN_CONSULTATIONS
 	private boolean showAllConsultations = false;
@@ -155,17 +158,21 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (konsDataList) {
-				log.debug("loaderJob started patient " + (patient == null ? "null" : patient.getPersonalia()));
+				log.debug("loaderJob started patient {} showAllCases {}", (patient == null ? "null" : patient.getPersonalia()),
+						showAllCases);
 				konsDataList.clear();
 
 				List<Konsultation> konsList = new ArrayList<>();
 
 				if (patient != null) {
-					Fall[] faelle = patient.getFaelle();
+					Fall[] faelle  = null;
+					if (showAllCases) {faelle = patient.getFaelle(); } else {
+						faelle = new Fall[]  { (Fall) ElexisEventDispatcher.getSelected(Fall.class) };
+					}
 
 					if (faelle.length > 0) {
 						IFilter globalFilter =
-							ObjectFilterRegistry.getInstance().getFilterFor(Konsultation.class);
+								ObjectFilterRegistry.getInstance().getFilterFor(Fall.class);
 
 						Query<Konsultation> query = new Query<>(Konsultation.class);
 						query.startGroup();
@@ -261,6 +268,12 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 		}
 	}
 
+	public void setShowAllCases(boolean showAll) {
+		showAllCases = showAll;
+		log.debug("setShowAllCases {}", showAllCases);
+		dataLoader.cancel();
+		reload(false, null);
+	}
 	@Override
 	public void setKons(Patient newPatient, Konsultation newKons, KonsActions op){
 		Helpers.checkActPatKons(newPatient, newKons);
@@ -277,16 +290,16 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 				!Helpers.twoKonsEqual(actKons, newKons)){
 			actPat = newPatient;
 			actKons = newKons;
-			log.debug(String.format("setPatient %s op %s newKons %s ",
-				newPatient == null ? "null" : newPatient.getPersonalia(), op, 
-				newKons == null ? "null" : newKons.getLabel()));
+			log.debug("setPatient {} op {} all {} newKons {}",
+				newPatient == null ? "null" : newPatient.getPersonalia(), op, showAllCases,
+				newKons == null ? "null" : newKons.getLabel());
 			dataLoader.cancel();
 			reload(true, null);
 			dataLoader.setPatient(newPatient, showAllCharges, showAllConsultations);
 			dataLoader.schedule();
 		} else {
 			if (newKons!= null) {
-				log.debug(String.format("setPatient skip reloading %s op %s vom %s ", newPatient.getPersonalia(), op, newKons.getLabel()));
+				log.debug("setPatient skip reloading {} op {} vom {} showAllCases {}", newPatient.getPersonalia(), op, newKons.getLabel(), showAllCases);
 			}
 			return;
 		}

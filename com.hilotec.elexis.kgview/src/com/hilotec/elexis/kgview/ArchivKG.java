@@ -266,21 +266,37 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	/**
 	 * ArchivKG zum angegebenen Patienten laden.
 	 */
-	private void loadPatient(Patient pat){
-		if (pat == null) {
-			text.setText("Kein Patient ausgewählt!");
-			return;
-		}
-		
-		// Inhalt fuer Textfeld generieren
-		StringBuilder sb = new StringBuilder();
-		sb.append("<form>");
-		for (Konsultation k : getKonsultationen(pat, sortRev)) {
-			processKonsultation(k, sb);
-		}
-		sb.append("</form>");
-		text.setText(sb.toString());
-	}
+    private void loadPatient(final Patient pat){
+        if (pat == null) {
+            text.setText("Kein Patient ausgewählt!");
+            return;
+        }
+        
+        //multithreading to avoid directly updating the UI which causes Illegal thread access
+        Runnable runnable = new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                UiDesk.asyncExec(new Runnable() {
+                    @Override
+                    public void run(){
+                        // Inhalt fuer Textfeld generieren
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("<form>");
+                        for (Konsultation k : getKonsultationen(pat, sortRev)) {
+                            processKonsultation(k, sb);
+                        }
+                        sb.append("</form>");
+                        text.setText(sb.toString());
+                    }
+                });     
+            }
+        };
+        new Thread(runnable).start();
+    }
 	
 	/**
 	 * Neu laden
@@ -349,10 +365,16 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 		sb.append("<br/><br/>");
 	}
 	
-	private String cleanUp(String text){
-		return text.replace(">", "&gt;").replace("<", "&lt;").replace("\n", "<br/>");
-	}
-	
+    private String cleanUp(String text){
+        return text
+                .replace("&", "&amp;")
+                .replace(">", "&gt;")
+                .replace("<", "&lt;")
+                .replace("\n", "<br/>")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
+    }	
+
 	public void catchElexisEvent(final ElexisEvent ev){
 		UiDesk.asyncExec(new Runnable() {
 			@Override

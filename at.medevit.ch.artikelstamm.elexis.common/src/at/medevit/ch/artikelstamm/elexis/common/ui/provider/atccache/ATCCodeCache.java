@@ -121,7 +121,8 @@ public class ATCCodeCache {
 		cache = new HashMap<String, Integer>(numberOfATCCodes);
 	
 		TreeMap<String, Integer> tm = new TreeMap<String, Integer>();
-		String query = "SELECT " + ArtikelstammItem.FLD_ATC + " FROM " + ArtikelstammItem.TABLENAME;
+		String query = "SELECT DISTINCT(" + ArtikelstammItem.FLD_ATC + ") FROM " + ArtikelstammItem.TABLENAME;
+		log.debug("ArtikelstammImporter {} numberOfATCCodes using query {}:" ,numberOfATCCodes,  query);
 		Stm stm = PersistentObject.getConnection().getStatement();
 		ResultSet rs = stm.query(query);
 		try {

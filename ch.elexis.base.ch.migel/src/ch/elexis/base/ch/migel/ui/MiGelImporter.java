@@ -140,7 +140,7 @@ public class MiGelImporter extends ImporterPage {
 				}
 				// category only 1 line and max 80 char
 				if(!category.isEmpty()) {
-					sb.append(StringTool.getFirstLine(category, 80)).append(" - ");
+					sb.append(StringTool.getFirstLine(category, 80, "[\\n\\r]")).append(" - ");
 				}
 				sb.append(ImportFields.NAME.getStringValue(line));
 				

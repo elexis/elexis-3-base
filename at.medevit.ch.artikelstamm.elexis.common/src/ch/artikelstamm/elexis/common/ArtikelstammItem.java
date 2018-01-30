@@ -56,6 +56,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	public static final String TABLENAME = "ARTIKELSTAMM_CH";
 	private static final String VERSION_ENTRY_ID = "VERSION";
 	static final String VERSION = "1.3.0";
+	private static int IS_USER_DEFINED_PKG_SIZE = -999999;
 	
 	//@formatter:off
 	/** Eintrag zugeh. zu  */ public static final String FLD_CUMMULATED_VERSION = "CUMM_VERSION";
@@ -88,6 +89,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE";
 	public static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE ="PPUB_OVERRIDE_STORE";
+	public static final String EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE ="PKG_SIZE_OVERRIDE_STORE";
 	
 	/** Definition of the database table */
 	static final String createDB =
@@ -318,7 +320,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public int getVerpackungsEinheit(){
-		return checkZero(get(FLD_PKG_SIZE));
+		return Math.abs(checkZero(get(FLD_PKG_SIZE)));
 	}
 	
 	@Override
@@ -769,12 +771,76 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return (get(FLD_LPPV).equals(StringConstants.ONE)) ? true : false;
 	}
 	
+	@Override
+	public boolean isUserDefinedPkgSize(){
+		return getUserDefinedPkgSize() != IS_USER_DEFINED_PKG_SIZE;
+	}
+
+	@Override
+	public void setUserDefinedPkgSize(boolean activate) {
+		if (activate) {
+			int value = IS_USER_DEFINED_PKG_SIZE;
+			String pkgSize = get(FLD_PKG_SIZE);
+			try {
+				value = new Integer(pkgSize.trim());
+			} catch (NumberFormatException nfe) {
+				log.error("Error #setUserDefinedPrice [{}] value is [{}], setting 0", getId(),
+					pkgSize);
+				pkgSize = "0";
+			}
+			setExtInfoStoredObjectByKey(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, pkgSize);
+			setUserDefinedPkgSizeValue(value);
+
+		} else {
+			String ppubStored =
+				(String) getExtInfoStoredObjectByKey(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE);
+			set(FLD_PKG_SIZE, ppubStored);
+			setExtInfoStoredObjectByKey(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, null);
+		}
+	}
+	/**
+	 * Set the price as user-defined (i.e. overridden) price. This will internally store the price
+	 * as negative value.
+	 * 
+	 * @param value
+	 */
+	public void setUserDefinedPkgSizeValue(int value){
+		if (value < 0) {
+			throw new IllegalArgumentException("value must not be lower than 0");
+		}
+		log.debug("setUserDefinedPkgSizeValue Verpackungseinheit gtin  {}  value {}", getGTIN(), value);
+		set(FLD_PKG_SIZE, "-" + value);
+	}
+	
+
+	/**
+	 * @return the overridden public price value if overridden and not null. If the price
+	 * was not overridden, also <code>null</code> is returned.
+	 */
+	public int getUserDefinedPkgSize(){
+		String oldValue  = get(FLD_PKG_SIZE);
+		if (oldValue != null && oldValue.startsWith("-")) {
+			try {
+				return -(new Integer(oldValue.trim()));
+			} catch (NumberFormatException nfe) {
+				log.error("Error #getUserDefinedVerpackungseinheit [{}] value is [{}], setting 0", getId(),
+					oldValue);
+				return IS_USER_DEFINED_PKG_SIZE;
+			}
+		}
+		return IS_USER_DEFINED_PKG_SIZE;
+	}
+	
 	public int getVerpackungseinheit(){
-		return getVerpackungsEinheit();
+		return Math.abs(getVerpackungsEinheit());
 	}
 	
 	public void setVerpackungseinheit(int vpe){
-		set(FLD_PKG_SIZE, vpe + "");
+		log.debug("phar {} gtin {} setVerpackungseinheit {} is {} ", getPHAR(), getGTIN(), vpe, getVerpackungseinheit());
+		if (vpe != getVerpackungseinheit()) {
+			setUserDefinedPkgSizeValue(vpe);
+		}
+ 		set(FLD_PKG_SIZE, vpe + "");
 	}
 	
 	@Override

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ARTIKELSTAMM xmlns="http://elexis.ch/Elexis_Artikelstamm_v5" CREATION_DATETIME="2017-12-25T00:00:00.000+01:00" BUILD_DATETIME="2017-12-25T00:00:00.000+01:00" DATA_SOURCE="oddb2xml">
+    <PRODUCTS>
+        <PRODUCT>
+            <PRODNO>2848601</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>Ancopir Inj Lös</DSCR>
+            <DSCRF>Ancopir sol inj</DSCRF>
+            <ATC>A11DB</ATC>
+            <SUBSTANCE>Verschiedene Kombinationen</SUBSTANCE>
+        </PRODUCT>
+        <PRODUCT>
+            <PRODNO>1521901</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>Zymafluor 0.25 mg, Tabletten</DSCR>
+            <DSCRF/>
+            <ATC>A01AA01</ATC>
+        </PRODUCT>
+        <PRODUCT>
+            <PRODNO>1610501</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>Hirudoid Creme 3 mg/g</DSCR>
+            <DSCRF>Hirudoid crème 3 mg/g</DSCRF>
+            <ATC>C05BA01</ATC>
+            <SUBSTANCE>Heparinoidum (chondroitini polysulfas)</SUBSTANCE>
+        </PRODUCT>
+    </PRODUCTS>
+    <LIMITATIONS>
+        <LIMITATION>
+            <LIMNAMEBAG>240PUNKTE</LIMNAMEBAG>
+            <DSCR>Gesamthaft zugelassen:
+&lt;b&gt;240&lt;/b&gt; Punkte</DSCR>
+            <DSCRF>Prescription limitée au maximum à:
+&lt;b&gt;240&lt;/b&gt; points</DSCRF>
+            <LIMITATION_PTS>240</LIMITATION_PTS>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>ADCETRIS2</LIMNAMEBAG>
+            <DSCR>Für eine Therapiedauer von maximal 16 Zyklen nach Kostengutsprache durch den Krankenversicherer aufgrund der Beurteilung durch den Vertrauensarzt.&lt;br&gt;
+Zur Behandlung von rezidiviertem oder refraktärem CD30 positivem Hodgkin-Lymphom (HL) nach autologer Stammzell- Transplantation (SZT) oder nach zumindest zwei vorherigen Behandlungen, falls eine SZT keine Behandlungsmöglichkeit darstellt sowie zur Behandlung von rezidiviertem oder refraktärem (nach Chemotherapie oder SZT) systemischem anaplastischem grosszelligem Lymphom (sALCL).&lt;br&gt;
+Der behandelnde Arzt ist verpflichtet, die erforderlichen Daten laufend im vorgegebenen Internettool des Registers, abrufbar auf http://www.lymphomaregistry.ch, zu erfassen. Eine schriftliche Einwilligung des Patienten muss vorliegen. Es sind folgende Daten zu erfassen:&lt;br&gt;
+1) Geburtsjahr, Geschlecht und das Gewicht der Patienten und Indikationsstellung (HL oder sALCL) sowie die Vortherapien für HL oder sALCL,&lt;br&gt;
+2) Applikationsdatum, Dosierung und Anzahl verwendete Ampullen von Adcetris pro Zyklus, Zusatztherapien, Datum Therapieende.
+
+
+</DSCR>
+            <DSCRF>Pour une durée de traitement maximale de 16 cycles après obtention de la garantie de prise en charge des frais par l’assurance maladie, après évaluation par le médecin-conseil.&lt;br&gt;
+Pour le traitement du lymphome hodgkinien (LH) CD30 positif, récidivant ou réfractaire, après une greffe autologue de cellules souches (ASCT) ou après au moins deux traitements antérieurs quand l’ASCT n’est pas une option de traitement, et pour le traitement du lymphome anaplasique à grandes cellules systémique (LAGCs) récidivant ou réfractaire (après chimiothérapie ou ACST).&lt;br&gt;
+Le médecin traitant est responsable de tenir à jour et d’enregistrer les données demandées dans le registre indiqué, disponible sous http://www.lymphomaregistry.ch. Le patient doit signer une lettre de consentement. Les données suivantes doivent être enregistrées:&lt;br&gt;
+1) année de naissance, sexe et poids du patient, indication thérapeutique (LH ou LAGCs) et traitements antérieurs du LH ou du LAGCs,&lt;br&gt;
+2) date d’utilisation, dosage et nombre d’ampoules d’Adcetris utilisées par cycle, traitements complémentaires et date de fin du traitement.
+</DSCRF>
+            <LIMITATION_PTS>1</LIMITATION_PTS>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>BLUTPRODUKTE</LIMNAMEBAG>
+            <DSCR>Preisberechnung für Blutpräparate aufgrund des Fabrikabgabepreises zuzüglich einer Fixmarge wegen der speziellen Verteilersituation (praktisch kein Zwischenhandel) von Fr. 40.-- zuzüglich MWST.  Diese Berechnung gilt nicht für die Humanalbumine.</DSCR>
+            <DSCRF>Calculation des prix pour préparations sanguines sur la base des prix "ex factory" plus une marge fixe de fr. 40.-- à cause de la situation particulière de distribution (pratiquement pas de commerce de grossiste et détailliste) plus la TVA. Cette calculation n'est pas valable pour l'albumine humaine.</DSCRF>
+            <LIMITATION_PTS>1</LIMITATION_PTS>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>YONDELIS</LIMNAMEBAG>
+            <DSCR>Behandlung von Patienten mit Liposarkom und Leimyosarkom nach Versagen oder Intoleranz von Anthrazyklinen und Ifosfamid.</DSCR>
+            <DSCRF>Traitement de patients atteints de liposarcome et de léiomyosarcome, après échec ou intolérance des traitements à base d'anthracyclines et d'ifosfamide.</DSCRF>
+            <LIMITATION_PTS>1</LIMITATION_PTS>
+        </LIMITATION>
+        <LIMITATION>
+            <LIMNAMEBAG>ZYVOXID</LIMNAMEBAG>
+            <DSCR>Behandlung nosokomialer Pneumonien,&lt;br&gt;
+komplizierter Haut- und Weichteilinfektionen,&lt;br&gt;
+Vancomycin-resistenter Enterococcus faecium-Infektionen einschliesslich Bakteriämie.</DSCR>
+            <DSCRF>Traitement de la pneumonie nosocomiale,&lt;br&gt;
+des infections compliquées de la peau et des parties molles,&lt;br&gt;
+des infections à l'Enterococcus faecium résistant à la vancomycine, y compris la bactériémie.</DSCRF>
+            <LIMITATION_PTS>1</LIMITATION_PTS>
+        </LIMITATION>
+    </LIMITATIONS>
+    <ITEMS>
+        <ITEM PHARMATYPE="N">
+            <GTIN>0040565124308</GTIN>
+            <PHAR>4236863</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>ACTICOAT Flex 7 Wundverband 10x12.5cm 5 Stk</DSCR>
+            <DSCRF>ACTICOAT Flex 7 pansement vulné 10x12.5cm 5 pce</DSCRF>
+            <COMP>
+                <GLN>7601001251861</GLN>
+            </COMP>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>0040565124346</GTIN>
+            <PHAR>4236857</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>ACTICOAT Flex 7 Wundverband 5x5cm 5 Stk</DSCR>
+            <DSCRF>ACTICOAT Flex 7 pansement vulné 5x5cm 5 pce</DSCRF>
+            <COMP>
+                <GLN>7601001251861</GLN>
+            </COMP>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>0899722000340</GTIN>
+            <PHAR>8111611</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>Coral mineral K2 Kapseln 90 Stk</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <PEXF>46.26</PEXF>
+            <PPUB>73.95</PPUB>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>4260057661517</GTIN>
+            <PHAR>8111718</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>Inkosport Activ Pro 80 Himbeer - Joghurt Ds 750g</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <PEXF>34.23</PEXF>
+            <PPUB>54.70</PPUB>
+        </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680651600014</GTIN>
+            <PHAR>6571270</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>LYNPARZA Kaps 50 mg 448 Stk</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <COMP>
+                <NAME>AstraZeneca AG</NAME>
+                <GLN/>
+            </COMP>
+            <PKG_SIZE>4</PKG_SIZE>
+            <MEASURE>Kapsel(n)</MEASURE>
+            <MEASUREF>Kapsel(n)</MEASUREF>
+            <DOSAGE_FORM>Kapseln</DOSAGE_FORM>
+            <DOSAGE_FORMF>Capsules</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>A</IKSCAT>
+            <PRODNO>6516001</PRODNO>
+        </ITEM>
+   </ITEMS>
+</ARTIKELSTAMM>

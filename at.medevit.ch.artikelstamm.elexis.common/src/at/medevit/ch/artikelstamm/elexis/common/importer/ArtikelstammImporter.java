@@ -400,7 +400,6 @@ public class ArtikelstammImporter {
 		
 		fields.add(ArtikelstammItem.FLD_PEXF);
 		values.add((item.getPEXF() != null) ? item.getPEXF().toString() : null);
-		
 		if (!keepOverriddenPublicPrice) {
 			fields.add(ArtikelstammItem.FLD_PPUB);
 			values.add((item.getPPUB() != null) ? item.getPPUB().toString() : null);
@@ -434,6 +433,7 @@ public class ArtikelstammImporter {
 			(item.isLPPV() != null && item.isLPPV()) ? StringConstants.ONE : StringConstants.ZERO);
 		
 		if (!keepOverriddenPkgSize) {
+			fields.add(ArtikelstammItem.FLD_PKG_SIZE);
 			String pkgSize = (item.getPKGSIZE() != null) ? item.getPKGSIZE().toString() : null;
 			values.add((pkgSize != null && pkgSize.length() > 6) ? pkgSize.substring(0, 6).toString()
 					: pkgSize);

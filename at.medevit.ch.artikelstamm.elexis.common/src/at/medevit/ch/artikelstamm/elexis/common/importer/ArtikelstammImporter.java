@@ -139,7 +139,10 @@ public class ArtikelstammImporter {
 			
 			int currentVersion = ArtikelstammItem.getCurrentVersion();
 			
-			log.info("[PI] Aktualisiere v" + currentVersion + " auf v" + newVersion);
+			log.info("[PI] Aktualisiere {} vom {} von v{} auf v{}",
+				importStamm.getDATASOURCE(),
+				importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime(), currentVersion,
+				newVersion);
 			
 			subMonitor.setTaskName("Lese Produkte und Limitationen...");
 			populateProducsAndLimitationsMap(importStamm);
@@ -168,7 +171,11 @@ public class ArtikelstammImporter {
 			long endTime = System.currentTimeMillis();
 			ElexisEventDispatcher.reload(ArtikelstammItem.class);
 			
-			log.info("[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) + "sec. Will rebuild ATCCodeCache");
+			log.info(
+				"[PI] Artikelstamm import took " + ((endTime - startTime) / 1000)
+					+ "sec.Used {} {} version {}. Will rebuild ATCCodeCache",
+				ArtikelstammItem.getDatasourceType().toString(),
+				ArtikelstammItem.getImportSetCreationDate(), newVersion);
 			
 			ATCCodeCache.rebuildCache(subMonitor.split(5));
 			log.info("[PI] Artikelstamm finished rebuilding ATCCodeCache");

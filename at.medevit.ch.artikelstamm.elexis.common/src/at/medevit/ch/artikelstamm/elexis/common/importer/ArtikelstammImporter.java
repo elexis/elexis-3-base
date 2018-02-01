@@ -182,11 +182,13 @@ public class ArtikelstammImporter {
 	private static void inactivateNonBlackboxedItems(){
 		log.debug("[BB] Setting all items inactive...");
 		Stm stm = PersistentObject.getConnection().getStatement();
-		stm.exec("UPDATE " + ArtikelstammItem.TABLENAME + " SET " + ArtikelstammItem.FLD_BLACKBOXED
-			+ Query.EQUALS
+		String cmd = "UPDATE " + ArtikelstammItem.TABLENAME + " SET "
+			+ ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
 			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()))
 			+ " WHERE " + ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
-			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason())));
+			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
+		log.debug("Executing {}", cmd);
+		stm.exec(cmd);
 		PersistentObject.getConnection().releaseStatement(stm);
 	}
 	
@@ -335,7 +337,11 @@ public class ArtikelstammImporter {
 		SALECDType salecd = item.getSALECD();
 		if (SALECDType.A == salecd) {
 			values.add(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
+			log.debug("{} Clearing blackboxed as salecd {} is A isSL {}", item.getGTIN(), salecd,
+				item.isSLENTRY());
 		} else {
+			log.debug("{} Setting blackboxed as salecd {} != {} SALECDTypt.A  isSL {}",
+				item.getGTIN(), salecd, SALECDType.A, salecd, item.isSLENTRY());
 			values.add(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()));
 		}
 		

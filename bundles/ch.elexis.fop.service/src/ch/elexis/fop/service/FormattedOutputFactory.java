@@ -38,6 +38,7 @@ import ch.elexis.fop.service.jaxb.JaxbToPcl;
 import ch.elexis.fop.service.jaxb.JaxbToPdf;
 import ch.elexis.fop.service.jaxb.JaxbToPng;
 import ch.elexis.fop.service.jaxb.JaxbToPs;
+import ch.elexis.fop.service.xmlstream.XmlStreamToPcl;
 import ch.elexis.fop.service.xmlstream.XmlStreamToPdf;
 import ch.elexis.fop.service.xmlstream.XmlStreamToPng;
 import ch.elexis.fop.service.xmlstream.XmlStreamToPs;
@@ -90,7 +91,7 @@ public class FormattedOutputFactory implements IFormattedOutputFactory {
 			case PNG:
 				return XmlStreamToPng.getInstance();
 			case PCL:
-				break;
+				return XmlStreamToPcl.getInstance();
 			default:
 				break;
 			}

@@ -30,6 +30,7 @@ import org.apache.fop.apps.FopFactoryBuilder;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import ch.elexis.core.data.util.PlatformHelper;
 
@@ -66,21 +67,29 @@ public class ConfigFile {
 			
 			Element rendererPDF = doc.createElement("renderer");
 			rendererPDF.setAttribute("mime", "application/pdf");
-			renderers.appendChild(rendererPDF);
 			
 			Element rendererPS = doc.createElement("renderer");
 			rendererPS.setAttribute("mime", "application/postscript");
-			renderers.appendChild(rendererPS);
+			rendererPS.appendChild(getPsVersionElement());
 			
 			rendererPDF.appendChild(getFontsDirectoryElement(fonts));
-			rendererPS.appendChild(getFontsDirectoryElement(fonts));
+			//			rendererPS.appendChild(getType1Fonts(fonts));
+			
+			renderers.appendChild(rendererPDF);
+			renderers.appendChild(rendererPS);
 		} catch (ParserConfigurationException e) {
 			LoggerFactory.getLogger(ConfigFile.class).error("Error during FOP configuration.", e);
 			throw new IllegalStateException(e);
 		}
 	}
 	
-	Element getFontsDirectoryElement(File fonts){
+	private Node getPsVersionElement(){
+		Element ret = doc.createElement("language-level");
+		ret.setTextContent("2");
+		return ret;
+	}
+	
+	private Element getFontsDirectoryElement(File fonts){
 		Element ret = doc.createElement("fonts");
 		
 		Element autodetect = doc.createElement("auto-detect");
@@ -90,6 +99,35 @@ public class ConfigFile {
 		
 		ret.appendChild(directory.cloneNode(true));
 		ret.appendChild(autodetect.cloneNode(true));
+		
+		return ret;
+	}
+	
+	private Element getType1Fonts(File fonts){
+		Element ret = doc.createElement("fonts");
+		
+		Element font = doc.createElement("font");
+		font.setAttribute("kerning", "yes");
+		font.setAttribute("embed-url",
+			"file:/" + fonts.getAbsolutePath() + File.separator + "Ocr" + File.separator
+				+ "OCRA.pfb");
+		Element fontTriple = doc.createElement("font-triplet");
+		fontTriple.setAttribute("name", "OCRA");
+		fontTriple.setAttribute("style", "normal");
+		fontTriple.setAttribute("weight", "normal");
+		font.appendChild(fontTriple.cloneNode(true));
+		ret.appendChild(font.cloneNode(true));
+		
+		font = doc.createElement("font");
+		font.setAttribute("kerning", "yes");
+		font.setAttribute("embed-url",
+			"file:/" + fonts.getAbsolutePath() + File.separator + "Ocr" + File.separator
+				+ "OCRB.pfb");
+		fontTriple.setAttribute("name", "OCRB");
+		fontTriple.setAttribute("style", "normal");
+		fontTriple.setAttribute("weight", "normal");
+		font.appendChild(fontTriple.cloneNode(true));
+		ret.appendChild(font.cloneNode(true));
 		
 		return ret;
 	}

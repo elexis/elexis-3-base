@@ -38,12 +38,6 @@
             name="medkey-RFE"
             restorable="true">
       </view>
-      <view
-            category="ch.elexis.abrechnungKategorie"
-            class="ch.elexis.views.ComplementaryPrintView"
-            id="ch.elexis.arzttarife_ch.complementaryprintview"
-            name="Rechnung Drucken">
-      </view>
    </extension>
    <extension
          point="ch.elexis.core.data.PersistentReference">
@@ -91,10 +85,6 @@
             name="Tarmed-XML-Export"
             outputter="ch.elexis.TarmedRechnung.XMLExporter">
       </Rechnung>
-      <Rechnung
-            name="Komplementär-Drucker"
-            outputter="ch.elexis.TarmedRechnung.ComplementaryDrucker">
-      </Rechnung>
    </extension>
    <extension
          point="ch.elexis.core.data.referenceDataImporter">
@@ -112,30 +102,16 @@
       <TextTemplateRequirement
             element="ch.elexis.tarmed.printer.TarmedTemplateRequirement">
       </TextTemplateRequirement>
-      <TextTemplateRequirement
-            element="ch.elexis.tarmed.printer.ComplementaryTemplateRequirement">
-      </TextTemplateRequirement>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="popup:ch.elexis.core.ui.views.codesystems.BlockSelector">
-         <command
-               commandId="ch.elexis.base.ch.arzttarife.ui.command.updateLeistungsblock"
-               label="Tarmed aktualisieren"
-               style="push">
-         </command>
       </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="ch.elexis.base.ch.arzttarife.ui.handler.UpdateLeistungsblock"
-            description="Update the TarmedLeistung of the Leistungsblock"
-            id="ch.elexis.base.ch.arzttarife.ui.command.updateLeistungsblock"
-            name="Update Leistungsblock">
-      </command>
    </extension>
 
 </plugin>

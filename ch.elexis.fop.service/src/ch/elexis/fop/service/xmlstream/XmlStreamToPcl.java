@@ -8,31 +8,31 @@ import org.apache.fop.apps.MimeConstants;
 
 import ch.elexis.core.services.IFormattedOutput;
 
-public class XmlStreamToPs implements IFormattedOutput
+public class XmlStreamToPcl implements IFormattedOutput
 {
-	private static XmlStreamToPs instance;
+	private static XmlStreamToPcl instance;
 	
-	private XmlStreamToPs(){
+	private XmlStreamToPcl(){
 		
 	}
 	
-	public static XmlStreamToPs getInstance(){
+	public static XmlStreamToPcl getInstance(){
 		if (instance == null)
-			instance = new XmlStreamToPs();
+			instance = new XmlStreamToPcl();
 		return instance;
 	}
 	
 	@Override
-	public void transform(Object xmlStream, InputStream xslt, OutputStream ps){
-		transform(xmlStream, xslt, ps, null);
+	public void transform(Object xmlStream, InputStream xslt, OutputStream pcl){
+		transform(xmlStream, xslt, pcl, null);
 	}
 	
 	@Override
-	public void transform(Object xmlStream, InputStream xslt, OutputStream ps,
+	public void transform(Object xmlStream, InputStream xslt, OutputStream pcl,
 		Map<String, String> transformerParameters){
 		if (xmlStream instanceof InputStream) {
 			XmlStreamToMimeType.getInstance().transform((InputStream) xmlStream, xslt,
-				ps, MimeConstants.MIME_POSTSCRIPT, transformerParameters);
+				pcl, MimeConstants.MIME_PCL, transformerParameters);
 		} else {
 			throw new IllegalStateException(
 				"Input Object [" + xmlStream + "] is not of type InputStream");

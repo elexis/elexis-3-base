@@ -67,6 +67,7 @@ public class DocumentImporter {
 	 * into a DateTime Object.
 	 */
 	private final static SimpleDateFormat documentDateTimeParser = new SimpleDateFormat("yyyyMMddHHmmss");//$NON-NLS-1$
+	private final static SimpleDateFormat documentDateParser = new SimpleDateFormat("yyyyMMdd");//$NON-NLS-1$
 
 	/**
 	 * This DateFormat is used to convert the birthdate available in the filename of the files to import into 
@@ -249,6 +250,9 @@ public class DocumentImporter {
 			
 			if(filenameMatcher.matches()){
 				documentDateTime = filenameMatcher.group("samplingDateTime");
+				if(documentDateTime == null || documentDateTime.isEmpty()) {
+					documentDateTime = filenameMatcher.group("transactionDateTime");
+				}
 				patientId = filenameMatcher.group("PatientId");
 				patientLastName = filenameMatcher.group("PatientLastName");
 				patientBirthDate = filenameMatcher.group("PatientBirthdate");
@@ -274,8 +278,14 @@ public class DocumentImporter {
 					try{
 						documentDateTimeObj = DocumentImporter.documentDateTimeParser.parse(documentDateTime);
 					}
-					catch(ParseException pe){
-						LOGGER.warn(logPrefix + "Unable to parse documentDateTime:"+documentDateTime, pe);//$NON-NLS-1$
+					catch(ParseException pe1){
+						//If we are not able to parse a DateTime, maybe it is only a Date
+						try {
+							documentDateTimeObj = DocumentImporter.documentDateParser.parse(documentDateTime);
+						}
+						catch(ParseException pe2) {
+							LOGGER.warn("process Unable to parse documentDateTime:"+documentDateTime, pe2);
+						}
 					}
 					
 					String keywords = orderNr;
@@ -369,7 +379,7 @@ public class DocumentImporter {
 						documentDateTimeObj = DocumentImporter.documentDateTimeParser.parse(documentDateTime);
 					}
 					catch(ParseException pe){
-						LOGGER.warn("process Unable to parse documentDateTime:"+documentDateTime, pe);
+						LOGGER.warn(logPrefix + "Unable to parse documentDateTime:"+documentDateTime, pe);//$NON-NLS-1$
 					}
 					
 					String keywords = orderNr;

@@ -161,7 +161,7 @@ public class PatientDocumentManager {
 						file.toFile(),
 						dateStr,
 						keywords,
-						null 
+						null
 				)
 			);
 			//If the document has successfully been added

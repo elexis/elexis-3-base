@@ -248,7 +248,7 @@ public class DocumentImporter {
 			Matcher filenameMatcher = documentFilenamePattern.matcher(getBaseName(pdfFile));
 			
 			if(filenameMatcher.matches()){
-				documentDateTime = filenameMatcher.group("transactionDateTime");
+				documentDateTime = filenameMatcher.group("samplingDateTime");
 				patientId = filenameMatcher.group("PatientId");
 				patientLastName = filenameMatcher.group("PatientLastName");
 				patientBirthDate = filenameMatcher.group("PatientBirthdate");

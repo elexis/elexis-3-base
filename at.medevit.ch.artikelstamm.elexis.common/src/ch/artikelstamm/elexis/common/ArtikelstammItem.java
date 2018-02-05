@@ -86,6 +86,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	/** CAS Nr wenn Betäub */	public static final String FLD_NARCOTIC_CAS = "NARCOTIC_CAS";
 	/** Ist Impfstoff */		public static final String FLD_VACCINE = "VACCINE";
 	/** Produkt-Nummer */ 	  	public static final String FLD_PRODNO = "PRODNO";
+	/** Substance(s) */			public static final String FLD_SUBSTANCE="SUBSTANCE";
 	
 	public static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE";
 	public static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE ="PPUB_OVERRIDE_STORE";
@@ -125,6 +126,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			+ FLD_VACCINE + " CHAR(1),"
 			+ VERKAUFSEINHEIT + " VARCHAR(4),"  // Stück pro Abgabe
 			+ FLD_PRODNO+" VARCHAR(10),"
+			+ FLD_SUBSTANCE+" VARCHAR(255),"	// Substanz(en)
 			+ PersistentObject.FLD_EXTINFO + " BLOB"
 			+ "); "
 			+ "CREATE INDEX idxAiPHAR ON " + TABLENAME + " ("+FLD_PHAR+"); "

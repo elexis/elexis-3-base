@@ -55,7 +55,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	public static final String TABLENAME = "ARTIKELSTAMM_CH";
 	private static final String VERSION_ENTRY_ID = "VERSION";
-	static final String VERSION = "1.3.0";
+	static final String VERSION = "1.4.0";
 	private static int IS_USER_DEFINED_PKG_SIZE = -999999;
 	
 	//@formatter:off
@@ -146,6 +146,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	static final String dbUpdateFrom12to13 =
 			"ALTER TABLE "+TABLENAME+" MODIFY "+FLD_DSCR+" VARCHAR(100);";
 	
+	static final String dbUpdateFrom13To14 =
+			"ALTER TABLE "+TABLENAME+" ADD "+FLD_SUBSTANCE+" VARCHAR(255);";
 	//@formatter:on
 	
 	static {
@@ -161,7 +163,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			Artikel.FLD_VK_PREIS + "=" + FLD_PPUB, FLD_PKG_SIZE, FLD_SL_ENTRY, FLD_IKSCAT,
 			FLD_LIMITATION, FLD_LIMITATION_PTS, FLD_LIMITATION_TEXT, FLD_GENERIC_TYPE,
 			FLD_HAS_GENERIC, FLD_LPPV, FLD_DEDUCTIBLE, FLD_NARCOTIC, FLD_NARCOTIC_CAS, FLD_VACCINE,
-			VERKAUFSEINHEIT, FLD_PRODNO, Artikel.LIEFERANT_ID, Artikel.MINBESTAND,
+			VERKAUFSEINHEIT, FLD_PRODNO, Artikel.LIEFERANT_ID, Artikel.MINBESTAND, FLD_SUBSTANCE,
 			Artikel.ISTBESTAND, Artikel.MAXBESTAND, PersistentObject.FLD_EXTINFO);
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		if (!version.exists()) {
@@ -179,6 +181,10 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 				}
 				if (vi.isOlder("1.3.0")) {
 					createOrModifyTable(dbUpdateFrom12to13);
+					version.set(FLD_GTIN, VERSION);
+				}
+				if (vi.isOlder("1.4.0")) {
+					createOrModifyTable(dbUpdateFrom13To14);
 					version.set(FLD_GTIN, VERSION);
 				}
 			}
@@ -358,7 +364,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		}
 		return false;
 	}
-		
+	
 	/**
 	 * De-/activate the manual price override.
 	 * 
@@ -398,8 +404,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	/**
-	 * @return the overridden public price value if overridden and not null. If the price
-	 * was not overridden, also <code>null</code> is returned.
+	 * @return the overridden public price value if overridden and not null. If the price was not
+	 *         overridden, also <code>null</code> is returned.
 	 */
 	public Double getUserDefinedPriceValue(){
 		String ppub = get(FLD_PPUB);
@@ -777,9 +783,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	public boolean isUserDefinedPkgSize(){
 		return getUserDefinedPkgSize() != IS_USER_DEFINED_PKG_SIZE;
 	}
-
+	
 	@Override
-	public void setUserDefinedPkgSize(boolean activate) {
+	public void setUserDefinedPkgSize(boolean activate){
 		if (activate) {
 			int value = IS_USER_DEFINED_PKG_SIZE;
 			String pkgSize = get(FLD_PKG_SIZE);
@@ -792,7 +798,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			}
 			setExtInfoStoredObjectByKey(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, pkgSize);
 			setUserDefinedPkgSizeValue(value);
-
+			
 		} else {
 			String ppubStored =
 				(String) getExtInfoStoredObjectByKey(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE);
@@ -800,6 +806,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 			setExtInfoStoredObjectByKey(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, null);
 		}
 	}
+	
 	/**
 	 * Set the price as user-defined (i.e. overridden) price. This will internally store the price
 	 * as negative value.
@@ -810,23 +817,23 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		if (value < 0) {
 			throw new IllegalArgumentException("value must not be lower than 0");
 		}
-		log.debug("setUserDefinedPkgSizeValue Verpackungseinheit gtin  {}  value {}", getGTIN(), value);
+		log.debug("setUserDefinedPkgSizeValue Verpackungseinheit gtin  {}  value {}", getGTIN(),
+			value);
 		set(FLD_PKG_SIZE, "-" + value);
 	}
 	
-
 	/**
-	 * @return the overridden public price value if overridden and not null. If the price
-	 * was not overridden, also <code>null</code> is returned.
+	 * @return the overridden public price value if overridden and not null. If the price was not
+	 *         overridden, also <code>null</code> is returned.
 	 */
 	public int getUserDefinedPkgSize(){
-		String oldValue  = get(FLD_PKG_SIZE);
+		String oldValue = get(FLD_PKG_SIZE);
 		if (oldValue != null && oldValue.startsWith("-")) {
 			try {
 				return -(new Integer(oldValue.trim()));
 			} catch (NumberFormatException nfe) {
-				log.error("Error #getUserDefinedVerpackungseinheit [{}] value is [{}], setting 0", getId(),
-					oldValue);
+				log.error("Error #getUserDefinedVerpackungseinheit [{}] value is [{}], setting 0",
+					getId(), oldValue);
 				return IS_USER_DEFINED_PKG_SIZE;
 			}
 		}
@@ -838,11 +845,12 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	}
 	
 	public void setVerpackungseinheit(int vpe){
-		log.debug("phar {} gtin {} setVerpackungseinheit {} is {} ", getPHAR(), getGTIN(), vpe, getVerpackungseinheit());
+		log.debug("phar {} gtin {} setVerpackungseinheit {} is {} ", getPHAR(), getGTIN(), vpe,
+			getVerpackungseinheit());
 		if (vpe != getVerpackungseinheit()) {
 			setUserDefinedPkgSizeValue(vpe);
 		}
- 		set(FLD_PKG_SIZE, vpe + "");
+		set(FLD_PKG_SIZE, vpe + "");
 	}
 	
 	@Override
@@ -873,7 +881,8 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	/**
 	 * @param ean
 	 *            the European Article Number or GTIN
-	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if none or multiple found
+	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if none or
+	 *         multiple found
 	 */
 	public static @Nullable ArtikelstammItem findByEANorGTIN(@NonNull String ean){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
@@ -907,7 +916,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	public int getCacheTime(){
 		return DBConnection.CACHE_TIME_MAX;
 	}
-
+	
 	@Override
 	public String getProductId(){
 		if (isProduct()) {

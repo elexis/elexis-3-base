@@ -696,7 +696,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			} else
 			{
 				Patient newPat = ElexisEventDispatcher.getSelectedPatient();
-				logEvent(null, "visible true newKons is null for " + newPat.getPersonalia());
+				logEvent(null, "visible true newKons is null for " + newPat == null ? "null" : newPat.getPersonalia());
 				displaySelectedPatient(newPat, "view visible");
 			}
 			visibleAllKonsAreas(mode);

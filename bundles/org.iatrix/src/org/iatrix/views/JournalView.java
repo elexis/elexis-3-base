@@ -267,7 +267,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			log.warn("Discovered changed patient " + op  + " actPat " + actPat.getPersonalia());
 		} else {
 			actPat = newPatient;
-			log.warn("Set actPat to " + op  + " actPat " + actPat.getPersonalia());
+			log.warn("Set actPat to {} actPat {}", op, actPat);
 		}
 		/*
 		 * Not yet sure whether comparing only the id or the whole cons is better
@@ -696,7 +696,7 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			} else
 			{
 				Patient newPat = ElexisEventDispatcher.getSelectedPatient();
-				logEvent(null, "visible true newKons is null for " + newPat == null ? "null" : newPat.getPersonalia());
+				logEvent(null, "visible true newKons is null for " +(newPat == null ? "null" : newPat.getPersonalia()));
 				displaySelectedPatient(newPat, "view visible");
 			}
 			visibleAllKonsAreas(mode);

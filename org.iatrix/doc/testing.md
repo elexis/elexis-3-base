@@ -34,3 +34,9 @@ Testing changing assigned user
 ** Show the attributes you als author?
 * Repeat the same with a  konsultation which has text in it
 
+Testcase from ticket 10686
+* KG Iatrix displays patient with kons
+** Leave JournalView e.g. changing to Agenda Gross
+** Select a different patient
+** Select JournalView again
+** The new patient must be selected

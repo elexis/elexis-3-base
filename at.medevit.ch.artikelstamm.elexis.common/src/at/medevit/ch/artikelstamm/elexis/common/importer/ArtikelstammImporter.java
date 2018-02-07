@@ -76,7 +76,7 @@ public class ArtikelstammImporter {
 	 * @return
 	 */
 	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
-		@Nullable Integer newVersion){
+		boolean bPharma, boolean bNonPharma, @Nullable Integer newVersion){
 		LocalLock lock = new LocalLock("ArtikelstammImporter");
 		
 		if (!lock.tryLock()) {
@@ -152,6 +152,7 @@ public class ArtikelstammImporter {
 				newVersion);
 			
 			subMonitor.setTaskName("Lese Produkte und Limitationen...");
+			subMonitor.subTask("Lese Produkt-Details");
 			populateProducsAndLimitationsMap(importStamm);
 			if (subMonitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -159,6 +160,7 @@ public class ArtikelstammImporter {
 			subMonitor.worked(5);
 			
 			subMonitor.setTaskName("Setze alle Elemente auf inaktiv...");
+			subMonitor.subTask("Setze Elemente auf inaktiv");
 			inactivateNonBlackboxedItems();
 			if (subMonitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -170,17 +172,21 @@ public class ArtikelstammImporter {
 				"Importiere Artikelstamm " + importStamm.getCREATIONDATETIME().getMonth() + "/"
 					+ importStamm.getCREATIONDATETIME().getYear());
 			
-			if (updateOrAddItems(newVersion, importStamm,
-				subMonitor.split(50)) == Status.CANCEL_STATUS) {
-				return Status.CANCEL_STATUS;
+			if (bNonPharma) {
+				subMonitor.subTask("Importiere Non Pharma Artikel");
+				if (updateOrAddItems(newVersion, importStamm,
+					subMonitor.split(50)) == Status.CANCEL_STATUS) {
+					return Status.CANCEL_STATUS;
+				}
 			}
-			;
 			
-			if (updateOrAddProducts(newVersion, importStamm,
-				subMonitor.split(20)) == Status.CANCEL_STATUS) {
-				return Status.CANCEL_STATUS;
+			if (bPharma) {
+				subMonitor.subTask("Importiere Pharma Artikel");
+				if (updateOrAddProducts(newVersion, importStamm,
+					subMonitor.split(20)) == Status.CANCEL_STATUS) {
+					return Status.CANCEL_STATUS;
+				}
 			}
-			;
 			
 			// update the version number for type importStammType
 			subMonitor.setTaskName("Setze neue Versionsnummer");

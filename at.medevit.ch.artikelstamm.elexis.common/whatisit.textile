@@ -16,3 +16,15 @@ Die Open-Source Variante ist komplett frei zur Verwendung. Informationen dazu, d
 h2. Sponsor
 
 The development of this plugin was sponsored by Dr. med. Franz Marty, "Medizinisches Zentrum, gleis d":http://www.mez-chur.com/ 
+
+
+h2. Erweiterung "article substances"
+
+Dieser Patch 
+
+- Ergänzt die Tabelle artikelstamm_ch um eie Spalte "substance"
+- Befüllt diese Spalte beim Import anhand des ATC Codes
+- Erstellt einen neuen Textfilter in der Artikel-View, die nach Substanzen filtern kann
+
+G. Weirich 2018
+ 

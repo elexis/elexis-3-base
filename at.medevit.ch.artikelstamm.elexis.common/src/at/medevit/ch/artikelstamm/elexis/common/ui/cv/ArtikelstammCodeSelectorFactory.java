@@ -65,7 +65,8 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 	private int eventType = SWT.KeyDown;
 	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
 	
-	private static final String DISP_NAME = "Artikel oder Wirkstoff";
+	private static final String DISP_PRODNAME = "Artikel";
+	private static final String DISP_SUBSTANCE = "Substanz";
 	
 	private ISelectionChangedListener selChange = new ISelectionChangedListener() {
 		@Override
@@ -82,8 +83,9 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		cov.setSelectionChangedListener(selChange);
 		
 		FieldDescriptor<?>[] fields = {
-			new FieldDescriptor<ArtikelstammItem>(DISP_NAME, ArtikelstammItem.FLD_DSCR, Typ.STRING,
+			new FieldDescriptor<ArtikelstammItem>(DISP_PRODNAME, ArtikelstammItem.FLD_DSCR, Typ.STRING,
 				null),
+			new FieldDescriptor<ArtikelstammItem>(DISP_SUBSTANCE,ArtikelstammItem.FLD_SUBSTANCE, Typ.STRING,null)
 		};
 		
 		// add keyListener to search field
@@ -223,7 +225,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 
 		@Override
 		public void changed(HashMap<String, String> values){
-			String val = values.get(DISP_NAME);
+			String val = values.get(DISP_PRODNAME);
 			if (val != null && val.length() == 13 && StringUtils.isNumeric(val)) {	
 				List<ArtikelstammItem> result = new Query<ArtikelstammItem>(ArtikelstammItem.class,
 					ArtikelstammItem.FLD_GTIN, val).execute();

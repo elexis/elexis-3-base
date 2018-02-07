@@ -14,6 +14,7 @@ import at.medevit.ch.artikelstamm.ui.ATCLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar.VatInfo;
+import ch.rgw.tools.StringTool;
 
 public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvider {
 	
@@ -42,6 +43,10 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 				if (publicPrice > 0.0d) {
 					ret = ret + " <" + ai.getPublicPrice() + "> ";
 				}
+			}
+			String subst=ai.get(ArtikelstammItem.FLD_SUBSTANCE);
+			if(!StringTool.isNothing(subst)) {
+				ret=ret+" ("+subst+")";
 			}
 			
 			return ret;

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
@@ -30,11 +31,21 @@ import ch.elexis.core.ui.util.SWTHelper;
 
 public class ArtikelstammImporterPage extends ImporterPage {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporter.class);
+	private Button cbPharma;
+	private Button cbNonPharma;
+	private boolean bPharma;
+	private boolean bNonPharma;
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		log.info("ArtikelstammImporterPage.doImport " + results[0]);
-		return ArtikelstammImporter.performImport(monitor, new FileInputStream(results[0]), null);
+		return ArtikelstammImporter.performImport(monitor, new FileInputStream(results[0]), bPharma, bNonPharma, null);
+	}
+	
+	@Override
+	public void collect() {
+		bPharma=cbPharma.getSelection();
+		bNonPharma=cbNonPharma.getSelection();
 	}
 	
 	@Override
@@ -67,6 +78,12 @@ public class ArtikelstammImporterPage extends ImporterPage {
 				.format(ArtikelstammItem.getImportSetCreationDate()));
 		}
 		lblVERSION.setText(sb.toString());
+		cbPharma = new Button(parent, SWT.CHECK);
+		cbPharma.setText("Pharma-Artikel");
+		cbPharma.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		cbNonPharma = new Button(parent, SWT.CHECK);
+		cbNonPharma.setText("Non-Pharma-Artikel");
+		cbNonPharma.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
 		Composite ret = new ImporterPage.FileBasedImporter(parent, this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));

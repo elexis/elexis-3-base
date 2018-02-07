@@ -1811,7 +1811,7 @@ public class ARTIKELSTAMM {
              *     {@link String }
              *     
              */
-            public String getATC() {
+			public String getATC() {
                 return atc;
             }
 

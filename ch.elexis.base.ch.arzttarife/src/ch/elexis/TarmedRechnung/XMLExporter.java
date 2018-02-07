@@ -401,8 +401,10 @@ public class XMLExporter implements IRnOutputter {
 		Element invoice = new Element(ELEMENT_INVOICE, nsinvoice);
 		invoice.setAttribute(ATTR_REQUEST_TIMESTAMP, ts);
 		invoice.setAttribute(ATTR_REQUEST_ID, rn.getRnId());
+		// add now time to date of Rechnung, some need time for validation see (https://redmine.medelexis.ch/issues/10561)
 		invoice.setAttribute(ATTR_REQUEST_DATE,
-			new TimeTool(rn.getDatumRn()).toString(TimeTool.DATE_MYSQL) + "T00:00:00"); // 10154 //$NON-NLS-1$
+			new TimeTool(rn.getDatumRn()).toString(TimeTool.DATE_MYSQL) + "T" //$NON-NLS-1$
+				+ new TimeTool().toString(TimeTool.TIME_FULL)); // 10154 
 		payload.addContent(invoice);
 		
 		//body

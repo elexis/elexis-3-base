@@ -315,8 +315,11 @@ public class PatientDocumentManager {
 		
 		//Limit the length of the title
 		//If it is too long, cut it
-		if (title.length() > MAX_LEN_RESULT)
-			title = title.substring(0,title.length() - MAX_LEN_RESULT - 3) + "..."  ;//$NON-NLS-1$
+		if (title.length() + 5> MAX_LEN_RESULT)
+			title = title.substring(0,title.length() - MAX_LEN_RESULT - 5 - 3) + "..."  ;//$NON-NLS-1$
+		
+		//The title must end up with ".pdf" if it doesn't end up with this extension, the user will have to select an application to open the document
+		title += " .pdf";
 		
 		
 		//Since the labResult Object uses TimeTool,

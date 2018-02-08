@@ -311,10 +311,12 @@ public class ArtikelstammImporter {
 			
 			if (foundItem == null) {
 				String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
-				
-				String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
-				TYPE pharmaType = TYPE.valueOf(ptString.toUpperCase());
-				
+				TYPE pharmaType = TYPE.X;
+				if (item.getPHARMATYPE() != null)
+				{
+					String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
+					pharmaType = TYPE.valueOf(ptString.toUpperCase());
+				}
 				foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(),
 					item.getPHAR(), trimmedDscr, StringConstants.EMPTY);
 				log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");

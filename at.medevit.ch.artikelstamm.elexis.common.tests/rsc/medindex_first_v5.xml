@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ARTIKELSTAMM xmlns="http://elexis.ch/Elexis_Artikelstamm_v5" CREATION_DATETIME="2017-12-05T08:46:26.971+01:00" BUILD_DATETIME="2017-12-05T08:51:30.510+01:00" DATA_SOURCE="medindex">
+    <PRODUCTS>
+        <PRODUCT>
+            <PRODNO>1977</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>HALDOL Tabl 1 mg</DSCR>
+            <DSCRF>HALDOL cpr 1 mg</DSCRF>
+            <ATC>N05AD01</ATC>
+            <SUBSTANCE>Haloperidol</SUBSTANCE>
+            <SUBSTANCEF>Halopéridol</SUBSTANCEF>
+        </PRODUCT>
+        <PRODUCT>
+            <PRODNO>1282905</PRODNO>
+            <SALECD>I</SALECD>
+            <DSCR>AMBRE SOLAIRE Duo Spray sensitive Exp+ SF50+ -25%</DSCR>
+            <DSCRF>AMBRE SOLAIRE duo spray sensitive exp+ IP50+  -25%</DSCRF>
+        </PRODUCT>
+        <PRODUCT>
+            <PRODNO>1123864</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>ACTICOAT FLEX 7 Wundverband 10x12.5cm</DSCR>
+            <DSCRF>ACTICOAT FLEX 7 pansement vulné 10x12.5cm</DSCRF>
+        </PRODUCT>
+        <PRODUCT>
+            <PRODNO>1123861</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>ACTICOAT FLEX 7 Wundverband 5x5cm</DSCR>
+            <DSCRF>ACTICOAT FLEX 7 pansement vulné 5x5cm</DSCRF>
+        </PRODUCT>
+        <PRODUCT>
+            <PRODNO>1312984</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>LYNPARZA Kaps 50 mg</DSCR>
+            <DSCRF>LYNPARZA caps 50 mg</DSCRF>
+            <ATC>L01XX46</ATC>
+            <LIMNAMEBAG>LYNPARZA</LIMNAMEBAG>
+            <SUBSTANCE>Olaparib</SUBSTANCE>
+            <SUBSTANCEF>Olaparib</SUBSTANCEF>
+        </PRODUCT>
+        <PRODUCT>
+            <PRODNO>1200047</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>HEPARIN Bichsel 5000 IE/ml steril</DSCR>
+            <DSCRF>HEPARINE Bichsel 5000 UI/ml stérile</DSCRF>
+            <ATC>B01AB01</ATC>
+            <SUBSTANCE>Heparin</SUBSTANCE>
+            <SUBSTANCEF>Héparine</SUBSTANCEF>
+        </PRODUCT>
+    </PRODUCTS>
+    <LIMITATIONS>
+        <LIMITATION>
+            <LIMNAMEBAG>LYNPARZA</LIMNAMEBAG>
+            <DSCR>Zur Erhaltungstherapie (Monotherapie) bei erwachsenen Patientinnen mit rezidiviertem, fortgeschrittenem Ovarialkarzinom mit BRCA Mutation im Anschluss an eine platinhaltige Chemotherapie bei Vorliegen einer kompletten oder partiellen Remission.&lt;br&gt; Der behandelnde Arzt ist verpflichtet, die erforderlichen Daten laufend im vorgegebenen Internettool des Registers, abrufbar auf http://www.olaparib-registry.ch, zu erfassen. Eine schriftliche Einwilligung der Patientin muss vorliegen. Es sind folgende Daten zu erfassen:&lt;br&gt; 1)	Geburtsjahr, sowie Vortherapien für das OC&lt;br&gt; 2)	Datum Therapiestart, Dosierung, Dosisanpassungen, Datum Therapieende. </DSCR>
+            <DSCRF>Pour le traitement d'entretien (en monothérapie) chez les patientes adultes atteintes d’un cancer de l'ovaire avancé, récidivant, avec une mutation du gène BRCA, chez les patientes en rémission complète ou partielle suite à une chimiothérapie à base de platine.&lt;br&gt; Le médecin traitant est tenu de saisir en continu les données requises dans l'outil internet accessible sur http://www.olaparib-registry.ch. Le consentement écrit de la patiente doit être obtenu. Les données à saisir sont les suivantes:&lt;br&gt; 1)     Année de naissance, ainsi que les traitements antérieurs pour le CO&lt;br&gt; 2)     Date du début de traitement, posologie, ajustements posologiques, date de fin de traitement. </DSCRF>
+        </LIMITATION>
+      </LIMITATIONS>
+      <ITEMS>
+        <ITEM PHARMATYPE="N">
+            <GTIN>00040565124308</GTIN>
+            <PHAR>4236863</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>ACTICOAT FLEX 7 Wundverband 10x12.5cm 5 Stk</DSCR>
+            <DSCRF>ACTICOAT FLEX 7 pansement vulné 10x12.5cm 5 pce</DSCRF>
+            <PEXF>137.67</PEXF>
+            <PPUB>244.3</PPUB>
+            <PKG_SIZE>5</PKG_SIZE>
+            <MEASURE>Stk</MEASURE>
+            <MEASUREF>pce</MEASUREF>
+            <DOSAGE_FORM>5.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>5.0</DOSAGE_FORMF>
+            <PRODNO>1123864</PRODNO>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>4062300253636</GTIN>
+            <PHAR>6606755</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HIPP Trinknahrung Joghurt Erdbeer&amp;Himbeer 200 ml</DSCR>
+            <DSCRF>HIPP aliment buvable yaourt fraise&amp;framboi 200 ml</DSCRF>
+            <PPUB>3.8</PPUB>
+            <PKG_SIZE>1</PKG_SIZE>
+            <MEASURE>ml</MEASURE>
+            <MEASUREF>ml</MEASUREF>
+            <DOSAGE_FORM>200.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>200.0</DOSAGE_FORMF>
+            <PRODNO>1315609</PRODNO>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>0040565124346</GTIN>
+            <PHAR>4236857</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>ACTICOAT FLEX 7 Wundverband 5x5cm 5 Stk</DSCR>
+            <DSCRF>ACTICOAT FLEX 7 pansement vulné 5x5cm 5 pce</DSCRF>
+            <PEXF>32.52</PEXF>
+            <PPUB>57.7</PPUB>
+            <PKG_SIZE>5</PKG_SIZE>
+            <MEASURE>Stk</MEASURE>
+            <MEASUREF>pce</MEASUREF>
+            <DOSAGE_FORM>5.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>5.0</DOSAGE_FORMF>
+            <PRODNO>1123861</PRODNO>
+        </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680651600014</GTIN>
+            <PHAR>6571270</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>LYNPARZA Kaps 50 mg 448 Stk</DSCR>
+            <DSCRF>LYNPARZA caps 50 mg 448 pce</DSCRF>
+            <PEXF>5562.48</PEXF>
+            <PPUB>5947.55</PPUB>
+            <PKG_SIZE>448</PKG_SIZE>
+            <MEASURE>Stk</MEASURE>
+            <MEASUREF>pce</MEASUREF>
+            <DOSAGE_FORM>448.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>448.0</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>A</IKSCAT>
+            <DEDUCTIBLE>10</DEDUCTIBLE>
+            <PRODNO>1312984</PRODNO>
+        </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7612929028176</GTIN>
+            <PHAR>5165993</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HEPARIN Bichsel 5000 IE/ml steril 10 Amp 1 ml</DSCR>
+            <DSCRF>HEPARINE Bichsel 5000 UI/ml stérile 10 amp 1 ml</DSCRF>
+            <PEXF>20.0</PEXF>
+            <PPUB>35.8</PPUB>
+            <!-- we need a testcase with PKG_SIZE null PKG_SIZE>10</PKG_SIZE> -->
+            <MEASURE>ml</MEASURE>
+            <MEASUREF>ml</MEASUREF>
+            <DOSAGE_FORM>Amp 1.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>amp 1.0</DOSAGE_FORMF>
+            <IKSCAT>B</IKSCAT>
+            <PRODNO>1200047</PRODNO>
+        </ITEM>
+        
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680273040281</GTIN>
+            <PHAR>98878</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HALDOL Tabl 1 mg 50 Stk</DSCR>
+            <DSCRF>HALDOL cpr 1 mg 50 pce</DSCRF>
+            <PEXF>2.2</PEXF>
+            <PPUB>6.6</PPUB>
+            <PKG_SIZE>50</PKG_SIZE>
+            <MEASURE>Stk</MEASURE>
+            <MEASUREF>pce</MEASUREF>
+            <DOSAGE_FORM>Blist 50.0</DOSAGE_FORM>
+            <DOSAGE_FORMF>blist 50.0</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>B</IKSCAT>
+            <DEDUCTIBLE>10</DEDUCTIBLE>
+            <PRODNO>1977</PRODNO>
+        </ITEM>
+    </ITEMS>
+</ARTIKELSTAMM>

@@ -5,6 +5,7 @@
     <artifactId>ch.elexis.base.tests</artifactId>
     <version>3.5.0-SNAPSHOT</version>
   </parent>
+  <version>3.0.0-SNAPSHOT</version>
   <artifactId>at.medevit.ch.artikelstamm.elexis.open.tests</artifactId>
   <packaging>eclipse-test-plugin</packaging>
   <build>

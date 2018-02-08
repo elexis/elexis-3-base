@@ -133,5 +133,14 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <IKSCAT>A</IKSCAT>
             <PRODNO>6516001</PRODNO>
         </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>7612929028176</GTIN>
+            <PHAR>5165993</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HEPARIN Bichsel 5000 IE/ml steril 10 Amp 1 ml</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <PEXF>28.32</PEXF>
+            <PPUB>45.65</PPUB>
+        </ITEM>
    </ITEMS>
 </ARTIKELSTAMM>

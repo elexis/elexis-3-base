@@ -26,6 +26,7 @@ public class ArtikelstammImporterTest {
 	private static String pharOnlyInSecond = "8304786";
 	private static String pharWithPriceOverridden = "8111718";
 	private static String gtinWithPkgSizeOverride = "7680651600014";
+	private static String gtinWithPkgSizeOverrideNull = "7612929028176";
 	private static String pharWithLeadingZero = "0021806";
 	private static final int OLD_PKG_SIZE =  4;
 	private static final int NEW_PKG_SIZE = 10;
@@ -61,26 +62,12 @@ public class ArtikelstammImporterTest {
 	     onlyInSecond = ArtikelstammItem.loadByPHARNo(pharOnlyInSecond);
 		assertTrue(onlyInSecond == null || onlyInSecond.isDeleted());
 
-		
 		ArtikelstammItem item7digitPhar = ArtikelstammItem.loadByPHARNo(pharWithPriceOverridden);
 		assertEquals("4260057661517", item7digitPhar.getGTIN());
 		assertEquals(pharWithPriceOverridden, item7digitPhar.getPHAR());
 		
-		ArtikelstammItem overridePkgSize = ArtikelstammItem.findByEANorGTIN(gtinWithPkgSizeOverride);
-		assertFalse(overridePkgSize.isUserDefinedPrice());
-		// Now Override PkgSize
-		int old_pkg_size = overridePkgSize.getVerpackungsEinheit();
-		log.debug("VerpackungsEinheit after first import {} getVerpackungsEinheit {} via FLD_PKG_SIZE '{}'",
-			gtinWithPkgSizeOverride, old_pkg_size, overridePkgSize.get(ArtikelstammItem.FLD_PKG_SIZE));
-		assertFalse(overridePkgSize.isUserDefinedPkgSize());
-		old_pkg_size = overridePkgSize.getVerpackungsEinheit();
-		log.debug("VerpackungsEinheit after first import {} getVerpackungsEinheit {} via FLD_PKG_SIZE '{}'",
-			gtinWithPkgSizeOverride, old_pkg_size, overridePkgSize.get(ArtikelstammItem.FLD_PKG_SIZE));
-
-		overridePkgSize.setUserDefinedPkgSizeValue(NEW_PKG_SIZE);
-		assertTrue(overridePkgSize.isUserDefinedPkgSize());
-		assertEquals(NEW_PKG_SIZE, overridePkgSize.getUserDefinedPkgSize());
-		assertEquals(NEW_PKG_SIZE, overridePkgSize.getVerpackungseinheit());
+		setPkgOverride(gtinWithPkgSizeOverride);
+		setPkgOverride(gtinWithPkgSizeOverrideNull);
 
 		success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
 			AllTests.class.getResourceAsStream("/rsc/artikelstamm_second_v5.xml"), null);
@@ -111,6 +98,7 @@ public class ArtikelstammImporterTest {
 		assertFalse(overridden.isBlackBoxed());
 
 		checkResettingVerpackungsEinheit(gtinWithPkgSizeOverride, OLD_PKG_SIZE);
+		checkResettingVerpackungsEinheit(gtinWithPkgSizeOverrideNull, 0);
 
 		// Check an article no long present
 		ArtikelstammItem onlyInFirst = ArtikelstammItem.loadByPHARNo(pharOnlyInFirst);
@@ -118,12 +106,34 @@ public class ArtikelstammImporterTest {
 			log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ", onlyInFirst.getDSCR(), onlyInFirst.getPHAR(), onlyInFirst.isBlackBoxed(), onlyInFirst.isDeleted());
 		// Next Check fails why?
 		// TODO: assertTrue(onlyInFirst == null || onlyInFirst.isDeleted() );
-		ArtikelstammItem withPkgOverride = ArtikelstammItem.findByEANorGTIN("7680651600014");
+		ArtikelstammItem withPkgOverride = ArtikelstammItem.findByEANorGTIN(gtinWithPkgSizeOverride);
+		assertNotNull(withPkgOverride);
 		if (withPkgOverride != null)
+		{
 			log.debug("withPkgOverride {} {} isBlackBoxed {} isDeleted {}  ",
 				withPkgOverride.getDSCR(), withPkgOverride.getPHAR(),
 				withPkgOverride.isBlackBoxed(), withPkgOverride.isDeleted());
-		assertFalse(withPkgOverride.isBlackBoxed());
+			assertFalse(withPkgOverride.isBlackBoxed());
+		}
+	}
+	private ArtikelstammItem setPkgOverride(String gtin) {
+		ArtikelstammItem overridePkgSize = ArtikelstammItem.findByEANorGTIN(gtin);
+		assertFalse(overridePkgSize.isUserDefinedPrice());
+		// Now Override PkgSize
+		int old_pkg_size = overridePkgSize.getVerpackungsEinheit();
+		log.debug("VerpackungsEinheit after first import {} getVerpackungsEinheit {} via FLD_PKG_SIZE '{}'",
+			gtinWithPkgSizeOverride, old_pkg_size, overridePkgSize.get(ArtikelstammItem.FLD_PKG_SIZE));
+		assertFalse(overridePkgSize.isUserDefinedPkgSize());
+		old_pkg_size = overridePkgSize.getVerpackungsEinheit();
+		log.debug("VerpackungsEinheit after first import {} getVerpackungsEinheit {} via FLD_PKG_SIZE '{}'",
+			gtinWithPkgSizeOverride, old_pkg_size, overridePkgSize.get(ArtikelstammItem.FLD_PKG_SIZE));
+
+		overridePkgSize.setUserDefinedPkgSizeValue(NEW_PKG_SIZE);
+		assertTrue(overridePkgSize.isUserDefinedPkgSize());
+		assertEquals(NEW_PKG_SIZE, overridePkgSize.getUserDefinedPkgSize());
+		assertEquals(NEW_PKG_SIZE, overridePkgSize.getVerpackungseinheit());
+		assertEquals("-"+NEW_PKG_SIZE, overridePkgSize.get(ArtikelstammItem.FLD_PKG_SIZE));
+		return overridePkgSize;
 	}
 	private static void checkResettingPrice(String pharmacode,  double expectedPrice) {
 		ArtikelstammItem item = ArtikelstammItem.loadByPHARNo(pharmacode);

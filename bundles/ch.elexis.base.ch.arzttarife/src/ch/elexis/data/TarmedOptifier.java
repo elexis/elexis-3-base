@@ -12,6 +12,8 @@
 
 package ch.elexis.data;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -48,6 +50,8 @@ import ch.rgw.tools.TimeTool;
 public class TarmedOptifier implements IOptifier {
 	private static final String TL = "TL"; //$NON-NLS-1$
 	private static final String AL = "AL"; //$NON-NLS-1$
+	private static final String AL_NOTSCALED = "AL_NOTSCALED"; //$NON-NLS-1$
+	private static final String AL_SCALINGFACTOR = "AL_SCALINGFACTOR"; //$NON-NLS-1$
 	public static final int OK = 0;
 	public static final int PREISAENDERUNG = 1;
 	public static final int KUMULATION = 2;
@@ -247,6 +251,7 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 			newVerrechnet.setDetail(AL, Integer.toString(tc.getAL(kons.getMandant())));
+			setALScalingInfo(tc, newVerrechnet, kons.getMandant(), false);
 			newVerrechnet.setDetail(TL, Integer.toString(tc.getTL()));
 			lst.add(newVerrechnet);
 		}
@@ -453,6 +458,35 @@ public class TarmedOptifier implements IOptifier {
 			return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 		}
 		return new Result<IVerrechenbar>(null);
+	}
+	
+	/**
+	 * If there is a AL scaling used to calculate the AL value, provide original AL and AL scaling
+	 * factor in the ExtInfo of the {@link Verrechnet}.
+	 * 
+	 * @param tarmed
+	 * @param verrechnet
+	 * @param mandant
+	 */
+	private void setALScalingInfo(TarmedLeistung tarmed, Verrechnet verrechnet, Mandant mandant,
+		boolean isComposite){
+		double scaling = tarmed.getALScaling(mandant);
+		if (scaling != 100) {
+			newVerrechnet.setDetail(AL_NOTSCALED, Integer.toString(tarmed.getAL()));
+			newVerrechnet.setDetail(AL_SCALINGFACTOR, Double.toString(scaling / 100));
+		}
+	}
+	
+	/**
+	 * Get double as int rounded half up.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private int doubleToInt(double value){
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(0, RoundingMode.HALF_UP);
+		return bd.intValue();
 	}
 	
 	private Result<IVerrechenbar> checkLimitations(Konsultation kons, TarmedLeistung tarmedLeistung,

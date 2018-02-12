@@ -184,7 +184,9 @@ public class KonsText implements IJournalArea {
 			if (actKons.getFall() == null) {
 				return;
 			}
-			if (text.isDirty() || textChanged()) {
+			if (!Helpers.userMayEditKons(actKons)) {
+				logEvent(String.format("skip updateEintrag as userMay not Edit dirty %s changed %s ", text.isDirty(), textChanged()));
+			} else  if (text.isDirty() || textChanged()) {
 				int old_version = actKons.getHeadVersion();
 				String plain = text.getContentsPlaintext();
 				logEvent("updateEintrag old_version " + old_version + " " +
@@ -587,20 +589,16 @@ public class KonsText implements IJournalArea {
 	@Override
 	public synchronized void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		logEvent("activation: " + mode);
-		/* Mein alte Lösung
-		if (mode == true) {
-			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
-		} else {
-			updateEintrag();
-		}
-		Nachher neu die von Thomas aus KonsDetailView */
 		if (mode == false) {
-			// save entry on deactivation if text was edited
-			if (actKons != null && (text.isDirty()) || textChanged()) {
+			// save entry on deactivation if text was edited and changed or diry and user my edit it
+			if (actKons != null && Helpers.userMayEditKons(actKons) && (text.isDirty()) || textChanged()) {
 				actKons.updateEintrag(text.getContentsAsXML(), false);
 				logEvent(String.format("updateEintrag activation vers %s dtext.isDirty ",
 					actKons.getHeadVersion()));
 				text.setDirty(false);
+			} else {
+				logEvent(String.format("skip updateEintrag activation as %s mayEdit %s dirty %s changed %s",
+					actKons,  Helpers.userMayEditKons(actKons), text.isDirty(),  textChanged()));
 			}
 		} else {
 			// load newest version on activation, if there are no local changes

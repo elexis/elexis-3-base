@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -46,7 +47,7 @@ public class ArtikelstammImporterTest {
 	}
 
 	private void runImport(String baseName) {
-		IStatus success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
+		 IStatus success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
 			AllTests.class.getResourceAsStream(baseName + "_first_v5.xml"), null);
 		if (!success.isOK()) {
 			String msg = String.format("Import of artikelstamm_first_v5 failed");

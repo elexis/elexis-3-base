@@ -401,6 +401,40 @@ public class TarmedOptifierTest {
 		resetKons(konsGriss);
 	}
 	
+	/**
+	 * Test exclusion with side.
+	 */
+	@Test
+	public void testSideExclusion(){
+		clearKons(konsGriss);
+		
+		Result<IVerrechenbar> result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("09.0930", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
+		
+		optifier.putContext(TarmedLeistung.SIDE, TarmedLeistung.SIDE_L);
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
+		
+		optifier.putContext(TarmedLeistung.SIDE, TarmedLeistung.SIDE_R);
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		resetKons(konsGriss);
+	}
+	
 	private void setUpDignitaet(Konsultation kons){
 		Hashtable<String, String> extension = tlBaseFirst5Min.loadExtension();
 		// set reduce factor

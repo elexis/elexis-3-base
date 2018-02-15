@@ -21,7 +21,9 @@ public class Messages extends NLS {
 	public static String MiGelImporter_ModeUpdateAdd;
 	public static String MiGelImporter_PleaseSelectFile;
 	public static String MiGelImporter_ReadMigel;
-	public static String MiGelDetailDisplay_PriceUnit;
+	public static String MiGelDetailDisplay_Price;
+	public static String MiGelDetailDisplay_Unit;
+	public static String MiGelDetailDisplay_Amount;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

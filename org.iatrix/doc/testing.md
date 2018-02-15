@@ -34,3 +34,19 @@ Testing changing assigned user
 ** Show the attributes you als author?
 * Repeat the same with a  konsultation which has text in it
 
+Testcase from ticket 10686
+* KG Iatrix displays patient with kons
+** Leave JournalView e.g. changing to Agenda Gross
+** Select a different patient
+** Select JournalView again
+** The new patient must be selected
+
+Testcase from 10713
+
+* Open kons not from you
+** Open another Elexis which user who created konst
+** Change Konsext
+** Close other Elexis
+* add Leistung
+* select other patient
+* Konstext may not change and display after reselecting the same patient the changed content

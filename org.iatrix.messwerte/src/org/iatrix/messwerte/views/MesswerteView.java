@@ -72,6 +72,8 @@ import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.core.types.LabItemTyp;
+import ch.elexis.core.types.PathologicDescription;
+import ch.elexis.core.types.PathologicDescription.Description;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
@@ -983,6 +985,8 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 									// activated by the user's click
 									boolean isPathologic = isChecked();
 									labResult.setFlag(LabResultConstants.PATHOLOGIC, isPathologic);
+									labResult.setPathologicDescription(
+										new PathologicDescription(Description.PATHO_MANUAL));
 									viewer.refresh();
 								}
 							}

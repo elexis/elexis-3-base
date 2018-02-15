@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.iatrix.widgets;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -635,7 +636,8 @@ public class ProblemArea implements IJournalArea {
 		heat.addListener(new IatrixHeartListener() {
 			@Override
 			public void heartbeat(){
-				logEvent("heartbeatProblem enabled " + heartbeatProblemEnabled);
+				logEvent(String.format("heartbeatProblem enabled %s version %s", heartbeatProblemEnabled,
+					Platform.getBundle("org.iatrix").getVersion().toString()));
 				if (heartbeatProblemEnabled) {
 					// backup selection
 

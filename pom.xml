@@ -41,7 +41,9 @@
 	</profiles>
 <modules>
   <!-- our test modules. Come first to make them run as soon as possible -->
+         
   <module>at.medevit.atc_codes.test</module>
+  <module>at.medevit.ch.artikelstamm.elexis.common.tests</module>
   <module>at.medevit.elexis.ehc.core.test</module>
   <module>at.medevit.elexis.gdt</module>
   <module>at.medevit.elexis.gdt.defaultfilecp</module>
@@ -68,6 +70,8 @@
   <module>at.medevit.elexis.cobasmira</module>
   <module>at.medevit.elexis.cobasmira.feature</module>
   <module>at.medevit.atc_codes</module>
+  <module>at.medevit.ch.artikelstamm.elexis.open</module>
+  <module>at.medevit.ch.artikelstamm.elexis.common</module>
   <module>at.medevit.elexis.weblinks</module>
   <module>at.medevit.elexis.swissmedic</module>
   <module>at.medevit.elexis.epha.interactions</module>
@@ -88,8 +92,6 @@
   <module>at.medevit.elexis.emediplan.core</module>
   <module>at.medevit.elexis.emediplan.ui</module>
   <module>at.medevit.elexis.emediplan.feature</module>
-  <module>at.medevit.ch.artikelstamm.elexis.common</module>
-  <module>at.medevit.ch.artikelstamm.elexis.open</module>
   <module>at.medevit.ch.artikelstamm.ui</module>
   <module>at.medevit.ch.artikelstamm/</module>
   <module>at.medevit.ch.artikelstamm.medcalendar</module>

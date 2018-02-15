@@ -137,7 +137,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				String[] ll = limit.split("#"); //$NON-NLS-1$
 				for (String line : ll) {
 					String[] f = line.split(","); //$NON-NLS-1$
-					if (f.length == 5) {
+					if (f.length == 6) {
 						sb.append("<li>"); //$NON-NLS-1$
 						if (f[0].equals("<=")) { //$NON-NLS-1$
 							sb.append(Messages.TarmedDetailDisplay_max).append(" "); //$NON-NLS-2$

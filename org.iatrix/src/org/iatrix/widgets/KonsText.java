@@ -592,6 +592,22 @@ public class KonsText implements IJournalArea {
 			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
 		} else {
 			updateEintrag();
+		if (mode == false) {
+			// save entry on deactivation if text was edited and changed or diry and user my edit it
+			if (actKons != null && Helpers.userMayEditKons(actKons) && (text.isDirty()) || textChanged()) {
+				actKons.updateEintrag(text.getContentsAsXML(), false);
+				logEvent(String.format("updateEintrag activation vers %s dtext.isDirty ",
+					actKons.getHeadVersion()));
+				text.setDirty(false);
+			} else {
+				logEvent(String.format("skip updateEintrag activation as %s mayEdit %s dirty %s changed %s",
+					actKons,  Helpers.userMayEditKons(actKons), text.isDirty(),  textChanged()));
+			}
+		} else {
+			// load newest version on activation, if there are no local changes
+			if (actKons != null && !text.isDirty()) {
+				setKonsText(actKons, actKons.getHeadVersion(), true);
+			}
 		}
 		Nachher neu die von Thomas aus KonsDetailView */
 		if (mode == false) {

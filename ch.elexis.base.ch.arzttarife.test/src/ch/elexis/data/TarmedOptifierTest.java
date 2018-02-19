@@ -435,6 +435,29 @@ public class TarmedOptifierTest {
 		resetKons(konsGriss);
 	}
 	
+	/**
+	 * Test cleanup after kumulation warning.
+	 */
+	@Test
+	public void testCleanUpAfterKumulation(){
+		clearKons(konsGriss);
+		
+		Result<IVerrechenbar> result;
+		for (int i = 0; i < 6; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", new TimeTool(), null),
+				konsGriss);
+			assertTrue(result.isOK());
+		}
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(6, konsGriss.getLeistungen().get(0).getZahl());
+		
+		resetKons(konsGriss);
+	}
+	
 	private void setUpDignitaet(Konsultation kons){
 		Hashtable<String, String> extension = tlBaseFirst5Min.loadExtension();
 		// set reduce factor

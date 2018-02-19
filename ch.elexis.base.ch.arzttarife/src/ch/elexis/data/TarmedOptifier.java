@@ -280,12 +280,7 @@ public class TarmedOptifier implements IOptifier {
 			// lookup available masters
 			List<Verrechnet> masters = getPossibleMasters(newVerrechnet, lst);
 			if (masters.isEmpty()) {
-				int zahl = newVerrechnet.getZahl();
-				if (zahl > 1) {
-					newVerrechnet.setZahl(zahl - 1);
-				} else {
-					newVerrechnet.delete();
-				}
+				decrementOrDelete(newVerrechnet);
 				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KOMBINATION,
 					"Für die Zuschlagsleistung " + code.getCode()
 						+ " konnte keine passende Hauptleistung gefunden werden.",
@@ -317,6 +312,7 @@ public class TarmedOptifier implements IOptifier {
 
 		Result<IVerrechenbar> limitResult = checkLimitations(kons, tc, newVerrechnet);
 		if (!limitResult.isOK()) {
+			decrementOrDelete(newVerrechnet);
 			return limitResult;
 		}
 
@@ -477,6 +473,15 @@ public class TarmedOptifier implements IOptifier {
 			return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 		}
 		return new Result<IVerrechenbar>(null);
+	}
+	
+	private void decrementOrDelete(Verrechnet verrechnet){
+		int zahl = verrechnet.getZahl();
+		if (zahl > 1) {
+			verrechnet.setZahl(zahl - 1);
+		} else {
+			verrechnet.delete();
+		}
 	}
 	
 	private boolean isContext(String key){

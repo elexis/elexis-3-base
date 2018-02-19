@@ -3,6 +3,8 @@ package ch.elexis.tarmed.printer;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_44_S1;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_44_S2;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -583,7 +585,8 @@ public class XML44Printer {
 		sb.append(tarmed.getQuantity()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.append(tarmed.getUnitMt()).append("\t"); //$NON-NLS-1$
 		sb.append(tarmed.getScaleFactorMt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-		sb.append(tarmed.getUnitFactorMt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(roundDouble(tarmed.getUnitFactorMt() * tarmed.getExternalFactorMt()))
+			.append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		sb.append(tarmed.getUnitTt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.append(tarmed.getScaleFactorTt()).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -617,6 +620,12 @@ public class XML44Printer {
 		sb.append("\n"); //$NON-NLS-1$
 		
 		return sb.toString();
+	}
+	
+	private double roundDouble(double value){
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 	
 	private void addBalanceLines(Object cursor, ITextPlugin tp, BalanceType balance, Money paid){

@@ -441,6 +441,8 @@ public class PatientDocumentManager {
 	 */
 	public void addForm(
 			String category,
+			String institutionName,
+			String formularName,
 			String orderId,
 			Path file,
 			Date documentDateTime,
@@ -471,6 +473,8 @@ public class PatientDocumentManager {
 		String title = 
 				MessageFormat.format(
 						MedNetMessages.PatientDocumentManager_FormTitle,
+						institutionName,
+						formularName,
 						orderId,
 						dateTimeFormatter.format(documentDateTime),
 						DocumentImporter.getBaseName(file),

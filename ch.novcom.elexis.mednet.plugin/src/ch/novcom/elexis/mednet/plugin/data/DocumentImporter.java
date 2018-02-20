@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,8 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
 import ch.elexis.data.Xid.XIDException;
+import ch.novcom.elexis.mednet.plugin.MedNet;
+import ch.novcom.elexis.mednet.plugin.MedNetConfigFormItem;
 import ch.novcom.elexis.mednet.plugin.MedNetLabItemResolver;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 import ch.rgw.tools.Result;
@@ -60,7 +63,7 @@ public class DocumentImporter {
 	 * The filename structure of the Forms that can be imported
 	 * This is important to identify which patient the file should be added
 	 */
-	private final static Pattern formFilenamePattern = Pattern.compile("^(?<transactionDateTime>[0-9]{14})_(?<sender>[^_]*)_(?<PatientId>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientFirstName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<formGroupId>[^_]*)_(?<formId>[^_]*)_(?<orderNr>[^_]*)$");//$NON-NLS-1$
+	private final static Pattern formFilenamePattern = Pattern.compile("^(?<transactionDateTime>[0-9]{14})_(?<sender>[^_]*)_(?<PatientId>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientFirstName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<institutionId>[^_]*)_(?<formId>[^_]*)_(?<orderNr>[^_]*)$");//$NON-NLS-1$
 	
 	/**
 	 * This DateFormat is used to convert the transactionDateTime available in the filenames of the files to import
@@ -348,6 +351,10 @@ public class DocumentImporter {
 			String patientFirstName = "";
 			String patientBirthDate = "";
 			String orderNr = "";
+			String institutionId = "";
+			String institutionName = "";
+			String formularId = "";
+			String formularName = "";
 			
 			//If it is not a document, maybe it is a form
 			Matcher filenameMatcher = formFilenamePattern.matcher(getBaseName(pdfFile));
@@ -359,6 +366,19 @@ public class DocumentImporter {
 				patientLastName = filenameMatcher.group("PatientFirstName");
 				patientBirthDate = filenameMatcher.group("PatientBirthdate");
 				orderNr = filenameMatcher.group("orderNr");
+				institutionId = filenameMatcher.group("institutionId");
+				formularId = filenameMatcher.group("formId");
+				
+				//Try to get the formularName and the institutionName from the configuration
+				Map<String, Map<String, MedNetConfigFormItem>> configFormItems = MedNet.getSettings().getConfigFormItems();
+				if(		configFormItems.containsKey(institutionId)
+					&&	configFormItems.get(institutionId).containsKey(formularId)
+						) {
+					MedNetConfigFormItem item = configFormItems.get(institutionId).get(formularId);
+					institutionName = item.getInstitutionName();
+					formularName = item.getFormName();
+				}
+				
 				
 			}
 			
@@ -386,6 +406,8 @@ public class DocumentImporter {
 					
 					documentManager.addForm(
 							category,
+							institutionName,
+							formularName,
 							orderNr,
 							pdfFile,
 							documentDateTimeObj,

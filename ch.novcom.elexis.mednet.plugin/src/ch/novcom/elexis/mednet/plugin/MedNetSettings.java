@@ -14,6 +14,8 @@ package ch.novcom.elexis.mednet.plugin;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +66,24 @@ public class MedNetSettings {
 	 */
 	private int formsArchivePurgeInterval;
 	
+	/**
+	 * This configuration is delivered by MedNet
+	 * Those are the Paths were the Formulars will be stored after been sent
+	 */
+	private Map<String,MedNetConfigFormPath> configFormPaths = null;
 	
+	/**
+	 * This configuration is delivered by MedNet
+	 * Those are the Paths were the Document will be stored when importing document
+	 */
+	private Set<MedNetConfigDocumentPath> configDocumentPaths = null;
+
+	/**
+	 * This configuration is delivered by MedNet
+	 * Those are the name of the formulars and of the institutions
+	 */
+	private Map<String,Map<String,MedNetConfigFormItem>> configFormItems = null;
+			
 	public MedNetSettings(){
 		this.loadSettings();
 	}
@@ -86,7 +105,7 @@ public class MedNetSettings {
 	}
 
 	public Path getFormsErrorPath() {
-		return formsErrorPath;
+		return this.formsErrorPath;
 	}
 
 	public void setFormsErrorPath(Path path) {
@@ -94,7 +113,7 @@ public class MedNetSettings {
 	}
 	
 	public Path getFormsArchivePath() {
-		return formsArchivePath;
+		return this.formsArchivePath;
 	}
 
 	public void setFormsArchivePath(Path path) {
@@ -102,11 +121,35 @@ public class MedNetSettings {
 	}
 
 	public int getFormsArchivePurgeInterval() {
-		return formsArchivePurgeInterval;
+		return this.formsArchivePurgeInterval;
 	}
 
 	public void setFormsArchivePurgeInterval(int interval) {
 		this.formsArchivePurgeInterval = interval;
+	}
+
+	public Map<String, MedNetConfigFormPath> getConfigFormPaths() {
+		if(this.configFormPaths == null && this.exePath != null) {
+			//Load the configuration by calling MedNet
+			this.configFormPaths = MedNet.export_ConfigForms();
+		}
+		return this.configFormPaths;
+	}
+
+	public Set<MedNetConfigDocumentPath> getConfigDocumentPaths() {
+		if(this.configDocumentPaths == null && this.exePath != null) {
+			//Load the configuration by calling MedNet
+			this.configDocumentPaths = MedNet.export_ConfigResults();
+		}
+		return this.configDocumentPaths;
+	}
+
+	public Map<String, Map<String, MedNetConfigFormItem>> getConfigFormItems() {
+		if(this.configFormItems == null && this.exePath != null) {
+			//Load the configuration by calling MedNet
+			this.configFormItems = MedNet.listForms();
+		}
+		return this.configFormItems;
 	}
 
 	/**
@@ -207,6 +250,5 @@ public class MedNetSettings {
 		
 		configuration.flush();
 	}
-	
 	
 }

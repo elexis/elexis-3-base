@@ -78,6 +78,7 @@
 		<command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
+             label="Formular ausfüllen"
              style="push">
 		</command>
     </menuContribution>
@@ -88,6 +89,7 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
+             label="Formular ausfüllen"
              style="push">
        </command>
 	</menuContribution>
@@ -98,6 +100,7 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
+             label="Formular ausfüllen"
              style="push">
        </command>
 	</menuContribution>
@@ -108,9 +111,23 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
+             label="Formular ausfüllen"
              style="push">
        </command>
 	</menuContribution>
+	
+	
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.BriefAuswahlView">
+         <command
+             commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
+             icon="icons/16x16/openformview.png"
+             label="Formular ausfüllen"
+             style="push">
+         </command>
+      </menuContribution>
+	
 	
     <menuContribution
             allPopups="false"
@@ -118,18 +135,18 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.getresult"
              icon="icons/16x16/getresult.png"
+             label="Dokumente importieren"
              style="push">
        </command>
     </menuContribution>
     
-    
-	
     <menuContribution
             allPopups="false"
             locationURI="toolbar:ch.elexis.Labor">
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.getresult"
              icon="icons/16x16/getresult.png"
+             label="Dokumente importieren"
              style="push">
        </command>
     </menuContribution>

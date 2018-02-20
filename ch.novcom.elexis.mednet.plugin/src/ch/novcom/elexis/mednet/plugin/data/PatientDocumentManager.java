@@ -11,6 +11,7 @@
 package ch.novcom.elexis.mednet.plugin.data;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -153,6 +154,33 @@ public class PatientDocumentManager {
 		//If no document has been found, we can add it to the database
 		if (documentList == null || documentList.size() == 0) {
 			
+			//Before importing the document
+			//Check that it is still not opened by MedNet
+			int trying = 0;
+			while (!file.toFile().canWrite() ) {
+				trying ++;
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					LOGGER.error(logPrefix+"waiting the file to be unlocked interrupted. "+file.toString());//$NON-NLS-1$
+					return false;
+				}
+				if(trying > 50) {
+					LOGGER.error(logPrefix+"the file is still used. Cancel import. "+file.toString());//$NON-NLS-1$
+					return false;
+				}
+			};
+			
+			//Get the document mimeType
+			String mimeType = null;
+			try {
+				Files.probeContentType(file);
+			}
+			catch(IOException | SecurityException e) {
+				//ignore exceptions
+				LOGGER.warn(logPrefix+"Unable to find the mimetype of the following file "+file.toString());//$NON-NLS-1$
+			}
+			
 			this.omnivoreDocManager.addDocument(
 				new GenericDocument(
 						this.patient,
@@ -161,7 +189,7 @@ public class PatientDocumentManager {
 						file.toFile(),
 						dateStr,
 						keywords,
-						null
+						mimeType
 				)
 			);
 			//If the document has successfully been added
@@ -315,12 +343,8 @@ public class PatientDocumentManager {
 		
 		//Limit the length of the title
 		//If it is too long, cut it
-		if (title.length() + 5> MAX_LEN_RESULT)
-			title = title.substring(0,title.length() - MAX_LEN_RESULT - 5 - 3) + "..."  ;//$NON-NLS-1$
-		
-		//The title must end up with ".pdf" if it doesn't end up with this extension, the user will have to select an application to open the document
-		title += " .pdf";
-		
+		if (title.length() > MAX_LEN_RESULT)
+			title = title.substring(0,title.length() - MAX_LEN_RESULT - 3) + "..."  ;//$NON-NLS-1$
 		
 		//Since the labResult Object uses TimeTool,
 		//We will convert the documentDateTime into a TimeTool

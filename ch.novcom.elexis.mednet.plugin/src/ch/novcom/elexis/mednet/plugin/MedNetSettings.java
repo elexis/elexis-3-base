@@ -23,9 +23,6 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.rgw.io.Settings;
 
-import ch.novcom.elexis.mednet.plugin.MedNetConfigDocumentPath;
-import ch.novcom.elexis.mednet.plugin.MedNetConfigFormPath;
-import ch.novcom.elexis.mednet.plugin.MedNetConfigFormItem;
 
 /**
  * Object that manage and store the simple MedNet settings

@@ -57,7 +57,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 	};
 	
 	private Text[] inputs = new Text[fields.length];
-	private FormText medinter, techinter, exclusion, inclusion, limits;
+	private FormText medinter, techinter, exclusion, inclusion, limits, hirarchy;
 	private FormText validity;
 	private TarmedLeistung actCode;
 	
@@ -100,6 +100,8 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		exclusion = tk.createFormText(form.getBody(), false);
 		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_DoCombine);
 		inclusion = tk.createFormText(form.getBody(), false);
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_PossibleAdd);
+		hirarchy = tk.createFormText(form.getBody(), false);
 		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_Limits);
 		limits = tk.createFormText(form.getBody(), false);
 		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_Validity);
@@ -138,6 +140,8 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				TarmedKumulation.TYP_EXCLUSION), false, false);
 			inclusion.setText(getKumulationsString(kumulations, actCode.getCode(),
 				TarmedKumulation.TYP_INCLUSION), false, false); //$NON-NLS-1$
+			List<String> hirarchyCodes = actCode.getHierarchy(actCode.getGueltigVon());
+			hirarchy.setText(String.join(", ", hirarchyCodes), false, false);
 			
 			String limit = ext.get("limits"); //$NON-NLS-1$
 			if (limit != null) {
@@ -205,8 +209,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 					&& k.isMasterCode(code) && k.isSlaveType(TarmedKumulationType.SERVICE))
 				.collect(Collectors.toList());
 			
-			if ((slaveServices != null && !slaveServices.isEmpty())
-				|| (masterServices != null && !masterServices.isEmpty())) {
+			if (!slaveServices.isEmpty() || !masterServices.isEmpty()) {
 				sb.append("Leistungen: ");
 				StringJoiner sj = new StringJoiner(", ");
 				for (TarmedKumulation tarmedKumulation : slaveServices) {
@@ -230,8 +233,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				.filter(k -> k.isTyp(typ) && k.isMasterType(TarmedKumulationType.GROUP))
 				.collect(Collectors.toList());
 			
-			if ((slaveGroups != null && !slaveGroups.isEmpty())
-				|| (masterGroups != null && !masterGroups.isEmpty())) {
+			if (!slaveGroups.isEmpty() || !masterGroups.isEmpty()) {
 				sb.append(" ");
 				sb.append("Gruppen: ");
 				StringJoiner sj = new StringJoiner(", ");

@@ -89,7 +89,7 @@ public class VitalSignsBuilder {
 					}
 				}
 			} else {
-				bdsyst = vals.get(split[1]).trim();
+				bdsyst = vals.get(split[1].trim());
 				split = config.getBdDiastTab().split("\\s:\\s");
 				if (split.length > 1) {
 					vals = xc.getResult(split[0].trim(), consultation.getDatum());

@@ -4,6 +4,9 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import java.math.BigInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IPersistentObject;
 import ch.elexis.data.Mandant;
@@ -19,6 +22,9 @@ public class FireConfig {
 	
 	private ObjectFactory factory;
 	
+	protected Logger log = LoggerFactory.getLogger(FireConfig.class);
+	
+	
 	public FireConfig(){
 		factory = new ObjectFactory();
 		
@@ -27,6 +33,15 @@ public class FireConfig {
 	}
 	
 	public BigInteger getPatId(Patient patient){
+
+		String patientNr = patient.getPatCode();
+		try {
+			long parseLong = Long.parseLong(patientNr);
+			return BigInteger.valueOf(parseLong);
+		} catch (NumberFormatException nfe) {
+			log.warn("Error parsing patientNr [{}], falling back to XID_FIRE_PATID", patientNr);
+		}
+		
 		try {
 			Thread.sleep(10);
 		} catch (InterruptedException e) {

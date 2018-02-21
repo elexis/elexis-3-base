@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.12.07 um 12:49:37 PM CET 
+// Generiert: 2018.02.21 um 02:32:18 PM CET 
 //
 
 
@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="tStatus">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="smoke" use="required" type="{}tSmokerType" />
- *       &lt;attribute name="death" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="mc" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="insurer" use="required" type="{}tString255" />
- *       &lt;attribute name="doctorPatientRelation" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="smoke" type="{}tSmokerType" />
+ *       &lt;attribute name="death" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="mc" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="insurer" type="{}tString255" />
+ *       &lt;attribute name="doctorPatientRelation" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -39,62 +39,86 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "tStatus")
 public class TStatus {
 
-    @XmlAttribute(name = "smoke", required = true)
-    protected short smoke;
-    @XmlAttribute(name = "death", required = true)
-    protected boolean death;
-    @XmlAttribute(name = "mc", required = true)
-    protected boolean mc;
-    @XmlAttribute(name = "insurer", required = true)
+    @XmlAttribute(name = "smoke")
+    protected Short smoke;
+    @XmlAttribute(name = "death")
+    protected Boolean death;
+    @XmlAttribute(name = "mc")
+    protected Boolean mc;
+    @XmlAttribute(name = "insurer")
     protected String insurer;
-    @XmlAttribute(name = "doctorPatientRelation", required = true)
-    protected boolean doctorPatientRelation;
+    @XmlAttribute(name = "doctorPatientRelation")
+    protected Boolean doctorPatientRelation;
 
     /**
      * Ruft den Wert der smoke-Eigenschaft ab.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getSmoke() {
+    public Short getSmoke() {
         return smoke;
     }
 
     /**
      * Legt den Wert der smoke-Eigenschaft fest.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setSmoke(short value) {
+    public void setSmoke(Short value) {
         this.smoke = value;
     }
 
     /**
      * Ruft den Wert der death-Eigenschaft ab.
      * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
      */
-    public boolean isDeath() {
+    public Boolean isDeath() {
         return death;
     }
 
     /**
      * Legt den Wert der death-Eigenschaft fest.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
      */
-    public void setDeath(boolean value) {
+    public void setDeath(Boolean value) {
         this.death = value;
     }
 
     /**
      * Ruft den Wert der mc-Eigenschaft ab.
      * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
      */
-    public boolean isMc() {
+    public Boolean isMc() {
         return mc;
     }
 
     /**
      * Legt den Wert der mc-Eigenschaft fest.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
      */
-    public void setMc(boolean value) {
+    public void setMc(Boolean value) {
         this.mc = value;
     }
 
@@ -125,16 +149,24 @@ public class TStatus {
     /**
      * Ruft den Wert der doctorPatientRelation-Eigenschaft ab.
      * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
      */
-    public boolean isDoctorPatientRelation() {
+    public Boolean isDoctorPatientRelation() {
         return doctorPatientRelation;
     }
 
     /**
      * Legt den Wert der doctorPatientRelation-Eigenschaft fest.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
      */
-    public void setDoctorPatientRelation(boolean value) {
+    public void setDoctorPatientRelation(Boolean value) {
         this.doctorPatientRelation = value;
     }
 

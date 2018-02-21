@@ -2,6 +2,7 @@ package ch.elexis.icpc.fire.model;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -18,9 +19,9 @@ public class ReportBuilder {
 	
 	private Report report;
 	
-	private HashMap<BigInteger, TPatient> patients;
+	private Map<BigInteger, TPatient> patients;
 	
-	private HashMap<BigInteger, TDoctor> doctors;
+	private Map<BigInteger, TDoctor> doctors;
 	
 	private ConsultationBuilder consultationBuilder;
 	
@@ -70,6 +71,7 @@ public class ReportBuilder {
 			
 			TPatient tPatient = fireConfig.getFactory().createTPatient();
 			tPatient.setId(patId);
+
 			Gender gender = patient.getGender();
 			if (gender == Gender.MALE) {
 				tPatient.setGender(true);
@@ -81,6 +83,10 @@ public class ReportBuilder {
 				TimeTool dob = new TimeTool(dateOfBirth);
 				tPatient.setBirthYear(dob.get(TimeTool.YEAR));
 			}
+			
+			TStatus tStatus = createPatientTStatus(patient);
+			tPatient.setStatus(tStatus);
+			
 			report.getPatients().getPatient().add(tPatient);
 			patients.put(patId, tPatient);
 		}
@@ -88,6 +94,24 @@ public class ReportBuilder {
 		return patId;
 	}
 	
+	private TStatus createPatientTStatus(Patient patient){
+		//		TStatus tStatus = fireConfig.getFactory().createTStatus();
+		// TODO
+		//		Query<Fall> qbe = new Query<>(Fall.class, Fall.PATIENT_ID, patient.getId());
+		//		qbe.add(Fall.FLD_XGESETZ, Query.EQUALS, "KVG");
+		//		List<Fall> qre = qbe.execute();
+		//		for (Fall fall : qre) {
+		//			if(fall.isOpen()) {
+		//				Kontakt garant = fall.getGarant();
+		//				if (garant != null && !garant.getId().equals(patient.getId()) && garant.exists()) {
+		//					tStatus.setInsurer(garant.getLabel());
+		//					break;
+		//				}
+		//			}
+		//		}
+		return null;
+	}
+
 	public BigInteger addMandant(Mandant mandant){
 		BigInteger docId = fireConfig.getDocId(mandant);
 		// only add a new doctor model object if no already in the list
@@ -121,5 +145,13 @@ public class ReportBuilder {
 	
 	public Optional<Report> build(){
 		return Optional.ofNullable(report);
+	}
+
+
+	/**
+	 * handle finishing tasks
+	 */
+	public void finish(){
+		consultationBuilder.handleUnreferencedStopMedisPerPatient(fireConfig, report);
 	}
 }

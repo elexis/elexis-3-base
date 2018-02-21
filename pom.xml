@@ -43,7 +43,6 @@
   <!-- our test modules. Come first to make them run as soon as possible -->
          
   <module>at.medevit.atc_codes.test</module>
-  <module>at.medevit.ch.artikelstamm.elexis.common.tests</module>
   <module>at.medevit.elexis.ehc.core.test</module>
   <module>at.medevit.elexis.gdt</module>
   <module>at.medevit.elexis.gdt.defaultfilecp</module>

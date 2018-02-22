@@ -13,6 +13,9 @@
 package ch.elexis.views;
 
 import java.util.Hashtable;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -29,6 +32,8 @@ import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import ch.elexis.data.TarmedKumulation;
+import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
 import ch.elexis.data.TarmedLeistung;
 import ch.rgw.tools.TimeTool;
 
@@ -52,7 +57,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 	};
 	
 	private Text[] inputs = new Text[fields.length];
-	private FormText medinter, techinter, exclusion, inclusion, limits;
+	private FormText medinter, techinter, exclusion, inclusion, limits, hirarchy;
 	private FormText validity;
 	private TarmedLeistung actCode;
 	
@@ -95,6 +100,8 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		exclusion = tk.createFormText(form.getBody(), false);
 		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_DoCombine);
 		inclusion = tk.createFormText(form.getBody(), false);
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_PossibleAdd);
+		hirarchy = tk.createFormText(form.getBody(), false);
 		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_Limits);
 		limits = tk.createFormText(form.getBody(), false);
 		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_Validity);
@@ -126,18 +133,24 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 			inputs[fields.length - 1].setText(actCode.get("Nickname")); //$NON-NLS-1$
 			medinter.setText(actCode.getMedInterpretation(), false, false);
 			techinter.setText(actCode.getTechInterpretation(), false, false);
-			String excl = ext.get("exclusion"); //$NON-NLS-1$
-			String incl = ext.get("inclusion"); //$NON-NLS-1$
+			List<TarmedKumulation> kumulations =
+				TarmedKumulation.getKumulations(actCode.getCode(), TarmedKumulationType.SERVICE,
+					actCode.getGueltigVon(), actCode.get(TarmedLeistung.FLD_LAW));
+			exclusion.setText(getKumulationsString(kumulations, actCode.getCode(),
+				TarmedKumulation.TYP_EXCLUSION), false, false);
+			inclusion.setText(getKumulationsString(kumulations, actCode.getCode(),
+				TarmedKumulation.TYP_INCLUSION), false, false); //$NON-NLS-1$
+			List<String> hirarchyCodes = actCode.getHierarchy(actCode.getGueltigVon());
+			hirarchy.setText(String.join(", ", hirarchyCodes), false, false);
+			
 			String limit = ext.get("limits"); //$NON-NLS-1$
-			exclusion.setText((excl == null) ? "" : excl, false, false); //$NON-NLS-1$
-			inclusion.setText((incl == null) ? "" : incl, false, false); //$NON-NLS-1$
 			if (limit != null) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("<form>"); //$NON-NLS-1$
 				String[] ll = limit.split("#"); //$NON-NLS-1$
 				for (String line : ll) {
 					String[] f = line.split(","); //$NON-NLS-1$
-					if (f.length == 5) {
+					if (f.length == 6) {
 						sb.append("<li>"); //$NON-NLS-1$
 						if (f[0].equals("<=")) { //$NON-NLS-1$
 							sb.append(Messages.TarmedDetailDisplay_max).append(" "); //$NON-NLS-2$
@@ -182,6 +195,64 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 			form.reflow(true);
 		}
 		
+	}
+	
+	private String getKumulationsString(List<TarmedKumulation> list, String code, String typ){
+		StringBuilder sb = new StringBuilder();
+		if (list != null) {
+			List<TarmedKumulation> slaveServices = list.stream()
+				.filter(k -> k.isTyp(typ) && k.isSlaveType(TarmedKumulationType.SERVICE)
+					&& k.isSlaveCode(code) && k.isMasterType(TarmedKumulationType.SERVICE))
+				.collect(Collectors.toList());
+			List<TarmedKumulation> masterServices = list.stream()
+				.filter(k -> k.isTyp(typ) && k.isMasterType(TarmedKumulationType.SERVICE)
+					&& k.isMasterCode(code) && k.isSlaveType(TarmedKumulationType.SERVICE))
+				.collect(Collectors.toList());
+			
+			if (!slaveServices.isEmpty() || !masterServices.isEmpty()) {
+				sb.append("Leistungen: ");
+				StringJoiner sj = new StringJoiner(", ");
+				for (TarmedKumulation tarmedKumulation : slaveServices) {
+					// dont add same exclusion multiple times
+					if (!sj.toString().contains(tarmedKumulation.getMasterCode())) {
+						sj.add(tarmedKumulation.getMasterCode());
+					}
+				}
+				for (TarmedKumulation tarmedKumulation : masterServices) {
+					// dont add same exclusion multiple times
+					if (!sj.toString().contains(tarmedKumulation.getSlaveCode())) {
+						sj.add(tarmedKumulation.getSlaveCode());
+					}
+				}
+				sb.append(sj.toString());
+			}
+			List<TarmedKumulation> slaveGroups =
+				list.stream().filter(k -> k.isTyp(typ) && k.isSlaveType(TarmedKumulationType.GROUP))
+					.collect(Collectors.toList());
+			List<TarmedKumulation> masterGroups = list.stream()
+				.filter(k -> k.isTyp(typ) && k.isMasterType(TarmedKumulationType.GROUP))
+				.collect(Collectors.toList());
+			
+			if (!slaveGroups.isEmpty() || !masterGroups.isEmpty()) {
+				sb.append(" ");
+				sb.append("Gruppen: ");
+				StringJoiner sj = new StringJoiner(", ");
+				for (TarmedKumulation tarmedKumulation : slaveGroups) {
+					// dont add same exclusion multiple times
+					if (!sj.toString().contains(tarmedKumulation.getSlaveCode())) {
+						sj.add(tarmedKumulation.getSlaveCode());
+					}
+				}
+				for (TarmedKumulation tarmedKumulation : masterGroups) {
+					// dont add same exclusion multiple times
+					if (!sj.toString().contains(tarmedKumulation.getMasterCode())) {
+						sj.add(tarmedKumulation.getMasterCode());
+					}
+				}
+				sb.append(sj.toString());
+			}
+		}
+		return sb.toString();
 	}
 	
 	public String getTitle(){

@@ -266,6 +266,8 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 			actPat = newKons.getFall().getPatient();
 			log.warn("Discovered changed patient " + op  + " actPat " + actPat.getPersonalia());
 		} else {
+			actPat = newPatient;
+			log.warn("Set actPat to {} actPat {}", op, actPat);
 		}
 		/*
 		 * Not yet sure whether comparing only the id or the whole cons is better
@@ -412,14 +414,14 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 * @param selectedPatient patient to be displayed
 	 * @param why 		Where do we come from (Only used for the logging)
 	 */
-	private void displaySelectedPatient(Patient selectedPatient, String why){
+	private synchronized void displaySelectedPatient(Patient selectedPatient, String why){
 		if (selectedPatient == null) {
-			logEvent(null, why + " displaySelectedPatient " + "no patient");
+			logEvent(null, why + " displaySelectedPatient 1 no patient");
 			updateAllKonsAreas(null, null, KonsActions.ACTIVATE_KONS);
 			return;
 
 		} else {
-			logEvent(actKons, why + " displaySelectedPatient " + selectedPatient.getId() + selectedPatient.getPersonalia());
+			logEvent(null, why + " displaySelectedPatient 2 " + selectedPatient.getId() + selectedPatient.getPersonalia());
 		}
 
 		showAllChargesAction.setChecked(false);
@@ -445,13 +447,13 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 								konsultation = konsultation.getFall().neueKonsultation();
 							}
 						}
-						log.debug("displaySelectedPatient neue Kons fall.isOpen " +  konsultation.getId() + " " + konsultation.getLabel());
+						log.debug("displaySelectedPatient 3 neue Kons fall.isOpen " +  konsultation.getId() + " " + konsultation.getLabel());
 						break;
 					}
 				}
 				if (konsultation == null) {
 					konsultation = selectedPatient.createFallUndKons();
-					log.debug("displaySelectedPatient neue Kons createFallUndKons " + konsultation.getId() + " " + konsultation.getLabel());
+					log.debug("displaySelectedPatient 4 neue Kons createFallUndKons " + konsultation.getId() + " " + konsultation.getLabel());
 				}
 			}
 		}
@@ -693,8 +695,9 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 				updateAllKonsAreas(actPat, newKons, KonsActions.ACTIVATE_KONS);
 			} else
 			{
-				logEvent(newKons, "visible true newKons is null");
-				displaySelectedPatient(ElexisEventDispatcher.getSelectedPatient(), "view visible");
+				Patient newPat = ElexisEventDispatcher.getSelectedPatient();
+				logEvent(null, "visible true newKons is null for " +(newPat == null ? "null" : newPat.getPersonalia()));
+				displaySelectedPatient(newPat, "view visible");
 			}
 			visibleAllKonsAreas(mode);
 			heartbeat.enableListener(true);

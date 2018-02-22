@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.text.model.Samdas;
@@ -183,7 +184,9 @@ public class KonsText implements IJournalArea {
 			if (actKons.getFall() == null) {
 				return;
 			}
-			if (text.isDirty() || textChanged()) {
+			if (!Helpers.userMayEditKons(actKons)) {
+				logEvent(String.format("skip updateEintrag as userMay not Edit dirty %s changed %s ", text.isDirty(), textChanged()));
+			} else  if (text.isDirty() || textChanged()) {
 				int old_version = actKons.getHeadVersion();
 				String plain = text.getContentsPlaintext();
 				logEvent("updateEintrag old_version " + old_version + " " +
@@ -194,6 +197,8 @@ public class KonsText implements IJournalArea {
 						showUnableToSaveKons(plain, notEditable);
 					} else  {
 						actKons.updateEintrag(text.getContentsAsXML(), false);
+						ElexisEventDispatcher.getInstance().fire(
+                            new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 						int new_version = actKons.getHeadVersion();
 						String samdasText = (new Samdas(actKons.getEintrag().getHead()).getRecordText());
 						if (new_version <= old_version || !plain.equals(samdasText)) {
@@ -207,7 +212,6 @@ public class KonsText implements IJournalArea {
 							}
 						} else {
 							unable_to_save_kons_id = "";
-							// TODO: Warum merkt das KonsListView trotzdem nicht ?? ElexisEventDispatcher.fireSelectionEvent(actKons);
 						}
 					}
 				} else {
@@ -323,7 +327,8 @@ public class KonsText implements IJournalArea {
 			@Override
 			public void run(){
 				actKons.purgeEintrag();
-				ElexisEventDispatcher.fireSelectionEvent(actKons);
+				ElexisEventDispatcher.getInstance().fire(
+                    new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 			}
 		};
 		versionBackAction = new Action("Vorherige Version") {
@@ -334,6 +339,8 @@ public class KonsText implements IJournalArea {
 					"Konsultationstext ersetzen",
 					"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine frühere Version desselben Eintrags ersetzen?")) {
 					setKonsText(actKons, displayedVersion - 1, false);
+					ElexisEventDispatcher.getInstance().fire(
+                        new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 				}
 			}
 		};
@@ -345,6 +352,8 @@ public class KonsText implements IJournalArea {
 					"Konsultationstext ersetzen",
 					"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine spätere Version desselben Eintrags ersetzen?")) {
 					setKonsText(actKons, displayedVersion + 1, false);
+					ElexisEventDispatcher.getInstance().fire(
+                        new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 				}
 			}
 		};
@@ -362,6 +371,8 @@ public class KonsText implements IJournalArea {
 						"Wollen Sie wirklich den aktuellen Konsultationstext gegen die Version "
 							+ selectedVersion + " desselben Eintrags ersetzen?")) {
 						setKonsText(actKons, selectedVersion, false);
+						ElexisEventDispatcher.getInstance().fire(
+                            new ElexisEvent(actKons, Konsultation.class, ElexisEvent.EVENT_UPDATE));
 					}
 				}
 
@@ -578,18 +589,16 @@ public class KonsText implements IJournalArea {
 	@Override
 	public synchronized void activation(boolean mode, Patient selectedPat, Konsultation selectedKons){
 		logEvent("activation: " + mode);
-		/* Mein alte Lösung
-		if (mode == true) {
-			setKons(selectedPat, selectedKons, KonsActions.ACTIVATE_KONS);
-		} else {
-			updateEintrag();
-		}
-		Nachher neu die von Thomas aus KonsDetailView */
 		if (mode == false) {
-			// save entry on deactivation if text was edited
-			if (actKons != null && (text.isDirty())) {
+			// save entry on deactivation if text was edited and changed or diry and user my edit it
+			if (actKons != null && Helpers.userMayEditKons(actKons) && (text.isDirty()) || textChanged()) {
 				actKons.updateEintrag(text.getContentsAsXML(), false);
+				logEvent(String.format("updateEintrag activation vers %s dtext.isDirty ",
+					actKons.getHeadVersion()));
 				text.setDirty(false);
+			} else {
+				logEvent(String.format("skip updateEintrag activation as %s mayEdit %s dirty %s changed %s",
+					actKons,  Helpers.userMayEditKons(actKons), text.isDirty(),  textChanged()));
 			}
 		} else {
 			// load newest version on activation, if there are no local changes

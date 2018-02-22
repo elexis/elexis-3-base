@@ -15,8 +15,7 @@ Import-Package: ch.elexis.core.model,
  ch.rgw.tools,
  org.osgi.service.component.annotations;version="1.2.0",
  org.slf4j;version="1.7.2"
-Service-Component: OSGI-INF/ehcservice.xml,
- OSGI-INF/at.medevit.elexis.ehc.core.internal.EhcCoreServiceImpl.xml
+Service-Component: OSGI-INF/at.medevit.elexis.ehc.core.internal.EhcCoreServiceImpl.xml
 Export-Package: at.medevit.elexis.ehc.core,
  org.ehealth_connector.cda,
  org.ehealth_connector.cda.ch,

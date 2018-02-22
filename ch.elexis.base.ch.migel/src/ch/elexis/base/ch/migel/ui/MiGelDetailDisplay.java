@@ -34,7 +34,7 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 	
 	FormToolkit tk = UiDesk.getToolkit();
 	ScrolledForm form;
-	LabeledInputField ifName, ifPreis;
+	LabeledInputField ifName, ifPreis, ifAmount, ifEinheit;
 	Text tName, tLong;
 	MiGelArtikel act;
 	
@@ -59,7 +59,9 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 			}
 			
 		});
-		ifPreis = new LabeledInputField(ret, Messages.MiGelDetailDisplay_PriceUnit);
+		ifPreis = new LabeledInputField(ret, Messages.MiGelDetailDisplay_Price);
+		ifAmount = new LabeledInputField(ret, Messages.MiGelDetailDisplay_Amount);
+		ifEinheit = new LabeledInputField(ret, Messages.MiGelDetailDisplay_Unit);
 		tLong = SWTHelper.createText(tk, ret, 4, SWT.READ_ONLY);
 
 		return ret;
@@ -74,8 +76,9 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 			act = (MiGelArtikel) obj;
 			form.setText(act.getLabel());
 			ifName.setText(act.getInternalName());
-			ifPreis.setText(new Money(act.getVKPreis()).getAmountAsString() + " " //$NON-NLS-1$
-				+ act.getExt("unit")); //$NON-NLS-1$
+			ifPreis.setText(new Money(act.getVKPreis()).getAmountAsString());
+			ifAmount.setText(Integer.toString(act.getPackungsGroesse()));
+			ifEinheit.setText(act.getExt("unit"));
 			tLong.setText(act.getExt("FullText")); //$NON-NLS-1$
 		}
 	}

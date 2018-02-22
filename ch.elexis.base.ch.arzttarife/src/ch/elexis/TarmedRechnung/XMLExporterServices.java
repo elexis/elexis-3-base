@@ -14,6 +14,7 @@ package ch.elexis.TarmedRechnung;
 import java.text.ParseException;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Optional;
 
 import org.jdom.Element;
 import org.slf4j.Logger;
@@ -349,6 +350,10 @@ public class XMLExporterServices {
 					el.setAttribute(ATTR_BODY_LOCATION, TarmedLeistung.getSide(verrechnet)); // 22450
 					
 					el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); // 22470
+					getALNotScaled(verrechnet).ifPresent(d -> {
+						el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(d / 100.0, 2)); // 22470
+					});
+					
 					el.setAttribute(ATTR_UNIT_FACTOR_MT, XMLTool.doubleToXmlDouble(mult, 2)); // 22480
 					// (strebt
 					// gegen
@@ -357,6 +362,9 @@ public class XMLExporterServices {
 						XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22490
 					el.setAttribute(ATTR_EXTERNAL_FACTOR_MT,
 						XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22500
+					getALScalingFactor(verrechnet).ifPresent(f -> {
+						el.setAttribute(ATTR_EXTERNAL_FACTOR_MT, XMLTool.doubleToXmlDouble(f, 1)); // 22500
+					});
 					el.setAttribute(XMLExporter.ATTR_AMOUNT_MT, XMLTool.moneyToXmlDouble(mAL)); // 22510
 					
 					el.setAttribute(ATTR_UNIT_TT, XMLTool.doubleToXmlDouble(tlTL / 100.0, 2)); // 22520
@@ -586,6 +594,30 @@ public class XMLExporterServices {
 		}
 		ret.initialized = true;
 		return ret;
+	}
+	
+	private static Optional<Double> getALScalingFactor(Verrechnet verrechnet){
+		String scalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
+		if (scalingFactor != null && !scalingFactor.isEmpty()) {
+			try {
+				return Optional.of(Double.parseDouble(scalingFactor));
+			} catch (NumberFormatException ne) {
+				// return empty if not parseable
+			}
+		}
+		return Optional.empty();
+	}
+	
+	private static Optional<Double> getALNotScaled(Verrechnet verrechnet){
+		String notScaled = verrechnet.getDetail("AL_NOTSCALED");
+		if (notScaled != null && !notScaled.isEmpty()) {
+			try {
+				return Optional.of(Double.parseDouble(notScaled));
+			} catch (NumberFormatException ne) {
+				// return empty if not parseable
+			}
+		}
+		return Optional.empty();
 	}
 	
 	/**

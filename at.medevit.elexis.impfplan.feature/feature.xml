@@ -17,10 +17,6 @@
       Eclipse Public License v1.0
    </license>
 
-   <requires>
-      <import feature="at.medevit.elexis.ehc.feature" version="3.0.0.qualifier"/>
-   </requires>
-
    <plugin
          id="at.medevit.elexis.impfplan"
          download-size="0"

@@ -7,9 +7,7 @@ import ch.elexis.core.importer.div.importers.TransientLabResult;
 import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-
 import ch.elexis.data.LabItem;
-import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
@@ -91,7 +89,7 @@ public class Value {
 		}
 		
 		return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_myLab),
-			_labItem, value).date(date).comment(comment).flags(resultFlags).build(liu);
+			_labItem, value).date(date).comment(comment).flags(Integer.valueOf(resultFlags)).build(liu);
 			
 	}
 }

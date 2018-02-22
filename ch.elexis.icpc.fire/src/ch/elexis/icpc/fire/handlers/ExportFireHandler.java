@@ -81,7 +81,7 @@ public class ExportFireHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		String lastupdate = CoreHub.globalCfg.get(CFGPARAM, null);
 		if (lastupdate == null) {
-			lastupdate = "20090101";
+			lastupdate = "20170101";
 		}
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 		TimeTool ttFrom = new TimeTool(lastupdate);
@@ -129,7 +129,7 @@ public class ExportFireHandler extends AbstractHandler {
 		public void run(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException{
 			try {
-				monitor.beginTask("FIRE Export ", consultations.size());
+				monitor.beginTask("FIRE Export ", consultations.size()+1);
 				int counter = 0;
 				ReportBuilder reportBuilder = new ReportBuilder();
 				if (reportBuilder.isValidConfig()) {
@@ -168,6 +168,10 @@ public class ExportFireHandler extends AbstractHandler {
 						}
 						monitor.worked(1);
 					}
+					
+					reportBuilder.finish();
+					monitor.worked(1);
+					
 					Optional<Report> report = reportBuilder.build();
 					if (report.isPresent()) {
 						try (FileOutputStream fout = new FileOutputStream(new File(exportPath))) {

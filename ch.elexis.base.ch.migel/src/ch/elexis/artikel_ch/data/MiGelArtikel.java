@@ -27,7 +27,7 @@ public class MiGelArtikel extends Artikel {
 	
 	public MiGelArtikel(String code, String text, String unit, Money price){
 		create(MIGEL_NAME + code); //$NON-NLS-1$
-		String shortname = StringTool.getFirstLine(text, 120);
+		String shortname = StringTool.getFirstLine(text, 120, "[\\n\\r]");
 		Matcher matcher = pattern.matcher(shortname);
 		StringBuffer sb = new StringBuffer();
 		while (matcher.find()) {
@@ -39,7 +39,7 @@ public class MiGelArtikel extends Artikel {
 			Artikel.FLD_NAME, Artikel.FLD_TYP, Artikel.FLD_SUB_ID, Artikel.FLD_KLASSE
 		}, new String[] {
 			shortname, MIGEL_NAME, code, MiGelArtikel.class.getName()
-		}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		});
 		setExt("FullText", text); //$NON-NLS-1$
 		setExt("unit", unit == null ? "-" : unit); //$NON-NLS-1$ //$NON-NLS-2$
 		set("VK_Preis", price.getCentsAsString()); //$NON-NLS-1$

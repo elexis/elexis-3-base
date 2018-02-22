@@ -139,11 +139,11 @@
 	<xs:attribute name="docId" type="xs:unsignedLong"/>
 </xs:complexType>
 <xs:complexType name="tStatus">
-	<xs:attribute name="smoke" type="tSmokerType"  use="required"/>
-	<xs:attribute name="death" type="xs:boolean" use="required"/> 
-	<xs:attribute name="mc" type="xs:boolean" use="required"/> 
-	<xs:attribute name="insurer" type="tString255" use="required"/>
-	<xs:attribute name="doctorPatientRelation" type="xs:boolean" use="required"/>
+	<xs:attribute name="smoke" type="tSmokerType"  use="optional"/>
+	<xs:attribute name="death" type="xs:boolean" use="optional"/> 
+	<xs:attribute name="mc" type="xs:boolean" use="optional"/> 
+	<xs:attribute name="insurer" type="tString255" use="optional"/>
+	<xs:attribute name="doctorPatientRelation" type="xs:boolean" use="optional"/>
 </xs:complexType>
 <xs:simpleType name="tSmokerType">
 	<xs:restriction base="xs:unsignedByte">

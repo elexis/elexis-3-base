@@ -2,8 +2,12 @@ package ch.elexis.icpc.fire.model;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -32,36 +36,45 @@ public class MedisBuilder {
 		return this;
 	}
 	
-	public Optional<Medis> build() throws DatatypeConfigurationException{
+	public Optional<Medis> build(Map<String, Set<TMedi>> unreferencedStopMedisPerPatient) throws DatatypeConfigurationException{
 		Patient patient = consultation.getFall().getPatient();
 		Query<Prescription> query = new Query<Prescription>(Prescription.class);
 		query.add(Prescription.FLD_PATIENT_ID, Query.EQUALS, patient.getId());
 		TimeTool consTime = new TimeTool(consultation.getDatum());
 		query.add(Prescription.FLD_DATE_FROM, Query.LIKE,
 			consTime.toString(TimeTool.DATE_COMPACT) + "%");
+		
 		List<Prescription> prescriptions = query.execute();
+		Set<TMedi> unreferencedStoppedMedis = unreferencedStopMedisPerPatient.get(patient.getId());
+		if(unreferencedStoppedMedis!=null) {
+			for (Iterator<TMedi> iterator = unreferencedStoppedMedis.iterator(); iterator.hasNext();) {
+				TMedi tMedi = (TMedi) iterator.next();
+				if(tMedi.getEndDate().toString().startsWith(new TimeTool(consTime).toString(TimeTool.DATE_MYSQL))) {
+					// if there exists a TMedi with stop date same as this consultation
+					// add it again
+					prescriptions.add(Prescription.load(tMedi.getId()));
+					iterator.remove();
+				}
+			}
+		}
+		
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			Medis medis = config.getFactory().createTConsultationMedis();
 			for (Prescription prescription : prescriptions) {
-				Artikel articel = prescription.getArtikel();
-				if (articel != null) {
+				Artikel article = prescription.getArtikel();
+				if (article != null) {
 					TMedi tMedi = config.getFactory().createTMedi();
+					tMedi.setId(prescription.getId());
 					String beginDateString = prescription.getBeginDate();
 					if (beginDateString != null && !beginDateString.isEmpty()) {
 						tMedi.setBeginDate(
 							XmlUtil.getXmlGregorianCalendar(new TimeTool(beginDateString)));
 					}
-					String stopDateString = prescription.getEndDate();
-					if (stopDateString != null && !stopDateString.isEmpty()) {
-						tMedi.setEndDate(
-							XmlUtil.getXmlGregorianCalendar(new TimeTool(stopDateString)));
-					}
-					
-					String atcCode = articel.getATC_code();
+					String atcCode = article.getATC_code();
 					if (atcCode != null && !atcCode.isEmpty()) {
 						tMedi.setAtc(atcCode);
 					}
-					String pharmacode = articel.getPharmaCode();
+					String pharmacode = article.getPharmaCode();
 					if (pharmacode != null && !pharmacode.isEmpty()) {
 						try {
 							long numericPharmacode = Long.valueOf(pharmacode);
@@ -71,7 +84,7 @@ public class MedisBuilder {
 						}
 					}
 					
-					String gtin = articel.getGTIN();
+					String gtin = article.getGTIN();
 					if (gtin != null && !gtin.isEmpty()) {
 						try {
 							long gtinL = Long.valueOf(gtin);
@@ -109,6 +122,21 @@ public class MedisBuilder {
 					}
 					
 					tMedi.setMediDauer(getType(prescription.getEntryType()));
+					
+					String stopDateString = prescription.getEndDate();
+					if (stopDateString != null && !stopDateString.isEmpty()) {
+						tMedi.setEndDate(
+							XmlUtil.getXmlGregorianCalendar(new TimeTool(stopDateString)));
+						if(!stopDateString.startsWith(consultation.getDatum())) {
+							// this medication has to be re-referenced in another consultation
+							// as the stopping of a medication has to be pointed out again
+							if(unreferencedStoppedMedis==null) {
+								unreferencedStoppedMedis = new HashSet<>();
+								unreferencedStopMedisPerPatient.put(patient.getId(), unreferencedStoppedMedis);
+							}
+							unreferencedStoppedMedis.add(tMedi);
+						}
+					}
 					
 					medis.getMedi().add(tMedi);
 				}

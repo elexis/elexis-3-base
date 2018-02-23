@@ -35,7 +35,7 @@ public class TarmedOptifierTest {
 	private static Konsultation konsGriss, konsSter, konsOneYear, konsBelow75;
 	private static TarmedLeistung tlBaseFirst5Min, tlBaseXRay, tlBaseRadiologyHospital,
 			tlUltrasound, tlAgeTo1Month, tlAgeTo7Years, tlAgeFrom7Years,
-			tlGroupLimit1, tlGroupLimit2;
+			tlGroupLimit1, tlGroupLimit2, tlAlZero;
 			
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
@@ -62,6 +62,8 @@ public class TarmedOptifierTest {
 			(TarmedLeistung) TarmedLeistung.getFromCode("02.0310", new TimeTool(), null);
 		tlGroupLimit2 =
 			(TarmedLeistung) TarmedLeistung.getFromCode("02.0340", new TimeTool(), null);
+		
+		tlAlZero = (TarmedLeistung) TarmedLeistung.getFromCode("00.0716", new TimeTool(), null);
 		
 		//Patient Grissemann with case and consultation
 		patGrissemann = new Patient("Grissemann", "Christoph", "17.05.1966", Patient.MALE);
@@ -359,11 +361,26 @@ public class TarmedOptifierTest {
 		amountAL = TarmedLeistung.getAL(verrechnet);
 		assertEquals(969, amountAL);
 		amount = verrechnet.getNettoPreis();
-		assertEquals(14.84, amount.getAmount(), 0.01);
+		assertEquals(14.84, amount.getAmount(), 0.01); // 10.42 * 0.83 * 0.93 + 8.19 * 0.83
+		String alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
+		assertEquals("0.93", alScalingFactor);
+		String alNotScaled = verrechnet.getDetail("AL_NOTSCALED");
+		assertEquals("1042", alNotScaled);
+		
+		result = kons.addLeistung(tlAlZero);
+		assertTrue(result.isOK());
+		verrechnet = kons.getVerrechnet(tlAlZero);
+		assertNotNull(verrechnet);
+		amountAL = TarmedLeistung.getAL(verrechnet);
+		assertEquals(0, amountAL);
+		amount = verrechnet.getNettoPreis();
+		assertEquals(4.08, amount.getAmount(), 0.01); // 0.0 * 0.83 * 0.93 + 4.92 * 0.83
+		alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
+		assertEquals("0.93", alScalingFactor);
 		
 		tearDownDignitaet(kons);
 		
-		// set the mandant type to practitioner
+		// set the mandant type to specialist
 		clearKons(kons);
 		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.SPECIALIST);
 		result = kons.addLeistung(tlBaseFirst5Min);
@@ -464,13 +481,19 @@ public class TarmedOptifierTest {
 		extension.put(TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
 		// the AL value
 		extension.put(TarmedLeistung.EXT_FLD_TP_AL, "10.42");
+		tlBaseFirst5Min.setExtension(extension);
+		extension = tlAlZero.loadExtension();
+		// set reduce factor
+		extension.put(TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
+		// no AL value
+		tlAlZero.setExtension(extension);
+		
 		// add additional multiplier
 		LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
 		MultiplikatorList multis =
 			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
 		multis.insertMultiplikator(new TimeTool(yesterday), "0.83");
 		
-		tlBaseFirst5Min.setExtension(extension);
 	}
 	
 	private void tearDownDignitaet(Konsultation kons){
@@ -480,13 +503,19 @@ public class TarmedOptifierTest {
 		extension.remove(TarmedLeistung.EXT_FLD_F_AL_R);
 		// reset AL value
 		extension.put(TarmedLeistung.EXT_FLD_TP_AL, "9.57");
+		tlBaseFirst5Min.setExtension(extension);
+		extension = tlAlZero.loadExtension();
+		// clear reduce factor
+		extension.remove(TarmedLeistung.EXT_FLD_F_AL_R);
+		// no AL value
+		tlAlZero.setExtension(extension);
+		
 		// remove additional multiplier
 		LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
 		MultiplikatorList multis =
 			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
 		multis.removeMultiplikator(new TimeTool(yesterday), "0.83");
 
-		tlBaseFirst5Min.setExtension(extension);
 	}
 	
 	private static void clearKons(Konsultation kons){

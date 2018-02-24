@@ -11,21 +11,13 @@
 package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
 
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -43,15 +35,6 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 	
 	private int defaultPurgeInterval = 30;
-	
-	private Text  formsPath;
-	private Button formsPathSelection;
-	
-	private Text  errorPath;
-	private Button errorPathSelection;
-	
-	private Text  archivePath;
-	private Button archivePathSelection;
 	
 	private Text  purgeInterval;
 	
@@ -72,104 +55,10 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	protected Control createContents(Composite parent){
 		
-		
-
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(3, false));
 		
-		WidgetFactory.createLabel(ret, MedNetMessages.FormPreferences_labelFormsPath);
-		formsPath = new Text(ret, SWT.BORDER);
-		formsPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		formsPath.setTextLimit(80);
-		//formsPath.setEnabled(false);
-		if(MedNet.getSettings().getFormsPath() != null) {
-			formsPath.setText(MedNet.getSettings().getFormsPath().toString());
-		}
-		
-		formsPathSelection = new Button(ret, SWT.PUSH);
-		formsPathSelection.setText("..."); //$NON-NLS-1$
-		formsPathSelection.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setText(MedNetMessages.FormPreferences_labelFormsPath);
-
-				if(!formsPath.getText().isEmpty()) {
-					dialog.setFilterPath(formsPath.getText());	
-				}
-				else if(	MedNet.getSettings().getExePath() != null ){
-					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");
-				}
-				
-		        String selected = dialog.open();
-		        formsPath.setText(selected);
-			}
-		});
-		
-		WidgetFactory.createLabel(ret, MedNetMessages.FormPreferences_labelErrorPath);
-		errorPath = new Text(ret, SWT.BORDER);
-		errorPath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		errorPath.setTextLimit(80);
-		//errorPath.setEnabled(false);
-		if(MedNet.getSettings().getFormsErrorPath() != null) {
-			errorPath.setText(MedNet.getSettings().getFormsErrorPath().toString());
-		}
-		
-		errorPathSelection = new Button(ret, SWT.PUSH);
-		errorPathSelection.setText("..."); //$NON-NLS-1$
-		errorPathSelection.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setText(MedNetMessages.FormPreferences_labelErrorPath);
-
-				if(!errorPath.getText().isEmpty()) {
-					dialog.setFilterPath(errorPath.getText());	
-				}
-				else if(!formsPath.getText().isEmpty()) {
-					dialog.setFilterPath(formsPath.getText());//$NON-NLS-1$
-				}
-				else if(	MedNet.getSettings().getExePath() != null ){
-					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");
-				}
-				
-		        String selected = dialog.open();
-		        errorPath.setText(selected);
-			}
-		});
-		
-		WidgetFactory.createLabel(ret, MedNetMessages.FormPreferences_labelArchivePath);
-		archivePath = new Text(ret, SWT.BORDER);
-		archivePath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		archivePath.setTextLimit(80);
-		//archivePath.setEnabled(false);
-		if(MedNet.getSettings().getFormsArchivePath() != null) {
-			archivePath.setText(MedNet.getSettings().getFormsArchivePath().toString());
-		}
-		
-		archivePathSelection = new Button(ret, SWT.PUSH);
-		archivePathSelection.setText("..."); //$NON-NLS-1$
-		archivePathSelection.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setText(MedNetMessages.FormPreferences_labelArchivePath);
-				if(!archivePath.getText().isEmpty()) {
-					dialog.setFilterPath(archivePath.getText());	
-				}
-				else if(!formsPath.getText().isEmpty()) {
-					dialog.setFilterPath(formsPath.getText());//$NON-NLS-1$
-				}
-				else if(	MedNet.getSettings().getExePath() != null ){
-					dialog.setFilterPath(MedNet.getSettings().getExePath().getParent().toString()+FileSystems.getDefault().getSeparator()+"interfaces");
-				}
-		        String selected = dialog.open();
-		        archivePath.setText(selected);
-			}
-		});
-		
-
 		WidgetFactory.createLabel(ret, MedNetMessages.FormPreferences_labelPurgeInterval);
 		purgeInterval = new Text(ret, SWT.BORDER);
 		purgeInterval.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
@@ -216,37 +105,6 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 	 */
 	@Override
 	public boolean performOk(){
-
-
-		if(this.formsPath.getText() == null || formsPath.getText().isEmpty()){
-			this.setErrorMessage(MedNetMessages.FormPreferences_NoPath);
-			return false;
-		}
-		if(!Files.isDirectory(Paths.get(this.formsPath.getText()))) {
-			this.setErrorMessage(String.format(MedNetMessages.FormPreferences_NotValidPath,this.formsPath.getText()));
-			return false;
-		}
-		if(this.errorPath.getText() == null || errorPath.getText().isEmpty()){
-			this.setErrorMessage(MedNetMessages.FormPreferences_NoErrorPath);
-			return false;
-		}
-		if(!Files.isDirectory(Paths.get(this.errorPath.getText()))) {
-			this.setErrorMessage(String.format(MedNetMessages.FormPreferences_NotValidPath,this.errorPath.getText()));
-			return false;
-		}
-		if(this.archivePath.getText() == null || archivePath.getText().isEmpty()){
-			this.setErrorMessage(MedNetMessages.FormPreferences_NoArchivingPath);
-			return false;
-		}
-		if(!Files.isDirectory(Paths.get(this.archivePath.getText()))) {
-			this.setErrorMessage(String.format(MedNetMessages.FormPreferences_NotValidPath,this.archivePath.getText()));
-			return false;
-		}
-		
-		
-		MedNet.getSettings().setFormsPath(Paths.get(formsPath.getText()));
-		MedNet.getSettings().setFormsErrorPath(Paths.get(errorPath.getText()));
-		MedNet.getSettings().setFormsArchivePath(Paths.get(archivePath.getText()));
 
 		if(purgeInterval.getText() == null || purgeInterval.getText().isEmpty()){
 			MedNet.getSettings().setFormsArchivePurgeInterval(defaultPurgeInterval);

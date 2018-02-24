@@ -1,18 +1,20 @@
 package ch.novcom.elexis.mednet.plugin;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MedNetConfigFormPath implements Comparable<MedNetConfigFormPath> {
 
 	//"accountID";"accountTitle";"accountLastname";"accountFirstname";"path"
-	private final static Pattern csvLinePattern = Pattern.compile("^\"(?<accountID>[^\"]*)\";(?<accountTitle>[^\"]*)\";(?<accountLastname>[^\"]*)\";(?<accountFirstname>[^\"]*)\";(?<path[^\"]*)\"$");//$NON-NLS-1$
+	private final static Pattern csvLinePattern = Pattern.compile("^\"(?<accountID>[^\"]*)\";\"(?<accountTitle>[^\"]*)\";\"(?<accountLastname>[^\"]*)\";\"(?<accountFirstname>[^\"]*)\";\"(?<path>[^\"]*)\"$");//$NON-NLS-1$
 	
 	private String accountID;
 	private String accountTitle;
 	private String accountLastname;
 	private String accountFirstname;
-	private String path;
+	private Path path;
 
 	public MedNetConfigFormPath(String fileLine) {
 
@@ -22,7 +24,7 @@ public class MedNetConfigFormPath implements Comparable<MedNetConfigFormPath> {
 			this.accountTitle = matcher.group("accountTitle");//$NON-NLS-1$
 			this.accountLastname = matcher.group("accountLastname");//$NON-NLS-1$
 			this.accountFirstname = matcher.group("accountFirstname");//$NON-NLS-1$
-			this.path = matcher.group("path");//$NON-NLS-1$
+			this.path = Paths.get(matcher.group("path"));//$NON-NLS-1$
 		}
 	}
 	
@@ -42,7 +44,7 @@ public class MedNetConfigFormPath implements Comparable<MedNetConfigFormPath> {
 	public String getAccountFirstname() {
 		return accountFirstname;
 	}
-	public String getPath() {
+	public Path getPath() {
 		return path;
 	}
 

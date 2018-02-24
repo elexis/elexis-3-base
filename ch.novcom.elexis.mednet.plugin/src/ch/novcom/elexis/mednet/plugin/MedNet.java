@@ -10,11 +10,9 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -26,9 +24,6 @@ import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.elexis.data.Patient;
-import ch.novcom.elexis.mednet.plugin.ui.commands.OpenFormView;
 
 /**
  * This class will 
@@ -160,6 +155,9 @@ public class MedNet {
 			LOGGER.error(logPrefix+"IOException creating list form file.",ioe);//$NON-NLS-1$
 			return null;
 		}
+		command.add("-output:"+file.toString());		
+		
+		LOGGER.debug(logPrefix + "launch MedNet "+String.join(" ", command));//$NON-NLS-1$
 		
 		ProcessBuilder probuilder = new ProcessBuilder(command);
 		probuilder.directory(MedNet.getSettings().getExePath().getParent().toFile());
@@ -248,6 +246,7 @@ public class MedNet {
 			LOGGER.error(logPrefix+"IOException creating config form file.",ioe);//$NON-NLS-1$
 			return null;
 		}
+		command.add("-output:"+file.toString());
 		
 		ProcessBuilder probuilder = new ProcessBuilder( command );
 		probuilder.directory(MedNet.getSettings().getExePath().getParent().toFile());
@@ -332,6 +331,7 @@ public class MedNet {
 			LOGGER.error(logPrefix+"IOException creating config result file.",ioe);//$NON-NLS-1$
 			return null;
 		}
+		command.add("-output:"+file.toString());
 		
 		ProcessBuilder probuilder = new ProcessBuilder( command );
 		probuilder.directory(MedNet.getSettings().getExePath().getParent().toFile());

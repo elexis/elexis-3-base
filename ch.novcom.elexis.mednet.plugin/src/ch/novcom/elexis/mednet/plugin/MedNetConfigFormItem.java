@@ -6,21 +6,20 @@ import java.util.regex.Pattern;
 public class MedNetConfigFormItem implements Comparable<MedNetConfigFormItem> {
 
 	//"accountID";"accountTitle";"accountLastname";"accountFirstname";"institutionID";"institutionName";"formID";"formName"
-	private final static Pattern csvLinePattern = Pattern.compile("^\"(?<accountID>[^\"]*)\";(?<accountTitle>[^\"]*)\";(?<accountLastname>[^\"]*)\";(?<accountFirstname>[^\"]*)\";(?<institutionID>[^\"]*)\";(?<institutionName>[^\"]*)\";(?<formID>[^\"]*)\";(?<formName[^\"]*)\"$");//$NON-NLS-1$
-
+	private final static Pattern csvLinePattern = Pattern.compile("^\"(?<accountID>[^\"]*)\";\"(?<accountTitle>[^\"]*)\";\"(?<accountLastname>[^\"]*)\";\"(?<accountFirstname>[^\"]*)\";\"(?<institutionID>[^\"]*)\";\"(?<institutionName>[^\"]*)\";\"(?<formID>[^\"]*)\";\"(?<formName>[^\"]*)\"$");//$NON-NLS-1$
 	
-	private String accountID;
-	private String accountTitle;
-	private String accountLastname;
-	private String accountFirstname;
-	private String institutionID;
-	private String institutionName;
-	private String formID;
-	private String formName;
+	private String accountID="";
+	private String accountTitle="";
+	private String accountLastname="";
+	private String accountFirstname="";
+	private String institutionID="";
+	private String institutionName="";
+	private String formID="";
+	private String formName="";
 	
 
 	public MedNetConfigFormItem(String line) {
-
+		
 		Matcher matcher = csvLinePattern.matcher(line);
 		if(matcher.matches()){
 			this.accountID = matcher.group("accountID");//$NON-NLS-1$

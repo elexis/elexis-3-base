@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,24 +62,38 @@ public class FormWatcher {
      */
     public FormWatcher() throws IOException{
 		String logPrefix = "constructor() - ";//$NON-NLS-1$
-    	Path pathToWatch = MedNet.getSettings().getFormsPath();
-    	//If the Path to monitor exists
-    	if(pathToWatch != null) {
-    		if(Files.isDirectory(pathToWatch)) {
+    	
+    	Map<String, MedNetConfigFormPath> configFormPaths = MedNet.getSettings().getConfigFormPaths();
+    	
+    	if(configFormPaths != null && configFormPaths.size() > 0) {
+    		Set<Path> toWatch = new TreeSet<Path>();
+    		for(MedNetConfigFormPath configFormPath : configFormPaths.values()) {
+    			Path path = configFormPath.getPath();
+    			if(Files.isDirectory(path)) {
+    				toWatch.add(path);
+    			}
+        		else {
+            		LOGGER.warn(logPrefix+"Configured Form Path is not a valid directory: "+path.toString());//$NON-NLS-1$
+        		}	
+    		}
+    		
+    		if(toWatch.size() > 0) {
                 this.watcher = FileSystems.getDefault().newWatchService();
-                LOGGER.info(logPrefix+"Following path will be monitored: "+pathToWatch.toString());//$NON-NLS-1$
-                //Register the Watcher
-                pathToWatch.register(watcher, StandardWatchEventKinds.ENTRY_CREATE);	
+    			for(Path path : toWatch) {
+                    LOGGER.info(logPrefix+"Following path will be monitored: "+path.toString());//$NON-NLS-1$
+                    //Register the Watcher
+                    path.register(watcher, StandardWatchEventKinds.ENTRY_CREATE);
+    			}
     		}
     		else {
-        		LOGGER.warn(logPrefix+"Configured Form Path is not a valid directory: "+pathToWatch.toString());//$NON-NLS-1$
-        		this.watcher = null;
-    		}	
+    			LOGGER.warn(logPrefix+"no valid Form Path configured");//$NON-NLS-1$
+    			this.watcher = null;
+    		}
     	}
-    	else {
-    		LOGGER.warn(logPrefix+"no Form Path configured");//$NON-NLS-1$
-    		this.watcher = null;
-    	}
+		else {
+			LOGGER.warn(logPrefix+"MedNet is not configured");//$NON-NLS-1$
+			this.watcher = null;
+		}
     	
     }
 
@@ -96,16 +113,27 @@ public class FormWatcher {
     	// before the watcher has already been started, process them first
     	//We only look for pdf files
     	List<Path> files = new ArrayList<Path>();
-    	try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(MedNet.getSettings().getFormsPath())) {
-            for (Path path : directoryStream) {
-            	if(		Files.isReadable(path)
-            		&&	Files.isRegularFile(path)
-            		&& 	path.getFileName().toString().toLowerCase().endsWith(".pdf")//$NON-NLS-1$
-            			){
-            		files.add(path);
-            	}
-            }
-        } catch (IOException ex) {}
+    	
+
+    	Map<String, MedNetConfigFormPath> configFormPaths = MedNet.getSettings().getConfigFormPaths();
+    	
+    	if(configFormPaths != null && configFormPaths.size() > 0) {
+    		for(MedNetConfigFormPath configFormPath : configFormPaths.values()) {
+    			Path path = configFormPath.getPath();
+    			if(Files.isDirectory(path)) {
+    		    	try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {
+    		            for (Path file : directoryStream) {
+    		            	if(		Files.isReadable(file)
+    		            		&&	Files.isRegularFile(file)
+    		            		&& 	file.getFileName().toString().toLowerCase().endsWith(".pdf")//$NON-NLS-1$
+    		            			){
+    		            		files.add(file);
+    		            	}
+    		            }
+    		        } catch (IOException ex) {}
+    			}	
+    		}
+    	}
     	
     	//Order the list by time
     	Collections.sort(files, new DateTimeAscending());
@@ -136,12 +164,12 @@ public class FormWatcher {
                 // Context for directory entry event is the file name of entry
                 WatchEvent<Path> ev = cast(event);
                 Path name = ev.context();
-                Path child = MedNet.getSettings().getFormsPath().resolve(name);
-                if(child.getFileName().toString().toLowerCase().endsWith(".pdf")){//$NON-NLS-1$
+                Path dir = (Path)key.watchable();
+                Path file = dir.resolve(name);
+                if(file.getFileName().toString().toLowerCase().endsWith(".pdf")){//$NON-NLS-1$
                 	//Import the files one after the other, supposing each file is a Formular
-                	this.importForm(child);
+                	this.importForm(file);
                 }
-                
             }
 
             // reset key and remove from set if directory no longer accessible
@@ -167,9 +195,75 @@ public class FormWatcher {
         		&& 	file.getFileName().toString().toLowerCase().endsWith(".pdf")//$NON-NLS-1$
         	){
 			try {
+				
+				//First move the file to a temporary folder
+				//If move does't work the file is still used
+				Path tempDir = Files.createTempDirectory("ch.novcom.elexis.mednet.plugin");
+				Path tempFile = tempDir.resolve(file.getFileName());
+				Path errorDir = file.getParent().resolve("error");
+				Path archiveDir = file.getParent().resolve("archive");
+				
+				//Before doing anything ensure that the errorDir and the archive dir exists
+				//or that we can create them
+				if(!Files.exists(errorDir)) {
+					LOGGER.info(logPrefix+"Error directory doesn't exist, create it. "+errorDir.toString());
+					try {
+						Files.createDirectory(errorDir);
+					}
+					catch(IOException | SecurityException ex) {
+						LOGGER.error(logPrefix+"Unable to create the error directory. Abort import. "+errorDir.toString(), ex);
+						return ;
+					}
+				}
+				else if (!Files.isDirectory(errorDir)) {
+					LOGGER.error(logPrefix+"Error directory is not a valid directory. Abort import. "+errorDir.toString());
+					return;
+				}
+				
+				if(!Files.exists(archiveDir)) {
+					LOGGER.info(logPrefix+"Archive directory doesn't exist, create it. "+archiveDir.toString());
+					try{
+						Files.createDirectory(archiveDir);
+					}
+					catch(IOException | SecurityException ex) {
+						LOGGER.error(logPrefix+"Unable to create the archive directory. Abort import. "+archiveDir.toString(), ex);
+						return ;
+					}
+				}
+				else if (!Files.isDirectory(archiveDir)) {
+					LOGGER.error(logPrefix+"Archive directory is not a valid directory. Abort import. "+errorDir.toString());
+					return;
+				}
+				
+				
+				int trying = 0;
+				while ( trying < 50) {
+					try {
+						Files.move(file, tempFile, StandardCopyOption.REPLACE_EXISTING);
+						break;
+					}
+					catch(IOException ioe) {
+						
+					}
+					//If we cannot move since the file is not used
+					//Try again later
+					try {
+						Thread.sleep(100);
+					}
+					catch(InterruptedException e) {
+						LOGGER.error(logPrefix+"waiting the file to be moved interrupted");
+						return;
+					}
+				}
+				
+				if(trying >= 50) {
+					//The file is still used. Abort
+					return;
+				}
+				
 				//Run the import using the DocumentImporter
 				boolean success = DocumentImporter.processForm(
-						file,
+						tempFile,
 						MedNetMessages.FormWatcher_FormCategory,
 						true
 				);
@@ -177,12 +271,12 @@ public class FormWatcher {
 				if(success){
 					//If the import was successfull, archive the file
 					LOGGER.info(logPrefix+"Successfully imported document: "+file.toString());//$NON-NLS-1$
-					Files.move(file, MedNet.getSettings().getFormsArchivePath().resolve(file.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+					Files.move(tempFile, archiveDir.resolve(file.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
 				}
 				else {
 					//If the import was not successfull, move the file to the error folder
 					LOGGER.error(logPrefix+"Failed importing document: "+file.toString());//$NON-NLS-1$
-					Files.move(file, MedNet.getSettings().getFormsErrorPath().resolve(file.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+					Files.move(tempFile, errorDir.resolve(file.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
 				}
 				
 			} catch (IOException e) {

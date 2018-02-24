@@ -39,29 +39,12 @@ public class MedNetSettings {
 	
 	// Globale Einstellungen
 	public static final String cfgExePath = cfgBase + "/exe"; //$NON-NLS-1$
-	public static final String cfgLogsPath = cfgBase + "/logs/path"; //$NON-NLS-1$
-	public static final String cfgLogsLevel = cfgBase + "/logs/level"; //$NON-NLS-1$
-	public static final String cfgFormsPath = cfgBase + "/forms/in"; //$NON-NLS-1$
-	public static final String cfgFormsErrorPath = cfgBase + "/forms/error"; //$NON-NLS-1$
-	public static final String cfgFormsArchivePath = cfgBase + "/forms/archive"; //$NON-NLS-1$
 	public static final String cfgFormsArchivePurgeInterval = cfgBase + "/forms/archivePurgeIntervalDays"; //$NON-NLS-1$
 	
 	/**
 	 * The link to the MedNet.exe file
 	 */
 	private Path exePath;
-	/**
-	 * The folder were MedNet save the filled forms
-	 */
-	private Path formsPath;
-	/**
-	 * The folder were a forms should be moved if it cannot been integrated into Elexis
-	 */
-	private Path formsErrorPath;
-	/**
-	 * The folder were the forms will be moved after they were successfully integrated into elexis
-	 */
-	private Path formsArchivePath;
 	/**
 	 * The number of days after which a form can be removed from the archive folder
 	 */
@@ -97,30 +80,6 @@ public class MedNetSettings {
 		this.exePath = path;
 	}
 	
-	public Path getFormsPath() {
-		return this.formsPath;
-	}
-
-	public void setFormsPath(Path path) {
-		this.formsPath = path;
-	}
-
-	public Path getFormsErrorPath() {
-		return this.formsErrorPath;
-	}
-
-	public void setFormsErrorPath(Path path) {
-		this.formsErrorPath = path;
-	}
-	
-	public Path getFormsArchivePath() {
-		return this.formsArchivePath;
-	}
-
-	public void setFormsArchivePath(Path path) {
-		this.formsArchivePath = path;
-	}
-
 	public int getFormsArchivePurgeInterval() {
 		return this.formsArchivePurgeInterval;
 	}
@@ -171,35 +130,6 @@ public class MedNetSettings {
 			}
 		}
 		
-		String formsPathString =configuration.get(cfgFormsPath, "");//$NON-NLS-1$
-		if(	formsPathString != null && 
-			!formsPathString.isEmpty()	) {
-			formsPath = Paths.get(formsPathString);
-			if(!Files.isDirectory(formsPath)) {
-				//If the formPath does no more exists
-				LOGGER.error(logPrefix+"Form path: "+formsPath.toString()+" is not a valid directory");//$NON-NLS-1$
-				formsPath = null;
-			}
-		}
-		else {
-			formsPath = null;
-		}
-		
-		String formsArchivePathString = configuration.get(cfgFormsArchivePath, "");
-
-		if(	formsArchivePathString != null && 
-			!formsArchivePathString.isEmpty()	) {
-			formsArchivePath = Paths.get(formsArchivePathString); //$NON-NLS-1$
-			if(!Files.isDirectory(formsArchivePath)) {
-				//If the formsArchivePath does no more exists
-				LOGGER.error(logPrefix+"Form archive path: "+formsArchivePath.toString()+" is not a valid directory");//$NON-NLS-1$
-				formsArchivePath = null;
-			}
-		}
-		else {
-			formsArchivePath = null;
-		}
-
 		String cfgFormsArchivePurgeIntervalString = configuration.get(cfgFormsArchivePurgeInterval, ""); //$NON-NLS-1$
 		if(	cfgFormsArchivePurgeIntervalString != null && 
 				!cfgFormsArchivePurgeIntervalString.isEmpty()	) {
@@ -214,19 +144,6 @@ public class MedNetSettings {
 			formsArchivePurgeInterval = -1 ;
 		}
 		
-		String formsErrorPathString = configuration.get(cfgFormsErrorPath, "");//$NON-NLS-1$
-		if(	formsErrorPathString != null && 
-			!formsErrorPathString.isEmpty()	) {
-			formsErrorPath = Paths.get(formsErrorPathString);
-			if(!Files.isDirectory(formsArchivePath)) {
-				//If the formsErrorPath does no more exists
-				LOGGER.error(logPrefix+"Form error path: "+formsErrorPath.toString()+" is not a valid directory");//$NON-NLS-1$
-				formsErrorPath = null;
-			}
-		}
-		else {
-			formsErrorPath = null;
-		}
 	}
 	
 	/**
@@ -238,16 +155,7 @@ public class MedNetSettings {
 		if(exePath != null) {
 			configuration.set(cfgExePath, exePath.toString());
 		}
-		if(formsPath != null) {
-			configuration.set(cfgFormsPath, formsPath.toString());
-		}
-		if(formsArchivePath != null) {
-			configuration.set(cfgFormsArchivePath, formsArchivePath.toString());
-		}
 		configuration.set(cfgFormsArchivePurgeInterval, formsArchivePurgeInterval);
-		if(formsErrorPath != null) {
-			configuration.set(cfgFormsErrorPath, formsErrorPath.toString());
-		}
 		
 		configuration.flush();
 	}

@@ -7,7 +7,7 @@ public class MedNetConfigDocumentPath implements Comparable<MedNetConfigDocument
 
 	
 	//"accountID";"accountTitle";"accountLastname";"accountFirstname";"institutionID";"institutionName";"type";"path"
-	private final static Pattern csvLinePattern = Pattern.compile("^\"(?<accountID>[^\"]*)\";(?<accountTitle>[^\"]*)\";(?<accountLastname>[^\"]*)\";(?<accountFirstname>[^\"]*)\";(?<institutionID>[^\"]*)\";(?<institutionName>[^\"]*)\";(?<type>[^\"]*)\";(?<path[^\"]*)\"$");//$NON-NLS-1$
+	private final static Pattern csvLinePattern = Pattern.compile("^\"(?<accountID>[^\"]*)\";\"(?<accountTitle>[^\"]*)\";\"(?<accountLastname>[^\"]*)\";\"(?<accountFirstname>[^\"]*)\";\"(?<institutionID>[^\"]*)\";\"(?<institutionName>[^\"]*)\";\"(?<type>[^\"]*)\";\"(?<path>[^\"]*)\"$");//$NON-NLS-1$
 	
 	private String accountID;
 	private String accountTitle;

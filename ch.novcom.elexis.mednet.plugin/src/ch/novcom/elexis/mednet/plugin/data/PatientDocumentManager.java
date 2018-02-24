@@ -154,23 +154,6 @@ public class PatientDocumentManager {
 		//If no document has been found, we can add it to the database
 		if (documentList == null || documentList.size() == 0) {
 			
-			//Before importing the document
-			//Check that it is still not opened by MedNet
-			int trying = 0;
-			while (!file.toFile().canWrite() ) {
-				trying ++;
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					LOGGER.error(logPrefix+"waiting the file to be unlocked interrupted. "+file.toString());//$NON-NLS-1$
-					return false;
-				}
-				if(trying > 50) {
-					LOGGER.error(logPrefix+"the file is still used. Cancel import. "+file.toString());//$NON-NLS-1$
-					return false;
-				}
-			};
-			
 			//Get the document mimeType
 			String mimeType = null;
 			try {

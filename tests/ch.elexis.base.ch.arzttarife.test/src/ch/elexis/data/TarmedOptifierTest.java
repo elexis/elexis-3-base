@@ -472,7 +472,45 @@ public class TarmedOptifierTest {
 		assertFalse(result.isOK());
 		assertEquals(6, konsGriss.getLeistungen().get(0).getZahl());
 		
+		clearKons(konsGriss);
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0030", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(1, getLeistungAmount("00.0010", konsGriss));
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(2, getLeistungAmount("00.0020", konsGriss));
+		
 		resetKons(konsGriss);
+	}
+	
+	private int getLeistungAmount(String code, Konsultation kons){
+		int ret = 0;
+		for (Verrechnet leistung : kons.getLeistungen()) {
+			if (leistung.getCode().equals(code)) {
+				ret += leistung.getZahl();
+			}
+		}
+		return ret;
 	}
 	
 	private void setUpDignitaet(Konsultation kons){

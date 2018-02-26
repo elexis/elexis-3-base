@@ -254,7 +254,6 @@ public class TarmedLimitation {
 					allVerrechnetOfGroup.addAll(getVerrechnetByCoverageAndCode(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
-					reduceAmountOrDelete(verrechnet);
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				}
@@ -273,7 +272,6 @@ public class TarmedLimitation {
 				List<Verrechnet> verrechnetByMandant = getVerrechnetByMandantAndCodeDuring(kons,
 					verrechnet.getVerrechenbar().getCode());
 				if (getVerrechnetCount(verrechnetByMandant) > amount) {
-					reduceAmountOrDelete(verrechnet);
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				}
@@ -284,21 +282,12 @@ public class TarmedLimitation {
 					allVerrechnetOfGroup.addAll(getVerrechnetByMandantAndCodeDuring(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
-					reduceAmountOrDelete(verrechnet);
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				}
 			}
 		}
 		return ret;
-	}
-	
-	private void reduceAmountOrDelete(Verrechnet verrechnet){
-		if (verrechnet.getZahl() > 1) {
-			verrechnet.setZahl(verrechnet.getZahl() - 1);
-		} else {
-			verrechnet.delete();
-		}
 	}
 	
 	private int getVerrechnetCount(List<Verrechnet> verrechnete){
@@ -406,7 +395,6 @@ public class TarmedLimitation {
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
 			if (verrechnet.getZahl() > amount) {
-				verrechnet.setZahl(amount);
 				ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
 					toString(), null, false);
 			}
@@ -421,12 +409,11 @@ public class TarmedLimitation {
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
 			if (verrechnet.getZahl() > amount) {
-				verrechnet.setZahl(amount);
 				if (limitationUnit == LimitationUnit.SESSION) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				} else if (limitationUnit == LimitationUnit.SIDE) {
-					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
+					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				}
 			}

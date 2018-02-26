@@ -401,6 +401,101 @@ public class TarmedOptifierTest {
 		resetKons(konsGriss);
 	}
 	
+	/**
+	 * Test exclusion with side.
+	 */
+	@Test
+	public void testSideExclusion(){
+		clearKons(konsGriss);
+		
+		Result<IVerrechenbar> result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("09.0930", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
+		
+		optifier.putContext(TarmedLeistung.SIDE, TarmedLeistung.SIDE_L);
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
+		
+		optifier.putContext(TarmedLeistung.SIDE, TarmedLeistung.SIDE_R);
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		resetKons(konsGriss);
+	}
+	
+	/**
+	 * Test cleanup after kumulation warning.
+	 */
+	@Test
+	public void testCleanUpAfterKumulation(){
+		clearKons(konsGriss);
+		
+		Result<IVerrechenbar> result;
+		for (int i = 0; i < 6; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", new TimeTool(), null),
+				konsGriss);
+			assertTrue(result.isOK());
+		}
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(6, konsGriss.getLeistungen().get(0).getZahl());
+		
+		clearKons(konsGriss);
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0030", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(1, getLeistungAmount("00.0010", konsGriss));
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(2, getLeistungAmount("00.0020", konsGriss));
+		
+		resetKons(konsGriss);
+	}
+	
+	private int getLeistungAmount(String code, Konsultation kons){
+		int ret = 0;
+		for (Verrechnet leistung : kons.getLeistungen()) {
+			if (leistung.getCode().equals(code)) {
+				ret += leistung.getZahl();
+			}
+		}
+		return ret;
+	}
+	
 	private void setUpDignitaet(Konsultation kons){
 		Hashtable<String, String> extension = tlBaseFirst5Min.loadExtension();
 		// set reduce factor

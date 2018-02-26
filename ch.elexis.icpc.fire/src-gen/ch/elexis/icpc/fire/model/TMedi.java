@@ -9,10 +9,12 @@
 package ch.elexis.icpc.fire.model;
 
 import java.math.BigInteger;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -55,6 +57,8 @@ import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 @XmlType(name = "tMedi")
 public class TMedi {
 
+	@XmlTransient
+	protected String id;
     @XmlAttribute(name = "pharmacode", required = true)
     @XmlSchemaType(name = "unsignedInt")
     protected long pharmacode;
@@ -95,6 +99,14 @@ public class TMedi {
     protected String folgeMedGtin;
     @XmlAttribute(name = "selbstdisp")
     protected Boolean selbstdisp;
+    
+    public String getId(){
+		return id;
+	}
+    
+    public void setId(String id){
+		this.id = id;
+	}
 
     /**
      * Ruft den Wert der pharmacode-Eigenschaft ab.

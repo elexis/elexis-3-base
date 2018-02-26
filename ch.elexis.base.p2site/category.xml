@@ -231,6 +231,9 @@
    <feature url="features/ch.elexis.agenda.feature_3.2.100.qualifier.jar" id="ch.elexis.agenda.feature" version="3.2.100.qualifier">
       <category name="organisation"/>
    </feature>
+   <feature url="features/ch.novcom.elexis.mednet.plugin.feature_3.1.100.qualifier.jar" id="ch.novcom.elexis.mednet.plugin.feature" version="3.1.100.qualifier">
+      <category name="dataexchange"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

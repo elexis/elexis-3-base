@@ -157,7 +157,8 @@ public class PatientDocumentManager {
 			//Get the document mimeType
 			String mimeType = null;
 			try {
-				Files.probeContentType(file);
+				mimeType = Files.probeContentType(file);
+				LOGGER.debug(logPrefix+"Mimetype for "+file.toString()+"  is "+mimeType);//$NON-NLS-1$
 			}
 			catch(IOException | SecurityException e) {
 				//ignore exceptions

@@ -486,6 +486,22 @@ public class TarmedOptifierTest {
 		resetKons(konsGriss);
 	}
 	
+	@Test
+	public void testKumulationSide(){
+		clearKons(konsGriss);
+		
+		Result<IVerrechenbar> result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("20.0330", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("20.0330", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		
+		clearKons(konsGriss);
+	}
+	
 	private int getLeistungAmount(String code, Konsultation kons){
 		int ret = 0;
 		for (Verrechnet leistung : kons.getLeistungen()) {

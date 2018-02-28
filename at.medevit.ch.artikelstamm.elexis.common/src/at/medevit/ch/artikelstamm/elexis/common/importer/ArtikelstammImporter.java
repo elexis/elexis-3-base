@@ -21,6 +21,7 @@ import javax.xml.bind.JAXBException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -100,6 +101,7 @@ public class ArtikelstammImporter {
 		}
 		try {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+			String bundleVersion =  Platform.getBundle("at.medevit.ch.artikelstamm.elexis.common").getVersion().toString();
 			
 			subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
 			ARTIKELSTAMM importStamm = null;
@@ -139,10 +141,11 @@ public class ArtikelstammImporter {
 			
 			int currentVersion = ArtikelstammItem.getCurrentVersion();
 			
-			log.info("[PI] Aktualisiere {} vom {} von v{} auf v{}",
+			log.info("[PI] Aktualisiere {} vom {} von v{} auf v{}. Importer-Version {}",
 				importStamm.getDATASOURCE(),
 				importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime(), currentVersion,
-				newVersion);
+				newVersion,
+				bundleVersion);
 			
 			subMonitor.setTaskName("Lese Produkte und Limitationen...");
 			populateProducsAndLimitationsMap(importStamm);
@@ -173,9 +176,9 @@ public class ArtikelstammImporter {
 			
 			log.info(
 				"[PI] Artikelstamm import took " + ((endTime - startTime) / 1000)
-					+ "sec.Used {} {} version {}. Will rebuild ATCCodeCache",
+					+ "sec.Used {} {} version {}. . Importer-Version {}. Will rebuild ATCCodeCache",
 				ArtikelstammItem.getDatasourceType().toString(),
-				ArtikelstammItem.getImportSetCreationDate(), newVersion);
+				ArtikelstammItem.getImportSetCreationDate(), newVersion, bundleVersion);
 			
 			ATCCodeCache.rebuildCache(subMonitor.split(5));
 			log.info("[PI] Artikelstamm finished rebuilding ATCCodeCache");
@@ -308,10 +311,12 @@ public class ArtikelstammImporter {
 			
 			if (foundItem == null) {
 				String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
-				
-				String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
-				TYPE pharmaType = TYPE.valueOf(ptString.toUpperCase());
-				
+				TYPE pharmaType = TYPE.X;
+				if (item.getPHARMATYPE() != null)
+				{
+					String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
+					pharmaType = TYPE.valueOf(ptString.toUpperCase());
+				}
 				foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(),
 					item.getPHAR(), trimmedDscr, StringConstants.EMPTY);
 				log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
@@ -329,6 +334,14 @@ public class ArtikelstammImporter {
 		subMonitor.done();
 	}
 	
+	/**
+	 * 
+	 * @param ai	The artikelstamm as seen by Elexis
+	 * @param item  The new item to be imported
+	 * @param cummulatedVersion version of the artikelstamm to be imported
+	 * @param keepOverriddenPublicPrice Must keep the user overriden price
+	 * @param keepOverriddenPkgSize Must keep the user overriden PKG_SIZE, aka PackungsGroesse
+	 */
 	private static void setValuesOnArtikelstammItem(ArtikelstammItem ai, ITEM item,
 		final int cummulatedVersion, boolean keepOverriddenPublicPrice, boolean keepOverriddenPkgSize){
 		List<String> fields = new ArrayList<>();
@@ -445,8 +458,8 @@ public class ArtikelstammImporter {
 			if(item.getPKGSIZE()!=null) {
 				ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE,
 					item.getPKGSIZE().toString());
-				log.info("[II] [{}] Updating PKG_SIZE override store to [{}]", ai.getId(), item.getPKGSIZE());
-			}
+				log.info("[II] [{}] Updating PKG_SIZE override store to [{}] fld {}", ai.getId(), item.getPKGSIZE(), ai.get(ArtikelstammItem.FLD_PKG_SIZE));
+				}
 		}
 		
 		ai.set(fields.toArray(new String[0]), values.toArray(new String[0]));

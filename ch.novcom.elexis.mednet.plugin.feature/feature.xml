@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.novcom.elexis.mednet.plugin.feature"
+      label="MedNet"
+      version="3.1.100.qualifier"
+      provider-name="novcom AG">
+
+   <description>
+      MedNet Modul
+   </description>
+
+   <copyright url="http://www.mednet.swiss">
+     novcom AG - David Gutknecht
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.novcom.elexis.mednet.plugin"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ARTIKELSTAMM xmlns="http://elexis.ch/Elexis_Artikelstamm_v5" CREATION_DATETIME="2018-01-25T00:00:00.000+01:00" BUILD_DATETIME="2018-01-25T00:00:00.000+01:00" DATA_SOURCE="oddb2xml">
+<ARTIKELSTAMM xmlns="http://elexis.ch/Elexis_Artikelstamm_v5" CREATION_DATETIME="2018-02-25T00:00:00.000+01:00" BUILD_DATETIME="2018-02-25T00:00:00.000+01:00" DATA_SOURCE="oddb2xml">
     <PRODUCTS>
         <PRODUCT>
             <PRODNO>6213201</PRODNO>
@@ -51,6 +51,18 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
     </LIMITATIONS>
     <ITEMS>
         <ITEM PHARMATYPE="N">
+            <GTIN>7611800080487</GTIN>
+            <PHAR>6606324</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>FLAWA porefix Heftpflaster 2.5cmx5m Disp</DSCR>
+            <DSCRF>FLAWA porefix sparadrap 2.5cmx5m disp</DSCRF>
+            <COMP>
+                <GLN>7611800000003</GLN>
+            </COMP>
+            <PEXF>2.99</PEXF>
+            <PPUB>5.00</PPUB>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
             <GTIN>0040565124346</GTIN>
             <PHAR>4236857</PHAR>
             <SALECD>A</SALECD>
@@ -68,15 +80,6 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <DSCRF>--missing--</DSCRF>
             <PEXF>46.26</PEXF>
             <PPUB>73.95</PPUB>
-        </ITEM>
-        <ITEM PHARMATYPE="N">
-            <GTIN>3605520301605</GTIN>
-            <PHAR>8304786</PHAR>
-            <SALECD>I</SALECD>
-            <DSCR>Armani Attitude 75 ml</DSCR>
-            <DSCRF>--missing--</DSCRF>
-            <PEXF>112.00</PEXF>
-            <PPUB>112.80</PPUB>
         </ITEM>
         <ITEM PHARMATYPE="N">
             <GTIN>4012346117706</GTIN>
@@ -124,7 +127,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
                 <NAME>AstraZeneca AG</NAME>
                 <GLN/>
             </COMP>
-            <PKG_SIZE>4</PKG_SIZE>
+            <PKG_SIZE>448</PKG_SIZE> <!-- manually  changed from 4 to 448 to have the same value as ini medindex -->
             <MEASURE>Kapsel(n)</MEASURE>
             <MEASUREF>Kapsel(n)</MEASUREF>
             <DOSAGE_FORM>Kapseln</DOSAGE_FORM>
@@ -132,6 +135,36 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SL_ENTRY>true</SL_ENTRY>
             <IKSCAT>A</IKSCAT>
             <PRODNO>6516001</PRODNO>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>7612929028176</GTIN>
+            <PHAR>5165993</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HEPARIN Bichsel 5000 IE/ml steril 10 Amp 1 ml</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <PEXF>28.32</PEXF>
+            <PPUB>45.65</PPUB>
+        </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680273040281</GTIN>
+            <PHAR>0098878</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HALDOL Tabl 1 mg 50 Stk</DSCR>
+            <DSCRF>HALDOL cpr 1 mg 50 pce</DSCRF>
+            <COMP>
+                <NAME>Janssen-Cilag AG</NAME>
+                <GLN>7601001000902</GLN>
+            </COMP>
+            <PEXF>2.2</PEXF>
+            <PPUB>6.6</PPUB>
+            <PKG_SIZE>50</PKG_SIZE>
+            <MEASURE>Tablette(n)</MEASURE>
+            <MEASUREF>Tablette(n)</MEASUREF>
+            <DOSAGE_FORM>Tabletten</DOSAGE_FORM>
+            <DOSAGE_FORMF>Comprimés</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>B</IKSCAT>
+            <DEDUCTIBLE>10</DEDUCTIBLE>
         </ITEM>
     </ITEMS>
 </ARTIKELSTAMM>

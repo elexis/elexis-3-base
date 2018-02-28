@@ -77,14 +77,13 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
     </LIMITATIONS>
     <ITEMS>
         <ITEM PHARMATYPE="N">
-            <GTIN>0040565124308</GTIN>
-            <PHAR>4236863</PHAR>
-            <SALECD>A</SALECD>
-            <DSCR>ACTICOAT Flex 7 Wundverband 10x12.5cm 5 Stk</DSCR>
-            <DSCRF>ACTICOAT Flex 7 pansement vulné 10x12.5cm 5 pce</DSCRF>
-            <COMP>
-                <GLN>7601001251861</GLN>
-            </COMP>
+            <GTIN>4062300253636</GTIN>
+            <PHAR>6606755</PHAR>
+            <SALECD>I</SALECD>
+            <DSCR>HIPP Trinknahrung Joghurt Erdbeer&amp;Himbeer 200 ml</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <PEXF>0.00</PEXF>
+            <PPUB>3.80</PPUB>
         </ITEM>
         <ITEM PHARMATYPE="N">
             <GTIN>0040565124346</GTIN>
@@ -105,15 +104,6 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <PEXF>46.26</PEXF>
             <PPUB>73.95</PPUB>
         </ITEM>
-        <ITEM PHARMATYPE="N">
-            <GTIN>4260057661517</GTIN>
-            <PHAR>8111718</PHAR>
-            <SALECD>A</SALECD>
-            <DSCR>Inkosport Activ Pro 80 Himbeer - Joghurt Ds 750g</DSCR>
-            <DSCRF>--missing--</DSCRF>
-            <PEXF>34.23</PEXF>
-            <PPUB>54.70</PPUB>
-        </ITEM>
         <ITEM PHARMATYPE="P">
             <GTIN>7680651600014</GTIN>
             <PHAR>6571270</PHAR>
@@ -124,7 +114,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
                 <NAME>AstraZeneca AG</NAME>
                 <GLN/>
             </COMP>
-            <PKG_SIZE>4</PKG_SIZE>
+            <PKG_SIZE>448</PKG_SIZE> <!-- manually  changed from 4 to 448 to have the same value as ini medindex -->
             <MEASURE>Kapsel(n)</MEASURE>
             <MEASUREF>Kapsel(n)</MEASUREF>
             <DOSAGE_FORM>Kapseln</DOSAGE_FORM>
@@ -133,5 +123,35 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <IKSCAT>A</IKSCAT>
             <PRODNO>6516001</PRODNO>
         </ITEM>
-   </ITEMS>
+        <ITEM PHARMATYPE="N">
+            <GTIN>7612929028176</GTIN>
+            <PHAR>5165993</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HEPARIN Bichsel 5000 IE/ml steril 10 Amp 1 ml</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <PEXF>28.32</PEXF>
+            <PPUB>45.65</PPUB>
+        </ITEM>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680273040281</GTIN>
+            <PHAR>0098878</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>HALDOL Tabl 1 mg 50 Stk</DSCR>
+            <DSCRF>HALDOL cpr 1 mg 50 pce</DSCRF>
+            <COMP>
+                <NAME>Janssen-Cilag AG</NAME>
+                <GLN>7601001000902</GLN>
+            </COMP>
+            <PEXF>2.2</PEXF>
+            <PPUB>6.6</PPUB>
+            <PKG_SIZE>50</PKG_SIZE>
+            <MEASURE>Tablette(n)</MEASURE>
+            <MEASUREF>Tablette(n)</MEASUREF>
+            <DOSAGE_FORM>Tabletten</DOSAGE_FORM>
+            <DOSAGE_FORMF>Comprimés</DOSAGE_FORMF>
+            <SL_ENTRY>true</SL_ENTRY>
+            <IKSCAT>B</IKSCAT>
+            <DEDUCTIBLE>10</DEDUCTIBLE>
+        </ITEM>
+      </ITEMS>
 </ARTIKELSTAMM>

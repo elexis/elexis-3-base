@@ -839,8 +839,9 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		log.debug("phar {} gtin {} setVerpackungseinheit {} is {} ", getPHAR(), getGTIN(), vpe, getVerpackungseinheit());
 		if (vpe != getVerpackungseinheit()) {
 			setUserDefinedPkgSizeValue(vpe);
+		} else {
+			set(FLD_PKG_SIZE, vpe + "");
 		}
- 		set(FLD_PKG_SIZE, vpe + "");
 	}
 	
 	@Override

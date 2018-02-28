@@ -416,12 +416,12 @@ public class JournalView extends ViewPart implements IActivationListener, ISavea
 	 */
 	private synchronized void displaySelectedPatient(Patient selectedPatient, String why){
 		if (selectedPatient == null) {
-			logEvent(null, why + " displaySelectedPatient " + "no patient");
+			logEvent(null, why + " displaySelectedPatient 1 no patient");
 			updateAllKonsAreas(null, null, KonsActions.ACTIVATE_KONS);
 			return;
 
 		} else {
-			logEvent(actKons, why + " displaySelectedPatient " + selectedPatient.getId() + selectedPatient.getPersonalia());
+			logEvent(null, why + " displaySelectedPatient 2 " + selectedPatient.getId() + selectedPatient.getPersonalia());
 		}
 
 		showAllChargesAction.setChecked(false);

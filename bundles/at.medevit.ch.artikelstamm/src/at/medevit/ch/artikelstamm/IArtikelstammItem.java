@@ -132,6 +132,18 @@ public interface IArtikelstammItem {
 	/**
 	 * @return whether this price is set by the user
 	 */
+	public boolean 	isUserDefinedPkgSize();
+	
+	/**
+	 * De-/activate the manual pkg_size override.
+	 * 
+	 * @param selection
+	 */
+	public void setUserDefinedPkgSize(boolean selection);
+	
+	/**
+	 * @return whether this price is set by the user
+	 */
 	public boolean isUserDefinedPrice();
 	
 	/**

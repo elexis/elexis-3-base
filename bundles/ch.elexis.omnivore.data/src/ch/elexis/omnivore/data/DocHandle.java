@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -63,6 +66,7 @@ import ch.elexis.omnivore.dialog.FileImportDialog;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.MimeTool;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -552,16 +556,24 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	 * @return temporary file
 	 */
 	public File createTemporaryFile(String title){
-		String ext = "";
-		String typname = get(FLD_MIMETYPE);
-		int r = typname.lastIndexOf('.');
-		if (r == -1) {
-			typname = get(FLD_TITLE);
-			r = typname.lastIndexOf('.');
+		
+		String fileExtension = null;
+		try {
+			MimeType docMimeType = new MimeType(get(FLD_MIMETYPE));
+			fileExtension = MimeTool.getExtension(docMimeType.getPrimaryType());
+		}
+		catch(MimeTypeParseException mpe) {
+			fileExtension = FileTool.getExtension(get(FLD_MIMETYPE));
+			
+			if(fileExtension == null) {
+				
+				fileExtension = FileTool.getExtension(get(FLD_TITLE));
+			}
 		}
 		
-		if (r != -1)
-			ext = typname.substring(r + 1);
+		if(fileExtension == null) {
+			fileExtension = "";
+		}
 		
 		// use title if given
 		StringBuffer config_temp_filename = new StringBuffer();
@@ -573,19 +585,19 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		try {
 			if (config_temp_filename.length() > 0) {
 				File uniquetemp =
-					File.createTempFile(config_temp_filename.toString() + "_", "." + ext); //$NON-NLS-1$ //$NON-NLS-2$
+					File.createTempFile(config_temp_filename.toString() + "_", "." + fileExtension); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				String temp_pathname = uniquetemp.getParent();
 				uniquetemp.delete();
 				
 				log.debug(temp_pathname);
-				log.debug(config_temp_filename + "." + ext);
+				log.debug(config_temp_filename + "." + fileExtension);
 				
-				temp = new File(temp_pathname, config_temp_filename + "." + ext);
+				temp = new File(temp_pathname, config_temp_filename + "." + fileExtension);
 				temp.createNewFile();
 				
 			} else {
-				temp = File.createTempFile("omni_", "_vore." + ext);
+				temp = File.createTempFile("omni_", "_vore." + fileExtension);
 			}
 			temp.deleteOnExit();
 			

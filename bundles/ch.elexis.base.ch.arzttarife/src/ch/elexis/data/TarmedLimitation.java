@@ -254,7 +254,6 @@ public class TarmedLimitation {
 					allVerrechnetOfGroup.addAll(getVerrechnetByCoverageAndCode(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
-					reduceAmountOrDelete(verrechnet);
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				}
@@ -273,7 +272,6 @@ public class TarmedLimitation {
 				List<Verrechnet> verrechnetByMandant = getVerrechnetByMandantAndCodeDuring(kons,
 					verrechnet.getVerrechenbar().getCode());
 				if (getVerrechnetCount(verrechnetByMandant) > amount) {
-					reduceAmountOrDelete(verrechnet);
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				}
@@ -284,21 +282,12 @@ public class TarmedLimitation {
 					allVerrechnetOfGroup.addAll(getVerrechnetByMandantAndCodeDuring(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
-					reduceAmountOrDelete(verrechnet);
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				}
 			}
 		}
 		return ret;
-	}
-	
-	private void reduceAmountOrDelete(Verrechnet verrechnet){
-		if (verrechnet.getZahl() > 1) {
-			verrechnet.setZahl(verrechnet.getZahl() - 1);
-		} else {
-			verrechnet.delete();
-		}
 	}
 	
 	private int getVerrechnetCount(List<Verrechnet> verrechnete){
@@ -405,8 +394,7 @@ public class TarmedLimitation {
 			return ret;
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
-			if (verrechnet.getZahl() > amount) {
-				verrechnet.setZahl(amount);
+			if (getVerrechnetAmount(verrechnet) > amount) {
 				ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
 					toString(), null, false);
 			}
@@ -420,18 +408,38 @@ public class TarmedLimitation {
 			return ret;
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
-			if (verrechnet.getZahl() > amount) {
-				verrechnet.setZahl(amount);
+			if (getVerrechnetAmount(verrechnet) > amount) {
 				if (limitationUnit == LimitationUnit.SESSION) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				} else if (limitationUnit == LimitationUnit.SIDE) {
-					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
+					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
 				}
 			}
 		}
 		return ret;
+	}
+	
+	private List<Verrechnet> getSameVerrechnetOfKons(Verrechnet verrechnet){
+		List<Verrechnet> ret = new ArrayList<>();
+		String verrechnetClass = verrechnet.get(Verrechnet.CLASS);
+		String verrechnetCode = verrechnet.getCode();
+		if(verrechnetClass != null && verrechnetCode != null) {
+			Konsultation kons = verrechnet.getKons();
+			for(Verrechnet leistung : kons.getLeistungen()) {
+				if (verrechnetClass.equals(verrechnet.get(Verrechnet.CLASS))
+					&& verrechnetCode.equals(leistung.getCode())) {
+					ret.add(leistung);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	private int getVerrechnetAmount(Verrechnet verrechnet){
+		List<Verrechnet> sameVerrechnet = getSameVerrechnetOfKons(verrechnet);
+		return getVerrechnetCount(sameVerrechnet);
 	}
 	
 	private boolean shouldSkipTest(){

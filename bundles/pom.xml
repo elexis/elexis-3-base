@@ -118,6 +118,7 @@
     <module>ch.medshare.elexis_directories</module>
     <module>ch.medshare.mediport</module>
     <module>ch.ngiger.utilities.comm</module>
+    <module>ch.novcom.elexis.mednet.plugin</module>
     <module>ch.pharmed.phmprescriber</module>
     <module>ch.unibe.iam.scg.archie</module>
     <module>ch.weirich.templator.pages</module>

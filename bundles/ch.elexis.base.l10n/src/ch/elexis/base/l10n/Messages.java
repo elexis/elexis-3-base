@@ -1825,6 +1825,7 @@ public class Messages extends NLS {
 	public static String TarmedDetailDisplay_MedInter;
 	public static String TarmedDetailDisplay_NameInternal;
 	public static String TarmedDetailDisplay_NumbereAss;
+	public static String TarmedDetailDisplay_PossibleAdd;
 	public static String TarmedDetailDisplay_Relation;
 	public static String TarmedDetailDisplay_RiskClass;
 	public static String TarmedDetailDisplay_Sparte;

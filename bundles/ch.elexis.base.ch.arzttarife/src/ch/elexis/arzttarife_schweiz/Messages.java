@@ -47,6 +47,7 @@ public class Messages extends NLS {
 	public static String  TarmedDetailDisplay_MedInter = ch.elexis.base.l10n.Messages.TarmedDetailDisplay_MedInter;
 	public static String  TarmedDetailDisplay_NameInternal = ch.elexis.base.l10n.Messages.TarmedDetailDisplay_NameInternal;
 	public static String  TarmedDetailDisplay_NumbereAss = ch.elexis.base.l10n.Messages.TarmedDetailDisplay_NumbereAss;
+	public static String  TarmedDetailDisplay_PossibleAdd = ch.elexis.base.l10n.Messages.TarmedDetailDisplay_PossibleAdd;
 	public static String  TarmedDetailDisplay_per = ch.elexis.base.l10n.Messages.TarmedDetailDisplay_per;
 	public static String  TarmedDetailDisplay_Relation = ch.elexis.base.l10n.Messages.TarmedDetailDisplay_Relation;
 	public static String  TarmedDetailDisplay_RiskClass = ch.elexis.base.l10n.Messages.TarmedDetailDisplay_RiskClass;

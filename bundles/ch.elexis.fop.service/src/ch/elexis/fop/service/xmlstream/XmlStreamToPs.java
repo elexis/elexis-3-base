@@ -1,6 +1,5 @@
 package ch.elexis.fop.service.xmlstream;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
@@ -31,10 +30,9 @@ public class XmlStreamToPs implements IFormattedOutput
 	@Override
 	public void transform(Object xmlStream, InputStream xslt, OutputStream ps,
 		Map<String, String> transformerParameters){
-		if (xmlStream instanceof ByteArrayOutputStream) {
+		if (xmlStream instanceof InputStream) {
 			XmlStreamToMimeType.getInstance().transform((InputStream) xmlStream, xslt,
 				ps, MimeConstants.MIME_POSTSCRIPT, transformerParameters);
-			transform(xmlStream, xslt, ps, null);
 		} else {
 			throw new IllegalStateException(
 				"Input Object [" + xmlStream + "] is not of type InputStream");

@@ -872,14 +872,19 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	/**
 	 * @param ean
 	 *            the European Article Number or GTIN
-	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if none or multiple found
+	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if none or
+	 *         multiple found
 	 */
 	public static @Nullable ArtikelstammItem findByEANorGTIN(@NonNull String ean){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 		qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, ean);
+		qre.add(ArtikelstammItem.FLD_BLACKBOXED, Query.EQUALS,
+			Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
 		List<ArtikelstammItem> result = qre.execute();
-		if (result.size() == 1)
+		if (result.size() == 1) {
 			return result.get(0);
+		}
+		
 		return null;
 	}
 	

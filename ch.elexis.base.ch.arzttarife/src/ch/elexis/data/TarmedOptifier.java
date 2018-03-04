@@ -210,7 +210,7 @@ public class TarmedOptifier implements IOptifier {
 				if (!tc.requiresSide()) {
 					newVerrechnet = v;
 					if (!(",00.2530,00.2570,00.2550,00.2590,04.0620,04.1930,06.0430,06.0440,06.0730,06.0740,07.0300,24.0250,24.3250,28.0020,"
-							.contains("," + code.getCode() + "c,")))
+							.contains("," + code.getCode())))
 						newVerrechnet.setZahl(newVerrechnet.getZahl() + 1);
 					break;
 				}

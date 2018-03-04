@@ -10,7 +10,7 @@ public class DocumentStoreServiceHolder {
 	private static DocumentStore localDocumentStore;
 	
 	@Reference
-	public static void bind(DocumentStore service){
+	public void bind(DocumentStore service){
 		DocumentStoreServiceHolder.localDocumentStore = service;
 	}
 	

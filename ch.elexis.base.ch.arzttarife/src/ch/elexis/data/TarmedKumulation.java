@@ -222,6 +222,40 @@ public class TarmedKumulation extends PersistentObject {
 	}
 	
 	/**
+	 * Get {@link TarmedKumulation} objects with code and type as master or slave.
+	 * 
+	 * @param code
+	 * @param type
+	 * @param date
+	 * @param law
+	 * @param includeSlave
+	 * @return
+	 */
+	public static List<TarmedKumulation> getKumulations(String code, TarmedKumulationType type,
+		TimeTool date, String law){
+		Query<TarmedKumulation> query = new Query<TarmedKumulation>(TarmedKumulation.class);
+		query.startGroup();
+		query.add(TarmedKumulation.FLD_MASTER_CODE, Query.EQUALS, code);
+		query.add(TarmedKumulation.FLD_MASTER_ART, Query.EQUALS, type.getArt());
+		query.endGroup();
+		query.or();
+		query.startGroup();
+		query.add(TarmedKumulation.FLD_SLAVE_CODE, Query.EQUALS, code);
+		query.add(TarmedKumulation.FLD_SLAVE_ART, Query.EQUALS, type.getArt());
+		query.endGroup();
+		if (law != null && !law.isEmpty()) {
+			query.add(TarmedKumulation.FLD_LAW, Query.EQUALS, law);
+		}
+		
+		List<TarmedKumulation> kumulations = query.execute();
+		if (kumulations == null || kumulations.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return kumulations.stream().filter(k -> k.isValidKumulation(date))
+			.collect(Collectors.toList());
+	}
+	
+	/**
 	 * Get {@link TarmedExclusion} objects for all exclusions defined as {@link TarmedKumulation},
 	 * with code as master code and master type.
 	 * 
@@ -354,5 +388,32 @@ public class TarmedKumulation extends PersistentObject {
 	
 	public void setValidTo(String vTo){
 		set(FLD_VALID_TO, vTo);
+	}
+	
+	public boolean isSlaveType(TarmedKumulationType type){
+		return TarmedKumulationType.ofArt(getSlaveArt()) == type;
+	}
+	
+	public boolean isSlaveCode(String code){
+		return getSlaveCode().equals(code);
+	}
+	
+	public boolean isMasterType(TarmedKumulationType type){
+		return TarmedKumulationType.ofArt(getMasterArt()) == type;
+	}
+	
+	public boolean isMasterCode(String code){
+		return getMasterCode().equals(code);
+	}
+	
+	public boolean isTyp(String typ){
+		return getTyp().equals(typ);
+	}
+	
+	@Override
+	public String toString(){
+		return getMasterArt() + " " + getMasterCode() + " -> " + getSlaveArt() + " "
+			+ getSlaveCode() + " [" + getTyp() + "]" + " (" + getValidFrom() + "-" + getValidTo()
+			+ ")";
 	}
 }

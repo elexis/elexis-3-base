@@ -125,7 +125,7 @@ public class BAGMediImporter extends ImporterPage {
 		BAGMedi imp = null;
 		// Kein Pharmacode, dann nach Name suchen
 		if (StringTool.isNothing(row[2].trim())) {
-			String mid = qbe.findSingle(Artikel.FLD_NAME, "=", row[7]);
+			String mid = qbe.findOne(Artikel.FLD_NAME, "=", row[7]);
 			if (mid != null) {
 				imp = BAGMedi.load(mid);
 			}

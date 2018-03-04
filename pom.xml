@@ -250,6 +250,8 @@
   <module>ch.elexis.barcode.scanner</module>
   <module>ch.elexis.barcode.scanner.feature</module>
   <module>ch.elexis.ebanking</module>
+  <module>ch.novcom.elexis.mednet.plugin</module>
+  <module>ch.novcom.elexis.mednet.plugin.feature</module>
 </modules>
 <repositories>
   <repository>

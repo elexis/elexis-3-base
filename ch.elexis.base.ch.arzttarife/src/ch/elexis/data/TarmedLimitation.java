@@ -394,7 +394,7 @@ public class TarmedLimitation {
 			return ret;
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
-			if (verrechnet.getZahl() > amount) {
+			if (getVerrechnetAmount(verrechnet) > amount) {
 				ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
 					toString(), null, false);
 			}
@@ -408,7 +408,7 @@ public class TarmedLimitation {
 			return ret;
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
-			if (verrechnet.getZahl() > amount) {
+			if (getVerrechnetAmount(verrechnet) > amount) {
 				if (limitationUnit == LimitationUnit.SESSION) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
@@ -419,6 +419,27 @@ public class TarmedLimitation {
 			}
 		}
 		return ret;
+	}
+	
+	private List<Verrechnet> getSameVerrechnetOfKons(Verrechnet verrechnet){
+		List<Verrechnet> ret = new ArrayList<>();
+		String verrechnetClass = verrechnet.get(Verrechnet.CLASS);
+		String verrechnetCode = verrechnet.getCode();
+		if(verrechnetClass != null && verrechnetCode != null) {
+			Konsultation kons = verrechnet.getKons();
+			for(Verrechnet leistung : kons.getLeistungen()) {
+				if (verrechnetClass.equals(verrechnet.get(Verrechnet.CLASS))
+					&& verrechnetCode.equals(leistung.getCode())) {
+					ret.add(leistung);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	private int getVerrechnetAmount(Verrechnet verrechnet){
+		List<Verrechnet> sameVerrechnet = getSameVerrechnetOfKons(verrechnet);
+		return getVerrechnetCount(sameVerrechnet);
 	}
 	
 	private boolean shouldSkipTest(){

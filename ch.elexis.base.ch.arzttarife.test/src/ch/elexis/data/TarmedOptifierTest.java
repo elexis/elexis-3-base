@@ -34,9 +34,9 @@ public class TarmedOptifierTest {
 	private static Patient patGrissemann, patStermann, patOneYear, patBelow75;
 	private static Konsultation konsGriss, konsSter, konsOneYear, konsBelow75;
 	private static TarmedLeistung tlBaseFirst5Min, tlBaseXRay, tlBaseRadiologyHospital,
-			tlUltrasound, tlAgeTo1Month, tlAgeTo7Years, tlAgeFrom7Years,
-			tlGroupLimit1, tlGroupLimit2, tlAlZero;
-			
+			tlUltrasound, tlAgeTo1Month, tlAgeTo7Years, tlAgeFrom7Years, tlGroupLimit1,
+			tlGroupLimit2, tlAlZero;
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
 		optifier = new TarmedOptifier();
@@ -278,8 +278,9 @@ public class TarmedOptifierTest {
 		// add age restriction to 75 years with 0 tolerance, for the test, like in tarmed 1.09
 		Hashtable<String, String> ext = tl.loadExtension();
 		String origAgeLimits = ext.get(TarmedLeistung.EXT_FLD_SERVICE_AGE);
-		ext.put(TarmedLeistung.EXT_FLD_SERVICE_AGE, origAgeLimits + (origAgeLimits.isEmpty()
-				? "-1|0|75|0|26[2006-04-01|2199-12-31]" : ", -1|0|75|0|26[2006-04-01|2199-12-31]"));
+		ext.put(TarmedLeistung.EXT_FLD_SERVICE_AGE,
+			origAgeLimits + (origAgeLimits.isEmpty() ? "-1|0|75|0|26[2006-04-01|2199-12-31]"
+					: ", -1|0|75|0|26[2006-04-01|2199-12-31]"));
 		tl.setExtension(ext);
 		
 		Result<IVerrechenbar> result = optifier.add(tl, konsBelow75);
@@ -569,7 +570,7 @@ public class TarmedOptifierTest {
 		MultiplikatorList multis =
 			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
 		multis.removeMultiplikator(new TimeTool(yesterday), "0.83");
-
+		
 	}
 	
 	private static void clearKons(Konsultation kons){

@@ -243,6 +243,7 @@ public class TarmedLimitation {
 			if (tarmedGroup == null) {
 				List<Verrechnet> verrechnetByCoverage =
 					getVerrechnetByCoverageAndCode(kons, tarmedLeistung.getCode());
+				verrechnetByCoverage = filterWithSameCode(verrechnet, verrechnetByCoverage);
 				if (getVerrechnetCount(verrechnetByCoverage) > amount) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
@@ -383,6 +384,26 @@ public class TarmedLimitation {
 			LocalDate leistungDate = tarmedLeistung.getGueltigVon().toLocalDate();
 			if (ret.isBefore(leistungDate)) {
 				ret = leistungDate;
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Filter the list of {@link Verrechnet} that only instances with the same code field (Tarmed
+	 * code, startdate and law) as the provided {@link Verrechnet} are in the resulting list.
+	 * 
+	 * @param verrechnet
+	 * @return
+	 */
+	private List<Verrechnet> filterWithSameCode(Verrechnet verrechnet, List<Verrechnet> list){
+		List<Verrechnet> ret = new ArrayList<>();
+		String matchCode = verrechnet.get(Verrechnet.LEISTG_CODE);
+		if(matchCode != null && !matchCode.isEmpty()) {
+			for (Verrechnet element : list) {
+				if (matchCode.equals(element.get(Verrechnet.LEISTG_CODE))) {
+					ret.add(element);
+				}
 			}
 		}
 		return ret;

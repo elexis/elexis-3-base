@@ -874,6 +874,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	 *            the European Article Number or GTIN
 	 * @return the ArtikelstammItem that fits the provided EAN/GTIN or <code>null</code> if none or
 	 *         multiple found
+	 * @since 3.4 black-boxed articles are not considered.
 	 */
 	public static @Nullable ArtikelstammItem findByEANorGTIN(@NonNull String ean){
 		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);

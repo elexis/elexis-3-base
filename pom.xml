@@ -13,7 +13,6 @@
     <repo_name>elexis.3.base</repo_name>
     <git.core.branch>master</git.core.branch>
     <git.target.branch>master</git.target.branch>
-    <nonElexisP2variant>master</nonElexisP2variant>
     <ROOT>${project.basedir}/compositeRepository</ROOT>
   </properties>
   <packaging>pom</packaging>

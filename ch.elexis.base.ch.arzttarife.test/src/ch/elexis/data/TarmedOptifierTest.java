@@ -12,8 +12,12 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -436,6 +440,43 @@ public class TarmedOptifierTest {
 	}
 	
 	/**
+	 * Test limit with side.
+	 */
+	@Test
+	public void testSideLimit(){
+		clearKons(konsGriss);
+		
+		Result<IVerrechenbar> result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("39.3408", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		assertEquals(1, getLeistungAmount("39.3408", konsGriss));
+		
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("39.3408", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		assertEquals(2, getLeistungAmount("39.3408", konsGriss));
+		
+		Set<String> sides = new HashSet<>();
+		List<Verrechnet> leistungen = getLeistungen("39.3408", konsGriss);
+		for (Verrechnet verrechnet : leistungen) {
+			sides.add(TarmedLeistung.getSide(verrechnet));
+		}
+		assertEquals(2, sides.size());
+		assertTrue(sides.contains(TarmedLeistung.LEFT));
+		assertTrue(sides.contains(TarmedLeistung.RIGHT));
+		
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("39.3408", new TimeTool(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(2, getLeistungAmount("39.3408", konsGriss));
+		
+		resetKons(konsGriss);
+	}
+	
+	/**
 	 * Test cleanup after kumulation warning.
 	 */
 	@Test
@@ -507,6 +548,16 @@ public class TarmedOptifierTest {
 		for (Verrechnet leistung : kons.getLeistungen()) {
 			if (leistung.getCode().equals(code)) {
 				ret += leistung.getZahl();
+			}
+		}
+		return ret;
+	}
+	
+	private List<Verrechnet> getLeistungen(String code, Konsultation kons){
+		List<Verrechnet> ret = new ArrayList<>();
+		for (Verrechnet leistung : kons.getLeistungen()) {
+			if (leistung.getCode().equals(code)) {
+				ret.add(leistung);
 			}
 		}
 		return ret;

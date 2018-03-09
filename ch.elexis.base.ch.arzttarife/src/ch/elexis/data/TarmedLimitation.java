@@ -451,7 +451,15 @@ public class TarmedLimitation {
 			for(Verrechnet leistung : kons.getLeistungen()) {
 				if (verrechnetClass.equals(verrechnet.get(Verrechnet.CLASS))
 					&& verrechnetCode.equals(leistung.getCode())) {
-					ret.add(leistung);
+					// for side limit, only add with same side
+					if (limitationUnit == LimitationUnit.SIDE) {
+						if (TarmedLeistung.getSide(verrechnet)
+							.equals(TarmedLeistung.getSide(leistung))) {
+							ret.add(leistung);
+						}
+					} else {
+						ret.add(leistung);
+					}
 				}
 			}
 		}

@@ -57,6 +57,7 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
@@ -106,16 +107,27 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 		}
 	};
 	
-	private void setCurPatient(Patient patient){
-		if (patient == null) {
-			form.setText(Messages.MessungenUebersicht_kein_Patient);
-		} else {
-			form.setText(patient.getLabel());
-		}
-		CTabItem tab = tabfolder.getSelection();
-		Control c = tab.getControl();
-		MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
-		refreshContent(patient, t);
+	private void setCurPatient(final Patient patient){
+		Runnable runnable = new Runnable() {
+			public void run() {
+            //multithreading to avoid directly updating the UI which causes Illegal thread access
+				UiDesk.asyncExec(new Runnable() {
+					@Override
+					public void run(){
+						if (patient == null) {
+							form.setText(Messages.MessungenUebersicht_kein_Patient);
+						} else {
+							form.setText(patient.getLabel());
+						}
+						CTabItem tab = tabfolder.getSelection();
+						Control c = tab.getControl();
+						MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
+						refreshContent(patient, t);
+					}
+				});     
+			}
+		};
+		new Thread(runnable).start();
 	}
 	
 	public void catchElexisEvent(final ElexisEvent ev){

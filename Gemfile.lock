@@ -3,7 +3,7 @@ GEM
   specs:
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
-    eclipse-plugin (0.4.1)
+    eclipse-plugin (0.4)
       nokogiri
       rubyzip (~> 1.2.1)
     elexis-wiki-interface (0.5.4)

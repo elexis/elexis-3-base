@@ -46,7 +46,7 @@ public class ArtikelstammImporterTest {
 	}
 
 	private void runImport(String baseName) {
-		 IStatus success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
+		IStatus success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
 			AllTests.class.getResourceAsStream(baseName + "_first_v5.xml"), null);
 		if (!success.isOK()) {
 			String msg = String.format("Import of artikelstamm_first_v5 failed");

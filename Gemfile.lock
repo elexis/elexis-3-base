@@ -6,6 +6,7 @@ GEM
     eclipse-plugin (0.4)
       nokogiri
       rubyzip (~> 1.2.1)
+      zip-zip
     elexis-wiki-interface (0.5.4)
       eclipse-plugin (>= 0.1)
       mediawiki-gateway

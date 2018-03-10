@@ -18,8 +18,7 @@
    </license>
 
    <requires>
-      <import plugin="org.eclipse.emf.ecore.xmi"/>
-      <import plugin="org.eclipse.emf.ecore"/>
+      <import feature="at.medevit.elexis.inbox.feature" version="3.0.0.qualifier"/>
    </requires>
 
    <plugin
@@ -31,6 +30,20 @@
 
    <plugin
          id="at.medevit.elexis.ehc.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.ecore"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.ecore.xmi"
          download-size="0"
          install-size="0"
          version="0.0.0"

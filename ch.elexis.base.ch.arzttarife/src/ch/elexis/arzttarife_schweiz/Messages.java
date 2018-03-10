@@ -82,8 +82,6 @@ public class Messages extends NLS {
 	
 	public static String TarmedDetailDisplay_NumbereAss;
 	
-	public static String TarmedDetailDisplay_PossibleAdd;
-	
 	public static String TarmedDetailDisplay_per;
 	
 	public static String TarmedDetailDisplay_Relation;

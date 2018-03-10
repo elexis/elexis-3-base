@@ -290,7 +290,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	/** Medizinische Interpretation auslesen */
 	public String getMedInterpretation(){
 		if (getExtension() != null) {
-			return extension.get(TarmedExtension.FLD_MED_INTERPRET);
+			extension.get(TarmedExtension.FLD_MED_INTERPRET);
 		}
 		return "";
 	}
@@ -306,7 +306,7 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	/** Technische Interpretation auslesen */
 	public String getTechInterpretation(){
 		if (getExtension() != null) {
-			return extension.get(TarmedExtension.FLD_TECH_INTERPRET);
+			extension.get(TarmedExtension.FLD_TECH_INTERPRET);
 		}
 		return "";
 	}

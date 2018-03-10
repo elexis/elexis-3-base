@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +40,6 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.util.Messages;
 import ch.elexis.data.Mandant;
 
 public class InboxWatcher {
@@ -56,7 +52,6 @@ public class InboxWatcher {
 	private WatchService watcher;
 	private HashMap<String, WatchKey> watchKeys;
 	private String activeInboxString;
-	private static String LinuxIoNtifyHint = "The inbox will not work correctly.\n\nHINT: Under linux calling 'echo 256 > /proc/sys/fs/inotify/max_user_instances' might fix the problem";
 	
 	private List<InboxListener> listeners;
 	
@@ -77,7 +72,6 @@ public class InboxWatcher {
 			
 			executor.execute(new DirectoryWatcher());
 		} catch (IOException e) {
-			logger.error(LinuxIoNtifyHint);
 			logger.error("Error creating filesystem watcher", e);
 		}
 	}
@@ -86,9 +80,7 @@ public class InboxWatcher {
 		ElexisEventDispatcher.getInstance().removeListeners(mandantListener);
 		try {
 			executor.shutdown();
-			if (watcher != null) {
-				watcher.close();
-			}
+			watcher.close();
 		} catch (IOException e) {
 			logger.error("Error closing filesystem watcher", e);
 		}
@@ -214,18 +206,9 @@ public class InboxWatcher {
 					}
 					
 					WatchKey key;
-					if (watcher == null) {
-						String errorTitle = "Unable to create file watcher";
-						Status status =
-								new Status(Status.ERROR, this.getClass().getSimpleName(), Status.ERROR,
-										errorTitle, null);
-							ErrorDialog.openError(null,"Unable to create file watcher",
-									LinuxIoNtifyHint, status);
-					} else {
-						key = inboxPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-							StandardWatchEventKinds.ENTRY_DELETE);
-						watchKeys.put(activeInboxString, key);
-					}
+					key = inboxPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
+						StandardWatchEventKinds.ENTRY_DELETE);
+					watchKeys.put(activeInboxString, key);
 				} catch (IOException e) {
 					logger.error("Error creating filesystem key", e);
 				}

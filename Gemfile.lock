@@ -44,6 +44,8 @@ GEM
     unf_ext (0.0.7.4)
     unicode (0.4.4.4)
     xml-simple (1.1.5)
+    zip-zip (0.3)
+        rubyzip (>= 1.0.0)
 
 PLATFORMS
   ruby

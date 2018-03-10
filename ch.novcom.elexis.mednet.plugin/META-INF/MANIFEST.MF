@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MedNet Plugin
+Bundle-SymbolicName: ch.novcom.elexis.mednet.plugin;singleton:=true
+Bundle-Version: 3.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Localization: plugin
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: ch.novcom.elexis.mednet.plugin.MedNetActivator
+Export-Package: ch.novcom.elexis.mednet.plugin,
+ ch.novcom.elexis.mednet.plugin.data,
+ ch.novcom.elexis.mednet.plugin.ui.commands,
+ ch.novcom.elexis.mednet.plugin.ui.dialog,
+ ch.novcom.elexis.mednet.plugin.ui.preferences
+Bundle-Vendor: novcom AG
+Require-Bundle: org.eclipse.core.runtime,
+ ch.rgw.utility,
+ ch.elexis.core,
+ ch.elexis.core.ui,
+ ch.elexis.core.data,
+ ch.elexis.core.hl7.v2x,
+ ch.elexis.core.ui.importer.div,
+ org.eclipse.ui,
+ at.medevit.elexis.gdt;bundle-version="3.1.0",
+ at.medevit.elexis.gdt.defaultfilecp;bundle-version="3.1.0",
+ ch.elexis.omnivore;bundle-version="3.2.0",
+ ch.elexis.omnivore.data;bundle-version="3.2.0"
+

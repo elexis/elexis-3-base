@@ -120,6 +120,12 @@ public class TarmedOptifier implements IOptifier {
 					true);
 		}
 
+		String tcid = code.getCode();
+		
+		// make titles not selectable - fast exit
+		if (!tcid.matches("[0-9][0-9].[0-9][0-9][0-9][0-9]"))
+			return new Result<IVerrechenbar>(null);
+		
 		bOptify = CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_OPTIFY, true);
 
 		TarmedLeistung tc = (TarmedLeistung) code;
@@ -315,8 +321,6 @@ public class TarmedOptifier implements IOptifier {
 			decrementOrDelete(newVerrechnet);
 			return limitResult;
 		}
-
-		String tcid = code.getCode();
 
 		// check if it's an X-RAY service and add default tax if so
 		// default xray tax will only be added once (see above)

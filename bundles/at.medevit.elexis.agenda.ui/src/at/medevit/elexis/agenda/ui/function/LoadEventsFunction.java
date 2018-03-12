@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
@@ -41,10 +42,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			LocalDate endDate = getDateArg(arguments[1]);
 			
 			List<IPeriod> periods = getPeriods(startDate, endDate);
-			ArrayList<Event> events = new ArrayList<>();
-			for (IPeriod iPeriod : periods) {
-				events.add(Event.of(iPeriod));
-			}
+			List<Event> events =
+				periods.parallelStream().map(p -> Event.of(p)).collect(Collectors.toList());
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run(){
@@ -84,7 +83,12 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		}
 		
 		ArrayList<IPeriod> ret = new ArrayList<IPeriod>();
-		Query<Termin> query = new Query<Termin>(Termin.class);
+		Query<Termin> query = new Query<Termin>(Termin.class, null, null, Termin.TABLENAME,
+			new String[] {
+				Termin.FLD_BEREICH, Termin.FLD_BEGINN, Termin.FLD_TAG, Termin.FLD_DAUER,
+				Termin.FLD_TERMINSTATUS, Termin.FLD_TERMINTYP, Termin.FLD_LINKGROUP,
+				Termin.FLD_PATIENT, Termin.FLD_GRUND, Termin.FLD_STATUSHIST
+			});
 		if (!resources.isEmpty()) {
 			String[] resourceArray = resources.toArray(new String[resources.size()]);
 			query.startGroup();

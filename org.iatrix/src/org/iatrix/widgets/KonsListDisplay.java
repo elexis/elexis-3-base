@@ -166,7 +166,12 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 				if (patient != null) {
 					Fall[] faelle  = null;
 					if (showAllCases) {faelle = patient.getFaelle(); } else {
-						faelle = new Fall[]  { (Fall) ElexisEventDispatcher.getSelected(Fall.class) };
+						Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+						if (actFall != null) {
+							faelle = new Fall[]  { actFall };
+						} else {
+							faelle = new Fall[]  { };
+						}
 					}
 
 					if (faelle.length > 0) {
@@ -176,10 +181,8 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 						Query<Konsultation> query = new Query<>(Konsultation.class);
 						query.startGroup();
 						for (Fall fall : faelle) {
-							if (fall != null) {
-								query.add("FallID", "=", fall.getId());
-								query.or();
-							}
+							query.add("FallID", "=", fall.getId());
+							query.or();
 						}
 						query.endGroup();
 						query.orderBy(true, "Datum");

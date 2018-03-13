@@ -445,6 +445,9 @@ public class Helpers {
 	 * @return whether user may is the author of this consultation
 	 */
 	public static boolean userIsKonsAuthor(Konsultation kons){
+		if (kons == null) {
+			return false;
+		}
 		return kons.getAuthor().isEmpty() || kons.getAuthor().contentEquals(CoreHub.actUser.getLabel()) ;
 	}
 	/**

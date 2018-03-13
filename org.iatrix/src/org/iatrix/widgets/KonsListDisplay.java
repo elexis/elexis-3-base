@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.actions.KonsFilter;
 import ch.elexis.core.ui.actions.ObjectFilterRegistry;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
@@ -177,8 +176,10 @@ public class KonsListDisplay extends Composite implements IJobChangeListener, IJ
 						Query<Konsultation> query = new Query<>(Konsultation.class);
 						query.startGroup();
 						for (Fall fall : faelle) {
-							query.add("FallID", "=", fall.getId());
-							query.or();
+							if (fall != null) {
+								query.add("FallID", "=", fall.getId());
+								query.or();
+							}
 						}
 						query.endGroup();
 						query.orderBy(true, "Datum");

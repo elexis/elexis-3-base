@@ -78,13 +78,23 @@
 				if (!element.hasClass('fc-helper')) {
 					element.qtip({
 						style: { classes: 'qtip-dark' },
+						show: {
+							delay: 250,
+							solo: true
+						},
+						hide: {
+							delay: 0
+						},
 						content: {
 							title: event.title,
 							text: event.description
 						},
 						position: {
+							my: 'left top',
+							at: 'right top',
+							target: element,
 							viewport: $('#calendar')
-						},
+						}
 					});
 				}
 			}

@@ -22,6 +22,7 @@ Import-Package: ch.elexis.agenda.data,
  ch.elexis.dialogs,
  ch.rgw.io,
  ch.rgw.tools,
+ com.google.common.cache;version="15.0.0",
  com.google.gson,
  org.osgi.framework,
  org.slf4j

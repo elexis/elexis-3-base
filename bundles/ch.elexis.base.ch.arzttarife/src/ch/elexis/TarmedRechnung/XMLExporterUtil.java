@@ -242,7 +242,8 @@ public class XMLExporterUtil {
 		if (!StringTool.isNothing(val)) {
 			Element ret = new Element(name, XMLExporter.nsinvoice);
 			if (attr == null) {
-				ret.setText(val);
+				// the replaceAll is an ugly fix problems in a database from Bruno Büchel in Yverdon
+				ret.setText(val.replaceAll("\u001f","")); // Unit-Separator
 			} else {
 				ret.setAttribute(attr, val);
 			}

@@ -15,6 +15,16 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_RECIPIENT_EAN;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
+
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
@@ -46,6 +56,7 @@ public class TarmedRequirements {
 	public static final String DOMAIN_SUVA = "www.xid.ch/id/suva"; // $NON-NLS-1$
 	
 	public static final String RESPONSIBLE_INFO_KEY = "ch.elexis.tarmedprefs.responsible";
+	private static Logger logger = LoggerFactory.getLogger(TarmedRequirements.class);
 
 	static {
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK,
@@ -225,6 +236,28 @@ public class TarmedRequirements {
 		if (gesetz.length() == 0) { // compatibility. To be removed
 			gesetz = Fall.getBillingSystemAttribute(billingSystem, "gesetz"); //$NON-NLS-1$
 		}
+		String language = System.getProperty("osgi.nl").toLowerCase();
+		language = language.substring(0, language.indexOf("_"));
+		if (language.equals("fr")) {
+		      // Use a hash map to convert french names to the one needed in the XML
+		      HashMap<String, String> hm = new HashMap<String, String>();
+		      hm.put("^lamal.*", "kvg");
+		      hm.put("^lcal.*", "kvg");
+		      hm.put("^lam[$_].*", "kvg");
+		      hm.put("^laa.*", "kvg");
+		      hm.put("^lai.*", "ivg");
+		      Set<Entry<String, String>> set = hm.entrySet();
+		      Iterator<Entry<String, String>> i = set.iterator();
+		      while(i.hasNext()) {
+		         Entry<String, String> me = i.next();
+		         if (billingSystem.toLowerCase().matches(me.getKey())) {
+					gesetz = me.getValue();
+					logger.info("Language {} Using {} for {}", language, me.getValue(), me.getKey());
+					break;
+		         }
+		      }
+		}
+
 		if (gesetz.length() == 0) {
 			if (billingSystem.matches("KVG|UVG|MV|VVG")) { //$NON-NLS-1$
 				gesetz = billingSystem;

@@ -108,9 +108,11 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run(){
-						// update calendar height
-						updateCalendarHeight();
-						scriptingHelper.scrollToNow();
+						if (!isDisposed()) {
+							// update calendar height
+							updateCalendarHeight();
+							scriptingHelper.scrollToNow();
+						}
 					}
 				});
 				return gson.toJson(events);

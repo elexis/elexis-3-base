@@ -141,16 +141,11 @@ public class Event {
 			else {
 				ret.title = termin.getPersonalia();
 			}
-			if (isDayLimit(iPeriod)) {
-				ret.rendering = "background";
-			} else {
-				ret.description =
-					termin.getGrund().replaceAll("\n", "<br />") + "<br /><br />"
-						+ termin.getStatusHistoryDesc(true).replaceAll("\n", "<br />");
-				ret.borderColor = getStateColor(iPeriod);
-				ret.backgroundColor = getTypColor(iPeriod);
-				ret.textColor = getTextColor(ret.backgroundColor.substring(1));
-			}
+			ret.description = termin.getGrund().replaceAll("\n", "<br />") + "<br /><br />"
+				+ termin.getStatusHistoryDesc(true).replaceAll("\n", "<br />");
+			ret.borderColor = getStateColor(iPeriod);
+			ret.backgroundColor = getTypColor(iPeriod);
+			ret.textColor = getTextColor(ret.backgroundColor.substring(1));
 		}
 		return ret;
 	}

@@ -1,0 +1,55 @@
+[[Category:Datenaustausch]]
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.0.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Datenaustausch</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>MedNet Anbindung</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>novcom AG</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>august 2017</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.0, Internetverbidnung</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+== Einführung ==
+
+Dieses Plugin ermöglicht die Verbindung an MedNet 
+
+== Voraussetzungen ==
+
+Sie benötigen neben Elexis 3.0 das mednet Produkt 
+
+
+== Installation und Konfiguration ==
+
+Die Anwendung kann über das Abo-Management installiert/deinstalliert werden. Abonnieren Sie in der Kategorie ''Datenaustausch'' das Plugin ''MedNet''. Nach dem Aktualisieren von Elexis ist das Modul geladen. 
+
+=== Konfiguration ===
+
+Nach erfolgreicher Installation finden sie unter ''Einstellungen/Datenaustausch/MedNet'' die entsprechende Einstellugnsseite.

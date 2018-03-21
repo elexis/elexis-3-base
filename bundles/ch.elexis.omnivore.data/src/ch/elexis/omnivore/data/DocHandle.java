@@ -560,7 +560,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		String fileExtension = null;
 		try {
 			MimeType docMimeType = new MimeType(get(FLD_MIMETYPE));
-			fileExtension = MimeTool.getExtension(docMimeType.getPrimaryType());
+			fileExtension = MimeTool.getExtension(docMimeType.toString());
 		}
 		catch(MimeTypeParseException mpe) {
 			fileExtension = FileTool.getExtension(get(FLD_MIMETYPE));

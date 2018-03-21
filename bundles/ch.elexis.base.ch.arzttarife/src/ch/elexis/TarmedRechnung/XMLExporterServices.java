@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.model.article.IArticle;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.Konsultation;
@@ -558,6 +559,9 @@ public class XMLExporterServices {
 						el.setAttribute(XMLExporter.ATTR_CODE, "2000");
 						el.setAttribute("name",
 							verrechnet.getText() + " [" + verrechnet.getCode() + "]"); // 22340
+					}
+					if ("590".equals(codeSystemCode) && v instanceof IArticle) {
+						el.setAttribute(XMLExporter.ATTR_CODE, "1310");
 					}
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$

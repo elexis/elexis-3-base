@@ -891,6 +891,22 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	/**
 	 * 
+	 * @param prodno
+	 * @return the ArtikelstammItem for the given id/prodno or <code>null</code> if not found
+	 */
+	public static @Nullable ArtikelstammItem findByProdnoOrID(@NonNull String prodno){
+		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
+		qre.add(ArtikelstammItem.FLD_PRODNO, Query.EQUALS, prodno);
+		qre.or();
+		qre.add(ArtikelstammItem.FLD_ID, Query.EQUALS, prodno);
+		List<ArtikelstammItem> result = qre.execute();
+		if (result.size() == 1)
+			return result.get(0);
+		return null;
+	}
+
+	/**
+	 * 
 	 * @param pharmaCode
 	 * @return the ArtikelstammItem for the given pharma code or <code>null</code> if not found
 	 */

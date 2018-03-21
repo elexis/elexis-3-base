@@ -559,8 +559,7 @@ public class TarmedOptifierTest {
 		
 		clearKons(konsGriss);
 	}
-	
-	
+		
 	private int getLeistungAmount(String code, Konsultation kons){
 		int ret = 0;
 		for (Verrechnet leistung : kons.getLeistungen()) {

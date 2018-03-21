@@ -361,11 +361,12 @@ public class XMLExporterServices {
 					// 0)
 					el.setAttribute(ATTR_SCALE_FACTOR_MT,
 						XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22490
+					getALScalingFactor(verrechnet).ifPresent(f -> {
+						f = f * primaryScale;
+						el.setAttribute(ATTR_SCALE_FACTOR_MT, XMLTool.doubleToXmlDouble(f, 1)); // 22500
+					});
 					el.setAttribute(ATTR_EXTERNAL_FACTOR_MT,
 						XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22500
-					getALScalingFactor(verrechnet).ifPresent(f -> {
-						el.setAttribute(ATTR_EXTERNAL_FACTOR_MT, XMLTool.doubleToXmlDouble(f, 1)); // 22500
-					});
 					el.setAttribute(XMLExporter.ATTR_AMOUNT_MT, XMLTool.moneyToXmlDouble(mAL)); // 22510
 					
 					el.setAttribute(ATTR_UNIT_TT, XMLTool.doubleToXmlDouble(tlTL / 100.0, 2)); // 22520

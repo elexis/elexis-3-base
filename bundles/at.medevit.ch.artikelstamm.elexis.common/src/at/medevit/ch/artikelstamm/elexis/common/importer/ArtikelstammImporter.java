@@ -227,12 +227,13 @@ public class ArtikelstammImporter {
 		for (PRODUCT product : importProductList) {
 			String prodno = product.getPRODNO();
 			
-			ArtikelstammItem foundProduct = ArtikelstammItem.load(prodno);
-			if (!foundProduct.exists()) {
-				
-				String trimmedDscr = trimDSCR(product.getDSCR(), product.getPRODNO());
-				foundProduct = new ArtikelstammItem(newVersion, TYPE.X, product.getPRODNO(), null,
-					trimmedDscr, StringConstants.EMPTY);
+			ArtikelstammItem foundProduct = ArtikelstammItem.findByProdnoOrID(prodno);
+			if (foundProduct == null || !foundProduct.exists()) {
+				if (foundProduct == null) {
+					String trimmedDscr = trimDSCR(product.getDSCR(), product.getPRODNO());
+					foundProduct = new ArtikelstammItem(newVersion, TYPE.X, product.getPRODNO(), null,
+						trimmedDscr, StringConstants.EMPTY);
+				}
 				log.trace("[IP] Adding product " + foundProduct.getId() + " ("
 					+ foundProduct.getDSCR() + ")");
 			}
@@ -319,7 +320,7 @@ public class ArtikelstammImporter {
 				}
 				foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(),
 					item.getPHAR(), trimmedDscr, StringConstants.EMPTY);
-				log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
+				log.trace("[II] Adding article id:  {} gtin: {} {}", foundItem.getId(), foundItem.getGTIN(), item.getDSCR());
 			} else {
 				// check if article has overridden public price
 				keepOverriddenPublicPrice = foundItem.isUserDefinedPrice();
@@ -357,7 +358,7 @@ public class ArtikelstammImporter {
 		SALECDType salecd = item.getSALECD();
 		if (SALECDType.A == salecd) {
 			values.add(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
-			log.debug("{} Clearing blackboxed as salecd {} is A isSL {}", item.getGTIN(), salecd,
+			log.trace("{} Clearing blackboxed as salecd {} is A isSL {}", item.getGTIN(), salecd,
 				item.isSLENTRY());
 		} else {
 			log.debug("{} Setting blackboxed as salecd {} != {} SALECDTypt.A  isSL {}",

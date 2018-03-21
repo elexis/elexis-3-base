@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.model.article.IArticle;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.Konsultation;
@@ -360,11 +361,12 @@ public class XMLExporterServices {
 					// 0)
 					el.setAttribute(ATTR_SCALE_FACTOR_MT,
 						XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22490
+					getALScalingFactor(verrechnet).ifPresent(f -> {
+						f = f * primaryScale;
+						el.setAttribute(ATTR_SCALE_FACTOR_MT, XMLTool.doubleToXmlDouble(f, 1)); // 22500
+					});
 					el.setAttribute(ATTR_EXTERNAL_FACTOR_MT,
 						XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22500
-					getALScalingFactor(verrechnet).ifPresent(f -> {
-						el.setAttribute(ATTR_EXTERNAL_FACTOR_MT, XMLTool.doubleToXmlDouble(f, 1)); // 22500
-					});
 					el.setAttribute(XMLExporter.ATTR_AMOUNT_MT, XMLTool.moneyToXmlDouble(mAL)); // 22510
 					
 					el.setAttribute(ATTR_UNIT_TT, XMLTool.doubleToXmlDouble(tlTL / 100.0, 2)); // 22520
@@ -558,6 +560,9 @@ public class XMLExporterServices {
 						el.setAttribute(XMLExporter.ATTR_CODE, "2000");
 						el.setAttribute("name",
 							verrechnet.getText() + " [" + verrechnet.getCode() + "]"); // 22340
+					}
+					if ("590".equals(codeSystemCode) && v instanceof IArticle) {
+						el.setAttribute(XMLExporter.ATTR_CODE, "1310");
 					}
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$

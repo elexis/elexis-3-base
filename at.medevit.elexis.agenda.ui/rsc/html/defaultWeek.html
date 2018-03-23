@@ -2,6 +2,7 @@
 <html>
 
 <head>
+	<meta http-equiv="x-ua-compatible" content="IE=9">
 	<meta charset='utf-8' />
 	<link href='../fullcalendar.min.css' rel='stylesheet' />
 	<link href='../fullcalendar.print.min.css' rel='stylesheet' media='print' />
@@ -99,11 +100,21 @@
 				if (!element.hasClass('fc-helper')) {
 					element.qtip({
 						style: { classes: 'qtip-dark' },
+						show: {
+							delay: 250,
+							solo: true
+						},
+						hide: {
+							delay: 0
+						},
 						content: {
 							title: "[" + event.resource + "] " + event.title,
 							text: event.description
 						},
 						position: {
+							my: 'left top',
+							at: 'right top',
+							target: element,
 							viewport: $('#calendar')
 						}
 					});

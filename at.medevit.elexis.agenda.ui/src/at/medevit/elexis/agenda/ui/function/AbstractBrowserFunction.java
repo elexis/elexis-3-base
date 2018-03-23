@@ -24,6 +24,11 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 		getBrowser().execute(refetchEvents);
 	}
 	
+	@Override
+	public boolean isDisposed(){
+		return super.isDisposed();
+	}
+	
 	protected LocalDateTime getDateTimeArg(Object object){
 		if (object instanceof String) {
 			if (((String) object).length() == 10) {

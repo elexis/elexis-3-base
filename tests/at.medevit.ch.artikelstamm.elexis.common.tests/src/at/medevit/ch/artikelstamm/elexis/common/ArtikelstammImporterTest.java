@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,18 +30,23 @@ public class ArtikelstammImporterTest {
 	private static final String gtinWithPkgSizeOverrideNull = "7612929028176";
 	private static final String pharWithLeadingZero = "0098878";
 	private static final String gtinUserPrice = "7680273040281";
+	private static final String gtin14chars = "68711428066649";
+	private static final String gtinPriorix = "7680581580011";
 	private static final String []  slEntries = new String [] { "7680273040281", "7680651600014" };
 	private static final int OLD_PKG_SIZE = 448;
 	private static final int NEW_PKG_SIZE = 100;
+	private static boolean isMedindex = false;
 
-	@Test
 	public void testImportMedindex() throws IOException{
+		isMedindex = true;
 		runImport("/rsc/medindex");
 	}
 
 	// At the moment I  can only activate one of the two tests or I will get errors
 	// about the incompatilibity between medindex and oddb2xml
+	@Test
 	public void testImportOddb2xml() throws IOException{
+		isMedindex = false;
 		runImport("/rsc/artikelstamm");
 	}
 
@@ -58,6 +62,19 @@ public class ArtikelstammImporterTest {
 		if (onlyInSecond != null)
 		{
 			onlyInSecond.delete();
+		}
+
+		if (!isMedindex) {
+			// I would have loved to add a test that priorix has only one product
+			// But it was too complicated
+			ArtikelstammItem priorix = ArtikelstammItem.findByEANorGTIN(gtinPriorix);
+			assertNotNull(priorix);
+
+			assertEquals(14, gtin14chars.length());
+			ArtikelstammItem gtin14 = ArtikelstammItem.findByEANorGTIN(gtin14chars);
+			assertNotNull(gtin14);
+			assertEquals(gtin14chars, gtin14.getGTIN());
+			assertEquals("178.2", gtin14.getPublicPrice().toString());
 		}
 
 		ArtikelstammItem withUserPrice = ArtikelstammItem.findByEANorGTIN(gtinUserPrice);

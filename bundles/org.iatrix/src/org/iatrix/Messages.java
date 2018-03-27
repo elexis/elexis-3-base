@@ -9,24 +9,19 @@
  **********************************************************************/
 package org.iatrix;
 
-import org.eclipse.osgi.util.NLS;
-
-public class Messages extends NLS {
-  private static final String BUNDLE_NAME = "org.iatrix.messages";
-    public static String FixMediDisplay_AddItem;
-    public static String FixMediDisplay_Change;
-    public static String FixMediDisplay_Copy;
-    public static String FixMediDisplay_DailyCost;
-    public static String FixMediDisplay_Delete;
-    public static String FixMediDisplay_DeleteUnrecoverable;
-    public static String FixMediDisplay_FixMedikation;
-    public static String FixMediDisplay_Modify;
-    public static String FixMediDisplay_Prescription;
-    public static String FixMediDisplay_Stop;
-    public static String FixMediDisplay_StopThisMedicament;
-    public static String FixMediDisplay_UsageList;
-
-    static { // load message values from bundle file
-    NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-  }
+public class Messages  {
+    public static String FixMediDisplay_AddItem = ch.elexis.base.l10n.Messages.FixMediDisplay_AddItem;
+    public static String FixMediDisplay_Change = ch.elexis.base.l10n.Messages.FixMediDisplay_Change;
+    public static String FixMediDisplay_Copy = ch.elexis.base.l10n.Messages.FixMediDisplay_Copy;
+    public static String FixMediDisplay_DailyCost = ch.elexis.base.l10n.Messages.FixMediDisplay_DailyCost;
+    public static String FixMediDisplay_Delete = ch.elexis.base.l10n.Messages.FixMediDisplay_Delete;
+    public static String FixMediDisplay_DeleteUnrecoverable = ch.elexis.base.l10n.Messages.FixMediDisplay_DeleteUnrecoverable;
+    public static String FixMediDisplay_FixMedikation = ch.elexis.base.l10n.Messages.FixMediDisplay_FixMedikation;
+    public static String FixMediDisplay_Modify = ch.elexis.base.l10n.Messages.FixMediDisplay_Modify;
+    public static String FixMediDisplay_Prescription = ch.elexis.base.l10n.Messages.FixMediDisplay_Prescription;
+    public static String FixMediDisplay_Stop = ch.elexis.base.l10n.Messages.FixMediDisplay_Stop;
+    public static String FixMediDisplay_StopThisMedicament = ch.elexis.base.l10n.Messages.FixMediDisplay_StopThisMedicament;
+    public static String FixMediDisplay_UsageList = ch.elexis.base.l10n.Messages.FixMediDisplay_UsageList;
+    public static String ProblemFixMediDisplay_AlertNoProblemSelectedTitle = ch.elexis.base.l10n.Messages.ProblemFixMediDisplay_AlertNoProblemSelectedTitle;
+    public static String ProblemFixMediDisplay_AlertNoProblemSelectedText = ch.elexis.base.l10n.Messages.ProblemFixMediDisplay_AlertNoProblemSelectedText;
 }

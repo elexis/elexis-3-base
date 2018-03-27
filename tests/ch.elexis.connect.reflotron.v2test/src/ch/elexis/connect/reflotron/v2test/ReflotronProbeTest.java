@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import ch.elexis.connect.reflotron.packages.PackageException;
 import ch.elexis.connect.reflotron.packages.Probe;
+import ch.elexis.connect.reflotron.packages.Value;
 
 public class ReflotronProbeTest {
 	
@@ -119,4 +120,24 @@ public class ReflotronProbeTest {
 		assertEquals("9.28", fields[VALUE]);
 		assertEquals("mmol/l", fields[UNIT]);
 	}
+
+	@Test
+	public void testLocalizedValue() throws PackageException{
+		Value val = Value.getValue("AMYL", "U/l");
+		assertEquals("Gesamt-Amylase", val.get_longName() );
+		assertEquals("AMYL", val.get_shortName() );
+	}
+
+	@Test
+	public void testLocalizedValueError() throws PackageException{
+		String msg = ch.elexis.connect.reflotron.packages.Messages.getString("Value.Error");
+		assertEquals("Fehler bei der Messung",msg );
+	}
+
+	@Test
+	public void testLocalizedConnectionName() throws PackageException{
+		String msg = ch.elexis.connect.reflotron.Messages.getString("ReflotronSprintAction.ConnectionName");
+		assertEquals("Elexis-Roche Reflotron", msg);
+	}
+	
 }

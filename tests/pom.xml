@@ -31,11 +31,14 @@
       <module>at.medevit.elexis.tarmed.model.tests</module>
       <module>ch.elexis.base.ch.arzttarife.test</module>
       <module>ch.elexis.base.ch.ebanking.test</module>
+      <module>ch.elexis.connect.afinion.test</module>
       <module>ch.elexis.connect.reflotron.v2test</module>
+      <module>ch.elexis.connect.sysmex.test</module>
       <module>ch.elexis.ebanking.tests</module>
       <module>ch.elexis.externe_dokumente.tests</module>
       <module>ch.elexis.fop.service.test</module>
       <module>ch.elexis.laborimport.viollier.v2_test</module>
+      <module>ch.medshare.connect.abacusjunior.test</module>
       <module>ch.medshare.elexis_directories.test</module>
       <module>ch.pharmed.phmprescriber_test</module>
       <module>com.hilotec.elexis.messwerte.v2_test</module>

@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Abacus Test
+Bundle-SymbolicName: ch.medshare.connect.abacusjunior.test
+Bundle-Version: 3.0.0.qualifier
+Fragment-Host: ch.medshare.connect.abacusjunior
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.junit

@@ -48,7 +48,7 @@ public class Value {
 		_longName = getString(paramName, "text");
 		_unit = getString(paramName, "unit");
 		
-		if (CoreHub.localCfg.get(Preferences.APPLY_SENT_UNITS, "n").equalsIgnoreCase("y")) {
+		if (CoreHub.localCfg != null && CoreHub.localCfg.get(Preferences.APPLY_SENT_UNITS, "n").equalsIgnoreCase("y")) {
 			_unit = unit;
 		}
 		_refMann = getString(paramName, "refM");

@@ -76,10 +76,30 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
         </LIMITATION>
     </LIMITATIONS>
     <ITEMS>
+        <ITEM PHARMATYPE="P">
+            <GTIN>7680581580011</GTIN>
+            <PHAR>3656617</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>PRIORIX TETRA Trockensub c Solv Fertspr</DSCR>
+            <DSCRF>PRIORIX TETRA subst sèche c solv ser pré</DSCRF>
+            <COMP>
+                <NAME>GlaxoSmithKline AG</NAME>
+                <GLN>7601001000674</GLN>
+            </COMP>
+            <PEXF>84.96</PEXF>
+            <PPUB>105.90</PPUB>
+            <PKG_SIZE>1</PKG_SIZE>
+            <MEASURE>Durchstechflasche(n)</MEASURE>
+            <MEASUREF>Durchstechflasche(n)</MEASUREF>
+            <DOSAGE_FORM>Pulver</DOSAGE_FORM>
+            <DOSAGE_FORMF>Poudre soluble</DOSAGE_FORMF>
+            <IKSCAT>B</IKSCAT>
+            <PRODNO>5815801</PRODNO>
+        </ITEM>
         <ITEM PHARMATYPE="N">
             <GTIN>4062300253636</GTIN>
             <PHAR>6606755</PHAR>
-            <SALECD>I</SALECD>
+            <SALECD>A</SALECD>
             <DSCR>HIPP Trinknahrung Joghurt Erdbeer&amp;Himbeer 200 ml</DSCR>
             <DSCRF>--missing--</DSCRF>
             <PEXF>0.00</PEXF>
@@ -152,6 +172,18 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SL_ENTRY>true</SL_ENTRY>
             <IKSCAT>B</IKSCAT>
             <DEDUCTIBLE>10</DEDUCTIBLE>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>68711428066649</GTIN>
+            <PHAR>5863450</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>3M MEDIPORE+PAD Absorbtionsverb 10x15cm 8 x 25 Stk</DSCR>
+            <DSCRF>3M MEDIPORE+PAD compr absorb 10x15cm 8 x 25 pce</DSCRF>
+            <COMP>
+                <GLN>7610182000007</GLN>
+            </COMP>
+            <PEXF>108.01</PEXF>
+            <PPUB>178.20</PPUB>
         </ITEM>
       </ITEMS>
 </ARTIKELSTAMM>

@@ -44,4 +44,11 @@ public class Messages {
   public static String Preferences_Modell = ch.elexis.base.l10n.Messages.Preferences_Modell;
   public static String Preferences_RDW = ch.elexis.base.l10n.Messages.Preferences_RDW;
   public static String Preferences_Verbindung = ch.elexis.base.l10n.Messages.Preferences_Verbindung;
+  public static String Sysmex_Probe_ResultatMsg = ch.elexis.base.l10n.Messages.Sysmex_Probe_ResultatMsg;
+  public static String Sysmex_Value_LabKuerzel = ch.elexis.base.l10n.Messages.Sysmex_Value_LabKuerzel;
+  public static String Sysmex_Value_LabName = ch.elexis.base.l10n.Messages.Sysmex_Value_LabName;
+  public static String Sysmex_Value_High = ch.elexis.base.l10n.Messages.Sysmex_Value_High;
+  public static String Sysmex_Value_Low = ch.elexis.base.l10n.Messages.Sysmex_Value_Low;
+  public static String Sysmex_Value_Error = ch.elexis.base.l10n.Messages.Sysmex_Value_Error;
+
 }

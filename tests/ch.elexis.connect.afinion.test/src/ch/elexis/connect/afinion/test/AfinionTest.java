@@ -18,7 +18,7 @@ public class AfinionTest {
 
 		@Test
 	public void testLocalizedValueError() throws PackageException{
-		String msg = ch.elexis.connect.afinion.packages.Messages.getString("Value.Error");
+		String msg = ch.elexis.connect.afinion.Messages.Afinion_Value_Error;
 		assertEquals("Fehler bei der Messung",msg );
 	}
 

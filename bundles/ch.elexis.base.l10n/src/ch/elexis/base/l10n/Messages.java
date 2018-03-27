@@ -40,6 +40,8 @@ public class Messages extends NLS {
 	public static String AbacusJuniorAction_RS232_Error_Title;
 	public static String AbacusJuniorAction_RS232_Timeout_Text;
 	public static String AbacusJuniorAction_RS232_Timeout_Title;
+	public static String AbacusJunior_Value_High;
+	public static String AbacusJunior_Value_Low;
 	public static String AbacusJuniorAction_ToolTip;
 	public static String Activator_noInbox;
 	public static String Active;
@@ -50,6 +52,11 @@ public class Messages extends NLS {
 	public static String AddVaccinationDialog_enterVaccinationText;
 	public static String AddVaccinationDialog_enterVaccinationTextError;
 	public static String AddVaccinationDialog_enterVaccinationTitle;
+	  public static String Afinion_Value_LabKuerzel;
+	  public static String Afinion_Value_LabName;
+	  public static String Afinion_Value_High;
+	  public static String Afinion_Value_Low;
+	  public static String Afinion_Value_Error;
 	public static String AfinionAS100Action_ButtonName;
 	public static String AfinionAS100Action_ConnectionName;
 	public static String AfinionAS100Action_DefaultParams;
@@ -1345,6 +1352,9 @@ public class Messages extends NLS {
 	public static String Preferences_Modell;
 	public static String Preferences_OrderItUrl;
 	public static String Preferences_Parity;
+	public static String AbacusJunior_Value_LabKuerzel;
+	public static String AbacusJunior_Value_LabName;
+	public static String AbacusJunior_Value_Error;
 	public static String Preferences_Port;
 	public static String Preferences_PreferedPresentation;
 	public static String Preferences_RDW;
@@ -1478,6 +1488,12 @@ public class Messages extends NLS {
 	public static String RechnungsPrefs_postAccount;
 	public static String RechnungsPrefs_trustcenter;
 	public static String RechnungsPrefs_vertCorrCodingLine;
+	public static String Reflotron_Probe_ResultatMsg;
+	public static String Reflotron_Value_LabKuerzel;
+	public static String Reflotron_Value_LabName;
+	public static String Reflotron_Value_High;
+	public static String Reflotron_Value_Low;
+	public static String Reflotron_Value_Error;
 	public static String ReflotronSprintAction_29;
 	public static String ReflotronSprintAction_ButtonName;
 	public static String ReflotronSprintAction_ConnectionName;
@@ -1624,6 +1640,12 @@ public class Messages extends NLS {
 	public static String StickyNotesView_StickyNotesName;
 	public static String StickyNotesView_StickyNotesNameDash;
 	public static String Synchronizer_connctNotSuccessful;
+  public static String Sysmex_Probe_ResultatMsg;
+  public static String Sysmex_Value_LabKuerzel;
+  public static String Sysmex_Value_LabName;
+  public static String Sysmex_Value_High;
+  public static String Sysmex_Value_Low;
+  public static String Sysmex_Value_Error;
 	public static String SysmexAction_ButtonName;
 	public static String SysmexAction_ConnectionName;
 	public static String SysmexAction_DefaultParams;

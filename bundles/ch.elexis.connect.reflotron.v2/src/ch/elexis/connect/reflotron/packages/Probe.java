@@ -11,6 +11,8 @@ import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
+import ch.elexis.connect.reflotron.Messages;
+
 public class Probe {
 	private static final String UNIT_TEST_RUNNING = "ElexisReflotronUnitTestRunning";
 	private static int NAME = 0;
@@ -68,7 +70,7 @@ public class Probe {
 	 */
 	public String write(Patient patient) throws PackageException{
 		if (resultat == null || resultat.isEmpty()) {
-			throw new PackageException(Messages.getString("Probe_ResultatMsg")); //$NON-NLS-1$
+			throw new PackageException(Messages.Reflotron_Probe_ResultatMsg);
 		}
 		
 		isEnzym = false;
@@ -131,7 +133,7 @@ public class Probe {
 		}
 		
 		if (split.length < 3) {
-			throw new PackageException(Messages.getString("Probe_ResultatMsg")); //$NON-NLS-1$
+			throw new PackageException(Messages.Reflotron_Probe_ResultatMsg); //$NON-NLS-1$
 		}
 		return split;
 		

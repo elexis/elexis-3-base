@@ -3,6 +3,7 @@ package ch.elexis.connect.sysmex.packages;
 import java.util.Collections;
 import java.util.ResourceBundle;
 
+import ch.elexis.connect.sysmex.Messages;
 import ch.elexis.core.data.beans.ContactBean;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
 import ch.elexis.core.types.LabItemTyp;
@@ -52,12 +53,12 @@ public class Value {
 	}
 	
 	private void initialize(){
-		_myLab = LabImportUtil.getOrCreateLabor(Messages.getString("Value.LabKuerzel"));
+		_myLab = LabImportUtil.getOrCreateLabor(Messages.Sysmex_Value_LabKuerzel);
 		
 		_labItem = LabImportUtil.getLabItem(_shortName, _myLab);
 		if (_labItem == null) {
 			_labItem = new LabItem(_shortName, _longName, _myLab, _refMann, _refFrau, _unit,
-				LabItemTyp.NUMERIC, Messages.getString("Value.LabName"), "50");
+				LabItemTyp.NUMERIC, Messages.Sysmex_Value_LabName, "50");
 		}
 	}
 	

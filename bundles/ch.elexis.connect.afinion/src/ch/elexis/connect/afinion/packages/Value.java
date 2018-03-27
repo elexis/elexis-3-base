@@ -2,6 +2,7 @@ package ch.elexis.connect.afinion.packages;
 
 import java.util.ResourceBundle;
 
+import ch.elexis.connect.afinion.Messages;
 import ch.elexis.connect.afinion.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.beans.ContactBean;
@@ -56,14 +57,14 @@ public class Value {
 	}
 	
 	private void initialize(){
-		_labor = LabImportUtil.getOrCreateLabor(Messages.getString("Value.LabKuerzel"));
+		_labor = LabImportUtil.getOrCreateLabor(Messages.Afinion_Value_LabKuerzel);
 		
 		_labItem = LabImportUtil.getLabItem(_shortName, _labor);
 		
 		if (_labItem == null) {
 			_labItem =
 				new LabItem(_shortName, _longName, _labor, _refMann, _refFrau, _unit,
-					LabItemTyp.NUMERIC, Messages.getString("Value.LabName"), "50");
+					LabItemTyp.NUMERIC, Messages.Afinion_Value_LabName, "50");
 		}
 	}
 	
@@ -89,7 +90,7 @@ public class Value {
 			resultFlags |= LabResultConstants.PATHOLOGIC;
 		}
 		if (flags.equals("*") || flags.equals("E")) {
-			comment = Messages.getString("Value.Error");
+			comment = Messages.Afinion_Value_Error;
 		}
 		
 		return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_labor), _labItem, value).date(date)

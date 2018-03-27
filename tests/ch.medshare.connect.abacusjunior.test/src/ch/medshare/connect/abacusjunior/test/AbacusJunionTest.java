@@ -18,7 +18,7 @@ public class AbacusJunionTest {
 
 	@Test
 	public void testLocalizedValueError() {
-		String msg =ch.medshare.connect.abacusjunior.packages.Messages.getString("Value.Error");
+		String msg =ch.medshare.connect.abacusjunior.Messages.AbacusJunior_Value_Error;
 		assertEquals("Fehler bei der Messung",msg );
 	}
 

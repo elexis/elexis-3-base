@@ -34,6 +34,12 @@ public class Messages {
   public static String AfinionAS100Action_ValueInfoMsg = ch.elexis.base.l10n.Messages.AfinionAS100Action_ValueInfoMsg;
   public static String AfinionAS100Action_WaitMsg = ch.elexis.base.l10n.Messages.AfinionAS100Action_WaitMsg;
 
+  public static String Afinion_Value_LabKuerzel = ch.elexis.base.l10n.Messages.Afinion_Value_LabKuerzel;
+  public static String Afinion_Value_LabName = ch.elexis.base.l10n.Messages.Afinion_Value_LabName;
+  public static String Afinion_Value_High = ch.elexis.base.l10n.Messages.Afinion_Value_High;
+  public static String Afinion_Value_Low = ch.elexis.base.l10n.Messages.Afinion_Value_Low;
+  public static String Afinion_Value_Error = ch.elexis.base.l10n.Messages.Afinion_Value_Error;
+  
   public static String Preferences_Port = ch.elexis.base.l10n.Messages.Preferences_Port;
   public static String Preferences_Baud = ch.elexis.base.l10n.Messages.Preferences_Baud;
   public static String Preferences_Databits = ch.elexis.base.l10n.Messages.Preferences_Databits;

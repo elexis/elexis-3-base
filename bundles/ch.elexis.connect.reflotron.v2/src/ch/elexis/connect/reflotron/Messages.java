@@ -48,4 +48,10 @@ public class Messages {
   public static String Preferences_Timeout = ch.elexis.base.l10n.Messages.Preferences_Timeout;
   public static String Preferences_Backgroundprocess = ch.elexis.base.l10n.Messages.Preferences_Backgroundprocess;
   public static String Preferences_Log = ch.elexis.base.l10n.Messages.Preferences_Log;
+  public static String Reflotron_Probe_ResultatMsg = ch.elexis.base.l10n.Messages.Reflotron_Probe_ResultatMsg;
+  public static String Reflotron_Value_LabKuerzel = ch.elexis.base.l10n.Messages.Reflotron_Value_LabKuerzel;
+  public static String Reflotron_Value_LabName = ch.elexis.base.l10n.Messages.Reflotron_Value_LabName;
+  public static String Reflotron_Value_High = ch.elexis.base.l10n.Messages.Reflotron_Value_High;
+  public static String Reflotron_Value_Low = ch.elexis.base.l10n.Messages.Reflotron_Value_Low;
+  public static String Reflotron_Value_Error = ch.elexis.base.l10n.Messages.Reflotron_Value_Error;
 }

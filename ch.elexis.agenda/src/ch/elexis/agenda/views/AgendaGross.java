@@ -236,16 +236,9 @@ public class AgendaGross extends BaseAgendaView {
 	}
 	
 	@Override
-	public void setFocus(){
-		tv.getControl().setFocus();
-	}
-	
-	@Override
-	public void activation(boolean mode){
-		super.activation(mode);
-		if (!mode) {
-			saveColumnSizes();
-		}
+	public void dispose(){
+		saveColumnSizes();
+		super.dispose();
 	}
 	
 	private void saveColumnSizes(){

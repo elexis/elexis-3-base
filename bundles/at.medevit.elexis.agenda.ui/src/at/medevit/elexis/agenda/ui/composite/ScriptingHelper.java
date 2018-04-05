@@ -11,6 +11,8 @@ public class ScriptingHelper {
 	
 	private Browser browser;
 	
+	private volatile boolean doScroll;
+	
 	public ScriptingHelper(Browser browser){
 		this.browser = browser;
 	}
@@ -77,9 +79,11 @@ public class ScriptingHelper {
 	}
 	
 	public void scrollToNow(){
-		String script =
-			"var now = $('#calendar').fullCalendar('getNow'); if (now._d.getUTCHours() >= 12 && now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top );}  , 500 );}";
-		browser.execute(script);
+		if (doScroll) {
+			String script =
+				"var now = $('#calendar').fullCalendar('getNow'); if (now._d.getUTCHours() >= 12 && now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top );}  , 500 );}";
+			browser.execute(script);
+		}
 	}
 	
 	private Object getResourceIdsString(List<String> selectedResources){
@@ -93,5 +97,10 @@ public class ScriptingHelper {
 		}
 		ret.append("]");
 		return ret;
+	}
+	
+	public void setScrollToNow(boolean value){
+		this.doScroll = value;
+		scrollToNow();
 	}
 }

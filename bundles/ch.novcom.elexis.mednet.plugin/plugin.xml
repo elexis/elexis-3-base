@@ -26,12 +26,6 @@
 		</page>
 		<page
         category="ch.novcom.elexis.mednet.plugin.ui.preferences"
-        class="ch.novcom.elexis.mednet.plugin.ui.preferences.FormPreferencePage"
-        id="ch.novcom.elexis.mednet.plugin.ui.preferences.form"
-        name="%preferences.forms">
-		</page>
-		<page
-        category="ch.novcom.elexis.mednet.plugin.ui.preferences"
         class="ch.novcom.elexis.mednet.plugin.ui.preferences.DocumentPreferencePage"
         id="ch.novcom.elexis.mednet.plugin.ui.preferences.receiving"
         name="%preferences.receiving">
@@ -54,6 +48,23 @@
             defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.DocumentSettingRecordCreate"
             id="ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.create"
             name="Create Document Record Item">
+      </command>
+      
+      <command
+            defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.ContactLinkRecordEdit"
+            id="ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit"
+            name="Edit Contact Item">
+         	<commandParameter
+               id="ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit.selected"
+               name="Selected Contact Item"
+               optional="true"
+               typeId="ch.elexis.PersistentObjectType">
+         	</commandParameter>
+      </command>
+      <command
+            defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.ContactLinkRecordCreate"
+            id="ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.create"
+            name="Create Contact Link Item">
       </command>
       
       <command

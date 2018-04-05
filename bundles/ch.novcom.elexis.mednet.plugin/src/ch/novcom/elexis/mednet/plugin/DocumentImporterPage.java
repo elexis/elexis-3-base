@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Query;
+import ch.novcom.elexis.mednet.plugin.data.ContactLinkRecord;
 import ch.novcom.elexis.mednet.plugin.data.DocumentImporter;
 import ch.novcom.elexis.mednet.plugin.data.DocumentSettingRecord;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
@@ -71,8 +76,9 @@ public class DocumentImporterPage extends ImporterPage {
 		String logPrefix = "doImport() - ";
 		
 		//List the path were we will have to collect the files to import
-		List<DocumentSettingRecord> receivingsPaths = DocumentSettingRecord.getAllDocumentSettingRecords();
-
+    	Set<MedNetConfigDocumentPath> configFormPaths = MedNet.getSettings().getConfigDocumentPaths();
+		
+		
 		//Add the information to the monitor that we start
 		//And also set the monitor number of units for the total work
 		if(monitor != null){
@@ -94,7 +100,18 @@ public class DocumentImporterPage extends ImporterPage {
 		
 		//We can have multiple Download Folders.
 		//We will process them One after the other
-		for(DocumentSettingRecord documentSettingItem: receivingsPaths){
+		for(MedNetConfigDocumentPath configFormPath: configFormPaths){
+			
+			ContactLinkRecord contactLink = null;
+			Kontakt institutionKontakt = null;
+			List<ContactLinkRecord> list = ContactLinkRecord.getContactLinkRecord(null, configFormPath.getInstitutionID());
+			if(list != null && list.size() > 0) {
+				contactLink = list.get(0);
+				institutionKontakt = Kontakt.load(contactLink.getContactID());
+			}
+			else {
+				continue;
+			}
 			
 			if(monitor != null && monitor.isCanceled()){
 				//If the monitor has been canceled we should break
@@ -102,103 +119,198 @@ public class DocumentImporterPage extends ImporterPage {
 				break;
 			}
 			
-			LOGGER.info(logPrefix+"Processing Institution "+documentSettingItem.getInstitutionName());//$NON-NLS-1$
+			LOGGER.info(logPrefix+"Processing Institution "+institutionKontakt.getLabel(true));//$NON-NLS-1$
 			//We write to the monitor the name of the institution we will check
 			if(monitor != null){
 				monitor.subTask(
 					MessageFormat.format(
 							MedNetMessages.DocumentImporterPage_checkInstitution,
-							documentSettingItem.getInstitutionName()
+							configFormPath.getInstitutionName()
 						)
 				);
 			}
 			
 			//List all the hl7 and pdf files from this folder
-			Path directory = documentSettingItem.getPath();
-			Path archiveDir = documentSettingItem.getArchivingPath();
-			Path errorDir = documentSettingItem.getErrorPath();
+			Path directory = configFormPath.getPath();
+			
+			Path errorDir = directory.resolve("error");
+			Path archiveDir = directory.resolve("archive");
 			
 			if(!Files.exists(directory) || !Files.isDirectory(directory)){
 				//If this directory doesn't exists or is not a directory
-				//continue
 				LOGGER.warn(logPrefix+"The following directory is not valid:"+directory.toString());//$NON-NLS-1$
 				if(monitor != null){
 					monitor.worked(100);
 				}
+				continue;
 			}
-			else if(!Files.exists(archiveDir) || !Files.isDirectory(archiveDir)){
-				//If this directory doesn't exists or is not a directory
-				//continue
-				LOGGER.warn(logPrefix+"The following directory is not valid:"+archiveDir.toString());//$NON-NLS-1$
+			
+			//Before doing anything ensure that the errorDir and the archive dir exists
+			//or that we can create them
+			if(!Files.exists(errorDir)) {
+				LOGGER.info(logPrefix+"Error directory doesn't exist, create it. "+errorDir.toString());
+				try {
+					Files.createDirectory(errorDir);
+				}
+				catch(IOException | SecurityException ex) {
+					LOGGER.error(logPrefix+"Unable to create the error directory. Abort import. "+errorDir.toString(), ex);
+					if(monitor != null){
+						monitor.worked(100);
+					}
+					continue;
+				}
+			}
+			else if (!Files.isDirectory(errorDir)) {
+				LOGGER.error(logPrefix+"Error directory is not a valid directory. Abort import. "+errorDir.toString());
 				if(monitor != null){
 					monitor.worked(100);
 				}
+				continue;
 			}
-			else if(!Files.exists(errorDir) || !Files.isDirectory(errorDir)){
-				//If this directory doesn't exists or is not a directory
-				//continue
-				LOGGER.warn(logPrefix+"The following directory is not valid:"+errorDir.toString());//$NON-NLS-1$
+			
+			if(!Files.exists(archiveDir)) {
+				LOGGER.info(logPrefix+"Archive directory doesn't exist, create it. "+archiveDir.toString());
+				try{
+					Files.createDirectory(archiveDir);
+				}
+				catch(IOException | SecurityException ex) {
+					LOGGER.error(logPrefix+"Unable to create the archive directory. Abort import. "+archiveDir.toString(), ex);
+					if(monitor != null){
+						monitor.worked(100);
+					}
+					continue;
+				}
+			}
+			else if (!Files.isDirectory(archiveDir)) {
+				LOGGER.error(logPrefix+"Archive directory is not a valid directory. Abort import. "+errorDir.toString());
 				if(monitor != null){
 					monitor.worked(100);
 				}
+				continue;
 			}
-			else {
+			
 				
-				//We can list all the hl7 and the pdfs of the folder
-				DirectoryStream<Path> hl7Stream = Files.newDirectoryStream(directory, new DirectoryStream.Filter<Path>() {
-			        @Override
-			        public boolean accept(Path entry) throws IOException 
-			        {
-			            return 		Files.isRegularFile(entry)
-			            		&&	entry.getFileName().toString().toLowerCase().endsWith(".hl7");//$NON-NLS-1$
-			        }
-			    });
-				
-				List<Path> hl7Files = new ArrayList<Path>();
-				for(Path file : hl7Stream){
-					hl7Files.add(file);
-				}
-				
-				DirectoryStream<Path> pdfStream = Files.newDirectoryStream(directory, new DirectoryStream.Filter<Path>() {
-			        @Override
-			        public boolean accept(Path entry) throws IOException 
-			        {
-			            return 		Files.isRegularFile(entry)
-			            		&&	entry.getFileName().toString().toLowerCase().endsWith(".pdf");//$NON-NLS-1$
-			        }
-			    });
-				
-				List<Path> pdfFiles = new ArrayList<Path>();
-				for(Path file : pdfStream){
-					pdfFiles.add(file);
-				}
-				
-				
-				//We listed PDF and HL7
-				//Then we will try to link them together
-				List<FilePair> pairList = new ArrayList<FilePair>();
+			//We can list all the hl7 and the pdfs of the folder
+			DirectoryStream<Path> hl7Stream = Files.newDirectoryStream(directory, new DirectoryStream.Filter<Path>() {
+		        @Override
+		        public boolean accept(Path entry) throws IOException 
+		        {
+		            return 		Files.isRegularFile(entry)
+		            		&&	entry.getFileName().toString().toLowerCase().endsWith(".hl7");//$NON-NLS-1$
+		        }
+		    });
+			
+			List<Path> hl7Files = new ArrayList<Path>();
+			for(Path file : hl7Stream){
+				hl7Files.add(file);
+			}
+			
+			DirectoryStream<Path> pdfStream = Files.newDirectoryStream(directory, new DirectoryStream.Filter<Path>() {
+		        @Override
+		        public boolean accept(Path entry) throws IOException 
+		        {
+		            return 		Files.isRegularFile(entry)
+		            		&&	entry.getFileName().toString().toLowerCase().endsWith(".pdf");//$NON-NLS-1$
+		        }
+		    });
+			
+			List<Path> pdfFiles = new ArrayList<Path>();
+			for(Path file : pdfStream){
+				pdfFiles.add(file);
+			}
+			
+			
+			//We listed PDF and HL7
+			//Then we will try to link them together
+			List<FilePair> pairList = new ArrayList<FilePair>();
 
-				sameFileNameLoop:
-				for(ListIterator<Path> hl7FilesIterator = hl7Files.listIterator(); hl7FilesIterator.hasNext();){
-					
+			sameFileNameLoop:
+			for(ListIterator<Path> hl7FilesIterator = hl7Files.listIterator(); hl7FilesIterator.hasNext();){
+				
+				if(monitor != null && monitor.isCanceled()){
+					break sameFileNameLoop;
+				}
+				
+				Path hl7File = hl7FilesIterator.next();
+				String hl7FileName = DocumentImporter.getBaseName(hl7File);
+						
+				//First of all look for a PDF with the same filename
+				for(ListIterator<Path> pdfFilesIterator = pdfFiles.listIterator(); pdfFilesIterator.hasNext();){
+
 					if(monitor != null && monitor.isCanceled()){
 						break sameFileNameLoop;
 					}
 					
-					Path hl7File = hl7FilesIterator.next();
-					String hl7FileName = DocumentImporter.getBaseName(hl7File);
-							
-					//First of all look for a PDF with the same filename
-					for(ListIterator<Path> pdfFilesIterator = pdfFiles.listIterator(); pdfFilesIterator.hasNext();){
-
-						if(monitor != null && monitor.isCanceled()){
-							break sameFileNameLoop;
+					Path pdfFile = pdfFilesIterator.next();
+					String pdfFileName = DocumentImporter.getBaseName(pdfFile);
+					
+					if(hl7FileName.equals(pdfFileName)){
+						FilePair pair = new FilePair();
+						pair.hl7 = hl7File;
+						pair.pdf = pdfFile;
+						pairList.add(pair);
+						
+						FileTime hl7FileTime = Files.getLastModifiedTime(hl7File);
+						FileTime pdfFileTime = Files.getLastModifiedTime(pdfFile);
+						
+						//We set the fileTime to the oldest one of the two files
+						if(hl7FileTime.compareTo(pdfFileTime) > 0){
+							pair.fileTime = hl7FileTime;
 						}
 						
-						Path pdfFile = pdfFilesIterator.next();
-						String pdfFileName = DocumentImporter.getBaseName(pdfFile);
+						//Remove the hl7 and the pdf Files from the queue
+						pdfFilesIterator.remove();
+						hl7FilesIterator.remove();
 						
-						if(hl7FileName.equals(pdfFileName)){
+						//Go to the next hl7
+						break;
+					}
+				}
+			}
+
+			//If we were not able to link hl7 and PDF with their filenames, use the Transaction we find in the PDF filename and in the HL7 fileName
+			distinguishedFileNameLoop:
+			for(ListIterator<Path> hl7FilesIterator = hl7Files.listIterator(); hl7FilesIterator.hasNext();){
+
+				if(monitor != null && monitor.isCanceled()){
+					break distinguishedFileNameLoop;
+				}
+				
+				Path hl7File = hl7FilesIterator.next();
+				String hl7FileName = DocumentImporter.getBaseName(hl7File);
+				
+				String hl7_transactionDateTime = "";
+				String hl7_orderNr = "";
+				String hl7_recipient = "";
+				
+				//If the HL7 has not the same structure as the pdf, maybe it is the old structure
+				Matcher filenameMatcher = hl7FilenamePattern.matcher(hl7FileName);
+				if(filenameMatcher.matches()){
+					hl7_transactionDateTime = filenameMatcher.group("transactionDateTime");//$NON-NLS-1$
+					hl7_orderNr = filenameMatcher.group("orderNr");//$NON-NLS-1$
+					hl7_recipient = filenameMatcher.group("recipient");//$NON-NLS-1$
+				}
+				
+				//Look for a pdf with the sameTransactionDateTime, orderNr and recipientNr
+				for(ListIterator<Path> pdfFilesIterator = pdfFiles.listIterator(); pdfFilesIterator.hasNext();){
+					if(monitor != null && monitor.isCanceled()){
+						break distinguishedFileNameLoop;
+					}
+					
+					Path pdfFile = pdfFilesIterator.next();
+					String pdfFileName = DocumentImporter.getBaseName(pdfFile);
+					
+					filenameMatcher = pdfFilenamePattern.matcher(pdfFileName);
+					if(filenameMatcher.matches()){
+						String pdf_transactionDateTime = filenameMatcher.group("transactionDateTime");//$NON-NLS-1$
+						String pdf_orderNr = filenameMatcher.group("orderNr");//$NON-NLS-1$
+						String pdf_recipient = filenameMatcher.group("recipient");//$NON-NLS-1$
+						
+						if(		hl7_transactionDateTime.equals(pdf_transactionDateTime)
+							&&	hl7_orderNr.equals(pdf_orderNr)
+							&&	hl7_recipient.equals(pdf_recipient)
+								
+							){
 							FilePair pair = new FilePair();
 							pair.hl7 = hl7File;
 							pair.pdf = pdfFile;
@@ -212,7 +324,7 @@ public class DocumentImporterPage extends ImporterPage {
 								pair.fileTime = hl7FileTime;
 							}
 							
-							//Remove the hl7 and the pdf Files from the queue
+							//Remove the hl7 and the pdf Files from the lists
 							pdfFilesIterator.remove();
 							hl7FilesIterator.remove();
 							
@@ -221,207 +333,141 @@ public class DocumentImporterPage extends ImporterPage {
 						}
 					}
 				}
+			}
+			
+			//Finally we have a list of Pair HL7/PDF, a list of HL7s and a list of PDFs
+			
+			//We will add the orphaned HL7 and PDF to the Pair list
+			//In order to be able to sort the list by FileTime
+			
+			for(Path hl7File : hl7Files){
 
-				//If we were not able to link hl7 and PDF with their filenames, use the Transaction we find in the PDF filename and in the HL7 fileName
-				distinguishedFileNameLoop:
-				for(ListIterator<Path> hl7FilesIterator = hl7Files.listIterator(); hl7FilesIterator.hasNext();){
+				if(monitor != null && monitor.isCanceled()){
+					break;
+				}
+				
+				FilePair pair = new FilePair();
+				pair.hl7 = hl7File;
+				pair.fileTime = Files.getLastModifiedTime(hl7File);
+				pairList.add(pair);
+			}
+			
+			for(Path pdfFile : pdfFiles){
 
-					if(monitor != null && monitor.isCanceled()){
-						break distinguishedFileNameLoop;
-					}
+				if(monitor != null && monitor.isCanceled()){
+					break;
+				}
+				
+				FilePair pair = new FilePair();
+				pair.pdf = pdfFile;
+				pair.fileTime = Files.getLastModifiedTime(pdfFile);
+				pairList.add(pair);
+			}
+			
+			//And we sort the list regarding the fileTime
+			Collections.sort(pairList, new FilePairDateComparator());
+			
+			//Then we are ready for importing the files in the database
+			for(FilePair pair : pairList){
+				if(monitor != null && monitor.isCanceled()){
+					break;
+				}
+				
+				//If we have a HL7 File we will read informations from the HL7 File
+				String filename = "";
+				if(pair.hl7 != null){
+					filename = pair.hl7.getFileName().toString();
+				}
+				else if(pair.pdf != null){
+					filename = pair.pdf.getFileName().toString();
+				}
+
+				//We write to the monitor the information that we are parsing the file
+				if(monitor != null){
+					monitor.subTask(
+						MessageFormat.format(
+								MedNetMessages.DocumentImporterPage_parseFile,
+								filename
+							)
+					);
+				}
 					
-					Path hl7File = hl7FilesIterator.next();
-					String hl7FileName = DocumentImporter.getBaseName(hl7File);
-					
-					String hl7_transactionDateTime = "";
-					String hl7_orderNr = "";
-					String hl7_recipient = "";
-					
-					//If the HL7 has not the same structure as the pdf, maybe it is the old structure
-					Matcher filenameMatcher = hl7FilenamePattern.matcher(hl7FileName);
-					if(filenameMatcher.matches()){
-						hl7_transactionDateTime = filenameMatcher.group("transactionDateTime");//$NON-NLS-1$
-						hl7_orderNr = filenameMatcher.group("orderNr");//$NON-NLS-1$
-						hl7_recipient = filenameMatcher.group("recipient");//$NON-NLS-1$
-					}
-					
-					//Look for a pdf with the sameTransactionDateTime, orderNr and recipientNr
-					for(ListIterator<Path> pdfFilesIterator = pdfFiles.listIterator(); pdfFilesIterator.hasNext();){
-						if(monitor != null && monitor.isCanceled()){
-							break distinguishedFileNameLoop;
+				boolean success = DocumentImporter.process(
+						pair.hl7,
+						pair.pdf,
+						contactLink.getContactID(),
+						institutionKontakt.getLabel(true),
+						contactLink.getCategory(),
+						contactLink.getXIDDomain(),
+						OVERWRITEOLDERENTRIES,
+						true
+				);
+				
+				
+				if (success) {
+					//If the import was successful we can archive the files 
+					if (pair.hl7 != null){
+						try {
+							Files.move(pair.hl7, archiveDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 						}
-						
-						Path pdfFile = pdfFilesIterator.next();
-						String pdfFileName = DocumentImporter.getBaseName(pdfFile);
-						
-						filenameMatcher = pdfFilenamePattern.matcher(pdfFileName);
-						if(filenameMatcher.matches()){
-							String pdf_transactionDateTime = filenameMatcher.group("transactionDateTime");//$NON-NLS-1$
-							String pdf_orderNr = filenameMatcher.group("orderNr");//$NON-NLS-1$
-							String pdf_recipient = filenameMatcher.group("recipient");//$NON-NLS-1$
-							
-							if(		hl7_transactionDateTime.equals(pdf_transactionDateTime)
-								&&	hl7_orderNr.equals(pdf_orderNr)
-								&&	hl7_recipient.equals(pdf_recipient)
-									
-								){
-								FilePair pair = new FilePair();
-								pair.hl7 = hl7File;
-								pair.pdf = pdfFile;
-								pairList.add(pair);
-								
-								FileTime hl7FileTime = Files.getLastModifiedTime(hl7File);
-								FileTime pdfFileTime = Files.getLastModifiedTime(pdfFile);
-								
-								//We set the fileTime to the oldest one of the two files
-								if(hl7FileTime.compareTo(pdfFileTime) > 0){
-									pair.fileTime = hl7FileTime;
-								}
-								
-								//Remove the hl7 and the pdf Files from the lists
-								pdfFilesIterator.remove();
-								hl7FilesIterator.remove();
-								
-								//Go to the next hl7
-								break;
-							}
+						catch(IOException ioe){
+							LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.hl7.toString(), ioe);//$NON-NLS-1$
 						}
 					}
-				}
-				
-				//Finally we have a list of Pair HL7/PDF, a list of HL7s and a list of PDFs
-				
-				//We will add the orphaned HL7 and PDF to the Pair list
-				//In order to be able to sort the list by FileTime
-				
-				for(Path hl7File : hl7Files){
-
-					if(monitor != null && monitor.isCanceled()){
-						break;
+					if (pair.pdf != null){
+						try{
+							Files.move(pair.pdf, archiveDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+						}
+						catch(IOException ioe){
+							LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.pdf.toString(), ioe);//$NON-NLS-1$
+						}
 					}
 					
-					FilePair pair = new FilePair();
-					pair.hl7 = hl7File;
-					pair.fileTime = Files.getLastModifiedTime(hl7File);
-					pairList.add(pair);
-				}
-				
-				for(Path pdfFile : pdfFiles){
-
-					if(monitor != null && monitor.isCanceled()){
-						break;
-					}
-					
-					FilePair pair = new FilePair();
-					pair.pdf = pdfFile;
-					pair.fileTime = Files.getLastModifiedTime(pdfFile);
-					pairList.add(pair);
-				}
-				
-				//And we sort the list regarding the fileTime
-				Collections.sort(pairList, new FilePairDateComparator());
-				
-				//Then we are ready for importing the files in the database
-				for(FilePair pair : pairList){
-					if(monitor != null && monitor.isCanceled()){
-						break;
-					}
-					
-					//If we have a HL7 File we will read informations from the HL7 File
-					String filename = "";
-					if(pair.hl7 != null){
-						filename = pair.hl7.getFileName().toString();
-					}
-					else if(pair.pdf != null){
-						filename = pair.pdf.getFileName().toString();
-					}
-
-					//We write to the monitor the information that we are parsing the file
-					if(monitor != null){
-						monitor.subTask(
-							MessageFormat.format(
-									MedNetMessages.DocumentImporterPage_parseFile,
-									filename
-								)
-						);
-					}
-						
-					boolean success = DocumentImporter.process(
-							pair.hl7,
-							pair.pdf,
-							documentSettingItem.getInstitutionID(),
-							documentSettingItem.getInstitutionName(),
-							documentSettingItem.getCategory(),
-							documentSettingItem.getXIDDomain(),
-							OVERWRITEOLDERENTRIES,
-							true
+					importSuccess.add(MessageFormat.format(
+							MedNetMessages.DocumentImporterPage_FileSuccess, configFormPath.getInstitutionName(), pair.toString())
 					);
 					
+				} else {
+					//If the import was not successful we move the files to the error folder 
+					if (pair.hl7 != null){
+						try {
+							Files.move(pair.hl7, errorDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+						}
+						catch(IOException ioe){
+							LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.hl7.toString(), ioe);//$NON-NLS-1$
+						}
+					}
+					if (pair.pdf != null){
+						try{
+							Files.move(pair.pdf, errorDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+						}
+						catch(IOException ioe){
+							LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.pdf.toString(), ioe);//$NON-NLS-1$
+						}
+					}
 					
-					if (success) {
-						//If the import was successful we can archive the files 
-						if (pair.hl7 != null){
-							try {
-								Files.move(pair.hl7, archiveDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-							}
-							catch(IOException ioe){
-								LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.hl7.toString(), ioe);//$NON-NLS-1$
-							}
-						}
-						if (pair.pdf != null){
-							try{
-								Files.move(pair.pdf, archiveDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-							}
-							catch(IOException ioe){
-								LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.pdf.toString(), ioe);//$NON-NLS-1$
-							}
-						}
-						
-						importSuccess.add(MessageFormat.format(
-								MedNetMessages.DocumentImporterPage_FileSuccess, documentSettingItem.getInstitutionName(), pair.toString())
+					if(monitor != null){
+						monitor.subTask(MessageFormat.format(
+								MedNetMessages.DocumentImporterPage_ErrorWhileParsingFile, filename)
 						);
-						
-					} else {
-						//If the import was not successful we move the files to the error folder 
-						if (pair.hl7 != null){
-							try {
-								Files.move(pair.hl7, errorDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-							}
-							catch(IOException ioe){
-								LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.hl7.toString(), ioe);//$NON-NLS-1$
-							}
-						}
-						if (pair.pdf != null){
-							try{
-								Files.move(pair.pdf, errorDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-							}
-							catch(IOException ioe){
-								LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.pdf.toString(), ioe);//$NON-NLS-1$
-							}
-						}
-						
-						if(monitor != null){
-							monitor.subTask(MessageFormat.format(
-									MedNetMessages.DocumentImporterPage_ErrorWhileParsingFile, filename)
-							);
-						}
-						
-						importFailures.add(MessageFormat.format(
-								MedNetMessages.DocumentImporterPage_FileFailure, documentSettingItem.getInstitutionName(), pair.toString())
-						);
-						
-					}	
+					}
 					
-				}
+					importFailures.add(MessageFormat.format(
+							MedNetMessages.DocumentImporterPage_FileFailure, configFormPath.getInstitutionName(), pair.toString())
+					);
+					
+				}	
 				
-				if(monitor != null){
-					monitor.worked(100);
-				}
-				
-				//Clear old archived files
-				this.deleteOldArchiveFiles(documentSettingItem);
 			}
+			
+			if(monitor != null){
+				monitor.worked(100);
+			}
+			
+			//Clear old archived files
+			this.deleteOldArchiveFiles(archiveDir);
 		}
+		
 		
 		
 		
@@ -472,23 +518,22 @@ public class DocumentImporterPage extends ImporterPage {
 	 * By default it is 30 Days.
 	 * @param documentSettingsItem specify the archive folder to check and also the number of days the files should be kept in it
 	 */
-	private void deleteOldArchiveFiles( DocumentSettingRecord documentSettingItem){
+	private void deleteOldArchiveFiles( Path archivPath){
 		String logPrefix = "deleteOldArchivFiles() - ";
-		LOGGER.info(logPrefix+"Purge archive dir "+documentSettingItem.getArchivingPath().toString());//$NON-NLS-1$
+		LOGGER.info(logPrefix+"Purge archive dir "+archivPath.toString());//$NON-NLS-1$
 		
 		//Prepare the FileTime representing the limit.
 		//All the files older than this limit will be deleted
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, 0-documentSettingItem.getPurgeInterval());
+		cal.add(Calendar.DAY_OF_MONTH, 0-MedNet.getSettings().getArchivePurgeInterval());
 		FileTime timeLimit = FileTime.fromMillis(cal.getTimeInMillis());
 		
 		
 		// Clear the files older than the purgeInterval
-		Path archivDir = documentSettingItem.getArchivingPath();
-		if (Files.exists(archivDir) && Files.isDirectory(archivDir)) {
+		if (Files.exists(archivPath) && Files.isDirectory(archivPath)) {
 			
 			try{
-				DirectoryStream<Path> fileStream = Files.newDirectoryStream(archivDir, new TimeFilter(timeLimit));
+				DirectoryStream<Path> fileStream = Files.newDirectoryStream(archivPath, new TimeFilter(timeLimit));
 				for(Path path : fileStream){
 					try{
 						Files.delete(path);
@@ -500,11 +545,11 @@ public class DocumentImporterPage extends ImporterPage {
 				}
 			}
 			catch (IOException ex) {
-				LOGGER.error(logPrefix+"IOException walking throw archiv directory "+archivDir.toString(), ex);//$NON-NLS-1$
+				LOGGER.error(logPrefix+"IOException walking throw archiv directory "+archivPath.toString(), ex);//$NON-NLS-1$
 			}
 		}
 		
-		LOGGER.info(logPrefix+"Purge of following archive completed"+archivDir.toString());//$NON-NLS-1$
+		LOGGER.info(logPrefix+"Purge of following archive completed"+archivPath.toString());//$NON-NLS-1$
 		
 	}
 	

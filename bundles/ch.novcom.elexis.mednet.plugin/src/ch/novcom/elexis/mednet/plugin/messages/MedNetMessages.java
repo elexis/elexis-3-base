@@ -88,9 +88,22 @@ public class MedNetMessages extends NLS {
 	public static String FormPreferences_NotValidPath;
 	
 	public static String MainPreferences_labelExePath;
-	public static String MainPreferences_labelLogsPath;
-	public static String MainPreferences_labelLogsLevel;
+	public static String MainPreferences_labelPurgeInterval;
 	
+	public static String ContactLinkPreferences_ContactLabel;
+	public static String ContactLinkPreferences_MedNetId;
+	public static String ContactLinkPreferences_MedNetName;
+	public static String ContactLinkPreferences_Category;
+	public static String ContactLinkPreferences_XIDDomain;
+	
+	public static String ContactLinkRecordEditDialog_shellTitle;
+	public static String ContactLinkRecordEditDialog_title;
+	public static String ContactLinkRecordEditDialog_message;
+	public static String ContactLinkRecordEditDialog_labelInstitution;
+	public static String ContactLinkRecordEditDialog_labelCategory;
+	public static String ContactLinkRecordEditDialog_labelXIDDomain;
+	public static String ContactLinkRecordEditDialog_NoInstitution;
+	public static String ContactLinkRecordEditDialog_NoCategory;
 	
 	static {
 		// initialize resource bundle

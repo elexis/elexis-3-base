@@ -86,6 +86,41 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 			}
 		});
 		
+
+		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelPurgeInterval);
+		purgeInterval = new Text(ret, SWT.BORDER);
+		purgeInterval.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		purgeInterval.setTextLimit(80);
+		purgeInterval.setText(String.valueOf(MedNet.getSettings().getArchivePurgeInterval()));
+		
+		purgeInterval.addVerifyListener(new VerifyListener() {
+	        @Override
+	        public void verifyText(VerifyEvent e) {
+
+	            Text text = (Text)e.getSource();
+
+	            // get old text and create new text by using the VerifyEvent.text
+	            final String oldS = text.getText();
+	            String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
+
+	            boolean isInteger = true;
+	            int newInt = -1;
+	            try
+	            {
+	            	newInt = Integer.parseInt(newS);
+	            }
+	            catch(NumberFormatException ex)
+	            {
+	            	isInteger = false;
+	            }
+
+	            if(!isInteger || newInt < 0 ){
+	                e.doit = false;
+	            }
+	        }
+	    });
+		
+		
 		
 		return ret;
 		

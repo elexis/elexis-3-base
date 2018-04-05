@@ -63,7 +63,7 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 		purgeInterval = new Text(ret, SWT.BORDER);
 		purgeInterval.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		purgeInterval.setTextLimit(80);
-		purgeInterval.setText(String.valueOf(MedNet.getSettings().getFormsArchivePurgeInterval()));
+		purgeInterval.setText(String.valueOf(MedNet.getSettings().getArchivePurgeInterval()));
 		
 		purgeInterval.addVerifyListener(new VerifyListener() {
 	        @Override
@@ -107,10 +107,10 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements
 	public boolean performOk(){
 
 		if(purgeInterval.getText() == null || purgeInterval.getText().isEmpty()){
-			MedNet.getSettings().setFormsArchivePurgeInterval(defaultPurgeInterval);
+			MedNet.getSettings().setArchivePurgeInterval(defaultPurgeInterval);
 		}
 		else {
-			MedNet.getSettings().setFormsArchivePurgeInterval(Integer.parseInt(purgeInterval.getText()));
+			MedNet.getSettings().setArchivePurgeInterval(Integer.parseInt(purgeInterval.getText()));
 		}
 		
 		

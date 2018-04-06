@@ -14,6 +14,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -25,7 +26,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -49,7 +50,8 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	
 	//private LaborSelectionComposite institutionSelection;
 	private KontaktSelectionComposite contactSelection;
-	private ComboViewer mednetIDSelection;
+	private Combo mednetIDSelection;
+	private List<MedNetItem> mednetItems;
 	private Text category;
 	private Text xidDomain;
 	
@@ -74,50 +76,24 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		this.contactSelection = new KontaktSelectionComposite(result, SWT.NONE);
 		this.contactSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
-		this.mednetIDSelection = new ComboViewer(result, SWT.READ_ONLY);
-		this.mednetIDSelection.setContentProvider(ArrayContentProvider.getInstance());
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelInstitution);
+		this.mednetIDSelection = new Combo(result, SWT.READ_ONLY);
+		this.mednetIDSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
-		/* if the current institution is selected, show text */
-		this.mednetIDSelection.setLabelProvider(new LabelProvider() {
-	        @Override
-	        public String getText(Object element) {
-	            if (element instanceof MedNetItem) {
-	            	MedNetItem current = (MedNetItem) element;
-
-	                if(current.isSelected())
-	                    return current.getName();
-	                else
-	                    return "";
-	            }
-	            return super.getText(element);
-	        }
-	    });
-	    
-	    List<MedNetItem> mednetItems = new ArrayList<MedNetItem>();
-	    for(Entry<String,String> item : MedNet.getSettings().getInstitutions().entrySet()) {
-	    	mednetItems.add(new MedNetItem(item.getKey(), item.getValue()));
-	    }
-	    
-	    this.mednetIDSelection.setInput(mednetItems);
-
-	    /* within the selection event, tell the object it was selected */
-	    this.mednetIDSelection.addSelectionChangedListener(new ISelectionChangedListener() {
-	        @Override
-	        public void selectionChanged(SelectionChangedEvent event) {
-	            IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-	            MedNetItem item = (MedNetItem)selection.getFirstElement();
-
-	            for(MedNetItem i : MedNetItem)
-	                i.setSelected(false);
-
-	            item.setSelected(true);
-
-	            this.mednetIDSelection.refresh();
-	        }
-	    });
-
-	    this.mednetIDSelection.setSelection(new StructuredSelection(this.mednetIDSelection.getElementAt(0)), true);
-	    
+		mednetItems = new ArrayList<MedNetItem>();
+		
+		for(Entry<String,String> mednetEntry : MedNet.getSettings().getInstitutions().entrySet()) {
+			mednetItems.add(new MedNetItem(mednetEntry.getKey(),mednetEntry.getValue()));
+		}
+		Collections.sort(mednetItems);
+		
+		String[] textList = new String[mednetItems.size()];
+		for(int i= 0; i< mednetItems.size(); i++) {
+			textList[i]= mednetItems.get(i).getName();
+		}
+		this.mednetIDSelection.setItems(textList);
+		
+		
 	    
 		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategory);
 		this.category = new Text(result, SWT.BORDER);
@@ -145,13 +121,12 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		
 		
 		if (record != null) {
-			this.institutionId.setText(record.getInstitutionID());
-			this.institutionName.setText(record.getInstitutionName());
+			this.mednetIDSelection.select(this.mednetIDSelection.indexOf(record.getMedNetID())); //TODO
 			this.category.setText(record.getCategory());
 			this.xidDomain.setText(String.valueOf(record.getXIDDomain()));
 		}
 		else {
-			this.purgeInterval.setText(String.valueOf(ContactLinkRecord.DEFAULT_PURGE_INTERVAL));
+			this.category.setText("");
 			this.xidDomain.setText("");
 		}
 		
@@ -164,9 +139,15 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	protected void okPressed(){
 		
 		if(this.contactSelection.getKontakt() == null){
-			setErrorMessage(MedNetMessages.ContactLinkRecordEditDialog_NoInstitution);
+			setErrorMessage(MedNetMessages.ContactLinkRecordEditDialog_NoContact);
 			return;
 		}
+		
+		if(this.mednetIDSelection.getSelectionIndex() <= 0) {
+			setErrorMessage(MedNetMessages.ContactLinkRecordEditDialog_NoMedNet);
+			return;
+		}
+		
 		if(this.category.getText() == null || category.getText().isEmpty()){
 			setErrorMessage(MedNetMessages.ContactLinkRecordEditDialog_NoCategory);
 			return;
@@ -176,7 +157,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		if (this.record == null) {
 			this.record = new ContactLinkRecord(
 					this.contactSelection.getKontakt().getId(),
-					((MedNetItem)(this.mednetIDSelection.getSelection().getFirstElement())).getId(),
+					this.mednetItems.get(this.mednetIDSelection.getSelectionIndex()).getId(),
 					this.category.getText(),
 					this.xidDomain.getText()
 			);
@@ -191,7 +172,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 							ContactLinkRecord.FLD_XID_DOMAIN
 						}, 
 						this.contactSelection.getKontakt().getId(),
-						((MedNetItem)(this.mednetIDSelection.getSelection().getFirstElement())).getId(),
+						this.mednetItems.get(this.mednetIDSelection.getSelectionIndex()).getId(),
 						this.category.getText(),
 						this.xidDomain.getText()
 			);
@@ -213,7 +194,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		this.xidDomain.setText(string);
 	}
 	
-	public static class MedNetItem {
+	public static class MedNetItem implements Comparable<MedNetItem> {
 		
 	    private String id;
 	    private String name;
@@ -250,6 +231,36 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	    public void setSelected(boolean isSelected) {
 	        this.isSelected = isSelected;
 	    }
+	    
+
+		public int compareTo(MedNetItem other){
+			// check for null; put null values at the end
+			if (other == null) {
+				return -1;
+			}
+			if(this.getId() != null && other.getId() == null){
+				return -1;
+			}
+			if(this.getId() == null && other.getId() != null){
+				return 1;
+			}
+			int comparator = this.getId().compareTo(other.getId());
+			if(comparator != 0){
+				return comparator;
+			}
+			
+			if(this.getName() != null && other.getName() == null){
+				return -1;
+			}
+			if(this.getName() == null && other.getName() != null){
+				return 1;
+			}
+			comparator = this.getName().compareTo(other.getName());
+			if(comparator != 0){
+				return comparator;
+			}
+			
+		}
 
 	}
 	

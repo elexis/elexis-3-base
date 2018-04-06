@@ -44,7 +44,7 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 	static final String TABLENAME = "MEDNET_CONTACTLINK";
 	
 
-//We cannot put any Unique index on the Path column. Since deleted records are keept in the database and just marked as deleted
+//We cannot put any Unique index since deleted records are keept in the database and just marked as deleted
 // 	private static final String index1SQL =
 //			"CREATE UNIQUE INDEX " + DocumentSettingRecord.TABLENAME + "_idx_Path on " + DocumentSettingRecord.TABLENAME + "(" + DocumentSettingRecord.FLD_PATH +");";
 

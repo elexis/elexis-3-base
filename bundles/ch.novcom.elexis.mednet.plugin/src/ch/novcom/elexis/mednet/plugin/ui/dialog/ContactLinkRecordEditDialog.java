@@ -10,9 +10,6 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.dialog;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,16 +17,12 @@ import java.util.Map.Entry;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -121,7 +114,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		
 		
 		if (record != null) {
-			this.mednetIDSelection.select(this.mednetIDSelection.indexOf(record.getMedNetID())); //TODO
+			this.mednetIDSelection.select(this.mednetIDSelection.indexOf(record.getMedNetID()));
 			this.category.setText(record.getCategory());
 			this.xidDomain.setText(String.valueOf(record.getXIDDomain()));
 		}
@@ -209,7 +202,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	    }
 	    
 	    public String getId() {
-	        return name;
+	        return this.id;
 	    }
 
 	    public void setId(String id) {
@@ -217,7 +210,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	    }
 	    
 	    public String getName() {
-	        return name;
+	        return this.name;
 	    }
 
 	    public void setName(String name) {
@@ -259,6 +252,8 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 			if(comparator != 0){
 				return comparator;
 			}
+			
+			return 0;
 			
 		}
 

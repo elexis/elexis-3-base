@@ -17,6 +17,8 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -40,6 +42,8 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	
 	Text exePath;
 	private Button exePathSelection;
+	
+	private Text  purgeInterval;
 	
 	/**
 	 * Standard Constructor

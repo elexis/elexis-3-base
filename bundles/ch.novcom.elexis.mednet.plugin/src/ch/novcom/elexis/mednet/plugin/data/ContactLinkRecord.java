@@ -195,6 +195,7 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 			return comparator;
 		}
 		
+		return 0;
 	}
 	
 	/**

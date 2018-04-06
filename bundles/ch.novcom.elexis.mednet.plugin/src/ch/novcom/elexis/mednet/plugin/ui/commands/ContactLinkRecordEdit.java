@@ -26,8 +26,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import ch.elexis.data.PersistentObject;
-import ch.novcom.elexis.mednet.plugin.data.DocumentSettingRecord;
-import ch.novcom.elexis.mednet.plugin.ui.dialog.DocumentSettingRecordEditDialog;
+import ch.novcom.elexis.mednet.plugin.data.ContactLinkRecord;
+import ch.novcom.elexis.mednet.plugin.ui.dialog.ContactLinkRecordEditDialog;
 
 //TODO FIX A BUG BY EDITING
 

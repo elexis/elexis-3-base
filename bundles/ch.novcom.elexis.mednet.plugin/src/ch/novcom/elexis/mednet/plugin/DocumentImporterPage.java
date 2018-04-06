@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,10 +36,8 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Query;
 import ch.novcom.elexis.mednet.plugin.data.ContactLinkRecord;
 import ch.novcom.elexis.mednet.plugin.data.DocumentImporter;
-import ch.novcom.elexis.mednet.plugin.data.DocumentSettingRecord;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 /**
@@ -82,7 +79,7 @@ public class DocumentImporterPage extends ImporterPage {
 		//Add the information to the monitor that we start
 		//And also set the monitor number of units for the total work
 		if(monitor != null){
-			monitor.beginTask(MedNetMessages.DocumentImporterPage_callMedNet,(receivingsPaths.size()+1)*100);
+			monitor.beginTask(MedNetMessages.DocumentImporterPage_callMedNet,(configFormPaths.size()+1)*100);
 		}
 
 		LOGGER.info(logPrefix+"call MedNet getResults()");//$NON-NLS-1$
@@ -102,6 +99,7 @@ public class DocumentImporterPage extends ImporterPage {
 		//We will process them One after the other
 		for(MedNetConfigDocumentPath configFormPath: configFormPaths){
 			
+			
 			ContactLinkRecord contactLink = null;
 			Kontakt institutionKontakt = null;
 			List<ContactLinkRecord> list = ContactLinkRecord.getContactLinkRecord(null, configFormPath.getInstitutionID());
@@ -110,6 +108,10 @@ public class DocumentImporterPage extends ImporterPage {
 				institutionKontakt = Kontakt.load(contactLink.getContactID());
 			}
 			else {
+				continue;
+			}
+			
+			if(contactLink == null || institutionKontakt == null) {
 				continue;
 			}
 			
@@ -391,72 +393,76 @@ public class DocumentImporterPage extends ImporterPage {
 							)
 					);
 				}
-					
-				boolean success = DocumentImporter.process(
-						pair.hl7,
-						pair.pdf,
-						contactLink.getContactID(),
-						institutionKontakt.getLabel(true),
-						contactLink.getCategory(),
-						contactLink.getXIDDomain(),
-						OVERWRITEOLDERENTRIES,
-						true
-				);
 				
-				
-				if (success) {
-					//If the import was successful we can archive the files 
-					if (pair.hl7 != null){
-						try {
-							Files.move(pair.hl7, archiveDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-						}
-						catch(IOException ioe){
-							LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.hl7.toString(), ioe);//$NON-NLS-1$
-						}
-					}
-					if (pair.pdf != null){
-						try{
-							Files.move(pair.pdf, archiveDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-						}
-						catch(IOException ioe){
-							LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.pdf.toString(), ioe);//$NON-NLS-1$
-						}
-					}
+				//this is just to avoir a eclipse error message
+				if(contactLink != null && institutionKontakt != null) {
 					
-					importSuccess.add(MessageFormat.format(
-							MedNetMessages.DocumentImporterPage_FileSuccess, configFormPath.getInstitutionName(), pair.toString())
+					boolean success = DocumentImporter.process(
+							pair.hl7,
+							pair.pdf,
+							contactLink.getContactID(),
+							institutionKontakt.getLabel(true),
+							contactLink.getCategory(),
+							contactLink.getXIDDomain(),
+							OVERWRITEOLDERENTRIES,
+							true
 					);
 					
-				} else {
-					//If the import was not successful we move the files to the error folder 
-					if (pair.hl7 != null){
-						try {
-							Files.move(pair.hl7, errorDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-						}
-						catch(IOException ioe){
-							LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.hl7.toString(), ioe);//$NON-NLS-1$
-						}
-					}
-					if (pair.pdf != null){
-						try{
-							Files.move(pair.pdf, errorDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-						}
-						catch(IOException ioe){
-							LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.pdf.toString(), ioe);//$NON-NLS-1$
-						}
-					}
 					
-					if(monitor != null){
-						monitor.subTask(MessageFormat.format(
-								MedNetMessages.DocumentImporterPage_ErrorWhileParsingFile, filename)
+					if (success) {
+						//If the import was successful we can archive the files 
+						if (pair.hl7 != null){
+							try {
+								Files.move(pair.hl7, archiveDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+							}
+							catch(IOException ioe){
+								LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.hl7.toString(), ioe);//$NON-NLS-1$
+							}
+						}
+						if (pair.pdf != null){
+							try{
+								Files.move(pair.pdf, archiveDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+							}
+							catch(IOException ioe){
+								LOGGER.error(logPrefix+"IOException moving this file to the archive "+pair.pdf.toString(), ioe);//$NON-NLS-1$
+							}
+						}
+						
+						importSuccess.add(MessageFormat.format(
+								MedNetMessages.DocumentImporterPage_FileSuccess, configFormPath.getInstitutionName(), pair.toString())
 						);
+						
+					} else {
+						//If the import was not successful we move the files to the error folder 
+						if (pair.hl7 != null){
+							try {
+								Files.move(pair.hl7, errorDir.resolve(pair.hl7.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+							}
+							catch(IOException ioe){
+								LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.hl7.toString(), ioe);//$NON-NLS-1$
+							}
+						}
+						if (pair.pdf != null){
+							try{
+								Files.move(pair.pdf, errorDir.resolve(pair.pdf.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+							}
+							catch(IOException ioe){
+								LOGGER.error(logPrefix+"IOException moving this file to the error "+pair.pdf.toString(), ioe);//$NON-NLS-1$
+							}
+						}
+						
+						if(monitor != null){
+							monitor.subTask(MessageFormat.format(
+									MedNetMessages.DocumentImporterPage_ErrorWhileParsingFile, filename)
+							);
+						}
+						
+						importFailures.add(MessageFormat.format(
+								MedNetMessages.DocumentImporterPage_FileFailure, configFormPath.getInstitutionName(), pair.toString())
+						);
+						
 					}
-					
-					importFailures.add(MessageFormat.format(
-							MedNetMessages.DocumentImporterPage_FileFailure, configFormPath.getInstitutionName(), pair.toString())
-					);
-					
-				}	
+				}
 				
 			}
 			

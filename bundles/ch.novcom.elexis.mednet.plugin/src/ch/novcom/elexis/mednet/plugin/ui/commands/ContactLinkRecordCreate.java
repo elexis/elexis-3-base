@@ -15,7 +15,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
-import ch.novcom.elexis.mednet.plugin.ui.dialog.DocumentSettingRecordEditDialog;
+
+import ch.novcom.elexis.mednet.plugin.ui.dialog.ContactLinkRecordEditDialog;
 
 
 public class ContactLinkRecordCreate extends AbstractHandler {
@@ -26,7 +27,7 @@ public class ContactLinkRecordCreate extends AbstractHandler {
 		try {
 			// create and open the dialog
 			Shell parent = HandlerUtil.getActiveShell(event);
-			ContactLinkEditDialog dialog = new ContactLinkRecordEditDialog(parent, null);
+			ContactLinkRecordEditDialog dialog = new ContactLinkRecordEditDialog(parent, null);
 			dialog.open();
 		} catch (Exception ex) {
 			throw new RuntimeException(COMMANDID, ex);

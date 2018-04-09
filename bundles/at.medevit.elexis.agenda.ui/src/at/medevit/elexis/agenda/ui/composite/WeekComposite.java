@@ -53,7 +53,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		browser = new Browser(this, SWT.NONE);
 		scriptingHelper = new ScriptingHelper(browser);
 		
-		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction");
+		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper);
 		
 		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this);
 		
@@ -170,5 +170,10 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 			((ISelectionChangedListener) listener)
 				.selectionChanged(new SelectionChangedEvent(this, selection));
 		}
+	}
+	
+	@Override
+	public void setScrollToNow(boolean value){
+		scriptingHelper.setScrollToNow(value);
 	}
 }

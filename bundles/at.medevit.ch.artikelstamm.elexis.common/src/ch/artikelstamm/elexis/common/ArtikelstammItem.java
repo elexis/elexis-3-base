@@ -308,13 +308,13 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	
 	@Override
 	public Money getKosten(final TimeTool dat){
-		double vkt = checkZeroDouble(getTP(dat, (IFall) null) + "");
+		double vkt = checkZeroDouble(get(FLD_PEXF));
 		double vpe = checkZeroDouble(get(FLD_PKG_SIZE));
 		double vke = checkZeroDouble(get(VERKAUFSEINHEIT));
-		if (vpe != vke) {
-			return new Money((int) Math.round(vke * (vkt / vpe)));
+		if ((vpe > 0.0 && vke > 0.0) && (vpe != vke)) {
+			return new Money(vke * (vkt / vpe));
 		} else {
-			return new Money((int) Math.round(vkt));
+			return new Money(vkt);
 		}
 	}
 	

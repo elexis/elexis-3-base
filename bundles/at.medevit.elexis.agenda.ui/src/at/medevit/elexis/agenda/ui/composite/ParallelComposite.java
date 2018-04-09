@@ -59,7 +59,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		browser = new Browser(this, SWT.NONE);
 		scriptingHelper = new ScriptingHelper(browser);
 		
-		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction");
+		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper);
 		
 		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this);
 		
@@ -186,5 +186,10 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 			((ISelectionChangedListener) listener)
 				.selectionChanged(new SelectionChangedEvent(this, selection));
 		}
+	}
+	
+	@Override
+	public void setScrollToNow(boolean value){
+		scriptingHelper.setScrollToNow(value);
 	}
 }

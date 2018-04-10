@@ -44,6 +44,8 @@ public class SideBarComposite extends Composite {
 	
 	private ToolBarManager menuManager;
 	
+	private Button scrollToNowCheck;
+	
 	public SideBarComposite(Composite parent, int style){
 		super(parent, style);
 		setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
@@ -129,6 +131,21 @@ public class SideBarComposite extends Composite {
 				}
 			}
 		});
+		
+		label = new Label(this, SWT.NONE);
+		label.setFont(boldFont);
+		label.setText("Auto. zu jetzt scrollen");
+		scrollToNowCheck = new Button(this, SWT.CHECK);
+		scrollToNowCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				agendaComposite.setScrollToNow(scrollToNowCheck.getSelection());
+				saveConfigurationString("scrollToNow",
+					Boolean.toString(scrollToNowCheck.getSelection()));
+				super.widgetSelected(e);
+			}
+		});
+		
 		Label separator = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -187,6 +204,11 @@ public class SideBarComposite extends Composite {
 		if (!selectedSpanSize.isEmpty()) {
 			spanSizeCombo
 				.setSelection(new StructuredSelection(AgendaSpanSize.valueOf(selectedSpanSize)));
+		}
+		String value = loadConfigurationString("scrollToNow");
+		if (value != null && value.equalsIgnoreCase("true")) {
+			scrollToNowCheck.setSelection(true);
+			agendaComposite.setScrollToNow(true);
 		}
 	}
 	

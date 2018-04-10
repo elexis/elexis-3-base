@@ -54,4 +54,11 @@ public interface IAgendaComposite {
 	 * @param size
 	 */
 	public void setSelectedSpanSize(AgendaSpanSize size);
+	
+	/**
+	 * Set if the agenda should automatically scroll to now if possible. Default is false.
+	 * 
+	 * @param value
+	 */
+	public void setScrollToNow(boolean value);
 }

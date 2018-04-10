@@ -30,10 +30,10 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	
 	private ScriptingHelper scriptingHelper;
 	
-	public LoadEventsFunction(Browser browser, String name){
+	public LoadEventsFunction(Browser browser, String name, ScriptingHelper scriptingHelper){
 		super(browser, name);
 		gson = new GsonBuilder().create();
-		scriptingHelper = new ScriptingHelper(browser);
+		this.scriptingHelper = scriptingHelper;
 	}
 	
 	public Object function(Object[] arguments){

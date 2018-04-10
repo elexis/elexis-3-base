@@ -91,6 +91,7 @@ public class ConsultationBuilder {
 						fireConfig.getFactory().createTConsultation();
 					BigInteger patId = fireConfig.getPatId(Patient.load(patientId));
 					pseudoTConsultation.setPatId(patId);
+					pseudoTConsultation.setConsType("7");
 					try {
 						pseudoTConsultation.setDate(XmlUtil
 							.getXmlGregorianCalendar(new TimeTool(entryForPatientByDate.getKey())));

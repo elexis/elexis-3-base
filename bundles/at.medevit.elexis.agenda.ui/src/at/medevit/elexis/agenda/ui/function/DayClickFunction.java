@@ -8,6 +8,7 @@ import org.eclipse.swt.browser.Browser;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.dialogs.TerminDialog;
+import ch.elexis.dialogs.TerminDialog.CollisionErrorLevel;
 import ch.rgw.tools.TimeTool;
 
 public class DayClickFunction extends AbstractBrowserFunction {
@@ -24,6 +25,7 @@ public class DayClickFunction extends AbstractBrowserFunction {
 			if (selectedResources != null && !selectedResources.isEmpty()) {
 				TerminDialog dlg = new TerminDialog(new TimeTool(date), selectedResources.get(0),
 					ElexisEventDispatcher.getSelectedPatient());
+				dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
 				dlg.open();
 			} else {
 				MessageDialog.openInformation(getBrowser().getShell(), "Info",
@@ -34,6 +36,7 @@ public class DayClickFunction extends AbstractBrowserFunction {
 			String resource = (String) arguments[1];
 			TerminDialog dlg = new TerminDialog(new TimeTool(date), resource,
 				ElexisEventDispatcher.getSelectedPatient());
+			dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
 			dlg.open();
 		}
 		return null;

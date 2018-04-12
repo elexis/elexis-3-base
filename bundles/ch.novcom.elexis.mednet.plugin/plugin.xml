@@ -74,6 +74,7 @@
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
              label="%menu.openformview"
+             tooltip="%menu.openformview"
              style="push">
 		</command>
     </menuContribution>
@@ -85,6 +86,7 @@
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
              label="%menu.openformview"
+             tooltip="%menu.openformview"
              style="push">
        </command>
 	</menuContribution>
@@ -96,6 +98,7 @@
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
              label="%menu.openformview"
+             tooltip="%menu.openformview"
              style="push">
        </command>
 	</menuContribution>
@@ -107,6 +110,7 @@
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
              label="%menu.openformview"
+             tooltip="%menu.openformview"
              style="push">
        </command>
 	</menuContribution>
@@ -119,6 +123,7 @@
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
              label="%menu.openformview"
+             tooltip="%menu.openformview"
              style="push">
          </command>
       </menuContribution>
@@ -131,6 +136,7 @@
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.getresult"
              icon="icons/16x16/getresult.png"
              label="%menu.getresult"
+             tooltip="%menu.getresult"
              style="push">
        </command>
     </menuContribution>
@@ -142,6 +148,7 @@
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.getresult"
              icon="icons/16x16/getresult.png"
              label="%menu.getresult"
+             tooltip="%menu.getresult"
              style="push">
        </command>
     </menuContribution>

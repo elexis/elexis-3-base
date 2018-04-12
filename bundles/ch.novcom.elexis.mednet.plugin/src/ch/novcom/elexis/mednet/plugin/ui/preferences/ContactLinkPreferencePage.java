@@ -151,6 +151,8 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 				Object o = sel.getFirstElement();
 				if (o instanceof ContactLinkRecord) {
 					ContactLinkRecord li = (ContactLinkRecord) o;
+					//It looks like the clean way should be to call following funktion
+					//But since it is not working we open directly the Dialog
 					//ContactLinkRecordEdit.executeWithParams(li);
 					ContactLinkRecordEditDialog dialog = new ContactLinkRecordEditDialog(getShell(),li);
 					if(dialog.open() == Dialog.OK) {

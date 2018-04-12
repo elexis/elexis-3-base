@@ -388,7 +388,7 @@ public class PatientDocumentManager {
 					if(name == null || name.isEmpty()) {
 						name = MedNet.getSettings().getInstitutions().get(contactLink.getMedNetID());
 					}
-					String category = contactLink.getCategoryForm();
+					String category = contactLink.getCategoryDoc();
 					if(category == null || category.isEmpty()) {
 						categorylabel = name;
 					}

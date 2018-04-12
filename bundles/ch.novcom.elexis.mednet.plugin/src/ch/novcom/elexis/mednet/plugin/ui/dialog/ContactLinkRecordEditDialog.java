@@ -66,11 +66,11 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		result.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		result.setLayout(new GridLayout(3, false));
 		
-		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelInstitution);
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelContact);
 		this.contactSelection = new KontaktSelectionComposite(result, SWT.NONE);
 		this.contactSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
-		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelInstitution);
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelMedNet);
 		this.mednetIDSelection = new Combo(result, SWT.READ_ONLY);
 		this.mednetIDSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		

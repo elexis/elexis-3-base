@@ -76,7 +76,7 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 		};
 
 	private int[] tableColwidth = {
-		27, 10, 27, 20, 16
+		20, 10, 20, 20, 20, 10
 	};
 	/**
 	 * Standard Constructor

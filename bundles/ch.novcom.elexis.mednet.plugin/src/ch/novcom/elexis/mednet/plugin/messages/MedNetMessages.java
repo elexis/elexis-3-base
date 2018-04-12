@@ -79,7 +79,6 @@ public class MedNetMessages extends NLS {
 	public static String ContactLinkRecordEditDialog_labelXIDDomain;
 	public static String ContactLinkRecordEditDialog_NoContact;
 	public static String ContactLinkRecordEditDialog_NoMedNet;
-	public static String ContactLinkRecordEditDialog_NoCategory;
 
 	public static String Omnivore_category_doclabel;
 	public static String Omnivore_category_formlabel;

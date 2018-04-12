@@ -73,7 +73,7 @@
 		<command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
-             label="Formular ausfüllen"
+             label="%menu.openformview"
              style="push">
 		</command>
     </menuContribution>

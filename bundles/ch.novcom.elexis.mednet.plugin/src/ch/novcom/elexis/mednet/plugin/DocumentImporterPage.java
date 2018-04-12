@@ -99,7 +99,6 @@ public class DocumentImporterPage extends ImporterPage {
 		//We will process them One after the other
 		for(MedNetConfigDocumentPath configFormPath: configFormPaths){
 			
-			
 			ContactLinkRecord contactLink = null;
 			Kontakt institutionKontakt = null;
 			List<ContactLinkRecord> list = ContactLinkRecord.getContactLinkRecord(null, configFormPath.getInstitutionID());
@@ -108,10 +107,13 @@ public class DocumentImporterPage extends ImporterPage {
 				institutionKontakt = Kontakt.load(contactLink.getContactID());
 			}
 			else {
+				//If the monitor has been canceled we should break
+				LOGGER.warn(logPrefix+"Following institution is not configured "+configFormPath.getInstitutionName()+" "+configFormPath.getInstitutionID());//$NON-NLS-1$
 				continue;
 			}
 			
 			if(contactLink == null || institutionKontakt == null) {
+				LOGGER.warn(logPrefix+"No contact found for "+configFormPath.getInstitutionName()+" "+configFormPath.getInstitutionID());//$NON-NLS-1$
 				continue;
 			}
 			
@@ -400,10 +402,8 @@ public class DocumentImporterPage extends ImporterPage {
 					boolean success = DocumentImporter.process(
 							pair.hl7,
 							pair.pdf,
-							contactLink.getContactID(),
-							institutionKontakt.getLabel(true),
-							contactLink.getCategory(),
-							contactLink.getXIDDomain(),
+							contactLink,
+							institutionKontakt,
 							OVERWRITEOLDERENTRIES,
 							true
 					);
@@ -520,9 +520,7 @@ public class DocumentImporterPage extends ImporterPage {
 	/**
 	 * This function is called after each import procedure, in order to clean the archive, and remove
 	 * all the old files.
-	 * The number of days a file should stay in the archive is given by the documentSettingItem.
-	 * By default it is 30 Days.
-	 * @param documentSettingsItem specify the archive folder to check and also the number of days the files should be kept in it
+	 * The number of days a file should stay in the archive is configurable
 	 */
 	private void deleteOldArchiveFiles( Path archivPath){
 		String logPrefix = "deleteOldArchivFiles() - ";

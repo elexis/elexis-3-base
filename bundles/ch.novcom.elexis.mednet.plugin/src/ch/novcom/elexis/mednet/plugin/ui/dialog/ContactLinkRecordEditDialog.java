@@ -45,7 +45,8 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	private KontaktSelectionComposite contactSelection;
 	private Combo mednetIDSelection;
 	private List<MedNetItem> mednetItems;
-	private Text category;
+	private Text category_doc;
+	private Text category_form;
 	private Text xidDomain;
 	
 	private ContactLinkRecord record;
@@ -85,13 +86,17 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 			textList[i]= mednetItems.get(i).getName();
 		}
 		this.mednetIDSelection.setItems(textList);
-		
-		
 	    
-		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategory);
-		this.category = new Text(result, SWT.BORDER);
-		this.category.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		this.category.setTextLimit(80);
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategoryDoc);
+		this.category_doc = new Text(result, SWT.BORDER);
+		this.category_doc.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		this.category_doc.setTextLimit(80);
+		
+
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategoryForm);
+		this.category_form = new Text(result, SWT.BORDER);
+		this.category_form.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		this.category_form.setTextLimit(80);
 		
 
 		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelXIDDomain);
@@ -112,14 +117,23 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	        }
 	    });
 		
-		
-		if (record != null) {
-			this.mednetIDSelection.select(this.mednetIDSelection.indexOf(record.getMedNetID()));
-			this.category.setText(record.getCategory());
+		if (this.record != null) {
+			Kontakt contact = Kontakt.load(this.record.getContactID());
+			this.contactSelection.setKontakt(contact);
+			for(int i=0; i<mednetItems.size(); i++) {
+				if(mednetItems.get(i).getId().equals(this.record.getMedNetID())) {
+					this.mednetIDSelection.select(i);
+					break;
+				}
+			}
+			this.category_doc.setText(this.record.getCategoryDoc());
+			this.category_form.setText(this.record.getCategoryForm());
 			this.xidDomain.setText(String.valueOf(record.getXIDDomain()));
 		}
 		else {
-			this.category.setText("");
+			this.mednetIDSelection.deselectAll();;
+			this.category_doc.setText("");
+			this.category_form.setText("");
 			this.xidDomain.setText("");
 		}
 		
@@ -136,22 +150,19 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 			return;
 		}
 		
-		if(this.mednetIDSelection.getSelectionIndex() <= 0) {
+		if(this.mednetIDSelection.getSelectionIndex() < 0) {
 			setErrorMessage(MedNetMessages.ContactLinkRecordEditDialog_NoMedNet);
 			return;
 		}
 		
-		if(this.category.getText() == null || category.getText().isEmpty()){
-			setErrorMessage(MedNetMessages.ContactLinkRecordEditDialog_NoCategory);
-			return;
-		}
 		
 		//If we have no record, we should create it
 		if (this.record == null) {
 			this.record = new ContactLinkRecord(
 					this.contactSelection.getKontakt().getId(),
 					this.mednetItems.get(this.mednetIDSelection.getSelectionIndex()).getId(),
-					this.category.getText(),
+					this.category_doc.getText(),
+					this.category_form.getText(),
 					this.xidDomain.getText()
 			);
 			//mapping.persistTransientLabMappings(result);
@@ -161,12 +172,14 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 						new String[]{
 							ContactLinkRecord.FLD_CONTACT_ID,
 							ContactLinkRecord.FLD_MEDNET_ID,
-							ContactLinkRecord.FLD_CATEGORY,
+							ContactLinkRecord.FLD_CATEGORY_DOC,
+							ContactLinkRecord.FLD_CATEGORY_FORM,
 							ContactLinkRecord.FLD_XID_DOMAIN
 						}, 
 						this.contactSelection.getKontakt().getId(),
 						this.mednetItems.get(this.mednetIDSelection.getSelectionIndex()).getId(),
-						this.category.getText(),
+						this.category_doc.getText(),
+						this.category_form.getText(),
 						this.xidDomain.getText()
 			);
 			
@@ -179,8 +192,12 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		this.contactSelection.setKontakt(Kontakt.load(id));
 	}
 	
-	public void setCategory(String string){
-		this.category.setText(string);
+	public void setCategoryDoc(String string){
+		this.category_doc.setText(string);
+	}
+	
+	public void setCategoryForm(String string){
+		this.category_form.setText(string);
 	}
 
 	public void setXIDDomainText(String string){

@@ -15,6 +15,7 @@ import java.util.List;
 
 import java.text.MessageFormat;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
@@ -50,12 +51,10 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Query;
 import ch.novcom.elexis.mednet.plugin.MedNet;
-import ch.novcom.elexis.mednet.plugin.MedNetConfigDocumentPath;
 import ch.novcom.elexis.mednet.plugin.data.ContactLinkRecord;
-import ch.novcom.elexis.mednet.plugin.data.DocumentSettingRecord;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
-import ch.novcom.elexis.mednet.plugin.ui.commands.DocumentSettingRecordCreate;
-import ch.novcom.elexis.mednet.plugin.ui.commands.DocumentSettingRecordEdit;
+import ch.novcom.elexis.mednet.plugin.ui.commands.ContactLinkRecordCreate;
+import ch.novcom.elexis.mednet.plugin.ui.dialog.ContactLinkRecordEditDialog;
 
 
 /**
@@ -71,7 +70,8 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 			MedNetMessages.ContactLinkPreferences_ContactLabel,
 			MedNetMessages.ContactLinkPreferences_MedNetId,
 			MedNetMessages.ContactLinkPreferences_MedNetName,
-			MedNetMessages.ContactLinkPreferences_Category,
+			MedNetMessages.ContactLinkPreferences_CategoryDoc,
+			MedNetMessages.ContactLinkPreferences_CategoryForm,
 			MedNetMessages.ContactLinkPreferences_XIDDomain
 		};
 
@@ -82,7 +82,7 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 	 * Standard Constructor
 	 */
 	public ContactLinkPreferencePage(){
-		super(MedNetMessages.DocumentPreferences_title);
+		super(MedNetMessages.ContactLinkPreferences_title);
 	}
 	
 	
@@ -149,10 +149,13 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 			public void doubleClick(DoubleClickEvent event){
 				IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
 				Object o = sel.getFirstElement();
-				if (o instanceof DocumentSettingRecord) {
-					DocumentSettingRecord li = (DocumentSettingRecord) o;
-					DocumentSettingRecordEdit.executeWithParams(li);
-					tableViewer.refresh();
+				if (o instanceof ContactLinkRecord) {
+					ContactLinkRecord li = (ContactLinkRecord) o;
+					//ContactLinkRecordEdit.executeWithParams(li);
+					ContactLinkRecordEditDialog dialog = new ContactLinkRecordEditDialog(getShell(),li);
+					if(dialog.open() == Dialog.OK) {
+						tableViewer.refresh();
+					}
 				}
 			}
 			
@@ -176,8 +179,10 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 			case 2:
 				return MedNet.getSettings().getInstitutions().get(contactLinkRecord.getMedNetID());
 			case 3:
-				return contactLinkRecord.getCategory();
+				return contactLinkRecord.getCategoryDoc();
 			case 4:
+				return contactLinkRecord.getCategoryForm();
+			case 5:
 				return contactLinkRecord.getXIDDomain();
 			default:
 				return "?col?"; //$NON-NLS-1$
@@ -198,7 +203,7 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 		
 		((GridLayout) parent.getLayout()).numColumns++;
 		Button bNewItem = new Button(parent, SWT.PUSH);
-		bNewItem.setText(MedNetMessages.DocumentPreferences_new);
+		bNewItem.setText(MedNetMessages.ContactLinkPreferences_new);
 		bNewItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -208,32 +213,32 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 						(IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 							.getService(IHandlerService.class);
 					
-					handlerService.executeCommand(DocumentSettingRecordCreate.COMMANDID, null);
+					handlerService.executeCommand(ContactLinkRecordCreate.COMMANDID, null);
 				} catch (Exception ex) {
-					throw new RuntimeException(DocumentSettingRecordCreate.COMMANDID, ex);
+					throw new RuntimeException(ContactLinkRecordCreate.COMMANDID, ex);
 				}
 				tableViewer.refresh();
 			}
 		});
 		((GridLayout) parent.getLayout()).numColumns++;
 		Button bDelItem = new Button(parent, SWT.PUSH);
-		bDelItem.setText(MedNetMessages.DocumentPreferences_delete);
+		bDelItem.setText(MedNetMessages.ContactLinkPreferences_delete);
 		bDelItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
 				IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
 				Object o = sel.getFirstElement();
-				if (o instanceof DocumentSettingRecord) {
-					DocumentSettingRecord li = (DocumentSettingRecord) o;
-					if (MessageDialog.openQuestion(getShell(), MedNetMessages.DocumentPreferences_delete,
-						MessageFormat.format(MedNetMessages.DocumentPreferences_reallyDelete,
+				if (o instanceof ContactLinkRecord) {
+					ContactLinkRecord li = (ContactLinkRecord) o;
+					if (MessageDialog.openQuestion(getShell(), MedNetMessages.ContactLinkPreferences_delete,
+						MessageFormat.format(MedNetMessages.ContactLinkPreferences_reallyDelete,
 							li.getLabel()))) {
 						
 						if (deleteRecord(li)) {
-							li.delete();
+							li.removeFromDatabase();
 							tableViewer.remove(li);
 						} else {
-							MessageDialog.openWarning(getShell(), MedNetMessages.DocumentPreferences_delete,
-									MedNetMessages.DocumentPreferences_deleteFailed);
+							MessageDialog.openWarning(getShell(), MedNetMessages.ContactLinkPreferences_delete,
+									MedNetMessages.ContactLinkPreferences_deleteFailed);
 						}
 					}
 				}
@@ -241,24 +246,24 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 		});
 		((GridLayout) parent.getLayout()).numColumns++;
 		Button bDelAllItems = new Button(parent, SWT.PUSH);
-		bDelAllItems.setText(MedNetMessages.DocumentPreferences_deleteAll);
+		bDelAllItems.setText(MedNetMessages.ContactLinkPreferences_deleteAll);
 		bDelAllItems.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
-				if (SWTHelper.askYesNo(MedNetMessages.DocumentPreferences_reallyDeleteAll,
-						MedNetMessages.DocumentPreferences_deleteAllExplain)) {
-					Query<DocumentSettingRecord> qbli = new Query<DocumentSettingRecord>(DocumentSettingRecord.class);
-					List<DocumentSettingRecord> items = qbli.execute();
+				if (SWTHelper.askYesNo(MedNetMessages.ContactLinkPreferences_deleteAllTitle,
+						MedNetMessages.ContactLinkPreferences_deleteAllExplain)) {
+					Query<ContactLinkRecord> qbli = new Query<ContactLinkRecord>(ContactLinkRecord.class);
+					List<ContactLinkRecord> items = qbli.execute();
 					boolean success = true;
-					for (DocumentSettingRecord li : items) {
+					for (ContactLinkRecord li : items) {
 						if (deleteRecord(li)) {
-							li.delete();
+							li.removeFromDatabase();
 						} else {
 							success = false;
 						}
 					}
 					if (!success) {
-						MessageDialog.openWarning(getShell(), MedNetMessages.DocumentPreferences_deleteAll,
-								MedNetMessages.DocumentPreferences_deleteAllFailed);
+						MessageDialog.openWarning(getShell(), MedNetMessages.ContactLinkPreferences_deleteAll,
+								MedNetMessages.ContactLinkPreferences_deleteAllFailed);
 					}
 					tableViewer.refresh();
 				}
@@ -269,16 +274,16 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 		}
 	}
 	
-	private boolean deleteRecord(DocumentSettingRecord li){
+	private boolean deleteRecord(ContactLinkRecord li){
 		boolean ret = true;
 		
-		Query<DocumentSettingRecord> qbe = new Query<DocumentSettingRecord>(DocumentSettingRecord.class);
-		qbe.add(DocumentSettingRecord.FLD_INSTITUTION_ID, "=", li.getInstitutionID()); //$NON-NLS-1$ //$NON-NLS-2$
-		List<DocumentSettingRecord> list = qbe.execute();
-		for (DocumentSettingRecord po : list) {
+		Query<ContactLinkRecord> qbe = new Query<ContactLinkRecord>(ContactLinkRecord.class);
+		qbe.add(ContactLinkRecord.FLD_ID, "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+		List<ContactLinkRecord> list = qbe.execute();
+		for (ContactLinkRecord po : list) {
 			// TODO Restore this point  
 			//if (CoreHub.getLocalLockService().acquireLock(po).isOk()) {
-				po.delete();
+				po.removeFromDatabase();
 			/*	CoreHub.getLocalLockService().releaseLock(po);
 			} else {
 				ret = false;

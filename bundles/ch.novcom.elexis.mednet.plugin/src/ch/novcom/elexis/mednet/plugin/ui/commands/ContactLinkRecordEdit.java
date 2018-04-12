@@ -18,6 +18,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -32,7 +33,7 @@ import ch.novcom.elexis.mednet.plugin.ui.dialog.ContactLinkRecordEditDialog;
 //TODO FIX A BUG BY EDITING
 
 public class ContactLinkRecordEdit extends AbstractHandler {
-	
+	                                        
 	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit";//$NON-NLS-1$
 	public static final String PARAMETERID = "ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit.selected";//$NON-NLS-1$
 	
@@ -45,9 +46,16 @@ public class ContactLinkRecordEdit extends AbstractHandler {
 			
 			PersistentObject contactLinkRecord =
 				(PersistentObject) event.getCommand().getParameterType(ContactLinkRecordEdit.PARAMETERID).getValueConverter().convertToObject(param);
+			String objString = event.getCommand().getParameterType(ContactLinkRecordEdit.PARAMETERID).getValueConverter().convertToString(param);
+			
 			
 			// create and open the dialog with the parameter
 			Shell parent = HandlerUtil.getActiveShell(event);
+
+			MessageDialog.openInformation(parent, "Parameter", param);
+			if(objString != null) {
+				MessageDialog.openInformation(parent, "Parameter as String", objString);
+			}
 			
 			ContactLinkRecordEditDialog dialog = new ContactLinkRecordEditDialog(parent, (ContactLinkRecord) contactLinkRecord);
 			dialog.open();

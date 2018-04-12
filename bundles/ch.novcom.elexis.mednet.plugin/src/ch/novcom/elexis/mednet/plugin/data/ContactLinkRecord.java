@@ -11,13 +11,8 @@
 
 package ch.novcom.elexis.mednet.plugin.data;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -25,7 +20,7 @@ import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 
 /**
- * This object represents a DocumentSettingRecord from the database
+ * This object represents a ContactLinkRecord from the database
  * This manage the Creation of the Table
  *
  */
@@ -33,12 +28,13 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 	/**
 	 * Logger used to log all activities of the module
 	 */
-	private final static Logger LOGGER = LoggerFactory.getLogger(ContactLinkRecord.class.getName());
+	//private final static Logger LOGGER = LoggerFactory.getLogger(ContactLinkRecord.class.getName());
 
 	//The different field names
 	public static final String FLD_CONTACT_ID = "ContactID";
 	public static final String FLD_MEDNET_ID = "MedNetID";
-	public static final String FLD_CATEGORY = "category";
+	public static final String FLD_CATEGORY_DOC = "category_doc";
+	public static final String FLD_CATEGORY_FORM = "category_form";
 	public static final String FLD_XID_DOMAIN = "xid_domain";
 	
 	static final String TABLENAME = "MEDNET_CONTACTLINK";
@@ -46,7 +42,7 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 
 //We cannot put any Unique index since deleted records are keept in the database and just marked as deleted
 // 	private static final String index1SQL =
-//			"CREATE UNIQUE INDEX " + DocumentSettingRecord.TABLENAME + "_idx_Path on " + DocumentSettingRecord.TABLENAME + "(" + DocumentSettingRecord.FLD_PATH +");";
+//			"CREATE UNIQUE INDEX " + ContactLinkRecord.TABLENAME + "_idx_Path on " + ContactLinkRecord.TABLENAME + "(" + ContactLinkRecord.FLD_PATH +");";
 
 
 	private static final String createTable = "CREATE TABLE "
@@ -54,7 +50,8 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 			+ PersistentObject.FLD_ID + " VARCHAR(25) primary key,"
 			+ ContactLinkRecord.FLD_CONTACT_ID + " VARCHAR(25),"
 			+ ContactLinkRecord.FLD_MEDNET_ID + " VARCHAR(255),"
-			+ ContactLinkRecord.FLD_CATEGORY + " VARCHAR(255),"
+			+ ContactLinkRecord.FLD_CATEGORY_DOC + " VARCHAR(255),"
+			+ ContactLinkRecord.FLD_CATEGORY_FORM + " VARCHAR(255),"
 			+ ContactLinkRecord.FLD_XID_DOMAIN + " VARCHAR(255),"
 			+ PersistentObject.FLD_LASTUPDATE + " BIGINT,"
 			+ PersistentObject.FLD_DELETED + " CHAR(1) default '0'"
@@ -71,7 +68,8 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 			ContactLinkRecord.TABLENAME,
 			ContactLinkRecord.FLD_CONTACT_ID,
 			ContactLinkRecord.FLD_MEDNET_ID,
-			ContactLinkRecord.FLD_CATEGORY,
+			ContactLinkRecord.FLD_CATEGORY_DOC,
+			ContactLinkRecord.FLD_CATEGORY_FORM,
 			ContactLinkRecord.FLD_XID_DOMAIN
 		);
 		if(!PersistentObject.tableExists(TABLENAME)){
@@ -82,7 +80,8 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 	public ContactLinkRecord(
 			String contactID,
 			String mednetID,
-			String category,
+			String category_doc,
+			String category_form,
 			String xidDomain
 		){
 		
@@ -90,12 +89,14 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 		set(new String[] {
 				FLD_CONTACT_ID,
 				FLD_MEDNET_ID,
-				FLD_CATEGORY,
+				FLD_CATEGORY_DOC,
+				FLD_CATEGORY_FORM,
 				FLD_XID_DOMAIN
 			}, 
 				contactID,
 				mednetID,
-				category,
+				category_doc,
+				category_form,
 				xidDomain
 		);
 		
@@ -112,6 +113,10 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 		return new ContactLinkRecord(id);
 	}
 	
+	@Override
+	public String toString(){
+		return getLabel();
+	}
 	
 	public String getContactID(){
 		return PersistentObject.checkNull(this.get(ContactLinkRecord.FLD_CONTACT_ID));
@@ -130,12 +135,20 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 	}
 	
 
-	public String getCategory(){
-		return PersistentObject.checkNull(this.get(ContactLinkRecord.FLD_CATEGORY));
+	public String getCategoryDoc(){
+		return PersistentObject.checkNull(this.get(ContactLinkRecord.FLD_CATEGORY_DOC));
 	}
 	
-	public void setCategory(String category){
-		this.set(ContactLinkRecord.FLD_CATEGORY, category);
+	public void setCategoryDoc(String category){
+		this.set(ContactLinkRecord.FLD_CATEGORY_DOC, category);
+	}
+	
+	public String getCategoryForm(){
+		return PersistentObject.checkNull(this.get(ContactLinkRecord.FLD_CATEGORY_FORM));
+	}
+	
+	public void setCategoryForm(String category){
+		this.set(ContactLinkRecord.FLD_CATEGORY_FORM, category);
 	}
 	
 	public String getXIDDomain(){
@@ -152,18 +165,20 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 		String[] fields = {
 				ContactLinkRecord.FLD_CONTACT_ID,
 				ContactLinkRecord.FLD_MEDNET_ID,
-				ContactLinkRecord.FLD_CATEGORY,
+				ContactLinkRecord.FLD_CATEGORY_DOC,
+				ContactLinkRecord.FLD_CATEGORY_FORM,
 				ContactLinkRecord.FLD_XID_DOMAIN
 		};
 		String[] vals = new String[fields.length];
 		this.get(fields, vals);
 		
 		return MessageFormat.format(
-			MedNetMessages.DocumentSettingRecord_Label,
+			MedNetMessages.ContactLinkRecord_Label,
 			vals[0],
 			vals[1],
 			vals[2],
-			vals[3]
+			vals[3],
+			vals[4]
 		);
 		
 	}
@@ -199,7 +214,7 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 	}
 	
 	/**
-	 * Get a List of all DocumentSettingRecords from the database
+	 * Get a List of all ContactLinkRecords from the database
 	 * 
 	 * @return List of {@link ContactLinkRecord}
 	 */
@@ -209,8 +224,8 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 	}
 	
 	/**
-	 * Get a List of DocumentSettingRecord matching the specified parameters in the database By specifying null
-	 * parameters the DocumentSettingRecord selection can be broadened.
+	 * Get a List of ContactLinkRecord matching the specified parameters in the database By specifying null
+	 * parameters the ContactLinkRecord selection can be broadened.
 	 * 
 	 * @param contactId
 	 * @param mednetId
@@ -230,5 +245,5 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 		return qbe.execute();
 	}
 	
-
+	
 }

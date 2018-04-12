@@ -19,44 +19,28 @@
 	<extension
 		point="org.eclipse.ui.preferencePages">
 		<page
-        category=""
+        category="ch.elexis.preferences.transporters"
         class="ch.novcom.elexis.mednet.plugin.ui.preferences.MainPreferencePage"
         id="ch.novcom.elexis.mednet.plugin.ui.preferences"
         name="%preferences.title">
 		</page>
 		<page
         category="ch.novcom.elexis.mednet.plugin.ui.preferences"
-        class="ch.novcom.elexis.mednet.plugin.ui.preferences.DocumentPreferencePage"
-        id="ch.novcom.elexis.mednet.plugin.ui.preferences.receiving"
-        name="%preferences.receiving">
+        class="ch.novcom.elexis.mednet.plugin.ui.preferences.ContactLinkPreferencePage"
+        id="ch.novcom.elexis.mednet.plugin.ui.preferences.contactlink"
+        name="%preferences.contactlink">
 		</page>
 	</extension>
  	<extension
        point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.DocumentSettingRecordEdit"
-            id="ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit"
-            name="Edit Receiving Item">
-         	<commandParameter
-               id="ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit.selected"
-               name="Selected Receiving Item"
-               optional="true"
-               typeId="ch.elexis.PersistentObjectType">
-         	</commandParameter>
-      </command>
-      <command
-            defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.DocumentSettingRecordCreate"
-            id="ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.create"
-            name="Create Document Record Item">
-      </command>
-      
+       
       <command
             defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.ContactLinkRecordEdit"
             id="ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit"
-            name="Edit Contact Item">
+            name="%command.contactlink.edit">
          	<commandParameter
                id="ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit.selected"
-               name="Selected Contact Item"
+               name="%command.contactlink.select"
                optional="true"
                typeId="ch.elexis.PersistentObjectType">
          	</commandParameter>
@@ -64,19 +48,19 @@
       <command
             defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.ContactLinkRecordCreate"
             id="ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.create"
-            name="Create Contact Link Item">
+            name="%command.contactlink.new">
       </command>
       
       <command
             defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.GetResult"
             id="ch.novcom.elexis.mednet.plugin.ui.commands.getresult"
-            name="Get Result">
+            name="%command.getresult">
       </command>
       
       <command
             defaultHandler="ch.novcom.elexis.mednet.plugin.ui.commands.OpenFormView"
             id="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
-            name="Open Form View">
+            name="%command.openformview">
       </command>
        
  	</extension>
@@ -100,7 +84,7 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
-             label="Formular ausfüllen"
+             label="%menu.openformview"
              style="push">
        </command>
 	</menuContribution>
@@ -111,7 +95,7 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
-             label="Formular ausfüllen"
+             label="%menu.openformview"
              style="push">
        </command>
 	</menuContribution>
@@ -122,7 +106,7 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
-             label="Formular ausfüllen"
+             label="%menu.openformview"
              style="push">
        </command>
 	</menuContribution>
@@ -134,7 +118,7 @@
          <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.openformview"
              icon="icons/16x16/openformview.png"
-             label="Formular ausfüllen"
+             label="%menu.openformview"
              style="push">
          </command>
       </menuContribution>
@@ -146,7 +130,7 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.getresult"
              icon="icons/16x16/getresult.png"
-             label="Dokumente importieren"
+             label="%menu.getresult"
              style="push">
        </command>
     </menuContribution>
@@ -157,7 +141,7 @@
        <command
              commandId="ch.novcom.elexis.mednet.plugin.ui.commands.getresult"
              icon="icons/16x16/getresult.png"
-             label="Dokumente importieren"
+             label="%menu.getresult"
              style="push">
        </command>
     </menuContribution>

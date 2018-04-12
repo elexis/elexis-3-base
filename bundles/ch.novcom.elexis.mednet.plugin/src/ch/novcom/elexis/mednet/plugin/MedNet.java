@@ -301,6 +301,7 @@ public class MedNet {
 		for(String line : resultStringList) {
 			MedNetConfigFormPath item = new MedNetConfigFormPath(line);
 			result.put(item.getAccountID(), item);
+			LOGGER.debug(logPrefix + "Form Path loaded: "+item.getAccountID()+" "+item.getAccountLastname()+" "+item.getPath());//$NON-NLS-1$
 		}
 		
 		//finally return the temporary fileCreated
@@ -386,6 +387,8 @@ public class MedNet {
 		for(String line : resultStringList) {
 			MedNetConfigDocumentPath item = new MedNetConfigDocumentPath(line);
 			result.add(item);
+
+			LOGGER.debug(logPrefix + "Document Path loaded: "+item.getAccountID()+" "+item.getAccountLastname()+" "+item.getInstitutionID()+" "+item.getInstitutionName()+" "+item.getPath());//$NON-NLS-1$
 		}
 		
 		//finally return the temporary fileCreated

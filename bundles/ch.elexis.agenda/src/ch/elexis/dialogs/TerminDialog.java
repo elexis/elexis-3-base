@@ -94,6 +94,10 @@ public class TerminDialog extends TitleAreaDialog {
 	
 	private static final Logger log = LoggerFactory.getLogger(TerminDialog.class);
 	
+	public enum CollisionErrorLevel {
+			ERROR, WARNING
+	}
+	
 	DatePicker dp;
 	TimeInput tiVon;
 	TimeInput tiBis;
@@ -128,6 +132,8 @@ public class TerminDialog extends TitleAreaDialog {
 	Activator agenda = Activator.getDefault();
 	boolean bModified;
 	private String msg;
+	
+	private CollisionErrorLevel collisionErrorLevel = CollisionErrorLevel.ERROR;
 	
 	public TerminDialog(IPlannable act){
 		super(UiDesk.getTopShell());
@@ -598,11 +604,17 @@ public class TerminDialog extends TitleAreaDialog {
 		slider.set();
 	}
 	
+	public void setCollisionErrorLevel(CollisionErrorLevel level){
+		this.collisionErrorLevel = level;
+	}
+	
 	private void enable(final boolean mode){
 		msg = Messages.TerminDialog_editTermins;
-		bChange.setEnabled(mode);
-		bSave.setEnabled(mode);
-		getButton(IDialogConstants.OK_ID).setEnabled(mode);
+		if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
+			bChange.setEnabled(mode);
+			bSave.setEnabled(mode);
+			getButton(IDialogConstants.OK_ID).setEnabled(mode);
+		}
 		slider.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY)); //$NON-NLS-1$
 		
 		if (!mode) {
@@ -613,7 +625,11 @@ public class TerminDialog extends TitleAreaDialog {
 		getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run(){
-				setMessage(msg, mode ? IMessageProvider.NONE : IMessageProvider.ERROR);
+				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
+					setMessage(msg, mode ? IMessageProvider.NONE : IMessageProvider.ERROR);
+				} else if (collisionErrorLevel == CollisionErrorLevel.WARNING) {
+					setMessage(msg, mode ? IMessageProvider.NONE : IMessageProvider.WARNING);
+				}
 			}
 		});
 	}

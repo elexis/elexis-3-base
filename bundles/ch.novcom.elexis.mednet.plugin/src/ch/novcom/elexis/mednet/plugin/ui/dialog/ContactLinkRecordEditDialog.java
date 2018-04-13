@@ -249,27 +249,31 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 			if (other == null) {
 				return -1;
 			}
-			if(this.getId() != null && other.getId() == null){
-				return -1;
-			}
-			if(this.getId() == null && other.getId() != null){
-				return 1;
-			}
-			int comparator = this.getId().compareTo(other.getId());
-			if(comparator != 0){
-				return comparator;
-			}
-			
+
 			if(this.getName() != null && other.getName() == null){
 				return -1;
 			}
 			if(this.getName() == null && other.getName() != null){
 				return 1;
 			}
-			comparator = this.getName().compareTo(other.getName());
+			
+			int comparator = this.getName().compareTo(other.getName());
 			if(comparator != 0){
 				return comparator;
 			}
+			
+			if(this.getId() != null && other.getId() == null){
+				return -1;
+			}
+			if(this.getId() == null && other.getId() != null){
+				return 1;
+			}
+			
+			comparator = this.getId().compareTo(other.getId());
+			if(comparator != 0){
+				return comparator;
+			}
+			
 			
 			return 0;
 			

@@ -67,16 +67,16 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 	private Table table;
 	
 	private String[] tableheaders = {
-			MedNetMessages.ContactLinkPreferences_ContactLabel,
 			MedNetMessages.ContactLinkPreferences_MedNetId,
 			MedNetMessages.ContactLinkPreferences_MedNetName,
+			MedNetMessages.ContactLinkPreferences_ContactLabel,
 			MedNetMessages.ContactLinkPreferences_CategoryDoc,
 			MedNetMessages.ContactLinkPreferences_CategoryForm,
 			MedNetMessages.ContactLinkPreferences_XIDDomain
 		};
 
 	private int[] tableColwidth = {
-		20, 10, 20, 20, 20, 10
+		10, 20, 20, 20, 20, 10
 	};
 	/**
 	 * Standard Constructor
@@ -175,11 +175,11 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 			
 			switch (columnIndex) {
 			case 0:
-				return kontakt.getLabel(true);
-			case 1:
 				return contactLinkRecord.getMedNetID();
-			case 2:
+			case 1:
 				return MedNet.getSettings().getInstitutions().get(contactLinkRecord.getMedNetID());
+			case 2:
+				return kontakt.getLabel(true);
 			case 3:
 				return contactLinkRecord.getCategoryDoc();
 			case 4:

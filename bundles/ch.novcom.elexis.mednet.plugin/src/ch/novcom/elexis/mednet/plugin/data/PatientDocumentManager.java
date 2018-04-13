@@ -28,6 +28,8 @@ import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.types.LabItemTyp;
+import ch.elexis.core.types.PathologicDescription;
+import ch.elexis.core.types.PathologicDescription.Description;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
@@ -334,6 +336,7 @@ public class PatientDocumentManager {
 			labResult.set(FLD_ORGIN, orderId);
 			labResult.set(LabResult.TIME, documentTime);
 			labResult.setObservationTime(documentDate);
+			labResult.setPathologicDescription(new PathologicDescription(Description.PATHO_IMPORT));
 			saved = true;
 		} else {
 			//If there is already a labresult
@@ -357,6 +360,7 @@ public class PatientDocumentManager {
 				labResult.setResult(title);
 				labResult.set(LabResult.TIME, documentTime);
 				labResult.setObservationTime(documentDate);
+				labResult.setPathologicDescription(new PathologicDescription(Description.PATHO_IMPORT));
 				saved = true;
 			} else {
 				

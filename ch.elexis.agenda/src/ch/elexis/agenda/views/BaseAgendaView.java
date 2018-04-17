@@ -53,16 +53,16 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
@@ -75,10 +75,9 @@ import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.rgw.tools.Log;
 import ch.rgw.tools.TimeTool;
 
-public abstract class BaseAgendaView extends ViewPart implements HeartListener,
-		IActivationListener, IBereichSelectionEvent {
-	
-	// protected Synchronizer pinger;
+
+public abstract class BaseAgendaView extends ViewPart
+		implements HeartListener, IRefreshable, IBereichSelectionEvent {
 	protected SelectionListener sListen = new SelectionListener();
 	TableViewer tv;
 	BaseAgendaView self;
@@ -96,10 +95,11 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 	private final ElexisEventListener eeli_termin = new ElexisUiEventListenerImpl(Termin.class,
 		ElexisEvent.EVENT_RELOAD) {
 		public void runInUi(ElexisEvent ev){
-			if (!tv.getControl().isDisposed()) {
-				tv.refresh(true);
+			if (tv != null && isActiveControl(tv.getControl())) {
+				if (!tv.getControl().isDisposed()) {
+					tv.refresh(true);
+				}
 			}
-			
 		}
 	};
 	
@@ -107,17 +107,18 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 		ElexisEvent.EVENT_USER_CHANGED) {
 		public void runInUi(ElexisEvent ev){
 			updateActions();
-			if (tv != null) {
-				if (!tv.getControl().isDisposed()) {
-					tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));
-				}
+			if (tv != null && isActiveControl(tv.getControl())) {
+				tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));
 			}
 			setBereich(CoreHub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
-			
 		}
 	};
 	private IMenuManager mgr;
 	private IAction bereichMenu;
+
+	private long highestLastUpdate;
+	
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 	
 	protected BaseAgendaView(){
 		self = this;
@@ -181,11 +182,13 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 		Menu cMenu = menu.createContextMenu(tv.getControl());
 		tv.getControl().setMenu(cMenu);
 		
-		// GlobalEvents.getInstance().addBackingStoreListener(this);
-		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
+		CoreHub.heart.addListener(this);
+		ElexisEventDispatcher.getInstance().addListeners(eeli_termin, eeli_user);
+		getSite().getPage().addPartListener(udpateOnVisible);
+		
 		tv.setInput(getViewSite());
-		// pinger=new ch.elexis.actions.Synchronizer();
 		updateActions();
+		tv.addSelectionChangedListener(sListen);
 	}
 	
 	public IPlannable getSelection(){
@@ -200,37 +203,32 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 	
 	@Override
 	public void dispose(){
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
+		CoreHub.heart.removeListener(this);
+		getSite().getPage().removePartListener(udpateOnVisible);
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_termin, eeli_user);
 		super.dispose();
 	}
 	
 	@Override
-	public void setFocus(){}
+	public void setFocus(){
+		tv.getControl().setFocus();
+	}
 	
 	public void heartbeat(){
-		log.log("Heartbeat", Log.DEBUGMSG); //$NON-NLS-1$
-		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
-		// GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
-		// pinger.doSync();
-	}
-	
-	public void activation(boolean mode){/* leer */
-	}
-	
-	public void visible(boolean mode){
-		if (mode == true) {
-			CoreHub.heart.addListener(this);
-			tv.addSelectionChangedListener(sListen);
-			ElexisEventDispatcher.getInstance().addListeners(eeli_termin, eeli_user);
-			heartbeat();
-			updateActions();
-		} else {
-			CoreHub.heart.removeListener(this);
-			tv.removeSelectionChangedListener(sListen);
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_termin, eeli_user);
+		long lastUpdate = Termin.getHighestLastUpdate(Termin.TABLENAME);
+		log.log("Heartbeat [" + lastUpdate + "]", Log.DEBUGMSG); //$NON-NLS-1$
+		if (lastUpdate > highestLastUpdate) {
+			highestLastUpdate = lastUpdate;
+			refresh();
 		}
-		
-	};
+	}
+	
+	
+	@Override
+	public void refresh(){
+		updateActions();
+		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
+	}
 	
 	public void setBereich(String b){
 		agenda.setActResource(b);

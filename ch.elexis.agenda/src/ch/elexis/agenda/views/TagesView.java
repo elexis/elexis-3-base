@@ -158,14 +158,6 @@ public class TagesView extends BaseAgendaView {
 		makePrivateActions();
 	}
 	
-	@Override
-	public void setFocus(){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void dispose(){}
-	
 	class AgendaLabelProvider extends LabelProvider implements ITableColorProvider,
 			ITableLabelProvider {
 		

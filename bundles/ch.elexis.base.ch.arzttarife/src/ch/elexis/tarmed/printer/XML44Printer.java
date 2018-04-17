@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
+import ch.elexis.TarmedRechnung.XMLExporterTiers;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.StringConstants;
@@ -176,7 +177,7 @@ public class XML44Printer {
 			return true;
 		}
 		
-		Kontakt adressat = loadAddressee(ezData.paymentMode);
+		Kontakt adressat = XMLExporterTiers.getGuarantor(ezData.paymentMode, pat, fall);
 		XMLPrinterUtil.createBrief(TT_TARMED_44_S1, adressat, text);
 		
 		if (request.getPayload().isCopy()) {
@@ -294,33 +295,6 @@ public class XML44Printer {
 		if (StringTool.isNothing(tarmedTray)) {
 			tarmedTray = null;
 		}
-	}
-	
-	private Kontakt loadAddressee(String paymentMode){
-		
-		Kontakt addressee;
-		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
-			// TP
-			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
-			// TG
-			Kontakt invoiceReceiver = fall.getGarant();
-			if (invoiceReceiver.equals(pat)) {
-				Kontakt legalGuardian = pat.getLegalGuardian();
-				if (legalGuardian != null) {
-					addressee = legalGuardian;
-				} else {
-					addressee = pat;
-				}
-			} else {
-				addressee = invoiceReceiver;
-			}
-		}
-		else {
-			addressee = fall.getGarant();
-		}
-		addressee.getPostAnschrift(true); // damit sicher eine existiert
-		return addressee;
 	}
 	
 	private void addSubTotalLine(Object cursor, ITextPlugin tp, BalanceType balance, String tcCode,

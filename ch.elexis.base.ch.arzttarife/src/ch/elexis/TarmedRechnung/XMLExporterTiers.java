@@ -94,15 +94,14 @@ public class XMLExporterTiers {
 		
 		Element provider = new Element("provider", XMLExporter.nsinvoice); //$NON-NLS-1$
 		provider.setAttribute(XMLExporter.ATTR_EAN_PARTY,
-			TarmedRequirements.getEAN(mandant.getRechnungssteller()));
+			TarmedRequirements.getEAN(mandant));
 		provider.setAttribute(
-			"zsr", TarmedRequirements.getKSK(mandant.getRechnungssteller())); //$NON-NLS-1$
-		spec = mandant.getRechnungssteller().getInfoString(ta.SPEC);
+			"zsr", TarmedRequirements.getKSK(mandant)); //$NON-NLS-1$
+		spec = mandant.getInfoString(ta.SPEC);
 		if (!spec.equals("")) { //$NON-NLS-1$
 			provider.setAttribute("specialty", spec); //$NON-NLS-1$
 		}
-		provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant
-			.getRechnungssteller()));
+		provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant));
 		ret.tiersElement.addContent(provider);
 		
 		Element onlineElement = null; // tschaller: see comments in

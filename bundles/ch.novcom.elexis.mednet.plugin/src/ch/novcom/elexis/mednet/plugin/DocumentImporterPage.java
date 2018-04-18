@@ -524,37 +524,42 @@ public class DocumentImporterPage extends ImporterPage {
 	 */
 	private void deleteOldArchiveFiles( Path archivPath){
 		String logPrefix = "deleteOldArchivFiles() - ";
-		LOGGER.info(logPrefix+"Purge archive dir "+archivPath.toString());//$NON-NLS-1$
-		
-		//Prepare the FileTime representing the limit.
-		//All the files older than this limit will be deleted
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, 0-MedNet.getSettings().getArchivePurgeInterval());
-		FileTime timeLimit = FileTime.fromMillis(cal.getTimeInMillis());
-		
-		
-		// Clear the files older than the purgeInterval
-		if (Files.exists(archivPath) && Files.isDirectory(archivPath)) {
+		if(MedNet.getSettings().getArchivePurgeInterval() > 0) {
 			
-			try{
-				DirectoryStream<Path> fileStream = Files.newDirectoryStream(archivPath, new TimeFilter(timeLimit));
-				for(Path path : fileStream){
-					try{
-						Files.delete(path);
-						LOGGER.info(logPrefix+"Following file has been deleted "+path.toString());//$NON-NLS-1$
+			LOGGER.info(logPrefix+"Purge archive dir "+archivPath.toString());//$NON-NLS-1$
+		
+			//Prepare the FileTime representing the limit.
+			//All the files older than this limit will be deleted
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, 0-MedNet.getSettings().getArchivePurgeInterval());
+			FileTime timeLimit = FileTime.fromMillis(cal.getTimeInMillis());
+			
+			
+			// Clear the files older than the purgeInterval
+			if (Files.exists(archivPath) && Files.isDirectory(archivPath)) {
+				
+				try{
+					DirectoryStream<Path> fileStream = Files.newDirectoryStream(archivPath, new TimeFilter(timeLimit));
+					for(Path path : fileStream){
+						try{
+							Files.delete(path);
+							LOGGER.info(logPrefix+"Following file has been deleted "+path.toString());//$NON-NLS-1$
+						}
+						catch (IOException ioe) {
+							LOGGER.error(logPrefix+"IOException deleting file "+path.toString(), ioe);//$NON-NLS-1$
+						}			
 					}
-					catch (IOException ioe) {
-						LOGGER.error(logPrefix+"IOException deleting file "+path.toString(), ioe);//$NON-NLS-1$
-					}			
+				}
+				catch (IOException ex) {
+					LOGGER.error(logPrefix+"IOException walking throw archiv directory "+archivPath.toString(), ex);//$NON-NLS-1$
 				}
 			}
-			catch (IOException ex) {
-				LOGGER.error(logPrefix+"IOException walking throw archiv directory "+archivPath.toString(), ex);//$NON-NLS-1$
-			}
+			
+			LOGGER.info(logPrefix+"Purge of following archive completed"+archivPath.toString());//$NON-NLS-1$
 		}
-		
-		LOGGER.info(logPrefix+"Purge of following archive completed"+archivPath.toString());//$NON-NLS-1$
-		
+		else {
+			LOGGER.debug(logPrefix+"Purge intervall is negativ. Archive will not be purged");//$NON-NLS-1$
+		}
 	}
 	
 	

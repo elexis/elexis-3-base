@@ -124,8 +124,6 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	        }
 	    });
 		
-		
-		
 		return ret;
 		
 	}
@@ -138,6 +136,7 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public boolean performOk(){
 		MedNet.getSettings().setExePath(Paths.get(exePath.getText()));
+		MedNet.getSettings().setArchivePurgeInterval(Integer.valueOf(purgeInterval.getText()));
 		MedNet.getSettings().saveSettings();
 		return true;
 	}

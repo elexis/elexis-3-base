@@ -34,12 +34,13 @@ public class MedNetSettings {
 	private final static Logger LOGGER = LoggerFactory.getLogger(MedNetSettings.class.getName());
 	public static final String PLUGIN_ID = "ch.novcom.elexis.mednet.plugin"; //$NON-NLS-1$
 	public static final String cfgBase = "ch/novcom/elexis/mednet/plugin"; //$NON-NLS-1$
+	public static final int DEFAULT_ARCHIVEPURGEINTERVAL = 60;
 	
 	Settings configuration = CoreHub.globalCfg; // Settings: DB for all PCs
 	
 	// Globale Einstellungen
 	public static final String cfgExePath = cfgBase + "/exe"; //$NON-NLS-1$
-	public static final String cfgFormsArchivePurgeInterval = cfgBase + "/forms/archivePurgeIntervalDays"; //$NON-NLS-1$
+	public static final String cfgFormsArchivePurgeInterval = cfgBase + "/archivePurgeIntervalDays"; //$NON-NLS-1$
 	
 	/**
 	 * The link to the MedNet.exe file
@@ -164,7 +165,7 @@ public class MedNetSettings {
 			}
 		}
 		else {
-			archivePurgeInterval = -1 ;
+			archivePurgeInterval = MedNetSettings.DEFAULT_ARCHIVEPURGEINTERVAL ;
 		}
 		
 	}

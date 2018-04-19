@@ -20,6 +20,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -204,7 +206,13 @@ public class AgendaGross extends BaseAgendaView {
 		sash.setWeights(sashWeights == null ? new int[] {
 			70, 30
 		} : sashWeights);
-		
+
+		tv.getControl().addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e){
+				saveColumnSizes();
+			}
+		});		
 		// set initial widget values
 		initialize();
 	}
@@ -233,19 +241,6 @@ public class AgendaGross extends BaseAgendaView {
 		 */
 		tv.refresh();
 		tv.getTable().getColumn(0).pack();
-	}
-	
-	@Override
-	public void setFocus(){
-		tv.getControl().setFocus();
-	}
-	
-	@Override
-	public void activation(boolean mode){
-		super.activation(mode);
-		if (!mode) {
-			saveColumnSizes();
-		}
 	}
 	
 	private void saveColumnSizes(){

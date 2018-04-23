@@ -719,7 +719,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			
 			public void run(){
 				bFlat = isChecked();
-				refresh();
+				viewer.refresh();
 			}
 		};
 	};

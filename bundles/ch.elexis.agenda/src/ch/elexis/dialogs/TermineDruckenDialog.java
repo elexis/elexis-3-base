@@ -13,6 +13,9 @@ package ch.elexis.dialogs;
 
 import static ch.elexis.agenda.text.AgendaTextTemplateRequirement.TT_APPOINTMENT_CARD;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -38,6 +41,25 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 	public TermineDruckenDialog(Shell shell, Termin[] liste){
 		super(shell);
 		this.liste = liste;
+		Arrays.sort(this.liste, new Comparator<Termin>() {
+			private TimeTool lDay = new TimeTool();
+			private TimeTool rDay = new TimeTool();
+			@Override
+			public int compare(Termin l, Termin r){
+				int dayRes = 0;
+				if (l.getDay() != null && l.getDay().length() > 3 && r.getDay() != null
+					&& r.getDay().length() > 3) {
+					lDay.set(l.getDay());
+					rDay.set(r.getDay());
+					dayRes = lDay.compareTo(rDay);
+				}
+				if (dayRes == 0) {
+					return Integer.compare(l.getStartMinute(), r.getStartMinute());
+				} else {
+					return dayRes;
+				}
+			}
+		});
 	}
 	
 	@Override

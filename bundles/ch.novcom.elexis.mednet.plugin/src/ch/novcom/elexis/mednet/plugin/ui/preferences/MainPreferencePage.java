@@ -31,6 +31,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.WidgetFactory;
 import ch.novcom.elexis.mednet.plugin.MedNet;
+import ch.novcom.elexis.mednet.plugin.MedNetSettings;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 
@@ -139,6 +140,16 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 		MedNet.getSettings().setArchivePurgeInterval(Integer.valueOf(purgeInterval.getText()));
 		MedNet.getSettings().saveSettings();
 		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performDefaults()
+	 */
+	@Override
+	public void performDefaults(){
+		purgeInterval.setText(String.valueOf(MedNetSettings.DEFAULT_ARCHIVEPURGEINTERVAL));
 	}
 	
 	/*

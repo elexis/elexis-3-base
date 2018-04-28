@@ -68,7 +68,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.preferences.CorePreferenceInitializer;
 import ch.elexis.core.data.util.PlatformHelper;
-import ch.elexis.core.model.IDiagnose;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;

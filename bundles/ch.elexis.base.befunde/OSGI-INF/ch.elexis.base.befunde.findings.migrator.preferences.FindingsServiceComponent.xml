@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent">
-   <reference bind="setMigratorService" cardinality="1..1" interface="ch.elexis.core.findings.migration.IMigratorService" name="MigratorService" policy="static"/>
-   <reference bind="setTemplateService" cardinality="1..1" interface="ch.elexis.core.findings.templates.service.IFindingsTemplateService" name="TemplateService" policy="static"/>
+   <reference bind="setMigratorService" interface="ch.elexis.core.findings.migration.IMigratorService" name="MigratorService"/>
+   <reference bind="setTemplateService" interface="ch.elexis.core.findings.templates.service.IFindingsTemplateService" name="TemplateService"/>
    <implementation class="ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent"/>
 </scr:component>

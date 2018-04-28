@@ -6,7 +6,7 @@ import org.eclipse.swt.browser.BrowserFunction;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
-import ch.elexis.core.model.IPersistentObject;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.dialogs.TerminDialog;
@@ -20,7 +20,7 @@ public class DoubleClickFunction extends BrowserFunction {
 	public Object function(Object[] arguments){
 		if (arguments.length == 1) {
 			Termin termin = Termin.load((String) arguments[0]);
-			AcquireLockBlockingUi.aquireAndRun((IPersistentObject) termin, new ILockHandler() {
+			AcquireLockBlockingUi.aquireAndRun((PersistentObject) termin, new ILockHandler() {
 				@Override
 				public void lockFailed(){
 					// do nothing

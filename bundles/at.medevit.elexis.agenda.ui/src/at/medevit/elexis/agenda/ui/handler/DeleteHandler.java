@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.IPeriod;
-import ch.elexis.core.model.IPersistentObject;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 
@@ -28,9 +28,9 @@ public class DeleteHandler extends AbstractHandler implements IHandler {
 		
 		period.ifPresent(p -> {
 			if (MessageDialog.openConfirm(HandlerUtil.getActiveShell(event), "Löschen",
-				"Wollen Sie " + ((IPersistentObject) period.get()).getLabel()
+				"Wollen Sie " + ((PersistentObject) period.get()).getLabel()
 					+ " wirklich löschen?")) {
-				AcquireLockBlockingUi.aquireAndRun((IPersistentObject) p, new ILockHandler() {
+				AcquireLockBlockingUi.aquireAndRun((PersistentObject) p, new ILockHandler() {
 					@Override
 					public void lockFailed(){
 						// do nothing

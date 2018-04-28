@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.jfree.data.statistics.Statistics;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.model.IDiagnose;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;

@@ -10,12 +10,12 @@ Require-Bundle: ch.elexis.core,
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/ehealth_connector-fatjar-ch-1.4.0-201704.jar,
  .
-Import-Package: ch.elexis.core.model,
+Import-Package: ch.elexis.core.data.interfaces,
+ ch.elexis.core.model,
  ch.elexis.data,
  ch.rgw.tools,
  org.osgi.service.component.annotations;version="1.2.0",
  org.slf4j;version="1.7.2"
-Service-Component: OSGI-INF/at.medevit.elexis.ehc.core.internal.EhcCoreServiceImpl.xml
 Export-Package: at.medevit.elexis.ehc.core,
  org.ehealth_connector.cda,
  org.ehealth_connector.cda.ch,
@@ -76,3 +76,4 @@ Export-Package: at.medevit.elexis.ehc.core,
  org.openhealthtools.mdht.uml.hl7.rim,
  org.openhealthtools.mdht.uml.hl7.rim.util,
  org.openhealthtools.mdht.uml.hl7.vocab
+Service-Component: OSGI-INF/at.medevit.elexis.ehc.core.internal.EhcCoreServiceImpl.xml

@@ -31,7 +31,7 @@ import org.ehealth_connector.common.enums.AddressUse;
 import org.ehealth_connector.common.enums.AdministrativeGender;
 import org.ehealth_connector.common.enums.CodeSystems;
 
-import ch.elexis.core.model.IPersistentObject;
+import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;

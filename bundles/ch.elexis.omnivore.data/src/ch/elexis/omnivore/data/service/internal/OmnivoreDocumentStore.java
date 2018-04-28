@@ -20,7 +20,6 @@ import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.exceptions.PersistenceException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
-import ch.elexis.core.model.IPersistentObject;
 import ch.elexis.core.model.ITag;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.data.Patient;
@@ -191,7 +190,7 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	}
 	
 	@Override
-	public Optional<IPersistentObject> getPersistenceObject(IDocument iDocument){
+	public Optional<Object> getPersistenceObject(IDocument iDocument){
 		return Optional.of(DocHandle.load(iDocument.getId()));
 	}
 	

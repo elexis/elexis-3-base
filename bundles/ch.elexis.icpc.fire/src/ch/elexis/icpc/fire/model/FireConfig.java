@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.model.IPersistentObject;
+import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;

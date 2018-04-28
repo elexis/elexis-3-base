@@ -20,10 +20,10 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core.findings;bundle-version="1.0.0",
  ch.elexis.core.findings.ui;bundle-version="1.0.0"
 Export-Package: ch.elexis.data
-Service-Component: OSGI-INF/ch.elexis.base.ch.diagnosecodes.coding.DatabaseICD10CodingContribution.xml,
- OSGI-INF/ch.elexis.base.ch.diagnosecodes.service.TICodeElementService.xml,
- OSGI-INF/ch.elexis.base.ch.diagnosecodes.service.ICD10CodeElementService.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.codes,
  ch.elexis.core.findings.util.model
+Service-Component: OSGI-INF/ch.elexis.base.ch.diagnosecodes.coding.DatabaseICD10CodingContribution.xml,
+ OSGI-INF/ch.elexis.base.ch.diagnosecodes.service.ICD10CodeElementService.xml,
+ OSGI-INF/ch.elexis.base.ch.diagnosecodes.service.TICodeElementService.xml

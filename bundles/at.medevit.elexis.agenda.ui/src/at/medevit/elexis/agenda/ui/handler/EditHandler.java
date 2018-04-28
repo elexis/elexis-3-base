@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.core.model.IPeriod;
-import ch.elexis.core.model.IPersistentObject;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.dialogs.TerminDialog;
@@ -25,7 +25,7 @@ public class EditHandler extends AbstractHandler implements IHandler {
 		Optional<IPeriod> period = getSelectedPeriod();
 		
 		period.ifPresent(p -> {
-			AcquireLockBlockingUi.aquireAndRun((IPersistentObject) p, new ILockHandler() {
+			AcquireLockBlockingUi.aquireAndRun((PersistentObject) p, new ILockHandler() {
 				@Override
 				public void lockFailed(){
 					// do nothing

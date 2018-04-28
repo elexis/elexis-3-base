@@ -3,8 +3,8 @@ package ch.elexis.medikamente.bag.data.service;
 import java.util.HashMap;
 import java.util.Optional;
 
-import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.services.ICodeElementServiceContribution;
+import ch.elexis.core.data.interfaces.ICodeElement;
+import ch.elexis.core.data.services.ICodeElementServiceContribution;
 import ch.elexis.data.Query;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 

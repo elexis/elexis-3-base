@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent">
-   <reference bind="setVacdocService" cardinality="1..1" interface="at.medevit.elexis.ehc.vacdoc.service.VacdocService" name="VacdocService" policy="static" unbind="unsetVacdocService"/>
+   <reference bind="setVacdocService" interface="at.medevit.elexis.ehc.vacdoc.service.VacdocService" name="VacdocService" unbind="unsetVacdocService"/>
    <implementation class="at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent"/>
 </scr:component>

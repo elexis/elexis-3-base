@@ -3,7 +3,7 @@
    <service>
       <provide interface="ch.elexis.core.findings.migration.IMigratorContribution"/>
    </service>
-   <reference bind="setFindingsService" cardinality="1..1" interface="ch.elexis.core.findings.IFindingsService" name="FindingsService" policy="static"/>
-   <reference bind="setFindingsTemplateService" cardinality="1..1" interface="ch.elexis.core.findings.templates.service.IFindingsTemplateService" name="FindingsTemplateService" policy="static"/>
+   <reference bind="setFindingsService" interface="ch.elexis.core.findings.IFindingsService" name="FindingsService"/>
+   <reference bind="setFindingsTemplateService" interface="ch.elexis.core.findings.templates.service.IFindingsTemplateService" name="FindingsTemplateService"/>
    <implementation class="ch.elexis.base.befunde.findings.migrator.MesswertMigrator"/>
 </scr:component>

@@ -18,8 +18,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import ch.elexis.base.ch.ticode.TessinerCode;
-import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.model.IDiagnose;
+import ch.elexis.core.data.interfaces.ICodeElement;
+import ch.elexis.core.data.interfaces.IDiagnose;
 /**
  * Die Tessinercodes werden nicht in der Datenbank vorgehalten, sondern sind aus Effizientgründen
  * hier in dieser Klasse fest verdrahtet. Die Klasse ist trotzdem im data-Package, um die

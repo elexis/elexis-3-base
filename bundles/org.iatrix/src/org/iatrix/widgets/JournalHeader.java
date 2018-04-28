@@ -40,7 +40,7 @@ import org.iatrix.util.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.model.ISticker;
+import ch.elexis.core.data.interfaces.ISticker;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.contacts.views.PatientDetailView2;
 import ch.elexis.core.ui.data.UiSticker;

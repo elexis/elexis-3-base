@@ -31,6 +31,6 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.8.1",
  ch.elexis.core.findings;bundle-version="1.0.0",
  ch.elexis.core.findings.templates;bundle-version="3.0.0",
  org.eclipse.osgi.services;bundle-version="3.5.100"
-Service-Component: OSGI-INF/ch.elexis.base.befunde.findings.migrator.MesswertMigrator.xml,
- OSGI-INF/ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent.xml
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent.xml,
+ OSGI-INF/ch.elexis.base.befunde.findings.migrator.MesswertMigrator.xml

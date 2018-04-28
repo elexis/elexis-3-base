@@ -3,6 +3,6 @@
    <service>
       <provide interface="at.medevit.elexis.emediplan.core.EMediplanService"/>
    </service>
-   <reference bind="setService" cardinality="1..1" interface="at.medevit.elexis.inbox.model.IInboxElementService" name="Service" policy="static"/>
+   <reference bind="setService" interface="at.medevit.elexis.inbox.model.IInboxElementService" name="Service"/>
    <implementation class="at.medevit.elexis.emediplan.core.internal.EMediplanServiceImpl"/>
 </scr:component>

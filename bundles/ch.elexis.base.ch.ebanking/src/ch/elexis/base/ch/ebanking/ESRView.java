@@ -52,7 +52,7 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.model.IPersistentObject;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Mandant;
@@ -389,7 +389,7 @@ public class ESRView extends ViewPart {
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				if ((sel != null) && (!sel.isEmpty())) {
 					Object element = sel.getFirstElement();
-					IPersistentObject po = (IPersistentObject) element;
+					PersistentObject po = (PersistentObject) element;
 					ESRRecordDialog erd =
 						new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) po);
 					erd.open();

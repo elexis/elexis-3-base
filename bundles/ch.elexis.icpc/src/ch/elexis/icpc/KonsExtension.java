@@ -20,7 +20,7 @@ import org.eclipse.swt.custom.StyleRange;
 
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.model.IDiagnose;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.core.ui.text.EnhancedTextField;
 import ch.elexis.core.ui.text.IRichTextDisplay;

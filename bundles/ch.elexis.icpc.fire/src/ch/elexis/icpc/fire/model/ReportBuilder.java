@@ -11,7 +11,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.model.ISticker;
+import ch.elexis.core.data.interfaces.ISticker;
 import ch.elexis.core.types.Gender;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;

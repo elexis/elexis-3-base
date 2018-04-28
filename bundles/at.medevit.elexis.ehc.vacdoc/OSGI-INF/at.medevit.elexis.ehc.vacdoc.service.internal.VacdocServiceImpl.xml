@@ -3,6 +3,6 @@
    <service>
       <provide interface="at.medevit.elexis.ehc.vacdoc.service.VacdocService"/>
    </service>
-   <reference bind="setEhcCoreService" cardinality="1..1" interface="at.medevit.elexis.ehc.core.EhcCoreService" name="EhcCoreService" policy="static" unbind="unsetEhcCoreService"/>
+   <reference bind="setEhcCoreService" interface="at.medevit.elexis.ehc.core.EhcCoreService" name="EhcCoreService" unbind="unsetEhcCoreService"/>
    <implementation class="at.medevit.elexis.ehc.vacdoc.service.internal.VacdocServiceImpl"/>
 </scr:component>

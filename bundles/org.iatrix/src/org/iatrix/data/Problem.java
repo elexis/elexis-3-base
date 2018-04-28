@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.model.IDiagnose;
+import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;

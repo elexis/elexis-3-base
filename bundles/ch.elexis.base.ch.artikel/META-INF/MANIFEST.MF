@@ -18,6 +18,6 @@ Export-Package: ch.elexis.artikel_ch.data,
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.osgi.service.component.annotations
-Service-Component: OSGI-INF/ch.elexis.artikel_ch.data.service.MedicalCodeElementService.xml,
- OSGI-INF/ch.elexis.artikel_ch.data.service.MedikamentCodeElementService.xml
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/ch.elexis.artikel_ch.data.service.MedikamentCodeElementService.xml,
+ OSGI-INF/ch.elexis.artikel_ch.data.service.MedicalCodeElementService.xml

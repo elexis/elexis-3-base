@@ -14,8 +14,8 @@ package ch.elexis.base.ch.ticode;
 
 import java.util.Hashtable;
 
-import ch.elexis.core.model.ICodeElement;
-import ch.elexis.core.model.IDiagnose;
+import ch.elexis.core.data.interfaces.ICodeElement;
+import ch.elexis.core.data.interfaces.IDiagnose;
 
 /**
  * Copy of the ch.elexis.data.TICode class, but without PersistentObject dependencies.

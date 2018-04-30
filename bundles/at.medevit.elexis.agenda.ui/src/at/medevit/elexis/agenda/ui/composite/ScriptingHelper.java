@@ -81,7 +81,7 @@ public class ScriptingHelper {
 	public void scrollToNow(){
 		if (doScroll) {
 			String script =
-				"var now = $('#calendar').fullCalendar('getNow'); if (now._d.getUTCHours() >= 12 && now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top );}  , 500 );}";
+				"var now = $('#calendar').fullCalendar('getNow'); if (now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top - ($('#calendar').height() / 2) );}  , 500 );}";
 			browser.execute(script);
 		}
 	}

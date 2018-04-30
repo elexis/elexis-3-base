@@ -6,3 +6,9 @@
 	background-color: #efefef;
 	border-bottom-left-radius: 5px;
 }
+.fc-icon-refresh:after {
+	content: "\21BB";
+	font-weight: bold;
+	font-size: 120%;
+	top: -7%;
+}

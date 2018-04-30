@@ -41,7 +41,21 @@
 				},
 				eventResizeStart: function (event, jsEvent, ui, view) {
 					event.qtip('destroy');
-				}
+				},
+				customButtons: {
+					reload: {
+						text: '',
+						icon: 'refresh',
+						click: function () {
+							$('#calendar').fullCalendar( 'refetchEvents' );
+						}
+					}
+				},
+				header: {
+					left: 'title',
+					center: '',
+					right: 'reload,today prev,next'
+				},
 			});
 		});
 

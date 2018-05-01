@@ -14,14 +14,7 @@ package ch.elexis.molemax.data;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.molemax.data.messages"; //$NON-NLS-1$
-	public static String MolemaxACL_changeImages;
-	public static String MolemaxACL_seeImages;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-
-	private Messages() {
-	}
+	public static String MolemaxACL_changeImages =
+		ch.elexis.base.l10n.Messages.MolemaxACL_changeImages;
+	public static String MolemaxACL_seeImages = ch.elexis.base.l10n.Messages.MolemaxACL_seeImages;
 }

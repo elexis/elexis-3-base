@@ -18,13 +18,13 @@ public class AfinionTest {
 
 		@Test
 	public void testLocalizedValueError() throws PackageException{
-		String msg = ch.elexis.connect.afinion.packages.Messages.getString("Value.Error");
+		String msg = ch.elexis.connect.afinion.Messages.Afinion_Value_Error;
 		assertEquals("Fehler bei der Messung",msg );
 	}
 
 	@Test
 	public void testLocalizedConnectionName() throws PackageException{
-		String msg = ch.elexis.connect.afinion.Messages.getString("AfinionAS100Action.ConnectionName");
+		String msg = ch.elexis.connect.afinion.Messages.AfinionAS100Action_ConnectionName;
 		assertEquals("Elexis-Afinion AS100", msg);
 	}
 	

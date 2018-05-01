@@ -57,7 +57,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		
 		setPreferenceStore(prefs);
 		
-		setDescription(Messages.getString("PreferencePage.title.description")); //$NON-NLS-1$
+		setDescription(Messages.PreferencePage_title_description); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -66,25 +66,25 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		final RadioGroupFieldEditor groupFieldEditor =
 			new RadioGroupFieldEditor(
 				BATCH_OR_FTP,
-				Messages.getString("PreferencePage.direktimport.label"), 2, new String[][] { //$NON-NLS-1$
-					{
-						Messages.getString("PreferencePage.batchscript.label"), BATCH}, { Messages.getString("PreferencePage.ftpserver.label"), FTP}}, //$NON-NLS-1$ //$NON-NLS-2$
+				Messages.PreferencePage_direktimport_label, 2, new String[][] { //$NON-NLS-1$
+					{ Messages.PreferencePage_batchscript_label, BATCH}, 
+					{ Messages.PreferencePage_ftpserver_label, FTP}},
 				parentComp, true);
 		final FileFieldEditor batchFileEditor =
-			new FileFieldEditor(BATCH_DATEI, Messages.getString("PreferencePage.batchdatei.label"), //$NON-NLS-1$
+			new FileFieldEditor(BATCH_DATEI, Messages.PreferencePage_batchdatei_label, //$NON-NLS-1$
 				parentComp);
 		
 		addField(groupFieldEditor);
 		addField(batchFileEditor);
 		
 		addField(new StringFieldEditor(FTP_HOST,
-			Messages.getString("PreferencePage.label.host"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_host, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new StringFieldEditor(FTP_USER,
-			Messages.getString("PreferencePage.label.user"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_user, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new StringFieldEditor(FTP_PWD,
-			Messages.getString("PreferencePage.label.password"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_password, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new InexistingDirectoryOKDirectoryFieldEditor(DL_DIR,
-			Messages.getString("PreferencePage.label.download"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_download, getFieldEditorParent())); //$NON-NLS-1$
 	}
 	
 	public void init(final IWorkbench workbench){

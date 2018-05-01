@@ -16,15 +16,10 @@ package com.hilotec.elexis.messwerte.v2.data.typen;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "com.hilotec.elexis.messwerte.v2.data.typen.messages"; //$NON-NLS-1$
-	public static String MesswertTypBool_No;
-	public static String MesswertTypBool_Yes;
-	public static String MesswertTypNum_CastFailure;
-	public static String MesswertTypScale_CastFailure;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-	
-	private Messages(){}
+	public static String MesswertTypBool_No = ch.elexis.base.l10n.Messages.MesswertTypBool_No;
+	public static String MesswertTypBool_Yes = ch.elexis.base.l10n.Messages.MesswertTypBool_Yes;
+	public static String MesswertTypNum_CastFailure =
+		ch.elexis.base.l10n.Messages.MesswertTypNum_CastFailure;
+	public static String MesswertTypScale_CastFailure =
+		ch.elexis.base.l10n.Messages.MesswertTypScale_CastFailure;
 }

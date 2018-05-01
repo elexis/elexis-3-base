@@ -13,46 +13,56 @@
 
 package ch.elexis.base.befunde;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import ch.rgw.tools.ExHandler;
-
-/**
- * This is the basis of the internationalization system. Every single String that is visible to the
- * user should be translatet through this mechanism The text file messages.properties contains the
- * "generic" versions of all translatable Strings. To create a new language file, one must only
- * create a file called messages_<language>_locale.properties, where locale is optionale. Thus you
- * might create messages_fr.properties to create a french localization or messages_fr_CH.properties
- * to create an even more specific version
- * 
- * @author gerry
- * 
- */
 public class Messages {
-	private static final String BUNDLE_NAME = "ch.elexis.base.befunde.messages"; //$NON-NLS-1$
-	
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-	
-	private Messages(){}
-	
-	public static String getString(String key){
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
-	
-	public static String getString(String key, Object[] params){
-		if (params == null) {
-			return getString(key);
-		}
-		try {
-			return java.text.MessageFormat.format(getString(key), params);
-		} catch (Exception e) {
-			ExHandler.handle(e);
-			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
+  public static  String BefundePrefs_enterRenameMessage = ch.elexis.base.l10n.Messages.BefundePrefs_enterRenameMessage;
+  public static  String BefundePrefs_enterRenameCaption = ch.elexis.base.l10n.Messages.BefundePrefs_enterRenameCaption;
+  public static String ACLContributor_addMesswertACLName = ch.elexis.base.l10n.Messages.ACLContributor_addMesswertACLName;
+  public static String ACLContributor_messwertACLName = ch.elexis.base.l10n.Messages.ACLContributor_messwertACLName;
+  public static String ACLContributor_messwertRubrikACLName = ch.elexis.base.l10n.Messages.ACLContributor_messwertRubrikACLName;
+  public static String BefundePrefs_add = ch.elexis.base.l10n.Messages.BefundePrefs_add;
+  public static String BefundePrefs_deleteText = ch.elexis.base.l10n.Messages.BefundePrefs_deleteText;
+  public static String BefundePrefs_renameFinding = ch.elexis.base.l10n.Messages.BefundePrefs_renameFinding;
+  public static String BefundePrefs_enterNameCaption = ch.elexis.base.l10n.Messages.BefundePrefs_enterNameCaption;
+  public static String BefundePrefs_enterNameMessage = ch.elexis.base.l10n.Messages.BefundePrefs_enterNameMessage;
+  public static String BefundePrefs_dotEndingNameNotAllowed = ch.elexis.base.l10n.Messages.BefundePrefs_dotEndingNameNotAllowed;
+  public static String DataAccessor_0 = ch.elexis.base.l10n.Messages.DataAccessor_0;
+  public static String DataAccessor_data = ch.elexis.base.l10n.Messages.DataAccessor_data;
+  public static String DataAccessor_dataInBefundePlugin = ch.elexis.base.l10n.Messages.DataAccessor_dataInBefundePlugin;
+  public static String DataAccessor_dateExpected = ch.elexis.base.l10n.Messages.DataAccessor_dateExpected;
+  public static String DataAccessor_invalidFieldIndex = ch.elexis.base.l10n.Messages.DataAccessor_invalidFieldIndex;
+  public static String DataAccessor_invalidFieldName = ch.elexis.base.l10n.Messages.DataAccessor_invalidFieldName;
+  public static String DataAccessor_invalidParameter = ch.elexis.base.l10n.Messages.DataAccessor_invalidParameter;
+  public static String DataAccessor_notFound = ch.elexis.base.l10n.Messages.DataAccessor_notFound;
+  public static String DataAccessor_first = ch.elexis.base.l10n.Messages.DataAccessor_first;
+  public static String DataAccessor_last = ch.elexis.base.l10n.Messages.DataAccessor_last;
+  public static String DataAccessor_date = ch.elexis.base.l10n.Messages.DataAccessor_date;
+  public static String DataAccessor_all = ch.elexis.base.l10n.Messages.DataAccessor_all;
+  public static String EditFindingDialog_captionBefundEditDlg = ch.elexis.base.l10n.Messages.EditFindingDialog_captionBefundEditDlg;
+  public static String EditFindingDialog_enterTextForBefund = ch.elexis.base.l10n.Messages.EditFindingDialog_enterTextForBefund;
+  public static String EditFindingDialog_noPatientSelected = ch.elexis.base.l10n.Messages.EditFindingDialog_noPatientSelected;
+  public static String FindingsView_addNewMeasure = ch.elexis.base.l10n.Messages.FindingsView_addNewMeasure;
+  public static String FindingsView_deleteActionCaption = ch.elexis.base.l10n.Messages.FindingsView_deleteActionCaption;
+  public static String FindingsView_deleteActionToolTip = ch.elexis.base.l10n.Messages.FindingsView_deleteActionToolTip;
+  public static String FindingsView_deleteConfirmCaption = ch.elexis.base.l10n.Messages.FindingsView_deleteConfirmCaption;
+  public static String FindingsView_deleteConfirmMessage = ch.elexis.base.l10n.Messages.FindingsView_deleteConfirmMessage;
+  public static String FindingsView_editActionCaption = ch.elexis.base.l10n.Messages.FindingsView_editActionCaption;
+  public static String FindingsView_editActionToolTip = ch.elexis.base.l10n.Messages.FindingsView_editActionToolTip;
+  public static String FindingsView_noPatientSelected = ch.elexis.base.l10n.Messages.FindingsView_noPatientSelected;
+  public static String FindingsView_printActionCaptiob = ch.elexis.base.l10n.Messages.FindingsView_printActionCaptiob;
+  public static String FindingsView_printActionMessage = ch.elexis.base.l10n.Messages.FindingsView_printActionMessage;
+  public static String Messwert_couldNotCreateTable = ch.elexis.base.l10n.Messages.Messwert_couldNotCreateTable;
+  public static String Messwert_valuesError = ch.elexis.base.l10n.Messages.Messwert_valuesError;
+  public static String MesswerteView_date = ch.elexis.base.l10n.Messages.MesswerteView_date;
+  public static String MesswerteView_enterNewEntry = ch.elexis.base.l10n.Messages.MesswerteView_enterNewEntry;
+  public static String MesswerteView_enterNewValue = ch.elexis.base.l10n.Messages.MesswerteView_enterNewValue;
+  public static String MesswerteView_new = ch.elexis.base.l10n.Messages.MesswerteView_new;
+  public static String MesswerteView_noPatSelected = ch.elexis.base.l10n.Messages.MesswerteView_noPatSelected;
+  public static String PrefsPage_enterCalculationForThis = ch.elexis.base.l10n.Messages.PrefsPage_enterCalculationForThis;
+  public static String PrefsPage_multilineCaption = ch.elexis.base.l10n.Messages.PrefsPage_multilineCaption;
+  public static String PrefsPage_warningConfirmMessage = ch.elexis.base.l10n.Messages.PrefsPage_warningConfirmMessage;
+  public static String PrefsPage_warningNotUndoableCaption = ch.elexis.base.l10n.Messages.PrefsPage_warningNotUndoableCaption;
+  public static String PrefsPage_warningConfirmRename = ch.elexis.base.l10n.Messages.PrefsPage_warningConfirmRename;
+  public static String PrintFindingsDialog_messwerteCaption = ch.elexis.base.l10n.Messages.PrintFindingsDialog_messwerteCaption;
+  public static String PrintFindingsDialog_printMesswerteMessage = ch.elexis.base.l10n.Messages.PrintFindingsDialog_printMesswerteMessage;
+  public static String PrintFindingsDialog_printMesswerteTitle = ch.elexis.base.l10n.Messages.PrintFindingsDialog_printMesswerteTitle;
 }

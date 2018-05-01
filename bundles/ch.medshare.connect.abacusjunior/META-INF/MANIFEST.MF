@@ -12,6 +12,7 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.base.ch.diagnosecodes,
  ch.elexis.core.data,
  ch.elexis.core.ui,
- org.slf4j.api
+ org.slf4j.api,
+ ch.elexis.base.l10n;bundle-version="3.5.0"
 Eclipse-LazyStart: true
 Bundle-Vendor: medshare.ch

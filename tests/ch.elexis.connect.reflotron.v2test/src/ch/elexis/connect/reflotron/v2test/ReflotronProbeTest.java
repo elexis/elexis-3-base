@@ -130,13 +130,13 @@ public class ReflotronProbeTest {
 
 	@Test
 	public void testLocalizedValueError() throws PackageException{
-		String msg = ch.elexis.connect.reflotron.packages.Messages.getString("Value.Error");
+		String msg = ch.elexis.connect.reflotron.Messages.Reflotron_Value_Error;
 		assertEquals("Fehler bei der Messung",msg );
 	}
 
 	@Test
 	public void testLocalizedConnectionName() throws PackageException{
-		String msg = ch.elexis.connect.reflotron.Messages.getString("ReflotronSprintAction.ConnectionName");
+		String msg = ch.elexis.connect.reflotron.Messages.ReflotronSprintAction_ConnectionName;
 		assertEquals("Elexis-Roche Reflotron", msg);
 	}
 	

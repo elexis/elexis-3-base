@@ -25,16 +25,16 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 	Logger _log;
 	
 	public AbacusJuniorAction(){
-		super(Messages.getString("AbacusJuniorAction.ButtonName"), AS_CHECK_BOX);
-		setToolTipText(Messages.getString("AbacusJuniorAction.ToolTip"));
+		super(Messages.AbacusJuniorAction_ButtonName, AS_CHECK_BOX);
+		setToolTipText(Messages.AbacusJuniorAction_ToolTip);
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
 			"ch.medshare.connect.abacusjunior", "icons/abacusjunior.ico"));
 		
 		_ctrl =
-			new Connection(Messages.getString("AbacusJuniorAction.ConnectionName"),
+			new Connection(Messages.AbacusJuniorAction_ConnectionName,
 				CoreHub.localCfg.get(Preferences.PORT,
-					Messages.getString("AbacusJuniorAction.DefaultPort")), CoreHub.localCfg.get(
-					Preferences.PARAMS, Messages.getString("AbacusJuniorAction.DefaultParams")),
+					Messages.AbacusJuniorAction_DefaultPort), CoreHub.localCfg.get(
+					Preferences.PARAMS, Messages.AbacusJuniorAction_DefaultParams),
 				this);
 		
 		if (CoreHub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) {
@@ -43,8 +43,8 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 					new Logger(System.getProperty("user.home") + File.separator + "elexis"
 						+ File.separator + "abacusjunior.log");
 			} catch (FileNotFoundException e) {
-				SWTHelper.showError(Messages.getString("AbacusJuniorAction.LogError.Title"),
-					Messages.getString("AbacusJuniorAction.LogError.Text"));
+				SWTHelper.showError(Messages.AbacusJuniorAction_LogError_Title,
+					Messages.AbacusJuniorAction_LogError_Text);
 				_log = new Logger();
 			}
 		} else {
@@ -57,10 +57,10 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 		if (isChecked()) {
 			KontaktSelektor ksl =
 				new KontaktSelektor(Hub.getActiveShell(), Patient.class,
-					Messages.getString("AbacusJuniorAction.Patient.Title"),
-					Messages.getString("AbacusJuniorAction.Patient.Text"), Patient.DEFAULT_SORT);
+					Messages.AbacusJuniorAction_Patient_Title,
+					Messages.AbacusJuniorAction_Patient_Text, Patient.DEFAULT_SORT);
 			ksl.create();
-			ksl.getShell().setText(Messages.getString("AbacusJuniorAction.Patient.Title"));
+			ksl.getShell().setText(Messages.AbacusJuniorAction_Patient_Title);
 			if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 				_actPatient = (Patient) ksl.getSelection();
 				
@@ -70,8 +70,8 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 					return;
 				} else {
 					_log.log("Error");
-					SWTHelper.showError(Messages.getString("AbacusJuniorAction.RS232.Error.Title"),
-						Messages.getString("AbacusJuniorAction.RS232.Error.Text"));
+					SWTHelper.showError(Messages.AbacusJuniorAction_RS232_Error_Title,
+						Messages.AbacusJuniorAction_RS232_Error_Text);
 				}
 			}
 		} else {
@@ -91,8 +91,8 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 		setChecked(false);
 		_log.log("Break");
 		_log.logEnd();
-		SWTHelper.showError(Messages.getString("AbacusJuniorAction.RS232.Break.Title"),
-			Messages.getString("AbacusJuniorAction.RS232.Break.Text"));
+		SWTHelper.showError(Messages.AbacusJuniorAction_RS232_Break_Title,
+			Messages.AbacusJuniorAction_RS232_Break_Text);
 	}
 	
 	public void gotChunk(final Connection connection, final String data){
@@ -128,8 +128,8 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 	public void timeout(){
 		_ctrl.close();
 		_log.log("Timeout");
-		SWTHelper.showError(Messages.getString("AbacusJuniorAction.RS232.Timeout.Title"),
-			Messages.getString("AbacusJuniorAction.RS232.Timeout.Text"));
+		SWTHelper.showError(Messages.AbacusJuniorAction_RS232_Timeout_Title,
+			Messages.AbacusJuniorAction_RS232_Timeout_Text);
 		setChecked(false);
 		_log.logEnd();
 	}

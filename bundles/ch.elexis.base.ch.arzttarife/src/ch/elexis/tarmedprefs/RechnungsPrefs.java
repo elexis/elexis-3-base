@@ -116,7 +116,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		};
 	
 	public RechnungsPrefs(){
-		super(Messages.getString("RechnungsPrefs.BillPrefs")); //$NON-NLS-1$
+		super(Messages.RechnungsPrefs_BillPrefs); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -155,16 +155,16 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		Group adrs = new Group(ret, SWT.NONE);
 		adrs.setLayout(new GridLayout(2, false));
 		adrs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		adrs.setText(Messages.getString("RechnungsPrefs.BillDetails")); //$NON-NLS-1$
+		adrs.setText(Messages.RechnungsPrefs_BillDetails); //$NON-NLS-1$
 		hTreat = new Hyperlink(adrs, SWT.NONE);
-		hTreat.setText(Messages.getString("RechnungsPrefs.Treator")); //$NON-NLS-1$
+		hTreat.setText(Messages.RechnungsPrefs_Treator); //$NON-NLS-1$
 		hTreat.setForeground(blau);
 		hTreat.addHyperlinkListener(hDetailListener);
 		tTreat = new Text(adrs, SWT.BORDER | SWT.READ_ONLY);
 		tTreat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		Label lMandantType = new Label(adrs, SWT.NONE);
-		lMandantType.setText(Messages.getString("RechnungsPrefs.MandantType")); //$NON-NLS-1$
+		lMandantType.setText(Messages.RechnungsPrefs_MandantType); //$NON-NLS-1$
 		lMandantType.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		cvMandantType = new ComboViewer(adrs);
@@ -172,8 +172,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cvMandantType.setLabelProvider(new LabelProvider() {
 			public String getText(Object element){
 				if (element instanceof MandantType) {
-					return Messages
-						.getString("RechnungsPrefs.MandantType." + ((MandantType) element).name());
+					return Messages.RechnungsPrefs_MandantType + ((MandantType) element).name();
 				}
 				return element.toString();
 			};
@@ -222,14 +221,14 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cFinanzinstitut.setLayout(new GridLayout(2, false));
 		
 		Label lFinanzinstitut = new Label(cFinanzinstitut, SWT.NONE);
-		lFinanzinstitut.setText(Messages.getString("RechnungsPrefs.Financeinst")); //$NON-NLS-1$
+		lFinanzinstitut.setText(Messages.RechnungsPrefs_Financeinst); //$NON-NLS-1$
 		lFinanzinstitut.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 		bPost = new Button(cFinanzinstitut, SWT.RADIO);
 		gd = SWTHelper.getFillGridData(1, false, 1, false);
 		gd.verticalAlignment = SWT.TOP;
 		bPost.setLayoutData(gd);
-		bPost.setText(Messages.getString("RechnungsPrefs.post")); //$NON-NLS-1$
+		bPost.setText(Messages.RechnungsPrefs_post); //$NON-NLS-1$
 		bPost.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
 				// check if Bank has been chosen
@@ -239,9 +238,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					actMandant.setInfoElement(ta.RNBANK, ""); //$NON-NLS-1$
 					// clear data set with BankLister dialog
 					actMandant.setInfoElement(ta.ESRNUMBER, ""); //$NON-NLS-1$
-					actMandant.setInfoElement(ta.ESRSUB, Messages.getString("RechnungsPrefs.13")); //$NON-NLS-1$
-					actMandant.setInfoElement(Messages.getString("RechnungsPrefs.department"), ""); //$NON-NLS-1$ //$NON-NLS-2$
-					actMandant.setInfoElement(Messages.getString("RechnungsPrefs.POBox"), ""); //$NON-NLS-1$ //$NON-NLS-2$
+					actMandant.setInfoElement(ta.ESRSUB, Messages.RechnungsPrefs_13); //$NON-NLS-1$
+					actMandant.setInfoElement(Messages.RechnungsPrefs_department, ""); //$NON-NLS-1$
+					actMandant.setInfoElement(Messages.RechnungsPrefs_POBox, ""); //$NON-NLS-1$ 
 				}
 				
 				// check if Post account is already available
@@ -261,7 +260,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cPost.setLayout(new GridLayout(1, false));
 		hPost = new Hyperlink(cPost, SWT.NONE);
 		hPost.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		hPost.setText(Messages.getString("RechnungsPrefs.POAccount")); //$NON-NLS-1$
+		hPost.setText(Messages.RechnungsPrefs_POAccount); //$NON-NLS-1$
 		hPost.setForeground(blau);
 		hPost.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
@@ -279,7 +278,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		gd = SWTHelper.getFillGridData(1, false, 1, false);
 		gd.verticalAlignment = SWT.TOP;
 		bBank.setLayoutData(gd);
-		bBank.setText(Messages.getString("RechnungsPrefs.bank")); //$NON-NLS-1$
+		bBank.setText(Messages.RechnungsPrefs_bank); //$NON-NLS-1$
 		bBank.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
 				if (actBank == null) {
@@ -297,7 +296,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cBank.setLayout(new GridLayout(1, false));
 		hBank = new Hyperlink(cBank, SWT.NONE);
 		hBank.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		hBank.setText(Messages.getString("RechnungsPrefs.bankconnection")); //$NON-NLS-1$
+		hBank.setText(Messages.RechnungsPrefs_bankconnection); //$NON-NLS-1$
 		hBank.setForeground(blau);
 		hBank.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
@@ -315,12 +314,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		// Trust Center
 		
 		Group gTC = new Group(ret, SWT.NONE);
-		gTC.setText(Messages.getString("RechnungsPrefs.trustcenter")); //$NON-NLS-1$
+		gTC.setText(Messages.RechnungsPrefs_trustcenter); //$NON-NLS-1$
 		gTC.setLayout(new GridLayout());
 		gTC.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		bUseTC = new Button(gTC, SWT.CHECK);
-		bUseTC.setText(Messages.getString("RechnungsPrefs.TrustCenterUsed")); //$NON-NLS-1$
+		bUseTC.setText(Messages.RechnungsPrefs_TrustCenterUsed); //$NON-NLS-1$
 		bUseTC.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -350,8 +349,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		responsible = new ResponsibleComposite(gResponsible, SWT.NONE);
 		
 		/*
-		 * bUseEDA=new Button(gTC,SWT.CHECK); bUseEDA.setText(Messages.getString(
-		 * "RechnungsPrefs.TrustCewntereDA")); //$NON-NLS-1$ bUseEDA.addSelectionListener(new
+		 * bUseEDA=new Button(gTC,SWT.CHECK); bUseEDA.setText(Messages.RechnungsPrefs_TrustCewntereDA);
+		 * bUseEDA.addSelectionListener(new
 		 * SelectionAdapter(){
 		 * 
 		 * @Override public void widgetSelected(SelectionEvent e) {
@@ -394,46 +393,46 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	
 	private void addFontsGroup(Composite ret){
 		Group fonts = new Group(ret, SWT.NONE);
-		fonts.setText(Messages.getString("RechnungsPrefs.FontSlip")); //$NON-NLS-1$
+		fonts.setText(Messages.RechnungsPrefs_FontSlip); //$NON-NLS-1$
 		fonts.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		fonts.setLayout(new GridLayout(2, false));
 		
 		FontsTextListener fontsTextListener = new FontsTextListener();
 		
-		String warning = Messages.getString("RechnungsPrefs.FontWarning") //$NON-NLS-1$
-			+ Messages.getString("RechnungsPrefs.FontWarning2") //$NON-NLS-1$
-			+ Messages.getString("RechnungsPrefs.FontWarning3"); //$NON-NLS-1$
+		String warning = Messages.RechnungsPrefs_FontWarning //$NON-NLS-1$
+			+ Messages.RechnungsPrefs_FontWarning2 //$NON-NLS-1$
+			+ Messages.RechnungsPrefs_FontWarning3; //$NON-NLS-1$
 		Label lWarning = new Label(fonts, SWT.NONE);
 		lWarning.setText(warning);
 		lWarning.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.Font")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_Font); //$NON-NLS-1$
 		tESRNormalFontName = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESRNormalFontName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRNormalFontName.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.Size")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_Size); //$NON-NLS-1$
 		tESRNormalFontSize = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESRNormalFontSize.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRNormalFontSize.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.fontCodingLine")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_fontCodingLine); //$NON-NLS-1$
 		tESROCRFontName = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESROCRFontName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESROCRFontName.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.SizeCondingLine")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_SizeCondingLine); //$NON-NLS-1$
 		tESROCRFontSize = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESROCRFontSize.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESROCRFontSize.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.Weight")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_Weight); //$NON-NLS-1$
 		cbESROCRFontWeight = new Combo(fonts, SWT.READ_ONLY);
 		cbESROCRFontWeight.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 		
-		cbESROCRFontWeight.add(Messages.getString("RechnungsPrefs.light")); // FONT_MIN_INDEX //$NON-NLS-1$
-		cbESROCRFontWeight.add(Messages.getString("RechnungsPrefs.normal")); // FONT_NORMAL_INDEX //$NON-NLS-1$
-		cbESROCRFontWeight.add(Messages.getString("RechnungsPrefs.bold")); // FONT_BOLD_INDEX //$NON-NLS-1$
+		cbESROCRFontWeight.add(Messages.RechnungsPrefs_light); // FONT_MIN_INDEX //$NON-NLS-1$
+		cbESROCRFontWeight.add(Messages.RechnungsPrefs_normal); // FONT_NORMAL_INDEX //$NON-NLS-1$
+		cbESROCRFontWeight.add(Messages.RechnungsPrefs_bold); // FONT_BOLD_INDEX //$NON-NLS-1$
 		
 		cbESROCRFontWeight.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -442,22 +441,22 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			}
 		});
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.horzCorrCodingLine")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_horzCorrCodingLine); //$NON-NLS-1$
 		tESRPrinterCorrectionX = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESRPrinterCorrectionX.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRPrinterCorrectionX.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.vertCorrCodingLine")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_vertCorrCodingLine); //$NON-NLS-1$
 		tESRPrinterCorrectionY = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESRPrinterCorrectionY.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRPrinterCorrectionY.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.horrzBaseOffset")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_horrzBaseOffset); //$NON-NLS-1$
 		tESRPrintCorrectionBaseX = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESRPrintCorrectionBaseX.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRPrintCorrectionBaseX.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungenPrefs.vertBaseOffset")); //$NON-NLS-1$
+		new Label(fonts, SWT.NONE).setText(Messages.RechnungenPrefs_vertBaseOffset); //$NON-NLS-1$
 		tESRPrintCorrectionBaseY = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESRPrintCorrectionBaseY.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRPrintCorrectionBaseY.addFocusListener(fontsTextListener);
@@ -491,7 +490,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			}
 			KontaktExtDialog dlg = new KontaktExtDialog(getShell(), actMandant, ExtFlds);
 			dlg.create();
-			dlg.setTitle(Messages.getString("RechnungsPrefs.MandatorDetails")); //$NON-NLS-1$
+			dlg.setTitle(Messages.RechnungsPrefs_MandatorDetails); //$NON-NLS-1$
 			
 			dlg.open();
 		}
@@ -501,7 +500,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	class BankLister extends TitleAreaDialog {
 		final String[] flds =
 			{
-				Messages.getString("RechnungsPrefs.department"), Messages.getString("RechnungsPrefs.POBox"), ta.ESRNUMBER, ta.ESRSUB}; //$NON-NLS-1$ //$NON-NLS-2$
+				Messages.RechnungsPrefs_department, Messages.RechnungsPrefs_POBox, ta.ESRNUMBER, ta.ESRSUB};
 		Label banklabel;
 		KontaktExtDialog.ExtInfoTable exTable;
 		
@@ -516,15 +515,15 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			ret.setLayout(new GridLayout(2, false));
 			Hyperlink hb =
 				UiDesk.getToolkit().createHyperlink(ret,
-					Messages.getString("RechnungsPrefs.FinanceInst"), SWT.NONE); //$NON-NLS-1$
+					Messages.RechnungsPrefs_FinanceInst, SWT.NONE); //$NON-NLS-1$
 			hb.addHyperlinkListener(new HyperlinkAdapter() {
 				
 				@Override
 				public void linkActivated(HyperlinkEvent e){
 					KontaktSelektor ksl =
-						new KontaktSelektor(getShell(), Organisation.class, Messages
-							.getString("RechnungsPrefs.paymentinst"), Messages
-							.getString("RechnungsPrefs.PleseChooseBank"), new String[] {
+						new KontaktSelektor(getShell(), Organisation.class, 
+								Messages.RechnungsPrefs_paymentinst, 
+								Messages.RechnungsPrefs_PleseChooseBank, new String[] {
 							Organisation.FLD_NAME1, Organisation.FLD_NAME2
 						}); //$NON-NLS-1$ //$NON-NLS-2$
 					if (ksl.open() == Dialog.OK) {
@@ -547,9 +546,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		@Override
 		public void create(){
 			super.create();
-			getShell().setText(Messages.getString("RechnungsPrefs.ChooseBank")); //$NON-NLS-1$
+			getShell().setText(Messages.RechnungsPrefs_ChooseBank); //$NON-NLS-1$
 			setTitle(actMandant.getLabel());
-			setMessage(Messages.getString("RechnungsPrefs.ChosseInst")); //$NON-NLS-1$
+			setMessage(Messages.RechnungsPrefs_ChosseInst); //$NON-NLS-1$
 		}
 		
 		@Override
@@ -583,9 +582,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		@Override
 		public void create(){
 			super.create();
-			getShell().setText(Messages.getString("RechnungsPrefs.postAccount")); //$NON-NLS-1$
+			getShell().setText(Messages.RechnungsPrefs_postAccount); //$NON-NLS-1$
 			setTitle(actMandant.getLabel());
-			setMessage(Messages.getString("RechnungsPrefs.InfoPostAccount")); //$NON-NLS-1$
+			setMessage(Messages.RechnungsPrefs_InfoPostAccount); //$NON-NLS-1$
 		}
 		
 		@Override

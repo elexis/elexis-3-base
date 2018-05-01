@@ -197,7 +197,7 @@ public class Messwert extends PersistentObject {
 					MessageDialog
 						.openError(
 							null,
-							Messages.getString("Messwert.valuesError"), Messages.getString("Messwert.couldNotCreateTable")); //$NON-NLS-1$ //$NON-NLS-2$
+							Messages.Messwert_valuesError, Messages.Messwert_couldNotCreateTable); //$NON-NLS-1$ //$NON-NLS-2$
 					return null;
 				}
 				Map names = setup.getMap(FLD_BEFUNDE);

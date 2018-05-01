@@ -89,9 +89,9 @@ public class ErrorInvoiceForm extends Composite {
 				String message =
 					MessageFormat
 						.format(
-							Messages.getString("ErrorInvoiceForm.msg.copyStylesheet"), new Object[] { fromFile.getAbsolutePath()}); //$NON-NLS-1$
+							Messages.ErrorInvoiceForm_msg_copyStylesheet, new Object[] { fromFile.getAbsolutePath()}); //$NON-NLS-1$
 				MessageDialog.openError(getShell(), Messages
-					.getString("ErrorInvoiceForm.error.copyStylesheet"), //$NON-NLS-1$
+					.ErrorInvoiceForm_error_copyStylesheet, //$NON-NLS-1$
 					message);
 			}
 		}
@@ -104,7 +104,7 @@ public class ErrorInvoiceForm extends Composite {
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				MessageDialog.openError(shell, Messages
-					.getString("ErrorInvoiceForm.msg.Fehlerverzeichnis"), ex //$NON-NLS-1$
+					.ErrorInvoiceForm_msg_Fehlerverzeichnis, ex //$NON-NLS-1$
 					.getMessage());
 			}
 		}
@@ -118,7 +118,7 @@ public class ErrorInvoiceForm extends Composite {
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				MessageDialog.openError(shell, Messages
-					.getString("ErrorInvoiceForm.msg.Antwortverzeichnis"), ex //$NON-NLS-1$
+					.ErrorInvoiceForm_msg_Antwortverzeichnis, ex //$NON-NLS-1$
 					.getMessage());
 			}
 		}
@@ -145,7 +145,7 @@ public class ErrorInvoiceForm extends Composite {
 		String msgErrorDir =
 			MessageFormat
 				.format(
-					Messages.getString("ErrorInvoiceForm.msg.Fehlerverzeichnis"), new Object[] { new Integer(countError)}); //$NON-NLS-1$
+					Messages.ErrorInvoiceForm_msg_Fehlerverzeichnis, new Object[] { new Integer(countError)}); //$NON-NLS-1$
 		btnErrorDir.setText(msgErrorDir);
 		btnErrorDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
@@ -153,7 +153,7 @@ public class ErrorInvoiceForm extends Composite {
 		String msgReceiveDir =
 			MessageFormat
 				.format(
-					Messages.getString("ErrorInvoiceForm.msg.Antwortverzeichnis"), new Object[] { new Integer(countReceive)}); //$NON-NLS-1$
+					Messages.ErrorInvoiceForm_msg_Antwortverzeichnis, new Object[] { new Integer(countReceive)}); //$NON-NLS-1$
 		btnReceiveDir.setText(msgReceiveDir);
 		btnReceiveDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		

@@ -19,13 +19,13 @@ public class  SysmexProbeTest{
 
 	@Test
 	public void testLocalizedValueError() throws PackageException{
-		String msg = ch.elexis.connect.sysmex.packages.Messages.getString("Value.Error");
+		String msg = ch.elexis.connect.sysmex.Messages.Sysmex_Value_Error;
 		assertEquals("Fehler bei der Messung",msg );
 	}
 
 	@Test
 	public void testLocalizedConnectionName() throws PackageException{
-		String msg = ch.elexis.connect.sysmex.Messages.getString("SysmexAction.ConnectionName");
+		String msg = ch.elexis.connect.sysmex.Messages.SysmexAction_ConnectionName;
 		assertEquals("Elexis-Sysmex", msg);
 	}
 	

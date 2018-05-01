@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.rgw.utility,
  at.medevit.ch.artikelstamm.ui,
  at.medevit.ch.artikelstamm.elexis.common,
- org.apache.commons.lang
+ org.apache.commons.lang,
+ ch.elexis.base.l10n;bundle-version="3.5.0"
 Import-Package: org.eclipse.wb.swt
 Bundle-ClassPath: lib/,
  .

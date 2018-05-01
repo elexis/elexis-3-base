@@ -15,19 +15,12 @@ package ch.elexis.base.ch.migel;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.base.ch.migel.messages"; //$NON-NLS-1$
-	public static String MiGelImporter_ClearAllData;
-	public static String MiGelImporter_ModeCreateNew;
-	public static String MiGelImporter_ModeUpdateAdd;
-	public static String MiGelImporter_PleaseSelectFile;
-	public static String MiGelImporter_ReadMigel;
-	public static String MiGelDetailDisplay_Price;
-	public static String MiGelDetailDisplay_Unit;
-	public static String MiGelDetailDisplay_Amount;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-	
-	private Messages(){}
+	public static String  MiGelImporter_ClearAllData = ch.elexis.base.l10n.Messages.MiGelImporter_ClearAllData;
+	public static String  MiGelImporter_ModeCreateNew = ch.elexis.base.l10n.Messages.MiGelImporter_ModeCreateNew;
+	public static String  MiGelImporter_ModeUpdateAdd = ch.elexis.base.l10n.Messages.MiGelImporter_ModeUpdateAdd;
+	public static String  MiGelImporter_PleaseSelectFile = ch.elexis.base.l10n.Messages.MiGelImporter_PleaseSelectFile;
+	public static String  MiGelImporter_ReadMigel = ch.elexis.base.l10n.Messages.MiGelImporter_ReadMigel;
+	public static String  MiGelDetailDisplay_Price = ch.elexis.base.l10n.Messages.MiGelDetailDisplay_Price;
+	public static String  MiGelDetailDisplay_Unit = ch.elexis.base.l10n.Messages.MiGelDetailDisplay_Unit;
+	public static String  MiGelDetailDisplay_Amount = ch.elexis.base.l10n.Messages.MiGelDetailDisplay_Amount;
 }

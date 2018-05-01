@@ -5,7 +5,8 @@ Bundle-SymbolicName: ch.medshare.commons;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Require-Bundle: 
  org.eclipse.swt;bundle-version="3.8.1",
- bouncycastle.bcprov-jdk14;bundle-version="138.0.0"
+ bouncycastle.bcprov-jdk14;bundle-version="138.0.0",
+ ch.elexis.base.l10n;bundle-version="3.5.0"
 Export-Package: ch.medshare.licence,
  ch.medshare.swt.widgets,
  ch.medshare.util

@@ -26,7 +26,8 @@ Require-Bundle: org.eclipse.core.jobs,
  commons-logging;bundle-version="1.1.1",
  org.apache.commons.io;bundle-version="2.4.0",
  org.apache.commons.lang;bundle-version="2.6.0",
- edu.emory.mathcs.backport;bundle-version="3.1.0"
+ edu.emory.mathcs.backport;bundle-version="3.1.0",
+ ch.elexis.base.l10n;bundle-version="3.5.0"
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/ical4j-1.0.1.jar

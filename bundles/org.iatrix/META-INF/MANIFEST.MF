@@ -22,6 +22,7 @@ Require-Bundle: org.slf4j.api,
  org.iatrix.messwerte,
  ch.elexis.core.ui.medication,
  org.iatrix.help.wiki,
+ ch.elexis.base.l10n,
  ch.elexis.base.ch.ebanking,
  ch.elexis.core.ui.laboratory
 Eclipse-LazyStart: true

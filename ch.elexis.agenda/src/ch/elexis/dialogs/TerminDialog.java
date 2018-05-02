@@ -329,12 +329,23 @@ public class TerminDialog extends TitleAreaDialog {
 						qbe.add("Tag", ">", new TimeTool().toString(TimeTool.DATE_COMPACT));
 					}
 					java.util.List<Termin> list = qbe.execute();
-					list.sort(new Comparator<Termin>() {
-						@Override
-						public int compare(Termin t1, Termin t2){
-							return t2.getStartTime().compareTo(t1.getStartTime());
-						}
-					});
+					// if past events are included, list future events first (sort desc)
+					// if past events not included, list nearest future event first (sort asc)
+					if (bFuture.getSelection()) {
+						list.sort(new Comparator<Termin>() {
+							@Override
+							public int compare(Termin t1, Termin t2){
+								return t2.getStartTime().compareTo(t1.getStartTime());
+							}
+						});
+					} else {
+						list.sort(new Comparator<Termin>() {
+							@Override
+							public int compare(Termin t1, Termin t2){
+								return t1.getStartTime().compareTo(t2.getStartTime());
+							}
+						});
+					}
 					lTermine.clear();
 					lTerminListe.removeAll();
 					if ((list != null) && (list.size() > 0)) {

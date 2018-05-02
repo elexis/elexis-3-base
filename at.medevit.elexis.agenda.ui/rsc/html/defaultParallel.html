@@ -27,6 +27,7 @@
 				minTime: "06:00:00",
 				maxTime: "23:00:00",
 				slotDuration: "00:05:00",
+				displayEventTime: false,
 				allDaySlot: false,
 				views: {
 			        agendaParallel: { 
@@ -133,6 +134,14 @@
 							viewport: $('#calendar')
 						}
 					});
+				}
+			}
+			if(event.description) {
+				var firstpart = event.description.split('<br /><br />');
+				if(firstpart.length > 0) {
+					element.find(".fc-title").append("<br/>" + firstpart[0]);
+				} else {
+					element.find(".fc-title").append("<br/>" + event.description);
 				}
 			}
 			if (event.borderColor)

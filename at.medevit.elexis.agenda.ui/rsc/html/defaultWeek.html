@@ -134,6 +134,11 @@
 					});
 				}
 			}
+			if (event.borderColor)
+			{
+				element.find("div.fc-content").wrapAll("<div class='event-status-block'></div>");
+				element.find("div.event-status-block").css("border-color", event.borderColor);
+			}
 			if (event.icon)
 			{
 				element.find("div.fc-content").prepend("<i class='ui-icon ui-calendar-icon " +event.icon+"'></i>");

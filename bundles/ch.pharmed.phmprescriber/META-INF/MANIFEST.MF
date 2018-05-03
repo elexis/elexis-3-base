@@ -18,3 +18,4 @@ Import-Package: org.eclipse.core.databinding,
  org.eclipse.jface.databinding.swt,
  org.osgi.framework;version="1.7.0"
 Export-Package: ch.pharmed.phmprescriber
+Automatic-Module-Name: ch.pharmed.phmprescriber

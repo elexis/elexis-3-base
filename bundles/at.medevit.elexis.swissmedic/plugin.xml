@@ -15,7 +15,17 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:ch.elexis.core.ui.medication.views.MedicationView">
+            locationURI="popup:ch.elexis.core.ui.medication.tables?after=ch.elexis.core.ui.medication.separator1">
+         <command
+               commandId="at.medevit.elexis.swissmedic.search"
+               label="Swissmedic suchen ..."
+               style="push"
+               tooltip="Fachinformation Swissmedic...">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.core.ui.medication.views.MedicationView">
          <command
                commandId="at.medevit.elexis.swissmedic.search"
                label="Swissmedic suchen ..."

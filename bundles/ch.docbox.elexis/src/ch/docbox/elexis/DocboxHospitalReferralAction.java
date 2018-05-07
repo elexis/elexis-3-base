@@ -36,6 +36,7 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
@@ -301,19 +302,19 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 	
 	private void addVersicherung(Fall fall, DocboxCDA docboxCDA){
 		if (fall != null) {
+			Kontakt costBearer = fall.getCostBearer();
 			if ("UVG".equals(fall.getAbrechnungsSystem())) {
 				try {
-					if (fall.getRequiredContact("Kostenträger") != null) {
-						docboxCDA.addUnfallversicherung(fall.getRequiredContact("Kostenträger")
-							.getLabel());
+					if (costBearer != null) {
+						docboxCDA.addUnfallversicherung(costBearer.getLabel());
 					}
 				} catch (Exception e) {
 					log.log(e, "addUnfallversicherung", Log.DEBUGMSG);
 					ExHandler.handle(e);
 				}
 				try {
-					docboxCDA.addUnfallversicherungPolicenummer(fall
-						.getRequiredString("Unfallnummer"));
+					docboxCDA
+						.addUnfallversicherungPolicenummer(fall.getRequiredString("Unfallnummer"));
 				} catch (Exception e) {
 					log.log(e, "Unfallnummer", Log.DEBUGMSG);
 					ExHandler.handle(e);
@@ -321,17 +322,16 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 			}
 			if ("KVG".equals(fall.getAbrechnungsSystem())) {
 				try {
-					if (fall.getRequiredContact("Kostenträger") != null) {
-						docboxCDA.addKrankenkasse(fall.getRequiredContact("Kostenträger")
-							.getLabel());
+					if (costBearer != null) {
+						docboxCDA.addKrankenkasse(costBearer.getLabel());
 					}
 				} catch (Exception e) {
 					log.log(e, "addKrankenkasse", Log.DEBUGMSG);
 					ExHandler.handle(e);
 				}
 				try {
-					docboxCDA.addKrankenkassePolicenummer(fall
-						.getRequiredString("Versicherungsnummer"));
+					docboxCDA
+						.addKrankenkassePolicenummer(fall.getRequiredString("Versicherungsnummer"));
 				} catch (Exception e) {
 					log.log(e, "addKrankenkassePolicenummer", Log.DEBUGMSG);
 					ExHandler.handle(e);

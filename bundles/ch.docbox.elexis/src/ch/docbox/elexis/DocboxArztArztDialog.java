@@ -451,7 +451,7 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 		if (fall != null) {
 			if ("UVG".equals(fall.getAbrechnungsSystem())) {
 				try {
-					docboxCDA.addUnfallversicherung(fall.getRequiredContact("Kostenträger")
+					docboxCDA.addUnfallversicherung(fall.getCostBearer()
 						.getLabel());
 				} catch (Exception e) {
 					ExHandler.handle(e);
@@ -465,7 +465,7 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 			}
 			if ("KVG".equals(fall.getAbrechnungsSystem())) {
 				try {
-					docboxCDA.addKrankenkasse(fall.getRequiredContact("Kostenträger").getLabel());
+					docboxCDA.addKrankenkasse(fall.getCostBearer().getLabel());
 				} catch (Exception e) {
 					ExHandler.handle(e);
 				}

@@ -12,6 +12,9 @@ package ch.elexis.views;
 
 import org.eclipse.swt.SWT;
 
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.ui.actions.FlatDataLoader;
 import ch.elexis.core.ui.actions.PersistentObjectLoader;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
@@ -21,16 +24,21 @@ import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PhysioLeistung;
 import ch.elexis.data.Query;
 import ch.rgw.tools.IFilter;
+import ch.rgw.tools.TimeTool;
 
 public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
-	Query<PhysioLeistung> qbe;
+	private Query<PhysioLeistung> qbe;
+	private ViewerConfigurer vc;
+	private UpdateDateEventListener updateListener;
 	
 	public PhysioLeistungsCodeSelectorFactory(){
-		// TODO Auto-generated constructor stub
+		this.updateListener = new UpdateDateEventListener();
+		ElexisEventDispatcher.getInstance().addListeners(updateListener);
 	}
 	
 	@Override
@@ -43,14 +51,36 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 		qbe = new Query<PhysioLeistung>(PhysioLeistung.class);
 		qbe.addPostQueryFilter(new IFilter() {
 			
+			private TimeTool validFrom = new TimeTool();
+			private TimeTool validTo = new TimeTool();
+			
 			public boolean select(Object toTest){
-				PersistentObject o = (PersistentObject) toTest;
-				return !(o.getId().equals("VERSION"));
+				if (toTest instanceof PhysioLeistung) {
+					PhysioLeistung physio = (PhysioLeistung) toTest;
+					if(physio.getId().equals("VERSION")) {
+						return false;
+					}
+					Konsultation selectedKons =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					if (selectedKons != null) {
+						TimeTool validDate = new TimeTool(selectedKons.getDatum());
+						validTo.set(physio.get(PhysioLeistung.FLD_BIS));
+						if(validDate.isBefore(validTo)) {
+							validFrom.set(physio.get(PhysioLeistung.FLD_VON));
+							return validDate.isAfterOrEqual(validFrom);
+						} else {
+							return false;
+						}
+					} else {
+						return true;
+					}
+				}
+				return false;
 			}
 		});
 		PersistentObjectLoader fdl = new FlatDataLoader(cv, qbe);
 		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
-		ViewerConfigurer vc =
+		vc =
 			new ViewerConfigurer(fdl, new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
@@ -80,4 +110,16 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 		return PhysioLeistung.load(id);
 	}
 	
+	private class UpdateDateEventListener extends ElexisEventListenerImpl {
+		public UpdateDateEventListener(){
+			super(Konsultation.class, ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
+		}
+		
+		@Override
+		public void catchElexisEvent(ElexisEvent ev){
+			if (vc != null && vc.getControlFieldProvider() != null) {
+				vc.getControlFieldProvider().fireChangedEvent();
+			}
+		}
+	}
 }

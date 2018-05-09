@@ -208,23 +208,23 @@ public class DocboxTerminvereinbarungAction extends DocboxAction {
 	
 	private void addVersicherung(Fall fall, DocboxCDA docboxCDA){
 		if (fall != null) {
+			Kontakt costBearer = fall.getCostBearer();
 			if ("UVG".equals(fall.getAbrechnungsSystem())) {
 				try {
-					docboxCDA.addUnfallversicherung(fall.getRequiredContact("Kostenträger")
-						.getLabel());
+					docboxCDA.addUnfallversicherung(costBearer.getLabel());
 				} catch (Exception e) {}
 				try {
-					docboxCDA.addUnfallversicherungPolicenummer(fall
-						.getRequiredString("Unfallnummer"));
+					docboxCDA
+						.addUnfallversicherungPolicenummer(fall.getRequiredString("Unfallnummer"));
 				} catch (Exception e) {}
 			}
 			if ("KVG".equals(fall.getAbrechnungsSystem())) {
 				try {
-					docboxCDA.addKrankenkasse(fall.getRequiredContact("Kostenträger").getLabel());
+					docboxCDA.addKrankenkasse(costBearer.getLabel());
 				} catch (Exception e) {}
 				try {
-					docboxCDA.addKrankenkassePolicenummer(fall
-						.getRequiredString("Versicherungsnummer"));
+					docboxCDA
+						.addKrankenkassePolicenummer(fall.getRequiredString("Versicherungsnummer"));
 				} catch (Exception e) {}
 			}
 			

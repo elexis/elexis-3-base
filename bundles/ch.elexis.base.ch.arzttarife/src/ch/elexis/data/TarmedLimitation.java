@@ -281,7 +281,8 @@ public class TarmedLimitation {
 				List<Verrechnet> allVerrechnetOfGroup = new ArrayList<>();
 				List<String> serviceCodes = tarmedGroup.getServices();
 				for (String code : serviceCodes) {
-					allVerrechnetOfGroup.addAll(getVerrechnetByMandantAndCodeDuring(kons, code));
+					allVerrechnetOfGroup
+						.addAll(getVerrechnetByMandantAndCodeDuringPeriod(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,

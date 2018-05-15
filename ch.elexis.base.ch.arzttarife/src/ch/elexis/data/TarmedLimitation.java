@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -270,8 +271,8 @@ public class TarmedLimitation {
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<Verrechnet> verrechnetByMandant = getVerrechnetByMandantAndCodeDuring(kons,
-					verrechnet.getVerrechenbar().getCode());
+				List<Verrechnet> verrechnetByMandant = getVerrechnetByMandantAndCodeDuringPeriod(
+					kons, verrechnet.getVerrechenbar().getCode());
 				if (getVerrechnetCount(verrechnetByMandant) > amount) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
 						TarmedOptifier.KUMULATION, toString(), null, false);
@@ -297,6 +298,127 @@ public class TarmedLimitation {
 			ret += verrechnet.getZahl();
 		}
 		return ret;
+	}
+
+	// @formatter:off
+	private static final String VERRECHNET_BYMANDANT_ANDCODE = "SELECT leistungen.ID FROM leistungen, behandlungen, faelle"
+	+ " WHERE leistungen.deleted = '0'" 
+	+ " AND leistungen.deleted = behandlungen.deleted"
+	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
+	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
+	+ " AND faelle.ID = behandlungen.fallID"
+	+ " AND faelle.PatientID = ?"
+	+ " AND leistungen.LEISTG_CODE like ?"
+	+ " AND behandlungen.MandantID = ?"
+	+ " ORDER BY behandlungen.Datum ASC";
+	// @formatter:on
+	/**
+	 * Get {@link Verrechnet} which are in the matching period for the kons and the code. <br />
+	 * The first period starts with the first time a {@link Verrechnet} with the code was created by
+	 * the mandant. From then on periods with the duration specified by {@link LimitationUnit} and
+	 * limitaiton amount are calculated and the {@link Verrechnet} during the periods are collected.
+	 * The collected {@link Verrechnet} of the period matching the kons date are returned, or empty
+	 * if no such period exists yet.
+	 * 
+	 * @param kons
+	 * @param code
+	 * @return
+	 */
+	private List<Verrechnet> getVerrechnetByMandantAndCodeDuringPeriod(Konsultation kons, String code) {
+		Mandant mandant = kons.getMandant();
+		List<Verrechnet> all = new ArrayList<>();
+		if (mandant != null) {
+			PreparedStatement pstm = PersistentObject.getDefaultConnection()
+				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE);
+			try {
+				pstm.setString(1, kons.getFall().getPatient().getId());
+				pstm.setString(2, code + "%");
+				pstm.setString(3, mandant.getId());
+				ResultSet resultSet = pstm.executeQuery();
+				while (resultSet.next()) {
+					all.add(Verrechnet.load(resultSet.getString(1)));
+				}
+				resultSet.close();
+			} catch (SQLException e) {
+				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
+			} finally {
+				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
+			}
+			// now group in time periods since first verrechnet
+			LocalDate konsDate = new TimeTool(kons.getDatum()).toLocalDate();
+			List<VerrechnetPeriod> grouped = getGroupedByPeriod(all);
+			// lookup period matching konsDate
+			for (VerrechnetPeriod verrechnetPeriod : grouped) {
+				if (verrechnetPeriod.isDateInPeriod(konsDate)) {
+					return verrechnetPeriod.getVerrechnete();
+				}
+			}
+		}		
+		return Collections.emptyList();
+	}
+	
+	private List<VerrechnetPeriod> getGroupedByPeriod(List<Verrechnet> verrechnete){
+		if(!verrechnete.isEmpty()) {
+			List<VerrechnetPeriod> ret = new ArrayList<>();
+			for (Verrechnet verrechnet : verrechnete) {
+				if (ret.isEmpty()) {
+					ret.add(new VerrechnetPeriod(verrechnet));
+				} else {
+					boolean added = false;
+					for (VerrechnetPeriod verrechnetPeriod : ret) {
+						if (verrechnetPeriod.isInPeriod(verrechnet)) {
+							verrechnetPeriod.addVerrechnet(verrechnet);
+							added = true;
+							break;
+						}
+					}
+					// start new period
+					if (!added) {
+						ret.add(new VerrechnetPeriod(verrechnet));
+					}
+				}
+			}
+			return ret;
+		}
+		return Collections.emptyList();
+	}
+	
+	private class VerrechnetPeriod {
+		private LocalDate start;
+		private LocalDate end;
+		
+		private List<Verrechnet> verrechnete;
+		
+		private VerrechnetPeriod(Verrechnet verrechnet){
+			start = new TimeTool(verrechnet.getKons().getDatum()).toLocalDate();
+			if (limitationUnit == LimitationUnit.WEEK) {
+				end = start.plus(limitationAmount, ChronoUnit.WEEKS);
+			} else if (limitationUnit == LimitationUnit.MONTH) {
+				end = start.plus(limitationAmount, ChronoUnit.MONTHS);
+			} else if (limitationUnit == LimitationUnit.YEAR) {
+				end = start.plus(limitationAmount, ChronoUnit.YEARS);
+			}
+			verrechnete = new ArrayList<>();
+			verrechnete.add(verrechnet);
+		}
+		
+		public List<Verrechnet> getVerrechnete(){
+			return verrechnete;
+		}
+		
+		private boolean isInPeriod(Verrechnet verrechnet){
+			LocalDate matchDate = new TimeTool(verrechnet.getKons().getDatum()).toLocalDate();
+			return isDateInPeriod(matchDate);
+		}
+		
+		private boolean isDateInPeriod(LocalDate date){
+			return (date.isAfter(start) || date.isEqual(start))
+				&& (date.isBefore(end) || date.isEqual(end));
+		}
+		
+		private void addVerrechnet(Verrechnet verrechnet){
+			verrechnete.add(verrechnet);
+		}
 	}
 	
 	// @formatter:off

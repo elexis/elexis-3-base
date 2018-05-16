@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
-import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.data.interfaces.ILabItem;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.data.Konsultation;

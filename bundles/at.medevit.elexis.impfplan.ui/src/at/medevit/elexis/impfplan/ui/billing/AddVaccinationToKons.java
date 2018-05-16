@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Display;
 
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.text.model.Samdas.Record;
 import ch.elexis.core.ui.dialogs.SelectOrCreateOpenKonsDialog;
@@ -88,8 +89,8 @@ public class AddVaccinationToKons {
 	private IVerrechenbar getKonsVerrechenbar(Konsultation kons){
 		TimeTool date = new TimeTool(kons.getDatum());
 		if (kons.getFall() != null) {
-			String law = kons.getFall().getRequiredString("Gesetz");
-			return TarmedLeistung.getFromCode(TARMED_5MIN_TARIF, date, law);
+			BillingLaw law = kons.getFall().getConfiguredBillingSystemLaw();
+			return TarmedLeistung.getFromCode(TARMED_5MIN_TARIF, date, law.name());
 		}
 		return null;
 	}

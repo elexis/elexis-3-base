@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Fall;
@@ -63,7 +64,7 @@ public class iMedAbfrageAction extends Action {
 	@Override
 	public void run(){
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
-		Kontakt kostentraeger = null;
+		Kontakt costBearer = null;
 		Kontakt rechnungsempfaenger = null;
 		Date beginDate = null;
 		String vnr = ""; //$NON-NLS-1$
@@ -97,11 +98,11 @@ public class iMedAbfrageAction extends Action {
 					Messages.LabOrderAction_errorTitleNoFallSelected,
 					Messages.LabOrderAction_errorMessageNoFallSelected);
 			} else {
-				kostentraeger = fall.getRequiredContact("Kostenträger"); //$NON-NLS-1$
-				if (kostentraeger == null) {
-					kostentraeger = fall.getGarant();
+				costBearer = fall.getCostBearer();
+				if (costBearer == null) {
+					costBearer = fall.getGarant();
 				}
-				rechnungsempfaenger = fall.getRequiredContact("Rechnungsempfänger"); //$NON-NLS-1$
+				rechnungsempfaenger = fall.getRequiredContact(Fall.FLD_EXT_RECHNUNGSEMPFAENGER);
 				if (rechnungsempfaenger == null) {
 					rechnungsempfaenger = fall.getGarant();
 				}
@@ -113,8 +114,8 @@ public class iMedAbfrageAction extends Action {
 		}
 		
 		// Nachricht auslösen
-		if (patient != null && kostentraeger != null) {
-			writeHL7File(patient, rechnungsempfaenger, kostentraeger, plan, beginDate, vnr);
+		if (patient != null && costBearer != null) {
+			writeHL7File(patient, rechnungsempfaenger, costBearer, plan, beginDate, vnr);
 		}
 	}
 	
@@ -133,12 +134,12 @@ public class iMedAbfrageAction extends Action {
 	 */
 	private String getVersicherungOderFallNummer(final Fall fall){
 		String nummer = null;
-		String gesetz = fall.getAbrechnungsSystem();
+		BillingLaw gesetz = fall.getConfiguredBillingSystemLaw();
 		if (gesetz != null) {
 			// Suche über Gesetz
-			if (gesetz.trim().toLowerCase().equalsIgnoreCase("ivg")) { //$NON-NLS-1$
+			if (gesetz == BillingLaw.IVG) {
 				nummer = fall.getRequiredString(TarmedRequirements.CASE_NUMBER);
-			} else if (gesetz.trim().toLowerCase().equalsIgnoreCase("uvg")) { //$NON-NLS-1$
+			} else if (gesetz == BillingLaw.UVG) {
 				nummer = fall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
 			} else {
 				nummer = fall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
@@ -249,8 +250,8 @@ public class iMedAbfrageAction extends Action {
 		mandant.setEan(CoreHub.actMandant.getXid(DOMAIN_EAN));
 		
 		HL7_OML_O21 omlO21 =
-			new HL7_OML_O21("CHELEXIS", "PATDATA", Messages.LabOrderAction_receivingApplication,
-				"", Messages.LabOrderAction_receivingFacility, uniqueMessageControlID,
+			new HL7_OML_O21("CHELEXIS", "PATDATA", Messages.LabOrderAction_receivingApplication, "",
+				Messages.LabOrderAction_receivingFacility, uniqueMessageControlID,
 				uniqueProcessingID, mandant);
 		
 		// Patient
@@ -258,8 +259,8 @@ public class iMedAbfrageAction extends Action {
 		fillHL7Kontakt(hl7Patient, patient);
 		String geschlecht = patient.getGeschlecht();
 		if (geschlecht != null && geschlecht.length() > 0) {
-			hl7Patient.setIsMale(Patient.MALE.toUpperCase().equals(
-				patient.getGeschlecht().toUpperCase()));
+			hl7Patient.setIsMale(
+				Patient.MALE.toUpperCase().equals(patient.getGeschlecht().toUpperCase()));
 		}
 		hl7Patient.setBirthdate(new TimeTool(patient.getGeburtsdatum()).getTime());
 		hl7Patient.setPatCode(patient.getPatCode());
@@ -275,24 +276,22 @@ public class iMedAbfrageAction extends Action {
 		hl7Kostentraeger.setEan(kostentraeger.getXid(DOMAIN_EAN));
 		
 		try {
-			String encodedMessage =
-				omlO21.createText(hl7Patient, hl7Rechnungsempfaenger, hl7Kostentraeger, plan,
-					beginDate, vnr, 0);
+			String encodedMessage = omlO21.createText(hl7Patient, hl7Rechnungsempfaenger,
+				hl7Kostentraeger, plan, beginDate, vnr, 0);
 			
 			// File speichern
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-			String filename =
-				patient.get(Patient.FLD_PATID)
-					+ "_" + sdf.format(Calendar.getInstance().getTime()) + ".hl7"; //$NON-NLS-1$ //$NON-NLS-2$
+			String filename = patient.get(Patient.FLD_PATID) + "_" //$NON-NLS-1$
+				+ sdf.format(Calendar.getInstance().getTime()) + ".hl7"; //$NON-NLS-1$
 			File hl7File =
 				new File(MedicsPreferencePage.getUploadDirimed() + File.separator + filename);
 			FileTool.writeFile(hl7File, encodedMessage.getBytes(MedicsActivator.TEXT_ENCODING));
 			
 			return hl7File.getPath();
 		} catch (Exception e) {
-			SWTHelper.showError(
-				MessageFormat.format(Messages.LabOrderAction_errorTitleCannotCreateHL7,
-					omlO21.getVersion()), e.getMessage());
+			SWTHelper.showError(MessageFormat
+				.format(Messages.LabOrderAction_errorTitleCannotCreateHL7, omlO21.getVersion()),
+				e.getMessage());
 		}
 		return null;
 	}

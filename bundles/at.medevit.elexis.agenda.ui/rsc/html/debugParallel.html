@@ -27,6 +27,7 @@
 				minTime: "06:00:00",
 				maxTime: "23:00:00",
 				slotDuration: "00:15:00",
+				displayEventTime: false,
 				views: {
 			        agendaParallel: { 
 			            titleFormat:   'dd, (D.) MMMM YYYY' 
@@ -36,9 +37,10 @@
 				events: [
 					{
 						title: 'Meeting Anton',
-						start: '2017-04-13T10:30:00',
-						end: '2017-04-13T12:30:00',
+						start: '2018-04-30T10:30:00',
+						end: '2018-04-30T12:30:00',
 						resource: 'Anton',
+						borderColor: '#00FF00',
 						icon: 'ui-icon-arrowrefresh-1-s'
 					},
 				],
@@ -97,6 +99,19 @@
 						}
 					});
 				}
+			}
+			if(event.description) {
+				var firstpart = event.description.split('<br /><br />');
+				if(firstpart.length > 0) {
+					element.find(".fc-title").append("<br/>" + firstpart[0]);
+				} else {
+					element.find(".fc-title").append("<br/>" + event.description);
+				}
+			}
+			if (event.borderColor)
+			{
+				element.find("div.fc-content").wrapAll("<div class='event-status-block'></div>");
+				element.find("div.event-status-block").css("border-color", event.borderColor);
 			}
 			if (event.icon)
 			{

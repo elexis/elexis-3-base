@@ -105,13 +105,13 @@ public class ReportBuilder {
 	private TStatus createPatientTStatus(Patient patient){
 		String insurer = null;
 		Boolean mc = null;
-		Query<Fall> qbe = new Query<>(Fall.class, Fall.PATIENT_ID, patient.getId());
-		qbe.add(Fall.FLD_XGESETZ, Query.EQUALS, "KVG");
+		Query<Fall> qbe = new Query<>(Fall.class, Fall.FLD_PATIENT_ID, patient.getId());
+		qbe.add(Fall.FLD_BILLINGSYSTEM, Query.EQUALS, "KVG");
 		qbe.orderBy(true, Fall.FLD_DATUM_VON);
 		List<Fall> qre = qbe.execute();
 		for (Fall fall : qre) {
 			if (fall.isOpen()) {
-				String kostentraeger = (String) fall.getInfoElement("Kostenträger");
+				String kostentraeger = (String) fall.getInfoElement(Fall.FLD_EXT_KOSTENTRAEGER);
 				if(kostentraeger == null) {
 					kostentraeger = fall.get(Fall.FLD_KOSTENTRAEGER);
 				}

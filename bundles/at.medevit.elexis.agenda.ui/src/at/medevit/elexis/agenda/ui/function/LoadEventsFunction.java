@@ -142,7 +142,6 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		
 		@Override
 		public List<Event> load(TimeSpan key) throws Exception{
-			System.out.println("LOADING ...");
 			List<IPeriod> periods = getPeriods(key.startDate, key.endDate);
 			return periods.parallelStream().map(p -> Event.of(p)).collect(Collectors.toList());
 		}

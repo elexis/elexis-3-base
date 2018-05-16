@@ -40,7 +40,8 @@ public class TarmedOptifierTest {
 	private static TarmedLeistung tlBaseFirst5Min, tlBaseXRay, tlBaseRadiologyHospital,
 			tlUltrasound, tlAgeTo1Month, tlAgeTo7Years, tlAgeFrom7Years,
 			tlGroupLimit1, tlGroupLimit2, tlAlZero;
-			
+	private static Konsultation konsPeriodStart, konsPeriodMiddle, konsPeriodEnd;
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
 		optifier = new TarmedOptifier();
@@ -105,6 +106,17 @@ public class TarmedOptifierTest {
 		konsBelow75 = new Konsultation(fallBelow75);
 		resetKons(konsBelow75);
 		
+		konsPeriodStart = new Konsultation(fallBelow75);
+		konsPeriodStart.setDatum(new TimeTool("01.01.2018").toString(TimeTool.DATE_GER), true);
+		resetKons(konsPeriodStart);
+		
+		konsPeriodMiddle = new Konsultation(fallBelow75);
+		konsPeriodMiddle.setDatum(new TimeTool("28.03.2018").toString(TimeTool.DATE_GER), true);
+		resetKons(konsPeriodMiddle);
+		
+		konsPeriodEnd = new Konsultation(fallBelow75);
+		konsPeriodEnd.setDatum(new TimeTool("02.04.2018").toString(TimeTool.DATE_GER), true);
+		resetKons(konsPeriodEnd);
 	}
 	
 	private static void importTarmedReferenceData() throws FileNotFoundException{
@@ -558,6 +570,47 @@ public class TarmedOptifierTest {
 		assertFalse(result.isOK());
 		
 		clearKons(konsGriss);
+	}
+	
+	/**
+	 * Test of limitation per period currently Tarmed 1.08 00.0140 limit 10 per 3 month. <br />
+	 * With Tarmed 1.09 00.0141 should be used limit 30 per 3 month.
+	 * 
+	 */
+	@Test
+	public void testLimitationPeriod(){
+		clearKons(konsPeriodStart);
+		clearKons(konsPeriodMiddle);
+		clearKons(konsPeriodEnd);
+		Result<IVerrechenbar> result = null;
+		// start and middle are 1 period
+		for (int i = 0; i < 6; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", new TimeTool(), null),
+				konsPeriodStart);
+			assertTrue(result.isOK());
+		}
+		for (int i = 0; i < 6; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", new TimeTool(), null),
+				konsPeriodMiddle);
+			assertTrue(result.isOK());
+		}
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", new TimeTool(), null),
+			konsPeriodMiddle);
+		assertFalse(result.isOK());
+		// end is after period so middle is not included for limit
+		for (int i = 0; i < 7; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", new TimeTool(), null),
+				konsPeriodEnd);
+			assertTrue(result.isOK());
+		}
+		
+		clearKons(konsPeriodStart);
+		clearKons(konsPeriodMiddle);
+		clearKons(konsPeriodEnd);
 	}
 	
 	private int getLeistungAmount(String code, Konsultation kons){

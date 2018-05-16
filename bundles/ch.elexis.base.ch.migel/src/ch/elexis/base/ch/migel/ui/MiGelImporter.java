@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.StringJoiner;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -57,9 +58,38 @@ public class MiGelImporter extends ImporterPage {
 		
 		public String getStringValue(String[] line){
 			if (exists(line)) {
+				if (this == NAME && line[index].contains("\n")) {
+					line[index] = getJoinedFirstLines(line[index]);
+				}
 				return line[index];
 			} else {
 				return "";
+			}
+		}
+		
+		private String getJoinedFirstLines(String string){
+			String[] parts = string.split("\n");
+			if (parts.length > 1) {
+				StringBuilder ret = new StringBuilder();
+				if (!parts[1].isEmpty()) {
+					if (parts[0].endsWith(",")) {
+						ret.append(parts[0] + " " + parts[1]);
+					} else {
+						ret.append(parts[0] + ", " + parts[1]);
+					}
+				} else {
+					ret.append(parts[0] + "\n");
+				}
+				StringJoiner rest = new StringJoiner("\n");
+				for (int i = 2; i < parts.length; i++) {
+					rest.add(parts[i]);
+				}
+				if (rest.length() > 0) {
+					ret.append("\n").append(rest);
+				}
+				return ret.toString();
+			} else {
+				return string;
 			}
 		}
 		
@@ -133,22 +163,35 @@ public class MiGelImporter extends ImporterPage {
 		monitor.subTask(Messages.MiGelImporter_ReadMigel);
 		while ((line = reader.readNext()) != null) {
 			if (isFieldsLine(line) && line.length >= 3) {
-				StringBuilder sb = new StringBuilder();
+				StringBuilder text = new StringBuilder();
 				String category = ImportFields.SUBCATEGORY.getStringValue(line);
 				if (category.isEmpty()) {
 					category = ImportFields.CATEGORY.getStringValue(line);
 				}
 				// category only 1 line and max 80 char
 				if(!category.isEmpty()) {
-					sb.append(StringTool.getFirstLine(category, 80, "[\\n\\r]")).append(" - ");
+					text.append(StringTool.getFirstLine(category, 80, "[\\n\\r]")).append(" - ");
 				}
-				sb.append(ImportFields.NAME.getStringValue(line));
-				
-				MiGelArtikel artikel = new MiGelArtikel(ImportFields.POSNUMER.getStringValue(line),
-					sb.toString(), ImportFields.UNIT.getStringValue(line),
-					ImportFields.PRICE.getMoneyValue(line));
+				text.append(ImportFields.NAME.getStringValue(line));
 				
 				String amount = ImportFields.AMOUNT.getStringValue(line);
+				String unit = ImportFields.UNIT.getStringValue(line);
+				// try to parse amount from unit
+				if (amount.isEmpty() && !unit.isEmpty() && Character.isDigit(unit.charAt(0))) {
+					String[] parts = unit.split(" ");
+					if (parts != null && parts.length > 1) {
+						amount = parts[0];
+						StringJoiner unitWithoutDigit = new StringJoiner(" ");
+						for (int i = 1; i < parts.length; i++) {
+							unitWithoutDigit.add(parts[i]);
+						}
+						unit = unitWithoutDigit.toString();
+					}
+				}
+				
+				MiGelArtikel artikel = new MiGelArtikel(ImportFields.POSNUMER.getStringValue(line),
+					text.toString(), unit, ImportFields.PRICE.getMoneyValue(line));
+				
 				if (!amount.isEmpty()) {
 					try {
 						double amountDbl = Double.parseDouble(amount);

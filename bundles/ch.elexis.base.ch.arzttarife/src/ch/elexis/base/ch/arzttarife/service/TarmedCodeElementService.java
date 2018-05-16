@@ -46,12 +46,12 @@ public class TarmedCodeElementService implements ICodeElementServiceContribution
 		}
 		Object coverage = context.get(ContextKeys.COVERAGE);
 		if (coverage instanceof Fall) {
-			return ((Fall) coverage).getRequiredString("Gesetz");
+			return ((Fall) coverage).getConfiguredBillingSystemLaw().name();
 		}
 		Object consultation = context.get(ContextKeys.CONSULTATION);
 		if (consultation instanceof Konsultation
 			&& ((Konsultation) consultation).getFall() != null) {
-			return ((Konsultation) consultation).getFall().getRequiredString("Gesetz");
+			return ((Konsultation) consultation).getFall().getConfiguredBillingSystemLaw().name();
 		}
 		return null;
 	}

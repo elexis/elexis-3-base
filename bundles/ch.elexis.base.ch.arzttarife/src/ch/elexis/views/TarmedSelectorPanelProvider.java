@@ -86,7 +86,7 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 		Fall fall = kons.getFall();
 		String law = "";
 		if (fall != null) {
-			String konsLaw = fall.getRequiredString("Gesetz");
+			String konsLaw = fall.getConfiguredBillingSystemLaw().name();
 			if (TarmedLeistung.isAvailableLaw(konsLaw)) {
 				law = konsLaw;
 			}

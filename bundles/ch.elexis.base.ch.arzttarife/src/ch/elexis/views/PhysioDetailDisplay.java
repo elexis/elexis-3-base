@@ -32,7 +32,9 @@ public class PhysioDetailDisplay implements IDetailDisplay {
 	
 	InputData[] data = new InputData[] {
 		new InputData("Ziffer"), //$NON-NLS-1$
-		new InputData("TP", "TP", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
+		new InputData("Taxpunkte / Preis in Rappen", "TP", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
+		new InputData("Gültig von", PhysioLeistung.FLD_VON, InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
+		new InputData("Gültig bis", PhysioLeistung.FLD_BIS, InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
 		};
 	
 	public Composite createDisplay(Composite parent, IViewSite site){

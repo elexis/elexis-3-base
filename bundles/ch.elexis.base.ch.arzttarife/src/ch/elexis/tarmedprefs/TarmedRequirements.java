@@ -20,7 +20,6 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Xid;
-import ch.rgw.tools.StringTool;
 
 public class TarmedRequirements {
 	
@@ -220,28 +219,7 @@ public class TarmedRequirements {
 	}
 	
 	public static String getGesetz(final Fall fall){
-		String billingSystem = fall.getAbrechnungsSystem();
-		if (StringTool.isNothing(billingSystem)) {
-			billingSystem = Fall.getAbrechnungsSysteme()[0];
-		}
-		String gesetz = fall.getRequiredString("Gesetz"); //$NON-NLS-1$
-		if (gesetz.length() == 0) {
-			gesetz = Fall.getBillingSystemConstant(billingSystem, CASE_LAW);
-		}
-		if (gesetz.length() == 0) { // compatibility. To be removed
-			gesetz = Fall.getBillingSystemAttribute(billingSystem, "gesetz"); //$NON-NLS-1$
-		}
-		if (gesetz.length() == 0) {
-			if (billingSystem.matches("KVG|UVG|MV|VVG")) { //$NON-NLS-1$
-				gesetz = billingSystem;
-			} else if (billingSystem.equalsIgnoreCase("iv")) { //$NON-NLS-1$
-				gesetz = "ivg";
-			}
-		}
-		if (StringTool.isNothing(gesetz)) {
-			gesetz = "KVG";
-		}
-		return gesetz;
+		return fall.getConfiguredBillingSystemLaw().name();
 	}
 	
 	public static String getTCName(Kontakt mandant){

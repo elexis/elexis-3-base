@@ -40,9 +40,7 @@ public class Validator {
 			rn.reject(RnStatus.REJECTCODE.NO_CASE, Messages.Validator_NoCase);
 			res.add(Result.SEVERITY.ERROR, 4, Messages.Validator_NoCase, rn, true);
 		}
-		/*
-		 * String g=fall.getGesetz(); if(g.equalsIgnoreCase(Fall.LAW_OTHER)){ return res; }
-		 */
+
 		String ean = TarmedRequirements.getEAN(m);
 		if (StringTool.isNothing(ean)) {
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);

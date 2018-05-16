@@ -96,6 +96,7 @@ public final class Messages extends NLS {
 	public static String AgendaImages_imagesForAgenda;
 	public static String AgendaDefinitionen_defForAgenda;
 	public static String AgendaDefinitionen_enterTypes;
+	public static String AgendaDefinitionen_areaTypeLabel;
 	public static String AgendaDefinitionen_AvoidPatientDoubleBooking;
 	public static String AgendaDefinitionen_CurrentMappings;
 	public static String AgendaImages_change;
@@ -190,6 +191,8 @@ public final class Messages extends NLS {
 	public static String Tageseinteilung_lblEditValuesFor_text;
 	public static String Tageseinteilung_lblChangedValuesAre_text;
 	public static String Tageseinteilung_btnNewButton_text;
+	public static String AgendaDefinitionPreferencePage_mntmNewItem_text;
+	public static String AgendaDefinitionPreferencePage_lblAreaTypeLabel_text;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

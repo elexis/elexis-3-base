@@ -44,7 +44,7 @@
       <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="ch.elexis.agenda.preferences.AgendaDefinitionen"
+            class="ch.elexis.agenda.preferences.AgendaDefinitionPreferencePage"
             id="ch.elexis.Agendaprefs"
             name="Agenda"/>
       <page

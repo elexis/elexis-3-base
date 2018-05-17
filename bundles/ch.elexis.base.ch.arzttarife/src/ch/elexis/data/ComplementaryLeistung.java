@@ -234,7 +234,7 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 					boolean valid = true;
 					// test VVG if necessary
 					if (CoreHub.mandantCfg.get(PreferenceConstants.COMPLEMENTARY_FIXTOVVG, false)) {
-						String gesetz = kons.getFall().getRequiredString("Gesetz");
+						String gesetz = kons.getFall().getConfiguredBillingSystemLaw().name();
 						String system = kons.getFall().getAbrechnungsSystem();
 						if(gesetz.isEmpty()) {
 							if (!"vvg".equalsIgnoreCase(system)) {

@@ -84,7 +84,7 @@ public class RnPrintView extends ViewPart {
 		Result<Rechnung> ret = new Result<Rechnung>();
 		fall = rn.getFall();
 		ElexisEventDispatcher.fireSelectionEvent(fall);
-		Kontakt adressat = fall.getGarant();// .getRequiredContact("Rechnungsempfänger");
+		Kontakt adressat = fall.getGarant();
 		if (!adressat.isValid()) {
 			adressat = fall.getPatient();
 		}

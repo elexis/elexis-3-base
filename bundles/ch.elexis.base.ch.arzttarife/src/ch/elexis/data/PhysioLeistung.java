@@ -30,10 +30,12 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	private static final String VALUE_VERSION = "VERSION";
 	public static final String FLD_TITEL = "Titel";
 	public static final String FLD_ZIFFER = "Ziffer";
+	public static final String FLD_TEXT = "text";
 	public static final String VERSION = "0.0.1";
 	private static final String TABLENAME = "CH_ELEXIS_ARZTTARIFE_CH_PHYSIO";
 	private static final String XIDDOMAIN = "www.xid.ch/id/physiotarif";
 	public static final String CODESYSTEMNAME = "Physiotherapie";
+	public static final String FIXEDPRICE = "\n[FIXPRICE]";
 	
 	private static IOptifier noObligationOptifier = new NoObligationOptifier();
 	
@@ -55,11 +57,14 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 		}
 	}
 	
-	public PhysioLeistung(String code, String text, String tp, String validFrom, String validUntil){
+	public PhysioLeistung(String code, String text, String tp, TimeTool validFrom,
+		TimeTool validTo){
 		create(null);
 		set(new String[] {
 			FLD_ZIFFER, FLD_TITEL, FLD_TP, FLD_VON, FLD_BIS
-		}, code, text, tp, TimeTool.BEGINNING_OF_UNIX_EPOCH, TimeTool.END_OF_UNIX_EPOCH);
+		}, code, text, tp, validFrom != null ? validFrom.toString(TimeTool.DATE_COMPACT)
+				: TimeTool.BEGINNING_OF_UNIX_EPOCH,
+			validTo != null ? validTo.toString(TimeTool.DATE_COMPACT) : TimeTool.END_OF_UNIX_EPOCH);
 	}
 	
 	@Override
@@ -74,6 +79,10 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	}
 	
 	public double getFactor(TimeTool date, IFall fall){
+		String text = get(FLD_TEXT);
+		if (text != null && text.endsWith(FIXEDPRICE)) {
+			return 1;
+		}
 		return getVKMultiplikator(date, fall);
 	}
 	

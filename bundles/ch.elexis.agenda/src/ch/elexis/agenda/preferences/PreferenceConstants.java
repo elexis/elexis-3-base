@@ -14,7 +14,10 @@ package ch.elexis.agenda.preferences;
 
 public class PreferenceConstants {
 	public static final String AG_BEREICHE = "agenda/bereiche"; //$NON-NLS-1$
-	public static final String AG_BEREICHE_TO_USER = "agenda/bereicheToUser"; //$NON-NLS-1$
+	
+	public static final String AG_BEREICH_PREFIX = "agenda/bereich/"; //$NON-NLS-1$
+	public static final String AG_BEREICH_TYPE_POSTFIX = "/type"; //$NON-NLS-1$
+	
 	public static final String AG_TERMINTYPEN = "agenda/TerminTypen"; //$NON-NLS-1$
 	public static final String AG_TERMINSTATUS = "agenda/TerminStatus"; //$NON-NLS-1$
 	public static final String AG_SHOWDELETED = "agenda/zeige_geloeschte"; //$NON-NLS-1$

@@ -31,6 +31,7 @@ import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
@@ -111,10 +112,8 @@ public class DocumentImporter {
 	public static boolean process(
 			Path hl7File,
 			Path pdfFile,
-			String institutionId,
-			String institutionName,
-			String category,
-			String xidDomain,
+			ContactLinkRecord contactLink,
+			Kontakt institution,
 			boolean overwriteOlderEntries,
 			boolean askUser
 		) throws IOException{
@@ -133,13 +132,13 @@ public class DocumentImporter {
 		//If we have an hl7 File try first to import the hl7 and to get all the Patient informations
 		if(hl7File != null && Files.exists(hl7File) && Files.isRegularFile(hl7File)){
 			
-			HL7Parser hlp = new DefaultHL7Parser(institutionId);
+			HL7Parser hlp = new DefaultHL7Parser(institution.getId());
 			try {
 				//Import the HL7. If the patient has not been found in the DB, the parser will ask for it 
 				Result<?> res = hlp.importFile(
 					hl7File.toFile(),
 					null,
-					new MedNetLabItemResolver(institutionName),
+					new MedNetLabItemResolver(institution.getLabel(true)),
 					false
 				);
 				
@@ -165,8 +164,8 @@ public class DocumentImporter {
 			
 			if(		success
 				&&	patient != null
-				&&	xidDomain != null 
-				&&	!xidDomain.isEmpty()) {
+				&&	contactLink.getXIDDomain() != null 
+				&&	!contactLink.getXIDDomain().isEmpty()) {
 			
 				
 				
@@ -204,29 +203,29 @@ public class DocumentImporter {
 				
 				if(patient_institutionId != null && !patient_institutionId.isEmpty()) {
 					try {
-						Xid.localRegisterXIDDomainIfNotExists(xidDomain, institutionName , Xid.ASSIGNMENT_LOCAL);
-						String db_patient_institutionId = DocumentImporter.getInstitutionXID(xidDomain, patient);
+						Xid.localRegisterXIDDomainIfNotExists(contactLink.getXIDDomain(), institution.getLabel(true) , Xid.ASSIGNMENT_LOCAL);
+						String db_patient_institutionId = DocumentImporter.getInstitutionXID(contactLink.getXIDDomain(), patient);
 						if(db_patient_institutionId == null) {
-							new Xid(patient, xidDomain, patient_institutionId);
+							new Xid(patient, contactLink.getXIDDomain(), patient_institutionId);
 							LOGGER.info(
 								MessageFormat.format("xid {0} ({2}) successfully saved to Patient {1}", patient_institutionId,
-									patient.getLabel(), institutionName)
+									patient.getLabel(), institution.getLabel(true))
 							);
 						}
 						else if( db_patient_institutionId.equals(patient_institutionId)) {
 							//If the institution ID we have in the database is not the same as the one we got,
 							//Update the one we got
-							DocumentImporter.deleteInstitutionXID(xidDomain, patient);
-							new Xid(patient, xidDomain, patient_institutionId);
+							DocumentImporter.deleteInstitutionXID(contactLink.getXIDDomain(), patient);
+							new Xid(patient, contactLink.getXIDDomain(), patient_institutionId);
 							LOGGER.info(
 									MessageFormat.format("xid {0} ({2}) from Patient {1} successfully updated (old value {3})", patient_institutionId,
-										patient.getLabel(), institutionName, db_patient_institutionId)
+										patient.getLabel(), institution.getLabel(true), db_patient_institutionId)
 								);
 						}
 					} catch (XIDException e) {
 						LOGGER.error(
 							MessageFormat.format("xid {0} ({2}) has not been saved to Patient {1}", patient_institutionId,
-								patient.getLabel(),institutionName),e);
+								patient.getLabel(),institution.getLabel(true)),e);
 					}
 				}
 				
@@ -294,9 +293,8 @@ public class DocumentImporter {
 					String keywords = orderNr;
 					
 					documentManager.addDocument(
-							institutionId,
-							institutionName,
-							category,
+							contactLink,
+							institution,
 							orderNr,
 							pdfFile,
 							documentDateTimeObj, 
@@ -328,7 +326,6 @@ public class DocumentImporter {
 	 */
 	public static boolean processForm(
 			Path pdfFile,
-			String category,
 			boolean askUser
 		) throws IOException{
 		String logPrefix = "processForm() - ";//$NON-NLS-1$
@@ -355,6 +352,7 @@ public class DocumentImporter {
 			String institutionName = "";
 			String formularId = "";
 			String formularName = "";
+			ContactLinkRecord contactLink = null;
 			
 			//If it is not a document, maybe it is a form
 			Matcher filenameMatcher = formFilenamePattern.matcher(getBaseName(pdfFile));
@@ -375,8 +373,14 @@ public class DocumentImporter {
 					&&	configFormItems.get(institutionId).containsKey(formularId)
 						) {
 					MedNetConfigFormItem item = configFormItems.get(institutionId).get(formularId);
-					institutionName = item.getInstitutionName();
 					formularName = item.getFormName();
+					institutionName = item.getInstitutionName();
+				}
+				
+				//Try to get the contactLink database entry for this institution
+				List<ContactLinkRecord> contactLinkList = ContactLinkRecord.getContactLinkRecord(null, institutionId);
+				if(contactLinkList != null && contactLinkList.size() > 0) {
+					contactLink = contactLinkList.get(0);
 				}
 				
 				
@@ -405,7 +409,7 @@ public class DocumentImporter {
 					String keywords = orderNr;
 					
 					documentManager.addForm(
-							category,
+							contactLink,
 							institutionName,
 							formularName,
 							orderNr,

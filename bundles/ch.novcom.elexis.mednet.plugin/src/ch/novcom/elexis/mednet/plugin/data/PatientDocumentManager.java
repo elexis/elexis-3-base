@@ -28,12 +28,14 @@ import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.types.LabItemTyp;
+import ch.elexis.core.types.PathologicDescription;
+import ch.elexis.core.types.PathologicDescription.Description;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
-import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -50,7 +52,8 @@ public class PatientDocumentManager {
 	 */
 	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentImporter.class.getName());
 	
-	public static String DEFAULT_PRIO = "0";
+	public static String DEFAULT_PRIO = "1";
+	public static String DEFAULT_PRIO_DOCUMENT = "0";
 	
 	private static String FLD_ORGIN = "Quelle";
 	
@@ -256,9 +259,8 @@ public class PatientDocumentManager {
 	 */
 	
 	public void addDocument(
-			String institutionId,
-			String institutionName,
-			String category,
+			ContactLinkRecord contactLink,
+			Kontakt institution,
 			String orderId,
 			Path file,
 			Date documentDateTime,
@@ -277,19 +279,8 @@ public class PatientDocumentManager {
 			);
 		}
 		
-		//Create the category if doesn't exists
-		this.checkCreateCategory(category);
-		
 		//Check if there is already a labitem of this category
-		LabItem labItem = getLabItem(institutionId, MedNetMessages.PatientDocumentManager_documentId, LabItemTyp.DOCUMENT);
-
-		//Get the kontakt linked with the institution
-		Kontakt institution = null;
-		String group = "";
-		if(institutionId != null && !institutionId.isEmpty()){
-			institution = PatientDocumentManager.getInstitution(institutionId);
-			group = institution.getLabel(true);
-		}
+		LabItem labItem = getLabItem(institution.getId(), MedNetMessages.PatientDocumentManager_documentId, LabItemTyp.DOCUMENT);
 		
 		//If no LabItem has been found, create one
 		if (labItem == null) {
@@ -302,8 +293,8 @@ public class PatientDocumentManager {
 						"",
 						"pdf",
 						LabItemTyp.DOCUMENT,
-						group ,
-						DEFAULT_PRIO
+						institution.getLabel(true) ,
+						DEFAULT_PRIO_DOCUMENT
 				);//$NON-NLS-1$
 		}
 		
@@ -320,8 +311,7 @@ public class PatientDocumentManager {
 						orderId,
 						dateTimeFormatter.format(documentDateTime),
 						DocumentImporter.getBaseName(file),
-						DocumentImporter.getExtension(file),
-						category
+						DocumentImporter.getExtension(file)
 				);
 		
 		
@@ -346,6 +336,7 @@ public class PatientDocumentManager {
 			labResult.set(FLD_ORGIN, orderId);
 			labResult.set(LabResult.TIME, documentTime);
 			labResult.setObservationTime(documentDate);
+			labResult.setPathologicDescription(new PathologicDescription(Description.PATHO_IMPORT));
 			saved = true;
 		} else {
 			//If there is already a labresult
@@ -369,6 +360,7 @@ public class PatientDocumentManager {
 				labResult.setResult(title);
 				labResult.set(LabResult.TIME, documentTime);
 				labResult.setObservationTime(documentDate);
+				labResult.setPathologicDescription(new PathologicDescription(Description.PATHO_IMPORT));
 				saved = true;
 			} else {
 				
@@ -391,7 +383,29 @@ public class PatientDocumentManager {
 			try {
 				String dateTimeDocumentString = documentDate.toString(TimeTool.DATE_GER);
 				
-				this.addDocumentToOmnivore(title, institutionName, dateTimeDocumentString, file, keywords);
+
+				//Construct the category were the documents will be stored:
+				String categorylabel = null;
+				if(contactLink != null) {
+					Kontakt kontakt = Kontakt.load(contactLink.getContactID());
+					String name = kontakt.getLabel(true);
+					if(name == null || name.isEmpty()) {
+						name = MedNet.getSettings().getInstitutions().get(contactLink.getMedNetID());
+					}
+					String category = contactLink.getCategoryDoc();
+					if(category == null || category.isEmpty()) {
+						categorylabel = name;
+					}
+					else {
+						categorylabel = MessageFormat.format(MedNetMessages.Omnivore_category_formlabel, name, category);
+					}
+				}
+				else {
+					categorylabel = institution.getLabel(true);
+				}
+				
+				
+				this.addDocumentToOmnivore(title, categorylabel, dateTimeDocumentString, file, keywords);
 				
 				
 				LOGGER.info(
@@ -424,7 +438,7 @@ public class PatientDocumentManager {
 	 * @throws IOException
 	 */
 	public void addForm(
-			String category,
+			ContactLinkRecord contactLink,
 			String institutionName,
 			String formularName,
 			String orderId,
@@ -445,8 +459,25 @@ public class PatientDocumentManager {
 			);
 		}
 		
-		//Create the category if doesn't exists
-		this.checkCreateCategory(category);
+		//Construct the category were the documents will be stored:
+		String categorylabel = null;
+		if(contactLink != null) {
+			Kontakt kontakt = Kontakt.load(contactLink.getContactID());
+			String name = kontakt.getLabel(true);
+			if(name == null || name.isEmpty()) {
+				name = MedNet.getSettings().getInstitutions().get(contactLink.getMedNetID());
+			}
+			String category = contactLink.getCategoryForm();
+			if(category == null || category.isEmpty()) {
+				categorylabel = name;
+			}
+			else {
+				categorylabel = MessageFormat.format(MedNetMessages.Omnivore_category_formlabel, name, category);
+			}
+		}
+		else {
+			categorylabel = institutionName;
+		}
 		
 		//Finally create a new laboratory Result to save to the database
 		
@@ -457,13 +488,11 @@ public class PatientDocumentManager {
 		String title = 
 				MessageFormat.format(
 						MedNetMessages.PatientDocumentManager_FormTitle,
-						institutionName,
 						formularName,
 						orderId,
 						dateTimeFormatter.format(documentDateTime),
 						DocumentImporter.getBaseName(file),
-						DocumentImporter.getExtension(file),
-						category
+						DocumentImporter.getExtension(file)
 				);
 		
 		//Limit the length of the title
@@ -480,7 +509,7 @@ public class PatientDocumentManager {
 		try {
 			String dateTimeDocumentString = documentDate.toString(TimeTool.DATE_GER);
 			
-			this.addDocumentToOmnivore(title, category, dateTimeDocumentString, file, keywords);
+			this.addDocumentToOmnivore(title, categorylabel, dateTimeDocumentString, file, keywords);
 			
 			LOGGER.info(
 					logPrefix +
@@ -495,39 +524,6 @@ public class PatientDocumentManager {
 			);
 		}
 		
-	}
-	
-	
-	/**
-	 * This function will return the contact corresponding to the given institution id
-	 * @param id
-	 * @return the contact or null if nothing or multiple contacts has been found
-	 */
-	public static Kontakt getInstitution(String id){
-		String logPrefix = "getInstitution() - ";//$NON-NLS-1$
-		
-		Query<Kontakt> qbe = new Query<Kontakt>(Labor.class);
-		qbe.startGroup();
-		qbe.add(Kontakt.FLD_ID, Query.EQUALS, id);
-		qbe.endGroup();
-		List<Kontakt> results = qbe.execute();
-		if (results.size() == 1) {
-			return results.get(0);
-		} 
-		else if (results.size() <= 0){
-			LOGGER.warn(
-					logPrefix +
-					"No institution with following id found:"+id
-			);
-			return null;
-		}
-		else {
-			LOGGER.warn(
-					logPrefix +
-					"More than one institution with following id found:"+id
-			);
-			return null;
-		}
 	}
 	
 	

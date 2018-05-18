@@ -44,53 +44,44 @@ public class MedNetMessages extends NLS {
 	
 	public static String PatientLabor_errorAddingDocumentToOmnivore;
 	
-	public static String DocumentSettingRecordEditDialog_shellTitle;
-	public static String DocumentSettingRecordEditDialog_title;
-	public static String DocumentSettingRecordEditDialog_message;
-	public static String DocumentSettingRecordEditDialog_labelInstitution;
-	public static String DocumentSettingRecordEditDialog_labelCategory;
-	public static String DocumentSettingRecordEditDialog_labelDocumentPath;
-	public static String DocumentSettingRecordEditDialog_labelErrorPath;
-	public static String DocumentSettingRecordEditDialog_labelArchivingPath;
-	public static String DocumentSettingRecordEditDialog_labelPurgeInterval;
-	public static String DocumentSettingRecordEditDialog_labelXIDDomain;
-	public static String DocumentSettingRecordEditDialog_NoInstitution;
-	public static String DocumentSettingRecordEditDialog_NoCategory;
-	public static String DocumentSettingRecordEditDialog_NoPath;
-	public static String DocumentSettingRecordEditDialog_NoErrorPath;
-	public static String DocumentSettingRecordEditDialog_NoArchivingPath;
-	public static String DocumentSettingRecordEditDialog_NotValidPath;
-	public static String DocumentSettingRecordEditDialog_NoPurgeInterval;
-	
-	public static String DocumentPreferences_institutionName;
-	public static String DocumentPreferences_category;
-	public static String DocumentPreferences_path;
-	public static String DocumentPreferences_errorPath;
-	public static String DocumentPreferences_archivingPath; 
-	public static String DocumentPreferences_archivingPurgeInterval;
-	public static String DocumentPreferences_title;
-	public static String DocumentPreferences_new;
-	public static String DocumentPreferences_delete;
-	public static String DocumentPreferences_reallyDelete;
-	public static String DocumentPreferences_deleteFailed;
-	public static String DocumentPreferences_deleteAll;
-	public static String DocumentPreferences_reallyDeleteAll;
-	public static String DocumentPreferences_deleteAllExplain;
-	public static String DocumentPreferences_deleteAllFailed;
-			
-	public static String FormPreferences_labelFormsPath;
-	public static String FormPreferences_labelErrorPath;
-	public static String FormPreferences_labelArchivePath;
-	public static String FormPreferences_labelPurgeInterval;
-	public static String FormPreferences_NoPath;
-	public static String FormPreferences_NoErrorPath;
-	public static String FormPreferences_NoArchivingPath;
-	public static String FormPreferences_NotValidPath;
 	
 	public static String MainPreferences_labelExePath;
-	public static String MainPreferences_labelLogsPath;
-	public static String MainPreferences_labelLogsLevel;
+	public static String MainPreferences_labelPurgeInterval;
 	
+	public static String ContactLinkPreferences_ContactLabel;
+	public static String ContactLinkPreferences_MedNetId;
+	public static String ContactLinkPreferences_MedNetName;
+	public static String ContactLinkPreferences_CategoryDoc;
+	public static String ContactLinkPreferences_CategoryForm;
+	public static String ContactLinkPreferences_XIDDomain;
+	
+
+	public static String ContactLinkPreferences_title;
+	public static String ContactLinkPreferences_new;
+	public static String ContactLinkPreferences_delete;
+	public static String ContactLinkPreferences_reallyDelete;
+	public static String ContactLinkPreferences_deleteFailed;
+	public static String ContactLinkPreferences_deleteAll;
+	public static String ContactLinkPreferences_deleteAllTitle;
+	public static String ContactLinkPreferences_deleteAllExplain;
+	public static String ContactLinkPreferences_deleteAllFailed;
+	
+
+	public static String ContactLinkRecord_Label;
+	
+	public static String ContactLinkRecordEditDialog_shellTitle;
+	public static String ContactLinkRecordEditDialog_title;
+	public static String ContactLinkRecordEditDialog_message;
+	public static String ContactLinkRecordEditDialog_labelContact;
+	public static String ContactLinkRecordEditDialog_labelMedNet;
+	public static String ContactLinkRecordEditDialog_labelCategoryDoc;
+	public static String ContactLinkRecordEditDialog_labelCategoryForm;
+	public static String ContactLinkRecordEditDialog_labelXIDDomain;
+	public static String ContactLinkRecordEditDialog_NoContact;
+	public static String ContactLinkRecordEditDialog_NoMedNet;
+
+	public static String Omnivore_category_doclabel;
+	public static String Omnivore_category_formlabel;
 	
 	static {
 		// initialize resource bundle

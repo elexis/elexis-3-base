@@ -15,18 +15,19 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
-import ch.novcom.elexis.mednet.plugin.ui.dialog.DocumentSettingRecordEditDialog;
+
+import ch.novcom.elexis.mednet.plugin.ui.dialog.ContactLinkRecordEditDialog;
 
 
-public class DocumentSettingRecordCreate extends AbstractHandler {
-	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.create"; //$NON-NLS-1$
+public class ContactLinkRecordCreate extends AbstractHandler {
+	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.create"; //$NON-NLS-1$
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		try {
 			// create and open the dialog
 			Shell parent = HandlerUtil.getActiveShell(event);
-			DocumentSettingRecordEditDialog dialog = new DocumentSettingRecordEditDialog(parent, null);
+			ContactLinkRecordEditDialog dialog = new ContactLinkRecordEditDialog(parent, null);
 			dialog.open();
 		} catch (Exception ex) {
 			throw new RuntimeException(COMMANDID, ex);

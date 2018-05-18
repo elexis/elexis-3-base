@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.novcom.elexis.mednet.plugin.data.DocumentImporter;
-import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 /**
  * The FormWatcher will monitor some folder,
@@ -264,7 +263,6 @@ public class FormWatcher {
 				//Run the import using the DocumentImporter
 				boolean success = DocumentImporter.processForm(
 						tempFile,
-						MedNetMessages.FormWatcher_FormCategory,
 						true
 				);
 				

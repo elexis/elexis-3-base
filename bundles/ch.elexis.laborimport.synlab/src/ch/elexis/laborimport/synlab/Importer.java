@@ -162,7 +162,9 @@ public class Importer extends ImporterPage {
 			});
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result<?> rs = mfParser.importFromFile(f, new DefaultImportStrategyFactory(), hl7Parser, new PersistenceHandler());
+				Result<?> rs = mfParser.importFromFile(f,
+					new DefaultImportStrategyFactory().setMoveAfterImport(true), hl7Parser,
+					new PersistenceHandler());
 				if (!rs.isOK()) {
 					// importFile already shows error
 					// rs.display("Fehler beim Import");

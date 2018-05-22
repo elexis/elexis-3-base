@@ -57,10 +57,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
@@ -386,35 +383,7 @@ public class AgendaGross extends BaseAgendaView {
 		ElexisEventDispatcher.fireSelectionEvent(t);
 		if (pat != null) {
 			ElexisEventDispatcher.fireSelectionEvent(pat);
-			if (pat instanceof Patient) {
-				Konsultation kons =
-					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-				
-				String sVgl = agenda.getActDate().toString(TimeTool.DATE_COMPACT);
-				if ((kons == null)
-					|| // Falls nicht die richtige Kons
-						// selektiert ist, passende
-						// Kons für heute suchen
-					!(kons.getFall().getPatient().getId().equals(pat.getId()))
-					|| !(new TimeTool(kons.getDatum()).toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
-					Fall[] faelle = ((Patient) pat).getFaelle();
-					TimeTool ttVgl = new TimeTool();
-					for (Fall f : faelle) {
-						Konsultation[] konsen = f.getBehandlungen(true);
-						for (Konsultation k : konsen) {
-							ttVgl.set(k.getDatum());
-							if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)) {
-								ElexisEventDispatcher.fireSelectionEvent(k);
-								return;
-							}
-						}
-					}
-					
-				}
-			}
-			
 		}
-		
 	}
 	
 	private void makePrivateActions(){

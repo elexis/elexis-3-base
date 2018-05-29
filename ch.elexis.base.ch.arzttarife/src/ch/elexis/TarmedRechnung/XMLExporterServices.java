@@ -559,7 +559,7 @@ public class XMLExporterServices {
 					if ("406".equals(codeSystemCode)) {
 						el.setAttribute(XMLExporter.ATTR_CODE, "2000");
 						el.setAttribute("name",
-							verrechnet.getText() + " [" + verrechnet.getCode() + "]"); // 22340
+							verrechnet.getText() + " [" + getServiceCode(verrechnet) + "]"); // 22340
 					}
 					if ("590".equals(codeSystemCode) && v instanceof IArticle) {
 						el.setAttribute(XMLExporter.ATTR_CODE, "1310");

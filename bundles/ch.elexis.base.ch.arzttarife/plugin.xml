@@ -113,5 +113,11 @@
    <extension
          point="org.eclipse.ui.commands">
    </extension>
+   <extension
+         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.base.ch.arzttarife.ui.dbcheck.UpdateTarmedInBlock">
+      </ExternalMaintenance>
+   </extension>
 
 </plugin>

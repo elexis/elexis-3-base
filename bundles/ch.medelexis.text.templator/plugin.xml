@@ -23,7 +23,7 @@
             category="ch.elexis.preferences.Texterstellung"
             class="ch.medelexis.templator.ui.Preferences"
             id="ch.medelexis.text.templator.Preferences"
-            name="%Text-Templator">
+            name="%Text_Templator">
       </page>
       <page
             category="ch.medelexis.text.templator.Preferences"

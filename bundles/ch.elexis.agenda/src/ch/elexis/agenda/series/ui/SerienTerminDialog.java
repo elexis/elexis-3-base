@@ -108,18 +108,18 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		
 		setTitleImage(ResourceManager.getPluginImage("ch.elexis.agenda", "icons/recurringDate.png"));
 		if (noedit) {
-			setMessage(Messages.getString("SerienTerminDialog.this.message.show")); //$NON-NLS-1$
+			setMessage(Messages.SerienTerminDialog_this_message_show);
 		} else {
-			setMessage(Messages.getString("SerienTerminDialog.this.message.create")); //$NON-NLS-1$
+			setMessage(Messages.SerienTerminDialog_this_message_create);
 		}
 		
 		Group grpTermin = new Group(area, SWT.NONE);
 		grpTermin.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpTermin.setLayout(new GridLayout(6, false));
-		grpTermin.setText(Messages.getString("SerienTerminDialog.grpTermin.text")); //$NON-NLS-1$
+		grpTermin.setText(Messages.SerienTerminDialog_grpTermin_text);
 		
 		Label lblBeginn = new Label(grpTermin, SWT.NONE);
-		lblBeginn.setText(Messages.getString("SerienTerminDialog.lblBeginn.text")); //$NON-NLS-1$
+		lblBeginn.setText(Messages.SerienTerminDialog_lblBeginn_text);
 		
 		dateTimeBegin = new DateTime(grpTermin, SWT.BORDER | SWT.TIME | SWT.SHORT);
 		dateTimeBegin.addSelectionListener(new SelectionAdapter() {
@@ -130,7 +130,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		});
 		
 		Label lblEnde = new Label(grpTermin, SWT.NONE);
-		lblEnde.setText(Messages.getString("SerienTerminDialog.lblEnde.text")); //$NON-NLS-1$
+		lblEnde.setText(Messages.SerienTerminDialog_lblEnde_text);
 		
 		dateTimeEnd = new DateTime(grpTermin, SWT.BORDER | SWT.TIME | SWT.SHORT);
 		dateTimeEnd.addSelectionListener(new SelectionAdapter() {
@@ -141,7 +141,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		});
 		
 		Label lblDauer = new Label(grpTermin, SWT.NONE);
-		lblDauer.setText(Messages.getString("SerienTerminDialog.lblDauer.text")); //$NON-NLS-1$
+		lblDauer.setText(Messages.SerienTerminDialog_lblDauer_text);
 		
 		durationSpinner = new Spinner(grpTermin, SWT.NONE);
 		durationSpinner.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
@@ -166,7 +166,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 			Group grpSerienmuster = new Group(area, SWT.NONE);
 			grpSerienmuster.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			grpSerienmuster.setLayout(new GridLayout(1, false));
-			grpSerienmuster.setText(Messages.getString("SerienTerminDialog.grpSerienmuster.text")); //$NON-NLS-1$
+			grpSerienmuster.setText(Messages.SerienTerminDialog_grpSerienmuster_text);
 			
 			tabFolderSeriesPattern = new CTabFolder(grpSerienmuster, SWT.BORDER);
 			tabFolderSeriesPattern
@@ -181,29 +181,28 @@ public class SerienTerminDialog extends TitleAreaDialog {
 			});
 			
 			CTabItem tbtmDaily = new CTabItem(tabFolderSeriesPattern, SWT.NONE);
-			tbtmDaily.setText(Messages.getString("SerienTerminDialog.tbtmDaily.text")); //$NON-NLS-1$
+			tbtmDaily.setText(Messages.SerienTerminDialog_tbtmDaily_text);
 			tbtmDaily.setData(SeriesType.DAILY);
 			
 			Label lblNoConfigurationNecessary = new Label(tabFolderSeriesPattern, SWT.NONE);
 			tbtmDaily.setControl(lblNoConfigurationNecessary);
-			lblNoConfigurationNecessary.setText(Messages
-				.getString("SerienTerminDialog.lblNoConfigurationNecessary.text")); //$NON-NLS-1$
+			lblNoConfigurationNecessary.setText(Messages.SerienTerminDialog_lblNoConfigurationNecessary_text); 
 			
 			CTabItem tbtmWeekly = new CTabItem(tabFolderSeriesPattern, SWT.NONE);
-			tbtmWeekly.setText(Messages.getString("SerienTerminDialog.tbtmWeekly.text")); //$NON-NLS-1$
+			tbtmWeekly.setText(Messages.SerienTerminDialog_tbtmWeekly_text);
 			wsc = new WeeklySeriesComposite(tabFolderSeriesPattern, SWT.NONE);
 			tbtmWeekly.setControl(wsc);
 			tbtmWeekly.setData(SeriesType.WEEKLY);
 			
 			CTabItem tbtmMonthly = new CTabItem(tabFolderSeriesPattern, SWT.NONE);
-			tbtmMonthly.setText(Messages.getString("SerienTerminDialog.tbtmMonthly.text")); //$NON-NLS-1$
+			tbtmMonthly.setText(Messages.SerienTerminDialog_tbtmMonthly_text);
 			msc = new MonthlySeriesComposite(tabFolderSeriesPattern, SWT.NONE);
 			tbtmMonthly.setControl(msc);
 			new Label(msc, SWT.NONE);
 			tbtmMonthly.setData(SeriesType.MONTHLY);
 			
 			CTabItem tbtmYearly = new CTabItem(tabFolderSeriesPattern, SWT.NONE);
-			tbtmYearly.setText(Messages.getString("SerienTerminDialog.tbtmYearly.text")); //$NON-NLS-1$
+			tbtmYearly.setText(Messages.SerienTerminDialog_tbtmYearly_text);
 			ysc = new YearlySeriesComposite(tabFolderSeriesPattern, SWT.NONE);
 			tbtmYearly.setControl(ysc);
 			tbtmYearly.setData(SeriesType.YEARLY);
@@ -211,11 +210,11 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		Group grpSeriendauer = new Group(area, SWT.NONE);
 		grpSeriendauer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpSeriendauer.setLayout(new GridLayout(3, false));
-		grpSeriendauer.setText(Messages.getString("SerienTerminDialog.grpSeriendauer.text")); //$NON-NLS-1$
+		grpSeriendauer.setText(Messages.SerienTerminDialog_grpSeriendauer_text);
 		
 		Label beginOfSeries = new Label(grpSeriendauer, SWT.NONE);
 		beginOfSeries.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-		beginOfSeries.setText(Messages.getString("SerienTerminDialog.beginOfSeries.text")); //$NON-NLS-1$
+		beginOfSeries.setText(Messages.SerienTerminDialog_beginOfSeries_text);
 		
 		dateTimeBeginOfSeries = new DateTime(grpSeriendauer, SWT.BORDER | SWT.DROP_DOWN | SWT.LONG);
 		dateTimeBeginOfSeries.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
@@ -237,7 +236,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		composite.setLayout(composite_layout);
 		
 		btnEndsAfter = new Button(composite, SWT.RADIO);
-		btnEndsAfter.setText(Messages.getString("SerienTerminDialog.btnEndsAfter.text")); //$NON-NLS-1$
+		btnEndsAfter.setText(Messages.SerienTerminDialog_btnEndsAfter_text);
 		btnEndsAfter.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -258,10 +257,10 @@ public class SerienTerminDialog extends TitleAreaDialog {
 			.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		
 		Label lblNewLabel = new Label(composite_1, SWT.NONE);
-		lblNewLabel.setText(Messages.getString("SerienTerminDialog.lblNewLabel.text")); //$NON-NLS-1$
+		lblNewLabel.setText(Messages.SerienTerminDialog_lblNewLabel_text);
 		
 		btnEndsOn = new Button(composite, SWT.RADIO);
-		btnEndsOn.setText(Messages.getString("SerienTerminDialog.btnEndsOn.text")); //$NON-NLS-1$
+		btnEndsOn.setText(Messages.SerienTerminDialog_btnEndsOn_text);
 		btnEndsOn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -272,22 +271,22 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		dateEndsOn = new DateTime(composite, SWT.BORDER);
 		
 		groupData = new Group(area, SWT.NONE);
-		groupData.setText(Messages.getString("SerienTerminDialog.groupData.text")); //$NON-NLS-1$
+		groupData.setText(Messages.SerienTerminDialog_groupData_text);
 		groupData.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		groupData.setLayout(new GridLayout(4, false));
 		
 		txtReason = new Text(groupData, SWT.BORDER);
-		txtReason.setMessage(Messages.getString("SerienTerminDialog.txtReason.message")); //$NON-NLS-1$
+		txtReason.setMessage(Messages.SerienTerminDialog_txtReason_message);
 		txtReason.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
 		
 		Link linkCustomText = new Link(groupData, SWT.NONE);
-		linkCustomText.setText(Messages.getString("SerienTerminDialog.linkCustomText.text")); //$NON-NLS-1$
+		linkCustomText.setText(Messages.SerienTerminDialog_linkCustomText_text);
 		linkCustomText.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				InputDialog inp =
 					new InputDialog(getShell(), "Enter Text",
-						"Enter Text/Name for the appointment", "", null); //$NON-NLS-1$
+						"Enter Text/Name for the appointment", "", null);
 				if (inp.open() == Dialog.OK) {
 					txtContact.setText(inp.getValue());
 					serienTermin.setContact(null);
@@ -296,7 +295,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		});
 		
 		Link linkSelectContact = new Link(groupData, SWT.NONE);
-		linkSelectContact.setText(Messages.getString("SerienTerminDialog.linkSelectContact.text")); //$NON-NLS-1$
+		linkSelectContact.setText(Messages.SerienTerminDialog_linkSelectContact_text);
 		linkSelectContact.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -314,7 +313,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		
 		Label lblArea = new Label(groupData, SWT.NONE);
 		lblArea.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
-		lblArea.setText(Messages.getString("SerienTerminDialog.lblArea.text")); //$NON-NLS-1$
+		lblArea.setText(Messages.SerienTerminDialog_lblArea_text);
 		
 		comboArea = new Combo(groupData, SWT.NONE);
 		comboArea.setItems(Activator.getDefault().getResources());
@@ -327,7 +326,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		});
 		
 		txtContact = new Text(groupData, SWT.BORDER);
-		txtContact.setMessage(Messages.getString("SerienTerminDialog.txtContact.message")); //$NON-NLS-1$
+		txtContact.setMessage(Messages.SerienTerminDialog_txtContact_message);
 		txtContact.setEditable(false);
 		txtContact.setTextLimit(80);
 		txtContact.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
@@ -425,9 +424,9 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		Button button =
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-		button.setText(Messages.getString("SerienTerminDialog.other.text")); //$NON-NLS-1$
+		button.setText(Messages.SerienTerminDialog_other_text);
 		Button button_1 = createButton(parent, IDialogConstants.STOP_ID, "remove series", false);
-		button_1.setText(Messages.getString("SerienTerminDialog.other.text_1")); //$NON-NLS-1$
+		button_1.setText(Messages.SerienTerminDialog_other_text_1);
 		
 	}
 	
@@ -500,13 +499,13 @@ public class SerienTerminDialog extends TitleAreaDialog {
 			// ask user about next step (keep, change, cancel) in case of a lock time collision
 			if (serienTermin.collidesWithLockTimes()) {
 				MessageDialog collisionDialog = new MessageDialog(getShell(),
-					Messages.getString("SerienTerminDialog.dlgLockTimesConflict"),
+					Messages.SerienTerminDialog_dlgLockTimesConflict,
 					getTitleImageLabel().getImage(),
-					Messages.getString("SerienTerminDialog.dlgLockTimesSeriesConflict"),
+					Messages.SerienTerminDialog_dlgLockTimesSeriesConflict,
 					MessageDialog.WARNING, new String[] {
-						Messages.getString("SerienTerminDialog.dlgBtnApplyAnyway"),
-						Messages.getString("SerienTerminDialog.dlgBtnChange"),
-						Messages.getString("SerienTerminDialog.dlgBtnCancel")
+						Messages.SerienTerminDialog_dlgBtnApplyAnyway,
+						Messages.SerienTerminDialog_dlgBtnChange,
+						Messages.SerienTerminDialog_dlgBtnCancel
 					}, 0);
 					
 				result = collisionDialog.open();

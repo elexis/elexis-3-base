@@ -41,6 +41,7 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.Preferences;
+import ch.elexis.omnivore.ui.Messages;
 import ch.rgw.tools.TimeTool;
 
 public class FileImportDialog extends TitleAreaDialog {

@@ -125,7 +125,7 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 									MessageFormat
 										.format(
 											Messages
-												.getString("MediportMainPrefPage.question.msg.differentData"), //$NON-NLS-1$
+												.MediportMainPrefPage_question_msg_differentData, //$NON-NLS-1$
 											new Object[] {
 												props.getConfigFilenamePath()
 											});
@@ -134,7 +134,7 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 										getShell(),
 										msg,
 										Messages
-											.getString("MediportMainPrefPage.question.msg.DatenUebernehmen"))) { //$NON-NLS-1$
+											.MediportMainPrefPage_question_msg_DatenUebernehmen)) { //$NON-NLS-1$
 									overwrite = true;
 								}
 							}
@@ -199,12 +199,12 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 					if (!keystoreFile.exists()) {
 						msg =
 							Messages
-								.getString("MediportMainPrefPage.error.msg.InitAbCD.SrcNotFound") + keystoreFile.getCanonicalPath(); //$NON-NLS-1$
+								.MediportMainPrefPage_error_msg_InitAbCD_SrcNotFound + keystoreFile.getCanonicalPath(); //$NON-NLS-1$
 					}
 					if (!toDir.exists()) {
 						msg =
 							Messages
-								.getString("MediportMainPrefPage.error.msg.InitAbCD.DstNotFound") + toDir.getCanonicalPath(); //$NON-NLS-1$
+								.MediportMainPrefPage_error_msg_InitAbCD_DstNotFound + toDir.getCanonicalPath(); //$NON-NLS-1$
 					}
 					if (keystoreFile.exists() && toDir.exists()) {
 						log.log("INIT: Keystorefile gefunden", Log.DEBUGMSG);
@@ -221,23 +221,24 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 							MessageDialog
 								.openError(
 									getShell(),
-									Messages.getString("MediportMainPrefPage.error.title.InitAbCD"), Messages.getString("MediportMainPrefPage.error.msg.InitAbCD") + "\r" + msg); //$NON-NLS-1$
+									Messages.MediportMainPrefPage_error_title_InitAbCD,
+									Messages.MediportMainPrefPage_error_msg_InitAbCD + "\r" + msg); //$NON-NLS-1$
 						}
 					} else {
 						log.log("INIT: " + msg, Log.DEBUGMSG);
 						MessageDialog
 							.openError(
 								getShell(),
-								Messages.getString("MediportMainPrefPage.error.title.InitAbCD"), Messages.getString("MediportMainPrefPage.error.msg.InitAbCD") + "\r" + msg); //$NON-NLS-1$
+								Messages.MediportMainPrefPage_error_title_InitAbCD, Messages.MediportMainPrefPage_error_msg_InitAbCD + "\r" + msg); //$NON-NLS-1$
 					}
 				} else {
 					throw new IOException(Messages
-						.getString("MediportMainPrefPage.error.msg.Dateiformat")); //$NON-NLS-1$
+						.MediportMainPrefPage_error_msg_Dateiformat); //$NON-NLS-1$
 				}
 			} catch (IOException ex) {
 				ExHandler.handle(ex);
 				MessageDialog.openError(getShell(), Messages
-					.getString("MediportMainPrefPage.error.title.InitAbCD"), ex.getMessage()); //$NON-NLS-1$
+					.MediportMainPrefPage_error_title_InitAbCD, ex.getMessage()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -250,51 +251,51 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 		
 		Label lblInstallDir = new Label(comp, SWT.NONE);
 		lblInstallDir.setText(Messages
-			.getString("MediportMainPrefPage.lbl.Installationsverzeichnis")); //$NON-NLS-1$
+			.MediportMainPrefPage_lbl_Installationsverzeichnis); //$NON-NLS-1$
 		txtInstallDir = new DirectoryText(comp, SWT.BORDER);
 		txtInstallDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		Label lblServer = new Label(comp, SWT.NONE);
-		lblServer.setText(Messages.getString("MediportMainPrefPage.lbl.Uebermittlung")); //$NON-NLS-1$
+		lblServer.setText(Messages.MediportMainPrefPage_lbl_Uebermittlung); //$NON-NLS-1$
 		cbServer = new Combo(comp, SWT.BORDER | SWT.READ_ONLY);
 		cbServer.add(LBL_SERVER_PRODUCTION);
 		cbServer.add(LBL_SERVER_TEST);
 		cbServer.setLayoutData(SWTHelper.getFillGridData(2, false, 1, false));
 		
 		Label lblServerIp = new Label(comp, SWT.NONE);
-		lblServerIp.setText(Messages.getString("MediportMainPrefPage.lbl.MediportServerURL")); //$NON-NLS-1$
+		lblServerIp.setText(Messages.MediportMainPrefPage_lbl_MediportServerURL); //$NON-NLS-1$
 		cbServerIp = new Combo(comp, SWT.BORDER);
 		cbServerIp.add(LBL_SERVER_URL_PRODUKTIV);
 		cbServerIp.add(LBL_SERVER_URL_TEST);
 		cbServerIp.setLayoutData(SWTHelper.getFillGridData(2, false, 1, false));
 		
 		Label lblAusgabe = new Label(comp, SWT.NONE);
-		lblAusgabe.setText(Messages.getString("MediportMainPrefPage.lbl.Rechnungsausgabe")); //$NON-NLS-1$
+		lblAusgabe.setText(Messages.MediportMainPrefPage_lbl_Rechnungsausgabe); //$NON-NLS-1$
 		cbAusgabe = new Combo(comp, SWT.BORDER | SWT.READ_ONLY);
 		cbAusgabe.setLayoutData(SWTHelper.getFillGridData(2, false, 1, false));
 		
 		Label lblIntermediaerEAN = new Label(comp, SWT.NONE);
-		lblIntermediaerEAN.setText(Messages.getString("MediportMainPrefPage.lbl.IntermediaerEAN")); //$NON-NLS-1$
+		lblIntermediaerEAN.setText(Messages.MediportMainPrefPage_lbl_IntermediaerEAN); //$NON-NLS-1$
 		txtIntermediaerEAN = new Text(comp, SWT.BORDER);
 		txtIntermediaerEAN.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 		Group senderComp = new Group(comp, SWT.NONE);
-		senderComp.setText(Messages.getString("MediportMainPrefPage.mediport.Sender")); //$NON-NLS-1$
+		senderComp.setText(Messages.MediportMainPrefPage_mediport_Sender); //$NON-NLS-1$
 		senderComp.setLayout(new GridLayout(2, false));
 		senderComp.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		
 		Label lblSenderEAN = new Label(senderComp, SWT.NONE);
-		lblSenderEAN.setText(Messages.getString("MediportMainPrefPage.mediport.EAN")); //$NON-NLS-1$
+		lblSenderEAN.setText(Messages.MediportMainPrefPage_mediport_EAN); //$NON-NLS-1$
 		txtSenderEAN = new Text(senderComp, SWT.BORDER);
 		txtSenderEAN.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		Label lblSenderDN = new Label(senderComp, SWT.NONE);
-		lblSenderDN.setText(Messages.getString("MediportMainPrefPage.mediport.DN")); //$NON-NLS-1$
+		lblSenderDN.setText(Messages.MediportMainPrefPage_mediport_DN); //$NON-NLS-1$
 		txtSenderDN = new Text(senderComp, SWT.BORDER);
 		txtSenderDN.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		btnInit = new Button(senderComp, SWT.PUSH);
-		btnInit.setText(Messages.getString("MediportMainPrefPage.btn.InitAbCD")); //$NON-NLS-1$
+		btnInit.setText(Messages.MediportMainPrefPage_btn_InitAbCD); //$NON-NLS-1$
 		btnInit.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		// Events
@@ -371,7 +372,7 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 				ExHandler.handle(e);
 				String msg =
 					MessageFormat.format(Messages
-						.getString("MediportMainPrefPage.error.title.SaveConfig"), //$NON-NLS-1$
+						.MediportMainPrefPage_error_title_SaveConfig, //$NON-NLS-1$
 						new Object[] {
 							configFilename
 						});
@@ -384,8 +385,8 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 	}
 	
 	public void init(final IWorkbench workbench){
-		setMessage(Messages.getString("MediportMainPrefPage.message")); //$NON-NLS-1$
-		setDescription(Messages.getString("MediportMainPrefPage.description")); //$NON-NLS-1$
+		setMessage(Messages.MediportMainPrefPage_message); //$NON-NLS-1$
+		setDescription(Messages.MediportMainPrefPage_description); //$NON-NLS-1$
 	}
 	
 }

@@ -57,7 +57,7 @@ import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.data.CstStateItem;
 import ch.gpb.elexis.cst.data.CstStateItem.StateType;
 import ch.gpb.elexis.cst.dialog.CstReminderDialog;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 
 public class RemindersComposite extends CstComposite implements HeartListener/* IActivationListener */{
@@ -218,7 +218,7 @@ public class RemindersComposite extends CstComposite implements HeartListener/* 
     public void addObject(CstStateItem selItem) {
 
 	if (aProfile == null) {
-	    showMessage("No Profile", "Bitte wählen Sie ein Profil");
+	    showMessage("No Profile", "Bitte wï¿½hlen Sie ein Profil");
 	    return;
 	}
 	CstReminderDialog dialog = new CstReminderDialog(getShell(), CoreHub.actMandant);
@@ -381,14 +381,14 @@ public class RemindersComposite extends CstComposite implements HeartListener/* 
 		cell.setImage(imgDecision);
 		break;
 	    case 2:
-		cell.setText(element.getItemType().name() + "" + "   fällig am:"
+		cell.setText(element.getItemType().name() + "" + "   fï¿½llig am:"
 			+ CstService.getGermanFromCompact(element.getDate()));
 
 		if (new Date().after(CstService.getDateFromCompact(element.getDate()))) {
 		    cell.setImage(imgReminder);
 		    cell.setBackground(COLOR_RED);
 		    /*
-		    cell.setText(text.toString() + "  (fällig am: "
+		    cell.setText(text.toString() + "  (fï¿½llig am: "
 		        + CstService.getGermanFromCompact(element.getDate())
 		        + ") ");
 		        */

@@ -23,6 +23,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.MolemaxACL;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;

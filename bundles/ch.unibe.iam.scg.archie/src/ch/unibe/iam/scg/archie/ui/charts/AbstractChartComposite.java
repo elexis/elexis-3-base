@@ -23,7 +23,7 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 
 import ch.elexis.core.ui.UiDesk;
 import ch.unibe.iam.scg.archie.ArchieActivator;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
 
 /**

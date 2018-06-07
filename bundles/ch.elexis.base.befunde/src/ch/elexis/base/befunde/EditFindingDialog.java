@@ -123,15 +123,15 @@ public class EditFindingDialog extends TitleAreaDialog {
 	@Override
 	public void create(){
 		super.create();
-		getShell().setText(Messages.getString("EditFindingDialog.captionBefundEditDlg")); //$NON-NLS-1$
+		getShell().setText(Messages.EditFindingDialog_captionBefundEditDlg); //$NON-NLS-1$
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat == null) {
-			setTitle(Messages.getString("EditFindingDialog.noPatientSelected")); //$NON-NLS-1$
+			setTitle(Messages.EditFindingDialog_noPatientSelected); //$NON-NLS-1$
 		} else {
 			setTitle(pat.getLabel());
 		}
 		setMessage(MessageFormat.format(
-			Messages.getString("EditFindingDialog.enterTextForBefund"), name)); //$NON-NLS-1$
+			Messages.EditFindingDialog_enterTextForBefund, name)); //$NON-NLS-1$
 		setTitleImage(Images.IMG_LOGO.getImage());
 	}
 	

@@ -28,6 +28,7 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.data.Anwender;
+import ch.gpb.elexis.cst.Messages;
 
 public class CstPreference extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
     public static String CST_IDENTIFIER_OMNIVORE = "ch.gpb.elexis.ident.omnivore";
@@ -67,7 +68,7 @@ public class CstPreference extends FieldEditorPreferencePage implements IWorkben
 	//Composite parent = getFieldEditorParent();
 
 	Label lblDoc = new Label(getFieldEditorParent(), SWT.NONE);
-	lblDoc.setText("Anzeigekriterien für CST-bezogene Dokumente:");
+	lblDoc.setText("Anzeigekriterien fï¿½r CST-bezogene Dokumente:");
 	GridData gdDoc = new GridData();
 	gdDoc.horizontalSpan = 2;
 	lblDoc.setLayoutData(gdDoc);
@@ -84,8 +85,8 @@ public class CstPreference extends FieldEditorPreferencePage implements IWorkben
 	gdFile.verticalIndent = 30;
 	lblFile.setLayoutData(gdFile);
 
-	addField(new StringFieldEditor(CST_IDENTIFIER_FILEPREFIX, "Prefix für File-Namen", getFieldEditorParent()));
-	addField(new StringFieldEditor(CST_IDENTIFIER_FILEFORMAT, "Datumsformat für File-Namen (kein : verwenden!)",
+	addField(new StringFieldEditor(CST_IDENTIFIER_FILEPREFIX, "Prefix fï¿½r File-Namen", getFieldEditorParent()));
+	addField(new StringFieldEditor(CST_IDENTIFIER_FILEFORMAT, "Datumsformat fï¿½r File-Namen (kein : verwenden!)",
 		getFieldEditorParent()));
     }
 

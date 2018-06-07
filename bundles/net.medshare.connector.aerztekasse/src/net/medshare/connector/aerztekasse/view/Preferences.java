@@ -15,7 +15,7 @@ package net.medshare.connector.aerztekasse.view;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 
-import net.medshare.connector.aerztekasse.MessagesAK;
+import net.medshare.connector.aerztekasse.Messages;
 import net.medshare.connector.aerztekasse.data.AerztekasseSettings;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -95,9 +95,9 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected Control createContents(Composite parent){
-		String undefined = MessagesAK.Preferences_undefiniert;
+		String undefined = Messages.Preferences_undefiniert;
 		Text dummy = new Text(parent, SWT.NONE);
-		dummy.setText(MessagesAK.Preferences_UseGlobalSettings);
+		dummy.setText(Messages.Preferences_UseGlobalSettings);
 		dummy.pack();
 		gridDataForLabels = new GridData(dummy.getSize().x, dummy.getLineHeight());
 		gridDataForInputs = new GridData(GridData.FILL_HORIZONTAL);
@@ -116,13 +116,13 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		
 		gGlobalSettings = new Group(comp, SWT.NONE);
 		grp = gGlobalSettings;
-		grp.setText(MessagesAK.Preferences_GlobalSettings);
+		grp.setText(Messages.Preferences_GlobalSettings);
 		grp.setLayout(new GridLayout(2, false));
 		grp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		// Benutzername
 		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(MessagesAK.Preferences_Username);
+		lbl.setText(Messages.Preferences_Username);
 		lbl.setLayoutData(gridDataForLabels);
 		
 		tGlobalUsername = new Text(grp, SWT.BORDER | SWT.SINGLE);
@@ -131,7 +131,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		
 		// Passwort
 		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(MessagesAK.Preferences_Password);
+		lbl.setText(Messages.Preferences_Password);
 		lbl.setLayoutData(gridDataForLabels);
 		
 		tGlobalPassword = new Text(grp, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
@@ -140,7 +140,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		
 		// URL
 		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(MessagesAK.Preferences_URL);
+		lbl.setText(Messages.Preferences_URL);
 		lbl.setLayoutData(gridDataForLabels);
 		
 		tGlobalUrl = new Text(grp, SWT.BORDER | SWT.SINGLE);
@@ -152,13 +152,13 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		// =====================================================================
 		gMandantSettings = new Group(comp, SWT.NONE);
 		grp = gMandantSettings;
-		grp.setText(MessagesAK.Preferences_MandantSettingsFor);
+		grp.setText(Messages.Preferences_MandantSettingsFor);
 		grp.setLayout(new GridLayout(2, false));
 		grp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		// Use global Settings
 		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(MessagesAK.Preferences_UseGlobalSettings);
+		lbl.setText(Messages.Preferences_UseGlobalSettings);
 		lbl.setLayoutData(gridDataForLabels);
 		
 		bMandantUseGlobalSettings = new Button(grp, SWT.CHECK);
@@ -183,7 +183,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		
 		// Benutzername
 		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(MessagesAK.Preferences_Username);
+		lbl.setText(Messages.Preferences_Username);
 		lbl.setLayoutData(gridDataForLabels);
 		
 		tMandantUsername = new Text(grp, SWT.BORDER | SWT.SINGLE);
@@ -192,7 +192,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		
 		// Passwort
 		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(MessagesAK.Preferences_Password);
+		lbl.setText(Messages.Preferences_Password);
 		lbl.setLayoutData(gridDataForLabels);
 		
 		tMandantPassword = new Text(grp, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
@@ -204,13 +204,13 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		// =====================================================================
 		gMachineSettings = new Group(comp, SWT.NONE);
 		grp = gMachineSettings;
-		grp.setText(MessagesAK.Preferences_LocalSettingsFor);
+		grp.setText(Messages.Preferences_LocalSettingsFor);
 		grp.setLayout(new GridLayout(2, false));
 		grp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		// Use global Settings
 		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(MessagesAK.Preferences_UseGlobalSettings);
+		lbl.setText(Messages.Preferences_UseGlobalSettings);
 		lbl.setLayoutData(gridDataForLabels);
 		
 		bMachineUseGlobalSettings = new Button(grp, SWT.CHECK);
@@ -235,7 +235,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		
 		// URL
 		lbl = new Label(grp, SWT.NONE);
-		lbl.setText(MessagesAK.Preferences_URL);
+		lbl.setText(Messages.Preferences_URL);
 		lbl.setLayoutData(gridDataForLabels);
 		
 		tMachineUrl = new Text(grp, SWT.BORDER | SWT.SINGLE);
@@ -294,7 +294,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		try {
 			mandantname = aerztekasseSettings.getMandant().getLabel();
 		} catch (Exception e) {}
-		gMandantSettings.setText(MessageFormat.format(MessagesAK.Preferences_MandantSettingsFor,
+		gMandantSettings.setText(MessageFormat.format(Messages.Preferences_MandantSettingsFor,
 			mandantname));
 		bMandantUseGlobalSettings.setSelection(mandantUseGlobalSettings);
 		tMandantUsername.setEditable(!mandantUseGlobalSettings);
@@ -310,7 +310,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		try {
 			hostname = InetAddress.getLocalHost().getHostName();
 		} catch (Exception e) {}
-		gMachineSettings.setText(MessageFormat.format(MessagesAK.Preferences_LocalSettingsFor,
+		gMachineSettings.setText(MessageFormat.format(Messages.Preferences_LocalSettingsFor,
 			hostname));
 		bMachineUseGlobalSettings.setSelection(machineUseGlobalSettings);
 		tMachineUrl.setEditable(!machineUseGlobalSettings);

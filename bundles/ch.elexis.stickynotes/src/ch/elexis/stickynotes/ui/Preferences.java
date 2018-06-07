@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.stickynotes.Messages;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	final static String PREFBRANCH = "sticky_notes/"; //$NON-NLS-1$

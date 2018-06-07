@@ -49,7 +49,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	Combo models, rdw_types;
 	
 	public Preferences(){
-		super(Messages.getString("SysmexAction.ButtonName")); //$NON-NLS-1$
+		super(Messages.SysmexAction_ButtonName);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
 	
@@ -63,7 +63,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		mainComp.setLayout(new GridLayout(4, false));
 		mainComp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
-		new Label(mainComp, SWT.NONE).setText(Messages.getString("Preferences.Modell")); //$NON-NLS-1$
+		new Label(mainComp, SWT.NONE).setText(Messages.Preferences_Modell);
 		models = new Combo(mainComp, SWT.SINGLE);
 		models.setItems(new String[] {
 			MODEL_KX21, MODEL_KX21N, MODEL_POCH
@@ -71,68 +71,68 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		models.setText(CoreHub.localCfg.get(MODEL, MODEL_KX21));
 		
 		lblRdw = new Label(mainComp, SWT.NONE);
-		lblRdw.setText(Messages.getString("Preferences.RDW")); //$NON-NLS-1$
+		lblRdw.setText(Messages.Preferences_RDW);
 		rdw_types = new Combo(mainComp, SWT.SINGLE);
 		rdw_types.setItems(new String[] {
 			RDW_SD, RDW_CV
 		});
 		rdw_types.setText(CoreHub.localCfg.get(RDW_TYP, RDW_SD));
 		
-		new Label(mainComp, SWT.NONE).setText(Messages.getString("Preferences.Backgroundprocess")); //$NON-NLS-1$
+		new Label(mainComp, SWT.NONE).setText(Messages.Preferences_Backgroundprocess);
 		background = new Button(mainComp, SWT.CHECK);
 		background.setSelection(CoreHub.localCfg.get(BACKGROUND, "n").equalsIgnoreCase("y")); //$NON-NLS-1$ //$NON-NLS-2$
 		GridDataFactory.swtDefaults().span(3, 1).applyTo(background);
 		
-		new Label(mainComp, SWT.NONE).setText(Messages.getString("Preferences.Log")); //$NON-NLS-1$
+		new Label(mainComp, SWT.NONE).setText(Messages.Preferences_Log);
 		log = new Button(mainComp, SWT.CHECK);
 		log.setSelection(CoreHub.localCfg.get(LOG, "n").equalsIgnoreCase("y")); //$NON-NLS-1$ //$NON-NLS-2$
 		GridDataFactory.swtDefaults().span(3, 1).applyTo(log);
 		
 		Group connectGroup = new Group(retComp, SWT.NONE);
-		connectGroup.setText(Messages.getString("Preferences.Verbindung")); //$NON-NLS-1$
+		connectGroup.setText(Messages.Preferences_Verbindung);
 		connectGroup.setLayout(new GridLayout(2, false));
 		connectGroup.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
 		Label lblPorts = new Label(connectGroup, SWT.NONE);
-		lblPorts.setText(Messages.getString("Preferences.Port")); //$NON-NLS-1$
+		lblPorts.setText(Messages.Preferences_Port);
 		lblPorts.setLayoutData(new GridData(SWT.NONE));
 		ports = new Combo(connectGroup, SWT.SINGLE);
 		ports.setItems(Connection.getComPorts());
-		ports.setText(CoreHub.localCfg.get(PORT, Messages.getString("SysmexAction.DefaultPort"))); //$NON-NLS-1$
+		ports.setText(CoreHub.localCfg.get(PORT, Messages.SysmexAction_DefaultPort));
 		
 		String[] param = CoreHub.localCfg.get(PARAMS, "9600,8,n,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Label lblSpeed = new Label(connectGroup, SWT.NONE);
-		lblSpeed.setText(Messages.getString("Preferences.Baud")); //$NON-NLS-1$
+		lblSpeed.setText(Messages.Preferences_Baud);
 		lblSpeed.setLayoutData(new GridData(SWT.NONE));
 		speed = new Text(connectGroup, SWT.BORDER);
 		speed.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		speed.setText(param[0]);
 		
 		Label lblData = new Label(connectGroup, SWT.NONE);
-		lblData.setText(Messages.getString("Preferences.Databits")); //$NON-NLS-1$
+		lblData.setText(Messages.Preferences_Databits);
 		lblData.setLayoutData(new GridData(SWT.NONE));
 		data = new Text(connectGroup, SWT.BORDER);
 		data.setText(param[1]);
 		
 		Label lblParity = new Label(connectGroup, SWT.NONE);
-		lblParity.setText(Messages.getString("Preferences.Parity")); //$NON-NLS-1$
+		lblParity.setText(Messages.Preferences_Parity);
 		lblParity.setLayoutData(new GridData(SWT.NONE));
 		parity = new Button(connectGroup, SWT.CHECK);
 		parity.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		parity.setSelection(!param[2].equalsIgnoreCase("n")); //$NON-NLS-1$
+		parity.setSelection(!param[2].equalsIgnoreCase("n"));
 		
 		Label lblStop = new Label(connectGroup, SWT.NONE);
-		lblStop.setText(Messages.getString("Preferences.Stopbits")); //$NON-NLS-1$
+		lblStop.setText(Messages.Preferences_Stopbits);
 		lblStop.setLayoutData(new GridData(SWT.NONE));
 		stop = new Text(connectGroup, SWT.BORDER);
 		stop.setText(param[3]);
 		
 		Label lblTimeout = new Label(connectGroup, SWT.NONE);
-		lblTimeout.setText(Messages.getString("Preferences.Timeout")); //$NON-NLS-1$
+		lblTimeout.setText(Messages.Preferences_Timeout);
 		lblTimeout.setLayoutData(new GridData(SWT.NONE));
 		String timeoutStr =
-			CoreHub.localCfg.get(TIMEOUT, Messages.getString("SysmexAction.DefaultTimeout")); //$NON-NLS-1$
+			CoreHub.localCfg.get(TIMEOUT, Messages.SysmexAction_DefaultTimeout);
 		timeout = new Text(connectGroup, SWT.BORDER);
 		timeout.setText(timeoutStr);
 		

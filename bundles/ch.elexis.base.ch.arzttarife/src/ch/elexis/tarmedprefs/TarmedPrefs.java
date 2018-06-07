@@ -29,14 +29,14 @@ public class TarmedPrefs extends PreferencePage implements IWorkbenchPreferenceP
 	protected Control createContents(final Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
-		new Label(ret, SWT.NONE).setText(Messages.getString("TarmedPrefs.TPKVG")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPKVG);
 		new MultiplikatorEditor(ret, TarmedLeistung.class.getName() + "KVG"); //$NON-NLS-1$
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
-		new Label(ret, SWT.NONE).setText(Messages.getString("TarmedPrefs.TPUVG")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPUVG);
 		new MultiplikatorEditor(ret, TarmedLeistung.class.getName() + "UVG"); //$NON-NLS-1$
-		new Label(ret, SWT.NONE).setText(Messages.getString("TarmedPrefs.TPIV")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPIV); 
 		new MultiplikatorEditor(ret, TarmedLeistung.class.getName() + "IV"); //$NON-NLS-1$
-		new Label(ret, SWT.NONE).setText(Messages.getString("TarmedPrefs.TPMV")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPMV); 
 		new MultiplikatorEditor(ret, TarmedLeistung.class.getName() + "MV"); //$NON-NLS-1$
 		return ret;
 	}

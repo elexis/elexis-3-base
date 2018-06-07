@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.MolemaxACL;
 import ch.elexis.molemax.data.Tracker;
 import ch.elexis.core.ui.util.SWTHelper;

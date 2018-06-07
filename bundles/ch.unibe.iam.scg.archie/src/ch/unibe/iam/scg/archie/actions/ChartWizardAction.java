@@ -29,7 +29,7 @@ import ch.elexis.core.ui.util.Log;
 import ch.unibe.iam.scg.archie.ArchieActivator;
 import ch.unibe.iam.scg.archie.controller.ChartModelManager;
 import ch.unibe.iam.scg.archie.controller.ProviderChartFactory;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.ChartModel;
 import ch.unibe.iam.scg.archie.ui.views.ChartView;
 import ch.unibe.iam.scg.archie.ui.wizards.ChartWizard;

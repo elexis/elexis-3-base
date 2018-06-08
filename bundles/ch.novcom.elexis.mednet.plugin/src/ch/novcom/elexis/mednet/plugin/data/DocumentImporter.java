@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.data.interfaces.IPatient;
 import ch.elexis.core.importer.div.importers.HL7Parser;
-import ch.elexis.core.model.IPatient;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.data.Kontakt;

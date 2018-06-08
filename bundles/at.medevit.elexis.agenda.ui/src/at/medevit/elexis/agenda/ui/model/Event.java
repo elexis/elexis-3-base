@@ -3,7 +3,7 @@ package at.medevit.elexis.agenda.ui.model;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.data.interfaces.IPeriod;
 
 /**
  * Model element representing an event than can be rendered using the javascript calendar contained

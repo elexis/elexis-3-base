@@ -1,8 +1,8 @@
 package ch.elexis.laborimport.hl7.universal;
 
 import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.data.interfaces.IContact;
 import ch.elexis.core.importer.div.importers.ILabContactResolver;
-import ch.elexis.core.model.IContact;
 import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.importer.div.importers.Messages;
 import ch.elexis.core.ui.util.SWTHelper;

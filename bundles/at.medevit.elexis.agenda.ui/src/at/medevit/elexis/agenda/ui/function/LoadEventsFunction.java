@@ -22,7 +22,7 @@ import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.model.Event;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.data.TerminUtil;
-import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.data.interfaces.IPeriod;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 

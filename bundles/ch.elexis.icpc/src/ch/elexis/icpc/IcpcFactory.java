@@ -14,6 +14,7 @@ package ch.elexis.icpc;
 
 import java.lang.reflect.Method;
 
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 
@@ -23,8 +24,8 @@ public class IcpcFactory extends PersistentObjectFactory {
 	
 	public PersistentObject createFromString(String code){
 		try {
-			String[] ci = code.split("::");
-			Class clazz = Class.forName(ci[0]);
+			String[] ci = code.split(StringConstants.DOUBLECOLON);
+			Class<?> clazz = Class.forName(ci[0]);
 			Method load = clazz.getMethod("load", new Class[] {
 				String.class
 			});

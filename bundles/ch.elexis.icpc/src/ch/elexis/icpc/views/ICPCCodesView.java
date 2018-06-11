@@ -25,6 +25,7 @@ public class ICPCCodesView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.codesView";
 	String mode;
 	ChapterDisplay[] chapters;
+	ShortlistComposite shortlistComposite;
 	CTabFolder ctab;
 	
 	public ICPCCodesView(){}
@@ -33,16 +34,27 @@ public class ICPCCodesView extends ViewPart {
 	public void createPartControl(Composite parent){
 		ctab = new CTabFolder(parent, SWT.NONE);
 		chapters = new ChapterDisplay[IcpcCode.classes.length];
+		
 		for (String chapter : IcpcCode.classes) {
 			CTabItem item = new CTabItem(ctab, SWT.NONE);
 			item.setText(chapter.substring(0, 1));
 			item.setToolTipText(chapter.substring(3));
 		}
+		
+		CTabItem shortlistCTabItem = new CTabItem(ctab, SWT.NONE);
+		shortlistCTabItem.setText("Shortlist");
+		shortlistComposite = new ShortlistComposite(ctab, SWT.NONE);
+		shortlistCTabItem.setControl(shortlistComposite);
+		
 		ctab.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				int idx = ctab.getSelectionIndex();
+				if (idx >= IcpcCode.classes.length) {
+					// if shortlist
+					return;
+				}
 				if (chapters[idx] == null) {
 					chapters[idx] = new ChapterDisplay(ctab, IcpcCode.classes[idx]);
 					ctab.getItem(idx).setControl(chapters[idx]);
@@ -51,12 +63,12 @@ public class ICPCCodesView extends ViewPart {
 			}
 			
 		});
+		ctab.setSelection(IcpcCode.classes.length);
 	}
 	
 	@Override
 	public void setFocus(){
-		// TODO Auto-generated method stub
-		
+		ctab.setFocus();
 	}
 	
 	public void setComponent(String mode){

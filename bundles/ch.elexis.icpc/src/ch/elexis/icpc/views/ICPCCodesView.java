@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.icpc.IcpcCode;
-import ch.elexis.core.ui.util.SWTHelper;
 
 public class ICPCCodesView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.codesView";
@@ -33,7 +32,6 @@ public class ICPCCodesView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent){
 		ctab = new CTabFolder(parent, SWT.NONE);
-		ctab.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		chapters = new ChapterDisplay[IcpcCode.classes.length];
 		for (String chapter : IcpcCode.classes) {
 			CTabItem item = new CTabItem(ctab, SWT.NONE);

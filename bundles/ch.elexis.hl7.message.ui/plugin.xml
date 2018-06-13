@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.Konsdetail">
+         <command
+               commandId="ch.elexis.hl7.message.ui.exportmessage"
+               icon="rsc/icon/HL7_Logo_16.png"
+               label="Patient Anmeldung"
+               style="push">
+            <parameter
+                  name="ch.elexis.hl7.message.ui.exportmessage.typ"
+                  value="ADT_A08">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Export a HL7 Message"
+            id="ch.elexis.hl7.message.ui.exportmessage"
+            name="Export Message">
+         <commandParameter
+               id="ch.elexis.hl7.message.ui.exportmessage.typ"
+               name="message typ"
+               optional="false">
+         </commandParameter>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="ch.elexis.hl7.message.ui.handler.ExportMessageHandler"
+            commandId="ch.elexis.hl7.message.ui.exportmessage">
+         <activeWhen>
+            <with
+                  variable="ch.elexis.commands.sourceprovider.patientSelectionActive">
+               <equals
+                     value="TRUE">
+               </equals>
+            </with>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.hl7.message.ui.preference.MessagePreferencePage"
+            id="ch.elexis.hl7.message.ui.preference.messagepage"
+            name="HL7 Message">
+      </page>
+   </extension>
+
+</plugin>

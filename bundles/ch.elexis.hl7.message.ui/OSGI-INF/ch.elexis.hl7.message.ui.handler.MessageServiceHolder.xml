@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.elexis.hl7.message.ui.handler.MessageServiceHolder">
+   <reference bind="setHL7MessageService" interface="ch.elexis.hl7.message.core.IHL7MessageService" name="HL7MessageService"/>
+   <implementation class="ch.elexis.hl7.message.ui.handler.MessageServiceHolder"/>
+</scr:component>

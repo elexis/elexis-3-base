@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="ch.elexis.hl7.message"
+      id="ch.elexis.hl7.message.feature"
       label="HL7 Message"
       version="1.0.0.qualifier"
       provider-name="medevit.at">

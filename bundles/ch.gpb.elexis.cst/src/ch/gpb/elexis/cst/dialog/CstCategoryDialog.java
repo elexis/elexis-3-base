@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 
 /**
  * 

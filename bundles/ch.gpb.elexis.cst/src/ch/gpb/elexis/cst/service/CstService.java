@@ -43,7 +43,7 @@ import ch.gpb.elexis.cst.data.CstGroup;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.data.CstProimmun;
 import ch.gpb.elexis.cst.preferences.CstPreference;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.view.CstProfileEditor;
 import ch.rgw.tools.StringTool;
 
@@ -532,7 +532,7 @@ public class CstService {
 		    for (LabResult labResult : res) {
 
 			// TODO: this lengthy condition is required, because sometimes the
-			// Labitems seem to be intermixed (ie HGB / Hämoglobin and LDH / LDH Elektrophorese)
+			// Labitems seem to be intermixed (ie HGB / Hï¿½moglobin and LDH / LDH Elektrophorese)
 			if ((labResult.getItem().getName().equals(name) ||
 				labResult.getItem().getKuerzel().equals(kuerzel) ||
 				labResult.getItem().getName().equals(kuerzel) ||
@@ -591,7 +591,7 @@ public class CstService {
 		    for (LabResult labResult : res) {
 
 			// TODO: this lengthy condition is required, because sometimes the
-			// Labitems seem to be intermixed (ie HGB / Hämoglobin and LDH / LDH Elektrophorese)
+			// Labitems seem to be intermixed (ie HGB / Hï¿½moglobin and LDH / LDH Elektrophorese)
 			if (labResult.getItem().getName().equals(name) ||
 				labResult.getItem().getKuerzel().equals(kuerzel) ||
 				labResult.getItem().getName().equals(kuerzel) ||

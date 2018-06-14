@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 
 /**
  * @author daniel ludin ludin@swissonline.ch

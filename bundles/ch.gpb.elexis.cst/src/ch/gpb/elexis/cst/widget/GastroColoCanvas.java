@@ -17,13 +17,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.gpb.elexis.cst.data.CstGastroColo;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 
 public class GastroColoCanvas extends CstCanvas {
 
     int iPixX = 780; // Anzeigebreite in pix
-    int iPixY = 120; // Anzeigehöhe in pix
+    int iPixY = 120; // Anzeigehï¿½he in pix
     int xoffBase = 4; // x offset
     int yoffBase = 140; // y offset
     int werteBereich = 160; // Wertebereich der in iPixY/X angezeigt werden soll

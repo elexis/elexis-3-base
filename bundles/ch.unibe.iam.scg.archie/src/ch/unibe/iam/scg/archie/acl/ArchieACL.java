@@ -18,7 +18,7 @@ import ch.elexis.admin.IACLContributor;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.RoleConstants;
 import ch.unibe.iam.scg.archie.ArchieActivator;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 
 /**
  * <p>

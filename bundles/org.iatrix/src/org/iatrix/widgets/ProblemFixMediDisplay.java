@@ -25,7 +25,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IViewSite;
 import org.iatrix.actions.IatrixEventHelper;
+import org.iatrix.Messages;
 import org.iatrix.data.Problem;
+
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.constants.StringConstants;
@@ -63,16 +65,16 @@ import ch.rgw.tools.TimeTool;
  *
  */
 public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
-	private static final String TTCOST = Messages.getString("FixMediDisplay.DailyCost"); //$NON-NLS-1$
+	private static final String TTCOST = Messages.FixMediDisplay_DailyCost;
 	private final LDListener dlisten;
 	private IAction stopMedicationAction, changeMedicationAction, removeMedicationAction;
 	ProblemFixMediDisplay self;
 	Label lCost;
 	PersistentObjectDropTarget target;
-	static final String REZEPT = Messages.getString("FixMediDisplay.Prescription"); //$NON-NLS-1$
-	static final String LISTE = Messages.getString("FixMediDisplay.UsageList"); //$NON-NLS-1$
-	static final String HINZU = Messages.getString("FixMediDisplay.AddItem"); //$NON-NLS-1$
-	static final String KOPIEREN = Messages.getString("FixMediDisplay.Copy"); //$NON-NLS-1$
+	static final String REZEPT = Messages.FixMediDisplay_Prescription;
+	static final String LISTE = Messages.FixMediDisplay_UsageList;
+	static final String HINZU = Messages.FixMediDisplay_AddItem;
+	static final String KOPIEREN = Messages.FixMediDisplay_Copy;
 
 	// DBUG
 	public org.eclipse.swt.widgets.List getList(){
@@ -93,7 +95,7 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 			removeMedicationAction);
 		setDLDListener(dlisten);
 		target =
-			new PersistentObjectDropTarget(Messages.getString("FixMediDisplay.FixMedikation"), this, //$NON-NLS-1$
+			new PersistentObjectDropTarget(Messages.FixMediDisplay_FixMedikation, this, //$NON-NLS-1$
 				new PersistentObjectDropTarget.IReceiver() {
 
 					@Override
@@ -156,10 +158,8 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 							}
 						} else {
 							SWTHelper.alert(
-								Messages
-									.getString("ProblemFixMediDisplay.AlertNoProblemSelectedTitle"),
-								Messages
-									.getString("ProblemFixMediDisplay.AlertNoProblemSelectedText"));
+								Messages.ProblemFixMediDisplay_AlertNoProblemSelectedTitle,
+								Messages.ProblemFixMediDisplay_AlertNoProblemSelectedText);
 						}
 					}
 				});
@@ -313,10 +313,10 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 	private void makeActions(){
 
 		changeMedicationAction = new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,
-			Messages.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
+			Messages.FixMediDisplay_Change) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
-				setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
+				setToolTipText(Messages.FixMediDisplay_Modify); 
 			}
 
 			@Override
@@ -333,10 +333,10 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 		};
 
 		stopMedicationAction = new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,
-			Messages.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
+			Messages.FixMediDisplay_Stop) {
 			{
 				setImageDescriptor(Images.IMG_REMOVEITEM.getImageDescriptor());
-				setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
+				setToolTipText(Messages.FixMediDisplay_StopThisMedicament); 
 			}
 
 			@Override
@@ -354,10 +354,10 @@ public class ProblemFixMediDisplay extends ListDisplay<Prescription> {
 		};
 
 		removeMedicationAction = new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION,
-			Messages.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
+			Messages.FixMediDisplay_Delete) {
 			{
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
-				setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
+				setToolTipText(Messages.FixMediDisplay_DeleteUnrecoverable); 
 			}
 
 			@Override

@@ -16,7 +16,6 @@ package com.hilotec.elexis.messwerte.v2.views;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "com.hilotec.elexis.messwerte.v2.views.messages"; //$NON-NLS-1$
 	public static String ExportDialog_btnDateAll;
 	public static String ExportDialog_btnDateFromTo;
 	public static String ExportDialog_btnPatAll;
@@ -64,10 +63,4 @@ public class Messages extends NLS {
 	public static String MessungenUebersichtV21_Initializing;
 	public static String DBError;
 	public static String DBErrorTable;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-	
-	private Messages(){}
 }

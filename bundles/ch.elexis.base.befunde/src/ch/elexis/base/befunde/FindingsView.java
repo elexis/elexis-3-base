@@ -146,7 +146,7 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 	
 	private void setPatient(final Patient p){
 		if (p == null) {
-			form.setText(Messages.getString("FindingsView.noPatientSelected")); //$NON-NLS-1$
+			form.setText(Messages.FindingsView_noPatientSelected); //$NON-NLS-1$
 			
 		} else {
 			form.setText(p.getLabel());
@@ -324,10 +324,10 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 	 * 
 	 */
 	private void makeActions(){
-		newValueAction = new Action(Messages.getString("MesswerteView.enterNewValue")) { //$NON-NLS-1$
+		newValueAction = new Action(Messages.MesswerteView_enterNewValue) { //$NON-NLS-1$
 				{
 					setImageDescriptor(Images.IMG_ADDITEM.getImageDescriptor());
-					setToolTipText(Messages.getString("FindingsView.addNewMeasure")); //$NON-NLS-1$
+					setToolTipText(Messages.FindingsView_addNewMeasure); //$NON-NLS-1$
 				}
 				
 				@Override
@@ -343,10 +343,10 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 					}
 				}
 			};
-		editValueAction = new Action(Messages.getString("FindingsView.editActionCaption")) { //$NON-NLS-1$
+		editValueAction = new Action(Messages.FindingsView_editActionCaption) { //$NON-NLS-1$
 				{
 					setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
-					setToolTipText(Messages.getString("FindingsView.editActionToolTip")); //$NON-NLS-1$
+					setToolTipText(Messages.FindingsView_editActionToolTip); //$NON-NLS-1$
 				}
 				
 				@Override
@@ -366,16 +366,16 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 					}
 				}
 			};
-		deleteValueAction = new Action(Messages.getString("FindingsView.deleteActionCaption")) { //$NON-NLS-1$
+		deleteValueAction = new Action(Messages.FindingsView_deleteActionCaption) { //$NON-NLS-1$
 				{
 					setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
-					setToolTipText(Messages.getString("FindingsView.deleteActionToolTip")); //$NON-NLS-1$
+					setToolTipText(Messages.FindingsView_deleteActionToolTip); //$NON-NLS-1$
 				}
 				
 				@Override
 				public void run(){
-					if (SWTHelper.askYesNo(Messages.getString("FindingsView.deleteConfirmCaption"), //$NON-NLS-1$
-						Messages.getString("FindingsView.deleteConfirmMessage"))) { //$NON-NLS-1$
+					if (SWTHelper.askYesNo(Messages.FindingsView_deleteConfirmCaption, //$NON-NLS-1$
+						Messages.FindingsView_deleteConfirmMessage)) { //$NON-NLS-1$
 						CTabItem ci = ctabs.getSelection();
 						if (ci != null) {
 							FindingsPage page = (FindingsPage) ci.getControl();
@@ -389,10 +389,10 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 					}
 				}
 			};
-		printValuesAction = new Action(Messages.getString("FindingsView.printActionCaptiob")) { //$NON-NLS-1$
+		printValuesAction = new Action(Messages.FindingsView_printActionCaptiob) { //$NON-NLS-1$
 				{
 					setImageDescriptor(Images.IMG_PRINTER.getImageDescriptor());
-					setToolTipText(Messages.getString("FindingsView.printActionMessage")); //$NON-NLS-1$
+					setToolTipText(Messages.FindingsView_printActionMessage); //$NON-NLS-1$
 				}
 				
 				@Override

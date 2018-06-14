@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.core.ui.util.Log;
 import ch.unibe.iam.scg.archie.ArchieActivator;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.RegexValidation;
 
 /**

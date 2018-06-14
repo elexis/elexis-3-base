@@ -100,7 +100,7 @@ import ch.gpb.elexis.cst.dialog.ThemenblockDetailDialog;
  * are presented in the same way everywhere.
  * <p>
  */
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 
 /**
  * 
@@ -672,7 +672,7 @@ public class CstThemenblockEditor extends ViewPart implements
 		if (isRepeatedDialog) {
 		    dialog.setErrorMessage(Messages.Cst_Text_cstgroup_exists);
 		}
-		// flag für den rekursiven Dialog Aufruf
+		// flag fï¿½r den rekursiven Dialog Aufruf
 		isRepeatedDialog = false;
 		if (dialog.open() == Window.OK) {
 		    if (dialog.getGroupName().length() < 1) {

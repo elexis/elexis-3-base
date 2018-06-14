@@ -24,7 +24,7 @@ public class ShowErrorInvoices extends Dialog {
 	protected void configureShell(Shell newShell){
 		super.configureShell(newShell);
 		newShell.setSize(300, 300);
-		newShell.setText(Messages.getString("ShowErrorInvoices.title.Antworten")); //$NON-NLS-1$
+		newShell.setText(Messages.ShowErrorInvoices_title_Antworten); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -37,8 +37,8 @@ public class ShowErrorInvoices extends Dialog {
 		txtInformation.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		txtInformation.setEditable(false);
 		
-		txtInformation.setText(Messages.getString("ShowErrorInvoices.msg.Rechnungsantworten") + //$NON-NLS-1$
-			Messages.getString("ShowErrorInvoices.msg2.Rechnungsantworten")); //$NON-NLS-1$
+		txtInformation.setText(Messages.ShowErrorInvoices_msg_Rechnungsantworten + //$NON-NLS-1$
+			Messages.ShowErrorInvoices_msg2_Rechnungsantworten); //$NON-NLS-1$
 		
 		new ErrorInvoiceForm(comp, SWT.NONE, client);
 		return parent;

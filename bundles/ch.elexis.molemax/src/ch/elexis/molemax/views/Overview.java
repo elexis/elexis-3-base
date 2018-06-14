@@ -38,6 +38,7 @@ import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;

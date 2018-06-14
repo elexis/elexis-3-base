@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.molemax.Messages;
 
 public class MolemaxPrefs extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {

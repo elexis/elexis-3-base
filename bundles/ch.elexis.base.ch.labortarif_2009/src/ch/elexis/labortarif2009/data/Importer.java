@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.base.ch.labortarif_2009.Messages;
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.ui.util.ImporterPage;

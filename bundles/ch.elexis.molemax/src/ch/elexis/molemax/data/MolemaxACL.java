@@ -15,6 +15,7 @@ import ch.elexis.admin.ACE;
 import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.IACLContributor;
 import ch.elexis.core.model.RoleConstants;
+import ch.elexis.molemax.Messages;
 
 public class MolemaxACL implements IACLContributor {
 	public static final ACE ACLBASE = new ACE(ACE.ACE_ROOT,

@@ -35,7 +35,7 @@ import ch.unibe.iam.scg.archie.ArchieActivator;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
 import ch.unibe.iam.scg.archie.actions.NewStatisticsAction;
 import ch.unibe.iam.scg.archie.controller.ProviderManager;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.ui.DetailsPanel;
 

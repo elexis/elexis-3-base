@@ -2,6 +2,8 @@ package ch.elexis.connect.reflotron.v2test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Locale;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -89,7 +91,20 @@ public class ReflotronProbeTest {
 		try {
 			probe.write(null).split(SEPARATOR);
 		} catch (PackageException e) {
-			assertEquals("Resultat der Probe zu klein!", e.getMessage());
+			String msg =  e.getMessage();
+	        Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
+	        if (locale.getLanguage().equals("de"))
+	        {
+	        	// Our most common case
+	    		assertEquals("Resultat der Probe zu klein!",msg );
+	        } else if (locale.getLanguage().equals("en"))
+	        {
+	        	// This is the case when running under CI via gitlab/travis
+	    		assertEquals("Result of the sample too small!",msg );
+	        }  else {
+	        	System.out.println(String.format("Skipping test for language {} produced {}",
+	        		locale.getLanguage(), msg));
+	        }
 		}
 		
 		probe.setResult(p8);
@@ -130,13 +145,25 @@ public class ReflotronProbeTest {
 
 	@Test
 	public void testLocalizedValueError() throws PackageException{
-		String msg = ch.elexis.connect.reflotron.packages.Messages.getString("Value.Error");
-		assertEquals("Fehler bei der Messung",msg );
-	}
+		String msg = ch.elexis.connect.reflotron.Messages.Reflotron_Value_Error;
+        Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
+        if (locale.getLanguage().equals("de"))
+        {
+        	// Our most common case
+    		assertEquals("Fehler bei der Messung",msg );
+        } else if (locale.getLanguage().equals("en"))
+        {
+        	// This is the case when running under CI via gitlab/travis
+    		assertEquals("Error in the measurement",msg );
+        }  else {
+        	System.out.println(String.format("Skipping test for language {} produced {}",
+        		locale.getLanguage(), msg));
+        }
+    }
 
 	@Test
 	public void testLocalizedConnectionName() throws PackageException{
-		String msg = ch.elexis.connect.reflotron.Messages.getString("ReflotronSprintAction.ConnectionName");
+		String msg = ch.elexis.connect.reflotron.Messages.ReflotronSprintAction_ConnectionName;
 		assertEquals("Elexis-Roche Reflotron", msg);
 	}
 	

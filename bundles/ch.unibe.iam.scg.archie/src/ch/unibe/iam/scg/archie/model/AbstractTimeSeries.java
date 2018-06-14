@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
 import ch.unibe.iam.scg.archie.annotations.SetProperty;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.ui.widgets.DateWidget;
 import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 

@@ -27,6 +27,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.artikel_ch.data.Medikament;
+import ch.elexis.base.ch.artikel.Messages;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.views.IDetailDisplay;

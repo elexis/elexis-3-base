@@ -71,11 +71,11 @@ public class DataAccessor implements IDataAccess {
 	}
 	
 	public String getDescription(){
-		return Messages.getString("DataAccessor.dataInBefundePlugin"); //$NON-NLS-1$
+		return Messages.DataAccessor_dataInBefundePlugin; //$NON-NLS-1$
 	}
 	
 	public String getName(){
-		return Messages.getString("DataAccessor.data"); //$NON-NLS-1$
+		return Messages.DataAccessor_data; //$NON-NLS-1$
 	}
 	
 	/**
@@ -96,22 +96,22 @@ public class DataAccessor implements IDataAccess {
 			// placeholder for finding of specific date
 			String placeholder =
 				PREFIX_DATE + n + ":" + today.toString(TimeTool.DATE_COMPACT) + SUFFIX;
-			String readableName = n + " - " + Messages.getString("DataAccessor.date");
+			String readableName = n + " - " + Messages.DataAccessor_date;
 			ret.add(createElement(readableName, placeholder));
 			
 			// placeholder for first finding
 			placeholder = PREFIX_FIRST + n + SUFFIX;
-			readableName = n + " - " + Messages.getString("DataAccessor.first");
+			readableName = n + " - " + Messages.DataAccessor_first;
 			ret.add(createElement(readableName, placeholder));
 			
 			// placeholder for last finding
 			placeholder = PREFIX_LAST + n + SUFFIX;
-			readableName = n + " - " + Messages.getString("DataAccessor.last");
+			readableName = n + " - " + Messages.DataAccessor_last;
 			ret.add(createElement(readableName, placeholder));
 			
 			// placeholder for all findings
 			placeholder = PREFIX_ALL + n + SUFFIX;
-			readableName = n + " - " + Messages.getString("DataAccessor.all");
+			readableName = n + " - " + Messages.DataAccessor_all;
 			ret.add(createElement(readableName, placeholder));
 		}
 		return ret;
@@ -141,7 +141,7 @@ public class DataAccessor implements IDataAccess {
 		if (!(dependentObject instanceof Patient)) {
 			ret =
 				new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
-					Messages.getString("DataAccessor.invalidParameter"), //$NON-NLS-1$
+					Messages.DataAccessor_invalidParameter, //$NON-NLS-1$
 					dependentObject, true);
 		} else {
 			Patient pat = (Patient) dependentObject;
@@ -168,7 +168,7 @@ public class DataAccessor implements IDataAccess {
 				for (Messwert m : list) {
 					String date = m.get(Messwert.FLD_DATE);
 					values[i][0] = new TimeTool(date).toString(TimeTool.DATE_GER);
-					Map befs = m.getMap(Messages.getString("DataAccessor.0")); //$NON-NLS-1$
+					Map befs = m.getMap(Messages.DataAccessor_0); //$NON-NLS-1$
 					for (int j = 1; j < cols.length; j++) {
 						String vv = (String) befs.get(keys[j]);
 						values[i][j] = vv;
@@ -194,7 +194,7 @@ public class DataAccessor implements IDataAccess {
 				if (mwrt == null) {
 					ret =
 						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-							Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
+							Messages.DataAccessor_notFound, //$NON-NLS-1$
 							params, true);
 				}
 				
@@ -217,7 +217,7 @@ public class DataAccessor implements IDataAccess {
 				if (mwrt == null) {
 					ret =
 						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-							Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
+							Messages.DataAccessor_notFound, //$NON-NLS-1$
 							params, true);
 				}
 			} else { // bestimmtes Datum
@@ -225,7 +225,7 @@ public class DataAccessor implements IDataAccess {
 				if (find.set(params[0]) == false) {
 					ret =
 						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
-							Messages.getString("DataAccessor.dateExpected"), //$NON-NLS-1$
+							Messages.DataAccessor_dateExpected, //$NON-NLS-1$
 							params, true);
 				} else {
 					for (Messwert m : list) {
@@ -241,7 +241,7 @@ public class DataAccessor implements IDataAccess {
 						ret =
 							new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
 								descriptor + " [" + find.toString(TimeTool.DATE_GER)
-									+ "] " + Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
+									+ "] " + Messages.DataAccessor_notFound, //$NON-NLS-1$
 								params, true);
 					}
 				}
@@ -270,7 +270,7 @@ public class DataAccessor implements IDataAccess {
 								new Result<Object>(
 									Result.SEVERITY.ERROR,
 									IDataAccess.INVALID_PARAMETERS,
-									Messages.getString("DataAccessor.invalidFieldIndex"), fname, true); //$NON-NLS-1$
+									Messages.DataAccessor_invalidFieldIndex, fname, true); //$NON-NLS-1$
 						}
 					} else {
 						for (int j = 0; (j < keys.length) && (ret == null); j++) {
@@ -283,7 +283,7 @@ public class DataAccessor implements IDataAccess {
 								new Result<Object>(
 									Result.SEVERITY.ERROR,
 									IDataAccess.INVALID_PARAMETERS,
-									Messages.getString("DataAccessor.invalidFieldName"), fname, true); //$NON-NLS-1$
+									Messages.DataAccessor_invalidFieldName, fname, true); //$NON-NLS-1$
 						}
 					}
 				} else {

@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import ch.unibe.iam.scg.archie.ArchieActivator;
 import ch.unibe.iam.scg.archie.controller.ChartModelManager;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.ChartModel;
 import ch.unibe.iam.scg.archie.model.DataSet;
 import ch.unibe.iam.scg.archie.ui.widgets.AbstractWidget;

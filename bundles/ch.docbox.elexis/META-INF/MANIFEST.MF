@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ch.docbox.elexis
+Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: ch.docbox.elexis;singleton:=true
 Bundle-Version: 3.0.0.qualifier
-Bundle-Vendor: visionary on behalf of argomed
+Bundle-Vendor: %Bundle-Vendor.0
 Bundle-ActivationPolicy: lazy
 Require-Bundle: ch.rgw.utility;bundle-version="2.0.2",
  ch.elexis.agenda;bundle-version="2.1.0",

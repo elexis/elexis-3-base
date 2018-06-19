@@ -932,6 +932,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		    } catch (Exception e) {
 			log.error("Error on image loading: " + e.toString());
 			e.printStackTrace();
+			return;
 		    }
 
 		    // only for debugging

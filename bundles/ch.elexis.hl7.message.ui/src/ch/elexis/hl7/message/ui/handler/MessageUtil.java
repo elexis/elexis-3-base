@@ -2,8 +2,9 @@ package ch.elexis.hl7.message.ui.handler;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -35,12 +36,14 @@ public class MessageUtil {
 		return ret;
 	}
 	
-	public static void export(String typ, String message) throws IOException{
+	public static void export(String typ, String message, String encoding) throws IOException{
 		Optional<File> outputDir = PreferenceUtil.getOutputDirectory();
 		if (outputDir.isPresent()) {
 			File outputFile =
 				new File(outputDir.get(), System.currentTimeMillis() + "_" + typ + ".hl7");
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+			try (BufferedWriter writer =
+				new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(outputFile), encoding))) {
 				writer.write(message);
 			}
 		}

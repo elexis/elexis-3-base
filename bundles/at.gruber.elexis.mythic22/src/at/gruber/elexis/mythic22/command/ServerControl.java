@@ -15,6 +15,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.menus.UIElement;
 
+import at.gruber.elexis.mythic22.Messages;
 import at.gruber.elexis.mythic22.netlistener.NetListener;
 import at.gruber.elexis.mythic22.ui.Preferences;
 import at.medevit.elexis.mythic22.EarlyStartup;

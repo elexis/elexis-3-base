@@ -21,10 +21,10 @@ public class Messages extends NLS {
 	public static String MesswertTypBool_Yes;
 	public static String MesswertTypNum_CastFailure;
 	public static String MesswertTypScale_CastFailure;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-	
+	   static {
+	        // initialize resource bundle
+	        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	    }
+
 	private Messages(){}
 }

@@ -2,6 +2,7 @@ package ch.elexis.connect.reflotron.packages;
 
 import java.util.ResourceBundle;
 
+import ch.elexis.connect.reflotron.Messages;
 import ch.elexis.core.data.beans.ContactBean;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
 import ch.elexis.core.model.LabResultConstants;
@@ -60,14 +61,14 @@ public class Value {
 	}
 	
 	private void initialize(){
-		_labor = LabImportUtil.getOrCreateLabor(Messages.getString("Value.LabKuerzel"));
+		_labor = LabImportUtil.getOrCreateLabor(Messages.Reflotron_Value_LabKuerzel);
 		
 		_labItem = LabImportUtil.getLabItem(_shortName, _labor);
 		
 		if (_labItem == null) {
 			_labItem =
 				new LabItem(_shortName, _longName, _labor, _refMann, _refFrau, _unit,
-					LabItemTyp.NUMERIC, Messages.getString("Value.LabName"), "50");
+					LabItemTyp.NUMERIC, Messages.Reflotron_Value_LabName, "50");
 		}
 	}
 	
@@ -95,7 +96,7 @@ public class Value {
 			resultFlags |= LabResultConstants.PATHOLOGIC;
 		}
 		if (flags.equals("*") || flags.equals("E")) {
-			comment = Messages.getString("Value.Error");
+			comment = Messages.Reflotron_Value_Error;
 		}
 		
 		return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_labor), _labItem, value).date(date)

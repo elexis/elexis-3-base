@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 
 public class DateRangeComposite extends CstComposite {

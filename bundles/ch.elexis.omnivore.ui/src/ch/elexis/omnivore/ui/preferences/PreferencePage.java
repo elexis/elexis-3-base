@@ -39,6 +39,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import static ch.elexis.omnivore.PreferenceConstants.*;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.omnivore.data.Preferences;
+import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.jobs.OutsourceUiJob;
 
 //FIXME: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.

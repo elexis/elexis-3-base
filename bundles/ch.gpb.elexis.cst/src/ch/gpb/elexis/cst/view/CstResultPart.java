@@ -84,7 +84,7 @@ import ch.gpb.elexis.cst.data.ValuePairTimeline;
 import ch.gpb.elexis.cst.data.ValueSingleTimeline;
 import ch.gpb.elexis.cst.dialog.PdfOptionsDialog;
 import ch.gpb.elexis.cst.preferences.CstPreference;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 import ch.gpb.elexis.cst.util.ImageUtils;
 import ch.gpb.elexis.cst.widget.GastroColoCanvas;
@@ -828,7 +828,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		.getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
 	actionScreenshot.setImageDescriptor(Activator.getImageDescriptor(Activator.IMG_PNG_PATH));
 
-	// TODO: die pdf ausgabe ist eine ziemliche Baustelle - überarbeiten
+	// TODO: die pdf ausgabe ist eine ziemliche Baustelle - ï¿½berarbeiten
 	actionPdf = new Action() {
 	    public void run() {
 
@@ -883,7 +883,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		    //SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
 
 		    Patient patient = Patient.load(profile.getKontaktId());
-		    //String sTitle = "Gemeinschaftspraxis Brunnmatt Dr. Beat Künzi ";
+		    //String sTitle = "Gemeinschaftspraxis Brunnmatt Dr. Beat Kï¿½nzi ";
 		    String sTitle;
 		    sTitle = profile.getOutputHeader() == null ? "No header configured!" :
 			    profile.getOutputHeader();
@@ -932,6 +932,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		    } catch (Exception e) {
 			log.error("Error on image loading: " + e.toString());
 			e.printStackTrace();
+			return;
 		    }
 
 		    // only for debugging
@@ -1158,7 +1159,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
     }
 
     /**
-     * Holt die Werte der Befunde (so wie in den Anzeigeoptionen ausgewählt) für Einzelwerte
+     * Holt die Werte der Befunde (so wie in den Anzeigeoptionen ausgewï¿½hlt) fï¿½r Einzelwerte
      * @param pat
      * @param parm
      * @param fieldName
@@ -1249,7 +1250,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
     }
 
     /**
-     * Holt die Werte der Befunde (so wie in den Anzeigeoptionen ausgewählt) für Wertepaaare
+     * Holt die Werte der Befunde (so wie in den Anzeigeoptionen ausgewï¿½hlt) fï¿½r Wertepaaare
      * 
      * @param pat
      * @param parm

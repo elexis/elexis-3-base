@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.data.Person;
 import ch.elexis.data.RnStatus;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.utils.DatabaseHelper;
 
 /**

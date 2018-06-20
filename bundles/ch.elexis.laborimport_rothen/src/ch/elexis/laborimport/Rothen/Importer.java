@@ -250,7 +250,6 @@ public class Importer extends ImporterPage {
 			bFile.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			
 			Label lFile = new Label(this, SWT.NONE);
-			// lFile.setText("    " + Messages.getString("ImporterPage.file")); //$NON-NLS-1$ //$NON-NLS-2$
 			GridData gd = SWTHelper.getFillGridData(1, false, 1, false);
 			gd.horizontalAlignment = GridData.END;
 			gd.widthHint = lFile.getSize().x + 20;
@@ -259,7 +258,6 @@ public class Importer extends ImporterPage {
 			tFilename.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			
 			Button bBrowse = new Button(this, SWT.PUSH);
-			// bBrowse.setText(Messages.getString("ImporterPage.browse")); //$NON-NLS-1$
 			
 			bDirect = new Button(this, SWT.RADIO);
 			bDirect.setText("Direkter Import");

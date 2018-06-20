@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.List;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
 import ch.elexis.core.ui.util.SWTHelper;
 

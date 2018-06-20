@@ -57,11 +57,11 @@ public class WeisseSeitenSearchForm extends Composite {
 		
 		Label nameLabel = new Label(this, SWT.NONE);
 		nameLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		nameLabel.setText(Messages.getString("WeisseSeitenSearchForm.label.werWasWo")); //$NON-NLS-1$
+		nameLabel.setText(Messages.WeisseSeitenSearchForm_label_werWasWo); //$NON-NLS-1$
 		
 		Label geoLabel = new Label(this, SWT.NONE);
 		geoLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		geoLabel.setText(Messages.getString("WeisseSeitenSearchForm.label.Ort")); //$NON-NLS-1$
+		geoLabel.setText(Messages.WeisseSeitenSearchForm_label_Ort); //$NON-NLS-1$
 		
 		new Label(this, SWT.NONE); // Platzhalter
 		
@@ -72,7 +72,7 @@ public class WeisseSeitenSearchForm extends Composite {
 		geoText.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		Button searchBtn = new Button(this, SWT.NONE);
-		searchBtn.setText(Messages.getString("WeisseSeitenSearchForm.btn.Suchen")); //$NON-NLS-1$
+		searchBtn.setText(Messages.WeisseSeitenSearchForm_btn_Suchen); //$NON-NLS-1$
 		
 		nameText.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e){

@@ -100,7 +100,7 @@ import ch.gpb.elexis.cst.dialog.CstCopyProfileDialog;
 import ch.gpb.elexis.cst.dialog.CstGroupSelectionDialog;
 import ch.gpb.elexis.cst.dialog.CstNewProfileDialog;
 import ch.gpb.elexis.cst.dialog.ProfileDetailDialog;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 import ch.gpb.elexis.cst.view.profileeditor.AnzeigeOptionsComposite;
 import ch.gpb.elexis.cst.view.profileeditor.BefundSelectionComposite;
@@ -1103,7 +1103,7 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 
 		dialog.create();
 
-		// flag für den rekursiven Dialog Aufruf
+		// flag fï¿½r den rekursiven Dialog Aufruf
 		if (isRepeatedDialog) {
 		    dialog.setErrorMessage(Messages.Cst_Text_cstprofile_exists);
 		}
@@ -1503,13 +1503,13 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 	patient = ElexisEventDispatcher.getSelectedPatient();
 
 	if (patient == null) {
-	    log.info("kein patient ausgewählt", Log.INFOS);
+	    log.info("kein patient ausgewï¿½hlt", Log.INFOS);
 	    /*
-	     * MessageEvent.fireError("Kein Patient ausgewählt",
-	     * "Bitte wählen Sie zuerst einen Patienten aus");
+	     * MessageEvent.fireError("Kein Patient ausgewï¿½hlt",
+	     * "Bitte wï¿½hlen Sie zuerst einen Patienten aus");
 	     */
 	} else {
-	    log.info("patient ausgewählt" + patient.getName(), Log.INFOS);
+	    log.info("patient ausgewï¿½hlt" + patient.getName(), Log.INFOS);
 	    labelLeft.setText(Messages.Cst_Text_Profile_fuer + " " + patient.getName() + " " + patient.getVorname());
 
 	    if (prevPatient != null && !prevPatient.getId().toString().equals(patient.getId().toString())) {

@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.molemax.Messages;
 
 public class RowDisplay extends Composite {
 	SashForm sash;

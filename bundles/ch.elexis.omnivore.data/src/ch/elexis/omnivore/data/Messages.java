@@ -3,7 +3,6 @@ package ch.elexis.omnivore.data;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.omnivore.data.messages"; //$NON-NLS-1$
 	public static String DocHandle_73;
 	public static String DocHandle_cantReadCaption;
 	public static String DocHandle_cantReadText;
@@ -35,8 +34,6 @@ public class Messages extends NLS {
 	public static String DocHandle_writeErrorText2;
 	public static String Dochandle_errorCatNameAlreadyTaken;
 	public static String DocHandle_errorCatNameAlreadyTakenMsg;
-	
-	
 	public static String xChangeContributor_thisIsAnOmnivoreDoc;
 	public static String DocumentManagement_contentsMatchNotSupported;
 	public static String DocHandle_cantReadMessage;
@@ -47,11 +44,4 @@ public class Messages extends NLS {
 	public static String DocHandle_MoveErrorDestIsFile;
 	public static String DocHandle_importErrorMessage;
 	public static String DocHandle_MoveError;
-	
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-	
-	private Messages(){}
 }

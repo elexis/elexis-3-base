@@ -12,13 +12,13 @@
             category="ch.elexis.preferences.transporters"
             class="ch.elexis.laborimport.teamw.PreferencePage"
             id="ch.elexis.laborimport.teamw.prefs"
-            name="Team-W Import"/>
+            name="%PreferencePageName"/>
    </extension>
    <extension
          point="ch.elexis.core.ui.LaborDatenImport">
       <Importer
             Class="ch.elexis.laborimport.teamw.Importer"
-            name="Laborimport TeamW">
+            name="%DataImportName">
       </Importer>
    </extension>
 

@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.data.Mandant;
 import ch.gpb.elexis.cst.data.CstProfile;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 
 /**
  * @author daniel ludin ludin@swissonline.ch

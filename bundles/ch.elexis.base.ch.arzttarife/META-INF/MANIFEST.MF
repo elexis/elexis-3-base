@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.ui.forms,
  ch.elexis.base.ch.ebanking;bundle-version="3.0.0",
  ch.elexis.base.ch.labortarif_2009;bundle-version="3.0.0",
  org.apache.commons.io;bundle-version="2.4.0",
- at.medevit.elexis.tarmed.model
+ at.medevit.elexis.tarmed.model,
+ ch.elexis.core.ui.dbcheck
 Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.arzttarife_schweiz,
  ch.elexis.data,

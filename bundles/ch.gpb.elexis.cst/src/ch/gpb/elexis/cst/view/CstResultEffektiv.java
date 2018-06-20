@@ -36,7 +36,7 @@ import ch.gpb.elexis.cst.data.CstGroup;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.data.LabItemWrapper;
 import ch.gpb.elexis.cst.data.ValueFinding;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 import ch.gpb.elexis.cst.widget.CstDangerRangeCanvas;
 import ch.gpb.elexis.cst.widget.CstVorwertCanvas;
@@ -47,7 +47,7 @@ import ch.gpb.elexis.cst.widget.CstVorwertCanvas;
  * 
  *         Class for displaying the Effektiv display mode.
  * 
- *         Target width for display: 794px (Hälfte: 397 px) Target heigth for
+ *         Target width for display: 794px (Hï¿½lfte: 397 px) Target heigth for
  *         display: 1123px
  */
 

@@ -28,7 +28,7 @@ public class WeeklySeriesComposite extends Composite {
 		setLayout(new GridLayout(4, false));
 		
 		Label lblEvery = new Label(this, SWT.NONE);
-		lblEvery.setText(Messages.getString("WeeklySeriesComposite.lblEvery.text")); //$NON-NLS-1$
+		lblEvery.setText(Messages.WeeklySeriesComposite_lblEvery_text); //$NON-NLS-1$
 		
 		txtWeekDistance = new Text(this, SWT.BORDER);
 		GridData gd_txtWeekDistance = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -37,7 +37,7 @@ public class WeeklySeriesComposite extends Composite {
 		getTxtWeekDistance().setTextLimit(2);
 		
 		Label lblWeekOn = new Label(this, SWT.NONE);
-		lblWeekOn.setText(Messages.getString("WeeklySeriesComposite.lblWeekOn.text")); //$NON-NLS-1$
+		lblWeekOn.setText(Messages.WeeklySeriesComposite_lblWeekOn_text); //$NON-NLS-1$
 		
 		lblWeekNumber = new Label(this, SWT.NONE);
 		lblWeekNumber.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
@@ -49,26 +49,26 @@ public class WeeklySeriesComposite extends Composite {
 		composite.setLayoutData(gd_composite);
 		
 		getWeekdays()[Calendar.MONDAY] = new Button(composite, SWT.CHECK);
-		getWeekdays()[Calendar.MONDAY].setText(Messages.getString("monday"));
+		getWeekdays()[Calendar.MONDAY].setText(Messages.SerienTermin_monday);
 		
 		getWeekdays()[Calendar.TUESDAY] = new Button(composite, SWT.CHECK);
-		getWeekdays()[Calendar.TUESDAY].setText(Messages.getString("tuesday"));
+		getWeekdays()[Calendar.TUESDAY].setText(Messages.SerienTermin_tuesday);
 		
 		getWeekdays()[Calendar.WEDNESDAY] = new Button(composite, SWT.CHECK);
-		getWeekdays()[Calendar.WEDNESDAY].setText(Messages.getString("wednesday"));
+		getWeekdays()[Calendar.WEDNESDAY].setText(Messages.SerienTermin_wednesday);
 		
 		getWeekdays()[Calendar.THURSDAY] = new Button(composite, SWT.CHECK);
-		getWeekdays()[Calendar.THURSDAY].setText(Messages.getString("thursday"));
+		getWeekdays()[Calendar.THURSDAY].setText(Messages.SerienTermin_thursday);
 		
 		getWeekdays()[Calendar.FRIDAY] = new Button(composite, SWT.CHECK);
-		getWeekdays()[Calendar.FRIDAY].setText(Messages.getString("friday"));
+		getWeekdays()[Calendar.FRIDAY].setText(Messages.SerienTermin_friday);
 		
 		getWeekdays()[Calendar.SATURDAY] = new Button(composite, SWT.CHECK);
-		getWeekdays()[Calendar.SATURDAY].setText(Messages.getString("saturday"));
+		getWeekdays()[Calendar.SATURDAY].setText(Messages.SerienTermin_saturday);
 		
 		getWeekdays()[Calendar.SUNDAY] = new Button(composite, SWT.CHECK);
 		new Label(composite, SWT.NONE);
-		getWeekdays()[Calendar.SUNDAY].setText(Messages.getString("sunday"));
+		getWeekdays()[Calendar.SUNDAY].setText(Messages.SerienTermin_sunday);
 	}
 	
 	@Override

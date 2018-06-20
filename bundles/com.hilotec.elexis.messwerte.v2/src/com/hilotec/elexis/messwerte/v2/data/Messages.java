@@ -38,10 +38,11 @@ public class Messages extends NLS {
 	public static String MesswertBase_Failure1;
 	public static String MesswertBase_Failure2;
 	public static String MesswertBase_NoData;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
-	
-	private Messages(){}
+    static {
+        // initialize resource bundle
+        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+    }
+
+private Messages(){}
+
 }

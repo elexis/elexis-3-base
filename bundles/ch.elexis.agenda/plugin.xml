@@ -9,28 +9,28 @@
             class="ch.elexis.agenda.views.TagesView"
             icon="icons/calendar.png"
             id="ch.elexis.agenda.tagesview"
-            name="Agenda"/>
+            name="%Agenda"/>
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.views.AgendaGross"
             id="ch.elexis.agenda.largeview"
-            name="Agenda gross"/>
+            name="%Agenda_gross"/>
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.ui.week.AgendaWeek"
             id="ch.elexis.agenda.week"
-            name="Wochenanzeige">
+            name="%Wochenanzeige">
       </view>
       <category
             id="ch.elexis.agenda.Views"
-            name="Agenda">
+            name="%Agenda">
       </category>
       <view
             allowMultiple="false"
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.ui.AgendaParallel"
             id="ch.elexis.agenda.parallelview"
-            name="Parallelanzeige"
+            name="%Parallelanzeige"
             restorable="true">
       </view>
       <view
@@ -46,7 +46,7 @@
       <page
             class="ch.elexis.agenda.preferences.AgendaDefinitionPreferencePage"
             id="ch.elexis.Agendaprefs"
-            name="Agenda"/>
+            name="%Agenda"/>
       <page
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.agenda.preferences.AgendaFarben"
@@ -56,12 +56,12 @@
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.agenda.preferences.AgendaImages"
             id="elexis-agenda.imageprefs"
-            name="Agenda-Icons"/>
+            name="%Agenda-Icons"/>
       <page
             category="ch.elexis.Agendaprefs"
             class="ch.elexis.agenda.preferences.AgendaDruck"
             id="ch.elexis.preferences.AgendaDruck"
-            name="Druck">
+            name="%Druck">
       </page>
       <page
             category="ch.elexis.Agendaprefs"
@@ -110,17 +110,17 @@
          <command
                defaultHandler="ch.elexis.agenda.series.command.AddReccuringDateHandler"
                id="ch.elexis.agenda.series.command.AddReccuringDate"
-               name="add reccuring date">
+               name="%Add_Recurring_Appointment">
          </command>
          <command
                defaultHandler="ch.elexis.agenda.commands.SortAscendingCommand"
                id="ch.elexis.agenda.commands.SortAscending"
-               name="Aufsteigend sortieren">
+               name="%SortAscending">
          </command>
          <command
                defaultHandler="ch.elexis.agenda.commands.SortDescendingCommand"
                id="ch.elexis.agenda.commands.SortDescending"
-               name="Absteigend sortieren">
+               name="%SortDescending">
          </command>
       </extension>
       <extension
@@ -187,13 +187,13 @@
             <command
                   commandId="ch.elexis.agenda.commands.SortAscending"
                   icon="icons/sort-number.png"
-                  label="Aufsteigend Sortieren"
+                  label="%SortAscending"
                   style="push">
             </command>
             <command
                   commandId="ch.elexis.agenda.commands.SortDescending"
                   icon="icons/sort-number-descending.png"
-                  label="Absteigend Sortieren"
+                  label="%SortDescending"
                   style="push">
             </command>
          </menuContribution>

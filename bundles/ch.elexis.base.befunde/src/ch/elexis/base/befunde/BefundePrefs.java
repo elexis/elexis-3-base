@@ -105,8 +105,8 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 			@Override
 			public void widgetSelected(final SelectionEvent e){
 				InputDialog id =
-					new InputDialog(getShell(), Messages.getString("BefundePrefs.enterNameCaption"), //$NON-NLS-1$
-						Messages.getString("BefundePrefs.enterNameMessage"), "", //$NON-NLS-1$//$NON-NLS-2$
+					new InputDialog(getShell(), Messages.BefundePrefs_enterNameCaption, //$NON-NLS-1$
+						Messages.BefundePrefs_enterNameMessage, "", //$NON-NLS-1$//$NON-NLS-2$
 						new FindingNameInputValidator());
 				if (id.open() == Dialog.OK) {
 					String name = id.getValue();
@@ -125,7 +125,7 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 			}
 			
 		});
-		bAdd.setText(Messages.getString("BefundePrefs.add")); //$NON-NLS-1$
+		bAdd.setText(Messages.BefundePrefs_add); //$NON-NLS-1$
 		
 		Button bRemove = new Button(cButtons, SWT.PUSH);
 		bRemove.addSelectionListener(new SelectionAdapter() {
@@ -150,13 +150,13 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 				}
 			}
 		});
-		bRemove.setText(Messages.getString("BefundePrefs.deleteText")); //$NON-NLS-1$
+		bRemove.setText(Messages.BefundePrefs_deleteText); //$NON-NLS-1$
 		if (!CoreHub.acl.request(ACLContributor.DELETE_PARAM)) {
 			bRemove.setEnabled(false);
 		}
 		
 		Button bRename = new Button(cButtons, SWT.PUSH);
-		bRename.setText(Messages.getString("BefundePrefs.renameFinding"));
+		bRename.setText(Messages.BefundePrefs_renameFinding);
 		bRename.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -164,8 +164,8 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 				if (tab != null) {
 					// ask user for desired new name
 					InputDialog id = new InputDialog(getShell(),
-						Messages.getString("BefundePrefs.enterRenameCaption"),
-						Messages.getString("BefundePrefs.enterRenameMessage"), "",
+						Messages.BefundePrefs_enterRenameCaption,
+						Messages.BefundePrefs_enterRenameMessage, "",
 						new FindingNameInputValidator());
 					if (id.open() == Dialog.OK) {
 						String oldName = tab.getText();
@@ -232,7 +232,7 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 		public String isValid(String newText){
 			newText = newText.trim();
 			if (newText.endsWith(".")) {
-				return Messages.getString("BefundePrefs.dotEndingNameNotAllowed");
+				return Messages.BefundePrefs_dotEndingNameNotAllowed;
 			}
 			return null;
 		}

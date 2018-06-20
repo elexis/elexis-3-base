@@ -30,7 +30,7 @@ import ch.gpb.elexis.cst.data.CstGroup;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.data.LabItemWrapper;
 import ch.gpb.elexis.cst.data.MinimaxValue;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 import ch.gpb.elexis.cst.widget.DisplayOnceCanvas;
 import ch.gpb.elexis.cst.widget.MinimaxCanvas;
@@ -158,7 +158,7 @@ public class CstResultMiniMax extends CstResultPart {
 		    NoValuesCanvas onceCAnvas = new NoValuesCanvas(lineCompo, SWT.BORDER);
 
 		    StringBuffer lblText = new StringBuffer(
-		    	"Für diesen Laborwert gibt es keine Werte bei diesem Patienten");
+		    	"Fï¿½r diesen Laborwert gibt es keine Werte bei diesem Patienten");
 		    minimaxValue.setText(lblText.toString());
 
 		    onceCAnvas.setFinding(minimaxValue);
@@ -172,7 +172,7 @@ public class CstResultMiniMax extends CstResultPart {
 			    NoValuesCanvas onceCAnvas = new NoValuesCanvas(lineCompo, SWT.BORDER);
 
 			    StringBuffer lblText = new StringBuffer(
-				    "Für diesen Laborwert gibt es keine Werte bei diesem Patienten");
+				    "Fï¿½r diesen Laborwert gibt es keine Werte bei diesem Patienten");
 			    minimaxValue.setText(lblText.toString());
 
 			    onceCAnvas.setFinding(minimaxValue);

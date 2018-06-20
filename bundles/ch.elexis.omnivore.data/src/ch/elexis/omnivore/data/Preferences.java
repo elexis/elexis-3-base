@@ -15,6 +15,8 @@ import static ch.elexis.omnivore.PreferenceConstants.nPREF_DEST_DIR;
 import static ch.elexis.omnivore.PreferenceConstants.nPREF_SRC_PATTERN;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.activator.CoreHubHelper;
@@ -23,6 +25,7 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 public class Preferences {
 	
 	private static SettingsPreferenceStore fsSettingsStore;
+	public static Logger log = LoggerFactory.getLogger(Preferences.class);
 	
 	/**
 	 * reload the fs settings store
@@ -124,7 +127,7 @@ public class Preferences {
 		// The preferences keys should already have been constructed by init - but if not, let's do
 		// it here for the one that we need now:
 		if (PREF_SRC_PATTERN[i].equals("")) {
-			PREF_SRC_PATTERN[i] = PREFBASE + PREFERENCE_SRC_PATTERN + i.toString().trim(); //$NON-NLS-1$
+			PREF_SRC_PATTERN[i] = PREFERENCE_SRC_PATTERN + i.toString().trim(); //$NON-NLS-1$
 		}
 		return CoreHub.localCfg.get(PREF_SRC_PATTERN[i], "").trim();
 	}
@@ -154,7 +157,7 @@ public class Preferences {
 		// The preferences keys should already have been constructed by init - but if not, let's do
 		// it here for the one that we need now:
 		if (PREF_DEST_DIR[i].equals("")) {
-			PREF_DEST_DIR[i] = PREFBASE + PREFERENCE_DEST_DIR + i.toString().trim(); //$NON-NLS-1$
+			PREF_DEST_DIR[i] = PREFERENCE_DEST_DIR + i.toString().trim(); //$NON-NLS-1$
 		}
 		return CoreHub.localCfg.get(PREF_DEST_DIR[i], "").trim();
 	}
@@ -180,11 +183,56 @@ public class Preferences {
 		}
 		return ret;
 	}
-
+	
 	public static void setFsSettingStore(SettingsPreferenceStore settingsPreferenceStore){
 		Preferences.fsSettingsStore = settingsPreferenceStore;
 	}
+	
 	public static SettingsPreferenceStore getFsSettingsStore(){
 		return fsSettingsStore;
 	}
+	
+	// Make the temporary filename configurable
+	// which is generated to extract the document from the database for viewing.
+	// Thereby, simplify tasks like adding a document to an e-mail.
+	// For most elements noted below, we can set the maximum number of digits
+	// to be used (taken from the source from left); which character to add thereafter;
+	// and whether to fill leading digits by a given character.
+	// This makes a large number of options, so I construct the required preference store keys from
+	// arrays.
+	// Note: The DocHandle.getTitle() javadoc says that a document title in omnivore may contain 80
+	// chars.
+	// To enable users to copy that in full, I allow for a max of 80 chars to be specified as
+	// num_digits for *any* element.
+	// Using all elements to that extent will return filename that's vastly too long, but that will
+	// probably be handled elsewhere.
+	public static final Integer nPreferences_cotf_element_digits_max = 80;
+	public static final String PREFERENCE_COTF = "cotf_";
+	public static final String[] PREFERENCE_cotf_elements = {
+		"constant1", "PID", "fn", "gn", "dob", "dt", "dk", "dguid", "random", "constant2"
+	};
+	public static final String[] PREFERENCE_cotf_parameters = {
+		"fill_leading_char", "num_digits", "add_trailing_char"
+	};
+	// The following unwanted characters, and all below codePoint=32 will be cleaned in advance.
+	// Please see the getOmnivoreTemp_Filename_Element for details.
+	public static final String cotf_unwanted_chars = "[\\:/:*?()+,\';\"\r\t\n´`]";
+	// Dank Eclipse's mglw. etwas übermässiger "Optimierung" werden externalisierte Strings nun als
+	// Felder von Messges angesprochen -
+	// und nicht mehr wie zuvor über einen als String übergebenen key. Insofern muss ich wohl zu den
+	// obigen Arrays korrespondierende Arrays
+	// vorab erstellen, welche die jeweils zugehörigen Strings aus omnivore.Messages dann in eine
+	// definierte Reihenfolge bringen,
+	// in der ich sie unten auch wieder gerne erhalten würde. Einfach per Programm at runtime die
+	// keys generieren scheint nicht so leicht zu gehen.
+	public static final String[] PREFERENCE_cotf_elements_messages = {
+		Messages.Preferences_cotf_constant1, Messages.Preferences_cotf_pid,
+		Messages.Preferences_cotf_fn, Messages.Preferences_cotf_gn, Messages.Preferences_cotf_dob,
+		Messages.Preferences_cotf_dt, Messages.Preferences_cotf_dk, Messages.Preferences_cotf_dguid,
+		Messages.Preferences_cotf_random, Messages.Preferences_cotf_constant2
+	};
+	public static final String[] PREFERENCE_cotf_parameters_messages = {
+		Messages.Preferences_cotf_fill_lead_char, Messages.Preferences_cotf_num_digits,
+		Messages.Preferences_cotf_add_trail_char
+	};
 }

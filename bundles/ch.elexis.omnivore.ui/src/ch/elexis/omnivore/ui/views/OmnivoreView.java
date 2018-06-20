@@ -13,6 +13,7 @@
 package ch.elexis.omnivore.ui.views;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,6 +65,8 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.constants.StringConstants;
@@ -84,6 +87,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.omnivore.data.Utils;
 import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
 
@@ -112,6 +116,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private String searchTitle = "";
 	private String searchKW = "";
 	// ISource selectedSource = null;
+	static Logger log = LoggerFactory.getLogger(OmnivoreView.class);
 	
 	private OmnivoreViewerComparator ovComparator;
 	
@@ -419,19 +424,16 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				DocHandle dh = (DocHandle) selection.getFirstElement();
 				if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
-					String title = dh.getTitle();
-					int end = dh.getTitle().lastIndexOf(".");
-					if (end != -1) {
-						title = (dh.getTitle()).substring(0, end);
-					}
-					File file = dh.createTemporaryFile(title);
+					File file = dh.createTemporaryFile(dh.getTitle());
 					event.data = new String[] {
 						file.getAbsolutePath()
 					};
+					log.debug("dragSetData; isSupportedType {} data {}", file.getAbsolutePath(), event.data); //$NON-NLS-1$
 				} else {
 					StringBuilder sb = new StringBuilder();
 					sb.append(((PersistentObject) dh).storeToString()).append(","); //$NON-NLS-1$
-					event.data = sb.toString().replace(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					log.debug("dragSetData; unsupported dataType {} returning {}",event.dataType, sb.toString().replace(",$", "")); //$NON-NLS-1$
+					event.data = sb.toString().replace(",$", "");  //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		});

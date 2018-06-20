@@ -14,7 +14,6 @@ package ch.elexis.omnivore.data;
 
 import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 import static ch.elexis.omnivore.Constants.DEFAULT_CATEGORY;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -423,7 +422,6 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 		return null;
 	}
-	
 	public String getCategoryName(){
 		return checkNull(get(FLD_CAT));
 	}
@@ -533,7 +531,8 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		try {
 			String ext = StringConstants.SPACE; //""; //$NON-NLS-1$
 			File temp = createTemporaryFile(null);
-			
+			log.debug("execute {} readable {}", temp.getAbsolutePath(), Files.isReadable(temp.toPath()));
+
 			Program proggie = Program.findProgram(ext);
 			if (proggie != null) {
 				proggie.execute(temp.getAbsolutePath());
@@ -575,26 +574,12 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			fileExtension = "";
 		}
 		
-		// use title if given
-		StringBuffer config_temp_filename = new StringBuffer();
-		if (title != null && !title.isEmpty()) {
-			config_temp_filename.append(title);
-		}
-		
+		String config_temp_filename = Utils.createNiceFileName(this);
 		File temp = null;
 		try {
 			if (config_temp_filename.length() > 0) {
-				File uniquetemp =
-					File.createTempFile(config_temp_filename.toString() + "_", "." + fileExtension); //$NON-NLS-1$ //$NON-NLS-2$
-				
-				String temp_pathname = uniquetemp.getParent();
-				uniquetemp.delete();
-				
-				log.debug(temp_pathname);
-				log.debug(config_temp_filename + "." + fileExtension);
-				
-				temp = new File(temp_pathname, config_temp_filename + "." + fileExtension);
-				temp.createNewFile();
+				String tmpDir = System.getProperty("java.io.tmpdir");
+				temp = new File(tmpDir, config_temp_filename + "." + fileExtension);
 				
 			} else {
 				temp = File.createTempFile("omni_", "_vore." + fileExtension);
@@ -610,6 +595,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			try (FileOutputStream fos = new FileOutputStream(temp)) {
 				fos.write(b);
 			}
+			log.debug("createTemporaryFile {} size {} ext {} ", temp.getAbsolutePath(), Files.size(temp.toPath()), fileExtension);
 		} catch (FileNotFoundException e) {
 			log.debug("File not found " + e, Log.WARNINGS);
 		} catch (IOException e) {
@@ -673,6 +659,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				DocHandle docHandle = new DocHandle(fid.category, baos.toByteArray(),
 					ElexisEventDispatcher.getSelectedPatient(), fid.originDate, fid.title,
 					"image.pdf", fid.keywords); //$NON-NLS-1$
+				Utils.archiveFile(docHandle.getStorageFile(true));
 				ret.add(docHandle);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
@@ -748,7 +735,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		File file = new File(f);
 		if (!file.canRead()) {
 			SWTHelper.showError(Messages.DocHandle_cantReadCaption,
-				MessageFormat.format(Messages.DocHandle_cantReadMessage, f));
+				String.format(Messages.DocHandle_cantReadMessage, f));
 			return null;
 		}
 		
@@ -803,76 +790,11 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					Messages.DocHandle_importErrorMessage2);
 				return null;
 			}
-			
-			try {
-				for (Integer i = 0; i < Preferences.getOmnivorenRulesForAutoArchiving(); i++) {
-					String SrcPattern = Preferences.getOmnivoreRuleForAutoArchivingSrcPattern(i);
-					String DestDir = Preferences.getOmnivoreRuleForAutoArchivingDestDir(i);
-					
-					if ((SrcPattern != null) && (DestDir != null)
-						&& ((SrcPattern != "" || DestDir != ""))) {
-						log.debug("Automatic archiving found matching rule #" + (i + 1)
-							+ " (1-based index):");
-						log.debug("file.getAbsolutePath(): " + file.getAbsolutePath());
-						log.debug("Pattern: " + SrcPattern);
-						log.debug("DestDir: " + DestDir);
-						
-						if (file.getAbsolutePath().contains(SrcPattern)) {
-							log.debug("SrcPattern found in file.getAbsolutePath()" + i);
-							
-							if (DestDir == "") {
-								log.debug(
-									"DestDir is empty. No more rules will be evaluated for this file. Returning.");
-								return dh;
-							}
-							
-							File newFile = new File(DestDir);
-							if (newFile.isDirectory()) {
-								log.debug("DestDir is a directory. Adding file.getName()...");
-								newFile = new File(DestDir + File.separatorChar + file.getName());
-							}
-							
-							if (newFile.isDirectory()) {
-								log.debug("NewFile.isDirectory==true; renaming not attempted");
-								SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
-									MessageFormat.format(Messages.DocHandle_MoveErrorDestIsDir,
-										DestDir, file.getName()));
-							} else {
-								if (newFile.isFile()) {
-									log.debug("NewFile.isFile==true; renaming not attempted");
-									SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
-										MessageFormat.format(Messages.DocHandle_MoveErrorDestIsFile,
-											DestDir, file.getName()));
-								} else {
-									log.debug(
-										"renaming incoming file to: " + newFile.getAbsolutePath());
-									if (Files.move(file.toPath(), newFile.toPath(),
-										REPLACE_EXISTING) != null) {
-										log.debug("renaming ok");
-									} else {
-										log.debug("renaming attempted, but returned false.");
-										log.debug(
-											"However, I may probably have observed this after successful moves?! So I won't show an error dialog here. js");
-										log.debug(
-											"So I won't show an error dialog here; if a real exception occured, that would suffice to trigger it.");
-										// SWTHelper.showError(Messages.DocHandleMoveErrorCaption,Messages.DocHandleMoveError);
-									}
-								}
-							}
-							
-							break;
-						}
-					}
-				}
-			} catch (Throwable throwable) {
-				ExHandler.handle(throwable);
-				SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
-					Messages.DocHandle_MoveError);
-			}
+			Utils.archiveFile(file);
 		}
 		return dh;
 	}
-	
+
 	private void configError(){
 		SWTHelper.showError("config error", Messages.DocHandle_configErrorCaption, //$NON-NLS-1$
 			Messages.DocHandle_configErrorText);

@@ -329,6 +329,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				+ JdbcLink.wrap(newName) + " where Title=" + JdbcLink.wrap(oldname)
 				+ " and mimetype=" + JdbcLink.wrap("text/category"));
 			main_categories = null;
+			log.info("Renaming category [{}], moving entries to category [{}]", old, newn);
 		} else {
 			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			MessageDialog.openWarning(shell, Messages.Dochandle_errorCatNameAlreadyTaken,
@@ -344,6 +345,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		getConnection().exec("update CH_ELEXIS_OMNIVORE_DATA set deleted='1' where Title="
 			+ JdbcLink.wrap(name) + " AND mimetype=" + JdbcLink.wrap("text/category"));
 		main_categories = null;
+		log.info("Removing category [{}], moving entries to category [{}]", name, destName);
 	}
 	
 	/**

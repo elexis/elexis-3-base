@@ -141,6 +141,10 @@ public class Event {
 			else {
 				ret.title = termin.getPersonalia();
 			}
+			// fullcalendar will no create title html div if no title is blank, add space
+			if (ret.title.isEmpty()) {
+				ret.title = " ";
+			}
 			ret.description = termin.getGrund().replaceAll("\n", "<br />") + "<br /><br />"
 				+ termin.getStatusHistoryDesc(true).replaceAll("\n", "<br />");
 			ret.borderColor = getStateColor(iPeriod);

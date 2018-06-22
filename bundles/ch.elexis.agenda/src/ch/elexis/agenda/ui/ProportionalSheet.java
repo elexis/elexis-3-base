@@ -250,18 +250,20 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		} else {
 			tlabels = new LinkedList<TerminLabel>();
 		}
-		// populate new TerminLabel list
-		for (Termin termin : apps) {
-			String m = termin.getBereich();
-			int idx = StringTool.getIndex(resnames, m);
-			if (idx != -1) {
-				TerminLabel terminLabel = new TerminLabel(this);
-				terminLabel.set(termin, idx);
-				tlabels.add(terminLabel);
+		if (!isDisposed()) {
+			// populate new TerminLabel list
+			for (Termin termin : apps) {
+				String m = termin.getBereich();
+				int idx = StringTool.getIndex(resnames, m);
+				if (idx != -1) {
+					TerminLabel terminLabel = new TerminLabel(this);
+					terminLabel.set(termin, idx);
+					tlabels.add(terminLabel);
+				}
 			}
+			TerminLabel.checkAllCollisions(tlabels);
+			recalc();
 		}
-		TerminLabel.checkAllCollisions(tlabels);
-		recalc();
 	}
 	
 	void recalc(){

@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.events.MessageEvent;
@@ -72,15 +73,21 @@ public class Importer extends Action implements IAction {
 				try {
 					r = hlp.importFile(hl7file, archiveDir, null, new LinkLabContactResolver(), false);
 				} catch (IOException e) {
+					LoggerFactory.getLogger(getClass())
+						.error("Error importing HL7 file [" + fn + "]", e);
 					err++;
 					File errFile = new File(errorDir, fn);
 					hl7file.renameTo(errFile);
 				}
 			}
 			if (err > 0) {
-				ResultAdapter.displayResult(r,
-					Integer.toString(err) + " von " + Integer.toString(files)
-						+ " Dateien hatten Fehler\n");
+				if (r != null) {
+					ResultAdapter.displayResult(r, Integer.toString(err) + " von "
+						+ Integer.toString(files) + " Dateien hatten Fehler\n");
+				} else {
+					SWTHelper.showError("HL7 Import Fehler",
+						"Die Dateien aus dem Transferverzeichnis konnten nicht importiert werden.");
+				}
 			} else if (files == 0) {
 				SWTHelper.showInfo("Laborimport", "Es waren keine Dateien zum Import vorhanden");
 			} else {

@@ -65,6 +65,7 @@ public class MedisBuilder {
 				if (article != null) {
 					TMedi tMedi = config.getFactory().createTMedi();
 					tMedi.setId(prescription.getId());
+					tMedi.setConsultation(consultation);
 					String beginDateString = prescription.getBeginDate();
 					if (beginDateString != null && !beginDateString.isEmpty()) {
 						tMedi.setBeginDate(

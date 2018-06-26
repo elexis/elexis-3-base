@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import ch.elexis.data.Konsultation;
 import ch.elexis.icpc.fire.model.jaxb.DateAdapter;
 
 /**
@@ -99,6 +100,8 @@ public class TMedi {
     protected String folgeMedGtin;
     @XmlAttribute(name = "selbstdisp")
     protected Boolean selbstdisp;
+    @XmlTransient
+    protected Konsultation consultation;
     
     public String getId(){
 		return id;
@@ -483,5 +486,19 @@ public class TMedi {
     public void setSelbstdisp(Boolean value) {
         this.selbstdisp = value;
     }
+    
+    /**
+     * internal use only, transient
+     */
+    public Konsultation getConsultation() {
+		return consultation;
+	}
+    
+    /**
+     * internal use only, transient
+     */
+    public void setConsultation(Konsultation consultation) {
+		this.consultation = consultation;
+	}
 
 }

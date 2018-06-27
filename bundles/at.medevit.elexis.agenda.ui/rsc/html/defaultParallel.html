@@ -84,23 +84,28 @@
 			callback(events);
 		}
 
-		function dayClickCallback(date, jsEvent, view) {
-			if (slotDate) {
-				dayClickFunction(date.format(), jsEvent.resource);
-				forgetSlot();
-			} else {
+		var dayClickSlotDate;
+		var dayClickPosX;
+		var dayClickPosY;
+
+   		function dayClickCallback(date, jsEvent, view) {
+   		    if (dayClickSlotDate) {
+   		        dayClickFunction(date.format());
+   		        dayClickSlotDate = null;
+   		    } else {
 				singleClickFunction();
-				slotDate = date;
-				$("#calendar").on("mousemove", forgetSlot);
-			}
-		}
-
-		function forgetSlot() {
-			slotDate = null;
-			$("#calendar").off("mousemove", forgetSlot);
-		}
-
-		var slotDate;
+		        dayClickSlotDate = date;
+				dayClickPosX = jsEvent.pageX;
+				dayClickPosY = jsEvent.pageY;
+   		        $("#calendar").mousemove(function (jqEvent) {
+					if(dayClickSlotDate) {
+						if(dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
+							dayClickSlotDate = null;
+						}
+					}
+				});
+   		    }
+   		}
 
 		function eventRenderCallback(event, element) {
 			element.click(function () {

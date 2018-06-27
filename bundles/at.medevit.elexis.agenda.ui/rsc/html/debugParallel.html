@@ -38,8 +38,8 @@
 					{
 						title: ' ',
 						description: 'Grund',
-						start: '2018-06-20T10:30:00',
-						end: '2018-06-20T12:30:00',
+						start: '2018-06-27T10:30:00',
+						end: '2018-06-27T12:30:00',
 						resource: 'Anton',
 						borderColor: '#00FF00',
 						icon: 'ui-icon-arrowrefresh-1-s'
@@ -50,29 +50,30 @@
 			});
 		});
 
-		function dayClickCallback(date, jsEvent, view) {
-			if (slotDate) {
-				forgetSlot();
-			} else {
-				console.debug(date.format());
-				console.debug(jsEvent.resource);
-				console.debug(view);
-				slotDate = date;
-				$("#calendar").on("mousemove", forgetSlot);
-			}
-		}
+		var dayClickSlotDate;
+		var dayClickPosX;
+		var dayClickPosY;
 
-		function forgetSlot() {
-			slotDate = null;
-			$("#calendar").off("mousemove", forgetSlot);
-		}
-
-		var slotDate;
+   		function dayClickCallback(date, jsEvent, view) {
+   		    if (dayClickSlotDate) {
+   		        dayClickFunction(date.format());
+   		        dayClickSlotDate = null;
+   		    } else {
+				singleClickFunction();
+		        dayClickSlotDate = date;
+				dayClickPosX = jsEvent.pageX;
+				dayClickPosY = jsEvent.pageY;
+   		        $("#calendar").mousemove(function (jqEvent) {
+					if(dayClickSlotDate) {
+						if(dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
+							dayClickSlotDate = null;
+						}
+					}
+				});
+   		    }
+   		}
 
 		function eventRenderCallback(event, element) {
-			element.click(function () {
-				singleClickFunction(event.id);
-			});
 			element.dblclick(function () {
 				doubleClickFunction(event.id);
 			});

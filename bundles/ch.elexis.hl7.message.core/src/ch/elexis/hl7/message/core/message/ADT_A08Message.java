@@ -21,7 +21,7 @@ public class ADT_A08Message implements IHL7Message {
 	
 	@Override
 	public String getMessage(Map<String, Object> context) throws ElexisException{
-		if (context == null || !context.isEmpty()) {
+		if (context != null && !context.isEmpty()) {
 			String uniqueMessageControlID = StringTool.unique("MessageControlID"); //$NON-NLS-1$
 			String uniqueProcessingID = StringTool.unique("ProcessingID"); //$NON-NLS-1$
 			

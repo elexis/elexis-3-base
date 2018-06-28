@@ -13,6 +13,5 @@ Require-Bundle: org.junit;bundle-version="4.12.0",
  org.hamcrest.library;bundle-version="1.3.0",
  ch.elexis.core.data,
  ch.elexis.core.application;bundle-version="3.5.0"
-Bundle-ClassPath: .,
- rsc/
+Bundle-ClassPath: .
 Import-Package: ch.elexis.core.data.activator

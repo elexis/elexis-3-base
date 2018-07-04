@@ -53,7 +53,7 @@ public class XMLExporterTiers {
 		Fall fall = rechnung.getFall();
 		Patient patient = fall.getPatient();
 		Mandant mandant = rechnung.getMandant();
-		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt kostentraeger = fall.getCostBearer();
 		// We try to figure out whether we should use Tiers Payant or Tiers
 		// Garant.
 		// if unsure, we make it TG
@@ -223,7 +223,7 @@ public class XMLExporterTiers {
 		Kontakt ret;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			// TP
-			ret = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+			ret = fall.getCostBearer();
 		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
 			// TG
 			Kontakt invoiceReceiver = fall.getGarant();

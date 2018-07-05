@@ -98,8 +98,15 @@ public class ConsultationBuilder {
 					} catch (DatatypeConfigurationException e) {
 						LoggerFactory.getLogger(ConsultationBuilder.class).warn("date error", e);
 					}
-					Medis medis  = new Medis();
-					medis.getMedi().addAll(entryForPatientByDate.getValue());
+					Medis medis = new Medis();
+					Set<TMedi> entries = entryForPatientByDate.getValue();
+					Konsultation identifyingKons = entries.stream().filter(e -> e.getConsultation() != null).findFirst()
+							.map(e -> e.getConsultation()).orElse(null);
+					if (identifyingKons != null && identifyingKons.getMandant() != null) {
+						BigInteger docId = config.getDocId(identifyingKons.getMandant());
+						pseudoTConsultation.setDocId(docId);
+					}
+					medis.getMedi().addAll(entries);
 					pseudoTConsultation.setMedis(medis);
 
 					report.getConsultations().getConsultation().add(pseudoTConsultation);

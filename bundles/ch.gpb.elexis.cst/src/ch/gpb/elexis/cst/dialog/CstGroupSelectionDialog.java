@@ -39,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 import ch.gpb.elexis.cst.data.CstGroup;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 
 /**
  * @author daniel ludin ludin@swissonline.ch

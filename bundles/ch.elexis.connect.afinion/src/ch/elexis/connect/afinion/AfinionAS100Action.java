@@ -63,8 +63,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	// Bytes footer)
 	
 	public AfinionAS100Action(){
-		super(Messages.getString("AfinionAS100Action.ButtonName"), AS_CHECK_BOX); //$NON-NLS-1$
-		setToolTipText(Messages.getString("AfinionAS100Action.ToolTip")); //$NON-NLS-1$
+		super(Messages.AfinionAS100Action_ButtonName, AS_CHECK_BOX); //$NON-NLS-1$
+		setToolTipText(Messages.AfinionAS100Action_ToolTip); //$NON-NLS-1$
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.afinion", //$NON-NLS-1$
 			"icons/afinion.png")); //$NON-NLS-1$
 	}
@@ -74,10 +74,10 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			_ctrl.close();
 		}
 		_ctrl =
-			new AfinionConnection(Messages.getString("AfinionAS100Action.ConnectionName"), //$NON-NLS-1$
+			new AfinionConnection(Messages.AfinionAS100Action_ConnectionName, //$NON-NLS-1$
 				CoreHub.localCfg.get(Preferences.PORT,
-					Messages.getString("AfinionAS100Action.DefaultPort")), CoreHub.localCfg.get( //$NON-NLS-1$
-					Preferences.PARAMS, Messages.getString("AfinionAS100Action.DefaultParams")), //$NON-NLS-1$
+					Messages.AfinionAS100Action_DefaultPort), CoreHub.localCfg.get( //$NON-NLS-1$
+					Preferences.PARAMS, Messages.AfinionAS100Action_DefaultParams), //$NON-NLS-1$
 				this);
 		
 		Calendar cal = new GregorianCalendar();
@@ -96,8 +96,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				_rs232log = new Logger(System.getProperty("user.home") + File.separator + "elexis" //$NON-NLS-1$ //$NON-NLS-2$
 					+ File.separator + "afinion.log"); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
-				SWTHelper.showError(Messages.getString("AfinionAS100Action.LogError.Title"), //$NON-NLS-1$
-					Messages.getString("AfinionAS100Action.LogError.Text")); //$NON-NLS-1$
+				SWTHelper.showError(Messages.AfinionAS100Action_LogError_Title,
+					Messages.AfinionAS100Action_LogError_Text);
 				_rs232log = new Logger();
 			}
 		} else {
@@ -117,7 +117,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				if (msg == null) {
 					String timeoutStr =
 						CoreHub.localCfg.get(Preferences.TIMEOUT,
-							Messages.getString("AfinionAS100Action.DefaultTimeout")); //$NON-NLS-1$
+							Messages.AfinionAS100Action_DefaultTimeout); //$NON-NLS-1$
 					int timeout = 20;
 					try {
 						timeout = Integer.parseInt(timeoutStr);
@@ -127,12 +127,12 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 					_ctrl
 						.awaitFrame(
 							UiDesk.getTopShell(),
-							Messages.getString("AfinionAS100Action.WaitMsg"), 1, 4, 0, timeout, background, false); //$NON-NLS-1$
+							Messages.AfinionAS100Action_WaitMsg, 1, 4, 0, timeout, background, false); //$NON-NLS-1$
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
 					SWTHelper.showError(
-						Messages.getString("AfinionAS100Action.RS232.Error.Title"), msg); //$NON-NLS-1$
+						Messages.AfinionAS100Action_RS232_Error_Title, msg); //$NON-NLS-1$
 				}
 			} else {
 				SWTHelper.showInfo("Simulating!!!", simulate);
@@ -176,8 +176,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		setChecked(false);
 		_rs232log.log("Break"); //$NON-NLS-1$
 		_rs232log.logEnd();
-		SWTHelper.showError(Messages.getString("AfinionAS100Action.RS232.Break.Title"), Messages //$NON-NLS-1$
-			.getString("AfinionAS100Action.RS232.Break.Text")); //$NON-NLS-1$
+		SWTHelper.showError(Messages.AfinionAS100Action_RS232_Break_Title, Messages.AfinionAS100Action_RS232_Break_Text);
 	}
 	
 	/**
@@ -205,7 +204,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				String vorname = null;
 				String name = null;
 				String patientElexisStr =
-					Messages.getString("AfinionAS100Action.UnknownPatientHeaderString");
+					Messages.AfinionAS100Action_UnknownPatientHeaderString;
 				String patientDeviceStr = record.getId();
 				Long patId = null;
 				
@@ -261,7 +260,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				}
 				
 				if ((patientDeviceStr == null) || (patientDeviceStr.equals(""))) {
-					patientDeviceStr = Messages.getString("AfinionAS100Action.NoPatientInfo");
+					patientDeviceStr = Messages.AfinionAS100Action_NoPatientInfo;
 				}
 				String warning = "";
 				// Gemäss Mail von Frau Rytz (Axis-Shield) vom 3.8.09: Anstelle der Warnung soll der
@@ -269,16 +268,16 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				// oder >max angezeigt werden
 				// Wurde in SubRecordPart.getResultStr implementiert
 				// if (record.isOutOfRange()) {
-				// warning = Messages.getString("AfinionAS100Action.ValueOutOfRangeWarning");
+				// warning = Messages.AfinionAS100Action_ValueOutOfRangeWarning;
 				// }
 				String text =
 					MessageFormat.format(
-						Messages.getString("AfinionAS100Action.ValueInfoMsg"), patientDeviceStr, patientElexisStr, record.getRunNr(), record //$NON-NLS-1$
+						Messages.AfinionAS100Action_ValueInfoMsg, patientDeviceStr, patientElexisStr, record.getRunNr(), record //$NON-NLS-1$
 							.getText(), warning);
 				
 				boolean ok =
 					MessageDialog.openConfirm(UiDesk.getTopShell(),
-						Messages.getString("AfinionAS100Action.DeviceName"), text); //$NON-NLS-1$
+						Messages.AfinionAS100Action_DeviceName, text); //$NON-NLS-1$
 				if (ok) {
 					boolean showSelectionDialog = false;
 					if (probePat != null) {
@@ -295,11 +294,11 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 									new KontaktSelektor(
 										Hub.getActiveShell(),
 										Patient.class,
-										Messages.getString("AfinionAS100Action.Patient.Title"), //$NON-NLS-1$
-										Messages.getString("AfinionAS100Action.Patient.Text"), Patient.DEFAULT_SORT); //$NON-NLS-1$
+										Messages.AfinionAS100Action_Patient_Title, //$NON-NLS-1$
+										Messages.AfinionAS100Action_Patient_Text, Patient.DEFAULT_SORT); //$NON-NLS-1$
 								ksl.create();
 								ksl.getShell().setText(
-									Messages.getString("AfinionAS100Action.Patient.Title")); //$NON-NLS-1$
+									Messages.AfinionAS100Action_Patient_Title); //$NON-NLS-1$
 								if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 									selectedPatient = (Patient) ksl.getSelection();
 								} else {
@@ -314,12 +313,11 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 							record.write(selectedPatient);
 						} catch (PackageException e) {
 							SWTHelper.showError(
-								Messages.getString("AfinionAS100Action.ProbeError.Title"), e //$NON-NLS-1$
-									.getMessage());
+								Messages.AfinionAS100Action_ProbeError_Title, e.getMessage());
 						}
 					} else {
-						SWTHelper.showError(Messages.getString("AfinionAS100Action.Patient.Title"), //$NON-NLS-1$
-							Messages.getString("AfinionAS100Action.NoPatientSelectedMsg")); //$NON-NLS-1$
+						SWTHelper.showError(Messages.AfinionAS100Action_Patient_Title, //$NON-NLS-1$
+							Messages.AfinionAS100Action_NoPatientSelectedMsg); //$NON-NLS-1$
 					}
 					_rs232log.log("Saved"); //$NON-NLS-1$
 					ElexisEventDispatcher.reload(LabItem.class);
@@ -386,7 +384,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			} else {
 				SWTHelper
 					.showInfo(
-						Messages.getString("AfinionAS100Action.DeviceName"), Messages.getString("AfinionAS100Action.NoValuesMsg")); //$NON-NLS-2$
+						Messages.AfinionAS100Action_DeviceName, Messages.AfinionAS100Action_NoValuesMsg); //$NON-NLS-2$
 			}
 			
 			_rs232log.log("Saved"); //$NON-NLS-1$
@@ -411,8 +409,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	public void timeout(){
 		_ctrl.close();
 		_rs232log.log("Timeout"); //$NON-NLS-1$
-		SWTHelper.showError(Messages.getString("AfinionAS100Action.RS232.Timeout.Title"), Messages //$NON-NLS-1$
-			.getString("AfinionAS100Action.RS232.Timeout.Text")); //$NON-NLS-1$
+		SWTHelper.showError(Messages.AfinionAS100Action_RS232_Timeout_Title, Messages.AfinionAS100Action_RS232_Timeout_Text);
 		setChecked(false);
 		_rs232log.logEnd();
 	}

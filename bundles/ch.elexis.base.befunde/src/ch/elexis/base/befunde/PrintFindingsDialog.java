@@ -56,9 +56,9 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 	@Override
 	public void create(){
 		super.create();
-		getShell().setText(Messages.getString("PrintFindingsDialog.messwerteCaption")); //$NON-NLS-1$
-		setTitle(Messages.getString("PrintFindingsDialog.printMesswerteTitle")); //$NON-NLS-1$
-		setMessage(Messages.getString("PrintFindingsDialog.printMesswerteMessage")); //$NON-NLS-1$
+		getShell().setText(Messages.PrintFindingsDialog_messwerteCaption); //$NON-NLS-1$
+		setTitle(Messages.PrintFindingsDialog_printMesswerteTitle); //$NON-NLS-1$
+		setMessage(Messages.PrintFindingsDialog_printMesswerteMessage); //$NON-NLS-1$
 		getShell().setSize(900, 700);
 	}
 	

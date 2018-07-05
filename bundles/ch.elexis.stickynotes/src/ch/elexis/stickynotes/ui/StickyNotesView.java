@@ -35,6 +35,7 @@ import ch.elexis.core.ui.text.EnhancedTextField;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
+import ch.elexis.stickynotes.Messages;
 import ch.elexis.stickynotes.data.StickyNote;
 
 public class StickyNotesView extends ViewPart implements IActivationListener, HeartListener {

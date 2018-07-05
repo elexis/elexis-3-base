@@ -72,7 +72,7 @@ public class PrefsPage extends Composite {
 			labels[0].setText("F1"); //$NON-NLS-1$
 			texts[0] = SWTHelper.createText(this, 1, SWT.NONE);
 			checkboxes[0] = new Button(this, SWT.CHECK);
-			checkboxes[0].setText(Messages.getString("PrefsPage.multilineCaption")); //$NON-NLS-1$
+			checkboxes[0].setText(Messages.PrefsPage_multilineCaption); //$NON-NLS-1$
 			
 		} else {
 			mNames = fields.split(Messwert.SETUP_SEPARATOR);
@@ -86,7 +86,7 @@ public class PrefsPage extends Composite {
 				labels[i].addMouseListener(new ScriptListener(i));
 				texts[i] = SWTHelper.createText(this, 1, SWT.NONE);
 				checkboxes[i] = new Button(this, SWT.CHECK);
-				checkboxes[i].setText(Messages.getString("PrefsPage.multilineCaption")); //$NON-NLS-1$
+				checkboxes[i].setText(Messages.PrefsPage_multilineCaption); //$NON-NLS-1$
 				if (i < mNames.length) {
 					String[] line = mNames[i].split(Messwert.SETUP_CHECKSEPARATOR);
 					texts[i].setText(line[0]);
@@ -121,8 +121,8 @@ public class PrefsPage extends Composite {
 	
 	boolean remove(){
 		if (CoreHub.acl.request(ACLContributor.DELETE_PARAM)
-			&& SWTHelper.askYesNo(Messages.getString("PrefsPage.warningNotUndoableCaption"), //$NON-NLS-1$
-				Messages.getString("PrefsPage.warningConfirmMessage"))) { //$NON-NLS-1$
+			&& SWTHelper.askYesNo(Messages.PrefsPage_warningNotUndoableCaption, //$NON-NLS-1$
+				Messages.PrefsPage_warningConfirmMessage)) { //$NON-NLS-1$
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
 			qbe.add(Messwert.FLD_NAME, Query.EQUALS, name);
 			for (Messwert m : qbe.execute()) {
@@ -143,8 +143,8 @@ public class PrefsPage extends Composite {
 	 * @return true if rename was successful, false otherwise
 	 */
 	public boolean rename(String newName){
-		if (SWTHelper.askYesNo(Messages.getString("PrefsPage.warningNotUndoableCaption"), //$NON-NLS-1$
-			Messages.getString("PrefsPage.warningConfirmRename"))) { //$NON-NLS-1$
+		if (SWTHelper.askYesNo(Messages.PrefsPage_warningNotUndoableCaption, //$NON-NLS-1$
+			Messages.PrefsPage_warningConfirmRename)) { //$NON-NLS-1$
 			
 			// rename all entries from oldName to new one
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
@@ -176,7 +176,7 @@ public class PrefsPage extends Composite {
 		public void mouseUp(MouseEvent e){
 			ScriptEditor se =
 				new ScriptEditor(getShell(), texts[i].getText(),
-					Messages.getString("PrefsPage.enterCalculationForThis")); //$NON-NLS-1$
+					Messages.PrefsPage_enterCalculationForThis); //$NON-NLS-1$
 			if (se.open() == Dialog.OK) {
 				texts[i].setText(se.getScript());
 			}

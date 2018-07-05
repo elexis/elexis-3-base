@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IDiagnose;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.PersistentObject;
@@ -213,10 +214,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	
 	@Override
 	public String storeToString(){
-		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getName()).append("::").append(getId()).append("::");
-		sb.append(realCode == null ? " " : realCode);
-		return sb.toString();
+		return getClass().getName() + StringConstants.DOUBLECOLON + getId();
 	}
 	
 	public List<IAction> getActions(Verrechnet kontext){

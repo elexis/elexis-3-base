@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.gpb.elexis.cst.data.ValueFinding;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 
 public class CstVorwertCanvas extends CstCanvas {
@@ -144,7 +144,7 @@ public class CstVorwertCanvas extends CstCanvas {
 	    String date = sdf.format(finding.getDateOfFinding());
 	    gc.drawText(date, xoffBase + new Double(xoff * xFactor).intValue(), yoffBase + yoff + 4, true);
 
-	    // je grösser corrY desto höher wandert der Text
+	    // je grï¿½sser corrY desto hï¿½her wandert der Text
 	    int corrY = 10;
 
 	    if (!(finding.getParam().toLowerCase().indexOf("neg") > -1 ||

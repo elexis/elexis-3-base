@@ -82,15 +82,15 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 		if (props != null) {
 			Client client = MediPortHelper.getCurrentClient();
 			if (client == null) {
-				addMessage(ret, Messages.getString("MediportOutputter.error.msg1.NoMPCClient"), //$NON-NLS-1$
-					Messages.getString("MediportOutputter.error.msg2.NoMPCClient")); //$NON-NLS-1$
+				addMessage(ret, Messages.MediportOutputter_error_msg1_NoMPCClient, //$NON-NLS-1$
+					Messages.MediportOutputter_error_msg2_NoMPCClient); //$NON-NLS-1$
 			} else {
 				if (client.getParamNames().size() == 0) {
-					addMessage(ret, Messages.getString("MediportOutputter.error.msg1.NoMPCParam"), //$NON-NLS-1$
-						Messages.getString("MediportOutputter.error.msg2.NoMPCParam")); //$NON-NLS-1$
+					addMessage(ret, Messages.MediportOutputter_error_msg1_NoMPCParam, //$NON-NLS-1$
+						Messages.MediportOutputter_error_msg2_NoMPCParam); //$NON-NLS-1$
 				} else {
 					Label lblParam = new Label(ret, SWT.NONE);
-					lblParam.setText(Messages.getString("MediportOutputter.lbl.Parameter")); //$NON-NLS-1$
+					lblParam.setText(Messages.MediportOutputter_lbl_Parameter); //$NON-NLS-1$
 					cbParamNames = new Combo(ret, SWT.BORDER | SWT.READ_ONLY);
 					cbParamNames.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 					
@@ -107,8 +107,8 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 				}
 			}
 		} else {
-			addMessage(ret, Messages.getString("MediportOutputter.error.msg1.NoMPCConfig"), //$NON-NLS-1$
-				Messages.getString("MediportOutputter.error.msg2.NoMPCConfig")); //$NON-NLS-1$
+			addMessage(ret, Messages.MediportOutputter_error_msg1_NoMPCConfig, //$NON-NLS-1$
+				Messages.MediportOutputter_error_msg2_NoMPCConfig); //$NON-NLS-1$
 		}
 		
 		return ret;
@@ -151,7 +151,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 					@Override
 					public void run(final IProgressMonitor monitor){
 						monitor.beginTask(Messages
-							.getString("MediportOutputter.info.exportiereRechnungen"), rnn.size()); //$NON-NLS-1$
+							.MediportOutputter_info_exportiereRechnungen, rnn.size()); //$NON-NLS-1$
 						
 						Log log = Log.get("MediPortOutputter");
 						
@@ -207,12 +207,12 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 										+ isMediPortParticipant, Log.DEBUGMSG);
 								String errorMsg =
 									Messages
-										.getString("MediportOutputter.error.NotMediPortParticipant"); //$NON-NLS-1$
+										.MediportOutputter_error_NotMediPortParticipant; //$NON-NLS-1$
 								if (rn.getStatus() == RnStatus.OFFEN) {
 									rn.reject(REJECTCODE.INTERNAL_ERROR, errorMsg);
 								} else {
 									String title =
-										Messages.getString("MediportOutputter.error.Rechnung"); //$NON-NLS-1$
+										Messages.MediportOutputter_error_Rechnung; //$NON-NLS-1$
 									title = title + " " + rn.getNr();
 									MessageDialog.openError(new Shell(), title, errorMsg);
 								}
@@ -226,17 +226,17 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 								if (checkTier(rn, param.getDocattr())) {
 									if (doExport(rn, billFilenamePath, type, true) == null) {
 										res.add(Result.SEVERITY.ERROR, 1,
-											Messages.getString("MediportOutputter.error.Rechnung") //$NON-NLS-1$
+											Messages.MediportOutputter_error_Rechnung //$NON-NLS-1$
 												+ rn.getNr(), rn, true);
 									}
 								} else {
 									String errorMsg =
-										Messages.getString("MediportOutputter.error.WrongTier"); //$NON-NLS-1$
+										Messages.MediportOutputter_error_WrongTier; //$NON-NLS-1$
 									if (rn.getStatus() == RnStatus.OFFEN) {
 										rn.reject(REJECTCODE.INTERNAL_ERROR, errorMsg);
 									} else {
 										String title =
-											Messages.getString("MediportOutputter.error.Rechnung"); //$NON-NLS-1$
+											Messages.MediportOutputter_error_Rechnung; //$NON-NLS-1$
 										title = title + " " + rn.getNr();
 										MessageDialog.openError(new Shell(), title, errorMsg);
 									}
@@ -246,7 +246,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 										+ rn.getStatus(), Log.DEBUGMSG);
 								if (rn.getStatus() == RnStatus.FEHLERHAFT) {
 									res.add(Result.SEVERITY.ERROR, 1,
-										Messages.getString("MediportOutputter.error.Rechnung") //$NON-NLS-1$
+										Messages.MediportOutputter_error_Rechnung //$NON-NLS-1$
 											+ rn.getNr(), rn, true);
 								}
 								monitor.worked(1);
@@ -299,8 +299,8 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 			ErrorDialog
 				.openError(
 					null,
-					Messages.getString("MediportOutputter.error.Output"), //$NON-NLS-1$
-					Messages.getString("MediportOutputter.error.MediPortTransmit"), ResultAdapter.getResultAsStatus(res)); //$NON-NLS-1$
+					Messages.MediportOutputter_error_Output, //$NON-NLS-1$
+					Messages.MediportOutputter_error_MediPortTransmit, ResultAdapter.getResultAsStatus(res)); //$NON-NLS-1$
 		}
 		
 		return res;
@@ -318,7 +318,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	
 	@Override
 	public String getDescription(){
-		return Messages.getString("MediportOutputter.description.MediPortTransmit"); //$NON-NLS-1$
+		return Messages.MediportOutputter_description_MediPortTransmit; //$NON-NLS-1$
 	}
 	
 	@Override
@@ -356,7 +356,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 		// Hinweis:
 		// XML Standard: http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
 		// Dort steht beim Feld 11310: Gesetzlicher Vertreter des Patienten.
-		Element guarantor = new Element("guarantor", ns);
+		Element guarantor = new Element("guarantor", nsinvoice);
 		guarantor.addContent(XMLExporterUtil.buildAdressElement(patient, true)); // use "Anschrift" instead of
 		// contact details (e.g. for
 		// "gesetzliche Vertretung")
@@ -420,7 +420,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	private boolean clientParamsOk(ClientParam param){
 		if (param == null) {
 			MessageDialog.openError(new Shell(), getDescription(),
-				Messages.getString("MediportOutputter.error.msg.unknownParameter")); //$NON-NLS-1$
+				Messages.MediportOutputter_error_msg_unknownParameter); //$NON-NLS-1$
 			return false;
 		}
 		
@@ -430,16 +430,16 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 		if (props != null) {
 			String serverIp = props.getProperty(ConfigKeys.MEDIPORT_IP);
 			if (MediportMainPrefPage.VALUE_SERVER_URL_TEST.equals(serverIp)) {
-				message = Messages.getString("MediportOutputter.info.testServer"); //$NON-NLS-1$
+				message = Messages.MediportOutputter_info_testServer; //$NON-NLS-1$
 			} else if (MediportMainPrefPage.LBL_SERVER_TEST.equals(prefs
 				.getString(MediportMainPrefPage.MPC_SERVER))) {
-				message = Messages.getString("MediportOutputter.info.test"); //$NON-NLS-1$
+				message = Messages.MediportOutputter_info_test; //$NON-NLS-1$
 			}
 		}
 		
 		if (message != null) {
 			return MessageDialog.openQuestion(new Shell(), getDescription(), message
-				+ "\n" + Messages.getString("MediportOutputter.question.Fortfahren")); //$NON-NLS-1$ //$NON-NLS-2$
+				+ "\n" + Messages.MediportOutputter_question_Fortfahren); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		return true;

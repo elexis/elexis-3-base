@@ -36,6 +36,7 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 		new FilterKonsultationListener(Konsultation.class);
 	
 	private Konsultation previousKons;
+	private Fall previousFall;
 	private boolean dirty;
 	
 	public TarmedSelectorPanelProvider(CommonViewer cv,
@@ -99,12 +100,19 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 			dirty = true;
 			previousKons = kons;
 		}
+		if (kons != null && kons.getFall() != previousFall) {
+			dirty = true;
+			previousFall = kons.getFall();
+		}
 	}
 	
 	private class FilterKonsultationListener extends ElexisUiEventListenerImpl {
 		
 		public FilterKonsultationListener(Class<?> clazz){
-			super(clazz);
+			super(clazz,
+				ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED
+					| ElexisEvent.EVENT_LOCK_AQUIRED | ElexisEvent.EVENT_LOCK_RELEASED
+					| ElexisEvent.EVENT_UPDATE);
 		}
 		
 		@Override

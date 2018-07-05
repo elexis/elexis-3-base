@@ -10,6 +10,7 @@ public class Messages extends NLS {
 	public static String DocHandle_configErrorCaption;
 	public static String DocHandle_configErrorText;
 	public static String DocHandle_couldNotLoadError;
+	public static String DocHandle_execError;
 	public static String DocHandle_fileNameTooLong;
 	public static String DocHandle_importError2;
 	public static String DocHandle_importErrorText;
@@ -36,7 +37,6 @@ public class Messages extends NLS {
 	public static String Dochandle_errorCatNameAlreadyTaken;
 	public static String DocHandle_errorCatNameAlreadyTakenMsg;
 	
-	
 	public static String xChangeContributor_thisIsAnOmnivoreDoc;
 	public static String DocumentManagement_contentsMatchNotSupported;
 	public static String DocHandle_cantReadMessage;
@@ -47,11 +47,34 @@ public class Messages extends NLS {
 	public static String DocHandle_MoveErrorDestIsFile;
 	public static String DocHandle_importErrorMessage;
 	public static String DocHandle_MoveError;
+	public static String Preferences_cotf_add_trail_char;
+	public static String Preferences_cotf_constant1;
+	public static String Preferences_cotf_constant2;
+	public static String Preferences_cotf_dguid;
+	public static String Preferences_cotf_dk;
+	public static String Preferences_cotf_dob;
+	public static String Preferences_cotf_dt;
+	public static String Preferences_cotf_fill_lead_char;
+	public static String Preferences_cotf_fn;
+	public static String Preferences_cotf_gn;
+	public static String Preferences_cotf_num_digits;
+	public static String Preferences_cotf_pid;
+	public static String Preferences_cotf_random;
+	public static String Preferences_construction_of_temporary_filename;
+	public static String Preferences_DEST_DIR;
+	public static String Preferences_dateModifiable;
+	public static String Preferences_storeInFS;
+	public static String Preferences_MAX_FILENAME_LENGTH;
+	public static String Preferences_pathForDocs;
+	public static String Preferences_Rule;
+	public static String Preferences_SRC_PATTERN;
+	public static String Preferences_automatic_archiving_of_processed_files;
+	public static String Preferences_omnivore;
 	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
+
 	private Messages(){}
 }

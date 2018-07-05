@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.elexis.hl7.message.core.service.HL7MessageService">
+   <service>
+      <provide interface="ch.elexis.hl7.message.core.IHL7MessageService"/>
+   </service>
+   <implementation class="ch.elexis.hl7.message.core.service.HL7MessageService"/>
+</scr:component>

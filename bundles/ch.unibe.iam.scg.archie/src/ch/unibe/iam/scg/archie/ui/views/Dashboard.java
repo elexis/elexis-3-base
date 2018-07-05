@@ -33,7 +33,7 @@ import ch.unibe.iam.scg.archie.ArchieActivator;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
 import ch.unibe.iam.scg.archie.actions.CreateChartsAction;
 import ch.unibe.iam.scg.archie.actions.RefreshChartsAction;
-import ch.unibe.iam.scg.archie.i18n.Messages;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.MutexRule;
 import ch.unibe.iam.scg.archie.ui.DashboardOverview;
 import ch.unibe.iam.scg.archie.ui.GraphicalMessage;

@@ -33,7 +33,6 @@ public class Messages extends NLS {
 	public static String OmnivoreView_searchKeywordsLabel;
 	public static String OmnivoreView_titleColumn;
 	public static String FileImportDialog_dateLabel;
-	public static String Preferences_dateModifiable;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

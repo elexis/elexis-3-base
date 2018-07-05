@@ -24,8 +24,7 @@ public class MonthlySeriesComposite extends Composite {
 		
 		Label lblAtThe = new Label(this, SWT.NONE);
 		lblAtThe.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblAtThe.setText(Messages.getString("MonthlySeriesComposite.lblAtThe.text")); //$NON-NLS-1$
-		
+		lblAtThe.setText(Messages.MonthlySeriesComposite_lblAtThe_text);
 		txtDay = new Text(this, SWT.BORDER);
 		txtDay.setTextLimit(2);
 		txtDay.setText("15");

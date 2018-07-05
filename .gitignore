@@ -8,3 +8,4 @@ rebel.xml
 bin/
 target/
 jetty.log
+.polyglot.build.properties

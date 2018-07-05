@@ -15,6 +15,16 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_RECIPIENT_EAN;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
+
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
@@ -23,40 +33,35 @@ import ch.elexis.data.Xid;
 
 public class TarmedRequirements {
 	
-	public static final String INSURANCE = Messages
-		.getString("TarmedRequirements.KostentraegerName"); //$NON-NLS-1$
-	public static final String INSURANCE_NUMBER = Messages
-		.getString("TarmedRequirements.InsuranceNumberName"); //$NON-NLS-1$
-	public static final String CASE_NUMBER = Messages
-		.getString("TarmedRequirements.CaseNumberName"); //$NON-NLS-1$
-	public static final String INTERMEDIATE = Messages
-		.getString("TarmedRequirements.IntermediateName"); //$NON-NLS-1$
-	public static final String ACCIDENT_NUMBER = Messages
-		.getString("TarmedRequirements.AccidentNumberName"); //$NON-NLS-1$
-	public final static String SSN = Messages.getString("TarmedRequirements.SSNName"); //$NON-NLS-1$
+	public static final String INSURANCE = Messages.TarmedRequirements_KostentraegerName;
+	public static final String INSURANCE_NUMBER = Messages.TarmedRequirements_InsuranceNumberName; 
+	public static final String CASE_NUMBER = Messages.TarmedRequirements_CaseNumberName;
+	public static final String INTERMEDIATE = Messages.TarmedRequirements_IntermediateName;
+	public static final String ACCIDENT_NUMBER = Messages.TarmedRequirements_AccidentNumberName;
+	public final static String SSN = Messages.TarmedRequirements_SSNName;
 	public static final String EAN_PSEUDO = "2000000000000"; //$NON-NLS-1$
 	public static final String EAN_PROVIDER = "ean_provider"; //$NON-NLS-1$
 	public static final String EAN_RESPONSIBLE = "ean_responsible"; //$NON-NLS-1$
-	public static final String EAN_PATTERN = "[0-9]{13}";
+	public static final String EAN_PATTERN = "[0-9]{13}"; //$NON-NLS-1$
 	
-	public static final String ACCIDENT_DATE = Messages
-		.getString("TarmedRequirements.AccidentDate"); //$NON-NLS-1$
-	public static final String CASE_LAW = Messages.getString("TarmedRequirements.Law"); //$NON-NLS-1$
+	public static final String ACCIDENT_DATE = Messages.TarmedRequirements_AccidentDate;
+	public static final String CASE_LAW = Messages.TarmedRequirements_Law;
 	
-	public static final String BILLINGSYSTEM_NAME = "TarmedLeistung";
-	public static final String OUTPUTTER_NAME = "Tarmed-Drucker";
+	public static final String BILLINGSYSTEM_NAME = "TarmedLeistung"; //$NON-NLS-1$
+	public static final String OUTPUTTER_NAME = "Tarmed-Drucker"; //$NON-NLS-1$
 	
 	public static final String DOMAIN_KSK = "www.xid.ch/id/ksk"; //$NON-NLS-1$
 	public static final String DOMAIN_NIF = "www.xid.ch/id/nif"; //$NON-NLS-1$
 	public static final String DOMAIN_SUVA = "www.xid.ch/id/suva"; // $NON-NLS-1$
 	
 	public static final String RESPONSIBLE_INFO_KEY = "ch.elexis.tarmedprefs.responsible";
+	private static Logger logger = LoggerFactory.getLogger(TarmedRequirements.class);
 
 	static {
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK,
-			Messages.getString("TarmedRequirements.kskName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+			Messages.TarmedRequirements_kskName, Xid.ASSIGNMENT_REGIONAL);
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF,
-			Messages.getString("TarmedRequirements.NifName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+			Messages.TarmedRequirements_NifName, Xid.ASSIGNMENT_REGIONAL);
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN,
 			"rEAN", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_SUVA, "Suva-Nr", Xid.ASSIGNMENT_REGIONAL);

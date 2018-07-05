@@ -11,13 +11,13 @@
             category="ch.elexis.preferences.transporters"
             class="ch.elexis.laborimport.analytica.PreferencePage"
             id="ch.elexis.laborimport_analytica.prefs"
-            name="Labor Analytica"/>
-   </extension>
+            name="%PreferencePageName"/>
+   </extension> 
    <extension
          point="ch.elexis.core.ui.LaborDatenImport">
       <Importer
             Class="ch.elexis.laborimport.analytica.Importer"
-            name="Laborimport Analytica">
+            name="%DataImportName">
       </Importer>
    </extension>
 

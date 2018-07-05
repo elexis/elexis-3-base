@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +38,7 @@ import at.medevit.ch.artikelstamm.ARTIKELSTAMM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEMS.ITEM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.LIMITATIONS.LIMITATION;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.PRODUCTS.PRODUCT;
+import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.BlackBoxReason;
@@ -45,10 +49,12 @@ import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCach
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.interfaces.ICodeElement;
 import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.core.data.util.LocalLock;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
@@ -101,7 +107,8 @@ public class ArtikelstammImporter {
 		}
 		try {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
-			String bundleVersion =  Platform.getBundle("at.medevit.ch.artikelstamm.elexis.common").getVersion().toString();
+			String bundleVersion = Platform.getBundle("at.medevit.ch.artikelstamm.elexis.common")
+				.getVersion().toString();
 			
 			subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
 			ARTIKELSTAMM importStamm = null;
@@ -144,8 +151,7 @@ public class ArtikelstammImporter {
 			log.info("[PI] Aktualisiere {} vom {} von v{} auf v{}. Importer-Version {}",
 				importStamm.getDATASOURCE(),
 				importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime(), currentVersion,
-				newVersion,
-				bundleVersion);
+				newVersion, bundleVersion);
 			
 			subMonitor.setTaskName("Lese Produkte und Limitationen...");
 			populateProducsAndLimitationsMap(importStamm);
@@ -180,13 +186,64 @@ public class ArtikelstammImporter {
 				ArtikelstammItem.getDatasourceType().toString(),
 				ArtikelstammItem.getImportSetCreationDate(), newVersion, bundleVersion);
 			
-			ATCCodeCache.rebuildCache(subMonitor.split(5));
+			ATCCodeCache.rebuildCache(subMonitor.split(2));
 			log.info("[PI] Artikelstamm finished rebuilding ATCCodeCache");
+			
+			validateLeistungsblockReferences(subMonitor.split(3));
+			log.info("[PI] Leistungsblock validation finished ");
 		} finally {
 			lock.unlock();
 		}
 		
 		return Status.OK_STATUS;
+	}
+	
+	private static void validateLeistungsblockReferences(SubMonitor subMonitor){
+		final Map<String, List<String>> nonResolvableArtikelstammItems = new HashMap<String, List<String>>();
+		
+		List<Leistungsblock> leistungsbloecke =
+			new Query<Leistungsblock>(Leistungsblock.class).execute();
+		subMonitor.beginTask("Checking Artikelstamm-References in Leistungsblock", leistungsbloecke.size());
+		for (Leistungsblock leistungsblock : leistungsbloecke) {
+			List<String> entry = nonResolvableArtikelstammItems.get(leistungsblock.getId());
+			List<ICodeElement> elements = leistungsblock.getElements();
+			List<ICodeElement> diffToReferences = leistungsblock.getDiffToReferences(elements);
+			if (diffToReferences.size() > 0) {
+				for (ICodeElement iCodeElement : diffToReferences) {
+					if(ArtikelstammConstants.CODESYSTEM_NAME.equals(iCodeElement.getCodeSystemName())) {
+						// non-resolvable ArtikelstammItem
+						if(entry==null) {
+							entry = new ArrayList<String>();
+						}
+						entry.add(iCodeElement.getText()+" ["+iCodeElement.getCode()+"]");
+					}
+				}
+			}
+			if(entry != null) {
+				nonResolvableArtikelstammItems.put(leistungsblock.getCode(), entry);
+			}
+			subMonitor.worked(1);
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("Die folgenden Artikelstamm-Referenzen in den genannten Leistungsblöcken sind nicht mehr auflösbar:\n\n");
+		Set<Entry<String, List<String>>> entrySet = nonResolvableArtikelstammItems.entrySet();
+		for (Entry<String, List<String>> entry : entrySet) {
+			sb.append(entry.getKey()+":\n");
+			List<String> value = entry.getValue();
+			for (String string : value) {
+				sb.append("\t"+string+"\n");
+			}
+		}
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run(){
+				MessageDialog.openInformation(
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+					"Leistungsblock Artikelstamm-Referenzen", sb.toString());
+			}
+		});
 	}
 	
 	private static void inactivateNonBlackboxedItems(){
@@ -291,8 +348,9 @@ public class ArtikelstammImporter {
 			ArtikelstammItem foundItem = null;
 			List<ArtikelstammItem> result = qre.execute();
 			if (result.size() == 0) {
-				foundItem =  ArtikelstammItem.loadByPHARNo(pharmaCode);
-				log.debug("[II] Found using loadByPHARNo {} item {}", pharmaCode,foundItem == null ? "null"  : foundItem.getId());
+				foundItem = ArtikelstammItem.loadByPHARNo(pharmaCode);
+				log.debug("[II] Found using loadByPHARNo {} item {}", pharmaCode,
+					foundItem == null ? "null" : foundItem.getId());
 			} else if (result.size() == 1) {
 				foundItem = result.get(0);
 			} else if (result.size() > 1) {
@@ -312,8 +370,7 @@ public class ArtikelstammImporter {
 			if (foundItem == null) {
 				String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
 				TYPE pharmaType = TYPE.X;
-				if (item.getPHARMATYPE() != null)
-				{
+				if (item.getPHARMATYPE() != null) {
 					String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
 					pharmaType = TYPE.valueOf(ptString.toUpperCase());
 				}
@@ -327,23 +384,30 @@ public class ArtikelstammImporter {
 			}
 			log.trace("[II] Updating article " + foundItem.getId() + " (" + item.getDSCR() + ")");
 			
-			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice, keepOverriddenPkgSize);
+			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice,
+				keepOverriddenPkgSize);
 			subMonitor.worked(1);
 		}
-
+		
 		subMonitor.done();
 	}
 	
 	/**
 	 * 
-	 * @param ai	The artikelstamm as seen by Elexis
-	 * @param item  The new item to be imported
-	 * @param cummulatedVersion version of the artikelstamm to be imported
-	 * @param keepOverriddenPublicPrice Must keep the user overriden price
-	 * @param keepOverriddenPkgSize Must keep the user overriden PKG_SIZE, aka PackungsGroesse
+	 * @param ai
+	 *            The artikelstamm as seen by Elexis
+	 * @param item
+	 *            The new item to be imported
+	 * @param cummulatedVersion
+	 *            version of the artikelstamm to be imported
+	 * @param keepOverriddenPublicPrice
+	 *            Must keep the user overriden price
+	 * @param keepOverriddenPkgSize
+	 *            Must keep the user overriden PKG_SIZE, aka PackungsGroesse
 	 */
 	private static void setValuesOnArtikelstammItem(ArtikelstammItem ai, ITEM item,
-		final int cummulatedVersion, boolean keepOverriddenPublicPrice, boolean keepOverriddenPkgSize){
+		final int cummulatedVersion, boolean keepOverriddenPublicPrice,
+		boolean keepOverriddenPkgSize){
 		List<String> fields = new ArrayList<>();
 		List<String> values = new ArrayList<>();
 		
@@ -417,10 +481,11 @@ public class ArtikelstammImporter {
 			fields.add(ArtikelstammItem.FLD_PPUB);
 			values.add((item.getPPUB() != null) ? item.getPPUB().toString() : null);
 		} else {
-			if(item.getPPUB()!=null) {
+			if (item.getPPUB() != null) {
 				ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PPUB_OVERRIDE_STORE,
 					item.getPPUB().toString());
-				log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB());
+				log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(),
+					item.getPPUB());
 			}
 		}
 		
@@ -448,18 +513,20 @@ public class ArtikelstammImporter {
 		if (!keepOverriddenPkgSize) {
 			fields.add(ArtikelstammItem.FLD_PKG_SIZE);
 			String pkgSize = (item.getPKGSIZE() != null) ? item.getPKGSIZE().toString() : null;
-			values.add((pkgSize != null && pkgSize.length() > 6) ? pkgSize.substring(0, 6).toString()
-					: pkgSize);
+			values
+				.add((pkgSize != null && pkgSize.length() > 6) ? pkgSize.substring(0, 6).toString()
+						: pkgSize);
 			if (pkgSize != null && pkgSize.length() > 6) {
 				log.warn("[II] Delimited pkg size for [{}] being [{}] to 6 characters.", ai.getId(),
 					item.getPKGSIZE().toString());
 			}
 		} else {
-			if(item.getPKGSIZE()!=null) {
+			if (item.getPKGSIZE() != null) {
 				ai.setExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE,
 					item.getPKGSIZE().toString());
-				log.info("[II] [{}] Updating PKG_SIZE override store to [{}] fld {}", ai.getId(), item.getPKGSIZE(), ai.get(ArtikelstammItem.FLD_PKG_SIZE));
-				}
+				log.info("[II] [{}] Updating PKG_SIZE override store to [{}] fld {}", ai.getId(),
+					item.getPKGSIZE(), ai.get(ArtikelstammItem.FLD_PKG_SIZE));
+			}
 		}
 		
 		ai.set(fields.toArray(new String[0]), values.toArray(new String[0]));

@@ -34,5 +34,14 @@
             referenceDataId="analysenliste">
       </importer>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.base.ch.labortarif_2009.ui.dbcheck.AddEAL4708To2013">
+      </ExternalMaintenance>
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.base.ch.labortarif_2009.ui.dbcheck.UpdateEAL">
+      </ExternalMaintenance>
+   </extension>
 
 </plugin>

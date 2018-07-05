@@ -113,9 +113,13 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 			form.setText(patient.getLabel());
 		}
 		CTabItem tab = tabfolder.getSelection();
-		Control c = tab.getControl();
-		MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
-		refreshContent(patient, t);
+		if (tab == null) {
+			refreshContent(patient, null);
+		} else {
+			Control c = tab.getControl();
+			MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
+			refreshContent(patient, t);
+		}
 	}
 	
 	public void catchElexisEvent(final ElexisEvent ev){

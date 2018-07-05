@@ -82,8 +82,8 @@ public class SysmexAction extends Action implements ComPortListener {
 	};
 	
 	public SysmexAction(){
-		super(Messages.getString("SysmexAction.ButtonName"), AS_CHECK_BOX); //$NON-NLS-1$
-		setToolTipText(Messages.getString("SysmexAction.ToolTip")); //$NON-NLS-1$
+		super(Messages.SysmexAction_ButtonName, AS_CHECK_BOX);
+		setToolTipText(Messages.SysmexAction_ToolTip);
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
 			"ch.elexis.connect.sysmex", "icons/sysmex.png")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -96,10 +96,10 @@ public class SysmexAction extends Action implements ComPortListener {
 			_ctrl.close();
 		}
 		_ctrl =
-			new SysmexConnection(Messages.getString("SysmexAction.ConnectionName"), //$NON-NLS-1$
+			new SysmexConnection(Messages.SysmexAction_ConnectionName,
 				CoreHub.localCfg.get(Preferences.PORT,
-					Messages.getString("SysmexAction.DefaultPort")), CoreHub.localCfg.get( //$NON-NLS-1$
-					Preferences.PARAMS, Messages.getString("SysmexAction.DefaultParams")), //$NON-NLS-1$
+					Messages.SysmexAction_DefaultPort), CoreHub.localCfg.get(
+					Preferences.PARAMS, Messages.SysmexAction_DefaultParams),
 				this);
 	}
 	
@@ -109,8 +109,8 @@ public class SysmexAction extends Action implements ComPortListener {
 				_rs232log = new Logger(System.getProperty("user.home") + File.separator + "elexis" //$NON-NLS-1$ //$NON-NLS-2$
 					+ File.separator + "sysmex.log"); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
-				SWTHelper.showError(Messages.getString("SysmexAction.LogError.Title"), //$NON-NLS-1$
-					Messages.getString("SysmexAction.LogError.Text")); //$NON-NLS-1$
+				SWTHelper.showError(Messages.SysmexAction_LogError_Title,
+					Messages.SysmexAction_LogError_Text);
 				_rs232log = new Logger();
 			}
 		} else {
@@ -130,7 +130,7 @@ public class SysmexAction extends Action implements ComPortListener {
 				if (msg == null) {
 					String timeoutStr =
 						CoreHub.localCfg.get(Preferences.TIMEOUT,
-							Messages.getString("SysmexAction.DefaultTimeout")); //$NON-NLS-1$
+							Messages.SysmexAction_DefaultTimeout);
 					int timeout = 20;
 					try {
 						timeout = Integer.parseInt(timeoutStr);
@@ -140,11 +140,11 @@ public class SysmexAction extends Action implements ComPortListener {
 					_ctrl
 						.awaitFrame(
 							UiDesk.getTopShell(),
-							Messages.getString("SysmexAction.WaitMsg"), 1, 4, 0, timeout, background, true); //$NON-NLS-1$
+							Messages.SysmexAction_WaitMsg, 1, 4, 0, timeout, background, true);
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
-					SWTHelper.showError(Messages.getString("SysmexAction.RS232.Error.Title"), //$NON-NLS-1$
+					SWTHelper.showError(Messages.SysmexAction_RS232_Error_Title,
 						msg);
 				}
 			} else {
@@ -212,8 +212,8 @@ public class SysmexAction extends Action implements ComPortListener {
 		connection.close();
 		setChecked(false);
 		_elexislog.log("Break", Log.INFOS); //$NON-NLS-1$
-		SWTHelper.showError(Messages.getString("SysmexAction.RS232.Break.Title"), Messages //$NON-NLS-1$
-			.getString("SysmexAction.RS232.Break.Text")); //$NON-NLS-1$
+		SWTHelper.showError(Messages.SysmexAction_RS232_Break_Title, Messages
+			.SysmexAction_RS232_Break_Text);
 	}
 	
 	/**
@@ -239,12 +239,12 @@ public class SysmexAction extends Action implements ComPortListener {
 						// case no patient selection was orcould be made yet
 						if (selectedPatient == null) {
 							KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(),
-								Patient.class, Messages.getString("SysmexAction.Patient.Title"), //$NON-NLS-1$
-								Messages.getString("SysmexAction.Patient.Text"), //$NON-NLS-1$
+								Patient.class, Messages.SysmexAction_Patient_Title,
+								Messages.SysmexAction_Patient_Text,
 								Patient.DEFAULT_SORT);
 							ksl.create();
 							ksl.getShell()
-								.setText(Messages.getString("SysmexAction.Patient.Title")); //$NON-NLS-1$
+								.setText(Messages.SysmexAction_Patient_Title);
 								
 							if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 								selectedPatient = (Patient) ksl.getSelection();
@@ -259,11 +259,11 @@ public class SysmexAction extends Action implements ComPortListener {
 						probe.write(selectedPatient);
 					} catch (PackageException e) {
 						showError(
-							Messages.getString("SysmexAction.ProbeError.Title"), e.getMessage()); //$NON-NLS-1$
+							Messages.SysmexAction_ProbeError_Title, e.getMessage());
 					}
 				} else {
-					showError(Messages.getString("SysmexAction.Patient.Title"), //$NON-NLS-1$
-						Messages.getString("SysmexAction.NoPatientMsg")); //$NON-NLS-1$
+					showError(Messages.SysmexAction_Patient_Title,
+						Messages.SysmexAction_NoPatientMsg);
 				}
 			}
 		});
@@ -317,8 +317,8 @@ public class SysmexAction extends Action implements ComPortListener {
 			analysisData.parse(content);
 			processProbe(analysisData);
 		} else {
-			showError(Messages.getString("SysmexAction.ErrorTitle"), //$NON-NLS-1$
-				Messages.getString("SysmexAction.WrongDataFormat")); //$NON-NLS-1$
+			showError(Messages.SysmexAction_ErrorTitle,
+				Messages.SysmexAction_WrongDataFormat);
 			
 		}
 		
@@ -379,8 +379,8 @@ public class SysmexAction extends Action implements ComPortListener {
 	 */
 	public void timeout(){
 		_elexislog.log("Timeout", Log.INFOS); //$NON-NLS-1$
-		SWTHelper.showError(Messages.getString("SysmexAction.RS232.Timeout.Title"), //$NON-NLS-1$
-			Messages.getString("SysmexAction.RS232.Timeout.Text")); //$NON-NLS-1$
+		SWTHelper.showError(Messages.SysmexAction_RS232_Timeout_Title,
+			Messages.SysmexAction_RS232_Timeout_Text);
 		close();
 	}
 }

@@ -40,7 +40,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.gpb.elexis.cst.preferences.Messages;
+import ch.gpb.elexis.cst.Messages;
 
 /**
  * @author daniel ludin ludin@swissonline.ch

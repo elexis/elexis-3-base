@@ -134,19 +134,19 @@ public class WeisseSeitenSearchView extends ViewPart {
 		Table table =
 			new Table(listArea, SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 		TableColumn nameTc = new TableColumn(table, SWT.CENTER);
-		nameTc.setText(Messages.getString("WeisseSeitenSearchView.header.Name")); //$NON-NLS-1$
+		nameTc.setText(Messages.WeisseSeitenSearchView_header_Name); //$NON-NLS-1$
 		nameTc.setWidth(250);
 		TableColumn adrTc = new TableColumn(table, SWT.LEFT);
-		adrTc.setText(Messages.getString("WeisseSeitenSearchView.header.Adresse")); //$NON-NLS-1$
+		adrTc.setText(Messages.WeisseSeitenSearchView_header_Adresse); //$NON-NLS-1$
 		adrTc.setWidth(140);
 		TableColumn plzTc = new TableColumn(table, SWT.LEFT);
-		plzTc.setText(Messages.getString("WeisseSeitenSearchView.header.Plz")); //$NON-NLS-1$
+		plzTc.setText(Messages.WeisseSeitenSearchView_header_Plz); //$NON-NLS-1$
 		plzTc.setWidth(40);
 		TableColumn ortTc = new TableColumn(table, SWT.LEFT);
-		ortTc.setText(Messages.getString("WeisseSeitenSearchView.header.Ort")); //$NON-NLS-1$
+		ortTc.setText(Messages.WeisseSeitenSearchView_header_Ort); //$NON-NLS-1$
 		ortTc.setWidth(150);
 		TableColumn telTc = new TableColumn(table, SWT.LEFT);
-		telTc.setText(Messages.getString("WeisseSeitenSearchView.header.Tel")); //$NON-NLS-1$
+		telTc.setText(Messages.WeisseSeitenSearchView_header_Tel); //$NON-NLS-1$
 		telTc.setWidth(90);
 		
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -251,9 +251,8 @@ public class WeisseSeitenSearchView extends ViewPart {
 				openPatientenDialog();
 			}
 		};
-		newPatientAction.setText(Messages.getString("WeisseSeitenSearchView.popup.newPatient")); //$NON-NLS-1$
-		newPatientAction.setToolTipText(Messages
-			.getString("WeisseSeitenSearchView.tooltip.newPatient")); //$NON-NLS-1$
+		newPatientAction.setText(Messages.WeisseSeitenSearchView_popup_newPatient); //$NON-NLS-1$
+		newPatientAction.setToolTipText(Messages.WeisseSeitenSearchView_tooltip_newPatient); //$NON-NLS-1$
 		newPatientAction.setImageDescriptor(Images.IMG_PERSON_ADD.getImageDescriptor());
 		
 		newKontaktAction = new Action() {
@@ -261,9 +260,9 @@ public class WeisseSeitenSearchView extends ViewPart {
 				openKontaktDialog();
 			}
 		};
-		newKontaktAction.setText(Messages.getString("WeisseSeitenSearchView.popup.newKontakt")); //$NON-NLS-1$
+		newKontaktAction.setText(Messages.WeisseSeitenSearchView_popup_newKontakt); //$NON-NLS-1$
 		newKontaktAction.setToolTipText(Messages
-			.getString("WeisseSeitenSearchView.tooltip.newKontakt")); //$NON-NLS-1$
+			.WeisseSeitenSearchView_tooltip_newKontakt); //$NON-NLS-1$
 		newKontaktAction.setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 	}
 	

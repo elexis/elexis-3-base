@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 
+import ch.elexis.base.ch.labortarif_2009.Messages;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.selectors.DisplayPanel;
 import ch.elexis.core.ui.selectors.FieldDescriptor;

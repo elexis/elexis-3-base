@@ -8,8 +8,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
  ch.rgw.utility;bundle-version="2.0.9",
  ch.elexis.core;bundle-version="0.0.2",
- ch.elexis.core.data;bundle-version="3.0.0"
-Service-Component: OSGI-INF/inboxService.xml
+ ch.elexis.core.data;bundle-version="3.0.0",
+ org.eclipse.osgi.services;bundle-version="3.6.0"
+Service-Component: OSGI-INF/at.medevit.elexis.inbox.model.impl.InboxElementService.xml
 Export-Package: at.medevit.elexis.inbox.model
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.io;version="2.4.0",

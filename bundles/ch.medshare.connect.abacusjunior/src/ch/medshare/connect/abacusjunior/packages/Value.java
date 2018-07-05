@@ -10,6 +10,7 @@ import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
+import ch.medshare.connect.abacusjunior.Messages;
 import ch.rgw.tools.TimeTool;
 
 public class Value {
@@ -51,12 +52,12 @@ public class Value {
 	}
 	
 	private void initialize(){
-		_myLab = LabImportUtil.getOrCreateLabor(Messages.getString("Value.LabKuerzel"));
+		_myLab = LabImportUtil.getOrCreateLabor(Messages.AbacusJunior_Value_LabKuerzel);
 		_labItem = LabImportUtil.getLabItem(_shortName, _myLab);
 		
 		if (_labItem == null) {
 			_labItem = new LabItem(_shortName, _longName, _myLab, _refMann, _refFrau, _unit,
-				LabItemTyp.NUMERIC, Messages.getString("Value.LabName"), "50");
+				LabItemTyp.NUMERIC, Messages.AbacusJunior_Value_LabName, "50");
 		}
 	}
 	
@@ -85,7 +86,7 @@ public class Value {
 			resultFlags |= LabResultConstants.PATHOLOGIC;
 		}
 		if (flags.equals("*") || flags.equals("E")) {
-			comment = Messages.getString("Value.Error");
+			comment = Messages.AbacusJunior_Value_Error;
 		}
 		
 		return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_myLab),

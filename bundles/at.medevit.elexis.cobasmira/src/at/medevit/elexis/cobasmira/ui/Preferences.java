@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.cobasmira.Messages;
 import at.medevit.elexis.cobasmira.connection.CobasMiraConnection;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
@@ -53,7 +54,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	private Text controlLogLoc;
 	
 	public Preferences(){
-		super(Messages.getString("CobasMiraAction.ButtonName")); //$NON-NLS-1$
+		super(Messages.CobasMiraAction_ButtonName);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 		
 		initMappingFileLocation();
@@ -67,39 +68,39 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		ret.setLayout(new GridLayout(4, false));
 		
 		Label lblLabIdentification = new Label(ret, SWT.NONE);
-		lblLabIdentification.setText(Messages.getString("Preferences.LabIdentification")); //$NON-NLS-1$
+		lblLabIdentification.setText(Messages.Preferences_LabIdentification);
 		lblLabIdentification.setLayoutData(new GridData(SWT.NONE));
 		String labIdentificationStr =
 			CoreHub.localCfg.get(LABIDENTIFICATION,
-				Messages.getString("CobasMiraAction.OwnLabIdentification"));
+				Messages.CobasMiraAction_OwnLabIdentification);
 		labIdentification = new Text(ret, SWT.BORDER);
 		labIdentification.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		labIdentification.setText(labIdentificationStr);
 		
 		Label lblIgnoreUser = new Label(ret, SWT.NONE);
-		lblIgnoreUser.setText(Messages.getString("Preferences.IgnoreUserOnInput")); //$NON-NLS-1$
+		lblIgnoreUser.setText(Messages.Preferences_IgnoreUserOnInput);
 		lblIgnoreUser.setLayoutData(new GridData(SWT.NONE));
 		String controlUserStr =
 			CoreHub.localCfg.get(CONTROLUSER,
-				Messages.getString("CobasMiraAction.DefaultIgnoreUser")); //$NON-NLS-1$
+				Messages.CobasMiraAction_DefaultIgnoreUser);
 		controlUser = new Text(ret, SWT.BORDER);
 		controlUser.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1));
 		controlUser.setText(controlUserStr);
 		
 		Label lblControlLogLoc = new Label(ret, SWT.NONE);
-		lblControlLogLoc.setText(Messages.getString("Preferences.lblcontrolLogLoc"));
+		lblControlLogLoc.setText(Messages.Preferences_lblcontrolLogLoc);
 		lblControlLogLoc.setLayoutData(new GridData(SWT.None));
 		String controlLogLocStr =
-			CoreHub.localCfg.get(CONTROLLOGFILE, Messages.getString("Message.notset"));
+			CoreHub.localCfg.get(CONTROLLOGFILE, Messages.Message_notset);
 		controlLogLoc = new Text(ret, SWT.BORDER);
 		controlLogLoc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		controlLogLoc.setText(controlLogLocStr);
 		
 		Label lblMappingLoc = new Label(ret, SWT.NONE);
-		lblMappingLoc.setText(Messages.getString("Preferences.lblMappingDatei"));
+		lblMappingLoc.setText(Messages.Preferences_lblMappingDatei);
 		lblMappingLoc.setLayoutData(new GridData(SWT.NONE));
 		String mappingLocStr =
-			CoreHub.localCfg.get(MAPPINGSCSVFILE, Messages.getString("Message.notset"));
+			CoreHub.localCfg.get(MAPPINGSCSVFILE, Messages.Message_notset);
 		mappingLoc = new Text(ret, SWT.BORDER);
 		mappingLoc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		mappingLoc.setText(mappingLocStr);
@@ -113,19 +114,19 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 				mappingLoc.setText(selected);
 			}
 		});
-		btnBrowse.setText(Messages.getString("Preferences.btnBrowse.text")); //$NON-NLS-1$
+		btnBrowse.setText(Messages.Preferences_btnBrowse_text);
 		
 		Label lblPorts = new Label(ret, SWT.NONE);
-		lblPorts.setText(Messages.getString("Preferences.Port")); //$NON-NLS-1$
+		lblPorts.setText(Messages.Preferences_Port);
 		lblPorts.setLayoutData(new GridData(SWT.NONE));
 		ports = new Combo(ret, SWT.SINGLE);
 		ports.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
 		ports.setItems(CobasMiraConnection.getComPorts());
 		ports
-			.setText(CoreHub.localCfg.get(PORT, Messages.getString("CobasMiraAction.DefaultPort"))); //$NON-NLS-1$	
+			.setText(CoreHub.localCfg.get(PORT, Messages.CobasMiraAction_DefaultPort));
 		
 		Label lblSpeed = new Label(ret, SWT.NONE);
-		lblSpeed.setText(Messages.getString("Preferences.Baud")); //$NON-NLS-1$
+		lblSpeed.setText(Messages.Preferences_Baud);
 		lblSpeed.setLayoutData(new GridData(SWT.NONE));
 		speed = new Text(ret, SWT.BORDER);
 		GridData gd_speed = new GridData(GridData.FILL_HORIZONTAL);
@@ -134,7 +135,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		speed.setText(param[0]);
 		
 		Label lblDatabits = new Label(ret, SWT.NONE);
-		lblDatabits.setText(Messages.getString("Preferences.Databits")); //$NON-NLS-1$
+		lblDatabits.setText(Messages.Preferences_Databits);
 		lblDatabits.setLayoutData(new GridData(SWT.NONE));
 		databits = new Combo(ret, SWT.SINGLE);
 		databits.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
@@ -145,7 +146,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		databits.setText(param[1]);
 		
 		Label lblParity = new Label(ret, SWT.NONE);
-		lblParity.setText(Messages.getString("Preferences.Parity")); //$NON-NLS-1$
+		lblParity.setText(Messages.Preferences_Parity);
 		lblParity.setLayoutData(new GridData(SWT.NONE));
 		parity = new Combo(ret, SWT.SINGLE);
 		parity.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
@@ -155,7 +156,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		parity.setText(param[2]);
 		
 		Label lblStopbits = new Label(ret, SWT.NONE);
-		lblStopbits.setText(Messages.getString("Preferences.Stopbits")); //$NON-NLS-1$
+		lblStopbits.setText(Messages.Preferences_Stopbits);
 		lblStopbits.setLayoutData(new GridData(SWT.NONE));
 		stopbits = new Combo(ret, SWT.SINGLE);
 		stopbits.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
@@ -164,7 +165,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		stopbits.setText(param[3]);
 		
 		Label lblflowctrlIn = new Label(ret, SWT.NONE);
-		lblflowctrlIn.setText(Messages.getString("Preferences.FlowCtrlIn"));
+		lblflowctrlIn.setText(Messages.Preferences_FlowCtrlIn);
 		lblflowctrlIn.setLayoutData(new GridData(SWT.NONE));
 		flowctrlIn = new Combo(ret, SWT.SINGLE);
 		flowctrlIn.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
@@ -182,7 +183,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		}
 		
 		Label lblflowctrlOut = new Label(ret, SWT.NONE);
-		lblflowctrlOut.setText(Messages.getString("Preferences.FlowCtrlOut"));
+		lblflowctrlOut.setText(Messages.Preferences_FlowCtrlOut);
 		lblflowctrlOut.setLayoutData(new GridData(SWT.NONE));
 		flowctrlOut = new Combo(ret, SWT.SINGLE);
 		flowctrlOut.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
@@ -199,7 +200,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 				flowctrlOut.setText("XONXOFF");
 		}
 		
-		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Backgroundprocess")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.Preferences_Backgroundprocess);
 		automaticStart = new Button(ret, SWT.CHECK);
 		automaticStart.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
 		automaticStart.setSelection(CoreHub.localCfg.get(BACKGROUND, "n").equalsIgnoreCase("y"));

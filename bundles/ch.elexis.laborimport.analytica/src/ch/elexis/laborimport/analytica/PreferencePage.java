@@ -60,21 +60,21 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		
 		setPreferenceStore(prefs);
 		
-		setDescription(Messages.getString("PreferencePage.title.description")); //$NON-NLS-1$
+		setDescription(Messages.PreferencePage_title_description); //$NON-NLS-1$
 	}
 	
 	@Override
 	protected void createFieldEditors(){
 		addField(new StringFieldEditor(FTP_HOST,
-			Messages.getString("PreferencePage.label.host"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_host, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new StringFieldEditor(FTP_USER,
-			Messages.getString("PreferencePage.label.user"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_user, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new StringFieldEditor(FTP_PWD,
-			Messages.getString("PreferencePage.label.password"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_password, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new InexistingDirectoryOKDirectoryFieldEditor(DL_DIR,
-			Messages.getString("PreferencePage.label.download"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_download, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new InexistingFileOKFileFieldEditor(OVPN_DIR,
-			Messages.getString("PreferencePage.label.ovpn"), getFieldEditorParent())); //$NON-NLS-1$
+			Messages.PreferencePage_label_ovpn, getFieldEditorParent())); //$NON-NLS-1$
 	}
 	
 	public void init(final IWorkbench workbench){

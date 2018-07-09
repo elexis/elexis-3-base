@@ -33,7 +33,6 @@ import ch.elexis.data.Xid;
 
 public class TarmedRequirements {
 	
-	public static final String INSURANCE = Messages.TarmedRequirements_KostentraegerName;
 	public static final String INSURANCE_NUMBER = Messages.TarmedRequirements_InsuranceNumberName; 
 	public static final String CASE_NUMBER = Messages.TarmedRequirements_CaseNumberName;
 	public static final String INTERMEDIATE = Messages.TarmedRequirements_IntermediateName;

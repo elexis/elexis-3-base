@@ -410,8 +410,8 @@ public class LabOrderImport extends ImporterPage {
 					cause));
 		} catch (Exception ex) {
 			saveResult = SaveResult.ERROR;
-			ViollierLogger.getLogger().println(
-				MessageFormat.format(Messages.LabOrderImport_Error, ex.getMessage()));
+			ViollierLogger.getLogger().println(MessageFormat.format(Messages.LabOrderImport_Error,
+					ex.getClass().getName() + ": " + ex.getMessage()));
 		}
 		
 		if ((patient != null) && (labor != null) && (observation != null)) {

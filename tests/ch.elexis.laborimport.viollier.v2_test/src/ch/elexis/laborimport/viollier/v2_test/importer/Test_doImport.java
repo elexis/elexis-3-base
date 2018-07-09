@@ -289,6 +289,7 @@ public class Test_doImport {
 			}
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Genereller Fehler (" + e.toString() + "): " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}

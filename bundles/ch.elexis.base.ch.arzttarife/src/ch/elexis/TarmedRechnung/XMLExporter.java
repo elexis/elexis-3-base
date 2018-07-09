@@ -347,7 +347,7 @@ public class XMLExporter implements IRnOutputter {
 		actFall = rn.getFall();
 		actPatient = actFall.getPatient();
 		actMandant = rn.getMandant();
-		Kontakt kostentraeger = actFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt kostentraeger = actFall.getCostBearer();
 		
 		if (kostentraeger == null) {
 			kostentraeger = actPatient;
@@ -876,7 +876,7 @@ public class XMLExporter implements IRnOutputter {
 	@Override
 	public boolean canBill(final Fall fall){
 		Kontakt garant = fall.getGarant();
-		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt kostentraeger = fall.getCostBearer();
 		if ((garant != null) && (kostentraeger != null)) {
 			if (garant.isValid()) {
 				if (kostentraeger.isValid()) {

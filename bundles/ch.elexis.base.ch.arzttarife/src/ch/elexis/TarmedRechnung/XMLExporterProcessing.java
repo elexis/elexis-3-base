@@ -114,7 +114,7 @@ public class XMLExporterProcessing {
 	private static Kontakt getKostentTraeger(Rechnung rechnung){
 		Fall actFall = rechnung.getFall();
 		Patient actPatient = actFall.getPatient();
-		Kontakt kostentraeger = actFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt kostentraeger = actFall.getCostBearer();
 		
 		if (kostentraeger == null) {
 			kostentraeger = actPatient;

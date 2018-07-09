@@ -514,7 +514,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 		Fall tempFall = rn.getFall();
 		Kontakt tempPatient = tempFall.getPatient();
 		
-		Kontakt kostentraeger = tempFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt kostentraeger = tempFall.getCostBearer();
 		Kontakt rnAdressat = tempFall.getGarant();
 		
 		if (kostentraeger == null || !kostentraeger.isValid()) {
@@ -535,7 +535,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	private String getTier(Rechnung rn){
 		Fall tempFall = rn.getFall();
 		
-		Kontakt kostentraeger = tempFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt kostentraeger = tempFall.getCostBearer();
 		Kontakt rnAdressat = tempFall.getGarant();
 		String tiers = TIER_GARANT;
 		

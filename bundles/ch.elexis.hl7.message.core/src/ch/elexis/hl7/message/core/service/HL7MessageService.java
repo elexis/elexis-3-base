@@ -33,6 +33,24 @@ public class HL7MessageService implements IHL7MessageService {
 	}
 	
 	@Override
+	public List<String> validateContext(String messageTyp, Map<String, Object> context)
+		throws ElexisException{
+		List<IHL7Message> messageVersions = messages.get(messageTyp);
+		if (messageVersions != null && !messageVersions.isEmpty()) {
+			String versionHint = (String) context.get(IHL7MessageService.CONTEXT_HL7VERSION_HINT);
+			if (versionHint != null) {
+				for (IHL7Message ihl7Message : messageVersions) {
+					if (versionHint.equals(ihl7Message.getHL7Version())) {
+						return ihl7Message.validateContext(context);
+					}
+				}
+			}
+			return messageVersions.get(0).validateContext(context);
+		}
+		throw new ElexisException("No message implementation for typ [" + messageTyp + "]");
+	}
+	
+	@Override
 	public String getMessage(String messageTyp, Map<String, Object> context) throws ElexisException{
 		List<IHL7Message> messageVersions = messages.get(messageTyp);
 		if (messageVersions != null && !messageVersions.isEmpty()) {

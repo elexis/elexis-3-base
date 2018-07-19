@@ -10,6 +10,8 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.ui.provider;
 
+import java.util.List;
+
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
@@ -19,6 +21,8 @@ import org.eclipse.wb.swt.ResourceManager;
 import at.medevit.ch.artikelstamm.ui.ArtikelstammLabelProvider;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IOrderEntry;
+import ch.elexis.core.model.IStockEntry;
 import ch.elexis.core.services.IStockService.Availability;
 import ch.elexis.core.ui.UiDesk;
 
@@ -57,6 +61,19 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	@Override
 	public Color getForeground(Object element){
 		ArtikelstammItem ai = (ArtikelstammItem) element;
+		
+		List<? extends IStockEntry> stockEntries =
+			CoreHub.getStockService().findAllStockEntriesForArticle(ai.storeToString());
+		if (!stockEntries.isEmpty()) {
+			for (IStockEntry iStockEntry : stockEntries) {
+				IOrderEntry order =
+					CoreHub.getOrderService().findOpenOrderEntryForStockEntry(iStockEntry);
+				if (order != null) {
+					return UiDesk.getColor(UiDesk.COL_LIGHTBLUE);
+				}
+			}
+		}
+		
 		Availability availability =
 			CoreHub.getStockService().getCumulatedAvailabilityForArticle(ai);
 		if (availability != null) {

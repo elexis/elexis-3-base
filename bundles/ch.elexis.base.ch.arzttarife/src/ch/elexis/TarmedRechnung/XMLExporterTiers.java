@@ -4,6 +4,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
 import ch.elexis.data.Fall;
+import ch.elexis.data.Fall.Tiers;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -30,23 +31,6 @@ public class XMLExporterTiers {
 		return tiers;
 	}
 
-	public static String getTiers(Kontakt rnAdressat, Kontakt kostentraeger, Fall fall){
-		String tiers = XMLExporter.TIERS_GARANT;
-		
-		if ((kostentraeger != null) && (kostentraeger.isValid())) {
-			if (rnAdressat.equals(kostentraeger)) {
-				tiers = XMLExporter.TIERS_PAYANT;
-			} else {
-				tiers = XMLExporter.TIERS_GARANT;
-			}
-		} else {
-			kostentraeger = rnAdressat;
-			tiers = XMLExporter.TIERS_GARANT;
-		}
-		
-		return tiers;
-	}
-
 	public static XMLExporterTiers buildTiers(Rechnung rechnung, XMLExporter xmlExporter){
 		TarmedACL ta = TarmedACL.getInstance();
 		
@@ -54,11 +38,13 @@ public class XMLExporterTiers {
 		Patient patient = fall.getPatient();
 		Mandant mandant = rechnung.getMandant();
 		Kontakt kostentraeger = fall.getCostBearer();
-		// We try to figure out whether we should use Tiers Payant or Tiers
-		// Garant.
-		// if unsure, we make it TG
-		Kontakt rnAdressat = fall.getGarant();
-		String tiers = getTiers(rnAdressat, kostentraeger, fall);
+		
+		String tiers = XMLExporter.TIERS_PAYANT;
+		Tiers tiersType = fall.getTiersType();
+		if(Tiers.GARANT == tiersType) {
+			tiers = XMLExporter.TIERS_GARANT;
+			kostentraeger = fall.getGarant();
+		}
 		
 		if (kostentraeger == null) {
 			kostentraeger = patient;

@@ -5,9 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.data.Fall;
+import ch.elexis.data.Fall.Tiers;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
@@ -67,9 +67,8 @@ public class XMLExporterProcessing {
 		element.addContent(transport);
 
 		// insert demand if TG and TC contract
-		String tiers =
-			XMLExporterTiers.getTiers(actFall.getGarant(), getKostentTraeger(rechnung), actFall);
-		if (tiers.equals(XMLExporter.TIERS_GARANT)
+		Tiers tiersType = actFall.getTiersType();
+		if (Tiers.GARANT == tiersType
 			&& (TarmedRequirements.hasTCContract(actMandant))) {
 			String tcCode = TarmedRequirements.getTCCode(actMandant);
 			Element demand = new Element("demand", XMLExporter.nsinvoice); //$NON-NLS-1$
@@ -111,19 +110,16 @@ public class XMLExporterProcessing {
 		return iEAN;
 	}
 	
-	private static Kontakt getKostentTraeger(Rechnung rechnung){
-		Fall actFall = rechnung.getFall();
-		Patient actPatient = actFall.getPatient();
-		Kontakt kostentraeger = actFall.getCostBearer();
-		
+	private static Kontakt getKostentTraeger(Fall invoiceCoverage){
+		Kontakt kostentraeger = invoiceCoverage.getCostBearer();	
 		if (kostentraeger == null) {
-			kostentraeger = actPatient;
+			kostentraeger = invoiceCoverage.getPatient();
 		}
 		return kostentraeger;
 	}
 	
 	public static String getRecipientEAN(Rechnung rechnung, XMLExporter xmlExporter){
-		String rEAN = TarmedRequirements.getRecipientEAN(getKostentTraeger(rechnung));
+		String rEAN = TarmedRequirements.getRecipientEAN(getKostentTraeger(rechnung.getFall()));
 		logger.debug("Recipient EAN [" + rEAN + "]");
 		if (rEAN.equals("unknown")) { //$NON-NLS-1$
 			rEAN = getKostentraegerEAN(rechnung, xmlExporter);
@@ -132,7 +128,7 @@ public class XMLExporterProcessing {
 	}
 	
 	public static String getKostentraegerEAN(Rechnung rechnung, XMLExporter xmlExporter){
-		String kEAN = TarmedRequirements.getEAN(getKostentTraeger(rechnung));
+		String kEAN = TarmedRequirements.getEAN(getKostentTraeger(rechnung.getFall()));
 		logger.debug("Kostentraeger EAN [" + kEAN + "]");
 		return kEAN;
 	}

@@ -953,7 +953,8 @@ public class TarmedOptifier implements IOptifier {
 				TarmedKumulationType.BLOCK, date, tarmed.get(TarmedLeistung.FLD_LAW));
 			// currently only test blocks exclusives, exclude hierarchy matches
 			if (canHandleAllExculives(exclusives)
-				&& !isMatchingHierarchy(tarmedCode, tarmed, date)) {
+				&& !isMatchingHierarchy(tarmedCode, tarmed, date)
+				&& !tarmedCode.getServiceTyp().equals("Z")) {
 				boolean included = false;
 				for (TarmedExclusive tarmedExclusive : exclusives) {
 					if (tarmedExclusive.isMatching(tarmedCode, date)) {

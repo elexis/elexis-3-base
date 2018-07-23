@@ -10,3 +10,6 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.base.befunde;bundle-version="3.0.0",
  ch.elexis.base.ch.arzttarife;bundle-version="3.0.0",
  org.jdom;bundle-version="1.1.0"
+Export-Package: ch.elexis.icpc.fire.handlers,
+ ch.elexis.icpc.fire.model,
+ ch.elexis.icpc.fire.ui

@@ -33,7 +33,7 @@ public class XmlUtil {
 	public static boolean marshallFireReport(Report report, OutputStream outStream){
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Report.class);
-			Marshaller marshaller = initMarshaller(jaxbContext, "/rsc/fireDbDe_20170322.xsd");
+			Marshaller marshaller = initMarshaller(jaxbContext);
 			marshaller.marshal(report, outStream);
 			return true;
 		} catch (JAXBException e) {
@@ -42,20 +42,20 @@ public class XmlUtil {
 		}
 	}
 	
-	private static Marshaller initMarshaller(JAXBContext jaxbContext, String schemaLocation)
+	public static Marshaller initMarshaller(JAXBContext jaxbContext)
 		throws JAXBException{
 		
 		Marshaller marshaller = jaxbContext.createMarshaller();
 		try {
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-			marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
+			marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "/rsc/fireDbDe_20170322.xsd");
 			marshaller.setProperty(JAXB_HEADER_KEY, DEFAULT_HEADER);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			
 			return marshaller;
 		} catch (PropertyException propE) {
 			logger.error("Error setting marshall properties - concerns XML with schema ["
-				+ schemaLocation + "]", propE);
+				+ "/rsc/fireDbDe_20170322.xsd" + "]", propE);
 		}
 		return marshaller;
 	}

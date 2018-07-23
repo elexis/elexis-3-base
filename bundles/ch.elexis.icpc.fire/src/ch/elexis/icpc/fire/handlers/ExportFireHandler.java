@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -44,8 +46,10 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Sticker;
+import ch.elexis.icpc.fire.model.ConsultationBuilder;
 import ch.elexis.icpc.fire.model.Report;
 import ch.elexis.icpc.fire.model.ReportBuilder;
+import ch.elexis.icpc.fire.model.TMedi;
 import ch.elexis.icpc.fire.model.XmlUtil;
 import ch.rgw.tools.TimeTool;
 
@@ -58,55 +62,65 @@ import ch.rgw.tools.TimeTool;
 public class ExportFireHandler extends AbstractHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(ExportFireHandler.class);
-	
+
 	public static final String FIRESTICKERNAME = "Fire (ICPC)";
 	private static final String CFGPARAM = "ICPC_FIRE_LAST_UPLOAD";
 	private Sticker fireSticker;
-	
-	public ExportFireHandler(){
-		String id =
-			new Query<Sticker>(Sticker.class).findSingle(Sticker.FLD_NAME, Query.EQUALS,
-				FIRESTICKERNAME);
+
+	public ExportFireHandler() {
+		String id = new Query<Sticker>(Sticker.class).findSingle(Sticker.FLD_NAME, Query.EQUALS, FIRESTICKERNAME);
 		if (id == null) {
 			fireSticker = new Sticker(FIRESTICKERNAME, "0066CC", "C0C0C0");
 		} else {
 			fireSticker = Sticker.load(id);
 		}
 	}
+
+	/**
+	 * The time this export slot run starts from
+	 * 
+	 * @return
+	 */
+	public static TimeTool getTtFrom() {
+		TimeTool ttFrom = new TimeTool("20170101");
+		String lastupdate = CoreHub.globalCfg.get(CFGPARAM, null);
+		if (lastupdate != null) {
+			ttFrom = new TimeTool(lastupdate);
+		}
+		ttFrom.addHours(Report.EXPORT_DELAY * -1);
+		return ttFrom;
+	}
 	
 	/**
-	 * the command has been executed, so extract extract the needed information from the application
-	 * context.
+	 * The time this export slot ends with
+	 * @return
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		String lastupdate = CoreHub.globalCfg.get(CFGPARAM, null);
-		if (lastupdate == null) {
-			lastupdate = "20170101";
-		}
-		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		TimeTool ttFrom = new TimeTool(lastupdate);
-		ttFrom.addHours(Report.EXPORT_DELAY * -1);
-		qbe.add(Konsultation.DATE, Query.GREATER, ttFrom.toString(TimeTool.DATE_COMPACT));
+	public static TimeTool getTtTo() {
 		TimeTool ttTo = new TimeTool();
 		ttTo.addHours(Report.EXPORT_DELAY * -1);
-		qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL,
-			ttTo.toString(TimeTool.DATE_COMPACT));
+		return ttTo;
+	}
+
+	/**
+	 * the command has been executed, so extract extract the needed information from
+	 * the application context.
+	 */
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
+		qbe.add(Konsultation.DATE, Query.GREATER, getTtFrom().toString(TimeTool.DATE_COMPACT));	
+		qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL, getTtTo().toString(TimeTool.DATE_COMPACT));
+		qbe.orderBy(false, Konsultation.DATE);
 		List<Konsultation> konsen = qbe.execute();
 		if (konsen.size() > 0) {
 			FileDialog fd = new FileDialog(Hub.getActiveShell(), SWT.SAVE);
 			fd.setFileName("elexis-fire" + new TimeTool().toString(TimeTool.DATE_COMPACT) + ".xml");
-			fd.setFilterExtensions(new String[] {
-				"xml"
-			});
-			fd.setFilterNames(new String[] {
-				"XML-Dateien"
-			});
+			fd.setFilterExtensions(new String[] { "xml" });
+			fd.setFilterNames(new String[] { "XML-Dateien" });
 			String expath = fd.open();
 			if (expath != null) {
-				ProgressMonitorDialog progress =
-					new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
+				ProgressMonitorDialog progress = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 				try {
-					progress.run(true, true, new ReportExportRunnable(konsen, expath));
+					progress.run(true, true, createReportExportRunnable(konsen, expath));
 				} catch (InvocationTargetException | InterruptedException e) {
 					logger.warn("Exception during FIRE export", e);
 				}
@@ -114,31 +128,36 @@ public class ExportFireHandler extends AbstractHandler {
 		}
 		return null;
 	}
-	
+
+	public IRunnableWithProgress createReportExportRunnable(List<Konsultation> konsen, String expath) {
+		return new ReportExportRunnable(konsen, expath);
+	}
+
 	private class ReportExportRunnable implements IRunnableWithProgress {
-		
+
 		private List<Konsultation> consultations;
 		private String exportPath;
-		
-		public ReportExportRunnable(List<Konsultation> konsen, String expath){
+
+		public ReportExportRunnable(List<Konsultation> konsen, String expath) {
 			this.consultations = konsen;
 			this.exportPath = expath;
 		}
-		
+
 		@Override
-		public void run(IProgressMonitor monitor)
-			throws InvocationTargetException, InterruptedException{
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			try {
-				monitor.beginTask("FIRE Export ", consultations.size()+1);
+				monitor.beginTask("FIRE Export ", consultations.size() + 1);
 				int counter = 0;
 				ReportBuilder reportBuilder = new ReportBuilder();
 				if (reportBuilder.isValidConfig()) {
+					Map<String, Set<TMedi>> unreferencedStopMedisPerPatient = ConsultationBuilder
+							.initializeUnreferencedStopMedisPerPatient(reportBuilder.getFireConfig());
+
 					for (Konsultation konsultation : consultations) {
 						if (monitor.isCanceled()) {
 							return;
 						}
-						monitor.setTaskName(
-							"FIRE exporting (" + ++counter + "/" + consultations.size() + ")");
+						monitor.setTaskName("FIRE exporting (" + ++counter + "/" + consultations.size() + ")");
 						// validate
 						Fall fall = konsultation.getFall();
 						if (fall == null) {
@@ -152,15 +171,15 @@ public class ExportFireHandler extends AbstractHandler {
 						if (mandant == null) {
 							continue;
 						}
-						
+
 						// konsultation.removeSticker(fireSticker);
 						if (!konsultation.getStickers().contains(fireSticker)) {
 							try {
 								// add to report
 								BigInteger patId = reportBuilder.addPatient(pat);
 								BigInteger docId = reportBuilder.addMandant(mandant);
-								reportBuilder.addKonsultation(patId, docId, konsultation);
-								
+								reportBuilder.addKonsultation(patId, docId, konsultation, unreferencedStopMedisPerPatient);
+
 								konsultation.addSticker(fireSticker);
 							} catch (IllegalStateException e) {
 								logger.warn("Could not add consultation.", e);
@@ -168,38 +187,36 @@ public class ExportFireHandler extends AbstractHandler {
 						}
 						monitor.worked(1);
 					}
-					
-					reportBuilder.finish();
+
+					reportBuilder.finish(unreferencedStopMedisPerPatient);
 					monitor.worked(1);
-					
+
 					Optional<Report> report = reportBuilder.build();
 					if (report.isPresent()) {
 						try (FileOutputStream fout = new FileOutputStream(new File(exportPath))) {
 							XmlUtil.marshallFireReport(report.get(), fout);
 							// update last export date
-							CoreHub.globalCfg.set(CFGPARAM,
-								new TimeTool().toString(TimeTool.DATE_COMPACT));
+							CoreHub.globalCfg.set(CFGPARAM, new TimeTool().toString(TimeTool.DATE_COMPACT));
 						} catch (IOException e) {
 							openError("Error", "Error writing report, see logs for details.");
 							logger.error("Error writing report.", e);
 						}
 					}
 				} else {
-					openError("ICPC/Fire",
-						"Bitte konfigurieren Sie das Fire Plugin (Datei-Einstellungen)");
+					openError("ICPC/Fire", "Bitte konfigurieren Sie das Fire Plugin (Datei-Einstellungen)");
 				}
 			} catch (DatatypeConfigurationException | NumberFormatException e) {
 				openError("Error", "Error creating report, see logs for details.");
 				logger.error("Could not create XML output", e);
 			}
 		}
-		
-		private void openError(String title, String description){
+
+		private void openError(String title, String description) {
 			Display display = Display.getDefault();
 			if (display != null) {
 				display.syncExec(new Runnable() {
 					@Override
-					public void run(){
+					public void run() {
 						MessageDialog.openError(display.getActiveShell(), title, description);
 					}
 				});

@@ -237,6 +237,9 @@
    <feature url="features/ch.elexis.hl7.message.feature_1.0.0.qualifier.jar" id="ch.elexis.hl7.message.feature" version="1.0.0.qualifier">
       <category name="dataexchange"/>
    </feature>
+   <feature url="features/ch.elexis.importer.aeskulap.feature_1.0.0.qualifier.jar" id="ch.elexis.importer.aeskulap.feature" version="1.0.0.qualifier">
+      <category name="support"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

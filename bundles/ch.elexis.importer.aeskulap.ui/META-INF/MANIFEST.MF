@@ -9,7 +9,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: ch.elexis.core.ui;bundle-version="3.2.0",
  org.eclipse.core.runtime;bundle-version="3.13.0",
  org.eclipse.jface;bundle-version="3.13.2",
- ch.elexis.importer.aeskulap.core
+ ch.elexis.importer.aeskulap.core,
+ org.eclipse.osgi.services;bundle-version="3.6.0"
 Import-Package: org.apache.commons.lang3
 Service-Component: OSGI-INF/ch.elexis.importer.aeskulap.ui.service.AeskulapImporterServiceHolder.xml
 Bundle-ActivationPolicy: lazy

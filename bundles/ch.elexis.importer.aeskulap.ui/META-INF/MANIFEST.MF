@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Aeskulap Importer Ui
+Bundle-SymbolicName: ch.elexis.importer.aeskulap.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: medevit.at
+Automatic-Module-Name: ch.elexis.importer.aeskulap.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: ch.elexis.core.ui;bundle-version="3.2.0",
+ org.eclipse.core.runtime;bundle-version="3.13.0",
+ org.eclipse.jface;bundle-version="3.13.2",
+ ch.elexis.importer.aeskulap.core
+Import-Package: org.apache.commons.lang3
+Service-Component: OSGI-INF/ch.elexis.importer.aeskulap.ui.service.AeskulapImporterServiceHolder.xml
+Bundle-ActivationPolicy: lazy

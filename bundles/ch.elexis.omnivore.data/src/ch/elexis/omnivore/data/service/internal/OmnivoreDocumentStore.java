@@ -32,7 +32,7 @@ import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.dto.DocHandleDocumentDTO;
 import ch.rgw.tools.JdbcLink.Stm;
 
-@Component(property = "storeid=ch.elexis.data.store.omnivore")
+@Component(immediate = true, property = "storeid=ch.elexis.data.store.omnivore")
 public class OmnivoreDocumentStore implements IDocumentStore {
 	
 	private static final String STORE_ID = "ch.elexis.data.store.omnivore";

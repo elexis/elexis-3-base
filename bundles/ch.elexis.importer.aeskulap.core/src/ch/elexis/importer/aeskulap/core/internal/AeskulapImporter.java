@@ -15,6 +15,7 @@ import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
+import ch.elexis.importer.aeskulap.core.service.InboxElementServiceHolder;
 
 @Component
 public class AeskulapImporter implements IAeskulapImporter {
@@ -86,6 +87,10 @@ public class AeskulapImporter implements IAeskulapImporter {
 	@Override
 	public List<IAeskulapImportFile> importFiles(List<IAeskulapImportFile> files,
 		boolean overwrite, SubMonitor monitor){
+		// deactivate inbox element creation
+		if (InboxElementServiceHolder.isSet()) {
+			InboxElementServiceHolder.get().deactivateProviders();
+		}
 		// make sure Xids are available
 		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_ADDRESS, "Alte Adress-ID",
 			XidConstants.ASSIGNMENT_LOCAL);
@@ -121,6 +126,10 @@ public class AeskulapImporter implements IAeskulapImporter {
 					}
 				}
 			}
+		}
+		// reactivate inbox element creation
+		if (InboxElementServiceHolder.isSet()) {
+			InboxElementServiceHolder.get().activateProviders();
 		}
 		return ret;
 	}

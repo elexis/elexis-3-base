@@ -2,7 +2,6 @@ package ch.elexis.importer.aeskulap.core.service;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import ch.elexis.core.services.IDocumentStore;
 
@@ -11,7 +10,7 @@ public class DocumentStoreServiceHolder {
 	
 	private static IDocumentStore documentStore;
 	
-	@Reference(cardinality = ReferenceCardinality.OPTIONAL, target = "(storeid=ch.elexis.data.store.omnivore)")
+	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
 	public void setDocumentStore(IDocumentStore documentStore){
 		DocumentStoreServiceHolder.documentStore = documentStore;
 	}

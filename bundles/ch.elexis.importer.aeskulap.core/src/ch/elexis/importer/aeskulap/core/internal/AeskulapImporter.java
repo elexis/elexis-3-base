@@ -3,6 +3,7 @@ package ch.elexis.importer.aeskulap.core.internal;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +12,12 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.osgi.service.component.annotations.Component;
 
 import ch.elexis.core.constants.XidConstants;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
-import ch.elexis.importer.aeskulap.core.service.InboxElementServiceHolder;
 
 @Component
 public class AeskulapImporter implements IAeskulapImporter {
@@ -87,10 +89,11 @@ public class AeskulapImporter implements IAeskulapImporter {
 	@Override
 	public List<IAeskulapImportFile> importFiles(List<IAeskulapImportFile> files,
 		boolean overwrite, SubMonitor monitor){
-		// deactivate inbox element creation
-		if (InboxElementServiceHolder.isSet()) {
-			InboxElementServiceHolder.get().deactivateProviders();
-		}
+		// deactivate all events
+		ElexisEventDispatcher.getInstance()
+			.setBlockEventTypes(Arrays.asList(ElexisEvent.EVENT_CREATE, ElexisEvent.EVENT_DELETE,
+				ElexisEvent.EVENT_SELECTED, ElexisEvent.EVENT_DESELECTED, ElexisEvent.EVENT_RELOAD,
+				ElexisEvent.EVENT_UPDATE));
 		// make sure Xids are available
 		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_ADDRESS, "Alte Adress-ID",
 			XidConstants.ASSIGNMENT_LOCAL);
@@ -128,9 +131,7 @@ public class AeskulapImporter implements IAeskulapImporter {
 			}
 		}
 		// reactivate inbox element creation
-		if (InboxElementServiceHolder.isSet()) {
-			InboxElementServiceHolder.get().activateProviders();
-		}
+		ElexisEventDispatcher.getInstance().setBlockEventTypes(null);
 		return ret;
 	}
 	

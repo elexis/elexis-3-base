@@ -28,22 +28,28 @@ public class ElementsProviderExtension {
 	
 	private static Logger logger = LoggerFactory.getLogger(ElementsProviderExtension.class);
 	
-	public static void activateAll(){
-		List<IInboxElementsProvider> providers = getAllProviders();
-		for (IInboxElementsProvider iInboxElementsProvider : providers) {
+	private static List<IInboxElementsProvider> instances;
+	
+	public synchronized static void activateAll(){
+		if (instances == null) {
+			updateInstances();
+		}
+		for (IInboxElementsProvider iInboxElementsProvider : instances) {
 			iInboxElementsProvider.activate();
 		}
 	}
 	
-	public static void deactivateAll(){
-		List<IInboxElementsProvider> providers = getAllProviders();
-		for (IInboxElementsProvider iInboxElementsProvider : providers) {
+	public synchronized static void deactivateAll(){
+		if (instances == null) {
+			updateInstances();
+		}
+		for (IInboxElementsProvider iInboxElementsProvider : instances) {
 			iInboxElementsProvider.deactivate();
 		}
 	}
 	
-	private static List<IInboxElementsProvider> getAllProviders(){
-		List<IInboxElementsProvider> ret = new ArrayList<IInboxElementsProvider>();
+	private static void updateInstances(){
+		instances = new ArrayList<IInboxElementsProvider>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.inbox.elementsprovider");
 		if (exp != null) {
@@ -53,7 +59,8 @@ public class ElementsProviderExtension {
 				for (IConfigurationElement el : elems) {
 					if (el.getName().equals("provider")) {
 						try {
-							ret.add((IInboxElementsProvider) el.createExecutableExtension("class"));
+							instances.add(
+								(IInboxElementsProvider) el.createExecutableExtension("class"));
 						} catch (CoreException e) {
 							logger.error("Error creating IInboxElementsProvider " + e);
 						}
@@ -61,6 +68,5 @@ public class ElementsProviderExtension {
 				}
 			}
 		}
-		return ret;
 	}
 }

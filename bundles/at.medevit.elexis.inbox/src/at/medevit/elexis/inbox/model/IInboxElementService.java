@@ -79,4 +79,17 @@ public interface IInboxElementService {
 	 * @return list of matching InboxElement objects
 	 */
 	public List<InboxElement> getInboxElements(Mandant mandant, Patient patient, State state);
+	
+	/**
+	 * Deactivate all {@link IInboxElementsProvider} implementations. Useful if for some reason no
+	 * new {@link InboxElement} should be created. For example on initial import of data from other
+	 * database.
+	 */
+	public void deactivateProviders();
+	
+	/**
+	 * Activate all {@link IInboxElementsProvider} implementations. Re activate after using
+	 * {@link IInboxElementService#deactivateProviders()}. Initially all providers are active.
+	 */
+	public void activateProviders();
 }

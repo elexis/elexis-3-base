@@ -10,6 +10,7 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -125,7 +126,6 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 		if (filtered != null) {
 			filtered.clear();
 		}
-		filtered = null;
 		setQuery();
 		applyQueryFilters();
 
@@ -228,12 +228,14 @@ public class ArtikelstammFlatDataLoader extends FlatDataLoader implements IDoubl
 	 * copied from {@link FlatDataLoader}
 	 */
 	public void updateElement(int index){
-		if (filtered != null) {
-			if (index >= 0 && index < filtered.size()) {
-				Object o = filtered.get(index);
+		if (filtered != null && !filtered.isEmpty()) {
+			@SuppressWarnings("unchecked")
+			ArrayList<?> filteredCopy = new ArrayList<>(filtered);
+			if (index >= 0 && index < filteredCopy.size()) {
+				Object o = filteredCopy.get(index);
 				if (o != null) {
 					TableViewer tv = (TableViewer) cv.getViewerWidget();
-					tv.replace(filtered.get(index), index);
+					tv.replace(filteredCopy.get(index), index);
 				}
 			}
 		}

@@ -195,16 +195,17 @@ public class XMLExporterTiers {
 		Element referrer = new Element("referrer", XMLExporter.nsinvoice); //$NON-NLS-1$
 		Kontakt auftraggeber = fall.getRequiredContact("Zuweiser");
 		if (auftraggeber != null) {
-			String zsr = TarmedRequirements.getKSK(auftraggeber);
-			if (zsr != null && !zsr.isEmpty()) {
+			String ean = TarmedRequirements.getEAN(auftraggeber);
+			if (ean != null && !ean.isEmpty()) {
 				referrer.setAttribute(XMLExporter.ATTR_EAN_PARTY,
 					TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
-				
-				referrer.setAttribute("zsr", zsr); // auftraggeber. //$NON-NLS-1$
-				
-				referrer.addContent(XMLExporterUtil.buildAdressElement(auftraggeber));
-				ret.tiersElement.addContent(referrer);
 			}
+			String zsr = TarmedRequirements.getKSK(auftraggeber);
+			if (zsr != null && !zsr.isEmpty()) {
+				referrer.setAttribute("zsr", zsr); // auftraggeber. //$NON-NLS-1$
+			}
+			referrer.addContent(XMLExporterUtil.buildAdressElement(auftraggeber));
+			ret.tiersElement.addContent(referrer);
 		}
 		ret.tiers = tiers;
 

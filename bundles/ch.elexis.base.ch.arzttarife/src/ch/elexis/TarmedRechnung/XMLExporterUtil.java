@@ -175,11 +175,13 @@ public class XMLExporterUtil {
 	
 	public static Element buildTelekomElement(final Kontakt k){
 		Element ret = new Element("telecom", XMLExporter.nsinvoice); //$NON-NLS-1$
-		addElementIfExists(ret,
-			"phone", null, StringTool.limitLength(k.get(Kontakt.FLD_PHONE1), 25), //$NON-NLS-1$
-			null); //$NON-NLS-1$
-		addElementIfExists(ret,
-			"fax", null, StringTool.limitLength(k.get(Kontakt.FLD_FAX), 25), null); //$NON-NLS-1$
+		Element phoneElement = addElementIfExists(ret, "phone", null, //$NON-NLS-1$
+			StringTool.limitLength(k.get(Kontakt.FLD_PHONE1), 25), null); //$NON-NLS-1$
+		// only add the fax element if there is a phone, telcom without phone is not allowed by xsd
+		if (phoneElement != null) {
+			addElementIfExists(ret, "fax", null, StringTool.limitLength(k.get(Kontakt.FLD_FAX), 25), //$NON-NLS-1$
+				null);
+		}
 		return ret;
 	}
 	

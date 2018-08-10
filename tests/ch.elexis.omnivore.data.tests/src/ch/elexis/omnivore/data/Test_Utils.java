@@ -1,13 +1,11 @@
 package ch.elexis.omnivore.data;
 
 import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
-import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Default;
 import static ch.elexis.omnivore.PreferenceConstants.PREFBASE;
 import static ch.elexis.omnivore.PreferenceConstants.PREF_DEST_DIR;
 import static ch.elexis.omnivore.PreferenceConstants.PREF_MAX_FILENAME_LENGTH;
 import static ch.elexis.omnivore.PreferenceConstants.PREF_SRC_PATTERN;
 import static ch.elexis.omnivore.PreferenceConstants.STOREFS;
-import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.startsWith;
@@ -15,20 +13,11 @@ import static org.hamcrest.Matchers.startsWith;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Group;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,12 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.activator.CoreHubHelper;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
-import ch.rgw.tools.JdbcLink;
 
 public class Test_Utils{
 	private static Logger log = LoggerFactory.getLogger(Test_Utils.class);
@@ -112,6 +97,61 @@ public class Test_Utils{
 		setCotfLength(4);
 	}
 	
+	private static void clearArchivePreferences() {
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		Path basePath = new File(tmpDir + "/omnivore/test/basepath").toPath();
+		preferenceStore.setValue(BASEPATH, tmpDir + "/omnivore/test/basepath");
+		try {
+			Files.createDirectories(basePath);
+			
+			preferenceStore.setValue(STOREFS, true);
+			preferenceStore.setValue(PREF_MAX_FILENAME_LENGTH, null);
+			Integer nCotfRules = Preferences.PREFERENCE_cotf_elements.length;
+			for (int i = 0; i < nCotfRules; i++) {
+				String search =
+					PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i]
+						+ "_" + Preferences.PREFERENCE_cotf_parameters[1];
+			}
+			Integer nAutoArchiveRules = Preferences.getOmnivorenRulesForAutoArchiving();
+			for (int i = 0; i < nAutoArchiveRules; i++) {
+				preferenceStore.setValue(PREF_SRC_PATTERN[i], null);
+				preferenceStore.setValue(PREF_DEST_DIR[i], null);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		preferenceStore.setValue( "ch.elexis.omnivore/cotf_constant1_num_digits",  "");
+		preferenceStore.setValue( "ch.elexis.omnivore/cotf_constant2_num_digits", "");
+		String[] ids = new String[] {"PID", "fn", "gn", "dob", "dt", "dk", "dguid", "random"};
+		for (String id: ids) {
+			String key = String.format("ch.elexis.omnivore/cotf_%s_num_digits", id);
+			preferenceStore.setValue(key, "");
+			preferenceStore.setValue(key.replace("num_digits", "fill_leading_char"), "");
+			preferenceStore.setValue(key.replace("num_digits", "add_trailing_char"), "");
+		}
+	}
+
+	@Test
+	public void testTitleIfNothingSpecified(){
+		clearArchivePreferences();
+		Patient female = new Patient("Musterfrau", "Erika", "1.1.2000", "f");
+		String title = "My Title";
+		DocHandle dh = new DocHandle("category", new byte[] {
+			1, 2
+		}, female, title, "mime", "keyword");
+
+		String result = Utils.createNiceFileName(dh);
+		// We cannot test the random here
+		Assert.assertFalse(result.endsWith("_ENDE"));
+		Assert.assertFalse(result.startsWith("ANFANG_"));
+		Assert.assertEquals("",result);
+		File temp = dh.createTemporaryFile(title);
+		String tempName = temp.getName();
+		Assert.assertEquals(title +".", tempName);
+		
+	}
+	
 	@Test
 	public void testCreateMeaningfull(){
 		Patient female = new Patient("Musterfrau", "Erika", "1.1.2000", "f");
@@ -145,21 +185,21 @@ public class Test_Utils{
 		setCotfLength(7);
 
 		String toBeStripped = "A\\B\\C:D/E:*?()+,\';\"\\r\t\n´`F";
-		Patient male = new Patient(toBeStripped, "B" + toBeStripped, "31.12.1955", "m");
+		Patient male = new Patient(toBeStripped, "B" + toBeStripped, "14.12.1955", "m");
 		DocHandle dh = new DocHandle("category", new byte[] {
 			1, 2
 		}, male, "Dr. hc.", "mime", "Stichwort");
 		
 		String result = Utils.createNiceFileName(dh);
 		Assert.assertEquals(toBeStripped, male.getName());
+		male.set(Patient.FLD_ID, "8753");
 		Assert.assertFalse(result.contains(toBeStripped));
 		Assert.assertThat(result, endsWith("_ENDE"));
 		Assert.assertThat(result, containsString("ANFANG_"));
-		Assert.assertThat(result, containsString("ANFANG_-------3YABCDErFXBABCDErY31.12.1XDr. hc.YStichwoX"));
+		Assert.assertThat(result, containsString("Dr. hc.YStichwoX"));
 	}
 	@Test
 	public void testArchiveFile(){
-		setArchivePreferences();
 		try {
 			String srcPattern = archiveSrcPattern.get(0);
 			File testTmp = File.createTempFile(srcPattern, ".tmp");

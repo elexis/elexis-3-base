@@ -144,7 +144,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			if (vi.isOlder(DBVERSION)) {
 				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
 					getConnection().exec("ALTER TABLE " + TABLENAME //$NON-NLS-1$
-						+ " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$
+						+ " ADD if not exists deleted CHAR(1) default '0';"); //$NON-NLS-1$
 				}
 				if (vi.isOlder("1.2.0")) { //$NON-NLS-1$
 					createOrModifyTable(upd120);
@@ -532,7 +532,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	public void execute(){
 		try {
 			String ext = StringConstants.SPACE; //""; //$NON-NLS-1$
-			File temp = createTemporaryFile(null);
+			File temp = createTemporaryFile(getTitle());
 			log.debug("execute {} readable {}", temp.getAbsolutePath(), Files.isReadable(temp.toPath()));
 
 			Program proggie = Program.findProgram(ext);
@@ -584,7 +584,13 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				temp = new File(tmpDir, config_temp_filename + "." + fileExtension);
 				
 			} else {
-				temp = File.createTempFile("omni_", "_vore." + fileExtension);
+				// use title if given
+				if (title != null && !title.isEmpty()) {
+					String tmpDir = System.getProperty("java.io.tmpdir");
+					temp = new File(tmpDir, title + "." + fileExtension);
+				} else {
+					temp = File.createTempFile("omni_", "_vore." + fileExtension);
+				}
 			}
 			temp.deleteOnExit();
 			

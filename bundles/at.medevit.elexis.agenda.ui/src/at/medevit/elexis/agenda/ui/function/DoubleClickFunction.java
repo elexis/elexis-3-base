@@ -10,6 +10,7 @@ import ch.elexis.core.model.IPersistentObject;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.dialogs.TerminDialog;
+import ch.elexis.dialogs.TerminDialog.CollisionErrorLevel;
 
 public class DoubleClickFunction extends BrowserFunction {
 	
@@ -36,6 +37,7 @@ public class DoubleClickFunction extends BrowserFunction {
 						dlg.open();
 					} else {
 						TerminDialog dlg = new TerminDialog(termin);
+						dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
 						dlg.open();
 					}
 					

@@ -70,6 +70,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
+import ch.elexis.dialogs.TerminDialog.CollisionErrorLevel;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.rgw.tools.Log;
@@ -338,6 +339,7 @@ public abstract class BaseAgendaView extends ViewPart
 						@Override
 						public void lockAcquired(){
 							TerminDialog dlg = new TerminDialog(element);
+							dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
 							dlg.open();
 						}
 					});
@@ -407,6 +409,7 @@ public abstract class BaseAgendaView extends ViewPart
 						"Bitte wählen Sie aus, wer einen Termin braucht", Kontakt.DEFAULT_SORT);
 				IPlannable sel = getSelection();
 				TerminDialog dlg = new TerminDialog(null);
+				dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
 				dlg.open();
 				if (tv != null) {
 					tv.refresh(true);

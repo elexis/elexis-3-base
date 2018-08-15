@@ -562,17 +562,16 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		try {
 			MimeType docMimeType = new MimeType(get(FLD_MIMETYPE));
 			fileExtension = MimeTool.getExtension(docMimeType.toString());
-		}
-		catch(MimeTypeParseException mpe) {
+		} catch (MimeTypeParseException mpe) {
 			fileExtension = FileTool.getExtension(get(FLD_MIMETYPE));
 			
-			if(fileExtension == null) {
+			if (fileExtension == null) {
 				
 				fileExtension = FileTool.getExtension(get(FLD_TITLE));
 			}
 		}
 		
-		if(fileExtension == null) {
+		if (fileExtension == null) {
 			fileExtension = "";
 		}
 		
@@ -587,7 +586,11 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				// use title if given
 				if (title != null && !title.isEmpty()) {
 					String tmpDir = System.getProperty("java.io.tmpdir");
-					temp = new File(tmpDir, title + "." + fileExtension);
+					if (!title.toLowerCase().contains("." + fileExtension.toLowerCase())) {
+						temp = new File(tmpDir, title + "." + fileExtension);
+					} else {
+						temp = new File(tmpDir, title);
+					}
 				} else {
 					temp = File.createTempFile("omni_", "_vore." + fileExtension);
 				}
@@ -603,7 +606,8 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			try (FileOutputStream fos = new FileOutputStream(temp)) {
 				fos.write(b);
 			}
-			log.debug("createTemporaryFile {} size {} ext {} ", temp.getAbsolutePath(), Files.size(temp.toPath()), fileExtension);
+			log.debug("createTemporaryFile {} size {} ext {} ", temp.getAbsolutePath(),
+				Files.size(temp.toPath()), fileExtension);
 		} catch (FileNotFoundException e) {
 			log.debug("File not found " + e, Log.WARNINGS);
 		} catch (IOException e) {
@@ -667,7 +671,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				DocHandle docHandle = new DocHandle(fid.category, baos.toByteArray(),
 					ElexisEventDispatcher.getSelectedPatient(), fid.originDate, fid.title,
 					"image.pdf", fid.keywords); //$NON-NLS-1$
-				Utils.archiveFile(docHandle.getStorageFile(true));
+				Utils.archiveFile(docHandle.getStorageFile(true), docHandle);
 				ret.add(docHandle);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
@@ -798,7 +802,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					Messages.DocHandle_importErrorMessage2);
 				return null;
 			}
-			Utils.archiveFile(file);
+			Utils.archiveFile(file, dh);
 		}
 		return dh;
 	}

@@ -33,7 +33,7 @@ import ch.rgw.tools.ExHandler;
 public class Utils {
 	private static Logger log = LoggerFactory.getLogger(Utils.class);
 	
-	static public File archiveFile(File file){
+	static public File archiveFile(File file, DocHandle dh){
 		File newFile = null;
 		String SrcPattern = null;
 		String DestDir = null;
@@ -78,6 +78,7 @@ public class Utils {
 									REPLACE_EXISTING) != null) {
 									log.debug("Archived incoming file {} to: {}",
 										file.getAbsolutePath(), newFile.getAbsolutePath());
+									return newFile;
 								} else {
 									log.debug("Failed archiveFile incoming file {} to: {}",
 										file.getAbsolutePath(), newFile.getAbsolutePath());

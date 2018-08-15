@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,6 +26,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteStreams;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.data.Patient;
@@ -35,11 +38,17 @@ public class Test_Utils{
 	static ArrayList<Path> archiveDestPaths = new ArrayList<Path>();
 	static ArrayList<String> archiveSrcPattern = new ArrayList<String>();
 	public Test_Utils(){}
+	static DocHandle dh = null;
+	static Patient male = null;
 	
 	@BeforeClass
 	public static void setUpClass(){
 		log.debug("testImportFirst getLink {}", AbstractPersistentObjectTest.getLink());
 		setArchivePreferences();
+		male = new Patient("Test", "Vorname", "24.12.1955", "m");
+		dh = new DocHandle("category", new byte[] {
+			1, 2
+		}, male, "MyTitle", "mime", "Stichwort");
 	}
 
 	private void setCotfLength(int len) {
@@ -64,7 +73,6 @@ public class Test_Utils{
 		preferenceStore.setValue(BASEPATH, tmpDir + "/omnivore/test/basepath");
 		try {
 			Files.createDirectories(basePath);
-			
 			preferenceStore.setValue(STOREFS, true);
 			preferenceStore.setValue(PREF_MAX_FILENAME_LENGTH, 66);
 			Integer nCotfRules = Preferences.PREFERENCE_cotf_elements.length;
@@ -153,6 +161,31 @@ public class Test_Utils{
 	}
 	
 	@Test
+	public void testTitleWithExtension(){
+		clearArchivePreferences();
+		Patient female = new Patient("Musterfrau", "Erika", "1.1.2000", "f");
+		String title = "MyTitle.pdf";
+		InputStream input =Test_Utils.class.getResourceAsStream("/rsc/ocr.pdf");
+		 
+		DocHandle dh;
+		try {
+			dh = new DocHandle("category", ByteStreams.toByteArray(input), female, title, ".PDF", "keyword");
+			String result = Utils.createNiceFileName(dh);
+			// We cannot test the random here
+			Assert.assertFalse(result.endsWith("_ENDE"));
+			Assert.assertFalse(result.startsWith("ANFANG_"));
+			Assert.assertEquals("",result);
+			File temp = dh.createTemporaryFile(title);
+			String tempName = temp.getName();
+			Assert.assertEquals(title, tempName);
+		} catch (IOException e) {
+			Assert.fail("Could not read OCR.pdf");
+		}
+
+
+	}
+	
+	@Test
 	public void testCreateMeaningfull(){
 		Patient female = new Patient("Musterfrau", "Erika", "1.1.2000", "f");
 		DocHandle dh = new DocHandle("category", new byte[] {
@@ -163,7 +196,7 @@ public class Test_Utils{
 		// We cannot test the random here
 		Assert.assertThat(result, endsWith("_ENDE"));
 		Assert.assertThat(result, startsWith("ANFANG_"));
-		Assert.assertThat(result, containsString("----1YMustXErikY01.0XtitlYkeywX"));
+		Assert.assertThat(result, containsString("MustXErikY01.0XtitlYkeyw"));
 		
 	}
 	@Test
@@ -198,6 +231,15 @@ public class Test_Utils{
 		Assert.assertThat(result, containsString("ANFANG_"));
 		Assert.assertThat(result, containsString("Dr. hc.YStichwoX"));
 	}
+	
+	private DocHandle getTestDh() {
+		Patient male = new Patient("Test", "Vorname", "14.12.1955", "m");
+		DocHandle dh = new DocHandle("category", new byte[] {
+			1, 2
+		}, male, "Dr. hc.", "mime", "Stichwort");
+		return dh;
+	}
+	
 	@Test
 	public void testArchiveFile(){
 		try {
@@ -209,11 +251,31 @@ public class Test_Utils{
 			writer.close();
 			Path archiveDir = archiveDestPaths.get(0);
 			archiveDir.toFile().mkdirs();
-			File result = Utils.archiveFile(testTmp);
+			File result = Utils.archiveFile(testTmp, dh);
 			Assert.assertNotNull(result);
+			Assert.assertTrue(result.getName().contains("src_0_src"));
+			Assert.assertTrue(result.getName().contains(dh.getPatient().getKuerzel()));
 			String readBack= new String(Files.readAllLines(result.toPath()).get(0));
 			Assert.assertTrue(result.toString().contains(srcPattern));
 			Assert.assertEquals(testContent, readBack);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testArchiveFileWithoutParameters(){
+		clearArchivePreferences();
+		dh = new DocHandle("category", new byte[] {
+			1, 2
+		}, male, "MeinZweiterTitel", "mime", "ZweiterStichwort");
+		try {
+			File testTmp;
+			testTmp = File.createTempFile("XXXXXXXXXXX", ".tmp");
+			File result = Utils.archiveFile(testTmp, dh);
+			log.debug("dh is " + dh.getId() + " " + dh.getTitle());
+			Assert.assertNull(result);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -226,7 +288,7 @@ public class Test_Utils{
 		try {
 			File testTmp;
 			testTmp = File.createTempFile("XXXXXXXXXXX", ".tmp");
-			File result = Utils.archiveFile(testTmp);
+			File result = Utils.archiveFile(testTmp, dh);
 			Assert.assertNull(result);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -239,7 +301,7 @@ public class Test_Utils{
 		setArchivePreferences();
 		try {
 			Path testTmpDir = Files.createTempDirectory("Dummy");
-			File result = Utils.archiveFile(testTmpDir.toFile());
+			File result = Utils.archiveFile(testTmpDir.toFile(), dh);
 			Assert.assertNull(result);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

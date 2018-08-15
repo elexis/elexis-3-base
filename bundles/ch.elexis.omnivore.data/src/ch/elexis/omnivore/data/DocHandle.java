@@ -586,6 +586,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			} else {
 				// use title if given
 				if (title != null && !title.isEmpty()) {
+<<<<<<< HEAD
 					// Remove all characters that shall not appear in the generated filename
 					String cleanTitle = title.replaceAll(java.util.regex.Matcher
 							.quoteReplacement(Preferences.cotf_unwanted_chars), "_");
@@ -593,6 +594,13 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 						temp = new File(tmpDir.toString(), cleanTitle + "." + fileExtension);
 					} else {
 						temp = new File(tmpDir.toString(), cleanTitle);
+=======
+					String tmpDir = System.getProperty("java.io.tmpdir");
+					if (!title.toLowerCase().contains("." + fileExtension.toLowerCase())) {
+						temp = new File(tmpDir, title + "." + fileExtension);
+					} else {
+						temp = new File(tmpDir, title);
+>>>>>>> [14369] Handle case of title with extenstion
 					}
 				} else {
 					temp = Files.createTempFile(tmpDir, "omni_", "_vore." + fileExtension).toFile();

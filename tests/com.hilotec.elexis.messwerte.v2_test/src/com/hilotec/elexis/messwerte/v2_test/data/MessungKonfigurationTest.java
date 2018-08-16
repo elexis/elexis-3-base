@@ -22,16 +22,17 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.eclipse.ui.PlatformUI;
 import org.junit.AfterClass;
 import org.junit.Test;
 
-import ch.elexis.core.data.util.PlatformHelper;
-
 import com.hilotec.elexis.messwerte.v2.data.MessungKonfiguration;
 import com.hilotec.elexis.messwerte.v2.data.MessungTyp;
 import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
+
+import ch.elexis.core.data.util.PlatformHelper;
 
 public class MessungKonfigurationTest {
 
@@ -79,7 +80,10 @@ public class MessungKonfigurationTest {
 			dataTypes.clear();
 			assertTrue("test xml '" + testXML + "' kann nicht initialisiert werden",
 				testConfig.readFromXML(testXML));
+			Locale defaultLocale = Locale.getDefault();
+
 			for (int i = 0; i < dataTypes.size(); i++) {
+				Locale.setDefault(defaultLocale);
 				MessungTyp datatype = dataTypes.get(i);
 				test_datatype(datatype);
 				System.out.println(THIS_DESCR + "Teste datatype " + datatype.getName());
@@ -190,15 +194,22 @@ public class MessungKonfigurationTest {
 							"2".equals(messWertTyp.getDefault(null)));
 					}
 
-					// Num Defaultwert
+					// Num Defaultwert depends on locale, all our clients (except one) are swiss
 					else if (TC1_NUM.equals(messWertTypName)) {
 						System.out.println(THIS_DESCR + "TEST_NUM Default: "
 							+ messWertTyp.getDefault(null));
+						Locale.setDefault(new Locale("de", "CH"));
 						assertEquals(
 							TC1_NUM + ": Falscher Titel für messWertTyp " + messWertTyp.getName(),
 							"Num default 3.24", messWertTyp.getTitle());
 						assertTrue(TC1_NUM + ": Defaulwert falsch",
-							"3.24".equals(messWertTyp.getDefault(null)));
+							 "3.24".equals(messWertTyp.getDefault(null)));
+						Locale.setDefault(new Locale("de", "DE"));
+						assertEquals(
+							TC1_NUM + ": Falscher Titel für messWertTyp " + messWertTyp.getName(),
+							"Num default 3.24", messWertTyp.getTitle());
+						assertTrue(TC1_NUM + ": Defaulwert falsch",
+							 "3.24".equals(messWertTyp.getDefault(null)));
 					}
 					// Num berechnet aus Formel
 					else if (TC2_NUM.equals(messWertTypName)) {
@@ -206,7 +217,12 @@ public class MessungKonfigurationTest {
 							messWertTyp.getDefault(null));
 					}
 					// Num Defaultwert weil Formel Exception wirft
+					// depends on locale, all our clients (except one) are swiss
 					else if (TC3_NUM.equals(messWertTypName)) {
+						Locale.setDefault(new Locale("de", "CH"));
+						assertTrue(TC3_NUM + ": Defaulwert falsch",
+							"3.24".equals(messWertTyp.getDefault(null)));
+						Locale.setDefault(new Locale("de", "DE"));
 						assertTrue(TC3_NUM + ": Defaulwert falsch",
 							"3.24".equals(messWertTyp.getDefault(null)));
 					}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
 <setAttribute key="additional_plugins">
-<setEntry value="ch.elexis.core.scripting.beanshell:3.0.0.qualifier:default:true"/>
+<setEntry value="ch.elexis.core.scripting.beanshell:3.2.0.qualifier:default:true"/>
 <setEntry value="com.hilotec.elexis.messwerte.v2:3.0.0.qualifier:default:true"/>
 </setAttribute>
 <booleanAttribute key="append.args" value="true"/>

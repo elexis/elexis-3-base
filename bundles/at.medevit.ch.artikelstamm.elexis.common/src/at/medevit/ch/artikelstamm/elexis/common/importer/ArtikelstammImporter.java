@@ -431,7 +431,8 @@ public class ArtikelstammImporter {
 		
 		fields.add(ArtikelstammItem.FLD_GTIN);
 		values.add(item.getGTIN());
-		
+		fields.add(ArtikelstammItem.FLD_TYP);
+		values.add(item.getPHARMATYPE().contentEquals("P")? "P": "N");
 		fields.add(ArtikelstammItem.FLD_DSCR);
 		values.add(trimDSCR(item.getDSCR(), item.getGTIN()));
 		

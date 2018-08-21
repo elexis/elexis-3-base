@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -578,21 +579,20 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		String config_temp_filename = Utils.createNiceFileName(this);
 		File temp = null;
 		try {
+			Path tmpDir = Files.createTempDirectory("elexis");
 			if (config_temp_filename.length() > 0) {
-				String tmpDir = System.getProperty("java.io.tmpdir");
-				temp = new File(tmpDir, config_temp_filename + "." + fileExtension);
+				temp = new File(tmpDir.toString(), config_temp_filename + "." + fileExtension);
 				
 			} else {
 				// use title if given
 				if (title != null && !title.isEmpty()) {
-					String tmpDir = System.getProperty("java.io.tmpdir");
 					if (!title.toLowerCase().contains("." + fileExtension.toLowerCase())) {
-						temp = new File(tmpDir, title + "." + fileExtension);
+						temp = new File(tmpDir.toString(), title + "." + fileExtension);
 					} else {
-						temp = new File(tmpDir, title);
+						temp = new File(tmpDir.toString(), title);
 					}
 				} else {
-					temp = File.createTempFile("omni_", "_vore." + fileExtension);
+					temp = Files.createTempFile(tmpDir, "omni_", "_vore." + fileExtension).toFile();
 				}
 			}
 			temp.deleteOnExit();

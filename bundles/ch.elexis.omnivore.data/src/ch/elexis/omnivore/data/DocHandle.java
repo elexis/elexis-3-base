@@ -586,17 +586,21 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			} else {
 				// use title if given
 				if (title != null && !title.isEmpty()) {
-					if (!title.toLowerCase().contains("." + fileExtension.toLowerCase())) {
-						temp = new File(tmpDir.toString(), title + "." + fileExtension);
+					// Remove all characters that shall not appear in the generated filename
+					String cleanTitle = title.replaceAll(java.util.regex.Matcher
+							.quoteReplacement(Preferences.cotf_unwanted_chars), "_");
+					if (!cleanTitle.toLowerCase().contains("." + fileExtension.toLowerCase())) {
+						temp = new File(tmpDir.toString(), cleanTitle + "." + fileExtension);
 					} else {
-						temp = new File(tmpDir.toString(), title);
+						temp = new File(tmpDir.toString(), cleanTitle);
 					}
 				} else {
 					temp = Files.createTempFile(tmpDir, "omni_", "_vore." + fileExtension).toFile();
 				}
 			}
+			tmpDir.toFile().deleteOnExit();
 			temp.deleteOnExit();
-			
+	
 			byte[] b = getContents(); // getBinary(FLD_DOC);
 			if (b == null) {
 				SWTHelper.showError(Messages.DocHandle_readErrorCaption2,

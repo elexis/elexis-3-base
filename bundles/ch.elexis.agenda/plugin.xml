@@ -56,7 +56,7 @@
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.agenda.preferences.AgendaImages"
             id="elexis-agenda.imageprefs"
-            name="%Agenda-Icons"/>
+            name="Agenda-Icons"/>
       <page
             category="ch.elexis.Agendaprefs"
             class="ch.elexis.agenda.preferences.AgendaDruck"

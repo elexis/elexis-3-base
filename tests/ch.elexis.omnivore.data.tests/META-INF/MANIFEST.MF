@@ -14,5 +14,10 @@ Require-Bundle: org.junit;bundle-version="4.12.0",
  ch.elexis.core.data,
  ch.elexis.core.application;bundle-version="3.5.0",
  com.google.guava
+<<<<<<< HEAD
 Bundle-ClassPath: .
+=======
+Bundle-ClassPath: .,
+ rsc/
+>>>>>>> [14369] Handle case of title with extenstion
 Import-Package: ch.elexis.core.data.activator

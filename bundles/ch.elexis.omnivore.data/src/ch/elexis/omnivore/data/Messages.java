@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	public static String DocHandle_importErrorText2;
 	public static String DocHandle_importErrorDirectory;
 	public static String DocHandle_importErrorDirectoryText;
+	public static String DocHandle_fileNameMayNotContain;
 	public static String DocHandle_loadErrorText;
 	public static String DocHandle_noPatientSelected;
 	public static String DocHandle_pleaseSelectPatient;

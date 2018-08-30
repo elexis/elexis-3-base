@@ -58,8 +58,8 @@ Der Name enthält auch das Datum, an dem die Dateie erzeugt wurde. Die Datei art
 
 * Elexis 2.1.7 und frühe Elexis 3.0-Versionen benutzten den den Artikelstamm in der Version 1 oder 2 und werden nicht mehr unterstützt.
 * Aktuelle Elexis 3.0-Versionen und 3.1 (Code-Zweig 3.1-maintenance) benötigen Artikelstamm Version 3
-* Elexis 3.2 (entspricht aktuell dem Code-Zweig master)  wird Artikelstamm Version 4 benötigen
-
+* Elexis 3.2 (interne Vesrsion) benötigte Artikelstamm Version 4
+* Elexis 3.4 benötigt Artikelstamm Version 5. Der Link https://artikelstamm.elexis.info/latest_all_v5.xml sollte jeweils auf die aktuellste Version zeigen (ca 32 MB gross). Es empfiehlt sich, diese Datei mit einem Kommandozeilen-Werkzeug wie wget runter zu laden
 
 Der Import Vorgang wird mit dem Menüpunkt ''Import'' auf der ''Artikestamm View'' gestartet.
 
@@ -73,10 +73,53 @@ Durch Klick auf OK wird der Import bzw. das Update des ausgelöst. Es wird ein F
 
 == Verwendung ==
 
-Mittels der ''Artikestamm View'' können die Eigenschaften der Artikel angesehen und teils auch editiert werden.
-
-[[File:medevit_artikelstamm_view.png]]
-
 Die Artikel können auf der ''Konsutlation View'' verrechnet werden, bzw. auf den Views ''Fixmedikation'' bzw. [[Medikamentenliste| Medikationsliste]] verschrieben werden.
 
-[[File:medevit_artikelstamm_selection.png]]
+[[File:medevit_artikelstamm_selection.png|338x549px|]]
+
+
+=== Eigenschaften ===
+
+Mittels der ''Artikestamm View'' oder ''rechte Maus auf einen Artikel - Eigenschaften'', können die Eigenschaften der Artikel angesehen und teils auch editiert werden.
+
+[[File:medevit_artikelstamm_view.png|700x650px|]]
+
+
+* Zuoberst finden sich die Medikamentenangaben wie Name, EAN/GTIN, Pharmacode, Abgabekategorie und Preis. 
+
+* Darauf folgt der ATC Code. (Genaueres zum ATC Code finden Sie hier: [https://wiki.elexis.info/Arbeiten_mit_Elexis#ATC_Code ATC_Code])
+
+* Unter Standard Signatur, können Sie die Dosierung und die Abgabe standardmässig definieren und entweder auf den ATC Code oder auf den Artikel hinterlegen. (Weiteres zu Standard Signatur finden Sie in der Medikationsliste: [https://wiki.elexis.info/Medikamentenliste Medikamentenliste])
+
+* Ein Artikel wird dadurch zum Lagerartikel, dass Sie ihm einen Mindestbestand grösser als Null zuweisen. Geben Sie ausserdem einen Höchstbestand höher als der Mindestbestand ein und weisen Sie dem Feld Istbestand den korrekten Wert zu. Elexis wird bei einer halbautomatischen Bestellung von jedem Artikel, dessen Istbestand unter dem Mindestbestand ist, soviele Exemplare bestellen, um auf den Höchstbestand zu kommen.
+* Bei manchen Artikeltypen wird üblicherweise nicht eine ganze Verpackungseinheit auf einmal abgegeben, beispielsweise Ampullen. Hierfür sind die Felder Stück pro Packungund Stück pro Abgabevorgesehen. Angenommen ein Artikel wird in Packungen zu 10 Stück eingekauft, aber einzeln abgegeben. In diesem Fall können Sie bei Stück pro Abgabe eine 1 setzen, bei Stück pro Packung eine 10. Wenn dieser Artikel dann einem Patienten verrechnet wird, dann wird automatisch 1/10 des Verpackungs-Verkaufspreises berechnet und auch nur 1/10 einer Packung aus dem Lager ausgebucht.
+
+* Die unterste Zeile zeigt ob der Artikelstamm auf dem aktuellsten Stand ist. Es sollte immer der aktuelle Monat aufgelistet sein.
+
+=== Farben ===
+
+Die Medikamente im Artikelstamm sind in 3 Farben aufgeteilt.
+
+Braun = Non-Pharma Produkt 
+
+Gelb = Pharmaprodukte aus der Pharma-Liste
+
+Grün = Produkte aus der Spezialitäten-Liste
+
+=== Icons ===
+
+* Mit dem "roten X" [[Datei:rotes X.png]] wird das Suchfeld geleert.
+
+* Ist das "Aktualisierungs-Symbol" [[Datei:Reset-Knopf.png]] angewählt, wird sobald etwas in das Suchfeld eingegeben wird, danach gesucht.
+
+* Mit dem "blauen Pfeil" wird die Suche gestartet falls das Aktualisierungs-Symbol [[Datei:Reset-Knopf.png]] nicht angewählt ist.
+
+* Um MephaArtikel an oberster Stelle zu haben kann das "Regenbogen-Symbol" [[Datei:Mepha-Icon.png]] angewählt werden. Somit werden MephaArtikel gefiltert und zuerst angezeigt.
+
+* Das "rot/blau/grüne Icon" [[Datei:ATC-Code-Icon.png]] ist der ATC-Code basierte Filter, womit nach Impfstoffen gesucht werden. Durch Doppelklick auf die gewünschte Impfstoffgruppe öffnen sich alle zugehörigen Artikel. Ein erneuter Doppelklick auf die Gruppe schliesst diese Ansicht wiederum. 
+
+* Mit der "braunen Kiste" [[Datei:Lager-Icon.png]] werden nur Artikel die an Lager sind angezeigt. Als Lagerartikel zählen die Medikamente, die in den Eigenschaften einen Min., Max. und aktuellen Lagerbestand notiert haben.
+
+* Generikas können mit den "grünen G" [[Datei:Gernerika-Icon.png]] angezeigt werden.
+
+* Ist ein Medikament ausser Handel, wurde bei Ihnen aber schon einmal einem Patienten verschrieben oder Sie haben es noch an Lager, wird dieses Medi als Blackbox-Medi dargestellt. Blackbox-Medis werden grau hinterlegt und mit dem schwarzen Fähnchen angezeigt. Mit dem "schwarzen Fähnchen" [[Datei:Blackbox-Icon.png]] können Sie diese anzeigen lassen.

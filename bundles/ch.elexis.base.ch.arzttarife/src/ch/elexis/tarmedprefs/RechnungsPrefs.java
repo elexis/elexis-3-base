@@ -172,26 +172,10 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cvMandantType.setLabelProvider(new LabelProvider() {
 			public String getText(Object element){
 				if (element instanceof MandantType) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-					if (element == MandantType.SPECIALIST) {
-						return Messages.RechnungsPrefs_MandantType_SPECIALIST;
-					}
-					if (element == MandantType.PRACTITIONER) {
-=======
-					if(element == MandantType.SPECIALIST)
-					{
-						return Messages.RechnungsPrefs_MandantType_SPECIALIST;
-					}
-					if(element == MandantType.PRACTITIONER)
-					{
->>>>>>> [14392] Kleine korrekturen
-=======
 					if (element.equals(MandantType.SPECIALIST)) {
 						return Messages.RechnungsPrefs_MandantType_SPECIALIST;
 					}
 					if (element.equals(MandantType.PRACTITIONER)) {
->>>>>>> Kleine korrekturen final
 						return Messages.RechnungsPrefs_MandantType_PRACTITIONER;
 					}
 				}

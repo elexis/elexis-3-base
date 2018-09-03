@@ -173,6 +173,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			public String getText(Object element){
 				if (element instanceof MandantType) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 					if (element == MandantType.SPECIALIST) {
 						return Messages.RechnungsPrefs_MandantType_SPECIALIST;
 					}
@@ -185,11 +186,17 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					if(element == MandantType.PRACTITIONER)
 					{
 >>>>>>> [14392] Kleine korrekturen
+=======
+					if (element.equals(MandantType.SPECIALIST)) {
+						return Messages.RechnungsPrefs_MandantType_SPECIALIST;
+					}
+					if (element.equals(MandantType.PRACTITIONER)) {
+>>>>>>> Kleine korrekturen final
 						return Messages.RechnungsPrefs_MandantType_PRACTITIONER;
 					}
 				}
 				return element.toString();
-			};
+			}
 		});
 		cvMandantType.setInput(MandantType.values());
 		cvMandantType.addSelectionChangedListener(new ISelectionChangedListener() {

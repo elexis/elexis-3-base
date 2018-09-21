@@ -134,5 +134,6 @@
     <module>org.iatrix.messwerte</module>
     <module>org.iatrix</module>
     <module>waelti.statistics</module>
+    <module>ch.itmed.lmz.risch.laborder</module>
 </modules>
 </project>

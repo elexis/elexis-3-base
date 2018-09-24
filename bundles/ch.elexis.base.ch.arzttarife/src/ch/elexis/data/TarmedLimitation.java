@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
@@ -345,6 +346,7 @@ public class TarmedLimitation {
 			} finally {
 				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
 			}
+			all = filterValidCodeForKonsultation(code, kons, all);
 			// now group in time periods since first verrechnet
 			LocalDate konsDate = new TimeTool(kons.getDatum()).toLocalDate();
 			List<VerrechnetPeriod> grouped = getGroupedByPeriod(all);
@@ -528,6 +530,36 @@ public class TarmedLimitation {
 					ret.add(element);
 				}
 			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Filter the list of {@link Verrechnet} that only instances with the same code field (Tarmed
+	 * code, startdate and law) as the valid {@link TarmedLeistung} for the provided
+	 * {@link Konsultation}. This filters {@link Verrechnet} with a {@link TarmedLeistung} from a
+	 * different catalog.
+	 * 
+	 * @param verrechnet
+	 * @return
+	 */
+	private List<Verrechnet> filterValidCodeForKonsultation(String code, Konsultation kons,
+		List<Verrechnet> list){
+		List<Verrechnet> ret = new ArrayList<>();
+		BillingLaw law = kons.getFall().getConfiguredBillingSystemLaw();
+		IVerrechenbar validForKons =
+			TarmedLeistung.getFromCode(code, new TimeTool(kons.getDatum()), law.name());
+		if (validForKons != null) {
+			String matchCode = validForKons.getId();
+			if (matchCode != null && !matchCode.isEmpty()) {
+				for (Verrechnet element : list) {
+					if (matchCode.equals(element.get(Verrechnet.LEISTG_CODE))) {
+						ret.add(element);
+					}
+				}
+			}
+		} else {
+			ret.addAll(list);
 		}
 		return ret;
 	}

@@ -932,7 +932,7 @@ public class TarmedOptifier implements IOptifier {
 		for (String groupName : groups) {
 			Optional<TarmedGroup> group =
 				TarmedGroup.find(groupName, tarmed.get(TarmedLeistung.FLD_LAW), date);
-			if (group.isPresent()) {
+			if (group.isPresent() && !tarmedCode.getServiceTyp().equals("Z")) {
 				List<TarmedExclusion> groupExclusions = group.get().getExclusions(kons);
 				for (TarmedExclusion tarmedExclusion : groupExclusions) {
 					if (tarmedExclusion.isMatching(tarmedCode, date)) {

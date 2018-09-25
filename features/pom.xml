@@ -74,6 +74,7 @@
     <module>ch.elexis.stickynotes.feature</module>
     <module>ch.elexis.support.dbshaker.feature</module>
     <module>ch.gpb.elexis.cst.feature</module>
+    <module>ch.itmed.lmz.risch.laborder.feature</module>
     <module>ch.medelexis.text.templator.feature</module>
     <module>ch.medshare.connect.abacusjunior.feature</module>
     <module>ch.medshare.elexis_directories.feature</module>

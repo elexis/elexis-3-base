@@ -240,6 +240,9 @@
    <feature url="features/ch.elexis.importer.aeskulap.feature_1.0.0.qualifier.jar" id="ch.elexis.importer.aeskulap.feature" version="1.0.0.qualifier">
       <category name="support"/>
    </feature>
+   <feature url="features/ch.itmed.lmz.risch.laborder.feature_3.7.0.qualifier.jar" id="ch.itmed.lmz.risch.laborder.feature" version="3.7.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

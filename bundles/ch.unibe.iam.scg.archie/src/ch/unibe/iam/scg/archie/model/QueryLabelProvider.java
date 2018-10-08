@@ -17,6 +17,8 @@ import java.util.Locale;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.rgw.tools.Money;
 
@@ -34,6 +36,8 @@ import ch.rgw.tools.Money;
  * @version $Rev: 747 $
  */
 public class QueryLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+	private static Logger logger = LoggerFactory.getLogger(QueryLabelProvider.class);
 
 	/**
 	 * Does nothing, returns null.
@@ -56,6 +60,10 @@ public class QueryLabelProvider extends LabelProvider implements ITableLabelProv
 	 */
 	public String getColumnText(final Object element, final int columnIndex) {
 		Comparable<?>[] row = (Comparable[]) element;
+		if(row[columnIndex] == null) {
+			logger.warn("Row result in column [" + columnIndex + "] is null");
+			return "";
+		}
 		if (row[columnIndex].getClass() == Money.class) {
 			Currency cur = Currency.getInstance(Locale.getDefault());
 			return cur + " " + row[columnIndex].toString();

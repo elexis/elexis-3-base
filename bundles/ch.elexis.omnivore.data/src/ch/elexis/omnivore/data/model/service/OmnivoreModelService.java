@@ -49,8 +49,6 @@ public class OmnivoreModelService extends AbstractModelService
 		return eventAdmin;
 	}
 	
-	private AbstractModelAdapterFactory adapterFactory;
-	
 	@Activate
 	public void activate(){
 		adapterFactory = OmnivoreModelAdapterFactory.getInstance();
@@ -101,14 +99,10 @@ public class OmnivoreModelService extends AbstractModelService
 	
 	@Override
 	protected ElexisEvent getCreateEvent(Identifiable identifiable){
-		ElexisEvent ee = new ElexisEvent();
-		ee.setTopic(ElexisEventTopics.PERSISTENCE_EVENT_CREATE);
 		if (identifiable instanceof AbstractIdModelAdapter<?>) {
 			EntityWithId dbObject = ((AbstractIdModelAdapter<?>) identifiable).getEntity();
-			ee.getProperties().put(ElexisEventTopics.PROPKEY_ID, dbObject.getId());
-			ee.getProperties().put(ElexisEventTopics.PROPKEY_CLASS,
-				ElexisTypeMap.getKeyForObject(dbObject));
+			return ElexisEvent.of(ElexisEventTopics.PERSISTENCE_EVENT_CREATE, dbObject.getId(), ElexisTypeMap.getKeyForObject(dbObject));
 		}
-		return ee;
+		return null;
 	}
 }

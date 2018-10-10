@@ -2,40 +2,49 @@ package ch.elexis.omnivore.data.service.internal;
 
 import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.exceptions.PersistenceException;
 import ch.elexis.core.model.ICategory;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ITag;
+import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IDocumentStore;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
+import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.data.Query;
 import ch.elexis.data.dto.CategoryDocumentDTO;
 import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.data.DocHandle;
-import ch.elexis.omnivore.data.dto.DocHandleDocumentDTO;
-import ch.rgw.tools.JdbcLink.Stm;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.data.model.TransientCategory;
 
-@Component
+@Component(property = "storeid=ch.elexis.data.store.omnivore")
 public class OmnivoreDocumentStore implements IDocumentStore {
 	
 	private static final String STORE_ID = "ch.elexis.data.store.omnivore";
 	private static Logger log = LoggerFactory.getLogger(OmnivoreDocumentStore.class);
+	
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
+	private IModelService coreModelService;
+	
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.omnivore.data.model)")
+	private IModelService modelService;
 	
 	@Override
 	public String getId(){
@@ -50,65 +59,52 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	@Override
 	public List<IDocument> getDocuments(String patientId, String authorId, ICategory category,
 		List<ITag> tag){
-		Query<DocHandle> query = new Query<>(DocHandle.class);
-		query.add(DocHandle.FLD_PATID, Query.EQUALS, patientId);
 		
-		if (category != null) {
-			query.add(DocHandle.FLD_CAT, Query.EQUALS, category.getName(), true);
-		}
-		if (tag != null) {
-			query.startGroup();
-			for (ITag t : tag) {
-				query.add(DocHandle.FLD_KEYWORDS, Query.EQUALS, t.getName());
-				query.or();
+		Optional<IPatient> patient = coreModelService.load(patientId, IPatient.class);
+		if (patient.isPresent()) {
+			IQuery<IDocumentHandle> query = modelService.getQuery(IDocumentHandle.class);
+			query.and(ModelPackage.Literals.IDOCUMENT__PATIENT, COMPARATOR.EQUALS, patient.get());
+			
+			if (authorId != null) {
+				Optional<IContact> author = coreModelService.load(authorId, IContact.class);
+				author.ifPresent(a -> {
+					query.and(ModelPackage.Literals.IDOCUMENT__AUTHOR, COMPARATOR.EQUALS, a);
+				});
 			}
-			query.endGroup();
+			if (category != null && category.getName() != null) {
+				query.and(ModelPackage.Literals.IDOCUMENT__CATEGORY, COMPARATOR.EQUALS,
+					category.getName());
+			}
+			
+			@SuppressWarnings("unchecked")
+			List<IDocument> results = (List<IDocument>) ((List<?>) query.execute());
+			results.parallelStream().forEach(d -> d.setStoreId(STORE_ID));
+			return results;
 		}
-		List<DocHandle> docs = query.execute();
-		List<IDocument> results = new ArrayList<>();
-		for (DocHandle doc : docs) {
-			results.add(new DocHandleDocumentDTO(doc, STORE_ID));
-		}
-		return results;
+		return Collections.emptyList();
 	}
 	
 	@Override
 	public List<ICategory> getCategories(){
-		Stm stm = PersistentObject.getDefaultConnection().getStatement();
-		ResultSet rs = stm
-			.query("select distinct category from " + DocHandle.TABLENAME
-				+ " where deleted = '0' order by category");
-		List<ICategory> categories = new ArrayList<>();
-		try {
-			while (rs.next()) {
-				String typ = rs.getString("Category");
-				if (typ != null) {
-					categories.add(new CategoryDocumentDTO(typ));
-				}
-			}
-		} catch (SQLException e) {
-			log.error("Error executing distinct docHandle category selection", e);
-		}
-		PersistentObject.getDefaultConnection().releaseStatement(stm);
-		
-		return categories;
+		Stream<?> resultStream = modelService.executeNativeQuery(
+			"select distinct category from CH_ELEXIS_OMNIVORE_DATA where deleted = '0' order by category");
+		return resultStream.filter(o -> o instanceof String)
+			.map(o -> new TransientCategory((String) o)).collect(Collectors.toList());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<IDocument> loadDocument(String id){
-		DocHandle doc = DocHandle.load(id);
-		if (doc.exists()) {
-			return Optional.of(new DocHandleDocumentDTO(doc, STORE_ID));
-		}
-		return Optional.empty();
+		return (Optional<IDocument>) (Optional<?>) modelService.load(id, IDocumentHandle.class);
 	}
 	
 	@Override
 	public void removeDocument(IDocument document){
-		DocHandle doc = DocHandle.load(document.getId());
-		if (doc.exists()) {
-			doc.delete();
-		}
+		Optional<IDocumentHandle> existing =
+			modelService.load(document.getId(), IDocumentHandle.class);
+		existing.ifPresent(d -> {
+			modelService.delete(d);
+		});
 	}
 	
 	@Override
@@ -123,65 +119,32 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	
 	private IDocument save(IDocument document, InputStream content) throws ElexisException{
 		try {
-			DocHandle doc = DocHandle.load(document.getId());
-			String category =
-				document.getCategory() != null ? document.getCategory().getName() : null;
-			if (doc.exists()) {
-				// update an existing document
-				String[] fetch = new String[] {
-					DocHandle.FLD_PATID, DocHandle.FLD_TITLE, DocHandle.FLD_MIMETYPE,
-					DocHandle.FLD_CAT, DocHandle.FLD_KEYWORDS
-				};
-				String[] data = new String[] {
-					document.getPatientId(), document.getTitle(), document.getMimeType(), category,
-					document.getKeywords()
-				};
-				doc.set(fetch, data);
-			} else {
-				// persist a new document
-				doc = new DocHandle(category, new byte[1], Patient.load(document.getPatientId()),
-					document.getCreated(), document.getTitle(), document.getMimeType(),
-					document.getKeywords());
-			}
-			
 			if (content != null) {
-				doc.storeContent(IOUtils.toByteArray(content));
+				document.setContent(content);
 			}
-			return new DocHandleDocumentDTO(doc, STORE_ID);
-		} catch (PersistenceException | IOException e) {
+			modelService.save(document);
+			return document;
+		} catch (PersistenceException e) {
 			throw new ElexisException("cannot save", e);
-		} finally {
-			if (content != null) {
-				IOUtils.closeQuietly(content);
-			}
 		}
 	}
 	
 	@Override
 	public Optional<InputStream> loadContent(IDocument document){
-		DocHandle doc = DocHandle.load(document.getId());
-		if (doc.exists()) {
-			try {
-				byte[] buf = doc.getContentsAsBytes();
-				if (buf != null) {
-					return Optional.of(new ByteArrayInputStream(buf));
-				}
-			} catch (ElexisException e) {
-				log.error("Cannot load contents of document id: " + document.getId(), e);
-			}
-		}
-		return Optional.empty();
+		return Optional.ofNullable(document.getContent());
 	}
 	
 	@Override
 	public IDocument createDocument(String patientId, String title, String categoryName){
-		DocHandleDocumentDTO docHandleDocumentDTO = new DocHandleDocumentDTO(STORE_ID);
+		IDocumentHandle handle = modelService.create(IDocumentHandle.class);
+		handle.setStoreId(STORE_ID);
+		handle.setTitle(title);
+		handle.setPatient(coreModelService.load(patientId, IPatient.class).orElse(null));
 		ICategory iCategory =
-			categoryName != null ? new CategoryDocumentDTO(categoryName) : getCategoryDefault();
-		docHandleDocumentDTO.setCategory(iCategory);
-		docHandleDocumentDTO.setPatientId(patientId);
-		docHandleDocumentDTO.setTitle(title);
-		return docHandleDocumentDTO;
+			categoryName != null ? new TransientCategory(categoryName) : getCategoryDefault();
+		handle.setCategory(iCategory);
+		modelService.save(handle);
+		return handle;
 	}
 	
 	@Override

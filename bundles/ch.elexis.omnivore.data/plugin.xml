@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-      <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.omnivore.data.DocHandleFactory"
-            name="Omnivore"/>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated omnivore -->
+      <package
+            uri="http://ch.elexis.omnivore.data/model/model"
+            class="ch.elexis.omnivore.data.model.ModelPackage"
+            genModel="model/omnivore.genmodel"/>
    </extension>
-   <extension
-         point="ch.elexis.core.ui.KonsExtension">
-      <Link
-            KonsExtension="ch.elexis.omnivore.data.KonsExtension"
-            name="omnivore">
-      </Link>
-   </extension>
-      <extension
-         point="org.eclipse.ui.views">
-      <category
-            id="ch.elexis.omnivore"
-            name="Omnivore">
-      </category>
-   </extension>
+
 </plugin>

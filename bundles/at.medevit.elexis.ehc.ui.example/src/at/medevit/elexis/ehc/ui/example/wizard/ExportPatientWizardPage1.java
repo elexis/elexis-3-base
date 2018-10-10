@@ -24,7 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
@@ -96,7 +96,7 @@ public class ExportPatientWizardPage1 extends WizardPage {
 		
 		if (!contentSelection.isEmpty()) {
 			Patient selectedPatient = (Patient) contentSelection.getFirstElement();
-			AbstractCdaCh<?> document =
+			AbstractCdaChV1<?> document =
 				ServiceComponent.getService().createCdaChDocument(selectedPatient,
 					(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 			try {

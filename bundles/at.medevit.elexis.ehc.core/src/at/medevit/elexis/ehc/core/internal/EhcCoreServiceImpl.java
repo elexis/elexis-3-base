@@ -25,7 +25,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 import org.ehealth_connector.communication.ConvenienceCommunication;
 import org.ehealth_connector.communication.DocumentMetadata;
 import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;
@@ -34,8 +34,7 @@ import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
 import org.openhealthtools.ihe.xds.document.XDSDocument;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.RecordTarget;
-import org.openhealthtools.mdht.uml.cda.ch.CDACH;
-import org.openhealthtools.mdht.uml.cda.ch.CHFactory;
+import org.openhealthtools.mdht.uml.cda.ch.ChFactory;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -54,12 +53,12 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	
 	public EhcCoreServiceImpl(){
 		// make sure CDACH is registered and initialized
-		CHFactory.eINSTANCE.createCDACH().init();
+		ChFactory.eINSTANCE.createCdaChV1().init();
 	}
 	
 	@Override
-	public AbstractCdaCh<?> createCdaChDocument(Patient patient, Mandant mandant){
-		CdaChImpl ret = new CdaChImpl(CHFactory.eINSTANCE.createCDACH().init());
+	public AbstractCdaChV1<?> createCdaChDocument(Patient patient, Mandant mandant){
+		CdaChImpl ret = new CdaChImpl(ChFactory.eINSTANCE.createCdaChV1().init());
 		
 		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
 		ret.addAuthor(EhcCoreMapper.getEhcAuthor(mandant));
@@ -77,11 +76,10 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public AbstractCdaCh<?> getAsCdaChDocument(ClinicalDocument clinicalDocument){
-		if (clinicalDocument instanceof CDACH) {
-			return new CdaChImpl((CDACH) clinicalDocument);
+	public AbstractCdaChV1<?> getAsCdaChDocument(ClinicalDocument clinicalDocument){
+		if (clinicalDocument instanceof ClinicalDocument) {
+			return new CdaChImpl(clinicalDocument);
 		}
-		logger.warn("Document is not a subclass of CDACH.");
 		return null;
 	}
 	

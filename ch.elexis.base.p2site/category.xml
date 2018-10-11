@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/ch.elexis.laborimport_lg1.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_lg1.feature" version="3.0.100.qualifier">
-      <category name="laborexchanges"/>
-   </feature>
    <bundle id="at.medevit.atc_codes" version="3.1.0.20180309-1216"/>
    <bundle id="at.medevit.ch.artikelstamm" version="3.3.0.qualifier"/>
    <bundle id="at.medevit.ch.artikelstamm.model" version="1.0.0.qualifier"/>

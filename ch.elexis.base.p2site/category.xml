@@ -4,4 +4,5 @@
    <bundle id="at.medevit.ch.artikelstamm" version="0.0.0"/>
    <bundle id="at.medevit.ch.artikelstamm.model" version="0.0.0"/>
    <bundle id="at.medevit.ch.artikelstamm.model.test" version="0.0.0"/>
+   <bundle id="ch.elexis.base.ch.ticode" version="0.0.0"/>
 </site>

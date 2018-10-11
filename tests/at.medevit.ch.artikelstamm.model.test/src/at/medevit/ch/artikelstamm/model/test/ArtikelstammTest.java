@@ -16,10 +16,14 @@ import org.junit.Test;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.core.test.AbstractTest;
 import ch.elexis.core.test.util.TestUtil;
 import ch.elexis.core.types.ArticleSubTyp;
@@ -56,8 +60,28 @@ public class ArtikelstammTest extends AbstractTest {
 	}
 	
 	@Test
-	public void loadFromStoreToString(){
-		
+	public void loadFromStoreToStringService(){
+		IStoreToStringService storeToStringService =
+			OsgiServiceUtil.getService(IStoreToStringService.class).get();
+		Identifiable loadFromString =
+			storeToStringService
+				.loadFromString(
+					"ch.artikelstamm.elexis.common.ArtikelstammItem::0768043838016013402350116")
+				.get();
+		assertEquals("0768043838016013402350116", loadFromString.getId());
+		assertTrue(loadFromString instanceof IArtikelstammItem);
+		assertEquals("Dafalgan Sirup 30 mg/ml Kind 90 ml",
+			((IArtikelstammItem) loadFromString).getName());
+	}
+	
+	@Test
+	public void loadFromCodeElementService(){
+		ICodeElementService codeElementService =
+			OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElement loadFromString =
+			codeElementService.loadFromString("Artikelstamm", "7680438380160", null).get();
+		assertEquals("0768043838016013402350116", ((Identifiable) loadFromString).getId());
+		assertTrue(loadFromString instanceof IArtikelstammItem);
 	}
 	
 	@Test

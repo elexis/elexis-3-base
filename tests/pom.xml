@@ -19,7 +19,8 @@
     </properties>
 
     <modules>
-      <module>at.medevit.atc_codes.test</module>
+   <!-- 
+   <module>at.medevit.atc_codes.test</module>
       <module>at.medevit.ch.artikelstamm.elexis.common.tests</module>
       <module>at.medevit.ch.artikelstamm.medcalendar.test</module>
       <module>at.medevit.elexis.cobasmira.tests</module>
@@ -45,6 +46,7 @@
       <module>net.medshare.connector.aerztekasse_test</module>
       <module>net.medshare.connector.viollier_test</module>
       <module>org.iatrix.bestellung.rose_test</module>
+ -->
     </modules>
 
     <dependencies>

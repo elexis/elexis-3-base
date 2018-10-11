@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Artikelstamm Service
+Bundle-SymbolicName: at.medevit.ch.artikelstamm.model
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: medevit.at
+Automatic-Module-Name: at.medevit.ch.artikelstamm.service
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.osgi.services;bundle-version="3.6.0",
+ ch.elexis.core,
+ ch.elexis.core.jpa;bundle-version="1.0.0",
+ ch.elexis.core.jpa.entities;bundle-version="1.0.0",
+ at.medevit.ch.artikelstamm
+Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.model.service.ArtikelstammModelService.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.model.service.ArtikelstammModelServiceHolder.xml
+Bundle-ActivationPolicy: lazy
+Import-Package: ch.rgw.tools,
+ org.apache.commons.lang3;version="3.3.2",
+ org.slf4j;version="1.7.2"

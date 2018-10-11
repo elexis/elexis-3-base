@@ -15,7 +15,10 @@
   </parent>
 
   <modules>
-    <module>ch.elexis.hl7.message.core</module>
+      <module>at.medevit.ch.artikelstamm</module>
+  	  <module>at.medevit.ch.artikelstamm.model</module>
+   <!-- 
+ <module>ch.elexis.hl7.message.core</module>
     <module>ch.elexis.hl7.message.ui</module>
     <module>at.gruber.elexis.mythic22</module>
     <module>at.medevit.atc_codes</module>
@@ -23,7 +26,6 @@
     <module>at.medevit.ch.artikelstamm.elexis.open</module>
     <module>at.medevit.ch.artikelstamm.medcalendar</module>
     <module>at.medevit.ch.artikelstamm.ui</module>
-    <module>at.medevit.ch.artikelstamm</module>
     <module>at.medevit.elexis.agenda.ui</module>
     <module>at.medevit.elexis.cobasmira</module>
     <module>at.medevit.elexis.ehc.core</module>
@@ -132,5 +134,6 @@
     <module>org.iatrix.messwerte</module>
     <module>org.iatrix</module>
     <module>waelti.statistics</module>
+ -->
 </modules>
 </project>

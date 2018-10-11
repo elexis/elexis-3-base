@@ -12,6 +12,9 @@ package at.medevit.ch.artikelstamm;
 
 public class ArtikelstammConstants {
 	
+	public static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE = "PPUB_OVERRIDE_STORE";
+	public static final String EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE = "PKG_SIZE_OVERRIDE_STORE";
+	
 	public static final String CODESYSTEM_NAME = "Artikelstamm";
 	
 	/**
@@ -22,7 +25,7 @@ public class ArtikelstammConstants {
 	 * <b>X</b> a Product
 	 */
 	public enum TYPE {
-		P, N, X
+			P, N, X
 	};
 	
 }

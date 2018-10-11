@@ -11,15 +11,13 @@
 package at.medevit.ch.artikelstamm;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
+import ch.elexis.core.model.IArticle;
+import ch.rgw.tools.Money;
 
 /**
  * Interface defining the requirements for the {@link DetailComposite} data-binding
  */
-public interface IArtikelstammItem {
-	/**
-	 * @return article description
-	 */
-	public String getDSCR();
+public interface IArtikelstammItem extends IArticle {
 	
 	/**
 	 * @return human readable label
@@ -27,19 +25,9 @@ public interface IArtikelstammItem {
 	public String getLabel();
 	
 	/**
-	 * @return Global Trade Index Number
-	 */
-	public String getGTIN();
-	
-	/**
 	 * @return pharmacode
 	 */
 	public String getPHAR();
-	
-	/**
-	 * @return ATC code
-	 */
-	public String getATCCode();
 	
 	/**
 	 * @return {@link TYPE}
@@ -50,23 +38,6 @@ public interface IArtikelstammItem {
 	 * @return human readable string of the manufacturer
 	 */
 	public String getManufacturerLabel();
-	
-	/**
-	 * @return the Ex-Factory price
-	 */
-	public Double getExFactoryPrice();
-	
-	/**
-	 * @return the public price
-	 */
-	public Double getPublicPrice();
-	
-	/**
-	 * set the public price, and automatically defines the article as {@link #isUserDefinedPrice()}
-	 * 
-	 * @param amount
-	 */
-	public void setPublicPrice(Double amount);
 	
 	/**
 	 * @return <code>true</code> if the article is part of the Spezialitaetenliste
@@ -123,31 +94,24 @@ public interface IArtikelstammItem {
 	public boolean isCalculatedPrice();
 	
 	/**
-	 * De-/activate the manual price override.
-	 * 
-	 * @param selection
-	 */
-	public void setUserDefinedPrice(boolean selection);
-	
-	/**
-	 * @return whether this price is set by the user
-	 */
-	public boolean 	isUserDefinedPkgSize();
-	
-	/**
-	 * De-/activate the manual pkg_size override.
-	 * 
-	 * @param selection
-	 */
-	public void setUserDefinedPkgSize(boolean selection);
-	
-	/**
 	 * @return whether this price is set by the user
 	 */
 	public boolean isUserDefinedPrice();
 	
 	/**
-	 * @return referenced product id or for type product the id itself
+	 * Set the price as user-defined (i.e. overridden) price. This will internally store the price
+	 * as negative value.
+	 * 
+	 * @param value
 	 */
-	public String getProductId();
+	public void setUserDefinedPriceValue(Money value);
+	
+	/**
+	 * Restore the original price, if was overridden, effectively deleting a manually overridden
+	 * selling price
+	 * 
+	 * @param selection
+	 */
+	public void restoreOriginalSellingPrice();
+	
 }

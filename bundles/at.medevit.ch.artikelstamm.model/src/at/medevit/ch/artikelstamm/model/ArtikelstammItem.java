@@ -9,6 +9,7 @@ import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.model.service.ArtikelstammModelServiceHolder;
+import at.medevit.ch.artikelstamm.model.service.CoreModelServiceHolder;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
@@ -16,6 +17,8 @@ import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
@@ -29,7 +32,7 @@ public class ArtikelstammItem
 	
 	private ExtInfoHandler extInfoHandler;
 	
-	private IBillableOptifier optifier;
+	private static IBillableOptifier<ArtikelstammItem> optifier;
 	private IBillableVerifier verifier;
 	
 	public ArtikelstammItem(ch.elexis.core.jpa.entities.ArtikelstammItem entity){
@@ -39,9 +42,34 @@ public class ArtikelstammItem
 	}
 	
 	@Override
-	public IBillableOptifier getOptifier(){
-		if (!isInSLList()) {
-			//			return noObligationOptifier;
+	public synchronized IBillableOptifier<ArtikelstammItem> getOptifier(){
+		if (optifier == null) {
+			optifier = new AbstractOptifier<ArtikelstammItem>(CoreModelServiceHolder.get()) {
+				
+				@Override
+				protected void setPrice(ArtikelstammItem billable, IBilled billed){
+					billed.setFactor(1.0);
+					billed.setNetPrice(billable.getPurchasePrice());
+					Money sellingPrice = billable.getSellingPrice();
+					if(sellingPrice == null) {
+//						sellingPrice =  MargePreference.calculateVKP(getPurchasePrice());
+					} 
+//					if (!billable.isInSLList()) {
+//						// noObligationOptifier
+//					} else {
+//						// defaultOptifier
+//					}
+					int vkPreis = sellingPrice.getCents();
+					double pkgSize = Math.abs(billable.getPackageSize());
+					double vkUnits = billable.getSellingSize();
+					if ((pkgSize > 0.0) && (vkUnits > 0.0) && (pkgSize != vkUnits)) {
+						billed.setPoints((int) Math.round(vkUnits * (vkPreis / pkgSize)));
+					} else {
+						billed.setPoints((int) Math.round(vkPreis));
+					}
+
+				}
+			};
 		}
 		return optifier;
 	}

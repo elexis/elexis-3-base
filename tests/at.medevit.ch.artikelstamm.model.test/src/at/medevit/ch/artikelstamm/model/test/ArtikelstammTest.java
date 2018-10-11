@@ -10,7 +10,6 @@ import java.text.ParseException;
 import java.util.List;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
@@ -143,9 +142,9 @@ public class ArtikelstammTest extends AbstractTest {
 		assertFalse(coDafalganArticle.isUserDefinedPrice());
 	}
 	
-	@Ignore
+	@SuppressWarnings("unchecked")
 	@Test
-	public void billing(){
+	public void billing() throws ParseException{
 		createEncounter();
 		
 		IArtikelstammItem dafalganArticle =
@@ -155,9 +154,10 @@ public class ArtikelstammTest extends AbstractTest {
 		assertFalse(encounter.getBilled().isEmpty());
 		IBilled billed = encounter.getBilled().get(0);
 		assertEquals(1.5, billed.getAmount(), 0.01);
-		assertEquals(new Money(), billed.getPrice());
-		assertEquals(new Money(), billed.getNetPrice());
-		assertEquals(new Money(), billed.getText());
+		assertEquals(dafalganArticle.getSellingPrice().multiply(1.5), billed.getTotal());
+		assertEquals(dafalganArticle.getPurchasePrice(), billed.getNetPrice());
+		assertEquals(dafalganArticle.getName(), billed.getText());
+		assertEquals(encounter, billed.getEncounter());
 		
 	}
 }

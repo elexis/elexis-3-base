@@ -342,24 +342,21 @@ public class ArtikelstammImporter {
 		
 		log.debug("[II] Update or import {} items...", importItemList.size());
 		for (ITEM item : importItemList) {
-			String pharmaCode = String.format("%07d", item.getPHAR());
 			Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 			qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, item.getGTIN());
 			ArtikelstammItem foundItem = null;
-			List<ArtikelstammItem> result = qre.execute();
-			if (result.size() == 0) {
-				foundItem = ArtikelstammItem.loadByPHARNo(pharmaCode);
-				log.debug("[II] Found using loadByPHARNo {} item {}", pharmaCode,
-					foundItem == null ? "null" : foundItem.getId());
-			} else if (result.size() == 1) {
-				foundItem = result.get(0);
-			} else if (result.size() > 1) {
-				log.warn("[II] Found multiple items for GTIN [" + item.getGTIN() + "]");
-				// Is the case in Stauffacher DB, where legacy articles have been imported
-				for (ArtikelstammItem artikelstammItem : result) {
-					if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE) {
-						foundItem = artikelstammItem;
-						log.warn("[II] Selected ID [" + foundItem.getId() + "] to update.");
+			List<ArtikelstammItem> result = qre.execute();		
+			if(result.size() > 0) {
+				if (result.size() == 1) {
+					foundItem = result.get(0);
+				} else {
+					log.warn("[II] Found multiple items for GTIN [" + item.getGTIN() + "]");
+					// Is the case in Stauffacher DB, where legacy articles have been imported
+					for (ArtikelstammItem artikelstammItem : result) {
+						if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE) {
+							foundItem = artikelstammItem;
+							log.warn("[II] Selected ID [" + foundItem.getId() + "] to update.");
+						}
 					}
 				}
 			}

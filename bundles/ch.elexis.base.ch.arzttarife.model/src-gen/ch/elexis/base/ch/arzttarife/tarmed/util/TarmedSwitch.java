@@ -97,6 +97,8 @@ public class TarmedSwitch<T> extends Switch<T> {
 			case TarmedPackage.ITARMED_GROUP: {
 				ITarmedGroup iTarmedGroup = (ITarmedGroup)theEObject;
 				T result = caseITarmedGroup(iTarmedGroup);
+				if (result == null) result = caseDeleteable(iTarmedGroup);
+				if (result == null) result = caseIdentifiable(iTarmedGroup);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

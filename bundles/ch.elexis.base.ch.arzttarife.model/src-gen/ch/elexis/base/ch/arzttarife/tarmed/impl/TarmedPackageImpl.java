@@ -19,6 +19,7 @@ import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.types.TypesPackage;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.EReference;
@@ -218,6 +219,15 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getITarmedLeistung_Parent() {
+		return (EReference)iTarmedLeistungEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getITarmedDefinitionen() {
 		return iTarmedDefinitionenEClass;
 	}
@@ -245,8 +255,44 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getITarmedGroup_Code() {
+		return (EAttribute)iTarmedGroupEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getITarmedKumulation() {
 		return iTarmedKumulationEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getITarmedKumulation_SlaveCode() {
+		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getITarmedKumulation_SlaveArt() {
+		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getITarmedKumulation_ValidSide() {
+		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -285,14 +331,19 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		createEAttribute(iTarmedLeistungEClass, ITARMED_LEISTUNG__DIGNI_QUANTI);
 		createEAttribute(iTarmedLeistungEClass, ITARMED_LEISTUNG__EXCLUSION);
 		createEReference(iTarmedLeistungEClass, ITARMED_LEISTUNG__EXTENSION);
+		createEReference(iTarmedLeistungEClass, ITARMED_LEISTUNG__PARENT);
 
 		iTarmedDefinitionenEClass = createEClass(ITARMED_DEFINITIONEN);
 
 		iTarmedExtensionEClass = createEClass(ITARMED_EXTENSION);
 
 		iTarmedGroupEClass = createEClass(ITARMED_GROUP);
+		createEAttribute(iTarmedGroupEClass, ITARMED_GROUP__CODE);
 
 		iTarmedKumulationEClass = createEClass(ITARMED_KUMULATION);
+		createEAttribute(iTarmedKumulationEClass, ITARMED_KUMULATION__SLAVE_CODE);
+		createEAttribute(iTarmedKumulationEClass, ITARMED_KUMULATION__SLAVE_ART);
+		createEAttribute(iTarmedKumulationEClass, ITARMED_KUMULATION__VALID_SIDE);
 	}
 
 	/**
@@ -320,6 +371,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 
 		// Obtain other dependent packages
 		ModelPackage theModelPackage = (ModelPackage)EPackage.Registry.INSTANCE.getEPackage(ModelPackage.eNS_URI);
+		TypesPackage theTypesPackage = (TypesPackage)EPackage.Registry.INSTANCE.getEPackage(TypesPackage.eNS_URI);
 
 		// Create type parameters
 
@@ -329,6 +381,8 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		iTarmedLeistungEClass.getESuperTypes().add(theModelPackage.getIBillable());
 		iTarmedExtensionEClass.getESuperTypes().add(theModelPackage.getIdentifiable());
 		iTarmedExtensionEClass.getESuperTypes().add(theModelPackage.getDeleteable());
+		iTarmedGroupEClass.getESuperTypes().add(theModelPackage.getDeleteable());
+		iTarmedGroupEClass.getESuperTypes().add(theModelPackage.getIdentifiable());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(iTarmedLeistungEClass, ITarmedLeistung.class, "ITarmedLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -339,14 +393,22 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		initEAttribute(getITarmedLeistung_DigniQuanti(), ecorePackage.getEString(), "digniQuanti", null, 0, 1, ITarmedLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getITarmedLeistung_Exclusion(), ecorePackage.getEString(), "exclusion", null, 0, 1, ITarmedLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getITarmedLeistung_Extension(), this.getITarmedExtension(), null, "extension", null, 0, 1, ITarmedLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getITarmedLeistung_Parent(), this.getITarmedLeistung(), null, "parent", null, 0, 1, ITarmedLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		EOperation op = addEOperation(iTarmedLeistungEClass, ecorePackage.getEString(), "getServiceGroups", 0, -1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theTypesPackage.getLocalDate(), "date", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(iTarmedDefinitionenEClass, ITarmedDefinitionen.class, "ITarmedDefinitionen", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(iTarmedExtensionEClass, ITarmedExtension.class, "ITarmedExtension", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(iTarmedGroupEClass, ITarmedGroup.class, "ITarmedGroup", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getITarmedGroup_Code(), ecorePackage.getEString(), "code", null, 0, 1, ITarmedGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(iTarmedKumulationEClass, ITarmedKumulation.class, "ITarmedKumulation", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getITarmedKumulation_SlaveCode(), ecorePackage.getEString(), "slaveCode", null, 0, 1, ITarmedKumulation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getITarmedKumulation_SlaveArt(), ecorePackage.getEString(), "slaveArt", null, 0, 1, ITarmedKumulation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getITarmedKumulation_ValidSide(), ecorePackage.getEString(), "validSide", null, 0, 1, ITarmedKumulation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -1,9 +1,12 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelAdapterFactory;
+import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
-import ch.elexis.core.jpa.entities.TarmedExtension;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IBillableOptifier;
@@ -130,14 +133,34 @@ public class TarmedLeistung
 	
 	@Override
 	public ITarmedExtension getExtension(){
-		TarmedExtension extension = getEntity().getExtension();
-		return ArzttarifeModelAdapterFactory.getInstance().getAdapter(extension,
+		return ArzttarifeModelAdapterFactory.getInstance().getAdapter(getEntity().getExtension(),
 			ITarmedExtension.class, true);
 	}
 	
 	@Override
 	public void setExtension(ITarmedExtension value){
 		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public ITarmedLeistung getParent(){
+		String parent = getEntity().getParent();
+		if (parent != null && parent != "NIL") {
+			return ArzttarifeModelServiceHolder.get().load(parent, ITarmedLeistung.class).get();
+		}
+		return null;
+	}
+	
+	@Override
+	public void setParent(ITarmedLeistung value){
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<String> getServiceGroups(LocalDate date){
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

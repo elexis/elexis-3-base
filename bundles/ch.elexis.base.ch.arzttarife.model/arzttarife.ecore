@@ -5,6 +5,9 @@
       nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedLeistung" abstract="true" interface="true"
         eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
+      <eOperations name="getServiceGroups" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="TL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
@@ -12,14 +15,22 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuanti" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tarmed/ITarmedExtension"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//tarmed/ITarmedLeistung"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedDefinitionen" abstract="true"
         interface="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedExtension" abstract="true"
         interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Identifiable ../ch.elexis.core/model/model.ecore#//Deleteable"/>
-    <eClassifiers xsi:type="ecore:EClass" name="ITarmedGroup" abstract="true" interface="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ITarmedGroup" abstract="true" interface="true"
+        eSuperTypes="../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//Identifiable">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedKumulation" abstract="true"
-        interface="true"/>
+        interface="true">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveArt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
   </eSubpackages>
   <eSubpackages name="physio" nsURI="http://ch.elexis.base/model/arzttarife/physio"
       nsPrefix="ch.elexis.arzttarife.ch.physio.model">

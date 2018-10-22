@@ -149,13 +149,22 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_LEISTUNG__EXTENSION = ModelPackage.IBILLABLE_FEATURE_COUNT + 6;
 
 	/**
+	 * The feature id for the '<em><b>Parent</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__PARENT = ModelPackage.IBILLABLE_FEATURE_COUNT + 7;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Leistung</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 7;
+	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 8;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen <em>ITarmed Definitionen</em>}' class.
@@ -215,13 +224,31 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_GROUP = 3;
 
 	/**
+	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__DELETED = ModelPackage.DELETEABLE__DELETED;
+
+	/**
+	 * The feature id for the '<em><b>Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__CODE = ModelPackage.DELETEABLE_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Group</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP_FEATURE_COUNT = 0;
+	int ITARMED_GROUP_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}' class.
@@ -234,13 +261,40 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_KUMULATION = 4;
 
 	/**
+	 * The feature id for the '<em><b>Slave Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__SLAVE_CODE = 0;
+
+	/**
+	 * The feature id for the '<em><b>Slave Art</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__SLAVE_ART = 1;
+
+	/**
+	 * The feature id for the '<em><b>Valid Side</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__VALID_SIDE = 2;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Kumulation</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_KUMULATION_FEATURE_COUNT = 0;
+	int ITARMED_KUMULATION_FEATURE_COUNT = 3;
 
 
 	/**
@@ -331,6 +385,17 @@ public interface TarmedPackage extends EPackage {
 	EReference getITarmedLeistung_Extension();
 
 	/**
+	 * Returns the meta object for the reference '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getParent <em>Parent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Parent</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getParent()
+	 * @see #getITarmedLeistung()
+	 * @generated
+	 */
+	EReference getITarmedLeistung_Parent();
+
+	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen <em>ITarmed Definitionen</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -361,6 +426,17 @@ public interface TarmedPackage extends EPackage {
 	EClass getITarmedGroup();
 
 	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getCode <em>Code</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Code</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getCode()
+	 * @see #getITarmedGroup()
+	 * @generated
+	 */
+	EAttribute getITarmedGroup_Code();
+
+	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -369,6 +445,39 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getITarmedKumulation();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getSlaveCode <em>Slave Code</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Slave Code</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getSlaveCode()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_SlaveCode();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getSlaveArt <em>Slave Art</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Slave Art</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getSlaveArt()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_SlaveArt();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getValidSide <em>Valid Side</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid Side</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getValidSide()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_ValidSide();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -459,6 +568,14 @@ public interface TarmedPackage extends EPackage {
 		EReference ITARMED_LEISTUNG__EXTENSION = eINSTANCE.getITarmedLeistung_Extension();
 
 		/**
+		 * The meta object literal for the '<em><b>Parent</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ITARMED_LEISTUNG__PARENT = eINSTANCE.getITarmedLeistung_Parent();
+
+		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen <em>ITarmed Definitionen</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -489,6 +606,14 @@ public interface TarmedPackage extends EPackage {
 		EClass ITARMED_GROUP = eINSTANCE.getITarmedGroup();
 
 		/**
+		 * The meta object literal for the '<em><b>Code</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_GROUP__CODE = eINSTANCE.getITarmedGroup_Code();
+
+		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -497,6 +622,30 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ITARMED_KUMULATION = eINSTANCE.getITarmedKumulation();
+
+		/**
+		 * The meta object literal for the '<em><b>Slave Code</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__SLAVE_CODE = eINSTANCE.getITarmedKumulation_SlaveCode();
+
+		/**
+		 * The meta object literal for the '<em><b>Slave Art</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__SLAVE_ART = eINSTANCE.getITarmedKumulation_SlaveArt();
+
+		/**
+		 * The meta object literal for the '<em><b>Valid Side</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__VALID_SIDE = eINSTANCE.getITarmedKumulation_ValidSide();
 
 	}
 

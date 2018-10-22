@@ -24,6 +24,10 @@ public class TarmedLeistungTest extends AbstractTest {
 		
 		ITarmedExtension extension = loaded.getExtension();
 		assertTrue(extension instanceof ITarmedExtension);
+		
+		ITarmedLeistung parent = loaded.getParent();
+		assertTrue(parent instanceof ITarmedLeistung);
+		assertEquals("00.01.01-20010101-KVG", parent.getId());
 	}
 	
 	@Test

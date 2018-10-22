@@ -20,11 +20,22 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/exclusion"/>
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
             ecoreFeature="ecore:EReference arzttarife.ecore#//tarmed/ITarmedLeistung/extension"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference arzttarife.ecore#//tarmed/ITarmedLeistung/parent"/>
+        <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/getServiceGroups">
+          <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getServiceGroups/date"/>
+        </genOperations>
       </genClasses>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedDefinitionen"/>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedExtension"/>
-      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedGroup"/>
-      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedKumulation"/>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedGroup">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedGroup/code"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedKumulation">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/slaveCode"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/slaveArt"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/validSide"/>
+      </genClasses>
     </nestedGenPackages>
     <nestedGenPackages prefix="Physio" basePackage="ch.elexis.base.ch.arzttarife"
         disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//physio">

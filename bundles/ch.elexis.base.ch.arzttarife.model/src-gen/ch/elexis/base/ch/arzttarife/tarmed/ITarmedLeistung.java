@@ -248,4 +248,12 @@ public interface ITarmedLeistung extends IBillable {
 	 */
 	List<String> getServiceGroups(LocalDate date);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model dateDataType="ch.elexis.core.types.LocalDate"
+	 * @generated
+	 */
+	List<String> getServiceBlocks(LocalDate date);
+
 } // ITarmedLeistung

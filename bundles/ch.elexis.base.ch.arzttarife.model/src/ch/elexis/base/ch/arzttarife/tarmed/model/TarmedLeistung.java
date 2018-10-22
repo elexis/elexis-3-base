@@ -162,5 +162,11 @@ public class TarmedLeistung
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<String> getServiceBlocks(LocalDate date){
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

@@ -380,6 +380,9 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		EOperation op = addEOperation(iTarmedLeistungEClass, ecorePackage.getEString(), "getServiceGroups", 0, -1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theTypesPackage.getLocalDate(), "date", 0, 1, IS_UNIQUE, IS_ORDERED);
 
+		op = addEOperation(iTarmedLeistungEClass, ecorePackage.getEString(), "getServiceBlocks", 0, -1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theTypesPackage.getLocalDate(), "date", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEClass(iTarmedExtensionEClass, ITarmedExtension.class, "ITarmedExtension", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(iTarmedGroupEClass, ITarmedGroup.class, "ITarmedGroup", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

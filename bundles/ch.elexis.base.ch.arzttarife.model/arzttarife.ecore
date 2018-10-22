@@ -8,6 +8,9 @@
       <eOperations name="getServiceGroups" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       </eOperations>
+      <eOperations name="getServiceBlocks" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="TL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>

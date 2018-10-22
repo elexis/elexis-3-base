@@ -18,6 +18,8 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/digniQuali"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/digniQuanti"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/exclusion"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference arzttarife.ecore#//tarmed/ITarmedLeistung/extension"/>
       </genClasses>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedDefinitionen"/>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedExtension"/>

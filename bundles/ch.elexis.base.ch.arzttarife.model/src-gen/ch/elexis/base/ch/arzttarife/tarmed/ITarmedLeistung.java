@@ -21,6 +21,7 @@ import ch.elexis.core.model.IBillable;
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getDigniQuali <em>Digni Quali</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getDigniQuanti <em>Digni Quanti</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getExclusion <em>Exclusion</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getExtension <em>Extension</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung()
@@ -183,5 +184,31 @@ public interface ITarmedLeistung extends IBillable {
 	 * @generated
 	 */
 	void setExclusion(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Extension</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Extension</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Extension</em>' reference.
+	 * @see #setExtension(ITarmedExtension)
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Extension()
+	 * @model
+	 * @generated
+	 */
+	ITarmedExtension getExtension();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getExtension <em>Extension</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Extension</em>' reference.
+	 * @see #getExtension()
+	 * @generated
+	 */
+	void setExtension(ITarmedExtension value);
 
 } // ITarmedLeistung

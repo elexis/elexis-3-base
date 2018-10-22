@@ -5,6 +5,7 @@ package ch.elexis.base.ch.arzttarife.tarmed.util;
 
 import ch.elexis.base.ch.arzttarife.tarmed.*;
 
+import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
@@ -102,6 +103,10 @@ public class TarmedAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseIBillable(IBillable object) {
 				return createIBillableAdapter();
+			}
+			@Override
+			public Adapter caseDeleteable(Deleteable object) {
+				return createDeleteableAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -232,6 +237,20 @@ public class TarmedAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createIBillableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ch.elexis.core.model.Deleteable <em>Deleteable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see ch.elexis.core.model.Deleteable
+	 * @generated
+	 */
+	public Adapter createDeleteableAdapter() {
 		return null;
 	}
 

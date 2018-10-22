@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
@@ -20,6 +21,9 @@ public class TarmedLeistungTest extends AbstractTest {
 		ITarmedLeistung loaded = AllTestsSuite.getModelService()
 			.load("00.0010-20180101-KVG", ITarmedLeistung.class).get();
 		assertTrue(loaded instanceof ITarmedLeistung);
+		
+		ITarmedExtension extension = loaded.getExtension();
+		assertTrue(extension instanceof ITarmedExtension);
 	}
 	
 	@Test

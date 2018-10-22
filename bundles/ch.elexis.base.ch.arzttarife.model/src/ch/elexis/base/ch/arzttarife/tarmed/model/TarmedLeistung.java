@@ -1,6 +1,9 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
+import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelAdapterFactory;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.core.jpa.entities.TarmedExtension;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IBillableOptifier;
@@ -123,6 +126,18 @@ public class TarmedLeistung
 	@Override
 	public void setText(String value){
 		getEntity().setTx255(value);
+	}
+	
+	@Override
+	public ITarmedExtension getExtension(){
+		TarmedExtension extension = getEntity().getExtension();
+		return ArzttarifeModelAdapterFactory.getInstance().getAdapter(extension,
+			ITarmedExtension.class, true);
+	}
+	
+	@Override
+	public void setExtension(ITarmedExtension value){
+		// TODO Auto-generated method stub
 	}
 	
 }

@@ -11,11 +11,12 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuali" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuanti" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tarmed/ITarmedExtension"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedDefinitionen" abstract="true"
         interface="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedExtension" abstract="true"
-        interface="true"/>
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Identifiable ../ch.elexis.core/model/model.ecore#//Deleteable"/>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedGroup" abstract="true" interface="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedKumulation" abstract="true"
         interface="true"/>

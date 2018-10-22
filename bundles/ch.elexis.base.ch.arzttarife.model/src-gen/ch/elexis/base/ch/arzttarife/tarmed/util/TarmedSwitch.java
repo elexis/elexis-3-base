@@ -5,6 +5,7 @@ package ch.elexis.base.ch.arzttarife.tarmed.util;
 
 import ch.elexis.base.ch.arzttarife.tarmed.*;
 
+import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
@@ -88,6 +89,8 @@ public class TarmedSwitch<T> extends Switch<T> {
 			case TarmedPackage.ITARMED_EXTENSION: {
 				ITarmedExtension iTarmedExtension = (ITarmedExtension)theEObject;
 				T result = caseITarmedExtension(iTarmedExtension);
+				if (result == null) result = caseIdentifiable(iTarmedExtension);
+				if (result == null) result = caseDeleteable(iTarmedExtension);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -224,6 +227,21 @@ public class TarmedSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseIBillable(IBillable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Deleteable</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Deleteable</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseDeleteable(Deleteable object) {
 		return null;
 	}
 

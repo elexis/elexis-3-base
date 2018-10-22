@@ -11,7 +11,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
-import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.test.util.TestUtil;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
@@ -38,8 +37,9 @@ public class AllTestsSuite {
 		assertTrue(entityManager.executeSQLScript("test_initComplementaryTarif",
 			TestUtil.loadFile(AllTestsSuite.class, "/rsc/complementaryTarif.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmed",
-			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/Tarmed.sql")));
-		
+			TestUtil.loadFile(AllTestsSuite.class, "/rsc/tarmedTarif.sql")));
+		assertTrue(entityManager.executeSQLScript("test_initTarmedExtension", TestUtil
+			.loadFile(AllTestsSuite.class, "/rsc/tarmedExtension.sql")));	
 	}
 	
 	public static IModelService getModelService(){

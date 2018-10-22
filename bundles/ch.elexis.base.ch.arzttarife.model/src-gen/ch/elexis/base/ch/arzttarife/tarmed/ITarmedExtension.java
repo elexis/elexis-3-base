@@ -3,6 +3,9 @@
  */
 package ch.elexis.base.ch.arzttarife.tarmed;
 
+import ch.elexis.core.model.Deleteable;
+import ch.elexis.core.model.Identifiable;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -14,5 +17,5 @@ package ch.elexis.base.ch.arzttarife.tarmed;
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface ITarmedExtension {
+public interface ITarmedExtension extends Identifiable, Deleteable {
 } // ITarmedExtension

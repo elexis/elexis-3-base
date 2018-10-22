@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright Text&#x9;Copyright (c) 2018 MEDEVIT &lt;office@medevit.at>...."
+    modelDirectory="/ch.elexis.base.ch.arzttarife.model/src-gen" modelPluginID="ch.elexis.base.ch.arzttarife.model"
+    modelName="Arzttarife" rootExtendsInterface="" rootExtendsClass="" suppressEMFTypes="true"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    usedGenPackages="../ch.elexis.core/model/model.genmodel#//model ../ch.elexis.core/model/types.genmodel#//types"
+    runtimePlatform="RCP">
+  <foreignModel>arzttarife.ecore</foreignModel>
+  <genPackages prefix="Arzttarife" basePackage="ch.elexis.base.ch" disposableProviderFactory="true"
+      ecorePackage="arzttarife.ecore#/">
+    <nestedGenPackages prefix="Tarmed" basePackage="ch.elexis.base.ch.arzttarife"
+        disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//tarmed">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedLeistung">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/minutes"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/AL"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/TL"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/digniQuali"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/digniQuanti"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/exclusion"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedDefinitionen"/>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedExtension"/>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedGroup"/>
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedKumulation"/>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Physio" basePackage="ch.elexis.base.ch.arzttarife"
+        disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//physio">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//physio/IPhysioLeistung">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/validFrom"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/validTo"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/TP"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/ziffer"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//physio/IPhysioLeistung/description"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Complementary" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//complementary">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//complementary/IComplementaryLeistung">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/description"/>
+      </genClasses>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>

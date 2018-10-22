@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="arzttarife" nsURI="http://ch.elexis.base/model/arzttarife" nsPrefix="ch.elexis.arzttarife.ch.model">
+  <eSubpackages name="tarmed" nsURI="http://ch.elexis.base/model/arzttarife/tarmed"
+      nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">
+    <eClassifiers xsi:type="ecore:EClass" name="ITarmedLeistung" abstract="true" interface="true"
+        eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="TL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuali" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuanti" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ITarmedDefinitionen" abstract="true"
+        interface="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ITarmedExtension" abstract="true"
+        interface="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ITarmedGroup" abstract="true" interface="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ITarmedKumulation" abstract="true"
+        interface="true"/>
+  </eSubpackages>
+  <eSubpackages name="physio" nsURI="http://ch.elexis.base/model/arzttarife/physio"
+      nsPrefix="ch.elexis.arzttarife.ch.physio.model">
+    <eClassifiers xsi:type="ecore:EClass" name="IPhysioLeistung" abstract="true" interface="true"
+        eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="TP" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="ziffer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="complementary" nsURI="http://ch.elexis.base/model/arzttarife/complementary"
+      nsPrefix="ch.elexis.arzttarife.ch.complementary.model">
+    <eClassifiers xsi:type="ecore:EClass" name="IComplementaryLeistung" abstract="true"
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>

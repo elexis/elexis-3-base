@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import ch.elexis.base.ch.arzttarife.model.tarmed.test.AllTarmedTests;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.util.TestUtil;
@@ -16,7 +17,7 @@ import ch.elexis.core.utils.OsgiServiceUtil;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	PhysioLeistungTest.class, ComplementaryLeistungTest.class, TarmedLeistungTest.class
+	PhysioLeistungTest.class, ComplementaryLeistungTest.class, TarmedLeistungTest.class, AllTarmedTests.class
 })
 public class AllTestsSuite {
 	
@@ -39,7 +40,9 @@ public class AllTestsSuite {
 		assertTrue(entityManager.executeSQLScript("test_initTarmed",
 			TestUtil.loadFile(AllTestsSuite.class, "/rsc/tarmedTarif.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmedExtension", TestUtil
-			.loadFile(AllTestsSuite.class, "/rsc/tarmedExtension.sql")));	
+			.loadFile(AllTestsSuite.class, "/rsc/tarmedExtension.sql")));
+		assertTrue(entityManager.executeSQLScript("test_initTarmedDefinitionen", TestUtil
+			.loadFile(AllTestsSuite.class, "/rsc/tarmedDefinitionen.sql")));
 	}
 	
 	public static IModelService getModelService(){

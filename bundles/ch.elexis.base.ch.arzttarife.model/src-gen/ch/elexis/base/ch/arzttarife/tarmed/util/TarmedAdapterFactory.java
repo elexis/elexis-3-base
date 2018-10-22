@@ -77,10 +77,6 @@ public class TarmedAdapterFactory extends AdapterFactoryImpl {
 				return createITarmedLeistungAdapter();
 			}
 			@Override
-			public Adapter caseITarmedDefinitionen(ITarmedDefinitionen object) {
-				return createITarmedDefinitionenAdapter();
-			}
-			@Override
 			public Adapter caseITarmedExtension(ITarmedExtension object) {
 				return createITarmedExtensionAdapter();
 			}
@@ -139,20 +135,6 @@ public class TarmedAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createITarmedLeistungAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen <em>ITarmed Definitionen</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen
-	 * @generated
-	 */
-	public Adapter createITarmedDefinitionenAdapter() {
 		return null;
 	}
 

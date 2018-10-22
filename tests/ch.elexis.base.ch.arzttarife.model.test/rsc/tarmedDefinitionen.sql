@@ -1,0 +1,17 @@
+INSERT INTO `tarmed_definitionen` VALUES ('SPARTE','0016','UBR Gynäkologie und Geburtshilfe','r258430b0ad6c8c68039503',1513845103482,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('SEX','0','männlich','O24e295bfe0c83067039497',1513845103479,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('REGEL_EL_ABR','08','Diese Limitierungen entfallen für elektronisch abrechnende Fachärzte','Mfd3c6697c5464a6039494',1513845103477,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('REGEL_EL_ABR','02','Diese Limitierung entfällt für elektronisch abrechnende Spitäler','Z13782997045db4a0039489',1513845103476,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('REGEL_EL_ABR','01','Diese Limitierung entfällt für elektronisch abrechnende Fachärzte','Becf9cd492e10fca2039488',1513845103475,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','21','Nur Leistung der Krankenversicherung','Tb65d77d2f2b209f039486',1513845103474,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','20','KVG: Keine oder eingeschränkte Pflichtleistung','V6dd984ba06ba89e039485',1513845103474,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','18','KLV: Pflichtleistung','R51e1d687ab8b09f039483',1513845103473,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','16','Nur anwendbar im IV-Bereich','Dfeacea385173949c039481',1513845103472,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','11','Die Leistungspflicht der Versicherer ist abhängig von einer Anerkennung des Schlaflabors.','Qf5bd18392674cc9a039476',1513845103471,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','10','KVG-Bereich: die laserinduzierte, transurethrale, ultraschallgesteuerte  Prostatektomie ist nicht Pflichtleistung (gemäss Anhang 1 KLV 1.4)','md138c27cc6157c98039475',1513845103470,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','09','im Zusammenhang mit IUD-Einlagen keine Pflichtleistung','n510235f870b5897039474',1513845103470,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','08','Pflichtleistung nur bei medizinischer Indikation gemäss KLV Anhang 1 Ziffer 2.1','b54eeb6746782099039473',1513845103469,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','06','Gemäss KLV','cf59c158b2f941497039471',1513845103469,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','07','keine Pflichtleistung Gemäss KLV Anhang 2.2','v114a16402bd94098039472',1513845103469,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','02','keine Pflichtleistung','l3cf01879e96b2093039468',1513845103468,'0','');
+INSERT INTO `tarmed_definitionen` VALUES ('PFLICHT','03','Pflichtleistung nur bei medizinischer Indikation','ydf97a1fcae1fe894039469',1513845103468,'0','');

@@ -30,5 +30,6 @@ Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.Arzttarif
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ComplementaryLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.PhysioLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.TarmedLeistungCodeElementService.xml,
- OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder.xml
+ OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.EntityManagerHolder.xml
 Import-Package: org.slf4j

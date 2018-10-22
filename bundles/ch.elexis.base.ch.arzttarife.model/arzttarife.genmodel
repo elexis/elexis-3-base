@@ -26,7 +26,6 @@
           <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getServiceGroups/date"/>
         </genOperations>
       </genClasses>
-      <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedDefinitionen"/>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedExtension"/>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedGroup">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedGroup/code"/>

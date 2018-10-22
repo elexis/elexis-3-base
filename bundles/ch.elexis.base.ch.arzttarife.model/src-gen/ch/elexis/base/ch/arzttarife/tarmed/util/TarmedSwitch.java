@@ -80,12 +80,6 @@ public class TarmedSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case TarmedPackage.ITARMED_DEFINITIONEN: {
-				ITarmedDefinitionen iTarmedDefinitionen = (ITarmedDefinitionen)theEObject;
-				T result = caseITarmedDefinitionen(iTarmedDefinitionen);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case TarmedPackage.ITARMED_EXTENSION: {
 				ITarmedExtension iTarmedExtension = (ITarmedExtension)theEObject;
 				T result = caseITarmedExtension(iTarmedExtension);
@@ -124,21 +118,6 @@ public class TarmedSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseITarmedLeistung(ITarmedLeistung object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>ITarmed Definitionen</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>ITarmed Definitionen</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseITarmedDefinitionen(ITarmedDefinitionen object) {
 		return null;
 	}
 

@@ -3,6 +3,7 @@ package ch.elexis.base.ch.arzttarife.model.tarmed.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
@@ -13,6 +14,7 @@ import ch.rgw.tools.Result;
 
 public class BasicBillingTest extends AbstractTest {
 	
+	@Ignore
 	@SuppressWarnings("unchecked")
 	@Test
 	public void ok_single_00_0010(){

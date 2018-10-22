@@ -44,13 +44,6 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass iTarmedDefinitionenEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass iTarmedExtensionEClass = null;
 
 	/**
@@ -228,15 +221,6 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getITarmedDefinitionen() {
-		return iTarmedDefinitionenEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getITarmedExtension() {
 		return iTarmedExtensionEClass;
 	}
@@ -333,8 +317,6 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		createEReference(iTarmedLeistungEClass, ITARMED_LEISTUNG__EXTENSION);
 		createEReference(iTarmedLeistungEClass, ITARMED_LEISTUNG__PARENT);
 
-		iTarmedDefinitionenEClass = createEClass(ITARMED_DEFINITIONEN);
-
 		iTarmedExtensionEClass = createEClass(ITARMED_EXTENSION);
 
 		iTarmedGroupEClass = createEClass(ITARMED_GROUP);
@@ -397,8 +379,6 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 
 		EOperation op = addEOperation(iTarmedLeistungEClass, ecorePackage.getEString(), "getServiceGroups", 0, -1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theTypesPackage.getLocalDate(), "date", 0, 1, IS_UNIQUE, IS_ORDERED);
-
-		initEClass(iTarmedDefinitionenEClass, ITarmedDefinitionen.class, "ITarmedDefinitionen", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(iTarmedExtensionEClass, ITarmedExtension.class, "ITarmedExtension", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

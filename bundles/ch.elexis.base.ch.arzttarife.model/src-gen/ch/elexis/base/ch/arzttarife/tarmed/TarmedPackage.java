@@ -167,25 +167,6 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 8;
 
 	/**
-	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen <em>ITarmed Definitionen</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen
-	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getITarmedDefinitionen()
-	 * @generated
-	 */
-	int ITARMED_DEFINITIONEN = 1;
-
-	/**
-	 * The number of structural features of the '<em>ITarmed Definitionen</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITARMED_DEFINITIONEN_FEATURE_COUNT = 0;
-
-	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -193,7 +174,7 @@ public interface TarmedPackage extends EPackage {
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getITarmedExtension()
 	 * @generated
 	 */
-	int ITARMED_EXTENSION = 2;
+	int ITARMED_EXTENSION = 1;
 
 	/**
 	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
@@ -221,7 +202,7 @@ public interface TarmedPackage extends EPackage {
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getITarmedGroup()
 	 * @generated
 	 */
-	int ITARMED_GROUP = 3;
+	int ITARMED_GROUP = 2;
 
 	/**
 	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
@@ -258,7 +239,7 @@ public interface TarmedPackage extends EPackage {
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getITarmedKumulation()
 	 * @generated
 	 */
-	int ITARMED_KUMULATION = 4;
+	int ITARMED_KUMULATION = 3;
 
 	/**
 	 * The feature id for the '<em><b>Slave Code</b></em>' attribute.
@@ -394,16 +375,6 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getITarmedLeistung_Parent();
-
-	/**
-	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen <em>ITarmed Definitionen</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>ITarmed Definitionen</em>'.
-	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen
-	 * @generated
-	 */
-	EClass getITarmedDefinitionen();
 
 	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}'.
@@ -574,16 +545,6 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EReference ITARMED_LEISTUNG__PARENT = eINSTANCE.getITarmedLeistung_Parent();
-
-		/**
-		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen <em>ITarmed Definitionen</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedDefinitionen
-		 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getITarmedDefinitionen()
-		 * @generated
-		 */
-		EClass ITARMED_DEFINITIONEN = eINSTANCE.getITarmedDefinitionen();
 
 		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}' class.

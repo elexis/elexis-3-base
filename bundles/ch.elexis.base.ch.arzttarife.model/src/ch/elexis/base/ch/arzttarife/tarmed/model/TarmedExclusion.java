@@ -1,9 +1,10 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
-import ch.rgw.tools.TimeTool;
 
 public class TarmedExclusion {
 	
@@ -11,19 +12,20 @@ public class TarmedExclusion {
 	private TarmedKumulationType slaveType;
 	private boolean validSide;
 	
-	public TarmedExclusion(TarmedKumulation kumulation){
+	public TarmedExclusion(ITarmedKumulation kumulation){
 		slaveCode = kumulation.getSlaveCode();
 		slaveType = TarmedKumulationType.ofArt(kumulation.getSlaveArt());
 		validSide = "1".equals(kumulation.getValidSide());
 	}
 	
-	public boolean isMatching(TarmedLeistung tarmedLeistung, TimeTool date){
+
+	public boolean isMatching(TarmedLeistung tarmedLeistung, LocalDate date){
 		if (slaveType == TarmedKumulationType.CHAPTER) {
 			return isMatchingChapter(tarmedLeistung);
 		} else if (slaveType == TarmedKumulationType.SERVICE) {
 			return isMatchingService(tarmedLeistung);
 		} else if (slaveType == TarmedKumulationType.GROUP) {
-			List<String> groups = tarmedLeistung.getServiceGroups(date.toLocalDate());
+			List<String> groups = tarmedLeistung.getServiceGroups(date);
 			return groups.contains(slaveCode);
 		}
 		return false;

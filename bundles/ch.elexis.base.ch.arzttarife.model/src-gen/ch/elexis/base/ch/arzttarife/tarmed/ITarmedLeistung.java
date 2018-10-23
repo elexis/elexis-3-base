@@ -25,6 +25,12 @@ import java.util.List;
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getExclusion <em>Exclusion</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getExtension <em>Extension</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getParent <em>Parent</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getValidFrom <em>Valid From</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getValidTo <em>Valid To</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getServiceTyp <em>Service Typ</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getLaw <em>Law</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getSparte <em>Sparte</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#isChapter <em>Chapter</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung()
@@ -67,22 +73,11 @@ public interface ITarmedLeistung extends IBillable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>AL</em>' attribute.
-	 * @see #setAL(int)
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_AL()
-	 * @model
+	 * @model changeable="false"
 	 * @generated
 	 */
 	int getAL();
-
-	/**
-	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getAL <em>AL</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>AL</em>' attribute.
-	 * @see #getAL()
-	 * @generated
-	 */
-	void setAL(int value);
 
 	/**
 	 * Returns the value of the '<em><b>TL</b></em>' attribute.
@@ -93,22 +88,11 @@ public interface ITarmedLeistung extends IBillable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>TL</em>' attribute.
-	 * @see #setTL(int)
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_TL()
-	 * @model
+	 * @model changeable="false"
 	 * @generated
 	 */
 	int getTL();
-
-	/**
-	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getTL <em>TL</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>TL</em>' attribute.
-	 * @see #getTL()
-	 * @generated
-	 */
-	void setTL(int value);
 
 	/**
 	 * Returns the value of the '<em><b>Digni Quali</b></em>' attribute.
@@ -241,6 +225,96 @@ public interface ITarmedLeistung extends IBillable {
 	void setParent(ITarmedLeistung value);
 
 	/**
+	 * Returns the value of the '<em><b>Valid From</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Valid From</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Valid From</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_ValidFrom()
+	 * @model dataType="ch.elexis.core.types.LocalDate" changeable="false"
+	 * @generated
+	 */
+	LocalDate getValidFrom();
+
+	/**
+	 * Returns the value of the '<em><b>Valid To</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Valid To</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Valid To</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_ValidTo()
+	 * @model dataType="ch.elexis.core.types.LocalDate" changeable="false"
+	 * @generated
+	 */
+	LocalDate getValidTo();
+
+	/**
+	 * Returns the value of the '<em><b>Service Typ</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Service Typ</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Service Typ</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_ServiceTyp()
+	 * @model changeable="false"
+	 * @generated
+	 */
+	String getServiceTyp();
+
+	/**
+	 * Returns the value of the '<em><b>Law</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Law</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Law</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Law()
+	 * @model changeable="false"
+	 * @generated
+	 */
+	String getLaw();
+
+	/**
+	 * Returns the value of the '<em><b>Sparte</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Sparte</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Sparte</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Sparte()
+	 * @model changeable="false"
+	 * @generated
+	 */
+	String getSparte();
+
+	/**
+	 * Returns the value of the '<em><b>Chapter</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Chapter</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Chapter</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Chapter()
+	 * @model changeable="false"
+	 * @generated
+	 */
+	boolean isChapter();
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model dateDataType="ch.elexis.core.types.LocalDate"
@@ -255,5 +329,13 @@ public interface ITarmedLeistung extends IBillable {
 	 * @generated
 	 */
 	List<String> getServiceBlocks(LocalDate date);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model
+	 * @generated
+	 */
+	boolean requiresSide();
 
 } // ITarmedLeistung

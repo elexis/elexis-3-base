@@ -1,20 +1,25 @@
-package ch.elexis.base.ch.arzttarife.model.test;
+package ch.elexis.base.ch.arzttarife.model.tarmed.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.Test;
 
+import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
+import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IStoreToStringService;
-import ch.elexis.core.test.AbstractTest;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
-public class TarmedLeistungTest extends AbstractTest {
+public class TarmedLeistungTest {
 	
 	@Test
 	public void queryLoad(){
@@ -50,6 +55,18 @@ public class TarmedLeistungTest extends AbstractTest {
 			ch.elexis.core.jpa.entities.TarmedLeistung.CODESYSTEM_NAME, "00.0056", null).get();
 		assertEquals("00.0056-20180101-KVG", ((Identifiable) loadFromString).getId());
 		assertTrue(loadFromString instanceof ITarmedLeistung);
+	}
+	
+	@Test
+	public void getDistinctAvailableLaws(){
+		List<String> availableLaws = TarmedLeistung.getAvailableLaws();
+		assertTrue(availableLaws.contains("KVG"));
+	}
+	
+	@Test
+	public void getFromCode(){
+		IBillable fromCode = TarmedLeistung.getFromCode("00.0010", LocalDate.now(), "KVG");
+		assertTrue(fromCode instanceof ITarmedLeistung);
 	}
 	
 }

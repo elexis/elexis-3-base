@@ -5,11 +5,13 @@ import java.util.Optional;
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.jpa.entities.ComplementaryLeistung;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
 import ch.elexis.core.jpa.entities.TarmedExtension;
+import ch.elexis.core.jpa.entities.TarmedKumulation;
 import ch.elexis.core.jpa.entities.TarmedLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractModelAdapterFactory;
 import ch.elexis.core.jpa.model.adapter.MappingEntry;
@@ -42,6 +44,9 @@ public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 		addMapping(new MappingEntry(ITarmedExtension.class,
 			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExtension.class,
 			TarmedExtension.class));
+		addMapping(new MappingEntry(ITarmedKumulation.class,
+			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedKumulation.class,
+			TarmedKumulation.class));
 	}
 	
 	public <T> T getAdapter(EntityWithId entity, Class<T> clazz, boolean registerEntityChangeEvent){

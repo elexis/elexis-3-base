@@ -5,7 +5,10 @@ package ch.elexis.base.ch.arzttarife.tarmed.impl;
 
 import ch.elexis.base.ch.arzttarife.tarmed.*;
 
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -60,6 +63,76 @@ public class TarmedFactoryImpl extends EFactoryImpl implements TarmedFactory {
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			case TarmedPackage.TARMED_LIMITATION:
+				return createTarmedLimitationFromString(eDataType, initialValue);
+			case TarmedPackage.TARMED_EXCLUSION:
+				return createTarmedExclusionFromString(eDataType, initialValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			case TarmedPackage.TARMED_LIMITATION:
+				return convertTarmedLimitationToString(eDataType, instanceValue);
+			case TarmedPackage.TARMED_EXCLUSION:
+				return convertTarmedExclusionToString(eDataType, instanceValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TarmedLimitation createTarmedLimitationFromString(EDataType eDataType, String initialValue) {
+		return (TarmedLimitation)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertTarmedLimitationToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TarmedExclusion createTarmedExclusionFromString(EDataType eDataType, String initialValue) {
+		return (TarmedExclusion)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertTarmedExclusionToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

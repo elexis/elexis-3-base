@@ -11,27 +11,84 @@
       <eOperations name="getServiceBlocks" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       </eOperations>
+      <eOperations name="requiresSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="TL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="TL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+          changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuali" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuanti" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tarmed/ITarmedExtension"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//tarmed/ITarmedLeistung"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="serviceTyp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="law" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="sparte" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          changeable="false"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedExtension" abstract="true"
-        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Identifiable ../ch.elexis.core/model/model.ecore#//Deleteable"/>
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Identifiable ../ch.elexis.core/model/model.ecore#//Deleteable">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="limits" changeable="false"
+          transient="true">
+        <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        </eGenericType>
+      </eStructuralFeatures>
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedGroup" abstract="true" interface="true"
         eSuperTypes="../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//Identifiable">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eOperations name="validAt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="reference" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
+      <eOperations name="getExclusions">
+        <eGenericType eClassifier="ecore:EClass ../ch.elexis.core/model/types.ecore#//List">
+          <eTypeArguments eClassifier="#//tarmed/TarmedExclusion"/>
+        </eGenericType>
+        <eParameters name="encounter" eType="ecore:EClass ../ch.elexis.core/model/model.ecore#//IEncounter"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="services" upperBound="-1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="law" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="limitations" upperBound="-1"
+          eType="#//tarmed/TarmedLimitation" changeable="false"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedKumulation" abstract="true"
         interface="true">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveArt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eOperations name="isValidKumulation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="reference" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveArt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="law" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EDataType" name="TarmedLimitation" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation"/>
+    <eClassifiers xsi:type="ecore:EDataType" name="TarmedExclusion" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion"/>
   </eSubpackages>
   <eSubpackages name="physio" nsURI="http://ch.elexis.base/model/arzttarife/physio"
       nsPrefix="ch.elexis.arzttarife.ch.physio.model">

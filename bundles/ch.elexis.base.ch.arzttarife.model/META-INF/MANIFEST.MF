@@ -23,7 +23,8 @@ Require-Bundle: org.eclipse.osgi.services;bundle-version="3.6.0",
  ch.elexis.core;visibility:=reexport,
  ch.elexis.core.jpa,
  ch.elexis.core.jpa.entities;bundle-version="1.0.0",
- ch.rgw.utility;bundle-version="3.7.0"
+ ch.rgw.utility;bundle-version="3.7.0",
+ ch.elexis.core.importer.div
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder.xml,
@@ -31,5 +32,10 @@ Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.Arzttarif
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.PhysioLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.TarmedLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder.xml,
- OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.EntityManagerHolder.xml
-Import-Package: org.slf4j
+ OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.EntityManagerHolder.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder.xml
+Import-Package: org.apache.commons.io;version="2.5.0",
+ org.apache.commons.lang;version="2.6.0",
+ org.apache.commons.lang.math;version="2.6.0",
+ org.slf4j

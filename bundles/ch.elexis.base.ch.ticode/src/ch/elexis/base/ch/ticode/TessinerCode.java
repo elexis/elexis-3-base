@@ -13,9 +13,13 @@
 package ch.elexis.base.ch.ticode;
 
 import java.util.Hashtable;
+import java.util.Optional;
 
-import ch.elexis.core.data.interfaces.ICodeElement;
-import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IDiagnosis;
+import ch.elexis.core.model.IXid;
+
+
 
 /**
  * Copy of the ch.elexis.data.TICode class, but without PersistentObject dependencies.
@@ -24,7 +28,7 @@ import ch.elexis.core.data.interfaces.IDiagnose;
  * @since 3.2.0
  * @since 3.4.0 implements {@link ICodeElement}, {@link IDiagnose}
  */
-public class TessinerCode implements ICodeElement, IDiagnose {
+public class TessinerCode implements IDiagnosis {
 	public static final String CODESYSTEM_NAME = "TI-Code"; //$NON-NLS-1$
 	private static Hashtable<String, TessinerCode> hash = new Hashtable<String, TessinerCode>();
 	private String text;
@@ -52,7 +56,7 @@ public class TessinerCode implements ICodeElement, IDiagnose {
 	}
 	
 	public static TessinerCode load(String code){
-		return getFromCode(code);
+		return getFromCode(code).get();
 	}
 	
 	public static TessinerCode[] getRootNodes(){
@@ -65,7 +69,7 @@ public class TessinerCode implements ICodeElement, IDiagnose {
 		return ret;
 	}
 	
-	public static TessinerCode getFromCode(String code){
+	public static Optional<TessinerCode> getFromCode(String code){
 		TessinerCode ret = hash.get(code);
 		if (ret == null && !code.isEmpty()) {
 			String chapter = code.substring(0, 1);
@@ -82,18 +86,18 @@ public class TessinerCode implements ICodeElement, IDiagnose {
 						ret = new TessinerCode(chapter + subch, ticode[i][subch + 1]);
 					}
 					hash.put(code, ret);
-					return ret;
+					return Optional.of(ret);
 				}
 			}
 		}
-		return ret;
+		return Optional.ofNullable(ret);
 	}
 	
 	public TessinerCode getParent(){
 		if (getCode().length() == 1) {
 			return null;
 		}
-		return getFromCode(getCode().substring(0, 1));
+		return getFromCode(getCode().substring(0, 1)).get();
 	}
 	
 	public boolean hasChildren(){
@@ -254,7 +258,42 @@ public class TessinerCode implements ICodeElement, IDiagnose {
 
 	@Override
 	public String getId(){
-		// TODO Auto-generated method stub
+		return getCode();
+	}
+
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return false;
+	}
+
+	@Override
+	public IXid getXid(String domain){
 		return null;
+	}
+
+	@Override
+	public Long getLastupdate(){
+		return null;
+	}
+
+	@Override
+	public String getDescription(){
+		return null;
+	}
+
+	@Override
+	public void setDescription(String value){
+	
+	}
+
+	@Override
+	public void setCode(String value){
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setText(String value){
+		// TODO Auto-generated method stub
 	}
 }

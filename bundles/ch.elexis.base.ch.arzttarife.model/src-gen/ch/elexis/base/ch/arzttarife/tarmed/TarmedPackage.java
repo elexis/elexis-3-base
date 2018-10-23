@@ -6,6 +6,7 @@ package ch.elexis.base.ch.arzttarife.tarmed;
 import ch.elexis.core.model.ModelPackage;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -158,13 +159,67 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_LEISTUNG__PARENT = ModelPackage.IBILLABLE_FEATURE_COUNT + 7;
 
 	/**
+	 * The feature id for the '<em><b>Valid From</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__VALID_FROM = ModelPackage.IBILLABLE_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Valid To</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__VALID_TO = ModelPackage.IBILLABLE_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Service Typ</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__SERVICE_TYP = ModelPackage.IBILLABLE_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Law</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__LAW = ModelPackage.IBILLABLE_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Sparte</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__SPARTE = ModelPackage.IBILLABLE_FEATURE_COUNT + 12;
+
+	/**
+	 * The feature id for the '<em><b>Chapter</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__CHAPTER = ModelPackage.IBILLABLE_FEATURE_COUNT + 13;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Leistung</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 8;
+	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 14;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}' class.
@@ -186,13 +241,22 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_EXTENSION__DELETED = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Limits</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_EXTENSION__LIMITS = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Extension</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_EXTENSION_FEATURE_COUNT = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 1;
+	int ITARMED_EXTENSION_FEATURE_COUNT = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup <em>ITarmed Group</em>}' class.
@@ -223,13 +287,58 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_GROUP__CODE = ModelPackage.DELETEABLE_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Services</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__SERVICES = ModelPackage.DELETEABLE_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Valid From</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__VALID_FROM = ModelPackage.DELETEABLE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Valid To</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__VALID_TO = ModelPackage.DELETEABLE_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Law</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__LAW = ModelPackage.DELETEABLE_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Limitations</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__LIMITATIONS = ModelPackage.DELETEABLE_FEATURE_COUNT + 5;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Group</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 1;
+	int ITARMED_GROUP_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 6;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}' class.
@@ -269,13 +378,62 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_KUMULATION__VALID_SIDE = 2;
 
 	/**
+	 * The feature id for the '<em><b>Valid From</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__VALID_FROM = 3;
+
+	/**
+	 * The feature id for the '<em><b>Valid To</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__VALID_TO = 4;
+
+	/**
+	 * The feature id for the '<em><b>Law</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__LAW = 5;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Kumulation</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_KUMULATION_FEATURE_COUNT = 3;
+	int ITARMED_KUMULATION_FEATURE_COUNT = 6;
+
+
+	/**
+	 * The meta object id for the '<em>Limitation</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedLimitation()
+	 * @generated
+	 */
+	int TARMED_LIMITATION = 4;
+
+
+	/**
+	 * The meta object id for the '<em>Exclusion</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedExclusion()
+	 * @generated
+	 */
+	int TARMED_EXCLUSION = 5;
 
 
 	/**
@@ -377,6 +535,72 @@ public interface TarmedPackage extends EPackage {
 	EReference getITarmedLeistung_Parent();
 
 	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getValidFrom <em>Valid From</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid From</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getValidFrom()
+	 * @see #getITarmedLeistung()
+	 * @generated
+	 */
+	EAttribute getITarmedLeistung_ValidFrom();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getValidTo <em>Valid To</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid To</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getValidTo()
+	 * @see #getITarmedLeistung()
+	 * @generated
+	 */
+	EAttribute getITarmedLeistung_ValidTo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getServiceTyp <em>Service Typ</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Service Typ</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getServiceTyp()
+	 * @see #getITarmedLeistung()
+	 * @generated
+	 */
+	EAttribute getITarmedLeistung_ServiceTyp();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getLaw <em>Law</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Law</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getLaw()
+	 * @see #getITarmedLeistung()
+	 * @generated
+	 */
+	EAttribute getITarmedLeistung_Law();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getSparte <em>Sparte</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Sparte</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getSparte()
+	 * @see #getITarmedLeistung()
+	 * @generated
+	 */
+	EAttribute getITarmedLeistung_Sparte();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#isChapter <em>Chapter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Chapter</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#isChapter()
+	 * @see #getITarmedLeistung()
+	 * @generated
+	 */
+	EAttribute getITarmedLeistung_Chapter();
+
+	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -385,6 +609,17 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getITarmedExtension();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getLimits <em>Limits</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Limits</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getLimits()
+	 * @see #getITarmedExtension()
+	 * @generated
+	 */
+	EAttribute getITarmedExtension_Limits();
 
 	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup <em>ITarmed Group</em>}'.
@@ -406,6 +641,61 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getITarmedGroup_Code();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getServices <em>Services</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Services</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getServices()
+	 * @see #getITarmedGroup()
+	 * @generated
+	 */
+	EAttribute getITarmedGroup_Services();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getValidFrom <em>Valid From</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid From</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getValidFrom()
+	 * @see #getITarmedGroup()
+	 * @generated
+	 */
+	EAttribute getITarmedGroup_ValidFrom();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getValidTo <em>Valid To</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid To</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getValidTo()
+	 * @see #getITarmedGroup()
+	 * @generated
+	 */
+	EAttribute getITarmedGroup_ValidTo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getLaw <em>Law</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Law</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getLaw()
+	 * @see #getITarmedGroup()
+	 * @generated
+	 */
+	EAttribute getITarmedGroup_Law();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getLimitations <em>Limitations</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Limitations</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getLimitations()
+	 * @see #getITarmedGroup()
+	 * @generated
+	 */
+	EAttribute getITarmedGroup_Limitations();
 
 	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}'.
@@ -449,6 +739,61 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getITarmedKumulation_ValidSide();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getValidFrom <em>Valid From</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid From</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getValidFrom()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_ValidFrom();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getValidTo <em>Valid To</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid To</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getValidTo()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_ValidTo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getLaw <em>Law</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Law</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getLaw()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_Law();
+
+	/**
+	 * Returns the meta object for data type '{@link ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation <em>Limitation</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Limitation</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation
+	 * @model instanceClass="ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation"
+	 * @generated
+	 */
+	EDataType getTarmedLimitation();
+
+	/**
+	 * Returns the meta object for data type '{@link ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion <em>Exclusion</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Exclusion</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion
+	 * @model instanceClass="ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion"
+	 * @generated
+	 */
+	EDataType getTarmedExclusion();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -547,6 +892,54 @@ public interface TarmedPackage extends EPackage {
 		EReference ITARMED_LEISTUNG__PARENT = eINSTANCE.getITarmedLeistung_Parent();
 
 		/**
+		 * The meta object literal for the '<em><b>Valid From</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_LEISTUNG__VALID_FROM = eINSTANCE.getITarmedLeistung_ValidFrom();
+
+		/**
+		 * The meta object literal for the '<em><b>Valid To</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_LEISTUNG__VALID_TO = eINSTANCE.getITarmedLeistung_ValidTo();
+
+		/**
+		 * The meta object literal for the '<em><b>Service Typ</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_LEISTUNG__SERVICE_TYP = eINSTANCE.getITarmedLeistung_ServiceTyp();
+
+		/**
+		 * The meta object literal for the '<em><b>Law</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_LEISTUNG__LAW = eINSTANCE.getITarmedLeistung_Law();
+
+		/**
+		 * The meta object literal for the '<em><b>Sparte</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_LEISTUNG__SPARTE = eINSTANCE.getITarmedLeistung_Sparte();
+
+		/**
+		 * The meta object literal for the '<em><b>Chapter</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_LEISTUNG__CHAPTER = eINSTANCE.getITarmedLeistung_Chapter();
+
+		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -555,6 +948,14 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ITARMED_EXTENSION = eINSTANCE.getITarmedExtension();
+
+		/**
+		 * The meta object literal for the '<em><b>Limits</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_EXTENSION__LIMITS = eINSTANCE.getITarmedExtension_Limits();
 
 		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup <em>ITarmed Group</em>}' class.
@@ -573,6 +974,46 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ITARMED_GROUP__CODE = eINSTANCE.getITarmedGroup_Code();
+
+		/**
+		 * The meta object literal for the '<em><b>Services</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_GROUP__SERVICES = eINSTANCE.getITarmedGroup_Services();
+
+		/**
+		 * The meta object literal for the '<em><b>Valid From</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_GROUP__VALID_FROM = eINSTANCE.getITarmedGroup_ValidFrom();
+
+		/**
+		 * The meta object literal for the '<em><b>Valid To</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_GROUP__VALID_TO = eINSTANCE.getITarmedGroup_ValidTo();
+
+		/**
+		 * The meta object literal for the '<em><b>Law</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_GROUP__LAW = eINSTANCE.getITarmedGroup_Law();
+
+		/**
+		 * The meta object literal for the '<em><b>Limitations</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_GROUP__LIMITATIONS = eINSTANCE.getITarmedGroup_Limitations();
 
 		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}' class.
@@ -607,6 +1048,50 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ITARMED_KUMULATION__VALID_SIDE = eINSTANCE.getITarmedKumulation_ValidSide();
+
+		/**
+		 * The meta object literal for the '<em><b>Valid From</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__VALID_FROM = eINSTANCE.getITarmedKumulation_ValidFrom();
+
+		/**
+		 * The meta object literal for the '<em><b>Valid To</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__VALID_TO = eINSTANCE.getITarmedKumulation_ValidTo();
+
+		/**
+		 * The meta object literal for the '<em><b>Law</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__LAW = eINSTANCE.getITarmedKumulation_Law();
+
+		/**
+		 * The meta object literal for the '<em>Limitation</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedLimitation()
+		 * @generated
+		 */
+		EDataType TARMED_LIMITATION = eINSTANCE.getTarmedLimitation();
+
+		/**
+		 * The meta object literal for the '<em>Exclusion</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedExclusion()
+		 * @generated
+		 */
+		EDataType TARMED_EXCLUSION = eINSTANCE.getTarmedExclusion();
 
 	}
 

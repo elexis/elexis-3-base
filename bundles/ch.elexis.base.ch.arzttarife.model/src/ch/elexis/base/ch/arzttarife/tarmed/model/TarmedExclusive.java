@@ -2,6 +2,7 @@ package ch.elexis.base.ch.arzttarife.tarmed.model;
 
 import java.util.List;
 
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.rgw.tools.TimeTool;
 
@@ -10,7 +11,7 @@ public class TarmedExclusive {
 	private String slaveCode;
 	private TarmedKumulationType slaveType;
 	
-	public TarmedExclusive(TarmedKumulation kumulation){
+	public TarmedExclusive(ITarmedKumulation kumulation){
 		slaveCode = kumulation.getSlaveCode();
 		slaveType = TarmedKumulationType.ofArt(kumulation.getSlaveArt());
 	}

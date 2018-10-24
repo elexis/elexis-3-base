@@ -10,9 +10,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import ch.elexis.base.ch.arzttarife.model.tarmed.test.AllTarmedTests;
-import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.test.util.TestUtil;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
@@ -44,13 +44,13 @@ public class AllTestsSuite {
 		assertTrue(entityManager.executeSQLScript("test_initComplementaryTarif",
 			TestUtil.loadFile(AllTestsSuite.class, "/rsc/complementaryTarif.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmed",
-			TestUtil.loadFile(AllTestsSuite.class, "/rsc/tarmedTarif.sql")));
+			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/Tarmed.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmedExtension",
-			TestUtil.loadFile(AllTestsSuite.class, "/rsc/tarmedExtension.sql")));
+			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedExtension.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmedDefinitionen",
-			TestUtil.loadFile(AllTestsSuite.class, "/rsc/tarmedDefinitionen.sql")));
+			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedDefinitionen.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmedKumulationen",
-			TestUtil.loadFile(AllTestsSuite.class, "/rsc/tarmedKumulationen.sql")));
+			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedKumulation.sql")));
 	}
 	
 	public static IModelService getModelService(){

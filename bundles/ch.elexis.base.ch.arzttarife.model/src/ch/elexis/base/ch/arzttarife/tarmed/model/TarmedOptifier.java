@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.importer.TarmedLeistungAge;
@@ -40,7 +39,6 @@ import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
-import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
@@ -48,7 +46,6 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.services.IContextService;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -87,6 +84,21 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	private String newVerrechnetSide;
 	
 	private Map<String, Object> contextMap;
+	
+	@Override
+	public synchronized void putContext(String key, Object value){
+		if (contextMap == null) {
+			contextMap = new HashMap<String, Object>();
+		}
+		contextMap.put(key, value);
+	}
+	
+	@Override
+	public void clearContext(){
+		if (contextMap != null) {
+			contextMap.clear();
+		}
+	}
 	
 	/**
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
@@ -209,6 +221,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				if (!tc.requiresSide()) {
 					newVerrechnet = v;
 					newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
+					saveBilled();
 					break;
 				}
 			}
@@ -302,6 +315,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 					if (!found) {
 						// create a new Verrechent and decrease amount
 						newVerrechnet.setAmount(newVerrechnet.getAmount() - 1);
+						saveBilled();
 						newVerrechnet = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons).buildAndSave();
 						newVerrechnet.setExtInfo("Bezug", masters.get(0).getCode());
 					}
@@ -322,8 +336,10 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		if (!tc.getCode().equals(DEFAULT_TAX_XRAY_ROOM) && !tc.getCode().matches("39.002[01]")
 			&& tc.getParent().getId().startsWith(CHAPTER_XRAY)) {
 			if (TarmedUtil.getConfigValue(getClass(), IUser.class, Preferences.LEISTUNGSCODES_OPTIFY_XRAY, true)) {
+				saveBilled();
 				add(getKonsVerrechenbar(DEFAULT_TAX_XRAY_ROOM, kons), kons);
 				// add 39.0020, will be changed according to case (see above)
+				saveBilled();
 				add(getKonsVerrechenbar("39.0020", kons), kons);
 			}
 		}
@@ -359,6 +375,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 						if (alter < 6) {
 							TarmedLeistung tl =
 								(TarmedLeistung) getKonsVerrechenbar("00.0040", kons);
+							saveBilled();
 							add(tl, kons);
 						}
 					}
@@ -469,9 +486,19 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				break;
 
 			}
-			return new Result<IBilled>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 		}
-		return new Result<IBilled>(null);
+		
+		saveBilled();
+		
+		return new Result<IBilled>(newVerrechnet);
+	}
+
+	private void saveBilled(){
+		if(newVerrechnet != null) {
+			CoreModelServiceHolder.get().save(newVerrechnet);
+		} else {
+			LoggerFactory.getLogger(TarmedOptifier.class).warn("Call on null", new Throwable("Diagnosis"));
+		}
 	}
 
 	private void decrementOrDelete(IBilled verrechnet){
@@ -733,6 +760,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		reductionVerrechnet.setPoints((int) Math.round(opVerrechenbar.getTL()));
 		reductionVerrechnet.setPrimaryScale(-40);
 		reductionVerrechnet.setExtInfo("Bezug", opVerrechenbar.getCode());
+		CoreModelServiceHolder.get().save(reductionVerrechnet);
 	}
 	
 	/**
@@ -772,6 +800,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			if (!isMapped) {
 				reductionVerrechnet.setAmount(0);
 				reductionVerrechnet.setExtInfo("Bezug", "");
+				saveBilled();
 			}
 		}
 		
@@ -864,9 +893,11 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			if ((countSideLeft > countSideRight) && rightVerrechnet != null) {
 				newVerrechnet = rightVerrechnet;
 				newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
+				saveBilled();
 			} else if ((countSideLeft <= countSideRight) && leftVerrechnet != null) {
 				newVerrechnet = leftVerrechnet;
 				newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
+				saveBilled();
 			} else if ((countSideLeft > countSideRight) && rightVerrechnet == null) {
 				return ch.elexis.core.jpa.entities.TarmedLeistung.SIDE_R;
 			}

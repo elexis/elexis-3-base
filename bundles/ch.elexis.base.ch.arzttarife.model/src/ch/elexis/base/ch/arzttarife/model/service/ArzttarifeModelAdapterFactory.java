@@ -5,12 +5,14 @@ import java.util.Optional;
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.jpa.entities.ComplementaryLeistung;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
 import ch.elexis.core.jpa.entities.TarmedExtension;
+import ch.elexis.core.jpa.entities.TarmedGroup;
 import ch.elexis.core.jpa.entities.TarmedKumulation;
 import ch.elexis.core.jpa.entities.TarmedLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractModelAdapterFactory;
@@ -47,8 +49,11 @@ public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 		addMapping(new MappingEntry(ITarmedKumulation.class,
 			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedKumulation.class,
 			TarmedKumulation.class));
+		addMapping(new MappingEntry(ITarmedGroup.class,
+			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedGroup.class, TarmedGroup.class));
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(EntityWithId entity, Class<T> clazz, boolean registerEntityChangeEvent){
 		if (entity != null) {
 			Optional<Identifiable> adapter =

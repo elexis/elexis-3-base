@@ -273,8 +273,8 @@ public class TarmedLimitation {
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<IBilled> verrechnetByMandant = getVerrechnetByMandantAndCodeDuringPeriod(
-					kons, verrechnet.getBillable().getCode());
+				List<IBilled> verrechnetByMandant = getVerrechnetByMandantAndCodeDuringPeriod(kons,
+					verrechnet.getBillable().getCode());
 				if (getVerrechnetCount(verrechnetByMandant) > amount) {
 					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
 						toString(), null, false);
@@ -310,9 +310,9 @@ public class TarmedLimitation {
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
 	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
 	+ " AND faelle.ID = behandlungen.fallID"
-	+ " AND faelle.PatientID = :patientId"
-	+ " AND leistungen.LEISTG_CODE like :leistungCode"
-	+ " AND behandlungen.MandantID = :mandantId"
+	+ " AND faelle.PatientID = ?1"
+	+ " AND leistungen.LEISTG_CODE like ?2"
+	+ " AND behandlungen.MandantID = ?3"
 	+ " ORDER BY behandlungen.Datum ASC";
 	// @formatter:on
 	/**
@@ -334,9 +334,9 @@ public class TarmedLimitation {
 			
 			INativeQuery nativeQuery =
 				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE);
-			Map<String, Object> parameterMap = CoreModelServiceHolder.get().getParameterMap(
-				"patientId", kons.getCoverage().getPatient().getId(), "leistungCode", code + "%",
-				"mandantId", mandant.getId());
+			Map<Integer, Object> parameterMap = CoreModelServiceHolder.get().getIndexedParameterMap(
+				Integer.valueOf(1), kons.getCoverage().getPatient().getId(), Integer.valueOf(2),
+				code + "%", Integer.valueOf(3), mandant.getId());
 			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
 			while (result.hasNext()) {
 				String next = result.next().toString();
@@ -344,25 +344,25 @@ public class TarmedLimitation {
 				all.add(load);
 			}
 			//			while (result.iterator().next()) {
-//				all.add(Verrechnet.load(resultSet.getString(1)));
-//			}			
+			//				all.add(Verrechnet.load(resultSet.getString(1)));
+			//			}			
 			
-//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
-//				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE);
-//			try {
-//				pstm.setString(1, kons.getCoverage().getPatient().getId());
-//				pstm.setString(2, code + "%");
-//				pstm.setString(3, mandant.getId());
-//				ResultSet resultSet = pstm.executeQuery();
-//				while (resultSet.next()) {
-//					all.add(Verrechnet.load(resultSet.getString(1)));
-//				}
-//				resultSet.close();
-//			} catch (SQLException e) {
-//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
-//			} finally {
-//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
-//			}
+			//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
+			//				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE);
+			//			try {
+			//				pstm.setString(1, kons.getCoverage().getPatient().getId());
+			//				pstm.setString(2, code + "%");
+			//				pstm.setString(3, mandant.getId());
+			//				ResultSet resultSet = pstm.executeQuery();
+			//				while (resultSet.next()) {
+			//					all.add(Verrechnet.load(resultSet.getString(1)));
+			//				}
+			//				resultSet.close();
+			//			} catch (SQLException e) {
+			//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
+			//			} finally {
+			//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
+			//			}
 			all = filterValidCodeForKonsultation(code, kons, all);
 			// now group in time periods since first verrechnet
 			LocalDate konsDate = kons.getDate();
@@ -448,10 +448,10 @@ public class TarmedLimitation {
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
 	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
 	+ " AND faelle.ID = behandlungen.fallID"
-	+ " AND faelle.PatientID = :patientId"
-	+ " AND leistungen.LEISTG_CODE like :leistungCode"
-	+ " AND behandlungen.Datum >= :datum"
-	+ " AND behandlungen.MandantID = :mandantId";
+	+ " AND faelle.PatientID = ?1"
+	+ " AND leistungen.LEISTG_CODE like ?2"
+	+ " AND behandlungen.Datum >= ?3"
+	+ " AND behandlungen.MandantID = ?4";
 	// @formatter:on
 	
 	private List<IBilled> getVerrechnetByMandantAndCodeDuring(IEncounter kons, String code){
@@ -461,36 +461,36 @@ public class TarmedLimitation {
 		if (fromDate != null && mandant != null) {
 			
 			INativeQuery nativeQuery =
-					CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
-				Map<String, Object> parameterMap = CoreModelServiceHolder.get().getParameterMap(
-					"patientId", kons.getCoverage().getPatient().getId(), "leistungCode", code + "%",
-					"datum", fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),
-					"mandantId", mandant.getId());
-				Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
-				while (result.hasNext()) {
-					String next = result.next().toString();
-					IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
-					ret.add(load);
-				}
+				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
+			Map<Integer, Object> parameterMap =
+				CoreModelServiceHolder.get().getIndexedParameterMap(Integer.valueOf(1),
+					kons.getCoverage().getPatient().getId(), Integer.valueOf(2), code + "%",
+					Integer.valueOf(3), fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),
+					Integer.valueOf(4), mandant.getId());
+			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
+			while (result.hasNext()) {
+				String next = result.next().toString();
+				IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
+				ret.add(load);
+			}
 			
-			
-//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
-//				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE_DURING);
-//			try {
-//				pstm.setString(1, kons.getCoverage().getPatient().getId());
-//				pstm.setString(2, code + "%");
-//				pstm.setString(3, fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-//				pstm.setString(4, mandant.getId());
-//				ResultSet resultSet = pstm.executeQuery();
-//				while (resultSet.next()) {
-//					ret.add(Verrechnet.load(resultSet.getString(1)));
-//				}
-//				resultSet.close();
-//			} catch (SQLException e) {
-//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
-//			} finally {
-//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
-//			}
+			//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
+			//				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE_DURING);
+			//			try {
+			//				pstm.setString(1, kons.getCoverage().getPatient().getId());
+			//				pstm.setString(2, code + "%");
+			//				pstm.setString(3, fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+			//				pstm.setString(4, mandant.getId());
+			//				ResultSet resultSet = pstm.executeQuery();
+			//				while (resultSet.next()) {
+			//					ret.add(Verrechnet.load(resultSet.getString(1)));
+			//				}
+			//				resultSet.close();
+			//			} catch (SQLException e) {
+			//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
+			//			} finally {
+			//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
+			//			}
 		}
 		return ret;
 	}
@@ -501,8 +501,8 @@ public class TarmedLimitation {
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
 	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
-	+ " AND leistungen.LEISTG_CODE like :leistungCode"
-	+ " AND behandlungen.FallID = :fallId";
+	+ " AND leistungen.LEISTG_CODE like ?1"
+	+ " AND behandlungen.FallID = ?2";
 	// @formatter:on
 	
 	private List<IBilled> getVerrechnetByCoverageAndCode(IEncounter kons, String code){
@@ -510,31 +510,31 @@ public class TarmedLimitation {
 		if (kons != null && kons.getCoverage() != null) {
 			
 			INativeQuery nativeQuery =
-					CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
-				Map<String, Object> parameterMap = CoreModelServiceHolder.get().getParameterMap(
-					"leistungCode", code + "%", "fallId", kons.getCoverage().getId());
-				Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
-				while (result.hasNext()) {
-					String next = result.next().toString();
-					IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
-					ret.add(load);
-				}
+				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
+			Map<Integer, Object> parameterMap = CoreModelServiceHolder.get().getIndexedParameterMap(
+				Integer.valueOf(1), code + "%", Integer.valueOf(2), kons.getCoverage().getId());
+			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
+			while (result.hasNext()) {
+				String next = result.next().toString();
+				IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
+				ret.add(load);
+			}
 			
-//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
-//				.getPreparedStatement(VERRECHNET_BYCOVERAGE_ANDCODE);
-//			try {
-//				pstm.setString(1, code + "%");
-//				pstm.setString(2, kons.getCoverage().getId());
-//				ResultSet resultSet = pstm.executeQuery();
-//				while (resultSet.next()) {
-//					ret.add(Verrechnet.load(resultSet.getString(1)));
-//				}
-//				resultSet.close();
-//			} catch (SQLException e) {
-//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
-//			} finally {
-//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
-//			}
+			//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
+			//				.getPreparedStatement(VERRECHNET_BYCOVERAGE_ANDCODE);
+			//			try {
+			//				pstm.setString(1, code + "%");
+			//				pstm.setString(2, kons.getCoverage().getId());
+			//				ResultSet resultSet = pstm.executeQuery();
+			//				while (resultSet.next()) {
+			//					ret.add(Verrechnet.load(resultSet.getString(1)));
+			//				}
+			//				resultSet.close();
+			//			} catch (SQLException e) {
+			//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
+			//			} finally {
+			//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
+			//			}
 		}
 		return ret;
 	}
@@ -579,10 +579,9 @@ public class TarmedLimitation {
 	}
 	
 	/**
-	 * Filter the list of {@link IBilled} that only instances with the same code field (Tarmed
-	 * code, startdate and law) as the valid {@link TarmedLeistung} for the provided
-	 * {@link Konsultation}. This filters {@link IBilled} with a {@link TarmedLeistung} from a
-	 * different catalog.
+	 * Filter the list of {@link IBilled} that only instances with the same code field (Tarmed code,
+	 * startdate and law) as the valid {@link TarmedLeistung} for the provided {@link Konsultation}.
+	 * This filters {@link IBilled} with a {@link TarmedLeistung} from a different catalog.
 	 * 
 	 * @param verrechnet
 	 * @return
@@ -591,8 +590,7 @@ public class TarmedLimitation {
 		List<IBilled> list){
 		List<IBilled> ret = new ArrayList<>();
 		BillingLaw law = kons.getCoverage().getBillingSystem().getLaw();
-		IBillable validForKons =
-			TarmedLeistung.getFromCode(code, kons.getDate(), law.name());
+		IBillable validForKons = TarmedLeistung.getFromCode(code, kons.getDate(), law.name());
 		if (validForKons != null) {
 			String matchCode = validForKons.getId();
 			if (matchCode != null && !matchCode.isEmpty()) {

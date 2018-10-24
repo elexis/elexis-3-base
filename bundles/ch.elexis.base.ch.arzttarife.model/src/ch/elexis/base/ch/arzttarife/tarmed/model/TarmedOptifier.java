@@ -150,6 +150,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			TimeTool date = new TimeTool(kons.getDate());
 			LocalDate dVon = code.getValidFrom();
 			if (!StringTool.isNothing(dVon)) {
+				// TODO check this does not enter here, although dVon is set
 				TimeTool tVon = new TimeTool(dVon);
 				if (date.isBefore(tVon)) {
 					return new Result<IBilled>(Result.SEVERITY.WARNING, NOTYETVALID,
@@ -158,6 +159,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			}
 			LocalDate dBis = code.getValidTo();
 			if (!StringTool.isNothing(dBis)) {
+				// TODO check this does not enter here, although dVon is set
 				TimeTool tBis = new TimeTool(dBis);
 				if (date.isAfter(tBis)) {
 					return new Result<IBilled>(Result.SEVERITY.WARNING, NOMOREVALID,

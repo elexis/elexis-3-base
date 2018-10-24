@@ -29,6 +29,8 @@ public class TarmedLeistungTest {
 		
 		ITarmedExtension extension = loaded.getExtension();
 		assertTrue(extension instanceof ITarmedExtension);
+		assertEquals(23, extension.getLimits().size());
+		assertEquals("H", extension.getLimits().get("LEISTUNG_TYP"));
 		
 		ITarmedLeistung parent = loaded.getParent();
 		assertTrue(parent instanceof ITarmedLeistung);

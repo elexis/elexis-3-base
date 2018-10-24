@@ -47,22 +47,11 @@ public interface ITarmedLeistung extends IBillable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Minutes</em>' attribute.
-	 * @see #setMinutes(int)
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Minutes()
-	 * @model
+	 * @model changeable="false"
 	 * @generated
 	 */
 	int getMinutes();
-
-	/**
-	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getMinutes <em>Minutes</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Minutes</em>' attribute.
-	 * @see #getMinutes()
-	 * @generated
-	 */
-	void setMinutes(int value);
 
 	/**
 	 * Returns the value of the '<em><b>AL</b></em>' attribute.
@@ -103,22 +92,11 @@ public interface ITarmedLeistung extends IBillable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Digni Quali</em>' attribute.
-	 * @see #setDigniQuali(String)
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_DigniQuali()
-	 * @model
+	 * @model changeable="false"
 	 * @generated
 	 */
 	String getDigniQuali();
-
-	/**
-	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getDigniQuali <em>Digni Quali</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Digni Quali</em>' attribute.
-	 * @see #getDigniQuali()
-	 * @generated
-	 */
-	void setDigniQuali(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Digni Quanti</b></em>' attribute.
@@ -129,22 +107,11 @@ public interface ITarmedLeistung extends IBillable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Digni Quanti</em>' attribute.
-	 * @see #setDigniQuanti(String)
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_DigniQuanti()
-	 * @model
+	 * @model changeable="false"
 	 * @generated
 	 */
 	String getDigniQuanti();
-
-	/**
-	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getDigniQuanti <em>Digni Quanti</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Digni Quanti</em>' attribute.
-	 * @see #getDigniQuanti()
-	 * @generated
-	 */
-	void setDigniQuanti(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Exclusion</b></em>' attribute.
@@ -155,22 +122,11 @@ public interface ITarmedLeistung extends IBillable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Exclusion</em>' attribute.
-	 * @see #setExclusion(String)
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Exclusion()
-	 * @model
+	 * @model changeable="false"
 	 * @generated
 	 */
 	String getExclusion();
-
-	/**
-	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getExclusion <em>Exclusion</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Exclusion</em>' attribute.
-	 * @see #getExclusion()
-	 * @generated
-	 */
-	void setExclusion(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Extension</b></em>' reference.
@@ -207,22 +163,11 @@ public interface ITarmedLeistung extends IBillable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Parent</em>' reference.
-	 * @see #setParent(ITarmedLeistung)
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Parent()
-	 * @model
+	 * @model changeable="false"
 	 * @generated
 	 */
 	ITarmedLeistung getParent();
-
-	/**
-	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getParent <em>Parent</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Parent</em>' reference.
-	 * @see #getParent()
-	 * @generated
-	 */
-	void setParent(ITarmedLeistung value);
 
 	/**
 	 * Returns the value of the '<em><b>Valid From</b></em>' attribute.

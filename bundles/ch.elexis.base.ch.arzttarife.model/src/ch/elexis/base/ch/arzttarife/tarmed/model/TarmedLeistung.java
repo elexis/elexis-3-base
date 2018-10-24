@@ -38,19 +38,18 @@ public class TarmedLeistung
 	
 	public TarmedLeistung(ch.elexis.core.jpa.entities.TarmedLeistung entity){
 		super(entity);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public int getMinutes(){
 		// TODO Auto-generated method stub
+//		Hashtable<String, String> map = loadExtension();
+//		double min = checkZeroDouble(map.get("LSTGIMES_MIN")); //$NON-NLS-1$
+//		min += checkZeroDouble(map.get("VBNB_MIN")); //$NON-NLS-1$
+//		min += checkZeroDouble(map.get("BEFUND_MIN")); //$NON-NLS-1$
+//		min += checkZeroDouble(map.get("WECHSEL_MIN")); //$NON-NLS-1$
+//		return (int) Math.round(min);
 		return 0;
-	}
-	
-	@Override
-	public void setMinutes(int value){
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
@@ -111,33 +110,14 @@ public class TarmedLeistung
 	}
 	
 	@Override
-	public void setDigniQuali(String value){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
 	public String getDigniQuanti(){
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public void setDigniQuanti(String value){
-		// TODO Auto-generated method stub
-		
+		return getEntity().getDigniQuanti();
 	}
 	
 	@Override
 	public String getExclusion(){
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public void setExclusion(String value){
-		// TODO Auto-generated method stub
-		
+		curTimeHelper = LocalDate.now();
+		return getExclusion(curTimeHelper);
 	}
 	
 	@Override
@@ -193,16 +173,10 @@ public class TarmedLeistung
 	@Override
 	public ITarmedLeistung getParent(){
 		String parent = getEntity().getParent();
-		if (parent != null && parent != "NIL") {
+		if (parent != null && !"NIL".equals(parent)) {
 			return ArzttarifeModelServiceHolder.get().load(parent, ITarmedLeistung.class).get();
 		}
 		return null;
-	}
-	
-	@Override
-	public void setParent(ITarmedLeistung value){
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
@@ -217,11 +191,11 @@ public class TarmedLeistung
 	
 	@Override
 	public boolean requiresSide(){
-		//		Hashtable<String, String> map = loadExtension();
-		//		if (checkZero(map.get(SIDE.toUpperCase())) == 1) {
-		//			return true;
-		//		}
-		//		return false;
+		if (getExtension() != null) {
+			String value =
+				getExtension().getLimits().get(TarmedConstants.TarmedLeistung.SIDE.toUpperCase());
+			return "1".equals(value);
+		}
 		return false;
 	}
 	
@@ -543,7 +517,7 @@ public class TarmedLeistung
 			if (_date.isAfterOrEqual(validFrom) && _date.isBeforeOrEqual(validTo)) {
 				return (TarmedLeistung) tarmedLeistung;
 			}
-
+			
 		}
 		return null;
 	}

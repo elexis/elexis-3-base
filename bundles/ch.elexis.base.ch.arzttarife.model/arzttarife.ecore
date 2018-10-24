@@ -12,16 +12,21 @@
         <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       </eOperations>
       <eOperations name="requiresSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+          changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="TL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           changeable="false"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuali" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuanti" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuali" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="digniQuanti" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tarmed/ITarmedExtension"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//tarmed/ITarmedLeistung"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//tarmed/ITarmedLeistung"
+          changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"

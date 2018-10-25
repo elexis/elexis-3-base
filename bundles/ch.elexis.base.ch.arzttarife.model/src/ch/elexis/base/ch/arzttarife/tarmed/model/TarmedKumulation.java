@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
@@ -71,8 +70,8 @@ public class TarmedKumulation
 		INamedQuery<ITarmedKumulation> query = ArzttarifeModelServiceHolder.get()
 			.getNamedQuery(ITarmedKumulation.class, "masterCode", "typ");
 		List<ITarmedKumulation> exclusions =
-			query.executeWithParameters(CoreModelServiceHolder.get().getParameterMap("masterCode",
-				code, "typ", ch.elexis.core.jpa.entities.TarmedKumulation.TYP_EXCLUSION));
+			query.executeWithParameters(query.getParameterMap("masterCode", code, "typ",
+				ch.elexis.core.jpa.entities.TarmedKumulation.TYP_EXCLUSION));
 		if (exclusions == null || exclusions.isEmpty()) {
 			return null;
 		}
@@ -106,9 +105,8 @@ public class TarmedKumulation
 		TarmedKumulationType masterType, LocalDate date, String law){
 		INamedQuery<ITarmedKumulation> query = ArzttarifeModelServiceHolder.get()
 			.getNamedQuery(ITarmedKumulation.class, "masterCode", "masterArt", "typ");
-		List<ITarmedKumulation> exclusions =
-			query.executeWithParameters(CoreModelServiceHolder.get().getParameterMap("masterCode",
-				mastercode, "masterArt", masterType.getArt(), "typ",
+		List<ITarmedKumulation> exclusions = query.executeWithParameters(
+			query.getParameterMap("masterCode", mastercode, "masterArt", masterType.getArt(), "typ",
 				ch.elexis.core.jpa.entities.TarmedKumulation.TYP_EXCLUSION));
 		
 		if (law != null && !law.isEmpty()) {
@@ -139,9 +137,8 @@ public class TarmedKumulation
 		
 		INamedQuery<ITarmedKumulation> query = ArzttarifeModelServiceHolder.get()
 			.getNamedQuery(ITarmedKumulation.class, "masterCode", "masterArt", "typ");
-		List<ITarmedKumulation> exclusives =
-			query.executeWithParameters(CoreModelServiceHolder.get().getParameterMap("masterCode",
-				mastercode, "masterArt", masterType.getArt(), "typ",
+		List<ITarmedKumulation> exclusives = query.executeWithParameters(
+			query.getParameterMap("masterCode", mastercode, "masterArt", masterType.getArt(), "typ",
 				ch.elexis.core.jpa.entities.TarmedKumulation.TYP_EXCLUSIVE));
 		
 		if (law != null && !law.isEmpty()) {

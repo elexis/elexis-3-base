@@ -20,6 +20,7 @@ import ch.elexis.core.exceptions.PersistenceException;
 import ch.elexis.core.jpa.entities.DocHandle;
 import ch.elexis.core.jpa.entities.Kontakt;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
+import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IHistory;

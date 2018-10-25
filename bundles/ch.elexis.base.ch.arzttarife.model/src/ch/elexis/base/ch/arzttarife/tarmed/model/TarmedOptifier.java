@@ -47,7 +47,6 @@ import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.services.IConfigService;
 import ch.rgw.tools.Result;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -149,8 +148,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		if (bOptify) {
 			TimeTool date = new TimeTool(kons.getDate());
 			LocalDate dVon = code.getValidFrom();
-			if (!StringTool.isNothing(dVon)) {
-				// TODO check this does not enter here, although dVon is set
+			if (dVon != null) {
 				TimeTool tVon = new TimeTool(dVon);
 				if (date.isBefore(tVon)) {
 					return new Result<IBilled>(Result.SEVERITY.WARNING, NOTYETVALID,
@@ -158,8 +156,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				}
 			}
 			LocalDate dBis = code.getValidTo();
-			if (!StringTool.isNothing(dBis)) {
-				// TODO check this does not enter here, although dVon is set
+			if (dBis != null) {
 				TimeTool tBis = new TimeTool(dBis);
 				if (date.isAfter(tBis)) {
 					return new Result<IBilled>(Result.SEVERITY.WARNING, NOMOREVALID,

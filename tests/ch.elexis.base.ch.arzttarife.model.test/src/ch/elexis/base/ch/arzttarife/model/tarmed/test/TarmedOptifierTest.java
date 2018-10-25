@@ -517,134 +517,134 @@ public class TarmedOptifierTest {
 		resetKons(konsGriss);
 	}
 	
-	//	/**
-	//	 * Test cleanup after kumulation warning.
-	//	 */
-	//	@Test
-	//	public void testCleanUpAfterKumulation(){
-	//		clearKons(konsGriss);
-	//		
-	//		Result<IVerrechenbar> result;
-	//		for (int i = 0; i < 6; i++) {
-	//			result = optifier.add(
-	//				(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", new TimeTool(), null),
-	//				konsGriss);
-	//			assertTrue(result.isOK());
-	//		}
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", new TimeTool(), null),
-	//			konsGriss);
-	//		assertFalse(result.isOK());
-	//		assertEquals(6, konsGriss.getLeistungen().get(0).getZahl());
-	//		
-	//		clearKons(konsGriss);
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", new TimeTool(), null),
-	//			konsGriss);
-	//		assertTrue(result.isOK());
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
-	//			konsGriss);
-	//		assertTrue(result.isOK());
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
-	//			konsGriss);
-	//		assertTrue(result.isOK());
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0030", new TimeTool(), null),
-	//			konsGriss);
-	//		assertTrue(result.isOK());
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", new TimeTool(), null),
-	//			konsGriss);
-	//		assertFalse(result.isOK());
-	//		assertEquals(1, getLeistungAmount("00.0010", konsGriss));
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", new TimeTool(), null),
-	//			konsGriss);
-	//		assertFalse(result.isOK());
-	//		assertEquals(2, getLeistungAmount("00.0020", konsGriss));
-	//		
-	//		resetKons(konsGriss);
-	//	}
-	//	
-	//	@Test
-	//	public void testKumulationSide(){
-	//		clearKons(konsGriss);
-	//		
-	//		Result<IVerrechenbar> result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("20.0330", new TimeTool(), null),
-	//			konsGriss);
-	//		assertTrue(result.isOK());
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("20.0330", new TimeTool(), null),
-	//			konsGriss);
-	//		assertFalse(result.isOK());
-	//		
-	//		clearKons(konsGriss);
-	//	}
-	//	
-	//	/**
-	//	 * Test of limitation per period currently Tarmed 1.08 00.0140 limit 10 per 3 month. <br />
-	//	 * With Tarmed 1.09 00.0141 should be used limit 30 per 3 month.
-	//	 * 
-	//	 */
-	//	@Test
-	//	public void testLimitationPeriod(){
-	//		clearKons(konsPeriodStart);
-	//		clearKons(konsPeriodMiddle);
-	//		clearKons(konsPeriodEnd);
-	//		Result<IVerrechenbar> result = null;
-	//		// start and middle are 1 period
-	//		for (int i = 0; i < 6; i++) {
-	//			result = optifier.add(
-	//				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", new TimeTool(), null),
-	//				konsPeriodStart);
-	//			assertTrue(result.isOK());
-	//		}
-	//		for (int i = 0; i < 6; i++) {
-	//			result = optifier.add(
-	//				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", new TimeTool(), null),
-	//				konsPeriodMiddle);
-	//			assertTrue(result.isOK());
-	//		}
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", new TimeTool(), null),
-	//			konsPeriodMiddle);
-	//		assertFalse(result.isOK());
-	//		// end is after period so middle is not included for limit
-	//		for (int i = 0; i < 7; i++) {
-	//			result = optifier.add(
-	//				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", new TimeTool(), null),
-	//				konsPeriodEnd);
-	//			assertTrue(result.isOK());
-	//		}
-	//		
-	//		clearKons(konsPeriodStart);
-	//		clearKons(konsPeriodMiddle);
-	//		clearKons(konsPeriodEnd);
-	//	}
-	//	
-	//	@Test
-	//	public void testAdditionalBlockExclusion(){
-	//		clearKons(konsGriss);
-	//		
-	//		Result<IVerrechenbar> result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("17.0710", new TimeTool(), null),
-	//			konsGriss);
-	//		assertTrue(result.isOK());
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("17.0740", new TimeTool(), null),
-	//			konsGriss);
-	//		assertTrue(result.isOK());
-	//		// additional service, not in block LB-05, billing is allowed anyway
-	//		result = optifier.add(
-	//			(TarmedLeistung) TarmedLeistung.getFromCode("17.0750", new TimeTool(), null),
-	//			konsGriss);
-	//		assertTrue(result.isOK());
-	//		
-	//		clearKons(konsGriss);
-	//	}
+	/**
+	 * Test cleanup after kumulation warning.
+	 */
+	@Test
+	public void testCleanUpAfterKumulation(){
+		clearKons(konsGriss);
+		
+		Result<IBilled> result;
+		for (int i = 0; i < 6; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", LocalDate.now(), null),
+				konsGriss);
+			assertTrue(result.isOK());
+		}
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", LocalDate.now(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(6, konsGriss.getBilled().get(0).getAmount(), 0.01);
+		
+		clearKons(konsGriss);
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", LocalDate.now(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0030", LocalDate.now(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", LocalDate.now(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(1, getLeistungAmount("00.0010", konsGriss));
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		assertEquals(2, getLeistungAmount("00.0020", konsGriss));
+		
+		resetKons(konsGriss);
+	}
+	
+	@Test
+	public void testKumulationSide(){
+		clearKons(konsGriss);
+		
+		Result<IBilled> result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("20.0330", LocalDate.now(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("20.0330", LocalDate.now(), null),
+			konsGriss);
+		assertFalse(result.isOK());
+		
+		clearKons(konsGriss);
+	}
+	
+	/**
+	 * Test of limitation per period currently Tarmed 1.08 00.0140 limit 10 per 3 month. <br />
+	 * With Tarmed 1.09 00.0141 should be used limit 30 per 3 month.
+	 * 
+	 */
+	@Test
+	public void testLimitationPeriod(){
+		clearKons(konsPeriodStart);
+		clearKons(konsPeriodMiddle);
+		clearKons(konsPeriodEnd);
+		Result<IBilled> result = null;
+		// start and middle are 1 period
+		for (int i = 0; i < 6; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", LocalDate.now(), null),
+				konsPeriodStart);
+			assertTrue(result.isOK());
+		}
+		for (int i = 0; i < 6; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", LocalDate.now(), null),
+				konsPeriodMiddle);
+			assertTrue(result.isOK());
+		}
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", LocalDate.now(), null),
+			konsPeriodMiddle);
+		assertFalse(result.isOK());
+		// end is after period so middle is not included for limit
+		for (int i = 0; i < 7; i++) {
+			result = optifier.add(
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", LocalDate.now(), null),
+				konsPeriodEnd);
+			assertTrue(result.isOK());
+		}
+		
+		clearKons(konsPeriodStart);
+		clearKons(konsPeriodMiddle);
+		clearKons(konsPeriodEnd);
+	}
+	
+	@Test
+	public void testAdditionalBlockExclusion(){
+		clearKons(konsGriss);
+		
+		Result<IBilled> result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("17.0710", LocalDate.now(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("17.0740", LocalDate.now(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		// additional service, not in block LB-05, billing is allowed anyway
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("17.0750", LocalDate.now(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		clearKons(konsGriss);
+	}
 	
 	private int getLeistungAmount(String code, IEncounter kons){
 		int ret = 0;

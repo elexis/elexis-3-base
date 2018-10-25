@@ -508,9 +508,8 @@ public class TarmedLimitation {
 	private List<IBilled> getVerrechnetByCoverageAndCode(IEncounter kons, String code){
 		List<IBilled> ret = new ArrayList<>();
 		if (kons != null && kons.getCoverage() != null) {
-			
 			INativeQuery nativeQuery =
-				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
+				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYCOVERAGE_ANDCODE);
 			Map<Integer, Object> parameterMap = CoreModelServiceHolder.get().getIndexedParameterMap(
 				Integer.valueOf(1), code + "%", Integer.valueOf(2), kons.getCoverage().getId());
 			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
@@ -519,22 +518,6 @@ public class TarmedLimitation {
 				IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
 				ret.add(load);
 			}
-			
-			//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
-			//				.getPreparedStatement(VERRECHNET_BYCOVERAGE_ANDCODE);
-			//			try {
-			//				pstm.setString(1, code + "%");
-			//				pstm.setString(2, kons.getCoverage().getId());
-			//				ResultSet resultSet = pstm.executeQuery();
-			//				while (resultSet.next()) {
-			//					ret.add(Verrechnet.load(resultSet.getString(1)));
-			//				}
-			//				resultSet.close();
-			//			} catch (SQLException e) {
-			//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
-			//			} finally {
-			//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
-			//			}
 		}
 		return ret;
 	}

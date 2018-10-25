@@ -137,22 +137,11 @@ public interface ITarmedLeistung extends IBillable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Extension</em>' reference.
-	 * @see #setExtension(ITarmedExtension)
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Extension()
-	 * @model
+	 * @model changeable="false"
 	 * @generated
 	 */
 	ITarmedExtension getExtension();
-
-	/**
-	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getExtension <em>Extension</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Extension</em>' reference.
-	 * @see #getExtension()
-	 * @generated
-	 */
-	void setExtension(ITarmedExtension value);
 
 	/**
 	 * Returns the value of the '<em><b>Parent</b></em>' reference.

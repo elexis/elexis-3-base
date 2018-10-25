@@ -1,6 +1,7 @@
 package ch.elexis.base.ch.arzttarife.model.tarmed.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
@@ -35,6 +36,26 @@ public class TarmedLeistungTest {
 		ITarmedLeistung parent = loaded.getParent();
 		assertTrue(parent instanceof ITarmedLeistung);
 		assertEquals("00.01.01-20010101-KVG", parent.getId());
+		
+		List<String> serviceGroups = loaded.getServiceGroups(LocalDate.now());
+		assertEquals(3, serviceGroups.size());
+		assertTrue(serviceGroups.contains("03"));
+		assertTrue(serviceGroups.contains("18"));
+		assertTrue(serviceGroups.contains("58"));
+		
+		assertFalse(loaded.requiresSide());
+		assertEquals("H", loaded.getServiceTyp());
+	}
+	
+	@Test
+	public void loadArticleInBlock(){
+		ITarmedLeistung loaded = AllTestsSuite.getModelService()
+			.load("00.0150-20180101-KVG", ITarmedLeistung.class).get();
+		assertTrue(loaded instanceof ITarmedLeistung);
+		
+		List<String> serviceBlocks = loaded.getServiceBlocks(LocalDate.now());
+		assertEquals(1, serviceBlocks.size());
+		assertTrue(serviceBlocks.contains("01"));
 	}
 	
 	@Test

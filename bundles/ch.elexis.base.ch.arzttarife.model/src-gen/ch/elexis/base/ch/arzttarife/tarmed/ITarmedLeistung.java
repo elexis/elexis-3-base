@@ -250,6 +250,9 @@ public interface ITarmedLeistung extends IBillable {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * <p>
+	 * Leistung ist beinhaltet in retournierten Leistungsgruppen
+	 * </p>
 	 * <!-- end-user-doc -->
 	 * @model dateDataType="ch.elexis.core.types.LocalDate"
 	 * @generated
@@ -258,6 +261,9 @@ public interface ITarmedLeistung extends IBillable {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * <p>
+	 * Leistung ist Teil der retournierten Leistungsblöcke
+	 * </p>
 	 * <!-- end-user-doc -->
 	 * @model dateDataType="ch.elexis.core.types.LocalDate"
 	 * @generated

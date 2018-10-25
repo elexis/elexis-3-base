@@ -52,6 +52,8 @@ public class AllTestsSuite {
 			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/TarmedDefinitionen.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmedKumulationen", TestUtil
 			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/TarmedKumulation.sql")));
+		assertTrue(entityManager.executeSQLScript("test_initTarmedGroup", TestUtil
+			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/TarmedGroup.sql")));
 	}
 	
 	public static IModelService getModelService(){

@@ -253,7 +253,7 @@ public class TarmedLeistung
 	public List<String> getServiceBlocks(LocalDate date){
 		List<String> ret = new ArrayList<>();
 		List<String> blocks = getExtStringListField(
-			ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_SERVICE_BLOCKS);
+			TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_BLOCKS);
 		if (!blocks.isEmpty()) {
 			for (String string : blocks) {
 				int dateStart = string.indexOf('[');
@@ -276,7 +276,7 @@ public class TarmedLeistung
 	public List<String> getServiceGroups(LocalDate date){
 		List<String> ret = new ArrayList<>();
 		List<String> groups = getExtStringListField(
-			ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_SERVICE_GROUPS);
+			TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_GROUPS);
 		if (!groups.isEmpty()) {
 			for (String string : groups) {
 				int dateStart = string.indexOf('[');

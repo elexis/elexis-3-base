@@ -7,7 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	TarmedDefinitionenTest.class, TarmedLeistungTest.class, TarmedKumulationTest.class,
-	TarmedOptifierTest.class
+	TarmedOptifierTest.class, TarmedGroupTest.class
 })
 public class AllTarmedTests {
 	

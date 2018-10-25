@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
+import ch.elexis.base.ch.arzttarife.tarmed.importer.TarmedReferenceDataImporter;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
@@ -31,8 +32,10 @@ import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.types.Gender;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
@@ -130,7 +133,10 @@ public class TarmedOptifierTest {
 	}
 	
 	private static void importTarmedReferenceData() throws FileNotFoundException{
-		
+		// Importer not provided we import the raw db; set values that would have
+		//		// been set by the importer
+		OsgiServiceUtil.getService(IConfigService.class).get()
+			.set(TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE, true);
 		//		File tarmedFile = new File(System.getProperty("user.dir") + File.separator + "rsc"
 		//			+ File.separator + "tarmed.mdb");
 		//		InputStream tarmedInStream = new FileInputStream(tarmedFile);
@@ -375,63 +381,63 @@ public class TarmedOptifierTest {
 		assertTrue(result.isOK());
 	}
 	
-//	@Test
-//	public void testDignitaet(){
-//		IEncounter kons = konsGriss;
-//		setUpDignitaet(kons);
-//		
-//		// default mandant type is specialist
-//		clearKons(kons);
-//		Result<IBilled> result = kons.addLeistung(tlBaseFirst5Min);
-//		assertTrue(result.isOK());
-//		Verrechnet verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-//		assertNotNull(verrechnet);
-//		int amountAL = TarmedLeistung.getAL(verrechnet);
-//		assertEquals(1042, amountAL);
-//		Money amount = verrechnet.getNettoPreis();
-//		assertEquals(15.45, amount.getAmount(), 0.01);
-//		
-//		// set the mandant type to practitioner
-//		clearKons(kons);
-//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.PRACTITIONER);
-//		result = kons.addLeistung(tlBaseFirst5Min);
-//		assertTrue(result.isOK());
-//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-//		assertNotNull(verrechnet);
-//		amountAL = TarmedLeistung.getAL(verrechnet);
-//		assertEquals(969, amountAL);
-//		amount = verrechnet.getNettoPreis();
-//		assertEquals(14.84, amount.getAmount(), 0.01); // 10.42 * 0.83 * 0.93 + 8.19 * 0.83
-//		String alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
-//		assertEquals("0.93", alScalingFactor);
-//		String alNotScaled = verrechnet.getDetail("AL_NOTSCALED");
-//		assertEquals("1042", alNotScaled);
-//		
-//		result = kons.addLeistung(tlAlZero);
-//		assertTrue(result.isOK());
-//		verrechnet = kons.getVerrechnet(tlAlZero);
-//		assertNotNull(verrechnet);
-//		amountAL = TarmedLeistung.getAL(verrechnet);
-//		assertEquals(0, amountAL);
-//		amount = verrechnet.getNettoPreis();
-//		assertEquals(4.08, amount.getAmount(), 0.01); // 0.0 * 0.83 * 0.93 + 4.92 * 0.83
-//		alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
-//		assertEquals("0.93", alScalingFactor);
-//		
-//		tearDownDignitaet(kons);
-//		
-//		// set the mandant type to specialist
-//		clearKons(kons);
-//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.SPECIALIST);
-//		result = kons.addLeistung(tlBaseFirst5Min);
-//		assertTrue(result.isOK());
-//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-//		assertNotNull(verrechnet);
-//		amountAL = TarmedLeistung.getAL(verrechnet);
-//		assertEquals(957, amountAL);
-//		amount = verrechnet.getNettoPreis();
-//		assertEquals(17.76, amount.getAmount(), 0.01);
-//	}
+	//	@Test
+	//	public void testDignitaet(){
+	//		IEncounter kons = konsGriss;
+	//		setUpDignitaet(kons);
+	//		
+	//		// default mandant type is specialist
+	//		clearKons(kons);
+	//		Result<IBilled> result = kons.addLeistung(tlBaseFirst5Min);
+	//		assertTrue(result.isOK());
+	//		Verrechnet verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
+	//		assertNotNull(verrechnet);
+	//		int amountAL = TarmedLeistung.getAL(verrechnet);
+	//		assertEquals(1042, amountAL);
+	//		Money amount = verrechnet.getNettoPreis();
+	//		assertEquals(15.45, amount.getAmount(), 0.01);
+	//		
+	//		// set the mandant type to practitioner
+	//		clearKons(kons);
+	//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.PRACTITIONER);
+	//		result = kons.addLeistung(tlBaseFirst5Min);
+	//		assertTrue(result.isOK());
+	//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
+	//		assertNotNull(verrechnet);
+	//		amountAL = TarmedLeistung.getAL(verrechnet);
+	//		assertEquals(969, amountAL);
+	//		amount = verrechnet.getNettoPreis();
+	//		assertEquals(14.84, amount.getAmount(), 0.01); // 10.42 * 0.83 * 0.93 + 8.19 * 0.83
+	//		String alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
+	//		assertEquals("0.93", alScalingFactor);
+	//		String alNotScaled = verrechnet.getDetail("AL_NOTSCALED");
+	//		assertEquals("1042", alNotScaled);
+	//		
+	//		result = kons.addLeistung(tlAlZero);
+	//		assertTrue(result.isOK());
+	//		verrechnet = kons.getVerrechnet(tlAlZero);
+	//		assertNotNull(verrechnet);
+	//		amountAL = TarmedLeistung.getAL(verrechnet);
+	//		assertEquals(0, amountAL);
+	//		amount = verrechnet.getNettoPreis();
+	//		assertEquals(4.08, amount.getAmount(), 0.01); // 0.0 * 0.83 * 0.93 + 4.92 * 0.83
+	//		alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
+	//		assertEquals("0.93", alScalingFactor);
+	//		
+	//		tearDownDignitaet(kons);
+	//		
+	//		// set the mandant type to specialist
+	//		clearKons(kons);
+	//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.SPECIALIST);
+	//		result = kons.addLeistung(tlBaseFirst5Min);
+	//		assertTrue(result.isOK());
+	//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
+	//		assertNotNull(verrechnet);
+	//		amountAL = TarmedLeistung.getAL(verrechnet);
+	//		assertEquals(957, amountAL);
+	//		amount = verrechnet.getNettoPreis();
+	//		assertEquals(17.76, amount.getAmount(), 0.01);
+	//	}
 	
 	/**
 	 * Test combination of session limit with coverage limit.
@@ -676,26 +682,26 @@ public class TarmedOptifierTest {
 		return ret;
 	}
 	
-//	private void setUpDignitaet(IEncounter kons){
-//		Map<String, String> extension = tlBaseFirst5Min.getExtension().getLimits();
-//		// set reduce factor
-//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
-//		// the AL value
-//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_TP_AL, "10.42");
-//		tlBaseFirst5Min.setExtension(extension);
-//		extension = tlAlZero.loadExtension();
-//		// set reduce factor
-//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
-//		// no AL value
-//		tlAlZero.setExtension(extension);
-//		
-//		// add additional multiplier
-//		LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
-//		MultiplikatorList multis =
-//			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
-//		multis.insertMultiplikator(new TimeTool(yesterday), "0.83");
-//		
-//	}
+	//	private void setUpDignitaet(IEncounter kons){
+	//		Map<String, String> extension = tlBaseFirst5Min.getExtension().getLimits();
+	//		// set reduce factor
+	//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
+	//		// the AL value
+	//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_TP_AL, "10.42");
+	//		tlBaseFirst5Min.setExtension(extension);
+	//		extension = tlAlZero.loadExtension();
+	//		// set reduce factor
+	//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
+	//		// no AL value
+	//		tlAlZero.setExtension(extension);
+	//		
+	//		// add additional multiplier
+	//		LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
+	//		MultiplikatorList multis =
+	//			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
+	//		multis.insertMultiplikator(new TimeTool(yesterday), "0.83");
+	//		
+	//	}
 	
 	//	private void tearDownDignitaet(Konsultation kons){
 	//		Hashtable<String, String> extension = tlBaseFirst5Min.loadExtension();

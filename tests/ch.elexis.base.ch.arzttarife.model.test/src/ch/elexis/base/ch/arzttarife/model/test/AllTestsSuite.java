@@ -47,11 +47,11 @@ public class AllTestsSuite {
 		assertTrue(entityManager.executeSQLScript("test_initTarmed",
 			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/Tarmed.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmedExtension", TestUtil
-			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedExtension.sql")));
+			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/TarmedExtension.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmedDefinitionen", TestUtil
-			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedDefinitionen.sql")));
+			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/TarmedDefinitionen.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmedKumulationen", TestUtil
-			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedKumulation.sql")));
+			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/TarmedKumulation.sql")));
 	}
 	
 	public static IModelService getModelService(){

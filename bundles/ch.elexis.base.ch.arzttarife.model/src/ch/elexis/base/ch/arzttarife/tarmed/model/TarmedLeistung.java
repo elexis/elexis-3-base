@@ -59,7 +59,7 @@ public class TarmedLeistung
 	@Override
 	public int getAL(){
 		String tp_al = getExtension().getLimits()
-			.get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_TP_AL);
+			.get(TarmedConstants.TarmedLeistung.EXT_FLD_TP_AL);
 		return NumberUtils.toInt(tp_al) * 100;
 	}
 	

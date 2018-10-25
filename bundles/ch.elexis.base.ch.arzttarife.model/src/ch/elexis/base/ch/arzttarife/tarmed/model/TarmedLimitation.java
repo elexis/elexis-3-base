@@ -334,7 +334,7 @@ public class TarmedLimitation {
 			
 			INativeQuery nativeQuery =
 				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE);
-			Map<Integer, Object> parameterMap = CoreModelServiceHolder.get().getIndexedParameterMap(
+			Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(
 				Integer.valueOf(1), kons.getCoverage().getPatient().getId(), Integer.valueOf(2),
 				code + "%", Integer.valueOf(3), mandant.getId());
 			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
@@ -463,7 +463,7 @@ public class TarmedLimitation {
 			INativeQuery nativeQuery =
 				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
 			Map<Integer, Object> parameterMap =
-				CoreModelServiceHolder.get().getIndexedParameterMap(Integer.valueOf(1),
+				nativeQuery.getIndexedParameterMap(Integer.valueOf(1),
 					kons.getCoverage().getPatient().getId(), Integer.valueOf(2), code + "%",
 					Integer.valueOf(3), fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),
 					Integer.valueOf(4), mandant.getId());
@@ -508,9 +508,10 @@ public class TarmedLimitation {
 	private List<IBilled> getVerrechnetByCoverageAndCode(IEncounter kons, String code){
 		List<IBilled> ret = new ArrayList<>();
 		if (kons != null && kons.getCoverage() != null) {
+			
 			INativeQuery nativeQuery =
-				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYCOVERAGE_ANDCODE);
-			Map<Integer, Object> parameterMap = CoreModelServiceHolder.get().getIndexedParameterMap(
+				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
+			Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(
 				Integer.valueOf(1), code + "%", Integer.valueOf(2), kons.getCoverage().getId());
 			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
 			while (result.hasNext()) {
@@ -518,6 +519,22 @@ public class TarmedLimitation {
 				IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
 				ret.add(load);
 			}
+			
+			//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
+			//				.getPreparedStatement(VERRECHNET_BYCOVERAGE_ANDCODE);
+			//			try {
+			//				pstm.setString(1, code + "%");
+			//				pstm.setString(2, kons.getCoverage().getId());
+			//				ResultSet resultSet = pstm.executeQuery();
+			//				while (resultSet.next()) {
+			//					ret.add(Verrechnet.load(resultSet.getString(1)));
+			//				}
+			//				resultSet.close();
+			//			} catch (SQLException e) {
+			//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
+			//			} finally {
+			//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
+			//			}
 		}
 		return ret;
 	}

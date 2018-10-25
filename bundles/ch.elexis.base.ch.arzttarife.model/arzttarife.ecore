@@ -24,7 +24,8 @@
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           changeable="false"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tarmed/ITarmedExtension"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tarmed/ITarmedExtension"
+          changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//tarmed/ITarmedLeistung"
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"

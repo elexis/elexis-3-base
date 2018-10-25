@@ -10,6 +10,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import ch.elexis.base.ch.arzttarife.model.tarmed.test.AllTarmedTests;
+import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
@@ -25,7 +26,7 @@ public class AllTestsSuite {
 	private static IElexisEntityManager entityManager;
 	private static IModelService modelService;
 	private static IModelService coreModelService;
-//	private static IContextService contextService;
+	private static IBillingService billingService;
 	
 	@BeforeClass
 	public static void beforeClass() throws IOException{
@@ -35,7 +36,7 @@ public class AllTestsSuite {
 			.get();
 		coreModelService = OsgiServiceUtil.getService(IModelService.class,
 			"(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)").get();
-//		contextService = OsgiServiceUtil.getService(IContextService.class).get();
+		billingService = OsgiServiceUtil.getService(IBillingService.class).get();
 		entityManager = OsgiServiceUtil.getService(IElexisEntityManager.class).get();
 		entityManager.getEntityManager(); // initialize the db
 		
@@ -45,12 +46,12 @@ public class AllTestsSuite {
 			TestUtil.loadFile(AllTestsSuite.class, "/rsc/complementaryTarif.sql")));
 		assertTrue(entityManager.executeSQLScript("test_initTarmed",
 			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/Tarmed.sql")));
-		assertTrue(entityManager.executeSQLScript("test_initTarmedExtension",
-			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedExtension.sql")));
-		assertTrue(entityManager.executeSQLScript("test_initTarmedDefinitionen",
-			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedDefinitionen.sql")));
-		assertTrue(entityManager.executeSQLScript("test_initTarmedKumulationen",
-			TestUtil.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedKumulation.sql")));
+		assertTrue(entityManager.executeSQLScript("test_initTarmedExtension", TestUtil
+			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedExtension.sql")));
+		assertTrue(entityManager.executeSQLScript("test_initTarmedDefinitionen", TestUtil
+			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedDefinitionen.sql")));
+		assertTrue(entityManager.executeSQLScript("test_initTarmedKumulationen", TestUtil
+			.loadFile(TestDatabaseInitializer.class, "/rsc/dbScripts/tarmedKumulation.sql")));
 	}
 	
 	public static IModelService getModelService(){
@@ -61,7 +62,7 @@ public class AllTestsSuite {
 		return coreModelService;
 	}
 	
-//	public static IContextService getContextService(){
-//		return contextService;
-//	}
+	public static IBillingService getBillingService(){
+		return billingService;
+	}
 }

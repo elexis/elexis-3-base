@@ -17,11 +17,24 @@ public class TarmedExtension
 		super(entity);
 		limitsExtInfoHandler = new ExtInfoHandler(this);
 	}
-
+	
+	/**
+	 * modifications to this map are not persisted
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, String> getLimits(){
 		return (Map<String, String>) ((Map<?, ?>) limitsExtInfoHandler.getMap());
 	}
-
+	
+	/**
+	 * Not available in {@link ITarmedExtension}, as should be used for tests only
+	 * 
+	 * @param limits
+	 */
+	public void setLimits(Map<String, String> limits){
+		limits.forEach((key, value) -> {
+			limitsExtInfoHandler.setExtInfo(key, value);
+		});
+	}
 }

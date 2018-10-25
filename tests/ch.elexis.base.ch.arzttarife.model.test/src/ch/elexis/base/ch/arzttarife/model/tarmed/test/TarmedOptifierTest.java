@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
 import ch.elexis.base.ch.ticode.TessinerCode;
@@ -144,6 +146,15 @@ public class TarmedOptifierTest {
 	private TarmedLeistung mainService;
 	
 	@Test
+	public void mutipleBaseFirst5MinIsInvalid(){
+		clearKons(konsGriss);
+		Result<IBilled> resultGriss = optifier.add(tlBaseFirst5Min, konsGriss);
+		assertTrue(resultGriss.isOK());
+		resultGriss = optifier.add(tlBaseFirst5Min, konsGriss);
+		assertFalse(resultGriss.isOK());
+	}
+	
+	@Test
 	public void testAddCompatibleAndIncompatible(){
 		clearKons(konsGriss);
 		Result<IBilled> resultGriss =
@@ -200,9 +211,8 @@ public class TarmedOptifierTest {
 		assertTrue(resCompatible.isOK());
 		
 		clearKons(konsSter);
-		resCompatible =
-			optifier.isCompatible(TarmedLeistung.getFromCode("00.0010", LocalDate.now(), null),
-				TarmedLeistung.getFromCode("00.1345", LocalDate.now(), null), konsSter);
+		resCompatible = optifier.isCompatible(tlBaseFirst5Min,
+			TarmedLeistung.getFromCode("00.1345", LocalDate.now(), null), konsSter);
 		assertFalse(resCompatible.isOK());
 		resText = "";
 		if (!resCompatible.getMessages().isEmpty()) {
@@ -294,65 +304,70 @@ public class TarmedOptifierTest {
 		assertFalse(result.isOK());
 	}
 	
-	//	@Test
-	//	public void testBelow75(){
-	//		TarmedLeistung tl =
-	//			TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null);
-	//		// add age restriction to 75 years with 0 tolerance, for the test, like in tarmed 1.09
-	//		Hashtable<String, String> ext = tl.loadExtension();
-	//		String origAgeLimits = ext.get(TarmedLeistung.EXT_FLD_SERVICE_AGE);
-	//		ext.put(TarmedLeistung.EXT_FLD_SERVICE_AGE,
-	//			origAgeLimits + (origAgeLimits.isEmpty() ? "-1|0|75|0|26[2006-04-01|2199-12-31]"
-	//					: ", -1|0|75|0|26[2006-04-01|2199-12-31]"));
-	//		tl.setExtension(ext);
-	//		
-	//		Result<IBilled> result = optifier.add(tl, konsBelow75);
-	//		assertTrue(result.isOK());
-	//		resetKons(konsBelow75);
-	//		
-	//		ext.put(TarmedLeistung.EXT_FLD_SERVICE_AGE, origAgeLimits);
-	//		tl.setExtension(ext);
-	//	}
-	//	
-	//	@Test
-	//	public void testGroupLimitation(){
-	//		// limit on group 31 is 48 times per week
-	//		resetKons(konsGriss);
-	//		for (int i = 0; i < 24; i++) {
-	//			Result<IBilled> result = konsGriss.addLeistung(tlGroupLimit1);
-	//			assertTrue(result.isOK());
-	//		}
-	//		resetKons(konsSter);
-	//		for (int i = 0; i < 24; i++) {
-	//			Result<IBilled> result = konsSter.addLeistung(tlGroupLimit2);
-	//			assertTrue(result.isOK());
-	//		}
-	//		
-	//		Result<IBilled> result = konsGriss.addLeistung(tlGroupLimit2);
-	//		assertTrue(result.isOK());
-	//		
-	//		result = konsSter.addLeistung(tlGroupLimit1);
-	//		assertTrue(result.isOK());
-	//		
-	//		for (int i = 0; i < 23; i++) {
-	//			result = konsGriss.addLeistung(tlGroupLimit1);
-	//			assertTrue(result.isOK());
-	//		}
-	//		for (int i = 0; i < 23; i++) {
-	//			result = konsSter.addLeistung(tlGroupLimit2);
-	//			assertTrue(result.isOK());
-	//		}
-	//		
-	//		result = konsGriss.addLeistung(tlGroupLimit2);
-	//		assertFalse(result.isOK());
-	//		
-	//		result = konsSter.addLeistung(tlGroupLimit1);
-	//		assertFalse(result.isOK());
-	//		
-	//		resetKons(konsGriss);
-	//		resetKons(konsSter);
-	//	}
-	//	
+	@Test
+	public void testBelow75(){
+		TarmedLeistung tl = TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null);
+		// add age restriction to 75 years with 0 tolerance, for the test, like in tarmed 1.09
+		Map<String, String> ext = tl.getExtension().getLimits();
+		String origAgeLimits = ext.get(TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_AGE);
+		ext.put(TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_AGE,
+			origAgeLimits + (origAgeLimits.isEmpty() ? "-1|0|75|0|26[2006-04-01|2199-12-31]"
+					: ", -1|0|75|0|26[2006-04-01|2199-12-31]"));
+		
+		TarmedExtension te = (TarmedExtension) tl.getExtension();
+		te.setLimits(ext);
+		
+		Result<IBilled> result = optifier.add(tl, konsBelow75);
+		assertTrue(result.isOK());
+		resetKons(konsBelow75);
+		
+		ext.put(TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_AGE, origAgeLimits);
+		te.setLimits(ext);
+	}
+	
+	@Test
+	public void testGroupLimitation(){
+		// limit on group 31 is 48 times per week
+		resetKons(konsGriss);
+		for (int i = 0; i < 24; i++) {
+			Result<IBilled> result = billSingle(konsGriss, tlGroupLimit1);
+			assertTrue(result.isOK());
+		}
+		resetKons(konsSter);
+		for (int i = 0; i < 24; i++) {
+			Result<IBilled> result = billSingle(konsSter, tlGroupLimit2);
+			assertTrue(result.isOK());
+		}
+		
+		Result<IBilled> result = billSingle(konsGriss, tlGroupLimit2);
+		assertTrue(result.isOK());
+		
+		result = billSingle(konsSter, tlGroupLimit1);
+		assertTrue(result.isOK());
+		
+		for (int i = 0; i < 23; i++) {
+			result = billSingle(konsGriss, tlGroupLimit1);
+			assertTrue(result.isOK());
+		}
+		for (int i = 0; i < 23; i++) {
+			result = billSingle(konsSter, tlGroupLimit2);
+			assertTrue(result.isOK());
+		}
+		
+		result = billSingle(konsGriss, tlGroupLimit2);
+		assertFalse(result.isOK());
+		
+		result = billSingle(konsSter, tlGroupLimit1);
+		assertFalse(result.isOK());
+		
+		resetKons(konsGriss);
+		resetKons(konsSter);
+	}
+	
+	private Result<IBilled> billSingle(IEncounter encounter, TarmedLeistung billable){
+		return AllTestsSuite.getBillingService().bill(billable, encounter, 1);
+	}
+	
 	private static void resetKons(IEncounter kons){
 		clearKons(kons);
 		kons.addDiagnosis(TessinerCode.getFromCode("T1").get());
@@ -360,64 +375,63 @@ public class TarmedOptifierTest {
 		assertTrue(result.isOK());
 	}
 	
-	//	
-	//	@Test
-	//	public void testDignitaet(){
-	//		Konsultation kons = konsGriss;
-	//		setUpDignitaet(kons);
-	//		
-	//		// default mandant type is specialist
-	//		clearKons(kons);
-	//		Result<IVerrechenbar> result = kons.addLeistung(tlBaseFirst5Min);
-	//		assertTrue(result.isOK());
-	//		Verrechnet verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-	//		assertNotNull(verrechnet);
-	//		int amountAL = TarmedLeistung.getAL(verrechnet);
-	//		assertEquals(1042, amountAL);
-	//		Money amount = verrechnet.getNettoPreis();
-	//		assertEquals(15.45, amount.getAmount(), 0.01);
-	//		
-	//		// set the mandant type to practitioner
-	//		clearKons(kons);
-	//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.PRACTITIONER);
-	//		result = kons.addLeistung(tlBaseFirst5Min);
-	//		assertTrue(result.isOK());
-	//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-	//		assertNotNull(verrechnet);
-	//		amountAL = TarmedLeistung.getAL(verrechnet);
-	//		assertEquals(969, amountAL);
-	//		amount = verrechnet.getNettoPreis();
-	//		assertEquals(14.84, amount.getAmount(), 0.01); // 10.42 * 0.83 * 0.93 + 8.19 * 0.83
-	//		String alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
-	//		assertEquals("0.93", alScalingFactor);
-	//		String alNotScaled = verrechnet.getDetail("AL_NOTSCALED");
-	//		assertEquals("1042", alNotScaled);
-	//		
-	//		result = kons.addLeistung(tlAlZero);
-	//		assertTrue(result.isOK());
-	//		verrechnet = kons.getVerrechnet(tlAlZero);
-	//		assertNotNull(verrechnet);
-	//		amountAL = TarmedLeistung.getAL(verrechnet);
-	//		assertEquals(0, amountAL);
-	//		amount = verrechnet.getNettoPreis();
-	//		assertEquals(4.08, amount.getAmount(), 0.01); // 0.0 * 0.83 * 0.93 + 4.92 * 0.83
-	//		alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
-	//		assertEquals("0.93", alScalingFactor);
-	//		
-	//		tearDownDignitaet(kons);
-	//		
-	//		// set the mandant type to specialist
-	//		clearKons(kons);
-	//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.SPECIALIST);
-	//		result = kons.addLeistung(tlBaseFirst5Min);
-	//		assertTrue(result.isOK());
-	//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-	//		assertNotNull(verrechnet);
-	//		amountAL = TarmedLeistung.getAL(verrechnet);
-	//		assertEquals(957, amountAL);
-	//		amount = verrechnet.getNettoPreis();
-	//		assertEquals(17.76, amount.getAmount(), 0.01);
-	//	}
+//	@Test
+//	public void testDignitaet(){
+//		IEncounter kons = konsGriss;
+//		setUpDignitaet(kons);
+//		
+//		// default mandant type is specialist
+//		clearKons(kons);
+//		Result<IBilled> result = kons.addLeistung(tlBaseFirst5Min);
+//		assertTrue(result.isOK());
+//		Verrechnet verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
+//		assertNotNull(verrechnet);
+//		int amountAL = TarmedLeistung.getAL(verrechnet);
+//		assertEquals(1042, amountAL);
+//		Money amount = verrechnet.getNettoPreis();
+//		assertEquals(15.45, amount.getAmount(), 0.01);
+//		
+//		// set the mandant type to practitioner
+//		clearKons(kons);
+//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.PRACTITIONER);
+//		result = kons.addLeistung(tlBaseFirst5Min);
+//		assertTrue(result.isOK());
+//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
+//		assertNotNull(verrechnet);
+//		amountAL = TarmedLeistung.getAL(verrechnet);
+//		assertEquals(969, amountAL);
+//		amount = verrechnet.getNettoPreis();
+//		assertEquals(14.84, amount.getAmount(), 0.01); // 10.42 * 0.83 * 0.93 + 8.19 * 0.83
+//		String alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
+//		assertEquals("0.93", alScalingFactor);
+//		String alNotScaled = verrechnet.getDetail("AL_NOTSCALED");
+//		assertEquals("1042", alNotScaled);
+//		
+//		result = kons.addLeistung(tlAlZero);
+//		assertTrue(result.isOK());
+//		verrechnet = kons.getVerrechnet(tlAlZero);
+//		assertNotNull(verrechnet);
+//		amountAL = TarmedLeistung.getAL(verrechnet);
+//		assertEquals(0, amountAL);
+//		amount = verrechnet.getNettoPreis();
+//		assertEquals(4.08, amount.getAmount(), 0.01); // 0.0 * 0.83 * 0.93 + 4.92 * 0.83
+//		alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
+//		assertEquals("0.93", alScalingFactor);
+//		
+//		tearDownDignitaet(kons);
+//		
+//		// set the mandant type to specialist
+//		clearKons(kons);
+//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.SPECIALIST);
+//		result = kons.addLeistung(tlBaseFirst5Min);
+//		assertTrue(result.isOK());
+//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
+//		assertNotNull(verrechnet);
+//		amountAL = TarmedLeistung.getAL(verrechnet);
+//		assertEquals(957, amountAL);
+//		amount = verrechnet.getNettoPreis();
+//		assertEquals(17.76, amount.getAmount(), 0.01);
+//	}
 	
 	/**
 	 * Test combination of session limit with coverage limit.
@@ -538,9 +552,7 @@ public class TarmedOptifierTest {
 		assertEquals(6, konsGriss.getBilled().get(0).getAmount(), 0.01);
 		
 		clearKons(konsGriss);
-		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", LocalDate.now(), null),
-			konsGriss);
+		result = optifier.add(tlBaseFirst5Min, konsGriss);
 		assertTrue(result.isOK());
 		result = optifier.add(
 			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null),
@@ -554,9 +566,7 @@ public class TarmedOptifierTest {
 			(TarmedLeistung) TarmedLeistung.getFromCode("00.0030", LocalDate.now(), null),
 			konsGriss);
 		assertTrue(result.isOK());
-		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", LocalDate.now(), null),
-			konsGriss);
+		result = optifier.add(tlBaseFirst5Min, konsGriss);
 		assertFalse(result.isOK());
 		assertEquals(1, getLeistungAmount("00.0010", konsGriss));
 		result = optifier.add(
@@ -666,27 +676,27 @@ public class TarmedOptifierTest {
 		return ret;
 	}
 	
-	//	private void setUpDignitaet(Konsultation kons){
-	//		Hashtable<String, String> extension = tlBaseFirst5Min.loadExtension();
-	//		// set reduce factor
-	//		extension.put(TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
-	//		// the AL value
-	//		extension.put(TarmedLeistung.EXT_FLD_TP_AL, "10.42");
-	//		tlBaseFirst5Min.setExtension(extension);
-	//		extension = tlAlZero.loadExtension();
-	//		// set reduce factor
-	//		extension.put(TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
-	//		// no AL value
-	//		tlAlZero.setExtension(extension);
-	//		
-	//		// add additional multiplier
-	//		LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
-	//		MultiplikatorList multis =
-	//			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
-	//		multis.insertMultiplikator(new TimeTool(yesterday), "0.83");
-	//		
-	//	}
-	//	
+//	private void setUpDignitaet(IEncounter kons){
+//		Map<String, String> extension = tlBaseFirst5Min.getExtension().getLimits();
+//		// set reduce factor
+//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
+//		// the AL value
+//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_TP_AL, "10.42");
+//		tlBaseFirst5Min.setExtension(extension);
+//		extension = tlAlZero.loadExtension();
+//		// set reduce factor
+//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
+//		// no AL value
+//		tlAlZero.setExtension(extension);
+//		
+//		// add additional multiplier
+//		LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
+//		MultiplikatorList multis =
+//			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
+//		multis.insertMultiplikator(new TimeTool(yesterday), "0.83");
+//		
+//	}
+	
 	//	private void tearDownDignitaet(Konsultation kons){
 	//		Hashtable<String, String> extension = tlBaseFirst5Min.loadExtension();
 	//		// clear reduce factor

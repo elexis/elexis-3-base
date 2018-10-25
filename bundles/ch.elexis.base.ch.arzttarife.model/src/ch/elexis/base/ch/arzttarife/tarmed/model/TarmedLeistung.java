@@ -23,6 +23,7 @@ import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.TimeTool;
@@ -32,12 +33,15 @@ public class TarmedLeistung
 		implements IdentifiableWithXid, ITarmedLeistung {
 	
 	public static final String STS_CLASS = "ch.elexis.data.TarmedLeistung";
+	
 	private IBillableOptifier<TarmedLeistung> tarmedOptifier;
+	private IBillableVerifier verifier;
 	
 	public static LocalDate curTimeHelper = LocalDate.now();
 	
 	public TarmedLeistung(ch.elexis.core.jpa.entities.TarmedLeistung entity){
 		super(entity);
+		verifier = new DefaultVerifier();
 	}
 	
 	@Override
@@ -130,8 +134,7 @@ public class TarmedLeistung
 	
 	@Override
 	public IBillableVerifier getVerifier(){
-		// TODO Auto-generated method stub
-		return null;
+		return verifier;
 	}
 	
 	@Override
@@ -163,11 +166,6 @@ public class TarmedLeistung
 	public ITarmedExtension getExtension(){
 		return ArzttarifeModelAdapterFactory.getInstance().getAdapter(getEntity().getExtension(),
 			ITarmedExtension.class, true);
-	}
-	
-	@Override
-	public void setExtension(ITarmedExtension value){
-		// TODO Auto-generated method stub
 	}
 	
 	@Override

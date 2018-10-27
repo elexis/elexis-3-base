@@ -431,7 +431,10 @@ public class TerminDialog extends TitleAreaDialog {
 				if (ksl.open() == Dialog.OK) {
 					actKontakt = (Kontakt) ksl.getSelection();
 					if (actKontakt != null) {
-						tName.setText(actKontakt.getLabel());
+						String telephoneLabel = actKontakt.getTelephoneLabel();
+						String label = actKontakt.getLabel()
+							+ ((telephoneLabel.length() > 0) ? " (" + telephoneLabel + ")" : "");
+						tName.setText(label);
 						tNr.setText(actKontakt.get(Kontakt.FLD_SHORT_LABEL));
 					}
 					setEnablement();

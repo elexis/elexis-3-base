@@ -256,9 +256,11 @@ public class TarmedLimitation {
 				List<IBilled> allVerrechnetOfGroup = new ArrayList<>();
 				List<String> serviceCodes = tarmedGroup.getServices();
 				for (String code : serviceCodes) {
-					allVerrechnetOfGroup.addAll(getVerrechnetByCoverageAndCode(kons, code));
+					List<IBilled> verrechnetByCoverageAndCode = getVerrechnetByCoverageAndCode(kons, code);
+					allVerrechnetOfGroup.addAll(verrechnetByCoverageAndCode);
 				}
-				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
+				int verrechnetCount = getVerrechnetCount(allVerrechnetOfGroup);
+				if (verrechnetCount > amount) {
 					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
 						toString(), null, false);
 				}
@@ -512,22 +514,6 @@ public class TarmedLimitation {
 				IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
 				ret.add(load);
 			}
-			
-			//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
-			//				.getPreparedStatement(VERRECHNET_BYCOVERAGE_ANDCODE);
-			//			try {
-			//				pstm.setString(1, code + "%");
-			//				pstm.setString(2, kons.getCoverage().getId());
-			//				ResultSet resultSet = pstm.executeQuery();
-			//				while (resultSet.next()) {
-			//					ret.add(Verrechnet.load(resultSet.getString(1)));
-			//				}
-			//				resultSet.close();
-			//			} catch (SQLException e) {
-			//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
-			//			} finally {
-			//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
-			//			}
 		}
 		return ret;
 	}

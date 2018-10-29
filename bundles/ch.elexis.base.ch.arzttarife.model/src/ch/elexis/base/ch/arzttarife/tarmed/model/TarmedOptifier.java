@@ -504,6 +504,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		double zahl = verrechnet.getAmount();
 		if (zahl > 1) {
 			verrechnet.setAmount(zahl - 1);
+			CoreModelServiceHolder.get().save(verrechnet);
 		} else {
 			CoreModelServiceHolder.get().delete(verrechnet);
 		}

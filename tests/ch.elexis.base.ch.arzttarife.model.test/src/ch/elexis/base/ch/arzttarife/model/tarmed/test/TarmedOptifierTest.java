@@ -597,7 +597,7 @@ public class TarmedOptifierTest {
 		result =
 			optifier.add(TarmedLeistung.getFromCode("00.0050", LocalDate.now(), null), konsGriss);
 		assertFalse(result.isOK());
-		assertEquals(7, konsGriss.getBilled().get(0).getAmount(), 0.01);
+		assertEquals(6, konsGriss.getBilled().get(0).getAmount(), 0.01);
 		
 		clearKons(konsGriss);
 		result = optifier.add(tlBaseFirst5Min, konsGriss);

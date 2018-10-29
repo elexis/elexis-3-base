@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
 import at.medevit.elexis.impfplan.model.po.Vaccination;
@@ -87,5 +88,10 @@ public class VaccinationComposite extends Composite implements ISelectionProvide
 				redraw();
 			}
 		}
+	}
+	
+	@Override
+	public Point computeSize(int wHint, int hHint){
+		return new Point(vcpl.getWidth(), vcpl.getHeight());
 	}
 }

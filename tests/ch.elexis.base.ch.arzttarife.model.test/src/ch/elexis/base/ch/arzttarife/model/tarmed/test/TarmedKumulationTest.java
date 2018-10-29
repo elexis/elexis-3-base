@@ -17,7 +17,7 @@ public class TarmedKumulationTest {
 	@Test
 	public void testGetExclusionsMasterCodeDate(){
 		String exclusions = TarmedKumulation.getExclusions("17.0010", LocalDate.now());
-		assertEquals("E,E,E,E,E,E,E,E,E,E", exclusions);
+		assertEquals("17.0090,17.0090,17.0080,17.0080,17.0080,17.0090,17.0090,17.0080,17.0090,17.0080", exclusions);
 	}
 	
 	@Test

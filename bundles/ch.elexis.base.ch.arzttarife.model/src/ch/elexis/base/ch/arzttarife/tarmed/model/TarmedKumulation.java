@@ -22,7 +22,7 @@ public class TarmedKumulation
 	
 	@Override
 	public String getSlaveCode(){
-		return getEntity().getTyp();
+		return getEntity().getSlaveCode();
 	}
 	
 	@Override

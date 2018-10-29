@@ -181,7 +181,7 @@ public class TarmedOptifierTest {
 	@Test
 	public void testAddMultipleIncompatible(){
 		Result<IBilled> resultSter = optifier.add(tlBaseXRay, konsSter);
-		assertTrue(resultSter.isOK());
+		assertTrue(resultSter.toString(), resultSter.isOK());
 		resultSter = optifier.add(tlUltrasound, konsSter);
 		assertFalse(resultSter.isOK());
 		resultSter = optifier.add(tlBaseRadiologyHospital, konsSter);
@@ -269,7 +269,7 @@ public class TarmedOptifierTest {
 		
 		// another additional, not allowed
 		resultSter = optifier.add(additionalService, konsSter);
-		assertFalse(resultSter.isOK());
+		assertFalse(resultSter.toString(), resultSter.isOK());
 		assertTrue(getVerrechent(konsSter, additionalService).isPresent());
 		
 		// remove, and add again
@@ -339,11 +339,14 @@ public class TarmedOptifierTest {
 			Result<IBilled> result = billSingle(konsGriss, tlGroupLimit1);
 			assertTrue(result.isOK());
 		}
+		assertEquals(2, konsGriss.getBilled().size());
+		
 		resetKons(konsSter);
 		for (int i = 0; i < 24; i++) {
 			Result<IBilled> result = billSingle(konsSter, tlGroupLimit2);
 			assertTrue(result.isOK());
 		}
+		assertEquals(2, konsSter.getBilled().size());
 		
 		Result<IBilled> result = billSingle(konsGriss, tlGroupLimit2);
 		assertTrue(result.isOK());
@@ -464,6 +467,47 @@ public class TarmedOptifierTest {
 		resetKons(konsGriss);
 	}
 	
+//	@Test
+//	public void testIsCompatibleTarmedBilling(){
+//		
+//		TarmedLeistung tlBaseXRay = (TarmedLeistung) TarmedLeistung.getFromCode("39.0020", null);
+//		TarmedLeistung tlUltrasound = (TarmedLeistung) TarmedLeistung.getFromCode("39.3005", null);
+//		TarmedLeistung tlBaseRadiologyHospital =
+//			(TarmedLeistung) TarmedLeistung.getFromCode("39.0015", null);
+//		TarmedLeistung tlBaseFirst5Min =
+//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", null);
+//		
+//		IStatus resCompatible =
+//			optifier.isCompatible(tlBaseXRay, tlUltrasound, testBehandlungen.get(0));
+//		assertFalse(resCompatible.isOK());
+//		String resText = "";
+//		if (!resCompatible.getMessage().isEmpty()) {
+//			resText = resCompatible.getMessage();
+//		}
+//		assertEquals("39.3005 nicht kombinierbar mit Kapitel 39.01", resText);
+//		resCompatible = optifier.isCompatible(tlUltrasound, tlBaseXRay, testBehandlungen.get(0));
+//		assertTrue(resCompatible.isOK());
+//		
+//		resCompatible =
+//			optifier.isCompatible(tlBaseXRay, tlBaseRadiologyHospital, testBehandlungen.get(0));
+//		assertFalse(resCompatible.isOK());
+//		if (!resCompatible.getMessage().isEmpty()) {
+//			resText = resCompatible.getMessage();
+//		}
+//		assertEquals("39.0015 nicht kombinierbar mit Leistung 39.0020", resText);
+//		
+//		resCompatible =
+//			optifier.isCompatible(tlBaseRadiologyHospital, tlUltrasound, testBehandlungen.get(0));
+//		assertFalse(resCompatible.isOK());
+//		
+//		resCompatible = optifier.isCompatible(tlBaseXRay, tlBaseFirst5Min, testBehandlungen.get(0));
+//		assertTrue(resCompatible.isOK());
+//		
+//		resCompatible = optifier.isCompatible(tlBaseFirst5Min, tlBaseRadiologyHospital,
+//			testBehandlungen.get(0));
+//		assertTrue(resCompatible.isOK());
+//	}
+	
 	/**
 	 * Test exclusion with side.
 	 */
@@ -546,38 +590,32 @@ public class TarmedOptifierTest {
 		
 		Result<IBilled> result;
 		for (int i = 0; i < 6; i++) {
-			result = optifier.add(
-				(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", LocalDate.now(), null),
+			result = optifier.add(TarmedLeistung.getFromCode("00.0050", LocalDate.now(), null),
 				konsGriss);
 			assertTrue(result.isOK());
 		}
-		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("00.0050", LocalDate.now(), null),
-			konsGriss);
+		result =
+			optifier.add(TarmedLeistung.getFromCode("00.0050", LocalDate.now(), null), konsGriss);
 		assertFalse(result.isOK());
-		assertEquals(6, konsGriss.getBilled().get(0).getAmount(), 0.01);
+		assertEquals(7, konsGriss.getBilled().get(0).getAmount(), 0.01);
 		
 		clearKons(konsGriss);
 		result = optifier.add(tlBaseFirst5Min, konsGriss);
 		assertTrue(result.isOK());
-		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null),
-			konsGriss);
+		result =
+			optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null), konsGriss);
 		assertTrue(result.isOK());
-		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null),
-			konsGriss);
+		result =
+			optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null), konsGriss);
 		assertTrue(result.isOK());
-		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("00.0030", LocalDate.now(), null),
-			konsGriss);
+		result =
+			optifier.add(TarmedLeistung.getFromCode("00.0030", LocalDate.now(), null), konsGriss);
 		assertTrue(result.isOK());
 		result = optifier.add(tlBaseFirst5Min, konsGriss);
 		assertFalse(result.isOK());
 		assertEquals(1, getLeistungAmount("00.0010", konsGriss));
-		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null),
-			konsGriss);
+		result =
+			optifier.add(TarmedLeistung.getFromCode("00.0020", LocalDate.now(), null), konsGriss);
 		assertFalse(result.isOK());
 		assertEquals(2, getLeistungAmount("00.0020", konsGriss));
 		
@@ -589,13 +627,13 @@ public class TarmedOptifierTest {
 		clearKons(konsGriss);
 		
 		Result<IBilled> result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("20.0330", LocalDate.now(), null),
+			TarmedLeistung.getFromCode("20.0330", LocalDate.now(), null),
 			konsGriss);
 		assertTrue(result.isOK());
 		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("20.0330", LocalDate.now(), null),
+			TarmedLeistung.getFromCode("20.0330", LocalDate.now(), null),
 			konsGriss);
-		assertFalse(result.isOK());
+		assertFalse(result.toString(), result.isOK());
 		
 		clearKons(konsGriss);
 	}
@@ -665,7 +703,7 @@ public class TarmedOptifierTest {
 	private int getLeistungAmount(String code, IEncounter kons){
 		int ret = 0;
 		for (IBilled leistung : kons.getBilled()) {
-			if (leistung.getCode().equals(code)) {
+			if (leistung.getBillable().getCode().equals(code)) {
 				ret += leistung.getAmount();
 			}
 		}
@@ -675,7 +713,7 @@ public class TarmedOptifierTest {
 	private List<IBilled> getLeistungen(String code, IEncounter kons){
 		List<IBilled> ret = new ArrayList<>();
 		for (IBilled leistung : kons.getBilled()) {
-			if (leistung.getCode().equals(code)) {
+			if (leistung.getBillable().getCode().equals(code)) {
 				ret.add(leistung);
 			}
 		}
@@ -733,7 +771,7 @@ public class TarmedOptifierTest {
 	
 	private Optional<IBilled> getVerrechent(IEncounter kons, TarmedLeistung leistung){
 		for (IBilled verrechnet : kons.getBilled()) {
-			if (verrechnet.getCode().equals(leistung.getCode())) {
+			if (verrechnet.getBillable().getCode().equals(leistung.getCode())) {
 				return Optional.of(verrechnet);
 			}
 		}

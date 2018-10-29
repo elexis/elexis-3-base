@@ -39,6 +39,7 @@ import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
@@ -215,8 +216,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann
 		// nur Zahl erhöhen.
 		for (IBilled v : lst) {
-			IBillable billable = v.getBillable();
-			if (isInstance(v, billable)) {
+			if (isInstance(v, code)) {
 				if (!tc.requiresSide()) {
 					newVerrechnet = v;
 					newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
@@ -844,9 +844,10 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		return ret;
 	}
 	
-	private boolean isInstance(IBilled billed, IBillable billable){
-		return billable.getCode().equals(billable.getCode())
-			&& billable.getCodeSystemCode().equals(billable.getCodeSystemCode());
+	private boolean isInstance(IBilled billed, ICodeElement billable){
+		boolean sameCode = (billed.getBillable().getCode().equals(billable.getCode()));
+		boolean sameCodeSystemCode = (billed.getBillable().getCodeSystemCode().equals(billable.getCodeSystemCode()));
+		return (sameCodeSystemCode && sameCode);
 	}
 	
 	/**

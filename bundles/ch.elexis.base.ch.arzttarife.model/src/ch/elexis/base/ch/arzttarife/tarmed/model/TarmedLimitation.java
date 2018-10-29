@@ -16,6 +16,7 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.INativeQuery;
 import ch.rgw.tools.Result;
@@ -315,6 +316,29 @@ public class TarmedLimitation {
 	+ " AND behandlungen.MandantID = ?3"
 	+ " ORDER BY behandlungen.Datum ASC";
 	// @formatter:on
+	
+	
+	public static List<IBilled> findVerrechnetByMandatorPatientCodeDuringPeriod(IMandator mandator, IPatient patient,
+		String code){
+		
+		if (mandator == null) {
+			return Collections.emptyList();
+		}
+		List<IBilled> all = new ArrayList<>();
+		INativeQuery nativeQuery =
+			CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE);
+		Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(Integer.valueOf(1),
+			patient.getId(), Integer.valueOf(2), code + "%",
+			Integer.valueOf(3), mandator.getId());
+		Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
+		while (result.hasNext()) {
+			String next = result.next().toString();
+			IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
+			all.add(load);
+		}
+		return all;
+	}
+	
 	/**
 	 * Get {@link Verrechnet} which are in the matching period for the kons and the code. <br />
 	 * The first period starts with the first time a {@link Verrechnet} with the code was created by
@@ -329,40 +353,9 @@ public class TarmedLimitation {
 	 */
 	private List<IBilled> getVerrechnetByMandantAndCodeDuringPeriod(IEncounter kons, String code){
 		IMandator mandant = kons.getMandator();
-		List<IBilled> all = new ArrayList<>();
+		
 		if (mandant != null) {
-			
-			INativeQuery nativeQuery =
-				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE);
-			Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(
-				Integer.valueOf(1), kons.getCoverage().getPatient().getId(), Integer.valueOf(2),
-				code + "%", Integer.valueOf(3), mandant.getId());
-			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
-			while (result.hasNext()) {
-				String next = result.next().toString();
-				IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
-				all.add(load);
-			}
-			//			while (result.iterator().next()) {
-			//				all.add(Verrechnet.load(resultSet.getString(1)));
-			//			}			
-			
-			//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
-			//				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE);
-			//			try {
-			//				pstm.setString(1, kons.getCoverage().getPatient().getId());
-			//				pstm.setString(2, code + "%");
-			//				pstm.setString(3, mandant.getId());
-			//				ResultSet resultSet = pstm.executeQuery();
-			//				while (resultSet.next()) {
-			//					all.add(Verrechnet.load(resultSet.getString(1)));
-			//				}
-			//				resultSet.close();
-			//			} catch (SQLException e) {
-			//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
-			//			} finally {
-			//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
-			//			}
+			List<IBilled> all = findVerrechnetByMandatorPatientCodeDuringPeriod(mandant, kons.getCoverage().getPatient(), code);
 			all = filterValidCodeForKonsultation(code, kons, all);
 			// now group in time periods since first verrechnet
 			LocalDate konsDate = kons.getDate();
@@ -510,7 +503,7 @@ public class TarmedLimitation {
 		if (kons != null && kons.getCoverage() != null) {
 			
 			INativeQuery nativeQuery =
-				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
+				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYCOVERAGE_ANDCODE);
 			Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(
 				Integer.valueOf(1), code + "%", Integer.valueOf(2), kons.getCoverage().getId());
 			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();

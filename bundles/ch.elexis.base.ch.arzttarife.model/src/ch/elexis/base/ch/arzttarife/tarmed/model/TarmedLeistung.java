@@ -47,19 +47,18 @@ public class TarmedLeistung
 	@Override
 	public int getMinutes(){
 		// TODO Auto-generated method stub
-//		Hashtable<String, String> map = loadExtension();
-//		double min = checkZeroDouble(map.get("LSTGIMES_MIN")); //$NON-NLS-1$
-//		min += checkZeroDouble(map.get("VBNB_MIN")); //$NON-NLS-1$
-//		min += checkZeroDouble(map.get("BEFUND_MIN")); //$NON-NLS-1$
-//		min += checkZeroDouble(map.get("WECHSEL_MIN")); //$NON-NLS-1$
-//		return (int) Math.round(min);
+		//		Hashtable<String, String> map = loadExtension();
+		//		double min = checkZeroDouble(map.get("LSTGIMES_MIN")); //$NON-NLS-1$
+		//		min += checkZeroDouble(map.get("VBNB_MIN")); //$NON-NLS-1$
+		//		min += checkZeroDouble(map.get("BEFUND_MIN")); //$NON-NLS-1$
+		//		min += checkZeroDouble(map.get("WECHSEL_MIN")); //$NON-NLS-1$
+		//		return (int) Math.round(min);
 		return 0;
 	}
 	
 	@Override
 	public int getAL(){
-		String tp_al = getExtension().getLimits()
-			.get(TarmedConstants.TarmedLeistung.EXT_FLD_TP_AL);
+		String tp_al = getExtension().getLimits().get(TarmedConstants.TarmedLeistung.EXT_FLD_TP_AL);
 		return NumberUtils.toInt(tp_al) * 100;
 	}
 	
@@ -252,8 +251,8 @@ public class TarmedLeistung
 	@Override
 	public List<String> getServiceBlocks(LocalDate date){
 		List<String> ret = new ArrayList<>();
-		List<String> blocks = getExtStringListField(
-			TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_BLOCKS);
+		List<String> blocks =
+			getExtStringListField(TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_BLOCKS);
 		if (!blocks.isEmpty()) {
 			for (String string : blocks) {
 				int dateStart = string.indexOf('[');
@@ -275,8 +274,8 @@ public class TarmedLeistung
 	@Override
 	public List<String> getServiceGroups(LocalDate date){
 		List<String> ret = new ArrayList<>();
-		List<String> groups = getExtStringListField(
-			TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_GROUPS);
+		List<String> groups =
+			getExtStringListField(TarmedConstants.TarmedLeistung.EXT_FLD_SERVICE_GROUPS);
 		if (!groups.isEmpty()) {
 			for (String string : groups) {
 				int dateStart = string.indexOf('[');
@@ -518,6 +517,10 @@ public class TarmedLeistung
 			
 		}
 		return null;
+	}
+	
+	public static TarmedLeistung getFromCode(final String code, String law){
+		return getFromCode(code, LocalDate.now(), law);
 	}
 	
 }

@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +18,7 @@ import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
+import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -27,6 +30,7 @@ import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.test.matchers.IBillingMatch;
 import ch.elexis.core.types.Gender;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
@@ -64,8 +68,7 @@ public class TarmedBillingTest {
 		coverage =
 			new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
 				.buildAndSave();
-		encounter =
-			new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
 	}
 	
 	@After
@@ -79,7 +82,7 @@ public class TarmedBillingTest {
 	}
 	
 	@Test
-	public void testAddTarmedBilling(){
+	public void basicTarmedPositions(){
 		status = billingService.bill(code_000010, encounter, 1);
 		assertTrue(status.isOK());
 		billed = status.get();
@@ -92,9 +95,15 @@ public class TarmedBillingTest {
 		assertEquals(1.0, billed.getFactor(), 0.01);
 		assertEquals(100, billed.getPrimaryScale());
 		assertEquals(100, billed.getSecondaryScale());
-
+		
 		assertEquals(encounter.getId(), billed.getEncounter().getId());
 		assertEquals(1, billed.getAmount(), 0.01d);
+		
+		assertEquals(billed, encounter.getBilled().get(0));
+		
+		status = billingService.bill(code_000015, encounter, 2);
+		assertTrue(status.toString(), status.isOK());
+		assertEquals(2, encounter.getBilled().size());
 		
 		TarmedLeistung code_000750 = TarmedLeistung.getFromCode("00.0750", LocalDate.now(), null);
 		assertNotNull(code_000750);
@@ -129,5 +138,21 @@ public class TarmedBillingTest {
 		status = billingService.bill(code_090510, encounter, 1);
 		assertFalse(status.isOK());
 	}
+	
+	@Test
+	public void testAddAutoPositions(){
+		ITarmedLeistung code_390590 = TarmedLeistung.getFromCode("39.0590", LocalDate.now(), null);
+		
+		status = billingService.bill(code_390590, encounter, 1);
+		assertTrue(status.isOK());
+		
+		List<IBillingMatch> matches = new ArrayList<>();
+		matches.add(new IBillingMatch("39.0590-20141001", 1));
+		matches.add(new IBillingMatch("39.2000-20180101-KVG", 1));
+		matches.add(new IBillingMatch("39.0020-20180101-KVG", 1));
+		IBillingMatch.assertMatch(encounter, matches);
+	}
+	
+	
 	
 }

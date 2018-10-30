@@ -90,6 +90,13 @@ public class TarmedLeistungTest {
 	public void getFromCode(){
 		IBillable fromCode = TarmedLeistung.getFromCode("00.0010", LocalDate.now(), "KVG");
 		assertTrue(fromCode instanceof ITarmedLeistung);
+		assertEquals("00.0010-20180101-KVG", fromCode.getId());
+		
+		fromCode = TarmedLeistung.getFromCode("00.0010", LocalDate.of(2015, 1, 1), "KVG");
+		assertEquals("00.0010-20010101-KVG", fromCode.getId());
+		
+		fromCode = TarmedLeistung.getFromCode("00.0010", null);
+		assertEquals("00.0010-20010101", fromCode.getId());
 	}
 	
 }

@@ -40,6 +40,9 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 public class TarmedOptifierTest {
+	
+	public static final String LAW = "KVG";
+	
 	private static IModelService coreModelService;
 	private static IMandator mandator;
 	private static TarmedOptifier optifier;
@@ -64,25 +67,25 @@ public class TarmedOptifierTest {
 		importTarmedReferenceData();
 		
 		// init some basic services
-		tlBaseFirst5Min = TarmedLeistung.getFromCode("00.0010", LocalDate.now(), null);
-		tlBaseXRay = TarmedLeistung.getFromCode("39.0020", LocalDate.now(), null);
-		tlBaseRadiologyHospital = TarmedLeistung.getFromCode("39.0015", LocalDate.now(), null);
-		tlUltrasound = TarmedLeistung.getFromCode("39.3005", LocalDate.now(), null);
+		tlBaseFirst5Min = TarmedLeistung.getFromCode("00.0010", LocalDate.now(), LAW);
+		tlBaseXRay = TarmedLeistung.getFromCode("39.0020", LocalDate.now(), LAW);
+		tlBaseRadiologyHospital = TarmedLeistung.getFromCode("39.0015", LocalDate.now(), LAW);
+		tlUltrasound = TarmedLeistung.getFromCode("39.3005", LocalDate.now(), LAW);
 		
-		tlAgeTo1Month = TarmedLeistung.getFromCode("00.0870", LocalDate.now(), null);
-		tlAgeTo7Years = TarmedLeistung.getFromCode("00.0900", LocalDate.now(), null);
-		tlAgeFrom7Years = TarmedLeistung.getFromCode("00.0890", LocalDate.now(), null);
+		tlAgeTo1Month = TarmedLeistung.getFromCode("00.0870", LocalDate.now(), LAW);
+		tlAgeTo7Years = TarmedLeistung.getFromCode("00.0900", LocalDate.now(), LAW);
+		tlAgeFrom7Years = TarmedLeistung.getFromCode("00.0890", LocalDate.now(), LAW);
 		
-		tlGroupLimit1 = TarmedLeistung.getFromCode("02.0310", LocalDate.now(), null);
-		tlGroupLimit2 = TarmedLeistung.getFromCode("02.0340", LocalDate.now(), null);
+		tlGroupLimit1 = TarmedLeistung.getFromCode("02.0310", LocalDate.now(), LAW);
+		tlGroupLimit2 = TarmedLeistung.getFromCode("02.0340", LocalDate.now(), LAW);
 		
-		tlAlZero = TarmedLeistung.getFromCode("00.0716", LocalDate.now(), null);
+		tlAlZero = TarmedLeistung.getFromCode("00.0716", LocalDate.now(), LAW);
 		
 		//Patient Grissemann with case and consultation
 		patGrissemann = new IContactBuilder.PatientBuilder(coreModelService, "Grissemann",
 			"Christoph", LocalDate.of(1966, 05, 17), Gender.MALE).buildAndSave();
 		ICoverage fallGriss = new ICoverageBuilder(coreModelService, patGrissemann,
-			"Testfall Grissemann", "Krankheit", "KVG").buildAndSave();
+			"Testfall Grissemann", "Krankheit", LAW).buildAndSave();
 		//		fallGriss.setInfoElement("Kostenträger", patGrissemann.getId());
 		konsGriss = new IEncounterBuilder(coreModelService, fallGriss, mandator).buildAndSave();
 		resetKons(konsGriss);
@@ -91,7 +94,7 @@ public class TarmedOptifierTest {
 		patStermann = new IContactBuilder.PatientBuilder(coreModelService, "Stermann", "Dirk",
 			LocalDate.of(1965, 7, 12), Gender.MALE).buildAndSave();
 		ICoverage fallSter = new ICoverageBuilder(coreModelService, patStermann,
-			"Testfall Stermann", "Krankheit", "KVG").buildAndSave();
+			"Testfall Stermann", "Krankheit", LAW).buildAndSave();
 		//		fallSter.setInfoElement("Kostenträger", patStermann.getId());
 		konsSter = new IEncounterBuilder(coreModelService, fallSter, mandator).buildAndSave();
 		resetKons(konsSter);
@@ -102,7 +105,7 @@ public class TarmedOptifierTest {
 			new IContactBuilder.PatientBuilder(coreModelService, "One", "Year", dob, Gender.MALE)
 				.buildAndSave();
 		ICoverage fallOneYear =
-			new ICoverageBuilder(coreModelService, patOneYear, "Testfall One", "Krankheit", "KVG")
+			new ICoverageBuilder(coreModelService, patOneYear, "Testfall One", "Krankheit", LAW)
 				.buildAndSave();
 		//		fallOneYear.setInfoElement("Kostenträger", patOneYear.getId());
 		konsOneYear = new IEncounterBuilder(coreModelService, fallOneYear, mandator).buildAndSave();
@@ -114,7 +117,7 @@ public class TarmedOptifierTest {
 			new IContactBuilder.PatientBuilder(coreModelService, "One", "Year", dob, Gender.MALE)
 				.buildAndSave();
 		ICoverage fallBelow75 = new ICoverageBuilder(coreModelService, patBelow75,
-			"Testfall below 75", "Krankheit", "KVG").buildAndSave();
+			"Testfall below 75", "Krankheit", LAW).buildAndSave();
 		//		fallBelow75.setCostBearer(patBelow75);
 		konsBelow75 = new IEncounterBuilder(coreModelService, fallBelow75, mandator).buildAndSave();
 		resetKons(konsBelow75);
@@ -338,6 +341,7 @@ public class TarmedOptifierTest {
 		for (int i = 0; i < 24; i++) {
 			Result<IBilled> result = billSingle(konsGriss, tlGroupLimit1);
 			assertTrue(result.isOK());
+			assertEquals("02.0310-20180101-KVG", result.get().getCode());
 		}
 		assertEquals(2, konsGriss.getBilled().size());
 		

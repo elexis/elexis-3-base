@@ -40,10 +40,10 @@ public class TarmedBillingTest {
 	private final IBillingService billingService = AllTestsSuite.getBillingService();
 	private final IModelService coreModelService = AllTestsSuite.getCoreModelService();
 	
-	private TarmedLeistung code_000010 = TarmedLeistung.getFromCode("00.0010", null);
-	private TarmedLeistung code_000015 = TarmedLeistung.getFromCode("00.0015", null);
-	private TarmedLeistung code_000140 = TarmedLeistung.getFromCode("00.0140", null);
-	private TarmedLeistung code_000510 = TarmedLeistung.getFromCode("00.0510", null);
+	private TarmedLeistung code_000010 = TarmedLeistung.getFromCode("00.0010", "KVG");
+	private TarmedLeistung code_000015 = TarmedLeistung.getFromCode("00.0015", "KVG");
+	private TarmedLeistung code_000140 = TarmedLeistung.getFromCode("00.0140", "KVG");
+	private TarmedLeistung code_000510 = TarmedLeistung.getFromCode("00.0510", "KVG");
 	
 	private IMandator mandator;
 	private IPatient patient;
@@ -87,11 +87,14 @@ public class TarmedBillingTest {
 		assertTrue(status.isOK());
 		billed = status.get();
 		assertNotNull(billed);
+		assertEquals("00.0010-20180101-KVG", billed.getCode());
 		
 		assertEquals(code_000010.getText(), billed.getText());
 		//		assertEquals("0.89", vr.getVk_scale());
 		//		assertEquals(1776, vr.getVk_tp());
 		//				assertEquals(1581, vr.getVk_preis());
+		// TODO billed.getPoints is 0
+		fail();
 		assertEquals(1.0, billed.getFactor(), 0.01);
 		assertEquals(100, billed.getPrimaryScale());
 		assertEquals(100, billed.getSecondaryScale());
@@ -109,9 +112,6 @@ public class TarmedBillingTest {
 		assertNotNull(code_000750);
 		status = billingService.bill(code_000750, encounter, 1);
 		assertFalse(status.isOK());
-		
-		// TODO billed.getPoints is 0
-		fail();
 	}
 	
 	@Test

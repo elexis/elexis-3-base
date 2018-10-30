@@ -5,6 +5,7 @@ import static at.medevit.ch.artikelstamm.ArtikelstammConstants.STS_CLASS;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -115,7 +116,7 @@ public class ArtikelstammModelService extends AbstractModelService
 	}
 	
 	@Override
-	public Optional<ICodeElement> loadFromCode(String code, HashMap<Object, Object> context){
+	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
 		EntityManager em = (EntityManager) entityManager.getEntityManager();
 		TypedQuery<ArtikelstammItem> gtinQuery =
 			em.createNamedQuery("ArtikelstammItem.gtin", ArtikelstammItem.class);
@@ -132,7 +133,7 @@ public class ArtikelstammModelService extends AbstractModelService
 	}
 	
 	@Override
-	public List<ICodeElement> getElements(HashMap<Object, Object> context){
+	public List<ICodeElement> getElements(Map<Object, Object> context){
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -94,7 +94,7 @@ public class TarmedBillingTest {
 		//		assertEquals(1776, vr.getVk_tp());
 		//				assertEquals(1581, vr.getVk_preis());
 		// TODO billed.getPoints is 0
-		fail();
+
 		assertEquals(1.0, billed.getFactor(), 0.01);
 		assertEquals(100, billed.getPrimaryScale());
 		assertEquals(100, billed.getSecondaryScale());
@@ -104,6 +104,9 @@ public class TarmedBillingTest {
 		
 		assertEquals(billed, encounter.getBilled().get(0));
 		
+		status = billingService.bill(code_000010, encounter, 1);
+		assertFalse(status.isOK());
+		
 		status = billingService.bill(code_000015, encounter, 2);
 		assertTrue(status.toString(), status.isOK());
 		assertEquals(2, encounter.getBilled().size());
@@ -112,6 +115,8 @@ public class TarmedBillingTest {
 		assertNotNull(code_000750);
 		status = billingService.bill(code_000750, encounter, 1);
 		assertFalse(status.isOK());
+	
+		fail("missing points");
 	}
 	
 	@Test

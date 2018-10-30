@@ -1,7 +1,7 @@
 package ch.elexis.base.ch.arzttarife.model.service;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -39,7 +39,7 @@ public class ComplementaryLeistungCodeElementService
 	}
 	
 	@Override
-	public Optional<ICodeElement> loadFromCode(String code, HashMap<Object, Object> context){
+	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
 		EntityManager em = (EntityManager) entityManager.getEntityManager();
 		TypedQuery<ComplementaryLeistung> gtinQuery =
 			em.createNamedQuery("ComplementaryLeistung.code", ComplementaryLeistung.class);
@@ -56,7 +56,7 @@ public class ComplementaryLeistungCodeElementService
 	}
 	
 	@Override
-	public List<ICodeElement> getElements(HashMap<Object, Object> context){
+	public List<ICodeElement> getElements(Map<Object, Object> context){
 		// TODO Auto-generated method stub
 		return null;
 	}

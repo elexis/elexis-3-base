@@ -5,13 +5,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
@@ -78,6 +81,23 @@ public class TarmedLeistungTest {
 			ch.elexis.core.jpa.entities.TarmedLeistung.CODESYSTEM_NAME, "00.0056", null).get();
 		assertEquals("00.0056-20180101-KVG", ((Identifiable) loadFromString).getId());
 		assertTrue(loadFromString instanceof ITarmedLeistung);
+		
+		loadFromString = codeElementService
+			.loadFromString(TarmedConstants.TarmedLeistung.CODESYSTEM_NAME, "00.0010", null).get();
+		assertEquals("00.0010-20010101", ((Identifiable) loadFromString).getId());
+		
+		Map<Object, Object> context = new HashMap<>();
+		context.put(ICodeElementService.ContextKeys.LAW, "KVG");
+		loadFromString = codeElementService
+			.loadFromString(TarmedConstants.TarmedLeistung.CODESYSTEM_NAME, "00.0010", context)
+			.get();
+		assertEquals("00.0010-20180101-KVG", ((Identifiable) loadFromString).getId());
+		
+		context.put(ICodeElementService.ContextKeys.DATE, LocalDate.of(2015, 1, 1));
+		loadFromString = codeElementService
+			.loadFromString(TarmedConstants.TarmedLeistung.CODESYSTEM_NAME, "00.0010", context)
+			.get();
+		assertEquals("00.0010-20010101-KVG", ((Identifiable) loadFromString).getId());
 	}
 	
 	@Test

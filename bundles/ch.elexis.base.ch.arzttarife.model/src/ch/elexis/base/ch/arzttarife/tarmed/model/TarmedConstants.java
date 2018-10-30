@@ -4,6 +4,8 @@ public class TarmedConstants {
 	
 	public class TarmedLeistung {
 		
+		public static final String CODESYSTEM_NAME = "Tarmed";
+		
 		public static final String SIDE = "Seite";
 		public static final String SIDE_L = "l";
 		public static final String SIDE_R = "r";

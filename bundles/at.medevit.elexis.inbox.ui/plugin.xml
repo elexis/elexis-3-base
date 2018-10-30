@@ -8,7 +8,7 @@
             class="at.medevit.elexis.inbox.ui.part.InboxView"
             icon="rsc/img/inbox_into.png"
             id="at.medevit.elexis.inbox.ui.view"
-            name="Inbox"
+            name="%view.name"
             restorable="true">
       </view>
    </extension>
@@ -17,32 +17,32 @@
       <command
             defaultHandler="at.medevit.elexis.inbox.ui.command.ReloadViewCommand"
             id="at.medevit.elexis.inbox.ui.command.reload"
-            name="reload">
+            name="%command.name.0">
       </command>
       <command
             defaultHandler="at.medevit.elexis.inbox.ui.command.ExpandAllCommand"
             id="at.medevit.elexis.inbox.ui.command.expandAll"
-            name="expand all">
+            name="%command.name.1">
       </command>
       <command
             defaultHandler="at.medevit.elexis.inbox.ui.command.IgnoreCommand"
             id="at.medevit.elexis.inbox.ui.command.ignore"
-            name="ignore">
+            name="%command.name.2">
       </command>
       <command
             defaultHandler="at.medevit.elexis.inbox.ui.command.ChangeMandantCommand"
             id="at.medevit.elexis.inbox.ui.command.changeMandant"
-            name="change mandant">
+            name="%command.name.3">
       </command>
       <command
             defaultHandler="at.medevit.elexis.inbox.ui.command.ActivatePatientCommand"
             id="at.medevit.elexis.inbox.ui.command.activatePatient"
-            name="activate patient">
+            name="%command.name.4">
       </command>
       <command
             defaultHandler="at.medevit.elexis.inbox.ui.command.AutoActivePatientHandler"
             id="at.medevit.elexis.inbox.ui.autoSelectPatient"
-            name="auto select patient">
+            name="%command.name.5">
          <state
                class="org.eclipse.ui.handlers.RegistryToggleState:false"
                id="org.eclipse.ui.commands.toggleState">
@@ -57,19 +57,19 @@
          <command
                commandId="at.medevit.elexis.inbox.ui.command.reload"
                icon="rsc/img/refresh.gif"
-               label="Neu laden"
+               label="%command.label.1"
                style="push">
          </command>
          <command
                commandId="at.medevit.elexis.inbox.ui.command.expandAll"
                icon="icon://IMG_ARROWDOWN"
-               label="Alle Aufklappen"
+               label="%command.label.2"
                style="push">
          </command>
          <command
                commandId="at.medevit.elexis.inbox.ui.command.ignore"
                icon="rsc/img/sausage.png"
-               label="Ignorieren"
+               label="%command.label.3"
                style="push">
          </command>
          <command
@@ -84,7 +84,7 @@
          <command
                commandId="at.medevit.elexis.inbox.ui.command.changeMandant"
                icon="rsc/img/user-silhouette-question.png"
-               label="Mandant ändern"
+               label="%command.label.4"
                style="push">
          </command>
       </menuContribution>

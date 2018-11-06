@@ -33,8 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.tiff.common.ui.datepicker.DatePickerCombo;
-
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.Hub;
@@ -42,8 +40,9 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.Preferences;
-import ch.elexis.omnivore.data.Utils;
 import ch.rgw.tools.TimeTool;
+
+import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class FileImportDialog extends TitleAreaDialog {
 	String file;
@@ -197,15 +196,10 @@ public class FileImportDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-		title = tTitle.getText();
-		if (Utils.containsSpecialChars(title, true)) {
-
-			super.cancelPressed();
-			return;
-		}
 		setDateValues();
 		
 		keywords = tKeywords.getText();
+		title = tTitle.getText();
 		category = cbCategories.getText();
 		if (dh != null) {
 			dh.setDate(saveDate);

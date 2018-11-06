@@ -41,7 +41,6 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.Preferences;
-import ch.elexis.omnivore.data.Utils;
 import ch.elexis.omnivore.ui.Messages;
 import ch.rgw.tools.TimeTool;
 
@@ -194,11 +193,6 @@ public class FileImportDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-		title = tTitle.getText();
-		if (Utils.containsSpecialChars(title, true)) {
-			super.cancelPressed();
-			return;
-		}
 		if (dDate != null)
 			date = dDate.getDate();
 		
@@ -207,6 +201,7 @@ public class FileImportDialog extends TitleAreaDialog {
 			date = new Date();
 		
 		keywords = tKeywords.getText();
+		title = tTitle.getText();
 		category = cbCategories.getText();
 		if (dh != null) {
 			dh.setDate(date);

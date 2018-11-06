@@ -21,9 +21,6 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,20 +32,6 @@ import ch.rgw.tools.ExHandler;
 
 public class Utils {
 	private static Logger log = LoggerFactory.getLogger(Utils.class);
-	
-	public static boolean containsSpecialChars(String string, boolean showError) {
-		Pattern p = Pattern.compile(Preferences.cotf_unwanted_chars);
-		Matcher m = p.matcher(string);
-		if (m.find()) {
-			log.debug("title '{}' contains invalid character", string);
-			if (showError) {
-				SWTHelper.showError(Messages.DocHandle_cantReadCaption,
-						Messages.DocHandle_fileNameMayNotContain);
-			}
-			return true;
-		}
-		return false;
-	}
 	
 	static public File archiveFile(File file, DocHandle dh){
 		File newFile = null;

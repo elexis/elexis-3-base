@@ -198,9 +198,6 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				Messages.DocHandle_readErrorText);
 			return;
 		}
-		if (Utils.containsSpecialChars(title, true)) {
-			return;
-		}
 		create(null);
 		
 		if (category == null || category.length() < 1) {
@@ -651,10 +648,6 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		FileImportDialog fid = new FileImportDialog(Messages.DocHandle_scannedImageDialogCaption);
 		if (fid.open() == Dialog.OK) {
 			try {
-				String title = fid.title;
-				if (Utils.containsSpecialChars(title, true)) {
-						return null;
-				}
 				Document pdf = new Document(PageSize.A4);
 				pdf.setMargins(0, 0, 0, 0);
 				ByteArrayOutputStream baos = new ByteArrayOutputStream(100000);
@@ -713,12 +706,9 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				Messages.DocHandle_importErrorDirectoryText);
 			return null;
 		}
+		
 		FileImportDialog fid = new FileImportDialog(file.getName());
 		if (fid.open() == Dialog.OK) {
-			String title = fid.title;
-			if (Utils.containsSpecialChars(title, true)) {
-				return null;
-			}
 			try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();) {
 				int in;

@@ -3,11 +3,11 @@ GEM
   specs:
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
-    eclipse-plugin (0.4.2)
+    eclipse-plugin (0.4.3)
       nokogiri
       rubyzip (~> 1.2.1)
-    elexis-wiki-interface (0.5.6)
-      eclipse-plugin (>= 0.4.2)
+    elexis-wiki-interface (0.5.7)
+      eclipse-plugin (>= 0.4.3)
       mediawiki-butt
       rest-client (~> 2.0)
       rubyzip (~> 1.2.1)
@@ -22,13 +22,13 @@ GEM
     mime-types-data (3.2018.0812)
     mini_portile2 (2.3.0)
     netrc (0.11.0)
-    nokogiri (1.8.4)
+    nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    rubyzip (1.2.1)
+    rubyzip (1.2.2)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
@@ -44,4 +44,4 @@ DEPENDENCIES
   xml-simple
 
 BUNDLED WITH
-   1.16.1
+   1.16.4

@@ -14,11 +14,17 @@ package ch.elexis.agenda.data;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -70,6 +76,9 @@ public class Termin extends PersistentObject
 	public static String[] TerminStatus;
 	public static String[] TerminBereiche;
 	private static final JdbcLink j = getConnection();
+	
+	public static final Cache<String, Boolean> cachedAttributeKeys =
+		CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build();
 	
 	// static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
 	// static final String
@@ -295,6 +304,26 @@ public class Termin extends PersistentObject
 			"ErstelltWann", FLD_LASTEDIT, FLD_STATUSHIST
 		}, bereich, Tag, Integer.toString(von), Integer.toString(bis - von), typ, status, ts, ts,
 			statusline(statusStandard()));
+	}
+	
+	@Override
+	public String getKey(String field){
+		String key = super.getKey(field);
+		cachedAttributeKeys.put(key, true);
+		return key;
+	}
+	
+	@Override
+	public void clearCachedAttributes(){
+		Iterator<Entry<String, Boolean>> iterator =
+			cachedAttributeKeys.asMap().entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Boolean> key = iterator.next();
+			if (key.getKey().contains(getId())) {
+				getDefaultConnection().getCache().remove(key.getKey());
+			}
+			iterator.remove();
+		}
 	}
 	
 	/*

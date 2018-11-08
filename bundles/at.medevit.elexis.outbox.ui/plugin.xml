@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="elementsui" name="Elementsui" schema="schema/elementsui.exsd"/>
+   <extension-point id="elementsui" name="%extension-point.name" schema="schema/elementsui.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
             class="at.medevit.elexis.outbox.ui.part.OutboxView"
             icon="rsc/img/outbox_into.png"
             id="at.medevit.elexis.outbox.ui.view"
-            name="Outbox"
+            name="%view.name"
             restorable="true">
       </view>
    </extension>
@@ -17,22 +17,22 @@
       <command
             defaultHandler="at.medevit.elexis.outbox.ui.command.ReloadViewCommand"
             id="at.medevit.elexis.outbox.ui.command.reload"
-            name="reload">
+            name="%command.name.0">
       </command>
       <command
             defaultHandler="at.medevit.elexis.outbox.ui.command.ExpandAllCommand"
             id="at.medevit.elexis.outbox.ui.command.expandAll"
-            name="expand all">
+            name="%command.name.1">
       </command>
       <command
             defaultHandler="at.medevit.elexis.outbox.ui.command.ActivatePatientCommand"
             id="at.medevit.elexis.outbox.ui.command.activatePatient"
-            name="activate patient">
+            name="%command.name.2">
       </command>
       <command
             defaultHandler="at.medevit.elexis.outbox.ui.command.AutoActivePatientHandler"
             id="at.medevit.elexis.outbox.ui.autoSelectPatient"
-            name="auto select patient">
+            name="%command.name.3">
          <state
                class="org.eclipse.ui.handlers.RegistryToggleState:false"
                id="org.eclipse.ui.commands.toggleState">
@@ -41,17 +41,17 @@
       <command
             defaultHandler="at.medevit.elexis.outbox.ui.command.OutboxSendHandler"
             id="at.medevit.elexis.outbox.ui.command.sendAsMail"
-            name="send">
+            name="%command.name.4">
       </command>
       <command
             defaultHandler="at.medevit.elexis.outbox.ui.command.OutboxDeleteHandler"
             id="at.medevit.elexis.outbox.ui.command.entfernen"
-            name="entfernen">
+            name="%command.name.5">
       </command>
       <command
             defaultHandler="at.medevit.elexis.outbox.ui.command.CreateOutboxElementHandler"
             id="at.medevit.elexis.outbox.ui.command.createElement"
-            name="create element">
+            name="%command.name.6">
       </command>
       <command
             id="at.medevit.elexis.outbox.ui.command.sendAsMailXDM"
@@ -66,13 +66,13 @@
          <command
                commandId="at.medevit.elexis.outbox.ui.command.reload"
                icon="rsc/img/refresh.gif"
-               label="Neu laden"
+               label="%command.label.1"
                style="push">
          </command>
          <command
                commandId="at.medevit.elexis.outbox.ui.command.expandAll"
                icon="icon://IMG_ARROWDOWN"
-               label="Alle Aufklappen"
+               label="%command.label.2"
                style="push">
          </command>
          <command
@@ -86,20 +86,20 @@
             locationURI="popup:at.medevit.elexis.outbox.ui.view">
          <command
                commandId="at.medevit.elexis.outbox.ui.command.entfernen"
-               label="Entfernen"
+               label="%command.label.3"
                style="push">
          </command>
          <menu
                icon="icon://IMG_MAIL_SEND"
-               label="Versenden">
+               label="%command.label.4">
             <command
                   commandId="at.medevit.elexis.outbox.ui.command.sendAsMail"
-                  label="als E-Mail"
+                  label="%command.label.5"
                   style="push">
             </command>
             <command
                   commandId="at.medevit.elexis.outbox.ui.command.sendAsMailXDM"
-                  label="als XDM E-Mail"
+                  label="%command.label.6"
                   style="push">
             </command>
          </menu>
@@ -110,7 +110,7 @@
          <command
                commandId="at.medevit.elexis.outbox.ui.command.createElement"
                icon="rsc/img/outbox_into.png"
-               label="in Outbox"
+               label="%command.label.7"
                style="push">
          </command>
       </menuContribution>

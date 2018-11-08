@@ -352,8 +352,9 @@ Rechtsklick auf einen Fall öffnet dessen Kontextmenü. Dieses enthält die folg
 <li><p>Fall wieder öffnen</p>
 <p>. Damit kann man einen bereits geschlossenen<sup>[[#fn10|10]]</sup> Fall wieder öffnen.</p></li>
 <li><p>Rechnung erstellen</p>
-<p>. Hiermit lässt sich über alle unverrechneten Konsultationen des aktuellen Falls und des aktuellen Mandanten eine Rechnung erstellen. Dies ist eine Abkürzung des normalen Wegs der Rechnungserstellung und eignet sich vor allem für Sofortrechnungen einzelner Konsultationen oder Leistungen.</p></li></ul>
+<p>. Hiermit lässt sich über alle unverrechneten Konsultationen des aktuellen Falls und des aktuellen Mandanten (je nach Berechtigung auch mehrere Mandanten) eine Rechnung erstellen. Dies ist eine Abkürzung des normalen Wegs der Rechnungserstellung und eignet sich vor allem für Sofortrechnungen einzelner Konsultationen oder Leistungen.</p></li></ul>
 =5000
+
 === Fälle und Kons ===
 l
 7cm

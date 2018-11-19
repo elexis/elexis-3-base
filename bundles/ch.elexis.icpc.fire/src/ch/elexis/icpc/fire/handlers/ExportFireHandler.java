@@ -71,6 +71,7 @@ public class ExportFireHandler extends AbstractHandler {
 		String id = new Query<Sticker>(Sticker.class).findSingle(Sticker.FLD_NAME, Query.EQUALS, FIRESTICKERNAME);
 		if (id == null) {
 			fireSticker = new Sticker(FIRESTICKERNAME, "0066CC", "C0C0C0");
+			fireSticker.setClassForSticker(Konsultation.class);
 		} else {
 			fireSticker = Sticker.load(id);
 		}
@@ -82,7 +83,7 @@ public class ExportFireHandler extends AbstractHandler {
 	 * @return
 	 */
 	public static TimeTool getTtFrom() {
-		TimeTool ttFrom = new TimeTool("20170101");
+		TimeTool ttFrom = new TimeTool("20180101");
 		String lastupdate = CoreHub.globalCfg.get(CFGPARAM, null);
 		if (lastupdate != null) {
 			ttFrom = new TimeTool(lastupdate);

@@ -51,7 +51,7 @@
             category="ch.elexis.preferences.transporters"
             class="ch.elexis.icpc.fire.ui.Preferences"
             id="ch.elexis.fire.preferences"
-            name="SGAM - Fire (ICPC)">
+            name="Fire (ICPC)">
       </page>
    </extension>
 

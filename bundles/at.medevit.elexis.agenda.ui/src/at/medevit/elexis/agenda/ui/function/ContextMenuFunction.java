@@ -1,13 +1,16 @@
 package at.medevit.elexis.agenda.ui.function;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
 
+import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import ch.elexis.agenda.data.Termin;
 
-public class ContextMenuFunction extends BrowserFunction {
+public class ContextMenuFunction extends AbstractBrowserFunction {
 	
 	private ISelectionProvider selectionProvider;
 	
@@ -17,7 +20,16 @@ public class ContextMenuFunction extends BrowserFunction {
 	}
 	
 	public Object function(Object[] arguments){
-		if (arguments.length == 1) {
+		if (arguments.length == 2) {
+			LocalDateTime date = getDateTimeArg(arguments[0]);
+			String resource = (String) arguments[1];
+			
+			Optional<SideBarComposite> activeSideBar = getActiveSideBar();
+			activeSideBar.ifPresent(sideBar -> {
+				sideBar.setMoveInformation(date, resource);
+				getBrowser().getMenu().setVisible(true);
+			});
+		} else if (arguments.length == 1) {
 			Termin termin = Termin.load((String) arguments[0]);
 			if (selectionProvider != null) {
 				selectionProvider.setSelection(new StructuredSelection(termin));

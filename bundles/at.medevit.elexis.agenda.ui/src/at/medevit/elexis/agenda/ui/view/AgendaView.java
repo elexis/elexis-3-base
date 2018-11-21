@@ -40,6 +40,10 @@ public class AgendaView extends ViewPart {
 			}
 		};
 	
+	private SideBarComposite parallelSideBar;
+	
+	private SideBarComposite weekSideBar;
+	
 	public AgendaView(){
 		// TODO Auto-generated constructor stub
 	}
@@ -59,11 +63,11 @@ public class AgendaView extends ViewPart {
 		layout.marginWidth = 0;
 		weekParent.setLayout(layout);
 		
-		SideBarComposite sideBar = new SideBarComposite(weekParent, SWT.NONE);
-		sideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		weekSideBar = new SideBarComposite(weekParent, SWT.NONE);
+		weekSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		weekComposite = new WeekComposite(getSite(), weekParent, SWT.NONE);
 		weekComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		sideBar.setAgendaComposite(weekComposite);
+		weekSideBar.setAgendaComposite(weekComposite);
 		
 		// create parallel composites
 		parallelParent = new Composite(container, SWT.NONE);
@@ -74,11 +78,11 @@ public class AgendaView extends ViewPart {
 		layout.marginWidth = 0;
 		parallelParent.setLayout(layout);
 		
-		sideBar = new SideBarComposite(parallelParent, SWT.NONE);
-		sideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		parallelSideBar = new SideBarComposite(parallelParent, true, SWT.NONE);
+		parallelSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		parallelComposite = new ParallelComposite(getSite(), parallelParent, SWT.NONE);
 		parallelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		sideBar.setAgendaComposite(parallelComposite);
+		parallelSideBar.setAgendaComposite(parallelComposite);
 		
 		setTopControl("parallel");
 		
@@ -99,5 +103,9 @@ public class AgendaView extends ViewPart {
 			stackLayout.topControl = weekParent;
 		}
 		container.layout();
+	}
+	
+	public SideBarComposite getParallelSideBarComposite(){
+		return parallelSideBar;
 	}
 }

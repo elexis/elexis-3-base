@@ -6,7 +6,7 @@
       <command
             defaultHandler="at.medevit.elexis.emediplan.ui.handler.CreateAndOpenHandler"
             id="at.medevit.elexis.emediplan.ui.createAndOpen"
-            name="Create and Open eMediplan">
+            name="%command.name.createAndOpen">
       </command>
    </extension>
    <extension
@@ -17,7 +17,7 @@
          <command
                commandId="at.medevit.elexis.emediplan.ui.createAndOpen"
                icon="rsc/logo.png"
-               label="eMediplan erstellen und öffnen"
+               label="%label.createAndOpen"
                style="push">
          </command>
       </menuContribution>

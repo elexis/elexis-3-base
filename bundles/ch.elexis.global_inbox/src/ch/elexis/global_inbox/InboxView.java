@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
@@ -182,7 +183,11 @@ public class InboxView extends ViewPart {
 									new TimeTool().toString(TimeTool.DATE_GER), "", null);
 							boolean bSucc = sel.delete();
 							sel = null;
-							dm.addDocument(fd);
+							if (CoreHub.localCfg.get(Preferences.PREF_AUTOBILLING, false)) {
+								dm.addDocument(fd, true);
+							} else {
+								dm.addDocument(fd);
+							}
 							fd = null;
 							Activator.getDefault().getContentProvider().reload();
 						} catch (Exception ex) {

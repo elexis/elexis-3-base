@@ -90,6 +90,7 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.omnivore.data.AutomaticBilling;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
@@ -398,7 +399,11 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 								
 								@Override
 								public void lockAcquired(){
-									// do nothing
+									// do automatic billing if configured
+									if (AutomaticBilling.isEnabled()) {
+										AutomaticBilling billing = new AutomaticBilling(handle);
+										billing.bill();
+									}
 								}
 							});
 						}

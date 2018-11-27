@@ -37,15 +37,14 @@ public class XMLExporterTiers {
 		Fall fall = rechnung.getFall();
 		Patient patient = fall.getPatient();
 		Mandant mandant = rechnung.getMandant();
-		Kontakt kostentraeger = fall.getCostBearer();
-		
+	
 		String tiers = XMLExporter.TIERS_PAYANT;
 		Tiers tiersType = fall.getTiersType();
 		if(Tiers.GARANT == tiersType) {
 			tiers = XMLExporter.TIERS_GARANT;
-			kostentraeger = fall.getGarant();
 		}
 		
+		Kontakt kostentraeger = fall.getCostBearer();
 		if (kostentraeger == null) {
 			kostentraeger = patient;
 		}

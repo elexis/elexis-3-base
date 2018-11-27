@@ -74,8 +74,9 @@ public class TestData {
 		TestSzenario() throws IOException{
 			createMandanten();
 			
-			createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false)
-				.set(Patient.FLD_PHONE1, "555-555 55 55");
+			Fall _fall =
+				createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
+			_fall.getPatient().set(Patient.FLD_PHONE1, "555-555 55 55");
 			createPatientWithFall("Karin", "Zirbelkiefer", "24.04.1951", "w", true);
 			
 			createLeistungen();
@@ -251,7 +252,16 @@ public class TestData {
 			CoreHub.setMandant(mandant);
 		}
 		
-		public Patient createPatientWithFall(String firstname, String lastname, String birthdate,
+		/**
+		 * 
+		 * @param firstname
+		 * @param lastname
+		 * @param birthdate
+		 * @param gender
+		 * @param addKostentraeger set the cost bearer to the created patient
+		 * @return
+		 */
+		public Fall createPatientWithFall(String firstname, String lastname, String birthdate,
 			String gender, boolean addKostentraeger){
 			Patient pat = new Patient(lastname, firstname, birthdate, gender);
 			addNextAHV(pat);
@@ -266,7 +276,7 @@ public class TestData {
 				fall.setCostBearer(pat);
 			}
 			faelle.add(fall);
-			return pat;
+			return fall;
 		}
 		
 		private void addNextAHV(Patient pat){

@@ -337,7 +337,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		tSearchKW.addModifyListener(searchListener);
 		
 		// Table to display documents
-		table = new Tree(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		table = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
 		TreeColumn[] cols = new TreeColumn[colLabels.length];
 		for (int i = 0; i < colLabels.length; i++) {
 			cols[i] = new TreeColumn(table, SWT.NONE);
@@ -421,27 +421,37 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			@Override
 			public void dragStart(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				DocHandle dh = (DocHandle) selection.getFirstElement();
-				if (dh.isCategory()) {
-					event.doit = false;
+				for (Object object : selection.toList()) {
+					DocHandle dh = (DocHandle) object;
+					if (dh.isCategory()) {
+						event.doit = false;
+					}
 				}
 			}
 			
 			@Override
 			public void dragSetData(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				DocHandle dh = (DocHandle) selection.getFirstElement();
+				
 				if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
-					File file = dh.createTemporaryFile(dh.getTitle());
-					event.data = new String[] {
-						file.getAbsolutePath()
-					};
-					log.debug("dragSetData; isSupportedType {} data {}", file.getAbsolutePath(), event.data); //$NON-NLS-1$
+					String[] files = new String[selection.size()];
+					for (int index = 0; index < selection.size(); index++) {
+						DocHandle dh = (DocHandle) selection.toList().get(index);
+						File file = dh.createTemporaryFile(dh.getTitle());
+						files[index] = file.getAbsolutePath();
+						log.debug("dragSetData; isSupportedType {} data {}", file.getAbsolutePath(), //$NON-NLS-1$
+							event.data);
+					}
+					event.data = files;
 				} else {
 					StringBuilder sb = new StringBuilder();
-					sb.append(((PersistentObject) dh).storeToString()).append(","); //$NON-NLS-1$
-					log.debug("dragSetData; unsupported dataType {} returning {}",event.dataType, sb.toString().replace(",$", "")); //$NON-NLS-1$
-					event.data = sb.toString().replace(",$", "");  //$NON-NLS-1$ //$NON-NLS-2$
+					for (int index = 0; index < selection.size(); index++) {
+						DocHandle dh = (DocHandle) selection.toList().get(index);
+						sb.append(((PersistentObject) dh).storeToString()).append(","); //$NON-NLS-1$
+						log.debug("dragSetData; unsupported dataType {} returning {}", //$NON-NLS-1$
+							event.dataType, sb.toString().replace(",$", ""));
+					}
+					event.data = sb.toString().replace(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		});

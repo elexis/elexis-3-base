@@ -200,6 +200,11 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 		
 		MenuManager listViewerAppointmentTypesMenuManager = new MenuManager();
 		listViewerAppointmentTypesMenuManager
+			.add(new MoveEntryWithinListAction(listViewerAppointmentTypes, appointmentTypes, true));
+		listViewerAppointmentTypesMenuManager.add(
+			new MoveEntryWithinListAction(listViewerAppointmentTypes, appointmentTypes, false));
+		listViewerAppointmentTypesMenuManager.add(new Separator());
+		listViewerAppointmentTypesMenuManager
 			.add(new AddStringEntryAction(listViewerAppointmentTypes, appointmentTypes));
 		listViewerAppointmentTypesMenuManager
 			.add(new RemoveSelectedEntriesAction(listViewerAppointmentTypes, appointmentTypes));
@@ -224,6 +229,11 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 		listViewerAppointmentStatus.setLabelProvider(new LabelProvider());
 		
 		MenuManager listViewerAppointmentStatusMenuManager = new MenuManager();
+		listViewerAppointmentStatusMenuManager.add(
+			new MoveEntryWithinListAction(listViewerAppointmentStatus, appointmentStatus, true));
+		listViewerAppointmentStatusMenuManager.add(
+			new MoveEntryWithinListAction(listViewerAppointmentStatus, appointmentStatus, false));
+		listViewerAppointmentStatusMenuManager.add(new Separator());
 		listViewerAppointmentStatusMenuManager
 			.add(new AddStringEntryAction(listViewerAppointmentStatus, appointmentStatus));
 		listViewerAppointmentStatusMenuManager

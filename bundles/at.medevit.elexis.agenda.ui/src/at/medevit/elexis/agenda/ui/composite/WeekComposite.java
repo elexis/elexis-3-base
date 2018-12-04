@@ -114,6 +114,10 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	
 	@Override
 	public boolean setFocus(){
+		getConfiguredFontSize().ifPresent(size -> {
+			setFontSize(size);
+			getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
+		});
 		refetchEvents();
 		return browser.setFocus();
 	}
@@ -125,6 +129,16 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	@Override
 	public void setSelectedDate(LocalDate date){
 		scriptingHelper.setSelectedDate(date);
+	}
+	
+	@Override
+	public void setFontSize(int sizePx){
+		scriptingHelper.setFontSize(sizePx);
+	}
+	
+	@Override
+	public void setFontFamily(String family){
+		scriptingHelper.setFontFamily(family);
 	}
 	
 	@Override

@@ -135,6 +135,16 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	}
 	
 	@Override
+	public void setFontSize(int sizePx){
+		scriptingHelper.setFontSize(sizePx);
+	}
+	
+	@Override
+	public void setFontFamily(String family){
+		scriptingHelper.setFontFamily(family);
+	}
+	
+	@Override
 	public void setSelectedSpanSize(AgendaSpanSize size){
 		currentSpanSize = size;
 		scriptingHelper.setSelectedSpanSize(size);
@@ -157,6 +167,10 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	
 	@Override
 	public boolean setFocus(){
+		getConfiguredFontSize().ifPresent(size -> {
+			setFontSize(size);
+			getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
+		});
 		refetchEvents();
 		return browser.setFocus();
 	}

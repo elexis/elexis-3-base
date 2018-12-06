@@ -407,9 +407,8 @@ public class TerminDialog extends TitleAreaDialog {
 		hlText.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(final HyperlinkEvent e){
-				InputDialog inp =
-					new InputDialog(getShell(), Messages.TerminDialog_enterText,
-						Messages.TerminDialog_enterFreeText, "", null); //$NON-NLS-1$
+				InputDialog inp = new InputDialog(getShell(), Messages.TerminDialog_enterText,
+					Messages.TerminDialog_enterFreeText, "", null); //$NON-NLS-1$
 				if (inp.open() == Dialog.OK) {
 					tName.setText(inp.getValue());
 					tNr.setText(""); //$NON-NLS-1$
@@ -431,10 +430,8 @@ public class TerminDialog extends TitleAreaDialog {
 				if (ksl.open() == Dialog.OK) {
 					actKontakt = (Kontakt) ksl.getSelection();
 					if (actKontakt != null) {
-						String telephoneLabel = actKontakt.getTelephoneLabel();
-						String label = actKontakt.getLabel()
-							+ ((telephoneLabel.length() > 0) ? " (" + telephoneLabel + ")" : "");
-						tName.setText(label);
+						String phoneEnhancedLabel = getPhoneEnhancedLabel(actKontakt);
+						tName.setText(phoneEnhancedLabel);
 						tNr.setText(actKontakt.get(Kontakt.FLD_SHORT_LABEL));
 					}
 					setEnablement();
@@ -577,7 +574,8 @@ public class TerminDialog extends TitleAreaDialog {
 		} else {
 			setTitle(actKontakt.getLabel());
 			tNr.setText(Kontakt.FLD_SHORT_LABEL);
-			tName.setText(actKontakt.getLabel());
+			String phoneEnhancedLabel = getPhoneEnhancedLabel(actKontakt);
+			tName.setText(phoneEnhancedLabel);
 			tBem.setText(actKontakt.getBemerkung());
 		}
 		
@@ -992,5 +990,12 @@ public class TerminDialog extends TitleAreaDialog {
 			return false;
 		}
 		return false;
+	}
+	
+	private String getPhoneEnhancedLabel(Kontakt actKontakt){
+		String telephoneLabel = actKontakt.getTelephoneLabel();
+		String label = actKontakt.getLabel()
+			+ ((telephoneLabel.length() > 0) ? " (" + telephoneLabel + ")" : "");
+		return label;
 	}
 }

@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -131,7 +132,15 @@ public class MessungKonfiguration {
 		types = new ArrayList<MessungTyp>();
 		String bundle_config_xml = PlatformHelper.getBasePath(Activator.PLUGIN_ID) + File.separator
 			+ "rsc" + File.separator + CONFIG_FILENAME;
-		defaultFile = CoreHub.localCfg.get(Preferences.CONFIG_FILE, bundle_config_xml);
+		String user_config_xml = CoreHub.localCfg.get(Preferences.CONFIG_FILE,
+			CoreHub.getWritableUserDir() + File.separator + CONFIG_FILENAME);
+		File f = new File(user_config_xml);
+		if (f.exists()) {
+			defaultFile = f.getAbsolutePath();
+		} else {
+			defaultFile = bundle_config_xml;
+		}
+		LoggerFactory.getLogger(getClass()).info("using config {}", defaultFile);
 	}
 	
 	private Panel createPanelFromNode(Element n){

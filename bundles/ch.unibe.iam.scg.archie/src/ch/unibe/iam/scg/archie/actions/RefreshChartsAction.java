@@ -14,6 +14,7 @@ package ch.unibe.iam.scg.archie.actions;
 import org.eclipse.jface.action.Action;
 
 import ch.unibe.iam.scg.archie.ArchieActivator;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.ui.views.Dashboard;
 
 /**
@@ -35,7 +36,7 @@ public class RefreshChartsAction extends Action {
 	public RefreshChartsAction(final Dashboard dashboard) {
 		this.dashboard = dashboard;
 		
-		this.setToolTipText("Refresh Charts");
+		this.setToolTipText(Messages.RefreshChart);
 		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/arrow_circle_double.png"));
 		
 		this.setEnabled(false);

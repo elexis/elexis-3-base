@@ -10,12 +10,12 @@
       Mehr Info unter http://wiki.elexis.info/ch.berchtold.privatrechnung.feature.feature.group
    </description>
 
-   <copyright>
-      Medelexis AG
+   <copyright url="http://elexis.info/de_contributers.html">
+      Gerry Weirich, 2007-2018 und viele andere
    </copyright>
 
-   <license>
-      Proprietär
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
    </license>
 
    <plugin

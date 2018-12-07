@@ -19,7 +19,7 @@
       <category name="documentmanagement"/>
    </feature>
    <feature url="features/ch.elexis.privatrechnung.feature_3.0.100.qualifier.jar" id="ch.elexis.privatrechnung.feature" version="3.0.100.qualifier">
-      <category name="documentmanagement"/>
+      <category name="finances"/>
    </feature>
    <feature url="features/ch.medelexis.text.templator.feature_3.0.100.qualifier.jar" id="ch.medelexis.text.templator.feature" version="3.0.100.qualifier">
       <category name="documentmanagement"/>

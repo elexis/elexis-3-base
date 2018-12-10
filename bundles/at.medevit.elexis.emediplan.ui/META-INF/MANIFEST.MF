@@ -33,3 +33,4 @@ Import-Package: at.medevit.elexis.emediplan.core,
  org.eclipse.wb.swt,
  org.slf4j;version="1.7.2"
 Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin

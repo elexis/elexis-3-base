@@ -198,28 +198,6 @@
             </visibleWhen>
          </command>
       </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:at.medevit.elexis.agenda.ui.view.agenda">
-         <command
-               commandId="at.medevit.elexis.agenda.ui.command.settopcontrol"
-               label="Tag"
-               style="push">
-            <parameter
-                  name="at.medevit.elexis.agenda.ui.command.parameter.controlId"
-                  value="parallel">
-            </parameter>
-         </command>
-         <command
-               commandId="at.medevit.elexis.agenda.ui.command.settopcontrol"
-               label="Woche"
-               style="push">
-            <parameter
-                  name="at.medevit.elexis.agenda.ui.command.parameter.controlId"
-                  value="week">
-            </parameter>
-         </command>
-      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

@@ -65,7 +65,7 @@ public class AgendaView extends ViewPart {
 		
 		weekSideBar = new SideBarComposite(weekParent, SWT.NONE);
 		weekSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		weekComposite = new WeekComposite(getSite(), weekParent, SWT.NONE);
+		weekComposite = new WeekComposite(getSite(), weekParent, SWT.NONE, true);
 		weekComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		weekSideBar.setAgendaComposite(weekComposite);
 		
@@ -80,7 +80,7 @@ public class AgendaView extends ViewPart {
 		
 		parallelSideBar = new SideBarComposite(parallelParent, true, SWT.NONE);
 		parallelSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		parallelComposite = new ParallelComposite(getSite(), parallelParent, SWT.NONE);
+		parallelComposite = new ParallelComposite(getSite(), parallelParent, SWT.NONE, true);
 		parallelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parallelSideBar.setAgendaComposite(parallelComposite);
 		

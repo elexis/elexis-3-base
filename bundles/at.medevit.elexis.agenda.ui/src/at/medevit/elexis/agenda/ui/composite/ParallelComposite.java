@@ -35,6 +35,7 @@ import at.medevit.elexis.agenda.ui.function.EventDropFunction;
 import at.medevit.elexis.agenda.ui.function.EventResizeFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
+import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import ch.elexis.core.data.activator.CoreHub;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
@@ -54,6 +55,11 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	private DayClickFunction dayClickFunction;
 	
 	public ParallelComposite(IWorkbenchPartSite partSite, Composite parent, int style){
+		this(partSite, parent, style, false);
+	}
+	
+	public ParallelComposite(IWorkbenchPartSite partSite, Composite parent, int style,
+		boolean enableSwitch){
 		super(parent, style);
 		setLayout(new FillLayout());
 		browser = new Browser(this, SWT.NONE);
@@ -73,16 +79,31 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
-		try {
-			URL url = FileLocator.toFileURL(
-				FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultParallel.html"));
-			logger.debug(
-				"Open url at [" + url.getFile() + "] with [" + browser.getBrowserType() + "]");
-			browser.setUrl(url.toString());
-		} catch (IOException e) {
-			logger.error("Could not set url to /rsc/html/defaultParallel.html with ["
-				+ browser.getBrowserType() + "]", e);
+		if (enableSwitch) {
+			new SwitchFunction(browser, "switchFunction");
+			try {
+				URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass())
+					.getResource("/rsc/html/switchParallel.html"));
+				logger.debug(
+					"Open url at [" + url.getFile() + "] with [" + browser.getBrowserType() + "]");
+				browser.setUrl(url.toString());
+			} catch (IOException e) {
+				logger.error("Could not set url to /rsc/html/switchParallel.html with ["
+					+ browser.getBrowserType() + "]", e);
+			}
+		} else {
+			try {
+				URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass())
+					.getResource("/rsc/html/defaultParallel.html"));
+				logger.debug(
+					"Open url at [" + url.getFile() + "] with [" + browser.getBrowserType() + "]");
+				browser.setUrl(url.toString());
+			} catch (IOException e) {
+				logger.error("Could not set url to /rsc/html/defaultParallel.html with ["
+					+ browser.getBrowserType() + "]", e);
+			}
 		}
+		
 		browser.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e){
@@ -115,6 +136,10 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 					if (currentSpanSize != null) {
 						setSelectedSpanSize(currentSpanSize);
 					}
+					getConfiguredFontSize().ifPresent(size -> {
+						setFontSize(size);
+						getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
+					});
 				}
 			}
 		});
@@ -167,10 +192,6 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	
 	@Override
 	public boolean setFocus(){
-		getConfiguredFontSize().ifPresent(size -> {
-			setFontSize(size);
-			getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
-		});
 		refetchEvents();
 		return browser.setFocus();
 	}

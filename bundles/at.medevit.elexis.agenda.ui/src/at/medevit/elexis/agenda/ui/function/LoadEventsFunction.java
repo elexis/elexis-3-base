@@ -2,15 +2,17 @@ package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -24,9 +26,12 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.data.TerminUtil;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.data.Query;
+import ch.elexis.data.Reminder;
 import ch.rgw.tools.TimeTool;
 
 public class LoadEventsFunction extends AbstractBrowserFunction {
+	
+	private static Logger logger = LoggerFactory.getLogger(LoadEventsFunction.class);
 	
 	private Gson gson;
 	
@@ -34,9 +39,48 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	
 	private ScriptingHelper scriptingHelper;
 	
-	private LoadingCache<TimeSpan, List<Event>> cache;
+	private LoadingCache<TimeSpan, EventsJsonValue> cache;
 	
 	private long knownLastUpdate = 0;
+	
+	private TimeSpan currentTimeSpan;
+	
+	private class EventsJsonValue {
+		
+		private Map<String, Event> eventsMap;
+		
+		private String jsonString;
+		
+		public EventsJsonValue(List<Event> events){
+			this.eventsMap =
+				events.parallelStream().collect(Collectors.toMap(e -> e.getId(), e -> e));
+			jsonString = gson.toJson(eventsMap.values());
+		}
+		
+		public String getJson(){
+			return jsonString;
+		}
+		
+		public boolean updateWith(TimeSpan timespan, List<IPeriod> changedPeriods){
+			boolean updated = false;
+			for (IPeriod iPeriod : changedPeriods) {
+				if (timespan.contains(iPeriod)) {
+					boolean deleted = ((Termin) iPeriod).isDeleted();
+					if (deleted) {
+						eventsMap.remove(iPeriod.getId());
+					} else {
+						Event event = Event.of(iPeriod);
+						eventsMap.put(event.getId(), event);
+					}
+					updated = true;
+				}
+			}
+			if (updated) {
+				jsonString = gson.toJson(eventsMap.values());
+			}
+			return updated;
+		}
+	}
 	
 	private class TimeSpan {
 		private LocalDate startDate;
@@ -84,6 +128,17 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		private LoadEventsFunction getOuterType(){
 			return LoadEventsFunction.this;
 		}
+		
+		public boolean contains(IPeriod iPeriod){
+			LocalDate periodStartDate = iPeriod.getStartTime().toLocalDate();
+			return (periodStartDate.isEqual(startDate) || periodStartDate.isAfter(startDate))
+				&& (periodStartDate.isEqual(endDate) || periodStartDate.isBefore(endDate));
+		}
+		
+		@Override
+		public String toString(){
+			return "Timespan [" + startDate + " - " + endDate + "]";
+		}
 	}
 	
 	public LoadEventsFunction(Browser browser, String name, ScriptingHelper scriptingHelper){
@@ -97,14 +152,38 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	public Object function(Object[] arguments){
 		if (arguments.length == 3) {
 			try {
-				TimeSpan timeSpan =
+				currentTimeSpan =
 					new TimeSpan(getDateArg(arguments[0]), getDateArg(arguments[1]));
 				long currentLastUpdate = Termin.getHighestLastUpdate(Termin.TABLENAME);
-				if (knownLastUpdate < currentLastUpdate) {
-					cache.invalidateAll();
+				if (knownLastUpdate == 0) {
+					knownLastUpdate = currentLastUpdate;
+				} else if (knownLastUpdate < currentLastUpdate) {
+					List<IPeriod> changedPeriods = getChangedPeriods();
+					Set<TimeSpan> cachedTimeSpans = cache.asMap().keySet();
+					for (TimeSpan timeSpan : cachedTimeSpans) {
+						EventsJsonValue eventsJson = cache.get(timeSpan);
+						if (eventsJson.updateWith(timeSpan, changedPeriods)) {
+							logger.debug("Updated timespan " + timeSpan);
+						} else {
+							logger.debug("No update to timespan " + timeSpan);
+						}
+					}
+					//					cachedTimeSpans.parallelStream().forEach(timeSpan -> {
+					//						try {
+					//						} catch (ExecutionException e) {
+					//							throw new IllegalStateException("Error updating events", e);
+					//						}
+					//					});
+					//					for (TimeSpan timeSpan : cachedTimeSpans) {
+						//						
+						//						List<? extends IPeriod> relevantChangedPeriods =
+						//							getRelevantChangedPeriods(timeSpan);
+						//						if (!relevantChangedPeriods.isEmpty()) {
+						//						}
+					//					}
 					knownLastUpdate = currentLastUpdate;
 				}
-				List<Event> events = cache.get(timeSpan);
+				EventsJsonValue eventsJson = cache.get(currentTimeSpan);
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run(){
@@ -115,13 +194,65 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 						}
 					}
 				});
-				return gson.toJson(events);
+				return eventsJson.getJson();
 			} catch (ExecutionException e) {
 				throw new IllegalStateException("Error loading events", e);
 			}
 		} else {
 			throw new IllegalArgumentException("Unexpected arguments");
 		}
+	}
+	
+	/**
+	 * Get all relevant changes compared to a TimeSpan.
+	 * 
+	 * @return
+	 * @throws ExecutionException
+	 */
+	//	private List<IPeriod> getRelevantChangedPeriods(TimeSpan timeSpan)
+	//		throws ExecutionException{
+	//		List<IPeriod> changed = getChangedPeriods();
+	//		if(!changed.isEmpty()) {
+	//			List<Event> known = cache.get(timeSpan).getEvents();
+	//			Map<String, Event> knownIdMap =
+	//				known.parallelStream().collect(Collectors.toMap(e -> e.getId(), e -> e));
+	//			
+	//			List<IPeriod> knownChanged = getKnownChanged(knownIdMap, changed);
+	//			List<IPeriod> notKnownChanged = getNotKnownChanged(knownIdMap, changed);
+	//			if (!knownChanged.isEmpty() || !notKnownChanged.isEmpty()) {
+	//				List<IPeriod> ret = new ArrayList<>();
+	//				ret.addAll(knownChanged);
+	//				ret.addAll(notKnownChanged);
+	//				return ret;
+	//			}
+	//		}
+	//		return Collections.emptyList();
+	//	}
+	
+	//	private List<IPeriod> getNotKnownChanged(Map<String, Event> knownIdMap, List<IPeriod> changed){
+	//		return changed.parallelStream()
+	//			.filter(iPeriod -> !knownIdMap.containsKey(iPeriod.getId())
+	//				&& currentTimeSpan.contains((IPeriod) iPeriod))
+	//			.collect(Collectors.toList());
+	//	}
+	//	
+	//	private List<IPeriod> getKnownChanged(Map<String, Event> knownIdMap, List<IPeriod> changed)
+	//		throws ExecutionException{
+	//		return changed.parallelStream()
+	//			.filter(t -> knownIdMap.containsKey(t.getId())).collect(Collectors.toList());
+	//	}
+	
+	/**
+	 * Get all changed {@link IPeriod} since the knownLastUpdate.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<IPeriod> getChangedPeriods(){
+		Query<Termin> query = new Query<>(Termin.class, Termin.TABLENAME, true, null);
+		query.clear(true);
+		query.add(Reminder.FLD_LASTUPDATE, Query.GREATER, Long.toString(knownLastUpdate));
+		return (List<IPeriod>) (List<?>) query.execute();
 	}
 	
 	public void addResource(String resource){
@@ -138,15 +269,19 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		cache.invalidateAll();
 	}
 	
-	private class TimeSpanLoader extends CacheLoader<TimeSpan, List<Event>> {
+	private class TimeSpanLoader extends CacheLoader<TimeSpan, EventsJsonValue> {
 		
 		@Override
-		public List<Event> load(TimeSpan key) throws Exception{
-			List<IPeriod> periods = getPeriods(key.startDate, key.endDate);
-			return periods.parallelStream().map(p -> Event.of(p)).collect(Collectors.toList());
+		public EventsJsonValue load(TimeSpan key) throws Exception{
+			List<IPeriod> periods = getPeriods(key);
+			return new EventsJsonValue(
+				periods.parallelStream().map(p -> Event.of(p)).collect(Collectors.toList()));
 		}
 		
-		private List<IPeriod> getPeriods(LocalDate from, LocalDate to) throws IllegalStateException{
+		private List<IPeriod> getPeriods(TimeSpan timespan) throws IllegalStateException{
+			logger.debug("Loading timespan " + timespan);
+			LocalDate from = timespan.startDate;
+			LocalDate to = timespan.endDate;
 			
 			for (String resource : resources) {
 				LocalDate updateDate = LocalDate.from(from);
@@ -186,8 +321,10 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 						time.toString(TimeTool.DATE_COMPACT));
 				}
 				query.endGroup();
-				ret.addAll((Collection<? extends IPeriod>) query.execute());
+				List<? extends IPeriod> iPeriods = (List<? extends IPeriod>) query.execute();
+				ret.addAll(iPeriods);
 			}
+			logger.debug("Loading timespan " + timespan + " finished");
 			return ret;
 		}
 	}

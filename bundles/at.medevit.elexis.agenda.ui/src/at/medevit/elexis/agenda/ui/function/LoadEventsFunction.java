@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,8 @@ import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.model.Event;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.data.TerminUtil;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.data.Query;
 import ch.elexis.data.Reminder;
@@ -44,6 +48,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	private long knownLastUpdate = 0;
 	
 	private TimeSpan currentTimeSpan;
+	
+	private HeartListener heartListener;
 	
 	private class EventsJsonValue {
 		
@@ -147,6 +153,30 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		this.scriptingHelper = scriptingHelper;
 		
 		cache = CacheBuilder.newBuilder().maximumSize(7).build(new TimeSpanLoader());
+		
+		heartListener = new HeartListener() {
+			@Override
+			public void heartbeat(){
+				long currentLastUpdate = Termin.getHighestLastUpdate(Termin.TABLENAME);
+				if (knownLastUpdate != 0 && knownLastUpdate < currentLastUpdate) {
+					Display.getDefault().asyncExec(new Runnable() {
+						@Override
+						public void run(){
+							scriptingHelper.refetchEvents();
+						}
+					});
+				}
+			}
+		};
+		
+		browser.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e){
+				CoreHub.heart.removeListener(heartListener);
+			}
+		});
+		
+		CoreHub.heart.addListener(heartListener);
 	}
 	
 	public Object function(Object[] arguments){
@@ -168,19 +198,6 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 							logger.debug("No update to timespan " + timeSpan);
 						}
 					}
-					//					cachedTimeSpans.parallelStream().forEach(timeSpan -> {
-					//						try {
-					//						} catch (ExecutionException e) {
-					//							throw new IllegalStateException("Error updating events", e);
-					//						}
-					//					});
-					//					for (TimeSpan timeSpan : cachedTimeSpans) {
-						//						
-						//						List<? extends IPeriod> relevantChangedPeriods =
-						//							getRelevantChangedPeriods(timeSpan);
-						//						if (!relevantChangedPeriods.isEmpty()) {
-						//						}
-					//					}
 					knownLastUpdate = currentLastUpdate;
 				}
 				EventsJsonValue eventsJson = cache.get(currentTimeSpan);
@@ -202,45 +219,6 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			throw new IllegalArgumentException("Unexpected arguments");
 		}
 	}
-	
-	/**
-	 * Get all relevant changes compared to a TimeSpan.
-	 * 
-	 * @return
-	 * @throws ExecutionException
-	 */
-	//	private List<IPeriod> getRelevantChangedPeriods(TimeSpan timeSpan)
-	//		throws ExecutionException{
-	//		List<IPeriod> changed = getChangedPeriods();
-	//		if(!changed.isEmpty()) {
-	//			List<Event> known = cache.get(timeSpan).getEvents();
-	//			Map<String, Event> knownIdMap =
-	//				known.parallelStream().collect(Collectors.toMap(e -> e.getId(), e -> e));
-	//			
-	//			List<IPeriod> knownChanged = getKnownChanged(knownIdMap, changed);
-	//			List<IPeriod> notKnownChanged = getNotKnownChanged(knownIdMap, changed);
-	//			if (!knownChanged.isEmpty() || !notKnownChanged.isEmpty()) {
-	//				List<IPeriod> ret = new ArrayList<>();
-	//				ret.addAll(knownChanged);
-	//				ret.addAll(notKnownChanged);
-	//				return ret;
-	//			}
-	//		}
-	//		return Collections.emptyList();
-	//	}
-	
-	//	private List<IPeriod> getNotKnownChanged(Map<String, Event> knownIdMap, List<IPeriod> changed){
-	//		return changed.parallelStream()
-	//			.filter(iPeriod -> !knownIdMap.containsKey(iPeriod.getId())
-	//				&& currentTimeSpan.contains((IPeriod) iPeriod))
-	//			.collect(Collectors.toList());
-	//	}
-	//	
-	//	private List<IPeriod> getKnownChanged(Map<String, Event> knownIdMap, List<IPeriod> changed)
-	//		throws ExecutionException{
-	//		return changed.parallelStream()
-	//			.filter(t -> knownIdMap.containsKey(t.getId())).collect(Collectors.toList());
-	//	}
 	
 	/**
 	 * Get all changed {@link IPeriod} since the knownLastUpdate.

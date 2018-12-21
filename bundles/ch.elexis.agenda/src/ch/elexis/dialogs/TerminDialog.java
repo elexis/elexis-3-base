@@ -17,6 +17,9 @@ import java.util.Comparator;
 import java.util.Hashtable;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -47,6 +50,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -58,6 +63,7 @@ import com.tiff.common.ui.datepicker.DatePicker;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
+import ch.elexis.agenda.commands.PrintAppointmentLabelHandler;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.data.Termin.Free;
@@ -80,6 +86,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.User;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -92,7 +99,9 @@ import ch.rgw.tools.TimeTool;
  */
 public class TerminDialog extends TitleAreaDialog {
 	
-	private static final Logger log = LoggerFactory.getLogger(TerminDialog.class);
+	private static final Logger logger = LoggerFactory.getLogger(TerminDialog.class);
+	private static ICommandService cmdService = (ICommandService) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getService(ICommandService.class);
+	private static Category cmdCategory = cmdService.getCategory("ch.elexis.agenda.commands");
 	
 	public enum CollisionErrorLevel {
 			ERROR, WARNING
@@ -358,7 +367,7 @@ public class TerminDialog extends TitleAreaDialog {
 						for (Termin t : list) {
 							lTermine.add(t);
 							String label = t.getLabel();
-							log.info(label);
+							logger.info(label);
 							lTerminListe.add(label);
 						}
 						lTerminListe.select(0);
@@ -373,7 +382,18 @@ public class TerminDialog extends TitleAreaDialog {
 		bPrint.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e){
-				new TermineDruckenDialog(getShell(), lTermine.toArray(new Termin[0])).open();
+				Command cmd = cmdService.getCommand("ch.elexis.agenda.commands.printAppointmentLabel");
+				if (!cmd.isDefined()) {
+					PrintAppointmentLabelHandler.setTermine(lTermine);
+					cmd.define("Print Appointment", "Print Appointment Command", cmdCategory);
+				}
+
+				try {
+					cmd.executeWithChecks(new ExecutionEvent());
+				} catch (Exception ex) {
+					ExHandler.handle(ex);
+					logger.error("Failed to execute command ch.elexis.agenda.commands.printAppointmentLabel", ex);
+				}
 			}
 			
 		});

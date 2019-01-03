@@ -23,10 +23,8 @@ public class HL7MessageUtil {
 	 */
 	public static HL7Mandant mandantOf(Mandant eMandant){
 		HL7Mandant ret = new HL7Mandant();
-		
 		ret.setLabel(eMandant.get(Anwender.FLD_LABEL));
 		ret.setEan(eMandant.getXid(DOMAIN_EAN));
-		
 		return ret;
 	}
 	

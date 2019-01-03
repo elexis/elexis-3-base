@@ -4,6 +4,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
 import ch.elexis.data.Fall;
+import ch.elexis.data.Fall.Tiers;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -30,36 +31,20 @@ public class XMLExporterTiers {
 		return tiers;
 	}
 
-	public static String getTiers(Kontakt rnAdressat, Kontakt kostentraeger, Fall fall){
-		String tiers = XMLExporter.TIERS_GARANT;
-		
-		if ((kostentraeger != null) && (kostentraeger.isValid())) {
-			if (rnAdressat.equals(kostentraeger)) {
-				tiers = XMLExporter.TIERS_PAYANT;
-			} else {
-				tiers = XMLExporter.TIERS_GARANT;
-			}
-		} else {
-			kostentraeger = rnAdressat;
-			tiers = XMLExporter.TIERS_GARANT;
-		}
-		
-		return tiers;
-	}
-
 	public static XMLExporterTiers buildTiers(Rechnung rechnung, XMLExporter xmlExporter){
 		TarmedACL ta = TarmedACL.getInstance();
 		
 		Fall fall = rechnung.getFall();
 		Patient patient = fall.getPatient();
 		Mandant mandant = rechnung.getMandant();
-		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		// We try to figure out whether we should use Tiers Payant or Tiers
-		// Garant.
-		// if unsure, we make it TG
-		Kontakt rnAdressat = fall.getGarant();
-		String tiers = getTiers(rnAdressat, kostentraeger, fall);
+	
+		String tiers = XMLExporter.TIERS_PAYANT;
+		Tiers tiersType = fall.getTiersType();
+		if(Tiers.GARANT == tiersType) {
+			tiers = XMLExporter.TIERS_GARANT;
+		}
 		
+		Kontakt kostentraeger = fall.getCostBearer();
 		if (kostentraeger == null) {
 			kostentraeger = patient;
 		}
@@ -195,16 +180,17 @@ public class XMLExporterTiers {
 		Element referrer = new Element("referrer", XMLExporter.nsinvoice); //$NON-NLS-1$
 		Kontakt auftraggeber = fall.getRequiredContact("Zuweiser");
 		if (auftraggeber != null) {
-			String zsr = TarmedRequirements.getKSK(auftraggeber);
-			if (zsr != null && !zsr.isEmpty()) {
+			String ean = TarmedRequirements.getEAN(auftraggeber);
+			if (ean != null && !ean.isEmpty()) {
 				referrer.setAttribute(XMLExporter.ATTR_EAN_PARTY,
 					TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
-				
-				referrer.setAttribute("zsr", zsr); // auftraggeber. //$NON-NLS-1$
-				
-				referrer.addContent(XMLExporterUtil.buildAdressElement(auftraggeber));
-				ret.tiersElement.addContent(referrer);
 			}
+			String zsr = TarmedRequirements.getKSK(auftraggeber);
+			if (zsr != null && !zsr.isEmpty()) {
+				referrer.setAttribute("zsr", zsr); // auftraggeber. //$NON-NLS-1$
+			}
+			referrer.addContent(XMLExporterUtil.buildAdressElement(auftraggeber));
+			ret.tiersElement.addContent(referrer);
 		}
 		ret.tiers = tiers;
 
@@ -212,7 +198,15 @@ public class XMLExporterTiers {
 	}
 	
 	/**
-	 * Get the {@link Kontakt} of the guarantor for a bill using the paymentMode, patient and fall.
+	 * Get the {@link Kontakt} of the guarantor for a bill using the paymentMode, patient and fall. 
+	 * 
+	 * <ul>
+	 * <li>Fall TP, Guardian defined -> return guardian
+	 * <li>Fall TP, No Guardian defined -> return patient
+	 * <li>Fall TG, Guarantor equals Patient, Guardian defined -> return guardian
+	 * <li>Fall TG, Guarantor equals Patient, No Guardian defined -> return patient
+	 * <li>Fall TG, Guarantor not equals Patient -> return guarantor
+	 * </ul>
 	 * 
 	 * @param paymentMode
 	 * @param patient
@@ -223,7 +217,12 @@ public class XMLExporterTiers {
 		Kontakt ret;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			// TP
-			ret = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+			Kontakt legalGuardian = patient.getLegalGuardian();
+			if(legalGuardian != null) {
+				return legalGuardian;
+			} else {
+				return patient;
+			}
 		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
 			// TG
 			Kontakt invoiceReceiver = fall.getGarant();
@@ -243,4 +242,5 @@ public class XMLExporterTiers {
 		ret.getPostAnschrift(true);
 		return ret;
 	}
+	
 }

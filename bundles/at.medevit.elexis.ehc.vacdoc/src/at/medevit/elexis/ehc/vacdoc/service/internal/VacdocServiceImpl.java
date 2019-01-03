@@ -15,8 +15,8 @@ import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.enums.CodeSystems;
 import org.ehealth_connector.common.enums.LanguageCode;
 import org.ehealth_connector.common.utils.DateUtil;
-import org.openhealthtools.mdht.uml.cda.ch.CHPackage;
-import org.openhealthtools.mdht.uml.cda.ch.VACD;
+import org.openhealthtools.mdht.uml.cda.ch.CdaChVacdV1;
+import org.openhealthtools.mdht.uml.cda.ch.ChPackage;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class VacdocServiceImpl implements VacdocService {
 	private EhcCoreService ehcCoreService;
 
 	public VacdocServiceImpl(){
-		EClass vacdClass = CHPackage.eINSTANCE.getVACD();
+		EClass vacdClass = ChPackage.eINSTANCE.getCdaChVacdV1();
 		if (vacdClass == null) {
 			logger.warn("Could not load VACD class from ch package");
 		}
@@ -162,7 +162,7 @@ public class VacdocServiceImpl implements VacdocService {
 	public Optional<CdaChVacd> loadVacdocDocument(InputStream document) throws Exception{
 		try {
 			final CdaChLoader<CdaChVacd> loader = new CdaChLoader<CdaChVacd>();
-			return Optional.of(loader.loadFromStream(document, CdaChVacd.class, VACD.class));
+			return Optional.of(loader.loadFromStream(document, CdaChVacd.class, CdaChVacdV1.class));
 		} catch (Exception e) {
 			logger.error("problem loading xml document", e);
 		}

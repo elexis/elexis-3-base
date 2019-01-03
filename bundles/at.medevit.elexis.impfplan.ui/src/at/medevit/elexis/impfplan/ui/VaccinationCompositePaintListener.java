@@ -18,14 +18,17 @@ import java.util.TreeMap;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
@@ -87,6 +90,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	
 	private int entryHeight;
 	private int defaultEntryHeight;
+	private ScrolledComposite scrolledComposite;
 	
 	public VaccinationCompositePaintListener(){
 		Display disp = Display.getCurrent();
@@ -147,6 +151,17 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			return;
 		
 		paintControl(e.gc, e.display, e.width, e.height, false);
+		
+		Widget widget = e.widget;
+		if (widget instanceof VaccinationComposite) {
+			VaccinationComposite vaccinationComposite = (VaccinationComposite) widget;
+			Composite parent = vaccinationComposite.getParent();
+			if (parent instanceof ScrolledComposite) {
+				scrolledComposite = (ScrolledComposite) parent;
+				scrolledComposite
+					.setMinSize(vaccinationComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			}
+		}
 	}
 	
 	public void paintControl(GC gc, Display display, int width, int height, boolean b){
@@ -161,6 +176,9 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		else {
 			if (width < 800) {
 				width = 800;
+			}
+			if (scrolledComposite != null && scrolledComposite.getVerticalBar().isVisible()) {
+				width = width - scrolledComposite.getVerticalBar().getSize().x;
 			}
 			if (locationOfLotNrBorder - OFFSET > 0) {
 				maxLengthBasisImpf = locationOfLotNrBorder - OFFSET;
@@ -665,5 +683,16 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	
 	public void restorePrePrintSettting(){
 		showSide = CoreHub.userCfg.get(PreferencePage.VAC_SHOW_SIDE, false);
+	}
+	
+	public int getWidth(){
+		return 800;
+	}
+	
+	public int getHeight(){
+		if (_vaccinations == null) {
+			return 64;
+		}
+		return eh();
 	}
 }

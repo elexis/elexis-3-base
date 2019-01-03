@@ -14,6 +14,7 @@ package ch.unibe.iam.scg.archie.actions;
 import org.eclipse.jface.action.Action;
 
 import ch.unibe.iam.scg.archie.ArchieActivator;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.ui.views.Dashboard;
 
 /**
@@ -41,7 +42,7 @@ public class CreateChartsAction extends Action {
 	public CreateChartsAction(Dashboard dashboard) {
 		this.dashboard = dashboard;
 
-		this.setToolTipText("Create Charts");
+		this.setToolTipText(Messages.CreateChart);
 		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/control.png"));
 	}
 

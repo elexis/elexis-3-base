@@ -2,6 +2,11 @@ package at.medevit.elexis.agenda.ui.composite;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.LoggerFactory;
+
+import ch.elexis.core.data.activator.CoreHub;
 
 public interface IAgendaComposite {
 	
@@ -25,6 +30,31 @@ public interface IAgendaComposite {
 		public Object getCalendarString(){
 			return calendarString;
 		}
+	}
+	
+	public default Optional<Integer> getConfiguredFontSize(){
+		String confFont = CoreHub.userCfg.get(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, "");
+		String[] parts = confFont.split("\\|");
+		if (parts.length > 3) {
+			try {
+				Float floatValue = Float.parseFloat(parts[2].trim());
+				return Optional.of(floatValue.intValue());
+			} catch (NumberFormatException e) {
+				LoggerFactory.getLogger(getClass())
+					.debug("Could not parse font size [" + parts[2] + "]");
+			}
+		}
+		return Optional.empty();
+	}
+	
+	public default Optional<String> getConfiguredFontFamily(){
+		String confFont =
+			CoreHub.userCfg.get(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, "");
+		String[] parts = confFont.split("\\|");
+		if (parts.length > 3) {
+			return Optional.of(parts[1]);
+		}
+		return Optional.empty();
 	}
 	
 	public String getConfigId();
@@ -61,4 +91,18 @@ public interface IAgendaComposite {
 	 * @param value
 	 */
 	public void setScrollToNow(boolean value);
+	
+	/**
+	 * Set the font-size of the displayed web agenda.
+	 * 
+	 * @param sizePx
+	 */
+	public void setFontSize(int sizePx);
+	
+	/**
+	 * Set the font-family of the displayed web agenda.
+	 * 
+	 * @param family
+	 */
+	public void setFontFamily(String family);
 }

@@ -105,15 +105,15 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	
 	private ResponsibleComposite responsible;
 	private ComboViewer cvMandantType;
-
+	
 	static TarmedACL ta = TarmedACL.getInstance();
 	
-	static final String[] ExtFlds =
-		{
-			"Anrede=" + XidConstants.XID_KONTAKT_ANREDE, "Kanton=" + XidConstants.XID_KONTAKT_KANTON, "EAN=" + DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
-			ta.KANTON, ta.LOCAL, ta.DIAGSYS, "Rolle=" + XidConstants.XID_KONTAKT_ROLLE
-		};
+	static final String[] ExtFlds = {
+		"Anrede=" + XidConstants.XID_KONTAKT_ANREDE, "Kanton=" + XidConstants.XID_KONTAKT_KANTON, //$NON-NLS-1$//$NON-NLS-2$
+		"EAN=" + DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$
+		"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
+		ta.KANTON, ta.LOCAL, ta.DIAGSYS, "Rolle=" + XidConstants.XID_KONTAKT_ROLLE
+	};
 	
 	public RechnungsPrefs(){
 		super(Messages.RechnungsPrefs_BillPrefs); //$NON-NLS-1$
@@ -172,7 +172,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cvMandantType.setLabelProvider(new LabelProvider() {
 			public String getText(Object element){
 				if (element instanceof MandantType) {
-					return Messages.RechnungsPrefs_MandantType + ((MandantType) element).name();
+					if (element == MandantType.SPECIALIST) {
+						return Messages.RechnungsPrefs_MandantType_SPECIALIST;
+					}
+					if (element == MandantType.PRACTITIONER) {
+						return Messages.RechnungsPrefs_MandantType_PRACTITIONER;
+					}
 				}
 				return element.toString();
 			};
@@ -205,8 +210,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				Settings settings = CoreHub.getUserSetting(actMandant);
-				settings.set(PreferenceConstants.BILL_ELECTRONICALLY,
-					bBillsElec.getSelection());
+				settings.set(PreferenceConstants.BILL_ELECTRONICALLY, bBillsElec.getSelection());
 				settings.flush();
 			}
 		});
@@ -498,9 +502,10 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	}
 	
 	class BankLister extends TitleAreaDialog {
-		final String[] flds =
-			{
-				Messages.RechnungsPrefs_department, Messages.RechnungsPrefs_POBox, ta.ESRNUMBER, ta.ESRSUB};
+		final String[] flds = {
+			Messages.RechnungsPrefs_department, Messages.RechnungsPrefs_POBox, ta.ESRNUMBER,
+			ta.ESRSUB
+		};
 		Label banklabel;
 		KontaktExtDialog.ExtInfoTable exTable;
 		
@@ -513,19 +518,17 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(2, false));
-			Hyperlink hb =
-				UiDesk.getToolkit().createHyperlink(ret,
-					Messages.RechnungsPrefs_FinanceInst, SWT.NONE); //$NON-NLS-1$
+			Hyperlink hb = UiDesk.getToolkit().createHyperlink(ret,
+				Messages.RechnungsPrefs_FinanceInst, SWT.NONE); //$NON-NLS-1$
 			hb.addHyperlinkListener(new HyperlinkAdapter() {
 				
 				@Override
 				public void linkActivated(HyperlinkEvent e){
-					KontaktSelektor ksl =
-						new KontaktSelektor(getShell(), Organisation.class, 
-								Messages.RechnungsPrefs_paymentinst, 
-								Messages.RechnungsPrefs_PleseChooseBank, new String[] {
+					KontaktSelektor ksl = new KontaktSelektor(getShell(), Organisation.class,
+						Messages.RechnungsPrefs_paymentinst,
+						Messages.RechnungsPrefs_PleseChooseBank, new String[] {
 							Organisation.FLD_NAME1, Organisation.FLD_NAME2
-						}); //$NON-NLS-1$ //$NON-NLS-2$
+					}); //$NON-NLS-1$ //$NON-NLS-2$
 					if (ksl.open() == Dialog.OK) {
 						actBank = (Kontakt) ksl.getSelection();
 						actMandant.setInfoElement(ta.RNBANK, actBank.getId());
@@ -661,18 +664,14 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		}
 		cbESROCRFontWeight.select(index);
 		
-		int printerCorrectionX =
-			CoreHub.localCfg
-				.get(ESR.ESR_PRINTER_CORRECTION_X, ESR.ESR_PRINTER_CORRECTION_X_DEFAULT);
-		int printerCorrectionY =
-			CoreHub.localCfg
-				.get(ESR.ESR_PRINTER_CORRECTION_Y, ESR.ESR_PRINTER_CORRECTION_Y_DEFAULT);
-		int printerBaseCorrectionX =
-			CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_X,
-				ESR.ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
-		int printerBaseCorrectionY =
-			CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_Y,
-				ESR.ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
+		int printerCorrectionX = CoreHub.localCfg.get(ESR.ESR_PRINTER_CORRECTION_X,
+			ESR.ESR_PRINTER_CORRECTION_X_DEFAULT);
+		int printerCorrectionY = CoreHub.localCfg.get(ESR.ESR_PRINTER_CORRECTION_Y,
+			ESR.ESR_PRINTER_CORRECTION_Y_DEFAULT);
+		int printerBaseCorrectionX = CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_X,
+			ESR.ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
+		int printerBaseCorrectionY = CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_Y,
+			ESR.ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
 		
 		tESRPrinterCorrectionX.setText(new Integer(printerCorrectionX).toString());
 		tESRPrinterCorrectionY.setText(new Integer(printerCorrectionY).toString());

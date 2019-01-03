@@ -27,6 +27,8 @@ public class ParallelView extends ViewPart {
 			}
 		};
 	
+	private SideBarComposite sideBar;
+	
 	public ParallelView(){}
 	
 	@Override
@@ -39,7 +41,7 @@ public class ParallelView extends ViewPart {
 		layout.marginWidth = 0;
 		container.setLayout(layout);
 		
-		SideBarComposite sideBar = new SideBarComposite(container, SWT.NONE);
+		sideBar = new SideBarComposite(container, true, SWT.NONE);
 		sideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		composite = new ParallelComposite(getSite(), container, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -58,5 +60,9 @@ public class ParallelView extends ViewPart {
 		if (composite != null && !composite.isDisposed()) {
 			composite.setFocus();
 		}
+	}
+	
+	public SideBarComposite getSideBarComposite(){
+		return sideBar;
 	}
 }

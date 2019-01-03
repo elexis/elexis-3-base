@@ -16,7 +16,6 @@ package com.hilotec.elexis.messwerte.v2.data;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "com.hilotec.elexis.messwerte.v2.data.messages"; //$NON-NLS-1$
 	public static String DataAccessor_DataDescription;
 	public static String DataAccessor_FilterAll;
 	public static String DataAccessor_FilterFirst;
@@ -40,7 +39,8 @@ public class Messages extends NLS {
 	public static String MesswertBase_NoData;
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+        NLS.initializeMessages( "com.hilotec.elexis.messwerte.v2.data.messages", //$NON-NLS-1$
+        	Messages.class);
     }
 
 private Messages(){}

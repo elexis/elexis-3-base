@@ -225,25 +225,29 @@ public class ArtikelstammImporter {
 			subMonitor.worked(1);
 		}
 		
-		StringBuilder sb = new StringBuilder();
-		sb.append("Die folgenden Artikelstamm-Referenzen in den genannten Leistungsblöcken sind nicht mehr auflösbar:\n\n");
-		Set<Entry<String, List<String>>> entrySet = nonResolvableArtikelstammItems.entrySet();
-		for (Entry<String, List<String>> entry : entrySet) {
-			sb.append(entry.getKey()+":\n");
-			List<String> value = entry.getValue();
-			for (String string : value) {
-				sb.append("\t"+string+"\n");
-			}
-		}
 		
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run(){
-				MessageDialog.openInformation(
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					"Leistungsblock Artikelstamm-Referenzen", sb.toString());
+		Set<Entry<String, List<String>>> entrySet = nonResolvableArtikelstammItems.entrySet();
+		if (!entrySet.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(
+				"Die folgenden Artikelstamm-Referenzen in den genannten Leistungsblöcken sind nicht mehr auflösbar:\n\n");
+			for (Entry<String, List<String>> entry : entrySet) {
+				sb.append(entry.getKey() + ":\n");
+				List<String> value = entry.getValue();
+				for (String string : value) {
+					sb.append("\t" + string + "\n");
+				}
 			}
-		});
+			
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run(){
+					MessageDialog.openInformation(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						"Leistungsblock Artikelstamm-Referenzen", sb.toString());
+				}
+			});
+		}
 	}
 	
 	private static void inactivateNonBlackboxedItems(){
@@ -342,24 +346,21 @@ public class ArtikelstammImporter {
 		
 		log.debug("[II] Update or import {} items...", importItemList.size());
 		for (ITEM item : importItemList) {
-			String pharmaCode = String.format("%07d", item.getPHAR());
 			Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 			qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, item.getGTIN());
 			ArtikelstammItem foundItem = null;
-			List<ArtikelstammItem> result = qre.execute();
-			if (result.size() == 0) {
-				foundItem = ArtikelstammItem.loadByPHARNo(pharmaCode);
-				log.debug("[II] Found using loadByPHARNo {} item {}", pharmaCode,
-					foundItem == null ? "null" : foundItem.getId());
-			} else if (result.size() == 1) {
-				foundItem = result.get(0);
-			} else if (result.size() > 1) {
-				log.warn("[II] Found multiple items for GTIN [" + item.getGTIN() + "]");
-				// Is the case in Stauffacher DB, where legacy articles have been imported
-				for (ArtikelstammItem artikelstammItem : result) {
-					if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE) {
-						foundItem = artikelstammItem;
-						log.warn("[II] Selected ID [" + foundItem.getId() + "] to update.");
+			List<ArtikelstammItem> result = qre.execute();		
+			if(result.size() > 0) {
+				if (result.size() == 1) {
+					foundItem = result.get(0);
+				} else {
+					log.warn("[II] Found multiple items for GTIN [" + item.getGTIN() + "]");
+					// Is the case in Stauffacher DB, where legacy articles have been imported
+					for (ArtikelstammItem artikelstammItem : result) {
+						if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE) {
+							foundItem = artikelstammItem;
+							log.warn("[II] Selected ID [" + foundItem.getId() + "] to update.");
+						}
 					}
 				}
 			}
@@ -431,7 +432,8 @@ public class ArtikelstammImporter {
 		
 		fields.add(ArtikelstammItem.FLD_GTIN);
 		values.add(item.getGTIN());
-		
+		fields.add(ArtikelstammItem.FLD_TYP);
+		values.add(item.getPHARMATYPE().contentEquals("P")? "P": "N");
 		fields.add(ArtikelstammItem.FLD_DSCR);
 		values.add(trimDSCR(item.getDSCR(), item.getGTIN()));
 		

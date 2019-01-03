@@ -14,7 +14,6 @@ package ch.elexis.omnivore.data;
 
 import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 import static ch.elexis.omnivore.Constants.DEFAULT_CATEGORY;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -27,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -145,7 +145,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			if (vi.isOlder(DBVERSION)) {
 				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
 					getConnection().exec("ALTER TABLE " + TABLENAME //$NON-NLS-1$
-						+ " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$
+						+ " ADD if not exists deleted CHAR(1) default '0';"); //$NON-NLS-1$
 				}
 				if (vi.isOlder("1.2.0")) { //$NON-NLS-1$
 					createOrModifyTable(upd120);
@@ -330,6 +330,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				+ JdbcLink.wrap(newName) + " where Title=" + JdbcLink.wrap(oldname)
 				+ " and mimetype=" + JdbcLink.wrap("text/category"));
 			main_categories = null;
+			log.info("Renaming category [{}], moving entries to category [{}]", old, newn);
 		} else {
 			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			MessageDialog.openWarning(shell, Messages.Dochandle_errorCatNameAlreadyTaken,
@@ -345,6 +346,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		getConnection().exec("update CH_ELEXIS_OMNIVORE_DATA set deleted='1' where Title="
 			+ JdbcLink.wrap(name) + " AND mimetype=" + JdbcLink.wrap("text/category"));
 		main_categories = null;
+		log.info("Removing category [{}], moving entries to category [{}]", name, destName);
 	}
 	
 	/**
@@ -423,7 +425,6 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 		return null;
 	}
-	
 	public String getCategoryName(){
 		return checkNull(get(FLD_CAT));
 	}
@@ -532,8 +533,9 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	public void execute(){
 		try {
 			String ext = StringConstants.SPACE; //""; //$NON-NLS-1$
-			File temp = createTemporaryFile(null);
-			
+			File temp = createTemporaryFile(getTitle());
+			log.debug("execute {} readable {}", temp.getAbsolutePath(), Files.isReadable(temp.toPath()));
+
 			Program proggie = Program.findProgram(ext);
 			if (proggie != null) {
 				proggie.execute(temp.getAbsolutePath());
@@ -561,46 +563,44 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		try {
 			MimeType docMimeType = new MimeType(get(FLD_MIMETYPE));
 			fileExtension = MimeTool.getExtension(docMimeType.toString());
-		}
-		catch(MimeTypeParseException mpe) {
+		} catch (MimeTypeParseException mpe) {
 			fileExtension = FileTool.getExtension(get(FLD_MIMETYPE));
 			
-			if(fileExtension == null) {
+			if (fileExtension == null) {
 				
 				fileExtension = FileTool.getExtension(get(FLD_TITLE));
 			}
 		}
 		
-		if(fileExtension == null) {
+		if (fileExtension == null) {
 			fileExtension = "";
 		}
 		
-		// use title if given
-		StringBuffer config_temp_filename = new StringBuffer();
-		if (title != null && !title.isEmpty()) {
-			config_temp_filename.append(title);
-		}
-		
+		String config_temp_filename = Utils.createNiceFileName(this);
 		File temp = null;
 		try {
+			Path tmpDir = Files.createTempDirectory("elexis");
 			if (config_temp_filename.length() > 0) {
-				File uniquetemp =
-					File.createTempFile(config_temp_filename.toString() + "_", "." + fileExtension); //$NON-NLS-1$ //$NON-NLS-2$
-				
-				String temp_pathname = uniquetemp.getParent();
-				uniquetemp.delete();
-				
-				log.debug(temp_pathname);
-				log.debug(config_temp_filename + "." + fileExtension);
-				
-				temp = new File(temp_pathname, config_temp_filename + "." + fileExtension);
-				temp.createNewFile();
+				temp = new File(tmpDir.toString(), config_temp_filename + "." + fileExtension);
 				
 			} else {
-				temp = File.createTempFile("omni_", "_vore." + fileExtension);
+				// use title if given
+				if (title != null && !title.isEmpty()) {
+					// Remove all characters that shall not appear in the generated filename
+					String cleanTitle = title.replaceAll(java.util.regex.Matcher
+							.quoteReplacement(Preferences.cotf_unwanted_chars), "_");
+					if (!cleanTitle.toLowerCase().contains("." + fileExtension.toLowerCase())) {
+						temp = new File(tmpDir.toString(), cleanTitle + "." + fileExtension);
+					} else {
+						temp = new File(tmpDir.toString(), cleanTitle);
+					}
+				} else {
+					temp = Files.createTempFile(tmpDir, "omni_", "_vore." + fileExtension).toFile();
+				}
 			}
+			tmpDir.toFile().deleteOnExit();
 			temp.deleteOnExit();
-			
+	
 			byte[] b = getContents(); // getBinary(FLD_DOC);
 			if (b == null) {
 				SWTHelper.showError(Messages.DocHandle_readErrorCaption2,
@@ -610,6 +610,8 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			try (FileOutputStream fos = new FileOutputStream(temp)) {
 				fos.write(b);
 			}
+			log.debug("createTemporaryFile {} size {} ext {} ", temp.getAbsolutePath(),
+				Files.size(temp.toPath()), fileExtension);
 		} catch (FileNotFoundException e) {
 			log.debug("File not found " + e, Log.WARNINGS);
 		} catch (IOException e) {
@@ -673,6 +675,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				DocHandle docHandle = new DocHandle(fid.category, baos.toByteArray(),
 					ElexisEventDispatcher.getSelectedPatient(), fid.originDate, fid.title,
 					"image.pdf", fid.keywords); //$NON-NLS-1$
+				Utils.archiveFile(docHandle.getStorageFile(true), docHandle);
 				ret.add(docHandle);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
@@ -748,7 +751,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		File file = new File(f);
 		if (!file.canRead()) {
 			SWTHelper.showError(Messages.DocHandle_cantReadCaption,
-				MessageFormat.format(Messages.DocHandle_cantReadMessage, f));
+				String.format(Messages.DocHandle_cantReadMessage, f));
 			return null;
 		}
 		
@@ -803,76 +806,11 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					Messages.DocHandle_importErrorMessage2);
 				return null;
 			}
-			
-			try {
-				for (Integer i = 0; i < Preferences.getOmnivorenRulesForAutoArchiving(); i++) {
-					String SrcPattern = Preferences.getOmnivoreRuleForAutoArchivingSrcPattern(i);
-					String DestDir = Preferences.getOmnivoreRuleForAutoArchivingDestDir(i);
-					
-					if ((SrcPattern != null) && (DestDir != null)
-						&& ((SrcPattern != "" || DestDir != ""))) {
-						log.debug("Automatic archiving found matching rule #" + (i + 1)
-							+ " (1-based index):");
-						log.debug("file.getAbsolutePath(): " + file.getAbsolutePath());
-						log.debug("Pattern: " + SrcPattern);
-						log.debug("DestDir: " + DestDir);
-						
-						if (file.getAbsolutePath().contains(SrcPattern)) {
-							log.debug("SrcPattern found in file.getAbsolutePath()" + i);
-							
-							if (DestDir == "") {
-								log.debug(
-									"DestDir is empty. No more rules will be evaluated for this file. Returning.");
-								return dh;
-							}
-							
-							File newFile = new File(DestDir);
-							if (newFile.isDirectory()) {
-								log.debug("DestDir is a directory. Adding file.getName()...");
-								newFile = new File(DestDir + File.separatorChar + file.getName());
-							}
-							
-							if (newFile.isDirectory()) {
-								log.debug("NewFile.isDirectory==true; renaming not attempted");
-								SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
-									MessageFormat.format(Messages.DocHandle_MoveErrorDestIsDir,
-										DestDir, file.getName()));
-							} else {
-								if (newFile.isFile()) {
-									log.debug("NewFile.isFile==true; renaming not attempted");
-									SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
-										MessageFormat.format(Messages.DocHandle_MoveErrorDestIsFile,
-											DestDir, file.getName()));
-								} else {
-									log.debug(
-										"renaming incoming file to: " + newFile.getAbsolutePath());
-									if (Files.move(file.toPath(), newFile.toPath(),
-										REPLACE_EXISTING) != null) {
-										log.debug("renaming ok");
-									} else {
-										log.debug("renaming attempted, but returned false.");
-										log.debug(
-											"However, I may probably have observed this after successful moves?! So I won't show an error dialog here. js");
-										log.debug(
-											"So I won't show an error dialog here; if a real exception occured, that would suffice to trigger it.");
-										// SWTHelper.showError(Messages.DocHandleMoveErrorCaption,Messages.DocHandleMoveError);
-									}
-								}
-							}
-							
-							break;
-						}
-					}
-				}
-			} catch (Throwable throwable) {
-				ExHandler.handle(throwable);
-				SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
-					Messages.DocHandle_MoveError);
-			}
+			Utils.archiveFile(file, dh);
 		}
 		return dh;
 	}
-	
+
 	private void configError(){
 		SWTHelper.showError("config error", Messages.DocHandle_configErrorCaption, //$NON-NLS-1$
 			Messages.DocHandle_configErrorText);

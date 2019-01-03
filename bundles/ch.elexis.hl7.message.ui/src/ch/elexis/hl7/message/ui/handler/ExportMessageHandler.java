@@ -1,6 +1,9 @@
 package ch.elexis.hl7.message.ui.handler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -64,10 +67,29 @@ public class ExportMessageHandler extends AbstractHandler implements IHandler {
 			Map<String, Object> context = MessageUtil.getContext();
 			context.put(IHL7MessageService.CONTEXT_RECEIVINGAPPLICATION, receiver.getApplication());
 			context.put(IHL7MessageService.CONTEXT_RECEIVINGFACILITY, receiver.getFacility());
-
-			String message =
-				MessageServiceHolder.getService().getMessage(messageTyp, context);
-			MessageUtil.export(messageTyp, message);
+			List<String> validationResult =
+				MessageServiceHolder.getService().validateContext(messageTyp, context);
+			if (validationResult.isEmpty()) {
+				String message = MessageServiceHolder.getService().getMessage(messageTyp, context);
+				MessageUtil.export(messageTyp, message, getEncoding(message));
+			} else {
+				StringBuilder sb = new StringBuilder("Für die Generierung der Message vom Typ [" + messageTyp + "] fehlt folgende Auswahl.\n\n");
+				for (String string : validationResult) {
+					if (string.equals(IHL7MessageService.CONTEXT_PATIENT)) {
+						sb.append("* Patient\n");
+					}
+					if (string.equals(IHL7MessageService.CONTEXT_CONSULTATION)) {
+						sb.append("* Konsultation\n");
+					}
+					if (string.equals(IHL7MessageService.CONTEXT_MANDANTOR)) {
+						sb.append("* Mandant\n");
+					}
+					sb.append("\nEs wurde keine Message exportiert.");
+				}
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+					sb.toString());
+				return false;
+			}
 		} catch (ElexisException e) {
 			LoggerFactory.getLogger(getClass()).error("Error generating message", e);
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
@@ -82,5 +104,21 @@ public class ExportMessageHandler extends AbstractHandler implements IHandler {
 			return false;
 		}
 		return true;
+	}
+	
+	private String getEncoding(String message){
+		BufferedReader reader = new BufferedReader(new StringReader(message));
+		String firstline;
+		try {
+			firstline = reader.readLine();
+			if (firstline.startsWith("MSH")) {
+				if (firstline.contains("8859-1") || firstline.contains("8859/1")) {
+					return StandardCharsets.ISO_8859_1.name();
+				}
+			}
+		} catch (IOException e) {
+			// ignore and use utf-8
+		}
+		return StandardCharsets.UTF_8.name();
 	}
 }

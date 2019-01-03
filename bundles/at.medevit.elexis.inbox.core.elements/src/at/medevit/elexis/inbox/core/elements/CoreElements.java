@@ -26,7 +26,10 @@ public class CoreElements implements IInboxElementsProvider {
 	
 	@Override
 	public void deactivate(){
-		ElexisEventDispatcher.getInstance().removeListeners(labResultListener);
+		if (labResultListener != null) {
+			ElexisEventDispatcher.getInstance().removeListeners(labResultListener);
+			labResultListener.shutdown();
+		}
 		labResultListener = null;
 	}
 }

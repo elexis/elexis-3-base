@@ -10,7 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.core.elements;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ch.elexis.core.data.events.ElexisEvent;
@@ -18,7 +18,7 @@ import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.data.LabResult;
 
 public class LabResultCreateListener extends ElexisEventListenerImpl {
-	private Executor executor = Executors.newCachedThreadPool();
+	private ExecutorService executor = Executors.newCachedThreadPool();
 
 	public LabResultCreateListener(){
 		super(LabResult.class, ElexisEvent.EVENT_CREATE);
@@ -31,5 +31,9 @@ public class LabResultCreateListener extends ElexisEventListenerImpl {
 			// check if we should add an EAL code to the active Konsultation
 			executor.execute(new AddLabInboxElement(result));
 		}
+	}
+	
+	public void shutdown() {
+		executor.shutdown();
 	}
 }

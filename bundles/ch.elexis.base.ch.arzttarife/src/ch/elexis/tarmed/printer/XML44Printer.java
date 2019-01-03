@@ -40,6 +40,7 @@ import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
+import ch.elexis.data.Fall.Tiers;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -177,7 +178,7 @@ public class XML44Printer {
 			return true;
 		}
 		
-		Kontakt adressat = XMLExporterTiers.getGuarantor(ezData.paymentMode, pat, fall);
+		Kontakt adressat = getAddressat(ezData.paymentMode, fall);
 		XMLPrinterUtil.createBrief(TT_TARMED_44_S1, adressat, text);
 		
 		if (request.getPayload().isCopy()) {
@@ -759,5 +760,15 @@ public class XML44Printer {
 			}
 		}
 		return null;
+	}
+	
+	private Kontakt getAddressat(String paymentMode, Fall fall) {
+		Tiers tiersType = fall.getTiersType();
+		switch (tiersType) {
+		case PAYANT:
+			return fall.getCostBearer();
+		default:
+			return XMLExporterTiers.getGuarantor(XMLExporter.TIERS_GARANT, fall.getPatient(), fall);
+		}
 	}
 }

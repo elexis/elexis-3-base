@@ -36,40 +36,53 @@
 			    },
 				events: [
 					{
-						title: 'Meeting Anton',
-						start: '2018-04-30T10:30:00',
-						end: '2018-04-30T12:30:00',
+						title: 'right click?',
+						description: 'Grund',
+						start: '2018-11-21T10:30:00',
+						end: '2018-11-21T12:30:00',
 						resource: 'Anton',
 						borderColor: '#00FF00',
 						icon: 'ui-icon-arrowrefresh-1-s'
 					},
 				],
+				rightClick: rightClickCallback,
 				dayClick: dayClickCallback,
 				eventRender: eventRenderCallback
 			});
 		});
 
-		function dayClickCallback(date, jsEvent, view) {
-			if (slotDate) {
-				forgetSlot();
+		var dayClickSlotDate;
+		var dayClickPosX;
+		var dayClickPosY;
+
+   		function dayClickCallback(date, jsEvent, view) {
+   		    if (dayClickSlotDate) {
+   		        dayClickFunction(date.format());
+   		        dayClickSlotDate = null;
+   		    } else {
+				singleClickFunction();
+		        dayClickSlotDate = date;
+				dayClickPosX = jsEvent.pageX;
+				dayClickPosY = jsEvent.pageY;
+   		        $("#calendar").mousemove(function (jqEvent) {
+					if(dayClickSlotDate) {
+						if(dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
+							dayClickSlotDate = null;
+						}
+					}
+				});
+   		    }
+   		}
+
+		function rightClickCallback(date, jsEvent, view) {
+			if (typeof jsEvent.resource !== 'undefined') {
+				contextMenuFunction(date.format(), jsEvent.resource);
 			} else {
-				console.debug(date.format());
-				console.debug(jsEvent.resource);
-				console.debug(view);
-				slotDate = date;
-				$("#calendar").on("mousemove", forgetSlot);
+				contextMenuFunction(date.format());
 			}
 		}
 
-		function forgetSlot() {
-			slotDate = null;
-			$("#calendar").off("mousemove", forgetSlot);
-		}
-
-		var slotDate;
-
 		function eventRenderCallback(event, element) {
-
 			element.dblclick(function () {
 				doubleClickFunction(event.id);
 			});

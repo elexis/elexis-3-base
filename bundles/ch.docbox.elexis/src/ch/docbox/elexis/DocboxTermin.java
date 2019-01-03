@@ -283,9 +283,7 @@ public class DocboxTermin {
 		Query<Termin> terminQuery = new Query<Termin>(Termin.class);
 		terminQuery.add(Termin.FLD_CREATOR, "=", UserDocboxPreferences.getDocboxLoginID(false));
 		terminQuery.add("Tag", ">=", new TimeTool().toString(TimeTool.DATE_COMPACT));
-		if (UserDocboxPreferences.getAgendaSettingsPerUser()) {
-			terminQuery.add("BeiWem", "=", UserDocboxPreferences.getAppointmentsBereich());
-		}
+		terminQuery.add("BeiWem", "=", UserDocboxPreferences.getAppointmentsBereich());
 		List<Termin> termine = terminQuery.execute();
 		log.log("Termine bestehend " + termine.size(), Log.DEBUGMSG);
 		ArrayList<DocboxTermin> docboxTermine = new ArrayList<DocboxTermin>();

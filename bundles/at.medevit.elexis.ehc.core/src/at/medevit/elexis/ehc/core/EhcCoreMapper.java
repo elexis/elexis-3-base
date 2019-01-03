@@ -230,7 +230,8 @@ public class EhcCoreMapper {
 			qpa.add(ch.elexis.data.Patient.FLD_NAME, Query.EQUALS, ehcName.getFamilyName());
 		}
 		if (ehcName.getGivenNames() != null && !ehcName.getGivenNames().isEmpty()) {
-			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS, ehcName.getGivenNames());
+			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS,
+				ehcName.getGivenNames().get(0));
 		}
 		if (ehcBirthdate != null) {
 			ttBirthdate.setTime(ehcBirthdate);
@@ -241,7 +242,7 @@ public class EhcCoreMapper {
 		ch.elexis.data.Patient ret = null;
 		if (existing.isEmpty()) {
 			ret =
-				new ch.elexis.data.Patient(ehcName.getFamilyName(), ehcName.getGivenNames(),
+				new ch.elexis.data.Patient(ehcName.getFamilyName(), ehcName.getGivenNames().get(0),
 					ttBirthdate.toString(TimeTool.DATE_COMPACT), gender);
 		} else {
 			ret = existing.get(0);

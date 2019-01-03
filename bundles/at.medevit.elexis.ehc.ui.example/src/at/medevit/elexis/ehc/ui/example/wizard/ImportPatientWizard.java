@@ -15,7 +15,7 @@ import java.io.InputStream;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
-import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class ImportPatientWizard extends Wizard implements IImportWizard {
 	
 	private ImportPatientWizardPage1 mainPage;
 	
-	private AbstractCdaCh<?> ehcDocument;
+	private AbstractCdaChV1<?> ehcDocument;
 	
 	public ImportPatientWizard(){
 		setWindowTitle("Patientenstammdaten import.");

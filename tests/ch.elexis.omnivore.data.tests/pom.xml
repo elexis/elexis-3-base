@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>ch.elexis.base</groupId>
+    <artifactId>ch.elexis.base.tests</artifactId>
+    <version>3.8.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>ch.elexis.omnivore.data.tests</artifactId>
+  <packaging>eclipse-test-plugin</packaging>
+  <version>3.0.0-SNAPSHOT</version>
+  <properties>
+    <elexis.run.dbtests>false</elexis.run.dbtests>
+  </properties>
+
+  <!-- comment out to enable headless tests and add additional dependencies if needed
+    -->
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+          <configuration>
+            <application>ch.elexis.core.application.ElexisApp</application>
+            <argLine>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
+            <useUIThread>true</useUIThread>
+            <useUIHarness>true</useUIHarness>
+            <showEclipseLog>true</showEclipseLog>
+            <dependencies>
+              <dependency>
+                <type>eclipse-feature</type>
+                <artifactId>ch.elexis.core.application.feature</artifactId>
+                <version>0.0.0</version>
+              </dependency>
+              <dependency>
+                <type>eclipse-plugin</type>
+                <artifactId>ch.elexis.core.data</artifactId>
+                <version>0.0.0</version>
+              </dependency>
+          </dependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

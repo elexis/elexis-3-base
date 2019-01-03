@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 import org.ehealth_connector.common.Organization;
 import org.ehealth_connector.common.Telecoms;
 import org.ehealth_connector.common.enums.AddressUse;
@@ -101,8 +101,8 @@ public class DocboxService {
 		}
 	}
 	
-	public static AbstractCdaCh<?> getPrescriptionDocument(Rezept rezept){
-		AbstractCdaCh<?> document =
+	public static AbstractCdaChV1<?> getPrescriptionDocument(Rezept rezept){
+		AbstractCdaChV1<?> document =
 			ehcCoreService.createCdaChDocument(rezept.getPatient(),
 				rezept.getMandant());
 		
@@ -409,7 +409,7 @@ public class DocboxService {
 		return out;
 	}
 	
-	public static ByteArrayOutputStream getPrescriptionPdf(AbstractCdaCh<?> cdaPrescription)
+	public static ByteArrayOutputStream getPrescriptionPdf(AbstractCdaChV1<?> cdaPrescription)
 		throws Exception{
 		ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream();
 		CDAUtil.save(cdaPrescription.getDocRoot().getClinicalDocument(), cdaOutput);

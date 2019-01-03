@@ -12,7 +12,6 @@ package ch.elexis.laborimport.hl7.universal;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -21,14 +20,18 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.events.MessageEvent;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
+import ch.elexis.core.ui.importer.div.importers.PersistenceHandler;
+import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Result;
 
 public class Importer extends Action implements IAction {
 	public static final String MY_LAB = "Eigenlabor";
 	
+	private MultiFileParser mfParser = new MultiFileParser(MY_LAB);
 	private HL7Parser hlp = new DefaultHL7Parser(MY_LAB);
 	
 	public Importer(){
@@ -47,14 +50,6 @@ public class Importer extends Action implements IAction {
 			SWTHelper.showError("bad directory for import", "Konfigurationsfehler",
 				"Das Transferverzeichnis ist nicht korrekt eingestellt");
 		} else {
-			File archiveDir = new File(dir, "archive");
-			if (!archiveDir.exists()) {
-				archiveDir.mkdir();
-			}
-			File errorDir = new File(dir, "fehlerhaft");
-			if (!errorDir.exists()) {
-				errorDir.mkdir();
-			}
 			int err = 0;
 			int files = 0;
 			Result<?> r = null;
@@ -69,18 +64,19 @@ public class Importer extends Action implements IAction {
 			})) {
 				files++;
 				File hl7file = new File(dir, fn);
-				try {
-					r = hlp.importFile(hl7file, archiveDir, null, new LinkLabContactResolver(), false);
-				} catch (IOException e) {
-					err++;
-					File errFile = new File(errorDir, fn);
-					hl7file.renameTo(errFile);
-				}
+				r = mfParser.importFromFile(hl7file,
+					new DefaultImportStrategyFactory().setMoveAfterImport(true)
+						.setLabContactResolver(new LinkLabContactResolver()),
+					hlp, new PersistenceHandler());
 			}
 			if (err > 0) {
-				ResultAdapter.displayResult(r,
-					Integer.toString(err) + " von " + Integer.toString(files)
-						+ " Dateien hatten Fehler\n");
+				if (r != null) {
+					ResultAdapter.displayResult(r, Integer.toString(err) + " von "
+						+ Integer.toString(files) + " Dateien hatten Fehler\n");
+				} else {
+					SWTHelper.showError("HL7 Import Fehler",
+						"Die Dateien aus dem Transferverzeichnis konnten nicht importiert werden.");
+				}
 			} else if (files == 0) {
 				SWTHelper.showInfo("Laborimport", "Es waren keine Dateien zum Import vorhanden");
 			} else {

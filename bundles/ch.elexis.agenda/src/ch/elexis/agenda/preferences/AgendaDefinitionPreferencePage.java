@@ -3,6 +3,7 @@ package ch.elexis.agenda.preferences;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -31,6 +32,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.agenda.AreaType;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.AddStringEntryAction;
+import ch.elexis.core.ui.actions.MoveEntryWithinListAction;
 import ch.elexis.core.ui.actions.RemoveSelectedEntriesAction;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.dialogs.provider.ILocalizedEnumLabelProvider;
@@ -115,6 +117,9 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 		listArea.setLayoutData(gd_listArea);
 		
 		MenuManager listAreaMenuManager = new MenuManager();
+		listAreaMenuManager.add(new MoveEntryWithinListAction(listViewerArea, areas, true));
+		listAreaMenuManager.add(new MoveEntryWithinListAction(listViewerArea, areas, false));
+		listAreaMenuManager.add(new Separator());
 		listAreaMenuManager.add(new AddStringEntryAction(listViewerArea, areas));
 		listAreaMenuManager.add(new RemoveSelectedEntriesAction(listViewerArea, areas));
 		Menu menu = listAreaMenuManager.createContextMenu(listArea);
@@ -195,6 +200,11 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 		
 		MenuManager listViewerAppointmentTypesMenuManager = new MenuManager();
 		listViewerAppointmentTypesMenuManager
+			.add(new MoveEntryWithinListAction(listViewerAppointmentTypes, appointmentTypes, true));
+		listViewerAppointmentTypesMenuManager.add(
+			new MoveEntryWithinListAction(listViewerAppointmentTypes, appointmentTypes, false));
+		listViewerAppointmentTypesMenuManager.add(new Separator());
+		listViewerAppointmentTypesMenuManager
 			.add(new AddStringEntryAction(listViewerAppointmentTypes, appointmentTypes));
 		listViewerAppointmentTypesMenuManager
 			.add(new RemoveSelectedEntriesAction(listViewerAppointmentTypes, appointmentTypes));
@@ -219,6 +229,11 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 		listViewerAppointmentStatus.setLabelProvider(new LabelProvider());
 		
 		MenuManager listViewerAppointmentStatusMenuManager = new MenuManager();
+		listViewerAppointmentStatusMenuManager.add(
+			new MoveEntryWithinListAction(listViewerAppointmentStatus, appointmentStatus, true));
+		listViewerAppointmentStatusMenuManager.add(
+			new MoveEntryWithinListAction(listViewerAppointmentStatus, appointmentStatus, false));
+		listViewerAppointmentStatusMenuManager.add(new Separator());
 		listViewerAppointmentStatusMenuManager
 			.add(new AddStringEntryAction(listViewerAppointmentStatus, appointmentStatus));
 		listViewerAppointmentStatusMenuManager

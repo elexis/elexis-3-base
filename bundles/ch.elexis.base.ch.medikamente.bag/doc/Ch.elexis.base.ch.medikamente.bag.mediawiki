@@ -1,7 +1,7 @@
 [[Kategorie:Basis-System]]
 == Einführung ==
 
-Dies ist ein Medikamente-Plugin, das als Datenbasis die vom BAG veröffentlichte Excel-Version der Spezialitätenliste verwendet. Darüberhinaus hat es einige funktionelle Erweiterungen gegenüber dem älteren, Galdat-basierten Plugin. Es bindet sich in die Verrechnen-View und in die Artikel-Perspektive ein und kann so exakt gleich wie die anderen Verrechnungsbezogenen Views verwendet werden.
+Dies ist ein Medikamente-Plugin, das als Datenbasis die vom BAG veröffentlichte Excel-Version der Spezialitätenliste http://bag.e-mediat.net/SL2007.Web.External/File.axd?file=XMLPublications.zip verwendet. Darüberhinaus hat es einige funktionelle Erweiterungen gegenüber dem älteren, Galdat-basierten Plugin. Es bindet sich in die Verrechnen-View und in die Artikel-Perspektive ein und kann so exakt gleich wie die anderen Verrechnungsbezogenen Views verwendet werden.
 
 == Voraussetzungen ==
 

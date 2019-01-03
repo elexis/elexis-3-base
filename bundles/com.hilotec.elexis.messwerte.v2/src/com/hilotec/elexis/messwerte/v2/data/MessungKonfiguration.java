@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -36,12 +37,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.util.PlatformHelper;
-import ch.elexis.core.ui.util.Log;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.rgw.tools.ExHandler;
-
+import com.hilotec.elexis.messwerte.v2.Activator;
 import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
 import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypBool;
 import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypCalc;
@@ -53,6 +49,12 @@ import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypNum;
 import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypScale;
 import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypStr;
 import com.hilotec.elexis.messwerte.v2.views.Preferences;
+
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.util.PlatformHelper;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 
 public class MessungKonfiguration {
 	public static final String CONFIG_FILENAME = "messwerte_v2.xml"; //$NON-NLS-1$
@@ -128,9 +130,17 @@ public class MessungKonfiguration {
 	
 	private MessungKonfiguration(){
 		types = new ArrayList<MessungTyp>();
-		defaultFile =
-			CoreHub.localCfg.get(Preferences.CONFIG_FILE, CoreHub.getWritableUserDir()
-				+ File.separator + CONFIG_FILENAME);
+		String bundle_config_xml = PlatformHelper.getBasePath(Activator.PLUGIN_ID) + File.separator
+			+ "rsc" + File.separator + CONFIG_FILENAME;
+		String user_config_xml = CoreHub.localCfg.get(Preferences.CONFIG_FILE,
+			CoreHub.getWritableUserDir() + File.separator + CONFIG_FILENAME);
+		File f = new File(user_config_xml);
+		if (f.exists()) {
+			defaultFile = f.getAbsolutePath();
+		} else {
+			defaultFile = bundle_config_xml;
+		}
+		LoggerFactory.getLogger(getClass()).info("using config {}", defaultFile);
 	}
 	
 	private Panel createPanelFromNode(Element n){
@@ -248,8 +258,8 @@ public class MessungKonfiguration {
 							num.setFormatPattern(edtf.getAttribute(ATTR_FORMATPATTERN));
 						
 						if (edtf.hasAttribute(ATTR_DEFAULT))
-							((MesswertTypNum) typ).setRoundingMode(edtf
-								.getAttribute(ATTR_ROUNDMODE));
+							((MesswertTypNum) typ)
+								.setRoundingMode(edtf.getAttribute(ATTR_ROUNDMODE));
 						
 					} else if (edtf.getNodeName().equals(NAME_BOOLFIELD)) {
 						typ = new MesswertTypBool(fn, ft, edtf.getAttribute(ATTR_UNIT));
@@ -352,9 +362,8 @@ public class MessungKonfiguration {
 					} else if (edtf.getNodeName().equals(ELEMENT_LAYOUTDESIGN)) {
 						continue;
 					} else {
-						log.log(MessageFormat.format(
-							Messages.MessungKonfiguration_UnknownFieldType, edtf.getNodeName()),
-							Log.ERRORS);
+						log.log(MessageFormat.format(Messages.MessungKonfiguration_UnknownFieldType,
+							edtf.getNodeName()), Log.ERRORS);
 						continue;
 					}
 					
@@ -403,15 +412,12 @@ public class MessungKonfiguration {
 			log.log(Messages.MessungKonfiguration_ErrorReadXML + e.getMessage(), Log.ERRORS);
 		} catch (SAXParseException e) {
 			ExHandler.handle(e);
-			SWTHelper.showError(
-				Messages.MessungKonfiguration_ErrorInXML,
+			SWTHelper.showError(Messages.MessungKonfiguration_ErrorInXML,
 				MessageFormat.format(Messages.MessungKonfiguration_ErrorInXMLOnLine, path,
 					e.getLineNumber(), e.getMessage()));
-			log.log(
-				Messages.MessungKonfiguration_ErrorReadXML
-					+ MessageFormat.format(
-						Messages.MessungKonfiguration_ErrorReadXMLFailure + e.getMessage(),
-						e.getLineNumber()), Log.ERRORS);
+			log.log(Messages.MessungKonfiguration_ErrorReadXML + MessageFormat.format(
+				Messages.MessungKonfiguration_ErrorReadXMLFailure + e.getMessage(),
+				e.getLineNumber()), Log.ERRORS);
 		} catch (Exception e) {
 			ExHandler.handle(e);
 			log.log(Messages.MessungKonfiguration_ErrorReadXML + e.getMessage(), Log.ERRORS);

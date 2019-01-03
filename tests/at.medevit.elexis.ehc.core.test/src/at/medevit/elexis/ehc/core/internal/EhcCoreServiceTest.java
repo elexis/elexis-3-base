@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 import org.ehealth_connector.common.Address;
 import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.enums.AddressUse;
@@ -119,12 +119,12 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testGetPatientDocument(){
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		AbstractCdaCh<?> cda = service.createCdaChDocument(patient, mandant);
+		AbstractCdaChV1<?> cda = service.createCdaChDocument(patient, mandant);
 		assertNotNull(cda);
 		org.ehealth_connector.common.Patient cdaPatient = cda.getPatient();
 		assertNotNull(cdaPatient);
 		assertEquals("name", cdaPatient.getName().getFamilyName());
-		assertEquals("firstname", cdaPatient.getName().getGivenNames());
+		assertEquals("firstname", cdaPatient.getName().getGivenNames().get(0));
 		assertEquals(AdministrativeGender.FEMALE, cdaPatient.getAdministrativeGenderCode());
 		Calendar bDay = Calendar.getInstance();
 		bDay.set(2000, 00, 01, 00, 00, 00);
@@ -142,7 +142,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testWritePatientDocument() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		AbstractCdaCh<?> cda = service.createCdaChDocument(patient, mandant);
+		AbstractCdaChV1<?> cda = service.createCdaChDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		assertTrue(output.size() > 0);
@@ -154,7 +154,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testWritePatientDocumentFile() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		AbstractCdaCh<?> cda = service.createCdaChDocument(patient, mandant);
+		AbstractCdaChV1<?> cda = service.createCdaChDocument(patient, mandant);
 		
 		String userHome = System.getProperty("user.home");
 		String outFilePath = userHome + File.separator + "testPatientCda.xml";
@@ -169,25 +169,25 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testGetDocument() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		AbstractCdaCh<?> cda = service.createCdaChDocument(patient, mandant);
+		AbstractCdaChV1<?> cda = service.createCdaChDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		assertTrue(output.size() > 0);
 		ByteArrayInputStream documentInput = new ByteArrayInputStream(output.toByteArray());
 		ClinicalDocument document = service.loadDocument(documentInput);
 		assertNotNull(document);
-		AbstractCdaCh<?> cdach = service.getAsCdaChDocument(document);
+		AbstractCdaChV1<?> cdach = service.getAsCdaChDocument(document);
 		assertNotNull(cdach);
 		org.ehealth_connector.common.Patient readPatient = cdach.getPatient();
 		assertEquals("name", readPatient.getName().getFamilyName());
-		assertEquals("firstname", readPatient.getName().getGivenNames());
+		assertEquals("firstname", readPatient.getName().getGivenNames().get(0));
 		assertEquals(AdministrativeGender.FEMALE, readPatient.getAdministrativeGenderCode());
 	}
 	
 	@Test
 	public void testGetVaccinationsDocument() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		AbstractCdaCh<?> cda = service.createCdaChDocument(patient, mandant);
+		AbstractCdaChV1<?> cda = service.createCdaChDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		assertTrue(output.size() > 0);
@@ -196,7 +196,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testGetXdmAsStream() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		AbstractCdaCh<?> cda = service.createCdaChDocument(patient, mandant);
+		AbstractCdaChV1<?> cda = service.createCdaChDocument(patient, mandant);
 		
 		InputStream input = service.getXdmAsStream(cda.getDoc());
 		assertTrue(input != null);
@@ -218,7 +218,7 @@ public class EhcCoreServiceTest {
 	@Test
 	public void testWriteXdm() throws Exception{
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
-		AbstractCdaCh<?> cda = service.createCdaChDocument(patient, mandant);
+		AbstractCdaChV1<?> cda = service.createCdaChDocument(patient, mandant);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		CDAUtil.save(cda.getDocRoot().getClinicalDocument(), output);
 		

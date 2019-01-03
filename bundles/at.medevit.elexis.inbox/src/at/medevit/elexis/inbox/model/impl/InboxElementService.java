@@ -16,6 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.model.IInboxElementService;
@@ -29,6 +32,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 
+@Component(immediate = true)
 public class InboxElementService implements IInboxElementService {
 	
 	HashSet<IInboxUpdateListener> listeners = new HashSet<IInboxUpdateListener>();
@@ -82,13 +86,14 @@ public class InboxElementService implements IInboxElementService {
 		}
 	}
 	
+	@Activate
 	public void activate(){
-		System.out.println("active providers");
-		ElementsProviderExtension.activateAll();
+		activateProviders();
 	}
 	
+	@Deactivate
 	public void deactivate(){
-		System.out.println("deactive providers");
+		deactivateProviders();
 	}
 	
 	@Override
@@ -121,5 +126,17 @@ public class InboxElementService implements IInboxElementService {
 				fireUpdate(element);
 			}
 		}
+	}
+	
+	@Override
+	public void deactivateProviders(){
+		LoggerFactory.getLogger(getClass()).info("Deactivating all ElementProviders");
+		ElementsProviderExtension.deactivateAll();
+	}
+	
+	@Override
+	public void activateProviders(){
+		LoggerFactory.getLogger(getClass()).info("Activating all ElementProviders");
+		ElementsProviderExtension.activateAll();
 	}
 }

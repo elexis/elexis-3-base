@@ -63,4 +63,8 @@ public class Messages extends NLS {
 	public static String MessungenUebersichtV21_Initializing;
 	public static String DBError;
 	public static String DBErrorTable;
+	static { // load message values from bundle file
+		NLS.initializeMessages("com.hilotec.elexis.messwerte.v2.views.messages", //$NON-NLS-1$
+			Messages.class);
+	}
 }

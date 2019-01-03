@@ -4,6 +4,7 @@ Bundle-Name: Elexis Plugin fuer Import Laborwerte TeamW
 Bundle-SymbolicName: ch.elexis.laborimport.teamw;singleton:=true
 Bundle-Version: 3.2.0.qualifier
 Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: ch.rgw.utility;bundle-version="2.0.0",

@@ -33,6 +33,7 @@ import at.medevit.elexis.agenda.ui.function.EventDropFunction;
 import at.medevit.elexis.agenda.ui.function.EventResizeFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
+import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import ch.elexis.core.data.activator.CoreHub;
 
 public class WeekComposite extends Composite implements ISelectionProvider, IAgendaComposite {
@@ -48,6 +49,11 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	private DayClickFunction dayClickFunction;
 	
 	public WeekComposite(IWorkbenchPartSite partSite, Composite parent, int style){
+		this(partSite, parent, style, false);
+	}
+	
+	public WeekComposite(IWorkbenchPartSite partSite, Composite parent, int style,
+		boolean enableSwitch){
 		super(parent, style);
 		setLayout(new FillLayout());
 		browser = new Browser(this, SWT.NONE);
@@ -67,14 +73,27 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
-		try {
-			URL url = FileLocator.toFileURL(
-				FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultWeek.html"));
-			LoggerFactory.getLogger(getClass()).debug("Open url [" + url.getFile() + "]");
-			browser.setUrl(url.toString());
-		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass())
-				.error("Could not set url to /rsc/html/defaultWeek.html", e);
+		if (enableSwitch) {
+			new SwitchFunction(browser, "switchFunction");
+			try {
+				URL url = FileLocator.toFileURL(
+					FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/switchWeek.html"));
+				LoggerFactory.getLogger(getClass()).debug("Open url [" + url.getFile() + "]");
+				browser.setUrl(url.toString());
+			} catch (IOException e) {
+				LoggerFactory.getLogger(getClass())
+					.error("Could not set url to /rsc/html/switchWeek.html", e);
+			}
+		} else {
+			try {
+				URL url = FileLocator.toFileURL(
+					FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultWeek.html"));
+				LoggerFactory.getLogger(getClass()).debug("Open url [" + url.getFile() + "]");
+				browser.setUrl(url.toString());
+			} catch (IOException e) {
+				LoggerFactory.getLogger(getClass())
+					.error("Could not set url to /rsc/html/defaultWeek.html", e);
+			}
 		}
 		
 		browser.addControlListener(new ControlAdapter() {
@@ -107,6 +126,11 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 					if (currentSpanSize != null) {
 						setSelectedSpanSize(currentSpanSize);
 					}
+					
+					getConfiguredFontSize().ifPresent(size -> {
+						setFontSize(size);
+						getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
+					});
 				}
 			}
 		});
@@ -125,6 +149,16 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	@Override
 	public void setSelectedDate(LocalDate date){
 		scriptingHelper.setSelectedDate(date);
+	}
+	
+	@Override
+	public void setFontSize(int sizePx){
+		scriptingHelper.setFontSize(sizePx);
+	}
+	
+	@Override
+	public void setFontFamily(String family){
+		scriptingHelper.setFontFamily(family);
 	}
 	
 	@Override

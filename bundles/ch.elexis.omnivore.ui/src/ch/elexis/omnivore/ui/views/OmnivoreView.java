@@ -12,6 +12,8 @@
 
 package ch.elexis.omnivore.ui.views;
 
+import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
+
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.LinkedList;
@@ -25,6 +27,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -62,8 +65,11 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.constants.StringConstants;
@@ -78,11 +84,13 @@ import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.omnivore.data.AutomaticBilling;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
@@ -112,6 +120,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private String searchTitle = "";
 	private String searchKW = "";
 	// ISource selectedSource = null;
+	static Logger log = LoggerFactory.getLogger(OmnivoreView.class);
 	
 	private OmnivoreViewerComparator ovComparator;
 	
@@ -328,7 +337,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		tSearchKW.addModifyListener(searchListener);
 		
 		// Table to display documents
-		table = new Tree(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		table = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
 		TreeColumn[] cols = new TreeColumn[colLabels.length];
 		for (int i = 0; i < colLabels.length; i++) {
 			cols[i] = new TreeColumn(table, SWT.NONE);
@@ -390,7 +399,11 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 								
 								@Override
 								public void lockAcquired(){
-									// do nothing
+									// do automatic billing if configured
+									if (AutomaticBilling.isEnabled()) {
+										AutomaticBilling billing = new AutomaticBilling(handle);
+										billing.bill();
+									}
 								}
 							});
 						}
@@ -408,29 +421,36 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			@Override
 			public void dragStart(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				DocHandle dh = (DocHandle) selection.getFirstElement();
-				if (dh.isCategory()) {
-					event.doit = false;
+				for (Object object : selection.toList()) {
+					DocHandle dh = (DocHandle) object;
+					if (dh.isCategory()) {
+						event.doit = false;
+					}
 				}
 			}
 			
 			@Override
 			public void dragSetData(DragSourceEvent event){
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				DocHandle dh = (DocHandle) selection.getFirstElement();
+				
 				if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
-					String title = dh.getTitle();
-					int end = dh.getTitle().lastIndexOf(".");
-					if (end != -1) {
-						title = (dh.getTitle()).substring(0, end);
+					String[] files = new String[selection.size()];
+					for (int index = 0; index < selection.size(); index++) {
+						DocHandle dh = (DocHandle) selection.toList().get(index);
+						File file = dh.createTemporaryFile(dh.getTitle());
+						files[index] = file.getAbsolutePath();
+						log.debug("dragSetData; isSupportedType {} data {}", file.getAbsolutePath(), //$NON-NLS-1$
+							event.data);
 					}
-					File file = dh.createTemporaryFile(title);
-					event.data = new String[] {
-						file.getAbsolutePath()
-					};
+					event.data = files;
 				} else {
 					StringBuilder sb = new StringBuilder();
-					sb.append(((PersistentObject) dh).storeToString()).append(","); //$NON-NLS-1$
+					for (int index = 0; index < selection.size(); index++) {
+						DocHandle dh = (DocHandle) selection.toList().get(index);
+						sb.append(((PersistentObject) dh).storeToString()).append(","); //$NON-NLS-1$
+						log.debug("dragSetData; unsupported dataType {} returning {}", //$NON-NLS-1$
+							event.dataType, sb.toString().replace(",$", ""));
+					}
 					event.data = sb.toString().replace(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
@@ -603,30 +623,45 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			}
 
 			@Override
-			public void doRun(DocHandle dh) {
-				if (dh.isCategory()) {
-					if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
-						InputDialog id = new InputDialog(getViewSite().getShell(),
-								MessageFormat.format("Kategorie {0} löschen", dh.getLabel()),
-								"Geben Sie bitte an, in welche andere Kategorie die Dokumente dieser Kategorie verschoben werden sollen",
-								"", null);
-						if (id.open() == Dialog.OK) {
-							DocHandle.removeCategory(dh.getLabel(), id.getValue());
-							viewer.refresh();
+				public void doRun(DocHandle dh){
+					if (dh.isCategory()) {
+						if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
+							ListDialog ld = new ListDialog(getViewSite().getShell());
+							
+							Query<DocHandle> qbe = new Query<DocHandle>(DocHandle.class);
+							qbe.add(DocHandle.FLD_MIMETYPE, Query.EQUALS, CATEGORY_MIMETYPE);
+							qbe.add(PersistentObject.FLD_ID, Query.NOT_EQUAL, dh.getId());
+							List<DocHandle> mainCategories = qbe.execute();
+
+							ld.setInput(mainCategories);
+							ld.setContentProvider(ArrayContentProvider.getInstance());
+							ld.setLabelProvider(new DefaultLabelProvider());
+							ld.setTitle(
+								MessageFormat.format("Kategorie {0} löschen", dh.getLabel()));
+							ld.setMessage(
+								"Geben Sie bitte an, in welche andere Kategorie die Dokumente dieser Kategorie verschoben werden sollen");
+							int open = ld.open();
+							if (open == Dialog.OK) {
+								Object[] selection = ld.getResult();
+								if (selection != null && selection.length > 0) {
+									String label = ((DocHandle) selection[0]).getLabel();
+									DocHandle.removeCategory(dh.getLabel(), label);
+								}
+								viewer.refresh();
+							}
+						} else {
+							SWTHelper.showError("Insufficient Rights",
+								"You have insufficient rights to delete document categories");
 						}
 					} else {
-						SWTHelper.showError("Insufficient Rights",
-								"You have insufficient rights to delete document categories");
+						if (SWTHelper.askYesNo(Messages.OmnivoreView_reallyDeleteCaption,
+							MessageFormat.format(Messages.OmnivoreView_reallyDeleteContents,
+								dh.getTitle()))) {
+							dh.delete();
+							viewer.refresh();
+						}
 					}
-
-				} else {
-					if (SWTHelper.askYesNo(Messages.OmnivoreView_reallyDeleteCaption,
-							MessageFormat.format(Messages.OmnivoreView_reallyDeleteContents, dh.get("Titel")))) { // $NON-NLS-2$
-						dh.delete();
-						viewer.refresh();
-					}
-				}
-			};
+				};
 		};
 		
 		editAction = new LockRequestingRestrictedAction<DocHandle>(AccessControlDefaults.DOCUMENT_DELETE,
@@ -648,7 +683,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 					if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
 
 						InputDialog id = new InputDialog(getViewSite().getShell(),
-								MessageFormat.format("Kategorie '{0}' umbenennen.", dh.getLabel()),
+								MessageFormat.format("Kategorie {0} umbenennen.", dh.getLabel()),
 								"Geben Sie bitte einen neuen Namen für die Kategorie ein", dh.getLabel(), null);
 						if (id.open() == Dialog.OK) {
 							String nn = id.getValue();

@@ -2,14 +2,35 @@ package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+
+import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
+import at.medevit.elexis.agenda.ui.view.AgendaView;
+import at.medevit.elexis.agenda.ui.view.ParallelView;
 
 public abstract class AbstractBrowserFunction extends BrowserFunction {
 	
 	public AbstractBrowserFunction(Browser browser, String name){
 		super(browser, name);
+	}
+	
+	public static Optional<SideBarComposite> getActiveSideBar(){
+		IWorkbenchPart activePart =
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+		SideBarComposite sideBar = null;
+		if (activePart instanceof AgendaView) {
+			AgendaView view = (AgendaView) activePart;
+			sideBar = view.getParallelSideBarComposite();
+		} else if (activePart instanceof ParallelView) {
+			ParallelView view = (ParallelView) activePart;
+			sideBar = view.getSideBarComposite();
+		}
+		return Optional.ofNullable(sideBar);
 	}
 	
 	public void updateCalendarHeight(){

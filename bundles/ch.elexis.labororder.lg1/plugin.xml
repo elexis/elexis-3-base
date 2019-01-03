@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.LaborOrder">
+      <Importer
+            ToolbarAction="ch.elexis.labororder.lg1.order.LabOrderAction"
+            name="LG1 LabOrder">
+      </Importer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.labororder.lg1.preferences.LG1PreferencePage"
+            id="ch.elexis.labororder.lg1.preferences"
+            name="LG1 Laborauftrag">
+      </page>
+   </extension>
+
+</plugin>

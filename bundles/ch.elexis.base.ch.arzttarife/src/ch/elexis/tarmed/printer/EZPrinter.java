@@ -65,7 +65,7 @@ public class EZPrinter {
 		Kontakt addressee;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			// TP
-			addressee = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+			addressee = fall.getCostBearer();
 		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
 			// TG
 			Kontakt invoiceReceiver = fall.getGarant();

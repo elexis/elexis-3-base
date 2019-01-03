@@ -16,11 +16,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
+import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.core.data.services.IDocumentManager;
-import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.rgw.tools.RegexpFilter;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -33,7 +33,17 @@ public class DocumentManagement implements IDocumentManager {
 	}
 	
 	public String addDocument(IOpaqueDocument doc) throws ElexisException{
+		return addDocument(doc, false);
+	}
+	
+	public String addDocument(IOpaqueDocument doc, boolean automaticBilling) throws ElexisException{
 		DocHandle dh = new DocHandle(doc);
+		if (automaticBilling) {
+			if (AutomaticBilling.isEnabled()) {
+				AutomaticBilling billing = new AutomaticBilling(dh);
+				billing.bill();
+			}
+		}
 		return dh.getId();
 	}
 	

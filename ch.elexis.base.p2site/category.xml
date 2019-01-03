@@ -19,7 +19,7 @@
       <category name="documentmanagement"/>
    </feature>
    <feature url="features/ch.elexis.privatrechnung.feature_3.0.100.qualifier.jar" id="ch.elexis.privatrechnung.feature" version="3.0.100.qualifier">
-      <category name="documentmanagement"/>
+      <category name="finances"/>
    </feature>
    <feature url="features/ch.medelexis.text.templator.feature_3.0.100.qualifier.jar" id="ch.medelexis.text.templator.feature" version="3.0.100.qualifier">
       <category name="documentmanagement"/>
@@ -236,6 +236,15 @@
    </feature>
    <feature url="features/ch.elexis.hl7.message.feature_1.0.0.qualifier.jar" id="ch.elexis.hl7.message.feature" version="1.0.0.qualifier">
       <category name="dataexchange"/>
+   </feature>
+   <feature url="features/ch.elexis.importer.aeskulap.feature_1.0.0.qualifier.jar" id="ch.elexis.importer.aeskulap.feature" version="1.0.0.qualifier">
+      <category name="support"/>
+   </feature>
+   <feature url="features/ch.itmed.lmz.risch.laborder.feature_3.7.0.qualifier.jar" id="ch.itmed.lmz.risch.laborder.feature" version="3.7.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.elexis.labororder.lg1.feature_1.0.0.qualifier.jar" id="ch.elexis.labororder.lg1.feature" version="1.0.0.qualifier">
+      <category name="laborexchanges"/>
    </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">

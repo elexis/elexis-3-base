@@ -97,7 +97,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		Label docSeparator = new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
 		docSeparator.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		
-		Label docLabel = new Label(result, SWT.LEFT); //WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelDoc);
+		Label docLabel = new Label(result, SWT.LEFT);
 		FontDescriptor docBoldDescriptor = FontDescriptor.createFrom(docLabel.getFont()).setStyle(SWT.BOLD);
 		Font docBoldFont = docBoldDescriptor.createFont(docLabel.getDisplay());
 		docLabel.setFont( docBoldFont );
@@ -117,7 +117,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		Label formSeparator = new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
 		formSeparator.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		
-		Label formLabel = new Label(result, SWT.LEFT); //WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelForm);
+		Label formLabel = new Label(result, SWT.LEFT);
 		FontDescriptor formBoldDescriptor = FontDescriptor.createFrom(formLabel.getFont()).setStyle(SWT.BOLD);
 		Font formBoldFont = formBoldDescriptor.createFont(formLabel.getDisplay());
 		formLabel.setFont( formBoldFont );
@@ -133,11 +133,15 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		this.category_form.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		this.category_form.setTextLimit(80);
 		
-
 		Label xidSeparator = new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
 		xidSeparator.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		
-		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelXIDDomain);
+		Label xidLabel = new Label(result, SWT.LEFT);
+		FontDescriptor xidBoldDescriptor = FontDescriptor.createFrom(xidLabel.getFont()).setStyle(SWT.BOLD);
+		Font xidBoldFont = xidBoldDescriptor.createFont(xidLabel.getDisplay());
+		xidLabel.setFont( xidBoldFont );
+		xidLabel.setText(MedNetMessages.ContactLinkRecordEditDialog_labelXIDDomain);
+		
 		this.xidDomain = new Text(result, SWT.BORDER);
 		this.xidDomain.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.xidDomain.setTextLimit(80);

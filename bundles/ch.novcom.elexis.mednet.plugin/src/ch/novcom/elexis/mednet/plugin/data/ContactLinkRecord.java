@@ -16,6 +16,7 @@ import java.util.List;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 
@@ -35,10 +36,13 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 	public static final String FLD_MEDNET_ID = "MedNetID";
 	public static final String FLD_CATEGORY_DOC = "category_doc";
 	public static final String FLD_CATEGORY_FORM = "category_form";
+	public static final String FLD_DOCIMPORT_ISACTIVE = "docImport_isActive";
+	public static final String FLD_FORMIMPORT_ISACTIVE = "formImport_isActive";
 	public static final String FLD_XID_DOMAIN = "xid_domain";
 	
-	static final String TABLENAME = "MEDNET_CONTACTLINK";
 	
+	static final String TABLENAME = "MEDNET_CONTACTLINK";
+	public static final int CURRENT_DBVERSION = 1;
 
 //We cannot put any Unique index since deleted records are keept in the database and just marked as deleted
 // 	private static final String index1SQL =
@@ -52,11 +56,22 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 			+ ContactLinkRecord.FLD_MEDNET_ID + " VARCHAR(255),"
 			+ ContactLinkRecord.FLD_CATEGORY_DOC + " VARCHAR(255),"
 			+ ContactLinkRecord.FLD_CATEGORY_FORM + " VARCHAR(255),"
+			+ ContactLinkRecord.FLD_DOCIMPORT_ISACTIVE + " CHAR(1) default '1',"
+			+ ContactLinkRecord.FLD_FORMIMPORT_ISACTIVE + " CHAR(1) default '1',"
 			+ ContactLinkRecord.FLD_XID_DOMAIN + " VARCHAR(255),"
 			+ PersistentObject.FLD_LASTUPDATE + " BIGINT,"
 			+ PersistentObject.FLD_DELETED + " CHAR(1) default '0'"
 			+ ");";
-			//+ index1SQL;
+	
+	private static final String addMedNetIndex =
+			"CREATE INDEX " + ContactLinkRecord.TABLENAME + "_idx_mednet on " + ContactLinkRecord.TABLENAME + "(" + ContactLinkRecord.FLD_MEDNET_ID + ");";
+	
+	private static final String addImportIsActiveColumns = "ALTER TABLE "
+			+ ContactLinkRecord.TABLENAME
+			+ " ADD " + ContactLinkRecord.FLD_DOCIMPORT_ISACTIVE  + " CHAR(1) default '1',"
+			+ " ADD " + ContactLinkRecord.FLD_FORMIMPORT_ISACTIVE + " CHAR(1) default '1';";
+			
+	
 	
 	@Override
 	protected String getTableName(){
@@ -70,18 +85,38 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 			ContactLinkRecord.FLD_MEDNET_ID,
 			ContactLinkRecord.FLD_CATEGORY_DOC,
 			ContactLinkRecord.FLD_CATEGORY_FORM,
+			ContactLinkRecord.FLD_DOCIMPORT_ISACTIVE,
+			ContactLinkRecord.FLD_FORMIMPORT_ISACTIVE,
 			ContactLinkRecord.FLD_XID_DOMAIN
 		);
+		checkTable();
+	}
+	
+	private static void checkTable(){
 		if(!PersistentObject.tableExists(TABLENAME)){
 			ContactLinkRecord.createOrModifyTable(createTable);
+			ContactLinkRecord.createOrModifyTable(addMedNetIndex);
+			MedNet.getSettings().setDBVersion(ContactLinkRecord.CURRENT_DBVERSION);	
+			MedNet.getSettings().saveSettings();
+		}
+		else {
+			if (MedNet.getSettings().getDBVersion() < ContactLinkRecord.CURRENT_DBVERSION) {
+				ContactLinkRecord.createOrModifyTable(addImportIsActiveColumns);
+				ContactLinkRecord.createOrModifyTable(addMedNetIndex);
+				MedNet.getSettings().setDBVersion(ContactLinkRecord.CURRENT_DBVERSION);	
+				MedNet.getSettings().saveSettings();
+			}
 		}
 	}
+	
 	
 	public ContactLinkRecord(
 			String contactID,
 			String mednetID,
 			String category_doc,
 			String category_form,
+			boolean docImport_isActive,
+			boolean formImport_isActive,
 			String xidDomain
 		){
 		
@@ -91,12 +126,16 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 				FLD_MEDNET_ID,
 				FLD_CATEGORY_DOC,
 				FLD_CATEGORY_FORM,
+				FLD_DOCIMPORT_ISACTIVE,
+				FLD_FORMIMPORT_ISACTIVE,
 				FLD_XID_DOMAIN
 			}, 
 				contactID,
 				mednetID,
 				category_doc,
 				category_form,
+				docImport_isActive ? "1": "0",
+				formImport_isActive ? "1": "0",
 				xidDomain
 		);
 		
@@ -150,6 +189,22 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 	public void setCategoryForm(String category){
 		this.set(ContactLinkRecord.FLD_CATEGORY_FORM, category);
 	}
+
+	public boolean docImport_isActive(){
+		return PersistentObject.checkNull(this.get(ContactLinkRecord.FLD_DOCIMPORT_ISACTIVE)).equals("1") ? true : false;
+	}
+	
+	public void docImport_setActive(boolean isActive){
+		this.set(ContactLinkRecord.FLD_DOCIMPORT_ISACTIVE, isActive ? "1" : "0");
+	}
+	
+	public boolean formImport_isActive(){
+		return PersistentObject.checkNull(this.get(ContactLinkRecord.FLD_FORMIMPORT_ISACTIVE)).equals("1") ? true : false;
+	}
+	
+	public void formImport_setActive(boolean isActive){
+		this.set(ContactLinkRecord.FLD_FORMIMPORT_ISACTIVE, isActive ? "1" : "0");
+	}
 	
 	public String getXIDDomain(){
 		return PersistentObject.checkNull(this.get(ContactLinkRecord.FLD_XID_DOMAIN));
@@ -167,6 +222,8 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 				ContactLinkRecord.FLD_MEDNET_ID,
 				ContactLinkRecord.FLD_CATEGORY_DOC,
 				ContactLinkRecord.FLD_CATEGORY_FORM,
+				ContactLinkRecord.FLD_DOCIMPORT_ISACTIVE,
+				ContactLinkRecord.FLD_FORMIMPORT_ISACTIVE,
 				ContactLinkRecord.FLD_XID_DOMAIN
 		};
 		String[] vals = new String[fields.length];
@@ -178,7 +235,9 @@ public class ContactLinkRecord extends PersistentObject implements Comparable<Co
 			vals[1],
 			vals[2],
 			vals[3],
-			vals[4]
+			vals[4],
+			vals[5],
+			vals[6]
 		);
 		
 	}

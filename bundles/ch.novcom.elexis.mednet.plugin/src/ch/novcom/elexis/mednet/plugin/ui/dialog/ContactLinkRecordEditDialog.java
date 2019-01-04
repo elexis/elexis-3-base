@@ -10,19 +10,24 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.dialog;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -41,12 +46,13 @@ import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
  */
 public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	
-	//private LaborSelectionComposite institutionSelection;
 	private KontaktSelectionComposite contactSelection;
 	private Combo mednetIDSelection;
 	private List<MedNetItem> mednetItems;
 	private Text category_doc;
 	private Text category_form;
+	private Button docImport_isActive;
+	private Button formImport_isActive;
 	private Text xidDomain;
 	
 	private ContactLinkRecord record;
@@ -88,18 +94,49 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		this.contactSelection = new KontaktSelectionComposite(result, SWT.NONE);
 		this.contactSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
-		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategoryDoc);
+		Label docSeparator = new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
+		docSeparator.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		
+		Label docLabel = new Label(result, SWT.LEFT); //WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelDoc);
+		FontDescriptor docBoldDescriptor = FontDescriptor.createFrom(docLabel.getFont()).setStyle(SWT.BOLD);
+		Font docBoldFont = docBoldDescriptor.createFont(docLabel.getDisplay());
+		docLabel.setFont( docBoldFont );
+		docLabel.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		docLabel.setText(MedNetMessages.ContactLinkRecordEditDialog_labelDoc);
+		
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelImportIsActive);
+		this.docImport_isActive = new Button(result, SWT.CHECK);
+		this.docImport_isActive.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		
+		
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategory);
 		this.category_doc = new Text(result, SWT.BORDER);
 		this.category_doc.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		this.category_doc.setTextLimit(80);
-		
 
-		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategoryForm);
+		Label formSeparator = new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
+		formSeparator.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		
+		Label formLabel = new Label(result, SWT.LEFT); //WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelForm);
+		FontDescriptor formBoldDescriptor = FontDescriptor.createFrom(formLabel.getFont()).setStyle(SWT.BOLD);
+		Font formBoldFont = formBoldDescriptor.createFont(formLabel.getDisplay());
+		formLabel.setFont( formBoldFont );
+		formLabel.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		formLabel.setText(MedNetMessages.ContactLinkRecordEditDialog_labelForm);
+		
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelImportIsActive);
+		this.formImport_isActive = new Button(result, SWT.CHECK);
+		this.formImport_isActive.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategory);
 		this.category_form = new Text(result, SWT.BORDER);
 		this.category_form.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		this.category_form.setTextLimit(80);
 		
 
+		Label xidSeparator = new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
+		xidSeparator.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		
 		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelXIDDomain);
 		this.xidDomain = new Text(result, SWT.BORDER);
 		this.xidDomain.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -129,12 +166,17 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 			}
 			this.category_doc.setText(this.record.getCategoryDoc());
 			this.category_form.setText(this.record.getCategoryForm());
+			this.docImport_isActive.setSelection(this.record.docImport_isActive());
+			this.formImport_isActive.setSelection(this.record.formImport_isActive());
+			
 			this.xidDomain.setText(String.valueOf(record.getXIDDomain()));
 		}
 		else {
 			this.mednetIDSelection.deselectAll();;
 			this.category_doc.setText("");
 			this.category_form.setText("");
+			this.docImport_isActive.setSelection(true);
+			this.formImport_isActive.setSelection(true);
 			this.xidDomain.setText("");
 		}
 		
@@ -164,6 +206,8 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 					this.mednetItems.get(this.mednetIDSelection.getSelectionIndex()).getId(),
 					this.category_doc.getText(),
 					this.category_form.getText(),
+					this.docImport_isActive.getSelection(),
+					this.formImport_isActive.getSelection(),
 					this.xidDomain.getText()
 			);
 			//mapping.persistTransientLabMappings(result);
@@ -175,12 +219,16 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 							ContactLinkRecord.FLD_MEDNET_ID,
 							ContactLinkRecord.FLD_CATEGORY_DOC,
 							ContactLinkRecord.FLD_CATEGORY_FORM,
+							ContactLinkRecord.FLD_DOCIMPORT_ISACTIVE,
+							ContactLinkRecord.FLD_FORMIMPORT_ISACTIVE,
 							ContactLinkRecord.FLD_XID_DOMAIN
-						}, 
+						},
 						this.contactSelection.getKontakt().getId(),
 						this.mednetItems.get(this.mednetIDSelection.getSelectionIndex()).getId(),
 						this.category_doc.getText(),
 						this.category_form.getText(),
+						this.docImport_isActive.getSelection() ? "1":"0",
+						this.formImport_isActive.getSelection() ? "1":"0",
 						this.xidDomain.getText()
 			);
 			
@@ -201,6 +249,8 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		this.category_form.setText(string);
 	}
 
+	
+	
 	public void setXIDDomainText(String string){
 		this.xidDomain.setText(string);
 	}

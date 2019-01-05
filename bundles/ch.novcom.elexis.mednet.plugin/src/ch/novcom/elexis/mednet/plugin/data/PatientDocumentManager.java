@@ -463,6 +463,7 @@ public class PatientDocumentManager {
 		String categorylabel = null;
 		if(contactLink != null) {
 			Kontakt kontakt = Kontakt.load(contactLink.getContactID());
+			
 			String name = kontakt.getLabel(true);
 			if(name == null || name.isEmpty()) {
 				name = MedNet.getSettings().getInstitutions().get(contactLink.getMedNetID());

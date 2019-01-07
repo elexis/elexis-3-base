@@ -78,7 +78,7 @@ public class ArtikelstammImporter {
 	 * @return
 	 */
 	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
-		@Nullable Integer newVersion){
+		boolean bPharma, boolean bNonPharma, @Nullable Integer newVersion){
 		LocalLock lock = new LocalLock("ArtikelstammImporter");
 		
 		if (!lock.tryLock()) {
@@ -148,16 +148,20 @@ public class ArtikelstammImporter {
 			
 			int currentVersion = ArtikelstammItem.getCurrentVersion();
 			
-			log.info("[PI] Aktualisiere {} vom {} von v{} auf v{}. Importer-Version {}",
+			log.info("[PI] Aktualisiere{}{} {} vom {} von v{} auf v{}. Importer-Version {}",
+				bPharma ? " Pharma" : "",
+				bNonPharma ? " NonPharma" : "",
 				importStamm.getDATASOURCE(),
 				importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime(), currentVersion,
 				newVersion, bundleVersion);
 			
 			subMonitor.setTaskName("Lese Produkte und Limitationen...");
+			subMonitor.subTask("Lese Produkt-Details");
 			populateProducsAndLimitationsMap(importStamm);
 			subMonitor.worked(5);
-			
+
 			subMonitor.setTaskName("Setze alle Elemente auf inaktiv...");
+			subMonitor.subTask("Setze Elemente auf inaktiv");
 			inactivateNonBlackboxedItems();
 			subMonitor.worked(5);
 			
@@ -165,10 +169,13 @@ public class ArtikelstammImporter {
 			subMonitor.setTaskName(
 				"Importiere Artikelstamm " + importStamm.getCREATIONDATETIME().getMonth() + "/"
 					+ importStamm.getCREATIONDATETIME().getYear());
-			
-			updateOrAddItems(newVersion, importStamm, subMonitor.split(50));
-			updateOrAddProducts(newVersion, importStamm, subMonitor.split(20));
-			
+			if (bPharma) {
+				subMonitor.subTask("Importiere Pharma Products");
+				updateOrAddProducts(newVersion, importStamm, subMonitor.split(20));
+			}
+			subMonitor.subTask("Importiere Artikel");
+			updateOrAddItems(newVersion, importStamm, bPharma, bNonPharma, subMonitor.split(50));
+
 			// update the version number for type importStammType
 			subMonitor.setTaskName("Setze neue Versionsnummer");
 			
@@ -304,7 +311,6 @@ public class ArtikelstammImporter {
 			subMonitor.worked(1);
 		}
 		subMonitor.done();
-		
 	}
 	
 	private static String trimDSCR(String dscr, String itemId){
@@ -337,7 +343,7 @@ public class ArtikelstammImporter {
 	}
 	
 	private static void updateOrAddItems(int newVersion, ARTIKELSTAMM importStamm,
-		IProgressMonitor monitor){
+		boolean bPharma, boolean bNonPharma, IProgressMonitor monitor){
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		
 		List<ITEM> importItemList = importStamm.getITEMS().getITEM();
@@ -364,29 +370,33 @@ public class ArtikelstammImporter {
 					}
 				}
 			}
-			
-			boolean keepOverriddenPublicPrice = false;
-			boolean keepOverriddenPkgSize = false;
-			
-			if (foundItem == null) {
-				String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
-				TYPE pharmaType = TYPE.X;
-				if (item.getPHARMATYPE() != null) {
-					String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
-					pharmaType = TYPE.valueOf(ptString.toUpperCase());
+
+			if ((bPharma && item.getPHARMATYPE().contentEquals("P"))
+					|| (bNonPharma && item.getPHARMATYPE().contentEquals("N"))) {
+				boolean keepOverriddenPublicPrice = false;
+				boolean keepOverriddenPkgSize = false;
+
+				if (foundItem == null) {
+					String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
+					TYPE pharmaType = TYPE.X;
+					if (item.getPHARMATYPE() != null) {
+						String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
+						pharmaType = TYPE.valueOf(ptString.toUpperCase());
+					}
+					foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(), item.getPHAR(),
+							trimmedDscr, StringConstants.EMPTY);
+					log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
+				} else {
+					// check if article has overridden public price
+					keepOverriddenPublicPrice = foundItem.isUserDefinedPrice();
+					keepOverriddenPkgSize = foundItem.isUserDefinedPkgSize();
 				}
-				foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(),
-					item.getPHAR(), trimmedDscr, StringConstants.EMPTY);
-				log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
-			} else {
-				// check if article has overridden public price
-				keepOverriddenPublicPrice = foundItem.isUserDefinedPrice();
-				keepOverriddenPkgSize = foundItem.isUserDefinedPkgSize();
+				log.trace("[II] Updating article {} {}  {} {} ({})", item.getPHARMATYPE(),
+						bPharma && item.getPHARMATYPE().contentEquals("P"),
+						bNonPharma && item.getPHARMATYPE().contentEquals("N"), foundItem.getId());
+				setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice,
+						keepOverriddenPkgSize);
 			}
-			log.trace("[II] Updating article " + foundItem.getId() + " (" + item.getDSCR() + ")");
-			
-			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice,
-				keepOverriddenPkgSize);
 			subMonitor.worked(1);
 		}
 		

@@ -598,7 +598,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		ArtikelstammItem version = load(VERSION_ENTRY_ID);
 		try {
 			return df.parse(version.get(FLD_DSCR));
-		} catch (ParseException e) {
+		} catch (NullPointerException |ParseException e) {
 			return null;
 		}
 	}

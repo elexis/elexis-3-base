@@ -69,13 +69,30 @@ public class ArtikelstammImporter {
 	private static volatile boolean userCanceled = false;
 	
 	/**
-	 * 
 	 * @param monitor
 	 * @param input
 	 * @param version
 	 *            the version to set. If <code>null</code> the current version will be simply
 	 *            increased by one
 	 * @return
+	 */
+	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
+		@Nullable Integer newVersion) {
+		return performImport(monitor, input, true, true, newVersion);
+	}
+
+	/**
+	 * @since 3.8 Allow import of only Pharma or NonPharma products
+	 * @param monitor
+	 * @param input
+	 * @param bPharm
+	 * 			  import pharma products (aka medical drugs)
+	 * @param nbNonPharma
+	 * 			  import Non-Pharma products
+	 * @param version
+	 *            the version to set. If <code>null</code> the current version will be simply
+	 *            increased by one
+	 * @return	status of import action
 	 */
 	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
 		boolean bPharma, boolean bNonPharma, @Nullable Integer newVersion){

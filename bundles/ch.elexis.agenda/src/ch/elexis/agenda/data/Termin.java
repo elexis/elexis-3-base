@@ -771,10 +771,6 @@ public class Termin extends PersistentObject
 		return ret;
 	}
 	
-	public boolean isDeleted(){
-		return get("deleted").equals(StringConstants.ONE); //$NON-NLS-1$
-	}
-	
 	/** standard equals: Gleiche Zeit, gleiche Dauer, gleicher Bereich */
 	public boolean equals(final Object o){
 		if (o instanceof Termin) {

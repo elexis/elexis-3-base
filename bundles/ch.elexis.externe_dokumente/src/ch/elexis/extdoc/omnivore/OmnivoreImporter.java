@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -26,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
-import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
@@ -71,10 +71,10 @@ public class OmnivoreImporter {
 		}
 		
 		@Override
-		protected Control createContents(Composite parent){
+		protected Control createDialogArea(Composite parent){
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
-			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			ret.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			
 			categoriesViewer = new ComboViewer(ret, SWT.BORDER);
 			categoriesViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -98,6 +98,9 @@ public class OmnivoreImporter {
 					}
 				}
 			});
+			categoriesViewer.setInput(DocumentStoreHolder.get().get().getCategories());
+			categoriesViewer.getControl()
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			
 			return ret;
 		}
@@ -109,8 +112,10 @@ public class OmnivoreImporter {
 		progress.beginTask("Externe Dokumente Importieren ...", allPatients.size());
 		
 		String[] activePaths = PreferenceConstants.getActiveBasePaths();
-		for (Patient patient : allPatients) {
-			importPatient(category, patient, activePaths);
+		for (int i = 0; i < allPatients.size(); i++) {
+			progress.setTaskName(
+				"Externe Dokumente Importieren (" + i + "/" + allPatients.size() + ")");
+			importPatient(category, allPatients.get(i), activePaths);
 			progress.worked(1);
 			if (progress.isCanceled()) {
 				break;

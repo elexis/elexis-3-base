@@ -16,4 +16,6 @@ Import-Package: org.slf4j
 Export-Package: ch.elexis.extdoc.util
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Service-Component: OSGI-INF/ch.elexis.extdoc.omnivore.DocumentStoreHolder.xml
+Bundle-ActivationPolicy: lazy
 

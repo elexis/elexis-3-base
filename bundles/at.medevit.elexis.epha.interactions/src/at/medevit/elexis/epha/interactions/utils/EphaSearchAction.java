@@ -65,29 +65,26 @@ public class EphaSearchAction extends Action implements IKonsExtension, IHandler
 		List<Prescription> medication = sp.getMedication(EntryType.FIXED_MEDICATION);
 		
 		for (Prescription prescription : medication) {
-			String num = null;
 			if (prescription.getArtikel() == null) {
 				logger.warn("Article of prescription ID=" + prescription.getId() + " not valid");
 				continue;
 			}
 			String ean = prescription.getArtikel().getEAN();
 			
-			if (ean != null && !ean.isEmpty() && ean.length() >= 9) {
-				num = ean.substring(4, 9);
-			} else {
+			if (ean == null || ean.isEmpty() || ean.length() < 9) {
 				logger.warn("Could not get EAN for aritcle with id "
 					+ prescription.getArtikel().getId());
+				continue;
 			}
 			
-			if (num != null && !num.isEmpty()) {
-				if (sb.length() == 0)
-					sb.append(num);
-				else
-					sb.append("," + num);
+			if (sb.length() == 0) {
+				sb.append(ean);
+			} else {
+				sb.append("," + ean);
 			}
 		}
 		
-		String url = "https://matrix.epha.ch/#/gtin:" + sb.toString(); //$NON-NLS-1$
+		String url = "https://epha.ch/matrix/visual/gtin:" + sb.toString() + "/"; //$NON-NLS-1$
 		Program.launch(url);
 	}
 	

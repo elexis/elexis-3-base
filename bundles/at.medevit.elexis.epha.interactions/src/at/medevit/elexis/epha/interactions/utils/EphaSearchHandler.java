@@ -23,5 +23,4 @@ public class EphaSearchHandler extends AbstractHandler {
 		action.run();
 		return null;
 	}
-	
 }

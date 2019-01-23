@@ -123,9 +123,10 @@
                name="%SortDescending">
          </command>
          <command
-               id="ch.elexis.agenda.commands.printAppointmentLabel"
                categoryId="ch.elexis.agenda.commands"
-               defaultHandler="ch.elexis.agenda.commands.PrintAppointmentLabelHandler">
+               defaultHandler="ch.elexis.agenda.commands.PrintAppointmentLabelHandler"
+               id="ch.elexis.agenda.commands.printAppointmentLabel"
+               name="%PrintAppointmentLabel">
          </command>
       </extension>
       <extension

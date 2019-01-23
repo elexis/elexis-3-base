@@ -23,9 +23,10 @@ import ch.elexis.dialogs.TermineDruckenDialog;
 
 public final class PrintAppointmentLabelHandler extends AbstractHandler {
 	private static ArrayList<Termin> lTermine;
-	
+
 	/**
 	 * Adds a list of Termine for print processing.
+	 * 
 	 * @param termine
 	 */
 	public static void setTermine(ArrayList<Termin> termine) {
@@ -34,8 +35,9 @@ public final class PrintAppointmentLabelHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		new TermineDruckenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), lTermine.toArray(new Termin[0])).open();
-		
+		new TermineDruckenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				lTermine.toArray(new Termin[0])).open();
+
 		return null;
 	}
 

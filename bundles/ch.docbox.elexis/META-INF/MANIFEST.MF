@@ -22,7 +22,8 @@ Bundle-ClassPath: .,
  rsc/
 Bundle-Localization: plugin
 Bundle-Activator: ch.docbox.elexis.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Multi-Release: true
 Export-Package: ch.docbox.cdach,
  ch.docbox.elexis,
  ch.docbox.ws.cdachservices,

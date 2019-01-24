@@ -124,6 +124,26 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <PEXF>46.26</PEXF>
             <PPUB>73.95</PPUB>
         </ITEM>
+         <ITEM PHARMATYPE="P">
+            <GTIN>7680667450023</GTIN>
+            <PHAR>7560363</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>LYNPARZA Filmtabl 100 mg 112 Stk</DSCR>
+            <DSCRF>LYNPARZA cpr pell 100 mg 112 pce</DSCRF>
+            <COMP>
+                <NAME>AstraZeneca AG</NAME>
+                <GLN>7601001348622</GLN>
+            </COMP>
+            <PEXF>7418.68</PEXF>
+            <PPUB>7766.10</PPUB>
+            <PKG_SIZE>112</PKG_SIZE>
+            <MEASURE>Tablette(n)</MEASURE>
+            <MEASUREF>Tablette(n)</MEASUREF>
+            <DOSAGE_FORM>Filmtabletten</DOSAGE_FORM>
+            <DOSAGE_FORMF>Comprimés filmés</DOSAGE_FORMF>
+            <IKSCAT>A</IKSCAT>
+            <PRODNO>6516001</PRODNO>
+        </ITEM>
         <ITEM PHARMATYPE="P">
             <GTIN>7680651600014</GTIN>
             <PHAR>6571270</PHAR>
@@ -184,6 +204,15 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             </COMP>
             <PEXF>108.01</PEXF>
             <PPUB>178.20</PPUB>
+        </ITEM>
+        <ITEM PHARMATYPE="N">
+            <GTIN>5011091105012</GTIN>
+            <PHAR>2023784</PHAR>
+            <SALECD>A</SALECD>
+            <DSCR>BIOPSY PUNCH 5mm ster 10 Stk</DSCR>
+            <DSCRF>--missing--</DSCRF>
+            <PEXF>0.00</PEXF>
+            <PPUB>70.40</PPUB>
         </ITEM>
       </ITEMS>
 </ARTIKELSTAMM>

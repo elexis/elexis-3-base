@@ -67,9 +67,9 @@ public class ArtikelstammImporter {
 	private static Map<String, PRODUCT> products = new HashMap<String, PRODUCT>();
 	private static Map<String, LIMITATION> limitations = new HashMap<String, LIMITATION>();
 	private static volatile boolean userCanceled = false;
+	private static boolean isOddb2xml = false;
 	
 	/**
-	 * 
 	 * @param monitor
 	 * @param input
 	 * @param version
@@ -78,7 +78,25 @@ public class ArtikelstammImporter {
 	 * @return
 	 */
 	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
-		@Nullable Integer newVersion){
+		@Nullable Integer newVersion) {
+		return performImport(monitor, input, true, true, newVersion);
+	}
+
+	/**
+	 * @since 3.8 Allow import of only Pharma or NonPharma products
+	 * @param monitor
+	 * @param input
+	 * @param bPharm
+	 * 			  import pharma products (aka medical drugs)
+	 * @param nbNonPharma
+	 * 			  import Non-Pharma products
+	 * @param version
+	 *            the version to set. If <code>null</code> the current version will be simply
+	 *            increased by one
+	 * @return	status of import action
+	 */
+	public static IStatus performImport(IProgressMonitor monitor, InputStream input,
+		boolean bPharma, boolean bNonPharma, @Nullable Integer newVersion){
 		LocalLock lock = new LocalLock("ArtikelstammImporter");
 		
 		if (!lock.tryLock()) {
@@ -148,16 +166,21 @@ public class ArtikelstammImporter {
 			
 			int currentVersion = ArtikelstammItem.getCurrentVersion();
 			
-			log.info("[PI] Aktualisiere {} vom {} von v{} auf v{}. Importer-Version {}",
+			log.info("[PI] Aktualisiere{}{} {} vom {} von v{} auf v{}. Importer-Version {}",
+				bPharma ? " Pharma" : "",
+				bNonPharma ? " NonPharma" : "",
 				importStamm.getDATASOURCE(),
 				importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime(), currentVersion,
 				newVersion, bundleVersion);
 			
 			subMonitor.setTaskName("Lese Produkte und Limitationen...");
+			subMonitor.subTask("Lese Produkt-Details");
 			populateProducsAndLimitationsMap(importStamm);
 			subMonitor.worked(5);
-			
+
 			subMonitor.setTaskName("Setze alle Elemente auf inaktiv...");
+			subMonitor.subTask("Setze Elemente auf inaktiv");
+			isOddb2xml = importStamm.getDATASOURCE().equals(DATASOURCEType.ODDB_2_XML);
 			inactivateNonBlackboxedItems();
 			subMonitor.worked(5);
 			
@@ -165,10 +188,13 @@ public class ArtikelstammImporter {
 			subMonitor.setTaskName(
 				"Importiere Artikelstamm " + importStamm.getCREATIONDATETIME().getMonth() + "/"
 					+ importStamm.getCREATIONDATETIME().getYear());
-			
-			updateOrAddItems(newVersion, importStamm, subMonitor.split(50));
-			updateOrAddProducts(newVersion, importStamm, subMonitor.split(20));
-			
+			if (bPharma) {
+				subMonitor.subTask("Importiere Pharma Products");
+				updateOrAddProducts(newVersion, importStamm, subMonitor.split(20));
+			}
+			subMonitor.subTask("Importiere Artikel");
+			updateOrAddItems(newVersion, importStamm, bPharma, bNonPharma, subMonitor.split(50));
+
 			// update the version number for type importStammType
 			subMonitor.setTaskName("Setze neue Versionsnummer");
 			
@@ -251,15 +277,21 @@ public class ArtikelstammImporter {
 	}
 	
 	private static void inactivateNonBlackboxedItems(){
-		log.debug("[BB] Setting all items inactive...");
+		log.debug("[BB] Setting all items inactive for isOddb2xml {}...", isOddb2xml);
 		Stm stm = PersistentObject.getConnection().getStatement();
 		String cmd = "UPDATE " + ArtikelstammItem.TABLENAME + " SET "
 			+ ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
 			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()))
 			+ " WHERE " + ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
 			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
+		if (isOddb2xml) {
+			cmd += " AND " + ArtikelstammItem.FLD_ITEM_TYPE + Query.EQUALS +
+					JdbcLink.wrap("P");
+		}
 		log.debug("Executing {}", cmd);
 		stm.exec(cmd);
+		log.debug("Done Executing {}", cmd);
+
 		PersistentObject.getConnection().releaseStatement(stm);
 	}
 	
@@ -304,7 +336,6 @@ public class ArtikelstammImporter {
 			subMonitor.worked(1);
 		}
 		subMonitor.done();
-		
 	}
 	
 	private static String trimDSCR(String dscr, String itemId){
@@ -337,7 +368,7 @@ public class ArtikelstammImporter {
 	}
 	
 	private static void updateOrAddItems(int newVersion, ARTIKELSTAMM importStamm,
-		IProgressMonitor monitor){
+		boolean bPharma, boolean bNonPharma, IProgressMonitor monitor){
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		
 		List<ITEM> importItemList = importStamm.getITEMS().getITEM();
@@ -364,29 +395,33 @@ public class ArtikelstammImporter {
 					}
 				}
 			}
-			
-			boolean keepOverriddenPublicPrice = false;
-			boolean keepOverriddenPkgSize = false;
-			
-			if (foundItem == null) {
-				String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
-				TYPE pharmaType = TYPE.X;
-				if (item.getPHARMATYPE() != null) {
-					String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
-					pharmaType = TYPE.valueOf(ptString.toUpperCase());
+
+			if ((bPharma && item.getPHARMATYPE().contentEquals("P"))
+					|| (bNonPharma && item.getPHARMATYPE().contentEquals("N"))) {
+				boolean keepOverriddenPublicPrice = false;
+				boolean keepOverriddenPkgSize = false;
+
+				if (foundItem == null) {
+					String trimmedDscr = trimDSCR(item.getDSCR(), item.getGTIN());
+					TYPE pharmaType = TYPE.X;
+					if (item.getPHARMATYPE() != null) {
+						String ptString = Character.toString(item.getPHARMATYPE().charAt(0));
+						pharmaType = TYPE.valueOf(ptString.toUpperCase());
+					}
+					foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(), item.getPHAR(),
+							trimmedDscr, StringConstants.EMPTY);
+					log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
+				} else {
+					// check if article has overridden public price
+					keepOverriddenPublicPrice = foundItem.isUserDefinedPrice();
+					keepOverriddenPkgSize = foundItem.isUserDefinedPkgSize();
 				}
-				foundItem = new ArtikelstammItem(newVersion, pharmaType, item.getGTIN(),
-					item.getPHAR(), trimmedDscr, StringConstants.EMPTY);
-				log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
-			} else {
-				// check if article has overridden public price
-				keepOverriddenPublicPrice = foundItem.isUserDefinedPrice();
-				keepOverriddenPkgSize = foundItem.isUserDefinedPkgSize();
+				log.trace("[II] Updating article {} {}  {} {} ({})", item.getPHARMATYPE(),
+						bPharma && item.getPHARMATYPE().contentEquals("P"),
+						bNonPharma && item.getPHARMATYPE().contentEquals("N"), foundItem.getId());
+				setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice,
+						keepOverriddenPkgSize);
 			}
-			log.trace("[II] Updating article " + foundItem.getId() + " (" + item.getDSCR() + ")");
-			
-			setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice,
-				keepOverriddenPkgSize);
 			subMonitor.worked(1);
 		}
 		
@@ -420,13 +455,16 @@ public class ArtikelstammImporter {
 		
 		fields.add(ArtikelstammItem.FLD_BLACKBOXED);
 		SALECDType salecd = item.getSALECD();
-		if (SALECDType.A == salecd) {
+		// For ODDB2XML we must override the SALECD == N for NonPharma as
+		// ZurRoses is eliminating way too many articles
+		boolean oddb2xmlOverride =  (isOddb2xml && item.getPHARMATYPE().contentEquals("N"));
+		if (SALECDType.A == salecd || oddb2xmlOverride) {
 			values.add(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
-			log.debug("{} Clearing blackboxed as salecd {} is A isSL {}", item.getGTIN(), salecd,
-				item.isSLENTRY());
+			log.debug("{} Clearing blackboxed as salecd {} is A isSL {} or oddb2xml override {}",
+					item.getGTIN(), salecd, item.isSLENTRY(), oddb2xmlOverride);
 		} else {
-			log.debug("{} Setting blackboxed as salecd {} != {} SALECDTypt.A  isSL {}",
-				item.getGTIN(), salecd, SALECDType.A, salecd, item.isSLENTRY());
+			log.debug("{} Setting blackboxed as 5 {} != {} SALECDTypt.A  isSL {}", item.getGTIN(), salecd, SALECDType.A,
+					salecd, item.isSLENTRY());
 			values.add(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()));
 		}
 		

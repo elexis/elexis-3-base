@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Import-Package: javax.xml.bind,
+Import-Package: com.ibm.icu.text,
+ javax.xml.bind,
  javax.xml.bind.annotation,
  org.eclipse.core.databinding.observable.value,
  org.eclipse.jface.viewers,

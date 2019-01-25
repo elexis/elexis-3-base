@@ -3,13 +3,11 @@ package at.medevit.ch.artikelstamm.model.service;
 import static at.medevit.ch.artikelstamm.ArtikelstammConstants.CODESYSTEM_NAME;
 import static at.medevit.ch.artikelstamm.ArtikelstammConstants.STS_CLASS;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -31,7 +29,9 @@ import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IStoreToStringContribution;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=at.medevit.ch.artikelstamm.model")
@@ -117,16 +117,26 @@ public class ArtikelstammModelService extends AbstractModelService
 	
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
-		EntityManager em = (EntityManager) entityManager.getEntityManager();
-		TypedQuery<ArtikelstammItem> gtinQuery =
-			em.createNamedQuery("ArtikelstammItem.gtin", ArtikelstammItem.class);
-		gtinQuery.setParameter("gtin", code);
-		List<ArtikelstammItem> resultList = gtinQuery.getResultList();
-		if (resultList.size() > 0) {
-			Optional<Identifiable> element =
-				adapterFactory.getModelAdapter(resultList.get(0), IArtikelstammItem.class, false);
-			if (element.isPresent()) {
-				return Optional.of((ICodeElement) element.get());
+		INamedQuery<IArtikelstammItem> query = getNamedQuery(IArtikelstammItem.class, "gtin");
+		List<IArtikelstammItem> found =
+			query.executeWithParameters(query.getParameterMap("gtin", code));
+		if (found.size() > 0) {
+			if (found.size() > 1) {
+				LoggerFactory.getLogger(getClass())
+					.warn("Found more than 1 code element for gtin [" + code + "]");
+			}
+			return Optional.of(found.get(0));
+		} else {
+			// try pharma code for compatibility
+			IQuery<IArtikelstammItem> pharmaQuery = getQuery(IArtikelstammItem.class);
+			pharmaQuery.and("phar", COMPARATOR.EQUALS, code);
+			found = pharmaQuery.execute();
+			if (found.size() > 0) {
+				if (found.size() > 1) {
+					LoggerFactory.getLogger(getClass())
+						.warn("Found more than 1 code element for phar [" + code + "]");
+				}
+				return Optional.of(found.get(0));
 			}
 		}
 		return Optional.empty();

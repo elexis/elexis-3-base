@@ -556,6 +556,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		
 		@Override
 		protected void okPressed(){
+			exTable.okPressed(actMandant);
 			super.okPressed();
 		}
 		
@@ -592,7 +593,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		
 		@Override
 		protected void okPressed(){
-			// TODO Automatisch erstellter Methoden-Stub
+			exTable.okPressed(actMandant);
 			super.okPressed();
 		}
 	}

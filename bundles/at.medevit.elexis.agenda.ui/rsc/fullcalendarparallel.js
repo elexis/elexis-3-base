@@ -214,8 +214,31 @@ ParallelView = View.extend({
 			.appendTo(this.resourceGrid.el); // inject it into the time-grid
 
 		this.noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)'); // fake rows not within the scroller
+
+		this.registerRightclickListener();
 	},
 
+	registerRightclickListener: function () {
+		var that = this;
+		this.el.on('contextmenu', function (ev) {
+			var fcContainer = $(ev.target).closest(
+				'.fc-bg, .fc-slats, .fc-content-skeleton, ' +
+				'.fc-bgevent-skeleton, .fc-highlight-skeleton'
+			);
+			var hit = that.queryHit(ev.pageX, ev.pageY);
+			if (fcContainer.length) {
+				that.prepareHits();
+				cell = that.getHitSpan(hit);
+			}
+			if (cell) {
+				that.triggerRightClick(
+					that.getHitSpan(hit),
+					that.getHitEl(hit),
+					ev
+				);
+			}
+		});
+	},
 
 	// render the day-of-week headers
 	renderHead: function () {
@@ -537,6 +560,22 @@ ParallelView = View.extend({
 		}
 		this.publiclyTrigger(
 			'dayClick',
+			dayEl,
+			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
+			ev
+		);
+	},
+
+	triggerRightClick: function (span, dayEl, ev) {
+		if (dayEl.length > 0) {
+			for (var i = 0, atts = dayEl[0].attributes; i < atts.length; i++) {
+				if (atts[i].nodeName === 'data-resource') {
+					ev.resource = atts[i].nodeValue;
+				}
+			}
+		}
+		this.publiclyTrigger(
+			'rightClick',
 			dayEl,
 			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
 			ev

@@ -69,7 +69,7 @@ public class TextPluginImpl implements ITextPlugin {
 			while (matcher.find()) {
 				String found = matcher.group();
 				bHit = true;
-				matcher.appendReplacement(sb, (String) cb.replace(found));
+				matcher.appendReplacement(sb, Matcher.quoteReplacement((String) cb.replace(found)));
 			}
 			matcher.appendTail(sb);
 			field.setText(sb.toString());

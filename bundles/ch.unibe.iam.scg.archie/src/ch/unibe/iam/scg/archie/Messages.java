@@ -91,6 +91,8 @@ public class Messages extends NLS {
     public static String STATISTIC_PARAMETERS_TITLE;
     public static String UNKNOWN;
     public static String WORKING;
+    public static String CreateChart;
+    public static String RefreshChart;
 
     static { // load message values from bundle file
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);

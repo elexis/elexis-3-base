@@ -122,6 +122,12 @@
                id="ch.elexis.agenda.commands.SortDescending"
                name="%SortDescending">
          </command>
+         <command
+               categoryId="ch.elexis.agenda.commands"
+               defaultHandler="ch.elexis.agenda.commands.PrintAppointmentLabelHandler"
+               id="ch.elexis.agenda.commands.printAppointmentLabel"
+               name="%PrintAppointmentLabel">
+         </command>
       </extension>
       <extension
             point="org.eclipse.ui.menus">

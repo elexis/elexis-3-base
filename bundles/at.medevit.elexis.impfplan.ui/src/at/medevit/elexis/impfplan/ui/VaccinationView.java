@@ -76,6 +76,8 @@ public class VaccinationView extends ViewPart {
 		};
 	};
 	
+	private ScrolledComposite scrolledComposite;
+	
 	public VaccinationView(){
 		ImpfplanSchweiz2015 is = new ImpfplanSchweiz2015();
 		vaccinationHeaderDefinition =
@@ -92,12 +94,13 @@ public class VaccinationView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
-		ScrolledComposite sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.BORDER);
-		vaccinationComposite = new VaccinationComposite(sc);
-		sc.setContent(vaccinationComposite);
-		sc.setExpandHorizontal(true);
-		sc.setExpandVertical(true);
-		sc.setMinSize(vaccinationComposite.computeSize(800, 800));
+		scrolledComposite =
+			new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		vaccinationComposite = new VaccinationComposite(scrolledComposite);
+		scrolledComposite.setContent(vaccinationComposite);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(true);
+		scrolledComposite.setMinSize(vaccinationComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		vcPaintListener = vaccinationComposite.getVaccinationCompositePaintListener();
 		vaccinationComposite.addMouseListener(new MouseAdapter() {
 			@Override

@@ -613,6 +613,27 @@ public class TarmedOptifierTest {
 		clearKons(konsPeriodEnd);
 	}
 	
+	@Test
+	public void testAdditionalBlockExclusion(){
+		clearKons(konsGriss);
+		
+		Result<IVerrechenbar> result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("17.0710", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("17.0740", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		// additional service, not in block LB-05, billing is allowed anyway
+		result = optifier.add(
+			(TarmedLeistung) TarmedLeistung.getFromCode("17.0750", new TimeTool(), null),
+			konsGriss);
+		assertTrue(result.isOK());
+		
+		clearKons(konsGriss);
+	}
+	
 	private int getLeistungAmount(String code, Konsultation kons){
 		int ret = 0;
 		for (Verrechnet leistung : kons.getLeistungen()) {

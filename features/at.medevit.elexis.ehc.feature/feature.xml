@@ -5,16 +5,17 @@
       version="3.3.100.qualifier"
       provider-name="medevit">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="https://wiki.elexis.info/At.medevit.elexis.ehc.feature.feature.group">
+	Das Feature bietet die Grundlage um e Health Dokumente zu erzeugen und wieder einzulesen. Dabei wird die ebenfalls unter der EPL verfügbare Bibliothek [http://sourceforge.net/projects/ehealthconnector/ eHealthConnector] verwendet.
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+    <copyright url="http://www.medevit.at">
+      Copyright (c) 2015-2018, Thomas Huster und MEDEVIT OG
+      All rights reserved.
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
    </license>
 
    <requires>
@@ -31,13 +32,6 @@
 
    <plugin
          id="at.medevit.elexis.ehc.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ch.elexis.fop_wrapper"
          download-size="0"
          install-size="0"
          version="0.0.0"

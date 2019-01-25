@@ -54,10 +54,13 @@ Um das Impfplan Plugin in Elexis verwenden zu können, muss aus der Kategorie �
 [[File:medevit_vacc2.png|1000px]]
 === Impfung Eintragen ===
 Wenn einem Patienten eine Impfung verabreicht wird, kann diese über zwei Wege eingetragen werden.
+
 '''Variante 1'''
 Die Imfung wird direkt über die Konsultation verrechnet (dabei öffnet sich ein Dialog über welchen die Lot-Nummer eingetragen werden kann). Der Impfeintrag wird dadurch automatisch in die Impfliste eingetragen.
+
 '''Variante 2'''
-In der Impflisten-View kann über des grüne Plus der Artikelstamm geöffnet werden. Dort kann die gewünschte Impfung per Doppelklick hinzugefügt werden. Die Impfung muss einer Konsultation zugewiesen werden bzw. es kann automatisch eine neue Konsultation generiert werden. Nach Eintragen der Lot-Nummer, wird die Impfung in die Verrechnung aufgenommen und im Impfplan festgehalten. Bei Einträgen wird davon ausgegangen, dass der am System angemeldete Mandant die Impfung verabreicht hat.
+In der Impflisten-View kann über des grüne Plus der Artikelstamm geöffnet werden. Dort kann die gewünschte Impfung per Doppelklick hinzugefügt werden. Die Impfung muss einer Konsultation zugewiesen werden bzw. es kann automatisch eine neue Konsultation generiert werden. Nach Eintragen der Lot-Nummer, wird die Impfung in die Verrechnung aufgenommen und im Impfplan festgehalten. Bei Einträgen wird davon ausgegangen, dass der am System angemeldete Mandant die Impfung verabreicht hat. Grippeimpfungen werden grundsätzlich nicht im Impfbuch aufgeführt. Daher gibt es bei Grippeimpfungen keine Kreuze.
+
 ''Tipp:'' Im Artikelstamm kann durch aktivieren des ATC basierten Filters [[File:medevit_vacc3.png]] nach Impfstoffen gesucht werden. Durch Doppelklick auf die gewünschte Impfstoffgruppe öffnen sich alle zugehörigen Artikel. Ein erneuter Doppelklick auf die Gruppe schliesst diese ansicht wiederum.
 [[File:medevit_vacc4.png]]
 === Impfung Nachtragen ===

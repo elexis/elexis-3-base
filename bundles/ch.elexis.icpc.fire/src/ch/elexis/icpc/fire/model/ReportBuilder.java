@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -46,7 +47,11 @@ public class ReportBuilder {
 		report.setExportDate(XmlUtil.getXmlGregorianCalendar(new TimeTool()));
 	}
 	
-	public void addKonsultation(BigInteger patId, BigInteger docId, Konsultation konsultation)
+	public FireConfig getFireConfig() {
+		return fireConfig;
+	}
+	
+	public void addKonsultation(BigInteger patId, BigInteger docId, Konsultation konsultation, Map<String, Set<TMedi>> unreferencedStoppedMedis)
 		throws DatatypeConfigurationException{
 		if (fireConfig.isValid()) {
 			if (report.getConsultations() == null) {
@@ -54,7 +59,7 @@ public class ReportBuilder {
 			}
 			
 			Optional<TConsultation> consultation =
-				consultationBuilder.consultation(konsultation).build();
+				consultationBuilder.consultation(konsultation).build(unreferencedStoppedMedis);
 			consultation.ifPresent(c -> report.getConsultations().getConsultation().add(c));
 			consultation.ifPresent(c -> c.setDocId(docId));
 			consultation.ifPresent(c -> c.setPatId(patId));
@@ -178,8 +183,9 @@ public class ReportBuilder {
 	
 	/**
 	 * handle finishing tasks
+	 * @param unreferencedStopMedisPerPatient 
 	 */
-	public void finish(){
-		consultationBuilder.handleUnreferencedStopMedisPerPatient(fireConfig, report);
+	public void finish(Map<String, Set<TMedi>> unreferencedStopMedisPerPatient){
+		consultationBuilder.handleUnreferencedStopMedisPerPatient(fireConfig, report, unreferencedStopMedisPerPatient);
 	}
 }

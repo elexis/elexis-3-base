@@ -34,7 +34,7 @@ import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.model.IDocumentHandle;
 import ch.elexis.omnivore.data.model.TransientCategory;
 
-@Component(property = "storeid=ch.elexis.data.store.omnivore")
+@Component(immediate = true, property = "storeid=ch.elexis.data.store.omnivore")
 public class OmnivoreDocumentStore implements IDocumentStore {
 	
 	private static final String STORE_ID = "ch.elexis.data.store.omnivore";

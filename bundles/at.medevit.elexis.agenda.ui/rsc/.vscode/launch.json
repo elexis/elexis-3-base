@@ -2,26 +2,30 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch debugParallel.html",
-            "type": "firefox",
+            "name": "Edge",
+            "type": "edge",
             "request": "launch",
-            "file": "${workspaceRoot}/html/debugParallel.html"
-        },
+            "url": "${workspaceRoot}/html/debugParallel.html",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "trace": true,
+            "userDataDir": "${workspaceRoot}/.vscode/edge"
+        }
         {
             "name": "Launch localhost",
-            "type": "firefox",
+            "type": "edge",
             "request": "launch",
             "url": "http://localhost/html/debugParallel.html",
             "webRoot": "${workspaceRoot}"
         },
         {
             "name": "Attach",
-            "type": "firefox",
+            "type": "edge",
             "request": "attach"
         },
         {
             "name": "Launch addon",
-            "type": "firefox",
+            "type": "edge",
             "request": "launch",
             "addonType": "addonSdk",
             "addonPath": "${workspaceRoot}"

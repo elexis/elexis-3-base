@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Import-Package: ch.elexis.core.data.util,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.osgi.service.component.annotations;version="1.2.0",
+ javax.xml.bind,
+ org.slf4j

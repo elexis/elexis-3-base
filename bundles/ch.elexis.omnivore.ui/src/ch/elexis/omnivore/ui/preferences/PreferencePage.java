@@ -13,6 +13,20 @@
 
 package ch.elexis.omnivore.ui.preferences;
 
+import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
+import static ch.elexis.omnivore.PreferenceConstants.DATE_MODIFIABLE;
+import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Default;
+import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Max;
+import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Min;
+import static ch.elexis.omnivore.PreferenceConstants.PREFBASE;
+import static ch.elexis.omnivore.PreferenceConstants.PREFERENCE_DEST_DIR;
+import static ch.elexis.omnivore.PreferenceConstants.PREFERENCE_SRC_PATTERN;
+import static ch.elexis.omnivore.PreferenceConstants.PREF_DEST_DIR;
+import static ch.elexis.omnivore.PreferenceConstants.PREF_MAX_FILENAME_LENGTH;
+import static ch.elexis.omnivore.PreferenceConstants.PREF_SRC_PATTERN;
+import static ch.elexis.omnivore.PreferenceConstants.STOREFS;
+import static ch.elexis.omnivore.PreferenceConstants.STOREFSGLOBAL;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -25,19 +39,25 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import static ch.elexis.omnivore.PreferenceConstants.*;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
+import ch.elexis.data.Leistungsblock;
+import ch.elexis.omnivore.PreferenceConstants;
 import ch.elexis.omnivore.data.Preferences;
 import ch.elexis.omnivore.ui.jobs.OutsourceUiJob;
 
@@ -57,6 +77,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		
 	private BooleanFieldEditor bStoreFSGlobal;
 	private BooleanFieldEditor bStoreFS;
+	private BooleanFieldEditor bAutomaticBilling;
 	private DirectoryFieldEditor dfStorePath;
 	
 	private Button btnSaveColumnWidths;
@@ -65,6 +86,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	
 	boolean storeFs = Preferences.storeInFilesystem();
 	boolean basePathSet = false;
+	
+	private Text tAutomaticBillingBlock;
 	
 	public PreferencePage(){
 		super(GRID);
@@ -319,6 +342,47 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		}
 		
 		enableOutsourceButton();
+		
+		bAutomaticBilling = new BooleanFieldEditor(PreferenceConstants.AUTO_BILLING,
+			"Automatische Verrechnung (bei Drag and Drop)", gAllOmnivorePrefs);
+		addField(bAutomaticBilling);
+		
+		Composite billingBlockComposite = new Composite(gAllOmnivorePrefs, SWT.NONE);
+		billingBlockComposite.setLayout(new RowLayout());
+		tAutomaticBillingBlock = new Text(billingBlockComposite, SWT.BORDER | SWT.READ_ONLY);
+		tAutomaticBillingBlock.setLayoutData(new RowData(250, SWT.DEFAULT));
+		tAutomaticBillingBlock.setTextLimit(80);
+		Button blockCodeSelection = new Button(billingBlockComposite, SWT.PUSH);
+		blockCodeSelection.setText("..."); //$NON-NLS-1$
+		blockCodeSelection.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				SelectionDialog dialog = CodeSelectorFactory.getSelectionDialog("Block", getShell(), //$NON-NLS-1$
+					"ignoreErrors");
+				if (dialog.open() == SelectionDialog.OK) {
+					if (dialog.getResult() != null && dialog.getResult().length > 0) {
+						Leistungsblock block = (Leistungsblock) dialog.getResult()[0];
+						selectBlock(block);
+						CoreHub.localCfg.set(PreferenceConstants.AUTO_BILLING_BLOCK, block.getId());
+					} else {
+						CoreHub.localCfg.set(PreferenceConstants.AUTO_BILLING_BLOCK, "");
+						selectBlock(null);
+					}
+				}
+			}
+		});
+		if(!CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, "").isEmpty()) {
+			selectBlock(Leistungsblock
+				.load(CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, "")));
+		}
+	}
+	
+	private void selectBlock(Leistungsblock block){
+		if (block != null && block.exists()) {
+			tAutomaticBillingBlock.setText(block.getLabel());
+		} else {
+			tAutomaticBillingBlock.setText("");
+		}
 	}
 	
 	private void enableOutsourceButton(){

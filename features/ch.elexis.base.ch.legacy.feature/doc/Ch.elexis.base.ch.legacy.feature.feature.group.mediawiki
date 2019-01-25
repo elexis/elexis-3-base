@@ -46,8 +46,12 @@ ToDo
 
 
 == Einführung ==
-ToDo
-
+ToDo<br>
+<br>
+Mit Stand vom 13.05.2018 sind folgende Elemente enthalten:<br>
+features\ch.elexis.base.ch.legacy.feature<br>
+plugins\ch.elexis.base.ch.artikel<br>
+plugins\ch.elexis.base.ch.medikamente.bag
 
 == Funktionen ==
 ToDo

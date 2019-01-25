@@ -57,6 +57,7 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	@Override
 	public Color getForeground(Object element){
 		ArtikelstammItem ai = (ArtikelstammItem) element;
+		
 		Availability availability =
 			CoreHub.getStockService().getCumulatedAvailabilityForArticle(ai);
 		if (availability != null) {

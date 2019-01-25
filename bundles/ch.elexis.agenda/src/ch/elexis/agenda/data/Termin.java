@@ -14,11 +14,17 @@ package ch.elexis.agenda.data;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -71,6 +77,9 @@ public class Termin extends PersistentObject
 	public static String[] TerminBereiche;
 	private static final JdbcLink j = getConnection();
 	
+	public static final Cache<String, Boolean> cachedAttributeKeys =
+		CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build();
+	
 	// static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
 	// static final String
 	// DEFSTATUS="-   ,geplant,eingetroffen,fertig,verpasst,abgesagt";
@@ -98,7 +107,7 @@ public class Termin extends PersistentObject
 		+ "CREATE INDEX it on AGNTERMINE (Tag,Beginn,Bereich);" 
 		+ "CREATE INDEX pattern on AGNTERMINE (PatID);"
 		+ "CREATE INDEX agnbereich on AGNTERMINE (Bereich);" 
-		+ "INSERT INTO AGNTERMINE (ID, PatId) VALUES (1, '" + VERSION + "');"; 
+		+ "INSERT INTO AGNTERMINE (ID, PatId) VALUES (1, '1.2.6');"; 
 	//@formatter:on
 	
 	private static final String upd122 = "ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);" //$NON-NLS-1$
@@ -107,74 +116,73 @@ public class Termin extends PersistentObject
 	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;"; //$NON-NLS-1$
 	private static final String upd125 = "ALTER TABLE AGNTERMINE ADD StatusHistory TEXT;"; //$NON-NLS-1$
 	private static final String upd126 = "ALTER TABLE AGNTERMINE MODIFY linkgroup VARCHAR(50)"; //$NON-NLS-1$
-	private static final String upd127 = "ALTER TABLE AGNTERMINE ADD priority CHAR(1);"
-		+ "ALTER TABLE AGNTERMINE ADD caseType CHAR(1);"
-		+ "ALTER TABLE AGNTERMINE ADD insuranceType CHAR(1);"
-		+ "ALTER TABLE AGNTERMINE ADD treatmentReason CHAR(1);";
+	private static final String upd127 = "ALTER TABLE AGNTERMINE ADD priority CHAR(1);" //$NON-NLS-1$
+		+ "ALTER TABLE AGNTERMINE ADD caseType CHAR(1);" //$NON-NLS-1$
+		+ "ALTER TABLE AGNTERMINE ADD insuranceType CHAR(1);" //$NON-NLS-1$
+		+ "ALTER TABLE AGNTERMINE ADD treatmentReason CHAR(1);"; //$NON-NLS-1$
 	
 	static {
 		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT + "=PatID", FLD_TAG, FLD_BEGINN, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			FLD_DAUER, FLD_GRUND, "Typ=TerminTyp", FLD_TERMINSTATUS + "=TerminStatus", FLD_CREATOR, //$NON-NLS-1$ //$NON-NLS-2$
-			"ErstelltWann=Angelegt", FLD_LASTEDIT, "PalmID", "flags", FLD_DELETED, FLD_EXTENSION, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			FLD_LINKGROUP, FLD_STATUSHIST, FLD_PRIORITY); //$NON-NLS-1$
+				FLD_DAUER, FLD_GRUND, "Typ=TerminTyp", FLD_TERMINSTATUS + "=TerminStatus", FLD_CREATOR, //$NON-NLS-1$ //$NON-NLS-2$
+				"ErstelltWann=Angelegt", FLD_LASTEDIT, "PalmID", "flags", FLD_DELETED, FLD_EXTENSION, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+																										// //$NON-NLS-4$
+				FLD_LINKGROUP, FLD_STATUSHIST, FLD_PRIORITY); // $NON-NLS-1$
 		TimeTool.setDefaultResolution(60000);
 		TerminTypes = CoreHub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
 		TerminStatus = CoreHub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
-		TerminBereiche =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
-				.split(","); //$NON-NLS-1$
+		TerminBereiche = CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 		if ((TerminTypes == null) || (TerminTypes.length < 3)) {
-			TerminTypes =
-				new String[] {
-					Messages.Termin_range_free, Messages.Termin_range_locked,
-					Messages.Termin_normalAppointment
-				};
+			TerminTypes = new String[] { Messages.Termin_range_free, Messages.Termin_range_locked,
+					Messages.Termin_normalAppointment };
 		}
 		if ((TerminStatus == null) || (TerminStatus.length < 2)) {
-			TerminStatus = new String[] {
-				"-", Messages.Termin_plannedAppointment //$NON-NLS-1$
-				};
+			TerminStatus = new String[] { "-", Messages.Termin_plannedAppointment //$NON-NLS-1$
+			};
 		}
 		Termin version = load("1"); //$NON-NLS-1$
 		if (version == null || !version.exists()) {
 			init();
-		} else {
-			VersionInfo vi = new VersionInfo(version.get(FLD_PATIENT));
-			if (vi.isOlder(VERSION)) {
-				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
-					if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
-						j.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);"); //$NON-NLS-1$
-						j.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);"); //$NON-NLS-1$
-						j.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);"); //$NON-NLS-1$
-					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
-						j.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);"); //$NON-NLS-1$
-						j.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);"); //$NON-NLS-1$
-						j.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);"); //$NON-NLS-1$
-					}
-				} else if (vi.isOlder("1.2.1")) { //$NON-NLS-1$
-					if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
-						j.exec("ALTER TABLE AGNTERMINE ALTER ID TYPE VARCHAR(127);"); //$NON-NLS-1$
-					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
-						j.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);"); //$NON-NLS-1$
-					}
-				} else if (vi.isOlder("1.2.3")) { //$NON-NLS-1$
-					createOrModifyTable(upd122);
-				}
-				if (vi.isOlder("1.2.4")) { //$NON-NLS-1$
-					createOrModifyTable(upd124);
-				}
-				if (vi.isOlder("1.2.5")) { //$NON-NLS-1$
-					createOrModifyTable(upd125);
-				}
-				if (vi.isOlder("1.2.6")) {
-					createOrModifyTable(upd126);
-				}
-				if (vi.isOlder("1.2.7")) {
-					createOrModifyTable(upd127);
-				}
-				version.set(FLD_PATIENT, VERSION);
-			}
+			version = load("1"); // initializes v1.2.6
 		}
+
+		VersionInfo vi = new VersionInfo(version.get(FLD_PATIENT));
+		if (vi.isOlder(VERSION)) {
+			if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
+				if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
+					j.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);"); //$NON-NLS-1$
+					j.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);"); //$NON-NLS-1$
+					j.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);"); //$NON-NLS-1$
+				} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
+					j.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);"); //$NON-NLS-1$
+					j.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);"); //$NON-NLS-1$
+					j.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);"); //$NON-NLS-1$
+				}
+			}
+			if (vi.isOlder("1.2.1")) { //$NON-NLS-1$
+				if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
+					j.exec("ALTER TABLE AGNTERMINE ALTER ID TYPE VARCHAR(127);"); //$NON-NLS-1$
+				} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
+					j.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);"); //$NON-NLS-1$
+				}
+			}
+			if (vi.isOlder("1.2.3")) { //$NON-NLS-1$
+				createOrModifyTable(upd122);
+			}
+			if (vi.isOlder("1.2.4")) { //$NON-NLS-1$
+				createOrModifyTable(upd124);
+			}
+			if (vi.isOlder("1.2.5")) { //$NON-NLS-1$
+				createOrModifyTable(upd125);
+			}
+			if (vi.isOlder("1.2.6")) { //$NON-NLS-1$
+				createOrModifyTable(upd126);
+			}
+			if (vi.isOlder("1.2.7")) { //$NON-NLS-1$
+				createOrModifyTable(upd127);
+			}
+			version.set(FLD_PATIENT, VERSION);
+		}
+
 	}
 	
 	// Terminstatus fix
@@ -296,6 +304,26 @@ public class Termin extends PersistentObject
 			"ErstelltWann", FLD_LASTEDIT, FLD_STATUSHIST
 		}, bereich, Tag, Integer.toString(von), Integer.toString(bis - von), typ, status, ts, ts,
 			statusline(statusStandard()));
+	}
+	
+	@Override
+	public String getKey(String field){
+		String key = super.getKey(field);
+		cachedAttributeKeys.put(key, true);
+		return key;
+	}
+	
+	@Override
+	public void clearCachedAttributes(){
+		Iterator<Entry<String, Boolean>> iterator =
+			cachedAttributeKeys.asMap().entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Boolean> key = iterator.next();
+			if (key.getKey().contains(getId())) {
+				getDefaultConnection().getCache().remove(key.getKey());
+			}
+			iterator.remove();
+		}
 	}
 	
 	/*
@@ -741,10 +769,6 @@ public class Termin extends PersistentObject
 		ret[1] = ret[1].trim();
 		ret[2] = ret[2].trim();
 		return ret;
-	}
-	
-	public boolean isDeleted(){
-		return get("deleted").equals(StringConstants.ONE); //$NON-NLS-1$
 	}
 	
 	/** standard equals: Gleiche Zeit, gleiche Dauer, gleicher Bereich */

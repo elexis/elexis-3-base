@@ -51,8 +51,8 @@ public class MedNetMessages extends NLS {
 	public static String ContactLinkPreferences_ContactLabel;
 	public static String ContactLinkPreferences_MedNetId;
 	public static String ContactLinkPreferences_MedNetName;
-	public static String ContactLinkPreferences_CategoryDoc;
-	public static String ContactLinkPreferences_CategoryForm;
+	public static String ContactLinkPreferences_DocImport;
+	public static String ContactLinkPreferences_FormImport;
 	public static String ContactLinkPreferences_XIDDomain;
 	
 
@@ -74,8 +74,10 @@ public class MedNetMessages extends NLS {
 	public static String ContactLinkRecordEditDialog_message;
 	public static String ContactLinkRecordEditDialog_labelContact;
 	public static String ContactLinkRecordEditDialog_labelMedNet;
-	public static String ContactLinkRecordEditDialog_labelCategoryDoc;
-	public static String ContactLinkRecordEditDialog_labelCategoryForm;
+	public static String ContactLinkRecordEditDialog_labelDoc;
+	public static String ContactLinkRecordEditDialog_labelForm;
+	public static String ContactLinkRecordEditDialog_labelCategory;
+	public static String ContactLinkRecordEditDialog_labelImportIsActive;
 	public static String ContactLinkRecordEditDialog_labelXIDDomain;
 	public static String ContactLinkRecordEditDialog_NoContact;
 	public static String ContactLinkRecordEditDialog_NoMedNet;

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.core.internal.document;
 
-import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import org.openhealthtools.mdht.uml.cda.ch.CDACH;
 
-public class CdaChImpl extends AbstractCdaCh<ClinicalDocument> {
+@SuppressWarnings("deprecation")
+public class CdaChImpl extends AbstractCdaChV1<ClinicalDocument> {
 
-	public CdaChImpl(CDACH cdach){
-		super(cdach);
+	public CdaChImpl(ClinicalDocument cda){
+		super(cda);
 	}
 }

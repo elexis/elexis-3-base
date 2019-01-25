@@ -37,3 +37,9 @@
 
 
 == Diff zu Omnivore noch unklar --> ergänzen ==
+
+
+== Hinweis zur Speicherung grosser Dokumente ==
+Für die MySQL Datenbank ist (oder war zumindest früher) eine maximale Grösse von BLOBs im Bereich weniger MB eingestellt.<br>
+Da heutige Dokumente (auch schon etwas grössere PDF-Dokumente) diese Grenze überschreiten, muss der entsprechende Konfigurationseintrag erhöht werden.<br>
+Dies ist auch beim Update des Datenbank-Servers auf eine neuere Version oder beim Wiederherstellen aus einem Backup zu beachten, wenn die Datenbank-Inhalte dafür mit dump und restore übertragen werden.<br>

@@ -60,7 +60,7 @@ ZB erleben wir hier, dass die Sozialämter lieber die Rechnung direkt bekommen u
 == Installation und Einstellungen des MediPortCommunicators ==
 
 * erfolgt einmalig und ist eher eine Sache für den Supporter.
-* Vor jedem Jahreswechsel müssen Zertifikate und Passwörter von einer neuen, von Medidata automatisch zugeschickten CD einlesen werden.
+* Vor jedem Jahreswechsel müssen Zertifikate und Passwörter von einer neuen, von Medidata automatisch zugeschickten CD eingelesen werden.
 
 === Konfigurations Datei ===
 
@@ -82,6 +82,7 @@ Um die notwendigen Konfigurationen vorzunehmen kann die Datei ''mpcommunicator.c
 Bitte beachten: Pro Client muss jeweils ein separates CLIENT.1.DIR.1 erstellt werden. Ebenso muss der vollständige Pfad vom PARTNER_FILE angegeben werden, da ansonsten das Mediport-Plugin die Datei nicht findet.
 
 Bei Problemen im $HOME/elexis/logs/elexis-3.log nach mediport suchen. Falls dort alles okay erscheint, im Mediport-Data-Verzeichnis die Datei data/log/mpcommunicator.log analysieren.
+
 == Probleme ==
 
 * Das Mediport-Plugin ist nicht für Praxen geeignet, welche verschiedene Betriebssystem einsetzen, da die Pfadnamen dann nicht stimmen.

@@ -3,7 +3,6 @@ package ch.elexis.omnivore.data;
 import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
 import static ch.elexis.omnivore.PreferenceConstants.DATE_MODIFIABLE;
 import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Default;
-import static ch.elexis.omnivore.PreferenceConstants.PREFBASE;
 import static ch.elexis.omnivore.PreferenceConstants.PREFERENCE_DEST_DIR;
 import static ch.elexis.omnivore.PreferenceConstants.PREFERENCE_SRC_PATTERN;
 import static ch.elexis.omnivore.PreferenceConstants.PREF_DEST_DIR;
@@ -216,7 +215,7 @@ public class Preferences {
 	};
 	// The following unwanted characters, and all below codePoint=32 will be cleaned in advance.
 	// Please see the getOmnivoreTemp_Filename_Element for details.
-	public static final String cotf_unwanted_chars = "[\\:/:*?()+,\';\"\r\t\n´`]";
+	public static final String cotf_unwanted_chars = "[\\:/:*?()+,\';\"\r\t\n´`<>]";
 	// Dank Eclipse's mglw. etwas übermässiger "Optimierung" werden externalisierte Strings nun als
 	// Felder von Messges angesprochen -
 	// und nicht mehr wie zuvor über einen als String übergebenen key. Insofern muss ich wohl zu den

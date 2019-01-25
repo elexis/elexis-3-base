@@ -24,7 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 import org.ehealth_connector.common.enums.AdministrativeGender;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
@@ -38,9 +38,9 @@ import ch.rgw.tools.TimeTool;
 public class ImportPatientWizardPage1 extends WizardPage {
 	
 	private TableViewer contentViewer;
-	private AbstractCdaCh<?> ehcDocument;
+	private AbstractCdaChV1<?> ehcDocument;
 	
-	protected ImportPatientWizardPage1(String pageName, AbstractCdaCh<?> ehcDocument){
+	protected ImportPatientWizardPage1(String pageName, AbstractCdaChV1<?> ehcDocument){
 		super(pageName);
 		setTitle("Patienten für import auswählen.");
 		this.ehcDocument = ehcDocument;
@@ -103,7 +103,7 @@ public class ImportPatientWizardPage1 extends WizardPage {
 						: Person.MALE;
 			Patient existing =
 				KontaktMatcher.findPatient(selectedPatient.getName().getFamilyName(),
-					selectedPatient.getName().getGivenNames(),
+					selectedPatient.getName().getGivenNames().get(0),
 					new TimeTool(selectedPatient.getBirthday()).toString(TimeTool.DATE_COMPACT),
 					gender, null, null, null, null, CreateMode.FAIL);
 			if (existing != null) {
@@ -120,7 +120,7 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		return true;
 	}
 	
-	public void setDocument(AbstractCdaCh<?> ehcDocument){
+	public void setDocument(AbstractCdaChV1<?> ehcDocument){
 		this.ehcDocument = ehcDocument;
 		if (contentViewer != null && !contentViewer.getControl().isDisposed()) {
 			contentViewer.setInput(Collections.singletonList(ehcDocument.getPatient()));

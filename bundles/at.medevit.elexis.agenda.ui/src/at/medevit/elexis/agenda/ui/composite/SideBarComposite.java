@@ -1,20 +1,26 @@
 package at.medevit.elexis.agenda.ui.composite;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,12 +33,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.ui.icons.Images;
+import ch.rgw.tools.TimeTool;
 
 public class SideBarComposite extends Composite {
 	
@@ -46,7 +56,16 @@ public class SideBarComposite extends Composite {
 	
 	private Button scrollToNowCheck;
 	
+	private TableViewer moveTable;
+	private List<IPeriod> movePeriods;
+	
+	private MoveInformation currentMoveInformation;
+	
 	public SideBarComposite(Composite parent, int style){
+		this(parent, false, style);
+	}
+	
+	public SideBarComposite(Composite parent, boolean includeMove, int style){
 		super(parent, style);
 		setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		setBackgroundMode(SWT.INHERIT_FORCE);
@@ -161,6 +180,57 @@ public class SideBarComposite extends Composite {
 				}
 			}
 		});
+		
+		if (includeMove) {
+			label = new Label(this, SWT.NONE);
+			label.setFont(boldFont);
+			label.setText("Termin verschieben");
+			label.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true));
+			moveTable = new TableViewer(this, SWT.MULTI);
+			moveTable.getTable().setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
+			moveTable.setContentProvider(ArrayContentProvider.getInstance());
+			moveTable.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element){
+					if (element instanceof IPeriod) {
+						return ((IPeriod) element).getLabel();
+					}
+					return super.getText(element);
+				}
+			});
+			MenuManager menuManager = new MenuManager();
+			menuManager.add(new Action() {
+				@Override
+				public String getText(){
+					return "verschieben abbrechen";
+				}
+				
+				@Override
+				public ImageDescriptor getImageDescriptor(){
+					return Images.IMG_DELETE.getImageDescriptor();
+				}
+				
+				@Override
+				public void run(){
+					IStructuredSelection selection = moveTable.getStructuredSelection();
+					if (selection != null && !selection.isEmpty()) {
+						for (Object selected : selection.toList()) {
+							if (selected instanceof IPeriod) {
+								SideBarComposite.this.removeMovePeriod((IPeriod) selected);
+							}
+						}
+					}
+				}
+			});
+			Menu contextMenu = menuManager.createContextMenu(moveTable.getTable());
+			moveTable.getTable().setMenu(contextMenu);
+			
+			GridData gd = new GridData(SWT.LEFT, SWT.BOTTOM, false, false);
+			gd.widthHint = 150;
+			moveTable.getTable().setLayoutData(gd);
+			movePeriods = new ArrayList<>();
+		}
+		
 		hideContent();
 	}
 	
@@ -255,5 +325,71 @@ public class SideBarComposite extends Composite {
 	private String loadConfigurationString(String configKey){
 		return CoreHub.localCfg.get(
 			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, "");
+	}
+	
+	public void addMovePeriod(IPeriod period){
+		if (moveTable != null && !moveTable.getTable().isDisposed()) {
+			if (!movePeriods.contains(period)) {
+				movePeriods.add(period);
+			}
+			moveTable.setInput(movePeriods);
+		}
+	}
+	
+	public void removeMovePeriod(IPeriod period){
+		if (moveTable != null && !moveTable.getTable().isDisposed()) {
+			movePeriods.remove(period);
+			moveTable.setInput(movePeriods);
+		}
+	}
+	
+	public Optional<MoveInformation> getMoveInformation(){
+		if (currentMoveInformation != null) {
+			currentMoveInformation.setMoveablePeriods(movePeriods);
+		}
+		return Optional.ofNullable(currentMoveInformation);
+	}
+	
+	public void setMoveInformation(LocalDateTime date, String resource){
+		currentMoveInformation = new MoveInformation(this, date, resource);
+	}
+	
+	public static class MoveInformation {
+		private SideBarComposite sideBar;
+		private LocalDateTime dateTime;
+		private String resource;
+		
+		private List<IPeriod> moveablePeriods;
+		
+		public MoveInformation(SideBarComposite sideBar, LocalDateTime dateTime, String resource){
+			this.sideBar = sideBar;
+			this.dateTime = dateTime;
+			this.resource = resource;
+		}
+		
+		public void setMoveablePeriods(List<IPeriod> periods){
+			this.moveablePeriods = new ArrayList<>(periods);
+		}
+		
+		public List<IPeriod> getMoveablePeriods(){
+			return moveablePeriods;
+		}
+		
+		public void movePeriod(IPeriod iPeriod){
+			iPeriod.setStartTime(new TimeTool(dateTime));
+			if (iPeriod instanceof Termin) {
+				((Termin) iPeriod).setBereich(resource);
+			}
+			moveablePeriods.remove(iPeriod);
+			Display.getDefault().timerExec(250, new Runnable() {
+				@Override
+				public void run(){
+					if (sideBar != null && !sideBar.isDisposed()) {
+						sideBar.removeMovePeriod(iPeriod);
+						sideBar.agendaComposite.refetchEvents();
+					}
+				}
+			});
+		}
 	}
 }

@@ -12,6 +12,8 @@ public class PreferenceConstants {
 	public static final String PREFERENCE_DEST_DIR = PREFBASE + "dest_dir";
 	public static final String PREF_MAX_FILENAME_LENGTH = PREFBASE + "max_filename_length";
 	public static final String TWAINACCESS_TYPE = PREFBASE + "twainaccess_type";
+	public static final String AUTO_BILLING = PREFBASE + "automatic_billing";
+	public static final String AUTO_BILLING_BLOCK = PREFBASE + "automatic_billing_block";
 	
 	// The following setting is used in ch.elexis.omnivore.data/DocHandle.java.
 	// Linux and MacOS may be able to handle longer filenames, but we observed that Windows 7 64-bit

@@ -507,7 +507,7 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 	public String getCodeSystemCode(){
 		String gtin = getGTIN();
 		if (gtin != null && gtin.length() > 3) {
-			if (getType() == TYPE.P) {
+			if (getType() == TYPE.P || isInSLList()) {
 				return "402";
 			} else if (getType() == TYPE.N) {
 				return "406";

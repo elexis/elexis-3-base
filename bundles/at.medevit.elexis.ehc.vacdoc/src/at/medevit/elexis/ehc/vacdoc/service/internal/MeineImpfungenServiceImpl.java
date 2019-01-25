@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.Name;
+import org.ehealth_connector.common.ch.enums.ConfidentialityCode;
 import org.ehealth_connector.common.enums.CodeSystems;
 import org.ehealth_connector.common.enums.LanguageCode;
 import org.ehealth_connector.common.utils.DateUtil;
@@ -33,11 +34,9 @@ import org.ehealth_connector.communication.ch.ConvenienceCommunicationCh;
 import org.ehealth_connector.communication.ch.DocumentMetadataCh;
 import org.ehealth_connector.communication.ch.enums.AvailabilityStatus;
 import org.ehealth_connector.communication.ch.enums.ClassCode;
-import org.ehealth_connector.communication.ch.enums.ConfidentialityCode;
 import org.ehealth_connector.communication.ch.enums.FormatCode;
 import org.ehealth_connector.communication.ch.enums.HealthcareFacilityTypeCode;
 import org.ehealth_connector.communication.ch.enums.MimeType;
-import org.ehealth_connector.communication.ch.enums.PracticeSettingCode;
 import org.ehealth_connector.communication.ch.enums.TypeCode;
 import org.ehealth_connector.communication.ch.xd.storedquery.FindDocumentsQuery;
 import org.openhealthtools.ihe.atna.auditor.XDSSourceAuditor;
@@ -440,14 +439,13 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		
 		metaData.setCodedLanguage(LanguageCode.GERMAN);
 		
-		metaData.setTypeCode(TypeCode.ELEKTRONISCHER_IMPFAUSWEIS);
-		metaData.setFormatCode(FormatCode.EIMPFDOSSIER);
+		metaData.setTypeCode(TypeCode.IMMUNIZATION_RECORD);
+		metaData.setFormatCode(FormatCode.IMMUNIZATION_CONTENT);
 		metaData.setClassCode(ClassCode.ALERTS);
 		
 		metaData.setHealthcareFacilityTypeCode(
-			HealthcareFacilityTypeCode.AMBULANTE_EINRICHTUNG_INKL_AMBULATORIUM);
-		metaData.setPracticeSettingCode(PracticeSettingCode.ALLERGOLOGIE);
-		metaData.addConfidentialityCode(ConfidentialityCode.ADMINISTRATIVE_DATEN);
+			HealthcareFacilityTypeCode.AMBULATORY_CARE_SITE);
+		metaData.addConfidentialityCode(ConfidentialityCode.NORMAL);
 		return true;
 	}
 	

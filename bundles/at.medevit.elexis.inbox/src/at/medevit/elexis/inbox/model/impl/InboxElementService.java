@@ -88,13 +88,12 @@ public class InboxElementService implements IInboxElementService {
 	
 	@Activate
 	public void activate(){
-		System.out.println("active providers");
-		ElementsProviderExtension.activateAll();
+		activateProviders();
 	}
 	
 	@Deactivate
 	public void deactivate(){
-		System.out.println("deactive providers");
+		deactivateProviders();
 	}
 	
 	@Override
@@ -127,5 +126,17 @@ public class InboxElementService implements IInboxElementService {
 				fireUpdate(element);
 			}
 		}
+	}
+	
+	@Override
+	public void deactivateProviders(){
+		LoggerFactory.getLogger(getClass()).info("Deactivating all ElementProviders");
+		ElementsProviderExtension.deactivateAll();
+	}
+	
+	@Override
+	public void activateProviders(){
+		LoggerFactory.getLogger(getClass()).info("Activating all ElementProviders");
+		ElementsProviderExtension.activateAll();
 	}
 }

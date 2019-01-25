@@ -17,6 +17,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.dialogs.TerminDialog;
+import ch.elexis.dialogs.TerminDialog.CollisionErrorLevel;
 
 public class EditHandler extends AbstractHandler implements IHandler {
 	
@@ -34,6 +35,7 @@ public class EditHandler extends AbstractHandler implements IHandler {
 				@Override
 				public void lockAcquired(){
 					TerminDialog dlg = new TerminDialog((IPlannable) p);
+					dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
 					dlg.open();
 				}
 			});

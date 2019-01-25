@@ -65,8 +65,9 @@ Unter Datei..Einstellungen..Textverarbeitung kann man das gewünschte Text-Plugi
 Unter Datei..Einstellungen..Dokumentvorlage kann man Arbeitsplatz abhängige Vorlagen definieren. Im folgenden gehen wir davon aus, dass Sie diese Möglichkeit nicht nutzen und der Suffix leer ist.
 [[File:anleitung_opendocument_4.png|frame|none]]
 === Aufsetzen der DemoDB (optional) ===
-Für diese Anleitung wurde Elexis in der Version 2.1.7.0 gebraucht und die spezielle [http://sourceforge.net/projects/elexis/files/elexis%20full%20installation/2.1.7.0/demoDB_2.1.7_with_mandant.zip/download Demo Datenbank], welche das Bearbeiten via Einstellungsseiten erlaubt verwendet.
+Für diese Anleitung wurde Elexis in der Version 2.1.7.0 gebraucht und die dazugehörende [http://download.elexis.info/elexis/demoDB Demo Datenbank], welche das Bearbeiten via Einstellungsseiten erlaubt verwendet.
 Ebenso gehen wir davon aus, dass Sie die elexis-vorlagen unter /pfad/zu/elexis-vorlagen entpackt haben. Hilotect stellt unter https://github.com/hilotec/elexis-vorlagen/archive/master.zip passende Vorlagen zur Verfügung.
+
 === Einlesen der Vorlage für das Arbeitsunfähigkeitszeugnisses ===
 * Via Fenster..Ansicht..Other die Ansicht “Briefe” öffnen.
 * Im Pull-Down-Menu oben rechts in der Ansicht “Dokument importieren” auswählen.

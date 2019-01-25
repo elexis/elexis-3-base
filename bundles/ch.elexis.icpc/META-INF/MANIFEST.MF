@@ -4,6 +4,7 @@ Bundle-Name: Elexis Plugin für ICPC 2
 Bundle-SymbolicName: ch.elexis.icpc;singleton:=true
 Bundle-Version: 3.2.0.qualifier
 Bundle-Vendor: elexis.ch
+Eclipse-ExtensibleAPI: true
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
  ch.elexis.core.data;bundle-version="3.0.0",

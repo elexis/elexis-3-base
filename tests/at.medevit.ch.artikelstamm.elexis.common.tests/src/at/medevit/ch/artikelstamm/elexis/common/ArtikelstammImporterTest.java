@@ -3,6 +3,7 @@ package at.medevit.ch.artikelstamm.elexis.common;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -22,7 +23,8 @@ import ch.elexis.data.PersistentObject;
 
 public class ArtikelstammImporterTest {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporterTest.class);
-	private static final String gtinOnlyInFirst = "4062300253636";
+	private static final String gtinNonPharmaInactiveInSecond = "5011091105012";
+	private static final String gtinPharmaOnlyInFirst = "7680667450023";
 	private static final String gtinOnlyInSecond = "7611800080487";
 	private static final String pharWithPriceOverridden ="6571270";
 	private static final String gtinWithPriceOverridden = "7680651600014";
@@ -32,6 +34,7 @@ public class ArtikelstammImporterTest {
 	private static final String gtinUserPrice = "7680273040281";
 	private static final String gtin14chars = "68711428066649";
 	private static final String gtinPriorix = "7680581580011";
+	private static final String gtinNonPharma = "68711428066649";
 	private static final String []  slEntries = new String [] { "7680273040281", "7680651600014" };
 	private static final int OLD_PKG_SIZE = 448;
 	private static final int NEW_PKG_SIZE = 100;
@@ -51,8 +54,27 @@ public class ArtikelstammImporterTest {
 	}
 
 	private void runImport(String baseName) {
-		 IStatus success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
-			AllTests.class.getResourceAsStream(baseName + "_first_v5.xml"), null);
+		// Import only Pharma-Artikel
+		ArtikelstammItem nonPharma = ArtikelstammItem.findByEANorGTIN(gtinNonPharma);
+		assertNull(nonPharma);
+		IStatus success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
+				AllTests.class.getResourceAsStream(baseName + "_first_v5.xml"), true, false, null);
+		if (!success.isOK()) {
+			String msg = String.format("Import of artikelstamm_first_v5 failed");
+			fail(msg);
+		}
+		if (!isMedindex) {
+			// I would have loved to add a test that priorix has only one product
+			// But it was too complicated
+			ArtikelstammItem priorix = ArtikelstammItem.findByEANorGTIN(gtinPriorix);
+			assertNotNull(priorix);
+			assertEquals("105.9", priorix.getPublicPrice().toString());
+
+			nonPharma = ArtikelstammItem.findByEANorGTIN(gtinNonPharma);
+			assertNull(nonPharma);
+		}
+		success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
+			AllTests.class.getResourceAsStream(baseName + "_first_v5.xml"), true, true, null);
 		if (!success.isOK()) {
 			String msg = String.format("Import of artikelstamm_first_v5 failed");
 			fail(msg);
@@ -75,8 +97,12 @@ public class ArtikelstammImporterTest {
 			assertNotNull(gtin14);
 			assertEquals(gtin14chars, gtin14.getGTIN());
 			assertEquals("178.2", gtin14.getPublicPrice().toString());
-		}
 
+			nonPharma = ArtikelstammItem.findByEANorGTIN(gtinNonPharma);
+			assertNotNull(nonPharma);
+			assertEquals(gtinNonPharma, nonPharma.getGTIN());
+			assertEquals("178.2", nonPharma.getPublicPrice().toString());
+		}
 		ArtikelstammItem withUserPrice = ArtikelstammItem.findByEANorGTIN(gtinUserPrice);
 		assertNotNull(withUserPrice);
 		assertEquals(gtinUserPrice, withUserPrice.getGTIN());
@@ -87,7 +113,9 @@ public class ArtikelstammImporterTest {
 		withUserPrice.setPublicPrice(Double.parseDouble(newPrice));
 		
 		// Check an article only present in first
-		assertNotNull(ArtikelstammItem.findByEANorGTIN(gtinOnlyInFirst));
+		assertNotNull(ArtikelstammItem.findByEANorGTIN(gtinNonPharmaInactiveInSecond));
+		assertFalse(ArtikelstammItem.findByEANorGTIN(gtinNonPharmaInactiveInSecond).isBlackBoxed());
+		assertNotNull(ArtikelstammItem.findByEANorGTIN(gtinPharmaOnlyInFirst));
 		
 		// Check a new article not present in first
 	     onlyInSecond = ArtikelstammItem.findByEANorGTIN(gtinOnlyInSecond);
@@ -101,7 +129,7 @@ public class ArtikelstammImporterTest {
 		setPkgOverride(gtinWithPkgSizeOverrideNull);
 
 		success = ArtikelstammImporter.performImport(new NullProgressMonitor(),
-			AllTests.class.getResourceAsStream(baseName + "_second_v5.xml"), null);
+			AllTests.class.getResourceAsStream(baseName + "_second_v5.xml"), true, true, null);
 		if (!success.isOK()) {
 			String msg =
 				String.format("Import of artikelstamm_second_v5.xml failed %s code %s file was {} ",
@@ -133,9 +161,22 @@ public class ArtikelstammImporterTest {
 		checkResettingVerpackungsEinheit(gtinWithPkgSizeOverrideNull, 0);
 
 		// Check an article no long present
-		ArtikelstammItem onlyInFirst = ArtikelstammItem.findByEANorGTIN(gtinOnlyInFirst);
-		if ( onlyInFirst != null  )
-			log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ", onlyInFirst.getDSCR(), onlyInFirst.getPHAR(), onlyInFirst.isBlackBoxed(), onlyInFirst.isDeleted());
+		ArtikelstammItem pharmaOnlyInFirst = ArtikelstammItem.findByEANorGTIN(gtinPharmaOnlyInFirst);
+		if ( pharmaOnlyInFirst != null  )
+			log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ", pharmaOnlyInFirst.getDSCR(), pharmaOnlyInFirst.getPHAR(), pharmaOnlyInFirst.isBlackBoxed(), pharmaOnlyInFirst.isDeleted());
+		assertNull(pharmaOnlyInFirst);
+		// assertTrue(pharmaOnlyInFirst.isBlackBoxed());
+		ArtikelstammItem nonPharmaOnlyInFirst = ArtikelstammItem.findByEANorGTIN(gtinNonPharmaInactiveInSecond);
+		if (isMedindex) {
+			if ( nonPharmaOnlyInFirst != null )
+				log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ", nonPharmaOnlyInFirst.getDSCR(), nonPharmaOnlyInFirst.getPHAR(), nonPharmaOnlyInFirst.isBlackBoxed(), nonPharmaOnlyInFirst.isDeleted());
+			assertNull(nonPharmaOnlyInFirst);
+
+		} else {
+			assertNotNull(nonPharmaOnlyInFirst);
+			assertFalse(nonPharmaOnlyInFirst.isBlackBoxed());
+		}
+
 		// Next Check fails why?
 		// TODO: assertTrue(onlyInFirst == null || onlyInFirst.isDeleted() );
 		ArtikelstammItem withPkgOverride = ArtikelstammItem.findByEANorGTIN(gtinWithPkgSizeOverride);
@@ -153,7 +194,6 @@ public class ArtikelstammImporterTest {
 			assertFalse(ai.isBlackBoxed());
 			assertTrue(ai.isInSLList());
 		}
-
 	}
 	private ArtikelstammItem setPkgOverride(String gtin) {
 		ArtikelstammItem overridePkgSize = ArtikelstammItem.findByEANorGTIN(gtin);

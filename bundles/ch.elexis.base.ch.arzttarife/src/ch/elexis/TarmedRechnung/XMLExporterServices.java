@@ -24,6 +24,7 @@ import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.model.article.IArticle;
+import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.Konsultation;
@@ -290,6 +291,8 @@ public class XMLExporterServices {
 			TimeTool tt = new TimeTool(konsDatum);
 			String dateForTarmed = XMLExporterUtil.makeTarmedDatum(konsultation.getDatum());
 			
+			BillingLaw law = konsultation.getFall().getConfiguredBillingSystemLaw();
+			
 			boolean bRFE = false; // RFE already encoded
 			
 			for (Verrechnet verrechnet : leistungen) {
@@ -523,6 +526,9 @@ public class XMLExporterServices {
 				} else if (v instanceof PhysioLeistung) {
 					el = new Element(ELEMENT_RECORD_PARAMED, XMLExporter.nsinvoice);
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode()); // 28060
+					if (law == BillingLaw.KVG) {
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "312"); // 28060
+					}
 					PhysioLeistung pl = (PhysioLeistung) v;
 					double mult = pl.getFactor(tt, rechnung.getFall());
 					Money preis = verrechnet.getNettoPreis();

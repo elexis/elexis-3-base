@@ -928,18 +928,21 @@ public class TarmedOptifier implements IOptifier {
 					null, false);
 			}
 		}
-		List<String> groups = tarmed.getServiceGroups(date);
-		for (String groupName : groups) {
-			Optional<TarmedGroup> group =
-				TarmedGroup.find(groupName, tarmed.get(TarmedLeistung.FLD_LAW), date);
-			if (group.isPresent()) {
-				List<TarmedExclusion> groupExclusions = group.get().getExclusions(kons);
-				for (TarmedExclusion tarmedExclusion : groupExclusions) {
-					if (tarmedExclusion.isMatching(tarmedCode, date)) {
-						return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION,
-							tarmed.getCode() + " nicht kombinierbar mit " //$NON-NLS-1$
-								+ tarmedExclusion.toString(),
-							null, false);
+		// skip group exclusions check for the same service code
+		if (!tarmedCode.getCode().equals(tarmed.getCode())) {
+			List<String> groups = tarmed.getServiceGroups(date);
+			for (String groupName : groups) {
+				Optional<TarmedGroup> group =
+					TarmedGroup.find(groupName, tarmed.get(TarmedLeistung.FLD_LAW), date);
+				if (group.isPresent() && !tarmedCode.getServiceTyp().equals("Z")) {
+					List<TarmedExclusion> groupExclusions = group.get().getExclusions(kons);
+					for (TarmedExclusion tarmedExclusion : groupExclusions) {
+						if (tarmedExclusion.isMatching(tarmedCode, date)) {
+							return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION,
+								tarmed.getCode() + " nicht kombinierbar mit " //$NON-NLS-1$
+									+ tarmedExclusion.toString(),
+								null, false);
+						}
 					}
 				}
 			}
@@ -953,7 +956,8 @@ public class TarmedOptifier implements IOptifier {
 				TarmedKumulationType.BLOCK, date, tarmed.get(TarmedLeistung.FLD_LAW));
 			// currently only test blocks exclusives, exclude hierarchy matches
 			if (canHandleAllExculives(exclusives)
-				&& !isMatchingHierarchy(tarmedCode, tarmed, date)) {
+				&& !isMatchingHierarchy(tarmedCode, tarmed, date)
+				&& !tarmedCode.getServiceTyp().equals("Z")) {
 				boolean included = false;
 				for (TarmedExclusive tarmedExclusive : exclusives) {
 					if (tarmedExclusive.isMatching(tarmedCode, date)) {

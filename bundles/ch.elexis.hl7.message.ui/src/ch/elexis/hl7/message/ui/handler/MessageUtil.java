@@ -20,18 +20,17 @@ public class MessageUtil {
 	
 	public static Map<String, Object> getContext(){
 		Map<String, Object> ret = new HashMap<>();
-		ret.put(IHL7MessageService.CONTEXT_RECEIVINGAPPLICATION, "IHECVX");
-		ret.put(IHL7MessageService.CONTEXT_RECEIVINGFACILITY, "Cardio Report");
-		
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		Konsultation cons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 		Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
-		if (patient != null && cons != null && mandant != null) {
+		if (patient != null) {
 			ret.put(IHL7MessageService.CONTEXT_PATIENT, patient);
+		}
+		if (cons != null) {
 			ret.put(IHL7MessageService.CONTEXT_CONSULTATION, cons);
+		}
+		if (mandant != null) {
 			ret.put(IHL7MessageService.CONTEXT_MANDANTOR, mandant);
-		} else {
-			ret.clear();
 		}
 		return ret;
 	}

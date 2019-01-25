@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import org.ehealth_connector.cda.ch.AbstractCdaCh;
+import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 
@@ -46,7 +46,7 @@ public interface EhcCoreService {
 	 * @param document
 	 * @return
 	 */
-	public AbstractCdaCh<?> getAsCdaChDocument(ClinicalDocument document);
+	public AbstractCdaChV1<?> getAsCdaChDocument(ClinicalDocument document);
 	
 	/**
 	 * Search for a matching Patient, or create a new Elexis {@link Patient} with the data from the
@@ -64,7 +64,7 @@ public interface EhcCoreService {
 	 * @param mandant
 	 * @return
 	 */
-	public AbstractCdaCh<?> createCdaChDocument(Patient patient, Mandant mandant);
+	public AbstractCdaChV1<?> createCdaChDocument(Patient patient, Mandant mandant);
 	
 	/**
 	 * Create a XDM as stream, with the provided document as content.

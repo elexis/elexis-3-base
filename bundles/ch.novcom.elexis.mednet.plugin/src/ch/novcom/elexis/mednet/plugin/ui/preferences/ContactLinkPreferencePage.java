@@ -70,8 +70,8 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 			MedNetMessages.ContactLinkPreferences_MedNetId,
 			MedNetMessages.ContactLinkPreferences_MedNetName,
 			MedNetMessages.ContactLinkPreferences_ContactLabel,
-			MedNetMessages.ContactLinkPreferences_CategoryDoc,
-			MedNetMessages.ContactLinkPreferences_CategoryForm,
+			MedNetMessages.ContactLinkPreferences_DocImport,
+			MedNetMessages.ContactLinkPreferences_FormImport,
 			MedNetMessages.ContactLinkPreferences_XIDDomain
 		};
 
@@ -181,9 +181,11 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 			case 2:
 				return kontakt.getLabel(true);
 			case 3:
-				return contactLinkRecord.getCategoryDoc();
+				return 		(contactLinkRecord.docImport_isActive() ? "on" : "off") 
+						+	(contactLinkRecord.getCategoryDoc().isEmpty() ? "" : " ( "+contactLinkRecord.getCategoryDoc()+" )");
 			case 4:
-				return contactLinkRecord.getCategoryForm();
+				return 		(contactLinkRecord.formImport_isActive() ? "on" : "off")
+						+	(contactLinkRecord.getCategoryForm().isEmpty() ? "" : " ( "+contactLinkRecord.getCategoryForm()+" )");
 			case 5:
 				return contactLinkRecord.getXIDDomain();
 			default:

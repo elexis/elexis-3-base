@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.itmed.lmz.risch.laborder.feature"
+      label="Labor Risch LabOrder"
+      version="3.7.0.qualifier"
+      provider-name="IT-Med AG">
+
+   <description url="http://www.it-med-ag.ch/">
+      Elektronische Auftragserfassung für das labormedizinischen zentrum Dr Risch über die LabOrder Schnittstelle.
+   </description>
+
+   <copyright url="http://www.it-med-ag.ch/">
+      Copyright (c) 2018 IT-Med AG, info@it-med-ag.ch
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.itmed.lmz.risch.laborder"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test fragment for Artikelstamm Importer
-Bundle-SymbolicName: at.medevit.ch.artikelstamm.elexis.open.tests;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-SymbolicName: at.medevit.ch.artikelstamm.elexis.common.tests;singleton:=true
+Bundle-Version: 3.3.0.qualifier
 Bundle-Vendor: ch.elexis
-Fragment-Host: at.medevit.ch.artikelstamm.elexis.common;bundle-version="3.0.0"
+Fragment-Host: at.medevit.ch.artikelstamm.elexis.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit;bundle-version="[4.0.0,5.0.0)",
  ch.elexis.core.application;bundle-version="3.0.0",

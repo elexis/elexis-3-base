@@ -67,6 +67,18 @@ public class ScriptingHelper {
 		browser.execute(script);
 	}
 	
+	public void setFontSize(int sizePx){
+		String bodyFontSize = "$('body').css('font-size', '%dpx');";
+		String script = String.format(bodyFontSize, sizePx);
+		browser.execute(script);
+	}
+	
+	public void setFontFamily(String family){
+		String bodyFontFamily = "$('body').css('font-family', '%s');";
+		String script = String.format(bodyFontFamily, family);
+		browser.execute(script);
+	}
+	
 	public void refetchEvents(){
 		String refetchEvents = "$('#calendar').fullCalendar('refetchEvents');";
 		browser.execute(refetchEvents);

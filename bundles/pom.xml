@@ -11,7 +11,7 @@
   <parent>
     <groupId>ch.elexis.base</groupId>
     <artifactId>elexis-3-base</artifactId>
-    <version>3.6.0-SNAPSHOT</version>
+    <version>3.8.0-SNAPSHOT</version>
   </parent>
 
   <modules>
@@ -135,6 +135,7 @@
     <module>org.iatrix.messwerte</module>
     <module>org.iatrix</module>
     <module>waelti.statistics</module>
+    <module>ch.itmed.lmz.risch.laborder</module>
  -->
 </modules>
 </project>

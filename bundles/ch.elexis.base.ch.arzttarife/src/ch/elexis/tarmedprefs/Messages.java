@@ -74,7 +74,6 @@ public class Messages extends NLS {
   public static String TarmedRequirements_CaseNumberName;
   public static String TarmedRequirements_InsuranceNumberName;
   public static String TarmedRequirements_IntermediateName;
-  public static String TarmedRequirements_KostentraegerName;
   public static String TarmedRequirements_kskName;
   public static String TarmedRequirements_Law;
   public static String TarmedRequirements_NifName;

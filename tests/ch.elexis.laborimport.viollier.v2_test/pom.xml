@@ -1,11 +1,12 @@
 <project
 	xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'
-	xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+	xmlns='http://maven.apache.org/POM/4.0.0'
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>ch.elexis.base</groupId>
-    <artifactId>ch.elexis.base.tests</artifactId>
-		<version>3.6.0-SNAPSHOT</version>
+		<artifactId>ch.elexis.base.tests</artifactId>
+		<version>3.8.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>ch.elexis.laborimport.viollier.v2_test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
@@ -17,9 +18,8 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
-          <skipTests>true</skipTests> <!-- TODO: Fails for unknown reason on the jenkins. Not locally. -->
-          <useUIThread>true</useUIThread>
-          <useUIHarness>true</useUIHarness>
+					<useUIThread>true</useUIThread>
+					<useUIHarness>true</useUIHarness>
 					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
@@ -27,5 +27,5 @@
 			</plugin>
 		</plugins>
 	</build>
-<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 </project>

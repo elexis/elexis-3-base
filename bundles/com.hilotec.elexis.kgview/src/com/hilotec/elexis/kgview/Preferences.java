@@ -53,7 +53,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		addField(new BooleanFieldEditor(CFG_FLORDZ, "Ordnungszahl in FML anzeigen",
 			getFieldEditorParent()));
 		addField(new BooleanFieldEditor(CFG_MK_INCSTOP,
-			"In Medikarte bis&mit Stoppdatum anzeigen?", getFieldEditorParent()));
+			"In Medikarte bis/mit Stoppdatum anzeigen?", getFieldEditorParent()));
 		addField(new IntegerFieldEditor(CFG_AKG_HEARTBEAT, "Archiv KG Heartbeat",
 			getFieldEditorParent()));
 		addField(new IntegerFieldEditor(CFG_AKG_SCROLLPERIOD, "Archiv KG Scroll Periode [ms]",

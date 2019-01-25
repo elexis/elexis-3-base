@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.PatListView">
+         <menu
+               icon="rsc/icons/risch.png"
+               id="ch.itmed.lmz.risch.laborder"
+               label="Labor Risch">
+            <command
+                  commandId="ch.itmed.lmz.risch.laborder.command.newOrder"
+                  label="Laborauftrag erstellen"
+                  style="push">
+            </command>
+            <command
+                  commandId="ch.itmed.lmz.risch.laborder.command.orderOverview"
+                  label="Auftragsübersicht"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="ch.itmed.lmz.risch.laborder.command.newOrder"
+            name="Laborauftrag erstellen">
+      </command>
+      <command
+            id="ch.itmed.lmz.risch.laborder.command.orderOverview"
+            name="Auftragsübersicht">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="ch.itmed.lmz.risch.laborder.handler.OrderCreationHandler"
+            commandId="ch.itmed.lmz.risch.laborder.command.newOrder">
+      </handler>
+      <handler
+            class="ch.itmed.lmz.risch.laborder.handler.OrderOverviewHandler"
+            commandId="ch.itmed.lmz.risch.laborder.command.orderOverview">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.onlineservices"
+            class="ch.itmed.lmz.risch.laborder.ui.preferences.RiboxPreferences"
+            id="ch.itmed.lmz.risch.laborder.preferencepage"
+            name="LabOrder Login Einstellungen">
+      </page>
+   </extension>
+
+</plugin>

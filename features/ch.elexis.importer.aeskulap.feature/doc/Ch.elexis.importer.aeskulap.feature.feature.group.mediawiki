@@ -1,0 +1,65 @@
+[[Category:Support]]
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>1.0.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Zusätze/Support</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>26. Juli 2018</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.6</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>EPL</td>
+	</tr>
+</table>
+==  Aeskulap Datenimport ==
+''Bezeichnung:'' Aeskulap Importer<br />
+ ''Author:'' Thomas Huster &lt;huster@medevit.at&gt;<br />
+ ''Version:'' 1.0.0, Juli 2018<br />
+ ''Beschreibung:'' Dieses Plug-In ermöglicht den Import von aus Aeskulap exportierten Daten.
+== Einführung ==
+Mit dem Aeskulap Importer können Daten welche aus Aeskulap exportiert wurden, in eine Elexis Datenbank importiert werden.
+== Installation ==
+Um den Aeskulap Importer in Elexis verwenden zu können, muss aus der Kategorie „Zusätze/Support“ das Modul „Aeskulap Importer“ abonniert werden. Nach dem Aktualisieren von Elexis ist das Modul geladen.
+== Konfiguration ==
+* Es ist keine spezielle Konfiguration für den Aeskulap Datenimport erforderlich. Allerdings müssen die aus Aeskulap exportierten Daten in einem Verzeichnis verfügbar sein.
+
+== Daten Verzeichnis ==
+Die Daten welche aus Aeskulap exportiert wurden, werden entpackt in einem Verzeichnis erwartet. Die Stammdaten, KG-Daten, etc. müssen in einem Verzeichnis in CSV (, als Trennzeichen und UTF-8 kodiert) Format vorhanden sein. Briefe werden in anderen Verzeichnissen mit Dateinamen im Format !xxx_xxx.xxx erwartet.
+Folgende Daten können importiert werden.
+
+* Adressen - Dateiname: Adressen.csv
+* Briefe - Dateiname: Briefe.csv und !xxx_xxx.xxx Dateien in einem anderen Verzeichnis
+* Patienten - Dateiname: Patienten.csv
+* Labor Kontakte - Dateiname: Labor_LabSource.csv
+* Labor Parameter - Dateiname: Labor_LabTyp.csv
+* Labor Werte - Dateiname: Labor_LabWert.csv
+* Mandaten - Dateiname: Mandanten.csv (Die Mandanten werden nicht importiert, sondern nur Kürzel bei den Patienten unter Gruppe abgelegt)
+
+== Verwendung ==
+# Öffnen Sie den Import Dialog über ''Datei > Datenimport...'' .
+# Reiter ''Aeskulap'' auswählen.
+# Mit dem Knopf ''Suche'' das Verzeichnis in dem sich die aus Aeskulap exportierten Daten befinden auswählen.
+# ''OK'' startet dem Import als Hintergrundprozess (in Elexis als Status rechts unten sichtbar).

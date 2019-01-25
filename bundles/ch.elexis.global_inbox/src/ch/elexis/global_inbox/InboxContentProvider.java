@@ -98,7 +98,11 @@ public class InboxContentProvider extends CommonContentProviderAdapter {
 								GenericDocument fd = new GenericDocument(pat, nam, cat, file,
 									new TimeTool().toString(TimeTool.DATE_GER), "", null);
 								file.delete();
-								dm.addDocument(fd);
+								if (CoreHub.localCfg.get(Preferences.PREF_AUTOBILLING, false)) {
+									dm.addDocument(fd, true);
+								} else {
+									dm.addDocument(fd);
+								}
 							} catch (Exception ex) {
 								ExHandler.handle(ex);
 								SWTHelper.alert(Messages.InboxView_error, ex.getMessage());

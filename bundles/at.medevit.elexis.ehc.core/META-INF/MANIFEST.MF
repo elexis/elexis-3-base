@@ -8,7 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: ch.elexis.core,
  org.apache.xerces;bundle-version="2.9.0"
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/ehealth_connector-fatjar-ch-1.4.0-201704.jar,
+Bundle-ClassPath: lib/ehealth_connector-fatjar-ch-1.7-20180920s.jar,
  .
 Import-Package: ch.elexis.core.data.interfaces,
  ch.elexis.core.model,
@@ -42,7 +42,6 @@ Export-Package: at.medevit.elexis.ehc.core,
  org.ehealth_connector.communication.xd.storedquery,
  org.ehealth_connector.communication.xd.xdm,
  org.ehealth_connector.fhir,
- org.ehealth_connector.fhir.ch,
  org.ehealth_connector.valueset.enums,
  org.hl7.v3,
  org.hl7.v3.impl,

@@ -137,7 +137,7 @@ public class XML40Printer {
 		
 		Kontakt adressat;
 		if (ezData.paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
-			adressat = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+			adressat = fall.getCostBearer();
 		} else {
 			adressat = fall.getGarant();
 		}

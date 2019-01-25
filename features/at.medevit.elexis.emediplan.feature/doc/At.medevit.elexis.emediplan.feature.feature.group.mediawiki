@@ -1,0 +1,51 @@
+[[Category:KG-Führung]]
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>1.0.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>KG-Führung</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>28. März 2017</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.1</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td></td>
+	</tr>
+</table>
+==  eMediplan ==
+''Bezeichnung:'' eMediplan <br />
+ ''Author:'' Thomas Huster &lt;huster@medevit.at&gt;<br />
+ ''Version:'' 1.0.0, März 2017<br />
+ ''Beschreibung:'' Dieses Plug-In ermöglicht das drucken eines eMediplan aus Elexis.
+== Einführung ==
+Mit dem Feature kann aus Elexis ein Medikationsplan nach der Spezifikation von [http://emediplan.ch eMediplan Schweiz] erstellt werden.
+== Installation ==
+Um das eMediplan Feature in Elexis verwenden zu können, muss aus der Kategorie „KG-Führung“ das Feature „eMediplan“ abonniert werden. Nach dem Aktualisieren von Elexis ist das Feature geladen.
+== Konfiguration ==
+* Für den eMediplan wird derzeit keine Konfiguration benötigt.
+== Verwendung ==
+Öffnen Sie die View Medikationsliste und selektieren Sie einen Patient. Es wird die aktive Medikation des Patienten angezeigt.
+[[Image:medevit_emediplan_usage1.png|frame|none]]
+Mit dem rot eingerahmten Menüpunkt kann die Erstellung des eMediplan ausgelöst werden. Der eMediplan wird als PDF geöffnet, und ebenfalls als PDF unter Briefe abgelegt.

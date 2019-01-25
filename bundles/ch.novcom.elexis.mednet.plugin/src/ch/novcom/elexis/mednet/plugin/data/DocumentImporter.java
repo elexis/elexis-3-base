@@ -381,8 +381,14 @@ public class DocumentImporter {
 				List<ContactLinkRecord> contactLinkList = ContactLinkRecord.getContactLinkRecord(null, institutionId);
 				if(contactLinkList != null && contactLinkList.size() > 0) {
 					contactLink = contactLinkList.get(0);
+
+					//Check if the contactLink formImport is active, if not don't import the form in Omnivore
+					if(contactLink != null && !contactLink.formImport_isActive()) {
+						LOGGER.info(logPrefix+"import ignored for " +institutionName);//$NON-NLS-1$
+						return true;
+					}
+					
 				}
-				
 				
 			}
 			

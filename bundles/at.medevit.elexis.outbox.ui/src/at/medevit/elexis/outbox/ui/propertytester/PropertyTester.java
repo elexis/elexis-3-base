@@ -2,8 +2,6 @@ package at.medevit.elexis.outbox.ui.propertytester;
 
 import java.util.List;
 
-import at.medevit.elexis.outbox.model.OutboxElement;
-
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 	
 	public PropertyTester(){
@@ -15,17 +13,17 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 			try {
 				if (receiver instanceof List<?>) {
 					List<?> receiverAsList = (List<?>) receiver;
-					for (Object o : receiverAsList) {
-						if (o instanceof OutboxElement) {
-							OutboxElement outboxElement = (OutboxElement) o;
-							String lbl = outboxElement.getLabel();
-							// because of an issue in ehealth DocumentDescriptor we can only handle pdf and xml files.
-							if (lbl == null || (!lbl.toLowerCase().endsWith(".xml")
-								&& !lbl.toLowerCase().endsWith(".pdf"))) {
-								return false;
-							}
-						}
-					}
+					//					for (Object o : receiverAsList) {
+					//						if (o instanceof OutboxElement) {
+					//							OutboxElement outboxElement = (OutboxElement) o;
+					//							String lbl = outboxElement.getLabel();
+					//							// because of an issue in ehealth DocumentDescriptor we can only handle pdf and xml files.
+					//							if (lbl == null || (!lbl.toLowerCase().endsWith(".xml")
+					//								&& !lbl.toLowerCase().endsWith(".pdf"))) {
+					//								return false;
+					//							}
+					//						}
+					//					}
 					return receiverAsList.size() > 0;
 				}
 			} catch (Exception ise) {

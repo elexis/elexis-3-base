@@ -53,7 +53,7 @@ public class Validator {
 		
 		
 		Kontakt kostentraeger =
-			(fall != null) ? fall.getRequiredContact(TarmedRequirements.INSURANCE) : null;
+			(fall != null) ? fall.getCostBearer() : null;
 		// kostentraeger is optional for tiers garant else check if valid
 		if (kostentraeger == null && xp.tiers != null && xp.tiers.equals(XMLExporter.TIERS_GARANT)) {
 			return res;

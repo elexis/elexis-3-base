@@ -17,15 +17,15 @@ package com.hilotec.elexis.messwerte.v2.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hilotec.elexis.messwerte.v2.Activator;
+import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
+import com.hilotec.elexis.messwerte.v2.views.Messages;
+
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
-
-import com.hilotec.elexis.messwerte.v2.Activator;
-import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
-import com.hilotec.elexis.messwerte.v2.views.Messages;
 
 public class Messung extends PersistentObject {
 	private static final String VERSION = "3"; // 05.02.2012 //$NON-NLS-1$
@@ -37,6 +37,7 @@ public class Messung extends PersistentObject {
 		checkTable();
 	}
 	
+	// @formatter:off
 	private static final String setVersionSQL = "UPDATE " + TABLENAME + " SET TypName='" + VERSION //$NON-NLS-1$ //$NON-NLS-2$
 		+ "' WHERE ID='VERSION'; "; //$NON-NLS-1$
 	private static final String index1SQL = "CREATE INDEX idx1 on " + TABLENAME + " (PatientID);"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -50,9 +51,13 @@ public class Messung extends PersistentObject {
 	private static final String create = "CREATE TABLE " + TABLENAME + " (" //$NON-NLS-1$ //$NON-NLS-2$
 		+ "  ID			VARCHAR(25) PRIMARY KEY, " + "  lastupdate 	BIGINT, " //$NON-NLS-1$ //$NON-NLS-2$
 		+ "  deleted		CHAR(1) DEFAULT '0', " + "  PatientID	VARCHAR(25), " //$NON-NLS-1$ //$NON-NLS-2$
-		+ "  TypName		VARCHAR(255), " + "  Datum		CHAR(8) " + ");" + "INSERT INTO " + TABLENAME //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		+ " (ID, TypName) VALUES " + "	('VERSION', '" + VERSION + "');" + index1SQL + index2SQL //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		+ "  TypName		VARCHAR(255), " + "  Datum		CHAR(8) " + ");"  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		+ "INSERT INTO " + TABLENAME
+		+ " (ID, TypName) VALUES " + "	('VERSION', '" + VERSION + "');"  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		+ index1SQL
+		+ index2SQL
 		+ index3SQL;
+	// @formatter:on
 	
 	/**
 	 * Pruefen ob die Tabelle existiert

@@ -57,13 +57,20 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	}
 
 	private static String findExecutableOnPath(String name) {
+		// Check full path given
+		if (!name.isEmpty()) {
+			File file = new File(name);
+	        if (file.isFile() && file.canExecute()) {
+	            return file.getAbsolutePath();
+	        }
+		}
 	    for (String dirname : System.getenv("PATH").split(File.pathSeparator)) { //$NON-NLS-1$
 	        File file = new File(dirname, name);
 	        if (file.isFile() && file.canExecute()) {
 	            return file.getAbsolutePath();
 	        }
 	    }
-	    return null;
+	    return "";
 	}
 	@Override
 	protected void createFieldEditors() {

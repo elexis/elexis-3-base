@@ -389,8 +389,8 @@ public class TextPlugin implements ITextPlugin {
 		
 		odtSync();
 		
-		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, "");
-		String argstr = CoreHub.localCfg.get(Preferences.P_EDITARGS, "");
+		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, Preferences.P_EDITOR_DEFAULT);
+		String argstr = CoreHub.localCfg.get(Preferences.P_EDITARGS, Preferences.P_EDITARGS_DEFAULT);
 		String baseName = "open_odf.sh";
 		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0)
 			baseName = "open_odf.bat";
@@ -411,7 +411,7 @@ public class TextPlugin implements ITextPlugin {
 		String personalia = (actPatient!=null) ? actPatient.getPersonalia() : "null";
 		List<String> args = new ArrayList<String>();
 		args.add(editor);
-		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, true)) {
+		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, Preferences.P_WRAPPERSCRIPT_DEFAULT)) {
 			args.add(scriptFile);
 		}
 		args.addAll(Arrays.asList(argstr.replaceAll("~", System.getProperty("user.home")).split("[ ]+")));
@@ -487,8 +487,8 @@ public class TextPlugin implements ITextPlugin {
 
 		File pdffile = new File(
 			file.getAbsoluteFile().getPath().replaceAll("\\.odt$", ".pdf"));
-		String pdfconv = CoreHub.localCfg.get(Preferences.P_PDFCONVERTER, "");
-		String pdfargs = CoreHub.localCfg.get(Preferences.P_PDFARGS, "");
+		String pdfconv = CoreHub.localCfg.get(Preferences.P_PDFCONVERTER, Preferences.P_PDFCONVERTER_DEFAULT);
+		String pdfargs = CoreHub.localCfg.get(Preferences.P_PDFARGS, Preferences.P_PDFARGS_DEFAULT);
 		if (pdfconv.length() == 0) {
 			SWTHelper.showError("Kein Konvertierungsbefehl gesetzt",
 					"In den Einstellungen wurde kein Befehl zum Konvertieren " +
@@ -519,8 +519,8 @@ public class TextPlugin implements ITextPlugin {
 			return false;
 		}
 		odtSync();
-		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, "oowriter");
-		String argstr = CoreHub.localCfg.get(Preferences.P_PRINTARGS, "");
+		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, Preferences.P_EDITOR_DEFAULT);
+		String argstr = CoreHub.localCfg.get(Preferences.P_PRINTARGS, Preferences.P_PRINTARGS_DEFAULT);
 		List<String> args = new ArrayList<String>();
 		args.add(editor);
 		args.addAll(Arrays.asList(argstr.replaceAll("~", System.getProperty("user.home")).split("[ ]+")));

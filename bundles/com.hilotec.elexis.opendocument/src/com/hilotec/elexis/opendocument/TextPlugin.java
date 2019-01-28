@@ -67,6 +67,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -406,15 +407,18 @@ public class TextPlugin implements ITextPlugin {
 		File scriptShell = new File(scriptFile);
 		if (!scriptShell.canExecute())
 			scriptShell.setExecutable(true);
-		String args = (editor + "\n" + argstr + "\n" + file.getAbsolutePath());
-		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, true))
-			args = scriptFile + "\n" + args;
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
 		String personalia = (actPatient!=null) ? actPatient.getPersonalia() : "null";
-		logger.info("openEditor: " + personalia + " as " + file.getAbsolutePath());
-		ProcessBuilder pb = new ProcessBuilder(args.split("\n"));
+		List<String> args = new ArrayList<String>();
+		args.add(editor);
+		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, true)) {
+			args.add(scriptFile);
+		}
+		args.addAll(Arrays.asList(argstr.replaceAll("~", System.getProperty("user.home")).split("[ ]+")));
+		args.add(file.getAbsolutePath());
+		ProcessBuilder pb = new ProcessBuilder(args);
 		filename_label.setText(file.getAbsolutePath());
-		
+		logger.info("openEditor for {} via: {}", personalia, args);
 		try {
 			editor_process = pb.start();
 			odt = null;
@@ -492,7 +496,10 @@ public class TextPlugin implements ITextPlugin {
 			return null;
 		}
 
-		String args[] = (pdfconv + "\n" + pdfargs + "\n" + file.getAbsolutePath()).split("[\n\r]+");
+		List<String> args = new ArrayList<String>();
+		args.add(pdfconv);
+		args.addAll(Arrays.asList(pdfargs.replaceAll("~", System.getProperty("user.home")).split("[ ]+")));
+		args.add(file.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(args);
 		try {
 			pb.directory(file.getAbsoluteFile().getParentFile());
@@ -505,30 +512,31 @@ public class TextPlugin implements ITextPlugin {
 		return null;
 	}
 
-	public boolean print(String toPrinter, String toTray, boolean wait){
+	@Override
+	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished){
 		logger.info("String: " + (file != null));
 		if (file == null || !ensureClosed()) {
 			return false;
 		}
-		
 		odtSync();
 		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, "oowriter");
 		String argstr = CoreHub.localCfg.get(Preferences.P_PRINTARGS, "");
-		String args[] = (editor + "\n" + argstr + "\n" + file.getAbsolutePath()).split("\n");
+		List<String> args = new ArrayList<String>();
+		args.add(editor);
+		args.addAll(Arrays.asList(argstr.replaceAll("~", System.getProperty("user.home")).split("[ ]+")));
+		args.add(file.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(args);
-		
 		try {
-			logger.info("print: " + args);
+			logger.info("print will : " + pb.command().toString());
 			editor_process = pb.start();
 			editor_process.waitFor();
-			logger.info("print waitFor done: " + args);
+			logger.info("Done printing");
 			filename_label.setText(NoFileOpen);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			editor_process = null;
 		}
-		
 		return true;
 	}
 	
@@ -1411,7 +1419,7 @@ public class TextPlugin implements ITextPlugin {
 	
 	@Override
 	public boolean isDirectOutput(){
-		return false;
+		return true;
 	}
 	
 	@Override
@@ -1422,8 +1430,8 @@ public class TextPlugin implements ITextPlugin {
 	
 	@Override
 	public void initTemplatePrintSettings(String template){
-		// TODO Auto-generated method stub
-		
+		// TODO: Siehe https://redmine.medelexis.ch/issues/3606 und
+		// https://redmine.medelexis.ch/issues/4037
 	}
 	
 }

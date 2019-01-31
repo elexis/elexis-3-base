@@ -4,7 +4,7 @@ import ch.elexis.connect.sysmex.ui.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.rgw.tools.TimeTool;
 
-public class KX21Data extends AbstractData {
+public class KX21Data extends AbstractHaematologyData {
 	
 	public int getSize(){
 		return 119;

@@ -18,8 +18,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.data.interfaces.IVerrechenbar.VatInfo;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.elexis.common.service.ModelServiceHolder;
+import ch.elexis.core.types.VatInfo;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 
 public class VATMenuContributionItem extends ContributionItem {
@@ -34,8 +35,8 @@ public class VATMenuContributionItem extends ContributionItem {
 	public void fill(Menu menu, int index){
 		StructuredSelection structuredSelection = new StructuredSelection(cv.getSelection());
 		Object element = structuredSelection.getFirstElement();
-		if (element instanceof ArtikelstammItem) {
-			final ArtikelstammItem ai = (ArtikelstammItem) element;
+		if (element instanceof IArtikelstammItem) {
+			final IArtikelstammItem ai = (IArtikelstammItem) element;
 			
 			VatInfo vatInfo = ai.getVatInfo();
 			
@@ -51,6 +52,7 @@ public class VATMenuContributionItem extends ContributionItem {
 				public void widgetSelected(SelectionEvent e){
 					if (vatNormal.getSelection()) {
 						ai.overrideVatInfo(VatInfo.VAT_CH_NOTMEDICAMENT);
+						ModelServiceHolder.get().save(ai);
 					}
 				}
 			});
@@ -63,6 +65,7 @@ public class VATMenuContributionItem extends ContributionItem {
 				public void widgetSelected(SelectionEvent e){
 					if (vatReduced.getSelection()) {
 						ai.overrideVatInfo(VatInfo.VAT_CH_ISMEDICAMENT);
+						ModelServiceHolder.get().save(ai);
 					}
 				}
 			});
@@ -75,6 +78,7 @@ public class VATMenuContributionItem extends ContributionItem {
 				public void widgetSelected(SelectionEvent e){
 					if (vatNone.getSelection()) {
 						ai.overrideVatInfo(VatInfo.VAT_NONE);
+						ModelServiceHolder.get().save(ai);
 					}
 				}
 			});

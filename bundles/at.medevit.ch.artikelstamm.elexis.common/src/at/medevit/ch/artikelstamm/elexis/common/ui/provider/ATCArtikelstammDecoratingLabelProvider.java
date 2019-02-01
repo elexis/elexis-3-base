@@ -7,13 +7,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import at.medevit.atc_codes.ATCCode;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.elexis.common.ui.cv.ATCFilterInfoListElement;
 import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCache;
 import at.medevit.ch.artikelstamm.ui.ATCLabelProvider;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.interfaces.IVerrechenbar.VatInfo;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.types.VatInfo;
+import ch.rgw.tools.Money;
 
 public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvider {
 	
@@ -28,19 +29,18 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 	
 	@Override
 	public String getText(Object element){
-		if (element instanceof ArtikelstammItem) {
+		if (element instanceof IArtikelstammItem) {
 			String ret = super.getText(element);
 			
-			ArtikelstammItem ai = (ArtikelstammItem) element;
-			String overriden =
-				(String) ai.getExtInfoStoredObjectByKey(ArtikelstammItem.EXTINFO_VAL_VAT_OVERRIDEN);
-			if (overriden != null) {
-				ret = ret + " (MWSt: " + resolveVatInfoLabel(VatInfo.valueOf(overriden)) + ")";
+			IArtikelstammItem ai = (IArtikelstammItem) element;
+			if (ai.isOverrideVatInfo()) {
+				ret = ret + " (MWSt: " + resolveVatInfoLabel(ai.getVatInfo()) + ")";
 			}
-			if (CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true)) {
-				Double publicPrice = ai.getPublicPrice();
-				if (publicPrice > 0.0d) {
-					ret = ret + " <" + ai.getPublicPrice() + "> ";
+			if (ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW,
+				true)) {
+				Money publicPrice = ai.getSellingPrice();
+				if (publicPrice != null && publicPrice.getAmount() > 0.0d) {
+					ret = ret + " <" + ai.getSellingPrice().getAmount() + "> ";
 				}
 			}
 			
@@ -74,7 +74,7 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 	
 	@Override
 	public Image getImage(Object element){
-		if (element instanceof ArtikelstammItem) {
+		if (element instanceof IArtikelstammItem) {
 			return super.getImage(element);
 		} else if (element instanceof ATCCode) {
 			return atcLabelProvider.getImage(element);
@@ -86,7 +86,7 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 	
 	@Override
 	public Color getForeground(Object element){
-		if (element instanceof ArtikelstammItem) {
+		if (element instanceof IArtikelstammItem) {
 			return super.getForeground(element);
 		} else if (element instanceof ATCCode) {
 			return atcLabelProvider.getForeground(element);
@@ -98,7 +98,7 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 	
 	@Override
 	public Color getBackground(Object element){
-		if (element instanceof ArtikelstammItem) {
+		if (element instanceof IArtikelstammItem) {
 			return super.getBackground(element);
 		} else if (element instanceof ATCCode) {
 			return atcLabelProvider.getBackground(element);

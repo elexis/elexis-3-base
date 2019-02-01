@@ -8,7 +8,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.wb.swt.ResourceManager;
 
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import ch.elexis.core.ui.UiDesk;
 
 public class ArtikelstammDecorator implements ILightweightLabelDecorator {
@@ -47,8 +47,8 @@ public class ArtikelstammDecorator implements ILightweightLabelDecorator {
 	
 	@Override
 	public void decorate(Object element, IDecoration decoration){
-		ArtikelstammItem item = (ArtikelstammItem) element;
-		if (item.getExFactoryPrice() == 0.0 && item.getPublicPrice() == 0.0) {
+		IArtikelstammItem item = (IArtikelstammItem) element;
+		if (item.getPurchasePrice().isZero() && item.getSellingPrice().isZero()) {
 			decoration.addOverlay(warning, IDecoration.TOP_LEFT);
 		}
 		if (item.isBlackBoxed()) {
@@ -56,10 +56,12 @@ public class ArtikelstammDecorator implements ILightweightLabelDecorator {
 			decoration.setBackgroundColor(UiDesk.getColor(UiDesk.COL_BLACK));
 		}
 		String genericType = item.getGenericType();
-		if (genericType.startsWith("G")) {
-			decoration.addOverlay(ol_gGruen, IDecoration.BOTTOM_LEFT);
-		} else if (genericType.startsWith("O")) {
-			decoration.addOverlay(ol_oBlue, IDecoration.BOTTOM_LEFT);
+		if (genericType != null) {
+			if (genericType.startsWith("G")) {
+				decoration.addOverlay(ol_gGruen, IDecoration.BOTTOM_LEFT);
+			} else if (genericType.startsWith("O")) {
+				decoration.addOverlay(ol_oBlue, IDecoration.BOTTOM_LEFT);
+			}
 		}
 	}
 }

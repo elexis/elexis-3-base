@@ -11,6 +11,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -24,10 +25,7 @@ import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.marge.Marge;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
-
-import org.eclipse.swt.widgets.Button;
-
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class ArtikelstammPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	public Marge margeA, margeB, margeC;
@@ -165,28 +163,33 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		btnRadioEnglish.addSelectionListener(radioSl);
 		
 		btnShowArticlePrice = new Button(container, SWT.CHECK);
-		btnShowArticlePrice.setSelection(CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true));
+		btnShowArticlePrice.setSelection(
+			ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true));
 		btnShowArticlePrice.setText("Artikelpreis in Übersicht anzeigen");
 		btnShowArticlePrice.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				CoreHub.globalCfg.set(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, btnShowArticlePrice.getSelection());
+				ConfigServiceHolder.get().set(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW,
+					btnShowArticlePrice.getSelection());
 			}
 		});
 		
 		
 		btnShowEmptyATCCodeGroups = new Button(container, SWT.CHECK);
 		btnShowEmptyATCCodeGroups.setText("ATC Gruppen ohne verfügbare Artikel anzeigen");
-		btnShowEmptyATCCodeGroups.setSelection(CoreHub.globalCfg.get(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES, true));
+		btnShowEmptyATCCodeGroups.setSelection(ConfigServiceHolder.get()
+			.get(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES, true));
 		btnShowEmptyATCCodeGroups.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				CoreHub.globalCfg.set(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES, btnShowEmptyATCCodeGroups.getSelection());
+				ConfigServiceHolder.get().set(
+					PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES,
+					btnShowEmptyATCCodeGroups.getSelection());
 			}
 		});
 		
 		String language =
-			CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+			ConfigServiceHolder.get().get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
 				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
 		if (language.equals(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN)) {
 			btnRadioGerman.setSelection(true);
@@ -204,7 +207,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		public void widgetSelected(SelectionEvent e){
 			if (!((Button) e.widget).getSelection())
 				return;
-			CoreHub.globalCfg.set(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+			ConfigServiceHolder.get().set(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
 				(String) e.widget.getData());
 			DetailComposite.setPrefAtcLanguage((String) e.widget.getData());
 		}

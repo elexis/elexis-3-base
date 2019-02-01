@@ -13,5 +13,6 @@ Bundle-ClassPath: lib/,
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.osgi
 Import-Package: ch.elexis.core.model,
+ ch.elexis.core.types,
  ch.rgw.tools,
  org.slf4j

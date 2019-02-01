@@ -12,6 +12,8 @@ package at.medevit.ch.artikelstamm;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.types.VatInfo;
 import ch.rgw.tools.Money;
 
 /**
@@ -114,4 +116,40 @@ public interface IArtikelstammItem extends IArticle {
 	 */
 	public void restoreOriginalSellingPrice();
 	
+	/**
+	 * Get an addition description text.
+	 * 
+	 * @return
+	 */
+	public String getAdditionalDescription();
+	
+	/**
+	 * Set the additional description text.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public void setAdditionalDescription(String value);
+	
+	/**
+	 * Test if the item is marked as black boxed.
+	 * 
+	 * @return
+	 */
+	public boolean isBlackBoxed();
+	
+	/**
+	 * Override the VatInfo of the item. See . Setting null results in default {@link VatInfo} for
+	 * {@link IBillable#getVatInfo()} and false for {@link IArtikelstammItem#isOverrideVatInfo()}.
+	 * 
+	 * @param vatInfo
+	 */
+	public void overrideVatInfo(VatInfo vatInfo);
+	
+	/**
+	 * Test if the {@link VatInfo} of the item is overridden.
+	 * 
+	 * @return
+	 */
+	public boolean isOverrideVatInfo();
 }

@@ -10,21 +10,32 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.ImageSize;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider;
+import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider.QueryFilter;
 
 public class MephaPrefferedProviderSorterAction extends Action {
 
-	private ArtikelstammFlatDataLoader afdl;
+	private AbstractCommonViewerContentProvider commonViewerContentProvider;
 
 	public static final String CFG_PREFER_MEPHA = "artikelstammPreferMepha";
 	
-	public MephaPrefferedProviderSorterAction(ArtikelstammFlatDataLoader afdl){
-		this.afdl = afdl;
+	private MephaPrefferdQueryFilter queryFilter;
+	
+	public MephaPrefferedProviderSorterAction(
+		AbstractCommonViewerContentProvider commonViewerContentProvider){
+		this.commonViewerContentProvider = commonViewerContentProvider;
+		this.queryFilter = new MephaPrefferdQueryFilter();
 	}
 	
 	@Override
@@ -49,7 +60,23 @@ public class MephaPrefferedProviderSorterAction extends Action {
 	
 	@Override
 	public void run(){
-		CoreHub.globalCfg.set(CFG_PREFER_MEPHA, isChecked());		
-		afdl.setUseMephaPrefferedProviderSorter(isChecked());
+		ConfigServiceHolder.get().set(CFG_PREFER_MEPHA, isChecked());
+		if (isChecked()) {
+			commonViewerContentProvider.addQueryFilter(queryFilter);
+		} else {
+			commonViewerContentProvider.removeQueryFilter(queryFilter);
+		}
+	}
+	
+	private class MephaPrefferdQueryFilter implements QueryFilter {
+		
+		@Override
+		public void apply(IQuery<?> query){
+			// #3627 need to work-around
+			Map<String, Object> caseContext = new HashMap<>();
+			caseContext.put("when|comp_gln|equals|7601001001121", Integer.valueOf(1));
+			caseContext.put("otherwise", Integer.valueOf(1));
+			query.orderBy(caseContext, ORDER.DESC);
+		}
 	}
 }

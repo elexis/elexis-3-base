@@ -17,10 +17,11 @@ import ch.elexis.core.ui.icons.Images;
 
 public class SupportedATCFilteringAction extends Action {
 	
-	private ArtikelstammFlatDataLoader afdl;
+	private ArtikelstammCommonViewerContentProvider commonViewerContentProvider;
 	
-	public SupportedATCFilteringAction(ArtikelstammFlatDataLoader afdl){
-		this.afdl = afdl;
+	public SupportedATCFilteringAction(
+		ArtikelstammCommonViewerContentProvider commonViewerContentProvider){
+		this.commonViewerContentProvider = commonViewerContentProvider;
 	}
 	
 	@Override
@@ -50,6 +51,9 @@ public class SupportedATCFilteringAction extends Action {
 	
 	@Override
 	public void run(){
-		afdl.setUseAtcQueryFilter(isChecked());
+		if (!isChecked()) {
+			commonViewerContentProvider.removeAllQueryFilterByType(AtcQueryFilter.class);
+		}
+		commonViewerContentProvider.setAddAtcElements(isChecked());
 	}
 }

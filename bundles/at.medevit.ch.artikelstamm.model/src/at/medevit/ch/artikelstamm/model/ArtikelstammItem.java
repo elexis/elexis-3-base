@@ -24,11 +24,16 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
+import ch.elexis.core.types.VatInfo;
 import ch.rgw.tools.Money;
 
 public class ArtikelstammItem
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ArtikelstammItem>
 		implements IdentifiableWithXid, IArtikelstammItem {
+	
+	private static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE";
+	private static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE = "PPUB_OVERRIDE_STORE";
+	private static final String EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE = "PKG_SIZE_OVERRIDE_STORE";
 	
 	private ExtInfoHandler extInfoHandler;
 	
@@ -399,4 +404,53 @@ public class ArtikelstammItem
 		setSellingPrice((value != null && value.intValue() > 0) ? value.negate() : null);
 	}
 	
+	@Override
+	public String getAdditionalDescription(){
+		return getEntity().getAdddscr();
+	}
+	
+	@Override
+	public void setAdditionalDescription(String value){
+		getEntity().setAdddscr(value);
+	}
+	
+	@Override
+	public boolean isBlackBoxed(){
+		return !("0".equals(getEntity().getBb()));
+	}
+	
+	@Override
+	public VatInfo getVatInfo(){
+		if (isOverrideVatInfo()) {
+			return VatInfo.valueOf((String) extInfoHandler.getExtInfo(EXTINFO_VAL_VAT_OVERRIDEN));
+		}
+		return getOriginalVatInfo();
+	}
+	
+	private VatInfo getOriginalVatInfo(){
+		switch (getType()) {
+		case P:
+			return VatInfo.VAT_CH_ISMEDICAMENT;
+		case N:
+			return VatInfo.VAT_CH_NOTMEDICAMENT;
+		case X:
+		}
+		return VatInfo.VAT_NONE;
+	}
+	
+	@Override
+	public void overrideVatInfo(VatInfo vatInfo){
+		VatInfo originalVatInfo = getOriginalVatInfo();
+		if (vatInfo == originalVatInfo) {
+			extInfoHandler.setExtInfo(EXTINFO_VAL_VAT_OVERRIDEN, null);
+		} else {
+			extInfoHandler.setExtInfo(EXTINFO_VAL_VAT_OVERRIDEN, vatInfo.toString());
+		}		
+	}
+	
+	@Override
+	public boolean isOverrideVatInfo(){
+		Object value = extInfoHandler.getExtInfo(EXTINFO_VAL_VAT_OVERRIDEN);
+		return value instanceof String;
+	}
 }

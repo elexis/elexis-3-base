@@ -23,25 +23,26 @@ import org.eclipse.swt.widgets.MenuItem;
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.atc_codes.ATCCodeService;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 
 public class ATCMenuContributionItem extends ContributionItem {
 	
 	final private CommonViewer cov;
 	final private String prefAtcLanguage;
-	final private ArtikelstammFlatDataLoader fdl;
+	final private AbstractCommonViewerContentProvider commonViewerDataProvider;
 	
-	public ATCMenuContributionItem(CommonViewer cov, ArtikelstammFlatDataLoader fdl){
+	public ATCMenuContributionItem(CommonViewer cov,
+		AbstractCommonViewerContentProvider commonViewerDataProvider){
 		this.cov = cov;
-		this.fdl = fdl;
+		this.commonViewerDataProvider = commonViewerDataProvider;
 		
-		prefAtcLanguage =
-			CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
-				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+		prefAtcLanguage = ConfigServiceHolder.get().get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+			ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
 	}
 	
 	@Override
@@ -53,9 +54,9 @@ public class ATCMenuContributionItem extends ContributionItem {
 		if (atcCodeService == null)
 			return;
 		
-		if (element instanceof ArtikelstammItem) {
-			final ArtikelstammItem ai = (ArtikelstammItem) element;
-			List<ATCCode> atcHierarchy = atcCodeService.getHierarchyForATCCode(ai.getATCCode());
+		if (element instanceof IArtikelstammItem) {
+			final IArtikelstammItem ai = (IArtikelstammItem) element;
+			List<ATCCode> atcHierarchy = atcCodeService.getHierarchyForATCCode(ai.getAtcCode());
 			
 			for (ATCCode atcCode : atcHierarchy) {
 				MenuItem temp = new MenuItem(menu, SWT.PUSH);
@@ -68,8 +69,10 @@ public class ATCMenuContributionItem extends ContributionItem {
 				temp.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e){
-						fdl.setUseAtcQueryFilter(true);
-						fdl.setAtcQueryFilterValue(tempC.atcCode);
+						commonViewerDataProvider.removeAllQueryFilterByType(AtcQueryFilter.class);
+						AtcQueryFilter queryFilter = new AtcQueryFilter();
+						queryFilter.setFilterValue(tempC.atcCode);
+						commonViewerDataProvider.addQueryFilter(queryFilter);
 					}
 				});
 			}
@@ -81,5 +84,4 @@ public class ATCMenuContributionItem extends ContributionItem {
 	public boolean isDynamic(){
 		return true;
 	}
-	
 }

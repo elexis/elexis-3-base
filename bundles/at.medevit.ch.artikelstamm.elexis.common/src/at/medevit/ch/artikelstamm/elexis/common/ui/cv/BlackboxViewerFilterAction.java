@@ -1,31 +1,39 @@
 package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 
+import java.util.Optional;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.wb.swt.ResourceManager;
 
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.actions.FlatDataLoader;
-import ch.elexis.core.ui.actions.PersistentObjectLoader.QueryFilter;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider;
+import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider.QueryFilter;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
 
 public class BlackboxViewerFilterAction extends Action {
 	
-	private FlatDataLoader fdl;
+	private AbstractCommonViewerContentProvider commonViewerContentProvider;
 	private QueryFilter blackboxOnlyFilter = new BlackboxOnlyQueryFilter();
 	private SelectorPanelProvider slp;
 	
 	private static final String FILTER_CFG = "BlackboxViewerFilterAction.showInactiveItems";
 	
-	public BlackboxViewerFilterAction(FlatDataLoader fdl, SelectorPanelProvider selectorPanel){
-		this.fdl = fdl;
+	public BlackboxViewerFilterAction(
+		AbstractCommonViewerContentProvider commonViewerContentProvider,
+		SelectorPanelProvider selectorPanel){
+		this.commonViewerContentProvider = commonViewerContentProvider;
 		this.slp = selectorPanel;
 		
-		boolean value = CoreHub.userCfg.get(FILTER_CFG, false);
+		boolean value = false;
+		Optional<IContact> activeUserContact = ContextServiceHolder.get().getActiveUserContact();
+		if (activeUserContact.isPresent()) {
+			value = ConfigServiceHolder.get().get(activeUserContact.get(), FILTER_CFG, false);
+		}
 		setChecked(value);
 		addOrRemoveFilter();
 	}
@@ -48,18 +56,18 @@ public class BlackboxViewerFilterAction extends Action {
 	
 	private void addOrRemoveFilter(){
 		if (isChecked()) {
-			fdl.removeQueryFilter(blackboxOnlyFilter);
+			commonViewerContentProvider.removeQueryFilter(blackboxOnlyFilter);
 		} else {
-			fdl.addQueryFilter(blackboxOnlyFilter);
+			commonViewerContentProvider.addQueryFilter(blackboxOnlyFilter);
 		}
 	}
 	
 	@Override
 	public void run(){
 		addOrRemoveFilter();
-		fdl.applyQueryFilters();
 		slp.getPanel().contentsChanged(null);
-		CoreHub.userCfg.set(FILTER_CFG, isChecked());
+		ContextServiceHolder.get().getActiveUserContact()
+			.ifPresent(contact -> ConfigServiceHolder.get().set(contact, FILTER_CFG, isChecked()));
 	}
 	
 	@Override
@@ -74,8 +82,8 @@ public class BlackboxViewerFilterAction extends Action {
 	
 	private class BlackboxOnlyQueryFilter implements QueryFilter {
 		@Override
-		public void apply(Query<? extends PersistentObject> qbe){
-			qbe.add(ArtikelstammItem.FLD_BLACKBOXED, Query.EQUALS, StringConstants.ZERO);
+		public void apply(IQuery<?> query){
+			query.and("bb", COMPARATOR.EQUALS, "0");
 		}
 	}
 }

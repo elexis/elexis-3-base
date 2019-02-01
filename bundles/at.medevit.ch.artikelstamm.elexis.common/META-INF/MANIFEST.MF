@@ -16,13 +16,17 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.core.databinding.property;bundle-version="1.4.0",
  org.eclipse.core.databinding,
  org.apache.commons.lang;bundle-version="2.6.0",
- ch.elexis.core.data;bundle-version="3.2.0",
  ch.elexis.core.ui;bundle-version="3.2.0",
  ch.elexis.core.ui.icons;bundle-version="3.1.0",
  at.medevit.atc_codes;bundle-version="3.1.0",
  at.medevit.ch.artikelstamm.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.dbcheck
-Import-Package: com.ibm.icu.text,
+Import-Package: ch.elexis.core.data.interfaces,
+ ch.elexis.core.data.services,
+ ch.elexis.core.data.status,
+ ch.elexis.core.data.util,
+ ch.elexis.core.services.holder,
+ com.ibm.icu.text,
  org.eclipse.core.databinding.observable.value,
  org.eclipse.jface.viewers,
  org.osgi.service.component.annotations;version="1.2.0",
@@ -31,9 +35,8 @@ Export-Package: at.medevit.ch.artikelstamm.elexis.common.importer,
  at.medevit.ch.artikelstamm.elexis.common.preference,
  at.medevit.ch.artikelstamm.elexis.common.ui,
  at.medevit.ch.artikelstamm.elexis.common.ui.cv,
- at.medevit.ch.artikelstamm.elexis.common.ui.provider,
- ch.artikelstamm.elexis.common
+ at.medevit.ch.artikelstamm.elexis.common.ui.provider
 Service-Component: OSGI-INF/atccodeserviceconsumer.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.elexis.common.service.ArtikelstammCodeElementService.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.elexis.common.service.ArticleService.xml
+ OSGI-INF/at.medevit.ch.artikelstamm.elexis.common.service.ArticleService.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.elexis.common.service.ModelServiceHolder.xml
 Bundle-ActivationPolicy: lazy

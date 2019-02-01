@@ -16,10 +16,10 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.wb.swt.ResourceManager;
 
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.ui.ArtikelstammLabelProvider;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.IStockService.Availability;
+import ch.elexis.core.services.holder.StockServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 
 /**
@@ -34,7 +34,7 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	
 	@Override
 	public Image getImage(Object element){
-		ArtikelstammItem ai = (ArtikelstammItem) element;
+		IArtikelstammItem ai = (IArtikelstammItem) element;
 		if (ai.isBlackBoxed())
 			return blackBoxedImage;
 		return super.getImage(element);
@@ -42,8 +42,8 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	
 	@Override
 	public String getText(Object element){
-		ArtikelstammItem ai = (ArtikelstammItem) element;
-		Integer availability = CoreHub.getStockService().getCumulatedStockForArticle(ai);
+		IArtikelstammItem ai = (IArtikelstammItem) element;
+		Long availability = StockServiceHolder.get().getCumulatedStockForArticle(ai);
 		if (availability != null) {
 			return ai.getLabel() + " (LB: " + availability + ")";
 		}
@@ -56,10 +56,10 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	 */
 	@Override
 	public Color getForeground(Object element){
-		ArtikelstammItem ai = (ArtikelstammItem) element;
+		IArtikelstammItem ai = (IArtikelstammItem) element;
 		
 		Availability availability =
-			CoreHub.getStockService().getCumulatedAvailabilityForArticle(ai);
+			StockServiceHolder.get().getCumulatedAvailabilityForArticle(ai);
 		if (availability != null) {
 			switch (availability) {
 			case CRITICAL_STOCK:
@@ -74,7 +74,7 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	
 	@Override
 	public Color getBackground(Object element){
-		ArtikelstammItem ai = (ArtikelstammItem) element;
+		IArtikelstammItem ai = (IArtikelstammItem) element;
 		if (ai.isBlackBoxed())
 			return UiDesk.getColor(UiDesk.COL_GREY60);
 		return super.getBackground(element);

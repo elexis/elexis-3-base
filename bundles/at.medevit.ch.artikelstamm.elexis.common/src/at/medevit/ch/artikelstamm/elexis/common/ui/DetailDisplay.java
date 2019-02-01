@@ -33,13 +33,13 @@ import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.DATASOURCEType;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
+import at.medevit.ch.artikelstamm.elexis.common.service.VersionUtil;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.core.ui.views.controls.StockDetailComposite;
-import ch.elexis.data.PersistentObject;
 
 public class DetailDisplay implements IDetailDisplay {
 	
@@ -53,20 +53,20 @@ public class DetailDisplay implements IDetailDisplay {
 			.setConverter(StringToNumberConverter.toInteger(false));
 	}
 	
-	protected WritableValue item = new WritableValue(null, ArtikelstammItem.class);
+	protected WritableValue item = new WritableValue(null, IArtikelstammItem.class);
 	
 	private DetailComposite dc = null;
 	private StockDetailComposite sdc;
 	private Text txtStkProPack, txtStkProAbgabe;
 	
 	@Override
-	public Class<? extends PersistentObject> getElementClass(){
-		return ArtikelstammItem.class;
+	public Class<?> getElementClass(){
+		return IArtikelstammItem.class;
 	}
 	
 	@Override
 	public void display(Object obj){
-		ArtikelstammItem ai = (ArtikelstammItem) obj;
+		IArtikelstammItem ai = (IArtikelstammItem) obj;
 		item.setValue(ai);
 		if (dc != null) {
 			dc.setItem(ai);
@@ -91,8 +91,9 @@ public class DetailDisplay implements IDetailDisplay {
 	@Override
 	public Composite createDisplay(Composite parent, IViewSite site){
 		if (dc == null) {
-			String atcLang = CoreHub.globalCfg.get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
-				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+			String atcLang =
+				ConfigServiceHolder.get().get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
+					ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
 			
 			dc = new DetailComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL, atcLang);
 			
@@ -115,11 +116,11 @@ public class DetailDisplay implements IDetailDisplay {
 		Label label = new Label(ret, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false, 1, 1));
 		StringBuilder sb = new StringBuilder();
-		int version = ArtikelstammItem.getCurrentVersion();
+		int version = VersionUtil.getCurrentVersion();
 		if (version != 99999) {
 			sb.append(" v" + version);
 		}
-		Date creationDate = ArtikelstammItem.getImportSetCreationDate();
+		Date creationDate = VersionUtil.getImportSetCreationDate();
 		if (creationDate != null) {
 			sb.append(" / " + ArtikelstammHelper.monthAndYearWritten.format(creationDate));
 		}
@@ -127,7 +128,7 @@ public class DetailDisplay implements IDetailDisplay {
 		// the default datasource is oddb2xml
 		DATASOURCEType datasourceType = DATASOURCEType.ODDB_2_XML;
 		try {
-			datasourceType = ArtikelstammItem.getDatasourceType();
+			datasourceType = VersionUtil.getDatasourceType();
 		} catch (IllegalArgumentException e) {
 			/** ignore **/
 		}
@@ -178,7 +179,8 @@ public class DetailDisplay implements IDetailDisplay {
 		gd_txtStkProPack.widthHint = 40;
 		txtStkProPack.setLayoutData(gd_txtStkProPack);
 		IObservableValue propertyStkProPack = PojoProperties
-			.value(ArtikelstammItem.class, "verpackungseinheit", Integer.class).observeDetail(item);
+			.value(IArtikelstammItem.class, "packageSize", Integer.class)
+			.observeDetail(item);
 		IObservableValue targetStkProPack =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProPack);
 		bindingContext.bindValue(targetStkProPack, propertyStkProPack, stringToInteger,
@@ -198,7 +200,7 @@ public class DetailDisplay implements IDetailDisplay {
 		txtStkProAbgabe.setLayoutData(gd_txtStkProAbgabe);
 		txtStkProAbgabe.setToolTipText(tooltip);
 		IObservableValue propertyStkProAbgabe = PojoProperties
-			.value(ArtikelstammItem.class, "verkaufseinheit", Integer.class).observeDetail(item);
+			.value(IArtikelstammItem.class, "sellingSize", Integer.class).observeDetail(item);
 		IObservableValue targetStkProAbgabe =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProAbgabe);
 		

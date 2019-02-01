@@ -16,11 +16,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -33,12 +33,14 @@ import org.slf4j.LoggerFactory;
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeService;
 import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import at.medevit.ch.artikelstamm.elexis.common.service.ModelServiceHolder;
+import at.medevit.ch.artikelstamm.elexis.common.service.VersionUtil;
+import ch.elexis.core.model.IBlobSecondary;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.data.NamedBlob2;
-import ch.elexis.data.PersistentObject;
-import ch.rgw.tools.JdbcLink.Stm;
-import ch.rgw.tools.TimeTool;
 
 /**
  * Provide a cache for the number of elements available in the Artikelstamm set for each ATC code.
@@ -57,16 +59,17 @@ public class ATCCodeCache {
 	}
 	
 	private static String determineBlobId(){
-		return NAMED_BLOB_PREFIX + "_" + ArtikelstammItem.getCurrentVersion();
+		return NAMED_BLOB_PREFIX + "_" + VersionUtil.getCurrentVersion();
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static void deserializeFromDatabase(String id) throws IOException,
-		ClassNotFoundException{
+	private static void deserializeFromDatabase(String id)
+		throws IOException, ClassNotFoundException{
 		
-		NamedBlob2 cacheStorage = NamedBlob2.load(id);
-		if (cacheStorage != null) {
-			ByteArrayInputStream ba = new ByteArrayInputStream(cacheStorage.getBytes());
+		Optional<IBlobSecondary> cacheStorage =
+			CoreModelServiceHolder.get().load(id, IBlobSecondary.class);
+		if (cacheStorage.isPresent()) {
+			ByteArrayInputStream ba = new ByteArrayInputStream(cacheStorage.get().getContent());
 			ObjectInputStream oba = new ObjectInputStream(ba);
 			cache = (HashMap<String, Integer>) oba.readObject();
 			oba.close();
@@ -78,8 +81,8 @@ public class ATCCodeCache {
 				pmd.run(false, false, new IRunnableWithProgress() {
 					
 					@Override
-					public void run(IProgressMonitor monitor) throws InvocationTargetException,
-						InterruptedException{
+					public void run(IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException{
 						rebuildCache(monitor);
 					}
 				});
@@ -106,7 +109,7 @@ public class ATCCodeCache {
 		}
 		
 		Integer value = cache.get(element.atcCode);
-		return (value!=null) ? value : 0;
+		return (value != null) ? value : 0;
 	}
 	
 	public static void rebuildCache(IProgressMonitor monitor){
@@ -116,41 +119,39 @@ public class ATCCodeCache {
 		List<ATCCode> allATCCodes = atcCodeService.getAllATCCodes();
 		int numberOfATCCodes = allATCCodes.size();
 		
-		monitor.beginTask("Rebuilding index of available articles per ATC Code", numberOfATCCodes+1);
+		monitor.beginTask("Rebuilding index of available articles per ATC Code",
+			numberOfATCCodes + 1);
 		
 		cache = new HashMap<String, Integer>(numberOfATCCodes);
-	
-		TreeMap<String, Integer> tm = new TreeMap<String, Integer>();
-		String query = "SELECT DISTINCT(" + ArtikelstammItem.FLD_ATC + ") FROM " + ArtikelstammItem.TABLENAME;
-		log.debug("ArtikelstammImporter {} numberOfATCCodes using query {}:" ,numberOfATCCodes,  query);
-		Stm stm = PersistentObject.getConnection().getStatement();
-		ResultSet rs = stm.query(query);
-		try {
-			while (rs.next()) {
-				String atc = rs.getString(1);
-				if(atc==null) continue;
-				if (!tm.containsKey(atc)) {
-					tm.put(atc, 0);
-				}
-				Integer integer = tm.get(atc);
-				tm.put(atc, integer + 1);
-			}
-			rs.close();
-		} catch (SQLException se) {}
 		
-		PersistentObject.getConnection().releaseStatement(stm);
+		TreeMap<String, Integer> tm = new TreeMap<String, Integer>();
+		String queryString = "SELECT DISTINCT(atc) FROM artikelstamm_ch";
+		log.debug("ArtikelstammImporter {} numberOfATCCodes using query {}:", numberOfATCCodes,
+			queryString);
+		ModelServiceHolder.get().executeNativeQuery(queryString).forEach(o -> {
+			if (o instanceof String) {
+				String atc = (String) o;
+				if (atc != null) {
+					if (!tm.containsKey(atc)) {
+						tm.put(atc, 0);
+					}
+					Integer integer = tm.get(atc);
+					tm.put(atc, integer + 1);
+				}
+			}
+		});
 		
 		for (ATCCode atcCode : allATCCodes) {
 			int foundElements = 0;
-		
+			
 			ATCCode next = atcCodeService.getNextInHierarchy(atcCode);
 			SortedMap<String, Integer> subMap;
-			if(next!=null) {
+			if (next != null) {
 				subMap = tm.subMap(atcCode.atcCode, next.atcCode);
 			} else {
 				subMap = tm.tailMap(atcCode.atcCode);
 			}
-
+			
 			for (Iterator<String> a = subMap.keySet().iterator(); a.hasNext();) {
 				String val = a.next();
 				foundElements += tm.get(val);
@@ -162,17 +163,28 @@ public class ATCCodeCache {
 		
 		monitor.subTask("Persisting ATC Code product cache to database");
 		// clear old caches
-		NamedBlob2.cleanup(NAMED_BLOB_PREFIX, new TimeTool());
+		IQuery<IBlobSecondary> query = ModelServiceHolder.get().getQuery(IBlobSecondary.class);
+		query.and(ModelPackage.Literals.IBLOB__DATE, COMPARATOR.LESS, LocalDate.now());
+		for (IBlobSecondary oldCache : query.execute()) {
+			ModelServiceHolder.get().remove(oldCache);
+		}
 		
 		// serialize the cache
 		try {
-			NamedBlob2 cacheStorage = NamedBlob2.create(determineBlobId(), false);
+			String id = determineBlobId();
+			IBlobSecondary cacheStorage =
+				ModelServiceHolder.get().load(id, IBlobSecondary.class).orElse(null);
+			if (cacheStorage == null) {
+				cacheStorage = ModelServiceHolder.get().create(IBlobSecondary.class);
+				cacheStorage.setId(determineBlobId());
+			}
 			ByteArrayOutputStream ba = new ByteArrayOutputStream();
 			ObjectOutputStream oba = new ObjectOutputStream(ba);
 			oba.writeObject(cache);
 			oba.close();
-			cacheStorage.putBytes(ba.toByteArray());
+			cacheStorage.setContent(ba.toByteArray());
 			ba.close();
+			ModelServiceHolder.get().save(cacheStorage);
 			monitor.worked(1);
 		} catch (IOException e) {
 			log.error("Error on cache generation", e);

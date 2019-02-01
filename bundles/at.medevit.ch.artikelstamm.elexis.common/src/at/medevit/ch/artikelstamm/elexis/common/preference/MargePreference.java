@@ -1,7 +1,7 @@
 package at.medevit.ch.artikelstamm.elexis.common.preference;
 
 import at.medevit.ch.artikelstamm.marge.Marge;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.rgw.tools.Money;
 
 public class MargePreference {
@@ -23,12 +23,12 @@ public class MargePreference {
 			if (i != marges.length)
 				sb.append("$");
 		}
-		CoreHub.globalCfg.set(PreferenceConstants.PREV_CSV_MARGE_STORAGE, sb.toString());
-		CoreHub.globalCfg.flush();
+		ConfigServiceHolder.get().set(PreferenceConstants.PREV_CSV_MARGE_STORAGE, sb.toString());
 	}
 	
 	private static void initMarges(){
-		String margeStorageString = CoreHub.globalCfg.get(PreferenceConstants.PREV_CSV_MARGE_STORAGE, "0/0/0$0/0/0$0/0/0");
+		String margeStorageString = ConfigServiceHolder.get()
+			.get(PreferenceConstants.PREV_CSV_MARGE_STORAGE, "0/0/0$0/0/0$0/0/0");
 		String[] margeStorageEntry = margeStorageString.split("\\$");
 		marges = new Marge[margeStorageEntry.length];
 		for (int i = 0; i < margeStorageEntry.length; i++) {

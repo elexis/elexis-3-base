@@ -11,20 +11,20 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
-import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider;
-import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider.QueryFilter;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider.QueryFilter;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 
 public class BlackboxViewerFilterAction extends Action {
 	
-	private AbstractCommonViewerContentProvider commonViewerContentProvider;
+	private CommonViewerContentProvider commonViewerContentProvider;
 	private QueryFilter blackboxOnlyFilter = new BlackboxOnlyQueryFilter();
 	private SelectorPanelProvider slp;
 	
 	private static final String FILTER_CFG = "BlackboxViewerFilterAction.showInactiveItems";
 	
 	public BlackboxViewerFilterAction(
-		AbstractCommonViewerContentProvider commonViewerContentProvider,
+		CommonViewerContentProvider commonViewerContentProvider,
 		SelectorPanelProvider selectorPanel){
 		this.commonViewerContentProvider = commonViewerContentProvider;
 		this.slp = selectorPanel;

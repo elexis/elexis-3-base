@@ -27,17 +27,18 @@ import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.CommonViewer.Message;
 
 public class ATCMenuContributionItem extends ContributionItem {
 	
 	final private CommonViewer cov;
 	final private String prefAtcLanguage;
-	final private AbstractCommonViewerContentProvider commonViewerDataProvider;
+	final private CommonViewerContentProvider commonViewerDataProvider;
 	
 	public ATCMenuContributionItem(CommonViewer cov,
-		AbstractCommonViewerContentProvider commonViewerDataProvider){
+		CommonViewerContentProvider commonViewerDataProvider){
 		this.cov = cov;
 		this.commonViewerDataProvider = commonViewerDataProvider;
 		
@@ -73,6 +74,7 @@ public class ATCMenuContributionItem extends ContributionItem {
 						AtcQueryFilter queryFilter = new AtcQueryFilter();
 						queryFilter.setFilterValue(tempC.atcCode);
 						commonViewerDataProvider.addQueryFilter(queryFilter);
+						cov.notify(Message.update);
 					}
 				});
 			}

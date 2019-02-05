@@ -21,19 +21,19 @@ import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.ImageSize;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider;
-import ch.elexis.core.ui.util.viewers.AbstractCommonViewerContentProvider.QueryFilter;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider.QueryFilter;
 
 public class MephaPrefferedProviderSorterAction extends Action {
 
-	private AbstractCommonViewerContentProvider commonViewerContentProvider;
+	private CommonViewerContentProvider commonViewerContentProvider;
 
 	public static final String CFG_PREFER_MEPHA = "artikelstammPreferMepha";
 	
 	private MephaPrefferdQueryFilter queryFilter;
 	
 	public MephaPrefferedProviderSorterAction(
-		AbstractCommonViewerContentProvider commonViewerContentProvider){
+		CommonViewerContentProvider commonViewerContentProvider){
 		this.commonViewerContentProvider = commonViewerContentProvider;
 		this.queryFilter = new MephaPrefferdQueryFilter();
 	}
@@ -75,8 +75,8 @@ public class MephaPrefferedProviderSorterAction extends Action {
 			// #3627 need to work-around
 			Map<String, Object> caseContext = new HashMap<>();
 			caseContext.put("when|comp_gln|equals|7601001001121", Integer.valueOf(1));
-			caseContext.put("otherwise", Integer.valueOf(1));
-			query.orderBy(caseContext, ORDER.DESC);
+			caseContext.put("otherwise", Integer.valueOf(2));
+			query.orderBy(caseContext, ORDER.ASC);
 		}
 	}
 }

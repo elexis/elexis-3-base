@@ -290,8 +290,7 @@ public class ArtikelstammItem
 	
 	@Override
 	public TYPE getType(){
-		// TODO Auto-generated method stub
-		return null;
+		return TYPE.valueOf(getEntity().getType());
 	}
 	
 	@Override
@@ -452,5 +451,12 @@ public class ArtikelstammItem
 	public boolean isOverrideVatInfo(){
 		Object value = extInfoHandler.getExtInfo(EXTINFO_VAL_VAT_OVERRIDEN);
 		return value instanceof String;
+	}
+	
+	@Override
+	public String getLabel(){
+		return (getAdditionalDescription() != null && getAdditionalDescription().length() > 0)
+				? getName() + " (" + getAdditionalDescription() + ")"
+				: getName();
 	}
 }

@@ -105,7 +105,9 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		for (FieldDescriptor<?> fd : fields) {
 			fd.setAssignedListener(eventType, keyListener);
 		}
+		// delay the change event of the selector panel
 		slp = new SelectorPanelProvider(fields, true);
+		slp.setChangeDelay(750);
 		slp.addChangeListener(new AControlFieldListener(slp));
 		
 		commonViewContentProvider =

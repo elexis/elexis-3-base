@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Vendor: hilotec.com
 Bundle-ClassPath: .
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.7.0.qualifier
 Bundle-Name: Hilotec_OpenDocument
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: com.hilotec.elexis.opendocument;singleton:=true

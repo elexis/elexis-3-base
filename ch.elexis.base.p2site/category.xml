@@ -33,7 +33,7 @@
    <feature url="features/ch.pharmed.phmprescriber.feature_3.0.100.qualifier.jar" id="ch.pharmed.phmprescriber.feature" version="3.0.100.qualifier">
       <category name="dataexchange"/>
    </feature>
-   <feature url="features/com.hilotec.elexis.opendocument.feature_3.1.100.qualifier.jar" id="com.hilotec.elexis.opendocument.feature" version="3.1.100.qualifier">
+   <feature url="features/com.hilotec.elexis.opendocument.feature_3.7.0.qualifier.jar" id="com.hilotec.elexis.opendocument.feature" version="3.7.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
    <feature url="features/org.iatrix.feature_3.1.100.qualifier.jar" id="org.iatrix.feature" version="3.1.100.qualifier">

@@ -78,6 +78,14 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 			TableViewer tv = (TableViewer) event.getSource();
 			StructuredSelection ss = (StructuredSelection) tv.getSelection();
 			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
+			if (!ss.isEmpty()) {
+				IArtikelstammItem selected = (IArtikelstammItem) ss.getFirstElement();
+				ContextServiceHolder.get().getRootContext()
+					.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", selected);
+			} else {
+				ContextServiceHolder.get().getRootContext()
+					.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", null);
+			}
 		}
 	};
 	

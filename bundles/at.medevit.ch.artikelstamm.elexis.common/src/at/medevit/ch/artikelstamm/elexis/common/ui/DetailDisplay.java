@@ -12,6 +12,9 @@ package at.medevit.ch.artikelstamm.elexis.common.ui;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoProperties;
@@ -19,6 +22,7 @@ import org.eclipse.core.databinding.conversion.NumberToStringConverter;
 import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -62,6 +66,14 @@ public class DetailDisplay implements IDetailDisplay {
 	@Override
 	public Class<?> getElementClass(){
 		return IArtikelstammItem.class;
+	}
+	
+	@Inject
+	public void selection(
+		@Optional @Named("at.medevit.ch.artikelstamm.elexis.common.ui.selection") IArtikelstammItem item){
+		if (item != null && !dc.isDisposed()) {
+			display(item);
+		}
 	}
 	
 	@Override

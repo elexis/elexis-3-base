@@ -2,13 +2,15 @@ package ch.elexis.agenda.series;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.IPlannable;
@@ -80,6 +82,8 @@ public class SerienTermin {
 	public final static long DAY_MILLIS = HOUR_MILLIS * 24;
 	public final static long YEAR_MILLIS = DAY_MILLIS * 365;
 	
+	private static Logger logger = LoggerFactory.getLogger(SerienTermin.class);
+	
 	public SerienTermin(){
 		beginTime = new Date();
 		Calendar endTimeCalendar = Calendar.getInstance();
@@ -125,6 +129,7 @@ public class SerienTermin {
 	 * <br>
 	 * Use with care, malformed strings will not be treated defensively!
 	 * 
+	 * Care about thread safety!
 	 * 
 	 * @param serienTerminConfigurationString
 	 */
@@ -133,12 +138,11 @@ public class SerienTermin {
 		String[] termin = terms[0].split(",");
 		
 		try {
-			beginTime = timeFormat.parse(termin[0]);
-			endTime = timeFormat.parse(termin[1]);
-			seriesStartDate = dateFormat.parse(terms[3]);
-		} catch (ParseException e) {
-			// TODO log
-			e.printStackTrace();
+			beginTime = new SimpleDateFormat("HHmm").parse(termin[0]);
+			endTime = new SimpleDateFormat("HHmm").parse(termin[1]);
+			seriesStartDate = new SimpleDateFormat("ddMMyyyy").parse(terms[3]);
+		} catch (Exception e) {
+			logger.error("unexpected exception", e);
 		}
 		
 		char seriesTypeCharacter = terms[1].toUpperCase().charAt(0);
@@ -152,10 +156,9 @@ public class SerienTermin {
 		switch (endingType) {
 		case ON_SPECIFIC_DATE:
 			try {
-				endsOnDate = dateFormat.parse(endingPatternString);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				endsOnDate = new SimpleDateFormat("ddMMyyyy").parse(endingPatternString);
+			} catch (Exception e) {
+				logger.error("unexpected exception", e);
 			}
 			break;
 		case AFTER_N_OCCURENCES:
@@ -510,15 +513,15 @@ public class SerienTermin {
 		// BEGINTIME,ENDTIME;SERIES_TYPE;[SERIES_PATTERN];BEGINDATE;[ENDING_TYPE];[ENDING_PATTERN]
 		StringBuilder sb = new StringBuilder();
 		try {
-			sb.append(timeFormat.format(beginTime));
+			sb.append(new SimpleDateFormat("HHmm").format(beginTime));
 			sb.append(",");
-			sb.append(timeFormat.format(endTime));
+			sb.append(new SimpleDateFormat("HHmm").format(endTime));
 			sb.append(";");
 			sb.append(getSeriesType().getSeriesTypeCharacter());
 			sb.append(";");
 			sb.append(seriesPatternString);
 			sb.append(";");
-			sb.append(dateFormat.format(seriesStartDate));
+			sb.append(new SimpleDateFormat("ddMMyyyy").format(seriesStartDate));
 			sb.append(";");
 			sb.append(endingType.getEndingTypeChar());
 			sb.append(";");
@@ -528,7 +531,7 @@ public class SerienTermin {
 				sb.append(endsAfterNDates);
 				break;
 			case ON_SPECIFIC_DATE:
-				sb.append(dateFormat.format(endsOnDate));
+				sb.append(new SimpleDateFormat("ddMMyyyy").format(endsOnDate));
 				break;
 			default:
 				break;

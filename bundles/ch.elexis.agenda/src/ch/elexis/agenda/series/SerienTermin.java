@@ -136,11 +136,13 @@ public class SerienTermin {
 	private void parseSerienTerminConfigurationString(String serienTerminConfigurationString){
 		String[] terms = serienTerminConfigurationString.split(";");
 		String[] termin = terms[0].split(",");
+		SimpleDateFormat timeDf = new SimpleDateFormat("HHmm");
+		SimpleDateFormat dateDf = new SimpleDateFormat("ddMMyyyy");
 		
 		try {
-			beginTime = new SimpleDateFormat("HHmm").parse(termin[0]);
-			endTime = new SimpleDateFormat("HHmm").parse(termin[1]);
-			seriesStartDate = new SimpleDateFormat("ddMMyyyy").parse(terms[3]);
+			beginTime = timeDf.parse(termin[0]);
+			endTime = timeDf.parse(termin[1]);
+			seriesStartDate = dateDf.parse(terms[3]);
 		} catch (Exception e) {
 			logger.error("unexpected exception", e);
 		}
@@ -156,7 +158,7 @@ public class SerienTermin {
 		switch (endingType) {
 		case ON_SPECIFIC_DATE:
 			try {
-				endsOnDate = new SimpleDateFormat("ddMMyyyy").parse(endingPatternString);
+				endsOnDate = dateDf.parse(endingPatternString);
 			} catch (Exception e) {
 				logger.error("unexpected exception", e);
 			}
@@ -513,15 +515,18 @@ public class SerienTermin {
 		// BEGINTIME,ENDTIME;SERIES_TYPE;[SERIES_PATTERN];BEGINDATE;[ENDING_TYPE];[ENDING_PATTERN]
 		StringBuilder sb = new StringBuilder();
 		try {
-			sb.append(new SimpleDateFormat("HHmm").format(beginTime));
+			SimpleDateFormat timeDf = new SimpleDateFormat("HHmm");
+			SimpleDateFormat dateDf = new SimpleDateFormat("ddMMyyyy");
+			
+			sb.append(timeDf.format(beginTime));
 			sb.append(",");
-			sb.append(new SimpleDateFormat("HHmm").format(endTime));
+			sb.append(timeDf.format(endTime));
 			sb.append(";");
 			sb.append(getSeriesType().getSeriesTypeCharacter());
 			sb.append(";");
 			sb.append(seriesPatternString);
 			sb.append(";");
-			sb.append(new SimpleDateFormat("ddMMyyyy").format(seriesStartDate));
+			sb.append(dateDf.format(seriesStartDate));
 			sb.append(";");
 			sb.append(endingType.getEndingTypeChar());
 			sb.append(";");
@@ -531,7 +536,7 @@ public class SerienTermin {
 				sb.append(endsAfterNDates);
 				break;
 			case ON_SPECIFIC_DATE:
-				sb.append(new SimpleDateFormat("ddMMyyyy").format(endsOnDate));
+				sb.append(dateDf.format(endsOnDate));
 				break;
 			default:
 				break;

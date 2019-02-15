@@ -376,17 +376,22 @@ public class ArtikelstammImporter {
 			Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 			qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, item.getGTIN());
 			ArtikelstammItem foundItem = null;
-			List<ArtikelstammItem> result = qre.execute();		
+			List<ArtikelstammItem> result = qre.execute();
 			if(result.size() > 0) {
 				if (result.size() == 1) {
 					foundItem = result.get(0);
 				} else {
-					log.warn("[II] Found multiple items for GTIN [" + item.getGTIN() + "]");
+					log.warn("[II] Found multiple items ({}) for GTIN [{}] type {}", result.size(), item.getGTIN(),
+							item.getPHARMATYPE());
 					// Is the case in Stauffacher DB, where legacy articles have been imported
 					for (ArtikelstammItem artikelstammItem : result) {
-						if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE) {
+						if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE
+								|| (isOddb2xml && artikelstammItem.getBlackBoxReason() == BlackBoxReason.NOT_BLACKBOXED)
+										&& artikelstammItem.getType() == TYPE.N) {
 							foundItem = artikelstammItem;
-							log.warn("[II] Selected ID [" + foundItem.getId() + "] to update.");
+							log.warn("[II] isOddb2xml {} Selected ID [{}] of {} items to update.", isOddb2xml,
+									foundItem.getId(), result.size());
+							break;
 						}
 					}
 				}

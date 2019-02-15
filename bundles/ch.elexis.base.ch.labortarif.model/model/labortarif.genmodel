@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/ch.elexis.base.ch.labortarif.model/src-gen" modelPluginID="ch.elexis.base.ch.labortarif.model"
+    modelName="Labortarif" rootExtendsInterface="" rootExtendsClass="" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" copyrightFields="false" usedGenPackages="../../ch.elexis.core/model/model.genmodel#//model ../../ch.elexis.core/model/types.genmodel#//types"
+    importOrganizing="true">
+  <foreignModel>labortarif.ecore</foreignModel>
+  <genPackages prefix="Labortarif" basePackage="ch.elexis.base.ch" disposableProviderFactory="true"
+      ecorePackage="labortarif.ecore#/">
+    <genClasses image="false" ecoreClass="labortarif.ecore#//ILaborLeistung">
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute labortarif.ecore#//ILaborLeistung/points"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute labortarif.ecore#//ILaborLeistung/validFrom"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute labortarif.ecore#//ILaborLeistung/validTo"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute labortarif.ecore#//ILaborLeistung/chapter"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute labortarif.ecore#//ILaborLeistung/speciality"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute labortarif.ecore#//ILaborLeistung/limitation"/>
+      <genOperations ecoreOperation="labortarif.ecore#//ILaborLeistung/isValidOn">
+        <genParameters ecoreParameter="labortarif.ecore#//ILaborLeistung/isValidOn/date"/>
+      </genOperations>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

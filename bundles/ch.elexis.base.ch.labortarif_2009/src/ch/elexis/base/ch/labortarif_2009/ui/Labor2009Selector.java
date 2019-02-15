@@ -12,19 +12,20 @@
 
 package ch.elexis.base.ch.labortarif_2009.ui;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.base.ch.labortarif.ILaborLeistung;
+import ch.elexis.base.ch.labortarif.LaborTarifConstants;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.labortarif2009.data.Labor2009Tarif;
-import ch.rgw.tools.TimeTool;
 
 public class Labor2009Selector extends CodeSelectorFactory {
 	CommonViewer cv;
@@ -32,15 +33,28 @@ public class Labor2009Selector extends CodeSelectorFactory {
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		this.cv = cv;
-		ViewerConfigurer vc =
-			new ViewerConfigurer(new Labor2009ContentProvider(), new DefaultLabelProvider(),
-				new Labor2009ControlFieldProvider(cv),
-				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
+		cv.setSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				TableViewer tv = (TableViewer) event.getSource();
+				StructuredSelection ss = (StructuredSelection) tv.getSelection();
+				if (!ss.isEmpty()) {
+					ILaborLeistung selected = (ILaborLeistung) ss.getFirstElement();
+					ContextServiceHolder.get().getRootContext().setNamed(
+						"ch.elexis.base.ch.labortarif_2009.ui.selection", selected);
+				} else {
+					ContextServiceHolder.get().getRootContext()
+						.setNamed("ch.elexis.base.ch.labortarif_2009.ui.selection", null);
+				}
+			}
+		});
 		
-		ElexisEventDispatcher.getInstance().addListeners(
-			new UpdateEventListener(cv, Labor2009Tarif.class, ElexisEvent.EVENT_RELOAD));
-		
+		Labor2009ControlFieldProvider controlFieldProvider = new Labor2009ControlFieldProvider(cv);
+		Labor2009ContentProvider contentProvider =
+			new Labor2009ContentProvider(cv, controlFieldProvider);
+		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new DefaultLabelProvider(),
+			controlFieldProvider, new ViewerConfigurer.DefaultButtonProvider(),
+			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 		return vc;
 	}
 	
@@ -51,31 +65,11 @@ public class Labor2009Selector extends CodeSelectorFactory {
 	
 	@Override
 	public String getCodeSystemName(){
-		return Labor2009Tarif.CODESYSTEM_NAME;
+		return LaborTarifConstants.CODESYSTEM_NAME;
 	}
 	
 	@Override
-	public Class<? extends PersistentObject> getElementClass(){
-		return Labor2009Tarif.class;
-	}
-	
-	@Override
-	public PersistentObject findElement(String code){
-		return Labor2009Tarif.getFromCode(code, new TimeTool());
-	}
-	
-	private class UpdateEventListener extends ElexisUiEventListenerImpl {
-		
-		CommonViewer viewer;
-		
-		UpdateEventListener(CommonViewer viewer, final Class<?> clazz, int mode){
-			super(clazz, mode);
-			this.viewer = viewer;
-		}
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			viewer.notify(CommonViewer.Message.update);
-		}
+	public Class<?> getElementClass(){
+		return ILaborLeistung.class;
 	}
 }

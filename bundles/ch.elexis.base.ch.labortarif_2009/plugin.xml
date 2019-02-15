@@ -11,37 +11,15 @@
       </page>
    </extension>
    <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.labortarif2009.data.Labor2009Factory">
-      </Factory>
-   </extension>
-   <extension
          point="ch.elexis.core.ui.Verrechnungscode">
       <Leistung
             CodeDetailDisplay="ch.elexis.base.ch.labortarif_2009.ui.DetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.labortarif_2009.ui.Labor2009Selector"
-            ElementFactory="ch.elexis.labortarif2009.data.Labor2009Factory"
             ImporterClass="ch.elexis.labortarif2009.data.Importer"
-            OptifierClass="ch.elexis.labortarif2009.data.Optifier"
-            name="%Labortarif2009">
+            elexisClassName="ch.elexis.labortarif2009.data.Labor2009Tarif"
+            name="%Labortarif2009"
+            system="EAL 2009">
       </Leistung>
-   </extension>
-   <extension
-         point="ch.elexis.core.data.referenceDataImporter">
-      <importer
-            class="ch.elexis.labortarif2009.data.EALReferenceDataImporter"
-            referenceDataId="analysenliste">
-      </importer>
-   </extension>
-   <extension
-         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
-      <ExternalMaintenance
-            MaintenanceCode="ch.elexis.base.ch.labortarif_2009.ui.dbcheck.AddEAL4708To2013">
-      </ExternalMaintenance>
-      <ExternalMaintenance
-            MaintenanceCode="ch.elexis.base.ch.labortarif_2009.ui.dbcheck.UpdateEAL">
-      </ExternalMaintenance>
    </extension>
 
 </plugin>

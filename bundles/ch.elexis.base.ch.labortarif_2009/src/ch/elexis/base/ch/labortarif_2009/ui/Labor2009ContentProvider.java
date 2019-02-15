@@ -11,106 +11,44 @@
  *******************************************************************************/
 package ch.elexis.base.ch.labortarif_2009.ui;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.eclipse.jface.viewers.Viewer;
+import ch.elexis.base.ch.labortarif.ILaborLeistung;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.LazyCommonViewerContentProvider;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
+import ch.elexis.labortarif2009.data.ModelServiceHolder;
 
-import ch.elexis.base.ch.labortarif_2009.ui.Labor2009CodeTextValidFilter.TarifDescription;
-import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
-import ch.elexis.labortarif2009.data.Labor2009Tarif;
-
-public class Labor2009ContentProvider implements ICommonViewerContentProvider {
+public class Labor2009ContentProvider extends LazyCommonViewerContentProvider {
 	
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
+	private ControlFieldProvider controlFieldProvider;
 	
-	private Object cacheLock = new Object();
-	private boolean initialized;
-	private HashMap<Labor2009Tarif, TarifDescription> cache;
-	
-	private void initCache(final List<Labor2009Tarif> input){
-		executor.execute(new Runnable() {
-			@Override
-			public void run(){
-				cache =
-					new HashMap<Labor2009Tarif, Labor2009CodeTextValidFilter.TarifDescription>(
-						input.size());
-				for (Labor2009Tarif labor2009Tarif : input) {
-					cache.put(labor2009Tarif, new TarifDescription(labor2009Tarif));
-				}
-				synchronized (cacheLock) {
-					initialized = true;
-					cacheLock.notifyAll();
-				}
-			}
-		});
+	public Labor2009ContentProvider(CommonViewer commonViewer,
+		ControlFieldProvider controlFieldProvider){
+		super(commonViewer);
+		this.controlFieldProvider = controlFieldProvider;
 	}
-
-	private List<Labor2009Tarif> elements;
-
+	
+	@Override
 	public Object[] getElements(Object inputElement){
-		if (elements == null) {
-			return Collections.emptyList().toArray();
-		}
-		return elements.toArray();
-	}
-	
-	public void dispose(){
-		// TODO Auto-generated method stub
+		IQuery<?> query = getBaseQuery();
+		// apply filters from control field provider
+		controlFieldProvider.setQuery(query);
+		// apply additional filters like atc, mepha, ...
+		applyQueryFilters(query);
+		query.orderBy("code", ORDER.ASC);
+		List<?> elements = query.execute();
 		
+		return elements.toArray(new Object[elements.size()]);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-		if (newInput instanceof List<?>) {
-			elements = (List<Labor2009Tarif>) newInput;
-			initCache(elements);
-		}
-	}
-	
-	public void changed(HashMap<String, String> values){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void reorder(String field){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void selected(){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void init(){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void startListening(){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void stopListening(){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public TarifDescription getDescription(Labor2009Tarif tarif){
-		if (!initialized) {
-			synchronized (cacheLock) {
-				try {
-					cacheLock.wait(5000);
-				} catch (InterruptedException e) {
-					// ignore
-				}
-			}
-		}
-		return cache.get(tarif);
+	@Override
+	protected IQuery<?> getBaseQuery(){
+		IQuery<ILaborLeistung> query = ModelServiceHolder.get().getQuery(ILaborLeistung.class);
+		query.and("id", COMPARATOR.NOT_EQUALS, "1");
+		return query;
 	}
 }

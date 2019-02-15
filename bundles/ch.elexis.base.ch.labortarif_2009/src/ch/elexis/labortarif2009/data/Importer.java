@@ -11,7 +11,6 @@
  *******************************************************************************/
 package ch.elexis.labortarif2009.data;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.util.Calendar;
 
@@ -28,18 +27,12 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.base.ch.labortarif_2009.Messages;
-import ch.elexis.core.data.util.PlatformHelper;
-import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class Importer extends ImporterPage {
 	TimeTool validFrom = new TimeTool();
-	
-	Fachspec[] specs;
-	int row;
 	
 	public Importer(){
 		// set default to start of year
@@ -94,18 +87,25 @@ public class Importer extends ImporterPage {
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		EALReferenceDataImporter refImporter = new EALReferenceDataImporter();
 		
 		FileInputStream tarifInputStream = new FileInputStream(results[0]);
 		
 		try {
-			return refImporter.performImport(monitor, tarifInputStream,
-				refImporter.getVersionFromValid(validFrom));
+			return ReferenceDataImporterHolder.get().performImport(monitor, tarifInputStream,
+				getVersionFromValid(validFrom));
 		} finally {
 			if (tarifInputStream != null) {
 				tarifInputStream.close();
 			}
 		}
+	}
+	
+	private int getVersionFromValid(TimeTool validFrom){
+		int year = validFrom.get(TimeTool.YEAR);
+		int month = validFrom.get(TimeTool.MONTH) + 1;
+		int day = validFrom.get(TimeTool.DAY_OF_MONTH);
+		
+		return day + (month * 100) + ((year - 2000) * 10000);
 	}
 	
 	@Override
@@ -116,61 +116,5 @@ public class Importer extends ImporterPage {
 	@Override
 	public String getTitle(){
 		return "EAL 2009"; //$NON-NLS-1$
-	}
-	
-	public static Fachspec[] loadFachspecs(int langdef){
-		String specs =
-			PlatformHelper.getBasePath(Constants.pluginID) + File.separator
-				+ "rsc" + File.separator + "arztpraxen.xls"; //$NON-NLS-1$ //$NON-NLS-2$
-		ExcelWrapper x = new ExcelWrapper();
-		x.setFieldTypes(new Class[] {
-			Integer.class, String.class, Integer.class, Integer.class
-		});
-		if (x.load(specs, langdef)) {
-			int first = x.getFirstRow();
-			int last = x.getLastRow();
-			Fachspec[] fspecs = new Fachspec[last - first + 1];
-			for (int i = first; i <= last; i++) {
-				fspecs[i] = new Fachspec(x.getRow(i).toArray(new String[0]));
-			}
-			return fspecs;
-		}
-		return null;
-	}
-
-	public static class Fachspec {
-		public int code, from, until;
-		public String name;
-		
-		Fachspec(String[] line){
-			this(Integer.parseInt(StringTool.getSafe(line, 0)), StringTool.getSafe(line, 1),
-				Integer.parseInt(StringTool.getSafe(line, 2)), Integer.parseInt(StringTool.getSafe(
-					line, 3)));
-		}
-		
-		Fachspec(int code, String name, int from, int until){
-			this.code = code;
-			this.from = from;
-			this.until = until;
-			this.name = name;
-		}
-		
-		/**
-		 * Find the spec a given row belongs to
-		 * 
-		 * @param specs
-		 *            a list of all specs
-		 * @param row
-		 *            the row to match
-		 * @return the spec number or -1 if no spec
-		 */
-		public static int getFachspec(Fachspec[] specs, int row){
-			for (Fachspec spec : specs) {
-				if (spec.from <= row && spec.until >= row) {
-					return spec.code;
-				}
-			}
-			return -1;
-		}
 	}
 }

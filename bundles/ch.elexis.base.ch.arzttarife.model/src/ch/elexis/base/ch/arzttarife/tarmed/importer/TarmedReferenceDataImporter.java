@@ -13,12 +13,6 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 		"ch.elexis.data.importer.TarmedReferenceDataImporter/referenceinfoavailable";
 
 	@Override
-	public Class<?> getReferenceDataTypeResponsibleFor(){
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IStatus performImport(IProgressMonitor ipm, InputStream input, Integer newVersion){
 		// TODO Auto-generated method stub
 		return null;

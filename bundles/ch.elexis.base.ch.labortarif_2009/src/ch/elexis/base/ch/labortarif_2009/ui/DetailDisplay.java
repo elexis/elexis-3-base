@@ -12,11 +12,16 @@
 
 package ch.elexis.base.ch.labortarif_2009.ui;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 
+import ch.elexis.base.ch.labortarif.ILaborLeistung;
 import ch.elexis.base.ch.labortarif_2009.Messages;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.selectors.DisplayPanel;
@@ -24,36 +29,38 @@ import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.labortarif2009.data.Labor2009Tarif;
 
 public class DetailDisplay implements IDetailDisplay {
 	Form form;
 	DisplayPanel panel;
 	FieldDescriptor<?>[] fields = {
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_chapter,
-			Labor2009Tarif.FLD_CHAPTER, Typ.STRING, null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_code, Labor2009Tarif.FLD_CODE,
+		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_chapter, "chapter", Typ.STRING,
+			null),
+		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_code, "code",
 			Typ.STRING, null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_fachbereich,
-			Labor2009Tarif.FLD_FACHBEREICH, Typ.STRING, null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_name, Labor2009Tarif.FLD_NAME,
+		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_fachbereich, "speciality",
 			Typ.STRING, null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_limitation,
-			Labor2009Tarif.FLD_LIMITATIO, Typ.STRING, null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_taxpoints,
-			Labor2009Tarif.FLD_TP, Typ.STRING, null)
+		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_name, "text",
+			Typ.STRING, null),
+		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_limitation,
+			"limitation", Typ.STRING, null),
+		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_taxpoints,
+			"points", Typ.STRING, null)
 	};
 	
-	public void display(Object obj){
-		if (obj instanceof Labor2009Tarif) {
-			form.setText(((PersistentObject) obj).getLabel());
-			panel.setObject((PersistentObject) obj);
+	@Inject
+	public void selection(
+		@Optional @Named("ch.elexis.base.ch.labortarif_2009.ui.selection") ILaborLeistung item){
+		if (item != null && !panel.isDisposed()) {
+			display(item);
 		}
 	}
 	
-	public Class<? extends PersistentObject> getElementClass(){
-		return Labor2009Tarif.class;
+	public void display(Object obj){
+		if (obj instanceof ILaborLeistung) {
+			form.setText(((ILaborLeistung) obj).getLabel());
+			panel.setObject((ILaborLeistung) obj);
+		}
 	}
 	
 	public String getTitle(){
@@ -69,4 +76,8 @@ public class DetailDisplay implements IDetailDisplay {
 		return panel;
 	}
 	
+	@Override
+	public Class<?> getElementClass(){
+		return ILaborLeistung.class;
+	}
 }

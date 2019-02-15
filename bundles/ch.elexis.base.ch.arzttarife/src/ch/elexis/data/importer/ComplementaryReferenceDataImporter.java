@@ -40,11 +40,6 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 	private int validto_index = 16;
 	
 	@Override
-	public Class<?> getReferenceDataTypeResponsibleFor(){
-		return ComplementaryLeistung.class;
-	}
-	
-	@Override
 	public IStatus performImport(@Nullable IProgressMonitor monitor, InputStream input,
 		@Nullable Integer newVersion){
 		if (monitor == null) {

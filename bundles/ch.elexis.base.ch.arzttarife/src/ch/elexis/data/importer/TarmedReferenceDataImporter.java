@@ -19,10 +19,9 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.importer.div.importers.AccessWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
-import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.jdt.Nullable;
-import ch.elexis.core.ui.importer.div.importers.AccessWrapper;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.TarmedLeistung;
 import ch.rgw.tools.JdbcLink;
@@ -55,11 +54,6 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
 	 */
 	public void suppressRestartDialog(){
 		showRestartDialog = false;
-	}
-	
-	@Override
-	public @NonNull Class<?> getReferenceDataTypeResponsibleFor(){
-		return TarmedLeistung.class;
 	}
 	
 	@Override

@@ -27,16 +27,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import ch.elexis.base.ch.labortarif.Fachspec;
+import ch.elexis.base.ch.labortarif.LaborTarifConstants;
 import ch.elexis.base.ch.labortarif_2009.Messages;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.labortarif2009.data.Importer;
-import ch.elexis.labortarif2009.data.Importer.Fachspec;
-import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.rgw.io.Settings;
-import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
@@ -53,8 +52,8 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	LinkedList<Button> buttons = new LinkedList<Button>();
 	
 	public Preferences(){
-		String lang = JdbcLink.wrap(CoreHub.localCfg.get( // d,f,i
-			ch.elexis.core.constants.Preferences.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
+		String lang = ConfigServiceHolder.get()
+			.getLocal(ch.elexis.core.constants.Preferences.ABL_LANGUAGE, "d").toUpperCase(); //$NON-NLS-1$
 		if (lang.startsWith("F")) { //$NON-NLS-1$
 			langdef = 1;
 		} else if (lang.startsWith("I")) { //$NON-NLS-1$
@@ -68,9 +67,10 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		new Label(ret, SWT.NONE).setText(Messages.Preferences_pleaseEnterMultiplier);
-		MultiplikatorEditor me = new MultiplikatorEditor(ret, Labor2009Tarif.MULTIPLICATOR_NAME);
+		MultiplikatorEditor me =
+			new MultiplikatorEditor(ret, LaborTarifConstants.MULTIPLICATOR_NAME);
 		me.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Fachspec[] specs = Importer.loadFachspecs(langdef);
+		Fachspec[] specs = Fachspec.loadFachspecs(langdef);
 		Group group = new Group(ret, SWT.BORDER);
 		group.setText(Messages.Preferences_specialities);
 		group.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));

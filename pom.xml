@@ -50,7 +50,7 @@
 		<system>Github</system>
 	</issueManagement>
 
-	<description>Elexis-Server for headless operation</description>
+	<description>Elexis Base</description>
 
 	<modules>
 		<!--module>target</module-->

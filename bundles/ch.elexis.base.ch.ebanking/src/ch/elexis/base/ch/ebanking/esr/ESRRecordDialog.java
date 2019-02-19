@@ -36,7 +36,6 @@ import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.Zahlung;
@@ -72,7 +71,7 @@ public class ESRRecordDialog extends TitleAreaDialog {
 				"BetragInRp", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
 			new InputData(Messages.ESRRecordDialog_billNr,
 				"RechnungsID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
-					public void displayContent(PersistentObject po, InputData ltf){
+					public void displayContent(Object po, InputData ltf){
 						Rechnung rn = rec.getRechnung();
 						if (rn == null) {
 							ltf.setText("??"); //$NON-NLS-1$
@@ -81,7 +80,7 @@ public class ESRRecordDialog extends TitleAreaDialog {
 						}
 					}
 					
-					public void reloadContent(PersistentObject po, InputData ltf){
+					public void reloadContent(Object po, InputData ltf){
 						InputDialog id =
 							new InputDialog(getShell(), Messages.ESRRecordDialog_changeBillNr,
 								Messages.ESRRecordDialog_pleaseEnterNewBilNr, ltf.getText(), null);
@@ -131,11 +130,11 @@ public class ESRRecordDialog extends TitleAreaDialog {
 			new InputData(Messages.ESRRecordDialog_patient,
 				"PatientID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
 				
-					public void displayContent(PersistentObject po, InputData ltf){
+					public void displayContent(Object po, InputData ltf){
 						ltf.setText(rec.getPatient().getLabel());
 					}
 					
-					public void reloadContent(PersistentObject po, InputData ltf){
+					public void reloadContent(Object po, InputData ltf){
 						KontaktSelektor ksl =
 							new KontaktSelektor(getShell(), Patient.class,
 								Messages.ESRRecordDialog_selectPatient,
@@ -146,7 +145,6 @@ public class ESRRecordDialog extends TitleAreaDialog {
 							ltf.setText(actPatient.getLabel());
 						}
 					}
-					
 				})
 		
 		};

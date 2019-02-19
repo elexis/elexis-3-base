@@ -44,6 +44,7 @@ import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.PersistentObjectLoader.QueryFilter;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.CommonViewer.PoDoubleClickListener;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
@@ -158,7 +159,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		menus.createToolbar(/* loadESRFile */);
 		menus.createMenu(/* loadESRFile */);
 		esrl = new ESRSelectionListener();
-		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
+		cv.addDoubleClickListener(new PoDoubleClickListener() {
 			public void doubleClicked(PersistentObject obj, CommonViewer cv){
 				ESRRecordDialog erd =
 					new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) obj);

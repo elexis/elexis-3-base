@@ -70,7 +70,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		public boolean updateWith(TimeSpan timespan, List<IPeriod> changedPeriods){
 			boolean updated = false;
 			for (IPeriod iPeriod : changedPeriods) {
-				if (timespan.contains(iPeriod)) {
+				// update the cache of the timespan of the cached period and also the current one
+				if (timespan.contains(iPeriod) || timespan.equals(currentTimeSpan)) {
 					boolean deleted = ((Termin) iPeriod).isDeleted();
 					if (deleted) {
 						eventsMap.remove(iPeriod.getId());

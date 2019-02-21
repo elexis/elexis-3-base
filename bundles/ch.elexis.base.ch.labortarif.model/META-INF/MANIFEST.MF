@@ -15,10 +15,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  ch.elexis.core;bundle-version="3.8.0";visibility:=reexport,
  ch.elexis.core.jpa;bundle-version="1.0.0",
- ch.elexis.core.importer.div
+ ch.elexis.core.importer.div,
+ ch.elexis.core.jpa.entities;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.jpa.entities,
- ch.elexis.core.services.holder,
+Import-Package: ch.elexis.core.services.holder,
  ch.rgw.tools,
  javax.persistence;version="2.2.0",
  javax.persistence.criteria;version="2.2.0",

@@ -2,6 +2,7 @@ package ch.elexis.base.ch.arzttarife.model.tarmed.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
@@ -115,8 +116,34 @@ public class TarmedLeistungTest {
 		fromCode = TarmedLeistung.getFromCode("00.0010", LocalDate.of(2015, 1, 1), "KVG");
 		assertEquals("00.0010-20010101-KVG", fromCode.getId());
 		
-		fromCode = TarmedLeistung.getFromCode("00.0010", null);
-		assertEquals("00.0010-20010101", fromCode.getId());
+		TarmedLeistung tl = TarmedLeistung.getFromCode("00.0010", null);
+		assertEquals("00.0010-20010101", tl.getId());
+		assertEquals("FMH05", tl.getDigniQuanti());
+		assertEquals("9999", tl.getDigniQuali());
+		assertEquals("0001", tl.getSparte());
+		assertEquals(LocalDate.of(2001, 1, 1), tl.getValidFrom());
+		assertEquals(LocalDate.of(2199, 12, 31), tl.getValidTo());
+		assertEquals("00.0010", fromCode.getCode());
+		
+		ITarmedExtension extension = tl.getExtension();
+		assertNotNull(extension.getLimits());
+		Map<String, String> limits = extension.getLimits();
+
+		assertEquals("5.0", limits.get("LSTGIMES_MIN"));
+		assertEquals("0.0", limits.get("ANZ_ASSI"));
+		assertEquals("0.0", limits.get("WECHSEL_MIN"));
+		assertEquals("0", limits.get("SEITE"));
+		assertEquals("01", limits.get("K_PFL"));
+		assertEquals("1.0", limits.get("F_AL"));
+		assertEquals("0.0", limits.get("BEFUND_MIN"));
+		assertEquals("9.57", limits.get("TP_AL"));
+		assertEquals("0.0", limits.get("VBNB_MIN"));
+		assertEquals("0.0", limits.get("TP_ASSI"));
+		assertEquals("N", limits.get("BEHANDLUNGSART"));
+		assertEquals("1.0", limits.get("F_TL"));
+		assertEquals("H", limits.get("LEISTUNG_TYP"));
+		assertEquals("8.19", limits.get("TP_TL"));
 	}
+	
 	
 }

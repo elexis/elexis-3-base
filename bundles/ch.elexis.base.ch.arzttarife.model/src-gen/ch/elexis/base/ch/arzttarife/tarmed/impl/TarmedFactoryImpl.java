@@ -73,6 +73,8 @@ public class TarmedFactoryImpl extends EFactoryImpl implements TarmedFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
+			case TarmedPackage.MANDANT_TYPE:
+				return createMandantTypeFromString(eDataType, initialValue);
 			case TarmedPackage.TARMED_LIMITATION:
 				return createTarmedLimitationFromString(eDataType, initialValue);
 			case TarmedPackage.TARMED_EXCLUSION:
@@ -90,6 +92,8 @@ public class TarmedFactoryImpl extends EFactoryImpl implements TarmedFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
+			case TarmedPackage.MANDANT_TYPE:
+				return convertMandantTypeToString(eDataType, instanceValue);
 			case TarmedPackage.TARMED_LIMITATION:
 				return convertTarmedLimitationToString(eDataType, instanceValue);
 			case TarmedPackage.TARMED_EXCLUSION:
@@ -97,6 +101,26 @@ public class TarmedFactoryImpl extends EFactoryImpl implements TarmedFactory {
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MandantType createMandantTypeFromString(EDataType eDataType, String initialValue) {
+		MandantType result = MandantType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertMandantTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**
@@ -140,6 +164,7 @@ public class TarmedFactoryImpl extends EFactoryImpl implements TarmedFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public TarmedPackage getTarmedPackage() {
 		return (TarmedPackage)getEPackage();
 	}

@@ -64,4 +64,14 @@ public class ComplementaryLeistung
 		getEntity().setDescription(value);
 	}
 	
+	@Override
+	public String getChapter(){
+		return getEntity().getChapter();
+	}
+	
+	@Override
+	public void setChapter(String value){
+		getEntity().setChapter(value);
+	}
+	
 }

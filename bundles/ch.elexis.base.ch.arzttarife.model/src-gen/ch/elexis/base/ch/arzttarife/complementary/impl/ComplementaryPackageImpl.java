@@ -11,6 +11,8 @@ import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
 
+import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
+import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
 
 import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
@@ -95,16 +97,20 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		TarmedPackageImpl theTarmedPackage = (TarmedPackageImpl)(registeredPackage instanceof TarmedPackageImpl ? registeredPackage : TarmedPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PhysioPackage.eNS_URI);
 		PhysioPackageImpl thePhysioPackage = (PhysioPackageImpl)(registeredPackage instanceof PhysioPackageImpl ? registeredPackage : PhysioPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(RfePackage.eNS_URI);
+		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theComplementaryPackage.createPackageContents();
 		theTarmedPackage.createPackageContents();
 		thePhysioPackage.createPackageContents();
+		theRfePackage.createPackageContents();
 
 		// Initialize created meta-data
 		theComplementaryPackage.initializePackageContents();
 		theTarmedPackage.initializePackageContents();
 		thePhysioPackage.initializePackageContents();
+		theRfePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theComplementaryPackage.freeze();
@@ -119,6 +125,7 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getIComplementaryLeistung() {
 		return iComplementaryLeistungEClass;
 	}
@@ -128,6 +135,7 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getIComplementaryLeistung_Description() {
 		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(0);
 	}
@@ -137,6 +145,17 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	public EAttribute getIComplementaryLeistung_Chapter() {
+		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public ComplementaryFactory getComplementaryFactory() {
 		return (ComplementaryFactory)getEFactoryInstance();
 	}
@@ -162,6 +181,7 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		// Create classes and their features
 		iComplementaryLeistungEClass = createEClass(ICOMPLEMENTARY_LEISTUNG);
 		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__DESCRIPTION);
+		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__CHAPTER);
 	}
 
 	/**
@@ -200,6 +220,7 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		// Initialize classes and features; add operations and parameters
 		initEClass(iComplementaryLeistungEClass, IComplementaryLeistung.class, "IComplementaryLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getIComplementaryLeistung_Description(), ecorePackage.getEString(), "description", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIComplementaryLeistung_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

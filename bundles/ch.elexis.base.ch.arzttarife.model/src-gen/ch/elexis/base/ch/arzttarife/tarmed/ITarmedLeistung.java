@@ -4,6 +4,7 @@
 package ch.elexis.base.ch.arzttarife.tarmed;
 
 import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IMandator;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -277,5 +278,13 @@ public interface ITarmedLeistung extends IBillable {
 	 * @generated
 	 */
 	boolean requiresSide();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model
+	 * @generated
+	 */
+	int getAL(IMandator mandator);
 
 } // ITarmedLeistung

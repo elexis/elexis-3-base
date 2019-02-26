@@ -7,6 +7,7 @@ import ch.elexis.core.model.ModelPackage;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -415,6 +416,16 @@ public interface TarmedPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.MandantType <em>Mandant Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.MandantType
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getMandantType()
+	 * @generated
+	 */
+	int MANDANT_TYPE = 4;
+
+	/**
 	 * The meta object id for the '<em>Limitation</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -422,7 +433,7 @@ public interface TarmedPackage extends EPackage {
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedLimitation()
 	 * @generated
 	 */
-	int TARMED_LIMITATION = 4;
+	int TARMED_LIMITATION = 5;
 
 
 	/**
@@ -433,7 +444,7 @@ public interface TarmedPackage extends EPackage {
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedExclusion()
 	 * @generated
 	 */
-	int TARMED_EXCLUSION = 5;
+	int TARMED_EXCLUSION = 6;
 
 
 	/**
@@ -774,6 +785,16 @@ public interface TarmedPackage extends EPackage {
 	EAttribute getITarmedKumulation_Law();
 
 	/**
+	 * Returns the meta object for enum '{@link ch.elexis.base.ch.arzttarife.tarmed.MandantType <em>Mandant Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Mandant Type</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.MandantType
+	 * @generated
+	 */
+	EEnum getMandantType();
+
+	/**
 	 * Returns the meta object for data type '{@link ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation <em>Limitation</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1072,6 +1093,16 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ITARMED_KUMULATION__LAW = eINSTANCE.getITarmedKumulation_Law();
+
+		/**
+		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.MandantType <em>Mandant Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.MandantType
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getMandantType()
+		 * @generated
+		 */
+		EEnum MANDANT_TYPE = eINSTANCE.getMandantType();
 
 		/**
 		 * The meta object literal for the '<em>Limitation</em>' data type.

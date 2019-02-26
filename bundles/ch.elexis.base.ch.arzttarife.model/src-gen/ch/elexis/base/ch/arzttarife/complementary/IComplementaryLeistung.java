@@ -16,6 +16,7 @@ import ch.elexis.core.model.IBillable;
  * </p>
  * <ul>
  *   <li>{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getDescription <em>Description</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getChapter <em>Chapter</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage#getIComplementaryLeistung()
@@ -49,4 +50,30 @@ public interface IComplementaryLeistung extends IBillable {
 	 * @generated
 	 */
 	void setDescription(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Chapter</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Chapter</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Chapter</em>' attribute.
+	 * @see #setChapter(String)
+	 * @see ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage#getIComplementaryLeistung_Chapter()
+	 * @model
+	 * @generated
+	 */
+	String getChapter();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getChapter <em>Chapter</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Chapter</em>' attribute.
+	 * @see #getChapter()
+	 * @generated
+	 */
+	void setChapter(String value);
 } // IComplementaryLeistung

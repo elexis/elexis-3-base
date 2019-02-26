@@ -5,6 +5,7 @@ package ch.elexis.base.ch.arzttarife.tarmed;
 
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.model.WithExtInfo;
 import java.util.Map;
 
 
@@ -24,7 +25,7 @@ import java.util.Map;
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface ITarmedExtension extends Identifiable, Deleteable {
+public interface ITarmedExtension extends Identifiable, Deleteable, WithExtInfo {
 
 	/**
 	 * Returns the value of the '<em><b>Limits</b></em>' attribute.

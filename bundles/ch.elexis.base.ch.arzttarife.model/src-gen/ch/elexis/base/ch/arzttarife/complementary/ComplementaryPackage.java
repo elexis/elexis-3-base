@@ -94,13 +94,22 @@ public interface ComplementaryPackage extends EPackage {
 	int ICOMPLEMENTARY_LEISTUNG__DESCRIPTION = ModelPackage.IBILLABLE_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Chapter</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICOMPLEMENTARY_LEISTUNG__CHAPTER = ModelPackage.IBILLABLE_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>IComplementary Leistung</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ICOMPLEMENTARY_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 1;
+	int ICOMPLEMENTARY_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 2;
 
 
 	/**
@@ -123,6 +132,17 @@ public interface ComplementaryPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIComplementaryLeistung_Description();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getChapter <em>Chapter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Chapter</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getChapter()
+	 * @see #getIComplementaryLeistung()
+	 * @generated
+	 */
+	EAttribute getIComplementaryLeistung_Chapter();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -162,6 +182,13 @@ public interface ComplementaryPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ICOMPLEMENTARY_LEISTUNG__DESCRIPTION = eINSTANCE.getIComplementaryLeistung_Description();
+		/**
+		 * The meta object literal for the '<em><b>Chapter</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ICOMPLEMENTARY_LEISTUNG__CHAPTER = eINSTANCE.getIComplementaryLeistung_Chapter();
 
 	}
 

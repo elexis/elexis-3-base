@@ -1,4 +1,4 @@
-package ch.elexis.base.ch.arzttarife.tarmed.importer;
+package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

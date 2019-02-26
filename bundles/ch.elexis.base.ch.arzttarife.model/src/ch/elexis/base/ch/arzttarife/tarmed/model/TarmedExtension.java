@@ -6,10 +6,11 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
+import ch.elexis.core.model.WithExtInfo;
 
 public class TarmedExtension
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedExtension>
-		implements IdentifiableWithXid, ITarmedExtension {
+		implements IdentifiableWithXid, ITarmedExtension, WithExtInfo {
 	
 	private ExtInfoHandler limitsExtInfoHandler;
 	
@@ -36,5 +37,15 @@ public class TarmedExtension
 		limits.forEach((key, value) -> {
 			limitsExtInfoHandler.setExtInfo(key, value);
 		});
+	}
+	
+	@Override
+	public Object getExtInfo(Object key){
+		return limitsExtInfoHandler.getExtInfo(key);
+	}
+	
+	@Override
+	public void setExtInfo(Object key, Object value){
+		limitsExtInfoHandler.setExtInfo(key, value);
 	}
 }

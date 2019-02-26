@@ -1,9 +1,9 @@
 /**
  * Copyright Text	Copyright (c) 2018 MEDEVIT <office@medevit.at>....
  */
-package ch.elexis.base.ch.arzttarife.physio.impl;
+package ch.elexis.base.ch.arzttarife.rfe.impl;
 
-import ch.elexis.base.ch.arzttarife.physio.*;
+import ch.elexis.base.ch.arzttarife.rfe.*;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -19,24 +19,24 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * <!-- end-user-doc -->
  * @generated
  */
-public class PhysioFactoryImpl extends EFactoryImpl implements PhysioFactory {
+public class RfeFactoryImpl extends EFactoryImpl implements RfeFactory {
 	/**
 	 * Creates the default factory implementation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static PhysioFactory init() {
+	public static RfeFactory init() {
 		try {
-			PhysioFactory thePhysioFactory = (PhysioFactory)EPackage.Registry.INSTANCE.getEFactory(PhysioPackage.eNS_URI);
-			if (thePhysioFactory != null) {
-				return thePhysioFactory;
+			RfeFactory theRfeFactory = (RfeFactory)EPackage.Registry.INSTANCE.getEFactory(RfePackage.eNS_URI);
+			if (theRfeFactory != null) {
+				return theRfeFactory;
 			}
 		}
 		catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
-		return new PhysioFactoryImpl();
+		return new RfeFactoryImpl();
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class PhysioFactoryImpl extends EFactoryImpl implements PhysioFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public PhysioFactoryImpl() {
+	public RfeFactoryImpl() {
 		super();
 	}
 
@@ -68,8 +68,8 @@ public class PhysioFactoryImpl extends EFactoryImpl implements PhysioFactory {
 	 * @generated
 	 */
 	@Override
-	public PhysioPackage getPhysioPackage() {
-		return (PhysioPackage)getEPackage();
+	public RfePackage getRfePackage() {
+		return (RfePackage)getEPackage();
 	}
 
 	/**
@@ -79,8 +79,8 @@ public class PhysioFactoryImpl extends EFactoryImpl implements PhysioFactory {
 	 * @generated
 	 */
 	@Deprecated
-	public static PhysioPackage getPackage() {
-		return PhysioPackage.eINSTANCE;
+	public static RfePackage getPackage() {
+		return RfePackage.eINSTANCE;
 	}
 
-} //PhysioFactoryImpl
+} //RfeFactoryImpl

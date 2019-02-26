@@ -6,6 +6,7 @@ package ch.elexis.base.ch.arzttarife.tarmed.impl;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
@@ -16,10 +17,13 @@ import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
+import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
+import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedFactory;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion;
@@ -61,6 +65,13 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * @generated
 	 */
 	private EClass iTarmedKumulationEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum mandantTypeEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -132,16 +143,20 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		PhysioPackageImpl thePhysioPackage = (PhysioPackageImpl)(registeredPackage instanceof PhysioPackageImpl ? registeredPackage : PhysioPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ComplementaryPackage.eNS_URI);
 		ComplementaryPackageImpl theComplementaryPackage = (ComplementaryPackageImpl)(registeredPackage instanceof ComplementaryPackageImpl ? registeredPackage : ComplementaryPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(RfePackage.eNS_URI);
+		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theTarmedPackage.createPackageContents();
 		thePhysioPackage.createPackageContents();
 		theComplementaryPackage.createPackageContents();
+		theRfePackage.createPackageContents();
 
 		// Initialize created meta-data
 		theTarmedPackage.initializePackageContents();
 		thePhysioPackage.initializePackageContents();
 		theComplementaryPackage.initializePackageContents();
+		theRfePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theTarmedPackage.freeze();
@@ -156,6 +171,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getITarmedLeistung() {
 		return iTarmedLeistungEClass;
 	}
@@ -165,6 +181,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_Minutes() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(0);
 	}
@@ -174,6 +191,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_AL() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(1);
 	}
@@ -183,6 +201,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_TL() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(2);
 	}
@@ -192,6 +211,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_DigniQuali() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(3);
 	}
@@ -201,6 +221,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_DigniQuanti() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(4);
 	}
@@ -210,6 +231,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_Exclusion() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(5);
 	}
@@ -219,6 +241,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getITarmedLeistung_Extension() {
 		return (EReference)iTarmedLeistungEClass.getEStructuralFeatures().get(6);
 	}
@@ -228,6 +251,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getITarmedLeistung_Parent() {
 		return (EReference)iTarmedLeistungEClass.getEStructuralFeatures().get(7);
 	}
@@ -237,6 +261,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_ValidFrom() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(8);
 	}
@@ -246,6 +271,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_ValidTo() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(9);
 	}
@@ -255,6 +281,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_ServiceTyp() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(10);
 	}
@@ -264,6 +291,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_Law() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(11);
 	}
@@ -273,6 +301,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_Sparte() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(12);
 	}
@@ -282,6 +311,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedLeistung_Chapter() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(13);
 	}
@@ -291,6 +321,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getITarmedExtension() {
 		return iTarmedExtensionEClass;
 	}
@@ -300,6 +331,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedExtension_Limits() {
 		return (EAttribute)iTarmedExtensionEClass.getEStructuralFeatures().get(0);
 	}
@@ -309,6 +341,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getITarmedGroup() {
 		return iTarmedGroupEClass;
 	}
@@ -318,6 +351,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedGroup_Code() {
 		return (EAttribute)iTarmedGroupEClass.getEStructuralFeatures().get(0);
 	}
@@ -327,6 +361,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedGroup_Services() {
 		return (EAttribute)iTarmedGroupEClass.getEStructuralFeatures().get(1);
 	}
@@ -336,6 +371,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedGroup_ValidFrom() {
 		return (EAttribute)iTarmedGroupEClass.getEStructuralFeatures().get(2);
 	}
@@ -345,6 +381,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedGroup_ValidTo() {
 		return (EAttribute)iTarmedGroupEClass.getEStructuralFeatures().get(3);
 	}
@@ -354,6 +391,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedGroup_Law() {
 		return (EAttribute)iTarmedGroupEClass.getEStructuralFeatures().get(4);
 	}
@@ -363,6 +401,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedGroup_Limitations() {
 		return (EAttribute)iTarmedGroupEClass.getEStructuralFeatures().get(5);
 	}
@@ -372,6 +411,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getITarmedKumulation() {
 		return iTarmedKumulationEClass;
 	}
@@ -381,6 +421,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedKumulation_SlaveCode() {
 		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(0);
 	}
@@ -390,6 +431,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedKumulation_SlaveArt() {
 		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(1);
 	}
@@ -399,6 +441,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedKumulation_ValidSide() {
 		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(2);
 	}
@@ -408,6 +451,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedKumulation_ValidFrom() {
 		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(3);
 	}
@@ -417,6 +461,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedKumulation_ValidTo() {
 		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(4);
 	}
@@ -426,6 +471,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getITarmedKumulation_Law() {
 		return (EAttribute)iTarmedKumulationEClass.getEStructuralFeatures().get(5);
 	}
@@ -435,6 +481,17 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	public EEnum getMandantType() {
+		return mandantTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EDataType getTarmedLimitation() {
 		return tarmedLimitationEDataType;
 	}
@@ -444,6 +501,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getTarmedExclusion() {
 		return tarmedExclusionEDataType;
 	}
@@ -453,6 +511,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public TarmedFactory getTarmedFactory() {
 		return (TarmedFactory)getEFactoryInstance();
 	}
@@ -511,6 +570,9 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		createEAttribute(iTarmedKumulationEClass, ITARMED_KUMULATION__VALID_TO);
 		createEAttribute(iTarmedKumulationEClass, ITARMED_KUMULATION__LAW);
 
+		// Create enums
+		mandantTypeEEnum = createEEnum(MANDANT_TYPE);
+
 		// Create data types
 		tarmedLimitationEDataType = createEDataType(TARMED_LIMITATION);
 		tarmedExclusionEDataType = createEDataType(TARMED_EXCLUSION);
@@ -551,6 +613,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		iTarmedLeistungEClass.getESuperTypes().add(theModelPackage.getIBillable());
 		iTarmedExtensionEClass.getESuperTypes().add(theModelPackage.getIdentifiable());
 		iTarmedExtensionEClass.getESuperTypes().add(theModelPackage.getDeleteable());
+		iTarmedExtensionEClass.getESuperTypes().add(theModelPackage.getWithExtInfo());
 		iTarmedGroupEClass.getESuperTypes().add(theModelPackage.getDeleteable());
 		iTarmedGroupEClass.getESuperTypes().add(theModelPackage.getIdentifiable());
 
@@ -578,6 +641,9 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		addEParameter(op, theTypesPackage.getLocalDate(), "date", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		addEOperation(iTarmedLeistungEClass, ecorePackage.getEBoolean(), "requiresSide", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = addEOperation(iTarmedLeistungEClass, ecorePackage.getEInt(), "getAL", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theModelPackage.getIMandator(), "mandator", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(iTarmedExtensionEClass, ITarmedExtension.class, "ITarmedExtension", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		EGenericType g1 = createEGenericType(ecorePackage.getEMap());
@@ -615,6 +681,11 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 
 		op = addEOperation(iTarmedKumulationEClass, ecorePackage.getEBoolean(), "isValidKumulation", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theTypesPackage.getLocalDate(), "reference", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		// Initialize enums and add enum literals
+		initEEnum(mandantTypeEEnum, MandantType.class, "MandantType");
+		addEEnumLiteral(mandantTypeEEnum, MandantType.SPECIALIST);
+		addEEnumLiteral(mandantTypeEEnum, MandantType.PRACTITIONER);
 
 		// Initialize data types
 		initEDataType(tarmedLimitationEDataType, TarmedLimitation.class, "TarmedLimitation", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

@@ -67,6 +67,7 @@ public class ComplementaryFactoryImpl extends EFactoryImpl implements Complement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComplementaryPackage getComplementaryPackage() {
 		return (ComplementaryPackage)getEPackage();
 	}

@@ -12,6 +12,9 @@
         <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       </eOperations>
       <eOperations name="requiresSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eOperations name="getAL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eParameters name="mandator" eType="ecore:EClass ../ch.elexis.core/model/model.ecore#//IMandator"/>
+      </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
@@ -42,7 +45,7 @@
           changeable="false"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedExtension" abstract="true"
-        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Identifiable ../ch.elexis.core/model/model.ecore#//Deleteable">
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Identifiable ../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//WithExtInfo">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="limits" changeable="false"
           transient="true">
         <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
@@ -95,6 +98,10 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EDataType" name="TarmedLimitation" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation"/>
     <eClassifiers xsi:type="ecore:EDataType" name="TarmedExclusion" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion"/>
+    <eClassifiers xsi:type="ecore:EEnum" name="MandantType">
+      <eLiterals name="SPECIALIST"/>
+      <eLiterals name="PRACTITIONER" value="1"/>
+    </eClassifiers>
   </eSubpackages>
   <eSubpackages name="physio" nsURI="http://ch.elexis.base/model/arzttarife/physio"
       nsPrefix="ch.elexis.arzttarife.ch.physio.model">
@@ -112,6 +119,16 @@
     <eClassifiers xsi:type="ecore:EClass" name="IComplementaryLeistung" abstract="true"
         interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="rfe" nsURI="http://ch.elexis.base/model/arzttarife/rfe" nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">
+    <eClassifiers xsi:type="ecore:EClass" name="IReasonForEncounter" abstract="true"
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//Identifiable">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="encounter" eType="ecore:EClass ../ch.elexis.core/model/model.ecore#//IEncounter"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
     </eClassifiers>
   </eSubpackages>
 </ecore:EPackage>

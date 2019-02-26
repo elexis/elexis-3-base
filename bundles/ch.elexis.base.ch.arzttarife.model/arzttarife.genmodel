@@ -11,6 +11,10 @@
       ecorePackage="arzttarife.ecore#/">
     <nestedGenPackages prefix="Tarmed" basePackage="ch.elexis.base.ch.arzttarife"
         disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//tarmed">
+      <genEnums typeSafeEnumCompatible="false" ecoreEnum="arzttarife.ecore#//tarmed/MandantType">
+        <genEnumLiterals ecoreEnumLiteral="arzttarife.ecore#//tarmed/MandantType/SPECIALIST"/>
+        <genEnumLiterals ecoreEnumLiteral="arzttarife.ecore#//tarmed/MandantType/PRACTITIONER"/>
+      </genEnums>
       <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedLimitation"/>
       <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedExclusion"/>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedLeistung">
@@ -37,6 +41,9 @@
           <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getServiceBlocks/date"/>
         </genOperations>
         <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/requiresSide"/>
+        <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/getAL">
+          <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getAL/mandator"/>
+        </genOperations>
       </genClasses>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedExtension">
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedExtension/limits"/>
@@ -80,6 +87,15 @@
     <nestedGenPackages prefix="Complementary" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//complementary">
       <genClasses image="false" ecoreClass="arzttarife.ecore#//complementary/IComplementaryLeistung">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/description"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/chapter"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Rfe" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//rfe">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//rfe/IReasonForEncounter">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference arzttarife.ecore#//rfe/IReasonForEncounter/encounter"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//rfe/IReasonForEncounter/code"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//rfe/IReasonForEncounter/text"/>
       </genClasses>
     </nestedGenPackages>
   </genPackages>

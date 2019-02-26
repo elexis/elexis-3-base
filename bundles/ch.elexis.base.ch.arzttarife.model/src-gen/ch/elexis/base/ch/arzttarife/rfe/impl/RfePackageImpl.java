@@ -1,27 +1,25 @@
 /**
  * Copyright Text	Copyright (c) 2018 MEDEVIT <office@medevit.at>....
  */
-package ch.elexis.base.ch.arzttarife.physio.impl;
+package ch.elexis.base.ch.arzttarife.rfe.impl;
 
-import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
-import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
-import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
-import ch.elexis.base.ch.arzttarife.physio.PhysioFactory;
-import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
-
-import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
-import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
-import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
-
-import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
-
-import ch.elexis.core.model.ModelPackage;
-import ch.elexis.core.types.TypesPackage;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
-
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
+import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
+import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
+import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
+import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
+import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
+import ch.elexis.base.ch.arzttarife.rfe.RfeFactory;
+import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
+import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.types.TypesPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,14 +27,13 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <!-- end-user-doc -->
  * @generated
  */
-public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
+public class RfePackageImpl extends EPackageImpl implements RfePackage {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass iPhysioLeistungEClass = null;
-
+	private EClass iReasonForEncounterEClass = null;
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
@@ -48,12 +45,12 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see ch.elexis.base.ch.arzttarife.physio.PhysioPackage#eNS_URI
+	 * @see ch.elexis.base.ch.arzttarife.rfe.RfePackage#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
-	private PhysioPackageImpl() {
-		super(eNS_URI, PhysioFactory.eINSTANCE);
+	private RfePackageImpl() {
+		super(eNS_URI, RfeFactory.eINSTANCE);
 	}
 
 	/**
@@ -66,7 +63,7 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 *
-	 * <p>This method is used to initialize {@link PhysioPackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link RfePackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -75,12 +72,12 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static PhysioPackage init() {
-		if (isInited) return (PhysioPackage)EPackage.Registry.INSTANCE.getEPackage(PhysioPackage.eNS_URI);
+	public static RfePackage init() {
+		if (isInited) return (RfePackage)EPackage.Registry.INSTANCE.getEPackage(RfePackage.eNS_URI);
 
 		// Obtain or create and register package
-		Object registeredPhysioPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		PhysioPackageImpl thePhysioPackage = registeredPhysioPackage instanceof PhysioPackageImpl ? (PhysioPackageImpl)registeredPhysioPackage : new PhysioPackageImpl();
+		Object registeredRfePackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		RfePackageImpl theRfePackage = registeredRfePackage instanceof RfePackageImpl ? (RfePackageImpl)registeredRfePackage : new RfePackageImpl();
 
 		isInited = true;
 
@@ -91,29 +88,29 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		// Obtain or create and register interdependencies
 		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedPackage.eNS_URI);
 		TarmedPackageImpl theTarmedPackage = (TarmedPackageImpl)(registeredPackage instanceof TarmedPackageImpl ? registeredPackage : TarmedPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PhysioPackage.eNS_URI);
+		PhysioPackageImpl thePhysioPackage = (PhysioPackageImpl)(registeredPackage instanceof PhysioPackageImpl ? registeredPackage : PhysioPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ComplementaryPackage.eNS_URI);
 		ComplementaryPackageImpl theComplementaryPackage = (ComplementaryPackageImpl)(registeredPackage instanceof ComplementaryPackageImpl ? registeredPackage : ComplementaryPackage.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(RfePackage.eNS_URI);
-		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
 
 		// Create package meta-data objects
-		thePhysioPackage.createPackageContents();
-		theTarmedPackage.createPackageContents();
-		theComplementaryPackage.createPackageContents();
 		theRfePackage.createPackageContents();
+		theTarmedPackage.createPackageContents();
+		thePhysioPackage.createPackageContents();
+		theComplementaryPackage.createPackageContents();
 
 		// Initialize created meta-data
-		thePhysioPackage.initializePackageContents();
-		theTarmedPackage.initializePackageContents();
-		theComplementaryPackage.initializePackageContents();
 		theRfePackage.initializePackageContents();
+		theTarmedPackage.initializePackageContents();
+		thePhysioPackage.initializePackageContents();
+		theComplementaryPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
-		thePhysioPackage.freeze();
+		theRfePackage.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(PhysioPackage.eNS_URI, thePhysioPackage);
-		return thePhysioPackage;
+		EPackage.Registry.INSTANCE.put(RfePackage.eNS_URI, theRfePackage);
+		return theRfePackage;
 	}
 
 	/**
@@ -122,8 +119,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	 * @generated
 	 */
 	@Override
-	public EClass getIPhysioLeistung() {
-		return iPhysioLeistungEClass;
+	public EClass getIReasonForEncounter() {
+		return iReasonForEncounterEClass;
 	}
 
 	/**
@@ -132,8 +129,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIPhysioLeistung_ValidFrom() {
-		return (EAttribute)iPhysioLeistungEClass.getEStructuralFeatures().get(0);
+	public EReference getIReasonForEncounter_Encounter() {
+		return (EReference)iReasonForEncounterEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -142,8 +139,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIPhysioLeistung_ValidTo() {
-		return (EAttribute)iPhysioLeistungEClass.getEStructuralFeatures().get(1);
+	public EAttribute getIReasonForEncounter_Code() {
+		return (EAttribute)iReasonForEncounterEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -152,8 +149,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIPhysioLeistung_TP() {
-		return (EAttribute)iPhysioLeistungEClass.getEStructuralFeatures().get(2);
+	public EAttribute getIReasonForEncounter_Text() {
+		return (EAttribute)iReasonForEncounterEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -162,28 +159,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIPhysioLeistung_Ziffer() {
-		return (EAttribute)iPhysioLeistungEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getIPhysioLeistung_Description() {
-		return (EAttribute)iPhysioLeistungEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public PhysioFactory getPhysioFactory() {
-		return (PhysioFactory)getEFactoryInstance();
+	public RfeFactory getRfeFactory() {
+		return (RfeFactory)getEFactoryInstance();
 	}
 
 	/**
@@ -205,12 +182,10 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		isCreated = true;
 
 		// Create classes and their features
-		iPhysioLeistungEClass = createEClass(IPHYSIO_LEISTUNG);
-		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__VALID_FROM);
-		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__VALID_TO);
-		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__TP);
-		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__ZIFFER);
-		createEAttribute(iPhysioLeistungEClass, IPHYSIO_LEISTUNG__DESCRIPTION);
+		iReasonForEncounterEClass = createEClass(IREASON_FOR_ENCOUNTER);
+		createEReference(iReasonForEncounterEClass, IREASON_FOR_ENCOUNTER__ENCOUNTER);
+		createEAttribute(iReasonForEncounterEClass, IREASON_FOR_ENCOUNTER__CODE);
+		createEAttribute(iReasonForEncounterEClass, IREASON_FOR_ENCOUNTER__TEXT);
 	}
 
 	/**
@@ -238,25 +213,23 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 
 		// Obtain other dependent packages
 		ModelPackage theModelPackage = (ModelPackage)EPackage.Registry.INSTANCE.getEPackage(ModelPackage.eNS_URI);
-		TypesPackage theTypesPackage = (TypesPackage)EPackage.Registry.INSTANCE.getEPackage(TypesPackage.eNS_URI);
 
 		// Create type parameters
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		iPhysioLeistungEClass.getESuperTypes().add(theModelPackage.getIBillable());
+		iReasonForEncounterEClass.getESuperTypes().add(theModelPackage.getDeleteable());
+		iReasonForEncounterEClass.getESuperTypes().add(theModelPackage.getIdentifiable());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(iPhysioLeistungEClass, IPhysioLeistung.class, "IPhysioLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getIPhysioLeistung_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPhysioLeistung_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPhysioLeistung_TP(), ecorePackage.getEString(), "TP", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPhysioLeistung_Ziffer(), ecorePackage.getEString(), "ziffer", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPhysioLeistung_Description(), ecorePackage.getEString(), "description", null, 0, 1, IPhysioLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(iReasonForEncounterEClass, IReasonForEncounter.class, "IReasonForEncounter", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getIReasonForEncounter_Encounter(), theModelPackage.getIEncounter(), null, "encounter", null, 0, 1, IReasonForEncounter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIReasonForEncounter_Code(), ecorePackage.getEString(), "code", null, 0, 1, IReasonForEncounter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIReasonForEncounter_Text(), ecorePackage.getEString(), "text", null, 0, 1, IReasonForEncounter.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
 	}
 
-} //PhysioPackageImpl
+} //RfePackageImpl

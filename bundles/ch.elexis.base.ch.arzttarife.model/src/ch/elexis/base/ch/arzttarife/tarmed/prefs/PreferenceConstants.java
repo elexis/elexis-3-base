@@ -25,4 +25,8 @@ public class PreferenceConstants {
 	
 	public static final String COMPLEMENTARY_HOURLY_WAGE = "arzttarife/complementary/hourlywage"; //$NON-NLS-1$
 	public static final String COMPLEMENTARY_FIXTOVVG = "arzttarife/complementary/fixtovvg"; //$NON-NLS-1$
+	
+	public static final String CFG_REFERENCEINFO_AVAILABLE =
+		"ch.elexis.data.importer.TarmedReferenceDataImporter/referenceinfoavailable"; //$NON-NLS-1$
+	
 }

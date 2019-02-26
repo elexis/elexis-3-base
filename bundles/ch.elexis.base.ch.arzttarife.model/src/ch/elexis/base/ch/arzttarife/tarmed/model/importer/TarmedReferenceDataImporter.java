@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.VersionUtil;
+import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.importer.div.importers.AccessWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
@@ -33,9 +34,6 @@ import ch.rgw.tools.TimeTool;
 public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter
 		implements IReferenceDataImporter {
 	private static final Logger logger = LoggerFactory.getLogger(TarmedReferenceDataImporter.class);
-	
-	public static final String CFG_REFERENCEINFO_AVAILABLE =
-		"ch.elexis.data.importer.TarmedReferenceDataImporter/referenceinfoavailable";
 	
 	public static final String ImportPrefix = "TARMED_IMPORT_";
 	
@@ -108,9 +106,8 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter
 									} else {
 										VersionUtil.setCurrentVersion(version.toString(), getLaw());
 									}
-									ConfigServiceHolder.get().get().set(
-										TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE,
-										true);
+									ConfigServiceHolder.get().get()
+										.set(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE, true);
 									ipm.done();
 								}
 							}

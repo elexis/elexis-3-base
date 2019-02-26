@@ -32,7 +32,7 @@ import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation.LimitationUnit;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedLeistungAge;
-import ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedReferenceDataImporter;
+import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.RechnungsPrefs;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.jpa.entities.Verrechnet;
@@ -642,7 +642,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		boolean result= false;
 		IConfigService cfgs = ConfigServiceHolder.get().orElse(null);
 		if(cfgs != null) {
-			result = cfgs.get(TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE, false);
+			result = cfgs.get(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE, false);
 		}
 		return result;
 	}

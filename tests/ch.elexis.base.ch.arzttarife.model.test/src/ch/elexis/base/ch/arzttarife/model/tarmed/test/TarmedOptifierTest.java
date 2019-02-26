@@ -17,11 +17,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
-import ch.elexis.base.ch.arzttarife.tarmed.importer.TarmedReferenceDataImporter;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
+import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.base.ch.ticode.TessinerCode;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
@@ -139,7 +139,7 @@ public class TarmedOptifierTest {
 		// Importer not provided we import the raw db; set values that would have
 		//		// been set by the importer
 		OsgiServiceUtil.getService(IConfigService.class).get()
-			.set(TarmedReferenceDataImporter.CFG_REFERENCEINFO_AVAILABLE, true);
+			.set(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE, true);
 		//		File tarmedFile = new File(System.getProperty("user.dir") + File.separator + "rsc"
 		//			+ File.separator + "tarmed.mdb");
 		//		InputStream tarmedInStream = new FileInputStream(tarmedFile);

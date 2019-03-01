@@ -12,7 +12,6 @@
 
 package ch.elexis.views;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -29,15 +28,20 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.arzttarife_schweiz.Messages;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp;
+import ch.elexis.base.ch.arzttarife.util.TarmedDefinitionenUtil;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.views.IDetailDisplay;
-import ch.elexis.data.TarmedKumulation;
-import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
-import ch.elexis.data.TarmedLeistung;
 import ch.rgw.tools.TimeTool;
 
 public class TarmedDetailDisplay implements IDetailDisplay {
+	
+	public static final TimeTool INFINITE = new TimeTool("19991231");
+	
 	private FormToolkit tk;
 	private ScrolledForm form;
 	private String[] fields = {
@@ -59,7 +63,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 	private Text[] inputs = new Text[fields.length];
 	private FormText medinter, techinter, exclusion, inclusion, limits, hirarchy;
 	private FormText validity;
-	private TarmedLeistung actCode;
+	private ITarmedLeistung actCode;
 	
 	public TarmedDetailDisplay(){
 		
@@ -81,7 +85,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 			@Override
 			public void focusLost(FocusEvent e){
 				if (actCode != null) {
-					actCode.set("Nickname", inputs[last].getText()); //$NON-NLS-1$
+					actCode.setNickname(inputs[last].getText());
 				}
 			}
 			
@@ -110,40 +114,40 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 	}
 	
 	public Class getElementClass(){
-		return TarmedLeistung.class;
+		return ITarmedLeistung.class;
 	}
 	
 	public void display(Object obj){
-		if (obj instanceof TarmedLeistung) {
-			actCode = (TarmedLeistung) obj;
+		if (obj instanceof ITarmedLeistung) {
+			actCode = (ITarmedLeistung) obj;
 			form.setText(actCode.getLabel());
-			Hashtable<String, String> ext = actCode.loadExtension();
-			inputs[0].setText(actCode.getDigniQuantiAsText());
-			inputs[1].setText(actCode.getDigniQualiAsText());
-			inputs[2].setText(actCode.getSparteAsText());
+			inputs[0].setText(actCode.getDigniQuanti());
+			inputs[1].setText(actCode.getDigniQuali());
+			inputs[2].setText(actCode.getSparte());
 			inputs[3]
-				.setText(TarmedLeistung.getTextForRisikoKlasse((String) ext.get("ANAESTHESIE"))); //$NON-NLS-1$
+				.setText(
+					TarmedDefinitionenUtil.getTextForRisikoKlasse(
+						(String) actCode.getExtension().getExtInfo("ANAESTHESIE"))); //$NON-NLS-1$
 			for (int i = 4; i < fields.length - 1; i++) {
-				String val = (String) ext.get(retrieve[i]);
+				String val = (String) actCode.getExtension().getExtInfo(retrieve[i]);
 				if (val == null) {
 					val = ""; //$NON-NLS-1$
 				}
 				inputs[i].setText(val);
 			}
-			inputs[fields.length - 1].setText(actCode.get("Nickname")); //$NON-NLS-1$
-			medinter.setText(actCode.getMedInterpretation(), false, false);
-			techinter.setText(actCode.getTechInterpretation(), false, false);
-			List<TarmedKumulation> kumulations =
-				TarmedKumulation.getKumulations(actCode.getCode(), TarmedKumulationType.SERVICE,
-					actCode.getGueltigVon(), actCode.get(TarmedLeistung.FLD_LAW));
+			inputs[fields.length - 1].setText(actCode.getNickname()); //$NON-NLS-1$
+			medinter.setText(actCode.getExtension().getMedInterpretation(), false, false);
+			techinter.setText(actCode.getExtension().getTechInterpretation(), false, false);
+			List<ITarmedKumulation> kumulations =
+				actCode.getKumulations(TarmedKumulationArt.SERVICE);
 			exclusion.setText(getKumulationsString(kumulations, actCode.getCode(),
-				TarmedKumulation.TYP_EXCLUSION), false, false);
+				TarmedKumulationTyp.EXCLUSION), false, false);
 			inclusion.setText(getKumulationsString(kumulations, actCode.getCode(),
-				TarmedKumulation.TYP_INCLUSION), false, false); //$NON-NLS-1$
-			List<String> hirarchyCodes = actCode.getHierarchy(actCode.getGueltigVon());
+				TarmedKumulationTyp.INCLUSION), false, false); //$NON-NLS-1$
+			List<String> hirarchyCodes = actCode.getHierarchy(actCode.getValidFrom());
 			hirarchy.setText(String.join(", ", hirarchyCodes), false, false);
 			
-			String limit = ext.get("limits"); //$NON-NLS-1$
+			String limit = (String) actCode.getExtension().getExtInfo("limits"); //$NON-NLS-1$
 			if (limit != null) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("<form>"); //$NON-NLS-1$
@@ -164,7 +168,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 							sb.append(Messages.TarmedDetailDisplay_after);
 						}
 						sb.append(f[2]).append(" "); //$NON-NLS-1$
-						sb.append(TarmedLeistung.getTextForZR_Einheit(f[4]));
+						sb.append(TarmedDefinitionenUtil.getTextForZR_Einheit(f[4]));
 						sb.append("</li>"); //$NON-NLS-1$
 					}
 				}
@@ -176,12 +180,12 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 			
 			// validity
 			String text;
-			TimeTool tGueltigVon = actCode.getGueltigVon();
-			TimeTool tGueltigBis = actCode.getGueltigBis();
+			TimeTool tGueltigVon = new TimeTool(actCode.getValidFrom());
+			TimeTool tGueltigBis = new TimeTool(actCode.getValidTo());
 			if (tGueltigVon != null && tGueltigBis != null) {
 				String from = tGueltigVon.toString(TimeTool.DATE_GER);
 				String to;
-				if (tGueltigBis.isSameDay(TarmedLeistung.INFINITE)) {
+				if (tGueltigBis.isSameDay(INFINITE)) {
 					to = "";
 				} else {
 					to = tGueltigBis.toString(TimeTool.DATE_GER);
@@ -197,28 +201,31 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		
 	}
 	
-	private String getKumulationsString(List<TarmedKumulation> list, String code, String typ){
+	private String getKumulationsString(List<ITarmedKumulation> list, String code,
+		TarmedKumulationTyp typ){
 		StringBuilder sb = new StringBuilder();
 		if (list != null) {
-			List<TarmedKumulation> slaveServices = list.stream()
-				.filter(k -> k.isTyp(typ) && k.isSlaveType(TarmedKumulationType.SERVICE)
-					&& k.isSlaveCode(code) && k.isMasterType(TarmedKumulationType.SERVICE))
+			List<ITarmedKumulation> slaveServices = list.stream()
+				.filter(k -> k.getTyp() == typ && k.getSlaveArt() == TarmedKumulationArt.SERVICE
+					&& k.getSlaveCode().equals(code)
+					&& k.getMasterArt() == TarmedKumulationArt.SERVICE)
 				.collect(Collectors.toList());
-			List<TarmedKumulation> masterServices = list.stream()
-				.filter(k -> k.isTyp(typ) && k.isMasterType(TarmedKumulationType.SERVICE)
-					&& k.isMasterCode(code) && k.isSlaveType(TarmedKumulationType.SERVICE))
+			List<ITarmedKumulation> masterServices = list.stream()
+				.filter(k -> k.getTyp() == typ && k.getMasterArt() == TarmedKumulationArt.SERVICE
+					&& k.getMasterCode().equals(code)
+					&& k.getSlaveArt() == TarmedKumulationArt.SERVICE)
 				.collect(Collectors.toList());
 			
 			if (!slaveServices.isEmpty() || !masterServices.isEmpty()) {
 				sb.append("Leistungen: ");
 				StringJoiner sj = new StringJoiner(", ");
-				for (TarmedKumulation tarmedKumulation : slaveServices) {
+				for (ITarmedKumulation tarmedKumulation : slaveServices) {
 					// dont add same exclusion multiple times
 					if (!sj.toString().contains(tarmedKumulation.getMasterCode())) {
 						sj.add(tarmedKumulation.getMasterCode());
 					}
 				}
-				for (TarmedKumulation tarmedKumulation : masterServices) {
+				for (ITarmedKumulation tarmedKumulation : masterServices) {
 					// dont add same exclusion multiple times
 					if (!sj.toString().contains(tarmedKumulation.getSlaveCode())) {
 						sj.add(tarmedKumulation.getSlaveCode());
@@ -226,24 +233,25 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				}
 				sb.append(sj.toString());
 			}
-			List<TarmedKumulation> slaveGroups =
-				list.stream().filter(k -> k.isTyp(typ) && k.isSlaveType(TarmedKumulationType.GROUP))
+			List<ITarmedKumulation> slaveGroups =
+				list.stream()
+					.filter(k -> k.getTyp() == typ && k.getSlaveArt() == TarmedKumulationArt.GROUP)
 					.collect(Collectors.toList());
-			List<TarmedKumulation> masterGroups = list.stream()
-				.filter(k -> k.isTyp(typ) && k.isMasterType(TarmedKumulationType.GROUP))
+			List<ITarmedKumulation> masterGroups = list.stream()
+				.filter(k -> k.getTyp() == typ && k.getMasterArt() == TarmedKumulationArt.GROUP)
 				.collect(Collectors.toList());
 			
 			if (!slaveGroups.isEmpty() || !masterGroups.isEmpty()) {
 				sb.append(" ");
 				sb.append("Gruppen: ");
 				StringJoiner sj = new StringJoiner(", ");
-				for (TarmedKumulation tarmedKumulation : slaveGroups) {
+				for (ITarmedKumulation tarmedKumulation : slaveGroups) {
 					// dont add same exclusion multiple times
 					if (!sj.toString().contains(tarmedKumulation.getSlaveCode())) {
 						sj.add(tarmedKumulation.getSlaveCode());
 					}
 				}
-				for (TarmedKumulation tarmedKumulation : masterGroups) {
+				for (ITarmedKumulation tarmedKumulation : masterGroups) {
 					// dont add same exclusion multiple times
 					if (!sj.toString().contains(tarmedKumulation.getMasterCode())) {
 						sj.add(tarmedKumulation.getMasterCode());

@@ -15,6 +15,18 @@
       <eOperations name="getAL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
         <eParameters name="mandator" eType="ecore:EClass ../ch.elexis.core/model/model.ecore#//IMandator"/>
       </eOperations>
+      <eOperations name="getKumulations">
+        <eGenericType eClassifier="ecore:EClass ../ch.elexis.core/model/types.ecore#//List">
+          <eTypeArguments eClassifier="#//tarmed/ITarmedKumulation"/>
+        </eGenericType>
+        <eParameters name="type" eType="#//tarmed/TarmedKumulationArt"/>
+      </eOperations>
+      <eOperations name="getHierarchy">
+        <eGenericType eClassifier="ecore:EClass ../ch.elexis.core/model/types.ecore#//List">
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        </eGenericType>
+        <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
@@ -43,6 +55,7 @@
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="nickname" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedExtension" abstract="true"
         interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//Identifiable ../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//WithExtInfo">
@@ -53,6 +66,8 @@
           <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         </eGenericType>
       </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="medInterpretation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="techInterpretation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedGroup" abstract="true" interface="true"
         eSuperTypes="../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//Identifiable">
@@ -85,7 +100,7 @@
       </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           changeable="false"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveArt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="slaveArt" eType="#//tarmed/TarmedKumulationArt"
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="validSide" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           changeable="false"/>
@@ -95,6 +110,12 @@
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="law" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="masterCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="masterArt" eType="#//tarmed/TarmedKumulationArt"
+          changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="typ" eType="#//tarmed/TarmedKumulationTyp"
+          changeable="false"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EDataType" name="TarmedLimitation" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation"/>
     <eClassifiers xsi:type="ecore:EDataType" name="TarmedExclusion" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion"/>
@@ -102,6 +123,8 @@
       <eLiterals name="SPECIALIST"/>
       <eLiterals name="PRACTITIONER" value="1"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EDataType" name="TarmedKumulationArt" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt"/>
+    <eClassifiers xsi:type="ecore:EDataType" name="TarmedKumulationTyp" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp"/>
   </eSubpackages>
   <eSubpackages name="physio" nsURI="http://ch.elexis.base/model/arzttarife/physio"
       nsPrefix="ch.elexis.arzttarife.ch.physio.model">
@@ -120,6 +143,9 @@
         interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedValueSet" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          changeable="false"/>
     </eClassifiers>
   </eSubpackages>
   <eSubpackages name="rfe" nsURI="http://ch.elexis.base/model/arzttarife/rfe" nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">

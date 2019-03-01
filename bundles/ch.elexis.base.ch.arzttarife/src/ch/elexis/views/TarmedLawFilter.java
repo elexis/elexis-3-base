@@ -13,7 +13,7 @@ package ch.elexis.views;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import ch.elexis.data.TarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 
 public class TarmedLawFilter extends ViewerFilter {
 	
@@ -30,10 +30,10 @@ public class TarmedLawFilter extends ViewerFilter {
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element){
-		TarmedLeistung leistung = (TarmedLeistung) element;
+		ITarmedLeistung leistung = (ITarmedLeistung) element;
 		
 		if (doFilter && law != null) {
-			return law.equalsIgnoreCase(leistung.get(TarmedLeistung.FLD_LAW));
+			return law.equalsIgnoreCase(leistung.getLaw());
 		}
 		return true;
 	}

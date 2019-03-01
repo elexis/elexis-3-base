@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
+import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
@@ -11,6 +12,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.jpa.entities.ComplementaryLeistung;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
+import ch.elexis.core.jpa.entities.RFE;
 import ch.elexis.core.jpa.entities.TarmedExtension;
 import ch.elexis.core.jpa.entities.TarmedGroup;
 import ch.elexis.core.jpa.entities.TarmedKumulation;
@@ -51,6 +53,9 @@ public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 			TarmedKumulation.class));
 		addMapping(new MappingEntry(ITarmedGroup.class,
 			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedGroup.class, TarmedGroup.class));
+		
+		addMapping(new MappingEntry(IReasonForEncounter.class,
+			ch.elexis.base.ch.arzttarife.rfe.model.ReasonForEncounter.class, RFE.class));
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -21,6 +21,9 @@ import java.time.LocalDate;
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getValidFrom <em>Valid From</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getValidTo <em>Valid To</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getLaw <em>Law</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getMasterCode <em>Master Code</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getMasterArt <em>Master Art</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getTyp <em>Typ</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedKumulation()
@@ -54,10 +57,10 @@ public interface ITarmedKumulation {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Slave Art</em>' attribute.
 	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedKumulation_SlaveArt()
-	 * @model changeable="false"
+	 * @model dataType="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt" changeable="false"
 	 * @generated
 	 */
-	String getSlaveArt();
+	TarmedKumulationArt getSlaveArt();
 
 	/**
 	 * Returns the value of the '<em><b>Valid Side</b></em>' attribute.
@@ -118,6 +121,51 @@ public interface ITarmedKumulation {
 	 * @generated
 	 */
 	String getLaw();
+
+	/**
+	 * Returns the value of the '<em><b>Master Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Master Code</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Master Code</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedKumulation_MasterCode()
+	 * @model changeable="false"
+	 * @generated
+	 */
+	String getMasterCode();
+
+	/**
+	 * Returns the value of the '<em><b>Master Art</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Master Art</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Master Art</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedKumulation_MasterArt()
+	 * @model dataType="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt" changeable="false"
+	 * @generated
+	 */
+	TarmedKumulationArt getMasterArt();
+
+	/**
+	 * Returns the value of the '<em><b>Typ</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Typ</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Typ</em>' attribute.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedKumulation_Typ()
+	 * @model dataType="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp" changeable="false"
+	 * @generated
+	 */
+	TarmedKumulationTyp getTyp();
 
 	/**
 	 * Checks if the kumulation is still/already valid on the given date

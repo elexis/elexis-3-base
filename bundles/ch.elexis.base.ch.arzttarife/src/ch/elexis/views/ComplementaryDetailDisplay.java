@@ -32,9 +32,9 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
+import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.views.IDetailDisplay;
-import ch.elexis.data.ComplementaryLeistung;
 
 public class ComplementaryDetailDisplay implements IDetailDisplay {
 	private ScrolledForm form;
@@ -42,7 +42,7 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 	private Section infoSection;
 	
 	// selected
-	private ComplementaryLeistung complementary;
+	private IComplementaryLeistung complementary;
 	
 	private Text codeChapter;
 	private Text codeCode;
@@ -140,19 +140,19 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 		return form.getBody();
 	}
 	
-	public Class getElementClass(){
-		return ComplementaryLeistung.class;
+	public Class<?> getElementClass(){
+		return IComplementaryLeistung.class;
 	}
 	
 	public void display(Object obj){
-		if (obj instanceof ComplementaryLeistung) {
-			complementary = (ComplementaryLeistung) obj;
+		if (obj instanceof IComplementaryLeistung) {
+			complementary = (IComplementaryLeistung) obj;
 			form.setText(complementary.getLabel());
 			
-			codeChapter.setText(complementary.get(ComplementaryLeistung.FLD_CHAPTER));
+			codeChapter.setText(complementary.getChapter());
 			codeCode.setText(complementary.getCode());
 			codeText.setText(complementary.getText());
-			codeDescription.setText(complementary.get(ComplementaryLeistung.FLD_DESCRIPTION));
+			codeDescription.setText(complementary.getDescription());
 			if(complementary.isFixedValueSet()) {
 				codeFixedValue.setText(Integer.toString(complementary.getFixedValue()));
 			} else {

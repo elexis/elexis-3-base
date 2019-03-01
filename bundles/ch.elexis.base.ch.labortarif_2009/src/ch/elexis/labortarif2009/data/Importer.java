@@ -14,6 +14,8 @@ package ch.elexis.labortarif2009.data;
 import java.io.FileInputStream;
 import java.util.Calendar;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
@@ -27,17 +29,26 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.base.ch.labortarif_2009.Messages;
+import ch.elexis.core.interfaces.IReferenceDataImporter;
+import ch.elexis.core.services.IReferenceDataImporterService;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 public class Importer extends ImporterPage {
-	TimeTool validFrom = new TimeTool();
+	
+	private TimeTool validFrom = new TimeTool();
+	
+	@Inject
+	private IReferenceDataImporterService importerService;
 	
 	public Importer(){
 		// set default to start of year
 		validFrom.clear();
 		validFrom.set(TimeTool.getInstance().get(Calendar.YEAR), 0, 1);
+		
+		CoreUiUtil.injectServices(this);
 	}
 	
 	@Override
@@ -87,16 +98,12 @@ public class Importer extends ImporterPage {
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		
-		FileInputStream tarifInputStream = new FileInputStream(results[0]);
-		
-		try {
-			return ReferenceDataImporterHolder.get().performImport(monitor, tarifInputStream,
+		try (FileInputStream tarifInputStream = new FileInputStream(results[0])) {
+			IReferenceDataImporter importer =
+				importerService.getImporter("analysenliste").orElseThrow(
+					() -> new IllegalStateException("No IReferenceDataImporter available."));
+			return importer.performImport(monitor, tarifInputStream,
 				getVersionFromValid(validFrom));
-		} finally {
-			if (tarifInputStream != null) {
-				tarifInputStream.close();
-			}
 		}
 	}
 	

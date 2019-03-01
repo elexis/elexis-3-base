@@ -6,8 +6,8 @@ import org.jdom.Element;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum.VatRateElement;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Rechnung;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.XMLTool;
@@ -102,18 +102,16 @@ public class XMLExporterBalance {
 		XMLExporterUtil.negate(balanceElement, ATTR_AMOUNT_OBLIGATIONS);
 	}
 
-	public static XMLExporterBalance buildBalance(Rechnung rechnung, XMLExporterServices services,
+	public static XMLExporterBalance buildBalance(IInvoice invoice, XMLExporterServices services,
 		VatRateSum vatSummer, XMLExporter xmlExporter){
 		
-		Mandant actMandant = rechnung.getMandant();
-		Money reminders = rechnung.getRemindersBetrag();
+		IMandator actMandant = invoice.getMandator();
+		Money reminders = invoice.getDemandAmount();
 		
 		Element element = new Element(XMLExporter.ELEMENT_BALANCE, XMLExporter.nsinvoice);
 		XMLExporterBalance balance = new XMLExporterBalance(element);
 		
-		String curr =
-			(String) actMandant.getRechnungssteller().getExtInfoStoredObjectByKey(
-				Messages.XMLExporter_Currency);
+		String curr = (String) actMandant.getBiller().getExtInfo(Messages.XMLExporter_Currency);
 		if (StringTool.isNothing(curr)) {
 			curr = "CHF"; //$NON-NLS-1$
 		}
@@ -123,9 +121,9 @@ public class XMLExporterBalance {
 			.addMoney(services.getMedikamentMoney()).addMoney(services.getUebrigeMoney())
 			.addMoney(services.getKantMoney()).addMoney(services.getPhysioMoney())
 			.addMoney(services.getMigelMoney());
-
+		
 		element.setAttribute(XMLExporter.ATTR_AMOUNT_PREPAID,
-			XMLTool.moneyToXmlDouble(new Money(rechnung.getAnzahlung())));
+			XMLTool.moneyToXmlDouble(new Money(invoice.getPayedAmount())));
 		
 		if (!reminders.isZero()) {
 			element.setAttribute(XMLExporter.ATTR_AMOUNT_REMINDER,
@@ -137,10 +135,9 @@ public class XMLExporterBalance {
 		if (!reminders.isZero()) {
 			balance.mDue.addMoney(reminders);
 		}
-		balance.mDue.subtractMoney(rechnung.getAnzahlung());
+		balance.mDue.subtractMoney(invoice.getPayedAmount());
 		balance.mDue.roundTo5();
 		element.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(balance.mDue));
-
 		
 		element.setAttribute(ATTR_AMOUNT_OBLIGATIONS,
 			XMLTool.moneyToXmlDouble(services.getObligationsMoney()));
@@ -148,7 +145,7 @@ public class XMLExporterBalance {
 		Element vat = new Element(XMLExporter.ELEMENT_VAT, XMLExporter.nsinvoice);
 		
 		String vatNumber =
-			actMandant.getRechnungssteller().getInfoString(XMLExporter.VAT_MANDANTVATNUMBER);
+			(String) actMandant.getBiller().getExtInfo(XMLExporter.VAT_MANDANTVATNUMBER);
 		if (vatNumber != null && vatNumber.length() > 0)
 			vat.setAttribute(XMLExporter.ELEMENT_VAT_NUMBER, vatNumber);
 		
@@ -162,8 +159,8 @@ public class XMLExporterBalance {
 				XMLTool.doubleToXmlDouble(rate.scale, 2));
 			vatrate.setAttribute(XMLExporter.ATTR_AMOUNT,
 				XMLTool.doubleToXmlDouble(rate.sumamount, 2));
-			vatrate
-				.setAttribute(XMLExporter.ELEMENT_VAT, XMLTool.doubleToXmlDouble(rate.sumvat, 2));
+			vatrate.setAttribute(XMLExporter.ELEMENT_VAT,
+				XMLTool.doubleToXmlDouble(rate.sumvat, 2));
 			vat.addContent(vatrate);
 		}
 		

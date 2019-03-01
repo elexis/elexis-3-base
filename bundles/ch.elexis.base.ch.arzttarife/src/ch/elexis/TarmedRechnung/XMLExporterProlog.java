@@ -3,7 +3,7 @@ package ch.elexis.TarmedRechnung;
 import org.jdom.Element;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.data.Rechnung;
+import ch.elexis.core.model.IInvoice;
 import ch.rgw.tools.VersionInfo;
 
 public class XMLExporterProlog {
@@ -25,7 +25,7 @@ public class XMLExporterProlog {
 		return prologElement;
 	}
 
-	public static XMLExporterProlog buildProlog(Rechnung rechnung, XMLExporter xmlExporter){
+	public static XMLExporterProlog buildProlog(IInvoice invoice, XMLExporter xmlExporter){
 		
 		Element element = new Element(ELEMENT_PROLOG, XMLExporter.nsinvoice);
 		

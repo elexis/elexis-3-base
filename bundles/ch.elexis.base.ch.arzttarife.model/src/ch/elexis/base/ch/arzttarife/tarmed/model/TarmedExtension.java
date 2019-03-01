@@ -48,4 +48,24 @@ public class TarmedExtension
 	public void setExtInfo(Object key, Object value){
 		limitsExtInfoHandler.setExtInfo(key, value);
 	}
+	
+	@Override
+	public String getMedInterpretation(){
+		return getEntity().getMed_interpret();
+	}
+	
+	@Override
+	public void setMedInterpretation(String value){
+		getEntity().setMed_interpret(value);
+	}
+	
+	@Override
+	public String getTechInterpretation(){
+		return getEntity().getTech_interpret();
+	}
+	
+	@Override
+	public void setTechInterpretation(String value){
+		getEntity().setTech_interpret(value);
+	}
 }

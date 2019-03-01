@@ -32,6 +32,7 @@ import java.util.List;
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getLaw <em>Law</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getSparte <em>Sparte</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#isChapter <em>Chapter</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getNickname <em>Nickname</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung()
@@ -250,6 +251,32 @@ public interface ITarmedLeistung extends IBillable {
 	boolean isChapter();
 
 	/**
+	 * Returns the value of the '<em><b>Nickname</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Nickname</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Nickname</em>' attribute.
+	 * @see #setNickname(String)
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Nickname()
+	 * @model
+	 * @generated
+	 */
+	String getNickname();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getNickname <em>Nickname</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Nickname</em>' attribute.
+	 * @see #getNickname()
+	 * @generated
+	 */
+	void setNickname(String value);
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * Leistung ist beinhaltet in retournierten Leistungsgruppen
@@ -286,5 +313,21 @@ public interface ITarmedLeistung extends IBillable {
 	 * @generated
 	 */
 	int getAL(IMandator mandator);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model type="ch.elexis.core.types.List&lt;ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation&gt;" many="false" typeDataType="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt"
+	 * @generated
+	 */
+	List<ITarmedKumulation> getKumulations(TarmedKumulationArt type);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model type="ch.elexis.core.types.List&lt;org.eclipse.emf.ecore.EString&gt;" many="false" dateDataType="ch.elexis.core.types.LocalDate"
+	 * @generated
+	 */
+	List<String> getHierarchy(LocalDate date);
 
 } // ITarmedLeistung

@@ -15,19 +15,14 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_RECIPIENT_EAN;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-
-import ch.elexis.data.Fall;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Person;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Xid;
 
@@ -66,36 +61,33 @@ public class TarmedRequirements {
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_SUVA, "Suva-Nr", Xid.ASSIGNMENT_REGIONAL);
 	}
 	
-	public static String getEAN(final Kontakt k){
-		if (k == null) {
+	public static String getEAN(final IContact contact){
+		if (contact == null) {
 			return null;
 		}
-		String ret = k.getXid(DOMAIN_EAN);
-		// compatibility layer
-		if (ret.length() == 0) {
-			ret = k.getInfoString("EAN"); //$NON-NLS-1$
-			if (ret.length() > 0) {
-				setEAN(k, ret);
-			}
+		IXid ret = contact.getXid(DOMAIN_EAN);
+		if (ret != null && ret.getId() != null && !ret.getId().isEmpty()) {
+			return ret.getId().trim();
+		} else if (ret != null) {
+			return EAN_PSEUDO;
 		}
-		// end
-		if (ret.length() == 0) {
-			ret = EAN_PSEUDO;
-		}
-		return ret.trim();
+		return "";
 	}
 	
-	public static String getRecipientEAN(final Kontakt k){
-		String ret = k.getXid(DOMAIN_RECIPIENT_EAN);
-		if (ret.length() == 0) {
-			ret = "unknown"; //$NON-NLS-1$
+	public static String getRecipientEAN(final IContact contact){
+		if (contact == null) {
+			return null;
 		}
-		return ret.trim();
+		IXid ret = contact.getXid(DOMAIN_RECIPIENT_EAN);
+		if (ret == null || ret.getId() == null || ret.getId().isEmpty()) {
+			return "unknown"; //$NON-NLS-1$
+		}
+		return ret.getId().trim();
 	}
 	
-	public static String getSuvaNr(final Kontakt k){
-		String ret = k.getXid(DOMAIN_SUVA);
-		return ret;
+	public static String getSuvaNr(final IContact k){
+		IXid ret = k.getXid(DOMAIN_SUVA);
+		return ret != null ? ret.getId() : "";
 	}
 	
 	/**
@@ -105,8 +97,8 @@ public class TarmedRequirements {
 	 * @param fall
 	 * @return the intermediate EAN as defined or the empty String (never null)
 	 */
-	public static String getIntermediateEAN(final Fall fall){
-		return fall.getRequiredString(INTERMEDIATE).trim();
+	public static String getIntermediateEAN(final ICoverage coverage){
+		return CoverageServiceHolder.get().getRequiredString(coverage, INTERMEDIATE).trim();
 	}
 	
 	/**
@@ -115,8 +107,8 @@ public class TarmedRequirements {
 	 * @param fall
 	 * @return the EAN or "unknown" if no valid ean was provided
 	 */
-	public static String getProviderEAN(final Fall fall){
-		String ean = fall.getRequiredString(EAN_PROVIDER).trim();
+	public static String getProviderEAN(final ICoverage coverage){
+		String ean = CoverageServiceHolder.get().getRequiredString(coverage, EAN_PROVIDER).trim();
 		if (!ean.matches("(20[0-9]{11}|76[0-9]{11}|unknown|[A-Z][0-9]{6})")) { //$NON-NLS-1$
 			return "unknown"; //$NON-NLS-1$
 		}
@@ -129,8 +121,9 @@ public class TarmedRequirements {
 	 * @param fall
 	 * @return the EAN or "unknown" if no valid ean was provided
 	 */
-	public static String getResponsibleEAN(final Fall fall){
-		String ean = fall.getRequiredString(EAN_RESPONSIBLE).trim();
+	public static String getResponsibleEAN(final ICoverage coverage){
+		String ean =
+			CoverageServiceHolder.get().getRequiredString(coverage, EAN_RESPONSIBLE).trim();
 		if (!ean.matches("(20[0-9]{11}|76[0-9]{11}|unknown|[A-Z][0-9]{6})")) { //$NON-NLS-1$
 			return "unknown"; //$NON-NLS-1$
 		}
@@ -158,33 +151,17 @@ public class TarmedRequirements {
 		return KSK.trim();
 	}
 	
-	public static String getKSK(final Kontakt k){
-		String ret = k.getXid(DOMAIN_KSK);
-		// compatibility layer
-		if (ret.length() == 0) {
-			ret = k.getInfoString("KSK"); //$NON-NLS-1$
-			if (ret.length() > 0) {
-				setKSK(k, ret);
-			}
-		}
-		// end
-		return ret.replaceAll("[\\s\\.\\-]", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+	public static String getKSK(final IContact k){
+		IXid ret = k.getXid(DOMAIN_KSK);
+		return ret != null ? ret.getId().replaceAll("[\\s\\.\\-]", "").trim() : ""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	public static String getNIF(final Kontakt k){
-		String ret = k.getXid(DOMAIN_NIF);
-		// compatibility layer
-		if (ret.length() == 0) {
-			ret = k.getInfoString("NIF"); //$NON-NLS-1$
-			if (ret.length() > 0) {
-				setNIF(k, ret);
-			}
-		}
-		// end
-		return ret.trim();
+	public static String getNIF(final IContact k){
+		IXid ret = k.getXid(DOMAIN_NIF);
+		return ret != null ? ret.getId().trim() : "";
 	}
 	
-	public static boolean setEAN(final Kontakt k, final String ean){
+	public static boolean setEAN(final IContact k, final String ean){
 		if (!ean.matches("[0-9]{13,13}")) { //$NON-NLS-1$
 			return false;
 		}
@@ -192,46 +169,47 @@ public class TarmedRequirements {
 		return true;
 	}
 	
-	public static void setKSK(final Kontakt k, final String ksk){
+	public static void setKSK(final IContact k, final String ksk){
 		k.addXid(DOMAIN_KSK, ksk, true);
 	}
 	
-	public static void setNIF(final Kontakt k, final String nif){
+	public static void setNIF(final IContact k, final String nif){
 		k.addXid(DOMAIN_NIF, nif, true);
 	}
 	
-	public static void setSuvaNr(final Kontakt k, final String SuvaNr){
+	public static void setSuvaNr(final IContact k, final String SuvaNr){
 		k.addXid(DOMAIN_SUVA, SuvaNr, true);
 	}
 	
-	public static String getAHV(final Person p){
-		String ahv = p.getXid(DOMAIN_AHV);
-		if (ahv.length() == 0) {
-			ahv = p.getInfoString(SSN);
-			if (ahv.length() == 0) {
-				ahv = p.getInfoString(INSURANCE_NUMBER);
+	public static String getAHV(final IPerson p){
+		IXid ahv = p.getXid(DOMAIN_AHV);
+		String ret = ahv != null ? ahv.getId() : "";
+		if (ret.length() == 0) {
+			ret = (String) p.getExtInfo(SSN);
+			if (ret.length() == 0) {
+				ret = (String) p.getExtInfo(INSURANCE_NUMBER);
 			}
-			if (ahv.length() > 0) {
-				setAHV(p, ahv);
+			if (ret.length() > 0) {
+				setAHV(p, ret);
 			}
 		}
-		return ahv.trim();
+		return ret.trim();
 	}
 	
-	public static void setAHV(final Person p, final String ahv){
+	public static void setAHV(final IPerson p, final String ahv){
 		p.addXid(DOMAIN_AHV, ahv, true);
 	}
 	
-	public static String getGesetz(final Fall fall){
-		return fall.getConfiguredBillingSystemLaw().name();
+	public static String getGesetz(final ICoverage coverage){
+		return coverage.getBillingSystem().getLaw().name();
 	}
 	
-	public static String getTCName(Kontakt mandant){
-		String tc = mandant.getInfoString(PreferenceConstants.TARMEDTC);
+	public static String getTCName(IContact mandant){
+		String tc = (String) mandant.getExtInfo(PreferenceConstants.TARMEDTC);
 		return tc;
 	}
 	
-	public static String getTCCode(Kontakt mandant){
+	public static String getTCCode(IContact mandant){
 		String tcname = getTCName(mandant);
 		Integer nr = TrustCenters.tc.get(tcname);
 		if (nr == null) {
@@ -240,12 +218,12 @@ public class TarmedRequirements {
 		return Integer.toString(nr);
 	}
 	
-	public static void setTC(Kontakt mandant, String tc){
-		mandant.setInfoElement(PreferenceConstants.TARMEDTC, tc);
+	public static void setTC(IContact mandant, String tc){
+		mandant.setExtInfo(PreferenceConstants.TARMEDTC, tc);
 	}
 	
-	public static boolean hasTCContract(Kontakt mandant){
-		String hc = (String) mandant.getInfoElement(PreferenceConstants.USETC);
+	public static boolean hasTCContract(IContact mandant){
+		String hc = (String) mandant.getExtInfo(PreferenceConstants.USETC);
 		return "1".equals(hc); //$NON-NLS-1$
 	}
 }

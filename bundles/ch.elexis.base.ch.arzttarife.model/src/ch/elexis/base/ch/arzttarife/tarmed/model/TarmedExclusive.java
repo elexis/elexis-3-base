@@ -4,27 +4,28 @@ import java.util.List;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.rgw.tools.TimeTool;
 
 public class TarmedExclusive {
 	
 	private String slaveCode;
-	private TarmedKumulationType slaveType;
+	private TarmedKumulationArt slaveType;
 	
 	public TarmedExclusive(ITarmedKumulation kumulation){
 		slaveCode = kumulation.getSlaveCode();
-		slaveType = TarmedKumulationType.ofArt(kumulation.getSlaveArt());
+		slaveType = kumulation.getSlaveArt();
 	}
 	
 	public boolean isMatching(ITarmedLeistung tarmedLeistung, TimeTool date){
-		if (slaveType == TarmedKumulationType.CHAPTER) {
+		if (slaveType == TarmedKumulationArt.CHAPTER) {
 			return isMatchingChapter(tarmedLeistung);
-		} else if (slaveType == TarmedKumulationType.SERVICE) {
+		} else if (slaveType == TarmedKumulationArt.SERVICE) {
 			return slaveCode.equals(tarmedLeistung.getCode());
-		} else if (slaveType == TarmedKumulationType.GROUP) {
+		} else if (slaveType == TarmedKumulationArt.GROUP) {
 			List<String> groups = tarmedLeistung.getServiceGroups(date.toLocalDate());
 			return groups.contains(slaveCode);
-		} else if (slaveType == TarmedKumulationType.BLOCK) {
+		} else if (slaveType == TarmedKumulationArt.BLOCK) {
 			List<String> blocks = tarmedLeistung.getServiceBlocks(date.toLocalDate());
 			return blocks.contains(slaveCode);
 		}
@@ -45,7 +46,7 @@ public class TarmedExclusive {
 	}
 	
 	public boolean isMatching(TarmedGroup tarmedGroup){
-		if (slaveType != TarmedKumulationType.GROUP) {
+		if (slaveType != TarmedKumulationArt.GROUP) {
 			return false;
 		}
 		return slaveCode.equals(tarmedGroup.getCode());
@@ -54,11 +55,11 @@ public class TarmedExclusive {
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(TarmedKumulationType.toString(slaveType)).append(" ").append(slaveCode);
+		sb.append(TarmedKumulationArt.toString(slaveType)).append(" ").append(slaveCode);
 		return sb.toString();
 	}
 	
-	public TarmedKumulationType getSlaveType(){
+	public TarmedKumulationArt getSlaveType(){
 		return slaveType;
 	}
 }

@@ -11,6 +11,7 @@ import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelAdapterFactory;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.core.jpa.entities.TarmedExtension;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
@@ -79,7 +80,7 @@ public class TarmedGroup
 	 * @return
 	 */
 	public List<TarmedExclusion> getExclusions(LocalDate date){
-		return TarmedKumulation.getExclusions(getCode(), TarmedKumulationType.GROUP, date,
+		return TarmedKumulation.getExclusions(getCode(), TarmedKumulationArt.GROUP, date,
 			getLaw());
 	}
 	

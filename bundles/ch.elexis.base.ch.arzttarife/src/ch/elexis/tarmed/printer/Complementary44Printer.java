@@ -29,6 +29,8 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.data.util.SortedList;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
@@ -144,7 +146,9 @@ public class Complementary44Printer {
 		
 		String tcCode = null;
 		if (ezData.paymentMode.equals(XMLExporter.TIERS_GARANT)) {
-			tcCode = TarmedRequirements.getTCCode(rnSteller);
+			tcCode = TarmedRequirements
+				.getTCCode(CoreModelServiceHolder.get().load(rnSteller.getId(), IContact.class)
+					.orElse(null));
 		} else if (ezData.paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			tcCode = "01";
 		}

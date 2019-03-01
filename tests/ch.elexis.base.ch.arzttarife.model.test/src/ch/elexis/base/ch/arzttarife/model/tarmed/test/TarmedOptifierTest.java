@@ -32,6 +32,7 @@ import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.types.Gender;
@@ -530,16 +531,14 @@ public class TarmedOptifierTest {
 		assertFalse(result.isOK());
 		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
 		
-		optifier.putContext(TarmedConstants.TarmedLeistung.SIDE,
-			TarmedConstants.TarmedLeistung.SIDE_L);
+		optifier.putContext(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
 		result = optifier.add(
 			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", LocalDate.now(), LAW),
 			konsGriss);
 		assertFalse(result.isOK());
 		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
 		
-		optifier.putContext(TarmedConstants.TarmedLeistung.SIDE,
-			TarmedConstants.TarmedLeistung.SIDE_R);
+		optifier.putContext(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
 		result = optifier.add(
 			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", LocalDate.now(), LAW),
 			konsGriss);
@@ -573,8 +572,8 @@ public class TarmedOptifierTest {
 			sides.add(TarmedLeistung.getSide(verrechnet));
 		}
 		assertEquals(2, sides.size());
-		assertTrue(sides.contains(TarmedConstants.TarmedLeistung.LEFT));
-		assertTrue(sides.contains(TarmedConstants.TarmedLeistung.RIGHT));
+		assertTrue(sides.contains(Constants.LEFT));
+		assertTrue(sides.contains(Constants.RIGHT));
 		
 		result = optifier.add(
 			(TarmedLeistung) TarmedLeistung.getFromCode("39.3408", LocalDate.now(), LAW),

@@ -214,13 +214,22 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_LEISTUNG__CHAPTER = ModelPackage.IBILLABLE_FEATURE_COUNT + 13;
 
 	/**
+	 * The feature id for the '<em><b>Nickname</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__NICKNAME = ModelPackage.IBILLABLE_FEATURE_COUNT + 14;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Leistung</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 14;
+	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 15;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}' class.
@@ -251,13 +260,31 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_EXTENSION__LIMITS = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Med Interpretation</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_EXTENSION__MED_INTERPRETATION = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Tech Interpretation</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_EXTENSION__TECH_INTERPRETATION = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Extension</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_EXTENSION_FEATURE_COUNT = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 2;
+	int ITARMED_EXTENSION_FEATURE_COUNT = ModelPackage.IDENTIFIABLE_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup <em>ITarmed Group</em>}' class.
@@ -406,13 +433,40 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_KUMULATION__LAW = 5;
 
 	/**
+	 * The feature id for the '<em><b>Master Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__MASTER_CODE = 6;
+
+	/**
+	 * The feature id for the '<em><b>Master Art</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__MASTER_ART = 7;
+
+	/**
+	 * The feature id for the '<em><b>Typ</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_KUMULATION__TYP = 8;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Kumulation</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_KUMULATION_FEATURE_COUNT = 6;
+	int ITARMED_KUMULATION_FEATURE_COUNT = 9;
 
 
 	/**
@@ -446,6 +500,26 @@ public interface TarmedPackage extends EPackage {
 	 */
 	int TARMED_EXCLUSION = 6;
 
+
+	/**
+	 * The meta object id for the '<em>Kumulation Art</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedKumulationArt()
+	 * @generated
+	 */
+	int TARMED_KUMULATION_ART = 7;
+
+	/**
+	 * The meta object id for the '<em>Kumulation Typ</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedKumulationTyp()
+	 * @generated
+	 */
+	int TARMED_KUMULATION_TYP = 8;
 
 	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung <em>ITarmed Leistung</em>}'.
@@ -612,6 +686,17 @@ public interface TarmedPackage extends EPackage {
 	EAttribute getITarmedLeistung_Chapter();
 
 	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getNickname <em>Nickname</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Nickname</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getNickname()
+	 * @see #getITarmedLeistung()
+	 * @generated
+	 */
+	EAttribute getITarmedLeistung_Nickname();
+
+	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -631,6 +716,28 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getITarmedExtension_Limits();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getMedInterpretation <em>Med Interpretation</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Med Interpretation</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getMedInterpretation()
+	 * @see #getITarmedExtension()
+	 * @generated
+	 */
+	EAttribute getITarmedExtension_MedInterpretation();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getTechInterpretation <em>Tech Interpretation</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Tech Interpretation</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getTechInterpretation()
+	 * @see #getITarmedExtension()
+	 * @generated
+	 */
+	EAttribute getITarmedExtension_TechInterpretation();
 
 	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup <em>ITarmed Group</em>}'.
@@ -785,6 +892,39 @@ public interface TarmedPackage extends EPackage {
 	EAttribute getITarmedKumulation_Law();
 
 	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getMasterCode <em>Master Code</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Master Code</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getMasterCode()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_MasterCode();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getMasterArt <em>Master Art</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Master Art</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getMasterArt()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_MasterArt();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getTyp <em>Typ</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Typ</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation#getTyp()
+	 * @see #getITarmedKumulation()
+	 * @generated
+	 */
+	EAttribute getITarmedKumulation_Typ();
+
+	/**
 	 * Returns the meta object for enum '{@link ch.elexis.base.ch.arzttarife.tarmed.MandantType <em>Mandant Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -815,6 +955,28 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getTarmedExclusion();
+
+	/**
+	 * Returns the meta object for data type '{@link ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt <em>Kumulation Art</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Kumulation Art</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt
+	 * @model instanceClass="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt"
+	 * @generated
+	 */
+	EDataType getTarmedKumulationArt();
+
+	/**
+	 * Returns the meta object for data type '{@link ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp <em>Kumulation Typ</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Kumulation Typ</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp
+	 * @model instanceClass="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp"
+	 * @generated
+	 */
+	EDataType getTarmedKumulationTyp();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -961,6 +1123,14 @@ public interface TarmedPackage extends EPackage {
 		EAttribute ITARMED_LEISTUNG__CHAPTER = eINSTANCE.getITarmedLeistung_Chapter();
 
 		/**
+		 * The meta object literal for the '<em><b>Nickname</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_LEISTUNG__NICKNAME = eINSTANCE.getITarmedLeistung_Nickname();
+
+		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -977,6 +1147,22 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ITARMED_EXTENSION__LIMITS = eINSTANCE.getITarmedExtension_Limits();
+
+		/**
+		 * The meta object literal for the '<em><b>Med Interpretation</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_EXTENSION__MED_INTERPRETATION = eINSTANCE.getITarmedExtension_MedInterpretation();
+
+		/**
+		 * The meta object literal for the '<em><b>Tech Interpretation</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_EXTENSION__TECH_INTERPRETATION = eINSTANCE.getITarmedExtension_TechInterpretation();
 
 		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup <em>ITarmed Group</em>}' class.
@@ -1095,6 +1281,30 @@ public interface TarmedPackage extends EPackage {
 		EAttribute ITARMED_KUMULATION__LAW = eINSTANCE.getITarmedKumulation_Law();
 
 		/**
+		 * The meta object literal for the '<em><b>Master Code</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__MASTER_CODE = eINSTANCE.getITarmedKumulation_MasterCode();
+
+		/**
+		 * The meta object literal for the '<em><b>Master Art</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__MASTER_ART = eINSTANCE.getITarmedKumulation_MasterArt();
+
+		/**
+		 * The meta object literal for the '<em><b>Typ</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_KUMULATION__TYP = eINSTANCE.getITarmedKumulation_Typ();
+
+		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.MandantType <em>Mandant Type</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1123,6 +1333,26 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType TARMED_EXCLUSION = eINSTANCE.getTarmedExclusion();
+
+		/**
+		 * The meta object literal for the '<em>Kumulation Art</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedKumulationArt()
+		 * @generated
+		 */
+		EDataType TARMED_KUMULATION_ART = eINSTANCE.getTarmedKumulationArt();
+
+		/**
+		 * The meta object literal for the '<em>Kumulation Typ</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp
+		 * @see ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl#getTarmedKumulationTyp()
+		 * @generated
+		 */
+		EDataType TARMED_KUMULATION_TYP = eINSTANCE.getTarmedKumulationTyp();
 
 	}
 

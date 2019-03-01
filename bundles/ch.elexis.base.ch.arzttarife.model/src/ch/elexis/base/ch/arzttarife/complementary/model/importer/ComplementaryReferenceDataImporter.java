@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import au.com.bytecode.opencsv.CSVReader;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
+import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
@@ -57,6 +60,7 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 			
 			updateIndexForLang();
 			
+			List<Object> imported = new ArrayList<>();
 			String[] line = reader.readNext();
 			while ((line = reader.readNext()) != null) {
 				if (line.length < validto_index + 1) {
@@ -79,9 +83,10 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 					complementary.setDescription(line[description_index]);
 					complementary.setValidFrom(validFrom);
 					complementary.setValidTo(validTo);
-					
+					imported.add(complementary);
 				}
 			}
+			EntityUtil.save(imported);
 			monitor.done();
 			return Status.OK_STATUS;
 		} catch (IOException uee) {

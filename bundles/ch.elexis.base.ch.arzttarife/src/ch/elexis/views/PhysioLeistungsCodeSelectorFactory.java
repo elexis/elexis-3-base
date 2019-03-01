@@ -10,82 +10,93 @@
  *******************************************************************************/
 package ch.elexis.views;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
-import ch.elexis.core.ui.actions.FlatDataLoader;
-import ch.elexis.core.ui.actions.PersistentObjectLoader;
+import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
+import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.PhysioLeistung;
-import ch.elexis.data.Query;
-import ch.rgw.tools.IFilter;
-import ch.rgw.tools.TimeTool;
 
 public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
-	private Query<PhysioLeistung> qbe;
 	private ViewerConfigurer vc;
-	private UpdateDateEventListener updateListener;
 	
-	public PhysioLeistungsCodeSelectorFactory(){
-		this.updateListener = new UpdateDateEventListener();
-		ElexisEventDispatcher.getInstance().addListeners(updateListener);
+	@Inject
+	public void selectedEncounter(@Optional IEncounter encounter){
+		if (vc != null && vc.getControlFieldProvider() != null) {
+			vc.getControlFieldProvider().fireChangedEvent();
+		}
 	}
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		FieldDescriptor<?>[] fd =
 			new FieldDescriptor<?>[] {
-				new FieldDescriptor<PhysioLeistung>("Ziffer", "Ziffer", null),
-				new FieldDescriptor<PhysioLeistung>("Text", "Text", null),
+				new FieldDescriptor<IPhysioLeistung>("Ziffer", "ziffer", null),
+				new FieldDescriptor<IPhysioLeistung>("Text", "titel", null),
 			};
-		qbe = new Query<PhysioLeistung>(PhysioLeistung.class);
-		qbe.addPostQueryFilter(new IFilter() {
-			
-			private TimeTool validFrom = new TimeTool();
-			private TimeTool validTo = new TimeTool();
-			
-			public boolean select(Object toTest){
-				if (toTest instanceof PhysioLeistung) {
-					PhysioLeistung physio = (PhysioLeistung) toTest;
-					if(physio.getId().equals("VERSION")) {
-						return false;
-					}
-					Konsultation selectedKons =
-						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-					if (selectedKons != null) {
-						TimeTool validDate = new TimeTool(selectedKons.getDatum());
-						validTo.set(physio.get(PhysioLeistung.FLD_BIS));
-						if(validDate.isBefore(validTo)) {
-							validFrom.set(physio.get(PhysioLeistung.FLD_VON));
-							return validDate.isAfterOrEqual(validFrom);
-						} else {
-							return false;
-						}
-					} else {
-						return true;
-					}
-				}
-				return false;
-			}
-		});
-		PersistentObjectLoader fdl = new FlatDataLoader(cv, qbe);
 		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
 		vc =
-			new ViewerConfigurer(fdl, new DefaultLabelProvider(), slp,
+			new ViewerConfigurer(new PhysioContentProvider(cv, slp), new DefaultLabelProvider(),
+				slp,
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		return vc;
 		
+	}
+	
+	private class PhysioContentProvider extends CommonViewerContentProvider {
+		
+		private ControlFieldProvider controlFieldProvider;
+		
+		public PhysioContentProvider(CommonViewer commonViewer,
+			ControlFieldProvider controlFieldProvider){
+			super(commonViewer);
+			this.controlFieldProvider = controlFieldProvider;
+		}
+		
+		@Override
+		public Object[] getElements(Object inputElement){
+			IQuery<?> query = getBaseQuery();
+			
+			java.util.Optional<IEncounter> encounter = ContextServiceHolder.get().getTyped(IEncounter.class);
+			encounter.ifPresent(e -> {
+				query.and("validFrom", COMPARATOR.LESS_OR_EQUAL, e.getDate());
+				query.and("validUntil", COMPARATOR.GREATER_OR_EQUAL, e.getDate());
+			});
+			
+			// apply filters from control field provider
+			controlFieldProvider.setQuery(query);
+			applyQueryFilters(query);
+			query.orderBy("ziffer", ORDER.ASC);
+			List<?> elements = query.execute();
+			
+			return elements.toArray(new Object[elements.size()]);
+		}
+		
+		@Override
+		protected IQuery<?> getBaseQuery(){
+			IQuery<IPhysioLeistung> query =
+				ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class);
+			query.and("id", COMPARATOR.NOT_EQUALS, "VERSION");
+			return query;
+		}
 	}
 	
 	@Override
@@ -96,30 +107,11 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 	
 	@Override
 	public String getCodeSystemName(){
-		return PhysioLeistung.CODESYSTEMNAME;
+		return "Physiotherapie";
 	}
 	
 	@Override
-	public Class<? extends PersistentObject> getElementClass(){
-		return PhysioLeistung.class;
-	}
-	
-	@Override
-	public PersistentObject findElement(String code){
-		String id = new Query<PhysioLeistung>(PhysioLeistung.class).findSingle("Ziffer", "=", code);
-		return PhysioLeistung.load(id);
-	}
-	
-	private class UpdateDateEventListener extends ElexisEventListenerImpl {
-		public UpdateDateEventListener(){
-			super(Konsultation.class, ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-		}
-		
-		@Override
-		public void catchElexisEvent(ElexisEvent ev){
-			if (vc != null && vc.getControlFieldProvider() != null) {
-				vc.getControlFieldProvider().fireChangedEvent();
-			}
-		}
+	public Class<?> getElementClass(){
+		return IPhysioLeistung.class;
 	}
 }

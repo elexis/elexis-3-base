@@ -10,61 +10,70 @@
  ******************************************************************************/
 package ch.elexis.views;
 
-import org.eclipse.jface.viewers.IContentProvider;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
+import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.TarmedLeistung;
-import ch.rgw.tools.TimeTool;
 
 public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
+	private static FieldDescriptor<?>[] fields = {
+		new FieldDescriptor<ITarmedLeistung>("Ziffer", "code_", Typ.STRING, null),
+		new FieldDescriptor<ITarmedLeistung>("Text", "tx255", Typ.STRING, null)
+	};
+	
 	private CommonViewer commonViewer;
 	private StructuredViewer viewer;
 	
 	private TarmedLawFilter lawFilter = new TarmedLawFilter();
 	private TarmedValidDateFilter validDateFilter = new TarmedValidDateFilter();
-	private FilterKonsultationListener konsFilter =
-		new FilterKonsultationListener(Konsultation.class);
 	
-	private Konsultation previousKons;
-	private Fall previousFall;
+	private IEncounter previousKons;
+	private ICoverage previousFall;
 	private boolean dirty;
 	
-	public TarmedSelectorPanelProvider(CommonViewer cv,
-		FieldDescriptor<? extends PersistentObject>[] fields, boolean bExlusive){
-		super(fields, bExlusive);
-		commonViewer = cv;
+	public TarmedSelectorPanelProvider(CommonViewer viewer){
+		super(fields, true);
+		commonViewer = viewer;
+		CoreUiUtil.injectServicesWithContext(this);
+	}
+	
+	@Inject
+	public void selectedEncounter(@Optional IEncounter encounter){
+		if (encounter != null) {
+			updateLawFilter(encounter);
+			updateValidFilter(encounter);
+			updateDirty(encounter);
+		} else {
+			// clear filters
+			lawFilter.setLaw(null);
+			validDateFilter.setValidDate(null);
+			updateDirty(null);
+		}
 	}
 	
 	@Override
 	public void setFocus(){
 		super.setFocus();
 		if (viewer == null) {
-			Konsultation selectedKons =
-				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			
+			java.util.Optional<IEncounter> selectedEncounter =
+				ContextServiceHolder.get().getTyped(IEncounter.class);
 			viewer = commonViewer.getViewerWidget();
-			IContentProvider contentProvider = viewer.getContentProvider();
-			if (contentProvider instanceof TarmedCodeSelectorContentProvider) {
-				if (selectedKons != null) {
-					updateLawFilter(selectedKons);
-				}
-				viewer.addFilter(lawFilter);
-			}
-			if (selectedKons != null) {
-				updateValidFilter(selectedKons);
-			}
+			selectedEncounter.ifPresent(encounter -> updateLawFilter(encounter));
+			viewer.addFilter(lawFilter);
+			selectedEncounter.ifPresent(encounter -> updateValidFilter(encounter));
 			viewer.addFilter(validDateFilter);
-			ElexisEventDispatcher.getInstance().addListeners(konsFilter);
 		}
 		refreshViewer();
 	}
@@ -79,62 +88,30 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 		}
 	}
 	
-	private void updateValidFilter(Konsultation kons){
-		validDateFilter.setValidDate(new TimeTool(kons.getDatum()));
+	private void updateValidFilter(IEncounter encounter){
+		validDateFilter.setValidDate(encounter.getDate());
 	}
 	
-	private void updateLawFilter(Konsultation kons){
-		Fall fall = kons.getFall();
+	private void updateLawFilter(IEncounter encounter){
+		ICoverage coverage = encounter.getCoverage();
 		String law = "";
-		if (fall != null) {
-			String konsLaw = fall.getConfiguredBillingSystemLaw().name();
-			if (TarmedLeistung.isAvailableLaw(konsLaw)) {
+		if (coverage != null) {
+			String konsLaw = coverage.getBillingSystem().getLaw().name();
+			if (ArzttarifeUtil.isAvailableLaw(konsLaw)) {
 				law = konsLaw;
 			}
 		}
 		lawFilter.setLaw(law);
 	}
 	
-	private void updateDirty(Konsultation kons){
-		if (kons != previousKons) {
+	private void updateDirty(IEncounter encounter){
+		if (encounter != previousKons) {
 			dirty = true;
-			previousKons = kons;
+			previousKons = encounter;
 		}
-		if (kons != null && kons.getFall() != previousFall) {
+		if (encounter != null && encounter.getCoverage() != previousFall) {
 			dirty = true;
-			previousFall = kons.getFall();
-		}
-	}
-	
-	private class FilterKonsultationListener extends ElexisUiEventListenerImpl {
-		
-		public FilterKonsultationListener(Class<?> clazz){
-			super(clazz,
-				ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED
-					| ElexisEvent.EVENT_LOCK_AQUIRED | ElexisEvent.EVENT_LOCK_RELEASED
-					| ElexisEvent.EVENT_UPDATE);
-		}
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			Konsultation selectedKons =
-				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			if (selectedKons != null) {
-				IContentProvider contentProvider = viewer.getContentProvider();
-				if (contentProvider instanceof TarmedCodeSelectorContentProvider) {
-					updateLawFilter(selectedKons);
-				}
-				updateValidFilter(selectedKons);
-				updateDirty(selectedKons);
-			} else {
-				// clear filters
-				IContentProvider contentProvider = viewer.getContentProvider();
-				if (contentProvider instanceof TarmedCodeSelectorContentProvider) {
-					lawFilter.setLaw(null);
-				}
-				validDateFilter.setValidDate(null);
-				updateDirty(null);
-			}
+			previousFall = encounter.getCoverage();
 		}
 	}
 	

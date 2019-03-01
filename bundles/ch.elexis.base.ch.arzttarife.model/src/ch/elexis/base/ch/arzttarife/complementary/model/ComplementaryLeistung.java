@@ -74,4 +74,23 @@ public class ComplementaryLeistung
 		getEntity().setChapter(value);
 	}
 	
+	@Override
+	public int getFixedValue(){
+		return getEntity().getFixedValue();
+	}
+	
+	@Override
+	public void setFixedValue(int value){
+		getEntity().setFixedValue(value);
+	}
+	
+	@Override
+	public boolean isFixedValueSet(){
+		return getFixedValue() != 0;
+	}
+	
+	@Override
+	public String getLabel(){
+		return "(" + getCode() + ") " + getText();
+	}
 }

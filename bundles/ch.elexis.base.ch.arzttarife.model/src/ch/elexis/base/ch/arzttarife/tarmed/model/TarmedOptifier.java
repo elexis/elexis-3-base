@@ -30,6 +30,7 @@ import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation.LimitationUnit;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedLeistungAge;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
@@ -46,6 +47,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.builder.IBilledBuilder;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IConfigService;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
@@ -235,7 +237,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			newVerrechnet = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons).buildAndSave();
 			// make sure side is initialized
 			if (tc.requiresSide()) {
-				newVerrechnet.setExtInfo(ch.elexis.core.jpa.entities.TarmedLeistung.SIDE, newVerrechnetSide);
+				newVerrechnet.setExtInfo(Constants.FLD_EXT_SIDE, newVerrechnetSide);
 			}
 			// Exclusionen
 			if (bOptify) {
@@ -867,8 +869,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		
 		for (IBilled v : lst) {
 			if (isInstance(v, code)) {
-				String side = (String) v.getExtInfo(ch.elexis.core.jpa.entities.TarmedLeistung.SIDE);
-				if (side.equals(ch.elexis.core.jpa.entities.TarmedLeistung.SIDE_L)) {
+				String side = (String) v.getExtInfo(Constants.FLD_EXT_SIDE);
+				if (side.equals(Constants.SIDE_L)) {
 					countSideLeft += v.getAmount();
 					leftVerrechnet = v;
 				} else {
@@ -878,12 +880,12 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			}
 		}
 		// if side is provided by context use that side
-		if (isContext(ch.elexis.core.jpa.entities.TarmedLeistung.SIDE)) {
-			String side = (String) getContextValue(ch.elexis.core.jpa.entities.TarmedLeistung.SIDE);
-			if (ch.elexis.core.jpa.entities.TarmedLeistung.SIDE_L.equals(side) && countSideLeft > 0) {
+		if (isContext(Constants.FLD_EXT_SIDE)) {
+			String side = (String) getContextValue(Constants.FLD_EXT_SIDE);
+			if (Constants.SIDE_L.equals(side) && countSideLeft > 0) {
 				newVerrechnet = leftVerrechnet;
 				newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
-			} else if (ch.elexis.core.jpa.entities.TarmedLeistung.SIDE_R.equals(side) && countSideRight > 0) {
+			} else if (Constants.SIDE_R.equals(side) && countSideRight > 0) {
 				newVerrechnet = rightVerrechnet;
 				newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
 			}
@@ -900,10 +902,10 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
 				saveBilled();
 			} else if ((countSideLeft > countSideRight) && rightVerrechnet == null) {
-				return ch.elexis.core.jpa.entities.TarmedLeistung.SIDE_R;
+				return Constants.SIDE_R;
 			}
 		}
-		return ch.elexis.core.jpa.entities.TarmedLeistung.SIDE_L;
+		return Constants.SIDE_L;
 	}
 	
 	/**
@@ -947,8 +949,10 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				// exclude only if side matches
 				if (tarmedExclusion.isValidSide() && tarmedCodeVerrechnet != null
 					&& tarmedVerrechnet != null) {
-					String tarmedCodeSide = (String) tarmedCodeVerrechnet.getExtInfo(ch.elexis.core.jpa.entities.TarmedLeistung.SIDE);
-					String tarmedSide = (String) tarmedVerrechnet.getExtInfo(ch.elexis.core.jpa.entities.TarmedLeistung.SIDE);
+					String tarmedCodeSide =
+						(String) tarmedCodeVerrechnet.getExtInfo(Constants.FLD_EXT_SIDE);
+					String tarmedSide =
+						(String) tarmedVerrechnet.getExtInfo(Constants.FLD_EXT_SIDE);
 					if (tarmedSide != null && tarmedCodeSide != null) {
 						if (tarmedSide.equals(tarmedCodeSide)) {
 							return new Result<IBilled>(Result.SEVERITY.WARNING, EXKLUSIONSIDE,
@@ -991,7 +995,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				continue;
 			}
 			List<TarmedExclusive> exclusives = TarmedKumulation.getExclusives(blockName,
-				TarmedKumulationType.BLOCK, kons.getDate(), tarmed.getLaw());
+				TarmedKumulationArt.BLOCK, kons.getDate(), tarmed.getLaw());
 			// currently only test blocks exclusives, exclude hierarchy matches
 			if (canHandleAllExculives(exclusives)
 				&& !isMatchingHierarchy(tarmedCode, tarmed, kons.getDate())
@@ -1038,9 +1042,9 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	 */
 	private boolean canHandleAllExculives(List<TarmedExclusive> exclusives){
 		for (TarmedExclusive tarmedExclusive : exclusives) {
-			if (tarmedExclusive.getSlaveType() != TarmedKumulationType.BLOCK
-				&& tarmedExclusive.getSlaveType() != TarmedKumulationType.CHAPTER
-				&& tarmedExclusive.getSlaveType() != TarmedKumulationType.SERVICE) {
+			if (tarmedExclusive.getSlaveType() != TarmedKumulationArt.BLOCK
+				&& tarmedExclusive.getSlaveType() != TarmedKumulationArt.CHAPTER
+				&& tarmedExclusive.getSlaveType() != TarmedKumulationArt.SERVICE) {
 				return false;
 			}
 		}

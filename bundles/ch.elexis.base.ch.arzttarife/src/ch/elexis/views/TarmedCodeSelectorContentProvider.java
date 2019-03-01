@@ -18,23 +18,24 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Display;
 
+import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
-import ch.elexis.data.Query;
-import ch.elexis.data.TarmedLeistung;
 
 public class TarmedCodeSelectorContentProvider
 		implements ICommonViewerContentProvider, ITreeContentProvider {
 	
-	private Query<TarmedLeistung> childrenQuery;
-	private List<TarmedLeistung> roots;
+	private List<ITarmedLeistung> roots;
 	
 	private CommonViewer commonViewer;
 	
 	private boolean isFiltered;
 	
-	private Query<TarmedLeistung> leafsQuery;
-	private HashMap<String, List<TarmedLeistung>> filteredLeafs;
+	private HashMap<String, List<ITarmedLeistung>> filteredLeafs;
 	
 	private RefreshExecutor refreshExecutor;
 	
@@ -44,16 +45,6 @@ public class TarmedCodeSelectorContentProvider
 	public TarmedCodeSelectorContentProvider(CommonViewer commonViewer){
 		this.commonViewer = commonViewer;
 		
-		childrenQuery =
-			new Query<>(TarmedLeistung.class, null, null, TarmedLeistung.TABLENAME, new String[] {
-				TarmedLeistung.FLD_GUELTIG_VON, TarmedLeistung.FLD_GUELTIG_BIS,
-				TarmedLeistung.FLD_LAW
-			});
-		leafsQuery =
-			new Query<>(TarmedLeistung.class, null, null, TarmedLeistung.TABLENAME, new String[] {
-				TarmedLeistung.FLD_GUELTIG_VON, TarmedLeistung.FLD_GUELTIG_BIS,
-				TarmedLeistung.FLD_LAW
-			});
 		filteredLeafs = new HashMap<>();
 		
 		refreshExecutor = new RefreshExecutor();
@@ -86,20 +77,21 @@ public class TarmedCodeSelectorContentProvider
 	private void refreshLeafs(String queryZiffer, String queryText){
 		filteredLeafs.clear();
 		// prepare query
-		leafsQuery.clear();
+		IQuery<ITarmedLeistung> leafsQuery =
+			ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
 		if (queryZiffer != null && queryZiffer.length() > 2) {
-			leafsQuery.add(TarmedLeistung.FLD_CODE, Query.LIKE, queryZiffer + "%");
+			leafsQuery.and("code_", COMPARATOR.LIKE, queryZiffer + "%");
 		}
 		if (queryText != null && queryText.length() > 2) {
-			leafsQuery.add(TarmedLeistung.FLD_TEXT, Query.LIKE, "%" + queryText + "%");
+			leafsQuery.and("tx255", COMPARATOR.LIKE, "%" + queryText + "%");
 		}
-		leafsQuery.add(TarmedLeistung.FLD_ISCHAPTER, Query.EQUALS, "0");
-		leafsQuery.orderBy(false, TarmedLeistung.FLD_CODE);
+		leafsQuery.and("isChapter", COMPARATOR.EQUALS, "0");
+		leafsQuery.orderBy("code_", ORDER.ASC);
 		// execute query and populate filtered leafs map
-		List<TarmedLeistung> leafs = leafsQuery.execute();
-		for (TarmedLeistung tarmedLeistung : leafs) {
-			String parentId = tarmedLeistung.getParent();
-			List<TarmedLeistung> list = filteredLeafs.get(parentId);
+		List<ITarmedLeistung> leafs = leafsQuery.execute();
+		for (ITarmedLeistung tarmedLeistung : leafs) {
+			String parentId = tarmedLeistung.getParent().getId();
+			List<ITarmedLeistung> list = filteredLeafs.get(parentId);
 			if (list == null) {
 				list = new ArrayList<>();
 			}
@@ -141,24 +133,24 @@ public class TarmedCodeSelectorContentProvider
 		if (roots == null) {
 			roots = getRoots();
 		}
-		List<TarmedLeistung> ret = roots;
+		List<ITarmedLeistung> ret = roots;
 		if (isFiltered) {
 			ret = purgeRoots(ret);
 		}
 		return ret.toArray();
 	}
 	
-	private List<TarmedLeistung> getRoots(){
-		Query<TarmedLeistung> rootQuery = new Query<>(TarmedLeistung.class);
-		rootQuery.clear();
-		rootQuery.add(TarmedLeistung.FLD_PARENT, Query.EQUALS, "NIL");
-		rootQuery.orderBy(false, TarmedLeistung.FLD_CODE);
+	private List<ITarmedLeistung> getRoots(){
+		IQuery<ITarmedLeistung> rootQuery =
+			ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
+		rootQuery.and("parent", COMPARATOR.EQUALS, "NIL");
+		rootQuery.orderBy("code_", ORDER.ASC);
 		return rootQuery.execute();
 	}
 	
-	private List<TarmedLeistung> purgeRoots(List<TarmedLeistung> roots){
-		ArrayList<TarmedLeistung> ret = new ArrayList<>();
-		for (TarmedLeistung root : roots) {
+	private List<ITarmedLeistung> purgeRoots(List<ITarmedLeistung> roots){
+		ArrayList<ITarmedLeistung> ret = new ArrayList<>();
+		for (ITarmedLeistung root : roots) {
 			if (currentZiffer != null && currentZiffer.length() > 2) {
 				if (root.getCode().equals(currentZiffer.substring(0, 2))) {
 					ret.add(root);
@@ -174,12 +166,13 @@ public class TarmedCodeSelectorContentProvider
 	
 	@Override
 	public Object[] getChildren(Object parentElement){
-		if (parentElement instanceof TarmedLeistung) {
-			TarmedLeistung parentLeistung = (TarmedLeistung) parentElement;
+		if (parentElement instanceof ITarmedLeistung) {
+			ITarmedLeistung parentLeistung = (ITarmedLeistung) parentElement;
 			if (!isFiltered) {
-				childrenQuery.clear();
-				childrenQuery.add(TarmedLeistung.FLD_PARENT, Query.EQUALS, parentLeistung.getId());
-				childrenQuery.orderBy(false, TarmedLeistung.FLD_CODE);
+				IQuery<ITarmedLeistung> childrenQuery =
+					ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
+				childrenQuery.and("parent", COMPARATOR.EQUALS, parentLeistung.getId());
+				childrenQuery.orderBy("code_", ORDER.ASC);
 				return childrenQuery.execute().toArray();
 			} else {
 				if (subChaptersHaveChildren(parentLeistung)) {
@@ -190,9 +183,9 @@ public class TarmedCodeSelectorContentProvider
 		return null;
 	}
 	
-	private boolean subChaptersHaveChildren(TarmedLeistung parentLeistung){
-		List<TarmedLeistung> children = getFilteredChapterChildren(parentLeistung);
-		for (TarmedLeistung tarmedLeistung : children) {
+	private boolean subChaptersHaveChildren(ITarmedLeistung parentLeistung){
+		List<ITarmedLeistung> children = getFilteredChapterChildren(parentLeistung);
+		for (ITarmedLeistung tarmedLeistung : children) {
 			if (tarmedLeistung.isChapter()) {
 				if (subChaptersHaveChildren(tarmedLeistung)) {
 					return true;
@@ -206,50 +199,52 @@ public class TarmedCodeSelectorContentProvider
 	
 	@Override
 	public Object getParent(Object element){
-		if (element instanceof TarmedLeistung) {
-			TarmedLeistung leistung = (TarmedLeistung) element;
-			return TarmedLeistung.load(leistung.get(TarmedLeistung.FLD_PARENT));
+		if (element instanceof ITarmedLeistung) {
+			ITarmedLeistung leistung = (ITarmedLeistung) element;
+			return leistung.getParent();
 		}
 		return null;
 	}
 	
 	@Override
 	public boolean hasChildren(Object parentElement){
-		if (parentElement instanceof TarmedLeistung) {
-			TarmedLeistung parentLeistung = (TarmedLeistung) parentElement;
+		if (parentElement instanceof ITarmedLeistung) {
+			ITarmedLeistung parentLeistung = (ITarmedLeistung) parentElement;
 			if (!isFiltered) {
-				childrenQuery.clear();
-				childrenQuery.add(TarmedLeistung.FLD_PARENT, Query.EQUALS, parentLeistung.getId());
+				IQuery<ITarmedLeistung> childrenQuery =
+					ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
+				childrenQuery.and("parent", COMPARATOR.EQUALS, parentLeistung.getId());
 				return !childrenQuery.execute().isEmpty();
 			} else {
-				List<TarmedLeistung> filteredChildren = getFilteredChapterChildren(parentLeistung);
+				List<ITarmedLeistung> filteredChildren = getFilteredChapterChildren(parentLeistung);
 				return !filteredChildren.isEmpty();
 			}
 		}
 		return false;
 	}
 	
-	private List<TarmedLeistung> getFilteredChapterChildren(TarmedLeistung parentLeistung){
-		List<TarmedLeistung> ret = new ArrayList<>();
-		List<TarmedLeistung> chapterChildren = getChapterChildren(parentLeistung);
+	private List<ITarmedLeistung> getFilteredChapterChildren(ITarmedLeistung parentLeistung){
+		List<ITarmedLeistung> ret = new ArrayList<>();
+		List<ITarmedLeistung> chapterChildren = getChapterChildren(parentLeistung);
 		if (!chapterChildren.isEmpty()) {
-			for (TarmedLeistung chapter : chapterChildren) {
+			for (ITarmedLeistung chapter : chapterChildren) {
 				if (subChaptersHaveChildren(chapter)) {
 					ret.add(chapter);
 				}
 			}
 		}
-		List<TarmedLeistung> leafs = filteredLeafs.get(parentLeistung.getId());
+		List<ITarmedLeistung> leafs = filteredLeafs.get(parentLeistung.getId());
 		if (leafs != null && !leafs.isEmpty()) {
 			ret.addAll(leafs);
 		}
 		return ret;
 	}
 	
-	private List<TarmedLeistung> getChapterChildren(TarmedLeistung parentLeistung){
-		childrenQuery.clear();
-		childrenQuery.add(TarmedLeistung.FLD_PARENT, Query.EQUALS, parentLeistung.getId());
-		childrenQuery.add(TarmedLeistung.FLD_ISCHAPTER, Query.EQUALS, "1");
+	private List<ITarmedLeistung> getChapterChildren(ITarmedLeistung parentLeistung){
+		IQuery<ITarmedLeistung> childrenQuery =
+			ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
+		childrenQuery.and("parent", COMPARATOR.EQUALS, parentLeistung.getId());
+		childrenQuery.and("isChapter", COMPARATOR.EQUALS, "1");
 		return childrenQuery.execute();
 	}
 	

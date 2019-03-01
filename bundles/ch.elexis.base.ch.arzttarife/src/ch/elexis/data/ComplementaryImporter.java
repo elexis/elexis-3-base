@@ -2,14 +2,25 @@ package ch.elexis.data;
 
 import java.io.FileInputStream;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.core.interfaces.IReferenceDataImporter;
+import ch.elexis.core.services.IReferenceDataImporterService;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
-import ch.elexis.data.importer.ComplementaryReferenceDataImporter;
 
 public class ComplementaryImporter extends ImporterPage {
+	
+	@Inject
+	private IReferenceDataImporterService importerService;
+	
+	public ComplementaryImporter(){
+		CoreUiUtil.injectServices(this);
+	}
 	
 	@Override
 	public Composite createPage(Composite parent){
@@ -19,7 +30,8 @@ public class ComplementaryImporter extends ImporterPage {
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		
-		ComplementaryReferenceDataImporter importer = new ComplementaryReferenceDataImporter();
+		IReferenceDataImporter importer = importerService.getImporter("complementary")
+			.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
 		return importer.performImport(monitor, new FileInputStream(results[0]), null);
 	}
 	

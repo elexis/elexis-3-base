@@ -21,7 +21,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
-import ch.elexis.data.TarmedLeistung;
 
 public class TarmedPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -30,14 +29,14 @@ public class TarmedPrefs extends PreferencePage implements IWorkbenchPreferenceP
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPKVG);
-		new MultiplikatorEditor(ret, TarmedLeistung.class.getName() + "KVG"); //$NON-NLS-1$
+		new MultiplikatorEditor(ret, "ch.elexis.data.TarmedLeistung" + "KVG"); //$NON-NLS-1$
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
 		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPUVG);
-		new MultiplikatorEditor(ret, TarmedLeistung.class.getName() + "UVG"); //$NON-NLS-1$
+		new MultiplikatorEditor(ret, "ch.elexis.data.TarmedLeistung" + "UVG"); //$NON-NLS-1$
 		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPIV); 
-		new MultiplikatorEditor(ret, TarmedLeistung.class.getName() + "IV"); //$NON-NLS-1$
+		new MultiplikatorEditor(ret, "ch.elexis.data.TarmedLeistung" + "IV"); //$NON-NLS-1$
 		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPMV); 
-		new MultiplikatorEditor(ret, TarmedLeistung.class.getName() + "MV"); //$NON-NLS-1$
+		new MultiplikatorEditor(ret, "ch.elexis.data.TarmedLeistung" + "MV"); //$NON-NLS-1$
 		return ret;
 	}
 	

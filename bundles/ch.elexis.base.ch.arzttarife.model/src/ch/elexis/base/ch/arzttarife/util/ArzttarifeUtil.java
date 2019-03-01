@@ -1,14 +1,16 @@
 package ch.elexis.base.ch.arzttarife.util;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
-import ch.elexis.core.jpa.entities.TarmedLeistung;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
@@ -17,6 +19,7 @@ import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 
@@ -155,11 +158,11 @@ public class ArzttarifeUtil {
 	public static String getSide(IBilled billed){
 		IBillable billable = billed.getBillable();
 		if (billable instanceof ITarmedLeistung) {
-			String side = (String) billed.getExtInfo(TarmedLeistung.SIDE);
-			if (TarmedLeistung.SIDE_L.equalsIgnoreCase(side)) {
-				return TarmedLeistung.LEFT;
-			} else if (TarmedLeistung.SIDE_R.equalsIgnoreCase(side)) {
-				return TarmedLeistung.RIGHT;
+			String side = (String) billed.getExtInfo(Constants.FLD_EXT_SIDE);
+			if (Constants.SIDE_L.equalsIgnoreCase(side)) {
+				return Constants.LEFT;
+			} else if (Constants.SIDE_R.equalsIgnoreCase(side)) {
+				return Constants.RIGHT;
 			}
 		}
 		return "none";
@@ -175,8 +178,28 @@ public class ArzttarifeUtil {
 	public static boolean isObligation(IBilled billed){
 		IBillable billable = billed.getBillable();
 		if (billable instanceof ITarmedLeistung) {
-			String obli = (String) billed.getExtInfo(TarmedLeistung.PFLICHTLEISTUNG);
+			String obli = (String) billed.getExtInfo(Constants.FLD_EXT_PFLICHTLEISTUNG);
 			if ((obli == null) || (Boolean.parseBoolean(obli))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static List<String> availableLawsCache;
+	
+	public static List<String> getAvailableLaws(){
+		return ArzttarifeModelServiceHolder.get()
+			.getNamedQueryByName(String.class, ITarmedLeistung.class, "TarmedLeistungDistinctLaws")
+			.executeWithParameters(Collections.emptyMap());
+	}
+	
+	public static boolean isAvailableLaw(String law){
+		if (availableLawsCache == null) {
+			availableLawsCache = getAvailableLaws();
+		}
+		for (String available : availableLawsCache) {
+			if (available.equalsIgnoreCase(law)) {
 				return true;
 			}
 		}

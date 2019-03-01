@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusion;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusive;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedKumulation;
-import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedKumulationType;
 
 public class TarmedKumulationTest {
 	
@@ -23,10 +23,10 @@ public class TarmedKumulationTest {
 	@Test
 	public void testGetExclusionsMasterCodeMasterArtDate(){
 		List<TarmedExclusion> exclusions = TarmedKumulation.getExclusions("17.0010",
-			TarmedKumulationType.SERVICE, LocalDate.now(), null);
+			TarmedKumulationArt.SERVICE, LocalDate.now(), null);
 		assertEquals(10, exclusions.size());
 		
-		exclusions = TarmedKumulation.getExclusions("17.0010", TarmedKumulationType.SERVICE,
+		exclusions = TarmedKumulation.getExclusions("17.0010", TarmedKumulationArt.SERVICE,
 			LocalDate.now(), "KVG");
 		assertEquals(6, exclusions.size());
 	}
@@ -34,9 +34,9 @@ public class TarmedKumulationTest {
 	@Test
 	public void testGetExclusivesMasterCodeMasterArtDate(){
 		List<TarmedExclusive> exclusives = TarmedKumulation.getExclusives("00.1420",
-			TarmedKumulationType.SERVICE, LocalDate.now(), null);
+			TarmedKumulationArt.SERVICE, LocalDate.now(), null);
 		assertEquals(3, exclusives.size());
-		exclusives = TarmedKumulation.getExclusives("00.1420", TarmedKumulationType.SERVICE,
+		exclusives = TarmedKumulation.getExclusives("00.1420", TarmedKumulationArt.SERVICE,
 			LocalDate.now(), "KVG");
 		assertEquals(2, exclusives.size());
 	}

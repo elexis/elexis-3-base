@@ -7,12 +7,11 @@ import java.util.List;
 import org.jdom.Element;
 
 import ch.elexis.core.model.FallConstants;
-import ch.elexis.core.data.interfaces.IDiagnose;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Rechnung;
-import ch.rgw.tools.TimeTool;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IDiagnosisReference;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
 
 public class XMLExporterTreatment {
 	private static final String BY_CONTRACT = "by_contract"; //$NON-NLS-1$
@@ -21,7 +20,7 @@ public class XMLExporterTreatment {
 	private static final String ATTR_TYPE = "type"; //$NON-NLS-1$
 
 	private Element insuranceElement;
-	private List<IDiagnose> diagnoses;
+	List<IDiagnosisReference> invoiceDiagnosis;
 	
 	private XMLExporterTreatment(Element insuranceElement){
 		this.insuranceElement = insuranceElement;
@@ -31,32 +30,28 @@ public class XMLExporterTreatment {
 		return insuranceElement;
 	}
 	
-	public static XMLExporterTreatment buildTreatment(Rechnung rechnung, XMLExporter xmlExporter){
+	public static XMLExporterTreatment buildTreatment(IInvoice invoice, XMLExporter xmlExporter){
 		
-		Fall actFall = rechnung.getFall();
-		Mandant actMandant = rechnung.getMandant();
+		ICoverage actFall = invoice.getCoverage();
+		IMandator actMandant = invoice.getMandator();
 		
 		Element element = new Element("treatment", XMLExporter.nsinvoice);
-		element.setAttribute(
-			"date_begin", //$NON-NLS-1$
-			XMLExporterUtil.makeTarmedDatum(XMLExporterUtil.getFirstKonsDate(rechnung).toString(
-				TimeTool.DATE_GER)));
-		element.setAttribute(
-			"date_end", //$NON-NLS-1$
-			XMLExporterUtil.makeTarmedDatum(XMLExporterUtil.getLastKonsDate(rechnung).toString(
-				TimeTool.DATE_GER)));
-		element.setAttribute("canton", actMandant.getInfoString(XMLExporter.ta.KANTON)); //$NON-NLS-1$
-		element.setAttribute("reason", match_type(actFall.getGrund())); //$NON-NLS-1$
+		element.setAttribute("date_begin", //$NON-NLS-1$
+			XMLExporterUtil.makeTarmedDatum(invoice.getDateFrom()));
+		element.setAttribute("date_end", //$NON-NLS-1$
+			XMLExporterUtil.makeTarmedDatum(invoice.getDateTo()));
+		element.setAttribute("canton", (String) actMandant.getExtInfo(XMLExporter.ta.KANTON)); //$NON-NLS-1$
+		element.setAttribute("reason", match_type(actFall.getReason())); //$NON-NLS-1$
 		
-		List<IDiagnose> diagnosen = getDiagnosen(rechnung);
+		List<IDiagnosisReference> invoiceDiagnosis = getDiagnosen(invoice);
 		//diagnosis
-		for (IDiagnose diagnose : diagnosen) {
+		for (IDiagnosisReference invoiceDiagnose : invoiceDiagnosis) {
 			Element diagnosis = new Element("diagnosis", XMLExporter.nsinvoice); //$NON-NLS-1$
-			String diagnosisType = match_diag(diagnose.getCodeSystemName());
+			String diagnosisType = match_diag(invoiceDiagnose.getCodeSystemName());
 			diagnosis.setAttribute(ATTR_TYPE, diagnosisType); // 15510
-			String code = diagnose.getCode();
+			String code = invoiceDiagnose.getCode();
 			if (diagnosisType.equalsIgnoreCase(XMLExporter.FREETEXT)) {
-				diagnosis.setText(diagnose.getText());
+				diagnosis.setText(invoiceDiagnose.getText());
 			} else {
 				if (code.length() > 12) {
 					code = code.substring(0, 12);
@@ -67,20 +62,20 @@ public class XMLExporterTreatment {
 		}
 
 		XMLExporterTreatment ret = new XMLExporterTreatment(element);
-		ret.diagnoses = diagnosen;
+		ret.invoiceDiagnosis = invoiceDiagnosis;
 		
 		return ret;
 	}
 	
-	private static List<IDiagnose> getDiagnosen(Rechnung rechnung){
-		ArrayList<IDiagnose> ret = new ArrayList<IDiagnose>();
-		List<Konsultation> lb = rechnung.getKonsultationen();
-		for (Konsultation b : lb) {
-			List<IDiagnose> ld = b.getDiagnosen();
-			for (IDiagnose dg : ld) {
-				String dgc = dg.getCode();
+	private static List<IDiagnosisReference> getDiagnosen(IInvoice invoice){
+		ArrayList<IDiagnosisReference> ret = new ArrayList<IDiagnosisReference>();
+		List<IEncounter> encounters = invoice.getEncounters();
+		for (IEncounter encounter : encounters) {
+			List<IDiagnosisReference> encounterDiagnosis = encounter.getDiagnoses();
+			for (IDiagnosisReference encounterDiagnose : encounterDiagnosis) {
+				String dgc = encounterDiagnose.getCode();
 				if (dgc != null) {
-					ret.add(dg);
+					ret.add(encounterDiagnose);
 				}
 			}
 		}
@@ -128,10 +123,10 @@ public class XMLExporterTreatment {
 		return BY_CONTRACT;
 	}
 	
-	public List<IDiagnose> getDiagnoses(){
-		if (diagnoses == null) {
+	public List<IDiagnosisReference> getDiagnoses(){
+		if (invoiceDiagnosis == null) {
 			return Collections.emptyList();
 		}
-		return diagnoses;
+		return invoiceDiagnosis;
 	}
 }

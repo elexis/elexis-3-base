@@ -79,6 +79,10 @@ public class TarmedFactoryImpl extends EFactoryImpl implements TarmedFactory {
 				return createTarmedLimitationFromString(eDataType, initialValue);
 			case TarmedPackage.TARMED_EXCLUSION:
 				return createTarmedExclusionFromString(eDataType, initialValue);
+			case TarmedPackage.TARMED_KUMULATION_ART:
+				return createTarmedKumulationArtFromString(eDataType, initialValue);
+			case TarmedPackage.TARMED_KUMULATION_TYP:
+				return createTarmedKumulationTypFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -98,6 +102,10 @@ public class TarmedFactoryImpl extends EFactoryImpl implements TarmedFactory {
 				return convertTarmedLimitationToString(eDataType, instanceValue);
 			case TarmedPackage.TARMED_EXCLUSION:
 				return convertTarmedExclusionToString(eDataType, instanceValue);
+			case TarmedPackage.TARMED_KUMULATION_ART:
+				return convertTarmedKumulationArtToString(eDataType, instanceValue);
+			case TarmedPackage.TARMED_KUMULATION_TYP:
+				return convertTarmedKumulationTypToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -156,6 +164,42 @@ public class TarmedFactoryImpl extends EFactoryImpl implements TarmedFactory {
 	 * @generated
 	 */
 	public String convertTarmedExclusionToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TarmedKumulationArt createTarmedKumulationArtFromString(EDataType eDataType, String initialValue) {
+		return (TarmedKumulationArt)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertTarmedKumulationArtToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TarmedKumulationTyp createTarmedKumulationTypFromString(EDataType eDataType, String initialValue) {
+		return (TarmedKumulationTyp)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertTarmedKumulationTypToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

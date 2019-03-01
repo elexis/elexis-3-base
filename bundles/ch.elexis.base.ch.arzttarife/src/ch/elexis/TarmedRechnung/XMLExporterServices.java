@@ -11,35 +11,40 @@
  *******************************************************************************/
 package ch.elexis.TarmedRechnung;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.Hashtable;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
+import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
+import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
+import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.base.ch.labortarif.ILaborLeistung;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.core.model.article.IArticle;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICustomService;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.ch.BillingLaw;
-import ch.elexis.data.Artikel;
-import ch.elexis.data.Eigenleistung;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.LaborLeistung;
-import ch.elexis.data.PhysioLeistung;
-import ch.elexis.data.RFE;
-import ch.elexis.data.Rechnung;
-import ch.elexis.data.TarmedLeistung;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
 public class XMLExporterServices {
@@ -257,358 +262,368 @@ public class XMLExporterServices {
 		initialized = true;
 	}
 	
-	public static XMLExporterServices buildServices(Rechnung rechnung, VatRateSum vatSummer){
+	public static XMLExporterServices buildServices(IInvoice invoice, VatRateSum vatSummer){
 		XMLExporterServices ret =
 			new XMLExporterServices(new Element(ELEMENT_SERVICES, XMLExporter.nsinvoice));
-			
-		List<Konsultation> konsultationen = rechnung.getKonsultationen();
 		
-		// To make the validator happy, the attribute date_begin must duplicate
-		// exactly
-		// the date of the first billing position end date_end must duplicate
-		// exactly
-		// the date of the last billed consultation. If we have non-billed
-		// entries in
-		// the patient's record we must forget these for the sake of
-		// xml-confirmity
-		// so we use ttFirst and ttLast to check he the dates (instead of the
-		// begin end end
-		// dates that are stored in the bill
-		int recordNumber = 1;
-		String lastKonsDatum = null;
-		int session = 1;
-		for (Konsultation konsultation : konsultationen) {
-			List<Verrechnet> leistungen = konsultation.getLeistungen();
-			// konsultationen list is ordered by date, so we can just compare with previous
-			String konsDatum = konsultation.getDatum();
-			if (konsDatum.equals(lastKonsDatum)) {
-				session++;
-			} else {
-				lastKonsDatum = konsDatum;
-				session = 1;
-			}
+		if(invoice != null) {
+			List<IEncounter> encounters = invoice.getEncounters();
 			
-			TimeTool tt = new TimeTool(konsDatum);
-			String dateForTarmed = XMLExporterUtil.makeTarmedDatum(konsultation.getDatum());
-			
-			BillingLaw law = konsultation.getFall().getConfiguredBillingSystemLaw();
-			
-			boolean bRFE = false; // RFE already encoded
-			
-			for (Verrechnet verrechnet : leistungen) {
-				Element el;
-				double zahl = verrechnet.getZahl();
-				IVerrechenbar v = verrechnet.getVerrechenbar();
-				
-				if (v == null) {
-					logger.error(Messages.XMLExporter_ErroneusBill + rechnung.getNr()
-						+ " Null-Verrechenbar bei Kons " //$NON-NLS-1$
-						+ konsultation.getLabel());
-					continue;
+			// To make the validator happy, the attribute date_begin must duplicate
+			// exactly
+			// the date of the first billing position end date_end must duplicate
+			// exactly
+			// the date of the last billed consultation. If we have non-billed
+			// entries in
+			// the patient's record we must forget these for the sake of
+			// xml-confirmity
+			// so we use ttFirst and ttLast to check he the dates (instead of the
+			// begin end end
+			// dates that are stored in the bill
+			int recordNumber = 1;
+			LocalDate lastEncounterDate = null;
+			int session = 1;
+			for (IEncounter encounter : encounters) {
+				List<IBilled> encounterBilled = encounter.getBilled();
+				// konsultationen list is ordered by date, so we can just compare with previous
+				LocalDate encounterDate = encounter.getDate();
+				if (encounterDate.equals(lastEncounterDate)) {
+					session++;
+				} else {
+					lastEncounterDate = encounterDate;
+					session = 1;
 				}
-				if (v instanceof TarmedLeistung) {
-					TarmedLeistung tl = (TarmedLeistung) v;
-					double primaryScale = verrechnet.getPrimaryScaleFactor();
-					double secondaryScale = verrechnet.getSecondaryScaleFactor();
+				String dateForTarmed = XMLExporterUtil.makeTarmedDatum(encounterDate);
+				BillingLaw law = encounter.getCoverage().getBillingSystem().getLaw();
+				
+				boolean bRFE = false; // RFE already encoded
+				
+				for (IBilled billed : encounterBilled) {
+					Element el;
+					double amount = billed.getAmount();
+					IBillable billable = billed.getBillable();
 					
-					double tlTL, tlAL, mult;
-					mult = tl.getVKMultiplikator(tt, rechnung.getFall());
-					
-					tlAL = TarmedLeistung.getAL(verrechnet);
-					tlTL = TarmedLeistung.getTL(verrechnet);
-					// build monetary values of this TarmedLeistung
-					Money mAL = new Money(
-						(int) Math.round(tlAL * mult * zahl * primaryScale * secondaryScale));
-					Money mTL = new Money(
-						(int) Math.round(tlTL * mult * zahl * primaryScale * secondaryScale));
-					Money mAmountLocal = new Money((int) Math
-						.round((tlAL + tlTL) * mult * zahl * primaryScale * secondaryScale));
+					if (billable == null) {
+						logger.error(Messages.XMLExporter_ErroneusBill + invoice.getNumber()
+							+ " Null-Verrechenbar bei Kons " //$NON-NLS-1$
+							+ encounter.getLabel());
+						continue;
+					}
+					if (billable instanceof ITarmedLeistung) {
+						ITarmedLeistung tl = (ITarmedLeistung) billable;
+						double primaryScale = billed.getPrimaryScaleFactor();
+						double secondaryScale = billed.getSecondaryScaleFactor();
 						
-					// sum tax points and monetary value
-					ret.tpTarmedTL += tlTL * zahl;
-					ret.tpTarmedAL += tlAL * zahl;
-					
-					ret.sumTarmedAL += tlAL * mult * zahl * primaryScale * secondaryScale;
-					ret.sumTarmedTL += tlTL * mult * zahl * primaryScale * secondaryScale;
-					
-					ret.mTarmed.addCent(mAmountLocal.getCents());
-					
-					el = new Element(ELEMENT_RECORD_TARMED, XMLExporter.nsinvoice); // 22000
-					el.setAttribute(ATTR_TREATMENT, "ambulatory"); // 22050 //$NON-NLS-1$
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "001"); // 22060 //$NON-NLS-1$
-					Hashtable<String, String> ext = tl.loadExtension();
-					String bezug = ext.get("Bezug"); // 22360 //$NON-NLS-1$
-					if (StringTool.isNothing(bezug)) {
-						bezug = verrechnet.getDetail("Bezug");
-					}
-					if (!StringTool.isNothing(bezug)) {
-						el.setAttribute("ref_code", bezug); //$NON-NLS-1$
-					}
-					el.setAttribute(ATTR_EAN_PROVIDER,
-						TarmedRequirements.getEAN(konsultation.getMandant()));
-					el.setAttribute(ATTR_EAN_RESPONSIBLE,
-						XMLExporterUtil.getResponsibleEAN(konsultation));
-					el.setAttribute(ATTR_BILLING_ROLE, "both"); // 22410 //$NON-NLS-1$
-					el.setAttribute(ATTR_MEDICAL_ROLE, "self_employed"); // 22430 //$NON-NLS-1$
-					
-					el.setAttribute(ATTR_BODY_LOCATION, TarmedLeistung.getSide(verrechnet)); // 22450
-					
-					el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); // 22470
-					getALNotScaled(verrechnet).ifPresent(d -> {
-						el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(d / 100.0, 2)); // 22470
-					});
-					
-					el.setAttribute(ATTR_UNIT_FACTOR_MT, XMLTool.doubleToXmlDouble(mult, 2)); // 22480
-					// (strebt
-					// gegen
-					// 0)
-					el.setAttribute(ATTR_SCALE_FACTOR_MT,
-						XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22490
-					getALScalingFactor(verrechnet).ifPresent(f -> {
-						f = f * primaryScale;
-						el.setAttribute(ATTR_SCALE_FACTOR_MT, XMLTool.doubleToXmlDouble(f, 1)); // 22500
-					});
-					el.setAttribute(ATTR_EXTERNAL_FACTOR_MT,
-						XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22500
-					el.setAttribute(XMLExporter.ATTR_AMOUNT_MT, XMLTool.moneyToXmlDouble(mAL)); // 22510
-					
-					el.setAttribute(ATTR_UNIT_TT, XMLTool.doubleToXmlDouble(tlTL / 100.0, 2)); // 22520
-					el.setAttribute(ATTR_UNIT_FACTOR_TT, XMLTool.doubleToXmlDouble(mult, 2)); // 22530
-					el.setAttribute(ATTR_SCALE_FACTOR_TT,
-						XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22540
-					el.setAttribute(ATTR_EXTERNAL_FACTOR_TT,
-						XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22550
-					el.setAttribute(XMLExporter.ATTR_AMOUNT_TT, XMLTool.moneyToXmlDouble(mTL)); // 22560
-					el.setAttribute(XMLExporter.ATTR_AMOUNT,
-						XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
-					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 22590 //$NON-NLS-1$
-					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 22620
-					
-					if (TarmedLeistung.isObligation(verrechnet)) {
+						double tlTL, tlAL, mult;
+						mult = ArzttarifeUtil.getFactor(encounterDate, invoice.getCoverage());
+						
+						tlAL = ArzttarifeUtil.getAL(billed);
+						tlTL = ArzttarifeUtil.getTL(billed);
+						// build monetary values of this TarmedLeistung
+						Money mAL = new Money(
+							(int) Math.round(tlAL * mult * amount * primaryScale * secondaryScale));
+						Money mTL = new Money(
+							(int) Math.round(tlTL * mult * amount * primaryScale * secondaryScale));
+						Money mAmountLocal = new Money((int) Math
+							.round((tlAL + tlTL) * mult * amount * primaryScale * secondaryScale));
+						
+						// sum tax points and monetary value
+						ret.tpTarmedTL += tlTL * amount;
+						ret.tpTarmedAL += tlAL * amount;
+						
+						ret.sumTarmedAL += tlAL * mult * amount * primaryScale * secondaryScale;
+						ret.sumTarmedTL += tlTL * mult * amount * primaryScale * secondaryScale;
+						
+						ret.mTarmed.addCent(mAmountLocal.getCents());
+						
+						el = new Element(ELEMENT_RECORD_TARMED, XMLExporter.nsinvoice); // 22000
+						el.setAttribute(ATTR_TREATMENT, "ambulatory"); // 22050 //$NON-NLS-1$
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "001"); // 22060 //$NON-NLS-1$
+						String bezug = (String) tl.getExtension().getExtInfo("Bezug");// 22360 //$NON-NLS-1$
+						if (StringTool.isNothing(bezug)) {
+							bezug = (String) billed.getExtInfo("Bezug");
+						}
+						if (!StringTool.isNothing(bezug)) {
+							el.setAttribute("ref_code", bezug); //$NON-NLS-1$
+						}
+						el.setAttribute(ATTR_EAN_PROVIDER,
+							TarmedRequirements.getEAN(encounter.getMandator()));
+						el.setAttribute(ATTR_EAN_RESPONSIBLE,
+							XMLExporterUtil.getResponsibleEAN(encounter));
+						el.setAttribute(ATTR_BILLING_ROLE, "both"); // 22410 //$NON-NLS-1$
+						el.setAttribute(ATTR_MEDICAL_ROLE, "self_employed"); // 22430 //$NON-NLS-1$
+						
+						el.setAttribute(ATTR_BODY_LOCATION, ArzttarifeUtil.getSide(billed)); // 22450
+						
+						el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); // 22470
+						getALNotScaled(billed).ifPresent(d -> {
+							el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(d / 100.0, 2)); // 22470
+						});
+						
+						el.setAttribute(ATTR_UNIT_FACTOR_MT, XMLTool.doubleToXmlDouble(mult, 2)); // 22480
+						// (strebt
+						// gegen
+						// 0)
+						el.setAttribute(ATTR_SCALE_FACTOR_MT,
+							XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22490
+						getALScalingFactor(billed).ifPresent(f -> {
+							f = f * primaryScale;
+							el.setAttribute(ATTR_SCALE_FACTOR_MT, XMLTool.doubleToXmlDouble(f, 1)); // 22500
+						});
+						el.setAttribute(ATTR_EXTERNAL_FACTOR_MT,
+							XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22500
+						el.setAttribute(XMLExporter.ATTR_AMOUNT_MT, XMLTool.moneyToXmlDouble(mAL)); // 22510
+						
+						el.setAttribute(ATTR_UNIT_TT, XMLTool.doubleToXmlDouble(tlTL / 100.0, 2)); // 22520
+						el.setAttribute(ATTR_UNIT_FACTOR_TT, XMLTool.doubleToXmlDouble(mult, 2)); // 22530
+						el.setAttribute(ATTR_SCALE_FACTOR_TT,
+							XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22540
+						el.setAttribute(ATTR_EXTERNAL_FACTOR_TT,
+							XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22550
+						el.setAttribute(XMLExporter.ATTR_AMOUNT_TT, XMLTool.moneyToXmlDouble(mTL)); // 22560
+						el.setAttribute(XMLExporter.ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
+						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer); // 22590 //$NON-NLS-1$
+						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 22620
+						
+						if (ArzttarifeUtil.isObligation(billed)) {
+							el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
+							ret.mObligations.addMoney(mAmountLocal);
+						} else {
+							el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE); // 28630
+						}
+						
+						if (!bRFE) {
+							List<IReasonForEncounter> rfes =
+								getReasonsForEncounter(encounter);
+							if (rfes.size() > 0) {
+								StringBuilder sb = new StringBuilder();
+								for (IReasonForEncounter rfe : rfes) {
+									sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+								}
+								el.setAttribute(XMLExporter.ATTR_REMARK, sb.toString());
+							}
+							bRFE = true;
+						}
+						
+					} else if (billable instanceof ILaborLeistung) {
+						el = new Element(ELEMENT_RECORD_LAB, XMLExporter.nsinvoice); // 28000
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, billable.getCodeSystemCode());
+						el.setAttribute(ATTR_EAN_PROVIDER,
+							TarmedRequirements.getEAN(encounter.getMandator()));
+						el.setAttribute(ATTR_EAN_RESPONSIBLE,
+							XMLExporterUtil.getResponsibleEAN(encounter));
+						ILaborLeistung laborLeistung = (ILaborLeistung) billable;
+						double mult =
+							ArzttarifeUtil.getFactor(encounterDate, encounter.getCoverage());
+						Money preis = billed.getNetPrice();
+						double korr = preis.getCents() / mult;
+						el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
+						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
+						Money mAmountLocal = new Money(preis);
+						mAmountLocal.multiply(amount);
+						el.setAttribute(XMLExporter.ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
+						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer); // 28590
 						el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 						ret.mObligations.addMoney(mAmountLocal);
-					} else {
-						el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE); // 28630
-					}
-					
-					if (!bRFE) {
-						List<RFE> rfes = RFE.getRfeForKons(konsultation.getId());
-						if (rfes.size() > 0) {
-							StringBuilder sb = new StringBuilder();
-							for (RFE rfe : rfes) {
-								sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							el.setAttribute(XMLExporter.ATTR_REMARK, sb.toString());
+						
+						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
+						ret.mAnalysen.addMoney(mAmountLocal);
+					} else if ("Medikamente".equals(billable.getCodeSystemName()) //$NON-NLS-1$
+						|| "Medicals".equals(billable.getCodeSystemName()) //$NON-NLS-1$
+						|| "400".equals(billable.getCodeSystemCode()) //$NON-NLS-1$
+						|| "402".equals(billable.getCodeSystemCode())) {
+						el = new Element(ELEMENT_RECORD_DRUG, XMLExporter.nsinvoice);
+						IArticle art = (IArticle) billable;
+						double mult =
+							ArzttarifeUtil.getFactor(encounterDate, encounter.getCoverage());
+						Money preis = billed.getNetPrice();
+						Money mAmountLocal = new Money(preis);
+						// new as of 3/2011: Correct handling of package fractions
+						Money einzelpreis = billed.getPrice();
+						einzelpreis.multiply(billed.getPrimaryScaleFactor());
+						
+						double cnt = billed.getSecondaryScaleFactor();
+						if (cnt != 1.0) {
+							amount *= cnt;
+						} else {
+							mAmountLocal.multiply(amount);
 						}
-						bRFE = true;
-					}
-					
-				} else if (v instanceof Labor2009Tarif) {
-					el = new Element(ELEMENT_RECORD_LAB, XMLExporter.nsinvoice); // 28000
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
-					el.setAttribute(ATTR_EAN_PROVIDER,
-						TarmedRequirements.getEAN(konsultation.getMandant()));
-					el.setAttribute(ATTR_EAN_RESPONSIBLE,
-						XMLExporterUtil.getResponsibleEAN(konsultation));
-					Labor2009Tarif ll = (Labor2009Tarif) v;
-					double mult = ll.getFactor(tt, rechnung.getFall());
-					Money preis = verrechnet.getNettoPreis();
-					double korr = preis.getCents() / mult;
-					el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
-					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
-					Money mAmountLocal = new Money(preis);
-					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT,
-						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
-					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590
-					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
-					ret.mObligations.addMoney(mAmountLocal);
-					
-					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
-					ret.mAnalysen.addMoney(mAmountLocal);
-				} else if (v instanceof LaborLeistung) {
-					el = new Element(ELEMENT_RECORD_LAB, XMLExporter.nsinvoice); // 28000
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "316"); // 28060 //$NON-NLS-1$
-					LaborLeistung ll = (LaborLeistung) v;
-					double mult = ll.getFactor(tt, rechnung.getFall());
-					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
-					Money preis = verrechnet.getNettoPreis();
-					double korr = preis.getCents() / mult;
-					el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
-					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
-					Money mAmountLocal = new Money(preis);
-					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT,
-						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
-					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590 //$NON-NLS-1$
-					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
-					ret.mObligations.addMoney(mAmountLocal);
-					
-					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
-					ret.mAnalysen.addMoney(mAmountLocal);
-				} else if ("Medikamente".equals(v.getCodeSystemName()) //$NON-NLS-1$
-					|| "Medicals".equals(v.getCodeSystemName()) //$NON-NLS-1$
-					|| "400".equals(v.getCodeSystemCode()) //$NON-NLS-1$
-					|| "402".equals(v.getCodeSystemCode())) {
-					el = new Element(ELEMENT_RECORD_DRUG, XMLExporter.nsinvoice);
-					Artikel art = (Artikel) v;
-					double mult = art.getFactor(tt, rechnung.getFall());
-					Money preis = verrechnet.getNettoPreis();
-					Money mAmountLocal = new Money(preis);
-					// new as of 3/2011: Correct handling of package fractions
-					Money einzelpreis = verrechnet.getBruttoPreis();
-					einzelpreis.multiply(verrechnet.getPrimaryScaleFactor());
-					
-					double cnt = verrechnet.getSecondaryScaleFactor();
-					if (cnt != 1.0) {
-						zahl *= cnt;
-					} else {
-						mAmountLocal.multiply(zahl);
-					}
-					
-					// end corrections
-					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(einzelpreis));
-					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
-					if ("true".equals(verrechnet.getDetail(Verrechnet.INDICATED))) {
-						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "207");
-					} else {
-						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode());
-					}
-					if ("402".equals(v.getCodeSystemCode())) { // GTIN-basiert //$NON-NLS-1$
-						String gtin = ((Artikel) v).getEAN();
-						el.setAttribute(XMLExporter.ATTR_CODE, gtin);
-					} else if ("400".equals(v.getCodeSystemCode())) { // Pharmacode-basiert //$NON-NLS-1$
-						String pk = ((Artikel) v).getPharmaCode();
-						el.setAttribute(XMLExporter.ATTR_CODE,
-							StringTool.pad(StringTool.LEFT, '0', pk, 7));
-					} else {
-						logger.warn("Unknown medical code " + v.getCodeSystemCode()
-							+ " encountered for " + v.getCodeSystemName() + "@" + v);
-					}
-					el.setAttribute(XMLExporter.ATTR_AMOUNT,
-						XMLTool.moneyToXmlDouble(mAmountLocal));
-					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
-					String ckzl = art.getExt("Kassentyp"); // cf. MedikamentImporter#KASSENTYP
-					if (ckzl.equals("1")) {
+						
+						// end corrections
+						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(einzelpreis));
+						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
+						if ("true".equals((String) billed.getExtInfo(Verrechnet.INDICATED))) {
+							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "207");
+						} else {
+							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE,
+								billable.getCodeSystemCode());
+						}
+						if ("402".equals(billable.getCodeSystemCode())) { // GTIN-basiert //$NON-NLS-1$
+							String gtin = ((IArticle) billable).getGtin();
+							el.setAttribute(XMLExporter.ATTR_CODE, gtin);
+						} else if ("400".equals(billable.getCodeSystemCode())) { // Pharmacode-basiert //$NON-NLS-1$
+							String pk = getPharmaCode(((IArticle) billable));
+							el.setAttribute(XMLExporter.ATTR_CODE,
+								StringTool.pad(StringTool.LEFT, '0', pk, 7));
+						} else {
+							logger.warn("Unknown medical code " + billable.getCodeSystemCode()
+								+ " encountered for " + billable.getCodeSystemName() + "@"
+								+ billable);
+						}
+						el.setAttribute(XMLExporter.ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal));
+						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer);
+						String ckzl = (String) art.getExtInfo("Kassentyp"); // cf. MedikamentImporter#KASSENTYP
+						if (ckzl.equals("1")) {
+							el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
+							ret.mObligations.addMoney(mAmountLocal);
+						} else {
+							el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE);
+						}
+						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
+						el.setAttribute(ATTR_EAN_PROVIDER,
+							TarmedRequirements.getEAN(encounter.getMandator()));
+						el.setAttribute(ATTR_EAN_RESPONSIBLE,
+							XMLExporterUtil.getResponsibleEAN(encounter));
+						ret.mMedikament.addMoney(mAmountLocal);
+					} else if ("MiGeL".equals(billable.getCodeSystemName())) {
+						el = new Element(ELEMENT_RECORD_MIGEL, XMLExporter.nsinvoice);
+						// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+						Money preis = billed.getNetPrice();
+						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
+						el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "452"); // MiGeL ab 2001-basiert //$NON-NLS-1$
+						el.setAttribute(XMLExporter.ATTR_CODE, billable.getCode());
+						el.setAttribute(ATTR_EAN_PROVIDER,
+							TarmedRequirements.getEAN(encounter.getMandator()));
+						el.setAttribute(ATTR_EAN_RESPONSIBLE,
+							XMLExporterUtil.getResponsibleEAN(encounter));
+						Money mAmountLocal = new Money(preis);
+						mAmountLocal.multiply(amount);
+						el.setAttribute(XMLExporter.ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal));
+						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer);
 						el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
 						ret.mObligations.addMoney(mAmountLocal);
-					} else {
-						el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE);
-					}
-					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
-					el.setAttribute(ATTR_EAN_PROVIDER,
-						TarmedRequirements.getEAN(konsultation.getMandant()));
-					el.setAttribute(ATTR_EAN_RESPONSIBLE,
-						XMLExporterUtil.getResponsibleEAN(konsultation));
-					ret.mMedikament.addMoney(mAmountLocal);
-				} else if ("MiGeL".equals(v.getCodeSystemName())) {
-					el = new Element(ELEMENT_RECORD_MIGEL, XMLExporter.nsinvoice);
-					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
-					Money preis = verrechnet.getNettoPreis();
-					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
-					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "452"); // MiGeL ab 2001-basiert //$NON-NLS-1$
-					el.setAttribute(XMLExporter.ATTR_CODE, v.getCode());
-					el.setAttribute(ATTR_EAN_PROVIDER,
-						TarmedRequirements.getEAN(konsultation.getMandant()));
-					el.setAttribute(ATTR_EAN_RESPONSIBLE,
-						XMLExporterUtil.getResponsibleEAN(konsultation));
-					Money mAmountLocal = new Money(preis);
-					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT,
-						XMLTool.moneyToXmlDouble(mAmountLocal));
-					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
-					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
-					ret.mObligations.addMoney(mAmountLocal);
-					
-					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
-					ret.mMigel.addMoney(mAmountLocal);
-				} else if (v instanceof PhysioLeistung) {
-					el = new Element(ELEMENT_RECORD_PARAMED, XMLExporter.nsinvoice);
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, v.getCodeSystemCode()); // 28060
-					if (law == BillingLaw.KVG) {
-						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "312"); // 28060
-					}
-					PhysioLeistung pl = (PhysioLeistung) v;
-					double mult = pl.getFactor(tt, rechnung.getFall());
-					Money preis = verrechnet.getNettoPreis();
-					double korr = preis.getCents() / mult;
-					el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
-					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
-					Money mAmountLocal = new Money(preis);
-					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT,
-						XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
-					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer); // 28590
-					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
-					ret.mObligations.addMoney(mAmountLocal);
-					
-					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
-					// get EAN provider
-					String ean = TarmedRequirements.getEAN(konsultation.getMandant());
-					if (ean.equals(TarmedRequirements.EAN_PSEUDO))
-						ean = "unknown";
-					el.setAttribute(ATTR_EAN_PROVIDER, ean);
-					// get EAN resposible
-					ean = XMLExporterUtil.getResponsibleEAN(konsultation);
-					if (ean.equals(TarmedRequirements.EAN_PSEUDO))
-						ean = "unknown";
-					el.setAttribute(ATTR_EAN_RESPONSIBLE, ean);
-					
-					ret.mPhysio.addMoney(mAmountLocal);
-				} else {
-					Money preis = verrechnet.getNettoPreis();
-					el = new Element(ELEMENT_RECORD_OTHER, XMLExporter.nsinvoice);
-					String codeSystemCode = v.getCodeSystemCode();
-					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, codeSystemCode);
-					// all 406 will have code 2000
-					if ("406".equals(codeSystemCode)) {
-						el.setAttribute(XMLExporter.ATTR_CODE, "2000");
-						el.setAttribute("name",
-							verrechnet.getText() + " [" + getServiceCode(verrechnet) + "]"); // 22340
-					}
-					if ("590".equals(codeSystemCode) && v instanceof IArticle) {
-						el.setAttribute(XMLExporter.ATTR_CODE, "1310");
-					}
-					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
-					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
-					Money mAmountLocal = new Money(preis);
-					mAmountLocal.multiply(zahl);
-					el.setAttribute(XMLExporter.ATTR_AMOUNT,
-						XMLTool.moneyToXmlDouble(mAmountLocal));
-					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
-					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
-					el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$
-					el.setAttribute("external_factor", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
-					
-					el.setAttribute(ATTR_EAN_PROVIDER,
-						TarmedRequirements.getEAN(konsultation.getMandant()));
-					el.setAttribute(ATTR_EAN_RESPONSIBLE,
-						XMLExporterUtil.getResponsibleEAN(konsultation));
 						
-					ret.mUebrige.addMoney(mAmountLocal);
+						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
+						ret.mMigel.addMoney(mAmountLocal);
+					} else if (billable instanceof IPhysioLeistung) {
+						el = new Element(ELEMENT_RECORD_PARAMED, XMLExporter.nsinvoice);
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, billable.getCodeSystemCode()); // 28060
+						if (law == BillingLaw.KVG) {
+							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "312"); // 28060
+						}
+						IPhysioLeistung pl = (IPhysioLeistung) billable;
+						double mult =
+							ArzttarifeUtil.getFactor(encounterDate, encounter.getCoverage());
+						Money preis = billed.getNetPrice();
+						double korr = preis.getCents() / mult;
+						el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
+						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
+						Money mAmountLocal = new Money(preis);
+						mAmountLocal.multiply(amount);
+						el.setAttribute(XMLExporter.ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
+						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer); // 28590
+						el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
+						ret.mObligations.addMoney(mAmountLocal);
+						
+						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
+						// get EAN provider
+						String ean = TarmedRequirements.getEAN(encounter.getMandator());
+						if (ean.equals(TarmedRequirements.EAN_PSEUDO))
+							ean = "unknown";
+						el.setAttribute(ATTR_EAN_PROVIDER, ean);
+						// get EAN resposible
+						ean = XMLExporterUtil.getResponsibleEAN(encounter);
+						if (ean.equals(TarmedRequirements.EAN_PSEUDO))
+							ean = "unknown";
+						el.setAttribute(ATTR_EAN_RESPONSIBLE, ean);
+						
+						ret.mPhysio.addMoney(mAmountLocal);
+					} else {
+						Money preis = billed.getNetPrice();
+						el = new Element(ELEMENT_RECORD_OTHER, XMLExporter.nsinvoice);
+						String codeSystemCode = billable.getCodeSystemCode();
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, codeSystemCode);
+						// all 406 will have code 2000
+						if ("406".equals(codeSystemCode)) {
+							el.setAttribute(XMLExporter.ATTR_CODE, "2000");
+							el.setAttribute("name",
+								billed.getText() + " [" + getServiceCode(billed) + "]"); // 22340
+						}
+						if ("590".equals(codeSystemCode) && billable instanceof IArticle) {
+							el.setAttribute(XMLExporter.ATTR_CODE, "1310");
+						}
+						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
+						el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
+						Money mAmountLocal = new Money(preis);
+						mAmountLocal.multiply(amount);
+						el.setAttribute(XMLExporter.ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal));
+						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer);
+						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
+						el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$
+						el.setAttribute("external_factor", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
+						
+						el.setAttribute(ATTR_EAN_PROVIDER,
+							TarmedRequirements.getEAN(encounter.getMandator()));
+						el.setAttribute(ATTR_EAN_RESPONSIBLE,
+							XMLExporterUtil.getResponsibleEAN(encounter));
+						
+						ret.mUebrige.addMoney(mAmountLocal);
+					}
+					el.setAttribute(ATTR_SESSION, Integer.toString(session));
+					el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
+					el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(amount)); // 22350
+					el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370
+					if (el.getAttribute("name") == null) {
+						el.setAttribute("name", billed.getText()); // 22340
+					}
+					// 22330 set code if still empty
+					if (el.getAttribute(XMLExporter.ATTR_CODE) == null) {
+						XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE,
+							getServiceCode(billed), StringConstants.ZERO); // 22330
+					}
+					ret.servicesElement.addContent(el);
 				}
-				el.setAttribute(ATTR_SESSION, Integer.toString(session));
-				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
-				el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
-				el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370
-				if (el.getAttribute("name") == null) {
-					el.setAttribute("name", verrechnet.getText()); // 22340
-				}
-				// 22330 set code if still empty
-				if (el.getAttribute(XMLExporter.ATTR_CODE) == null) {
-					XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE,
-						getServiceCode(verrechnet), StringConstants.ZERO); // 22330
-				}
-				ret.servicesElement.addContent(el);
 			}
 		}
 		ret.initialized = true;
 		return ret;
 	}
 	
-	private static Optional<Double> getALScalingFactor(Verrechnet verrechnet){
-		String scalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
+	private static List<IReasonForEncounter> getReasonsForEncounter(IEncounter encounter){
+		IQuery<IReasonForEncounter> query =
+			ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
+		query.and("konsID", COMPARATOR.EQUALS, encounter.getId());
+		return query.execute();
+	}
+	
+	private static String getPharmaCode(IArticle iArticle){
+		String ret = "";
+		String systemName = iArticle.getCodeSystemName();
+		if (systemName != null && systemName.equals("Artikelstamm")) {
+			try {
+				ret = BeanUtils.getProperty(iArticle, "PHAR");
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+				logger.warn("Could not get pharma code from [" + iArticle + "]", e);
+			}
+		} else {
+			try {
+				ret = BeanUtils.getProperty(iArticle, "pharmaCode");
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+				logger.warn("Could not get pharma code from [" + iArticle + "]", e);
+			}
+		}
+		return ret;
+	}
+	
+	private static Optional<Double> getALScalingFactor(IBilled billed){
+		String scalingFactor = (String) billed.getExtInfo("AL_SCALINGFACTOR");
 		if (scalingFactor != null && !scalingFactor.isEmpty()) {
 			try {
 				return Optional.of(Double.parseDouble(scalingFactor));
@@ -619,8 +634,8 @@ public class XMLExporterServices {
 		return Optional.empty();
 	}
 	
-	private static Optional<Double> getALNotScaled(Verrechnet verrechnet){
-		String notScaled = verrechnet.getDetail("AL_NOTSCALED");
+	private static Optional<Double> getALNotScaled(IBilled billed){
+		String notScaled = (String) billed.getExtInfo("AL_NOTSCALED");
 		if (notScaled != null && !notScaled.isEmpty()) {
 			try {
 				return Optional.of(Double.parseDouble(notScaled));
@@ -632,18 +647,18 @@ public class XMLExporterServices {
 	}
 	
 	/**
-	 * Filter codes of {@link Verrechnet} where ID is used as code. This is relevant for
-	 * {@link Eigenleistung} and Eigenartikel.
+	 * Filter codes of {@link IBilled} where ID is used as code. This is relevant for
+	 * {@link ICustomService} and {@link IArticle} of typ {@link ArticleTyp#EIGENARTIKEL}.
 	 * 
 	 * @param lst
 	 * @return
 	 */
-	private static String getServiceCode(Verrechnet verrechnet){
+	private static String getServiceCode(IBilled verrechnet){
 		String ret = verrechnet.getCode();
-		IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
-		if (verrechenbar instanceof Eigenleistung || (verrechenbar instanceof Artikel
-			&& ((Artikel) verrechenbar).get(Artikel.FLD_TYP).equals("Eigenartikel"))) {
-			if (verrechenbar.getId().equals(ret)) {
+		IBillable billable = verrechnet.getBillable();
+		if (billable instanceof ICustomService || (billable instanceof IArticle
+			&& ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)) {
+			if (billable.getId().equals(ret)) {
 				ret = "";
 			}
 		}

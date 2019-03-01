@@ -53,9 +53,13 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
+import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktExtDialog;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
@@ -64,8 +68,6 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
-import ch.elexis.data.TarmedLeistung;
-import ch.elexis.data.TarmedLeistung.MandantType;
 import ch.elexis.data.TrustCenters;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
@@ -191,7 +193,10 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					Object element = ((StructuredSelection) selection).getFirstElement();
 					if (element instanceof MandantType) {
 						if (actMandant != null) {
-							TarmedLeistung.setMandantType(actMandant, (MandantType) element);
+							ArzttarifeUtil.setMandantType(
+								CoreModelServiceHolder.get()
+									.load(actMandant.getId(), IMandator.class).get(),
+								(MandantType) element);
 						}
 					}
 				}
@@ -339,7 +344,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cbTC.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				TarmedRequirements.setTC(actMandant, cbTC.getText());
+				TarmedRequirements.setTC(CoreModelServiceHolder.get()
+					.load(actMandant.getId(), IMandator.class).orElse(null), cbTC.getText());
 				// actMandant.setInfoElement(PreferenceConstants.TARMEDTC,
 				// cbTC.getText());
 			}
@@ -602,7 +608,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		
 		tTreat.setText(actMandant.getLabel());
 		cvMandantType
-			.setSelection(new StructuredSelection(TarmedLeistung.getMandantType(actMandant)));
+			.setSelection(new StructuredSelection(ArzttarifeUtil.getMandantType(
+				CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).get())));
 		
 		actBank = Kontakt.load(actMandant.getInfoString(ta.RNBANK));
 		if (actBank != null && actBank.isValid()) {
@@ -620,7 +627,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bUseTC.setSelection(actMandant.getInfoString(PreferenceConstants.USETC).equals("1")); //$NON-NLS-1$
 		//bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
 		//bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
-		cbTC.setText(TarmedRequirements.getTCName(actMandant)); // actMandant.getInfoString(PreferenceConstants.TARMEDTC));
+		cbTC.setText(TarmedRequirements.getTCName(
+			CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).orElse(null))); // actMandant.getInfoString(PreferenceConstants.TARMEDTC));
 		
 		bBillsElec.setSelection(
 			CoreHub.getUserSetting(actMandant).get(PreferenceConstants.BILL_ELECTRONICALLY, false));

@@ -10,25 +10,28 @@
  *******************************************************************************/
 package ch.elexis.views;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 
-import ch.elexis.core.ui.actions.FlatDataLoader;
-import ch.elexis.core.ui.actions.PersistentObjectLoader;
+import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
+import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
-import ch.elexis.data.ComplementaryLeistung;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
-import ch.rgw.tools.IFilter;
-import ch.rgw.tools.TimeTool;
 
 public class ComplementaryCodeSelectorFactory extends CodeSelectorFactory {
-	Query<ComplementaryLeistung> qbe;
 	
 	public ComplementaryCodeSelectorFactory(){
 		// TODO Auto-generated constructor stub
@@ -38,37 +41,56 @@ public class ComplementaryCodeSelectorFactory extends CodeSelectorFactory {
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		FieldDescriptor<?>[] fieldDescriptors =
 			new FieldDescriptor<?>[] {
-				new FieldDescriptor<ComplementaryLeistung>("Code", ComplementaryLeistung.FLD_CODE,
+				new FieldDescriptor<IComplementaryLeistung>("Code", "code",
 					null),
-				new FieldDescriptor<ComplementaryLeistung>("Text",
-					ComplementaryLeistung.FLD_CODE_TEXT, null),
+				new FieldDescriptor<IComplementaryLeistung>("Text", "codeText", null),
 			};
-		qbe = new Query<ComplementaryLeistung>(ComplementaryLeistung.class, null, null,
-			ComplementaryLeistung.TABLENAME,
-			new String[] {
-				ComplementaryLeistung.FLD_VALID_FROM, ComplementaryLeistung.FLD_VALID_TO
-			});
-		qbe.addPostQueryFilter(new IFilter() {
-			private TimeTool now = new TimeTool();
-			
-			public boolean select(Object toTest){
-				ComplementaryLeistung complementary = (ComplementaryLeistung) toTest;
-				if (complementary.getId().equals("VERSION")) {
-					return false;
-				}
-				if (!complementary.isValid(now)) {
-					return false;
-				}
-				return true;
-			}
-		});
-		PersistentObjectLoader fdl = new FlatDataLoader(cv, qbe);
 		SelectorPanelProvider slp = new SelectorPanelProvider(fieldDescriptors, true);
 		ViewerConfigurer vc =
-			new ViewerConfigurer(fdl, new DefaultLabelProvider(), slp,
+			new ViewerConfigurer(new ComplementaryContentProvider(cv, slp),
+				new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		return vc;
+	}
+	
+	private class ComplementaryContentProvider extends CommonViewerContentProvider {
+		
+		private ControlFieldProvider controlFieldProvider;
+		
+		public ComplementaryContentProvider(CommonViewer commonViewer,
+			ControlFieldProvider controlFieldProvider){
+			super(commonViewer);
+			this.controlFieldProvider = controlFieldProvider;
+		}
+		
+		@Override
+		public Object[] getElements(Object inputElement){
+			IQuery<?> query = getBaseQuery();
+			
+			java.util.Optional<IEncounter> encounter =
+				ContextServiceHolder.get().getTyped(IEncounter.class);
+			encounter.ifPresent(e -> {
+				query.and("validFrom", COMPARATOR.LESS_OR_EQUAL, e.getDate());
+				query.and("validTo", COMPARATOR.GREATER_OR_EQUAL, e.getDate());
+			});
+			
+			// apply filters from control field provider
+			controlFieldProvider.setQuery(query);
+			applyQueryFilters(query);
+			query.orderBy("code", ORDER.ASC);
+			List<?> elements = query.execute();
+			
+			return elements.toArray(new Object[elements.size()]);
+		}
+		
+		@Override
+		protected IQuery<?> getBaseQuery(){
+			IQuery<IComplementaryLeistung> query =
+				ArzttarifeModelServiceHolder.get().getQuery(IComplementaryLeistung.class);
+			query.and("id", COMPARATOR.NOT_EQUALS, "VERSION");
+			return query;
+		}
 	}
 	
 	@Override
@@ -83,13 +105,7 @@ public class ComplementaryCodeSelectorFactory extends CodeSelectorFactory {
 	}
 	
 	@Override
-	public Class<? extends PersistentObject> getElementClass(){
-		return ComplementaryLeistung.class;
+	public Class<?> getElementClass(){
+		return IComplementaryLeistung.class;
 	}
-	
-	@Override
-	public PersistentObject findElement(String code){
-		return (PersistentObject) ComplementaryLeistung.getFromCode(code, new TimeTool());
-	}
-	
 }

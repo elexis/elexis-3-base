@@ -17,6 +17,8 @@
       </genEnums>
       <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedLimitation"/>
       <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedExclusion"/>
+      <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedKumulationArt"/>
+      <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedKumulationTyp"/>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedLeistung">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/minutes"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/AL"/>
@@ -34,6 +36,7 @@
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/law"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/sparte"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/chapter"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/nickname"/>
         <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/getServiceGroups">
           <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getServiceGroups/date"/>
         </genOperations>
@@ -44,9 +47,17 @@
         <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/getAL">
           <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getAL/mandator"/>
         </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/getKumulations">
+          <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getKumulations/type"/>
+        </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/getHierarchy">
+          <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getHierarchy/date"/>
+        </genOperations>
       </genClasses>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedExtension">
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedExtension/limits"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedExtension/medInterpretation"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedExtension/techInterpretation"/>
       </genClasses>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedGroup">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedGroup/code"/>
@@ -69,6 +80,9 @@
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/validFrom"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/validTo"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/law"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/masterCode"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/masterArt"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedKumulation/typ"/>
         <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedKumulation/isValidKumulation">
           <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedKumulation/isValidKumulation/reference"/>
         </genOperations>
@@ -88,6 +102,8 @@
       <genClasses image="false" ecoreClass="arzttarife.ecore#//complementary/IComplementaryLeistung">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/description"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/chapter"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/fixedValue"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/fixedValueSet"/>
       </genClasses>
     </nestedGenPackages>
     <nestedGenPackages prefix="Rfe" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//rfe">

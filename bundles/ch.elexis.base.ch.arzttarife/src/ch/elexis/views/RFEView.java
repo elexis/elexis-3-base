@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -30,16 +33,15 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
+import ch.elexis.base.ch.arzttarife.rfe.ReasonsForEncounter;
+import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Query;
-import ch.elexis.data.RFE;
 
 public class RFEView extends ViewPart {
 	Table longTable, shortTable, mediumTable;
@@ -48,24 +50,22 @@ public class RFEView extends ViewPart {
 	boolean bDaempfung = false;
 	HashMap<String, Integer> mapCodeToIndex = new HashMap<String, Integer>();
 	HashMap<Integer, String> mapIndexToCode = new HashMap<Integer, String>();
+	private IEncounter currentEncounter;
 	static final int No_More_Valid = 1;
 	
-	ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(Konsultation.class) {
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			Konsultation k = (Konsultation) ev.getObject();
-			adjustTable(k);
-		}
-		
-	};
+	@Inject
+	void selectedEncounter(@Optional IEncounter encounter){
+		adjustTable(encounter);
+		currentEncounter = encounter;
+	}
 	
-	private void adjustTable(Konsultation k){
-		List<RFE> rfeForKOns;
-		if (k != null)
-			rfeForKOns = RFE.getRfeForKons(k.getId());
-		else
+	private void adjustTable(IEncounter encounter){
+		List<IReasonForEncounter> rfeForKOns;
+		if (encounter != null) {
+			rfeForKOns = getReasonsForEncounter(encounter);
+		} else {
 			rfeForKOns = Collections.emptyList();
+		}
 		
 		CTabItem top = tabs.getSelection();
 		if (top != null) {
@@ -78,7 +78,7 @@ public class RFEView extends ViewPart {
 					// it.setForeground(null);
 					it.setImage((Image) null);
 				}
-				for (RFE rfe : rfeForKOns) {
+				for (IReasonForEncounter rfe : rfeForKOns) {
 					int idx = mapCodeToIndex.get(rfe.getCode());
 					TableItem item = table.getItem(idx);
 					// item.setBackground(Desk.getColor(Desk.COL_SKYBLUE));
@@ -89,6 +89,18 @@ public class RFEView extends ViewPart {
 				}
 			}
 		}
+	}
+	
+	private List<IReasonForEncounter> getReasonsForEncounter(IEncounter encounter){
+		IQuery<IReasonForEncounter> query =
+			ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
+		query.and("konsID", COMPARATOR.EQUALS, encounter.getId());
+		return query.execute();
+	}
+	
+	private void removeReasonsForEncounter(IEncounter encounter){
+		List<IReasonForEncounter> existingReasons = getReasonsForEncounter(encounter);
+		existingReasons.forEach(reason -> ArzttarifeModelServiceHolder.get().remove(reason));
 	}
 	
 	@Override
@@ -121,10 +133,11 @@ public class RFEView extends ViewPart {
 				for (Control c : cCalc.getChildren()) {
 					c.dispose();
 				}
-				Query<RFE> qbe = new Query<RFE>(RFE.class);
-				int[] result = new int[RFE.getRFETexts().length];
+				IQuery<IReasonForEncounter> query =
+					ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
+				int[] result = new int[ReasonsForEncounter.getCodeToReasonMap().values().size()];
 				int all = 0;
-				for (RFE rfe : qbe.execute()) {
+				for (IReasonForEncounter rfe : query.execute()) {
 					String code = rfe.getCode();
 					if (code.length() != 2) {
 						continue;
@@ -147,13 +160,13 @@ public class RFEView extends ViewPart {
 			
 		});
 		int i = 0;
-		for (String[] t : RFE.getRFEDescriptions()) {
+		for (String code : ReasonsForEncounter.getCodeToReasonMap().values()) {
 			TableItem longItem = new TableItem(longTable, SWT.NONE);
-			longItem.setText(t[2]);
+			longItem.setText(ReasonsForEncounter.getCodeToShortReasonMap().get(code));
 			TableItem mediumItem = new TableItem(mediumTable, SWT.NONE);
-			mediumItem.setText(t[1]);
-			mapCodeToIndex.put(t[0], i);
-			mapIndexToCode.put(i, t[0]);
+			mediumItem.setText(ReasonsForEncounter.getCodeToReasonMap().get(code));
+			mapCodeToIndex.put(code, i);
+			mapIndexToCode.put(i, code);
 			if (i == No_More_Valid) {
 				mediumItem.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY));
 				mediumItem.setGrayed(true);
@@ -164,13 +177,8 @@ public class RFEView extends ViewPart {
 		}
 		longTable.addSelectionListener(new ClickListener(longTable));
 		mediumTable.addSelectionListener(new ClickListener(mediumTable));
-		ElexisEventDispatcher.getInstance().addListeners(eeli_kons);
 	}
 	
-	@Override
-	public void dispose(){
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_kons);
-	}
 	
 	@Override
 	public void setFocus(){
@@ -187,23 +195,25 @@ public class RFEView extends ViewPart {
 		
 		@Override
 		public void widgetSelected(SelectionEvent e){
-			Konsultation k = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			if (k != null) {
+			if (currentEncounter != null) {
 				int[] sel = table.getSelectionIndices();
 				if (sel.length > 0) {
-					RFE.clear(k);
+					removeReasonsForEncounter(currentEncounter);
 					
 					for (int s : sel) {
 						if (s == No_More_Valid) {
 							break;
 						}
 						String code = mapIndexToCode.get(s);
-						new RFE(k.getId(), code);
+						IReasonForEncounter reason =
+							ArzttarifeModelServiceHolder.get().create(IReasonForEncounter.class);
+						reason.setEncounter(currentEncounter);
+						reason.setCode(code);
+						ArzttarifeModelServiceHolder.get().save(reason);
 					}
-					adjustTable(k);
+					adjustTable(currentEncounter);
 				}
 			}
 		}
-		
 	}
 }

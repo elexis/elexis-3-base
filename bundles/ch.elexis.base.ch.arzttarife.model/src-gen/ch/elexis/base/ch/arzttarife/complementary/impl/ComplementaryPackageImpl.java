@@ -156,6 +156,26 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
+	public EAttribute getIComplementaryLeistung_FixedValue() {
+		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIComplementaryLeistung_FixedValueSet() {
+		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public ComplementaryFactory getComplementaryFactory() {
 		return (ComplementaryFactory)getEFactoryInstance();
 	}
@@ -182,6 +202,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		iComplementaryLeistungEClass = createEClass(ICOMPLEMENTARY_LEISTUNG);
 		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__DESCRIPTION);
 		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__CHAPTER);
+		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE);
+		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE_SET);
 	}
 
 	/**
@@ -221,6 +243,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		initEClass(iComplementaryLeistungEClass, IComplementaryLeistung.class, "IComplementaryLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getIComplementaryLeistung_Description(), ecorePackage.getEString(), "description", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIComplementaryLeistung_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIComplementaryLeistung_FixedValue(), ecorePackage.getEInt(), "fixedValue", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIComplementaryLeistung_FixedValueSet(), ecorePackage.getEBoolean(), "fixedValueSet", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

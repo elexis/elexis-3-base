@@ -16,9 +16,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
-import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
-import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -28,6 +26,7 @@ import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.matchers.IBillingMatch;
@@ -130,15 +129,14 @@ public class TarmedBillingTest {
 		
 		IBilled billed = status.get();
 		assertNotNull(billed);
-		assertEquals(TarmedConstants.TarmedLeistung.SIDE_L,
-			billed.getExtInfo(TarmedConstants.TarmedLeistung.SIDE));
+		assertEquals(Constants.SIDE_L, billed.getExtInfo(Constants.FLD_EXT_SIDE));
 		
 		status = billingService.bill(code_090510, encounter, 1);
 		assertTrue(status.isOK());
 		billed = status.get();
 		assertNotNull(billed);
-		assertEquals(TarmedConstants.TarmedLeistung.SIDE_R,
-			billed.getExtInfo(TarmedConstants.TarmedLeistung.SIDE));
+		assertEquals(Constants.SIDE_R,
+			billed.getExtInfo(Constants.FLD_EXT_SIDE));
 		//
 		status = billingService.bill(code_090510, encounter, 1);
 		assertFalse(status.isOK());

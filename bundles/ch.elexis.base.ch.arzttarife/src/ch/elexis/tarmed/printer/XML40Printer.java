@@ -27,6 +27,8 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.data.util.SortedList;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
@@ -127,9 +129,11 @@ public class XML40Printer {
 		EZPrinterData ezData = getEZPrintData(balance, invoice);
 		
 		String tcCode = null;
-		if (TarmedRequirements.hasTCContract(rs)
+		IContact rsContact =
+			CoreModelServiceHolder.get().load(rs.getId(), IContact.class).orElse(null);
+		if (TarmedRequirements.hasTCContract(rsContact)
 			&& ezData.paymentMode.equals(XMLExporter.TIERS_GARANT)) {
-			tcCode = TarmedRequirements.getTCCode(rs);
+			tcCode = TarmedRequirements.getTCCode(rsContact);
 		} else if (ezData.paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			tcCode = "01";
 		}
@@ -234,8 +238,10 @@ public class XML40Printer {
 		text.replace("\\[F98\\]", XMLPrinterUtil.getEANList(eanArray));
 		
 		Kontakt zuweiser = fall.getRequiredContact("Zuweiser");
+		IContact zuweiserContact =
+			CoreModelServiceHolder.get().load(zuweiser.getId(), IContact.class).orElse(null);
 		if (zuweiser != null) {
-			String ean = TarmedRequirements.getEAN(zuweiser);
+			String ean = TarmedRequirements.getEAN(zuweiserContact);
 			if (ean != null && !ean.equals(TarmedRequirements.EAN_PSEUDO)) {
 				text.replace("\\[F23\\]", ean);
 			}

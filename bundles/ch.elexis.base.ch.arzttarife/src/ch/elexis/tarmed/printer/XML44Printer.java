@@ -35,6 +35,10 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.data.util.SortedList;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
@@ -154,9 +158,11 @@ public class XML44Printer {
 		EZPrinterData ezData = getEZPrintData(balance, services, body);
 		
 		String tcCode = null;
-		if (TarmedRequirements.hasTCContract(rnSteller)
+		IContact rsContact =
+			CoreModelServiceHolder.get().load(rnSteller.getId(), IContact.class).orElse(null);
+		if (TarmedRequirements.hasTCContract(rsContact)
 			&& ezData.paymentMode.equals(XMLExporter.TIERS_GARANT)) {
-			tcCode = TarmedRequirements.getTCCode(rnSteller);
+			tcCode = TarmedRequirements.getTCCode(rsContact);
 		} else if (ezData.paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			tcCode = "01";
 		}
@@ -768,7 +774,13 @@ public class XML44Printer {
 		case PAYANT:
 			return fall.getCostBearer();
 		default:
-			return XMLExporterTiers.getGuarantor(XMLExporter.TIERS_GARANT, fall.getPatient(), fall);
+			IPatient patientContact = CoreModelServiceHolder.get()
+				.load(fall.getPatient().getId(), IPatient.class).orElse(null);
+			ICoverage coverage =
+				CoreModelServiceHolder.get().load(fall.getId(), ICoverage.class).orElse(null);
+			IContact guarantor = XMLExporterTiers.getGuarantor(XMLExporter.TIERS_GARANT, patientContact,
+				coverage);
+			return Kontakt.load(guarantor.getId());
 		}
 	}
 }

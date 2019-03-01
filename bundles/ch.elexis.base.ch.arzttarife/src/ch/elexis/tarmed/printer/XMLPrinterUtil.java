@@ -10,6 +10,11 @@ import org.jdom.Element;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.data.Brief;
@@ -30,17 +35,25 @@ public class XMLPrinterUtil {
 		Mandant mandant, Rechnungssteller rechnungssteller, String paymentMode){
 		ElexisEventDispatcher.fireSelectionEvents(rechnung, fall, patient, rechnungssteller);
 		
+		ICoverage coverage =
+			CoreModelServiceHolder.get().load(fall.getId(), ICoverage.class).orElse(null);
+		IMandator mandator =
+			CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).orElse(null);
+		IContact biller = CoreModelServiceHolder.get()
+			.load(rechnungssteller.getId(), IMandator.class)
+			.orElse(null);
+		
 		// make sure the Textplugin can replace all fields
 		fall.setInfoString("payment", paymentMode);
-		fall.setInfoString("Gesetz", TarmedRequirements.getGesetz(fall));
-		mandant.setInfoElement("EAN", TarmedRequirements.getEAN(mandant));
-		rechnungssteller.setInfoElement("EAN", TarmedRequirements.getEAN(rechnungssteller));
-		mandant.setInfoElement("KSK", TarmedRequirements.getKSK(mandant));
-		mandant.setInfoElement("NIF", TarmedRequirements.getNIF(mandant));
+		fall.setInfoString("Gesetz", TarmedRequirements.getGesetz(coverage));
+		mandant.setInfoElement("EAN", TarmedRequirements.getEAN(mandator));
+		rechnungssteller.setInfoElement("EAN", TarmedRequirements.getEAN(biller));
+		mandant.setInfoElement("KSK", TarmedRequirements.getKSK(mandator));
+		mandant.setInfoElement("NIF", TarmedRequirements.getNIF(mandator));
 		if (!mandant.equals(rechnungssteller)) {
-			rechnungssteller.setInfoElement("EAN", TarmedRequirements.getEAN(rechnungssteller));
-			rechnungssteller.setInfoElement("KSK", TarmedRequirements.getKSK(rechnungssteller));
-			rechnungssteller.setInfoElement("NIF", TarmedRequirements.getNIF(rechnungssteller));
+			rechnungssteller.setInfoElement("EAN", TarmedRequirements.getEAN(biller));
+			rechnungssteller.setInfoElement("KSK", TarmedRequirements.getKSK(biller));
+			rechnungssteller.setInfoElement("NIF", TarmedRequirements.getNIF(biller));
 		}
 	}
 
@@ -154,15 +167,21 @@ public class XMLPrinterUtil {
 		text.replace("\\[Titel\\]", titel); //$NON-NLS-1$
 		text.replace("\\[TitelMahnung\\]", titelMahnung); //$NON-NLS-1$
 		
+		IMandator mandator =
+			CoreModelServiceHolder.get().load(m.getId(), IMandator.class).orElse(null);
+		IPatient patient =
+			CoreModelServiceHolder.get().load(fall.getPatient().getId(), IPatient.class)
+				.orElse(null);
+		
 		if (fall.getAbrechnungsSystem().equals("IV")) { //$NON-NLS-1$
-			text.replace("\\[NIF\\]", TarmedRequirements.getNIF(m)); //$NON-NLS-1$
-			String ahv = TarmedRequirements.getAHV(fall.getPatient());
+			text.replace("\\[NIF\\]", TarmedRequirements.getNIF(mandator)); //$NON-NLS-1$
+			String ahv = TarmedRequirements.getAHV(patient);
 			if (StringTool.isNothing(ahv)) {
 				ahv = fall.getRequiredString("AHV-Nummer");
 			}
 			text.replace("\\[F60\\]", ahv); //$NON-NLS-1$
 		} else {
-			text.replace("\\[NIF\\]", TarmedRequirements.getKSK(m)); //$NON-NLS-1$
+			text.replace("\\[NIF\\]", TarmedRequirements.getKSK(mandator)); //$NON-NLS-1$
 			text.replace("\\[F60\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		text.replace("\\?\\?\\??[a-zA-Z0-9 \\.]+\\?\\?\\??", "");

@@ -31,36 +31,38 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.TarmedLeistung;
-import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.Money;
 
 public class TarmedDetailDialog extends Dialog {
-	private Verrechnet verrechnet;
+	private IBilled billed;
 	private Combo cSide;
 	private Button bPflicht;
 	private ComboViewer cBezug;
 	
-	public TarmedDetailDialog(Shell shell, Verrechnet tl){
+	public TarmedDetailDialog(Shell shell, IBilled tl){
 		super(shell);
-		verrechnet = tl;
+		billed = tl;
 	}
 	
 	@Override
 	protected Control createDialogArea(Composite parent){
-		TarmedLeistung tl = (TarmedLeistung) verrechnet.getVerrechenbar();
+		ITarmedLeistung tl = (ITarmedLeistung) billed.getBillable();
 		Composite ret = (Composite) super.createDialogArea(parent);
 		ret.setLayout(new GridLayout(8, false));
 		
 		Label lTitle = new Label(ret, SWT.WRAP);
 		lTitle.setText(tl.getText());
 		lTitle.setLayoutData(SWTHelper.getFillGridData(8, true, 1, true));
-		double primaryScale = verrechnet.getPrimaryScaleFactor();
-		double secondaryScale = verrechnet.getSecondaryScaleFactor();
-		double tpAL = TarmedLeistung.getAL(verrechnet) / 100.0;
-		double tpTL = TarmedLeistung.getTL(verrechnet) / 100.0;
-		double tpw = verrechnet.getTPW();
+		double primaryScale = billed.getPrimaryScaleFactor();
+		double secondaryScale = billed.getSecondaryScaleFactor();
+		double tpAL = ArzttarifeUtil.getAL(billed) / 100.0;
+		double tpTL = ArzttarifeUtil.getTL(billed) / 100.0;
+		double tpw = billed.getFactor();
 		Money mAL = new Money(tpAL * tpw * primaryScale * secondaryScale);
 		Money mTL = new Money(tpTL * tpw * primaryScale * secondaryScale);
 		double tpAll = Math.round((tpAL + tpTL) * 100.0) / 100.0;
@@ -111,11 +113,11 @@ public class TarmedDetailDialog extends Dialog {
 		
 		new Label(ret, SWT.NONE).setText("Pflichtleist.");
 		bPflicht = new Button(ret, SWT.CHECK);
-		String sPflicht = verrechnet.getDetail(TarmedLeistung.PFLICHTLEISTUNG);
+		String sPflicht = (String) billed.getExtInfo(Constants.FLD_EXT_PFLICHTLEISTUNG);
 		if ((sPflicht == null) || (Boolean.parseBoolean(sPflicht))) {
 			bPflicht.setSelection(true);
 		}
-		String side = verrechnet.getDetail(TarmedLeistung.SIDE);
+		String side = (String) billed.getExtInfo(Constants.FLD_EXT_SIDE);
 		if (side == null) {
 			cSide.select(0);
 		} else if (side.equalsIgnoreCase("l")) {
@@ -134,13 +136,13 @@ public class TarmedDetailDialog extends Dialog {
 			cBezug.setLabelProvider(new LabelProvider());
 			List<BezugComboItem> input = new ArrayList<>();
 			input.add(BezugComboItem.noBezug());
-			for (Verrechnet kVerr : verrechnet.getKons().getLeistungen()) {
+			for (IBilled kVerr : billed.getEncounter().getBilled()) {
 				if (!kVerr.getCode().equals(tl.getCode())) {
 					input.add(BezugComboItem.of(kVerr.getCode()));
 				}
 			}
 			cBezug.setInput(input);
-			String bezug = verrechnet.getDetail("Bezug");
+			String bezug = (String) billed.getExtInfo("Bezug");
 			if (bezug != null) {
 				cBezug.setSelection(new StructuredSelection(BezugComboItem.of(bezug)), true);
 			} else {
@@ -153,9 +155,9 @@ public class TarmedDetailDialog extends Dialog {
 					if (selection != null && !selection.isEmpty()) {
 						BezugComboItem selected = (BezugComboItem) selection.getFirstElement();
 						if (selected.isNoBezug) {
-							verrechnet.setDetail("Bezug", "");
+							billed.setExtInfo("Bezug", "");
 						} else {
-							verrechnet.setDetail("Bezug", selected.getCode());
+							billed.setExtInfo("Bezug", selected.getCode());
 						}
 					}
 				}
@@ -231,20 +233,21 @@ public class TarmedDetailDialog extends Dialog {
 	@Override
 	public void create(){
 		super.create();
-		getShell().setText("Tarmed-Details: " + verrechnet.getCode());
+		getShell().setText("Tarmed-Details: " + billed.getCode());
 	}
 	
 	@Override
 	protected void okPressed(){
 		int idx = cSide.getSelectionIndex();
 		if (idx < 1) {
-			verrechnet.setDetail(TarmedLeistung.SIDE, null);
+			billed.setExtInfo(Constants.FLD_EXT_SIDE, null);
 		} else if (idx == 1) {
-			verrechnet.setDetail(TarmedLeistung.SIDE, "l");
+			billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_L);
 		} else {
-			verrechnet.setDetail(TarmedLeistung.SIDE, "r");
+			billed.setExtInfo(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
 		}
-		verrechnet.setDetail(TarmedLeistung.PFLICHTLEISTUNG, Boolean.toString(bPflicht.getSelection()));
+		billed.setExtInfo(Constants.FLD_EXT_PFLICHTLEISTUNG,
+			Boolean.toString(bPflicht.getSelection()));
 		super.okPressed();
 	}
 	

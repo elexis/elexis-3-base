@@ -17,6 +17,8 @@ package ch.elexis.data;
 
 import java.io.FileInputStream;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -35,11 +37,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.arzttarife_schweiz.Messages;
-import ch.elexis.core.ui.importer.div.importers.AccessWrapper;
+import ch.elexis.core.importer.div.importers.AccessWrapper;
+import ch.elexis.core.interfaces.IReferenceDataImporter;
+import ch.elexis.core.services.IReferenceDataImporterService;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.importer.KVGTarmedReferenceDataImporter;
-import ch.elexis.data.importer.TarmedReferenceDataImporter;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 
@@ -73,7 +76,12 @@ public class TarmedImporter extends ImporterPage {
 		"", "KVG", "UVG", "MVG", "IVG"
 	};
 	
-	public TarmedImporter(){}
+	@Inject
+	private IReferenceDataImporterService importerService;
+	
+	public TarmedImporter(){
+		CoreUiUtil.injectServices(this);
+	}
 	
 	@Override
 	public String getTitle(){
@@ -87,17 +95,19 @@ public class TarmedImporter extends ImporterPage {
 	 * @see ch.elexis.util.ImporterPage#doImport(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
-		TarmedReferenceDataImporter trdImporter = getImporter();
+		IReferenceDataImporter trdImporter = getImporter();
 		return trdImporter.performImport(monitor, new FileInputStream(results[0]), null);
 	}
 	
-	private TarmedReferenceDataImporter getImporter(){
+	private IReferenceDataImporter getImporter(){
 		// special importers since Tarmed 1.09
 		if ("KVG".equals(selectedLaw)) {
-			return new KVGTarmedReferenceDataImporter();
+			return importerService.getImporter("tarmed_kvg_34")
+				.orElseThrow(() -> new IllegalStateException("No ReferenceDataImporter available"));
 		}
 		// default importer
-		return new TarmedReferenceDataImporter();
+		return importerService.getImporter("tarmed_34")
+			.orElseThrow(() -> new IllegalStateException("No ReferenceDataImporter available"));
 	}
 	
 	@Override

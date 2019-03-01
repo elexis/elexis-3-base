@@ -10,15 +10,16 @@
  ******************************************************************************/
 package ch.elexis.views;
 
+import java.time.LocalDate;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import ch.elexis.data.TarmedLeistung;
-import ch.rgw.tools.TimeTool;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 
 public class TarmedValidDateFilter extends ViewerFilter {
 	
-	private TimeTool validDate;
+	private LocalDate validDate;
 	private boolean doFilter = true;
 	
 	/**
@@ -26,7 +27,7 @@ public class TarmedValidDateFilter extends ViewerFilter {
 	 * 
 	 * @param date
 	 */
-	public void setValidDate(TimeTool date){
+	public void setValidDate(LocalDate date){
 		validDate = date;
 	}
 	
@@ -40,14 +41,14 @@ public class TarmedValidDateFilter extends ViewerFilter {
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element){
-		TarmedLeistung leistung = (TarmedLeistung) element;
+		ITarmedLeistung leistung = (ITarmedLeistung) element;
 		
 		if (doFilter && validDate != null) {
-			TimeTool validFrom = leistung.getGueltigVon();
-			TimeTool validTo = leistung.getGueltigBis();
-			// Kapitel do not have valid dates
+			LocalDate validFrom = leistung.getValidFrom();
+			LocalDate validTo = leistung.getValidTo();
 			if (validFrom != null && validTo != null) {
-				if (!(validDate.isAfterOrEqual(validFrom) && validDate.isBeforeOrEqual(validTo)))
+				if (!(validDate.isAfter(validFrom) || validDate.equals(validFrom))
+					&& (validDate.isBefore(validTo) || validDate.equals(validTo)))
 					return false;
 			}
 		}

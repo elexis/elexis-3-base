@@ -1,18 +1,19 @@
 package ch.elexis.TarmedRechnung;
 
+import java.time.LocalDateTime;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
-import ch.elexis.data.Fall;
-import ch.elexis.data.Fall.Tiers;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Person;
-import ch.elexis.data.Rechnung;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.ICoverageService.Tiers;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
 
 public class XMLExporterTiers {
 	private Element tiersElement;
@@ -31,29 +32,29 @@ public class XMLExporterTiers {
 		return tiers;
 	}
 
-	public static XMLExporterTiers buildTiers(Rechnung rechnung, XMLExporter xmlExporter){
+	public static XMLExporterTiers buildTiers(IInvoice invoice, XMLExporter xmlExporter){
 		TarmedACL ta = TarmedACL.getInstance();
 		
-		Fall fall = rechnung.getFall();
-		Patient patient = fall.getPatient();
-		Mandant mandant = rechnung.getMandant();
+		ICoverage coverage = invoice.getCoverage();
+		IPatient patient = coverage.getPatient();
+		IMandator mandant = invoice.getMandator();
 	
 		String tiers = XMLExporter.TIERS_PAYANT;
-		Tiers tiersType = fall.getTiersType();
+		Tiers tiersType = CoverageServiceHolder.get().getTiersType(coverage);
 		if(Tiers.GARANT == tiersType) {
 			tiers = XMLExporter.TIERS_GARANT;
 		}
 		
-		Kontakt kostentraeger = fall.getCostBearer();
-		if (kostentraeger == null) {
-			kostentraeger = patient;
+		IContact costBearer = coverage.getCostBearer();
+		if (costBearer == null) {
+			costBearer = patient;
 		}
-		String kEAN = TarmedRequirements.getEAN(kostentraeger);
+		String kEAN = TarmedRequirements.getEAN(costBearer);
 		
 		Element element = null;
 		if (tiers.equals(XMLExporter.TIERS_GARANT)) {
 			element = new Element(XMLExporter.ELEMENT_TIERS_GARANT, XMLExporter.nsinvoice); //$NON-NLS-1$
-			String paymentPeriode = mandant.getRechnungssteller().getInfoString("rnfrist"); //$NON-NLS-1$
+			String paymentPeriode = (String) mandant.getBiller().getExtInfo("rnfrist"); //$NON-NLS-1$
 			if (StringTool.isNothing(paymentPeriode)) {
 				paymentPeriode = "30"; //$NON-NLS-1$
 			}
@@ -66,15 +67,15 @@ public class XMLExporterTiers {
 		
 		Element biller = new Element("biller", XMLExporter.nsinvoice); //$NON-NLS-1$
 		biller.setAttribute(XMLExporter.ATTR_EAN_PARTY,
-			TarmedRequirements.getEAN(mandant.getRechnungssteller()));
+			TarmedRequirements.getEAN(mandant.getBiller()));
 		XMLExporterUtil.setAttributeIfNotEmpty(biller, "zsr",
-			TarmedRequirements.getKSK(mandant.getRechnungssteller()));
-		String spec = mandant.getRechnungssteller().getInfoString(ta.SPEC);
+			TarmedRequirements.getKSK(mandant.getBiller()));
+		String spec = (String) mandant.getBiller().getExtInfo(ta.SPEC);
 		if (!spec.equals("")) { //$NON-NLS-1$
 			biller.setAttribute("specialty", spec); //$NON-NLS-1$
 		}
 		biller.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant
-			.getRechnungssteller())); // 11600-11680
+			.getBiller())); // 11600-11680
 		ret.tiersElement.addContent(biller);
 		
 		Element provider = new Element("provider", XMLExporter.nsinvoice); //$NON-NLS-1$
@@ -82,7 +83,7 @@ public class XMLExporterTiers {
 			TarmedRequirements.getEAN(mandant));
 		provider.setAttribute(
 			"zsr", TarmedRequirements.getKSK(mandant)); //$NON-NLS-1$
-		spec = mandant.getInfoString(ta.SPEC);
+		spec = (String) mandant.getExtInfo(ta.SPEC);
 		if (!spec.equals("")) { //$NON-NLS-1$
 			provider.setAttribute("specialty", spec); //$NON-NLS-1$
 		}
@@ -103,10 +104,10 @@ public class XMLExporterTiers {
 		// is a person, we "convert" it to an organization to make the validator
 		// happy
 		if (tiers.equals(XMLExporter.TIERS_GARANT)) {
-			if (kostentraeger.istOrganisation()) {
+			if (costBearer.isOrganization()) {
 				if (kEAN.matches("[0-9]{13,13}")) { //$NON-NLS-1$
 					insurance.setAttribute(XMLExporter.ATTR_EAN_PARTY, kEAN);
-					insurance.addContent(XMLExporterUtil.buildAdressElement(kostentraeger));
+					insurance.addContent(XMLExporterUtil.buildAdressElement(costBearer));
 					ret.tiersElement.addContent(insurance);
 				}
 			}
@@ -120,17 +121,17 @@ public class XMLExporterTiers {
 			insurance.setAttribute(XMLExporter.ATTR_EAN_PARTY, kEAN);
 			Element company = new Element("company", XMLExporter.nsinvoice); //$NON-NLS-1$
 			Element companyname = new Element("companyname", XMLExporter.nsinvoice); //$NON-NLS-1$
-			companyname.setText(StringTool.limitLength(kostentraeger.get(Kontakt.FLD_NAME1), 35));
+			companyname.setText(StringTool.limitLength(costBearer.getDescription1(), 35));
 			company.addContent(companyname);
-			company.addContent(XMLExporterUtil.buildPostalElement(kostentraeger));
-			Element telcom = XMLExporterUtil.buildTelekomElement(kostentraeger);
+			company.addContent(XMLExporterUtil.buildPostalElement(costBearer));
+			Element telcom = XMLExporterUtil.buildTelekomElement(costBearer);
 			if (telcom != null && !telcom.getChildren().isEmpty()) {
 				company.addContent(telcom);
 			}
 			// company.addContent(buildOnlineElement(kostentraeger)); //
 			// tschaller: see comments in
 			// buildOnlineElement
-			onlineElement = XMLExporterUtil.buildOnlineElement(kostentraeger);
+			onlineElement = XMLExporterUtil.buildOnlineElement(costBearer);
 			if (onlineElement != null) {
 				company.addContent(onlineElement);
 			}
@@ -147,38 +148,31 @@ public class XMLExporterTiers {
 		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is
 		// optional and should be
 		// ssn13 type. leave it out for now
-		String gender = "male"; //$NON-NLS-1$
 		if (patient == null) {
 			MessageDialog.openError(null, Messages.XMLExporter_ErrorCaption,
 				Messages.XMLExporter_NoPatientText);
 			return null;
 		}
-		if (StringTool.isNothing(patient.getGeschlecht())) { // we fall back to
-			// female. why not?
-			patient.set(Person.SEX, Person.FEMALE);
-		}
-		if (patient.getGeschlecht().equals(Person.FEMALE)) {
-			gender = "female"; //$NON-NLS-1$
-		}
-		patientElement.setAttribute("gender", gender); //$NON-NLS-1$
-		String gebDat = patient.getGeburtsdatum();
-		if (StringTool.isNothing(gebDat)) { // make validator happy if we don't
+		patientElement.setAttribute("gender", patient.getGender().toString().toLowerCase()); //$NON-NLS-1$
+		LocalDateTime dateOfBirth = patient.getDateOfBirth();
+		if (dateOfBirth == null) { // make validator happy if we don't
 			// know the birthdate
 			patientElement.setAttribute(XMLExporter.ATTR_BIRTHDATE, "0001-00-00T00:00:00"); //$NON-NLS-1$
 		} else {
 			patientElement
 				.setAttribute(XMLExporter.ATTR_BIRTHDATE,
-					new TimeTool(patient.getGeburtsdatum()).toString(TimeTool.DATE_MYSQL)
-						+ "T00:00:00"); //$NON-NLS-1$
+					XMLExporterUtil.makeTarmedDatum(dateOfBirth.toLocalDate())); //$NON-NLS-1$
 		}
 		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
 		ret.tiersElement.addContent(patientElement);
 		
-		Element guarantor = xmlExporter.buildGuarantor(getGuarantor(tiers, patient, fall), patient);
+		Element guarantor =
+			xmlExporter.buildGuarantor(getGuarantor(tiers, patient, coverage), patient);
 		ret.tiersElement.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", XMLExporter.nsinvoice); //$NON-NLS-1$
-		Kontakt auftraggeber = fall.getRequiredContact("Zuweiser");
+		IContact auftraggeber =
+			CoverageServiceHolder.get().getRequiredContact(coverage, "Zuweiser");
 		if (auftraggeber != null) {
 			String ean = TarmedRequirements.getEAN(auftraggeber);
 			if (ean != null && !ean.isEmpty()) {
@@ -198,7 +192,7 @@ public class XMLExporterTiers {
 	}
 	
 	/**
-	 * Get the {@link Kontakt} of the guarantor for a bill using the paymentMode, patient and fall. 
+	 * Get the {@link IContact} of the guarantor for a bill using the paymentMode, patient and fall.
 	 * 
 	 * <ul>
 	 * <li>Fall TP, Guardian defined -> return guardian
@@ -210,14 +204,14 @@ public class XMLExporterTiers {
 	 * 
 	 * @param paymentMode
 	 * @param patient
-	 * @param fall
+	 * @param coverage
 	 * @return
 	 */
-	public static Kontakt getGuarantor(String paymentMode, Patient patient, Fall fall){
-		Kontakt ret;
+	public static IContact getGuarantor(String paymentMode, IPatient patient, ICoverage coverage){
+		IContact ret;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			// TP
-			Kontakt legalGuardian = patient.getLegalGuardian();
+			IContact legalGuardian = patient.getLegalGuardian();
 			if(legalGuardian != null) {
 				return legalGuardian;
 			} else {
@@ -225,9 +219,9 @@ public class XMLExporterTiers {
 			}
 		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
 			// TG
-			Kontakt invoiceReceiver = fall.getGarant();
+			IContact invoiceReceiver = coverage.getGuarantor();
 			if (invoiceReceiver.equals(patient)) {
-				Kontakt legalGuardian = patient.getLegalGuardian();
+				IContact legalGuardian = patient.getLegalGuardian();
 				if (legalGuardian != null) {
 					ret = legalGuardian;
 				} else {
@@ -237,9 +231,9 @@ public class XMLExporterTiers {
 				ret = invoiceReceiver;
 			}
 		} else {
-			ret = fall.getGarant();
+			ret = coverage.getGuarantor();
 		}
-		ret.getPostAnschrift(true);
+		ret.getPostalAddress();
 		return ret;
 	}
 	

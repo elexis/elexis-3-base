@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -12,8 +13,12 @@ import org.apache.commons.lang.math.NumberUtils;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelAdapterFactory;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation.LimitationUnit;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.base.ch.arzttarife.util.TarmedDefinitionenUtil;
 import ch.elexis.core.jpa.entities.TarmedLeistung.MandantType;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
@@ -24,6 +29,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.TimeTool;
@@ -190,7 +196,7 @@ public class TarmedLeistung
 	public boolean requiresSide(){
 		if (getExtension() != null) {
 			String value =
-				getExtension().getLimits().get(TarmedConstants.TarmedLeistung.SIDE.toUpperCase());
+				getExtension().getLimits().get(Constants.FLD_EXT_SIDE.toUpperCase());
 			return "1".equals(value);
 		}
 		return false;
@@ -219,11 +225,11 @@ public class TarmedLeistung
 	public static String getSide(IBilled v){
 		IBillable vv = v.getBillable();
 		if (vv instanceof TarmedLeistung) {
-			String side = (String) v.getExtInfo(ch.elexis.core.jpa.entities.TarmedLeistung.SIDE);
-			if (ch.elexis.core.jpa.entities.TarmedLeistung.SIDE_L.equalsIgnoreCase(side)) {
-				return ch.elexis.core.jpa.entities.TarmedLeistung.LEFT;
-			} else if (ch.elexis.core.jpa.entities.TarmedLeistung.SIDE_R.equalsIgnoreCase(side)) {
-				return ch.elexis.core.jpa.entities.TarmedLeistung.RIGHT;
+			String side = (String) v.getExtInfo(Constants.FLD_EXT_SIDE);
+			if (Constants.SIDE_L.equalsIgnoreCase(side)) {
+				return Constants.LEFT;
+			} else if (Constants.SIDE_R.equalsIgnoreCase(side)) {
+				return Constants.RIGHT;
 			}
 		}
 		return "none";
@@ -294,6 +300,7 @@ public class TarmedLeistung
 	 * 
 	 * @return
 	 */
+	@Override
 	public List<String> getHierarchy(LocalDate date){
 		List<String> ret = new ArrayList<>();
 		List<String> hierarchy = getExtStringListField(
@@ -336,7 +343,7 @@ public class TarmedLeistung
 	 */
 	public List<TarmedExclusion> getExclusions(LocalDate date){
 		return TarmedKumulation.getExclusions(getCode(),
-			isChapter() ? TarmedKumulationType.CHAPTER : TarmedKumulationType.SERVICE, date,
+			isChapter() ? TarmedKumulationArt.CHAPTER : TarmedKumulationArt.SERVICE, date,
 			getLaw());
 	}
 	
@@ -408,7 +415,7 @@ public class TarmedLeistung
 	}
 	
 	public String getSparteAsText(){
-		return StringUtils.defaultString(TarmedLeistung.getTextForSparte(getSparte()));
+		return StringUtils.defaultString(TarmedDefinitionenUtil.getTextForSparte(getSparte()));
 	}
 	
 	/**
@@ -428,56 +435,6 @@ public class TarmedLeistung
 		return MandantType.SPECIALIST;
 	}
 	
-	/** Text zu einem Code der qualitativen Dignität holen */
-	public static String getTextForDigniQuali(final String kuerzel){
-		return TarmedDefinitionen.getTitle("DIGNI_QUALI", kuerzel);
-	}
-	
-	/** Kurz-Code für eine qualitative Dignität holen */
-	public static String getCodeForDigniQuali(final String titel){
-		return TarmedDefinitionen.getKuerzel("DIGNI_QUALI", titel);
-	}
-	
-	/** Text für einen Code für quantitative Dignität holen */
-	public static String getTextForDigniQuanti(final String kuerzel){
-		return TarmedDefinitionen.getTitle("DIGNI_QUALI", kuerzel);
-	}
-	
-	/** Text für einen Sparten-Code holen */
-	public static String getTextForSparte(final String kuerzel){
-		return TarmedDefinitionen.getTitle("SPARTE", kuerzel);
-	}
-	
-	/** Text für eine Anästhesie-Risikoklasse holen */
-	public static String getTextForRisikoKlasse(final String kuerzel){
-		return TarmedDefinitionen.getTitle("ANAESTHESIE", kuerzel);
-	}
-	
-	/** Text für einen ZR_EINHEIT-Code holen (Sitzung, Monat usw.) */
-	public static String getTextForZR_Einheit(final String kuerzel){
-		return TarmedDefinitionen.getTitle("ZR_EINHEIT", kuerzel);
-	}
-	
-	private static List<String> availableLawsCache;
-	
-	public static List<String> getAvailableLaws(){
-		return ArzttarifeModelServiceHolder.get()
-			.getNamedQueryByName(String.class, ITarmedLeistung.class, "TarmedLeistungDistinctLaws")
-			.executeWithParameters(Collections.emptyMap());
-	}
-	
-	public static boolean isAvailableLaw(String law){
-		if (availableLawsCache == null) {
-			availableLawsCache = getAvailableLaws();
-		}
-		for (String available : availableLawsCache) {
-			if (available.equalsIgnoreCase(law)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	/**
 	 * Query for a {@link TarmedLeistung} using the code. The returned {@link TarmedLeistung} will
 	 * be valid on date, and will be from the cataloge specified by law.
@@ -489,16 +446,12 @@ public class TarmedLeistung
 	 * @since 3.4
 	 */
 	public static TarmedLeistung getFromCode(final String code, LocalDate date, String law){
-		if (availableLawsCache == null) {
-			availableLawsCache = getAvailableLaws();
-		}
-		
 		IQuery<ITarmedLeistung> query =
 			ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
 		query.and("code_", COMPARATOR.EQUALS, code);
 		
 		if (law != null) {
-			if (!isAvailableLaw(law)) {
+			if (!ArzttarifeUtil.isAvailableLaw(law)) {
 				query.startGroup();
 				query.and("law", COMPARATOR.EQUALS, "");
 				query.or("law", COMPARATOR.EQUALS, null);
@@ -523,4 +476,43 @@ public class TarmedLeistung
 		return getFromCode(code, LocalDate.now(), law);
 	}
 	
+	@Override
+	public String getNickname(){
+		return getEntity().getNickname();
+	}
+	
+	@Override
+	public void setNickname(String value){
+		getEntity().setNickname(value);
+	}
+	
+	@Override
+	public List<ITarmedKumulation> getKumulations(TarmedKumulationArt type){
+		IQuery<ITarmedKumulation> query =
+			ArzttarifeModelServiceHolder.get().getQuery(ITarmedKumulation.class);
+		if (getLaw() != null && !getLaw().isEmpty()) {
+			query.and("law", COMPARATOR.EQUALS, getLaw());
+		}
+		query.startGroup();
+		query.and("masterCode", COMPARATOR.EQUALS, getCode());
+		query.and("masterArt", COMPARATOR.EQUALS, type.getArt());
+		query.startGroup();
+		query.and("slaveCode", COMPARATOR.EQUALS, getCode());
+		query.and("slaveArt", COMPARATOR.EQUALS, type.getArt());
+		query.orJoinGroups();
+		query.andJoinGroups();
+		
+		List<ITarmedKumulation> kumulations = query.execute();
+		if (kumulations == null || kumulations.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return kumulations.stream().filter(k -> k.isValidKumulation(getValidFrom()))
+			.collect(Collectors.toList());
+	}
+	
+	@Override
+	public String getLabel(){
+		return getCode() + " " + getText()
+			+ ((getLaw() != null && !getLaw().isEmpty()) ? " (" + getLaw() + ")" : "");
+	}
 }

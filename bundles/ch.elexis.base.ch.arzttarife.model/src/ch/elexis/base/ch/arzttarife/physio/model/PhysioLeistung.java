@@ -140,4 +140,8 @@ public class PhysioLeistung
 		getEntity().setDescription(value);
 	}
 	
+	@Override
+	public String getLabel(){
+		return getZiffer() + " " + getText();
+	}
 }

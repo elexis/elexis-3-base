@@ -1,4 +1,4 @@
-package ch.elexis.base.ch.arzttarife.tarmed.model;
+package ch.elexis.base.ch.arzttarife.util;
 
 import java.util.List;
 
@@ -7,7 +7,37 @@ import javax.persistence.TypedQuery;
 
 import ch.elexis.base.ch.arzttarife.model.service.EntityManagerHolder;
 
-public class TarmedDefinitionen {
+public class TarmedDefinitionenUtil {
+	
+	/** Text zu einem Code der qualitativen Dignität holen */
+	public static String getTextForDigniQuali(final String kuerzel){
+		return TarmedDefinitionenUtil.getTitle("DIGNI_QUALI", kuerzel);
+	}
+	
+	/** Kurz-Code für eine qualitative Dignität holen */
+	public static String getCodeForDigniQuali(final String titel){
+		return TarmedDefinitionenUtil.getKuerzel("DIGNI_QUALI", titel);
+	}
+	
+	/** Text für einen Code für quantitative Dignität holen */
+	public static String getTextForDigniQuanti(final String kuerzel){
+		return TarmedDefinitionenUtil.getTitle("DIGNI_QUALI", kuerzel);
+	}
+	
+	/** Text für einen Sparten-Code holen */
+	public static String getTextForSparte(final String kuerzel){
+		return TarmedDefinitionenUtil.getTitle("SPARTE", kuerzel);
+	}
+	
+	/** Text für eine Anästhesie-Risikoklasse holen */
+	public static String getTextForRisikoKlasse(final String kuerzel){
+		return TarmedDefinitionenUtil.getTitle("ANAESTHESIE", kuerzel);
+	}
+	
+	/** Text für einen ZR_EINHEIT-Code holen (Sitzung, Monat usw.) */
+	public static String getTextForZR_Einheit(final String kuerzel){
+		return TarmedDefinitionenUtil.getTitle("ZR_EINHEIT", kuerzel);
+	}
 	
 	public static String getTitle(String spalte, String kuerzel){
 		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();

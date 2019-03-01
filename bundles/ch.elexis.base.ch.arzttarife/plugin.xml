@@ -40,39 +40,31 @@
       </view>
    </extension>
    <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.data.ArzttarifFactory"
-            name="Arzttarife">
-      </Factory>
-   </extension>
-   <extension
          point="ch.elexis.core.ui.Verrechnungscode">
       <Leistung
             CodeDetailDisplay="ch.elexis.views.TarmedDetailDisplay"
             CodeSelectorFactory="ch.elexis.views.TarmedCodeSelectorFactory"
-            ComparatorClass="ch.elexis.data.TarmedLeistung$TarmedComparator"
-            ElementFactory="ch.elexis.data.ArzttarifFactory"
             ImporterClass="ch.elexis.data.TarmedImporter"
-            MandandFilterClass="ch.elexis.data.TarmedLeistung$MandantFilter"
             OptifyerClass="ch.elexis.data.TarmedOptifier"
-            name="TarmedLeistung">
+            elexisClassName="ch.elexis.data.TarmedLeistung"
+            name="TarmedLeistung"
+            system="Tarmed">
       </Leistung>
       <Leistung
             CodeDetailDisplay="ch.elexis.views.PhysioDetailDisplay"
             CodeSelectorFactory="ch.elexis.views.PhysioLeistungsCodeSelectorFactory"
-            ComparatorClass="ch.elexis.data.PhysioComparator"
-            ElementFactory="ch.elexis.data.ArzttarifFactory"
             ImporterClass="ch.elexis.data.PhysioImporter"
-            name=" Physio-Leistung">
+            elexisClassName="ch.elexis.data.PhysioLeistung"
+            name=" Physio-Leistung"
+            system="Physiotherapie">
       </Leistung>
       <Leistung
             CodeDetailDisplay="ch.elexis.views.ComplementaryDetailDisplay"
             CodeSelectorFactory="ch.elexis.views.ComplementaryCodeSelectorFactory"
-            ComparatorClass="ch.elexis.data.ComplementaryComparator"
-            ElementFactory="ch.elexis.data.ArzttarifFactory"
             ImporterClass="ch.elexis.data.ComplementaryImporter"
-            name="Komplementärmedizin">
+            elexisClassName="ch.elexis.data.ComplementaryLeistung"
+            name="Komplementärmedizin"
+            system="Komplementärmedizin">
       </Leistung>
    </extension>
    <extension
@@ -85,17 +77,6 @@
             name="Tarmed-XML-Export"
             outputter="ch.elexis.TarmedRechnung.XMLExporter">
       </Rechnung>
-   </extension>
-   <extension
-         point="ch.elexis.core.data.referenceDataImporter">
-      <importer
-            class="ch.elexis.data.importer.KVGTarmedReferenceDataImporter"
-            referenceDataId="tarmed_kvg_34">
-      </importer>
-      <importer
-            class="ch.elexis.data.importer.TarmedReferenceDataImporter"
-            referenceDataId="tarmed_34">
-      </importer>
    </extension>
    <extension
          point="ch.elexis.core.ui.TextTemplateRequirement">
@@ -112,12 +93,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-   </extension>
-   <extension
-         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
-      <ExternalMaintenance
-            MaintenanceCode="ch.elexis.base.ch.arzttarife.ui.dbcheck.UpdateTarmedInBlock">
-      </ExternalMaintenance>
    </extension>
 
 </plugin>

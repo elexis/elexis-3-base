@@ -24,6 +24,5 @@ Import-Package: ch.elexis.core.services.holder,
  org.osgi.service.component.annotations;version="1.2.0",
  org.slf4j
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/ch.elexis.labortarif2009.data.ReferenceDataImporterHolder.xml,
- OSGI-INF/ch.elexis.labortarif2009.data.ModelServiceHolder.xml
+Service-Component: OSGI-INF/ch.elexis.labortarif2009.data.ModelServiceHolder.xml
 

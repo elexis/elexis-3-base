@@ -1,12 +1,16 @@
 package ch.elexis.TarmedRechnung;
 
+import java.util.Optional;
+
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
 import ch.elexis.base.ch.ebanking.esr.ESR;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Organisation;
-import ch.elexis.data.Rechnung;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IOrganization;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.rgw.tools.XMLTool;
 
 public class XMLExporterEsr9 {
@@ -24,12 +28,12 @@ public class XMLExporterEsr9 {
 		return esr9Element;
 	}
 	
-	public static XMLExporterEsr9 buildEsr9(Rechnung rechnung, XMLExporterBalance balance,
+	public static XMLExporterEsr9 buildEsr9(IInvoice invoice, XMLExporterBalance balance,
 		XMLExporter xmlExporter){
 		
-		Mandant actMandant = rechnung.getMandant();
+		IMandator actMandant = invoice.getMandator();
 		
-		String esrmode = actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESR5OR9);
+		String esrmode = (String) actMandant.getBiller().getExtInfo(XMLExporter.ta.ESR5OR9);
 		Element element;
 		ESR besr = xmlExporter.getBesr();
 		
@@ -48,13 +52,16 @@ public class XMLExporterEsr9 {
 				Messages.XMLExporter_MandatorErrorText);
 			return null;
 		}
-		String bankid = actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.RNBANK);
-		if (!bankid.equals("")) { //$NON-NLS-1$
-			Organisation bank = Organisation.load(bankid);
-			Element eBank = new Element("bank", XMLExporter.nsinvoice); //$NON-NLS-1$
-			Element company = XMLExporterUtil.buildAdressElement(bank);
-			eBank.addContent(company);
-			element.addContent(eBank);
+		String bankid = (String) actMandant.getBiller().getExtInfo(XMLExporter.ta.RNBANK);
+		if (StringUtils.isNotBlank(bankid)) { //$NON-NLS-1$
+			Optional<IOrganization> bank =
+				CoreModelServiceHolder.get().load(bankid, IOrganization.class);
+			bank.ifPresent(b -> {
+				Element eBank = new Element("bank", XMLExporter.nsinvoice); //$NON-NLS-1$
+				Element company = XMLExporterUtil.buildAdressElement(b);
+				eBank.addContent(company);
+				element.addContent(eBank);
+			});
 		}
 
 		return new XMLExporterEsr9(element);

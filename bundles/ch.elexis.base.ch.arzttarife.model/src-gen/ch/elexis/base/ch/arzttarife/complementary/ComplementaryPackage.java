@@ -103,13 +103,31 @@ public interface ComplementaryPackage extends EPackage {
 	int ICOMPLEMENTARY_LEISTUNG__CHAPTER = ModelPackage.IBILLABLE_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Fixed Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE = ModelPackage.IBILLABLE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Fixed Value Set</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE_SET = ModelPackage.IBILLABLE_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>IComplementary Leistung</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ICOMPLEMENTARY_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 2;
+	int ICOMPLEMENTARY_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 4;
 
 
 	/**
@@ -143,6 +161,28 @@ public interface ComplementaryPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIComplementaryLeistung_Chapter();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getFixedValue <em>Fixed Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Fixed Value</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getFixedValue()
+	 * @see #getIComplementaryLeistung()
+	 * @generated
+	 */
+	EAttribute getIComplementaryLeistung_FixedValue();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#isFixedValueSet <em>Fixed Value Set</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Fixed Value Set</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#isFixedValueSet()
+	 * @see #getIComplementaryLeistung()
+	 * @generated
+	 */
+	EAttribute getIComplementaryLeistung_FixedValueSet();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -189,6 +229,20 @@ public interface ComplementaryPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ICOMPLEMENTARY_LEISTUNG__CHAPTER = eINSTANCE.getIComplementaryLeistung_Chapter();
+		/**
+		 * The meta object literal for the '<em><b>Fixed Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE = eINSTANCE.getIComplementaryLeistung_FixedValue();
+		/**
+		 * The meta object literal for the '<em><b>Fixed Value Set</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE_SET = eINSTANCE.getIComplementaryLeistung_FixedValueSet();
 
 	}
 

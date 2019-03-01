@@ -17,6 +17,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
@@ -103,7 +104,7 @@ public class TarmedLeistungTest {
 	
 	@Test
 	public void getDistinctAvailableLaws(){
-		List<String> availableLaws = TarmedLeistung.getAvailableLaws();
+		List<String> availableLaws = ArzttarifeUtil.getAvailableLaws();
 		assertTrue(availableLaws.contains("KVG"));
 	}
 	

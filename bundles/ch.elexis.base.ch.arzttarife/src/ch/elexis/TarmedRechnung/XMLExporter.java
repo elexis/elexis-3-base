@@ -68,15 +68,20 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.preferences.CorePreferenceInitializer;
 import ch.elexis.core.data.util.PlatformHelper;
-import ch.elexis.core.data.interfaces.IDiagnose;
+import ch.elexis.core.model.IBlob;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IDiagnosisReference;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.NamedBlob;
-import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
@@ -174,12 +179,12 @@ public class XMLExporter implements IRnOutputter {
 	public static final Namespace nsds = Namespace.getNamespace(
 		"ds", "http://www.w3.org/2000/09/xmldsig#"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	Fall actFall;
-	Patient actPatient;
-	Mandant actMandant;
+	ICoverage coverage;
+	IPatient patient;
+	IMandator mandator;
 	String tiers;
 	
-	Rechnung rn;
+	IInvoice invoice;
 	
 	private XMLExporterBalance xmlBalance;
 	private XMLExporterTreatment xmlTreatment;
@@ -198,10 +203,10 @@ public class XMLExporter implements IRnOutputter {
 	 * Reset exporter
 	 */
 	public void clear(){
-		actFall = null;
-		actPatient = null;
-		actMandant = null;
-		rn = null;
+		coverage = null;
+		patient = null;
+		mandator = null;
+		invoice = null;
 	}
 	
 	public XMLExporter(){
@@ -328,11 +333,13 @@ public class XMLExporter implements IRnOutputter {
 		clear();
 		// create a object for managing vat rates and values on invoice level
 		VatRateSum vatSummer = new VatRateSum();
-		rn = rechnung;
+		invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class)
+			.orElseThrow(() -> new IllegalStateException(
+				"Could not load invoice [" + rechnung.getId() + "]"));
 		
-		if (xmlBillExists(rechnung)) {
-			logger.info("Updating existing bill for " + rechnung.getNr());
-			Document updated = updateExistingXmlBill(rechnung, dest, type, doVerify);
+		if (xmlBillExists(invoice)) {
+			logger.info("Updating existing bill for " + invoice.getNumber());
+			Document updated = updateExistingXmlBill(invoice, dest, type, doVerify);
 			if (updated != null) {
 				return updated;
 			}
@@ -344,13 +351,13 @@ public class XMLExporter implements IRnOutputter {
 			return null;
 		}
 		
-		actFall = rn.getFall();
-		actPatient = actFall.getPatient();
-		actMandant = rn.getMandant();
-		Kontakt kostentraeger = actFall.getCostBearer();
+		coverage = invoice.getCoverage();
+		patient = coverage.getPatient();
+		mandator = invoice.getMandator();
+		IContact costBearer = coverage.getCostBearer();
 		
-		if (kostentraeger == null) {
-			kostentraeger = actPatient;
+		if (costBearer == null) {
+			costBearer = patient;
 		}
 
 		logger.info("Creating new bill for " + rechnung.getNr());
@@ -363,19 +370,19 @@ public class XMLExporter implements IRnOutputter {
 		root.setAttribute("schemaLocation", //$NON-NLS-1$
 			"http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_440.xsd", nsxsi); //$NON-NLS-1$
 		
-		root.setAttribute(ATTR_MODUS, getRole(actFall));
+		root.setAttribute(ATTR_MODUS, getRole(coverage));
 		root.setAttribute(ATTR_LANGUAGE, Locale.getDefault().getLanguage());
 		xmlRn = new Document(root);
 		
 		// services are needed for the balance
 		XMLExporterServices services = null;
-		services = XMLExporterServices.buildServices(rn, vatSummer);
+		services = XMLExporterServices.buildServices(invoice, vatSummer);
 		
 		//balance is needed by other parts so initialize first
-		initBalanceData(rechnung, services, vatSummer);
+		initBalanceData(invoice, services, vatSummer);
 
 		//processing
-		XMLExporterProcessing processing = XMLExporterProcessing.buildProcessing(rechnung, this);
+		XMLExporterProcessing processing = XMLExporterProcessing.buildProcessing(invoice, this);
 		root.addContent(processing.getElement());
 
 		//payload
@@ -388,24 +395,24 @@ public class XMLExporter implements IRnOutputter {
 		//invoice
 		String ts = null;
 		if (type.equals(IRnOutputter.TYPE.COPY)) {
-			ts = rn.getExtInfo(FIELDNAME_TIMESTAMPXML);
+			ts = (String) invoice.getExtInfo(FIELDNAME_TIMESTAMPXML);
 			if (StringTool.isNothing(ts)) {
 				ts = Long.toString(new Date().getTime() / 1000);
-				rn.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
+				invoice.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
 			}
 		} else {
 			ts = Long.toString(new Date().getTime() / 1000);
-			rn.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
+			invoice.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
 		}
 		
-		Element invoice = new Element(ELEMENT_INVOICE, nsinvoice);
-		invoice.setAttribute(ATTR_REQUEST_TIMESTAMP, ts);
-		invoice.setAttribute(ATTR_REQUEST_ID, rn.getRnId());
+		Element invoiceElement = new Element(ELEMENT_INVOICE, nsinvoice);
+		invoiceElement.setAttribute(ATTR_REQUEST_TIMESTAMP, ts);
+		invoiceElement.setAttribute(ATTR_REQUEST_ID, getInvoiceId(invoice));
 		// add now time to date of Rechnung, some need time for validation see (https://redmine.medelexis.ch/issues/10561)
-		invoice.setAttribute(ATTR_REQUEST_DATE,
-			new TimeTool(rn.getDatumRn()).toString(TimeTool.DATE_MYSQL) + "T" //$NON-NLS-1$
+		invoiceElement.setAttribute(ATTR_REQUEST_DATE,
+			new TimeTool(invoice.getDate()).toString(TimeTool.DATE_MYSQL) + "T" //$NON-NLS-1$
 				+ new TimeTool().toString(TimeTool.TIME_FULL)); // 10154 
-		payload.addContent(invoice);
+		payload.addContent(invoiceElement);
 		
 		//body
 		Element body = new Element(ELEMENT_BODY, nsinvoice);
@@ -413,14 +420,14 @@ public class XMLExporter implements IRnOutputter {
 		body.setAttribute(ATTR_BODY_PLACE, "practice");
 		
 		//prolog
-		XMLExporterProlog prolog = XMLExporterProlog.buildProlog(rechnung, this);
+		XMLExporterProlog prolog = XMLExporterProlog.buildProlog(invoice, this);
 		body.addContent(prolog.getElement());
 
 		//remark
-		String bem = rn.getBemerkung();
+		String bem = invoice.getRemark();
 		if (!StringTool.isNothing(bem)) {
 			Element remark = new Element(ELEMENT_REMARK, nsinvoice);
-			remark.setText(rn.getBemerkung());
+			remark.setText(invoice.getRemark());
 			body.addContent(remark);
 		}
 		
@@ -428,19 +435,19 @@ public class XMLExporter implements IRnOutputter {
 		body.addContent(xmlBalance.getElement());
 		
 		//esr9
-		esr9 = XMLExporterEsr9.buildEsr9(rechnung, xmlBalance, this);
+		esr9 = XMLExporterEsr9.buildEsr9(invoice, xmlBalance, this);
 		body.addContent(esr9.getElement());
 
 		//tiers garant or payant
-		XMLExporterTiers xmlTiers = XMLExporterTiers.buildTiers(rechnung, this);
+		XMLExporterTiers xmlTiers = XMLExporterTiers.buildTiers(invoice, this);
 		tiers = xmlTiers.getTiers();
 		body.addContent(xmlTiers.getElement());
 
 		//insurance
-		XMLExporterInsurance xmlInsurance = XMLExporterInsurance.buildInsurance(rechnung, this);
+		XMLExporterInsurance xmlInsurance = XMLExporterInsurance.buildInsurance(invoice, this);
 		body.addContent(xmlInsurance.getElement());
 
-		xmlTreatment = XMLExporterTreatment.buildTreatment(rechnung, this);
+		xmlTreatment = XMLExporterTreatment.buildTreatment(invoice, this);
 		body.addContent(xmlTreatment.getElement());
 		
 		if(services!=null) {
@@ -454,24 +461,29 @@ public class XMLExporter implements IRnOutputter {
 		
 		root.addContent(payload);
 		
-		if (rn.setBetrag(xmlBalance.getAmount().roundTo5()) == false) {
-			rn.reject(RnStatus.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
+		if (invoice.adjustAmount(xmlBalance.getAmount().roundTo5()) == false) {
+			invoice.reject(InvoiceState.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
 		} else if (doVerify) {
-			new Validator().checkBill(this, new Result<Rechnung>());
+			new Validator().checkBill(this, new Result<IInvoice>());
 		}
 		
-		checkXML(xmlRn, dest, rn, doVerify);
+		checkXML(xmlRn, dest, invoice, doVerify);
 		
-		if (rn.getStatus() != RnStatus.FEHLERHAFT) {
+		if (invoice.getState() != InvoiceState.DEFECTIVE) {
 			try {
 				StringWriter stringWriter = new StringWriter();
 				XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
 				xout.output(xmlRn, stringWriter);
-				NamedBlob blob = NamedBlob.load(PREFIX + rn.getNr());
-				blob.putString(stringWriter.toString());
+				IBlob blob = CoreModelServiceHolder.get()
+					.load(PREFIX + invoice.getNumber(), IBlob.class).orElseGet(() -> {
+						IBlob newBlob = CoreModelServiceHolder.get().create(IBlob.class);
+						newBlob.setId(PREFIX + invoice.getNumber());
+						return newBlob;
+					});
+				blob.setStringContent(stringWriter.toString());
+				CoreModelServiceHolder.get().save(blob);
 				if (dest != null) {
 					writeFile(xmlRn, dest);
-					
 				}
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
@@ -483,49 +495,59 @@ public class XMLExporter implements IRnOutputter {
 		return xmlRn;
 	}
 	
-	private Document updateExistingXmlBill(Rechnung rechnung, String dest, TYPE type,
+	private String getInvoiceId(IInvoice invoice){
+		IPatient patient = invoice.getCoverage().getPatient();
+		String pid = StringTool.pad(StringTool.LEFT, '0', patient.getPatientNr(), 6);
+		String nr = StringTool.pad(StringTool.LEFT, '0', invoice.getNumber(), 6);
+		return pid + nr;
+	}
+	
+	private Document updateExistingXmlBill(IInvoice invoice, String dest, TYPE type,
 		boolean doVerify){
 		// If the bill exists already in the database, it has been output
 		// earlier, so we don't
 		// recreate it. We must, however, reflect changes that happened
 		// since it was output:
 		// Payments, state changes, obligations
-		NamedBlob blob = NamedBlob.load(PREFIX + rechnung.getNr());
+		NamedBlob blob = NamedBlob.load(PREFIX + invoice.getNumber());
 		SAXBuilder builder = new SAXBuilder();
 		// initialize variables
-		actFall = rechnung.getFall();
-		actMandant = rechnung.getMandant();
+		coverage = invoice.getCoverage();
+		mandator = invoice.getMandator();
 		try {
 			Document ret = builder.build(new StringReader(blob.getString()));
 			Element root = ret.getRootElement();
 			if (getXmlVersion(root).equals("4.0")) {
-				updateExisting4Xml(root, type, rechnung);
+				updateExisting4Xml(root, type, invoice);
 			} else if (getXmlVersion(root).equals("4.4")) {
-				updateExisting44Xml(root, type, rechnung);
+				updateExisting44Xml(root, type, invoice);
 				
-				int status = rechnung.getStatus();
-				if (status == RnStatus.MAHNUNG_1 || status == RnStatus.MAHNUNG_1_GEDRUCKT) {
+				InvoiceState state = invoice.getState();
+				if (state == InvoiceState.DEMAND_NOTE_1
+					|| state == InvoiceState.DEMAND_NOTE_1_PRINTED) {
 					if (dest != null) {
 						dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m1.xml");
 					}
-					addReminderEntry(root, rechnung, "1");
-				} else if (status == RnStatus.MAHNUNG_2 || status == RnStatus.MAHNUNG_2_GEDRUCKT) {
+					addReminderEntry(root, invoice, "1");
+				} else if (state == InvoiceState.DEMAND_NOTE_2
+					|| state == InvoiceState.DEMAND_NOTE_2_PRINTED) {
 					if (dest != null) {
 						dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m2.xml");
 					}
-					addReminderEntry(root, rechnung, "2");
-				} else if (status == RnStatus.MAHNUNG_3 || status == RnStatus.MAHNUNG_3_GEDRUCKT) {
+					addReminderEntry(root, invoice, "2");
+				} else if (state == InvoiceState.DEMAND_NOTE_3
+					|| state == InvoiceState.DEMAND_NOTE_3_PRINTED) {
 					if (dest != null) {
 						dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m3.xml");
 					}
-					addReminderEntry(root, rechnung, "3");
+					addReminderEntry(root, invoice, "3");
 				}
 			} else {
 				logger.warn("Bill in unknown XML version " + getXmlVersion(root)
 					+ ", recreating bill.");
 				return null;
 			}
-			checkXML(ret, dest, rn, doVerify);
+			checkXML(ret, dest, invoice, doVerify);
 			
 			if (dest != null) {
 				if (type.equals(TYPE.STORNO)) {
@@ -548,7 +570,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
-	private void addReminderEntry(Element root, Rechnung rechnung, String reminderLevel){
+	private void addReminderEntry(Element root, IInvoice invoice, String reminderLevel){
 		boolean firstReminder = false;
 		Element payload = root.getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		payload.setAttribute(ATTR_PAYLOAD_TYPE, "reminder"); //$NON-NLS-1$
@@ -564,20 +586,20 @@ public class XMLExporter implements IRnOutputter {
 		}
 		reminder.setAttribute(ATTR_REQUEST_TIMESTAMP, timestamp); //$NON-NLS-1$
 		reminder.setAttribute(ATTR_REQUEST_DATE, dateString); //$NON-NLS-1$
-		reminder.setAttribute(ATTR_REQUEST_ID, rechnung.getRnId()); //$NON-NLS-1$
+		reminder.setAttribute(ATTR_REQUEST_ID, getInvoiceId(invoice)); //$NON-NLS-1$
 		reminder.setAttribute(ATTR_REMINDER_LEVEL, reminderLevel); //$NON-NLS-1$
 		
 		// add amount reminder and recalculate amount due
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);
 		if (body != null) {
 			Element balance = body.getChild("balance", XMLExporter.nsinvoice);
-			Money amountReminder = rechnung.getRemindersBetrag();
+			Money amountReminder = invoice.getDemandAmount();
 			balance.setAttribute(XMLExporter.ATTR_AMOUNT_REMINDER,
 				XMLTool.moneyToXmlDouble(amountReminder));
 			// rewrite amount due
-			Money mDue = new Money(rechnung.getBetrag());
+			Money mDue = new Money(invoice.getTotalAmount());
 			mDue.addMoney(amountReminder);
-			mDue.subtractMoney(rechnung.getAnzahlung());
+			mDue.subtractMoney(invoice.getPayedAmount());
 			balance.setAttribute(XMLExporter.ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue));
 		}
 		
@@ -597,8 +619,8 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
-	private void updateExisting44Xml(Element root, TYPE type, Rechnung rechnung){
-		Money mPaid = rn.getAnzahlung();
+	private void updateExisting44Xml(Element root, TYPE type, IInvoice existingInvoice){
+		Money mPaid = existingInvoice.getPayedAmount();
 		// update processing, print_at_intermediate and transport via EAN
 		Element processing = root.getChild("processing", XMLExporter.nsinvoice);//$NON-NLS-1$
 		String intermediatePrint =
@@ -615,7 +637,7 @@ public class XMLExporter implements IRnOutputter {
 		if (transport != null) {
 			Element via = transport.getChild(XMLExporterProcessing.ELEMENT_TRANSPORT_VIA,
 				XMLExporter.nsinvoice);
-			String iEAN = XMLExporterProcessing.getIntermediateEAN(rechnung, this);
+			String iEAN = XMLExporterProcessing.getIntermediateEAN(existingInvoice, this);
 			if (iEAN != null && !iEAN.isEmpty()) {
 				via.setAttribute(XMLExporterProcessing.ATTR_TRANSPORT_VIA_VIA, iEAN);
 			}
@@ -671,9 +693,9 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
-	private void updateExisting4Xml(Element root, TYPE type, Rechnung rechnung){
+	private void updateExisting4Xml(Element root, TYPE type, IInvoice existingInvoice){
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
-		Money mPaid = rn.getAnzahlung();
+		Money mPaid = existingInvoice.getPayedAmount();
 
 		Element invoice = root.getChild("invoice", namespace);//$NON-NLS-1$
 		fixCanton(invoice, namespace);
@@ -751,11 +773,12 @@ public class XMLExporter implements IRnOutputter {
 		return location;//$NON-NLS-1$
 	}
 
-	private boolean xmlBillExists(Rechnung rechnung){
-		return NamedBlob.exists(PREFIX + rechnung.getNr());
+	private boolean xmlBillExists(IInvoice invoice){
+		return CoreModelServiceHolder.get().load(PREFIX + invoice.getNumber(), IBlob.class)
+			.isPresent();
 	}
 
-	protected Element buildGuarantor(Kontakt garant, Kontakt patient){
+	protected Element buildGuarantor(IContact garant, IContact patient){
 		// Patient wird im override des MediPort Plugins verwendet
 		// Hinweis:
 		// XML Standard:
@@ -780,12 +803,12 @@ public class XMLExporter implements IRnOutputter {
 	 *            the bill
 	 * @param dest
 	 *            the destination path if the user chose output to file. Might be null
-	 * @param rn
+	 * @param invoice
 	 *            the bill to output
 	 * @param doVerify
 	 *            false if the user doesn't want strict validity check (subclasses may ignore)
 	 */
-	protected void checkXML(final Document xmlDoc, String dest, final Rechnung rn,
+	protected void checkXML(final Document xmlDoc, String dest, final IInvoice invoice,
 		final boolean doVerify){
 		if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)) {
 			Source source = new JDOMSource(xmlDoc);
@@ -815,7 +838,7 @@ public class XMLExporter implements IRnOutputter {
 					sb.append(err).append(StringConstants.LF);
 				}
 				logger.error(sb.toString());
-				rn.reject(RnStatus.REJECTCODE.VALIDATION_ERROR, sb.toString());
+				invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR, sb.toString());
 				XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
 				StringWriter sw = new StringWriter();
 				try {
@@ -864,13 +887,16 @@ public class XMLExporter implements IRnOutputter {
 		xout.output(doc, cout);
 		cout.close();
 		fout.close();
-		int status_vorher = rn.getStatus();
-		if ((status_vorher == RnStatus.OFFEN) || (status_vorher == RnStatus.MAHNUNG_1)
-			|| (status_vorher == RnStatus.MAHNUNG_2) || (status_vorher == RnStatus.MAHNUNG_3)) {
-			rn.setStatus(status_vorher + 1);
+		InvoiceState previousState = invoice.getState();
+		if ((previousState == InvoiceState.OPEN) || (previousState == InvoiceState.DEMAND_NOTE_1)
+			|| (previousState == InvoiceState.DEMAND_NOTE_2)
+			|| (previousState == InvoiceState.DEMAND_NOTE_3)) {
+			InvoiceState newState = InvoiceState.fromState(previousState.numericValue() + 1);
+			invoice.setState(newState);
+			CoreModelServiceHolder.get().save(invoice);
 		}
-		rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
-			+ RnStatus.getStatusText(rn.getStatus()));
+		invoice.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
+			+ invoice.getState().getLocaleText());
 	}
 	
 	@Override
@@ -894,7 +920,7 @@ public class XMLExporter implements IRnOutputter {
 		// Nothing
 	}
 	
-	protected String getIntermediateEAN(final Fall fall){
+	protected String getIntermediateEAN(final ICoverage coverage){
 		// Try to find the intermediate EAN. If we have explicitely set
 		// an intermediate EAN, we'll use this one. Otherweise, we'll
 		// check whether the mandator has a TC contract. if so, we try to
@@ -902,10 +928,10 @@ public class XMLExporter implements IRnOutputter {
 		// If nothing appropriate is found, we'll try to use the receiver EAN
 		// or at least the guarantor EAN.
 		// If everything fails we use a pseudo EAN to make the Validators happy
-		String iEAN = TarmedRequirements.getIntermediateEAN(actFall);
+		String iEAN = TarmedRequirements.getIntermediateEAN(coverage);
 		if (iEAN.length() == 0) {
-			if (TarmedRequirements.hasTCContract(actMandant)) {
-				String trustCenter = TarmedRequirements.getTCName(actMandant);
+			if (TarmedRequirements.hasTCContract(mandator)) {
+				String trustCenter = TarmedRequirements.getTCName(mandator);
 				if (trustCenter.length() > 0) {
 					iEAN = TrustCenters.getTCEAN(trustCenter);
 				}
@@ -914,7 +940,7 @@ public class XMLExporter implements IRnOutputter {
 		return iEAN;
 	}
 	
-	protected String getSenderEAN(Mandant actMandant){
+	protected String getSenderEAN(IMandator actMandant){
 		return TarmedRequirements.getEAN(actMandant);
 	}
 	
@@ -973,14 +999,15 @@ public class XMLExporter implements IRnOutputter {
 	 * @param services
 	 * @param vatSummer
 	 */
-	private void initBalanceData(Rechnung rechnung, XMLExporterServices services,
+	private void initBalanceData(IInvoice invoice, XMLExporterServices services,
 		VatRateSum vatSummer){
-		xmlBalance = XMLExporterBalance.buildBalance(rechnung, services, vatSummer, this);
+		
+		xmlBalance = XMLExporterBalance.buildBalance(invoice, services, vatSummer, this);
 		
 		besr =
-			new ESR(actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRNUMBER),
-				actMandant.getRechnungssteller().getInfoString(XMLExporter.ta.ESRSUB),
-				rechnung.getRnId(), ESR.ESR27);
+			new ESR((String) mandator.getBiller().getExtInfo(XMLExporter.ta.ESRNUMBER),
+				(String) mandator.getBiller().getExtInfo(XMLExporter.ta.ESRSUB),
+				getInvoiceId(invoice), ESR.ESR27);
 	}
 
 	public ESR getBesr(){
@@ -991,11 +1018,11 @@ public class XMLExporter implements IRnOutputter {
 		return xmlBalance.getDue();
 	}
 	
-	public List<IDiagnose> getDiagnoses(){
+	public List<IDiagnosisReference> getDiagnoses(){
 		return xmlTreatment.getDiagnoses();
 	}
 	
-	protected String getRole(final Fall fall){
+	protected String getRole(final ICoverage coverage){
 		return "production"; //$NON-NLS-1$
 	}
 }

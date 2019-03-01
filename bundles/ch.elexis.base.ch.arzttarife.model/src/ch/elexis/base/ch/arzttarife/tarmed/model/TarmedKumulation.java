@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.services.INamedQuery;
@@ -26,8 +28,8 @@ public class TarmedKumulation
 	}
 	
 	@Override
-	public String getSlaveArt(){
-		return getEntity().getSlaveArt();
+	public TarmedKumulationArt getSlaveArt(){
+		return TarmedKumulationArt.ofArt(getEntity().getSlaveArt());
 	}
 	
 	@Override
@@ -102,7 +104,7 @@ public class TarmedKumulation
 	 * @return
 	 */
 	public static List<TarmedExclusion> getExclusions(String mastercode,
-		TarmedKumulationType masterType, LocalDate date, String law){
+		TarmedKumulationArt masterType, LocalDate date, String law){
 		INamedQuery<ITarmedKumulation> query = ArzttarifeModelServiceHolder.get()
 			.getNamedQuery(ITarmedKumulation.class, "masterCode", "masterArt", "typ");
 		List<ITarmedKumulation> exclusions = query.executeWithParameters(
@@ -133,7 +135,7 @@ public class TarmedKumulation
 	 * @return
 	 */
 	public static List<TarmedExclusive> getExclusives(String mastercode,
-		TarmedKumulationType masterType, LocalDate date, String law){
+		TarmedKumulationArt masterType, LocalDate date, String law){
 		
 		INamedQuery<ITarmedKumulation> query = ArzttarifeModelServiceHolder.get()
 			.getNamedQuery(ITarmedKumulation.class, "masterCode", "masterArt", "typ");
@@ -153,5 +155,20 @@ public class TarmedKumulation
 		exclusives =
 			exclusives.stream().filter(k -> k.isValidKumulation(date)).collect(Collectors.toList());
 		return exclusives.stream().map(k -> new TarmedExclusive(k)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public String getMasterCode(){
+		return getEntity().getMasterCode();
+	}
+	
+	@Override
+	public TarmedKumulationArt getMasterArt(){
+		return TarmedKumulationArt.ofArt(getEntity().getMasterArt());
+	}
+	
+	@Override
+	public TarmedKumulationTyp getTyp(){
+		return TarmedKumulationTyp.ofTyp(getEntity().getTyp());
 	}
 }

@@ -5,26 +5,27 @@ import java.util.List;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 
 public class TarmedExclusion {
 	
 	private String slaveCode;
-	private TarmedKumulationType slaveType;
+	private TarmedKumulationArt slaveType;
 	private boolean validSide;
 	
 	public TarmedExclusion(ITarmedKumulation kumulation){
 		slaveCode = kumulation.getSlaveCode();
-		slaveType = TarmedKumulationType.ofArt(kumulation.getSlaveArt());
+		slaveType = kumulation.getSlaveArt();
 		validSide = "1".equals(kumulation.getValidSide());
 	}
 	
 
 	public boolean isMatching(TarmedLeistung tarmedLeistung, LocalDate date){
-		if (slaveType == TarmedKumulationType.CHAPTER) {
+		if (slaveType == TarmedKumulationArt.CHAPTER) {
 			return isMatchingChapter(tarmedLeistung);
-		} else if (slaveType == TarmedKumulationType.SERVICE) {
+		} else if (slaveType == TarmedKumulationArt.SERVICE) {
 			return isMatchingService(tarmedLeistung);
-		} else if (slaveType == TarmedKumulationType.GROUP) {
+		} else if (slaveType == TarmedKumulationArt.GROUP) {
 			List<String> groups = tarmedLeistung.getServiceGroups(date);
 			return groups.contains(slaveCode);
 		}
@@ -49,7 +50,7 @@ public class TarmedExclusion {
 	}
 	
 	public boolean isMatching(TarmedGroup tarmedGroup){
-		if (slaveType != TarmedKumulationType.GROUP) {
+		if (slaveType != TarmedKumulationArt.GROUP) {
 			return false;
 		}
 		return slaveCode.equals(tarmedGroup.getCode());
@@ -62,7 +63,7 @@ public class TarmedExclusion {
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(TarmedKumulationType.toString(slaveType)).append(" ").append(slaveCode);
+		sb.append(TarmedKumulationArt.toString(slaveType)).append(" ").append(slaveCode);
 		return sb.toString();
 	}
 }

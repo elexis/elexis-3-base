@@ -19,6 +19,8 @@ import java.util.Map;
  * </p>
  * <ul>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getLimits <em>Limits</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getMedInterpretation <em>Med Interpretation</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getTechInterpretation <em>Tech Interpretation</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedExtension()
@@ -41,4 +43,56 @@ public interface ITarmedExtension extends Identifiable, Deleteable, WithExtInfo 
 	 * @generated
 	 */
 	Map<String, String> getLimits();
+
+	/**
+	 * Returns the value of the '<em><b>Med Interpretation</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Med Interpretation</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Med Interpretation</em>' attribute.
+	 * @see #setMedInterpretation(String)
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedExtension_MedInterpretation()
+	 * @model
+	 * @generated
+	 */
+	String getMedInterpretation();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getMedInterpretation <em>Med Interpretation</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Med Interpretation</em>' attribute.
+	 * @see #getMedInterpretation()
+	 * @generated
+	 */
+	void setMedInterpretation(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Tech Interpretation</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Tech Interpretation</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Tech Interpretation</em>' attribute.
+	 * @see #setTechInterpretation(String)
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedExtension_TechInterpretation()
+	 * @model
+	 * @generated
+	 */
+	String getTechInterpretation();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension#getTechInterpretation <em>Tech Interpretation</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Tech Interpretation</em>' attribute.
+	 * @see #getTechInterpretation()
+	 * @generated
+	 */
+	void setTechInterpretation(String value);
 } // ITarmedExtension

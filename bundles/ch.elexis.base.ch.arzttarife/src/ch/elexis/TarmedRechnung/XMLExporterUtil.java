@@ -1,21 +1,21 @@
 package ch.elexis.TarmedRechnung;
 
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.jdom.Element;
 import org.jdom.Verifier;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Person;
-import ch.elexis.data.Rechnung;
-import ch.elexis.data.Rechnungssteller;
-import ch.elexis.data.Verrechnet;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.format.PostalAddress;
+import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -25,37 +25,37 @@ public class XMLExporterUtil {
 	private static final String ELEMENT_EMAIL = "email"; //$NON-NLS-1$
 	private static final String ELEMENT_ONLINE = "online"; //$NON-NLS-1$
 	
-	public static Element buildRechnungsstellerAdressElement(final Kontakt k){
+	public static Element buildRechnungsstellerAdressElement(final IContact k){
 		return buildAdressElement(k, false, true);
 	}
 	
-	public static Element buildAdressElement(final Kontakt k){
-		return buildAdressElement(k, false, false);
+	public static Element buildAdressElement(final IContact contact){
+		return buildAdressElement(contact, false, false);
 	}
 	
-	public static Element buildAdressElement(final Kontakt k, final boolean useAnschrift){
-		return buildAdressElement(k, useAnschrift, false);
+	public static Element buildAdressElement(final IContact contact, final boolean useAnschrift){
+		return buildAdressElement(contact, useAnschrift, false);
 	}
 	
-	public static Element buildAdressElement(final Kontakt k, final boolean useAnschrift,
+	public static Element buildAdressElement(final IContact contact, final boolean useAnschrift,
 		boolean checkAnrede){
 		Element ret;
 		boolean anredeOrganization = false;
 		if (checkAnrede) {
-			String anrede = (String) k.getInfoElement("Anrede");
+			String anrede = (String) contact.getExtInfo("Anrede");
 			anredeOrganization = (anrede == null || anrede.isEmpty());
 		}
-		if (k.istPerson() == false || anredeOrganization) {
+		if (contact.isPerson() == false || anredeOrganization) {
 			ret = new Element("company", XMLExporter.nsinvoice); //$NON-NLS-1$
 			Element companyname = new Element("companyname", XMLExporter.nsinvoice); //$NON-NLS-1$
-			companyname.setText(StringTool.limitLength(k.get(Kontakt.FLD_NAME1), 35));
+			companyname.setText(StringTool.limitLength(contact.getDescription1(), 35));
 			ret.addContent(companyname);
-			ret.addContent(buildPostalElement(k));
-			Element telcom = buildTelekomElement(k);
+			ret.addContent(buildPostalElement(contact));
+			Element telcom = buildTelekomElement(contact);
 			if (telcom != null && !telcom.getChildren().isEmpty()) {
 				ret.addContent(telcom);
 			}
-			Element onlineElement = buildOnlineElement(k);
+			Element onlineElement = buildOnlineElement(contact);
 			if (onlineElement != null) {
 				ret.addContent(onlineElement);
 			}
@@ -64,35 +64,40 @@ public class XMLExporterUtil {
 			Element familyname = new Element("familyname", XMLExporter.nsinvoice); //$NON-NLS-1$
 			Element givenname = new Element("givenname", XMLExporter.nsinvoice); //$NON-NLS-1$
 			
-			String anschrift = k.get(Kontakt.FLD_ANSCHRIFT);
-			if (!useAnschrift || StringTool.isNothing(anschrift)
-				|| anschrift.equals(k.createStdAnschrift())) {
-				setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"), 35); //$NON-NLS-1$ //$NON-NLS-2$
-				setAttributeIfNotEmptyWithLimit(ret, "title", k.get(Person.TITLE), 35); //$NON-NLS-1$
-				familyname.setText(StringTool.limitLength(k.get(Kontakt.FLD_NAME1), 35));
-				String gn = k.get(StringTool.limitLength(Kontakt.FLD_NAME2, 35));
+			if (!useAnschrift) {
+				setAttributeIfNotEmptyWithLimit(ret, "salutation", //$NON-NLS-1$
+					(String) contact.getExtInfo("Anrede"), //$NON-NLS-1$
+					35);
+				if (contact.isPerson()) {
+					IPerson person =
+						CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
+					setAttributeIfNotEmptyWithLimit(ret, "title", person.getTitel(), 35); //$NON-NLS-1$
+				}
+				familyname.setText(StringTool.limitLength(contact.getDescription1(), 35));
+				String gn = StringTool.limitLength(contact.getDescription2(), 35);
 				if (StringTool.isNothing(gn)) {
 					gn = "Unbekannt"; // make validator happy //$NON-NLS-1$
 				}
 				givenname.setText(gn);
 				ret.addContent(familyname);
 				ret.addContent(givenname);
-				ret.addContent(buildPostalElement(k));
+				ret.addContent(buildPostalElement(contact));
 			} else {
-				Postanschrift postAnschrift = new Postanschrift(k);
-				familyname.setText(StringTool.limitLength(postAnschrift.name, 35));
-				givenname.setText(StringTool.limitLength(postAnschrift.vorname, 35));
+				PostalAddress postAnschrift = PostalAddress.ofText(contact.getPostalAddress());
+				familyname.setText(StringTool.limitLength(postAnschrift.getLastName(), 35));
+				givenname.setText(StringTool.limitLength(postAnschrift.getFirstName(), 35));
 				
-				setAttributeIfNotEmptyWithLimit(ret, "salutation", postAnschrift.anrede, 35); //$NON-NLS-1$
+				setAttributeIfNotEmptyWithLimit(ret, "salutation", postAnschrift.getSalutation(), //$NON-NLS-1$
+					35);
 				ret.addContent(familyname);
 				ret.addContent(givenname);
 				ret.addContent(buildPostalElement(postAnschrift));
 			}
-			Element telcom = buildTelekomElement(k);
+			Element telcom = buildTelekomElement(contact);
 			if (telcom != null && !telcom.getChildren().isEmpty()) {
 				ret.addContent(telcom);
 			}
-			Element onlineElement = buildOnlineElement(k);
+			Element onlineElement = buildOnlineElement(contact);
 			if (onlineElement != null) {
 				ret.addContent(onlineElement);
 			}
@@ -100,39 +105,41 @@ public class XMLExporterUtil {
 		return ret;
 	}
 	
-	public static Element buildPostalElement(final Kontakt k){
+	public static Element buildPostalElement(final IContact contact){
 		Element ret = new Element("postal", XMLExporter.nsinvoice); //$NON-NLS-1$
-		addElementIfExists(ret, "pobox", null, StringTool.limitLength(k.getInfoString("Postfach"), //$NON-NLS-1$ //$NON-NLS-2$
-			35), null);
-		addElementIfExists(ret,
-			"street", null, StringTool.limitLength(k.get(Kontakt.FLD_STREET), 35), null); //$NON-NLS-1$
+		addElementIfExists(ret, "pobox", null, //$NON-NLS-1$
+			StringTool.limitLength((String) contact.getExtInfo("Postfach"), //$NON-NLS-1$
+				35),
+			null);
+		addElementIfExists(ret, "street", null, StringTool.limitLength(contact.getStreet(), 35), //$NON-NLS-1$
+			null);
 		Element zip =
-			addElementIfExists(ret,
-				"zip", null, StringTool.limitLength(k.get(Kontakt.FLD_ZIP), 9), "0000"); //$NON-NLS-1$ //$NON-NLS-2$
-		setAttributeIfNotEmpty(zip,
-			"countrycode", StringTool.limitLength(k.get(Kontakt.FLD_COUNTRY), 3)); //$NON-NLS-1$
-		addElementIfExists(
-			ret,
-			"city", null, StringTool.limitLength(k.get(Kontakt.FLD_PLACE), 35), Messages.XMLExporter_Unknown); //$NON-NLS-1$
+			addElementIfExists(ret, "zip", null, StringTool.limitLength(contact.getZip(), 9), //$NON-NLS-1$
+				"0000"); //$NON-NLS-1$
+		setAttributeIfNotEmpty(zip, "countrycode", //$NON-NLS-1$
+			StringTool.limitLength(contact.getCountry().toString(), 3));
+		addElementIfExists(ret, "city", null, StringTool.limitLength(contact.getCity(), 35), //$NON-NLS-1$
+			Messages.XMLExporter_Unknown);
 		return ret;
 	}
 	
-	public static Element buildPostalElement(final Postanschrift postanschrift){
+	public static Element buildPostalElement(final PostalAddress postalAddress){
 		Element ret = new Element("postal", XMLExporter.nsinvoice); //$NON-NLS-1$
-		addElementIfExists(ret, "pobox", null, StringTool.limitLength(postanschrift.adresse2, 35), //$NON-NLS-1$
-			null);
-		addElementIfExists(ret, "street", null, StringTool.limitLength(postanschrift.adresse1, 35), //$NON-NLS-1$
-			null);
+		addElementIfExists(ret, "pobox", null, //$NON-NLS-1$
+			StringTool.limitLength(postalAddress.getAddress2(), 35), null);
+		addElementIfExists(ret, "street", null, //$NON-NLS-1$
+			StringTool.limitLength(postalAddress.getAddress1(), 35), null);
 		Element zip =
-			addElementIfExists(ret, "zip", null, StringTool.limitLength(postanschrift.plz, 9), //$NON-NLS-1$
+			addElementIfExists(ret, "zip", null, StringTool.limitLength(postalAddress.getZip(), 9), //$NON-NLS-1$
 				"0000"); //$NON-NLS-1$
-		setAttributeIfNotEmpty(zip, "countrycode", StringTool.limitLength(postanschrift.land, 3)); //$NON-NLS-1$
-		addElementIfExists(ret, "city", null, StringTool.limitLength(postanschrift.ort, 35), //$NON-NLS-1$
+		setAttributeIfNotEmpty(zip, "countrycode", //$NON-NLS-1$
+			StringTool.limitLength(postalAddress.getCountry(), 3));
+		addElementIfExists(ret, "city", null, StringTool.limitLength(postalAddress.getCity(), 35), //$NON-NLS-1$
 			Messages.XMLExporter_unknown);
 		return ret;
 	}
 	
-	public static Element buildOnlineElement(final Kontakt k){
+	public static Element buildOnlineElement(final IContact k){
 		// Element ret = new Element("online", XMLExporter.nsinvoice);
 		// String email = StringTool.limitLength(k.get("E-Mail"), 70);
 		// if (!email.matches(".+@.+")) {
@@ -150,7 +157,7 @@ public class XMLExporterUtil {
 		Element ret = null;
 		
 		// mail adresse
-		String value = getValidXMLString(StringTool.limitLength(k.get(Kontakt.FLD_E_MAIL), 70));
+		String value = getValidXMLString(StringTool.limitLength(k.getEmail(), 70));
 		if (!value.equals(StringConstants.EMPTY)) {
 			if (!value.matches(".+@.+")) { //$NON-NLS-1$
 				value = "mail@invalid.invalid"; //$NON-NLS-1$
@@ -162,7 +169,7 @@ public class XMLExporterUtil {
 		}
 		
 		// webseite
-		value = getValidXMLString(StringTool.limitLength(k.get(Kontakt.FLD_WEBSITE), 100));
+		value = getValidXMLString(StringTool.limitLength(k.getWebsite(), 100));
 		if (!value.equals(StringConstants.EMPTY)) {
 			if (ret == null) {
 				ret = new Element(ELEMENT_ONLINE, XMLExporter.nsinvoice);
@@ -173,13 +180,13 @@ public class XMLExporterUtil {
 		return ret;
 	}
 	
-	public static Element buildTelekomElement(final Kontakt k){
+	public static Element buildTelekomElement(final IContact k){
 		Element ret = new Element("telecom", XMLExporter.nsinvoice); //$NON-NLS-1$
 		Element phoneElement = addElementIfExists(ret, "phone", null, //$NON-NLS-1$
-			StringTool.limitLength(k.get(Kontakt.FLD_PHONE1), 25), null); //$NON-NLS-1$
+			StringTool.limitLength(k.getPhone1(), 25), null); //$NON-NLS-1$
 		// only add the fax element if there is a phone, telcom without phone is not allowed by xsd
 		if (phoneElement != null) {
-			addElementIfExists(ret, "fax", null, StringTool.limitLength(k.get(Kontakt.FLD_FAX), 25), //$NON-NLS-1$
+			addElementIfExists(ret, "fax", null, StringTool.limitLength(k.getFax(), 25), //$NON-NLS-1$
 				null);
 		}
 		return ret;
@@ -212,28 +219,8 @@ public class XMLExporterUtil {
 		return new TimeTool(datum).toString(TimeTool.DATE_MYSQL) + "T00:00:00"; //$NON-NLS-1$
 	}
 	
-	public static TimeTool getFirstKonsDate(Rechnung rechnung){
-		TimeTool ret = new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
-		List<Konsultation> konsultationen = rechnung.getKonsultationen();
-		for (Konsultation konsultation : konsultationen) {
-			TimeTool tt = new TimeTool(konsultation.getDatum());
-			if (tt.isBefore(ret)) {
-				ret.set(tt);
-			}
-		}
-		return ret;
-	}
-	
-	public static TimeTool getLastKonsDate(Rechnung rechnung){
-		TimeTool ret = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-		List<Konsultation> konsultationen = rechnung.getKonsultationen();
-		for (Konsultation konsultation : konsultationen) {
-			TimeTool tt = new TimeTool(konsultation.getDatum());
-			if (tt.isAfter(ret)) {
-				ret.set(tt);
-			}
-		}
-		return ret;
+	public static String makeTarmedDatum(final LocalDate datum){
+		return datum.format(DateTimeFormatter.ofPattern("yyyyy-MM-dd")) + "T00:00:00"; //$NON-NLS-1$
 	}
 	
 	private static Element addElementIfExists(final Element parent, final String name,
@@ -275,11 +262,11 @@ public class XMLExporterUtil {
 	 * @param amount
 	 * @param el
 	 */
-	public static void setVatAttribute(Verrechnet verrechnet, Money amount, Element el,
+	public static void setVatAttribute(IBilled billed, Money amount, Element el,
 		VatRateSum vatsum){
 		double value = 0.0;
 		
-		String vatScale = verrechnet.getDetail(Verrechnet.VATSCALE);
+		String vatScale = (String) billed.getExtInfo(Constants.VAT_SCALE);
 		if (vatScale != null && vatScale.length() > 0)
 			value = Double.parseDouble(vatScale);
 		
@@ -290,144 +277,33 @@ public class XMLExporterUtil {
 	
 	/**
 	 * Determine the EAN of the responsible Kontakt for a Konsultation. The search for thee right
-	 * contact is in the following order.<br\>
-	 * 1. configured via ResponsibleComposite on RechnungsPref preference page for the Mandant of
-	 * the consultation<br\>
-	 * 2. Rechnungssteller of the Mandant of the consultation if not an organization<br\>
-	 * 3. the Mandant of the consultation<\br>
+	 * contact is in the following order.<br\> 1. configured via ResponsibleComposite on
+	 * RechnungsPref preference page for the Mandant of the consultation<br\> 2. Rechnungssteller of
+	 * the Mandant of the consultation if not an organization<br\> 3. the Mandant of the
+	 * consultation<\br>
 	 * 
-	 * @param kons
+	 * @param encounter
 	 * @return
 	 */
-	public static String getResponsibleEAN(Konsultation kons){
-		Kontakt responsibleKontakt = null;
+	public static String getResponsibleEAN(IEncounter encounter){
+		IContact responsibleKontakt = null;
 		
 		String responsibleId =
-			(String) kons.getMandant().getInfoElement(TarmedRequirements.RESPONSIBLE_INFO_KEY);
+			(String) encounter.getMandator().getExtInfo(TarmedRequirements.RESPONSIBLE_INFO_KEY);
 		if (responsibleId != null && !responsibleId.isEmpty()) {
-			responsibleKontakt = Mandant.load(responsibleId);
+			responsibleKontakt =
+				CoreModelServiceHolder.get().load(responsibleId, IMandator.class).orElse(null);
 		} else {
-			Rechnungssteller rechnungssteller = kons.getMandant().getRechnungssteller();
-			String anrede = rechnungssteller.getInfoString("Anrede");
+			IContact rechnungssteller = encounter.getMandator().getBiller();
+			String anrede = (String) rechnungssteller.getExtInfo("Anrede");
 			// only way to determine if rechnungssteller is a organization is testing empty anrede
 			if (anrede != null && !anrede.isEmpty()) {
 				responsibleKontakt = rechnungssteller;
 			} else {
-				responsibleKontakt = kons.getMandant();
+				responsibleKontakt = encounter.getMandator();
 			}
 		}
 		return TarmedRequirements.getEAN(responsibleKontakt);
-	}
-	
-	private static class Postanschrift {
-		private String anrede = StringConstants.EMPTY;
-		private String name = StringConstants.EMPTY;
-		private String vorname = StringConstants.EMPTY;
-		private String adresse1 = StringConstants.EMPTY;
-		private String adresse2 = StringConstants.EMPTY;
-		private String plz = StringConstants.EMPTY;
-		private String ort = StringConstants.EMPTY;
-		private String land = StringConstants.EMPTY;
-		
-		public Postanschrift(final Kontakt k){
-			super();
-			init(k);
-		}
-		
-		private void init(final Kontakt k){
-			String postAnschrift = k.getPostAnschrift(true);
-			
-			// Zeilen lesen
-			StringTokenizer tokenizer = new StringTokenizer(postAnschrift, StringConstants.LF);
-			List<String> zeileList = new Vector<String>();
-			while (tokenizer.hasMoreElements()) {
-				zeileList.add(tokenizer.nextToken());
-			}
-			// Zeilen interpretieren (so gut es geht)
-			String plzOrt = ""; //$NON-NLS-1$
-			String nameVorname = ""; //$NON-NLS-1$
-			final int len = zeileList.size();
-			switch (len) {
-			case 0: // Kann gar nicht sein, aber man weiss ja nie!
-				throw new IllegalArgumentException(Messages.XMLExporter_NoPostal);
-			case 1: // Nur Name vorname
-				nameVorname = zeileList.get(0);
-				break;
-			case 2: // NameVorname, Ortsangaben
-				nameVorname = zeileList.get(0);
-				plzOrt = zeileList.get(1);
-				break;
-			case 3: // NameVorname, Adr1, Ortsangaben ODER Anrede, NameVorname,
-				// Ortsangaben
-				if (zeileList.get(0).indexOf(" ") < 0) { //$NON-NLS-1$
-					// Erste Zeile Anrede
-					anrede = zeileList.get(0);
-					nameVorname = zeileList.get(1);
-					plzOrt = zeileList.get(2);
-				} else {
-					// Erste Zeile NameVorname
-					nameVorname = zeileList.get(0);
-					adresse1 = zeileList.get(1);
-					plzOrt = zeileList.get(2);
-				}
-				break;
-			case 4: // NameVorname, Adr1, Adr2, Ortsangaben ODER Anrede,
-				// NameVorname, Adr1,
-				// Ortsangaben
-				if (zeileList.get(0).indexOf(" ") < 0) { //$NON-NLS-1$
-					// Erste Zeile Anrede
-					anrede = zeileList.get(0);
-					nameVorname = zeileList.get(1);
-					adresse1 = zeileList.get(2);
-					plzOrt = zeileList.get(3);
-				} else {
-					// Erste Zeile NameVorname
-					nameVorname = zeileList.get(0);
-					adresse1 = zeileList.get(1);
-					adresse2 = zeileList.get(2);
-					plzOrt = zeileList.get(3);
-				}
-				break;
-			default:
-				if (len > 4) { // Anrede, NameVorname, Adr1, Adr2, Ortsangaben
-					anrede = zeileList.get(0);
-					nameVorname = zeileList.get(1);
-					adresse1 = zeileList.get(2);
-					adresse2 = zeileList.get(3);
-					plzOrt = zeileList.get(4);
-				}
-				break;
-			}
-			
-			// NameVorname aufteilen. Z.B. Von Allmen Christoph
-			if (!StringTool.isNothing(nameVorname)) {
-				nameVorname = nameVorname.trim();
-				int index = nameVorname.lastIndexOf(" "); // Z.B. Von Allmen Christoph //$NON-NLS-1$
-				if (index > 0) {
-					name = nameVorname.substring(0, index);
-					vorname = nameVorname.substring(index + 1);
-				} else {
-					name = nameVorname;
-				}
-			}
-			
-			// plzOrt parsen. Z.B. CH-3600 Lenzburg
-			land = k.get(Kontakt.FLD_COUNTRY);
-			if (plzOrt.length() > 3 && plzOrt.substring(0, 3).indexOf("-") > 0) { //$NON-NLS-1$
-				// Land exists
-				int index = plzOrt.indexOf("-"); //$NON-NLS-1$
-				land = plzOrt.substring(0, index);
-				plzOrt = plzOrt.substring(index + 1);
-			}
-			plz = k.get(Kontakt.FLD_ZIP);
-			if (plzOrt.indexOf(" ") > 0) { //$NON-NLS-1$
-				// Read zip code
-				int index = plzOrt.indexOf(StringConstants.SPACE);
-				plz = plzOrt.substring(0, index);
-				plzOrt = plzOrt.substring(index + 1);
-			}
-			ort = plzOrt;
-		}
 	}
 	
 	public static void negate(Element el, String attr){

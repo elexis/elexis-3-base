@@ -1,11 +1,11 @@
-package ch.elexis.base.ch.arzttarife.tarmed.model;
+package ch.elexis.base.ch.arzttarife.tarmed;
 
-public enum TarmedKumulationType {
+public enum TarmedKumulationArt {
 		SERVICE("L"), GROUP("G"), CHAPTER("K"), BLOCK("B");
 	
 	private String art;
 	
-	TarmedKumulationType(String art){
+	TarmedKumulationArt(String art){
 		this.art = art;
 	}
 	
@@ -13,7 +13,7 @@ public enum TarmedKumulationType {
 		return art;
 	}
 	
-	public static TarmedKumulationType ofArt(String slaveArt){
+	public static TarmedKumulationArt ofArt(String slaveArt){
 		if ("L".equals(slaveArt)) {
 			return SERVICE;
 		} else if ("G".equals(slaveArt)) {
@@ -26,7 +26,7 @@ public enum TarmedKumulationType {
 		return null;
 	}
 	
-	public static String toString(TarmedKumulationType type){
+	public static String toString(TarmedKumulationArt type){
 		if (type == SERVICE) {
 			return "Leistung";
 		} else if (type == GROUP) {

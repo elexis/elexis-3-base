@@ -11,6 +11,10 @@
  *******************************************************************************/
 package ch.elexis.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
@@ -35,6 +39,14 @@ public class PhysioDetailDisplay implements IDetailDisplay {
 		new InputData("Gültig von", "validFrom", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
 		new InputData("Gültig bis", "validTo", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
 		};
+	
+	@Inject
+	public void selection(
+		@Optional @Named("ch.elexis.views.codeselector.physio.selection") IPhysioLeistung physio){
+		if (physio != null && !form.isDisposed()) {
+			display(physio);
+		}
+	}
 	
 	public Composite createDisplay(Composite parent, IViewSite site){
 		form = tk.createForm(parent);

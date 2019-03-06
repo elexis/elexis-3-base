@@ -478,7 +478,7 @@ public class TarmedLeistung
 	
 	@Override
 	public String getNickname(){
-		return getEntity().getNickname();
+		return StringUtils.defaultString(getEntity().getNickname());
 	}
 	
 	@Override

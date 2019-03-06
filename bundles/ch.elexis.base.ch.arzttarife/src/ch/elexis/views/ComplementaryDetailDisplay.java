@@ -12,6 +12,10 @@
 
 package ch.elexis.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
@@ -49,6 +53,14 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 	private Text codeText;
 	private Text codeDescription;
 	private Text codeFixedValue;
+	
+	@Inject
+	public void selection(
+		@Optional @Named("ch.elexis.views.codeselector.complementary.selection") IComplementaryLeistung complementary){
+		if (complementary != null && !form.isDisposed()) {
+			display(complementary);
+		}
+	}
 	
 	public Composite createDisplay(Composite parent, IViewSite site){
 		form = toolkit.createScrolledForm(parent);

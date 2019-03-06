@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -44,12 +45,15 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		public void selectionChanged(SelectionChangedEvent event){
 			TreeViewer tv = (TreeViewer) event.getSource();
 			StructuredSelection ss = (StructuredSelection) tv.getSelection();
-			if (ss.isEmpty()) {
-				tvfa.updateSelection(null);
-				return;
+			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
+			if (!ss.isEmpty()) {
+				ITarmedLeistung selected = (ITarmedLeistung) ss.getFirstElement();
+				ContextServiceHolder.get().getRootContext()
+					.setNamed("ch.elexis.views.codeselector.tarmed.selection", selected);
+			} else {
+				ContextServiceHolder.get().getRootContext()
+					.setNamed("ch.elexis.views.codeselector.tarmed.selection", null);
 			}
-			//			PersistentObject o = (PersistentObject) ;
-			//			tvfa.updateSelection((o.isDragOK()) ? ss.getFirstElement() : null);
 		}
 	};
 	

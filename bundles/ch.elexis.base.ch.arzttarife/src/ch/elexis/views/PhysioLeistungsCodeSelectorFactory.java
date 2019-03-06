@@ -15,6 +15,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
@@ -46,6 +50,21 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+		cv.setSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				TableViewer tv = (TableViewer) event.getSource();
+				StructuredSelection ss = (StructuredSelection) tv.getSelection();
+				if (!ss.isEmpty()) {
+					IPhysioLeistung selected = (IPhysioLeistung) ss.getFirstElement();
+					ContextServiceHolder.get().getRootContext()
+						.setNamed("ch.elexis.views.codeselector.physio.selection", selected);
+				} else {
+					ContextServiceHolder.get().getRootContext()
+						.setNamed("ch.elexis.views.codeselector.physio.selection", null);
+				}
+			}
+		});
 		FieldDescriptor<?>[] fd =
 			new FieldDescriptor<?>[] {
 				new FieldDescriptor<IPhysioLeistung>("Ziffer", "ziffer", null),

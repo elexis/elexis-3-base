@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -67,6 +71,14 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 	
 	public TarmedDetailDisplay(){
 		
+	}
+	
+	@Inject
+	public void selection(
+		@Optional @Named("ch.elexis.views.codeselector.tarmed.selection") ITarmedLeistung tarmed){
+		if (tarmed != null && !form.isDisposed()) {
+			display(tarmed);
+		}
 	}
 	
 	public Composite createDisplay(Composite parent, IViewSite notUsed){

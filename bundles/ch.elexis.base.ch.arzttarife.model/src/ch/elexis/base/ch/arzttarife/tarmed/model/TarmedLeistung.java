@@ -453,8 +453,9 @@ public class TarmedLeistung
 		if (law != null) {
 			if (!ArzttarifeUtil.isAvailableLaw(law)) {
 				query.startGroup();
-				query.and("law", COMPARATOR.EQUALS, "");
+				query.or("law", COMPARATOR.EQUALS, "");
 				query.or("law", COMPARATOR.EQUALS, null);
+				query.andJoinGroups();
 			} else {
 				query.and("law", COMPARATOR.EQUALS, law, true);
 			}

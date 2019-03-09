@@ -31,6 +31,7 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
@@ -103,7 +104,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 				new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
-		return vc;
+		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
 	
 	@Override

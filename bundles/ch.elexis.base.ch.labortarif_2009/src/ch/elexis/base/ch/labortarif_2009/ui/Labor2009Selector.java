@@ -25,6 +25,7 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class Labor2009Selector extends CodeSelectorFactory {
@@ -55,7 +56,7 @@ public class Labor2009Selector extends CodeSelectorFactory {
 		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new DefaultLabelProvider(),
 			controlFieldProvider, new ViewerConfigurer.DefaultButtonProvider(),
 			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
-		return vc;
+		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
 	
 	@Override

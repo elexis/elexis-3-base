@@ -22,12 +22,6 @@
       </decorator>
    </extension>
  <extension
-       point="ch.elexis.core.data.PersistentReference">
-    <Factory
-          Class="ch.artikelstamm.elexis.common.ArtikelstammPOFactory">
-    </Factory>
- </extension>
- <extension
        point="org.eclipse.ui.handlers">
     <handler
           class="at.medevit.ch.artikelstamm.elexis.common.ui.handlers.OpenArticelDetailDialogHandler"

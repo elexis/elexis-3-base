@@ -20,6 +20,8 @@ public class LaborLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.Labor2009Tarif>
 		implements IdentifiableWithXid, ILaborLeistung {
 	
+	public static final String STS_CLASS = "ch.elexis.labortarif2009.data.Labor2009Tarif";
+	
 	private static IBillableOptifier<ILaborLeistung> optifier;
 	private IBillableVerifier verifier;
 	
@@ -88,8 +90,11 @@ public class LaborLeistung
 	
 	@Override
 	public boolean isValidOn(LocalDate date){
-		return (getValidFrom().isBefore(date) || getValidFrom().isEqual(date))
-			&& (getValidTo().isAfter(date) || getValidTo().isEqual(date));
+		boolean validFrom = getValidFrom().isBefore(date) || getValidFrom().isEqual(date);
+		if(validFrom && getValidTo() != null) {
+			return getValidTo().isAfter(date) || getValidTo().isEqual(date);
+		}
+		return validFrom;
 	}
 	
 	@Override

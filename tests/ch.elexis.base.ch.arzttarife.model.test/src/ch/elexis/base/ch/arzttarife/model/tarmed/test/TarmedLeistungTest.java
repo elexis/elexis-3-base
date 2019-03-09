@@ -89,6 +89,13 @@ public class TarmedLeistungTest {
 		assertEquals("00.0010-20010101", ((Identifiable) loadFromString).getId());
 		
 		Map<Object, Object> context = new HashMap<>();
+		context.put(ICodeElementService.ContextKeys.LAW, "UVG");
+		loadFromString = codeElementService
+			.loadFromString(TarmedConstants.TarmedLeistung.CODESYSTEM_NAME, "00.0010", context)
+			.get();
+		assertEquals("00.0010-20010101", ((Identifiable) loadFromString).getId());
+		
+		context = new HashMap<>();
 		context.put(ICodeElementService.ContextKeys.LAW, "KVG");
 		loadFromString = codeElementService
 			.loadFromString(TarmedConstants.TarmedLeistung.CODESYSTEM_NAME, "00.0010", context)

@@ -1,8 +1,274 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <bundle id="at.medevit.atc_codes" version="0.0.0"/>
-   <bundle id="at.medevit.ch.artikelstamm" version="0.0.0"/>
-   <bundle id="at.medevit.ch.artikelstamm.model" version="0.0.0"/>
-   <bundle id="at.medevit.ch.artikelstamm.model.test" version="0.0.0"/>
-   <bundle id="ch.elexis.base.ch.ticode" version="0.0.0"/>
+   <feature url="features/ch.elexis.base.ch.feature_3.2.100.qualifier.jar" id="ch.elexis.base.ch.feature" version="3.2.100.qualifier">
+      <category name="basepackages"/>
+   </feature>
+   <feature url="features/ch.elexis.base.textplugin.feature_3.0.100.qualifier.jar" id="ch.elexis.base.textplugin.feature" version="3.0.100.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.connect.reflotron.v2.feature_3.0.100.qualifier.jar" id="ch.elexis.connect.reflotron.v2.feature" version="3.0.100.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/ch.elexis.externe_dokumente.feature_3.0.100.qualifier.jar" id="ch.elexis.externe_dokumente.feature" version="3.0.100.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.icpc.feature_3.2.100.qualifier.jar" id="ch.elexis.icpc.feature" version="3.2.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.omnivore.feature_3.2.100.qualifier.jar" id="ch.elexis.omnivore.feature" version="3.2.100.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.privatrechnung.feature_3.0.100.qualifier.jar" id="ch.elexis.privatrechnung.feature" version="3.0.100.qualifier">
+      <category name="finances"/>
+   </feature>
+   <feature url="features/ch.medelexis.text.templator.feature_3.0.100.qualifier.jar" id="ch.medelexis.text.templator.feature" version="3.0.100.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.medshare.mediport.feature_3.0.100.qualifier.jar" id="ch.medshare.mediport.feature" version="3.0.100.qualifier">
+      <category name="finances"/>
+   </feature>
+   <feature url="features/ch.berchtold.privatrechnung.feature_3.0.100.qualifier.jar" id="ch.berchtold.privatrechnung.feature" version="3.0.100.qualifier">
+      <category name="finances"/>
+   </feature>
+   <feature url="features/ch.pharmed.phmprescriber.feature_3.0.100.qualifier.jar" id="ch.pharmed.phmprescriber.feature" version="3.0.100.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/com.hilotec.elexis.opendocument.feature_3.7.0.qualifier.jar" id="com.hilotec.elexis.opendocument.feature" version="3.7.0.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/org.iatrix.feature_3.1.100.qualifier.jar" id="org.iatrix.feature" version="3.1.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/org.iatrix.messwerte.feature_3.0.100.qualifier.jar" id="org.iatrix.messwerte.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/org.iatrix.bestellung.rose.feature_3.0.100.qualifier.jar" id="org.iatrix.bestellung.rose.feature" version="3.0.100.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/ch.elexis.base.messages.feature_3.0.100.qualifier.jar" id="ch.elexis.base.messages.feature" version="3.0.100.qualifier">
+      <category name="organisation"/>
+   </feature>
+   <feature url="features/ch.elexis.base.befunde.feature_3.0.100.qualifier.jar" id="ch.elexis.base.befunde.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.base.konsextension.privatnotizen.feature_3.0.100.qualifier.jar" id="ch.elexis.base.konsextension.privatnotizen.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.base.konsextension.bildanzeige.feature_3.0.100.qualifier.jar" id="ch.elexis.base.konsextension.bildanzeige.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport.bioanalytica.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport.bioanalytica.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport.analytica.feature_3.1.100.qualifier.jar" id="ch.elexis.laborimport.analytica.feature" version="3.1.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport.teamw.feature_3.1.100.qualifier.jar" id="ch.elexis.laborimport.teamw.feature" version="3.1.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.elexis.fop_wrapper.feature_3.0.100.qualifier.jar" id="ch.elexis.fop_wrapper.feature" version="3.0.100.qualifier">
+      <category name="libraries"/>
+   </feature>
+   <feature url="features/ch.elexis.base.ch.legacy.feature_3.0.100.qualifier.jar" id="ch.elexis.base.ch.legacy.feature" version="3.0.100.qualifier">
+      <category name="basepackages"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.decision.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.decision.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.gdt.feature_3.1.100.qualifier.jar" id="at.medevit.elexis.gdt.feature" version="3.1.100.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.gdt.defaultfilecp.feature_3.1.100.qualifier.jar" id="at.medevit.elexis.gdt.defaultfilecp.feature" version="3.1.100.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/ch.elexis.global_inbox.feature_3.0.100.qualifier.jar" id="ch.elexis.global_inbox.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.unibe.iam.scg.archie.feature_3.0.100.qualifier.jar" id="ch.unibe.iam.scg.archie.feature" version="3.0.100.qualifier">
+      <category name="statistics"/>
+   </feature>
+   <feature url="features/ch.elexis.connect.mythic.feature_3.0.100.qualifier.jar" id="ch.elexis.connect.mythic.feature" version="3.0.100.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/ch.elexis.connect.sysmex.feature_3.0.100.qualifier.jar" id="ch.elexis.connect.sysmex.feature" version="3.0.100.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/ch.elexis.connect.afinion.feature_3.0.100.qualifier.jar" id="ch.elexis.connect.afinion.feature" version="3.0.100.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/ch.medshare.connect.abacusjunior.feature_3.0.100.qualifier.jar" id="ch.medshare.connect.abacusjunior.feature" version="3.0.100.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/ch.elexis.archie.patientstatistik.feature_3.0.100.qualifier.jar" id="ch.elexis.archie.patientstatistik.feature" version="3.0.100.qualifier">
+      <category name="statistics"/>
+   </feature>
+   <feature url="features/ch.elexis.notes.feature_3.0.100.qualifier.jar" id="ch.elexis.notes.feature" version="3.0.100.qualifier">
+      <category name="organisation"/>
+   </feature>
+   <feature url="features/ch.elexis.archie.wzw.feature_3.0.100.qualifier.jar" id="ch.elexis.archie.wzw.feature" version="3.0.100.qualifier">
+      <category name="statistics"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.medietikette.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.medietikette.feature" version="3.0.100.qualifier">
+      <category name="organisation"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport.hl7.allg.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport.hl7.allg.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/waelti.statistics.feature_3.0.100.qualifier.jar" id="waelti.statistics.feature" version="3.0.100.qualifier">
+      <category name="statistics"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport_viollier.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_viollier.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.docbox.elexis.feature_3.0.100.qualifier.jar" id="ch.docbox.elexis.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.molemax.feature_3.0.100.qualifier.jar" id="ch.elexis.molemax.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport_labtop.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_labtop.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/com.hilotec.elexis.kgview.feature_3.0.100.qualifier.jar" id="com.hilotec.elexis.kgview.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport.synlab.feature.3.0.100.qualifier.jar" id="ch.elexis.laborimport.synlab.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport_lg1.feature.3.0.100.qualifier.jar" id="ch.elexis.laborimport_lg1.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/com.hilotec.elexis.stickerprefix.feature_3.0.100.qualifier.jar" id="com.hilotec.elexis.stickerprefix.feature" version="3.0.100.qualifier">
+      <category name="divers"/>
+   </feature>
+   <feature url="features/com.hilotec.elexis.opendocument2omnivore.feature_3.0.100.qualifier.jar" id="com.hilotec.elexis.opendocument2omnivore.feature" version="3.0.100.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport_lg1.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_lg1.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/com.hilotec.elexis.pluginstatistiken.feature_3.0.100.qualifier.jar" id="com.hilotec.elexis.pluginstatistiken.feature" version="3.0.100.qualifier">
+      <category name="statistics"/>
+   </feature>
+   <feature url="features/com.hilotec.elexis.messwerte.v2.feature_3.0.100.qualifier.jar" id="com.hilotec.elexis.messwerte.v2.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport_rischbern.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_rischbern.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport_rothen.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_rothen.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.medshare.elexis_directories.feature_3.0.100.qualifier.jar" id="ch.medshare.elexis_directories.feature" version="3.0.100.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/ch.elexis.stickynotes.feature_3.0.100.qualifier.jar" id="ch.elexis.stickynotes.feature" version="3.0.100.qualifier">
+      <category name="organisation"/>
+   </feature>
+   <feature url="features/ch.elexis.support.dbshaker.feature_3.0.100.qualifier.jar" id="ch.elexis.support.dbshaker.feature" version="3.0.100.qualifier">
+      <category name="support"/>
+   </feature>
+   <feature url="features/ch.elexis.icpc.fire.feature_3.2.100.qualifier.jar" id="ch.elexis.icpc.fire.feature" version="3.2.100.qualifier">
+      <category name="statistics"/>
+   </feature>
+   <feature url="features/ch.weirich.templator.pages.feature_3.0.100.qualifier.jar" id="ch.weirich.templator.pages.feature" version="3.0.100.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/ch.elexis.buchhaltung.basis.feature_3.0.100.qualifier.jar" id="ch.elexis.buchhaltung.basis.feature" version="3.0.100.qualifier">
+      <category name="finances"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport.medics.v2.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport.medics.v2.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/net.medshare.connector.aerztekasse.feature_3.0.100.qualifier.jar" id="net.medshare.connector.aerztekasse.feature" version="3.0.100.qualifier">
+      <category name="finances"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport.viollier.v2.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport.viollier.v2.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.inbox.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.inbox.feature" version="3.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.ehc.feature_3.3.100.qualifier.jar" id="at.medevit.elexis.ehc.feature" version="3.3.100.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/net.medshare.connector.viollier.feature_3.0.100.qualifier.jar" id="net.medshare.connector.viollier.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.elexis.impfplan.feature_3.0.100.qualifier.jar" id="ch.elexis.impfplan.feature" version="3.0.100.qualifier">
+      <category name="clinical_helpers"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.impfplan.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.impfplan.feature" version="3.0.100.qualifier">
+      <category name="clinical_helpers"/>
+   </feature>
+   <feature url="features/at.gruber.elexis.mythic22.feature_3.0.100.qualifier.jar" id="at.gruber.elexis.mythic22.feature" version="3.0.100.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.cobasmira.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.cobasmira.feature" version="3.0.100.qualifier">
+      <category name="labinterfaces"/>
+   </feature>
+   <feature url="features/at.medevit.ch.artikelstamm.medcalendar.feature_3.0.100.qualifier.jar" id="at.medevit.ch.artikelstamm.medcalendar.feature" version="3.0.100.qualifier">
+      <category name="clinical_helpers"/>
+   </feature>
+   <feature url="features/ch.elexis.connector.medicosearch.feature_3.0.100.qualifier.jar" id="ch.elexis.connector.medicosearch.feature" version="3.0.100.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/ch.elexis.laborimport.eurolyser.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport.eurolyser.feature" version="3.0.100.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.gpb.elexis.cst.feature_1.0.100.qualifier.jar" id="ch.gpb.elexis.cst.feature" version="1.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.emediplan.feature_1.0.100.qualifier.jar" id="at.medevit.elexis.emediplan.feature" version="1.0.100.qualifier">
+      <category name="clinicrecordkeeping"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.agenda.feature_1.0.100.qualifier.jar" id="at.medevit.elexis.agenda.feature" version="1.0.100.qualifier">
+      <category name="organisation"/>
+   </feature>
+   <feature url="features/ch.elexis.barcode.scanner.feature_3.2.100.qualifier.jar" id="ch.elexis.barcode.scanner.feature" version="3.2.100.qualifier">
+      <category name="libraries"/>
+   </feature>
+   <feature url="features/ch.elexis.agenda.feature_3.2.100.qualifier.jar" id="ch.elexis.agenda.feature" version="3.2.100.qualifier">
+      <category name="organisation"/>
+   </feature>
+   <feature url="features/ch.novcom.elexis.mednet.plugin.feature_3.1.100.qualifier.jar" id="ch.novcom.elexis.mednet.plugin.feature" version="3.1.100.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/ch.elexis.hl7.message.feature_1.0.0.qualifier.jar" id="ch.elexis.hl7.message.feature" version="1.0.0.qualifier">
+      <category name="dataexchange"/>
+   </feature>
+   <feature url="features/ch.elexis.importer.aeskulap.feature_1.0.0.qualifier.jar" id="ch.elexis.importer.aeskulap.feature" version="1.0.0.qualifier">
+      <category name="support"/>
+   </feature>
+   <feature url="features/ch.itmed.lmz.risch.laborder.feature_3.7.0.qualifier.jar" id="ch.itmed.lmz.risch.laborder.feature" version="3.7.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature url="features/ch.elexis.labororder.lg1.feature_1.0.0.qualifier.jar" id="ch.elexis.labororder.lg1.feature" version="1.0.0.qualifier">
+      <category name="laborexchanges"/>
+   </feature>
+   <category-def name="basepackages" label="Basispakete"/>
+   <category-def name="documentmanagement" label="Dokumentenverwaltung">
+      <description>
+         Elexis bietet verschiedene Plug-Ins zur Anbindung an eine Textverarbeitung an. Hinweise zur Auswahl finden Sie unter http://wiki.elexis.info/Auswahl.Text_Plugins.
+      </description>
+   </category-def>
+   <category-def name="dataexchange" label="Datenaustausch"/>
+   <category-def name="finances" label="Finanzen"/>
+   <category-def name="labinterfaces" label="Geräteanbindung"/>
+   <category-def name="clinicrecordkeeping" label="KG-Führung">
+      <description>
+         Elexis bietet verschiedene Plug-Ins für die Führung der Krankengeschichte an. Hinweise zur Auswahl finden Sie unter http://wiki.elexis.info/Auswahl.Krankengeschichte.
+      </description>
+   </category-def>
+   <category-def name="clinical_helpers" label="Klinische Hilfsmittel"/>
+   <category-def name="laborexchanges" label="Laboranbindung"/>
+   <category-def name="organisation" label="Organisation"/>
+   <category-def name="divers" label="Sonstige"/>
+   <category-def name="statistics" label="Statistik"/>
+   <category-def name="support" label="Zusätze/Support"/>
+   <category-def name="libraries" label="libraries [invisible]">
+      <description>
+         Hier finden sie Bibliotheken, welche keine direkt für den Benutzer sichtbare Auswirkung haben. Diese können jedoch von mehreren Plug-In verwendet werden.
+      </description>
+   </category-def>
 </site>

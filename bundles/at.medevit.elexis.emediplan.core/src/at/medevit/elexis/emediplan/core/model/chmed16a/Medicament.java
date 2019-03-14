@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
@@ -42,6 +43,7 @@ public class Medicament {
 	public transient State state = State.NEW;
 	public transient Prescription foundPrescription;
 	public transient String stateInfo = "";
+	public transient EntryType entryType;
 	
 	public static final String FREETEXT_PREFIX = "[Dosis: ";
 	public static final String FREETEXT_POSTFIX = "]";

@@ -8,6 +8,11 @@
             id="at.medevit.elexis.emediplan.ui.createAndOpen"
             name="%command.name.createAndOpen">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.emediplan.ui.handler.DebugImportHandler"
+            id="at.medevit.elexis.emediplan.ui.debugImport"
+            name="debugImport">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

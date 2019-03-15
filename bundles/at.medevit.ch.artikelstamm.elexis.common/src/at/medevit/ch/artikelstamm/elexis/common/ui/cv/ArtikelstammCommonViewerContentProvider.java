@@ -5,10 +5,10 @@ import java.util.List;
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeService;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
-import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
+import at.medevit.ch.artikelstamm.elexis.common.service.ATCCodeCacheServiceHolder;
+import at.medevit.ch.artikelstamm.elexis.common.service.ATCCodeServiceHolder;
 import at.medevit.ch.artikelstamm.elexis.common.service.ModelServiceHolder;
-import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCache;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -74,7 +74,7 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 	private void addFilterInformation(AtcQueryFilter atcQueryFilter, List<Object> elements){
 		String atcFilterValue = atcQueryFilter.getFilterValue();
 		String atcInfo =
-			ATCCodeServiceConsumer.getATCCodeService().getForATCCode(atcFilterValue).name_german;
+			ATCCodeServiceHolder.get().get().getForATCCode(atcFilterValue).name_german;
 		String label = "ATC Filter " + atcFilterValue + " (" + atcInfo + ")";
 		ATCFilterInfoListElement aficle = new ATCFilterInfoListElement(label);
 		elements.add(0, aficle);
@@ -86,7 +86,7 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 			
 			if (name == null || name.length() < 1)
 				return;
-			ATCCodeService atcCodeService = ATCCodeServiceConsumer.getATCCodeService();
+			ATCCodeService atcCodeService = ATCCodeServiceHolder.get().get();
 			if (atcCodeService == null)
 				return;
 			List<ATCCode> results = atcCodeService.getATCCodesMatchingName(name,
@@ -96,7 +96,7 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 				.get(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES, true);
 			if (!showEmptyGroups) {
 				for (ATCCode atcCode : results) {
-					if (ATCCodeCache.getAvailableArticlesByATCCode(atcCode) > 0)
+					if (ATCCodeCacheServiceHolder.getAvailableArticlesByATCCode(atcCode) > 0)
 						elements.add(atcCode);
 				}
 			} else {

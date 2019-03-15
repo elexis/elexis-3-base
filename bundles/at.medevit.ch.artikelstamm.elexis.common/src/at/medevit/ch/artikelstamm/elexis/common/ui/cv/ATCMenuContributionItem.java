@@ -24,12 +24,12 @@ import at.medevit.atc_codes.ATCCode;
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
 import at.medevit.atc_codes.ATCCodeService;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
-import at.medevit.ch.artikelstamm.elexis.common.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
+import at.medevit.ch.artikelstamm.elexis.common.service.ATCCodeServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.CommonViewer.Message;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
 
 public class ATCMenuContributionItem extends ContributionItem {
 	
@@ -51,7 +51,7 @@ public class ATCMenuContributionItem extends ContributionItem {
 		StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
 		Object element = structuredSelection.getFirstElement();
 		
-		ATCCodeService atcCodeService = ATCCodeServiceConsumer.getATCCodeService();
+		ATCCodeService atcCodeService = ATCCodeServiceHolder.get().get();
 		if (atcCodeService == null)
 			return;
 		

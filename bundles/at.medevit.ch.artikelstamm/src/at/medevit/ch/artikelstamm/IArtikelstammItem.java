@@ -101,6 +101,25 @@ public interface IArtikelstammItem extends IArticle {
 	public boolean isUserDefinedPrice();
 	
 	/**
+	 * @return whether this price is set by the user
+	 */
+	public boolean isUserDefinedPkgSize();
+	
+	/**
+	 * @return the overridden public price value if overridden and not null. If the price was not
+	 *         overridden, also <code>null</code> is returned.
+	 */
+	public int getUserDefinedPkgSize();
+	
+	/**
+	 * Set the price as user-defined (i.e. overridden) price. This will internally store the price
+	 * as negative value.
+	 * 
+	 * @param value
+	 */
+	public void setUserDefinedPkgSizeValue(int value);
+	
+	/**
 	 * Set the price as user-defined (i.e. overridden) price. This will internally store the price
 	 * as negative value.
 	 * 
@@ -112,9 +131,15 @@ public interface IArtikelstammItem extends IArticle {
 	 * Restore the original price, if was overridden, effectively deleting a manually overridden
 	 * selling price
 	 * 
-	 * @param selection
 	 */
 	public void restoreOriginalSellingPrice();
+	
+	/**
+	 * Restore the original package size, if was overridden, effectively deleting a manually
+	 * overridden package size
+	 * 
+	 */
+	public void restoreOriginalPackageSize();
 	
 	/**
 	 * Get an addition description text.

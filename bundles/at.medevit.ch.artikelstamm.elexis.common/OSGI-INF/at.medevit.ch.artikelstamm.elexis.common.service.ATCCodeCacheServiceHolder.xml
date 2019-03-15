@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.ch.artikelstamm.elexis.common.service.ATCCodeCacheServiceHolder">
+   <reference bind="setATCCodeService" interface="at.medevit.ch.artikelstamm.ATCCodeCacheService" name="ATCCodeService"/>
+   <implementation class="at.medevit.ch.artikelstamm.elexis.common.service.ATCCodeCacheServiceHolder"/>
+</scr:component>

@@ -9,8 +9,8 @@ import org.eclipse.swt.graphics.Image;
 import at.medevit.atc_codes.ATCCode;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
+import at.medevit.ch.artikelstamm.elexis.common.service.ATCCodeCacheServiceHolder;
 import at.medevit.ch.artikelstamm.elexis.common.ui.cv.ATCFilterInfoListElement;
-import at.medevit.ch.artikelstamm.elexis.common.ui.provider.atccache.ATCCodeCache;
 import at.medevit.ch.artikelstamm.ui.ATCLabelProvider;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.types.VatInfo;
@@ -58,7 +58,7 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 	}
 	
 	private String determineNumberOfAvailableArticlesForAtcCode(ATCCode element){
-		return String.valueOf(ATCCodeCache.getAvailableArticlesByATCCode(element));
+		return String.valueOf(ATCCodeCacheServiceHolder.getAvailableArticlesByATCCode(element));
 	}
 	
 	private String resolveVatInfoLabel(VatInfo vatinfo){

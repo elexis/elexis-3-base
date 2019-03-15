@@ -152,11 +152,14 @@ public class ArtikelstammItem
 	
 	@Override
 	public int getPackageSize(){
-		return getEntity().getPkg_size();
+		return Math.abs(getEntity().getPkg_size());
 	}
 	
 	@Override
 	public void setPackageSize(int value){
+		if (value < 0) {
+			throw new IllegalArgumentException("value must not be lower than 0");
+		}
 		getEntity().setPkg_size(value);
 	}
 	
@@ -458,5 +461,47 @@ public class ArtikelstammItem
 		return (getAdditionalDescription() != null && getAdditionalDescription().length() > 0)
 				? getName() + " (" + getAdditionalDescription() + ")"
 				: getName();
+	}
+	
+	@Override
+	public boolean isUserDefinedPkgSize(){
+		return getEntity().getPkg_size() < 0;
+	}
+	
+	@Override
+	public void restoreOriginalPackageSize(){
+		if (isUserDefinedPkgSize()) {
+			String ppubStored = (String) getExtInfo(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE);
+			if (ppubStored != null && !ppubStored.isEmpty()) {
+				setPackageSize(Integer.parseInt(ppubStored));
+				setExtInfo(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, null);
+			}
+		}
+	}
+	
+	@Override
+	public int getUserDefinedPkgSize(){
+		int oldValue = getEntity().getPkg_size();
+		if (oldValue < 0) {
+			return oldValue * -1;
+		}
+		return ch.elexis.core.jpa.entities.ArtikelstammItem.IS_USER_DEFINED_PKG_SIZE;
+	}
+	
+	/**
+	 * Set the price as user-defined (i.e. overridden) price. This will internally store the price
+	 * as negative value.
+	 * 
+	 * @param value
+	 */
+	@Override
+	public void setUserDefinedPkgSizeValue(int value){
+		if (value < 0) {
+			throw new IllegalArgumentException("value must not be lower than 0");
+		}
+		int pkgSize = getPackageSize();
+		setExtInfo(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, Integer.toString(pkgSize));
+		
+		getEntity().setPkg_size(value * -1);
 	}
 }

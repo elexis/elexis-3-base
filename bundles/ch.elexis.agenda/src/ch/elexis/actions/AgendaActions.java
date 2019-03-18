@@ -29,6 +29,7 @@ import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
@@ -156,7 +157,8 @@ public class AgendaActions {
 						@Override
 						public void widgetSelected(SelectionEvent e){
 							Termin act = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-							AcquireLockBlockingUi.aquireAndRun(act, new ILockHandler() {
+							AcquireLockBlockingUi.aquireAndRun((IPersistentObject) act,
+								new ILockHandler() {
 								@Override
 								public void lockFailed(){
 									// do nothing

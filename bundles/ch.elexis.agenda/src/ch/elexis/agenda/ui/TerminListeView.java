@@ -29,6 +29,7 @@ import ch.elexis.agenda.ui.provider.TermineLabelProvider;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
@@ -39,7 +40,7 @@ import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
-import ch.elexis.core.ui.util.viewers.CommonViewer.DoubleClickListener;
+import ch.elexis.core.ui.util.viewers.CommonViewer.PoDoubleClickListener;
 import ch.elexis.core.ui.util.viewers.DefaultContentProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.data.Patient;
@@ -88,7 +89,7 @@ public class TerminListeView extends ViewPart implements IActivationListener {
 			
 			@Override
 			public void doRun(Termin element){
-				AcquireLockBlockingUi.aquireAndRun(element, new ILockHandler() {
+				AcquireLockBlockingUi.aquireAndRun((IPersistentObject) element, new ILockHandler() {
 					
 					@Override
 					public void lockFailed(){
@@ -131,7 +132,7 @@ public class TerminListeView extends ViewPart implements IActivationListener {
 		}, new TermineLabelProvider(), new TerminListWidgetProvider());
 		cv.create(vc, body, SWT.NONE, this);
 		cv.getConfigurer().getContentProvider().startListening();
-		cv.addDoubleClickListener(new DoubleClickListener() {
+		cv.addDoubleClickListener(new PoDoubleClickListener() {
 			@Override
 			public void doubleClicked(PersistentObject obj, CommonViewer cv){
 				terminAendernAction.run();

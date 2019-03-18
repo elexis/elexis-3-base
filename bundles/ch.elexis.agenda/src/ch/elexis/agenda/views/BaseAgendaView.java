@@ -52,6 +52,7 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
@@ -329,7 +330,8 @@ public abstract class BaseAgendaView extends ViewPart
 
 			@Override
 			public void doRun(Termin element) {
-					AcquireLockBlockingUi.aquireAndRun(element, new ILockHandler() {
+					AcquireLockBlockingUi.aquireAndRun((IPersistentObject) element,
+						new ILockHandler() {
 						
 						@Override
 						public void lockFailed(){

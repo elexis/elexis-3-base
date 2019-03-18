@@ -10,10 +10,13 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.core.model.chmed16a;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.elexis.data.Prescription;
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.rgw.tools.TimeTool;
 
 public class Posology {
@@ -24,20 +27,20 @@ public class Posology {
 	public List<Float> D;
 	public List<TakingTime> TT;
 	
-	public static List<Posology> fromPrescription(Prescription prescription){
+	public static List<Posology> fromPrescription(IPrescription prescription){
 		List<Posology> ret = new ArrayList<>();
 		Posology posology = new Posology();
-		String beginDate = prescription.getBeginDate();
-		if (beginDate != null && !beginDate.isEmpty()) {
+		LocalDateTime beginDate = prescription.getDateFrom();
+		if (beginDate != null) {
 			posology.DtFrom = new TimeTool(beginDate).toString(TimeTool.DATE_ISO);
 		}
-		String endDate = prescription.getEndDate();
-		if (endDate != null && !endDate.isEmpty()) {
+		LocalDateTime endDate = prescription.getDateTo();
+		if (endDate != null) {
 			posology.DtTo = new TimeTool(endDate).toString(TimeTool.DATE_ISO);
 		}
-		ArrayList<Float> floats = Prescription.getDoseAsFloats(prescription.getDosis());
+		List<Float> floats = MedicationServiceHolder.get().getDosageAsFloats(prescription);
 		if (floats != null && !floats.isEmpty()) {
-			posology.TT = TakingTime.fromFloats(floats, prescription.isReserveMedication());
+			posology.TT = TakingTime.fromFloats(floats, prescription.getEntryType() == EntryType.RESERVE_MEDICATION);
 			posology.D = floats;
 		}
 		ret.add(posology);

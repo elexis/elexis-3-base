@@ -22,9 +22,10 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Prescription;
 
 @XmlRootElement(name = "medication")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -49,15 +50,15 @@ public class Medication {
 	@XmlElement(name = "medicament")
 	List<Medicament> symptomaticMedication;
 	
-	public static Medication fromPrescriptions(@NonNull Mandant author,
-		@NonNull ch.elexis.data.Patient patient, @NonNull List<Prescription> prescriptions){
+	public static Medication fromPrescriptions(@NonNull IMandator author,
+		@NonNull IPatient patient, @NonNull List<IPrescription> prescriptions){
 		Medication ret = new Medication();
 		ret.date = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(LocalDateTime.now());
 		
 		ret.patientInfo = ContactInfo.fromPatient(patient);
 		ret.mandantInfo = ContactInfo.fromKontakt(author);
 		
-		for (Prescription prescription : prescriptions) {
+		for (IPrescription prescription : prescriptions) {
 			EntryType type = prescription.getEntryType();
 			if(type == EntryType.FIXED_MEDICATION) {
 				if (ret.fixMedication == null) {

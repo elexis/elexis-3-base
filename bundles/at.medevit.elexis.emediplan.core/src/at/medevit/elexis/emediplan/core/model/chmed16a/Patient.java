@@ -10,9 +10,10 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.core.model.chmed16a;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import ch.elexis.data.Kontakt;
+import ch.elexis.core.model.IPatient;
 import ch.rgw.tools.TimeTool;
 
 public class Patient {
@@ -32,12 +33,12 @@ public class Patient {
 	public transient String patientId;
 	public transient String patientLabel;
 	
-	public static Patient fromPatient(ch.elexis.data.Patient elexisPatient){
+	public static Patient fromPatient(IPatient elexisPatient){
 		Patient ret = new Patient();
-		ret.FName = elexisPatient.getVorname();
-		ret.LName = elexisPatient.getName();
-		String dob = elexisPatient.getGeburtsdatum();
-		if (dob != null && !dob.isEmpty()) {
+		ret.FName = elexisPatient.getFirstName();
+		ret.LName = elexisPatient.getLastName();
+		LocalDateTime dob = elexisPatient.getDateOfBirth();
+		if (dob != null) {
 			ret.BDt = new TimeTool(dob).toString(TimeTool.DATE_ISO);
 		}
 		ch.elexis.core.types.Gender gender = elexisPatient.getGender();
@@ -51,11 +52,11 @@ public class Patient {
 		default:
 			ret.Gender = null;
 		}
-		ret.Street = elexisPatient.get(Kontakt.FLD_STREET);
-		ret.Zip = elexisPatient.get(Kontakt.FLD_ZIP);
-		ret.City = elexisPatient.get(Kontakt.FLD_PLACE);
+		ret.Street = elexisPatient.getStreet();
+		ret.Zip = elexisPatient.getZip();
+		ret.City = elexisPatient.getCity();
 		ret.Lng = "de";
-		ret.Phone = elexisPatient.get(Kontakt.FLD_PHONE1);
+		ret.Phone = elexisPatient.getPhone1();
 		return ret;
 	}
 }

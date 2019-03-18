@@ -25,7 +25,7 @@ public class TakingTime {
 		8 * 3600, 12 * 3600, 16 * 3600, 20 * 3600
 	};
 	
-	public static List<TakingTime> fromFloats(ArrayList<Float> floats, boolean reserve){
+	public static List<TakingTime> fromFloats(List<Float> floats, boolean reserve){
 		List<TakingTime> ret = new ArrayList<>();
 		for (int i = 0; i < floats.size(); i++) {
 			TakingTime tt = new TakingTime();

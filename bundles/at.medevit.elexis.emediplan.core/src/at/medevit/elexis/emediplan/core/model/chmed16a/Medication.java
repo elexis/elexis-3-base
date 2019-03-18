@@ -17,7 +17,10 @@ import java.util.List;
 import java.util.UUID;
 
 import ch.elexis.core.jdt.NonNull;
-import ch.elexis.data.Mandant;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.model.IXid;
 import ch.elexis.data.Prescription;
 
 public class Medication {
@@ -39,22 +42,24 @@ public class Medication {
 	
 	/**
 	 * Create a complete CHMED16A model from the provided {@link Prescription} of one
-	 * {@link ch.elexis.data.Patient}.
+	 * {@link IPatient}.
 	 * 
 	 * @param prescriptions
 	 * @return
 	 */
-	public static Medication fromPrescriptions(@NonNull Mandant author,
-		@NonNull ch.elexis.data.Patient patient, @NonNull List<Prescription> prescriptions){
+	public static Medication fromPrescriptions(@NonNull IMandator author, @NonNull IPatient patient,
+		@NonNull List<IPrescription> prescriptions){
 		Medication ret = new Medication();
 		ret.MedType = 1;
 		ret.Id = UUID.randomUUID().toString();
 		ret.Dt = LocalDateTime.now().toString();
-		String gln = author.getXid(DOMAIN_EAN);
-		if (gln != null && !gln.isEmpty()) {
-			ret.Auth = gln;
+		IXid gln = author.getXid(DOMAIN_EAN);
+		if (gln != null) {
+			if (gln.getDomainId() != null && !gln.getDomainId().isEmpty()) {
+				ret.Auth = gln.getDomainId();
+			}
 		} else {
-			ret.Auth = author.getLabel(true);
+			ret.Auth = author.getLabel();
 		}
 		if (!prescriptions.isEmpty()) {
 			ret.Patient =

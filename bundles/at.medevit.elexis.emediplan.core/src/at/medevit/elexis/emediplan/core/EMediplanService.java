@@ -16,9 +16,9 @@ import java.util.List;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.data.Prescription;
 
 /**
@@ -37,8 +37,8 @@ public interface EMediplanService {
 	 * @param json
 	 * @param output
 	 */
-	public void exportEMediplanPdf(Mandant author, Patient patient,
-		List<Prescription> prescriptions, OutputStream output);
+	public void exportEMediplanPdf(IMandator author, IPatient patient,
+		List<IPrescription> prescriptions, OutputStream output);
 	
 	/**
 	 * Creates a model representation from a base 64 compressed json chunk
@@ -74,6 +74,6 @@ public interface EMediplanService {
 	 * @param mandant
 	 * @return
 	 */
-	public boolean createInboxEntry(Medication medication, Mandant mandant);
+	public boolean createInboxEntry(Medication medication, IMandator mandant);
 	
 }

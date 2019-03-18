@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -23,11 +25,11 @@ public class SaveEMediplanUtil {
 		return pdfFile.getAbsolutePath();
 	}
 	
-	public static void saveEMediplan(Patient patient, Mandant mandant, byte[] content){
+	public static void saveEMediplan(IPatient patient, IMandator mandant, byte[] content){
 		TimeTool now = new TimeTool();
 		Brief letter = new Brief("eMediplan " + now.toString(TimeTool.DATE_GER), now,
-			mandant, null, null, Brief.UNKNOWN);
-		letter.setPatient(patient);
+			Mandant.load(mandant.getId()), null, null, Brief.UNKNOWN);
+		letter.setPatient(Patient.load(patient.getId()));
 		letter.save(content, "pdf");
 	}
 }

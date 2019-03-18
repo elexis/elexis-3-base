@@ -56,18 +56,27 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.emediplan.core.EMediplanService;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament.State;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
 import at.medevit.elexis.inbox.model.IInboxElementService;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.model.IBlob;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IFormattedOutput;
 import ch.elexis.core.services.IFormattedOutputFactory;
 import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
 import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
+import ch.elexis.core.services.holder.CodeElementServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
 import ch.elexis.core.ui.exchange.KontaktMatcher.CreateMode;
 import ch.elexis.data.Artikel;
@@ -92,8 +101,8 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 	
 	@Override
-	public void exportEMediplanPdf(Mandant author, Patient patient,
-		List<Prescription> prescriptions, OutputStream output){
+	public void exportEMediplanPdf(IMandator author, IPatient patient,
+		List<IPrescription> prescriptions, OutputStream output){
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
 			Optional<String> jsonString = getJsonString(author, patient, prescriptions);
 			Optional<Image> qrCode =
@@ -234,15 +243,15 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 	
 	protected Optional<at.medevit.elexis.emediplan.core.model.print.Medication> getJaxbModel(
-		Mandant author, Patient patient, List<Prescription> prescriptions){
+		IMandator author, IPatient patient, List<IPrescription> prescriptions){
 		at.medevit.elexis.emediplan.core.model.print.Medication medication =
 			at.medevit.elexis.emediplan.core.model.print.Medication.fromPrescriptions(author,
 				patient, prescriptions);
 		return Optional.ofNullable(medication);
 	}
 	
-	protected Optional<String> getJsonString(Mandant author, Patient patient,
-		List<Prescription> prescriptions){
+	protected Optional<String> getJsonString(IMandator author, IPatient patient,
+		List<IPrescription> prescriptions){
 		Medication medication = Medication.fromPrescriptions(author, patient, prescriptions);
 		return Optional.ofNullable(gson.toJson(medication));
 	}
@@ -302,22 +311,27 @@ public class EMediplanServiceImpl implements EMediplanService {
 	
 	private void findPatientForMedication(Medication medication){
 		if (medication.Patient != null) {
-			Patient patient = null;
+			IPatient patient = null;
 			// if the chunk are from the inbox the elexis patient id is also available
 			if (medication.Patient.patientId != null) {
-				patient = Patient.load(medication.Patient.patientId);
+				patient = CoreModelServiceHolder.get()
+					.load(medication.Patient.patientId, IPatient.class).orElse(null);
 			}
 			// try to find patient by birthdate firstname and lastname
 			if (patient == null) {
 				String bDate = medication.Patient.BDt;
-				patient = KontaktMatcher.findPatient(medication.Patient.LName,
+				Patient kontakt = KontaktMatcher.findPatient(medication.Patient.LName,
 					medication.Patient.FName, bDate != null ? bDate.replace("-", "") : null, null,
 					null, null, null, null, CreateMode.ASK);
+				if(kontakt != null) {
+					patient = CoreModelServiceHolder.get().load(kontakt.getId(), IPatient.class)
+						.orElse(null);
+				}
 			}
 			
-			if (patient != null && patient.getId() != null && patient.exists()) {
+			if (patient != null) {
 				medication.Patient.patientId = patient.getId();
-				medication.Patient.patientLabel = patient.getPersonalia();
+				medication.Patient.patientLabel = patient.getLabel();
 			}
 		}
 		
@@ -398,13 +412,13 @@ public class EMediplanServiceImpl implements EMediplanService {
 		for (Prescription prescription : patientPrescriptions) {
 			Artikel artikel = prescription.getArtikel();
 			
-			if (checkATCEquality(medicament.artikelstammItem.getATCCode(), artikel.getATC_code())) {
+			if (checkATCEquality(medicament.artikelstammItem.getAtcCode(), artikel.getATC_code())) {
 				if (State.isHigherState(medicament.state, State.ATC)) {
 					medicament.state = State.ATC;
 					medicament.foundPrescription = prescription;
 				}
 				
-				if (medicament.artikelstammItem.getATCCode().equals(artikel.getATC_code())
+				if (medicament.artikelstammItem.getAtcCode().equals(artikel.getATC_code())
 					&& State.isHigherState(medicament.state, State.ATC_SAME)) {
 					medicament.state = State.ATC_SAME;
 					medicament.foundPrescription = prescription;
@@ -417,7 +431,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 					}
 				}
 			}
-			if (medicament.artikelstammItem.getGTIN().equals(artikel.getGTIN())) {
+			if (medicament.artikelstammItem.getGtin().equals(artikel.getGTIN())) {
 				if (State.isHigherState(medicament.state, State.GTIN_SAME)) {
 					medicament.state = State.GTIN_SAME;
 					medicament.foundPrescription = prescription;
@@ -472,24 +486,20 @@ public class EMediplanServiceImpl implements EMediplanService {
 		return atc1 != null && atc1.equals(atc2);
 	}
 	
-	private void findArticleForMedicament(Medicament medicament)
-	{
-		if (medicament.IdType == 2)
-		{
-			//GTIN
-			ArtikelstammItem artikelstammItem = ArtikelstammItem.findByEANorGTIN(medicament.Id);
-			if (artikelstammItem != null) {
-				medicament.artikelstammItem = artikelstammItem;
+	private void findArticleForMedicament(Medicament medicament){
+		Optional<ICodeElementServiceContribution> artikelstammContribution =
+			CodeElementServiceHolder.get().getContribution(CodeElementTyp.ARTICLE, "Artikelstamm");
+		if (artikelstammContribution.isPresent()) {
+			Optional<ICodeElement> loaded =
+				artikelstammContribution.get().loadFromCode(medicament.Id);
+			if (loaded.isPresent()) {
+				medicament.artikelstammItem = (IArtikelstammItem) loaded.get();
+			} else {
+				logger.warn("Could not load article for code [" + medicament.Id + "] id type ["
+					+ medicament.IdType + "]");
 			}
-		}
-		else if (medicament.IdType == 3)
-		{
-			//PHARMACODE
-			ArtikelstammItem artikelstammItem = ArtikelstammItem.findByPharmaCode(medicament.Id);
-			if (artikelstammItem != null)
-			{
-				medicament.artikelstammItem = artikelstammItem;
-			}
+		} else {
+			logger.error("No Artikelstamm code contribution available");
 		}
 	}
 
@@ -524,7 +534,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 	
 	@Override
-	public boolean createInboxEntry(Medication medication, Mandant mandant){
+	public boolean createInboxEntry(Medication medication, IMandator mandant){
 		
 		if (service == null) {
 			throw new IllegalStateException("No IInboxElementService for inbox defined");
@@ -533,13 +543,20 @@ public class EMediplanServiceImpl implements EMediplanService {
 		if (medication != null) {
 			if (medication.chunk != null && medication.Patient != null
 				&& medication.Patient.patientId != null) {
-				Patient patient = Patient.load(medication.Patient.patientId);
-				NamedBlob namedBlob = NamedBlob.load(medication.getNamedBlobId());
-				namedBlob.putString(medication.chunk);
-				
-				if (namedBlob != null && patient.exists()) {
-					service.createInboxElement(patient, mandant, namedBlob);
-					return true;
+				IPatient patient = CoreModelServiceHolder.get()
+					.load(medication.Patient.patientId, IPatient.class).orElse(null);
+				if(patient != null) {
+					IBlob blob = CoreModelServiceHolder.get()
+							.load(medication.getNamedBlobId(), IBlob.class).orElse(null);
+						if (blob == null) {
+							blob = CoreModelServiceHolder.get().create(IBlob.class);
+							blob.setId(medication.getNamedBlobId());
+						}
+						blob.setStringContent(medication.chunk);
+						CoreModelServiceHolder.get().save(blob);
+					service.createInboxElement(Patient.load(patient.getId()),
+						Mandant.load(mandant.getId()), NamedBlob.load(blob.getId()));
+						return true;
 				}
 			}
 			

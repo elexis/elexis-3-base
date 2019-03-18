@@ -10,13 +10,16 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.core.model.print;
 
+import java.time.format.DateTimeFormatter;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Person;
-import ch.elexis.data.Prescription;
 
 @XmlRootElement(name = "medicament")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -40,11 +43,12 @@ public class Medicament {
 	public String reason;
 	public String prescriptor;
 	
-	public static Medicament fromPrescription(Prescription prescription){
+	public static Medicament fromPrescription(IPrescription prescription){
 		Medicament ret = new Medicament();
-		ret.name = prescription.getArtikel().getLabel();
+		ret.name = prescription.getArticle().getLabel();
 		
-		String[] signature = Prescription.getSignatureAsStringArray(prescription.getDosis());
+		String[] signature = MedicationServiceHolder.get()
+			.getSignatureAsStringArray(prescription.getDosageInstruction());
 		boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty()
 			&& signature[2].isEmpty() && signature[3].isEmpty();
 		if (isFreetext) {
@@ -56,13 +60,17 @@ public class Medicament {
 			ret.dosageNight = signature[3];
 			ret.type = "täglich";
 		}
-		ret.startDate = prescription.getBeginDate();
-		ret.endDate = prescription.getEndDate();
-		
-		ret.remarks = prescription.getBemerkung();
+		ret.startDate = prescription.getDateFrom() != null
+				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom())
+				: "";
+		ret.endDate = prescription.getDateTo() != null
+				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateTo())
+				: "";
+		ret.remarks = prescription.getRemark();
 		ret.reason = prescription.getDisposalComment();
 		
-		String prescriptorId = prescription.get(Prescription.FLD_PRESCRIPTOR);
+		String prescriptorId =
+			prescription.getPrescriptor() != null ? prescription.getPrescriptor().getId() : "";
 		ret.prescriptor = getPrescriptorLabel(prescriptorId);
 		return ret;
 	}

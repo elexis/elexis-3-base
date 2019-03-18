@@ -13,6 +13,7 @@ package at.medevit.elexis.emediplan.ui.handler;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,25 +34,25 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.emediplan.core.EMediplanService;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.ui.medication.handlers.PrintTakingsListHandler.SorterAdapter;
 import ch.elexis.core.ui.medication.views.MedicationTableViewerItem;
 import ch.elexis.core.ui.medication.views.MedicationView;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
 
 public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
-		Patient patient = ElexisEventDispatcher.getSelectedPatient();
+		IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 		if (patient == null) {
 			return null;
 		}
-		Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
-		if(mandant == null) {
+		IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
+		if (mandant == null) {
 			return null;
 		}
 		
@@ -62,7 +63,7 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 			medicationType = "all";
 		}
 		
-		List<Prescription> prescriptions = getPrescriptions(patient, medicationType, event);
+		List<IPrescription> prescriptions = getPrescriptions(patient, medicationType, event);
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			prescriptions = sortPrescriptions(prescriptions, event);
 			
@@ -92,7 +93,7 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 		return null;
 	}
 	
-	private List<Prescription> sortPrescriptions(List<Prescription> prescriptions,
+	private List<IPrescription> sortPrescriptions(List<IPrescription> prescriptions,
 		ExecutionEvent event){
 		SorterAdapter sorter = new SorterAdapter(event);
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
@@ -103,41 +104,40 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Prescription> getPrescriptions(Patient patient, String medicationType,
+	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType,
 		ExecutionEvent event){
 		if ("selection".equals(medicationType)) {
 			ISelection selection =
 				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 			if (selection != null && !selection.isEmpty()) {
-				List<Prescription> ret = new ArrayList<Prescription>();
+				List<IPrescription> ret = new ArrayList<>();
 				IStructuredSelection strucSelection = (IStructuredSelection) selection;
 				if (strucSelection.getFirstElement() instanceof MedicationTableViewerItem) {
 					List<MedicationTableViewerItem> mtvItems =
 						(List<MedicationTableViewerItem>) strucSelection.toList();
 					for (MedicationTableViewerItem mtvItem : mtvItems) {
-						Prescription p = mtvItem.getPrescription();
+						IPrescription p = mtvItem.getPrescription();
 						if (p != null) {
 							ret.add(p);
 						}
 					}
-				} else if (strucSelection.getFirstElement() instanceof Prescription) {
+				} else if (strucSelection.getFirstElement() instanceof IPrescription) {
 					ret.addAll(strucSelection.toList());
 				}
 				return ret;
 			}
 		} else if ("all".equals(medicationType)) {
-			List<Prescription> ret = new ArrayList<Prescription>();
-			ret.addAll(patient.getMedication(EntryType.FIXED_MEDICATION));
-			ret.addAll(patient.getMedication(EntryType.RESERVE_MEDICATION));
-			ret.addAll(patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION));
+			List<IPrescription> ret = new ArrayList<>();
+			ret.addAll(patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION,
+				EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION)));
 			return ret;
 		} else if ("fix".equals(medicationType)) {
-			return patient.getMedication(EntryType.FIXED_MEDICATION);
+			return patient.getMedication(Collections.singletonList(EntryType.FIXED_MEDICATION));
 		} else if ("reserve".equals(medicationType)) {
-			return patient.getMedication(EntryType.RESERVE_MEDICATION);
-		}
-		else if ("symptomatic".equals(medicationType)) {
-			return patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION);
+			return patient.getMedication(Collections.singletonList(EntryType.RESERVE_MEDICATION));
+		} else if ("symptomatic".equals(medicationType)) {
+			return patient
+				.getMedication(Collections.singletonList(EntryType.SYMPTOMATIC_MEDICATION));
 		}
 		return Collections.emptyList();
 	}

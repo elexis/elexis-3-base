@@ -1,8 +1,13 @@
 package at.medevit.elexis.emediplan.ui;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -29,20 +34,20 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament.State;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.model.builder.IPrescriptionBuilder;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.rgw.tools.TimeTool;
 
 public class ImportEMediplanDialog extends TitleAreaDialog {
@@ -52,20 +57,36 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	private Table table;
 	private boolean showInboxBtn = true;
 	
-	private ElexisEventListener eeli_presc = new ElexisUiEventListenerImpl(Prescription.class,
-		ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE) {
-		public void runInUi(ElexisEvent ev){
-			if (medication.Patient != null) {
-				Prescription prescription = (Prescription) ev.getObject();
-				if (prescription != null && prescription.getArtikel() instanceof ArtikelstammItem) {
-					String patientId = prescription.get(Prescription.FLD_PATIENT_ID);
-					if (patientId != null && patientId.equals(medication.Patient.patientId)) {
-						refreshMedicamentsTable();
-					}
+	private boolean bulkInsert = false;
+	
+	@Inject
+	void updatePrescription(
+		@Optional @UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPrescription prescription){
+		refreshPrescription(prescription);
+	}
+	
+	@Inject
+	void createPrescription(
+		@Optional @UIEventTopic(ElexisEventTopics.EVENT_CREATE) IPrescription prescription){
+		refreshPrescription(prescription);
+	}
+	
+	@Inject
+	void deletePrescription(
+		@Optional @UIEventTopic(ElexisEventTopics.EVENT_DELETE) IPrescription prescription){
+		refreshPrescription(prescription);
+	}
+	
+	private void refreshPrescription(IPrescription prescription){
+		if (medication.Patient != null && !bulkInsert) {
+			if (prescription != null && prescription.getArticle() instanceof IArtikelstammItem) {
+				IPatient patient = prescription.getPatient();
+				if (patient != null && patient.getId().equals(medication.Patient.patientId)) {
+					refreshMedicamentsTable();
 				}
 			}
 		}
-	};
+	}
 	
 	private void refreshMedicamentsTable(){
 		if (medication != null) {
@@ -79,6 +100,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	
 	public ImportEMediplanDialog(Shell parentShell, Medication medication, boolean showInboxBtn){
 		super(parentShell);
+		CoreUiUtil.injectServicesWithContext(this);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.MODELESS | SWT.RESIZE);
 		this.medication = medication;
 		this.showInboxBtn = showInboxBtn;
@@ -142,7 +164,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				if (EMediplanServiceHolder.getService().createInboxEntry(medication,
-					ElexisEventDispatcher.getSelectedMandator())) {
+					ContextServiceHolder.get().getActiveMandator().orElse(null))) {
 					MessageDialog.openInformation(getShell(), "Medikationsplan",
 						"Der Medikationsplan wurde erfolgreich in die Inbox hinzugefügt.");
 					close();
@@ -153,14 +175,11 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 				
 			}
 		});
-		ElexisEventDispatcher.getInstance().addListeners(eeli_presc);
-		
 		return area;
 	}
 	
 	@Override
 	public boolean close(){
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_presc);
 		return super.close();
 	}
 	
@@ -344,33 +363,28 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	}
 	
 	public void insertArticle(StructuredSelection selection){
-		boolean bulkInsert = false;
 		try {
 			if (selection != null) {
 				Object[] selections = selection.toArray();
-				Patient patient = null;
+				IPatient patient = null;
 				
 				if (medication.Patient != null && medication.Patient.patientId != null) {
-					patient = Patient.load(medication.Patient.patientId);
-					if (patient != null && !patient.exists()) {
-						patient = null;
-					}
+					patient = CoreModelServiceHolder.get()
+						.load(medication.Patient.patientId, IPatient.class).orElse(null);
 				}
 				if (patient != null) {
-					List<Prescription> prescriptions = new ArrayList<>();
+					List<IPrescription> prescriptions = new ArrayList<>();
 			
 					for (Object selectItem : selections) {
 						if (selectItem instanceof Medicament) {
 							if (((Medicament) selectItem).entryType != null) {
-								Prescription prescription = insertMedicament(patient,
+								IPrescription prescription = insertMedicament(patient,
 									(Medicament) selectItem, selections.length > 1);
 								if (prescription != null) {
 									prescriptions.add(prescription);
 									
 									// for bulk inserts we remove the event because of performance issues
 									if (!bulkInsert && prescriptions.size() > 3) {
-										ElexisEventDispatcher.getInstance()
-											.removeListeners(eeli_presc);
 										bulkInsert = true;
 									}
 								}
@@ -387,8 +401,8 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 						}
 						
 						buf.append("\n\n");
-						for (Prescription prescription : prescriptions) {
-							buf.append(prescription.getArtikel().getName());
+						for (IPrescription prescription : prescriptions) {
+							buf.append(prescription.getArticle().getName());
 							buf.append("\n");
 						}
 						MessageDialog.openInformation(getShell(), "Artikel", buf.toString());
@@ -414,13 +428,12 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		} finally {
 			if (bulkInsert) {
 				refreshMedicamentsTable();
-				// register the event after bulk insert
-				ElexisEventDispatcher.getInstance().addListeners(eeli_presc);
+				bulkInsert = false;
 			}
 		}
 	}
 	
-	private Prescription insertMedicament(Patient patient, Medicament medicament,
+	private IPrescription insertMedicament(IPatient patient, Medicament medicament,
 		boolean multiSelection){
 		if (patient != null && medicament != null && medicament.entryType != null) {
 			EMediplanServiceHolder.getService().setPresciptionsToMedicament(medication, medicament);
@@ -446,7 +459,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		return null;
 	}
 	
-	private Prescription insertMedicamentExistingPrescription(Patient patient,
+	private IPrescription insertMedicamentExistingPrescription(IPatient patient,
 		Medicament medicament, boolean multiSelection){
 		
 		if (multiSelection && State.GTIN_SAME.equals(medicament.state)) {
@@ -508,18 +521,27 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		}
 	}
 	
-	private Prescription createPrescription(Medicament medicament,
-		Patient patient,
+	private IPrescription createPrescription(Medicament medicament, IPatient patient,
 		boolean multiSelection){
-		Prescription prescription = new Prescription(medicament.artikelstammItem, patient,
-			medicament.dosis, medicament.AppInstr);
-		prescription.set(new String[] {
-			Prescription.FLD_PRESC_TYPE, Prescription.FLD_DATE_FROM, Prescription.FLD_DATE_UNTIL
-		}, String.valueOf(medicament.entryType.numericValue()), medicament.dateFrom, medicament.dateTo);
+		IPrescription prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
+			medicament.artikelstammItem, patient, medicament.dosis).build();
+		
+		getLocalDateTime(medicament.dateFrom).ifPresent(ldt -> prescription.setDateFrom(ldt));
+		getLocalDateTime(medicament.dateTo).ifPresent(ldt -> prescription.setDateTo(ldt));
+		
+		prescription.setRemark(medicament.AppInstr);
+		prescription.setEntryType(medicament.entryType);
 		prescription.setDisposalComment(medicament.TkgRsn);
-		CoreHub.getLocalLockService().acquireLock(prescription);
-		CoreHub.getLocalLockService().releaseLock(prescription);
+		
+		CoreModelServiceHolder.get().save(prescription);
 		return prescription;
+	}
+	
+	private java.util.Optional<LocalDateTime> getLocalDateTime(String dateString){
+		if (dateString != null && !dateString.isEmpty()) {
+			return java.util.Optional.of(new TimeTool(dateString).toLocalDateTime());
+		}
+		return java.util.Optional.empty();
 	}
 	
 	class CheckBoxColumnEditingSupport extends EditingSupport {

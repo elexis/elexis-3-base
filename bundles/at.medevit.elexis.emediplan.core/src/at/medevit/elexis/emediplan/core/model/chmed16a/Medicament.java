@@ -15,10 +15,13 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.prescription.EntryType;
-import ch.elexis.data.Anwender;
-import ch.elexis.data.Artikel;
+import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.TimeTool;
 
@@ -36,7 +39,7 @@ public class Medicament {
 	public int Subs;
 	public float NbPack;
 	public List<PrivateField> PFields;
-	public transient ArtikelstammItem artikelstammItem;
+	public transient IArtikelstammItem artikelstammItem;
 	public transient String dosis;
 	public transient String dateFrom;
 	public transient String dateTo;
@@ -48,16 +51,16 @@ public class Medicament {
 	public static final String FREETEXT_PREFIX = "[Dosis: ";
 	public static final String FREETEXT_POSTFIX = "]";
 	
-	public static List<Medicament> fromPrescriptions(List<Prescription> prescriptions){
+	public static List<Medicament> fromPrescriptions(List<IPrescription> prescriptions){
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			List<Medicament> ret = new ArrayList<>();
-			for (Prescription prescription : prescriptions) {
+			for (IPrescription prescription : prescriptions) {
 				Medicament medicament = new Medicament();
 				medicament.Unit = "";
 				medicament.AutoMed = 0;
-				medicament.AppInstr = prescription.getBemerkung();
+				medicament.AppInstr = prescription.getRemark();
 				medicament.TkgRsn = prescription.getDisposalComment();
-				Artikel article = prescription.getArtikel();
+				IArticle article = prescription.getArticle();
 				medicament.IdType = getIdType(article);
 				medicament.Id = getId(article);
 				medicament.Pos = Posology.fromPrescription(prescription);
@@ -65,14 +68,14 @@ public class Medicament {
 				// check if it has freetext dosis
 				if (medicament.Pos != null && !medicament.Pos.isEmpty()
 					&& (medicament.Pos.get(0).D == null || medicament.Pos.get(0).D.isEmpty())) {
-					String freeTextDosis = getDosageAsFreeText(prescription.getDosis());
+					String freeTextDosis = getDosageAsFreeText(prescription.getDosageInstruction());
 					if (freeTextDosis != null) {
 						medicament.AppInstr += (FREETEXT_PREFIX + freeTextDosis + FREETEXT_POSTFIX);
 					}
 				}
 				
-				String prescriptorId = prescription.get(Prescription.FLD_PRESCRIPTOR);
-				medicament.PrscBy = getPrescriptorEAN(prescriptorId);
+				IContact prescriptor = prescription.getPrescriptor();
+				medicament.PrscBy = getPrescriptorEAN(prescriptor);
 				ret.add(medicament);
 			}
 			return ret;
@@ -82,7 +85,7 @@ public class Medicament {
 	
 	private static String getDosageAsFreeText(String dosis){
 		if (dosis != null && !dosis.isEmpty()) {
-			String[] signature = Prescription.getSignatureAsStringArray(dosis);
+			String[] signature = MedicationServiceHolder.get().getSignatureAsStringArray(dosis);
 			boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty()
 				&& signature[2].isEmpty() && signature[3].isEmpty();
 			if (isFreetext) {
@@ -92,45 +95,36 @@ public class Medicament {
 		return null;
 	}
 	
-	private static String getPrescriptorEAN(String prescriptorId){
-		if (prescriptorId != null && !prescriptorId.isEmpty()) {
-			Anwender prescriptor = Anwender.load(prescriptorId);
-			if (prescriptor != null && prescriptor.exists()) {
-				String ean = prescriptor.getXid(DOMAIN_EAN);
-				if (ean != null && !ean.isEmpty()) {
-					return ean;
-				}
+	private static String getPrescriptorEAN(IContact prescriptor){
+		if (prescriptor != null) {
+			IXid ean = prescriptor.getXid(DOMAIN_EAN);
+			if (ean != null && ean.getDomainId() != null && !ean.getDomainId().isEmpty()) {
+				return ean.getDomainId();
 			}
 		}
 		return null;
 	}
 	
-	private static int getIdType(Artikel article){
-		String gtin = article.getEAN();
+	private static int getIdType(IArticle article){
+		String gtin = article.getGtin();
 		if (gtin != null && !gtin.isEmpty()) {
 			return 2;
 		}
-		String pharma = article.getPharmaCode();
-		if (pharma == null || pharma.isEmpty()) {
-			pharma = article.get(Artikel.FLD_SUB_ID);
-		}
-		if (pharma != null && !pharma.isEmpty()) {
+		String code = article.getCode();
+		if (code != null && !code.isEmpty()) {
 			return 3;
 		}
 		return 1;
 	}
 	
-	private static String getId(Artikel article){
-		String gtin = article.getEAN();
+	private static String getId(IArticle article){
+		String gtin = article.getGtin();
 		if (gtin != null && !gtin.isEmpty()) {
 			return gtin;
 		}
-		String pharma = article.getPharmaCode();
-		if (pharma == null || pharma.isEmpty()) {
-			pharma = article.get(Artikel.FLD_SUB_ID);
-		}
-		if (pharma != null && !pharma.isEmpty()) {
-			return pharma;
+		String code = article.getCode();
+		if (code != null && !code.isEmpty()) {
+			return code;
 		}
 		throw new IllegalStateException(
 			"No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]");

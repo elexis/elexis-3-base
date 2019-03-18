@@ -10,10 +10,15 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.core.model.print;
 
+import java.time.format.DateTimeFormatter;
+
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IOrganization;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPerson;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Person;
 
 public class ContactInfo {
 	String title;
@@ -30,16 +35,16 @@ public class ContactInfo {
 	String tel;
 	String insurancenumber;
 
-	public static ContactInfo fromPatient(Patient pat){
+	public static ContactInfo fromPatient(IPatient pat){
 		ContactInfo ret = new ContactInfo();
-		ret.setBirthdate(pat.getGeburtsdatum());
-		ret.setCity(pat.get(Patient.FLD_PLACE));
-		ret.setFirstname(pat.getVorname());
+		ret.setBirthdate(pat.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+		ret.setCity(pat.getCity());
+		ret.setFirstname(pat.getFirstName());
 		ret.setGender(pat.getGender() == Gender.FEMALE ? "W" : "M");
-		ret.setLastname(pat.getName());
-		ret.setStreet1(pat.get(Patient.FLD_STREET));
-		ret.setZip(pat.get(Patient.FLD_ZIP));
-		ret.setTel(pat.get(Kontakt.FLD_PHONE1));
+		ret.setLastname(pat.getLastName());
+		ret.setStreet1(pat.getStreet());
+		ret.setZip(pat.getZip());
+		ret.setTel(pat.getPhone1());
 		return ret;
 	}
 	
@@ -49,31 +54,36 @@ public class ContactInfo {
 	 * 
 	 * @param kon
 	 */
-	public static ContactInfo fromKontakt(Kontakt kon){
+	public static ContactInfo fromKontakt(IContact kon){
 		ContactInfo ret = new ContactInfo();
-		if(kon.istOrganisation()) {
-			ret.setZip(kon.get(Kontakt.FLD_ZIP));
-			ret.setCity(kon.get(Kontakt.FLD_PLACE));
-			ret.setStreet1(kon.get(Kontakt.FLD_STREET));
-			ret.setLastname(kon.get(Kontakt.FLD_NAME2));
-			ret.setFirstname(kon.get(Kontakt.FLD_NAME1));
-			ret.setTel(kon.get(Kontakt.FLD_PHONE1));
-		} else if (kon.istPerson()) {
-			ret.setZip(kon.get(Person.FLD_ZIP));
-			ret.setCity(kon.get(Person.FLD_PLACE));
-			ret.setStreet1(kon.get(Person.FLD_STREET));
-			ret.setLastname(kon.get(Person.FLD_NAME1));
-			ret.setFirstname(kon.get(Person.FLD_NAME2));
-			ret.setBirthdate(kon.get(Person.BIRTHDATE));
-			ret.setGender(kon.get(Person.SEX));
-			ret.setTel(kon.get(Kontakt.FLD_PHONE1));
-			ret.setTitle(kon.get(Person.TITLE));
+		if (kon.isOrganization()) {
+			IOrganization org =
+				CoreModelServiceHolder.get().load(kon.getId(), IOrganization.class).orElse(null);
+			ret.setZip(org.getZip());
+			ret.setCity(org.getCity());
+			ret.setStreet1(org.getStreet());
+			ret.setLastname(org.getDescription2());
+			ret.setFirstname(org.getDescription1());
+			ret.setTel(org.getPhone1());
+		} else if (kon.isPerson()) {
+			IPerson per =
+				CoreModelServiceHolder.get().load(kon.getId(), IPerson.class).orElse(null);
+			ret.setZip(per.getZip());
+			ret.setCity(per.getCity());
+			ret.setStreet1(per.getStreet());
+			ret.setLastname(per.getLastName());
+			ret.setFirstname(per.getFirstName());
+			ret.setBirthdate(
+				per.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+			ret.setGender(per.getGender() == Gender.FEMALE ? "W" : "M");
+			ret.setTel(per.getPhone1());
+			ret.setTitle(per.getTitel());
 		} else {
-			ret.setZip(kon.get(Kontakt.FLD_ZIP));
-			ret.setCity(kon.get(Kontakt.FLD_PLACE));
-			ret.setStreet1(kon.get(Kontakt.FLD_STREET));
-			ret.setLastname(kon.get(Kontakt.FLD_NAME1));
-			ret.setFirstname(kon.get(Kontakt.FLD_NAME2));
+			ret.setZip(kon.getZip());
+			ret.setCity(kon.getCity());
+			ret.setStreet1(kon.getStreet());
+			ret.setLastname(kon.getDescription1());
+			ret.setFirstname(kon.getDescription2());
 		}
 		return ret;
 	}

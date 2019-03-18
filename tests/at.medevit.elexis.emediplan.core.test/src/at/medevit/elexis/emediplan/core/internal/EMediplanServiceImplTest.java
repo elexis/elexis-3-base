@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +21,9 @@ import org.junit.Test;
 import at.medevit.elexis.emediplan.core.model.print.Medication;
 import at.medevit.elexis.emediplan.core.test.TestData;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
 
 public class EMediplanServiceImplTest {
 	
@@ -32,7 +33,7 @@ public class EMediplanServiceImplTest {
 	@Test
 	public void getJsonString() throws IOException{
 		EMediplanServiceImpl impl = new EMediplanServiceImpl();
-		List<Patient> patients = TestData.getTestSzenarioInstance().getPatients();
+		List<IPatient> patients = TestData.getTestSzenarioInstance().getPatients();
 		Optional<String> jsonString =
 			impl.getJsonString(TestData.getTestSzenarioInstance().getMandator(), patients.get(0),
 				getPatientMedication(patients.get(0)));
@@ -57,7 +58,7 @@ public class EMediplanServiceImplTest {
 	@Test
 	public void getEncodedJsonString() throws IOException{
 		EMediplanServiceImpl impl = new EMediplanServiceImpl();
-		List<Patient> patients = TestData.getTestSzenarioInstance().getPatients();
+		List<IPatient> patients = TestData.getTestSzenarioInstance().getPatients();
 		Optional<String> jsonString =
 			impl.getJsonString(TestData.getTestSzenarioInstance().getMandator(), patients.get(0),
 				getPatientMedication(patients.get(0)));
@@ -73,7 +74,7 @@ public class EMediplanServiceImplTest {
 	@Test
 	public void getQrCode() throws IOException{
 		EMediplanServiceImpl impl = new EMediplanServiceImpl();
-		List<Patient> patients = TestData.getTestSzenarioInstance().getPatients();
+		List<IPatient> patients = TestData.getTestSzenarioInstance().getPatients();
 		Optional<String> jsonString =
 			impl.getJsonString(TestData.getTestSzenarioInstance().getMandator(), patients.get(0),
 				getPatientMedication(patients.get(0)));
@@ -89,7 +90,7 @@ public class EMediplanServiceImplTest {
 	@Test
 	public void getDecodedJsonString() throws IOException{
 		EMediplanServiceImpl impl = new EMediplanServiceImpl();
-		List<Patient> patients = TestData.getTestSzenarioInstance().getPatients();
+		List<IPatient> patients = TestData.getTestSzenarioInstance().getPatients();
 		Optional<String> jsonString =
 			impl.getJsonString(TestData.getTestSzenarioInstance().getMandator(), patients.get(0),
 				getPatientMedication(patients.get(0)));
@@ -107,7 +108,7 @@ public class EMediplanServiceImplTest {
 	@Test
 	public void getJaxbModel(){
 		EMediplanServiceImpl impl = new EMediplanServiceImpl();
-		List<Patient> patients = TestData.getTestSzenarioInstance().getPatients();
+		List<IPatient> patients = TestData.getTestSzenarioInstance().getPatients();
 		Optional<Medication> jaxbModel =
 			impl.getJaxbModel(TestData.getTestSzenarioInstance().getMandator(), patients.get(0),
 				getPatientMedication(patients.get(0)));
@@ -118,7 +119,7 @@ public class EMediplanServiceImplTest {
 	@Test
 	public void exportEMediplanPdf() throws FileNotFoundException, IOException{
 		EMediplanServiceImpl impl = new EMediplanServiceImpl();
-		List<Patient> patients = TestData.getTestSzenarioInstance().getPatients();
+		List<IPatient> patients = TestData.getTestSzenarioInstance().getPatients();
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		impl.exportEMediplanPdf(
 			TestData.getTestSzenarioInstance().getMandator(), patients.get(0),
@@ -134,9 +135,9 @@ public class EMediplanServiceImplTest {
 		assertTrue(output.size() > 100);
 	}
 	
-	private List<Prescription> getPatientMedication(Patient patient){
-		List<Prescription> medication = patient.getMedication(EntryType.FIXED_MEDICATION);
-		medication.addAll(patient.getMedication(EntryType.RESERVE_MEDICATION));
+	private List<IPrescription> getPatientMedication(IPatient patient){
+		List<IPrescription> medication = patient
+			.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION));
 		return medication;
 	}
 	

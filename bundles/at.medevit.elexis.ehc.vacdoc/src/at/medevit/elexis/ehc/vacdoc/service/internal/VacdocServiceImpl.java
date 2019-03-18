@@ -22,12 +22,15 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.core.EhcCoreService;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.data.Artikel;
+import ch.elexis.core.data.service.StoreToStringServiceHolder;
+import ch.elexis.core.services.INamedQuery;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObjectFactory;
@@ -176,13 +179,17 @@ public class VacdocServiceImpl implements VacdocService {
 			
 			Code atcCode = consumable.getWhoAtcCode();
 			Identificator gtin = consumable.getManufacturedProductId();
-			Artikel article = resolveArticle(gtin, atcCode);
+			IArtikelstammItem article = resolveArticle(gtin, atcCode);
+			Optional<String> articleStoreToString =
+				StoreToStringServiceHolder.get().storeToString(article);
 			
 			Author author = immunization.getAuthor();
 			
-			if (article != null) {
-				new Vaccination(elexisPatient.getId(), article, immunization.getApplyDate(),
-					consumable.getLotNr(), ((author != null) ? author.getCompleteName() : ""));
+			if (article != null && articleStoreToString.isPresent()) {
+				new Vaccination(elexisPatient.getId(), articleStoreToString.get(),
+					article.getLabel(), article.getGtin(), article.getAtcCode(),
+					immunization.getApplyDate(), consumable.getLotNr(),
+					((author != null) ? author.getCompleteName() : ""));
 			} else {
 				logger.warn("Article [" + consumable.getTradeName() + "] not found GTIN ["
 					+ ((gtin != null) ? gtin.getExtension() : "") + "]");
@@ -194,25 +201,24 @@ public class VacdocServiceImpl implements VacdocService {
 		}
 	}
 	
-	private Artikel resolveArticle(Identificator gtin, Code atcCode){
+	private IArtikelstammItem resolveArticle(Identificator gtin, Code atcCode){
 		String gtinStr = (gtin != null) ? gtin.getExtension() : null;
 		String atcStr = (atcCode != null) ? atcCode.getCode() : null;
 		if (gtinStr != null) {
-			Query<ArtikelstammItem> query = new Query<>(ArtikelstammItem.class);
-			query.add(ArtikelstammItem.FLD_GTIN, Query.EQUALS, gtinStr);
-			List<ArtikelstammItem> articles = query.execute();
-			if (articles != null && !articles.isEmpty()) {
-				return articles.get(0);
-			}
+			INamedQuery<IArtikelstammItem> query =
+				ArtikelstammModelServiceHolder.get().getNamedQuery(IArtikelstammItem.class, "gtin");
+			return query.executeWithParametersSingleResult(query.getParameterMap("gtin", gtinStr))
+				.orElse(null);
 		} else if (atcStr != null && !atcStr.isEmpty()) {
-			Query<ArtikelstammItem> query = new Query<>(ArtikelstammItem.class);
-			query.add(ArtikelstammItem.FLD_ATC, Query.EQUALS, atcStr);
-			List<ArtikelstammItem> articles = query.execute();
+			IQuery<IArtikelstammItem> query =
+				ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
+			query.and("atc", COMPARATOR.EQUALS, atcStr);
+			List<IArtikelstammItem> articles = query.execute();
 			if (articles != null && !articles.isEmpty()) {
 				String displayName =
 					(atcCode != null) ? atcCode.getDisplayName().toLowerCase() : null;
 				if (displayName != null && !displayName.isEmpty()) {
-					for (ArtikelstammItem artikelstammItem : articles) {
+					for (IArtikelstammItem artikelstammItem : articles) {
 						if (artikelstammItem.getName().toLowerCase().contains(displayName)) {
 							return artikelstammItem;
 						}

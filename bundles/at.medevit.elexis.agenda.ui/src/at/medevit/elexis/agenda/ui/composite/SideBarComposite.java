@@ -40,7 +40,7 @@ import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.data.interfaces.IPeriod;
 import ch.elexis.core.ui.icons.Images;
 import ch.rgw.tools.TimeTool;
 

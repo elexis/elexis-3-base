@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
 import at.medevit.elexis.agenda.ui.view.ParallelView;
-import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.data.interfaces.IPeriod;
 
 public class MoveHandler extends AbstractHandler implements IHandler {
 	

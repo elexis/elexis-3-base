@@ -6,8 +6,8 @@ import org.eclipse.swt.browser.Browser;
 
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.series.SerienTermin;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.LocalLockServiceHolder;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.data.Kontakt;
@@ -59,8 +59,8 @@ public class EventDropFunction extends AbstractBrowserFunction {
 					
 					// checks if that termin is copied
 					if (!current.equals(termin)) {
-						if (CoreHub.getLocalLockService().acquireLock(current).isOk()) {
-							CoreHub.getLocalLockService().releaseLock(current);
+						if (LocalLockServiceHolder.get().acquireLock(current).isOk()) {
+							LocalLockServiceHolder.get().releaseLock(current);
 						} else {
 							// should not happened - no lock - delete the copied termin
 							current.delete();

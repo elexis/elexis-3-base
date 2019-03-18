@@ -2,7 +2,7 @@ package ch.elexis.connect.sysmex.packages;
 
 import ch.rgw.tools.TimeTool;
 
-public class KX21NData extends AbstractData {
+public class KX21NData extends AbstractHaematologyData {
 	
 	public int getSize(){
 		return 129;

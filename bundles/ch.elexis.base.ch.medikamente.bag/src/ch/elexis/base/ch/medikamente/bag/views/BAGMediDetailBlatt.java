@@ -27,18 +27,18 @@ import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.TableWrapData;
 
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IArticle;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.settings.UserSettings;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.util.LabeledInputField.InputData.Typ;
-import ch.elexis.core.ui.views.controls.StockDetailComposite;
 import ch.elexis.core.ui.util.ListDisplay;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.controls.StockDetailComposite;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.Interaction;
 import ch.elexis.medikamente.bag.data.Substance;
@@ -64,7 +64,7 @@ public class BAGMediDetailBlatt extends Composite {
 	
 	InputData[] fields = new InputData[] {
 		new InputData("Hersteller", "ExtInfo", new LabeledInputField.IContentProvider() {
-			public void displayContent(PersistentObject po, InputData ltf){
+			public void displayContent(Object po, InputData ltf){
 				Kontakt hersteller = ((BAGMedi) po).getHersteller();
 				if (hersteller.isValid()) {
 					String lbl = hersteller.getLabel();
@@ -77,7 +77,7 @@ public class BAGMediDetailBlatt extends Composite {
 				}
 			}
 			
-			public void reloadContent(PersistentObject po, InputData ltf){}
+			public void reloadContent(Object po, InputData ltf){}
 			
 		}), new InputData("Therap. Gruppe", "Gruppe", InputData.Typ.STRING, null),
 		new InputData("Generika", "ExtInfo", InputData.Typ.STRING, "Generika"),
@@ -205,7 +205,7 @@ public class BAGMediDetailBlatt extends Composite {
 	
 	public void display(final BAGMedi m){
 		actMedi = m;
-		sdc.setArticle(m);
+		sdc.setArticle(CoreModelServiceHolder.get().load(m.getId(), IArticle.class).orElse(null));
 		form.setText(m.getLabel());
 		fld.reload(m);
 		List<Substance> list = m.getSubstances();

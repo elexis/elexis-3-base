@@ -13,16 +13,19 @@
 package ch.elexis.base.ch.medikamente.bag.views;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.data.service.StockServiceHolder;
+import ch.elexis.core.model.IArticle;
 import ch.elexis.core.services.IStockService.Availability;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
-import ch.elexis.data.Artikel;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.Substance;
 import ch.rgw.tools.StringTool;
@@ -45,11 +48,15 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements ITable
 				}
 				sb.append("]");
 			}
-			Availability availability =
-				CoreHub.getStockService().getCumulatedAvailabilityForArticle(bm);
-			if (availability != null) {
-				sb.append(" (").append(availability).append(")");
-			}
+			Optional<IArticle> article =
+				CoreModelServiceHolder.get().load(bm.getId(), IArticle.class);
+			article.ifPresent(art -> {
+				Availability availability =
+					StockServiceHolder.get().getCumulatedAvailabilityForArticle(art);
+				if (availability != null) {
+					sb.append(" (").append(availability).append(")");
+				}
+			});
 			
 			return sb.toString();
 		}
@@ -62,22 +69,25 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements ITable
 	}
 	
 	public Color getForeground(final Object element, final int columnIndex){
-		if (element instanceof Artikel) {
-			Artikel art = (Artikel) element;
+		if (element instanceof PersistentObject) {
 			
-			Availability availability =
-				CoreHub.getStockService().getCumulatedAvailabilityForArticle(art);
-			if (availability != null) {
-				switch (availability) {
-				case CRITICAL_STOCK:
-				case OUT_OF_STOCK:
-					return UiDesk.getColor(UiDesk.COL_RED);
-				default:
-					return UiDesk.getColor(UiDesk.COL_BLUE);
+			Optional<IArticle> article = CoreModelServiceHolder.get()
+				.load(((PersistentObject) element).getId(), IArticle.class);
+			if (article.isPresent()) {
+				Availability availability =
+					StockServiceHolder.get().getCumulatedAvailabilityForArticle(article.get());
+				
+				if (availability != null) {
+					switch (availability) {
+					case CRITICAL_STOCK:
+					case OUT_OF_STOCK:
+						return UiDesk.getColor(UiDesk.COL_RED);
+					default:
+						return UiDesk.getColor(UiDesk.COL_BLUE);
+					}
 				}
 			}
 		}
-		
 		return null;
 	}
 	

@@ -23,7 +23,8 @@
             CodeSelectorFactory="ch.elexis.base.ch.medikamente.bag.views.BAGMediSelector"
             ElementFactory="ch.elexis.medikamente.bag.data.BAGMediFactory"
             ImporterClass="ch.elexis.medikamente.bag.data.BAGMediImporter"
-            name="Medikamente BAG">
+            name="Medikamente BAG"
+            system="Medikament">
       </Artikel>
    </extension>
 

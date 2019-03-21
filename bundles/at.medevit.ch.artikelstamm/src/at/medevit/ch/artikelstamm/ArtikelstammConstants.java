@@ -29,4 +29,7 @@ public class ArtikelstammConstants {
 			P, N, X
 	};
 	
+	public enum ContextKeys {
+			INCLUDE_BB
+	}
 }

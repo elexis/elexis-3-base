@@ -6,6 +6,7 @@ import static at.medevit.ch.artikelstamm.ArtikelstammConstants.STS_CLASS;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -15,6 +16,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.ch.artikelstamm.ArtikelstammConstants.ContextKeys;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import ch.elexis.core.common.ElexisEvent;
 import ch.elexis.core.common.ElexisEventTopics;
@@ -117,9 +119,13 @@ public class ArtikelstammModelService extends AbstractModelService
 	
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
+		boolean includeBlackBoxed = getIncludeBlackBoxed(context);
 		INamedQuery<IArtikelstammItem> query = getNamedQuery(IArtikelstammItem.class, "gtin");
 		List<IArtikelstammItem> found =
 			query.executeWithParameters(query.getParameterMap("gtin", code));
+		if (!includeBlackBoxed) {
+			found = found.stream().filter(ai -> !ai.isBlackBoxed()).collect(Collectors.toList());
+		}
 		if (found.size() > 0) {
 			if (found.size() > 1) {
 				LoggerFactory.getLogger(getClass())
@@ -140,6 +146,15 @@ public class ArtikelstammModelService extends AbstractModelService
 			}
 		}
 		return Optional.empty();
+	}
+	
+	private boolean getIncludeBlackBoxed(Map<Object, Object> context){
+		if (context != null) {
+			return context != null
+				&& context.get(ContextKeys.INCLUDE_BB) != null
+				&& context.get(ContextKeys.INCLUDE_BB) == Boolean.TRUE;
+		}
+		return false;
 	}
 	
 	@Override

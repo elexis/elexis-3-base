@@ -194,6 +194,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter
 		}
 		log.debug("Executing {}", cmd);
 		ModelServiceHolder.get().executeNativeUpdate(cmd);
+		// refresh cache after native update ...
+		ModelServiceHolder.get().getQuery(IArtikelstammItem.class, true, false).execute();
 		log.debug("Done Executing {}", cmd);
 	}
 	
@@ -273,6 +275,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter
 			importItemList.size());
 		
 		log.debug("[II] Update or import {} items...", importItemList.size());
+		List<Object> foundItems = new ArrayList<>();
 		for (ITEM item : importItemList) {
 			ArtikelstammItem foundItem = null;
 			List<ArtikelstammItem> result = EntityUtil.loadByNamedQuery(Collections.singletonMap("gtin", item.getGTIN()), ArtikelstammItem.class);
@@ -339,10 +342,10 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter
 			}
 			subMonitor.worked(1);
 			if (foundItem != null) {
-				EntityUtil.save(Collections.singletonList(foundItem));
+				foundItems.add(foundItem);
 			}
 		}
-		
+		EntityUtil.save(foundItems);
 		subMonitor.done();
 	}
 	

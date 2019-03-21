@@ -40,17 +40,22 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel.DiseaseDefinition;
+import at.medevit.elexis.impfplan.service.ArtikelstammModelServiceHolder;
 import at.medevit.elexis.impfplan.ui.VaccinationEffectCheckboxTreeViewer;
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.StoreToStringServiceHolder;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.ui.proposals.IdentifiableContentProposal;
+import ch.elexis.core.ui.proposals.IdentifiableProposalProvider;
 import ch.elexis.core.ui.proposals.PersistentObjectContentProposal;
 import ch.elexis.core.ui.proposals.PersistentObjectProposalProvider;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 
 public class SupplementVaccinationDialog extends TitleAreaDialog {
@@ -154,28 +159,23 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 				}
 			});
 			
-			PersistentObjectProposalProvider<ArtikelstammItem> aopp =
-				new PersistentObjectProposalProvider<>(ArtikelstammItem.class,
-					ArtikelstammItem.FLD_ATC, Query.LIKE, "J07%");
-			ContentProposalAdapter articleProposalAdapter =
-				new ContentProposalAdapter(txtArticleName, new TextContentAdapter(), aopp, null,
-					null);
+			IQuery<IArtikelstammItem> query =
+				ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
+			query.and("atc", COMPARATOR.LIKE, "J07%");
+			IdentifiableProposalProvider<IArtikelstammItem> aopp =
+				new IdentifiableProposalProvider<>(query);
+			ContentProposalAdapter articleProposalAdapter = new ContentProposalAdapter(
+				txtArticleName, new TextContentAdapter(), aopp, null, null);
 			articleProposalAdapter.addContentProposalListener(new IContentProposalListener() {
 				
 				@SuppressWarnings("unchecked")
 				@Override
 				public void proposalAccepted(IContentProposal proposal){
-					PersistentObjectContentProposal<ArtikelstammItem> prop =
-						(PersistentObjectContentProposal<ArtikelstammItem>) proposal;
+					IdentifiableContentProposal<IArtikelstammItem> prop =
+						(IdentifiableContentProposal<IArtikelstammItem>) proposal;
 					txtArticleName.setText(prop.getLabel());
-					articleString = prop.getPersistentObject().storeToString();
-					
-					/**
-					 * could be useful to define vacc. against at some point, but not needed in the
-					 * current version
-					 */
-// txtArticleEAN.setText(prop.getPersistentObject().getEAN());
-// txtAtcCode.setText(prop.getPersistentObject().getATCCode());
+					articleString =
+						StoreToStringServiceHolder.getStoreToString(prop.getIdentifiable());
 				}
 			});
 		}

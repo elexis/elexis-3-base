@@ -1,51 +1,63 @@
 package at.medevit.elexis.impfplan.ui.billing;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
 
-import ch.artikelstamm.elexis.common.ArtikelstammItem;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.data.service.CodeElementServiceHolder;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ch.BillingLaw;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementService.ContextKeys;
+import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.text.model.Samdas.Record;
 import ch.elexis.core.ui.dialogs.SelectOrCreateOpenKonsDialog;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
-import ch.elexis.data.Artikel;
-import ch.elexis.data.Konsultation;
+import ch.elexis.core.ui.services.BillingServiceHolder;
+import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.data.Patient;
-import ch.elexis.data.TarmedLeistung;
-import ch.elexis.data.Verrechnet;
-import ch.rgw.tools.TimeTool;
 
 public class AddVaccinationToKons {
 	private static final String TARMED_5MIN_TARIF = "00.0010";
 	
 	private static Object selectKonsLock = new Object();
-	private Konsultation kons;
-	private Patient patient;
-	private Artikel art;
+	private IEncounter actEncounter;
+	private IPatient patient;
+	private IArticle art;
 	
-	public AddVaccinationToKons(Patient patient, Artikel art, String ean){
+	public AddVaccinationToKons(IPatient patient, IArticle art, String ean){
 		this.patient = patient;
 		this.art = art;
 		if (art == null) {
-			art = ArtikelstammItem.findByEANorGTIN(ean);
+			CodeElementServiceHolder.get().getContribution(CodeElementTyp.ARTICLE, "Artikelstamm")
+				.ifPresent(contribution -> {
+					Optional<ICodeElement> loaded = contribution.loadFromCode(ean);
+					if (loaded.isPresent()) {
+						this.art = (IArticle) loaded.get();
+					}
+				});
 		}
 	}
 	
-	public Konsultation findOrCreateKons(){
-		// TODO anbieten, dass Tarifpositionen vorab bestimmt werden können
-// String l = CoreHub.userCfg.get(PreferencePage.VAC_BILLING_POS, "");
-// String[] billingPos = l.split(",");
-		
+	public IEncounter findOrCreateKons(){
 		initKonsultation();
-		if (kons == null || !kons.isEditable(false)) {
+		if (actEncounter == null || !EncounterServiceHolder.get().isEditable(actEncounter)) {
 			return null;
 		} else { // (kons != null && kons.isEditable(false)) {
-			AcquireLockBlockingUi.aquireAndRun(kons, new ILockHandler() {
+			AcquireLockBlockingUi.aquireAndRun(actEncounter, new ILockHandler() {
 				
 				@Override
 				public void lockFailed(){
@@ -55,42 +67,57 @@ public class AddVaccinationToKons {
 				
 				@Override
 				public void lockAcquired(){
-					kons.addLeistung(art);
-					
-					// update kons. text
-					Samdas samdas = new Samdas(kons.getEintrag().getHead());
-					Record rec = samdas.getRecord();
-					String recText = rec.getText();
-					recText += "\nImpfung - " + art.getName();
-					rec.setText(recText);
-					kons.updateEintrag(samdas.toString(), true);
-					
-					boolean addedCons = true;
-					List<Verrechnet> leistungen = kons.getLeistungen();
-					for (Verrechnet verrechnet : leistungen) {
-						IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
-						if (verrechenbar != null
-							&& verrechenbar.getCodeSystemName().equals("Tarmed")
-							&& verrechenbar.getCode().equals(TARMED_5MIN_TARIF)) {
-							addedCons = false;
-							break;
+					Optional<IEncounter> encounter = CoreModelServiceHolder.get().load(actEncounter.getId(), IEncounter.class);
+					if (encounter.isPresent()) {
+						BillingServiceHolder.get().bill(art, encounter.get(), 1);
+						
+						// update kons. text
+						Samdas samdas = new Samdas(actEncounter.getVersionedEntry().getHead());
+						Record rec = samdas.getRecord();
+						String recText = rec.getText();
+						recText += "\nImpfung - " + art.getName();
+						rec.setText(recText);
+						EncounterServiceHolder.get().updateVersionedEntry(actEncounter, samdas);
+						CoreModelServiceHolder.get().save(actEncounter);
+						
+						boolean addedCons = true;
+						List<IBilled> leistungen = actEncounter.getBilled();
+						for (IBilled verrechnet : leistungen) {
+							IBillable verrechenbar = verrechnet.getBillable();
+							if (verrechenbar != null
+								&& verrechenbar.getCodeSystemName().equals("Tarmed")
+								&& verrechenbar.getCode().equals(TARMED_5MIN_TARIF)) {
+								addedCons = false;
+								break;
+							}
 						}
-					}
-					IVerrechenbar consVerrechenbar = getKonsVerrechenbar(kons);
-					if (addedCons && (consVerrechenbar != null)) {
-						kons.addLeistung(consVerrechenbar);
+						IBillable consVerrechenbar = getKonsVerrechenbar(encounter.get());
+						if (addedCons && (consVerrechenbar != null)) {
+							BillingServiceHolder.get().bill(consVerrechenbar, encounter.get(), 1);
+						}
 					}
 				}
 			});
-			return kons;
+			return actEncounter;
 		}
 	}
 	
-	private IVerrechenbar getKonsVerrechenbar(Konsultation kons){
-		TimeTool date = new TimeTool(kons.getDatum());
-		if (kons.getFall() != null) {
-			BillingLaw law = kons.getFall().getConfiguredBillingSystemLaw();
-			return TarmedLeistung.getFromCode(TARMED_5MIN_TARIF, date, law.name());
+	private IBillable getKonsVerrechenbar(IEncounter encounter){
+		LocalDate encounterDate = encounter.getDate();
+		if (encounter.getCoverage() != null) {
+			BillingLaw law = encounter.getCoverage().getBillingSystem().getLaw();
+			Optional<ICodeElementServiceContribution> tarmedContribution =
+				CodeElementServiceHolder.get().getContribution(CodeElementTyp.SERVICE, "Tarmed");
+			if (tarmedContribution.isPresent()) {
+				Map<Object, Object> context = new HashMap<>();
+				context.put(ContextKeys.DATE, encounterDate);
+				context.put(ContextKeys.LAW, law.name());
+				Optional<ICodeElement> loaded =
+					tarmedContribution.get().loadFromCode(TARMED_5MIN_TARIF, context);
+				if (loaded.isPresent()) {
+					return (IBillable) loaded.get();
+				}
+			}
 		}
 		return null;
 	}
@@ -100,16 +127,18 @@ public class AddVaccinationToKons {
 	 */
 	private void initKonsultation(){
 		synchronized (selectKonsLock) {
-			kons = patient.getLetzteKons(false);
-			if (kons == null || !kons.isEditable(false)) {
+			actEncounter = EncounterServiceHolder.get().getLatestEncounter(patient, false).orElse(null);
+			if (actEncounter == null || !EncounterServiceHolder.get().isEditable(actEncounter)) {
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run(){
 						SelectOrCreateOpenKonsDialog dialog =
-							new SelectOrCreateOpenKonsDialog(patient,
+							new SelectOrCreateOpenKonsDialog(Patient.load(patient.getId()),
 								"Konsultation für die automatische Verrechnung auswählen.");
 						if (dialog.open() == Dialog.OK) {
-							kons = dialog.getKonsultation();
+							actEncounter = CoreModelServiceHolder.get()
+								.load(dialog.getKonsultation().getId(), IEncounter.class)
+								.orElse(null);
 						}
 					}
 				});

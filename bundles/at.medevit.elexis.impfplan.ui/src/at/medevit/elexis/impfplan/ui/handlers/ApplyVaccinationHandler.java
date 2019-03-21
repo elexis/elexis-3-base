@@ -11,12 +11,15 @@
 package at.medevit.elexis.impfplan.ui.handlers;
 
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +27,14 @@ import org.slf4j.LoggerFactory;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.ui.billing.AddVaccinationToKons;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
-import ch.elexis.core.ui.util.PersistentObjectDropTarget;
+import ch.elexis.core.ui.util.GenericObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
-import ch.elexis.data.Artikel;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -40,16 +42,16 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(ApplyVaccinationHandler.class);
 	
 	private static boolean inProgress = false;
-	private static PersistentObjectDropTarget dropTarget;
+	private GenericObjectDropTarget dropTarget;
 	private static TimeTool doa;
-	private static Konsultation kons;
+	private static IEncounter actEncounter;
 	private LeistungenView leistungenView;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		if (dropTarget == null) {
 			dropTarget =
-				new PersistentObjectDropTarget("Impfplan", UiDesk.getTopShell(), new DropReceiver());
+				new GenericObjectDropTarget("Impfplan", UiDesk.getTopShell(), new DropReceiver());
 		}
 		
 		// open the LeistungenView
@@ -79,7 +81,7 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 	}
 	
 	public static Date getKonsDate(){
-		doa = new TimeTool(kons.getDatum());
+		doa = new TimeTool(actEncounter.getDate());
 		return doa.getTime();
 	}
 	
@@ -91,38 +93,45 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 	 * waits for dropps/double-clicks on vaccinations
 	 *
 	 */
-	private final class DropReceiver implements PersistentObjectDropTarget.IReceiver {
-		public void dropped(PersistentObject o, DropTargetEvent ev){
-			if (o instanceof Artikel) {
-				Artikel artikel = (Artikel) o;
-				
-				// only accept vaccinations
-				String atcCode = artikel.getATC_code();
-				if (atcCode != null && atcCode.length() > 4) {
-					if (atcCode.toUpperCase().startsWith(
-						DiseaseDefinitionModel.VACCINATION_ATC_GROUP_TRAILER)) {
-						AddVaccinationToKons addVacToKons =
-							new AddVaccinationToKons(ElexisEventDispatcher.getSelectedPatient(),
-								artikel, artikel.getEAN());
-						
-						kons = addVacToKons.findOrCreateKons();
-						if (kons == null) {
-							logger
-								.warn("Could not insert vaccination as no consultation was found for this patient");
-							SWTHelper
-								.showError("Nicht erstellbar",
+	private final class DropReceiver implements GenericObjectDropTarget.IReceiver {
+		public void dropped(List<Object> list, DropTargetEvent ev){
+			for (Object object : list) {
+				if (object instanceof IArticle) {
+					IArticle artikel = (IArticle) object;
+					// only accept vaccinations
+					String atcCode = artikel.getAtcCode();
+					if (atcCode != null && atcCode.length() > 4) {
+						if (atcCode.toUpperCase()
+							.startsWith(DiseaseDefinitionModel.VACCINATION_ATC_GROUP_TRAILER)) {
+							AddVaccinationToKons addVacToKons = new AddVaccinationToKons(
+								ContextServiceHolder.get().getActivePatient().orElse(null), artikel,
+								artikel.getGtin());
+							
+							actEncounter = addVacToKons.findOrCreateKons();
+							if (actEncounter == null) {
+								logger.warn(
+									"Could not insert vaccination as no consultation was found for this patient");
+								MessageDialog.openError(Display.getDefault().getActiveShell(),
+									"Nicht erstellbar",
 									"Konnte Impfung nich eintragen, da keine Konsultation vorhanden ist.");
+							}
+							inProgress = true;
+						} else {
+							MessageDialog.openWarning(Display.getDefault().getActiveShell(),
+								"Nicht erstellbar",
+								"Der gewählte Artikel ist kein Impfstoff.");
 						}
-						inProgress = true;
 					}
 				}
 			}
 		}
 		
-		public boolean accept(PersistentObject o){
-			if (ElexisEventDispatcher.getSelectedPatient() != null) {
-				if (o instanceof Artikel) {
-					return true;
+		public boolean accept(List<Object> list){
+			if (ContextServiceHolder.get().getActivePatient().isPresent()) {
+				for (Object object : list) {
+					if (object instanceof IArticle) {
+						return true;
+					}
 				}
 			}
 			return false;

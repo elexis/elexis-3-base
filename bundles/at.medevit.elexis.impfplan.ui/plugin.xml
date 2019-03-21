@@ -141,12 +141,5 @@
             name="%vaccPlanViewPartName">
       </page>
    </extension>
-   <extension
-         point="ch.elexis.core.data.VerrechnungscodeAdjuster">
-      <adjuster
-            class="at.medevit.elexis.impfplan.ui.billing.VaccinationVerrechnetAdjuster"
-            id="at.medevit.elexis.impfplan.ui.billing.verrechnet.adjuster">
-      </adjuster>
-   </extension>
 
 </plugin>

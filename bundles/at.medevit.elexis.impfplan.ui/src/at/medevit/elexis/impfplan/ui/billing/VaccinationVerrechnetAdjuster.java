@@ -4,48 +4,53 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.osgi.service.component.annotations.Component;
+
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.ui.dialogs.ApplicationInputDialog;
 import at.medevit.elexis.impfplan.ui.handlers.ApplyVaccinationHandler;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.core.data.interfaces.IVerrechnetAdjuster;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IBilledAdjuster;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.data.Artikel;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
 import ch.elexis.data.Verrechnet;
-import ch.rgw.tools.Money;
 
-public class VaccinationVerrechnetAdjuster implements IVerrechnetAdjuster {
+@Component
+public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 	
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	@Override
-	public void adjust(final Verrechnet verrechnet){
+	public void adjust(IBilled billed){
 		executor.submit(new Runnable() {
 			@Override
 			public void run(){
-				IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
-				if (verrechenbar instanceof Artikel) {
-					String atc_code = ((Artikel) verrechenbar).getATC_code();
+				IBillable billable = billed.getBillable();
+				if (billable instanceof IArticle) {
+					String atc_code = ((IArticle) billable).getAtcCode();
 					if (atc_code != null && atc_code.length() > 4) {
 						if (atc_code.toUpperCase()
 							.startsWith(DiseaseDefinitionModel.VACCINATION_ATC_GROUP_TRAILER)) {
-							Konsultation kons = verrechnet.getKons();
-							if (kons != null) {
-								Fall fall = kons.getFall();
-								if (fall != null) {
-									Patient patient = fall.getPatient();
+							IEncounter encounter = billed.getEncounter();
+							if (encounter != null) {
+								ICoverage coverage = encounter.getCoverage();
+								if (coverage != null) {
+									IPatient patient = coverage.getPatient();
 									if (patient != null) {
-										performVaccination(patient.getId(), (Artikel) verrechenbar);
+										performVaccination(patient.getId(),
+											(IArticle) billable);
 									}
 								}
 							}
-							verrechnet.setDetail(Verrechnet.VATSCALE, Double.toString(0.0));
+							billed.setExtInfo(Verrechnet.VATSCALE, Double.toString(0.0));
 						}
 					}
 				}
@@ -53,7 +58,7 @@ public class VaccinationVerrechnetAdjuster implements IVerrechnetAdjuster {
 		});
 	}
 	
-	private void performVaccination(String patientId, Artikel article){
+	private void performVaccination(String patientId, IArticle article){
 		UiDesk.asyncExec(new Runnable() {
 			@Override
 			public void run(){
@@ -62,14 +67,17 @@ public class VaccinationVerrechnetAdjuster implements IVerrechnetAdjuster {
 					d = ApplyVaccinationHandler.getKonsDate();
 				}
 				
-				Mandant m = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+				IMandator m = ContextServiceHolder.get().getActiveMandator().orElse(null);
 				ApplicationInputDialog aid =
 					new ApplicationInputDialog(UiDesk.getTopShell(), article);
 				aid.open();
 				String lotNo = aid.getLotNo();
 				String side = aid.getSide();
 				
-				Vaccination vacc = new Vaccination(patientId, article, d, lotNo, m.storeToString());
+				Vaccination vacc =
+					new Vaccination(patientId, StoreToStringServiceHolder.getStoreToString(article),
+						article.getLabel(), article.getGtin(), article.getAtcCode(), d, lotNo,
+						StoreToStringServiceHolder.getStoreToString(m));
 				
 				if (side != null && !side.isEmpty()) {
 					vacc.setSide(side);
@@ -77,11 +85,4 @@ public class VaccinationVerrechnetAdjuster implements IVerrechnetAdjuster {
 			}
 		});
 	}
-	
-	@Override
-	public void adjustGetNettoPreis(Verrechnet verrechnet, Money price){
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

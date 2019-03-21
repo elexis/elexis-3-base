@@ -19,7 +19,7 @@ import org.eclipse.wb.swt.ResourceManager;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Artikel;
+import ch.elexis.core.model.IArticle;
 import ch.elexis.data.Patient;
 
 public class ApplicationInputDialog extends TitleAreaDialog {
@@ -29,9 +29,9 @@ public class ApplicationInputDialog extends TitleAreaDialog {
 	
 	private Text txtLotNo;
 	private Button btnLeft, btnRight;
-	private Optional<Artikel> art;
+	private Optional<IArticle> art;
 	
-	public ApplicationInputDialog(Shell parentShell, Artikel article){
+	public ApplicationInputDialog(Shell parentShell, IArticle article){
 		super(parentShell);
 		showSideOption = CoreHub.userCfg.get(PreferencePage.VAC_SHOW_SIDE, false);
 		art = Optional.ofNullable(article);

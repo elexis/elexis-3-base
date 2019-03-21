@@ -49,6 +49,8 @@ import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.actions.CodeSelectorHandler;
+import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.selectors.ActiveControl;
@@ -58,6 +60,7 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.core.ui.views.KonsDetailView;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
@@ -78,7 +81,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 			TableViewer tv = (TableViewer) event.getSource();
 			StructuredSelection ss = (StructuredSelection) tv.getSelection();
 			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
-			if (!ss.isEmpty()) {
+			if (!ss.isEmpty() && ss.getFirstElement() instanceof IArtikelstammItem) {
 				IArtikelstammItem selected = (IArtikelstammItem) ss.getFirstElement();
 				ContextServiceHolder.get().getRootContext()
 					.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", selected);
@@ -138,7 +141,6 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		
 		ViewerConfigurer vc = new ViewerConfigurer(commonViewContentProvider, adlp,
 			slp, new ViewerConfigurer.DefaultButtonProvider(), swp);
-		vc.setDoubleClickListener(new ArtikelstammDoubleClickListener());
 		
 		// the dropdown menu on the viewer
 		MenuManager menu = new MenuManager();
@@ -189,8 +191,13 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		menu.add(new Separator());
 		menu.add(new VATMenuContributionItem(cov));
 		cv.setContextMenu(menu);
-		
+		vc.setContentType(ContentType.GENERICOBJECT);
 		return vc;
+	}
+	
+	@Override
+	public IDoubleClickListener getDoubleClickListener(){
+		return new ArtikelstammDoubleClickListener();
 	}
 	
 	@Override
@@ -251,6 +258,13 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 				ac.setText((filterValueStore != null) ? filterValueStore : "");
 				
 				commonViewContentProvider.removeAllQueryFilterByType(AtcQueryFilter.class);
+			} else if (selection.getFirstElement() instanceof IArtikelstammItem) {
+				ICodeSelectorTarget target =
+					CodeSelectorHandler.getInstance().getCodeSelectorTarget();
+				if (target != null) {
+					Object obj = selection.getFirstElement();
+					target.codeSelected(obj);
+				}
 			}
 		}
 	}

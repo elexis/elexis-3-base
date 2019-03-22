@@ -70,5 +70,12 @@
             ID="ch.elexis.icpc.perspective"
             name="ICPC-2"/>
    </extension>
+   <extension
+         point="ch.elexis.core.data.referenceDataImporter">
+      <importer
+            class="ch.elexis.icpc.IcpcReferenceDataImporter"
+            referenceDataId="icpc2">
+      </importer>
+   </extension>
 
 </plugin>

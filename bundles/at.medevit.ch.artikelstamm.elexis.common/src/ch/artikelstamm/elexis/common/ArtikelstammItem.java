@@ -904,6 +904,20 @@ public class ArtikelstammItem extends Artikel implements IArtikelstammItem {
 		return null;
 	}
 	
+	/**
+	 * @param name
+	 * @return the ArtikelstammItem for the given name code or <code>null</code> if not found
+	 */
+	public static @Nullable ArtikelstammItem findByName(@NonNull String name){
+		Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
+		qre.add(ArtikelstammItem.FLD_DSCR, Query.LIKE, name);
+		List<ArtikelstammItem> result = qre.execute();
+		if (result.size() == 1) {
+			return result.get(0);
+		}
+		return null;
+	}
+	
 	@Override
 	public int getCacheTime(){
 		return DBConnection.CACHE_TIME_MAX;

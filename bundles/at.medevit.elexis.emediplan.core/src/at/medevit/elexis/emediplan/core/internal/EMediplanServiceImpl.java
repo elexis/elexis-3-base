@@ -491,6 +491,14 @@ public class EMediplanServiceImpl implements EMediplanService {
 				medicament.artikelstammItem = artikelstammItem;
 			}
 		}
+		else if (medicament.IdType == 1)
+		{
+			ArtikelstammItem artikelstammItem = ArtikelstammItem.findByName(medicament.Id);
+			if (artikelstammItem != null)
+			{
+				medicament.artikelstammItem = artikelstammItem;
+			}
+		}
 	}
 
 	public class MedicationDeserializer implements JsonDeserializer<Medication> {

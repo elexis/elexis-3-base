@@ -132,6 +132,9 @@ public class Medicament {
 		if (pharma != null && !pharma.isEmpty()) {
 			return pharma;
 		}
+		if (getIdType(article) == 1) {
+			return article.getText();
+		}
 		throw new IllegalStateException(
 			"No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]");
 	}

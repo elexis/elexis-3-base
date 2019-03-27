@@ -43,7 +43,7 @@ public class EMediplanServiceImplTest {
 		assertTrue(jsonString.get().contains("\"LName\":\"Spitzkiel\""));
 		assertTrue(jsonString.get().contains("7680336700282"));
 		assertTrue(jsonString.get().contains("\"Off\":28800"));
-		assertTrue(jsonString.get().contains("5390827"));
+		assertTrue(jsonString.get().contains("4881026"));
 		
 		jsonString = impl.getJsonString(TestData.getTestSzenarioInstance().getMandator(),
 			patients.get(1), getPatientMedication(patients.get(1)));
@@ -52,7 +52,7 @@ public class EMediplanServiceImplTest {
 		assertTrue(jsonString.get().contains("\"LName\":\"Zirbelkiefer\""));
 		assertTrue(jsonString.get().contains("7680336700282"));
 		assertTrue(jsonString.get().contains("\"Off\":28800"));
-		assertFalse(jsonString.get().contains("5390827"));
+		assertFalse(jsonString.get().contains("4881026"));
 	}
 	
 	@Test

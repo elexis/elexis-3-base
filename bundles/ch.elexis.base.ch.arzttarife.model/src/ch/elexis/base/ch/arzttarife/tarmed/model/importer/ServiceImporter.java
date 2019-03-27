@@ -99,7 +99,7 @@ public class ServiceImporter {
 					tl.setLaw(law);
 	
 					extension = new TarmedExtension();
-					tl.setExtension(extension);
+					extension.setCode(tl.getId());
 					extensionMap = JpaModelUtil.extInfoFromBytes(extension.getExtInfo());
 					
 					if (hasColumn(res, "F_AL_R")) {
@@ -244,6 +244,7 @@ public class ServiceImporter {
 					kumulation.setValidFrom(fromTime.toLocalDate());
 					kumulation.setValidTo(toTime.toLocalDate());
 					kumulation.setLaw(law);
+					kumulations.add(kumulation);
 				}
 				EntityUtil.save(kumulations);
 			}
@@ -515,8 +516,9 @@ public class ServiceImporter {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			ResultSet rsub = subStm
-				.query(String.format("SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE=%s AND LNR=%s",
-					TarmedReferenceDataImporter.ImportPrefix, lang, JdbcLink.wrap(code))); //$NON-NLS-1$
+				.query(
+					String.format("SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE='%s' AND LNR='%s'",
+						TarmedReferenceDataImporter.ImportPrefix, lang, code)); //$NON-NLS-1$
 			List<Map<String, String>> validResults =
 				ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {

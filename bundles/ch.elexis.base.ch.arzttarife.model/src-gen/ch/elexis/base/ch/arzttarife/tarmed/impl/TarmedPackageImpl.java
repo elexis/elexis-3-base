@@ -458,6 +458,16 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * @generated
 	 */
 	@Override
+	public EReference getITarmedGroup_Extension() {
+		return (EReference)iTarmedGroupEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getITarmedKumulation() {
 		return iTarmedKumulationEClass;
 	}
@@ -660,6 +670,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		createEAttribute(iTarmedGroupEClass, ITARMED_GROUP__VALID_TO);
 		createEAttribute(iTarmedGroupEClass, ITARMED_GROUP__LAW);
 		createEAttribute(iTarmedGroupEClass, ITARMED_GROUP__LIMITATIONS);
+		createEReference(iTarmedGroupEClass, ITARMED_GROUP__EXTENSION);
 
 		iTarmedKumulationEClass = createEClass(ITARMED_KUMULATION);
 		createEAttribute(iTarmedKumulationEClass, ITARMED_KUMULATION__SLAVE_CODE);
@@ -781,6 +792,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		initEAttribute(getITarmedGroup_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, ITarmedGroup.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getITarmedGroup_Law(), ecorePackage.getEString(), "law", null, 0, 1, ITarmedGroup.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getITarmedGroup_Limitations(), this.getTarmedLimitation(), "limitations", null, 0, -1, ITarmedGroup.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getITarmedGroup_Extension(), this.getITarmedExtension(), null, "extension", null, 0, 1, ITarmedGroup.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = addEOperation(iTarmedGroupEClass, ecorePackage.getEBoolean(), "validAt", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theTypesPackage.getLocalDate(), "reference", 0, 1, IS_UNIQUE, IS_ORDERED);

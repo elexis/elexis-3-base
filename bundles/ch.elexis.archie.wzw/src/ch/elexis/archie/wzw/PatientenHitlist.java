@@ -11,25 +11,33 @@
  *******************************************************************************/
 package ch.elexis.archie.wzw;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.base.ch.labortarif.ILaborLeistung;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
-import ch.elexis.data.PhysioLeistung;
-import ch.elexis.data.Rechnung;
-import ch.elexis.data.TarmedLeistung;
-import ch.elexis.data.Verrechnet;
-import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
@@ -81,7 +89,11 @@ public class PatientenHitlist extends BaseStats {
 									ps = new PatientStat(pat);
 									pstat.put(pat.getId(), ps);
 								}
-								ps.addCons(k);
+								Optional<IEncounter> encounter =
+									CoreModelServiceHolder.get().load(k.getId(), IEncounter.class);
+								if (encounter.isPresent()) {
+									ps.addCons(encounter.get());
+								}
 							}
 						}
 						monitor.worked(clicksPerRound);
@@ -229,50 +241,59 @@ public class PatientenHitlist extends BaseStats {
 			costTotal = 0.0;
 		}
 		
-		void addCons(Konsultation k){
-			TimeTool kdate = new TimeTool(k.getDatum());
+		void addCons(IEncounter encounter){
+			LocalDate encounterDate = encounter.getDate();
 			numCons++;
-			List<Verrechnet> vr = k.getLeistungen();
-			Fall fall = k.getFall();
-			for (Verrechnet v : vr) {
-				IVerrechenbar vv = v.getVerrechenbar();
-				if (vv != null) {
-					double cost = v.getNettoPreis().doubleValue() * v.getZahl();
+			List<IBilled> encounterBilled = encounter.getBilled();
+			ICoverage coverage = encounter.getCoverage();
+			for (IBilled billed : encounterBilled) {
+				IBillable billable = billed.getBillable();
+				if (billable != null) {
+					double cost = billed.getNetPrice().doubleValue() * billed.getAmount();
 					costTotal += cost;
-					if (vv instanceof TarmedLeistung) {
-						int tarmedAl = TarmedLeistung.getAL(v);
-						int tarmedTl = TarmedLeistung.getTL(v);
+					if (billable instanceof ITarmedLeistung) {
+						int tarmedAl = (int) ArzttarifeUtil.getAL(billed);
+						int tarmedTl = (int) ArzttarifeUtil.getTL(billed);
 						
-						TarmedLeistung tl = (TarmedLeistung) vv;
+						ITarmedLeistung tl = (ITarmedLeistung) billable;
 						if (tl.getCode().equals("00.0060")) {
 							numVisits++;
 						}
+						Optional<IBillingSystemFactor> billingFactor =
+							BillingServiceHolder.get().getBillingSystemFactor(
+							coverage.getBillingSystem().getName(), encounterDate);
+						double factorValue = 1.0;
+						if (billingFactor.isPresent()) {
+							factorValue = billingFactor.get().getFactor();
+						}
 						double cal =
-							Math.round(v.getZahl() * tarmedAl * tl.getFactor(kdate, fall)) / 100.0;
+							Math.round(billed.getAmount() * tarmedAl * factorValue)
+								/ 100.0;
 						costTarmedAL += cal;
 						double ctl =
-							Math.round(v.getZahl() * tarmedTl * tl.getFactor(kdate, fall)) / 100.0;
+							Math.round(billed.getAmount() * tarmedTl * factorValue)
+								/ 100.0;
 						costTarmedTL += ctl;
-					} else if (vv instanceof PhysioLeistung) {
+					} else if (billable instanceof IPhysioLeistung) {
 						costPhysio += cost;
-					} else if ("Medicals".equals(vv.getCodeSystemName())
-						|| "MiGeL".equals(vv.getCodeSystemName())) {
+					} else if ("Medicals".equals(billable.getCodeSystemName())
+						|| "MiGeL".equals(billable.getCodeSystemName())) {
 						costMedical += cost;
-					} else if ("Medikamente".equals(vv.getCodeSystemName())
-						|| "400".equals(vv.getCodeSystemCode())
-						|| "402".equals(vv.getCodeSystemCode())) {
+					} else if ("Medikamente".equals(billable.getCodeSystemName())
+						|| "400".equals(billable.getCodeSystemCode())
+						|| "402".equals(billable.getCodeSystemCode())) {
 						costMedikamente += cost;
-					} else if (vv instanceof Labor2009Tarif) {
+					} else if (billable instanceof ILaborLeistung) {
 						costLabor += cost;
 					} else {
 						costOther += cost;
 					}
 				}
 			}
-			Rechnung r = k.getRechnung();
-			if (r != null) {
-				if (!bills.contains(r)) {
-					bills.add(r);
+			IInvoice invoice = encounter.getInvoice();
+			if (invoice != null) {
+				if (!bills.contains(invoice)) {
+					bills.add(invoice);
 				}
 			}
 		}
@@ -290,6 +311,6 @@ public class PatientenHitlist extends BaseStats {
 		Double costLabor;
 		Double costOther;
 		Double costTotal;
-		ArrayList<Rechnung> bills = new ArrayList<Rechnung>();
+		ArrayList<IInvoice> bills = new ArrayList<>();
 	}
 }

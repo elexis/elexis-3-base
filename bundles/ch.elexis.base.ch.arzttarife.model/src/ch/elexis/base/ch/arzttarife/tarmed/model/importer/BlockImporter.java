@@ -96,6 +96,7 @@ public class BlockImporter {
 					kumulation.setValidFrom(fromTime.toLocalDate());
 					kumulation.setValidTo(toTime.toLocalDate());
 					kumulation.setLaw(law);
+					kumulations.add(kumulation);
 				}
 				EntityUtil.save(kumulations);
 			}

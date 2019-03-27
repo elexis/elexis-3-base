@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Fragment-Host: at.medevit.elexis.emediplan.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit;bundle-version="4.10.0",
- ch.elexis.base.ch.medikamente.bag;bundle-version="3.2.0",
  at.medevit.ch.artikelstamm;bundle-version="3.2.0",
  at.medevit.ch.artikelstamm.elexis.common,
  ch.elexis.core.data

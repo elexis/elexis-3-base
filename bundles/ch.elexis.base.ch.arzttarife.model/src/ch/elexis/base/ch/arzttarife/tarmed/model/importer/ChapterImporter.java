@@ -56,7 +56,7 @@ public class ChapterImporter {
 			List<Object> imported = new ArrayList<>();
 			source = cacheDb.getStatement();
 			try (ResultSet res = source.query(String
-				.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE=%s", //$NON-NLS-1$
+				.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE='%s'", //$NON-NLS-1$
 					TarmedReferenceDataImporter.ImportPrefix, lang))) {
 				int count = 0;
 				while (res != null && res.next()) {
@@ -127,8 +127,8 @@ public class ChapterImporter {
 		try {
 			source = cacheDb.getStatement();
 			try (ResultSet res = source
-				.query(String.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE=%s AND KNR=%s", //$NON-NLS-1$
-					TarmedReferenceDataImporter.ImportPrefix, lang, JdbcLink.wrap(parentCode)))) {
+				.query(String.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE='%s' AND KNR='%s'", //$NON-NLS-1$
+					TarmedReferenceDataImporter.ImportPrefix, lang, parentCode))) {
 				while (res != null && res.next()) {
 					String code = res.getString("KNR"); //$NON-NLS-1$
 					if (code.trim().equals("I")) { //$NON-NLS-1$

@@ -8,7 +8,9 @@
             CodeSelectorFactory="ch.berchtold.emanuel.privatrechnung.views.Leistungsselektor"
             ElementFactory="ch.berchtold.emanuel.privatrechnung.data.LeistungsFactory"
             ImporterClass="ch.berchtold.emanuel.privatrechnung.data.Importer"
-            name="Privatrechnung Berchtold">
+            elexisClassName="ch.berchtold.emanuel.privatrechnung.data.Leistung"
+            name="Privatrechnung Berchtold"
+            system="Privattarif">
       </Leistung>
    </extension>
    <extension

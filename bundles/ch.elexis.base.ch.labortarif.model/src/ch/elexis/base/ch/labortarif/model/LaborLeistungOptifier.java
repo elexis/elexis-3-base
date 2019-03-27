@@ -21,6 +21,7 @@ import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -169,8 +170,8 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 	}
 	
 	private double getFactor(LocalDate date){
-		Optional<IBillingSystemFactor> systemFactor =
-			getBillingSystemFactor(LaborTarifConstants.MULTIPLICATOR_NAME, date);
+		Optional<IBillingSystemFactor> systemFactor = BillingServiceHolder.get()
+			.getBillingSystemFactor(LaborTarifConstants.MULTIPLICATOR_NAME, date);
 		if (systemFactor.isPresent()) {
 			return systemFactor.get().getFactor();
 		}

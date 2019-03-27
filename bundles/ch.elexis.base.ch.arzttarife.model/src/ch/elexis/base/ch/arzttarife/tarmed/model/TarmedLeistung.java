@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
-import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelAdapterFactory;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
@@ -30,9 +29,9 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
-import ch.rgw.tools.TimeTool;
 
 public class TarmedLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedLeistung>
@@ -42,6 +41,8 @@ public class TarmedLeistung
 	
 	private IBillableOptifier<TarmedLeistung> tarmedOptifier;
 	private IBillableVerifier verifier;
+	
+	private ITarmedExtension extension;
 	
 	public static LocalDate curTimeHelper = LocalDate.now();
 	
@@ -65,7 +66,7 @@ public class TarmedLeistung
 	@Override
 	public int getAL(){
 		String tp_al = getExtension().getLimits().get(TarmedConstants.TarmedLeistung.EXT_FLD_TP_AL);
-		return NumberUtils.toInt(tp_al) * 100;
+		return (int) Math.round(NumberUtils.toDouble(tp_al) * 100);
 	}
 	
 	/**
@@ -80,7 +81,7 @@ public class TarmedLeistung
 	public int getAL(IMandator mandant){
 		String tp_al = getExtension().getLimits()
 			.get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_TP_AL);
-		return (int) Math.round(NumberUtils.toInt(tp_al) * getALScaling(mandant));
+		return (int) Math.round(NumberUtils.toDouble(tp_al) * getALScaling(mandant));
 	}
 	
 	/**
@@ -108,9 +109,9 @@ public class TarmedLeistung
 	
 	@Override
 	public int getTL(){
-		String tp_al = getExtension().getLimits()
+		String tp_tl = getExtension().getLimits()
 			.get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_TP_TL);
-		return NumberUtils.toInt(tp_al) * 100;
+		return (int) Math.round(NumberUtils.toDouble(tp_tl) * 100);
 	}
 	
 	@Override
@@ -169,8 +170,16 @@ public class TarmedLeistung
 	
 	@Override
 	public ITarmedExtension getExtension(){
-		return ArzttarifeModelAdapterFactory.getInstance().getAdapter(getEntity().getExtension(),
-			ITarmedExtension.class, true);
+		if (extension == null) {
+			INamedQuery<ITarmedExtension> query =
+				ArzttarifeModelServiceHolder.get().getNamedQuery(ITarmedExtension.class, "code");
+			List<ITarmedExtension> found =
+				query.executeWithParameters(query.getParameterMap("code", getId()));
+			if (!found.isEmpty()) {
+				extension = found.get(0);
+			}
+		}
+		return extension;
 	}
 	
 	@Override
@@ -461,14 +470,13 @@ public class TarmedLeistung
 			}
 		}
 		List<ITarmedLeistung> leistungen = query.execute();
-		TimeTool _date = new TimeTool(date);
 		for (ITarmedLeistung tarmedLeistung : leistungen) {
-			TimeTool validFrom = new TimeTool(tarmedLeistung.getValidFrom());
-			TimeTool validTo = new TimeTool(tarmedLeistung.getValidTo());
-			if (_date.isAfterOrEqual(validFrom) && _date.isBeforeOrEqual(validTo)) {
+			if ((date.isAfter(tarmedLeistung.getValidFrom())
+				|| date.equals(tarmedLeistung.getValidFrom()))
+				&& (date.isBefore(tarmedLeistung.getValidTo())
+					|| date.equals(tarmedLeistung.getValidTo()))) {
 				return (TarmedLeistung) tarmedLeistung;
 			}
-			
 		}
 		return null;
 	}

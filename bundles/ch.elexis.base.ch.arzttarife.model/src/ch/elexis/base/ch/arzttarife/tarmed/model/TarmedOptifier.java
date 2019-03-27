@@ -40,6 +40,7 @@ import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -49,6 +50,7 @@ import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
@@ -209,7 +211,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 					code.getCode(), null, false);
 			}
 			for (IBilled verrechnet : availableCodes) {
-				newVerrechnet = new IBilledBuilder(CoreModelServiceHolder.get(), tc, kons).buildAndSave();
+				newVerrechnet = initializeBilled(code, kons);
 				mapOpReduction(verrechnet, newVerrechnet);
 			}
 			return new Result<IBilled>(null);
@@ -234,7 +236,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		
 		// Ausschliessende Kriterien prüfen ("Nicht zusammen mit")
 		if (newVerrechnet == null) {
-			newVerrechnet = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons).buildAndSave();
+			newVerrechnet = initializeBilled(code, kons);
+			
 			// make sure side is initialized
 			if (tc.requiresSide()) {
 				newVerrechnet.setExtInfo(Constants.FLD_EXT_SIDE, newVerrechnetSide);
@@ -317,7 +320,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 						// create a new Verrechent and decrease amount
 						newVerrechnet.setAmount(newVerrechnet.getAmount() - 1);
 						saveBilled();
-						newVerrechnet = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons).buildAndSave();
+						newVerrechnet = initializeBilled(code, kons);
 						newVerrechnet.setExtInfo("Bezug", masters.get(0).getCode());
 					}
 				}
@@ -494,6 +497,20 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		return new Result<IBilled>(newVerrechnet);
 	}
 
+	private IBilled initializeBilled(TarmedLeistung code, IEncounter kons){
+		IBilled ret = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons).build();
+		ret.setPoints(code.getAL(kons.getMandator()) + code.getTL());
+		Optional<IBillingSystemFactor> systemFactor = BillingServiceHolder.get()
+			.getBillingSystemFactor(code.getCodeSystemName(), kons.getDate());
+		if (systemFactor.isPresent()) {
+			ret.setFactor(systemFactor.get().getFactor());
+		} else {
+			ret.setFactor(1.0);
+		}
+		CoreModelServiceHolder.get().save(ret);
+		return ret;
+	}
+	
 	private void saveBilled(){
 		if(newVerrechnet != null) {
 			CoreModelServiceHolder.get().save(newVerrechnet);

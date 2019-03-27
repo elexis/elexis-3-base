@@ -2,6 +2,7 @@ package at.medevit.elexis.loinc.model;
 
 import java.util.List;
 
+import ch.elexis.core.data.interfaces.ICodeElement;
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.CodingSystem;
 import ch.elexis.data.PersistentObject;
@@ -9,7 +10,7 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 
 public class LoincCode extends PersistentObject
-		implements ch.elexis.core.model.ICodeElement, ICoding {
+		implements ICodeElement, ICoding {
 	public static final String TABLENAME = "at_medevit_elexis_loinc"; //$NON-NLS-1$
 	public static final String VERSION = "1.0.0"; //$NON-NLS-1$
 	

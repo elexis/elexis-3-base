@@ -50,7 +50,7 @@ public class DefinitionImport {
 			stmCached = cacheDb.getStatement();
 			for (String s : fields) {
 				ResultSet res =
-					stmCached.query(String.format("SELECT * FROM %sCT_" + s + " WHERE SPRACHE=%s", //$NON-NLS-1$
+					stmCached.query(String.format("SELECT * FROM %sCT_" + s + " WHERE SPRACHE='%s'", //$NON-NLS-1$
 						TarmedReferenceDataImporter.ImportPrefix, lang));
 				importNewest(s, res);
 				res.close();

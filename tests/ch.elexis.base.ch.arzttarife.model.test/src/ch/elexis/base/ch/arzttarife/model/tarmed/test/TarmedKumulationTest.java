@@ -1,6 +1,8 @@
 package ch.elexis.base.ch.arzttarife.model.tarmed.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +19,10 @@ public class TarmedKumulationTest {
 	@Test
 	public void testGetExclusionsMasterCodeDate(){
 		String exclusions = TarmedKumulation.getExclusions("17.0010", LocalDate.now());
-		assertEquals("17.0090,17.0090,17.0080,17.0080,17.0080,17.0090,17.0090,17.0080,17.0090,17.0080", exclusions);
+		assertTrue(exclusions.contains("17.0090"));
+		assertTrue(exclusions.contains("17.0080"));
+		assertFalse(exclusions.contains("17.0010"));
+		assertFalse(exclusions.contains("17.0070"));
 	}
 	
 	@Test

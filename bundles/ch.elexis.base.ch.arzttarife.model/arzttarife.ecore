@@ -92,6 +92,8 @@
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="limitations" upperBound="-1"
           eType="#//tarmed/TarmedLimitation" changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//tarmed/ITarmedExtension"
+          changeable="false"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedKumulation" abstract="true"
         interface="true">

@@ -7,15 +7,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelAdapterFactory;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
-import ch.elexis.core.jpa.entities.TarmedExtension;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.TimeTool;
@@ -25,6 +24,8 @@ public class TarmedGroup
 		implements IdentifiableWithXid, ITarmedGroup {
 	
 	private LocalDate curTimeHelper = LocalDate.now();
+	
+	private ITarmedExtension extension;
 	
 	public TarmedGroup(ch.elexis.core.jpa.entities.TarmedGroup entity){
 		super(entity);
@@ -85,11 +86,23 @@ public class TarmedGroup
 	}
 	
 	@Override
+	public ITarmedExtension getExtension(){
+		if (extension == null) {
+			INamedQuery<ITarmedExtension> query =
+				ArzttarifeModelServiceHolder.get().getNamedQuery(ITarmedExtension.class, "code");
+			List<ITarmedExtension> found =
+				query.executeWithParameters(query.getParameterMap("code", getId()));
+			if (!found.isEmpty()) {
+				extension = found.get(0);
+			}
+		}
+		return extension;
+	}
+	
+	@Override
 	public List<TarmedLimitation> getLimitations(){
-		TarmedExtension extension = getEntity().getExtension();
+		ITarmedExtension _extension = getExtension();
 		if (extension != null) {
-			ITarmedExtension _extension = (ITarmedExtension) ArzttarifeModelAdapterFactory
-				.getInstance().getModelAdapter(extension, ITarmedExtension.class, true).get();
 			String lim = _extension.getLimits().get("limits");
 			if (lim != null && !lim.isEmpty()) {
 				List<TarmedLimitation> ret = new ArrayList<>();

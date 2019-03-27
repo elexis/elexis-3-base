@@ -66,6 +66,7 @@
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedGroup/validTo"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedGroup/law"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedGroup/limitations"/>
+        <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference arzttarife.ecore#//tarmed/ITarmedGroup/extension"/>
         <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedGroup/validAt">
           <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedGroup/validAt/reference"/>
         </genOperations>

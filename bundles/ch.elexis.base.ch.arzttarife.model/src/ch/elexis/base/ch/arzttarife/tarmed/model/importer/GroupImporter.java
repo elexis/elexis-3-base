@@ -3,6 +3,7 @@ package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,7 +63,8 @@ public class GroupImporter {
 				TransientTarmedGroup transientGroup = loadedGroups.get(id);
 				if (transientGroup == null) {
 					transientGroup =
-						new TransientTarmedGroup(id, groupName, law, validFrom, validTo, this);
+						new TransientTarmedGroup(id, groupName, law, validFrom.toLocalDate(),
+							validTo.toLocalDate(), this);
 					loadedGroups.put(id, transientGroup);
 				}
 				transientGroup.addService(serviceCode);
@@ -105,13 +107,13 @@ public class GroupImporter {
 		private String law;
 		private StringBuilder services;
 		
-		private TimeTool validFrom;
-		private TimeTool validTo;
+		private LocalDate validFrom;
+		private LocalDate validTo;
 		
 		private GroupImporter importer;
 		
-		public TransientTarmedGroup(String id, String groupName, String law, TimeTool validFrom,
-			TimeTool validTo, GroupImporter importer){
+		public TransientTarmedGroup(String id, String groupName, String law, LocalDate validFrom,
+			LocalDate validTo, GroupImporter importer){
 			this.id = id;
 			this.code = groupName;
 			this.law = law;
@@ -129,12 +131,12 @@ public class GroupImporter {
 			persistent.setId(id);
 			persistent.setGroupName(code);
 			persistent.setLaw(law);
-			persistent.setValidFrom(validFrom.toLocalDate());
-			persistent.setValidTo(validTo.toLocalDate());
+			persistent.setValidFrom(validFrom);
+			persistent.setValidTo(validTo);
 			persistent.setRawServices(services.toString());
 			
 			TarmedExtension extension = new TarmedExtension();
-			persistent.setExtension(extension);
+			extension.setCode(persistent.getId());
 			Map<Object, Object> extensionMap =
 				JpaModelUtil.extInfoFromBytes(extension.getExtInfo());
 			
@@ -164,8 +166,8 @@ public class GroupImporter {
 			Stm subStm = importer.cacheDb.getStatement();
 			try {
 				ResultSet rsub = subStm.query(
-					String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR=%s AND ART='G'",
-						TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(groupName))); //$NON-NLS-1$
+					String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR='%s' AND ART='G'",
+						TarmedReferenceDataImporter.ImportPrefix, groupName)); //$NON-NLS-1$
 				List<Map<String, String>> validResults =
 					ImporterUtil.getValidValueMaps(rsub, new TimeTool(validFrom));
 				if (!validResults.isEmpty()) {
@@ -221,6 +223,7 @@ public class GroupImporter {
 						kumulation.setValidFrom(fromTime.toLocalDate());
 						kumulation.setValidTo(toTime.toLocalDate());
 						kumulation.setLaw(law);
+						kumulations.add(kumulation);
 					}
 					EntityUtil.save(kumulations);
 				}

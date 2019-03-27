@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.loinc.model.LoincCode;
+import ch.elexis.core.services.IQuery;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldListener;
@@ -115,6 +116,11 @@ public class LoincCodeControlFieldProvider implements ControlFieldProvider {
 	@Override
 	public void setQuery(Query<? extends PersistentObject> q){
 		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void setQuery(IQuery<?> query){
+		// TODO Auto-generated method stub	
 	}
 	
 	@Override

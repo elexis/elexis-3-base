@@ -360,13 +360,22 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_GROUP__LIMITATIONS = ModelPackage.DELETEABLE_FEATURE_COUNT + 5;
 
 	/**
+	 * The feature id for the '<em><b>Extension</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__EXTENSION = ModelPackage.DELETEABLE_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Group</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 6;
+	int ITARMED_GROUP_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 7;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}' class.
@@ -816,6 +825,17 @@ public interface TarmedPackage extends EPackage {
 	EAttribute getITarmedGroup_Limitations();
 
 	/**
+	 * Returns the meta object for the reference '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getExtension <em>Extension</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Extension</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getExtension()
+	 * @see #getITarmedGroup()
+	 * @generated
+	 */
+	EReference getITarmedGroup_Extension();
+
+	/**
 	 * Returns the meta object for class '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1221,6 +1241,14 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ITARMED_GROUP__LIMITATIONS = eINSTANCE.getITarmedGroup_Limitations();
+
+		/**
+		 * The meta object literal for the '<em><b>Extension</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ITARMED_GROUP__EXTENSION = eINSTANCE.getITarmedGroup_Extension();
 
 		/**
 		 * The meta object literal for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}' class.

@@ -80,7 +80,7 @@ public class TarmedKumulation
 		
 		StringBuilder sb = new StringBuilder();
 		for (ITarmedKumulation excl : exclusions) {
-			if ("G".equals(excl.getSlaveArt())) {
+			if (excl.getSlaveArt() == TarmedKumulationArt.GROUP) {
 				continue;
 			}
 			if (excl.isValidKumulation(date)) {

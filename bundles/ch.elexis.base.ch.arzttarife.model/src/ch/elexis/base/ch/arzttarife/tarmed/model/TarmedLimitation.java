@@ -571,7 +571,7 @@ public class TarmedLimitation {
 		BillingLaw law = kons.getCoverage().getBillingSystem().getLaw();
 		IBillable validForKons = TarmedLeistung.getFromCode(code, kons.getDate(), law.name());
 		if (validForKons != null) {
-			String matchCode = validForKons.getId();
+			String matchCode = validForKons.getCode();
 			if (matchCode != null && !matchCode.isEmpty()) {
 				for (IBilled element : list) {
 					if (matchCode.equals(element.getCode())) {

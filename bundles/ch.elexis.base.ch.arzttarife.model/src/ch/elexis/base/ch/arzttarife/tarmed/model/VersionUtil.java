@@ -73,7 +73,10 @@ public class VersionUtil {
 			StringBuilder sb = new StringBuilder();
 			// read and replace Version for specified law 
 			String oldVersions = (String) ArzttarifeModelServiceHolder.get()
-					.getEntityProperty("text", versionEntry.get());
+				.getEntityProperty("tx255", versionEntry.get());
+			if (oldVersions == null) {
+				oldVersions = "";
+			}
 			String[] parts = oldVersions.split("\\" + DATASET_VERSION_SEPARATOR);
 			for (String part : parts) {
 				String[] subParts = part.split(DATASET_LAW_SEPARATOR);
@@ -97,7 +100,7 @@ public class VersionUtil {
 				}
 				sb.append(law).append(DATASET_LAW_SEPARATOR).append(versionVal);
 			}
-			ArzttarifeModelServiceHolder.get().setEntityProperty("text", sb.toString(),
+			ArzttarifeModelServiceHolder.get().setEntityProperty("tx255", sb.toString(),
 				versionEntry.get());
 		}
 		ArzttarifeModelServiceHolder.get().save(versionEntry.get());

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
@@ -82,19 +82,25 @@ public class TarmedBillingTest {
 	
 	@Test
 	public void basicTarmedPositions(){
+		IBillingSystemFactor factor = coreModelService.create(IBillingSystemFactor.class);
+		factor.setSystem("Tarmed");
+		factor.setFactor(0.89);
+		factor.setValidFrom(LocalDate.of(2000, 1, 1));
+		factor.setValidTo(LocalDate.of(9999, 12, 31));
+		assertTrue(coreModelService.save(factor));
+		
 		status = billingService.bill(code_000010, encounter, 1);
 		assertTrue(status.isOK());
 		billed = status.get();
 		assertNotNull(billed);
-		assertEquals("00.0010-20180101-KVG", billed.getCode());
+		assertEquals("00.0010", billed.getCode());
 		
 		assertEquals(code_000010.getText(), billed.getText());
-		//		assertEquals("0.89", vr.getVk_scale());
-		//		assertEquals(1776, vr.getVk_tp());
-		//				assertEquals(1581, vr.getVk_preis());
-		// TODO billed.getPoints is 0
+		assertEquals(0.89, billed.getFactor(), 0.0001);
+		assertEquals(1861, billed.getPoints());
+		assertEquals(1656, billed.getPrice().getCents());
+		coreModelService.remove(factor);
 
-		assertEquals(1.0, billed.getFactor(), 0.01);
 		assertEquals(100, billed.getPrimaryScale());
 		assertEquals(100, billed.getSecondaryScale());
 		
@@ -114,8 +120,6 @@ public class TarmedBillingTest {
 		assertNotNull(code_000750);
 		status = billingService.bill(code_000750, encounter, 1);
 		assertFalse(status.isOK());
-	
-		fail("missing points");
 	}
 	
 	@Test

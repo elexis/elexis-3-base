@@ -1,6 +1,7 @@
 package ch.elexis.base.ch.arzttarife.physio.model;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
@@ -9,8 +10,10 @@ import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 
 public class PhysioLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PhysioLeistung>
@@ -33,26 +36,23 @@ public class PhysioLeistung
 				
 				@Override
 				protected void setPrice(PhysioLeistung billable, IBilled billed){
-										billed.setFactor(1.0);
-//										billed.setNetPrice(billable.getPurchasePrice());
-					//					Money sellingPrice = billable.getSellingPrice();
-					//					if (sellingPrice == null) {
-					//						//						sellingPrice =  MargePreference.calculateVKP(getPurchasePrice());
-					//					}
-					//					//					if (!billable.isInSLList()) {
-					//					//						// noObligationOptifier
-					//					//					} else {
-					//					//						// defaultOptifier
-					//					//					}
-					//					int vkPreis = sellingPrice.getCents();
-					//					double pkgSize = Math.abs(billable.getPackageSize());
-					//					double vkUnits = billable.getSellingSize();
-					//					if ((pkgSize > 0.0) && (vkUnits > 0.0) && (pkgSize != vkUnits)) {
-					//						billed.setPoints((int) Math.round(vkUnits * (vkPreis / pkgSize)));
-					//					} else {
-					//						billed.setPoints((int) Math.round(vkPreis));
-					//					}
-					
+					Optional<IBillingSystemFactor> billingFactor =
+						BillingServiceHolder.get().getBillingSystemFactor(getCodeSystemName(),
+							billed.getEncounter().getDate());
+					if (billingFactor.isPresent()) {
+						billed.setFactor(billingFactor.get().getFactor());
+					} else {
+						billed.setFactor(1.0);
+					}
+					int points = 0;
+					if (billable.getTP() != null) {
+						try {
+							points = Integer.valueOf(billable.getTP());
+						} catch (NumberFormatException ne) {
+							// ignore ...
+						}
+					}
+					billed.setPoints(points);
 				}
 			};
 		}

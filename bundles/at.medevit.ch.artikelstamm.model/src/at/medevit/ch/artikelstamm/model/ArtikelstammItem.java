@@ -283,7 +283,7 @@ public class ArtikelstammItem
 	
 	@Override
 	public void setCode(String code){
-		// TODO Auto-generated method stub
+		getEntity().setPhar(code);
 	}
 	
 	@Override

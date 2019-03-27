@@ -8,7 +8,6 @@ import java.util.List;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import ch.elexis.core.data.service.ContextServiceHolder;
-import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
@@ -23,7 +22,6 @@ import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
-import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.rgw.tools.TimeTool;
 
 public class TestData {
@@ -44,8 +42,8 @@ public class TestData {
 	public static class TestSzenario {
 		private IMandator mandator;
 		private List<IPatient> patients = new ArrayList<>();
-		private IArtikelstammItem artikelstammItem;
-		private BAGMedi bagMedi;
+		private IArtikelstammItem artikelstammAspirin;
+		private IArtikelstammItem artikelstammIbuprofen;
 		
 		TestSzenario(){
 			if (artikelstammModelService == null) {
@@ -70,18 +68,24 @@ public class TestData {
 		}
 		
 		private void createPrescriptions(){
-			artikelstammItem = artikelstammModelService.create(IArtikelstammItem.class);
-			artikelstammItem.setTyp(ArticleTyp.ARTIKELSTAMM);
-			artikelstammItem.setSubTyp(ArticleSubTyp.PHARMA);
-			artikelstammItem.setGtin("7680336700282");
-			artikelstammItem.setCode("58985");
-			artikelstammItem.setName("ASPIRIN C Brausetabl 10 Stk");
-			artikelstammModelService.save(artikelstammItem);
+			artikelstammAspirin = artikelstammModelService.create(IArtikelstammItem.class);
+			artikelstammAspirin.setTyp(ArticleTyp.ARTIKELSTAMM);
+			artikelstammAspirin.setSubTyp(ArticleSubTyp.PHARMA);
+			artikelstammAspirin.setGtin("7680336700282");
+			artikelstammAspirin.setCode("58985");
+			artikelstammAspirin.setName("ASPIRIN C Brausetabl 10 Stk");
+			artikelstammModelService.save(artikelstammAspirin);
 			
-			bagMedi = new BAGMedi("IBUPROFEN Actavis Filmtabl 400mg 20 Stk", "5390827", "", "");
+			artikelstammIbuprofen = artikelstammModelService.create(IArtikelstammItem.class);
+			artikelstammIbuprofen.setTyp(ArticleTyp.ARTIKELSTAMM);
+			artikelstammIbuprofen.setSubTyp(ArticleSubTyp.PHARMA);
+			artikelstammIbuprofen.setGtin("");
+			artikelstammIbuprofen.setCode("4881026");
+			artikelstammIbuprofen.setName("IBUPROFEN Sandoz Filmtabl 400mg 20 Stk");
+			artikelstammModelService.save(artikelstammIbuprofen);
 			
 			IPrescription prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
-				artikelstammItem, patients.get(0), "1-1-1-1").entryType(EntryType.FIXED_MEDICATION)
+				artikelstammAspirin, patients.get(0), "1-1-1-1").entryType(EntryType.FIXED_MEDICATION)
 					.buildAndSave();
 			
 			IArtikelstammItem item =
@@ -113,21 +117,21 @@ public class TestData {
 				patients.get(0), "2-0-2").entryType(EntryType.FIXED_MEDICATION)
 					.remark("Anwendungsinstruktion").buildAndSave();
 			
-			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
-				CoreModelServiceHolder.get().load(bagMedi.getId(), IArticle.class).get(),
-				patients.get(0), "freetext dosis").entryType(EntryType.RESERVE_MEDICATION)
-					.remark("Anwendungsinstruktion").buildAndSave();
+			prescription =
+				new IPrescriptionBuilder(CoreModelServiceHolder.get(), artikelstammIbuprofen,
+					patients.get(0), "freetext dosis").entryType(EntryType.RESERVE_MEDICATION)
+						.remark("Anwendungsinstruktion").buildAndSave();
 			
-			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(), artikelstammItem,
-				patients.get(1), "1/2-1/2-1/2-1/2").entryType(EntryType.FIXED_MEDICATION)
-					.remark("Anwendungsinstruktion").build();
+			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
+				artikelstammAspirin, patients.get(1), "1/2-1/2-1/2-1/2")
+					.entryType(EntryType.FIXED_MEDICATION).remark("Anwendungsinstruktion").build();
 			prescription.setDisposalComment("Abgabekommentar");
 			CoreModelServiceHolder.get().save(prescription);
 			
-			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
-				CoreModelServiceHolder.get().load(bagMedi.getId(), IArticle.class).get(),
-				patients.get(1), "1/4-1/4-1/4").entryType(EntryType.SYMPTOMATIC_MEDICATION)
-					.remark("Anwendungsinstruktion").build();
+			prescription =
+				new IPrescriptionBuilder(CoreModelServiceHolder.get(), artikelstammIbuprofen,
+					patients.get(1), "1/4-1/4-1/4").entryType(EntryType.SYMPTOMATIC_MEDICATION)
+						.remark("Anwendungsinstruktion").build();
 			prescription.setDisposalComment("Anwendungsgrund");
 			CoreModelServiceHolder.get().save(prescription);
 

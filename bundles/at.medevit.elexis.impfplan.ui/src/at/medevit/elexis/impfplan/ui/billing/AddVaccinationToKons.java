@@ -21,12 +21,12 @@ import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.text.model.Samdas.Record;
 import ch.elexis.core.ui.dialogs.SelectOrCreateOpenKonsDialog;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
-import ch.elexis.core.ui.services.BillingServiceHolder;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.data.Patient;
 

@@ -27,6 +27,7 @@ import java.util.List;
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getValidTo <em>Valid To</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getLaw <em>Law</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getLimitations <em>Limitations</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup#getExtension <em>Extension</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedGroup()
@@ -126,6 +127,21 @@ public interface ITarmedGroup extends Deleteable, Identifiable {
 	 * @generated
 	 */
 	List<TarmedLimitation> getLimitations();
+
+	/**
+	 * Returns the value of the '<em><b>Extension</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Extension</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Extension</em>' reference.
+	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedGroup_Extension()
+	 * @model changeable="false"
+	 * @generated
+	 */
+	ITarmedExtension getExtension();
 
 	/**
 	 * <!-- begin-user-doc -->

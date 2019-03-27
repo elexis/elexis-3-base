@@ -342,7 +342,7 @@ public class TarmedOptifierTest {
 		for (int i = 0; i < 24; i++) {
 			Result<IBilled> result = billSingle(konsGriss, tlGroupLimit1);
 			assertTrue(result.isOK());
-			assertEquals("02.0310-20180101-KVG", result.get().getCode());
+			assertEquals("02.0310", result.get().getCode());
 		}
 		assertEquals(2, konsGriss.getBilled().size());
 		
@@ -537,12 +537,14 @@ public class TarmedOptifierTest {
 			konsGriss);
 		assertFalse(result.isOK());
 		assertEquals(TarmedOptifier.EXKLUSIONSIDE, result.getCode());
+		optifier.clearContext();
 		
 		optifier.putContext(Constants.FLD_EXT_SIDE, Constants.SIDE_R);
 		result = optifier.add(
 			(TarmedLeistung) TarmedLeistung.getFromCode("09.0950", LocalDate.now(), LAW),
 			konsGriss);
 		assertTrue(result.isOK());
+		optifier.clearContext();
 		
 		resetKons(konsGriss);
 	}
@@ -629,14 +631,13 @@ public class TarmedOptifierTest {
 	public void testKumulationSide(){
 		clearKons(konsGriss);
 		
-		Result<IBilled> result = optifier.add(
-			TarmedLeistung.getFromCode("20.0330", LocalDate.now(), LAW),
-			konsGriss);
+		Result<IBilled> result =
+			optifier.add(TarmedLeistung.getFromCode("20.0330", LocalDate.now(), LAW), konsGriss);
+		assertEquals("l", result.get().getExtInfo("Seite"));
 		assertTrue(result.isOK());
-		result = optifier.add(
-			TarmedLeistung.getFromCode("20.0330", LocalDate.now(), LAW),
-			konsGriss);
-		assertFalse(result.toString(), result.isOK());
+		result =
+			optifier.add(TarmedLeistung.getFromCode("20.0330", LocalDate.now(), LAW), konsGriss);
+		assertFalse(result.isOK());
 		
 		clearKons(konsGriss);
 	}
@@ -653,26 +654,26 @@ public class TarmedOptifierTest {
 		clearKons(konsPeriodEnd);
 		Result<IBilled> result = null;
 		// start and middle are 1 period
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 15; i++) {
 			result = optifier.add(
-				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", LocalDate.now(), LAW),
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW),
 				konsPeriodStart);
 			assertTrue(result.isOK());
 		}
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 15; i++) {
 			result = optifier.add(
-				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", LocalDate.now(), LAW),
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW),
 				konsPeriodMiddle);
 			assertTrue(result.isOK());
 		}
 		result = optifier.add(
-			(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", LocalDate.now(), LAW),
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW),
 			konsPeriodMiddle);
 		assertFalse(result.isOK());
 		// end is after period so middle is not included for limit
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 15; i++) {
 			result = optifier.add(
-				(TarmedLeistung) TarmedLeistung.getFromCode("00.0140", LocalDate.now(), LAW),
+				(TarmedLeistung) TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW),
 				konsPeriodEnd);
 			assertTrue(result.isOK());
 		}

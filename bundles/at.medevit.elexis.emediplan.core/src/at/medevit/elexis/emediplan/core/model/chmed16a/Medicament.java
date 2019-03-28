@@ -19,6 +19,7 @@ import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.TimeTool;
 
@@ -114,7 +115,8 @@ public class Medicament {
 		if (pharma == null || pharma.isEmpty()) {
 			pharma = article.get(Artikel.FLD_SUB_ID);
 		}
-		if (pharma != null && !pharma.isEmpty()) {
+		if (pharma != null && !pharma.isEmpty()
+			&& !pharma.startsWith(PersistentObject.MAPPING_ERROR_MARKER)) {
 			return 3;
 		}
 		return 1;
@@ -129,8 +131,12 @@ public class Medicament {
 		if (pharma == null || pharma.isEmpty()) {
 			pharma = article.get(Artikel.FLD_SUB_ID);
 		}
-		if (pharma != null && !pharma.isEmpty()) {
+		if (pharma != null && !pharma.isEmpty()
+			&& !pharma.startsWith(PersistentObject.MAPPING_ERROR_MARKER)) {
 			return pharma;
+		}
+		if (getIdType(article) == 1) {
+			return article.getText();
 		}
 		throw new IllegalStateException(
 			"No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]");

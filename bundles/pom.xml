@@ -90,6 +90,7 @@
     <module>ch.elexis.icpc.fire</module>
     <module>ch.elexis.icpc</module>
     <module>ch.elexis.impfplan</module>
+    <module>ch.elexis.kassenbuch</module>
     <module>ch.elexis.laborimport.analytica</module>
     <module>ch.elexis.laborimport.bioanalytica</module>
     <module>ch.elexis.laborimport.eurolyser</module>

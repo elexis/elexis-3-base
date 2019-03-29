@@ -171,6 +171,9 @@
    <feature url="features/ch.elexis.icpc.fire.feature_3.2.100.qualifier.jar" id="ch.elexis.icpc.fire.feature" version="3.2.100.qualifier">
       <category name="statistics"/>
    </feature>
+   <feature url="features/ch.elexis.kassenbuch.feature_3.2.0.qualifier.jar" id="ch.elexis.kassenbuch.feature" version="3.2.0.qualifier">
+      <category name="finances"/>
+   </feature>
    <feature url="features/ch.weirich.templator.pages.feature_3.0.100.qualifier.jar" id="ch.weirich.templator.pages.feature" version="3.0.100.qualifier">
       <category name="documentmanagement"/>
    </feature>

@@ -15,6 +15,8 @@ public interface IAeskulapImporter {
 	final static String XID_IMPORT_PATIENT = XID_IMPORT + "/PatID";
 	final static String XID_IMPORT_GARANT = XID_IMPORT + "/garantID";
 	final static String XID_IMPORT_LETTER = XID_IMPORT + "/LetterID";
+	final static String XID_IMPORT_DOCUMENT = XID_IMPORT + "/DocumentID";
+	final static String XID_IMPORT_FILE = XID_IMPORT + "/FileID";
 	
 	/**
 	 * Set the import directory to import data from. Returns a list of {@link IAeskulapImportFile}

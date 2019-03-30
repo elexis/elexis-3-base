@@ -71,15 +71,17 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 							// skip if overwrite is not set
 							continue;
 						}
-						setProperties(letter, line);
-						letter.setExtension(FilenameUtils.getExtension(file.getName()));
-						letter.setMimeType(FilenameUtils.getExtension(file.getName()));
-						DocumentStoreServiceHolder.get().saveDocument(letter,
-							new FileInputStream(file));
-						String xid = line[1];
-						Optional<IPersistentObject> po =
-							DocumentStoreServiceHolder.get().getPersistenceObject(letter);
-						po.ifPresent(o -> o.addXid(getXidDomain(), xid, true));
+						if (letter != null) {
+							setProperties(letter, line);
+							letter.setExtension(FilenameUtils.getExtension(file.getName()));
+							letter.setMimeType(FilenameUtils.getExtension(file.getName()));
+							DocumentStoreServiceHolder.get().saveDocument(letter,
+								new FileInputStream(file));
+							String xid = line[1];
+							Optional<IPersistentObject> po =
+								DocumentStoreServiceHolder.get().getPersistenceObject(letter);
+							po.ifPresent(o -> o.addXid(getXidDomain(), xid, true));
+						}
 					}
 					monitor.worked(1);
 				}
@@ -115,10 +117,12 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 	@Override
 	public IDocument create(String[] line){
 		Patient patient = (Patient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
-		IDocument document = DocumentStoreServiceHolder.get().createDocument(patient.getId(),
-			line[3],
-			importCategory.getName());
-		return document;
+		if (patient != null) {
+			IDocument document = DocumentStoreServiceHolder.get().createDocument(patient.getId(),
+				line[3], importCategory.getName());
+			return document;
+		}
+		return null;
 	}
 	
 	@Override

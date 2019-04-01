@@ -7,10 +7,6 @@ import ch.elexis.base.befunde.xchange.XChangeContributor;
 import ch.elexis.data.Konsultation;
 
 public class VitalSignsBuilder {
-
-	private enum BDIdentifier {
-			DIAST, SYST
-	}
 	
 	private FireConfig config;
 	
@@ -50,7 +46,7 @@ public class VitalSignsBuilder {
 	}
 	
 	private Optional<Integer> getBpDiast(){
-		Optional<String> value = getBdVitalParm(BDIdentifier.DIAST);
+		Optional<String> value = getVitalParm(config.getBdDiastTab());
 		if (value.isPresent()) {
 			try {
 				return Optional.of(Integer.parseInt(value.get()));
@@ -62,44 +58,12 @@ public class VitalSignsBuilder {
 	}
 	
 	private Optional<Integer> getBpSyst(){
-		Optional<String> value = getBdVitalParm(BDIdentifier.SYST);
+		Optional<String> value = getVitalParm(config.getBdSystTab());
 		if (value.isPresent()) {
 			try {
 				return Optional.of(Integer.parseInt(value.get()));
 			} catch (NumberFormatException e) {
 				return Optional.empty();
-			}
-		}
-		return Optional.empty();
-	}
-	
-	private Optional<String> getBdVitalParm(BDIdentifier identifier){
-		String[] split = config.getBdSystTab().split("\\s*\\:\\s*");
-		String bdsyst = null, bddiast = null;
-		if (split.length > 1) {
-			HashMap<String, String> vals = xc.getResult(split[0].trim(), consultation.getDatum());
-			
-			if (config.getBdSystTab().equals(config.getBdDiastTab())) {
-				String bd = vals.get(split[1].trim());
-				if (bd != null) {
-					String[] bds = bd.split("\\s*\\/\\s*");
-					if (bds.length > 1) {
-						bdsyst = bds[0].trim();
-						bddiast = bds[1].trim();
-					}
-				}
-			} else {
-				bdsyst = vals.get(split[1].trim());
-				split = config.getBdDiastTab().split("\\s:\\s");
-				if (split.length > 1) {
-					vals = xc.getResult(split[0].trim(), consultation.getDatum());
-					bddiast = vals.get(split[1]).trim();
-				}
-			}
-			if (identifier == BDIdentifier.DIAST) {
-				return Optional.ofNullable(bddiast);
-			} else if (identifier == BDIdentifier.SYST) {
-				return Optional.ofNullable(bdsyst);
 			}
 		}
 		return Optional.empty();

@@ -120,7 +120,7 @@ public class FileFile extends AbstractCsvImportFile<IDocument> implements IAesku
 		Patient patient = (Patient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
 		if (patient != null) {
 			IDocument document = DocumentStoreServiceHolder.get().createDocument(patient.getId(),
-				line[3], importCategory.getName());
+				line[4], importCategory.getName());
 			return document;
 		}
 		return null;
@@ -128,7 +128,7 @@ public class FileFile extends AbstractCsvImportFile<IDocument> implements IAesku
 	
 	@Override
 	public void setProperties(IDocument document, String[] line){
-		TimeTool letterDate = new TimeTool(line[2]);
+		TimeTool letterDate = new TimeTool(line[3]);
 		document.setCreated(letterDate.getTime());
 		document.setLastchanged(letterDate.getTime());
 	}

@@ -1,0 +1,62 @@
+package ch.elexis.base.ch.ticode;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.osgi.service.component.annotations.Component;
+
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementServiceContribution;
+import ch.elexis.core.services.IStoreToStringContribution;
+
+@Component
+public class CodeElementContribution
+		implements ICodeElementServiceContribution, IStoreToStringContribution {
+	
+	@Override
+	public String getSystem(){
+		return TessinerCode.CODESYSTEM_NAME;
+	}
+	
+	@Override
+	public CodeElementTyp getTyp(){
+		return CodeElementTyp.DIAGNOSE;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
+		return (Optional<ICodeElement>) (Optional<?>) TessinerCode.getFromCode(code);
+	}
+	
+	@Override
+	public List<ICodeElement> getElements(Map<Object, Object> context){
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Optional<String> storeToString(Identifiable identifiable){
+		if(identifiable instanceof TessinerCode) {
+			return Optional.of("ch.elexis.data.TICode" + IStoreToStringContribution.DOUBLECOLON
+				+ ((TessinerCode) identifiable).getId());
+		}
+		return Optional.empty();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Optional<Identifiable> loadFromString(String storeToString){
+		if (storeToString != null && storeToString.startsWith("ch.elexis.data.TICode")) {
+			String[] parts = storeToString.split(IStoreToStringContribution.DOUBLECOLON);
+			if (parts != null && parts.length == 2) {
+				return (Optional<Identifiable>) (Optional<?>) loadFromCode(parts[1]);
+			}
+		}
+		return Optional.empty();
+	}
+	
+}

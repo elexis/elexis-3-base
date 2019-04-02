@@ -27,6 +27,7 @@ import ch.elexis.core.model.IXid;
  * @author Gerry
  * @since 3.2.0
  * @since 3.4.0 implements {@link ICodeElement}, {@link IDiagnose}
+ * @since 3.8.0 implements {@link IDiagnosis}
  */
 public class TessinerCode implements IDiagnosis {
 	public static final String CODESYSTEM_NAME = "TI-Code"; //$NON-NLS-1$

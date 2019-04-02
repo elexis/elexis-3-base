@@ -209,7 +209,7 @@ public class XMLExporterUtil {
 	
 	public static boolean setAttributeIfNotEmptyWithLimit(final Element element, final String name,
 		String value, final int len){
-		if (value.length() >= len) {
+		if (value != null && value.length() >= len) {
 			value = value.substring(0, len - 1);
 		}
 		return setAttributeIfNotEmpty(element, name, value);

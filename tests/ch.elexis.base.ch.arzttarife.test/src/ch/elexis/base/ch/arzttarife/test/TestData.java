@@ -2,23 +2,41 @@ package ch.elexis.base.ch.arzttarife.test;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.ICustomService;
+import ch.elexis.core.model.IDiagnosis;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.ICodeElementService;
+import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.InvoiceServiceHolder;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.BillingSystem;
 import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.Fall;
@@ -27,8 +45,6 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.TICode;
-import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Money;
@@ -68,11 +84,18 @@ public class TestData {
 		List<Patient> patienten = new ArrayList<Patient>();
 		List<Fall> faelle = new ArrayList<Fall>();
 		List<Konsultation> konsultationen = new ArrayList<Konsultation>();
-		List<IVerrechenbar> leistungen = new ArrayList<IVerrechenbar>();
+		List<IBillable> leistungen = new ArrayList<IBillable>();
 		List<Rechnung> rechnungen = new ArrayList<Rechnung>();
 		
 		TestSzenario() throws IOException{
 			createMandanten();
+			
+			// disable strict billing for tests
+			Optional<IContact> userContact = ContextServiceHolder.get().getActiveUserContact();
+			userContact.ifPresent(uc -> {
+				ConfigServiceHolder.get().set(uc,
+					ch.elexis.core.constants.Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
+			});
 			
 			Fall _fall =
 				createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
@@ -84,9 +107,11 @@ public class TestData {
 			for (int j = 0; j < faelle.size(); j++) {
 				Konsultation kons = createKons(faelle.get(j), mandanten.get(0));
 				konsultationen.add(kons);
-				kons.addDiagnose(TICode.getFromCode("A1"));
-				for (IVerrechenbar leistung : leistungen) {
-					Result<IVerrechenbar> result = kons.addLeistung(leistung);
+				IEncounter encounter = CoreModelServiceHolder.get().load(kons.getId(), IEncounter.class).get();
+				encounter.addDiagnosis(getDiagnosis());
+				for (IBillable leistung : leistungen) {
+					Result<IBilled> result =
+						BillingServiceHolder.get().bill(leistung, encounter, 1);
 					if (!result.isOK()) {
 						throw new IllegalStateException(result.toString());
 					}
@@ -105,17 +130,27 @@ public class TestData {
 			}
 			
 			for (Fall fall : faelle) {
-				List<Konsultation> kons =
-					new ArrayList<Konsultation>(Arrays.asList(fall.getBehandlungen(false)));
-				Result<Rechnung> result = Rechnung.build(kons);
+				ICoverage coverage =
+					CoreModelServiceHolder.get().load(fall.getId(), ICoverage.class).get();
+				Result<IInvoice> result =
+					InvoiceServiceHolder.get().invoice(coverage.getEncounters());
 				if (result.isOK()) {
-					rechnungen.add(result.get());
+					rechnungen.add((Rechnung) NoPoUtil.loadAsPersistentObject(result.get()));
 				} else {
 					throw new IllegalStateException(result.toString());
 				}
 			}
 			
 			importExistingXml();
+		}
+		
+		private IDiagnosis getDiagnosis(){
+			ICodeElementService codeElementService =
+				OsgiServiceUtil.getService(ICodeElementService.class).get();
+			ICodeElement loadFromString =
+				codeElementService.loadFromString("TI-Code", "A1", null).get();
+			OsgiServiceUtil.ungetService(codeElementService);
+			return (IDiagnosis) loadFromString;
 		}
 		
 		private void importExistingXml() throws IOException{
@@ -163,47 +198,25 @@ public class TestData {
 		}
 		
 		private void createLeistungen(){
-			TarmedLeistung leistung = new TarmedLeistung("00", null, "NIL", "", "", "", true);
-			leistung.setText("Grundleistungen");
-			
-			leistung = new TarmedLeistung("00.0010-20010101", "00.0010", "00", "9999", "FMH05",
-				"0001", false);
-			leistung.setText("Konsultation, erste 5 Min. (Grundkonsultation)");
-			leistung.set(TarmedLeistung.FLD_GUELTIG_VON, "20010101");
-			leistung.set(TarmedLeistung.FLD_GUELTIG_BIS, "21991231");
-			
-			Hashtable<String, String> ext = leistung.loadExtension();
-			ext.put("LEISTUNG_TYP", "H");
-			ext.put("SEITE", "0");
-			ext.put("K_PFL", "01");
-			ext.put("BEHANDLUNGSART", "N");
-			ext.put("TP_AL", "9.57");
-			ext.put("TP_ASSI", "0.0");
-			ext.put("TP_TL", "8.19");
-			ext.put("ANZ_ASSI", "0.0");
-			ext.put("LSTGIMES_MIN", "5.0");
-			ext.put("VBNB_MIN", "0.0");
-			ext.put("BEFUND_MIN", "0.0");
-			ext.put("RAUM_MIN", "5.0");
-			ext.put("WECHSEL_MIN", "0.0");
-			ext.put("F_AL", "1.0");
-			ext.put("F_TL", "1.0");
-			
-			ext.put("limits", "<=,1.0,1,P,07#");
-			ext.put("exclusion",
-				"00.0060,00.0110,02.0010,02.0020,02.0030,02.0040,02.0050,08.0500,12");
-			
-			leistung.setExtension(ext);
-			
-			leistungen.add(leistung);
+			ICodeElementService codeElementService =
+				OsgiServiceUtil.getService(ICodeElementService.class).get();
+			ICodeElement loadedCode =
+				codeElementService.loadFromString("Tarmed", "00.0010", null).get();
+			assertTrue(loadedCode instanceof ITarmedLeistung);
+			leistungen.add((IBillable) loadedCode);
 			
 			// vat 8.00
 			Eigenleistung eigenleistung =
 				new Eigenleistung("GA", "Gutachten A", "270000", "270000");
-			leistungen.add(eigenleistung);
+			ICustomService customService = CoreModelServiceHolder.get()
+				.load(eigenleistung.getId(), ICustomService.class).get();
+			leistungen.add(customService);
 			// vat 2.50
 			eigenleistung = new Eigenleistung("GB", "Gutachten B", "250000", "250000");
-			leistungen.add(eigenleistung);
+			customService = CoreModelServiceHolder.get()
+				.load(eigenleistung.getId(), ICustomService.class).get();
+			leistungen.add(customService);
+			
 		}
 		
 		public List<Mandant> getMandanten(){
@@ -233,7 +246,8 @@ public class TestData {
 			
 			mandant.addXid(DOMAIN_EAN, "2000000000002", true);
 			// make sure somains are registered
-			TarmedRequirements.getEAN(mandant);
+			TarmedRequirements
+				.getEAN(CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).get());
 			
 			mandant.addXid(TarmedRequirements.DOMAIN_KSK, "C000002", true);
 			
@@ -324,14 +338,18 @@ public class TestData {
 		
 		public Rechnung getExistingRechnung(String rechnungNr){
 			Konsultation kons = createKons(faelle.get(0), mandanten.get(0));
-			kons.addDiagnose(TICode.getFromCode("A1"));
+			IEncounter encounter =
+				CoreModelServiceHolder.get().load(kons.getId(), IEncounter.class).get();
+			encounter.addDiagnosis(getDiagnosis());
+			CoreModelServiceHolder.get().save(encounter);
 			// add leistungen according to rsc/*.xml
 			if (rechnungNr.equals(EXISTING_4_RNR) || rechnungNr.equals(EXISTING_4_2_RNR)
 				|| rechnungNr.equals(EXISTING_4_3_RNR)) {
-				for (IVerrechenbar leistung : leistungen) {
-					if (leistung instanceof TarmedLeistung
+				for (IBillable leistung : leistungen) {
+					if (leistung instanceof ITarmedLeistung
 						&& leistung.getCode().equals("00.0010")) {
-						Result<IVerrechenbar> result = kons.addLeistung(leistung);
+						Result<IBilled> result =
+							BillingServiceHolder.get().bill(leistung, encounter, 1);
 						if (!result.isOK()) {
 							throw new IllegalStateException(result.toString());
 						}
@@ -339,16 +357,18 @@ public class TestData {
 				}
 			} else if (rechnungNr.equals(EXISTING_44_RNR) || rechnungNr.equals(EXISTING_44_2_RNR)
 				|| rechnungNr.equals(ERRONEOUS_44_1_RNR) || rechnungNr.equals(EXISTING_44_3_RNR)) {
-				for (IVerrechenbar leistung : leistungen) {
-					if (leistung instanceof TarmedLeistung
+				for (IBillable leistung : leistungen) {
+					if (leistung instanceof ITarmedLeistung
 						&& leistung.getCode().equals("00.0010")) {
-						Result<IVerrechenbar> result = kons.addLeistung(leistung);
+						Result<IBilled> result =
+							BillingServiceHolder.get().bill(leistung, encounter, 1);
 						if (!result.isOK()) {
 							throw new IllegalStateException(result.toString());
 						}
 					} else if (leistung instanceof Eigenleistung
 						&& (leistung.getCode().equals("GA") || leistung.getCode().equals("GB"))) {
-						Result<IVerrechenbar> result = kons.addLeistung(leistung);
+						Result<IBilled> result =
+							BillingServiceHolder.get().bill(leistung, encounter, 1);
 						if (!result.isOK()) {
 							throw new IllegalStateException(result.toString());
 						}

@@ -84,5 +84,8 @@ public class LaborTarifModelService extends AbstractModelService
 		return Optional.empty();
 	}
 	
-	
+	@Override
+	public void clearCache(){
+		entityManager.clearCache();
+	}
 }

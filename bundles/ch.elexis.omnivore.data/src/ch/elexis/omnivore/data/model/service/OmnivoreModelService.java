@@ -16,7 +16,6 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.model.adapter.AbstractIdModelAdapter;
-import ch.elexis.core.jpa.model.adapter.AbstractModelAdapterFactory;
 import ch.elexis.core.jpa.model.adapter.AbstractModelService;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.IElexisEntityManager;
@@ -104,5 +103,10 @@ public class OmnivoreModelService extends AbstractModelService
 			return ElexisEvent.of(ElexisEventTopics.PERSISTENCE_EVENT_CREATE, dbObject.getId(), ElexisTypeMap.getKeyForObject(dbObject));
 		}
 		return null;
+	}
+	
+	@Override
+	public void clearCache(){
+		entityManager.clearCache();
 	}
 }

@@ -194,8 +194,6 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter
 		}
 		log.debug("Executing {}", cmd);
 		ModelServiceHolder.get().executeNativeUpdate(cmd);
-		// refresh cache after native update ...
-		ModelServiceHolder.get().getQuery(IArtikelstammItem.class, true, false).execute();
 		log.debug("Done Executing {}", cmd);
 	}
 	

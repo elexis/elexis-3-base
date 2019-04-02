@@ -162,4 +162,9 @@ public class ArtikelstammModelService extends AbstractModelService
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void clearCache(){
+		entityManager.clearCache();
+	}
 }

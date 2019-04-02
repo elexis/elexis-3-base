@@ -223,13 +223,15 @@ public class ServiceImporter {
 		try {
 			try (ResultSet res = subStm
 				.query(String.format(
-					"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s AND ART_MASTER='L'",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(code)))) {
+					"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER='%s' AND ART_MASTER='L'",
+					TarmedReferenceDataImporter.ImportPrefix, code))) {
 				TimeTool fromTime = new TimeTool();
 				TimeTool toTime = new TimeTool();
 				
 				List<Object> kumulations = new ArrayList<>();
+				boolean skip = false;
 				while (res != null && res.next()) {
+					skip = false;
 					fromTime.set(res.getString("GUELTIG_VON"));
 					toTime.set(res.getString("GUELTIG_BIS"));
 					
@@ -244,7 +246,29 @@ public class ServiceImporter {
 					kumulation.setValidFrom(fromTime.toLocalDate());
 					kumulation.setValidTo(toTime.toLocalDate());
 					kumulation.setLaw(law);
-					kumulations.add(kumulation);
+					
+					// same code (TarmedLeistung) can be imported multiple times, filter out already imported kumulation
+					// .masterCode.masterArt.typ
+					HashMap<String, String> propertyMap = new HashMap<String, String>();
+					propertyMap.put("masterCode", kumulation.getMasterCode());
+					propertyMap.put("masterArt", kumulation.getMasterArt());
+					propertyMap.put("typ", kumulation.getTyp());
+					List<TarmedKumulation> existing =
+						EntityUtil.loadByNamedQuery(propertyMap, TarmedKumulation.class);
+					if (existing != null && !existing.isEmpty()) {
+						for (TarmedKumulation existingKumulation : existing) {
+							if(existingKumulation.getSlaveCode().equals(kumulation.getSlaveCode()) && existingKumulation.getSlaveArt().equals(kumulation.getSlaveArt()) && 
+								existingKumulation.getValidFrom().isEqual(kumulation.getValidFrom())
+								&& existingKumulation.getValidTo()
+									.isEqual(kumulation.getValidTo())) {
+								skip = true;
+								break;
+							}
+						}
+					}
+					if (!skip) {
+						kumulations.add(kumulation);
+					}
 				}
 				EntityUtil.save(kumulations);
 			}
@@ -262,8 +286,8 @@ public class ServiceImporter {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			ResultSet rsub = subStm
-				.query(String.format("SELECT * FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER=%s",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(code))); //$NON-NLS-1$
+				.query(String.format("SELECT * FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
 			List<Map<String, String>> validResults =
 				ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
@@ -302,8 +326,8 @@ public class ServiceImporter {
 		try {
 			ResultSet rsub =
 				subStm.query(
-					String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR=%s AND ART='L'",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(code))); //$NON-NLS-1$
+					String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR='%s' AND ART='L'",
+						TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
 			List<Map<String, String>> validResults =
 				ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
@@ -330,8 +354,8 @@ public class ServiceImporter {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			ResultSet rsub =
-				subStm.query(String.format("SELECT * FROM %sLEISTUNG_BLOECKE WHERE LNR=%s",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(code))); //$NON-NLS-1$
+				subStm.query(String.format("SELECT * FROM %sLEISTUNG_BLOECKE WHERE LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
 			if (!validResults.isEmpty()) {
 				for (Map<String, String> map : validResults) {
@@ -361,8 +385,8 @@ public class ServiceImporter {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			ResultSet rsub =
-				subStm.query(String.format("SELECT * FROM %sLEISTUNG_GRUPPEN WHERE LNR=%s",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(code))); //$NON-NLS-1$
+				subStm.query(String.format("SELECT * FROM %sLEISTUNG_GRUPPEN WHERE LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
 			if (!validResults.isEmpty()) {
 				for (Map<String, String> map : validResults) {
@@ -392,8 +416,8 @@ public class ServiceImporter {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			ResultSet rsub =
-				subStm.query(String.format("SELECT * FROM %sLEISTUNG_ALTER WHERE LNR=%s",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(code))); //$NON-NLS-1$
+				subStm.query(String.format("SELECT * FROM %sLEISTUNG_ALTER WHERE LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
 			if (!validResults.isEmpty()) {
 				for (Map<String, String> map : validResults) {
@@ -477,8 +501,8 @@ public class ServiceImporter {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			ResultSet rsub = subStm
-				.query(String.format("SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_MASTER=%s",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(code))); //$NON-NLS-1$
+				.query(String.format("SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_MASTER='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
 			if (!validResults.isEmpty()) {
 				// do not import directly as bezug, that will lead to incorrect bills
@@ -541,8 +565,8 @@ public class ServiceImporter {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			ResultSet rsub =
-				subStm.query(String.format("SELECT * FROM %sLEISTUNG_DIGNIQUALI WHERE LNR=%s",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(code))); //$NON-NLS-1$
+				subStm.query(String.format("SELECT * FROM %sLEISTUNG_DIGNIQUALI WHERE LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
 			List<Map<String, String>> validResults =
 				ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {

@@ -1,5 +1,7 @@
 package ch.elexis.base.ch.arzttarife.model.test;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,6 +11,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -24,6 +27,7 @@ import ch.elexis.base.ch.arzttarife.model.tarmed.test.AllTarmedTests;
 import ch.elexis.core.common.DBConnection;
 import ch.elexis.core.common.DBConnection.DBType;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
+import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IElexisDataSource;
 import ch.elexis.core.services.IElexisEntityManager;
@@ -84,6 +88,26 @@ public class AllTestsSuite {
 		billingService = OsgiServiceUtil.getService(IBillingService.class).get();
 		entityManager = OsgiServiceUtil.getService(IElexisEntityManager.class).get();
 		entityManager.getEntityManager(); // initialize the db		
+	}
+	
+	/**
+	 * Create a {@link IBillingSystemFactor} for tests, <b>do not forget to remove it after test is
+	 * finished</b>
+	 * 
+	 * @param billingSystem
+	 * @param value
+	 * @param from
+	 * @return
+	 */
+	public static IBillingSystemFactor createBillingSystemFactor(String billingSystem, double value,
+		LocalDate from){
+		IBillingSystemFactor factor = coreModelService.create(IBillingSystemFactor.class);
+		factor.setSystem(billingSystem);
+		factor.setFactor(value);
+		factor.setValidFrom(from);
+		factor.setValidTo(LocalDate.of(9999, 12, 31));
+		assertTrue(coreModelService.save(factor));
+		return factor;
 	}
 	
 	private static boolean setInitialTarifs() throws IOException{

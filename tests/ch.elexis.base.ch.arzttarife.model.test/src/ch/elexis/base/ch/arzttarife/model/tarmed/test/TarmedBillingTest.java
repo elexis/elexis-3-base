@@ -82,12 +82,8 @@ public class TarmedBillingTest {
 	
 	@Test
 	public void basicTarmedPositions(){
-		IBillingSystemFactor factor = coreModelService.create(IBillingSystemFactor.class);
-		factor.setSystem("Tarmed");
-		factor.setFactor(0.89);
-		factor.setValidFrom(LocalDate.of(2000, 1, 1));
-		factor.setValidTo(LocalDate.of(9999, 12, 31));
-		assertTrue(coreModelService.save(factor));
+		IBillingSystemFactor factor =
+			AllTestsSuite.createBillingSystemFactor("Tarmed", 0.89, LocalDate.of(2000, 1, 1));
 		
 		status = billingService.bill(code_000010, encounter, 1);
 		assertTrue(status.isOK());

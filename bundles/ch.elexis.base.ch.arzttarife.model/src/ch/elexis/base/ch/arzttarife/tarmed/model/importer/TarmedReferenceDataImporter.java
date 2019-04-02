@@ -121,6 +121,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter
 			if (deleteCachedAccessTables() != Status.OK_STATUS) {
 				return Status.CANCEL_STATUS;
 			}
+			cacheDb.disconnect();
 		}
 		return ret;
 	}

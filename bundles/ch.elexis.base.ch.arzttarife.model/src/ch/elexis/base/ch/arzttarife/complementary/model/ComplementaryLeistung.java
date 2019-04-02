@@ -1,10 +1,24 @@
 package ch.elexis.base.ch.arzttarife.complementary.model;
 
+import java.util.Optional;
+
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
+import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
+import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
+import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
+import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.billable.AbstractOptifier;
+import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 
 public class ComplementaryLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ComplementaryLeistung>
@@ -12,21 +26,64 @@ public class ComplementaryLeistung
 	
 	public static final String STS_CLASS = "ch.elexis.data.ComplementaryLeistung";
 	
+	private static IBillableOptifier<ComplementaryLeistung> optifier;
+	private IBillableVerifier verifier;
+	
 	public ComplementaryLeistung(ch.elexis.core.jpa.entities.ComplementaryLeistung entity){
 		super(entity);
-		// TODO Auto-generated constructor stub
+		verifier = new DefaultVerifier();
 	}
 	
 	@Override
 	public IBillableOptifier<ComplementaryLeistung> getOptifier(){
-		// TODO Auto-generated method stub
-		return null;
+		if (optifier == null) {
+			optifier = new AbstractOptifier<ComplementaryLeistung>(CoreModelServiceHolder.get()) {
+				
+				@Override
+				protected void setPrice(ComplementaryLeistung billable, IBilled billed){
+					Optional<IBillingSystemFactor> billingFactor =
+						BillingServiceHolder.get().getBillingSystemFactor(getCodeSystemName(),
+							billed.getEncounter().getDate());
+					if (billingFactor.isPresent()) {
+						billed.setFactor(billingFactor.get().getFactor());
+					} else {
+						billed.setFactor(1.0);
+					}
+					int points = 0;
+					// configured hourly wage, or fixed value, in cents
+					if (billable.isFixedValueSet()) {
+						points = billable.getFixedValue() * 100;
+					} else {
+						points = getHourlyWage() / 12;
+					}
+					billed.setPoints(points);
+				}
+				
+				private int getHourlyWage(){
+					if (ContextServiceHolder.get().isPresent()) {
+						Optional<IMandator> activeMandator =
+							ContextServiceHolder.get().get().getActiveMandator();
+						if (activeMandator.isPresent()) {
+							if (ConfigServiceHolder.get().isPresent()) {
+								String wageString = ConfigServiceHolder.get().get()
+									.get(activeMandator.get(),
+										PreferenceConstants.COMPLEMENTARY_HOURLY_WAGE, "0");
+								return Integer.valueOf(wageString);
+							}
+						}
+					}
+					LoggerFactory.getLogger(getClass())
+						.warn("Could not get active mandator, billing without hourly wage");
+					return 0;
+				}
+			};
+		}
+		return optifier;
 	}
 	
 	@Override
 	public IBillableVerifier getVerifier(){
-		// TODO Auto-generated method stub
-		return null;
+		return verifier;
 	}
 	
 	@Override

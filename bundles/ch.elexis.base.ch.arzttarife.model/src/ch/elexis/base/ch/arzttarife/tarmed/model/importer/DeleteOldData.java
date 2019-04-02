@@ -98,6 +98,8 @@ public class DeleteOldData {
 		}
 		logger.debug("Deleted " + affected + " tarmed group");
 		
+		ArzttarifeModelServiceHolder.get().clearCache();
+		
 		return Status.OK_STATUS;
 	}
 }

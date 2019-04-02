@@ -12,7 +12,6 @@ import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.services.INamedQuery;
-import ch.rgw.tools.TimeTool;
 
 public class TarmedKumulation
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedKumulation>
@@ -53,11 +52,9 @@ public class TarmedKumulation
 	}
 	
 	@Override
-	public boolean isValidKumulation(LocalDate reference){
-		TimeTool date = new TimeTool(reference);
-		TimeTool from = new TimeTool(getValidFrom());
-		TimeTool to = new TimeTool(getValidTo());
-		return (date.isAfterOrEqual(from) && date.isBeforeOrEqual(to));
+	public boolean isValidKumulation(LocalDate date){
+		return (date.isAfter(getValidFrom()) || date.isEqual(getValidFrom()))
+			&& (date.isBefore(getValidTo()) || date.isEqual(getValidTo()));
 	}
 	
 	/**
@@ -77,7 +74,6 @@ public class TarmedKumulation
 		if (exclusions == null || exclusions.isEmpty()) {
 			return null;
 		}
-		
 		StringBuilder sb = new StringBuilder();
 		for (ITarmedKumulation excl : exclusions) {
 			if (excl.getSlaveArt() == TarmedKumulationArt.GROUP) {

@@ -20,13 +20,13 @@ public class VersionUtil {
 			ArzttarifeModelServiceHolder.get().load(VERSION_ENTRY_ID, ITarmedLeistung.class);
 		if (law == null || law.isEmpty()) {
 			String versionVal =
-				(String) ArzttarifeModelServiceHolder.get().getEntityProperty("code",
+				(String) ArzttarifeModelServiceHolder.get().getEntityProperty("code_",
 					versionEntry.get());
 			return getVersionAsInt(versionVal);
 		} else {
 			// read from text if law specified 
 			String versionVal = (String) ArzttarifeModelServiceHolder.get()
-				.getEntityProperty("text", versionEntry.get());
+				.getEntityProperty("tx255", versionEntry.get());
 			String[] parts = versionVal.split("\\" + DATASET_VERSION_SEPARATOR);
 			for (String part : parts) {
 				String[] subParts = part.split(DATASET_LAW_SEPARATOR);
@@ -66,7 +66,7 @@ public class VersionUtil {
 			if (!versionEntry.isPresent()) {
 				versionEntry = createVersionEntry();
 			}
-			ArzttarifeModelServiceHolder.get().setEntityProperty("code", versionVal,
+			ArzttarifeModelServiceHolder.get().setEntityProperty("code_", versionVal,
 				versionEntry.get());
 		} else {
 			boolean found = false;

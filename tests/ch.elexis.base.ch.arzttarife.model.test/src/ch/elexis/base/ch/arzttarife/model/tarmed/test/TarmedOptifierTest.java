@@ -2,10 +2,12 @@ package ch.elexis.base.ch.arzttarife.model.tarmed.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,13 +19,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
+import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.ticode.TessinerCode;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
@@ -37,6 +42,7 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
@@ -389,63 +395,66 @@ public class TarmedOptifierTest {
 		assertTrue(result.isOK());
 	}
 	
-	//	@Test
-	//	public void testDignitaet(){
-	//		IEncounter kons = konsGriss;
-	//		setUpDignitaet(kons);
-	//		
-	//		// default mandant type is specialist
-	//		clearKons(kons);
-	//		Result<IBilled> result = kons.addLeistung(tlBaseFirst5Min);
-	//		assertTrue(result.isOK());
-	//		Verrechnet verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-	//		assertNotNull(verrechnet);
-	//		int amountAL = TarmedLeistung.getAL(verrechnet);
-	//		assertEquals(1042, amountAL);
-	//		Money amount = verrechnet.getNettoPreis();
-	//		assertEquals(15.45, amount.getAmount(), 0.01);
-	//		
-	//		// set the mandant type to practitioner
-	//		clearKons(kons);
-	//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.PRACTITIONER);
-	//		result = kons.addLeistung(tlBaseFirst5Min);
-	//		assertTrue(result.isOK());
-	//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-	//		assertNotNull(verrechnet);
-	//		amountAL = TarmedLeistung.getAL(verrechnet);
-	//		assertEquals(969, amountAL);
-	//		amount = verrechnet.getNettoPreis();
-	//		assertEquals(14.84, amount.getAmount(), 0.01); // 10.42 * 0.83 * 0.93 + 8.19 * 0.83
-	//		String alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
-	//		assertEquals("0.93", alScalingFactor);
-	//		String alNotScaled = verrechnet.getDetail("AL_NOTSCALED");
-	//		assertEquals("1042", alNotScaled);
-	//		
-	//		result = kons.addLeistung(tlAlZero);
-	//		assertTrue(result.isOK());
-	//		verrechnet = kons.getVerrechnet(tlAlZero);
-	//		assertNotNull(verrechnet);
-	//		amountAL = TarmedLeistung.getAL(verrechnet);
-	//		assertEquals(0, amountAL);
-	//		amount = verrechnet.getNettoPreis();
-	//		assertEquals(4.08, amount.getAmount(), 0.01); // 0.0 * 0.83 * 0.93 + 4.92 * 0.83
-	//		alScalingFactor = verrechnet.getDetail("AL_SCALINGFACTOR");
-	//		assertEquals("0.93", alScalingFactor);
-	//		
-	//		tearDownDignitaet(kons);
-	//		
-	//		// set the mandant type to specialist
-	//		clearKons(kons);
-	//		TarmedLeistung.setMandantType(kons.getMandant(), MandantType.SPECIALIST);
-	//		result = kons.addLeistung(tlBaseFirst5Min);
-	//		assertTrue(result.isOK());
-	//		verrechnet = kons.getVerrechnet(tlBaseFirst5Min);
-	//		assertNotNull(verrechnet);
-	//		amountAL = TarmedLeistung.getAL(verrechnet);
-	//		assertEquals(957, amountAL);
-	//		amount = verrechnet.getNettoPreis();
-	//		assertEquals(17.76, amount.getAmount(), 0.01);
-	//	}
+	@Test
+	public void testDignitaet(){
+		IEncounter kons = konsGriss;
+		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor("Tarmed", 0.83,
+			LocalDate.now().minus(1, ChronoUnit.DAYS));
+		
+		// default mandant type is specialist, factor 0.83 tarmed 1.09
+		clearKons(kons);
+		Result<IBilled> result = billSingle(kons, tlBaseFirst5Min);
+		assertTrue(result.isOK());
+		IBilled billed = kons.getBilled().get(0);
+		assertNotNull(billed);
+		double amountAL = ArzttarifeUtil.getAL(billed);
+		assertEquals(1042, amountAL, 0.01);
+		Money amount = billed.getPrice();
+		assertEquals(15.45, amount.getAmount(), 0.01);
+		
+		// set the mandant type to practitioner
+		clearKons(kons);
+		ArzttarifeUtil.setMandantType(kons.getMandator(), MandantType.PRACTITIONER);
+		coreModelService.save(kons.getMandator());
+		result = billSingle(kons, tlBaseFirst5Min);
+		assertTrue(result.isOK());
+		billed = kons.getBilled().get(0);
+		assertNotNull(billed);
+		amountAL = ArzttarifeUtil.getAL(billed);
+		assertEquals(969, amountAL, 0.01);
+		amount = billed.getPrice();
+		assertEquals(14.84, amount.getAmount(), 0.01); // 10.42 * 0.83 * 0.93 + 8.19 * 0.83
+		String alScalingFactor = (String) billed.getExtInfo("AL_SCALINGFACTOR");
+		assertEquals("0.93", alScalingFactor);
+		String alNotScaled = (String) billed.getExtInfo("AL_NOTSCALED");
+		assertEquals("1042", alNotScaled);
+		
+		result = billSingle(kons, tlAlZero);
+		assertTrue(result.isOK());
+		billed = kons.getBilled().get(1);
+		assertNotNull(billed);
+		amountAL = ArzttarifeUtil.getAL(billed);
+		assertEquals(0, amountAL, 0.01);
+		amount = billed.getPrice();
+		assertEquals(4.08, amount.getAmount(), 0.01); // 0.0 * 0.83 * 0.93 + 4.92 * 0.83
+		alScalingFactor = (String) billed.getExtInfo("AL_SCALINGFACTOR");
+		assertEquals("0.93", alScalingFactor);
+		
+		coreModelService.remove(factor);
+		
+		// set the mandant type to specialist, default factor 1.0 tarmed 1.09
+		clearKons(kons);
+		ArzttarifeUtil.setMandantType(kons.getMandator(), MandantType.SPECIALIST);
+		coreModelService.save(kons.getMandator());
+		result = billSingle(kons, tlBaseFirst5Min);
+		assertTrue(result.isOK());
+		billed = kons.getBilled().get(0);
+		assertNotNull(billed);
+		amountAL = ArzttarifeUtil.getAL(billed);
+		assertEquals(1042, amountAL, 0.01);
+		amount = billed.getPrice();
+		assertEquals(18.61, amount.getAmount(), 0.01);
+	}
 	
 	/**
 	 * Test combination of session limit with coverage limit.
@@ -472,46 +481,45 @@ public class TarmedOptifierTest {
 		resetKons(konsGriss);
 	}
 	
-//	@Test
-//	public void testIsCompatibleTarmedBilling(){
-//		
-//		TarmedLeistung tlBaseXRay = (TarmedLeistung) TarmedLeistung.getFromCode("39.0020", null);
-//		TarmedLeistung tlUltrasound = (TarmedLeistung) TarmedLeistung.getFromCode("39.3005", null);
-//		TarmedLeistung tlBaseRadiologyHospital =
-//			(TarmedLeistung) TarmedLeistung.getFromCode("39.0015", null);
-//		TarmedLeistung tlBaseFirst5Min =
-//			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", null);
-//		
-//		IStatus resCompatible =
-//			optifier.isCompatible(tlBaseXRay, tlUltrasound, testBehandlungen.get(0));
-//		assertFalse(resCompatible.isOK());
-//		String resText = "";
-//		if (!resCompatible.getMessage().isEmpty()) {
-//			resText = resCompatible.getMessage();
-//		}
-//		assertEquals("39.3005 nicht kombinierbar mit Kapitel 39.01", resText);
-//		resCompatible = optifier.isCompatible(tlUltrasound, tlBaseXRay, testBehandlungen.get(0));
-//		assertTrue(resCompatible.isOK());
-//		
-//		resCompatible =
-//			optifier.isCompatible(tlBaseXRay, tlBaseRadiologyHospital, testBehandlungen.get(0));
-//		assertFalse(resCompatible.isOK());
-//		if (!resCompatible.getMessage().isEmpty()) {
-//			resText = resCompatible.getMessage();
-//		}
-//		assertEquals("39.0015 nicht kombinierbar mit Leistung 39.0020", resText);
-//		
-//		resCompatible =
-//			optifier.isCompatible(tlBaseRadiologyHospital, tlUltrasound, testBehandlungen.get(0));
-//		assertFalse(resCompatible.isOK());
-//		
-//		resCompatible = optifier.isCompatible(tlBaseXRay, tlBaseFirst5Min, testBehandlungen.get(0));
-//		assertTrue(resCompatible.isOK());
-//		
-//		resCompatible = optifier.isCompatible(tlBaseFirst5Min, tlBaseRadiologyHospital,
-//			testBehandlungen.get(0));
-//		assertTrue(resCompatible.isOK());
-//	}
+	@Test
+	public void testIsCompatibleTarmedBilling(){
+		clearKons(konsGriss);
+		
+		TarmedLeistung tlBaseXRay = (TarmedLeistung) TarmedLeistung.getFromCode("39.0020", null);
+		TarmedLeistung tlUltrasound = (TarmedLeistung) TarmedLeistung.getFromCode("39.3005", null);
+		TarmedLeistung tlBaseRadiologyHospital =
+			(TarmedLeistung) TarmedLeistung.getFromCode("39.0015", null);
+		TarmedLeistung tlBaseFirst5Min =
+			(TarmedLeistung) TarmedLeistung.getFromCode("00.0010", null);
+		
+		Result<IBilled> resCompatible = optifier.isCompatible(tlBaseXRay, tlUltrasound, konsGriss);
+		assertFalse(resCompatible.isOK());
+		String resText = "";
+		if (!resCompatible.getMessages().get(0).getText().isEmpty()) {
+			resText = resCompatible.getMessages().get(0).getText();
+		}
+		assertEquals("39.3005 nicht kombinierbar mit Kapitel 39.01", resText);
+		resCompatible = optifier.isCompatible(tlUltrasound, tlBaseXRay, konsGriss);
+		assertTrue(resCompatible.isOK());
+		
+		resCompatible = optifier.isCompatible(tlBaseXRay, tlBaseRadiologyHospital, konsGriss);
+		assertFalse(resCompatible.isOK());
+		if (!resCompatible.getMessages().get(0).getText().isEmpty()) {
+			resText = resCompatible.getMessages().get(0).getText();
+		}
+		assertEquals("39.0015 nicht kombinierbar mit Leistung 39.0020", resText);
+		
+		resCompatible = optifier.isCompatible(tlBaseRadiologyHospital, tlUltrasound, konsGriss);
+		assertFalse(resCompatible.isOK());
+		
+		resCompatible = optifier.isCompatible(tlBaseXRay, tlBaseFirst5Min, konsGriss);
+		assertTrue(resCompatible.isOK());
+		
+		resCompatible = optifier.isCompatible(tlBaseFirst5Min, tlBaseRadiologyHospital, konsGriss);
+		assertTrue(resCompatible.isOK());
+		
+		resetKons(konsGriss);
+	}
 	
 	/**
 	 * Test exclusion with side.
@@ -724,49 +732,6 @@ public class TarmedOptifierTest {
 		return ret;
 	}
 	
-	//	private void setUpDignitaet(IEncounter kons){
-	//		Map<String, String> extension = tlBaseFirst5Min.getExtension().getLimits();
-	//		// set reduce factor
-	//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
-	//		// the AL value
-	//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_TP_AL, "10.42");
-	//		tlBaseFirst5Min.setExtension(extension);
-	//		extension = tlAlZero.loadExtension();
-	//		// set reduce factor
-	//		extension.put(TarmedConstants.TarmedLeistung.EXT_FLD_F_AL_R, "0.93");
-	//		// no AL value
-	//		tlAlZero.setExtension(extension);
-	//		
-	//		// add additional multiplier
-	//		LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
-	//		MultiplikatorList multis =
-	//			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
-	//		multis.insertMultiplikator(new TimeTool(yesterday), "0.83");
-	//		
-	//	}
-	
-	//	private void tearDownDignitaet(Konsultation kons){
-	//		Hashtable<String, String> extension = tlBaseFirst5Min.loadExtension();
-	//		// clear reduce factor
-	//		extension = tlBaseFirst5Min.loadExtension();
-	//		extension.remove(TarmedLeistung.EXT_FLD_F_AL_R);
-	//		// reset AL value
-	//		extension.put(TarmedLeistung.EXT_FLD_TP_AL, "9.57");
-	//		tlBaseFirst5Min.setExtension(extension);
-	//		extension = tlAlZero.loadExtension();
-	//		// clear reduce factor
-	//		extension.remove(TarmedLeistung.EXT_FLD_F_AL_R);
-	//		// no AL value
-	//		tlAlZero.setExtension(extension);
-	//		
-	//		// remove additional multiplier
-	//		LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
-	//		MultiplikatorList multis =
-	//			new MultiplikatorList("VK_PREISE", kons.getFall().getAbrechnungsSystem());
-	//		multis.removeMultiplikator(new TimeTool(yesterday), "0.83");
-	//		
-	//	}
-	//	
 	private static void clearKons(IEncounter kons){
 		for (IBilled verrechnet : kons.getBilled()) {
 			coreModelService.remove(verrechnet);

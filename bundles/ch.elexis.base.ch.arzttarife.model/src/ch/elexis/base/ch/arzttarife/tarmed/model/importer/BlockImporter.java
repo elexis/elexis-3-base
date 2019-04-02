@@ -75,8 +75,8 @@ public class BlockImporter {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			try (ResultSet res = subStm.query(String.format(
-				"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s AND ART_MASTER='B'",
-				TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(blockName)))) {
+				"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER='%s' AND ART_MASTER='B'",
+				TarmedReferenceDataImporter.ImportPrefix, blockName))) {
 				TimeTool fromTime = new TimeTool();
 				TimeTool toTime = new TimeTool();
 				

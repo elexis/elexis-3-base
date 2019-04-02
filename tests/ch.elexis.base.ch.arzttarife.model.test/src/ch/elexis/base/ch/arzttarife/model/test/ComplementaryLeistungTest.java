@@ -8,12 +8,14 @@ import java.text.ParseException;
 import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
+import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.core.test.AbstractTest;
 import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.rgw.tools.Result;
 
 public class ComplementaryLeistungTest extends AbstractTest {
 	
@@ -37,6 +39,7 @@ public class ComplementaryLeistungTest extends AbstractTest {
 		assertEquals(
 			"Beinhaltet Körperreflexzonen, Muskelreflexzonenmassage, sowie Mikrosysteme wie Ohren, Hände und Füsse",
 			((IComplementaryLeistung) loadFromString).getDescription());
+		OsgiServiceUtil.ungetService(storeToStringService);
 	}
 	
 	@Test
@@ -47,23 +50,37 @@ public class ComplementaryLeistungTest extends AbstractTest {
 			codeElementService.loadFromString("Komplementärmedizin", "1111", null).get();
 		assertEquals("1111-20090101", ((Identifiable) loadFromString).getId());
 		assertTrue(loadFromString instanceof IComplementaryLeistung);
+		OsgiServiceUtil.ungetService(codeElementService);
 	}
 	
 	@Test
 	public void billing() throws ParseException{
-		//		createEncounter();
-		//		
-		//		IPhysioLeistung sitzungsPauschale = AllTestsSuite.getModelService()
-		//			.load("If1afa9fb481c7dee0295", IPhysioLeistung.class).get();
-		//		Result<IBilled> result = sitzungsPauschale.getOptifier().add(sitzungsPauschale, encounter, 1.5);
-		//		assertTrue(result.isOK());
-		//		assertFalse(encounter.getBilled().isEmpty());
-		//		IBilled billed = encounter.getBilled().get(0);
-		//		assertEquals(1.5, billed.getAmount(), 0.01);
-		//		//		assertEquals(sitzungsPauschale.getSellingPrice().multiply(1.5), billed.getTotal());
-		//		//		assertEquals(sitzungsPauschale.getPurchasePrice(), billed.getNetPrice());
-		//		//		assertEquals(sitzungsPauschale.getName(), billed.getText());
-		//		assertEquals(encounter, billed.getEncounter());
+		createEncounter();
 		
+		ICodeElementService codeElementService =
+			OsgiServiceUtil.getService(ICodeElementService.class).get();
+		IComplementaryLeistung complementaryLeistung = (IComplementaryLeistung) codeElementService
+			.loadFromString("Komplementärmedizin", "1111", null).get();
+		Result<IBilled> result =
+			complementaryLeistung.getOptifier().add(complementaryLeistung, encounter, 1);
+		assertTrue(result.isOK());
+		assertEquals(1, encounter.getBilled().size());
+		IBilled billed = encounter.getBilled().get(0);
+		assertEquals(1, billed.getAmount(), 0.01);
+		assertEquals(0, billed.getPoints());
+		
+		encounter.removeBilled(billed);
+		
+		complementaryLeistung.setFixedValue(50);
+		result = complementaryLeistung.getOptifier().add(complementaryLeistung, encounter, 1);
+		assertTrue(result.isOK());
+		assertEquals(1, encounter.getBilled().size());
+		billed = encounter.getBilled().get(0);
+		assertEquals(1, billed.getAmount(), 0.01);
+		assertEquals(5000, billed.getPoints());
+		assertEquals(50, billed.getPrice().getAmount(), 0.01);
+		
+		assertEquals(encounter, billed.getEncounter());
+		OsgiServiceUtil.ungetService(codeElementService);
 	}
 }

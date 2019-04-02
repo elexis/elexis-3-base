@@ -11,6 +11,7 @@ import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IEncounter;
@@ -128,8 +129,17 @@ public class TarmedGroup
 		IQuery<ITarmedGroup> query =
 			ArzttarifeModelServiceHolder.get().getQuery(ITarmedGroup.class);
 		
-		query.and("GroupName", COMPARATOR.EQUALS, groupName);
-		query.and("Law", COMPARATOR.EQUALS, law);
+		query.and("groupName", COMPARATOR.EQUALS, groupName);
+		if (law != null) {
+			if (!ArzttarifeUtil.isAvailableLaw(law)) {
+				query.startGroup();
+				query.or("law", COMPARATOR.EQUALS, "");
+				query.or("law", COMPARATOR.EQUALS, null);
+				query.andJoinGroups();
+			} else {
+				query.and("law", COMPARATOR.EQUALS, law, true);
+			}
+		}
 		List<ITarmedGroup> groups = query.execute();
 		groups = groups.stream().filter(g -> g.validAt(validFrom)).collect(Collectors.toList());
 		if (!groups.isEmpty()) {

@@ -63,7 +63,7 @@ public class ComplementaryLeistungCodeElementService
 	
 	@Override
 	public Optional<String> storeToString(Identifiable identifiable){
-		if (identifiable instanceof ComplementaryLeistung) {
+		if (identifiable instanceof ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung) {
 			return Optional
 				.of(ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
 					+ StringConstants.DOUBLECOLON + identifiable.getId());

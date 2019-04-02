@@ -66,12 +66,8 @@ public class PhysioLeistungTest extends AbstractTest {
 	public void billing() throws ParseException{
 		createEncounter();
 		
-		IBillingSystemFactor factor = coreModelService.create(IBillingSystemFactor.class);
-		factor.setSystem("Physiotherapie");
-		factor.setFactor(0.89);
-		factor.setValidFrom(LocalDate.of(2000, 1, 1));
-		factor.setValidTo(LocalDate.of(9999, 12, 31));
-		assertTrue(coreModelService.save(factor));
+		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor("Physiotherapie",
+			0.89, LocalDate.of(2000, 1, 1));
 		
 		ICodeElementService codeElementService =
 			OsgiServiceUtil.getService(ICodeElementService.class).get();
@@ -90,5 +86,7 @@ public class PhysioLeistungTest extends AbstractTest {
 		assertEquals(4272, billed.getTotal().getCents());
 		assertEquals(sitzungsPauschale.getText(), billed.getText());
 		assertEquals(encounter, billed.getEncounter());
+		
+		coreModelService.remove(factor);
 	}
 }

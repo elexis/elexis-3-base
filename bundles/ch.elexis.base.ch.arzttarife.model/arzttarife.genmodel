@@ -20,7 +20,6 @@
       <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedKumulationArt"/>
       <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedKumulationTyp"/>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedLeistung">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/minutes"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/AL"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/TL"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedLeistung/digniQuali"/>

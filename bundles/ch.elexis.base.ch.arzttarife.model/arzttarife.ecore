@@ -4,7 +4,7 @@
   <eSubpackages name="tarmed" nsURI="http://ch.elexis.base/model/arzttarife/tarmed"
       nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">
     <eClassifiers xsi:type="ecore:EClass" name="ITarmedLeistung" abstract="true" interface="true"
-        eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
+        eSuperTypes="../ch.elexis.core/model/model.ecore#//IService">
       <eOperations name="getServiceGroups" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       </eOperations>
@@ -27,8 +27,6 @@
         </eGenericType>
         <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       </eOperations>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minutes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-          changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="TL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"

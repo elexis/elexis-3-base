@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +26,7 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.billable.DefaultVerifier;
@@ -32,6 +34,8 @@ import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.rgw.tools.Money;
 
 public class TarmedLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedLeistung>
@@ -53,14 +57,11 @@ public class TarmedLeistung
 	
 	@Override
 	public int getMinutes(){
-		// TODO Auto-generated method stub
-		//		Hashtable<String, String> map = loadExtension();
-		//		double min = checkZeroDouble(map.get("LSTGIMES_MIN")); //$NON-NLS-1$
-		//		min += checkZeroDouble(map.get("VBNB_MIN")); //$NON-NLS-1$
-		//		min += checkZeroDouble(map.get("BEFUND_MIN")); //$NON-NLS-1$
-		//		min += checkZeroDouble(map.get("WECHSEL_MIN")); //$NON-NLS-1$
-		//		return (int) Math.round(min);
-		return 0;
+		double min = NumberUtils.toDouble((String) getExtension().getExtInfo("LSTGIMES_MIN"));
+		min += NumberUtils.toDouble((String) getExtension().getExtInfo("VBNB_MIN"));
+		min += NumberUtils.toDouble((String) getExtension().getExtInfo("BEFUND_MIN"));
+		min += NumberUtils.toDouble((String) getExtension().getExtInfo("WECHSEL_MIN"));
+		return (int) Math.round(min);
 	}
 	
 	@Override
@@ -523,5 +524,36 @@ public class TarmedLeistung
 	public String getLabel(){
 		return getCode() + " " + getText()
 			+ ((getLaw() != null && !getLaw().isEmpty()) ? " (" + getLaw() + ")" : "");
+	}
+	
+	@Override
+	public Money getPrice(){
+		Money ret = getNetPrice();
+		Optional<IBillingSystemFactor> systemFactor =
+			BillingServiceHolder.get().getBillingSystemFactor(getCodeSystemName(), LocalDate.now());
+		if (systemFactor.isPresent()) {
+			return ret.multiply(systemFactor.get().getFactor());
+		}
+		return ret;
+	}
+	
+	@Override
+	public void setPrice(Money value){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public Money getNetPrice(){
+		return new Money(getAL() + getTL());
+	}
+	
+	@Override
+	public void setNetPrice(Money value){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public void setMinutes(int value){
+		throw new UnsupportedOperationException();
 	}
 }

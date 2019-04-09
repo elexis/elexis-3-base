@@ -157,7 +157,10 @@ public class ATCCodes {
 	 * @return {@link ATCCode} if valid ATC code, else <code>null</code>
 	 */
 	public ATCCode getATCCode(String atcCode){
-		return atcCodesMap.get(atcCode.trim());
+		if (atcCodesMap != null && atcCode != null) {
+			return atcCodesMap.get(atcCode.trim());
+		}
+		return null;
 	}
 	
 	/**

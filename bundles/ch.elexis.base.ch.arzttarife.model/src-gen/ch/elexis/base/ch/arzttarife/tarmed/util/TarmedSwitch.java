@@ -8,6 +8,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.*;
 import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IService;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithExtInfo;
 import org.eclipse.emf.ecore.EObject;
@@ -75,7 +76,9 @@ public class TarmedSwitch<T> extends Switch<T> {
 			case TarmedPackage.ITARMED_LEISTUNG: {
 				ITarmedLeistung iTarmedLeistung = (ITarmedLeistung)theEObject;
 				T result = caseITarmedLeistung(iTarmedLeistung);
+				if (result == null) result = caseIService(iTarmedLeistung);
 				if (result == null) result = caseIBillable(iTarmedLeistung);
+				if (result == null) result = caseDeleteable(iTarmedLeistung);
 				if (result == null) result = caseICodeElement(iTarmedLeistung);
 				if (result == null) result = caseIdentifiable(iTarmedLeistung);
 				if (result == null) result = defaultCase(theEObject);
@@ -225,6 +228,21 @@ public class TarmedSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseDeleteable(Deleteable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>IService</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>IService</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseIService(IService object) {
 		return null;
 	}
 

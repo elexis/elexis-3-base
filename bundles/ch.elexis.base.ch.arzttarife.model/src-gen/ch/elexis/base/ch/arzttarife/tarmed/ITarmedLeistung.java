@@ -5,6 +5,7 @@ package ch.elexis.base.ch.arzttarife.tarmed;
 
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IService;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,7 +19,6 @@ import java.util.List;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getMinutes <em>Minutes</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getAL <em>AL</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getTL <em>TL</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getDigniQuali <em>Digni Quali</em>}</li>
@@ -39,22 +39,7 @@ import java.util.List;
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface ITarmedLeistung extends IBillable {
-	/**
-	 * Returns the value of the '<em><b>Minutes</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Minutes</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Minutes</em>' attribute.
-	 * @see ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage#getITarmedLeistung_Minutes()
-	 * @model changeable="false"
-	 * @generated
-	 */
-	int getMinutes();
-
+public interface ITarmedLeistung extends IService {
 	/**
 	 * Returns the value of the '<em><b>AL</b></em>' attribute.
 	 * <!-- begin-user-doc -->

@@ -198,7 +198,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedLeistung_Minutes() {
+	public EAttribute getITarmedLeistung_AL() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -208,7 +208,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedLeistung_AL() {
+	public EAttribute getITarmedLeistung_TL() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -218,7 +218,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedLeistung_TL() {
+	public EAttribute getITarmedLeistung_DigniQuali() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -228,7 +228,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedLeistung_DigniQuali() {
+	public EAttribute getITarmedLeistung_DigniQuanti() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -238,7 +238,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedLeistung_DigniQuanti() {
+	public EAttribute getITarmedLeistung_Exclusion() {
 		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -248,18 +248,8 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedLeistung_Exclusion() {
-		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EReference getITarmedLeistung_Extension() {
-		return (EReference)iTarmedLeistungEClass.getEStructuralFeatures().get(6);
+		return (EReference)iTarmedLeistungEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -269,7 +259,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 */
 	@Override
 	public EReference getITarmedLeistung_Parent() {
-		return (EReference)iTarmedLeistungEClass.getEStructuralFeatures().get(7);
+		return (EReference)iTarmedLeistungEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -279,7 +269,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 */
 	@Override
 	public EAttribute getITarmedLeistung_ValidFrom() {
-		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(8);
+		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -289,7 +279,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 */
 	@Override
 	public EAttribute getITarmedLeistung_ValidTo() {
-		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(9);
+		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -299,7 +289,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 */
 	@Override
 	public EAttribute getITarmedLeistung_ServiceTyp() {
-		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(10);
+		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -309,7 +299,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 */
 	@Override
 	public EAttribute getITarmedLeistung_Law() {
-		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(11);
+		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -319,7 +309,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 */
 	@Override
 	public EAttribute getITarmedLeistung_Sparte() {
-		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(12);
+		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(11);
 	}
 
 	/**
@@ -329,7 +319,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 */
 	@Override
 	public EAttribute getITarmedLeistung_Chapter() {
-		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(13);
+		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(12);
 	}
 
 	/**
@@ -339,7 +329,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 	 */
 	@Override
 	public EAttribute getITarmedLeistung_Nickname() {
-		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(14);
+		return (EAttribute)iTarmedLeistungEClass.getEStructuralFeatures().get(13);
 	}
 
 	/**
@@ -642,7 +632,6 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 
 		// Create classes and their features
 		iTarmedLeistungEClass = createEClass(ITARMED_LEISTUNG);
-		createEAttribute(iTarmedLeistungEClass, ITARMED_LEISTUNG__MINUTES);
 		createEAttribute(iTarmedLeistungEClass, ITARMED_LEISTUNG__AL);
 		createEAttribute(iTarmedLeistungEClass, ITARMED_LEISTUNG__TL);
 		createEAttribute(iTarmedLeistungEClass, ITARMED_LEISTUNG__DIGNI_QUALI);
@@ -725,7 +714,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		iTarmedLeistungEClass.getESuperTypes().add(theModelPackage.getIBillable());
+		iTarmedLeistungEClass.getESuperTypes().add(theModelPackage.getIService());
 		iTarmedExtensionEClass.getESuperTypes().add(theModelPackage.getIdentifiable());
 		iTarmedExtensionEClass.getESuperTypes().add(theModelPackage.getDeleteable());
 		iTarmedExtensionEClass.getESuperTypes().add(theModelPackage.getWithExtInfo());
@@ -734,7 +723,6 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(iTarmedLeistungEClass, ITarmedLeistung.class, "ITarmedLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getITarmedLeistung_Minutes(), ecorePackage.getEInt(), "minutes", null, 0, 1, ITarmedLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getITarmedLeistung_AL(), ecorePackage.getEInt(), "AL", null, 0, 1, ITarmedLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getITarmedLeistung_TL(), ecorePackage.getEInt(), "TL", null, 0, 1, ITarmedLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getITarmedLeistung_DigniQuali(), ecorePackage.getEString(), "digniQuali", null, 0, 1, ITarmedLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

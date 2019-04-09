@@ -76,7 +76,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__CODE = ModelPackage.IBILLABLE__CODE;
+	int ITARMED_LEISTUNG__CODE = ModelPackage.ISERVICE__CODE;
 
 	/**
 	 * The feature id for the '<em><b>Text</b></em>' attribute.
@@ -85,7 +85,34 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__TEXT = ModelPackage.IBILLABLE__TEXT;
+	int ITARMED_LEISTUNG__TEXT = ModelPackage.ISERVICE__TEXT;
+
+	/**
+	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__DELETED = ModelPackage.ISERVICE__DELETED;
+
+	/**
+	 * The feature id for the '<em><b>Price</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__PRICE = ModelPackage.ISERVICE__PRICE;
+
+	/**
+	 * The feature id for the '<em><b>Net Price</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__NET_PRICE = ModelPackage.ISERVICE__NET_PRICE;
 
 	/**
 	 * The feature id for the '<em><b>Minutes</b></em>' attribute.
@@ -94,7 +121,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__MINUTES = ModelPackage.IBILLABLE_FEATURE_COUNT + 0;
+	int ITARMED_LEISTUNG__MINUTES = ModelPackage.ISERVICE__MINUTES;
 
 	/**
 	 * The feature id for the '<em><b>AL</b></em>' attribute.
@@ -103,7 +130,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__AL = ModelPackage.IBILLABLE_FEATURE_COUNT + 1;
+	int ITARMED_LEISTUNG__AL = ModelPackage.ISERVICE_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>TL</b></em>' attribute.
@@ -112,7 +139,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__TL = ModelPackage.IBILLABLE_FEATURE_COUNT + 2;
+	int ITARMED_LEISTUNG__TL = ModelPackage.ISERVICE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Digni Quali</b></em>' attribute.
@@ -121,7 +148,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__DIGNI_QUALI = ModelPackage.IBILLABLE_FEATURE_COUNT + 3;
+	int ITARMED_LEISTUNG__DIGNI_QUALI = ModelPackage.ISERVICE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Digni Quanti</b></em>' attribute.
@@ -130,7 +157,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__DIGNI_QUANTI = ModelPackage.IBILLABLE_FEATURE_COUNT + 4;
+	int ITARMED_LEISTUNG__DIGNI_QUANTI = ModelPackage.ISERVICE_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Exclusion</b></em>' attribute.
@@ -139,7 +166,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__EXCLUSION = ModelPackage.IBILLABLE_FEATURE_COUNT + 5;
+	int ITARMED_LEISTUNG__EXCLUSION = ModelPackage.ISERVICE_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Extension</b></em>' reference.
@@ -148,7 +175,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__EXTENSION = ModelPackage.IBILLABLE_FEATURE_COUNT + 6;
+	int ITARMED_LEISTUNG__EXTENSION = ModelPackage.ISERVICE_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -157,7 +184,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__PARENT = ModelPackage.IBILLABLE_FEATURE_COUNT + 7;
+	int ITARMED_LEISTUNG__PARENT = ModelPackage.ISERVICE_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Valid From</b></em>' attribute.
@@ -166,7 +193,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__VALID_FROM = ModelPackage.IBILLABLE_FEATURE_COUNT + 8;
+	int ITARMED_LEISTUNG__VALID_FROM = ModelPackage.ISERVICE_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Valid To</b></em>' attribute.
@@ -175,7 +202,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__VALID_TO = ModelPackage.IBILLABLE_FEATURE_COUNT + 9;
+	int ITARMED_LEISTUNG__VALID_TO = ModelPackage.ISERVICE_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Service Typ</b></em>' attribute.
@@ -184,7 +211,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__SERVICE_TYP = ModelPackage.IBILLABLE_FEATURE_COUNT + 10;
+	int ITARMED_LEISTUNG__SERVICE_TYP = ModelPackage.ISERVICE_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Law</b></em>' attribute.
@@ -193,7 +220,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__LAW = ModelPackage.IBILLABLE_FEATURE_COUNT + 11;
+	int ITARMED_LEISTUNG__LAW = ModelPackage.ISERVICE_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Sparte</b></em>' attribute.
@@ -202,7 +229,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__SPARTE = ModelPackage.IBILLABLE_FEATURE_COUNT + 12;
+	int ITARMED_LEISTUNG__SPARTE = ModelPackage.ISERVICE_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Chapter</b></em>' attribute.
@@ -211,7 +238,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__CHAPTER = ModelPackage.IBILLABLE_FEATURE_COUNT + 13;
+	int ITARMED_LEISTUNG__CHAPTER = ModelPackage.ISERVICE_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Nickname</b></em>' attribute.
@@ -220,7 +247,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG__NICKNAME = ModelPackage.IBILLABLE_FEATURE_COUNT + 14;
+	int ITARMED_LEISTUNG__NICKNAME = ModelPackage.ISERVICE_FEATURE_COUNT + 13;
 
 	/**
 	 * The number of structural features of the '<em>ITarmed Leistung</em>' class.
@@ -229,7 +256,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 15;
+	int ITARMED_LEISTUNG_FEATURE_COUNT = ModelPackage.ISERVICE_FEATURE_COUNT + 14;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension <em>ITarmed Extension</em>}' class.
@@ -539,17 +566,6 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getITarmedLeistung();
-
-	/**
-	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getMinutes <em>Minutes</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Minutes</em>'.
-	 * @see ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getMinutes()
-	 * @see #getITarmedLeistung()
-	 * @generated
-	 */
-	EAttribute getITarmedLeistung_Minutes();
 
 	/**
 	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung#getAL <em>AL</em>}'.
@@ -1029,14 +1045,6 @@ public interface TarmedPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ITARMED_LEISTUNG = eINSTANCE.getITarmedLeistung();
-
-		/**
-		 * The meta object literal for the '<em><b>Minutes</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ITARMED_LEISTUNG__MINUTES = eINSTANCE.getITarmedLeistung_Minutes();
 
 		/**
 		 * The meta object literal for the '<em><b>AL</b></em>' attribute feature.

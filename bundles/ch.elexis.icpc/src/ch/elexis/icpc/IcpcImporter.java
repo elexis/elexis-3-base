@@ -70,7 +70,10 @@ public class IcpcImporter extends ImporterPage {
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		monitor.beginTask("Importiere ICPC-2", 727);
-		Database db = new DatabaseBuilder().setReadOnly(true).open(new File(results[0]));
+		return doImport(monitor, new DatabaseBuilder().setReadOnly(true).open(new File(results[0])));
+	}
+
+	public IStatus doImport(IProgressMonitor monitor, Database db){
 		monitor.worked(1);
 		pj = PersistentObject.getConnection();
 		

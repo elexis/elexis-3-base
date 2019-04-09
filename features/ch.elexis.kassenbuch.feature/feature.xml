@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.kassenbuch.feature"
+      label="Kassenbuch Plugin für Elexis"
+      version="3.2.0.qualifier"
+      provider-name="elexis.info">
+
+   <description url="http://www.medelexis.ch">
+      Einfaches Kassenbuch mit Buchungskategorien.
+      Mehr Info unter http://wiki.elexis.info/ch.medelexis.application.feature.feature.group
+   </description>
+
+   <copyright url="http://elexis.info/de_contributers.html">
+      Gerry Weirich, 2007-2018 und andere
+   </copyright>
+
+   <license>
+      Proprietär
+   </license>
+
+   <plugin
+         id="ch.elexis.kassenbuch"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.internal.csv.AddressesFile;
+import ch.elexis.importer.aeskulap.core.internal.csv.DocumentFile;
+import ch.elexis.importer.aeskulap.core.internal.csv.FileFile;
 import ch.elexis.importer.aeskulap.core.internal.csv.LabContactFile;
 import ch.elexis.importer.aeskulap.core.internal.csv.LabItemFile;
 import ch.elexis.importer.aeskulap.core.internal.csv.LabResultFile;
@@ -27,6 +29,10 @@ public class AeskulapFileFactory {
 			return Optional.of(new PatientFile(file));
 		} else if (LetterFile.canHandleFile(file)) {
 			return Optional.of(new LetterFile(file));
+		} else if (DocumentFile.canHandleFile(file)) {
+			return Optional.of(new DocumentFile(file));
+		} else if (FileFile.canHandleFile(file)) {
+			return Optional.of(new FileFile(file));
 		} else if (MandatorFile.canHandleFile(file)) {
 			return Optional.of(new MandatorFile(file));
 		}

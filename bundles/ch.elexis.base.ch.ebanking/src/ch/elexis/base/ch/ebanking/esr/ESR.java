@@ -230,10 +230,10 @@ public class ESR {
 		// Papierrand)
 		int xBase = 0; // Offset Einzahlunsschein 0mm (absolut vom Papierrand)
 		int wFr = 40; // Breite des Franken-Felds
-		int hFr = 5; // Höhe des FrankenFeld
+		int hFr = 6; // Höhe des FrankenFeld
 		int wRp = 10; // Breite des Rappen-Felds
 		int wRef = 81; // Breite des Ref-Nr-Felds
-		int hRef = 10; // Höhe des Ref-Nr-Felds
+		int hRef = 6; // Höhe des Ref-Nr-Felds
 		int xRef = 63; // x-Offset des Ref-Nr-Felds von xGiro
 		int yRef = 33; // y-Offset des Ref-Nr-Felds
 		int xGiro = 60; // x-Offset des Giro-Abschnitts
@@ -300,9 +300,9 @@ public class ESR {
 		
 		String Franken = Integer.toString(fr);
 		String Rappen = StringTool.pad(StringTool.LEFT, '0', Integer.toString(rp), 2);
-		p.insertTextAt(xBase + 3, yBase + 50, wFr, hFr - 3, Franken, SWT.CENTER);
+		p.insertTextAt(xBase + 3, yBase + 50, wFr, hFr, Franken, SWT.CENTER);
 		
-		p.insertTextAt(xBase + 45, yBase + 50, wRp, hFr - 3, Rappen, SWT.LEFT);
+		p.insertTextAt(xBase + 45, yBase + 50, wRp, hFr, Rappen, SWT.LEFT);
 		
 		// Referenznummer
 		p.insertTextAt(xGiro + xRef, yBase + yRef, wRef, hRef, makeRefNr(true), SWT.CENTER);
@@ -320,8 +320,8 @@ public class ESR {
 		p.insertTextAt(xGiro + xRef, yBase + yGarant2, wAdresse, 25,
 			schuldner.getPostAnschrift(true), SWT.LEFT);
 		
-		p.insertTextAt(xGiro + 5, yBase + 50, wFr, hFr - 3, Franken, SWT.CENTER);
-		p.insertTextAt(xGiro + 45, yBase + 50, wRp, hFr - 3, Rappen, SWT.LEFT);
+		p.insertTextAt(xGiro + 5, yBase + 50, wFr, hFr, Franken, SWT.CENTER);
+		p.insertTextAt(xGiro + 45, yBase + 50, wRp, hFr, Rappen, SWT.LEFT);
 		printESRCodeLine(p, betragInRappen, null);
 		
 		return true;

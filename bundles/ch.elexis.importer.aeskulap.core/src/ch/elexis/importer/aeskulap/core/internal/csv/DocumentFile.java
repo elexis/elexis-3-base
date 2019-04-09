@@ -20,17 +20,17 @@ import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 import ch.elexis.importer.aeskulap.core.service.DocumentStoreServiceHolder;
 import ch.rgw.tools.TimeTool;
 
-public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAeskulapImportFile {
+public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IAeskulapImportFile {
 	
-	public static final String CATEGORY_AESKULAP_BRIEFE = "Aeskulap-Briefe";
+	public static final String CATEGORY_AESKULAP_DOKUMENTE = "Aeskulap-Dokumente";
 	
 	private File file;
 	
 	private ICategory importCategory;
 	
-	private IAeskulapImportFile letterDirectory;
+	private IAeskulapImportFile documentDirectory;
 	
-	public LetterFile(File file){
+	public DocumentFile(File file){
 		super(file);
 		this.file = file;
 	}
@@ -43,43 +43,44 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 	public static boolean canHandleFile(File file){
 		// can only handle letter if store is available
 		return FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("csv")
-			&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Briefe");
+			&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Dokumente");
 	}
 	
 	@Override
 	public Type getType(){
-		return Type.LETTER;
+		return Type.DOCUMENT;
 	}
 	
 	@Override
 	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite,
 		SubMonitor monitor){
-		monitor.beginTask("Aeskuplap Briefe Import", getLineCount());
-		importCategory = DocumentStoreServiceHolder.get().createCategory(CATEGORY_AESKULAP_BRIEFE);
-		letterDirectory = transientFiles.get(Type.LETTERDIRECTORY);
-		if (letterDirectory != null) {
+		monitor.beginTask("Aeskuplap Dokumente Import", getLineCount());
+		importCategory =
+			DocumentStoreServiceHolder.get().createCategory(CATEGORY_AESKULAP_DOKUMENTE);
+		documentDirectory = transientFiles.get(Type.DOCUMENTDIRECTORY);
+		if (documentDirectory != null) {
 			try {
 				String[] line = null;
 				while ((line = getNextLine()) != null) {
 					String filename = getFilename(line);
-					file = (File) letterDirectory.getTransient(filename);
+					file = (File) documentDirectory.getTransient(filename);
 					if (file != null) {
-						IDocument letter = getExisting(line[1]);
-						if (letter == null) {
-							letter = create(line);
+						IDocument document = getExisting(line[1]);
+						if (document == null) {
+							document = create(line);
 						} else if (!overwrite) {
 							// skip if overwrite is not set
 							continue;
 						}
-						if (letter != null) {
-							setProperties(letter, line);
-							letter.setExtension(FilenameUtils.getExtension(file.getName()));
-							letter.setMimeType(FilenameUtils.getExtension(file.getName()));
-							DocumentStoreServiceHolder.get().saveDocument(letter,
+						if (document != null) {
+							setProperties(document, line);
+							document.setExtension(FilenameUtils.getExtension(file.getName()));
+							document.setMimeType(FilenameUtils.getExtension(file.getName()));
+							DocumentStoreServiceHolder.get().saveDocument(document,
 								new FileInputStream(file));
 							String xid = line[1];
 							Optional<IPersistentObject> po =
-								DocumentStoreServiceHolder.get().getPersistenceObject(letter);
+								DocumentStoreServiceHolder.get().getPersistenceObject(document);
 							po.ifPresent(o -> o.addXid(getXidDomain(), xid, true));
 						}
 					}
@@ -101,7 +102,7 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 	}
 	
 	private String getFilename(String[] line){
-		return new StringBuilder("!").append(line[0]).append("_").append(line[1]).toString();
+		return new StringBuilder("Doc_").append(line[0]).append("_").append(line[1]).toString();
 	}
 	
 	@Override
@@ -111,7 +112,7 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 	
 	@Override
 	public String getXidDomain(){
-		return IAeskulapImporter.XID_IMPORT_LETTER;
+		return IAeskulapImporter.XID_IMPORT_DOCUMENT;
 	}
 	
 	@Override

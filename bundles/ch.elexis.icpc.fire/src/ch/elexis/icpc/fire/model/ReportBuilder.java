@@ -51,8 +51,8 @@ public class ReportBuilder {
 		return fireConfig;
 	}
 	
-	public void addKonsultation(BigInteger patId, BigInteger docId, Konsultation konsultation, Map<String, Set<TMedi>> unreferencedStoppedMedis)
-		throws DatatypeConfigurationException{
+	public void addKonsultation(BigInteger patId, BigInteger docId, Konsultation konsultation,
+		Map<String, Set<TMedi>> unreferencedStoppedMedis) throws DatatypeConfigurationException{
 		if (fireConfig.isValid()) {
 			if (report.getConsultations() == null) {
 				report.setConsultations(fireConfig.getFactory().createReportConsultations());
@@ -71,6 +71,9 @@ public class ReportBuilder {
 					LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e);
 				}
 			});
+		} else {
+			LoggerFactory.getLogger(getClass())
+				.warn("Invalid fireConfig, skipping consultation [" + konsultation.getId() + "]");
 		}
 	}
 	

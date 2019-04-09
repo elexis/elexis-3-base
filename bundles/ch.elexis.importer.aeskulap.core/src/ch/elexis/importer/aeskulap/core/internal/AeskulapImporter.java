@@ -25,6 +25,8 @@ public class AeskulapImporter implements IAeskulapImporter {
 	private Map<Type, IAeskulapImportFile> transientFiles;
 	
 	private LetterDirectories letterDirectories;
+	private DocumentDirectories documentDirectories;
+	private FileDirectories fileDirectories;
 	
 	@Override
 	public List<IAeskulapImportFile> setImportDirectory(File directory){
@@ -35,6 +37,10 @@ public class AeskulapImporter implements IAeskulapImporter {
 				if(file.isDirectory()) {
 					if (isLetterDirectory(file)) {
 						addLetterDirectory(file);
+					} else if (isDocumentDirectory(file)) {
+						addDocumentDirectory(file);
+					} else if (isFileDirectory(file)) {
+						addFileDirectory(file);
 					} else {
 						ret.addAll(getAeskulapFilesFromDirectory(file));
 					}
@@ -46,6 +52,12 @@ public class AeskulapImporter implements IAeskulapImporter {
 		if (letterDirectories != null) {
 			ret.add(letterDirectories);
 		}
+		if (documentDirectories != null) {
+			ret.add(documentDirectories);
+		}
+		if (fileDirectories != null) {
+			ret.add(fileDirectories);
+		}
 		return ret;
 	}
 	
@@ -54,6 +66,20 @@ public class AeskulapImporter implements IAeskulapImporter {
 			letterDirectories = new LetterDirectories();
 		}
 		letterDirectories.add(file);
+	}
+	
+	private void addDocumentDirectory(File file){
+		if (documentDirectories == null) {
+			documentDirectories = new DocumentDirectories();
+		}
+		documentDirectories.add(file);
+	}
+	
+	private void addFileDirectory(File file){
+		if (fileDirectories == null) {
+			fileDirectories = new FileDirectories();
+		}
+		fileDirectories.add(file);
 	}
 	
 	private boolean isLetterDirectory(File directory){
@@ -69,6 +95,32 @@ public class AeskulapImporter implements IAeskulapImporter {
 		return false;
 	}
 	
+	private boolean isDocumentDirectory(File directory){
+		if (directory.isDirectory()) {
+			File[] docFiles = directory.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name){
+					return name.startsWith("Doc_") && name.contains("_");
+				}
+			});
+			return docFiles.length > 0;
+		}
+		return false;
+	}
+	
+	private boolean isFileDirectory(File directory){
+		if (directory.isDirectory()) {
+			File[] docFiles = directory.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name){
+					return name.startsWith("PF_") && name.contains("_");
+				}
+			});
+			return docFiles.length > 0;
+		}
+		return false;
+	}
+	
 	private List<IAeskulapImportFile> getAeskulapFilesFromDirectory(File directory){
 		List<IAeskulapImportFile> ret = new ArrayList<>();
 		File[] fileOrDirectory = directory.listFiles();
@@ -76,6 +128,10 @@ public class AeskulapImporter implements IAeskulapImporter {
 			if (file.isDirectory()) {
 				if (isLetterDirectory(file)) {
 					addLetterDirectory(file);
+				} else if (isDocumentDirectory(file)) {
+					addDocumentDirectory(file);
+				} else if (isFileDirectory(file)) {
+					addFileDirectory(file);
 				} else {
 					ret.addAll(getAeskulapFilesFromDirectory(file));
 				}
@@ -108,6 +164,10 @@ public class AeskulapImporter implements IAeskulapImporter {
 		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_GARANT, "Alte Garant-ID",
 			XidConstants.ASSIGNMENT_LOCAL);
 		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LETTER, "Alte Brief-ID",
+			XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_DOCUMENT, "Alte Dokument-ID",
+			XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_FILE, "Alte Datei-ID",
 			XidConstants.ASSIGNMENT_LOCAL);
 		// create a new map
 		transientFiles = new HashMap<>();

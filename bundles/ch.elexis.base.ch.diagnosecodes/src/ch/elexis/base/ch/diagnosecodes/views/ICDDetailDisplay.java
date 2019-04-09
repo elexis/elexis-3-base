@@ -12,6 +12,10 @@
 
 package ch.elexis.base.ch.diagnosecodes.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,22 +26,30 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
+import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
-import ch.elexis.data.ICD10;
 
 public class ICDDetailDisplay implements IDetailDisplay {
 	FormToolkit tk = UiDesk.getToolkit();
 	ScrolledForm form;
 	Text titel;
 	
+	@Inject
+	public void selection(
+		@Optional @Named("ch.elexis.base.ch.diagnosecodes.icd10.selection") IDiagnosisTree item){
+		if (item != null && !form.isDisposed()) {
+			display(item);
+		}
+	}
+	
 	public Class getElementClass(){
-		return ICD10.class;
+		return IDiagnosisTree.class;
 	}
 	
 	public void display(Object obj){
-		ICD10 ic = (ICD10) obj;
+		IDiagnosisTree ic = (IDiagnosisTree) obj;
 		form.setText(ic.getCode());
 		titel.setText(ic.getText());
 	}

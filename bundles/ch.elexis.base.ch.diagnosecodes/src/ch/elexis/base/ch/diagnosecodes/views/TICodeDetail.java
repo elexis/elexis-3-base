@@ -12,6 +12,10 @@
 
 package ch.elexis.base.ch.diagnosecodes.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -20,11 +24,12 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import ch.elexis.base.ch.ticode.Messages;
+import ch.elexis.base.ch.diagnosecodes.Messages;
+import ch.elexis.core.model.IDiagnosis;
+import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
-import ch.elexis.data.TICode;
 
 public class TICodeDetail implements IDetailDisplay {
 	
@@ -32,13 +37,17 @@ public class TICodeDetail implements IDetailDisplay {
 	Form form;
 	Text tID, tFull;
 	
-	public Class getElementClass(){
-		return TICode.class;
+	@Inject
+	public void selection(
+		@Optional @Named("ch.elexis.base.ch.diagnosecodes.ti.selection") IDiagnosisTree item){
+		if (item != null && !form.isDisposed()) {
+			display(item);
+		}
 	}
 	
 	public void display(Object obj){
-		if (obj instanceof TICode) {
-			TICode tc = (TICode) obj;
+		if (obj instanceof IDiagnosis) {
+			IDiagnosis tc = (IDiagnosis) obj;
 			tID.setText(tc.getCode());
 			tFull.setText(tc.getText());
 		}
@@ -62,4 +71,8 @@ public class TICodeDetail implements IDetailDisplay {
 		return body;
 	}
 	
+	@Override
+	public Class<?> getElementClass(){
+		return IDiagnosis.class;
+	}
 }

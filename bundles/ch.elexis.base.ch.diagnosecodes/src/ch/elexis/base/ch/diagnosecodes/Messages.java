@@ -20,6 +20,8 @@ public class Messages extends NLS {
     public static String ICDImporter_icdImport;
     public static String ICDImporter_readCodes;
 
+	public static String TICodeDetail_fulltext;
+	
     static { // load message values from bundle file
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);
   }

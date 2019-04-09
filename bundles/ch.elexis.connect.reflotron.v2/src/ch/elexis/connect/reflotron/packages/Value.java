@@ -3,13 +3,14 @@ package ch.elexis.connect.reflotron.packages;
 import java.util.ResourceBundle;
 
 import ch.elexis.connect.reflotron.Messages;
-import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.core.types.LabItemTyp;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.data.LabItem;
-import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
@@ -29,10 +30,10 @@ public class Value {
 	String _shortName;
 	String _longName;
 	String _unit;
-	LabItem _labItem;
+	ILabItem _labItem;
 	String _refMann;
 	String _refFrau;
-	Labor _labor;
+	ILaboratory _labor;
 	
 	String warning = "";
 	
@@ -61,28 +62,28 @@ public class Value {
 	}
 	
 	private void initialize(){
-		_labor = LabImportUtil.getOrCreateLabor(Messages.Reflotron_Value_LabKuerzel);
+		_labor = LabImportUtilHolder.get().getOrCreateLabor(Messages.Reflotron_Value_LabKuerzel);
 		
-		_labItem = LabImportUtil.getLabItem(_shortName, _labor);
+		_labItem = LabImportUtilHolder.get().getLabItem(_shortName, _labor);
 		
 		if (_labItem == null) {
 			_labItem =
-				new LabItem(_shortName, _longName, _labor, _refMann, _refFrau, _unit,
-					LabItemTyp.NUMERIC, Messages.Reflotron_Value_LabName, "50");
+				LabImportUtilHolder.get().createLabItem(_shortName, _longName, _labor, _refMann,
+					_refFrau, _unit, LabItemTyp.NUMERIC, Messages.Reflotron_Value_LabName, "50");
 		}
 	}
 	
-	public TransientLabResult fetchValue(Patient patient, String value, String flags, TimeTool date){
+	public TransientLabResult fetchValue(Patient patient, String value, String flags,
+		TimeTool date){
 		if (_labItem == null) {
 			initialize();
 		}
-		
-		LabImportUtil lu = new LabImportUtil();
-		
+		IPatient iPatient =
+			CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null);
 		// do not set a flag or comment if none is given
 		if (flags == null || flags.isEmpty()) {
-			return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_labor), _labItem, value).date(date)
-				.build(lu);
+			return new TransientLabResult.Builder(iPatient, _labor, _labItem, value).date(date)
+				.build(LabImportUtilHolder.get());
 		}
 		
 		String comment = "";
@@ -99,7 +100,7 @@ public class Value {
 			comment = Messages.Reflotron_Value_Error;
 		}
 		
-		return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_labor), _labItem, value).date(date)
-			.comment(comment).flags(Integer.valueOf(resultFlags)).build(lu);
+		return new TransientLabResult.Builder(iPatient, _labor, _labItem, value).date(date)
+			.comment(comment).flags(Integer.valueOf(resultFlags)).build(LabImportUtilHolder.get());
 	}
 }

@@ -18,7 +18,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.List;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,11 +31,17 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import au.com.bytecode.opencsv.CSVReader;
-import ch.elexis.artikel_ch.data.MiGelArtikel;
+import ch.elexis.artikel_ch.data.service.MiGelCodeElementService;
 import ch.elexis.base.ch.migel.Messages;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.builder.IArticleBuilder;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -110,7 +119,7 @@ public class MiGelImporter extends ImporterPage {
 	
 	@Override
 	public String getTitle(){
-		return MiGelArtikel.MIGEL_NAME; //$NON-NLS-1$
+		return "MiGeL"; //$NON-NLS-1$
 	}
 	
 	@Override
@@ -122,7 +131,10 @@ public class MiGelImporter extends ImporterPage {
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		mode = Messages.MiGelImporter_ModeUpdateAdd;
 		if (bDelete == true) {
-			PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='MiGeL'"); //$NON-NLS-1$
+			IQuery<IArticle> query = CoreModelServiceHolder.get().getQuery(IArticle.class, true);
+			query.and(ModelPackage.Literals.IARTICLE__TYP, COMPARATOR.EQUALS, ArticleTyp.MIGEL);
+			List<IArticle> existing = query.execute();
+			existing.forEach(a -> CoreModelServiceHolder.get().remove(a));
 			mode = Messages.MiGelImporter_ModeCreateNew;
 		}
 		try {
@@ -154,6 +166,8 @@ public class MiGelImporter extends ImporterPage {
 		return ret;
 		
 	}
+	
+	static Pattern pattern = Pattern.compile("([a-z0-9A-Z])([A-Z][a-z])");
 	
 	private IStatus importCSV(final File file, final IProgressMonitor monitor)
 		throws FileNotFoundException, IOException{
@@ -189,22 +203,44 @@ public class MiGelImporter extends ImporterPage {
 					}
 				}
 				
-				MiGelArtikel artikel = new MiGelArtikel(ImportFields.POSNUMER.getStringValue(line),
-					text.toString(), unit, ImportFields.PRICE.getMoneyValue(line));
+				String code = ImportFields.POSNUMER.getStringValue(line);
+				String shortname = getShortname(text.toString());
+				
+				IArticle migelArticle =
+					new IArticleBuilder(CoreModelServiceHolder.get(), shortname,
+						ImportFields.POSNUMER.getStringValue(line), ArticleTyp.MIGEL).build();
+				
+				CoreModelServiceHolder.get().setEntityProperty("id",
+					MiGelCodeElementService.MIGEL_NAME + code, migelArticle);
+				migelArticle.setPackageUnit(unit);
+				migelArticle.setSellingPrice(ImportFields.PRICE.getMoneyValue(line));
+				migelArticle.setExtInfo("FullText", text.toString());
 				
 				if (!amount.isEmpty()) {
 					try {
 						double amountDbl = Double.parseDouble(amount);
-						artikel.setPackungsGroesse((int) amountDbl);
+						migelArticle.setPackageSize((int) amountDbl);
 					} catch (NumberFormatException e) {
 						// ignore
 					}
 				}
+				CoreModelServiceHolder.get().save(migelArticle);
 				monitor.worked(1);
 			}
 		}
 		monitor.done();
 		return Status.OK_STATUS;
+	}
+	
+	private String getShortname(String text){
+		String shortname = StringTool.getFirstLine(text, 120, "[\\n\\r]");
+		Matcher matcher = pattern.matcher(shortname);
+		StringBuffer sb = new StringBuffer();
+		while (matcher.find()) {
+			matcher.appendReplacement(sb, matcher.group(1) + " " + matcher.group(2));
+		}
+		matcher.appendTail(sb);
+		return sb.toString();
 	}
 	
 	private boolean isFieldsLine(String[] line){

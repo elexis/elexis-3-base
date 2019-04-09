@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ch.elexis.connect.reflotron.Messages;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
-
-import ch.elexis.connect.reflotron.Messages;
 
 public class Probe {
 	private static final String UNIT_TEST_RUNNING = "ElexisReflotronUnitTestRunning";
@@ -99,7 +97,7 @@ public class Probe {
 		
 		TransientLabResult result = val.fetchValue(patient, value, "", getDate()); //$NON-NLS-1$
 		
-		new LabImportUtil().importLabResults(Collections.singletonList(result),
+		LabImportUtilHolder.get().importLabResults(Collections.singletonList(result),
 			new DefaultLabImportUiHandler());
 		
 		return val.getWarning();

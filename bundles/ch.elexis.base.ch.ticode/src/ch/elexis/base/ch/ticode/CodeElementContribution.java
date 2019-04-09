@@ -1,5 +1,7 @@
 package ch.elexis.base.ch.ticode;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,6 +11,7 @@ import org.osgi.service.component.annotations.Component;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IStoreToStringContribution;
 
@@ -32,10 +35,14 @@ public class CodeElementContribution
 		return (Optional<ICodeElement>) (Optional<?>) TessinerCode.getFromCode(code);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ICodeElement> getElements(Map<Object, Object> context){
-		// TODO Auto-generated method stub
-		return null;
+		if (context.get(ContextKeys.TREE_ROOTS) != null
+			&& context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
+			return (List<ICodeElement>) (List<?>) Arrays.asList(TessinerCode.getRootNodes());
+		}
+		return Collections.emptyList();
 	}
 	
 	@Override

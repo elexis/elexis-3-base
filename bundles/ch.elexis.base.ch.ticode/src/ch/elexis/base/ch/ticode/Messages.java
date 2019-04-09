@@ -282,7 +282,6 @@ public class Messages extends NLS {
 	
 	public static String TICode_vertebral;
 	
-	public static String TICodeDetail_fulltext;
 	public static String ICDCodeSelectorFactory_errorLoading;
 	public static String ICDCodeSelectorFactory_couldntCreate;
 	

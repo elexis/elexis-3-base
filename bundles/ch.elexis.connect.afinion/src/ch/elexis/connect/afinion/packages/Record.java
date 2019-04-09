@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-
 import ch.elexis.data.Patient;
 
 /**
@@ -99,7 +98,7 @@ public class Record {
 					this.header.getDate()));
 			}
 		}
-		new LabImportUtil().importLabResults(results, new DefaultLabImportUiHandler());
+		LabImportUtilHolder.get().importLabResults(results, new DefaultLabImportUiHandler());
 	}
 	
 	public String toString(){

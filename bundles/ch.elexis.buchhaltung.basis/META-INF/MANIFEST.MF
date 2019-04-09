@@ -12,5 +12,5 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core,
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.rgw.utility;bundle-version="3.0.0",
- ch.elexis.base.ch.arzttarife;bundle-version="3.0.0";resolution:=optional,
  ch.elexis.core.ui;bundle-version="3.0.0"
+Import-Package: ch.elexis.base.ch.arzttarife.tarmed

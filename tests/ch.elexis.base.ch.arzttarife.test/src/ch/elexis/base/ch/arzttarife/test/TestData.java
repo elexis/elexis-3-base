@@ -19,7 +19,6 @@ import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
@@ -85,7 +84,7 @@ public class TestData {
 		List<Fall> faelle = new ArrayList<Fall>();
 		List<Konsultation> konsultationen = new ArrayList<Konsultation>();
 		List<IBillable> leistungen = new ArrayList<IBillable>();
-		List<Rechnung> rechnungen = new ArrayList<Rechnung>();
+		List<IInvoice> invoices = new ArrayList<IInvoice>();
 		
 		TestSzenario() throws IOException{
 			createMandanten();
@@ -135,7 +134,7 @@ public class TestData {
 				Result<IInvoice> result =
 					InvoiceServiceHolder.get().invoice(coverage.getEncounters());
 				if (result.isOK()) {
-					rechnungen.add((Rechnung) NoPoUtil.loadAsPersistentObject(result.get()));
+					invoices.add(result.get());
 				} else {
 					throw new IllegalStateException(result.toString());
 				}
@@ -332,8 +331,8 @@ public class TestData {
 			return kons;
 		}
 		
-		public List<Rechnung> getRechnungen(){
-			return rechnungen;
+		public List<IInvoice> getInvoices(){
+			return invoices;
 		}
 		
 		public Rechnung getExistingRechnung(String rechnungNr){
@@ -365,7 +364,7 @@ public class TestData {
 						if (!result.isOK()) {
 							throw new IllegalStateException(result.toString());
 						}
-					} else if (leistung instanceof Eigenleistung
+					} else if (leistung instanceof ICustomService
 						&& (leistung.getCode().equals("GA") || leistung.getCode().equals("GB"))) {
 						Result<IBilled> result =
 							BillingServiceHolder.get().bill(leistung, encounter, 1);

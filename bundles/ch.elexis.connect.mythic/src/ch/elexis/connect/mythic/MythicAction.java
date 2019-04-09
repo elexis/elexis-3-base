@@ -18,19 +18,21 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.beans.ContactBean;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.importer.div.rs232.Connection;
 import ch.elexis.core.ui.importer.div.rs232.Connection.ComPortListener;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabItem;
-import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -44,7 +46,7 @@ public class MythicAction extends Action implements ComPortListener {
 	Connection ctrl =
 		new Connection("Elexis-Mythic", CoreHub.localCfg.get(Preferences.PORT, "COM1"),
 			CoreHub.localCfg.get(Preferences.PARAMS, "9600,8,n,1"), this);
-	Labor myLab;
+	ILaboratory myLab;
 	Patient actPatient;
 	
 	public MythicAction(){
@@ -53,7 +55,7 @@ public class MythicAction extends Action implements ComPortListener {
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.mythic", //$NON-NLS-1$
 			"icons/mythic.ico"));
 			
-		myLab = LabImportUtil.getOrCreateLabor("Mythic");
+		myLab = LabImportUtilHolder.get().getOrCreateLabor("Mythic");
 	}
 	
 	@Override
@@ -112,24 +114,24 @@ public class MythicAction extends Action implements ComPortListener {
 		int idx = StringTool.getIndex(results, line[0]);
 		if (idx != -1) {
 			if (line.length > 7) {
-				LabItem li = LabImportUtil.getLabItem(line[0], myLab);
+				ILabItem li = LabImportUtilHolder.get().getLabItem(line[0], myLab);
 				if (li == null) {
 					String ref = line[5] + "-" + line[6];
-					li = new LabItem(line[0], line[0], myLab, ref, ref, units[idx],
-						LabItemTyp.NUMERIC, "MTH Mythic", "50");
+					li = LabImportUtilHolder.get().createLabItem(line[0], line[0], myLab, ref, ref,
+						units[idx], LabItemTyp.NUMERIC, "MTH Mythic", "50");
 				}
 				
 				String comment = "";
 				if ((line[2].length() > 0) || (line[3].length() > 0)) {
 					comment = line[2] + ";" + line[3];
 				}
-				LabImportUtil lu = new LabImportUtil();
+				IPatient iPatient = CoreModelServiceHolder.get()
+					.load(actPatient.getId(), IPatient.class)
+					.orElse(null);
 				TransientLabResult tLabResult =
-					new TransientLabResult.Builder(new ContactBean(actPatient),
-						new ContactBean(myLab), li, line[1]).date(new TimeTool()).comment(comment)
-							.build(lu);
-							
-				lu.importLabResults(Collections.singletonList(tLabResult),
+					new TransientLabResult.Builder(iPatient, myLab, li, line[1])
+						.date(new TimeTool()).comment(comment).build(LabImportUtilHolder.get());
+				LabImportUtilHolder.get().importLabResults(Collections.singletonList(tLabResult),
 					new DefaultLabImportUiHandler());
 			}
 		}

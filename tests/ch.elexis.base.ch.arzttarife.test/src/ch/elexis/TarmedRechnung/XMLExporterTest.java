@@ -27,6 +27,7 @@ import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
@@ -64,15 +65,15 @@ public class XMLExporterTest {
 	@Test
 	public void doExportTest() throws IOException{
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
-		assertNotNull(szenario.getRechnungen());
-		assertFalse(szenario.getRechnungen().isEmpty());
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
 		XMLExporter exporter = new XMLExporter();
-		List<Rechnung> rechnungen = szenario.getRechnungen();
-		for (Rechnung rechnung : rechnungen) {
-			Document result =
-				exporter.doExport(rechnung, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+		List<IInvoice> invoices = szenario.getInvoices();
+		for (IInvoice invoice : invoices) {
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
+				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
-			if (rechnung.getStatus() == RnStatus.FEHLERHAFT) {
+			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
 				fail();
 			}
@@ -107,15 +108,15 @@ public class XMLExporterTest {
 	@Test
 	public void doExportVatTest() throws IOException{
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
-		assertNotNull(szenario.getRechnungen());
-		assertFalse(szenario.getRechnungen().isEmpty());
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
 		XMLExporter exporter = new XMLExporter();
-		List<Rechnung> rechnungen = szenario.getRechnungen();
-		for (Rechnung rechnung : rechnungen) {
-			Document result =
-				exporter.doExport(rechnung, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+		List<IInvoice> invoices = szenario.getInvoices();
+		for (IInvoice invoice : invoices) {
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
+				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
-			if (rechnung.getStatus() == RnStatus.FEHLERHAFT) {
+			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
 				fail();
 			}
@@ -143,15 +144,15 @@ public class XMLExporterTest {
 	@Test
 	public void doExportObligationTest() throws IOException{
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
-		assertNotNull(szenario.getRechnungen());
-		assertFalse(szenario.getRechnungen().isEmpty());
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
 		XMLExporter exporter = new XMLExporter();
-		List<Rechnung> rechnungen = szenario.getRechnungen();
-		for (Rechnung rechnung : rechnungen) {
-			Document result =
-				exporter.doExport(rechnung, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+		List<IInvoice> invoices = szenario.getInvoices();
+		for (IInvoice invoice : invoices) {
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
+				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
-			if (rechnung.getStatus() == RnStatus.FEHLERHAFT) {
+			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
 				fail();
 			}
@@ -177,15 +178,15 @@ public class XMLExporterTest {
 	@Test
 	public void doExportPrepaidTest() throws IOException{
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
-		assertNotNull(szenario.getRechnungen());
-		assertFalse(szenario.getRechnungen().isEmpty());
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
 		XMLExporter exporter = new XMLExporter();
-		List<Rechnung> rechnungen = szenario.getRechnungen();
-		for (Rechnung rechnung : rechnungen) {
-			Document result =
-				exporter.doExport(rechnung, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+		List<IInvoice> invoices = szenario.getInvoices();
+		for (IInvoice invoice : invoices) {
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
+				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
-			if (rechnung.getStatus() == RnStatus.FEHLERHAFT) {
+			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
 				fail();
 			}
@@ -419,8 +420,7 @@ public class XMLExporterTest {
 		assertEquals("17.75", due);
 		// customer pays including reminder fee
 		existing.addZahlung(new Money(27.75), "", null);
-		result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);

@@ -220,7 +220,7 @@ public class XMLExporterUtil {
 	}
 	
 	public static String makeTarmedDatum(final LocalDate datum){
-		return datum.format(DateTimeFormatter.ofPattern("yyyyy-MM-dd")) + "T00:00:00"; //$NON-NLS-1$
+		return datum.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "T00:00:00"; //$NON-NLS-1$
 	}
 	
 	private static Element addElementIfExists(final Element parent, final String name,

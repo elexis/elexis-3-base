@@ -2,20 +2,14 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.artikel_ch.data.MiGelFactory"
-            name="MiGel Artikel">
-      </Factory>
-   </extension>
-   <extension
          point="ch.elexis.core.ui.Verrechnungscode">
       <Artikel
             CodeDetailDisplay="ch.elexis.base.ch.migel.ui.MiGelDetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.migel.ui.MiGelSelector"
-            ElementFactory="ch.elexis.artikel_ch.data.MiGelFactory"
             ImporterClass="ch.elexis.base.ch.migel.ui.MiGelImporter"
-            name="MiGeL">
+            elexisClassName="ch.elexis.artikel_ch.data.MiGelArtikel"
+            name="MiGeL"
+            system="MiGeL">
       </Artikel>
    </extension>
 </plugin>

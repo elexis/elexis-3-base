@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,28 +21,31 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.buchhaltung.util.DateTool;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.data.status.ElexisStatus;
-import ch.elexis.data.AccountTransaction;
-import ch.elexis.data.Anschrift;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
-import ch.elexis.data.RnStatus;
-import ch.elexis.data.TarmedLeistung;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.data.Verrechnet;
-import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
 
 public class AlleLeistungen extends AbstractTimeSeries {
 	private static final String NAME = Messages.AlleLeistungen_Title;
+	
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	
 	private boolean hasUserId;
 	
@@ -91,16 +95,14 @@ public class AlleLeistungen extends AbstractTimeSeries {
 	@Override
 	protected IStatus createContent(IProgressMonitor monitor){
 		int total = 10000000;
-		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
-		TimeTool ttEnd = new TimeTool(this.getEndDate().getTimeInMillis());
-		qbe.add(AccountTransaction.FLD_DATE, Query.GREATER_OR_EQUAL,
-			ttStart.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
-		qbe.add(AccountTransaction.FLD_DATE, Query.LESS_OR_EQUAL,
-			ttEnd.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+		IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
+		query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL,
+			new TimeTool(this.getStartDate().getTimeInMillis()).toLocalDate());
+		query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL,
+			new TimeTool(this.getEndDate().getTimeInMillis()).toLocalDate());
 		monitor.beginTask(NAME, total);
 		monitor.subTask(Messages.FakturaJournal_DatabaseQuery);
-		List<Konsultation> consultations = qbe.execute();
+		List<IEncounter> consultations = query.execute();
 		int sum = consultations.size();
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
 		if (sum == 0) {
@@ -112,62 +114,60 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		monitor.worked(20 * step);
 		PatientIdFormatter pif = new PatientIdFormatter(8);
 		long time = System.currentTimeMillis();
-		for (Konsultation cons : consultations) {
-			Patient patient = cons.getFall().getPatient();
-			Mandant mandant = cons.getMandant();
-			String billState = cons.getStatusText();
-			if (cons.getStatus() >= RnStatus.VON_HEUTE
-				&& cons.getStatus() <= RnStatus.NICHT_VON_IHNEN)
+		for (IEncounter cons : consultations) {
+			IPatient patient = cons.getPatient();
+			IMandator mandant = cons.getMandator();
+			
+			IInvoice consInvoice = cons.getInvoice();
+			InvoiceState consInvoiceState = cons.getInvoiceState();
+			String billState = (consInvoice != null ? "RG " + consInvoice.getNumber() + ": " : "")
+				+ consInvoiceState.getLocaleText();
+			if (consInvoiceState.numericValue() >= InvoiceState.FROM_TODAY.numericValue()
+				&& consInvoiceState.numericValue() <= InvoiceState.NOT_FROM_YOU.numericValue())
 				billState = Messages.AlleLeistungen_NoBill;
 			
-			String[] cachedData = performanceOptimization(patient, mandant);
-			List<Verrechnet> activities = cons.getLeistungen(new String[] {
-				Verrechnet.USERID, Verrechnet.LEISTG_TXT, Verrechnet.SCALE_SELLING,
-				Verrechnet.COUNT,
-				Verrechnet.SCALE2, Verrechnet.COST_BUYING, Verrechnet.PRICE_SELLING,
-				Verrechnet.SCALE_TP_SELLING
-			});
-			
+			List<IBilled> activities = cons.getBilled();
 			if (mandant != null && patient != null && activities != null && !activities.isEmpty()) {
-				for (Verrechnet verrechnet : activities) {
-					IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
+				for (IBilled verrechnet : activities) {
+					IBillable verrechenbar = verrechnet.getBillable();
 					Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
 					int index = 0;
-					row[index++] = cachedData[0];
-					row[index++] = cachedData[1];
+					row[index++] = mandant.getBiller().getLabel();
+					row[index++] = mandant.getLabel();
 					
 					if (hasUserId) { //$NON-NLS-1$
-						String userid = verrechnet.get("userID"); //$NON-NLS-1$
-						Kontakt user = Kontakt.load(userid);
-						if (user.exists())
+						IContact user = verrechnet.getBiller();
+						if (user != null)
 							row[index++] = user.getLabel();
 						else
 							row[index++] = ""; //$NON-NLS-1$
 					}
-					row[index++] = cachedData[2];
-					row[index++] = new DateTool(cons.getDatum());
-					row[index++] = patient.getName();
-					row[index++] = patient.getVorname();
-					row[index++] = pif.format(patient.get(Patient.FLD_PATID));
-					row[index++] = new DateTool(patient.getGeburtsdatum());
-					row[index++] = patient.getGeschlecht();
-					row[index++] = cachedData[3];
-					row[index++] = cachedData[4];
+					IContact familyDoctor = patient.getFamilyDoctor();
+					row[index++] = familyDoctor != null ? familyDoctor.getLabel() : "";
+					row[index++] = cons.getDate().format(dateFormat);
+					row[index++] = patient.getLastName();
+					row[index++] = patient.getFirstName();
+					row[index++] = pif.format(patient.getPatientNr());
+					row[index++] = patient.getDateOfBirth().toLocalDate().format(dateFormat);
+					row[index++] = patient.getGender();
+					row[index++] = patient.getZip();
+					row[index++] = patient.getCity();
 					row[index++] = verrechnet.getText();
 					
 					if (verrechenbar != null) {
 						try {
 							row[index++] =
 								verrechenbar.getCode() == null ? "?" : verrechenbar.getCode(); //$NON-NLS-1$
-							if (verrechenbar instanceof TarmedLeistung)
+							if (verrechenbar instanceof ITarmedLeistung)
 								row[index++] =
-									Double.toString(((double) ((TarmedLeistung) verrechenbar)
+									Double.toString(((double) ((ITarmedLeistung) verrechenbar)
 										.getAL()) / 100);
 							else
 								row[index++] = ""; //$NON-NLS-1$
-							if (verrechenbar instanceof TarmedLeistung)
+							if (verrechenbar instanceof ITarmedLeistung)
 								row[index++] =
-									Double.toString(((double) ((TarmedLeistung) verrechenbar)
+									Double.toString(
+										((double) ((ITarmedLeistung) verrechenbar)
 										.getTL()) / 100);
 							else
 								row[index++] = ""; //$NON-NLS-1$
@@ -180,18 +180,19 @@ public class AlleLeistungen extends AbstractTimeSeries {
 							StatusManager.getManager().handle(status, StatusManager.SHOW);
 							return Status.CANCEL_STATUS;
 						}
+						row[index++] = verrechenbar.getCodeSystemName();
 					} else {
 						row[index++] = ""; //$NON-NLS-1$
 						row[index++] = ""; //$NON-NLS-1$
 						row[index++] = ""; //$NON-NLS-1$
+						row[index++] = ""; //$NON-NLS-1$
 					}
-					row[index++] = getClassName(verrechnet);
-					row[index++] = verrechnet.getTPW();
+					row[index++] = verrechnet.getFactor();
 					// include partial quantity info in secondary scale
-					row[index++] = verrechnet.getZahl() * verrechnet.getSecondaryScaleFactor();
-					row[index++] = verrechnet.getKosten();
-					row[index++] = verrechnet.getEffPreis();
-					row[index++] = getSales(verrechnet);
+					row[index++] = verrechnet.getAmount();
+					row[index++] = verrechnet.getNetPrice(); //verrechnet.getKosten();
+					row[index++] = ""; //verrechnet.getEffPreis();
+					row[index++] = verrechnet.getTotal();
 					row[index++] = getVatScale(verrechnet);
 					
 					row[index++] = billState;
@@ -217,65 +218,16 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		
 		return Status.OK_STATUS;
 	}
-
-	private String[] performanceOptimization(Patient patient, Mandant mandant){
-		// performance optimization
-		if (patient != null) {
-			patient.get(false, Patient.NAME, Patient.FIRSTNAME, Patient.BIRTHDATE, Patient.SEX,
-				Patient.FLD_PATID);
-		}
-		String[] data = new String[] {
-			"", "", "", "", ""
-		};
-		if (mandant != null) {
-			data[0] = mandant.getRechnungssteller().getLabel();
-			data[1] = mandant.getMandantLabel();
-		}
-		if (patient != null) {
-			Kontakt stammArzt = patient.getStammarzt();
-			if (stammArzt != null) {
-				data[2] = stammArzt.getLabel();
-			}
-			Anschrift anschrift = patient.getAnschrift();
-			data[3] = anschrift.getPlz();
-			data[4] = anschrift.getOrt();
-			
-		}
-		return data;
-	}
-
-	private String getClassName(Verrechnet verrechnet){
-		String fullname = verrechnet.get(Verrechnet.CLASS);
-		if (fullname != null && !fullname.isEmpty() && fullname.lastIndexOf('.') != -1)
-			return fullname.substring(fullname.lastIndexOf('.') + 1);
-		return ""; //$NON-NLS-1$
-	}
 	
-	private Money getSales(Verrechnet verrechnet){
-		double vk_tp = 0.0;
-		try {
-			vk_tp = Double.parseDouble(verrechnet.get(Verrechnet.SCALE_TP_SELLING));
-		} catch (NumberFormatException ne) {/* just leave 0.0 as value */}
-		double vk_scale = 1.0;
-		try {
-			vk_scale = Double.parseDouble(verrechnet.get(Verrechnet.SCALE_SELLING));
-		} catch (NumberFormatException ne) {/* just leave 1.0 as value */}
-		double scale1 = verrechnet.getPrimaryScaleFactor();
-		double scale2 = verrechnet.getSecondaryScaleFactor();
-		// get sales for the verrechnet including all scales and quantity
-		return new Money(
-			(int) (Math.round(vk_tp * vk_scale) * scale1 * scale2 * verrechnet.getZahl()));
-	}
-	
-	private String getVatScale(Verrechnet verrechnet){
-		String scale = verrechnet.getDetail(Verrechnet.VATSCALE);
+	private String getVatScale(IBilled verrechnet){
+		String scale = (String) verrechnet.getExtInfo(Verrechnet.VATSCALE);
 		if (scale != null)
 			return scale;
 		else
 			return "0.0"; //$NON-NLS-1$
 	}
 	
-	private int getVatInfoCode(Verrechnet verrechnet){
+	private int getVatInfoCode(IBilled verrechnet){
 		String scale = getVatScale(verrechnet);
 		if (scale != null)
 			return guessVatCode(scale);

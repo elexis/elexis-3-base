@@ -1,0 +1,59 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *******************************************************************************/
+
+package ch.elexis.base.ch.diagnosecodes.importer;
+
+import java.io.FileInputStream;
+
+import javax.inject.Inject;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.swt.widgets.Composite;
+
+import ch.elexis.core.interfaces.IReferenceDataImporter;
+import ch.elexis.core.services.IReferenceDataImporterService;
+import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.util.ImporterPage;
+
+public class ICDImporter extends ImporterPage {
+	
+	@Inject
+	private IReferenceDataImporterService importerService;
+	
+	public ICDImporter(){
+		CoreUiUtil.injectServices(this);
+	}
+	
+	@Override
+	public Composite createPage(Composite parent){
+		return new FileBasedImporter(parent, this);
+	}
+	
+	@Override
+	public IStatus doImport(IProgressMonitor monitor) throws Exception{
+		
+		IReferenceDataImporter importer = importerService.getImporter("icd10")
+			.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
+		return importer.performImport(monitor, new FileInputStream(results[0]), null);
+	}
+	
+	@Override
+	public String getDescription(){
+		return "Import einer ICD-10 zip Datei";
+	}
+	
+	@Override
+	public String getTitle(){
+		return "ICD-10";
+	}
+}

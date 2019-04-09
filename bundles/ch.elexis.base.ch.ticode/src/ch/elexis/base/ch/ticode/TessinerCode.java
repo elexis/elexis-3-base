@@ -12,11 +12,14 @@
 
 package ch.elexis.base.ch.ticode;
 
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Optional;
 
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosis;
+import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.model.IXid;
 
 
@@ -29,7 +32,7 @@ import ch.elexis.core.model.IXid;
  * @since 3.4.0 implements {@link ICodeElement}, {@link IDiagnose}
  * @since 3.8.0 implements {@link IDiagnosis}
  */
-public class TessinerCode implements IDiagnosis {
+public class TessinerCode implements IDiagnosisTree {
 	public static final String CODESYSTEM_NAME = "TI-Code"; //$NON-NLS-1$
 	private static Hashtable<String, TessinerCode> hash = new Hashtable<String, TessinerCode>();
 	private String text;
@@ -108,7 +111,7 @@ public class TessinerCode implements IDiagnosis {
 		return false;
 	}
 	
-	public TessinerCode[] getChildren(){
+	public List<IDiagnosisTree> getChildren(){
 		if (getCode().length() > 1) {
 			return null;
 		}
@@ -125,7 +128,7 @@ public class TessinerCode implements IDiagnosis {
 					}
 					ret[j - 2] = new TessinerCode(chapter + x, ticode[i][j]);
 				}
-				return ret;
+				return Arrays.asList(ret);
 			}
 		}
 		return null;
@@ -264,7 +267,7 @@ public class TessinerCode implements IDiagnosis {
 
 	@Override
 	public boolean addXid(String domain, String id, boolean updateIfExists){
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -274,27 +277,31 @@ public class TessinerCode implements IDiagnosis {
 
 	@Override
 	public Long getLastupdate(){
-		return null;
+		return 0L;
 	}
 
 	@Override
 	public String getDescription(){
-		return null;
+		return getText();
 	}
 
 	@Override
 	public void setDescription(String value){
-	
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void setCode(String value){
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void setText(String value){
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public void setParent(IDiagnosisTree value){
+		throw new UnsupportedOperationException();
 	}
 }

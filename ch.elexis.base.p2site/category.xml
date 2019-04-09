@@ -69,9 +69,6 @@
    <feature url="features/ch.elexis.fop_wrapper.feature_3.0.100.qualifier.jar" id="ch.elexis.fop_wrapper.feature" version="3.0.100.qualifier">
       <category name="libraries"/>
    </feature>
-   <feature url="features/ch.elexis.base.ch.legacy.feature_3.0.100.qualifier.jar" id="ch.elexis.base.ch.legacy.feature" version="3.0.100.qualifier">
-      <category name="basepackages"/>
-   </feature>
    <feature url="features/at.medevit.elexis.decision.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.decision.feature" version="3.0.100.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>
@@ -206,9 +203,6 @@
    </feature>
    <feature url="features/at.medevit.elexis.cobasmira.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.cobasmira.feature" version="3.0.100.qualifier">
       <category name="labinterfaces"/>
-   </feature>
-   <feature url="features/at.medevit.ch.artikelstamm.medcalendar.feature_3.0.100.qualifier.jar" id="at.medevit.ch.artikelstamm.medcalendar.feature" version="3.0.100.qualifier">
-      <category name="clinical_helpers"/>
    </feature>
    <feature url="features/ch.elexis.connector.medicosearch.feature_3.0.100.qualifier.jar" id="ch.elexis.connector.medicosearch.feature" version="3.0.100.qualifier">
       <category name="dataexchange"/>

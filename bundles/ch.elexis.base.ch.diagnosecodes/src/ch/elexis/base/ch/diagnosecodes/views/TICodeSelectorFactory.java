@@ -12,24 +12,31 @@
 
 package ch.elexis.base.ch.diagnosecodes.views;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
+import ch.elexis.base.ch.diagnosecodes.service.CodeElementServiceHolder;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IDiagnosisTree;
+import ch.elexis.core.services.ICodeElementService;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
-import ch.elexis.data.TICode;
 
 public class TICodeSelectorFactory extends CodeSelectorFactory {
 	
@@ -37,11 +44,16 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
-		return new ViewerConfigurer(new TICodeContentProvider(cv), new TICodeLabelProvider(),
+		ViewerConfigurer vc =
+			new ViewerConfigurer(new TICodeContentProvider(cv), new TICodeLabelProvider(),
 			new DefaultControlFieldProvider(cv, new String[] {
 				"Text"}), //$NON-NLS-1$
 			new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 				SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
+				
+		cv.setNamedSelection("ch.elexis.base.ch.diagnosecodes.ti.selection");
+		vc.setContentType(ContentType.GENERICOBJECT);
+		return vc;
 	}
 	
 	static class TICodeContentProvider implements ITreeContentProvider,
@@ -50,46 +62,47 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 		private String value;
 		private String TICKey = "Text";
 		
-		private List<TICode> nodes;
-		private List<TICode> childs;
-		private List<TICode> allNodes;
+		private ICodeElementServiceContribution tiCodeElementContribution;
+		private List<ICodeElement> roots;
 		
 		public TICodeContentProvider(CommonViewer viewer){
 			this.viewer = viewer;
-			allNodes = new ArrayList<TICode>(Arrays.asList(TICode.getRootNodes()));
-			nodes = allNodes;
+			tiCodeElementContribution = CodeElementServiceHolder.get()
+				.getContribution(CodeElementTyp.DIAGNOSE, "TI-Code").orElseThrow(
+					() -> new IllegalStateException("No TI CodeElementContribution available"));
+			
+			roots = tiCodeElementContribution.getElements(Collections
+				.singletonMap(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE));
 			value = "";
 		}
 		
 		public Object[] getChildren(Object parentElement){
-			TICode c = (TICode) parentElement;
+			IDiagnosisTree c = (IDiagnosisTree) parentElement;
 			// get all children if no search value is set
 			if (value == null || value.isEmpty()) {
-				return c.getChildren();
+				return c.getChildren().toArray();
 			}
 			
 			// only show children that match the search query
-			List<TICode> availableChildren = new ArrayList<TICode>();
-			for (TICode tic : c.getChildren()) {
-				if (childs.contains(tic)) {
-					availableChildren.add(tic);
-				}
-			}
-			return availableChildren.toArray(new TICode[availableChildren.size()]);
+			List<IDiagnosisTree> availableChildren =  c.getChildren().parallelStream().filter(ti -> matchFilter(ti)).collect(Collectors.toList());
+			return availableChildren.toArray();
 		}
 		
 		public Object getParent(Object element){
-			TICode c = (TICode) element;
+			IDiagnosisTree c = (IDiagnosisTree) element;
 			return c.getParent();
 		}
 		
 		public boolean hasChildren(Object element){
-			TICode c = (TICode) element;
-			return c.hasChildren();
+			IDiagnosisTree c = (IDiagnosisTree) element;
+			if (c.getChildren() == null) {
+				return false;
+			}
+			return !c.getChildren().isEmpty();
 		}
 		
 		public Object[] getElements(Object inputElement){
-			return nodes.toArray(new TICode[nodes.size()]);
+			return roots.toArray();
 		}
 		
 		public void dispose(){
@@ -110,88 +123,19 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 		public void changed(HashMap<String, String> values){
 			String filterText = values.get(TICKey).toLowerCase();
 			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) {
-				nodes = allNodes;
 				setFilterValue("");
 			} else {
-				List<TICode> filteredTICodes = new ArrayList<TICode>();
-				
-				boolean startMatchesOnly = true;
-				// search for any match if query starts with %
-				if (filterText.startsWith("%")) {
-					filterText = filterText.replace("%", "");
-					startMatchesOnly = false;
-				}
 				setFilterValue(filterText);
-				filteredTICodes = findMatchingTiCodes(filterText, startMatchesOnly);
-				nodes = filteredTICodes;
 			}
 			// update view
 			viewer.notify(CommonViewer.Message.update);
 		}
-		
-		/**
-		 * looks for TICode texts that match with the searched query
-		 * 
-		 * @param search
-		 *            pattern
-		 * @param startMatchesOnly
-		 *            whether only to search for {@link TICode}s starting with the pattern (
-		 *            {@code true} or containing it anywhere in the name ({@code false})
-		 * @return list of search term matching TICodes
-		 */
-		private List<TICode> findMatchingTiCodes(String search, boolean startMatchesOnly){
-			childs = new ArrayList<TICode>();
-			List<TICode> matches = new ArrayList<TICode>();
-			
-			for (TICode tiCode : allNodes) {
-				String text = tiCode.getText().toLowerCase();
-				if (isMatch(search, text, startMatchesOnly)) {
-					matches.add(tiCode);
-				}
-				matches =
-					addMatchingChildren(search, startMatchesOnly, matches, tiCode.getChildren(),
-						tiCode);
-				
+
+		public boolean matchFilter(IDiagnosisTree element) {
+			if(StringUtils.isNotBlank(value)) {
+				return (element.getCode() + " " + element.getText()).contains(value);
 			}
-			return matches;
-		}
-		
-		/**
-		 * adds all children who's names match the search pattern
-		 * 
-		 * @param search
-		 *            word/pattern
-		 * @param startMatchesOnly
-		 *            {@link TICode} must {@code true}: start with pattern/ {@code false}: contain
-		 *            pattern
-		 * @param matches
-		 *            list of matching parents
-		 * @param tiChildren
-		 *            all relevant children
-		 * @param parent
-		 * @return up to date list of matching parents
-		 */
-		private List<TICode> addMatchingChildren(String search, boolean startMatchesOnly,
-			List<TICode> matches, TICode[] tiChildren, TICode parent){
-			for (TICode tic : tiChildren) {
-				String text = tic.getText().toLowerCase();
-				if (isMatch(search, text, startMatchesOnly)) {
-					childs.add(tic);
-					if (!matches.contains(parent)) {
-						matches.add(parent);
-					}
-				}
-				
-			}
-			return matches;
-		}
-		
-		private boolean isMatch(String search, String text, boolean startMatchesOnly){
-			if (startMatchesOnly) {
-				return text.startsWith(search);
-			} else {
-				return text.contains(search);
-			}
+			return true;
 		}
 		
 		public void reorder(String field){}
@@ -211,7 +155,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 	
 	static class TICodeLabelProvider extends LabelProvider {
 		public String getText(Object element){
-			TICode c = (TICode) element;
+			IDiagnosisTree c = (IDiagnosisTree) element;
 			return c.getCode() + " " + c.getText(); //$NON-NLS-1$
 		}
 		
@@ -224,7 +168,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 	
 	@Override
 	public Class getElementClass(){
-		return TICode.class;
+		return IDiagnosisTree.class;
 	}
 	
 	@Override

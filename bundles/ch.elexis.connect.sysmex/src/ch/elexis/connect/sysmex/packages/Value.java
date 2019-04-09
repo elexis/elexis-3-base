@@ -4,13 +4,14 @@ import java.util.Collections;
 import java.util.ResourceBundle;
 
 import ch.elexis.connect.sysmex.Messages;
-import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.data.LabItem;
-import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
@@ -25,11 +26,11 @@ public class Value {
 		"ch.elexis.connect.sysmex.packages.valuetexts_UC1000"; //$NON-NLS-1$
 	
 	private final ResourceBundle _bundle;
-	Labor _myLab;
+	ILaboratory _myLab;
 	String _shortName;
 	String _longName;
 	String _unit;
-	LabItem _labItem;
+	ILabItem _labItem;
 	String _refMann;
 	String _refFrau;
 	
@@ -59,12 +60,12 @@ public class Value {
 	}
 	
 	private void initialize(){
-		_myLab = LabImportUtil.getOrCreateLabor(Messages.Sysmex_Value_LabKuerzel);
+		_myLab = LabImportUtilHolder.get().getOrCreateLabor(Messages.Sysmex_Value_LabKuerzel);
 		
-		_labItem = LabImportUtil.getLabItem(_shortName, _myLab);
+		_labItem = LabImportUtilHolder.get().getLabItem(_shortName, _myLab);
 		if (_labItem == null) {
-			_labItem = new LabItem(_shortName, _longName, _myLab, _refMann, _refFrau, _unit,
-				LabItemTyp.NUMERIC, Messages.Sysmex_Value_LabName, "50");
+			_labItem = LabImportUtilHolder.get().createLabItem(_shortName, _longName, _myLab,
+				_refMann, _refFrau, _unit, LabItemTyp.NUMERIC, Messages.Sysmex_Value_LabName, "50");
 		}
 	}
 	
@@ -72,11 +73,13 @@ public class Value {
 		if (_labItem == null) {
 			initialize();
 		}
-		
-		LabImportUtil lu = new LabImportUtil();
-		TransientLabResult tLabResult = new TransientLabResult.Builder(new ContactBean(patient),
-			new ContactBean(_myLab), _labItem, value).date(date).build(lu);
-		lu.importLabResults(Collections.singletonList(tLabResult), new DefaultLabImportUiHandler());
+		IPatient iPatient =
+			CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null);
+		TransientLabResult tLabResult =
+			new TransientLabResult.Builder(iPatient, _myLab, _labItem, value).date(date)
+				.build(LabImportUtilHolder.get());
+		LabImportUtilHolder.get().importLabResults(Collections.singletonList(tLabResult),
+			new DefaultLabImportUiHandler());
 	}
 	
 	public String get_shortName(){

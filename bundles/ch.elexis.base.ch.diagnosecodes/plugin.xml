@@ -12,26 +12,21 @@
 -->
 <plugin>
    <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.data.DiagnoseCodeFactory"
-            name="%DiagnosecodesSchweiz">
-      </Factory>
-   </extension>
-   <extension
          point="ch.elexis.core.ui.Diagnosecode">
       <Diagnosesystem
             CodeDetailDisplay="ch.elexis.base.ch.diagnosecodes.views.ICDDetailDisplay"
             CodeSelectorFactory="ch.elexis.base.ch.diagnosecodes.views.ICDCodeSelectorFactory"
-            ElementFactory="ch.elexis.data.DiagnoseCodeFactory"
-            ImporterClass="ch.elexis.data.ICDImporter"
-            name="%ICD10deutsch">
+            ImporterClass="ch.elexis.base.ch.diagnosecodes.importer.ICDImporter"
+            elexisClassName="ch.elexis.data.ICD10"
+            name="%ICD10deutsch"
+            system="ICD-10">
       </Diagnosesystem>
       <Diagnosesystem
             CodeDetailDisplay="ch.elexis.base.ch.diagnosecodes.views.TICodeDetail"
             CodeSelectorFactory="ch.elexis.base.ch.diagnosecodes.views.TICodeSelectorFactory"
-            ElementFactory="ch.elexis.data.DiagnoseCodeFactory"
-            name="%TessinerCodes">
+            elexisClassName="ch.elexis.data.TICode"
+            name="%TessinerCodes"
+            system="TI-Code">
       </Diagnosesystem>
    </extension>
    <extension

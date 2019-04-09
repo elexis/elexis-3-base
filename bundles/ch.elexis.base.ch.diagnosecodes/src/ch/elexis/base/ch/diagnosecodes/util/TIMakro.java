@@ -1,13 +1,17 @@
 package ch.elexis.base.ch.diagnosecodes.util;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.diagnosecodes.service.CodeElementServiceHolder;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IDiagnosis;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.IKonsMakro;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.TICode;
 
 public class TIMakro implements IKonsMakro {
 	
@@ -19,18 +23,20 @@ public class TIMakro implements IKonsMakro {
 	
 	@Override
 	public String executeMakro(String makro){
-		Konsultation actKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-		
-		try {
-			TICode tiCode = TICode.getFromCode(makro);
-			if (tiCode != null) {
-				actKons.addDiagnose(tiCode);
-				return StringConstants.EMPTY;
+		Optional<IEncounter> encounter =
+			ContextServiceHolder.get().getRootContext().getTyped(IEncounter.class);
+		if (encounter.isPresent()) {
+			try {
+				Optional<ICodeElement> tiCode =
+					CodeElementServiceHolder.get().loadFromString("TI-Code", makro, null);
+				if (tiCode.isPresent()) {
+					encounter.get().addDiagnosis((IDiagnosis) tiCode.get());
+					return StringConstants.EMPTY;
+				}
+			} catch (Exception e) {
+				logger.debug("Could not resolve TI Code [" + makro + "]");
 			}
-		} catch (Exception e) {
-			logger.debug("Could not resolve TI Code [" + makro + "]");
 		}
-		
 		return null;
 	}
 	

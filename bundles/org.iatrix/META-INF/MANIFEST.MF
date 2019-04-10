@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Iatrix Erweiterungen zu Elexis
 Bundle-SymbolicName: org.iatrix; singleton:=true
-Bundle-Version: 3.1.1.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.slf4j.api,
  org.eclipse.ui.forms,
@@ -23,7 +23,8 @@ Require-Bundle: org.slf4j.api,
  ch.elexis.core.ui.medication,
  org.iatrix.help.wiki,
  ch.elexis.base.ch.ebanking,
- ch.elexis.core.ui.laboratory
+ ch.elexis.core.ui.laboratory,
+ ch.elexis.core.ui.dbcheck
 Eclipse-LazyStart: true
 Bundle-Vendor: iatrix.org
 Bundle-ClassPath: .,

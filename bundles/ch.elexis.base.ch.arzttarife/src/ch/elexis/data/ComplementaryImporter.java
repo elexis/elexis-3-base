@@ -19,7 +19,7 @@ public class ComplementaryImporter extends ImporterPage {
 	private IReferenceDataImporterService importerService;
 	
 	public ComplementaryImporter(){
-		CoreUiUtil.injectServices(this);
+		CoreUiUtil.injectServicesWithContext(this);
 	}
 	
 	@Override

@@ -80,7 +80,7 @@ public class TarmedImporter extends ImporterPage {
 	private IReferenceDataImporterService importerService;
 	
 	public TarmedImporter(){
-		CoreUiUtil.injectServices(this);
+		CoreUiUtil.injectServicesWithContext(this);
 	}
 	
 	@Override

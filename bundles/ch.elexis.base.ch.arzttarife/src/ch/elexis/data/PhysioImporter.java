@@ -49,7 +49,7 @@ public class PhysioImporter extends ImporterPage {
 		validFrom.clear();
 		validFrom.set(TimeTool.getInstance().get(Calendar.YEAR), 0, 1);
 		
-		CoreUiUtil.injectServices(this);
+		CoreUiUtil.injectServicesWithContext(this);
 	}
 	
 	@Override

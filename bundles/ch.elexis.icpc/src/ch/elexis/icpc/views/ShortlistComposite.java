@@ -17,9 +17,10 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import ch.elexis.core.ui.util.PersistentObjectDragSource;
+import ch.elexis.core.data.service.StoreToStringServiceHolder;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
-import ch.elexis.icpc.IcpcCode;
+import ch.elexis.icpc.model.icpc.IcpcCode;
+import ch.elexis.icpc.service.IcpcModelServiceHolder;
 
 public class ShortlistComposite extends Composite {
 	
@@ -38,7 +39,8 @@ public class ShortlistComposite extends Composite {
 		setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		List<IcpcCode> shortList = Arrays.asList(SHORTLIST_CODES).stream()
-			.map(s -> IcpcCode.load(s)).collect(Collectors.toList());
+			.map(s -> IcpcModelServiceHolder.get().load(s, IcpcCode.class).get())
+			.collect(Collectors.toList());
 		
 		ListViewer listViewer = new ListViewer(this, SWT.BORDER | SWT.V_SCROLL);
 		org.eclipse.swt.widgets.List list = listViewer.getList();
@@ -53,10 +55,10 @@ public class ShortlistComposite extends Composite {
 			public void dragStart(DragSourceEvent event){
 				IStructuredSelection ss = listViewer.getStructuredSelection();
 				if (ss.isEmpty()) {
-					PersistentObjectDragSource.setDraggedObject(null);
+					event.data = null;
 					event.doit = false;
 				} else {
-					PersistentObjectDragSource.setDraggedObject((IcpcCode) ss.getFirstElement());
+					event.data = (IcpcCode) ss.getFirstElement();
 				}
 			}
 			
@@ -64,7 +66,8 @@ public class ShortlistComposite extends Composite {
 			public void dragSetData(DragSourceEvent event){
 				IStructuredSelection ss = listViewer.getStructuredSelection();
 				if (!ss.isEmpty()) {
-					event.data = ((IcpcCode) ss.getFirstElement()).storeToString();
+					event.data = StoreToStringServiceHolder.get()
+						.storeToString((IcpcCode) ss.getFirstElement()).orElse(null);
 				}
 			}
 			

@@ -12,41 +12,43 @@
 
 package ch.elexis.icpc.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IContext;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.icpc.Encounter;
-import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.icpc.model.icpc.IcpcEncounter;
 
-public class EncounterView extends ViewPart implements IActivationListener {
+public class EncounterView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.encounterView";
 	private EncounterDisplay display;
 	
-	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
-		ElexisEvent.EVENT_SELECTED) {
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			display.setEncounter(null);
+	@Inject
+	void activePatient(@Optional @Named(IContext.ACTIVE_PATIENT) IPatient patient){
+		if (display != null && !display.isDisposed()) {
+			Display.getDefault().asyncExec(() -> {
+				display.setEncounter(null);
+			});
 		}
-		
-	};
+	}
 	
-	private final ElexisUiEventListenerImpl eeli_enc = new ElexisUiEventListenerImpl(Encounter.class,
-		ElexisEvent.EVENT_SELECTED) {
-		@Override
-		public void runInUi(ElexisEvent ev){
-			display.setEncounter((Encounter) ev.getObject());
+	@Inject
+	void selectedEncounter(@Optional IcpcEncounter encounter){
+		if (display != null && !display.isDisposed()) {
+			Display.getDefault().asyncExec(() -> {
+				display.setEncounter(encounter);
+			});
 		}
-	};
+	}
 	
 	public EncounterView(){
 		// TODO Auto-generated constructor stub
@@ -57,42 +59,16 @@ public class EncounterView extends ViewPart implements IActivationListener {
 		parent.setLayout(new GridLayout());
 		display = new EncounterDisplay(parent);
 		display.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
-		
-	}
-	
-	@Override
-	public void dispose(){
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
 	}
 	
 	@Override
 	public void setFocus(){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void activation(boolean mode){
-		
-	}
-	
-	public void visible(boolean mode){
-		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_enc, eeli_pat);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_enc, eeli_pat);
-		}
-		
-	}
-	
-	public void clearEvent(Class template){
-		// TODO Auto-generated method stub
-		
+		display.setFocus();
 	}
 	
 	public void selectionEvent(PersistentObject obj){
-		if (obj instanceof Encounter) {
-			display.setEncounter((Encounter) obj);
+		if (obj instanceof IcpcEncounter) {
+			display.setEncounter((IcpcEncounter) obj);
 		} else if (obj instanceof Patient) {
 			display.setEncounter(null);
 		}

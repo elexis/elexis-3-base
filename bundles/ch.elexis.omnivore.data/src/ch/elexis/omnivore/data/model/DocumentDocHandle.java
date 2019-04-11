@@ -8,15 +8,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.exceptions.PersistenceException;
 import ch.elexis.core.jpa.entities.DocHandle;
 import ch.elexis.core.jpa.entities.Kontakt;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -26,11 +26,10 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IHistory;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.types.DocumentStatus;
-import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.data.Messages;
 import ch.elexis.omnivore.data.Preferences;
 import ch.elexis.omnivore.data.model.util.ModelUtil;
-import ch.rgw.tools.ExHandler;
 
 public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		implements IdentifiableWithXid, IDocumentHandle {
@@ -74,7 +73,8 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public Date getCreated(){
-		return toDate(getEntity().getCreationDate());
+		LocalDate creationDate = getEntity().getCreationDate();
+		return creationDate != null ? toDate(creationDate) : getLastchanged();
 	}
 	
 	@Override
@@ -97,7 +97,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public String getMimeType(){
-		return getEntity().getMimetype();
+		return StringUtils.defaultString(getEntity().getMimetype());
 	}
 	
 	@Override
@@ -145,7 +145,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public String getKeywords(){
-		return this.keywords;
+		return StringUtils.defaultString(getEntity().getKeywords());
 	}
 	
 	@Override
@@ -212,21 +212,14 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 					// database: copy the file from the file system to the
 					// database
 					if (!Preferences.storeInFilesystem()) {
-						try {
-							getEntity().setDoc(bytes);
-						} catch (PersistenceException pe) {
-							SWTHelper.showError(Messages.DocHandle_readErrorCaption,
-								Messages.DocHandle_importErrorText + "; " + pe.getMessage());
-						}
+						getEntity().setDoc(bytes);
 					}
 					
 					return bytes;
 				} catch (Exception ex) {
-					ExHandler.handle(ex);
-					SWTHelper.showError(Messages.DocHandle_readErrorHeading,
-						Messages.DocHandle_importError2,
-						MessageFormat.format(Messages.DocHandle_importErrorText2 + ex.getMessage(),
-							file.getAbsolutePath()));
+					LoggerFactory.getLogger(getClass())
+						.error("Getting content of [" + getId() + "] fails", ex);
+					throw new IllegalStateException(ex);
 				}
 			}
 		}
@@ -250,14 +243,33 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 				}
 			}
 			if (Preferences.storeInFilesystem()) {
-				configError();
+				LoggerFactory.getLogger(getClass())
+					.error("Config error: " + Messages.DocHandle_configErrorText);
 			}
 		}
 		return null;
 	}
 	
-	private void configError(){
-		SWTHelper.showError("config error", Messages.DocHandle_configErrorCaption, //$NON-NLS-1$
-			Messages.DocHandle_configErrorText);
+	@Override
+	public boolean isCategory(){
+		return getMimeType().equals(Constants.CATEGORY_MIMETYPE);
+	}
+	
+	@Override
+	public boolean exportToFileSystem(){
+		byte[] doc = getEntity().getDoc();
+		// return true if doc is already on file system
+		if (doc == null)
+			return true;
+		File file = getStorageFile(true);
+		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(file))) {
+			bout.write(doc);
+			getEntity().setDoc(null);
+		} catch (IOException ios) {
+			LoggerFactory.getLogger(getClass())
+				.error("Exporting dochandle [" + getId() + "] to filesystem fails.");
+			return false;
+		}
+		return true;
 	}
 }

@@ -2,14 +2,13 @@ package ch.medshare.connect.abacusjunior.packages;
 
 import java.util.ResourceBundle;
 
-import ch.elexis.core.data.beans.ContactBean;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.core.types.LabItemTyp;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.data.LabItem;
-import ch.elexis.data.Labor;
-import ch.elexis.data.Patient;
 import ch.medshare.connect.abacusjunior.Messages;
 import ch.rgw.tools.TimeTool;
 
@@ -27,11 +26,11 @@ public class Value {
 		return new Value(paramName);
 	}
 	
-	Labor _myLab;
+	ILaboratory _myLab;
 	String _shortName;
 	String _longName;
 	String _unit;
-	LabItem _labItem;
+	ILabItem _labItem;
 	String _refMann;
 	String _refFrau;
 	
@@ -52,27 +51,26 @@ public class Value {
 	}
 	
 	private void initialize(){
-		_myLab = LabImportUtil.getOrCreateLabor(Messages.AbacusJunior_Value_LabKuerzel);
-		_labItem = LabImportUtil.getLabItem(_shortName, _myLab);
+		_myLab = LabImportUtilHolder.get().getOrCreateLabor(Messages.AbacusJunior_Value_LabKuerzel);
+		_labItem = LabImportUtilHolder.get().getLabItem(_shortName, _myLab);
 		
 		if (_labItem == null) {
-			_labItem = new LabItem(_shortName, _longName, _myLab, _refMann, _refFrau, _unit,
+			_labItem =
+				LabImportUtilHolder.get().createLabItem(_shortName, _longName, _myLab, _refMann,
+					_refFrau, _unit,
 				LabItemTyp.NUMERIC, Messages.AbacusJunior_Value_LabName, "50");
 		}
 	}
 	
-	public TransientLabResult fetchValue(Patient patient, String value, String flags,
+	public TransientLabResult fetchValue(IPatient patient, String value, String flags,
 		TimeTool date){
 		if (_labItem == null) {
 			initialize();
 		}
-		
-		LabImportUtil liu = new LabImportUtil();
-		
 		// do not set a flag or comment if none is given
 		if (flags == null || flags.isEmpty()) {
-			return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_myLab),
-				_labItem, value).date(date).build(liu);
+			return new TransientLabResult.Builder(patient, _myLab, _labItem, value).date(date)
+				.build(LabImportUtilHolder.get());
 		}
 		
 		String comment = "";
@@ -89,8 +87,9 @@ public class Value {
 			comment = Messages.AbacusJunior_Value_Error;
 		}
 		
-		return new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_myLab),
-			_labItem, value).date(date).comment(comment).flags(Integer.valueOf(resultFlags)).build(liu);
+		return new TransientLabResult.Builder(patient, _myLab,
+			_labItem, value).date(date).comment(comment).flags(Integer.valueOf(resultFlags))
+				.build(LabImportUtilHolder.get());
 			
 	}
 }

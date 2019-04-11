@@ -26,10 +26,10 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
-import ch.elexis.base.ch.ticode.TessinerCode;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -38,8 +38,11 @@ import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.holder.CodeElementServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Money;
@@ -61,6 +64,8 @@ public class TarmedOptifierTest {
 			tlGroupLimit2, tlAlZero;
 	private static IEncounter konsPeriodStart, konsPeriodMiddle, konsPeriodEnd;
 	
+	private static ICodeElementServiceContribution tiCode;
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
 		optifier = new TarmedOptifier();
@@ -70,6 +75,9 @@ public class TarmedOptifierTest {
 			new IContactBuilder.PersonBuilder(coreModelService, "mandator1 " + now.toString(),
 				"Anton" + now.toString(), now, Gender.MALE).mandator().buildAndSave();
 		mandator = coreModelService.load(person.getId(), IMandator.class).get();
+		
+		tiCode = CodeElementServiceHolder.get().getContribution(CodeElementTyp.DIAGNOSE, "TI-Code")
+			.get();
 		
 		importTarmedReferenceData();
 		
@@ -390,7 +398,7 @@ public class TarmedOptifierTest {
 	
 	private static void resetKons(IEncounter kons){
 		clearKons(kons);
-		kons.addDiagnosis(TessinerCode.getFromCode("T1").get());
+		kons.addDiagnosis((IDiagnosis) tiCode.loadFromCode("T1").get());
 		Result<IBilled> result = optifier.add(tlBaseFirst5Min, kons);
 		assertTrue(result.isOK());
 	}

@@ -12,6 +12,8 @@
 
 package ch.elexis.icpc.views;
 
+import java.util.List;
+
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -28,11 +30,10 @@ import org.eclipse.ui.forms.widgets.Form;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.icpc.Encounter;
-import ch.elexis.icpc.IcpcCode;
-import ch.elexis.core.ui.util.PersistentObjectDropTarget;
+import ch.elexis.core.ui.util.GenericObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.icpc.model.icpc.IcpcCode;
+import ch.elexis.icpc.model.icpc.IcpcEncounter;
 import ch.rgw.tools.ExHandler;
 
 /**
@@ -47,8 +48,8 @@ public class EncounterDisplay extends Composite {
 	Form form;
 	Group gRfe, gDiag, gProc;
 	Label lRfe, lDiag, lProc;
-	Encounter actEncounter;
-	PersistentObjectDropTarget podRfe, podDiag, podProc;
+	IcpcEncounter actEncounter;
+	GenericObjectDropTarget podRfe, podDiag, podProc;
 	
 	public EncounterDisplay(Composite parent){
 		super(parent, SWT.NONE);
@@ -62,21 +63,27 @@ public class EncounterDisplay extends Composite {
 		GridData gd = SWTHelper.getFillGridData(1, true, 1, true);
 		gd.heightHint = 30;
 		gRfe.setLayoutData(gd);
-		podRfe = new PersistentObjectDropTarget(gRfe, new PersistentObjectDropTarget.IReceiver() {
+		podRfe = new GenericObjectDropTarget(gRfe, new GenericObjectDropTarget.IReceiver() {
 			
-			public boolean accept(PersistentObject o){
-				if (o instanceof IcpcCode) {
-					return true;
-				}
-				return false;
-			}
-			
-			public void dropped(PersistentObject o, DropTargetEvent ev){
-				if ((actEncounter) != null && (o instanceof IcpcCode)) {
-					actEncounter.setRFE((IcpcCode) o);
-					setEncounter(actEncounter);
+			@Override
+			public void dropped(List<Object> list, DropTargetEvent e){
+				for (Object object : list) {
+					if ((actEncounter) != null && (object instanceof IcpcCode)) {
+						actEncounter.setRfe((IcpcCode) object);
+						setEncounter(actEncounter);
+					}
 				}
 				CodeSelectorHandler.getInstance().removeCodeSelectorTarget();
+			}
+			
+			@Override
+			public boolean accept(List<Object> list){
+				for (Object object : list) {
+					if (object instanceof IcpcCode) {
+						return true;
+					}
+				}
+				return false;
 			}
 			
 		});
@@ -88,21 +95,26 @@ public class EncounterDisplay extends Composite {
 		gDiag = new Group(body, SWT.NONE);
 		gDiag.setText("Diagnose");
 		gDiag.setLayoutData(GridDataFactory.copyData(gd));
-		podDiag = new PersistentObjectDropTarget(gDiag, new PersistentObjectDropTarget.IReceiver() {
-			
-			public boolean accept(PersistentObject o){
-				if (o instanceof IcpcCode) {
-					return true;
-				}
-				return false;
-			}
-			
-			public void dropped(PersistentObject o, DropTargetEvent ev){
-				if ((actEncounter) != null && (o instanceof IcpcCode)) {
-					actEncounter.setDiag((IcpcCode) o);
-					setEncounter(actEncounter);
+		podDiag = new GenericObjectDropTarget(gDiag, new GenericObjectDropTarget.IReceiver() {
+			@Override
+			public void dropped(List<Object> list, DropTargetEvent e){
+				for (Object object : list) {
+					if ((actEncounter) != null && (object instanceof IcpcCode)) {
+						actEncounter.setDiag((IcpcCode) object);
+						setEncounter(actEncounter);
+					}
 				}
 				CodeSelectorHandler.getInstance().removeCodeSelectorTarget();
+			}
+			
+			@Override
+			public boolean accept(List<Object> list){
+				for (Object object : list) {
+					if (object instanceof IcpcCode) {
+						return true;
+					}
+				}
+				return false;
 			}
 			
 		});
@@ -111,21 +123,27 @@ public class EncounterDisplay extends Composite {
 		lDiag = new Label(gDiag, SWT.WRAP);
 		gProc = new Group(body, SWT.NONE);
 		gProc.setText("Procedere");
-		podProc = new PersistentObjectDropTarget(gProc, new PersistentObjectDropTarget.IReceiver() {
+		podProc = new GenericObjectDropTarget(gProc, new GenericObjectDropTarget.IReceiver() {
 			
-			public boolean accept(PersistentObject o){
-				if (o instanceof IcpcCode) {
-					return true;
-				}
-				return false;
-			}
-			
-			public void dropped(PersistentObject o, DropTargetEvent ev){
-				if ((actEncounter) != null && (o instanceof IcpcCode)) {
-					actEncounter.setProc((IcpcCode) o);
-					setEncounter(actEncounter);
+			@Override
+			public void dropped(List<Object> list, DropTargetEvent e){
+				for (Object object : list) {
+					if ((actEncounter) != null && (object instanceof IcpcCode)) {
+						actEncounter.setProc((IcpcCode) object);
+						setEncounter(actEncounter);
+					}
 				}
 				CodeSelectorHandler.getInstance().removeCodeSelectorTarget();
+			}
+			
+			@Override
+			public boolean accept(List<Object> list){
+				for (Object object : list) {
+					if (object instanceof IcpcCode) {
+						return true;
+					}
+				}
+				return false;
 			}
 			
 		});
@@ -135,7 +153,7 @@ public class EncounterDisplay extends Composite {
 		lProc = new Label(gProc, SWT.WRAP);
 	}
 	
-	public void setEncounter(Encounter e){
+	public void setEncounter(IcpcEncounter e){
 		actEncounter = e;
 		if (e == null) {
 			form.setText("Keine Episode gewählt");
@@ -144,7 +162,7 @@ public class EncounterDisplay extends Composite {
 			lProc.setText("");
 		} else {
 			form.setText(e.getEpisode().getLabel());
-			IcpcCode rfe = e.getRFE();
+			IcpcCode rfe = e.getRfe();
 			lRfe.setText(rfe == null ? "" : rfe.getLabel());
 			IcpcCode diag = e.getDiag();
 			lDiag.setText(diag == null ? "" : diag.getLabel());
@@ -154,10 +172,10 @@ public class EncounterDisplay extends Composite {
 	}
 	
 	class ClickReact extends MouseAdapter {
-		PersistentObjectDropTarget pod;
+		GenericObjectDropTarget pod;
 		String mode;
 		
-		ClickReact(PersistentObjectDropTarget pod, String mode){
+		ClickReact(GenericObjectDropTarget pod, String mode){
 			this.pod = pod;
 			this.mode = mode;
 		}

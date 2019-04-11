@@ -18,7 +18,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.forms;bundle-version="3.5.200",
  com.lowagie.itext;bundle-version="2.0.8",
  ch.elexis.omnivore.data;bundle-version="3.2.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: org.slf4j
+Import-Package: ch.elexis.core.documents,
+ org.slf4j
 Export-Package: ch.gpb.elexis.cst.preferences
+Service-Component: OSGI-INF/ch.gpb.elexis.cst.service.DocumentStoreHolder.xml

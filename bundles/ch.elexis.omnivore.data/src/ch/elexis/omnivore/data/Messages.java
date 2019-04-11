@@ -27,7 +27,7 @@ public class Messages extends NLS {
 	public static String DocHandle_readErrorHeading;
 	public static String DocHandle_readErrorText;
 	public static String DocHandle_readErrorText2;
-	public static String DocHandle_runErrorHeading;
+	
 	public static String DocHandle_scannedImageDialogCaption;
 	public static String DocHandle_writeErrorCaption;
 	public static String DocHandle_writeErrorCaption2;

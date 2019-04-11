@@ -11,16 +11,25 @@
 
 package ch.elexis.omnivore.data;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.data.model.OpaqueDocumentAdapter;
+import ch.elexis.omnivore.data.model.TransientCategory;
+import ch.elexis.omnivore.data.model.service.OmnivoreModelServiceHolder;
+import ch.elexis.omnivore.data.model.util.CategoryUtil;
 import ch.rgw.tools.RegexpFilter;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -28,7 +37,7 @@ import ch.rgw.tools.TimeTool;
 public class DocumentManagement implements IDocumentManager {
 	
 	public boolean addCategorie(String categorie){
-		DocHandle.addMainCategory(categorie);
+		CategoryUtil.addCategory(categorie);
 		return true;
 	}
 	
@@ -37,64 +46,92 @@ public class DocumentManagement implements IDocumentManager {
 	}
 	
 	public String addDocument(IOpaqueDocument doc, boolean automaticBilling) throws ElexisException{
-		DocHandle dh = new DocHandle(doc);
-		if (automaticBilling) {
-			if (AutomaticBilling.isEnabled()) {
-				AutomaticBilling billing = new AutomaticBilling(dh);
-				billing.bill();
+		IPatient iPatient = CoreModelServiceHolder.get()
+			.load(doc.getPatient().getId(), IPatient.class).orElse(null);
+		if (iPatient != null) {
+			IDocumentHandle docHandle =
+				OmnivoreModelServiceHolder.get().create(IDocumentHandle.class);
+			OmnivoreModelServiceHolder.get().setEntityProperty("id", doc.getGUID(), docHandle);
+			String category = doc.getCategory();
+			if (category == null || category.length() < 1) {
+				category = CategoryUtil.getDefaultCategory().getName();
+			} else {
+				CategoryUtil.ensureCategoryAvailability(category);
 			}
+			docHandle.setCategory(new TransientCategory(category));
+			docHandle.setPatient(iPatient);
+			
+			docHandle.setCreated(new TimeTool(doc.getCreationDate()).getTime());
+			docHandle.setTitle(doc.getTitle());
+			docHandle.setKeywords(doc.getKeywords());
+			docHandle.setMimeType(doc.getMimeType());
+			docHandle.setContent(doc.getContentsAsStream());
+			OmnivoreModelServiceHolder.get().save(docHandle);
+			
+			if (automaticBilling) {
+				if (AutomaticBilling.isEnabled()) {
+					AutomaticBilling billing = new AutomaticBilling(docHandle);
+					billing.bill();
+				}
+			}
+			return docHandle.getId();
+		} else {
+			throw new IllegalStateException("No patient available");
 		}
-		return dh.getId();
 	}
 	
 	public String[] getCategories(){
-		return DocHandle.getMainCategoryNames().toArray(new String[0]);
+		return CategoryUtil.getCategoriesNames().toArray(new String[0]);
 	}
 	
 	public InputStream getDocument(String id){
-		DocHandle dh = DocHandle.load(id);
-		byte[] cnt = dh.getContents();
-		ByteArrayInputStream bais = new ByteArrayInputStream(cnt);
-		return bais;
+		IDocumentHandle dh =
+			OmnivoreModelServiceHolder.get().load(id, IDocumentHandle.class).orElse(null);
+		if (dh != null) {
+			return dh.getContent();
+		}
+		return null;
 	}
 	
 	@Override
 	public List<IOpaqueDocument> listDocuments(final Patient pat, final String categoryMatch,
 		final String titleMatch, final String keywordMatch, final TimeSpan dateMatch,
 		final String contentsMatch) throws ElexisException{
-		Query<DocHandle> qbe = new Query<DocHandle>(DocHandle.class);
+		
+		IQuery<IDocumentHandle> qbe =
+			OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
 		if (pat != null) {
-			qbe.add(DocHandle.FLD_PATID, Query.EQUALS, pat.getId());
+			IPatient iPatient =
+				CoreModelServiceHolder.get().load(pat.getId(), IPatient.class).orElse(null);
+			qbe.and("kontakt", COMPARATOR.EQUALS, iPatient);
 		}
 		if (dateMatch != null) {
-			String from = dateMatch.from.toString(TimeTool.DATE_COMPACT);
-			String until = dateMatch.until.toString(TimeTool.DATE_COMPACT);
-			qbe.add(DocHandle.FLD_DATE, Query.GREATER_OR_EQUAL, from);
-			qbe.add(DocHandle.FLD_DATE, Query.LESS_OR_EQUAL, until);
+			LocalDate from = dateMatch.from.toLocalDate();
+			LocalDate until = dateMatch.until.toLocalDate();
+			qbe.and("creationDate", COMPARATOR.GREATER_OR_EQUAL, from);
+			qbe.and("creationDate", COMPARATOR.LESS_OR_EQUAL, until);
 		}
+		List<RegexpFilter> filters = new ArrayList<>();
 		if (titleMatch != null) {
 			if (titleMatch.matches("/.+/")) { //$NON-NLS-1$
-				qbe.addPostQueryFilter(
-					new RegexpFilter(titleMatch.substring(1, titleMatch.length() - 1)));
+				filters.add(new RegexpFilter(titleMatch.substring(1, titleMatch.length() - 1)));
 			} else {
-				qbe.add(DocHandle.FLD_TITLE, Query.EQUALS, titleMatch);
+				qbe.and("title", COMPARATOR.EQUALS, titleMatch);
 			}
 		}
 		if (keywordMatch != null) {
 			if (keywordMatch.matches("/.+/")) { //$NON-NLS-1$
-				qbe.addPostQueryFilter(
-					new RegexpFilter(keywordMatch.substring(1, keywordMatch.length() - 1)));
+				filters.add(new RegexpFilter(keywordMatch.substring(1, keywordMatch.length() - 1)));
 			} else {
-				qbe.add(DocHandle.FLD_KEYWORDS, Query.LIKE, "%" + keywordMatch + "%"); //$NON-NLS-1$ //$NON-NLS-2$
+				qbe.and("keywords", COMPARATOR.LIKE, "%" + keywordMatch + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		
 		if (categoryMatch != null) {
 			if (categoryMatch.matches("/.+/")) { //$NON-NLS-1$
-				qbe.addPostQueryFilter(
-					new RegexpFilter(categoryMatch.substring(1, categoryMatch.length() - 1)));
+				filters.add(new RegexpFilter(categoryMatch.substring(1, categoryMatch.length() - 1)));
 			} else {
-				qbe.add(DocHandle.FLD_CAT, Query.EQUALS, categoryMatch);
+				qbe.and("category", COMPARATOR.EQUALS, categoryMatch);
 			}
 		}
 		
@@ -103,19 +140,34 @@ public class DocumentManagement implements IDocumentManager {
 				Messages.DocumentManagement_contentsMatchNotSupported,
 				ElexisException.EE_NOT_SUPPORTED);
 		}
-		List<DocHandle> dox = qbe.execute();
+		List<IDocumentHandle> dox = qbe.execute();
+		if (!filters.isEmpty()) {
+			dox = dox.parallelStream().filter(d -> applyFilters(d, filters))
+				.collect(Collectors.toList());
+		}
 		ArrayList<IOpaqueDocument> ret = new ArrayList<IOpaqueDocument>(dox.size());
-		for (DocHandle doc : dox) {
-			ret.add(doc);
+		for (IDocumentHandle doc : dox) {
+			ret.add(new OpaqueDocumentAdapter(doc));
 		}
 		return ret;
 	}
 	
+	private boolean applyFilters(IDocumentHandle d, List<RegexpFilter> filters){
+		for (RegexpFilter regexpFilter : filters) {
+			if (!regexpFilter.select(d)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	@Override
-	public boolean removeDocument(String guid){
-		DocHandle dh = DocHandle.load(guid);
-		if (dh != null && dh.exists() && (!DocHandle.VERSION.equals(dh.getId()))) {
-			return dh.delete();
+	public boolean removeDocument(String id){
+		IDocumentHandle dh =
+			OmnivoreModelServiceHolder.get().load(id, IDocumentHandle.class).orElse(null);
+		if (dh != null) {
+			OmnivoreModelServiceHolder.get().delete(dh);
+			return true;
 		}
 		return false;
 	}

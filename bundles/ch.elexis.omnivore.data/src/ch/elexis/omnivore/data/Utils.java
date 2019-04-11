@@ -17,23 +17,41 @@ import static ch.elexis.omnivore.PreferenceConstants.PREFBASE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.data.model.service.OmnivoreModelServiceHolder;
+import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.MimeTool;
 
 public class Utils {
 	private static Logger log = LoggerFactory.getLogger(Utils.class);
 	
-	static public File archiveFile(File file, DocHandle dh){
+	static public File archiveFile(File file, IDocumentHandle dh){
 		File newFile = null;
 		String SrcPattern = null;
 		String DestDir = null;
@@ -245,19 +263,20 @@ public class Utils {
 	 * @author Joerg Sigle, reworked for Elexis 3.5 by Niklaus Giger
 	 */
 	
-	public static String createNiceFileName(DocHandle dh){
+	public static String createNiceFileName(IDocumentHandle dh){
 		StringBuffer tmp = new StringBuffer();
 		tmp.append(getFileElement("constant1", ""));
-		tmp.append(getFileElement("PID", dh.getPatient().getKuerzel())); //getPatient() liefert in etwa: ch.elexis.com@1234567; getPatient().getId() eine DB-ID; getPatient().getKuerzel() die Patientennummer.
-		tmp.append(getFileElement("fn", dh.getPatient().getName()));
-		tmp.append(getFileElement("gn", dh.getPatient().getVorname()));
-		tmp.append(getFileElement("dob", dh.getPatient().getGeburtsdatum()));
+		tmp.append(getFileElement("PID", dh.getPatient().getPatientNr())); //getPatient() liefert in etwa: ch.elexis.com@1234567; getPatient().getId() eine DB-ID; getPatient().getKuerzel() die Patientennummer.
+		tmp.append(getFileElement("fn", dh.getPatient().getLastName()));
+		tmp.append(getFileElement("gn", dh.getPatient().getFirstName()));
+		tmp.append(getFileElement("dob",
+			dh.getPatient().getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
 		
 		tmp.append(getFileElement("dt", dh.getTitle())); //not more than 80 characters, laut javadoc
 		tmp.append(getFileElement("dk", dh.getKeywords()));
 		//Da könnten auch noch Felder wie die Document Create Time etc. rein - siehe auch unten, die Methoden getPatient() etc.
 		
-		tmp.append(getFileElement("dguid", dh.getGUID()));
+		tmp.append(getFileElement("dguid", dh.getId()));
 		
 		//N.B.: We may NOT REALLY assume for sure that another filename, derived from a createTempFile() result, where the random portion would be moved forward in the name, may also be guaranteed unique!
 		//So *if* we should use createTempFile() to obtain such a filename, we should put constant2 away from configured_temp_filename and put it in the portion provided with "ext", if a unique_temp_id was requested.
@@ -280,5 +299,103 @@ public class Utils {
 		
 		tmp.append(getFileElement("constant2", ""));
 		return tmp.toString();
+	}
+	
+	/**
+	 * create a temporary file
+	 * 
+	 * @return temporary file
+	 */
+	public static File createTemporaryFile(IDocumentHandle documentHandle, String title){
+		
+		String fileExtension = null;
+		try {
+			MimeType docMimeType = new MimeType(documentHandle.getMimeType());
+			fileExtension = MimeTool.getExtension(docMimeType.toString());
+		} catch (MimeTypeParseException mpe) {
+			fileExtension = FileTool.getExtension(documentHandle.getMimeType());
+			
+			if (fileExtension == null) {
+				
+				fileExtension = FileTool.getExtension(documentHandle.getTitle());
+			}
+		}
+		
+		if (fileExtension == null) {
+			fileExtension = "";
+		}
+		
+		String config_temp_filename = Utils.createNiceFileName(documentHandle);
+		File temp = null;
+		try {
+			Path tmpDir = Files.createTempDirectory("elexis");
+			if (config_temp_filename.length() > 0) {
+				temp = new File(tmpDir.toString(), config_temp_filename + "." + fileExtension);
+				
+			} else {
+				// use title if given
+				if (title != null && !title.isEmpty()) {
+					// Remove all characters that shall not appear in the generated filename
+					String cleanTitle = title.replaceAll(
+						java.util.regex.Matcher.quoteReplacement(Preferences.cotf_unwanted_chars),
+						"_");
+					if (!cleanTitle.toLowerCase().contains("." + fileExtension.toLowerCase())) {
+						temp = new File(tmpDir.toString(), cleanTitle + "." + fileExtension);
+					} else {
+						temp = new File(tmpDir.toString(), cleanTitle);
+					}
+				} else {
+					temp = Files.createTempFile(tmpDir, "omni_", "_vore." + fileExtension).toFile();
+				}
+			}
+			tmpDir.toFile().deleteOnExit();
+			temp.deleteOnExit();
+			
+			byte[] b = IOUtils.toByteArray(documentHandle.getContent());
+			if (b == null) {
+				SWTHelper.showError(Messages.DocHandle_readErrorCaption2,
+					Messages.DocHandle_loadErrorText);
+				return temp;
+			}
+			try (FileOutputStream fos = new FileOutputStream(temp)) {
+				fos.write(b);
+			}
+			log.debug("createTemporaryFile {} size {} ext {} ", temp.getAbsolutePath(),
+				Files.size(temp.toPath()), fileExtension);
+		} catch (FileNotFoundException e) {
+			log.warn("File not found " + e);
+		} catch (IOException e) {
+			log.warn("Error creating file " + e);
+		}
+		
+		return temp;
+	}
+	
+	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat){
+		IQuery<IDocumentHandle> query =
+			OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
+		query.and("category", COMPARATOR.EQUALS, dh.getTitle());
+		query.and("kontakt", COMPARATOR.EQUALS, pat);
+		return query.execute();
+	}
+	
+	public static boolean storeExternal(IDocumentHandle docHandle, String filename){
+		try {
+			byte[] b = IOUtils.toByteArray(docHandle.getContent());
+			if (b == null) {
+				SWTHelper.showError(Messages.DocHandle_readErrorCaption2,
+					Messages.DocHandle_couldNotLoadError);
+				return false;
+			}
+			try (FileOutputStream fos = new FileOutputStream(filename)) {
+				fos.write(b);
+				return true;
+			}
+		} catch (IOException ios) {
+			ExHandler.handle(ios);
+			SWTHelper.showError(Messages.DocHandle_writeErrorCaption2,
+				Messages.DocHandle_writeErrorCaption2, ios.getMessage());
+			return false;
+		}
 	}
 }

@@ -19,7 +19,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.icpc.IcpcCode;
+import ch.elexis.icpc.Messages;
 
 public class ICPCCodesView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.codesView";
@@ -33,9 +33,9 @@ public class ICPCCodesView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent){
 		ctab = new CTabFolder(parent, SWT.NONE);
-		chapters = new ChapterDisplay[IcpcCode.classes.length];
+		chapters = new ChapterDisplay[Messages.classes.length];
 		
-		for (String chapter : IcpcCode.classes) {
+		for (String chapter : Messages.classes) {
 			CTabItem item = new CTabItem(ctab, SWT.NONE);
 			item.setText(chapter.substring(0, 1));
 			item.setToolTipText(chapter.substring(3));
@@ -51,19 +51,19 @@ public class ICPCCodesView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				int idx = ctab.getSelectionIndex();
-				if (idx >= IcpcCode.classes.length) {
+				if (idx >= Messages.classes.length) {
 					// if shortlist
 					return;
 				}
 				if (chapters[idx] == null) {
-					chapters[idx] = new ChapterDisplay(ctab, IcpcCode.classes[idx]);
+					chapters[idx] = new ChapterDisplay(ctab, Messages.classes[idx]);
 					ctab.getItem(idx).setControl(chapters[idx]);
 				}
 				chapters[idx].setComponent(mode);
 			}
 			
 		});
-		ctab.setSelection(IcpcCode.classes.length);
+		ctab.setSelection(Messages.classes.length);
 	}
 	
 	@Override

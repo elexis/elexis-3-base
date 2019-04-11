@@ -21,16 +21,18 @@ import java.util.List;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.model.ILaboratory;
 import ch.elexis.core.types.LabItemTyp;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
-import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.labor.viollier.v2.Messages;
@@ -60,7 +62,7 @@ public class PatientLabor {
 	private static int MAX_LEN_RESULT = 80; // Spaltenlänge LABORWERTE.Result
 	
 	private ViollierLaborImportSettings settings;
-	private Labor myLab = null;
+	private ILaboratory myLab = null;
 	
 	private final Patient patient;
 	
@@ -76,7 +78,7 @@ public class PatientLabor {
 	public PatientLabor(Patient patient){
 		super();
 		this.patient = patient;
-		myLab = LabImportUtil.getOrCreateLabor(KUERZEL);
+		myLab = LabImportUtilHolder.get().getOrCreateLabor(KUERZEL);
 		initDocumentManager();
 	}
 	
@@ -163,11 +165,11 @@ public class PatientLabor {
 	 *            Typ, nach dem gesucht werden soll
 	 * @return LabItem falls exisitiert. Sonst null
 	 */
-	private LabItem getLabItem(String kuerzel, String name, LabItemTyp type){
+	private ILabItem getLabItem(String kuerzel, String name, LabItemTyp type){
 		Query<LabItem> qli = new Query<LabItem>(LabItem.class);
 		qli.add(LabItem.SHORTNAME, "=", kuerzel); //$NON-NLS-1$ //$NON-NLS-2$
 		qli.and();
-		qli.add(LabItem.LAB_ID, "=", myLab.get("ID")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		qli.add(LabItem.LAB_ID, "=", myLab.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		qli.and();
 		qli.add(LabItem.TYPE, "=", new Integer(type.ordinal()).toString()); //$NON-NLS-1$
 		
@@ -180,7 +182,7 @@ public class PatientLabor {
 			qli = new Query<LabItem>(LabItem.class);
 			qli.add(LabItem.SHORTNAME, "=", name); //$NON-NLS-1$ //$NON-NLS-2$
 			qli.and();
-			qli.add(LabItem.LAB_ID, "=", myLab.get("ID")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			qli.add(LabItem.LAB_ID, "=", myLab.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			qli.and();
 			qli.add(LabItem.TYPE, "=", new Integer(type.ordinal()).toString()); //$NON-NLS-1$
 			
@@ -190,7 +192,10 @@ public class PatientLabor {
 				labItem = itemList.get(0);
 			}
 		}
-		return labItem;
+		if (labItem != null) {
+			return CoreModelServiceHolder.get().load(labItem.getId(), ILabItem.class).orElse(null);
+		}
+		return null;
 	}
 	
 	/**
@@ -204,7 +209,7 @@ public class PatientLabor {
 	 *            Datum, nach welchem gesucht werden soll
 	 * @return Gefundenes Resultat oder null
 	 */
-	private LabResult getLabResult(LabItem labItem, String name, String date){
+	private LabResult getLabResult(ILabItem labItem, String name, String date){
 		Query<LabResult> qli = new Query<LabResult>(LabResult.class);
 		qli.add(LabResult.ITEM_ID, "=", labItem.getId()); //$NON-NLS-1$
 		qli.and();
@@ -268,7 +273,7 @@ public class PatientLabor {
 		String name = Messages.PatientLabor_DocumentLabItemName;
 		String kuerzel = "doc"; //$NON-NLS-1$
 		
-		LabItem labItem = getLabItem(kuerzel, name, LabItemTyp.DOCUMENT);
+		ILabItem labItem = getLabItem(kuerzel, name, LabItemTyp.DOCUMENT);
 		if (labItem == null) {
 			if (group == null || group.length() == 0) {
 				group = LABOR_NAME;
@@ -276,8 +281,8 @@ public class PatientLabor {
 			if (sequence == null || sequence.length() == 0) {
 				sequence = DEFAULT_PRIO;
 			}
-			labItem =
-				new LabItem(kuerzel, Messages.PatientLabor_nameDokumentLaborParameter, myLab,
+			labItem = LabImportUtilHolder.get().createLabItem(kuerzel,
+				Messages.PatientLabor_nameDokumentLaborParameter, myLab,
 					"", "", //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 					"pdf", LabItemTyp.DOCUMENT, group, sequence); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -289,7 +294,7 @@ public class PatientLabor {
 		LabResult lr = getLabResult(labItem, title, datum);
 		if (lr == null) {
 			// Neues Laborresultat erstellen
-			lr = new LabResult(patient, dateTime, labItem, title, null); //$NON-NLS-1$
+			lr = new LabResult(patient, dateTime, LabItem.load(labItem.getId()), title, null); //$NON-NLS-1$
 			lr.set(FIELD_ORGIN, orderId); //$NON-NLS-1$
 			lr.set(LabResult.TIME, zeit); //$NON-NLS-1$
 			saved = true;
@@ -302,7 +307,9 @@ public class PatientLabor {
 					.println(
 						MessageFormat.format(
 							Messages.PatientLabor_InfoOverwriteValue,
-							labItem.getKuerzel() + "-" + labItem.getName(), lr.getDateTime().toDBString(true), dateTime.toDBString(true), lr.getResult(), title)); //$NON-NLS-2$
+							labItem.getCode() + "-" + labItem.getName(),
+							lr.getDateTime().toDBString(true), dateTime.toDBString(true),
+							lr.getResult(), title)); //$NON-NLS-2$
 				lr.setResult(title);
 				lr.set(LabResult.TIME, zeit); //$NON-NLS-1$
 				saved = true;
@@ -312,7 +319,9 @@ public class PatientLabor {
 					.println(
 						MessageFormat.format(
 							Messages.PatientLabor_InfoExistingValueIsValid,
-							labItem.getKuerzel() + "-" + labItem.getName(), lr.getDateTime().toDBString(true), dateTime.toDBString(true), lr.getResult(), title)); //$NON-NLS-2$
+							labItem.getCode() + "-" + labItem.getName(),
+							lr.getDateTime().toDBString(true), dateTime.toDBString(true),
+							lr.getResult(), title)); //$NON-NLS-2$
 			}
 		}
 		

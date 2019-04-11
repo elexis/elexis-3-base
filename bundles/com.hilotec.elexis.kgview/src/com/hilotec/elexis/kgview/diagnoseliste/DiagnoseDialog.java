@@ -9,12 +9,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.hilotec.elexis.kgview.data.IcpcModelServiceHolder;
+import com.tiff.common.ui.datepicker.DatePickerCombo;
+
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.icpc.IcpcCode;
+import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-
-import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class DiagnoseDialog extends TitleAreaDialog {
 	private DiagnoselisteItem di;
@@ -60,8 +61,10 @@ public class DiagnoseDialog extends TitleAreaDialog {
 			Label icpc = new Label(comp, 0);
 			String code = di.getICPC();
 			if (!StringTool.isNothing(code)) {
-				IcpcCode c = IcpcCode.load(code);
-				icpc.setText(c.getLabel());
+				IcpcCode c = IcpcModelServiceHolder.get().load(code, IcpcCode.class).orElse(null);
+				if (c != null) {
+					icpc.setText(c.getLabel());
+				}
 			}
 		}
 		

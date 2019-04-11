@@ -25,10 +25,9 @@ import java.util.regex.Pattern;
 
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.importer.div.importers.ILabItemResolver;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-import ch.elexis.data.Kontakt;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILaboratory;
 import ch.elexis.data.LabItem;
-import ch.elexis.data.Labor;
 import ch.elexis.data.Query;
 import ch.elexis.hl7.model.AbstractData;
 import ch.elexis.hl7.model.LabResultData;
@@ -242,7 +241,7 @@ public class Groups implements ILabItemResolver {
 	 *            the labor this labitem is part of
 	 * @return the next free priority
 	 */
-	public static String getCodeOrderByGroupName(String groupName, Kontakt labor){
+	public static String getCodeOrderByGroupName(String groupName, ILaboratory labor){
 		String order;
 		
 		Query<LabItem> query = new Query<LabItem>(LabItem.class);
@@ -326,7 +325,7 @@ public class Groups implements ILabItemResolver {
 	
 	@Override
 	public String getNextTestGroupSequence(AbstractData data){
-		Labor labor = LabImportUtil.getOrCreateLabor(Importer.MY_LAB);
+		ILaboratory labor = LabImportUtilHolder.get().getOrCreateLabor(Importer.MY_LAB);
 		return Groups.getCodeOrderByGroupName(getTestGroupName(data), labor);
 	}
 }

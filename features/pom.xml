@@ -91,7 +91,6 @@
 		<module>net.medshare.connector.aerztekasse.feature</module>
 		<module>net.medshare.connector.viollier.feature</module>
 		<module>org.iatrix.bestellung.rose.feature</module>
-		<module>org.iatrix.feature</module>
 		<module>org.iatrix.messwerte.feature</module>
 		<module>waelti.statistics.feature</module>
 		<module>ch.elexis.importer.aeskulap.feature</module>

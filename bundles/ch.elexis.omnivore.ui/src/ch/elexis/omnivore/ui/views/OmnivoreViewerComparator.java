@@ -4,8 +4,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.omnivore.data.DocHandle;
-import ch.rgw.tools.TimeTool;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
 
 /**
  * OmnivorViewerComparator. In Non-Flat view categories are handled with priority - meaning category
@@ -21,8 +20,6 @@ public class OmnivoreViewerComparator extends ViewerComparator {
 	private int direction = DESCENDING;
 	private int catDirection;
 	private boolean isFlat;
-	private TimeTool t1 = new TimeTool();
-	private TimeTool t2 = new TimeTool();
 	
 	public OmnivoreViewerComparator(){
 		this.propertyIndex = 0;
@@ -56,10 +53,10 @@ public class OmnivoreViewerComparator extends ViewerComparator {
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2){
 		boolean compareCategories = false;
-		DocHandle dh1 = (DocHandle) e1;
-		DocHandle dh2 = (DocHandle) e2;
-		String cat1 = dh1.getCategory().toLowerCase();
-		String cat2 = dh2.getCategory().toLowerCase();
+		IDocumentHandle dh1 = (IDocumentHandle) e1;
+		IDocumentHandle dh2 = (IDocumentHandle) e2;
+		String cat1 = dh1.getCategory().getName().toLowerCase();
+		String cat2 = dh2.getCategory().getName().toLowerCase();
 		
 		int rc = 0;
 		
@@ -69,9 +66,7 @@ public class OmnivoreViewerComparator extends ViewerComparator {
 			break;
 		case 2:
 			if (cat1.equals(cat2) || isFlat) {
-				t1.set(dh1.getDate());
-				t2.set(dh2.getDate());
-				rc = t1.compareTo(t2);
+				rc = dh1.getLastchanged().compareTo(dh2.getLastchanged());
 			} else {
 				compareCategories = true;
 			}

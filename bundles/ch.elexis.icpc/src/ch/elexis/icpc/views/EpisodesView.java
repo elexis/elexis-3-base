@@ -12,89 +12,74 @@
 
 package ch.elexis.icpc.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IContext;
 import ch.elexis.core.ui.actions.ObjectFilterRegistry;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.util.ViewMenus.IMenuPopulator;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.icpc.Episode;
 import ch.elexis.icpc.KonsFilter;
+import ch.elexis.icpc.model.icpc.IcpcEpisode;
+import ch.elexis.icpc.service.IcpcModelServiceHolder;
 
-public class EpisodesView extends ViewPart implements IActivationListener {
+public class EpisodesView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.episodesView";
 	EpisodesDisplay display;
 	KonsFilter episodesFilter = new KonsFilter(this);
 	private IAction addEpisodeAction, removeEpisodeAction, editEpisodeAction,
 			activateEpisodeAction, konsFilterAction, removeDiagnosesAction;
 	
-	private ElexisUiEventListenerImpl eeli_kons = new ElexisUiEventListenerImpl(Konsultation.class,
-		ElexisEvent.EVENT_CREATE) {
-		
-		@Override
-		public void catchElexisEvent(ElexisEvent ev){
-			switch (ev.getType()) {
-			case ElexisEvent.EVENT_CREATE:
-				/*
-				 * Konsultation k = (Konsultation) ev.getObject(); Samdas entry = k.getEntryRaw();
-				 * Record record = entry.getRecord(); break;
-				 */
-			}
+	@Inject
+	void activePatient(@Optional @Named(IContext.ACTIVE_PATIENT) IPatient patient){
+		if (display != null && !display.isDisposed()) {
+			Display.getDefault().asyncExec(() -> {
+				display.setPatient(patient);
+			});
 		}
-		
-	};
+	}
 	
-	private ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
-		ElexisEvent.EVENT_SELECTED) {
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			display.setPatient((Patient) ev.getObject());
-		}
-		
-	};
-	
-	private ElexisUiEventListenerImpl eeli_episode = new ElexisUiEventListenerImpl(Episode.class,
-		ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_UPDATE) {
-		@Override
-		public void runInUi(ElexisEvent ev){
-			Episode ep = (Episode) ev.getObject();
-			switch (ev.getType()) {
-			case ElexisEvent.EVENT_SELECTED:
-				if (ep.getStatus() == Episode.ACTIVE) {
-					activateEpisodeAction.setChecked(true);
+	@Inject
+	void selectedEpisode(@Optional IcpcEpisode episode){
+		if (display != null && !display.isDisposed()) {
+			Display.getDefault().asyncExec(() -> {
+				if (episode != null) {
+					if (episode.getStatus() == 1) {
+						activateEpisodeAction.setChecked(true);
+					} else {
+						activateEpisodeAction.setChecked(false);
+					}
+					if (konsFilterAction.isChecked()) {
+						episodesFilter.setProblem(episode);
+					}
 				} else {
-					activateEpisodeAction.setChecked(false);
+					episodesFilter.setProblem(null);
 				}
-				if (konsFilterAction.isChecked()) {
-					episodesFilter.setProblem(ep);
-				}
-				break;
-			case ElexisEvent.EVENT_DESELECTED:
-				episodesFilter.setProblem(null);
-				break;
-			case ElexisEvent.EVENT_UPDATE:
-				display.tvEpisodes.refresh();
-				break;
-			
-			}
-			
+			});
 		}
-	};
+	}
+	
+	@Inject
+	void updateEpisode(@Optional @UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IcpcEpisode episode){
+		if (display != null && !display.isDisposed()) {
+			display.tvEpisodes.refresh();
+		}
+	}
 	
 	@Override
 	public void createPartControl(final Composite parent){
@@ -120,33 +105,11 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		});
 		
 		menu.createToolbar(konsFilterAction, addEpisodeAction, editEpisodeAction);
-		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
 	}
 	
 	@Override
 	public void setFocus(){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void clearEvent(final Class<? extends PersistentObject> template){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void activation(final boolean mode){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void visible(final boolean mode){
-		if (mode) {
-			display.setPatient(ElexisEventDispatcher.getSelectedPatient());
-			ElexisEventDispatcher.getInstance().addListeners(eeli_episode, eeli_kons, eeli_pat);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_episode, eeli_kons, eeli_pat);
-		}
-		
+		display.setFocus();
 	}
 	
 	private void makeActions(){
@@ -172,9 +135,9 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 			
 			@Override
 			public void run(){
-				Episode act = display.getSelectedEpisode();
+				IcpcEpisode act = display.getSelectedEpisode();
 				if (act != null) {
-					act.delete();
+					IcpcModelServiceHolder.get().delete(act);
 					display.tvEpisodes.refresh();
 				}
 			}
@@ -188,9 +151,10 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 			
 			@Override
 			public void run(){
-				Episode act = display.getSelectedEpisode();
+				IcpcEpisode act = display.getSelectedEpisode();
 				if (act != null) {
-					act.removeFromList("DiagLink");
+					act.getDiagnosis().forEach(d -> act.removeDiagnosis(d));
+					IcpcModelServiceHolder.get().save(act);
 					display.tvEpisodes.refresh();
 				}
 			}
@@ -204,7 +168,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 			
 			@Override
 			public void run(){
-				Episode ep = display.getSelectedEpisode();
+				IcpcEpisode ep = display.getSelectedEpisode();
 				if (ep != null) {
 					EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), ep);
 					if (dlg.open() == Dialog.OK) {
@@ -220,10 +184,9 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 			
 			@Override
 			public void run(){
-				Episode ep = display.getSelectedEpisode();
+				IcpcEpisode ep = display.getSelectedEpisode();
 				if (ep != null) {
-					ep.setStatus(activateEpisodeAction.isChecked() ? Episode.ACTIVE
-							: Episode.INACTIVE);
+					ep.setStatus(activateEpisodeAction.isChecked() ? 1 : 0);
 					display.tvEpisodes.refresh();
 				}
 			}
@@ -244,7 +207,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 				} else {
 					ObjectFilterRegistry.getInstance().registerObjectFilter(Konsultation.class,
 						episodesFilter);
-					Episode ep = display.getSelectedEpisode();
+					IcpcEpisode ep = display.getSelectedEpisode();
 					episodesFilter.setProblem(ep);
 				}
 			}

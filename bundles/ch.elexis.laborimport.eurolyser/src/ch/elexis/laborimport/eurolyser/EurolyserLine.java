@@ -10,16 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.beans.ContactBean;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
 import ch.elexis.core.ui.laboratory.dialogs.LabItemSelektor;
-import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabMapping;
-import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
@@ -27,7 +28,7 @@ public class EurolyserLine {
 	
 	private static Logger logger = LoggerFactory.getLogger(EurolyserLine.class);
 	
-	private Labor labor;
+	private ILaboratory labor;
 	
 	private String line;
 	
@@ -42,8 +43,8 @@ public class EurolyserLine {
 	
 	private String resultObservationTime;
 	
-	public EurolyserLine(Labor labor, String line){
-		this.labor = labor;
+	public EurolyserLine(ILaboratory labor2, String line){
+		this.labor = labor2;
 		this.line = line;
 		parseLine();
 	}
@@ -162,8 +163,8 @@ public class EurolyserLine {
 	 * 			
 	 * @return
 	 */
-	public TransientLabResult createResult(HashMap<String, Patient> filePatientMap){
-		Patient patient = resolvePatient(filePatientMap);
+	public TransientLabResult createResult(HashMap<String, IPatient> filePatientMap){
+		IPatient patient = resolvePatient(filePatientMap);
 		if (patient == null) {
 			AskAbortRunnable askAbort = new AskAbortRunnable();
 			Display.getDefault().syncExec(askAbort);
@@ -173,12 +174,13 @@ public class EurolyserLine {
 		}
 		filePatientMap.put(patientId, patient);
 		
-		LabItem labItem = resolveLabItem();
+		ILabItem labItem = resolveLabItem();
 		if (labItem == null) {
 			AskCreateItemRunnable askCreate = new AskCreateItemRunnable();
 			Display.getDefault().syncExec(askCreate);
 			if (askCreate.getResult()) {
-				labItem = new LabItem(resultItemName, resultItemName, (Kontakt) null, null, null, resultUnit,
+				labItem = LabImportUtilHolder.get().createLabItem(resultItemName, resultItemName,
+					(ILaboratory) null, null, null, resultUnit,
 					LabItemTyp.NUMERIC, "Eurolyser", "0");
 				// create a mapping with the slection
 				new LabMapping(labor.getId(), resultItemName, labItem.getId(), false);
@@ -188,16 +190,16 @@ public class EurolyserLine {
 		if (labItem != null && patient != null) {
 			TimeTool analyseTime = new TimeTool(resultObservationTime);
 			TransientLabResult result =
-				new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(labor), labItem, resultValue)
-					.unit(resultUnit).analyseTime(analyseTime).build(new LabImportUtil());
+				new TransientLabResult.Builder(patient, labor, labItem, resultValue)
+					.unit(resultUnit).analyseTime(analyseTime).build(LabImportUtilHolder.get());
 			return result;
 		}
 		
 		return null;
 	}
 	
-	private LabItem resolveLabItem(){
-		LabItem item = LabImportUtil.getLabItem(resultItemName, labor);
+	private ILabItem resolveLabItem(){
+		ILabItem item = LabImportUtilHolder.get().getLabItem(resultItemName, labor);
 		
 		if (item == null) {
 			Display display = Display.getDefault();
@@ -211,14 +213,14 @@ public class EurolyserLine {
 	
 	private class LabItemSelectionRunnable implements Runnable {
 		
-		private LabItem labItem;
+		private ILabItem labItem;
 		private String labItemName;
 		
 		public LabItemSelectionRunnable(String labItemName){
 			this.labItemName = labItemName;
 		}
 		
-		public LabItem getLabItem(){
+		public ILabItem getLabItem(){
 			return labItem;
 		}
 		
@@ -233,7 +235,8 @@ public class EurolyserLine {
 				if (!items.isEmpty()) {
 					// create a mapping with the slection
 					new LabMapping(labor.getId(), labItemName, items.get(0).getId(), false);
-					labItem = items.get(0);
+					labItem = CoreModelServiceHolder.get()
+						.load(items.get(0).getId(), ILabItem.class).orElse(null);
 					logger.info("Item mapping created for " + labItem.getLabel());
 				}
 			}
@@ -241,7 +244,7 @@ public class EurolyserLine {
 		
 	}
 	
-	private Patient resolvePatient(HashMap<String, Patient> filePatientMap){
+	private IPatient resolvePatient(HashMap<String, IPatient> filePatientMap){
 		String lastname = "";
 		String firstname = "";
 		String[] nameParts = patientName.split(" ");
@@ -252,10 +255,10 @@ public class EurolyserLine {
 			firstname = nameParts[1];
 		}
 		
-		Patient p = Patient.loadByPatientID(patientId);
-		if (p != null && p.isValid()) {
-			if (p.getVorname().equalsIgnoreCase(firstname)
-				&& p.getName().equalsIgnoreCase(lastname)) {
+		IPatient p = CoreModelServiceHolder.get().load(patientId, IPatient.class).orElse(null);
+		if (p != null) {
+			if (p.getFirstName().equalsIgnoreCase(firstname)
+				&& p.getLastName().equalsIgnoreCase(lastname)) {
 				logger.info("Patient " + p.getLabel() + " found by PracitceID [" + patientId + "]");
 				return p;
 			}
@@ -266,7 +269,11 @@ public class EurolyserLine {
 			return p;
 		}
 		
-		return (Patient) KontaktSelektor.showInSync(Patient.class, "Patient ausw\u00E4hlen",
+		Patient pat = (Patient) KontaktSelektor.showInSync(Patient.class, "Patient ausw\u00E4hlen",
 			"Wer ist " + lastname + " " + firstname + "?");
+		if (pat != null) {
+			CoreModelServiceHolder.get().load(pat.getId(), IPatient.class).orElse(null);
+		}
+		return null;
 	}
 }

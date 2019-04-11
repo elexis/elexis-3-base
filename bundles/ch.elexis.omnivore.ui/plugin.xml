@@ -4,11 +4,12 @@
     <extension
          point="org.eclipse.ui.views">
       <view
-            name="Omnivore"
-            icon="icons/fressen.gif"
             category="ch.elexis.omnivore"
             class="ch.elexis.omnivore.ui.views.OmnivoreView"
-            id="ch.elexis.omnivore.views.OmnivoreView">
+            icon="icons/fressen.gif"
+            id="ch.elexis.omnivore.views.OmnivoreView"
+            inject="true"
+            name="Omnivore">
       </view>
    </extension>
    <extension

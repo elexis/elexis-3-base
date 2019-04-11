@@ -19,24 +19,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILaboratory;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabItem;
-import ch.elexis.data.Labor;
 import ch.elexis.laborimport.eurolyser.EurolyserImporter;
 
 public class LabImportPage extends ImporterPage {
 	
 	private static Logger logger = LoggerFactory.getLogger(LabImportPage.class);
 	
-	private Labor eurolyserLabor;
+	private ILaboratory eurolyserLabor;
 	private Shell parentShell;
 	
 	private File archiveDir;
 	
 	public LabImportPage(){
-		eurolyserLabor = LabImportUtil.getOrCreateLabor("Eurolyser");
+		eurolyserLabor = LabImportUtilHolder.get().getOrCreateLabor("Eurolyser");
 	}
 	
 	@Override

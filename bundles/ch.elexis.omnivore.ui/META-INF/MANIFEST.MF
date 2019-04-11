@@ -13,4 +13,9 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  ch.elexis.omnivore;bundle-version="3.2.0",
  ch.elexis.omnivore.data;bundle-version="3.2.0",
  ch.rgw.utility
-Export-Package: ch.elexis.omnivore.ui.jobs
+Export-Package: ch.elexis.omnivore.ui.jobs,
+ ch.elexis.omnivore.ui.util
+Service-Component: OSGI-INF/ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder.xml
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.e4.core.di.annotations,
+ org.eclipse.e4.ui.di

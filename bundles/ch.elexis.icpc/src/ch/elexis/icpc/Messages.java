@@ -57,4 +57,29 @@ public class Messages extends NLS {
 	}
 	
 	private Messages(){}
+	
+	public static final String[] classes = {
+		Messages.IcpcCode_class_A, Messages.IcpcCode_class_B, Messages.IcpcCode_class_D,
+		Messages.IcpcCode_class_F, Messages.IcpcCode_class_H, Messages.IcpcCode_class_K,
+		Messages.IcpcCode_class_L, Messages.IcpcCode_class_N, Messages.IcpcCode_class_P,
+		Messages.IcpcCode_class_R, Messages.IcpcCode_class_S, Messages.IcpcCode_class_T,
+		Messages.IcpcCode_class_U, Messages.IcpcCode_class_W, Messages.IcpcCode_class_X,
+		Messages.IcpcCode_class_Y, Messages.IcpcCode_class_Z
+	};
+	/*
+	 * public static final String[] components_de={ };
+	 */
+	public static final String[] components = {
+		Messages.IcpcCode_comp_1, Messages.IcpcCode_comp_2, Messages.IcpcCode_comp_3,
+		Messages.IcpcCode_comp_4, Messages.IcpcCode_comp_5, Messages.IcpcCode_comp_6,
+		Messages.IcpcCode_comp_7
+	};
+	
+	public static String getStatusText(int status){
+		if (status == 1) {
+			return Active;
+		} else {
+			return Inactive;
+		}
+	}
 }

@@ -119,8 +119,7 @@ public class ModelUtil {
 		return Optional.empty();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static <T> T loadCoreModel(EntityWithId entity, Class<T> clazz){
-		return (T) modelService.load(entity.getId(), clazz);
+		return (T) modelService.load(entity.getId(), clazz).orElse(null);
 	}
 }

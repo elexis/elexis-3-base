@@ -81,6 +81,7 @@ public class Messages extends NLS {
     public static String Preferences_omnivore;
     public static String Preferences_pathForDocs;
     public static String Preferences_storeInFS;
+	public static String DocHandle_runErrorHeading;
 
     static { // load message values from bundle file
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);

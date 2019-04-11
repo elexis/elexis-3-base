@@ -8,8 +8,11 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.elexis.data.Query;
-import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.omnivore.data.Messages;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 
 public class OutsourceUiJob {
 	
@@ -24,17 +27,21 @@ public class OutsourceUiJob {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 					InterruptedException{
 					
-					Query<DocHandle> qDoc;
-					qDoc = new Query<DocHandle>(DocHandle.class);
-					List<DocHandle> lDocs = qDoc.execute();
+					IQuery<IDocumentHandle> qDoc =
+						OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
+					List<IDocumentHandle> lDocs = qDoc.execute();
 					
 					monitor.beginTask("Dateien werden ausgelagert...", lDocs.size());
 					
-					for (DocHandle docHandle : lDocs) {
+					for (IDocumentHandle docHandle : lDocs) {
 						if (monitor.isCanceled())
 							return;
 						monitor.subTask("Datei: " + docHandle.getTitle());
-						docHandle.exportToFileSystem();
+						if (!docHandle.exportToFileSystem()) {
+							SWTHelper.showError(Messages.DocHandle_writeErrorCaption2,
+								Messages.DocHandle_writeErrorCaption2,
+								"Fehlerdetails siehe Logdatei");
+						}
 						monitor.worked(1);
 					}
 					monitor.done();

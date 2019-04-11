@@ -39,14 +39,16 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.Preferences;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.data.model.TransientCategory;
+import ch.elexis.omnivore.data.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.Messages;
 import ch.rgw.tools.TimeTool;
 
 public class FileImportDialog extends TitleAreaDialog {
 	String file;
-	DocHandle dh;
+	IDocumentHandle dh;
 	DatePickerCombo dDate;
 	Text tTitle;
 	Text tKeywords;
@@ -58,10 +60,10 @@ public class FileImportDialog extends TitleAreaDialog {
 	public String category;
 	private String preSelectedCategory;
 	
-	public FileImportDialog(DocHandle dh){
+	public FileImportDialog(IDocumentHandle dh){
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
 		this.dh = dh;
-		file = dh.get(DocHandle.FLD_TITLE);
+		file = dh.getTitle();
 	}
 	
 	/**
@@ -89,7 +91,7 @@ public class FileImportDialog extends TitleAreaDialog {
 			if (dh == null) {
 				dDate.setDate(new Date());
 			} else {
-				dDate.setDate(new TimeTool(dh.getDate()).getTime());
+				dDate.setDate(new TimeTool(dh.getCreated()).getTime());
 			}
 		}
 		new Label(ret, SWT.None).setText(Messages.FileImportDialog_categoryLabel);
@@ -109,7 +111,7 @@ public class FileImportDialog extends TitleAreaDialog {
 					new InputDialog(getShell(), Messages.FileImportDialog_newCategoryCaption,
 						Messages.FileImportDialog_newCategoryText, null, null);
 				if (id.open() == Dialog.OK) {
-					DocHandle.addMainCategory(id.getValue());
+					CategoryUtil.addCategory(id.getValue());
 					cbCategories.add(id.getValue());
 					cbCategories.setText(id.getValue());
 				}
@@ -127,7 +129,7 @@ public class FileImportDialog extends TitleAreaDialog {
 					"Geben Sie bitte einen neuen Namen für die Kategorie ein", old, null);
 				if (id.open() == Dialog.OK) {
 					String nn = id.getValue();
-					DocHandle.renameCategory(old, nn);
+					CategoryUtil.renameCategory(old, nn);
 					cbCategories.remove(old);
 					cbCategories.add(nn);
 				}
@@ -146,12 +148,12 @@ public class FileImportDialog extends TitleAreaDialog {
 						"Geben Sie bitte an, in welche andere Kategorie die Dokumente dieser Kategorie verschoben werden sollen",
 						"", null);
 				if (id.open() == Dialog.OK) {
-					DocHandle.removeCategory(old, id.getValue());
+					CategoryUtil.removeCategory(old, id.getValue());
 					cbCategories.remove(id.getValue());
 				}
 			}
 		});
-		List<String> cats = DocHandle.getMainCategoryNames();
+		List<String> cats = CategoryUtil.getCategoriesNames();
 		if (cats.size() > 0) {
 			Collections.sort(cats);
 			cbCategories.setItems(cats.toArray(new String[0]));
@@ -173,8 +175,8 @@ public class FileImportDialog extends TitleAreaDialog {
 		tKeywords = SWTHelper.createText(ret, 4, SWT.NONE);
 		tTitle.setText(file);
 		if (dh != null) {
-			tKeywords.setText(dh.get(DocHandle.FLD_KEYWORDS));
-			cbCategories.setText(dh.getCategoryName());
+			tKeywords.setText(dh.getKeywords());
+			cbCategories.setText(dh.getCategory().getName());
 		}
 		bEditCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE));
 		bDeleteCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE));
@@ -204,13 +206,13 @@ public class FileImportDialog extends TitleAreaDialog {
 		title = tTitle.getText();
 		category = cbCategories.getText();
 		if (dh != null) {
-			dh.setDate(date);
-			if (category.length() > 0)
-				dh.set(DocHandle.FLD_CAT, category);
-			dh.set(DocHandle.FLD_TITLE, title);
-			dh.set(DocHandle.FLD_KEYWORDS, keywords);
+			dh.setCreated(date);
+			if (category.length() > 0) {
+				dh.setCategory(new TransientCategory(category));
+			}
+			dh.setTitle(title);
+			dh.setKeywords(keywords);
 		}
 		super.okPressed();
 	}
-	
 }

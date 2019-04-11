@@ -50,7 +50,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.icpc.IcpcCode;
+import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.rgw.tools.StringTool;
 
 /*

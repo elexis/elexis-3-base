@@ -1,9 +1,6 @@
 package ch.elexis.omnivore.data.service.internal;
 
-import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
-
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,12 +24,11 @@ import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
-import ch.elexis.data.Query;
 import ch.elexis.data.dto.CategoryDocumentDTO;
 import ch.elexis.omnivore.Constants;
-import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.omnivore.data.model.IDocumentHandle;
 import ch.elexis.omnivore.data.model.TransientCategory;
+import ch.elexis.omnivore.data.model.util.CategoryUtil;
 
 @Component(immediate = true, property = "storeid=ch.elexis.data.store.omnivore")
 public class OmnivoreDocumentStore implements IDocumentStore {
@@ -154,30 +150,18 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	
 	@Override
 	public Optional<Object> getPersistenceObject(IDocument iDocument){
-		return Optional.of(DocHandle.load(iDocument.getId()));
+		return Optional.empty();
 	}
 	
 	@Override
 	public ICategory createCategory(String name){
 		if (name != null) {
-			if (findCategoriesByName(name).isEmpty()) {
-				DocHandle.addMainCategory(name);
+			if (CategoryUtil.findCategoriesByName(name).isEmpty()) {
+				CategoryUtil.addCategory(name);
 			}
 		}
-		return new CategoryDocumentDTO(name);
+		return new TransientCategory(name);
 		
-	}
-
-	private List<ICategory> findCategoriesByName(String name){
-		Query<DocHandle> query = new Query<>(DocHandle.class);
-		query.add(DocHandle.FLD_CAT, Query.EQUALS, name, true);
-		query.add(DocHandle.FLD_MIMETYPE, Query.EQUALS, CATEGORY_MIMETYPE);
-		List<DocHandle> docs = query.execute();
-		List<ICategory> iCategories = new ArrayList<>();
-		for (DocHandle docHandle : docs) {
-			iCategories.add(new CategoryDocumentDTO(docHandle.getCategoryName()));
-		}
-		return iCategories;
 	}
 	
 	@Override
@@ -186,24 +170,23 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 		if (iDocument.getId() != null && iDocument.getCategory() != null) {
 			// check if document to category references exists and ignore current iDocument
 			ICategory oldCategory = iDocument.getCategory();
-			Query<DocHandle> query = new Query<>(DocHandle.class);
-			query.add(DocHandle.FLD_CAT, Query.EQUALS, oldCategory.getName(), true);
-			query.add(DocHandle.FLD_MIMETYPE, Query.NOT_EQUAL, CATEGORY_MIMETYPE);
-			query.add(DocHandle.FLD_ID, Query.NOT_EQUAL, iDocument.getId());
-			List<DocHandle> docs = query.execute();
-			if (!docs.isEmpty()) {
+			
+			List<IDocumentHandle> existing =
+				CategoryUtil.getDocumentsWithCategoryByName(oldCategory.getName());
+			if (existing.isEmpty()
+				|| (existing.size() == 1 && existing.get(0).getId().equals(iDocument.getId()))) {
+				CategoryUtil.removeCategory(oldCategory.getName(), newCategory);
+			} else {
 				throw new IllegalStateException(
 					"at least one document to category reference exists with id: "
-						+ docs.get(0).getId());
+						+ existing.get(0).getId());
 			}
-			DocHandle.removeCategory(oldCategory.getName(), newCategory);
 		}
 	}
 	
 	@Override
 	public void renameCategory(ICategory category, String newCategory)
 		throws IllegalStateException{
-		DocHandle.renameCategory(category.getName(), newCategory);
+		CategoryUtil.renameCategory(category.getName(), newCategory);
 	}
-	
 }

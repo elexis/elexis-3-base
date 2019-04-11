@@ -10,10 +10,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
-import ch.elexis.core.model.IPersistentObject;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Patient;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
@@ -78,9 +79,17 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 							DocumentStoreServiceHolder.get().saveDocument(letter,
 								new FileInputStream(file));
 							String xid = line[1];
-							Optional<IPersistentObject> po =
+							Optional<Object> po =
 								DocumentStoreServiceHolder.get().getPersistenceObject(letter);
-							po.ifPresent(o -> o.addXid(getXidDomain(), xid, true));
+							if(po.isPresent()) {
+								if(po.get() instanceof IPersistentObject) {
+									((IPersistentObject) po.get()).addXid(getXidDomain(), xid,
+										true);
+								} else if (po.get() instanceof Identifiable) {
+									((Identifiable) po.get()).addXid(getXidDomain(), xid, true);
+								}
+							}
+							
 						}
 					}
 					monitor.worked(1);

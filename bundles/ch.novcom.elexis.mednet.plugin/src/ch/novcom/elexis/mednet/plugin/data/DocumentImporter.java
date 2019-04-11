@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.interfaces.IPatient;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
@@ -41,7 +41,6 @@ import ch.novcom.elexis.mednet.plugin.MedNetConfigFormItem;
 import ch.novcom.elexis.mednet.plugin.MedNetLabItemResolver;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 import ch.rgw.tools.Result;
-import ch.rgw.tools.TimeTool;
 
 /**
  * Manage the import of HL7 and PDF Documents into the Patient
@@ -145,8 +144,11 @@ public class DocumentImporter {
 				if(res.isOK()) {
 					//If the result has successfully been imported
 					//Get the Patient found in the HL7 or selected by the user
-					IPatient ipat = hlp.hl7Reader.getPatient();
-					patient = DocumentImporter.getPatient(ipat.getId(), ipat.getFamilyName(), ipat.getFirstName() , ipat.getDateOfBirth().toString(TimeTool.DATE_COMPACT), ipat.getGender().value(), false);
+					ch.elexis.core.model.IPatient ipat = hlp.hl7Reader.getPatient();
+					patient = DocumentImporter.getPatient(ipat.getId(), ipat.getLastName(),
+						ipat.getFirstName(),
+						ipat.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyyMMdd")),
+						ipat.getGender().value(), false);
 					success = true;
 				}
 				else {

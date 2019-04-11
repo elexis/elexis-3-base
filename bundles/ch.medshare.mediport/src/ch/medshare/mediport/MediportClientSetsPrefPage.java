@@ -36,11 +36,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Query;
 import ch.elexis.tarmedprefs.TarmedRequirements;
-import ch.elexis.core.ui.util.Log;
-import ch.elexis.core.ui.util.SWTHelper;
 import ch.medshare.awt.Desktop;
 import ch.medshare.mediport.config.Client;
 import ch.medshare.mediport.config.ClientParam;
@@ -246,12 +248,14 @@ public class MediportClientSetsPrefPage extends MediPortAbstractPrefPage {
 			client = new Client(getPrefString(MediPortAbstractPrefPage.MPC_INSTALL_DIR));
 		}
 		if ((client.getEan() == null || client.getEan().length() == 0) && mandant != null) {
-			client.setEan(TarmedRequirements.getEAN(mandant));
+			client.setEan(TarmedRequirements.getEAN(
+				CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).orElse(null)));
 		}
 		
 		fillMKey(clientNum);
 		
-		String mandantEan = TarmedRequirements.getEAN(mandant);
+		String mandantEan = TarmedRequirements.getEAN(
+			CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).orElse(null));
 		String senderEan = client.getEan();
 		if (senderEan == null && mandantEan != null) {
 			senderEan = mandantEan;
@@ -578,7 +582,8 @@ public class MediportClientSetsPrefPage extends MediPortAbstractPrefPage {
 			cxWieMandant.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e){
 					txtSenderEan.setEnabled(!cxWieMandant.getSelection());
-					txtSenderEan.setText(TarmedRequirements.getEAN(getSelectedMandant()));
+					txtSenderEan.setText(TarmedRequirements.getEAN(CoreModelServiceHolder.get()
+						.load(getSelectedMandant().getId(), IMandator.class).orElse(null)));
 				}
 			});
 			

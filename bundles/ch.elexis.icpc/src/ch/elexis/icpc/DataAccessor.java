@@ -12,22 +12,31 @@
 
 package ch.elexis.icpc;
 
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import ch.elexis.core.data.interfaces.IDataAccess;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
-import ch.elexis.core.data.interfaces.IDataAccess;
-import ch.rgw.tools.IFilter;
+import ch.elexis.icpc.model.icpc.IcpcCode;
+import ch.elexis.icpc.model.icpc.IcpcEncounter;
+import ch.elexis.icpc.model.icpc.IcpcEpisode;
+import ch.elexis.icpc.model.icpc.IcpcPackage;
+import ch.elexis.icpc.service.IcpcModelServiceHolder;
 import ch.rgw.tools.Result;
-import ch.rgw.tools.TimeTool;
 
 public class DataAccessor implements IDataAccess {
 	
@@ -52,60 +61,63 @@ public class DataAccessor implements IDataAccess {
 	 * Alle Encounters in der Episode ep suchen, die zum Zeitraum dates passen und Liste zurueck
 	 * geben.
 	 */
-	private Result<Object> sucheEncounters(Episode ep, String dates, PersistentObject dep){
-		Query<Encounter> qen = new Query<Encounter>(Encounter.class);
-		qen.add("EpisodeID", Query.LIKE, ep.getId());
+	private Result<Object> sucheEncounters(IcpcEpisode ep, String dates, Object dep){
+		IQuery<IcpcEncounter> query = IcpcModelServiceHolder.get().getQuery(IcpcEncounter.class);
+		query.and(IcpcPackage.Literals.ICPC_ENCOUNTER__EPISODE, COMPARATOR.EQUALS, ep);
 		if (dep instanceof Konsultation) {
-			Konsultation kons = (Konsultation) dep;
-			qen.add("KonsID", Query.LIKE, kons.getId());
+			IEncounter encounter = CoreModelServiceHolder.get()
+				.load(((Konsultation) dep).getId(), IEncounter.class).orElse(null);
+			query.and(IcpcPackage.Literals.ICPC_ENCOUNTER__ENCOUNTER, COMPARATOR.EQUALS, encounter);
 		}
+		List<IcpcEncounter> encounters = query.execute();
 		
 		// TODO: Filtern nach dates
 		
 		// Encounters ohne RFE, Diag und Procedere rauswerfen
-		qen.addPostQueryFilter(new IFilter() {
-			public boolean select(Object element){
-				Encounter e = (Encounter) element;
-				return e.getRFE() != null || e.getDiag() != null || e.getProc() != null;
-			}
-		});
-		List<Encounter> result = qen.execute();
+		encounters = encounters.parallelStream().filter(e -> filterEmptyEncounter(e))
+			.collect(Collectors.toList());
 		
 		// Sortieren
-		Collections.sort(result, new Comparator<Encounter>() {
-			public int compare(Encounter e1, Encounter e2){
-				TimeTool tt1 = new TimeTool(e1.getKons().getDatum());
-				TimeTool tt2 = new TimeTool(e2.getKons().getDatum());
-				return tt1.compareTo(tt2);
+		Collections.sort(encounters, new Comparator<IcpcEncounter>() {
+			public int compare(IcpcEncounter e1, IcpcEncounter e2){
+				return e1.getEncounter().getDate().compareTo(e2.getEncounter().getDate());
 			}
 		});
 		
-		return new Result<Object>(result);
+		return new Result<Object>(encounters);
 	}
 	
-	private Result<Object> sucheEncounters(List<Episode> eps, Map<Episode, List<Encounter>> encs,
-		PersistentObject dep, String dates){
+	private boolean filterEmptyEncounter(IcpcEncounter encounter){
+		return encounter.getRfe() != null || encounter.getDiag() != null
+			|| encounter.getProc() != null;
+	}
+	
+	private Result<Object> sucheEncounters(List<IcpcEpisode> eps,
+		Map<IcpcEpisode, List<IcpcEncounter>> encs,
+		Object dep, String dates){
 		
-		Patient pat;
+		IPatient pat;
 		
 		if (dep instanceof Konsultation) {
-			Konsultation kons = (Konsultation) dep;
-			pat = kons.getFall().getPatient();
+			IEncounter encounter = CoreModelServiceHolder.get()
+				.load(((Konsultation) dep).getId(), IEncounter.class).orElse(null);
+			pat = encounter.getPatient();
 		} else if (dep instanceof Patient) {
-			pat = (Patient) dep;
+			pat = CoreModelServiceHolder.get().load(((Patient) dep).getId(), IPatient.class)
+				.orElse(null);
 		} else {
 			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
 				"Ungültiger Parameter", dep, true);
 		}
 		
 		// Alle Episoden des Patienten zusammensuchen
-		Query<Episode> qep = new Query<Episode>(Episode.class);
-		qep.add(Episode.FLD_PATIENT_ID, Query.LIKE, pat.getId());
-		qep.orderBy(false, Episode.FLD_START_DATE);
-		List<Episode> raw_eps = qep.execute();
+		IQuery<IcpcEpisode> query = IcpcModelServiceHolder.get().getQuery(IcpcEpisode.class);
+		query.and(IcpcPackage.Literals.ICPC_EPISODE__PATIENT, COMPARATOR.EQUALS, pat);
+		query.orderBy(IcpcPackage.Literals.ICPC_EPISODE__START_DATE, ORDER.ASC);
+		List<IcpcEpisode> raw_eps = query.execute();
 		
 		int count = 0;
-		for (Episode ep : raw_eps) {
+		for (IcpcEpisode ep : raw_eps) {
 			// Betroffene Encounters suchen
 			Result<Object> res = sucheEncounters(ep, dates, dep);
 			if (!res.isOK()) {
@@ -115,7 +127,7 @@ public class DataAccessor implements IDataAccess {
 			// Falls mindestens ein Encounter gefunden wurde,
 			// Episode in Liste aufnehmen.
 			@SuppressWarnings("unchecked")
-			List<Encounter> ep_encs = (List<Encounter>) res.get();
+			List<IcpcEncounter> ep_encs = (List<IcpcEncounter>) res.get();
 			if (ep_encs.size() > 0) {
 				eps.add(ep);
 				encs.put(ep, ep_encs);
@@ -136,8 +148,9 @@ public class DataAccessor implements IDataAccess {
 			 * Procedere . . . . . Problem2 | Datum | aktiv/inaktiv . . . . .
 			 */
 			
-			List<Episode> episodes = new LinkedList<Episode>();
-			HashMap<Episode, List<Encounter>> encounters = new HashMap<Episode, List<Encounter>>();
+			List<IcpcEpisode> episodes = new LinkedList<IcpcEpisode>();
+			HashMap<IcpcEpisode, List<IcpcEncounter>> encounters =
+				new HashMap<IcpcEpisode, List<IcpcEncounter>>();
 			
 			Result<Object> res = sucheEncounters(episodes, encounters, dependentObject, dates);
 			if (!res.isOK()) {
@@ -156,19 +169,20 @@ public class DataAccessor implements IDataAccess {
 			result[i][4] = "Procedere";
 			i++;
 			
-			for (Episode ep : episodes) {
+			for (IcpcEpisode ep : episodes) {
 				/* Zeile fuer Episode generieren */
 				result[i][0] = ep.getTitle();
 				result[i][1] = ep.getStartDate();
-				result[i][2] = ep.getStatusText();
+				result[i][2] = getStatusText(ep.getStatus());
 				result[i][3] = result[i][4] = "";
 				i++;
 				
 				/* Zeilen fuer Encounters generieren */
-				for (Encounter en : encounters.get(ep)) {
+				for (IcpcEncounter en : encounters.get(ep)) {
 					result[i][0] = "";
-					result[i][1] = en.getKons().getDatum();
-					result[i][2] = code(en.getRFE());
+					result[i][1] = en.getEncounter().getDate()
+						.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+					result[i][2] = code(en.getRfe());
 					result[i][3] = code(en.getDiag());
 					result[i][4] = code(en.getProc());
 					i++;
@@ -182,4 +196,11 @@ public class DataAccessor implements IDataAccess {
 		}
 	}
 	
+	private String getStatusText(int status){
+		if (status == 1) {
+			return Messages.Active;
+		} else {
+			return Messages.Inactive;
+		}
+	}
 }

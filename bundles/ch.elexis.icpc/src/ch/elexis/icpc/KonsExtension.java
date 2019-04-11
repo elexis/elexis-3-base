@@ -18,13 +18,18 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IDiagnosis;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IDiagnose;
-import ch.elexis.data.Konsultation;
-import ch.elexis.core.ui.text.EnhancedTextField;
+import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.core.ui.text.IRichTextDisplay;
 import ch.elexis.core.ui.util.IKonsExtension;
+import ch.elexis.icpc.model.icpc.IcpcEncounter;
+import ch.elexis.icpc.model.icpc.IcpcEpisode;
+import ch.elexis.icpc.service.IcpcModelServiceHolder;
 
 public class KonsExtension implements IKonsExtension {
 	IRichTextDisplay mine;
@@ -32,7 +37,7 @@ public class KonsExtension implements IKonsExtension {
 	
 	public String connect(final IRichTextDisplay tf){
 		mine = tf;
-		mine.addDropReceiver(Episode.class, this);
+		mine.addDropReceiver(IcpcEpisode.class, this);
 		return Activator.PLUGIN_ID;
 	}
 	
@@ -42,9 +47,10 @@ public class KonsExtension implements IKonsExtension {
 	}
 	
 	public boolean doXRef(final String refProvider, final String refID){
-		Encounter enc = Encounter.load(refID);
-		if (enc.exists()) {
-			ElexisEventDispatcher.fireSelectionEvent(enc);
+		IcpcEncounter enc =
+			IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
+		if (enc != null) {
+			ContextServiceHolder.get().getRootContext().setTyped(enc);
 		}
 		return true;
 	}
@@ -55,26 +61,35 @@ public class KonsExtension implements IKonsExtension {
 	}
 	
 	public void insert(final Object o, final int pos){
-		if (o instanceof Episode) {
-			Episode ep = (Episode) o;
-			final Konsultation k =
-				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			Encounter enc = new Encounter(k, ep);
-			List<IDiagnose> diags = ep.getDiagnoses();
-			for (IDiagnose dg : diags) {
-				k.addDiagnose(dg);
+		if (o instanceof IcpcEpisode) {
+			IcpcEpisode ep = (IcpcEpisode) o;
+			final IEncounter encounter =
+				ContextServiceHolder.get().getTyped(IEncounter.class).orElse(null);
+			if (encounter != null) {
+				IcpcEncounter icpcEncounter =
+					IcpcModelServiceHolder.get().create(IcpcEncounter.class);
+				icpcEncounter.setEncounter(encounter);
+				icpcEncounter.setEpisode(ep);
+				IcpcModelServiceHolder.get().save(icpcEncounter);
+				List<IDiagnosis> diags = ep.getDiagnosis();
+				for (IDiagnosis dg : diags) {
+					encounter.addDiagnosis(dg);
+				}
+				mine.insertXRef(pos, EPISODE_TITLE + ep.getLabel(), Activator.PLUGIN_ID,
+					icpcEncounter.getId());
+				EncounterServiceHolder.get().updateVersionedEntry(encounter, new Samdas(mine.getContentsAsXML()));
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, encounter);
 			}
-			mine.insertXRef(pos, EPISODE_TITLE + ep.getLabel(), Activator.PLUGIN_ID, enc.getId());
-			k.updateEintrag(mine.getContentsAsXML(), false);
-			ElexisEventDispatcher.update(k);
 		}
 		
 	}
 	
 	public void removeXRef(final String refProvider, final String refID){
-		Encounter encounter = Encounter.load(refID);
-		encounter.delete();
-		
+		IcpcEncounter enc =
+			IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
+		if (enc != null) {
+			IcpcModelServiceHolder.get().delete(enc);
+		}
 	}
 	
 	public void setInitializationData(final IConfigurationElement config,

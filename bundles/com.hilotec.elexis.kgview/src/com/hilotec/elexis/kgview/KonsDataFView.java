@@ -13,13 +13,13 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import ch.elexis.core.ui.util.PersistentObjectDropTarget;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.icpc.IcpcCode;
-import ch.rgw.tools.StringTool;
-
+import com.hilotec.elexis.kgview.data.IcpcModelServiceHolder;
 import com.hilotec.elexis.kgview.data.KonsData;
+
+import ch.elexis.core.ui.util.GenericObjectDropTarget;
+import ch.elexis.data.Konsultation;
+import ch.elexis.icpc.model.icpc.IcpcCode;
+import ch.rgw.tools.StringTool;
 
 public abstract class KonsDataFView extends SimpleTextFView {
 	protected final String dbfield;
@@ -74,7 +74,8 @@ public abstract class KonsDataFView extends SimpleTextFView {
 		for (String c : entries) {
 			if (c.length() == 0)
 				continue;
-			IcpcCode code = IcpcCode.load(c);
+			IcpcCode code = IcpcModelServiceHolder.get()
+				.load(c, ch.elexis.icpc.model.icpc.IcpcCode.class).orElse(null);
 			code_list.add(code);
 			icpc_list.add(code.getLabel());
 		}
@@ -126,17 +127,24 @@ public abstract class KonsDataFView extends SimpleTextFView {
 			});
 			icpc_list.setMenu(m);
 			
-			new PersistentObjectDropTarget(icpc_list, new PersistentObjectDropTarget.IReceiver() {
-				public void dropped(PersistentObject o, DropTargetEvent e){
-					IcpcCode code = (IcpcCode) o;
-					icpc_list.add(code.getLabel());
-					code_list.add(code);
-					storeIcpc();
+			new GenericObjectDropTarget(icpc_list, new GenericObjectDropTarget.IReceiver() {
+				
+				@Override
+				public void dropped(java.util.List<Object> list, DropTargetEvent e){
+					for (Object o : list) {
+						IcpcCode code = (IcpcCode) o;
+						icpc_list.add(code.getLabel());
+						code_list.add(code);
+						storeIcpc();
+					}
 				}
 				
-				public boolean accept(PersistentObject o){
-					if (!(o instanceof IcpcCode) || code_list.contains(o))
-						return false;
+				@Override
+				public boolean accept(java.util.List<Object> list){
+					for (Object o : list) {
+						if (!(o instanceof IcpcCode) || code_list.contains(o))
+							return false;
+					}
 					return isEnabled();
 				}
 			});

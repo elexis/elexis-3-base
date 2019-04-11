@@ -3,41 +3,51 @@ package ch.elexis.omnivore.data;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.data.interfaces.events.MessageEvent;
 import ch.elexis.core.data.interfaces.events.MessageEvent.MessageType;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.ICodeElementBlock;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.builder.ICoverageBuilder;
+import ch.elexis.core.model.builder.IEncounterBuilder;
+import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
+import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.core.ui.views.Messages;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Leistungsblock;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.omnivore.PreferenceConstants;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
 import ch.rgw.tools.Result;
-import ch.rgw.tools.TimeTool;
 
 public class AutomaticBilling {
 	
 	public static boolean isEnabled(){
-		String blockId = CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, "");
-		return CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING, false)
+		String blockId =
+			ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING_BLOCK, "");
+		return ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING, false)
 			&& !blockId.isEmpty();
 	}
 	
 	private static Executor executor = Executors.newSingleThreadExecutor();
 	
-	private Patient patient;
-	private DocHandle docHandle;
+	private IPatient patient;
+	private IDocumentHandle docHandle;
 	
-	public AutomaticBilling(DocHandle docHandle){
+	public AutomaticBilling(IDocumentHandle docHandle){
 		this.patient = docHandle.getPatient();
 		this.docHandle = docHandle;
 	}
@@ -49,16 +59,23 @@ public class AutomaticBilling {
 				@Override
 				public void run(){
 					try {
-						Konsultation encounter = getEncounter();
+						IEncounter encounter = getEncounter();
 						if (encounter != null) {
-							Leistungsblock block = Leistungsblock.load(
-								CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, ""));
-							if (encounter != null && encounter.isEditable(false)) {
-								addBlockToEncounter(block, encounter);
-							} else {
-								LoggerFactory.getLogger(getClass()).warn(String.format(
-									"Could not add block [%s] for document of patient [%s] because no valid kons found.",
-									block.getName(), patient.getLabel()));
+							String blockId = ConfigServiceHolder.get()
+								.getLocal(PreferenceConstants.AUTO_BILLING_BLOCK, "");
+							if (StringUtils.isNotBlank(blockId)) {
+								ICodeElementBlock block = CoreModelServiceHolder.get()
+									.load(blockId, ICodeElementBlock.class).orElse(null);
+								if (block != null) {
+									if (encounter != null && BillingServiceHolder.get()
+										.isEditable(encounter).isOK()) {
+										addBlockToEncounter(block, encounter);
+									} else {
+										LoggerFactory.getLogger(getClass()).warn(String.format(
+											"Could not add block [%s] for document of patient [%s] because no valid kons found.",
+											block.getCode(), patient.getLabel()));
+									}
+								}
 							}
 						}
 					} catch (Exception e) {
@@ -72,71 +89,72 @@ public class AutomaticBilling {
 		}
 	}
 	
-	private void addBlockToEncounter(Leistungsblock block, Konsultation encounter){
+	private void addBlockToEncounter(ICodeElementBlock block, IEncounter encounter){
 		List<ICodeElement> elements = block.getElements(encounter);
 		for (ICodeElement element : elements) {
-			if (element instanceof PersistentObject) {
-				Result<IVerrechenbar> result = encounter.addLeistung((IVerrechenbar) element);
+			if (element instanceof IBillable) {
+				Result<IBilled> result =
+					BillingServiceHolder.get().bill((IBillable) element, encounter, 1);
 				if (!result.isOK()) {
 					ElexisEventDispatcher.getInstance()
 						.fireMessageEvent(new MessageEvent(MessageType.WARN,
 							Messages.VerrechnungsDisplay_imvalidBilling,
 							patient.getLabel() + "\nDokument import Verrechnung von ["
-								+ ((IVerrechenbar) element).getCode() + "]\n\n"
+								+ element.getCode() + "]\n\n"
 								+ result.toString()));
 				}
 			}
 		}
 	}
 	
-	private Konsultation getEncounter(){
-		Konsultation encounter = patient.getLastKonsultation();
-		if (encounter == null || !encounter.isEditable(false)) {
+	private IEncounter getEncounter(){
+		Optional<IEncounter> encounter = EncounterServiceHolder.get().getLatestEncounter(patient);
+		if (!encounter.isPresent() || !EncounterServiceHolder.get().isEditable(encounter.get())) {
 			encounter = createEncounter();
 		}
-		return encounter;
+		return encounter.orElse(null);
 	}
 	
-	private Konsultation createEncounter(){
-		Konsultation lastEncounter = patient.getLastKonsultation();
-		Fall fall = null;
-		if(lastEncounter != null) {
-			fall = lastEncounter.getFall();
+	private Optional<IEncounter> createEncounter(){
+		Optional<IEncounter> lastEncounter =
+			EncounterServiceHolder.get().getLatestEncounter(patient); // patient.getLastKonsultation();
+		ICoverage coverage = null;
+		if (lastEncounter.isPresent()) {
+			coverage = lastEncounter.get().getCoverage();
 		}
-		if (fall == null || !fall.isOpen()) {
-			List<Fall> openFall = getOpenFall();
+		if (coverage == null || !coverage.isOpen()) {
+			List<ICoverage> openFall = getOpenFall();
 			if (openFall.isEmpty()) {
-				fall = patient.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(),
-					Fall.getDefaultCaseLaw());
+				coverage = new ICoverageBuilder(CoreModelServiceHolder.get(), patient,
+					CoverageServiceHolder.get().getDefaultCoverageLabel(),
+					CoverageServiceHolder.get().getDefaultCoverageReason(),
+					CoverageServiceHolder.get().getDefaultCoverageLaw()).buildAndSave();
 			} else {
-				fall = openFall.get(0);
+				coverage = openFall.get(0);
 			}
 		}
-		if (fall != null) {
-			return fall.neueKonsultation();
+		if (coverage != null) {
+			return Optional.of(new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
+				ContextServiceHolder.get().getActiveMandator().orElse(null)).buildAndSave());
 		}
-		return null;
+		return Optional.empty();
 	}
 	
-	private List<Fall> getOpenFall(){
-		ArrayList<Fall> ret = new ArrayList<Fall>();
-		Fall[] faelle = patient.getFaelle();
-		for (Fall f : faelle) {
+	private List<ICoverage> getOpenFall(){
+		ArrayList<ICoverage> ret = new ArrayList<>();
+		List<ICoverage> coverages = patient.getCoverages();
+		for (ICoverage f : coverages) {
 			if (f.isOpen()) {
 				ret.add(f);
 			}
 		}
-		ret.sort(new Comparator<Fall>() {
-			TimeTool o1Begin = new TimeTool();
-			TimeTool o2Begin = new TimeTool();
+		ret.sort(new Comparator<ICoverage>() {
 			@Override
-			public int compare(Fall o1, Fall o2){
-				if (o1.getBeginnDatum() != null && o2.getBeginnDatum() != null) {
-					o1Begin.set(o1.getBeginnDatum());
-					o2Begin.set(o2.getBeginnDatum());
-					return o1Begin.compareTo(o2Begin);
+			public int compare(ICoverage o1, ICoverage o2){
+				if (o1.getDateFrom() != null && o2.getDateFrom() != null) {
+					return o1.getDateFrom().compareTo(o2.getDateFrom());
 				}
-				return Long.compare(o1.getLastUpdate(), o2.getLastUpdate());
+				return Long.compare(o1.getLastupdate(), o2.getLastupdate());
 			}
 		});
 		return ret;

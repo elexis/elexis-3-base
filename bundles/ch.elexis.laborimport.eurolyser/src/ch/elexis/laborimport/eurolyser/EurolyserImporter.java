@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Set;
 
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-
-import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 
 public class EurolyserImporter {
@@ -21,13 +21,13 @@ public class EurolyserImporter {
 	public final static String CONFIG_IMPORT_MANDANTONLY = "eurolyser/import/mandantonly";
 	
 	private File file;
-	private Labor labor;
+	private ILaboratory labor;
 	
-	private HashMap<String, Patient> filePatientMap = new HashMap<String, Patient>();
+	private HashMap<String, IPatient> filePatientMap = new HashMap<String, IPatient>();
 	
-	public EurolyserImporter(Labor labor, File file){
+	public EurolyserImporter(ILaboratory eurolyserLabor, File file){
 		this.file = file;
-		this.labor = labor;
+		this.labor = eurolyserLabor;
 	}
 	
 	public boolean createResults(){
@@ -51,7 +51,8 @@ public class EurolyserImporter {
 			Set<Patient> keys = resultsMap.keySet();
 			for (Patient patient : keys) {
 				List<TransientLabResult> patResults = resultsMap.get(patient);
-				new LabImportUtil().importLabResults(patResults, new DefaultLabImportUiHandler());
+				LabImportUtilHolder.get().importLabResults(patResults,
+					new DefaultLabImportUiHandler());
 			}
 			return !resultsMap.isEmpty();
 		} catch (RuntimeException e) {

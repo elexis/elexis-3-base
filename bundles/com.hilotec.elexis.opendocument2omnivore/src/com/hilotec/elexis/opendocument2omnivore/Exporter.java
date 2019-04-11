@@ -3,9 +3,10 @@ package com.hilotec.elexis.opendocument2omnivore;
 import java.io.File;
 import java.io.RandomAccessFile;
 
-import ch.elexis.omnivore.data.DocHandle;
-
 import com.hilotec.elexis.opendocument.export.IDocExporter;
+
+import ch.elexis.omnivore.ui.util.UiUtils;
+
 
 public class Exporter implements IDocExporter {
 
@@ -22,7 +23,7 @@ public class Exporter implements IDocExporter {
 			e.printStackTrace();
 			return;
 		}
-		DocHandle.assimilate(path);
+		UiUtils.assimilate(path);
 		new File(path).delete();
 	}
 

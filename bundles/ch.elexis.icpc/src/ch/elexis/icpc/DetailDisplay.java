@@ -12,6 +12,10 @@
 
 package ch.elexis.icpc;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -23,11 +27,20 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import ch.elexis.icpc.model.icpc.IcpcCode;
 
 public class DetailDisplay implements IDetailDisplay {
 	Text tLang, tICD, tCriteria, tInclude, tExclude, tConsider, tNote;
 	FormToolkit tk = UiDesk.getToolkit();
 	Form form;
+	
+	@Inject
+	public void selection(
+		@Optional @Named("ch.elexis.icpc.selection") IcpcCode code){
+		if (form != null && !form.isDisposed()) {
+			display(code);
+		}
+	}
 	
 	public Composite createDisplay(Composite parent, IViewSite site){
 		// parent.setLayout(new FillLayout());
@@ -74,17 +87,21 @@ public class DetailDisplay implements IDetailDisplay {
 	public void display(Object obj){
 		if (obj instanceof IcpcCode) {
 			IcpcCode ipc = (IcpcCode) obj;
-			form.setText(IcpcCode.checkNull(ipc.get("short")));
-			tLang.setText(IcpcCode.checkNull(ipc.get("text")));
-			tICD.setText(IcpcCode.checkNull(ipc.get("icd10")));
-			tCriteria.setText(IcpcCode.checkNull(ipc.get("criteria")));
-			tInclude.setText(IcpcCode.checkNull(ipc.get("inclusion")));
-			tExclude.setText(IcpcCode.checkNull(ipc.get("exclusion")));
-			tNote.setText(IcpcCode.checkNull(ipc.get("note")));
-			tConsider.setText(IcpcCode.checkNull(ipc.get("consider")));
+			form.setText(checkNull(ipc.getText()));
+			tLang.setText(checkNull(ipc.getDescription()));
+			tICD.setText(checkNull(ipc.getIcd10()));
+			tCriteria.setText(checkNull(ipc.getCriteria()));
+			tInclude.setText(checkNull(ipc.getInclusion()));
+			tExclude.setText(checkNull(ipc.getExclusion()));
+			tNote.setText(checkNull(ipc.getNote()));
+			tConsider.setText(checkNull(ipc.getConsider()));
 			// form.reflow(true);
 		}
 		
+	}
+	
+	private String checkNull(String string){
+		return string != null ? string : "";
 	}
 	
 	public Class getElementClass(){

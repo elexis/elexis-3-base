@@ -16,14 +16,20 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IFilter;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.actions.ObjectFilterRegistry.IObjectFilterProvider;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.Query;
+import ch.elexis.icpc.model.icpc.IcpcEncounter;
+import ch.elexis.icpc.model.icpc.IcpcEpisode;
+import ch.elexis.icpc.model.icpc.IcpcPackage;
+import ch.elexis.icpc.service.IcpcModelServiceHolder;
 import ch.elexis.icpc.views.EpisodesView;
 
 public class KonsFilter implements IObjectFilterProvider, IFilter {
-	Episode mine;
+	IcpcEpisode mine;
 	EpisodesView home;
 	boolean bDaemfung;
 	
@@ -31,9 +37,8 @@ public class KonsFilter implements IObjectFilterProvider, IFilter {
 		this.home = home;
 	}
 	
-	public void setProblem(final Episode problem){
+	public void setProblem(final IcpcEpisode problem){
 		mine = problem;
-		ElexisEventDispatcher.reload(Konsultation.class); // TODO why?
 	}
 	
 	public void activate(){
@@ -65,13 +70,28 @@ public class KonsFilter implements IObjectFilterProvider, IFilter {
 			return true;
 		}
 		if (toTest instanceof Konsultation) {
-			Konsultation k = (Konsultation) toTest;
-			List<Encounter> list =
-				new Query<Encounter>(Encounter.class, "EpisodeID", mine.getId()).execute();
-			for (Encounter enc : list) {
-				if (enc.get("KonsID").equals(k.getId())) {
-					return true;
-				}
+			IEncounter encounter = CoreModelServiceHolder.get()
+				.load(((Konsultation) toTest).getId(), IEncounter.class).orElse(null);
+			if (encounter != null) {
+				return mineHasEncounter(encounter);
+			}
+		}
+		if (toTest instanceof IEncounter) {
+			IEncounter encounter = (IEncounter) toTest;
+			if (encounter != null) {
+				return mineHasEncounter(encounter);
+			}
+		}
+		return false;
+	}
+	
+	private boolean mineHasEncounter(IEncounter encounter){
+		IQuery<IcpcEncounter> query = IcpcModelServiceHolder.get().getQuery(IcpcEncounter.class);
+		query.and(IcpcPackage.Literals.ICPC_ENCOUNTER__EPISODE, COMPARATOR.EQUALS, mine);
+		List<IcpcEncounter> list = query.execute();
+		for (IcpcEncounter enc : list) {
+			if (enc.getEncounter().equals(encounter)) {
+				return true;
 			}
 		}
 		return false;

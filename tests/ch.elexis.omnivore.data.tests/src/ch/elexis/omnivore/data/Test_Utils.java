@@ -31,6 +31,7 @@ import com.google.common.io.ByteStreams;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.data.Patient;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
 
 public class Test_Utils{
 	private static Logger log = LoggerFactory.getLogger(Test_Utils.class);
@@ -38,7 +39,8 @@ public class Test_Utils{
 	static ArrayList<Path> archiveDestPaths = new ArrayList<Path>();
 	static ArrayList<String> archiveSrcPattern = new ArrayList<String>();
 	public Test_Utils(){}
-	static DocHandle dh = null;
+	
+	static IDocumentHandle dh = null;
 	static Patient male = null;
 	
 	@BeforeClass
@@ -46,7 +48,7 @@ public class Test_Utils{
 		log.debug("testImportFirst getLink {}", AbstractPersistentObjectTest.getLink());
 		setArchivePreferences();
 		male = new Patient("Test", "Vorname", "24.12.1955", "m");
-		dh = new DocHandle("category", new byte[] {
+		dh = AllOmnivoreDataTests.createDocumentHandle("category", new byte[] {
 			1, 2
 		}, male, "MyTitle", "mime", "Stichwort");
 	}
@@ -145,7 +147,7 @@ public class Test_Utils{
 		clearArchivePreferences();
 		Patient female = new Patient("Musterfrau", "Erika", "1.1.2000", "f");
 		String title = "My Title";
-		DocHandle dh = new DocHandle("category", new byte[] {
+		IDocumentHandle dh = AllOmnivoreDataTests.createDocumentHandle("category", new byte[] {
 			1, 2
 		}, female, title, "mime", "keyword");
 
@@ -154,7 +156,7 @@ public class Test_Utils{
 		Assert.assertFalse(result.endsWith("_ENDE"));
 		Assert.assertFalse(result.startsWith("ANFANG_"));
 		Assert.assertEquals("",result);
-		File temp = dh.createTemporaryFile(title);
+		File temp = Utils.createTemporaryFile(dh, title);
 		String tempName = temp.getName();
 		Assert.assertEquals(title +".", tempName);
 		
@@ -167,15 +169,16 @@ public class Test_Utils{
 		String title = "MyTitle.pdf";
 		InputStream input =Test_Utils.class.getResourceAsStream("/rsc/ocr.pdf");
 		 
-		DocHandle dh;
+		IDocumentHandle dh;
 		try {
-			dh = new DocHandle("category", ByteStreams.toByteArray(input), female, title, ".PDF", "keyword");
+			dh = AllOmnivoreDataTests.createDocumentHandle("category",
+				ByteStreams.toByteArray(input), female, title, ".PDF", "keyword");
 			String result = Utils.createNiceFileName(dh);
 			// We cannot test the random here
 			Assert.assertFalse(result.endsWith("_ENDE"));
 			Assert.assertFalse(result.startsWith("ANFANG_"));
 			Assert.assertEquals("",result);
-			File temp = dh.createTemporaryFile(title);
+			File temp = Utils.createTemporaryFile(dh, title);
 			String tempName = temp.getName();
 			Assert.assertEquals(title, tempName);
 		} catch (IOException e) {
@@ -188,7 +191,7 @@ public class Test_Utils{
 	@Test
 	public void testCreateMeaningfull(){
 		Patient female = new Patient("Musterfrau", "Erika", "1.1.2000", "f");
-		DocHandle dh = new DocHandle("category", new byte[] {
+		IDocumentHandle dh = AllOmnivoreDataTests.createDocumentHandle("category", new byte[] {
 			1, 2
 		}, female, "title", "mime", "keyword");
 
@@ -202,11 +205,11 @@ public class Test_Utils{
 	@Test
 	public void testCreateTemporaryFile(){
 		Patient female = new Patient("Musterfrau", "Marianne", "1.1.2000", "f");
-		DocHandle dh = new DocHandle("category", new byte[] {
+		IDocumentHandle dh = AllOmnivoreDataTests.createDocumentHandle("category", new byte[] {
 			1, 2, 3
 		}, female, "title", "mime", "keyword");
 
-		File f = dh.createTemporaryFile("dummy");
+		File f = Utils.createTemporaryFile(dh, "dummy");
 		Assert.assertTrue(f.exists());
 		Assert.assertThat(f.getName(), startsWith("ANFANG_"));
 		Assert.assertEquals(3, f.length());
@@ -219,7 +222,7 @@ public class Test_Utils{
 
 		String toBeStripped = "A\\B\\C:D/E:*?()+,\';\"\\r\t\n´`F";
 		Patient male = new Patient(toBeStripped, "B" + toBeStripped, "14.12.1955", "m");
-		DocHandle dh = new DocHandle("category", new byte[] {
+		IDocumentHandle dh = AllOmnivoreDataTests.createDocumentHandle("category", new byte[] {
 			1, 2
 		}, male, "Dr. hc.", "mime", "Stichwort");
 		
@@ -232,9 +235,9 @@ public class Test_Utils{
 		Assert.assertThat(result, containsString("Dr. hc.YStichwoX"));
 	}
 	
-	private DocHandle getTestDh() {
+	private IDocumentHandle getTestDh(){
 		Patient male = new Patient("Test", "Vorname", "14.12.1955", "m");
-		DocHandle dh = new DocHandle("category", new byte[] {
+		IDocumentHandle dh = AllOmnivoreDataTests.createDocumentHandle("category", new byte[] {
 			1, 2
 		}, male, "Dr. hc.", "mime", "Stichwort");
 		return dh;
@@ -254,7 +257,7 @@ public class Test_Utils{
 			File result = Utils.archiveFile(testTmp, dh);
 			Assert.assertNotNull(result);
 			Assert.assertTrue(result.getName().contains("src_0_src"));
-			Assert.assertTrue(result.getName().contains(dh.getPatient().getKuerzel()));
+			Assert.assertTrue(result.getName().contains(dh.getPatient().getPatientNr()));
 			String readBack= new String(Files.readAllLines(result.toPath()).get(0));
 			Assert.assertTrue(result.toString().contains(srcPattern));
 			Assert.assertEquals(testContent, readBack);
@@ -267,7 +270,7 @@ public class Test_Utils{
 	@Test
 	public void testArchiveFileWithoutParameters(){
 		clearArchivePreferences();
-		dh = new DocHandle("category", new byte[] {
+		dh = AllOmnivoreDataTests.createDocumentHandle("category", new byte[] {
 			1, 2
 		}, male, "MeinZweiterTitel", "mime", "ZweiterStichwort");
 		try {

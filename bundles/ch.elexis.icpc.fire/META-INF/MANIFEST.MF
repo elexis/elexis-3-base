@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.ui,
 Export-Package: ch.elexis.icpc.fire.handlers,
  ch.elexis.icpc.fire.model,
  ch.elexis.icpc.fire.ui
+Import-Package: ch.elexis.icpc.model.icpc

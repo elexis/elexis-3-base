@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="icpc" nsURI="http://ch.elexis.base/model/icpc" nsPrefix="ch.elexis.icpc.model">
+  <eClassifiers xsi:type="ecore:EClass" name="IcpcEncounter" abstract="true" interface="true"
+      eSuperTypes="../../ch.elexis.core/model/model.ecore#//Identifiable ../../ch.elexis.core/model/model.ecore#//Deleteable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="encounter" eType="ecore:EClass ../../ch.elexis.core/model/model.ecore#//IEncounter"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="episode" eType="#//IcpcEpisode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="proc" eType="#//IcpcCode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="diag" eType="#//IcpcCode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rfe" eType="#//IcpcCode"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IcpcEpisode" abstract="true" interface="true"
+      eSuperTypes="../../ch.elexis.core/model/model.ecore#//WithExtInfo ../../ch.elexis.core/model/model.ecore#//Deleteable ../../ch.elexis.core/model/model.ecore#//Identifiable">
+    <eOperations name="addDiagnosis">
+      <eParameters name="diagnosis" lowerBound="1" eType="ecore:EClass ../../ch.elexis.core/model/model.ecore#//IDiagnosis"/>
+    </eOperations>
+    <eOperations name="removeDiagnosis">
+      <eParameters name="diagnosis" lowerBound="1" eType="ecore:EClass ../../ch.elexis.core/model/model.ecore#//IDiagnosis"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="number" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="patient" eType="ecore:EClass ../../ch.elexis.core/model/model.ecore#//IPatient">
+      <eAnnotations source="http://elexis.info/jpa/entity/attribute/mapping">
+        <details key="attributeName" value="patientKontakt"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="diagnosis" upperBound="-1"
+        eType="ecore:EClass ../../ch.elexis.core/model/model.ecore#//IDiagnosis" changeable="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IcpcCode" abstract="true" interface="true"
+      eSuperTypes="../../ch.elexis.core/model/model.ecore#//IDiagnosisTree">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="icd10" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="criteria" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="note" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="consider" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -33,13 +33,16 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.RnStatus.REJECTCODE;
@@ -186,7 +189,9 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 							log.log("doLicensedOutput: rn.getNr()=" + rn.getNr()
 								+ "; getRecipientEAN(rn)=" + getRecipientEAN(rn)
 								+ "; TarmedRequirements.getEAN(getKostentraeger(rn))="
-								+ TarmedRequirements.getEAN(getKostentraeger(rn))
+								+ TarmedRequirements.getEAN(CoreModelServiceHolder.get()
+									.load(getKostentraeger(rn).getId(), IContact.class)
+									.orElse(null))
 								+ "; partnerInfoContainsEan(getRecipientEAN(rn))="
 								+ partnerInfoContainsEan(getRecipientEAN(rn))
 								+ "; isMediPortParticipant=" + isMediPortParticipant
@@ -334,7 +339,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	}
 	
 	@Override
-	protected String getIntermediateEAN(final Fall fall){
+	protected String getIntermediateEAN(final ICoverage fall){
 		String retVal = prefs.getString(MediPortAbstractPrefPage.MPC_INTERMEDIAER_EAN);
 		if (retVal == null) {
 			retVal = super.getIntermediateEAN(fall);
@@ -343,7 +348,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	}
 	
 	@Override
-	protected String getRole(final Fall fall){
+	protected String getRole(final ICoverage fall){
 		String retVal = prefs.getString(MediportMainPrefPage.MPC_SERVER);
 		if (retVal == null) {
 			retVal = super.getRole(fall);
@@ -352,7 +357,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	}
 	
 	@Override
-	protected Element buildGuarantor(Kontakt garant, Kontakt patient){
+	protected Element buildGuarantor(IContact garant, IContact patient){
 		// Hinweis:
 		// XML Standard: http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
 		// Dort steht beim Feld 11310: Gesetzlicher Vertreter des Patienten.
@@ -364,7 +369,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	}
 	
 	@Override
-	protected String getSenderEAN(Mandant actMandant){
+	protected String getSenderEAN(IMandator actMandant){
 		String senderEan = null;
 		MPCProperties props = getProperties();
 		if (props != null) {
@@ -459,9 +464,11 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	// }
 	
 	private String getRecipientEAN(Rechnung rn){
-		String retVal = TarmedRequirements.getRecipientEAN(getKostentraeger(rn));
+		String retVal = TarmedRequirements.getRecipientEAN(CoreModelServiceHolder.get()
+			.load(getKostentraeger(rn).getId(), IContact.class).orElse(null));
 		if (retVal.equals("unknown")) {
-			retVal = TarmedRequirements.getEAN(getKostentraeger(rn));
+			retVal = TarmedRequirements.getEAN(CoreModelServiceHolder.get()
+				.load(getKostentraeger(rn).getId(), IContact.class).orElse(null));
 		}
 		return retVal;
 	}

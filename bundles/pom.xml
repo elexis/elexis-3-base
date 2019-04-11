@@ -16,6 +16,7 @@
 	</parent>
 
 	<modules>
+	    <module>ch.elexis.icpc.model</module>
 		<module>at.medevit.atc_codes</module>
 		<module>at.medevit.ch.artikelstamm</module>
 		<module>at.medevit.ch.artikelstamm.model</module>
@@ -132,7 +133,6 @@
 		<module>net.medshare.connector.viollier</module>
 		<module>org.iatrix.bestellung.rose</module>
 		<module>org.iatrix.messwerte</module>
-		<module>org.iatrix</module>
 		<module>waelti.statistics</module>
 		<module>ch.itmed.lmz.risch.laborder</module>
 		<module>ch.elexis.importer.aeskulap.core</module>

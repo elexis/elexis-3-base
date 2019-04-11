@@ -1,20 +1,16 @@
 package ch.elexis.omnivore.data.service.internal;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import org.apache.commons.io.IOUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.ILocalDocumentService.ILoadHandler;
 import ch.elexis.core.services.ILocalDocumentService.ISaveHandler;
-import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
 
 /**
  * Service component for {@link LocalDocumentService} access. <br/>
@@ -33,17 +29,15 @@ public class LocalDocumentServiceHolder {
 	public void bind(ILocalDocumentService service){
 		LocalDocumentServiceHolder.localDocumentService = Optional.ofNullable(service);
 		
-		service.registerSaveHandler(DocHandle.class, new ISaveHandler() {
+		service.registerSaveHandler(IDocumentHandle.class, new ISaveHandler() {
 			@Override
 			public boolean save(Object documentSource, ILocalDocumentService service){
-				DocHandle docHandle = (DocHandle) documentSource;
+				IDocumentHandle docHandle = (IDocumentHandle) documentSource;
 				Optional<InputStream> content = service.getContent(docHandle);
 				if (content.isPresent()) {
 					try {
-						docHandle.storeContent(IOUtils.toByteArray(content.get()));
+						docHandle.setContent(content.get());
 						return true;
-					} catch (IOException | ElexisException e) {
-						LoggerFactory.getLogger(getClass()).error("Error saving document", e);
 					} finally {
 						try {
 							content.get().close();
@@ -56,16 +50,11 @@ public class LocalDocumentServiceHolder {
 			}
 		});
 		
-		service.registerLoadHandler(DocHandle.class, new ILoadHandler() {
+		service.registerLoadHandler(IDocumentHandle.class, new ILoadHandler() {
 			@Override
 			public InputStream load(Object documentSource){
-				DocHandle docHandle = (DocHandle) documentSource;
-				try {
-					return new ByteArrayInputStream(docHandle.getContentsAsBytes());
-				} catch (ElexisException e) {
-					LoggerFactory.getLogger(getClass()).error("Error loading document", e);
-				}
-				return null;
+				IDocumentHandle docHandle = (IDocumentHandle) documentSource;
+				return docHandle.getContent();
 			}
 		});
 	}

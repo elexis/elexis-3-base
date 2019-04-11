@@ -8,7 +8,9 @@
             CodeSelectorFactory="ch.elexis.privatrechnung.views.Leistungsselektor"
             ElementFactory="ch.elexis.privatrechnung.data.LeistungsFactory"
             ImporterClass="ch.elexis.privatrechnung.data.Importer"
-            name="PrivatLeistung">
+            elexisClassName="ch.elexis.privatrechnung.data.Leistung"
+            name="PrivatLeistung"
+            system="Privat">
       </Leistung>
    </extension>
    <extension

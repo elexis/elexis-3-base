@@ -3,10 +3,11 @@ package ch.medshare.connect.abacusjunior.packages;
 import java.util.Collections;
 import java.util.MissingResourceException;
 
+import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
+import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
-import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
-
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
@@ -18,7 +19,8 @@ public class DataPackage extends Package {
 	
 	public void fetchResults(Patient actPatient){
 		TimeTool date = new TimeTool();
-		;
+		IPatient iPatient =
+			CoreModelServiceHolder.get().load(actPatient.getId(), IPatient.class).orElse(null);
 		
 		for (String line : getMessage().split("\n")) {
 			String[] cells = line.split("\t");
@@ -37,9 +39,9 @@ public class DataPackage extends Package {
 					Value val = Value.getValue(cells[0]);
 					
 					TransientLabResult result =
-						val.fetchValue(actPatient, cells[1], cells.length >= 3 ? cells[2] : "",
+						val.fetchValue(iPatient, cells[1], cells.length >= 3 ? cells[2] : "",
 							date);
-					new LabImportUtil().importLabResults(Collections.singletonList(result),
+					LabImportUtilHolder.get().importLabResults(Collections.singletonList(result),
 						new DefaultLabImportUiHandler());
 				} catch (MissingResourceException ex) {
 					// Value will not be recorded

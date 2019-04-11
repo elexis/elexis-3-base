@@ -18,39 +18,38 @@
       <elexis.ui.test.vmargs>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</elexis.ui.test.vmargs>
     </properties>
 
-    <modules>
-	    <module>at.medevit.ch.artikelstamm.model.test</module>
-	    <module>ch.elexis.base.ch.arzttarife.model.test</module>
-   <!-- 
-   <module>at.medevit.atc_codes.test</module>
-      <module>at.medevit.ch.artikelstamm.elexis.common.tests</module>
-      <module>at.medevit.ch.artikelstamm.medcalendar.test</module>
-      <module>at.medevit.elexis.cobasmira.tests</module>
-      <module>at.medevit.elexis.ehc.core.test</module>
-      <module>at.medevit.elexis.ehc.vacdoc.test</module>
-      <module>at.medevit.elexis.emediplan.core.test</module>
-      <module>at.medevit.elexis.impfplan.test</module>
-      <module>at.medevit.elexis.loinc_test</module>
-      <module>at.medevit.elexis.tarmed.model.tests</module>
-      <module>ch.elexis.base.ch.arzttarife.test</module>
-      <module>ch.elexis.base.ch.ebanking.test</module>
-      <module>ch.elexis.connect.afinion.test</module>
-      <module>ch.elexis.connect.reflotron.v2test</module>
-      <module>ch.elexis.connect.sysmex.test</module>
-      <module>ch.elexis.ebanking.tests</module>
-      <module>ch.elexis.externe_dokumente.tests</module>
-      <module>ch.elexis.fop.service.test</module>
-      <module>ch.elexis.laborimport.viollier.v2_test</module>
-      <!-- fragment depenency <module>ch.elexis.icpc.fire.test</module> -->
-      <module>ch.medshare.connect.abacusjunior.test</module>
-      <module>ch.medshare.elexis_directories.test</module>
-      <module>ch.pharmed.phmprescriber_test</module>
-      <module>com.hilotec.elexis.messwerte.v2_test</module>
-      <module>net.medshare.connector.aerztekasse_test</module>
-      <module>net.medshare.connector.viollier_test</module>
-      <module>org.iatrix.bestellung.rose_test</module>
- -->
-    </modules>
+	<modules>
+<!-- 		<module>at.medevit.ch.artikelstamm.model.test</module>
+		<module>ch.elexis.base.ch.arzttarife.model.test</module>
+
+		<module>at.medevit.atc_codes.test</module>
+		<module>at.medevit.ch.artikelstamm.elexis.common.tests</module>
+		<module>at.medevit.ch.artikelstamm.medcalendar.test</module>
+		<module>at.medevit.elexis.cobasmira.tests</module>
+		<module>at.medevit.elexis.ehc.core.test</module>
+		<module>at.medevit.elexis.ehc.vacdoc.test</module>
+		<module>at.medevit.elexis.emediplan.core.test</module>
+		<module>at.medevit.elexis.impfplan.test</module>
+		<module>at.medevit.elexis.loinc_test</module>
+		<module>at.medevit.elexis.tarmed.model.tests</module>
+		<module>ch.elexis.base.ch.arzttarife.test</module>
+		<module>ch.elexis.base.ch.ebanking.test</module>
+		<module>ch.elexis.connect.afinion.test</module>
+		<module>ch.elexis.connect.reflotron.v2test</module>
+		<module>ch.elexis.connect.sysmex.test</module>
+		<module>ch.elexis.ebanking.tests</module>
+		<module>ch.elexis.externe_dokumente.tests</module>
+		<module>ch.elexis.fop.service.test</module>
+		<module>ch.elexis.laborimport.viollier.v2_test</module>
+		fragment depenency <module>ch.elexis.icpc.fire.test</module>
+		<module>ch.medshare.connect.abacusjunior.test</module>
+		<module>ch.medshare.elexis_directories.test</module>
+		<module>ch.pharmed.phmprescriber_test</module>
+		<module>com.hilotec.elexis.messwerte.v2_test</module>
+		<module>net.medshare.connector.aerztekasse_test</module>
+		<module>net.medshare.connector.viollier_test</module>
+		<module>org.iatrix.bestellung.rose_test</module> -->
+	</modules>
 
     <dependencies>
         <dependency>

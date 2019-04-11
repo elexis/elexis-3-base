@@ -6,15 +6,10 @@
       <Diagnosesystem
             CodeDetailDisplay="ch.elexis.icpc.DetailDisplay"
             CodeSelectorFactory="ch.elexis.icpc.CodeSelectorFactory"
-            ElementFactory="ch.elexis.icpc.IcpcFactory"
             ImporterClass="ch.elexis.icpc.IcpcImporter"
-            name="ICPC2"/>
-   </extension>
-   <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.icpc.IcpcFactory"
-            name="IcpcFactory"/>
+            elexisClassName="ch.elexis.icpc.IcpcCode"
+            name="ICPC2"
+            system="ICPC"/>
    </extension>
    <extension
          point="ch.elexis.core.data.DataAccess">
@@ -33,12 +28,14 @@
             class="ch.elexis.icpc.views.EpisodesView"
             icon="icons/wonca16.png"
             id="ch.elexis.icpc.episodesView"
+            inject="true"
             name="Probleme"/>
       <view
             category="ch.elexis.icpcCategory"
             class="ch.elexis.icpc.views.EncounterView"
             icon="icons/wonca16.png"
             id="ch.elexis.icpc.encounterView"
+            inject="true"
             name="Encounters"/>
       <view
             allowMultiple="false"

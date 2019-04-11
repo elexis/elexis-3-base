@@ -11,6 +11,8 @@
  *******************************************************************************/
 package ch.elexis.icpc.views;
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -29,8 +31,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.icpc.IcpcCode;
 import ch.elexis.core.ui.settings.UserSettings;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.viewers.CommonContentProviderAdapter;
@@ -38,6 +38,9 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.icpc.Messages;
+import ch.elexis.icpc.model.icpc.IcpcCode;
+import ch.elexis.icpc.service.IcpcModelServiceHolder;
 
 public class ChapterDisplay extends Composite {
 	private static final String UC2_HEADING = "ICPCChapter/";
@@ -60,10 +63,10 @@ public class ChapterDisplay extends Composite {
 		final Composite cRight = tk.createComposite(this);
 		cRight.setLayout(new GridLayout());
 		cRight.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		ec = new ExpandableComposite[IcpcCode.components.length];
+		ec = new ExpandableComposite[Messages.components.length];
 		
 		for (int i = 0; i < ec.length; i++) {
-			String c = IcpcCode.components[i];
+			String c = Messages.components[i];
 			ec[i] = tk.createExpandableComposite(cLeft, ExpandableComposite.TWISTIE);
 			ec[i].setText(c);
 			UserSettings.setExpandedState(ec[i], UC2_HEADING + c.substring(0, 1));
@@ -75,12 +78,17 @@ public class ChapterDisplay extends Composite {
 					new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.SINGLE, cv));
 			ec[i].setData(cv);
 			cv.create(vc, inlay, SWT.NONE, this);
-			cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
-				public void doubleClicked(PersistentObject obj, CommonViewer cv){
-					ICodeSelectorTarget target =
-						CodeSelectorHandler.getInstance().getCodeSelectorTarget();
-					if (target != null) {
-						target.codeSelected(obj);
+			vc.setDoubleClickListener(new IDoubleClickListener() {
+				
+				@Override
+				public void doubleClick(DoubleClickEvent event){
+					if (event.getSelection() instanceof IStructuredSelection
+						&& !event.getSelection().isEmpty()) {
+						ICodeSelectorTarget target =
+							CodeSelectorHandler.getInstance().getCodeSelectorTarget();
+						if (target != null) {
+							target.codeSelected(((IStructuredSelection) event).getFirstElement());
+						}
 					}
 				}
 			});
@@ -90,10 +98,10 @@ public class ChapterDisplay extends Composite {
 					IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 					if (!sel.isEmpty()) {
 						IcpcCode code = (IcpcCode) sel.getFirstElement();
-						tCrit.setText(code.get("criteria"));
-						tIncl.setText(code.get("inclusion"));
-						tExcl.setText(code.get("exclusion"));
-						tNote.setText(code.get("note"));
+						tCrit.setText(code.getCriteria());
+						tIncl.setText(code.getInclusion());
+						tExcl.setText(code.getExclusion());
+						tNote.setText(code.getNote());
 						cRight.layout();
 					}
 					
@@ -145,7 +153,7 @@ public class ChapterDisplay extends Composite {
 		}
 		
 		public Object[] getElements(Object inputElement){
-			return IcpcCode.loadAllFromComponent(chapter, component, false).toArray();
+			return IcpcModelServiceHolder.loadAllFromComponent(chapter, component, false).toArray();
 		}
 		
 	}

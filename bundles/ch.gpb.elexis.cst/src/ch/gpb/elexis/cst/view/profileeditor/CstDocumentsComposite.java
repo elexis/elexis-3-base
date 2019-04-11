@@ -10,12 +10,16 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -36,7 +40,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -45,21 +51,26 @@ import org.eclipse.ui.PartInitException;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.ICategory;
+import ch.elexis.core.model.IDocument;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.views.TextView;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.preferences.CstPreference;
-import ch.gpb.elexis.cst.Messages;
+import ch.gpb.elexis.cst.service.DocumentStoreHolder;
 import ch.rgw.tools.ExHandler;
 // TODO: the handling of the omnivore documents is done quick and dirty. There is an API to use these documents,
 // see i.e. in Labor View, and that should be used here for CST Documents
 //   
 public class CstDocumentsComposite extends CstComposite {
 
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+	
     CstProfile aProfile;
     private Table tableOmnivore;
     TableViewer tableViewerOmnivore;
@@ -198,8 +209,24 @@ public class CstDocumentsComposite extends CstComposite {
 	    public void run() {
 		ISelection selection = tableViewerOmnivore.getSelection();
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
-		DocHandle dh = (DocHandle) obj;
-		dh.execute();
+				IDocument dh = (IDocument) obj;
+				
+				try {
+					File temp;
+					temp = File.createTempFile("csf_", dh.getExtension());
+					Program proggie = Program.findProgram(dh.getExtension());
+					if (proggie != null) {
+						proggie.execute(temp.getAbsolutePath());
+					} else {
+						if (Program.launch(temp.getAbsolutePath()) == false) {
+							Runtime.getRuntime().exec(temp.getAbsolutePath());
+						}
+						
+					}
+				} catch (IOException e) {
+					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+						"Fehler beim Öffnen der Datei");
+				}
 	    }
 
 	};
@@ -294,29 +321,31 @@ public class CstDocumentsComposite extends CstComposite {
      * 
      * @return a list of CST related Omnivore documents
      */
-    private List<DocHandle> loadCstdocsOmnivore() {
-	sIdentOmnivore = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
-
-	Patient pat = ElexisEventDispatcher.getSelectedPatient();
-	if (pat == null) {
-	    ArrayList<DocHandle> emptyList = new ArrayList<DocHandle>();
-	    return emptyList;
+	private List<IDocument> loadCstdocsOmnivore(){
+		sIdentOmnivore = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
+		
+		Patient pat = ElexisEventDispatcher.getSelectedPatient();
+		if (pat == null) {
+			ArrayList<IDocument> emptyList = new ArrayList<IDocument>();
+			return emptyList;
+		}
+		
+		List<IDocument> ret = new LinkedList<IDocument>();
+		
+		String cat = sIdentOmnivore;
+		
+		ICategory category = DocumentStoreHolder.get().getCategories().stream()
+			.filter(c -> c.getName().equals(cat)).findFirst().orElse(null);
+		if (category == null) {
+			category = DocumentStoreHolder.get().createCategory(cat);
+		}
+		List<IDocument> root =
+			DocumentStoreHolder.get().getDocuments(pat.getId(), null, category, null);
+		
+		ret.addAll(root);
+		
+		return ret;
 	}
-
-	List<DocHandle> ret = new LinkedList<DocHandle>();
-
-	String cat = sIdentOmnivore;
-
-	Query<DocHandle> qbe = new Query<DocHandle>(DocHandle.class);
-	qbe.add(DocHandle.FLD_PATID, Query.EQUALS, pat.getId());
-	qbe.add(DocHandle.FLD_CAT, Query.EQUALS, cat);
-
-	List<DocHandle> root = qbe.execute();
-
-	ret.addAll(root);
-
-	return ret;
-    }
 
     private String[] getCategoryColumnLabels() {
 	String columnLabels[] = { "Category", "Date", "Titel", "MIME Type" };
@@ -399,50 +428,50 @@ public class CstDocumentsComposite extends CstComposite {
 	}
 
 	public Object[] getElements(Object parent) {
-	    List<DocHandle> result = loadCstdocsOmnivore();
+			List<IDocument> result = loadCstdocsOmnivore();
 	    return result.toArray();
 	}
     }
 
     class DocumentsLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider,
-	    IColorProvider {
-
-	public String getColumnText(Object obj, int index) {
-	    DocHandle docHandle = (DocHandle) obj;
-	    switch (index) {
-	    case 0:
-		return docHandle.getCategoryName();
-	    case 1:
-		return docHandle.getDate();
-	    case 2:
-		return docHandle.getTitle();
-	    case 3:
-		return docHandle.getMimetype();
-	    default:
-		return "";
-	    }
+			IColorProvider {
+		
+		public String getColumnText(Object obj, int index){
+			IDocument docHandle = (IDocument) obj;
+			switch (index) {
+			case 0:
+				return docHandle.getCategory().getName();
+			case 1:
+				return dateFormat.format(docHandle.getCreated());
+			case 2:
+				return docHandle.getTitle();
+			case 3:
+				return docHandle.getMimeType();
+			default:
+				return "";
+			}
+		}
+		
+		public Image getColumnImage(Object obj, int index){
+			return null;
+		}
+		
+		public Font getFont(Object element, int columnIndex){
+			Font font = null;
+			return font;
+		}
+		
+		@Override
+		public Color getForeground(Object element){
+			
+			return null;
+		}
+		
+		@Override
+		public Color getBackground(Object element){
+			return null;
+		}
 	}
-
-	public Image getColumnImage(Object obj, int index) {
-	    return null;
-	}
-
-	public Font getFont(Object element, int columnIndex) {
-	    Font font = null;
-	    return font;
-	}
-
-	@Override
-	public Color getForeground(Object element) {
-
-	    return null;
-	}
-
-	@Override
-	public Color getBackground(Object element) {
-	    return null;
-	}
-    }
 
     class CstDocumentsSortListener extends SelectionAdapter {
 
@@ -465,39 +494,39 @@ public class CstDocumentsComposite extends CstComposite {
 
     }
 
-    class CstDocumentsSorter extends ViewerSorter {
-
-	@Override
-	public int compare(Viewer viewer, Object e1, Object e2) {
-	    if ((e1 instanceof DocHandle) && (e2 instanceof DocHandle)) {
-		DocHandle d1 = (DocHandle) e1;
-		DocHandle d2 = (DocHandle) e2;
-		String c1 = "";
-		String c2 = "";
-		switch (sortColumn) {
-		case 1:
-		    c1 = d1.getDate();
-		    c2 = d2.getDate();
-		    break;
-		case 2:
-		    c1 = d1.getTitle();
-		    c2 = d2.getTitle();
-		    break;
-		case 3:
-		    c1 = d1.getMimetype();
-		    c2 = d2.getMimetype();
-		    break;
+	class CstDocumentsSorter extends ViewerSorter {
+		
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2){
+			if ((e1 instanceof IDocumentHandle) && (e2 instanceof IDocumentHandle)) {
+				IDocumentHandle d1 = (IDocumentHandle) e1;
+				IDocumentHandle d2 = (IDocumentHandle) e2;
+				String c1 = "";
+				String c2 = "";
+				switch (sortColumn) {
+				case 1:
+					c1 = dateFormat.format(d1.getCreated());
+					c2 = dateFormat.format(d2.getCreated());
+					break;
+				case 2:
+					c1 = d1.getTitle();
+					c2 = d2.getTitle();
+					break;
+				case 3:
+					c1 = d1.getMimeType();
+					c2 = d2.getMimeType();
+					break;
+				}
+				if (sortReverse) {
+					return c1.compareTo(c2);
+				} else {
+					return c2.compareTo(c1);
+				}
+			}
+			return 0;
 		}
-		if (sortReverse) {
-		    return c1.compareTo(c2);
-		} else {
-		    return c2.compareTo(c1);
-		}
-	    }
-	    return 0;
+		
 	}
-
-    }
 
     class CstBriefeSortListener extends SelectionAdapter {
 

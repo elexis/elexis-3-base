@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2019, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    N. Giger - Warn on printing error
  *    
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
@@ -16,12 +17,14 @@ import static ch.elexis.buchhaltung.kassenbuch.KassenbuchTextTemplateRequirement
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.SortedSet;
+import java.util.logging.Logger;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.core.data.activator.CoreHub;
@@ -54,7 +57,13 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		text.createFromTemplateName(null, TT_LIST, Brief.UNKNOWN, CoreHub.actUser, "Kassenbuch");
+		Brief brief = text.createFromTemplateName(null, TT_LIST, Brief.UNKNOWN, CoreHub.actUser, "Kassenbuch");
+		if (brief == null) {
+			String title = "Probleme beim Drucken";
+			String msg = String.format("Konnte kein TextDokument erstellen. Fehlt die Vorlage '%s'? Oder ist sie fehlerhaft?", TT_LIST);
+			SWTHelper.alert(title, msg);
+			return ret;
+		}
 		SortedSet<KassenbuchEintrag> set = KassenbuchEintrag.getBookings(ttVon, ttBis);
 		if (set == null) {
 			return ret;

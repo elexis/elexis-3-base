@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2019, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    N. Giger - Using Nebula CDateTime as DatePicker
  *    
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.nebula.widgets.cdatetime.CDT;
+import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,10 +34,12 @@ import ch.rgw.tools.TimeTool;
 public class BuchungsDialog extends TitleAreaDialog {
 	
 	boolean bType;
-	LabeledInputField liBeleg, liDate, liBetrag;
+	LabeledInputField liBeleg, liBetrag;
+	CDateTime liDate;
+	Label dDate;
 	Text text;
 	KassenbuchEintrag last, act;
-	Combo cbCats, cbPayments;
+	Combo cbDate, cbCats, cbPayments;
 	
 	BuchungsDialog(Shell shell, boolean mode){
 		super(shell);
@@ -42,6 +47,9 @@ public class BuchungsDialog extends TitleAreaDialog {
 		act = null;
 	}
 	
+	/**
+	 * @wbp.parser.constructor
+	 */
 	BuchungsDialog(Shell shell, KassenbuchEintrag kbe){
 		super(shell);
 		act = kbe;
@@ -56,9 +64,12 @@ public class BuchungsDialog extends TitleAreaDialog {
 		top.setLayout(new FillLayout());
 		top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		liBeleg = new LabeledInputField(top, "Beleg");
-		liDate = new LabeledInputField(top, "Datum", LabeledInputField.Typ.DATE);
+		Composite cbDate_1 = new Composite(top, SWT.BORDER);
+		cbDate_1.setLayout(new GridLayout(1, false));
+		dDate = new Label(cbDate_1, SWT.NONE);
+		dDate.setText("Datum");
+		liDate =  new CDateTime(cbDate_1, CDT.DATE_MEDIUM | CDT.DROP_DOWN | SWT.BORDER | CDT.COMPACT);
 		liBetrag = new LabeledInputField(top, "Betrag", LabeledInputField.Typ.MONEY);
-		
 		Composite cCombos = new Composite(ret, SWT.NONE);
 		cCombos.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cCombos.setLayout(new GridLayout(2, false));
@@ -80,7 +91,7 @@ public class BuchungsDialog extends TitleAreaDialog {
 			liBeleg.setText(KassenbuchEintrag.nextNr(last));
 		} else {
 			liBeleg.setText(act.getBelegNr());
-			liDate.setText(act.getDate());
+			liDate.setSelection(new TimeTool(act.getDate()).getTime());
 			liBetrag.setText(act.getAmount().getAmountAsString());
 			cbCats.setText(act.getKategorie());
 			cbPayments.setText(act.getPaymentMode());

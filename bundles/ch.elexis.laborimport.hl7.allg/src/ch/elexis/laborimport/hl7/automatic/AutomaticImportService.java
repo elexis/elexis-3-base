@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
-import ch.elexis.core.ui.importer.div.importers.PersistenceHandler;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.laborimport.hl7.universal.LinkLabContactResolver;
 import ch.elexis.laborimport.hl7.universal.Preferences;
@@ -131,7 +131,7 @@ public class AutomaticImportService {
 			result = mfParser.importFromFile(
 				file, new DefaultImportStrategyFactory().setMoveAfterImport(true)
 					.setLabContactResolver(new LinkLabContactResolver()),
-				hlp, new PersistenceHandler());
+				hlp, new DefaultPersistenceHandler());
 		}
 	}
 }

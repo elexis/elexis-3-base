@@ -19,11 +19,11 @@ import org.eclipse.jface.action.IAction;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.events.MessageEvent;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
-import ch.elexis.core.ui.importer.div.importers.PersistenceHandler;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Result;
@@ -67,7 +67,7 @@ public class Importer extends Action implements IAction {
 				r = mfParser.importFromFile(hl7file,
 					new DefaultImportStrategyFactory().setMoveAfterImport(true)
 						.setLabContactResolver(new LinkLabContactResolver()),
-					hlp, new PersistenceHandler());
+					hlp, new DefaultPersistenceHandler());
 			}
 			if (err > 0) {
 				if (r != null) {

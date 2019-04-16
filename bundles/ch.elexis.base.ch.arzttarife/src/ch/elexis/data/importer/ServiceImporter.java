@@ -10,6 +10,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -503,7 +504,7 @@ public class ServiceImporter {
 				ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
 				Map<String, String> row = ImporterUtil.getLatestMap(validResults);
-				ret[0] = row.get("BEZ_255"); //$NON-NLS-1$
+				ret[0] = StringUtils.abbreviate(row.get("BEZ_255"), 255); //$NON-NLS-1$
 				ret[1] = row.get("MED_INTERPRET"); //$NON-NLS-1$
 				ret[2] = row.get("TECH_INTERPRET"); //$NON-NLS-1$
 			}

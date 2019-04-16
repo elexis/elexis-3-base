@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
-package ch.elexis.data;
+package ch.elexis.base.ch.arzttarife.importer;
 
 import java.util.ArrayList;
 import java.util.HashMap;

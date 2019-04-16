@@ -18,12 +18,12 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_RECIPIENT_EAN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
-import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Xid;
 
 public class TarmedRequirements {

@@ -61,6 +61,7 @@ import org.jdom.transform.JDOMSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
@@ -82,7 +83,6 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.TrustCenters;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.ExHandler;

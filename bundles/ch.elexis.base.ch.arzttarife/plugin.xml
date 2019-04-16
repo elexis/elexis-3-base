@@ -44,7 +44,7 @@
       <Leistung
             CodeDetailDisplay="ch.elexis.views.TarmedDetailDisplay"
             CodeSelectorFactory="ch.elexis.views.TarmedCodeSelectorFactory"
-            ImporterClass="ch.elexis.data.TarmedImporter"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.TarmedImporter"
             OptifyerClass="ch.elexis.data.TarmedOptifier"
             elexisClassName="ch.elexis.data.TarmedLeistung"
             name="TarmedLeistung"
@@ -53,7 +53,7 @@
       <Leistung
             CodeDetailDisplay="ch.elexis.views.PhysioDetailDisplay"
             CodeSelectorFactory="ch.elexis.views.PhysioLeistungsCodeSelectorFactory"
-            ImporterClass="ch.elexis.data.PhysioImporter"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.PhysioImporter"
             elexisClassName="ch.elexis.data.PhysioLeistung"
             name=" Physio-Leistung"
             system="Physiotherapie">
@@ -61,7 +61,7 @@
       <Leistung
             CodeDetailDisplay="ch.elexis.views.ComplementaryDetailDisplay"
             CodeSelectorFactory="ch.elexis.views.ComplementaryCodeSelectorFactory"
-            ImporterClass="ch.elexis.data.ComplementaryImporter"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.ComplementaryImporter"
             elexisClassName="ch.elexis.data.ComplementaryLeistung"
             name="Komplementärmedizin"
             system="Komplementärmedizin">
@@ -90,9 +90,6 @@
             allPopups="false"
             locationURI="popup:ch.elexis.core.ui.views.codesystems.BlockSelector">
       </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
    </extension>
 
 </plugin>

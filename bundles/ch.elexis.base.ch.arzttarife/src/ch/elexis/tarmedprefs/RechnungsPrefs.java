@@ -53,6 +53,7 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
+import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.ebanking.esr.ESR;
@@ -68,7 +69,6 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
-import ch.elexis.data.TrustCenters;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
 

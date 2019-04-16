@@ -13,7 +13,7 @@
  *******************************************************************************/
 
 // 8.12.07 G.Weirich avoid duplicate imports
-package ch.elexis.data;
+package ch.elexis.base.ch.arzttarife.importer;
 
 import java.io.FileInputStream;
 

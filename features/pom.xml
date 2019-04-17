@@ -66,6 +66,7 @@
     <module>ch.elexis.laborimport_rischbern.feature</module>
     <module>ch.elexis.laborimport_rothen.feature</module>
     <module>ch.elexis.laborimport_viollier.feature</module>
+    <module>ch.elexis.importer.aeskulap.feature</module>
     <module>ch.elexis.molemax.feature</module>
     <module>ch.elexis.notes.feature</module>
     <module>ch.elexis.omnivore.feature</module>

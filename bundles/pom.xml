@@ -16,6 +16,7 @@
     <module>ch.elexis.base.ch.ticode</module>
     <module>ch.elexis.base.ch.arzttarife.model</module>
     <module>ch.elexis.base.ch.labortarif.model</module>
+    <module>ch.elexis.base.ch.icd10</module>
     <module>ch.elexis.hl7.message.core</module>
     <module>ch.elexis.hl7.message.ui</module>
     <module>at.gruber.elexis.mythic22</module>

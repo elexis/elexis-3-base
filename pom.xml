@@ -23,8 +23,8 @@
 		<tycho.version>1.0.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
-        <git.target.branch>f11106</git.target.branch>
-        <git.core.branch>${git.target.branch}</git.core.branch>
+		<git.target.branch>${git.target.branch}</git.target.branch>
+		<git.core.branch>${git.core.branch}</git.core.branch>
 	</properties>
 
 	<organization>
@@ -53,7 +53,6 @@
 	<description>Elexis Base</description>
 
 	<modules>
-		<!--module>target</module-->
 		<module>bundles</module>
 		<module>features</module>
 		<module>ch.elexis.base.p2site</module>

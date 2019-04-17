@@ -90,6 +90,7 @@
     <module>ch.elexis.global_inbox</module>
     <module>ch.elexis.icpc.fire</module>
     <module>ch.elexis.icpc</module>
+    <module>ch.elexis.icpc.model</module>
     <module>ch.elexis.impfplan</module>
     <module>ch.elexis.laborimport.analytica</module>
     <module>ch.elexis.laborimport.bioanalytica</module>

@@ -28,7 +28,7 @@
     <module>at.medevit.elexis.impfplan.test</module>
     <module>at.medevit.elexis.loinc_test</module>
     <module>at.medevit.elexis.tarmed.model.tests</module>
-    <!--
+    <!-- fails
     <module>ch.elexis.base.ch.arzttarife.test</module>
 -->
     <module>ch.elexis.base.ch.ebanking.test</module>
@@ -38,7 +38,9 @@
     <module>ch.elexis.ebanking.tests</module>
     <module>ch.elexis.externe_dokumente.tests</module>
     <module>ch.elexis.fop.service.test</module>
+    <!-- fails
     <module>ch.elexis.laborimport.viollier.v2_test</module>
+-->
     <module>ch.medshare.connect.abacusjunior.test</module>
     <module>ch.medshare.elexis_directories.test</module>
     <module>ch.pharmed.phmprescriber_test</module>

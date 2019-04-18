@@ -17,10 +17,6 @@
     <module>at.medevit.ch.artikelstamm.model.test</module>
     <module>ch.elexis.base.ch.arzttarife.model.test</module>
     <module>at.medevit.atc_codes.test</module>
-    <!--
-    <module>at.medevit.ch.artikelstamm.elexis.common.tests</module>
-    <module>at.medevit.ch.artikelstamm.medcalendar.test</module>
-	-->
     <module>at.medevit.elexis.cobasmira.tests</module>
     <module>at.medevit.elexis.ehc.core.test</module>
     <module>at.medevit.elexis.ehc.vacdoc.test</module>

@@ -1398,7 +1398,9 @@ public class TextPlugin implements ITextPlugin {
 			return false;
 		}
 		
-		curStyle.setFont(name, style, size);
+		if (curStyle != null) { // NPE seen in Kassenbuch
+			curStyle.setFont(name, style, size);
+		}
 		return true;
 	}
 	

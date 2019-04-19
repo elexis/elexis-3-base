@@ -13,4 +13,5 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core;bundle-version="0.0.2",
  ch.elexis.core.data,
  ch.elexis.core.ui,
- ch.elexis.core.ui.icons
+ ch.elexis.core.ui.icons,
+ org.eclipse.nebula.widgets.cdatetime

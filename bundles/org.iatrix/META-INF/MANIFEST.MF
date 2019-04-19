@@ -1,0 +1,36 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Iatrix Erweiterungen zu Elexis
+Bundle-SymbolicName: org.iatrix; singleton:=true
+Bundle-Version: 3.2.0.qualifier
+Bundle-Localization: plugin
+Require-Bundle: org.slf4j.api,
+ org.eclipse.ui.forms,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.jdom;bundle-version="1.1.0",
+ ch.elexis.core;bundle-version="3.1.0",
+ org.eclipse.core.expressions;bundle-version="3.4.100",
+ de.kupzog.ktable;bundle-version="2.2.0",
+ ch.elexis.core.data;bundle-version="3.1.0",
+ ch.elexis.core.ui.icons;bundle-version="3.1.0",
+ ch.elexis.core.ui.contacts;bundle-version="3.1.0",
+ ch.elexis.core.ui;bundle-version="3.1.0",
+ ch.rgw.utility,
+ ch.elexis.icpc;bundle-version="3.1.0",
+ ch.elexis.externe_dokumente;bundle-version="3.0.0",
+ org.iatrix.messwerte,
+ ch.elexis.core.ui.medication,
+ org.iatrix.help.wiki,
+ ch.elexis.base.ch.ebanking,
+ ch.elexis.core.ui.laboratory,
+ ch.elexis.core.ui.dbcheck
+Eclipse-LazyStart: true
+Bundle-Vendor: iatrix.org
+Bundle-ClassPath: .,
+ icons/,
+ rsc/
+Bundle-Activator: org.iatrix.IatrixActivator
+Created-By: Buildr
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+

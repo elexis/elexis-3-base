@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2019, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    N. Giger - Using Nebula CDateTime as DatePicker
  *    
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
-import java.util.Date;
-
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.nebula.widgets.cdatetime.CDT;
+import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -24,10 +25,8 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
-import com.tiff.common.ui.datepicker.DatePicker;
-
 public class DatumEingabeDialog extends TitleAreaDialog {
-	DatePicker dpVon, dpBis;
+	CDateTime dpVon, dpBis;
 	TimeTool ttVon, ttBis;
 	
 	public DatumEingabeDialog(Shell parentShell, TimeTool von, TimeTool bis){
@@ -43,13 +42,13 @@ public class DatumEingabeDialog extends TitleAreaDialog {
 		ret.setLayout(new GridLayout(2, true));
 		new Label(ret, SWT.NONE).setText("Von:");
 		new Label(ret, SWT.NONE).setText("Bis:");
-		dpVon = new DatePicker(ret, SWT.NONE);
-		dpBis = new DatePicker(ret, SWT.NONE);
+		dpVon = new CDateTime(ret, CDT.DATE_MEDIUM | CDT.DROP_DOWN | SWT.BORDER | CDT.COMPACT);
+		dpBis = new CDateTime(ret, CDT.DATE_MEDIUM | CDT.DROP_DOWN | SWT.BORDER | CDT.COMPACT);
 		if (ttVon != null) {
-			dpVon.setDate(ttVon.getTime());
+			dpVon.setSelection(ttVon.getTime());
 		}
 		if (ttBis != null) {
-			dpBis.setDate(ttBis.getTime());
+			dpBis.setSelection(ttBis.getTime());
 		}
 		return ret;
 	}
@@ -65,21 +64,9 @@ public class DatumEingabeDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-		ttVon = getTimeFromField(dpVon); // new TimeTool(dpVon.getDate().getTime());
-		
-		ttBis = getTimeFromField(dpBis); // new TimeTool(dpBis.getDate().getTime());
+		ttVon =  new TimeTool(dpVon.getSelection());
+		ttBis =  new TimeTool(dpBis.getSelection());
 		super.okPressed();
-	}
-	
-	private TimeTool getTimeFromField(DatePicker dp){
-		if (dp != null) {
-			Date dat = dp.getDate();
-			if (dat != null) {
-				long millis = dat.getTime();
-				return new TimeTool(millis);
-			}
-		}
-		return new TimeTool();
 	}
 	
 }

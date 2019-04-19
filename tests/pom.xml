@@ -24,9 +24,7 @@
     <module>at.medevit.elexis.impfplan.test</module>
     <module>at.medevit.elexis.loinc_test</module>
     <module>at.medevit.elexis.tarmed.model.tests</module>
-    <!-- fails
     <module>ch.elexis.base.ch.arzttarife.test</module>
--->
     <module>ch.elexis.base.ch.ebanking.test</module>
     <module>ch.elexis.connect.afinion.test</module>
     <module>ch.elexis.connect.reflotron.v2test</module>

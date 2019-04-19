@@ -376,6 +376,7 @@ public class TestData {
 				
 			}
 			Result<Rechnung> result = Rechnung.build(Collections.singletonList(kons));
+			assertTrue(result.toString(), result.isOK());
 			Rechnung ret = result.get();
 			
 			// add prepaid according to rsc/*.xml

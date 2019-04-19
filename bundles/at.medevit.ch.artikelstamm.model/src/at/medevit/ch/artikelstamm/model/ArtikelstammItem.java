@@ -58,6 +58,7 @@ public class ArtikelstammItem
 					Money sellingPrice = billable.getSellingPrice();
 					if(sellingPrice == null) {
 //						sellingPrice =  MargePreference.calculateVKP(getPurchasePrice());
+						// TODO
 					} 
 //					if (!billable.isInSLList()) {
 //						// noObligationOptifier

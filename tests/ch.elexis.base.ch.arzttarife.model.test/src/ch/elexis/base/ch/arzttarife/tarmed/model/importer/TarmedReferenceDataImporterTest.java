@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
@@ -72,9 +73,9 @@ public class TarmedReferenceDataImporterTest {
 		// IMPORTANT download the database from (https://www.fmh.ch/themen/ambulante-tarife/tarmed-tarifbrowser-datenbank.cfm) 
 		// and add to the rsc folder of test bundle
 		InputStream tarmedInStream = TarmedReferenceDataImporterTest.class
-			.getResourceAsStream("/rsc/TARMED_Datenbank_01.08.00_BR_UVG_IVG_MVG.mdb");
+			.getResourceAsStream("/rsc/TARMED__Datenbank_01.09.00_BR_KVG-27.12.2017.mdb");
 		
-		TarmedReferenceDataImporter importer = new TarmedReferenceDataImporter();
+		TarmedReferenceDataImporter importer = new KVGTarmedReferenceDataImporter();
 		Status retStatus =
 			(Status) importer.performImport(new NullProgressMonitor(), tarmedInStream, null);
 		assertEquals(IStatus.OK, retStatus.getCode());
@@ -158,6 +159,13 @@ public class TarmedReferenceDataImporterTest {
 		// parents #9212
 		Stream<?> found = ArzttarifeModelServiceHolder.get().executeNativeQuery(testParentsSql);
 		assertFalse(found.findFirst().isPresent());
+		
+		// long text
+		TarmedLeistung tl = TarmedLeistung.getFromCode("22.0045", LocalDate.now(), null);
+		assertNotNull(tl);
+		assertTrue(StringUtils.isNotBlank(tl.getText()));
+		tl = TarmedLeistung.getFromCode("22.0035", LocalDate.now(), null);
+		assertTrue(StringUtils.isNotBlank(tl.getText()));
 	}
 	
 	private static String testParentsSql =

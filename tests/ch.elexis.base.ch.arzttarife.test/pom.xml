@@ -18,7 +18,6 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-                    <skipTests>true</skipTests> <!-- läuft manchmal durch und machmal nicht TODO: -->
                     <showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
                     <argLine>${elexis.ui.test.vmargs}</argLine>

@@ -91,6 +91,7 @@ public class TestData {
 			
 			// disable strict billing for tests
 			Optional<IContact> userContact = ContextServiceHolder.get().getActiveUserContact();
+			assertTrue(userContact.isPresent());
 			userContact.ifPresent(uc -> {
 				ConfigServiceHolder.get().set(uc,
 					ch.elexis.core.constants.Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
@@ -245,8 +246,11 @@ public class TestData {
 			
 			mandant.addXid(DOMAIN_EAN, "2000000000002", true);
 			// make sure somains are registered
+			assertTrue(CoreModelServiceHolder.get() != null);
+			Optional<IMandator> mandator = CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class);
+			assertTrue(mandator.isPresent());
 			TarmedRequirements
-				.getEAN(CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).get());
+				.getEAN(mandator.get());
 			
 			mandant.addXid(TarmedRequirements.DOMAIN_KSK, "C000002", true);
 			

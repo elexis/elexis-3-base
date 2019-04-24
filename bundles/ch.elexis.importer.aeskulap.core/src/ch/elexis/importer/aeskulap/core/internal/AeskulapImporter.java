@@ -27,6 +27,7 @@ public class AeskulapImporter implements IAeskulapImporter {
 	private LetterDirectories letterDirectories;
 	private DocumentDirectories documentDirectories;
 	private FileDirectories fileDirectories;
+	private DiagDirectory diagDirectory;
 	
 	@Override
 	public List<IAeskulapImportFile> setImportDirectory(File directory){
@@ -41,6 +42,8 @@ public class AeskulapImporter implements IAeskulapImporter {
 						addDocumentDirectory(file);
 					} else if (isFileDirectory(file)) {
 						addFileDirectory(file);
+					} else if (isDiagDirectory(file)) {
+						addDiagDirectory(file);
 					} else {
 						ret.addAll(getAeskulapFilesFromDirectory(file));
 					}
@@ -57,6 +60,9 @@ public class AeskulapImporter implements IAeskulapImporter {
 		}
 		if (fileDirectories != null) {
 			ret.add(fileDirectories);
+		}
+		if (diagDirectory != null) {
+			ret.add(diagDirectory);
 		}
 		return ret;
 	}
@@ -80,6 +86,13 @@ public class AeskulapImporter implements IAeskulapImporter {
 			fileDirectories = new FileDirectories();
 		}
 		fileDirectories.add(file);
+	}
+	
+	private void addDiagDirectory(File file){
+		if (diagDirectory == null) {
+			diagDirectory = new DiagDirectory();
+		}
+		diagDirectory.add(file);
 	}
 	
 	private boolean isLetterDirectory(File directory){
@@ -121,6 +134,21 @@ public class AeskulapImporter implements IAeskulapImporter {
 		return false;
 	}
 	
+	private boolean isDiagDirectory(File directory){
+		if (directory.isDirectory()) {
+			if (directory.getName().equalsIgnoreCase("diag")) {
+				File[] diagFiles = directory.listFiles(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name){
+						return name.matches("[0-9]+.txt");
+					}
+				});
+				return diagFiles.length > 0;
+			}
+		}
+		return false;
+	}
+	
 	private List<IAeskulapImportFile> getAeskulapFilesFromDirectory(File directory){
 		List<IAeskulapImportFile> ret = new ArrayList<>();
 		File[] fileOrDirectory = directory.listFiles();
@@ -132,6 +160,8 @@ public class AeskulapImporter implements IAeskulapImporter {
 					addDocumentDirectory(file);
 				} else if (isFileDirectory(file)) {
 					addFileDirectory(file);
+				} else if (isDiagDirectory(file)) {
+					addDiagDirectory(file);
 				} else {
 					ret.addAll(getAeskulapFilesFromDirectory(file));
 				}

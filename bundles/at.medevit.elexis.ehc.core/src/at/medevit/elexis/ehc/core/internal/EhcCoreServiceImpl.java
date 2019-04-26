@@ -169,6 +169,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 			ConvenienceCommunication conCom = new ConvenienceCommunication();
 			org.ehealth_connector.common.Patient ehealthPatient =
 				EhcCoreMapper.getEhcPatient(patient);
+			System.out.println(ehealthPatient.getIds());
 			StringBuilder retInfo = new StringBuilder();
 			retInfo.append(xdmPath);
 			for (File f : attachments) {
@@ -193,6 +194,9 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 						FileInputStream in = FileUtils.openInputStream(f);
 						DocumentMetadata metaData = conCom.addDocument(dc, in);
 						metaData.setPatient(ehealthPatient);
+						if (ehealthPatient.getIds() != null && !ehealthPatient.getIds().isEmpty()) {
+							metaData.setDestinationPatientId(ehealthPatient.getIds().get(0));
+						}
 						IOUtils.closeQuietly(in);
 						retInfo.append(":::");
 						retInfo.append(attachmentPath);

@@ -30,6 +30,7 @@ import org.ehealth_connector.common.Telecoms;
 import org.ehealth_connector.common.enums.AddressUse;
 import org.ehealth_connector.common.enums.AdministrativeGender;
 import org.ehealth_connector.common.enums.CodeSystems;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IPersistentObject;
 import ch.elexis.data.Anschrift;
@@ -98,6 +99,10 @@ public class EhcCoreMapper {
 			} else if (socialSecurityNumber.length() == 13) {
 				ret.addId(new Identificator(CodeSystems.SwissSSN.getCodeSystemId(),
 					socialSecurityNumber));
+			} else {
+				LoggerFactory.getLogger(EhcCoreMapper.class)
+					.warn("Ignoring SSN [" + socialSecurityNumber + "] length "
+						+ socialSecurityNumber.length() + " not vaild.");
 			}
 		}
 

@@ -58,7 +58,7 @@ import ch.elexis.core.ui.views.TextView;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.preferences.CstPreference;

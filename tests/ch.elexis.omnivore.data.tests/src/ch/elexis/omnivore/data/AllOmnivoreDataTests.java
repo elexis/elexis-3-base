@@ -11,7 +11,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.Patient;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 
 @RunWith(Suite.class)
 @SuiteClasses({

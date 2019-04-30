@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.Reference;
 import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.ILocalDocumentService.ILoadHandler;
 import ch.elexis.core.services.ILocalDocumentService.ISaveHandler;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 
 /**
  * Service component for {@link LocalDocumentService} access. <br/>

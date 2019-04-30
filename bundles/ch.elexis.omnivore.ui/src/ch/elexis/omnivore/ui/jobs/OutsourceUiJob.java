@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.Messages;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 
 public class OutsourceUiJob {

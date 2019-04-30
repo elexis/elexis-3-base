@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.data.Patient;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.TimeTool;
 
 public class OpaqueDocumentAdapter implements IOpaqueDocument {

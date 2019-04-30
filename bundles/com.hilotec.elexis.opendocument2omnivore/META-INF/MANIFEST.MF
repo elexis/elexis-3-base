@@ -9,6 +9,7 @@ Require-Bundle: com.hilotec.elexis.opendocument;bundle-version="3.0.0",
  ch.rgw.utility,
  org.eclipse.ui,
  ch.elexis.omnivore,
- ch.elexis.core.data
-Import-Package: ch.elexis.omnivore.data.model,
- ch.elexis.omnivore.ui.util
+ ch.elexis.core.model;bundle-version="1.0.0",
+ ch.elexis.core.data,
+ ch.elexis.omnivore.model
+Import-Package: ch.elexis.omnivore.ui.util

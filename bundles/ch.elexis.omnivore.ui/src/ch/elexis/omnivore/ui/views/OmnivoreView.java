@@ -100,8 +100,9 @@ import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.omnivore.data.AutomaticBilling;
 import ch.elexis.omnivore.data.Utils;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
-import ch.elexis.omnivore.data.model.util.CategoryUtil;
+import ch.elexis.omnivore.model.IDocumentHandle;
+import ch.elexis.omnivore.model.util.CategoryUtil;
+
 import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;

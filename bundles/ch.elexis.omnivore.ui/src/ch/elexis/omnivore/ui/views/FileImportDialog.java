@@ -40,9 +40,9 @@ import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.Preferences;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
-import ch.elexis.omnivore.data.model.TransientCategory;
-import ch.elexis.omnivore.data.model.util.CategoryUtil;
+import ch.elexis.omnivore.model.IDocumentHandle;
+import ch.elexis.omnivore.model.TransientCategory;
+import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.Messages;
 import ch.rgw.tools.TimeTool;
 

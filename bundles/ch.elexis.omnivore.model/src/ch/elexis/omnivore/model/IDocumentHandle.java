@@ -1,4 +1,4 @@
-package ch.elexis.omnivore.data.model;
+package ch.elexis.omnivore.model;
 
 import ch.elexis.core.model.IDocument;
 

@@ -1,4 +1,4 @@
-package ch.elexis.omnivore.data.model.service;
+package ch.elexis.omnivore.model.service;
 
 import javax.persistence.EntityManager;
 

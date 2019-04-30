@@ -1,4 +1,4 @@
-package ch.elexis.omnivore.data.model.service;
+package ch.elexis.omnivore.model.service;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

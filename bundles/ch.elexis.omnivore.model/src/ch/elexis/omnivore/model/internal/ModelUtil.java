@@ -1,4 +1,4 @@
-package ch.elexis.omnivore.data.model.util;
+package ch.elexis.omnivore.model.internal;
 
 import java.util.List;
 import java.util.Optional;

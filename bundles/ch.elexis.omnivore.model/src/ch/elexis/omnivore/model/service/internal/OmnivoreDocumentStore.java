@@ -1,4 +1,4 @@
-package ch.elexis.omnivore.data.service.internal;
+package ch.elexis.omnivore.model.service.internal;
 
 import java.io.InputStream;
 import java.util.Collections;
@@ -9,8 +9,6 @@ import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.exceptions.PersistenceException;
@@ -24,17 +22,15 @@ import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
-import ch.elexis.data.dto.CategoryDocumentDTO;
 import ch.elexis.omnivore.Constants;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
-import ch.elexis.omnivore.data.model.TransientCategory;
-import ch.elexis.omnivore.data.model.util.CategoryUtil;
+import ch.elexis.omnivore.model.IDocumentHandle;
+import ch.elexis.omnivore.model.TransientCategory;
+import ch.elexis.omnivore.model.util.CategoryUtil;
 
 @Component(immediate = true, property = "storeid=ch.elexis.data.store.omnivore")
 public class OmnivoreDocumentStore implements IDocumentStore {
 	
 	private static final String STORE_ID = "ch.elexis.data.store.omnivore";
-	private static Logger log = LoggerFactory.getLogger(OmnivoreDocumentStore.class);
 	
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
 	private IModelService coreModelService;
@@ -145,7 +141,7 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	
 	@Override
 	public ICategory getCategoryDefault(){
-		return new CategoryDocumentDTO(Constants.DEFAULT_CATEGORY);
+		return new TransientCategory(Constants.DEFAULT_CATEGORY);
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package ch.elexis.omnivore.data.model;
+package ch.elexis.omnivore.model;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -27,9 +27,8 @@ import ch.elexis.core.model.IHistory;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.types.DocumentStatus;
 import ch.elexis.omnivore.Constants;
-import ch.elexis.omnivore.data.Messages;
-import ch.elexis.omnivore.data.Preferences;
-import ch.elexis.omnivore.data.model.util.ModelUtil;
+import ch.elexis.omnivore.model.internal.ModelUtil;
+import ch.elexis.omnivore.model.internal.Preferences;
 
 public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		implements IdentifiableWithXid, IDocumentHandle {

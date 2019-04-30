@@ -14,7 +14,7 @@ import ch.elexis.core.ui.text.IRichTextDisplay;
 import ch.elexis.core.ui.util.IKonsExtension;
 import ch.elexis.data.Konsultation;
 import ch.elexis.omnivore.Constants;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.util.UiUtils;
 public class KonsExtension implements IKonsExtension {

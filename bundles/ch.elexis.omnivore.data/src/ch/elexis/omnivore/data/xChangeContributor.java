@@ -28,8 +28,8 @@ import ch.elexis.core.ui.exchange.elements.DocumentElement;
 import ch.elexis.core.ui.exchange.elements.MedicalElement;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.omnivore.Constants;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
-import ch.elexis.omnivore.data.model.service.OmnivoreModelServiceHolder;
+import ch.elexis.omnivore.data.service.internal.OmnivoreModelServiceHolder;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.MimeTool;
 
 public class xChangeContributor implements IExchangeContributor {

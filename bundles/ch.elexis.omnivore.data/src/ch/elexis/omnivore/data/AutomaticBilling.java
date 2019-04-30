@@ -30,7 +30,7 @@ import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.core.ui.views.Messages;
 import ch.elexis.omnivore.PreferenceConstants;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.Result;
 
 public class AutomaticBilling {

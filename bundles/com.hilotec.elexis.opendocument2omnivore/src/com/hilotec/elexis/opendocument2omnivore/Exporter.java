@@ -8,6 +8,8 @@ import com.hilotec.elexis.opendocument.export.IDocExporter;
 import ch.elexis.omnivore.ui.util.UiUtils;
 
 
+
+
 public class Exporter implements IDocExporter {
 
 	@Override

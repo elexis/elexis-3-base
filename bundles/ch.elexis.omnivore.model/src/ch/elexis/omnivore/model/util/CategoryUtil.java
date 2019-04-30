@@ -1,4 +1,4 @@
-package ch.elexis.omnivore.data.model.util;
+package ch.elexis.omnivore.model.util;
 
 import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 
@@ -11,9 +11,9 @@ import ch.elexis.core.model.ICategory;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.omnivore.Constants;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
-import ch.elexis.omnivore.data.model.TransientCategory;
-import ch.elexis.omnivore.data.model.service.OmnivoreModelServiceHolder;
+import ch.elexis.omnivore.model.IDocumentHandle;
+import ch.elexis.omnivore.model.TransientCategory;
+import ch.elexis.omnivore.model.service.OmnivoreModelServiceHolder;
 
 public class CategoryUtil {
 	

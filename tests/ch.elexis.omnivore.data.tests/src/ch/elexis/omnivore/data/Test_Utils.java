@@ -31,7 +31,7 @@ import com.google.common.io.ByteStreams;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.data.Patient;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 
 public class Test_Utils{
 	private static Logger log = LoggerFactory.getLogger(Test_Utils.class);

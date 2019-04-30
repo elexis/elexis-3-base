@@ -111,9 +111,10 @@
     <module>ch.elexis.labororder.lg1</module>
     <module>ch.elexis.molemax</module>
     <module>ch.elexis.notes</module>
+    <module>ch.elexis.omnivore</module>
+    <module>ch.elexis.omnivore.model</module>
     <module>ch.elexis.omnivore.data</module>
     <module>ch.elexis.omnivore.ui</module>
-    <module>ch.elexis.omnivore</module>
     <module>ch.elexis.privatrechnung</module>
     <module>ch.elexis.stickynotes</module>
     <module>ch.elexis.support.dbshaker</module>

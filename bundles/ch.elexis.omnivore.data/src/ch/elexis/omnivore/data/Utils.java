@@ -38,12 +38,9 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.IQuery;
-import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
-import ch.elexis.omnivore.data.model.service.OmnivoreModelServiceHolder;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.MimeTool;
@@ -371,14 +368,6 @@ public class Utils {
 		return temp;
 	}
 	
-	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat){
-		IQuery<IDocumentHandle> query =
-			OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-		query.and("category", COMPARATOR.EQUALS, dh.getTitle());
-		query.and("kontakt", COMPARATOR.EQUALS, pat);
-		return query.execute();
-	}
-	
 	public static boolean storeExternal(IDocumentHandle docHandle, String filename){
 		try {
 			byte[] b = IOUtils.toByteArray(docHandle.getContent());
@@ -397,5 +386,9 @@ public class Utils {
 				Messages.DocHandle_writeErrorCaption2, ios.getMessage());
 			return false;
 		}
+	}
+
+	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat) {
+		return ch.elexis.omnivore.model.util.Utils.getMembers(dh, pat);
 	}
 }

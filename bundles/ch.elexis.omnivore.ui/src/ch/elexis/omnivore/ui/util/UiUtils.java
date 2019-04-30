@@ -19,8 +19,9 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.Messages;
 import ch.elexis.omnivore.data.Preferences;
 import ch.elexis.omnivore.data.Utils;
-import ch.elexis.omnivore.data.model.IDocumentHandle;
-import ch.elexis.omnivore.data.model.util.CategoryUtil;
+import ch.elexis.omnivore.model.IDocumentHandle;
+import ch.elexis.omnivore.model.util.CategoryUtil;
+
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.views.FileImportDialog;
 import ch.rgw.tools.ExHandler;

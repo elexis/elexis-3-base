@@ -45,8 +45,17 @@ public class VitalSignsBuilder {
 		return Optional.empty();
 	}
 	
+	private enum BDIdentifier {
+			DIAST, SYST
+	}
+	
 	private Optional<Integer> getBpDiast(){
-		Optional<String> value = getVitalParm(config.getBdDiastTab());
+		Optional<String> value;
+		if (useCombinedBdValue()) {
+			value = getBdVitalParm(BDIdentifier.DIAST);
+		} else {
+			value = getVitalParm(config.getBdDiastTab());
+		}
 		if (value.isPresent()) {
 			try {
 				return Optional.of(Integer.parseInt(value.get()));
@@ -58,12 +67,56 @@ public class VitalSignsBuilder {
 	}
 	
 	private Optional<Integer> getBpSyst(){
-		Optional<String> value = getVitalParm(config.getBdSystTab());
+		Optional<String> value;
+		if (useCombinedBdValue()) {
+			value = getBdVitalParm(BDIdentifier.SYST);
+		} else {
+			value = getVitalParm(config.getBdSystTab());
+		}
 		if (value.isPresent()) {
 			try {
 				return Optional.of(Integer.parseInt(value.get()));
 			} catch (NumberFormatException e) {
 				return Optional.empty();
+			}
+		}
+		return Optional.empty();
+	}
+	
+	private boolean useCombinedBdValue(){
+		if (config.getBdDiastTab() != null) {
+			return config.getBdDiastTab().equalsIgnoreCase(config.getBdSystTab());
+		}
+		return false;
+	}
+	
+	private Optional<String> getBdVitalParm(BDIdentifier identifier){
+		String[] split = config.getBdSystTab().split("\\s*\\:\\s*");
+		String bdsyst = null, bddiast = null;
+		if (split.length > 1) {
+			HashMap<String, String> vals = xc.getResult(split[0].trim(), consultation.getDatum());
+			
+			if (config.getBdSystTab().equals(config.getBdDiastTab())) {
+				String bd = vals.get(split[1].trim());
+				if (bd != null) {
+					String[] bds = bd.split("\\s*\\/\\s*");
+					if (bds.length > 1) {
+						bdsyst = bds[0].trim();
+						bddiast = bds[1].trim();
+					}
+				}
+			} else {
+				bdsyst = vals.get(split[1].trim());
+				split = config.getBdDiastTab().split("\\s:\\s");
+				if (split.length > 1) {
+					vals = xc.getResult(split[0].trim(), consultation.getDatum());
+					bddiast = vals.get(split[1]).trim();
+				}
+			}
+			if (identifier == BDIdentifier.DIAST) {
+				return Optional.ofNullable(bddiast);
+			} else if (identifier == BDIdentifier.SYST) {
+				return Optional.ofNullable(bdsyst);
 			}
 		}
 		return Optional.empty();

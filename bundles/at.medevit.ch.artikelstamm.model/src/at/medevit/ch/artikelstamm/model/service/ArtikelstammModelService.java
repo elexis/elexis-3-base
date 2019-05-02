@@ -3,12 +3,14 @@ package at.medevit.ch.artikelstamm.model.service;
 import static at.medevit.ch.artikelstamm.ArtikelstammConstants.CODESYSTEM_NAME;
 import static at.medevit.ch.artikelstamm.ArtikelstammConstants.STS_CLASS;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -75,6 +77,33 @@ public class ArtikelstammModelService extends AbstractModelService
 				.ofNullable(adapterFactory.getModelAdapter(dbObject, null, false).orElse(null));
 		}
 		return Optional.empty();
+	}
+	
+	@Override
+	public List<Identifiable> loadFromStringWithIdPart(String partialStoreToString){
+		if (partialStoreToString == null) {
+			LoggerFactory.getLogger(getClass()).warn("StoreToString is null");
+			return Collections.emptyList();
+		}
+		
+		if (partialStoreToString.startsWith(STS_CLASS + StringConstants.DOUBLECOLON)) {
+			String[] split = splitIntoTypeAndId(partialStoreToString);
+			String id = split[1];
+			Class<? extends EntityWithId> clazz = ArtikelstammItem.class;
+			if (clazz != null) {
+				EntityManager em = (EntityManager) entityManager.getEntityManager();
+				TypedQuery<? extends EntityWithId> query = em.createQuery("SELECT entity FROM "
+					+ clazz.getSimpleName() + " entity WHERE entity.id LIKE :idpart", clazz);
+				query.setParameter("idpart", id + "%");
+				List<? extends EntityWithId> found = query.getResultList();
+				if (!found.isEmpty()) {
+					return found.parallelStream()
+						.map(e -> adapterFactory.getModelAdapter(e, null, false).orElse(null))
+						.collect(Collectors.toList());
+				}
+			}
+		}
+		return Collections.emptyList();
 	}
 	
 	@Override

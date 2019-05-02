@@ -1,8 +1,10 @@
 package ch.elexis.base.ch.arzttarife.model.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -86,4 +88,32 @@ public class ComplementaryLeistungCodeElementService
 		return Optional.empty();
 	}
 	
+	@Override
+	public List<Identifiable> loadFromStringWithIdPart(String partialStoreToString){
+		if (!partialStoreToString.startsWith(
+			ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
+				+ StringConstants.DOUBLECOLON)) {
+			return Collections.emptyList();
+		}
+		
+		String[] split = splitIntoTypeAndId(partialStoreToString);
+		if (split != null && split.length == 2) {
+			String id = split[1];
+			Class<? extends EntityWithId> clazz =
+				ch.elexis.core.jpa.entities.ComplementaryLeistung.class;
+			EntityManager em = (EntityManager) entityManager.getEntityManager();
+			TypedQuery<? extends EntityWithId> query = em.createQuery("SELECT entity FROM "
+				+ clazz.getSimpleName() + " entity WHERE entity.id LIKE :idpart", clazz);
+			query.setParameter("idpart", id + "%");
+			List<? extends EntityWithId> found = query.getResultList();
+			if (!found.isEmpty()) {
+				ArzttarifeModelAdapterFactory adapterFactory =
+					ArzttarifeModelAdapterFactory.getInstance();
+				return found.parallelStream()
+					.map(e -> adapterFactory.getModelAdapter(e, null, false).orElse(null))
+					.collect(Collectors.toList());
+			}
+		}
+		return Collections.emptyList();
+	}
 }

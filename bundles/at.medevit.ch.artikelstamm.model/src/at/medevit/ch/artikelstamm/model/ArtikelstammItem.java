@@ -14,15 +14,17 @@ import at.medevit.ch.artikelstamm.model.service.CoreModelServiceHolder;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.types.VatInfo;
@@ -30,7 +32,7 @@ import ch.rgw.tools.Money;
 
 public class ArtikelstammItem
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ArtikelstammItem>
-		implements IdentifiableWithXid, IArtikelstammItem {
+		implements Identifiable, IArtikelstammItem {
 	
 	private static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE";
 	private static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE = "PPUB_OVERRIDE_STORE";
@@ -505,5 +507,15 @@ public class ArtikelstammItem
 		setExtInfo(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, Integer.toString(pkgSize));
 		
 		getEntity().setPkg_size(value * -1);
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

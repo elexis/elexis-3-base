@@ -6,18 +6,20 @@ import java.util.Optional;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 
 public class PhysioLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PhysioLeistung>
-		implements IdentifiableWithXid, IPhysioLeistung {
+		implements Identifiable, IPhysioLeistung {
 	
 	public static final String STS_CLASS = "ch.elexis.data.PhysioLeistung";
 	
@@ -143,5 +145,15 @@ public class PhysioLeistung
 	@Override
 	public String getLabel(){
 		return getZiffer() + " " + getText();
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

@@ -10,19 +10,21 @@ import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 
 public class ComplementaryLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ComplementaryLeistung>
-		implements IdentifiableWithXid, IComplementaryLeistung {
+		implements Identifiable, IComplementaryLeistung {
 	
 	public static final String STS_CLASS = "ch.elexis.data.ComplementaryLeistung";
 	
@@ -149,5 +151,15 @@ public class ComplementaryLeistung
 	@Override
 	public String getLabel(){
 		return "(" + getCode() + ") " + getText();
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

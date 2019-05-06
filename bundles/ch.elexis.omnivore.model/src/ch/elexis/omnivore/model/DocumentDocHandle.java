@@ -20,18 +20,20 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.jpa.entities.DocHandle;
 import ch.elexis.core.jpa.entities.Kontakt;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IHistory;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.DocumentStatus;
 import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.model.internal.ModelUtil;
 import ch.elexis.omnivore.model.internal.Preferences;
 
 public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
-		implements IdentifiableWithXid, IDocumentHandle {
+		implements Identifiable, IDocumentHandle {
 	
 	private String storeId = "";
 	private String keywords;
@@ -270,5 +272,15 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

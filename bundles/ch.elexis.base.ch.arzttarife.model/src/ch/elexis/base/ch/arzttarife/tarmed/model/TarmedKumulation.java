@@ -10,12 +10,14 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.INamedQuery;
+import ch.elexis.core.services.holder.XidServiceHolder;
 
 public class TarmedKumulation
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedKumulation>
-		implements IdentifiableWithXid, ITarmedKumulation {
+		implements Identifiable, ITarmedKumulation {
 	
 	public TarmedKumulation(ch.elexis.core.jpa.entities.TarmedKumulation entity){
 		super(entity);
@@ -166,5 +168,15 @@ public class TarmedKumulation
 	@Override
 	public TarmedKumulationTyp getTyp(){
 		return TarmedKumulationTyp.ofTyp(getEntity().getTyp());
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

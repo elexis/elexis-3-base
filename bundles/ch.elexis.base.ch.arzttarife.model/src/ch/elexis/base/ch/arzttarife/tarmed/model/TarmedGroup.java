@@ -13,16 +13,18 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.rgw.tools.TimeTool;
 
 public class TarmedGroup
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedGroup>
-		implements IdentifiableWithXid, ITarmedGroup {
+		implements Identifiable, ITarmedGroup {
 	
 	private LocalDate curTimeHelper = LocalDate.now();
 	
@@ -146,5 +148,15 @@ public class TarmedGroup
 			return Optional.of(groups.get(0));
 		}
 		return Optional.empty();
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

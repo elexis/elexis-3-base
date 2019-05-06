@@ -5,12 +5,14 @@ import java.util.Map;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithExtInfo;
+import ch.elexis.core.services.holder.XidServiceHolder;
 
 public class TarmedExtension
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedExtension>
-		implements IdentifiableWithXid, ITarmedExtension, WithExtInfo {
+		implements Identifiable, ITarmedExtension, WithExtInfo {
 	
 	private ExtInfoHandler limitsExtInfoHandler;
 	
@@ -67,5 +69,15 @@ public class TarmedExtension
 	@Override
 	public void setTechInterpretation(String value){
 		getEntity().setTech_interpret(value);
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

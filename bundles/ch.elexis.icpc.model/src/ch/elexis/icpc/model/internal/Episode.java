@@ -11,16 +11,17 @@ import ch.elexis.core.jpa.entities.ICPCEpisodeDiagnosisLink;
 import ch.elexis.core.jpa.entities.Kontakt;
 import ch.elexis.core.jpa.model.adapter.AbstractIdModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.icpc.model.icpc.IcpcEpisode;
 
 public class Episode extends AbstractIdModelAdapter<ICPCEpisode>
-		implements IdentifiableWithXid, IcpcEpisode {
+		implements Identifiable, IcpcEpisode {
 	
 	private ExtInfoHandler extInfoHandler;
 	
@@ -149,5 +150,15 @@ public class Episode extends AbstractIdModelAdapter<ICPCEpisode>
 		sb.append(" [" + (getStatus() == 1 ? Messages.Active : Messages.Inactive) + "]");
 		
 		return sb.toString();
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

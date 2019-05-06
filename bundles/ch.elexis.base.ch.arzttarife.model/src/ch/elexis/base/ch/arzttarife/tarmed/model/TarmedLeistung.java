@@ -21,7 +21,6 @@ import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.arzttarife.util.TarmedDefinitionenUtil;
 import ch.elexis.core.jpa.entities.TarmedLeistung.MandantType;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
@@ -29,17 +28,20 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.rgw.tools.Money;
 
 public class TarmedLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedLeistung>
-		implements IdentifiableWithXid, ITarmedLeistung {
+		implements Identifiable, ITarmedLeistung {
 	
 	public static final String STS_CLASS = "ch.elexis.data.TarmedLeistung";
 	
@@ -555,5 +557,15 @@ public class TarmedLeistung
 	@Override
 	public void setMinutes(int value){
 		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

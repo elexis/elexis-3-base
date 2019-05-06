@@ -5,13 +5,15 @@ import java.util.List;
 import ch.elexis.core.jpa.entities.ICD10;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IDiagnosisTree;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.WithExtInfo;
+import ch.elexis.core.services.holder.XidServiceHolder;
 
 public class Icd10Diagnosis
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ICD10>
-		implements IDiagnosisTree, WithExtInfo, IdentifiableWithXid {
+		implements IDiagnosisTree, WithExtInfo, Identifiable {
 	
 	private ExtInfoHandler extInfoHandler;
 	
@@ -89,5 +91,15 @@ public class Icd10Diagnosis
 	@Override
 	public String getLabel(){
 		return getCode() + " " + getText();
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

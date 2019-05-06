@@ -8,16 +8,17 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import ch.elexis.core.jpa.entities.ICPCCode;
 import ch.elexis.core.jpa.model.adapter.AbstractIdModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.elexis.icpc.model.internal.service.IcpcModelServiceHolder;
 
 public class Code extends AbstractIdModelAdapter<ICPCCode>
-		implements IdentifiableWithXid, IcpcCode {
+		implements Identifiable, IcpcCode {
 	
 	public static final String[] classes = {
 		Messages.IcpcCode_class_A, Messages.IcpcCode_class_B, Messages.IcpcCode_class_D,
@@ -180,6 +181,16 @@ public class Code extends AbstractIdModelAdapter<ICPCCode>
 	@Override
 	public void setConsider(String value){
 		getEntity().setConsider(value);
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 	
 	private static class TransientCode implements IDiagnosisTree {

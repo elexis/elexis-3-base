@@ -6,16 +6,18 @@ import ch.elexis.core.jpa.entities.Behandlung;
 import ch.elexis.core.jpa.entities.ICPCEncounter;
 import ch.elexis.core.jpa.entities.ICPCEpisode;
 import ch.elexis.core.jpa.model.adapter.AbstractIdModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.elexis.icpc.model.icpc.IcpcEncounter;
 import ch.elexis.icpc.model.icpc.IcpcEpisode;
 import ch.elexis.icpc.model.internal.service.IcpcModelServiceHolder;
 
 public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
-		implements IdentifiableWithXid, IcpcEncounter {
+		implements Identifiable, IcpcEncounter {
 	
 	public Encounter(ICPCEncounter entity){
 		super(entity);
@@ -115,5 +117,15 @@ public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
 		} else {
 			getEntity().setRfe(null);
 		}
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

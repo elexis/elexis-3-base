@@ -8,17 +8,19 @@ import org.apache.commons.lang3.StringUtils;
 import ch.elexis.base.ch.labortarif.ILaborLeistung;
 import ch.elexis.base.ch.labortarif.LaborTarifConstants;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.IdentifiableWithXid;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.VatInfo;
 import ch.rgw.tools.StringTool;
 
 public class LaborLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.Labor2009Tarif>
-		implements IdentifiableWithXid, ILaborLeistung {
+		implements Identifiable, ILaborLeistung {
 	
 	public static final String STS_CLASS = "ch.elexis.labortarif2009.data.Labor2009Tarif";
 	
@@ -132,5 +134,15 @@ public class LaborLeistung
 	@Override
 	public String getLimitation(){
 		return getEntity().getLimitatio();
+	}
+	
+	@Override
+	public boolean addXid(String domain, String id, boolean updateIfExists){
+		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
+	}
+	
+	@Override
+	public IXid getXid(String domain){
+		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

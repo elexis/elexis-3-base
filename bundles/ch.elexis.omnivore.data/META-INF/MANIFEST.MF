@@ -30,4 +30,5 @@ Service-Component: OSGI-INF/ch.elexis.omnivore.data.service.internal.LocalDocume
  OSGI-INF/ch.elexis.omnivore.data.service.internal.OmnivoreDocumentStore.xml,
  OSGI-INF/ch.elexis.omnivore.data.model.service.OmnivoreModelService.xml,
  OSGI-INF/ch.elexis.omnivore.data.model.util.ModelUtil.xml,
- OSGI-INF/ch.elexis.omnivore.data.model.service.OmnivoreModelServiceHolder.xml
+ OSGI-INF/ch.elexis.omnivore.data.model.service.OmnivoreModelServiceHolder.xml,
+ OSGI-INF/ch.elexis.omnivore.data.service.internal.OmnivoreModelServiceHolder.xml

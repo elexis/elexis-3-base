@@ -1,4 +1,4 @@
-package at.medevit.ch.artikelstamm.elexis.common.preference;
+package at.medevit.ch.artikelstamm.model.common.preference;
 
 import at.medevit.ch.artikelstamm.marge.Marge;
 import ch.elexis.core.services.holder.ConfigServiceHolder;

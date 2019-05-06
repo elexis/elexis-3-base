@@ -21,9 +21,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import at.medevit.atc_codes.ATCCodeLanguageConstants;
-import at.medevit.ch.artikelstamm.elexis.common.preference.MargePreference;
-import at.medevit.ch.artikelstamm.elexis.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.marge.Marge;
+import at.medevit.ch.artikelstamm.model.common.preference.MargePreference;
+import at.medevit.ch.artikelstamm.model.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 

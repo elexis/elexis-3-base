@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.model.common.preference.MargePreference;
 import at.medevit.ch.artikelstamm.model.service.ArtikelstammModelServiceHolder;
 import at.medevit.ch.artikelstamm.model.service.CoreModelServiceHolder;
 import ch.elexis.core.constants.StringConstants;
@@ -57,10 +58,10 @@ public class ArtikelstammItem
 					billed.setNetPrice(billable.getPurchasePrice());
 					Money sellingPrice = billable.getSellingPrice();
 					if(sellingPrice == null) {
-//						sellingPrice =  MargePreference.calculateVKP(getPurchasePrice());
-						// TODO
+						sellingPrice =  MargePreference.calculateVKP(getPurchasePrice());
 					} 
 //					if (!billable.isInSLList()) {
+// TODO
 //						// noObligationOptifier
 //					} else {
 //						// defaultOptifier

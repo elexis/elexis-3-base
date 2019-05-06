@@ -1,4 +1,4 @@
-package at.medevit.ch.artikelstamm.elexis.common.preference;
+package at.medevit.ch.artikelstamm.model.common.preference;
 
 public class PreferenceConstants {
 	

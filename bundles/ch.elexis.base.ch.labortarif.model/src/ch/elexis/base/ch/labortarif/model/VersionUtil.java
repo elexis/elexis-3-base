@@ -30,7 +30,8 @@ public class VersionUtil {
 			ModelServiceHolder.get().setEntityProperty("chapter", Integer.toString(newVersion),
 				versionEntry.get());
 			ModelServiceHolder.get().save(versionEntry.get());
+		} else {
+			throw new IllegalArgumentException("No Version entry");
 		}
-		throw new IllegalArgumentException("No Verison entry");
 	}
 }

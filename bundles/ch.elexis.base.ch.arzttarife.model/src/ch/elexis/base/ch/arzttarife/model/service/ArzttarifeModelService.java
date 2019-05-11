@@ -17,7 +17,7 @@ import ch.elexis.core.services.IQuery;
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.arzttarife.model")
 public class ArzttarifeModelService extends AbstractModelService implements IModelService {
 	
-	@Reference
+	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
 	
 	@Reference

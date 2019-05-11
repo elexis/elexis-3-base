@@ -27,7 +27,7 @@ import ch.elexis.core.services.IStoreToStringContribution;
 public class OmnivoreModelService extends AbstractModelService
 		implements IModelService, IStoreToStringContribution {
 	
-	@Reference(cardinality = ReferenceCardinality.MANDATORY)
+	@Reference(cardinality = ReferenceCardinality.MANDATORY, target = "(id=default)")
 	private IElexisEntityManager entityManager;
 	
 	@Override
@@ -108,5 +108,15 @@ public class OmnivoreModelService extends AbstractModelService
 	@Override
 	public void clearCache(){
 		entityManager.clearCache();
+	}
+	
+	@Override
+	public Class<?> getEntityForType(String type){
+		return ElexisTypeMap.get(type);
+	}
+	
+	@Override
+	public String getTypeForEntity(Object entityInstance){
+		return ElexisTypeMap.getKeyForObject((EntityWithId) entityInstance);
 	}
 }

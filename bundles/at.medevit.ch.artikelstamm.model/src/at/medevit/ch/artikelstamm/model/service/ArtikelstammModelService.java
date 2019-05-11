@@ -42,7 +42,7 @@ import ch.elexis.core.services.IStoreToStringContribution;
 public class ArtikelstammModelService extends AbstractModelService
 		implements IModelService, IStoreToStringContribution, ICodeElementServiceContribution {
 	
-	@Reference
+	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
 	
 	@Reference
@@ -55,7 +55,7 @@ public class ArtikelstammModelService extends AbstractModelService
 	
 	@Override
 	public Optional<String> storeToString(Identifiable identifiable){
-		if (identifiable instanceof ArtikelstammItem) {
+		if (identifiable instanceof IArtikelstammItem) {
 			return Optional.of(STS_CLASS + StringConstants.DOUBLECOLON + identifiable.getId());
 		}
 		return Optional.empty();
@@ -195,5 +195,21 @@ public class ArtikelstammModelService extends AbstractModelService
 	@Override
 	public void clearCache(){
 		entityManager.clearCache();
+	}
+	
+	@Override
+	public Class<?> getEntityForType(String type){
+		if (STS_CLASS.equals(type)) {
+			return ArtikelstammItem.class;
+		}
+		return null;
+	}
+	
+	@Override
+	public String getTypeForEntity(Object entityInstance){
+		if (entityInstance instanceof ArtikelstammItem) {
+			return STS_CLASS;
+		}
+		return null;
 	}
 }

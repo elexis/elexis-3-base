@@ -6,7 +6,7 @@
       <provide interface="ch.elexis.core.services.IStoreToStringContribution"/>
       <provide interface="ch.elexis.core.services.ICodeElementServiceContribution"/>
    </service>
-   <reference cardinality="1..1" field="entityManager" interface="ch.elexis.core.services.IElexisEntityManager" name="entityManager"/>
+   <reference cardinality="1..1" field="entityManager" interface="ch.elexis.core.services.IElexisEntityManager" name="entityManager" target="(id=default)"/>
    <reference cardinality="1..1" field="eventAdmin" interface="org.osgi.service.event.EventAdmin" name="eventAdmin"/>
    <implementation class="at.medevit.ch.artikelstamm.model.service.ArtikelstammModelService"/>
 </scr:component>

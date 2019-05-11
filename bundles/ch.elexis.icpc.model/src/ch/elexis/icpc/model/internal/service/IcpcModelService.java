@@ -24,7 +24,7 @@ import ch.elexis.core.services.IStoreToStringContribution;
 public class IcpcModelService extends AbstractModelService
 		implements IModelService, IStoreToStringContribution {
 	
-	@Reference
+	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
 	
 	@Reference
@@ -102,5 +102,15 @@ public class IcpcModelService extends AbstractModelService
 			}
 		}
 		return Optional.empty();
+	}
+	
+	@Override
+	public Class<?> getEntityForType(String type){
+		return ElexisTypeMap.get(type);
+	}
+	
+	@Override
+	public String getTypeForEntity(Object entityInstance){
+		return ElexisTypeMap.getKeyForObject((EntityWithId) entityInstance);
 	}
 }

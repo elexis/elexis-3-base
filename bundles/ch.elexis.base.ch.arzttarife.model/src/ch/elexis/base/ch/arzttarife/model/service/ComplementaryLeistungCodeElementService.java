@@ -27,7 +27,7 @@ import ch.elexis.core.services.IStoreToStringContribution;
 public class ComplementaryLeistungCodeElementService
 		implements ICodeElementServiceContribution, IStoreToStringContribution {
 	
-	@Reference
+	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
 	
 	@Override
@@ -115,5 +115,22 @@ public class ComplementaryLeistungCodeElementService
 			}
 		}
 		return Collections.emptyList();
+	}
+	
+	@Override
+	public Class<?> getEntityForType(String type){
+		if (ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
+			.equals(type)) {
+			return ch.elexis.core.jpa.entities.ComplementaryLeistung.class;
+		}
+		return null;
+	}
+	
+	@Override
+	public String getTypeForEntity(Object entityInstance){
+		if (entityInstance instanceof ch.elexis.core.jpa.entities.ComplementaryLeistung) {
+			return ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS;
+		}
+		return null;
 	}
 }

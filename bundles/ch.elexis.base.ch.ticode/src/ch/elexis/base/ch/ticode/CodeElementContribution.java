@@ -19,6 +19,8 @@ import ch.elexis.core.services.IStoreToStringContribution;
 public class CodeElementContribution
 		implements ICodeElementServiceContribution, IStoreToStringContribution {
 	
+	public static final String STS_CLASS = "ch.elexis.data.TICode";
+	
 	@Override
 	public String getSystem(){
 		return TessinerCode.CODESYSTEM_NAME;
@@ -48,7 +50,7 @@ public class CodeElementContribution
 	@Override
 	public Optional<String> storeToString(Identifiable identifiable){
 		if(identifiable instanceof TessinerCode) {
-			return Optional.of("ch.elexis.data.TICode" + IStoreToStringContribution.DOUBLECOLON
+			return Optional.of(STS_CLASS + IStoreToStringContribution.DOUBLECOLON
 				+ ((TessinerCode) identifiable).getId());
 		}
 		return Optional.empty();
@@ -57,13 +59,25 @@ public class CodeElementContribution
 	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<Identifiable> loadFromString(String storeToString){
-		if (storeToString != null && storeToString.startsWith("ch.elexis.data.TICode")) {
+		if (storeToString != null && storeToString.startsWith(STS_CLASS)) {
 			String[] parts = storeToString.split(IStoreToStringContribution.DOUBLECOLON);
 			if (parts != null && parts.length == 2) {
 				return (Optional<Identifiable>) (Optional<?>) loadFromCode(parts[1]);
 			}
 		}
 		return Optional.empty();
+	}
+	
+	@Override
+	public Class<?> getEntityForType(String type){
+		// there is no entity for the ti code ...
+		return null;
+	}
+	
+	@Override
+	public String getTypeForEntity(Object entityInstance){
+		// there is no entity for the ti code ...
+		return null;
 	}
 	
 }

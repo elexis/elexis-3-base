@@ -24,7 +24,7 @@ import ch.elexis.core.services.IStoreToStringContribution;
 public class LaborTarifModelService extends AbstractModelService
 		implements IModelService, IStoreToStringContribution {
 	
-	@Reference
+	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
 	
 	@Reference
@@ -87,5 +87,21 @@ public class LaborTarifModelService extends AbstractModelService
 	@Override
 	public void clearCache(){
 		entityManager.clearCache();
+	}
+	
+	@Override
+	public Class<?> getEntityForType(String type){
+		if (LaborLeistung.STS_CLASS.equals(type)) {
+			return ch.elexis.core.jpa.entities.Labor2009Tarif.class;
+		}
+		return null;
+	}
+	
+	@Override
+	public String getTypeForEntity(Object entityInstance){
+		if (entityInstance instanceof ch.elexis.core.jpa.entities.Labor2009Tarif) {
+			return LaborLeistung.STS_CLASS;
+		}
+		return null;
 	}
 }

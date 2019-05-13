@@ -11,8 +11,7 @@ Bundle-Vendor: medevit.at
 Bundle-ClassPath: lib/,
  .
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.osgi
-Import-Package: ch.elexis.core.model,
- ch.elexis.core.types,
- ch.rgw.tools,
- org.slf4j
+Require-Bundle: org.eclipse.osgi,
+ ch.rgw.utility;bundle-version="3.8.0",
+ ch.elexis.core;bundle-version="3.8.0"
+Import-Package: org.slf4j

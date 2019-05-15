@@ -1,17 +1,16 @@
 package ch.elexis.agenda.data;
 
-import java.util.Calendar;
-import java.util.Hashtable;
-import java.util.List;
-
-import ch.elexis.agenda.util.Plannables;
-import ch.elexis.data.Query;
-import ch.rgw.tools.StringTool;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.rgw.tools.TimeTool;
 
 public class TerminUtil {
 	
 	public static void updateBoundaries(String resource, TimeTool date){
+		
+		AppointmentServiceHolder.get().updateBoundaries(resource,  date.toLocalDate());
+		
+		/**
+		 * DEPRECATED JPA
 		String day = date.toString(TimeTool.DATE_COMPACT);
 		Query<Termin> qbe = new Query<Termin>(Termin.class, Termin.TABLENAME, false, new String [] {Termin.FLD_LINKGROUP, Termin.FLD_DAUER, Termin.FLD_BEGINN, Termin.FLD_TAG, Termin.FLD_GRUND, Termin.FLD_PATIENT, Termin.FLD_DELETED, Termin.FLD_TERMINSTATUS, Termin.FLD_TERMINTYP, Termin.FLD_BEREICH, Termin.FLD_STATUSHIST});
 		qbe.add(Termin.FLD_TAG, Query.EQUALS, day);
@@ -42,6 +41,8 @@ public class TerminUtil {
 				TimeTool.getMinutesFromTimeString(until), Termin.typReserviert(),
 				Termin.statusLeer());
 		}
+		
+		*/
 	}
 	
 }

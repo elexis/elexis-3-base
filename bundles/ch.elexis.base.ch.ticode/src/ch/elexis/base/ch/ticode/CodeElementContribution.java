@@ -80,4 +80,9 @@ public class CodeElementContribution
 		return null;
 	}
 	
+	@Override
+	public String getTypeForModel(Class<?> interfaze){
+		// there is no entity for the ti code ...
+		return null;
+	}
 }

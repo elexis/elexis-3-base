@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.EventAdmin;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.labortarif.model.LaborLeistung;
 import ch.elexis.core.common.ElexisEvent;
@@ -101,6 +102,20 @@ public class LaborTarifModelService extends AbstractModelService
 	public String getTypeForEntity(Object entityInstance){
 		if (entityInstance instanceof ch.elexis.core.jpa.entities.Labor2009Tarif) {
 			return LaborLeistung.STS_CLASS;
+		}
+		return null;
+	}
+	
+	@Override
+	public String getTypeForModel(Class<?> interfaze){
+		Class<? extends EntityWithId> entityClass = adapterFactory.getEntityClass(interfaze);
+		if (entityClass != null) {
+			try {
+				return getTypeForEntity(entityClass.newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				LoggerFactory.getLogger(getClass())
+					.error("Error getting type for model [" + interfaze + "]", e);
+			}
 		}
 		return null;
 	}

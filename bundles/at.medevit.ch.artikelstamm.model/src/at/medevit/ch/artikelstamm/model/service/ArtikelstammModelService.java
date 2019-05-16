@@ -212,4 +212,19 @@ public class ArtikelstammModelService extends AbstractModelService
 		}
 		return null;
 	}
+	
+	@Override
+	public String getTypeForModel(Class<?> interfaze){
+		Class<? extends EntityWithId> entityClass =
+			adapterFactory.getEntityClass(interfaze);
+		if (entityClass != null) {
+			try {
+				return getTypeForEntity(entityClass.newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				LoggerFactory.getLogger(getClass())
+					.error("Error getting type for model [" + interfaze + "]", e);
+			}
+		}
+		return null;
+	}
 }

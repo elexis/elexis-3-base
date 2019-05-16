@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.core.constants.StringConstants;
@@ -130,6 +131,21 @@ public class ComplementaryLeistungCodeElementService
 	public String getTypeForEntity(Object entityInstance){
 		if (entityInstance instanceof ch.elexis.core.jpa.entities.ComplementaryLeistung) {
 			return ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS;
+		}
+		return null;
+	}
+	
+	@Override
+	public String getTypeForModel(Class<?> interfaze){
+		Class<? extends EntityWithId> entityClass =
+			ArzttarifeModelAdapterFactory.getInstance().getEntityClass(interfaze);
+		if (entityClass != null) {
+			try {
+				return getTypeForEntity(entityClass.newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				LoggerFactory.getLogger(getClass())
+					.error("Error getting type for model [" + interfaze + "]", e);
+			}
 		}
 		return null;
 	}

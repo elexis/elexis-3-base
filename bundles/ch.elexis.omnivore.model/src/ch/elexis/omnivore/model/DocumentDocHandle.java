@@ -275,6 +275,11 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	}
 	
 	@Override
+	public File getAsFile(){
+		return getStorageFile(true);
+	}
+	
+	@Override
 	public boolean addXid(String domain, String id, boolean updateIfExists){
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}

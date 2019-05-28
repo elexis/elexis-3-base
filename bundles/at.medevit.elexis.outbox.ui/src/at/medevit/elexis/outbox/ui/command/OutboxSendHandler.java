@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.model.OutboxElement;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
+import at.medevit.elexis.outbox.ui.part.model.PatientOutboxElements;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Patient;
 
@@ -46,6 +47,10 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 			&& !((StructuredSelection) selection).isEmpty()) {
 			List<?> iOutboxElements = ((StructuredSelection) selection).toList();
 			Set<String> patientIds = new HashSet<>();
+			if (iOutboxElements.size() == 1
+				&& iOutboxElements.get(0) instanceof PatientOutboxElements) {
+				iOutboxElements = ((PatientOutboxElements) iOutboxElements.get(0)).getElements();
+			}
 			for (Object iOutboxElement : iOutboxElements) {
 				
 				if (iOutboxElement instanceof OutboxElement) {

@@ -97,7 +97,10 @@ public class MsgDetailDialog extends Dialog {
 			.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 		
 		if (incomingMsg != null) {
-			lblFrom.setText(incomingMsg.getSender().getLabel());
+			String senderString =
+				(incomingMsg.getSender() != null) ? incomingMsg.getSender().getLabel()
+						: incomingMsg.getSenderString();
+			lblFrom.setText(senderString);
 			Anwender sender = null;
 			for (Anwender anwender : users) {
 				if (incomingMsg.getDest().getId().equals(anwender.getId())) {

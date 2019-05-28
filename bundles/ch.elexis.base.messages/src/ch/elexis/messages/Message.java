@@ -69,8 +69,16 @@ public class Message extends PersistentObject {
 		
 	}
 	
+	/**
+	 * @return the raw sender string
+	 * @since 3.7
+	 */
+	public String getSenderString() {
+		return get(FLD_FROM);
+	}
+	
 	public Anwender getSender(){
-		Anwender an = Anwender.load(get(FLD_FROM));
+		Anwender an = Anwender.load(getSenderString());
 		return an;
 	}
 	

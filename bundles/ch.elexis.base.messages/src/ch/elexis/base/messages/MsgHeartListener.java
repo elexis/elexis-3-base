@@ -40,7 +40,7 @@ public class MsgHeartListener implements HeartListener {
 		if (!bSkip) {
 			if (CoreHub.actUser != null) {
 				Query<Message> qbe = new Query<Message>(Message.class);
-				qbe.add("to", "=", CoreHub.actUser.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+				qbe.add("to", Query.EQUALS, CoreHub.actUser.getId()); //$NON-NLS-1$
 				final List<Message> res = qbe.execute();
 				if (res.size() > 0) {
 					UiDesk.getDisplay().asyncExec(new Runnable() {

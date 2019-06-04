@@ -102,7 +102,6 @@ import ch.elexis.omnivore.data.AutomaticBilling;
 import ch.elexis.omnivore.data.Utils;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.model.util.CategoryUtil;
-
 import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
@@ -181,9 +180,9 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		}
 	}
 	
+	@Optional
 	@Inject
-	void updateDocHandle(
-		@Optional @UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IDocumentHandle dochandle){
+	void updateDocHandle(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IDocumentHandle dochandle){
 		if (isActiveControl(table)) {
 			viewer.refresh();
 		}

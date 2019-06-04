@@ -59,9 +59,10 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	
 	private boolean bulkInsert = false;
 	
+	@Optional
 	@Inject
 	void updatePrescription(
-		@Optional @UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPrescription prescription){
+		@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPrescription prescription){
 		refreshPrescription(prescription);
 	}
 	

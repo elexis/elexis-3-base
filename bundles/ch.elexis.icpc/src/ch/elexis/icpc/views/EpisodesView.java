@@ -74,8 +74,9 @@ public class EpisodesView extends ViewPart {
 		}
 	}
 	
+	@Optional
 	@Inject
-	void updateEpisode(@Optional @UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IcpcEpisode episode){
+	void updateEpisode(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IcpcEpisode episode){
 		if (display != null && !display.isDisposed()) {
 			display.tvEpisodes.refresh();
 		}

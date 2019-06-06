@@ -13,7 +13,6 @@
 package ch.elexis.icpc.views;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -27,7 +26,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.IContext;
 import ch.elexis.core.ui.actions.ObjectFilterRegistry;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -46,7 +44,7 @@ public class EpisodesView extends ViewPart {
 			activateEpisodeAction, konsFilterAction, removeDiagnosesAction;
 	
 	@Inject
-	void activePatient(@Optional @Named(IContext.ACTIVE_PATIENT) IPatient patient){
+	void activePatient(@Optional IPatient patient){
 		if (display != null && !display.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				display.setPatient(patient);

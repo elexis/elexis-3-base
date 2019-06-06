@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -88,7 +87,6 @@ import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.service.StoreToStringServiceHolder;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.IContext;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.actions.RestrictedAction;
@@ -158,7 +156,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	}
 	
 	@Inject
-	void activePatient(@Optional @Named(IContext.ACTIVE_PATIENT) IPatient patient){
+	void activePatient(@Optional IPatient patient){
 		Display.getDefault().asyncExec(() -> {
 			if (isActiveControl(table)) {
 				if (actPatient != patient) {

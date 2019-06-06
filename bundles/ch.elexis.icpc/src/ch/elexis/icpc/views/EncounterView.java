@@ -13,7 +13,6 @@
 package ch.elexis.icpc.views;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,7 +21,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.IContext;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -33,7 +31,7 @@ public class EncounterView extends ViewPart {
 	private EncounterDisplay display;
 	
 	@Inject
-	void activePatient(@Optional @Named(IContext.ACTIVE_PATIENT) IPatient patient){
+	void activePatient(@Optional IPatient patient){
 		if (display != null && !display.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				display.setEncounter(null);

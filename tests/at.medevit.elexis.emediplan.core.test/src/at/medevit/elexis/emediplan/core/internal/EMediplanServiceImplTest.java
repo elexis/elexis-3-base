@@ -18,6 +18,7 @@ import org.eclipse.swt.program.Program;
 import org.junit.Test;
 
 import at.medevit.elexis.emediplan.core.model.print.Medication;
+import at.medevit.elexis.emediplan.core.test.AllTests;
 import at.medevit.elexis.emediplan.core.test.TestData;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.prescription.EntryType;
@@ -132,6 +133,22 @@ public class EMediplanServiceImplTest {
 				+ "emediplan_test.pdf");
 		}
 		assertTrue(output.size() > 100);
+	}
+	
+	@Test
+	public void loadNbPackFloat() throws IOException{
+		EMediplanServiceImpl impl = new EMediplanServiceImpl();
+		at.medevit.elexis.emediplan.core.model.chmed16a.Medication model =
+			impl.createModelFromJsonString(AllTests.getAsString("/rsc/NbPack_float.json"));
+		assertNotNull(model);
+	}
+	
+	@Test
+	public void loadNbPackInt() throws IOException{
+		EMediplanServiceImpl impl = new EMediplanServiceImpl();
+		at.medevit.elexis.emediplan.core.model.chmed16a.Medication model =
+			impl.createModelFromJsonString(AllTests.getAsString("/rsc/NbPack_int.json"));
+		assertNotNull(model);
 	}
 	
 	private List<Prescription> getPatientMedication(Patient patient){

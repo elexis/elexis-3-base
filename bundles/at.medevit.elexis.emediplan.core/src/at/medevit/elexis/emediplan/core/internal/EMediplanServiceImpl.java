@@ -270,12 +270,9 @@ public class EMediplanServiceImpl implements EMediplanService {
 		String json = getDecodedJsonString(chunk);
 		if (chunk.length() > 8) {
 			logger.debug("json version: " + chunk.substring(5, 8));
-			GsonBuilder gb = new GsonBuilder();
-			gb.registerTypeAdapter(Medication.class, new MedicationDeserializer());
-			Gson g = gb.create();
-			Medication m = g.fromJson(json, Medication.class);
-			m.chunk = chunk;
-			return m;
+			Medication ret = createModelFromJsonString(json);
+			ret.chunk = chunk;
+			return ret;
 		}
 		else {
 			logger.error("invalid json length - cannot parseable");
@@ -284,6 +281,14 @@ public class EMediplanServiceImpl implements EMediplanService {
 		return null;
 	}
 	
+	protected Medication createModelFromJsonString(String jsonString) {
+		GsonBuilder gb = new GsonBuilder();
+		gb.registerTypeAdapter(Medication.class, new MedicationDeserializer());
+		Gson g = gb.create();
+		Medication m = g.fromJson(jsonString, Medication.class);
+		return m;
+	}
+
 	public void addExistingArticlesToMedication(Medication medication){
 		if (medication != null) {
 			findPatientForMedication(medication);

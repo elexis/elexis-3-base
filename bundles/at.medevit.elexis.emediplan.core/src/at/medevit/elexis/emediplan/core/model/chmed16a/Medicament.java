@@ -35,7 +35,7 @@ public class Medicament {
 	public String Roa;
 	public int Rep;
 	public int Subs;
-	public float NbPack;
+	public int NbPack;
 	public List<PrivateField> PFields;
 	public transient ArtikelstammItem artikelstammItem;
 	public transient String dosis;

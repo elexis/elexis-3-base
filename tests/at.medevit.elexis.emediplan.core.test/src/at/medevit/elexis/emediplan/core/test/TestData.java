@@ -181,7 +181,7 @@ public class TestData {
 			CoreModelServiceHolder.get().save(mandatorPerson);
 			mandator =
 				CoreModelServiceHolder.get().load(mandatorPerson.getId(), IMandator.class).get();
-			ContextServiceHolder.get().getRootContext().setActiveMandator(
+			ContextServiceHolder.get().setActiveMandator(
 				mandator);
 		}
 		

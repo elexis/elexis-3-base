@@ -1,9 +1,15 @@
 package at.medevit.elexis.emediplan.core.internal;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.LoggerFactory;
+import org.threeten.bp.LocalDate;
 
 import at.medevit.elexis.emediplan.core.BlueMedicationConstants;
 import at.medevit.elexis.emediplan.core.BlueMedicationService;
@@ -12,7 +18,8 @@ import ch.elexis.data.Patient;
 import ch.rgw.tools.Result;
 import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
-import io.swagger.client.api.DefaultApi;
+import io.swagger.client.api.ExtractionAndConsolidationApi;
+import io.swagger.client.model.UploadResult;
 
 @Component
 public class BlueMedicationServiceImpl implements BlueMedicationService {
@@ -20,6 +27,13 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	private boolean proxyActive;
 	private String oldProxyHost;
 	private String oldProxyPort;
+	
+	private Map<LocalDateTime, UploadResult> pendingUploadResults;
+	
+	@Activate
+	public void activate() {
+		pendingUploadResults = new HashMap<>();
+	}
 	
 	/**
 	 * Set the HIN proxy as system property. <b>Remember to call deInitProxy</b>
@@ -61,27 +75,29 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	}
 	
 	@Override
-	public Result uploadDocument(Patient patient, File document){
+	public Result<String> uploadDocument(Patient patient, File document){
 		initProxy();
 		try {
-			DefaultApi apiInstance = new DefaultApi();
-			apiInstance.getApiClient()
-				.setBasePath("http://staging.blueconnect.hin.ch/bluemedication");
-			File externalData = document; // byte[] | 
-			String patientFirstName = patient.getVorname(); // String | 
-			String patientLastName = patient.getName(); // String | 
-			String patientSex = patient.getGender().name(); // String | 
-			String patientBirthdate = ""; // String | 
+			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
+			apiInstance.getApiClient().setBasePath(getBasePath());
+			File externalData = document;
+			String patientFirstName = patient.getVorname();
+			String patientLastName = patient.getName();
+			String patientSex = patient.getGender().name();
+			LocalDate patientBirthdate = LocalDate.now();
 			try {
-				ApiResponse<Void> ret = apiInstance.dispatchPostWithHttpInfo(null, externalData,
-					patientFirstName, patientLastName, patientSex, patientBirthdate);
-				if (ret.getStatusCode() > 303) {
+				ApiResponse<UploadResult> ret = apiInstance.dispatchPostWithHttpInfo((File) null,
+					externalData, patientFirstName, patientLastName, patientSex, patientBirthdate);
+				if (ret.getStatusCode() >= 300) {
 					return Result.ERROR("Response status code was [" + ret.getStatusCode() + "]");
 				}
-				return Result.OK();
+				if (ret.getData() == null) {
+					return Result.ERROR("Response has no data");
+				}
+				pendingUploadResults.put(LocalDateTime.now(), ret.getData());
+				return Result.OK(ret.getData().getUrl());
 			} catch (ApiException e) {
-				System.err.println("Exception when calling DefaultApi#dispatchPost");
-				e.printStackTrace();
+				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
 				return Result.ERROR(e.getMessage());
 			}
 		} finally {
@@ -89,8 +105,16 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		}
 	}
 	
+	private String getBasePath(){
+		if (CoreHub.globalCfg.get(BlueMedicationConstants.CFG_URL_STAGING, true)) {
+			return "http://staging.blueconnect.hin.ch/bluemedication/api/v1";
+		} else {
+			return "http://blueconnect.hin.ch/bluemedication/api/v1";
+		}
+	}
+	
 	@Override
-	public Result downloadEMediplan(String id){
+	public Result<String> downloadEMediplan(String id){
 		// TODO Auto-generated method stub
 		return null;
 	}

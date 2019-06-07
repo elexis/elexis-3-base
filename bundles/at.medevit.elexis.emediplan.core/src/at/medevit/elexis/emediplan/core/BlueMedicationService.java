@@ -7,7 +7,7 @@ import ch.rgw.tools.Result;
 
 public interface BlueMedicationService {
 	
-	public Result uploadDocument(Patient patient, File document);
+	public Result<String> uploadDocument(Patient patient, File document);
 	
-	public Result downloadEMediplan(String id);
+	public Result<String> downloadEMediplan(String id);
 }

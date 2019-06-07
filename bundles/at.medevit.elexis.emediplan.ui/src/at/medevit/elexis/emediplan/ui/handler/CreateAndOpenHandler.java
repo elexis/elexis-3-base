@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -44,6 +45,9 @@ import ch.elexis.data.Prescription;
 
 public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 	
+	private BundleContext bundleContext;
+	private ServiceReference<EMediplanService> eMediplanServiceRef;
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
@@ -66,13 +70,11 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			prescriptions = sortPrescriptions(prescriptions, event);
 			
-			BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
-			ServiceReference<EMediplanService> eMediplanServiceRef =
-				bundleContext.getServiceReference(EMediplanService.class);
-			if (eMediplanServiceRef != null) {
-				EMediplanService eMediplanService = bundleContext.getService(eMediplanServiceRef);
+			Optional<EMediplanService> eMediplanService = getEMediplanService();
+			if (eMediplanService.isPresent()) {
 				ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
-				eMediplanService.exportEMediplanPdf(mandant, patient, prescriptions, pdfOutput);
+				eMediplanService.get().exportEMediplanPdf(mandant, patient, prescriptions,
+					pdfOutput);
 				// save as Brief
 				SaveEMediplanUtil.saveEMediplan(patient, mandant, pdfOutput.toByteArray());
 				// open with system viewer
@@ -82,7 +84,7 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 						"Das Rezept konnte nicht angezeigt werden.");
 				}
-				bundleContext.ungetService(eMediplanServiceRef);
+				ungetEMediplanService();
 			} else {
 				LoggerFactory.getLogger(getClass()).error("No EMediplanService available");
 				MessageDialog.openError(HandlerUtil.getActiveShell(event), "Fehler",
@@ -90,6 +92,24 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 			}
 		}
 		return null;
+	}
+	
+	private Optional<EMediplanService> getEMediplanService() {
+		bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		eMediplanServiceRef =
+			bundleContext.getServiceReference(EMediplanService.class);
+		if (eMediplanServiceRef != null) {
+			return Optional.of(bundleContext.getService(eMediplanServiceRef));
+		}
+		return Optional.empty();
+	}
+	
+	private void ungetEMediplanService(){
+		if (bundleContext != null && eMediplanServiceRef != null) {
+			bundleContext.ungetService(eMediplanServiceRef);
+		}
+		bundleContext = null;
+		eMediplanServiceRef = null;
 	}
 	
 	private List<Prescription> sortPrescriptions(List<Prescription> prescriptions,

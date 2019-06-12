@@ -62,6 +62,37 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.omnivoredirect_view">
+         <command
+               commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
+               icon="rsc/be_icon_16x16_up.png"
+               label="Blue Medication Upload"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="org.eclipse.ui.selection">
+                  <not>
+                     <count
+                           value="0">
+                     </count>
+                  </not>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="ch.elexis.omnivore.data.DocHandle">
+                     </instanceof>
+                  </iterate>
+                  <test
+                        property="at.medevit.elexis.emediplan.ui.isUploadable">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

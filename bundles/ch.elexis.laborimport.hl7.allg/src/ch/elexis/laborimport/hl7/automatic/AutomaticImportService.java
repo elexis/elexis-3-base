@@ -30,13 +30,20 @@ public class AutomaticImportService {
 	public static final String MY_LAB = "Eigenlabor";
 	
 	private MultiFileParser mfParser = new MultiFileParser(MY_LAB);
-	private HL7Parser hlp = new DefaultHL7Parser(MY_LAB);
+	private HL7Parser hl7parser;
 	
 	private Timer timer = new Timer(true);
 	
 	@Activate
 	public void activate(){
 		timer.schedule(new AutomaticImportTask(), 5000, 5000);
+	}
+	
+	private HL7Parser getHL7Parser(){
+		if (hl7parser == null) {
+			hl7parser = new DefaultHL7Parser(MY_LAB);
+		}
+		return hl7parser;
 	}
 	
 	private class AutomaticImportTask extends TimerTask {
@@ -131,7 +138,7 @@ public class AutomaticImportService {
 			result = mfParser.importFromFile(
 				file, new DefaultImportStrategyFactory().setMoveAfterImport(true)
 					.setLabContactResolver(new LinkLabContactResolver()),
-				hlp, new DefaultPersistenceHandler());
+				getHL7Parser(), new DefaultPersistenceHandler());
 		}
 	}
 }

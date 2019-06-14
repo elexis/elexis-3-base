@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,7 +29,7 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.elexis.icpc.model.internal.service.IcpcModelServiceHolder;
 
-@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=icpc")
+@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=icpc2")
 public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter
 		implements IReferenceDataImporter {
 	
@@ -57,8 +56,8 @@ public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter
 	
 	@Override
 	public int getCurrentVersion(){
-		Optional<IcpcCode> existing = IcpcModelServiceHolder.get().load("ver", IcpcCode.class);
-		return existing.isPresent() ? 1 : 0;
+		long count = IcpcModelServiceHolder.get().executeNativeQuery("SELECT ID FROM CH_ELEXIS_ICPC WHERE ID != 'ver'").count();
+		return count > 0 ? 1 : 0;
 	}
 	
 	private IStatus doImport(IProgressMonitor monitor, Database db) throws IOException{
@@ -78,7 +77,8 @@ public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter
 			Row row = it.next();
 			ICPCCode entity = new ICPCCode();
 			entity.setId((String) row.get("CODE"));
-			entity.setComponent((String) row.get("COMPONENT"));
+			Object component = row.get("COMPONENT");
+			entity.setComponent(component != null ? String.valueOf(component) : null);
 			entity.setText((String) row.get("TEXT"));
 			entity.setSynonyms((String) row.get("SYNONYMS"));
 			entity.setShortName((String) row.get("SHORT"));

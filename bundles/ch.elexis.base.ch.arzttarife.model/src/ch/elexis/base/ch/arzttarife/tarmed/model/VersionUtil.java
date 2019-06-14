@@ -27,12 +27,15 @@ public class VersionUtil {
 			// read from text if law specified 
 			String versionVal = (String) ArzttarifeModelServiceHolder.get()
 				.getEntityProperty("tx255", versionEntry.get());
-			String[] parts = versionVal.split("\\" + DATASET_VERSION_SEPARATOR);
-			for (String part : parts) {
-				String[] subParts = part.split(DATASET_LAW_SEPARATOR);
-				if (subParts.length == 2) {
-					if (law.equals(subParts[0])) {
-						return getVersionAsInt(subParts[1]);
+			if (versionVal != null)
+			{
+				String[] parts = versionVal.split("\\" + DATASET_VERSION_SEPARATOR);
+				for (String part : parts) {
+					String[] subParts = part.split(DATASET_LAW_SEPARATOR);
+					if (subParts.length == 2) {
+						if (law.equals(subParts[0])) {
+							return getVersionAsInt(subParts[1]);
+						}
 					}
 				}
 			}

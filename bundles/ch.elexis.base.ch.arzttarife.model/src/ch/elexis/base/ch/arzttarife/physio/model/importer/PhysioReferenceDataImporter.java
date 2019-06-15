@@ -22,7 +22,7 @@ import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
 import ch.rgw.tools.TimeTool;
 
-@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=psychotrope")
+@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=physio")
 public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 		implements IReferenceDataImporter {
 	

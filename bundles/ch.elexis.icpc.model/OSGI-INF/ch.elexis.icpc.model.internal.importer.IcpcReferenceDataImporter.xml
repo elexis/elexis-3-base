@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.elexis.icpc.model.internal.importer.IcpcReferenceDataImporter">
-   <property name="referenceDataId" value="icpc"/>
+   <property name="referenceDataId" value="icpc2"/>
    <service>
       <provide interface="ch.elexis.core.interfaces.IReferenceDataImporter"/>
    </service>

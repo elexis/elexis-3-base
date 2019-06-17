@@ -16,7 +16,9 @@ public class ICD10ModelServiceHolder {
 	}
 	
 	public static IModelService get(){
+		if (service == null) {
+			throw new IllegalStateException("No IModelService available");
+		}
 		return service;
-		
 	}
 }

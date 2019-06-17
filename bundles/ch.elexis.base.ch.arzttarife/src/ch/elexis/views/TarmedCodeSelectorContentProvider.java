@@ -85,7 +85,7 @@ public class TarmedCodeSelectorContentProvider
 		if (queryText != null && queryText.length() > 2) {
 			leafsQuery.and("tx255", COMPARATOR.LIKE, "%" + queryText + "%");
 		}
-		leafsQuery.and("isChapter", COMPARATOR.EQUALS, "0");
+		leafsQuery.and("isChapter", COMPARATOR.EQUALS, false);
 		leafsQuery.orderBy("code_", ORDER.ASC);
 		// execute query and populate filtered leafs map
 		List<ITarmedLeistung> leafs = leafsQuery.execute();
@@ -244,7 +244,7 @@ public class TarmedCodeSelectorContentProvider
 		IQuery<ITarmedLeistung> childrenQuery =
 			ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
 		childrenQuery.and("parent", COMPARATOR.EQUALS, parentLeistung.getId());
-		childrenQuery.and("isChapter", COMPARATOR.EQUALS, "1");
+		childrenQuery.and("isChapter", COMPARATOR.EQUALS, true);
 		return childrenQuery.execute();
 	}
 	

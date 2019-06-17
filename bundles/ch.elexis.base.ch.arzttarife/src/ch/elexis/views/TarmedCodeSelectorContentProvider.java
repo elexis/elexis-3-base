@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
@@ -42,8 +43,18 @@ public class TarmedCodeSelectorContentProvider
 	private String currentZiffer;
 	private String currentText;
 	
+	private INamedQuery<ITarmedLeistung> childrenQuery;
+	
+	private INamedQuery<ITarmedLeistung> childrenChapterQuery;
+	
 	public TarmedCodeSelectorContentProvider(CommonViewer commonViewer){
 		this.commonViewer = commonViewer;
+		
+		this.childrenQuery =
+			ArzttarifeModelServiceHolder.get().getNamedQuery(ITarmedLeistung.class, "parent");
+		this.childrenChapterQuery =
+			ArzttarifeModelServiceHolder.get().getNamedQuery(ITarmedLeistung.class, "parent",
+				"chapter");
 		
 		filteredLeafs = new HashMap<>();
 		
@@ -141,11 +152,7 @@ public class TarmedCodeSelectorContentProvider
 	}
 	
 	private List<ITarmedLeistung> getRoots(){
-		IQuery<ITarmedLeistung> rootQuery =
-			ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
-		rootQuery.and("parent", COMPARATOR.EQUALS, "NIL");
-		rootQuery.orderBy("code_", ORDER.ASC);
-		return rootQuery.execute();
+		return childrenQuery.executeWithParameters(childrenQuery.getParameterMap("parent", "NIL"));
 	}
 	
 	private List<ITarmedLeistung> purgeRoots(List<ITarmedLeistung> roots){
@@ -169,11 +176,7 @@ public class TarmedCodeSelectorContentProvider
 		if (parentElement instanceof ITarmedLeistung) {
 			ITarmedLeistung parentLeistung = (ITarmedLeistung) parentElement;
 			if (!isFiltered) {
-				IQuery<ITarmedLeistung> childrenQuery =
-					ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
-				childrenQuery.and("parent", COMPARATOR.EQUALS, parentLeistung.getId());
-				childrenQuery.orderBy("code_", ORDER.ASC);
-				return childrenQuery.execute().toArray();
+				return childrenQuery.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getId())).toArray();
 			} else {
 				if (subChaptersHaveChildren(parentLeistung)) {
 					return getFilteredChapterChildren(parentLeistung).toArray();
@@ -211,10 +214,8 @@ public class TarmedCodeSelectorContentProvider
 		if (parentElement instanceof ITarmedLeistung) {
 			ITarmedLeistung parentLeistung = (ITarmedLeistung) parentElement;
 			if (!isFiltered) {
-				IQuery<ITarmedLeistung> childrenQuery =
-					ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
-				childrenQuery.and("parent", COMPARATOR.EQUALS, parentLeistung.getId());
-				return !childrenQuery.execute().isEmpty();
+				return !childrenQuery.executeWithParameters(
+					childrenQuery.getParameterMap("parent", parentLeistung.getId())).isEmpty();
 			} else {
 				List<ITarmedLeistung> filteredChildren = getFilteredChapterChildren(parentLeistung);
 				return !filteredChildren.isEmpty();
@@ -241,11 +242,8 @@ public class TarmedCodeSelectorContentProvider
 	}
 	
 	private List<ITarmedLeistung> getChapterChildren(ITarmedLeistung parentLeistung){
-		IQuery<ITarmedLeistung> childrenQuery =
-			ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
-		childrenQuery.and("parent", COMPARATOR.EQUALS, parentLeistung.getId());
-		childrenQuery.and("isChapter", COMPARATOR.EQUALS, true);
-		return childrenQuery.execute();
+		return childrenChapterQuery.executeWithParameters(childrenChapterQuery
+			.getParameterMap("parent", parentLeistung.getId(), "chapter", true));
 	}
 	
 	/**

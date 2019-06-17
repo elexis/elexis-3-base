@@ -142,12 +142,26 @@ public class DocumentImporter {
 			HL7Parser hlp = new DefaultHL7Parser(docImportId);
 			try {
 				
-				Result<?> res = hlp.importFile(
-					hl7File.toFile(),
-					null,
-					new MedNetLabItemResolver(institution.getLabel(true)),
-					false
-				);
+				Result<?> res = null;
+				
+				if(contactLink.getDocImport_id() != null 
+						&&	!contactLink.getDocImport_id().isEmpty()) {
+					//If a docImport ID is specified, we should import without using the LabItemResolver
+					res = hlp.importFile(
+						hl7File.toFile(),
+						null,
+						false
+					);
+				}
+				else {
+					//If no docImport ID is specified, we can use the labItemResolver
+					res = hlp.importFile(
+						hl7File.toFile(),
+						null,
+						new MedNetLabItemResolver(institution.getLabel(true)),
+						false
+					);
+				}
 				
 				if(res.isOK()) {
 					//If the result has successfully been imported

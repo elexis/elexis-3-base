@@ -38,6 +38,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	public static final String MODEL_KX21 = "KX-21"; //$NON-NLS-1$
 	public static final String MODEL_KX21N = "KX-21N"; //$NON-NLS-1$
 	public static final String MODEL_POCH = "pocH-100i"; //$NON-NLS-1$
+	public static final String MODEL_UC1000 = "UC-1000"; //$NON-NLS-1$
 	
 	public static final String RDW_SD = "SD"; //$NON-NLS-1$
 	public static final String RDW_CV = "CV"; //$NON-NLS-1$
@@ -66,7 +67,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		new Label(mainComp, SWT.NONE).setText(Messages.Preferences_Modell);
 		models = new Combo(mainComp, SWT.SINGLE);
 		models.setItems(new String[] {
-			MODEL_KX21, MODEL_KX21N, MODEL_POCH
+			MODEL_KX21, MODEL_KX21N, MODEL_POCH, MODEL_UC1000
 		});
 		models.setText(CoreHub.localCfg.get(MODEL, MODEL_KX21));
 		

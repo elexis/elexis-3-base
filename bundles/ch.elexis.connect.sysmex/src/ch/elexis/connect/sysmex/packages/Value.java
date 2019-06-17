@@ -21,7 +21,9 @@ public class Value {
 		"ch.elexis.connect.sysmex.packages.valuetexts_KX21N"; //$NON-NLS-1$
 	private static final String POCH_BUNDLE_NAME =
 		"ch.elexis.connect.sysmex.packages.valuetexts_pocH"; //$NON-NLS-1$
-		
+	private static final String UC1000_BUNDLE_NAME =
+		"ch.elexis.connect.sysmex.packages.valuetexts_UC1000"; //$NON-NLS-1$
+	
 	private final ResourceBundle _bundle;
 	Labor _myLab;
 	String _shortName;
@@ -30,6 +32,10 @@ public class Value {
 	LabItem _labItem;
 	String _refMann;
 	String _refFrau;
+	
+	public static Value getValueUC1000(final String paramName) throws PackageException{
+		return new Value(paramName, UC1000_BUNDLE_NAME);
+	}
 	
 	public static Value getValueKX21(final String paramName) throws PackageException{
 		return new Value(paramName, KX21_BUNDLE_NAME);

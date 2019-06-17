@@ -8,6 +8,16 @@
             id="at.medevit.elexis.emediplan.ui.createAndOpen"
             name="%command.name.createAndOpen">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.emediplan.ui.handler.DebugImportHandler"
+            id="at.medevit.elexis.emediplan.ui.debugImport"
+            name="debugImport">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.emediplan.ui.handler.BlueMedicationUploadHandler"
+            id="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
+            name="Blue Medication Upload">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -19,6 +29,68 @@
                icon="rsc/logo.png"
                label="%label.createAndOpen"
                style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
+         <command
+               commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
+               icon="rsc/be_icon_16x16_up.png"
+               label="Blue Medication Upload"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="org.eclipse.ui.selection">
+                  <not>
+                     <count
+                           value="0">
+                     </count>
+                  </not>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="ch.elexis.omnivore.data.DocHandle">
+                     </instanceof>
+                  </iterate>
+                  <test
+                        property="at.medevit.elexis.emediplan.ui.isUploadable">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.omnivoredirect_view">
+         <command
+               commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
+               icon="rsc/be_icon_16x16_up.png"
+               label="Blue Medication Upload"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="org.eclipse.ui.selection">
+                  <not>
+                     <count
+                           value="0">
+                     </count>
+                  </not>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="ch.elexis.omnivore.data.DocHandle">
+                     </instanceof>
+                  </iterate>
+                  <test
+                        property="at.medevit.elexis.emediplan.ui.isUploadable">
+                  </test>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
@@ -34,6 +106,16 @@
             class="at.medevit.elexis.emediplan.inbox.EMediplanUiProvider"
             id="at.medevit.elexis.emediplan.inbox.uiprovider">
       </uiprovider>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="at.medevit.elexis.emediplan.ui.tester.EMediplanPropertyTester"
+            id="at.medevit.elexis.emediplan.ui.propertyTester"
+            namespace="at.medevit.elexis.emediplan.ui"
+            properties="isUploadable"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 
 </plugin>

@@ -1,0 +1,9 @@
+[[Kategorie:Finanzen]]
+<!--  Text above may be removed without notice. Start editing in the next line -->
+Einfache Tabelle zum Erfassen von Ein- und Ausgaben in einer Bargeldkasse.
+
+Vorgabemässig werden nur die zwei letzten Wochen angezeigt.
+
+Es können diverse Zahlungsarten wie Bar, Meastro angegeben werden.
+
+Bis Elexis 1.4 und ab Elexis 3.8 ist dieses Feature im OpenSource-Bereich. Dazwischen wurde es als proprietäre Plugin der Medelexis AG vertrieben.

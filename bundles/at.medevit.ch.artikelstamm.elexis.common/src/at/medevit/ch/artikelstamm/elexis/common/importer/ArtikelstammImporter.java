@@ -67,6 +67,7 @@ public class ArtikelstammImporter {
 	private static Map<String, PRODUCT> products = new HashMap<String, PRODUCT>();
 	private static Map<String, LIMITATION> limitations = new HashMap<String, LIMITATION>();
 	private static volatile boolean userCanceled = false;
+	private static boolean isOddb2xml = false;
 	
 	/**
 	 * @param monitor
@@ -179,6 +180,7 @@ public class ArtikelstammImporter {
 
 			subMonitor.setTaskName("Setze alle Elemente auf inaktiv...");
 			subMonitor.subTask("Setze Elemente auf inaktiv");
+			isOddb2xml = importStamm.getDATASOURCE().equals(DATASOURCEType.ODDB_2_XML);
 			inactivateNonBlackboxedItems();
 			subMonitor.worked(5);
 			
@@ -275,15 +277,21 @@ public class ArtikelstammImporter {
 	}
 	
 	private static void inactivateNonBlackboxedItems(){
-		log.debug("[BB] Setting all items inactive...");
+		log.debug("[BB] Setting all items inactive for isOddb2xml {}...", isOddb2xml);
 		Stm stm = PersistentObject.getConnection().getStatement();
 		String cmd = "UPDATE " + ArtikelstammItem.TABLENAME + " SET "
 			+ ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
 			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()))
 			+ " WHERE " + ArtikelstammItem.FLD_BLACKBOXED + Query.EQUALS
 			+ JdbcLink.wrap(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
+		if (isOddb2xml) {
+			cmd += " AND " + ArtikelstammItem.FLD_ITEM_TYPE + Query.EQUALS +
+					JdbcLink.wrap("P");
+		}
 		log.debug("Executing {}", cmd);
 		stm.exec(cmd);
+		log.debug("Done Executing {}", cmd);
+
 		PersistentObject.getConnection().releaseStatement(stm);
 	}
 	
@@ -372,17 +380,22 @@ public class ArtikelstammImporter {
 			Query<ArtikelstammItem> qre = new Query<ArtikelstammItem>(ArtikelstammItem.class);
 			qre.add(ArtikelstammItem.FLD_GTIN, Query.LIKE, item.getGTIN());
 			ArtikelstammItem foundItem = null;
-			List<ArtikelstammItem> result = qre.execute();		
+			List<ArtikelstammItem> result = qre.execute();
 			if(result.size() > 0) {
 				if (result.size() == 1) {
 					foundItem = result.get(0);
 				} else {
-					log.warn("[II] Found multiple items for GTIN [" + item.getGTIN() + "]");
+					log.warn("[II] Found multiple items ({}) for GTIN [{}] type {}", result.size(), item.getGTIN(),
+							item.getPHARMATYPE());
 					// Is the case in Stauffacher DB, where legacy articles have been imported
 					for (ArtikelstammItem artikelstammItem : result) {
-						if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE) {
+						if (artikelstammItem.getBlackBoxReason() == BlackBoxReason.INACTIVE
+								|| (isOddb2xml && artikelstammItem.getBlackBoxReason() == BlackBoxReason.NOT_BLACKBOXED)
+										&& artikelstammItem.getType() == TYPE.N) {
 							foundItem = artikelstammItem;
-							log.warn("[II] Selected ID [" + foundItem.getId() + "] to update.");
+							log.warn("[II] isOddb2xml {} Selected ID [{}] of {} items to update.", isOddb2xml,
+									foundItem.getId(), result.size());
+							break;
 						}
 					}
 				}
@@ -447,13 +460,16 @@ public class ArtikelstammImporter {
 		
 		fields.add(ArtikelstammItem.FLD_BLACKBOXED);
 		SALECDType salecd = item.getSALECD();
-		if (SALECDType.A == salecd) {
+		// For ODDB2XML we must override the SALECD == N for NonPharma as
+		// ZurRoses is eliminating way too many articles
+		boolean oddb2xmlOverride =  (isOddb2xml && item.getPHARMATYPE().contentEquals("N"));
+		if (SALECDType.A == salecd || oddb2xmlOverride) {
 			values.add(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
-			log.debug("{} Clearing blackboxed as salecd {} is A isSL {}", item.getGTIN(), salecd,
-				item.isSLENTRY());
+			log.debug("{} Clearing blackboxed as salecd {} is A isSL {} or oddb2xml override {}",
+					item.getGTIN(), salecd, item.isSLENTRY(), oddb2xmlOverride);
 		} else {
-			log.debug("{} Setting blackboxed as salecd {} != {} SALECDTypt.A  isSL {}",
-				item.getGTIN(), salecd, SALECDType.A, salecd, item.isSLENTRY());
+			log.debug("{} Setting blackboxed as 5 {} != {} SALECDTypt.A  isSL {}", item.getGTIN(), salecd, SALECDType.A,
+					salecd, item.isSLENTRY());
 			values.add(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()));
 		}
 		

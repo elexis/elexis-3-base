@@ -251,12 +251,14 @@ public class InboxView extends ViewPart {
 		
 		InboxServiceComponent.getService().addUpdateListener(new IInboxUpdateListener() {
 			public void update(final InboxElement element){
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run(){
-						contentProvider.refreshElement(element);
-						viewer.refresh();
-					}
-				});
+				if (viewer != null && !viewer.getControl().isDisposed()) {
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run(){
+							contentProvider.refreshElement(element);
+							viewer.refresh();
+						}
+					});
+				}
 			}
 		});
 		

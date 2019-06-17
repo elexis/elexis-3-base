@@ -460,6 +460,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		viewer.setInput(getViewSite());
 		ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_user, eeli_dochandle);
 		getSite().getPage().addPartListener(udpateOnVisible);
+		getSite().setSelectionProvider(viewer);
 	}
 	
 	private SelectionListener getSelectionAdapter(final TreeColumn column, final int index){

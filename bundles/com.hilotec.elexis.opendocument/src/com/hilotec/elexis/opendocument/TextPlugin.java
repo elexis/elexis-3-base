@@ -61,12 +61,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -78,9 +80,13 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
@@ -308,6 +314,7 @@ public class TextPlugin implements ITextPlugin {
 	private Label filename_label;
 	private Button open_button;
 	private Button import_button;
+	private Button print_button;
 	private static final String pluginID = "com.hilotec.elexis.opendocument";
 	private static final String NoFileOpen = "Dateiname: Keine Datei geöffnet";
 	private static Logger logger = LoggerFactory.getLogger(pluginID);
@@ -388,8 +395,8 @@ public class TextPlugin implements ITextPlugin {
 		
 		odtSync();
 		
-		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, "");
-		String argstr = CoreHub.localCfg.get(Preferences.P_EDITARGS, "");
+		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, Preferences.P_EDITOR_DEFAULT);
+		String argstr = CoreHub.localCfg.get(Preferences.P_EDITARGS, Preferences.P_EDITARGS_DEFAULT);
 		String baseName = "open_odf.sh";
 		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0)
 			baseName = "open_odf.bat";
@@ -406,15 +413,18 @@ public class TextPlugin implements ITextPlugin {
 		File scriptShell = new File(scriptFile);
 		if (!scriptShell.canExecute())
 			scriptShell.setExecutable(true);
-		String args = (editor + "\n" + argstr + "\n" + file.getAbsolutePath());
-		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, true))
-			args = scriptFile + "\n" + args;
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
 		String personalia = (actPatient!=null) ? actPatient.getPersonalia() : "null";
-		logger.info("openEditor: " + personalia + " as " + file.getAbsolutePath());
-		ProcessBuilder pb = new ProcessBuilder(args.split("\n"));
+		List<String> args = new ArrayList<String>();
+		args.add(editor);
+		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, Preferences.P_WRAPPERSCRIPT_DEFAULT)) {
+			args.add(scriptFile);
+		}
+		args.addAll(Arrays.asList(argstr.replaceAll("~", System.getProperty("user.home")).split("[ ]+")));
+		args.add(file.getAbsolutePath());
+		ProcessBuilder pb = new ProcessBuilder(args);
 		filename_label.setText(file.getAbsolutePath());
-		
+		logger.info("openEditor for {} via: {}", personalia, args);
 		try {
 			editor_process = pb.start();
 			odt = null;
@@ -483,8 +493,8 @@ public class TextPlugin implements ITextPlugin {
 
 		File pdffile = new File(
 			file.getAbsoluteFile().getPath().replaceAll("\\.odt$", ".pdf"));
-		String pdfconv = CoreHub.localCfg.get(Preferences.P_PDFCONVERTER, "");
-		String pdfargs = CoreHub.localCfg.get(Preferences.P_PDFARGS, "");
+		String pdfconv = CoreHub.localCfg.get(Preferences.P_PDFCONVERTER, Preferences.P_PDFCONVERTER_DEFAULT);
+		String pdfargs = CoreHub.localCfg.get(Preferences.P_PDFARGS, Preferences.P_PDFARGS_DEFAULT);
 		if (pdfconv.length() == 0) {
 			SWTHelper.showError("Kein Konvertierungsbefehl gesetzt",
 					"In den Einstellungen wurde kein Befehl zum Konvertieren " +
@@ -492,7 +502,10 @@ public class TextPlugin implements ITextPlugin {
 			return null;
 		}
 
-		String args[] = (pdfconv + "\n" + pdfargs + "\n" + file.getAbsolutePath()).split("[\n\r]+");
+		List<String> args = new ArrayList<String>();
+		args.add(pdfconv);
+		args.addAll(Arrays.asList(pdfargs.replaceAll("~", System.getProperty("user.home")).split("[ ]+")));
+		args.add(file.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(args);
 		try {
 			pb.directory(file.getAbsoluteFile().getParentFile());
@@ -505,72 +518,90 @@ public class TextPlugin implements ITextPlugin {
 		return null;
 	}
 
-	public boolean print(String toPrinter, String toTray, boolean wait){
+	@Override
+	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished){
 		logger.info("String: " + (file != null));
 		if (file == null || !ensureClosed()) {
 			return false;
 		}
-		
 		odtSync();
-		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, "oowriter");
-		String argstr = CoreHub.localCfg.get(Preferences.P_PRINTARGS, "");
-		String args[] = (editor + "\n" + argstr + "\n" + file.getAbsolutePath()).split("\n");
+		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, Preferences.P_EDITOR_DEFAULT);
+		String argstr = CoreHub.localCfg.get(Preferences.P_PRINTARGS, Preferences.P_PRINTARGS_DEFAULT);
+		List<String> args = new ArrayList<String>();
+		args.add(editor);
+		args.addAll(Arrays.asList(argstr.replaceAll("~", System.getProperty("user.home")).split("[ ]+")));
+		args.add(file.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(args);
-		
 		try {
-			logger.info("print: " + args);
+			logger.info("print will : " + pb.command().toString());
 			editor_process = pb.start();
 			editor_process.waitFor();
-			logger.info("print waitFor done: " + args);
+			logger.info("Done printing");
 			filename_label.setText(NoFileOpen);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			editor_process = null;
 		}
-		
 		return true;
 	}
 	
 	@Override
-	public Composite createContainer(Composite parent, ICallback handler){
+	public Composite createContainer(Composite parent, ICallback handler) {
 		if (comp == null) {
 			comp = new Composite(parent, SWT.NONE);
-			RowLayout layout = new RowLayout(SWT.VERTICAL);
-			layout.wrap = true;
-			layout.fill = false;
-			layout.justify = false;
-			comp.setLayout(layout);
-			
-			RowData data = new RowData();
+			comp.setLayout(new GridLayout(1, false));
+
 			filename_label = new Label(comp, SWT.PUSH);
 			filename_label.setText(NoFileOpen);
-			filename_label.setLayoutData(data);
-			data.width = 400;
 			open_button = new Button(comp, SWT.PUSH);
 			open_button.setText("Editor öffnen");
 			open_button.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event){
+				public void handleEvent(Event event) {
 					openEditor();
 				}
 			});
-			data = new RowData();
-			open_button.setLayoutData(data);
+			print_button = new Button(comp, SWT.PUSH);
+			print_button.setText("Datei drucken");
+			print_button.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					Color saved = print_button.getBackground();
+					print_button.setBackground(UiDesk.getColor(UiDesk.COL_RED));
+					print_button.setText("Datei am drucken");
+					ProgressMonitorDialog pmd = new ProgressMonitorDialog(UiDesk.getTopShell());
+					try {
+						pmd.run(true, false, new IRunnableWithProgress() {		
+							@Override
+							public void run(IProgressMonitor monitor) throws InvocationTargetException,
+								InterruptedException{
+								logger.info("Start printing {}", file.getAbsolutePath()); //$NON-NLS-1$
+								exportPDF();
+							}
+						});
+					} catch (InvocationTargetException | InterruptedException e) {
+						e.printStackTrace();
+					}
+					print_button.setText("Datei drucken");
+					print_button.setBackground(saved);
+					logger.info("finished printing {}", file.getAbsolutePath()); //$NON-NLS-1$
+				}
+			});
+			// print_button.setLayoutData(new RowData());
 			import_button = new Button(comp, SWT.PUSH);
 			import_button.setText("Datei importieren");
 			import_button.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event){
+				public void handleEvent(Event event) {
 					importFile();
 				}
 			});
-			import_button.setLayoutData(data);
-			
+			// import_button.setLayoutData(new RowData());
+
 			comp.pack();
 
 			Composite exporters = new Composite(parent, SWT.NONE);
 			exporters.setLayout(new GridLayout());
 			Exporter[] exps = Export.getExporters();
-			for (Exporter e: exps) {
+			for (Exporter e : exps) {
 				Button b = new Button(exporters, SWT.PUSH);
 				b.setText(e.getLabel());
 				b.setData(e);
@@ -580,14 +611,15 @@ public class TextPlugin implements ITextPlugin {
 						Button b = (Button) e.widget;
 						Exporter ex = (Exporter) b.getData();
 						File f = exportPDF();
-						if (f != null) ex.export(f.getPath());
+						if (f != null)
+							ex.export(f.getPath());
 					}
 				});
 			}
 			exporters.update();
 
 		}
-		
+
 		return comp;
 	}
 	
@@ -1366,7 +1398,9 @@ public class TextPlugin implements ITextPlugin {
 			return false;
 		}
 		
-		curStyle.setFont(name, style, size);
+		if (curStyle != null) { // NPE seen in Kassenbuch
+			curStyle.setFont(name, style, size);
+		}
 		return true;
 	}
 	
@@ -1411,7 +1445,7 @@ public class TextPlugin implements ITextPlugin {
 	
 	@Override
 	public boolean isDirectOutput(){
-		return false;
+		return true;
 	}
 	
 	@Override
@@ -1422,8 +1456,8 @@ public class TextPlugin implements ITextPlugin {
 	
 	@Override
 	public void initTemplatePrintSettings(String template){
-		// TODO Auto-generated method stub
-		
+		// TODO: Siehe https://redmine.medelexis.ch/issues/3606 und
+		// https://redmine.medelexis.ch/issues/4037
 	}
 	
 }

@@ -7,10 +7,6 @@ import ch.elexis.base.befunde.xchange.XChangeContributor;
 import ch.elexis.data.Konsultation;
 
 public class VitalSignsBuilder {
-
-	private enum BDIdentifier {
-			DIAST, SYST
-	}
 	
 	private FireConfig config;
 	
@@ -49,8 +45,17 @@ public class VitalSignsBuilder {
 		return Optional.empty();
 	}
 	
+	private enum BDIdentifier {
+			DIAST, SYST
+	}
+	
 	private Optional<Integer> getBpDiast(){
-		Optional<String> value = getBdVitalParm(BDIdentifier.DIAST);
+		Optional<String> value;
+		if (useCombinedBdValue()) {
+			value = getBdVitalParm(BDIdentifier.DIAST);
+		} else {
+			value = getVitalParm(config.getBdDiastTab());
+		}
 		if (value.isPresent()) {
 			try {
 				return Optional.of(Integer.parseInt(value.get()));
@@ -62,7 +67,12 @@ public class VitalSignsBuilder {
 	}
 	
 	private Optional<Integer> getBpSyst(){
-		Optional<String> value = getBdVitalParm(BDIdentifier.SYST);
+		Optional<String> value;
+		if (useCombinedBdValue()) {
+			value = getBdVitalParm(BDIdentifier.SYST);
+		} else {
+			value = getVitalParm(config.getBdSystTab());
+		}
 		if (value.isPresent()) {
 			try {
 				return Optional.of(Integer.parseInt(value.get()));
@@ -71,6 +81,13 @@ public class VitalSignsBuilder {
 			}
 		}
 		return Optional.empty();
+	}
+	
+	private boolean useCombinedBdValue(){
+		if (config.getBdDiastTab() != null) {
+			return config.getBdDiastTab().equalsIgnoreCase(config.getBdSystTab());
+		}
+		return false;
 	}
 	
 	private Optional<String> getBdVitalParm(BDIdentifier identifier){

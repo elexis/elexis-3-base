@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Kassenbuch Plugin für Elexis
+Bundle-SymbolicName: ch.elexis.kassenbuch;singleton:=true
+Bundle-Version: 3.2.0.qualifier
+Bundle-Vendor: elexis.info
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.forms,
+ org.eclipse.core.runtime,
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="0.0.2",
+ ch.elexis.core.data,
+ ch.elexis.core.ui,
+ ch.elexis.core.ui.icons,
+ org.eclipse.nebula.widgets.cdatetime

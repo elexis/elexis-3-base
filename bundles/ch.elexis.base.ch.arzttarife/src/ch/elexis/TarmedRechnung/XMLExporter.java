@@ -388,14 +388,14 @@ public class XMLExporter implements IRnOutputter {
 		//invoice
 		String ts = null;
 		if (type.equals(IRnOutputter.TYPE.COPY)) {
-			ts = rn.getExtInfo(FIELDNAME_TIMESTAMPXML);
+			ts = (String) rn.getExtInfoStoredObjectByKey(FIELDNAME_TIMESTAMPXML);
 			if (StringTool.isNothing(ts)) {
 				ts = Long.toString(new Date().getTime() / 1000);
-				rn.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
+				rn.setExtInfoStoredObjectByKey(FIELDNAME_TIMESTAMPXML, ts);
 			}
 		} else {
 			ts = Long.toString(new Date().getTime() / 1000);
-			rn.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
+			rn.setExtInfoStoredObjectByKey(FIELDNAME_TIMESTAMPXML, ts);
 		}
 		
 		Element invoice = new Element(ELEMENT_INVOICE, nsinvoice);

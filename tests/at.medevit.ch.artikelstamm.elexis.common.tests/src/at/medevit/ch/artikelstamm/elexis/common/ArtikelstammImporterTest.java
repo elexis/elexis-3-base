@@ -23,7 +23,8 @@ import ch.elexis.data.PersistentObject;
 
 public class ArtikelstammImporterTest {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammImporterTest.class);
-	private static final String gtinOnlyInFirst = "4062300253636";
+	private static final String gtinNonPharmaInactiveInSecond = "5011091105012";
+	private static final String gtinPharmaOnlyInFirst = "7680667450023";
 	private static final String gtinOnlyInSecond = "7611800080487";
 	private static final String pharWithPriceOverridden ="6571270";
 	private static final String gtinWithPriceOverridden = "7680651600014";
@@ -112,7 +113,9 @@ public class ArtikelstammImporterTest {
 		withUserPrice.setPublicPrice(Double.parseDouble(newPrice));
 		
 		// Check an article only present in first
-		assertNotNull(ArtikelstammItem.findByEANorGTIN(gtinOnlyInFirst));
+		assertNotNull(ArtikelstammItem.findByEANorGTIN(gtinNonPharmaInactiveInSecond));
+		assertFalse(ArtikelstammItem.findByEANorGTIN(gtinNonPharmaInactiveInSecond).isBlackBoxed());
+		assertNotNull(ArtikelstammItem.findByEANorGTIN(gtinPharmaOnlyInFirst));
 		
 		// Check a new article not present in first
 	     onlyInSecond = ArtikelstammItem.findByEANorGTIN(gtinOnlyInSecond);
@@ -158,9 +161,22 @@ public class ArtikelstammImporterTest {
 		checkResettingVerpackungsEinheit(gtinWithPkgSizeOverrideNull, 0);
 
 		// Check an article no long present
-		ArtikelstammItem onlyInFirst = ArtikelstammItem.findByEANorGTIN(gtinOnlyInFirst);
-		if ( onlyInFirst != null  )
-			log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ", onlyInFirst.getDSCR(), onlyInFirst.getPHAR(), onlyInFirst.isBlackBoxed(), onlyInFirst.isDeleted());
+		ArtikelstammItem pharmaOnlyInFirst = ArtikelstammItem.findByEANorGTIN(gtinPharmaOnlyInFirst);
+		if ( pharmaOnlyInFirst != null  )
+			log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ", pharmaOnlyInFirst.getDSCR(), pharmaOnlyInFirst.getPHAR(), pharmaOnlyInFirst.isBlackBoxed(), pharmaOnlyInFirst.isDeleted());
+		assertNull(pharmaOnlyInFirst);
+		// assertTrue(pharmaOnlyInFirst.isBlackBoxed());
+		ArtikelstammItem nonPharmaOnlyInFirst = ArtikelstammItem.findByEANorGTIN(gtinNonPharmaInactiveInSecond);
+		if (isMedindex) {
+			if ( nonPharmaOnlyInFirst != null )
+				log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ", nonPharmaOnlyInFirst.getDSCR(), nonPharmaOnlyInFirst.getPHAR(), nonPharmaOnlyInFirst.isBlackBoxed(), nonPharmaOnlyInFirst.isDeleted());
+			assertNull(nonPharmaOnlyInFirst);
+
+		} else {
+			assertNotNull(nonPharmaOnlyInFirst);
+			assertFalse(nonPharmaOnlyInFirst.isBlackBoxed());
+		}
+
 		// Next Check fails why?
 		// TODO: assertTrue(onlyInFirst == null || onlyInFirst.isDeleted() );
 		ArtikelstammItem withPkgOverride = ArtikelstammItem.findByEANorGTIN(gtinWithPkgSizeOverride);

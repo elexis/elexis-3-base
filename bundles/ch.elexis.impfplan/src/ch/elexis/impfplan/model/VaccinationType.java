@@ -61,7 +61,7 @@ public class VaccinationType extends PersistentObject {
 		"recommendedAge VARCHAR(10)," //$NON-NLS-1$
 		+ // recommended age in months for 1st, e.g. 8-12 or 48- or -24
 		"remarks TEXT," // general remarks, warnings, limitations etc. //$NON-NLS-1$
-		+ FLD_EXTINFO + " longblob);" // extinfo //$NON-NLS-1$
+		+ FLD_EXTINFO + " BLOB);" // extinfo //$NON-NLS-1$
 		+ "INSERT INTO " + TABLENAME + " (ID,name) VALUES('VERSION','" //$NON-NLS-1$ //$NON-NLS-2$
 		+ VERSION + "');"; //$NON-NLS-1$
 	

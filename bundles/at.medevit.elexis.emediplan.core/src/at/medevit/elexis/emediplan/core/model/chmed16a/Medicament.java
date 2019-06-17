@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.TimeTool;
 
@@ -33,7 +35,7 @@ public class Medicament {
 	public String Roa;
 	public int Rep;
 	public int Subs;
-	public float NbPack;
+	public int NbPack;
 	public List<PrivateField> PFields;
 	public transient ArtikelstammItem artikelstammItem;
 	public transient String dosis;
@@ -42,6 +44,7 @@ public class Medicament {
 	public transient State state = State.NEW;
 	public transient Prescription foundPrescription;
 	public transient String stateInfo = "";
+	public transient EntryType entryType;
 	
 	public static final String FREETEXT_PREFIX = "[Dosis: ";
 	public static final String FREETEXT_POSTFIX = "]";
@@ -112,7 +115,8 @@ public class Medicament {
 		if (pharma == null || pharma.isEmpty()) {
 			pharma = article.get(Artikel.FLD_SUB_ID);
 		}
-		if (pharma != null && !pharma.isEmpty()) {
+		if (pharma != null && !pharma.isEmpty()
+			&& !pharma.startsWith(PersistentObject.MAPPING_ERROR_MARKER)) {
 			return 3;
 		}
 		return 1;
@@ -127,8 +131,12 @@ public class Medicament {
 		if (pharma == null || pharma.isEmpty()) {
 			pharma = article.get(Artikel.FLD_SUB_ID);
 		}
-		if (pharma != null && !pharma.isEmpty()) {
+		if (pharma != null && !pharma.isEmpty()
+			&& !pharma.startsWith(PersistentObject.MAPPING_ERROR_MARKER)) {
 			return pharma;
+		}
+		if (getIdType(article) == 1) {
+			return article.getText();
 		}
 		throw new IllegalStateException(
 			"No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]");

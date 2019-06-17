@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Vendor: hilotec.com
 Bundle-ClassPath: .
-Bundle-Version: 3.1.1.qualifier
+Bundle-Version: 3.7.0.qualifier
 Bundle-Name: Hilotec_OpenDocument
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: com.hilotec.elexis.opendocument;singleton:=true
@@ -15,5 +15,6 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.0.0",
  xerces.Impl;bundle-version="2.9.1",
  xml-apis;bundle-version="1.3.4",
  org.jdom;bundle-version="1.1.0",
- org.odftoolkit.odfdom-java;bundle-version="0.8.6"
+ org.odftoolkit.odfdom-java;bundle-version="0.8.6",
+ org.eclipse.jface
 Export-Package: com.hilotec.elexis.opendocument.export

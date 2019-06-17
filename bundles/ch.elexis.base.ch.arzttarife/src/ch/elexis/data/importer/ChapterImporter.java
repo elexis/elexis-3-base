@@ -105,7 +105,7 @@ public class ChapterImporter {
 			list = new ArrayList<>();
 		}
 		list.add(tl);
-		list.sort((l, r) -> r.getGueltigVon().compareTo(r.getGueltigVon()));
+		list.sort((l, r) -> l.getGueltigVon().compareTo(r.getGueltigVon()));
 		importedChapters.put(code, list);
 		logger.debug("Imported " + tl.getLabel());
 	}

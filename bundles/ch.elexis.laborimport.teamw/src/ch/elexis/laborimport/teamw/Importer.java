@@ -45,10 +45,10 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.data.util.UtilFile;
+import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
-import ch.elexis.core.ui.importer.div.importers.PersistenceHandler;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.Log;
@@ -102,7 +102,7 @@ public class Importer extends ImporterPage {
 		File file = new File(filepath);
 		Result<?> result = mfParser.importFromFile(file,
 			new DefaultImportStrategyFactory().setMoveAfterImport(true),
-			hl7parser, new PersistenceHandler());
+			hl7parser, new DefaultPersistenceHandler());
 		return result;
 	}
 	

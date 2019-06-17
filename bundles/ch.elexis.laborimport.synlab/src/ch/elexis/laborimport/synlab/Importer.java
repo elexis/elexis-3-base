@@ -34,10 +34,10 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
-import ch.elexis.core.ui.importer.div.importers.PersistenceHandler;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -164,7 +164,7 @@ public class Importer extends ImporterPage {
 				File f = new File(downloadDir, file);
 				Result<?> rs = mfParser.importFromFile(f,
 					new DefaultImportStrategyFactory().setMoveAfterImport(true), hl7Parser,
-					new PersistenceHandler());
+					new DefaultPersistenceHandler());
 				if (!rs.isOK()) {
 					// importFile already shows error
 					// rs.display("Fehler beim Import");
@@ -223,7 +223,7 @@ public class Importer extends ImporterPage {
 				String filename = results[1];
 				File hl7File = new File(filename);
 				result = ResultAdapter.getResultAsStatus(
-					mfParser.importFromFile(hl7File, new DefaultImportStrategyFactory(), hl7Parser, new PersistenceHandler()));
+					mfParser.importFromFile(hl7File, new DefaultImportStrategyFactory(), hl7Parser, new DefaultPersistenceHandler()));
 			} else {
 				result = ResultAdapter.getResultAsStatus(importDirect());
 			}

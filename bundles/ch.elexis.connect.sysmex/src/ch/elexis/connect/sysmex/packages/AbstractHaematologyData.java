@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
-public abstract class AbstractData {
+public abstract class AbstractHaematologyData implements IProbe {
 	private TimeTool date;
 	private String patId;
 	private String wbc;

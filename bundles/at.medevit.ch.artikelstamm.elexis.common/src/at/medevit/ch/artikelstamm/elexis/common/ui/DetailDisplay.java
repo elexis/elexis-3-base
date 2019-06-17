@@ -43,10 +43,15 @@ import ch.elexis.data.PersistentObject;
 
 public class DetailDisplay implements IDetailDisplay {
 	
-	private UpdateValueStrategy integerToString =
-		new UpdateValueStrategy().setConverter(NumberToStringConverter.fromInteger(false));
-	private UpdateValueStrategy stringToInteger =
-		new UpdateValueStrategy().setConverter(StringToNumberConverter.toInteger(false));
+	private UpdateValueStrategy<Integer, String> integerToString;
+	private UpdateValueStrategy<String, Integer> stringToInteger;
+	
+	public DetailDisplay(){
+		integerToString = new UpdateValueStrategy<Integer, String>()
+			.setConverter(NumberToStringConverter.fromInteger(false));
+		stringToInteger = new UpdateValueStrategy<String, Integer>()
+			.setConverter(StringToNumberConverter.toInteger(false));
+	}
 	
 	protected WritableValue item = new WritableValue(null, ArtikelstammItem.class);
 	

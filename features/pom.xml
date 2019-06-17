@@ -55,6 +55,7 @@
     <module>ch.elexis.icpc.feature</module>
     <module>ch.elexis.icpc.fire.feature</module>
     <module>ch.elexis.impfplan.feature</module>
+    <module>ch.elexis.kassenbuch.feature</module>
     <module>ch.elexis.laborimport.analytica.feature</module>
     <module>ch.elexis.laborimport.bioanalytica.feature</module>
     <module>ch.elexis.laborimport.eurolyser.feature</module>

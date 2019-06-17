@@ -20,6 +20,8 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -73,6 +75,14 @@ public class MsgDetailDialog extends Dialog {
 		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_to);
 		cbTo = new ComboViewer(ret, SWT.SINGLE | SWT.READ_ONLY);
 		cbTo.setContentProvider(ArrayContentProvider.getInstance());
+		cbTo.setComparator(new ViewerComparator() {
+			@Override
+			public int compare(Viewer viewer, Object e1, Object e2){
+				Anwender anw1 = (Anwender) e1;
+				Anwender anw2 = (Anwender) e2;
+				return String.CASE_INSENSITIVE_ORDER.compare(anw1.getLabel(), anw2.getLabel());
+			}
+		});
 		cbTo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element){
@@ -87,7 +97,10 @@ public class MsgDetailDialog extends Dialog {
 			.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 		
 		if (incomingMsg != null) {
-			lblFrom.setText(incomingMsg.getSender().getLabel());
+			String senderString =
+				(incomingMsg.getSender() != null) ? incomingMsg.getSender().getLabel()
+						: incomingMsg.getSenderString();
+			lblFrom.setText(senderString);
 			Anwender sender = null;
 			for (Anwender anwender : users) {
 				if (incomingMsg.getDest().getId().equals(anwender.getId())) {

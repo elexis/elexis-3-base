@@ -47,8 +47,8 @@ public class TarmedValidDateFilter extends ViewerFilter {
 			LocalDate validFrom = leistung.getValidFrom();
 			LocalDate validTo = leistung.getValidTo();
 			if (validFrom != null && validTo != null) {
-				if (!(validDate.isAfter(validFrom) || validDate.equals(validFrom))
-					&& (validDate.isBefore(validTo) || validDate.equals(validTo)))
+				if (!((validDate.isAfter(validFrom) || validDate.equals(validFrom))
+					&& (validDate.isBefore(validTo) || validDate.equals(validTo))))
 					return false;
 			}
 		}

@@ -216,7 +216,7 @@ public class TarmedLeistung
 	
 	@Override
 	public String getServiceTyp(){
-		return getExtension().getLimits().get("LEISTUNG_TYP");
+		return StringUtils.defaultString(getExtension().getLimits().get("LEISTUNG_TYP"));
 	}
 	
 	@Override

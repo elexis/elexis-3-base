@@ -134,7 +134,7 @@ public class ArtikelstammItem
 	
 	@Override
 	public String getAtcCode(){
-		return getEntity().getAtc();
+		return StringUtils.defaultString(getEntity().getAtc());
 	}
 	
 	@Override

@@ -12,6 +12,7 @@ import at.medevit.ch.artikelstamm.model.common.preference.MargePreference;
 import at.medevit.ch.artikelstamm.model.service.ArtikelstammModelServiceHolder;
 import at.medevit.ch.artikelstamm.model.service.CoreModelServiceHolder;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
 import ch.elexis.core.model.IArticle;
@@ -133,8 +134,8 @@ public class ArtikelstammItem
 	}
 	
 	@Override
-	public String getAtcCode(){
-		return getEntity().getAtc();
+	public @NonNull String getAtcCode(){
+		return StringUtils.defaultString(getEntity().getAtc());
 	}
 	
 	@Override

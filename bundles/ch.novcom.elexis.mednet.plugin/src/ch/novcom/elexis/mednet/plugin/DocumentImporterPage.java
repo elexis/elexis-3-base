@@ -117,6 +117,11 @@ public class DocumentImporterPage extends ImporterPage {
 				continue;
 			}
 			
+			if(!contactLink.docImport_isActive()) { //If the doc import is disabled, ignore this institution
+				LOGGER.info(logPrefix+"import ignored for " +institutionKontakt.getLabel(true));//$NON-NLS-1$
+				continue;
+			}
+			
 			if(monitor != null && monitor.isCanceled()){
 				//If the monitor has been canceled we should break
 				LOGGER.info(logPrefix+"import canceled");//$NON-NLS-1$
@@ -396,7 +401,7 @@ public class DocumentImporterPage extends ImporterPage {
 					);
 				}
 				
-				//this is just to avoir a eclipse error message
+				//this is just to avoid a eclipse error message
 				if(contactLink != null && institutionKontakt != null) {
 					
 					boolean success = DocumentImporter.process(

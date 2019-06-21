@@ -50,10 +50,12 @@ public class MsgDetailDialog extends Dialog {
 	private Text txtMessage;
 	private Message incomingMsg;
 	private List<Anwender> users = CoreHub.getUserList();
-	private Button bOK, bAnswer;
+	private Button bOK;
+	private Button bAnswer;
 	
 	MsgDetailDialog(final Shell shell, final Message msg){
 		super(shell);
+		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
 		this.incomingMsg = msg;
 	}
 	

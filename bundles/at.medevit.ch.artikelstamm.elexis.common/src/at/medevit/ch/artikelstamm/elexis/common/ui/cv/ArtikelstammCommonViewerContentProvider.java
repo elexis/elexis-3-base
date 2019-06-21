@@ -1,5 +1,6 @@
 package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 
+import java.util.HashMap;
 import java.util.List;
 
 import at.medevit.atc_codes.ATCCode;
@@ -18,6 +19,8 @@ import ch.elexis.core.ui.util.viewers.LazyCommonViewerContentProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerContentProvider {
+	
+	private static final int QUERY_LIMIT = 500;
 	
 	private ControlFieldProvider controlFieldProvider;
 	private boolean addAtcElements;
@@ -38,7 +41,7 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 		applyQueryFilters(query);
 		query.orderBy("dscr", ORDER.ASC);
 		List<?> elements = query.execute();
-		
+		commonViewer.setLimitReached(elements.size() == QUERY_LIMIT, QUERY_LIMIT);
 		if (addAtcElements) {
 			if (!isQueryFilterByType(AtcQueryFilter.class)) {
 				insertATCCodeValues((List<Object>) elements);
@@ -59,7 +62,26 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 	
 	@Override
 	protected IQuery<?> getBaseQuery(){
-		return ModelServiceHolder.get().getQuery(IArtikelstammItem.class);
+		IQuery<IArtikelstammItem> ret = ModelServiceHolder.get().getQuery(IArtikelstammItem.class);
+		if (!ignoreLimit) {
+			ret.limit(QUERY_LIMIT);
+		}
+		return ret;
+	}
+	
+	@Override
+	public void changed(HashMap<String, String> values){
+		super.setIgnoreLimit(false);
+		super.changed(values);
+	}
+	
+	@Override
+	protected void setIgnoreLimit(boolean value){
+		super.setIgnoreLimit(value);
+		if (true) {
+			// trigger loading
+			asyncReload();
+		}
 	}
 	
 	public void setAddAtcElements(boolean checked){

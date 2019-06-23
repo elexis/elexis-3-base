@@ -2,6 +2,7 @@ package ch.elexis.base.ch.arzttarife.test;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -267,6 +268,9 @@ public class TestData {
 			mandanten.add(mandant);
 			
 			CoreHub.setMandant(mandant);
+			
+			mandator = CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class);
+			assertEquals("2000000000002", TarmedRequirements.getEAN(mandator.get()));
 		}
 		
 		/**

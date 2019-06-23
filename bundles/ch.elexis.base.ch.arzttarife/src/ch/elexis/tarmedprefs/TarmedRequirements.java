@@ -66,9 +66,9 @@ public class TarmedRequirements {
 			return null;
 		}
 		IXid ret = contact.getXid(DOMAIN_EAN);
-		if (ret != null && ret.getId() != null && !ret.getId().isEmpty()) {
-			return ret.getId().trim();
-		} else if (ret != null) {
+		if (ret != null && ret.getDomainId() != null && !ret.getDomainId().isEmpty()) {
+			return ret.getDomainId().trim();
+		} else if (ret == null) {
 			return EAN_PSEUDO;
 		}
 		return "";
@@ -79,15 +79,15 @@ public class TarmedRequirements {
 			return null;
 		}
 		IXid ret = contact.getXid(DOMAIN_RECIPIENT_EAN);
-		if (ret == null || ret.getId() == null || ret.getId().isEmpty()) {
+		if (ret == null || ret.getDomainId() == null || ret.getDomainId().isEmpty()) {
 			return "unknown"; //$NON-NLS-1$
 		}
-		return ret.getId().trim();
+		return ret.getDomainId().trim();
 	}
 	
 	public static String getSuvaNr(final IContact k){
 		IXid ret = k.getXid(DOMAIN_SUVA);
-		return ret != null ? ret.getId() : "";
+		return ret != null ? ret.getDomainId() : "";
 	}
 	
 	/**
@@ -153,12 +153,12 @@ public class TarmedRequirements {
 	
 	public static String getKSK(final IContact k){
 		IXid ret = k.getXid(DOMAIN_KSK);
-		return ret != null ? ret.getId().replaceAll("[\\s\\.\\-]", "").trim() : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		return ret != null ? ret.getDomainId().replaceAll("[\\s\\.\\-]", "").trim() : ""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static String getNIF(final IContact k){
 		IXid ret = k.getXid(DOMAIN_NIF);
-		return ret != null ? ret.getId().trim() : "";
+		return ret != null ? ret.getDomainId().trim() : "";
 	}
 	
 	public static boolean setEAN(final IContact k, final String ean){
@@ -183,7 +183,7 @@ public class TarmedRequirements {
 	
 	public static String getAHV(final IPerson p){
 		IXid ahv = p.getXid(DOMAIN_AHV);
-		String ret = ahv != null ? ahv.getId() : "";
+		String ret = ahv != null ? ahv.getDomainId() : "";
 		if (ret.length() == 0) {
 			ret = (String) p.getExtInfo(SSN);
 			if (ret.length() == 0) {

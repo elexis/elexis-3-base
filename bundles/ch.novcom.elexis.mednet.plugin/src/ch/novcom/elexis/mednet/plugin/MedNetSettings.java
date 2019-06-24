@@ -35,12 +35,19 @@ public class MedNetSettings {
 	public static final String PLUGIN_ID = "ch.novcom.elexis.mednet.plugin"; //$NON-NLS-1$
 	public static final String cfgBase = "ch/novcom/elexis/mednet/plugin"; //$NON-NLS-1$
 	public static final int DEFAULT_ARCHIVEPURGEINTERVAL = 60;
+	public static final int DEFAULT_DBVERSION = 0;
 	
 	Settings configuration = CoreHub.globalCfg; // Settings: DB for all PCs
 	
 	// Globale Einstellungen
 	public static final String cfgExePath = cfgBase + "/exe"; //$NON-NLS-1$
 	public static final String cfgFormsArchivePurgeInterval = cfgBase + "/archivePurgeIntervalDays"; //$NON-NLS-1$
+	public static final String cfgDBVersion = cfgBase + "/dbVersion"; //$NON-NLS-1$
+	
+	/**
+	 * The plugin Version
+	 */
+	private int dbVersion;
 	
 	/**
 	 * The link to the MedNet.exe file
@@ -77,6 +84,14 @@ public class MedNetSettings {
 			
 	public MedNetSettings(){
 		this.loadSettings();
+	}
+	
+	public int getDBVersion() {
+		return this.dbVersion;
+	}
+
+	public void setDBVersion(int dbVersion) {
+		this.dbVersion = dbVersion;
 	}
 	
 	public Path getExePath() {
@@ -168,6 +183,20 @@ public class MedNetSettings {
 			archivePurgeInterval = MedNetSettings.DEFAULT_ARCHIVEPURGEINTERVAL ;
 		}
 		
+		String cfgDBVersionString = configuration.get(cfgDBVersion, ""); //$NON-NLS-1$
+		if(	cfgDBVersionString != null && 
+				!cfgDBVersionString.isEmpty()	) {
+			try {
+				dbVersion = Integer.parseInt(cfgDBVersionString);
+			} catch (Exception e) {
+				dbVersion = -1 ;
+				LOGGER.error(logPrefix+"DB Version: "+cfgDBVersionString+" is not a valid number");//$NON-NLS-1$
+			}
+		}
+		else {
+			dbVersion = MedNetSettings.DEFAULT_DBVERSION ;
+		}
+		
 	}
 	
 	/**
@@ -180,6 +209,7 @@ public class MedNetSettings {
 			configuration.set(cfgExePath, exePath.toString());
 		}
 		configuration.set(cfgFormsArchivePurgeInterval, archivePurgeInterval);
+		configuration.set(cfgDBVersion, dbVersion);
 		
 		configuration.flush();
 	}

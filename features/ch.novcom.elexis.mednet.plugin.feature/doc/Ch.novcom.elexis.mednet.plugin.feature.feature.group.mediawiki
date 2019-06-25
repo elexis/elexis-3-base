@@ -1,0 +1,85 @@
+[[Category:Datenaustausch]]
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>3.4.0</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Datenaustausch</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>MedNet Anbindung</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>novcom AG</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>März 2018</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.4, Internetverbidnung</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+== Einführung ==
+
+Dieses Plugin ermöglicht die Verbindung an '''MedNet'''.<br/>
+Dies beinhaltet folgende Funktionalitäten:<br/>
+- Elektronischer Versand der Labor-, Spital-Formulare und weitere Formulare.<br/>
+- Empfang und Import von elektronischen Laborbefunde, Laborberichte Radiologieberichte und weitere Dokumente.<br/>
+
+== Voraussetzungen ==
+
+Sie benötigen neben Elexis das '''MedNet''' Produkt der [http://www.openmedical.ch openmedical AG]
+
+
+== Installation und Konfiguration ==
+
+Die Installation und Konfiguration von '''MedNet''' wird durch die openmedical AG durchgeführt.
+
+== Benutzung des Plugins ==
+=== Vorraussetzung ===
+Damit Befunde abgerufen, sowie Formulare versendet werden können, muss Elexis und '''MedNet''' gestartet sein.
+
+=== Befunde abrufen ===
+Die Befunde des externen Instituts können unter ''Labor'' abgerufen werden. Beim Klicken des Downloadsymbols werden die Resultate via MedNet abgerufen und direkt in Elexis integriert.
+Nachdem die Befunde importiert wurden, sind sie ebenfalls unter ''Labor'' ersichtlich.
+
+[[File:befunddownload.PNG|frame|Befunddownload in Elexis]]
+
+=== Formulare versenden ===
+Das Versenden von Formularen ist in 2 Schritte gegliedert.
+
+==== 1. Patientendaten von Elexis an MedNet übergeben ====
+In Elexis unter ''Patient Details'', ''Konsultation'' oder ''Briefauswahl'' auf das Exportsymbol klicken.
+
+[[File:patexport.PNG|frame|Patientendatenexport in Elexis]]
+
+Die Daten des aktuell ausgewählen Patienten werden an MedNet übergeben und die Formularauswahl wird gestartet.
+
+[[File:formularauswahl.PNG|frame|Formularauswahl in MedNet]]
+
+
+==== 2. Formular ausfüllen, versenden ====
+
+Nachdem das Formular ausgefüllt wurde, wird es mit dem Klick auf den Versendenbutton an das Institut gesendet, sowie in Elexis importiert.
+
+[[File:formsend.PNG|frame|Formularversand in MedNet]]
+
+Das Formular ist in Elexis im Fenster ''Omnivore'' ersichtlich.

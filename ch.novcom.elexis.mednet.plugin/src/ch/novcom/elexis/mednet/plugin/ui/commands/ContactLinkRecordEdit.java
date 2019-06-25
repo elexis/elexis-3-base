@@ -18,6 +18,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -26,33 +27,40 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import ch.elexis.data.PersistentObject;
-import ch.novcom.elexis.mednet.plugin.data.DocumentSettingRecord;
-import ch.novcom.elexis.mednet.plugin.ui.dialog.DocumentSettingRecordEditDialog;
+import ch.novcom.elexis.mednet.plugin.data.ContactLinkRecord;
+import ch.novcom.elexis.mednet.plugin.ui.dialog.ContactLinkRecordEditDialog;
 
 //TODO FIX A BUG BY EDITING
 
-public class DocumentSettingRecordEdit extends AbstractHandler {
-	
-	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit";//$NON-NLS-1$
-	public static final String PARAMETERID = "ch.novcom.elexis.mednet.plugin.data.documentsettingrecord.edit.selected";//$NON-NLS-1$
+public class ContactLinkRecordEdit extends AbstractHandler {
+	                                        
+	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit";//$NON-NLS-1$
+	public static final String PARAMETERID = "ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit.selected";//$NON-NLS-1$
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		try {
 			
 			// get the parameter
-			String param = event.getParameter(DocumentSettingRecordEdit.PARAMETERID);
+			String param = event.getParameter(ContactLinkRecordEdit.PARAMETERID);
 			
-			PersistentObject documentSettingRecord =
-				(PersistentObject) event.getCommand().getParameterType(DocumentSettingRecordEdit.PARAMETERID).getValueConverter().convertToObject(param);
+			PersistentObject contactLinkRecord =
+				(PersistentObject) event.getCommand().getParameterType(ContactLinkRecordEdit.PARAMETERID).getValueConverter().convertToObject(param);
+			String objString = event.getCommand().getParameterType(ContactLinkRecordEdit.PARAMETERID).getValueConverter().convertToString(param);
+			
 			
 			// create and open the dialog with the parameter
 			Shell parent = HandlerUtil.getActiveShell(event);
+
+			MessageDialog.openInformation(parent, "Parameter", param);
+			if(objString != null) {
+				MessageDialog.openInformation(parent, "Parameter as String", objString);
+			}
 			
-			DocumentSettingRecordEditDialog dialog = new DocumentSettingRecordEditDialog(parent, (DocumentSettingRecord) documentSettingRecord);
+			ContactLinkRecordEditDialog dialog = new ContactLinkRecordEditDialog(parent, (ContactLinkRecord) contactLinkRecord);
 			dialog.open();
 		} catch (Exception ex) {
-			throw new RuntimeException(DocumentSettingRecordEdit.COMMANDID, ex);
+			throw new RuntimeException(ContactLinkRecordEdit.COMMANDID, ex);
 		}
 		return null;
 	}
@@ -62,10 +70,10 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 			// get the command
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			ICommandService cmdService = (ICommandService) window.getService(ICommandService.class);
-			Command cmd = cmdService.getCommand(DocumentSettingRecordEdit.COMMANDID);
+			Command cmd = cmdService.getCommand(ContactLinkRecordEdit.COMMANDID);
 			// create the parameter
 			HashMap<String, Object> param = new HashMap<String, Object>();
-			param.put(DocumentSettingRecordEdit.PARAMETERID, parameter);
+			param.put(ContactLinkRecordEdit.PARAMETERID, parameter);
 			// build the parameterized command
 			ParameterizedCommand pc = ParameterizedCommand.generateCommand(cmd, param);
 			
@@ -75,7 +83,7 @@ public class DocumentSettingRecordEdit extends AbstractHandler {
 					.getService(IHandlerService.class);
 			handlerService.executeCommand(pc, null);
 		} catch (Exception ex) {
-			throw new RuntimeException(DocumentSettingRecordEdit.COMMANDID, ex);
+			throw new RuntimeException(ContactLinkRecordEdit.COMMANDID, ex);
 		}
 	}
 	

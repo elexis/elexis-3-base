@@ -1,5 +1,7 @@
 package ch.novcom.elexis.mednet.plugin;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +17,7 @@ public class MedNetConfigDocumentPath implements Comparable<MedNetConfigDocument
 	private String accountFirstname;
 	private String institutionID;
 	private String institutionName;
-	private String path;
+	private Path path;
 	
 	public MedNetConfigDocumentPath(String fileLine) {
 		
@@ -27,7 +29,7 @@ public class MedNetConfigDocumentPath implements Comparable<MedNetConfigDocument
 			this.accountFirstname = matcher.group("accountFirstname");//$NON-NLS-1$
 			this.institutionID = matcher.group("institutionID");//$NON-NLS-1$
 			this.institutionName = matcher.group("institutionName");//$NON-NLS-1$
-			this.path = matcher.group("path");//$NON-NLS-1$
+			this.path = Paths.get(matcher.group("path"));//$NON-NLS-1$
 		}
 		
 	}
@@ -64,8 +66,7 @@ public class MedNetConfigDocumentPath implements Comparable<MedNetConfigDocument
 		return institutionName;
 	}
 
-
-	public String getPath() {
+	public Path getPath() {
 		return path;
 	}
 	

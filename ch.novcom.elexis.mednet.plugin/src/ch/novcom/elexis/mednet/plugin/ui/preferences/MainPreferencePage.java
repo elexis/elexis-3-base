@@ -17,6 +17,8 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -29,6 +31,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.WidgetFactory;
 import ch.novcom.elexis.mednet.plugin.MedNet;
+import ch.novcom.elexis.mednet.plugin.MedNetSettings;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
 
@@ -40,6 +43,8 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	
 	Text exePath;
 	private Button exePathSelection;
+	
+	private Text  purgeInterval;
 	
 	/**
 	 * Standard Constructor
@@ -86,6 +91,39 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 			}
 		});
 		
+
+		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelPurgeInterval);
+		purgeInterval = new Text(ret, SWT.BORDER);
+		purgeInterval.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		purgeInterval.setTextLimit(80);
+		purgeInterval.setText(String.valueOf(MedNet.getSettings().getArchivePurgeInterval()));
+		
+		purgeInterval.addVerifyListener(new VerifyListener() {
+	        @Override
+	        public void verifyText(VerifyEvent e) {
+
+	            Text text = (Text)e.getSource();
+
+	            // get old text and create new text by using the VerifyEvent.text
+	            final String oldS = text.getText();
+	            String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
+
+	            boolean isInteger = true;
+	            int newInt = -1;
+	            try
+	            {
+	            	newInt = Integer.parseInt(newS);
+	            }
+	            catch(NumberFormatException ex)
+	            {
+	            	isInteger = false;
+	            }
+
+	            if(!isInteger || newInt < 0 ){
+	                e.doit = false;
+	            }
+	        }
+	    });
 		
 		return ret;
 		
@@ -99,8 +137,19 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public boolean performOk(){
 		MedNet.getSettings().setExePath(Paths.get(exePath.getText()));
+		MedNet.getSettings().setArchivePurgeInterval(Integer.valueOf(purgeInterval.getText()));
 		MedNet.getSettings().saveSettings();
 		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performDefaults()
+	 */
+	@Override
+	public void performDefaults(){
+		purgeInterval.setText(String.valueOf(MedNetSettings.DEFAULT_ARCHIVEPURGEINTERVAL));
 	}
 	
 	/*

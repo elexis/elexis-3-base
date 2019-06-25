@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +34,20 @@ public class MedNetSettings {
 	private final static Logger LOGGER = LoggerFactory.getLogger(MedNetSettings.class.getName());
 	public static final String PLUGIN_ID = "ch.novcom.elexis.mednet.plugin"; //$NON-NLS-1$
 	public static final String cfgBase = "ch/novcom/elexis/mednet/plugin"; //$NON-NLS-1$
+	public static final int DEFAULT_ARCHIVEPURGEINTERVAL = 60;
+	public static final int DEFAULT_DBVERSION = 0;
 	
 	Settings configuration = CoreHub.globalCfg; // Settings: DB for all PCs
 	
 	// Globale Einstellungen
 	public static final String cfgExePath = cfgBase + "/exe"; //$NON-NLS-1$
-	public static final String cfgFormsArchivePurgeInterval = cfgBase + "/forms/archivePurgeIntervalDays"; //$NON-NLS-1$
+	public static final String cfgFormsArchivePurgeInterval = cfgBase + "/archivePurgeIntervalDays"; //$NON-NLS-1$
+	public static final String cfgDBVersion = cfgBase + "/dbVersion"; //$NON-NLS-1$
+	
+	/**
+	 * The plugin Version
+	 */
+	private int dbVersion;
 	
 	/**
 	 * The link to the MedNet.exe file
@@ -48,7 +56,7 @@ public class MedNetSettings {
 	/**
 	 * The number of days after which a form can be removed from the archive folder
 	 */
-	private int formsArchivePurgeInterval;
+	private int archivePurgeInterval;
 	
 	/**
 	 * This configuration is delivered by MedNet
@@ -64,12 +72,26 @@ public class MedNetSettings {
 
 	/**
 	 * This configuration is delivered by MedNet
+	 * Those are the list of institutions and there label
+	 */
+	private Map<String,String> institutionsList = null;
+	
+	/**
+	 * This configuration is delivered by MedNet
 	 * Those are the name of the formulars and of the institutions
 	 */
 	private Map<String,Map<String,MedNetConfigFormItem>> configFormItems = null;
 			
 	public MedNetSettings(){
 		this.loadSettings();
+	}
+	
+	public int getDBVersion() {
+		return this.dbVersion;
+	}
+
+	public void setDBVersion(int dbVersion) {
+		this.dbVersion = dbVersion;
 	}
 	
 	public Path getExePath() {
@@ -80,12 +102,12 @@ public class MedNetSettings {
 		this.exePath = path;
 	}
 	
-	public int getFormsArchivePurgeInterval() {
-		return this.formsArchivePurgeInterval;
+	public int getArchivePurgeInterval() {
+		return this.archivePurgeInterval;
 	}
 
-	public void setFormsArchivePurgeInterval(int interval) {
-		this.formsArchivePurgeInterval = interval;
+	public void setArchivePurgeInterval(int interval) {
+		this.archivePurgeInterval = interval;
 	}
 
 	public Map<String, MedNetConfigFormPath> getConfigFormPaths() {
@@ -103,7 +125,24 @@ public class MedNetSettings {
 		}
 		return this.configDocumentPaths;
 	}
+	
+	public Map<String, String> getInstitutions() {
+		if(this.institutionsList == null) {
 
+			//Construct the list from the ConfigDocumentPaths and the FormItems
+			this.institutionsList = new TreeMap<String,String>();
+			for(Map<String, MedNetConfigFormItem> formItemMap : this.getConfigFormItems().values()) {
+				for(MedNetConfigFormItem formItem : formItemMap.values()) {
+					this.institutionsList.putIfAbsent(formItem.getInstitutionID(), formItem.getInstitutionName());
+				}
+			}
+			for(MedNetConfigDocumentPath docItem : this.getConfigDocumentPaths()) {
+				this.institutionsList.putIfAbsent(docItem.getInstitutionID(), docItem.getInstitutionName());
+			}
+		}
+		return this.institutionsList;
+	}
+	
 	public Map<String, Map<String, MedNetConfigFormItem>> getConfigFormItems() {
 		if(this.configFormItems == null && this.exePath != null) {
 			//Load the configuration by calling MedNet
@@ -134,14 +173,28 @@ public class MedNetSettings {
 		if(	cfgFormsArchivePurgeIntervalString != null && 
 				!cfgFormsArchivePurgeIntervalString.isEmpty()	) {
 			try {
-				formsArchivePurgeInterval = Integer.parseInt(cfgFormsArchivePurgeIntervalString);
+				archivePurgeInterval = Integer.parseInt(cfgFormsArchivePurgeIntervalString);
 			} catch (Exception e) {
-				formsArchivePurgeInterval = -1 ;
+				archivePurgeInterval = -1 ;
 				LOGGER.error(logPrefix+"Form archive purge interval: "+cfgFormsArchivePurgeIntervalString+" is not a valid number");//$NON-NLS-1$
 			}
 		}
 		else {
-			formsArchivePurgeInterval = -1 ;
+			archivePurgeInterval = MedNetSettings.DEFAULT_ARCHIVEPURGEINTERVAL ;
+		}
+		
+		String cfgDBVersionString = configuration.get(cfgDBVersion, ""); //$NON-NLS-1$
+		if(	cfgDBVersionString != null && 
+				!cfgDBVersionString.isEmpty()	) {
+			try {
+				dbVersion = Integer.parseInt(cfgDBVersionString);
+			} catch (Exception e) {
+				dbVersion = -1 ;
+				LOGGER.error(logPrefix+"DB Version: "+cfgDBVersionString+" is not a valid number");//$NON-NLS-1$
+			}
+		}
+		else {
+			dbVersion = MedNetSettings.DEFAULT_DBVERSION ;
 		}
 		
 	}
@@ -155,7 +208,8 @@ public class MedNetSettings {
 		if(exePath != null) {
 			configuration.set(cfgExePath, exePath.toString());
 		}
-		configuration.set(cfgFormsArchivePurgeInterval, formsArchivePurgeInterval);
+		configuration.set(cfgFormsArchivePurgeInterval, archivePurgeInterval);
+		configuration.set(cfgDBVersion, dbVersion);
 		
 		configuration.flush();
 	}

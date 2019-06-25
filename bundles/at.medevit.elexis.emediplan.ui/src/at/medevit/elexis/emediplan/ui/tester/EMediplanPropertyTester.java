@@ -16,8 +16,8 @@ public class EMediplanPropertyTester extends PropertyTester {
 					Object object = selection.getFirstElement();
 					if (object instanceof DocHandle) {
 						DocHandle docHandle = (DocHandle) object;
-						if (docHandle.getMimeType().endsWith("pdf")
-							|| docHandle.getTitle().endsWith(".pdf")) {
+						if (docHandle.getMimeType().toLowerCase().endsWith("pdf")
+							|| docHandle.getTitle().toLowerCase().endsWith(".pdf")) {
 							return true;
 						}
 					}

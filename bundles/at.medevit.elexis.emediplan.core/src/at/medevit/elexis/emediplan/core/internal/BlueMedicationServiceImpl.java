@@ -95,7 +95,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 					return Result.ERROR("Response has no data");
 				}
 				pendingUploadResults.put(LocalDateTime.now(), ret.getData());
-				return Result.OK(ret.getData().getUrl());
+				return Result.OK(getAppBasePath() + ret.getData().getUrl());
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
 				return Result.ERROR(e.getMessage());
@@ -110,6 +110,14 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			return "http://staging.blueconnect.hin.ch/bluemedication/api/v1";
 		} else {
 			return "http://blueconnect.hin.ch/bluemedication/api/v1";
+		}
+	}
+	
+	private String getAppBasePath(){
+		if (CoreHub.globalCfg.get(BlueMedicationConstants.CFG_URL_STAGING, true)) {
+			return "http://staging.blueconnect.hin.ch";
+		} else {
+			return "http://blueconnect.hin.ch";
 		}
 	}
 	

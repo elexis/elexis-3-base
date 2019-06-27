@@ -119,5 +119,12 @@
             MaintenanceCode="ch.elexis.base.ch.arzttarife.ui.dbcheck.UpdateTarmedInBlock">
       </ExternalMaintenance>
    </extension>
+   <extension
+         point="ch.elexis.core.data.VerrechnungscodeAdjuster">
+      <adjuster
+            class_pre="ch.elexis.base.ch.arzttarife.adjuster.TarmedVerrechnebarAdjuster"
+            id="ch.elexis.base.ch.arzttarife.tarmed.context.adjuster">
+      </adjuster>
+   </extension>
 
 </plugin>

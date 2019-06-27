@@ -1,9 +1,9 @@
 package at.medevit.elexis.emediplan.core.internal;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.osgi.service.component.annotations.Activate;
@@ -16,6 +16,7 @@ import at.medevit.elexis.emediplan.core.BlueMedicationService;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.Result.SEVERITY;
 import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
 import io.swagger.client.api.ExtractionAndConsolidationApi;
@@ -28,7 +29,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	private String oldProxyHost;
 	private String oldProxyPort;
 	
-	private Map<LocalDateTime, UploadResult> pendingUploadResults;
+	private Map<Object, at.medevit.elexis.emediplan.core.UploadResult> pendingUploadResults;
 	
 	@Activate
 	public void activate() {
@@ -75,7 +76,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	}
 	
 	@Override
-	public Result<String> uploadDocument(Patient patient, File document){
+	public Result<at.medevit.elexis.emediplan.core.UploadResult> uploadDocument(Patient patient,
+		File document){
 		initProxy();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
@@ -86,19 +88,25 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			String patientSex = patient.getGender().name();
 			LocalDate patientBirthdate = LocalDate.now();
 			try {
-				ApiResponse<UploadResult> ret = apiInstance.dispatchPostWithHttpInfo((File) null,
+				ApiResponse<UploadResult> response = apiInstance.dispatchPostWithHttpInfo((File) null,
 					externalData, patientFirstName, patientLastName, patientSex, patientBirthdate);
-				if (ret.getStatusCode() >= 300) {
-					return Result.ERROR("Response status code was [" + ret.getStatusCode() + "]");
+				if (response.getStatusCode() >= 300) {
+					return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR,
+						0,
+						"Response status code was [" + response.getStatusCode() + "]", null, false);
 				}
-				if (ret.getData() == null) {
-					return Result.ERROR("Response has no data");
+				if (response.getData() == null) {
+					return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR,
+						0, "Response has no data", null,
+						false);
 				}
-				pendingUploadResults.put(LocalDateTime.now(), ret.getData());
-				return Result.OK(getAppBasePath() + ret.getData().getUrl());
+				return new Result<at.medevit.elexis.emediplan.core.UploadResult>(
+					new at.medevit.elexis.emediplan.core.UploadResult(
+					getAppBasePath() + response.getData().getUrl(), response.getData().getId()));
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
-				return Result.ERROR(e.getMessage());
+				return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR, 0,
+					e.getMessage(), null, false);
 			}
 		} finally {
 			deInitProxy();
@@ -106,11 +114,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	}
 	
 	private String getBasePath(){
-		if (CoreHub.globalCfg.get(BlueMedicationConstants.CFG_URL_STAGING, true)) {
-			return "http://staging.blueconnect.hin.ch/bluemedication/api/v1";
-		} else {
-			return "http://blueconnect.hin.ch/bluemedication/api/v1";
-		}
+		return getAppBasePath() + "/bluemedication/api/v1";
 	}
 	
 	private String getAppBasePath(){
@@ -123,8 +127,42 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	
 	@Override
 	public Result<String> downloadEMediplan(String id){
-		// TODO Auto-generated method stub
-		return null;
+		initProxy();
+		try {
+			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
+			apiInstance.getApiClient().setBasePath(getBasePath());
+			
+			ApiResponse<String> response =
+				apiInstance.downloadIdExtractionChmedGetWithHttpInfo(id, true);
+			if (response.getStatusCode() >= 300) {
+				return Result.ERROR("Response status code was [" + response.getStatusCode() + "]");
+			}
+			if (response.getData() == null) {
+				return Result.ERROR("Response has no data");
+			}
+			return Result.OK(response.getData());
+		} catch (ApiException e) {
+			LoggerFactory.getLogger(getClass()).error("Error downloading Document", e);
+			return Result.ERROR(e.getMessage());
+		} finally {
+			deInitProxy();
+		}
 	}
 	
+	@Override
+	public void addPendingUploadResult(Object object,
+		at.medevit.elexis.emediplan.core.UploadResult uploadResult){
+		pendingUploadResults.put(object, uploadResult);
+	}
+	
+	@Override
+	public Optional<at.medevit.elexis.emediplan.core.UploadResult> getPendingUploadResult(
+		Object object){
+		return Optional.ofNullable(pendingUploadResults.get(object));
+	}
+	
+	@Override
+	public void removePendingUploadResult(Object object){
+		pendingUploadResults.remove(object);
+	}
 }

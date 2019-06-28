@@ -68,7 +68,7 @@
          </command>
          <command
                commandId="at.medevit.elexis.inbox.ui.command.ignore"
-               icon="rsc/img/sausage.png"
+               icon="icon://IMG_DELETE"
                label="%command.label.3"
                style="push">
          </command>

@@ -14,3 +14,9 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  ch.elexis.omnivore.data;bundle-version="3.2.0",
  ch.rgw.utility
 Export-Package: ch.elexis.omnivore.ui.jobs
+Import-Package: at.medevit.elexis.inbox.model,
+ at.medevit.elexis.inbox.ui.part.provider,
+ org.eclipse.wb.swt,
+ org.osgi.service.component.annotations;version="1.3.0"
+Service-Component: OSGI-INF/ch.elexis.omnivore.ui.inbox.DocHandleInboxService.xml
+Bundle-ActivationPolicy: lazy

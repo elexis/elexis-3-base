@@ -1,8 +1,6 @@
 package ch.elexis.base.ch.arzttarife.adjuster;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.data.interfaces.IVerrechenbarAdjuster;
@@ -25,14 +23,9 @@ public class TarmedVerrechnebarAdjuster implements IVerrechenbarAdjuster {
 				String law = fall.getConfiguredBillingSystemLaw().name();
 				
 				// law is not compatible for this leistung law look for compatible one
-				if (!leistungLaw.equals(law)) {
+				if (!leistungLaw.equalsIgnoreCase(law)) {
 					verrechenbar = TarmedLeistung.getFromCode(leistung.getCode(),
 						new TimeTool(kons.getDateTime()), fall.getAbrechnungsSystem());
-				}
-				if (verrechenbar == null) {
-					MessageDialog.openWarning(Display.getDefault().getActiveShell(), "Warnung",
-						"Warnung folgende Leistung '" + leistung.getCode()
-							+ "' konnte im aktuellen Kontext (Fall, Konsultation, Gesetz) nicht verrechnet werden.");
 				}
 			}
 		}

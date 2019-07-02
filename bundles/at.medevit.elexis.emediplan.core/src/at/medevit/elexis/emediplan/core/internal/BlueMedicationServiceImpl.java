@@ -102,7 +102,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 				}
 				return new Result<at.medevit.elexis.emediplan.core.UploadResult>(
 					new at.medevit.elexis.emediplan.core.UploadResult(
-					getAppBasePath() + response.getData().getUrl(), response.getData().getId()));
+						getAppBasePath() + response.getData().getUrl() + "&mode=embed",
+						response.getData().getId()));
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
 				return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR, 0,

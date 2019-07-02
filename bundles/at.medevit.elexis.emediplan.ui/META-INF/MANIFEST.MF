@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  org.eclipse.jface,
  ch.elexis.core;bundle-version="3.2.0",
  ch.elexis.fop.service;bundle-version="3.2.0",
- org.eclipse.core.expressions;bundle-version="3.6.200"
+ org.eclipse.core.expressions;bundle-version="3.6.200",
+ ch.elexis.core.ui
 Import-Package: at.medevit.elexis.emediplan.core,
  at.medevit.elexis.emediplan.core.model.chmed16a,
  at.medevit.elexis.inbox.model,
@@ -32,6 +33,7 @@ Import-Package: at.medevit.elexis.emediplan.core,
  ch.elexis.core.ui.medication.views,
  ch.elexis.data,
  ch.elexis.omnivore.data,
+ ch.rgw.io,
  ch.rgw.tools,
  org.eclipse.wb.swt,
  org.slf4j;version="1.7.2"

@@ -184,5 +184,14 @@
             type="java.lang.Object">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="at.medevit.medelexis.blueevidence"
+            class="at.medevit.elexis.emediplan.ui.preference.BlueMedicationPreferencePage"
+            id="at.medevit.elexis.emediplan.ui.page1"
+            name="Blue Medication">
+      </page>
+   </extension>
 
 </plugin>

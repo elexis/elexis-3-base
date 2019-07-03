@@ -6,7 +6,7 @@
  <perspective
             class="ch.elexis.notes.NotesPerspective"
             icon="icons/notebook.gif"
-            id="ch.elexis.SchwarzesBrett"
+            id="ch.elexis.NotesPerspektive"
             name="%notes"/>
             </extension>
             
@@ -31,6 +31,12 @@
             id="Preferences"
             name="%notes">
       </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.Sidebar">
+      <Perspektive
+            ID="ch.elexis.NotesPerspektive"
+            name="%notes"/>
    </extension>
 
 </plugin>

@@ -13,11 +13,14 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  ch.elexis.core.ui.icons;bundle-version="3.2.0",
  ch.elexis.omnivore;bundle-version="3.2.0",
  ch.elexis.omnivore.data;bundle-version="3.2.0",
- ch.rgw.utility
+ ch.rgw.utility,
+ at.medevit.elexis.inbox;bundle-version="3.0.0",
+ at.medevit.elexis.inbox.ui
 Export-Package: ch.elexis.omnivore.ui.jobs,
  ch.elexis.omnivore.ui.util,
  ch.elexis.omnivore.ui.views
-Service-Component: OSGI-INF/ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder.xml
+Service-Component: OSGI-INF/ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder.xml,
+ OSGI-INF/ch.elexis.omnivore.ui.inbox.DocHandleInboxService.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.e4.core.di.annotations,
  org.eclipse.e4.ui.di

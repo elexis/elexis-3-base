@@ -26,6 +26,9 @@ import at.medevit.elexis.inbox.model.IInboxUpdateListener;
 import at.medevit.elexis.inbox.model.InboxElement;
 import at.medevit.elexis.inbox.model.InboxElementType;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -39,6 +42,12 @@ public class InboxElementService implements IInboxElementService {
 	
 	@Override
 	public void createInboxElement(Patient patient, Kontakt mandant, PersistentObject object){
+		InboxElement element = new InboxElement(patient, mandant, object);
+		fireUpdate(element);
+	}
+	
+	@Override
+	public void createInboxElement(IPatient patient, IMandator mandant, Identifiable object){
 		InboxElement element = new InboxElement(patient, mandant, object);
 		fireUpdate(element);
 	}

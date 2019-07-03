@@ -15,6 +15,10 @@ import java.nio.file.Paths;
 
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.service.StoreToStringServiceHolder;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -94,6 +98,14 @@ public class InboxElement extends PersistentObject {
 		set(FLD_STATE, Integer.toString(State.NEW.ordinal()));
 	}
 	
+	public InboxElement(IPatient patient, IMandator mandant, Identifiable object){
+		create(null);
+		set(FLD_PATIENT, patient != null ? patient.getId() : "");
+		set(FLD_MANDANT, mandant.getId());
+		set(FLD_OBJECT, StoreToStringServiceHolder.getStoreToString(object));
+		set(FLD_STATE, Integer.toString(State.NEW.ordinal()));
+	}
+	
 	public InboxElement(){
 		// TODO Auto-generated constructor stub
 	}
@@ -128,6 +140,11 @@ public class InboxElement extends PersistentObject {
 				PersistentObject object = CoreHub.poFactory.createFromString(uri);
 				if (object != null && object.exists()) {
 					return object;
+				}
+				Identifiable identifiable =
+					StoreToStringServiceHolder.get().loadFromString(uri).orElse(null);
+				if (identifiable != null) {
+					return identifiable;
 				}
 				break;
 			case FILE:

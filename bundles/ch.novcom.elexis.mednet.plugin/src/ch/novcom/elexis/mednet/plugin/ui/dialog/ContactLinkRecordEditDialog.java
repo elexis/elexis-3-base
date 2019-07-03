@@ -52,6 +52,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 	private Text category_doc;
 	private Text category_form;
 	private Button docImport_isActive;
+	private Text docImport_Id;
 	private Button formImport_isActive;
 	private Text xidDomain;
 	
@@ -108,11 +109,15 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		this.docImport_isActive = new Button(result, SWT.CHECK);
 		this.docImport_isActive.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
-		
 		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelCategory);
 		this.category_doc = new Text(result, SWT.BORDER);
 		this.category_doc.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		this.category_doc.setTextLimit(80);
+
+		WidgetFactory.createLabel(result, MedNetMessages.ContactLinkRecordEditDialog_labelDocImportId);
+		this.docImport_Id = new Text(result, SWT.BORDER);
+		this.docImport_Id.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		this.docImport_Id.setTextLimit(80);
 
 		Label formSeparator = new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
 		formSeparator.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
@@ -171,6 +176,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 			this.category_doc.setText(this.record.getCategoryDoc());
 			this.category_form.setText(this.record.getCategoryForm());
 			this.docImport_isActive.setSelection(this.record.docImport_isActive());
+			this.docImport_Id.setText(this.record.getDocImport_id());
 			this.formImport_isActive.setSelection(this.record.formImport_isActive());
 			
 			this.xidDomain.setText(String.valueOf(record.getXIDDomain()));
@@ -180,6 +186,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 			this.category_doc.setText("");
 			this.category_form.setText("");
 			this.docImport_isActive.setSelection(true);
+			this.docImport_Id.setText("");
 			this.formImport_isActive.setSelection(true);
 			this.xidDomain.setText("");
 		}
@@ -211,6 +218,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 					this.category_doc.getText(),
 					this.category_form.getText(),
 					this.docImport_isActive.getSelection(),
+					this.docImport_Id.getText(),
 					this.formImport_isActive.getSelection(),
 					this.xidDomain.getText()
 			);
@@ -224,6 +232,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 							ContactLinkRecord.FLD_CATEGORY_DOC,
 							ContactLinkRecord.FLD_CATEGORY_FORM,
 							ContactLinkRecord.FLD_DOCIMPORT_ISACTIVE,
+							ContactLinkRecord.FLD_DOCIMPORT_ID,
 							ContactLinkRecord.FLD_FORMIMPORT_ISACTIVE,
 							ContactLinkRecord.FLD_XID_DOMAIN
 						},
@@ -232,6 +241,7 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 						this.category_doc.getText(),
 						this.category_form.getText(),
 						this.docImport_isActive.getSelection() ? "1":"0",
+						this.docImport_Id.getText(),
 						this.formImport_isActive.getSelection() ? "1":"0",
 						this.xidDomain.getText()
 			);
@@ -253,7 +263,9 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		this.category_form.setText(string);
 	}
 
-	
+	public void setDocImportId(String string){
+		this.docImport_Id.setText(string);
+	}
 	
 	public void setXIDDomainText(String string){
 		this.xidDomain.setText(string);

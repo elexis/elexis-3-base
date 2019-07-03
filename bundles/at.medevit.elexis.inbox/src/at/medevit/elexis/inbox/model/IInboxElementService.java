@@ -12,6 +12,9 @@ package at.medevit.elexis.inbox.model;
 
 import java.util.List;
 
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -23,6 +26,16 @@ public interface IInboxElementService {
 		NEW, SEEN;
 	}
 
+	/**
+	 * Create a new InboxElement and tell registered listeners about it.
+	 * 
+	 * @param mandant
+	 * @param patient
+	 * @param object
+	 * @return
+	 */
+	public void createInboxElement(IPatient patient, IMandator mandant, Identifiable object);
+	
 	/**
 	 * Create a new InboxElement and tell registered listeners about it.
 	 * 

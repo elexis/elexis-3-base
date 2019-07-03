@@ -658,9 +658,9 @@ public class XMLExporter implements IRnOutputter {
 			mDue.roundTo5();
 			xmlBalance.setDue(mDue);
 		}
-		if (type.equals(IRnOutputter.TYPE.COPY)) {
-			payload.setAttribute("copy", Boolean.toString(true));//$NON-NLS-1$
-		} else if (type.equals(TYPE.STORNO)) {
+		// always update copy information
+		payload.setAttribute(ATTR_PAYLOAD_COPY, type.equals(IRnOutputter.TYPE.COPY) ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (type.equals(TYPE.STORNO)) {
 			payload.setAttribute("storno", Boolean.toString(true));//$NON-NLS-1$
 			Element services = body.getChild("services", XMLExporter.nsinvoice);//$NON-NLS-1$
 			XMLExporterServices xmlServices = new XMLExporterServices(services);

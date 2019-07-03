@@ -67,7 +67,7 @@ public class Startup implements IStartup {
 							logger.debug("Opening ImportEMediplanDialog");
 							ImportEMediplanDialog dlg =
 								new ImportEMediplanDialog(UiDesk.getTopShell(), medication,
-									selectedPatientId == null);
+									selectedPatientId != null);
 							dlg.open();
 						}
 					});

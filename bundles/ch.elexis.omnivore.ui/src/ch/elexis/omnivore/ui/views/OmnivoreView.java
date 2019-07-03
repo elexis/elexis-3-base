@@ -477,6 +477,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		});
 		viewer.setInput(getViewSite());
 		getSite().getPage().addPartListener(udpateOnVisible);
+		getSite().setSelectionProvider(viewer);
 	}
 	
 	private SelectionListener getSelectionAdapter(final TreeColumn column, final int index){

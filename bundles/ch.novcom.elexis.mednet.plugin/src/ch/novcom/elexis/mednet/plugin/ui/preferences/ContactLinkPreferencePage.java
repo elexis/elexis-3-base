@@ -71,12 +71,13 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 			MedNetMessages.ContactLinkPreferences_MedNetName,
 			MedNetMessages.ContactLinkPreferences_ContactLabel,
 			MedNetMessages.ContactLinkPreferences_DocImport,
+			MedNetMessages.ContactLinkPreferences_DocImportId,
 			MedNetMessages.ContactLinkPreferences_FormImport,
 			MedNetMessages.ContactLinkPreferences_XIDDomain
 		};
 
 	private int[] tableColwidth = {
-		10, 20, 20, 20, 20, 10
+		8, 19, 19, 19, 8, 19, 8
 	};
 	/**
 	 * Standard Constructor
@@ -184,9 +185,11 @@ public class ContactLinkPreferencePage extends PreferencePage implements
 				return 		(contactLinkRecord.docImport_isActive() ? "on" : "off") 
 						+	(contactLinkRecord.getCategoryDoc().isEmpty() ? "" : " ( "+contactLinkRecord.getCategoryDoc()+" )");
 			case 4:
+				return contactLinkRecord.getDocImport_id();
+			case 5:
 				return 		(contactLinkRecord.formImport_isActive() ? "on" : "off")
 						+	(contactLinkRecord.getCategoryForm().isEmpty() ? "" : " ( "+contactLinkRecord.getCategoryForm()+" )");
-			case 5:
+			case 6:
 				return contactLinkRecord.getXIDDomain();
 			default:
 				return "?col?"; //$NON-NLS-1$

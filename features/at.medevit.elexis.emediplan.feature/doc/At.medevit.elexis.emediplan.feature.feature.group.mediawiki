@@ -41,11 +41,27 @@
  ''Beschreibung:'' Dieses Plug-In ermöglicht das drucken eines eMediplan aus Elexis.
 == Einführung ==
 Mit dem Feature kann aus Elexis ein Medikationsplan nach der Spezifikation von [http://emediplan.ch eMediplan Schweiz] erstellt werden.
+
+Ausserdem können pdf Dokumente zum Bluemedication Service hochgeladen und dann als eMediplan importiert werden..
 == Installation ==
 Um das eMediplan Feature in Elexis verwenden zu können, muss aus der Kategorie „KG-Führung“ das Feature „eMediplan“ abonniert werden. Nach dem Aktualisieren von Elexis ist das Feature geladen.
 == Konfiguration ==
 * Für den eMediplan wird derzeit keine Konfiguration benötigt.
+
+* Der Bluemedication Service ist nur im HIN Netzwerk erreichbar. D.h. es muss ein HIN client installiert, und aktiviert sein.
+
 == Verwendung ==
+
+'''eMediplan'''
+
 Öffnen Sie die View Medikationsliste und selektieren Sie einen Patient. Es wird die aktive Medikation des Patienten angezeigt.
 [[Image:medevit_emediplan_usage1.png|frame|none]]
+
 Mit dem rot eingerahmten Menüpunkt kann die Erstellung des eMediplan ausgelöst werden. Der eMediplan wird als PDF geöffnet, und ebenfalls als PDF unter Briefe abgelegt.
+
+'''Bluemedication'''
+
+Das Hochladen von Pdf Dokumenten kann auf den Omnivore Views (1) ausgelöst werden.
+[[Image:medevit_emediplan_bluemedication_usage1.png|frame|none]]
+
+Nach dem Hochladen wird die Auswahl der Medikation des Bluemedication Service im Browser geöffnet. Wenn die Auswahl im Browser abgeschlossen ist, kann in der Omnivore View der Download (2) des eMediplan vom Bluemedication Service gestartet werden. Der eMediplan wird dann zum Import geöffnet.

@@ -8,6 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit;bundle-version="4.10.0",
  at.medevit.ch.artikelstamm;bundle-version="3.2.0",
  at.medevit.ch.artikelstamm.elexis.common,
- ch.elexis.core.data
+ ch.elexis.core.data,
+ ch.elexis.fop.service;bundle-version="3.2.0"
 Import-Package: ch.elexis.core.constants
 Bundle-ActivationPolicy: lazy

@@ -47,4 +47,11 @@
             name="omnivore">
       </Link>
    </extension>
+   <extension
+         point="at.medevit.elexis.inbox.ui.elementsui">
+      <uiprovider
+            class="ch.elexis.omnivore.ui.inbox.DocHandleUiProvider"
+            id="at.medevit.elexis.omnivore.inbox.uiprovider">
+      </uiprovider>
+   </extension>
 </plugin>

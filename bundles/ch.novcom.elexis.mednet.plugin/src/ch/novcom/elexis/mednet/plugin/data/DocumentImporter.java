@@ -130,16 +130,37 @@ public class DocumentImporter {
 		
 		//If we have an hl7 File try first to import the hl7 and to get all the Patient informations
 		if(hl7File != null && Files.exists(hl7File) && Files.isRegularFile(hl7File)){
+
+			//Import the HL7. If the patient has not been found in the DB, the parser will ask for it 
+			String docImportId = institution.getId();
+			if(contactLink.getDocImport_id() != null 
+					&&	!contactLink.getDocImport_id().isEmpty()) {
+				docImportId = contactLink.getDocImport_id();
+			}
 			
-			HL7Parser hlp = new DefaultHL7Parser(institution.getId());
+			HL7Parser hlp = new DefaultHL7Parser(docImportId);
 			try {
-				//Import the HL7. If the patient has not been found in the DB, the parser will ask for it 
-				Result<?> res = hlp.importFile(
-					hl7File.toFile(),
-					null,
-					new MedNetLabItemResolver(institution.getLabel(true)),
-					false
-				);
+				
+				Result<?> res = null;
+				
+				if(contactLink.getDocImport_id() != null 
+						&&	!contactLink.getDocImport_id().isEmpty()) {
+					//If a docImport ID is specified, we should import without using the LabItemResolver
+					res = hlp.importFile(
+						hl7File.toFile(),
+						null,
+						false
+					);
+				}
+				else {
+					//If no docImport ID is specified, we can use the labItemResolver
+					res = hlp.importFile(
+						hl7File.toFile(),
+						null,
+						new MedNetLabItemResolver(institution.getLabel(true)),
+						false
+					);
+				}
 				
 				if(res.isOK()) {
 					//If the result has successfully been imported

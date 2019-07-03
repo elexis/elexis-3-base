@@ -12,6 +12,7 @@
 
 package ch.elexis.base.ch.labortarif_2009.ui;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -21,6 +22,8 @@ import org.eclipse.swt.SWT;
 import ch.elexis.base.ch.labortarif.ILaborLeistung;
 import ch.elexis.base.ch.labortarif.LaborTarifConstants;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.actions.AddVerrechenbarToLeistungsblockAction;
+import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
@@ -31,14 +34,20 @@ import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 public class Labor2009Selector extends CodeSelectorFactory {
 	CommonViewer cv;
 	
+	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
+	private AddVerrechenbarToLeistungsblockAction atla =
+		new AddVerrechenbarToLeistungsblockAction("ch.elexis.base.ch.labortarif_2009.ui.selection");
+	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		this.cv = cv;
+		
 		cv.setSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event){
 				TableViewer tv = (TableViewer) event.getSource();
 				StructuredSelection ss = (StructuredSelection) tv.getSelection();
+				tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
 				if (!ss.isEmpty()) {
 					ILaborLeistung selected = (ILaborLeistung) ss.getFirstElement();
 					ContextServiceHolder.get().getRootContext().setNamed(
@@ -49,6 +58,11 @@ public class Labor2009Selector extends CodeSelectorFactory {
 				}
 			}
 		});
+		
+		MenuManager menu = new MenuManager();
+		menu.add(atla);
+		menu.add(tvfa);
+		cv.setContextMenu(menu);
 		
 		Labor2009ControlFieldProvider controlFieldProvider = new Labor2009ControlFieldProvider(cv);
 		Labor2009ContentProvider contentProvider =

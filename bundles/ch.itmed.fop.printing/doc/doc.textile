@@ -1,0 +1,126 @@
+h1. Übersicht der XML Elemente
+
+Das Plugin nutzt für den Druck der Etiketten/Terminkarten, Apache FOP im Hintergrund. Dabei wird das druckbare Dokumente mittels XML und XSLT Transformation erstellt. Die XML Dokumente beinhalten dabei die Informationen, welche gedruckt werden sollen. Die XSL Dokumente beinhaltet die Formatierung für das druckbare Dokument.
+Nachfolgend soll erläutert werden, welche XML Elemente für welche Druckbare Elemente genutzt werden können. 
+
+h1. Patienten Informationen
+
+Die XML Elemente für die Patienten Informationen können in folgenden Dokumenten genutzt werden:
+* Terminkarte
+* Serien Terminkarte
+* Artikel-Etikette
+* Medi-Etikette
+* Patienten-Etikette
+* Patienten-Etikette mit Auftragsnummer
+* Patienten-Etikette mit Adresse
+
+Root Element:
+| &lt;Patient&gt; | 
+
+Kinder Elemente:
+| &lt;FirstName&gt; 		| Vorname des Patienten |
+| &lt;LastName&gt;	 		| Nachname des Patienten |
+| &lt;Birthdate&gt; 		| Geburtstagsdatum des Patienten im Format DD.MM.YYYY |
+| &lt;Sex&gt; 				| Geschlecht des Patienten |
+| &lt;PID&gt; 				| ID des Patienten |
+| &lt;Title&gt; 			| Titel des Patienten wie z.B. Dr. |
+| &lt;PostalCode&gt; 		| PLZ |
+| &lt;City&gt;	 			| Stadt |
+| &lt;Country&gt; 			| Land |
+| &lt;Street&gt; 			| Strasse |
+| &lt;Phone1&gt; 			| 1. Telefonnummer des Patienten (üblicherweise die Privatnummer des Patienten) |
+| &lt;Phone2&gt; 			| 2. Telefonnummer des Patienten (üblicherweise die Geschäftsnummer des Patienten) |
+| &lt;MobilePhone&gt; 		| Handynummer des Patienten |
+| &lt;CompleteAddress&gt;   | Postanschrift aus Elexis auslesen |
+| &lt;OrderNumber&gt;		| Auftragsnummer des Patienten |
+
+h1. Termin Informationen
+
+Die XML Elemente für 
+
+Root Element:
+| &lt;AppointmentsInformation&gt; |
+
+Kinder Elemente:
+| &lt;Disclaimer&gt;	| Der Dislaimer Text welcher jeweils auf den Terminkarten ersichtlich ist |
+| &lt;AgendaArea&gt;	| Der Agenda-Bereich zu welchem die Termine gehören |
+| &lt;Appointments&gt;	| Beinhaltet Informationen zu einem oder mehreren Terminen |
+
+Kind Element von __&lt;Appointments&gt;__
+| &lt;Appointment&gt;	|  Beinhaltet die Daten des Termins im Format: "Day, DD.MM.YY HH.mm" also z.B. "Fr, 31.12.2019 11:11"|
+
+h1. Medikations Informationen
+
+Die XML Elemente für die Medikations Informationen können nur in der Medi-Etikette genutzt werden.
+
+Root Element:
+| &lt;Medication&gt; |
+
+Kinder Elemente:
+| &lt;ArticleName&gt;				| Artikelname des Medikaments |
+| &lt;ArticlePrice&gt;				| Preis des Medikaments|
+| &lt;Dose&gt;					| Dosis der Medikation |
+| &lt;DosageInstructions&gt;		| Anwendungsinstruktionen der Medikation |
+| &lt;PrescriptionDate&gt;			| Datum der Medikations-Erstellung |
+| &lt;DeliveryDate&gt;				| Abgabedatum des Medikation |
+| &lt;PrescriptionAuthor&gt;		| Author der Medikation |
+| &lt;ResponsiblePharmacist&gt;	| Verantwortlicher Apotheker der Praxis |
+| &lt;MedicationType&gt;			|	Art der Medikation. Es wird zwischen folgenden Arten unterschieden: symptomatische Medikation, Fixmedikation, reserve Medikation |
+
+h1. Mandanten Information
+
+*NOT IMPLEMENTED*
+
+Die XML Elemente für die Mandaten Information können in folgenden Dokumenten genutzt werden:
+* Terminkarte
+* Serien Terminkarte
+* Artikel-Etikette
+* Medi-Etikette
+
+Root Element:
+| &lt;Mandator&gt; |
+
+Kinder Elemente:
+| &lt;OfficeInformation&gt;	| Praxisname |
+| &lt;FirstName&gt;			| Vorname des Mandanten |
+| &lt;LastName&gt;			| Nachname des Mandanten |
+| &lt;Title&gt;				| Titel des Mandanten |
+| &lt;Phone&gt;				| Telefonnummer des Mandanten |
+| &lt;Email&gt;				| E-Mail des Mandanten |
+
+h1. Fall Informationen
+
+Anwendbar für:
+* Patienten-Etikette mit Auftragsnummer
+
+Root Element:
+| &lt;Case&gt; | Informationen über den aktuell ausgewählten Fall |
+
+Kinder Elemente:
+| &lt;InsuranceNumber&gt;	| Versicherungsnummer |
+| &lt;CostBearer&gt;		| Kostenträger des Falles |
+
+h1. Kontakt Informationen
+
+Die XML Elemente für die Kontakt Informationen können nur für folgendes Dokument genutzt werden: Etikette mit Kontaktadresse
+
+Root Element:
+| &lt;Contact&gt; | 
+
+Kinder Elemente:
+| &lt;Address&gt; | Vollständige Adresse des Kontaktes |
+
+h1. Artikel Informationen
+
+Die XML Elemente für die Artikel Informationen können nur für die Artikel-Etikette genutzt werden.
+
+Root Element:
+| &lt;Articles&gt; | 
+
+Kinder Elemente:
+| &lt;Article&gt; | Für jeden einzelnen Artikel einer Konsultation wird ein eigenes Element erstellt. |
+
+Kinder Elemente von _Article_:
+| &lt;Name&gt; 			| Name des Artikels | 
+| &lt;Price&gt; 		| Preis des Artikels | 
+| &lt;DeliveryDate&gt; 	| Abgabedatum des Artikels | 

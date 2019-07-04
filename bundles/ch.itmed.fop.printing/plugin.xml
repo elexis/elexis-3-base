@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension point="org.eclipse.ui.contexts">
+        <context id="ch.elexis.context.itmed.fop.printing" name="IT-Med FOP Printing Context" parentId="org.eclipse.ui.contexts.window">
+        </context>
+    </extension>
+    <extension point="org.eclipse.ui.handlers">
+        <handler class="ch.itmed.fop.printing.handlers.PatientLabelHandler" commandId="ch.elexis.core.ui.commands.printPatientLabel">
+            <activeWhen>
+                <with variable="activeContexts">
+                    <iterate operator="or">
+                        <equals value="ch.elexis.context.itmed.fop.printing" />
+                    </iterate>
+                </with>
+            </activeWhen>
+        </handler>
+        <handler class="ch.itmed.fop.printing.handlers.VersionedLabelHandler" commandId="ch.elexis.core.ui.commands.printVersionedLabel">
+            <activeWhen>
+                <with variable="activeContexts">
+                    <iterate operator="or">
+                        <equals value="ch.elexis.context.itmed.fop.printing" />
+                    </iterate>
+                </with>
+            </activeWhen>
+        </handler>
+        <handler class="ch.itmed.fop.printing.handlers.PatientAddressLabelHandler" commandId="ch.elexis.core.ui.commands.printAddressLabel">
+            <activeWhen>
+                <with variable="activeContexts">
+                    <iterate operator="or">
+                        <equals value="ch.elexis.context.itmed.fop.printing" />
+                    </iterate>
+                </with>
+            </activeWhen>
+        </handler>
+        <handler class="ch.itmed.fop.printing.handlers.ContactAddressLabelHandler" commandId="ch.elexis.core.ui.commands.printContactLabel">
+            <activeWhen>
+                <with variable="activeContexts">
+                    <iterate operator="or">
+                        <equals value="ch.elexis.context.itmed.fop.printing" />
+                    </iterate>
+                </with>
+            </activeWhen>
+        </handler>
+        <handler class="ch.itmed.fop.printing.handlers.AppointmentCardHandler" commandId="ch.elexis.agenda.commands.printAppointmentLabel">
+            <activeWhen>
+                <with variable="activeContexts">
+                    <iterate operator="or">
+                        <equals value="ch.elexis.context.itmed.fop.printing" />
+                    </iterate>
+                </with>
+            </activeWhen>
+        </handler>
+    </extension>
+    <extension point="org.eclipse.ui.startup">
+        <startup class="ch.itmed.fop.printing.startup.Startup" />
+    </extension>
+    <extension point="org.eclipse.ui.commands">
+        <command defaultHandler="ch.itmed.fop.printing.handlers.MedicationLabelHandler" id="ch.itmed.fop.printing.command.MedicationLabelPrint" name="Medi-Etikette drucken">
+        </command>
+        <command defaultHandler="ch.itmed.fop.printing.handlers.RecurringAppointmentsCardHandler" id="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint" name="Terminserie drucken">
+        </command>
+        <command defaultHandler="ch.itmed.fop.printing.handlers.AppointmentCardHandler" id="ch.itmed.fop.printing.command.AppointmentCardPrint" name="Termin drucken">
+        </command>
+        <command defaultHandler="ch.itmed.fop.printing.handlers.ArticleLabelHandler" id="ch.itmed.fop.printing.command.ArticleLabelPrint" name="Artikel drucken">
+        </command>
+    </extension>
+    <extension point="org.eclipse.ui.menus">
+        <menuContribution locationURI="toolbar:ch.elexis.VerrechnungsDisplay">
+            <command commandId="ch.itmed.fop.printing.command.ArticleLabelPrint" icon="res/icons/medicationPrint.png" style="push">
+            </command>
+        </menuContribution>
+        <menuContribution allPopups="false" locationURI="toolbar:ch.elexis.core.ui.medication.views.MedicationView">
+            <command commandId="ch.itmed.fop.printing.command.MedicationLabelPrint" icon="res/icons/medicationPrint.png" style="push">
+            </command>
+        </menuContribution>
+        <menuContribution allPopups="false" locationURI="toolbar:ch.elexis.dauermedikationview">
+            <command commandId="ch.itmed.fop.printing.command.MedicationLabelPrint" icon="res/icons/medicationPrint.png" style="push">
+            </command>
+        </menuContribution>
+        <menuContribution allPopups="false" locationURI="toolbar:ch.elexis.agenda.largeview">
+            <command commandId="ch.itmed.fop.printing.command.AppointmentCardPrint" icon="res/icons/termin.png" label="Termin drucken" style="push">
+            </command>
+        </menuContribution>
+        <menuContribution allPopups="false" locationURI="toolbar:ch.elexis.agenda.largeview">
+            <command commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint" icon="res/icons/termine.png" label="Terminserie drucken" style="push">
+            </command>
+        </menuContribution>
+        <menuContribution allPopups="false" locationURI="toolbar:at.medevit.elexis.agenda.ui.view.agenda">
+            <command commandId="ch.itmed.fop.printing.command.AppointmentCardPrint" icon="res/icons/termin.png" label="Termin drucken" style="push">
+            </command>
+        </menuContribution>
+        <menuContribution allPopups="false" locationURI="toolbar:at.medevit.elexis.agenda.ui.view.agenda">
+            <command commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint" icon="res/icons/termine.png" label="Terminserie drucken" style="push">
+            </command>
+        </menuContribution>
+
+    </extension>
+
+    <extension point="org.eclipse.ui.preferencePages">
+        <page category="ch.elexis.core.ui.preferences.SystemPreferencePage" class="ch.itmed.fop.printing.preferences.ui.GeneralPreferences" id="ch.itmed.fop.printing.preferences" name="Medi-Print">
+        </page>
+    </extension>
+</plugin>

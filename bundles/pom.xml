@@ -137,5 +137,6 @@
     <module>org.iatrix</module>
     <module>waelti.statistics</module>
     <module>ch.itmed.lmz.risch.laborder</module>
+    <module>ch.itmed.fop.printing</module>
 </modules>
 </project>

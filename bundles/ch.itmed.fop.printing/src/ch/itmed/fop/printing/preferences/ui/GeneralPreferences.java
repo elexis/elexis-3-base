@@ -111,9 +111,7 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 			item.setText(4, Messages.GeneralPreferences_OrientationLandscape);
 		}
 
-		// TODO: Resize the cell
-		// table.setSize(table.computeSize(SWT.DEFAULT, 200)); // Make sure the table
-		// size will be adjusted
+		// TODO: Resize the cell on updates
 	}
 
 	private void createTableContent() {

@@ -121,8 +121,7 @@ public class ResourceProvider {
 					for (int k = 0; k < childNodeList.getLength(); k++) {
 						Node childNode = (Node) childNodeList.item(k);
 
-						// We only want child nodes that are of type
-						// ELEMENT_NODE
+						// We only want child nodes that are of type ELEMENT_NODE
 						if (childNode.getNodeType() == Node.ELEMENT_NODE) {
 							paperFormatValues.add(childNode.getTextContent());
 						}

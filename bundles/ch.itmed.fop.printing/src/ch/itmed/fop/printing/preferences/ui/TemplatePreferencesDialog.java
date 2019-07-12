@@ -321,11 +321,6 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 		WindowUtil.handleXslCustomEvent(xslCustomFlag, xslCustomFileDialog, xslTemplate);
 	}
 
-	/**
-	 * 
-	 * @author Daniel Rösch
-	 *
-	 */
 	private static final class WindowUtil {
 
 		public static void checkBoxEvent(Button checkBox, Composite areaTemplate, Composite areaCustom,

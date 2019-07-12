@@ -50,6 +50,10 @@ public class Messages extends NLS {
 	public static String Info_NoConsultation_Message;
 	public static String Info_NoContact_Title;
 	public static String Info_NoContact_Message;
+	public static String Info_NoAppointment_Title;
+	public static String Info_NoAppointment_Message;
+	public static String Info_NoPatient_Title;
+	public static String Info_NoPatient_Message;
 	
 	public static String Medication_FixedMedication;
 	public static String Medication_ReserveMedication;

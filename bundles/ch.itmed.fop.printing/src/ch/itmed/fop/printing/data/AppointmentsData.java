@@ -12,17 +12,16 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.itmed.fop.printing.resources.Messages;
 
 public final class AppointmentsData {
 	private Kontakt kontakt;
 	private ArrayList<AppointmentData> appointmentsData;
 
 	public ArrayList<AppointmentData> load() throws NullPointerException {
-		//Termin termin = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Patient.class);
-		//kontakt = termin.getKontakt();
 		if (kontakt == null) {
-			SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte selektieren Sie vor dem Drucken einen Patienten.");
+			SWTHelper.showInfo(Messages.Info_NoPatient_Title, Messages.Info_NoPatient_Message);
 			throw new NullPointerException("No patient selected");
 		}
 		appointmentsData = new ArrayList<>();

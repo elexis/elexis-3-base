@@ -7,6 +7,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.agenda.AreaType;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
+import ch.itmed.fop.printing.resources.Messages;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
@@ -22,7 +23,7 @@ public final class AppointmentData {
 	public void load() throws NullPointerException {
 		appointment = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		if (appointment == null) {
-			SWTHelper.showInfo("Kein Mandant ausgewählt", "Bitte wählen Sie vor dem Drucken einen Termin aus.");
+			SWTHelper.showInfo(Messages.Info_NoAppointment_Title, Messages.Info_NoAppointment_Message);
 			throw new NullPointerException("No appointment selected");
 		}		
 	}

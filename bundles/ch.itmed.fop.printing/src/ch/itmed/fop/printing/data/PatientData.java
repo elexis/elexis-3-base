@@ -14,7 +14,8 @@ public class PatientData {
 	public void load() throws NullPointerException {
 		patient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		if (patient == null) {
-			SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte selektieren Sie vor dem Drucken einen Patienten.");
+			SWTHelper.showInfo(ch.itmed.fop.printing.resources.Messages.Info_NoPatient_Title,
+					ch.itmed.fop.printing.resources.Messages.Info_NoPatient_Message);
 			throw new NullPointerException("No patient selected");
 		}
 	}

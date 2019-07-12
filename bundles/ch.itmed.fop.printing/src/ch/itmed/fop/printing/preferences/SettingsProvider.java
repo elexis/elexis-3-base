@@ -5,9 +5,6 @@ import ch.rgw.io.Settings;
 
 public final class SettingsProvider {
 	public static Settings getSettings(String cfgStoreName) {
-		// String currentPreferences =
-		// CoreHub.localCfg.get(PreferenceConstants.SETTINGS_PROVIDER, "aktueller
-		// Benutzer");
 		String currentPreferences = "";
 
 		if (currentPreferences.equals("user")) {
@@ -41,8 +38,6 @@ public final class SettingsProvider {
 			for (int i = indexBegin; i < indexEnd + 1; i++) {
 				String constant = PreferenceConstants.getDocPreferenceConstant(doc, i);
 				CoreHub.localCfg.set(constant, CoreHub.globalCfg.get(constant, ""));
-				// CoreHub.localCfg.set(constant, "foo"); //Only a value is written, if a non
-				// empty string was returned
 			}
 		}
 		CoreHub.localCfg.flush();

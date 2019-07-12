@@ -37,7 +37,7 @@ public class FoTransformer {
 
 		if (xmlInputStream == null) {
 			logger.error("Failed to create XML file");
-			return null; // TODO: throw exception?
+			return null;
 		}
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

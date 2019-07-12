@@ -23,6 +23,7 @@ Kinder Elemente:
 | &lt;Birthdate&gt; 		| Geburtstagsdatum des Patienten im Format DD.MM.YYYY |
 | &lt;Sex&gt; 				| Geschlecht des Patienten |
 | &lt;PID&gt; 				| ID des Patienten |
+| &lt;Salutation&gt;		| Anrede des Patienten |
 | &lt;Title&gt; 			| Titel des Patienten wie z.B. Dr. |
 | &lt;PostalCode&gt; 		| PLZ |
 | &lt;City&gt;	 			| Stadt |
@@ -36,14 +37,15 @@ Kinder Elemente:
 
 h1. Termin Informationen
 
-Die XML Elemente für 
+Die XML Elemente für die Termin Informationen können in folgenden Dokumenten genutzt werden:
+* Terminkarte
+* Serien Terminkarte
 
 Root Element:
 | &lt;AppointmentsInformation&gt; |
 
 Kinder Elemente:
-| &lt;Disclaimer&gt;	| Der Dislaimer Text welcher jeweils auf den Terminkarten ersichtlich ist |
-| &lt;AgendaArea&gt;	| Der Agenda-Bereich zu welchem die Termine gehören |
+| &lt;AgendaArea&gt;	| Der Agenda-Bereich zu welchem die Termine gehören. Es wird der Wert des Agenda Bereichs ausgegeben. Falls es sich um einen Benutzerbereich handelt, wird der Kontakt ausgelesen und dann die Anrede des Kontakts ausgegeben. |
 | &lt;Appointments&gt;	| Beinhaltet Informationen zu einem oder mehreren Terminen |
 
 Kind Element von __&lt;Appointments&gt;__
@@ -59,34 +61,43 @@ Root Element:
 Kinder Elemente:
 | &lt;ArticleName&gt;				| Artikelname des Medikaments |
 | &lt;ArticlePrice&gt;				| Preis des Medikaments|
-| &lt;Dose&gt;					| Dosis der Medikation |
+| &lt;Dose&gt;						| Dosis der Medikation, z.B. 1-1-1-0 |
 | &lt;DosageInstructions&gt;		| Anwendungsinstruktionen der Medikation |
 | &lt;PrescriptionDate&gt;			| Datum der Medikations-Erstellung |
 | &lt;DeliveryDate&gt;				| Abgabedatum des Medikation |
 | &lt;PrescriptionAuthor&gt;		| Author der Medikation |
-| &lt;ResponsiblePharmacist&gt;	| Verantwortlicher Apotheker der Praxis |
-| &lt;MedicationType&gt;			|	Art der Medikation. Es wird zwischen folgenden Arten unterschieden: symptomatische Medikation, Fixmedikation, reserve Medikation |
+| &lt;ResponsiblePharmacist&gt;		| Verantwortlicher Apotheker der Praxis, wird aus den Einstellungen ausgelesen |
+| &lt;MedicationType&gt;			| Art der Medikation. Es wird zwischen folgenden Arten unterschieden: symptomatische Medikation, Fixmedikation, reserve Medikation |
 
-h1. Mandanten Information
+Die Dosis kann auch im Tabellen Format angegeben werden. Die Tabelle besteht dabei aus einem Header mit dem Metainformationen und einem Body mit den Dosis-Informationen.
 
-*NOT IMPLEMENTED*
+| &lt;DoseTableHeader&gt; | Root Element vom Header der Dosis-Tabelle |
 
-Die XML Elemente für die Mandaten Information können in folgenden Dokumenten genutzt werden:
-* Terminkarte
-* Serien Terminkarte
-* Artikel-Etikette
-* Medi-Etikette
+Kind Element von DoseTableHeader:
+| &lt;HeaderItem&gt; | Beinhaltet die eigentlichen Meta-Informationen |
 
-Root Element:
-| &lt;Mandator&gt; |
+Die Daten zu Dosis befinden sich dann im DoseTableBody:
 
-Kinder Elemente:
-| &lt;OfficeInformation&gt;	| Praxisname |
-| &lt;FirstName&gt;			| Vorname des Mandanten |
-| &lt;LastName&gt;			| Nachname des Mandanten |
-| &lt;Title&gt;				| Titel des Mandanten |
-| &lt;Phone&gt;				| Telefonnummer des Mandanten |
-| &lt;Email&gt;				| E-Mail des Mandanten |
+| &lt;DoseTableBody&gt; | Root Element vom Body der Dosis-Tabelle |
+
+Kind Element von DoseTableBody:
+
+| &lt;DoseItem&gt; | Beinhaltet die eigentlichen Informationen zur Dosis |
+
+Hier ein Beispiel wie die Dosis-Tabelle als XML daherkommt:
+
+bc. <DoseTableHeader>
+	<HeaderItem>morgens</HeaderItem>
+	<HeaderItem>mittags</HeaderItem>
+	<HeaderItem>abends</HeaderItem>
+	<HeaderItem>nachts</HeaderItem>
+</DoseTableHeader>
+<DoseTableBody>
+	<DoseItem>1</DoseItem>
+	<DoseItem>1</DoseItem>
+	<DoseItem>1</DoseItem>
+	<DoseItem>0</DoseItem>
+</DoseTableBody>
 
 h1. Fall Informationen
 
@@ -97,8 +108,8 @@ Root Element:
 | &lt;Case&gt; | Informationen über den aktuell ausgewählten Fall |
 
 Kinder Elemente:
-| &lt;InsuranceNumber&gt;	| Versicherungsnummer |
-| &lt;CostBearer&gt;		| Kostenträger des Falles |
+| &lt;InsurancePolicyNumber&gt;	| Versicherungsnummer |
+| &lt;CostBearer&gt;			| Kostenträger des Falles |
 
 h1. Kontakt Informationen
 
@@ -108,7 +119,11 @@ Root Element:
 | &lt;Contact&gt; | 
 
 Kinder Elemente:
-| &lt;Address&gt; | Vollständige Adresse des Kontaktes |
+| &lt;Salutation&gt; | Beinhaltet die Anrede und den Namen des Kontaktes z.B. Herr Max Mustermann |
+| &lt;Address&gt; 	 | Vollständige Adresse des Kontaktes |
+
+Kind Element von Address:
+| &lt;Part&gt; | Beinhaltet die einzelnen Zeilen der Adresse | 
 
 h1. Artikel Informationen
 
@@ -123,4 +138,4 @@ Kinder Elemente:
 Kinder Elemente von _Article_:
 | &lt;Name&gt; 			| Name des Artikels | 
 | &lt;Price&gt; 		| Preis des Artikels | 
-| &lt;DeliveryDate&gt; 	| Abgabedatum des Artikels | 
+| &lt;DeliveryDate&gt; 	| Abgabedatum des Artikels, das Abgabedatum entspricht dabei dem Datum zum Zeitpunkt des Drucks | 

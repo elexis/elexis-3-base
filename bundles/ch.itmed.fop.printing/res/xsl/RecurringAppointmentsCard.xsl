@@ -40,6 +40,7 @@
 			<fo:page-sequence
 				master-reference="RecurringAppointmentsCard">
 				<fo:flow flow-name="xsl-region-body">
+					<!-- Example entries for additional info
 					<fo:block-container font="10pt Helvetica"
 						font-weight="bold">
 						<fo:block>Praxis Name</fo:block>
@@ -62,6 +63,7 @@
 							<fo:leader />
 						</fo:block>
 					</fo:block-container>
+					-->
 					<xsl:apply-templates select="/Page/Patient" />
 					<xsl:apply-templates
 						select="/Page/AppointmentsInformation" />

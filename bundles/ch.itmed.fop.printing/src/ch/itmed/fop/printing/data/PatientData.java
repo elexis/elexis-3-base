@@ -14,7 +14,7 @@ public class PatientData {
 	public void load() throws NullPointerException {
 		patient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		if (patient == null) {
-			SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte wählen Sie vor dem Drucken einen Patient!");
+			SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte selektieren Sie vor dem Drucken einen Patienten.");
 			throw new NullPointerException("No patient selected");
 		}
 	}
@@ -42,7 +42,6 @@ public class PatientData {
 	}
 
 	public String getSex() {
-		//return patient.getGender().value();
 		return patient.getGeschlecht();
 	}
 

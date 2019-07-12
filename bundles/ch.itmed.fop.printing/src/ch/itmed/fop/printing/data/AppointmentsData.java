@@ -22,7 +22,7 @@ public final class AppointmentsData {
 		kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Patient.class);
 		//kontakt = termin.getKontakt();
 		if (kontakt == null) {
-			SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte wählen Sie vor dem Drucken einen Patienten.");
+			SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte selektieren Sie vor dem Drucken einen Patienten.");
 			throw new NullPointerException("No patient selected");
 		}
 		appointmentsData = new ArrayList<>();

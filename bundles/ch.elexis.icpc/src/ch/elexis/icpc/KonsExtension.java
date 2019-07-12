@@ -22,6 +22,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
@@ -78,6 +79,8 @@ public class KonsExtension implements IKonsExtension {
 				mine.insertXRef(pos, EPISODE_TITLE + ep.getLabel(), Activator.PLUGIN_ID,
 					icpcEncounter.getId());
 				EncounterServiceHolder.get().updateVersionedEntry(encounter, new Samdas(mine.getContentsAsXML()));
+				
+				CoreModelServiceHolder.get().save(encounter);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, encounter);
 			}
 		}

@@ -11,6 +11,7 @@ import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.IKonsMakro;
 
 public class TIMakro implements IKonsMakro {
@@ -31,6 +32,7 @@ public class TIMakro implements IKonsMakro {
 					CodeElementServiceHolder.get().loadFromString("TI-Code", makro, null);
 				if (tiCode.isPresent()) {
 					encounter.get().addDiagnosis((IDiagnosis) tiCode.get());
+					CoreModelServiceHolder.get().save(encounter.get());
 					return StringConstants.EMPTY;
 				}
 			} catch (Exception e) {

@@ -43,6 +43,7 @@ import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.CodeElementServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Money;
@@ -399,6 +400,7 @@ public class TarmedOptifierTest {
 	private static void resetKons(IEncounter kons){
 		clearKons(kons);
 		kons.addDiagnosis((IDiagnosis) tiCode.loadFromCode("T1").get());
+		CoreModelServiceHolder.get().save(kons);
 		Result<IBilled> result = optifier.add(tlBaseFirst5Min, kons);
 		assertTrue(result.isOK());
 	}

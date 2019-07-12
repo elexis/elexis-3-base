@@ -30,6 +30,7 @@ import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -101,6 +102,8 @@ public class TestData {
 			Fall _fall =
 				createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
 			_fall.getPatient().set(Patient.FLD_PHONE1, "555-555 55 55");
+			// load and refresh jpa cache after using PO set
+			CoreModelServiceHolder.get().load(_fall.getPatient().getId(), IPatient.class);
 			createPatientWithFall("Karin", "Zirbelkiefer", "24.04.1951", "w", true);
 			
 			createLeistungen();
@@ -110,6 +113,8 @@ public class TestData {
 				konsultationen.add(kons);
 				IEncounter encounter = CoreModelServiceHolder.get().load(kons.getId(), IEncounter.class).get();
 				encounter.addDiagnosis(getDiagnosis());
+				CoreModelServiceHolder.get().save(encounter);
+				assertEquals(1, encounter.getDiagnoses().size());
 				for (IBillable leistung : leistungen) {
 					Result<IBilled> result =
 						BillingServiceHolder.get().bill(leistung, encounter, 1);

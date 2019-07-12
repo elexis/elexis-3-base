@@ -6,23 +6,10 @@ import org.w3c.dom.Element;
 import ch.itmed.fop.printing.data.ContactData;
 
 public class ContactElement {
-	public static int SELECTED_CONTACT = 0;
-	public static int APPOINTMENT_CONTACT = 1;
-	public static int APPOINTMENTS_CONTACT = 2;
 
-	public static Element create(Document doc, int contactType) throws Exception {
+	public static Element create(Document doc) throws Exception {
 		ContactData cd = new ContactData();
-		switch (contactType) {
-		case 0:
-			cd.load();
-			break;
-		case 1:
-			cd.loadFromAppointment();
-			break;
-		case 2:
-			cd.loadFromAppointments();
-			break;
-		}
+		cd.load();
 
 		Element p = doc.createElement("Contact");
 

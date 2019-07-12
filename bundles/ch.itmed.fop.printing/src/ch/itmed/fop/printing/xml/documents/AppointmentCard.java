@@ -7,7 +7,6 @@ import org.w3c.dom.Element;
 
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.AppointmentsInformationElement;
-import ch.itmed.fop.printing.xml.elements.ContactElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public final class AppointmentCard {
@@ -19,8 +18,6 @@ public final class AppointmentCard {
 		doc.appendChild(page);
 		Element appointment = AppointmentsInformationElement.create(doc, true);
 		page.appendChild(appointment);
-		Element contact = ContactElement.create(doc, ContactElement.APPOINTMENT_CONTACT);
-		page.appendChild(contact);
 		Element patient = PatientElement.create(doc, true);
 		page.appendChild(patient);
 

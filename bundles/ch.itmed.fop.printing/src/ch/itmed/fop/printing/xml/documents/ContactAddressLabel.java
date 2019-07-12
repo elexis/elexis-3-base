@@ -14,7 +14,7 @@ public class ContactAddressLabel {
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.CONTACT_ADDRESS_LABEL);
 		doc.appendChild(page);
-		Element contact = ContactElement.create(doc, ContactElement.SELECTED_CONTACT);
+		Element contact = ContactElement.create(doc);
 		page.appendChild(contact);
 
 		return DomDocument.toInputStream(doc);

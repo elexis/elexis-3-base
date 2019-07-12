@@ -108,21 +108,19 @@
 			</xsl:if>
 		</fo:block-container>
 	</xsl:template>
-	<xsl:template match="Contact">
+	<xsl:template match="AppointmentsInformation">
 		<fo:block-container font="8pt Helvetica"
 			font-weight="normal">
-			<fo:block>
-				<fo:leader />
-			</fo:block>
-			<fo:block>
-				Termin bei:
-				<xsl:value-of select="Salutation" />
-				<xsl:value-of select="FirstName" />
-				<xsl:value-of select="LastName" />
-			</fo:block>
+			<xsl:if test="/Page/AppointmentsInformation/AgendaArea/text()">
+				<fo:block>
+					<fo:leader />
+				</fo:block>
+				<fo:block>
+					Termin bei:
+					<xsl:value-of select="AgendaArea" />
+				</fo:block>
+			</xsl:if>
 		</fo:block-container>
-	</xsl:template>
-	<xsl:template match="AppointmentsInformation">
 		<fo:block-container>
 			<fo:block>
 				<fo:leader />
@@ -141,7 +139,8 @@
 			<fo:leader />
 		</fo:block>
 		<fo:block font="7pt Helvetica" font-style="italic">
-			Absagen in weniger als 24 Stunden vor dem Termin werden verrechnet
+			Absagen in weniger
+			als 24 Stunden vor dem Termin werden verrechnet
 		</fo:block>
 	</xsl:template>
 	<xsl:template match="Appointments">
@@ -149,6 +148,4 @@
 			<xsl:value-of select="Appointment" />
 		</fo:block>
 	</xsl:template>
-	<!-- <xsl:template match="Disclaimer"> <fo:block-container font="7pt Helvetica" 
-		font-style="italic"> </fo:block-container> </xsl:template> -->
 </xsl:stylesheet>

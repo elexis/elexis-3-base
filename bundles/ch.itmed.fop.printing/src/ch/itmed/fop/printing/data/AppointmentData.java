@@ -1,8 +1,12 @@
 package ch.itmed.fop.printing.data;
 
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.agenda.AreaType;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Kontakt;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
@@ -49,9 +53,24 @@ public final class AppointmentData {
 
 		return appointmentDate.toString();
 	}
-	
+
 	public String getAgendaArea() {
-		return appointment.getBereich();
+		Kontakt kontakt = null;
+		String agendaSection = appointment.getBereich();
+		String type = CoreHub.globalCfg.get(
+				PreferenceConstants.AG_BEREICH_PREFIX + agendaSection + PreferenceConstants.AG_BEREICH_TYPE_POSTFIX,
+				null);
+		if (type != null) {
+			if (type.startsWith(AreaType.CONTACT.name())) {
+				kontakt = Kontakt.load(type.substring(AreaType.CONTACT.name().length() + 1));
+			}
+		}
+
+		if (kontakt != null) {
+			return kontakt.getSalutation();
+		} else {
+			return agendaSection;
+		}
 	}
 
 }

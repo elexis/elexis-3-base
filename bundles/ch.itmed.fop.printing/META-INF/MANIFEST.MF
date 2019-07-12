@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IT-Med FOP Printing
+Bundle-Name: IT-Med Medi-Print Plugin
 Bundle-SymbolicName: ch.itmed.fop.printing;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: IT-Med AG

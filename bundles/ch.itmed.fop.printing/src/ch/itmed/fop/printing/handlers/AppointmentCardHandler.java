@@ -28,8 +28,6 @@ public final class AppointmentCardHandler extends AbstractHandler {
 			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.APPOINTMENT_CARD_ID));
 
-			InputStreamConverter.createFileFromInputStream(fo); // debug
-
 			String docName = PreferenceConstants.APPOINTMENT_CARD;
 			Settings settingsStore = SettingsProvider.getStore(docName);
 

@@ -34,8 +34,6 @@ public final class PatientLabelHandler extends AbstractHandler {
 			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.PATIENT_LABEL_ID));
 
-			InputStreamConverter.createFileFromInputStream(fo);
-
 			String docName = PreferenceConstants.PATIENT_LABEL;
 			Settings settingsStore = SettingsProvider.getStore(docName);
 

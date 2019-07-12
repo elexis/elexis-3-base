@@ -28,8 +28,6 @@ public final class VersionedLabelHandler extends AbstractHandler {
 			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.VERSIONED_LABEL_ID));
 
-			InputStreamConverter.createFileFromInputStream(fo); // debug
-
 			String docName = PreferenceConstants.VERSIONED_LABEL;
 			Settings settingsStore = SettingsProvider.getStore(docName);
 

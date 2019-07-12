@@ -28,8 +28,6 @@ public final class ContactAddressLabelHandler extends AbstractHandler {
 			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.CONTACT_ADDRESS_LABEL_ID));
 
-			InputStreamConverter.createFileFromInputStream(fo); // debug
-
 			String docName = PreferenceConstants.CONTACT_ADDRESS_LABEL;
 			Settings settingsStore = SettingsProvider.getStore(docName);
 

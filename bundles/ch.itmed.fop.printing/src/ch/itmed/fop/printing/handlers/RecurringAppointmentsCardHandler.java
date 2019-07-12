@@ -28,8 +28,6 @@ public final class RecurringAppointmentsCardHandler extends AbstractHandler {
 			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.RECURRING_APPOINTMENTS_CARD_ID));
 
-			InputStreamConverter.createFileFromInputStream(fo); // debug
-
 			String docName = PreferenceConstants.RECURRING_APPOINTMENTS_CARD;
 			Settings settingsStore = SettingsProvider.getStore(docName);
 

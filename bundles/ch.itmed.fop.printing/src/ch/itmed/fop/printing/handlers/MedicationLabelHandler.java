@@ -28,8 +28,6 @@ public final class MedicationLabelHandler extends AbstractHandler {
 			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
 
-			InputStreamConverter.createFileFromInputStream(fo); // debug
-
 			String docName = PreferenceConstants.MEDICATION_LABEL;
 			Settings settingsStore = SettingsProvider.getStore(docName);
 

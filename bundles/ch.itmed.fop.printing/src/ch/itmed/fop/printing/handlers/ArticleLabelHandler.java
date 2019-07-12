@@ -28,8 +28,6 @@ public final class ArticleLabelHandler extends AbstractHandler {
 			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
 
-			InputStreamConverter.createFileFromInputStream(fo); // debug
-
 			String docName = PreferenceConstants.ARTICLE_LABEL;
 			Settings settingsStore = SettingsProvider.getStore(docName);
 

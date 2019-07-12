@@ -25,10 +25,7 @@ public class AppointmentsInformationElement {
 
 		Element p = doc.createElement("AppointmentsInformation");
 
-		Element c = doc.createElement("Disclaimer");
-		p.appendChild(c);
-
-		c = doc.createElement("AgendaArea");
+		Element c = doc.createElement("AgendaArea");
 		c.appendChild(doc.createTextNode(al.get(0).getAgendaArea()));
 		p.appendChild(c);
 

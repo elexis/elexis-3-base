@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.itmed.fop.printing.feature"
+      label="Medi-Print"
+      version="1.0.0.qualifier"
+      provider-name="IT-Med AG">
+
+   <description>
+      Das Plugin für den Druck von Etiketten/Terminkarten auf Basis von Apache FOP.
+   </description>
+
+   <copyright url="http://it-med-ag.ch/">
+      Copyright (c) 2019 IT-Med AG &lt;info@it-med-ag.ch&gt;
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.itmed.fop.printing"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

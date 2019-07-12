@@ -98,5 +98,6 @@
     <module>org.iatrix.feature</module>
     <module>org.iatrix.messwerte.feature</module>
     <module>waelti.statistics.feature</module>
+    <module>ch.itmed.fop.printing.feature</module>
   </modules>
 </project>

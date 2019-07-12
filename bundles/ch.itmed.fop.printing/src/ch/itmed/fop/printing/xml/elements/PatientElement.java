@@ -84,7 +84,7 @@ public class PatientElement {
 		p.appendChild(c);
 
 		c = doc.createElement("OrderNumber");
-		c.appendChild(doc.createTextNode(pd.getCompleteAddress()));
+		c.appendChild(doc.createTextNode(pd.getOrderNumber()));
 		p.appendChild(c);
 
 		return p;

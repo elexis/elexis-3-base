@@ -96,7 +96,7 @@ public class PatientData {
 		return patient.getPostAnschrift(true);
 	}
 
-	public String getOrderNumer() {
+	public String getOrderNumber() {
 		return patient.getAuftragsnummer();
 	}
 }

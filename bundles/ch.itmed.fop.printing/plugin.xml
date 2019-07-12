@@ -79,19 +79,19 @@
             </command>
         </menuContribution>
         <menuContribution allPopups="false" locationURI="toolbar:ch.elexis.agenda.largeview">
-            <command commandId="ch.itmed.fop.printing.command.AppointmentCardPrint" icon="res/icons/termin.png" label="Termin drucken" style="push">
+            <command commandId="ch.itmed.fop.printing.command.AppointmentCardPrint" icon="res/icons/appointmentPrint.png" label="Termin drucken" style="push">
             </command>
         </menuContribution>
         <menuContribution allPopups="false" locationURI="toolbar:ch.elexis.agenda.largeview">
-            <command commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint" icon="res/icons/termine.png" label="Terminserie drucken" style="push">
+            <command commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint" icon="res/icons/appointmentsPrint.png" label="Terminserie drucken" style="push">
             </command>
         </menuContribution>
         <menuContribution allPopups="false" locationURI="toolbar:at.medevit.elexis.agenda.ui.view.agenda">
-            <command commandId="ch.itmed.fop.printing.command.AppointmentCardPrint" icon="res/icons/termin.png" label="Termin drucken" style="push">
+            <command commandId="ch.itmed.fop.printing.command.AppointmentCardPrint" icon="res/icons/appointmentPrint.png" label="Termin drucken" style="push">
             </command>
         </menuContribution>
         <menuContribution allPopups="false" locationURI="toolbar:at.medevit.elexis.agenda.ui.view.agenda">
-            <command commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint" icon="res/icons/termine.png" label="Terminserie drucken" style="push">
+            <command commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint" icon="res/icons/appointmentsPrint.png" label="Terminserie drucken" style="push">
             </command>
         </menuContribution>
 

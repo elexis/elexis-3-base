@@ -600,6 +600,9 @@ public class XMLExporterServices {
 				if (el.getAttribute("name") == null) {
 					el.setAttribute("name", verrechnet.getText()); // 22340
 				}
+				if (el.getAttribute(XMLExporter.ATTR_QUANTITY) == null) {
+					el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
+				}
 				// 22330 set code if still empty
 				if (el.getAttribute(XMLExporter.ATTR_CODE) == null) {
 					XMLExporterUtil.setAttributeWithDefault(el, XMLExporter.ATTR_CODE,

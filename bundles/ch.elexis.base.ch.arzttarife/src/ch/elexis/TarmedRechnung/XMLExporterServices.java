@@ -455,20 +455,20 @@ public class XMLExporterServices {
 					double mult = art.getFactor(tt, rechnung.getFall());
 					Money preis = verrechnet.getNettoPreis();
 					Money mAmountLocal = new Money(preis);
-					// new as of 3/2011: Correct handling of package fractions
-					Money einzelpreis = verrechnet.getBruttoPreis();
-					einzelpreis.multiply(verrechnet.getPrimaryScaleFactor());
-					
-					double cnt = verrechnet.getSecondaryScaleFactor();
-					if (cnt != 1.0) {
-						zahl *= cnt;
+					mAmountLocal.multiply(zahl);
+					if (isPartialAmount(verrechnet)) {
+						el.setAttribute(ATTR_UNIT,
+							XMLTool.moneyToXmlDouble(verrechnet.getBruttoPreis()));
+						el.setAttribute(XMLExporter.ATTR_QUANTITY,
+							Double.toString(verrechnet.getSecondaryScaleFactor())); // 22350
 					} else {
-						mAmountLocal.multiply(zahl);
+						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
+						el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
 					}
-					
-					// end corrections
-					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(einzelpreis));
+					el.setAttribute(XMLExporter.ATTR_AMOUNT,
+						XMLTool.moneyToXmlDouble(mAmountLocal));
 					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
+					// end corrections
 					if ("true".equals(verrechnet.getDetail(Verrechnet.INDICATED))) {
 						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "207");
 					} else {
@@ -485,8 +485,6 @@ public class XMLExporterServices {
 						logger.warn("Unknown medical code " + v.getCodeSystemCode()
 							+ " encountered for " + v.getCodeSystemName() + "@" + v);
 					}
-					el.setAttribute(XMLExporter.ATTR_AMOUNT,
-						XMLTool.moneyToXmlDouble(mAmountLocal));
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
 					String ckzl = art.getExt("Kassentyp"); // cf. MedikamentImporter#KASSENTYP
 					if (ckzl.equals("1")) {
@@ -570,10 +568,18 @@ public class XMLExporterServices {
 					if ("590".equals(codeSystemCode) && v instanceof IArticle) {
 						el.setAttribute(XMLExporter.ATTR_CODE, "1310");
 					}
-					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
-					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
+					if (isPartialAmount(verrechnet)) {
+						el.setAttribute(ATTR_UNIT,
+							XMLTool.moneyToXmlDouble(verrechnet.getBruttoPreis()));
+						el.setAttribute(XMLExporter.ATTR_QUANTITY,
+							Double.toString(verrechnet.getSecondaryScaleFactor())); // 22350
+					} else {
+						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
+						el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
+					}
+					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
 					el.setAttribute(XMLExporter.ATTR_AMOUNT,
 						XMLTool.moneyToXmlDouble(mAmountLocal));
 					XMLExporterUtil.setVatAttribute(verrechnet, mAmountLocal, el, vatSummer);
@@ -590,7 +596,6 @@ public class XMLExporterServices {
 				}
 				el.setAttribute(ATTR_SESSION, Integer.toString(session));
 				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
-				el.setAttribute(XMLExporter.ATTR_QUANTITY, Double.toString(zahl)); // 22350
 				el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370
 				if (el.getAttribute("name") == null) {
 					el.setAttribute("name", verrechnet.getText()); // 22340
@@ -605,6 +610,10 @@ public class XMLExporterServices {
 		}
 		ret.initialized = true;
 		return ret;
+	}
+	
+	private static boolean isPartialAmount(Verrechnet verrechnet){
+		return verrechnet.getZahl() == 1 && verrechnet.getSecondaryScaleFactor() != 1.0;
 	}
 	
 	private static Optional<Double> getALScalingFactor(Verrechnet verrechnet){

@@ -7,7 +7,8 @@
 	<xsl:param name="versionParam" select="'1.0'" />
 	<xsl:param name="logoJpeg" select="''" />
 	<xsl:param name="qrJpeg" select="''" />
-
+	<xsl:param name="commentText" select="''" />
+		
 	<xsl:attribute-set name="simpleBorder">
 		<xsl:attribute name="border">solid 0.2mm black</xsl:attribute>
 	</xsl:attribute-set>
@@ -97,7 +98,7 @@
 								<fo:table-cell padding-left="1mm">
 									<xsl:apply-templates select="mandant" />
 								</fo:table-cell>
-								<fo:table-cell>
+								<fo:table-cell number-rows-spanned="2">
 									<fo:block>
 										<!-- QR Code -->
 										<xsl:if test="string-length($qrJpeg) > 0">
@@ -105,6 +106,13 @@
 												content-width="40mm" content-height="40mm" scaling="non-uniform" />
 										</xsl:if>
 									</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+							<fo:table-row>
+								<fo:table-cell number-columns-spanned="3">
+									<fo:block linefeed-treatment="preserve" padding-top="5mm" font-size="9pt">
+											<xsl:value-of select="$commentText" />
+										</fo:block>
 								</fo:table-cell>
 							</fo:table-row>
 						</fo:table-body>

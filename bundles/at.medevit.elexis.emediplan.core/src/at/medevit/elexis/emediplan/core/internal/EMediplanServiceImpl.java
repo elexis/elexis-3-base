@@ -63,7 +63,10 @@ import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
+import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.preferences.Messages;
 import ch.elexis.core.services.IFormattedOutput;
 import ch.elexis.core.services.IFormattedOutputFactory;
 import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
@@ -117,6 +120,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 				fopFactory.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF);
 			HashMap<String, String> parameters = new HashMap<>();
 			parameters.put("logoJpeg", getEncodedLogo());
+			parameters.put("commentText", CoreHub.userCfg.get(Preferences.MEDICATION_SETTINGS_EMEDIPLAN_HEADER_COMMENT, Messages.Medication_headerComment));
 			qrCode.ifPresent(qr -> {
 				parameters.put("qrJpeg", getEncodedQr(qr));
 			});

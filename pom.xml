@@ -6,7 +6,6 @@
 	<version>3.8.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Elexis-Base</name>
-
     <repositories>
       <repository>
         <id>elexis.3.target</id>
@@ -20,13 +19,12 @@
       </repository>
     </repositories>
     <properties>
-		<tycho.version>1.4.0</tycho.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
-		<git.target.branch>${git.target.branch}</git.target.branch>
-		<git.core.branch>${git.core.branch}</git.core.branch>
-	</properties>
-
+      <tycho.version>1.4.0</tycho.version>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <tycho-groupid>org.eclipse.tycho</tycho-groupid>
+      <git.target.branch>master</git.target.branch>
+      <git.core.branch>${git.target.branch}</git.core.branch>
+    </properties>
 	<organization>
 		<name>elexis.info</name>
 		<url>http://www.elexis.info</url>

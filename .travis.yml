@@ -1,23 +1,19 @@
 ---
 language: java
-env:
-  - git.target.branch=$TRAVIS_BRANCH
 
-install: mvn --batch-mode -V --quiet -DskipTests=true -Dmaven.javadoc.skip=true validate
+install: mvn --batch-mode -V --quiet -DskipTests=true -Dmaven.javadoc.skip=true validate -Dgit.target.branch=$TRAVIS_BRANCH -Dgit.core.branch=$TRAVIS_BRANCH
 
-script: mvn --batch-mode -V clean verify
+script: mvn --batch-mode -V clean verify --fail-at-end -Dgit.target.branch=$TRAVIS_BRANCH -Dgit.core.branch=$TRAVIS_BRANCH
   
 notifications:
   email:
   - niklaus.giger@member.fsf.org
 jdk:
-  - oraclejdk8
+  - openjdk8
+
+services:
+  - xvfb
 
 cache:
   directories:
   - $HOME/.m2
-
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start

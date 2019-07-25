@@ -1,7 +1,7 @@
 ---
 language: java
 env:
-  - git.target.branch=f11106
+  - git.target.branch=$TRAVIS_BRANCH
 
 install: mvn --batch-mode -V --quiet -DskipTests=true -Dmaven.javadoc.skip=true validate
 

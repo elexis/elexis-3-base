@@ -1,9 +1,21 @@
 ---
 language: java
 
-install: mvn --batch-mode -V --quiet -DskipTests=true -Dmaven.javadoc.skip=true validate -Dgit.target.branch=$TRAVIS_BRANCH -Dgit.core.branch=$TRAVIS_BRANCH
+matrix:
+  include:
+  - name: "Deutsch"
+    env: NL=de_CH
+  - name: "English"
+    env:  NL=en_US
+  - name: "Français"
+    env: NL=fr_CH
+  allow_failures:
+  - name: "English"
+  - name: "Français"
+  
+install: mvn --batch-mode -V -Dgit.target.branch=$TRAVIS_BRANCH -Dgit.core.branch=$TRAVIS_BRANCH -DskipTests=true -Dmaven.javadoc.skip=true clean validate --quiet
 
-script: mvn --batch-mode -V clean verify --fail-at-end -Dgit.target.branch=$TRAVIS_BRANCH -Dgit.core.branch=$TRAVIS_BRANCH
+script: mvn  --batch-mode -V -Dgit.target.branch=$TRAVIS_BRANCH -Dgit.core.branch=$TRAVIS_BRANCH -DNL=$NL --fail-at-end clean verify
   
 notifications:
   email:

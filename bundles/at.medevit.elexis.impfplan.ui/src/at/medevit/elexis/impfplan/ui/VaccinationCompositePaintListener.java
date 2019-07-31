@@ -88,6 +88,9 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	private int maxLengthDoctor = 100;
 	private int maxLengthLotNr = 70;
 	
+	private int pageElementCount = 20; //default will be calculated
+	private int pageTotalSize = 1; //default will be calculated
+	
 	private int entryHeight;
 	private int defaultEntryHeight;
 	private ScrolledComposite scrolledComposite;
@@ -150,7 +153,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		if (_vphd == null)
 			return;
 		
-		paintControl(e.gc, e.display, e.width, e.height, false);
+		paintControl(e.gc, e.display, e.width, e.height, false, -1);
 		
 		Widget widget = e.widget;
 		if (widget instanceof VaccinationComposite) {
@@ -164,7 +167,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		}
 	}
 	
-	public void paintControl(GC gc, Display display, int width, int height, boolean b){
+	public void paintControl(GC gc, Display display, int width, int height, boolean b, int pageIdx){
 		if (b) {
 			//do print
 			showSide = false;
@@ -221,9 +224,19 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			entryHeight = entryHeight + defaultEntryHeight;
 		}
 		
+		if (b) {
+			// calculate page element count
+			pageElementCount = (height - HEADER_HEIGHT) / entryHeight;
+			// calculate total page size
+			pageTotalSize =
+				(int) Math.ceil((float) _vaccinations.size() / pageElementCount);
+		} else {
+			pageTotalSize = 1;
+		}
+		
 		determineMinWidth(gc, wrapText);
-		drawHeader(gc, display, width);
-		drawEntries(gc, display, width, b);
+		drawHeader(gc, display, width, pageIdx);
+		drawEntries(gc, display, width, b, pageIdx);
 		
 		if(b) {
 			gc.drawLine(0, 0, width, 0);
@@ -231,6 +244,10 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			gc.drawLine(0, height - 1, width, height - 1);
 			gc.drawLine(width - 1, 0, width - 1, height - 1);
 		}
+	}
+	
+	public int getPageTotalSize(){
+		return pageTotalSize;
 	}
 	
 	public void setVaccinationPlanHeader(VaccinationPlanHeaderDefinition vphd){
@@ -277,12 +294,14 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		return minWidth;
 	}
 	
-	private void drawHeader(GC gc, Display display, int width){
+	private void drawHeader(GC gc, Display display, int width, int pageIdx){
 		boolean alternator = true;
 		diseaseBoundaries.clear();
 		
 		if (HEADER_HEIGHT == -1)
 			HEADER_HEIGHT = determineMaxDiseaseStringExtension(gc).x + 10;
+		
+		int ehHeight = calcEhHeight(pageIdx);
 		
 		// main label
 		gc.setFont(headerFont);
@@ -343,8 +362,8 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			} else {
 				gc.setBackground(COLOR_WHITE);
 			}
-			gc.fillRectangle(width + spaceCounter, 0, distanceBetweenDiseases, eh());
-			gc.drawLine(width + spaceCounter, 0, width + spaceCounter, eh());
+			gc.fillRectangle(width + spaceCounter, 0, distanceBetweenDiseases, ehHeight);
+			gc.drawLine(width + spaceCounter, 0, width + spaceCounter, ehHeight);
 			
 			diseaseBoundaries
 				.add(new DiseaseBoundary(width + spaceCounter, gc.getBackground(), val));
@@ -361,7 +380,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		// separator
 		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		separatorBoundary = width - leftStart;
-		gc.fillRectangle(separatorBoundary, 0, SEPARATOR_WIDTH_BASE_EXTENDED, eh());
+		gc.fillRectangle(separatorBoundary, 0, SEPARATOR_WIDTH_BASE_EXTENDED, ehHeight);
 		
 		// Basisimpfungen
 		spaceCounter = -distanceBetweenDiseases;
@@ -372,9 +391,10 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			} else {
 				gc.setBackground(COLOR_WHITE);
 			}
-			gc.fillRectangle(width + spaceCounter - leftStart, 0, distanceBetweenDiseases, eh());
+			gc.fillRectangle(width + spaceCounter - leftStart, 0, distanceBetweenDiseases,
+				ehHeight);
 			gc.drawLine(width + spaceCounter - leftStart, 0, width + spaceCounter - leftStart,
-				eh());
+				ehHeight);
 			
 			diseaseBoundaries.add(new DiseaseBoundary(width + spaceCounter - leftStart,
 				gc.getBackground(), baseDisease));
@@ -392,16 +412,28 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		gc.drawLine(0, HEADER_HEIGHT - 1, width, HEADER_HEIGHT - 1);
 		
 		// vertical date delimiter line
-		if (eh() != HEADER_HEIGHT) {
-			gc.drawLine(locationOfAgeBorder, HEADER_HEIGHT, locationOfAgeBorder, eh());
+		if (ehHeight != HEADER_HEIGHT) {
+			gc.drawLine(locationOfAgeBorder, HEADER_HEIGHT, locationOfAgeBorder, ehHeight);
 			if (showSide) {
-				gc.drawLine(locationOfSideBorder, HEADER_HEIGHT, locationOfSideBorder, eh());
+				gc.drawLine(locationOfSideBorder, HEADER_HEIGHT, locationOfSideBorder, ehHeight);
 			}
-			gc.drawLine(locationOfDateBorder, HEADER_HEIGHT, locationOfDateBorder, eh());
-			gc.drawLine(locationOfDocBorder, HEADER_HEIGHT, locationOfDocBorder, eh());
-			gc.drawLine(locationOfLotNrBorder, HEADER_HEIGHT, locationOfLotNrBorder, eh());
+			gc.drawLine(locationOfDateBorder, HEADER_HEIGHT, locationOfDateBorder, ehHeight);
+			gc.drawLine(locationOfDocBorder, HEADER_HEIGHT, locationOfDocBorder, ehHeight);
+			gc.drawLine(locationOfLotNrBorder, HEADER_HEIGHT, locationOfLotNrBorder, ehHeight);
 			
+		}		
+	}
+
+	private int calcEhHeight(int pageIdx){
+		if (pageIdx > 0) {
+			// calculate how many elements left and its height 
+			int diff = _vaccinations.size() - (pageElementCount * pageIdx);
+			if (diff <=  pageElementCount) {
+				// show only the elements which are left
+				return HEADER_HEIGHT + diff * entryHeight;
+			}
 		}
+		return eh(pageIdx);
 	}
 	
 	private Point determineMaxDiseaseStringExtension(GC gc){
@@ -484,25 +516,37 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	 * 
 	 * @return
 	 */
-	private int eh(){
-		return HEADER_HEIGHT + (_vaccinations.size() * entryHeight);
+	private int eh(int pageIndex){
+		return HEADER_HEIGHT + ((pageIndex == -1 || _vaccinations.size() < pageElementCount ? _vaccinations.size() : pageElementCount) * entryHeight);
 	}
 	
-	private void drawEntries(GC gc, Display display, int width, boolean b){
+	private void drawEntries(GC gc, Display display, int width, boolean b, int pageIdx){
 		int lastHeightStart = 0;
 		naviVacMap.clear();
 		naviVacMap.put(0, null);
 		
-		for (int i = 0; i < _vaccinations.size(); i++) {
+		// calculate the offset and the max size for paginagtion
+		int i = 0;
+		int size = _vaccinations.size();
+		if (pageIdx > -1) {
+			i = pageElementCount * pageIdx;
+			size = pageElementCount * (pageIdx + 1);			
+		}
+		int a = 0; // only for increment
+		for (; i < size; i++) {
+			if (_vaccinations.size() <= i) {
+				break;
+			}
+			
 			Vaccination vacc = _vaccinations.get(i);
 			
 			gc.setBackground(COLOR_WHITE);
 			gc.setForeground(COLOR_BLACK);
-			int heightStart = HEADER_HEIGHT + (entryHeight * i + 1);
+			int heightStart = HEADER_HEIGHT + (entryHeight * a + 1);
 			lastHeightStart = heightStart;
 			
 			if (vacc.equals(selectedVacc)) {
-				highlightSelectedEntry(gc, heightStart, width);
+				highlightSelectedEntry(gc, heightStart, width, pageIdx);
 			}
 			
 			gc.setFont(boldFont);
@@ -543,6 +587,8 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			
 			gc.setBackground(COLOR_WHITE);
 			naviVacMap.put(heightStart, vacc);
+			
+			a++;
 		}
 		// position from which on to ignore selection
 		naviVacMap.put(lastHeightStart + entryHeight - 1, null);
@@ -589,34 +635,36 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	 *            start of the row
 	 * @param width
 	 */
-	private void highlightSelectedEntry(GC gc, int heightStart, int width){
+	private void highlightSelectedEntry(GC gc, int heightStart, int width, int pageIdx){
 		gc.setForeground(COLOR_CREME);
 		gc.setBackground(UiDesk.getColorFromRGB("FEFFCB"));
 		gc.drawRectangle(0, heightStart, width, entryHeight - 1);
 		// gc.fillRectangle(0, heightStart, width, ENTRY_HEIGHT - 1);
 		gc.fillGradientRectangle(0, heightStart, width, entryHeight - 1, true);
-		
 		gc.setForeground(COLOR_BLACK);
 		// vertical lines
-		if (eh() != HEADER_HEIGHT) {
+		int ehHeight = calcEhHeight(pageIdx);
+		
+		int yStart = HEADER_HEIGHT;
+		if (ehHeight != HEADER_HEIGHT) {
 			// age, date and first disease
-			gc.drawLine(locationOfLotNrBorder, HEADER_HEIGHT, locationOfLotNrBorder, eh());
-			gc.drawLine(locationOfDocBorder, HEADER_HEIGHT, locationOfDocBorder, eh());
-			gc.drawLine(locationOfAgeBorder, HEADER_HEIGHT, locationOfAgeBorder, eh());
+			gc.drawLine(locationOfLotNrBorder, yStart, locationOfLotNrBorder, ehHeight);
+			gc.drawLine(locationOfDocBorder, yStart, locationOfDocBorder, ehHeight);
+			gc.drawLine(locationOfAgeBorder, yStart, locationOfAgeBorder, ehHeight);
 			if (showSide) {
-				gc.drawLine(locationOfSideBorder, HEADER_HEIGHT, locationOfSideBorder, eh());
+				gc.drawLine(locationOfSideBorder, yStart, locationOfSideBorder, ehHeight);
 			}
-			gc.drawLine(locationOfDateBorder, HEADER_HEIGHT, locationOfDateBorder, eh());
-			gc.drawLine(locationOfFirstDisease, HEADER_HEIGHT, locationOfFirstDisease, eh());
+			gc.drawLine(locationOfDateBorder, yStart, locationOfDateBorder, ehHeight);
+			gc.drawLine(locationOfFirstDisease, yStart, locationOfFirstDisease, ehHeight);
 			
 			// draw lines for each disease
 			for (DiseaseBoundary db : diseaseBoundaries) {
-				gc.drawLine(db.leftTrim, 0, db.leftTrim, eh());
+				gc.drawLine(db.leftTrim, 0, db.leftTrim, ehHeight);
 			}
 			
 			// draw the base/extended disease separator line
 			gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-			gc.fillRectangle(separatorBoundary, 0, SEPARATOR_WIDTH_BASE_EXTENDED, eh());
+			gc.fillRectangle(separatorBoundary, 0, SEPARATOR_WIDTH_BASE_EXTENDED, ehHeight);
 			gc.setBackground(COLOR_CREME);
 		}
 	}
@@ -693,6 +741,6 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		if (_vaccinations == null) {
 			return 64;
 		}
-		return eh();
+		return eh(-1);
 	}
 }

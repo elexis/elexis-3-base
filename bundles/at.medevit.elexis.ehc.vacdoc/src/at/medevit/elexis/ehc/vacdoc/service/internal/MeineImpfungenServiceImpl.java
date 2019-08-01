@@ -410,8 +410,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		try {
 			ConvenienceCommunicationCh convComm = new ConvenienceCommunicationCh(affinityDomain);
 			DocumentMetadataCh metaData = convComm.addChDocument(DocumentDescriptor.CDA_R2,
-				getDocumentAsInputStream(document));
-			
+				getDocumentAsInputStream(document), getDocumentAsInputStream(document));
 			setMetadataCdaCh(metaData, document);
 			response = convComm.submit();
 		} catch (final Exception e) {
@@ -419,7 +418,14 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 			return false;
 		}
 		if (response.getStatus() != null) {
-			return XDSStatusType.SUCCESS == response.getStatus().getValue();
+			if (XDSStatusType.SUCCESS == response.getStatus().getValue()) {
+				return true;
+			} else {
+				response.getErrorList().getError().forEach(e -> {
+					logger.error(
+						"Error response " + e.getErrorCode().getName() + ": " + e.getCodeContext());
+				});
+			}
 		}
 		return false;
 	}

@@ -29,6 +29,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.apache.avalon.framework.configuration,
  org.apache.fop,
  org.apache.fop.apps,
+ org.apache.fop.render,
+ org.apache.fop.render.print,
  org.apache.fop.tools.fontlist,
  org.apache.xmlgraphics.util
 Require-Bundle: org.apache.xerces;bundle-version="2.9.0"

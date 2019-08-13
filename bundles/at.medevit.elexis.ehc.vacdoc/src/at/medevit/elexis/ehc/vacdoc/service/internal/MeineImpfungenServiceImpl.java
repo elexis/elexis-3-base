@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
+import org.ehealth_connector.common.Code;
 import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.Name;
 import org.ehealth_connector.common.ch.enums.ConfidentialityCode;
@@ -452,6 +453,13 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		metaData.setHealthcareFacilityTypeCode(
 			HealthcareFacilityTypeCode.AMBULATORY_CARE_SITE);
 		metaData.addConfidentialityCode(ConfidentialityCode.NORMAL);
+		
+		// TODO this workaround is only needed as long as meineimpfungen and the current eHC release use different coding for vaccination documents. 
+		metaData.setTypeCode(new Code("2.16.756.5.30.1.127.3.10.1.27", "60043", "epd_xds_typeCode",
+			"elektronischer Impfausweis"));// TypeCode.IMMUNIZATION_RECORD);
+		metaData.setFormatCode(new Code("2.16.756.5.30.1.127.3.10.1.9",
+			"urn:epd:2015:EPD_Immunization Content", "epd_xds_formatCode", "eImpfDossier"));// FormatCode.IMMUNIZATION_CONTENT
+		
 		return true;
 	}
 	

@@ -20,6 +20,7 @@ import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
@@ -31,12 +32,14 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.builder.IArticleBuilder;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
+import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.BillingSystem;
 import ch.elexis.data.Eigenleistung;
@@ -116,10 +119,19 @@ public class TestData {
 				CoreModelServiceHolder.get().save(encounter);
 				assertEquals(1, encounter.getDiagnoses().size());
 				for (IBillable leistung : leistungen) {
-					Result<IBilled> result =
-						BillingServiceHolder.get().bill(leistung, encounter, 1);
-					if (!result.isOK()) {
-						throw new IllegalStateException(result.toString());
+					if (leistung instanceof IArticle
+						&& ((IArticle) leistung).getName().endsWith("fractional")) {
+						Result<IBilled> result =
+							BillingServiceHolder.get().bill(leistung, encounter, 0.5);
+						if (!result.isOK()) {
+							throw new IllegalStateException(result.toString());
+						}
+					} else {
+						Result<IBilled> result =
+							BillingServiceHolder.get().bill(leistung, encounter, 1);
+						if (!result.isOK()) {
+							throw new IllegalStateException(result.toString());
+						}
 					}
 				}
 				// apply vat
@@ -223,6 +235,25 @@ public class TestData {
 				.load(eigenleistung.getId(), ICustomService.class).get();
 			leistungen.add(customService);
 			
+			IArticle localArticle = new IArticleBuilder(CoreModelServiceHolder.get(),
+				"test article", "123456789", ArticleTyp.EIGENARTIKEL).build();
+			localArticle.setGtin("0000001111111");
+			localArticle.setPackageSize(12);
+			localArticle.setSellingSize(12);
+			localArticle.setPurchasePrice(new Money(8.15));
+			localArticle.setSellingPrice(new Money(10.15));
+			CoreModelServiceHolder.get().save(localArticle);
+			leistungen.add(localArticle);
+			
+			localArticle = new IArticleBuilder(CoreModelServiceHolder.get(),
+				"test article fractional", "1234567890", ArticleTyp.EIGENARTIKEL).build();
+			localArticle.setGtin("0000001111112");
+			localArticle.setPackageSize(12);
+			localArticle.setSellingSize(12);
+			localArticle.setPurchasePrice(new Money(8.15));
+			localArticle.setSellingPrice(new Money(10.15));
+			CoreModelServiceHolder.get().save(localArticle);
+			leistungen.add(localArticle);
 		}
 		
 		public List<Mandant> getMandanten(){

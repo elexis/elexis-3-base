@@ -209,6 +209,48 @@ public class XMLExporterTest {
 	}
 	
 	@Test
+	public void doExportTestFractional() throws IOException{
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
+		XMLExporter exporter = new XMLExporter();
+		List<IInvoice> invoices = szenario.getInvoices();
+		for (IInvoice invoice : invoices) {
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
+				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			assertNotNull(result);
+			if (invoice.getState() == InvoiceState.DEFECTIVE) {
+				printFaildDocument(result);
+				fail();
+			}
+			// check if the whole and fractional is included
+			boolean wholePresent = false;
+			boolean fractionalPresent = false;
+			Element root = result.getRootElement();
+			Iterator<?> iter = root.getDescendants(new ElementFilter("record_other"));
+			assertTrue(iter.hasNext());
+			while (iter.hasNext()) {
+				Element record = (Element) iter.next();
+				Attribute code = record.getAttribute("code");
+				if (code.getValue().equals("123456789")) {
+					assertEquals("1.0", record.getAttribute("quantity").getValue());
+					assertEquals("10.15", record.getAttribute("unit").getValue());
+					assertEquals("1.0", record.getAttribute("external_factor").getValue());
+					assertEquals("10.15", record.getAttribute("amount").getValue());
+					wholePresent = true;
+				} else if (code.getValue().equals("1234567890")) {
+					assertTrue(record.getAttribute("quantity").getValue().equals("0.5"));
+					assertTrue(record.getAttribute("unit").getValue().equals("10.15"));
+					assertTrue(record.getAttribute("external_factor").getValue().equals("1.0"));
+					assertTrue(record.getAttribute("amount").getValue().equals("5.08"));
+					fractionalPresent = true;
+				}
+			}
+			assertTrue(wholePresent && fractionalPresent);
+		}
+	}
+	
+	@Test
 	public void doExportExisting4Test() throws IOException{
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
 		

@@ -438,21 +438,7 @@ public class XMLExporterServices {
 						IArticle art = (IArticle) billable;
 						double mult =
 							ArzttarifeUtil.getFactor(encounterDate, encounter.getCoverage());
-						Money preis = billed.getNetPrice();
-						Money mAmountLocal = new Money(preis);
-						// new as of 3/2011: Correct handling of package fractions
-						Money einzelpreis = billed.getPrice();
-						einzelpreis.multiply(billed.getPrimaryScaleFactor());
-						
-						double cnt = billed.getSecondaryScaleFactor();
-						if (cnt != 1.0) {
-							amount *= cnt;
-						} else {
-							mAmountLocal.multiply(amount);
-						}
-						
-						// end corrections
-						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(einzelpreis));
+						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(billed.getPrice()));
 						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
 						if ("true".equals((String) billed.getExtInfo(Verrechnet.INDICATED))) {
 							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "207");
@@ -473,12 +459,12 @@ public class XMLExporterServices {
 								+ billable);
 						}
 						el.setAttribute(XMLExporter.ATTR_AMOUNT,
-							XMLTool.moneyToXmlDouble(mAmountLocal));
-						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer);
+							XMLTool.moneyToXmlDouble(billed.getTotal()));
+						XMLExporterUtil.setVatAttribute(billed, billed.getTotal(), el, vatSummer);
 						String ckzl = (String) art.getExtInfo("Kassentyp"); // cf. MedikamentImporter#KASSENTYP
 						if (ckzl.equals("1")) {
 							el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
-							ret.mObligations.addMoney(mAmountLocal);
+							ret.mObligations.addMoney(billed.getTotal());
 						} else {
 							el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE);
 						}
@@ -487,7 +473,7 @@ public class XMLExporterServices {
 							TarmedRequirements.getEAN(encounter.getMandator()));
 						el.setAttribute(ATTR_EAN_RESPONSIBLE,
 							XMLExporterUtil.getResponsibleEAN(encounter));
-						ret.mMedikament.addMoney(mAmountLocal);
+						ret.mMedikament.addMoney(billed.getTotal());
 					} else if ("MiGeL".equals(billable.getCodeSystemName())) {
 						el = new Element(ELEMENT_RECORD_MIGEL, XMLExporter.nsinvoice);
 						// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
@@ -545,7 +531,6 @@ public class XMLExporterServices {
 						
 						ret.mPhysio.addMoney(mAmountLocal);
 					} else {
-						Money preis = billed.getNetPrice();
 						el = new Element(ELEMENT_RECORD_OTHER, XMLExporter.nsinvoice);
 						String codeSystemCode = billable.getCodeSystemCode();
 						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, codeSystemCode);
@@ -558,13 +543,11 @@ public class XMLExporterServices {
 						if ("590".equals(codeSystemCode) && billable instanceof IArticle) {
 							el.setAttribute(XMLExporter.ATTR_CODE, "1310");
 						}
-						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
+						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(billed.getPrice()));
 						el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
-						Money mAmountLocal = new Money(preis);
-						mAmountLocal.multiply(amount);
 						el.setAttribute(XMLExporter.ATTR_AMOUNT,
-							XMLTool.moneyToXmlDouble(mAmountLocal));
-						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer);
+							XMLTool.moneyToXmlDouble(billed.getTotal()));
+						XMLExporterUtil.setVatAttribute(billed, billed.getTotal(), el, vatSummer);
 						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
 						el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$
 						el.setAttribute("external_factor", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -574,7 +557,7 @@ public class XMLExporterServices {
 						el.setAttribute(ATTR_EAN_RESPONSIBLE,
 							XMLExporterUtil.getResponsibleEAN(encounter));
 						
-						ret.mUebrige.addMoney(mAmountLocal);
+						ret.mUebrige.addMoney(billed.getTotal());
 					}
 					el.setAttribute(ATTR_SESSION, Integer.toString(session));
 					el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010

@@ -81,7 +81,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		initProxy();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
-			apiInstance.getApiClient().setBasePath(getBasePath());
+			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			File externalData = document;
 			String patientFirstName = patient.getVorname();
 			String patientLastName = patient.getName();
@@ -114,15 +114,11 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		}
 	}
 	
-	private String getBasePath(){
-		return getAppBasePath() + "/bluemedication/api/v1";
-	}
-	
 	private String getAppBasePath(){
-		if (ConfigServiceHolder.get().get(BlueMedicationConstants.CFG_URL_STAGING, true)) {
-			return "http://staging.blueconnect.hin.ch";
+		if (ConfigServiceHolder.get().get(BlueMedicationConstants.CFG_URL_STAGING, false)) {
+			return "http://staging.bluemedication.hin.ch/api/v1";
 		} else {
-			return "http://blueconnect.hin.ch";
+			return "http://bluemedication.hin.ch/api/v1";
 		}
 	}
 	
@@ -131,7 +127,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		initProxy();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
-			apiInstance.getApiClient().setBasePath(getBasePath());
+			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			
 			ApiResponse<String> response =
 				apiInstance.downloadIdExtractionChmedGetWithHttpInfo(id, true);

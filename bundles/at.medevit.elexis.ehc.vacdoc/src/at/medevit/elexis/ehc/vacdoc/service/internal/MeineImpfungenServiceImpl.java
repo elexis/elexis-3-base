@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
+import org.ehealth_connector.common.Code;
 import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.Name;
 import org.ehealth_connector.common.ch.enums.ConfidentialityCode;
@@ -410,8 +411,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		try {
 			ConvenienceCommunicationCh convComm = new ConvenienceCommunicationCh(affinityDomain);
 			DocumentMetadataCh metaData = convComm.addChDocument(DocumentDescriptor.CDA_R2,
-				getDocumentAsInputStream(document));
-			
+				getDocumentAsInputStream(document), getDocumentAsInputStream(document));
 			setMetadataCdaCh(metaData, document);
 			response = convComm.submit();
 		} catch (final Exception e) {
@@ -419,7 +419,14 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 			return false;
 		}
 		if (response.getStatus() != null) {
-			return XDSStatusType.SUCCESS == response.getStatus().getValue();
+			if (XDSStatusType.SUCCESS == response.getStatus().getValue()) {
+				return true;
+			} else {
+				response.getErrorList().getError().forEach(e -> {
+					logger.error(
+						"Error response " + e.getErrorCode().getName() + ": " + e.getCodeContext());
+				});
+			}
 		}
 		return false;
 	}
@@ -446,6 +453,13 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		metaData.setHealthcareFacilityTypeCode(
 			HealthcareFacilityTypeCode.AMBULATORY_CARE_SITE);
 		metaData.addConfidentialityCode(ConfidentialityCode.NORMAL);
+		
+		// TODO this workaround is only needed as long as meineimpfungen and the current eHC release use different coding for vaccination documents. 
+		metaData.setTypeCode(new Code("2.16.756.5.30.1.127.3.10.1.27", "60043", "epd_xds_typeCode",
+			"elektronischer Impfausweis"));// TypeCode.IMMUNIZATION_RECORD);
+		metaData.setFormatCode(new Code("2.16.756.5.30.1.127.3.10.1.9",
+			"urn:epd:2015:EPD_Immunization Content", "epd_xds_formatCode", "eImpfDossier"));// FormatCode.IMMUNIZATION_CONTENT
+		
 		return true;
 	}
 	

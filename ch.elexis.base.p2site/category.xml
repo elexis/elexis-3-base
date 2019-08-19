@@ -237,6 +237,9 @@
    <feature url="features/ch.elexis.labororder.lg1.feature_1.0.0.qualifier.jar" id="ch.elexis.labororder.lg1.feature" version="1.0.0.qualifier">
       <category name="laborexchanges"/>
    </feature>
+   <feature url="features/ch.itmed.fop.printing.feature_1.0.0.qualifier.jar" id="ch.itmed.fop.printing.feature" version="1.0.0.qualifier">
+      <category name="divers"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

@@ -12,6 +12,7 @@ Import-Package:
  ch.elexis.core.constants,
  ch.elexis.core.data.util,
  ch.elexis.core.jdt,
+ ch.elexis.core.l10n;version="3.5.0.qualifier",
  ch.elexis.core.model,
  ch.elexis.core.model.prescription,
  ch.elexis.core.services,

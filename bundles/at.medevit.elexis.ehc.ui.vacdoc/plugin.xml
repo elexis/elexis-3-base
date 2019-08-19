@@ -43,6 +43,12 @@
             allPopups="false"
             locationURI="popup:at.medevit.elexis.impfplan.ui.ImpfplanViewPart.contextMenu">
          <command
+               commandId="at.medevit.elexis.ehc.ui.vacdoc.DownloadMeineImpfungen"
+               icon="rsc/meineimpfungenlogo_16x16.png"
+               label="import von meineimpfungen"
+               style="push">
+         </command>
+         <command
                commandId="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen"
                icon="rsc/meineimpfungenlogo_16x16.png"
                label="export nach meineimpfungen"
@@ -122,6 +128,15 @@
       <handler
             class="at.medevit.elexis.ehc.ui.vacdoc.handler.CdaOutboxHandler"
             commandId="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler">
+      </handler>
+      <handler
+            class="at.medevit.elexis.ehc.ui.vacdoc.handler.DownloadMeineImpfungenHandler"
+            commandId="at.medevit.elexis.ehc.ui.vacdoc.DownloadMeineImpfungen">
+         <enabledWhen>
+            <test
+                  property="at.medevit.elexis.ehc.ui.vacdoc.enabled">
+            </test>
+         </enabledWhen>
       </handler>
    </extension>
    <extension

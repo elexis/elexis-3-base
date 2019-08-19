@@ -19,8 +19,10 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -74,13 +76,17 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		
 		Rectangle a4Rectangle = new Rectangle(0, 0, dim, (int) (dim * 1.41));
 		Display display = vaccinationComposite.getDisplay();
-		final Image image = new Image(display, a4Rectangle);
-		GC gc = new GC(image);
-		vcpl.paintControl(gc, display, a4Rectangle.width, a4Rectangle.height, true);
-		gc.dispose();
-		
+		List<Image> images = new ArrayList<>();
+		for (int i = 0; i < vcpl.getPageTotalSize(); i++) {
+			final Image image = new Image(display, a4Rectangle);
+			GC gc = new GC(image);
+			vcpl.paintControl(gc, display, a4Rectangle.width, a4Rectangle.height, true, i);
+			images.add(image);
+			gc.dispose();
+		}
 		try {
-			createPDF(patient, image);
+			createPDF(patient, images);
+			images.clear();
 		} catch (COSVisitorException | IOException e) {
 			MessageEvent.fireError("Fehler beim Erstellen des PDF", e.getMessage(), e);
 		}
@@ -88,7 +94,7 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private void createPDF(Patient patient, Image image) throws IOException, COSVisitorException{
+	private void createPDF(Patient patient, List<Image> images) throws IOException, COSVisitorException{
 		PDDocumentInformation pdi = new PDDocumentInformation();
 		Mandant mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 		pdi.setAuthor(mandant.getName() + " " + mandant.getVorname());
@@ -98,37 +104,46 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		PDDocument document = new PDDocument();
 		document.setDocumentInformation(pdi);
 		
-		PDPage page = new PDPage();
-		page.setMediaBox(PDPage.PAGE_SIZE_A4);
-		document.addPage(page);
-		
-		PDRectangle pageSize = page.findMediaBox();
-		PDFont font = PDType1Font.HELVETICA_BOLD;
-		
-		PDFont subFont = PDType1Font.HELVETICA;
-		
-		PDPageContentStream contentStream = new PDPageContentStream(document, page);
-		contentStream.beginText();
-		contentStream.setFont(font, 14);
-		contentStream.moveTextPositionByAmount(40, pageSize.getUpperRightY() - 40);
-		contentStream.drawString(patient.getLabel());
-		contentStream.endText();
-		
-		String dateLabel = sdf.format(Calendar.getInstance().getTime());
-		String title = Person.load(mandant.getId()).get(Person.TITLE);
-		String mandantLabel = title + " " + mandant.getName() + " " + mandant.getVorname();
-		contentStream.beginText();
-		contentStream.setFont(subFont, 10);
-		contentStream.moveTextPositionByAmount(40, pageSize.getUpperRightY() - 55);
-		contentStream.drawString("Ausstellung " + dateLabel + ", " + mandantLabel);
-		contentStream.endText();
-		
-		BufferedImage imageAwt = convertToAWT(image.getImageData());
-		
-		PDXObjectImage pdPixelMap = new PDPixelMap(document, imageAwt);
-		contentStream.drawXObject(pdPixelMap, 40, 30, pageSize.getWidth() - 80,
-			pageSize.getHeight() - 100);
-		contentStream.close();
+		int i = 0;
+		for (Image image : images) {
+			i++;
+			PDPage page = new PDPage();
+			page.setMediaBox(PDPage.PAGE_SIZE_A4);
+			document.addPage(page);
+			
+			PDRectangle pageSize = page.findMediaBox();
+			PDFont font = PDType1Font.HELVETICA_BOLD;
+			
+			PDFont subFont = PDType1Font.HELVETICA;
+			PDPageContentStream contentStream = new PDPageContentStream(document, page);
+			contentStream.beginText();
+			contentStream.setFont(font, 14);
+			contentStream.moveTextPositionByAmount(40, pageSize.getUpperRightY() - 40);
+			contentStream.drawString(patient.getLabel());
+			contentStream.endText();
+			
+			String dateLabel = sdf.format(Calendar.getInstance().getTime());
+			String title = Person.load(mandant.getId()).get(Person.TITLE);
+			String mandantLabel = title + " " + mandant.getName() + " " + mandant.getVorname();
+			contentStream.beginText();
+			contentStream.setFont(subFont, 10);
+			contentStream.moveTextPositionByAmount(40, pageSize.getUpperRightY() - 55);
+			contentStream.drawString("Ausstellung " + dateLabel + ", " + mandantLabel);
+			contentStream.endText();
+			
+			BufferedImage imageAwt = convertToAWT(image.getImageData());
+			PDXObjectImage pdPixelMap = new PDPixelMap(document, imageAwt);
+			contentStream.drawXObject(pdPixelMap, 40, 30, pageSize.getWidth() - 80,
+				pageSize.getHeight() - 100);
+			
+			// page numbers
+			contentStream.beginText();
+			contentStream.setFont(subFont, 8);
+			contentStream.moveTextPositionByAmount((PDPage.PAGE_SIZE_A4.getUpperRightX() / 2 - 20), (PDPage.PAGE_SIZE_A4.getLowerLeftY() + 15));
+			contentStream.drawString("Seite " + i + " von " + images.size());
+			contentStream.endText();
+            contentStream.close();
+		}
 		
 		String outputPath =
 			CoreHub.userCfg.get(PreferencePage.VAC_PDF_OUTPUTDIR, CoreHub.getWritableUserDir()

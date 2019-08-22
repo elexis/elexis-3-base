@@ -91,7 +91,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			try {
 				ApiResponse<UploadResult> response =
 					apiInstance.dispatchPostWithHttpInfo((File) null, externalData,
-						patientFirstName, patientLastName, patientSex, patientBirthdate);
+						patientFirstName, patientLastName, patientSex, patientBirthdate,
+						"", "", "", "", "");
 				if (response.getStatusCode() >= 300) {
 					return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR,
 						0, "Response status code was [" + response.getStatusCode() + "]", null,
@@ -125,7 +126,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			
 			LoggerFactory.getLogger(getClass()).warn("Performing workaround GET request");
-			apiInstance.comparisonIdGet("workaround");
+			apiInstance.downloadIdComparisonChmedGet("workaround", false);
 		} catch (Exception e) {
 			// ignore
 		}

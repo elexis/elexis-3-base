@@ -6,7 +6,9 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.emediplan.Startup;
@@ -32,9 +34,12 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 					if (emediplan.isOK()) {
 						Startup.openEMediplanImportDialog(emediplan.get(),
 							docHandle.getPatient().getId());
-						BlueMedicationServiceHolder.getService()
-							.removePendingUploadResult(docHandle);
+					} else {
+						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+							"Beim download ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
 					}
+					// always remove pending upload
+					BlueMedicationServiceHolder.getService().removePendingUploadResult(docHandle);
 				}
 			}
 		}

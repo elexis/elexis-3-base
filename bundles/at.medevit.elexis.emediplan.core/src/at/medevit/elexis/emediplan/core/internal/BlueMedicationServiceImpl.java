@@ -32,7 +32,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	private Map<Object, at.medevit.elexis.emediplan.core.UploadResult> pendingUploadResults;
 	
 	@Activate
-	public void activate() {
+	public void activate(){
 		pendingUploadResults = new HashMap<>();
 	}
 	
@@ -79,6 +79,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	public Result<at.medevit.elexis.emediplan.core.UploadResult> uploadDocument(Patient patient,
 		File document){
 		initProxy();
+		workaroundGet();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
@@ -88,21 +89,21 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			String patientSex = patient.getGender().name();
 			LocalDate patientBirthdate = LocalDate.now();
 			try {
-				ApiResponse<UploadResult> response = apiInstance.dispatchPostWithHttpInfo((File) null,
-					externalData, patientFirstName, patientLastName, patientSex, patientBirthdate);
+				ApiResponse<UploadResult> response =
+					apiInstance.dispatchPostWithHttpInfo((File) null, externalData,
+						patientFirstName, patientLastName, patientSex, patientBirthdate);
 				if (response.getStatusCode() >= 300) {
 					return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR,
-						0,
-						"Response status code was [" + response.getStatusCode() + "]", null, false);
+						0, "Response status code was [" + response.getStatusCode() + "]", null,
+						false);
 				}
 				if (response.getData() == null) {
 					return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR,
-						0, "Response has no data", null,
-						false);
+						0, "Response has no data", null, false);
 				}
 				return new Result<at.medevit.elexis.emediplan.core.UploadResult>(
 					new at.medevit.elexis.emediplan.core.UploadResult(
-						getAppBasePath() + response.getData().getUrl() + "&mode=embed",
+						appendPath(getBasePath(), response.getData().getUrl() + "&mode=embed"),
 						response.getData().getId()));
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
@@ -114,12 +115,42 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		}
 	}
 	
-	private String getAppBasePath(){
-		if (CoreHub.globalCfg.get(BlueMedicationConstants.CFG_URL_STAGING, false)) {
-			return "http://staging.bluemedication.hin.ch/api/v1";
-		} else {
-			return "http://bluemedication.hin.ch/api/v1";
+	/**
+	 * Perform a workaround get until HIN fixed POST issue
+	 * 
+	 */
+	private void workaroundGet(){
+		try {
+			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
+			apiInstance.getApiClient().setBasePath(getAppBasePath());
+			
+			LoggerFactory.getLogger(getClass()).warn("Performing workaround GET request");
+			apiInstance.comparisonIdGet("workaround");
+		} catch (Exception e) {
+			// ignore
 		}
+	}
+	
+	private String appendPath(String pathStart, String pathEnd){
+		if (pathStart.endsWith("/") || pathEnd.startsWith("/")) {
+			return pathStart + pathEnd;
+		} else if (pathStart.endsWith("/") && pathEnd.startsWith("/")) {
+			return pathStart + pathEnd.substring(1);
+		} else {
+			return pathStart + "/" + pathEnd;
+		}
+	}
+	
+	private String getBasePath(){
+		if (CoreHub.globalCfg.get(BlueMedicationConstants.CFG_URL_STAGING, false)) {
+			return "http://staging.bluemedication.hin.ch";
+		} else {
+			return "http://bluemedication.hin.ch";
+		}
+	}
+	
+	private String getAppBasePath(){
+		return appendPath(getBasePath(), "/api/v1");
 	}
 	
 	@Override

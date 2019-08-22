@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
 
@@ -272,7 +273,8 @@ public class TarmedLimitation {
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<Verrechnet> verrechnetByMandant = getVerrechnetByMandantAndCodeDuringPeriod(
+				List<Verrechnet> verrechnetByMandant =
+					getVerrechnetByRechnungsstellerAndCodeDuringPeriod(
 					kons, verrechnet.getVerrechenbar().getCode());
 				if (getVerrechnetCount(verrechnetByMandant) > amount) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
@@ -283,7 +285,7 @@ public class TarmedLimitation {
 				List<String> serviceCodes = tarmedGroup.getServices();
 				for (String code : serviceCodes) {
 					allVerrechnetOfGroup
-						.addAll(getVerrechnetByMandantAndCodeDuringPeriod(kons, code));
+						.addAll(getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
 					ret = new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
@@ -303,7 +305,7 @@ public class TarmedLimitation {
 	}
 
 	// @formatter:off
-	private static final String VERRECHNET_BYMANDANT_ANDCODE = "SELECT leistungen.ID FROM leistungen, behandlungen, faelle"
+	private static final String VERRECHNET_BYPATIENT_ANDCODE = "SELECT leistungen.ID FROM leistungen, behandlungen, faelle"
 	+ " WHERE leistungen.deleted = '0'" 
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
@@ -311,7 +313,6 @@ public class TarmedLimitation {
 	+ " AND faelle.ID = behandlungen.fallID"
 	+ " AND faelle.PatientID = ?"
 	+ " AND leistungen.LEISTG_CODE like ?"
-	+ " AND behandlungen.MandantID = ?"
 	+ " ORDER BY behandlungen.Datum ASC";
 	// @formatter:on
 	/**
@@ -326,16 +327,16 @@ public class TarmedLimitation {
 	 * @param code
 	 * @return
 	 */
-	private List<Verrechnet> getVerrechnetByMandantAndCodeDuringPeriod(Konsultation kons, String code) {
-		Mandant mandant = kons.getMandant();
+	private List<Verrechnet> getVerrechnetByRechnungsstellerAndCodeDuringPeriod(Konsultation kons,
+		String code){
+		Rechnungssteller rechnungssteller = kons.getMandant().getRechnungssteller();
 		List<Verrechnet> all = new ArrayList<>();
-		if (mandant != null) {
+		if (rechnungssteller != null) {
 			PreparedStatement pstm = PersistentObject.getDefaultConnection()
-				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE);
+				.getPreparedStatement(VERRECHNET_BYPATIENT_ANDCODE);
 			try {
 				pstm.setString(1, kons.getFall().getPatient().getId());
 				pstm.setString(2, code + "%");
-				pstm.setString(3, mandant.getId());
 				ResultSet resultSet = pstm.executeQuery();
 				while (resultSet.next()) {
 					all.add(Verrechnet.load(resultSet.getString(1)));
@@ -346,6 +347,11 @@ public class TarmedLimitation {
 			} finally {
 				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
 			}
+			// filter for matching rechnungssteller
+			all = all.parallelStream()
+				.filter(
+					v -> v.getKons().getMandant().getRechnungssteller().equals(rechnungssteller))
+				.collect(Collectors.toList());
 			all = filterValidCodeForKonsultation(code, kons, all);
 			// now group in time periods since first verrechnet
 			LocalDate konsDate = new TimeTool(kons.getDatum()).toLocalDate();

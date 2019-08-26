@@ -133,6 +133,7 @@ public class FileImportDialog extends TitleAreaDialog {
 					CategoryUtil.renameCategory(old, nn);
 					cbCategories.remove(old);
 					cbCategories.add(nn);
+					cbCategories.select(cbCategories.getItemCount() - 1);
 				}
 			}
 		});

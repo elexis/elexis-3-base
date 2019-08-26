@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
@@ -287,5 +288,23 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	@Override
 	public IXid getXid(String domain){
 		return XidServiceHolder.get().getXid(this, domain);
+	}
+	
+	@Override
+	public String getLabel(){
+		if (isCategory()) {
+			return getTitle();
+		} else {
+			StringBuilder sb = new StringBuilder();
+			// avoid adding only a space - causes trouble in renaming of categories
+			Date date = getCreated();
+			if (date != null) {
+				SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+				sb.append(format.format(date));
+				sb.append(" ");
+			}
+			sb.append(getTitle());
+			return sb.toString();
+		}
 	}
 }

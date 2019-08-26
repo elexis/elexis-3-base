@@ -95,10 +95,10 @@ public class CategoryUtil {
 		
 		if (findCategoriesByName(newname).isEmpty()) {
 			OmnivoreModelServiceHolder.get()
-				.executeNativeQuery("UPDATE CH_ELEXIS_OMNIVORE_DATA SET category='" + newname
+				.executeNativeUpdate("UPDATE CH_ELEXIS_OMNIVORE_DATA SET category='" + newname
 					+ "' WHERE category='" + oldname + "'");
 			OmnivoreModelServiceHolder.get()
-				.executeNativeQuery("UPDATE CH_ELEXIS_OMNIVORE_DATA SET title='" + newname
+				.executeNativeUpdate("UPDATE CH_ELEXIS_OMNIVORE_DATA SET title='" + newname
 					+ "' WHERE title='" + oldname + "' AND mimetype='" + CATEGORY_MIMETYPE + "'");
 			LoggerFactory.getLogger(CategoryUtil.class).info("Renaming category [" + oldname
 				+ "], moving entries to category [" + newname + "]");
@@ -109,10 +109,10 @@ public class CategoryUtil {
 	
 	public static void removeCategory(String name, String destName){
 		OmnivoreModelServiceHolder.get()
-			.executeNativeQuery("UPDATE CH_ELEXIS_OMNIVORE_DATA SET category='" + destName
+			.executeNativeUpdate("UPDATE CH_ELEXIS_OMNIVORE_DATA SET category='" + destName
 				+ "' WHERE category='" + name + "'");
 		OmnivoreModelServiceHolder.get()
-			.executeNativeQuery("UPDATE CH_ELEXIS_OMNIVORE_DATA SET deleted='1' WHERE title='"
+			.executeNativeUpdate("UPDATE CH_ELEXIS_OMNIVORE_DATA SET deleted='1' WHERE title='"
 				+ name + "' AND mimetype='" + CATEGORY_MIMETYPE + "'");
 		LoggerFactory.getLogger(CategoryUtil.class).info(
 			"Removing category [" + name + "], moving entries to category [" + destName + "]");

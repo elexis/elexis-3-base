@@ -362,7 +362,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			public void modifyText(ModifyEvent e){
 				searchKW = tSearchKW.getText();
 				searchTitle = tSearchTitle.getText();
-				refresh();
+				viewer.refresh();
 			}
 		};
 		tSearchTitle.addModifyListener(searchListener);

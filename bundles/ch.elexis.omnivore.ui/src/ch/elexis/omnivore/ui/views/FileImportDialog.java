@@ -151,7 +151,12 @@ public class FileImportDialog extends TitleAreaDialog {
 						"", null);
 				if (id.open() == Dialog.OK) {
 					CategoryUtil.removeCategory(old, id.getValue());
-					cbCategories.remove(id.getValue());
+					cbCategories.remove(old);
+					for (int i = 0; i < cbCategories.getItems().length; i++) {
+						if (cbCategories.getItems()[i].equals(id.getValue())) {
+							cbCategories.select(i);
+						}
+					}
 				}
 			}
 		});

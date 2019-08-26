@@ -51,6 +51,7 @@ import ch.elexis.icpc.fire.model.Report;
 import ch.elexis.icpc.fire.model.ReportBuilder;
 import ch.elexis.icpc.fire.model.TMedi;
 import ch.elexis.icpc.fire.model.XmlUtil;
+import ch.elexis.icpc.fire.ui.Preferences;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -64,7 +65,7 @@ public class ExportFireHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(ExportFireHandler.class);
 
 	public static final String FIRESTICKERNAME = "Fire (ICPC)";
-	private static final String CFGPARAM = "ICPC_FIRE_LAST_UPLOAD";
+
 	private Sticker fireSticker;
 
 	public ExportFireHandler() {
@@ -84,7 +85,7 @@ public class ExportFireHandler extends AbstractHandler {
 	 */
 	public static TimeTool getTtFrom() {
 		TimeTool ttFrom = new TimeTool("20180101");
-		String lastupdate = CoreHub.globalCfg.get(CFGPARAM, null);
+		String lastupdate = CoreHub.globalCfg.get(Preferences.CFGPARAM, null);
 		if (lastupdate != null) {
 			ttFrom = new TimeTool(lastupdate);
 		}
@@ -197,7 +198,7 @@ public class ExportFireHandler extends AbstractHandler {
 						try (FileOutputStream fout = new FileOutputStream(new File(exportPath))) {
 							XmlUtil.marshallFireReport(report.get(), fout);
 							// update last export date
-							CoreHub.globalCfg.set(CFGPARAM, new TimeTool().toString(TimeTool.DATE_COMPACT));
+							CoreHub.globalCfg.set(Preferences.CFGPARAM, new TimeTool().toString(TimeTool.DATE_COMPACT));
 						} catch (IOException e) {
 							openError("Error", "Error writing report, see logs for details.");
 							logger.error("Error writing report.", e);

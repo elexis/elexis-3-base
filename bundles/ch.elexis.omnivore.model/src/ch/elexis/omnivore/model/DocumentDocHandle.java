@@ -36,7 +36,6 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		implements Identifiable, IDocumentHandle {
 	
 	private String storeId = "";
-	private String keywords;
 	
 	public DocumentDocHandle(DocHandle entity){
 		super(entity);
@@ -151,7 +150,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setKeywords(String value){
-		this.keywords = value;
+		getEntityMarkDirty().setKeywords(value);
 	}
 	
 	@Override

@@ -49,7 +49,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setTitle(String value){
-		getEntity().setTitle(value);
+		getEntityMarkDirty().setTitle(value);
 	}
 	
 	@Override
@@ -80,7 +80,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setCreated(Date value){
-		getEntity().setCreationDate(toLocalDate(value).toLocalDate());
+		getEntityMarkDirty().setCreationDate(toLocalDate(value).toLocalDate());
 	}
 	
 	@Override
@@ -103,7 +103,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setMimeType(String value){
-		getEntity().setMimetype(value);
+		getEntityMarkDirty().setMimetype(value);
 	}
 	
 	@Override
@@ -116,7 +116,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setCategory(ICategory value){
-		getEntity().setCategory(value.getName());
+		getEntityMarkDirty().setCategory(value.getName());
 	}
 	
 	@Override
@@ -162,9 +162,10 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	@Override
 	public void setPatient(IPatient value){
 		if (value instanceof AbstractIdDeleteModelAdapter) {
-			getEntity().setKontakt((Kontakt) ((AbstractIdDeleteModelAdapter<?>) value).getEntity());
+			getEntityMarkDirty()
+				.setKontakt((Kontakt) ((AbstractIdDeleteModelAdapter<?>) value).getEntity());
 		} else if (value == null) {
-			getEntity().setKontakt(null);
+			getEntityMarkDirty().setKontakt(null);
 		}
 	}
 	
@@ -189,7 +190,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		try {
 			File file = getStorageFile(false);
 			if (file == null) {
-				getEntity().setDoc(IOUtils.toByteArray(content));
+				getEntityMarkDirty().setDoc(IOUtils.toByteArray(content));
 			} else {
 				try (BufferedOutputStream bout =
 					new BufferedOutputStream(new FileOutputStream(file))) {

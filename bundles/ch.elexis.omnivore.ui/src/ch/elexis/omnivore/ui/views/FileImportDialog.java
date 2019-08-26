@@ -44,6 +44,7 @@ import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.model.TransientCategory;
 import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.Messages;
+import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.rgw.tools.TimeTool;
 
 public class FileImportDialog extends TitleAreaDialog {
@@ -212,6 +213,7 @@ public class FileImportDialog extends TitleAreaDialog {
 			}
 			dh.setTitle(title);
 			dh.setKeywords(keywords);
+			OmnivoreModelServiceHolder.get().save(dh);
 		}
 		super.okPressed();
 	}

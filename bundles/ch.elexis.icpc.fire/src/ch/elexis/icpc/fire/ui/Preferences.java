@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.inputs.DateTimeFieldEditor;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Sticker;
@@ -43,6 +44,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	static final String EXPL_WEIGHT = "Gewicht";
 	public static final String CFG_WEIGHT = "icpc/fire/field_gewicht";
 	public static final String CFG_BASE_IS_HAM_STICKER = "icpc/fire/isHamSticker/";
+	public static final String CFGPARAM = "ICPC_FIRE_LAST_UPLOAD";
 	
 	public Preferences(){
 		super("Fire", GRID);
@@ -62,9 +64,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		addField(new StringFieldEditor(CFG_WEIGHT, EXPL_WEIGHT, getFieldEditorParent()));
 		addField(new StringFieldEditor(CFG_BU, EXPL_BU, getFieldEditorParent()));
 		
-		new Label(getFieldEditorParent(), SWT.None);
-		Label separator = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
-		separator.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		createSeparator(true);
 		Label lblStickerConfig = new Label(getFieldEditorParent(), SWT.WRAP);
 		lblStickerConfig.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		lblStickerConfig.setText(
@@ -77,10 +77,23 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 					sticker.getLabel(), getFieldEditorParent());
 			addField(bfe);
 		}
+
+		createSeparator(false);
+		addField(new DateTimeFieldEditor(CFGPARAM, "Datum des letzten Exports: ", getFieldEditorParent(), true));
+	}
+
+	private void createSeparator(boolean addEmptyLineBefore){
+		if (addEmptyLineBefore) {
+			new Label(getFieldEditorParent(), SWT.None);
+		}
+		Label separator = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
+		separator.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 	}
 	
 	public void init(IWorkbench workbench){
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
+		// default date must be specified otherwise DateTimeFieldEditor shows the current date for null
+		getPreferenceStore().setDefault(CFGPARAM, "20180101");
 	}
 	
 	@Override

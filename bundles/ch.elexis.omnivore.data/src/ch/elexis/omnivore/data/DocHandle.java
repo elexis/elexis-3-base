@@ -171,18 +171,18 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	}
 	
 	public DocHandle(IOpaqueDocument doc) throws ElexisException{
-		create(doc.getGUID());
-		
 		String category = doc.getCategory();
 		if (category == null || category.length() < 1) {
 			category = DocHandle.getDefaultCategory().getCategoryName();
 		} else {
 			DocHandle.ensureCategoryAvailability(category);
 		}
-		set(new String[] {
+		create(doc.getGUID(), new String[] {
 			FLD_CAT, FLD_PATID, FLD_DATE, FLD_CREATION_DATE, FLD_TITLE, FLD_KEYWORDS, FLD_MIMETYPE
-		}, category, doc.getPatient().getId(), doc.getCreationDate(), doc.getCreationDate(),
-			doc.getTitle(), doc.getKeywords(), doc.getMimeType());
+		}, new String[] {
+			category, doc.getPatient().getId(), doc.getCreationDate(), doc.getCreationDate(),
+			doc.getTitle(), doc.getKeywords(), doc.getMimeType()
+		});
 		store(doc.getContentsAsBytes());
 	}
 	
@@ -198,7 +198,6 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				Messages.DocHandle_readErrorText);
 			return;
 		}
-		create(null);
 		
 		if (category == null || category.length() < 1) {
 			category = DocHandle.getDefaultCategory().getCategoryName();
@@ -211,17 +210,20 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 		
 		if (category == null || category.length() == 0) {
-			set(new String[] {
+			create(null, new String[] {
 				FLD_PATID, FLD_DATE, FLD_CREATION_DATE, FLD_TITLE, FLD_KEYWORDS, FLD_MIMETYPE
-			}, pat.getId(), new TimeTool().toString(TimeTool.DATE_GER),
-				new TimeTool(creationDate).toString(TimeTool.DATE_COMPACT), title, keyw, mime);
+			}, new String[] {
+				pat.getId(), new TimeTool().toString(TimeTool.DATE_COMPACT),
+				new TimeTool(creationDate).toString(TimeTool.DATE_COMPACT), title, keyw, mime
+			});
 		} else {
-			set(new String[] {
+			create(null, new String[] {
 				FLD_CAT, FLD_PATID, FLD_DATE, FLD_CREATION_DATE, FLD_TITLE, FLD_KEYWORDS,
 				FLD_MIMETYPE
-			}, category, pat.getId(), new TimeTool().toString(TimeTool.DATE_GER),
-				new TimeTool(creationDate).toString(TimeTool.DATE_COMPACT), title, keyw, mime);
-			
+			}, new String[] {
+				category, pat.getId(), new TimeTool().toString(TimeTool.DATE_COMPACT),
+				new TimeTool(creationDate).toString(TimeTool.DATE_COMPACT), title, keyw, mime
+			});
 		}
 		store(doc);
 	}

@@ -402,7 +402,7 @@ public class TarmedOptifierTest {
 		kons.addDiagnosis((IDiagnosis) tiCode.loadFromCode("T1").get());
 		CoreModelServiceHolder.get().save(kons);
 		Result<IBilled> result = optifier.add(tlBaseFirst5Min, kons);
-		assertTrue(result.isOK());
+		assertTrue(result.toString(), result.isOK());
 	}
 	
 	@Test
@@ -743,9 +743,9 @@ public class TarmedOptifierTest {
 	}
 	
 	private static void clearKons(IEncounter kons){
-		for (IBilled verrechnet : kons.getBilled()) {
-			coreModelService.remove(verrechnet);
-		}
+		coreModelService.remove(kons.getBilled());
+		// remove does not update the reference list
+		coreModelService.refresh(kons, true);
 	}
 	
 	private Optional<IBilled> getVerrechent(IEncounter kons, TarmedLeistung leistung){

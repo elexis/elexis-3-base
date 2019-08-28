@@ -7,5 +7,7 @@ Import-Package:  javax.jws,
  javax.xml.bind.annotation.adapters,
  javax.xml.ws,
  javax.activation,
- org.slf4j
+ ch.elexis.data,
+ org.eclipse.core.runtime;version="3.5.0",
+ org.eclipse.jface.operation
 Comment:Java 9+ support

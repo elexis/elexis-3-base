@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -107,6 +108,19 @@ public class EMediplanServiceImpl implements EMediplanService {
 			jaxbModel.ifPresent(model -> {
 				createPdf(qrCode, model, output);
 			});
+		}
+	}
+	
+	@Override
+	public void exportEMediplanJson(Mandant author, Patient patient,
+		List<Prescription> prescriptions, OutputStream output){
+		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
+			Optional<String> jsonString = getJsonString(author, patient, prescriptions);
+			if (jsonString.isPresent()) {
+				try (PrintWriter writer = new PrintWriter(output)) {
+					writer.write(jsonString.get());
+				}
+			}
 		}
 	}
 	

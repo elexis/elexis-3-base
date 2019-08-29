@@ -26,6 +26,9 @@ public class BlueMedicationPreferencePage extends FieldEditorPreferencePage
 		addField(new StringFieldEditor(BlueMedicationConstants.CFG_HIN_PROXY_PORT, "HIN Proxy Port",
 			getFieldEditorParent()));
 		
+		addField(new BooleanFieldEditor(BlueMedicationConstants.CFG_USE_IMPORT,
+			"Medikationsabgleich bei Blue Medication nutzen", getFieldEditorParent()));
+		
 		addField(new BooleanFieldEditor(BlueMedicationConstants.CFG_URL_STAGING,
 			"Test Server verwenden", getFieldEditorParent()));
 	}

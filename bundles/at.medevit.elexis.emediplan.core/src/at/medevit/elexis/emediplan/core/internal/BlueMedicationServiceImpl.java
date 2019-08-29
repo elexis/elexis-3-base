@@ -1,7 +1,13 @@
 package at.medevit.elexis.emediplan.core.internal;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -13,8 +19,13 @@ import org.threeten.bp.LocalDate;
 
 import at.medevit.elexis.emediplan.core.BlueMedicationConstants;
 import at.medevit.elexis.emediplan.core.BlueMedicationService;
+import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.elexis.data.Prescription;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
 import io.swagger.client.ApiException;
@@ -89,8 +100,31 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			String patientSex = patient.getGender().name();
 			LocalDate patientBirthdate = LocalDate.now();
 			try {
+				File internalData = null;
+				if (useRemoteImport()) {
+					Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
+					if (mandant != null) {
+						try {
+							ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
+							EMediplanServiceHolder.getService().exportEMediplanPdf(mandant, patient,
+								getPrescriptions(patient, "all"), pdfOutput);
+							File pdfFile = File
+								.createTempFile("eMediplan_" + System.currentTimeMillis(), ".pdf");
+							try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
+								fos.write(pdfOutput.toByteArray());
+								fos.flush();
+							}
+							internalData = pdfFile;
+						} catch (IOException e) {
+							LoggerFactory.getLogger(getClass()).error("Error creating eMediplan",
+								e);
+							return new Result<at.medevit.elexis.emediplan.core.UploadResult>(
+								SEVERITY.ERROR, 0, e.getMessage(), null, false);
+						}
+					}
+				}
 				ApiResponse<UploadResult> response =
-					apiInstance.dispatchPostWithHttpInfo((File) null, externalData,
+					apiInstance.dispatchPostWithHttpInfo(internalData, externalData,
 						patientFirstName, patientLastName, patientSex, patientBirthdate,
 						"", "", "", "", "");
 				if (response.getStatusCode() >= 300) {
@@ -104,7 +138,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 				}
 				return new Result<at.medevit.elexis.emediplan.core.UploadResult>(
 					new at.medevit.elexis.emediplan.core.UploadResult(
-						appendPath(getBasePath(), response.getData().getUrl() + "&mode=embed"),
+						appendPath(getBasePath(),
+							response.getData().getUrl() + (useRemoteImport() ? "" : "&mode=embed")),
 						response.getData().getId()));
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
@@ -193,5 +228,26 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	@Override
 	public void removePendingUploadResult(Object object){
 		pendingUploadResults.remove(object);
+	}
+	
+	private boolean useRemoteImport(){
+		return CoreHub.globalCfg.get(BlueMedicationConstants.CFG_USE_IMPORT, false);
+	}
+	
+	private List<Prescription> getPrescriptions(Patient patient, String medicationType){
+		if ("all".equals(medicationType)) {
+			List<Prescription> ret = new ArrayList<Prescription>();
+			ret.addAll(patient.getMedication(EntryType.FIXED_MEDICATION));
+			ret.addAll(patient.getMedication(EntryType.RESERVE_MEDICATION));
+			ret.addAll(patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION));
+			return ret;
+		} else if ("fix".equals(medicationType)) {
+			return patient.getMedication(EntryType.FIXED_MEDICATION);
+		} else if ("reserve".equals(medicationType)) {
+			return patient.getMedication(EntryType.RESERVE_MEDICATION);
+		} else if ("symptomatic".equals(medicationType)) {
+			return patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION);
+		}
+		return Collections.emptyList();
 	}
 }

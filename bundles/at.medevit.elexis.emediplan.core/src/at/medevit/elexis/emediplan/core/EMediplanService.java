@@ -31,13 +31,27 @@ import ch.elexis.data.Prescription;
 public interface EMediplanService {
 	
 	/**
-	 * Get a PDF eMediplan (http://emediplan.ch/de/home) representation of the JSON encoded String,
-	 * written to the provided {@link OutputStream}.
+	 * Get a PDF eMediplan (http://emediplan.ch/de/home) representation of the prescriptions of the
+	 * patient, written to the provided {@link OutputStream}.
 	 * 
-	 * @param json
+	 * @param author
+	 * @param patient
+	 * @param prescriptions
 	 * @param output
 	 */
 	public void exportEMediplanPdf(Mandant author, Patient patient,
+		List<Prescription> prescriptions, OutputStream output);
+	
+	/**
+	 * Get a CHMED json eMediplan (http://emediplan.ch/de/home) representation of the prescriptions
+	 * of the patient, written to the provided {@link OutputStream}.
+	 * 
+	 * @param author
+	 * @param patient
+	 * @param prescriptions
+	 * @param output
+	 */
+	public void exportEMediplanJson(Mandant author, Patient patient,
 		List<Prescription> prescriptions, OutputStream output);
 	
 	/**

@@ -1,6 +1,6 @@
 h1. Übersicht der XML Elemente
 
-Das Plugin nutzt für den Druck der Etiketten/Terminkarten, Apache FOP im Hintergrund. Dabei wird das druckbare Dokumente mittels XML und XSLT Transformation erstellt. Die XML Dokumente beinhalten dabei die Informationen, welche gedruckt werden sollen. Die XSL Dokumente beinhaltet die Formatierung für das druckbare Dokument.
+Das Plug-In nutzt für den Druck der Etiketten/Terminkarten, Apache FOP im Hintergrund. Dabei wird das druckbare Dokumente mittels XML und XSLT Transformation erstellt. Die XML Dokumente beinhalten dabei die Informationen, welche gedruckt werden sollen. Die XSL Dokumente beinhaltet die Formatierung für das druckbare Dokument.
 Nachfolgend soll erläutert werden, welche XML Elemente für welche Druckbare Elemente genutzt werden können. 
 
 h1. Patienten Informationen
@@ -13,6 +13,7 @@ Die XML Elemente für die Patienten Informationen können in folgenden Dokumente
 * Patienten-Etikette
 * Patienten-Etikette mit Auftragsnummer
 * Patienten-Etikette mit Adresse
+* Etikette mit Kontaktadresse
 
 Root Element:
 | &lt;Patient&gt; | 
@@ -51,9 +52,9 @@ Kinder Elemente:
 Kind Element von __&lt;Appointments&gt;__
 | &lt;Appointment&gt;	|  Beinhaltet die Daten des Termins im Format: "Day, DD.MM.YY HH.mm" also z.B. "Fr, 31.12.2019 11:11"|
 
-h1. Medikations Informationen
+h1. Medikations-Informationen
 
-Die XML Elemente für die Medikations Informationen können nur in der Medi-Etikette genutzt werden.
+Die XML Elemente für die Medikations-Informationen können nur in der Medi-Etikette genutzt werden.
 
 Root Element:
 | &lt;Medication&gt; |

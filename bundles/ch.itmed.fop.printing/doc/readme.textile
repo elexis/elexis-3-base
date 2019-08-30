@@ -1,0 +1,91 @@
+h1. Medi-Print
+
+Das Medi-Print Plug-In nutzt "Apache FOP":https://xmlgraphics.apache.org/fop/ um Etiketten und Terminkarten zu drucken. Die Dokumente werden über XSL-FO formatierte und dann an einem definierten Drucker ausgedruckt.
+
+
+
+h2. Benutzeranleitung
+
+Mit dem Plug-In können folgende Dokumente gedruckt werden:
+* Terminkarte
+* Serien Terminkarte
+* Artikel-Etikette
+* Medi-Etikette
+* Patienten-Etikette
+* Patienten-Etikette mit Auftragsnummer
+* Patienten-Etikette mit Adresse
+* Etikette mit Kontaktadresse
+
+Nachfolgend wird darauf eingegangen wie die Dokumente gedruckt werden können:
+
+h3. Terminkarte
+
+Terminkarten können prinzipiell über die Ansicht _Agenda gross_ oder _Agenda Web_ gedruckt werden.
+In beiden Ansichten ist folgender Button ersichtlich:
+!./img/button1.png!
+Über den Button kann der aktuell selektierte Termin ausgedruckt werden.
+
+Darüber hinaus können Termine über die Eigenschaften des Termins gedruckt werden:
+!./img/button2.png!
+
+h3. Serien Terminkarte
+
+Serien Terminkarten können prinzipiell über die Ansicht _Agenda gross_ oder _Agenda Web_ gedruckt werden.
+In beiden Ansichten ist folgender Button ersichtlich:
+!./img/button3.png!
+Über den Button werden alle zukünftigen Termine des selektierten Patienten auf einer Terminkarte ausgedruckt.
+
+h3. Artikel-Etikette
+
+Artikel-Etiketten werden über die Ansicht _Konsultation_ mit folgendem Button gedruckt:
+!./img/button4.png!
+Es werden dann alle Artikel der entsprechenden Konsultation ausgedruckt (1 Artikel pro Etikette).
+Für den Druck muss eine Konsultation selektiert werden.
+
+h3. Medi-Etikette
+
+Medi-Etiketten werden über die Ansicht _Medikationsliste_ mit folgendem Button gedruckt:
+!./img/button5.png!
+
+Zudem kann auch die Ansicht _Fixmedikation_ genutzt werden:
+!./img/button6.png!
+Für den Druck muss eine Medikation selektiert werden.
+
+h3. Patienten-Etikette
+
+Eine Patienten-Etikette wird über die Toolbar mit folgendem Button gedruckt:
+!./img/button7.png!
+Für den Druck muss ein Patient selektiert werden.
+
+h3. Patienten-Etikette mit Auftragsnummer
+
+Eine Patienten-Etikette mit Auftragsnummer wird über die Toolbar mit folgendem Button gedruckt:
+!./img/button8.png!
+Für den Druck muss ein Patient selektiert werden.
+
+h3. Patienten-Etikette mit Adresse
+
+Eine Patienten-Etikette mit Adresse wird über die Toolbar mit folgendem Button gedruckt:
+!./img/button9.png!
+Für den Druck muss ein Patient selektiert werden.
+
+h3. Etikette mit Kontaktadresse
+
+Eine Etikette mit Kontaktadresse wird über die Ansicht _Kontakte_ gedruckt:
+!./img/button10.png!
+
+Zudem kann auch die Ansicht _Details zum Kontakt_ genutzt werden:
+!./img/button11.png!
+
+Für den Druck muss ein Kontakt selektiert werden.
+
+h2. Einstellungen
+
+Das Plug-In wird im Elexis über den Menüpunkt _Datei_ -> _Einstellungen_ -> _System_ -> _Medi-Print_ konfiguriert.
+Standardmässig wird jeweils eine Übersicht der aktuellen Einstellungen angezeigt:
+!./img/settings1.png!
+Falls die Checkbox in der Spalte _Globale Einstellungen verwenden_ aktiviert wird, werden für das entsprechende Dokument die globalen Einstellungen verwendet.
+Mit einem Doppelklick auf ein beliebiges Dokument wird folgender Dialog geöffnet:
+!./img/settings2.png!
+
+Das Plug-In funktioniert prinzipiell mit jedem Drucker, welcher vom Client über die Windows Printing API oder CUPS angesprochen werden kann. Drucker welche sich ausschliesslich mit einer Dritthersteller-Software steuern lassen, sind mit dem Plug-In nicht kompatibel. Die Papier-Einstellungen auf dem Drucker müssen jeweils mit dem eingestellten Papierformat des Plug-Ins korrespondieren. Das Plug-In verändert die Druckereinstellungen *nie*, sondern nutzt lediglich die vorhandene Drucker-Infrastruktur. 

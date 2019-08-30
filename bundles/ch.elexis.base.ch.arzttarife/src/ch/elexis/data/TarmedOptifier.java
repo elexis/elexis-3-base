@@ -621,7 +621,7 @@ public class TarmedOptifier implements IOptifier {
 	
 	private boolean shouldDetermineReference(TarmedLeistung tc){
 		String typ = tc.getServiceTyp();
-		boolean becauseOfType = typ.equals("Z");
+		boolean becauseOfType = typ != null && typ.equals("Z");
 		if (becauseOfType) {
 			String text = tc.getText();
 			return text.startsWith("+") || text.startsWith("-");

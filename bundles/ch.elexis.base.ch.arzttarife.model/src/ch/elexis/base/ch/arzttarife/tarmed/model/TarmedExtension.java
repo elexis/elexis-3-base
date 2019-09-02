@@ -52,6 +52,11 @@ public class TarmedExtension
 	}
 	
 	@Override
+	public Map<Object, Object> getMap(){
+		return limitsExtInfoHandler.getMap();
+	}
+	
+	@Override
 	public String getMedInterpretation(){
 		return getEntity().getMed_interpret();
 	}

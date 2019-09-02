@@ -2,6 +2,7 @@ package ch.elexis.icpc.model.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,11 @@ public class Episode extends AbstractIdModelAdapter<ICPCEpisode>
 	@Override
 	public void setExtInfo(Object key, Object value){
 		extInfoHandler.setExtInfo(key, value);
+	}
+	
+	@Override
+	public Map<Object, Object> getMap(){
+		return extInfoHandler.getMap();
 	}
 	
 	@Override

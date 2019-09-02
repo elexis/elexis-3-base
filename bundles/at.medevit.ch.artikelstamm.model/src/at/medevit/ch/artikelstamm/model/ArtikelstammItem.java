@@ -2,6 +2,7 @@ package at.medevit.ch.artikelstamm.model;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -121,6 +122,11 @@ public class ArtikelstammItem
 	@Override
 	public void setExtInfo(Object key, Object value){
 		extInfoHandler.setExtInfo(key, value);
+	}
+	
+	@Override
+	public Map<Object, Object> getMap(){
+		return extInfoHandler.getMap();
 	}
 	
 	@Override

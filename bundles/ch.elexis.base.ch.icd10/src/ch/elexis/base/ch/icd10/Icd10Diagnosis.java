@@ -1,6 +1,7 @@
 package ch.elexis.base.ch.icd10;
 
 import java.util.List;
+import java.util.Map;
 
 import ch.elexis.core.jpa.entities.ICD10;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -67,6 +68,11 @@ public class Icd10Diagnosis
 	@Override
 	public void setExtInfo(Object key, Object value){
 		extInfoHandler.setExtInfo(key, value);
+	}
+	
+	@Override
+	public Map<Object, Object> getMap(){
+		return extInfoHandler.getMap();
 	}
 	
 	@Override

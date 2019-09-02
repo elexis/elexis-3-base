@@ -5,4 +5,5 @@ Bundle-SymbolicName: ch.elexis.fop.service.test
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: ch.elexis.fop.service;bundle-version="3.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Multi-Release: true
 Require-Bundle: org.junit;bundle-version="4.10.0"

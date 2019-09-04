@@ -161,7 +161,12 @@
 			if (event.description) {
 				var firstpart = event.description.split('<br /><br />');
 				if (firstpart.length > 0) {
-					element.find(".fc-title").append("<br/>" + firstpart[0]);
+					if (!event.title.trim()) {
+						element.find(".fc-title").text(firstpart[0]);
+					}
+					else {
+						element.find(".fc-title").append("<br/>" + firstpart[0]);
+					}
 				} else {
 					element.find(".fc-title").append("<br/>" + event.description);
 				}

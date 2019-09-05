@@ -1,12 +1,12 @@
-package at.medevit.elexis.emediplan.ui.tester;
+package at.medevit.elexis.bluemedication.ui.tester;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.jface.viewers.StructuredSelection;
 
-import at.medevit.elexis.emediplan.core.BlueMedicationServiceHolder;
+import at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder;
 import ch.elexis.omnivore.data.DocHandle;
 
-public class EMediplanPropertyTester extends PropertyTester {
+public class BluemedicationPropertyTester extends PropertyTester {
 	
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue){

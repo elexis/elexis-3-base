@@ -1,4 +1,4 @@
-package at.medevit.elexis.emediplan.core.internal;
+package at.medevit.elexis.bluemedication.core.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,8 +17,9 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 import org.threeten.bp.LocalDate;
 
-import at.medevit.elexis.emediplan.core.BlueMedicationConstants;
-import at.medevit.elexis.emediplan.core.BlueMedicationService;
+import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
+import at.medevit.elexis.bluemedication.core.BlueMedicationService;
+import at.medevit.elexis.bluemedication.core.UploadResult;
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -31,7 +32,6 @@ import ch.rgw.tools.Result.SEVERITY;
 import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
 import io.swagger.client.api.ExtractionAndConsolidationApi;
-import io.swagger.client.model.UploadResult;
 
 @Component
 public class BlueMedicationServiceImpl implements BlueMedicationService {
@@ -40,7 +40,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	private String oldProxyHost;
 	private String oldProxyPort;
 	
-	private Map<Object, at.medevit.elexis.emediplan.core.UploadResult> pendingUploadResults;
+	private Map<Object, UploadResult> pendingUploadResults;
 	
 	@Activate
 	public void activate(){
@@ -87,8 +87,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	}
 	
 	@Override
-	public Result<at.medevit.elexis.emediplan.core.UploadResult> uploadDocument(Patient patient,
-		File document){
+	public Result<UploadResult> uploadDocument(Patient patient, File document){
 		initProxy();
 		workaroundGet();
 		try {
@@ -118,32 +117,32 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 						} catch (IOException e) {
 							LoggerFactory.getLogger(getClass()).error("Error creating eMediplan",
 								e);
-							return new Result<at.medevit.elexis.emediplan.core.UploadResult>(
+							return new Result<UploadResult>(
 								SEVERITY.ERROR, 0, e.getMessage(), null, false);
 						}
 					}
 				}
-				ApiResponse<UploadResult> response =
+				ApiResponse<io.swagger.client.model.UploadResult> response =
 					apiInstance.dispatchPostWithHttpInfo(internalData, externalData,
 						patientFirstName, patientLastName, patientSex, patientBirthdate,
 						"", "", "", "", "");
 				if (response.getStatusCode() >= 300) {
-					return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR,
+					return new Result<UploadResult>(SEVERITY.ERROR,
 						0, "Response status code was [" + response.getStatusCode() + "]", null,
 						false);
 				}
 				if (response.getData() == null) {
-					return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR,
+					return new Result<UploadResult>(SEVERITY.ERROR,
 						0, "Response has no data", null, false);
 				}
-				return new Result<at.medevit.elexis.emediplan.core.UploadResult>(
-					new at.medevit.elexis.emediplan.core.UploadResult(
+				return new Result<UploadResult>(
+					new UploadResult(
 						appendPath(getBasePath(),
 							response.getData().getUrl() + (useRemoteImport() ? "" : "&mode=embed")),
 						response.getData().getId()));
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
-				return new Result<at.medevit.elexis.emediplan.core.UploadResult>(SEVERITY.ERROR, 0,
+				return new Result<UploadResult>(SEVERITY.ERROR, 0,
 					e.getMessage(), null, false);
 			}
 		} finally {
@@ -215,12 +214,12 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	
 	@Override
 	public void addPendingUploadResult(Object object,
-		at.medevit.elexis.emediplan.core.UploadResult uploadResult){
+		UploadResult uploadResult){
 		pendingUploadResults.put(object, uploadResult);
 	}
 	
 	@Override
-	public Optional<at.medevit.elexis.emediplan.core.UploadResult> getPendingUploadResult(
+	public Optional<UploadResult> getPendingUploadResult(
 		Object object){
 		return Optional.ofNullable(pendingUploadResults.get(object));
 	}

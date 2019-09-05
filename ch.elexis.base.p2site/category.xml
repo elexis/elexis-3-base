@@ -252,6 +252,9 @@
    <feature url="features/ch.itmed.fop.printing.feature_1.0.0.qualifier.jar" id="ch.itmed.fop.printing.feature" version="1.0.0.qualifier">
       <category name="divers"/>
    </feature>
+   <feature id="at.medevit.elexis.bluemedication.feature">
+      <category name="clinicrecordkeeping"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

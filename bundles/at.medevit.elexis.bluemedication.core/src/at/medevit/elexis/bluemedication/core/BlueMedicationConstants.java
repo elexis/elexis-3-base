@@ -1,4 +1,4 @@
-package at.medevit.elexis.emediplan.core;
+package at.medevit.elexis.bluemedication.core;
 
 public class BlueMedicationConstants {
 	public static final String CFG_URL_STAGING =

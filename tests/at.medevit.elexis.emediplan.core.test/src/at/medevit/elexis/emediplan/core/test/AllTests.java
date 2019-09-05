@@ -9,12 +9,11 @@ import org.apache.commons.io.IOUtils;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import at.medevit.elexis.emediplan.core.internal.BlueMedicationServiceImplTest;
 import at.medevit.elexis.emediplan.core.internal.EMediplanServiceImplTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	EMediplanServiceImplTest.class, BlueMedicationServiceImplTest.class
+	EMediplanServiceImplTest.class
 })
 public class AllTests {
 	

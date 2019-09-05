@@ -1,4 +1,4 @@
-package at.medevit.elexis.emediplan.ui.preference;
+package at.medevit.elexis.bluemedication.ui.preference;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -6,7 +6,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import at.medevit.elexis.emediplan.core.BlueMedicationConstants;
+import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
@@ -16,7 +16,7 @@ public class BlueMedicationPreferencePage extends FieldEditorPreferencePage
 	public BlueMedicationPreferencePage(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
-		setDescription("Blue Medication Einstellungen");
+		setDescription("BlueMedication Einstellungen");
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package at.medevit.elexis.emediplan.core;
+package at.medevit.elexis.bluemedication.core;
 
 import java.io.File;
 import java.util.Optional;

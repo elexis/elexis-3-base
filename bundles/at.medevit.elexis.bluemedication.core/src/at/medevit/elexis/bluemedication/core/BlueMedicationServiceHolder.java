@@ -1,5 +1,6 @@
-package at.medevit.elexis.emediplan.core;
+package at.medevit.elexis.bluemedication.core;
 
+import at.medevit.elexis.emediplan.core.EMediplanService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 

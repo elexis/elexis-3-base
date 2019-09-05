@@ -1,4 +1,4 @@
-package at.medevit.elexis.emediplan.ui.handler;
+package at.medevit.elexis.bluemedication.ui.handler;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -10,8 +10,8 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import at.medevit.elexis.emediplan.core.BlueMedicationServiceHolder;
-import at.medevit.elexis.emediplan.core.UploadResult;
+import at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder;
+import at.medevit.elexis.bluemedication.core.UploadResult;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.rgw.tools.Result;
 

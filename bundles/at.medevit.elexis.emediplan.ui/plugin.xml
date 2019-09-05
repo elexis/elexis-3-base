@@ -28,6 +28,21 @@
                optional="true">
          </commandParameter>
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.emediplan.ui.handler.DirectImportHandler"
+            id="at.medevit.elexis.emediplan.ui.directImport"
+            name="direct import">
+         <commandParameter
+               id="at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan"
+               name="emediplan"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="at.medevit.elexis.emediplan.ui.directImport.parameter.patientid"
+               name="patientid"
+               optional="true">
+         </commandParameter>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

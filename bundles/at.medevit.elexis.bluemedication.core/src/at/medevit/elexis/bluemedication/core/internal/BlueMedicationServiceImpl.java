@@ -195,15 +195,29 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			
-			ApiResponse<String> response =
-				apiInstance.downloadIdExtractionChmedGetWithHttpInfo(id, true);
-			if (response.getStatusCode() >= 300) {
-				return Result.ERROR("Response status code was [" + response.getStatusCode() + "]");
+			if (useRemoteImport()) {
+				ApiResponse<String> response =
+					apiInstance.downloadIdComparisonChmedGetWithHttpInfo(id, true);
+				if (response.getStatusCode() >= 300) {
+					return Result
+						.ERROR("Response status code was [" + response.getStatusCode() + "]");
+				}
+				if (response.getData() == null) {
+					return Result.ERROR("Response has no data");
+				}
+				return Result.OK(response.getData());
+			} else {
+				ApiResponse<String> response =
+					apiInstance.downloadIdExtractionChmedGetWithHttpInfo(id, true);
+				if (response.getStatusCode() >= 300) {
+					return Result
+						.ERROR("Response status code was [" + response.getStatusCode() + "]");
+				}
+				if (response.getData() == null) {
+					return Result.ERROR("Response has no data");
+				}
+				return Result.OK(response.getData());
 			}
-			if (response.getData() == null) {
-				return Result.ERROR("Response has no data");
-			}
-			return Result.OK(response.getData());
 		} catch (ApiException e) {
 			LoggerFactory.getLogger(getClass()).error("Error downloading Document", e);
 			return Result.ERROR(e.getMessage());

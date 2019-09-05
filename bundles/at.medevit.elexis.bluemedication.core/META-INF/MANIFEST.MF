@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bluemedication Core
+Bundle-SymbolicName: at.medevit.elexis.bluemedication.core
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: at.medevit.elexis.bluemedication.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.osgi.service.component.annotations
+Service-Component: OSGI-INF/at.medevit.elexis.bluemedication.core.internal.BlueMedicationServiceImpl.xml,
+ OSGI-INF/at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder.xml
+Bundle-ActivationPolicy: lazy
+Require-Bundle: at.medevit.elexis.emediplan.core,
+ ch.elexis.core.data,
+ ch.rgw.utility,
+ com.google.code.gson;bundle-version="2.8.0"
+Bundle-ClassPath: lib/gson-fire-1.8.3.jar,
+ lib/okhttp-2.7.5.jar,
+ lib/okio-1.6.0.jar,
+ lib/swagger-java-client-1.0.0.jar,
+ lib/threetenbp-1.3.5.jar,
+ .
+Export-Package: at.medevit.elexis.bluemedication.core

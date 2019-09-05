@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  ch.elexis.core;bundle-version="3.2.0",
  ch.elexis.fop.service;bundle-version="3.2.0",
  ch.elexis.core.ui,
+ ch.elexis.core.ui.medication,
  ch.rgw.utility
 Import-Package: at.medevit.elexis.emediplan.core,
  at.medevit.elexis.emediplan.core.model.chmed16a,

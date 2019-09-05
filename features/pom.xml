@@ -97,5 +97,6 @@
     <module>org.iatrix.feature</module>
     <module>org.iatrix.messwerte.feature</module>
     <module>waelti.statistics.feature</module>
+    <module>at.medevit.elexis.bluemedication.feature</module>
   </modules>
 </project>

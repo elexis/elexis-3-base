@@ -14,14 +14,19 @@
             name="debugImport">
       </command>
       <command
-            defaultHandler="at.medevit.elexis.emediplan.ui.handler.BlueMedicationUploadHandler"
-            id="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-            name="Blue Medication Upload">
-      </command>
-      <command
-            defaultHandler="at.medevit.elexis.emediplan.ui.handler.BlueMedicationDownloadHandler"
-            id="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
-            name="Blue Medication Download">
+            defaultHandler="at.medevit.elexis.emediplan.ui.handler.OpenImportHandler"
+            id="at.medevit.elexis.emediplan.ui.openImport"
+            name="open import dialog">
+         <commandParameter
+               id="at.medevit.elexis.emediplan.ui.openImport.parameter.emediplan"
+               name="emediplan"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="at.medevit.elexis.emediplan.ui.openImport.parameter.patientid"
+               name="patientid"
+               optional="true">
+         </commandParameter>
       </command>
    </extension>
    <extension
@@ -34,130 +39,6 @@
                icon="rsc/logo.png"
                label="%label.createAndOpen"
                style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
-         <command
-               commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-               icon="rsc/be_icon_16x16_up.png"
-               label="Blue Medication Upload"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="org.eclipse.ui.selection">
-                  <not>
-                     <count
-                           value="0">
-                     </count>
-                  </not>
-                  <iterate
-                        ifEmpty="false"
-                        operator="and">
-                     <instanceof
-                           value="ch.elexis.omnivore.data.DocHandle">
-                     </instanceof>
-                  </iterate>
-                  <test
-                        property="at.medevit.elexis.emediplan.ui.isUploadable">
-                  </test>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.omnivoredirect_view">
-         <command
-               commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-               icon="rsc/be_icon_16x16_up.png"
-               label="Blue Medication Upload"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="org.eclipse.ui.selection">
-                  <not>
-                     <count
-                           value="0">
-                     </count>
-                  </not>
-                  <iterate
-                        ifEmpty="false"
-                        operator="and">
-                     <instanceof
-                           value="ch.elexis.omnivore.data.DocHandle">
-                     </instanceof>
-                  </iterate>
-                  <test
-                        property="at.medevit.elexis.emediplan.ui.isUploadable">
-                  </test>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
-         <command
-               commandId="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
-               icon="rsc/be_icon_16x16_down.png"
-               label="Blue Medication Download"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="org.eclipse.ui.selection">
-                  <not>
-                     <count
-                           value="0">
-                     </count>
-                  </not>
-                  <iterate
-                        ifEmpty="false"
-                        operator="and">
-                     <instanceof
-                           value="ch.elexis.omnivore.data.DocHandle">
-                     </instanceof>
-                  </iterate>
-                  <test
-                        property="at.medevit.elexis.emediplan.ui.isDownloadable">
-                  </test>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:ch.elexis.omnivoredirect_view">
-         <command
-               commandId="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
-               icon="rsc/be_icon_16x16_down.png"
-               label="Blue Medication Download"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="org.eclipse.ui.selection">
-                  <not>
-                     <count
-                           value="0">
-                     </count>
-                  </not>
-                  <iterate
-                        ifEmpty="false"
-                        operator="and">
-                     <instanceof
-                           value="ch.elexis.omnivore.data.DocHandle">
-                     </instanceof>
-                  </iterate>
-                  <test
-                        property="at.medevit.elexis.emediplan.ui.isDownloadable">
-                  </test>
-               </with>
-            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
@@ -174,23 +55,4 @@
             id="at.medevit.elexis.emediplan.inbox.uiprovider">
       </uiprovider>
    </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="at.medevit.elexis.emediplan.ui.tester.EMediplanPropertyTester"
-            id="at.medevit.elexis.emediplan.ui.propertyTester"
-            namespace="at.medevit.elexis.emediplan.ui"
-            properties="isUploadable, isDownloadable"
-            type="java.lang.Object">
-      </propertyTester>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="at.medevit.elexis.emediplan.ui.preference.BlueMedicationPreferencePage"
-            id="at.medevit.elexis.emediplan.ui.page1"
-            name="Blue Medication">
-      </page>
-   </extension>
-
 </plugin>

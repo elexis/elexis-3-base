@@ -137,7 +137,7 @@ public class iMedAbfrageAction extends Action {
 		BillingLaw gesetz = fall.getConfiguredBillingSystemLaw();
 		if (gesetz != null) {
 			// Suche über Gesetz
-			if (gesetz == BillingLaw.IVG) {
+			if (gesetz == BillingLaw.IV) {
 				nummer = fall.getRequiredString(TarmedRequirements.CASE_NUMBER);
 			} else if (gesetz == BillingLaw.UVG) {
 				nummer = fall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);

@@ -128,7 +128,7 @@ public class LabOrderAction extends Action {
 		String nummer = null;
 		BillingLaw gesetz = fall.getConfiguredBillingSystemLaw();
 		if (gesetz != null) {
-			if (gesetz == BillingLaw.IVG) {
+			if (gesetz == BillingLaw.IV) {
 				nummer = fall.getRequiredString(TarmedRequirements.CASE_NUMBER);
 			} else if (gesetz == BillingLaw.UVG) {
 				nummer = fall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);

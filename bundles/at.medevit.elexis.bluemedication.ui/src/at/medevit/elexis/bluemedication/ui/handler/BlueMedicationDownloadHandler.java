@@ -20,8 +20,10 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
 import at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder;
 import at.medevit.elexis.bluemedication.core.UploadResult;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.rgw.tools.Result;
 
@@ -40,29 +42,67 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 					Result<String> emediplan = BlueMedicationServiceHolder.getService()
 						.downloadEMediplan(pending.get().getId());
 					if (emediplan.isOK()) {
-						ICommandService commandService = (ICommandService) HandlerUtil
-							.getActiveWorkbenchWindow(event).getService(ICommandService.class);
-						
-						Command openImportCommand =
-							commandService.getCommand("at.medevit.elexis.emediplan.ui.openImport");
-						
-						HashMap<String, String> params = new HashMap<String, String>();
-						
-						params.put("at.medevit.elexis.emediplan.ui.openImport.parameter.emediplan",
-							emediplan.get());
-						params.put("at.medevit.elexis.emediplan.ui.openImport.parameter.patientid",
-							docHandle.getPatient().getId());
-						
-						ParameterizedCommand parametrizedCommmand =
-							ParameterizedCommand.generateCommand(openImportCommand, params);
-						
-						try {
-							PlatformUI.getWorkbench().getService(IHandlerService.class)
-								.executeCommand(parametrizedCommmand, null);
-						} catch (NotDefinedException | NotEnabledException
-								| NotHandledException e) {
-							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-								"Beim öffnen des eMediplan Import ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
+						if (useRemoteImport()) {
+							if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
+								"Import",
+								"Möchten Sie die aktuelle Medikation mit dem erstellten eMediplan überschrieben?")) {
+								ICommandService commandService =
+									(ICommandService) HandlerUtil.getActiveWorkbenchWindow(event)
+										.getService(ICommandService.class);
+								
+								Command directImportCommand = commandService
+									.getCommand("at.medevit.elexis.emediplan.ui.directImport");
+								
+								HashMap<String, String> params = new HashMap<String, String>();
+								
+								params.put(
+									"at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan",
+									emediplan.get());
+								params.put(
+									"at.medevit.elexis.emediplan.ui.directImport.parameter.patientid",
+									docHandle.getPatient().getId());
+								
+								ParameterizedCommand parametrizedCommmand =
+									ParameterizedCommand.generateCommand(directImportCommand, params);
+								
+								try {
+									PlatformUI.getWorkbench().getService(IHandlerService.class)
+										.executeCommand(parametrizedCommmand, null);
+								} catch (NotDefinedException | NotEnabledException
+										| NotHandledException e) {
+									MessageDialog.openError(Display.getDefault().getActiveShell(),
+										"Fehler",
+										"Beim import des eMediplan ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
+								}
+							}
+						} else {
+							ICommandService commandService = (ICommandService) HandlerUtil
+								.getActiveWorkbenchWindow(event).getService(ICommandService.class);
+							
+							Command openImportCommand = commandService
+								.getCommand("at.medevit.elexis.emediplan.ui.openImport");
+							
+							HashMap<String, String> params = new HashMap<String, String>();
+							
+							params.put(
+								"at.medevit.elexis.emediplan.ui.openImport.parameter.emediplan",
+								emediplan.get());
+							params.put(
+								"at.medevit.elexis.emediplan.ui.openImport.parameter.patientid",
+								docHandle.getPatient().getId());
+							
+							ParameterizedCommand parametrizedCommmand =
+								ParameterizedCommand.generateCommand(openImportCommand, params);
+							
+							try {
+								PlatformUI.getWorkbench().getService(IHandlerService.class)
+									.executeCommand(parametrizedCommmand, null);
+							} catch (NotDefinedException | NotEnabledException
+									| NotHandledException e) {
+								MessageDialog.openError(Display.getDefault().getActiveShell(),
+									"Fehler",
+									"Beim öffnen des eMediplan Import ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
+							}
 						}
 					} else {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
@@ -74,5 +114,9 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 			}
 		}
 		return null;
+	}
+	
+	private boolean useRemoteImport(){
+		return CoreHub.globalCfg.get(BlueMedicationConstants.CFG_USE_IMPORT, false);
 	}
 }

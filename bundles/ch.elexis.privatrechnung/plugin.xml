@@ -10,6 +10,7 @@
             ImporterClass="ch.elexis.privatrechnung.data.Importer"
             elexisClassName="ch.elexis.privatrechnung.data.Leistung"
             name="PrivatLeistung"
+            localizedName="%PrivatLeistung.Elexis"
             system="Privat">
       </Leistung>
    </extension>
@@ -32,6 +33,7 @@
    <extension
          point="ch.elexis.core.data.RechnungsManager">
       <Rechnung
+            localizedName="%Privatrechnung.Elexis"
             name="Privatrechnung"
             outputter="ch.elexis.privatrechnung.rechnung.RechnungsDrucker">
       </Rechnung>

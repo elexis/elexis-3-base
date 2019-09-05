@@ -25,6 +25,7 @@
    <extension
          point="ch.elexis.core.data.RechnungsManager">
       <Rechnung
+            localizedName="%MediPort.Rechnung"
             name="MediPort"
             outputter="ch.medshare.mediport.MediportOutputter">
       </Rechnung>

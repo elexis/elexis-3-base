@@ -354,7 +354,11 @@ public class EMediplanServiceImpl implements EMediplanService {
 			if (pos.D != null) {
 				int size = pos.D.size();
 				for (float f : pos.D) {
-					buf.append((int) f);
+					if (f % 1 != 0) {
+						buf.append(f);
+					} else {
+						buf.append((int) f);
+					}
 					size--;
 					if (size != 0) {
 						buf.append("-");

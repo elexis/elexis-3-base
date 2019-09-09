@@ -1,6 +1,7 @@
 package at.medevit.elexis.emediplan.ui.handler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,15 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan");
 		String patientid =
 			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.patientid");
+		String stopreason =
+			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.stopreason");
+		String medicationType =
+			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.medication"); //$NON-NLS-1$
+		// if not set use all
+		if (medicationType == null || medicationType.isEmpty()) {
+			medicationType = "all";
+		}
+		
 		if (StringUtils.isNotEmpty(patientid) && StringUtils.isNotEmpty(emediplan)) {
 			Medication medication =
 				EMediplanServiceHolder.getService().createModelFromChunk(emediplan);
@@ -39,14 +49,12 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 			if (patient.exists()) {
 				ElexisEventDispatcher.fireSelectionEvent(patient);
 				
-				List<Prescription> fixMedication =
-					patient.getMedication(EntryType.FIXED_MEDICATION);
-				for (Prescription prescription : fixMedication) {
+				List<Prescription> currentMedication = getPrescriptions(patient, medicationType);
+				for (Prescription prescription : currentMedication) {
 					prescription.stop(null);
-					prescription.setStopReason("BlueMedication EMediplan Import");
+					prescription.setStopReason(stopreason != null ? stopreason : "Direct Import");
 					ElexisEventDispatcher.getInstance().fire(new ElexisEvent(prescription,
 						Prescription.class, ElexisEvent.EVENT_UPDATE));
-					
 				}
 				List<Medicament> notFoundMedicament = new ArrayList<>();
 				for (Medicament medicament : medication.Medicaments) {
@@ -68,6 +76,23 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 			}
 		}
 		return null;
+	}
+	
+	private List<Prescription> getPrescriptions(Patient patient, String medicationType){
+		if ("all".equals(medicationType)) {
+			List<Prescription> ret = new ArrayList<Prescription>();
+			ret.addAll(patient.getMedication(EntryType.FIXED_MEDICATION));
+			ret.addAll(patient.getMedication(EntryType.RESERVE_MEDICATION));
+			ret.addAll(patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION));
+			return ret;
+		} else if ("fix".equals(medicationType)) {
+			return patient.getMedication(EntryType.FIXED_MEDICATION);
+		} else if ("reserve".equals(medicationType)) {
+			return patient.getMedication(EntryType.RESERVE_MEDICATION);
+		} else if ("symptomatic".equals(medicationType)) {
+			return patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION);
+		}
+		return Collections.emptyList();
 	}
 	
 	private Prescription createPrescription(Medicament medicament, Patient patient){

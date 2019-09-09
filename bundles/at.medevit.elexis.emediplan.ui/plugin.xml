@@ -40,6 +40,16 @@
          <commandParameter
                id="at.medevit.elexis.emediplan.ui.directImport.parameter.patientid"
                name="patientid"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="at.medevit.elexis.emediplan.ui.directImport.parameter.stopreason"
+               name="stopreason"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="at.medevit.elexis.emediplan.ui.directImport.parameter.medication"
+               name="medication"
                optional="true">
          </commandParameter>
       </command>

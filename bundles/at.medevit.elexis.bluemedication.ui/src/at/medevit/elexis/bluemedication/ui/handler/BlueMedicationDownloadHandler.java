@@ -61,6 +61,9 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 								params.put(
 									"at.medevit.elexis.emediplan.ui.directImport.parameter.patientid",
 									docHandle.getPatient().getId());
+								params.put(
+									"at.medevit.elexis.emediplan.ui.directImport.parameter.stopreason",
+									"BlueMedication EMediplan Import");
 								
 								ParameterizedCommand parametrizedCommmand =
 									ParameterizedCommand.generateCommand(directImportCommand, params);

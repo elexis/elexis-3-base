@@ -135,11 +135,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 					return new Result<UploadResult>(SEVERITY.ERROR,
 						0, "Response has no data", null, false);
 				}
-				return new Result<UploadResult>(
-					new UploadResult(
-						appendPath(getBasePath(),
-							response.getData().getUrl() + (useRemoteImport() ? "" : "&mode=embed")),
-						response.getData().getId()));
+				return new Result<UploadResult>(new UploadResult(
+					appendPath(getBasePath(), response.getData().getUrl() + "&mode=embed"),
+					response.getData().getId()));
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
 				return new Result<UploadResult>(SEVERITY.ERROR, 0,

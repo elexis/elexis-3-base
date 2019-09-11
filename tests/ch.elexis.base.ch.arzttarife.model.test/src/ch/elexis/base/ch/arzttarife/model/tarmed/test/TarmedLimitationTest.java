@@ -14,7 +14,7 @@ import ch.elexis.core.model.IBilled;
 public class TarmedLimitationTest extends AbstractTarmedTest {
 	
 	@Test
-	public void findVerrechnetByMandatorPatientCodeDuringPeriod(){
+	public void findVerrechnetByPatientCodeDuringPeriod(){
 		before();
 		
 		TarmedLeistung tlGroupLimit1 = TarmedLeistung.getFromCode("02.0310", LocalDate.now(), null);
@@ -22,17 +22,11 @@ public class TarmedLimitationTest extends AbstractTarmedTest {
 		result = billSingle(encounter, tlGroupLimit1);
 		
 		List<IBilled> alreadyBilled = TarmedLimitation
-			.findVerrechnetByMandatorPatientCodeDuringPeriod(encounter.getMandator(),
-				encounter.getCoverage().getPatient(), tlGroupLimit1.getCode());
+			.findVerrechnetByPatientCodeDuringPeriod(encounter.getCoverage().getPatient(),
+				tlGroupLimit1.getCode());
 		assertEquals(1, alreadyBilled.size());
 		assertEquals(2, alreadyBilled.get(0).getAmount(), 0.01);
 		
 		after();
 	}
-	
-	@Test
-	public void getVerrechnetByMandantAndCodeDuring(){
-		
-	}
-	
 }

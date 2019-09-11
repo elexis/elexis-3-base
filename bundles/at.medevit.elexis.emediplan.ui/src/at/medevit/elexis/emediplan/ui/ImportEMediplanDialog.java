@@ -1,8 +1,12 @@
 package at.medevit.elexis.emediplan.ui;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -33,8 +37,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.elexis.emediplan.Startup;
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament.State;
@@ -48,6 +54,7 @@ import ch.elexis.core.model.builder.IPrescriptionBuilder;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.utils.CoreUtil;
 import ch.rgw.tools.TimeTool;
 
 public class ImportEMediplanDialog extends TitleAreaDialog {
@@ -153,7 +160,8 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		btnImport.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				insertArticle(new StructuredSelection(getInput()));
+				insertArticle(new StructuredSelection(getInput().stream()
+					.filter(m -> m.entryType != null).collect(Collectors.toList())));
 			}
 		});
 		
@@ -164,6 +172,17 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
+				int stateMask = e.stateMask;
+				if ((stateMask & SWT.SHIFT) == SWT.SHIFT && medication.chunk != null) {
+					File userDir = CoreUtil.getWritableUserDir();
+					File jsonOutput = new File(userDir, "emediplan.json");
+					try (FileWriter writer = new FileWriter(jsonOutput)) {
+						writer.write(Startup.getDecodedJsonString(medication.chunk));
+					} catch (IOException e1) {
+						LoggerFactory.getLogger(getClass())
+							.error("Could not write emediplan json" + e);
+					}
+				}
 				if (EMediplanServiceHolder.getService().createInboxEntry(medication,
 					ContextServiceHolder.get().getActiveMandator().orElse(null))) {
 					MessageDialog.openInformation(getShell(), "Medikationsplan",

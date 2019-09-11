@@ -21,12 +21,10 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		UIJob job = new UIJob("InitCommandsWorkaround") {
 			
-			public IStatus runInUIThread(@SuppressWarnings("unused")
-			IProgressMonitor monitor){
+			public IStatus runInUIThread(@SuppressWarnings("unused") IProgressMonitor monitor){
 				
-				ICommandService commandService =
-					(ICommandService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.getService(ICommandService.class);
+				ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getService(ICommandService.class);
 				Command command = commandService.getCommand(LoadESRFileHandler.COMMAND_ID);
 				command.isEnabled();
 				return new Status(IStatus.OK, "my.plugin.id",

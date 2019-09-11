@@ -19,7 +19,6 @@ import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
-import ch.elexis.data.Prescription;
 
 /**
  * Service interface providing methods to import and export an eMediplabn
@@ -31,13 +30,27 @@ import ch.elexis.data.Prescription;
 public interface EMediplanService {
 	
 	/**
-	 * Get a PDF eMediplan (http://emediplan.ch/de/home) representation of the JSON encoded String,
-	 * written to the provided {@link OutputStream}.
+	 * Get a PDF eMediplan (http://emediplan.ch/de/home) representation of the prescriptions of the
+	 * patient, written to the provided {@link OutputStream}.
 	 * 
-	 * @param json
+	 * @param author
+	 * @param patient
+	 * @param prescriptions
 	 * @param output
 	 */
 	public void exportEMediplanPdf(IMandator author, IPatient patient,
+		List<IPrescription> prescriptions, OutputStream output);
+	
+	/**
+	 * Get a CHMED json eMediplan (http://emediplan.ch/de/home) representation of the prescriptions
+	 * of the patient, written to the provided {@link OutputStream}.
+	 * 
+	 * @param author
+	 * @param patient
+	 * @param prescriptions
+	 * @param output
+	 */
+	public void exportEMediplanJson(IMandator author, IPatient patient,
 		List<IPrescription> prescriptions, OutputStream output);
 	
 	/**
@@ -58,7 +71,7 @@ public interface EMediplanService {
 	public void addExistingArticlesToMedication(Medication medication);
 	
 	/**
-	 * Set all existing {@link Prescription} for a {@link Medication}
+	 * Set all existing {@link IPrescription} for a {@link Medication}
 	 * 
 	 * @param medication
 	 * @param medicament

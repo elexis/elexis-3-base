@@ -1,5 +1,12 @@
 package at.medevit.elexis.emediplan;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Base64;
+import java.util.zip.GZIPInputStream;
+
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -14,6 +21,7 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.medication.views.MedicationView;
 import ch.elexis.data.Patient;
@@ -78,5 +86,25 @@ public class Startup implements IStartup {
 	
 	private boolean hasMediplanHeader(String chunk){
 		return chunk.startsWith("CHMED");
+	}
+	
+	public static String getDecodedJsonString(@NonNull String encodedJson){
+		String content = encodedJson.substring(9);
+		byte[] zipped = Base64.getMimeDecoder().decode(content);
+		StringBuilder sb = new StringBuilder();
+		try {
+			GZIPInputStream gzip = new GZIPInputStream(new ByteArrayInputStream(zipped));
+			InputStreamReader reader = new InputStreamReader(gzip);
+			BufferedReader in = new BufferedReader(reader);
+			// Probably only single json line, but just to be sure ... 
+			String read;
+			while ((read = in.readLine()) != null) {
+				sb.append(read);
+			}
+		} catch (IOException e) {
+			LoggerFactory.getLogger(Startup.class).error("Error decoding json", e);
+			throw new IllegalStateException("Error decoding json", e);
+		}
+		return sb.toString();
 	}
 }

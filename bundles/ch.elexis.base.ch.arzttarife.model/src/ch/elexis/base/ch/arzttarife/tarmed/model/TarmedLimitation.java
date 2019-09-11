@@ -8,12 +8,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -276,7 +278,8 @@ public class TarmedLimitation {
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<IBilled> verrechnetByMandant = getVerrechnetByMandantAndCodeDuringPeriod(kons,
+				List<IBilled> verrechnetByMandant =
+					getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons,
 					verrechnet.getBillable().getCode());
 				if (getVerrechnetCount(verrechnetByMandant) > amount) {
 					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
@@ -287,7 +290,7 @@ public class TarmedLimitation {
 				List<String> serviceCodes = tarmedGroup.getServices();
 				for (String code : serviceCodes) {
 					allVerrechnetOfGroup
-						.addAll(getVerrechnetByMandantAndCodeDuringPeriod(kons, code));
+						.addAll(getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
 					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
@@ -307,7 +310,7 @@ public class TarmedLimitation {
 	}
 	
 	// @formatter:off
-	private static final String VERRECHNET_BYMANDANT_ANDCODE = "SELECT leistungen.ID FROM leistungen, behandlungen, faelle"
+	private static final String VERRECHNET_BYPATIENT_ANDCODE = "SELECT leistungen.ID FROM leistungen, behandlungen, faelle"
 	+ " WHERE leistungen.deleted = '0'" 
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
@@ -315,23 +318,17 @@ public class TarmedLimitation {
 	+ " AND faelle.ID = behandlungen.fallID"
 	+ " AND faelle.PatientID = ?1"
 	+ " AND leistungen.LEISTG_CODE like ?2"
-	+ " AND behandlungen.MandantID = ?3"
 	+ " ORDER BY behandlungen.Datum ASC";
 	// @formatter:on
 	
 	
-	public static List<IBilled> findVerrechnetByMandatorPatientCodeDuringPeriod(IMandator mandator, IPatient patient,
+	public static List<IBilled> findVerrechnetByPatientCodeDuringPeriod(IPatient patient,
 		String code){
-		
-		if (mandator == null) {
-			return Collections.emptyList();
-		}
 		List<IBilled> all = new ArrayList<>();
 		INativeQuery nativeQuery =
-			CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE);
+			CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYPATIENT_ANDCODE);
 		Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(Integer.valueOf(1),
-			patient.getId(), Integer.valueOf(2), code + "%",
-			Integer.valueOf(3), mandator.getId());
+			patient.getId(), Integer.valueOf(2), code + "%");
 		Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
 		while (result.hasNext()) {
 			String next = result.next().toString();
@@ -353,11 +350,17 @@ public class TarmedLimitation {
 	 * @param code
 	 * @return
 	 */
-	private List<IBilled> getVerrechnetByMandantAndCodeDuringPeriod(IEncounter kons, String code){
-		IMandator mandant = kons.getMandator();
+	private List<IBilled> getVerrechnetByRechnungsstellerAndCodeDuringPeriod(IEncounter kons,
+		String code){
+		IContact rechnungssteller = kons.getMandator().getBiller();
 		
-		if (mandant != null) {
-			List<IBilled> all = findVerrechnetByMandatorPatientCodeDuringPeriod(mandant, kons.getCoverage().getPatient(), code);
+		if (rechnungssteller != null) {
+			List<IBilled> all =
+				findVerrechnetByPatientCodeDuringPeriod(kons.getCoverage().getPatient(), code);
+			// filter for matching rechnungssteller
+			all = all.parallelStream()
+				.filter(v -> v.getEncounter().getMandator().getBiller().equals(rechnungssteller))
+				.collect(Collectors.toList());
 			all = filterValidCodeForKonsultation(code, kons, all);
 			// now group in time periods since first verrechnet
 			LocalDate konsDate = kons.getDate();

@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +22,11 @@ import at.medevit.elexis.bluemedication.core.BlueMedicationService;
 import at.medevit.elexis.bluemedication.core.UploadResult;
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
 import io.swagger.client.ApiException;
@@ -87,21 +87,21 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	}
 	
 	@Override
-	public Result<UploadResult> uploadDocument(Patient patient, File document){
+	public Result<UploadResult> uploadDocument(IPatient patient, File document){
 		initProxy();
 		workaroundGet();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			File externalData = document;
-			String patientFirstName = patient.getVorname();
-			String patientLastName = patient.getName();
+			String patientFirstName = patient.getFirstName();
+			String patientLastName = patient.getLastName();
 			String patientSex = patient.getGender().name();
 			LocalDate patientBirthdate = LocalDate.now();
 			try {
 				File internalData = null;
 				if (useRemoteImport()) {
-					Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
+					IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 					if (mandant != null) {
 						try {
 							ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
@@ -245,19 +245,16 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		return CoreHub.globalCfg.get(BlueMedicationConstants.CFG_USE_IMPORT, false);
 	}
 	
-	private List<Prescription> getPrescriptions(Patient patient, String medicationType){
+	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType){
 		if ("all".equals(medicationType)) {
-			List<Prescription> ret = new ArrayList<Prescription>();
-			ret.addAll(patient.getMedication(EntryType.FIXED_MEDICATION));
-			ret.addAll(patient.getMedication(EntryType.RESERVE_MEDICATION));
-			ret.addAll(patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION));
-			return ret;
+			return patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION,
+				EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
 		} else if ("fix".equals(medicationType)) {
-			return patient.getMedication(EntryType.FIXED_MEDICATION);
+			return patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION));
 		} else if ("reserve".equals(medicationType)) {
-			return patient.getMedication(EntryType.RESERVE_MEDICATION);
+			return patient.getMedication(Arrays.asList(EntryType.RESERVE_MEDICATION));
 		} else if ("symptomatic".equals(medicationType)) {
-			return patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION);
+			return patient.getMedication(Arrays.asList(EntryType.SYMPTOMATIC_MEDICATION));
 		}
 		return Collections.emptyList();
 	}

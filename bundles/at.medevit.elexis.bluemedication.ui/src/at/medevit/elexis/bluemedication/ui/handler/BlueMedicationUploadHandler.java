@@ -19,7 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder;
 import at.medevit.elexis.bluemedication.core.UploadResult;
-import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.omnivore.data.Utils;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.Result;
 
 public class BlueMedicationUploadHandler extends AbstractHandler implements IHandler {
@@ -30,8 +31,8 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 			(StructuredSelection) HandlerUtil.getCurrentSelection(event);
 		if (!selection.isEmpty()) {
 			Object object = selection.getFirstElement();
-			if (object instanceof DocHandle) {
-				DocHandle docHandle = (DocHandle) object;
+			if (object instanceof IDocumentHandle) {
+				IDocumentHandle docHandle = (IDocumentHandle) object;
 				if (docHandle.getMimeType().endsWith("pdf")
 					|| docHandle.getTitle().endsWith(".pdf")) {
 					Shell activeshell = HandlerUtil.getActiveShell(event);
@@ -45,7 +46,7 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 									IProgressMonitor.UNKNOWN);
 								Result<UploadResult> result = BlueMedicationServiceHolder
 									.getService().uploadDocument(docHandle.getPatient(),
-										docHandle.createTemporaryFile(docHandle.getTitle()));
+										Utils.createTemporaryFile(docHandle, docHandle.getTitle()));
 								if (result.isOK()) {
 									Display.getDefault().syncExec(() -> {
 										// open the uri of the result

@@ -3,7 +3,7 @@ package at.medevit.elexis.bluemedication.core;
 import java.io.File;
 import java.util.Optional;
 
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
 import ch.rgw.tools.Result;
 
 public interface BlueMedicationService {
@@ -15,7 +15,7 @@ public interface BlueMedicationService {
 	 * @param document
 	 * @return
 	 */
-	public Result<UploadResult> uploadDocument(Patient patient, File document);
+	public Result<UploadResult> uploadDocument(IPatient patient, File document);
 	
 	/**
 	 * Download the results of upload and user interaction on the browser, from the bluemedication

@@ -4,7 +4,7 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 import at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder;
-import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 
 public class BluemedicationPropertyTester extends PropertyTester {
 	
@@ -15,8 +15,8 @@ public class BluemedicationPropertyTester extends PropertyTester {
 				StructuredSelection selection = (StructuredSelection) receiver;
 				if (!selection.isEmpty()) {
 					Object object = selection.getFirstElement();
-					if (object instanceof DocHandle) {
-						DocHandle docHandle = (DocHandle) object;
+					if (object instanceof IDocumentHandle) {
+						IDocumentHandle docHandle = (IDocumentHandle) object;
 						if (docHandle.getMimeType().toLowerCase().endsWith("pdf")
 							|| docHandle.getTitle().toLowerCase().endsWith(".pdf")) {
 							return true;
@@ -29,7 +29,7 @@ public class BluemedicationPropertyTester extends PropertyTester {
 				StructuredSelection selection = (StructuredSelection) receiver;
 				if (!selection.isEmpty()) {
 					Object object = selection.getFirstElement();
-					if (object instanceof DocHandle) {
+					if (object instanceof IDocumentHandle) {
 						return BlueMedicationServiceHolder.getService()
 							.getPendingUploadResult(object).isPresent();
 					}

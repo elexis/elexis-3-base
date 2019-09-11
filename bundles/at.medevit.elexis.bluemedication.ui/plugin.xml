@@ -24,7 +24,7 @@
                         ifEmpty="false"
                         operator="and">
                      <instanceof
-                           value="ch.elexis.omnivore.data.DocHandle">
+                           value="ch.elexis.omnivore.model.IDocumentHandle">
                      </instanceof>
                   </iterate>
                   <test
@@ -55,7 +55,7 @@
                         ifEmpty="false"
                         operator="and">
                      <instanceof
-                           value="ch.elexis.omnivore.data.DocHandle">
+                           value="ch.elexis.omnivore.model.IDocumentHandle">
                      </instanceof>
                   </iterate>
                   <test
@@ -86,7 +86,7 @@
                         ifEmpty="false"
                         operator="and">
                      <instanceof
-                           value="ch.elexis.omnivore.data.DocHandle">
+                           value="ch.elexis.omnivore.model.IDocumentHandle">
                      </instanceof>
                   </iterate>
                   <test
@@ -117,7 +117,7 @@
                         ifEmpty="false"
                         operator="and">
                      <instanceof
-                           value="ch.elexis.omnivore.data.DocHandle">
+                           value="ch.elexis.omnivore.model.IDocumentHandle">
                      </instanceof>
                   </iterate>
                   <test

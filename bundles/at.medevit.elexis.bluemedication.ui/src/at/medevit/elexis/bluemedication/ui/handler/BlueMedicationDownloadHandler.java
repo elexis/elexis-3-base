@@ -24,7 +24,7 @@ import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
 import at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder;
 import at.medevit.elexis.bluemedication.core.UploadResult;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.omnivore.data.DocHandle;
+import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.Result;
 
 public class BlueMedicationDownloadHandler extends AbstractHandler implements IHandler {
@@ -35,8 +35,8 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 			(StructuredSelection) HandlerUtil.getCurrentSelection(event);
 		if (!selection.isEmpty()) {
 			Object object = selection.getFirstElement();
-			if (object instanceof DocHandle) {
-				DocHandle docHandle = (DocHandle) object;
+			if (object instanceof IDocumentHandle) {
+				IDocumentHandle docHandle = (IDocumentHandle) object;
 					Optional<UploadResult> pending = BlueMedicationServiceHolder.getService().getPendingUploadResult(docHandle);
 				if (pending.isPresent()) {
 					Result<String> emediplan = BlueMedicationServiceHolder.getService()

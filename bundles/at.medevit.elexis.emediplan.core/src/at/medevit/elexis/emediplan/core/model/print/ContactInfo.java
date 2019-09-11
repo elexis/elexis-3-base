@@ -73,8 +73,10 @@ public class ContactInfo {
 			ret.setStreet1(per.getStreet());
 			ret.setLastname(per.getLastName());
 			ret.setFirstname(per.getFirstName());
-			ret.setBirthdate(
-				per.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+			if (per.getDateOfBirth() != null) {
+				ret.setBirthdate(
+					per.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+			}
 			ret.setGender(per.getGender() == Gender.FEMALE ? "W" : "M");
 			ret.setTel(per.getPhone1());
 			ret.setTitle(per.getTitel());

@@ -5,6 +5,7 @@ Bundle-SymbolicName: net.medshare.connector.aerztekasse;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Activator: net.medshare.connector.aerztekasse.Activator
 Bundle-Vendor: medshare.net
+Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.rgw.utility,

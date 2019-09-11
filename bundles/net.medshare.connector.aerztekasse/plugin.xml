@@ -4,6 +4,7 @@
    <extension
          point="ch.elexis.core.data.RechnungsManager">
       <Rechnung
+            localizedName="%Medshare.Aerztekasse"
             name="Ärztekasse"
             outputter="net.medshare.connector.aerztekasse.invoice.InvoiceOutputter">
       </Rechnung>

@@ -48,6 +48,7 @@
             OptifyerClass="ch.elexis.data.TarmedOptifier"
             elexisClassName="ch.elexis.data.TarmedLeistung"
             name="TarmedLeistung"
+            localizedName="%TarmedLeistung"
             system="Tarmed">
       </Leistung>
       <Leistung
@@ -56,6 +57,7 @@
             ImporterClass="ch.elexis.base.ch.arzttarife.importer.PhysioImporter"
             elexisClassName="ch.elexis.data.PhysioLeistung"
             name=" Physio-Leistung"
+            localizedName="%PhysioLeistung"
             system="Physiotherapie">
       </Leistung>
       <Leistung
@@ -64,6 +66,7 @@
             ImporterClass="ch.elexis.base.ch.arzttarife.importer.ComplementaryImporter"
             elexisClassName="ch.elexis.data.ComplementaryLeistung"
             name="Komplementärmedizin"
+            localizedName="%ComplementaryMedicine"
             system="Komplementärmedizin">
       </Leistung>
    </extension>
@@ -71,10 +74,12 @@
          point="ch.elexis.core.data.RechnungsManager">
       <Rechnung
             name="Tarmed-Drucker"
+            localizedName="%TarmedRechnung.RechnungsDrucker"
             outputter="ch.elexis.TarmedRechnung.RechnungsDrucker">
       </Rechnung>
       <Rechnung
             name="Tarmed-XML-Export"
+            localizedName="%TarmedRechnung.XMLExporter"
             outputter="ch.elexis.TarmedRechnung.XMLExporter">
       </Rechnung>
    </extension>

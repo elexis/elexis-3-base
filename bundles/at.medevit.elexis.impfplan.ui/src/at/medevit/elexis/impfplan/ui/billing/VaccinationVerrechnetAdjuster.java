@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.ui.dialogs.ApplicationInputDialog;
 import at.medevit.elexis.impfplan.ui.handlers.ApplyVaccinationHandler;
@@ -31,22 +30,18 @@ public class VaccinationVerrechnetAdjuster implements IVerrechnetAdjuster {
 			public void run(){
 				IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
 				if (verrechenbar instanceof Artikel) {
-					String atc_code = ((Artikel) verrechenbar).getATC_code();
-					if (atc_code != null && atc_code.length() > 4) {
-						if (atc_code.toUpperCase()
-							.startsWith(DiseaseDefinitionModel.VACCINATION_ATC_GROUP_TRAILER)) {
-							Konsultation kons = verrechnet.getKons();
-							if (kons != null) {
-								Fall fall = kons.getFall();
-								if (fall != null) {
-									Patient patient = fall.getPatient();
-									if (patient != null) {
-										performVaccination(patient.getId(), (Artikel) verrechenbar);
-									}
+					if (((Artikel) verrechenbar).isVaccination()) {
+						Konsultation kons = verrechnet.getKons();
+						if (kons != null) {
+							Fall fall = kons.getFall();
+							if (fall != null) {
+								Patient patient = fall.getPatient();
+								if (patient != null) {
+									performVaccination(patient.getId(), (Artikel) verrechenbar);
 								}
 							}
-							verrechnet.setDetail(Verrechnet.VATSCALE, Double.toString(0.0));
 						}
+						verrechnet.setDetail(Verrechnet.VATSCALE, Double.toString(0.0));
 					}
 				}
 			}

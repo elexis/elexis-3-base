@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
-import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.ui.billing.AddVaccinationToKons;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.UiDesk;
@@ -97,24 +96,18 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 				Artikel artikel = (Artikel) o;
 				
 				// only accept vaccinations
-				String atcCode = artikel.getATC_code();
-				if (atcCode != null && atcCode.length() > 4) {
-					if (atcCode.toUpperCase().startsWith(
-						DiseaseDefinitionModel.VACCINATION_ATC_GROUP_TRAILER)) {
-						AddVaccinationToKons addVacToKons =
-							new AddVaccinationToKons(ElexisEventDispatcher.getSelectedPatient(),
-								artikel, artikel.getEAN());
-						
-						kons = addVacToKons.findOrCreateKons();
-						if (kons == null) {
-							logger
-								.warn("Could not insert vaccination as no consultation was found for this patient");
-							SWTHelper
-								.showError("Nicht erstellbar",
-									"Konnte Impfung nich eintragen, da keine Konsultation vorhanden ist.");
-						}
-						inProgress = true;
+				if (artikel.isVaccination()) {
+					AddVaccinationToKons addVacToKons = new AddVaccinationToKons(
+						ElexisEventDispatcher.getSelectedPatient(), artikel, artikel.getEAN());
+					
+					kons = addVacToKons.findOrCreateKons();
+					if (kons == null) {
+						logger.warn(
+							"Could not insert vaccination as no consultation was found for this patient");
+						SWTHelper.showError("Nicht erstellbar",
+							"Konnte Impfung nich eintragen, da keine Konsultation vorhanden ist.");
 					}
+					inProgress = true;
 				}
 			}
 		}

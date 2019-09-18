@@ -20,10 +20,8 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
 import at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder;
 import at.medevit.elexis.bluemedication.core.UploadResult;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.rgw.tools.Result;
 
@@ -40,9 +38,9 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 					Optional<UploadResult> pending = BlueMedicationServiceHolder.getService().getPendingUploadResult(docHandle);
 				if (pending.isPresent()) {
 					Result<String> emediplan = BlueMedicationServiceHolder.getService()
-						.downloadEMediplan(pending.get().getId());
+						.downloadEMediplan(pending.get());
 					if (emediplan.isOK()) {
-						if (useRemoteImport()) {
+						if (pending.get().isUploadedMediplan()) {
 							if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
 								"Import",
 								"Möchten Sie die aktuelle Medikation mit dem erstellten eMediplan überschrieben?")) {
@@ -117,9 +115,5 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 			}
 		}
 		return null;
-	}
-	
-	private boolean useRemoteImport(){
-		return CoreHub.globalCfg.get(BlueMedicationConstants.CFG_USE_IMPORT, false);
 	}
 }

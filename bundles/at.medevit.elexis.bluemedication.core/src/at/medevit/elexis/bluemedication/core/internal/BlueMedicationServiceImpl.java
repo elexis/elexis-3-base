@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -24,8 +25,10 @@ import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.data.Artikel;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
@@ -99,8 +102,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			String patientSex = patient.getGender().name();
 			LocalDate patientBirthdate = LocalDate.now();
 			try {
+				boolean uploadedMediplan = false;
 				File internalData = null;
-				if (useRemoteImport()) {
+				if (useRemoteImport() && hasPrescriptionsWithValidIdType(patient)) {
 					Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
 					if (mandant != null) {
 						try {
@@ -114,6 +118,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 								fos.flush();
 							}
 							internalData = pdfFile;
+							uploadedMediplan = true;
 						} catch (IOException e) {
 							LoggerFactory.getLogger(getClass()).error("Error creating eMediplan",
 								e);
@@ -137,7 +142,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 				}
 				return new Result<UploadResult>(new UploadResult(
 					appendPath(getBasePath(), response.getData().getUrl() + "&mode=embed"),
-					response.getData().getId()));
+					response.getData().getId(), uploadedMediplan));
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
 				return new Result<UploadResult>(SEVERITY.ERROR, 0,
@@ -187,15 +192,16 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	}
 	
 	@Override
-	public Result<String> downloadEMediplan(String id){
+	public Result<String> downloadEMediplan(UploadResult uploadResult){
 		initProxy();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			
-			if (useRemoteImport()) {
+			if (uploadResult.isUploadedMediplan()) {
 				ApiResponse<String> response =
-					apiInstance.downloadIdComparisonChmedGetWithHttpInfo(id, true);
+					apiInstance.downloadIdComparisonChmedGetWithHttpInfo(uploadResult.getId(),
+						true);
 				if (response.getStatusCode() >= 300) {
 					return Result
 						.ERROR("Response status code was [" + response.getStatusCode() + "]");
@@ -206,7 +212,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 				return Result.OK(response.getData());
 			} else {
 				ApiResponse<String> response =
-					apiInstance.downloadIdExtractionChmedGetWithHttpInfo(id, true);
+					apiInstance.downloadIdExtractionChmedGetWithHttpInfo(uploadResult.getId(),
+						true);
 				if (response.getStatusCode() >= 300) {
 					return Result
 						.ERROR("Response status code was [" + response.getStatusCode() + "]");
@@ -245,6 +252,13 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		return CoreHub.globalCfg.get(BlueMedicationConstants.CFG_USE_IMPORT, false);
 	}
 	
+	private boolean hasPrescriptionsWithValidIdType(Patient patient){
+		List<Prescription> allPrescriptions = getPrescriptions(patient, "all");
+		List<Prescription> nonValidIdPrescriptions = allPrescriptions.stream()
+			.filter(p -> getIdType(p.getArtikel()) == 1).collect(Collectors.toList());
+		return nonValidIdPrescriptions.isEmpty();
+	}
+	
 	private List<Prescription> getPrescriptions(Patient patient, String medicationType){
 		if ("all".equals(medicationType)) {
 			List<Prescription> ret = new ArrayList<Prescription>();
@@ -260,5 +274,30 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			return patient.getMedication(EntryType.SYMPTOMATIC_MEDICATION);
 		}
 		return Collections.emptyList();
+	}
+	
+	/**
+	 * Get the eMediplan id type for an Artikel. Must match method of
+	 * <i>at.medevit.elexis.emediplan.core.model.chmed16a.Medicament</i>.
+	 * 
+	 * @param article
+	 * @return
+	 */
+	private int getIdType(Artikel article){
+		if (article != null) {
+			String gtin = article.getEAN();
+			if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
+				return 2;
+			}
+			String pharma = article.getPharmaCode();
+			if (pharma == null || pharma.isEmpty()) {
+				pharma = article.get(Artikel.FLD_SUB_ID);
+			}
+			if (pharma != null && !pharma.isEmpty()
+				&& !pharma.startsWith(PersistentObject.MAPPING_ERROR_MARKER)) {
+				return 3;
+			}
+		}
+		return 1;
 	}
 }

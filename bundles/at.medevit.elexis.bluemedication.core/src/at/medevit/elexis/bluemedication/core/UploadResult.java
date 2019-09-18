@@ -8,11 +8,14 @@ public class UploadResult {
 	
 	private String id;
 	
+	private boolean uploadedMediplan;
+	
 	private LocalDateTime timestamp;
 	
-	public UploadResult(String url, String id){
+	public UploadResult(String url, String id, boolean uploadedMediplan){
 		this.url = url;
 		this.id = id;
+		this.uploadedMediplan = uploadedMediplan;
 		this.timestamp = LocalDateTime.now();
 	}
 	
@@ -22,5 +25,9 @@ public class UploadResult {
 	
 	public String getId(){
 		return id;
+	}
+	
+	public boolean isUploadedMediplan(){
+		return uploadedMediplan;
 	}
 }

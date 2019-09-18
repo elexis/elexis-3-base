@@ -108,7 +108,7 @@ public class Medicament {
 	
 	private static int getIdType(Artikel article){
 		String gtin = article.getEAN();
-		if (gtin != null && !gtin.isEmpty()) {
+		if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
 			return 2;
 		}
 		String pharma = article.getPharmaCode();
@@ -124,7 +124,7 @@ public class Medicament {
 	
 	private static String getId(Artikel article){
 		String gtin = article.getEAN();
-		if (gtin != null && !gtin.isEmpty()) {
+		if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
 			return gtin;
 		}
 		String pharma = article.getPharmaCode();

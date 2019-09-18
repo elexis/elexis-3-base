@@ -27,7 +27,8 @@ public class BlueMedicationPreferencePage extends FieldEditorPreferencePage
 			getFieldEditorParent()));
 		
 		addField(new BooleanFieldEditor(BlueMedicationConstants.CFG_USE_IMPORT,
-			"Medikationsabgleich bei Blue Medication nutzen", getFieldEditorParent()));
+			"Medikationsabgleich bei Blue Medication nutzen. (Automatisch deaktiviert bei Eigenartikel in Medikation des Patienten)",
+			getFieldEditorParent()));
 		
 		addField(new BooleanFieldEditor(BlueMedicationConstants.CFG_URL_STAGING,
 			"Test Server verwenden", getFieldEditorParent()));

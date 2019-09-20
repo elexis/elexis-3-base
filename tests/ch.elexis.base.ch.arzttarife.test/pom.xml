@@ -25,7 +25,7 @@
 					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<appArgLine>-nl ${NL}</appArgLine>
-					<argLine>-Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret</argLine>
+					<argLine>-Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis.test.mode=true</argLine>
 					<bundleStartLevel>
 						<bundle>
 							<id>org.eclipse.gemini.jpa</id>
@@ -46,28 +46,18 @@
 					<dependencies>
 						<dependency>
 							<type>eclipse-feature</type>
+							<groupId>ch.elexis.core</groupId>
+							<artifactId>ch.elexis.core.application.feature</artifactId>
+						</dependency>
+						<dependency>
+							<type>eclipse-feature</type>
+							<groupId>ch.elexis.core</groupId>
 							<artifactId>ch.elexis.core.common.feature</artifactId>
-							<version>0.0.0</version>
 						</dependency>
 						<dependency>
-							<type>eclipse-plugin</type>
-							<artifactId>ch.elexis.core.jpa.logging.slf4j</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-						<dependency>
-							<type>eclipse-plugin</type>
-							<artifactId>org.slf4j.api</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-						<dependency>
-							<type>eclipse-plugin</type>
-							<artifactId>ch.elexis.core.logging.default_configuration</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-						<dependency>
-							<type>eclipse-plugin</type>
-							<artifactId>ch.qos.logback.slf4j</artifactId>
-							<version>0.0.0</version>
+							<type>eclipse-feature</type>
+							<groupId>ch.elexis.core</groupId>
+							<artifactId>ch.elexis.core.persistence.feature</artifactId>
 						</dependency>
 					</dependencies>
 				</configuration>

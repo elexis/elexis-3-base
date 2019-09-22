@@ -57,6 +57,7 @@ public class DiseaseDefinitionModel {
 		diseases.add(new DiseaseDefinition("J07BG", "Tollwut", "Rabies"));
 		diseases.add(new DiseaseDefinition("J07AN", "Tuberkulose"));
 		diseases.add(new DiseaseDefinition("J07BK01", "Windpocken - Varizellen"));
+		diseases.add(new DiseaseDefinition("J07BK02", "Herpes Zoster"));
 		
 		diseases = Collections.unmodifiableList(diseases);
 	}

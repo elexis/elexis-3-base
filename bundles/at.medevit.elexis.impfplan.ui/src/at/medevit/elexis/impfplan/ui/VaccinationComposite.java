@@ -35,6 +35,7 @@ public class VaccinationComposite extends Composite implements ISelectionProvide
 		vcmml = new VaccinationCompositeMouseMoveListener(vcpl);
 		addPaintListener(vcpl);
 		addMouseMoveListener(vcmml);
+		addMouseListener(new VaccinationCompositeMouseListener(vcpl));
 		
 		setBackground(UiDesk.getColor(UiDesk.COL_WHITE));
 	}

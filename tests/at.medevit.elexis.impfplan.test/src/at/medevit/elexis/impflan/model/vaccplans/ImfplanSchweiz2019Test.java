@@ -10,18 +10,17 @@
  *******************************************************************************/
 package at.medevit.elexis.impflan.model.vaccplans;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
-import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2015;
 import at.medevit.elexis.impfplan.model.vaccplans.AbstractVaccinationPlan.RequiredVaccination;
+import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2019;
+import junit.framework.Assert;
 
-public class ImfplanSchweiz2015Test {
+public class ImfplanSchweiz2019Test {
 
 	@Test
-	public void testImpfplanSchweiz2015(){
-		ImpfplanSchweiz2015 ipfplch = new ImpfplanSchweiz2015();
+	public void testImpfplanSchweiz2019(){
+		ImpfplanSchweiz2019 ipfplch = new ImpfplanSchweiz2019();
 		for (RequiredVaccination rv : ipfplch.baseVaccinations) {
 			System.out.println("B "+rv);
 		}

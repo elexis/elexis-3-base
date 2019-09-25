@@ -255,6 +255,9 @@
    <feature id="at.medevit.elexis.bluemedication.feature">
       <category name="clinicrecordkeeping"/>
    </feature>
+   <feature id="at.medbits.elexis.labbit">
+      <category name="labinterfaces"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

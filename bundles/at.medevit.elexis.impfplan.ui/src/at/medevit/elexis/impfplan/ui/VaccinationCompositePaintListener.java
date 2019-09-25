@@ -95,6 +95,9 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	private int defaultEntryHeight;
 	private ScrolledComposite scrolledComposite;
 	
+	public int mouseX;
+	public int mouseY;
+	
 	public VaccinationCompositePaintListener(){
 		Display disp = Display.getCurrent();
 		defaultFont = UiDesk.getFont(Preferences.USR_DEFAULTFONT);
@@ -742,5 +745,9 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			return 64;
 		}
 		return eh(-1);
+	}
+	
+	public boolean isTitleArea(){
+		return mouseY > 1 && mouseX > 1 && mouseY < 90 && mouseX < 350;
 	}
 }

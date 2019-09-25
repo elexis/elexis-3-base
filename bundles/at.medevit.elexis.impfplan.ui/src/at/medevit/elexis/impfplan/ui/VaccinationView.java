@@ -33,7 +33,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
-import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2015;
+import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2019;
 import at.medevit.elexis.impfplan.ui.dialogs.EditVaccinationDialog;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.constants.StringConstants;
@@ -79,7 +79,7 @@ public class VaccinationView extends ViewPart {
 	private ScrolledComposite scrolledComposite;
 	
 	public VaccinationView(){
-		ImpfplanSchweiz2015 is = new ImpfplanSchweiz2015();
+		ImpfplanSchweiz2019 is = new ImpfplanSchweiz2019();
 		vaccinationHeaderDefinition =
 			new VaccinationPlanHeaderDefinition(is.id, is.name, is.getOrderedBaseDiseases(),
 				is.getOrderedExtendedDiseases());

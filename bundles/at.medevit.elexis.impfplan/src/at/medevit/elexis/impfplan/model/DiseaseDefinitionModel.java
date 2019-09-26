@@ -41,14 +41,14 @@ public class DiseaseDefinitionModel {
 		diseases.add(new DiseaseDefinition("J07BE", "Mumps"));
 		diseases.add(new DiseaseDefinition("J07BJ", "Röteln", "Rubella"));
 		diseases.add(new DiseaseDefinition("J07BC01", "Hepatitis B"));
-		diseases.add(new DiseaseDefinition("J07BM", "humanes PapillomaVirus"));
-		diseases.add(new DiseaseDefinition("J07BB", "Influenza"));
+		diseases.add(new DiseaseDefinition("J07BM", "humanes Papilloma Virus (Mädchen)"));
+		diseases.add(new DiseaseDefinition("J07BB", "Influenza (> 65)"));
 		diseases.add(new DiseaseDefinition("J07BC02", "Hepatitis A*"));
 		diseases.add(new DiseaseDefinition("J07AL", "Pneumokokken", "Pneumococca"));
 		diseases.add(new DiseaseDefinition("J07AH", "Meningokokken", "Meningococca"));
 		diseases.add(new DiseaseDefinition("J07BA01", "FSME", "Encephalitis tick borne"));
 		diseases.add(new DiseaseDefinition("J07AP", "Typhus"));
-		diseases.add(new DiseaseDefinition("J07BK", "Varizellen", "Varicella zoster"));
+		diseases.add(new DiseaseDefinition("J07BK01", "Windpocken", "Varizellen"));
 		diseases.add(new DiseaseDefinition("J07BL", "Gelbfieber", "Yellow fever"));
 		diseases.add(new DiseaseDefinition("J07AE", "Cholera"));
 		diseases.add(new DiseaseDefinition("J07BA02", "japanische Encephalitis",
@@ -56,7 +56,7 @@ public class DiseaseDefinitionModel {
 		diseases.add(new DiseaseDefinition("J07BH", "Rotaviren", "Rota virus"));
 		diseases.add(new DiseaseDefinition("J07BG", "Tollwut", "Rabies"));
 		diseases.add(new DiseaseDefinition("J07AN", "Tuberkulose"));
-		diseases.add(new DiseaseDefinition("J07BK01", "Windpocken - Varizellen"));
+		diseases.add(new DiseaseDefinition("J07BK02", "Herpes Zoster"));
 		
 		diseases = Collections.unmodifiableList(diseases);
 	}

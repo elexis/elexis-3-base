@@ -24,6 +24,7 @@ Import-Package:
  ch.rgw.tools,
  com.google.gson,
  org.apache.commons.io;version="2.4.0",
+ org.apache.commons.lang3;version="3.7.0",
  org.osgi.framework;version="1.7.0",
  org.osgi.service.component.annotations;version="1.2.0",
  org.slf4j

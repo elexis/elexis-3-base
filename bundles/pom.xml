@@ -148,5 +148,6 @@
     <module>waelti.statistics</module>
     <module>ch.itmed.lmz.risch.laborder</module>
     <module>ch.itmed.fop.printing</module>
+    <module>at.medbits.elexis.labbit.ui</module>
   </modules>
 </project>

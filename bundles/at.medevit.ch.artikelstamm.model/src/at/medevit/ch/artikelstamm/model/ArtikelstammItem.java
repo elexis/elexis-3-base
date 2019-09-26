@@ -525,4 +525,15 @@ public class ArtikelstammItem
 	public IXid getXid(String domain){
 		return XidServiceHolder.get().getXid(this, domain);
 	}
+
+	@Override
+	public boolean isVaccination() {
+		String atcCode = getAtcCode();
+		if (atcCode != null && atcCode.length() > 4) {
+			if (atcCode.toUpperCase().startsWith("J07") && !atcCode.toUpperCase().startsWith("J07AX")) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

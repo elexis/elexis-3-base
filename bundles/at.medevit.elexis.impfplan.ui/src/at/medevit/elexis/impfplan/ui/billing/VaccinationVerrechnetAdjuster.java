@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Component;
 
-import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.ui.dialogs.ApplicationInputDialog;
 import at.medevit.elexis.impfplan.ui.handlers.ApplyVaccinationHandler;
@@ -29,29 +28,24 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	@Override
-	public void adjust(IBilled billed){
+	public void adjust(IBilled billed) {
 		executor.submit(new Runnable() {
 			@Override
-			public void run(){
+			public void run() {
 				IBillable billable = billed.getBillable();
 				if (billable instanceof IArticle) {
-					String atc_code = ((IArticle) billable).getAtcCode();
-					if (atc_code != null && atc_code.length() > 4) {
-						if (atc_code.toUpperCase()
-							.startsWith(DiseaseDefinitionModel.VACCINATION_ATC_GROUP_TRAILER)) {
-							IEncounter encounter = billed.getEncounter();
-							if (encounter != null) {
-								ICoverage coverage = encounter.getCoverage();
-								if (coverage != null) {
-									IPatient patient = coverage.getPatient();
-									if (patient != null) {
-										performVaccination(patient.getId(),
-											(IArticle) billable);
-									}
+					if (((IArticle) billable).isVaccination()) {
+						IEncounter encounter = billed.getEncounter();
+						if (encounter != null) {
+							ICoverage coverage = encounter.getCoverage();
+							if (coverage != null) {
+								IPatient patient = coverage.getPatient();
+								if (patient != null) {
+									performVaccination(patient.getId(), (IArticle) billable);
 								}
 							}
-							billed.setExtInfo(Verrechnet.VATSCALE, Double.toString(0.0));
 						}
+						billed.setExtInfo(Verrechnet.VATSCALE, Double.toString(0.0));
 					}
 				}
 			}

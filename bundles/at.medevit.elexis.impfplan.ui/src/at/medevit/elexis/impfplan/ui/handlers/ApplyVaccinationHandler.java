@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
-import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.ui.billing.AddVaccinationToKons;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IArticle;
@@ -94,33 +93,25 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 	 *
 	 */
 	private final class DropReceiver implements GenericObjectDropTarget.IReceiver {
-		public void dropped(List<Object> list, DropTargetEvent ev){
+		public void dropped(List<Object> list, DropTargetEvent ev) {
 			for (Object object : list) {
 				if (object instanceof IArticle) {
 					IArticle artikel = (IArticle) object;
 					// only accept vaccinations
-					String atcCode = artikel.getAtcCode();
-					if (atcCode != null && atcCode.length() > 4) {
-						if (atcCode.toUpperCase()
-							.startsWith(DiseaseDefinitionModel.VACCINATION_ATC_GROUP_TRAILER)) {
-							AddVaccinationToKons addVacToKons = new AddVaccinationToKons(
-								ContextServiceHolder.get().getActivePatient().orElse(null), artikel,
-								artikel.getGtin());
-							
-							actEncounter = addVacToKons.findOrCreateKons();
-							if (actEncounter == null) {
-								logger.warn(
-									"Could not insert vaccination as no consultation was found for this patient");
-								MessageDialog.openError(Display.getDefault().getActiveShell(),
-									"Nicht erstellbar",
+					if (artikel.isVaccination()) {
+						AddVaccinationToKons addVacToKons = new AddVaccinationToKons(
+								ContextServiceHolder.get().getActivePatient().orElse(null), artikel, artikel.getGtin());
+
+						actEncounter = addVacToKons.findOrCreateKons();
+						if (actEncounter == null) {
+							logger.warn("Could not insert vaccination as no consultation was found for this patient");
+							MessageDialog.openError(Display.getDefault().getActiveShell(), "Nicht erstellbar",
 									"Konnte Impfung nich eintragen, da keine Konsultation vorhanden ist.");
-							}
-							inProgress = true;
-						} else {
-							MessageDialog.openWarning(Display.getDefault().getActiveShell(),
-								"Nicht erstellbar",
-								"Der gewählte Artikel ist kein Impfstoff.");
 						}
+						inProgress = true;
+					} else {
+						MessageDialog.openWarning(Display.getDefault().getActiveShell(), "Nicht erstellbar",
+								"Der gewählte Artikel ist kein Impfstoff.");
 					}
 				}
 			}

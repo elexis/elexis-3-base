@@ -21,10 +21,10 @@ public interface BlueMedicationService {
 	 * Download the results of upload and user interaction on the browser, from the bluemedication
 	 * service.
 	 * 
-	 * @param id
+	 * @param uploadResult
 	 * @return
 	 */
-	public Result<String> downloadEMediplan(String id);
+	public Result<String> downloadEMediplan(UploadResult uploadResult);
 	
 	/**
 	 * Add a pending {@link UploadResult} to the map of pending results. One object can only have

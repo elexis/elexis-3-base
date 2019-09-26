@@ -15,6 +15,8 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IContact;
@@ -106,25 +108,33 @@ public class Medicament {
 	}
 	
 	private static int getIdType(IArticle article){
-		String gtin = article.getGtin();
-		if (gtin != null && !gtin.isEmpty()) {
-			return 2;
-		}
-		String code = article.getCode();
-		if (code != null && !code.isEmpty()) {
-			return 3;
+		if (article != null) {
+			String gtin = article.getGtin();
+			if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
+				return 2;
+			}
+			String pharma = null;
+			if (article instanceof IArtikelstammItem) {
+				pharma = ((IArtikelstammItem) article).getPHAR();
+			}
+			if (StringUtils.isNotBlank(pharma)) {
+				return 3;
+			}
 		}
 		return 1;
 	}
 	
 	private static String getId(IArticle article){
 		String gtin = article.getGtin();
-		if (gtin != null && !gtin.isEmpty()) {
+		if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
 			return gtin;
 		}
-		String code = article.getCode();
-		if (code != null && !code.isEmpty()) {
-			return code;
+		String pharma = null;
+		if (article instanceof IArtikelstammItem) {
+			pharma = ((IArtikelstammItem) article).getPHAR();
+		}
+		if (StringUtils.isNotBlank(pharma)) {
+			return pharma;
 		}
 		if (getIdType(article) == 1) {
 			return article.getText();

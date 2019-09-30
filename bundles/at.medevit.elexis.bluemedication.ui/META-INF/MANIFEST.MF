@@ -14,5 +14,6 @@ Require-Bundle: at.medevit.elexis.bluemedication.core;bundle-version="1.0.0",
  org.eclipse.core.expressions,
  ch.elexis.core.data;bundle-version="3.7.0",
  com.google.code.gson;bundle-version="2.8.0"
-Import-Package: ch.elexis.omnivore.data
+Import-Package: ch.elexis.omnivore.data,
+ org.apache.commons.lang3;version="3.1.0"
 Bundle-ActivationPolicy: lazy

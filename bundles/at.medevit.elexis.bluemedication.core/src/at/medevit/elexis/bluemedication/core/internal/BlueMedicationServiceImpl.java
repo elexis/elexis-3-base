@@ -127,22 +127,32 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 						}
 					}
 				}
-				ApiResponse<io.swagger.client.model.UploadResult> response =
+				ApiResponse<?> response =
 					apiInstance.dispatchPostWithHttpInfo(internalData, externalData,
 						patientFirstName, patientLastName, patientSex, patientBirthdate,
 						"", "", "", "", "");
 				if (response.getStatusCode() >= 300) {
-					return new Result<UploadResult>(SEVERITY.ERROR,
-						0, "Response status code was [" + response.getStatusCode() + "]", null,
-						false);
+					if (response.getStatusCode() == 400 || response.getStatusCode() == 422) {
+						// error result code should be evaluated
+						@SuppressWarnings("unchecked")
+						io.swagger.client.model.ErrorResult data =
+							((ApiResponse<io.swagger.client.model.ErrorResult>) response).getData();
+						return new Result<UploadResult>(SEVERITY.ERROR, 0,
+							"Error result code [" + data.getCode() + "]", null, false);
+					}
+					return new Result<UploadResult>(SEVERITY.ERROR, 0,
+						"Response status code was [" + response.getStatusCode() + "]", null, false);
 				}
 				if (response.getData() == null) {
 					return new Result<UploadResult>(SEVERITY.ERROR,
 						0, "Response has no data", null, false);
 				}
-				return new Result<UploadResult>(new UploadResult(
-					appendPath(getBasePath(), response.getData().getUrl() + "&mode=embed"),
-					response.getData().getId(), uploadedMediplan));
+				// successful upload
+				@SuppressWarnings("unchecked")
+				io.swagger.client.model.UploadResult data =
+					((ApiResponse<io.swagger.client.model.UploadResult>) response).getData();
+				return new Result<UploadResult>(new UploadResult(appendPath(getBasePath(),
+					data.getUrl() + "&mode=embed"), data.getId(), uploadedMediplan));
 			} catch (ApiException e) {
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
 				return new Result<UploadResult>(SEVERITY.ERROR, 0,

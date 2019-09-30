@@ -13,6 +13,7 @@ package at.medevit.elexis.emediplan.core.model.chmed16a;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.TimeTool;
 
@@ -39,6 +40,9 @@ public class Posology {
 		if (floats != null && !floats.isEmpty()) {
 			posology.TT = TakingTime.fromFloats(floats, prescription.isReserveMedication());
 			posology.D = floats;
+		}
+		if (prescription.getEntryType() == EntryType.RESERVE_MEDICATION) {
+			posology.InRes = 1;
 		}
 		ret.add(posology);
 		return ret;

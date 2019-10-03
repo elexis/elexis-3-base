@@ -19,6 +19,7 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 import org.threeten.bp.LocalDate;
 
+import com.google.gson.Gson;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
 import at.medevit.elexis.bluemedication.core.BlueMedicationService;
@@ -128,23 +129,39 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 						}
 					}
 				}
-				ApiResponse<io.swagger.client.model.UploadResult> response =
+				ApiResponse<?> response =
 					apiInstance.dispatchPostWithHttpInfo(internalData, externalData,
 						patientFirstName, patientLastName, patientSex, patientBirthdate,
 						"", "", "", "", "");
 				if (response.getStatusCode() >= 300) {
-					return new Result<UploadResult>(SEVERITY.ERROR,
-						0, "Response status code was [" + response.getStatusCode() + "]", null,
-						false);
+					return new Result<UploadResult>(SEVERITY.ERROR, 0,
+						"Response status code was [" + response.getStatusCode() + "]", null, false);
 				}
 				if (response.getData() == null) {
 					return new Result<UploadResult>(SEVERITY.ERROR,
 						0, "Response has no data", null, false);
 				}
-				return new Result<UploadResult>(new UploadResult(
-					appendPath(getBasePath(), response.getData().getUrl() + "&mode=embed"),
-					response.getData().getId(), uploadedMediplan));
+				// successful upload
+				@SuppressWarnings("unchecked")
+				io.swagger.client.model.UploadResult data =
+					((ApiResponse<io.swagger.client.model.UploadResult>) response).getData();
+				return new Result<UploadResult>(new UploadResult(appendPath(getBasePath(),
+					data.getUrl() + "&mode=embed"), data.getId(), uploadedMediplan));
 			} catch (ApiException e) {
+				if (e.getCode() == 400 || e.getCode() == 422) {
+					// error result code should be evaluated
+					try {
+						Gson gson = new Gson();
+						io.swagger.client.model.ErrorResult data = gson.fromJson(
+							e.getResponseBody(), io.swagger.client.model.ErrorResult.class);
+						return new Result<UploadResult>(SEVERITY.ERROR, 0,
+							"Error result code [" + data.getCode() + "]", null, false);
+					} catch (Exception je) {
+						LoggerFactory.getLogger(getClass())
+							.warn("Could not parse code 400 exception content ["
+								+ e.getResponseBody() + "]");
+					}
+				}
 				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
 				return new Result<UploadResult>(SEVERITY.ERROR, 0,
 					e.getMessage(), null, false);

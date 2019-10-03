@@ -1,7 +1,9 @@
 package at.medevit.elexis.bluemedication.ui.handler;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -55,10 +57,40 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 											.addPendingUploadResult(docHandle, result.get());
 									});
 								} else {
+									List<Result<UploadResult>.msg> messages = result.getMessages();
+									if (messages != null && !messages.isEmpty()) {
+										String text = messages.get(0).getText();
+										if (StringUtils.isNotBlank(text)
+											&& text.startsWith("Error result code [")) {
+											String resultCode = text.substring(text.indexOf('['),
+												text.indexOf(']'));
+											if (StringUtils.isNotBlank(resultCode)) {
+												if ("A6".equals(resultCode)) {
+													Display.getDefault().syncExec(() -> {
+														MessageDialog.openError(
+															Display.getDefault().getActiveShell(),
+															"BlueMedication",
+															"Der Medikationsabgleich kann in BlueMedication nicht durchgeführt werden.\n"
+																+ "Bitte melden Sie den Fehler A6 an help.bluemedication@bluecare.ch");
+													});
+												} else {
+													Display.getDefault().syncExec(() -> {
+														MessageDialog.openError(
+															Display.getDefault().getActiveShell(),
+															"BlueMedication",
+															"Beim Aufruf von BlueMedication ist ein technischer Fehler aufgetreten\n"
+																+ "Bitte melden Sie den Fehler "
+																+ resultCode
+																+ " an help.bluemedication@bluecare.ch");
+													});
+												}
+											}
+										}
+									}
 									Display.getDefault().syncExec(() -> {
 										MessageDialog.openError(
 											Display.getDefault().getActiveShell(), "BlueMedication",
-											"Beim hochladen der Datei ist ein Fehler aufgetreten.\n\nBitte HIN client Konfiguration prüfen.");
+											"Beim Hochladen der Datei ist ein Fehler aufgetreten.\n\nBitte HIN client Konfiguration prüfen.");
 									});
 								}
 							}

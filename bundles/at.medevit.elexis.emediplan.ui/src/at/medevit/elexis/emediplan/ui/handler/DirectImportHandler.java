@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
+import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
@@ -101,6 +102,13 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 	
 	private IPrescription createPrescription(Medicament medicament, IPatient patient){
 		medicament.entryType = EntryType.FIXED_MEDICATION;
+		if (medicament.Pos != null && !medicament.Pos.isEmpty()) {
+			for (Posology pos : medicament.Pos) {
+				if (pos.InRes == 1) {
+					medicament.entryType = EntryType.RESERVE_MEDICATION;
+				}
+			}
+		}
 		
 		IPrescription prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
 			medicament.artikelstammItem, patient, medicament.dosis).build();

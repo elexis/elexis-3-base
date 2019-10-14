@@ -49,10 +49,7 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 	}
 	
 	@Override
-	public void doubleClicked(OutboxElement element){
-		
-
-	}
+	public void doubleClicked(OutboxElement element){}
 	
 	class DefaultLabelProvider extends LabelProvider {
 		@Override

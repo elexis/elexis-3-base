@@ -5,13 +5,9 @@ import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -31,7 +27,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 
 import at.medevit.elexis.outbox.model.IOutboxElementService;
-import at.medevit.elexis.outbox.model.IOutboxUpdateListener;
 import at.medevit.elexis.outbox.model.OutboxElement;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
 import at.medevit.elexis.outbox.ui.command.AutoActivePatientHandler;
@@ -81,23 +76,20 @@ public class OutboxView extends ViewPart {
 		filterText.setMessage("Filter");
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		filterText.setLayoutData(data);
-		filterText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e){
-				if (filterText.getText().length() > 1) {
-					filter.setSearchText(filterText.getText());
-					viewer.refresh();
-				} else {
-					filter.setSearchText("");
-					viewer.refresh();
-				}
+		filterText.addModifyListener(e -> {
+			if (filterText.getText().length() > 1) {
+				filter.setSearchText(filterText.getText());
+				viewer.refresh();
+			} else {
+				filter.setSearchText("");
+				viewer.refresh();
 			}
 		});
 		
 		ToolBarManager menuManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		menuManager.createControl(filterComposite);
 		
-		viewer =
-			new TreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		viewer = new TreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd);
 		
@@ -110,35 +102,28 @@ public class OutboxView extends ViewPart {
 		
 		viewer.setLabelProvider(new OutboxElementLabelProvider());
 		
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event){
-				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
-				if (!selection.isEmpty()) {
-					Object selectedObj = selection.getFirstElement();
-					if (selectedObj instanceof OutboxElement) {
-						OutboxElementUiExtension extension = new OutboxElementUiExtension();
-						extension.fireDoubleClicked((OutboxElement) selectedObj);
-					}
+		viewer.addDoubleClickListener(event -> {
+			StructuredSelection selection = (StructuredSelection) viewer.getSelection();
+			if (!selection.isEmpty()) {
+				Object selectedObj = selection.getFirstElement();
+				if (selectedObj instanceof OutboxElement) {
+					OutboxElementUiExtension extension = new OutboxElementUiExtension();
+					extension.fireDoubleClicked((OutboxElement) selectedObj);
 				}
 			}
 		});
 		
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event){
-				ISelection selection = event.getSelection();
-				if (selection instanceof StructuredSelection && !selection.isEmpty()) {
-					if (setAutoSelectPatient) {
-						Object selectedElement =
-							((StructuredSelection) selection).getFirstElement();
-						if (selectedElement instanceof OutboxElement) {
-							ElexisEventDispatcher
-								.fireSelectionEvent(((OutboxElement) selectedElement).getPatient());
-						} else if (selectedElement instanceof PatientOutboxElements) {
-							ElexisEventDispatcher.fireSelectionEvent(
-								((PatientOutboxElements) selectedElement).getPatient());
-						}
+		viewer.addSelectionChangedListener(event -> {
+			ISelection selection = event.getSelection();
+			if (selection instanceof StructuredSelection && !selection.isEmpty()) {
+				if (setAutoSelectPatient) {
+					Object selectedElement = ((StructuredSelection) selection).getFirstElement();
+					if (selectedElement instanceof OutboxElement) {
+						ElexisEventDispatcher
+							.fireSelectionEvent(((OutboxElement) selectedElement).getPatient());
+					} else if (selectedElement instanceof PatientOutboxElements) {
+						ElexisEventDispatcher.fireSelectionEvent(
+							((PatientOutboxElements) selectedElement).getPatient());
 					}
 				}
 			}
@@ -146,15 +131,13 @@ public class OutboxView extends ViewPart {
 		
 		addFilterActions(menuManager);
 		
-		OutboxServiceComponent.getService().addUpdateListener(new IOutboxUpdateListener() {
-			public void update(final OutboxElement element){
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run(){
-						contentProvider.refreshElement(element);
-						viewer.refresh();
-					}
-				});
-			}
+		OutboxServiceComponent.getService().addUpdateListener(element -> {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run(){
+					contentProvider.refreshElement(element);
+					viewer.refresh();
+				}
+			});
 		});
 		
 		reload();
@@ -173,8 +156,7 @@ public class OutboxView extends ViewPart {
 	
 	public void setAutoSelectPatientState(boolean value){
 		setAutoSelectPatient = value;
-		ICommandService service =
-			(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service.getCommand(AutoActivePatientHandler.CMD_ID);
 		command.getState(AutoActivePatientHandler.STATE_ID).setValue(value);
 		CoreHub.userCfg.set(Preferences.OUTBOX_PATIENT_AUTOSELECT, value);

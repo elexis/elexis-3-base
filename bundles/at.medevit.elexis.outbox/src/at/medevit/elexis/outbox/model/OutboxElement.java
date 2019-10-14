@@ -94,9 +94,7 @@ public class OutboxElement extends PersistentObject {
 		set(FLD_STATE, Integer.toString(State.NEW.ordinal()));
 	}
 	
-	public OutboxElement(){
-		// TODO Auto-generated constructor stub
-	}
+	public OutboxElement(){}
 	
 	public static OutboxElement load(final String id){
 		return new OutboxElement(id);

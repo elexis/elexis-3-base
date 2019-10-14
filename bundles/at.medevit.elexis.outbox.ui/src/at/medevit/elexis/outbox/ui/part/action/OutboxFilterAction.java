@@ -11,6 +11,7 @@
 package at.medevit.elexis.outbox.ui.part.action;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -34,7 +35,7 @@ public class OutboxFilterAction extends Action {
 	
 	@Override
 	public int getStyle(){
-		return Action.AS_CHECK_BOX;
+		return IAction.AS_CHECK_BOX;
 	}
 	
 	@Override

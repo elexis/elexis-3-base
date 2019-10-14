@@ -50,7 +50,7 @@ public class OutboxElementUiExtension {
 	}
 	
 	private List<IOutboxElementUiProvider> getExtensions(){
-		List<IOutboxElementUiProvider> ret = new ArrayList<IOutboxElementUiProvider>();
+		List<IOutboxElementUiProvider> ret = new ArrayList<>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.outbox.ui.elementsui");
 		if (exp != null) {
@@ -62,7 +62,7 @@ public class OutboxElementUiExtension {
 						try {
 							ret.add((IOutboxElementUiProvider) el.createExecutableExtension("class"));
 						} catch (CoreException e) {
-							logger.error("Error creating IOutboxElementsProvider " + e);
+							logger.error("Error creating IOutboxElementsProvider {}", e);
 						}
 					}
 				}

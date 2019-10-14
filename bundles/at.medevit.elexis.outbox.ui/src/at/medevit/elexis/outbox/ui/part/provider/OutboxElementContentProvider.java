@@ -62,7 +62,7 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 				}
 				patientOutbox.addElement(outboxElement);
 			}
-			items = new ArrayList<PatientOutboxElements>(map.values());
+			items = new ArrayList<>(map.values());
 		}
 	}
 	

@@ -21,21 +21,14 @@ import ch.elexis.core.ui.UiDesk;
 
 public class MessageDelegate implements IWorkbenchWindowActionDelegate {
 	
-	public void dispose(){
-		// TODO Auto-generated method stub
-	}
+	public void dispose(){}
 	
-	public void init(final IWorkbenchWindow window){
-		// TODO Auto-generated method stub
-	}
+	public void init(final IWorkbenchWindow window){}
 	
 	public void run(final IAction action){
 		new MsgDetailDialog(UiDesk.getTopShell(), null).open();
-		
 	}
 	
-	public void selectionChanged(final IAction action, final ISelection selection){
-		// TODO Auto-generated method stub
-	}
+	public void selectionChanged(final IAction action, final ISelection selection){}
 	
 }

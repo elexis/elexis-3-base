@@ -23,8 +23,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -129,15 +127,11 @@ public class MsgDetailDialog extends Dialog {
 		
 		txtMessage = SWTHelper.createText(ret, 1, SWT.BORDER);
 		txtMessage.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
-		txtMessage.addModifyListener(new ModifyListener() {
-			
-			@Override
-			public void modifyText(ModifyEvent e){
-				if (txtMessage.getText() != null && txtMessage.getText().length() > 0) {
-					getShell().setDefaultButton(bAnswer);
-				} else {
-					getShell().setDefaultButton(bOK);
-				}
+		txtMessage.addModifyListener(e -> {
+			if (txtMessage.getText() != null && txtMessage.getText().length() > 0) {
+				getShell().setDefaultButton(bAnswer);
+			} else {
+				getShell().setDefaultButton(bOK);
 			}
 		});
 		

@@ -102,8 +102,7 @@ public class TestData {
 					ch.elexis.core.constants.Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 			});
 			
-			Fall _fall =
-				createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
+			Fall _fall = createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
 			_fall.getPatient().set(Patient.FLD_PHONE1, "555-555 55 55");
 			// load and refresh jpa cache after using PO set
 			CoreModelServiceHolder.get().load(_fall.getPatient().getId(), IPatient.class);
@@ -114,7 +113,8 @@ public class TestData {
 			for (int j = 0; j < faelle.size(); j++) {
 				Konsultation kons = createKons(faelle.get(j), mandanten.get(0));
 				konsultationen.add(kons);
-				IEncounter encounter = CoreModelServiceHolder.get().load(kons.getId(), IEncounter.class).get();
+				IEncounter encounter =
+					CoreModelServiceHolder.get().load(kons.getId(), IEncounter.class).get();
 				encounter.addDiagnosis(getDiagnosis());
 				CoreModelServiceHolder.get().save(encounter);
 				assertEquals(1, encounter.getDiagnoses().size());
@@ -282,13 +282,6 @@ public class TestData {
 			mandant.setExtInfoStoredObjectByKey("Kanton", "AG");
 			
 			mandant.addXid(DOMAIN_EAN, "2000000000002", true);
-			// make sure somains are registered
-			assertTrue(CoreModelServiceHolder.get() != null);
-			Optional<IMandator> mandator = CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class);
-			assertTrue(mandator.isPresent());
-			TarmedRequirements
-				.getEAN(mandator.get());
-			
 			mandant.addXid(TarmedRequirements.DOMAIN_KSK, "C000002", true);
 			
 			mandant.setExtInfoStoredObjectByKey(ta.ESR5OR9, "esr9");
@@ -305,8 +298,18 @@ public class TestData {
 			
 			CoreHub.setMandant(mandant);
 			
-			mandator = CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class);
+			// make sure somains are registered
+			assertTrue(CoreModelServiceHolder.get() != null);
+			Optional<IMandator> mandator =
+				CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class);
+			assertTrue(mandator.isPresent());
+			TarmedRequirements.getEAN(mandator.get());
+			
 			assertEquals("2000000000002", TarmedRequirements.getEAN(mandator.get()));
+			
+			Object extInfoStoredObjectByKey = mandant.getExtInfoStoredObjectByKey(ta.ESR5OR9);
+			Object extInfo = mandator.get().getExtInfo(ta.ESR5OR9);
+			assertEquals(extInfoStoredObjectByKey, extInfo);
 		}
 		
 		/**
@@ -315,7 +318,8 @@ public class TestData {
 		 * @param lastname
 		 * @param birthdate
 		 * @param gender
-		 * @param addKostentraeger set the cost bearer to the created patient
+		 * @param addKostentraeger
+		 *            set the cost bearer to the created patient
 		 * @return
 		 */
 		public Fall createPatientWithFall(String firstname, String lastname, String birthdate,

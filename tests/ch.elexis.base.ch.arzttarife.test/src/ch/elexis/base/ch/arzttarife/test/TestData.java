@@ -3,6 +3,7 @@ package ch.elexis.base.ch.arzttarife.test;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -165,6 +166,7 @@ public class TestData {
 		private IDiagnosis getDiagnosis(){
 			ICodeElementService codeElementService =
 				OsgiServiceUtil.getService(ICodeElementService.class).get();
+			assertNotNull(codeElementService);
 			ICodeElement loadFromString =
 				codeElementService.loadFromString("TI-Code", "A1", null).get();
 			OsgiServiceUtil.ungetService(codeElementService);
@@ -218,6 +220,7 @@ public class TestData {
 		private void createLeistungen(){
 			ICodeElementService codeElementService =
 				OsgiServiceUtil.getService(ICodeElementService.class).get();
+			assertNotNull(codeElementService);
 			ICodeElement loadedCode =
 				codeElementService.loadFromString("Tarmed", "00.0010", null).get();
 			assertTrue(loadedCode instanceof ITarmedLeistung);

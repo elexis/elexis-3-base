@@ -108,6 +108,7 @@ public class XMLExporterTest {
 	@Test
 	public void doExportVatTest() throws IOException{
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario);
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
 		XMLExporter exporter = new XMLExporter();

@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.complementary.model;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
@@ -161,5 +162,30 @@ public class ComplementaryLeistung
 	@Override
 	public IXid getXid(String domain){
 		return XidServiceHolder.get().getXid(this, domain);
+	}
+	
+	@Override
+	public void setId(String id){
+		getEntityMarkDirty().setId(id);
+	}
+	
+	@Override
+	public LocalDate getValidFrom(){
+		return getEntity().getValidFrom();
+	}
+	
+	@Override
+	public LocalDate getValidTo(){
+		return getEntity().getValidTo();
+	}
+	
+	@Override
+	public void setValidFrom(LocalDate value){
+		getEntityMarkDirty().setValidFrom(value);
+	}
+	
+	@Override
+	public void setValidTo(LocalDate value){
+		getEntityMarkDirty().setValidTo(value);
 	}
 }

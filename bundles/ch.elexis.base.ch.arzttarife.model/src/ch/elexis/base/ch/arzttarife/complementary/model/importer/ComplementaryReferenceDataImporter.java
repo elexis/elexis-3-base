@@ -56,7 +56,8 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 			monitor.beginTask("Import Complementary", IProgressMonitor.UNKNOWN);
 			
 			ArzttarifeModelServiceHolder.get()
-				.executeNativeUpdate("DELETE FROM CH_ELEXIS_ARZTTARIFE_CH_COMPLEMENTARY");
+				.executeNativeUpdate(
+					"DELETE FROM CH_ELEXIS_ARZTTARIFE_CH_COMPLEMENTARY WHERE ID NOT LIKE '%sub%'");
 			
 			updateIndexForLang();
 			

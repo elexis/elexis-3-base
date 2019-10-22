@@ -3,7 +3,10 @@
  */
 package ch.elexis.base.ch.arzttarife.complementary;
 
+import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.WithAssignableId;
+import java.time.LocalDate;
 
 
 /**
@@ -19,13 +22,15 @@ import ch.elexis.core.model.IBillable;
  *   <li>{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getChapter <em>Chapter</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getFixedValue <em>Fixed Value</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#isFixedValueSet <em>Fixed Value Set</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getValidFrom <em>Valid From</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getValidTo <em>Valid To</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage#getIComplementaryLeistung()
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface IComplementaryLeistung extends IBillable {
+public interface IComplementaryLeistung extends IBillable, Deleteable, WithAssignableId {
 
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
@@ -119,4 +124,48 @@ public interface IComplementaryLeistung extends IBillable {
 	 * @generated
 	 */
 	boolean isFixedValueSet();
+
+	/**
+	 * Returns the value of the '<em><b>Valid From</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Valid From</em>' attribute.
+	 * @see #setValidFrom(LocalDate)
+	 * @see ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage#getIComplementaryLeistung_ValidFrom()
+	 * @model dataType="ch.elexis.core.types.LocalDate"
+	 * @generated
+	 */
+	LocalDate getValidFrom();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getValidFrom <em>Valid From</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Valid From</em>' attribute.
+	 * @see #getValidFrom()
+	 * @generated
+	 */
+	void setValidFrom(LocalDate value);
+
+	/**
+	 * Returns the value of the '<em><b>Valid To</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Valid To</em>' attribute.
+	 * @see #setValidTo(LocalDate)
+	 * @see ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage#getIComplementaryLeistung_ValidTo()
+	 * @model dataType="ch.elexis.core.types.LocalDate"
+	 * @generated
+	 */
+	LocalDate getValidTo();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getValidTo <em>Valid To</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Valid To</em>' attribute.
+	 * @see #getValidTo()
+	 * @generated
+	 */
+	void setValidTo(LocalDate value);
 } // IComplementaryLeistung

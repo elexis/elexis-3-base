@@ -5,9 +5,11 @@ package ch.elexis.base.ch.arzttarife.complementary.util;
 
 import ch.elexis.base.ch.arzttarife.complementary.*;
 
+import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.model.WithAssignableId;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 
@@ -88,6 +90,14 @@ public class ComplementaryAdapterFactory extends AdapterFactoryImpl {
 				return createIBillableAdapter();
 			}
 			@Override
+			public Adapter caseDeleteable(Deleteable object) {
+				return createDeleteableAdapter();
+			}
+			@Override
+			public Adapter caseWithAssignableId(WithAssignableId object) {
+				return createWithAssignableIdAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -160,6 +170,34 @@ public class ComplementaryAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createIBillableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ch.elexis.core.model.Deleteable <em>Deleteable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see ch.elexis.core.model.Deleteable
+	 * @generated
+	 */
+	public Adapter createDeleteableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ch.elexis.core.model.WithAssignableId <em>With Assignable Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see ch.elexis.core.model.WithAssignableId
+	 * @generated
+	 */
+	public Adapter createWithAssignableIdAdapter() {
 		return null;
 	}
 

@@ -176,6 +176,26 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 	 * @generated
 	 */
 	@Override
+	public EAttribute getIComplementaryLeistung_ValidFrom() {
+		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIComplementaryLeistung_ValidTo() {
+		return (EAttribute)iComplementaryLeistungEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public ComplementaryFactory getComplementaryFactory() {
 		return (ComplementaryFactory)getEFactoryInstance();
 	}
@@ -204,6 +224,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__CHAPTER);
 		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE);
 		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE_SET);
+		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__VALID_FROM);
+		createEAttribute(iComplementaryLeistungEClass, ICOMPLEMENTARY_LEISTUNG__VALID_TO);
 	}
 
 	/**
@@ -231,6 +253,7 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 
 		// Obtain other dependent packages
 		ModelPackage theModelPackage = (ModelPackage)EPackage.Registry.INSTANCE.getEPackage(ModelPackage.eNS_URI);
+		TypesPackage theTypesPackage = (TypesPackage)EPackage.Registry.INSTANCE.getEPackage(TypesPackage.eNS_URI);
 
 		// Create type parameters
 
@@ -238,6 +261,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 
 		// Add supertypes to classes
 		iComplementaryLeistungEClass.getESuperTypes().add(theModelPackage.getIBillable());
+		iComplementaryLeistungEClass.getESuperTypes().add(theModelPackage.getDeleteable());
+		iComplementaryLeistungEClass.getESuperTypes().add(theModelPackage.getWithAssignableId());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(iComplementaryLeistungEClass, IComplementaryLeistung.class, "IComplementaryLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -245,6 +270,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		initEAttribute(getIComplementaryLeistung_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIComplementaryLeistung_FixedValue(), ecorePackage.getEInt(), "fixedValue", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIComplementaryLeistung_FixedValueSet(), ecorePackage.getEBoolean(), "fixedValueSet", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIComplementaryLeistung_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIComplementaryLeistung_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, IComplementaryLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -104,6 +104,8 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/chapter"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/fixedValue"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/fixedValueSet"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/validFrom"/>
+        <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//complementary/IComplementaryLeistung/validTo"/>
       </genClasses>
     </nestedGenPackages>
     <nestedGenPackages prefix="Rfe" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//rfe">

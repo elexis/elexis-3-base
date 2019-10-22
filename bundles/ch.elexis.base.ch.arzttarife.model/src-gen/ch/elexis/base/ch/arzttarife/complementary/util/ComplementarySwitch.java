@@ -5,9 +5,11 @@ package ch.elexis.base.ch.arzttarife.complementary.util;
 
 import ch.elexis.base.ch.arzttarife.complementary.*;
 
+import ch.elexis.core.model.Deleteable;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.model.WithAssignableId;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -74,6 +76,8 @@ public class ComplementarySwitch<T> extends Switch<T> {
 				IComplementaryLeistung iComplementaryLeistung = (IComplementaryLeistung)theEObject;
 				T result = caseIComplementaryLeistung(iComplementaryLeistung);
 				if (result == null) result = caseIBillable(iComplementaryLeistung);
+				if (result == null) result = caseDeleteable(iComplementaryLeistung);
+				if (result == null) result = caseWithAssignableId(iComplementaryLeistung);
 				if (result == null) result = caseICodeElement(iComplementaryLeistung);
 				if (result == null) result = caseIdentifiable(iComplementaryLeistung);
 				if (result == null) result = defaultCase(theEObject);
@@ -140,6 +144,36 @@ public class ComplementarySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseIBillable(IBillable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Deleteable</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Deleteable</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseDeleteable(Deleteable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>With Assignable Id</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>With Assignable Id</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseWithAssignableId(WithAssignableId object) {
 		return null;
 	}
 

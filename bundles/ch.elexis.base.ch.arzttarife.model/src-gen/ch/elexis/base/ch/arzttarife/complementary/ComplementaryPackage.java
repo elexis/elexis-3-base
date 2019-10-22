@@ -85,13 +85,22 @@ public interface ComplementaryPackage extends EPackage {
 	int ICOMPLEMENTARY_LEISTUNG__TEXT = ModelPackage.IBILLABLE__TEXT;
 
 	/**
+	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICOMPLEMENTARY_LEISTUNG__DELETED = ModelPackage.IBILLABLE_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ICOMPLEMENTARY_LEISTUNG__DESCRIPTION = ModelPackage.IBILLABLE_FEATURE_COUNT + 0;
+	int ICOMPLEMENTARY_LEISTUNG__DESCRIPTION = ModelPackage.IBILLABLE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Chapter</b></em>' attribute.
@@ -100,7 +109,7 @@ public interface ComplementaryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICOMPLEMENTARY_LEISTUNG__CHAPTER = ModelPackage.IBILLABLE_FEATURE_COUNT + 1;
+	int ICOMPLEMENTARY_LEISTUNG__CHAPTER = ModelPackage.IBILLABLE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Fixed Value</b></em>' attribute.
@@ -109,7 +118,7 @@ public interface ComplementaryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE = ModelPackage.IBILLABLE_FEATURE_COUNT + 2;
+	int ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE = ModelPackage.IBILLABLE_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Fixed Value Set</b></em>' attribute.
@@ -118,7 +127,25 @@ public interface ComplementaryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE_SET = ModelPackage.IBILLABLE_FEATURE_COUNT + 3;
+	int ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE_SET = ModelPackage.IBILLABLE_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Valid From</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICOMPLEMENTARY_LEISTUNG__VALID_FROM = ModelPackage.IBILLABLE_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Valid To</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICOMPLEMENTARY_LEISTUNG__VALID_TO = ModelPackage.IBILLABLE_FEATURE_COUNT + 6;
 
 	/**
 	 * The number of structural features of the '<em>IComplementary Leistung</em>' class.
@@ -127,7 +154,7 @@ public interface ComplementaryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICOMPLEMENTARY_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 4;
+	int ICOMPLEMENTARY_LEISTUNG_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 7;
 
 
 	/**
@@ -183,6 +210,28 @@ public interface ComplementaryPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getIComplementaryLeistung_FixedValueSet();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getValidFrom <em>Valid From</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid From</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getValidFrom()
+	 * @see #getIComplementaryLeistung()
+	 * @generated
+	 */
+	EAttribute getIComplementaryLeistung_ValidFrom();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getValidTo <em>Valid To</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Valid To</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung#getValidTo()
+	 * @see #getIComplementaryLeistung()
+	 * @generated
+	 */
+	EAttribute getIComplementaryLeistung_ValidTo();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -243,6 +292,20 @@ public interface ComplementaryPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ICOMPLEMENTARY_LEISTUNG__FIXED_VALUE_SET = eINSTANCE.getIComplementaryLeistung_FixedValueSet();
+		/**
+		 * The meta object literal for the '<em><b>Valid From</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ICOMPLEMENTARY_LEISTUNG__VALID_FROM = eINSTANCE.getIComplementaryLeistung_ValidFrom();
+		/**
+		 * The meta object literal for the '<em><b>Valid To</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ICOMPLEMENTARY_LEISTUNG__VALID_TO = eINSTANCE.getIComplementaryLeistung_ValidTo();
 
 	}
 

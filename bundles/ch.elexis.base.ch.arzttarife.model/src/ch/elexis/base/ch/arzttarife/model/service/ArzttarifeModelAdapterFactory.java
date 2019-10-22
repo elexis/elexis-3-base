@@ -1,7 +1,5 @@
 package ch.elexis.base.ch.arzttarife.model.service;
 
-import java.util.Optional;
-
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
@@ -10,7 +8,6 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.jpa.entities.ComplementaryLeistung;
-import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
 import ch.elexis.core.jpa.entities.RFE;
 import ch.elexis.core.jpa.entities.TarmedExtension;
@@ -19,7 +16,6 @@ import ch.elexis.core.jpa.entities.TarmedKumulation;
 import ch.elexis.core.jpa.entities.TarmedLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractModelAdapterFactory;
 import ch.elexis.core.jpa.model.adapter.MappingEntry;
-import ch.elexis.core.model.Identifiable;
 
 public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 	
@@ -57,15 +53,4 @@ public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 		addMapping(new MappingEntry(IReasonForEncounter.class,
 			ch.elexis.base.ch.arzttarife.rfe.model.ReasonForEncounter.class, RFE.class));
 	}
-	
-	@SuppressWarnings("unchecked")
-	public <T> T getAdapter(EntityWithId entity, Class<T> clazz, boolean registerEntityChangeEvent){
-		if (entity != null) {
-			Optional<Identifiable> adapter =
-				getInstance().getModelAdapter(entity, clazz, true, registerEntityChangeEvent);
-			return (T) adapter.orElse(null);
-		}
-		return null;
-	}
-	
 }

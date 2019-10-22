@@ -140,12 +140,14 @@
   <eSubpackages name="complementary" nsURI="http://ch.elexis.base/model/arzttarife/complementary"
       nsPrefix="ch.elexis.arzttarife.ch.complementary.model">
     <eClassifiers xsi:type="ecore:EClass" name="IComplementaryLeistung" abstract="true"
-        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable ../ch.elexis.core/model/model.ecore#//Deleteable ../ch.elexis.core/model/model.ecore#//WithAssignableId">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedValueSet" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           changeable="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
     </eClassifiers>
   </eSubpackages>
   <eSubpackages name="rfe" nsURI="http://ch.elexis.base/model/arzttarife/rfe" nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">

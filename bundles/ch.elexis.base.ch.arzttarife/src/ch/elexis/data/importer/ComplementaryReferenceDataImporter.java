@@ -61,7 +61,7 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 				try {
 					statement =
 						PersistentObject.getDefaultConnection().getJdbcLink().getStatement();
-					statement.exec("DELETE FROM " + ComplementaryLeistung.TABLENAME);
+					statement.exec("DELETE FROM " + ComplementaryLeistung.TABLENAME + " WHERE ID NOT LIKE '%sub%'");
 				} finally {
 					if (statement != null) {
 						PersistentObject.getDefaultConnection().getJdbcLink()

@@ -50,6 +50,8 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 	private Text codeDescription;
 	private Text codeFixedValue;
 	
+	private ComplementarySubDetail subDetail;
+
 	public Composite createDisplay(Composite parent, IViewSite site){
 		form = toolkit.createScrolledForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
@@ -135,6 +137,11 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 		deco.setDescriptionText(
 			"Hier kann ein pauschal Preis angegeben werden. Dieser wird dann anstelle des Stundensatz als Preis verwendet.");
 		
+		subDetail = new ComplementarySubDetail(info, SWT.NONE);
+		twd = new TableWrapData(TableWrapData.FILL_GRAB);
+		subDetail.setLayoutData(twd);
+		subDetail.hide();
+
 		infoSection.setClient(info);
 		
 		return form.getBody();
@@ -147,6 +154,15 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 	public void display(Object obj){
 		if (obj instanceof ComplementaryLeistung) {
 			complementary = (ComplementaryLeistung) obj;
+			if (isSub(complementary)) {
+				complementary = getParent(complementary);
+			}
+			if (complementary.getCode().equals("1302")) {
+				subDetail.show(complementary);
+			} else {
+				subDetail.hide();
+			}
+
 			form.setText(complementary.getLabel());
 			
 			codeChapter.setText(complementary.get(ComplementaryLeistung.FLD_CHAPTER));
@@ -167,11 +183,22 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 			codeText.setText("");
 			codeDescription.setText("");
 			codeFixedValue.setText("");
+			subDetail.hide();
 		}
 		infoSection.layout();
 		form.reflow(true);
 	}
 	
+	private ComplementaryLeistung getParent(ComplementaryLeistung complementary) {
+		String start = complementary.getId().substring(0, complementary.getId().indexOf("sub"));
+		String end = complementary.getId().substring(complementary.getId().indexOf("-"));
+		return ComplementaryLeistung.load(start + end);
+	}
+
+	private boolean isSub(ComplementaryLeistung complementary) {
+		return complementary.getId().contains("sub");
+	}
+
 	public String getTitle(){
 		return "Komplementärmedizin";
 	}

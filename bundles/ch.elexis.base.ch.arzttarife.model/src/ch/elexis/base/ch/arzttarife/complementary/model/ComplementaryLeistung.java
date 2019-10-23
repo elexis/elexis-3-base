@@ -55,7 +55,7 @@ public class ComplementaryLeistung
 					int points = 0;
 					// configured hourly wage, or fixed value, in cents
 					if (billable.isFixedValueSet()) {
-						points = billable.getFixedValue() * 100;
+						points = billable.getFixedValue();
 					} else {
 						points = getHourlyWage() / 12;
 					}

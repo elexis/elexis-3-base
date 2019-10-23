@@ -136,7 +136,7 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 						return;
 					}
 					try {
-						int value = Integer.parseInt(text);
+						int value = (int) (Float.parseFloat(text) * 100);
 						complementary.setFixedValue(value);
 					} catch (NumberFormatException ex) {
 						// ignore and keep last valid value
@@ -183,7 +183,7 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 			codeText.setText(complementary.getText());
 			codeDescription.setText(complementary.getDescription());
 			if(complementary.isFixedValueSet()) {
-				codeFixedValue.setText(Integer.toString(complementary.getFixedValue()));
+				codeFixedValue.setText(Double.toString(complementary.getFixedValue() / 100.0));
 			} else {
 				codeFixedValue.setText("");
 			}

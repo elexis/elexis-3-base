@@ -107,8 +107,13 @@ public class ComplementarySubDetail extends Composite {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ComplementaryLeistung) {
-					return ((ComplementaryLeistung) element).getText() + " ("
-							+ ((ComplementaryLeistung) element).getFixedValue() + ")";
+					StringBuilder sb = new StringBuilder();
+					sb.append(((ComplementaryLeistung) element).getText());
+					if(((ComplementaryLeistung) element).isFixedValueSet()) {
+						sb.append(" ("
+								+ Double.toString(((ComplementaryLeistung) element).getFixedValue() / 100.0) + ")");
+					}
+					return sb.toString();
 				}
 				return super.getText(element);
 			}
@@ -198,11 +203,17 @@ public class ComplementarySubDetail extends Composite {
 
 		@Override
 		protected void okPressed() {
-			try {
-				valueInt = Integer.valueOf(value.getText());
-			} catch (NumberFormatException e) {
-				valueInt = -1;
+			valueInt = -1;
+			if (StringUtils.isNotBlank(text.getText())) {
+				try {
+					String valueString = value.getText();
+					valueString = valueString.replaceAll(",", ".");
+					valueInt = (int) (Float.parseFloat(valueString) * 100);
+				} catch (NumberFormatException e) {
+					// ignore use -1
+				}
 			}
+
 			if (StringUtils.isNotBlank(text.getText())) {
 				textString = text.getText();
 				super.okPressed();

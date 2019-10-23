@@ -11,6 +11,7 @@ import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 
 public class ComplementaryLeistung extends VerrechenbarAdapter {
 	public static final String FLD_CHAPTER = "chapter";
@@ -21,7 +22,7 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 	public static final String FLD_VALID_FROM = "validfrom";
 	public static final String FLD_VALID_TO = "validto";
 	
-	public static final String VERSION = "0.0.1";
+	public static final String VERSION = "0.0.2";
 	
 	public static final String TABLENAME = "CH_ELEXIS_ARZTTARIFE_CH_COMPLEMENTARY";
 	
@@ -56,6 +57,11 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 			version.create("VERSION");
 			version.set(FLD_CODE, VERSION);
 		}
+		VersionInfo vi = new VersionInfo(version.get(FLD_CODE));
+		if (vi.isOlder("0.0.2")) {
+			updateFixedValues();
+			version.set(FLD_CODE, "0.0.2");
+		}
 	}
 	
 	private static IOptifier OPTIFIER;
@@ -66,6 +72,19 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 	protected ComplementaryLeistung(){
 	}
 	
+	private static void updateFixedValues() {
+		Query<ComplementaryLeistung> query = new Query<ComplementaryLeistung>(ComplementaryLeistung.class);
+		query.clear(true);
+		query.add("id", Query.NOT_EQUAL, "VERSION");
+		List<ComplementaryLeistung> all = query.execute();
+		for (ComplementaryLeistung complementaryLeistung : all) {
+			if (complementaryLeistung.isFixedValueSet()) {
+				int value = complementaryLeistung.getFixedValue();
+				complementaryLeistung.setFixedValue(value * 100);
+			}
+		}
+	}
+
 	/**
 	 * For {@link ComplementaryLeistung#load(String)} only
 	 * 
@@ -99,7 +118,7 @@ public class ComplementaryLeistung extends VerrechenbarAdapter {
 	public int getTP(TimeTool date, IFall fall){
 		// configured hourly wage, or fixed value, in cents
 		if (isFixedValueSet()) {
-			return getFixedValue() * 100;
+			return getFixedValue();
 		} else {
 			return getHourlyWage() / 12;
 		}

@@ -98,6 +98,7 @@ public class TerminListeView extends ViewPart implements IActivationListener {
 					
 					@Override
 					public void lockAcquired(){
+						TerminDialog.setActResource(element.getBereich());
 						TerminDialog dlg = new TerminDialog(element);
 						dlg.open();
 					}

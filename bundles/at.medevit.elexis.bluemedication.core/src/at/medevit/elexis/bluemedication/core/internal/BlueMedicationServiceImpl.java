@@ -152,10 +152,12 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 					// error result code should be evaluated
 					try {
 						Gson gson = new Gson();
-						io.swagger.client.model.ErrorResult data = gson.fromJson(
-							e.getResponseBody(), io.swagger.client.model.ErrorResult.class);
-						return new Result<UploadResult>(SEVERITY.ERROR, 0,
-							"Error result code [" + data.getCode() + "]", null, false);
+						io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+								io.swagger.client.model.ErrorResult[].class);
+						if (mcArray != null && mcArray.length > 0) {
+							return new Result<UploadResult>(SEVERITY.ERROR, 0,
+									"Error result code [" + mcArray[0].getCode() + "]", null, false);
+						}
 					} catch (Exception je) {
 						LoggerFactory.getLogger(getClass())
 							.warn("Could not parse code 400 exception content ["

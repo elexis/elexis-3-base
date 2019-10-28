@@ -61,7 +61,8 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 										String text = messages.get(0).getText();
 										if (StringUtils.isNotBlank(text)
 											&& text.startsWith("Error result code [")) {
-											String resultCode = text.substring(text.indexOf('['),
+											String resultCode = text.substring(
+												text.indexOf('[') + 1,
 												text.indexOf(']'));
 											if (StringUtils.isNotBlank(resultCode)) {
 												if ("A6".equals(resultCode)) {
@@ -83,6 +84,7 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 																+ " an help.bluemedication@bluecare.ch");
 													});
 												}
+												return;
 											}
 										}
 									}

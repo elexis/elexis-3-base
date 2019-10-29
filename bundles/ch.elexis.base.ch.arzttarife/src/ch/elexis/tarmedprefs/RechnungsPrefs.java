@@ -16,6 +16,7 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -628,8 +629,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bUseTC.setSelection(actMandant.getInfoString(PreferenceConstants.USETC).equals("1")); //$NON-NLS-1$
 		//bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
 		//bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
-		cbTC.setText(TarmedRequirements.getTCName(
-			CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).orElse(null))); // actMandant.getInfoString(PreferenceConstants.TARMEDTC));
+
+		cbTC.setText(Optional.ofNullable(TarmedRequirements.getTCName(
+			CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).orElse(null))).orElse("")); // actMandant.getInfoString(PreferenceConstants.TARMEDTC));
 		
 		bBillsElec.setSelection(
 			CoreHub.getUserSetting(actMandant).get(PreferenceConstants.BILL_ELECTRONICALLY, false));

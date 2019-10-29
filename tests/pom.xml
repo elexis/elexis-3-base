@@ -38,7 +38,7 @@
       <module>ch.elexis.externe_dokumente.tests</module>
       <module>ch.elexis.fop.service.test</module>
       <module>ch.elexis.laborimport.viollier.v2_test</module>
-      <module>ch.elexis.icpc.fire.test</module>
+      <!-- <module>ch.elexis.icpc.fire.test</module> -->
       <module>ch.medshare.connect.abacusjunior.test</module>
       <module>ch.medshare.elexis_directories.test</module>
       <module>ch.pharmed.phmprescriber_test</module>

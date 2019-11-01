@@ -342,6 +342,11 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter
 			if (foundItem != null) {
 				foundItems.add(foundItem);
 			}
+			// save in batches
+			if (foundItems.size() == 100) {
+				EntityUtil.save(foundItems);
+				foundItems.clear();
+			}
 		}
 		EntityUtil.save(foundItems);
 		subMonitor.done();

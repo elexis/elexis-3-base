@@ -79,9 +79,10 @@ public class VersionUtil {
 				try {
 					return df.parse((String) value);
 				} catch (ParseException e) {
-					return null;
+					// ignore fall back return null
 				}
 			}
+			return null;
 		}
 		throw new IllegalArgumentException("No Verison entry");
 	}

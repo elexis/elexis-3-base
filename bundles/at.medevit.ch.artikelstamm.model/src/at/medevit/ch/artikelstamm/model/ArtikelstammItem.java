@@ -15,7 +15,6 @@ import at.medevit.ch.artikelstamm.model.service.CoreModelServiceHolder;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
@@ -40,14 +39,11 @@ public class ArtikelstammItem
 	private static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE = "PPUB_OVERRIDE_STORE";
 	private static final String EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE = "PKG_SIZE_OVERRIDE_STORE";
 	
-	private ExtInfoHandler extInfoHandler;
-	
 	private static IBillableOptifier<ArtikelstammItem> optifier;
 	private IBillableVerifier verifier;
 	
 	public ArtikelstammItem(ch.elexis.core.jpa.entities.ArtikelstammItem entity){
 		super(entity);
-		extInfoHandler = new ExtInfoHandler(this);
 		verifier = new DefaultVerifier();
 	}
 	

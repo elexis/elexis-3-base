@@ -5,7 +5,6 @@ import java.util.Map;
 
 import ch.elexis.core.jpa.entities.ICD10;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
 import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
@@ -16,13 +15,10 @@ public class Icd10Diagnosis
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ICD10>
 		implements IDiagnosisTree, WithExtInfo, Identifiable {
 	
-	private ExtInfoHandler extInfoHandler;
-	
 	public static final String CODESYSTEM_NAME = "ICD-10";
 	
 	public Icd10Diagnosis(ICD10 entity){
 		super(entity);
-		extInfoHandler = new ExtInfoHandler(this);
 	}
 	
 	@Override

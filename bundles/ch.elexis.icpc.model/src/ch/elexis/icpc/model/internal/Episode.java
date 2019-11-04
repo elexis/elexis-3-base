@@ -11,7 +11,6 @@ import ch.elexis.core.jpa.entities.ICPCEpisode;
 import ch.elexis.core.jpa.entities.ICPCEpisodeDiagnosisLink;
 import ch.elexis.core.jpa.entities.Kontakt;
 import ch.elexis.core.jpa.model.adapter.AbstractIdModelAdapter;
-import ch.elexis.core.jpa.model.adapter.mixin.ExtInfoHandler;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IXid;
@@ -24,11 +23,8 @@ import ch.elexis.icpc.model.icpc.IcpcEpisode;
 public class Episode extends AbstractIdModelAdapter<ICPCEpisode>
 		implements Identifiable, IcpcEpisode {
 	
-	private ExtInfoHandler extInfoHandler;
-	
 	public Episode(ICPCEpisode entity){
 		super(entity);
-		extInfoHandler = new ExtInfoHandler(this);
 	}
 	
 	@Override

@@ -71,7 +71,7 @@ public class ComplementaryLeistungTest extends AbstractTest {
 		
 		encounter.removeBilled(billed);
 		
-		complementaryLeistung.setFixedValue(50);
+		complementaryLeistung.setFixedValue(5000);
 		result = complementaryLeistung.getOptifier().add(complementaryLeistung, encounter, 1);
 		assertTrue(result.isOK());
 		assertEquals(1, encounter.getBilled().size());

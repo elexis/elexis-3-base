@@ -57,7 +57,7 @@ public class ArtikelstammItem
 					billed.setFactor(1.0);
 					billed.setNetPrice(billable.getPurchasePrice());
 					Money sellingPrice = billable.getSellingPrice();
-					if(sellingPrice == null) {
+					if (sellingPrice.isZero()) {
 						sellingPrice =  MargePreference.calculateVKP(getPurchasePrice());
 					} 
 //					if (!billable.isInSLList()) {

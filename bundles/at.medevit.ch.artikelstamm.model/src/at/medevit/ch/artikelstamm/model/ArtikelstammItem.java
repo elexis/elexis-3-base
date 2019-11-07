@@ -204,7 +204,7 @@ public class ArtikelstammItem
 				return new Money(priceString);
 			} catch (ParseException e) {}
 		}
-		return null;
+		return new Money();
 	}
 	
 	@Override
@@ -221,7 +221,7 @@ public class ArtikelstammItem
 				return (isUserDefinedPrice()) ? value.negate() : value;
 			} catch (ParseException e) {}
 		}
-		return null;
+		return new Money();
 	}
 	
 	@Override

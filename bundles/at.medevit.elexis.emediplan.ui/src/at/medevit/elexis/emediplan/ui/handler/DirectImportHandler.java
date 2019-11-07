@@ -61,6 +61,7 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 				for (IPrescription prescription : currentMedication) {
 					prescription.setDateTo(LocalDateTime.now());
 					prescription.setStopReason(stopreason != null ? stopreason : "Direct Import");
+					CoreModelServiceHolder.get().save(prescription);
 					ElexisEventDispatcher.getInstance().fire(new ElexisEvent(prescription,
 						Prescription.class, ElexisEvent.EVENT_UPDATE));
 				}

@@ -34,8 +34,8 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 			Object object = selection.getFirstElement();
 			if (object instanceof DocHandle) {
 				DocHandle docHandle = (DocHandle) object;
-				if (docHandle.getMimeType().endsWith("pdf")
-					|| docHandle.getTitle().endsWith(".pdf")) {
+				if (docHandle.getMimeType().toLowerCase().endsWith("pdf")
+						|| docHandle.getTitle().toLowerCase().endsWith(".pdf")) {
 					Shell activeshell = HandlerUtil.getActiveShell(event);
 					ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(activeshell);
 					try {

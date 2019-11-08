@@ -19,12 +19,13 @@ import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
 import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.data.service.ContextServiceHolder;
-import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.builder.IPrescriptionBuilder;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.rgw.tools.TimeTool;
 
 public class DirectImportHandler extends AbstractHandler implements IHandler {
@@ -56,8 +57,9 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 				ContextServiceHolder.get().setActivePatient(patient);
 				
 				List<IPrescription> currentMedication = getPrescriptions(patient, medicationType);
+				LocalDateTime now = LocalDateTime.now();
 				for (IPrescription prescription : currentMedication) {
-					prescription.setDateTo(LocalDateTime.now());
+					MedicationServiceHolder.get().stopPrescription(prescription, now);
 					prescription.setStopReason(stopreason != null ? stopreason : "Direct Import");
 				}
 				CoreModelServiceHolder.get().save(currentMedication);

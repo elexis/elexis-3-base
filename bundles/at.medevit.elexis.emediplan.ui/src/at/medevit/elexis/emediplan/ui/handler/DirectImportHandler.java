@@ -18,15 +18,13 @@ import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.builder.IPrescriptionBuilder;
 import ch.elexis.core.model.prescription.EntryType;
-import ch.elexis.data.Prescription;
 import ch.rgw.tools.TimeTool;
 
 public class DirectImportHandler extends AbstractHandler implements IHandler {
@@ -59,12 +57,12 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 				
 				List<IPrescription> currentMedication = getPrescriptions(patient, medicationType);
 				for (IPrescription prescription : currentMedication) {
-					prescription.setDateTo(LocalDateTime.now().minusSeconds(10));
+					prescription.setDateTo(LocalDateTime.now());
 					prescription.setStopReason(stopreason != null ? stopreason : "Direct Import");
-					CoreModelServiceHolder.get().save(prescription);
-					ElexisEventDispatcher.getInstance().fire(new ElexisEvent(prescription,
-						Prescription.class, ElexisEvent.EVENT_UPDATE));
 				}
+				CoreModelServiceHolder.get().save(currentMedication);
+				currentMedication.forEach(
+					pr -> ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, pr));
 				List<Medicament> notFoundMedicament = new ArrayList<>();
 				for (Medicament medicament : medication.Medicaments) {
 					if (medicament.artikelstammItem != null) {

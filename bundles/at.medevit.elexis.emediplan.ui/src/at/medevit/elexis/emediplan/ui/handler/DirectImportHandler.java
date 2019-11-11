@@ -59,10 +59,10 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 				List<IPrescription> currentMedication = getPrescriptions(patient, medicationType);
 				LocalDateTime now = LocalDateTime.now();
 				for (IPrescription prescription : currentMedication) {
-					MedicationServiceHolder.get().stopPrescription(prescription, now);
-					prescription.setStopReason(stopreason != null ? stopreason : "Direct Import");
+					MedicationServiceHolder.get().stopPrescription(prescription, now,
+						stopreason != null ? stopreason : "Direct Import");
+					CoreModelServiceHolder.get().save(prescription);
 				}
-				CoreModelServiceHolder.get().save(currentMedication);
 				currentMedication.forEach(
 					pr -> ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, pr));
 				List<Medicament> notFoundMedicament = new ArrayList<>();
@@ -89,8 +89,7 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 	
 	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType){
 		if ("all".equals(medicationType)) {
-			return patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION,
-				EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
+			return patient.getMedication(Collections.emptyList());
 		} else if ("fix".equals(medicationType)) {
 			return patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION));
 		} else if ("reserve".equals(medicationType)) {

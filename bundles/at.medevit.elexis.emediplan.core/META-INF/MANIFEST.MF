@@ -11,7 +11,6 @@ Import-Package:
  at.medevit.ch.artikelstamm,
  at.medevit.elexis.inbox.model,
  ch.elexis.core.constants,
- ch.elexis.core.data.util,
  ch.elexis.core.jdt,
  ch.elexis.core.l10n;version="3.5.0.qualifier",
  ch.elexis.core.model,
@@ -19,8 +18,6 @@ Import-Package:
  ch.elexis.core.services,
  ch.elexis.core.services.holder,
  ch.elexis.core.types,
- ch.elexis.core.ui.exchange,
- ch.elexis.data,
  ch.rgw.tools,
  com.google.gson,
  org.apache.commons.io;version="2.4.0",
@@ -29,7 +26,9 @@ Import-Package:
  org.osgi.service.component.annotations;version="1.2.0",
  org.slf4j
 Require-Bundle: org.eclipse.swt;bundle-version="3.104.2",
- at.medevit.ch.artikelstamm.elexis.common;bundle-version="3.2.0"
+ at.medevit.ch.artikelstamm.elexis.common;bundle-version="3.2.0",
+ ch.elexis.core.data;bundle-version="3.8.0",
+ ch.elexis.core.ui;bundle-version="3.8.0"
 Bundle-ClassPath: lib/zxing_core-3.3.0.jar,
  .
 Export-Package: at.medevit.elexis.emediplan.core,

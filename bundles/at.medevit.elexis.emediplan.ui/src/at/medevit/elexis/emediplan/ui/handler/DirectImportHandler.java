@@ -61,6 +61,8 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 				for (IPrescription prescription : currentMedication) {
 					MedicationServiceHolder.get().stopPrescription(prescription, now,
 						stopreason != null ? stopreason : "Direct Import");
+					// FIXME (#15795) this is a workaround as eclipselink only picks up the change if done twice 
+					prescription.setDateTo(now);
 					CoreModelServiceHolder.get().save(prescription);
 				}
 				currentMedication.forEach(

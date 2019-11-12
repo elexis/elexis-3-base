@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import ch.elexis.base.ch.arzttarife.elexis.service.test.IEncounterServiceTest;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IBillingSystemService;

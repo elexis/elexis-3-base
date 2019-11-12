@@ -22,12 +22,16 @@ import org.eclipse.core.runtime.Platform;
 import at.medevit.elexis.gdt.Activator;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartnerProvider;
+import ch.elexis.core.jdt.Nullable;
+import ch.rgw.tools.Log;
 
 public class GDTCommPartnerCollector {
 	
-	public static final String EP_ID = Activator.PLUGIN_ID + ".communicationPartner";
+	private static Log logger = Log.get(GDTCommPartnerCollector.class.getName());
 	
-	public static List<IGDTCommunicationPartner> getRegisteredCommPartners(){
+	public static final String EP_ID = Activator.PLUGIN_ID + ".communicationPartner";
+		
+	public static @Nullable List<IGDTCommunicationPartner> getRegisteredCommPartners(){
 		List<IGDTCommunicationPartner> ret = null;
 		
 		IConfigurationElement[] config =
@@ -47,6 +51,7 @@ public class GDTCommPartnerCollector {
 				}
 			}
 		} catch (CoreException ex) {
+			logger.log("CoreException in getRegisteredCommPartners: "+ex.getMessage(), Log.WARNINGS);
 			System.out.println(ex.getMessage());
 		}
 		if (ret == null)
@@ -54,7 +59,7 @@ public class GDTCommPartnerCollector {
 		return ret;
 	}
 	
-	public static IGDTCommunicationPartner identifyCommunicationPartnerByIncomingDirectory(String incomingDirectory) {
+	public static @Nullable IGDTCommunicationPartner identifyCommunicationPartnerByIncomingDirectory(String incomingDirectory) {
 		IConfigurationElement[] config =
 				Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
 			try {
@@ -74,12 +79,13 @@ public class GDTCommPartnerCollector {
 					}
 				}
 			} catch (CoreException ex) {
+				logger.log("CoreException in getRegisteredCommPartners: "+ex.getMessage(), Log.WARNINGS);
 				System.out.println(ex.getMessage());
 			}
 			return null;
 	}
 	
-	public static IGDTCommunicationPartner identifyCommunicationPartnerByLabel(String label) {
+	public static @Nullable IGDTCommunicationPartner identifyCommunicationPartnerByLabel(String label) {
 		IConfigurationElement[] config =
 				Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
 			try {
@@ -101,6 +107,7 @@ public class GDTCommPartnerCollector {
 					}
 				}
 			} catch (CoreException ex) {
+				logger.log("CoreException in getRegisteredCommPartners: "+ex.getMessage(), Log.WARNINGS);
 				System.out.println(ex.getMessage());
 			}
 			return null;

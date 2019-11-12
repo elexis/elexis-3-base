@@ -43,9 +43,13 @@ public class GDTFileInputHandler {
 			satzkennung = Integer.parseInt(satzkennungString);
 		}
 		
-		IGDTCommunicationPartner cp =
-			GDTCommPartnerCollector.identifyCommunicationPartnerByIncomingDirectory(file
-				.getParent());
+		IGDTCommunicationPartner cp = GDTCommPartnerCollector
+			.identifyCommunicationPartnerByIncomingDirectory(file.getParent());
+		if (cp == null) {
+			logger.log("IGDTCommunicationPartner for file " + file.getAbsolutePath()
+				+ " is null, skipping.", Log.ERRORS);
+			return;
+		}
 		
 		boolean delivered = false;
 		

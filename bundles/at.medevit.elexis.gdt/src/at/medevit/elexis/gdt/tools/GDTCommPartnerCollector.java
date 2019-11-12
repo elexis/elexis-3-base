@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import at.medevit.elexis.gdt.Activator;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartnerProvider;
+import ch.elexis.core.jdt.Nullable;
 
 public class GDTCommPartnerCollector {
 	
@@ -54,7 +55,7 @@ public class GDTCommPartnerCollector {
 		return ret;
 	}
 	
-	public static IGDTCommunicationPartner identifyCommunicationPartnerByIncomingDirectory(String incomingDirectory) {
+	public static @Nullable IGDTCommunicationPartner identifyCommunicationPartnerByIncomingDirectory(String incomingDirectory) {
 		IConfigurationElement[] config =
 				Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
 			try {

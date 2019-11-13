@@ -33,6 +33,8 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystem;
+import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.ICustomService;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
@@ -294,7 +296,9 @@ public class XMLExporterServices {
 					session = 1;
 				}
 				String dateForTarmed = XMLExporterUtil.makeTarmedDatum(encounterDate);
-				BillingLaw law = encounter.getCoverage().getBillingSystem().getLaw();
+				ICoverage coverage = encounter.getCoverage();
+				IBillingSystem billingSystem = coverage.getBillingSystem();
+				BillingLaw law = billingSystem.getLaw();
 				
 				boolean bRFE = false; // RFE already encoded
 				

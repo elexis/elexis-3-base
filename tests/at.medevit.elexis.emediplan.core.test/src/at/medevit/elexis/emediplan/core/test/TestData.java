@@ -85,11 +85,10 @@ public class TestData {
 			artikelstammModelService.save(artikelstammIbuprofen);
 			
 			IPrescription prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
-				artikelstammAspirin, patients.get(0), "1-1-1-1").entryType(EntryType.FIXED_MEDICATION)
-					.buildAndSave();
+				null, artikelstammAspirin, patients.get(0), "1-1-1-1")
+					.entryType(EntryType.FIXED_MEDICATION).buildAndSave();
 			
-			IArtikelstammItem item =
-				artikelstammModelService.create(IArtikelstammItem.class);
+			IArtikelstammItem item = artikelstammModelService.create(IArtikelstammItem.class);
 			item.setTyp(ArticleTyp.ARTIKELSTAMM);
 			item.setSubTyp(ArticleSubTyp.PHARMA);
 			item.setGtin("7680475040157");
@@ -97,7 +96,7 @@ public class TestData {
 			item.setName("DAFALGAN Tabl 500 mg (16 Stk)");
 			artikelstammModelService.save(item);
 			
-			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(), item,
+			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(), null, item,
 				patients.get(0), "1-1/2-1").entryType(EntryType.FIXED_MEDICATION)
 					.remark("Anwendungsinstruktion").build();
 			// Anwendungsinstruktion
@@ -113,28 +112,28 @@ public class TestData {
 			item.setCode("3823877");
 			item.setName("MORPHIN HCL 1 % Streuli Tropfen 10 mg/ml (20 ml)");
 			artikelstammModelService.save(item);
-			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(), item,
+			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(), null, item,
 				patients.get(0), "2-0-2").entryType(EntryType.FIXED_MEDICATION)
 					.remark("Anwendungsinstruktion").buildAndSave();
 			
 			prescription =
-				new IPrescriptionBuilder(CoreModelServiceHolder.get(), artikelstammIbuprofen,
+				new IPrescriptionBuilder(CoreModelServiceHolder.get(), null, artikelstammIbuprofen,
 					patients.get(0), "freetext dosis").entryType(EntryType.RESERVE_MEDICATION)
 						.remark("Anwendungsinstruktion").buildAndSave();
 			
-			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
+			prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(), null,
 				artikelstammAspirin, patients.get(1), "1/2-1/2-1/2-1/2")
 					.entryType(EntryType.FIXED_MEDICATION).remark("Anwendungsinstruktion").build();
 			prescription.setDisposalComment("Abgabekommentar");
 			CoreModelServiceHolder.get().save(prescription);
 			
 			prescription =
-				new IPrescriptionBuilder(CoreModelServiceHolder.get(), artikelstammIbuprofen,
+				new IPrescriptionBuilder(CoreModelServiceHolder.get(), null, artikelstammIbuprofen,
 					patients.get(1), "1/4-1/4-1/4").entryType(EntryType.SYMPTOMATIC_MEDICATION)
 						.remark("Anwendungsinstruktion").build();
 			prescription.setDisposalComment("Anwendungsgrund");
 			CoreModelServiceHolder.get().save(prescription);
-
+			
 			prescription = MedicationServiceHolder.get().createPrescriptionCopy(prescription);
 			prescription.setEntryType(EntryType.RECIPE);
 			CoreModelServiceHolder.get().save(prescription);
@@ -181,8 +180,7 @@ public class TestData {
 			CoreModelServiceHolder.get().save(mandatorPerson);
 			mandator =
 				CoreModelServiceHolder.get().load(mandatorPerson.getId(), IMandator.class).get();
-			ContextServiceHolder.get().setActiveMandator(
-				mandator);
+			ContextServiceHolder.get().setActiveMandator(mandator);
 		}
 		
 		public IPatient createPatient(String firstname, String lastname, String birthdate,

@@ -543,7 +543,8 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	
 	private IPrescription createPrescription(Medicament medicament, IPatient patient,
 		boolean multiSelection){
-		IPrescription prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
+		IPrescription prescription =
+			new IPrescriptionBuilder(CoreModelServiceHolder.get(), ContextServiceHolder.get(),
 			medicament.artikelstammItem, patient, medicament.dosis).build();
 		
 		getLocalDateTime(medicament.dateFrom).ifPresent(ldt -> prescription.setDateFrom(ldt));

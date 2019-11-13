@@ -112,8 +112,9 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 			}
 		}
 		
-		IPrescription prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(),
-			medicament.artikelstammItem, patient, medicament.dosis).build();
+		IPrescription prescription =
+			new IPrescriptionBuilder(CoreModelServiceHolder.get(), ContextServiceHolder.get(),
+				medicament.artikelstammItem, patient, medicament.dosis).build();
 		
 		getLocalDateTime(medicament.dateFrom).ifPresent(ldt -> prescription.setDateFrom(ldt));
 		getLocalDateTime(medicament.dateTo).ifPresent(ldt -> prescription.setDateTo(ldt));

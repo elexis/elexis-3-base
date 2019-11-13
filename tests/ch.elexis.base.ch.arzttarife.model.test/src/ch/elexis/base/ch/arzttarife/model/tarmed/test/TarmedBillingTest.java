@@ -41,7 +41,6 @@ public class TarmedBillingTest {
 	
 	private TarmedLeistung code_000010 = TarmedLeistung.getFromCode("00.0010", "KVG");
 	private TarmedLeistung code_000015 = TarmedLeistung.getFromCode("00.0015", "KVG");
-	private TarmedLeistung code_000140 = TarmedLeistung.getFromCode("00.0140", "KVG");
 	private TarmedLeistung code_000510 = TarmedLeistung.getFromCode("00.0510", "KVG");
 	
 	private IMandator mandator;
@@ -63,7 +62,8 @@ public class TarmedBillingTest {
 					.buildAndSave();
 		mandator = coreModelService.load(_mandator.getId(), IMandator.class).get();
 		patient = new IContactBuilder.PatientBuilder(coreModelService, "Armer",
-			"Anton" + timeTool.toString(), timeTool.toLocalDate(), Gender.MALE).buildAndSave();
+			"Anton" + timeTool.toString(), timeTool.toLocalDate().minusYears(8), Gender.MALE)
+				.buildAndSave();
 		coverage =
 			new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
 				.buildAndSave();
@@ -96,7 +96,7 @@ public class TarmedBillingTest {
 		assertEquals(1861, billed.getPoints());
 		assertEquals(1656, billed.getPrice().getCents());
 		coreModelService.remove(factor);
-
+		
 		assertEquals(100, billed.getPrimaryScale());
 		assertEquals(100, billed.getSecondaryScale());
 		
@@ -109,8 +109,13 @@ public class TarmedBillingTest {
 		assertFalse(status.isOK());
 		
 		status = billingService.bill(code_000015, encounter, 2);
-		assertTrue(status.toString(), status.isOK());
+		assertFalse(status.toString(), status.isOK());
+		assertEquals(1, status.get().getAmount(), 0.01d);
 		assertEquals(2, encounter.getBilled().size());
+		
+		status = billingService.bill(code_000510, encounter, 4);
+		assertTrue(status.toString(), status.isOK());
+		assertEquals(4, status.get().getAmount(), 0.01d);
 		
 		TarmedLeistung code_000750 = TarmedLeistung.getFromCode("00.0750", LocalDate.now(), null);
 		assertNotNull(code_000750);
@@ -135,8 +140,7 @@ public class TarmedBillingTest {
 		assertTrue(status.isOK());
 		billed = status.get();
 		assertNotNull(billed);
-		assertEquals(Constants.SIDE_R,
-			billed.getExtInfo(Constants.FLD_EXT_SIDE));
+		assertEquals(Constants.SIDE_R, billed.getExtInfo(Constants.FLD_EXT_SIDE));
 		//
 		status = billingService.bill(code_090510, encounter, 1);
 		assertFalse(status.isOK());
@@ -155,7 +159,5 @@ public class TarmedBillingTest {
 		matches.add(new IBillingMatch("39.0020-20180101-KVG", 1));
 		IBillingMatch.assertMatch(encounter, matches);
 	}
-	
-	
 	
 }

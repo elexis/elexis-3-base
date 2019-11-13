@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import ch.elexis.base.ch.arzttarife.elexis.service.test.IEncounterServiceTest;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IBillingSystemService;
@@ -14,7 +15,7 @@ import ch.elexis.core.utils.OsgiServiceUtil;
 @SuiteClasses({
 	TarmedDefinitionenTest.class, TarmedLeistungTest.class, TarmedKumulationTest.class,
 	TarmedLimitationTest.class, TarmedGroupTest.class, TarmedOptifierTest.class,
-	TarmedBillingTest.class
+	TarmedBillingTest.class, IEncounterServiceTest.class
 })
 public class AllTarmedTests {
 	

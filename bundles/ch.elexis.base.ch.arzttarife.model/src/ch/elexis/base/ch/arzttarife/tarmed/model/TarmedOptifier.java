@@ -53,6 +53,7 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.Result.SEVERITY;
 
 /**
  * Dies ist eine Beispielimplementation des IOptifier Interfaces, welches einige einfache Checks von
@@ -61,8 +62,7 @@ import ch.rgw.tools.TimeTool;
  * @author gerry
  * 
  */
-public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
-{
+public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	private static final String TL = "TL"; //$NON-NLS-1$
 	private static final String AL = "AL"; //$NON-NLS-1$
 	private static final String AL_NOTSCALED = "AL_NOTSCALED"; //$NON-NLS-1$
@@ -123,8 +123,25 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		return null;
 	}
 	
-	public Result<IBilled> add(TarmedLeistung code, IEncounter kons) {
-		return add(code, kons, 1);
+	public Result<IBilled> add(TarmedLeistung code, IEncounter kons, double amount){
+		int amountInt = doubleToInt(amount);
+		if (amountInt >= 1) {
+			Result<IBilled> result = add(code, kons);
+			if (amountInt == 1) {
+				return result;
+			}
+			for (int i = 2; i <= amountInt; i++) {
+				Result<IBilled> intermediateResult = add(code, kons);
+				if (!intermediateResult.isOK()) {
+					result.addMessage(SEVERITY.WARNING, intermediateResult.toString(),
+						result.get());
+					return result;
+				}
+			}
+			return result;
+		} else {
+			return Result.OK();
+		}
 	}
 	
 	/**
@@ -132,23 +149,24 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	 * Kontext der übergebenen Konsultation verwendet werden kann und kann sie ggf. zurückweisen
 	 * oder modifizieren.
 	 */
-	public Result<IBilled> add(TarmedLeistung code, IEncounter kons, double amount) {
+	public Result<IBilled> add(TarmedLeistung code, IEncounter kons){
 		if (!(code instanceof TarmedLeistung)) {
-			return new Result<IBilled>(Result.SEVERITY.ERROR, LEISTUNGSTYP, Messages.TarmedOptifier_BadType, null,
-					true);
+			return new Result<IBilled>(Result.SEVERITY.ERROR, LEISTUNGSTYP,
+				Messages.TarmedOptifier_BadType, null, true);
 		}
 		
-		bOptify = TarmedUtil.getConfigValue(getClass(), IMandator.class, Preferences.LEISTUNGSCODES_OPTIFY, true);
-
+		bOptify = TarmedUtil.getConfigValue(getClass(), IMandator.class,
+			Preferences.LEISTUNGSCODES_OPTIFY, true);
+		
 		TarmedLeistung tc = (TarmedLeistung) code;
 		List<IBilled> lst = kons.getBilled();
 		/*
 		 * TODO Hier checken, ob dieser code mit der Dignität und
 		 * Fachspezialisierung des aktuellen Mandanten usw. vereinbar ist
 		 */
-
+		
 		Map<String, String> ext = tc.getExtension().getLimits();
-
+		
 		// Gültigkeit gemäss Datum und Alter prüfen
 		if (bOptify) {
 			TimeTool date = new TimeTool(kons.getDate());
@@ -157,7 +175,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				TimeTool tVon = new TimeTool(dVon);
 				if (date.isBefore(tVon)) {
 					return new Result<IBilled>(Result.SEVERITY.WARNING, NOTYETVALID,
-							code.getCode() + Messages.TarmedOptifier_NotYetValid, null, false);
+						code.getCode() + Messages.TarmedOptifier_NotYetValid, null, false);
 				}
 			}
 			LocalDate dBis = code.getValidTo();
@@ -165,50 +183,51 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				TimeTool tBis = new TimeTool(dBis);
 				if (date.isAfter(tBis)) {
 					return new Result<IBilled>(Result.SEVERITY.WARNING, NOMOREVALID,
-							code.getCode() + Messages.TarmedOptifier_NoMoreValid, null, false);
+						code.getCode() + Messages.TarmedOptifier_NoMoreValid, null, false);
 				}
 			}
-			String ageLimits = ext.get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_SERVICE_AGE);
+			String ageLimits =
+				ext.get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_SERVICE_AGE);
 			if (ageLimits != null && !ageLimits.isEmpty()) {
 				String errorMessage = checkAge(ageLimits, kons);
 				if (errorMessage != null) {
-					return new Result<IBilled>(Result.SEVERITY.WARNING, PATIENTAGE,
-						errorMessage, null, false);
+					return new Result<IBilled>(Result.SEVERITY.WARNING, PATIENTAGE, errorMessage,
+						null, false);
 				}
 			}
 		}
 		newVerrechnet = null;
 		newVerrechnetSide = null;
 		// Korrekter Fall Typ prüfen, und ggf. den code ändern
-		if (tc.getCode().matches("39.002[01]") || tc.getCode().matches("39.001[0156]")) {	
+		if (tc.getCode().matches("39.002[01]") || tc.getCode().matches("39.001[0156]")) {
 			String gesetz = kons.getCoverage().getBillingSystem().getLaw().name();
 			if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0011")) {
 				return this.add(getKonsVerrechenbar("39.0010", kons), kons);
 			} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0010")) {
 				return this.add(getKonsVerrechenbar("39.0011", kons), kons);
 			}
-
+			
 			if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0016")) {
 				return this.add(getKonsVerrechenbar("39.0015", kons), kons);
 			} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0015")) {
 				return this.add(getKonsVerrechenbar("39.0016", kons), kons);
 			}
-
+			
 			if (gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0021")) {
 				return this.add(getKonsVerrechenbar("39.0020", kons), kons);
 			} else if (!gesetz.equalsIgnoreCase("KVG") && tc.getCode().matches("39.0020")) {
 				return this.add(getKonsVerrechenbar("39.0021", kons), kons);
 			}
 		}
-
+		
 		if (tc.getCode().matches("35.0020")) {
 			List<IBilled> opCodes = getOPList(lst);
 			List<IBilled> opReduction = getVerrechnetMatchingCode(lst, "35.0020");
 			// updated reductions to codes, and get not yet reduced codes
 			List<IBilled> availableCodes = updateOPReductions(opCodes, opReduction);
 			if (availableCodes.isEmpty()) {
-				return new Result<IBilled>(Result.SEVERITY.WARNING, KOMBINATION,
-					code.getCode(), null, false);
+				return new Result<IBilled>(Result.SEVERITY.WARNING, KOMBINATION, code.getCode(),
+					null, false);
 			}
 			for (IBilled verrechnet : availableCodes) {
 				newVerrechnet = initializeBilled(code, kons);
@@ -259,7 +278,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 								resCompatible =
 									isCompatible(newVerrechnet, newTarmed, v, tarmed, kons);
 							}
-
+							
 							if (!resCompatible.isOK()) {
 								CoreModelServiceHolder.get().delete(newVerrechnet);
 								return resCompatible;
@@ -268,7 +287,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 					}
 				}
 				
-				if (newVerrechnet.getCode().equals("00.0750") || newVerrechnet.getCode().equals("00.0010")) {
+				if (newVerrechnet.getCode().equals("00.0750")
+					|| newVerrechnet.getCode().equals("00.0010")) {
 					String excludeCode = null;
 					if (newVerrechnet.getCode().equals("00.0010")) {
 						excludeCode = "00.0750";
@@ -279,8 +299,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 						if (v.getCode().equals(excludeCode)) {
 							CoreModelServiceHolder.get().delete(newVerrechnet);
 							return new Result<IBilled>(Result.SEVERITY.WARNING, EXKLUSION,
-									"00.0750 ist nicht im Rahmen einer ärztlichen Beratung 00.0010 verrechnenbar.", //$NON-NLS-1$
-									null, false);
+								"00.0750 ist nicht im Rahmen einer ärztlichen Beratung 00.0010 verrechnenbar.", //$NON-NLS-1$
+								null, false);
 						}
 					}
 				}
@@ -297,9 +317,9 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			List<IBilled> masters = getPossibleMasters(newVerrechnet, lst);
 			if (masters.isEmpty()) {
 				decrementOrDelete(newVerrechnet);
-				return new Result<IBilled>(Result.SEVERITY.WARNING, KOMBINATION,
-					"Für die Zuschlagsleistung " + code.getCode()
-						+ " konnte keine passende Hauptleistung gefunden werden.",
+				return new Result<IBilled>(
+					Result.SEVERITY.WARNING, KOMBINATION, "Für die Zuschlagsleistung "
+						+ code.getCode() + " konnte keine passende Hauptleistung gefunden werden.",
 					null, false);
 			}
 			if (!masters.isEmpty()) {
@@ -326,20 +346,21 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				}
 			}
 		}
-
+		
 		Result<IBilled> limitResult = checkLimitations(kons, tc, newVerrechnet);
 		if (!limitResult.isOK()) {
 			decrementOrDelete(newVerrechnet);
 			return limitResult;
 		}
-
+		
 		String tcid = code.getCode();
-
+		
 		// check if it's an X-RAY service and add default tax if so
 		// default xray tax will only be added once (see above)
 		if (!tc.getCode().equals(DEFAULT_TAX_XRAY_ROOM) && !tc.getCode().matches("39.002[01]")
 			&& tc.getParent().getId().startsWith(CHAPTER_XRAY)) {
-			if (TarmedUtil.getConfigValue(getClass(), IUser.class, Preferences.LEISTUNGSCODES_OPTIFY_XRAY, true)) {
+			if (TarmedUtil.getConfigValue(getClass(), IUser.class,
+				Preferences.LEISTUNGSCODES_OPTIFY_XRAY, true)) {
 				saveBilled();
 				add(getKonsVerrechenbar(DEFAULT_TAX_XRAY_ROOM, kons), kons);
 				// add 39.0020, will be changed according to case (see above)
@@ -367,10 +388,11 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			newVerrechnet.setExtInfo(AL, Double.toString(sumAL));
 			newVerrechnet.setExtInfo(TL, Double.toString(sumTL));
 		}
-
+		
 		// Zuschlag Kinder
 		else if (tcid.equals("00.0010") || tcid.equals("00.0060")) {
-			if (TarmedUtil.getConfigValue(getClass(), IMandator.class, RechnungsPrefs.PREF_ADDCHILDREN, false)) {
+			if (TarmedUtil.getConfigValue(getClass(), IMandator.class,
+				RechnungsPrefs.PREF_ADDCHILDREN, false)) {
 				ICoverage f = kons.getCoverage();
 				if (f != null) {
 					IPatient p = f.getPatient();
@@ -386,7 +408,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				}
 			}
 		}
-
+		
 		// Zuschläge für Insellappen 50% auf AL und TL bei 1910,20,40,50
 		else if (tcid.equals("04.1930")) { //$NON-NLS-1$
 			double sumAL = 0.0;
@@ -397,7 +419,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 					String tlc = tl.getCode();
 					double z = v.getAmount();
 					if (tlc.equals("04.1910") || tlc.equals("04.1920") || tlc.equals("04.1940") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							|| tlc.equals("04.1950")) { //$NON-NLS-1$
+						|| tlc.equals("04.1950")) { //$NON-NLS-1$
 						sumAL += tl.getAL(kons.getMandator()) * z;
 						sumTL += tl.getTL() * z;
 						// double al = (tl.getAL() * 15) / 10.0;
@@ -434,7 +456,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			newVerrechnet.setExtInfo(TL, Double.toString(sumTL));
 			newVerrechnet.setPrimaryScale(70);
 		}
-
+		
 		// Notfall-Zuschläge
 		if (tcid.startsWith("00.25")) { //$NON-NLS-1$
 			double sum = 0.0;
@@ -483,12 +505,12 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 				newVerrechnet.setExtInfo(AL, Double.toString(sum));
 				newVerrechnet.setPrimaryScale(50);
 				break;
-
+			
 			case 60: // Tel. Mo-Fr 19-22, Sa 12-22, So 7-22: 30 TP
 				break;
 			case 80: // Tel. von 22-7: 70 TP
 				break;
-
+			
 			}
 		}
 		
@@ -496,7 +518,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		
 		return new Result<IBilled>(newVerrechnet);
 	}
-
+	
 	private IBilled initializeBilled(TarmedLeistung code, IEncounter kons){
 		IBilled ret = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons).build();
 		ret.setPoints(code.getAL(kons.getMandator()) + code.getTL());
@@ -512,13 +534,14 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	}
 	
 	private void saveBilled(){
-		if(newVerrechnet != null) {
+		if (newVerrechnet != null) {
 			CoreModelServiceHolder.get().save(newVerrechnet);
 		} else {
-			LoggerFactory.getLogger(TarmedOptifier.class).warn("Call on null", new Throwable("Diagnosis"));
+			LoggerFactory.getLogger(TarmedOptifier.class).warn("Call on null",
+				new Throwable("Diagnosis"));
 		}
 	}
-
+	
 	private void decrementOrDelete(IBilled verrechnet){
 		double zahl = verrechnet.getAmount();
 		if (zahl > 1) {
@@ -591,8 +614,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 					limitations = group.get().getLimitations();
 					for (TarmedLimitation tarmedLimitation : limitations) {
 						if (tarmedLimitation.isTestable()) {
-							Result<IBilled> result =
-								tarmedLimitation.test(kons, newVerrechnet);
+							Result<IBilled> result = tarmedLimitation.test(kons, newVerrechnet);
 							if (!result.isOK()) {
 								return result;
 							}
@@ -658,9 +680,9 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	}
 	
 	private boolean isReferenceInfoAvailable(){
-		boolean result= false;
+		boolean result = false;
 		IConfigService cfgs = ConfigServiceHolder.get().orElse(null);
-		if(cfgs != null) {
+		if (cfgs != null) {
 			result = cfgs.get(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE, false);
 		}
 		return result;
@@ -704,9 +726,9 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 			for (IBilled master : masterSlavesMap.keySet()) {
 				double masterCount = master.getAmount();
 				int slaveCount = 0;
-				for(IBilled slave : masterSlavesMap.get(master)) {
+				for (IBilled slave : masterSlavesMap.get(master)) {
 					slaveCount += slave.getAmount();
-					if(slave.equals(newSlave)) {
+					if (slave.equals(newSlave)) {
 						slaveCount--;
 					}
 				}
@@ -726,8 +748,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	 * @param lst
 	 * @return
 	 */
-	private Map<IBilled, List<IBilled>> getMasterToSlavesMap(IBilled newSlave,
-		List<IBilled> lst){
+	private Map<IBilled, List<IBilled>> getMasterToSlavesMap(IBilled newSlave, List<IBilled> lst){
 		Map<IBilled, List<IBilled>> ret = new HashMap<>();
 		TarmedLeistung slaveTarmed = (TarmedLeistung) newSlave.getBillable();
 		// lookup available masters
@@ -792,8 +813,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	 *            list of all available reduction codes see {@link #getVerrechnetMatchingCode(List)}
 	 * @return list of not unmapped OP I codes
 	 */
-	private List<IBilled> updateOPReductions(List<IBilled> opCodes,
-		List<IBilled> opReduction){
+	private List<IBilled> updateOPReductions(List<IBilled> opCodes, List<IBilled> opReduction){
 		List<IBilled> notMappedCodes = new ArrayList<IBilled>();
 		notMappedCodes.addAll(opCodes);
 		// update already mapped
@@ -806,7 +826,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 					String opCodeString = opVerrechenbar.getCode();
 					if (bezug.equals(opCodeString)) {
 						// update
-						reductionVerrechnet.setAmount(opVerrechnet.getAmount());	
+						reductionVerrechnet.setAmount(opVerrechnet.getAmount());
 						reductionVerrechnet.setExtInfo(TL, Double.toString(opVerrechenbar.getTL()));
 						reductionVerrechnet.setExtInfo(AL, Double.toString(0.0));
 						reductionVerrechnet.setPrimaryScale(-40);
@@ -866,7 +886,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	
 	private boolean isInstance(IBilled billed, ICodeElement billable){
 		boolean sameCode = (billed.getBillable().getCode().equals(billable.getCode()));
-		boolean sameCodeSystemCode = (billed.getBillable().getCodeSystemCode().equals(billable.getCodeSystemCode()));
+		boolean sameCodeSystemCode =
+			(billed.getBillable().getCodeSystemCode().equals(billable.getCodeSystemCode()));
 		return (sameCodeSystemCode && sameCode);
 	}
 	
@@ -956,9 +977,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 	 *            {@link IEncounter} providing context
 	 * @return true OK if they are compatible, WARNING if it matches an exclusion case
 	 */
-	public Result<IBilled> isCompatible(IBilled tarmedCodeVerrechnet,
-		TarmedLeistung tarmedCode, IBilled tarmedVerrechnet, TarmedLeistung tarmed,
-		IEncounter kons){
+	public Result<IBilled> isCompatible(IBilled tarmedCodeVerrechnet, TarmedLeistung tarmedCode,
+		IBilled tarmedVerrechnet, TarmedLeistung tarmed, IEncounter kons){
 		TimeTool date = new TimeTool(kons.getDate());
 		List<TarmedExclusion> exclusions = tarmed.getExclusions(kons);
 		for (TarmedExclusion tarmedExclusion : exclusions) {
@@ -1088,5 +1108,5 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung>
 		}
 		return new Result<IBilled>(code);
 	}
-
+	
 }

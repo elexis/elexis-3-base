@@ -29,6 +29,7 @@ public class Messages extends NLS {
   public static String RechnungsPrefs_bank;
   public static String RechnungsPrefs_bankconnection;
   public static String RechnungsPrefs_trustcenter;
+  public static String RechnungsPrefs_Responsible_Doctor;
   public static String RechnungsPrefs_TrustCenterUsed;
   public static String RechnungsPrefs_ImagesToTrustCenter;
   public static String RechnungsPrefs_FontSlip;

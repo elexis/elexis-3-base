@@ -356,7 +356,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		Group gResponsible = new Group(ret, SWT.NONE);
 		gResponsible.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gResponsible.setLayout(new FillLayout());
-		gResponsible.setText("Responsible Doctor");
+		gResponsible.setText(Messages.RechnungsPrefs_Responsible_Doctor);
 		responsible = new ResponsibleComposite(gResponsible, SWT.NONE);
 		
 		/*

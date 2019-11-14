@@ -20,6 +20,8 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.ui.locks.AcquireLockUi;
+import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 
@@ -49,13 +51,22 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 			Patient patient = Patient.load(patientid);
 			if (patient.exists()) {
 				ElexisEventDispatcher.fireSelectionEvent(patient);
-				
 				List<Prescription> currentMedication = getPrescriptions(patient, medicationType);
 				for (Prescription prescription : currentMedication) {
-					prescription.stop(null);
-					prescription.setStopReason(stopreason != null ? stopreason : "Direct Import");
-					ElexisEventDispatcher.getInstance().fire(new ElexisEvent(prescription,
-						Prescription.class, ElexisEvent.EVENT_UPDATE));
+					AcquireLockUi.aquireAndRun(prescription, new ILockHandler() {
+						@Override
+						public void lockFailed() {
+							// do nothing
+						}
+
+						@Override
+						public void lockAcquired() {
+							prescription.stop(null);
+							prescription.setStopReason(stopreason != null ? stopreason : "Direct Import");
+							ElexisEventDispatcher.getInstance()
+									.fire(new ElexisEvent(prescription, Prescription.class, ElexisEvent.EVENT_UPDATE));
+						}
+					});
 				}
 				List<Medicament> notFoundMedicament = new ArrayList<>();
 				for (Medicament medicament : medication.Medicaments) {

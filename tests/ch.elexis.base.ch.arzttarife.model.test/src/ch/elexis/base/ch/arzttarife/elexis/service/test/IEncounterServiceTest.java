@@ -1,6 +1,7 @@
 package ch.elexis.base.ch.arzttarife.elexis.service.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -40,6 +41,8 @@ public class IEncounterServiceTest {
 	private TarmedLeistung code_000010 = TarmedLeistung.getFromCode("00.0010", "KVG");
 	private TarmedLeistung code_000015 = TarmedLeistung.getFromCode("00.0015", "KVG");
 	private TarmedLeistung code_000020 = TarmedLeistung.getFromCode("00.0020", "KVG");
+	
+	private TarmedLeistung code_000516_kvgOnly = TarmedLeistung.getFromCode("00.0516", "KVG");
 	
 	private IMandator mandator;
 	private IPatient patient;
@@ -96,6 +99,9 @@ public class IEncounterServiceTest {
 		status = billingService.bill(code_000020, encounter, 2);
 		assertTrue(status.toString(), status.isOK());
 		assertEquals(2, status.get().getAmount(), 0.01d);
+		status = billingService.bill(code_000516_kvgOnly, encounter, 3);
+		assertTrue(status.toString(), status.isOK());
+		assertEquals(3, status.get().getAmount(), 0.01d);
 		
 		IBilled billed_kvg_000010 = null;
 		IBilled billed_kvg_000015 = null;
@@ -119,7 +125,7 @@ public class IEncounterServiceTest {
 		
 		Result<IEncounter> result =
 			encounterService.transferToCoverage(encounter, coverageUVG, false);
-		assertTrue(result.toString(), result.isOK());
+		assertFalse(result.toString(), result.isOK());
 		assertEquals(BillingLaw.UVG, result.get().getCoverage().getBillingSystem().getLaw());
 		coreModelService.refresh(billed_kvg_000010);
 		assertTrue(billed_kvg_000010.isDeleted());
@@ -142,6 +148,8 @@ public class IEncounterServiceTest {
 				assertEquals(1, iBilled.getAmount(), 0);
 			} else if ("00.0020".equals(iBilled.getCode())) {
 				assertEquals(2, iBilled.getAmount(), 0);
+			} else if ("00.0516".equals(iBilled.getCode())) {
+				fail("Position 00.0516 should have been removed (KVG only)");
 			}
 		}
 		

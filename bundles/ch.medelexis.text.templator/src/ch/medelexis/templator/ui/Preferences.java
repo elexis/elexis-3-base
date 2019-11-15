@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.inputs.InexistingDirectoryOKDirectoryFieldEditor;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -42,7 +43,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected void createFieldEditors(){
-		addField(new DirectoryFieldEditor(PREF_TEMPLATEBASE, "Schablonen-Verzeichnis",
+		addField(new InexistingDirectoryOKDirectoryFieldEditor(PREF_TEMPLATEBASE, "Schablonen-Verzeichnis",
 			getFieldEditorParent()));
 		Label i2 = new Label(getFieldEditorParent(), SWT.WRAP);
 		i2.setText("Geben Sie bitte an, wie das Dokument nach\ndem Fertigstellen archiviert werden soll");

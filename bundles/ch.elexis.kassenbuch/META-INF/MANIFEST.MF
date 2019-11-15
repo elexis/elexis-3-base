@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.ui,
  ch.elexis.core.ui.icons,
  org.eclipse.nebula.widgets.cdatetime
+Bundle-ActivationPolicy: lazy

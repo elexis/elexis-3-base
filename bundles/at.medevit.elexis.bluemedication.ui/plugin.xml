@@ -28,6 +28,7 @@
                      </instanceof>
                   </iterate>
                   <test
+                        forcePluginActivation="true"
                         property="at.medevit.elexis.bluemedication.ui.isUploadable">
                   </test>
                </with>
@@ -59,6 +60,7 @@
                      </instanceof>
                   </iterate>
                   <test
+                        forcePluginActivation="true"
                         property="at.medevit.elexis.bluemedication.ui.isUploadable">
                   </test>
                </with>
@@ -90,6 +92,7 @@
                      </instanceof>
                   </iterate>
                   <test
+                        forcePluginActivation="true"
                         property="at.medevit.elexis.bluemedication.ui.isDownloadable">
                   </test>
                </with>
@@ -121,6 +124,7 @@
                      </instanceof>
                   </iterate>
                   <test
+                        forcePluginActivation="true"
                         property="at.medevit.elexis.bluemedication.ui.isDownloadable">
                   </test>
                </with>

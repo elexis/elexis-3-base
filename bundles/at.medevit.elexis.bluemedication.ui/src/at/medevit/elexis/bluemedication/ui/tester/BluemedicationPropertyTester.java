@@ -19,7 +19,7 @@ public class BluemedicationPropertyTester extends PropertyTester {
 						IDocumentHandle docHandle = (IDocumentHandle) object;
 						if (docHandle.getMimeType().toLowerCase().endsWith("pdf")
 							|| docHandle.getTitle().toLowerCase().endsWith(".pdf")) {
-							return true;
+							return !BlueMedicationServiceHolder.getService().getPendingUploadResult(object).isPresent();
 						}
 					}
 				}

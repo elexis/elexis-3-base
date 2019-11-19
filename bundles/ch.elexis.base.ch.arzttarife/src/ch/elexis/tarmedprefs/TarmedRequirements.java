@@ -28,7 +28,7 @@ import ch.elexis.data.Xid;
 
 public class TarmedRequirements {
 	
-	public static final String INSURANCE_NUMBER = Messages.TarmedRequirements_InsuranceNumberName; 
+	public static final String INSURANCE_NUMBER = Messages.TarmedRequirements_InsuranceNumberName;
 	public static final String CASE_NUMBER = Messages.TarmedRequirements_CaseNumberName;
 	public static final String INTERMEDIATE = Messages.TarmedRequirements_IntermediateName;
 	public static final String ACCIDENT_NUMBER = Messages.TarmedRequirements_AccidentNumberName;
@@ -50,14 +50,14 @@ public class TarmedRequirements {
 	
 	public static final String RESPONSIBLE_INFO_KEY = "ch.elexis.tarmedprefs.responsible";
 	private static Logger logger = LoggerFactory.getLogger(TarmedRequirements.class);
-
+	
 	static {
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK,
-			Messages.TarmedRequirements_kskName, Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF,
-			Messages.TarmedRequirements_NifName, Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN,
-			"rEAN", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, Messages.TarmedRequirements_kskName,
+			Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, Messages.TarmedRequirements_NifName,
+			Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN, "rEAN", //$NON-NLS-1$
+			Xid.ASSIGNMENT_REGIONAL);
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_SUVA, "Suva-Nr", Xid.ASSIGNMENT_REGIONAL);
 	}
 	
@@ -205,8 +205,11 @@ public class TarmedRequirements {
 	}
 	
 	public static String getTCName(IContact mandant){
-		String tc = (String) mandant.getExtInfo(PreferenceConstants.TARMEDTC);
-		return tc;
+		if (mandant != null) {
+			String tc = (String) mandant.getExtInfo(PreferenceConstants.TARMEDTC);
+			return tc;
+		}
+		return null;
 	}
 	
 	public static String getTCCode(IContact mandant){
@@ -218,12 +221,19 @@ public class TarmedRequirements {
 		return Integer.toString(nr);
 	}
 	
-	public static void setTC(IContact mandant, String tc){
-		mandant.setExtInfo(PreferenceConstants.TARMEDTC, tc);
+	public static void setTC(IContact mandant, String value){
+		mandant.setExtInfo(PreferenceConstants.TARMEDTC, value);
+	}
+	
+	public static void setHasTCContract(IContact mandant, boolean value){
+		mandant.setExtInfo(PreferenceConstants.USETC, value ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean hasTCContract(IContact mandant){
-		String hc = (String) mandant.getExtInfo(PreferenceConstants.USETC);
-		return "1".equals(hc); //$NON-NLS-1$
+		if (mandant != null) {
+			String hc = (String) mandant.getExtInfo(PreferenceConstants.USETC);
+			return "1".equals(hc); //$NON-NLS-1$
+		}
+		return false;
 	}
 }

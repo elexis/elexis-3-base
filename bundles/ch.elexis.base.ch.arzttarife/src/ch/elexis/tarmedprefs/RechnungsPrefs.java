@@ -16,7 +16,6 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -333,8 +332,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bUseTC.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				actMandant.setInfoElement(PreferenceConstants.USETC,
-					bUseTC.getSelection() == true ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
+				IMandator mandator = CoreModelServiceHolder.get()
+						.load(actMandant.getId(), IMandator.class).orElse(null);
+				if(mandator != null) {
+					TarmedRequirements.setHasTCContract(mandator, bUseTC.getSelection());
+					CoreModelServiceHolder.get().save(mandator);
+				}
 			}
 			
 		});
@@ -345,12 +348,13 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cbTC.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				TarmedRequirements.setTC(CoreModelServiceHolder.get()
-					.load(actMandant.getId(), IMandator.class).orElse(null), cbTC.getText());
-				// actMandant.setInfoElement(PreferenceConstants.TARMEDTC,
-				// cbTC.getText());
+				IMandator mandator = CoreModelServiceHolder.get()
+						.load(actMandant.getId(), IMandator.class).orElse(null);
+				if(mandator != null) {
+					TarmedRequirements.setTC(mandator, cbTC.getText());
+					CoreModelServiceHolder.get().save(mandator);
+				}
 			}
-			
 		});
 		
 		Group gResponsible = new Group(ret, SWT.NONE);
@@ -626,12 +630,17 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bPost.setSelection(actBank == null);
 		bBank.setSelection(actBank != null);
 		
-		bUseTC.setSelection(actMandant.getInfoString(PreferenceConstants.USETC).equals("1")); //$NON-NLS-1$
+		bUseTC.setSelection(TarmedRequirements.hasTCContract(
+			CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).orElse(null))); //$NON-NLS-1$
 		//bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
 		//bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
 
-		cbTC.setText(Optional.ofNullable(TarmedRequirements.getTCName(
-			CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).orElse(null))).orElse("")); // actMandant.getInfoString(PreferenceConstants.TARMEDTC));
+		String tcName = TarmedRequirements.getTCName(CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).orElse(null));
+		if(tcName != null) {
+			cbTC.setText(tcName);
+		} else {
+			cbTC.setText("");
+		}
 		
 		bBillsElec.setSelection(
 			CoreHub.getUserSetting(actMandant).get(PreferenceConstants.BILL_ELECTRONICALLY, false));

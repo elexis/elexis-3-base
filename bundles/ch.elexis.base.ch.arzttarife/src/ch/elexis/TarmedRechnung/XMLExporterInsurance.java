@@ -16,7 +16,7 @@ import ch.rgw.tools.StringTool;
 
 public class XMLExporterInsurance {
 	private static final String ATTR_CASE_ID = "case_id"; //$NON-NLS-1$
-
+	
 	private Element insuranceElement;
 	
 	private XMLExporterInsurance(Element insuranceElement){
@@ -54,10 +54,9 @@ public class XMLExporterInsurance {
 				}
 			}
 			element.setAttribute(ATTR_CASE_ID, caseNumber);
-			addSSNAttribute(element, patient, coverage, invoice);
-			String nif =
-				TarmedRequirements.getNIF(mandator.getBiller()).replaceAll(
-					"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+			addSSNAttribute(element, patient, coverage, invoice, false);
+			String nif = TarmedRequirements.getNIF(mandator.getBiller()).replaceAll("[^0-9]", //$NON-NLS-1$
+				StringConstants.EMPTY);
 			if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
 				&& (!nif.matches("[0-9]{1,7}"))) { //$NON-NLS-1$
 				invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
@@ -66,7 +65,7 @@ public class XMLExporterInsurance {
 				element.setAttribute("nif", nif); //$NON-NLS-1$
 			}
 		} else if (gesetz.equalsIgnoreCase("mvg")) { //$NON-NLS-1$
-			addSSNAttribute(element, patient, coverage, invoice);
+			addSSNAttribute(element, patient, coverage, invoice, false);
 			addInsuredId(element, patient, coverage);
 		} else if (gesetz.equalsIgnoreCase("uvg")) { //$NON-NLS-1$
 			String casenumber = CoverageServiceHolder.get().getRequiredString(coverage,
@@ -78,8 +77,10 @@ public class XMLExporterInsurance {
 			if (!StringTool.isNothing(casenumber)) {
 				element.setAttribute(ATTR_CASE_ID, casenumber);
 			}
+			addSSNAttribute(element, patient, coverage, invoice, true);
 			addInsuredId(element, patient, coverage);
 		} else {
+			addSSNAttribute(element, patient, coverage, invoice, true);
 			addInsuredId(element, patient, coverage);
 		}
 		String casedate = (String) coverage.getExtInfo("Unfalldatum"); //$NON-NLS-1$
@@ -109,19 +110,19 @@ public class XMLExporterInsurance {
 	}
 	
 	private static void addSSNAttribute(Element element, IPatient actPatient, ICoverage coverage,
-		IInvoice invoice){
+		IInvoice invoice, boolean isOptional){
 		String ahv =
 			TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		if (ahv.length() == 0) {
 			ahv = CoverageServiceHolder.get().getRequiredString(coverage, TarmedRequirements.SSN)
 				.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		}
-		boolean bAHVValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
-			&& (bAHVValid == false)) {
+		boolean ahvValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!isOptional && ((CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
+			&& !ahvValid))) {
 			invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
 				Messages.XMLExporter_AHVInvalid);
-		} else {
+		} else if (ahvValid) {
 			element.setAttribute("ssn", ahv); //$NON-NLS-1$
 		}
 	}

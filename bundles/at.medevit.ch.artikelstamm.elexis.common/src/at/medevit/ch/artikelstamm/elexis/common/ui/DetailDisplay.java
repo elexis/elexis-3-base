@@ -71,7 +71,7 @@ public class DetailDisplay implements IDetailDisplay {
 	@Inject
 	public void selection(
 		@Optional @Named("at.medevit.ch.artikelstamm.elexis.common.ui.selection") IArtikelstammItem item){
-		if (item != null && !dc.isDisposed()) {
+		if (item != null && dc != null && !dc.isDisposed()) {
 			display(item);
 		}
 	}

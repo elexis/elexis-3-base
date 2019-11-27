@@ -109,7 +109,7 @@
                         ifEmpty="false"
                         operator="and">
                      <instanceof
-                           value="ch.elexis.core.model.IPeriod">
+                           value="ch.elexis.core.data.interfaces.IPeriod">
                      </instanceof>
                   </iterate>
                </with>
@@ -133,7 +133,7 @@
                         ifEmpty="false"
                         operator="and">
                      <instanceof
-                           value="ch.elexis.core.model.IPeriod">
+                           value="ch.elexis.core.data.interfaces.IPeriod">
                      </instanceof>
                   </iterate>
                </with>
@@ -156,7 +156,7 @@
                         ifEmpty="false"
                         operator="and">
                      <instanceof
-                           value="ch.elexis.core.model.IPeriod">
+                           value="ch.elexis.core.data.interfaces.IPeriod">
                      </instanceof>
                   </iterate>
                </with>
@@ -191,7 +191,7 @@
                         ifEmpty="false"
                         operator="and">
                      <instanceof
-                           value="ch.elexis.core.model.IPeriod">
+                           value="ch.elexis.core.data.interfaces.IPeriod">
                      </instanceof>
                   </iterate>
                </with>

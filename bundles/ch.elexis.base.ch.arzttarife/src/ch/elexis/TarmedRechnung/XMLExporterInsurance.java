@@ -76,7 +76,6 @@ public class XMLExporterInsurance {
 			addSSNAttribute(element, actPatient, actFall, rechnung, true);
 			addInsuredId(element, actPatient, actFall);
 		} else {
-			addSSNAttribute(element, actPatient, actFall, rechnung, true);
 			addInsuredId(element, actPatient, actFall);
 		}
 		String casedate = actFall.getInfoString("Unfalldatum"); //$NON-NLS-1$

@@ -12,10 +12,10 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.agenda.data.IPlannable;
-import ch.elexis.core.model.IPeriod;
-import ch.elexis.data.PersistentObject;
+import ch.elexis.core.data.interfaces.IPeriod;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminDialog.CollisionErrorLevel;
 

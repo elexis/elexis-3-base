@@ -15,10 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.model.IPeriod;
-import ch.elexis.data.PersistentObject;
+import ch.elexis.core.data.interfaces.IPeriod;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
+import ch.elexis.data.PersistentObject;
 
 public class DeleteHandler extends AbstractHandler implements IHandler {
 	

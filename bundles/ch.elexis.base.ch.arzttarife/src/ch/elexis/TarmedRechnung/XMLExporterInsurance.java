@@ -52,7 +52,7 @@ public class XMLExporterInsurance {
 				}
 			}
 			element.setAttribute(ATTR_CASE_ID, caseNumber);
-			addSSNAttribute(element, actPatient, actFall, rechnung);
+			addSSNAttribute(element, actPatient, actFall, rechnung, false);
 			String nif =
 				TarmedRequirements.getNIF(actMandant.getRechnungssteller()).replaceAll(
 					"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class XMLExporterInsurance {
 				element.setAttribute("nif", nif); //$NON-NLS-1$
 			}
 		} else if (gesetz.equalsIgnoreCase("mvg")) {
-			addSSNAttribute(element, actPatient, actFall, rechnung);
+			addSSNAttribute(element, actPatient, actFall, rechnung, false);
 			addInsuredId(element, actPatient, actFall);
 		} else if (gesetz.equalsIgnoreCase("uvg")) { //$NON-NLS-1$
 			String casenumber = actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
@@ -73,8 +73,10 @@ public class XMLExporterInsurance {
 			if (!StringTool.isNothing(casenumber)) {
 				element.setAttribute(ATTR_CASE_ID, casenumber);
 			}
+			addSSNAttribute(element, actPatient, actFall, rechnung, true);
 			addInsuredId(element, actPatient, actFall);
 		} else {
+			addSSNAttribute(element, actPatient, actFall, rechnung, true);
 			addInsuredId(element, actPatient, actFall);
 		}
 		String casedate = actFall.getInfoString("Unfalldatum"); //$NON-NLS-1$
@@ -100,7 +102,7 @@ public class XMLExporterInsurance {
 	}
 	
 	private static void addSSNAttribute(Element element, Patient actPatient, Fall actFall,
-		Rechnung rechnung){
+			Rechnung rechnung, boolean isOptional) {
 		String ahv =
 			TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		if (ahv.length() == 0) {
@@ -108,11 +110,10 @@ public class XMLExporterInsurance {
 				actFall.getRequiredString(TarmedRequirements.SSN).replaceAll(
 					"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		}
-		boolean bAHVValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
-			&& (bAHVValid == false)) {
+		boolean ahvValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!isOptional && ((CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true) && !ahvValid))) {
 			rechnung.reject(REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_AHVInvalid);
-		} else {
+		} else if (ahvValid) {
 			element.setAttribute("ssn", ahv); //$NON-NLS-1$
 		}
 	}

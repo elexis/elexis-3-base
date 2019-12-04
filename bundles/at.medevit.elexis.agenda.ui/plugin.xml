@@ -61,6 +61,11 @@
             id="at.medevit.elexis.agenda.ui.command.insert"
             name="Insert">
       </command>
+      <command
+            defaultHandler="at.medevit.elexis.agenda.ui.handler.PrintSelectedAgendaHandler"
+            id="at.medevit.elexis.agenda.ui.PrintSelectedAgenda"
+            name="Print selected Agenda">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

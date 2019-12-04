@@ -210,4 +210,8 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	public void setScrollToNow(boolean value){
 		scriptingHelper.setScrollToNow(value);
 	}
+	
+	public LoadEventsFunction getLoadEventsFunction(){
+		return loadEventsFunction;
+	}
 }

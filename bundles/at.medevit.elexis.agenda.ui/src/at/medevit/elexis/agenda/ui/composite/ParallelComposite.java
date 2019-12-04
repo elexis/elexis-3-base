@@ -34,6 +34,7 @@ import at.medevit.elexis.agenda.ui.function.DoubleClickFunction;
 import at.medevit.elexis.agenda.ui.function.EventDropFunction;
 import at.medevit.elexis.agenda.ui.function.EventResizeFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
+import at.medevit.elexis.agenda.ui.function.PdfFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import ch.elexis.core.data.activator.CoreHub;
@@ -76,6 +77,8 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		new EventDropFunction(browser, "eventDropFunction");
 		
 		new EventResizeFunction(browser, "eventResizeFunction");
+		
+		new PdfFunction(browser, "pdfFunction");
 		
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
@@ -226,5 +229,9 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	@Override
 	public void setScrollToNow(boolean value){
 		scriptingHelper.setScrollToNow(value);
+	}
+	
+	public LoadEventsFunction getLoadEventsFunction(){
+		return loadEventsFunction;
 	}
 }

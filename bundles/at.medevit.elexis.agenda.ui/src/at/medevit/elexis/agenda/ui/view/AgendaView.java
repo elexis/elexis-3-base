@@ -10,6 +10,7 @@ import org.eclipse.ui.part.ViewPart;
 import at.medevit.elexis.agenda.ui.composite.ParallelComposite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.composite.WeekComposite;
+import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -107,5 +108,14 @@ public class AgendaView extends ViewPart {
 	
 	public SideBarComposite getParallelSideBarComposite(){
 		return parallelSideBar;
+	}
+	
+	public LoadEventsFunction getLoadEventsFunction(){
+		if (stackLayout.topControl == parallelParent) {
+			return parallelComposite.getLoadEventsFunction();
+		} else if (stackLayout.topControl == weekParent) {
+			return weekComposite.getLoadEventsFunction();
+		}
+		return null;
 	}
 }

@@ -307,4 +307,9 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			return ret;
 		}
 	}
+	
+	public List<IPeriod> getCurrentPeriods(){
+		TimeSpanLoader loader = new TimeSpanLoader();
+		return loader.getPeriods(currentTimeSpan);
+	}
 }

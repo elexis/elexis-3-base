@@ -46,6 +46,12 @@
 				},
 				eventRender: eventRenderCallback,
 				customButtons: {
+					pdf: {
+						text: 'Pdf',
+						click: function () {
+							pdfFunction();
+						}						
+					},
 					switch: {
 						text: 'Woche',
 						click: function () {
@@ -63,7 +69,7 @@
 				header: {
 					left: 'title',
 					center: '',
-					right: 'switch reload,today prev,next'
+					right: 'pdf switch reload,today prev,next'
 				},
 			});
 		});

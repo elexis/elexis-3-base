@@ -25,7 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.ehealth_connector.cda.ch.AbstractCdaChV1;
-import org.ehealth_connector.common.enums.AdministrativeGender;
+import org.ehealth_connector.common.mdht.enums.AdministrativeGender;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
@@ -62,9 +62,9 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		contentViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element){
-				if (element instanceof org.ehealth_connector.common.Patient) {
-					org.ehealth_connector.common.Patient patient =
-						((org.ehealth_connector.common.Patient) element);
+				if (element instanceof org.ehealth_connector.common.mdht.Patient) {
+					org.ehealth_connector.common.mdht.Patient patient =
+						((org.ehealth_connector.common.mdht.Patient) element);
 					return patient.getName().getCompleteName() + " - "
 						+ patient.getBirthday().toString();
 				}
@@ -73,8 +73,8 @@ public class ImportPatientWizardPage1 extends WizardPage {
 			
 			@Override
 			public Image getImage(Object element){
-				if (element instanceof org.ehealth_connector.common.Patient) {
-					if (((org.ehealth_connector.common.Patient) element)
+				if (element instanceof org.ehealth_connector.common.mdht.Patient) {
+					if (((org.ehealth_connector.common.mdht.Patient) element)
 						.getAdministrativeGenderCode() == AdministrativeGender.FEMALE) {
 						return Images.IMG_FRAU.getImage();
 					} else {
@@ -96,8 +96,8 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
 		
 		if (!contentSelection.isEmpty()) {
-			org.ehealth_connector.common.Patient selectedPatient =
-				(org.ehealth_connector.common.Patient) contentSelection.getFirstElement();
+			org.ehealth_connector.common.mdht.Patient selectedPatient =
+				(org.ehealth_connector.common.mdht.Patient) contentSelection.getFirstElement();
 			String gender =
 				selectedPatient.getAdministrativeGenderCode() == AdministrativeGender.FEMALE ? Person.FEMALE
 						: Person.MALE;

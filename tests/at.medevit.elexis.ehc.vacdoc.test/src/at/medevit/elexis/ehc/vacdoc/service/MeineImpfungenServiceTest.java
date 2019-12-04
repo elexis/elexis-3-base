@@ -103,7 +103,7 @@ public class MeineImpfungenServiceTest {
 			(ServiceReference<MeineImpfungenService>) AllTests
 				.getService(MeineImpfungenService.class);
 		MeineImpfungenService service = context.getService(serviceRef);
-		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
+		List<org.ehealth_connector.common.mdht.Patient> patients = service.getPatients(patient);
 		assertNotNull(patients);
 		AllTests.ungetService(serviceRef);
 	}
@@ -115,7 +115,7 @@ public class MeineImpfungenServiceTest {
 			(ServiceReference<MeineImpfungenService>) AllTests
 				.getService(MeineImpfungenService.class);
 		MeineImpfungenService service = context.getService(serviceRef);
-		List<org.ehealth_connector.common.Patient> patients = service.getPatients(patient);
+		List<org.ehealth_connector.common.mdht.Patient> patients = service.getPatients(patient);
 		List<CdaChVacd> documents = service.getDocuments(patients.get(0));
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());

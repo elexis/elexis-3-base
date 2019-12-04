@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.ehealth_connector.cda.ch.AbstractCdaChV1;
-import org.ehealth_connector.common.Organization;
-import org.ehealth_connector.common.Telecoms;
-import org.ehealth_connector.common.enums.AddressUse;
+import org.ehealth_connector.common.enums.TelecomAddressUse;
+import org.ehealth_connector.common.mdht.Organization;
+import org.ehealth_connector.common.mdht.Telecoms;
 import org.openhealthtools.mdht.uml.cda.Act;
 import org.openhealthtools.mdht.uml.cda.Author;
 import org.openhealthtools.mdht.uml.cda.CDAFactory;
@@ -174,7 +174,7 @@ public class DocboxService {
 		String phone = (String) rechnungssteller.get(Rechnungssteller.FLD_PHONE1);
 		if (!StringTool.isNothing(phone)) {
 			Telecoms telcoms = organization.getTelecoms();
-			telcoms.addPhone(phone, AddressUse.BUSINESS);
+			telcoms.addPhone(phone, TelecomAddressUse.BUSINESS);
 		}
 		document.setCustodian(organization);
 		// add ZSR to custodian organization

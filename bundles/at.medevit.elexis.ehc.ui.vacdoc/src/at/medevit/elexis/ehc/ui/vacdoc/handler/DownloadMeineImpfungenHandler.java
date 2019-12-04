@@ -42,7 +42,7 @@ public class DownloadMeineImpfungenHandler extends AbstractHandler implements IH
 							monitor.beginTask("Impfungen importieren von meineimpfungen ...",
 								IProgressMonitor.UNKNOWN);
 							
-							List<org.ehealth_connector.common.Patient> patients =
+							List<org.ehealth_connector.common.mdht.Patient> patients =
 								MeineImpfungenServiceHolder.getService().getPatients(patient);
 							if (patients != null && !patients.isEmpty()) {
 								if (patients.size() == 1) {

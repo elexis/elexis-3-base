@@ -9,11 +9,11 @@ import org.ehealth_connector.cda.Consumable;
 import org.ehealth_connector.cda.ch.utils.CdaChLoader;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.cda.ch.vacd.Immunization;
-import org.ehealth_connector.common.Author;
-import org.ehealth_connector.common.Code;
-import org.ehealth_connector.common.Identificator;
 import org.ehealth_connector.common.enums.CodeSystems;
 import org.ehealth_connector.common.enums.LanguageCode;
+import org.ehealth_connector.common.mdht.Author;
+import org.ehealth_connector.common.mdht.Code;
+import org.ehealth_connector.common.mdht.Identificator;
 import org.ehealth_connector.common.utils.DateUtil;
 import org.openhealthtools.mdht.uml.cda.ch.CdaChVacdV1;
 import org.openhealthtools.mdht.uml.cda.ch.ChPackage;
@@ -84,7 +84,7 @@ public class VacdocServiceImpl implements VacdocService {
 	 */
 	@Override
 	public void addAllVaccinations(CdaChVacd doc){
-		org.ehealth_connector.common.Patient ehcPatient = doc.getPatient();
+		org.ehealth_connector.common.mdht.Patient ehcPatient = doc.getPatient();
 		Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcPatient);
 		
 		Query<Vaccination> query = new Query<Vaccination>(Vaccination.class);
@@ -127,7 +127,7 @@ public class VacdocServiceImpl implements VacdocService {
 				}
 				
 				Immunization immunization = new Immunization(consumable, author,
-					DateUtil.date(vaccination.getDateOfAdministrationLabel()), null, null);
+					DateUtil.parseDate(vaccination.getDateOfAdministrationLabel()), null, null);
 				doc.addImmunization(immunization);
 			}
 		}

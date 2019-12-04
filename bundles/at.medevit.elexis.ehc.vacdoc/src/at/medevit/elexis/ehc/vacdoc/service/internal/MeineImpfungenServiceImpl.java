@@ -17,12 +17,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
-import org.ehealth_connector.common.Code;
-import org.ehealth_connector.common.Identificator;
-import org.ehealth_connector.common.Name;
 import org.ehealth_connector.common.ch.enums.ConfidentialityCode;
 import org.ehealth_connector.common.enums.CodeSystems;
 import org.ehealth_connector.common.enums.LanguageCode;
+import org.ehealth_connector.common.mdht.Code;
+import org.ehealth_connector.common.mdht.Identificator;
+import org.ehealth_connector.common.mdht.Name;
 import org.ehealth_connector.common.utils.DateUtil;
 import org.ehealth_connector.communication.AffinityDomain;
 import org.ehealth_connector.communication.AtnaConfig;
@@ -34,7 +34,6 @@ import org.ehealth_connector.communication.MasterPatientIndexQueryResponse;
 import org.ehealth_connector.communication.ch.ConvenienceCommunicationCh;
 import org.ehealth_connector.communication.ch.DocumentMetadataCh;
 import org.ehealth_connector.communication.ch.enums.AvailabilityStatus;
-import org.ehealth_connector.communication.ch.enums.ClassCode;
 import org.ehealth_connector.communication.ch.enums.FormatCode;
 import org.ehealth_connector.communication.ch.enums.HealthcareFacilityTypeCode;
 import org.ehealth_connector.communication.ch.enums.MimeType;
@@ -267,7 +266,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	}
 	
 	@Override
-	public List<CdaChVacd> getDocuments(org.ehealth_connector.common.Patient ehcPatient){
+	public List<CdaChVacd> getDocuments(org.ehealth_connector.common.mdht.Patient ehcPatient){
 		List<CdaChVacd> ret = new ArrayList<>();
 		List<DocumentEntryType> entryTypes = getAllPatientDocumentEntryTypes(ehcPatient);
 		try {
@@ -299,7 +298,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	 * @return the document entry types
 	 */
 	private List<DocumentEntryType> getAllPatientDocumentEntryTypes(
-		org.ehealth_connector.common.Patient ehcPatient){
+		org.ehealth_connector.common.mdht.Patient ehcPatient){
 		List<DocumentEntryType> ret = new ArrayList<DocumentEntryType>();
 		List<Identificator> ids = ehcPatient.getIds();
 		if (ids != null && !ids.isEmpty()) {
@@ -360,7 +359,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	}
 	
 	@Override
-	public List<org.ehealth_connector.common.Patient> getPatients(Patient elexisPatient){
+	public List<org.ehealth_connector.common.mdht.Patient> getPatients(Patient elexisPatient){
 		MasterPatientIndexQuery mpiQuery =
 			new MasterPatientIndexQuery(affinityDomain.getPdqDestination());
 		mpiQuery.addDomainToReturn(PDQ_REQUEST_PATID_OID);
@@ -370,7 +369,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		
 		String birthDate = elexisPatient.getGeburtsdatum();
 		if (birthDate != null && !birthDate.isEmpty()) {
-			mpiQuery.setPatientDateOfBirth(DateUtil.date(birthDate));
+			mpiQuery.setPatientDateOfBirth(DateUtil.parseDate(birthDate));
 		}
 		MasterPatientIndexQueryResponse ret =
 			ConvenienceMasterPatientIndexV3.queryPatientDemographics(mpiQuery, affinityDomain);
@@ -448,11 +447,10 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		
 		metaData.setTypeCode(TypeCode.IMMUNIZATION_RECORD);
 		metaData.setFormatCode(FormatCode.IMMUNIZATION_CONTENT);
-		metaData.setClassCode(ClassCode.ALERTS);
 		
 		metaData.setHealthcareFacilityTypeCode(
 			HealthcareFacilityTypeCode.AMBULATORY_CARE_SITE);
-		metaData.addConfidentialityCode(ConfidentialityCode.NORMAL);
+		metaData.addConfidentialityCode(ConfidentialityCode.NORMALLY_ACCESSIBLE);
 		
 		// TODO this workaround is only needed as long as meineimpfungen and the current eHC release use different coding for vaccination documents. 
 		metaData.setTypeCode(new Code("2.16.756.5.30.1.127.3.10.1.27", "60043", "epd_xds_typeCode",
@@ -464,7 +462,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	}
 	
 	private Optional<Identificator> getMeineImpfungenPatientId(
-		org.ehealth_connector.common.Patient patient){
+		org.ehealth_connector.common.mdht.Patient patient){
 		List<Identificator> ids = patient.getIds();
 		if (ids != null && !ids.isEmpty()) {
 			for (Identificator identificator : ids) {

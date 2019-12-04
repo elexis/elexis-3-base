@@ -10,11 +10,11 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import org.ehealth_connector.common.Address;
-import org.ehealth_connector.common.Identificator;
-import org.ehealth_connector.common.Name;
-import org.ehealth_connector.common.Patient;
-import org.ehealth_connector.common.enums.AdministrativeGender;
+import org.ehealth_connector.common.mdht.Address;
+import org.ehealth_connector.common.mdht.Identificator;
+import org.ehealth_connector.common.mdht.Name;
+import org.ehealth_connector.common.mdht.Patient;
+import org.ehealth_connector.common.mdht.enums.AdministrativeGender;
 import org.ehealth_connector.communication.AffinityDomain;
 import org.ehealth_connector.communication.ConvenienceMasterPatientIndexV3;
 import org.ehealth_connector.communication.Destination;

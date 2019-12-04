@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
-import org.ehealth_connector.common.Identificator;
+import org.ehealth_connector.common.mdht.Identificator;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder;
@@ -51,7 +51,7 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 							monitor.beginTask("Impfung export nach meineimpfungen ...",
 								IProgressMonitor.UNKNOWN);
 							
-							List<org.ehealth_connector.common.Patient> patients =
+							List<org.ehealth_connector.common.mdht.Patient> patients =
 								MeineImpfungenServiceHolder.getService().getPatients(patient);
 							if (patients != null && !patients.isEmpty()) {
 								if (patients.size() == 1) {
@@ -84,8 +84,8 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 						}
 						
 						private void setMeineImpfungenPatientId(
-							org.ehealth_connector.common.Patient docPatient,
-							org.ehealth_connector.common.Patient miPatient){
+							org.ehealth_connector.common.mdht.Patient docPatient,
+							org.ehealth_connector.common.mdht.Patient miPatient){
 							List<Identificator> ids = miPatient.getIds();
 							if (ids != null && !ids.isEmpty()) {
 								for (Identificator identificator : ids) {

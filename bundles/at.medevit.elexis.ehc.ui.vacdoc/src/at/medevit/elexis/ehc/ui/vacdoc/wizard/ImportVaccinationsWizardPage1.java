@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.ehealth_connector.cda.Consumable;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.cda.ch.vacd.Immunization;
-import org.ehealth_connector.common.Code;
+import org.ehealth_connector.common.mdht.Code;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;

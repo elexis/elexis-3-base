@@ -128,7 +128,7 @@ public class EhcDocument extends PersistentObject {
 				AbstractCdaChV1<?> cdaCh =
 					ServiceComponent.getEhcService().getAsCdaChDocument(clinicalDocument);
 				if (cdaCh != null) {
-					org.ehealth_connector.common.Patient patient = cdaCh.getPatient();
+					org.ehealth_connector.common.mdht.Patient patient = cdaCh.getPatient();
 					if (patient != null) {
 						ret = EhcCoreMapper.getElexisPatient(patient);
 					}
@@ -211,7 +211,7 @@ public class EhcDocument extends PersistentObject {
 			if (fileName != null && !fileName.isEmpty()) {
 				File file = new File(fileName);
 				if (file.exists()) {
-					List<org.ehealth_connector.common.Patient> patients =
+					List<org.ehealth_connector.common.mdht.Patient> patients =
 						ServiceComponent.getEhcService().getXdmPatients(file);
 					return patients != null;
 				}

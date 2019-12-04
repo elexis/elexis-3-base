@@ -14,7 +14,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.ehealth_connector.common.Identificator;
+import org.ehealth_connector.common.mdht.Identificator;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder;
@@ -39,7 +39,7 @@ public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandl
 							monitor.beginTask("Patient auf meineimpfungen suchen ...",
 								IProgressMonitor.UNKNOWN);
 							
-							List<org.ehealth_connector.common.Patient> patients =
+							List<org.ehealth_connector.common.mdht.Patient> patients =
 								MeineImpfungenServiceHolder.getService().getPatients(patient);
 							if (patients != null && !patients.isEmpty()) {
 								if (patients.size() == 1) {
@@ -87,7 +87,7 @@ public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandl
 		return null;
 	}
 	
-	private Optional<String> getPatientId(org.ehealth_connector.common.Patient ehcPatient){
+	private Optional<String> getPatientId(org.ehealth_connector.common.mdht.Patient ehcPatient){
 		List<Identificator> ids = ehcPatient.getIds();
 		if (ids != null && !ids.isEmpty()) {
 			for (Identificator identificator : ids) {

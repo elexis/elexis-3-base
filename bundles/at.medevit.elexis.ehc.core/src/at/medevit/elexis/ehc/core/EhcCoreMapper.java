@@ -20,16 +20,16 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.ehealth_connector.common.Address;
-import org.ehealth_connector.common.Author;
-import org.ehealth_connector.common.Identificator;
-import org.ehealth_connector.common.Name;
-import org.ehealth_connector.common.Organization;
-import org.ehealth_connector.common.Patient;
-import org.ehealth_connector.common.Telecoms;
-import org.ehealth_connector.common.enums.AddressUse;
-import org.ehealth_connector.common.enums.AdministrativeGender;
 import org.ehealth_connector.common.enums.CodeSystems;
+import org.ehealth_connector.common.enums.TelecomAddressUse;
+import org.ehealth_connector.common.mdht.Address;
+import org.ehealth_connector.common.mdht.Author;
+import org.ehealth_connector.common.mdht.Identificator;
+import org.ehealth_connector.common.mdht.Name;
+import org.ehealth_connector.common.mdht.Organization;
+import org.ehealth_connector.common.mdht.Patient;
+import org.ehealth_connector.common.mdht.Telecoms;
+import org.ehealth_connector.common.mdht.enums.AdministrativeGender;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.interfaces.IPersistentObject;
@@ -76,11 +76,11 @@ public class EhcCoreMapper {
 		Telecoms telecoms = new Telecoms();
 		String value = elexisPatient.get(Kontakt.FLD_PHONE1);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
-			telecoms.addPhone(value, AddressUse.PRIVATE);
+			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
 		}
 		value = elexisPatient.get(Kontakt.FLD_MOBILEPHONE);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
-			telecoms.addPhone(value, AddressUse.MOBILE);
+			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
 		}
 		ret.setTelecoms(telecoms);
 		// ADDRESS
@@ -137,11 +137,11 @@ public class EhcCoreMapper {
 		Telecoms telecoms = new Telecoms();
 		String value = elexisMandant.get(Kontakt.FLD_PHONE1);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
-			telecoms.addPhone(value, AddressUse.PRIVATE);
+			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
 		}
 		value = elexisMandant.get(Kontakt.FLD_MOBILEPHONE);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
-			telecoms.addPhone(value, AddressUse.MOBILE);
+			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
 		}
 		ret.setTelecoms(telecoms);
 		// ADDRESS
@@ -162,11 +162,11 @@ public class EhcCoreMapper {
 		Telecoms telecoms = new Telecoms();
 		String value = rechnungssteller.get(Kontakt.FLD_PHONE1);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
-			telecoms.addPhone(value, AddressUse.PRIVATE);
+			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
 		}
 		value = rechnungssteller.get(Kontakt.FLD_MOBILEPHONE);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
-			telecoms.addPhone(value, AddressUse.MOBILE);
+			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
 		}
 		ret.setTelecoms(telecoms);
 		// ADDRESS
@@ -265,7 +265,7 @@ public class EhcCoreMapper {
 	}
 	
 	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt, Telecoms telecoms){
-		Map<String, AddressUse> phones = telecoms.getPhones();
+		Map<String, TelecomAddressUse> phones = telecoms.getPhones();
 		Set<String> keys = phones.keySet();
 		String existing = kontakt.get(Kontakt.FLD_PHONE1);
 		

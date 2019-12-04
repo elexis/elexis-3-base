@@ -84,7 +84,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public Patient getOrCreatePatient(org.ehealth_connector.common.Patient ehcPatient){
+	public Patient getOrCreatePatient(org.ehealth_connector.common.mdht.Patient ehcPatient){
 		Patient patient = EhcCoreMapper.getElexisPatient(ehcPatient);
 		EhcCoreMapper.importEhcAddress(patient, ehcPatient.getAddress());
 		EhcCoreMapper.importEhcPhone(patient, ehcPatient.getTelecoms());
@@ -107,13 +107,13 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		return new ByteArrayInputStream(outputStream.toByteArray());
 	}
 	
-	private org.ehealth_connector.common.Patient getPatient(ClinicalDocument document){
+	private org.ehealth_connector.common.mdht.Patient getPatient(ClinicalDocument document){
 		EList<RecordTarget> targets = document.getRecordTargets();
 		if (targets != null && !targets.isEmpty()) {
 			if (targets.size() > 1) {
 				logger.warn("Document " + document.getTitle() + " has more than one record target");
 			}
-			return new org.ehealth_connector.common.Patient(EcoreUtil.copy(targets.get(0)));
+			return new org.ehealth_connector.common.mdht.Patient(EcoreUtil.copy(targets.get(0)));
 		}
 		throw new IllegalStateException(
 			"Document " + document.getTitle() + " has no record target");
@@ -148,12 +148,12 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 	
 	@Override
-	public List<org.ehealth_connector.common.Patient> getXdmPatients(File file){
-		List<org.ehealth_connector.common.Patient> ret = null;
+	public List<org.ehealth_connector.common.mdht.Patient> getXdmPatients(File file){
+		List<org.ehealth_connector.common.mdht.Patient> ret = null;
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
 		XdmContents contents = conCom.getXdmContents(file.getAbsolutePath());
 		if (contents != null) {
-			ret = new ArrayList<org.ehealth_connector.common.Patient>();
+			ret = new ArrayList<org.ehealth_connector.common.mdht.Patient>();
 			List<DocumentContentAndMetadata> dataList = contents.getDocumentAndMetadataList();
 			for (DocumentContentAndMetadata documentContentAndMetadata : dataList) {
 				ret.add(documentContentAndMetadata.getDocEntry().getPatient());
@@ -167,7 +167,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		String xdmPath){
 		if (patient != null && mandant != null && attachments != null && xdmPath != null) {
 			ConvenienceCommunication conCom = new ConvenienceCommunication();
-			org.ehealth_connector.common.Patient ehealthPatient =
+			org.ehealth_connector.common.mdht.Patient ehealthPatient =
 				EhcCoreMapper.getEhcPatient(patient);
 			System.out.println(ehealthPatient.getIds());
 			StringBuilder retInfo = new StringBuilder();

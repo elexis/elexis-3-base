@@ -50,11 +50,11 @@ public interface EhcCoreService {
 	
 	/**
 	 * Search for a matching Patient, or create a new Elexis {@link Patient} with the data from the
-	 * {@link org.ehealth_connector.common.Patient} provided.
+	 * {@link org.ehealth_connector.common.mdht.Patient} provided.
 	 * 
 	 * @param selectedPatient
 	 */
-	public Patient getOrCreatePatient(org.ehealth_connector.common.Patient selectedPatient);
+	public Patient getOrCreatePatient(org.ehealth_connector.common.mdht.Patient selectedPatient);
 	
 	/**
 	 * Create a {@link AbstractCdaCh} implementation, containing the provided {@link Patient} and
@@ -84,12 +84,12 @@ public interface EhcCoreService {
 	public List<ClinicalDocument> getXdmDocuments(File file);
 		
 	/**
-	 * Get all {@link org.ehealth_connector.common.Patient} instances from a XDM file.
+	 * Get all {@link org.ehealth_connector.common.mdht.Patient} instances from a XDM file.
 	 * 
 	 * @param file
 	 * @return
 	 */
-	public List<org.ehealth_connector.common.Patient> getXdmPatients(File file);
+	public List<org.ehealth_connector.common.mdht.Patient> getXdmPatients(File file);
 	
 	/**
 	 * Creates a new xdm container with the files for a patient

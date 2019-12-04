@@ -30,10 +30,10 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.ehealth_connector.cda.ch.AbstractCdaChV1;
-import org.ehealth_connector.common.Address;
-import org.ehealth_connector.common.Identificator;
-import org.ehealth_connector.common.enums.AddressUse;
-import org.ehealth_connector.common.enums.AdministrativeGender;
+import org.ehealth_connector.common.enums.TelecomAddressUse;
+import org.ehealth_connector.common.mdht.Address;
+import org.ehealth_connector.common.mdht.Identificator;
+import org.ehealth_connector.common.mdht.enums.AdministrativeGender;
 import org.ehealth_connector.communication.ConvenienceCommunication;
 import org.ehealth_connector.communication.DocumentMetadata;
 import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;
@@ -121,7 +121,7 @@ public class EhcCoreServiceTest {
 		EhcCoreServiceImpl service = new EhcCoreServiceImpl();
 		AbstractCdaChV1<?> cda = service.createCdaChDocument(patient, mandant);
 		assertNotNull(cda);
-		org.ehealth_connector.common.Patient cdaPatient = cda.getPatient();
+		org.ehealth_connector.common.mdht.Patient cdaPatient = cda.getPatient();
 		assertNotNull(cdaPatient);
 		assertEquals("name", cdaPatient.getName().getFamilyName());
 		assertEquals("firstname", cdaPatient.getName().getGivenNames().get(0));
@@ -134,7 +134,7 @@ public class EhcCoreServiceTest {
 		assertFalse(addresses.isEmpty());
 		assertEquals("City", addresses.get(0).getCity());
 		
-		Map<String, AddressUse> phones = cdaPatient.getTelecoms().getPhones();
+		Map<String, TelecomAddressUse> phones = cdaPatient.getTelecoms().getPhones();
 		assertFalse(phones.isEmpty());
 		assertTrue(phones.containsKey("tel:+01555123"));
 	}
@@ -178,7 +178,7 @@ public class EhcCoreServiceTest {
 		assertNotNull(document);
 		AbstractCdaChV1<?> cdach = service.getAsCdaChDocument(document);
 		assertNotNull(cdach);
-		org.ehealth_connector.common.Patient readPatient = cdach.getPatient();
+		org.ehealth_connector.common.mdht.Patient readPatient = cdach.getPatient();
 		assertEquals("name", readPatient.getName().getFamilyName());
 		assertEquals("firstname", readPatient.getName().getGivenNames().get(0));
 		assertEquals(AdministrativeGender.FEMALE, readPatient.getAdministrativeGenderCode());
@@ -206,7 +206,7 @@ public class EhcCoreServiceTest {
 			input.close();
 		}
 		
-		List<org.ehealth_connector.common.Patient> patients = service.getXdmPatients(testTmp);
+		List<org.ehealth_connector.common.mdht.Patient> patients = service.getXdmPatients(testTmp);
 		assertFalse(patients.isEmpty());
 		List<Identificator> ids = patients.get(0).getIds();
 		assertFalse(ids.isEmpty());

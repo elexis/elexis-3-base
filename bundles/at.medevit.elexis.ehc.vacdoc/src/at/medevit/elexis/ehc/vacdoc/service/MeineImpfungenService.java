@@ -3,7 +3,7 @@ package at.medevit.elexis.ehc.vacdoc.service;
 import java.util.List;
 
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
-import org.ehealth_connector.common.Patient;
+import org.ehealth_connector.common.mdht.Patient;
 
 /**
  * Service interface for communication with the ehealth interface provided by the meineimpfungen web

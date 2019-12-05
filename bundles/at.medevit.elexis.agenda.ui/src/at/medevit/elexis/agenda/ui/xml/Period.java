@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.model.IPeriod;
 import ch.rgw.tools.TimeTool;
 
 @XmlRootElement(name = "period")

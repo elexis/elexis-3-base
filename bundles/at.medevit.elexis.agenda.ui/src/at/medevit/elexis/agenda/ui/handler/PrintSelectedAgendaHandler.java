@@ -30,7 +30,7 @@ import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
 import at.medevit.elexis.agenda.ui.xml.AreaPeriodsLetter;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.services.IFormattedOutput;
 import ch.elexis.core.services.IFormattedOutputFactory;
 import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;

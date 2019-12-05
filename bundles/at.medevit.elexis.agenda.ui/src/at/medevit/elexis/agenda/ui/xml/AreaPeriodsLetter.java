@@ -10,7 +10,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.model.IPeriod;
+
 
 @XmlRootElement
 public class AreaPeriodsLetter {

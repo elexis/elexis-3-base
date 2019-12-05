@@ -32,6 +32,7 @@ import at.medevit.elexis.gdt.tools.GDTSatzNachrichtHelper;
 import at.medevit.elexis.gdt.ui.dialog.StammdatenUebermittelnDialog;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Patient;
 
 public class StammdatenUebermitteln extends AbstractHandler {
@@ -51,7 +52,7 @@ public class StammdatenUebermitteln extends AbstractHandler {
 			ISelection selection = iWorkbenchWindow.getActivePage().getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection strucSelection = (IStructuredSelection) selection;
-				pat = (Patient) strucSelection.getFirstElement();
+				pat = getAsPatient(strucSelection);
 			}
 		}
 		
@@ -85,4 +86,13 @@ public class StammdatenUebermitteln extends AbstractHandler {
 		return null;
 	}
 	
+	private Patient getAsPatient(IStructuredSelection strucSelection){
+		Patient ret = null;
+		if (strucSelection.getFirstElement() instanceof Identifiable) {
+			ret = Patient.load(((Identifiable) strucSelection.getFirstElement()).getId());
+		} else {
+			ret = (Patient) strucSelection.getFirstElement();
+		}
+		return ret;
+	}
 }

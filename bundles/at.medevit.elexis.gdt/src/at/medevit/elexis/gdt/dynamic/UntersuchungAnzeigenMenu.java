@@ -31,6 +31,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.data.GDTProtokoll;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Patient;
 
 public class UntersuchungAnzeigenMenu extends ContributionItem {
@@ -48,7 +49,7 @@ public class UntersuchungAnzeigenMenu extends ContributionItem {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = window.getActivePage().getSelection();
 		IStructuredSelection strucSelection = (IStructuredSelection) selection;
-		Patient pat = (Patient) strucSelection.getFirstElement();
+		Patient pat = getAsPatient(strucSelection);
 		
 		if (pat != null) {
 			GDTProtokoll[] prot = GDTProtokoll.getEntriesForPatient(pat);
@@ -88,5 +89,15 @@ public class UntersuchungAnzeigenMenu extends ContributionItem {
 			}
 			
 		}
+	}
+	
+	private Patient getAsPatient(IStructuredSelection strucSelection){
+		Patient ret = null;
+		if (strucSelection.getFirstElement() instanceof Identifiable) {
+			ret = Patient.load(((Identifiable) strucSelection.getFirstElement()).getId());
+		} else {
+			ret = (Patient) strucSelection.getFirstElement();
+		}
+		return ret;
 	}
 }

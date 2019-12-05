@@ -14,6 +14,7 @@ package at.medevit.elexis.gdt.handler;
 
 import at.medevit.elexis.gdt.data.GDTProtokoll;
 import at.medevit.elexis.gdt.handler.response.GDTResponseIn6300Out6301;
+import at.medevit.elexis.gdt.interfaces.HandlerProgramType;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6300;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6301;
@@ -78,7 +79,7 @@ public class GDTInputHandler {
 		if (out == null)
 			return false;
 		
-		GDTOutputHandler.handleOutput(out, cp);
+		GDTOutputHandler.handleOutput(out, cp, HandlerProgramType.DEFAULT);
 		return true;
 	}
 	

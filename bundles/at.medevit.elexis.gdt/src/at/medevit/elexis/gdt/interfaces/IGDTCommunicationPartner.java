@@ -139,20 +139,21 @@ public interface IGDTCommunicationPartner {
 	int getOutgoingDefaultCharset();
 
 	/**
-	 * Call a program after creating a GDT package to a specific communication
-	 * partner. This hook can be used, if a certain program needs to be called
-	 * to handle the generated GDT Satznachricht.
+	 * Call a program after creating a GDT package to a specific communication partner. This hook
+	 * can be used, if a certain program needs to be called to handle the generated GDT
+	 * Satznachricht.
 	 * 
-	 * If not null this program will be executed any time a message has been
-	 * written to this communication partner.
+	 * If not null this program will be executed any time a message has been written to this
+	 * communication partner.
 	 * 
-	 * This is only applicable for communication of type
-	 * {@link SystemConstants#FILE_COMMUNICATION}.
+	 * This is only applicable for communication of type {@link SystemConstants#FILE_COMMUNICATION}.
+	 * 
+	 * @param handlerType
 	 * 
 	 * @return String containing the program and arguments to be called
 	 */
-	String getExternalHandlerProgram();
-
+	String getExternalHandlerProgram(HandlerProgramType handlerType);
+	
 	/**
 	 * The "long" ID of the receiver which will be embedded into the GDT
 	 * Satznachricht at {@link GDTConstants#FELDKENNUNG_GDT_ID_EMPFAENGER} when

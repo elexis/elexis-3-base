@@ -302,8 +302,8 @@ public class KonsData extends PersistentObject {
 			if (au == null) {
 				// Noch kein Autor gesetzt, auf dieser Kons, setze auf
 				// aktuellen User
-				setAutor(CoreHub.actUser);
-			} else if (!au.equals(CoreHub.actUser)) {
+				setAutor(CoreHub.getActContact());
+			} else if (!au.equals(CoreHub.getActContact())) {
 				// Ungueltiger User
 				throw new RuntimeException("Nur Autor kann " + "Krankengeschichte veraendern!");
 			} else if (StringTool.isNothing(value)) {
@@ -325,7 +325,7 @@ public class KonsData extends PersistentObject {
 	 */
 	public boolean isEditOK(){
 		Anwender au = getAutor();
-		return au == null || au.equals(CoreHub.actUser);
+		return au == null || au.equals(CoreHub.getActContact());
 	}
 	
 	@Override

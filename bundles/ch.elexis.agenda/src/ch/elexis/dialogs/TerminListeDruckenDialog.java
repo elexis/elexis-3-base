@@ -53,7 +53,7 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		text.createFromTemplateName(null, TT_AGENDA_LIST, Brief.UNKNOWN, CoreHub.actUser, "Agenda");
+		text.createFromTemplateName(null, TT_AGENDA_LIST, Brief.UNKNOWN, CoreHub.getActContact(), "Agenda");
 		String[][] termine = new String[liste.length + 1][5];
 		termine[0] = new String[] {
 			"von", "bis", "Typ", "Name", "Grund"

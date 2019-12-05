@@ -99,7 +99,7 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 	 */
 	public void run(IAction action){
 		try {
-			if (CoreHub.actUser != null) {
+			if (CoreHub.getActContact() != null) {
 				patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient == null) {
 					MessageBox box =

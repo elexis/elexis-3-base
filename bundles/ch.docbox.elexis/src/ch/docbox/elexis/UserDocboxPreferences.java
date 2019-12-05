@@ -483,7 +483,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static boolean getAgendaSettingsPerUser(){
-		if (CoreHub.actUser == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getActContact() == null || CoreHub.mandantCfg == null) {
 			return false;
 		}
 		boolean value = CoreHub.mandantCfg.get(USR_AGENDASETTINGSPERUSER, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -646,7 +646,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	public static Settings getSettingsForUser(){
 		// if anwender is also mandant the settings preferences get a hickup, therefore we return
 		// the mandantcfg
-		if (CoreHub.actUser.getId().equals(CoreHub.actMandant.getId())) {
+		if (CoreHub.getActContact().getId().equals(CoreHub.actMandant.getId())) {
 			return CoreHub.mandantCfg;
 		}
 		Settings settings = getAgendaSettingsPerUser() ? CoreHub.userCfg : CoreHub.mandantCfg;
@@ -654,7 +654,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static boolean isAppointmentsEmergencyService(){
-		if (CoreHub.actUser == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getActContact() == null || CoreHub.mandantCfg == null) {
 			return false;
 		}
 		return getSettingsForUser().get(USR_GETAPPOINTMENTSEMERGENCYSERVICE, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -666,7 +666,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static boolean isAppointmentsPharmaVisits(){
-		if (CoreHub.actUser == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getActContact() == null || CoreHub.mandantCfg == null) {
 			return false;
 		}
 		return getSettingsForUser().get(USR_GETAPPOINTMENTSPHARMAVISITS, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -678,7 +678,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static boolean isAppointmentsTerminvereinbarung(){
-		if (CoreHub.actUser == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getActContact() == null || CoreHub.mandantCfg == null) {
 			return false;
 		}
 		return getSettingsForUser().get(USR_GETAPPOINTMENTSTERMINVEREINBARUNG, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -690,7 +690,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static String getAppointmentsBereich(){
-		if (CoreHub.actUser == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getActContact() == null || CoreHub.mandantCfg == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return getSettingsForUser().get(USR_APPOINTMENTSBEREICH, ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -747,7 +747,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static String getProxyHost(){
-		if (CoreHub.actUser == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getActContact() == null || CoreHub.mandantCfg == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return CoreHub.mandantCfg.get(USR_PROXYHOST, ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -758,7 +758,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static String getProxyPort(){
-		if (CoreHub.actUser == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getActContact() == null || CoreHub.mandantCfg == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return CoreHub.mandantCfg.get(USR_PROXYPORT, ""); //$NON-NLS-1$ //$NON-NLS-2$

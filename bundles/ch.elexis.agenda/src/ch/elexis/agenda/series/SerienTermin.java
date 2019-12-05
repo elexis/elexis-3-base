@@ -16,9 +16,9 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Query;
-import ch.elexis.data.User;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
@@ -316,7 +316,7 @@ public class SerienTermin {
 		}
 		
 		rootTermin.setGrund(reason);	
-		rootTermin.set(Termin.FLD_CREATOR, ElexisEventDispatcher.getSelected(User.class).getLabel());
+		rootTermin.set(Termin.FLD_CREATOR, ContextServiceHolder.get().getActiveUser().get().getLabel());
 		rootTermin.set(Termin.FLD_EXTENSION, this.toString());
 		
 	}

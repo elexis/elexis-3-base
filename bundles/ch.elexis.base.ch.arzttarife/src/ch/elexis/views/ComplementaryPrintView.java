@@ -117,7 +117,7 @@ public class ComplementaryPrintView extends ViewPart {
 		if(templateUrl != null) {
 			byte[] content = downloadTempalte(templateUrl);
 			if (content != null && content.length > 0) {
-				Brief template = new Brief(name, null, CoreHub.actUser, null, null, Brief.TEMPLATE);
+				Brief template = new Brief(name, null, CoreHub.getActContact(), null, null, Brief.TEMPLATE);
 				template.save(content, text.getPlugin().getMimeType());
 				// all tarmed templates are sys templates
 				template.set(Brief.FLD_KONSULTATION_ID, Brief.SYS_TEMPLATE);

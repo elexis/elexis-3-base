@@ -107,12 +107,12 @@ public class LabResultFile extends AbstractCsvImportFile<LabResult> implements I
 		LabOrder order = importOrderMap.get(patient);
 		if (order == null) {
 			orderId = LabOrder.getNextOrderId();
-			order = new LabOrder(CoreHub.actUser, ElexisEventDispatcher.getSelectedMandator(), patient,
+			order = new LabOrder(CoreHub.getActContact(), ElexisEventDispatcher.getSelectedMandator(), patient,
 				item, labResult, orderId, "Aeskulap Import", new TimeTool());
 			importOrderMap.put(patient, order);
 		} else {
 			orderId = order.get(LabOrder.FLD_ORDERID);
-			order = new LabOrder(CoreHub.actUser, ElexisEventDispatcher.getSelectedMandator(),
+			order = new LabOrder(CoreHub.getActContact(), ElexisEventDispatcher.getSelectedMandator(),
 				patient,
 				item, labResult, orderId, "Aeskulap Import", new TimeTool());
 		}

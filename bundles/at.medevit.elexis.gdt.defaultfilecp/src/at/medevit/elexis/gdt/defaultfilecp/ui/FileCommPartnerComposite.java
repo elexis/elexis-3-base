@@ -40,6 +40,7 @@ public class FileCommPartnerComposite extends Composite {
 	private Text txtExchangeInDir;
 	private Text txtExchangeOutDir;
 	private Text txtExecutable;
+	private Text txtViewerExecutable;
 	private Text txtAdditionalParam;
 	private Button[] btnFileTypes = new Button[2];
 	
@@ -180,6 +181,28 @@ public class FileCommPartnerComposite extends Composite {
 			}
 		});
 		
+		new Label(this, SWT.NONE).setText("Anzeigeprogramm");
+		txtViewerExecutable = new Text(this, SWT.BORDER);
+		txtViewerExecutable.setLayoutData(gridData1Col);
+		txtViewerExecutable
+			.setText(getValueByConfigKey(fileCommPartner.getFileTransferViewerExecuteable()));
+		
+		Button btnViewerExecutable = new Button(this, SWT.PUSH);
+		btnViewerExecutable.setText("Browse...");
+		
+		btnViewerExecutable.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event){
+				FileDialog dlg = new FileDialog(getShell());
+				dlg.setFilterPath(txtViewerExecutable.getText());
+				dlg.setText("Datei suchen");
+				
+				String dir = dlg.open();
+				if (dir != null) {
+					txtViewerExecutable.setText(dir);
+				}
+			}
+		});
+		
 		new Label(this, SWT.NONE).setText("Zusatzparameter");
 		txtAdditionalParam = new Text(this, SWT.BORDER);
 		txtAdditionalParam.setLayoutData(gridData2Col);
@@ -276,6 +299,7 @@ public class FileCommPartnerComposite extends Composite {
 		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferOutDirectory());
 		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferUsedType());
 		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferExecuteable());
+		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferViewerExecuteable());
 		fileCommPartner.getSettings().remove(fileCommPartner.getFileAdditionalParams());
 		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferName());
 		
@@ -307,6 +331,8 @@ public class FileCommPartnerComposite extends Composite {
 			fileCommPartner.getSettings().set(
 				fileCommPartner.getFileTransferExecuteable(),
 				txtExecutable.getText());
+			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferViewerExecuteable(),
+				txtViewerExecutable.getText());
 			fileCommPartner.getSettings().set(fileCommPartner.getFileAdditionalParams(),
 				txtAdditionalParam.getText());
 			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferName(),

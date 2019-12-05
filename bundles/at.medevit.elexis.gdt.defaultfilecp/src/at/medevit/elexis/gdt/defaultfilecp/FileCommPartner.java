@@ -18,6 +18,7 @@ public class FileCommPartner {
 	private static final String FILETRANSFER_LONG_ID_RECEIVER = "longIDReceiver";
 	private static final String FILETRANSFER_SHORT_ID_RECEIVER = "longIDReceiver";
 	private static final String FILETRANSFER_EXECUTABLE = "executable";
+	private static final String FILETRANSFER_VIEWEREXECUTABLE = "viewerexecutable";
 	private static final String FILETRANSFER_ADDITIONAL_PARAMS = "additionalParams";
 	
 	public static final String CFG_GDT_FILETRANSFER_IDS = CFG_GDT + "/fileTransferTypes";
@@ -99,6 +100,10 @@ public class FileCommPartner {
 	
 	public String getFileTransferExecuteable(){
 		return CFG_GDT + "/" + getId() + "/" + FILETRANSFER_EXECUTABLE;
+	}
+	
+	public String getFileTransferViewerExecuteable(){
+		return CFG_GDT + "/" + getId() + "/" + FILETRANSFER_VIEWEREXECUTABLE;
 	}
 	
 	public String getFileAdditionalParams(){

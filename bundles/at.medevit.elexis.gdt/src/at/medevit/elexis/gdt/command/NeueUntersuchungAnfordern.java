@@ -25,6 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
 import at.medevit.elexis.gdt.handler.GDTOutputHandler;
+import at.medevit.elexis.gdt.interfaces.HandlerProgramType;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6302;
 import at.medevit.elexis.gdt.tools.GDTSatzNachrichtHelper;
@@ -75,7 +76,7 @@ public class NeueUntersuchungAnfordern extends AbstractHandler {
 			return null;
 		
 		IGDTCommunicationPartner cp = nuad.getGDTCommunicationPartner();
-		GDTOutputHandler.handleOutput(gdt6302, cp);
+		GDTOutputHandler.handleOutput(gdt6302, cp, HandlerProgramType.DEFAULT);
 		
 		return null;
 	}

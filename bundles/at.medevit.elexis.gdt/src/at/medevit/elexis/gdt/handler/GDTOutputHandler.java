@@ -28,6 +28,7 @@ import at.medevit.elexis.gdt.Activator;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.SystemConstants;
 import at.medevit.elexis.gdt.data.GDTProtokoll;
+import at.medevit.elexis.gdt.interfaces.HandlerProgramType;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht;
 import at.medevit.elexis.gdt.tools.GDTFileHelper;
@@ -38,7 +39,8 @@ public class GDTOutputHandler {
 	
 	private static Log logger = Log.get(GDTOutputHandler.class.getName());
 	
-	public static void handleOutput(GDTSatzNachricht gdtSatzNachricht, IGDTCommunicationPartner cp){
+	public static void handleOutput(GDTSatzNachricht gdtSatzNachricht, IGDTCommunicationPartner cp,
+		HandlerProgramType handlerType){
 		int connectionType = cp.getConnectionType();
 		
 		switch (connectionType) {
@@ -70,7 +72,11 @@ public class GDTOutputHandler {
 			});
 			
 			// Call the external program to care for the output (if applicable)
-			String handlerProgram = cp.getExternalHandlerProgram();
+			String handlerProgram = cp.getExternalHandlerProgram(handlerType);
+			if (handlerProgram == null && handlerType == HandlerProgramType.VIEWER) {
+				// fallback to default if no viewer is configured
+				handlerProgram = cp.getExternalHandlerProgram(HandlerProgramType.DEFAULT);
+			}
 			if (handlerProgram != null) {
 				CommandLine cmdLine = CommandLine.parse(handlerProgram);
 				try {

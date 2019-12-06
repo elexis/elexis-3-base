@@ -126,7 +126,7 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 		}
 		LoggerFactory.getLogger(getClass())
 			.info("Find external handler [" + executable + "] of [" + defaultFileCommPartner.getId()
-				+ "] in [" + defaultFileCommPartner.getSettings() + "]");
+				+ "] in [" + defaultFileCommPartner.getSettings().getClass().getSimpleName() + "]");
 		if (executable != null) {
 			File execFile = new File(executable);
 			if (execFile.canExecute()) {

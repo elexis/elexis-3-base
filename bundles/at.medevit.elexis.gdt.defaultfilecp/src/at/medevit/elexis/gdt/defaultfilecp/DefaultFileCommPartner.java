@@ -236,16 +236,24 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					public String getExternalHandlerProgram(HandlerProgramType handlerType){
 						String executable = null;
 						if (handlerType == HandlerProgramType.VIEWER) {
-							executable = defaultFileCommPartner.getSettings().get(
-								defaultFileCommPartner.getFileTransferViewerExecuteable(), null);
+							executable = defaultFileCommPartner.getSettings()
+									.get(fileCommPartner.getFileTransferViewerExecuteable(), null);
 						} else {
 							executable = defaultFileCommPartner.getSettings()
-								.get(defaultFileCommPartner.getFileTransferExecuteable(), null);
+								.get(fileCommPartner.getFileTransferExecuteable(), null);
 						}
+						LoggerFactory.getLogger(getClass())
+								.info("Find external handler [" + executable + "] of [" + fileCommPartner.getId()
+										+ "] in [" + defaultFileCommPartner.getSettings().getClass().getSimpleName()
+										+ "]");
 						if (executable != null) {
 							File execFile = new File(executable);
-							if (execFile.canExecute())
+							if (execFile.canExecute()) {
 								return executable;
+							} else {
+								LoggerFactory.getLogger(getClass())
+										.warn("Can not execute external handler [" + executable + "]");
+							}
 						}
 						return null;
 					}

@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.gdt.Activator;
 import at.medevit.elexis.gdt.constants.GDTConstants;
@@ -33,11 +35,10 @@ import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht;
 import at.medevit.elexis.gdt.tools.GDTFileHelper;
 import at.medevit.elexis.gdt.ui.GDTProtokollView;
-import ch.elexis.core.ui.util.Log;
 
 public class GDTOutputHandler {
 	
-	private static Log logger = Log.get(GDTOutputHandler.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(GDTOutputHandler.class);
 	
 	public static void handleOutput(GDTSatzNachricht gdtSatzNachricht, IGDTCommunicationPartner cp,
 		HandlerProgramType handlerType){
@@ -55,7 +56,7 @@ public class GDTOutputHandler {
 						+ " auf " + cp.getLabel();
 				Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message);
 				StatusManager.getManager().handle(status, StatusManager.SHOW);
-				logger.log(message, Log.WARNINGS);
+				logger.warn(message);
 			}
 			
 			// Update the protokoll view
@@ -77,23 +78,25 @@ public class GDTOutputHandler {
 				// fallback to default if no viewer is configured
 				handlerProgram = cp.getExternalHandlerProgram(HandlerProgramType.DEFAULT);
 			}
+			logger.info("Handler program of [" + cp.getLabel() + "] [" + handlerProgram + "]");
 			if (handlerProgram != null) {
 				CommandLine cmdLine = CommandLine.parse(handlerProgram);
+				logger.info("Command line [" + handlerProgram + "]");
 				try {
 					DefaultExecutor executor = new DefaultExecutor();
 					executor.setExitValues(null); // Ignore the exit value
 					int exitValue = executor.execute(cmdLine);
-					logger.log("Return value of " + cmdLine + ": " + exitValue, Log.DEBUGMSG);
+					logger.debug("Return value of " + cmdLine + ": " + exitValue);
 				} catch (ExecuteException e) {
 					String message = "Fehler beim Ausführen von " + cmdLine;
 					Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, e);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
-					logger.log(e, message, Log.ERRORS);
+					logger.error(message, e);
 				} catch (IOException e) {
 					String message = "Fehler beim Ausführen von " + cmdLine;
 					Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, e);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
-					logger.log(e, message, Log.ERRORS);
+					logger.error(message, e);
 				}
 			}
 			break;

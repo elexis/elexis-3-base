@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+
 import at.medevit.elexis.gdt.constants.Feld8402Constants;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
@@ -124,8 +126,12 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 		}
 		if (executable != null) {
 			File execFile = new File(executable);
-			if (execFile.canExecute())
+			if (execFile.canExecute()) {
 				return executable;
+			} else {
+				LoggerFactory.getLogger(getClass())
+					.warn("Can not execute external handler [" + executable + "]");
+			}
 		}
 		return null;	
 	}

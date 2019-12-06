@@ -124,6 +124,9 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 			executable = defaultFileCommPartner.getSettings()
 				.get(defaultFileCommPartner.getFileTransferExecuteable(), null);
 		}
+		LoggerFactory.getLogger(getClass())
+			.info("Find external handler [" + executable + "] of [" + defaultFileCommPartner.getId()
+				+ "] in [" + defaultFileCommPartner.getSettings() + "]");
 		if (executable != null) {
 			File execFile = new File(executable);
 			if (execFile.canExecute()) {
@@ -132,10 +135,6 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 				LoggerFactory.getLogger(getClass())
 					.warn("Can not execute external handler [" + executable + "]");
 			}
-		} else {
-			LoggerFactory.getLogger(getClass())
-				.info("Could not find external handler of [" + defaultFileCommPartner.getId()
-					+ "] in [" + defaultFileCommPartner.getSettings() + "]");
 		}
 		return null;	
 	}

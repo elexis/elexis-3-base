@@ -43,7 +43,7 @@ public class DocboxArztArztAction extends DocboxAction {
 	 */
 	public void run(IAction action){
 		try {
-			if (CoreHub.getActContact() != null) {
+			if (CoreHub.getLoggedInContact() != null) {
 				patient = ElexisEventDispatcher.getSelectedPatient();
 				kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Kontakt.class);
 				if (patient == null) {

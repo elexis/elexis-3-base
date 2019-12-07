@@ -64,7 +64,7 @@ public class DocboxView extends ViewPart implements ISaveablePart2 {
 	}
 	
 	public void setHome(){
-		if (CoreHub.getActContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
+		if (CoreHub.getLoggedInContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
 			browser.setUrl(getDoboxLoginUrl() + getSSOLoginParams("MainWelcome"));
 		} else {
 			browser.setUrl(UserDocboxPreferences.getDocboxBrowserHome());
@@ -72,25 +72,25 @@ public class DocboxView extends ViewPart implements ISaveablePart2 {
 	}
 	
 	public void setHospitalReferral(){
-		if (CoreHub.getActContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
+		if (CoreHub.getLoggedInContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
 			browser.setUrl(getDoboxLoginUrl() + getSSOLoginParams("HospitalApplicationsOverview"));
 		}
 	}
 	
 	public void setMyPatient(){
-		if (CoreHub.getActContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
+		if (CoreHub.getLoggedInContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
 			browser.setUrl(getDoboxLoginUrl() + getSSOLoginParams("MyPatient"));
 		}
 	}
 	
 	public void setTerminvereinbarung(){
-		if (CoreHub.getActContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
+		if (CoreHub.getLoggedInContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
 			browser.setUrl(getDoboxLoginUrl() + getSSOLoginParams("AppBookingWizzard"));
 		}
 	}
 	
 	public void setAppointment(String termin){
-		if (CoreHub.getActContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
+		if (CoreHub.getLoggedInContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
 			String url = getDoboxLoginUrl() + getSSOLoginParams("DocCalendar");
 			if (termin != null) {
 				try {

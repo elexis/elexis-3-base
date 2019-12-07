@@ -99,7 +99,7 @@ public class CstPreference extends FieldEditorPreferencePage implements IWorkben
 	boolean ret = super.performOk();
 
 	ElexisEventDispatcher.getInstance().fire(
-		new ElexisEvent(CoreHub.getActContact(), Anwender.class, ElexisEvent.EVENT_USER_CHANGED));
+		new ElexisEvent(CoreHub.getLoggedInContact(), Anwender.class, ElexisEvent.EVENT_USER_CHANGED));
 
 
 	return ret;

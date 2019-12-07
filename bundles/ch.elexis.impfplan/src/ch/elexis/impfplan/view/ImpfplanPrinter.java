@@ -55,7 +55,7 @@ public class ImpfplanPrinter extends TitleAreaDialog implements ICallback {
 			text.getPlugin().createContainer(ret, this);
 			text.getPlugin().showMenu(true);
 			text.getPlugin().showToolbar(true);
-			text.createFromTemplateName(null, TT_VACCINATIONS, Brief.UNKNOWN, CoreHub.getActContact(),
+			text.createFromTemplateName(null, TT_VACCINATIONS, Brief.UNKNOWN, CoreHub.getLoggedInContact(),
 				Messages.ImpfplanPrinter_templateType);
 			Collection<Vaccination> r = ImpfplanController.getVaccinations(actPatient);
 			String[][] tbl = new String[r.size()][3];

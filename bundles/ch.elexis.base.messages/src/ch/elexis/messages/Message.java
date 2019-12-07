@@ -64,7 +64,7 @@ public class Message extends PersistentObject {
 		set(new String[] {
 			FLD_FROM, FLD_TO, FLD_TIME, FLD_TEXT
 		}, new String[] {
-			CoreHub.getActContact().getId(), an.getId(), dt, text
+			CoreHub.getLoggedInContact().getId(), an.getId(), dt, text
 		});
 		
 	}

@@ -223,7 +223,7 @@ public abstract class MesswertBase {
 		interpreter.setValue("actFall", ElexisEventDispatcher.getSelected(Fall.class)); //$NON-NLS-1$
 		interpreter.setValue("actKons", ElexisEventDispatcher.getSelected(Konsultation.class)); //$NON-NLS-1$
 		interpreter.setValue("actMandant", CoreHub.actMandant); //$NON-NLS-1$
-		interpreter.setValue("actUser", CoreHub.getActContact()); //$NON-NLS-1$
+		interpreter.setValue("actUser", CoreHub.getLoggedInContact()); //$NON-NLS-1$
 		interpreter.setValue("Elexis", Hub.plugin); //$NON-NLS-1$
 	}
 	

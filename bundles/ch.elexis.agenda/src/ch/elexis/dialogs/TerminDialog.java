@@ -74,6 +74,7 @@ import ch.elexis.agenda.util.TimeInput.TimeInputListener;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
@@ -85,7 +86,6 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.data.User;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
@@ -955,7 +955,7 @@ public class TerminDialog extends TitleAreaDialog {
 				}
 				lockTermin.setGrund(tGrund.getText());
 				lockTermin.set(Termin.FLD_CREATOR,
-					ElexisEventDispatcher.getSelected(User.class).getLabel());
+					ContextServiceHolder.get().getActiveUser().get().getLabel());
 				
 				if (bLocked.getSelection()) {
 					lockTermin.setFlag(Termin.SW_LOCKED);

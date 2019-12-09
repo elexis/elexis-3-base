@@ -8,6 +8,7 @@ import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.constants.ElexisSystemPropertyConstants;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
@@ -47,9 +48,9 @@ public class AbstractPersistentObjectTest {
 			new Anwender(testUserName, PASSWORD);
 		} 
 		
-		boolean succ = Anwender.login(testUserName, PASSWORD);
+		boolean succ = CoreHub.login(testUserName, PASSWORD.toCharArray());
 		assertTrue(succ);
-		log.debug("Anwender.login done link is {}", link);		
+		log.debug("CoreHub.login done link is {}", link);
 	}
 	public AbstractPersistentObjectTest() {
 	}

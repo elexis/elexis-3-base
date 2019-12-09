@@ -402,9 +402,9 @@ public class DocboxBackgroundJob extends Job {
 		boolean success = true;
 		String msg = ""; //$NON-NLS-1$
 		log.debug("running");
-		if (CoreHub.actUser != null) {
+		if (CoreHub.getLoggedInContact() != null) {
 			try {
-				if (CoreHub.actUser != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
+				if (CoreHub.getLoggedInContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
 					
 					log.debug("beginTask");
 					

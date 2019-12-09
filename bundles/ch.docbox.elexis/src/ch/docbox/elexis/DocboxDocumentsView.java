@@ -361,7 +361,7 @@ public class DocboxDocumentsView extends ViewPart implements ISaveablePart2, IAc
 			
 		});
 		
-		selectionEvent(CoreHub.actUser);
+		selectionEvent(CoreHub.getLoggedInContact());
 		tableViewer.setInput(getViewSite());
 		
 		actionOpenAttachments = new Action(Messages.DocboxDocumentsView_Action_AttachmentsOpen) {

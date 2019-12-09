@@ -121,7 +121,7 @@ public class MsgDetailDialog extends Dialog {
 			
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_answer);
 		} else {
-			lblFrom.setText(CoreHub.actUser.getLabel());
+			lblFrom.setText(CoreHub.getLoggedInContact().getLabel());
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 		}
 		

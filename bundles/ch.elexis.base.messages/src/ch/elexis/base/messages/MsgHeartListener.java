@@ -38,9 +38,9 @@ public class MsgHeartListener implements HeartListener {
 	
 	public void heartbeat(){
 		if (!bSkip) {
-			if (CoreHub.actUser != null) {
+			if (CoreHub.getLoggedInContact() != null) {
 				Query<Message> qbe = new Query<Message>(Message.class);
-				qbe.add("to", Query.EQUALS, CoreHub.actUser.getId()); //$NON-NLS-1$
+				qbe.add("to", Query.EQUALS, CoreHub.getLoggedInContact().getId()); //$NON-NLS-1$
 				final List<Message> res = qbe.execute();
 				if (res.size() > 0) {
 					UiDesk.getDisplay().asyncExec(new Runnable() {

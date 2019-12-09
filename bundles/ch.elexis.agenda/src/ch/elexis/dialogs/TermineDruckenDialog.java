@@ -72,7 +72,7 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(true);
 		text.getPlugin().showToolbar(true);
-		text.createFromTemplateName(null, TT_APPOINTMENT_CARD, Brief.UNKNOWN, CoreHub.actUser,
+		text.createFromTemplateName(null, TT_APPOINTMENT_CARD, Brief.UNKNOWN, CoreHub.getLoggedInContact(),
 			"Agenda");
 		/*
 		 * String[][] termine=new String[liste.length+1][3]; termine[0]=new String[]{"Datum",

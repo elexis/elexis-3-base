@@ -57,7 +57,7 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		Brief brief = text.createFromTemplateName(null, TT_LIST, Brief.UNKNOWN, CoreHub.actUser, "Kassenbuch");
+		Brief brief = text.createFromTemplateName(null, TT_LIST, Brief.UNKNOWN, CoreHub.getLoggedInContact(), "Kassenbuch");
 		if (brief == null) {
 			String title = "Probleme beim Drucken";
 			String msg = String.format("Konnte kein TextDokument erstellen. Fehlt die Vorlage '%s'? Oder ist sie fehlerhaft?", TT_LIST);

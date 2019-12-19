@@ -41,7 +41,10 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.model.IPersistentObject;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.locks.ILockHandler;
 import ch.rgw.tools.TimeTool;
 
 public class SideBarComposite extends Composite {
@@ -376,18 +379,29 @@ public class SideBarComposite extends Composite {
 		}
 		
 		public void movePeriod(IPeriod iPeriod){
-			iPeriod.setStartTime(new TimeTool(dateTime));
-			if (iPeriod instanceof Termin) {
-				((Termin) iPeriod).setBereich(resource);
-			}
-			moveablePeriods.remove(iPeriod);
-			Display.getDefault().timerExec(250, new Runnable() {
+			AcquireLockBlockingUi.aquireAndRun((IPersistentObject) iPeriod, new ILockHandler() {
+
 				@Override
-				public void run(){
-					if (sideBar != null && !sideBar.isDisposed()) {
-						sideBar.removeMovePeriod(iPeriod);
-						sideBar.agendaComposite.refetchEvents();
+				public void lockAcquired() {
+					iPeriod.setStartTime(new TimeTool(dateTime));
+					if (iPeriod instanceof Termin) {
+						((Termin) iPeriod).setBereich(resource);
 					}
+					Display.getDefault().timerExec(250, new Runnable() {
+						@Override
+						public void run() {
+							if (sideBar != null && !sideBar.isDisposed()) {
+								sideBar.removeMovePeriod(iPeriod);
+								sideBar.agendaComposite.refetchEvents();
+							}
+						}
+					});
+				}
+
+				@Override
+				public void lockFailed() {
+					// TODO Auto-generated method stub
+					
 				}
 			});
 		}

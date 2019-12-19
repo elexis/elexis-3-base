@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,10 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		
 		private String jsonString;
 		
-		public EventsJsonValue(List<Event> events){
+		private TimeSpan timespan;
+
+		public EventsJsonValue(TimeSpan key, List<Event> events) {
+			this.timespan = key;
 			this.eventsMap =
 				events.parallelStream().collect(Collectors.toMap(e -> e.getId(), e -> e));
 			jsonString = gson.toJson(eventsMap.values());
@@ -67,18 +71,24 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			return jsonString;
 		}
 		
-		public boolean updateWith(TimeSpan timespan, List<IPeriod> changedPeriods){
+		public boolean updateWith(List<IPeriod> changedPeriods) {
 			boolean updated = false;
 			for (IPeriod iPeriod : changedPeriods) {
-				// update the cache of the timespan of the cached period and also the current one
-				if (timespan.contains(iPeriod) || timespan.equals(currentTimeSpan)) {
+				if (eventsMap.containsKey(iPeriod.getId())) {
 					boolean deleted = ((Termin) iPeriod).isDeleted();
-					if (deleted) {
+					if (deleted || !timespan.contains(iPeriod)) {
+						// deleted or moved outside timespan
 						eventsMap.remove(iPeriod.getId());
 					} else {
+						// updated still inside timespan
 						Event event = Event.of(iPeriod);
 						eventsMap.put(event.getId(), event);
 					}
+					updated = true;
+				} else if (timespan.contains(iPeriod)) {
+					// new or moved into timespan
+					Event event = Event.of(iPeriod);
+					eventsMap.put(event.getId(), event);
 					updated = true;
 				}
 			}
@@ -190,10 +200,10 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 					knownLastUpdate = currentLastUpdate;
 				} else if (knownLastUpdate < currentLastUpdate) {
 					List<IPeriod> changedPeriods = getChangedPeriods();
-					Set<TimeSpan> cachedTimeSpans = cache.asMap().keySet();
-					for (TimeSpan timeSpan : cachedTimeSpans) {
+					ConcurrentMap<TimeSpan, EventsJsonValue> cacheAsMap = cache.asMap();
+					for (TimeSpan timeSpan : cacheAsMap.keySet()) {
 						EventsJsonValue eventsJson = cache.get(timeSpan);
-						if (eventsJson.updateWith(timeSpan, changedPeriods)) {
+						if (eventsJson.updateWith(changedPeriods)) {
 							logger.debug("Updated timespan " + timeSpan);
 						} else {
 							logger.debug("No update to timespan " + timeSpan);
@@ -253,7 +263,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		@Override
 		public EventsJsonValue load(TimeSpan key) throws Exception{
 			List<IPeriod> periods = getPeriods(key);
-			return new EventsJsonValue(
+			return new EventsJsonValue(key,
 				periods.parallelStream().map(p -> Event.of(p)).collect(Collectors.toList()));
 		}
 		

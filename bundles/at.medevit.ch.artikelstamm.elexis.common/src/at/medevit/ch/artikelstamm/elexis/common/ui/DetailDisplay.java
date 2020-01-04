@@ -42,22 +42,15 @@ import at.medevit.ch.artikelstamm.elexis.common.service.VersionUtil;
 import at.medevit.ch.artikelstamm.model.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.ui.databinding.SavingUpdateValueStrategy;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.core.ui.views.controls.StockDetailComposite;
 
 public class DetailDisplay implements IDetailDisplay {
 	
-	private UpdateValueStrategy<Integer, String> integerToString;
-	private UpdateValueStrategy<String, Integer> stringToInteger;
-	
-	public DetailDisplay(){
-		integerToString = new UpdateValueStrategy<Integer, String>()
-			.setConverter(NumberToStringConverter.fromInteger(false));
-		stringToInteger = new UpdateValueStrategy<String, Integer>()
-			.setConverter(StringToNumberConverter.toInteger(false));
-	}
-	
-	protected WritableValue item = new WritableValue(null, IArtikelstammItem.class);
+	protected WritableValue<IArtikelstammItem> item =
+		new WritableValue<>(null, IArtikelstammItem.class);
 	
 	private DetailComposite dc = null;
 	private StockDetailComposite sdc;
@@ -195,8 +188,12 @@ public class DetailDisplay implements IDetailDisplay {
 			.observeDetail(item);
 		IObservableValue targetStkProPack =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProPack);
-		bindingContext.bindValue(targetStkProPack, propertyStkProPack, stringToInteger,
-			integerToString);
+		bindingContext.bindValue(targetStkProPack, propertyStkProPack,
+			new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(),
+				item)
+				.setConverter(StringToNumberConverter.toInteger(false)),
+			new UpdateValueStrategy<Integer, String>()
+				.setConverter(NumberToStringConverter.fromInteger(false)));
 		
 		// Stk. pro Abgabe
 		Label lblStkProAbgabe = new Label(grpLagerhaltung, SWT.NONE);
@@ -216,9 +213,10 @@ public class DetailDisplay implements IDetailDisplay {
 		IObservableValue targetStkProAbgabe =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProAbgabe);
 		
-		bindingContext.bindValue(targetStkProAbgabe, propertyStkProAbgabe, stringToInteger,
-			integerToString);
-		
+		bindingContext.bindValue(targetStkProAbgabe, propertyStkProAbgabe,
+			new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(),
+				item).setConverter(StringToNumberConverter.toInteger(false)),
+			new UpdateValueStrategy<Integer, String>()
+				.setConverter(NumberToStringConverter.fromInteger(false)));
 	}
-	
 }

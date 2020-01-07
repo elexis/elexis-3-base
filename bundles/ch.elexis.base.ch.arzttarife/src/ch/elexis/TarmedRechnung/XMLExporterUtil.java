@@ -3,6 +3,7 @@ package ch.elexis.TarmedRechnung;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jdom.Verifier;
 
@@ -13,6 +14,7 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.model.format.PostalAddress;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -72,6 +74,11 @@ public class XMLExporterUtil {
 					IPerson person =
 						CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
 					setAttributeIfNotEmptyWithLimit(ret, "title", person.getTitel(), 35); //$NON-NLS-1$
+					if (StringUtils.isEmpty((String) contact.getExtInfo("Anrede"))) {
+						setAttributeIfNotEmptyWithLimit(ret, "salutation", //$NON-NLS-1$
+							PersonFormatUtil.getSalutation(person), //$NON-NLS-1$
+							35);
+					}
 				}
 				familyname.setText(StringTool.limitLength(contact.getDescription1(), 35));
 				String gn = StringTool.limitLength(contact.getDescription2(), 35);

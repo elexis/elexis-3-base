@@ -24,6 +24,7 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -65,9 +66,10 @@ public class JaxbToMimeType {
 	 *            the requested output format {@link MimeConstants}
 	 * @param transformerParameters
 	 *            key/value parameters to be passed to the transformer, can be <code>null</code>
+	 * @param resolver
 	 */
 	public void transform(Object jaxbObject, InputStream xslt, OutputStream outputStream,
-		String outputFormat, Map<String, String> transformerParameters){
+		String outputFormat, Map<String, String> transformerParameters, URIResolver resolver){
 		
 		FOUserAgent foUserAgent = FormattedOutputFactory.getFopFactory().newFOUserAgent();
 		// configure foUserAgent as desired
@@ -78,7 +80,7 @@ public class JaxbToMimeType {
 			Fop fop = FormattedOutputFactory.getFopFactory().newFop(outputFormat, foUserAgent,
 				outputStream);
 			// Setup XSLT
-			Transformer transformer = XSLTUtil.getTransformerForXSLT(xslt);
+			Transformer transformer = XSLTUtil.getTransformerForXSLT(xslt, resolver);
 			
 			if (transformerParameters != null && transformerParameters.keySet().size() > 0) {
 				for (String keyParameter : transformerParameters.keySet()) {

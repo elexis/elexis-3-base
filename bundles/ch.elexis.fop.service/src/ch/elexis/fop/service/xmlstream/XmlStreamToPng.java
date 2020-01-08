@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.xml.transform.URIResolver;
+
 import org.apache.fop.apps.MimeConstants;
 
 import ch.elexis.core.services.IFormattedOutput;
@@ -28,10 +30,10 @@ public class XmlStreamToPng implements IFormattedOutput {
 	
 	@Override
 	public void transform(Object xmlStream, InputStream xslt, OutputStream png,
-		Map<String, String> transformerParameters){
+		Map<String, String> transformerParameters, URIResolver resolver){
 		if (xmlStream instanceof InputStream) {
 			XmlStreamToMimeType.getInstance().transform((InputStream) xmlStream, xslt,
-				png, MimeConstants.MIME_PNG, transformerParameters);
+				png, MimeConstants.MIME_PNG, transformerParameters, resolver);
 			transform(xmlStream, xslt, png, null);
 		} else {
 			throw new IllegalStateException(

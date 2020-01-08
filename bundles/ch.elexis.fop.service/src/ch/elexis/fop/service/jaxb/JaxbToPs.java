@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.xml.transform.URIResolver;
+
 import org.apache.fop.apps.MimeConstants;
 
 import ch.elexis.core.services.IFormattedOutput;
@@ -34,9 +36,9 @@ public class JaxbToPs implements IFormattedOutput {
 	
 	@Override
 	public void transform(Object jaxbObject, InputStream xslt, OutputStream ps,
-		Map<String, String> transformerParameters){
+		Map<String, String> transformerParameters, URIResolver resolver){
 		JaxbToMimeType.getInstance().transform(jaxbObject, xslt, ps, MimeConstants.MIME_POSTSCRIPT,
-			transformerParameters);
+			transformerParameters, resolver);
 	}
 	
 }

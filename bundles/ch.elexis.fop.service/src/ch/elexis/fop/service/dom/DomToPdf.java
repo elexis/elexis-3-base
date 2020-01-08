@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.xml.transform.URIResolver;
+
 import org.apache.fop.apps.MimeConstants;
 
 import ch.elexis.core.services.IFormattedOutput;
@@ -37,8 +39,8 @@ public class DomToPdf implements IFormattedOutput {
 	
 	@Override
 	public void transform(Object documentObject, InputStream xslt, OutputStream pdf,
-		Map<String, String> transformerParameters){
+		Map<String, String> transformerParameters, URIResolver resolver){
 		DomToMimeType.getInstance().transform(documentObject, xslt, pdf, MimeConstants.MIME_PDF,
-			transformerParameters);
+			transformerParameters, resolver);
 	}
 }

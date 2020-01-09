@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jdom.Verifier;
 
@@ -69,6 +70,9 @@ public class XMLExporterUtil {
 				|| anschrift.equals(k.createStdAnschrift())) {
 				setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"), 35); //$NON-NLS-1$ //$NON-NLS-2$
 				setAttributeIfNotEmptyWithLimit(ret, "title", k.get(Person.TITLE), 35); //$NON-NLS-1$
+				if (StringUtils.isEmpty(k.getInfoString("Anrede"))) {
+					setAttributeIfNotEmptyWithLimit(ret, "salutation", getSalutation(k), 35);
+				}
 				familyname.setText(StringTool.limitLength(k.get(Kontakt.FLD_NAME1), 35));
 				String gn = k.get(StringTool.limitLength(Kontakt.FLD_NAME2, 35));
 				if (StringTool.isNothing(gn)) {
@@ -100,6 +104,18 @@ public class XMLExporterUtil {
 		return ret;
 	}
 	
+	private static String getSalutation(Kontakt k) {
+		if (k.istPerson() == true) {
+			Person p = Person.load(k.getId());
+			if (p.getGeschlecht().equals(Person.MALE)) {
+				return ch.elexis.data.Messages.Contact_SalutationM;
+			} else {
+				return ch.elexis.data.Messages.Contact_SalutationF;
+			}
+		}
+		return "";
+	}
+
 	public static Element buildPostalElement(final Kontakt k){
 		Element ret = new Element("postal", XMLExporter.nsinvoice); //$NON-NLS-1$
 		addElementIfExists(ret, "pobox", null, StringTool.limitLength(k.getInfoString("Postfach"), //$NON-NLS-1$ //$NON-NLS-2$

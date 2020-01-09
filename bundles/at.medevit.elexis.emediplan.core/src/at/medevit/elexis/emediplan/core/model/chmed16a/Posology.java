@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.holder.MedicationServiceHolder;
@@ -39,10 +38,13 @@ public class Posology {
 		if (endDate != null) {
 			posology.DtTo = new TimeTool(endDate).toString(TimeTool.DATE_ISO);
 		}
-		List<Float> floats = MedicationServiceHolder.get().getDosageAsFloats(prescription);
-		if (floats != null && !floats.isEmpty()) {
+		String[] signature = MedicationServiceHolder.get()
+			.getSignatureAsStringArray(prescription.getDosageInstruction());
+		boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty()
+			&& signature[2].isEmpty() && signature[3].isEmpty();
+		if (!isFreetext) {
+			List<Float> floats = MedicationServiceHolder.get().getDosageAsFloats(prescription);
 			posology.TT = TakingTime.fromFloats(floats, prescription.getEntryType() == EntryType.RESERVE_MEDICATION);
-			posology.D = floats;
 		}
 		if (prescription.getEntryType() == EntryType.RESERVE_MEDICATION) {
 			posology.InRes = 1;

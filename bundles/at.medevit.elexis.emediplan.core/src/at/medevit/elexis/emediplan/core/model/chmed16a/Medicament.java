@@ -66,6 +66,14 @@ public class Medicament {
 				medicament.IdType = getIdType(article);
 				medicament.Id = getId(article);
 				medicament.Pos = Posology.fromPrescription(prescription);
+				if (article instanceof IArtikelstammItem
+					&& ((IArtikelstammItem) article).isBlackBoxed()) {
+					medicament.PFields = new ArrayList<>();
+					PrivateField privateField = new PrivateField();
+					privateField.Nm = "desc";
+					privateField.Val = article.getText();
+					medicament.PFields.add(privateField);
+				}
 				
 				// check if it has freetext dosis
 				if (medicament.Pos != null && !medicament.Pos.isEmpty()

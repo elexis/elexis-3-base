@@ -44,7 +44,8 @@ public class Posology {
 			&& signature[2].isEmpty() && signature[3].isEmpty();
 		if (!isFreetext) {
 			List<Float> floats = MedicationServiceHolder.get().getDosageAsFloats(prescription);
-			posology.TT = TakingTime.fromFloats(floats, prescription.getEntryType() == EntryType.RESERVE_MEDICATION);
+			posology.D = floats;
+			// posology.TT = TakingTime.fromFloats(floats, prescription.getEntryType() == EntryType.RESERVE_MEDICATION);
 		}
 		if (prescription.getEntryType() == EntryType.RESERVE_MEDICATION) {
 			posology.InRes = 1;

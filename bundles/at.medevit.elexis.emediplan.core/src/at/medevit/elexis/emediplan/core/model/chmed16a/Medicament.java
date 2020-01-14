@@ -53,7 +53,8 @@ public class Medicament {
 	public static final String FREETEXT_PREFIX = "[Dosis: ";
 	public static final String FREETEXT_POSTFIX = "]";
 	
-	public static List<Medicament> fromPrescriptions(List<IPrescription> prescriptions){
+	public static List<Medicament> fromPrescriptions(List<IPrescription> prescriptions,
+		boolean addDesc){
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			List<Medicament> ret = new ArrayList<>();
 			for (IPrescription prescription : prescriptions) {
@@ -66,8 +67,7 @@ public class Medicament {
 				medicament.IdType = getIdType(article);
 				medicament.Id = getId(article);
 				medicament.Pos = Posology.fromPrescription(prescription);
-				if (article instanceof IArtikelstammItem
-					&& ((IArtikelstammItem) article).isBlackBoxed()) {
+				if (addDesc) {
 					medicament.PFields = new ArrayList<>();
 					PrivateField privateField = new PrivateField();
 					privateField.Nm = "desc";

@@ -106,9 +106,9 @@ public class EMediplanServiceImpl implements EMediplanService {
 	
 	@Override
 	public void exportEMediplanPdf(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, OutputStream output){
+		List<IPrescription> prescriptions, boolean addDesc, OutputStream output){
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
-			Optional<String> jsonString = getJsonString(author, patient, prescriptions);
+			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
 			Optional<Image> qrCode =
 				jsonString.map(json -> getQrCode(json)).orElse(Optional.empty());
 			
@@ -124,7 +124,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 	public void exportEMediplanJson(IMandator author, IPatient patient,
 		List<IPrescription> prescriptions, OutputStream output){
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
-			Optional<String> jsonString = getJsonString(author, patient, prescriptions);
+			Optional<String> jsonString = getJsonString(author, patient, prescriptions, false);
 			if (jsonString.isPresent()) {
 				try (PrintWriter writer = new PrintWriter(output)) {
 					writer.write(jsonString.get());
@@ -272,8 +272,9 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 	
 	protected Optional<String> getJsonString(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions){
-		Medication medication = Medication.fromPrescriptions(author, patient, prescriptions);
+		List<IPrescription> prescriptions, boolean addDesc){
+		Medication medication =
+			Medication.fromPrescriptions(author, patient, prescriptions, addDesc);
 		return Optional.ofNullable(gson.toJson(medication));
 	}
 	

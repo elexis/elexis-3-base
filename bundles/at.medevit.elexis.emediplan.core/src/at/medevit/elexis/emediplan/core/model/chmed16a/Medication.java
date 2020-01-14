@@ -45,10 +45,11 @@ public class Medication {
 	 * {@link IPatient}.
 	 * 
 	 * @param prescriptions
+	 * @param addDesc
 	 * @return
 	 */
 	public static Medication fromPrescriptions(@NonNull IMandator author, @NonNull IPatient patient,
-		@NonNull List<IPrescription> prescriptions){
+		@NonNull List<IPrescription> prescriptions, boolean addDesc){
 		Medication ret = new Medication();
 		ret.MedType = 1;
 		ret.Id = UUID.randomUUID().toString();
@@ -64,7 +65,7 @@ public class Medication {
 		if (!prescriptions.isEmpty()) {
 			ret.Patient =
 				at.medevit.elexis.emediplan.core.model.chmed16a.Patient.fromPatient(patient);
-			ret.Medicaments = Medicament.fromPrescriptions(prescriptions);
+			ret.Medicaments = Medicament.fromPrescriptions(prescriptions, addDesc);
 		}
 		return ret;
 	}

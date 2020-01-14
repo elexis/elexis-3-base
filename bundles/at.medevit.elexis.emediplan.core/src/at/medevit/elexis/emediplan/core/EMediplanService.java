@@ -38,8 +38,24 @@ public interface EMediplanService {
 	 * @param prescriptions
 	 * @param output
 	 */
+	public default void exportEMediplanPdf(IMandator author, IPatient patient,
+		List<IPrescription> prescriptions, OutputStream output){
+		exportEMediplanPdf(author, patient, prescriptions, false, output);
+	}
+	
+	/**
+	 * Get a PDF eMediplan (http://emediplan.ch/de/home) representation of the prescriptions of the
+	 * patient, written to the provided {@link OutputStream}. If addDesc is true a desc private
+	 * field is added to all medication entries of the JSON emediplan.
+	 * 
+	 * @param author
+	 * @param patient
+	 * @param prescriptions
+	 * @param addDesc
+	 * @param output
+	 */
 	public void exportEMediplanPdf(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, OutputStream output);
+		List<IPrescription> prescriptions, boolean addDesc, OutputStream output);
 	
 	/**
 	 * Get a CHMED json eMediplan (http://emediplan.ch/de/home) representation of the prescriptions

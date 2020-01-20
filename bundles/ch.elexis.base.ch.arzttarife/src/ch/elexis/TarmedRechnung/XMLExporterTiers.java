@@ -1,5 +1,6 @@
 package ch.elexis.TarmedRechnung;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
@@ -172,6 +173,14 @@ public class XMLExporterTiers {
 						+ "T00:00:00"); //$NON-NLS-1$
 		}
 		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
+		if (StringUtils.isNotBlank((String) fall.getExtInfoStoredObjectByKey("VEKANr"))
+				&& StringUtils.isNotBlank((String) fall.getExtInfoStoredObjectByKey("VEKAValid"))) {
+			Element cardElement = new Element("card", XMLExporter.nsinvoice);
+			cardElement.setAttribute("card_id", (String) fall.getExtInfoStoredObjectByKey("VEKANr"));
+			cardElement.setAttribute("expiry_date",
+					XMLExporterUtil.makeTarmedDatum((String) fall.getExtInfoStoredObjectByKey("VEKAValid")));
+			patientElement.addContent(cardElement);
+		}
 		ret.tiersElement.addContent(patientElement);
 		
 		Element guarantor = xmlExporter.buildGuarantor(getGuarantor(tiers, patient, fall), patient);

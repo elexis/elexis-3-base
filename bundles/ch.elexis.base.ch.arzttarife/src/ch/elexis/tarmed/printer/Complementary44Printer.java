@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.jdom.Document;
@@ -334,11 +335,8 @@ public class Complementary44Printer {
 				gesetzNummer = "Verfügungs-Nr.";
 				gesetzZSRNIF = "NIF-Nr.(P)";
 			}
-			String vekaNumber = fall.getXid("www.covercard.ch/xid");
-			if (vekaNumber == null || vekaNumber.isEmpty()) {
-				Object veka = fall.getExtInfoStoredObjectByKey("VEKAnummer");
-				vekaNumber = veka == null ? "" : veka.toString();
-			}
+			String vekaNumber =
+				StringUtils.defaultIfBlank((String) fall.getExtInfoStoredObjectByKey("VEKANr"), "");
 			
 			text.replace("\\[F44.Datum\\]", gesetzDatum);
 			text.replace("\\[F44.Nummer\\]", gesetzNummer);

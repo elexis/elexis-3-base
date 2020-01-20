@@ -110,20 +110,22 @@ public class XMLExporterTreatment {
 	}
 	
 	private static String match_diag(final String name){
-		if (name.equalsIgnoreCase(XMLExporter.FREETEXT)) {
-			return XMLExporter.FREETEXT;
-		}
-		if (name.equalsIgnoreCase("ICD-10")) { //$NON-NLS-1$
-			return "ICD"; //$NON-NLS-1$
-		}
-		if (name.equalsIgnoreCase("by contract")) { //$NON-NLS-1$
-			return BY_CONTRACT;
-		}
-		if (name.equalsIgnoreCase(ICPC)) {
-			return ICPC;
-		}
-		if (name.equalsIgnoreCase(XMLExporter.BIRTHDEFECT)) {
-			return XMLExporter.BIRTHDEFECT;
+		if (name != null) {
+			if (name.equalsIgnoreCase(XMLExporter.FREETEXT)) {
+				return XMLExporter.FREETEXT;
+			}
+			if (name.equalsIgnoreCase("ICD-10")) { //$NON-NLS-1$
+				return "ICD"; //$NON-NLS-1$
+			}
+			if (name.equalsIgnoreCase("by contract")) { //$NON-NLS-1$
+				return BY_CONTRACT;
+			}
+			if (name.equalsIgnoreCase(ICPC)) {
+				return ICPC;
+			}
+			if (name.equalsIgnoreCase(XMLExporter.BIRTHDEFECT)) {
+				return XMLExporter.BIRTHDEFECT;
+			}
 		}
 		return BY_CONTRACT;
 	}

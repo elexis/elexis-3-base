@@ -2,6 +2,7 @@ package ch.elexis.TarmedRechnung;
 
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
@@ -164,6 +165,14 @@ public class XMLExporterTiers {
 					XMLExporterUtil.makeTarmedDatum(dateOfBirth.toLocalDate())); //$NON-NLS-1$
 		}
 		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
+		if (StringUtils.isNotBlank((String) coverage.getExtInfo("VEKANr"))
+			&& StringUtils.isNotBlank((String) coverage.getExtInfo("VEKAValid"))) {
+			Element cardElement = new Element("card", XMLExporter.nsinvoice);
+			cardElement.setAttribute("card_id", (String) coverage.getExtInfo("VEKANr"));
+			cardElement.setAttribute("expiry_date",
+				XMLExporterUtil.makeTarmedDatum((String) coverage.getExtInfo("VEKAValid")));
+			patientElement.addContent(cardElement);
+		}
 		ret.tiersElement.addContent(patientElement);
 		
 		Element guarantor =

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.emediplan.Startup;
+import at.medevit.elexis.emediplan.core.EMediplanService;
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament.State;
@@ -65,6 +67,8 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	private boolean showInboxBtn = true;
 	
 	private boolean bulkInsert = false;
+	
+	private EMediplanService mediplanService;
 	
 	@Optional
 	@Inject
@@ -99,7 +103,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	private void refreshMedicamentsTable(){
 		if (medication != null) {
 			for (Medicament medicament : medication.Medicaments) {
-				EMediplanServiceHolder.getService().setPresciptionsToMedicament(medication,
+				mediplanService.setPresciptionsToMedicament(medication,
 					medicament);
 			}
 		}
@@ -112,6 +116,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 		setShellStyle(SWT.DIALOG_TRIM | SWT.MODELESS | SWT.RESIZE);
 		this.medication = medication;
 		this.showInboxBtn = showInboxBtn;
+		this.mediplanService = EMediplanServiceHolder.getService();
 	}
 	
 	@Override
@@ -183,7 +188,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 							.error("Could not write emediplan json" + e);
 					}
 				}
-				if (EMediplanServiceHolder.getService().createInboxEntry(medication,
+				if (mediplanService.createInboxEntry(medication,
 					ContextServiceHolder.get().getActiveMandator().orElse(null))) {
 					MessageDialog.openInformation(getShell(), "Medikationsplan",
 						"Der Medikationsplan wurde erfolgreich in die Inbox hinzugefügt.");
@@ -257,6 +262,8 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 				Medicament mdm = (Medicament) element;
 				if (mdm.artikelstammItem != null) {
 					return mdm.artikelstammItem.getName();
+				} else if (StringUtils.isNotBlank(mediplanService.getPFieldValue(mdm, "Dsc"))) {
+					return mediplanService.getPFieldValue(mdm, "Dsc");
 				}
 				return mdm.Id;
 			}
@@ -456,7 +463,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	private IPrescription insertMedicament(IPatient patient, Medicament medicament,
 		boolean multiSelection){
 		if (patient != null && medicament != null && medicament.entryType != null) {
-			EMediplanServiceHolder.getService().setPresciptionsToMedicament(medication, medicament);
+			mediplanService.setPresciptionsToMedicament(medication, medicament);
 			if (medicament.artikelstammItem != null) {
 				if (State.GTIN_SAME_DOSAGE.equals(medicament.state)) {
 					openDialogWarning("Das Medikament kann nicht zweimal verordnet werden.",

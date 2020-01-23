@@ -14,6 +14,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
+import at.medevit.elexis.emediplan.core.EMediplanService;
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
@@ -30,8 +31,11 @@ import ch.rgw.tools.TimeTool;
 
 public class DirectImportHandler extends AbstractHandler implements IHandler {
 	
+	private EMediplanService mediplanService;
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
+		mediplanService = EMediplanServiceHolder.getService();
 		String emediplan =
 			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan");
 		String patientid =
@@ -46,10 +50,9 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 		}
 		
 		if (StringUtils.isNotEmpty(patientid) && StringUtils.isNotEmpty(emediplan)) {
-			Medication medication =
-				EMediplanServiceHolder.getService().createModelFromChunk(emediplan);
+			Medication medication = mediplanService.createModelFromChunk(emediplan);
 			
-			EMediplanServiceHolder.getService().addExistingArticlesToMedication(medication);
+			mediplanService.addExistingArticlesToMedication(medication);
 			
 			IPatient patient =
 				CoreModelServiceHolder.get().load(patientid, IPatient.class).orElse(null);
@@ -80,13 +83,22 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 					sb.append(
 						"Folgende Medikamente konnte im Artikelstamm nicht gefunden werden\n\n");
 					notFoundMedicament
-						.forEach(m -> sb.append(" - " + m.Id + " " + m.AppInstr + " " + m.TkgRsn));
+						.forEach(
+							m -> sb.append(" - " + getDsc(m) + " " + m.AppInstr + " " + m.TkgRsn));
 					MessageDialog.openWarning(Display.getDefault().getActiveShell(), "Warnung",
 						sb.toString());
 				}
 			}
 		}
 		return null;
+	}
+	
+	private String getDsc(Medicament medicament){
+		String ret = medicament.Id;
+		if (StringUtils.isNotBlank(mediplanService.getPFieldValue(medicament, "Dsc"))) {
+			ret = mediplanService.getPFieldValue(medicament, "Dsc");
+		}
+		return ret;
 	}
 	
 	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType){
@@ -104,7 +116,14 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 	
 	private IPrescription createPrescription(Medicament medicament, IPatient patient){
 		medicament.entryType = EntryType.FIXED_MEDICATION;
-		if (medicament.Pos != null && !medicament.Pos.isEmpty()) {
+		String takingScheme = mediplanService.getPFieldValue(medicament, "TkgSch");
+		if (StringUtils.isNotBlank(takingScheme)) {
+			if ("Prd".equals(takingScheme)) {
+				medicament.entryType = EntryType.SYMPTOMATIC_MEDICATION;
+			} else if ("Ond".equals(takingScheme)) {
+				medicament.entryType = EntryType.RESERVE_MEDICATION;
+			}
+		} else if (medicament.Pos != null && !medicament.Pos.isEmpty()) {
 			for (Posology pos : medicament.Pos) {
 				if (pos.InRes == 1) {
 					medicament.entryType = EntryType.RESERVE_MEDICATION;

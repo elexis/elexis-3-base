@@ -54,7 +54,7 @@ public class Medicament {
 	public static final String FREETEXT_POSTFIX = "]";
 	
 	public static List<Medicament> fromPrescriptions(List<IPrescription> prescriptions,
-		boolean addDesc){
+		boolean addDsc){
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			List<Medicament> ret = new ArrayList<>();
 			for (IPrescription prescription : prescriptions) {
@@ -67,14 +67,10 @@ public class Medicament {
 				medicament.IdType = getIdType(article);
 				medicament.Id = getId(article);
 				medicament.Pos = Posology.fromPrescription(prescription);
-				if (addDesc) {
-					medicament.PFields = new ArrayList<>();
-					PrivateField privateField = new PrivateField();
-					privateField.Nm = "desc";
-					privateField.Val = article.getText();
-					medicament.PFields.add(privateField);
+				if (addDsc) {
+					addDsc(medicament, article);
 				}
-				
+				addTkgSch(medicament, prescription);
 				// check if it has freetext dosis
 				if (medicament.Pos != null && !medicament.Pos.isEmpty()
 					&& (medicament.Pos.get(0).TT == null || medicament.Pos.get(0).TT.isEmpty())) {
@@ -91,6 +87,49 @@ public class Medicament {
 			return ret;
 		}
 		return null;
+	}
+	
+	/**
+	 * Add taking scheme private field. Values are:<br/>
+	 * 
+	 * <li>«Prd» (Period): Symptommedikation</li>
+	 * <li>«Cnt» (Continuous): Dauermedikation</li>
+	 * <li>«Ond» (On Demand): Reservemedikation</li>
+	 * 
+	 * @param medicament
+	 * @param prescription
+	 */
+	private static void addTkgSch(Medicament medicament, IPrescription prescription){
+		if (medicament.PFields == null) {
+			medicament.PFields = new ArrayList<>();
+		}
+		PrivateField privateField = new PrivateField();
+		privateField.Nm = "TkgSch";
+		if (prescription.getEntryType() == EntryType.SYMPTOMATIC_MEDICATION) {
+			privateField.Val = "Prd";
+		} else if (prescription.getEntryType() == EntryType.RESERVE_MEDICATION) {
+			privateField.Val = "Ond";
+		} else {
+			privateField.Val = "Cnt";
+		}
+		medicament.PFields.add(privateField);
+	}
+	
+	/**
+	 * Add description private field. This field is intended to be used if the id can not be
+	 * resolved.
+	 * 
+	 * @param medicament
+	 * @param article
+	 */
+	private static void addDsc(Medicament medicament, IArticle article){
+		if (medicament.PFields == null) {
+			medicament.PFields = new ArrayList<>();
+		}
+		PrivateField privateField = new PrivateField();
+		privateField.Nm = "Dsc";
+		privateField.Val = article.getText();
+		medicament.PFields.add(privateField);
 	}
 	
 	private static String getDosageAsFreeText(String dosis){

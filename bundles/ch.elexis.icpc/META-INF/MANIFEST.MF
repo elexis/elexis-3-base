@@ -31,10 +31,11 @@ Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.util.model,
  ch.elexis.core.services.holder,
  org.apache.commons.io;version="2.4.0",
+ org.apache.commons.lang;version="2.6.0",
  org.eclipse.e4.core.di.annotations;version="1.6.0",
  org.eclipse.e4.ui.di
-Service-Component: OSGI-INF/ch.elexis.icpc.coding.DatabaseICPCCodingContribution.xml,
- OSGI-INF/ch.elexis.icpc.service.IcpcModelServiceHolder.xml,
- OSGI-INF/ch.elexis.icpc.service.CodeElementServiceHolder.xml
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/ch.elexis.icpc.service.CodeElementServiceHolder.xml,
+ OSGI-INF/ch.elexis.icpc.coding.DatabaseICPCCodingContribution.xml,
+ OSGI-INF/ch.elexis.icpc.service.IcpcModelServiceHolder.xml
 

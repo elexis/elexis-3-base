@@ -15,9 +15,12 @@ package ch.elexis.icpc;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 
@@ -43,7 +46,7 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
-		ViewerConfigurer vc = new ViewerConfigurer(new IcpcCodeContentProvider(),
+		ViewerConfigurer vc = new ViewerConfigurer(new IcpcCodeContentProvider(cv),
 			new IcpcCodeLabelProvider(),
 			new DefaultControlFieldProvider(cv, new String[] {
 				"Text"
@@ -72,10 +75,20 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 	
 	public class IcpcCodeContentProvider implements ICommonViewerContentProvider,
 			ITreeContentProvider {
+		private CommonViewer viewer;
+		private String filterValue;
 		
-		public void startListening(){}
+		public IcpcCodeContentProvider(CommonViewer cv){
+			this.viewer = cv;
+		}
 		
-		public void stopListening(){}
+		public void startListening(){
+			viewer.getConfigurer().getControlFieldProvider().addChangeListener(this);
+		}
+		
+		public void stopListening(){
+			viewer.getConfigurer().getControlFieldProvider().removeChangeListener(this);
+		}
 		
 		public Object[] getElements(Object inputElement){
 			ICodeElementServiceContribution icpcCodeElementContribution = CodeElementServiceHolder
@@ -93,7 +106,31 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 		
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
 		
-		public void changed(HashMap<String, String> values){}
+		public void changed(HashMap<String, String> values){
+			String filterText = values.get("Text").toLowerCase();
+			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) {
+				setFilterValue("");
+			} else {
+				setFilterValue(filterText);
+			}
+			// update view
+			viewer.notify(CommonViewer.Message.update);
+			if(StringUtils.isNotBlank(filterValue)) {
+				((TreeViewer) viewer.getViewerWidget()).expandAll();
+			}
+		}
+		
+		public boolean matchFilter(IDiagnosisTree element){
+			if (StringUtils.isNotBlank(filterValue)) {
+				if (element.getChildren().isEmpty()) {
+					return (element.getCode() + " " + element.getText()).toLowerCase()
+						.contains(filterValue);
+				} else {
+					return getChildren(element).length > 0;
+				}
+			}
+			return true;
+		}
 		
 		public void reorder(String field){}
 		
@@ -103,7 +140,15 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 		
 		public Object[] getChildren(Object parentElement){
 			if (parentElement instanceof IDiagnosisTree) {
-				return ((IDiagnosisTree) parentElement).getChildren().toArray();
+				// get all children if no search value is set
+				if (StringUtils.isBlank(filterValue)) {
+					return ((IDiagnosisTree) parentElement).getChildren().toArray();
+				} else {
+					List<IDiagnosisTree> availableChildren =
+						((IDiagnosisTree) parentElement).getChildren().parallelStream()
+							.filter(ti -> matchFilter(ti)).collect(Collectors.toList());
+					return availableChildren.toArray();
+				}
 			}
 			return null;
 		}
@@ -117,8 +162,12 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 		
 		public boolean hasChildren(Object element){
 			if (element instanceof IDiagnosisTree) {
-				List<IDiagnosisTree> children = ((IDiagnosisTree) element).getChildren();
-				return children != null && !children.isEmpty();
+				if (StringUtils.isBlank(filterValue)) {
+					List<IDiagnosisTree> children = ((IDiagnosisTree) element).getChildren();
+					return children != null && !children.isEmpty();
+				} else {
+					return getChildren(element).length > 0;
+				}
 			}
 			return false;
 		}
@@ -129,6 +178,9 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 			
 		}
 		
+		private void setFilterValue(String value){
+			this.filterValue = value;
+		}
 	}
 	
 	public class IcpcCodeLabelProvider extends LabelProvider {

@@ -112,7 +112,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 						try {
 							ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
 							EMediplanServiceHolder.getService().exportEMediplanPdf(mandant, patient,
-								getPrescriptions(patient, "all"), pdfOutput);
+									getPrescriptions(patient, "all"), true, pdfOutput);
 							File pdfFile = File
 								.createTempFile("eMediplan_" + System.currentTimeMillis(), ".pdf");
 							try (FileOutputStream fos = new FileOutputStream(pdfFile)) {

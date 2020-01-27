@@ -65,7 +65,7 @@ public class Medicament {
 				
 				// check if it has freetext dosis
 				if (medicament.Pos != null && !medicament.Pos.isEmpty()
-					&& (medicament.Pos.get(0).D == null || medicament.Pos.get(0).D.isEmpty())) {
+						&& (medicament.Pos.get(0).TT == null || medicament.Pos.get(0).TT.isEmpty())) {
 					String freeTextDosis = getDosageAsFreeText(prescription.getDosis());
 					if (freeTextDosis != null) {
 						medicament.AppInstr += (FREETEXT_PREFIX + freeTextDosis + FREETEXT_POSTFIX);

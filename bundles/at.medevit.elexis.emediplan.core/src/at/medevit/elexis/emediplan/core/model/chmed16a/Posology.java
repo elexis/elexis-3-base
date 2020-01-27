@@ -36,10 +36,12 @@ public class Posology {
 		if (endDate != null && !endDate.isEmpty()) {
 			posology.DtTo = new TimeTool(endDate).toString(TimeTool.DATE_ISO);
 		}
-		ArrayList<Float> floats = Prescription.getDoseAsFloats(prescription.getDosis());
-		if (floats != null && !floats.isEmpty()) {
+		String[] signature = Prescription.getSignatureAsStringArray(prescription.getDosis());
+		boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty() && signature[2].isEmpty()
+				&& signature[3].isEmpty();
+		if (!isFreetext) {
+			ArrayList<Float> floats = Prescription.getDoseAsFloats(prescription.getDosis());
 			posology.TT = TakingTime.fromFloats(floats, prescription.isReserveMedication());
-			posology.D = floats;
 		}
 		if (prescription.getEntryType() == EntryType.RESERVE_MEDICATION) {
 			posology.InRes = 1;

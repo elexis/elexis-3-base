@@ -81,7 +81,7 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 					sb.append(
 						"Folgende Medikamente konnte im Artikelstamm nicht gefunden werden\n\n");
 					notFoundMedicament
-						.forEach(m -> sb.append(" - " + m.Id + " " + m.AppInstr + " " + m.TkgRsn));
+							.forEach(m -> sb.append(" - " + getDsc(m) + " " + m.AppInstr + " " + m.TkgRsn));
 					MessageDialog.openWarning(Display.getDefault().getActiveShell(), "Warnung",
 						sb.toString());
 				}
@@ -90,6 +90,14 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 		return null;
 	}
 	
+	private String getDsc(Medicament medicament) {
+		String ret = medicament.Id;
+		if (StringUtils.isNotBlank(EMediplanServiceHolder.getService().getPFieldValue(medicament, "Dsc"))) {
+			ret = EMediplanServiceHolder.getService().getPFieldValue(medicament, "Dsc");
+		}
+		return ret;
+	}
+
 	private List<Prescription> getPrescriptions(Patient patient, String medicationType){
 		if ("all".equals(medicationType)) {
 			List<Prescription> ret = new ArrayList<Prescription>();
@@ -109,7 +117,14 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 	
 	private Prescription createPrescription(Medicament medicament, Patient patient){
 		medicament.entryType = EntryType.FIXED_MEDICATION;
-		if (medicament.Pos != null && !medicament.Pos.isEmpty()) {
+		String takingScheme = EMediplanServiceHolder.getService().getPFieldValue(medicament, "TkgSch");
+		if (StringUtils.isNotBlank(takingScheme)) {
+			if ("Prd".equals(takingScheme)) {
+				medicament.entryType = EntryType.SYMPTOMATIC_MEDICATION;
+			} else if ("Ond".equals(takingScheme)) {
+				medicament.entryType = EntryType.RESERVE_MEDICATION;
+			}
+		} else if (medicament.Pos != null && !medicament.Pos.isEmpty()) {
 			for (Posology pos : medicament.Pos) {
 				if (pos.InRes == 1) {
 					medicament.entryType = EntryType.RESERVE_MEDICATION;

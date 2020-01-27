@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -236,6 +237,8 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 				Medicament mdm = (Medicament) element;
 				if (mdm.artikelstammItem != null) {
 					return mdm.artikelstammItem.getName();
+				} else if (StringUtils.isNotBlank(EMediplanServiceHolder.getService().getPFieldValue(mdm, "Dsc"))) {
+					return EMediplanServiceHolder.getService().getPFieldValue(mdm, "Dsc");
 				}
 				return mdm.Id;
 			}

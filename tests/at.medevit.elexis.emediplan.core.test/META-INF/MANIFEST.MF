@@ -10,4 +10,5 @@ Require-Bundle: org.junit;bundle-version="4.10.0",
  at.medevit.ch.artikelstamm;bundle-version="3.2.0",
  at.medevit.ch.artikelstamm.elexis.common,
  ch.elexis.core.data
-Import-Package: ch.elexis.core.constants
+Import-Package: ch.elexis.core.constants,
+ org.apache.commons.lang;version="2.6.0"

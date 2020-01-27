@@ -16,6 +16,7 @@ import java.util.List;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Posology;
+import at.medevit.elexis.emediplan.core.model.chmed16a.PrivateField;
 import ch.artikelstamm.elexis.common.ArtikelstammItem;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -106,4 +107,22 @@ public interface EMediplanService {
 	 */
 	public boolean createInboxEntry(Medication medication, Mandant mandant);
 	
+	/**
+	 * Get a private field value from the provided {@link Medicament} with matching
+	 * name.
+	 * 
+	 * @param medicament
+	 * @param name
+	 * @return
+	 */
+	public default String getPFieldValue(Medicament medicament, String name) {
+		if (medicament != null && medicament.PFields != null && name != null) {
+			for (PrivateField pField : medicament.PFields) {
+				if (name.equals(pField.Nm)) {
+					return pField.Val;
+				}
+			}
+		}
+		return null;
+	}
 }

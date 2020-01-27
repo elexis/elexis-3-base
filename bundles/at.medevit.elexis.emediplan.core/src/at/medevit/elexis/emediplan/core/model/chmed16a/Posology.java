@@ -41,7 +41,9 @@ public class Posology {
 				&& signature[3].isEmpty();
 		if (!isFreetext) {
 			ArrayList<Float> floats = Prescription.getDoseAsFloats(prescription.getDosis());
-			posology.TT = TakingTime.fromFloats(floats, prescription.isReserveMedication());
+			posology.D = floats;
+			// posology.TT = TakingTime.fromFloats(floats,
+			// prescription.isReserveMedication());
 		}
 		if (prescription.getEntryType() == EntryType.RESERVE_MEDICATION) {
 			posology.InRes = 1;

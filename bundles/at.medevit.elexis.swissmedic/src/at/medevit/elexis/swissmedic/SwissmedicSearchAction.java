@@ -10,6 +10,9 @@
  ******************************************************************************/
 package at.medevit.elexis.swissmedic;
 
+import java.util.Optional;
+
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -18,13 +21,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Display;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.text.IRichTextDisplay;
 import ch.elexis.core.ui.util.IKonsExtension;
-import ch.elexis.data.Prescription;
 
 public class SwissmedicSearchAction extends Action implements IKonsExtension, IHandler {
 	
@@ -49,22 +54,41 @@ public class SwissmedicSearchAction extends Action implements IKonsExtension, IH
 	
 	@Override
 	public void run(){
-		// get actual fix medication of the patient
-		Prescription medication =
-			(Prescription) ElexisEventDispatcher.getSelected(Prescription.class);
-		
-		String ean = null;
-		String num = "";
-		if (medication != null) {
-			ean = medication.getArtikel().getEAN();
+		// get selected medication of the patient
+		Optional<IPrescription> selectedMedication =
+			ContextServiceHolder.get().getTyped(IPrescription.class);
+		IPrescription medication;
+		if (selectedMedication.isPresent()) {
+			medication = selectedMedication.get();
+			
+			String ean = null;
+			String num = "";
+			if (medication != null) {
+				if (medication.getArticle().isProduct()) {
+					MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+						"Swissmedic",
+						"Es ist ein Produkt ausgewählt. Für die Suche wird die GTIN eines Artikels benötigt.");
+					return;
+				}
+				ean = medication.getArticle().getGtin();
+			}
+			
+			if (ean != null && !ean.isEmpty() && ean.length() >= 9) {
+				num = ean.substring(4, 9);
+			}
+			if (StringUtils.isNotBlank(num)) {
+				String url =
+					"http://www.swissmedicinfo.ch/ShowText.aspx?textType=FI&lang=DE&authNr=" + num; //$NON-NLS-1$
+				Program.launch(url);
+			} else {
+				MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Swissmedic",
+					"Für Artikel " + medication.getArticle().getText()
+						+ " ist keine GTIN hinterlegt. Diese wird für die Suche benötigt.");
+			}
+		} else {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Swissmedic",
+				"Keine Medikation ausgewählt.");
 		}
-		
-		if (ean != null && !ean.isEmpty() && ean.length() >= 9) {
-			num = ean.substring(4, 9);
-		}
-		
-		String url = "http://www.swissmedicinfo.ch/ShowText.aspx?textType=FI&lang=DE&authNr=" + num; //$NON-NLS-1$
-		Program.launch(url);
 	}
 	
 	public IAction[] getActions(){

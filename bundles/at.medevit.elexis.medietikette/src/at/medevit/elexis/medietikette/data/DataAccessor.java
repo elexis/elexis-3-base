@@ -13,11 +13,14 @@ package at.medevit.elexis.medietikette.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.medietikette.Messages;
 import ch.elexis.core.data.interfaces.IDataAccess;
-import ch.elexis.data.Artikel;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Prescription;
 import ch.rgw.tools.Result;
 
 public class DataAccessor implements IDataAccess {
@@ -36,8 +39,8 @@ public class DataAccessor implements IDataAccess {
 	
 	ArrayList<Element> elementsList;
 	
-	private static Prescription selectedPrescription;
-	private static Artikel selectedArticel;
+	private static IPrescription selectedPrescription;
+	private static IArticle selectedArticel;
 	
 	public DataAccessor(){
 		// initialize the list of defined elements
@@ -68,7 +71,7 @@ public class DataAccessor implements IDataAccess {
 		
 		if (descriptor.equals("Name")) { //$NON-NLS-1$
 			if (selectedArticel != null)
-				ret = new Result<Object>(selectedArticel.get(Artikel.FLD_NAME));
+				ret = new Result<Object>(StringUtils.defaultIfBlank(selectedArticel.getText(), ""));
 			else
 				ret =
 					new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
@@ -76,7 +79,7 @@ public class DataAccessor implements IDataAccess {
 						null, false);
 		} else if (descriptor.equals("Preis")) { //$NON-NLS-1$
 			if (selectedArticel != null)
-				ret = new Result<Object>(selectedArticel.getVKPreis().toString());
+				ret = new Result<Object>(selectedArticel.getSellingPrice().toString());
 			else
 				ret =
 					new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
@@ -84,7 +87,7 @@ public class DataAccessor implements IDataAccess {
 						null, false);
 		} else if (descriptor.equals("OPGroesse")) { //$NON-NLS-1$
 			if (selectedArticel != null)
-				ret = new Result<Object>(selectedArticel.getPackungsGroesseDesc());
+				ret = new Result<Object>(selectedArticel.getPackageSize());
 			else
 				ret =
 					new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
@@ -92,7 +95,7 @@ public class DataAccessor implements IDataAccess {
 						null, false);
 		} else if (descriptor.equals("EAN")) { //$NON-NLS-1$
 			if (selectedArticel != null)
-				ret = new Result<Object>(selectedArticel.getEAN());
+				ret = new Result<Object>(StringUtils.defaultIfBlank(selectedArticel.getGtin(), ""));
 			else
 				ret =
 					new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
@@ -100,7 +103,11 @@ public class DataAccessor implements IDataAccess {
 						null, false);
 		} else if (descriptor.equals("Pharmacode")) { //$NON-NLS-1$
 			if (selectedArticel != null)
-				ret = new Result<Object>(selectedArticel.getPharmaCode());
+				if(selectedArticel instanceof IArtikelstammItem) {
+					ret = new Result<Object>(((IArtikelstammItem) selectedArticel).getPHAR());
+				} else {
+					ret = new Result<Object>(selectedArticel.getCode());
+				}
 			else
 				ret =
 					new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
@@ -108,12 +115,14 @@ public class DataAccessor implements IDataAccess {
 						null, false);
 		} else if (descriptor.equals("Dosis")) { //$NON-NLS-1$
 			if (selectedPrescription != null)
-				ret = new Result<Object>(selectedPrescription.getDosis());
+				ret = new Result<Object>(
+					StringUtils.defaultIfBlank(selectedPrescription.getDosageInstruction(), ""));
 			else
 				ret = new Result<Object>(""); //$NON-NLS-1$
 		} else if (descriptor.equals("Vorschrift")) { //$NON-NLS-1$
 			if (selectedPrescription != null)
-				ret = new Result<Object>(selectedPrescription.getBemerkung());
+				ret = new Result<Object>(
+					StringUtils.defaultIfBlank(selectedPrescription.getRemark(), ""));
 			else
 				ret = new Result<Object>(""); //$NON-NLS-1$
 		}
@@ -121,11 +130,11 @@ public class DataAccessor implements IDataAccess {
 		
 	}
 	
-	public static void setSelectedArticel(Artikel articel){
+	public static void setSelectedArticel(IArticle articel){
 		selectedArticel = articel;
 	}
 	
-	public static void setSelectedPrescription(Prescription prescription){
+	public static void setSelectedPrescription(IPrescription prescription){
 		selectedPrescription = prescription;
 	}
 }

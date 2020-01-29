@@ -32,14 +32,14 @@ import at.medevit.elexis.medietikette.Messages;
 import at.medevit.elexis.medietikette.data.DataAccessor;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.data.status.ElexisStatus;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.ui.dialogs.EtiketteDruckenDialog;
-import ch.elexis.data.Artikel;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
-import ch.elexis.data.Verrechnet;
 
 public class PrintMediEtiketteUi extends AbstractHandler {
 	
@@ -54,19 +54,19 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection strucSelection = (IStructuredSelection) selection;
-				List<Prescription> prescriptions = getPrescriptionsFromSelection(strucSelection);
-				List<Artikel> artikels = getArtikelsFromSelection(strucSelection);
+				List<IPrescription> prescriptions = getPrescriptionsFromSelection(strucSelection);
+				List<IArticle> artikels = getArtikelsFromSelection(strucSelection);
 				
-				for (Prescription prescription : prescriptions) {
+				for (IPrescription prescription : prescriptions) {
 					DataAccessor.setSelectedPrescription(prescription);
-					DataAccessor.setSelectedArticel(prescription.getArtikel());
+					DataAccessor.setSelectedArticel(prescription.getArticle());
 					print(event);
 					// clear the selection
 					DataAccessor.setSelectedPrescription(null);
 					DataAccessor.setSelectedArticel(null);
 				}
 				
-				for (Artikel artikel : artikels) {
+				for (IArticle artikel : artikels) {
 					DataAccessor.setSelectedArticel(artikel);
 					print(event);
 					// clear the selection
@@ -103,33 +103,33 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 		}
 	}
 	
-	private List<Artikel> getArtikelsFromSelection(IStructuredSelection strucSelection){
+	private List<IArticle> getArtikelsFromSelection(IStructuredSelection strucSelection){
 		List<?> selection = strucSelection.toList();
-		List<Artikel> ret = new ArrayList<Artikel>();
+		List<IArticle> ret = new ArrayList<>();
 		for (Object object : selection) {
-			if (object instanceof Verrechnet) {
-				Verrechnet verrechnet = (Verrechnet) object;
-				IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
-				if (verrechenbar instanceof Artikel) {
-					ret.add((Artikel) verrechenbar);
+			if (object instanceof IBilled) {
+				IBilled verrechnet = (IBilled) object;
+				IBillable verrechenbar = verrechnet.getBillable();
+				if (verrechenbar instanceof IArticle) {
+					ret.add((IArticle) verrechenbar);
 				}
 			}
 		}
 		return ret;
 	}
 	
-	private List<Prescription> getPrescriptionsFromSelection(IStructuredSelection strucSelection){
+	private List<IPrescription> getPrescriptionsFromSelection(IStructuredSelection strucSelection){
 		List<?> selection = strucSelection.toList();
-		List<Prescription> ret = new ArrayList<Prescription>();
+		List<IPrescription> ret = new ArrayList<>();
 		for (Object object : selection) {
-			if (object instanceof Prescription) {
-				ret.add((Prescription) object);
+			if (object instanceof IPrescription) {
+				ret.add((IPrescription) object);
 			} else if (object.getClass().getName()
 				.equals("ch.elexis.core.ui.medication.views.MedicationTableViewerItem")) {
 				try {
-					Method method = object.getClass().getMethod("getPrescription", null);
+					Method method = object.getClass().getMethod("getPrescription", new Class[0]);
 					if (method != null) {
-						Prescription pres = (Prescription) method.invoke(object, new Object[0]);
+						IPrescription pres = (IPrescription) method.invoke(object, new Object[0]);
 						if (pres != null) {
 							ret.add(pres);
 						}

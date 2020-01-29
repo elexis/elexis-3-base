@@ -1,6 +1,5 @@
-<project
-	xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'
-	xmlns='http://maven.apache.org/POM/4.0.0'
+<project xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd' 
+	xmlns='http://maven.apache.org/POM/4.0.0' 
 	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -8,10 +7,10 @@
 		<artifactId>ch.elexis.base.tests</artifactId>
 		<version>3.8.0-SNAPSHOT</version>
 	</parent>
-    <properties>
-      <NL>de_CH</NL>
-    </properties>
-  <artifactId>ch.elexis.base.ch.arzttarife.test</artifactId>
+	<properties>
+		<NL>de_CH</NL>
+	</properties>
+	<artifactId>ch.elexis.base.ch.arzttarife.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -26,7 +25,7 @@
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<appArgLine>-nl ${NL}</appArgLine>
 					<trimStackTrace>false</trimStackTrace>
-					<argLine>-Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis.test.mode=true</argLine>
+					<argLine>${os-jvm-flags} -Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis.test.mode=true</argLine>
 					<bundleStartLevel>
 						<bundle>
 							<id>org.eclipse.gemini.jpa</id>

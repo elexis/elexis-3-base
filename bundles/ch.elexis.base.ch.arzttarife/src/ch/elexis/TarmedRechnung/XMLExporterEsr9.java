@@ -37,7 +37,7 @@ public class XMLExporterEsr9 {
 		Element element;
 		ESR besr = xmlExporter.getBesr();
 		
-		if (esrmode.equals("esr9")) {
+		if (StringUtils.isNotBlank(esrmode) && esrmode.equals("esr9")) {
 			element = new Element("esr9", XMLExporter.nsinvoice); //$NON-NLS-1$
 			element.setAttribute(ATTR_PARTICIPANT_NUMBER, besr.makeParticipantNumber(true));
 			element.setAttribute(ATTR_TYPE, "16or27"); //$NON-NLS-1$

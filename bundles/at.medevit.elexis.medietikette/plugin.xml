@@ -23,7 +23,7 @@
                      ifEmpty="false"
                      operator="and">
                   <instanceof
-                        value="ch.elexis.data.Prescription">
+                        value="ch.elexis.core.model.IPrescription">
                   </instanceof>
                </iterate>
             </visibleWhen>
@@ -41,7 +41,7 @@
                <iterate
                      operator="and">
                   <instanceof
-                        value="ch.elexis.data.Verrechnet">
+                        value="ch.elexis.core.model.IBilled">
                   </instanceof>
                </iterate>
             </visibleWhen>
@@ -59,7 +59,7 @@
                <iterate
                      operator="and">
                   <instanceof
-                        value="ch.elexis.data.Prescription">
+                        value="ch.elexis.core.model.IPrescription">
                   </instanceof>
                </iterate>
             </visibleWhen>

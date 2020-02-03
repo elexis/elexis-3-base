@@ -43,4 +43,10 @@
             name="%importer.name">
       </Importer>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode">
+      </ExternalMaintenance>
+   </extension>
 </plugin>

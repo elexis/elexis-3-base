@@ -1,6 +1,5 @@
-<project
-	xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'
-	xmlns='http://maven.apache.org/POM/4.0.0'
+<project xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd' 
+	xmlns='http://maven.apache.org/POM/4.0.0' 
 	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -20,7 +19,7 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<application>ch.elexis.core.application.ElexisApp</application>
-					<argLine>-DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
+					<argLine>${os-jvm-flags} -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
 					<testClass>at.medevit.elexis.tarmed.model.tests.AllTests</testClass>
 					<useUIHarness>true</useUIHarness>
 					<showEclipseLog>${show.eclipse.log}</showEclipseLog>

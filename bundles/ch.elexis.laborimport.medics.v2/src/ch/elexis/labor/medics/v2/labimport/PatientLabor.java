@@ -27,8 +27,8 @@ import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
 public class PatientLabor {
-	protected static String KUERZEL = Messages.PatientLabor_kuerzelMedics;
-	private static String LABOR_NAME = Messages.PatientLabor_nameMedicsLabor;
+	public static String KUERZEL = Messages.PatientLabor_kuerzelMedics;
+	public static String LABOR_NAME = Messages.PatientLabor_nameMedicsLabor;
 	
 	private Labor myLab = null;
 	

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ch.elexis.base.tests</artifactId>
   <name>Elexis-Base tests</name>
@@ -32,6 +33,7 @@
     <module>ch.elexis.ebanking.tests</module>
     <module>ch.elexis.externe_dokumente.tests</module>
     <module>ch.elexis.fop.service.test</module>
+    <module>ch.elexis.tasks.integration.test</module>
     <!-- fails
     <module>ch.elexis.laborimport.viollier.v2_test</module>
 -->

@@ -32,11 +32,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
@@ -58,8 +58,16 @@ public class RechnungsDrucker implements IRnOutputter {
 	
 	private boolean bESRSelected, bFormsSelected, bIgnoreFaultsSelected, bSaveFileAsSelected;
 	
+	private boolean modifyInvoiceState;
+	
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type,
 		final Collection<Rechnung> rechnungen, Properties props){
+		
+		if (!props.isEmpty()) {
+			initSelectedFromProperties(props);
+		} else {
+			modifyInvoiceState = true;
+		}
 		
 		rnPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
@@ -85,15 +93,17 @@ public class RechnungsDrucker implements IRnOutputter {
 									errors++;
 									continue;
 								}
-								int status_vorher = rn.getStatus();
-								if ((status_vorher == RnStatus.OFFEN)
-									|| (status_vorher == RnStatus.MAHNUNG_1)
-									|| (status_vorher == RnStatus.MAHNUNG_2)
-									|| (status_vorher == RnStatus.MAHNUNG_3)) {
-									rn.setStatus(status_vorher + 1);
+								if (modifyInvoiceState) {
+									int status_vorher = rn.getStatus();
+									if ((status_vorher == RnStatus.OFFEN)
+										|| (status_vorher == RnStatus.MAHNUNG_1)
+										|| (status_vorher == RnStatus.MAHNUNG_2)
+										|| (status_vorher == RnStatus.MAHNUNG_3)) {
+										rn.setStatus(status_vorher + 1);
+									}
+									rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
+										+ RnStatus.getStatusText(rn.getStatus()));
 								}
-								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
-									+ RnStatus.getStatusText(rn.getStatus()));
 							} catch (Exception ex) {
 								ExHandler.handle(ex);
 								String msg = ex.getMessage();
@@ -131,6 +141,24 @@ public class RechnungsDrucker implements IRnOutputter {
 			// ElexisEventCascade.getInstance().start();
 		}
 		return res;
+	}
+	
+	private void initSelectedFromProperties(Properties props){
+		LoggerFactory.getLogger(getClass())
+			.warn("Initializing with properties " + props.toString());
+		modifyInvoiceState = true;
+		if (props.get(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE) instanceof String) {
+			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE);
+			modifyInvoiceState = Boolean.parseBoolean(value);
+		}
+		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR) instanceof String) {
+			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR);
+			bESRSelected = Boolean.parseBoolean(value);
+		}
+		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM) instanceof String) {
+			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM);
+			bFormsSelected = Boolean.parseBoolean(value);
+		}
 	}
 	
 	public String getDescription(){

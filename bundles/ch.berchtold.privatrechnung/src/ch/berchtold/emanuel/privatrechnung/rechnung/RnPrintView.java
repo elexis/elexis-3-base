@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.eclipse.swt.SWT;
@@ -25,11 +26,14 @@ import org.eclipse.ui.part.ViewPart;
 import ch.berchtold.emanuel.privatrechnung.data.PreferenceConstants;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.constants.ExtensionPointConstantsData;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.Extensions;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -48,6 +52,7 @@ public class RnPrintView extends ViewPart {
 	final static double lineHeight = 0.63;
 	TextContainer tc;
 	Fall fall;
+	private IRnOutputter tarmedOutputter;
 	
 	@Override
 	public void createPartControl(final Composite parent){
@@ -111,13 +116,15 @@ public class RnPrintView extends ViewPart {
 				netto.multiply(v.getZahl());
 				sum.addMoney(netto);
 				IVerrechenbar iv = v.getVerrechenbar();
-				String csName = iv.getCodeSystemName();
-				List<Verrechnet> gl = groups.get(csName);
-				if (gl == null) {
-					gl = new ArrayList<Verrechnet>();
-					groups.put(csName, gl);
+				if (iv != null) {
+					String csName = iv.getCodeSystemName();
+					List<Verrechnet> gl = groups.get(csName);
+					if (gl == null) {
+						gl = new ArrayList<Verrechnet>();
+						groups.put(csName, gl);
+					}
+					gl.add(v);
 				}
-				gl.add(v);
 			}
 		}
 		if (props.get("Summary").equals(Boolean.toString(true))) {
@@ -216,7 +223,39 @@ public class RnPrintView extends ViewPart {
 			
 			tc.getPlugin().print(toPrinter, null, false);
 		}
+		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM).equals(Boolean.toString(true))) {
+			Optional<IRnOutputter> tarmedOutputter = getTarmedOutputter();
+			if (tarmedOutputter.isPresent()) {
+				Properties tarmedProps = new Properties();
+				tarmedProps.put(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE,
+					Boolean.toString(false));
+				tarmedProps.put(IRnOutputter.PROP_OUTPUT_WITH_ESR, Boolean.toString(false));
+				tarmedProps.put(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM, Boolean.toString(true));
+				
+				tarmedOutputter.get().doOutput(IRnOutputter.TYPE.ORIG,
+					Collections.singletonList(rn), tarmedProps);
+			} else {
+				SWTHelper.showError("Keine Tarmed Ausgabe gefunden",
+					"Es ist keine Tarmed Ausgabe bei dieser Installation verfügbar.");
+			}
+		}
 		return ret;
+	}
+	
+	private Optional<IRnOutputter> getTarmedOutputter(){
+		if (tarmedOutputter != null) {
+			return Optional.of(tarmedOutputter);
+		}
+		@SuppressWarnings("unchecked")
+		List<IRnOutputter> foundOutputters =
+			Extensions.getClasses(ExtensionPointConstantsData.RECHNUNGS_MANAGER, "outputter");
+		for (IRnOutputter outputter : foundOutputters) {
+			if (outputter.getClass().getName().endsWith("TarmedRechnung.RechnungsDrucker")) {
+				tarmedOutputter = outputter;
+				return Optional.of(tarmedOutputter);
+			}
+		}
+		return Optional.empty();
 	}
 	
 	private void insertPage(final int page, final Kontakt adressat, final Rechnung rn){

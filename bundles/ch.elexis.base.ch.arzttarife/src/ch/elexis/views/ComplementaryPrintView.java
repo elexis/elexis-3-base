@@ -1,9 +1,5 @@
 package ch.elexis.views;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -15,10 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.TarmedRechnung.XMLExporter;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.ui.text.ITextPlugin;
-import ch.elexis.core.ui.text.MimeTypeUtil;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Brief;
@@ -26,7 +20,6 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.tarmed.printer.Complementary44Printer;
-import ch.elexis.tarmed.printer.ComplementaryTemplateRequirement;
 
 public class ComplementaryPrintView extends ViewPart {
 	public static final String ID = "ch.elexis.arzttarife_ch.complementaryprintview";
@@ -86,8 +79,6 @@ public class ComplementaryPrintView extends ViewPart {
 		if (rn.getStatus() == RnStatus.FEHLERHAFT) {
 			return false;
 		}
-		// check if we have all req. text templates
-		initializeRequiredTemplates();
 		
 		// complementary starts with 4.4 tarmed xml
 		if (TarmedJaxbUtil.getXMLVersion(xmlRn).equals("4.4")) {
@@ -101,88 +92,6 @@ public class ComplementaryPrintView extends ViewPart {
 			return false;
 		}
 		
-	}
-	
-	private void initializeRequiredTemplates(){
-		if (!testTemplate(ComplementaryTemplateRequirement.TT_COMPLEMENTARY_S1)) {
-			initializeTemplate(ComplementaryTemplateRequirement.TT_COMPLEMENTARY_S1);
-		}
-		if (!testTemplate(ComplementaryTemplateRequirement.TT_COMPLEMENTARY_S2)) {
-			initializeTemplate(ComplementaryTemplateRequirement.TT_COMPLEMENTARY_S2);
-		}
-	}
-	
-	private void initializeTemplate(String name){
-		String templateUrl = getTemplateUrl(name);
-		if(templateUrl != null) {
-			byte[] content = downloadTempalte(templateUrl);
-			if (content != null && content.length > 0) {
-				Brief template = new Brief(name, null, CoreHub.getLoggedInContact(), null, null, Brief.TEMPLATE);
-				template.save(content, text.getPlugin().getMimeType());
-				// all tarmed templates are sys templates
-				template.set(Brief.FLD_KONSULTATION_ID, Brief.SYS_TEMPLATE);
-			}
-		}
-	}
-	
-	private byte[] downloadTempalte(String templateUrl){
-		BufferedInputStream in = null;
-		ByteArrayOutputStream bout = null;
-		try {
-			in = new BufferedInputStream(new URL(templateUrl).openStream());
-			bout = new ByteArrayOutputStream();
-			
-			final byte data[] = new byte[1024];
-			int count;
-			while ((count = in.read(data, 0, 1024)) != -1) {
-				bout.write(data, 0, count);
-			}
-		} catch (IOException e) {
-			logger.warn("Could not dowload template from [" + templateUrl + "]", e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// ignore
-				}
-				try {
-					if(bout!=null) {
-						bout.close();
-					}
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return bout != null ? bout.toByteArray() : null;
-	}
-	
-	private String getTemplateUrl(String name){
-		if (isWord()) {
-			switch (name) {
-			case ComplementaryTemplateRequirement.TT_COMPLEMENTARY_S1:
-				return "https://medelexis.ch/uploads/media/TR59_S1.docx";
-			case ComplementaryTemplateRequirement.TT_COMPLEMENTARY_S2:
-				return "https://medelexis.ch/uploads/media/TR59_S2.docx";
-			default:
-				break;
-			}
-		} else {
-			switch (name) {
-			case ComplementaryTemplateRequirement.TT_COMPLEMENTARY_S1:
-				return "https://medelexis.ch/uploads/media/TR59_S1.odt";
-			case ComplementaryTemplateRequirement.TT_COMPLEMENTARY_S2:
-				return "https://medelexis.ch/uploads/media/TR59_S2.odt";
-			default:
-				break;
-			}
-		}
-		return null;
-	}
-	
-	private boolean isWord(){
-		return text.getPlugin().getMimeType().equals(MimeTypeUtil.MIME_TYPE_MSWORD);
 	}
 	
 	private boolean testTemplate(String name){

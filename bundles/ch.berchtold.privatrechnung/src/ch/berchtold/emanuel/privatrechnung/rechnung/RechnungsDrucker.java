@@ -36,9 +36,8 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 public class RechnungsDrucker implements IRnOutputter {
-	// String templateESR, templateBill;
-	Button bFirst, bSecond;
-	boolean bSummary, bDetail;
+	private Button bFirst, bSecond, bThird;
+	private boolean bSummary, bDetail, bReclaim;
 	
 	/**
 	 * We'll take all sorts of bills
@@ -67,8 +66,11 @@ public class RechnungsDrucker implements IRnOutputter {
 		bFirst.setText("Zusammenfassung");
 		bSecond = new Button(ret, SWT.CHECK);
 		bSecond.setText("Detail");
+		bThird = new Button(ret, SWT.CHECK);
+		bThird.setText("Rückforderungsbeleg");
 		bFirst.setSelection(true);
 		bSecond.setSelection(true);
+		bThird.setSelection(true);
 		return ret;
 	}
 	
@@ -86,6 +88,7 @@ public class RechnungsDrucker implements IRnOutputter {
 		final Result<Rechnung> res = new Result<Rechnung>();
 		props.setProperty("Summary", Boolean.toString(bSummary));
 		props.setProperty("Detail", Boolean.toString(bDetail));
+		props.setProperty(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM, Boolean.toString(bReclaim));
 		try {
 			final RnPrintView rnp = (RnPrintView) rnPage.showView(RnPrintView.ID);
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
@@ -153,5 +156,6 @@ public class RechnungsDrucker implements IRnOutputter {
 	public void saveComposite(){
 		bSummary = bFirst.getSelection();
 		bDetail = bSecond.getSelection();
+		bReclaim = bThird.getSelection();
 	}
 }

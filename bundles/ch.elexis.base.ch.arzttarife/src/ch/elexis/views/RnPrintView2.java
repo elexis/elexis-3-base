@@ -194,30 +194,31 @@ public class RnPrintView2 extends ViewPart {
 		return bout != null ? bout.toByteArray() : null;
 	}
 	
+	// https://medelexis.ch/wp-content/uploads/TR44_S1.docx
 	private String getTemplateUrl(String name){
 		if (isWord()) {
 			switch (name) {
 			case TarmedTemplateRequirement.TT_TARMED_S1:
-				return "https://medelexis.ch/uploads/media/Tarmedrechnung_S1_01.docx";
+				return "https://medelexis.ch/wp-content/uploads/Tarmedrechnung_S1_01.docx";
 			case TarmedTemplateRequirement.TT_TARMED_S2:
-				return "https://medelexis.ch/uploads/media/Tarmedrechnung_S2_01.docx";
+				return "https://medelexis.ch/wp-content/uploads/Tarmedrechnung_S2_01.docx";
 			case TarmedTemplateRequirement.TT_TARMED_44_S1:
-				return "https://medelexis.ch/uploads/media/TR44_S1.docx";
+				return "https://medelexis.ch/wp-content/uploads/TR44_S1.docx";
 			case TarmedTemplateRequirement.TT_TARMED_44_S2:
-				return "https://medelexis.ch/uploads/media/TR44_S2.docx";
+				return "https://medelexis.ch/wp-content/uploads/TR44_S2.docx";
 			default:
 				break;
 			}
 		} else {
 			switch (name) {
 			case TarmedTemplateRequirement.TT_TARMED_S1:
-				return "https://medelexis.ch/uploads/media/Tarmedrechnung_S1.odt";
+				return "https://medelexis.ch/wp-content/uploads/Tarmedrechnung_S1.odt";
 			case TarmedTemplateRequirement.TT_TARMED_S2:
-				return "https://medelexis.ch/uploads/media/Tarmedrechnung_S2.odt";
+				return "https://medelexis.ch/wp-content/uploads/Tarmedrechnung_S2.odt";
 			case TarmedTemplateRequirement.TT_TARMED_44_S1:
-				return "https://medelexis.ch/uploads/media/TR44_S1.odt";
+				return "https://medelexis.ch/wp-content/uploads/TR44_S1.odt";
 			case TarmedTemplateRequirement.TT_TARMED_44_S2:
-				return "https://medelexis.ch/uploads/media/TR44_S2.odt";
+				return "https://medelexis.ch/wp-content/uploads/TR44_S2.odt";
 				
 			default:
 				break;

@@ -619,6 +619,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void updateExisting44Xml(Element root, TYPE type, IInvoice existingInvoice){
 		Money mPaid = existingInvoice.getPayedAmount();
 		// update processing, print_at_intermediate and transport via EAN
@@ -646,6 +647,25 @@ public class XMLExporter implements IRnOutputter {
 		// update payload and balance
 		Element payload = root.getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
+		
+		// update guarantor information
+		Element tiersGarant = body.getChild("tiers_garant", XMLExporter.nsinvoice);//$NON-NLS-1$
+		if (tiersGarant != null) {
+			IContact guarantorContact =
+				XMLExporterTiers.getGuarantor(XMLExporter.TIERS_GARANT, patient, coverage);
+			if (guarantorContact != null) {
+				Element guarantorUpdate = buildGuarantor(guarantorContact, patient);
+				if (guarantorUpdate != null) {
+					List<Element> existing = new ArrayList<>(
+						tiersGarant.getChildren("guarantor", XMLExporter.nsinvoice));
+					for (Element element : existing) {
+						tiersGarant.removeContent(element);
+					}
+					tiersGarant.addContent(guarantorUpdate);
+				}
+			}
+		}
+		
 		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
 		XMLExporterBalance xmlBalance = new XMLExporterBalance(balance);
 		// fix for erroneous bills without amount_prepaid (https://redmine.medelexis.ch/issues/6624)

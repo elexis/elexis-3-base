@@ -1,9 +1,5 @@
 package ch.elexis.TarmedRechnung;
 
-import java.time.LocalDateTime;
-
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
 import ch.elexis.core.model.IContact;
@@ -145,34 +141,7 @@ public class XMLExporterTiers {
 			
 		}
 		
-		Element patientElement = new Element("patient", XMLExporter.nsinvoice); //$NON-NLS-1$
-		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is
-		// optional and should be
-		// ssn13 type. leave it out for now
-		if (patient == null) {
-			MessageDialog.openError(null, Messages.XMLExporter_ErrorCaption,
-				Messages.XMLExporter_NoPatientText);
-			return null;
-		}
-		patientElement.setAttribute("gender", patient.getGender().toString().toLowerCase()); //$NON-NLS-1$
-		LocalDateTime dateOfBirth = patient.getDateOfBirth();
-		if (dateOfBirth == null) { // make validator happy if we don't
-			// know the birthdate
-			patientElement.setAttribute(XMLExporter.ATTR_BIRTHDATE, "0001-00-00T00:00:00"); //$NON-NLS-1$
-		} else {
-			patientElement
-				.setAttribute(XMLExporter.ATTR_BIRTHDATE,
-					XMLExporterUtil.makeTarmedDatum(dateOfBirth.toLocalDate())); //$NON-NLS-1$
-		}
-		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
-		if (StringUtils.isNotBlank((String) coverage.getExtInfo("VEKANr"))
-			&& StringUtils.isNotBlank((String) coverage.getExtInfo("VEKAValid"))) {
-			Element cardElement = new Element("card", XMLExporter.nsinvoice);
-			cardElement.setAttribute("card_id", (String) coverage.getExtInfo("VEKANr"));
-			cardElement.setAttribute("expiry_date",
-				XMLExporterUtil.makeTarmedDatum((String) coverage.getExtInfo("VEKAValid")));
-			patientElement.addContent(cardElement);
-		}
+		Element patientElement = xmlExporter.buildPatient(patient);
 		ret.tiersElement.addContent(patientElement);
 		
 		Element guarantor =

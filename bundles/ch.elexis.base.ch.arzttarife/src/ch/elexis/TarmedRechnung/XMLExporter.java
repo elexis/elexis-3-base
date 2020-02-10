@@ -416,13 +416,13 @@ public class XMLExporter implements IRnOutputter {
 		XMLExporterProlog prolog = XMLExporterProlog.buildProlog(rechnung, this);
 		body.addContent(prolog.getElement());
 
-		//remark
-		String bem = rn.getBemerkung();
-		if (!StringTool.isNothing(bem)) {
-			Element remark = new Element(ELEMENT_REMARK, nsinvoice);
-			remark.setText(rn.getBemerkung());
-			body.addContent(remark);
-		}
+		// ignore remark
+//		String bem = rn.getBemerkung();
+//		if (!StringTool.isNothing(bem)) {
+//			Element remark = new Element(ELEMENT_REMARK, nsinvoice);
+//			remark.setText(rn.getBemerkung());
+//			body.addContent(remark);
+//		}
 		
 		// add the balance
 		body.addContent(xmlBalance.getElement());

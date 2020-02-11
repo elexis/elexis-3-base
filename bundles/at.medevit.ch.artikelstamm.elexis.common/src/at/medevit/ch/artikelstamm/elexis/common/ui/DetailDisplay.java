@@ -160,6 +160,7 @@ public class DetailDisplay implements IDetailDisplay {
 	 * @param dc
 	 *            the {@link DetailComposite} of {@link ArtikelstammItem}
 	 */
+	@SuppressWarnings("unchecked")
 	private void addLagerhaltungGroupToComposite(final DetailComposite dc){
 		DataBindingContext bindingContext = new DataBindingContext();
 		
@@ -189,9 +190,8 @@ public class DetailDisplay implements IDetailDisplay {
 		IObservableValue targetStkProPack =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProPack);
 		bindingContext.bindValue(targetStkProPack, propertyStkProPack,
-			new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(),
-				item)
-				.setConverter(StringToNumberConverter.toInteger(false)),
+			new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(), item)
+				.setAutoSave(true).setConverter(StringToNumberConverter.toInteger(false)),
 			new UpdateValueStrategy<Integer, String>()
 				.setConverter(NumberToStringConverter.fromInteger(false)));
 		
@@ -215,7 +215,7 @@ public class DetailDisplay implements IDetailDisplay {
 		
 		bindingContext.bindValue(targetStkProAbgabe, propertyStkProAbgabe,
 			new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(),
-				item).setConverter(StringToNumberConverter.toInteger(false)),
+				item).setAutoSave(true).setConverter(StringToNumberConverter.toInteger(false)),
 			new UpdateValueStrategy<Integer, String>()
 				.setConverter(NumberToStringConverter.fromInteger(false)));
 	}

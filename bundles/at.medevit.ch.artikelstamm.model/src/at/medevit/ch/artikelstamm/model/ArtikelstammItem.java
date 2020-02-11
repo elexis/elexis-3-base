@@ -147,14 +147,12 @@ public class ArtikelstammItem
 	
 	@Override
 	public int getSellingSize(){
-		// TODO Auto-generated method stub
-		return 0;
+		return getEntity().getVerkaufseinheit();
 	}
 	
 	@Override
 	public void setSellingSize(int value){
-		// TODO Auto-generated method stub
-		
+		getEntityMarkDirty().setVerkaufseinheit(value);
 	}
 	
 	@Override

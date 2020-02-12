@@ -1,7 +1,5 @@
 package ch.elexis.TarmedRechnung;
 
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 
 import ch.elexis.data.Fall;
@@ -9,11 +7,9 @@ import ch.elexis.data.Fall.Tiers;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Person;
 import ch.elexis.data.Rechnung;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
 
 public class XMLExporterTiers {
 	private Element tiersElement;
@@ -144,43 +140,7 @@ public class XMLExporterTiers {
 			
 		}
 		
-		Element patientElement = new Element("patient", XMLExporter.nsinvoice); //$NON-NLS-1$
-		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is
-		// optional and should be
-		// ssn13 type. leave it out for now
-		String gender = "male"; //$NON-NLS-1$
-		if (patient == null) {
-			MessageDialog.openError(null, Messages.XMLExporter_ErrorCaption,
-				Messages.XMLExporter_NoPatientText);
-			return null;
-		}
-		if (StringTool.isNothing(patient.getGeschlecht())) { // we fall back to
-			// female. why not?
-			patient.set(Person.SEX, Person.FEMALE);
-		}
-		if (patient.getGeschlecht().equals(Person.FEMALE)) {
-			gender = "female"; //$NON-NLS-1$
-		}
-		patientElement.setAttribute("gender", gender); //$NON-NLS-1$
-		String gebDat = patient.getGeburtsdatum();
-		if (StringTool.isNothing(gebDat)) { // make validator happy if we don't
-			// know the birthdate
-			patientElement.setAttribute(XMLExporter.ATTR_BIRTHDATE, "0001-00-00T00:00:00"); //$NON-NLS-1$
-		} else {
-			patientElement
-				.setAttribute(XMLExporter.ATTR_BIRTHDATE,
-					new TimeTool(patient.getGeburtsdatum()).toString(TimeTool.DATE_MYSQL)
-						+ "T00:00:00"); //$NON-NLS-1$
-		}
-		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
-		if (StringUtils.isNotBlank((String) fall.getExtInfoStoredObjectByKey("VEKANr"))
-				&& StringUtils.isNotBlank((String) fall.getExtInfoStoredObjectByKey("VEKAValid"))) {
-			Element cardElement = new Element("card", XMLExporter.nsinvoice);
-			cardElement.setAttribute("card_id", (String) fall.getExtInfoStoredObjectByKey("VEKANr"));
-			cardElement.setAttribute("expiry_date",
-					XMLExporterUtil.makeTarmedDatum((String) fall.getExtInfoStoredObjectByKey("VEKAValid")));
-			patientElement.addContent(cardElement);
-		}
+		Element patientElement = xmlExporter.buildPatient(patient);
 		ret.tiersElement.addContent(patientElement);
 		
 		Element guarantor = xmlExporter.buildGuarantor(getGuarantor(tiers, patient, fall), patient);

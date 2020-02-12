@@ -35,6 +35,7 @@ import java.util.Properties;
 
 import javax.xml.transform.Source;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -75,6 +76,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Patient;
+import ch.elexis.data.Person;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.TrustCenters;
@@ -626,8 +628,20 @@ public class XMLExporter implements IRnOutputter {
 		Element payload = root.getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
 
-		// update guarantor information
+		// update patient information
 		Element tiersGarant = body.getChild("tiers_garant", XMLExporter.nsinvoice);//$NON-NLS-1$
+		if (tiersGarant != null && actFall.getPatient() != null) {
+			Element patientUpdate = buildPatient(actFall.getPatient());
+			if (patientUpdate != null) {
+				List<Element> existing = new ArrayList<>(tiersGarant.getChildren("patient", XMLExporter.nsinvoice));
+				for (Element element : existing) {
+					tiersGarant.removeContent(element);
+				}
+				tiersGarant.addContent(patientUpdate);
+			}
+		}
+
+		// update guarantor information
 		if (tiersGarant != null) {
 			Kontakt guarantorContact = XMLExporterTiers.getGuarantor(XMLExporter.TIERS_GARANT, actPatient, actFall);
 			if (guarantorContact != null) {
@@ -783,6 +797,44 @@ public class XMLExporter implements IRnOutputter {
 		Element guarantor = new Element("guarantor", XMLExporter.nsinvoice); //$NON-NLS-1$
 		guarantor.addContent(XMLExporterUtil.buildAdressElement(garant));
 		return guarantor;
+	}
+
+	protected Element buildPatient(Patient patient) {
+		Element patientElement = new Element("patient", XMLExporter.nsinvoice); //$NON-NLS-1$
+		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is
+		// optional and should be
+		// ssn13 type. leave it out for now
+		String gender = "male"; //$NON-NLS-1$
+		if (patient == null) {
+			MessageDialog.openError(null, Messages.XMLExporter_ErrorCaption, Messages.XMLExporter_NoPatientText);
+			return null;
+		}
+		if (StringTool.isNothing(patient.getGeschlecht())) { // we fall back to
+			// female. why not?
+			patient.set(Person.SEX, Person.FEMALE);
+		}
+		if (patient.getGeschlecht().equals(Person.FEMALE)) {
+			gender = "female"; //$NON-NLS-1$
+		}
+		patientElement.setAttribute("gender", gender); //$NON-NLS-1$
+		String gebDat = patient.getGeburtsdatum();
+		if (StringTool.isNothing(gebDat)) { // make validator happy if we don't
+			// know the birthdate
+			patientElement.setAttribute(XMLExporter.ATTR_BIRTHDATE, "0001-00-00T00:00:00"); //$NON-NLS-1$
+		} else {
+			patientElement.setAttribute(XMLExporter.ATTR_BIRTHDATE,
+					new TimeTool(patient.getGeburtsdatum()).toString(TimeTool.DATE_MYSQL) + "T00:00:00"); //$NON-NLS-1$
+		}
+		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
+		if (StringUtils.isNotBlank((String) actFall.getExtInfoStoredObjectByKey("VEKANr"))
+				&& StringUtils.isNotBlank((String) actFall.getExtInfoStoredObjectByKey("VEKAValid"))) {
+			Element cardElement = new Element("card", XMLExporter.nsinvoice);
+			cardElement.setAttribute("card_id", (String) actFall.getExtInfoStoredObjectByKey("VEKANr"));
+			cardElement.setAttribute("expiry_date",
+					XMLExporterUtil.makeTarmedDatum((String) actFall.getExtInfoStoredObjectByKey("VEKAValid")));
+			patientElement.addContent(cardElement);
+		}
+		return patientElement;
 	}
 
 	@Override

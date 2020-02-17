@@ -26,7 +26,7 @@ public class FilterSearchField extends ViewerFilter {
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element){
-		if (searchString == null || searchString.length() < 1)
+		if (searchString == null || searchString.length() < 2)
 			return true;
 		ESRRecord e = (ESRRecord) element;
 		

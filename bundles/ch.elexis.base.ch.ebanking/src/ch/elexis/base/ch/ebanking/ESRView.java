@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.runtime.ICoreRunnable;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -52,13 +54,14 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
+import ch.elexis.data.Zahlung;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -81,6 +84,31 @@ public class ESRView extends ViewPart {
 		new ElexisUiEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
 			
 			public void runInUi(ElexisEvent ev){
+				updateView();
+			};
+		};
+	
+	private final ElexisUiEventListenerImpl eeli_zahlung =
+		new ElexisUiEventListenerImpl(Zahlung.class, ElexisEvent.EVENT_SELECTED) {
+			
+			public void runInUi(ElexisEvent ev){
+				if (ev.getObject() instanceof Zahlung) {
+					Zahlung zahlung = (Zahlung) ev.getObject();
+					if (zahlung.get(Zahlung.REMARK).contains("VESR")) {
+						Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class,
+							ESRRecord.TABLENAME, false, new String[] {
+								ESRRecord.FLD_DATE, ESRRecord.FLD_BOOKING_DATE,
+								ESRRecord.RECHNUNGS_ID, "Eingelesen", "Verarbeitet", "BetragInRp",
+								"File"
+						});
+						qbe.add(ESRRecord.RECHNUNGS_ID, Query.EQUALS, zahlung.get(Zahlung.BILL_ID));
+						List<ESRRecord> esrRecords = qbe.execute();
+						if (!esrRecords.isEmpty()) {
+							tableViewer.setInput(esrRecords);
+							return;
+						}
+					}
+				}
 				updateView();
 			};
 		};
@@ -438,7 +466,7 @@ public class ESRView extends ViewPart {
 		
 		updateView();
 		
-		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
+		ElexisEventDispatcher.getInstance().addListeners(eeli_user, eeli_zahlung);
 	}
 	
 	public void updateView(){
@@ -470,47 +498,50 @@ public class ESRView extends ViewPart {
 		}
 		
 		if (CoreHub.acl.request(DISPLAY_ESR) == true) {
-			Runnable loadingArticles = new Runnable() {
-				public void run(){
-					
-					Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class);
-					qbe.add(ESRRecord.FLD_ID, Query.NOT_EQUAL, StringConstants.ONE);
-					
-					if (CoreHub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
-						Mandant mandator = ElexisEventDispatcher.getSelectedMandator();
-						if (mandator != null) {
-							qbe.startGroup();
-							qbe.add(ESRRecord.MANDANT_ID, Query.EQUALS, mandator.getId());
-							qbe.or();
-							qbe.add(ESRRecord.MANDANT_ID, StringConstants.EMPTY, null);
-							qbe.add(ESRRecord.FLD_REJECT_CODE, Query.NOT_EQUAL,
-								StringConstants.ZERO);
-							qbe.endGroup();
-							qbe.and();
-						} else {
-							qbe.insertFalse();
-						}
-					}
-					
-					if (SELECTION_TYPE.NOTPOSTED == selectionType) {
-						// we select by state
+			Job job = Job.create("ESR loading ...", (ICoreRunnable) monitor -> {
+				Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class, ESRRecord.TABLENAME,
+					false, new String[] {
+						ESRRecord.FLD_DATE, ESRRecord.FLD_BOOKING_DATE, ESRRecord.RECHNUNGS_ID,
+						"Eingelesen", "Verarbeitet", "BetragInRp", "File"
+				});
+				qbe.add(ESRRecord.FLD_ID, Query.NOT_EQUAL, StringConstants.ONE);
+				
+				if (CoreHub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
+					Mandant mandator = ElexisEventDispatcher.getSelectedMandator();
+					if (mandator != null) {
 						qbe.startGroup();
-						qbe.add(ESRRecord.FLD_BOOKING_DATE, Query.EQUALS, null);
+						qbe.add(ESRRecord.MANDANT_ID, Query.EQUALS, mandator.getId());
 						qbe.or();
-						qbe.addToken(ESRRecord.FLD_BOOKING_DATE+" IS NULL");
+						qbe.add(ESRRecord.MANDANT_ID, StringConstants.EMPTY, null);
+						qbe.add(ESRRecord.FLD_REJECT_CODE, Query.NOT_EQUAL, StringConstants.ZERO);
 						qbe.endGroup();
+						qbe.and();
 					} else {
-						// we select by date	
-						qbe.add(ESRRecord.FLD_DATE, Query.GREATER_OR_EQUAL,
-							startDate.toDBString(true));
-						qbe.add(ESRRecord.FLD_DATE, Query.LESS_OR_EQUAL, endDate.toDBString(true));
-					}				
-
-					List<ESRRecord> res = qbe.execute();
-					tableViewer.setInput(res);
+						qbe.insertFalse();
+					}
 				}
-			};
-			Display.getCurrent().asyncExec(loadingArticles);
+				
+				if (SELECTION_TYPE.NOTPOSTED == selectionType) {
+					// we select by state
+					qbe.startGroup();
+					qbe.add(ESRRecord.FLD_BOOKING_DATE, Query.EQUALS, null);
+					qbe.or();
+					qbe.addToken(ESRRecord.FLD_BOOKING_DATE + " IS NULL");
+					qbe.endGroup();
+				} else {
+					// we select by date	
+					qbe.add(ESRRecord.FLD_DATE, Query.GREATER_OR_EQUAL, startDate.toDBString(true));
+					qbe.add(ESRRecord.FLD_DATE, Query.LESS_OR_EQUAL, endDate.toDBString(true));
+				}
+				List<ESRRecord> res = qbe.execute();
+				
+				Display.getDefault().asyncExec(() -> {
+					tableViewer.setInput(res);
+				});
+			});
+			
+			// Start the Job
+			job.schedule();
 		} else {
 			tableViewer.setInput(null);
 		}

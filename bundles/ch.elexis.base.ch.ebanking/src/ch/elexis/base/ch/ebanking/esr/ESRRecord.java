@@ -38,7 +38,7 @@ public class ESRRecord extends PersistentObject {
 	public static final String RECHNUNGS_ID = "RechnungsID"; //$NON-NLS-1$
 	public static final String CODE = "Code"; //$NON-NLS-1$
 	private static final String VERSION = "2"; //$NON-NLS-1$
-	private static final String TABLENAME = "ESRRECORDS"; //$NON-NLS-1$
+	public static final String TABLENAME = "ESRRECORDS"; //$NON-NLS-1$
 	private static final int POSITION_PAT_NR = 11;
 	private static final int POSITION_RN_NR = 20;
 	

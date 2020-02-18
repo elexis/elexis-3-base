@@ -32,6 +32,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.labor.medics.v2.MedicsPreferencePage;
 import ch.elexis.labor.medics.v2.Messages;
 import ch.elexis.labor.medics.v2.util.MedicsLogger;
+import ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode;
 import ch.rgw.tools.Result;
 
 public class LabOrderImport extends ImporterPage {
@@ -75,6 +76,10 @@ public class LabOrderImport extends ImporterPage {
 			MessageFormat.format("{0}: Medics Laborimport gestartet", df.format(new Date()))); //$NON-NLS-1$
 		MedicsLogger.getLogger().println(
 			"=============================================================="); //$NON-NLS-1$
+		
+		if(!UpdateLabItemCode.wasExecuted()) {
+			UpdateLabItemCode.execute();
+		}
 		
 		File downloadDir = new File(MedicsPreferencePage.getDownloadDir());
 		Result<Object> result = null;

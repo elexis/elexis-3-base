@@ -1,12 +1,20 @@
 package ch.elexis.laborimport.medics.v2.dbcheck;
 
+import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.data.LabItem;
@@ -45,6 +53,8 @@ public class UpdateLabItemCode extends ExternalMaintenance {
 				notfound++;
 			}
 		}
+		CoreHub.globalCfg.set("ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode",
+			"done_" + LocalDateTime.now());
 		return "In " + items.size() + " Medics Parametern wurden " + updated + " angepasst, "
 			+ already + " waren bereits richtig und " + notfound
 			+ " konnte in " + nameToCodeMap.size() + " Methoden nicht gefunden werden.";
@@ -76,5 +86,36 @@ public class UpdateLabItemCode extends ExternalMaintenance {
 	@Override
 	public String getMaintenanceDescription(){
 		return "Kürzel der Medics Labor Parameter aus Methodenstamm setzen.";
+	}
+	
+	public static boolean wasExecuted(){
+		return CoreHub.globalCfg.get("ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode",
+			null) != null;
+	}
+	
+	public static void execute(){
+		Display display = Display.getDefault();
+		display.syncExec(() -> {
+			Shell activeshell = display.getActiveShell();
+			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(activeshell);
+			try {
+				progressDialog.run(true, false, new IRunnableWithProgress() {
+					
+					@Override
+					public void run(IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException{
+						UpdateLabItemCode update = new UpdateLabItemCode();
+						String result = update.executeMaintenance(monitor, "");
+						LoggerFactory.getLogger(UpdateLabItemCode.class)
+							.info("LabItems update result:" + result);
+					}
+				});
+			} catch (InvocationTargetException | InterruptedException e) {
+				MessageDialog.openError(activeshell, "Medics Importer",
+					"Fehler beim Update der Labor Parameter");
+				LoggerFactory.getLogger(UpdateLabItemCode.class).error("Error on LabItems update",
+					e);
+			}
+		});
 	}
 }

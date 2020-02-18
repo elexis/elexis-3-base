@@ -2,6 +2,7 @@ package ch.elexis.laborimport.hl7.automatic;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -11,17 +12,15 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
-import ch.elexis.core.importer.div.importers.HL7Parser;
-import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
-import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
-import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
-import ch.elexis.laborimport.hl7.universal.LinkLabContactResolver;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.laborimport.hl7.command.ImportFileRunnable;
 import ch.elexis.laborimport.hl7.universal.Preferences;
 import ch.rgw.tools.Result;
 
@@ -29,21 +28,14 @@ import ch.rgw.tools.Result;
 public class AutomaticImportService {
 	public static final String MY_LAB = "Eigenlabor";
 	
-	private MultiFileParser mfParser = new MultiFileParser(MY_LAB);
-	private HL7Parser hl7parser;
-	
 	private Timer timer = new Timer(true);
+	
+	@Reference
+	IVirtualFilesystemService vfsService;
 	
 	@Activate
 	public void activate(){
 		timer.schedule(new AutomaticImportTask(), 5000, 5000);
-	}
-	
-	private HL7Parser getHL7Parser(){
-		if (hl7parser == null) {
-			hl7parser = new DefaultHL7Parser(MY_LAB);
-		}
-		return hl7parser;
 	}
 	
 	private class AutomaticImportTask extends TimerTask {
@@ -107,9 +99,18 @@ public class AutomaticImportService {
 				files++;
 				Display display = Display.getDefault();
 				if (display != null) {
-					ImportFileRunnable runnable = new ImportFileRunnable(importFile);
-					display.syncExec(runnable);
-					r = runnable.getResult();
+					
+					IVirtualFilesystemHandle vfsFile;
+					try {
+						vfsFile = vfsService.of(importFile);
+						ImportFileRunnable runnable = new ImportFileRunnable(vfsFile, MY_LAB);
+						display.syncExec(runnable);
+						r = runnable.getResult();
+					} catch (IOException e) {
+						err = 1;
+						LoggerFactory.getLogger(getClass()).warn("File error", e);
+					}
+					
 				}
 			}
 			if (err > 0) {
@@ -119,26 +120,4 @@ public class AutomaticImportService {
 		}
 	}
 	
-	private class ImportFileRunnable implements Runnable {
-		
-		private File file;
-		
-		private Result<?> result;
-		
-		public ImportFileRunnable(File importFile){
-			this.file = importFile;
-		}
-		
-		public Result<?> getResult(){
-			return result;
-		}
-		
-		@Override
-		public void run(){
-			result = mfParser.importFromFile(
-				file, new DefaultImportStrategyFactory().setMoveAfterImport(true)
-					.setLabContactResolver(new LinkLabContactResolver()),
-				getHL7Parser(), new DefaultPersistenceHandler());
-		}
-	}
 }

@@ -17,5 +17,18 @@
             name="HL7 Dateien">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="ch.elexis.laborimport.hl7.command.HL7FileImportHandler"
+            id="ch.elexis.laborimport.hl7.allg.importFile"
+            name="Import a single HL7 file">
+         <commandParameter
+               id="ch.elexis.laborimport.hl7.allg.importFile.fileUrl"
+               name="Import File Url"
+               optional="false">
+         </commandParameter>
+      </command>
+   </extension>
 
 </plugin>

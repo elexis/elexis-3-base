@@ -29,6 +29,20 @@
             id="ch.elexis.ebanking_ch.command.loadESRFile"
             name="load ESR file">
       </command>
+      <command
+            id="ch.elexis.ebanking_ch.command.openESRWithInvoiceId"
+            name="open ESR with invoice id">
+         <commandParameter
+               id="ch.elexis.ebanking_ch.command.openESR.InvoiceId"
+               name="InvoiceId"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="ch.elexis.ebanking_ch.command.openESR.PaymentDate"
+               name="PaymentDate"
+               optional="false">
+         </commandParameter>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -47,6 +61,10 @@
       <handler
             class="ch.elexis.base.ch.ebanking.command.LoadESRFileHandler"
             commandId="ch.elexis.ebanking_ch.command.loadESRFile">
+      </handler>
+      <handler
+            class="ch.elexis.base.ch.ebanking.command.OpenESRWithinvoiceIdHandler"
+            commandId="ch.elexis.ebanking_ch.command.openESRWithInvoiceId">
       </handler>
    </extension>
    <extension

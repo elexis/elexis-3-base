@@ -61,7 +61,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.Zahlung;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -84,31 +83,6 @@ public class ESRView extends ViewPart {
 		new ElexisUiEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
 			
 			public void runInUi(ElexisEvent ev){
-				updateView();
-			};
-		};
-	
-	private final ElexisUiEventListenerImpl eeli_zahlung =
-		new ElexisUiEventListenerImpl(Zahlung.class, ElexisEvent.EVENT_SELECTED) {
-			
-			public void runInUi(ElexisEvent ev){
-				if (ev.getObject() instanceof Zahlung) {
-					Zahlung zahlung = (Zahlung) ev.getObject();
-					if (zahlung.get(Zahlung.REMARK).contains("VESR")) {
-						Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class,
-							ESRRecord.TABLENAME, false, new String[] {
-								ESRRecord.FLD_DATE, ESRRecord.FLD_BOOKING_DATE,
-								ESRRecord.RECHNUNGS_ID, "Eingelesen", "Verarbeitet", "BetragInRp",
-								"File"
-						});
-						qbe.add(ESRRecord.RECHNUNGS_ID, Query.EQUALS, zahlung.get(Zahlung.BILL_ID));
-						List<ESRRecord> esrRecords = qbe.execute();
-						if (!esrRecords.isEmpty()) {
-							tableViewer.setInput(esrRecords);
-							return;
-						}
-					}
-				}
 				updateView();
 			};
 		};
@@ -466,7 +440,7 @@ public class ESRView extends ViewPart {
 		
 		updateView();
 		
-		ElexisEventDispatcher.getInstance().addListeners(eeli_user, eeli_zahlung);
+		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 	}
 	
 	public void updateView(){

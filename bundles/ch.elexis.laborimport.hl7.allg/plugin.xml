@@ -29,6 +29,16 @@
                optional="false">
          </commandParameter>
       </command>
+      <command
+            defaultHandler="ch.elexis.laborimport.hl7.command.HL7FileArchiveHandler"
+            id="ch.elexis.laborimport.hl7.allg.archiveFile"
+            name="Move the HL7 file to the archive directory">
+         <commandParameter
+               id="ch.elexis.laborimport.hl7.allg.archiveFile.fileUrl"
+               name="File Url"
+               optional="false">
+         </commandParameter>
+      </command>
    </extension>
 
 </plugin>

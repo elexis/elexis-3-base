@@ -24,13 +24,16 @@ import ch.elexis.core.model.ILabMapping;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
+import ch.elexis.core.model.tasks.IIdentifiedRunnable.ReturnParameter;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable.RunContextParameter;
 import ch.elexis.core.model.tasks.TaskException;
+import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LabServiceHolder;
 import ch.elexis.core.tasks.IdentifiedRunnableIdConstants;
+import ch.elexis.core.tasks.model.ITask;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
 import ch.elexis.core.tasks.model.OwnerTaskNotification;
 import ch.elexis.core.tasks.model.TaskState;
@@ -44,6 +47,9 @@ public class Hl7ImporterTaskIntegrationTest {
 	
 	private IVirtualFilesystemService vfs =
 		OsgiServiceUtil.getService(IVirtualFilesystemService.class).get();
+	
+	IVirtualFilesystemHandle hl7Target;
+	IVirtualFilesystemHandle hl7Archived;
 	
 	@Test
 	public void executionOnLocalFilesystem() throws Exception{
@@ -61,10 +67,10 @@ public class Hl7ImporterTaskIntegrationTest {
 		final IVirtualFilesystemHandle pdf =
 			vfs.of(new File(PlatformHelper.getBasePath("ch.elexis.tasks.integration.test"),
 				"rsc/5083_LabCube_ABXMicrosEmi_20160217143956_198647.pdf"));
-		final IVirtualFilesystemHandle hl7Target = tempDirectoryVfs.subFile(hl7.getName());
+		hl7Target = tempDirectoryVfs.subFile(hl7.getName());
 		final IVirtualFilesystemHandle pdfTarget = tempDirectoryVfs.subFile(pdf.getName());
 		final IVirtualFilesystemHandle archiveDir = tempDirectoryVfs.subDir("archive").mkdir();
-		final IVirtualFilesystemHandle hl7Archived = archiveDir.subFile(hl7.getName());
+		hl7Archived = archiveDir.subFile(hl7.getName());
 		final IVirtualFilesystemHandle pdfArchived = archiveDir.subFile(pdf.getName());
 		
 		Callable<Void> pushFiles = () -> {
@@ -73,14 +79,12 @@ public class Hl7ImporterTaskIntegrationTest {
 			return null;
 		};
 		
-		localFilesystemImport(AllTests.getOwner(), tempDirectoryVfs.toString(), pushFiles);
+		performLocalFilesystemImport(AllTests.getOwner(), tempDirectoryVfs.toString(), pushFiles);
 		
 		// import was successful, files was moved to archive
 		System.out.println(tempDirectoryVfs.getAbsolutePath());
 		assertTrue(hl7Archived.exists());
 		assertTrue(pdfArchived.exists());
-		hl7Archived.delete();
-		pdfArchived.delete();
 		archiveDir.delete();
 		tempDirectoryVfs.delete();
 		//		new File(tempDirectory.toFile() + "/archive").delete();
@@ -98,14 +102,18 @@ public class Hl7ImporterTaskIntegrationTest {
 	 * @throws Exception
 	 */
 	
-	private void localFilesystemImport(IUser owner, String urlString, Callable<Void> pushFiles)
+	private void performLocalFilesystemImport(IUser owner, String urlString, Callable<Void> pushFiles)
 		throws Exception{
 		
 		ITaskDescriptor watcherTaskDescriptor = initDirectoryWatcherTask(owner, urlString);
 		ITaskDescriptor hl7ImporterTaskDescriptor = initHl7ImporterTask(owner);
 		ITaskDescriptor billLabResultsTaskDescriptor = initBillLabResultTask(owner);
 		
-		pushFilesAndWait(pushFiles, watcherTaskDescriptor, hl7ImporterTaskDescriptor);
+		ITask hl7ImporterTask = pushFilesAndWait(pushFiles, watcherTaskDescriptor, hl7ImporterTaskDescriptor);
+		String resultData = hl7ImporterTask.getResultEntryTyped(ReturnParameter.RESULT_DATA, String.class);
+		assertEquals("Result (OK) msgs: OK/0 , OK/0", resultData);
+		String url = hl7ImporterTask.getResultEntryTyped(ReturnParameter.STRING_URL, String.class);
+		assertEquals(hl7Archived.getAbsolutePath(), url);
 		
 		// 18 labResults + 1 pdf
 		List<ILabResult> labResults =
@@ -127,15 +135,21 @@ public class Hl7ImporterTaskIntegrationTest {
 			assertEquals(1, billed.getAmount(), 0.01d);
 		}
 		
-//		pushFilesAndWait(pushFiles, watcherTaskDescriptor, hl7ImporterTaskDescriptor);
-//		
-//		billedList = CoreModelServiceHolder.get().getQuery(IBilled.class).execute();
-//		assertEquals(1, billedList.size());
-//		// 1371.00 fails, as no eal code is available
-//		for (IBilled billed : billedList) {
-//			assertEquals(2, billed.getAmount(), 0.01d);
-//			System.out.println(billed);
-//		}
+		
+		
+//		CoreModelServiceHolder.get().getQuery(ILabResult.class).execute().forEach(e->CoreModelServiceHolder.get().remove(e));
+		String sqlScript = "UPDATE LABORWERTE SET DELETED = '1' WHERE DELETED = '0'";
+		assertTrue(OsgiServiceUtil.getService(IElexisEntityManager.class).get().executeSQLScript("clearAll", sqlScript));
+		
+		pushFilesAndWait(pushFiles, watcherTaskDescriptor, hl7ImporterTaskDescriptor);
+		
+		billedList = CoreModelServiceHolder.get().getQuery(IBilled.class).execute();
+		assertEquals(1, billedList.size());
+		// 1371.00 fails, as no eal code is available
+		for (IBilled billed : billedList) {
+			assertEquals(2, billed.getAmount(), 0.01d);
+			System.out.println(billed);
+		}
 		
 		//		assertEquals(true,
 		//			TaskServiceHolder.get().findLatestExecution(billLabResultsTaskDescriptor).isPresent());
@@ -156,8 +170,15 @@ public class Hl7ImporterTaskIntegrationTest {
 		TaskServiceHolder.get().removeTaskDescriptor(billLabResultsTaskDescriptor);
 		TaskServiceHolder.get().removeTaskDescriptor(hl7ImporterTaskDescriptor);
 	}
-	
-	private void pushFilesAndWait(Callable<Void> pushFiles, ITaskDescriptor watcherTaskDescriptor,
+	/**
+	 * 
+	 * @param pushFiles
+	 * @param watcherTaskDescriptor
+	 * @param hl7ImporterTaskDescriptor
+	 * @return the latest execution of the hl7importer task
+	 * @throws Exception
+	 */
+	private ITask pushFilesAndWait(Callable<Void> pushFiles, ITaskDescriptor watcherTaskDescriptor,
 		ITaskDescriptor hl7ImporterTaskDescriptor) throws Exception{
 		
 		// cleanup previous entry for multiple runs
@@ -180,6 +201,7 @@ public class Hl7ImporterTaskIntegrationTest {
 		assertEquals(TaskState.COMPLETED, TaskServiceHolder.get()
 			.findLatestExecution(hl7ImporterTaskDescriptor).get().getState());
 		
+		return TaskServiceHolder.get().findLatestExecution(hl7ImporterTaskDescriptor).orElse(null);
 	}
 	
 	private ITaskDescriptor initBillLabResultTask(IUser activeUser) throws TaskException{

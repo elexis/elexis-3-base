@@ -135,7 +135,6 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 		ICategory iCategory =
 			categoryName != null ? new TransientCategory(categoryName) : getCategoryDefault();
 		handle.setCategory(iCategory);
-		modelService.save(handle);
 		return handle;
 	}
 	

@@ -79,7 +79,7 @@ public class Hl7ImporterTaskIntegrationTest {
 			return null;
 		};
 		
-		performLocalFilesystemImport(AllTests.getOwner(), tempDirectoryVfs.toString(), pushFiles);
+		performLocalFilesystemImport(AllTests.getUser(), tempDirectoryVfs.toString(), pushFiles);
 		
 		// import was successful, files was moved to archive
 		System.out.println(tempDirectoryVfs.getAbsolutePath());

@@ -5,34 +5,52 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.BeforeClass;
 
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.ILabItem;
 import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.tasks.integration.test.hl7import.Hl7ImporterTaskIntegrationTest;
 import ch.elexis.tasks.integration.test.internal.Hl7ImporterTaskIntegrationTestUtil;
+import ch.elexis.tasks.integration.test.runnable.AllRunnableTests;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	Hl7ImporterTaskIntegrationTest.class
+	Hl7ImporterTaskIntegrationTest.class, AllRunnableTests.class
 })
 public class AllTests {
 	
-	private static IUser owner;
-	private static ILaboratory laboratory;
+	private static Hl7ImporterTaskIntegrationTestUtil util;
+	
 	
 	@BeforeClass
 	public static void beforeClass(){
 		
-		owner = Hl7ImporterTaskIntegrationTestUtil.prepareEnvironment();
-		laboratory = Hl7ImporterTaskIntegrationTestUtil.configureLabAndLabItemBilling();
-		Hl7ImporterTaskIntegrationTestUtil.importEal2009();
+		util = new Hl7ImporterTaskIntegrationTestUtil();
+		
+		util.prepareEnvironment();
+		util.configureLabAndLabItemBilling();
+		util.importEal2009();
 	}
 	
-	public static IUser getOwner(){
-		return owner;
+	public static IUser getUser(){
+		return util.getUser();
 	}
 	
 	public static ILaboratory getLaboratory(){
-		return laboratory;
+		return util.getLaboratory();
+	}
+
+	public static ICoverage getCoverage(){
+		return util.getCoverage();
+	}
+
+	public static IPatient getPatient(){
+		return util.getPatient();
+	}
+
+	public static ILabItem getLabItem(){
+		return util.getLabItem();
 	}
 	
 }

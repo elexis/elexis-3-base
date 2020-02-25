@@ -14,10 +14,12 @@ Require-Bundle: org.junit,
  org.eclipse.equinox.common,
  ch.elexis.core.tasks,
  ch.elexis.core.importer.div;bundle-version="3.2.0",
- ch.elexis.base.ch.labortarif.model;bundle-version="1.0.0"
+ ch.elexis.base.ch.labortarif.model;bundle-version="1.0.0",
+ ch.elexis.core.jpa;bundle-version="1.0.0"
 Bundle-ClassPath: lib/awaitility-3.1.6.jar,
  .
-Import-Package: org.osgi.service.component.annotations
+Import-Package: org.osgi.service.component.annotations,
+ org.slf4j;version="1.6.6"
 Service-Component: OSGI-INF/ch.elexis.tasks.integration.test.internal.TaskServiceHolder.xml,
  OSGI-INF/ch.elexis.tasks.integration.test.internal.MockOmnivoreDocumentStore.xml
 Bundle-ActivationPolicy: lazy

@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.slf4j.api,
  ca.uhn.hapi.osgi-base;bundle-version="1.2.0",
  ch.elexis.core.importer.div,
- ch.elexis.core.ui.dbcheck;bundle-version="3.8.0"
+ ch.elexis.core.ui.dbcheck;bundle-version="3.7.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.labor.medics.v2.MedicsActivator
 Bundle-Vendor: medshare.net

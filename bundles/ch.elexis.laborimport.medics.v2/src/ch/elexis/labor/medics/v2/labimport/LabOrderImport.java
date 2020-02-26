@@ -19,13 +19,13 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
-import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
-import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabContactResolver;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
 import ch.elexis.core.ui.importer.div.importers.ImporterPatientResolver;
+import ch.elexis.core.ui.importer.div.importers.LabImportUtil;
+import ch.elexis.core.ui.importer.div.importers.PersistenceHandler;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -43,27 +43,23 @@ public class LabOrderImport extends ImporterPage {
 	public LabOrderImport(){
 		mfParser = new MultiFileParser(PatientLabor.KUERZEL) {
 			@Override
-			protected IVirtualFilesystemHandle[] sortListHandles(
-				IVirtualFilesystemHandle[] iVirtualFilesystemHandles){
-				Arrays.parallelSort(iVirtualFilesystemHandles,
-					new Comparator<IVirtualFilesystemHandle>() {
-						
-						@Override
-						public int compare(IVirtualFilesystemHandle left,
-							IVirtualFilesystemHandle right){
-							String[] leftParts = left.getName().split("_");
-							String[] rightParts = right.getName().split("_");
-							if (leftParts.length > 1 && rightParts.length > 1) {
-								return leftParts[1].compareTo(rightParts[1]);
-							}
-							return left.getName().compareTo(right.getName());
+			protected File[] sortListFiles(File[] files) {
+				Arrays.parallelSort(files, new Comparator<File>() {
+					@Override
+					public int compare(File left, File right) {
+						String[] leftParts = left.getName().split("_");
+						String[] rightParts = right.getName().split("_");
+						if (leftParts.length > 1 && rightParts.length > 1) {
+							return leftParts[1].compareTo(rightParts[1]);
 						}
-					});
-				return iVirtualFilesystemHandles;
+						return left.getName().compareTo(right.getName());
+					}
+				});
+				return files;
 			}
 		};
 		
-		hl7parser = new HL7Parser(PatientLabor.KUERZEL, new ImporterPatientResolver(),
+		hl7parser = new HL7Parser(PatientLabor.KUERZEL, new ImporterPatientResolver(), new LabImportUtil(),
 			new DefaultLabImportUiHandler(),
 			new DefaultLabContactResolver(),
 			CoreHub.localCfg.get(HL7Parser.CFG_IMPORT_ENCDATA, false));
@@ -81,9 +77,10 @@ public class LabOrderImport extends ImporterPage {
 		MedicsLogger.getLogger()
 			.println(MessageFormat.format("HL7 Dateien in Verzeichnis {0} lesen..", downloadDir)); //$NON-NLS-1$
 		if (downloadDir.isDirectory()) {
-			result = mfParser.importFromDirectory(downloadDir,
-				new DefaultImportStrategyFactory().setPDFImportCategory(MedicsPreferencePage.getDokumentKategorie()).setMoveAfterImport(true), hl7parser,
-				new DefaultPersistenceHandler());
+			result = mfParser.importFromDirectory(
+					downloadDir, new DefaultImportStrategyFactory()
+							.setPDFImportCategory(MedicsPreferencePage.getDokumentKategorie()).setMoveAfterImport(true),
+					hl7parser, new PersistenceHandler());
 		}
 		
 		MedicsLogger.getLogger().println(

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Elexis with all OpenSource features" uid="ch.elexis.core.application.ElexisAllOpenSourceApp" id="ch.elexis.core.application.product" application="ch.elexis.core.application.ElexisApp" version="3.8.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <aboutInfo>
+      <image path="rsc/elexislogo2.png"/>
+      <text>
+         Elexis 3.8 - www.elexis.info
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgsLin>--launcher.GTK_version 2
+      </programArgsLin>
+      <vmArgs>-Xms256m -Xmx1024m -Duser.language=de -Duser.region=CH  -Dfile.encoding=utf-8 -Dorg.eclipse.gemini.refreshBundles=false
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts=false -Dfile.encoding=utf-8
+      </vmArgsMac>
+   </launcherArgs>
+
+   <windowImages i16="rsc/elexis2_16.gif" i32="rsc/elexis32_2.gif" i48="rsc/elexis48.gif"/>
+
+   <splash
+      location="ch.elexis.core.product" />
+   <launcher name="Elexis3">
+      <linux icon="rsc/elexis48.xpm"/>
+      <macosx icon="rsc/elexis-mac.icns"/>
+      <win useIco="true">
+         <ico path="rsc/elexis.ico"/>
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
+   </vm>
+
+   <license>
+        <url>http://www.eclipse.org/legal/epl-v10.html</url>
+   </license>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="at.gruber.elexis.mythic22.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.agenda.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.bluemedication.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.cobasmira.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.decision.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.ehc.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.emediplan.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.gdt.defaultfilecp.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.gdt.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.impfplan.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.inbox.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.loinc.feature" installMode="root"/>
+      <feature id="at.medevit.elexis.medietikette.feature" installMode="root"/>
+      <feature id="ch.berchtold.privatrechnung.feature" installMode="root"/>
+      <feature id="ch.docbox.elexis.feature" installMode="root"/>
+      <feature id="ch.elexis.agenda.feature" installMode="root"/>
+      <feature id="ch.elexis.archie.patientstatistik.feature" installMode="root"/>
+      <feature id="ch.elexis.archie.wzw.feature" installMode="root"/>
+      <feature id="ch.elexis.barcode.scanner.feature" installMode="root"/>
+      <feature id="ch.elexis.base.befunde.feature" installMode="root"/>
+      <feature id="ch.elexis.base.ch.feature" installMode="root"/>
+      <feature id="ch.elexis.base.konsextension.bildanzeige.feature" installMode="root"/>
+      <feature id="ch.elexis.base.konsextension.privatnotizen.feature" installMode="root"/>
+      <feature id="ch.elexis.base.messages.feature" installMode="root"/>
+      <feature id="ch.elexis.base.messages.feature" installMode="root"/>
+      <feature id="ch.elexis.base.textplugin.feature" installMode="root"/>
+      <feature id="ch.elexis.base.textplugin.feature" installMode="root"/>
+      <feature id="ch.elexis.buchhaltung.basis.feature" installMode="root"/>
+      <feature id="ch.elexis.connect.afinion.feature" installMode="root"/>
+      <feature id="ch.elexis.connect.mythic.feature" installMode="root"/>
+      <feature id="ch.elexis.connect.reflotron.v2.feature" installMode="root"/>
+      <feature id="ch.elexis.connect.sysmex.feature" installMode="root"/>
+      <feature id="ch.elexis.connector.medicosearch.feature" installMode="root"/>
+      <feature id="ch.elexis.core.application.feature" installMode="root"/>
+      <feature id="ch.elexis.core.common.feature" installMode="root"/>
+      <feature id="ch.elexis.core.logging.feature" installMode="root"/>
+      <feature id="ch.elexis.core.persistence.feature" installMode="root"/>
+      <feature id="ch.elexis.core.ui.feature" installMode="root"/>
+      <feature id="ch.elexis.core.ui.p2.feature" installMode="root"/>
+      <feature id="ch.elexis.externe_dokumente.feature" installMode="root"/>
+      <feature id="ch.elexis.fop_wrapper.feature" installMode="root"/>
+      <feature id="ch.elexis.global_inbox.feature" installMode="root"/>
+      <feature id="ch.elexis.hl7.message.feature" installMode="root"/>
+      <feature id="ch.elexis.icpc.feature" installMode="root"/>
+      <feature id="ch.elexis.icpc.fire.feature" installMode="root"/>
+      <feature id="ch.elexis.impfplan.feature" installMode="root"/>
+      <feature id="ch.elexis.importer.aeskulap.feature" installMode="root"/>
+      <feature id="ch.elexis.kassenbuch.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport.analytica.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport.bioanalytica.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport.eurolyser.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport.hl7.allg.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport.medics.v2.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport.synlab.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport.teamw.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport.viollier.v2.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport_labtop.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport_lg1.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport_rischbern.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport_rothen.feature" installMode="root"/>
+      <feature id="ch.elexis.laborimport_viollier.feature" installMode="root"/>
+      <feature id="ch.elexis.labororder.lg1.feature" installMode="root"/>
+      <feature id="ch.elexis.molemax.feature" installMode="root"/>
+      <feature id="ch.elexis.notes.feature" installMode="root"/>
+      <feature id="ch.elexis.omnivore.feature" installMode="root"/>
+      <feature id="ch.elexis.privatrechnung.feature" installMode="root"/>
+      <feature id="ch.elexis.stickynotes.feature" installMode="root"/>
+      <feature id="ch.elexis.support.dbshaker.feature" installMode="root"/>
+      <feature id="ch.gpb.elexis.cst.feature" installMode="root"/>
+      <feature id="ch.itmed.fop.printing.feature" installMode="root"/>
+      <feature id="ch.itmed.lmz.risch.laborder.feature" installMode="root"/>
+      <feature id="ch.medelexis.text.templator.feature" installMode="root"/>
+      <feature id="ch.medshare.connect.abacusjunior.feature" installMode="root"/>
+      <feature id="ch.medshare.elexis_directories.feature" installMode="root"/>
+      <feature id="ch.medshare.mediport.feature" installMode="root"/>
+      <feature id="ch.novcom.elexis.mednet.plugin.feature" installMode="root"/>
+      <feature id="ch.pharmed.phmprescriber.feature" installMode="root"/>
+      <feature id="ch.unibe.iam.scg.archie.feature" installMode="root"/>
+      <feature id="ch.weirich.templator.pages.feature" installMode="root"/>
+      <feature id="com.hilotec.elexis.kgview.feature" installMode="root"/>
+      <feature id="com.hilotec.elexis.messwerte.v2.feature" installMode="root"/>
+      <feature id="com.hilotec.elexis.opendocument.feature" installMode="root"/>
+      <feature id="com.hilotec.elexis.opendocument2omnivore.feature" installMode="root"/>
+      <feature id="com.hilotec.elexis.pluginstatistiken.feature" installMode="root"/>
+      <feature id="com.hilotec.elexis.stickerprefix.feature" installMode="root"/>
+      <feature id="com.hilotec.elexis.toolbar.feature" installMode="root"/>
+      <feature id="net.medshare.connector.aerztekasse.feature" installMode="root"/>
+      <feature id="net.medshare.connector.viollier.feature" installMode="root"/>
+      <feature id="org.iatrix.bestellung.rose.feature" installMode="root"/>
+      <feature id="org.iatrix.messwerte.feature" installMode="root"/>
+      <feature id="at.medbits.elexis.labbit.feature" installMode="root"/>
+   </features>
+
+   <configurations>
+      <plugin id="ch.elexis.core.jpa.datasource" autoStart="true" startLevel="3" />
+      <plugin id="ch.elexis.core.jpa.entities" autoStart="true" startLevel="3" />
+      <plugin id="ch.elexis.core.logging" autoStart="true" startLevel="2" />
+      <plugin id="ch.elexis.core.ui.p2" autoStart="true" startLevel="4" />
+      <plugin id="ch.qos.logback.classic" autoStart="true" startLevel="2" />
+      <plugin id="ch.qos.logback.core" autoStart="true" startLevel="2" />
+      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.gemini.jpa" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.osgi.services" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="3" />
+      <plugin id="org.slf4j.api" autoStart="false" startLevel="1" />
+      <plugin id="org.slf4j.jcl" autoStart="true" startLevel="1" />
+      <plugin id="org.slf4j.jul" autoStart="true" startLevel="1" />
+      <plugin id="org.slf4j.log4j" autoStart="true" startLevel="1" />
+   </configurations>
+
+   <repositories>
+      <repository location="https://download.elexis.info/elexis/master/p2/elexis-3-base" enabled="true" />
+      <repository location="https://download.elexis.info/elexis/master/p2/elexis-3-core" enabled="true" />
+      <repository location="https://download.elexis.info/elexis/master/p2/elexis.3.gpl" enabled="true" />
+   </repositories>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
+
+</product>

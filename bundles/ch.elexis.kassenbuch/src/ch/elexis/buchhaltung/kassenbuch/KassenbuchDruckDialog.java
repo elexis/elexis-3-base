@@ -17,14 +17,12 @@ import static ch.elexis.buchhaltung.kassenbuch.KassenbuchTextTemplateRequirement
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.SortedSet;
-import java.util.logging.Logger;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.core.data.activator.CoreHub;
@@ -100,12 +98,14 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 		});
 		Enumeration<String> keys = mCategories.keys();
 		Object cursor = text.getPlugin().insertText("##end##", "", SWT.LEFT);
-		while (keys.hasMoreElements()) {
-			String cat = keys.nextElement();
-			Money betrag = mCategories.get(cat);
-			StringBuilder sb = new StringBuilder();
-			sb.append("\n").append(cat).append("\t\t\t").append(betrag.getAmountAsString());
-			cursor = text.getPlugin().insertText(cursor, sb.toString(), SWT.LEFT);
+		if (cursor != null) {
+			while (keys.hasMoreElements()) {
+				String cat = keys.nextElement();
+				Money betrag = mCategories.get(cat);
+				StringBuilder sb = new StringBuilder();
+				sb.append("\n").append(cat).append("\t\t\t").append(betrag.getAmountAsString());
+				cursor = text.getPlugin().insertText(cursor, sb.toString(), SWT.LEFT);
+			}
 		}
 		return ret;
 	}

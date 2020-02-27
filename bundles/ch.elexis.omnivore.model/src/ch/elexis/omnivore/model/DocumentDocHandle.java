@@ -126,7 +126,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public String getStoreId(){
-		return storeId;
+		return StringUtils.isNotEmpty(storeId) ? storeId : "ch.elexis.data.store.omnivore";
 	}
 	
 	@Override

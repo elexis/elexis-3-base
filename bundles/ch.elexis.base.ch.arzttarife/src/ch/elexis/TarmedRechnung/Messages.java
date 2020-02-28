@@ -86,6 +86,7 @@ public class Messages extends NLS {
 	public static String XMLExporter_IVCaseNumberInvalid;
 	public static String XMLExporter_MandatorErrorCaption;
 	public static String XMLExporter_MandatorErrorText;
+	public static String XMLExporter_MandatorErrorEsr;
 	public static String XMLExporter_NIFInvalid;
 	public static String XMLExporter_NoPatientText;
 	public static String XMLExporter_NoPostal;

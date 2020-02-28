@@ -39,7 +39,13 @@ public class XMLExporterEsr9 {
 		
 		if (StringUtils.isNotBlank(esrmode) && esrmode.equals("esr9")) {
 			element = new Element("esr9", XMLExporter.nsinvoice); //$NON-NLS-1$
-			element.setAttribute(ATTR_PARTICIPANT_NUMBER, besr.makeParticipantNumber(true));
+			String participantNumber = besr.makeParticipantNumber(true);
+			if (StringUtils.isEmpty(participantNumber)) {
+				MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
+					Messages.XMLExporter_MandatorErrorEsr + " [" + actMandant.getLabel() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+				return null;
+			}
+			element.setAttribute(ATTR_PARTICIPANT_NUMBER, participantNumber);
 			element.setAttribute(ATTR_TYPE, "16or27"); //$NON-NLS-1$
 			String refnr = besr.makeRefNr(true);
 			String codingline =

@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public interface IAgendaComposite {
 	
@@ -33,7 +33,8 @@ public interface IAgendaComposite {
 	}
 	
 	public default Optional<Integer> getConfiguredFontSize(){
-		String confFont = CoreHub.userCfg.get(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, "");
+		String confFont = ConfigServiceHolder.get()
+			.getActiveUserContact(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, "");
 		String[] parts = confFont.split("\\|");
 		if (parts.length > 3) {
 			try {
@@ -48,8 +49,8 @@ public interface IAgendaComposite {
 	}
 	
 	public default Optional<String> getConfiguredFontFamily(){
-		String confFont =
-			CoreHub.userCfg.get(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, "");
+		String confFont = ConfigServiceHolder.get()
+				.getActiveUserContact(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, "");
 		String[] parts = confFont.split("\\|");
 		if (parts.length > 3) {
 			return Optional.of(parts[1]);

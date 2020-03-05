@@ -5,10 +5,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class SingleClickFunction extends BrowserFunction {
 	
@@ -20,14 +21,16 @@ public class SingleClickFunction extends BrowserFunction {
 	
 	public Object function(Object[] arguments){
 		if (arguments.length == 1) {
-			Termin termin = Termin.load((String) arguments[0]);
-			ElexisEventDispatcher.fireSelectionEvent(termin);
+			IAppointment termin = CoreModelServiceHolder.get()
+				.load((String) arguments[0], IAppointment.class).orElse(null);
+			ContextServiceHolder.get().getRootContext().setTyped(termin);
 			if (selectionProvider != null) {
 				selectionProvider.setSelection(new StructuredSelection(termin));
 			}
-			Kontakt contact = termin.getKontakt();
-			if (contact instanceof Patient) {
-				ElexisEventDispatcher.fireSelectionEvent((Patient) contact);
+			IContact contact = termin.getContact();
+			if (contact.isPatient()) {
+				ContextServiceHolder.get().setActivePatient(
+					CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
 			}
 		} else if (arguments.length == 0) {
 			if (selectionProvider != null) {

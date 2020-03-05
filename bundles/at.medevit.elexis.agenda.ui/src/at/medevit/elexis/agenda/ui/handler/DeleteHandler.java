@@ -13,12 +13,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
-import ch.elexis.data.PersistentObject;
 
 public class DeleteHandler extends AbstractHandler implements IHandler {
 	
@@ -28,9 +29,9 @@ public class DeleteHandler extends AbstractHandler implements IHandler {
 		
 		period.ifPresent(p -> {
 			if (MessageDialog.openConfirm(HandlerUtil.getActiveShell(event), "Löschen",
-				"Wollen Sie " + ((PersistentObject) period.get()).getLabel()
+				"Wollen Sie " + period.get().getLabel()
 					+ " wirklich löschen?")) {
-				AcquireLockBlockingUi.aquireAndRun((PersistentObject) p, new ILockHandler() {
+				AcquireLockBlockingUi.aquireAndRun(p, new ILockHandler() {
 					@Override
 					public void lockFailed(){
 						// do nothing
@@ -38,8 +39,9 @@ public class DeleteHandler extends AbstractHandler implements IHandler {
 					
 					@Override
 					public void lockAcquired(){
-						((Termin) p).delete();
-						ElexisEventDispatcher.reload(Termin.class);
+						CoreModelServiceHolder.get().delete(p);
+						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
+							IAppointment.class);
 					}
 				});
 			}

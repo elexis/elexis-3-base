@@ -1,5 +1,9 @@
 package at.medevit.elexis.agenda.ui.view;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.GridData;
@@ -11,10 +15,8 @@ import at.medevit.elexis.agenda.ui.composite.ParallelComposite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.composite.WeekComposite;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IAppointment;
 
 public class AgendaView extends ViewPart {
 	
@@ -28,25 +30,25 @@ public class AgendaView extends ViewPart {
 	
 	private StackLayout stackLayout;
 	
-	private ElexisUiEventListenerImpl reloadListener =
-		new ElexisUiEventListenerImpl(Termin.class, ElexisEvent.EVENT_RELOAD) {
-			@Override
-			public void runInUi(ElexisEvent ev){
-				if (parallelComposite != null && !parallelComposite.isDisposed()) {
-					parallelComposite.refetchEvents();
-				}
-				if (weekComposite != null && !weekComposite.isDisposed()) {
-					weekComposite.refetchEvents();
-				}
-			}
-		};
-	
 	private SideBarComposite parallelSideBar;
 	
 	private SideBarComposite weekSideBar;
 	
 	public AgendaView(){
 		// TODO Auto-generated constructor stub
+	}
+	
+	@Inject
+	@Optional
+	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz){
+		if (IAppointment.class.equals(clazz)) {
+			if (parallelComposite != null && !parallelComposite.isDisposed()) {
+				parallelComposite.refetchEvents();
+			}
+			if (weekComposite != null && !weekComposite.isDisposed()) {
+				weekComposite.refetchEvents();
+			}
+		}
 	}
 	
 	@Override
@@ -86,8 +88,6 @@ public class AgendaView extends ViewPart {
 		parallelSideBar.setAgendaComposite(parallelComposite);
 		
 		setTopControl("parallel");
-		
-		ElexisEventDispatcher.getInstance().addListeners(reloadListener);
 	}
 	
 	@Override

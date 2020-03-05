@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
 import at.medevit.elexis.agenda.ui.xml.AreaPeriodsLetter;
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.services.IFormattedOutput;
 import ch.elexis.core.services.IFormattedOutputFactory;
 import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
@@ -102,10 +102,10 @@ public class PrintSelectedAgendaHandler extends AbstractHandler implements IHand
 	
 	private Map<String, List<IPeriod>> getAreaPeriodMap(List<IPeriod> periods){
 		if (periods != null && !periods.isEmpty()) {
-			if (periods.get(0) instanceof Termin) {
+			if (periods.get(0) instanceof IAppointment) {
 				Map<String, List<IPeriod>> ret = new HashMap<>();
 				for (IPeriod iPeriod : periods) {
-					String area = ((Termin) iPeriod).getBereich();
+					String area = ((IAppointment) iPeriod).getSchedule();
 					List<IPeriod> list = ret.get(area);
 					if (list == null) {
 						list = new ArrayList<>();

@@ -8,7 +8,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.browser.Browser;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
-import ch.elexis.agenda.data.Termin;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class ContextMenuFunction extends AbstractBrowserFunction {
 	
@@ -30,7 +31,8 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 				getBrowser().getMenu().setVisible(true);
 			});
 		} else if (arguments.length == 1) {
-			Termin termin = Termin.load((String) arguments[0]);
+			IAppointment termin = CoreModelServiceHolder.get()
+				.load((String) arguments[0], IAppointment.class).orElse(null);
 			if (selectionProvider != null) {
 				selectionProvider.setSelection(new StructuredSelection(termin));
 			}

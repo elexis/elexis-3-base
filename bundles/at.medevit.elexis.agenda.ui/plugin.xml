@@ -7,6 +7,7 @@
             category="ch.elexis.agenda.Views"
             class="at.medevit.elexis.agenda.ui.view.WeekView"
             id="at.medevit.elexis.agenda.ui.view.week"
+            inject="true"
             name="Week"
             restorable="true">
       </view>
@@ -14,6 +15,7 @@
             category="ch.elexis.agenda.Views"
             class="at.medevit.elexis.agenda.ui.view.ParallelView"
             id="at.medevit.elexis.agenda.ui.view.parallel"
+            inject="true"
             name="Parallel"
             restorable="true">
       </view>
@@ -21,6 +23,7 @@
             category="ch.elexis.agenda.Views"
             class="at.medevit.elexis.agenda.ui.view.AgendaView"
             id="at.medevit.elexis.agenda.ui.view.agenda"
+            inject="true"
             name="Agenda Web"
             restorable="true">
       </view>

@@ -18,13 +18,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.agenda.data.Termin;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 
 public class SetStatusContributionItem extends ContributionItem {
 	
 	@Override
 	public void fill(Menu menu, int index){
-		for (String t : Termin.TerminStatus) {
+		for (String t : AppointmentServiceHolder.get().getStates()) {
 			MenuItem it = new MenuItem(menu, SWT.NONE);
 			it.setText(t);
 			it.addSelectionListener(new SelectionAdapter() {

@@ -11,12 +11,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
-import ch.elexis.data.PersistentObject;
 
 public class SetStatusHandler extends AbstractHandler implements IHandler {
 	
@@ -27,7 +27,7 @@ public class SetStatusHandler extends AbstractHandler implements IHandler {
 		Optional<IPeriod> period = getSelectedPeriod();
 		
 		period.ifPresent(p -> {
-			AcquireLockBlockingUi.aquireAndRun((PersistentObject) p, new ILockHandler() {
+			AcquireLockBlockingUi.aquireAndRun(p, new ILockHandler() {
 				@Override
 				public void lockFailed(){
 					// do nothing
@@ -35,8 +35,9 @@ public class SetStatusHandler extends AbstractHandler implements IHandler {
 				
 				@Override
 				public void lockAcquired(){
-					((Termin) p).setStatus(statusId);
-					ElexisEventDispatcher.reload(Termin.class);
+					((IAppointment) p).setState(statusId);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
+						IAppointment.class);
 				}
 			});
 		});

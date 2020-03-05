@@ -37,15 +37,15 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.series.ui.SerienTerminDialog;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.interfaces.IPeriod;
+import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.model.agenda.Area;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
-import ch.elexis.data.PersistentObject;
-import ch.rgw.tools.TimeTool;
 
 public class SideBarComposite extends Composite {
 	
@@ -107,9 +107,10 @@ public class SideBarComposite extends Composite {
 		Font boldFont = boldDescriptor.createFont(label.getDisplay());
 		label.setFont(boldFont);
 		label.setText("Bereiche");
-		for (String bereich : Termin.TerminBereiche) {
+		List<Area> areas = AppointmentServiceHolder.get().getAreas();
+		for (Area area : areas) {
 			Button btn = new Button(this, SWT.CHECK);
-			btn.setText(bereich);
+			btn.setText(area.getName());
 			btn.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e){
@@ -177,8 +178,7 @@ public class SideBarComposite extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				if (e.getSource() instanceof Button) {
-					SerienTerminDialog dlg =
-						new SerienTerminDialog(getShell(), null);
+					RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(null);
 					dlg.open();
 				}
 			}
@@ -320,13 +320,13 @@ public class SideBarComposite extends Composite {
 	}
 	
 	private void saveConfigurationString(String configKey, String value){
-		CoreHub.localCfg.set(
+		ConfigServiceHolder.get().setLocal(
 			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey,
 			value);
 	}
 	
 	private String loadConfigurationString(String configKey){
-		return CoreHub.localCfg.get(
+		return ConfigServiceHolder.get().getLocal(
 			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, "");
 	}
 	
@@ -379,12 +379,12 @@ public class SideBarComposite extends Composite {
 		}
 		
 		public void movePeriod(IPeriod iPeriod){
-			AcquireLockBlockingUi.aquireAndRun((PersistentObject) iPeriod, new ILockHandler() {
+			AcquireLockBlockingUi.aquireAndRun(iPeriod, new ILockHandler() {
 				@Override
 				public void lockAcquired(){
-					iPeriod.setStartTime(new TimeTool(dateTime));
-					if (iPeriod instanceof Termin) {
-						((Termin) iPeriod).setBereich(resource);
+					iPeriod.setStartTime(dateTime);
+					if (iPeriod instanceof IAppointment) {
+						((IAppointment) iPeriod).setSchedule(resource);
 					}
 					Display.getDefault().timerExec(250, new Runnable() {
 						@Override

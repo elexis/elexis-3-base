@@ -3,14 +3,12 @@ package at.medevit.elexis.agenda.ui.function;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.series.SerienTermin;
-import ch.elexis.agenda.series.ui.SerienTerminDialog;
-import ch.elexis.data.PersistentObject;
+import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
+import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
-import ch.elexis.dialogs.TerminDialog;
-import ch.elexis.dialogs.TerminDialog.CollisionErrorLevel;
 
 public class DoubleClickFunction extends BrowserFunction {
 	
@@ -20,8 +18,9 @@ public class DoubleClickFunction extends BrowserFunction {
 	
 	public Object function(Object[] arguments){
 		if (arguments.length == 1) {
-			Termin termin = Termin.load((String) arguments[0]);
-			AcquireLockBlockingUi.aquireAndRun((PersistentObject) termin, new ILockHandler() {
+			IAppointment termin = CoreModelServiceHolder.get()
+				.load((String) arguments[0], IAppointment.class).orElse(null);
+			AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
 				@Override
 				public void lockFailed(){
 					// do nothing
@@ -29,18 +28,14 @@ public class DoubleClickFunction extends BrowserFunction {
 				
 				@Override
 				public void lockAcquired(){
-					TerminDialog.setActResource(termin.getBereich());
-					if (termin.isRecurringDate()) {
-						SerienTerminDialog dlg =
-							new SerienTerminDialog(getBrowser().getShell(),
-								new SerienTermin(termin));
+					// TerminDialog.setActResource(termin.getBereich());
+					if (termin.isRecurring()) {
+						RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(termin);
 						dlg.open();
 					} else {
-						TerminDialog dlg = new TerminDialog(termin);
-						dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
+						AppointmentDialog dlg = new AppointmentDialog(termin);
 						dlg.open();
 					}
-					
 				}
 			});
 		}

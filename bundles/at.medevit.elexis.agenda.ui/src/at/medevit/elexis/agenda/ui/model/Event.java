@@ -1,9 +1,13 @@
 package at.medevit.elexis.agenda.ui.model;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.series.SerienTermin;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.model.agenda.RecurringAppointment;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.types.AppointmentState;
+import ch.elexis.core.types.AppointmentType;
 
 /**
  * Model element representing an event than can be rendered using the javascript calendar contained
@@ -127,26 +131,28 @@ public class Event {
 	public static Event of(IPeriod iPeriod){
 		Event ret = new Event();
 		ret.id = iPeriod.getId();
-		ret.start = iPeriod.getStartTime().toLocalDateTime().toString();
-		ret.end = iPeriod.getEndTime().toLocalDateTime().toString();
-		if(iPeriod instanceof Termin) {
-			Termin termin = (Termin) iPeriod;
-			ret.resource = termin.getBereich();
-			Termin rootTermin = null;
-			if (termin.isRecurringDate()
-				&& (rootTermin = new SerienTermin(termin).getRootTermin()) != null) {
+		ret.start = iPeriod.getStartTime().toString();
+		ret.end = iPeriod.getEndTime().toString();
+		if (iPeriod instanceof IAppointment) {
+			IAppointment termin = (IAppointment) iPeriod;
+			ret.resource = termin.getSchedule();
+			IAppointment rootTermin = null;
+			if (termin.isRecurring()
+				&& (rootTermin = new RecurringAppointment(termin, CoreModelServiceHolder.get())
+					.getRootAppoinemtent()) != null) {
 				ret.icon = "ui-icon-arrowrefresh-1-w";
-				ret.title = rootTermin.getPersonalia();
+				ret.title = rootTermin.getSubjectOrPatient();
 			}
 			else {
-				ret.title = termin.getPersonalia();
+				ret.title = termin.getSubjectOrPatient();
 			}
 			// fullcalendar will no create title html div if no title is blank, add space
 			if (ret.title.isEmpty()) {
 				ret.title = " ";
 			}
-			ret.description = termin.getGrund().replaceAll("\n", "<br />") + "<br /><br />"
-				+ termin.getStatusHistoryDesc(true).replaceAll("\n", "<br />");
+			ret.description = termin.getReason().replaceAll("\n", "<br />") + "<br /><br />"
+				+ termin.getStateHistoryFormatted("dd.MM.yyyyy hh:mm:ss").replaceAll("\n",
+					"<br />");
 			ret.borderColor = getStateColor(iPeriod);
 			ret.backgroundColor = getTypColor(iPeriod);
 			ret.textColor = getTextColor(ret.backgroundColor.substring(1));
@@ -161,10 +167,14 @@ public class Event {
 	 * @return
 	 */
 	public static boolean isDayLimit(IPeriod iPeriod){
-		if (iPeriod instanceof Termin) {
-			String type = ((Termin) iPeriod).getType();
-			String status = ((Termin) iPeriod).getStatus();
-			return type.equals(Termin.typReserviert()) && status.equals(Termin.statusLeer());
+		if (iPeriod instanceof IAppointment) {
+			String type = ((IAppointment) iPeriod).getType();
+			String status = ((IAppointment) iPeriod).getState();
+			String emptyStateString =
+				AppointmentServiceHolder.get().getState(AppointmentState.EMPTY);
+			String reservedTypeString =
+				AppointmentServiceHolder.get().getType(AppointmentType.BOOKED);
+			return type.equals(reservedTypeString) && status.equals(emptyStateString);
 		}
 		return false;
 	}
@@ -176,10 +186,10 @@ public class Event {
 	 * @return
 	 */
 	public static String getTypColor(IPeriod iPeriod){
-		if (iPeriod instanceof Termin) {
-			Termin termin = (Termin) iPeriod;
-			return "#"
-				+ CoreHub.userCfg.get("agenda/farben/typ/" + termin.getType(), DEFAULT_BG_COLOR); //$NON-NLS-1$
+		if (iPeriod instanceof IAppointment) {
+			IAppointment termin = (IAppointment) iPeriod;
+			return "#" + ConfigServiceHolder.get()
+				.getActiveUserContact("agenda/farben/typ/" + termin.getType(), DEFAULT_BG_COLOR); //$NON-NLS-1$
 		}
 		return "#" + DEFAULT_BG_COLOR;
 	}
@@ -191,10 +201,10 @@ public class Event {
 	 * @return
 	 */
 	public static String getStateColor(IPeriod iPeriod){
-		if (iPeriod instanceof Termin) {
-			Termin termin = (Termin) iPeriod;
-			return "#" + CoreHub.userCfg.get("agenda/farben/status/" + termin.getStatus(),
-				DEFAULT_BG_COLOR); //$NON-NLS-2$
+		if (iPeriod instanceof IAppointment) {
+			IAppointment termin = (IAppointment) iPeriod;
+			return "#" + ConfigServiceHolder.get().getActiveUserContact(
+				"agenda/farben/status/" + termin.getState(), DEFAULT_BG_COLOR); //$NON-NLS-2$
 		}
 		return "#" + DEFAULT_BG_COLOR;
 	}

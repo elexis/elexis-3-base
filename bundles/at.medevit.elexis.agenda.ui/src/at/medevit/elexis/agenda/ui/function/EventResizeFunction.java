@@ -4,11 +4,12 @@ import java.time.LocalDateTime;
 
 import org.eclipse.swt.browser.Browser;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
-import ch.rgw.tools.TimeTool;
 
 public class EventResizeFunction extends AbstractBrowserFunction {
 	
@@ -18,7 +19,8 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 	
 	public Object function(Object[] arguments){
 		if (arguments.length == 3) {
-			final Termin termin = Termin.load((String) arguments[0]);
+			IAppointment termin = CoreModelServiceHolder.get()
+				.load((String) arguments[0], IAppointment.class).orElse(null);
 			final LocalDateTime startDate = getDateTimeArg(arguments[1]);
 			final LocalDateTime endDate = getDateTimeArg(arguments[2]);
 			
@@ -30,9 +32,10 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 				
 				@Override
 				public void lockAcquired(){
-					termin.setStartTime(new TimeTool(startDate));
-					termin.setEndTime(new TimeTool(endDate));
-					ElexisEventDispatcher.reload(Termin.class);
+					termin.setStartTime(startDate);
+					termin.setEndTime(endDate);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
+						IAppointment.class);
 					redraw();
 				}
 			});

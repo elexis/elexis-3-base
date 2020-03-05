@@ -4,14 +4,16 @@ import java.time.LocalDateTime;
 
 import org.eclipse.swt.browser.Browser;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.series.SerienTermin;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.agenda.RecurringAppointment;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LocalLockServiceHolder;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
-import ch.elexis.data.Kontakt;
-import ch.rgw.tools.TimeTool;
 
 public class EventDropFunction extends AbstractBrowserFunction {
 	
@@ -21,7 +23,8 @@ public class EventDropFunction extends AbstractBrowserFunction {
 	
 	public Object function(final Object[] arguments){
 		if (arguments.length >= 3) {
-			final Termin termin = Termin.load((String) arguments[0]);
+			IAppointment termin = CoreModelServiceHolder.get()
+				.load((String) arguments[0], IAppointment.class).orElse(null);
 			
 			AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
 				@Override
@@ -31,29 +34,31 @@ public class EventDropFunction extends AbstractBrowserFunction {
 				
 				@Override
 				public void lockAcquired(){
-					Termin current = termin;
+					IAppointment current = termin;
 					
 					// do copy
 					if (arguments.length >= 5 && Boolean.TRUE.equals(arguments[4])) {
-						current = (Termin) termin.clone();
-						if (termin.isRecurringDate() && termin.getKontakt() == null) {
+						current = AppointmentServiceHolder.get().clone(termin);
+						if (termin.isRecurring() && termin.getContact() == null) {
 							// take kontakt from root termin
-							Kontakt k = new SerienTermin(termin).getRootTermin().getKontakt();
+							IContact k =
+								new RecurringAppointment(termin, CoreModelServiceHolder.get())
+									.getRootAppoinemtent().getContact();
 							if (k != null) {
-								current.setKontakt(k);
+								current.setSubjectOrPatient(k.getId());
 							}
 						}
 					}
 					
 					// moving
 					LocalDateTime startDate = getDateTimeArg(arguments[1]);
-					current.setStartTime(new TimeTool(startDate));
+					current.setStartTime(startDate);
 					LocalDateTime endDate = getDateTimeArg(arguments[2]);
-					current.setEndTime(new TimeTool(endDate));
+					current.setEndTime(endDate);
 					if (arguments.length >= 4 && arguments[3] != null) {
 						String bereich = (String) arguments[3];
 						if (!bereich.isEmpty()) {
-							current.setBereich(bereich);
+							current.setSchedule(bereich);
 						}
 					}
 					
@@ -63,11 +68,12 @@ public class EventDropFunction extends AbstractBrowserFunction {
 							LocalLockServiceHolder.get().releaseLock(current);
 						} else {
 							// should not happened - no lock - delete the copied termin
-							current.delete();
+							CoreModelServiceHolder.get().delete(current);
 						}
 					}
 					
-					ElexisEventDispatcher.reload(Termin.class);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
+						IAppointment.class);
 					redraw();
 				}
 			});

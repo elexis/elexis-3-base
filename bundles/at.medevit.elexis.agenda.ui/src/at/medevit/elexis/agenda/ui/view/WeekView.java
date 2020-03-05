@@ -1,5 +1,9 @@
 package at.medevit.elexis.agenda.ui.view;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -8,27 +12,25 @@ import org.eclipse.ui.part.ViewPart;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.composite.WeekComposite;
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IAppointment;
 
 public class WeekView extends ViewPart {
 	
 	private WeekComposite composite;
 	
-	private ElexisUiEventListenerImpl reloadListener =
-		new ElexisUiEventListenerImpl(Termin.class, ElexisEvent.EVENT_RELOAD) {
-			@Override
-			public void runInUi(ElexisEvent ev){
-				if (composite != null && !composite.isDisposed()) {
-					composite.refetchEvents();
-				}
-			}
-		};
-	
 	public WeekView(){
 		// TODO Auto-generated constructor stub
+	}
+	
+	@Inject
+	@Optional
+	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz){
+		if (IAppointment.class.equals(clazz)) {
+			if (composite != null && !composite.isDisposed()) {
+				composite.refetchEvents();
+			}
+		}
 	}
 	
 	@Override
@@ -46,13 +48,6 @@ public class WeekView extends ViewPart {
 		composite = new WeekComposite(getSite(), container, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		sideBar.setAgendaComposite(composite);
-		
-		ElexisEventDispatcher.getInstance().addListeners(reloadListener);
-	}
-	
-	@Override
-	public void dispose(){
-		ElexisEventDispatcher.getInstance().removeListeners(reloadListener);
 	}
 	
 	@Override

@@ -1,20 +1,22 @@
 package at.medevit.elexis.agenda.ui.xml;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.interfaces.IPeriod;
-import ch.rgw.tools.TimeTool;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPeriod;
 
 @XmlRootElement(name = "period")
 public class Period implements Comparable<Period> {
 	
 	@XmlTransient
-	private TimeTool fromTool;
+	private LocalDateTime fromDateTime;
 	@XmlTransient
-	private TimeTool toTool;
+	private LocalDateTime toDateTime;
 	
 	@XmlElement
 	private String from;
@@ -28,15 +30,16 @@ public class Period implements Comparable<Period> {
 	public static Period of(IPeriod iPeriod){
 		Period ret = new Period();
 		
-		if (iPeriod instanceof Termin) {
-			Termin termin = (Termin) iPeriod;
-			ret.fromTool = termin.getStartTime();
-			ret.toTool = termin.getEndTime();
-			ret.from = ret.fromTool.toString(TimeTool.TIME_SMALL);
-			ret.to = ret.toTool.toString(TimeTool.TIME_SMALL);
+		if (iPeriod instanceof IAppointment) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
+			IAppointment termin = (IAppointment) iPeriod;
+			ret.fromDateTime = termin.getStartTime();
+			ret.toDateTime = termin.getEndTime();
+			ret.from = formatter.format(ret.fromDateTime);
+			ret.to = formatter.format(ret.toDateTime);
 			
-			ret.personalia = termin.getPersonalia();
-			ret.reason = termin.getGrund();
+			ret.personalia = termin.getSubjectOrPatient();
+			ret.reason = termin.getReason();
 		}
 		
 		return ret;
@@ -46,8 +49,8 @@ public class Period implements Comparable<Period> {
 		// needed for jaxb
 	}
 	
-	public TimeTool getFromTool(){
-		return fromTool;
+	public LocalDateTime getFromDateTime(){
+		return fromDateTime;
 	}
 	
 	@Override

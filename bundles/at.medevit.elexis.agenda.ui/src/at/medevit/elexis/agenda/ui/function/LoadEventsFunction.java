@@ -1,18 +1,17 @@
 package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +24,13 @@ import com.google.gson.GsonBuilder;
 
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.model.Event;
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.data.TerminUtil;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.Heartbeat.HeartListener;
-import ch.elexis.core.data.interfaces.IPeriod;
-import ch.elexis.data.Query;
-import ch.elexis.data.Reminder;
-import ch.rgw.tools.TimeTool;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class LoadEventsFunction extends AbstractBrowserFunction {
 	
@@ -42,15 +40,15 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	
 	private Set<String> resources = new HashSet<String>();
 	
-	private ScriptingHelper scriptingHelper;
+	protected ScriptingHelper scriptingHelper;
 	
 	private LoadingCache<TimeSpan, EventsJsonValue> cache;
 	
-	private long knownLastUpdate = 0;
+	protected long knownLastUpdate = 0;
 	
 	private TimeSpan currentTimeSpan;
 	
-	private HeartListener heartListener;
+	private Timer timer;
 	
 	private class EventsJsonValue {
 		
@@ -75,7 +73,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			boolean updated = false;
 			for (IPeriod iPeriod : changedPeriods) {
 				if (eventsMap.containsKey(iPeriod.getId())) {
-					boolean deleted = ((Termin) iPeriod).isDeleted();
+					boolean deleted = ((IAppointment) iPeriod).isDeleted();
 					if (deleted || !timespan.contains(iPeriod)) {
 						// deleted or moved outside timespan
 						eventsMap.remove(iPeriod.getId());
@@ -165,29 +163,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		
 		cache = CacheBuilder.newBuilder().maximumSize(7).build(new TimeSpanLoader());
 		
-		heartListener = new HeartListener() {
-			@Override
-			public void heartbeat(){
-				long currentLastUpdate = Termin.getHighestLastUpdate(Termin.TABLENAME);
-				if (knownLastUpdate != 0 && knownLastUpdate < currentLastUpdate) {
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run(){
-							scriptingHelper.refetchEvents();
-						}
-					});
-				}
-			}
-		};
-		
-		browser.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e){
-				CoreHub.heart.removeListener(heartListener);
-			}
-		});
-		
-		CoreHub.heart.addListener(heartListener);
+		timer = new Timer("Agenda check for updates", true);
+		timer.schedule(new CheckForUpdatesTimerTask(this), 10000);
 	}
 	
 	public Object function(Object[] arguments){
@@ -195,7 +172,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			try {
 				currentTimeSpan =
 					new TimeSpan(getDateArg(arguments[0]), getDateArg(arguments[1]));
-				long currentLastUpdate = Termin.getHighestLastUpdate(Termin.TABLENAME);
+				long currentLastUpdate =
+					CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
 				if (knownLastUpdate == 0) {
 					knownLastUpdate = currentLastUpdate;
 				} else if (knownLastUpdate < currentLastUpdate) {
@@ -238,9 +216,9 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	 */
 	@SuppressWarnings("unchecked")
 	private List<IPeriod> getChangedPeriods(){
-		Query<Termin> query = new Query<>(Termin.class, Termin.TABLENAME, true, null);
-		query.clear(true);
-		query.add(Reminder.FLD_LASTUPDATE, Query.GREATER, Long.toString(knownLastUpdate));
+		IQuery<IAppointment> query =
+			CoreModelServiceHolder.get().getQuery(IAppointment.class, true, true);
+		query.and("lastupdate", COMPARATOR.GREATER, Long.valueOf(knownLastUpdate));
 		return (List<IPeriod>) (List<?>) query.execute();
 	}
 	
@@ -267,6 +245,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 				periods.parallelStream().map(p -> Event.of(p)).collect(Collectors.toList()));
 		}
 		
+		@SuppressWarnings("unchecked")
 		private List<IPeriod> getPeriods(TimeSpan timespan) throws IllegalStateException{
 			logger.debug("Loading timespan " + timespan);
 			LocalDate from = timespan.startDate;
@@ -275,46 +254,33 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			for (String resource : resources) {
 				LocalDate updateDate = LocalDate.from(from);
 				do {
-					TerminUtil.updateBoundaries(resource, new TimeTool(updateDate));
+					AppointmentServiceHolder.get().updateBoundaries(resource, updateDate);
 					updateDate = updateDate.plusDays(1);
 				} while (updateDate.isBefore(to) || updateDate.isEqual(to));
 			}
 			
-			ArrayList<IPeriod> ret = new ArrayList<IPeriod>();
-			Query<Termin> query = new Query<Termin>(Termin.class, null, null, Termin.TABLENAME,
-				new String[] {
-					Termin.FLD_BEREICH, Termin.FLD_BEGINN, Termin.FLD_TAG, Termin.FLD_DAUER,
-					Termin.FLD_TERMINSTATUS, Termin.FLD_TERMINTYP, Termin.FLD_LINKGROUP,
-					Termin.FLD_PATIENT, Termin.FLD_GRUND, Termin.FLD_STATUSHIST
-				});
+			IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
 			if (!resources.isEmpty()) {
 				String[] resourceArray = resources.toArray(new String[resources.size()]);
 				query.startGroup();
 				for (int i = 0; i < resourceArray.length; i++) {
-					if (i > 0) {
-						query.or();
-					}
-					query.add(Termin.FLD_BEREICH, Query.EQUALS, resourceArray[i]);
+					query.or(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS,
+						resourceArray[i]);
+					
 				}
-				query.endGroup();
-				query.and();
+				query.andJoinGroups();
 				query.startGroup();
 				if (from != null) {
-					TimeTool time = new TimeTool(from);
-					query.add(Termin.FLD_TAG, Query.GREATER_OR_EQUAL,
-						time.toString(TimeTool.DATE_COMPACT));
+					query.and("tag", COMPARATOR.GREATER_OR_EQUAL, from);
 				}
 				if (to != null) {
-					TimeTool time = new TimeTool(to);
-					query.add(Termin.FLD_TAG, Query.LESS_OR_EQUAL,
-						time.toString(TimeTool.DATE_COMPACT));
+					query.and("tag", COMPARATOR.LESS_OR_EQUAL, to);
 				}
-				query.endGroup();
-				List<? extends IPeriod> iPeriods = (List<? extends IPeriod>) query.execute();
-				ret.addAll(iPeriods);
+				query.andJoinGroups();
+				return (List<IPeriod>) (List<?>) query.execute();
 			}
 			logger.debug("Loading timespan " + timespan + " finished");
-			return ret;
+			return Collections.emptyList();
 		}
 	}
 	

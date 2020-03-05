@@ -9,8 +9,10 @@ import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.types.AppointmentType;
 
 @XmlRootElement
 public class AreaPeriodsLetter {
@@ -22,9 +24,9 @@ public class AreaPeriodsLetter {
 			.collect(Collectors.toList());
 		Collections.sort(ret.period);
 		if (!ret.period.isEmpty()) {
-			LocalDate fromLocalDate = ret.period.get(0).getFromTool().toLocalDate();
+			LocalDate fromLocalDate = ret.period.get(0).getFromDateTime().toLocalDate();
 			LocalDate toLocalDate =
-				ret.period.get(ret.period.size() - 1).getFromTool().toLocalDate();
+				ret.period.get(ret.period.size() - 1).getFromDateTime().toLocalDate();
 			if (fromLocalDate.equals(toLocalDate)) {
 				ret.areaPeriod = fromLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 			} else {
@@ -36,9 +38,11 @@ public class AreaPeriodsLetter {
 	}
 	
 	public static boolean isDayLimit(IPeriod iPeriod){
-		if (iPeriod instanceof Termin) {
-			String type = ((Termin) iPeriod).getType();
-			return type.equals(Termin.TerminTypes[1]);
+		if (iPeriod instanceof IAppointment) {
+			String type = ((IAppointment) iPeriod).getType();
+			String reservedTypeString =
+				AppointmentServiceHolder.get().getType(AppointmentType.BOOKED);
+			return type.equals(reservedTypeString);
 		}
 		return false;
 	}

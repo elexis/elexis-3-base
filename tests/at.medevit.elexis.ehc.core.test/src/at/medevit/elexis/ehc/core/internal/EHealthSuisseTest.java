@@ -5,10 +5,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyStore;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.ehealth_connector.common.mdht.Address;
 import org.ehealth_connector.common.mdht.Identificator;
@@ -20,6 +22,9 @@ import org.ehealth_connector.communication.ConvenienceMasterPatientIndexV3;
 import org.ehealth_connector.communication.Destination;
 import org.junit.Test;
 
+import ch.elexis.core.services.ISSLStoreService;
+import ch.elexis.core.utils.OsgiServiceUtil;
+
 /**
  * Test the Elexis ehc integration, with the ehealthsuisse <a
  * href=https://ehealthsuisse.ihe-europe.net/>„EPD-Referenzumgebung“ (EPD-RU)</a>.
@@ -29,11 +34,13 @@ import org.junit.Test;
  */
 public class EHealthSuisseTest {
 	
+	private static ISSLStoreService sslStoreService;
+	
 	/**
 	 * (ITI-47) Endpoint
 	 */
 	public static final String PDQ_ENDPOINT_URL =
-		"https://ehealthsuisse.ihe-europe.net/PAMSimulator-ejb/PDQSupplier_Service/PDQSupplier_PortType";
+		"https://ehealthsuisse.ihe-europe.net:10443/PAMSimulator-ejb/PDQSupplier_Service/PDQSupplier_PortType";
 	
 	public static final String PDQ_RECV_DEVICE_OID = "1.3.6.1.4.1.12559.11.25.1.14";
 	
@@ -43,7 +50,7 @@ public class EHealthSuisseTest {
 	 * (ITI-45 / ITI-44) Endpoint
 	 */
 	public static final String PIX_ENDPOINT_URL =
-		"https://ehealthsuisse.ihe-europe.net/PAMSimulator-ejb/PIXManager_Service/PIXManager_PortType";
+		"https://ehealthsuisse.ihe-europe.net:10443/PAMSimulator-ejb/PIXManager_Service/PIXManager_PortType";
 	
 	public static final String PIX_RECV_DEVICE_OID = "1.3.6.1.4.1.12559.11.25.1.10";
 	
@@ -57,6 +64,16 @@ public class EHealthSuisseTest {
 	private static AffinityDomain affinityDomain;
 	
 	private static AffinityDomain getAffinityDomain() throws URISyntaxException{
+		sslStoreService = OsgiServiceUtil.getService(ISSLStoreService.class)
+			.orElseThrow(() -> new IllegalStateException("No ISSLStoreService available"));
+		Optional<KeyStore> currentTrustStore = sslStoreService.loadKeyStore(
+			AffinityDomain.class.getResourceAsStream("/rsc/cert/gazelle.jks"), "gazelle", "JKS");
+		currentTrustStore.ifPresent(store -> sslStoreService.addTrustStore(store));
+		
+		Optional<KeyStore> currentKeyStore = sslStoreService.loadKeyStore(
+			AffinityDomain.class.getResourceAsStream("/rsc/cert/gazelle.jks"), "gazelle", "JKS");
+		currentKeyStore.ifPresent(store -> sslStoreService.addKeyStore(store, "gazelle"));
+		
 		if (affinityDomain == null) {
 			// create PDQ and PIX destinations
 			Destination pdqDestination =

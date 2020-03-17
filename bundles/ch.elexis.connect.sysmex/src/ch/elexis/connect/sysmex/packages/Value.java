@@ -69,7 +69,12 @@ public class Value {
 		}
 	}
 	
-	public void fetchValue(Patient patient, String value, String flags, TimeTool date){
+	public void fetchValue(Patient patient, String value, Integer flags, TimeTool date){
+		fetchValue(patient, value, flags, date, "");
+	}
+	
+	public void fetchValue(Patient patient, String value, Integer flags, TimeTool date,
+		String comment){
 		if (_labItem == null) {
 			initialize();
 		}
@@ -77,6 +82,7 @@ public class Value {
 			CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null);
 		TransientLabResult tLabResult =
 			new TransientLabResult.Builder(iPatient, _myLab, _labItem, value).date(date)
+				.comment(comment).flags(flags)
 				.build(LabImportUtilHolder.get());
 		LabImportUtilHolder.get().importLabResults(Collections.singletonList(tLabResult),
 			new DefaultLabImportUiHandler());

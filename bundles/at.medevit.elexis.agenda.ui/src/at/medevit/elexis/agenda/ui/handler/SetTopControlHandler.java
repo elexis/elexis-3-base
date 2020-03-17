@@ -1,30 +1,30 @@
 package at.medevit.elexis.agenda.ui.handler;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.view.AgendaView;
 
-public class SetTopControlHandler extends AbstractHandler implements IHandler {
+public class SetTopControlHandler {
 	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		String controlId =
-			event.getParameter("at.medevit.elexis.agenda.ui.command.parameter.controlId");
-		try {
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.showView("at.medevit.elexis.agenda.ui.view.agenda");
-			if (view instanceof AgendaView) {
-				((AgendaView) view).setTopControl(controlId);
-			}
-		} catch (PartInitException e) {
-			LoggerFactory.getLogger(getClass()).error("Error switching top control", e);
+	@Inject
+	private EPartService partService;
+	
+	@Execute
+	public Object execute(MPart part,
+		@Named("at.medevit.elexis.agenda.ui.command.parameter.controlId") String controlId){
+		partService.showPart(part, PartState.ACTIVATE);
+		if (part.getObject() instanceof AgendaView) {
+			((AgendaView) part.getObject()).setTopControl(controlId);
+		} else {
+			LoggerFactory.getLogger(getClass())
+				.error("Part object class " + part.getObject() + " unknown");
 		}
 		return null;
 	}

@@ -34,6 +34,7 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 				public void lockAcquired(){
 					termin.setStartTime(startDate);
 					termin.setEndTime(endDate);
+					CoreModelServiceHolder.get().save(termin);
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
 						IAppointment.class);
 					redraw();

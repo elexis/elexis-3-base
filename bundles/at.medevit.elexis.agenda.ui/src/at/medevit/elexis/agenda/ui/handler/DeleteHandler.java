@@ -2,15 +2,17 @@ package at.medevit.elexis.agenda.ui.handler;
 
 import java.util.Optional;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.swt.widgets.Shell;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.common.ElexisEventTopics;
@@ -21,14 +23,18 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 
-public class DeleteHandler extends AbstractHandler implements IHandler {
+public class DeleteHandler {
 	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	@Inject
+	private ESelectionService selectionService;
+	
+	@Execute
+	public Object execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell)
+		throws ExecutionException{
 		Optional<IPeriod> period = getSelectedPeriod();
 		
 		period.ifPresent(p -> {
-			if (MessageDialog.openConfirm(HandlerUtil.getActiveShell(event), "Löschen",
+			if (MessageDialog.openConfirm(shell, "Löschen",
 				"Wollen Sie " + period.get().getLabel()
 					+ " wirklich löschen?")) {
 				AcquireLockBlockingUi.aquireAndRun(p, new ILockHandler() {
@@ -51,8 +57,7 @@ public class DeleteHandler extends AbstractHandler implements IHandler {
 	
 	private Optional<IPeriod> getSelectedPeriod(){
 		try {
-			ISelection activeSelection =
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
+			ISelection activeSelection = (ISelection) selectionService.getSelection();
 			if (activeSelection instanceof StructuredSelection
 				&& !((StructuredSelection) activeSelection).isEmpty()) {
 				Object element = ((StructuredSelection) activeSelection).getFirstElement();

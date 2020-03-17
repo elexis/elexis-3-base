@@ -12,15 +12,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -36,13 +36,12 @@ import ch.elexis.core.services.IFormattedOutputFactory;
 import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
 import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
 
-public class PrintSelectedAgendaHandler extends AbstractHandler implements IHandler {
+public class PrintSelectedAgendaHandler {
 	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
-		if (activePart instanceof AgendaView) {
-			AgendaView agendaView = (AgendaView) activePart;
+	@Execute
+	public Object execute(MPart part, @Named(IServiceConstants.ACTIVE_SHELL) Shell shell){
+		if (part.getObject() instanceof AgendaView) {
+			AgendaView agendaView = (AgendaView) part.getObject();
 			LoadEventsFunction loadEventsFunction = agendaView.getLoadEventsFunction();
 			
 			List<IPeriod> periods = loadEventsFunction.getCurrentPeriods();
@@ -77,7 +76,7 @@ public class PrintSelectedAgendaHandler extends AbstractHandler implements IHand
 							fout.write(pdf.toByteArray());
 							} catch (IOException e) {
 							Display.getDefault().syncExec(() -> {
-								MessageDialog.openError(HandlerUtil.getActiveShell(event), "Fehler",
+								MessageDialog.openError(shell, "Fehler",
 									"Fehler beim PDF anlegen.\n" + e.getMessage());
 							});
 							LoggerFactory.getLogger(getClass()).error("Error creating PDF", e);

@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.services.EMenuService;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -22,8 +24,6 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,19 +49,26 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	private ScriptingHelper scriptingHelper;
 	
 	private ISelection currentSelection;
-	private ListenerList listeners = new ListenerList();
+	private ListenerList<ISelectionChangedListener> listeners = new ListenerList<>();
 	
 	private AgendaSpanSize currentSpanSize;
 	
 	private DayClickFunction dayClickFunction;
 	
-	public ParallelComposite(IWorkbenchPartSite partSite, Composite parent, int style){
-		this(partSite, parent, style, false);
+	private ESelectionService selectionService;
+	
+	public ParallelComposite(MPart part, ESelectionService selectionService,
+		EMenuService menuService,
+		Composite parent, int style){
+		this(part, selectionService, menuService, parent, style, false);
 	}
 	
-	public ParallelComposite(IWorkbenchPartSite partSite, Composite parent, int style,
+	public ParallelComposite(MPart part, ESelectionService selectionService,
+		EMenuService menuService,
+		Composite parent, int style,
 		boolean enableSwitch){
 		super(parent, style);
+		this.selectionService = selectionService;
 		setLayout(new FillLayout());
 		browser = new Browser(this, SWT.NONE);
 		scriptingHelper = new ScriptingHelper(browser);
@@ -72,18 +79,20 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		
 		new DoubleClickFunction(browser, "doubleClickFunction");
 		
-		new ContextMenuFunction(browser, "contextMenuFunction").setSelectionProvider(this);
+		new ContextMenuFunction(part, browser, "contextMenuFunction").setSelectionProvider(this);
 		
 		new EventDropFunction(browser, "eventDropFunction");
 		
 		new EventResizeFunction(browser, "eventResizeFunction");
 		
-		new PdfFunction(browser, "pdfFunction");
+		new PdfFunction(part, browser, "pdfFunction");
 		
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
+		// bisher 1,5h
+		
 		if (enableSwitch) {
-			new SwitchFunction(browser, "switchFunction");
+			new SwitchFunction(part, browser, "switchFunction");
 			try {
 				URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass())
 					.getResource("/rsc/html/switchParallel.html"));
@@ -114,15 +123,8 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 			}
 		});
 		
-		// register context menu for table viewer
-		MenuManager menuManager = new MenuManager();
-		Menu menu = menuManager.createContextMenu(browser);
-		
-		browser.setMenu(menu);
-		if (partSite != null) {
-			partSite.setSelectionProvider(this);
-			partSite.registerContextMenu("at.medevit.elexis.agenda.ui.parallel", menuManager, this);
-		}
+		// register context menu for browser
+		menuService.registerContextMenu(browser, "at.medevit.elexis.agenda.ui.popupmenu.parallel");
 		
 		browser.addProgressListener(new ProgressAdapter() {
 			@Override
@@ -224,6 +226,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 			((ISelectionChangedListener) listener)
 				.selectionChanged(new SelectionChangedEvent(this, selection));
 		}
+		selectionService.setSelection(currentSelection);
 	}
 	
 	@Override

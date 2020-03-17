@@ -4,10 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
@@ -19,15 +18,13 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 		super(browser, name);
 	}
 	
-	public static Optional<SideBarComposite> getActiveSideBar(){
-		IWorkbenchPart activePart =
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+	public static Optional<SideBarComposite> getActiveSideBar(MPart part){
 		SideBarComposite sideBar = null;
-		if (activePart instanceof AgendaView) {
-			AgendaView view = (AgendaView) activePart;
+		if (part.getObject() instanceof AgendaView) {
+			AgendaView view = (AgendaView) part.getObject();
 			sideBar = view.getParallelSideBarComposite();
-		} else if (activePart instanceof ParallelView) {
-			ParallelView view = (ParallelView) activePart;
+		} else if (part.getObject() instanceof ParallelView) {
+			ParallelView view = (ParallelView) part.getObject();
 			sideBar = view.getSideBarComposite();
 		}
 		return Optional.ofNullable(sideBar);

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:ui="http://www.eclipse.org/ui/2010/UIModel/application/ui" xmi:id="_2A8FAGehEequPMul5sCwsQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_KyBHQGeiEequPMul5sCwsQ" featurename="descriptors" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_PnmWIGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.partdescriptor.agendaweb" label="Agenda Web" category="Agenda" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.AgendaView">
+      <tags>View</tags>
+      <menus xsi:type="menu:PopupMenu" xmi:id="_GXOA0GerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.popupmenu.parallel">
+        <children xsi:type="menu:Menu" xmi:id="_GXOA0WerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.menu.status" label="Status">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_GXOA0merEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_GXOA02erEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.dynamic.status" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.menu.SetStatusContributionItem"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_GXOA1GerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.edit" label="bearbeiten" iconURI="icon://IMG_EDIT" command="_JuszoGejEequPMul5sCwsQ">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_GXOA1WerEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_GXOA1merEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.move" label="verschieben" command="_QisP8GejEequPMul5sCwsQ">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_GXOA12erEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_GXOA2GerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.insert" label="einf&#xfc;gen" command="_Si83gGejEequPMul5sCwsQ">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_GXOA2WerEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.moveAvailable"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_GXOA2merEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.delete" label="l&#xf6;schen" iconURI="icon://IMG_DELETE" command="_MBYn8GejEequPMul5sCwsQ">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_GXOA22erEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+        </children>
+      </menus>
+      <menus xsi:type="menu:PopupMenu" xmi:id="_G4BAwGerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.popupmenu.week">
+        <children xsi:type="menu:Menu" xmi:id="_G4BAwWerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.menu.status" label="Status">
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_G4BAwmerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.dynamic.status" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.menu.SetStatusContributionItem"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_G4BAw2erEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.edit" label="bearbeiten" iconURI="icon://IMG_EDIT" command="_JuszoGejEequPMul5sCwsQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_G4BAxGerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.delete" label="l&#xf6;schen" iconURI="icon://IMG_DELETE" command="_MBYn8GejEequPMul5sCwsQ"/>
+      </menus>
+      <toolbar xmi:id="_bfi0gGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.toolbar.0"/>
+    </elements>
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_iNAyEGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.partdescriptor.agendaparallel" label="Agenda Parallel" category="Agenda" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.ParallelView">
+      <tags>View</tags>
+      <menus xsi:type="menu:PopupMenu" xmi:id="_74dnIGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.popupmenu.parallel">
+        <children xsi:type="menu:Menu" xmi:id="_FqdFoGekEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.menu.status" label="Status">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_KQNIwGekEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_FqdFoWekEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.dynamic.status" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.menu.SetStatusContributionItem"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_wVrD8GekEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.edit" label="bearbeiten" iconURI="icon://IMG_EDIT" command="_JuszoGejEequPMul5sCwsQ">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_yeJMUGekEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_2QutIGekEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.move" label="verschieben" command="_QisP8GejEequPMul5sCwsQ">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_36rtgGekEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-MmXgGekEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.insert" label="einf&#xfc;gen" command="_Si83gGejEequPMul5sCwsQ">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_AFJNgGelEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.moveAvailable"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_D1J7cGelEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.delete" label="l&#xf6;schen" iconURI="icon://IMG_DELETE" command="_MBYn8GejEequPMul5sCwsQ">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_FgA6wGelEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+        </children>
+      </menus>
+      <toolbar xmi:id="_kGomIGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.toolbar.1"/>
+    </elements>
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_iiMX4GeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.partdescriptor.agendaweek" label="Agenda Woche" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.WeekView">
+      <tags>View</tags>
+      <menus xsi:type="menu:PopupMenu" xmi:id="_cKCtkGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.popupmenu.week">
+        <children xsi:type="menu:Menu" xmi:id="_gW2FMGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.menu.status" label="Status">
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_k3ov0GejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.dynamic.status" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.menu.SetStatusContributionItem"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_sh6T4GejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.edit" label="bearbeiten" iconURI="icon://IMG_EDIT" command="_JuszoGejEequPMul5sCwsQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_03Mj0GejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.delete" label="l&#xf6;schen" iconURI="icon://IMG_DELETE" command="_MBYn8GejEequPMul5sCwsQ"/>
+      </menus>
+      <toolbar xmi:id="_wuJgQGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.toolbar.2"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_83J5cGeiEequPMul5sCwsQ" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_DekSUGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.command.setStatus" commandName="SetStatus">
+      <parameters xmi:id="_GUc6UGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.command.parameter.statusId" name="statusId" optional="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_JuszoGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.command.edit" commandName="Edit"/>
+    <elements xsi:type="commands:Command" xmi:id="_MBYn8GejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.command.delete" commandName="Delete"/>
+    <elements xsi:type="commands:Command" xmi:id="_OFU1oGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.command.settopcontrol" commandName="SetTopControl"/>
+    <elements xsi:type="commands:Command" xmi:id="_QisP8GejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.command.move" commandName="Move"/>
+    <elements xsi:type="commands:Command" xmi:id="_Si83gGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.command.insert" commandName="Insert"/>
+    <elements xsi:type="commands:Command" xmi:id="_U2kf8GejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.PrintSelectedAgenda" commandName="Print selected Agenda"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_M3bNMGelEequPMul5sCwsQ" featurename="handlers" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_O23VYGelEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.setstatus" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.SetStatusHandler" command="_DekSUGejEequPMul5sCwsQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_UFRT8GelEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.edit" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.EditHandler" command="_JuszoGejEequPMul5sCwsQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="__h12sGelEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.move" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.MoveHandler" command="_QisP8GejEequPMul5sCwsQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_EWaY8GemEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.delete" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.DeleteHandler" command="_MBYn8GejEequPMul5sCwsQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_I7zPsGemEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.settopcontrol" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.SetTopControlHandler" command="_OFU1oGejEequPMul5sCwsQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_NfgrcGemEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.insert" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.InsertHandler" command="_Si83gGejEequPMul5sCwsQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_Se6fEGgyEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.printSelectedAgenda" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.PrintSelectedAgendaHandler" command="_U2kf8GejEequPMul5sCwsQ"/>
+  </fragments>
+</fragment:ModelFragments>

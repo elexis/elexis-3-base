@@ -155,7 +155,8 @@ public class UC1000Data extends AbstractUrinData {
 		}
 		Integer patho = 0;
 		if (StringUtils.isNotBlank(resultInfo.getQualitativValue())) {
-			if (Character.isDigit(resultInfo.getQualitativValue().charAt(0))) {
+			if (Character.isDigit(resultInfo.getQualitativValue().charAt(0))
+				&& resultInfo.getQualitativValue().contains("+")) {
 				patho |= LabResultConstants.PATHOLOGIC;
 			}
 		}

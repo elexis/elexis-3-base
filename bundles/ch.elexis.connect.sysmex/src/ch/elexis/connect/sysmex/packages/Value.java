@@ -68,14 +68,18 @@ public class Value {
 		}
 	}
 	
-	public void fetchValue(Patient patient, String value, String flags, TimeTool date){
+	public void fetchValue(Patient patient, String value, Integer flags, TimeTool date) {
+		fetchValue(patient, value, flags, date, "");
+	}
+
+	public void fetchValue(Patient patient, String value, Integer flags, TimeTool date, String comment) {
 		if (_labItem == null) {
 			initialize();
 		}
 		
 		LabImportUtil lu = new LabImportUtil();
 		TransientLabResult tLabResult = new TransientLabResult.Builder(new ContactBean(patient),
-			new ContactBean(_myLab), _labItem, value).date(date).build(lu);
+				new ContactBean(_myLab), _labItem, value).date(date).comment(comment).flags(flags).build(lu);
 		lu.importLabResults(Collections.singletonList(tLabResult), new DefaultLabImportUiHandler());
 	}
 	

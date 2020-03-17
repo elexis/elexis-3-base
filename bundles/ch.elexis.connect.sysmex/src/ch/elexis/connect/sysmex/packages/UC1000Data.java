@@ -1,5 +1,8 @@
 package ch.elexis.connect.sysmex.packages;
 
+import org.apache.commons.lang.StringUtils;
+
+import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
@@ -60,6 +63,24 @@ public class UC1000Data extends AbstractUrinData {
 			return bid;
 		case "bil":
 			return bil;
+		case "ket":
+			return ket;
+		case "glu":
+			return glu;
+		case "pro":
+			return pro;
+		case "ph":
+			return ph;
+		case "nit":
+			return nit;
+		case "leu":
+			return leu;
+		case "sg":
+			return sg;
+		case "cre":
+			return cre;
+		case "alb":
+			return alb;
 		}
 		throw new IllegalStateException("Unknown parameter name [" + paramName + "]");
 	}
@@ -71,16 +92,76 @@ public class UC1000Data extends AbstractUrinData {
 	
 	@Override
 	public String getPatientId(){
-		// TODO Auto-generated method stub
-		return null;
+		return patId;
 	}
 	
 	@Override
-	public void write(Patient selectedPatient) throws PackageException{
-		// TODO Auto-generated method stub
-		
+	public void write(Patient patient) throws PackageException{
+		if (uro.isAnalyzed()) {
+			write(uro, getValue("uro"), patient);
+		}
+		if (bid.isAnalyzed()) {
+			if (bid.getSemiQualitativValue().indexOf(".") != -1) {
+				write(bid, getValue("hem"), patient);
+			} else {
+				write(bid, getValue("rbc"), patient);
+			}
+		}
+		if (bil.isAnalyzed()) {
+			write(bil, getValue("bil"), patient);
+		}
+		if (ket.isAnalyzed()) {
+			write(ket, getValue("ket"), patient);
+		}
+		if (glu.isAnalyzed()) {
+			write(glu, getValue("glu"), patient);
+		}
+		if (pro.isAnalyzed()) {
+			write(pro, getValue("pro"), patient);
+		}
+		if (ph.isAnalyzed()) {
+			write(ph, getValue("ph"), patient);
+		}
+		if (nit.isAnalyzed()) {
+			write(nit, getValue("nit"), patient);
+		}
+		if (leu.isAnalyzed()) {
+			write(leu, getValue("leu"), patient);
+		}
+		if (sg.isAnalyzed()) {
+			write(sg, getValue("sg"), patient);
+		}
+		if (cre.isAnalyzed()) {
+			write(cre, getValue("cre"), patient);
+		}
+		if (alb.isAnalyzed()) {
+			write(alb, getValue("alb"), patient);
+		}
 	}
 	
+	private void write(ResultInfo resultInfo, Value value, Patient patient){
+		String result = "";
+		String comment = "";
+		if (StringUtils.isNotBlank(resultInfo.getSemiQualitativValue())) {
+			result = resultInfo.getSemiQualitativValue();
+			if (StringUtils.isNotBlank(resultInfo.getQualitativValue())) {
+				comment = "Qualitativ Wert: " + resultInfo.getQualitativValue();
+			}
+		} else {
+			result = resultInfo.getQualitativValue();
+			if (StringUtils.isNotBlank(resultInfo.getSemiQualitativValue())) {
+				comment = "Semiqualitativ Wert: " + resultInfo.getSemiQualitativValue();
+			}
+		}
+		Integer patho = 0;
+		if (StringUtils.isNotBlank(resultInfo.getQualitativValue())) {
+			if (Character.isDigit(resultInfo.getQualitativValue().charAt(0))) {
+				patho |= LabResultConstants.PATHOLOGIC;
+			}
+		}
+		value.fetchValue(patient, result, patho, date, comment);
+	}
+		
 	@Override
 	public void parse(String content){
 		// Datum
@@ -101,7 +182,7 @@ public class UC1000Data extends AbstractUrinData {
 		alb = ResultInfo.parse(421, 453, content);
 		pcr = ResultInfo.parse(453, 468, content);
 		acr = ResultInfo.parse(468, 483, content);
-		sg = ResultInfo.parse(483, 498, content);
+		sgr = ResultInfo.parse(483, 498, content);
 		color = ResultInfo.parse(498, 518, content);
 		tur = ResultInfo.parse(498, 518, content);
 	}

@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.services.EMenuService;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -21,8 +23,6 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.LoggerFactory;
 
@@ -44,17 +44,22 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	private ScriptingHelper scriptingHelper;
 	
 	private ISelection currentSelection;
-	private ListenerList listeners = new ListenerList();
+	private ListenerList<ISelectionChangedListener> listeners = new ListenerList<>();
 	private AgendaSpanSize currentSpanSize;
 	private DayClickFunction dayClickFunction;
 	
-	public WeekComposite(IWorkbenchPartSite partSite, Composite parent, int style){
-		this(partSite, parent, style, false);
+	private ESelectionService selectionService;
+	
+	public WeekComposite(MPart part, ESelectionService selectionService, EMenuService menuService,
+		Composite parent, int style){
+		this(part, selectionService, menuService, parent, style, false);
 	}
 	
-	public WeekComposite(IWorkbenchPartSite partSite, Composite parent, int style,
+	public WeekComposite(MPart part, ESelectionService selectionService, EMenuService menuService,
+		Composite parent, int style,
 		boolean enableSwitch){
 		super(parent, style);
+		this.selectionService = selectionService;
 		setLayout(new FillLayout());
 		browser = new Browser(this, SWT.NONE);
 		scriptingHelper = new ScriptingHelper(browser);
@@ -65,7 +70,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		
 		new DoubleClickFunction(browser, "doubleClickFunction");
 		
-		new ContextMenuFunction(browser, "contextMenuFunction").setSelectionProvider(this);
+		new ContextMenuFunction(part, browser, "contextMenuFunction").setSelectionProvider(this);
 		
 		new EventDropFunction(browser, "eventDropFunction");
 		
@@ -74,7 +79,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
 		
 		if (enableSwitch) {
-			new SwitchFunction(browser, "switchFunction");
+			new SwitchFunction(part, browser, "switchFunction");
 			try {
 				URL url = FileLocator.toFileURL(
 					FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/switchWeek.html"));
@@ -103,15 +108,8 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 			}
 		});
 		
-		// register context menu for table viewer
-		MenuManager menuManager = new MenuManager();
-		Menu menu = menuManager.createContextMenu(browser);
-		
-		browser.setMenu(menu);
-		if (partSite != null) {
-			partSite.setSelectionProvider(this);
-			partSite.registerContextMenu("at.medevit.elexis.agenda.ui.week", menuManager, this);
-		}
+		// register context menu for browser
+		menuService.registerContextMenu(browser, "at.medevit.elexis.agenda.ui.popupmenu.week");
 		
 		browser.addProgressListener(new ProgressAdapter() {
 			@Override
@@ -205,6 +203,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 			((ISelectionChangedListener) listener)
 				.selectionChanged(new SelectionChangedEvent(this, selection));
 		}
+		selectionService.setSelection(currentSelection);
 	}
 	
 	@Override

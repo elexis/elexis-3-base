@@ -2,13 +2,12 @@ package at.medevit.elexis.agenda.ui.handler;
 
 import java.util.Optional;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.PlatformUI;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
@@ -17,10 +16,13 @@ import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 
-public class EditHandler extends AbstractHandler implements IHandler {
+public class EditHandler {
 	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	@Inject
+	private ESelectionService selectionService;
+	
+	@Execute
+	public Object execute(){
 		Optional<IPeriod> period = getSelectedPeriod();
 		
 		period.ifPresent(p -> {
@@ -42,8 +44,7 @@ public class EditHandler extends AbstractHandler implements IHandler {
 	
 	private Optional<IPeriod> getSelectedPeriod(){
 		try {
-			ISelection activeSelection =
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
+			ISelection activeSelection = (ISelection) selectionService.getSelection();
 			if (activeSelection instanceof StructuredSelection
 				&& !((StructuredSelection) activeSelection).isEmpty()) {
 				Object element = ((StructuredSelection) activeSelection).getFirstElement();

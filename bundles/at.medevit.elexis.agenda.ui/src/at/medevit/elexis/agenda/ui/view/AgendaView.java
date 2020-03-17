@@ -1,15 +1,19 @@
 package at.medevit.elexis.agenda.ui.view;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.services.EMenuService;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.ViewPart;
 
 import at.medevit.elexis.agenda.ui.composite.ParallelComposite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
@@ -18,7 +22,7 @@ import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 
-public class AgendaView extends ViewPart {
+public class AgendaView {
 	
 	private Composite container;
 	
@@ -51,8 +55,9 @@ public class AgendaView extends ViewPart {
 		}
 	}
 	
-	@Override
-	public void createPartControl(Composite parent){
+	@PostConstruct
+	public void createPartControl(MPart part, ESelectionService selectionService,
+		EMenuService menuService, Composite parent){
 		container = new Composite(parent, SWT.NONE);
 		stackLayout = new StackLayout();
 		container.setLayout(stackLayout);
@@ -68,7 +73,8 @@ public class AgendaView extends ViewPart {
 		
 		weekSideBar = new SideBarComposite(weekParent, SWT.NONE);
 		weekSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		weekComposite = new WeekComposite(getSite(), weekParent, SWT.NONE, true);
+		weekComposite =
+			new WeekComposite(part, selectionService, menuService, weekParent, SWT.NONE, true);
 		weekComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		weekSideBar.setAgendaComposite(weekComposite);
 		
@@ -83,14 +89,15 @@ public class AgendaView extends ViewPart {
 		
 		parallelSideBar = new SideBarComposite(parallelParent, true, SWT.NONE);
 		parallelSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		parallelComposite = new ParallelComposite(getSite(), parallelParent, SWT.NONE, true);
+		parallelComposite = new ParallelComposite(part, selectionService, menuService,
+			parallelParent, SWT.NONE, true);
 		parallelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parallelSideBar.setAgendaComposite(parallelComposite);
 		
 		setTopControl("parallel");
 	}
 	
-	@Override
+	@Focus
 	public void setFocus(){
 		if (container != null && !container.isDisposed()) {
 			container.setFocus();

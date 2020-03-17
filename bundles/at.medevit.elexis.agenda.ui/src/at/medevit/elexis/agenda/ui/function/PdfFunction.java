@@ -1,55 +1,54 @@
 package at.medevit.elexis.agenda.ui.function;
 
-import java.util.Collections;
+import javax.inject.Inject;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.services.IEvaluationService;
 import org.slf4j.LoggerFactory;
+
+import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class PdfFunction extends BrowserFunction {
 	
-	public PdfFunction(Browser browser, String name){
+	@Inject
+	private EPartService partService;
+	
+	@SuppressWarnings("restriction")
+	@Inject
+	private ECommandService commandService;
+	
+	@SuppressWarnings("restriction")
+	@Inject
+	private EHandlerService handlerService;
+	
+	private MPart part;
+	
+	public PdfFunction(MPart part, Browser browser, String name){
 		super(browser, name);
+		this.part = part;
+		CoreUiUtil.injectServices(this, part.getContext());
 	}
 	
 	public Object function(Object[] arguments){
-		try {
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.showView("at.medevit.elexis.agenda.ui.view.agenda");
-			callPdf(view);
-		} catch (PartInitException e) {
-			LoggerFactory.getLogger(getClass()).error("Error switching agenda", e);
-		}
+		partService.showPart(part, PartState.ACTIVATE);
+		callPdf();
 		return null;
 	}
 	
-	private void callPdf(IViewPart view){
-		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-			.getActiveWorkbenchWindow().getService(ICommandService.class);
-		Command command =
-			commandService.getCommand("at.medevit.elexis.agenda.ui.PrintSelectedAgenda");
-		
-		IEvaluationService evaluationService = (IEvaluationService) PlatformUI.getWorkbench()
-			.getActiveWorkbenchWindow().getService(IEvaluationService.class);
-		
-		ExecutionEvent ev = new ExecutionEvent(command, Collections.emptyMap(), null,
-			evaluationService.getCurrentState());
-		try {
-			command.executeWithChecks(ev);
-		} catch (ExecutionException | NotDefinedException | NotEnabledException
-				| NotHandledException ex) {
-			LoggerFactory.getLogger(getClass()).error("Error calling pdf", ex);
+	@SuppressWarnings("restriction")
+	private void callPdf(){
+		ParameterizedCommand command =
+			commandService.createCommand("at.medevit.elexis.agenda.ui.PrintSelectedAgenda", null);
+		if (command != null) {
+			handlerService.executeHandler(command);
+		} else {
+			LoggerFactory.getLogger(getClass()).error("Command not found");
 		}
 	}
 }

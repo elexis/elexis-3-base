@@ -43,6 +43,7 @@ import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.model.agenda.Area;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
@@ -386,6 +387,7 @@ public class SideBarComposite extends Composite {
 					if (iPeriod instanceof IAppointment) {
 						((IAppointment) iPeriod).setSchedule(resource);
 					}
+					CoreModelServiceHolder.get().save(iPeriod);
 					Display.getDefault().timerExec(250, new Runnable() {
 						@Override
 						public void run(){

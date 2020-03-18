@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:ui="http://www.eclipse.org/ui/2010/UIModel/application/ui" xmi:id="_2A8FAGehEequPMul5sCwsQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_KyBHQGeiEequPMul5sCwsQ" featurename="descriptors" parentElementId="org.eclipse.e4.legacy.ide.application">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_PnmWIGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.partdescriptor.agendaweb" label="Agenda Web" category="Agenda" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.AgendaView">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_PnmWIGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.view.agenda" label="Agenda Web" category="Agenda" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.AgendaView">
       <tags>View</tags>
       <menus xsi:type="menu:PopupMenu" xmi:id="_GXOA0GerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.popupmenu.parallel">
         <children xsi:type="menu:Menu" xmi:id="_GXOA0WerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.menu.status" label="Status">
@@ -30,7 +30,7 @@
       </menus>
       <toolbar xmi:id="_bfi0gGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.toolbar.0"/>
     </elements>
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_iNAyEGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.partdescriptor.agendaparallel" label="Agenda Parallel" category="Agenda" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.ParallelView">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_iNAyEGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.view.parallel" label="Agenda Parallel" category="Agenda" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.ParallelView">
       <tags>View</tags>
       <menus xsi:type="menu:PopupMenu" xmi:id="_74dnIGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.popupmenu.parallel">
         <children xsi:type="menu:Menu" xmi:id="_FqdFoGekEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.menu.status" label="Status">
@@ -52,7 +52,7 @@
       </menus>
       <toolbar xmi:id="_kGomIGeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.toolbar.1"/>
     </elements>
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_iiMX4GeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.partdescriptor.agendaweek" label="Agenda Woche" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.WeekView">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_iiMX4GeiEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.view.week" label="Agenda Woche" category="Agenda" closeable="true" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.view.WeekView">
       <tags>View</tags>
       <menus xsi:type="menu:PopupMenu" xmi:id="_cKCtkGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.popupmenu.week">
         <children xsi:type="menu:Menu" xmi:id="_gW2FMGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.menu.status" label="Status">

@@ -44,9 +44,9 @@ import ch.elexis.core.model.agenda.Area;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.e4.locks.ILockHandler;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
-import ch.elexis.core.ui.locks.ILockHandler;
 
 public class SideBarComposite extends Composite {
 	

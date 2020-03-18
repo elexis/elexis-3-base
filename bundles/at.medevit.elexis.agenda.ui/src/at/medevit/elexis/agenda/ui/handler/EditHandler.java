@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
-import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
-import ch.elexis.core.ui.locks.ILockHandler;
+import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class EditHandler {
 	

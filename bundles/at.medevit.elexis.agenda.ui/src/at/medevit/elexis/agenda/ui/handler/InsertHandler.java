@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Display;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.function.AbstractBrowserFunction;
 import ch.elexis.core.model.IPeriod;
-import ch.elexis.core.ui.views.controls.GenericSelectionComposite.GenericSelectionDialog;
+import ch.elexis.core.ui.e4.views.controls.GenericSelectionComposite.GenericSelectionDialog;
 
 public class InsertHandler {
 	

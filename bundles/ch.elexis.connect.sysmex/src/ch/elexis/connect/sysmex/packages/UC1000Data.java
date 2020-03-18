@@ -46,7 +46,11 @@ public class UC1000Data extends AbstractUrinData {
 		String patId = content.substring(0, 14).trim();
 		if (patId != null && !patId.isEmpty()) {
 			// remove leading zeros
-			patId = Integer.valueOf(patId).toString();
+			try {
+				patId = Integer.valueOf(patId).toString();
+			} catch (NumberFormatException e) {
+				// non numeric, but ok
+			}
 		}
 		return patId;
 	}

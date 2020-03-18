@@ -10,7 +10,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite.MoveInformation;
 import at.medevit.elexis.agenda.ui.function.AbstractBrowserFunction;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class AgendaPropertyTester extends PropertyTester {
 	

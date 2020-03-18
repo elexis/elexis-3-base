@@ -12,18 +12,17 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
+@SuppressWarnings("restriction")
 public class PdfFunction extends BrowserFunction {
 	
 	@Inject
 	private EPartService partService;
 	
-	@SuppressWarnings("restriction")
 	@Inject
 	private ECommandService commandService;
 	
-	@SuppressWarnings("restriction")
 	@Inject
 	private EHandlerService handlerService;
 	
@@ -41,7 +40,6 @@ public class PdfFunction extends BrowserFunction {
 		return null;
 	}
 	
-	@SuppressWarnings("restriction")
 	private void callPdf(){
 		ParameterizedCommand command =
 			commandService.createCommand("at.medevit.elexis.agenda.ui.PrintSelectedAgenda", null);

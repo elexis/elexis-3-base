@@ -8,8 +8,8 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
-import ch.elexis.core.ui.locks.ILockHandler;
+import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class EventResizeFunction extends AbstractBrowserFunction {
 	

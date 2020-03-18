@@ -7,8 +7,8 @@ import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
-import ch.elexis.core.ui.locks.ILockHandler;
+import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
+import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class DoubleClickFunction extends BrowserFunction {
 	

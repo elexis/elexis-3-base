@@ -98,44 +98,44 @@ public class UC1000Data extends AbstractUrinData {
 	@Override
 	public void write(Patient patient) throws PackageException{
 		if (uro.isAnalyzed()) {
-			write(uro, getValue("uro"), patient);
+			write(uro, getValue("URO"), patient);
 		}
 		if (bid.isAnalyzed()) {
 			if (bid.getSemiQualitativValue().indexOf(".") != -1) {
-				write(bid, getValue("hem"), patient);
+				write(bid, getValue("HEM"), patient);
 			} else {
-				write(bid, getValue("rbc"), patient);
+				write(bid, getValue("RBC"), patient);
 			}
 		}
 		if (bil.isAnalyzed()) {
-			write(bil, getValue("bil"), patient);
+			write(bil, getValue("BIL"), patient);
 		}
 		if (ket.isAnalyzed()) {
-			write(ket, getValue("ket"), patient);
+			write(ket, getValue("KET"), patient);
 		}
 		if (glu.isAnalyzed()) {
-			write(glu, getValue("glu"), patient);
+			write(glu, getValue("GLU"), patient);
 		}
 		if (pro.isAnalyzed()) {
-			write(pro, getValue("pro"), patient);
+			write(pro, getValue("PRO"), patient);
 		}
 		if (ph.isAnalyzed()) {
-			write(ph, getValue("ph"), patient);
+			write(ph, getValue("PH"), patient);
 		}
 		if (nit.isAnalyzed()) {
-			write(nit, getValue("nit"), patient);
+			write(nit, getValue("NIT"), patient);
 		}
 		if (leu.isAnalyzed()) {
-			write(leu, getValue("leu"), patient);
+			write(leu, getValue("LEU"), patient);
 		}
 		if (sg.isAnalyzed()) {
-			write(sg, getValue("sg"), patient);
+			write(sg, getValue("SG"), patient);
 		}
 		if (cre.isAnalyzed()) {
-			write(cre, getValue("cre"), patient);
+			write(cre, getValue("CRE"), patient);
 		}
 		if (alb.isAnalyzed()) {
-			write(alb, getValue("alb"), patient);
+			write(alb, getValue("ALB"), patient);
 		}
 	}
 	

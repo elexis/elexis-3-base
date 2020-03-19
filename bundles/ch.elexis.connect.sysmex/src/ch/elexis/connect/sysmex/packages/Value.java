@@ -80,10 +80,15 @@ public class Value {
 		}
 		IPatient iPatient =
 			CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null);
-		TransientLabResult tLabResult =
-			new TransientLabResult.Builder(iPatient, _myLab, _labItem, value).date(date)
-				.comment(comment).flags(flags)
-				.build(LabImportUtilHolder.get());
+		TransientLabResult tLabResult = null;
+		// do not set flag, pathologic info could be calculated in TransientLabResult#persist
+		if (flags == -1) {
+			tLabResult = new TransientLabResult.Builder(iPatient, _myLab, _labItem, value)
+				.date(date).comment(comment).build(LabImportUtilHolder.get());
+		} else {
+			tLabResult = new TransientLabResult.Builder(iPatient, _myLab, _labItem, value)
+				.date(date).comment(comment).flags(flags).build(LabImportUtilHolder.get());
+		}
 		LabImportUtilHolder.get().importLabResults(Collections.singletonList(tLabResult),
 			new DefaultLabImportUiHandler());
 	}

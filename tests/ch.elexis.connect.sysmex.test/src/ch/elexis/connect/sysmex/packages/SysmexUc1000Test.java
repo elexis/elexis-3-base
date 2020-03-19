@@ -1,4 +1,4 @@
-package ch.elexis.connect.sysmex.test;
+package ch.elexis.connect.sysmex.packages;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,6 +10,7 @@ import java.io.InputStream;
 import org.junit.Test;
 
 import ch.elexis.connect.sysmex.packages.AbstractUrinData.ResultInfo;
+import ch.elexis.connect.sysmex.test.AllTests;
 import ch.elexis.connect.sysmex.packages.UC1000Data;
 
 public class SysmexUc1000Test {

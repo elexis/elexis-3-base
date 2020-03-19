@@ -65,65 +65,65 @@ public abstract class AbstractHaematologyData implements IProbe {
 	public void write(Patient patient) throws PackageException{
 		
 		Value wbcVal = getValue("WBC"); //$NON-NLS-1$
-		wbcVal.fetchValue(patient, wbc, 0, getDate()); //$NON-NLS-1$
+		wbcVal.fetchValue(patient, wbc, -1, getDate()); //$NON-NLS-1$
 		
 		Value rbcVal = getValue("RBC"); //$NON-NLS-1$
-		rbcVal.fetchValue(patient, rbc, 0, getDate()); //$NON-NLS-1$
+		rbcVal.fetchValue(patient, rbc, -1, getDate()); //$NON-NLS-1$
 		
 		Value hgbVal = getValue("HGB"); //$NON-NLS-1$
-		hgbVal.fetchValue(patient, hgb, 0, getDate()); //$NON-NLS-1$
+		hgbVal.fetchValue(patient, hgb, -1, getDate()); //$NON-NLS-1$
 		
 		Value hctVal = getValue("HCT"); //$NON-NLS-1$
-		hctVal.fetchValue(patient, hct, 0, getDate()); //$NON-NLS-1$
+		hctVal.fetchValue(patient, hct, -1, getDate()); //$NON-NLS-1$
 		
 		Value mcvVal = getValue("MCV"); //$NON-NLS-1$
-		mcvVal.fetchValue(patient, mcv, 0, getDate()); //$NON-NLS-1$
+		mcvVal.fetchValue(patient, mcv, -1, getDate()); //$NON-NLS-1$
 		
 		Value mchVal = getValue("MCH"); //$NON-NLS-1$
-		mchVal.fetchValue(patient, mch, 0, getDate()); //$NON-NLS-1$
+		mchVal.fetchValue(patient, mch, -1, getDate()); //$NON-NLS-1$
 		
 		Value mchcVal = getValue("MCHC"); //$NON-NLS-1$
-		mchcVal.fetchValue(patient, mchc, 0, getDate()); //$NON-NLS-1$
+		mchcVal.fetchValue(patient, mchc, -1, getDate()); //$NON-NLS-1$
 		
 		Value pltVal = getValue("PLT"); //$NON-NLS-1$
-		pltVal.fetchValue(patient, plt, 0, getDate()); //$NON-NLS-1$
+		pltVal.fetchValue(patient, plt, -1, getDate()); //$NON-NLS-1$
 		
 		Value lymPercentVal = getValue("LYM%"); //$NON-NLS-1$
-		lymPercentVal.fetchValue(patient, lym_percent, 0, getDate()); //$NON-NLS-1$
+		lymPercentVal.fetchValue(patient, lym_percent, -1, getDate()); //$NON-NLS-1$
 		
 		Value mxdPercentVal = getValue("MXD%"); //$NON-NLS-1$
-		mxdPercentVal.fetchValue(patient, mxd_percent, 0, getDate()); //$NON-NLS-1$
+		mxdPercentVal.fetchValue(patient, mxd_percent, -1, getDate()); //$NON-NLS-1$
 		
 		Value neutPercentVal = getValue("NEUT%"); //$NON-NLS-1$
-		neutPercentVal.fetchValue(patient, neut_percent, 0, getDate()); //$NON-NLS-1$
+		neutPercentVal.fetchValue(patient, neut_percent, -1, getDate()); //$NON-NLS-1$
 		
 		Value lymVolumeVal = getValue("LYM#"); //$NON-NLS-1$
-		lymVolumeVal.fetchValue(patient, lym_volume, 0, getDate()); //$NON-NLS-1$
+		lymVolumeVal.fetchValue(patient, lym_volume, -1, getDate()); //$NON-NLS-1$
 		
 		Value mxdVolumeVal = getValue("MXD#"); //$NON-NLS-1$
-		mxdVolumeVal.fetchValue(patient, mxd_volume, 0, getDate()); //$NON-NLS-1$
+		mxdVolumeVal.fetchValue(patient, mxd_volume, -1, getDate()); //$NON-NLS-1$
 		
 		Value neutVolumeVal = getValue("NEUT#"); //$NON-NLS-1$
-		neutVolumeVal.fetchValue(patient, neut_volume, 0, getDate()); //$NON-NLS-1$
+		neutVolumeVal.fetchValue(patient, neut_volume, -1, getDate()); //$NON-NLS-1$
 		
 		if (rdw_sd != null) {
 			Value rdwSdVal = getValue("RDW-SD"); //$NON-NLS-1$
-			rdwSdVal.fetchValue(patient, rdw_sd, 0, getDate()); //$NON-NLS-1$
+			rdwSdVal.fetchValue(patient, rdw_sd, -1, getDate()); //$NON-NLS-1$
 		}
 		
 		if (rdw_cv != null) {
 			Value rdwCvVal = getValue("RDW-CV"); //$NON-NLS-1$
-			rdwCvVal.fetchValue(patient, rdw_cv, 0, getDate()); //$NON-NLS-1$
+			rdwCvVal.fetchValue(patient, rdw_cv, -1, getDate()); //$NON-NLS-1$
 		}
 		
 		Value pdwVal = getValue("PDW"); //$NON-NLS-1$
-		pdwVal.fetchValue(patient, pdw, 0, getDate()); //$NON-NLS-1$
+		pdwVal.fetchValue(patient, pdw, -1, getDate()); //$NON-NLS-1$
 		
 		Value mpvVal = getValue("MPV"); //$NON-NLS-1$
-		mpvVal.fetchValue(patient, mpv, 0, getDate()); //$NON-NLS-1$
+		mpvVal.fetchValue(patient, mpv, -1, getDate()); //$NON-NLS-1$
 		
 		Value pLcrVal = getValue("P-LCR"); //$NON-NLS-1$
-		pLcrVal.fetchValue(patient, p_lcr, 0, getDate()); //$NON-NLS-1$
+		pLcrVal.fetchValue(patient, p_lcr, -1, getDate()); //$NON-NLS-1$
 	}
 	
 	public TimeTool getDate(){

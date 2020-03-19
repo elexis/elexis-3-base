@@ -9,9 +9,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import ch.elexis.connect.sysmex.packages.SysmexKx21nTest;
+import ch.elexis.connect.sysmex.packages.SysmexUc1000Test;
+
 @RunWith(Suite.class)
 @SuiteClasses({
-	SysmexProbeTest.class, SysmexUc1000Test.class
+	SysmexProbeTest.class, SysmexUc1000Test.class, SysmexKx21nTest.class
 })
 public class AllTests {
 

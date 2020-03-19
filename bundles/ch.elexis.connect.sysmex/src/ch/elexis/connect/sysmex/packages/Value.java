@@ -78,8 +78,16 @@ public class Value {
 		}
 		
 		LabImportUtil lu = new LabImportUtil();
-		TransientLabResult tLabResult = new TransientLabResult.Builder(new ContactBean(patient),
-				new ContactBean(_myLab), _labItem, value).date(date).comment(comment).flags(flags).build(lu);
+		TransientLabResult tLabResult = null;
+		// do not set flag, pathologic info could be calculated in
+		// TransientLabResult#persist
+		if (flags == -1) {
+			tLabResult = new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_myLab), _labItem,
+					value).date(date).comment(comment).build(lu);
+		} else {
+			tLabResult = new TransientLabResult.Builder(new ContactBean(patient), new ContactBean(_myLab), _labItem,
+					value).date(date).comment(comment).flags(flags).build(lu);
+		}
 		lu.importLabResults(Collections.singletonList(tLabResult), new DefaultLabImportUiHandler());
 	}
 	

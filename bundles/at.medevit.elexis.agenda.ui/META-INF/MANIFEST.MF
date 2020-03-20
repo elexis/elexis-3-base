@@ -42,7 +42,7 @@ Import-Package: ch.elexis.core.common,
  org.eclipse.swt.events,
  org.eclipse.swt.graphics,
  org.eclipse.swt.layout,
- org.eclipse.swt.program,
+ org.eclipse.swt.program;resolution:=optional,
  org.eclipse.swt.widgets,
  org.osgi.framework,
  org.slf4j

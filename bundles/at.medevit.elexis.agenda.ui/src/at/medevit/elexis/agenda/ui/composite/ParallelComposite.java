@@ -91,28 +91,32 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		
 		// bisher 1,5h
 		
+		// RAP workaround 
+		String browserType = (browser.getWebBrowser() != null) ? browser.getBrowserType() : "iframe rap";
+		
 		if (enableSwitch) {
 			new SwitchFunction(part, browser, "switchFunction");
 			try {
 				URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass())
 					.getResource("/rsc/html/switchParallel.html"));
+				
 				logger.debug(
-					"Open url at [" + url.getFile() + "] with [" + browser.getBrowserType() + "]");
+					"Open url at [" + url.getFile() + "] with [" + browserType + "]");
 				browser.setUrl(url.toString());
 			} catch (IOException e) {
 				logger.error("Could not set url to /rsc/html/switchParallel.html with ["
-					+ browser.getBrowserType() + "]", e);
+					+ browserType + "]", e);
 			}
 		} else {
 			try {
 				URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass())
 					.getResource("/rsc/html/defaultParallel.html"));
 				logger.debug(
-					"Open url at [" + url.getFile() + "] with [" + browser.getBrowserType() + "]");
+					"Open url at [" + url.getFile() + "] with [" + browserType + "]");
 				browser.setUrl(url.toString());
 			} catch (IOException e) {
 				logger.error("Could not set url to /rsc/html/defaultParallel.html with ["
-					+ browser.getBrowserType() + "]", e);
+					+ browserType + "]", e);
 			}
 		}
 		

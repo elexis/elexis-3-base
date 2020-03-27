@@ -1,6 +1,6 @@
 package at.medevit.elexis.agenda.ui.dialog;
 
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Display;
 import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import ch.elexis.core.model.IAppointment;
 
-public class AppointmentDialog extends TitleAreaDialog {
+public class AppointmentDialog extends Dialog {
 	
 	private AppointmentDetailComposite detailComposite;
 	

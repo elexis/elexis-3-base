@@ -10,6 +10,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.connect.sysmex.packages.IProbe;
 import ch.elexis.connect.sysmex.packages.KX21Data;
@@ -228,16 +229,21 @@ public class SysmexAction extends Action implements ComPortListener {
 			public void run(){
 				UiDesk.getDisplay().syncExec(new Runnable() {
 					public void run(){
-						Patient suggestedPatient = findSuggestedPatient(probe.getPatientId());
-						// only open selection dialog if there is a suggestion available
-						if (suggestedPatient != null) {
-							WhichPatientDialog wpDialog =
-								new WhichPatientDialog(UiDesk.getTopShell(), suggestedPatient);
-							wpDialog.open();
-							selectedPatient = wpDialog.getPatient();
+						// perform direct import if patient with matching patient id is found
+						selectedPatient = Patient.loadByPatientID(probe.getPatientId());
+						LoggerFactory.getLogger(getClass()).info("Found patient [" + selectedPatient
+							+ "] for id [" + probe.getPatientId() + "]");
+						if (selectedPatient == null) {
+							Patient suggestedPatient = findSuggestedPatient(probe.getPatientId());
+							// only open selection dialog if there is a suggestion available
+							if (suggestedPatient != null) {
+								WhichPatientDialog wpDialog =
+									new WhichPatientDialog(UiDesk.getTopShell(), suggestedPatient);
+								wpDialog.open();
+								selectedPatient = wpDialog.getPatient();
+							}
 						}
-						
-						// case no patient selection was orcould be made yet
+						// case no patient selection could be made yet
 						if (selectedPatient == null) {
 							KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(),
 								Patient.class, Messages.SysmexAction_Patient_Title,

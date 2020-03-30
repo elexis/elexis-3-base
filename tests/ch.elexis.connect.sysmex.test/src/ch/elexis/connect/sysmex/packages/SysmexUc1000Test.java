@@ -1,6 +1,7 @@
 package ch.elexis.connect.sysmex.packages;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -11,7 +12,6 @@ import org.junit.Test;
 
 import ch.elexis.connect.sysmex.packages.AbstractUrinData.ResultInfo;
 import ch.elexis.connect.sysmex.test.AllTests;
-import ch.elexis.connect.sysmex.packages.UC1000Data;
 
 public class SysmexUc1000Test {
 	
@@ -75,5 +75,26 @@ public class SysmexUc1000Test {
 		ResultInfo albInfo = data.getResultInfo("alb");
 		assertNotNull(albInfo);
 		assertTrue(albInfo.isAnalyzed());
+	}
+	
+	@Test
+	public void uc1000_2() throws IOException{
+		InputStream in = AllTests.class.getResourceAsStream("/rsc/UC-1000_2.txt");
+		String content = AllTests.getTextBetween(AllTests.STX, AllTests.ETX, in);
+		assertNotNull(content);
+		UC1000Data data = new UC1000Data();
+		assertEquals(data.getSize(), content.length());
+		data.parse(content);
+		
+		ResultInfo uroInfo = data.getResultInfo("uro");
+		assertNotNull(uroInfo);
+		assertTrue(uroInfo.isAnalyzed());
+		assertEquals("normal", uroInfo.getQualitativValue());
+		assertEquals("", uroInfo.getSemiQualitativValue());
+		
+		String patId = data.getPatientId();
+		assertNotNull(patId);
+		assertFalse(patId.isEmpty());
+		assertEquals("340", patId);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.swt.browser.Browser;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
+import at.medevit.elexis.agenda.ui.function.BrowserExecLock;
 
 public class ScriptingHelper {
 	
@@ -20,7 +21,7 @@ public class ScriptingHelper {
 	public void setSelectedSpanSize(AgendaSpanSize size){
 		String slotDuration = "$('#calendar').fullCalendar('option', 'slotDuration', '%s');";
 		String script = String.format(slotDuration, size.getCalendarString());
-		browser.execute(script);
+		BrowserExecLock.executeScript(browser, script);
 		scrollToNow();
 	}
 	
@@ -57,44 +58,44 @@ public class ScriptingHelper {
 		String startAt = "$('#calendar').fullCalendar('option', 'minTime', '%s');";
 		String script = String.format(endsAt, parseTime(dayEndsAt))
 			+ String.format(startAt, parseTime(dayStartsAt));
-		browser.execute(script);
+		BrowserExecLock.executeScript(browser, script);
 		scrollToNow();
 	}
 	
 	public void setSelectedDate(LocalDate date){
 		String gotoDate = "$('#calendar').fullCalendar('gotoDate', '%s');";
 		String script = String.format(gotoDate, date.toString());
-		browser.execute(script);
+		BrowserExecLock.executeScript(browser, script);
 	}
 	
 	public void setFontSize(int sizePx){
 		String bodyFontSize = "$('body').css('font-size', '%dpx');";
 		String script = String.format(bodyFontSize, sizePx);
-		browser.execute(script);
+		BrowserExecLock.executeScript(browser, script);
 	}
 	
 	public void setFontFamily(String family){
 		String bodyFontFamily = "$('body').css('font-family', '%s');";
 		String script = String.format(bodyFontFamily, family);
-		browser.execute(script);
+		BrowserExecLock.executeScript(browser, script);
 	}
 	
 	public void refetchEvents(){
 		String refetchEvents = "$('#calendar').fullCalendar('refetchEvents');";
-		browser.execute(refetchEvents);
+		BrowserExecLock.executeScript(browser, refetchEvents);
 	}
 	
 	public void initializeResources(List<String> selectedResources){
 		String updateResourceIds = "$('#calendar').fullCalendar('getView').setResourceIds(%s);";
 		String script = String.format(updateResourceIds, getResourceIdsString(selectedResources));
-		browser.execute(script);
+		BrowserExecLock.executeScript(browser, script);
 	}
 	
 	public void scrollToNow(){
 		if (doScroll) {
 			String script =
 				"var now = $('#calendar').fullCalendar('getNow'); if (now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top - ($('#calendar').height() / 2) );}  , 500 );}";
-			browser.execute(script);
+			BrowserExecLock.executeScript(browser, script);
 		}
 	}
 	

@@ -41,7 +41,7 @@ public class SetStatusContributionItem {
 	@SuppressWarnings("restriction")
 	@Execute
 	private void setStatus(MDirectMenuItem menuItem){
-		HashMap<String, String> parameters = new HashMap<String, String>();
+		HashMap<String, Object> parameters = new HashMap<>();
 		parameters.put("at.medevit.elexis.agenda.ui.command.parameter.statusId",
 			menuItem.getLabel());
 		ParameterizedCommand command = commandService

@@ -23,4 +23,11 @@
          install-size="0"
          version="0.0.0"/>
 
+   <plugin
+         id="at.medevit.elexis.agenda.ui.rcp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
 </feature>

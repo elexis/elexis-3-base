@@ -34,12 +34,13 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 		String updateHeight =
 			"$('#calendar').fullCalendar('option', 'contentHeight', (%d - $('#calendar').find('.fc-view-container').offset().top));";
 		int browserHeight = getBrowser().getBounds().height;
-		getBrowser().execute(String.format(updateHeight, browserHeight));
+		String script = String.format(updateHeight, browserHeight);
+		BrowserExecLock.executeScript(getBrowser(), script);
 	}
 	
 	public void redraw(){
 		String refetchEvents = "$('#calendar').fullCalendar('rerenderEvents');";
-		getBrowser().execute(refetchEvents);
+		BrowserExecLock.executeScript(getBrowser(), refetchEvents);
 	}
 	
 	@Override

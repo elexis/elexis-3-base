@@ -12,14 +12,6 @@
       </propertyTester>
    </extension>
    <extension
-         id="at.medevit.elexis.agenda.ui.fragment"
-         point="org.eclipse.e4.workbench.model">
-      <fragment
-            uri="fragment.e4xmi"
-            apply="always">
-      </fragment>
-   </extension>
-   <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
             id="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty">

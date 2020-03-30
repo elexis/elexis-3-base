@@ -1,11 +1,8 @@
 package at.medevit.elexis.agenda.ui.composite;
 
-import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EMenuService;
@@ -23,7 +20,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.osgi.framework.FrameworkUtil;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.function.ContextMenuFunction;
@@ -37,6 +34,8 @@ import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class WeekComposite extends Composite implements ISelectionProvider, IAgendaComposite {
+	
+	private static Logger logger = LoggerFactory.getLogger(WeekComposite.class);
 	
 	private Browser browser;
 	private LoadEventsFunction loadEventsFunction;
@@ -80,25 +79,15 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		
 		if (enableSwitch) {
 			new SwitchFunction(part, browser, "switchFunction");
-			try {
-				URL url = FileLocator.toFileURL(
-					FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/switchWeek.html"));
-				LoggerFactory.getLogger(getClass()).debug("Open url [" + url.getFile() + "]");
-				browser.setUrl(url.toString());
-			} catch (IOException e) {
-				LoggerFactory.getLogger(getClass())
-					.error("Could not set url to /rsc/html/switchWeek.html", e);
-			}
+			String targetUrl = HtmlBaseUrlResolver.resolve(part, "switchWeek.html", logger);
+			logger.debug("Open url [" + targetUrl + "]");
+			browser.setUrl(targetUrl);
+			
 		} else {
-			try {
-				URL url = FileLocator.toFileURL(
-					FrameworkUtil.getBundle(getClass()).getResource("/rsc/html/defaultWeek.html"));
-				LoggerFactory.getLogger(getClass()).debug("Open url [" + url.getFile() + "]");
-				browser.setUrl(url.toString());
-			} catch (IOException e) {
-				LoggerFactory.getLogger(getClass())
-					.error("Could not set url to /rsc/html/defaultWeek.html", e);
-			}
+			String targetUrl = HtmlBaseUrlResolver.resolve(part, "defaultWeek.html", logger);
+			logger.debug("Open url [" + targetUrl + "]");
+			browser.setUrl(targetUrl);
+
 		}
 		
 		browser.addControlListener(new ControlAdapter() {

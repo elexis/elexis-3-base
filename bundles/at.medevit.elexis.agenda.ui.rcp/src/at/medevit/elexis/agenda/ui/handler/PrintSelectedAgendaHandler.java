@@ -92,6 +92,8 @@ public class PrintSelectedAgendaHandler {
 						if (file != null) {
 							Program.launch(file.getAbsolutePath());
 							}
+					} else {
+						LoggerFactory.getLogger(getClass()).warn("No formatted output factory available.");
 					}
 				}
 			}

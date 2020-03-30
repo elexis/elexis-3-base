@@ -48,3 +48,6 @@ Import-Package: ch.elexis.core.common,
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
+Export-Package: at.medevit.elexis.agenda.ui.function,
+ at.medevit.elexis.agenda.ui.view,
+ at.medevit.elexis.agenda.ui.xml

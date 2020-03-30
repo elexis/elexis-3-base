@@ -1,12 +1,9 @@
 package at.medevit.elexis.agenda.ui.composite;
 
-import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EMenuService;
@@ -24,7 +21,6 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,28 +92,15 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		
 		if (enableSwitch) {
 			new SwitchFunction(part, browser, "switchFunction");
-			try {
-				URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass())
-					.getResource("/rsc/html/switchParallel.html"));
+			String targetUrl = HtmlBaseUrlResolver.resolve(part, "switchParallel.html", logger);
+			logger.debug("Open url at [" + targetUrl + "] with [" + browserType + "]");
+			browser.setUrl(targetUrl);
 				
-				logger.debug(
-					"Open url at [" + url.getFile() + "] with [" + browserType + "]");
-				browser.setUrl(url.toString());
-			} catch (IOException e) {
-				logger.error("Could not set url to /rsc/html/switchParallel.html with ["
-					+ browserType + "]", e);
-			}
 		} else {
-			try {
-				URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass())
-					.getResource("/rsc/html/defaultParallel.html"));
-				logger.debug(
-					"Open url at [" + url.getFile() + "] with [" + browserType + "]");
-				browser.setUrl(url.toString());
-			} catch (IOException e) {
-				logger.error("Could not set url to /rsc/html/defaultParallel.html with ["
-					+ browserType + "]", e);
-			}
+			String targetUrl = HtmlBaseUrlResolver.resolve(part, "defaultParallel.html", logger);
+			logger.debug("Open url at [" + targetUrl + "] with [" + browserType + "]");
+			browser.setUrl(targetUrl);
+
 		}
 		
 		browser.addControlListener(new ControlAdapter() {

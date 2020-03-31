@@ -16,7 +16,7 @@ public class SingleSourceUtil {
 
 	private static final boolean IS_RAP;
 	private static final String HTML_BASE_URL;
-	
+
 	static {
 		Class<?> clazz = null;
 		try {
@@ -26,7 +26,7 @@ public class SingleSourceUtil {
 		IS_RAP = clazz != null;
 
 		if (IS_RAP) {
-			HTML_BASE_URL = RAP_BASE_URL;
+			HTML_BASE_URL = RAP_BASE_URL + "html/";
 		} else {
 			String _baseUrl = null;
 			try {
@@ -82,7 +82,8 @@ public class SingleSourceUtil {
 			return browser.execute(script);
 		}
 	}
-	
-	private class BrowserLock {}
+
+	private class BrowserLock {
+	}
 
 }

@@ -9,7 +9,8 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core.ui.icons,
  ch.elexis.core.services,
  org.eclipse.e4.ui.model.workbench;bundle-version="2.1.100.v20180904-1914",
- ch.elexis.core.ui.e4;bundle-version="1.0.0"
+ ch.elexis.core.ui.e4;bundle-version="1.0.0",
+ org.eclipse.equinox.http.registry;bundle-version="1.1.600";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: ch.elexis.core.common,
  ch.elexis.core.constants,
@@ -37,6 +38,7 @@ Import-Package: ch.elexis.core.common,
  org.eclipse.jface.resource,
  org.eclipse.jface.viewers,
  org.eclipse.jface.window,
+ org.eclipse.rap.rwt;version="3.12.0";resolution:=optional,
  org.eclipse.swt,
  org.eclipse.swt.browser,
  org.eclipse.swt.custom,

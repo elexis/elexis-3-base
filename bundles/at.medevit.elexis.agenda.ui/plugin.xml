@@ -46,5 +46,11 @@
             uri="fragment.e4xmi">
       </fragment>
    </extension>
-
+  <extension
+         point="org.eclipse.equinox.http.registry.resources">
+      <resource
+            alias="/agenda/static"
+            base-name="/rsc">
+      </resource>
+   </extension>
 </plugin>

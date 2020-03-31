@@ -31,6 +31,7 @@ import at.medevit.elexis.agenda.ui.function.EventResizeFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
+import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class WeekComposite extends Composite implements ISelectionProvider, IAgendaComposite {
@@ -79,12 +80,12 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		
 		if (enableSwitch) {
 			new SwitchFunction(part, browser, "switchFunction");
-			String targetUrl = HtmlBaseUrlResolver.resolve(part, "switchWeek.html", logger);
+			String targetUrl = SingleSourceUtil.resolve("switchWeek.html");
 			logger.debug("Open url [" + targetUrl + "]");
 			browser.setUrl(targetUrl);
 			
 		} else {
-			String targetUrl = HtmlBaseUrlResolver.resolve(part, "defaultWeek.html", logger);
+			String targetUrl = SingleSourceUtil.resolve("defaultWeek.html");
 			logger.debug("Open url [" + targetUrl + "]");
 			browser.setUrl(targetUrl);
 

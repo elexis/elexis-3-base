@@ -33,6 +33,7 @@ import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.PdfFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
+import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
@@ -92,12 +93,12 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		
 		if (enableSwitch) {
 			new SwitchFunction(part, browser, "switchFunction");
-			String targetUrl = HtmlBaseUrlResolver.resolve(part, "switchParallel.html", logger);
+			String targetUrl = SingleSourceUtil.resolve("switchParallel.html");
 			logger.debug("Open url at [" + targetUrl + "] with [" + browserType + "]");
 			browser.setUrl(targetUrl);
 				
 		} else {
-			String targetUrl = HtmlBaseUrlResolver.resolve(part, "defaultParallel.html", logger);
+			String targetUrl = SingleSourceUtil.resolve( "defaultParallel.html");
 			logger.debug("Open url at [" + targetUrl + "] with [" + browserType + "]");
 			browser.setUrl(targetUrl);
 

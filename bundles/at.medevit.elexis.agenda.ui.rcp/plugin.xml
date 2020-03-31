@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <fragment>
    <extension
-         id="at.medevit.elexis.agenda.ui.fragment"
+         id="at.medevit.elexis.agenda.ui.rcp.fragment"
          point="org.eclipse.e4.workbench.model">
       <fragment
             apply="always"

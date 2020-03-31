@@ -38,5 +38,13 @@
          </test>
       </definition>
    </extension>
+   <extension
+         id="at.medevit.elexis.agenda.ui.fragment"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            apply="always"
+            uri="fragment.e4xmi">
+      </fragment>
+   </extension>
 
 </plugin>

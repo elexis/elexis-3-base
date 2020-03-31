@@ -9,6 +9,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
+import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
 import at.medevit.elexis.agenda.ui.view.ParallelView;
 
@@ -35,12 +36,12 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 			"$('#calendar').fullCalendar('option', 'contentHeight', (%d - $('#calendar').find('.fc-view-container').offset().top));";
 		int browserHeight = getBrowser().getBounds().height;
 		String script = String.format(updateHeight, browserHeight);
-		BrowserExecLock.executeScript(getBrowser(), script);
+		SingleSourceUtil.executeScript(getBrowser(), script);
 	}
 	
 	public void redraw(){
 		String refetchEvents = "$('#calendar').fullCalendar('rerenderEvents');";
-		BrowserExecLock.executeScript(getBrowser(), refetchEvents);
+		SingleSourceUtil.executeScript(getBrowser(), refetchEvents);
 	}
 	
 	@Override

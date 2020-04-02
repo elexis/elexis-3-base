@@ -99,7 +99,7 @@
 
 		function rightClickCallback(date, jsEvent, view) {
 			if (typeof jsEvent.resource !== 'undefined') {
-				contextMenuFunction(date.format(), jsEvent.resource);
+				contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource);
 			}
 		}
 

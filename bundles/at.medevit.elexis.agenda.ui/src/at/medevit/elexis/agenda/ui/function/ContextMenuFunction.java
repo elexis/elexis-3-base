@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.browser.Browser;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
+import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
@@ -23,13 +24,25 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 	}
 	
 	public Object function(Object[] arguments){
-		if (arguments.length == 2) {
-			LocalDateTime date = getDateTimeArg(arguments[0]);
-			String resource = (String) arguments[1];
+		if (arguments.length == 4) {
+			LocalDateTime date = getDateTimeArg(arguments[2]);
+			String resource = (String) arguments[3];
 			
 			Optional<SideBarComposite> activeSideBar = getActiveSideBar(part);
 			activeSideBar.ifPresent(sideBar -> {
 				sideBar.setMoveInformation(date, resource);
+				
+				if(SingleSourceUtil.isRap()) {
+					// in Rap Browser Mouse Location is not connected to SWT
+					// hence the menu does not open at the correct location (but would on the last entry
+					// point to the SWT browser widget)
+					// see https://www.eclipse.org/forums/index.php?t=msg&th=1100113&goto=1810544&#msg_1810544
+					// relative if sidebar is opened
+					Double argX = (Double) arguments[0];
+					Double argY = (Double) arguments[1];
+					getBrowser().getMenu().setLocation(argX.intValue()+100, argY.intValue());
+				}
+				
 				getBrowser().getMenu().setVisible(true);
 			});
 		} else if (arguments.length == 1) {

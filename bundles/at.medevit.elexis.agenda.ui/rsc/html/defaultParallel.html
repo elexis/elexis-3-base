@@ -63,31 +63,34 @@
 		});
 
 		function loadEventsCallback(start, end, timezone, callback) {
-			var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
-			var jsonEvents = JSON.parse(eventsJson);
-			var events = [];
-			jsonEvents.forEach(function (event) {
-				events.push({
-					id: event.id,
-					title: event.title,
-					start: event.start,
-					end: event.end,
-					description: event.description,
-					icon: event.icon,
-					rendering: event.rendering,
-					borderColor: event.borderColor,
-					backgroundColor: event.backgroundColor,
-					textColor: event.textColor,
-
-					resource: event.resource
+			if(typeof loadEventsFunction === 'function') {
+				var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
+				var jsonEvents = JSON.parse(eventsJson);
+				var events = [];
+				jsonEvents.forEach(function (event) {
+					events.push({
+						id: event.id,
+						title: event.title,
+						start: event.start,
+						end: event.end,
+						description: event.description,
+						icon: event.icon,
+						rendering: event.rendering,
+						borderColor: event.borderColor,
+						backgroundColor: event.backgroundColor,
+						textColor: event.textColor,
+						resource: event.resource
+					});
 				});
-			});
-			callback(events);
+				callback(events);
+			} else {
+				callback();
+			}
 		}
 
 		function rightClickCallback(date, jsEvent, view) {
 			if (typeof jsEvent.resource !== 'undefined') {
-				contextMenuFunction(date.format(), jsEvent.resource);
+				contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource);
 			}
 		}
 

@@ -4,6 +4,7 @@ import java.util.TimerTask;
 
 import org.eclipse.swt.widgets.Display;
 
+import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
@@ -21,12 +22,16 @@ public class CheckForUpdatesTimerTask extends TimerTask {
 			CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
 		if (loadEventsFunction.knownLastUpdate != 0
 			&& loadEventsFunction.knownLastUpdate < currentLastUpdate) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run(){
-					loadEventsFunction.scriptingHelper.refetchEvents();
-				}
-			});
+			// TODO throws NPE in rap
+			if(!SingleSourceUtil.isRap()) {
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run(){
+						loadEventsFunction.scriptingHelper.refetchEvents();
+					}
+				});
+			}
+
 		}
 	}
 	

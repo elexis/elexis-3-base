@@ -182,6 +182,8 @@ if ( System.getProperty("git_branch") == null ) {
         <artifactId>target-platform-configuration</artifactId>
         <configuration>
           <dependency-resolution>
+	    <!-- do not resolve optional bundles/packages during build -->
+	    <optionalDependencies>ignore</optionalDependencies>
             <extraRequirements>
               <requirement>
                 <type>eclipse-plugin</type>

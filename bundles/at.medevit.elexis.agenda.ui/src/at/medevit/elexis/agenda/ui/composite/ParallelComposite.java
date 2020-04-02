@@ -15,8 +15,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -88,18 +88,15 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		
 		// bisher 1,5h
 		
-		// RAP workaround 
-		String browserType = (browser.getWebBrowser() != null) ? browser.getBrowserType() : "iframe rap";
-		
 		if (enableSwitch) {
 			new SwitchFunction(part, browser, "switchFunction");
 			String targetUrl = SingleSourceUtil.resolve("switchParallel.html");
-			logger.debug("Open url at [" + targetUrl + "] with [" + browserType + "]");
+			logger.debug("Open url [" + targetUrl + "]");
 			browser.setUrl(targetUrl);
 				
 		} else {
 			String targetUrl = SingleSourceUtil.resolve( "defaultParallel.html");
-			logger.debug("Open url at [" + targetUrl + "] with [" + browserType + "]");
+			logger.debug("Open url [" + targetUrl + "]");
 			browser.setUrl(targetUrl);
 
 		}
@@ -114,7 +111,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		// register context menu for browser
 		menuService.registerContextMenu(browser, "at.medevit.elexis.agenda.ui.popupmenu.parallel");
 		
-		browser.addProgressListener(new ProgressAdapter() {
+		browser.addProgressListener(new ProgressListener() {
 			@Override
 			public void changed(ProgressEvent event){
 				if (event.current == 0 && event.total == 0) {
@@ -135,6 +132,9 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 					});
 				}
 			}
+
+			@Override
+			public void completed(ProgressEvent event){}
 		});
 	}
 	

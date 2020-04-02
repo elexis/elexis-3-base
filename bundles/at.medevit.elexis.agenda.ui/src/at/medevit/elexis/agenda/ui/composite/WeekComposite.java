@@ -14,8 +14,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -101,7 +101,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		// register context menu for browser
 		menuService.registerContextMenu(browser, "at.medevit.elexis.agenda.ui.popupmenu.week");
 		
-		browser.addProgressListener(new ProgressAdapter() {
+		browser.addProgressListener(new ProgressListener() {
 			@Override
 			public void changed(ProgressEvent event){
 				if (event.current == 0 && event.total == 0) {
@@ -122,6 +122,9 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 					});
 				}
 			}
+
+			@Override
+			public void completed(ProgressEvent event){}
 		});
 	}
 	

@@ -10,11 +10,15 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.di.AboutToShow;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 
 public class SetStatusContributionItem {
@@ -27,13 +31,22 @@ public class SetStatusContributionItem {
 	@Inject
 	private EHandlerService handlerService;
 	
+	@Inject
+	private ESelectionService eSelectionService;
+	
 	@AboutToShow
 	public void fill(List<MMenuElement> items){
+		IStructuredSelection selection = (IStructuredSelection) eSelectionService.getSelection();
+		IAppointment selectedAppointment = (selection != null) ? (IAppointment) selection.getFirstElement() : null;
+		String state = (selectedAppointment != null) ? selectedAppointment.getState() : null;
+		
 		for (String t : AppointmentServiceHolder.get().getStates()) {
 			MDirectMenuItem dynamicItem = MMenuFactory.INSTANCE.createDirectMenuItem();
+			dynamicItem.setType(ItemType.CHECK);
 			dynamicItem.setLabel(t);
 			dynamicItem.setContributionURI(
 				"bundleclass://at.medevit.elexis.agenda.ui/" + getClass().getName());
+			dynamicItem.setSelected(t.equalsIgnoreCase(state));
 			items.add(dynamicItem);
 		}
 	}

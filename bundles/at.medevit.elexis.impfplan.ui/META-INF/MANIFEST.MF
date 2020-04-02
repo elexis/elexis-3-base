@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  at.medevit.elexis.impfplan;bundle-version="3.0.0",
  at.medevit.ch.artikelstamm.elexis.common,
  org.apache.commons.logging;bundle-version="1.0.4",
- ch.elexis.impfplan;bundle-version="3.0.1";resolution:=optional,
+ ch.elexis.impfplan;bundle-version="3.0.1",
  at.medevit.ch.artikelstamm
 Bundle-ClassPath: .,
  lib/pdfbox-1.8.6.jar,

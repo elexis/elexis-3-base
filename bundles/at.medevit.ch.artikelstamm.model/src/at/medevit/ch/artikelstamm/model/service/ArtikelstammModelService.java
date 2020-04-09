@@ -174,6 +174,20 @@ public class ArtikelstammModelService extends AbstractModelService
 				return Optional.of(found.get(0));
 			}
 		}
+		
+		if(context.containsKey("CONSIDER_PRODNO")) {
+			IQuery<IArtikelstammItem> prodnoQuery = getQuery(IArtikelstammItem.class);
+			prodnoQuery.and("id", COMPARATOR.EQUALS, code);
+			found = prodnoQuery.execute();
+			if (found.size() > 0) {
+				if (found.size() > 1) {
+					LoggerFactory.getLogger(getClass())
+						.warn("Found more than 1 code element for prodno [" + code + "]");
+				}
+				return Optional.of(found.get(0));
+			}
+		}
+		
 		return Optional.empty();
 	}
 	

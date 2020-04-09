@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.eclipse.core.runtime.IStatus;
@@ -98,7 +99,7 @@ public class ArtikelstammImporterTest {
 			// I would have loved to add a test that priorix has only one product
 			// But it was too complicated
 			Optional<ICodeElement> priorix =
-				artikelstammCodeElements.loadFromCode(gtinPriorix, null);
+				artikelstammCodeElements.loadFromCode(gtinPriorix, Collections.emptyMap());
 			assertTrue(priorix.isPresent());
 			assertEquals(10590, ((IArtikelstammItem) priorix.get()).getSellingPrice().getCents());
 

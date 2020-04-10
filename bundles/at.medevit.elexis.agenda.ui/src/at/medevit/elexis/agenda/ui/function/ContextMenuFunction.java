@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import ch.elexis.agenda.data.Termin;
@@ -34,7 +35,15 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 			if (selectionProvider != null) {
 				selectionProvider.setSelection(new StructuredSelection(termin));
 			}
-			getBrowser().getMenu().setVisible(true);
+			// setting menu visibility needs to be executed in separate
+			// trigger rebuild of menu with new selection by setting visible false first
+			Display.getDefault().asyncExec(() -> {
+				getBrowser().getMenu().setVisible(false);
+
+			});
+			Display.getDefault().asyncExec(() -> {
+				getBrowser().getMenu().setVisible(true);
+			});
 		} else if (arguments.length == 0) {
 			if (selectionProvider != null) {
 				selectionProvider.setSelection(StructuredSelection.EMPTY);

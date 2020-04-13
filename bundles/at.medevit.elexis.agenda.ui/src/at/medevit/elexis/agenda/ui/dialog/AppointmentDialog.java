@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class AppointmentDialog extends Dialog {
 	
@@ -17,18 +18,26 @@ public class AppointmentDialog extends Dialog {
 	
 	public AppointmentDialog(IAppointment appointment){
 		super(Display.getDefault().getActiveShell());
-		
 		this.appointment = appointment;
 	}
 	
 	@Override
 	protected Control createContents(Composite parent){
-		Composite ret = (Composite) super.createContents(parent);
-		detailComposite = new AppointmentDetailComposite(ret, SWT.NONE);
-		if (appointment != null) {
-			detailComposite.setAppointment(appointment);
+		if (appointment == null) {
+			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
 		}
-		return ret;
+		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
+		return super.createContents(parent);
+		
+	}
+	
+	@Override
+	protected void okPressed(){
+		if (appointment != null) {
+			// save appointment
+			CoreModelServiceHolder.get().save(detailComposite.setToModel());
+		}
+		super.okPressed();
 	}
 	
 }

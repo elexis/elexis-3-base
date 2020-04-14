@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
@@ -440,6 +444,15 @@ public class TestData {
 			
 			ret.set(Rechnung.BILL_NUMBER, rechnungNr);
 			
+			return ret;
+		}
+	}
+	
+	public static Document loadXml(String resource) throws IOException, JDOMException{
+		try (InputStream input = TestData.class.getResourceAsStream(resource)) {
+			String text = IOUtils.toString(input, "UTF-8");
+			SAXBuilder builder = new SAXBuilder();
+			Document ret = builder.build(new StringReader(text));
 			return ret;
 		}
 	}

@@ -1,0 +1,123 @@
+<invoice:request xmlns:invoice="http://www.forum-datenaustausch.ch/invoice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nsxenc="http://www.w3.org/2001/04/xmlenc#" xsi:schemaLocation="http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_440.xsd" modus="production" language="de">
+  <invoice:processing print_at_intermediate="1">
+    <invoice:transport from="2000000000000" to="2000000000000">
+      <invoice:via via="2000000000000" sequence_id="1" />
+    </invoice:transport>
+  </invoice:processing>
+  <invoice:payload type="reminder" copy="0" storno="0">
+    <invoice:invoice request_timestamp="1576586205" request_id="171217019444" request_date="2019-12-17T13:36:45" />
+    <invoice:reminder request_timestamp="1582018176" request_date="2020-02-18T00:00:00" request_id="171217019444" reminder_level="2" />
+    <invoice:body role="physician" place="practice">
+      <invoice:prolog>
+        <invoice:package version="370" name="Elexis" />
+        <invoice:generator name="JDOM" version="100">
+          <invoice:depends_on name="Elexis TarmedVerifier" version="370" />
+        </invoice:generator>
+      </invoice:prolog>
+      <invoice:balance currency="CHF" amount_prepaid="0.00" amount="380.17" amount_due="400.15" amount_obligations="371.42" amount_reminder="20.00">
+        <invoice:vat vat="0.00">
+          <invoice:vat_rate vat_rate="0.00" amount="380.17" vat="0.00" />
+        </invoice:vat>
+      </invoice:balance>
+      <invoice:esr9 participant_number="01-16111-5" type="16or27" reference_number="39 83810 00000 00171 21701 91113" coding_line="0100000380159&gt;398381000000001712170191113+ 010165111&gt;">
+        <invoice:bank>
+          <invoice:company>
+            <invoice:companyname>Raiffeisen Xxxx</invoice:companyname>
+            <invoice:postal>
+              <invoice:street>Xxxxxstrasse 104</invoice:street>
+              <invoice:zip>6048</invoice:zip>
+              <invoice:city>Horw</invoice:city>
+            </invoice:postal>
+          </invoice:company>
+        </invoice:bank>
+      </invoice:esr9>
+      <invoice:tiers_garant payment_period="P30D">
+        <invoice:biller ean_party="2000000000000" zsr="W150503" specialty="Radiologie FMH">
+          <invoice:company>
+            <invoice:companyname>Xxxxxx Luzern AG</invoice:companyname>
+            <invoice:postal>
+              <invoice:street>Xxxxxx 46</invoice:street>
+              <invoice:zip>6005</invoice:zip>
+              <invoice:city>Luzern</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+              <invoice:phone>041 xxx xx xx</invoice:phone>
+              <invoice:fax>041 xxx xx xx</invoice:fax>
+            </invoice:telecom>
+          </invoice:company>
+        </invoice:biller>
+        <invoice:provider ean_party="2000000000000" zsr="W150503" specialty="Radiologie FMH">
+          <invoice:company>
+            <invoice:companyname>Xxxxxx Luzern AG</invoice:companyname>
+            <invoice:postal>
+              <invoice:street>Xxxxxx 46</invoice:street>
+              <invoice:zip>6005</invoice:zip>
+              <invoice:city>Luzern</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+              <invoice:phone>041 xxx xx xx</invoice:phone>
+              <invoice:fax>041 xxx xx xx</invoice:fax>
+            </invoice:telecom>
+          </invoice:company>
+        </invoice:provider>
+        <invoice:insurance ean_party="2000000000000">
+          <invoice:company>
+            <invoice:companyname>unbekannt</invoice:companyname>
+            <invoice:postal>
+              <invoice:zip>0000</invoice:zip>
+              <invoice:city>Unbekannt</invoice:city>
+            </invoice:postal>
+          </invoice:company>
+        </invoice:insurance>
+        <invoice:referrer ean_party="2000000000000">
+          <invoice:person title="Dr. med.">
+            <invoice:familyname>Xxxxx</invoice:familyname>
+            <invoice:givenname>Xxxxx H.</invoice:givenname>
+            <invoice:postal>
+              <invoice:street>Xxxxx 11</invoice:street>
+              <invoice:zip>6052</invoice:zip>
+              <invoice:city>Hergiswil</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+              <invoice:phone>+41xxxxxxxxx</invoice:phone>
+              <invoice:fax>+41xxxxxxxxx</invoice:fax>
+            </invoice:telecom>
+          </invoice:person>
+        </invoice:referrer>
+        <invoice:patient gender="male" birthdate="1968-02-03T00:00:00">
+          <invoice:person salutation="Herr">
+            <invoice:familyname>Xxxxx</invoice:familyname>
+            <invoice:givenname>Xxxxx</invoice:givenname>
+            <invoice:postal>
+              <invoice:street>Xxxxx 13</invoice:street>
+              <invoice:zip countrycode="CH">6052</invoice:zip>
+              <invoice:city>Hergiswil</invoice:city>
+            </invoice:postal>
+          </invoice:person>
+        </invoice:patient>
+        <invoice:guarantor>
+          <invoice:person salutation="Herr">
+            <invoice:familyname>Xxxxx</invoice:familyname>
+            <invoice:givenname>Xxxxx</invoice:givenname>
+            <invoice:postal>
+              <invoice:street>Xxxxx 13</invoice:street>
+              <invoice:zip countrycode="CH">6052</invoice:zip>
+              <invoice:city>Hergiswil</invoice:city>
+            </invoice:postal>
+          </invoice:person>
+        </invoice:guarantor>
+      </invoice:tiers_garant>
+      <invoice:kvg insured_id="-" case_date="2019-11-11T00:00:00" />
+      <invoice:treatment date_begin="2019-11-11T00:00:00" date_end="2019-11-11T00:00:00" canton="LU" reason="disease">
+        <invoice:diagnosis type="by_contract" code="D5" />
+      </invoice:treatment>
+      <invoice:services>
+        <invoice:record_other tariff_type="999" unit="8.75" quantity="1.0" unit_factor="1.0" amount="8.75" vat_rate="0.0" validate="true" obligation="false" external_factor="1.0" provider_id="2000000000000" responsible_id="2000000000000" session="1" record_id="1" date_begin="2019-11-11T00:00:00" name="Hygienische Pat. Kleider MR (Tarif Typ 406) " code="CH-0158-8" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" provider_id="2000000000000" responsible_id="2000000000000" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="6.25" unit_factor_mt="0.82" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="5.13" unit_tt="78.43" unit_factor_tt="0.82" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="64.31" amount="69.44" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="2" date_begin="2019-11-11T00:00:00" name="Grundkonsultation/Betriebsstelle Radiologie im Röntgeninstitut ausserhalb Spital" quantity="1.0" code="39.0010" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ref_code="39.5060" provider_id="2000000000000" responsible_id="2000000000000" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="11.80" unit_factor_mt="0.82" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="9.68" unit_tt="0.00" unit_factor_tt="0.82" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="0.00" amount="9.68" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="3" date_begin="2019-11-11T00:00:00" name="+ Ärztliche Leistung im Falle einer persönlichen Betreuung der MRI-Untersuchung durch den Facharzt für medizinische Radiologie" quantity="1.0" code="39.5015" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" provider_id="2000000000000" responsible_id="2000000000000" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="59.00" unit_factor_mt="0.82" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="48.38" unit_tt="227.84" unit_factor_tt="0.82" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="186.83" amount="235.21" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="4" date_begin="2019-11-11T00:00:00" name="{MRI} Übersicht u/o Teilstück(e) der Wirbelsäule" quantity="1.0" code="39.5060" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" provider_id="2000000000000" responsible_id="2000000000000" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="0.00" unit_factor_mt="0.82" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="0.00" unit_tt="69.62" unit_factor_tt="0.82" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="57.09" amount="57.09" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="5" date_begin="2019-11-11T00:00:00" name="Technische Grundleistung 0, Magnetic Resonance Imaging ({MRI}), ambulanter Patient" quantity="1.0" code="39.5300" />
+      </invoice:services>
+    </invoice:body>
+  </invoice:payload>
+</invoice:request>

@@ -15,9 +15,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.slf4j.LoggerFactory;
 
 public class ResponseDialog extends Dialog {
@@ -25,7 +22,6 @@ public class ResponseDialog extends Dialog {
 	private String responseText;
 	private Label title;
 	private Browser browser;
-	private Hyperlink link;
 	
 	public ResponseDialog(String text, Shell shell){
 		super(shell);
@@ -47,29 +43,7 @@ public class ResponseDialog extends Dialog {
 			gd.heightHint = 600;
 			browser.setLayoutData(gd);
 			browser.setText(responseText);
-		} else {
-			title.setText("Daten erfolgreich übertragen.");
-			link = new Hyperlink(parent, SWT.NONE);
-			link.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			link.setText("medapp öffnen");
-			link.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-			link.addHyperlinkListener(new HyperlinkAdapter() {
-				@Override
-				public void linkActivated(HyperlinkEvent e){
-					try {
-						IWorkbenchBrowserSupport browserSupport =
-							PlatformUI.getWorkbench().getBrowserSupport();
-						IWebBrowser externalBrowser = browserSupport.getExternalBrowser();
-						externalBrowser.openURL(new URI("https://stage.medapp.ch/").toURL());
-						close();
-					} catch (Exception ex) {
-						LoggerFactory.getLogger(getClass()).error("Error open medapp url", ex);
-					}
-					
-				}
-			});
 		}
-
 		return parent;
 	}
 	
@@ -81,5 +55,18 @@ public class ResponseDialog extends Dialog {
 		data.exclude = true;
 		composite.setLayoutData(data);
 		return composite;
+	}
+	
+	public static void openMedapp(){
+		Display.getDefault().asyncExec(() -> {
+			try {
+				IWorkbenchBrowserSupport browserSupport =
+					PlatformUI.getWorkbench().getBrowserSupport();
+				IWebBrowser externalBrowser = browserSupport.getExternalBrowser();
+				externalBrowser.openURL(new URI("https://stage.medapp.ch/").toURL());
+			} catch (Exception ex) {
+				LoggerFactory.getLogger(ResponseDialog.class).error("Error open medapp url", ex);
+			}
+		});
 	}
 }

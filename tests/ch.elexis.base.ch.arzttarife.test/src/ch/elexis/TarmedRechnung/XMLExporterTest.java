@@ -16,6 +16,7 @@ import org.eclipse.ui.PlatformUI;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.output.Format;
@@ -29,6 +30,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.rgw.tools.Money;
@@ -432,6 +434,19 @@ public class XMLExporterTest {
 		assertEquals("1207.75", due);
 		amount = balance.getAttributeValue("amount");//$NON-NLS-1$
 		assertEquals("5217.76", amount);
+	}
+	
+	@Test
+	public void erroneous44_2Test() throws IOException, JDOMException{
+		XMLExporter exporter = new XMLExporter();
+		// error in sequence of invoice:tiers_garant
+		IInvoice dummyInvoice = CoreModelServiceHolder.get().create(IInvoice.class);
+		exporter.checkXML(TestData.loadXml("/rsc/erroneous44_2.xml"), null, dummyInvoice, true);
+		assertEquals(InvoiceState.DEFECTIVE, dummyInvoice.getState());
+		// no error in sequence of invoice:tiers_garant
+		dummyInvoice = CoreModelServiceHolder.get().create(IInvoice.class);
+		exporter.checkXML(TestData.loadXml("/rsc/noerroneous44_2.xml"), null, dummyInvoice, true);
+		assertTrue(dummyInvoice.getState() == null);
 	}
 	
 	@Test

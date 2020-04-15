@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -80,7 +81,15 @@ public class LabOrderAction extends Action {
 						new ResponseDialog(responseText, Display.getDefault().getActiveShell());
 					dialog.open();
 				} else {
-					ResponseDialog.openMedapp();
+					Header[] responseHeaders = response.getAllHeaders();
+					String location = "https://stage.medapp.ch/";
+					for (Header header : responseHeaders) {
+						if (header.getName().equalsIgnoreCase("location")
+							&& header.getValue().startsWith("http")) {
+							location = header.getValue();
+						}
+					}
+					ResponseDialog.openMedapp(location);
 				}
 			}
 		}

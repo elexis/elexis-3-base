@@ -57,13 +57,13 @@ public class ResponseDialog extends Dialog {
 		return composite;
 	}
 	
-	public static void openMedapp(){
+	public static void openMedapp(String location){
 		Display.getDefault().asyncExec(() -> {
 			try {
 				IWorkbenchBrowserSupport browserSupport =
 					PlatformUI.getWorkbench().getBrowserSupport();
 				IWebBrowser externalBrowser = browserSupport.getExternalBrowser();
-				externalBrowser.openURL(new URI("https://stage.medapp.ch/").toURL());
+				externalBrowser.openURL(new URI(location).toURL());
 			} catch (Exception ex) {
 				LoggerFactory.getLogger(ResponseDialog.class).error("Error open medapp url", ex);
 			}

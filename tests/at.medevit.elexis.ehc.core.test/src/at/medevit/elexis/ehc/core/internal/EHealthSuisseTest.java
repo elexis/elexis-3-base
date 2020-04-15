@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,13 @@ import org.ehealth_connector.common.mdht.enums.AdministrativeGender;
 import org.ehealth_connector.communication.AffinityDomain;
 import org.ehealth_connector.communication.ConvenienceMasterPatientIndexV3;
 import org.ehealth_connector.communication.Destination;
+import org.ehealth_connector.communication.ch.ConvenienceCommunicationCh;
+import org.ehealth_connector.communication.ch.enums.AvailabilityStatus;
+import org.ehealth_connector.communication.ch.xd.storedquery.FindDocumentsQuery;
 import org.junit.Test;
+import org.openhealthtools.ihe.xds.metadata.DocumentEntryType;
+import org.openhealthtools.ihe.xds.response.DocumentEntryResponseType;
+import org.openhealthtools.ihe.xds.response.XDSQueryResponseType;
 
 import ch.elexis.core.services.ISSLStoreService;
 import ch.elexis.core.utils.OsgiServiceUtil;
@@ -56,6 +63,17 @@ public class EHealthSuisseTest {
 	
 	public static final String PIX_RECV_ORG_OID = "1.3.6.1.4.1.12559.11.25.1.12";
 	
+	/**
+	 * 
+	 */
+	public static final String XDS_REGISTRY_URL =
+		"https://ehealthsuisse.ihe-europe.net:10443/xdstools7/sim/default__docsrc_support/reg/sq";
+	
+	public static final String XDS_REPOSITORY_URL =
+		"https://ehealthsuisse.ihe-europe.net:10443/xdstools7/sim/default__docsrc_support/rep";
+	
+	public static final String XDS_REPOSITORY_OID = "1.1.4567332.1.3";
+	
 	// use dummy sub id of ehc dev OID for now -> TODO get an Elexis OID
 	public static final String ORGANIZATIONAL_ID = "2.16.756.5.30.1.139.1.1.3.9999";
 	
@@ -88,17 +106,20 @@ public class EHealthSuisseTest {
 			pdqDestination.setReceiverApplicationOid(PIX_RECV_DEVICE_OID);
 			pdqDestination.setReceiverFacilityOid(PIX_RECV_ORG_OID);
 			
+			// TODO add XDS registry and repository if EPD-RU supports it
+			Destination xdsRegistryDestination =
+				new Destination(ORGANIZATIONAL_ID, new URI(XDS_REGISTRY_URL));
+			Destination xdsRepositoryDestination =
+				new Destination(ORGANIZATIONAL_ID, new URI(XDS_REPOSITORY_URL));
+			xdsRegistryDestination.setReceiverApplicationOid(XDS_REPOSITORY_OID);
+			xdsRegistryDestination.setReceiverFacilityOid(XDS_REPOSITORY_OID);
+			
 			affinityDomain = new AffinityDomain();
 			affinityDomain.setPdqDestination(pdqDestination);
 			affinityDomain.setPixDestination(pixDestination);
+			affinityDomain.setRegistryDestination(xdsRegistryDestination);
+			affinityDomain.addRepository(xdsRepositoryDestination);
 		}
-		// TODO add XDS registry and repository if EPD-RU supports it
-		//		Destination xdsRegistryDestination =
-		//			new Destination(ORGANIZATIONAL_ID, new URI(getXdsRegistryUrl()));
-		//		Destination xdsRepositoryDestination =
-		//			new Destination(ORGANIZATIONAL_ID, new URI(getXdsRepositoryUrl()));
-		//		xdsRegistryDestination.setReceiverApplicationOid(XDS_REPOSITORY_OID);
-		//		xdsRegistryDestination.setReceiverFacilityOid(XDS_REPOSITORY_OID);
 		
 		// TODO add ATNA if EPD-RU supports it
 		//		AtnaConfig atnaConfig = new AtnaConfig();
@@ -143,6 +164,36 @@ public class EHealthSuisseTest {
 			ORGANIZATIONAL_ID, domainToReturnOids, getAffinityDomain());
 		
 		assertNotNull(ids);
-		assertTrue(ids.size() > 0);
+		assertTrue(ids.size() == 1);
+	}
+	
+	@Test
+	public void xdsGetPatientDocumentEntryTypes() throws URISyntaxException{
+		Patient patient = getTestPatient();
+		
+		getAllPatientDocumentEntryTypes(patient);
+	}
+	
+	private List<DocumentEntryType> getAllPatientDocumentEntryTypes(
+		org.ehealth_connector.common.mdht.Patient ehcPatient) throws URISyntaxException{
+		List<DocumentEntryType> ret = new ArrayList<DocumentEntryType>();
+		List<Identificator> ids = ehcPatient.getIds();
+		if (ids != null && !ids.isEmpty()) {
+			FindDocumentsQuery fdq = new FindDocumentsQuery(ids.get(0), null, null, null, null,
+				null, null, null, AvailabilityStatus.APPROVED);
+			final ConvenienceCommunicationCh convComm =
+				new ConvenienceCommunicationCh(getAffinityDomain());
+			final XDSQueryResponseType regDocQuery = convComm.queryDocuments(fdq);
+			if (regDocQuery != null) {
+				final List<DocumentEntryResponseType> docEntrieResponses =
+					regDocQuery.getDocumentEntryResponses();
+				for (final DocumentEntryResponseType docEntryResponse : docEntrieResponses) {
+					final DocumentEntryType docEntry = docEntryResponse.getDocumentEntry();
+					ret.add(docEntry);
+				}
+			}
+			convComm.clearDocuments();
+		}
+		return ret;
 	}
 }

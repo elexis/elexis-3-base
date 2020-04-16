@@ -59,7 +59,7 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 	/**
 	 * Starts proposal change monitoring if not started already
 	 */
-	private void monitorProposalChanges(){
+	private void monitorProposalChanges(final Display display){
 		if (!startMonitoring) {
 			startMonitoring = true;
 			Objects.requireNonNull(adapter, "no adapter configured");
@@ -98,7 +98,7 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 								proposals.add(new IdentifiableContentProposal<T>(o.getLabel(), o));
 							}
 						}
-						Display.getDefault().syncExec(() -> {
+						display.syncExec(() -> {
 							// trigger call getProposals
 							Event event = new Event();
 							event.character = ' ';
@@ -126,7 +126,7 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 		if (contents == null || contents.length() < 1)
 			return null;
 		this.contents = contents;
-		monitorProposalChanges();
+		monitorProposalChanges(Display.getDefault());
 		return proposals.toArray(new ContentProposal[] {});
 	}
 	

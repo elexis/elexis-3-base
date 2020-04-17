@@ -233,7 +233,7 @@ public class SysmexAction extends Action implements ComPortListener {
 						selectedPatient = Patient.loadByPatientID(probe.getPatientId());
 						LoggerFactory.getLogger(getClass()).info("Found patient [" + selectedPatient
 							+ "] for id [" + probe.getPatientId() + "]");
-						if (selectedPatient == null) {
+						if (selectedPatient == null || !selectedPatient.exists()) {
 							Patient suggestedPatient = findSuggestedPatient(probe.getPatientId());
 							// only open selection dialog if there is a suggestion available
 							if (suggestedPatient != null) {
@@ -244,7 +244,7 @@ public class SysmexAction extends Action implements ComPortListener {
 							}
 						}
 						// case no patient selection could be made yet
-						if (selectedPatient == null) {
+						if (selectedPatient == null || !selectedPatient.exists()) {
 							KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(),
 								Patient.class, Messages.SysmexAction_Patient_Title,
 								Messages.SysmexAction_Patient_Text,
@@ -261,7 +261,7 @@ public class SysmexAction extends Action implements ComPortListener {
 						}
 					}
 				});
-				if (selectedPatient != null) {
+				if (selectedPatient != null && selectedPatient.exists()) {
 					try {
 						probe.write(selectedPatient);
 					} catch (PackageException e) {

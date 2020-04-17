@@ -231,8 +231,6 @@ public class SysmexAction extends Action implements ComPortListener {
 					public void run(){
 						// perform direct import if patient with matching patient id is found
 						selectedPatient = Patient.loadByPatientID(probe.getPatientId());
-						LoggerFactory.getLogger(getClass()).info("Found patient [" + selectedPatient
-							+ "] for id [" + probe.getPatientId() + "]");
 						if (selectedPatient == null || !selectedPatient.exists()) {
 							Patient suggestedPatient = findSuggestedPatient(probe.getPatientId());
 							// only open selection dialog if there is a suggestion available
@@ -258,6 +256,13 @@ public class SysmexAction extends Action implements ComPortListener {
 							} else {
 								selectedPatient = null;
 							}
+						}
+						if (selectedPatient == null || !selectedPatient.exists()) {
+							LoggerFactory.getLogger(getClass())
+								.info("No patient for id [" + probe.getPatientId() + "]");
+						} else {
+							LoggerFactory.getLogger(getClass()).info("Found patient ["
+								+ selectedPatient + "] for id [" + probe.getPatientId() + "]");
 						}
 					}
 				});

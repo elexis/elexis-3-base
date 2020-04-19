@@ -1,5 +1,7 @@
 package at.medevit.elexis.agenda.ui.dialog;
 
+import java.time.LocalDateTime;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -25,6 +27,7 @@ public class AppointmentDialog extends Dialog {
 	protected Control createContents(Composite parent){
 		if (appointment == null) {
 			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
+			appointment.setStartTime(LocalDateTime.now());
 		}
 		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
 		return super.createContents(parent);

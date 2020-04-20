@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -38,6 +41,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.model.agenda.Area;
@@ -46,6 +50,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 
 public class SideBarComposite extends Composite {
@@ -65,12 +70,16 @@ public class SideBarComposite extends Composite {
 	
 	private MoveInformation currentMoveInformation;
 	
+	@Inject
+	private IEventBroker eventBroker;
+	
 	public SideBarComposite(Composite parent, int style){
 		this(parent, false, style);
 	}
 	
 	public SideBarComposite(Composite parent, boolean includeMove, int style){
 		super(parent, style);
+		CoreUiUtil.injectServicesWithContext(this);
 		setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		setBackgroundMode(SWT.INHERIT_FORCE);
 		
@@ -393,7 +402,8 @@ public class SideBarComposite extends Composite {
 						public void run(){
 							if (sideBar != null && !sideBar.isDisposed()) {
 								sideBar.removeMovePeriod(iPeriod);
-								sideBar.agendaComposite.refetchEvents();
+								sideBar.eventBroker
+									.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 							}
 						}
 					});

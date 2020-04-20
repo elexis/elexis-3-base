@@ -18,9 +18,9 @@ import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
@@ -59,7 +59,7 @@ public class AppointmentDetailComposite extends Composite {
 	private Text txtReason;
 	private Text txtPatSearch;
 	private DayOverViewComposite dayBar;
-	private ListViewer lTerminListe;
+	private TableViewer appointmentsViewer;
 	private Label lblContact;
 	
 	SelectionAdapter dateTimeSelectionAdapter = new SelectionAdapter() {
@@ -165,11 +165,13 @@ public class AppointmentDetailComposite extends Composite {
 		compContentMiddle.setLayout(new GridLayout(4, false));
 		compContentMiddle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 7, 1));
 		
-		lTerminListe = new ListViewer(compContentMiddle,
+		appointmentsViewer = new TableViewer(
+			compContentMiddle,
 			SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
-		lTerminListe.getControl()
-			.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 3));
-		lTerminListe.addSelectionChangedListener(new ISelectionChangedListener() {
+		GridData listGd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 3);
+		listGd.heightHint = 200;
+		appointmentsViewer.getControl().setLayoutData(listGd);
+		appointmentsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			
 			@Override
 			public void selectionChanged(SelectionChangedEvent event){
@@ -180,8 +182,8 @@ public class AppointmentDetailComposite extends Composite {
 				}
 			}
 		});
-		lTerminListe.setContentProvider(ArrayContentProvider.getInstance());
-		lTerminListe.setLabelProvider(new LabelProvider() {
+		appointmentsViewer.setContentProvider(ArrayContentProvider.getInstance());
+		appointmentsViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element){
 				return ((IAppointment) element).getLabel();
@@ -198,7 +200,7 @@ public class AppointmentDetailComposite extends Composite {
 				// same handling as legacy implementation
 				if (appointment.getSubjectOrPatient() == null
 					|| appointment.getSubjectOrPatient().isEmpty()) {
-					lTerminListe.add(appointment);
+					appointmentsViewer.add(appointment);
 				}
 			}
 		});
@@ -208,7 +210,7 @@ public class AppointmentDetailComposite extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				CoreModelServiceHolder.get().delete(appointment);
-				lTerminListe.remove(appointment);
+				appointmentsViewer.remove(appointment);
 				cloneAndReloadAppointment();
 			}
 		});
@@ -249,7 +251,6 @@ public class AppointmentDetailComposite extends Composite {
 				
 				dayBar.set();
 				dayBar.redraw();
-				
 			}
 		});
 		
@@ -347,11 +348,13 @@ public class AppointmentDetailComposite extends Composite {
 		getAppointmentContact().ifPresent(i -> {
 			IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
 			query.and("patId", COMPARATOR.EQUALS, i.getId());
-			lTerminListe.setInput(query.execute().stream()
-				.sorted(Comparator.comparing(a -> a.getStartTime())).collect(Collectors.toList()));
-			if (appointment != null
-				&& !appointment.equals(lTerminListe.getStructuredSelection().getFirstElement())) {
-				lTerminListe.setSelection(new StructuredSelection(appointment));
+			appointmentsViewer.setInput(query.execute().stream()
+				.sorted(Comparator.comparing(IAppointment::getStartTime)
+					.reversed())
+				.collect(Collectors.toList()));
+			if (appointment != null && !appointment
+				.equals(appointmentsViewer.getStructuredSelection().getFirstElement())) {
+				appointmentsViewer.setSelection(new StructuredSelection(appointment));
 			}
 		});
 	}

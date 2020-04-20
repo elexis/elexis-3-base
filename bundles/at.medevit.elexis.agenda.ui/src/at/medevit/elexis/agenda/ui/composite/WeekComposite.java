@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,20 +106,21 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 			@Override
 			public void changed(ProgressEvent event){
 				if (event.current == 0 && event.total == 0) {
-					String dayStartsAt =
-						ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung",
-							"0000");
-					String dayEndsAt =
-						ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359");
-					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
-					
-					if (currentSpanSize != null) {
-						setSelectedSpanSize(currentSpanSize);
-					}
-					
-					getConfiguredFontSize().ifPresent(size -> {
-						setFontSize(size);
-						getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
+					Display.getDefault().timerExec(250, () -> {
+						String dayStartsAt = ConfigServiceHolder.get()
+							.get("agenda/beginnStundeTagesdarstellung", "0000");
+						String dayEndsAt = ConfigServiceHolder.get()
+							.get("agenda/endStundeTagesdarstellung", "2359");
+						scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
+						
+						if (currentSpanSize != null) {
+							setSelectedSpanSize(currentSpanSize);
+						}
+						
+						getConfiguredFontSize().ifPresent(size -> {
+							setFontSize(size);
+							getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
+						});
 					});
 				}
 			}

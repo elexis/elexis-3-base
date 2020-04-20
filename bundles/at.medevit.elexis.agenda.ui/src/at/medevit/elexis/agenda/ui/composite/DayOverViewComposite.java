@@ -111,7 +111,7 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 		slider = new Slider(this);
 	}
 	
-	public void reloadAppointment(IAppointment appointment){
+	public void setAppointment(IAppointment appointment){
 		this.appointment = appointment;
 	}
 	
@@ -125,32 +125,34 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 		tagStart = ts * 60;
 		tagEnd = te * 60;
 		int i = 0;
-		IAppointment pi = list.get(i);
-		// Tagesanzeige ca. eine halbe Stunde vor dem ersten reservierten
-		// Zeitraum anfangen
-		if (isTerminTypeIsReserviert(pi)) {
-			tagStart = pi.getDurationMinutes() < 31 ? 0 : pi.getDurationMinutes() - 30;
-		} else {
-			tagStart = 0;
+		if (!list.isEmpty()) {
+			IAppointment pi = list.get(i);
+			// Tagesanzeige ca. eine halbe Stunde vor dem ersten reservierten
+			// Zeitraum anfangen
+			if (isTerminTypeIsReserviert(pi)) {
+				tagStart = pi.getDurationMinutes() < 31 ? 0 : pi.getDurationMinutes() - 30;
+			} else {
+				tagStart = 0;
+			}
+			i = list.size() - 1;
+			pi = list.get(i);
+			
+			int end = getStartMinute(pi) + pi.getDurationMinutes();
+			if (end < 1408) {
+				tagEnd = 1439;
+			}
+			
+			if (tagStart != 0) {
+				tagStart = tagStart / 60 * 60;
+			}
+			if (tagEnd < 1439) {
+				tagEnd = (tagEnd + 30) / 60 * 60;
+			}
+			minutes = tagEnd - tagStart;
+			d = this.getSize();
+			pixelPerMinute = d.x / minutes;
+			sep = d.y / 2;
 		}
-		i = list.size() - 1;
-		pi = list.get(i);
-		
-		int end = getStartMinute(pi) + pi.getDurationMinutes();
-		if (end < 1408) {
-			tagEnd = 1439;
-		}
-		
-		if (tagStart != 0) {
-			tagStart = tagStart / 60 * 60;
-		}
-		if (tagEnd < 1439) {
-			tagEnd = (tagEnd + 30) / 60 * 60;
-		}
-		minutes = tagEnd - tagStart;
-		d = this.getSize();
-		pixelPerMinute = d.x / minutes;
-		sep = d.y / 2;
 	}
 	
 	@Override
@@ -234,7 +236,7 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 			setBounds(x, 0, w, r.height / 2);
 			setTimeTo(v + d);
 			bModified = true;
-			setEnablement();
+			updateCollision();
 		}
 		
 		public void mouseDoubleClick(final MouseEvent e){}
@@ -277,8 +279,20 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 		if (slider != null) {
 			recalc();
 			slider.set();
+			updateCollision();
+			redraw();
+			this.getParent().layout();
 		}
 		
+	}
+	
+	public void refresh(){
+		if (slider != null) {
+			recalc();
+			updateCollision();
+			redraw();
+			this.getParent().layout();
+		}
 	}
 	
 	public void setCollisionErrorLevel(CollisionErrorLevel level){
@@ -325,29 +339,8 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 			Date.from(appointment.getStartTime().atZone(ZoneId.systemDefault()).toInstant()));
 	}
 	
-	private void setEnablement(){
-		if (isTerminTypeIsFree(appointment)) {
-			if (isAppointmentOverlapping() || IsAppontmentCollidating()) {
-				enable(false);
-			} else {
-				enable(true);
-			}
-		} else {
-			if (IsAppontmentCollidating()) {
-				enable(false);
-			} else {
-				if (bModified) {
-					if (isAppointmentOverlapping()) {
-						enable(false);
-						return;
-					}
-					enable(true);
-				} else {
-					enable(false);
-				}
-			}
-		}
-		
+	private void updateCollision(){
+		updateMessage(isColliding());
 	}
 	
 	private void loadCurrentAppointments(){
@@ -369,17 +362,23 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 			.collect(Collectors.toList());
 	}
 	
-	private boolean isAppointmentOverlapping(){
-		// checks if the given appointment overlaps with any other appointment of this patient
-		//TODO check against db why ?
+	private boolean isColliding(){
+		for (IAppointment iAppointment : list) {
+			if (!iAppointment.getId().equals(appointment.getId())) {
+				if (isOverlapping(appointment.getStartTime(), appointment.getEndTime(),
+					iAppointment.getStartTime(), iAppointment.getEndTime())) {
+					System.out.println(
+						"Collide " + appointment.getLabel() + " with " + iAppointment.getLabel());
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	
-	private boolean IsAppontmentCollidating(){
-		//@REF Plannables#collides
-		return list.stream().filter(i -> !i.getId().equals(appointment.getId()))
-			.anyMatch(b -> b.getStartTime().isBefore(appointment.getEndTime())
-				&& b.getEndTime().isAfter(appointment.getStartTime()));
+	private boolean isOverlapping(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2,
+		LocalDateTime end2){
+		return start1.isBefore(end2) && start2.isBefore(end1);
 	}
 	
 	private int getRasterStartTime(){
@@ -419,37 +418,26 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 			.set(c, "agenda/dayView/raster", String.valueOf(rasterIndex)));
 	}
 	
-	private void enable(final boolean mode){
+	private void updateMessage(final boolean collision){
 		msg = "Termin(e) bearbeiten bzw. neu einsetzen";
-		if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
-			disableControlsOnError(mode);
-		}
 		
 		slider.setBackground(getColor(SWT.COLOR_GRAY)); //$NON-NLS-1$ //TODO LIGHTGREY
 		
-		if (!mode) {
+		if (collision) {
 			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY)); //$NON-NLS-1$
-			msg += "\n\t" + " - Termin kollision!";
+			msg += "\t" + " - Termin kollision!";
 		}
 		
 		getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run(){
 				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
-					setMessage(msg, mode ? IMessageProvider.NONE : IMessageProvider.ERROR);
+					setMessage(msg, collision ? IMessageProvider.ERROR : IMessageProvider.NONE);
 				} else if (collisionErrorLevel == CollisionErrorLevel.WARNING) {
-					setMessage(msg, mode ? IMessageProvider.NONE : IMessageProvider.WARNING);
+					setMessage(msg, collision ? IMessageProvider.WARNING : IMessageProvider.NONE);
 				}
 			}
-			
 		});
-	}
-	
-	private void disableControlsOnError(boolean mode){
-		// TODO Auto-generated method stub
-		//		bChange.setEnabled(mode);
-		//		bSave.setEnabled(mode);
-		//		getOKButton(IDialogConstants.OK_ID).setEnabled(mode);
 	}
 	
 	private void setMessage(String msg, int i){

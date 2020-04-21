@@ -40,7 +40,6 @@ public class AppointmentDialog extends Dialog {
 		}
 		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
 		return super.createContents(parent);
-		
 	}
 	
 	@Override

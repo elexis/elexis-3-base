@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -35,11 +37,13 @@ import org.eclipse.swt.widgets.Spinner;
 
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
@@ -48,6 +52,9 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 	public enum CollisionErrorLevel {
 			ERROR, WARNING
 	}
+	
+	@Inject
+	private IAppointmentService appointmentService;
 	
 	private CDateTime txtTimeFrom;
 	private CDateTime txtTimeTo;
@@ -80,10 +87,11 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 	
 	private CollisionErrorLevel collisionErrorLevel = CollisionErrorLevel.ERROR;
 	
-	DayOverViewComposite(final Group parent, IAppointment appointment,
+	public DayOverViewComposite(final Group parent, IAppointment appointment,
 		CDateTime txtTimeFrom,
 		CDateTime txtTimeTo, Spinner txtDuration){
 		super(parent, SWT.NONE);
+		CoreUiUtil.injectServicesWithContext(this);
 		this.parent = parent;
 		
 		this.appointment = appointment;
@@ -356,7 +364,11 @@ public class DayOverViewComposite extends Composite implements PaintListener {
 		query.and(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS,
 			appointment.getSchedule());
 		list = query.execute();
-		
+		if (list.isEmpty()) {
+			appointmentService.updateBoundaries(appointment.getSchedule(),
+				appointment.getStartTime().toLocalDate());
+			list = query.execute();
+		}
 		list = list.stream()
 			.sorted(Comparator.comparing(a -> a.getStartTime()))
 			.collect(Collectors.toList());

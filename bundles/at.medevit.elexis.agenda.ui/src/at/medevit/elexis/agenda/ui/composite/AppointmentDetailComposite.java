@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,10 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -70,6 +75,8 @@ public class AppointmentDetailComposite extends Composite {
 	private Spinner txtDuration;
 	private CDateTime txtTimeTo;
 	
+	private Composite compContext;
+	private Text txtContact;
 	private CDateTime pickerContext;
 	
 	private Combo comboArea;
@@ -79,7 +86,6 @@ public class AppointmentDetailComposite extends Composite {
 	private Text txtPatSearch;
 	private DayOverViewComposite dayBar;
 	private TableViewer appointmentsViewer;
-	private Text txtContact;
 	
 	SelectionAdapter dateTimeSelectionAdapter = new SelectionAdapter() {
 		@Override
@@ -105,8 +111,6 @@ public class AppointmentDetailComposite extends Composite {
 			dayBar.set();
 		}
 	};
-	
-	private Composite compContext;
 	
 	public AppointmentDetailComposite(Composite parent, int style, IAppointment appointment){
 		super(parent, style);
@@ -140,7 +144,8 @@ public class AppointmentDetailComposite extends Composite {
 				return txtPatSearch;
 			}
 		};
-		txtPatSearch.setData(appointment.getContact());
+		txtPatSearch
+			.setData(reloadAsPatient(Optional.ofNullable(appointment.getContact())).orElse(null));
 		ControlDecoration controlDecoration =
 			new ControlDecoration(txtPatSearch, SWT.LEFT | SWT.TOP);
 		controlDecoration.setDescriptionText(
@@ -149,6 +154,14 @@ public class AppointmentDetailComposite extends Composite {
 			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION);
 		controlDecoration.setImage(fieldDecoration.getImage());
 		controlDecoration.show();
+		controlDecoration.setShowHover(true);
+		txtPatSearch.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e){
+				controlDecoration.showHoverText(
+					"Kontakt Suche nach Vorname, Nachname, Geburtsdatum, PatientNr\noder Freitext Eingabe für Termine ohne Kontakt");
+			}
+		});
 		
 		ContentProposalAdapter cppa =
 			new ContentProposalAdapter(txtPatSearch, new TextContentAdapter(), aopp, null, null);
@@ -165,6 +178,15 @@ public class AppointmentDetailComposite extends Composite {
 				txtPatSearch.setData(prop.getIdentifiable());
 				appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
 				refreshPatientModel();
+			}
+		});
+		txtPatSearch.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e){
+				reloadContactLabel();
+				if (!txtDataIsMatchingContact()) {
+					appointmentsViewer.setInput(Collections.emptyList());
+				}
 			}
 		});
 		
@@ -322,6 +344,15 @@ public class AppointmentDetailComposite extends Composite {
 		refreshPatientModel();
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Optional<IContact> reloadAsPatient(Optional<IContact> contact){
+		if (contact.isPresent() && contact.get().isPatient()) {
+			return (Optional<IContact>) (Optional<?>) CoreModelServiceHolder.get()
+				.load(contact.get().getId(), IPatient.class);
+		}
+		return contact;
+	}
+	
 	private void reloadAppointment(IAppointment appointment){
 		this.appointment = appointment;
 		loadFromModel();
@@ -338,8 +369,9 @@ public class AppointmentDetailComposite extends Composite {
 	}
 	
 	private void reloadContactLabel(){
-		Optional<IContact> c = getAppointmentContact();
-		if (c.isPresent()) {
+		Optional<IContact> c = reloadAsPatient(getAppointmentContact());
+		String currentSearchText = txtPatSearch.getText();
+		if (c.isPresent() && c.get().getLabel().equals(currentSearchText)) {
 			StringBuilder b = new StringBuilder();
 			b.append(c.get().getDescription1());
 			b.append(" ");
@@ -368,7 +400,11 @@ public class AppointmentDetailComposite extends Composite {
 				.map(i -> "\n" + i).orElse(""));
 			txtContact.setText(b.toString());
 		} else {
-			txtContact.setText("Kein Patient\nausgewählt!");
+			if (!c.isPresent() && StringUtils.isBlank(currentSearchText)) {
+				txtContact.setText("Kein Patient\nausgewählt!");
+			} else {
+				txtContact.setText("Freitext\n" + currentSearchText);
+			}
 		}
 	}
 	
@@ -536,12 +572,17 @@ public class AppointmentDetailComposite extends Composite {
 		appointment.setSchedule(comboArea.getText());
 		
 		appointment.setReason(txtReason.getText());
-		if (txtPatSearch.getData() instanceof IContact) {
+		if (txtDataIsMatchingContact()) {
 			appointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
 		} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
 			appointment.setSubjectOrPatient(txtPatSearch.getText());
 		}
 		return appointment;
+	}
+	
+	private boolean txtDataIsMatchingContact(){
+		return txtPatSearch.getData() instanceof IContact
+			&& ((IContact) txtPatSearch.getData()).getLabel().equals(txtPatSearch.getText());
 	}
 	
 	private void cloneAndReloadAppointment(){

@@ -150,9 +150,9 @@ public class Event {
 			if (ret.title.isEmpty()) {
 				ret.title = " ";
 			}
-			ret.description = termin.getReason().replaceAll("\n", "<br />") + "<br /><br />"
-				+ termin.getStateHistoryFormatted("dd.MM.yyyyy hh:mm:ss").replaceAll("\n",
-					"<br />");
+			ret.description =
+				termin.getReason().replaceAll("\n", "<br />") + "<br /><br />" + termin
+					.getStateHistoryFormatted("dd.MM.yyyyy HH:mm:ss").replaceAll("\n", "<br />");
 			ret.borderColor = getStateColor(iPeriod);
 			ret.backgroundColor = getTypColor(iPeriod);
 			ret.textColor = getTextColor(ret.backgroundColor.substring(1));

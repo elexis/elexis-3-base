@@ -28,7 +28,7 @@ public class SingleClickFunction extends BrowserFunction {
 				selectionProvider.setSelection(new StructuredSelection(termin));
 			}
 			IContact contact = termin.getContact();
-			if (contact.isPatient()) {
+			if (contact != null && contact.isPatient()) {
 				ContextServiceHolder.get().setActivePatient(
 					CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
 			}

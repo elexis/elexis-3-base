@@ -115,7 +115,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		browser.addProgressListener(new ProgressListener() {
 			@Override
 			public void changed(ProgressEvent event){
-				if (event.current == 0 && event.total == 0) {
+				if (event.current == event.total) {
 					Display.getDefault().timerExec(250, () -> {
 						String dayStartsAt = ConfigServiceHolder.get()
 							.get("agenda/beginnStundeTagesdarstellung", "0000");
@@ -124,6 +124,8 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 						scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
 						
 						initializeResources();
+						loadEventsFunction.setResources(selectedResources);
+						dayClickFunction.setSelectedResources(selectedResources);
 						if (currentSpanSize != null) {
 							setSelectedSpanSize(currentSpanSize);
 						}

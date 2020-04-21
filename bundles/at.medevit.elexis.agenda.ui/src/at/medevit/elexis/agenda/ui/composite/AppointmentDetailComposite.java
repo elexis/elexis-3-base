@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -7,11 +8,18 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalListener;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
@@ -39,15 +47,20 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 
 public class AppointmentDetailComposite extends Composite {
 	
 	private IAppointment appointment;
+	
+	@Inject
+	private IAppointmentService appointmentService;
 	
 	private CDateTime txtDateFrom;
 	private CDateTime txtDateFromDrop;
@@ -97,6 +110,7 @@ public class AppointmentDetailComposite extends Composite {
 	
 	public AppointmentDetailComposite(Composite parent, int style, IAppointment appointment){
 		super(parent, style);
+		CoreUiUtil.injectServicesWithContext(this);
 		this.appointment = appointment;
 		setLayout(new GridLayout(2, false));
 		setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -113,7 +127,7 @@ public class AppointmentDetailComposite extends Composite {
 		new Label(container, SWT.NULL).setText("Suche");
 		txtPatSearch = new Text(container, SWT.SEARCH | SWT.ICON_SEARCH);
 		txtPatSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		txtPatSearch.setMessage(" Vorname, Nachname, Geburtsdatum, PatientNr ");
+		txtPatSearch.setMessage("Vorname, Nachname, Geburtsdatum, PatientNr, oder Freitext");
 		AsyncContentProposalProvider<IPatient> aopp = new AsyncContentProposalProvider<IPatient>(
 			"description1", "description2", "dob", "code") {
 			@Override
@@ -126,6 +140,15 @@ public class AppointmentDetailComposite extends Composite {
 				return txtPatSearch;
 			}
 		};
+		txtPatSearch.setData(appointment.getContact());
+		ControlDecoration controlDecoration =
+			new ControlDecoration(txtPatSearch, SWT.LEFT | SWT.TOP);
+		controlDecoration.setDescriptionText(
+			"Kontakt Suche nach Vorname, Nachname, Geburtsdatum, PatientNr\noder Freitext Eingabe für Termine ohne Kontakt");
+		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
+			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION);
+		controlDecoration.setImage(fieldDecoration.getImage());
+		controlDecoration.show();
 		
 		ContentProposalAdapter cppa =
 			new ContentProposalAdapter(txtPatSearch, new TextContentAdapter(), aopp, null, null);
@@ -175,13 +198,14 @@ public class AppointmentDetailComposite extends Composite {
 			}
 		});
 		
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		gd.verticalIndent = 15;
 		Composite compDateArea = createUIDateAreaContents(gd, container);
 		
-		Composite compContentMiddle = new Composite(compDateArea, SWT.BORDER);
+		Group compContentMiddle = new Group(compDateArea, SWT.BORDER);
 		compContentMiddle.setLayout(new GridLayout(4, false));
-		compContentMiddle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 7, 1));
+		compContentMiddle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+		compContentMiddle.setText("Geplante Termine des Patienten");
 		
 		appointmentsViewer = new TableViewer(
 			compContentMiddle,
@@ -217,7 +241,7 @@ public class AppointmentDetailComposite extends Composite {
 				// same handling as legacy implementation
 				if (appointment.getSubjectOrPatient() == null
 					|| appointment.getSubjectOrPatient().isEmpty()) {
-					appointmentsViewer.add(appointment);
+					loadAppointmentsForPatient();
 				}
 			}
 		});
@@ -257,14 +281,13 @@ public class AppointmentDetailComposite extends Composite {
 				toggleVisiblityComposite(compContentMiddle);
 				toggleVisiblityComposite(compTimeSelektor);
 				getParent().pack();
-				
+				refreshPatientModel();
 				dayBar.refresh();
 			}
 		});
 		
 		Composite compTypeReason = new Composite(container, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1);
-		gd.verticalIndent = 10;
 		compTypeReason.setLayoutData(gd);
 		compTypeReason.setLayout(new GridLayout(2, false));
 		
@@ -275,19 +298,20 @@ public class AppointmentDetailComposite extends Composite {
 		lblReason.setText("Grund");
 		
 		comboType = new Combo(compTypeReason, SWT.DROP_DOWN);
-		comboType.setItems(ConfigServiceHolder.get().get("agenda/TerminTypen", "").split(",")); //TODO case find noting
+		comboType.setItems(appointmentService.getTypes()
+			.toArray(new String[appointmentService.getTypes().size()]));
 		
 		gd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd.widthHint = 80;
 		comboType.setLayoutData(gd);
 		
 		txtReason = new Text(compTypeReason, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3);
-		gd.heightHint = 100;
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2);
 		txtReason.setLayoutData(gd);
 		
 		comboStatus = new Combo(compTypeReason, SWT.DROP_DOWN);
-		comboStatus.setItems(ConfigServiceHolder.get().get("agenda/TerminStatus", "").split(",")); //TODO case find noting
+		comboStatus.setItems(appointmentService.getStates()
+			.toArray(new String[appointmentService.getStates().size()]));
 		
 		toggleVisiblityComposite(txtDateFromDrop);
 		toggleVisiblityComposite(compContext);
@@ -353,13 +377,15 @@ public class AppointmentDetailComposite extends Composite {
 	}
 	
 	private void loadAppointmentsForPatient(){
-		getAppointmentContact().ifPresent(i -> {
+		getAppointmentContact().ifPresent(contact -> {
 			IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
-			query.and("patId", COMPARATOR.EQUALS, i.getId());
-			appointmentsViewer.setInput(query.execute().stream()
-				.sorted(Comparator.comparing(IAppointment::getStartTime)
-					.reversed())
-				.collect(Collectors.toList()));
+			query.and("patId", COMPARATOR.EQUALS, contact.getId());
+			query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now());
+			List<IAppointment> input = query.execute().stream()
+					.sorted(Comparator.comparing(IAppointment::getStartTime)
+						.reversed())
+				.collect(Collectors.toList());
+			appointmentsViewer.setInput(input);
 			if (appointment != null && !appointment
 				.equals(appointmentsViewer.getStructuredSelection().getFirstElement())) {
 				appointmentsViewer.setSelection(new StructuredSelection(appointment));
@@ -398,14 +424,14 @@ public class AppointmentDetailComposite extends Composite {
 		txtDateFromDrop =
 			new CDateTime(
 			compDateTime,
-			CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
+				CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
 		txtDateFromDrop.setPattern("EEE, dd.MM.yyyy ");
 		txtDateFromDrop.setLayoutData(new GridData());
 		txtDateFromDrop.addSelectionListener(dateTimeSelectionAdapter);
 		txtDateFromDrop.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				setToModel();
+				setCompTimeToModel();
 				dayBar.refresh();
 			}
 		});
@@ -417,7 +443,7 @@ public class AppointmentDetailComposite extends Composite {
 		txtDateFromNoDrop.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				setToModel();
+				setCompTimeToModel();
 				dayBar.refresh();
 			}
 		});
@@ -462,7 +488,7 @@ public class AppointmentDetailComposite extends Composite {
 				}
 			}
 		});
-		return compTime;
+		return compDateTime;
 	}
 	
 	private void loadCompTimeFromModel(){
@@ -510,10 +536,11 @@ public class AppointmentDetailComposite extends Composite {
 		appointment.setSchedule(comboArea.getText());
 		
 		appointment.setReason(txtReason.getText());
-		if (txtPatSearch.getData() instanceof IPatient) {
-			appointment.setSubjectOrPatient(((IPatient) txtPatSearch.getData()).getId());
+		if (txtPatSearch.getData() instanceof IContact) {
+			appointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
+		} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
+			appointment.setSubjectOrPatient(txtPatSearch.getText());
 		}
-		
 		return appointment;
 	}
 	

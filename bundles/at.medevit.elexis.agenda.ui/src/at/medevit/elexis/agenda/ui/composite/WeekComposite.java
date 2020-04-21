@@ -105,7 +105,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		browser.addProgressListener(new ProgressListener() {
 			@Override
 			public void changed(ProgressEvent event){
-				if (event.current == 0 && event.total == 0) {
+				if (event.current == event.total) {
 					Display.getDefault().timerExec(250, () -> {
 						String dayStartsAt = ConfigServiceHolder.get()
 							.get("agenda/beginnStundeTagesdarstellung", "0000");

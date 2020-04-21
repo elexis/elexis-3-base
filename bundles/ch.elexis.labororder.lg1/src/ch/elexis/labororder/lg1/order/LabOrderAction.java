@@ -63,7 +63,7 @@ public class LabOrderAction extends Action {
 		HttpPost httppost = new HttpPost("https://ms2.medapp.ch/rest/lg1/v1/call-medapp/");
 
 		// Request parameters and other properties.
-		List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+		List<NameValuePair> params = new ArrayList<>(3);
 		params.add(new BasicNameValuePair("appkey", getAppkey()));
 		params.add(new BasicNameValuePair("service", "orderentry"));
 		params.add(new BasicNameValuePair("data", getData(patient)));
@@ -71,6 +71,9 @@ public class LabOrderAction extends Action {
 		
 		//Execute and get the response.
 		HttpResponse response = httpclient.execute(httppost);
+		LoggerFactory.getLogger(getClass()).info("Got response code ["
+			+ response.getStatusLine().getStatusCode() + "] from [" + httppost.getURI().toString()
+			+ "]");
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {
 			try (InputStream instream = entity.getContent()) {
@@ -81,7 +84,7 @@ public class LabOrderAction extends Action {
 					dialog.open();
 				} else {
 					Header[] responseHeaders = response.getAllHeaders();
-					String location = "https://stage.medapp.ch/";
+					String location = "https://medapp.ch/";
 					for (Header header : responseHeaders) {
 						if (header.getName().equalsIgnoreCase("location")
 							&& header.getValue().startsWith("http")) {

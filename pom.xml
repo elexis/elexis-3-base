@@ -19,7 +19,7 @@
     </repository>
   </repositories>
   <properties>
-    <tycho.version>1.6.0</tycho.version>
+    <tycho.version>1.7.0</tycho.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tycho-groupid>org.eclipse.tycho</tycho-groupid>
     <git.target.branch>master</git.target.branch>
@@ -202,11 +202,6 @@ if ( System.getProperty("git_branch") == null ) {
               <os>linux</os>
               <ws>gtk</ws>
               <arch>x86_64</arch>
-            </environment>
-            <environment>
-              <os>win32</os>
-              <ws>win32</ws>
-              <arch>x86</arch>
             </environment>
             <environment>
               <os>win32</os>

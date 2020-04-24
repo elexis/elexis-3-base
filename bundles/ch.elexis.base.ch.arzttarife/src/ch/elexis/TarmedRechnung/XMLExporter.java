@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -633,11 +634,16 @@ public class XMLExporter implements IRnOutputter {
 		if (tiersGarant != null && actFall.getPatient() != null) {
 			Element patientUpdate = buildPatient(actFall.getPatient());
 			if (patientUpdate != null) {
-				List<Element> existing = new ArrayList<>(tiersGarant.getChildren("patient", XMLExporter.nsinvoice));
-				for (Element element : existing) {
-					tiersGarant.removeContent(element);
+				List<Object> tiersChildren = tiersGarant.getChildren();
+				// remove existing patient children
+				ListIterator<Object> iterator = tiersChildren.listIterator();
+				while (iterator.hasNext()) {
+					Object obj = (Object) iterator.next();
+					if (obj instanceof Element && "patient".equals(((Element) obj).getName())) {
+						iterator.remove();
+					}
 				}
-				tiersGarant.addContent(patientUpdate);
+				tiersChildren.add(getPatientIndex(tiersChildren), patientUpdate);
 			}
 		}
 
@@ -647,12 +653,16 @@ public class XMLExporter implements IRnOutputter {
 			if (guarantorContact != null) {
 				Element guarantorUpdate = buildGuarantor(guarantorContact, actPatient);
 				if (guarantorUpdate != null) {
-					List<Element> existing = new ArrayList<>(
-							tiersGarant.getChildren("guarantor", XMLExporter.nsinvoice));
-					for (Element element : existing) {
-						tiersGarant.removeContent(element);
+					List<Object> tiersChildren = tiersGarant.getChildren();
+					// remove existing guarantor children
+					ListIterator<Object> iterator = tiersChildren.listIterator();
+					while (iterator.hasNext()) {
+						Object obj = (Object) iterator.next();
+						if (obj instanceof Element && "guarantor".equals(((Element) obj).getName())) {
+							iterator.remove();
+						}
 					}
-					tiersGarant.addContent(guarantorUpdate);
+					tiersChildren.add(getGuarantorIndex(tiersChildren), guarantorUpdate);
 				}
 			}
 		}
@@ -684,6 +694,33 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
+	private int getGuarantorIndex(List<Object> tiersChildren) {
+		int index = 0;
+		for (Object object : tiersChildren) {
+			if (object instanceof Element) {
+				String name = ((Element) object).getName();
+				if ("biller".equals(name) || "provider".equals(name) || "insurance".equals(name)
+						|| "patient".equals(name) || "insured".equals(name)) {
+					index++;
+				}
+			}
+		}
+		return index;
+	}
+
+	private int getPatientIndex(List<Object> tiersChildren) {
+		int index = 0;
+		for (Object object : tiersChildren) {
+			if (object instanceof Element) {
+				String name = ((Element) object).getName();
+				if ("biller".equals(name) || "provider".equals(name) || "insurance".equals(name)) {
+					index++;
+				}
+			}
+		}
+		return index;
+	}
+
 	private void tryToFixPrepaid(XMLExporterBalance xmlBalance, Money mPaid){
 		if (!xmlBalance.hasPrepaid()) {
 			xmlBalance.setPrepaid(mPaid);

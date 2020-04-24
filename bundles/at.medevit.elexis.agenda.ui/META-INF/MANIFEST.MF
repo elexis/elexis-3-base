@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core.services,
  org.eclipse.e4.ui.model.workbench;bundle-version="2.1.100.v20180904-1914",
  ch.elexis.core.ui.e4;bundle-version="1.0.0",
- org.eclipse.equinox.http.registry;bundle-version="1.1.600";resolution:=optional
+ org.eclipse.equinox.http.registry;bundle-version="1.1.600";resolution:=optional,
+ org.eclipse.e4.core.services;bundle-version="2.1.200"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Multi-Release: true
 Import-Package: ch.elexis.core.common,
@@ -31,7 +32,6 @@ Import-Package: ch.elexis.core.common,
  org.eclipse.e4.core.commands,
  org.eclipse.e4.core.contexts;version="1.7.0",
  org.eclipse.e4.core.di.annotations;version="1.6.0",
- org.eclipse.e4.core.services.events,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.services,
  org.eclipse.e4.ui.workbench.modeling,

@@ -25,11 +25,14 @@ import com.google.gson.GsonBuilder;
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.model.Event;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class LoadEventsFunction extends AbstractBrowserFunction {
@@ -69,7 +72,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			return jsonString;
 		}
 		
-		public boolean updateWith(List<IPeriod> changedPeriods){
+		public boolean updateWith(List<IPeriod> changedPeriods, IContact userContact){
 			boolean updated = false;
 			for (IPeriod iPeriod : changedPeriods) {
 				if (eventsMap.containsKey(iPeriod.getId())) {
@@ -79,13 +82,13 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 						eventsMap.remove(iPeriod.getId());
 					} else {
 						// updated still inside timespan
-						Event event = Event.of(iPeriod);
+						Event event = Event.of(iPeriod, userContact);
 						eventsMap.put(event.getId(), event);
 					}
 					updated = true;
 				} else if (timespan.contains(iPeriod)) {
 					// new or moved into timespan
-					Event event = Event.of(iPeriod);
+					Event event = Event.of(iPeriod, userContact);
 					eventsMap.put(event.getId(), event);
 					updated = true;
 				}
@@ -100,10 +103,12 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	private class TimeSpan {
 		private LocalDate startDate;
 		private LocalDate endDate;
+		private IContact userContact;
 		
-		public TimeSpan(LocalDate startDate, LocalDate endDate){
+		public TimeSpan(LocalDate startDate, LocalDate endDate, IContact userContact){
 			this.startDate = startDate;
 			this.endDate = endDate;
+			this.userContact = userContact;
 		}
 		
 		@Override
@@ -170,8 +175,10 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	public Object function(Object[] arguments){
 		if (arguments.length == 3) {
 			try {
+				IContact userContact = ContextServiceHolder.get().getActiveUser()
+					.map(IUser::getAssignedContact).orElse(null);
 				currentTimeSpan =
-					new TimeSpan(getDateArg(arguments[0]), getDateArg(arguments[1]));
+					new TimeSpan(getDateArg(arguments[0]), getDateArg(arguments[1]), userContact);
 				long currentLastUpdate =
 					CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
 				if (knownLastUpdate == 0) {
@@ -181,7 +188,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 					ConcurrentMap<TimeSpan, EventsJsonValue> cacheAsMap = cache.asMap();
 					for (TimeSpan timeSpan : cacheAsMap.keySet()) {
 						EventsJsonValue eventsJson = cache.get(timeSpan);
-						if (eventsJson.updateWith(changedPeriods)) {
+						if (eventsJson.updateWith(changedPeriods, userContact)) {
 							logger.debug("Updated timespan " + timeSpan);
 						} else {
 							logger.debug("No update to timespan " + timeSpan);
@@ -241,8 +248,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		@Override
 		public EventsJsonValue load(TimeSpan key) throws Exception{
 			List<IPeriod> periods = getPeriods(key);
-			return new EventsJsonValue(key,
-				periods.parallelStream().map(p -> Event.of(p)).collect(Collectors.toList()));
+			return new EventsJsonValue(key, periods.parallelStream()
+				.map(p -> Event.of(p, key.userContact)).collect(Collectors.toList()));
 		}
 		
 		@SuppressWarnings("unchecked")

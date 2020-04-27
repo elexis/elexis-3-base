@@ -288,4 +288,11 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		TimeSpanLoader loader = new TimeSpanLoader();
 		return loader.getPeriods(currentTimeSpan);
 	}
+	
+	/**
+	 * Invalidate all cache entries. This should be done prior to changing the user.
+	 */
+	public void invalidateCache(){
+		cache.invalidateAll();
+	}
 }

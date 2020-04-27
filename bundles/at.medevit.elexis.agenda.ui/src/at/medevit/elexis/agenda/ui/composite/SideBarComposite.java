@@ -25,9 +25,11 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -117,9 +119,20 @@ public class SideBarComposite extends Composite {
 		Font boldFont = boldDescriptor.createFont(label.getDisplay());
 		label.setFont(boldFont);
 		label.setText("Bereiche");
+		ScrolledComposite areaScrolledComposite = new ScrolledComposite(this, SWT.V_SCROLL);
+		areaScrolledComposite.setLayout(new FillLayout());
+		areaScrolledComposite.setExpandVertical(true);
+		areaScrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		areaScrolledComposite.addListener( SWT.Resize, event -> {
+			  int width = areaScrolledComposite.getClientArea().width;
+			  areaScrolledComposite.setMinSize( parent.computeSize( width, SWT.DEFAULT ) );
+		} );
+		
+		Composite areaComposite = new Composite(areaScrolledComposite, SWT.NONE);
+		areaComposite.setLayout(new GridLayout());
 		List<Area> areas = AppointmentServiceHolder.get().getAreas();
 		for (Area area : areas) {
-			Button btn = new Button(this, SWT.CHECK);
+			Button btn = new Button(areaComposite, SWT.CHECK);
 			btn.setText(area.getName());
 			btn.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -136,6 +149,9 @@ public class SideBarComposite extends Composite {
 				}
 			});
 		}
+		areaComposite.pack();
+		areaScrolledComposite.setContent(areaComposite);
+		
 		
 		label = new Label(this, SWT.NONE);
 		label.setFont(boldFont);

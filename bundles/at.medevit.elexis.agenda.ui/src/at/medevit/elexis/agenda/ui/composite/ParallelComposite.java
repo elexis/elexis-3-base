@@ -4,7 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -35,6 +38,7 @@ import at.medevit.elexis.agenda.ui.function.PdfFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
@@ -54,6 +58,13 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	private DayClickFunction dayClickFunction;
 	
 	private ESelectionService selectionService;
+	
+	@Inject
+	void user(@Optional IUser user) {
+		if(loadEventsFunction != null) {
+			loadEventsFunction.invalidateCache();
+		}
+	}
 	
 	public ParallelComposite(MPart part, ESelectionService selectionService,
 		EMenuService menuService,

@@ -1,6 +1,7 @@
 package at.medevit.elexis.agenda.ui.model;
 
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.model.agenda.RecurringAppointment;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
@@ -128,7 +129,7 @@ public class Event {
 	 * @param iPeriod
 	 * @return
 	 */
-	public static Event of(IPeriod iPeriod){
+	public static Event of(IPeriod iPeriod, IContact userContact){
 		Event ret = new Event();
 		ret.id = iPeriod.getId();
 		ret.start = iPeriod.getStartTime().toString();
@@ -153,8 +154,8 @@ public class Event {
 			ret.description =
 				termin.getReason().replaceAll("\n", "<br />") + "<br /><br />" + termin
 					.getStateHistoryFormatted("dd.MM.yyyyy HH:mm:ss").replaceAll("\n", "<br />");
-			ret.borderColor = getStateColor(iPeriod);
-			ret.backgroundColor = getTypColor(iPeriod);
+			ret.borderColor = getStateColor(userContact, iPeriod);
+			ret.backgroundColor = getTypColor(userContact, iPeriod);
 			ret.textColor = getTextColor(ret.backgroundColor.substring(1));
 		}
 		return ret;
@@ -181,29 +182,31 @@ public class Event {
 	
 	/**
 	 * Get the configured type color, default is #3a87ad.
+	 * @param userContact 
 	 * 
 	 * @param iPeriod
 	 * @return
 	 */
-	public static String getTypColor(IPeriod iPeriod){
+	public static String getTypColor(IContact userContact, IPeriod iPeriod){
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
 			return "#" + ConfigServiceHolder.get()
-				.getActiveUserContact("agenda/farben/typ/" + termin.getType(), DEFAULT_BG_COLOR); //$NON-NLS-1$
+				.get(userContact, "agenda/farben/typ/" + termin.getType(), DEFAULT_BG_COLOR); //$NON-NLS-1$
 		}
 		return "#" + DEFAULT_BG_COLOR;
 	}
 	
 	/**
 	 * Get the configured state color, default is #3a87ad.
+	 * @param userContact 
 	 * 
 	 * @param iPeriod
 	 * @return
 	 */
-	public static String getStateColor(IPeriod iPeriod){
+	public static String getStateColor(IContact userContact, IPeriod iPeriod){
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
-			return "#" + ConfigServiceHolder.get().getActiveUserContact(
+			return "#" + ConfigServiceHolder.get().get(userContact,
 				"agenda/farben/status/" + termin.getState(), DEFAULT_BG_COLOR); //$NON-NLS-2$
 		}
 		return "#" + DEFAULT_BG_COLOR;

@@ -21,6 +21,7 @@ import at.medevit.elexis.agenda.ui.composite.WeekComposite;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class AgendaView {
 	
@@ -91,6 +92,7 @@ public class AgendaView {
 		parallelSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		parallelComposite = new ParallelComposite(part, selectionService, menuService,
 			parallelParent, SWT.NONE, true);
+		CoreUiUtil.injectServicesWithContext(parallelComposite);
 		parallelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parallelSideBar.setAgendaComposite(parallelComposite);
 		

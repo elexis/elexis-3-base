@@ -18,6 +18,7 @@ import at.medevit.elexis.agenda.ui.composite.ParallelComposite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class ParallelView {
 	
@@ -53,6 +54,7 @@ public class ParallelView {
 		sideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		composite = new ParallelComposite(part, selectionService, menuService, container, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		CoreUiUtil.injectServicesWithContext(composite);
 		sideBar.setAgendaComposite(composite);
 	}
 	

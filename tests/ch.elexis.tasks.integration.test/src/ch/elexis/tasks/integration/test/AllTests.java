@@ -1,9 +1,9 @@
 package ch.elexis.tasks.integration.test;
 
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.junit.BeforeClass;
 
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.ILabItem;
@@ -51,6 +51,11 @@ public class AllTests {
 
 	public static ILabItem getLabItem(){
 		return util.getLabItem();
+	}
+
+	public static ILabItem getLabItemGPT(){
+		return util.getItemGPT();
+		
 	}
 	
 }

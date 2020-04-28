@@ -132,7 +132,7 @@ public class BillLabResultOnCreationIdentifiedRunnableTest {
 		encounter = EncounterServiceHolder.get().getLatestEncounter(AllTests.getPatient()).get();
 		assertNotEquals(closedEncounterId, encounter.getId());
 		assertEquals(1, encounter.getBilled().size());
-		CoreModelServiceHolder.get().remove(encounter);
+		assertTrue(CoreModelServiceHolder.get().remove(encounter));
 	}
 
 }

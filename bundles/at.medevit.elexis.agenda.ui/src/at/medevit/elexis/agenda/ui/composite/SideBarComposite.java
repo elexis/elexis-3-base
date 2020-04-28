@@ -130,7 +130,7 @@ public class SideBarComposite extends Composite {
 		areaScrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		areaScrolledComposite.addListener( SWT.Resize, event -> {
 			  int width = areaScrolledComposite.getClientArea().width;
-			  areaScrolledComposite.setMinSize( parent.computeSize( width, SWT.DEFAULT ) );
+			  areaScrolledComposite.setMinSize(areaComposite.computeSize(width, SWT.DEFAULT));
 		} );
 		
 		areaComposite = new Composite(areaScrolledComposite, SWT.NONE);

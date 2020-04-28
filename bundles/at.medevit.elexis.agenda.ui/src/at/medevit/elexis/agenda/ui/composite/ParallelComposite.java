@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -18,13 +19,12 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
-import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import ch.elexis.core.model.IUser;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.IConfigService;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
 	private List<String> selectedResources = new ArrayList<>();
@@ -58,6 +58,12 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	private DayClickFunction dayClickFunction;
 	
 	private ESelectionService selectionService;
+	
+	@Inject
+	private IConfigService configService;
+	
+	@Inject
+	private UISynchronize uiSynchronize;
 	
 	@Inject
 	void user(@Optional IUser user) {
@@ -123,33 +129,27 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		// register context menu for browser
 		menuService.registerContextMenu(browser, "at.medevit.elexis.agenda.ui.popupmenu.parallel");
 		
-		browser.addProgressListener(new ProgressListener() {
+		browser.addProgressListener(new ProgressAdapter() {
 			@Override
-			public void changed(ProgressEvent event){
-				if (event.current == event.total) {
-					Display.getDefault().timerExec(250, () -> {
-						String dayStartsAt = ConfigServiceHolder.get()
-							.get("agenda/beginnStundeTagesdarstellung", "0000");
-						String dayEndsAt = ConfigServiceHolder.get()
-							.get("agenda/endStundeTagesdarstellung", "2359");
-						scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
-						
-						initializeResources();
-						loadEventsFunction.setResources(selectedResources);
-						dayClickFunction.setSelectedResources(selectedResources);
-						if (currentSpanSize != null) {
-							setSelectedSpanSize(currentSpanSize);
-						}
-						getConfiguredFontSize().ifPresent(size -> {
-							setFontSize(size);
-							getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
-						});
+			public void completed(ProgressEvent event){
+				String dayStartsAt =
+					configService.get("agenda/beginnStundeTagesdarstellung", "0000");
+				String dayEndsAt = configService.get("agenda/endStundeTagesdarstellung", "2359");
+				uiSynchronize.asyncExec(() -> {
+					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
+					
+					initializeResources();
+					loadEventsFunction.setResources(selectedResources);
+					dayClickFunction.setSelectedResources(selectedResources);
+					if (currentSpanSize != null) {
+						setSelectedSpanSize(currentSpanSize);
+					}
+					getConfiguredFontSize().ifPresent(size -> {
+						setFontSize(size);
+						getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
 					});
-				}
+				});
 			}
-
-			@Override
-			public void completed(ProgressEvent event){}
 		});
 	}
 	

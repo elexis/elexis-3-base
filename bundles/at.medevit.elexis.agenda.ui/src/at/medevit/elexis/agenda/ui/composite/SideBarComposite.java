@@ -47,8 +47,8 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.model.agenda.Area;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
@@ -72,8 +72,13 @@ public class SideBarComposite extends Composite {
 	
 	private MoveInformation currentMoveInformation;
 	
+	private Composite areaComposite;
+	
 	@Inject
 	private IEventBroker eventBroker;
+	
+	@Inject
+	private IConfigService configService;
 	
 	public SideBarComposite(Composite parent, int style){
 		this(parent, false, style);
@@ -128,7 +133,7 @@ public class SideBarComposite extends Composite {
 			  areaScrolledComposite.setMinSize( parent.computeSize( width, SWT.DEFAULT ) );
 		} );
 		
-		Composite areaComposite = new Composite(areaScrolledComposite, SWT.NONE);
+		areaComposite = new Composite(areaScrolledComposite, SWT.NONE);
 		areaComposite.setLayout(new GridLayout());
 		List<Area> areas = AppointmentServiceHolder.get().getAreas();
 		for (Area area : areas) {
@@ -331,7 +336,7 @@ public class SideBarComposite extends Composite {
 			selectedResources.addAll(Arrays.asList(parts));
 			List<String> selections = new ArrayList<>();
 			// update button selection
-			for (Control child : getChildren()) {
+			for (Control child : areaComposite.getChildren()) {
 				if (child instanceof Button) {
 					if (selectedResources.contains(((Button) child).getText())) {
 						((Button) child).setSelection(true);
@@ -346,13 +351,13 @@ public class SideBarComposite extends Composite {
 	}
 	
 	private void saveConfigurationString(String configKey, String value){
-		ConfigServiceHolder.get().setLocal(
+		configService.setActiveUserContact(
 			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey,
 			value);
 	}
 	
 	private String loadConfigurationString(String configKey){
-		return ConfigServiceHolder.get().getLocal(
+		return configService.getActiveUserContact(
 			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, "");
 	}
 	

@@ -53,9 +53,9 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
@@ -66,6 +66,9 @@ public class AppointmentDetailComposite extends Composite {
 	
 	@Inject
 	private IAppointmentService appointmentService;
+	
+	@Inject
+	private IConfigService configService;
 	
 	private CDateTime txtDateFrom;
 	private CDateTime txtDateFromDrop;
@@ -287,6 +290,7 @@ public class AppointmentDetailComposite extends Composite {
 		});
 		Group compTimeSelektor = new Group(container, SWT.SHADOW_ETCHED_IN);
 		compTimeSelektor.setLayout(new GridLayout(1, false));
+		// FIXME works only in windows, in RAP not available
 		compTimeSelektor.setTextDirection(SWT.CENTER);
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1);
 		compTimeSelektor.setLayoutData(gd);
@@ -513,7 +517,7 @@ public class AppointmentDetailComposite extends Composite {
 		Label lblArea = new Label(compArea, SWT.NULL);
 		lblArea.setText("Bereich");
 		comboArea = new Combo(compArea, SWT.DROP_DOWN);
-		comboArea.setItems(ConfigServiceHolder.get().get("agenda/bereiche", "Praxis").split(","));
+		comboArea.setItems(configService.get("agenda/bereiche", "Praxis").split(","));
 		comboArea.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){

@@ -196,7 +196,6 @@
         <setEntry value="ch.elexis.core.data"/>
         <setEntry value="ch.elexis.core.data.tests"/>
         <setEntry value="ch.elexis.core.documents"/>
-        <setEntry value="ch.elexis.core.eenv"/>
         <setEntry value="ch.elexis.core.eigenartikel"/>
         <setEntry value="ch.elexis.core.eigendiagnosen"/>
         <setEntry value="ch.elexis.core.findings"/>
@@ -227,7 +226,6 @@
         <setEntry value="ch.elexis.core.ui.dbcheck"/>
         <setEntry value="ch.elexis.core.ui.documents"/>
         <setEntry value="ch.elexis.core.ui.eenv"/>
-        <setEntry value="ch.elexis.core.ui.eenv.win32.win32.x86_64"/>
         <setEntry value="ch.elexis.core.ui.eigenartikel"/>
         <setEntry value="ch.elexis.core.ui.eigendiagnosen"/>
         <setEntry value="ch.elexis.core.ui.icons"/>
@@ -597,6 +595,7 @@
         <setEntry value="xpp3.min@default:default"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
+        <setEntry value="at.medevit.medelexis.text.msword@default:default"/>
         <setEntry value="ch.elexis.base.ch.labortarif.model@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
         <setEntry value="ch.elexis.core.importer.div@default:default"/>
@@ -617,11 +616,13 @@
         <setEntry value="ch.elexis.core.test.context@default:false"/>
         <setEntry value="ch.elexis.core.test.logging@default:false"/>
         <setEntry value="ch.elexis.core.test@default:default"/>
+        <setEntry value="ch.elexis.core.ui.e4@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.elexis.tasks.integration.test@default:default"/>
         <setEntry value="ch.rgw.utility.tests@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>
         <setEntry value="jaxb-api-impl-import-java9@default:false"/>
+        <setEntry value="org.osgi.framework.system.packages.extra@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <stringAttribute key="templateConfig" value="${target_home}/configuration/config.ini"/>

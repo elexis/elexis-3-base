@@ -35,6 +35,7 @@ public class Hl7ImporterTaskIntegrationTestUtil {
 	private IUser user;
 	private ILaboratory laboratory;
 	private ILabItem item;
+	private ILabItem itemGPT;
 	
 	public void prepareEnvironment(){
 		IPerson _mandator = new IContactBuilder.PersonBuilder(CoreModelServiceHolder.get(), "Elisa",
@@ -76,6 +77,10 @@ public class Hl7ImporterTaskIntegrationTestUtil {
 			"T/l", LabItemTyp.NUMERIC, "ABX", 0).origin(laboratory, "RBC", true).buildAndSave();
 		item.setBillingCode("1281.10");
 		CoreModelServiceHolder.get().save(item);
+		
+		itemGPT = new ILabItemBuilder(CoreModelServiceHolder.get(), "GPT-P", "GPT", null, null,
+			"U/l", LabItemTyp.NUMERIC, "LabCube", 0).origin(laboratory, "LabCube", true)
+				.buildAndSave();
 	}
 	
 	public void importEal2009(){
@@ -111,6 +116,10 @@ public class Hl7ImporterTaskIntegrationTestUtil {
 
 	public ILabItem getLabItem(){
 		return item;
+	}
+
+	public ILabItem getItemGPT(){
+		return itemGPT;
 	}
 	
 }

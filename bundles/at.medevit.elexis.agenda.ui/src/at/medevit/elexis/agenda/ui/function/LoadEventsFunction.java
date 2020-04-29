@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
@@ -161,7 +162,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		}
 	}
 	
-	public LoadEventsFunction(Browser browser, String name, ScriptingHelper scriptingHelper){
+	public LoadEventsFunction(Browser browser, String name, ScriptingHelper scriptingHelper,
+		UISynchronize uiSynchronize){
 		super(browser, name);
 		gson = new GsonBuilder().create();
 		this.scriptingHelper = scriptingHelper;
@@ -169,7 +171,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		cache = CacheBuilder.newBuilder().maximumSize(7).build(new TimeSpanLoader());
 		
 		timer = new Timer("Agenda check for updates", true);
-		timer.schedule(new CheckForUpdatesTimerTask(this), 10000);
+		timer.schedule(new CheckForUpdatesTimerTask(this, uiSynchronize), 10000);
 	}
 	
 	public Object function(Object[] arguments){

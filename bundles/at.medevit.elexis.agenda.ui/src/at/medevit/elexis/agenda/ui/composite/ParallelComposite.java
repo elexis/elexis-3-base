@@ -63,9 +63,6 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	private IConfigService configService;
 	
 	@Inject
-	private UISynchronize uiSynchronize;
-	
-	@Inject
 	void user(@Optional IUser user) {
 		if(loadEventsFunction != null) {
 			loadEventsFunction.invalidateCache();
@@ -73,22 +70,22 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	}
 	
 	public ParallelComposite(MPart part, ESelectionService selectionService,
-		EMenuService menuService,
-		Composite parent, int style){
-		this(part, selectionService, menuService, parent, style, false);
+		EMenuService menuService, Composite parent, int style, UISynchronize uiSynchronize){
+		this(part, selectionService, menuService, parent, style, false, uiSynchronize);
 	}
 	
 	public ParallelComposite(MPart part, ESelectionService selectionService,
-		EMenuService menuService,
-		Composite parent, int style,
-		boolean enableSwitch){
+		EMenuService menuService, Composite parent,
+		int style,
+		boolean enableSwitch, UISynchronize uiSynchronize){
 		super(parent, style);
 		this.selectionService = selectionService;
 		setLayout(new FillLayout());
 		browser = new Browser(this, SWT.NONE);
 		scriptingHelper = new ScriptingHelper(browser);
 		
-		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper);
+		loadEventsFunction =
+			new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize);
 		
 		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this);
 		

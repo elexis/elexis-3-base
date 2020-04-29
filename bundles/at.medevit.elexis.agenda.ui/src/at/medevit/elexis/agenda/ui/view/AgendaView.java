@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -58,7 +59,7 @@ public class AgendaView {
 	
 	@PostConstruct
 	public void createPartControl(MPart part, ESelectionService selectionService,
-		EMenuService menuService, Composite parent){
+		EMenuService menuService, Composite parent, UISynchronize uiSynchronize){
 		container = new Composite(parent, SWT.NONE);
 		stackLayout = new StackLayout();
 		container.setLayout(stackLayout);
@@ -74,9 +75,10 @@ public class AgendaView {
 		
 		weekSideBar = new SideBarComposite(weekParent, SWT.NONE);
 		weekSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		weekComposite =
-			new WeekComposite(part, selectionService, menuService, weekParent, SWT.NONE, true);
+		weekComposite = new WeekComposite(part, selectionService, menuService, weekParent, SWT.NONE,
+			true, uiSynchronize);
 		weekComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		CoreUiUtil.injectServicesWithContext(weekComposite);
 		weekSideBar.setAgendaComposite(weekComposite);
 		
 		// create parallel composites
@@ -91,7 +93,7 @@ public class AgendaView {
 		parallelSideBar = new SideBarComposite(parallelParent, true, SWT.NONE);
 		parallelSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		parallelComposite = new ParallelComposite(part, selectionService, menuService,
-			parallelParent, SWT.NONE, true);
+			parallelParent, SWT.NONE, true, uiSynchronize);
 		CoreUiUtil.injectServicesWithContext(parallelComposite);
 		parallelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parallelSideBar.setAgendaComposite(parallelComposite);

@@ -67,7 +67,7 @@ public class SingleSourceUtil {
 	 * @return
 	 */
 	public static boolean executeScript(final Browser browser, final String script){
-		log.debug("executeScript: {}", script); //$NON-NLS-1$
+		log.debug("script [{}]: {}", script.hashCode(), script); //$NON-NLS-1$
 		if (IS_RAP) {
 			synchronized (BrowserLock.class) {
 				if (!browser.isDisposed()) {

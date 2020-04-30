@@ -49,6 +49,7 @@ import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.model.agenda.Area;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
@@ -76,10 +77,7 @@ public class SideBarComposite extends Composite {
 	
 	@Inject
 	private IEventBroker eventBroker;
-	
-	@Inject
-	private IConfigService configService;
-	
+
 	public SideBarComposite(Composite parent, int style){
 		this(parent, false, style);
 	}
@@ -351,13 +349,13 @@ public class SideBarComposite extends Composite {
 	}
 	
 	private void saveConfigurationString(String configKey, String value){
-		configService.setActiveUserContact(
+		ConfigServiceHolder.get().setActiveUserContact(
 			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey,
 			value);
 	}
 	
 	private String loadConfigurationString(String configKey){
-		return configService.getActiveUserContact(
+		return ConfigServiceHolder.get().getActiveUserContact(
 			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, "");
 	}
 	

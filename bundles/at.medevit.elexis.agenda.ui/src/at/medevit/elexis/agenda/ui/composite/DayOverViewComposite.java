@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
@@ -47,7 +48,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
-public class DayOverViewComposite extends Composite implements PaintListener {
+public class DayOverViewComposite extends Canvas implements PaintListener {
 	
 	public enum CollisionErrorLevel {
 			ERROR, WARNING

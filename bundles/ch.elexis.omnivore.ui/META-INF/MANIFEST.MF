@@ -22,5 +22,6 @@ Export-Package: ch.elexis.omnivore.ui.jobs,
 Service-Component: OSGI-INF/ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder.xml,
  OSGI-INF/ch.elexis.omnivore.ui.inbox.DocHandleInboxService.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.e4.core.di.annotations,
+Import-Package: javax.inject,
+ org.eclipse.e4.core.di.annotations,
  org.eclipse.e4.ui.di

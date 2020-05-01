@@ -53,7 +53,7 @@
 							</requirement>
 							<requirement>
 								<type>eclipse-plugin</type>
-								<id>org.slf4j.nop</id>
+								<id>org.slf4j.api</id>
 								<versionRange>0.0.0</versionRange>
 							</requirement>
 						</extraRequirements>

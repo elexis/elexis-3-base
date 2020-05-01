@@ -18,6 +18,7 @@
           <useUIHarness>false</useUIHarness>
           <application>ch.elexis.core.application.ElexisApp</application>
           <useUIThread>false</useUIThread>
+          <skipTests>true</skipTests> <!-- since upgrading to Java-11 and target 2019-12 -->
           <argLine>-DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
           <showEclipseLog>${show.eclipse.log}</showEclipseLog>
           <dependencies>

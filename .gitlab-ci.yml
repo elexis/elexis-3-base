@@ -13,6 +13,7 @@ build:
   - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-core/ -o /dev/null) == '200' ]; then export BUILD_CORE_BRANCH=$CI_COMMIT_REF_NAME; fi 
   - xvfb-run mvn clean verify ${BUILD_TARGET_BRANCH:+-Dgit.target.branch=$BUILD_TARGET_BRANCH} ${BUILD_CORE_BRANCH:+-Dgit.core.branch=$BUILD_CORE_BRANCH}
   - jo token="$WEBHOOK_TOKEN" info="elexis-3-base $CI_JOB_ID $ORIGIN_BRANCH $CI_COMMIT_REF_NAME $CI_COMMIT_SHA" binary=%$(find ch.elexis.base.p2site/target/ch.elexis.base.p2site*.zip) destDir=elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-base | curl -k -H "Content-Type:application/json" -X POST -d @- $WEBHOOK_URL/deploy-zip
+  - for file in ch.elexis.base.p2site/target/products/*.zip; do jo token="$WEBHOOK_TOKEN" destFilename="${file##*/}" binary=%${file} destDir=elexis/$CI_COMMIT_REF_NAME/products/ | curl -k -H "Content-Type:application/json" -X POST -d @- $WEBHOOK_URL/deploy-file; done
   only:
   - master@elexis/elexis-3-base
   - /^\d*[.]\d*$/@elexis/elexis-3-base

@@ -64,7 +64,6 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
-          <skipTests>true</skipTests> <!-- since upgrading to Java-11 and target 2019-12 -->
 					<useUIHarness>false</useUIHarness>
 					<testClass>ch.elexis.tasks.integration.test.AllTests</testClass>
 					<showEclipseLog>true</showEclipseLog>

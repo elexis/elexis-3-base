@@ -15,7 +15,6 @@
         <artifactId>tycho-surefire-plugin</artifactId>
         <version>${tycho.version}</version>
         <configuration>
-          <skipTests>true</skipTests> <!-- since upgrading to Java-11 and target 2019-12 -->
           <useUIHarness>false</useUIHarness>
           <application>ch.elexis.core.application.ElexisApp</application>
           <useUIThread>false</useUIThread>

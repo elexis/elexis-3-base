@@ -1,21 +1,18 @@
 package net.medshare.connector.viollier.handlers;
 
-import java.awt.Desktop;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
-
-import net.medshare.connector.viollier.Messages;
-import net.medshare.connector.viollier.data.ViollierConnectorSettings;
-import net.medshare.connector.viollier.ses.PortalCookieService;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +24,9 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.laborimport.viollier.v2.data.KontaktOrderManagement;
 import ch.elexis.laborimport.viollier.v2.data.LaborwerteOrderManagement;
+import net.medshare.connector.viollier.Messages;
+import net.medshare.connector.viollier.data.ViollierConnectorSettings;
+import net.medshare.connector.viollier.ses.PortalCookieService;
 
 public class RepeatOrderHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(RepeatOrderHandler.class);
@@ -110,11 +110,11 @@ public class RepeatOrderHandler extends AbstractHandler {
 		
 		// Browser OrderIT öffnen
 		try {
-			Desktop.getDesktop().browse(new URI(httpsUrl));
-		} catch (URISyntaxException e) {
-			log.error("Could not resolve URI: " + httpsUrl, e);
-		} catch (IOException e) {
-			log.error("IO exception while trying to create order", e);
+			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
+			IWebBrowser externalBrowser = browserSupport.getExternalBrowser();
+			externalBrowser.openURL(new URI(httpsUrl).toURL());
+		} catch (Exception e) {
+			log.error("Error openen url [{}]: ", httpsUrl, e);
 		}
 		return null;
 	}

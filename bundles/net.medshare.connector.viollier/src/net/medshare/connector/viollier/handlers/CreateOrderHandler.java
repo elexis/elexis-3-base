@@ -2,11 +2,9 @@ package net.medshare.connector.viollier.handlers;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
-import java.awt.Desktop;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -15,6 +13,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,13 +141,12 @@ public class CreateOrderHandler extends AbstractHandler {
 		
 		// Browser OrderIT öffnen
 		try {
-			Desktop.getDesktop().browse(new URI(httpsUrl));
-		} catch (URISyntaxException e) {
-			log.error("Could not resolve URI: " + httpsUrl, e);
-		} catch (IOException e) {
-			log.error("IO exception while trying to create order", e);
+			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
+			IWebBrowser externalBrowser = browserSupport.getExternalBrowser();
+			externalBrowser.openURL(new URI(httpsUrl).toURL());
+		} catch (Exception e) {
+			log.error("Error openen url [{}]: ", httpsUrl, e);
 		}
-		
 		return null;
 	}
 	

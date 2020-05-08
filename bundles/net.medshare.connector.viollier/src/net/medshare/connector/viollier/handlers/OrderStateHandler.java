@@ -1,21 +1,18 @@
 package net.medshare.connector.viollier.handlers;
 
-import java.awt.Desktop;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
-
-import net.medshare.connector.viollier.Messages;
-import net.medshare.connector.viollier.data.ViollierConnectorSettings;
-import net.medshare.connector.viollier.ses.PortalCookieService;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +20,9 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import net.medshare.connector.viollier.Messages;
+import net.medshare.connector.viollier.data.ViollierConnectorSettings;
+import net.medshare.connector.viollier.ses.PortalCookieService;
 
 public class OrderStateHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(OrderStateHandler.class);
@@ -86,11 +86,11 @@ public class OrderStateHandler extends AbstractHandler {
 		
 		// Browser OrderIT öffnen
 		try {
-			Desktop.getDesktop().browse(new URI(httpsUrl));
-		} catch (URISyntaxException e) {
-			log.error("Could not resolve URI: " + httpsUrl, e);
-		} catch (IOException e) {
-			log.error("IO Exception while trying to get order state", e);
+			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
+			IWebBrowser externalBrowser = browserSupport.getExternalBrowser();
+			externalBrowser.openURL(new URI(httpsUrl).toURL());
+		} catch (Exception e) {
+			log.error("Error openen url [{}]: ", httpsUrl, e);
 		}
 		return null;
 	}

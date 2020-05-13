@@ -10,6 +10,7 @@
     <version>3.9.0-SNAPSHOT</version>
   </parent>
   <modules>
+  	<module>ch.elexis.ebanking.qr</module>
     <module>at.medevit.atc_codes</module>
     <module>at.medevit.ch.artikelstamm</module>
     <module>at.medevit.ch.artikelstamm.model</module>

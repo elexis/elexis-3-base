@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SIX QR Bill
+Bundle-SymbolicName: ch.elexis.ebanking.qr
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: medevit.at
+Automatic-Module-Name: ch.elexis.ebanking.qr
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: ch.elexis.core.model

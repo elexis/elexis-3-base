@@ -6,4 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.ebanking.qr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: ch.elexis.core.model
+Import-Package: ch.elexis.core.model,
+ ch.elexis.core.model.format,
+ ch.rgw.tools,
+ org.apache.commons.beanutils;version="1.8.0",
+ org.apache.commons.lang3;version="3.7.0"

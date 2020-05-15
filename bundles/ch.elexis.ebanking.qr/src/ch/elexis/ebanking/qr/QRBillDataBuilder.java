@@ -3,6 +3,7 @@ package ch.elexis.ebanking.qr;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.format.AddressFormatUtil;
@@ -79,7 +80,7 @@ public class QRBillDataBuilder {
 		ret.setHeaderVersion(headerVersion);
 		ret.setHeaderCoding(headerCoding);
 		
-		ret.setCdtrInfIBAN((String) cdtrInfContact.getExtInfo("IBAN"));
+		ret.setCdtrInfIBAN(StringUtils.defaultString((String) cdtrInfContact.getExtInfo("IBAN")));
 		setAddress(ret, "cdtrInf", cdtrInfContact);
 		
 		ret.setCcyAmtAmt(amount.getAmountAsString().replaceAll(",", "."));

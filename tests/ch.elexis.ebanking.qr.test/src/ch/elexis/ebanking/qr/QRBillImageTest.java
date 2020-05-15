@@ -1,12 +1,11 @@
 package ch.elexis.ebanking.qr;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
+import org.eclipse.swt.graphics.Image;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,10 +15,9 @@ import ch.elexis.core.model.builder.IContactBuilder.PersonBuilder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.Country;
 import ch.elexis.core.types.Gender;
-import ch.elexis.ebanking.qr.model.QRBillData;
 import ch.rgw.tools.Money;
 
-public class QRBillDataBuilderTest {
+public class QRBillImageTest {
 	
 	private IContact cdtr;
 	private IContact dbtr;
@@ -42,35 +40,22 @@ public class QRBillDataBuilderTest {
 	}
 	
 	@Test
-	public void buildSuccess(){
+	public void getImage(){
 		QRBillDataBuilder builder = new QRBillDataBuilder(cdtr, new Money(12.00), "CHF", dbtr);
 		builder.reference("977598000000002414281387835");
 		builder.unstructuredRemark("Ähnliche Rechnung #23 oder -23 über +23 mit <23");
-		QRBillData data = builder.build();
-		assertNotNull(data);
-		
-		String qrData = data.toString();
-		assertTrue(StringUtils.isNotEmpty(qrData));
-		String[] parts = qrData.split("\r\n", -1);
-		assertEquals(32, parts.length);
-		
-		assertEquals("CH4431999123000889012", parts[3]);
-		assertEquals("Grosse Marktgasse 28", parts[6]);
-		assertEquals("9400 Rorschach", parts[7]);
-		assertEquals("", parts[8]);
-		assertEquals("", parts[9]);
-		assertEquals("CH", parts[10]);
-		
-		assertEquals("12.00", parts[18]);
-		assertEquals("CHF", parts[19]);
-		
-		assertEquals("DbtrOrg", parts[21]);
-		assertEquals("Rue du Lac 1268", parts[22]);
-		assertEquals("CH", parts[26]);
-		
-		assertEquals("SCOR", parts[27]);
-		assertEquals("977598000000002414281387835", parts[28]);
-		
-		assertEquals("Ähnliche Rechnung #23 oder -23 über +23 mit <23", parts[29]);
+		QRBillImage qrImage = new QRBillImage(builder.build());
+		Optional<Image> image = qrImage.getImage();
+		assertTrue(image.isPresent());
+	}
+	
+	@Test
+	public void getEncodedImage(){
+		QRBillDataBuilder builder = new QRBillDataBuilder(cdtr, new Money(12.00), "CHF", dbtr);
+		builder.reference("977598000000002414281387835");
+		builder.unstructuredRemark("Ähnliche Rechnung #23 oder -23 über +23 mit <23");
+		QRBillImage qrImage = new QRBillImage(builder.build());
+		Optional<String> encodedImage = qrImage.getEncodedImage();
+		assertTrue(encodedImage.isPresent());
 	}
 }

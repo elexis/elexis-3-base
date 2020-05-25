@@ -25,7 +25,7 @@ public class TarmedJaxbUtil {
 	private static Logger log = LoggerFactory.getLogger(TarmedJaxbUtil.class);
 	
 	/**
-	 * creates an invoice request xml (XML4.0 or XML4.4 - depends on given RequestType)
+	 * creates an invoice request xml (XML4.0 RequestType)
 	 * 
 	 * @param request
 	 *            RequestType to write to the xml
@@ -49,7 +49,7 @@ public class TarmedJaxbUtil {
 	}
 	
 	/**
-	 * creates an invoice request xml (XML4.0 or XML4.4 - depends on given RequestType)
+	 * creates an invoice request xml (XML4.4 RequestType)
 	 * 
 	 * @param request
 	 *            RequestType to write to the xml
@@ -71,7 +71,31 @@ public class TarmedJaxbUtil {
 	}
 	
 	/**
-	 * creates an invoice response xml (XML4.0 or XML4.4 - depends on given ResponseType)
+	 * creates an invoice request xml (XML4.5 RequestType)
+	 * 
+	 * @param request
+	 *            RequestType to write to the xml
+	 * @param outStream
+	 *            of the file to write to
+	 * @return true if success, false if an exception occurred
+	 */
+	public static boolean marshallInvoiceRequest(ch.fd.invoice450.request.RequestType request,
+		OutputStream outStream){
+		try {
+			JAXBContext jaxbContext =
+				JAXBContext.newInstance(ch.fd.invoice450.request.RequestType.class);
+			Marshaller marshaller =
+				initMarshaller(jaxbContext, Constants.INVOICE_REQUEST_450_LOCATION);
+			marshaller.marshal(request, outStream);
+			return true;
+		} catch (JAXBException e) {
+			log.error("Marshalling generalInvoiceRequest_450 failed", e);
+			return false;
+		}
+	}
+	
+	/**
+	 * creates an invoice response xml (XML4.0 ResponseType)
 	 * 
 	 * @param response
 	 *            ResponeType object to write to the xml
@@ -95,7 +119,7 @@ public class TarmedJaxbUtil {
 	}
 	
 	/**
-	 * creates an invoice response xml (XML4.0 or XML4.4 - depends on given ResponseType)
+	 * creates an invoice response xml (XML4.4 ResponseType)
 	 * 
 	 * @param response
 	 *            ResponeType object to write to the xml
@@ -199,6 +223,35 @@ public class TarmedJaxbUtil {
 	}
 	
 	/**
+	 * loads elements from a XML4.5 request file into java objects
+	 * 
+	 * @param inStream
+	 *            of an inovice response file (based on {@link www.forum-datenaustausch.ch/invoice
+	 *            generalInvoiceRequest_450.xsd}
+	 * @return {@link RequestType} request root element containing the child objects or null if
+	 *         unable to resolve
+	 */
+	@SuppressWarnings("unchecked")
+	public static ch.fd.invoice450.request.RequestType unmarshalInvoiceRequest450(
+		InputStream inStream){
+		try {
+			JAXBContext jaxbContext =
+				JAXBContext.newInstance(ch.fd.invoice450.request.RequestType.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			JAXBElement<Object> jaxElement = (JAXBElement<Object>) unmarshaller.unmarshal(inStream);
+			
+			if (jaxElement.getValue() instanceof ch.fd.invoice450.request.RequestType) {
+				ch.fd.invoice450.request.RequestType request =
+					(ch.fd.invoice450.request.RequestType) jaxElement.getValue();
+				return request;
+			}
+		} catch (JAXBException e) {
+			log.error("Unmarshalling generalInvoiceRequest_450 failed", e);
+		}
+		return null;
+	}
+	
+	/**
 	 * loads elements from a XML4.0 response file into java objects
 	 * 
 	 * @param inStream
@@ -286,6 +339,9 @@ public class TarmedJaxbUtil {
 			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_440_LOCATION)
 				|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_440_LOCATION)) {
 				return "4.4";
+			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_450_LOCATION)
+				|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_450_LOCATION)) {
+				return "4.5";
 			}
 		}
 		return location;

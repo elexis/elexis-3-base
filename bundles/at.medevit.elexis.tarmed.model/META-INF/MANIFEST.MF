@@ -14,4 +14,6 @@ Export-Package: at.medevit.elexis.tarmed.model,
  ch.fd.invoice400.request,
  ch.fd.invoice400.response,
  ch.fd.invoice440.request,
- ch.fd.invoice440.response
+ ch.fd.invoice440.response,
+ ch.fd.invoice450.request,
+ ch.fd.invoice450.response

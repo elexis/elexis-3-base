@@ -1,22 +1,42 @@
 package ch.elexis.TarmedRechnung;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Optional;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jdom.Verifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
+import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
+import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
+import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.model.format.PostalAddress;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Money;
@@ -24,6 +44,9 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class XMLExporterUtil {
+	
+	private static Logger logger = LoggerFactory.getLogger(XMLExporterUtil.class);
+	
 	private static final String ELEMENT_EMAIL = "email"; //$NON-NLS-1$
 	private static final String ELEMENT_ONLINE = "online"; //$NON-NLS-1$
 	
@@ -239,7 +262,7 @@ public class XMLExporterUtil {
 			Element ret = new Element(name, XMLExporter.nsinvoice);
 			if (attr == null) {
 				// the replaceAll is an ugly fix problems in a database from Bruno Büchel in Yverdon
-				ret.setText(val.replaceAll("\u001f","")); // Unit-Separator
+				ret.setText(val.replaceAll("\u001f", "")); // Unit-Separator
 			} else {
 				ret.setAttribute(attr, val);
 			}
@@ -269,8 +292,7 @@ public class XMLExporterUtil {
 	 * @param amount
 	 * @param el
 	 */
-	public static void setVatAttribute(IBilled billed, Money amount, Element el,
-		VatRateSum vatsum){
+	public static void setVatAttribute(IBilled billed, Money amount, Element el, VatRateSum vatsum){
 		double value = 0.0;
 		
 		String vatScale = (String) billed.getExtInfo(Constants.VAT_SCALE);
@@ -336,5 +358,162 @@ public class XMLExporterUtil {
 			}
 		}
 		return ret.toString();
+	}
+	
+	public static String getIntermediateEAN(IInvoice invoice){
+		String kEAN = getCostBearerEAN(invoice);
+		String rEAN = getRecipientEAN(invoice);
+		
+		// Try to find the intermediate EAN. If we have explicitely set
+		// an intermediate EAN, we'll use this one. Otherweise, we'll
+		// check whether the mandator has a TC contract. if so, we try to
+		// find the TC's EAN.
+		// If nothing appropriate is found, we'll try to use the receiver EAN
+		// or at least the guarantor EAN.
+		// If everything fails we use a pseudo EAN to make the Validators happy
+		String iEAN = TarmedRequirements.getIntermediateEAN(invoice.getCoverage());
+		if (iEAN.length() == 0) {
+			if (TarmedRequirements.hasTCContract(invoice.getMandator())) {
+				String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
+				if (trustCenter.length() > 0) {
+					iEAN = TrustCenters.getTCEAN(trustCenter);
+				}
+			}
+		}
+		logger.info("Intermediate EAN [" + iEAN + "]");
+		if (StringTool.isNothing(iEAN)) {
+			// make validator happy
+			if (!rEAN.matches("(20[0-9]{11}|76[0-9]{11})")) { //$NON-NLS-1$
+				if (kEAN.matches("(20[0-9]{11}|76[0-9]{11})")) { //$NON-NLS-1$
+					iEAN = kEAN;
+				} else {
+					iEAN = TarmedRequirements.EAN_PSEUDO;
+				}
+			} else {
+				iEAN = rEAN;
+			}
+		}
+		return iEAN;
+	}
+	
+	private static IContact getCostBearer(ICoverage invoiceCoverage){
+		IContact kostentraeger = invoiceCoverage.getCostBearer();
+		if (kostentraeger == null) {
+			kostentraeger = invoiceCoverage.getPatient();
+		}
+		return kostentraeger;
+	}
+	
+	public static String getRecipientEAN(IInvoice invoice){
+		String rEAN = TarmedRequirements.getRecipientEAN(getCostBearer(invoice.getCoverage()));
+		logger.info("Recipient EAN [" + rEAN + "]");
+		if (rEAN.equals("unknown")) { //$NON-NLS-1$
+			rEAN = getCostBearerEAN(invoice);
+		}
+		return rEAN;
+	}
+	
+	public static String getCostBearerEAN(IInvoice invoice){
+		String kEAN = TarmedRequirements.getEAN(getCostBearer(invoice.getCoverage()));
+		logger.info("Costbearer EAN [" + kEAN + "]");
+		return kEAN;
+	}
+	
+	public static XMLGregorianCalendar makeXMLDate(LocalDate date)
+		throws DatatypeConfigurationException{
+		ZonedDateTime zonedDateTime = date.atStartOfDay().atZone(ZoneId.systemDefault());
+		GregorianCalendar gregorianCalendar = GregorianCalendar.from(zonedDateTime);
+		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+	}
+	
+	public static XMLGregorianCalendar makeXMLDateTime(LocalDateTime dateTime)
+		throws DatatypeConfigurationException{
+		ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.systemDefault());
+		GregorianCalendar gregorianCalendar = GregorianCalendar.from(zonedDateTime);
+		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+	}
+	
+	public static XMLGregorianCalendar makeTarmedDate(String dateString)
+		throws DatatypeConfigurationException{
+		TimeTool timetool = new TimeTool(dateString);
+		GregorianCalendar gregorianCalendar = GregorianCalendar.from(timetool.toZonedDateTime());
+		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+	}
+	
+	public static Optional<Double> getALScalingFactor(IBilled billed){
+		String scalingFactor = (String) billed.getExtInfo("AL_SCALINGFACTOR");
+		if (scalingFactor != null && !scalingFactor.isEmpty()) {
+			try {
+				return Optional.of(Double.parseDouble(scalingFactor));
+			} catch (NumberFormatException ne) {
+				// return empty if not parseable
+			}
+		}
+		return Optional.empty();
+	}
+	
+	public static Optional<Double> getALNotScaled(IBilled billed){
+		String notScaled = (String) billed.getExtInfo("AL_NOTSCALED");
+		if (notScaled != null && !notScaled.isEmpty()) {
+			try {
+				return Optional.of(Double.parseDouble(notScaled));
+			} catch (NumberFormatException ne) {
+				// return empty if not parseable
+			}
+		}
+		return Optional.empty();
+	}
+	
+	public static List<IReasonForEncounter> getReasonsForEncounter(IEncounter encounter){
+		IQuery<IReasonForEncounter> query =
+			ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
+		query.and("konsID", COMPARATOR.EQUALS, encounter.getId());
+		return query.execute();
+	}
+	
+	/**
+	 * Get the {@link IContact} of the guarantor for a bill using the paymentMode, patient and fall.
+	 * 
+	 * <ul>
+	 * <li>Fall TP, Guardian defined -> return guardian
+	 * <li>Fall TP, No Guardian defined -> return patient
+	 * <li>Fall TG, Guarantor equals Patient, Guardian defined -> return guardian
+	 * <li>Fall TG, Guarantor equals Patient, No Guardian defined -> return patient
+	 * <li>Fall TG, Guarantor not equals Patient -> return guarantor
+	 * </ul>
+	 * 
+	 * @param paymentMode
+	 * @param patient
+	 * @param coverage
+	 * @return
+	 */
+	public static IContact getGuarantor(String paymentMode, IPatient patient, ICoverage coverage){
+		IContact ret;
+		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
+			// TP
+			IContact legalGuardian = patient.getLegalGuardian();
+			if (legalGuardian != null) {
+				return legalGuardian;
+			} else {
+				return patient;
+			}
+		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
+			// TG
+			IContact invoiceReceiver = coverage.getGuarantor();
+			if (invoiceReceiver.equals(patient)) {
+				IContact legalGuardian = patient.getLegalGuardian();
+				if (legalGuardian != null) {
+					ret = legalGuardian;
+				} else {
+					ret = patient;
+				}
+			} else {
+				ret = invoiceReceiver;
+			}
+		} else {
+			ret = coverage.getGuarantor();
+		}
+		ret.getPostalAddress();
+		return ret;
 	}
 }

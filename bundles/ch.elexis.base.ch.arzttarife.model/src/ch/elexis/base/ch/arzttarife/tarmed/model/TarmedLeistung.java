@@ -152,6 +152,11 @@ public class TarmedLeistung
 	}
 	
 	@Override
+	public String getCodeSystemCode(){
+		return "001";
+	}
+	
+	@Override
 	public String getCode(){
 		return getEntity().getCode_();
 	}

@@ -673,7 +673,7 @@ public class XMLExporter implements IRnOutputter {
 		// update guarantor information
 		if (tiersGarant != null) {
 			IContact guarantorContact =
-				XMLExporterTiers.getGuarantor(XMLExporter.TIERS_GARANT, patient, coverage);
+				XMLExporterUtil.getGuarantor(XMLExporter.TIERS_GARANT, patient, coverage);
 			if (guarantorContact != null) {
 				Element guarantorUpdate = buildGuarantor(guarantorContact, patient);
 				if (guarantorUpdate != null) {

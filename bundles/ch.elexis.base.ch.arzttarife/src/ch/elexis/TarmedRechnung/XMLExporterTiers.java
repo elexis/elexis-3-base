@@ -145,7 +145,8 @@ public class XMLExporterTiers {
 		ret.tiersElement.addContent(patientElement);
 		
 		Element guarantor =
-			xmlExporter.buildGuarantor(getGuarantor(tiers, patient, coverage), patient);
+			xmlExporter.buildGuarantor(XMLExporterUtil.getGuarantor(tiers, patient, coverage),
+				patient);
 		ret.tiersElement.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", XMLExporter.nsinvoice); //$NON-NLS-1$
@@ -168,51 +169,4 @@ public class XMLExporterTiers {
 
 		return ret;
 	}
-	
-	/**
-	 * Get the {@link IContact} of the guarantor for a bill using the paymentMode, patient and fall.
-	 * 
-	 * <ul>
-	 * <li>Fall TP, Guardian defined -> return guardian
-	 * <li>Fall TP, No Guardian defined -> return patient
-	 * <li>Fall TG, Guarantor equals Patient, Guardian defined -> return guardian
-	 * <li>Fall TG, Guarantor equals Patient, No Guardian defined -> return patient
-	 * <li>Fall TG, Guarantor not equals Patient -> return guarantor
-	 * </ul>
-	 * 
-	 * @param paymentMode
-	 * @param patient
-	 * @param coverage
-	 * @return
-	 */
-	public static IContact getGuarantor(String paymentMode, IPatient patient, ICoverage coverage){
-		IContact ret;
-		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
-			// TP
-			IContact legalGuardian = patient.getLegalGuardian();
-			if(legalGuardian != null) {
-				return legalGuardian;
-			} else {
-				return patient;
-			}
-		} else if (paymentMode.equals(XMLExporter.TIERS_GARANT)) {
-			// TG
-			IContact invoiceReceiver = coverage.getGuarantor();
-			if (invoiceReceiver.equals(patient)) {
-				IContact legalGuardian = patient.getLegalGuardian();
-				if (legalGuardian != null) {
-					ret = legalGuardian;
-				} else {
-					ret = patient;
-				}
-			} else {
-				ret = invoiceReceiver;
-			}
-		} else {
-			ret = coverage.getGuarantor();
-		}
-		ret.getPostalAddress();
-		return ret;
-	}
-	
 }

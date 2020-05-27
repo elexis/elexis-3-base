@@ -34,7 +34,8 @@ public class XMLExporterTiersTest {
 		assertEquals(Tiers.PAYANT, TP_GV.getTiersType());
 		ICoverage coverage =
 			CoreModelServiceHolder.get().load(TP_GV.getId(), ICoverage.class).get();
-		IContact guarantor = XMLExporterTiers.getGuarantor(XMLExporter.TIERS_PAYANT,
+		IContact guarantor = XMLExporterUtil.getGuarantor(
+			XMLExporter.TIERS_PAYANT,
 			coverage.getPatient(), coverage);
 		assertEquals(legalGuardian, NoPoUtil.loadAsPersistentObject(guarantor));
 		
@@ -44,7 +45,8 @@ public class XMLExporterTiersTest {
 		TP_NOGV.setGarant(insurer);
 		assertEquals(Tiers.PAYANT, TP_NOGV.getTiersType());
 		coverage = CoreModelServiceHolder.get().load(TP_NOGV.getId(), ICoverage.class).get();
-		guarantor = XMLExporterTiers.getGuarantor(XMLExporter.TIERS_PAYANT, coverage.getPatient(),
+		guarantor =
+			XMLExporterUtil.getGuarantor(XMLExporter.TIERS_PAYANT, coverage.getPatient(),
 			coverage);
 		assertEquals(TP_NOGV.getPatient(), NoPoUtil.loadAsPersistentObject(guarantor));
 		

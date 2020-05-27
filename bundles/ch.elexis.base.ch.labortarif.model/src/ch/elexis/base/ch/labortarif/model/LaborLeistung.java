@@ -43,6 +43,11 @@ public class LaborLeistung
 	}
 	
 	@Override
+	public String getCodeSystemCode(){
+		return "317";
+	}
+	
+	@Override
 	public VatInfo getVatInfo(){
 		return VatInfo.VAT_NONE;
 	}

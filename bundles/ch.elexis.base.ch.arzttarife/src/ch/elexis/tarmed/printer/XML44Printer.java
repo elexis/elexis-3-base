@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
-import ch.elexis.TarmedRechnung.XMLExporterTiers;
+import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.StringConstants;
@@ -776,7 +776,8 @@ public class XML44Printer {
 				.load(fall.getPatient().getId(), IPatient.class).orElse(null);
 			ICoverage coverage =
 				CoreModelServiceHolder.get().load(fall.getId(), ICoverage.class).orElse(null);
-			IContact guarantor = XMLExporterTiers.getGuarantor(XMLExporter.TIERS_GARANT, patientContact,
+			IContact guarantor =
+				XMLExporterUtil.getGuarantor(XMLExporter.TIERS_GARANT, patientContact,
 				coverage);
 			return Kontakt.load(guarantor.getId());
 		}

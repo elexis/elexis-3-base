@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.jdom.Element;
@@ -25,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
-import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.labortarif.ILaborLeistung;
@@ -39,8 +37,6 @@ import ch.elexis.core.model.ICustomService;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.ch.BillingLaw;
-import ch.elexis.core.services.IQuery;
-import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.tarmedprefs.TarmedRequirements;
@@ -360,7 +356,7 @@ public class XMLExporterServices {
 						el.setAttribute(ATTR_BODY_LOCATION, ArzttarifeUtil.getSide(billed)); // 22450
 						
 						el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); // 22470
-						getALNotScaled(billed).ifPresent(d -> {
+						XMLExporterUtil.getALNotScaled(billed).ifPresent(d -> {
 							el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(d / 100.0, 2)); // 22470
 						});
 						
@@ -370,7 +366,7 @@ public class XMLExporterServices {
 						// 0)
 						el.setAttribute(ATTR_SCALE_FACTOR_MT,
 							XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22490
-						getALScalingFactor(billed).ifPresent(f -> {
+						XMLExporterUtil.getALScalingFactor(billed).ifPresent(f -> {
 							f = f * primaryScale;
 							el.setAttribute(ATTR_SCALE_FACTOR_MT, XMLTool.doubleToXmlDouble(f, 1)); // 22500
 						});
@@ -399,7 +395,7 @@ public class XMLExporterServices {
 						
 						if (!bRFE) {
 							List<IReasonForEncounter> rfes =
-								getReasonsForEncounter(encounter);
+								XMLExporterUtil.getReasonsForEncounter(encounter);
 							if (rfes.size() > 0) {
 								StringBuilder sb = new StringBuilder();
 								for (IReasonForEncounter rfe : rfes) {
@@ -583,13 +579,6 @@ public class XMLExporterServices {
 		return ret;
 	}
 	
-	private static List<IReasonForEncounter> getReasonsForEncounter(IEncounter encounter){
-		IQuery<IReasonForEncounter> query =
-			ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
-		query.and("konsID", COMPARATOR.EQUALS, encounter.getId());
-		return query.execute();
-	}
-	
 	private static String getPharmaCode(IArticle iArticle){
 		String ret = "";
 		String systemName = iArticle.getCodeSystemName();
@@ -607,30 +596,6 @@ public class XMLExporterServices {
 			}
 		}
 		return ret;
-	}
-	
-	private static Optional<Double> getALScalingFactor(IBilled billed){
-		String scalingFactor = (String) billed.getExtInfo("AL_SCALINGFACTOR");
-		if (scalingFactor != null && !scalingFactor.isEmpty()) {
-			try {
-				return Optional.of(Double.parseDouble(scalingFactor));
-			} catch (NumberFormatException ne) {
-				// return empty if not parseable
-			}
-		}
-		return Optional.empty();
-	}
-	
-	private static Optional<Double> getALNotScaled(IBilled billed){
-		String notScaled = (String) billed.getExtInfo("AL_NOTSCALED");
-		if (notScaled != null && !notScaled.isEmpty()) {
-			try {
-				return Optional.of(Double.parseDouble(notScaled));
-			} catch (NumberFormatException ne) {
-				// return empty if not parseable
-			}
-		}
-		return Optional.empty();
 	}
 	
 	/**

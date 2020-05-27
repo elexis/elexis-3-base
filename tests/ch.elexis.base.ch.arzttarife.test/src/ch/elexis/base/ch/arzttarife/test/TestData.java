@@ -55,6 +55,7 @@ import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.data.Xid;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
@@ -289,6 +290,7 @@ public class TestData {
 			mandant.setExtInfoStoredObjectByKey("Kanton", "AG");
 			
 			mandant.addXid(DOMAIN_EAN, "2000000000002", true);
+			Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_KSK, "KSK/ZSR-Nr", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 			mandant.addXid(TarmedRequirements.DOMAIN_KSK, "C000002", true);
 			
 			mandant.setExtInfoStoredObjectByKey(ta.ESR5OR9, "esr9");

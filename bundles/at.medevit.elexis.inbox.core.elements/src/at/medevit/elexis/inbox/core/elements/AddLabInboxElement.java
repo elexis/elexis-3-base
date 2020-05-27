@@ -60,7 +60,7 @@ public class AddLabInboxElement implements Runnable {
 				// if stammarzt and assigned contact is null use active mandant
 				assignedMandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 			}
-		} else {
+		} else if ("1".equals(doctor.get(Kontakt.FLD_IS_MANDATOR))) {
 			// stammarzt is defined
 			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
 				+ patient.getLabel() + " for mandant " + doctor.getLabel());

@@ -673,7 +673,7 @@ public class Tarmed45Exporter {
 				return true;
 			}
 			String ckzl = (String) ((IArticle) billable).getExtInfo("Kassentyp"); // MedikamentImporter#KASSENTYP
-			return ckzl.equals("1");
+			return "1".equals(ckzl);
 		}
 		// physio
 		if ("311".equals(tariffTyp)) {

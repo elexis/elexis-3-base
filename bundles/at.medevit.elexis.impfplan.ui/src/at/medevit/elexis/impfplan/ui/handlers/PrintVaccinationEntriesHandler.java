@@ -10,7 +10,6 @@
  *******************************************************************************/
 package at.medevit.elexis.impfplan.ui.handlers;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
@@ -43,6 +42,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
@@ -160,7 +160,8 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		File pdf = new File(outputDir, "impfplan_" + patient.getPatCode() + ".pdf");
 		document.save(pdf);
 		document.close();
-		Desktop.getDesktop().open(pdf);
+		// open with system viewer
+		Program.launch(pdf.getAbsolutePath());
 	}
 	
 	static BufferedImage convertToAWT(ImageData data){

@@ -7,6 +7,7 @@ import org.junit.runners.Suite;
 
 import ch.elexis.TarmedRechnung.XMLExporterTest;
 import ch.elexis.TarmedRechnung.XMLExporterTiersTest;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45ExporterTest;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ch.BillingLaw;
@@ -15,7 +16,7 @@ import ch.elexis.core.utils.OsgiServiceUtil;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	XMLExporterTest.class, XMLExporterTiersTest.class
+	XMLExporterTest.class, XMLExporterTiersTest.class, Tarmed45ExporterTest.class
 })
 public class AllPluginTests {
 	

@@ -145,9 +145,17 @@ public class TestData {
 					if (verrechnet.getVerrechenbar() instanceof Eigenleistung) {
 						if ("GA".equals(verrechnet.getCode())) {
 							verrechnet.setDetail(Verrechnet.VATSCALE, "8.00");
+							// test if data made it to jpa
+							//							Optional<IBilled> billed = CoreModelServiceHolder.get()
+							//								.load(verrechnet.getId(), IBilled.class);
+							//							assertTrue(billed.get().getExtInfo(Verrechnet.VATSCALE) != null);
 						}
 						if ("GB".equals(verrechnet.getCode())) {
 							verrechnet.setDetail(Verrechnet.VATSCALE, "2.50");
+							// test if data made it to jpa							
+							//							Optional<IBilled> billed = CoreModelServiceHolder.get()
+							//								.load(verrechnet.getId(), IBilled.class);
+							//							assertTrue(billed.get().getExtInfo(Verrechnet.VATSCALE) != null);
 						}
 					}
 				}

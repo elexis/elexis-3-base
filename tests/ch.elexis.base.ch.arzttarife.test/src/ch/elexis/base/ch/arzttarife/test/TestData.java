@@ -3,6 +3,7 @@ package ch.elexis.base.ch.arzttarife.test;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom.Document;
@@ -84,9 +86,39 @@ public class TestData {
 	public static TestSzenario getTestSzenarioInstance() throws IOException{
 		if (testSzenarioInstance == null) {
 			testSzenarioInstance = new TestSzenario();
+			validateSzenario(testSzenarioInstance);
 		}
 		
 		return testSzenarioInstance;
+	}
+	
+	private static void validateSzenario(TestSzenario szenario){
+		List<IInvoice> invoices = szenario.getInvoices();
+		assertNotNull(invoices);
+		assertFalse(invoices.isEmpty());
+		for (IInvoice iInvoice : invoices) {
+			// reload all invoices from db to get po changes
+			CoreModelServiceHolder.get().refresh(iInvoice, true);
+			List<IBilled> invoiceBilled = iInvoice.getBilled();
+			List<IEncounter> encounters = iInvoice.getEncounters();
+			assertFalse(encounters.isEmpty());
+			List<IBilled> encounterBilled = encounters.stream().map(enc -> enc.getBilled()).flatMap(
+				List::stream)
+				.collect(Collectors.toList());
+			assertEquals(encounterBilled.size(), invoiceBilled.size());
+			for (IBilled iBilled : invoiceBilled) {
+				assertFalse(iBilled.getText().isEmpty());
+				if (iBilled.getText().equals("Gutachten A")) {
+					String vatscale = (String) iBilled.getExtInfo(Verrechnet.VATSCALE);
+					assertNotNull(vatscale);
+					assertEquals("8.00", vatscale);
+				} else if (iBilled.getText().equals("Gutachten B")) {
+					String vatscale = (String) iBilled.getExtInfo(Verrechnet.VATSCALE);
+					assertNotNull(vatscale);
+					assertEquals("2.50", vatscale);
+				}
+			}
+		}
 	}
 	
 	public static class TestSzenario {
@@ -145,17 +177,9 @@ public class TestData {
 					if (verrechnet.getVerrechenbar() instanceof Eigenleistung) {
 						if ("GA".equals(verrechnet.getCode())) {
 							verrechnet.setDetail(Verrechnet.VATSCALE, "8.00");
-							// test if data made it to jpa
-							Optional<IBilled> billed = CoreModelServiceHolder.get()
-								.load(verrechnet.getId(), IBilled.class);
-							assertTrue(billed.get().getExtInfo(Verrechnet.VATSCALE) != null);
 						}
 						if ("GB".equals(verrechnet.getCode())) {
 							verrechnet.setDetail(Verrechnet.VATSCALE, "2.50");
-							// test if data made it to jpa							
-							Optional<IBilled> billed = CoreModelServiceHolder.get()
-								.load(verrechnet.getId(), IBilled.class);
-							assertTrue(billed.get().getExtInfo(Verrechnet.VATSCALE) != null);
 						}
 					}
 				}

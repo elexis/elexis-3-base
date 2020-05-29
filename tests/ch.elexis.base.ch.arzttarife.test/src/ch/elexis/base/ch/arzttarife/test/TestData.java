@@ -377,6 +377,8 @@ public class TestData {
 			if (addKostentraeger) {
 				fall.setCostBearer(pat);
 			}
+			fall.setExtInfoStoredObjectByKey(TarmedRequirements.CASE_NUMBER, "123456");
+			
 			faelle.add(fall);
 			return fall;
 		}

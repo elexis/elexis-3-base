@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,10 +41,17 @@ public class Tarmed45ExporterTest {
 		assertTrue(vatInvoice.isPresent());
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		assertTrue(exporter.doExport(vatInvoice.get(), output, IRnOutputter.TYPE.ORIG));
+		
+		// ensure xsd conformity
+		Tarmed45Validator validator = new Tarmed45Validator();
+		List<String> errors =
+			validator.validateRequest(new ByteArrayInputStream(output.toByteArray()));
+		assertTrue(Arrays.toString(errors.toArray()), errors.isEmpty());
+		
+		// unmarshall and check vat values
 		RequestType vatRequest =
 			TarmedJaxbUtil
 				.unmarshalInvoiceRequest450(new ByteArrayInputStream(output.toByteArray()));
-		// check vat values
 		assertNotNull(vatRequest.getPayload().getBody().getTiersGarant());
 		VatType vat = vatRequest.getPayload().getBody().getTiersGarant().getBalance().getVat();
 		assertNotNull(vat);

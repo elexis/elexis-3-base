@@ -1,6 +1,7 @@
 package at.medevit.elexis.ehc.ui.vacdoc.preferences;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -35,6 +36,10 @@ public class MeineImpfungenPreferences extends FieldEditorPreferencePage
 					"Test", MeineImpfungenService.ENDPOINT_TEST
 				}
 			}, getFieldEditorParent());
+		addField(editor);
+		
+		editor = new BooleanFieldEditor(MeineImpfungenService.CONFIG_USECERTAUTH,
+			"meineimpfungen mit Zertifikat aufrufen", getFieldEditorParent());
 		addField(editor);
 		
 		editor = new FileFieldEditor(MeineImpfungenService.CONFIG_KEYSTORE_PATH, "Keystore",

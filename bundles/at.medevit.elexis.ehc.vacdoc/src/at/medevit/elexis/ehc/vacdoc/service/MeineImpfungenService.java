@@ -19,6 +19,8 @@ public interface MeineImpfungenService {
 	public static final String ENDPOINT_PRODUCTIV = "productiv";
 	public static final String ENDPOINT_TEST = "test";
 	
+	public static final String CONFIG_USECERTAUTH = "meineimpfungen.usecertauth";
+	
 	public static final String CONFIG_KEYSTORE_PATH = "meineimpfungen.keystorePath";
 	public static final String CONFIG_KEYSTORE_PASS = "meineimpfungen.keystorePass";
 	

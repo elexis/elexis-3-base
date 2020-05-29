@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder;
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 
@@ -48,6 +49,10 @@ public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandl
 										MeineImpfungenServiceHolder.getService().getBaseUrl());
 									if (link.lastIndexOf("/") != (link.length() - 1)) {
 										link.append("/");
+									}
+									if (CoreHub.mandantCfg
+										.get(MeineImpfungenService.CONFIG_USECERTAUTH, false)) {
+										link.append("certauth/");
 									}
 									getPatientId(patients.get(0)).ifPresent(pid -> {
 										link.append("specialist-person-home.html?personId=")

@@ -1010,7 +1010,7 @@ public class Tarmed45Exporter {
 			return null;
 		}
 		esrQRType.setIban(iban);
-		esrQRType.setReferenceNumber(besr.makeRefNr(true));
+		esrQRType.setReferenceNumber(besr.makeRefNr(false));
 		
 		IContact creditor = invoice.getMandator().getBiller();
 		EsrAddressType esrAddressType = new EsrAddressType();

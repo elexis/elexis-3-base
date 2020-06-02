@@ -52,8 +52,10 @@ import ch.elexis.data.BillingSystem;
 import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.NamedBlob;
+import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.Verrechnet;
@@ -314,6 +316,11 @@ public class TestData {
 		
 		private void createMandanten(){
 			
+			Organisation bank = new Organisation("Test Bank", "Test");
+			bank.set(Kontakt.FLD_STREET, "Bankweg 1");
+			bank.set(Kontakt.FLD_ZIP, "2501");
+			bank.set(Kontakt.FLD_PLACE, "Biel");
+
 			Mandant mandant = new Mandant("Mandant.tarmed", "Mandant.tarmed", "01.01.1900", "w");
 			mandant.setLabel("mt");
 			
@@ -334,6 +341,10 @@ public class TestData {
 			
 			mandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, "01-12648-2");
 			mandant.setExtInfoStoredObjectByKey(ta.ESRSUB, "15453");
+			
+			mandant.setExtInfoStoredObjectByKey(ta.RNBANK, bank.getId());
+			
+			mandant.setExtInfoStoredObjectByKey("IBAN", "CH5800791123000889012");
 			
 			mandanten.add(mandant);
 			

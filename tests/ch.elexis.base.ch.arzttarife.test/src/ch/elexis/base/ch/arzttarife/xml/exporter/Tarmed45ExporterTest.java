@@ -17,6 +17,7 @@ import org.junit.Test;
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.data.Verrechnet;
@@ -65,5 +66,30 @@ public class Tarmed45ExporterTest {
 				assertEquals(expectedVat, vatRate.getVat(), 0.01);
 			}
 		}
+	}
+	
+	@Test
+	public void doExportQrTest() throws IOException{
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario);
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
+		Tarmed45Exporter exporter = new Tarmed45Exporter();
+		exporter.setEsrType(EsrType.esrQR);
+		
+		List<IInvoice> invoices = szenario.getInvoices();
+		Optional<IInvoice> vatInvoice = invoices.stream()
+			.filter(i -> i.getBilled().stream()
+				.filter(b -> b.getExtInfo(Verrechnet.VATSCALE) != null).findFirst().isPresent())
+			.findFirst();
+		assertTrue(vatInvoice.isPresent());
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		assertTrue(exporter.doExport(vatInvoice.get(), output, IRnOutputter.TYPE.ORIG));
+		
+		// ensure xsd conformity
+		Tarmed45Validator validator = new Tarmed45Validator();
+		List<String> errors =
+			validator.validateRequest(new ByteArrayInputStream(output.toByteArray()));
+		assertTrue(Arrays.toString(errors.toArray()), errors.isEmpty());
 	}
 }

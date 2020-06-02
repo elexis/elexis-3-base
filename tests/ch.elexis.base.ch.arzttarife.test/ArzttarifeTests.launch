@@ -230,7 +230,6 @@
 <setEntry value="ch.rgw.utility@default:default"/>
 <setEntry value="jaxb-api-impl-import-java9@default:false"/>
 <setEntry value="org.iatrix.help.wiki@default:default"/>
-<setEntry value="org.osgi.framework.system.packages.extra@default:false"/>
 </setAttribute>
 <booleanAttribute key="show_selected_only" value="false"/>
 <stringAttribute key="testApplication" value="ch.elexis.core.application.ElexisApp"/>

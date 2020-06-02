@@ -17,9 +17,9 @@ import org.xml.sax.SAXParseException;
 
 public class Tarmed45Validator {
 	
-	private Validator validator;
+	private static Validator validator;
 	
-	public List<String> validateRequest(InputStream request){
+	public synchronized List<String> validateRequest(InputStream request){
 		if (validator == null) {
 			try {
 				validator = initValidator();

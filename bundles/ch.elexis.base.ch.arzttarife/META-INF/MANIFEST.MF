@@ -24,6 +24,7 @@ Require-Bundle: org.eclipse.ui.forms,
 Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.arzttarife_schweiz,
  ch.elexis.base.ch.arzttarife.importer,
+ ch.elexis.base.ch.arzttarife.xml.exporter,
  ch.elexis.tarmedprefs,
  ch.elexis.views
 Bundle-ClassPath: .

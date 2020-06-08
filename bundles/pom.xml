@@ -124,6 +124,8 @@
     <module>ch.elexis.stickynotes</module>
     <module>ch.elexis.support.dbshaker</module>
     <module>ch.gpb.elexis.cst</module>
+    <module>at.medevit.medelexis.text.msword</module>
+    <module>ch.medelexis.openoffice</module>
     <module>ch.medelexis.text.templator</module>
     <module>ch.medshare.commons</module>
     <module>ch.medshare.connect.abacusjunior</module>

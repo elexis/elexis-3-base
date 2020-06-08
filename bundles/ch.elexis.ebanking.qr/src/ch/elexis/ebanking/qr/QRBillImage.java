@@ -1,7 +1,6 @@
 package ch.elexis.ebanking.qr;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Hashtable;
@@ -91,10 +90,6 @@ public class QRBillImage {
 				};
 				imageLoader.compression = 100;
 				imageLoader.save(output, SWT.IMAGE_JPEG);
-				
-				try (FileOutputStream out = new FileOutputStream("/home/thomas/kack.jpg")) {
-					out.write(output.toByteArray());
-				}
 				
 				return Optional.of("data:image/jpg;base64,"
 					+ Base64.getEncoder().encodeToString(output.toByteArray()));

@@ -130,6 +130,8 @@
       <feature id="com.hilotec.elexis.kgview.feature" installMode="root"/>
       <feature id="com.hilotec.elexis.messwerte.v2.feature" installMode="root"/>
       <feature id="com.hilotec.elexis.opendocument.feature" installMode="root"/>
+      <feature id="at.medevit.medelexis.text.msword.feature" installMode="root"/>
+      <feature id="ch.medelexis.openoffice.feature" installMode="root"/>
       <feature id="com.hilotec.elexis.opendocument2omnivore.feature" installMode="root"/>
       <feature id="com.hilotec.elexis.pluginstatistiken.feature" installMode="root"/>
       <feature id="com.hilotec.elexis.stickerprefix.feature" installMode="root"/>

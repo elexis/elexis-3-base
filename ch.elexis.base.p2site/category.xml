@@ -21,6 +21,12 @@
    <feature url="features/ch.elexis.privatrechnung.feature_3.0.100.qualifier.jar" id="ch.elexis.privatrechnung.feature" version="3.0.100.qualifier">
       <category name="finances"/>
    </feature>
+   <feature url="features/ch.medelexis.openoffice.feature_3.8.0.qualifier.jar" id="ch.medelexis.openoffice.feature" version="3.8.0.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/at.medevit.medelexis.text.msword.feature_3.8.0.qualifier.jar" id="at.medevit.medelexis.text.msword.feature" version="3.8.0.qualifier">
+      <category name="documentmanagement"/>
+   </feature>
    <feature url="features/ch.medelexis.text.templator.feature_3.0.100.qualifier.jar" id="ch.medelexis.text.templator.feature" version="3.0.100.qualifier">
       <category name="documentmanagement"/>
    </feature>

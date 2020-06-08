@@ -515,7 +515,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	class BankLister extends TitleAreaDialog {
 		final String[] flds = {
 			Messages.RechnungsPrefs_department, Messages.RechnungsPrefs_POBox, ta.ESRNUMBER,
-			ta.ESRSUB
+			ta.ESRSUB, "IBAN"
 		};
 		Label banklabel;
 		KontaktExtDialog.ExtInfoTable exTable;

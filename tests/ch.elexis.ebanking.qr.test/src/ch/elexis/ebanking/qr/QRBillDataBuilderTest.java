@@ -42,7 +42,7 @@ public class QRBillDataBuilderTest {
 	}
 	
 	@Test
-	public void buildSuccess(){
+	public void buildSuccess() throws QRBillDataException{
 		QRBillDataBuilder builder = new QRBillDataBuilder(cdtr, new Money(12.00), "CHF", dbtr);
 		builder.reference("977598000000002414281387835");
 		builder.unstructuredRemark("Ähnliche Rechnung #23 oder -23 über +23 mit <23");

@@ -4,6 +4,9 @@ import java.util.StringJoiner;
 
 import org.apache.commons.lang3.StringUtils;
 
+import ch.elexis.ebanking.qr.QRBillDataException;
+import ch.elexis.ebanking.qr.QRBillDataException.SourceType;
+
 public class QRBillData {
 	
 	public static String SEPARATOR = "\r\n";
@@ -73,7 +76,7 @@ public class QRBillData {
 	private String rmtInfRef;
 	private String rmtInfRefPattern = "[\\w]{1,27}";
 	private String rmtInfUstrd;
-	private String rmtInfUstrdPattern = "[\\u0020-\\uFFFF]{1,140}";
+	private String rmtInfUstrdPattern = "[\\u0020-\\uFFFF]{0,140}";
 	private String rmtInfTrailer;
 	private String rmtInfTrailerPattern = "[\\w]{3}";
 	
@@ -86,9 +89,10 @@ public class QRBillData {
 		return cdtrInfIBAN;
 	}
 	
-	public void setCdtrInfIBAN(String cdtrInfIBAN){
+	public void setCdtrInfIBAN(String cdtrInfIBAN) throws QRBillDataException{
 		if (!cdtrInfIBAN.matches(cdtrInfIBANPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + cdtrInfIBAN + "] for [" + cdtrInfIBANPattern + "]");
 		}
 		this.cdtrInfIBAN = cdtrInfIBAN;
@@ -98,9 +102,10 @@ public class QRBillData {
 		return cdtrInfAdrTp;
 	}
 	
-	public void setCdtrInfAdrTp(String cdtrInfAdrTp){
+	public void setCdtrInfAdrTp(String cdtrInfAdrTp) throws QRBillDataException{
 		if (!cdtrInfAdrTp.matches(cdtrInfAdrTpPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + cdtrInfAdrTp + "] for [" + cdtrInfAdrTpPattern + "]");
 		}
 		this.cdtrInfAdrTp = cdtrInfAdrTp;
@@ -110,9 +115,10 @@ public class QRBillData {
 		return cdtrInfName;
 	}
 	
-	public void setCdtrInfName(String cdtrInfName){
+	public void setCdtrInfName(String cdtrInfName) throws QRBillDataException{
 		if (!cdtrInfName.matches(cdtrInfNamePattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + cdtrInfName + "] for [" + cdtrInfNamePattern + "]");
 		}
 		this.cdtrInfName = cdtrInfName;
@@ -122,9 +128,12 @@ public class QRBillData {
 		return cdtrInfStrtNmOrAdrLine1;
 	}
 	
-	public void setCdtrInfStrtNmOrAdrLine1(String cdtrInfStrtNmOrAdrLine1){
+	public void setCdtrInfStrtNmOrAdrLine1(String cdtrInfStrtNmOrAdrLine1)
+		throws QRBillDataException{
 		if (!cdtrInfStrtNmOrAdrLine1.matches(cdtrInfStrtNmOrAdrLine1Pattern)) {
-			throw new IllegalArgumentException("Invalid value [" + cdtrInfStrtNmOrAdrLine1
+			throw new QRBillDataException(SourceType.CREDITOR,
+				"Invalid value ["
+				+ cdtrInfStrtNmOrAdrLine1
 				+ "] for [" + cdtrInfStrtNmOrAdrLine1Pattern + "]");
 		}
 		this.cdtrInfStrtNmOrAdrLine1 = cdtrInfStrtNmOrAdrLine1;
@@ -134,9 +143,12 @@ public class QRBillData {
 		return cdtrInfStrtNmOrAdrLine2;
 	}
 	
-	public void setCdtrInfStrtNmOrAdrLine2(String cdtrInfStrtNmOrAdrLine2){
+	public void setCdtrInfStrtNmOrAdrLine2(String cdtrInfStrtNmOrAdrLine2)
+		throws QRBillDataException{
 		if (!cdtrInfStrtNmOrAdrLine2.matches(cdtrInfStrtNmOrAdrLine2Pattern)) {
-			throw new IllegalArgumentException("Invalid value [" + cdtrInfStrtNmOrAdrLine2
+			throw new QRBillDataException(SourceType.CREDITOR,
+				"Invalid value ["
+				+ cdtrInfStrtNmOrAdrLine2
 				+ "] for [" + cdtrInfStrtNmOrAdrLine2Pattern + "]");
 		}
 		this.cdtrInfStrtNmOrAdrLine2 = cdtrInfStrtNmOrAdrLine2;
@@ -146,9 +158,10 @@ public class QRBillData {
 		return cdtrInfPstCd;
 	}
 	
-	public void setCdtrInfPstCd(String cdtrInfPstCd){
+	public void setCdtrInfPstCd(String cdtrInfPstCd) throws QRBillDataException{
 		if (!cdtrInfPstCd.matches(cdtrInfPstCdPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + cdtrInfPstCd + "] for [" + cdtrInfPstCdPattern + "]");
 		}
 		this.cdtrInfPstCd = cdtrInfPstCd;
@@ -158,9 +171,10 @@ public class QRBillData {
 		return cdtrInfTwnNm;
 	}
 	
-	public void setCdtrInfTwnNm(String cdtrInfTwnNm){
+	public void setCdtrInfTwnNm(String cdtrInfTwnNm) throws QRBillDataException{
 		if (!cdtrInfTwnNm.matches(cdtrInfTwnNmPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + cdtrInfTwnNm + "] for [" + cdtrInfTwnNmPattern + "]");
 		}
 		this.cdtrInfTwnNm = cdtrInfTwnNm;
@@ -170,9 +184,10 @@ public class QRBillData {
 		return cdtrInfCtry;
 	}
 	
-	public void setCdtrInfCtry(String cdtrInfCtry){
+	public void setCdtrInfCtry(String cdtrInfCtry) throws QRBillDataException{
 		if (!cdtrInfCtry.matches(cdtrInfCtryPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + cdtrInfCtry + "] for [" + cdtrInfCtryPattern + "]");
 		}
 		this.cdtrInfCtry = cdtrInfCtry;
@@ -184,9 +199,10 @@ public class QRBillData {
 		return ultmtCdtrAdrTp;
 	}
 	
-	public void setUltmtCdtrAdrTp(String ultmtCdtrAdrTp){
+	public void setUltmtCdtrAdrTp(String ultmtCdtrAdrTp) throws QRBillDataException{
 		if (!ultmtCdtrAdrTp.matches(ultmtCdtrAdrTpPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + ultmtCdtrAdrTp + "] for [" + ultmtCdtrAdrTpPattern + "]");
 		}
 		this.ultmtCdtrAdrTp = ultmtCdtrAdrTp;
@@ -196,9 +212,10 @@ public class QRBillData {
 		return ultmtCdtrName;
 	}
 	
-	public void setUltmtCdtrName(String ultmtCdtrName){
+	public void setUltmtCdtrName(String ultmtCdtrName) throws QRBillDataException{
 		if (!ultmtCdtrName.matches(ultmtCdtrNamePattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + ultmtCdtrName + "] for [" + ultmtCdtrNamePattern + "]");
 		}
 		this.ultmtCdtrName = ultmtCdtrName;
@@ -208,9 +225,12 @@ public class QRBillData {
 		return ultmtCdtrStrtNmOrAdrLine1;
 	}
 	
-	public void setUltmtCdtrStrtNmOrAdrLine1(String ultmtCdtrStrtNmOrAdrLine1){
+	public void setUltmtCdtrStrtNmOrAdrLine1(String ultmtCdtrStrtNmOrAdrLine1)
+		throws QRBillDataException{
 		if (!ultmtCdtrStrtNmOrAdrLine1.matches(ultmtCdtrStrtNmOrAdrLine1Pattern)) {
-			throw new IllegalArgumentException("Invalid value [" + ultmtCdtrStrtNmOrAdrLine1
+			throw new QRBillDataException(SourceType.CREDITOR,
+				"Invalid value ["
+				+ ultmtCdtrStrtNmOrAdrLine1
 				+ "] for [" + ultmtCdtrStrtNmOrAdrLine1Pattern + "]");
 		}
 		this.ultmtCdtrStrtNmOrAdrLine1 = ultmtCdtrStrtNmOrAdrLine1;
@@ -220,9 +240,12 @@ public class QRBillData {
 		return ultmtCdtrStrtNmOrAdrLine2;
 	}
 	
-	public void setUltmtCdtrStrtNmOrAdrLine2(String ultmtCdtrStrtNmOrAdrLine2){
+	public void setUltmtCdtrStrtNmOrAdrLine2(String ultmtCdtrStrtNmOrAdrLine2)
+		throws QRBillDataException{
 		if (!ultmtCdtrStrtNmOrAdrLine2.matches(ultmtCdtrStrtNmOrAdrLine2Pattern)) {
-			throw new IllegalArgumentException("Invalid value [" + ultmtCdtrStrtNmOrAdrLine2
+			throw new QRBillDataException(SourceType.CREDITOR,
+				"Invalid value ["
+				+ ultmtCdtrStrtNmOrAdrLine2
 				+ "] for [" + ultmtCdtrStrtNmOrAdrLine2Pattern + "]");
 		}
 		this.ultmtCdtrStrtNmOrAdrLine2 = ultmtCdtrStrtNmOrAdrLine2;
@@ -232,9 +255,10 @@ public class QRBillData {
 		return ultmtCdtrPstCd;
 	}
 	
-	public void setUltmtCdtrPstCd(String ultmtCdtrPstCd){
+	public void setUltmtCdtrPstCd(String ultmtCdtrPstCd) throws QRBillDataException{
 		if (!ultmtCdtrPstCd.matches(ultmtCdtrPstCdPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + ultmtCdtrPstCd + "] for [" + ultmtCdtrPstCdPattern + "]");
 		}
 		this.ultmtCdtrPstCd = ultmtCdtrPstCd;
@@ -244,9 +268,10 @@ public class QRBillData {
 		return ultmtCdtrTwnNm;
 	}
 	
-	public void setUltmtCdtrTwnNm(String ultmtCdtrTwnNm){
+	public void setUltmtCdtrTwnNm(String ultmtCdtrTwnNm) throws QRBillDataException{
 		if (!ultmtCdtrTwnNm.matches(ultmtCdtrTwnNmPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + ultmtCdtrTwnNm + "] for [" + ultmtCdtrTwnNmPattern + "]");
 		}
 		this.ultmtCdtrTwnNm = ultmtCdtrTwnNm;
@@ -256,9 +281,10 @@ public class QRBillData {
 		return ultmtCdtrCtry;
 	}
 	
-	public void setUltmtCdtrCtry(String ultmtCdtrCtry){
+	public void setUltmtCdtrCtry(String ultmtCdtrCtry) throws QRBillDataException{
 		if (!ultmtCdtrCtry.matches(ultmtCdtrCtryPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.CREDITOR,
 				"Invalid value [" + ultmtCdtrCtry + "] for [" + ultmtCdtrCtryPattern + "]");
 		}
 		this.ultmtCdtrCtry = ultmtCdtrCtry;
@@ -270,9 +296,10 @@ public class QRBillData {
 		return ccyAmtAmt;
 	}
 	
-	public void setCcyAmtAmt(String ccyAmtAmt){
+	public void setCcyAmtAmt(String ccyAmtAmt) throws QRBillDataException{
 		if (!ccyAmtAmt.matches(ccyAmtAmtPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.AMOUNT,
 				"Invalid value [" + ccyAmtAmt + "] for [" + ccyAmtAmtPattern + "]");
 		}
 		this.ccyAmtAmt = ccyAmtAmt;
@@ -282,9 +309,10 @@ public class QRBillData {
 		return ccyAmtCcy;
 	}
 	
-	public void setCcyAmtCcy(String ccyAmtCcy){
+	public void setCcyAmtCcy(String ccyAmtCcy) throws QRBillDataException{
 		if (!ccyAmtCcy.matches(ccyAmtCcyPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.AMOUNT,
 				"Invalid value [" + ccyAmtCcy + "] for [" + ccyAmtCcyPattern + "]");
 		}
 		this.ccyAmtCcy = ccyAmtCcy;
@@ -296,9 +324,10 @@ public class QRBillData {
 		return ultmtDbtrAdrTp;
 	}
 	
-	public void setUltmtDbtrAdrTp(String ultmtDbtrAdrTp){
+	public void setUltmtDbtrAdrTp(String ultmtDbtrAdrTp) throws QRBillDataException{
 		if (!ultmtDbtrAdrTp.matches(ultmtDbtrAdrTpPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.DEBITOR,
 				"Invalid value [" + ultmtDbtrAdrTp + "] for [" + ultmtDbtrAdrTpPattern + "]");
 		}
 		this.ultmtDbtrAdrTp = ultmtDbtrAdrTp;
@@ -308,9 +337,10 @@ public class QRBillData {
 		return ultmtDbtrName;
 	}
 	
-	public void setUltmtDbtrName(String ultmtDbtrName){
+	public void setUltmtDbtrName(String ultmtDbtrName) throws QRBillDataException{
 		if (!ultmtDbtrName.matches(ultmtDbtrNamePattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.DEBITOR,
 				"Invalid value [" + ultmtDbtrName + "] for [" + ultmtDbtrNamePattern + "]");
 		}
 		this.ultmtDbtrName = ultmtDbtrName;
@@ -320,9 +350,12 @@ public class QRBillData {
 		return ultmtDbtrStrtNmOrAdrLine1;
 	}
 	
-	public void setUltmtDbtrStrtNmOrAdrLine1(String ultmtDbtrStrtNmOrAdrLine1){
+	public void setUltmtDbtrStrtNmOrAdrLine1(String ultmtDbtrStrtNmOrAdrLine1)
+		throws QRBillDataException{
 		if (!ultmtDbtrStrtNmOrAdrLine1.matches(ultmtDbtrStrtNmOrAdrLine1Pattern)) {
-			throw new IllegalArgumentException("Invalid value [" + ultmtDbtrStrtNmOrAdrLine1
+			throw new QRBillDataException(SourceType.DEBITOR,
+				"Invalid value ["
+				+ ultmtDbtrStrtNmOrAdrLine1
 				+ "] for [" + ultmtDbtrStrtNmOrAdrLine1Pattern + "]");
 		}
 		this.ultmtDbtrStrtNmOrAdrLine1 = ultmtDbtrStrtNmOrAdrLine1;
@@ -332,9 +365,12 @@ public class QRBillData {
 		return ultmtDbtrStrtNmOrAdrLine2;
 	}
 	
-	public void setUltmtDbtrStrtNmOrAdrLine2(String ultmtDbtrStrtNmOrAdrLine2){
+	public void setUltmtDbtrStrtNmOrAdrLine2(String ultmtDbtrStrtNmOrAdrLine2)
+		throws QRBillDataException{
 		if (!ultmtDbtrStrtNmOrAdrLine2.matches(ultmtDbtrStrtNmOrAdrLine2Pattern)) {
-			throw new IllegalArgumentException("Invalid value [" + ultmtDbtrStrtNmOrAdrLine2
+			throw new QRBillDataException(SourceType.DEBITOR,
+				"Invalid value ["
+				+ ultmtDbtrStrtNmOrAdrLine2
 				+ "] for [" + ultmtDbtrStrtNmOrAdrLine2Pattern + "]");
 		}
 		this.ultmtDbtrStrtNmOrAdrLine2 = ultmtDbtrStrtNmOrAdrLine2;
@@ -344,9 +380,10 @@ public class QRBillData {
 		return ultmtDbtrPstCd;
 	}
 	
-	public void setUltmtDbtrPstCd(String ultmtDbtrPstCd){
+	public void setUltmtDbtrPstCd(String ultmtDbtrPstCd) throws QRBillDataException{
 		if (!ultmtDbtrPstCd.matches(ultmtDbtrPstCdPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.DEBITOR,
 				"Invalid value [" + ultmtDbtrPstCd + "] for [" + ultmtDbtrPstCdPattern + "]");
 		}
 		this.ultmtDbtrPstCd = ultmtDbtrPstCd;
@@ -356,9 +393,10 @@ public class QRBillData {
 		return ultmtDbtrTwnNm;
 	}
 	
-	public void setUltmtDbtrTwnNm(String ultmtDbtrTwnNm){
+	public void setUltmtDbtrTwnNm(String ultmtDbtrTwnNm) throws QRBillDataException{
 		if (!ultmtDbtrTwnNm.matches(ultmtDbtrTwnNmPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.DEBITOR,
 				"Invalid value [" + ultmtDbtrTwnNm + "] for [" + ultmtDbtrTwnNmPattern + "]");
 		}
 		this.ultmtDbtrTwnNm = ultmtDbtrTwnNm;
@@ -368,9 +406,10 @@ public class QRBillData {
 		return ultmtDbtrCtry;
 	}
 	
-	public void setUltmtDbtrCtry(String ultmtDbtrCtry){
+	public void setUltmtDbtrCtry(String ultmtDbtrCtry) throws QRBillDataException{
 		if (!ultmtDbtrCtry.matches(ultmtDbtrCtryPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.DEBITOR,
 				"Invalid value [" + ultmtDbtrCtry + "] for [" + ultmtDbtrCtryPattern + "]");
 		}
 		this.ultmtDbtrCtry = ultmtDbtrCtry;
@@ -382,9 +421,10 @@ public class QRBillData {
 		return rmtInfTp;
 	}
 	
-	public void setRmtInfTp(String rmtInfTp){
+	public void setRmtInfTp(String rmtInfTp) throws QRBillDataException{
 		if (!rmtInfTp.matches(rmtInfTpPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.REMARK,
 				"Invalid value [" + rmtInfTp + "] for [" + rmtInfTpPattern + "]");
 		}
 		this.rmtInfTp = rmtInfTp;
@@ -394,9 +434,10 @@ public class QRBillData {
 		return rmtInfRef;
 	}
 	
-	public void setRmtInfRef(String rmtInfRef){
+	public void setRmtInfRef(String rmtInfRef) throws QRBillDataException{
 		if (!rmtInfRef.matches(rmtInfRefPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.REMARK,
 				"Invalid value [" + rmtInfRef + "] for [" + rmtInfRefPattern + "]");
 		}
 		this.rmtInfRef = rmtInfRef;
@@ -406,9 +447,10 @@ public class QRBillData {
 		return rmtInfUstrd;
 	}
 	
-	public void setRmtInfUstrd(String rmtInfUstrd){
+	public void setRmtInfUstrd(String rmtInfUstrd) throws QRBillDataException{
 		if (!rmtInfUstrd.matches(rmtInfUstrdPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.REMARK,
 				"Invalid value [" + rmtInfUstrd + "] for [" + rmtInfUstrdPattern + "]");
 		}
 		this.rmtInfUstrd = rmtInfUstrd;
@@ -418,9 +460,10 @@ public class QRBillData {
 		return rmtInfTrailer;
 	}
 	
-	public void setRmtInfTrailer(String rmtInfTrailer){
+	public void setRmtInfTrailer(String rmtInfTrailer) throws QRBillDataException{
 		if (!rmtInfTrailer.matches(rmtInfTrailerPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.REMARK,
 				"Invalid value [" + rmtInfTrailer + "] for [" + rmtInfTrailerPattern + "]");
 		}
 		this.rmtInfTrailer = rmtInfTrailer;
@@ -430,9 +473,10 @@ public class QRBillData {
 		return rmtInfStrdBkgInf;
 	}
 	
-	public void setRmtInfStrdBkgInf(String rmtInfStrdBkgInf){
+	public void setRmtInfStrdBkgInf(String rmtInfStrdBkgInf) throws QRBillDataException{
 		if (!rmtInfStrdBkgInf.matches(rmtInfStrdBkgInfPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.REMARK,
 				"Invalid value [" + rmtInfStrdBkgInf + "] for [" + rmtInfStrdBkgInfPattern + "]");
 		}
 		this.rmtInfStrdBkgInf = rmtInfStrdBkgInf;
@@ -444,9 +488,10 @@ public class QRBillData {
 		return headerQRType;
 	}
 	
-	public void setHeaderQRType(String headerQRType){
+	public void setHeaderQRType(String headerQRType) throws QRBillDataException{
 		if (!headerQRType.matches(headerQRTypePattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.HEADER,
 				"Invalid value [" + headerQRType + "] for [" + headerQRTypePattern + "]");
 		}
 		this.headerQRType = headerQRType;
@@ -456,9 +501,10 @@ public class QRBillData {
 		return headerVersion;
 	}
 	
-	public void setHeaderVersion(String headerVersion){
+	public void setHeaderVersion(String headerVersion) throws QRBillDataException{
 		if (!headerVersion.matches(headerVersionPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.HEADER,
 				"Invalid value [" + headerVersion + "] for [" + headerVersionPattern + "]");
 		}
 		this.headerVersion = headerVersion;
@@ -468,9 +514,10 @@ public class QRBillData {
 		return headerCoding;
 	}
 	
-	public void setHeaderCoding(String headerCoding){
+	public void setHeaderCoding(String headerCoding) throws QRBillDataException{
 		if (!headerCoding.matches(headerCodingPattern)) {
-			throw new IllegalArgumentException(
+			throw new QRBillDataException(
+				SourceType.HEADER,
 				"Invalid value [" + headerCoding + "] for [" + headerCodingPattern + "]");
 		}
 		this.headerCoding = headerCoding;

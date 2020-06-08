@@ -40,7 +40,7 @@ public class QRBillImageTest {
 	}
 	
 	@Test
-	public void getImage(){
+	public void getImage() throws QRBillDataException{
 		QRBillDataBuilder builder = new QRBillDataBuilder(cdtr, new Money(12.00), "CHF", dbtr);
 		builder.reference("977598000000002414281387835");
 		builder.unstructuredRemark("Ähnliche Rechnung #23 oder -23 über +23 mit <23");
@@ -50,7 +50,7 @@ public class QRBillImageTest {
 	}
 	
 	@Test
-	public void getEncodedImage(){
+	public void getEncodedImage() throws QRBillDataException{
 		QRBillDataBuilder builder = new QRBillDataBuilder(cdtr, new Money(12.00), "CHF", dbtr);
 		builder.reference("977598000000002414281387835");
 		builder.unstructuredRemark("Ähnliche Rechnung #23 oder -23 über +23 mit <23");

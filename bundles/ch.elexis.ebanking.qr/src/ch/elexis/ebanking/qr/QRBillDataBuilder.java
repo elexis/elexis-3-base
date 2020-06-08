@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.format.AddressFormatUtil;
+import ch.elexis.ebanking.qr.QRBillDataException.SourceType;
 import ch.elexis.ebanking.qr.model.QRBillData;
 import ch.rgw.tools.Money;
 
@@ -73,7 +74,7 @@ public class QRBillDataBuilder {
 		return this;
 	}
 	
-	public QRBillData build(){
+	public QRBillData build() throws QRBillDataException{
 		QRBillData ret = new QRBillData();
 		
 		ret.setHeaderQRType(headerQRType);
@@ -91,13 +92,14 @@ public class QRBillDataBuilder {
 		ret.setRmtInfTp(referenceType);
 		ret.setRmtInfRef(reference);
 		
-		ret.setRmtInfUstrd(referenceUnstructuredRemark);
+		ret.setRmtInfUstrd(StringUtils.defaultString(referenceUnstructuredRemark));
 		ret.setRmtInfTrailer(referenceTrailer);
 		
 		return ret;
 	}
 	
-	private void setAddress(QRBillData qrBillData, String prefix, IContact contact){
+	private void setAddress(QRBillData qrBillData, String prefix, IContact contact)
+		throws QRBillDataException{
 		try {
 			BeanUtils.setProperty(qrBillData, prefix + "AdrTp", "K");
 			
@@ -108,12 +110,18 @@ public class QRBillDataBuilder {
 				contact.getStreet().trim());
 			
 			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine2",
-				contact.getZip().trim() + " " + contact.getCity().trim());
+				StringUtils.left(contact.getZip().trim() + " " + contact.getCity().trim(), 16));
 			
 			BeanUtils.setProperty(qrBillData, prefix + "Ctry",
-				contact.getCountry());
+				StringUtils.left(contact.getCountry().name(), 2));
 		} catch (IllegalAccessException | InvocationTargetException e) {
-			throw new IllegalStateException("Error setting contact", e);
+			Throwable cause = e.getCause();
+			if (cause != null && cause instanceof QRBillDataException) {
+				((QRBillDataException) cause).setContact(contact);
+				throw (QRBillDataException) cause;
+			} else {
+				throw new QRBillDataException(SourceType.UNKNOWN, e.getMessage());
+			}
 		}
 	}
 }

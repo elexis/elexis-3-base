@@ -1,6 +1,7 @@
 package ch.elexis.ebanking.qr;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Hashtable;
@@ -11,6 +12,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
@@ -50,17 +52,19 @@ public class QRBillImage {
 		
 		QRCodeWriter qrCodeWriter = new QRCodeWriter();
 		try {
-			// with = 46 mm * 3.77 pixel per mm = 173,42 pixel
 			BitMatrix bitMatrix =
-				qrCodeWriter.encode(data.toString(), BarcodeFormat.QR_CODE, 174, 174, hintMap);
+				qrCodeWriter.encode(data.toString(), BarcodeFormat.QR_CODE, 0, 0, hintMap);
 			int width = bitMatrix.getWidth();
 			int height = bitMatrix.getHeight();
 			
-			ImageData data =
-				new ImageData(width, height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
+			PaletteData paletteData = new PaletteData(new RGB[] {
+				new RGB(0, 0, 0), new RGB(255, 255, 255)
+			});
+			
+			ImageData data = new ImageData(width, height, 1, paletteData);
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
-					data.setPixel(x, y, bitMatrix.get(x, y) ? 0x000000 : 0xFFFFFF);
+					data.setPixel(x, y, bitMatrix.get(x, y) ? 0 : 1);
 				}
 			}
 			return Optional.of(new Image(Display.getDefault(), data));
@@ -87,6 +91,11 @@ public class QRBillImage {
 				};
 				imageLoader.compression = 100;
 				imageLoader.save(output, SWT.IMAGE_JPEG);
+				
+				try (FileOutputStream out = new FileOutputStream("/home/thomas/kack.jpg")) {
+					out.write(output.toByteArray());
+				}
+				
 				return Optional.of("data:image/jpg;base64,"
 					+ Base64.getEncoder().encodeToString(output.toByteArray()));
 			} catch (IOException e) {

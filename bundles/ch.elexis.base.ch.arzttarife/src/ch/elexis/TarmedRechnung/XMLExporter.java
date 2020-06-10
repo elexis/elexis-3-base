@@ -18,6 +18,7 @@ package ch.elexis.TarmedRechnung;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
@@ -944,14 +945,21 @@ public class XMLExporter implements IRnOutputter {
 				logger.error(sb.toString());
 				invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR, sb.toString());
 				XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
-				StringWriter sw = new StringWriter();
-				try {
-					xout.output(xmlDoc, sw);
-				} catch (IOException e) {
-					logger.error("Failed getting document as String.", e);
-					return;
+				File invalidDir = 
+					new File(CoreHub.getWritableUserDir(), "validation_error");
+				if (!invalidDir.exists()) {
+					invalidDir.mkdir();
 				}
-				logger.debug(sw.toString());
+				File invalidFile =
+					new File(invalidDir, invoice.getNumber() + "_invalid_tarmed.xml");
+				invalidFile.deleteOnExit();
+				try (FileWriter writer = new FileWriter(invalidFile)) {
+					xout.output(xmlDoc, writer);
+					logger.info(
+						"Temporary invalid xml written to [" + invalidFile.getAbsolutePath() + "]");
+				} catch (IOException e) {
+					logger.error("Failed writing invalid xml", e);
+				}
 			}
 		}
 		

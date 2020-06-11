@@ -952,6 +952,7 @@ public class XMLExporter implements IRnOutputter {
 				}
 				File invalidFile =
 					new File(invalidDir, invoice.getNumber() + "_invalid_tarmed.xml");
+				invalidDir.deleteOnExit();
 				invalidFile.deleteOnExit();
 				try (FileWriter writer = new FileWriter(invalidFile)) {
 					xout.output(xmlDoc, writer);

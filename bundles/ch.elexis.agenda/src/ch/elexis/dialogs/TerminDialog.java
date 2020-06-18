@@ -384,11 +384,11 @@ public class TerminDialog extends TitleAreaDialog {
 			public void widgetSelected(final SelectionEvent e){
 				Command cmd = cmdService.getCommand("ch.elexis.agenda.commands.printAppointmentLabel");
 				if (!cmd.isDefined()) {
-					PrintAppointmentLabelHandler.setTermine(lTermine);
 					cmd.define("Print Appointment", "Print Appointment Command", cmdCategory);
 				}
 
 				try {
+					PrintAppointmentLabelHandler.setTermine(lTermine);
 					cmd.executeWithChecks(new ExecutionEvent());
 				} catch (Exception ex) {
 					ExHandler.handle(ex);

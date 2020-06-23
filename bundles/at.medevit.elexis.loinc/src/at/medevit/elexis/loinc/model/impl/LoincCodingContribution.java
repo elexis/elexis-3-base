@@ -39,7 +39,7 @@ public class LoincCodingContribution implements ICodingContribution
 	
 	@Override
 	public Optional<ICoding> getCode(String code){
-		return Optional.of((ICoding) iLoincCodeService.getByCode(code));
+		return Optional.ofNullable((ICoding) iLoincCodeService.getByCode(code));
 	}
 	
 }

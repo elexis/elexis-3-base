@@ -34,6 +34,7 @@ public class LoincCodeService implements ILoincCodeService {
 		qbe.add(LoincCode.FLD_CODE, "=", code);
 		List<LoincCode> res = qbe.execute();
 		if (res.isEmpty()) {
+			logger.info("Code [" + code + "] not found");
 			return null;
 		} else {
 			return res.get(0);

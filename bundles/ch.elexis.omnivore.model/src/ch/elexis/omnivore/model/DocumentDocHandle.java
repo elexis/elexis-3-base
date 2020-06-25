@@ -136,7 +136,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public String getExtension(){
-		return ModelUtil.evaluateFileExtension(getEntity().getTitle());
+		return ModelUtil.evaluateFileExtension(getEntity().getMimetype());
 	}
 	
 	@Override

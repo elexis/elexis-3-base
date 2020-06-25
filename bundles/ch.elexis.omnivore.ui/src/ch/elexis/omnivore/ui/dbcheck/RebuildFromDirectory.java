@@ -33,6 +33,7 @@ import ch.elexis.core.services.INativeQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
+import ch.elexis.core.utils.FileUtil;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.scripting.CSVWriter;
@@ -144,6 +145,7 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 							try (FileInputStream fi = new FileInputStream(importFile)) {
 								documentHandle.get().setContent(fi);
 								imported++;
+								moveToImported(importFile);
 							} catch (IOException e) {
 								LoggerFactory.getLogger(getClass()).error("Error importing file",
 									e);
@@ -170,6 +172,10 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 			return "Kein Dateiname Vergleich zu DB Feld ausgewählt";
 		}
 		return "Es wurden " + imported + " Dateien von " + total + " importiert";
+	}
+	
+	private void moveToImported(File importFile){
+		FileUtil.moveFileToParentDir(importFile, "imported");
 	}
 	
 	private void writeCsv(List<IDocumentHandle> invalidEntries, File importDir){
@@ -234,6 +240,6 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 	
 	@Override
 	public String getMaintenanceDescription(){
-		return "Omnivore aus Verzeichnis (Dateiname entspricht ID in DB) wiederherstellen.";
+		return "Omnivore aus Verzeichnis wiederherstellen.";
 	}
 }

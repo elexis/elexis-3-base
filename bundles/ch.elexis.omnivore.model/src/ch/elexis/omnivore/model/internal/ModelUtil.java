@@ -37,6 +37,9 @@ public class ModelUtil {
 	}
 	
 	public static <T> T loadCoreModel(EntityWithId entity, Class<T> clazz){
-		return (T) modelService.load(entity.getId(), clazz).orElse(null);
+		if (entity != null) {
+			return (T) modelService.load(entity.getId(), clazz).orElse(null);
+		}
+		return null;
 	}
 }

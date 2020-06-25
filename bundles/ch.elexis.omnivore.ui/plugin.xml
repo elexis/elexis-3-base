@@ -54,4 +54,10 @@
             id="at.medevit.elexis.omnivore.inbox.uiprovider">
       </uiprovider>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.omnivore.ui.dbcheck.RebuildFromDirectory">
+      </ExternalMaintenance>
+   </extension>
 </plugin>

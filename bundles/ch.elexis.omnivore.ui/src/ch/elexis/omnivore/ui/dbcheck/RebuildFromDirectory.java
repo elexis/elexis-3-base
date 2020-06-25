@@ -145,11 +145,11 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 							try (FileInputStream fi = new FileInputStream(importFile)) {
 								documentHandle.get().setContent(fi);
 								imported++;
-								moveToImported(importFile);
 							} catch (IOException e) {
 								LoggerFactory.getLogger(getClass()).error("Error importing file",
 									e);
 							}
+							moveToImported(importFile);
 						} else {
 							LoggerFactory.getLogger(getClass())
 								.warn("No DB entry for file [" + importFile.getName() + "]");

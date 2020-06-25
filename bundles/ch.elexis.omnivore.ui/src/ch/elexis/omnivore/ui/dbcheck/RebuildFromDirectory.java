@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,7 +34,6 @@ import ch.elexis.core.services.INativeQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
-import ch.elexis.core.utils.FileUtil;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.scripting.CSVWriter;
@@ -175,7 +175,12 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 	}
 	
 	private void moveToImported(File importFile){
-		FileUtil.moveFileToParentDir(importFile, "imported");
+		try {
+			File importedDir = new File(importFile.getParentFile(), "imported");
+			FileUtils.moveFileToDirectory(importFile, importedDir, true);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error moving file to imported dir", e);
+		}
 	}
 	
 	private void writeCsv(List<IDocumentHandle> invalidEntries, File importDir){

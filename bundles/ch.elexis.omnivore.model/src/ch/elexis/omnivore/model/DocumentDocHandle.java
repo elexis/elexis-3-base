@@ -236,12 +236,22 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 				if (dir.isDirectory()) {
 					IPatient patient =
 						ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
-					File subdir = new File(dir, patient.getPatientNr());
-					if (!subdir.exists()) {
-						subdir.mkdir();
+					if (patient != null) {
+						File subdir = new File(dir, patient.getPatientNr());
+						if (!subdir.exists()) {
+							subdir.mkdir();
+						}
+						File file = new File(subdir, getId() + "." + getExtension()); //$NON-NLS-1$
+						return file;
+					} else {
+						if (getEntity().getKontakt() == null) {
+							LoggerFactory.getLogger(getClass())
+								.error("Dochandle [" + getEntity().getId() + "] has no patient");
+						} else {
+							LoggerFactory.getLogger(getClass()).error("Contact ["
+								+ getEntity().getKontakt().getId() + "] is not a patient");
+						}
 					}
-					File file = new File(subdir, getId() + "." + getExtension()); //$NON-NLS-1$
-					return file;
 				}
 			}
 			if (Preferences.storeInFilesystem()) {

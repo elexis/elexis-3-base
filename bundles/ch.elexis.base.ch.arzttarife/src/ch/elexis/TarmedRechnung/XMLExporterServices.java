@@ -37,6 +37,7 @@ import ch.elexis.core.model.ICustomService;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.ch.BillingLaw;
+import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.tarmedprefs.TarmedRequirements;
@@ -535,7 +536,7 @@ public class XMLExporterServices {
 						String codeSystemCode = billable.getCodeSystemCode();
 						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, codeSystemCode);
 						// all 406 will have code 2000
-						if ("406".equals(codeSystemCode)) {
+						if ("406".equals(codeSystemCode) && !isCovid(billable)) {
 							el.setAttribute(XMLExporter.ATTR_CODE, "2000");
 							el.setAttribute("name",
 								billed.getText() + " [" + getServiceCode(billed) + "]"); // 22340
@@ -615,5 +616,13 @@ public class XMLExporterServices {
 			}
 		}
 		return ret;
+	}
+	
+	private static boolean isCovid(IBillable billable){
+		if (billable instanceof IArticle) {
+			return ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL
+				&& ((IArticle) billable).getSubTyp() == ArticleSubTyp.COVID;
+		}
+		return false;
 	}
 }

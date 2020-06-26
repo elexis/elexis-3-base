@@ -560,7 +560,7 @@ public class XMLExporterServices {
 					String codeSystemCode = v.getCodeSystemCode();
 					el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, codeSystemCode);
 					// all 406 will have code 2000
-					if ("406".equals(codeSystemCode)) {
+					if ("406".equals(codeSystemCode) && !isCovid(v)) {
 						el.setAttribute(XMLExporter.ATTR_CODE, "2000");
 						el.setAttribute("name",
 							verrechnet.getText() + " [" + getServiceCode(verrechnet) + "]"); // 22340
@@ -660,5 +660,13 @@ public class XMLExporterServices {
 			}
 		}
 		return ret;
+	}
+
+	private static boolean isCovid(IVerrechenbar verrechenbar) {
+		if (verrechenbar instanceof Artikel) {
+			return ((Artikel) verrechenbar).get(Artikel.FLD_TYP).equals("Eigenartikel")
+					&& ((Artikel) verrechenbar).get(Artikel.FLD_CODECLASS).equals("V");
+		}
+		return false;
 	}
 }

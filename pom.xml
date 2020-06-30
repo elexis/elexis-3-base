@@ -29,7 +29,7 @@
   </properties>
   <organization>
     <name>elexis.info</name>
-    <url>http://www.elexis.info</url>
+    <url>https://www.elexis.info</url>
   </organization>
 
   <scm>
@@ -41,7 +41,7 @@
   <licenses>
     <license>
       <name>Eclipse Public License</name>
-      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+      <url>https://www.eclipse.org/legal/epl-v10.html</url>
     </license>
   </licenses>
 
@@ -198,11 +198,6 @@ if ( System.getProperty("git_branch") == null ) {
             </extraRequirements>
           </dependency-resolution>
           <environments>
-            <environment>
-              <os>linux</os>
-              <ws>gtk</ws>
-              <arch>x86</arch>
-            </environment>
             <environment>
               <os>linux</os>
               <ws>gtk</ws>
@@ -378,7 +373,7 @@ Without it Maven would put two versions of each class file into the jars
   <distributionManagement>
     <site>
       <id>www.elexis.info</id>
-      <url>http://www.elexis.info</url>
+      <url>https://www.elexis.info</url>
     </site>
   </distributionManagement>
 </project>

@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  ch.rgw.utility,
  at.medevit.elexis.inbox;bundle-version="3.0.0",
  at.medevit.elexis.inbox.ui,
- ch.elexis.core.ui.dbcheck;bundle-version="3.9.0"
+ ch.elexis.core.ui.dbcheck;bundle-version="3.8.0"
 Export-Package: ch.elexis.omnivore.ui.jobs,
  ch.elexis.omnivore.ui.util,
  ch.elexis.omnivore.ui.views

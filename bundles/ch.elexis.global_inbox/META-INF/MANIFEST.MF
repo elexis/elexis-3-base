@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Global Inbox
 Bundle-SymbolicName: ch.elexis.global_inbox;singleton:=true
 Bundle-Version: 3.0.0.qualifier
-Bundle-Activator: ch.elexis.global_inbox.Activator
 Bundle-Vendor: weirich@elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -15,4 +14,6 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.ui.icons
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.commons.io
+Import-Package: org.apache.commons.io,
+ org.eclipse.e4.ui.workbench
+Service-Component: OSGI-INF/ch.elexis.global_inbox.StartupComponent.xml

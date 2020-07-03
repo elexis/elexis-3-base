@@ -79,7 +79,7 @@ public class InboxContentProvider extends CommonContentProviderAdapter {
 					if (lPat.size() == 1) {
 						if (!isFileOpened(file)) {
 							Patient pat = lPat.get(0);
-							String cat = Activator.getDefault().getCategory(file);
+							String cat = StartupComponent.getInstance().getCategory(file);
 							if (cat.equals("-") || cat.equals("??")) {
 								cat = null;
 							}

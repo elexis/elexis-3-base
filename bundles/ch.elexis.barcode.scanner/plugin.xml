@@ -45,11 +45,5 @@
          </toolbar>
       </menuContribution>
    </extension>
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="ch.elexis.barcode.scanner.internal.BarcodeScannerStartup">
-      </startup>
-   </extension>
 
 </plugin>

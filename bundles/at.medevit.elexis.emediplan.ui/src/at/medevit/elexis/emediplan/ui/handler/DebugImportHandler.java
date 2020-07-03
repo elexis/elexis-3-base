@@ -14,7 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.elexis.emediplan.Startup;
+import at.medevit.elexis.emediplan.StartupHandler;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
 
@@ -30,7 +30,7 @@ public class DebugImportHandler extends AbstractHandler implements IHandler {
 		if (inputDialog.open() == MessageDialog.OK) {
 			String importJson = inputDialog.getValue();
 			
-			Startup.openEMediplanImportDialog(getEncodedJson(importJson), null);
+			StartupHandler.openEMediplanImportDialog(getEncodedJson(importJson), null);
 		}
 		return null;
 	}

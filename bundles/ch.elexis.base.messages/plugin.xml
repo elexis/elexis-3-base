@@ -33,10 +33,4 @@
                tooltip="Nachricht senden"/>
       </actionSet>
    </extension>
- <extension
-       point="org.eclipse.ui.startup">
-    <startup
-          class="ch.elexis.base.messages.Activator">
-    </startup>
- </extension>
 </plugin>

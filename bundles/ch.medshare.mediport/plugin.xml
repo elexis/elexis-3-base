@@ -17,12 +17,6 @@
       </page>
    </extension>
    <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="ch.medshare.mediport.MediportStartup">
-      </startup>
-   </extension>
-   <extension
          point="ch.elexis.core.data.RechnungsManager">
       <Rechnung
             localizedName="%MediPort.Rechnung"

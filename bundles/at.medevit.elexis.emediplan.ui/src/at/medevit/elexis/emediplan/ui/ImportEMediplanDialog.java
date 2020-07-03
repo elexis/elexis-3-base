@@ -41,7 +41,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
-import at.medevit.elexis.emediplan.Startup;
+import at.medevit.elexis.emediplan.StartupHandler;
 import at.medevit.elexis.emediplan.core.EMediplanService;
 import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
@@ -182,7 +182,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 					File userDir = CoreUtil.getWritableUserDir();
 					File jsonOutput = new File(userDir, "emediplan.json");
 					try (FileWriter writer = new FileWriter(jsonOutput)) {
-						writer.write(Startup.getDecodedJsonString(medication.chunk));
+						writer.write(StartupHandler.getDecodedJsonString(medication.chunk));
 					} catch (IOException e1) {
 						LoggerFactory.getLogger(getClass())
 							.error("Could not write emediplan json" + e);

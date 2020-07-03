@@ -52,9 +52,6 @@
             </activeWhen>
         </handler>
     </extension>
-    <extension point="org.eclipse.ui.startup">
-        <startup class="ch.itmed.fop.printing.startup.Startup" />
-    </extension>
     <extension point="org.eclipse.ui.commands">
         <command defaultHandler="ch.itmed.fop.printing.handlers.MedicationLabelHandler" id="ch.itmed.fop.printing.command.MedicationLabelPrint" name="Medi-Etikette drucken">
         </command>

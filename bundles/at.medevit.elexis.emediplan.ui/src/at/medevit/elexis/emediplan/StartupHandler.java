@@ -7,9 +7,13 @@ import java.io.InputStreamReader;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
-import org.eclipse.ui.IStartup;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,25 +30,11 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.medication.views.MedicationView;
 import ch.elexis.data.Patient;
 
-public class Startup implements IStartup {
-	private static Logger logger = LoggerFactory.getLogger(Startup.class);
+@Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
+public class StartupHandler implements EventHandler {
+	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
 	
 	ElexisEventListener elexisEventListenerImpl;
-	
-	@Override
-	public void earlyStartup(){
-		elexisEventListenerImpl =
-			new ElexisEventListenerImpl(BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE) {
-				public void run(ElexisEvent ev){
-					BarcodeScannerMessage b = (BarcodeScannerMessage) ev.getGenericObject();
-					if (hasMediplanHeader(b.getChunk())) {
-						openEMediplanImportDialog(b.getChunk(), null);
-					}
-				}
-			};
-		ElexisEventDispatcher.getInstance().addListeners(elexisEventListenerImpl);
-		
-	}
 	
 	public static void openEMediplanImportDialog(String chunk, String selectedPatientId)
 	{
@@ -102,9 +92,23 @@ public class Startup implements IStartup {
 				sb.append(read);
 			}
 		} catch (IOException e) {
-			LoggerFactory.getLogger(Startup.class).error("Error decoding json", e);
+			LoggerFactory.getLogger(StartupHandler.class).error("Error decoding json", e);
 			throw new IllegalStateException("Error decoding json", e);
 		}
 		return sb.toString();
+	}
+	
+	@Override
+	public void handleEvent(Event event){
+		elexisEventListenerImpl =
+			new ElexisEventListenerImpl(BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE) {
+				public void run(ElexisEvent ev){
+					BarcodeScannerMessage b = (BarcodeScannerMessage) ev.getGenericObject();
+					if (hasMediplanHeader(b.getChunk())) {
+						openEMediplanImportDialog(b.getChunk(), null);
+					}
+				}
+			};
+		ElexisEventDispatcher.getInstance().addListeners(elexisEventListenerImpl);
 	}
 }

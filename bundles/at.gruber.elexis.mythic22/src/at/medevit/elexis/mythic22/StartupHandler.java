@@ -9,9 +9,13 @@ import java.util.Map;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.ui.IStartup;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +23,14 @@ import at.gruber.elexis.mythic22.command.ServerControl;
 import at.gruber.elexis.mythic22.ui.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 
-public class EarlyStartup implements IStartup {
+@Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
+public class StartupHandler implements EventHandler {
 	
 	public static final String PARAM_EARLYSTARTUP = "earlyStartup";
-	private static Logger logger = LoggerFactory.getLogger(EarlyStartup.class);
+	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
 	
 	@Override
-	public void earlyStartup(){
-		
+	public void handleEvent(Event event){
 		boolean autostart = CoreHub.localCfg.get(Preferences.CFG_AUTOSTART, false);
 		
 		if (autostart) {
@@ -46,5 +50,4 @@ public class EarlyStartup implements IStartup {
 			}
 		}
 	}
-	
 }

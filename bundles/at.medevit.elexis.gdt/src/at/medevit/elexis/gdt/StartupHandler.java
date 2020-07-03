@@ -15,31 +15,36 @@ package at.medevit.elexis.gdt;
 import java.io.File;
 import java.util.List;
 
-import org.eclipse.ui.IStartup;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.gdt.constants.SystemConstants;
 import at.medevit.elexis.gdt.interfaces.IGDTCommunicationPartner;
 import at.medevit.elexis.gdt.tools.DirectoryWatcher;
 import at.medevit.elexis.gdt.tools.GDTCommPartnerCollector;
-import ch.elexis.core.ui.util.Log;
 
-public class EarlyStartup implements IStartup {
+@Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
+public class StartupHandler implements EventHandler {
 	
-	private static Log logger = Log.get(EarlyStartup.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
 	
 	@Override
-	public void earlyStartup(){
-		
+	public void handleEvent(Event event){
 		List<IGDTCommunicationPartner> lp = GDTCommPartnerCollector.getRegisteredCommPartners();
 		if (lp == null) {
-			logger.log("There are no registered communication partners", Log.DEBUGMSG);
+			logger.info("There are no registered communication partners");
 			return;
 		}
 		for (IGDTCommunicationPartner igdtCommunicationPartner : lp) {
 			if (igdtCommunicationPartner.getConnectionType() == SystemConstants.FILE_COMMUNICATION) {
 				String incomingDirString = igdtCommunicationPartner.getIncomingDirectory();
-				logger.log("Found directory " + incomingDirString + "to watch by comm partner "
-					+ igdtCommunicationPartner.getLabel(), Log.DEBUGMSG);
+				logger.info("Found directory " + incomingDirString + "to watch by comm partner "
+					+ igdtCommunicationPartner.getLabel());
 				File incomingDir = null;
 				if (incomingDirString != null)
 					incomingDir = new File(incomingDirString);
@@ -48,5 +53,4 @@ public class EarlyStartup implements IStartup {
 			}
 		}
 	}
-	
 }

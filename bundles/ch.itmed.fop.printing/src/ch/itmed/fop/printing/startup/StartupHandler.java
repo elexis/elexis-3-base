@@ -11,17 +11,21 @@
 
 package ch.itmed.fop.printing.startup;
 
-import org.eclipse.ui.IStartup;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextService;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 
-public class Startup implements IStartup {
+@Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
+public class StartupHandler implements EventHandler {
 	private static final String CONTEXT_ID = "ch.elexis.context.itmed.fop.printing";
 
 	@Override
-	public void earlyStartup() {
+	public void handleEvent(Event event){
 		IContextService contextService = (IContextService) PlatformUI.getWorkbench().getService(IContextService.class);
 		contextService.activateContext(CONTEXT_ID, null, true);
 	}
-
 }

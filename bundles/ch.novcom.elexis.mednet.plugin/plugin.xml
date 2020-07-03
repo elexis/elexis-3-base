@@ -2,12 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="ch.novcom.elexis.mednet.plugin.FormWatcherStartup">
-      </startup>
-   </extension>
    
    <extension
          point="ch.elexis.core.ui.LaborDatenImport">

@@ -68,12 +68,6 @@
       </menuContribution>
    </extension>
    <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="at.medevit.elexis.emediplan.Startup">
-      </startup>
-   </extension>
-   <extension
          point="at.medevit.elexis.inbox.ui.elementsui">
       <uiprovider
             class="at.medevit.elexis.emediplan.inbox.EMediplanUiProvider"

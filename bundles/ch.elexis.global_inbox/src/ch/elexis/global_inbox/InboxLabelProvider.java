@@ -22,7 +22,7 @@ public class InboxLabelProvider extends LabelProvider implements ITableLabelProv
 		if (element instanceof File) {
 			File file = (File) element;
 			if (columnIndex == 0) {
-				return Activator.getDefault().getCategory(file);
+				return StartupComponent.getInstance().getCategory(file);
 			} else {
 				return file.getName();
 			}

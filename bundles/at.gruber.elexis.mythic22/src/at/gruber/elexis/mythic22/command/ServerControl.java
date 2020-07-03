@@ -18,7 +18,7 @@ import org.eclipse.ui.menus.UIElement;
 import at.gruber.elexis.mythic22.Messages;
 import at.gruber.elexis.mythic22.netlistener.NetListener;
 import at.gruber.elexis.mythic22.ui.Preferences;
-import at.medevit.elexis.mythic22.EarlyStartup;
+import at.medevit.elexis.mythic22.StartupHandler;
 import ch.elexis.core.data.activator.CoreHub;
 import de.ralfebert.rcputils.handler.ToggleHandler;
 
@@ -39,7 +39,7 @@ public class ServerControl extends ToggleHandler {
 	@Override
 	protected void executeToggle(ExecutionEvent event, boolean checked){
 		
-		earlyStartup = Boolean.parseBoolean(event.getParameter(EarlyStartup.PARAM_EARLYSTARTUP));
+		earlyStartup = Boolean.parseBoolean(event.getParameter(StartupHandler.PARAM_EARLYSTARTUP));
 		
 		if (checked) {
 			

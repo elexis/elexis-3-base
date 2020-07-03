@@ -5,7 +5,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
-import at.medevit.elexis.emediplan.Startup;
+import at.medevit.elexis.emediplan.StartupHandler;
 
 public class OpenImportHandler extends AbstractHandler implements IHandler {
 	
@@ -15,7 +15,7 @@ public class OpenImportHandler extends AbstractHandler implements IHandler {
 			event.getParameter("at.medevit.elexis.emediplan.ui.openImport.parameter.emediplan");
 		String patientid =
 			event.getParameter("at.medevit.elexis.emediplan.ui.openImport.parameter.patientid");
-		Startup.openEMediplanImportDialog(emediplan, patientid);
+		StartupHandler.openEMediplanImportDialog(emediplan, patientid);
 		return null;
 	}
 	

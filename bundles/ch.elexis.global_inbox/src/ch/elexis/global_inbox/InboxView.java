@@ -66,7 +66,7 @@ public class InboxView extends ViewPart {
 		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		InboxContentProvider cp = Activator.getDefault().getContentProvider();
+		InboxContentProvider cp = StartupComponent.getInstance().getContentProvider();
 		makeActions();
 		tv.setContentProvider(cp);
 		tv.setLabelProvider(new InboxLabelProvider());
@@ -113,7 +113,7 @@ public class InboxView extends ViewPart {
 	
 	@Override
 	public void dispose(){
-		Activator.getDefault().getContentProvider().setView(null);
+		StartupComponent.getInstance().getContentProvider().setView(null);
 		super.dispose();
 	}
 	
@@ -172,7 +172,7 @@ public class InboxView extends ViewPart {
 							(IDocumentManager) Extensions
 								.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 						try {
-							String cat = Activator.getDefault().getCategory(sel);
+							String cat = StartupComponent.getInstance().getCategory(sel);
 							if (cat.equals("-")) {
 								cat = "";
 							}
@@ -189,7 +189,7 @@ public class InboxView extends ViewPart {
 								dm.addDocument(fd);
 							}
 							fd = null;
-							Activator.getDefault().getContentProvider().reload();
+							StartupComponent.getInstance().getContentProvider().reload();
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
 							SWTHelper.alert(Messages.InboxView_error, ex.getMessage());
@@ -257,7 +257,7 @@ public class InboxView extends ViewPart {
 	}
 	
 	private void reloadInbox(){
-		IStatus status = Activator.getDefault().getContentProvider().reload();
+		IStatus status = StartupComponent.getInstance().getContentProvider().reload();
 		if (status == Status.CANCEL_STATUS) {
 			SWTHelper.showError(Messages.InboxView_error, Messages.InvoxView_errorCantDetectInbox);
 		}

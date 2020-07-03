@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.wb.swt.ResourceManager;
 
-import at.medevit.elexis.emediplan.Startup;
+import at.medevit.elexis.emediplan.StartupHandler;
 import at.medevit.elexis.inbox.model.InboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import ch.elexis.data.NamedBlob;
@@ -58,7 +58,8 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 		Object obj = element.getObject();
 		if (isProviderFor(element)) {
 			NamedBlob document = (NamedBlob) obj;
-			Startup.openEMediplanImportDialog(document.getString(), element.getPatient().getId());
+			StartupHandler.openEMediplanImportDialog(document.getString(),
+				element.getPatient().getId());
 		}
 	}
 	

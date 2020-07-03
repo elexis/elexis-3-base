@@ -21,11 +21,4 @@
             restorable="true">
       </view>
    </extension>
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="ch.elexis.global_inbox.Activator">
-      </startup>
-   </extension>
-
 </plugin>

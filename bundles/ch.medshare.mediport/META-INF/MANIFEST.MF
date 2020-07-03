@@ -23,4 +23,7 @@ Bundle-Vendor: medshare.ch
 Bundle-ClassPath: .
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.eclipse.e4.ui.workbench
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/ch.medshare.mediport.StartupHandler.xml
 

@@ -26,3 +26,5 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.omnivore;bundle-version="3.2.0",
  ch.elexis.omnivore.data;bundle-version="3.2.0",
  ch.elexis.omnivore.ui;bundle-version="3.2.0"
+Import-Package: org.eclipse.e4.ui.workbench
+Service-Component: OSGI-INF/ch.novcom.elexis.mednet.plugin.StartupHandler.xml

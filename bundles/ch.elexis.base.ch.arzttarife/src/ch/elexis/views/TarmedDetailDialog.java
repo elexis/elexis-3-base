@@ -142,6 +142,10 @@ public class TarmedDetailDialog extends Dialog {
 			cBezug.setInput(input);
 			String bezug = verrechnet.getDetail("Bezug");
 			if (bezug != null) {
+				if (!input.contains(BezugComboItem.of(bezug))) {
+					input.add(BezugComboItem.of(bezug));
+					cBezug.setInput(input);
+				}
 				cBezug.setSelection(new StructuredSelection(BezugComboItem.of(bezug)), true);
 			} else {
 				cBezug.setSelection(new StructuredSelection(BezugComboItem.noBezug()), true);

@@ -62,7 +62,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	private ElexisEventListener eeli_presc = new ElexisUiEventListenerImpl(Prescription.class,
 		ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE) {
 		public void runInUi(ElexisEvent ev){
-			if (medication.Patient != null) {
+			if (medication != null && medication.Patient != null) {
 				Prescription prescription = (Prescription) ev.getObject();
 				if (prescription != null && prescription.getArtikel() instanceof ArtikelstammItem) {
 					String patientId = prescription.get(Prescription.FLD_PATIENT_ID);

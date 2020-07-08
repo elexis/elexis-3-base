@@ -13,7 +13,6 @@
 package ch.elexis.views;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -37,26 +36,22 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 
-import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
-import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.data.service.ContextServiceHolder;
-import ch.elexis.core.model.IBilled;
-import ch.elexis.core.model.IEncounter;
-import ch.elexis.core.model.ModelPackage;
-import ch.elexis.core.model.builder.IBilledBuilder;
-import ch.elexis.core.services.IQuery;
-import ch.elexis.core.services.IQuery.COMPARATOR;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Query;
+import ch.elexis.data.TarmedLeistung;
+import ch.elexis.data.Verrechnet;
 
 public class TarmedRefcodesDialog extends Dialog {
 	
-	private IBilled billed;
+	private Verrechnet billed;
 	private Composite contentComposite;
 	
 	private List<RefCodeEditComposite> refcodesComposites;
 	
-	public TarmedRefcodesDialog(Shell shell, IBilled tl){
+	public TarmedRefcodesDialog(Shell shell, Verrechnet tl) {
 		super(shell);
 		refcodesComposites = new ArrayList<>();
 		billed = tl;
@@ -68,7 +63,7 @@ public class TarmedRefcodesDialog extends Dialog {
 		contentComposite.setLayout(new GridLayout(2, false));
 		
 		Label lbl = new Label(contentComposite, SWT.NONE);
-		lbl.setText(billed.getAmount() + "x " + billed.getText());
+		lbl.setText(billed.getZahl() + "x " + billed.getText());
 		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		
 		lbl = new Label(contentComposite, SWT.NONE);
@@ -118,8 +113,8 @@ public class TarmedRefcodesDialog extends Dialog {
 		if (!refcodesComposites.isEmpty()) {
 			if (isValid()) {
 				refcodesComposites.forEach(rc -> rc.apply(billed));
-				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-					billed.getEncounter());
+				ElexisEventDispatcher.getInstance().fire(new ElexisEvent(billed.getKons(), Konsultation.class,
+						ElexisEvent.EVENT_UPDATE));
 				super.okPressed();
 			} else {
 				MessageDialog.openWarning(getShell(), "Warnung",
@@ -130,7 +125,7 @@ public class TarmedRefcodesDialog extends Dialog {
 	
 	private boolean isValid(){
 		return refcodesComposites.stream().mapToInt(rc -> rc.amountSpinner.getSelection())
-			.sum() <= billed.getAmount();
+				.sum() <= billed.getZahl();
 	}
 	
 	private class RefCodeEditComposite extends Composite {
@@ -144,26 +139,37 @@ public class TarmedRefcodesDialog extends Dialog {
 			createContent();
 		}
 		
-		public void apply(IBilled billed){
+		public void apply(Verrechnet billed) {
 			if (amountSpinner.getSelection() > 0 && !refcodeCombo.getSelection().isEmpty()) {
 				String bezug =
 					(String) ((StructuredSelection) refcodeCombo.getSelection()).getFirstElement();
 				int amount = amountSpinner.getSelection();
-				if (amount == billed.getAmount()) {
-					billed.setExtInfo("Bezug", bezug);
-					CoreModelServiceHolder.get().save(billed);
+				if (amount == billed.getZahl()) {
+					billed.setDetail("Bezug", bezug);
 				} else {
-					IBilled copy = new IBilledBuilder(CoreModelServiceHolder.get(),
-						billed.getBillable(), billed.getEncounter()).build();
-					billed.copy(copy);
-					copy.setAmount(amount);
-					billed.setAmount(billed.getAmount() - amount);
-					copy.setExtInfo("Bezug", bezug);
-					CoreModelServiceHolder.get().save(Arrays.asList(billed, copy));
+					Verrechnet copy = new Verrechnet(billed.getVerrechenbar(), billed.getKons(), billed.getZahl());
+					copyVerrechnet(billed, copy);
+					copy.setZahl(amount);
+					billed.setZahl(billed.getZahl() - amount);
+					copy.setDetail("Bezug", bezug);
 				}
 			}
 		}
 		
+		private void copyVerrechnet(Verrechnet from, Verrechnet to) {
+			to.set(new String[] { Verrechnet.LEISTG_TXT,
+					Verrechnet.LEISTG_CODE, Verrechnet.CLASS, Verrechnet.COUNT, Verrechnet.COST_BUYING,
+					Verrechnet.SCALE_TP_SELLING, Verrechnet.SCALE_SELLING, Verrechnet.PRICE_SELLING, Verrechnet.SCALE,
+					Verrechnet.SCALE2, Verrechnet.USERID },
+					new String[] { from.get(Verrechnet.LEISTG_TXT), from.get(Verrechnet.LEISTG_CODE),
+							from.get(Verrechnet.CLASS), from.get(Verrechnet.COUNT), from.get(Verrechnet.COST_BUYING),
+							from.get(Verrechnet.SCALE_TP_SELLING), from.get(Verrechnet.SCALE_SELLING),
+							from.get(Verrechnet.PRICE_SELLING), from.get(Verrechnet.SCALE), from.get(Verrechnet.SCALE2),
+							from.get(Verrechnet.USERID) });
+			// copy vat scale for reporting
+			to.setDetail(Verrechnet.VATSCALE, from.getDetail(Verrechnet.VATSCALE));
+		}
+
 		private void createContent(){
 			refcodeCombo = new ComboViewer(this, SWT.BORDER);
 			refcodeCombo.setContentProvider(ArrayContentProvider.getInstance());
@@ -171,7 +177,7 @@ public class TarmedRefcodesDialog extends Dialog {
 			refcodeCombo.setInput(getPossibleRefCodes());
 			
 			amountSpinner = new Spinner(this, SWT.BORDER);
-			amountSpinner.setValues(0, 0, (int) TarmedRefcodesDialog.this.billed.getAmount(), 0, 1,
+			amountSpinner.setValues(0, 0, (int) TarmedRefcodesDialog.this.billed.getZahl(), 0, 1,
 				1);
 			
 			ToolBarManager mgr = new ToolBarManager(SWT.RIGHT | SWT.FLAT);
@@ -190,20 +196,18 @@ public class TarmedRefcodesDialog extends Dialog {
 		}
 		
 		private List<String> getPossibleRefCodes(){
-			IEncounter encounter = billed.getEncounter();
+			Konsultation encounter = billed.getKons();
 			
-			IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
-			query.and(ModelPackage.Literals.IENCOUNTER__COVERAGE, COMPARATOR.EQUALS,
-				encounter.getCoverage());
-			query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.EQUALS,
-				encounter.getDate());
-			List<IEncounter> encounters = query.execute();
+			Query<Konsultation> query = new Query<>(Konsultation.class);
+			query.add(Konsultation.FLD_CASE_ID, Query.EQUALS, encounter.getFall().getId());
+			query.add(Konsultation.FLD_DATE, Query.EQUALS, encounter.get(Konsultation.FLD_DATE));
+			List<Konsultation> encounters = query.execute();
 			if (!encounters.isEmpty()) {
 				List<String> ret = new ArrayList<String>();
 				HashSet<String> uniqueCodes = new HashSet<String>();
 				encounters.forEach(e -> {
-					List<String> codes = e.getBilled().stream()
-						.filter(b -> b.getBillable() instanceof ITarmedLeistung)
+					List<String> codes = e.getLeistungen().stream()
+							.filter(b -> b.getVerrechenbar() instanceof TarmedLeistung)
 						.map(b -> b.getCode()).collect(Collectors.toList());
 					uniqueCodes.addAll(codes);
 				});

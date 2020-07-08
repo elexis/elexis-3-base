@@ -36,6 +36,7 @@ import ch.elexis.core.ui.data.UiVerrechenbarAdapter;
 import ch.elexis.data.TarmedKumulation.TarmedKumulationType;
 import ch.elexis.data.TarmedLimitation.LimitationUnit;
 import ch.elexis.views.TarmedDetailDialog;
+import ch.elexis.views.TarmedRefcodesDialog;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -769,10 +770,16 @@ public class TarmedLeistung extends UiVerrechenbarAdapter {
 	public List<Object> getActions(final Object kontext){
 		List<Object> ret = super.getActions((Verrechnet) kontext);
 		if (kontext != null) {
-			ret.add(new Action("Details") {
+			ret.add(new Action("Tarmed Detail") {
 				@Override
 				public void run(){
 					new TarmedDetailDialog(UiDesk.getTopShell(), (Verrechnet) kontext).open();
+				}
+			});
+			ret.add(new Action("Tarmedbezüge") {
+				@Override
+				public void run() {
+					new TarmedRefcodesDialog(UiDesk.getTopShell(), (Verrechnet) kontext).open();
 				}
 			});
 		}

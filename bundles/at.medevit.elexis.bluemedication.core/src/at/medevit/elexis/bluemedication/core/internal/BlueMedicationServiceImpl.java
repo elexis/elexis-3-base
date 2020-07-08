@@ -11,11 +11,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.bp.LocalDate;
 
@@ -42,15 +53,20 @@ import io.swagger.client.api.ExtractionAndConsolidationApi;
 @Component
 public class BlueMedicationServiceImpl implements BlueMedicationService {
 	
+	private static Logger logger = LoggerFactory.getLogger(BlueMedicationServiceImpl.class);
+	
 	private boolean proxyActive;
 	private String oldProxyHost;
 	private String oldProxyPort;
 	
 	private Map<Object, UploadResult> pendingUploadResults;
 	
+	private ExecutorService executor;
+	
 	@Activate
 	public void activate(){
 		pendingUploadResults = new HashMap<>();
+		executor = Executors.newCachedThreadPool();
 	}
 	
 	/**
@@ -123,7 +139,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 							internalData = pdfFile;
 							uploadedMediplan = true;
 						} catch (IOException e) {
-							LoggerFactory.getLogger(getClass()).error("Error creating eMediplan",
+							logger.error("Error creating eMediplan",
 								e);
 							return new Result<UploadResult>(
 								SEVERITY.ERROR, 0, e.getMessage(), null, false);
@@ -159,12 +175,12 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 								"Error result code [" + mcArray[0].getCode() + "]", null, false);
 						}
 					} catch (Exception je) {
-						LoggerFactory.getLogger(getClass())
+						logger
 							.warn("Could not parse code 400 exception content ["
 								+ e.getResponseBody() + "]");
 					}
 				}
-				LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
+				logger.error("Error uploading Document", e);
 				return new Result<UploadResult>(SEVERITY.ERROR, 0,
 					e.getMessage(), null, false);
 			}
@@ -182,7 +198,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			
-			LoggerFactory.getLogger(getClass()).warn("Performing workaround GET request");
+			logger.warn("Performing workaround GET request");
 			apiInstance.downloadIdComparisonChmedGet("workaround", false);
 		} catch (Exception e) {
 			// ignore
@@ -244,7 +260,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 				return Result.OK(response.getData());
 			}
 		} catch (ApiException e) {
-			LoggerFactory.getLogger(getClass()).error("Error downloading Document", e);
+			logger.error("Error downloading Document", e);
 			return Result.ERROR(e.getMessage());
 		} finally {
 			deInitProxy();
@@ -315,5 +331,58 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			}
 		}
 		return 1;
+	}
+	
+	@Override
+	public void startPollForResult(final Object object, final UploadResult uploadResult,
+		Consumer<Object> onSuccess){
+		executor.execute(() -> {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e1) {
+				// ignore
+			}
+			logger.info("Start polling for [" + uploadResult.getId() + "]");
+			// configure HIN proxy for apache http client 
+			HttpHost proxy = new HttpHost(
+				CoreHub.globalCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
+					BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST),
+				Integer.parseInt(CoreHub.globalCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
+					BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT)),
+				"http");
+			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+			HttpClient httpclient = HttpClients.custom().setRoutePlanner(routePlanner).build();
+			
+			HttpGet httpget = new HttpGet(getAppBasePath() + "/status/" + uploadResult.getId());
+			int maxRetry = 30; // default timeout 30 sec -> 15 min.
+			int statusCode = 204;
+			String content = null;
+			try {
+				while (statusCode == 204 && maxRetry > 0) {
+					HttpResponse response = httpclient.execute(httpget);
+					statusCode = response.getStatusLine().getStatusCode();
+					if(response.getEntity() != null) {
+						content = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+					}
+					maxRetry--;
+				}
+			} catch (IOException e) {
+				logger.error("Error performing polling for [" + uploadResult.getId() + "]", e);
+				return;
+			}
+			if (statusCode == 200) {
+				if (StringUtils.isNotBlank(content) && content.contains("COMPLETED")) {
+					logger.info("Finished [" + uploadResult.getId() + "] completed");
+					onSuccess.accept(object);
+				} else {
+					logger.info("Finished [" + uploadResult.getId() + "] not completed");
+					removePendingUploadResult(object);
+				}
+			} else {
+				logger.warn("Got response code [" + statusCode + "] for [" + uploadResult.getId()
+					+ "] clearing pending upload");
+				removePendingUploadResult(object);
+			}
+		});
 	}
 }

@@ -90,7 +90,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 	}
 	
 	private void refreshPrescription(IPrescription prescription){
-		if (medication.Patient != null && !bulkInsert) {
+		if (medication != null && medication.Patient != null && !bulkInsert) {
 			if (prescription != null && prescription.getArticle() instanceof IArtikelstammItem) {
 				IPatient patient = prescription.getPatient();
 				if (patient != null && patient.getId().equals(medication.Patient.patientId)) {

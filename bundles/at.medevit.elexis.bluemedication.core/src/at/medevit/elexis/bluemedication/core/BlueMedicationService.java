@@ -2,6 +2,7 @@ package at.medevit.elexis.bluemedication.core;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import ch.elexis.core.model.IPatient;
 import ch.rgw.tools.Result;
@@ -50,4 +51,15 @@ public interface BlueMedicationService {
 	 * @param object
 	 */
 	public void removePendingUploadResult(Object object);
+	
+	/**
+	 * Start long polling for the result in background thread. The {@link Consumer} onSuccess is
+	 * called with the provided object if the result is success.
+	 * 
+	 * @param object
+	 * @param uploadResult
+	 * @param onSuccess
+	 */
+	public void startPollForResult(Object object, UploadResult uploadResult,
+		Consumer<Object> onSuccess);
 }

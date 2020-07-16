@@ -52,8 +52,8 @@ import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.rgw.tools.Result;
-import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Result.SEVERITY;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Dies ist eine Beispielimplementation des IOptifier Interfaces, welches einige einfache Checks von
@@ -523,7 +523,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		IBilled ret = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons).build();
 		ret.setPoints(code.getAL(kons.getMandator()) + code.getTL());
 		Optional<IBillingSystemFactor> systemFactor = BillingServiceHolder.get()
-			.getBillingSystemFactor(code.getCodeSystemName(), kons.getDate());
+			.getBillingSystemFactor(kons.getCoverage().getBillingSystem().getName(),
+				kons.getDate());
 		if (systemFactor.isPresent()) {
 			ret.setFactor(systemFactor.get().getFactor());
 		} else {

@@ -408,7 +408,8 @@ public class TarmedOptifierTest {
 	@Test
 	public void testDignitaet(){
 		IEncounter kons = konsGriss;
-		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor("Tarmed", 0.83,
+		IBillingSystemFactor factor = AllTestsSuite.createBillingSystemFactor(
+			konsGriss.getCoverage().getBillingSystem().getName(), 0.83,
 			LocalDate.now().minus(1, ChronoUnit.DAYS));
 		
 		// default mandant type is specialist, factor 0.83 tarmed 1.09

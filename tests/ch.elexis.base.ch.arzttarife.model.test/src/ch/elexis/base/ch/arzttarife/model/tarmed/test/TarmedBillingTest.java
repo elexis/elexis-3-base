@@ -83,7 +83,8 @@ public class TarmedBillingTest {
 	@Test
 	public void basicTarmedPositions(){
 		IBillingSystemFactor factor =
-			AllTestsSuite.createBillingSystemFactor("Tarmed", 0.89, LocalDate.of(2000, 1, 1));
+			AllTestsSuite.createBillingSystemFactor(coverage.getBillingSystem().getName(), 0.89,
+				LocalDate.of(2000, 1, 1));
 		
 		status = billingService.bill(code_000010, encounter, 1);
 		assertTrue(status.isOK());

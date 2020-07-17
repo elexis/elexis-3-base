@@ -10,6 +10,8 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.core.ui;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IColorProvider;
@@ -21,11 +23,10 @@ import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.inbox.core.ui.preferences.InboxPreferences;
 import at.medevit.elexis.inbox.model.InboxElement;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.LabResult;
-import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.TimeTool;
 
 public class LabResultLabelProvider extends LabelProvider implements IColorProvider {
@@ -35,6 +36,8 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			LAB_RESULT("Resultat"), ORIGIN("Herkunft"), DATE("Datum");
 		
 		private final String text;
+		
+		private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 		
 		private LabelFields(final String text){
 			this.text = text;
@@ -86,6 +89,28 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			}
 		}
 		
+		public String getValue(ILabResult labResult){
+			switch (this) {
+			case LAB_VALUE_SHORT:
+				return labResult.getItem().getCode();
+			case LAB_VALUE_NAME:
+				return labResult.getItem().getName();
+			case LAB_RESULT:
+				return labResult.getResult();
+			case REF_RANGE:
+				return labResult.getReferenceMale() + "/" + labResult.getReferenceFemale();
+			case ORIGIN:
+				return labResult.getOrigin().getLabel();
+			case DATE:
+				LocalDateTime observationTime = labResult.getObservationTime();
+				if (observationTime == null) {
+					return labResult.getDate().format(formatter);
+				}
+				return observationTime.format(formatter);
+			default:
+				return "";
+			}
+		}
 	}
 	
 	@Override
@@ -95,9 +120,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 	
 	@Override
 	public String getText(Object element){
-		PersistentObject object =
-			CoreHub.poFactory.createFromString(((InboxElement) element)
-				.get(InboxElement.FLD_OBJECT));
+		Object object = ((InboxElement) element).getObject();
 		if (object instanceof LabResult) {
 			LabResult labResult = (LabResult) object;
 			List<LabelFields> labelFields = InboxPreferences.getChoosenLabel();
@@ -112,14 +135,35 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 				sb.replace(sb.length() - 2, sb.length(), "");
 			}
 			return sb.toString();
+		} else if (object instanceof ILabResult) {
+			ILabResult labResult = (ILabResult) object;
+			List<LabelFields> labelFields = InboxPreferences.getChoosenLabel();
+			
+			StringBuilder sb = new StringBuilder();
+			for (LabelFields lblField : labelFields) {
+				sb.append(lblField.getValue(labResult));
+				sb.append(", ");
+			}
+			
+			if (!sb.toString().isEmpty()
+				&& sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
+				sb.replace(sb.length() - 2, sb.length(), "");
+			}
+			return sb.toString();
 		}
 		return ((InboxElement) element).getLabel();
 	}
 	
 	@Override
 	public Color getForeground(Object element){
-		LabResult labResult = (LabResult) ((InboxElement) element).getObject();
-		if (labResult.isFlag(LabResultConstants.PATHOLOGIC)) {
+		boolean pathologic = false;
+		Object object = ((InboxElement) element).getObject();
+		if (object instanceof LabResult) {
+			pathologic = ((LabResult) object).isFlag(LabResultConstants.PATHOLOGIC);
+		} else if (object instanceof ILabResult) {
+			pathologic = ((ILabResult) object).isPathologic();
+		}
+		if (pathologic) {
 			return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
 		} else {
 			return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);

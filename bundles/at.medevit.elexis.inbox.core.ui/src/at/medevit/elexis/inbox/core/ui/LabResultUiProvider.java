@@ -20,6 +20,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import at.medevit.elexis.inbox.core.ui.filter.PathologicInboxFilter;
 import at.medevit.elexis.inbox.model.InboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
+import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.LabResult;
 
@@ -63,6 +64,8 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 	public boolean isProviderFor(InboxElement element){
 		Object obj = element.getObject();
 		if (obj instanceof LabResult) {
+			return true;
+		} else if (obj instanceof ILabResult) {
 			return true;
 		}
 		return false;

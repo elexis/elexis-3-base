@@ -40,7 +40,12 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 			if (text != null) {
 				return text;
 			} else {
-				return "unbekannt";
+				Object obj = ((InboxElement) element).getObject();
+				if(obj != null) {
+					return "unbekannt [" + obj.getClass().getSimpleName() + "]";
+				} else {
+					return "unbekannt";					
+				}
 			}
 		}
 		return super.getText(element);

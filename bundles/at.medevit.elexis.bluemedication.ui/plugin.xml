@@ -8,8 +8,8 @@
             locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-               icon="rsc/be_icon_16x16_up.png"
-               label="BlueMedication Upload"
+               icon="rsc/be_icon_16x16_pill.png"
+               label="BlueMedication Medikationsabgleich"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -33,6 +33,10 @@
                   </test>
                </with>
             </visibleWhen>
+            <parameter
+                  name="at.medevit.elexis.bluemedication.ui.resulttyp"
+                  value="chmed">
+            </parameter>
          </command>
       </menuContribution>
       <menuContribution
@@ -40,8 +44,8 @@
             locationURI="toolbar:ch.elexis.omnivoredirect_view">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-               icon="rsc/be_icon_16x16_up.png"
-               label="BlueMedication Upload"
+               icon="rsc/be_icon_16x16_pill.png"
+               label="BlueMedication Medikationsabgleich"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -62,6 +66,74 @@
                   <test
                         forcePluginActivation="true"
                         property="at.medevit.elexis.bluemedication.ui.isUploadable">
+                  </test>
+               </with>
+            </visibleWhen>
+            <parameter
+                  name="at.medevit.elexis.bluemedication.ui.resulttyp"
+                  value="chmed">
+            </parameter>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
+         <command
+               commandId="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
+               icon="rsc/be_icon_16x16_down.png"
+               label="BlueMedication Medikationsimport"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="org.eclipse.ui.selection">
+                  <not>
+                     <count
+                           value="0">
+                     </count>
+                  </not>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="ch.elexis.omnivore.model.IDocumentHandle">
+                     </instanceof>
+                  </iterate>
+                  <test
+                        forcePluginActivation="true"
+                        property="at.medevit.elexis.bluemedication.ui.isDownloadable">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.omnivoredirect_view">
+         <command
+               commandId="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
+               icon="rsc/be_icon_16x16_down.png"
+               label="BlueMedication Medikationsimport"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="org.eclipse.ui.selection">
+                  <not>
+                     <count
+                           value="0">
+                     </count>
+                  </not>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="ch.elexis.omnivore.model.IDocumentHandle">
+                     </instanceof>
+                  </iterate>
+                  <test
+                        forcePluginActivation="true"
+                        property="at.medevit.elexis.bluemedication.ui.isDownloadable">
                   </test>
                </with>
             </visibleWhen>
@@ -71,9 +143,9 @@
             allPopups="false"
             locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
          <command
-               commandId="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
-               icon="rsc/be_icon_16x16_down.png"
-               label="BlueMedication Download"
+               commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
+               icon="rsc/be_icon_16x16_pdf.png"
+               label="BlueMedication Medikationsextraktion"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -93,19 +165,23 @@
                   </iterate>
                   <test
                         forcePluginActivation="true"
-                        property="at.medevit.elexis.bluemedication.ui.isDownloadable">
+                        property="at.medevit.elexis.bluemedication.ui.isUploadable">
                   </test>
                </with>
             </visibleWhen>
+            <parameter
+                  name="at.medevit.elexis.bluemedication.ui.resulttyp"
+                  value="pdf">
+            </parameter>
          </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="toolbar:ch.elexis.omnivoredirect_view">
          <command
-               commandId="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
-               icon="rsc/be_icon_16x16_down.png"
-               label="BlueMedication Download"
+               commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
+               icon="rsc/be_icon_16x16_pdf.png"
+               label="BlueMedication Medikationsextraktion"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -125,10 +201,14 @@
                   </iterate>
                   <test
                         forcePluginActivation="true"
-                        property="at.medevit.elexis.bluemedication.ui.isDownloadable">
+                        property="at.medevit.elexis.bluemedication.ui.isUploadable">
                   </test>
                </with>
             </visibleWhen>
+            <parameter
+                  name="at.medevit.elexis.bluemedication.ui.resulttyp"
+                  value="pdf">
+            </parameter>
          </command>
       </menuContribution>
    </extension>
@@ -138,6 +218,12 @@
             defaultHandler="at.medevit.elexis.bluemedication.ui.handler.BlueMedicationUploadHandler"
             id="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
             name="Blue Medication Upload">
+         <commandParameter
+               id="at.medevit.elexis.bluemedication.ui.resulttyp"
+               name="resulttyp"
+               optional="false"
+               values="chmed, pdf">
+         </commandParameter>
       </command>
       <command
             defaultHandler="at.medevit.elexis.bluemedication.ui.handler.BlueMedicationDownloadHandler"

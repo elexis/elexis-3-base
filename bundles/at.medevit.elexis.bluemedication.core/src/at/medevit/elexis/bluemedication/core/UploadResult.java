@@ -10,12 +10,15 @@ public class UploadResult {
 	
 	private boolean uploadedMediplan;
 	
+	private String typ;
+	
 	private LocalDateTime timestamp;
 	
-	public UploadResult(String url, String id, boolean uploadedMediplan){
+	public UploadResult(String url, String id, String typ, boolean uploadedMediplan){
 		this.url = url;
 		this.id = id;
 		this.uploadedMediplan = uploadedMediplan;
+		this.typ = typ;
 		this.timestamp = LocalDateTime.now();
 	}
 	
@@ -25,6 +28,10 @@ public class UploadResult {
 	
 	public String getId(){
 		return id;
+	}
+	
+	public String getTyp(){
+		return typ;
 	}
 	
 	public boolean isUploadedMediplan(){

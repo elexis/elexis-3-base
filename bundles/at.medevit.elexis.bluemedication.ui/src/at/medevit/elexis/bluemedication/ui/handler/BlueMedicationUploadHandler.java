@@ -30,6 +30,7 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		StructuredSelection selection =
 			(StructuredSelection) HandlerUtil.getCurrentSelection(event);
+		String resulttyp = event.getParameter("at.medevit.elexis.bluemedication.ui.resulttyp");
 		if (!selection.isEmpty()) {
 			Object object = selection.getFirstElement();
 			if (object instanceof DocHandle) {
@@ -47,7 +48,7 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 									IProgressMonitor.UNKNOWN);
 								Result<UploadResult> result = BlueMedicationServiceHolder
 									.getService().uploadDocument(docHandle.getPatient(),
-										docHandle.createTemporaryFile(docHandle.getTitle()));
+												docHandle.createTemporaryFile(docHandle.getTitle()), resulttyp);
 								if (result.isOK()) {
 									Display.getDefault().syncExec(() -> {
 										// open the uri of the result

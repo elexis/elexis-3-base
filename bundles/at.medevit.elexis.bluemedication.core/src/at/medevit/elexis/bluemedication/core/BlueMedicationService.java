@@ -9,17 +9,34 @@ import ch.rgw.tools.Result;
 public interface BlueMedicationService {
 	
 	/**
-	 * Upload a document as {@link File} to the bluemedication service.
+	 * Upload a document as {@link File} to the bluemedication service. Result typ
+	 * is chmed.
 	 * 
 	 * @param patient
 	 * @param document
 	 * @return
 	 */
-	public Result<UploadResult> uploadDocument(Patient patient, File document);
+	public default Result<UploadResult> uploadDocument(Patient patient, File document) {
+		return uploadDocument(patient, document, "chmed");
+	}
+
+	/**
+	 * Upload a document as {@link File} to the bluemedication service.<br />
+	 * Result typ:
+	 * <li>chmed - emediplan can be imported in patients medication</li>
+	 * <li>pdf - pdf including medication info, can be imported in patients
+	 * documents</li>
+	 * 
+	 * @param patient
+	 * @param document
+	 * @param resulttyp
+	 * @return
+	 */
+	public Result<UploadResult> uploadDocument(Patient patient, File document, String resulttyp);
 	
 	/**
-	 * Download the results of upload and user interaction on the browser, from the bluemedication
-	 * service.
+	 * Download the results of upload and user interaction on the browser, from the
+	 * bluemedication service. Result typ of upload was chmed.
 	 * 
 	 * @param uploadResult
 	 * @return
@@ -27,8 +44,17 @@ public interface BlueMedicationService {
 	public Result<String> downloadEMediplan(UploadResult uploadResult);
 	
 	/**
-	 * Add a pending {@link UploadResult} to the map of pending results. One object can only have
-	 * one {@link UploadResult}.
+	 * Download the results of upload and user interaction on the browser, from the
+	 * bluemedication service. Result typ of upload was pdf.
+	 * 
+	 * @param uploadResult
+	 * @return
+	 */
+	public Result<String> downloadPdf(UploadResult uploadResult);
+
+	/**
+	 * Add a pending {@link UploadResult} to the map of pending results. One object
+	 * can only have one {@link UploadResult}.
 	 * 
 	 * @param object
 	 * @param uploadResult

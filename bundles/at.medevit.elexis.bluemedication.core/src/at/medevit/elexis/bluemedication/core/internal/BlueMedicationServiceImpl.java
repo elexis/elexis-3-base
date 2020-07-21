@@ -92,7 +92,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	}
 	
 	@Override
-	public Result<UploadResult> uploadDocument(Patient patient, File document){
+	public Result<UploadResult> uploadDocument(Patient patient, File document, String resulttyp) {
 		initProxy();
 		workaroundGet();
 		try {
@@ -106,7 +106,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			try {
 				boolean uploadedMediplan = false;
 				File internalData = null;
-				if (useRemoteImport() && hasPrescriptionsWithValidIdType(patient)) {
+				if ("chmed".equals(resulttyp) && useRemoteImport() && hasPrescriptionsWithValidIdType(patient)) {
 					Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
 					if (mandant != null) {
 						try {
@@ -146,7 +146,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 				io.swagger.client.model.UploadResult data =
 					((ApiResponse<io.swagger.client.model.UploadResult>) response).getData();
 				return new Result<UploadResult>(new UploadResult(appendPath(getBasePath(),
-					data.getUrl() + "&mode=embed"), data.getId(), uploadedMediplan));
+						data.getUrl() + "&mode=embed"), data.getId(), resulttyp, uploadedMediplan));
 			} catch (ApiException e) {
 				if (e.getCode() == 400 || e.getCode() == 422) {
 					// error result code should be evaluated
@@ -257,6 +257,30 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		}
 	}
 	
+	@Override
+	public Result<String> downloadPdf(UploadResult uploadResult) {
+		initProxy();
+		try {
+			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
+			apiInstance.getApiClient().setBasePath(getAppBasePath());
+
+			ApiResponse<File> response = apiInstance
+					.downloadIdExtractionExtendedpdfGetWithHttpInfo(uploadResult.getId(), true);
+			if (response.getStatusCode() >= 300) {
+				return getError("Response status code was [" + response.getStatusCode() + "]");
+			}
+			if (response.getData() == null) {
+				return getError("Response has no data");
+			}
+			return getOk(response.getData().getAbsolutePath());
+		} catch (ApiException e) {
+			LoggerFactory.getLogger(getClass()).error("Error downloading Document Pdf", e);
+			return getError(e.getMessage());
+		} finally {
+			deInitProxy();
+		}
+	}
+
 	@Override
 	public void addPendingUploadResult(Object object,
 		UploadResult uploadResult){

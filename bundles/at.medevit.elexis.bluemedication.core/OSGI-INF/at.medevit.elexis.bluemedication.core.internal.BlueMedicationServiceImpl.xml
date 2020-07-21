@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="at.medevit.elexis.bluemedication.core.internal.BlueMedicationServiceImpl">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" activate="activate" name="at.medevit.elexis.bluemedication.core.internal.BlueMedicationServiceImpl">
+   <property name="event.topics" value="info/elexis/emediplan/ui/create"/>
    <service>
       <provide interface="at.medevit.elexis.bluemedication.core.BlueMedicationService"/>
+      <provide interface="org.osgi.service.event.EventHandler"/>
    </service>
+   <reference cardinality="1..1" field="eMediplanService" interface="at.medevit.elexis.emediplan.core.EMediplanService" name="eMediplanService"/>
    <implementation class="at.medevit.elexis.bluemedication.core.internal.BlueMedicationServiceImpl"/>
 </scr:component>

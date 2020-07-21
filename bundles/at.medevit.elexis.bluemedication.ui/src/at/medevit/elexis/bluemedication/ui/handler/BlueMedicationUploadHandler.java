@@ -123,9 +123,8 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 						});
 					} catch (InvocationTargetException | InterruptedException e) {
 						MessageDialog.openError(activeshell, "BlueMedication",
-							"Bluemedication Upload konnte nicht gestartet werden.");
-						LoggerFactory.getLogger(getClass())
-							.error("Error creating structured diagnosis", e);
+							"BlueMedication Upload konnte nicht gestartet werden.");
+						LoggerFactory.getLogger(getClass()).error("Error on upload", e);
 					}
 				}
 			}

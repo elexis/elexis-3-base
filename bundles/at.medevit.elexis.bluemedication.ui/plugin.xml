@@ -211,6 +211,16 @@
             </parameter>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.core.ui.medication.views.MedicationView">
+         <command
+               commandId="at.medevit.elexis.emediplan.ui.blueMedicationCheck"
+               icon="rsc/be_icon_16x16_exclam.png"
+               label="Medikationscheck"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -229,6 +239,11 @@
             defaultHandler="at.medevit.elexis.bluemedication.ui.handler.BlueMedicationDownloadHandler"
             id="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
             name="Blue Medication Download">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.bluemedication.ui.handler.BlueMedicationCheckHandler"
+            id="at.medevit.elexis.emediplan.ui.blueMedicationCheck"
+            name="Blue Medication Check">
       </command>
    </extension>
    <extension

@@ -109,7 +109,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	}
 	
 	@Override
-	public Result<UploadResult> uploadDocument(IPatient patient, File document){
+	public Result<UploadResult> uploadDocument(IPatient patient, File document, String resulttyp){
 		initProxy();
 		workaroundGet();
 		try {
@@ -123,7 +123,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			try {
 				boolean uploadedMediplan = false;
 				File internalData = null;
-				if (useRemoteImport() && hasPrescriptionsWithValidIdType(patient)) {
+				if ("chmed".equals(resulttyp) && useRemoteImport()
+					&& hasPrescriptionsWithValidIdType(patient)) {
 					IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 					if (mandant != null) {
 						try {
@@ -163,7 +164,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 				io.swagger.client.model.UploadResult data =
 					((ApiResponse<io.swagger.client.model.UploadResult>) response).getData();
 				return new Result<UploadResult>(new UploadResult(appendPath(getBasePath(),
-					data.getUrl() + "&mode=embed"), data.getId(), uploadedMediplan));
+					data.getUrl() + "&mode=embed"), data.getId(), resulttyp, uploadedMediplan));
 			} catch (ApiException e) {
 				if (e.getCode() == 400 || e.getCode() == 422) {
 					// error result code should be evaluated
@@ -261,6 +262,31 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			}
 		} catch (ApiException e) {
 			logger.error("Error downloading Document", e);
+			return Result.ERROR(e.getMessage());
+		} finally {
+			deInitProxy();
+		}
+	}
+	
+	@Override
+	public Result<String> downloadPdf(UploadResult uploadResult){
+		initProxy();
+		try {
+			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
+			apiInstance.getApiClient().setBasePath(getAppBasePath());
+			
+				ApiResponse<File> response = apiInstance
+					.downloadIdExtractionExtendedpdfGetWithHttpInfo(uploadResult.getId(), true);
+				if (response.getStatusCode() >= 300) {
+					return Result
+						.ERROR("Response status code was [" + response.getStatusCode() + "]");
+				}
+				if (response.getData() == null) {
+					return Result.ERROR("Response has no data");
+				}
+				return Result.OK(response.getData().getAbsolutePath());
+		} catch (ApiException e) {
+			logger.error("Error downloading Document Pdf", e);
 			return Result.ERROR(e.getMessage());
 		} finally {
 			deInitProxy();

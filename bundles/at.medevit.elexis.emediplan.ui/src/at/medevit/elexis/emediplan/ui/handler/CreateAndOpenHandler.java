@@ -34,11 +34,13 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.emediplan.core.EMediplanService;
-import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.medication.handlers.PrintTakingsListHandler.SorterAdapter;
 import ch.elexis.core.ui.medication.views.MedicationTableViewerItem;
 import ch.elexis.core.ui.medication.views.MedicationView;
@@ -75,10 +77,13 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 				ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
 				eMediplanService.exportEMediplanPdf(mandant, patient, prescriptions, pdfOutput);
 				// save as Brief
-				SaveEMediplanUtil.saveEMediplan(patient, mandant, pdfOutput.toByteArray());
+				IDocument letter =
+					SaveEMediplanUtil.saveEMediplan(patient, mandant, pdfOutput.toByteArray());
 				// open with system viewer
 				try {
 					Program.launch(SaveEMediplanUtil.writeTempPdf(pdfOutput));
+					ContextServiceHolder.get()
+						.postEvent(ElexisEventTopics.BASE + "emediplan/ui/create", letter);
 				} catch (IOException e) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 						"Das Rezept konnte nicht angezeigt werden.");

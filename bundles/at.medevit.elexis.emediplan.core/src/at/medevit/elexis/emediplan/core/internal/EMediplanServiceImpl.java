@@ -122,9 +122,9 @@ public class EMediplanServiceImpl implements EMediplanService {
 	
 	@Override
 	public void exportEMediplanJson(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, OutputStream output){
+		List<IPrescription> prescriptions, boolean addDesc, OutputStream output){
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
-			Optional<String> jsonString = getJsonString(author, patient, prescriptions, false);
+			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
 			if (jsonString.isPresent()) {
 				try (PrintWriter writer = new PrintWriter(output)) {
 					writer.write(jsonString.get());

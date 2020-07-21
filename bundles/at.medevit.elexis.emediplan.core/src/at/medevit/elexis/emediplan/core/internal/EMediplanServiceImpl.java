@@ -125,8 +125,8 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 	
 	@Override
-	public void exportEMediplanChmed(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, boolean addDesc, OutputStream output){
+	public void exportEMediplanChmed(Mandant author, Patient patient,
+			List<Prescription> prescriptions, boolean addDesc, OutputStream output) {
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
 			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
 			if (jsonString.isPresent()) {

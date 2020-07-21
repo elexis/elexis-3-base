@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.threeten.bp.LocalDate;
 
 import com.google.gson.Gson;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.RequestBody;
 
 import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
 import at.medevit.elexis.bluemedication.core.BlueMedicationService;
@@ -42,6 +44,7 @@ import ch.elexis.data.Prescription;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
 import ch.rgw.tools.TimeTool;
+import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
 import io.swagger.client.api.EMediplanGenerationApi;
@@ -191,14 +194,28 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		initProxy();
 		workaroundGet();
 		try {
-			MediCheckApi apiInstance = new MediCheckApi();
+			ApiClient client = new ApiClient() {
+				public String selectHeaderContentType(String[] contentTypes) {
+					return "application/x-chmed16a";
+				};
+
+				@Override
+				public RequestBody serialize(Object obj, String contentType) throws ApiException {
+					if (obj instanceof String) {
+						return RequestBody.create(MediaType.parse(contentType), (String) obj);
+					} else {
+						throw new ApiException("Content type \"" + contentType + "\" is not supported");
+					}
+				}
+			};
+			MediCheckApi apiInstance = new MediCheckApi(client);
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
 
 			Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
 			if (mandant != null) {
 				try {
 					ByteArrayOutputStream jsonOutput = new ByteArrayOutputStream();
-					eMediplanService.exportEMediplanJson(mandant, patient, getPrescriptions(patient, "all"), true,
+					eMediplanService.exportEMediplanChmed(mandant, patient, getPrescriptions(patient, "all"), true,
 							jsonOutput);
 					ApiResponse<?> response = apiInstance
 							.checkPostWithHttpInfo(new String(jsonOutput.toByteArray(), "UTF-8"));
@@ -206,8 +223,12 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 					@SuppressWarnings("unchecked")
 					io.swagger.client.model.UploadResult data = ((ApiResponse<io.swagger.client.model.UploadResult>) response)
 							.getData();
-					return new Result<UploadResult>(new UploadResult(
-							appendPath(getBasePath(), data.getUrl() + "&mode=embed"), data.getId(), "check", true));
+					if (data != null) {
+						return new Result<UploadResult>(new UploadResult(
+								appendPath(getBasePath(), data.getUrl() + "&mode=embed"), data.getId(), "check", true));
+					} else {
+						return new Result<UploadResult>(SEVERITY.ERROR, 0, "No data", null, false);
+					}
 				} catch (IOException e) {
 					LoggerFactory.getLogger(getClass()).error("Error creating eMediplan", e);
 					return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);

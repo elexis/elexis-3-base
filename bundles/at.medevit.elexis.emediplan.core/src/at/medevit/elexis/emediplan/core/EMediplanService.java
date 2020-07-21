@@ -100,8 +100,8 @@ public interface EMediplanService {
 	 * @param addDesc
 	 * @param output
 	 */
-	public void exportEMediplanChmed(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, boolean addDesc, OutputStream output);
+	public void exportEMediplanChmed(Mandant author, Patient patient, List<Prescription> prescriptions, boolean addDesc,
+			OutputStream output);
 	
 	/**
 	 * Creates a model representation from a base 64 compressed json chunk

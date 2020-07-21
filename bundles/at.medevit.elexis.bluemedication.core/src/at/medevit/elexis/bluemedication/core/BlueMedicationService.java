@@ -35,6 +35,23 @@ public interface BlueMedicationService {
 	public Result<UploadResult> uploadDocument(Patient patient, File document, String resulttyp);
 	
 	/**
+	 * Generate a chmed emediplan with the active medication of the patient, and
+	 * upload it to the medication check of the bluemedication service.<br />
+	 * 
+	 * @param patient
+	 * @return
+	 */
+	public Result<UploadResult> uploadCheck(Patient patient);
+
+	/**
+	 * Notify the bluemedication service that an chmed emediplan was generated.
+	 * 
+	 * @param patient
+	 * @return
+	 */
+	public Result<String> emediplanNotification(Patient patient);
+
+	/**
 	 * Download the results of upload and user interaction on the browser, from the
 	 * bluemedication service. Result typ of upload was chmed.
 	 * 

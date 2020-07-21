@@ -13,8 +13,13 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.LoggerFactory;
 import org.threeten.bp.LocalDate;
 
@@ -23,23 +28,28 @@ import com.google.gson.Gson;
 import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
 import at.medevit.elexis.bluemedication.core.BlueMedicationService;
 import at.medevit.elexis.bluemedication.core.UploadResult;
-import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
+import at.medevit.elexis.emediplan.core.EMediplanService;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Brief;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
+import ch.rgw.tools.TimeTool;
 import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
+import io.swagger.client.api.EMediplanGenerationApi;
 import io.swagger.client.api.ExtractionAndConsolidationApi;
+import io.swagger.client.api.MediCheckApi;
 
-@Component
-public class BlueMedicationServiceImpl implements BlueMedicationService {
+@Component(property = EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.BASE + "emediplan/ui/create")
+public class BlueMedicationServiceImpl implements BlueMedicationService, EventHandler {
 	
 	private boolean proxyActive;
 	private String oldProxyHost;
@@ -47,6 +57,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 	
 	private Map<Object, UploadResult> pendingUploadResults;
 	
+	@Reference
+	private EMediplanService eMediplanService;
+
 	@Activate
 	public void activate(){
 		pendingUploadResults = new HashMap<>();
@@ -111,7 +124,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 					if (mandant != null) {
 						try {
 							ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
-							EMediplanServiceHolder.getService().exportEMediplanPdf(mandant, patient,
+							eMediplanService.exportEMediplanPdf(mandant, patient,
 									getPrescriptions(patient, "all"), true, pdfOutput);
 							File pdfFile = File
 								.createTempFile("eMediplan_" + System.currentTimeMillis(), ".pdf");
@@ -173,6 +186,99 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 		}
 	}
 	
+	@Override
+	public Result<UploadResult> uploadCheck(Patient patient) {
+		initProxy();
+		workaroundGet();
+		try {
+			MediCheckApi apiInstance = new MediCheckApi();
+			apiInstance.getApiClient().setBasePath(getAppBasePath());
+
+			Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
+			if (mandant != null) {
+				try {
+					ByteArrayOutputStream jsonOutput = new ByteArrayOutputStream();
+					eMediplanService.exportEMediplanJson(mandant, patient, getPrescriptions(patient, "all"), true,
+							jsonOutput);
+					ApiResponse<?> response = apiInstance
+							.checkPostWithHttpInfo(new String(jsonOutput.toByteArray(), "UTF-8"));
+					// successful upload
+					@SuppressWarnings("unchecked")
+					io.swagger.client.model.UploadResult data = ((ApiResponse<io.swagger.client.model.UploadResult>) response)
+							.getData();
+					return new Result<UploadResult>(new UploadResult(
+							appendPath(getBasePath(), data.getUrl() + "&mode=embed"), data.getId(), "check", true));
+				} catch (IOException e) {
+					LoggerFactory.getLogger(getClass()).error("Error creating eMediplan", e);
+					return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
+				}
+			} else {
+				return new Result<UploadResult>(SEVERITY.ERROR, 0, "No active mandator", null, false);
+			}
+		} catch (ApiException e) {
+			if (e.getCode() == 400 || e.getCode() == 422) {
+				// error result code should be evaluated
+				try {
+					Gson gson = new Gson();
+					io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+							io.swagger.client.model.ErrorResult[].class);
+					if (mcArray != null && mcArray.length > 0) {
+						return new Result<UploadResult>(SEVERITY.ERROR, 0,
+								"Error result code [" + mcArray[0].getCode() + "]", null, false);
+					}
+				} catch (Exception je) {
+					LoggerFactory.getLogger(getClass())
+							.warn("Could not parse code 400 exception content [" + e.getResponseBody() + "]");
+				}
+			}
+			LoggerFactory.getLogger(getClass()).error("Error uploading Document", e);
+			return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
+		} finally {
+			deInitProxy();
+		}
+	}
+
+	@Override
+	public Result<String> emediplanNotification(Patient patient) {
+		initProxy();
+		workaroundGet();
+		try {
+			EMediplanGenerationApi apiInstance = new EMediplanGenerationApi();
+			apiInstance.getApiClient().setBasePath(getAppBasePath());
+			
+			LocalDate birthDate = null;
+			if(StringUtils.isNotBlank(patient.getGeburtsdatum())) {
+				TimeTool patBirthDay = new TimeTool(patient.getGeburtsdatum());
+				birthDate = LocalDate.of(patBirthDay.toLocalDate().getYear(), patBirthDay.toLocalDate().getMonthValue(),
+						patBirthDay.toLocalDate().getDayOfMonth());
+			}
+
+			ApiResponse<?> response = apiInstance.notificationEmediplanPostWithHttpInfo(patient.getVorname(),
+					patient.getName(), patient.getGender().name(), birthDate);
+			return new Result<String>(response.toString());
+		} catch (ApiException e) {
+			if (e.getCode() == 400 || e.getCode() == 422) {
+				// error result code should be evaluated
+				try {
+					Gson gson = new Gson();
+					io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+							io.swagger.client.model.ErrorResult[].class);
+					if (mcArray != null && mcArray.length > 0) {
+						return new Result<String>(SEVERITY.ERROR, 0, "Error result code [" + mcArray[0].getCode() + "]",
+								null, false);
+					}
+				} catch (Exception je) {
+					LoggerFactory.getLogger(getClass())
+							.warn("Could not parse code 400 exception content [" + e.getResponseBody() + "]");
+				}
+			}
+			LoggerFactory.getLogger(getClass()).error("Error performing notification", e);
+			return new Result<String>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
+		} finally {
+			deInitProxy();
+		}
+	}
+
 	/**
 	 * Perform a workaround get until HIN fixed POST issue
 	 * 
@@ -349,5 +455,16 @@ public class BlueMedicationServiceImpl implements BlueMedicationService {
 			}
 		}
 		return 1;
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		Object property = event.getProperty("org.eclipse.e4.data");
+		if (property instanceof Brief) {
+			Patient patient = (Patient) ((Brief) property).getPatient();
+			if (patient != null) {
+				emediplanNotification(patient);
+			}
+		}
 	}
 }

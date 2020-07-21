@@ -87,6 +87,20 @@ public interface EMediplanService {
 		List<IPrescription> prescriptions, boolean addDesc, OutputStream output);
 	
 	/**
+	 * Get a CHMED eMediplan (http://emediplan.ch/de/home) representation of the prescriptions of
+	 * the patient, written to the provided {@link OutputStream}. If addDesc is true a desc private
+	 * field is added to all medication entries of the JSON emediplan.
+	 * 
+	 * @param author
+	 * @param patient
+	 * @param prescriptions
+	 * @param addDesc
+	 * @param output
+	 */
+	public void exportEMediplanChmed(IMandator author, IPatient patient,
+		List<IPrescription> prescriptions, boolean addDesc, OutputStream output);
+	
+	/**
 	 * Creates a model representation from a base 64 compressed json chunk
 	 * 
 	 * @param chunk

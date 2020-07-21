@@ -133,6 +133,19 @@ public class EMediplanServiceImpl implements EMediplanService {
 		}
 	}
 	
+	@Override
+	public void exportEMediplanChmed(IMandator author, IPatient patient,
+		List<IPrescription> prescriptions, boolean addDesc, OutputStream output){
+		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
+			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
+			if (jsonString.isPresent()) {
+				try (PrintWriter writer = new PrintWriter(output)) {
+					writer.write(getEncodedJson(jsonString.get()));
+				}
+			}
+		}
+	}
+	
 	private void createPdf(Optional<Image> qrCode, Object jaxbModel, OutputStream output){
 		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		ServiceReference<IFormattedOutputFactory> fopFactoryRef =

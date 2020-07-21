@@ -59,6 +59,7 @@ public interface EMediplanService {
 	 */
 	public void exportEMediplanPdf(Mandant author, Patient patient,
 			List<Prescription> prescriptions, boolean addDesc, OutputStream output);
+
 	/**
 	 * Get a CHMED json eMediplan (http://emediplan.ch/de/home) representation of the prescriptions
 	 * of the patient, written to the provided {@link OutputStream}.
@@ -68,8 +69,25 @@ public interface EMediplanService {
 	 * @param prescriptions
 	 * @param output
 	 */
+	public default void exportEMediplanJson(Mandant author, Patient patient, List<Prescription> prescriptions,
+			OutputStream output) {
+		exportEMediplanJson(author, patient, prescriptions, false, output);
+	}
+
+	/**
+	 * Get a CHMED json eMediplan (http://emediplan.ch/de/home) representation of
+	 * the prescriptions of the patient, written to the provided
+	 * {@link OutputStream}. If addDesc is true a desc private field is added to all
+	 * medication entries of the JSON emediplan.
+	 * 
+	 * @param author
+	 * @param patient
+	 * @param prescriptions
+	 * @param addDesc
+	 * @param output
+	 */
 	public void exportEMediplanJson(Mandant author, Patient patient,
-		List<Prescription> prescriptions, OutputStream output);
+			List<Prescription> prescriptions, boolean addDesc, OutputStream output);
 	
 	/**
 	 * Creates a model representation from a base 64 compressed json chunk

@@ -23,11 +23,12 @@ public class SaveEMediplanUtil {
 		return pdfFile.getAbsolutePath();
 	}
 	
-	public static void saveEMediplan(Patient patient, Mandant mandant, byte[] content){
+	public static Brief saveEMediplan(Patient patient, Mandant mandant, byte[] content) {
 		TimeTool now = new TimeTool();
 		Brief letter = new Brief("eMediplan " + now.toString(TimeTool.DATE_GER), now,
 			mandant, null, null, Brief.UNKNOWN);
 		letter.setPatient(patient);
 		letter.save(content, "pdf");
+		return letter;
 	}
 }

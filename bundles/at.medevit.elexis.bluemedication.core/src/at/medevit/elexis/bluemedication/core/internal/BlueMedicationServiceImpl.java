@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import org.threeten.bp.LocalDate;
 import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
@@ -206,26 +208,52 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		}
 	}
 
+	private class CheckApiClient extends ApiClient {
+		
+		private String redirectUrl;
+		
+		public CheckApiClient(){
+			super();
+			// do not follow redirects
+			getHttpClient().setFollowRedirects(false);
+			getHttpClient().setFollowSslRedirects(false);
+		}
+		
+		public String selectHeaderContentType(String[] contentTypes){
+			return "application/x-chmed16a";
+		};
+		
+		@Override
+		public RequestBody serialize(Object obj, String contentType) throws ApiException{
+			if (obj instanceof String) {
+				return RequestBody.create(MediaType.parse(contentType), (String) obj);
+			} else {
+				throw new ApiException("Content type \"" + contentType + "\" is not supported");
+			}
+		}
+		
+		@Override
+		public <T> T handleResponse(Response response, Type returnType) throws ApiException{
+			if (response.code() == 302) {
+				redirectUrl = response.header("Location", null);
+				return null;
+			}
+			throw new ApiException(response.message(), response.code(),
+				response.headers().toMultimap(), null);
+		}
+		
+		public String getRedirectUrl(){
+			return redirectUrl;
+		}
+	}
+	
 	@Override
 	public Result<UploadResult> uploadCheck(IPatient patient){
 		initProxy();
 		workaroundGet();
 		try {
-			ApiClient client = new ApiClient() {
-				public String selectHeaderContentType(String[] contentTypes) {
-					return "application/x-chmed16a";
-				};
-				
-				@Override
-				public RequestBody serialize(Object obj, String contentType) throws ApiException{
-					if (obj instanceof String) {
-						return RequestBody.create(MediaType.parse(contentType), (String) obj);
-					} else {
-						throw new ApiException(
-							"Content type \"" + contentType + "\" is not supported");
-					}
-				}
-			};
+			CheckApiClient client = new CheckApiClient();
+			
 			MediCheckApi apiInstance = new MediCheckApi(client);
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
@@ -234,18 +262,14 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 					ByteArrayOutputStream jsonOutput = new ByteArrayOutputStream();
 					eMediplanService.exportEMediplanChmed(mandant, patient,
 						getPrescriptions(patient, "all"), true, jsonOutput);
-					ApiResponse<?> response = apiInstance
+					apiInstance
 						.checkPostWithHttpInfo(new String(jsonOutput.toByteArray(), "UTF-8"));
-					// successful upload
-					@SuppressWarnings("unchecked")
-					io.swagger.client.model.UploadResult data =
-						((ApiResponse<io.swagger.client.model.UploadResult>) response).getData();
-					if (data != null) {
-						return new Result<UploadResult>(new UploadResult(
-							appendPath(getBasePath(), data.getUrl() + "&mode=embed"), data.getId(),
-							"check", true));
+					if (client.getRedirectUrl() != null) {
+						return new Result<UploadResult>(
+							new UploadResult(client.getRedirectUrl(), "", "check", true));
 					} else {
-						return new Result<UploadResult>(SEVERITY.ERROR, 0, "No data", null, false);
+						return new Result<UploadResult>(SEVERITY.ERROR, 0, "No redirect", null,
+							false);
 					}
 				} catch (IOException e) {
 					logger.error("Error creating eMediplan", e);

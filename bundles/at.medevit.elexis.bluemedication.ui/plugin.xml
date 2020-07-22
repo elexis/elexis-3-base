@@ -217,7 +217,7 @@
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationCheck"
                icon="rsc/be_icon_16x16_exclam.png"
-               label="Medikationscheck"
+               label="BlueMedication Medikationscheck"
                style="push">
          </command>
       </menuContribution>

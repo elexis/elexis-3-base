@@ -33,6 +33,7 @@
       </win>
    </launcher>
 
+
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
@@ -160,7 +161,6 @@
       <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="4" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
@@ -174,9 +174,9 @@
    </configurations>
 
    <repositories>
-      <repository location="https://download.elexis.info/elexis/master/p2/elexis-3-base" enabled="true" />
-      <repository location="https://download.elexis.info/elexis/master/p2/elexis-3-core" enabled="true" />
-      <repository location="https://download.elexis.info/elexis/master/p2/elexis.3.gpl" enabled="true" />
+      <repository location="http://https://download.elexis.info/elexis/3.8/p2/elexis-3-base" enabled="true" />
+      <repository location="http://https://download.elexis.info/elexis/3.8/p2/elexis-3-core" enabled="true" />
+      <repository location="http://https://download.elexis.info/elexis/3.8/p2/elexis.3.gpl" enabled="true" />
    </repositories>
 
    <preferencesInfo>

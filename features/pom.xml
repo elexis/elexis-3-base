@@ -105,5 +105,6 @@
     <module>at.medbits.elexis.labbit.feature</module>
     <module>ch.medelexis.openoffice.feature</module>
     <module>at.medevit.medelexis.text.msword.feature</module>
+    <module>at.medevit.elexis.documents.converter.feature</module>
   </modules>
 </project>

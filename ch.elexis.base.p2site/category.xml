@@ -255,6 +255,9 @@
    <feature url="features/ch.elexis.kassenbuch.feature_3.2.0.qualifier.jar" id="ch.elexis.kassenbuch.feature" version="3.2.0.qualifier">
       <category name="finances"/>
    </feature>
+   <feature id="at.medevit.elexis.documents.converter.feature">
+      <category name="documentmanagement"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

@@ -154,5 +154,7 @@
     <module>ch.itmed.lmz.risch.laborder</module>
     <module>ch.itmed.fop.printing</module>
     <module>at.medbits.elexis.labbit.ui</module>
+    <module>at.medevit.elexis.documents.converter</module>
+    <module>at.medevit.elexis.documents.converter.ui</module>
   </modules>
 </project>

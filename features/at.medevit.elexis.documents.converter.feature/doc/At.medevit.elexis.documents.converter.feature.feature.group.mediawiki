@@ -1,0 +1,49 @@
+
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Dokumentenverwaltung</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td>Konvertierung von Dokumenten</td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Thomas Huster</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>23.07.2020</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.8</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+== Einführung ==
+Das Feature bietet die Grundlage um Dokumente in verschiedene Formate zu konvertieren. Dabei wird die unter die Apache Lizenz verfügbare Bibliothek [https://github.com/sbraconnier/jodconverter JODConverter] verwendet.
+== Installation / Deinstallation==
+Medelexis-Benutzer können über das Service-Abo installieren oder deinstallieren. OpenSource-Benutzer können das Feature über 'Hilfe' im Menü erreichen (siehe [[Installation Elexis 3.0 OpenSource]])
+== Konfiguration ==
+Es muss eine HTTP Adresse konfiguriert werden unter der die REST Schnittstelle des JODConverter erreichbar ist.
+[[File:medevit_converter1.png]]
+== Funktionen ==
+Die Menüpunkte sind inaktiv wenn keine REST Schnittstelle konfiguriert ist, oder diese nicht erreichbar ist.
+=== Dokument als Pdf öffnen ===
+Der Menüpunkt ist im Kontextmenü der Dokumente View sichtbar, wenn das ausgewählte Dokument nicht bereits ein pdf ist. 
+
+Das in der Dokumente View ausgewählte Dokument wird in eine temporäre pdf Datei konvertiert, und mit der pdf Anzeige des Betriebsystems geöffnet.

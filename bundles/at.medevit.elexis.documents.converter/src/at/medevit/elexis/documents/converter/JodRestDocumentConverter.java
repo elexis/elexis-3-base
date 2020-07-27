@@ -55,7 +55,15 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		if(StringUtils.isNotEmpty(basePath)) {
 			try {
 				URI uri = new URI(basePath);
-				return isServiceAvailable(uri.getHost(), uri.getPort(), 500);
+				int port = uri.getPort();
+				if (port == -1) {
+					if (basePath.toLowerCase().contains("https")) {
+						port = 443;
+					} else {
+						port = 80;
+					}
+				}
+				return isServiceAvailable(uri.getHost(), port, 500);
 			} catch (URISyntaxException e) {
 				LoggerFactory.getLogger(getClass()).warn("Invalid basePath URI syntax [" + basePath + "]");
 			}

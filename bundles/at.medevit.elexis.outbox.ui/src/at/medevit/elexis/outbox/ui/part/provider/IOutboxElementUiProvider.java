@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import at.medevit.elexis.outbox.model.OutboxElement;
+import at.medevit.elexis.outbox.model.IOutboxElement;
 
 public interface IOutboxElementUiProvider {
 	/**
@@ -52,12 +52,12 @@ public interface IOutboxElementUiProvider {
 	 * @param element
 	 * @return
 	 */
-	public boolean isProviderFor(OutboxElement element);
+	public boolean isProviderFor(IOutboxElement element);
 	
 	/**
 	 * Method called when element is double clicked.
 	 * 
 	 * @param element
 	 */
-	public void doubleClicked(OutboxElement element);
+	public void doubleClicked(IOutboxElement element);
 }

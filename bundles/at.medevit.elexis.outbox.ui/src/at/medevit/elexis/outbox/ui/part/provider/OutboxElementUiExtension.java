@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.elexis.outbox.model.OutboxElement;
+import at.medevit.elexis.outbox.model.IOutboxElement;
 
 public class OutboxElementUiExtension {
 	
@@ -40,7 +40,7 @@ public class OutboxElementUiExtension {
 		return providers;
 	}
 	
-	private IOutboxElementUiProvider getProvider(OutboxElement element){
+	private IOutboxElementUiProvider getProvider(IOutboxElement element){
 		for (IOutboxElementUiProvider iOutboxElementUiProvider : providers) {
 			if (iOutboxElementUiProvider.isProviderFor(element)) {
 				return iOutboxElementUiProvider;
@@ -71,7 +71,7 @@ public class OutboxElementUiExtension {
 		return ret;
 	}
 	
-	public String getText(OutboxElement element){
+	public String getText(IOutboxElement element){
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getLabelProvider() != null) {
 			return provider.getLabelProvider().getText(element);
@@ -79,7 +79,7 @@ public class OutboxElementUiExtension {
 		return null;
 	}
 	
-	public Image getImage(OutboxElement element){
+	public Image getImage(IOutboxElement element){
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getLabelProvider() != null) {
 			return provider.getLabelProvider().getImage(element);
@@ -87,7 +87,7 @@ public class OutboxElementUiExtension {
 		return null;
 	}
 	
-	public Color getForeground(OutboxElement element){
+	public Color getForeground(IOutboxElement element){
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getColorProvider() != null) {
 			return provider.getColorProvider().getForeground(element);
@@ -95,7 +95,7 @@ public class OutboxElementUiExtension {
 		return null;
 	}
 	
-	public Color getBackground(OutboxElement element){
+	public Color getBackground(IOutboxElement element){
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getColorProvider() != null) {
 			return provider.getColorProvider().getBackground(element);
@@ -103,7 +103,7 @@ public class OutboxElementUiExtension {
 		return null;
 	}
 	
-	public void fireDoubleClicked(OutboxElement element){
+	public void fireDoubleClicked(IOutboxElement element){
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null) {
 			provider.doubleClicked(element);

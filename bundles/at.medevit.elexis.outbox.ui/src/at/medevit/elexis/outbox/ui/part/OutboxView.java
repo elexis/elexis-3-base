@@ -14,8 +14,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -26,8 +24,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 
+import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService;
-import at.medevit.elexis.outbox.model.OutboxElement;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
 import at.medevit.elexis.outbox.ui.command.AutoActivePatientHandler;
 import at.medevit.elexis.outbox.ui.part.action.OutboxFilterAction;
@@ -40,6 +38,7 @@ import at.medevit.elexis.outbox.ui.preferences.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Mandant;
 
@@ -106,9 +105,9 @@ public class OutboxView extends ViewPart {
 			StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 			if (!selection.isEmpty()) {
 				Object selectedObj = selection.getFirstElement();
-				if (selectedObj instanceof OutboxElement) {
+				if (selectedObj instanceof IOutboxElement) {
 					OutboxElementUiExtension extension = new OutboxElementUiExtension();
-					extension.fireDoubleClicked((OutboxElement) selectedObj);
+					extension.fireDoubleClicked((IOutboxElement) selectedObj);
 				}
 			}
 		});
@@ -118,11 +117,11 @@ public class OutboxView extends ViewPart {
 			if (selection instanceof StructuredSelection && !selection.isEmpty()) {
 				if (setAutoSelectPatient) {
 					Object selectedElement = ((StructuredSelection) selection).getFirstElement();
-					if (selectedElement instanceof OutboxElement) {
-						ElexisEventDispatcher
-							.fireSelectionEvent(((OutboxElement) selectedElement).getPatient());
+					if (selectedElement instanceof IOutboxElement) {
+						ContextServiceHolder.get()
+							.setActivePatient(((IOutboxElement) selectedElement).getPatient());
 					} else if (selectedElement instanceof PatientOutboxElements) {
-						ElexisEventDispatcher.fireSelectionEvent(
+						ContextServiceHolder.get().setActivePatient(
 							((PatientOutboxElements) selectedElement).getPatient());
 					}
 				}
@@ -185,9 +184,9 @@ public class OutboxView extends ViewPart {
 		}
 	}
 	
-	private List<OutboxElement> getOpenOutboxElements(){
-		List<OutboxElement> openElements = OutboxServiceComponent.getService().getOutboxElements(
-			(Mandant) ElexisEventDispatcher.getSelected(Mandant.class), null,
+	private List<IOutboxElement> getOpenOutboxElements(){
+		List<IOutboxElement> openElements = OutboxServiceComponent.getService().getOutboxElements(
+			ContextServiceHolder.get().getActiveMandator().orElse(null), null,
 			IOutboxElementService.State.NEW);
 		return openElements;
 	}

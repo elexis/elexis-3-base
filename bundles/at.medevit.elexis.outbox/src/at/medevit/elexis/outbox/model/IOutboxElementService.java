@@ -16,9 +16,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 
 public interface IOutboxElementService {
 	// do not change order, as we save the ordinal to the db, only adding new state is allowed
@@ -34,7 +33,7 @@ public interface IOutboxElementService {
 	 * @param uri
 	 * @return
 	 */
-	public void createOutboxElement(Patient patient, Kontakt mandant, String uri);
+	public IOutboxElement createOutboxElement(IPatient patient, IMandator mandant, String uri);
 	
 	/**
 	 * Delete OutboxElement and tell registered listeners about it.
@@ -42,7 +41,7 @@ public interface IOutboxElementService {
 	 * @param outboxElement
 	 * @return
 	 */
-	public void deleteOutboxElement(OutboxElement outboxElement);
+	public void deleteOutboxElement(IOutboxElement outboxElement);
 	
 	/**
 	 * Change the state of a OutboxElement and tell registered listeners about it.
@@ -52,7 +51,7 @@ public interface IOutboxElementService {
 	 * @param state
 	 * @return
 	 */
-	public void changeOutboxElementState(OutboxElement element, State state);
+	public void changeOutboxElementState(IOutboxElement element, State state);
 
 	/**
 	 * Get all OutboxElements with matching mandant, patient and state. By setting parameters to
@@ -63,7 +62,7 @@ public interface IOutboxElementService {
 	 * @param state
 	 * @return list of matching OutboxElement objects
 	 */
-	public List<OutboxElement> getOutboxElements(Mandant mandant, Patient patient, State state);
+	public List<IOutboxElement> getOutboxElements(IMandator mandant, IPatient patient, State state);
 	
 	/**
 	 * Register a listener to the set of listeners.
@@ -86,7 +85,7 @@ public interface IOutboxElementService {
 	 * @param outboxElement
 	 * @return
 	 */
-	public InputStream getContentsAsStream(OutboxElement outboxElement)
+	public InputStream getContentsAsStream(IOutboxElement outboxElement)
 		throws IOException;
 	
 	/**
@@ -97,6 +96,6 @@ public interface IOutboxElementService {
 	 * @param outboxElement
 	 * @return
 	 */
-	public Optional<File> createTempFileWithContents(File folder, OutboxElement outboxElement)
+	public Optional<File> createTempFileWithContents(File folder, IOutboxElement outboxElement)
 		throws IOException;
 }

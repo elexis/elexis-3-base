@@ -7,6 +7,10 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,12 +37,17 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		ConverterControllerApi apiInstance = new ConverterControllerApi();
 		apiInstance.getApiClient().setBasePath(getAppBasePath());
 		try {
-			File tempFile = new File(documentStore.saveContentToTempFile(document, "topdf_",
-				document.getTitle() + "." + document.getMimeType(), true));
+			File tempFile = new File(documentStore.saveContentToTempFile(document,
+				getPrefix(document), getExtension(document), true));
 			File converted = apiInstance.convertToUsingParamUsingPOST(tempFile, "pdf", null);
 			tempFile.delete();
-			return Optional.of(converted);
-		} catch (ElexisException | ApiException e) {
+			Path moved = Files.move(converted.toPath(),
+				new File(tempFile.getParentFile(), getPrefix(document) + ".pdf").toPath(),
+				StandardCopyOption.REPLACE_EXISTING);
+			File ret = moved.toFile();
+			ret.deleteOnExit();
+			return Optional.of(ret);
+		} catch (ElexisException | ApiException | IOException e) {
 			if (e instanceof ApiException) {
 				LoggerFactory.getLogger(getClass())
 					.error("Error rest api response code [" + ((ApiException) e).getCode() + "]");
@@ -47,6 +56,30 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 				.error("Error converting document [" + document + "]", e);
 		}
 		return Optional.empty();
+	}
+	
+	private static String getExtension(IDocument document){
+		String extension = document.getExtension();
+		if (extension.indexOf('.') != -1) {
+			extension = extension.substring(extension.lastIndexOf('.') + 1);
+		}
+		return extension;
+	}
+	
+	private static String getPrefix(IDocument iDocument){
+		StringBuilder ret = new StringBuilder();
+		ret.append(iDocument.getPatient().getCode()).append("_");
+		
+		ret.append(iDocument.getPatient().getLastName()).append(" ");
+		ret.append(iDocument.getPatient().getFirstName()).append("_");
+		String title = iDocument.getTitle();
+		if (iDocument.getExtension() != null && title.endsWith(iDocument.getExtension())) {
+			title = title.substring(0, title.lastIndexOf('.'));
+		}
+		ret.append(title).append("_");
+		ret.append(new SimpleDateFormat("ddMMyyyy_HHmmss").format(iDocument.getLastchanged()));
+		
+		return ret.toString().replaceAll("[^a-züäöA-ZÜÄÖ0-9 _\\.\\-]", "");
 	}
 	
 	private String getAppBasePath(){

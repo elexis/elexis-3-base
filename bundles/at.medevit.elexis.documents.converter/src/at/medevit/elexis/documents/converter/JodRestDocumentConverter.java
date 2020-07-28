@@ -39,6 +39,10 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 			tempFile.delete();
 			return Optional.of(converted);
 		} catch (ElexisException | ApiException e) {
+			if (e instanceof ApiException) {
+				LoggerFactory.getLogger(getClass())
+					.error("Error rest api response code [" + ((ApiException) e).getCode() + "]");
+			}
 			LoggerFactory.getLogger(getClass())
 				.error("Error converting document [" + document + "]", e);
 		}

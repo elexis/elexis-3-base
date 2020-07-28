@@ -4,31 +4,31 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import at.medevit.elexis.outbox.model.OutboxElement;
-import ch.elexis.data.Patient;
+import at.medevit.elexis.outbox.model.IOutboxElement;
+import ch.elexis.core.model.IPatient;
 
 public class PatientOutboxElements {
 	
-	private Patient patient;
-	private HashSet<OutboxElement> elements = new HashSet<OutboxElement>();
+	private IPatient patient;
+	private HashSet<IOutboxElement> elements = new HashSet<IOutboxElement>();
 	
-	public PatientOutboxElements(Patient patient){
+	public PatientOutboxElements(IPatient patient){
 		this.patient = patient;
 	}
 	
-	public List<OutboxElement> getElements(){
-		return new ArrayList<OutboxElement>(elements);
+	public List<IOutboxElement> getElements(){
+		return new ArrayList<IOutboxElement>(elements);
 	}
 	
-	public void addElement(OutboxElement element){
+	public void addElement(IOutboxElement element){
 		elements.add(element);
 	}
 	
-	public void removeElement(OutboxElement element){
+	public void removeElement(IOutboxElement element){
 		elements.remove(element);
 	}
 	
-	public Patient getPatient(){
+	public IPatient getPatient(){
 		return patient;
 	}
 	

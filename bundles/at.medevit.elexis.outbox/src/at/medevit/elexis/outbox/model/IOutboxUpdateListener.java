@@ -11,5 +11,5 @@
 package at.medevit.elexis.outbox.model;
 
 public interface IOutboxUpdateListener {
-	public void update(OutboxElement element);
+	public void update(IOutboxElement element);
 }

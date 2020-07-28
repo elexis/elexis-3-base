@@ -10,7 +10,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import at.medevit.elexis.outbox.model.OutboxElement;
+import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
 
 public class OutboxDeleteHandler extends AbstractHandler implements IHandler {
@@ -22,8 +22,8 @@ public class OutboxDeleteHandler extends AbstractHandler implements IHandler {
 			&& !((StructuredSelection) selection).isEmpty()) {
 			List<?> iOutboxElements = ((StructuredSelection) selection).toList();
 			for (Object iOutboxElement : iOutboxElements) {
-				if (iOutboxElement instanceof OutboxElement) {
-					OutboxElement el = (OutboxElement) iOutboxElement;
+				if (iOutboxElement instanceof IOutboxElement) {
+					IOutboxElement el = (IOutboxElement) iOutboxElement;
 					OutboxServiceComponent.getService().deleteOutboxElement(el);
 				}
 			}

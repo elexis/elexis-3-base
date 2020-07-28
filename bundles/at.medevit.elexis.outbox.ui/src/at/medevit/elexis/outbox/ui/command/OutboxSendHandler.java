@@ -29,11 +29,12 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
-import at.medevit.elexis.outbox.model.OutboxElement;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
 import at.medevit.elexis.outbox.ui.part.model.PatientOutboxElements;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.data.Patient;
 
 public class OutboxSendHandler extends AbstractHandler implements IHandler {
@@ -53,9 +54,9 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 			}
 			for (Object iOutboxElement : iOutboxElements) {
 				
-				if (iOutboxElement instanceof OutboxElement) {
-					Patient p = ((OutboxElement) iOutboxElement).getPatient();
-					if (p != null && p.exists()) {
+				if (iOutboxElement instanceof IOutboxElement) {
+					IPatient p = ((IOutboxElement) iOutboxElement).getPatient();
+					if (p != null) {
 						patientIds.add(p.getId());
 					}
 				}
@@ -82,8 +83,8 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		}
 		
 		for (Object iOutboxElement : iOutboxElements) {
-			if (iOutboxElement instanceof OutboxElement) {
-				Optional<File> tmpFile = createTempFile((OutboxElement) iOutboxElement);
+			if (iOutboxElement instanceof IOutboxElement) {
+				Optional<File> tmpFile = createTempFile((IOutboxElement) iOutboxElement);
 				if (tmpFile.isPresent()) {
 					File file = tmpFile.get();
 					attachments.add(file);
@@ -124,9 +125,9 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		if (openSendMailDlg(patient, iOutboxElements, commandService,
 			attachmentsString)) {
 			for (Object iOutboxElement : iOutboxElements) {
-				if (iOutboxElement instanceof OutboxElement) {
+				if (iOutboxElement instanceof IOutboxElement) {
 					OutboxServiceComponent.getService().changeOutboxElementState(
-						(OutboxElement) iOutboxElement, State.SENT);
+						(IOutboxElement) iOutboxElement, State.SENT);
 				}
 			}
 		}
@@ -143,8 +144,8 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 			
 			StringBuilder warnings = new StringBuilder();
 			for (Object iOutboxElement : iOutboxElements) {
-				if (iOutboxElement instanceof OutboxElement) {
-					OutboxElement outboxElement = (OutboxElement) iOutboxElement;
+				if (iOutboxElement instanceof IOutboxElement) {
+					IOutboxElement outboxElement = (IOutboxElement) iOutboxElement;
 					String lblOutBoxElement = outboxElement.getLabel();
 					
 					// check if outbox element is sent
@@ -156,7 +157,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 					}
 					if (outboxElementSent) {
 						OutboxServiceComponent.getService()
-							.changeOutboxElementState((OutboxElement) iOutboxElement, State.SENT);
+							.changeOutboxElementState((IOutboxElement) iOutboxElement, State.SENT);
 					} else {
 						warnings.append("\n");
 						warnings.append(lblOutBoxElement);
@@ -222,7 +223,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		return Boolean.TRUE.equals(obj);
 	}
 	
-	private Optional<File> createTempFile(OutboxElement outboxElement){
+	private Optional<File> createTempFile(IOutboxElement outboxElement){
 		try {
 			return OutboxServiceComponent.getService().createTempFileWithContents(attachmentsFolder,
 				outboxElement);

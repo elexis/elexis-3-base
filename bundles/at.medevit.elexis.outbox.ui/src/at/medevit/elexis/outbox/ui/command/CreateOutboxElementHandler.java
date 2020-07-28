@@ -14,21 +14,20 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.outbox.model.OutboxElementType;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.documents.DocumentStore;
 import ch.elexis.core.model.IDocument;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 
 public class CreateOutboxElementHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
-		Patient elexisPatient = ElexisEventDispatcher.getSelectedPatient();
-		Mandant elexisMandant = ElexisEventDispatcher.getSelectedMandator();
+		IPatient elexisPatient = ContextServiceHolder.get().getActivePatient().orElse(null);
+		IMandator elexisMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		
-		if (elexisPatient != null && elexisMandant != null && elexisPatient.exists()
-			&& elexisMandant.exists()) {
+		if (elexisPatient != null && elexisMandant != null) {
 			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 			ISelection selection = HandlerUtil.getCurrentSelection(event);
 			if (selection instanceof StructuredSelection
@@ -54,7 +53,7 @@ public class CreateOutboxElementHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private boolean createOutboxElement(Patient patient, Mandant mandant, IDocument document){
+	private boolean createOutboxElement(IPatient patient, IMandator mandant, IDocument document){
 		OutboxServiceComponent.getService().createOutboxElement(patient, mandant,
 			OutboxElementType.DOC.getPrefix() + document.getId()
 				+ DocumentStore.ID_WITH_STOREID_SPLIT + document.getStoreId());

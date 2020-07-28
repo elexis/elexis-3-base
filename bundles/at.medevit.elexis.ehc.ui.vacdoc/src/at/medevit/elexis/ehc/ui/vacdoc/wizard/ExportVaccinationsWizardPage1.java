@@ -40,6 +40,9 @@ import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.outbox.model.OutboxElementType;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -182,7 +185,10 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	}
 	
 	private void createOutboxElement(Patient patient, Mandant mandant, String outputFile){
-		OutboxElementServiceHolder.getService().createOutboxElement(patient, mandant, OutboxElementType.FILE.getPrefix() +  outputFile);
+		OutboxElementServiceHolder.getService().createOutboxElement(
+			CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null),
+			CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).orElse(null),
+			OutboxElementType.FILE.getPrefix() + outputFile);
 	}
 	
 	private String writeAsXDM(Patient elexisPatient, String outputDir, VacdocService service,

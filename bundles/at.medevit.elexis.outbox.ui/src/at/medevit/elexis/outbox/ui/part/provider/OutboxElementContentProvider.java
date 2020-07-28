@@ -8,16 +8,16 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
-import at.medevit.elexis.outbox.model.OutboxElement;
 import at.medevit.elexis.outbox.ui.part.model.PatientOutboxElements;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 
 public class OutboxElementContentProvider implements ITreeContentProvider {
 	
-	HashMap<Patient, PatientOutboxElements> map = new HashMap<Patient, PatientOutboxElements>();
+	HashMap<IPatient, PatientOutboxElements> map = new HashMap<IPatient, PatientOutboxElements>();
 	private ArrayList<PatientOutboxElements> items;
 	
 	public Object[] getElements(Object inputElement){
@@ -50,11 +50,11 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 	@SuppressWarnings("unchecked")
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
 		if (newInput instanceof List<?>) {
-			List<OutboxElement> input = (List<OutboxElement>) newInput;
+			List<IOutboxElement> input = (List<IOutboxElement>) newInput;
 			// refresh map and list
 			map.clear();
-			for (OutboxElement outboxElement : input) {
-				Patient patient = outboxElement.getPatient();
+			for (IOutboxElement outboxElement : input) {
+				IPatient patient = outboxElement.getPatient();
 				PatientOutboxElements patientOutbox = map.get(patient);
 				if (patientOutbox == null) {
 					patientOutbox = new PatientOutboxElements(patient);
@@ -66,16 +66,17 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 		}
 	}
 	
-	public void refreshElement(OutboxElement outboxElement){
-		Patient patient = outboxElement.getPatient();
+	public void refreshElement(IOutboxElement outboxElement){
+		IPatient patient = outboxElement.getPatient();
 		PatientOutboxElements patientOutboxElements = map.get(patient);
 		// remove seen and add unseen
 		if (patientOutboxElements != null) {
-			if (outboxElement.getState() == State.SENT || !outboxElement.exists()) {
+			if (outboxElement.getState() == State.SENT) {
 				patientOutboxElements.removeElement(outboxElement);
 			} else {
-				Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();
-				if (outboxElement.getMandant().equals(activeMandant)) {
+				IMandator activeMandant =
+					ContextServiceHolder.get().getActiveMandator().orElse(null);
+				if (outboxElement.getMandator().equals(activeMandant)) {
 					patientOutboxElements.addElement(outboxElement);
 				} else {
 					patientOutboxElements.removeElement(outboxElement);
@@ -91,8 +92,8 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 		if (patientOutboxElements.getElements().isEmpty()) {
 			items.remove(patientOutboxElements);
 		} else {
-			Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();
-			Mandant outboxMandant = patientOutboxElements.getElements().get(0).getMandant();
+			IMandator activeMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
+			IMandator outboxMandant = patientOutboxElements.getElements().get(0).getMandator();
 			if (!outboxMandant.equals(activeMandant)) {
 				items.remove(patientOutboxElements);
 			}

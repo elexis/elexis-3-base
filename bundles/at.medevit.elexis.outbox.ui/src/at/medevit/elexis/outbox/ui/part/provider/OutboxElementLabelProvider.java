@@ -17,11 +17,11 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import at.medevit.elexis.outbox.model.OutboxElement;
+import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.ui.part.model.PatientOutboxElements;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.types.Gender;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Person;
 
 public class OutboxElementLabelProvider extends LabelProvider implements IColorProvider {
 	
@@ -35,8 +35,8 @@ public class OutboxElementLabelProvider extends LabelProvider implements IColorP
 	public String getText(Object element){
 		if (element instanceof PatientOutboxElements) {
 			return ((PatientOutboxElements) element).toString();
-		} else if (element instanceof OutboxElement) {
-			String text = extension.getText((OutboxElement) element);
+		} else if (element instanceof IOutboxElement) {
+			String text = extension.getText((IOutboxElement) element);
 			if (text != null) {
 				return text;
 			} else {
@@ -49,9 +49,9 @@ public class OutboxElementLabelProvider extends LabelProvider implements IColorP
 	@Override
 	public Image getImage(Object element){
 		if (element instanceof PatientOutboxElements) {
-			Patient pat = ((PatientOutboxElements) element).getPatient();
+			IPatient pat = ((PatientOutboxElements) element).getPatient();
 			if (pat != null) {
-				if (pat.getGeschlecht().equals(Person.MALE)) {
+				if (pat.getGender().equals(Gender.MALE)) {
 					return Images.IMG_MANN.getImage();
 				} else {
 					return Images.IMG_FRAU.getImage();
@@ -59,8 +59,8 @@ public class OutboxElementLabelProvider extends LabelProvider implements IColorP
 			} else {
 				return Images.IMG_QUESTION_MARK.getImage();
 			}
-		} else if (element instanceof OutboxElement) {
-			Image image = extension.getImage((OutboxElement) element);
+		} else if (element instanceof IOutboxElement) {
+			Image image = extension.getImage((IOutboxElement) element);
 			if (image != null) {
 				return image;
 			} else {
@@ -71,8 +71,8 @@ public class OutboxElementLabelProvider extends LabelProvider implements IColorP
 	}
 	
 	public Color getForeground(Object element){
-		if (element instanceof OutboxElement) {
-			Color color = extension.getForeground((OutboxElement) element);
+		if (element instanceof IOutboxElement) {
+			Color color = extension.getForeground((IOutboxElement) element);
 			if (color != null) {
 				return color;
 			}
@@ -81,8 +81,8 @@ public class OutboxElementLabelProvider extends LabelProvider implements IColorP
 	}
 	
 	public Color getBackground(Object element){
-		if (element instanceof OutboxElement) {
-			Color color = extension.getBackground((OutboxElement) element);
+		if (element instanceof IOutboxElement) {
+			Color color = extension.getBackground((IOutboxElement) element);
 			if (color != null) {
 				return color;
 			}

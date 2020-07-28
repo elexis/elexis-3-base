@@ -11,47 +11,64 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
+import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService;
 import at.medevit.elexis.outbox.model.IOutboxUpdateListener;
-import at.medevit.elexis.outbox.model.OutboxElement;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IDocument;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 
+@Component
 public class OutboxElementService implements IOutboxElementService {
+	
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.elexis.outbox.model)")
+	private IModelService modelService;
+	
 	HashSet<IOutboxUpdateListener> listeners = new HashSet<IOutboxUpdateListener>();
 	
 	@Override
-	public void createOutboxElement(Patient patient, Kontakt mandant, String uri){
-		OutboxElement element = new OutboxElement(patient, mandant, uri);
+	public IOutboxElement createOutboxElement(IPatient patient, IMandator mandator, String uri){
+		//		OutboxElement element = new OutboxElement(patient, mandant, uri);
+		IOutboxElement element = modelService.create(IOutboxElement.class);
+		element.setPatient(patient);
+		element.setMandator(mandator);
+		element.setUri(uri);
+		element.setState(State.NEW);
+		modelService.save(element);
 		fireUpdate(element);
-		
+		return element;
 	}
 	
 	@Override
-	public void changeOutboxElementState(OutboxElement element, State state){
-		element.set(OutboxElement.FLD_STATE, Integer.toString(state.ordinal()));
+	public void changeOutboxElementState(IOutboxElement element, State state){
+		element.setState(state);
+		modelService.save(element);
 		fireUpdate(element);
 	}
 	
 	@Override
-	public List<OutboxElement> getOutboxElements(Mandant mandant, Patient patient, State state){
-		Query<OutboxElement> qie = new Query<>(OutboxElement.class);
-		if (mandant != null) {
-			qie.add(OutboxElement.FLD_MANDANT, "=", mandant.getId());
+	public List<IOutboxElement> getOutboxElements(IMandator mandator, IPatient patient,
+		State state){
+		IQuery<IOutboxElement> query = modelService.getQuery(IOutboxElement.class);
+		if (mandator != null) {
+			query.and("mandant", COMPARATOR.EQUALS, mandator);
 		}
 		if (patient != null) {
-			qie.add(OutboxElement.FLD_PATIENT, "=", patient.getId());
+			query.and("patient", COMPARATOR.EQUALS, patient);
 		}
 		if (state != null) {
-			qie.add(OutboxElement.FLD_STATE, "=", Integer.toString(state.ordinal()));
+			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal()));
 		}
-		return qie.execute();
+		return query.execute();
 	}
 	
 	@Override
@@ -68,7 +85,7 @@ public class OutboxElementService implements IOutboxElementService {
 		}
 	}
 	
-	private void fireUpdate(OutboxElement element){
+	private void fireUpdate(IOutboxElement element){
 		synchronized (listeners) {
 			for (IOutboxUpdateListener listener : listeners) {
 				listener.update(element);
@@ -76,22 +93,22 @@ public class OutboxElementService implements IOutboxElementService {
 		}
 	}
 
+	@Activate
 	public void activate(){
 		System.out.println("active providers");
 		ElementsProviderExtension.activateAll();
 	}
 	
+	@Deactivate
 	public void deactivate(){
 		System.out.println("deactive providers");
 	}
 	
 	@Override
-	public InputStream getContentsAsStream(OutboxElement outboxElement)
+	public InputStream getContentsAsStream(IOutboxElement outboxElement)
 		throws IOException{
 		Object object = outboxElement.getObject();
-		if (object instanceof PersistentObject) {
-			throw new UnsupportedOperationException("Wird nicht unterstützt.");
-		} else if (object instanceof Path) {
+		if (object instanceof Path) {
 			Path path = (Path) object;
 			return Files.newInputStream(path);
 		}
@@ -101,23 +118,24 @@ public class OutboxElementService implements IOutboxElementService {
 			if (in.isPresent()) {
 				return in.get();
 			}
+		} else if (object instanceof Identifiable) {
+			throw new UnsupportedOperationException("Identifiable to InputStream");
 		}
 		return null;
 	}
 	
 	@Override
-	public Optional<File> createTempFileWithContents(File folder, OutboxElement outboxElement)
+	public Optional<File> createTempFileWithContents(File folder, IOutboxElement outboxElement)
 		throws IOException{
-		File tmpDir = CoreHub.getTempDir();
-		InputStream in = getContentsAsStream(outboxElement);
-		if (in != null) {
-			if (folder != null && folder.exists()) {
-				File tmpFile = new File(folder, outboxElement.getLabel());
-				try (FileOutputStream fout = new FileOutputStream(tmpFile)) {
-					IOUtils.copy(in, fout);
-					IOUtils.closeQuietly(in);
-					tmpFile.deleteOnExit();
-					return Optional.of(tmpFile);
+		try (InputStream in = getContentsAsStream(outboxElement)) {
+			if (in != null) {
+				if (folder != null && folder.exists()) {
+					File tmpFile = new File(folder, outboxElement.getLabel());
+					try (FileOutputStream fout = new FileOutputStream(tmpFile)) {
+						IOUtils.copy(in, fout);
+						tmpFile.deleteOnExit();
+						return Optional.of(tmpFile);
+					}
 				}
 			}
 		}
@@ -125,9 +143,9 @@ public class OutboxElementService implements IOutboxElementService {
 	}
 	
 	@Override
-	public void deleteOutboxElement(OutboxElement outboxElement){
+	public void deleteOutboxElement(IOutboxElement outboxElement){
 		if (outboxElement != null) {
-			outboxElement.delete();
+			modelService.delete(outboxElement);
 			fireUpdate(outboxElement);
 		}
 	}

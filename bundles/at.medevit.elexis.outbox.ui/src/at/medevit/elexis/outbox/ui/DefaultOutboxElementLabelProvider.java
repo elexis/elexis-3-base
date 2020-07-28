@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 
-import at.medevit.elexis.outbox.model.OutboxElement;
+import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.OutboxElementType;
 import at.medevit.elexis.outbox.ui.part.provider.IOutboxElementUiProvider;
 import ch.elexis.core.ui.icons.Images;
@@ -41,7 +41,7 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 	}
 	
 	@Override
-	public boolean isProviderFor(OutboxElement element){
+	public boolean isProviderFor(IOutboxElement element){
 		OutboxElementType elementType = OutboxElementType.parseType(element.getUri());
 		return OutboxElementType.FILE.equals(elementType)
 			|| OutboxElementType.DB.equals(elementType)
@@ -49,18 +49,18 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 	}
 	
 	@Override
-	public void doubleClicked(OutboxElement element){}
+	public void doubleClicked(IOutboxElement element){}
 	
 	class DefaultLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element){
-			return ((OutboxElement) element).getLabel();
+			return ((IOutboxElement) element).getLabel();
 		}
 		
 		@Override
 		public Image getImage(Object element){
 			OutboxElementType elementType =
-				OutboxElementType.parseType(((OutboxElement) element).getUri());
+				OutboxElementType.parseType(((IOutboxElement) element).getUri());
 			if (OutboxElementType.FILE.equals(elementType)) {
 				return Images.IMG_BULLET_YELLOW.getImage();
 			} else if (OutboxElementType.DOC.equals(elementType)) {

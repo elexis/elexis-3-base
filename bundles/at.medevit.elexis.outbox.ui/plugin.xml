@@ -57,6 +57,15 @@
             id="at.medevit.elexis.outbox.ui.command.sendAsMailXDM"
             name="sendAsXDM">
       </command>
+      <command
+            id="at.medevit.elexis.outbox.ui.command.createElementNoUi"
+            name="Create Element No UI">
+         <commandParameter
+               id="at.medevit.elexis.outbox.ui.command.createElementNoUi.dburi"
+               name="dburi"
+               optional="true">
+         </commandParameter>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -142,6 +151,10 @@
                   property="at.medevit.elexis.outbox.ui.propertytester.enabled">
             </test>
          </enabledWhen>
+      </handler>
+      <handler
+            class="at.medevit.elexis.outbox.ui.command.CreateOutboxElementNoUiHandler"
+            commandId="at.medevit.elexis.outbox.ui.command.createElementNoUi">
       </handler>
    </extension>
 

@@ -21,7 +21,7 @@ public class CreateOutboxElementNoUiHandler extends AbstractHandler {
 		String dburi =
 			event.getParameter("at.medevit.elexis.outbox.ui.command.createElementNoUi.dburi");
 		if (StringUtils.isNotEmpty(dburi)) {
-			OutboxServiceComponent.getService().createOutboxElement(patient, mandant,
+			OutboxServiceComponent.get().createOutboxElement(patient, mandant,
 				OutboxElementType.DB.getPrefix() + dburi);
 		}
 		return null;

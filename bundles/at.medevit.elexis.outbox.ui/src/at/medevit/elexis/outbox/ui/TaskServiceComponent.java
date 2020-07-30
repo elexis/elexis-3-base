@@ -13,24 +13,24 @@ package at.medevit.elexis.outbox.ui;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import at.medevit.elexis.outbox.model.IOutboxElementService;
+import ch.elexis.core.tasks.model.ITaskService;
 
 @Component
-public class OutboxServiceComponent {
-	private static IOutboxElementService service;
+public class TaskServiceComponent {
+	private static ITaskService service;
 	
-	public static IOutboxElementService get(){
+	public static ITaskService get(){
 		return service;
 	}
 	
 	@Reference
-	public synchronized void setService(IOutboxElementService service){
-		OutboxServiceComponent.service = service;
+	public synchronized void setService(ITaskService service){
+		TaskServiceComponent.service = service;
 	}
 	
-	public synchronized void unsetService(IOutboxElementService service){
-		if (OutboxServiceComponent.service == service) {
-			OutboxServiceComponent.service = null;
+	public synchronized void unsetService(ITaskService service){
+		if (TaskServiceComponent.service == service) {
+			TaskServiceComponent.service = null;
 		}
 	}
 }

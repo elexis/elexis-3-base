@@ -126,7 +126,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 			attachmentsString)) {
 			for (Object iOutboxElement : iOutboxElements) {
 				if (iOutboxElement instanceof IOutboxElement) {
-					OutboxServiceComponent.getService().changeOutboxElementState(
+					OutboxServiceComponent.get().changeOutboxElementState(
 						(IOutboxElement) iOutboxElement, State.SENT);
 				}
 			}
@@ -156,7 +156,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 						}
 					}
 					if (outboxElementSent) {
-						OutboxServiceComponent.getService()
+						OutboxServiceComponent.get()
 							.changeOutboxElementState((IOutboxElement) iOutboxElement, State.SENT);
 					} else {
 						warnings.append("\n");
@@ -225,7 +225,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 	
 	private Optional<File> createTempFile(IOutboxElement outboxElement){
 		try {
-			return OutboxServiceComponent.getService().createTempFileWithContents(attachmentsFolder,
+			return OutboxServiceComponent.get().createTempFileWithContents(attachmentsFolder,
 				outboxElement);
 		} catch (IOException e) {
 			MessageDialog.openError(Display.getCurrent().getActiveShell(), "Fehler",

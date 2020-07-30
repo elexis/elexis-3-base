@@ -54,7 +54,7 @@ public class CreateOutboxElementHandler extends AbstractHandler {
 	}
 	
 	private boolean createOutboxElement(IPatient patient, IMandator mandant, IDocument document){
-		OutboxServiceComponent.getService().createOutboxElement(patient, mandant,
+		OutboxServiceComponent.get().createOutboxElement(patient, mandant,
 			OutboxElementType.DOC.getPrefix() + document.getId()
 				+ DocumentStore.ID_WITH_STOREID_SPLIT + document.getStoreId());
 		return true;

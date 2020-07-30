@@ -130,6 +130,10 @@
             class="at.medevit.elexis.outbox.ui.DefaultOutboxElementLabelProvider"
             id="at.medevit.elexis.outbox.ui.defaultOutboxElementLabelProvider">
       </uiprovider>
+      <uiprovider
+            class="at.medevit.elexis.outbox.ui.CoreOutboxElementLabelProvider"
+            id="at.medevit.elexis.outbox.ui.CoreOutboxElementLabelProvider">
+      </uiprovider>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">

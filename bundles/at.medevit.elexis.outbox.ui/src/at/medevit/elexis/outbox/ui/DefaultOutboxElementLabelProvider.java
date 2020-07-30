@@ -5,6 +5,7 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.program.Program;
 
 import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.OutboxElementType;
@@ -43,13 +44,17 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 	@Override
 	public boolean isProviderFor(IOutboxElement element){
 		OutboxElementType elementType = OutboxElementType.parseType(element.getUri());
-		return OutboxElementType.FILE.equals(elementType)
-			|| OutboxElementType.DB.equals(elementType)
-			|| OutboxElementType.DOC.equals(elementType);
+		return OutboxElementType.FILE.equals(elementType);
 	}
 	
 	@Override
-	public void doubleClicked(IOutboxElement element){}
+	public void doubleClicked(IOutboxElement element){
+		OutboxElementType elementType =
+			OutboxElementType.parseType(((IOutboxElement) element).getUri());
+		if (OutboxElementType.FILE.equals(elementType)) {
+			Program.launch(((IOutboxElement) element).getUri());
+		}
+	}
 	
 	class DefaultLabelProvider extends LabelProvider {
 		@Override
@@ -62,11 +67,7 @@ public class DefaultOutboxElementLabelProvider implements IOutboxElementUiProvid
 			OutboxElementType elementType =
 				OutboxElementType.parseType(((IOutboxElement) element).getUri());
 			if (OutboxElementType.FILE.equals(elementType)) {
-				return Images.IMG_BULLET_YELLOW.getImage();
-			} else if (OutboxElementType.DOC.equals(elementType)) {
-				return Images.IMG_BULLET_GREY.getImage();
-			} else if (OutboxElementType.DB.equals(elementType)) {
-				return Images.IMG_BULLET_GREEN.getImage();
+				return Images.IMG_DOCUMENT.getImage();
 			}
 			return null;
 		}

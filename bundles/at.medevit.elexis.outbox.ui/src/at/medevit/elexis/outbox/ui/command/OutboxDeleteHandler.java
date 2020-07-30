@@ -24,7 +24,7 @@ public class OutboxDeleteHandler extends AbstractHandler implements IHandler {
 			for (Object iOutboxElement : iOutboxElements) {
 				if (iOutboxElement instanceof IOutboxElement) {
 					IOutboxElement el = (IOutboxElement) iOutboxElement;
-					OutboxServiceComponent.getService().deleteOutboxElement(el);
+					OutboxServiceComponent.get().deleteOutboxElement(el);
 				}
 			}
 			

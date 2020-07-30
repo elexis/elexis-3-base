@@ -130,7 +130,7 @@ public class OutboxView extends ViewPart {
 		
 		addFilterActions(menuManager);
 		
-		OutboxServiceComponent.getService().addUpdateListener(element -> {
+		OutboxServiceComponent.get().addUpdateListener(element -> {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run(){
 					contentProvider.refreshElement(element);
@@ -185,7 +185,7 @@ public class OutboxView extends ViewPart {
 	}
 	
 	private List<IOutboxElement> getOpenOutboxElements(){
-		List<IOutboxElement> openElements = OutboxServiceComponent.getService().getOutboxElements(
+		List<IOutboxElement> openElements = OutboxServiceComponent.get().getOutboxElements(
 			ContextServiceHolder.get().getActiveMandator().orElse(null), null,
 			IOutboxElementService.State.NEW);
 		return openElements;

@@ -12,6 +12,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
+import at.medevit.elexis.outbox.ui.part.provider.IOutboxElementUiProvider;
+import at.medevit.elexis.outbox.ui.part.provider.OutboxElementUiExtension;
 
 public class OutboxDeleteHandler extends AbstractHandler implements IHandler {
 	
@@ -23,16 +25,17 @@ public class OutboxDeleteHandler extends AbstractHandler implements IHandler {
 			List<?> iOutboxElements = ((StructuredSelection) selection).toList();
 			for (Object iOutboxElement : iOutboxElements) {
 				if (iOutboxElement instanceof IOutboxElement) {
+					OutboxElementUiExtension extension = new OutboxElementUiExtension();
 					IOutboxElement el = (IOutboxElement) iOutboxElement;
+					IOutboxElementUiProvider provider = extension.getProviderFor(el);
+					if (provider != null) {
+						provider.delete(el);
+					}
 					OutboxServiceComponent.get().deleteOutboxElement(el);
 				}
 			}
 			
 		}
-		
 		return null;
 	}
-	
-	
-	
 }

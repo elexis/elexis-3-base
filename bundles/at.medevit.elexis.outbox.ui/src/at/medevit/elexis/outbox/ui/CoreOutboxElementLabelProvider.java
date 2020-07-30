@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -15,14 +17,18 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.outbox.model.IOutboxElement;
+import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.model.OutboxElementType;
 import at.medevit.elexis.outbox.ui.part.provider.IOutboxElementUiProvider;
 import ch.elexis.core.mail.MailMessage;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
+import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
 import ch.elexis.core.ui.icons.Images;
 
@@ -91,9 +97,29 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 				ITaskDescriptor taskDescriptor =
 					(ITaskDescriptor) ((IOutboxElement) element).getObject();
 				if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) {
-					MailMessage msg =
-						MailMessage.fromJson(taskDescriptor.getRunContext().get("message"));
-					// call open mail message dialog command
+					// now try to call the send mail task command
+					try {
+						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+							.getService(ICommandService.class);
+						Command sendMailTaskCommand =
+							commandService.getCommand("ch.elexis.core.mail.ui.sendMailTask");
+						
+						HashMap<String, String> params = new HashMap<String, String>();
+						params.put("ch.elexis.core.mail.ui.sendMailTaskDescriptorId",
+							taskDescriptor.getId());
+						ParameterizedCommand parametrizedCommmand =
+							ParameterizedCommand.generateCommand(sendMailTaskCommand, params);
+						Boolean success =
+							(Boolean) PlatformUI.getWorkbench().getService(IHandlerService.class)
+								.executeCommand(parametrizedCommmand, null);
+						if (success) {
+							OutboxServiceComponent.get().changeOutboxElementState(element,
+								State.SENT);
+						}
+					} catch (Exception ex) {
+						LoggerFactory.getLogger(getClass())
+							.warn("Send mail Task command not available", ex);
+					}
 				}
 			}
 		} else if (OutboxElementType.DOC.equals(elementType)) {
@@ -171,6 +197,23 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 				}
 			}
 			return taskImage;
+		}
+	}
+	
+	@Override
+	public void delete(IOutboxElement element){
+		OutboxElementType elementType =
+			OutboxElementType.parseType(((IOutboxElement) element).getUri());
+		if (OutboxElementType.DB.equals(elementType)) {
+			if (((IOutboxElement) element).getObject() instanceof ITaskDescriptor) {
+				ITaskDescriptor taskDescriptor =
+					(ITaskDescriptor) ((IOutboxElement) element).getObject();
+				try {
+					TaskServiceComponent.get().removeTaskDescriptor(taskDescriptor);
+				} catch (TaskException e) {
+					LoggerFactory.getLogger(getClass()).warn("Error removing mail Task", e);
+				}
+			}
 		}
 	}
 }

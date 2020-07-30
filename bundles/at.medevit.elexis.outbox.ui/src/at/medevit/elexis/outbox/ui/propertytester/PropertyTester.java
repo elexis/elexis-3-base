@@ -2,6 +2,11 @@ package at.medevit.elexis.outbox.ui.propertytester;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.jface.viewers.TreeSelection;
+
+import at.medevit.elexis.outbox.model.IOutboxElement;
+
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 	
 	public PropertyTester(){
@@ -9,25 +14,27 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 	
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue){
-		if ("enabled".equals(property)) {
+		if (receiver instanceof TreeSelection) {
+			receiver = ((TreeSelection) receiver).getFirstElement();
+		}
+		if ("xdmEnabled".equals(property)) {
 			try {
 				if (receiver instanceof List<?>) {
 					List<?> receiverAsList = (List<?>) receiver;
-					//					for (Object o : receiverAsList) {
-					//						if (o instanceof OutboxElement) {
-					//							OutboxElement outboxElement = (OutboxElement) o;
-					//							String lbl = outboxElement.getLabel();
-					//							// because of an issue in ehealth DocumentDescriptor we can only handle pdf and xml files.
-					//							if (lbl == null || (!lbl.toLowerCase().endsWith(".xml")
-					//								&& !lbl.toLowerCase().endsWith(".pdf"))) {
-					//								return false;
-					//							}
-					//						}
-					//					}
 					return receiverAsList.size() > 0;
 				}
 			} catch (Exception ise) {
 				// do nothing, false is returned
+			}
+		} else if ("isObjectClass".equals(property)) {
+			if (StringUtils.isNotBlank((String) args[0])) {
+				String className = (String) args[0];
+				if (receiver instanceof IOutboxElement) {
+					Object object = ((IOutboxElement) receiver).getObject();
+					if (object != null) {
+						return object.getClass().getSimpleName().contains(className);
+					}
+				}
 			}
 		}
 		return false;

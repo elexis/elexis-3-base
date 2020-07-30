@@ -60,4 +60,11 @@ public interface IOutboxElementUiProvider {
 	 * @param element
 	 */
 	public void doubleClicked(IOutboxElement element);
+	
+	/**
+	 * Method called when element is deleted.
+	 * 
+	 * @param element
+	 */
+	public default void delete(IOutboxElement element){};
 }

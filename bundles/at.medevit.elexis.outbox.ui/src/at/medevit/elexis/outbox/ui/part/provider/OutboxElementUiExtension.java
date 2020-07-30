@@ -109,4 +109,8 @@ public class OutboxElementUiExtension {
 			provider.doubleClicked(element);
 		}
 	}
+	
+	public IOutboxElementUiProvider getProviderFor(IOutboxElement element){
+		return getProvider(element);
+	}
 }

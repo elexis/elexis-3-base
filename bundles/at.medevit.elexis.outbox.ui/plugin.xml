@@ -58,11 +58,16 @@
             name="sendAsXDM">
       </command>
       <command
-            id="at.medevit.elexis.outbox.ui.command.createElementNoUi"
+            id="at.medevit.elexis.outbox.ui.command.getOrCreateElementNoUi"
             name="Create Element No UI">
          <commandParameter
-               id="at.medevit.elexis.outbox.ui.command.createElementNoUi.dburi"
+               id="at.medevit.elexis.outbox.ui.command.getOrCreateElementNoUi.dburi"
                name="dburi"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="at.medevit.elexis.outbox.ui.command.getOrCreateElementNoUi.sent"
+               name="sent"
                optional="true">
          </commandParameter>
       </command>
@@ -170,7 +175,7 @@
       </handler>
       <handler
             class="at.medevit.elexis.outbox.ui.command.CreateOutboxElementNoUiHandler"
-            commandId="at.medevit.elexis.outbox.ui.command.createElementNoUi">
+            commandId="at.medevit.elexis.outbox.ui.command.getOrCreateElementNoUi">
       </handler>
    </extension>
 

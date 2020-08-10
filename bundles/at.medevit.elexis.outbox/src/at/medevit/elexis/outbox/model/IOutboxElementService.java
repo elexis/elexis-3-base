@@ -65,6 +65,16 @@ public interface IOutboxElementService {
 	public List<IOutboxElement> getOutboxElements(IMandator mandant, IPatient patient, State state);
 	
 	/**
+	 * Get all OutboxElements with matching uri and state. By setting parameters to null the query
+	 * can be broadened.
+	 * 
+	 * @param uri
+	 * @param state
+	 * @return
+	 */
+	public List<IOutboxElement> getOutboxElements(String uri, State state);
+	
+	/**
 	 * Register a listener to the set of listeners.
 	 * 
 	 * @param listener

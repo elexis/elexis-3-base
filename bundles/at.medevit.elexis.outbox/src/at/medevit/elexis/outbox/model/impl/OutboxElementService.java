@@ -56,6 +56,18 @@ public class OutboxElementService implements IOutboxElementService {
 	}
 	
 	@Override
+	public List<IOutboxElement> getOutboxElements(String uri, State state){
+		IQuery<IOutboxElement> query = modelService.getQuery(IOutboxElement.class);
+		if (uri != null) {
+			query.and("uri", COMPARATOR.EQUALS, uri);
+		}
+		if (state != null) {
+			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal()));
+		}
+		return query.execute();
+	}
+	
+	@Override
 	public List<IOutboxElement> getOutboxElements(IMandator mandator, IPatient patient,
 		State state){
 		IQuery<IOutboxElement> query = modelService.getQuery(IOutboxElement.class);

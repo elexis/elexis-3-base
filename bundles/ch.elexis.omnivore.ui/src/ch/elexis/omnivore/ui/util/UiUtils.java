@@ -21,7 +21,6 @@ import ch.elexis.omnivore.data.Preferences;
 import ch.elexis.omnivore.data.Utils;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.model.util.CategoryUtil;
-
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.views.FileImportDialog;
 import ch.rgw.tools.ExHandler;
@@ -160,9 +159,9 @@ public class UiUtils {
 					category = CategoryUtil.getDefaultCategory().getName();
 				}
 				IDocumentHandle dh = createDocHandle(category, baos.toByteArray(), act,
-					fid.date, fid.title, file.getName(), fid.keywords);
+					fid.originDate, fid.title, file.getName(), fid.keywords);
 				if (Preferences.getDateModifiable()) {
-					dh.setCreated(fid.date);
+					dh.setCreated(fid.originDate);
 				}
 				return dh;
 			} catch (Exception ex) {

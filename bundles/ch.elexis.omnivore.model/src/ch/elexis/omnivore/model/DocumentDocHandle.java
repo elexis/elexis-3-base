@@ -85,6 +85,9 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public Date getLastchanged(){
+		if (getEntity().getDatum() != null) {
+			return toDate(getEntity().getDatum());
+		}
 		if (getEntity().getLastupdate() != null) {
 			return new Date(getEntity().getLastupdate().longValue());
 		}
@@ -93,7 +96,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setLastchanged(Date value){
-		// entity does not support last changed
+		getEntityMarkDirty().setDatum(toLocalDate(value).toLocalDate());
 	}
 	
 	@Override

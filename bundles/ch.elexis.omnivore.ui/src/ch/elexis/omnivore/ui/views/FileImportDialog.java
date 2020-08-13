@@ -50,12 +50,14 @@ import ch.rgw.tools.TimeTool;
 public class FileImportDialog extends TitleAreaDialog {
 	String file;
 	IDocumentHandle dh;
-	DatePickerCombo dDate;
+	DatePickerCombo saveDatePicker;
+	DatePickerCombo originDatePicker;
 	Text tTitle;
 	Text tKeywords;
 	
 	Combo cbCategories;
-	public Date date;
+	public Date saveDate;
+	public Date originDate;
 	public String title;
 	public String keywords;
 	public String category;
@@ -87,14 +89,28 @@ public class FileImportDialog extends TitleAreaDialog {
 		ret.setLayout(new GridLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		if (Preferences.getDateModifiable()) {
-			new Label(ret, SWT.None).setText(Messages.FileImportDialog_dateLabel);
-			dDate = new DatePickerCombo(ret, SWT.NONE);
+			Composite dateComposite = new Composite(ret, SWT.NONE);
+			dateComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			dateComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+			
+			new Label(dateComposite, SWT.None).setText(Messages.FileImportDialog_dateLabel);
+			saveDatePicker = new DatePickerCombo(dateComposite, SWT.NONE);
 			if (dh == null) {
-				dDate.setDate(new Date());
+				saveDatePicker.setDate(new Date());
 			} else {
-				dDate.setDate(new TimeTool(dh.getCreated()).getTime());
+				saveDatePicker.setDate(new TimeTool(dh.getLastchanged()).getTime());
+			}
+			
+			new Label(dateComposite, SWT.None)
+				.setText(Messages.FileImportDialog_dateOriginLabel);
+			originDatePicker = new DatePickerCombo(dateComposite, SWT.NONE);
+			if (dh == null) {
+				originDatePicker.setDate(new Date());
+			} else {
+				originDatePicker.setDate(new TimeTool(dh.getCreated()).getTime());
 			}
 		}
+		
 		new Label(ret, SWT.None).setText(Messages.FileImportDialog_categoryLabel);
 		Composite cCats = new Composite(ret, SWT.NONE);
 		cCats.setFocus();
@@ -202,18 +218,15 @@ public class FileImportDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-		if (dDate != null)
-			date = dDate.getDate();
-		
-		// dDate was null or dDate.getDate() returned null
-		if (date == null)
-			date = new Date();
+		setDateValues();
 		
 		keywords = tKeywords.getText();
 		title = tTitle.getText();
 		category = cbCategories.getText();
 		if (dh != null) {
-			dh.setCreated(date);
+			dh.setLastchanged(saveDate);
+			dh.setCreated(originDate);
+			
 			if (category.length() > 0) {
 				dh.setCategory(new TransientCategory(category));
 			}
@@ -223,4 +236,23 @@ public class FileImportDialog extends TitleAreaDialog {
 		}
 		super.okPressed();
 	}
+	
+	private void setDateValues(){
+		if (saveDatePicker != null) {
+			saveDate = saveDatePicker.getDate();
+		}
+		if (originDatePicker != null) {
+			originDate = originDatePicker.getDate();
+		}
+		
+		if (saveDate == null && originDate != null) {
+			saveDate = originDate;
+		} else if (originDate == null && saveDate != null) {
+			originDate = saveDate;
+		} else if (saveDate == null && originDate == null) {
+			saveDate = new Date();
+			originDate = new Date();
+		}
+	}
+	
 }

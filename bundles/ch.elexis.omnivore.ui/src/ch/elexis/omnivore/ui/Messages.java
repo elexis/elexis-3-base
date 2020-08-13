@@ -28,6 +28,7 @@ public class Messages extends NLS {
     public static String DocHandle_readErrorCaption;
     public static String FileImportDialog_categoryLabel;
     public static String FileImportDialog_dateLabel;
+	public static String FileImportDialog_dateOriginLabel;
     public static String FileImportDialog_importCaption;
     public static String FileImportDialog_importFileCaption;
     public static String FileImportDialog_importFileText;
@@ -40,6 +41,7 @@ public class Messages extends NLS {
     public static String OmnivoreView_configErrorText;
     public static String OmnivoreView_dataSources;
     public static String OmnivoreView_dateColumn;
+	public static String OmnivoreView_dateOriginColumn;
     public static String OmnivoreView_deleteActionCaption;
     public static String OmnivoreView_deleteActionToolTip;
     public static String OmnivoreView_editActionCaption;

@@ -121,7 +121,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private Action flatViewAction;
 	private final String[] colLabels = {
 		"", Messages.OmnivoreView_categoryColumn, Messages.OmnivoreView_dateColumn, //$NON-NLS-1$
-		Messages.OmnivoreView_titleColumn, Messages.OmnivoreView_keywordsColumn
+		Messages.OmnivoreView_dateOriginColumn, Messages.OmnivoreView_titleColumn,
+		Messages.OmnivoreView_keywordsColumn
 	};
 	private final String colWidth = "20,80,80,150,500";
 	private final String sortSettings = "0,1,-1,false";
@@ -310,10 +311,12 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 					return dh.getCategory().getName();
 				return dh.isCategory() ? dh.getTitle() : ""; //$NON-NLS-1$
 			case 2:
-				return dh.isCategory() ? "" : dateFormat.format(dh.getCreated()); //$NON-NLS-1$
+				return dh.isCategory() ? "" : dateFormat.format(dh.getLastchanged()); //$NON-NLS-1$
 			case 3:
-				return dh.isCategory() ? "" : dh.getTitle(); //$NON-NLS-1$
+				return dh.isCategory() ? "" : dateFormat.format(dh.getCreated()); //$NON-NLS-1$
 			case 4:
+				return dh.isCategory() ? "" : dh.getTitle(); //$NON-NLS-1$
+			case 5:
 				return dh.isCategory() ? "" : dh.getKeywords(); //$NON-NLS-1$
 			default:
 				return "?"; //$NON-NLS-1$

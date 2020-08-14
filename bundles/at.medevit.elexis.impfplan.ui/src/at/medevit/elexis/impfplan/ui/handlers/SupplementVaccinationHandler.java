@@ -10,10 +10,11 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.ui.dialogs.SupplementVaccinationDialog;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.data.Artikel;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObjectFactory;
 import ch.rgw.tools.TimeTool;
 
 public class SupplementVaccinationHandler extends AbstractHandler {
@@ -33,10 +34,13 @@ public class SupplementVaccinationHandler extends AbstractHandler {
 			String lotNo = svd.getLotNo();
 			TimeTool doa = svd.getDateOfAdministration();
 			String articleString = svd.getArticleString();
-			Artikel art = (Artikel) new PersistentObjectFactory().createFromString(articleString);
+			Identifiable art =
+				StoreToStringServiceHolder.get().loadFromString(articleString).orElse(null);
 			
-			if (art != null) {
-				new Vaccination(patientId, art, doa.getTime(), lotNo, administratorString);
+			if (art instanceof IArticle) {
+				IArticle article = (IArticle) art;
+				new Vaccination(patientId, articleString, article.getLabel(), article.getGtin(),
+					article.getAtcCode(), doa.getTime(), lotNo, administratorString);
 			} else {
 				Vaccination v =
 					new Vaccination(patientId, null, articleString, null, null, doa.getTime(),

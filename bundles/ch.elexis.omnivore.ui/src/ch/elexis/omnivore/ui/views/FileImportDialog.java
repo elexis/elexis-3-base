@@ -195,7 +195,7 @@ public class FileImportDialog extends TitleAreaDialog {
 		new Label(ret, SWT.NONE).setText(Messages.FileImportDialog_titleLabel);
 		tTitle = SWTHelper.createText(ret, 1, SWT.NONE);
 		new Label(ret, SWT.NONE).setText(Messages.FileImportDialog_keywordsLabel);
-		tKeywords = SWTHelper.createText(ret, 4, SWT.NONE);
+		tKeywords = SWTHelper.createText(ret, 4, SWT.V_SCROLL);
 		tTitle.setText(file);
 		if (dh != null) {
 			tKeywords.setText(dh.getKeywords());

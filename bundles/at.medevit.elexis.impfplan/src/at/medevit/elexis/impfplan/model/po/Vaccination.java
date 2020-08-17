@@ -13,16 +13,18 @@ package at.medevit.elexis.impfplan.model.po;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.data.service.StoreToStringServiceHolder;
 import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink;
@@ -191,8 +193,8 @@ public class Vaccination extends PersistentObject {
 	 */
 	public @NonNull String getAdministratorLabel(){
 		String value = get(FLD_ADMINISTRATOR);
-		if (value.startsWith(Mandant.class.getName())) {
-			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
+		if (value.startsWith(Mandant.class.getName()) || value.startsWith(Person.class.getName())) {
+			Mandant mandant = loadMandant(value);
 			
 			if (mandant == null) {
 				return "";
@@ -211,12 +213,21 @@ public class Vaccination extends PersistentObject {
 		}
 	}
 	
+	private Mandant loadMandant(String value){
+		Optional<Identifiable> mandator =
+			StoreToStringServiceHolder.get().loadFromString(value);
+		if (mandator.isPresent()) {
+			return Mandant.load(mandator.get().getId());
+		}
+		return null;
+	}
+	
 	public boolean isSupplement(){
 		String value = get(FLD_ADMINISTRATOR);
-		if (value.startsWith(Mandant.class.getName())) {
-			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
+		if (value.startsWith(Mandant.class.getName()) || value.startsWith(Person.class.getName())) {
+			Mandant mandant = loadMandant(value);
 			
-			if (mandant.exists()) {
+			if (mandant != null) {
 				return false;
 			}
 		}

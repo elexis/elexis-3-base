@@ -131,7 +131,7 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 				CoreModelServiceHolder.get().save(v470720);
 			}
 		}
-		return super.add(billable, encounter, amount);
+		return super.add(billable, encounter, amount, save);
 	}
 	
 	@Override

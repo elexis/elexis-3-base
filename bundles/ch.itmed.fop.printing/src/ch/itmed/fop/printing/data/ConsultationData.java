@@ -16,18 +16,18 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.Verrechnet;
-
-import ch.itmed.fop.printing.data.ArticleData;
 import ch.itmed.fop.printing.resources.Messages;
 
 public final class ConsultationData {
 	private Konsultation consultation;
-	private static List<IVerrechenbar> verrechenbar;
+	private static List<IBillable> verrechenbar;
 
 	public List<ArticleData> load() throws NullPointerException {
 		consultation = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
@@ -39,24 +39,25 @@ public final class ConsultationData {
 	}
 
 	private List<ArticleData> getArticles() {
-		List<Verrechnet> verrechnet = consultation.getLeistungen();
+		List<IBilled> verrechnet =
+			NoPoUtil.loadAsIdentifiable(consultation, IEncounter.class).get().getBilled();
 
 		verrechenbar = new ArrayList<>();
 		verrechnet.stream().forEach(new VerrechnetConsumer());
 
 		List<ArticleData> articles = new ArrayList<>();
-		verrechenbar.stream().filter(v -> v instanceof Artikel)
-				.forEach(v -> articles.add(new ArticleData((Artikel) v)));
+		verrechenbar.stream().filter(v -> v instanceof IArticle)
+			.forEach(v -> articles.add(new ArticleData((IArticle) v)));
 
 		return articles;
 	}
 
-	private static class VerrechnetConsumer implements Consumer<Verrechnet> {
+	private static class VerrechnetConsumer implements Consumer<IBilled> {
 		@Override
-		public void accept(Verrechnet v) {
+		public void accept(IBilled v){
 			// We need to count the quantity of the articles
-			for (int i = 0; i < v.getZahl(); i++) {
-				verrechenbar.add(v.getVerrechenbar());
+			for (int i = 0; i < v.getAmount(); i++) {
+				verrechenbar.add(v.getBillable());
 			}
 		}
 	}

@@ -23,20 +23,25 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 
-import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
-import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.TimeTool;
 
 public class Counter extends Job {
 	private static final int tasksum = 1000000;
 	private int perCase = tasksum;
 	private int perKons = 1;
-	private HashMap<IVerrechenbar, List<Verrechnet>> result;
+	private HashMap<IBillable, List<IBilled>> result;
 	private Patient p;
 	private TimeTool von;
 	private TimeTool bis;
@@ -45,7 +50,7 @@ public class Counter extends Job {
 		public void jobFinished(Counter counter);
 	}
 	
-	public HashMap<IVerrechenbar, List<Verrechnet>> getValues(){
+	public HashMap<IBillable, List<IBilled>> getValues(){
 		return result;
 	}
 	
@@ -89,35 +94,34 @@ public class Counter extends Job {
 	protected IStatus run(IProgressMonitor monitor){
 		
 		monitor.beginTask("Zähle Verrechnungen", tasksum);
-		result = new HashMap<IVerrechenbar, List<Verrechnet>>();
-		Fall[] faelle = p.getFaelle();
-		if (faelle.length > 0) {
-			perCase = tasksum / faelle.length;
+		result = new HashMap<IBillable, List<IBilled>>();
+		IPatient patient = NoPoUtil.loadAsIdentifiable(p, IPatient.class).get();
+		List<ICoverage> coverages = patient.getCoverages();
+		if (!coverages.isEmpty()) {
+			perCase = tasksum / coverages.size();
 			
-			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-			qbe.startGroup();
-			for (Fall fall : faelle) {
-				qbe.add(Konsultation.FLD_CASE_ID, Query.EQUALS, fall.getId());
-				qbe.or();
+			IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
+			query.startGroup();
+			for (ICoverage coverage : coverages) {
+				query.or(ModelPackage.Literals.IENCOUNTER__COVERAGE, COMPARATOR.EQUALS, coverage);
 			}
-			qbe.endGroup();
-			qbe.and();
+			query.andJoinGroups();
 			if (von != null) {
-				qbe.add(Konsultation.DATE, Query.GREATER_OR_EQUAL,
-					von.toString(TimeTool.DATE_COMPACT));
+				query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL,
+					von.toLocalDate());
 			}
 			if (bis != null) {
-				qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL, bis.toString(TimeTool.DATE_COMPACT));
+				query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL,
+					bis.toLocalDate());
 			}
-			List<Konsultation> kk = qbe.execute();
+			List<IEncounter> kk = query.execute();
 			perKons = perCase / kk.size();
-			for (Konsultation k : kk) {
-				List<Verrechnet> lv = k.getLeistungen();
-				for (Verrechnet v : lv) {
-					IVerrechenbar iv = v.getVerrechenbar();
-					List<Verrechnet> liv = result.get(iv);
+			for (IEncounter encounter : kk) {
+				for (IBilled v : encounter.getBilled()) {
+					IBillable iv = v.getBillable();
+					List<IBilled> liv = result.get(iv);
 					if (liv == null) {
-						liv = new LinkedList<Verrechnet>();
+						liv = new LinkedList<IBilled>();
 						result.put(iv, liv);
 					}
 					liv.add(v);

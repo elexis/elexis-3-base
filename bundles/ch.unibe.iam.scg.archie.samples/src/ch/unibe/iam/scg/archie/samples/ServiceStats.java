@@ -12,6 +12,8 @@
 package ch.unibe.iam.scg.archie.samples;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,11 +25,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Query;
-import ch.elexis.data.Verrechnet;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
@@ -70,23 +75,26 @@ public class ServiceStats extends AbstractTimeSeries {
 		final SimpleDateFormat databaseFormat = new SimpleDateFormat(DATE_DB_FORMAT);
 
 		// Prepare DB query.
-		final Query<Konsultation> query = new Query<Konsultation>(Konsultation.class);
-		query.add("Datum", ">=", databaseFormat.format(this.getStartDate().getTime()));
-		query.add("Datum", "<=", databaseFormat.format(this.getEndDate().getTime()));
+		IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
 		if (this.currentMandatorOnly) {
-			query.add("MandantID", "=", CoreHub.actMandant.getId());
+			query.and(ModelPackage.Literals.IENCOUNTER__MANDATOR, COMPARATOR.EQUALS,
+					ContextServiceHolder.get().getActiveMandator());
 		}
+		query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL,
+				LocalDateTime.ofInstant(this.getStartDate().toInstant(), ZoneId.systemDefault()).toLocalDate());
+		query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL,
+				LocalDateTime.ofInstant(this.getEndDate().toInstant(), ZoneId.systemDefault()).toLocalDate());
 
 		// Get all Consultation which happened in the specified date range.
-		final List<Konsultation> consultations = query.execute();
+		final List<IEncounter> consultations = query.execute();
 
 		monitor.beginTask(Messages.CALCULATING, consultations.size()); // monitoring
 
-		final HashMap<IVerrechenbar, ServiceCounter> services = new HashMap<IVerrechenbar, ServiceCounter>();
+		final HashMap<IBillable, ServiceCounter> services = new HashMap<IBillable, ServiceCounter>();
 
 		// Go through all consultations.
 		monitor.subTask("Grouping Consultations");
-		for (Konsultation consultation : consultations) {
+		for (IEncounter consultation : consultations) {
 
 			// Check for cancellation.
 			if (monitor.isCanceled()) {
@@ -94,15 +102,14 @@ public class ServiceStats extends AbstractTimeSeries {
 			}
 
 			// Go through all services.
-			List<Verrechnet> consServices = consultation.getLeistungen();
-			for (Verrechnet service : consServices) {
+			for (IBilled service : consultation.getBilled()) {
 
 				// Check for cancellation.
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 
-				IVerrechenbar serviceBase = service.getVerrechenbar();
+				IBillable serviceBase = service.getBillable();
 				ServiceCounter counter = services.get(serviceBase);
 				if (counter == null) {
 					counter = new ServiceCounter(service);
@@ -257,24 +264,24 @@ public class ServiceStats extends AbstractTimeSeries {
 	 */
 	private class ServiceCounter implements Comparable<ServiceCounter> {
 
-		private Verrechnet service;
+		private IBilled service;
 
 		private Money income;
 		private Money cost;
 
-		private int totalServices;
+		private double totalServices;
 
 		/**
 		 * Public constructor.
 		 * 
 		 * @param service
 		 */
-		public ServiceCounter(Verrechnet service) {
-			int serviceCount = service.getZahl();
+		public ServiceCounter(IBilled service) {
+			double serviceCount = service.getAmount();
 
 			this.service = service;
-			this.income = service.getNettoPreis().multiply(serviceCount);
-			this.cost = service.getKosten().multiply(serviceCount);
+			this.income = service.getTotal();
+			this.cost = service.getNetPrice().multiply(serviceCount);
 			this.totalServices = serviceCount;
 		}
 
@@ -313,14 +320,14 @@ public class ServiceStats extends AbstractTimeSeries {
 		 * 
 		 * @param service
 		 */
-		protected void add(Verrechnet service) {
+		protected void add(IBilled service) {
 			// increment counter
-			int serviceCount = service.getZahl();
+			double serviceCount = service.getAmount();
 			this.totalServices += serviceCount;
 
 			// sum up moneys
-			Money totalIncome = service.getNettoPreis().multiply(serviceCount);
-			Money totalCost = service.getKosten().multiply(serviceCount);
+			Money totalIncome = service.getTotal();
+			Money totalCost = service.getNetPrice().multiply(serviceCount);
 			this.cost.addMoney(totalCost);
 			this.income.addMoney(totalIncome);
 		}
@@ -333,7 +340,7 @@ public class ServiceStats extends AbstractTimeSeries {
 		 * @param counter
 		 */
 		protected void add(ServiceCounter counter) {
-			int serviceCount = counter.getServiceCount();
+			double serviceCount = counter.getServiceCount();
 			this.totalServices += serviceCount;
 
 			// sum up money values
@@ -350,8 +357,8 @@ public class ServiceStats extends AbstractTimeSeries {
 		 * @return The <code>IVerrechenbar<code> object for the service in this
 		 *         counter.
 		 */
-		protected IVerrechenbar getVerrechenbar() {
-			return this.service.getVerrechenbar();
+		protected IBillable getVerrechenbar() {
+			return this.service.getBillable();
 		}
 
 		/**
@@ -359,7 +366,7 @@ public class ServiceStats extends AbstractTimeSeries {
 		 * 
 		 * @return Returns the service in this counter.
 		 */
-		protected Verrechnet getService() {
+		protected IBilled getService() {
 			return this.service;
 		}
 
@@ -386,7 +393,7 @@ public class ServiceStats extends AbstractTimeSeries {
 		 * 
 		 * @return Total number of services for this counter.
 		 */
-		protected int getServiceCount() {
+		protected double getServiceCount() {
 			return this.totalServices;
 		}
 	}

@@ -12,10 +12,10 @@
 package ch.unibe.iam.scg.archie.samples;
 
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -24,9 +24,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Query;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IService;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.Money;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
 import ch.unibe.iam.scg.archie.annotations.SetProperty;
@@ -50,8 +54,6 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
  */
 public class ConsultationTimeStats extends AbstractTimeSeries {
 
-	private static final String DATE_DB_FORMAT = "yyyyMMdd";
-	private static final String DATE_CONS_FORMAT = "dd.MM.yyyy";
 	private static final String DATE_MONTH_FORMAT = "yyyy-MM";
 
 	private boolean withTime;
@@ -70,51 +72,46 @@ public class ConsultationTimeStats extends AbstractTimeSeries {
 		final ArrayList<Comparable<?>[]> content = new ArrayList<Comparable<?>[]>();
 
 		// month to consultations map
-		final TreeMap<String, ArrayList<Konsultation>> grouped = new TreeMap<String, ArrayList<Konsultation>>();
+		final TreeMap<String, ArrayList<IEncounter>> grouped = new TreeMap<>();
 
 		// date formats
-		final SimpleDateFormat databaseFormat = new SimpleDateFormat(DATE_DB_FORMAT);
-		final SimpleDateFormat consultationFormat = new SimpleDateFormat(DATE_CONS_FORMAT);
-		final SimpleDateFormat monthFormat = new SimpleDateFormat(DATE_MONTH_FORMAT);
+		final DateTimeFormatter monthFormat = DateTimeFormatter.ofPattern(DATE_MONTH_FORMAT);
 
 		// prepare query
-		final Query<Konsultation> query = new Query<Konsultation>(Konsultation.class);
-		query.add("Datum", ">=", databaseFormat.format(this.getStartDate().getTime()));
-		query.add("Datum", "<=", databaseFormat.format(this.getEndDate().getTime()));
-		query.add("MandantID", "=", CoreHub.actMandant.getId());
+		IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
+		query.and(ModelPackage.Literals.IENCOUNTER__MANDATOR, COMPARATOR.EQUALS, ContextServiceHolder.get().getActiveMandator());
+		query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL,
+				LocalDateTime.ofInstant(this.getStartDate().toInstant(), ZoneId.systemDefault()).toLocalDate());
+		query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL,
+				LocalDateTime.ofInstant(this.getEndDate().toInstant(), ZoneId.systemDefault()).toLocalDate());
 
-		final List<Konsultation> consults = query.execute();
+		final List<IEncounter> consults = query.execute();
 
 		// define size and begin task
 		monitor.beginTask(Messages.CALCULATING, consults.size());
 
 		// do the light stuff...
 		monitor.subTask("Grouping Consultations");
-		for (final Konsultation consult : consults) {
-			try {
-				// check for cancelation
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
+		for (final IEncounter consult : consults) {
+			// check for cancelation
+			if (monitor.isCanceled())
+				return Status.CANCEL_STATUS;
 
-				final Date consultDate = consultationFormat.parse(consult.getDatum());
-				ArrayList<Konsultation> consultGroup = new ArrayList<Konsultation>();
+			ArrayList<IEncounter> consultGroup = new ArrayList<>();
 
-				final String monthString = monthFormat.format(consultDate);
-				if (grouped.get(monthString) != null) {
-					consultGroup = grouped.get(monthString);
-				}
-
-				// add the current consult to this month group
-				consultGroup.add(consult);
-				grouped.put(monthString, consultGroup);
-			} catch (final ParseException e) {
-				e.printStackTrace();
+			final String monthString = monthFormat.format(consult.getDate());
+			if (grouped.get(monthString) != null) {
+				consultGroup = grouped.get(monthString);
 			}
+
+			// add the current consult to this month group
+			consultGroup.add(consult);
+			grouped.put(monthString, consultGroup);
 		}
 
 		// do the super heavy stuff ^^
 		monitor.subTask("Computing Results");
-		for (final Entry<String, ArrayList<Konsultation>> entry : grouped.entrySet()) {
+		for (final Entry<String, ArrayList<IEncounter>> entry : grouped.entrySet()) {
 			// check for cancelation
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
@@ -129,7 +126,7 @@ public class ConsultationTimeStats extends AbstractTimeSeries {
 			int consTotal = 0, total = 0, max = 0;
 			double income = 0, spending = 0, profit = 0;
 
-			for (final Konsultation consultation : entry.getValue()) {
+			for (final IEncounter consultation : entry.getValue()) {
 				// check for cancelation
 				if (monitor.isCanceled())
 					return Status.CANCEL_STATUS;
@@ -137,14 +134,14 @@ public class ConsultationTimeStats extends AbstractTimeSeries {
 				// time statistics for a month
 				consTotal++;
 				if (this.withTime) {
-					final int minutes = consultation.getMinutes();
+					final int minutes = getMinutes(consultation);
 					total += minutes;
 					max = (minutes > max) ? minutes : max;
 				}
 
 				// money statistics
-				income += consultation.getUmsatz();
-				spending += consultation.getKosten();
+				income += getUmsatz(consultation);
+				spending += getKosten(consultation);
 
 				monitor.worked(1);
 			}
@@ -177,6 +174,19 @@ public class ConsultationTimeStats extends AbstractTimeSeries {
 
 		monitor.done();
 		return Status.OK_STATUS;
+	}
+
+	private double getKosten(IEncounter encounter) {
+		return encounter.getBilled().stream().mapToDouble(b -> b.getNetPrice().doubleValue()).sum();
+	}
+
+	private double getUmsatz(IEncounter encounter) {
+		return encounter.getBilled().stream().mapToDouble(b -> b.getTotal().doubleValue()).sum();
+	}
+
+	private int getMinutes(IEncounter encounter) {
+		return encounter.getBilled().stream().map(b -> b.getBillable()).filter(b -> b instanceof IService)
+				.mapToInt(b -> ((IService) b).getMinutes()).sum();
 	}
 
 	@Override

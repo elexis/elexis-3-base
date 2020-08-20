@@ -8,12 +8,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Verrechnet;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.rgw.tools.Money;
 
 public class AlleLeistungen extends BaseStats {
@@ -31,20 +31,20 @@ public class AlleLeistungen extends BaseStats {
 	protected IStatus createContent(IProgressMonitor monitor){
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
 		
-		List<Konsultation> conses = getConses(monitor);
+		List<IEncounter> conses = getConses(monitor);
 		if (conses.size() > 0) {
 			int clicksPerRound = HUGE_NUMBER / conses.size();
 			HashMap<String, TarifStat> tstats = new HashMap<String, TarifStat>();
-			for (Konsultation k : conses) {
-				Mandant m = k.getMandant();
+			for (IEncounter k : conses) {
+				IMandator m = k.getMandator();
 				if (m != null) {
-					Fall fall = k.getFall();
+					ICoverage fall = k.getCoverage();
 					if (fall != null) {
-						Patient pat = fall.getPatient();
+						IPatient pat = fall.getPatient();
 						if (pat != null) {
-							List<Verrechnet> vr = k.getLeistungen();
-							for (Verrechnet v : vr) {
-								IVerrechenbar vv = v.getVerrechenbar();
+							List<IBilled> vr = k.getBilled();
+							for (IBilled v : vr) {
+								IBillable vv = v.getBillable();
 								if (vv == null) {
 									System.out.println(v.getLabel());
 								} else {
@@ -58,8 +58,8 @@ public class AlleLeistungen extends BaseStats {
 										ts.text = vv.getText();
 										tstats.put(sname + scode, ts);
 									}
-									ts.count += v.getZahl();
-									ts.umsatz += v.getNettoPreis().doubleValue() + v.getZahl();
+									ts.count += v.getAmount();
+									ts.umsatz += v.getTotal().doubleValue();
 								}
 							}
 							

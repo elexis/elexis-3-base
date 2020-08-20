@@ -1,15 +1,20 @@
 package ch.elexis.archie.wzw;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Query;
-import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.TimeTool;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
@@ -24,6 +29,8 @@ public abstract class BaseStats extends AbstractTimeSeries {
 	private boolean bOnlyActiveMandator;
 	protected int clicksPerRound;
 	protected int HUGE_NUMBER = 1000000;
+	
+	private List<IFilter> filters;
 	
 	public BaseStats(String name, String desc, String[] headings){
 		super(name);
@@ -63,11 +70,12 @@ public abstract class BaseStats extends AbstractTimeSeries {
 		return Arrays.asList(headings);
 	}
 	
-	protected List<Konsultation> getConses(final IProgressMonitor monitor){
+	protected List<IEncounter> getConses(final IProgressMonitor monitor){
+		filters = new ArrayList<IFilter>();
 		HUGE_NUMBER = 1000000;
 		monitor.beginTask("Sammle Konsultationsdaten ", HUGE_NUMBER);
 		monitor.subTask("Datenbankabfrage und PostQueryFilters");
-		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
+		IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
 		String dateFrom =
 			new TimeTool(getStartDate().getTime().getTime()).toString(TimeTool.DATE_COMPACT);
 		String dateUntil =
@@ -77,47 +85,39 @@ public abstract class BaseStats extends AbstractTimeSeries {
 		final TimeTool to = new TimeTool(dateUntil);
 		
 		if (getDateType().equals("Konsultationsdatum")) {
-			qbe.addPostQueryFilter(new IFilter() {
-				@Override
-				public boolean select(Object element){
-					Konsultation k = (Konsultation) element;
-					monitor.subTask(k.getDatum());
-					monitor.worked(1);
-					HUGE_NUMBER--;
-					
-					TimeTool konsDatum = new TimeTool(k.getDatum());
-					return konsDatum.isAfterOrEqual(from) && konsDatum.isBeforeOrEqual(to);
-				}
-			});
+			query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL,
+				from.toLocalDate());
+			query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL,
+				to.toLocalDate());
 		} else if (getDateType().equals("Rechnungsdatum")) {
-			qbe.add(Konsultation.FLD_BILL_ID, "NOT", null);
-			qbe.addPostQueryFilter(new IFilter() {
+			query.and(ModelPackage.Literals.IENCOUNTER__INVOICE, COMPARATOR.NOT_EQUALS, null);
+			filters.add(new IFilter() {
 				@Override
 				public boolean select(Object element){
-					Konsultation k = (Konsultation) element;
-					monitor.subTask(k.getDatum());
+					IEncounter k = (IEncounter) element;
+					monitor.subTask(k.getDate().toString());
 					monitor.worked(1);
 					HUGE_NUMBER--;
 					
-					Rechnung rn = k.getRechnung();
-					TimeTool rndate = new TimeTool(rn.getDatumRn());
+					IInvoice rn = k.getInvoice();
+					TimeTool rndate = new TimeTool(rn.getDate());
 					return rndate.isAfterOrEqual(from) && rndate.isBeforeOrEqual(to);
 				}
 			});
 		} else if (getDateType().equals("Zahlungsdatum")) {
-			qbe.add(Konsultation.FLD_BILL_ID, "NOT", null);
-			qbe.addPostQueryFilter(new IFilter() {
+			query.and(ModelPackage.Literals.IENCOUNTER__INVOICE, COMPARATOR.NOT_EQUALS, null);
+			filters.add(new IFilter() {
 				@Override
 				public boolean select(Object element){
-					Konsultation k = (Konsultation) element;
+					IEncounter k = (IEncounter) element;
 					monitor.subTask(k.getLabel());
 					monitor.worked(1);
 					HUGE_NUMBER--;
 					
-					Rechnung rn = k.getRechnung();
-					if (rn.getStatus() == RnStatus.BEZAHLT
-						|| rn.getStatus() == RnStatus.ZUVIEL_BEZAHLT) {
-						TimeTool rndate = new TimeTool(rn.getDatumRn());
+					IInvoice rn = k.getInvoice();
+					if (rn.getState() == InvoiceState.PAID
+						|| rn.getState() == InvoiceState.EXCESSIVE_PAYMENT) {
+						TimeTool rndate = new TimeTool(rn.getDate());
 						return rndate.isAfterOrEqual(from) && rndate.isBeforeOrEqual(to);
 					}
 					return false;
@@ -126,9 +126,16 @@ public abstract class BaseStats extends AbstractTimeSeries {
 			
 		}
 		if (bOnlyActiveMandator) {
-			qbe.add(Konsultation.FLD_MANDATOR_ID, Query.EQUALS, CoreHub.actMandant.getId());
+			query.and(ModelPackage.Literals.IENCOUNTER__MANDATOR, COMPARATOR.EQUALS,
+				ContextServiceHolder.get().getActiveMandator().get());
 		}
-		return qbe.execute();
+		List<IEncounter> ret = query.execute();
+		if(!filters.isEmpty()) {
+			for (IFilter filter : filters) {
+				ret = ret.stream().filter(e -> filter.select(e)).collect(Collectors.toList());
+			}
+		}
+		return ret;
 	}
 	
 }

@@ -34,7 +34,8 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
@@ -44,7 +45,6 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -170,15 +170,15 @@ public class VerrechnungsStatistikView extends ViewPart implements IActivationLi
 	}
 	
 	public void jobFinished(final Counter counter){
-		HashMap<IVerrechenbar, List<Verrechnet>> cnt = counter.getValues();
+		HashMap<IBillable, List<IBilled>> cnt = counter.getValues();
 		HashMap<String, Money> totals = new HashMap<String, Money>();
 		
 		// TreeSet<IVerrechenbar> set=new
 		// TreeSet<IVerrechenbar>(cnt.keySet());
-		ArrayList<IVerrechenbar> set = new ArrayList<IVerrechenbar>(cnt.keySet());
-		Collections.sort(set, new Comparator<IVerrechenbar>() {
+		ArrayList<IBillable> set = new ArrayList<IBillable>(cnt.keySet());
+		Collections.sort(set, new Comparator<IBillable>() {
 			
-			public int compare(IVerrechenbar o1, IVerrechenbar o2){
+			public int compare(IBillable o1, IBillable o2){
 				if (o1 != null && o2 != null) {
 					String csname1 = o1.getCodeSystemName();
 					String csname2 = o2.getCodeSystemName();
@@ -194,7 +194,7 @@ public class VerrechnungsStatistikView extends ViewPart implements IActivationLi
 				
 			}
 		});
-		for (IVerrechenbar iv : set) {
+		for (IBillable iv : set) {
 			if (iv != null) {
 				TableItem ti = new TableItem(table, SWT.NONE);
 				String codename = iv.getCodeSystemName();
@@ -208,12 +208,9 @@ public class VerrechnungsStatistikView extends ViewPart implements IActivationLi
 				ti.setText(2, StringTool.unNull(iv.getText()));
 				Money total = new Money();
 				int count = 0;
-				for (Verrechnet vv : cnt.get(iv)) {
-					Money singlePrice = vv.getNettoPreis();
-					int num = vv.getZahl();
-					singlePrice.multiply(num);
-					total.addMoney(singlePrice);
-					count += num;
+				for (IBilled vv : cnt.get(iv)) {
+					total.addMoney(vv.getTotal());
+					count += vv.getAmount();
 				}
 				tCode.addMoney(total);
 				ti.setText(3, Integer.toString(count));

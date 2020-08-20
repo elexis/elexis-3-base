@@ -25,17 +25,16 @@ import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.labortarif.ILaborLeistung;
-import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.BillingServiceHolder;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Mandant;
+import ch.elexis.core.types.Gender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.rgw.tools.ExHandler;
@@ -74,26 +73,22 @@ public class PatientenHitlist extends BaseStats {
 		try {
 			HashMap<String, PatientStat> pstat =
 				new HashMap<String, PatientenHitlist.PatientStat>();
-			List<Konsultation> conses = getConses(monitor);
+			List<IEncounter> conses = getConses(monitor);
 			if (conses.size() > 0) {
 				int clicksPerRound = HUGE_NUMBER / conses.size();
-				for (Konsultation k : conses) {
-					Mandant m = k.getMandant();
+				for (IEncounter k : conses) {
+					IMandator m = k.getMandator();
 					if (m != null) {
-						Fall fall = k.getFall();
+						ICoverage fall = k.getCoverage();
 						if (fall != null) {
-							Patient pat = fall.getPatient();
+							IPatient pat = fall.getPatient();
 							if (pat != null) {
 								PatientStat ps = pstat.get(pat.getId());
 								if (ps == null) {
 									ps = new PatientStat(pat);
 									pstat.put(pat.getId(), ps);
 								}
-								Optional<IEncounter> encounter =
-									CoreModelServiceHolder.get().load(k.getId(), IEncounter.class);
-								if (encounter.isPresent()) {
-									ps.addCons(encounter.get());
-								}
+								ps.addCons(k);
 							}
 						}
 						monitor.worked(clicksPerRound);
@@ -225,10 +220,10 @@ public class PatientenHitlist extends BaseStats {
 	
 	static class PatientStat {
 		
-		PatientStat(Patient pat){
+		PatientStat(IPatient pat){
 			PatientID = pat.getId();
-			birthDate = new TimeTool(pat.get(Patient.FLD_DOB));
-			sex = pat.getGeschlecht();
+			birthDate = new TimeTool(pat.getDateOfBirth());
+			sex = pat.getGender();
 			numCons = 0;
 			numVisits = 0;
 			costTarmedAL = 0.0;
@@ -300,7 +295,7 @@ public class PatientenHitlist extends BaseStats {
 		
 		String PatientID;
 		TimeTool birthDate;
-		String sex;
+		Gender sex;
 		Integer numCons;
 		Integer numVisits;
 		Double costTarmedAL;

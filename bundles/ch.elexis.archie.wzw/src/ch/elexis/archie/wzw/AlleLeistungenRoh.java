@@ -7,12 +7,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Verrechnet;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 
 public class AlleLeistungenRoh extends BaseStats {
 	static final String NAME = "Alle Leistungen roh";
@@ -29,28 +29,30 @@ public class AlleLeistungenRoh extends BaseStats {
 	@Override
 	protected IStatus createContent(IProgressMonitor monitor){
 		List<Comparable<?>[]> lines = new ArrayList<Comparable<?>[]>(10000);
-		List<Konsultation> conses = getConses(monitor);
+		List<IEncounter> conses = getConses(monitor);
 		if (!conses.isEmpty()) {
 			int clicksPerRound = HUGE_NUMBER / conses.size();
-			for (Konsultation k : conses) {
+			for (IEncounter k : conses) {
 				if (!k.isDeleted()) {
-					Fall fall = k.getFall();
+					ICoverage fall = k.getCoverage();
 					if (fall != null) {
-						Patient pat = fall.getPatient();
-						Mandant m = k.getMandant();
+						IPatient pat = fall.getPatient();
+						IMandator m = k.getMandator();
 						String md = m == null ? "?" : m.getLabel();
-						String g = fall.getAbrechnungsSystem();
+						String g = fall.getBillingSystem().getName();
 						if (pat != null) {
-							for (Verrechnet v : k.getLeistungen()) {
-								IVerrechenbar vv = v.getVerrechenbar();
+							for (IBilled v : k.getBilled()) {
+								IBillable vv = v.getBillable();
 								if (vv != null) {
 									String[] line = new String[] {
-										md, pat.getPatCode(), pat.getLabel(false),
-										pat.getGeschlecht(), pat.getAlter(), k.getDatum(),
+										md, pat.getPatientNr(), pat.getLabel(),
+										pat.getGender().toString(),
+										Integer.toString(pat.getAgeInYears()),
+										k.getDate().toString(),
 										g == null ? "?" : g, vv.getCodeSystemName(),
 										vv.getCode() == null ? "?" : vv.getCode(), vv.getText(),
-										Integer.toString(v.getZahl()),
-										v.getNettoPreis().getAmountAsString()
+										Double.toString(v.getAmount()),
+										v.getTotal().getAmountAsString()
 									};
 									lines.add(line);
 								} else {

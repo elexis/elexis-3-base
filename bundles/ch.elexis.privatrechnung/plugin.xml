@@ -6,11 +6,9 @@
       <Leistung
             CodeDetailDisplay="ch.elexis.privatrechnung.views.Leistungsdetail"
             CodeSelectorFactory="ch.elexis.privatrechnung.views.Leistungsselektor"
-            ElementFactory="ch.elexis.privatrechnung.data.LeistungsFactory"
             ImporterClass="ch.elexis.privatrechnung.data.Importer"
             elexisClassName="ch.elexis.privatrechnung.data.Leistung"
-            name="PrivatLeistung"
-            localizedName="%PrivatLeistung.Elexis"
+            name="%PrivatLeistung.Elexis"
             system="Privat">
       </Leistung>
    </extension>
@@ -22,13 +20,6 @@
             id="ch.elexis.privatrechnung.prefs"
             name="Privatrechnung">
       </page>
-   </extension>
-   <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.privatrechnung.data.LeistungsFactory"
-            name="Privatrechnung">
-      </Factory>
    </extension>
    <extension
          point="ch.elexis.core.data.RechnungsManager">

@@ -26,6 +26,9 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -111,6 +114,7 @@ public class RnPrintView extends ViewPart {
 		Money sum = new Money();
 		VatRateSum vatSummer = new VatRateSum();
 		for (Konsultation k : kons) {
+			IEncounter encounter = NoPoUtil.loadAsIdentifiable(k, IEncounter.class).get();
 			tc.getPlugin().setStyle(SWT.BOLD);
 			// print date
 			pos =
@@ -123,17 +127,16 @@ public class RnPrintView extends ViewPart {
 				.append("\t").append("Betrag").append("\n\n");
 			pos = tc.getPlugin().insertText(pos, header.toString(), SWT.LEFT);
 			// print info for each Leistung
-			for (Verrechnet vv : k.getLeistungen()) {
+			for (IBilled vv : encounter.getBilled()) {
 				tc.getPlugin().setStyle(SWT.BOLD);
 				pos = tc.getPlugin().insertText(pos, "- " + vv.getText() + "\n", SWT.LEFT);
 				tc.getPlugin().setStyle(SWT.NORMAL);
 				
-				Money preis = vv.getNettoPreis();
-				int zahl = vv.getZahl();
-				Money subtotal = new Money(preis);
-				subtotal.multiply(zahl);
+				Money preis = vv.getScaledPrice();
+				Money subtotal = vv.getTotal();
 				StringBuilder sb = new StringBuilder();
-				sb.append(zahl).append("\t").append(getVatRate(vv, subtotal, vatSummer))
+				sb.append(vv.getAmount()).append("\t")
+					.append(getVatRate(vv, vv.getTotal(), vatSummer))
 					.append("\t").append(preis.getAmountAsString()).append("\t")
 					.append(subtotal.getAmountAsString()).append("\n");
 				pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
@@ -209,18 +212,17 @@ public class RnPrintView extends ViewPart {
 	 * Get the correct VAT value based on the Verrechent and the info if the Rechnungssteller has to
 	 * pay VAT.
 	 * 
-	 * @param verrechnet
+	 * @param vv
 	 * @param amount
 	 */
-	private String getVatRate(Verrechnet verrechnet, Money amount, VatRateSum vatsum){
+	private String getVatRate(IBilled vv, Money amount, VatRateSum vatsum){
 		
 		Boolean isVat =
-			(Boolean) verrechnet.getKons().getMandant().getRechnungssteller()
-				.getInfoElement(VAT_ISMANDANTVAT);
+			(Boolean) vv.getEncounter().getMandator().getBiller().getExtInfo(VAT_ISMANDANTVAT);
 		
 		double value = 0.0;
 		if (isVat != null && isVat) {
-			String vatScale = verrechnet.getDetail(Verrechnet.VATSCALE);
+			String vatScale = (String) vv.getExtInfo(Verrechnet.VATSCALE);
 			if (vatScale != null && vatScale.length() > 0)
 				value = Double.parseDouble(vatScale);
 		}

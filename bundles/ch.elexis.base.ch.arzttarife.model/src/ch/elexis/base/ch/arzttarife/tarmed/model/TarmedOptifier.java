@@ -83,6 +83,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	private static final String CHAPTER_XRAY = "39.02";
 	private static final String DEFAULT_TAX_XRAY_ROOM = "39.2000";
 	
+	boolean save = true;
 	boolean bOptify = true;
 	private IBilled newVerrechnet;
 	private String newVerrechnetSide;
@@ -123,7 +124,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		return null;
 	}
 	
-	public Result<IBilled> add(TarmedLeistung code, IEncounter kons, double amount){
+	public Result<IBilled> add(TarmedLeistung code, IEncounter kons, double amount, boolean save){
+		this.save = save;
 		int amountInt = doubleToInt(amount);
 		if (amountInt >= 1) {
 			Result<IBilled> result = add(code, kons);
@@ -280,7 +282,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 							}
 							
 							if (!resCompatible.isOK()) {
-								CoreModelServiceHolder.get().delete(newVerrechnet);
+								deleteBilled(newVerrechnet);
 								return resCompatible;
 							}
 						}
@@ -297,7 +299,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 					}
 					for (IBilled v : lst) {
 						if (v.getCode().equals(excludeCode)) {
-							CoreModelServiceHolder.get().delete(newVerrechnet);
+							deleteBilled(newVerrechnet);
 							return new Result<IBilled>(Result.SEVERITY.WARNING, EXKLUSION,
 								"00.0750 ist nicht im Rahmen einer ärztlichen Beratung 00.0010 verrechnenbar.", //$NON-NLS-1$
 								null, false);
@@ -530,12 +532,14 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		} else {
 			ret.setFactor(1.0);
 		}
-		CoreModelServiceHolder.get().save(ret);
+		if(save) {
+			CoreModelServiceHolder.get().save(ret);
+		}
 		return ret;
 	}
 	
 	private void saveBilled(){
-		if (newVerrechnet != null) {
+		if (newVerrechnet != null && save) {
 			CoreModelServiceHolder.get().save(newVerrechnet);
 		} else {
 			LoggerFactory.getLogger(TarmedOptifier.class).warn("Call on null",
@@ -543,13 +547,23 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		}
 	}
 	
+	private void deleteBilled(IBilled billed){
+		if (save) {
+			CoreModelServiceHolder.get().delete(billed);
+		} else {
+			billed.setDeleted(true);
+		}
+	}
+	
 	private void decrementOrDelete(IBilled verrechnet){
 		double zahl = verrechnet.getAmount();
 		if (zahl > 1) {
 			verrechnet.setAmount(zahl - 1);
-			CoreModelServiceHolder.get().save(verrechnet);
+			if (save) {
+				CoreModelServiceHolder.get().save(verrechnet);
+			}
 		} else {
-			CoreModelServiceHolder.get().delete(verrechnet);
+			deleteBilled(verrechnet);
 		}
 	}
 	
@@ -801,7 +815,9 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		reductionVerrechnet.setPoints((int) Math.round(opVerrechenbar.getTL()));
 		reductionVerrechnet.setPrimaryScale(-40);
 		reductionVerrechnet.setExtInfo("Bezug", opVerrechenbar.getCode());
-		CoreModelServiceHolder.get().save(reductionVerrechnet);
+		if (save) {
+			CoreModelServiceHolder.get().save(reductionVerrechnet);
+		}
 	}
 	
 	/**
@@ -1097,7 +1113,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	public Result<IBilled> remove(IBilled code, IEncounter kons){
 		List<IBilled> l = kons.getBilled();
 		l.remove(code);
-		CoreModelServiceHolder.get().delete(code);
+		deleteBilled(code);
 		// if no more left, check for bezug and remove
 		List<IBilled> left = getVerrechnetMatchingCode(l, code.getCode());
 		if (left.isEmpty()) {

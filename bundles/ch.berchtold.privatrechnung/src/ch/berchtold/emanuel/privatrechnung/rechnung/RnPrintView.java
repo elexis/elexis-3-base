@@ -29,7 +29,10 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.constants.ExtensionPointConstantsData;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.data.interfaces.IVerrechenbar;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -40,7 +43,6 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
@@ -108,19 +110,17 @@ public class RnPrintView extends ViewPart {
 		});
 		// Leistungen und Artikel gruppieren
 		Money sum = new Money();
-		HashMap<String, List<Verrechnet>> groups = new HashMap<String, List<Verrechnet>>();
+		HashMap<String, List<IBilled>> groups = new HashMap<String, List<IBilled>>();
 		for (Konsultation k : kons) {
-			List<Verrechnet> vv = k.getLeistungen();
-			for (Verrechnet v : vv) {
-				Money netto = v.getNettoPreis();
-				netto.multiply(v.getZahl());
-				sum.addMoney(netto);
-				IVerrechenbar iv = v.getVerrechenbar();
+			IEncounter encounter = NoPoUtil.loadAsIdentifiable(k, IEncounter.class).get();
+			for (IBilled v : encounter.getBilled()) {
+				sum.addMoney(v.getTotal());
+				IBillable iv = v.getBillable();
 				if (iv != null) {
 					String csName = iv.getCodeSystemName();
-					List<Verrechnet> gl = groups.get(csName);
+					List<IBilled> gl = groups.get(csName);
 					if (gl == null) {
-						gl = new ArrayList<Verrechnet>();
+						gl = new ArrayList<IBilled>();
 						groups.put(csName, gl);
 					}
 					gl.add(v);
@@ -150,10 +150,10 @@ public class RnPrintView extends ViewPart {
 				tc.getPlugin().setFont("Helvetiva", SWT.BOLD, 10);
 				pos = tc.getPlugin().insertText(pos, k + ":\t", SWT.LEFT);
 				tc.getPlugin().setFont("Helvetiva", SWT.NORMAL, 10);
-				List<Verrechnet> lv = groups.get(k);
+				List<IBilled> lv = groups.get(k);
 				Money zeile = new Money();
-				for (Verrechnet vv : lv) {
-					zeile.addMoney(vv.getNettoPreis().multiply(vv.getZahl()));
+				for (IBilled vv : lv) {
+					zeile.addMoney(vv.getTotal());
 				}
 				pos =
 					tc.getPlugin().insertText(pos, "\t\t" + zeile.getAmountAsString() + "\n",
@@ -179,23 +179,21 @@ public class RnPrintView extends ViewPart {
 			int page = 1;
 			tc.getPlugin().setFont("Helvetica", SWT.NORMAL, 8);
 			for (Konsultation k : kons) {
+				IEncounter encounter = NoPoUtil.loadAsIdentifiable(k, IEncounter.class).get();
 				/*
 				 * tc.getPlugin().setFont("Helvetica", SWT.BOLD, 10); pos =
 				 * tc.getPlugin().insertText(pos, new
 				 * TimeTool(k.getDatum()).toString(TimeTool.DATE_GER) + "\n", SWT.LEFT);
 				 */
 				String date = new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER);
-				for (Verrechnet vv : k.getLeistungen()) {
-					Money preis = vv.getNettoPreis();
-					int zahl = vv.getZahl();
-					Money subtotal = new Money(preis);
-					subtotal.multiply(zahl);
+				for (IBilled vv : encounter.getBilled()) {
 					StringBuilder sb = new StringBuilder();
-					sb.append(date).append("\t").append(zahl).append("\t").append(vv.getText())
-						.append("\t").append(preis.getAmountAsString()).append("\t")
-						.append(subtotal.getAmountAsString()).append("\n");
+					sb.append(date).append("\t").append(vv.getAmount()).append("\t")
+						.append(vv.getText())
+						.append("\t").append(vv.getScaledPrice()).append("\t")
+						.append(vv.getTotal().getAmountAsString()).append("\n");
 					pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
-					sum.addMoney(subtotal);
+					sum.addMoney(vv.getTotal());
 					cmAvail -= lineHeight;
 					if (cmAvail <= 0.0) {
 						StringBuilder footer = new StringBuilder();

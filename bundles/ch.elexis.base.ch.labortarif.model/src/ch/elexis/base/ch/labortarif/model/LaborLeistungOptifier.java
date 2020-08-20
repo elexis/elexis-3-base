@@ -48,7 +48,8 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 	}
 	
 	@Override
-	public Result<IBilled> add(ILaborLeistung billable, IEncounter encounter, double amount){
+	public Result<IBilled> add(ILaborLeistung billable, IEncounter encounter, double amount,
+		boolean save){
 		if (billable instanceof ILaborLeistung && isOptify()) {
 			boolean haveKons = false;
 			
@@ -123,10 +124,10 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 				v470720.setAmount(z470720);
 			}
 			
-			if (v470710 != null) {
+			if (v470710 != null && save) {
 				CoreModelServiceHolder.get().save(v470710);
 			}
-			if (v470720 != null) {
+			if (v470720 != null && save) {
 				CoreModelServiceHolder.get().save(v470720);
 			}
 		}

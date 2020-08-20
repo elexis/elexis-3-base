@@ -15,13 +15,13 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import ch.elexis.data.Artikel;
+import ch.elexis.core.model.IArticle;
 
 public final class ArticleData {
-	private Artikel article;
+	private IArticle article;
 
-	public ArticleData(Artikel artikel) {
-		article = artikel;
+	public ArticleData(IArticle v){
+		article = v;
 	}
 
 	public String getName() {
@@ -29,7 +29,7 @@ public final class ArticleData {
 	}
 
 	public String getPrice() {
-		return article.getVKPreis().toString();
+		return article.getSellingPrice().toString();
 	}
 
 	public String getDeliveryDate() {

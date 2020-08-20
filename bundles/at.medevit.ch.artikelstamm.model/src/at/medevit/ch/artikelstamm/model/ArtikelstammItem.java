@@ -21,10 +21,12 @@ import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.model.billable.AbstractOptifier;
+import ch.elexis.core.model.billable.AbstractNoObligationOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.ArticleSubTyp;
 import ch.elexis.core.types.ArticleTyp;
@@ -50,7 +52,9 @@ public class ArtikelstammItem
 	@Override
 	public synchronized IBillableOptifier<ArtikelstammItem> getOptifier(){
 		if (optifier == null) {
-			optifier = new AbstractOptifier<ArtikelstammItem>(CoreModelServiceHolder.get()) {
+			optifier = new AbstractNoObligationOptifier<ArtikelstammItem>(
+				CoreModelServiceHolder.get(), ConfigServiceHolder.get(),
+				ContextServiceHolder.get()) {
 				
 				@Override
 				protected void setPrice(ArtikelstammItem billable, IBilled billed){
@@ -58,14 +62,8 @@ public class ArtikelstammItem
 					billed.setNetPrice(billable.getPurchasePrice());
 					Money sellingPrice = billable.getSellingPrice();
 					if (sellingPrice.isZero()) {
-						sellingPrice =  MargePreference.calculateVKP(getPurchasePrice());
-					} 
-//					if (!billable.isInSLList()) {
-// TODO
-//						// noObligationOptifier
-//					} else {
-//						// defaultOptifier
-//					}
+						sellingPrice = MargePreference.calculateVKP(getPurchasePrice());
+					}
 					int vkPreis = sellingPrice.getCents();
 					double pkgSize = Math.abs(billable.getPackageSize());
 					double vkUnits = billable.getSellingSize();
@@ -74,7 +72,11 @@ public class ArtikelstammItem
 					} else {
 						billed.setPoints((int) Math.round(vkPreis));
 					}
-
+				}
+				
+				@Override
+				protected boolean isNoObligation(ArtikelstammItem billable){
+					return !billable.isInSLList();
 				}
 			};
 		}
@@ -452,7 +454,7 @@ public class ArtikelstammItem
 			extInfoHandler.setExtInfo(EXTINFO_VAL_VAT_OVERRIDEN, null);
 		} else {
 			extInfoHandler.setExtInfo(EXTINFO_VAL_VAT_OVERRIDEN, vatInfo.toString());
-		}		
+		}
 	}
 	
 	@Override
@@ -519,12 +521,13 @@ public class ArtikelstammItem
 	public IXid getXid(String domain){
 		return XidServiceHolder.get().getXid(this, domain);
 	}
-
+	
 	@Override
-	public boolean isVaccination() {
+	public boolean isVaccination(){
 		String atcCode = getAtcCode();
 		if (atcCode != null && atcCode.length() > 4) {
-			if (atcCode.toUpperCase().startsWith("J07") && !atcCode.toUpperCase().startsWith("J07AX")) {
+			if (atcCode.toUpperCase().startsWith("J07")
+				&& !atcCode.toUpperCase().startsWith("J07AX")) {
 				return true;
 			}
 		}

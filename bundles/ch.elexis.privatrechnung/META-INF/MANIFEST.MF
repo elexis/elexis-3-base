@@ -16,7 +16,17 @@ Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
  org.eclipse.ui.forms,
  ch.rgw.utility,
  ch.elexis.core;bundle-version="3.2.0",
- ch.elexis.base.ch.ebanking;bundle-version="3.0.0"
+ ch.elexis.base.ch.ebanking;bundle-version="3.0.0",
+ ch.elexis.core.jpa,
+ ch.elexis.core.jpa.entities
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Service-Component: OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnungModelService.xml,
+ OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnungCodeElementServiceContribution.xml,
+ OSGI-INF/ch.elexis.privatrechnung.model.PrivatModelServiceHolder.xml
+Bundle-ActivationPolicy: lazy
+Import-Package: ch.elexis.core.services.holder,
+ javax.persistence,
+ javax.persistence.criteria;version="2.2.3",
+ org.apache.commons.lang;version="2.6.0"
 

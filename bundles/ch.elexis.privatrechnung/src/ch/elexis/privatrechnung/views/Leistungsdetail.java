@@ -19,10 +19,11 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.privatrechnung.data.Leistung;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
+import ch.elexis.privatrechnung.model.IPrivatLeistung;
+import ch.elexis.privatrechnung.model.internal.Leistung;
 
 /**
  * An IDetailDisplay must be able to create and manage a form that can display detailed information
@@ -35,17 +36,17 @@ public class Leistungsdetail implements IDetailDisplay {
 	Form form;
 	LabeledInputField.AutoForm tblPls;
 	InputData[] data = new InputData[] {
-		new InputData("Kuerzel"), //$NON-NLS-1$
-		new InputData("Kosten", "Kosten", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
-		new InputData("Preis", "Preis", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+		new InputData("Kuerzel", "shortName", InputData.Typ.STRING, null), //$NON-NLS-1$
+		new InputData("Kosten", "cost", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+		new InputData("Preis", "price", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
 	};
 	
 	/**
 	 * Select the given Objetc to display
 	 */
 	public void display(Object obj){
-		if (obj instanceof Leistung) { // should always be true...
-			Leistung ls = (Leistung) obj;
+		if (obj instanceof IPrivatLeistung) { // should always be true...
+			IPrivatLeistung ls = (IPrivatLeistung) obj;
 			form.setText(ls.getLabel());
 			tblPls.reload(ls);
 		}

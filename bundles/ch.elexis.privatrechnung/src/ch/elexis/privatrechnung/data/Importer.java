@@ -22,13 +22,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
 import au.com.bytecode.opencsv.CSVReader;
-
-import ch.elexis.data.Query;
-import ch.elexis.core.ui.util.ImporterPage;
-import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.ui.util.ImporterPage;
+import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.privatrechnung.model.IPrivatLeistung;
+import ch.elexis.privatrechnung.model.PrivatModelServiceHolder;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
@@ -86,6 +88,7 @@ public class Importer extends ImporterPage {
 	 */
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
+		
 		// PersistentObject.getConnection().exec("DROP TABLE " + Leistung.TABLENAME + ";");
 		// Leistung.createTable();
 		File file = new File(results[0]);
@@ -166,19 +169,30 @@ public class Importer extends ImporterPage {
 			if (line[7].equals("")) {
 				line[7] = TimeTool.END_OF_UNIX_EPOCH;
 			}
-			Query<Leistung> qbe = new Query<Leistung>(Leistung.class);
-			qbe.add("Kuerzel", "=", line[1]);
-			List<Leistung> res = qbe.execute();
-			Leistung lst;
+			IQuery<IPrivatLeistung> query =
+				PrivatModelServiceHolder.get().getQuery(IPrivatLeistung.class);
+			query.and("shortname", COMPARATOR.EQUALS, line[1]);
+			List<IPrivatLeistung> res = query.execute();
+			IPrivatLeistung lst;
 			if (res.size() > 0) {
 				lst = res.get(0);
-				lst.set(new String[] {
-					"parent", "Name", "Kosten", "Preis", "Zeit", "DatumVon", "DatumBis"
-				}, line[0], line[2], line[3], line[4], line[5], line[6], line[7]);
+				//				lst.set(new String[] {
+				//					"parent", "Name", "Kosten", "Preis", "Zeit", "DatumVon", "DatumBis"
+				//				}, line[0], line[2], line[3], line[4], line[5], line[6], line[7]);
 			} else {
-				new Leistung(null, line[0], line[2], line[1], line[3], line[4], line[5], line[6],
-					line[7]);
+				lst = PrivatModelServiceHolder.get().create(IPrivatLeistung.class);
+				//				new Leistung(null, line[0], line[2], line[1], line[3], line[4], line[5], line[6],
+				//					line[7]);
 			}
+			lst.setParent(line[0]);
+			lst.setCode(line[1]);
+			lst.setText(line[2]);
+			lst.setCost(line[3]);
+			lst.setPrice(line[4]);
+			lst.setTime(line[5]);
+			lst.setValidFrom(line[6]);
+			lst.setValidTo(line[7]);
+			PrivatModelServiceHolder.get().save(lst);
 		}
 	}
 }

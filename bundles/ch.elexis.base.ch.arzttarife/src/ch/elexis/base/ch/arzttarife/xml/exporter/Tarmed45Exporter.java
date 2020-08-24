@@ -635,7 +635,7 @@ public class Tarmed45Exporter {
 					
 					double primaryScale = billed.getPrimaryScaleFactor();
 					double secondaryScale = billed.getSecondaryScaleFactor();
-					double mult = ArzttarifeUtil.getFactor(encounterDate, invoice.getCoverage());
+					double mult = billed.getFactor();
 					double tlAL = ArzttarifeUtil.getAL(billed);
 					double tlTL = ArzttarifeUtil.getTL(billed);
 					// build monetary values of this TarmedLeistung
@@ -701,8 +701,7 @@ public class Tarmed45Exporter {
 					serviceType.setVatRate(getVatRate(billed));
 					
 					serviceType.setUnit(billed.getPrice().doubleValue());
-					serviceType.setUnitFactor(
-						ArzttarifeUtil.getFactor(encounterDate, encounter.getCoverage()));
+					serviceType.setUnitFactor(billed.getFactor());
 					
 					serviceType.setTariffType(billable.getCodeSystemCode());
 					serviceType.setCode(billable.getCode());

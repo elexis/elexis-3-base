@@ -97,14 +97,14 @@ public class PrivatRechnungModelService extends AbstractModelService
 	@Override
 	public Class<?> getEntityForType(String type){
 		if (Leistung.STS_CLASS.equals(type)) {
-			return ch.elexis.core.jpa.entities.Labor2009Tarif.class;
+			return ch.elexis.core.jpa.entities.PrivatLeistung.class;
 		}
 		return null;
 	}
 	
 	@Override
 	public String getTypeForEntity(Object entityInstance){
-		if (entityInstance instanceof ch.elexis.core.jpa.entities.Labor2009Tarif) {
+		if (entityInstance instanceof ch.elexis.core.jpa.entities.PrivatLeistung) {
 			return Leistung.STS_CLASS;
 		}
 		return null;

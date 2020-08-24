@@ -165,4 +165,9 @@ public class Leistung
 			getEntityMarkDirty().setValidTo(new TimeTool(string).toLocalDate());
 		}
 	}
+	
+	@Override
+	public String getLabel(){
+		return getCode() + " - " + getText();
+	}
 }

@@ -160,9 +160,9 @@ public class Importer extends ImporterPage {
 	}
 	
 	// parentCode 0,codeID 1,codeName 2,cost 3,price 4 ,time 5, validFrom
-	// 6,validUntil 7,factor 8
+	// 6,validUntil 7
 	private void importLine(final String[] line){
-		if (line.length == 9) {
+		if (line.length == 8) {
 			if (line[6].equals("")) {
 				line[6] = TimeTool.BEGINNING_OF_UNIX_EPOCH;
 			}

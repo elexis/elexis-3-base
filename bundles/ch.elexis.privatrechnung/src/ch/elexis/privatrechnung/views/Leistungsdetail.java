@@ -12,6 +12,10 @@
 
 package ch.elexis.privatrechnung.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
@@ -23,7 +27,6 @@ import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.privatrechnung.model.IPrivatLeistung;
-import ch.elexis.privatrechnung.model.internal.Leistung;
 
 /**
  * An IDetailDisplay must be able to create and manage a form that can display detailed information
@@ -36,8 +39,8 @@ public class Leistungsdetail implements IDetailDisplay {
 	Form form;
 	LabeledInputField.AutoForm tblPls;
 	InputData[] data = new InputData[] {
-		new InputData("Kuerzel", "shortName", InputData.Typ.STRING, null), //$NON-NLS-1$
-		new InputData("Kosten", "cost", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+		new InputData("Kuerzel", "code", InputData.Typ.STRING, null), //$NON-NLS-1$
+		new InputData("Kosten", "netPrice", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
 		new InputData("Preis", "price", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
 	};
 	
@@ -53,8 +56,17 @@ public class Leistungsdetail implements IDetailDisplay {
 		
 	}
 	
-	public Class getElementClass(){
-		return Leistung.class;
+	@Inject
+	public void selection(
+		@Optional @Named("ch.elexis.privatrechnung.views.selection") IPrivatLeistung leistung){
+		if (form != null && !form.isDisposed()) {
+			display(leistung);
+		}
+	}
+	
+	@Override
+	public Class<?> getElementClass(){
+		return IPrivatLeistung.class;
 	}
 	
 	public String getTitle(){

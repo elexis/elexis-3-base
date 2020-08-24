@@ -26,7 +26,9 @@ Service-Component: OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnu
  OSGI-INF/ch.elexis.privatrechnung.model.PrivatModelServiceHolder.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.services.holder,
+ javax.inject;version="1.0.0",
  javax.persistence,
  javax.persistence.criteria;version="2.2.3",
- org.apache.commons.lang;version="2.6.0"
+ org.apache.commons.lang;version="2.6.0",
+ org.eclipse.e4.core.di.annotations;version="1.6.0"
 

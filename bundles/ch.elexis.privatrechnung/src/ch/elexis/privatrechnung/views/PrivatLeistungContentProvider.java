@@ -2,11 +2,14 @@ package ch.elexis.privatrechnung.views;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.CommonViewer.Message;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.privatrechnung.model.IPrivatLeistung;
 import ch.elexis.privatrechnung.model.PrivatModelServiceHolder;
@@ -17,6 +20,10 @@ public class PrivatLeistungContentProvider
 	private CommonViewer commonViewer;
 	
 	private INamedQuery<IPrivatLeistung> childrenQuery;
+	
+	private String nameFilter;
+	
+	private String codeFilter;
 	
 	public PrivatLeistungContentProvider(CommonViewer commonViewer){
 		this.commonViewer = commonViewer;
@@ -34,13 +41,13 @@ public class PrivatLeistungContentProvider
 	
 	@Override
 	public void changed(HashMap<String, String> values){
-		// TODO Auto-generated method stub
-		
+		nameFilter = values.get("name");
+		codeFilter = values.get("shortName");
+		commonViewer.notify(Message.update_keeplabels);
 	}
 	
 	@Override
 	public void reorder(String field){
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -70,10 +77,28 @@ public class PrivatLeistungContentProvider
 	public Object[] getChildren(Object parentElement){
 		if (parentElement instanceof IPrivatLeistung) {
 			IPrivatLeistung parentLeistung = (IPrivatLeistung) parentElement;
-			return childrenQuery.executeWithParameters(
-				childrenQuery.getParameterMap("parent", parentLeistung.getCode())).toArray();
+			List<IPrivatLeistung> ret = childrenQuery.executeWithParameters(
+				childrenQuery.getParameterMap("parent", parentLeistung.getCode()));
+			ret = getFiltered(ret);
+			return ret.toArray(new Object[ret.size()]);
 		}
 		return null;
+	}
+	
+	private List<IPrivatLeistung> getFiltered(List<IPrivatLeistung> ret){
+		if (StringUtils.isNotBlank(nameFilter)) {
+			ret = ret.stream()
+				.filter(pl -> hasChildren(pl)
+					|| pl.getText().toLowerCase().contains(nameFilter.toLowerCase()))
+				.collect(Collectors.toList());
+		}
+		if (StringUtils.isNotBlank(codeFilter)) {
+			ret = ret.stream()
+				.filter(pl -> hasChildren(pl)
+					|| pl.getCode().toLowerCase().contains(codeFilter.toLowerCase()))
+				.collect(Collectors.toList());
+		}
+		return ret;
 	}
 	
 	@Override
@@ -86,8 +111,10 @@ public class PrivatLeistungContentProvider
 	public boolean hasChildren(Object parentElement){
 		if (parentElement instanceof IPrivatLeistung) {
 			IPrivatLeistung parentLeistung = (IPrivatLeistung) parentElement;
-			return !childrenQuery.executeWithParameters(
-				childrenQuery.getParameterMap("parent", parentLeistung.getCode())).isEmpty();
+			List<IPrivatLeistung> ret = childrenQuery.executeWithParameters(
+				childrenQuery.getParameterMap("parent", parentLeistung.getCode()));
+			ret = getFiltered(ret);
+			return !ret.isEmpty();
 		}
 		return false;
 	}

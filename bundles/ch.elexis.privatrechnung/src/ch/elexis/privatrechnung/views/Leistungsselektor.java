@@ -12,10 +12,20 @@
 
 package ch.elexis.privatrechnung.views;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
+import ch.elexis.core.ui.selectors.FieldDescriptor;
+import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
-import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
+import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
@@ -33,10 +43,25 @@ public class Leistungsselektor extends CodeSelectorFactory {
 	
 	private CommonViewer cv;
 	
-	/**
-	 * On Creation we initiate a dataloader. We can simply use the existing LazyXXXLoader framework.
-	 */
-	@SuppressWarnings("unchecked")
+	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
+	private ISelectionChangedListener selChangeListener = new ISelectionChangedListener() {
+		@Override
+		public void selectionChanged(SelectionChangedEvent event){
+			TreeViewer tv = (TreeViewer) event.getSource();
+			StructuredSelection ss = (StructuredSelection) tv.getSelection();
+			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
+			
+			if (!ss.isEmpty()) {
+				IPrivatLeistung ea = (IPrivatLeistung) ss.getFirstElement();
+				ContextServiceHolder.get().getRootContext()
+					.setNamed("ch.elexis.privatrechnung.views.selection", ea);
+			} else {
+				ContextServiceHolder.get().getRootContext()
+					.setNamed("ch.elexis.privatrechnung.views.selection", null);
+			}
+		}
+	};
+	
 	public Leistungsselektor(){}
 	
 	/**
@@ -49,11 +74,13 @@ public class Leistungsselektor extends CodeSelectorFactory {
 		this.cv = cv;
 		ViewerConfigurer vc =
 			new ViewerConfigurer(new PrivatLeistungContentProvider(cv),
-				new ViewerConfigurer.TreeLabelProvider(), new DefaultControlFieldProvider(cv,
-					new String[] {
-						"Kuerzel", "Name"}), //$NON-NLS-1$
+				new DefaultLabelProvider(), new PrivatSelectorPanelProvider(cv), //$NON-NLS-1$
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
+		
+		cv.setNamedSelection("ch.elexis.privatrechnung.views.selection");
+		cv.setSelectionChangedListener(selChangeListener);
+		
 		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
 	
@@ -70,5 +97,21 @@ public class Leistungsselektor extends CodeSelectorFactory {
 	@Override
 	public Class<?> getElementClass(){
 		return IPrivatLeistung.class;
+	}
+	
+	private static class PrivatSelectorPanelProvider extends SelectorPanelProvider {
+		
+		private static FieldDescriptor<?>[] fields = {
+			new FieldDescriptor<IPrivatLeistung>("Kuerzel", "shortName", Typ.STRING, null),
+			new FieldDescriptor<IPrivatLeistung>("Name", "name", Typ.STRING, null)
+		};
+		
+		private CommonViewer commonViewer;
+		
+		public PrivatSelectorPanelProvider(CommonViewer viewer){
+			super(fields, true);
+			commonViewer = viewer;
+			CoreUiUtil.injectServicesWithContext(this);
+		}
 	}
 }

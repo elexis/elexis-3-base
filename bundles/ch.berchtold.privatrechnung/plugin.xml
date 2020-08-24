@@ -6,7 +6,6 @@
       <Leistung
             CodeDetailDisplay="ch.berchtold.emanuel.privatrechnung.views.Leistungsdetail"
             CodeSelectorFactory="ch.berchtold.emanuel.privatrechnung.views.Leistungsselektor"
-            ElementFactory="ch.berchtold.emanuel.privatrechnung.data.LeistungsFactory"
             ImporterClass="ch.berchtold.emanuel.privatrechnung.data.Importer"
             elexisClassName="ch.berchtold.emanuel.privatrechnung.data.Leistung"
             localizedName="%Privatrechnung.Berchtold"
@@ -21,13 +20,6 @@
             name="Privatrechnung Berchtold"
             outputter="ch.berchtold.emanuel.privatrechnung.rechnung.RechnungsDrucker">
       </Rechnung>
-   </extension>
-   <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.berchtold.emanuel.privatrechnung.data.LeistungsFactory"
-            name="Privatrechnung Berchtold">
-      </Factory>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

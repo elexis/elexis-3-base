@@ -12,20 +12,25 @@
 
 package ch.berchtold.emanuel.privatrechnung.views;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 
-import ch.berchtold.emanuel.privatrechnung.data.Leistung;
-import ch.berchtold.emanuel.privatrechnung.model.LeistungenLoader;
-import ch.elexis.core.ui.actions.TreeDataLoader;
+import ch.berchtold.emanuel.privatrechnung.model.IPrivatLeistung;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
+import ch.elexis.core.ui.util.viewers.DefaultLabelProvider;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
 
 /**
  * This is the Composite that lets the user select codes and drag them into the billing-field. It
@@ -36,6 +41,27 @@ import ch.elexis.data.Query;
  */
 public class Leistungsselektor extends CodeSelectorFactory {
 	
+	private CommonViewer cv;
+	
+	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
+	private ISelectionChangedListener selChangeListener = new ISelectionChangedListener() {
+		@Override
+		public void selectionChanged(SelectionChangedEvent event){
+			TreeViewer tv = (TreeViewer) event.getSource();
+			StructuredSelection ss = (StructuredSelection) tv.getSelection();
+			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
+			
+			if (!ss.isEmpty()) {
+				IPrivatLeistung ea = (IPrivatLeistung) ss.getFirstElement();
+				ContextServiceHolder.get().getRootContext()
+					.setNamed("ch.berchtold.emanuel.privatrechnung.views.selection", ea);
+			} else {
+				ContextServiceHolder.get().getRootContext()
+					.setNamed("ch.berchtold.emanuel.privatrechnung.views.selection", null);
+			}
+		}
+	};
+	
 	/**
 	 * Here we create the populator for the CodeSelector. We must provide a viewer widget, a content
 	 * provider, a label provider, a ControlFieldProvider and a ButtonProvider Again, we simply use
@@ -43,32 +69,46 @@ public class Leistungsselektor extends CodeSelectorFactory {
 	 */
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
-		TreeDataLoader tdl =
-			new LeistungenLoader(this, cv, new Query<Leistung>(Leistung.class), "parent");
-		FieldDescriptor<Leistung> fdName =
-			new FieldDescriptor<Leistung>("Leistungen", Leistung.FIELD_NAME, Typ.STRING, null);
 		ViewerConfigurer vc =
-			new ViewerConfigurer(tdl, new ViewerConfigurer.TreeLabelProvider(),
-				new SelectorPanelProvider(new FieldDescriptor<?>[] {
-					fdName
-				}, true), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_TREE, SWT.VIRTUAL, null));
-		return vc;
+			new ViewerConfigurer(new PrivatLeistungContentProvider(cv), new DefaultLabelProvider(),
+				new PrivatSelectorPanelProvider(cv), new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
+				
+		cv.setNamedSelection("ch.berchtold.emanuel.privatrechnung.views.selection");
+		cv.setSelectionChangedListener(selChangeListener);
+		
+		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
 	
 	@Override
 	public void dispose(){
-		// TODO Auto-generated method stub
-		
+		cv.dispose();
 	}
 	
 	@Override
 	public String getCodeSystemName(){
-		return Leistung.CODESYSTEM_NAME;
+		return "Privattarif";
 	}
 	
 	@Override
-	public Class<? extends PersistentObject> getElementClass(){
-		return Leistung.class;
+	public Class<?> getElementClass(){
+		return IPrivatLeistung.class;
+	}
+	
+	private static class PrivatSelectorPanelProvider extends SelectorPanelProvider {
+		
+		private static FieldDescriptor<?>[] fields = {
+			new FieldDescriptor<IPrivatLeistung>("Kuerzel", "shortName", Typ.STRING, null),
+			new FieldDescriptor<IPrivatLeistung>("Name", "name", Typ.STRING, null)
+		};
+		
+		private CommonViewer commonViewer;
+		
+		public PrivatSelectorPanelProvider(CommonViewer viewer){
+			super(fields, true);
+			commonViewer = viewer;
+			CoreUiUtil.injectServicesWithContext(this);
+		}
 	}
 }

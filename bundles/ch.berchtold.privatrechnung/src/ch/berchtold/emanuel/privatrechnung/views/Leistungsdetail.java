@@ -12,13 +12,17 @@
 
 package ch.berchtold.emanuel.privatrechnung.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-import ch.berchtold.emanuel.privatrechnung.data.Leistung;
+import ch.berchtold.emanuel.privatrechnung.model.IPrivatLeistung;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
@@ -35,25 +39,34 @@ public class Leistungsdetail implements IDetailDisplay {
 	Form form;
 	LabeledInputField.AutoForm tblPls;
 	InputData[] data = new InputData[] {
-		new InputData("Kuerzel"), //$NON-NLS-1$
-		new InputData("Kosten", "Kosten", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
-		new InputData("Preis", "Preis", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+		new InputData("Kuerzel", "code", InputData.Typ.STRING, null), //$NON-NLS-1$
+		new InputData("Kosten", "netPrice", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+		new InputData("Preis", "price", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
 	};
 	
 	/**
 	 * Select the given Objetc to display
 	 */
 	public void display(Object obj){
-		if (obj instanceof Leistung) { // should always be true...
-			Leistung ls = (Leistung) obj;
+		if (obj instanceof IPrivatLeistung) { // should always be true...
+			IPrivatLeistung ls = (IPrivatLeistung) obj;
 			form.setText(ls.getLabel());
 			tblPls.reload(ls);
 		}
 		
 	}
 	
-	public Class getElementClass(){
-		return Leistung.class;
+	@Inject
+	public void selection(
+		@Optional @Named("ch.berchtold.emanuel.privatrechnung.views.selection") IPrivatLeistung leistung){
+		if (form != null && !form.isDisposed()) {
+			display(leistung);
+		}
+	}
+	
+	@Override
+	public Class<?> getElementClass(){
+		return IPrivatLeistung.class;
 	}
 	
 	public String getTitle(){

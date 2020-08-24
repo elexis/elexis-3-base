@@ -80,8 +80,6 @@ public class XMLExporterServices {
 	private static final String ATTR_SESSION = "session"; //$NON-NLS-1$
 	
 	private static final String ELEMENT_RECORD_TARMED = "record_tarmed"; //$NON-NLS-1$
-	private static final String TL = "TL"; //$NON-NLS-1$
-	private static final String AL = "AL"; //$NON-NLS-1$
 	
 	private static final String TARMED_FALSE = "false"; //$NON-NLS-1$
 	private static final String TARMED_TRUE = "true"; //$NON-NLS-1$
@@ -316,7 +314,7 @@ public class XMLExporterServices {
 						double secondaryScale = billed.getSecondaryScaleFactor();
 						
 						double tlTL, tlAL, mult;
-						mult = ArzttarifeUtil.getFactor(encounterDate, invoice.getCoverage());
+						mult = billed.getFactor();
 						
 						tlAL = ArzttarifeUtil.getAL(billed);
 						tlTL = ArzttarifeUtil.getTL(billed);
@@ -414,15 +412,12 @@ public class XMLExporterServices {
 							TarmedRequirements.getEAN(encounter.getMandator()));
 						el.setAttribute(ATTR_EAN_RESPONSIBLE,
 							XMLExporterUtil.getResponsibleEAN(encounter));
-						ILaborLeistung laborLeistung = (ILaborLeistung) billable;
-						double mult =
-							ArzttarifeUtil.getFactor(encounterDate, encounter.getCoverage());
-						Money preis = billed.getNetPrice();
+						double mult = billed.getFactor();
+						Money preis = billed.getScaledPrice();
 						double korr = preis.getCents() / mult;
 						el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
 						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
-						Money mAmountLocal = new Money(preis);
-						mAmountLocal.multiply(amount);
+						Money mAmountLocal = billed.getTotal();
 						el.setAttribute(XMLExporter.ATTR_AMOUNT,
 							XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 						XMLExporterUtil.setVatAttribute(billed, mAmountLocal, el, vatSummer); // 28590
@@ -437,8 +432,7 @@ public class XMLExporterServices {
 						|| "402".equals(billable.getCodeSystemCode())) {
 						el = new Element(ELEMENT_RECORD_DRUG, XMLExporter.nsinvoice);
 						IArticle art = (IArticle) billable;
-						double mult =
-							ArzttarifeUtil.getFactor(encounterDate, encounter.getCoverage());
+						double mult = billed.getFactor();
 						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(billed.getPrice()));
 						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
 						if ("true".equals((String) billed.getExtInfo(Verrechnet.INDICATED))) {
@@ -478,7 +472,7 @@ public class XMLExporterServices {
 					} else if ("MiGeL".equals(billable.getCodeSystemName())) {
 						el = new Element(ELEMENT_RECORD_MIGEL, XMLExporter.nsinvoice);
 						// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
-						Money preis = billed.getNetPrice();
+						Money preis = billed.getScaledPrice();
 						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
 						el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
 						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "452"); // MiGeL ab 2001-basiert //$NON-NLS-1$
@@ -503,10 +497,8 @@ public class XMLExporterServices {
 						if (law == BillingLaw.KVG) {
 							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "312"); // 28060
 						}
-						IPhysioLeistung pl = (IPhysioLeistung) billable;
-						double mult =
-							ArzttarifeUtil.getFactor(encounterDate, encounter.getCoverage());
-						Money preis = billed.getNetPrice();
+						double mult = billed.getFactor();
+						Money preis = billed.getScaledPrice();
 						double korr = preis.getCents() / mult;
 						el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
 						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480

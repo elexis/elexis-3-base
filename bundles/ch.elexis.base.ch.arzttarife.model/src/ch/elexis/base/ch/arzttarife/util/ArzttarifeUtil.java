@@ -1,27 +1,17 @@
 package ch.elexis.base.ch.arzttarife.util;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
-import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
-import ch.elexis.core.model.IBillingSystemFactor;
-import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
-import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.verrechnet.Constants;
-import ch.elexis.core.services.IQuery;
-import ch.elexis.core.services.IQuery.COMPARATOR;
 
 public class ArzttarifeUtil {
 	
@@ -51,45 +41,6 @@ public class ArzttarifeUtil {
 			return MandantType.valueOf((String) typeObj);
 		}
 		return MandantType.SPECIALIST;
-	}
-	
-	/**
-	 * Get the configured factor for the billing system of the {@link ICoverage} at the provided
-	 * date.
-	 * 
-	 * @param date
-	 * @param coverage
-	 * @return
-	 */
-	public static double getFactor(LocalDate date, ICoverage coverage){
-		Optional<IBillingSystemFactor> billingSystemFactor =
-			getBillingSystemFactor(coverage.getBillingSystem().getName(), date);
-		if (billingSystemFactor.isPresent()) {
-			return billingSystemFactor.get().getFactor();
-		}
-		LoggerFactory.getLogger(ArzttarifeUtil.class).warn("No IBillingSystemFactor for system ["
-			+ coverage.getBillingSystem().getName() + "] on [" + date + "]");
-		return 1.0;
-	}
-	
-	/**
-	 * Get a valid {@link IBillingSystemFactor} object that is matching the system and valid on the
-	 * provided date.
-	 * 
-	 * @param system
-	 * @param date
-	 * @return
-	 */
-	private static Optional<IBillingSystemFactor> getBillingSystemFactor(String system,
-		LocalDate date){
-		IQuery<IBillingSystemFactor> query =
-			CoreModelServiceHolder.get().getQuery(IBillingSystemFactor.class);
-		query.and(ModelPackage.Literals.IBILLING_SYSTEM_FACTOR__SYSTEM, COMPARATOR.EQUALS, system);
-		query.and(ModelPackage.Literals.IBILLING_SYSTEM_FACTOR__VALID_FROM,
-			COMPARATOR.LESS_OR_EQUAL, date);
-		query.and(ModelPackage.Literals.IBILLING_SYSTEM_FACTOR__VALID_TO,
-			COMPARATOR.GREATER_OR_EQUAL, date);
-		return query.executeSingleResult();
 	}
 	
 	/**

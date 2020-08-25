@@ -8,9 +8,10 @@
             locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-               icon="rsc/be_icon_16x16_pill.png"
-               label="BlueMedication Medikationsabgleich"
-               style="push">
+               icon="rsc/bmed_icon_abgleich.png"
+               label="BlueMedication Abgleich"
+               style="push"
+               tooltip="BlueMedication Abgleich">
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -44,9 +45,10 @@
             locationURI="toolbar:ch.elexis.omnivoredirect_view">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-               icon="rsc/be_icon_16x16_pill.png"
-               label="BlueMedication Medikationsabgleich"
-               style="push">
+               icon="rsc/bmed_icon_abgleich.png"
+               label="BlueMedication Abgleich"
+               style="push"
+               tooltip="BlueMedication Abgleich">
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -80,7 +82,7 @@
             locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
-               icon="rsc/be_icon_16x16_down.png"
+               icon="rsc/bmed_icon_extraktion.png"
                label="BlueMedication Medikationsimport"
                style="push">
             <visibleWhen
@@ -112,7 +114,7 @@
             locationURI="toolbar:ch.elexis.omnivoredirect_view">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationDownload"
-               icon="rsc/be_icon_16x16_down.png"
+               icon="rsc/bmed_icon_extraktion.png"
                label="BlueMedication Medikationsimport"
                style="push">
             <visibleWhen
@@ -144,9 +146,10 @@
             locationURI="toolbar:ch.elexis.omnivore.views.OmnivoreView">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-               icon="rsc/be_icon_16x16_pdf.png"
-               label="BlueMedication Medikationsextraktion"
-               style="push">
+               icon="rsc/bmed_icon_extraktion.png"
+               label="BlueMedication Extraktion"
+               style="push"
+               tooltip="BlueMedication Extraktion">
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -180,9 +183,10 @@
             locationURI="toolbar:ch.elexis.omnivoredirect_view">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationUpload"
-               icon="rsc/be_icon_16x16_pdf.png"
-               label="BlueMedication Medikationsextraktion"
-               style="push">
+               icon="rsc/bmed_icon_extraktion.png"
+               label="BlueMedication Extraktion"
+               style="push"
+               tooltip="BlueMedication Extraktion">
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -216,9 +220,10 @@
             locationURI="toolbar:ch.elexis.core.ui.medication.views.MedicationView">
          <command
                commandId="at.medevit.elexis.emediplan.ui.blueMedicationCheck"
-               icon="rsc/be_icon_16x16_exclam.png"
+               icon="rsc/bmed_icon_medicheck.png"
                label="BlueMedication Medikationscheck"
-               style="push">
+               style="push"
+               tooltip="BlueMedication Medikationscheck">
          </command>
       </menuContribution>
    </extension>

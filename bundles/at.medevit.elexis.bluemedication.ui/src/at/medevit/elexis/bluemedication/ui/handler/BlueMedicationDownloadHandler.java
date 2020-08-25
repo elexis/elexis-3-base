@@ -95,7 +95,7 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 		if (emediplan.isOK()) {
 			if (uploadResult.isUploadedMediplan()) {
 				if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Import",
-						"Möchten Sie die aktuelle Medikation mit dem erstellten eMediplan überschrieben?")) {
+						"Möchten Sie die aktuelle Medikation mit dem erstellten eMediplan überschreiben?")) {
 					Command directImportCommand = commandService
 							.getCommand("at.medevit.elexis.emediplan.ui.directImport");
 

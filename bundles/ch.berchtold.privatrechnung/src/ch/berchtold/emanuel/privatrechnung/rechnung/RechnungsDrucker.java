@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.util.ResultAdapter;
@@ -119,6 +120,7 @@ public class RechnungsDrucker implements IRnOutputter {
 									getDescription() + ": "
 										+ RnStatus.getStatusText(rn.getStatus()));
 							} catch (Exception ex) {
+								LoggerFactory.getLogger(getClass()).error("Error printing", ex);
 								SWTHelper.showError(
 									"Fehler beim Drucken der Rechnung " + rn.getRnId(),
 									ex.getMessage());

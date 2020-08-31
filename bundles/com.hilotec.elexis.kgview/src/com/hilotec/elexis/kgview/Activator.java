@@ -19,6 +19,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 
@@ -50,11 +51,11 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 		
 		// Falls noetig Dosierungen von Verschreibungen konvertieren
-		int ver = CoreHub.globalCfg.get(VERSION_SETTING, 0);
+		int ver = ConfigServiceHolder.getGlobal(VERSION_SETTING, 0);
 		if (ver < 1) {
 			System.out.println("Update");
 			updateDosierungen();
-			CoreHub.globalCfg.set(VERSION_SETTING, 1);
+			ConfigServiceHolder.setGlobal(VERSION_SETTING, 1);
 		}
 	}
 	

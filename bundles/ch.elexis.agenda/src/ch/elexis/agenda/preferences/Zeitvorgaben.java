@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 
 /**
@@ -67,7 +67,7 @@ public class Zeitvorgaben extends PreferencePage implements IWorkbenchPreference
 		Composite check = new Composite(parent, SWT.BORDER);
 		check.setLayout(new GridLayout());
 		bereiche =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.Zeitvorgaben_praxis)
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.Zeitvorgaben_praxis)
 				.split(",");
 		
 		table = new Table(check, SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL);

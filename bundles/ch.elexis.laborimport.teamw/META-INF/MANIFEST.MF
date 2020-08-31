@@ -15,4 +15,5 @@ Require-Bundle: ch.rgw.utility;bundle-version="2.0.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.data
-Import-Package: org.apache.commons.net.ftp
+Import-Package: ch.elexis.core.services.holder,
+ org.apache.commons.net.ftp

@@ -55,6 +55,7 @@ import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -109,7 +110,7 @@ public class AgendaGross extends BaseAgendaView {
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
 		String[] bereiche =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
 				.split(","); //$NON-NLS-1$
 		ChangeBereichAdapter chb = new ChangeBereichAdapter();
 		bChange = new Button[bereiche.length];

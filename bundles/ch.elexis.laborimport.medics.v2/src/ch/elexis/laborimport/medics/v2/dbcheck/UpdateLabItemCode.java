@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Query;
@@ -53,7 +54,7 @@ public class UpdateLabItemCode extends ExternalMaintenance {
 				notfound++;
 			}
 		}
-		CoreHub.globalCfg.set("ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode",
+		ConfigServiceHolder.setGlobal("ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode",
 			"done_" + LocalDateTime.now());
 		return "In " + items.size() + " Medics Parametern wurden " + updated + " angepasst, "
 			+ already + " waren bereits richtig und " + notfound
@@ -89,7 +90,7 @@ public class UpdateLabItemCode extends ExternalMaintenance {
 	}
 	
 	public static boolean wasExecuted(){
-		return CoreHub.globalCfg.get("ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode",
+		return ConfigServiceHolder.getGlobal("ch.elexis.laborimport.medics.v2.dbcheck.UpdateLabItemCode",
 			null) != null;
 	}
 	

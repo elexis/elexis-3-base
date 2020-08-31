@@ -29,6 +29,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -186,9 +187,9 @@ public class RnPrintView extends ViewPart {
 			Brief.RECHNUNG, adressat, rn.getNr());
 		fillFields();
 		ESR esr =
-			new ESR(CoreHub.globalCfg.get(PreferenceConstants.esrIdentity, ""),
-				CoreHub.globalCfg.get(PreferenceConstants.esrUser, ""), rn.getRnId(), 27);
-		Kontakt bank = Kontakt.load(CoreHub.globalCfg.get(PreferenceConstants.cfgBank, ""));
+			new ESR(ConfigServiceHolder.getGlobal(PreferenceConstants.esrIdentity, ""),
+				ConfigServiceHolder.getGlobal(PreferenceConstants.esrUser, ""), rn.getRnId(), 27);
+		Kontakt bank = Kontakt.load(ConfigServiceHolder.getGlobal(PreferenceConstants.cfgBank, ""));
 		if (!bank.isValid()) {
 			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 		}

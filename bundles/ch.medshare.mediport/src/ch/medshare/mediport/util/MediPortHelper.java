@@ -14,10 +14,10 @@ import org.osgi.framework.Bundle;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.constants.ExtensionPointConstantsData;
-import ch.elexis.core.ui.constants.ExtensionPointConstantsUi;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
-import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.data.util.Extensions;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.Log;
 import ch.medshare.mediport.config.Client;
 import ch.medshare.mediport.config.ClientParam;
@@ -57,7 +57,7 @@ public class MediPortHelper {
 		if (props == null) {
 			return null;
 		}
-		SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+		ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 		String prefix = getMandantPrefix(CoreHub.actMandant.getLabel());
 		String numStr = prefs.getString(prefix);
 		if (numStr != null && numStr.length() > 0) {

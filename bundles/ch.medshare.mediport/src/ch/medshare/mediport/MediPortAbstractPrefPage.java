@@ -7,8 +7,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.medshare.mediport.config.MPCProperties;
 
 public abstract class MediPortAbstractPrefPage extends PreferencePage implements
@@ -56,7 +56,8 @@ public abstract class MediPortAbstractPrefPage extends PreferencePage implements
 	public static final String LBL_SERVER_URL_TEST =
 		VALUE_SERVER_URL_TEST + ":" + Messages.MediPortAbstractPrefPage_lbl_TestServer; //$NON-NLS-1$
 	
-	protected final SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+	protected final ConfigServicePreferenceStore prefs =
+		new ConfigServicePreferenceStore(Scope.GLOBAL);
 	
 	MPCProperties props;
 	
@@ -90,7 +91,6 @@ public abstract class MediPortAbstractPrefPage extends PreferencePage implements
 	}
 	
 	protected void storePrefs(){
-		prefs.flush();
 	}
 	
 	@Override

@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.labor.medics.v2.MedicsActivator
 Bundle-Vendor: medshare.net
-Import-Package: ch.elexis.core.ui.importer.div.importers,
+Import-Package: ch.elexis.core.services.holder,
+ ch.elexis.core.ui.importer.div.importers,
  ch.elexis.core.ui.importer.div.importers.multifile.strategy
 

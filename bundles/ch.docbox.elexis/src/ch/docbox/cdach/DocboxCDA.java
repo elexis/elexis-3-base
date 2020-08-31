@@ -70,6 +70,7 @@ import org.w3c.dom.Element;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 /**
  * Utility to generate a CDA V1.1 compliant document according to the CDA-CH standard described at
@@ -715,11 +716,11 @@ public class DocboxCDA {
 	}
 	
 	private String getElexisInstallationId(){
-		return CoreHub.globalCfg.get(Preferences.INSTALLATION_TIMESTAMP, null);
+		return ConfigServiceHolder.getGlobal(Preferences.INSTALLATION_TIMESTAMP, null);
 	}
 	
 	private boolean isElexisInstallationIdAvailable(){
-		return CoreHub.globalCfg.get(Preferences.INSTALLATION_TIMESTAMP, null) != null;
+		return ConfigServiceHolder.getGlobal(Preferences.INSTALLATION_TIMESTAMP, null) != null;
 	}
 	
 	private boolean isOidMedelexisProjectAvailable(){

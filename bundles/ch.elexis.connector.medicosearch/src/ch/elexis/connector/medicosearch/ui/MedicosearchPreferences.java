@@ -18,8 +18,8 @@ import org.eclipse.wb.swt.ResourceManager;
 
 import ch.elexis.connector.medicosearch.MedicosearchUtil;
 import ch.elexis.connector.medicosearch.Messages;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class MedicosearchPreferences extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String CFG_MEDICOSEARCH_CONFIG = "medicosearch/config";
@@ -32,7 +32,7 @@ public class MedicosearchPreferences extends PreferencePage implements IWorkbenc
 	
 	@Override
 	public void init(IWorkbench workbench){
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		setImageDescriptor(ResourceManager.getPluginImageDescriptor(
 			"ch.elexis.connector.medicosearch", "icons/medicosearch.png"));
 			

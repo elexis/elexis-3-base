@@ -1,6 +1,6 @@
 package ch.elexis.privatrechnung.rechnung;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.text.ITextTemplateRequirement;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 
@@ -23,12 +23,12 @@ public class PrivaterechnungTextTemplateRequirement implements ITextTemplateRequ
 	}
 	
 	public static String getBillTemplate(){
-		return CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateBill,
+		return ConfigServiceHolder.getGlobal(PreferenceConstants.cfgTemplateBill,
 			PreferenceConstants.DEFAULT_TEMPLATE_BILL);
 	}
 	
 	public static String getESRTemplate(){
-		return CoreHub.globalCfg.get(PreferenceConstants.cfgTemplateESR,
+		return ConfigServiceHolder.getGlobal(PreferenceConstants.cfgTemplateESR,
 			PreferenceConstants.DEFAULT_TEMPLATE_ESR);
 	}
 }

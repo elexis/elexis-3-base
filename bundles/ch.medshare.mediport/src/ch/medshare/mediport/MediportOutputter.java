@@ -31,14 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IMandator;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
@@ -74,7 +74,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 	
 	ClientParam selectedParam;
 	
-	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 	
 	public Control createSettingsControl(Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);

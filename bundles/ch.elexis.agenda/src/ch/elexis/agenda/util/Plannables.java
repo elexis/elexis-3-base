@@ -13,9 +13,18 @@
 package ch.elexis.agenda.util;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +33,9 @@ import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Query;
-import ch.rgw.tools.Log;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -339,7 +347,7 @@ public final class Plannables {
 	public static Hashtable<String, String> getTimePrefFor(String mandantLabel){
 		Hashtable<String, String> map = new Hashtable<String, String>();
 		String mTimes =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, ""); //$NON-NLS-1$ //$NON-NLS-2$
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!StringTool.isNothing(mTimes)) {
 			String[] types = mTimes.split("::"); //$NON-NLS-1$
 			for (String t : types) {
@@ -367,14 +375,14 @@ public final class Plannables {
 				e.append("::"); //$NON-NLS-1$
 			}
 		}
-		CoreHub.globalCfg.set(
+		ConfigServiceHolder.setGlobal(
 			PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, e.toString()); //$NON-NLS-1$
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static Hashtable<String, String> getDayPrefFor(String mandantLabel){
 		Hashtable<String, String> map =
-			StringTool.foldStrings(CoreHub.globalCfg.get(PreferenceConstants.AG_DAYPREFERENCES
+			StringTool.foldStrings(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAYPREFERENCES
 				+ "/" //$NON-NLS-1$
 				+ mandantLabel, null));
 		return map == null ? new Hashtable<String, String>() : map;
@@ -382,6 +390,6 @@ public final class Plannables {
 	
 	public static void setDayPrefFor(String mandantLabel, Hashtable<String, String> map){
 		String flat = StringTool.flattenStrings(map);
-		CoreHub.globalCfg.set(PreferenceConstants.AG_DAYPREFERENCES + "/" + mandantLabel, flat); //$NON-NLS-1$
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAYPREFERENCES + "/" + mandantLabel, flat); //$NON-NLS-1$
 	}
 }

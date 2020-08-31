@@ -42,7 +42,7 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
@@ -81,7 +81,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			}
 		}
 		String startOfDayTimeInMinutes =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 		int dayStartHour = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 		
 		int minute = (int) Math.round(y / ppm);
@@ -271,14 +271,14 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			ppm = AgendaParallel.getPixelPerMinute();
 			
 			String startOfDayTimeInMinutes =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 			int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 			int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 			int sodtM = (sodtHours * 60);
 			sodtM += sodtMinutes;
 			
 			String endOfDayTimeInMinutes =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 			int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0, 2));
 			int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
 			int eodtM = (eodtHours * 60);
@@ -340,11 +340,11 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			int y = 0;
 			TimeTool runner = new TimeTool();
 			String dayStartsAt =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 			runner.set(dayStartsAt); //$NON-NLS-1$
 			
 			String dayEndsAt =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 			TimeTool limit = new TimeTool(dayEndsAt); //$NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;

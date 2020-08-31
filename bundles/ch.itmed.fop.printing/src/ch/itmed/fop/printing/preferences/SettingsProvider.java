@@ -12,6 +12,7 @@
 package ch.itmed.fop.printing.preferences;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.rgw.io.Settings;
 
 public final class SettingsProvider {
@@ -48,7 +49,7 @@ public final class SettingsProvider {
 		for (String doc : PreferenceConstants.getDocumentNames()) {
 			for (int i = indexBegin; i < indexEnd + 1; i++) {
 				String constant = PreferenceConstants.getDocPreferenceConstant(doc, i);
-				CoreHub.localCfg.set(constant, CoreHub.globalCfg.get(constant, ""));
+				CoreHub.localCfg.set(constant, ConfigServiceHolder.getGlobal(constant, ""));
 			}
 		}
 		CoreHub.localCfg.flush();

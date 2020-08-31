@@ -55,6 +55,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
 import io.swagger.client.ApiClient;
@@ -98,10 +99,10 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			oldProxyPort = systemSettings.getProperty("http.proxyPort"); //$NON-NLS-1$
 			
 			// set new values
-			systemSettings.put("http.proxyHost", CoreHub.globalCfg.get( //$NON-NLS-1$
+			systemSettings.put("http.proxyHost", ConfigServiceHolder.getGlobal( //$NON-NLS-1$
 				BlueMedicationConstants.CFG_HIN_PROXY_HOST,
 				BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST));
-			systemSettings.put("http.proxyPort", CoreHub.globalCfg.get( //$NON-NLS-1$
+			systemSettings.put("http.proxyPort", ConfigServiceHolder.getGlobal( //$NON-NLS-1$
 				BlueMedicationConstants.CFG_HIN_PROXY_PORT,
 				BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT));
 			System.setProperties(systemSettings);
@@ -367,7 +368,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	}
 	
 	private String getBasePath(){
-		if (CoreHub.globalCfg.get(BlueMedicationConstants.CFG_URL_STAGING, false)) {
+		if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
 			return "http://staging.bluemedication.hin.ch";
 		} else {
 			return "http://bluemedication.hin.ch";
@@ -461,7 +462,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	}
 	
 	private boolean useRemoteImport(){
-		return CoreHub.globalCfg.get(BlueMedicationConstants.CFG_USE_IMPORT, false);
+		return ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_USE_IMPORT, false);
 	}
 	
 	private boolean hasPrescriptionsWithValidIdType(IPatient patient) {
@@ -521,9 +522,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			logger.info("Start polling for [" + uploadResult.getId() + "]");
 			// configure HIN proxy for apache http client 
 			HttpHost proxy = new HttpHost(
-				CoreHub.globalCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
+				ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
 					BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST),
-				Integer.parseInt(CoreHub.globalCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
+				Integer.parseInt(ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
 					BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT)),
 				"http");
 			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);

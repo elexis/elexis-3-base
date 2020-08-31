@@ -26,6 +26,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.iatrix.messwerte.Constants;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Query;
@@ -106,7 +107,7 @@ public class MesswertePreferences extends PreferencePage implements IWorkbenchPr
 		java.util.List<Labor> labors = new ArrayList<Labor>();
 		
 		String localLabors =
-			CoreHub.globalCfg.get(Constants.CFG_LOCAL_LABORS, Constants.CFG_DEFAULT_LOCAL_LABORS);
+			ConfigServiceHolder.getGlobal(Constants.CFG_LOCAL_LABORS, Constants.CFG_DEFAULT_LOCAL_LABORS);
 		String[] laborIds = localLabors.split("\\s*,\\s*");
 		for (String laborId : laborIds) {
 			if (!StringTool.isNothing(laborId)) {
@@ -137,7 +138,7 @@ public class MesswertePreferences extends PreferencePage implements IWorkbenchPr
 		}
 		
 		String cfgValue = StringTool.join(selectedLaborsIds, ",");
-		CoreHub.globalCfg.set(Constants.CFG_LOCAL_LABORS, cfgValue);
+		ConfigServiceHolder.setGlobal(Constants.CFG_LOCAL_LABORS, cfgValue);
 		
 		if (spinnerNoCol.getSelection() != CoreHub.localCfg.get(
 			Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS,

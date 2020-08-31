@@ -28,3 +28,4 @@ Export-Package: ch.docbox.cdach,
  ch.docbox.elexis,
  ch.docbox.ws.cdachservices,
  ch.swissmedicalsuite
+Import-Package: ch.elexis.core.services.holder

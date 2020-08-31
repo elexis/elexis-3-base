@@ -30,13 +30,15 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.agenda.Messages;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.agenda.AreaType;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.AddStringEntryAction;
 import ch.elexis.core.ui.actions.MoveEntryWithinListAction;
 import ch.elexis.core.ui.actions.RemoveSelectedEntriesAction;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.dialogs.provider.ILocalizedEnumLabelProvider;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
@@ -44,7 +46,7 @@ import ch.elexis.data.Kontakt;
 public class AgendaDefinitionPreferencePage extends PreferencePage
 		implements IWorkbenchPreferencePage {
 	
-	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 	
 	private Link linkAreaTypeValue;
 	private ListViewer listViewerArea;
@@ -63,11 +65,11 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 	public AgendaDefinitionPreferencePage(){
 		setPreferenceStore(prefs);
 		setDescription(Messages.AgendaDefinitionen_defForAgenda);
-		areas = new ArrayList<String>(CoreHub.globalCfg.getAsList(PreferenceConstants.AG_BEREICHE));
+		areas = new ArrayList<String>(ConfigServiceHolder.getGlobalAsList(PreferenceConstants.AG_BEREICHE));
 		appointmentTypes =
-			new ArrayList<String>(CoreHub.globalCfg.getAsList(PreferenceConstants.AG_TERMINTYPEN));
+			new ArrayList<String>(ConfigServiceHolder.getGlobalAsList(PreferenceConstants.AG_TERMINTYPEN));
 		appointmentStatus =
-			new ArrayList<String>(CoreHub.globalCfg.getAsList(PreferenceConstants.AG_TERMINSTATUS));
+			new ArrayList<String>(ConfigServiceHolder.getGlobalAsList(PreferenceConstants.AG_TERMINSTATUS));
 	}
 	
 	/**
@@ -94,7 +96,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 		listViewerArea.setContentProvider(ArrayContentProvider.getInstance());
 		listViewerArea.setLabelProvider(new LabelProvider());
 		listViewerArea.addSelectionChangedListener(sc -> {
-			String type = CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICH_PREFIX
+			String type = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICH_PREFIX
 				+ sc.getStructuredSelection().getFirstElement()
 				+ PreferenceConstants.AG_BEREICH_TYPE_POSTFIX, null);
 			if (type != null) {
@@ -267,7 +269,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 			+ PreferenceConstants.AG_BEREICH_TYPE_POSTFIX;
 		switch (areaType) {
 		case CONTACT:
-			CoreHub.globalCfg.set(key, areaType.name() + "/" + value);
+			ConfigServiceHolder.setGlobal(key, areaType.name() + "/" + value);
 			break;
 		default:
 			CoreHub.globalCfg.remove(key);
@@ -282,9 +284,9 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 	
 	@Override
 	protected void performApply(){
-		CoreHub.globalCfg.setAsList(PreferenceConstants.AG_BEREICHE, areas);
-		CoreHub.globalCfg.setAsList(PreferenceConstants.AG_TERMINTYPEN, appointmentTypes);
-		CoreHub.globalCfg.setAsList(PreferenceConstants.AG_TERMINSTATUS, appointmentStatus);
+		ConfigServiceHolder.setGlobalAsList(PreferenceConstants.AG_BEREICHE, areas);
+		ConfigServiceHolder.setGlobalAsList(PreferenceConstants.AG_TERMINTYPEN, appointmentTypes);
+		ConfigServiceHolder.setGlobalAsList(PreferenceConstants.AG_TERMINSTATUS, appointmentStatus);
 		CoreHub.localCfg.set(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
 			btnAvoidDoubleBooking.getSelection());
 		CoreHub.localCfg.flush();

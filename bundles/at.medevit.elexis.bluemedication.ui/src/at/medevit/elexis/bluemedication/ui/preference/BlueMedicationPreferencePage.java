@@ -7,15 +7,16 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class BlueMedicationPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 	
 	public BlueMedicationPreferencePage(){
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		setDescription("BlueMedication Einstellungen");
 	}
 	
@@ -37,15 +38,15 @@ public class BlueMedicationPreferencePage extends FieldEditorPreferencePage
 	@Override
 	public void init(IWorkbench workbench){
 		String initialvalue =
-			CoreHub.globalCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_HOST, null);
+			ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_HIN_PROXY_HOST, null);
 		if (initialvalue == null) {
-			CoreHub.globalCfg.set(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
+			ConfigServiceHolder.setGlobal(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
 				BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST);
 		}
 		
-		initialvalue = CoreHub.globalCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_PORT, null);
+		initialvalue = ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_HIN_PROXY_PORT, null);
 		if (initialvalue == null) {
-			CoreHub.globalCfg.set(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
+			ConfigServiceHolder.setGlobal(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
 				BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT);
 		}
 	}

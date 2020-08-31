@@ -8,6 +8,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class PreferenceUtil {
 	
@@ -18,7 +19,7 @@ public class PreferenceUtil {
 	
 	public static List<Receiver> getReceivers(){
 		List<Receiver> ret = new ArrayList<>();
-		String receiversString = CoreHub.globalCfg.get(PREF_RECEIVERS, null);
+		String receiversString = ConfigServiceHolder.getGlobal(PREF_RECEIVERS, null);
 		if (receiversString != null && !receiversString.isEmpty()) {
 			String[] receiversParts = receiversString.split("\\|\\|");
 			if (receiversParts != null) {
@@ -48,7 +49,7 @@ public class PreferenceUtil {
 		for (Receiver receiver : receivers) {
 			sj.add(receiver.toString());
 		}
-		CoreHub.globalCfg.set(PREF_RECEIVERS, sj.toString());
+		ConfigServiceHolder.setGlobal(PREF_RECEIVERS, sj.toString());
 	}
 	
 	public static Optional<File> getOutputDirectory(){

@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -85,7 +86,7 @@ public class ExportFireHandler extends AbstractHandler {
 	 */
 	public static TimeTool getTtFrom() {
 		TimeTool ttFrom = new TimeTool("20180101");
-		String lastupdate = CoreHub.globalCfg.get(Preferences.CFGPARAM, null);
+		String lastupdate = ConfigServiceHolder.getGlobal(Preferences.CFGPARAM, null);
 		if (lastupdate != null) {
 			ttFrom = new TimeTool(lastupdate);
 		}
@@ -198,7 +199,7 @@ public class ExportFireHandler extends AbstractHandler {
 						try (FileOutputStream fout = new FileOutputStream(new File(exportPath))) {
 							XmlUtil.marshallFireReport(report.get(), fout);
 							// update last export date
-							CoreHub.globalCfg.set(Preferences.CFGPARAM, new TimeTool().toString(TimeTool.DATE_COMPACT));
+							ConfigServiceHolder.setGlobal(Preferences.CFGPARAM, new TimeTool().toString(TimeTool.DATE_COMPACT));
 						} catch (IOException e) {
 							openError("Error", "Error writing report, see logs for details.");
 							logger.error("Error writing report.", e);

@@ -23,6 +23,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Kontakt;
 import ch.rgw.tools.TimeTool;
@@ -88,7 +89,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	public String[] getResources(){
-		return CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
+		return ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 	}
 	
 	public String getActResource(){

@@ -3,6 +3,7 @@ package at.medevit.elexis.gdt.defaultfilecp;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.activator.CoreHubHelper;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.rgw.io.Settings;
 
@@ -115,11 +116,11 @@ public class FileCommPartner {
 	}
 	
 	public static boolean isFileTransferGlobalConfigured(){
-		return CoreHub.globalCfg.get(FileCommPartner.CFG_GDT_FILETRANSFER_GLOBAL, false);
+		return ConfigServiceHolder.getGlobal(FileCommPartner.CFG_GDT_FILETRANSFER_GLOBAL, false);
 	}
 	
 	public static void setFileTransferConfiguration(boolean global){
-		CoreHub.globalCfg.set(FileCommPartner.CFG_GDT_FILETRANSFER_GLOBAL, global);
+		ConfigServiceHolder.setGlobal(FileCommPartner.CFG_GDT_FILETRANSFER_GLOBAL, global);
 	}
 	
 	public static String[] getAllFileCommPartnersArray(){

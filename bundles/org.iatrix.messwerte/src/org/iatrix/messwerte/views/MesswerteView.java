@@ -71,6 +71,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.model.LabResultConstants;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.types.PathologicDescription;
 import ch.elexis.core.types.PathologicDescription.Description;
@@ -757,7 +758,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, ISav
 		ownLabors = new ArrayList<Labor>();
 		
 		String localLabors =
-			CoreHub.globalCfg.get(Constants.CFG_LOCAL_LABORS, Constants.CFG_DEFAULT_LOCAL_LABORS);
+			ConfigServiceHolder.getGlobal(Constants.CFG_LOCAL_LABORS, Constants.CFG_DEFAULT_LOCAL_LABORS);
 		String[] laborIds = localLabors.split("\\s*,\\s*");
 		for (String laborId : laborIds) {
 			if (!StringTool.isNothing(laborId)) {

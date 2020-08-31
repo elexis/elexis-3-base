@@ -7,8 +7,8 @@ import java.math.BigInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IPersistentObject;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
@@ -99,7 +99,7 @@ public class FireConfig {
 	}
 	
 	private String getOrFail(String prefs){
-		String ret = CoreHub.globalCfg.get(prefs, null);
+		String ret = ConfigServiceHolder.getGlobal(prefs, null);
 		return ret;
 	}
 	

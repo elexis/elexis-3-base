@@ -23,6 +23,7 @@ import org.junit.Test;
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -82,12 +83,12 @@ public class FireExportTest {
 	}
 	
 	private static void configureExporter(){
-		CoreHub.globalCfg.set(Preferences.CFG_BD_SYST, "Vitaldaten:Systolisch");
-		CoreHub.globalCfg.set(Preferences.CFG_BD_DIAST, "Vitaldaten:Diastolisch");
-		CoreHub.globalCfg.set(Preferences.CFG_PULS, "Vitaldaten:Puls");
-		CoreHub.globalCfg.set(Preferences.CFG_HEIGHT, "Vitaldaten:Grösse");
-		CoreHub.globalCfg.set(Preferences.CFG_WEIGHT, "Vitaldaten:Gewicht");
-		CoreHub.globalCfg.set(Preferences.CFG_BU, "Vitaldaten:Bauchumfang-Diabetiker");
+		ConfigServiceHolder.setGlobal(Preferences.CFG_BD_SYST, "Vitaldaten:Systolisch");
+		ConfigServiceHolder.setGlobal(Preferences.CFG_BD_DIAST, "Vitaldaten:Diastolisch");
+		ConfigServiceHolder.setGlobal(Preferences.CFG_PULS, "Vitaldaten:Puls");
+		ConfigServiceHolder.setGlobal(Preferences.CFG_HEIGHT, "Vitaldaten:Grösse");
+		ConfigServiceHolder.setGlobal(Preferences.CFG_WEIGHT, "Vitaldaten:Gewicht");
+		ConfigServiceHolder.setGlobal(Preferences.CFG_BU, "Vitaldaten:Bauchumfang-Diabetiker");
 	}
 	
 	@Test
@@ -97,7 +98,7 @@ public class FireExportTest {
 		assertEquals(1, report.getConsultations().getConsultation().size());
 		assertEquals(1,
 			report.getConsultations().getConsultation().get(0).getMedis().getMedi().size());
-		CoreHub.globalCfg.set("ICPC_FIRE_LAST_UPLOAD",
+		ConfigServiceHolder.setGlobal("ICPC_FIRE_LAST_UPLOAD",
 			new TimeTool("20180101").toString(TimeTool.DATE_COMPACT));
 		
 		TConsultation tConsultation = report.getConsultations().getConsultation().get(0);
@@ -111,7 +112,7 @@ public class FireExportTest {
 		// perform another export with no changes
 		report = exportAll();
 		assertNull(report.getConsultations());
-		CoreHub.globalCfg.set("ICPC_FIRE_LAST_UPLOAD",
+		ConfigServiceHolder.setGlobal("ICPC_FIRE_LAST_UPLOAD",
 			new TimeTool("20180201").toString(TimeTool.DATE_COMPACT));
 		
 		// now stop the medication, add another unreferenced for fun
@@ -128,7 +129,7 @@ public class FireExportTest {
 			report.getConsultations().getConsultation().get(0).getMedis().getMedi().size());
 		assertEquals(1,
 			report.getConsultations().getConsultation().get(1).getMedis().getMedi().size());
-		CoreHub.globalCfg.set("ICPC_FIRE_LAST_UPLOAD",
+		ConfigServiceHolder.setGlobal("ICPC_FIRE_LAST_UPLOAD",
 			new TimeTool("20180301").toString(TimeTool.DATE_COMPACT));
 		
 		// perform another export with no changes

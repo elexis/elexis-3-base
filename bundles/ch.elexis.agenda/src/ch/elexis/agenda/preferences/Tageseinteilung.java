@@ -47,6 +47,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.agenda.util.TermineLockedTimesUpdater;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
@@ -72,7 +73,7 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 	public Tageseinteilung(){
 		super(Messages.Tageseinteilung_dayPlanning);
 		bereiche =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.Tageseinteilung_praxis)
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.Tageseinteilung_praxis)
 				.split(","); //$NON-NLS-1$
 		actBereich = 0;
 	}
@@ -328,10 +329,10 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		tSo.setText(p == null ? "0000-2359" : p); //$NON-NLS-1$
 		
 		String sodtString =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 		sodt.setText(sodtString);
 		String eodtString =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 		eodt.setText(eodtString);
 		
 	}
@@ -347,8 +348,8 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		map.put(Messages.Tageseinteilung_su, tSo.getText());
 		Plannables.setDayPrefFor(bereiche[actBereich], map);
 		
-		CoreHub.globalCfg.set(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, sodt.getText());
-		CoreHub.globalCfg.set(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, eodt.getText());
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, sodt.getText());
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, eodt.getText());
 		CoreHub.globalCfg.flush();
 	}
 	

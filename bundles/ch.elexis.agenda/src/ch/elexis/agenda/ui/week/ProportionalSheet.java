@@ -37,6 +37,7 @@ import ch.elexis.agenda.ui.BaseView;
 import ch.elexis.agenda.ui.IAgendaLayout;
 import ch.elexis.agenda.ui.TerminLabel;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TerminDialog;
@@ -169,14 +170,14 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			ppm = BaseView.getPixelPerMinute();
 			
 			String startOfDayTimeInMinutes =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 			int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 			int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 			int sodtM = (sodtHours * 60);
 			sodtM += sodtMinutes;
 			
 			String endOfDayTimeInMinutes =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 			int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0, 2));
 			int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
 			int eodtM = (eodtHours * 60);
@@ -241,11 +242,11 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			TimeTool runner = new TimeTool();
 			
 			String dayStartsAt =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 			runner.set(dayStartsAt); //$NON-NLS-1$
 			
 			String dayEndsAt =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 			TimeTool limit = new TimeTool(dayEndsAt); //$NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;

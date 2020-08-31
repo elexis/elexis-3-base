@@ -17,6 +17,33 @@ import java.io.FileOutputStream;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.tiff.common.ui.datepicker.DatePickerCombo;
+
+import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Query;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.data.ParserException;
@@ -37,34 +64,6 @@ import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
-import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
-
-import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 /**
  * Convert appointments to and frim ICal-Format
@@ -87,7 +86,7 @@ public class ICalTransfer {
 	
 	public ICalTransfer(){
 		bereiche =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 	}
 	
 	/**

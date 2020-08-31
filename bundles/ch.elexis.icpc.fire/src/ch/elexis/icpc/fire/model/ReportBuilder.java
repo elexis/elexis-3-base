@@ -11,8 +11,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.ISticker;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -135,7 +135,7 @@ public class ReportBuilder {
 		List<ISticker> stickers = patient.getStickers();
 		for (ISticker iSticker : stickers) {
 			String stickerId = ((Sticker) iSticker).getId();
-			if (CoreHub.globalCfg.get(Preferences.CFG_BASE_IS_HAM_STICKER + stickerId, false)) {
+			if (ConfigServiceHolder.getGlobal(Preferences.CFG_BASE_IS_HAM_STICKER + stickerId, false)) {
 				mc = true;
 				break;
 			}

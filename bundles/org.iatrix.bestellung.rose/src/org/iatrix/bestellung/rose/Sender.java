@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Properties;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.core.ui.exchange.elements.XChangeElement;
@@ -66,9 +67,9 @@ public class Sender implements IDataSender {
 		
 		// set new values
 		systemSettings.put("http.proxyHost",
-			CoreHub.globalCfg.get(Constants.CFG_ASAS_PROXY_HOST, DEFAULT_ASAS_PROXY_HOST));
+			ConfigServiceHolder.getGlobal(Constants.CFG_ASAS_PROXY_HOST, DEFAULT_ASAS_PROXY_HOST));
 		systemSettings.put("http.proxyPort",
-			CoreHub.globalCfg.get(Constants.CFG_ASAS_PROXY_PORT, DEFAULT_ASAS_PROXY_PORT));
+			ConfigServiceHolder.getGlobal(Constants.CFG_ASAS_PROXY_PORT, DEFAULT_ASAS_PROXY_PORT));
 		System.setProperties(systemSettings);
 		
 		try {
@@ -181,7 +182,7 @@ public class Sender implements IDataSender {
 				"Kundennummer ist nicht konfiguriert. (Einstellungen/Datenaustausch/zur Rose (Bestellungen))");
 		}
 		
-		String supplier = CoreHub.globalCfg.get(Constants.CFG_ROSE_SUPPLIER, null);
+		String supplier = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, null);
 		String selDialogTitle = "Kein 'Zur Rose' Lieferant definiert";
 		Kontakt roseSupplier = BestellView.resolveDefaultSupplier(supplier, selDialogTitle);
 		if (roseSupplier == null || !roseSupplier.exists()) {

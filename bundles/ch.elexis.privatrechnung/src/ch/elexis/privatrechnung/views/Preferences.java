@@ -29,7 +29,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	public Preferences(){
 		super(GRID);
-		// cfg=CoreHub.globalCfg.getBranch(PreferenceConstants.cfgBase, true);
+		// cfg=ConfigServiceHolder.getGlobalBranch(PreferenceConstants.cfgBase, true);
 		cfg = CoreHub.globalCfg;
 		setPreferenceStore(new SettingsPreferenceStore(cfg));
 	}

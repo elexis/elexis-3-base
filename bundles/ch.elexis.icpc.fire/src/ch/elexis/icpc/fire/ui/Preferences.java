@@ -23,7 +23,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.DateTimeFieldEditor;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
@@ -91,7 +92,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	}
 	
 	public void init(IWorkbench workbench){
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		// default date must be specified otherwise DateTimeFieldEditor shows the current date for null
 		getPreferenceStore().setDefault(CFGPARAM, "20180101");
 	}

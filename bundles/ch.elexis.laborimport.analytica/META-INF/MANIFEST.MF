@@ -17,3 +17,4 @@ Require-Bundle: ch.rgw.utility,
 Bundle-ClassPath: .
 Export-Package: ch.elexis.laborimport.analytica
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: ch.elexis.core.services.holder

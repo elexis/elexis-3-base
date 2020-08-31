@@ -48,6 +48,7 @@ import ch.elexis.core.data.util.UtilFile;
 import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.importer.div.importers.multifile.strategy.DefaultImportStrategyFactory;
 import ch.elexis.core.ui.util.ImporterPage;
@@ -107,7 +108,7 @@ public class Importer extends ImporterPage {
 	}
 	
 	private Result<?> importDirect(){
-		String batchOrFtp = CoreHub.globalCfg.get(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
+		String batchOrFtp = ConfigServiceHolder.getGlobal(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
 		if (PreferencePage.BATCH.equals(batchOrFtp)) {
 			return importDirectBatch();
 		}
@@ -120,12 +121,12 @@ public class Importer extends ImporterPage {
 			new Result<String>(ch.elexis.laborimport.teamw.Messages.Importer_ok); //$NON-NLS-1$
 		
 		String ftpHost =
-			CoreHub.globalCfg.get(PreferencePage.FTP_HOST, PreferencePage.DEFAULT_FTP_HOST);
+			ConfigServiceHolder.getGlobal(PreferencePage.FTP_HOST, PreferencePage.DEFAULT_FTP_HOST);
 		String user =
-			CoreHub.globalCfg.get(PreferencePage.FTP_USER, PreferencePage.DEFAULT_FTP_USER);
-		String pwd = CoreHub.globalCfg.get(PreferencePage.FTP_PWD, PreferencePage.DEFAULT_FTP_PWD);
+			ConfigServiceHolder.getGlobal(PreferencePage.FTP_USER, PreferencePage.DEFAULT_FTP_USER);
+		String pwd = ConfigServiceHolder.getGlobal(PreferencePage.FTP_PWD, PreferencePage.DEFAULT_FTP_PWD);
 		String downloadDir =
-			UtilFile.getCorrectPath(CoreHub.globalCfg.get(PreferencePage.DL_DIR,
+			UtilFile.getCorrectPath(ConfigServiceHolder.getGlobal(PreferencePage.DL_DIR,
 				PreferencePage.DEFAULT_DL_DIR));
 		
 		FtpServer ftp = new FtpServer();
@@ -190,9 +191,9 @@ public class Importer extends ImporterPage {
 			new Result<String>(ch.elexis.laborimport.teamw.Messages.Importer_ok); //$NON-NLS-1$
 		
 		String batchFile =
-			UtilFile.getCorrectPath(CoreHub.globalCfg.get(PreferencePage.BATCH_DATEI, "")); //$NON-NLS-1$
+			UtilFile.getCorrectPath(ConfigServiceHolder.getGlobal(PreferencePage.BATCH_DATEI, "")); //$NON-NLS-1$
 		String downloadDir =
-			UtilFile.getCorrectPath(CoreHub.globalCfg.get(PreferencePage.DL_DIR,
+			UtilFile.getCorrectPath(ConfigServiceHolder.getGlobal(PreferencePage.DL_DIR,
 				PreferencePage.DEFAULT_DL_DIR));
 		
 		if (batchFile == null || batchFile.length() == 0) {
@@ -336,7 +337,7 @@ public class Importer extends ImporterPage {
 			bBrowse.setText(Messages.ImporterPage_browse); //$NON-NLS-1$
 			
 			String batchOrFtp =
-				CoreHub.globalCfg.get(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
+				ConfigServiceHolder.getGlobal(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
 			String direktHerkunft =
 				ch.elexis.laborimport.teamw.Messages.Importer_ftp_label; //$NON-NLS-1$
 			if (PreferencePage.BATCH.equals(batchOrFtp)) {

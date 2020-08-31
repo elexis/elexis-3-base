@@ -11,14 +11,15 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.KontaktFieldEditor;
 
 public class RosePreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	public RosePreferences(){
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		setDescription("Einstellung zur Bestellung bei der Apotheke zur Rose");
 	}
 	

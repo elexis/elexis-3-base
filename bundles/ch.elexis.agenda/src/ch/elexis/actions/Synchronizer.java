@@ -27,8 +27,7 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.preferences.CorePreferenceInitializer;
-import ch.elexis.core.ui.Hub;
-import ch.elexis.core.ui.preferences.PreferenceInitializer;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -64,13 +63,13 @@ public class Synchronizer {
 	 */
 	public Synchronizer(){
 		
-		if (CoreHub.globalCfg.get(PreferenceConstants.AG_SYNC_ENABLED, false) == true) {
+		if (ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_ENABLED, false) == true) {
 			String base = CorePreferenceInitializer.getDefaultDBPath();
-			String typ = CoreHub.globalCfg.get(PreferenceConstants.AG_SYNC_TYPE, "hsqldb"); //$NON-NLS-1$
+			String typ = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_TYPE, "hsqldb"); //$NON-NLS-1$
 			String connect =
-				CoreHub.globalCfg.get(PreferenceConstants.AG_SYNC_CONNECTOR,
+				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_CONNECTOR,
 					"jdbc:hsqldb:" + base + "/db"); //$NON-NLS-1$ //$NON-NLS-2$
-			String dbhost = CoreHub.globalCfg.get(PreferenceConstants.AG_SYNC_HOST, "localhost"); //$NON-NLS-1$
+			String dbhost = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_HOST, "localhost"); //$NON-NLS-1$
 			
 			if (typ.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
 				sync = JdbcLink.createMySqlLink(dbhost, connect);
@@ -82,8 +81,8 @@ public class Synchronizer {
 				sync = null;
 			}
 			if (sync != null) {
-				if (!sync.connect(CoreHub.globalCfg.get(PreferenceConstants.AG_SYNC_DBUSER, "sa"), //$NON-NLS-1$
-					CoreHub.globalCfg.get(PreferenceConstants.AG_SYNC_DBPWD, ""))) { //$NON-NLS-1$
+				if (!sync.connect(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_DBUSER, "sa"), //$NON-NLS-1$
+					ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_DBPWD, ""))) { //$NON-NLS-1$
 					log.warn(Messages.Synchronizer_connctNotSuccessful + sync.lastErrorString);
 					sync = null;
 				} else {
@@ -270,7 +269,7 @@ public class Synchronizer {
 	@SuppressWarnings("unchecked")
 	public static Hashtable<String, String> getBereichMapping(){
 		Hashtable<String, String> ret =
-			StringTool.foldStrings(CoreHub.globalCfg.get(PreferenceConstants.AG_SYNC_MAPPING, null));
+			StringTool.foldStrings(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_MAPPING, null));
 		if (ret == null) {
 			ret = new Hashtable<String, String>();
 		}
@@ -278,7 +277,7 @@ public class Synchronizer {
 	}
 	
 	public static void setBereichMapping(final Hashtable<String, String> map){
-		CoreHub.globalCfg.set(PreferenceConstants.AG_SYNC_MAPPING, StringTool.flattenStrings(map));
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_SYNC_MAPPING, StringTool.flattenStrings(map));
 	}
 	
 }

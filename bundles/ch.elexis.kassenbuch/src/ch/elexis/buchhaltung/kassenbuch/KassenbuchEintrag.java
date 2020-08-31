@@ -15,6 +15,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
@@ -269,27 +270,27 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 	}
 	
 	public static String[] getCategories(){
-		String cats = CoreHub.globalCfg.get(CATEGORIES, "");
+		String cats = ConfigServiceHolder.getGlobal(CATEGORIES, "");
 		return cats.split(GLOBAL_CFG_SEPARATOR);
 	}
 	
 	public static void addKategorie(String cat){
-		String updatedCats = append(cat, CoreHub.globalCfg.get(CATEGORIES, ""));
+		String updatedCats = append(cat, ConfigServiceHolder.getGlobal(CATEGORIES, ""));
 		
 		if (updatedCats != null)
-			CoreHub.globalCfg.set(CATEGORIES, updatedCats);
+			ConfigServiceHolder.setGlobal(CATEGORIES, updatedCats);
 	}
 	
 	public static String[] getPaymentModes(){
-		String payments = CoreHub.globalCfg.get(PAYMENT_MODES, "");
+		String payments = ConfigServiceHolder.getGlobal(PAYMENT_MODES, "");
 		return payments.split(GLOBAL_CFG_SEPARATOR);
 	}
 	
 	public static void addPaymentMode(String payment){
-		String updatedPaymentModes = append(payment, CoreHub.globalCfg.get(PAYMENT_MODES, ""));
+		String updatedPaymentModes = append(payment, ConfigServiceHolder.getGlobal(PAYMENT_MODES, ""));
 		
 		if (updatedPaymentModes != null)
-			CoreHub.globalCfg.set(PAYMENT_MODES, updatedPaymentModes);
+			ConfigServiceHolder.setGlobal(PAYMENT_MODES, updatedPaymentModes);
 		
 	}
 	

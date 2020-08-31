@@ -26,10 +26,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.Log;
-import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 
 /**
@@ -163,7 +162,7 @@ public class ArchieActivator extends AbstractUIPlugin {
 	@Override
 	public IPreferenceStore getPreferenceStore() {
 		if (ArchieActivator.PREFERENCE_STORE == null) {
-			ArchieActivator.PREFERENCE_STORE = new SettingsPreferenceStore(CoreHub.globalCfg);
+			ArchieActivator.PREFERENCE_STORE = new ConfigServicePreferenceStore(Scope.GLOBAL);
 		}
 		return ArchieActivator.PREFERENCE_STORE;
 	}

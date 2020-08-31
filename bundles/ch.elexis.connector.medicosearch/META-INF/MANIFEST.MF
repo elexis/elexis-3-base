@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core.ui,
  ch.elexis.core.data,
  ch.rgw.utility
-Import-Package: org.eclipse.wb.swt
+Import-Package: ch.elexis.core.services.holder,
+ org.eclipse.wb.swt
 Bundle-ClassPath: .
 Eclipse-BundleShape: dir

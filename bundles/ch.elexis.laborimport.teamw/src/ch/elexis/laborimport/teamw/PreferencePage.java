@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.InexistingDirectoryOKDirectoryFieldEditor;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -43,7 +43,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String DEFAULT_FTP_PWD = ""; //$NON-NLS-1$
 	public static final String DEFAULT_DL_DIR = "/tmp/teamw"; //$NON-NLS-1$
 	
-	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 	
 	public PreferencePage(){
 		super(GRID);

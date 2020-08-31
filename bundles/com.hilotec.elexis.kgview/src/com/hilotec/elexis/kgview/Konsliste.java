@@ -23,10 +23,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import com.hilotec.elexis.kgview.data.KonsData;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
 import ch.elexis.core.ui.icons.Images;
@@ -110,7 +110,7 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 		// Label provider um mehrzeilige Zellen zu erlauben
 		tv.setLabelProvider(new CellLabelProvider() {
 			private Color mandantColor(Mandant m){
-				return UiDesk.getColorFromRGB(CoreHub.globalCfg.get(
+				return UiDesk.getColorFromRGB(ConfigServiceHolder.getGlobal(
 					ch.elexis.core.constants.Preferences.USR_MANDATOR_COLORS_PREFIX + m.getLabel(),
 					"ffffff"));
 			}

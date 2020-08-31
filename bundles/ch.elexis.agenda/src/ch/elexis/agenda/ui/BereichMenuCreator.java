@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class BereichMenuCreator implements IMenuCreator {
 	
@@ -38,7 +38,7 @@ public class BereichMenuCreator implements IMenuCreator {
 	
 	public BereichMenuCreator(){
 		sMandanten =
-			CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_praxis)
+			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_praxis)
 				.split(","); //$NON-NLS-1$
 		menuItems = new MenuItem[sMandanten.length];
 	}

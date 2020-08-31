@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
@@ -48,7 +48,7 @@ public class EditCatsDialog extends TitleAreaDialog {
 		String ncats =
 			((Text) getDialogArea()).getText().replaceAll("\n",
 				KassenbuchEintrag.GLOBAL_CFG_SEPARATOR);
-		CoreHub.globalCfg.set(KassenbuchEintrag.CATEGORIES, ncats.replaceAll("\r", ""));
+		ConfigServiceHolder.setGlobal(KassenbuchEintrag.CATEGORIES, ncats.replaceAll("\r", ""));
 		super.okPressed();
 	}
 	

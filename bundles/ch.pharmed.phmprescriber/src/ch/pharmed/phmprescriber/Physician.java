@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.pharmedsolutions.www.apothekenservice.Apotheken;
 import ch.pharmedsolutions.www.apothekenservice.ApothekenPortType;
 import ch.pharmedsolutions.www.apothekenservice.ApothekenRequest;
@@ -148,7 +149,7 @@ public class Physician {
 
 	public void getAttributesFromConfig() {
 						
-		String strCFG = CoreHub.globalCfg.get(Constants.CFG_PHM_PHY, "");
+		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_PHY, "");
 				
 		//Split string and include also blanks
 		String[] attributes = strCFG.split("\\;",-1);
@@ -238,7 +239,7 @@ public class Physician {
 	public Boolean hasShops() {
 			
 			//(1) Check, if we need to update the shops from the WebService
-			String strCFG = CoreHub.globalCfg.get(Constants.CFG_PHM_LASTREQUEST, "");
+			String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_LASTREQUEST, "");
 				
 				
 			TimeTool now = new TimeTool(new Date());
@@ -319,8 +320,9 @@ public class Physician {
 			//Store in Config, if successful consumption
 			TimeTool now = new TimeTool(new Date());
 			
-			CoreHub.globalCfg.set(Constants.CFG_PHM_LASTREQUEST,now);
-			CoreHub.globalCfg.set(Constants.CFG_PHM_SHOPS,this.createCFGStringShops(hmShops));
+			ConfigServiceHolder.setGlobal(Constants.CFG_PHM_LASTREQUEST,
+				now.toString(TimeTool.FULL_MYSQL));
+			ConfigServiceHolder.setGlobal(Constants.CFG_PHM_SHOPS,this.createCFGStringShops(hmShops));
 			CoreHub.globalCfg.flush();
 			
          } catch (Exception ex) {
@@ -360,7 +362,7 @@ public class Physician {
 		
 		HashMap<String, String> hmShops = new HashMap<String, String>();
 		
-		String strCFG = CoreHub.globalCfg.get(Constants.CFG_PHM_SHOPS, "");
+		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_SHOPS, "");
 				
 		
 		

@@ -33,6 +33,7 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IPeriod;
 import ch.elexis.core.jdt.Nullable;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -128,9 +129,9 @@ public class Termin extends PersistentObject
 																										// //$NON-NLS-4$
 				FLD_LINKGROUP, FLD_STATUSHIST, FLD_PRIORITY); // $NON-NLS-1$
 		TimeTool.setDefaultResolution(60000);
-		TerminTypes = CoreHub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
-		TerminStatus = CoreHub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
-		TerminBereiche = CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
+		TerminTypes = ConfigServiceHolder.getGlobalStringArray(PreferenceConstants.AG_TERMINTYPEN);
+		TerminStatus = ConfigServiceHolder.getGlobalStringArray(PreferenceConstants.AG_TERMINSTATUS);
+		TerminBereiche = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 		if ((TerminTypes == null) || (TerminTypes.length < 3)) {
 			TerminTypes = new String[] { Messages.Termin_range_free, Messages.Termin_range_locked,
 					Messages.Termin_normalAppointment };
@@ -206,9 +207,9 @@ public class Termin extends PersistentObject
 			ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8")); //$NON-NLS-1$
 			j.execScript(bais, true, false);
 			CoreHub.userCfg.set(PreferenceConstants.AG_SHOWDELETED + "_default", "0"); //$NON-NLS-1$ //$NON-NLS-2$
-			CoreHub.globalCfg.set(PreferenceConstants.AG_TERMINTYPEN + "_default", //$NON-NLS-1$
+			ConfigServiceHolder.setGlobal(PreferenceConstants.AG_TERMINTYPEN + "_default", //$NON-NLS-1$
 				Messages.Termin_freeLockedNormalExtraVisit);
-			CoreHub.globalCfg.set(PreferenceConstants.AG_TERMINSTATUS + "_default", //$NON-NLS-1$
+			ConfigServiceHolder.setGlobal(PreferenceConstants.AG_TERMINSTATUS + "_default", //$NON-NLS-1$
 				Messages.Termin_plannedHereFinishedMissed);
 			CoreHub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Termin.typFrei(),
 				"icons/gruen.png"); //$NON-NLS-1$
@@ -228,15 +229,15 @@ public class Termin extends PersistentObject
 	}
 	
 	public static void addBereich(String bereich){
-		String nber = CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14);
+		String nber = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14);
 		nber += "," + bereich; //$NON-NLS-1$
-		CoreHub.globalCfg.set(PreferenceConstants.AG_BEREICHE, nber);
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_BEREICHE, nber);
 		TerminBereiche = nber.split(","); //$NON-NLS-1$
 	}
 	
 	public static void addType(String typ){
 		String tt = StringTool.join(TerminTypes, ",") + "," + typ; //$NON-NLS-1$ //$NON-NLS-2$
-		CoreHub.globalCfg.set(PreferenceConstants.AG_TERMINTYPEN, tt);
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_TERMINTYPEN, tt);
 		TerminTypes = tt.split(","); //$NON-NLS-1$
 	}
 	

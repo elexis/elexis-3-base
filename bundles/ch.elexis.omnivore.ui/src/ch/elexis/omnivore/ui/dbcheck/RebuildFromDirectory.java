@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.service.ConfigServiceHolder;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.INativeQuery;
 import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
 import ch.elexis.omnivore.model.IDocumentHandle;

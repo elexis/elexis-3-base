@@ -54,6 +54,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.data.Leistungsblock;
@@ -159,7 +161,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			protected void fireValueChanged(String property, Object oldValue, Object newValue){
 				super.fireValueChanged(property, oldValue, newValue);
 				if ((Boolean) newValue) {
-					Preferences.setFsSettingStore(new SettingsPreferenceStore(CoreHub.globalCfg));
+					Preferences.setFsSettingStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 					updateFSSettingsStore();
 				} else {
 					Preferences.setFsSettingStore(new SettingsPreferenceStore(CoreHub.localCfg));
@@ -404,7 +406,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	protected Control createContents(Composite parent){
 		Control c = super.createContents(parent);
 		// save global setting to global cfg
-		bStoreFSGlobal.setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
+		bStoreFSGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		bStoreFSGlobal.load();
 		// must be called after createFieldEditors / super.createContents
 		updateFSSettingsStore();

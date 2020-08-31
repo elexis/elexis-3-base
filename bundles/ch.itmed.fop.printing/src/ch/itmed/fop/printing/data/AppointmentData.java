@@ -16,6 +16,7 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.agenda.AreaType;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
 import ch.itmed.fop.printing.resources.Messages;
@@ -69,7 +70,7 @@ public final class AppointmentData {
 	public String getAgendaArea() {
 		Kontakt kontakt = null;
 		String agendaSection = appointment.getBereich();
-		String type = CoreHub.globalCfg.get(
+		String type = ConfigServiceHolder.getGlobal(
 				PreferenceConstants.AG_BEREICH_PREFIX + agendaSection + PreferenceConstants.AG_BEREICH_TYPE_POSTFIX,
 				null);
 		if (type != null) {

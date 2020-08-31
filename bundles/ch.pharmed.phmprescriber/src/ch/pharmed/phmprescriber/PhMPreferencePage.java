@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class PhMPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -226,7 +227,7 @@ public class PhMPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		
 		
 		String interactionsEnabled =
-			CoreHub.globalCfg.get(Constants.CFG_INTERATCIONS,
+			ConfigServiceHolder.getGlobal(Constants.CFG_INTERATCIONS,
 					Constants.CFG_INTERATCIONS);
 		if (interactionsEnabled.equals("true")) { //$NON-NLS-1$
 			btnCboInteraction.setSelection(true);
@@ -299,7 +300,7 @@ public class PhMPreferencePage extends PreferencePage implements IWorkbenchPrefe
 														
 			//Store the value in the preferences
 					
-			CoreHub.globalCfg.set(Constants.CFG_INTERATCIONS,
+			ConfigServiceHolder.setGlobal(Constants.CFG_INTERATCIONS,
 			(String) interactionEnabled);
 			
 		}
@@ -318,7 +319,7 @@ public class PhMPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		
 		String strCfg = this.createCFGString();
 		
-		CoreHub.globalCfg.set(Constants.CFG_PHM_PHY, strCfg.toString());
+		ConfigServiceHolder.setGlobal(Constants.CFG_PHM_PHY, strCfg.toString());
 		CoreHub.globalCfg.flush();
 		
 	}

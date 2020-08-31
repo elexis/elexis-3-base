@@ -6,6 +6,7 @@ import org.iatrix.messwerte.acl.ACLContributor;
 import org.osgi.framework.BundleContext;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -39,10 +40,10 @@ public class Activator extends AbstractUIPlugin {
 	 * Initialize ACLs for the first time, if not yet done.
 	 */
 	private void initACL(){
-		boolean isInitialized = CoreHub.globalCfg.get(Constants.ACL_INITIALIZED, false);
+		boolean isInitialized = ConfigServiceHolder.getGlobal(Constants.ACL_INITIALIZED, false);
 		if (!isInitialized) {
 			new ACLContributor().initializeDefaults(CoreHub.acl);
-			CoreHub.globalCfg.set(Constants.ACL_INITIALIZED, true);
+			ConfigServiceHolder.setGlobal(Constants.ACL_INITIALIZED, true);
 			// make sure configuration is written, so that initalization is not repeated
 			CoreHub.globalCfg.flush();
 		}

@@ -21,8 +21,8 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.InexistingDirectoryOKDirectoryFieldEditor;
 import ch.elexis.core.ui.preferences.inputs.InexistingFileOKFileFieldEditor;
 
@@ -45,7 +45,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String DEFAULT_DL_DIR = "C:\\LaborDownloads"; //$NON-NLS-1$
 	public static final String DEFAULT_OVPN_DIR = "C:\\Programme\\OpenVPN\\config\\praxis.ovpn"; //$NON-NLS-1$
 	
-	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 	
 	public PreferencePage(){
 		super(GRID);

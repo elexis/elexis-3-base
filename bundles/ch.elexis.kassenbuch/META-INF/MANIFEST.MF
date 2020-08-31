@@ -16,3 +16,4 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.ui.icons,
  org.eclipse.nebula.widgets.cdatetime
 Bundle-ActivationPolicy: lazy
+Import-Package: ch.elexis.core.services.holder

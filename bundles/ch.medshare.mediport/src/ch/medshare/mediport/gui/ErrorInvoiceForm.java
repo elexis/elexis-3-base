@@ -13,8 +13,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.medshare.awt.Desktop;
 import ch.medshare.mediport.config.Client;
@@ -26,7 +26,7 @@ public class ErrorInvoiceForm extends Composite {
 	
 	private final Client client;
 	
-	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 	
 	public ErrorInvoiceForm(Composite parent, int style, Client client){
 		super(parent, style);

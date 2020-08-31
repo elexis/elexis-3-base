@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.selectors.ActiveControl;
 import ch.elexis.core.ui.util.SWTHelper;
 
@@ -82,13 +83,13 @@ public class MesswertTypCount extends MesswertBase implements IMesswertTyp {
 	public void saveInput(Messwert messwert){
 		String s = messwert.getWert();
 		if (s.equals("")) { //$NON-NLS-1$
-			int value = CoreHub.globalCfg.get(CONFIG_BASE_NAME + counterMode, startValue);
+			int value = ConfigServiceHolder.getGlobal(CONFIG_BASE_NAME + counterMode, startValue);
 			if (value < startValue) {
 				value = startValue;
 			} else {
 				value++;
 			}
-			CoreHub.globalCfg.set(CONFIG_BASE_NAME + counterMode, value);
+			ConfigServiceHolder.setGlobal(CONFIG_BASE_NAME + counterMode, value);
 			CoreHub.globalCfg.flush();
 			messwert.setWert(df.format(value));
 		}

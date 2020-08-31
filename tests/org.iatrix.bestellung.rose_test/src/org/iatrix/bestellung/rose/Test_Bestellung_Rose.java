@@ -19,7 +19,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
@@ -76,9 +76,9 @@ public class Test_Bestellung_Rose {
 		createTestBestellungHorizontal();
 		System.out.println("testBestellung_2");
 		System.out.println(order.toString());
-		CoreHub.globalCfg.set(Constants.CFG_ROSE_CLIENT_NUMBER, "999993");
-		CoreHub.globalCfg.set(Constants.CFG_ROSE_USERNAME, "elexis");
-		CoreHub.globalCfg.set(Constants.CFG_ROSE_PASSWORD, "elexis");
+		ConfigServiceHolder.setGlobal(Constants.CFG_ROSE_CLIENT_NUMBER, "999993");
+		ConfigServiceHolder.setGlobal(Constants.CFG_ROSE_USERNAME, "elexis");
+		ConfigServiceHolder.setGlobal(Constants.CFG_ROSE_PASSWORD, "elexis");
 		Sender sender = null;
 		System.out.println("testBestellung_3");
 		try {

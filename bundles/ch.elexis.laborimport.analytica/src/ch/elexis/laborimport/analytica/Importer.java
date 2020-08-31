@@ -51,6 +51,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.FileUtility;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -124,12 +125,12 @@ public class Importer extends ImporterPage {
 			new Result<String>(ch.elexis.laborimport.analytica.Messages.Importer_ok); //$NON-NLS-1$
 			
 		String ftpHost =
-			CoreHub.globalCfg.get(PreferencePage.FTP_HOST, PreferencePage.DEFAULT_FTP_HOST);
+			ConfigServiceHolder.getGlobal(PreferencePage.FTP_HOST, PreferencePage.DEFAULT_FTP_HOST);
 		String user =
-			CoreHub.globalCfg.get(PreferencePage.FTP_USER, PreferencePage.DEFAULT_FTP_USER);
-		String pwd = CoreHub.globalCfg.get(PreferencePage.FTP_PWD, PreferencePage.DEFAULT_FTP_PWD);
+			ConfigServiceHolder.getGlobal(PreferencePage.FTP_USER, PreferencePage.DEFAULT_FTP_USER);
+		String pwd = ConfigServiceHolder.getGlobal(PreferencePage.FTP_PWD, PreferencePage.DEFAULT_FTP_PWD);
 		String downloadDir = FileUtility.getCorrectPath(
-			CoreHub.globalCfg.get(PreferencePage.DL_DIR, PreferencePage.DEFAULT_DL_DIR));
+			ConfigServiceHolder.getGlobal(PreferencePage.DL_DIR, PreferencePage.DEFAULT_DL_DIR));
 			
 		FtpServer ftp = new FtpServer();
 		try {

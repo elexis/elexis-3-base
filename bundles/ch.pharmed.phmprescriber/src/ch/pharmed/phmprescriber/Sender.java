@@ -7,6 +7,8 @@ package ch.pharmed.phmprescriber;
 
 
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -15,8 +17,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -27,21 +27,16 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-
-
-
-
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
-import ch.pharmedsolutions.www.rezeptserver.ArrayOfProduct;
 import ch.pharmedsolutions.www.rezeptserver.PrescriptionPortType;
 import ch.pharmedsolutions.www.rezeptserver.PrescriptionResponse;
 import ch.pharmedsolutions.www.rezeptserver.PrescriptionService;
-import ch.elexis.core.data.activator.CoreHub;
 
 
 
@@ -126,7 +121,7 @@ public class Sender  {
 		}
 		
 		//(3) Check Interaction if enabled
-		String strCFG = CoreHub.globalCfg.get(Constants.CFG_INTERATCIONS, ""); //$NON-NLS-1$
+		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_INTERATCIONS, ""); //$NON-NLS-1$
 				
 		//If so, run the check
 		if (strCFG.equals("true")) { //$NON-NLS-1$

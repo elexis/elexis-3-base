@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.medshare.mediport.MediPortAbstractPrefPage;
 import ch.medshare.util.SystemProperties;
 import ch.medshare.util.UtilFile;
@@ -54,7 +54,7 @@ public class MPCProperties extends Properties implements ConfigKeys {
 	}
 	
 	public static MPCProperties reload() throws IOException{
-		SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.globalCfg);
+		ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 		String installDir = prefs.getString(MediPortAbstractPrefPage.MPC_INSTALL_DIR);
 		return reload(installDir);
 	}

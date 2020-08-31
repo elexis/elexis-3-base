@@ -421,9 +421,9 @@ public class TestData {
 		private void moveRequiredToOptional(String defaultCaseLaw){
 			String requirements = BillingSystem.getRequirements(defaultCaseLaw);
 			if (requirements != null) {
-				CoreHub.globalCfg.set(Preferences.LEISTUNGSCODES_CFG_KEY + "/" //$NON-NLS-1$
+				ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/" //$NON-NLS-1$
 					+ defaultCaseLaw + "/bedingungen", ""); //$NON-NLS-1$
-				CoreHub.globalCfg.set(Preferences.LEISTUNGSCODES_CFG_KEY + "/" //$NON-NLS-1$
+				ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/" //$NON-NLS-1$
 					+ defaultCaseLaw + "/fakultativ", requirements); //$NON-NLS-1$
 			}
 		}

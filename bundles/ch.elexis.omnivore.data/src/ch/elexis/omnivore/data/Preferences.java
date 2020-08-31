@@ -19,11 +19,14 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.activator.CoreHubHelper;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class Preferences {
 	
-	private static SettingsPreferenceStore fsSettingsStore;
+	private static IPreferenceStore fsSettingsStore;
 	public static Logger log = LoggerFactory.getLogger(Preferences.class);
 	
 	/**
@@ -54,9 +57,9 @@ public class Preferences {
 			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/savesortdirection", STOREFS,
 				false);
 			
-			boolean isGlobal = CoreHub.globalCfg.get(STOREFSGLOBAL, false);
+			boolean isGlobal = ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false);
 			if (isGlobal) {
-				fsSettingsStore = new SettingsPreferenceStore(CoreHub.globalCfg);
+				fsSettingsStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
 			} else {
 				fsSettingsStore = new SettingsPreferenceStore(CoreHub.localCfg);
 			}
@@ -183,11 +186,11 @@ public class Preferences {
 		return ret;
 	}
 	
-	public static void setFsSettingStore(SettingsPreferenceStore settingsPreferenceStore){
-		Preferences.fsSettingsStore = settingsPreferenceStore;
+	public static void setFsSettingStore(IPreferenceStore configServicePreferenceStore){
+		Preferences.fsSettingsStore = configServicePreferenceStore;
 	}
 	
-	public static SettingsPreferenceStore getFsSettingsStore(){
+	public static IPreferenceStore getFsSettingsStore(){
 		return fsSettingsStore;
 	}
 	

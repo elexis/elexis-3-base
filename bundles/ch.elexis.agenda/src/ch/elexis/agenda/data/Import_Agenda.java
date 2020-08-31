@@ -33,6 +33,7 @@ import ch.elexis.actions.Synchronizer;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
@@ -154,12 +155,12 @@ public class Import_Agenda extends ImporterPage {
 		dest_bereich = cbBereich.getText();
 		map.put(dest_bereich, orig_mandant);
 		Synchronizer.setBereichMapping(map);
-		CoreHub.globalCfg.set(PreferenceConstants.AG_SYNC_ENABLED, bSyncEnable.getSelection());
-		CoreHub.globalCfg.set(PreferenceConstants.AG_SYNC_TYPE, results[0]);
-		CoreHub.globalCfg.set(PreferenceConstants.AG_SYNC_HOST, results[1]);
-		CoreHub.globalCfg.set(PreferenceConstants.AG_SYNC_CONNECTOR, results[2]);
-		CoreHub.globalCfg.set(PreferenceConstants.AG_SYNC_DBUSER, results[3]);
-		CoreHub.globalCfg.set(PreferenceConstants.AG_SYNC_DBPWD, results[4]);
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_SYNC_ENABLED, bSyncEnable.getSelection());
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_SYNC_TYPE, results[0]);
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_SYNC_HOST, results[1]);
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_SYNC_CONNECTOR, results[2]);
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_SYNC_DBUSER, results[3]);
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_SYNC_DBPWD, results[4]);
 		bDelete = bDoDelete.getSelection();
 	}
 	
@@ -177,7 +178,7 @@ public class Import_Agenda extends ImporterPage {
 		cl.setLayout(new GridLayout());
 		new Label(cl, SWT.NONE).setText("Bereich in Elexis"); //$NON-NLS-1$
 		cbBereich = new Combo(cl, SWT.SINGLE | SWT.READ_ONLY);
-		cbBereich.setItems(CoreHub.globalCfg.get(PreferenceConstants.AG_BEREICHE, "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
+		cbBereich.setItems(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
 		dest_bereich = cbBereich.getItem(0);
 		cbBereich.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -205,7 +206,7 @@ public class Import_Agenda extends ImporterPage {
 		bDoDelete.setText("Agenda-Daten löschen und neu anlegen"); //$NON-NLS-1$
 		bSyncEnable = new Button(ret, SWT.CHECK);
 		bSyncEnable.setText("Kontinuierlich synchronisieren"); //$NON-NLS-1$
-		bSyncEnable.setSelection(CoreHub.globalCfg.get(PreferenceConstants.AG_SYNC_ENABLED, false));
+		bSyncEnable.setSelection(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_ENABLED, false));
 		return ret;
 	}
 	

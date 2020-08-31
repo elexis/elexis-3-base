@@ -1,5 +1,7 @@
 package ch.pharmed.phmprescriber;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.eclipse.ui.PlatformUI;
@@ -9,12 +11,11 @@ import org.junit.Test;
 
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Patient;
-
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
-import static org.junit.Assert.assertEquals;
 
 
 
@@ -129,12 +130,12 @@ public class Test_PhMPrescriber {
 			
 				
 		//Check WS for checking available shops
-		CoreHub.globalCfg.set(Constants.CFG_PHM_LASTREQUEST,"");
+		ConfigServiceHolder.setGlobal(Constants.CFG_PHM_LASTREQUEST,"");
 		CoreHub.globalCfg.flush();
 				
 		assertEquals(false, phys.hasShops());
 		
-		CoreHub.globalCfg.set(Constants.CFG_PHM_LASTREQUEST,"");
+		ConfigServiceHolder.setGlobal(Constants.CFG_PHM_LASTREQUEST,"");
 		CoreHub.globalCfg.flush();
 				
 		phys.setZsrid("W 0192.59");

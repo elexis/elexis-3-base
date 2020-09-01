@@ -49,10 +49,10 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.views.TextView;
 import ch.elexis.data.Brief;
@@ -88,8 +88,8 @@ public class CstDocumentsComposite extends CstComposite {
 	super(parent, SWT.NONE);
 	this.viewsite = viewsite;
 
-	sIdentBriefe = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_BRIEFE, "CST");
-	sIdentOmnivore = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
+	sIdentBriefe = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_BRIEFE, "CST");
+	sIdentOmnivore = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
 
 
 	GridLayout gridLayout = new GridLayout(1, true);
@@ -295,7 +295,7 @@ public class CstDocumentsComposite extends CstComposite {
 
 	Patient actPat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 	if (actPat != null) {
-	    sIdentBriefe = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_BRIEFE, "CST");
+	    sIdentBriefe = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_BRIEFE, "CST");
 
 	    Query<Brief> qbe = new Query<Brief>(Brief.class);
 	    qbe.add(Brief.FLD_PATIENT_ID, Query.EQUALS, actPat.getId());
@@ -322,7 +322,7 @@ public class CstDocumentsComposite extends CstComposite {
      * @return a list of CST related Omnivore documents
      */
 	private List<IDocument> loadCstdocsOmnivore(){
-		sIdentOmnivore = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
+		sIdentOmnivore = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
 		
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat == null) {

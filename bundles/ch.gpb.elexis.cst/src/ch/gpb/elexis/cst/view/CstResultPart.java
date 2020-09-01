@@ -60,10 +60,22 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfWriter;
+
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
@@ -75,6 +87,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.gpb.elexis.cst.Activator;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.data.CstGastroColo;
 import ch.gpb.elexis.cst.data.CstGroup;
 import ch.gpb.elexis.cst.data.CstProfile;
@@ -84,24 +97,12 @@ import ch.gpb.elexis.cst.data.ValuePairTimeline;
 import ch.gpb.elexis.cst.data.ValueSingleTimeline;
 import ch.gpb.elexis.cst.dialog.PdfOptionsDialog;
 import ch.gpb.elexis.cst.preferences.CstPreference;
-import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 import ch.gpb.elexis.cst.util.ImageUtils;
 import ch.gpb.elexis.cst.widget.GastroColoCanvas;
 import ch.gpb.elexis.cst.widget.ValuePairTimelineCanvas;
 import ch.gpb.elexis.cst.widget.ValueSingleTimelineCanvas;
 import ch.rgw.tools.TimeTool;
-
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.HeaderFooter;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * 
@@ -761,7 +762,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		Image image = null;
 		try {
 
-		    String latestPath = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_LATESTPATH, null);
+		    String latestPath = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_LATESTPATH, null);
 		    if (latestPath == null) {
 			latestPath = System.getProperty("user.home");
 		    }
@@ -780,7 +781,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 
 		    File selFile = new File(selected);
 
-		    CoreHub.userCfg.set(CstPreference.CST_IDENTIFIER_LATESTPATH, selFile.getParentFile()
+		    ConfigServiceHolder.setUser(CstPreference.CST_IDENTIFIER_LATESTPATH, selFile.getParentFile()
 			    .getAbsolutePath());
 
 		    //if (profile.getAnzeigeTyp().toLowerCase().equals("effektiv")) {
@@ -841,7 +842,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		GC gc = null;
 		Image image = null;
 		try {
-		    String latestPath = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_LATESTPATH, null);
+		    String latestPath = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_LATESTPATH, null);
 		    if (latestPath == null) {
 			latestPath = System.getProperty("user.home");
 		    }
@@ -859,7 +860,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		    }
 		    File selFile = new File(selected);
 
-		    CoreHub.userCfg.set(CstPreference.CST_IDENTIFIER_LATESTPATH, selFile.getParentFile()
+		    ConfigServiceHolder.setUser(CstPreference.CST_IDENTIFIER_LATESTPATH, selFile.getParentFile()
 			    .getAbsolutePath());
 
 		    int printHeigth = 1123;

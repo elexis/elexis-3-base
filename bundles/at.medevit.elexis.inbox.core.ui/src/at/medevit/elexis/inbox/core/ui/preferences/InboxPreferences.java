@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import at.medevit.elexis.inbox.core.ui.LabResultLabelProvider;
 import at.medevit.elexis.inbox.core.ui.LabResultLabelProvider.LabelFields;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 
 public class InboxPreferences extends PreferencePage implements IWorkbenchPreferencePage {
@@ -56,13 +57,13 @@ public class InboxPreferences extends PreferencePage implements IWorkbenchPrefer
 	public InboxPreferences(){
 		super("Inbox");
 		
-		choosen = CoreHub.userCfg.get(INBOX_LABRESULT_LBL_CHOOSEN, DEF_CHOOSEN).split(",");
+		choosen = ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_CHOOSEN, DEF_CHOOSEN).split(",");
 		int nrValues = LabResultLabelProvider.LabelFields.values().length;
 		if (choosen.length == nrValues) {
 			available = new String[] {};
 		} else {
 			available =
-				CoreHub.userCfg.get(INBOX_LABRESULT_LBL_AVAILABLE, DEF_AVAILABLE).split(",");
+				ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_AVAILABLE, DEF_AVAILABLE).split(",");
 		}
 	}
 	
@@ -152,9 +153,9 @@ public class InboxPreferences extends PreferencePage implements IWorkbenchPrefer
 	
 	@Override
 	public boolean performOk(){
-		CoreHub.userCfg.set(INBOX_LABRESULT_LBL_CHOOSEN, getListAsString(lvChoosen.getList()
+		ConfigServiceHolder.setUser(INBOX_LABRESULT_LBL_CHOOSEN, getListAsString(lvChoosen.getList()
 			.getItems()));
-		CoreHub.userCfg.set(INBOX_LABRESULT_LBL_AVAILABLE, getListAsString(lvAvailable.getList()
+		ConfigServiceHolder.setUser(INBOX_LABRESULT_LBL_AVAILABLE, getListAsString(lvAvailable.getList()
 			.getItems()));
 		
 		CoreHub.userCfg.flush();
@@ -184,7 +185,7 @@ public class InboxPreferences extends PreferencePage implements IWorkbenchPrefer
 	public void init(IWorkbench workbench){}
 	
 	private static void loadChoosenLabel(){
-		String[] labels = CoreHub.userCfg.get(INBOX_LABRESULT_LBL_CHOOSEN, DEF_CHOOSEN).split(",");
+		String[] labels = ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_CHOOSEN, DEF_CHOOSEN).split(",");
 		choosenLabels = new ArrayList<LabResultLabelProvider.LabelFields>();
 		
 		for (String label : labels) {

@@ -47,13 +47,13 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.core.ui.util.viewers.CommonViewer.Message;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -90,7 +90,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		ElexisEvent.EVENT_USER_CHANGED) {
 		public void runInUi(ElexisEvent ev){
 			updateActions();
-			agenda.setActResource(CoreHub.userCfg.get(PreferenceConstants.AG_BEREICH,
+			agenda.setActResource(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH,
 				agenda.getActResource()));
 			
 		}

@@ -242,14 +242,14 @@ public class AgendaGross extends BaseAgendaView {
 	}
 	
 	private void saveColumnSizes(){
-		if (CoreHub.userCfg.get(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
+		if (ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
 			StringBuilder sb = new StringBuilder();
 			TableColumn[] columns = tv.getTable().getColumns();
 			for (TableColumn tc : columns) {
 				sb.append(tc.getWidth());
 				sb.append(SEPARATOR);
 			}
-			CoreHub.userCfg.set(PreferenceConstants.AG_BIG_COLUMNWIDTH, sb.toString());
+			ConfigServiceHolder.setUser(PreferenceConstants.AG_BIG_COLUMNWIDTH, sb.toString());
 		}
 	}
 	
@@ -257,11 +257,11 @@ public class AgendaGross extends BaseAgendaView {
 		int colWidth[] = DEFAULT_COLUMN_WIDTHS;
 		
 		// load user preferences if settings require it
-		if (CoreHub.userCfg.get(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
+		if (ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
 			String defaultColWidths =
 				Arrays.toString(DEFAULT_COLUMN_WIDTHS).replace("[", "").replace("]", "");
 			String userColWidths =
-				CoreHub.userCfg.get(PreferenceConstants.AG_BIG_COLUMNWIDTH, defaultColWidths);
+				ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_COLUMNWIDTH, defaultColWidths);
 			
 			String[] widthStrings = userColWidths.split(SEPARATOR);
 			for (int i = 0; i < widthStrings.length; i++) {

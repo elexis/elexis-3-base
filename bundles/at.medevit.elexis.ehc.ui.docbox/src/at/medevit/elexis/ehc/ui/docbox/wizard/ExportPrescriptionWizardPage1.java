@@ -25,6 +25,7 @@ import at.medevit.elexis.ehc.docbox.service.DocboxService;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -111,7 +112,7 @@ public class ExportPrescriptionWizardPage1 extends WizardPage {
 	
 	private void writePdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException{
 		String outputDir =
-			CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR, PreferencePage.getDefaultOutputDir());
+			ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR, PreferencePage.getDefaultOutputDir());
 		File pdfFile = new File(outputDir + File.separator + getRezeptFileName() + ".pdf");
 		try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
 			fos.write(pdf.toByteArray());
@@ -122,7 +123,7 @@ public class ExportPrescriptionWizardPage1 extends WizardPage {
 	public boolean finish(){
 		try {
 			String outputDir =
-				CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
+				ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 					PreferencePage.getDefaultOutputDir());
 			ExportPrescriptionWizard.getDocument().saveToFile(
 				outputDir + File.separator + getRezeptFileName() + ".xml");

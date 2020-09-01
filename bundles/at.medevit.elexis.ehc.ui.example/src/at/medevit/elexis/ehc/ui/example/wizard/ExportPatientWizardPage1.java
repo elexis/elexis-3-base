@@ -30,6 +30,7 @@ import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -101,7 +102,7 @@ public class ExportPatientWizardPage1 extends WizardPage {
 					(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 			try {
 				String outputDir =
-					CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
+					ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 						PreferencePage.getDefaultOutputDir());
 				document.saveToFile(outputDir + File.separator
 					+ selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml");

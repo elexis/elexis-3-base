@@ -17,4 +17,5 @@ Require-Bundle: at.medevit.elexis.ehc.core,
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ehcservice.xml
 Import-Package: ch.elexis.core.model,
+ ch.elexis.core.services.holder,
  org.slf4j

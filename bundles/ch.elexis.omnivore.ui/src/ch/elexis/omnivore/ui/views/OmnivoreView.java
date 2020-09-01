@@ -89,6 +89,7 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
@@ -500,9 +501,9 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private void applySortDirection(){
 		String[] usrSortSettings = sortSettings.split(",");
 		
-		if (CoreHub.userCfg.get(PreferencePage.SAVE_SORT_DIRECTION, false)) {
+		if (ConfigServiceHolder.getUser(PreferencePage.SAVE_SORT_DIRECTION, false)) {
 			String sortSet =
-				CoreHub.userCfg.get(PreferencePage.USR_SORT_DIRECTION_SETTINGS, sortSettings);
+				ConfigServiceHolder.getUser(PreferencePage.USR_SORT_DIRECTION_SETTINGS, sortSettings);
 			usrSortSettings = sortSet.split(",");
 		}
 		
@@ -538,8 +539,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private void applyUsersColumnWidthSetting(){
 		TreeColumn[] treeColumns = table.getColumns();
 		String[] userColWidth = colWidth.split(",");
-		if (CoreHub.userCfg.get(PreferencePage.SAVE_COLUM_WIDTH, false)) {
-			String ucw = CoreHub.userCfg.get(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, colWidth);
+		if (ConfigServiceHolder.getUser(PreferencePage.SAVE_COLUM_WIDTH, false)) {
+			String ucw = ConfigServiceHolder.getUser(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, colWidth);
 			userColWidth = ucw.split(",");
 		}
 		
@@ -788,14 +789,14 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			sb.append(tc.getWidth());
 			sb.append(",");
 		}
-		CoreHub.userCfg.set(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, sb.toString());
+		ConfigServiceHolder.setUser(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, sb.toString());
 	}
 	
 	private void saveSortSettings(){
 		int propertyIdx = ovComparator.getPropertyIndex();
 		int direction = ovComparator.getDirectionDigit();
 		int catDirection = ovComparator.getCategoryDirection();
-		CoreHub.userCfg.set(PreferencePage.USR_SORT_DIRECTION_SETTINGS,
+		ConfigServiceHolder.setUser(PreferencePage.USR_SORT_DIRECTION_SETTINGS,
 			propertyIdx + "," + direction + "," + catDirection + "," + bFlat);
 	}
 	

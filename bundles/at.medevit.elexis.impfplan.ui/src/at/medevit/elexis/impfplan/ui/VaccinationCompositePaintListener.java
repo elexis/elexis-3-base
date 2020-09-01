@@ -35,7 +35,7 @@ import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.rgw.tools.TimeTool;
 
@@ -116,7 +116,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		
 		naviVacMap = new TreeMap<Integer, Vaccination>();
 		selectedVacc = null;
-		showSide = CoreHub.userCfg.get(PreferencePage.VAC_SHOW_SIDE, false);
+		showSide = ConfigServiceHolder.getUser(PreferencePage.VAC_SHOW_SIDE, false);
 	}
 	
 	private boolean shouldScale(){
@@ -733,7 +733,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	}
 	
 	public void restorePrePrintSettting(){
-		showSide = CoreHub.userCfg.get(PreferencePage.VAC_SHOW_SIDE, false);
+		showSide = ConfigServiceHolder.getUser(PreferencePage.VAC_SHOW_SIDE, false);
 	}
 	
 	public int getWidth(){

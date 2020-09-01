@@ -11,6 +11,7 @@
 package at.medevit.elexis.weblinks.model;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class WebLinkElement {
 	private String text;
@@ -47,13 +48,13 @@ public class WebLinkElement {
 	}
 	
 	private void init(){
-		text = CoreHub.userCfg.get(WebLinkElementUtil.getTextConfig(id), "");
-		link = CoreHub.userCfg.get(WebLinkElementUtil.getLinkConfig(id), "");
+		text = ConfigServiceHolder.getUser(WebLinkElementUtil.getTextConfig(id), "");
+		link = ConfigServiceHolder.getUser(WebLinkElementUtil.getLinkConfig(id), "");
 	}
 	
 	public void save(){
-		CoreHub.userCfg.set(WebLinkElementUtil.getTextConfig(id), text);
-		CoreHub.userCfg.set(WebLinkElementUtil.getLinkConfig(id), link);
+		ConfigServiceHolder.setUser(WebLinkElementUtil.getTextConfig(id), text);
+		ConfigServiceHolder.setUser(WebLinkElementUtil.getLinkConfig(id), link);
 		CoreHub.userCfg.flush();
 	}
 	

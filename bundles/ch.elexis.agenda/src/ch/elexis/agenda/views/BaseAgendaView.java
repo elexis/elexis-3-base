@@ -53,6 +53,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.interfaces.IPersistentObject;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
@@ -112,7 +113,7 @@ public abstract class BaseAgendaView extends ViewPart
 			if (tv != null && isActiveControl(tv.getControl())) {
 				tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));
 			}
-			setBereich(CoreHub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
+			setBereich(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
 		}
 	};
 	private IMenuManager mgr;

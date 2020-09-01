@@ -53,6 +53,7 @@ import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.events.MessageEvent;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -146,7 +147,7 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		}
 		
 		String outputPath =
-			CoreHub.userCfg.get(PreferencePage.VAC_PDF_OUTPUTDIR, CoreHub.getWritableUserDir()
+			ConfigServiceHolder.getUser(PreferencePage.VAC_PDF_OUTPUTDIR, CoreHub.getWritableUserDir()
 				.getAbsolutePath());
 		if (outputPath.equals(CoreHub.getWritableUserDir().getAbsolutePath())) {
 			SWTHelper

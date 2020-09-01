@@ -37,10 +37,10 @@ import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2019;
 import at.medevit.elexis.impfplan.ui.dialogs.EditVaccinationDialog;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.Patient;
@@ -183,7 +183,7 @@ public class VaccinationView extends ViewPart {
 		}
 		
 		if (patientChanged) {
-			boolean sortDir = CoreHub.userCfg.get(PreferencePage.VAC_SORT_ORDER, false);
+			boolean sortDir = ConfigServiceHolder.getUser(PreferencePage.VAC_SORT_ORDER, false);
 			Query<Vaccination> qbe = new Query<>(Vaccination.class);
 			qbe.add("ID", Query.NOT_EQUAL, StringConstants.VERSION_LITERAL);
 			qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, pat.getId());

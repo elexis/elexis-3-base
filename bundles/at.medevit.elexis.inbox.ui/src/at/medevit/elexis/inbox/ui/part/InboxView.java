@@ -65,6 +65,7 @@ import at.medevit.elexis.inbox.ui.preferences.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -272,7 +273,7 @@ public class InboxView extends ViewPart {
 		ElexisEventDispatcher.getInstance().addListeners(mandantChanged);
 		getSite().setSelectionProvider(viewer);
 		
-		setAutoSelectPatientState(CoreHub.userCfg.get(Preferences.INBOX_PATIENT_AUTOSELECT, false));
+		setAutoSelectPatientState(ConfigServiceHolder.getUser(Preferences.INBOX_PATIENT_AUTOSELECT, false));
 	}
 	
 	public void setAutoSelectPatientState(boolean value){
@@ -281,7 +282,7 @@ public class InboxView extends ViewPart {
 			(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service.getCommand(AutoActivePatientHandler.CMD_ID);
 		command.getState(AutoActivePatientHandler.STATE_ID).setValue(value);
-		CoreHub.userCfg.set(Preferences.INBOX_PATIENT_AUTOSELECT, value);
+		ConfigServiceHolder.setUser(Preferences.INBOX_PATIENT_AUTOSELECT, value);
 	}
 	
 	private void addFilterActions(ToolBarManager menuManager){

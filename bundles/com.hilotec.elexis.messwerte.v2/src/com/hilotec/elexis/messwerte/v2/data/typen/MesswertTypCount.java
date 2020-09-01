@@ -21,13 +21,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
-import ch.elexis.core.data.activator.CoreHub;
+import com.hilotec.elexis.messwerte.v2.data.Messwert;
+import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
+
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.selectors.ActiveControl;
 import ch.elexis.core.ui.util.SWTHelper;
-
-import com.hilotec.elexis.messwerte.v2.data.Messwert;
-import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
 
 /**
  * @author Patrick Chaubert
@@ -90,7 +89,6 @@ public class MesswertTypCount extends MesswertBase implements IMesswertTyp {
 				value++;
 			}
 			ConfigServiceHolder.setGlobal(CONFIG_BASE_NAME + counterMode, value);
-			CoreHub.globalCfg.flush();
 			messwert.setWert(df.format(value));
 		}
 	}

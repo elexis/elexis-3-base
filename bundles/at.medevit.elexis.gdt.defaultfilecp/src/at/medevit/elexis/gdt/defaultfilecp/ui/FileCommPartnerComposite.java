@@ -2,6 +2,7 @@ package at.medevit.elexis.gdt.defaultfilecp.ui;
 
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -248,7 +249,7 @@ public class FileCommPartnerComposite extends Composite {
 	}
 	
 	private String getValueByConfigKey(String cfgKey){
-		return fileCommPartner.getSettings().get(cfgKey, "");
+		return fileCommPartner.getSettings().getString(cfgKey);
 	}
 	
 	private boolean add(String id, String name){
@@ -272,8 +273,9 @@ public class FileCommPartnerComposite extends Composite {
 	}
 	
 	private String getAllFileCommPartners(){
-		return fileCommPartner.getSettings()
-			.get(FileCommPartner.CFG_GDT_FILETRANSFER_IDS, FileCommPartner.DEFAULT_COMM_PARTNER_ID);
+		return StringUtils.defaultIfBlank(
+			fileCommPartner.getSettings().getString(FileCommPartner.CFG_GDT_FILETRANSFER_IDS),
+			FileCommPartner.DEFAULT_COMM_PARTNER_ID);
 	}
 	
 	private void removeFileCommPartner(String id){
@@ -285,23 +287,24 @@ public class FileCommPartnerComposite extends Composite {
 	}
 	
 	private void updateFileCommPartner(String cfg){
-		fileCommPartner.getSettings().set(FileCommPartner.CFG_GDT_FILETRANSFER_IDS,
+		fileCommPartner.getSettings().setValue(FileCommPartner.CFG_GDT_FILETRANSFER_IDS,
 			cfg);
 	}
 	
 	private void remove(){
 		removeFileCommPartner(fileCommPartner.getId());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferIdReceiver());
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferIdReceiver(), null);
 		fileCommPartner.getSettings()
-			.remove(fileCommPartner.getFileTransferShortIdReceiver());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferDirectory());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferInDirectory());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferOutDirectory());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferUsedType());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferExecuteable());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferViewerExecuteable());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileAdditionalParams());
-		fileCommPartner.getSettings().remove(fileCommPartner.getFileTransferName());
+			.setValue(fileCommPartner.getFileTransferShortIdReceiver(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferDirectory(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferInDirectory(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferOutDirectory(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferUsedType(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferExecuteable(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferViewerExecuteable(),
+			null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileAdditionalParams(), null);
+		fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferName(), null);
 		
 		Composite parent = getParent();
 		dispose();
@@ -310,32 +313,33 @@ public class FileCommPartnerComposite extends Composite {
 	
 	public void save(){
 		if (!isDisposed()) {
-			fileCommPartner.getSettings().set(
+			fileCommPartner.getSettings().setValue(
 				fileCommPartner.getFileTransferIdReceiver(),
 				txtIdReceiver.getText());
-			fileCommPartner.getSettings().set(
+			fileCommPartner.getSettings().setValue(
 				fileCommPartner.getFileTransferShortIdReceiver(),
 				txtIdShortReceiver.getText());
-			fileCommPartner.getSettings().set(
+			fileCommPartner.getSettings().setValue(
 				fileCommPartner.getFileTransferDirectory(),
 				txtExchangeDir.getText());
-			fileCommPartner.getSettings().set(
+			fileCommPartner.getSettings().setValue(
 				fileCommPartner.getFileTransferInDirectory(),
 				txtExchangeInDir.getText());
-			fileCommPartner.getSettings().set(
+			fileCommPartner.getSettings().setValue(
 				fileCommPartner.getFileTransferOutDirectory(),
 				txtExchangeOutDir.getText());
-			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferUsedType(),
+			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferUsedType(),
 				btnFileTypes[1].getSelection() ? GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND
 						: GDTConstants.GDT_FILETRANSFER_TYP_FEST);
-			fileCommPartner.getSettings().set(
+			fileCommPartner.getSettings().setValue(
 				fileCommPartner.getFileTransferExecuteable(),
 				txtExecutable.getText());
-			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferViewerExecuteable(),
+			fileCommPartner.getSettings().setValue(
+				fileCommPartner.getFileTransferViewerExecuteable(),
 				txtViewerExecutable.getText());
-			fileCommPartner.getSettings().set(fileCommPartner.getFileAdditionalParams(),
+			fileCommPartner.getSettings().setValue(fileCommPartner.getFileAdditionalParams(),
 				txtAdditionalParam.getText());
-			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferName(),
+			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferName(),
 				txtName.getText());
 		}
 	}

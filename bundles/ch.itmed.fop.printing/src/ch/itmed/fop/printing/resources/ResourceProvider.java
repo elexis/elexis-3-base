@@ -27,18 +27,18 @@ import javax.xml.xpath.XPathFactory;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.preferences.SettingsProvider;
-import ch.rgw.io.Settings;
 
 public class ResourceProvider {
 	private static final String PLUGIN_ID = "ch.itmed.fop.printing";
@@ -51,10 +51,11 @@ public class ResourceProvider {
 
 	public static File getXslTemplateFile(int docId) {
 		String docName = PreferenceConstants.getDocumentName(docId);
-		Settings settingsStore = SettingsProvider.getStore(docName);
+		IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-		if (settingsStore.get(PreferenceConstants.getDocPreferenceConstant(docName, 2), false)) {
-			String xslPath = settingsStore.get(PreferenceConstants.getDocPreferenceConstant(docName, 1), "");
+		if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 2))) {
+			String xslPath =
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 1));
 			return new File(xslPath);
 		}
 

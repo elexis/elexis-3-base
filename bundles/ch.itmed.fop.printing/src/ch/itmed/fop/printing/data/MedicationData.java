@@ -15,23 +15,22 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Anwender;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.preferences.SettingsProvider;
 import ch.itmed.fop.printing.resources.Messages;
-import ch.rgw.io.Settings;
-import ch.rgw.tools.TimeTool;
 
 public final class MedicationData {
-	private Prescription prescription;
+	private IPrescription prescription;
 
 	public void load() throws NullPointerException {
-		prescription = (Prescription) ElexisEventDispatcher.getSelected(Prescription.class);
+		prescription = ContextServiceHolder.get().getTyped(IPrescription.class).orElse(null);
 		if (prescription == null) {
 			SWTHelper.showInfo("Keine Medikation ausgewählt", "Bitte wählen Sie vor dem Drucken eine Medikation.");
 			throw new NullPointerException("No prescription selected");
@@ -39,11 +38,11 @@ public final class MedicationData {
 	}
 
 	public String getArticleName() {
-		return prescription.getArtikel().getName();
+		return prescription.getArticle().getName();
 	}
 
 	public String getArticlePrice() {
-		return prescription.getArtikel().getVKPreis().toString();
+		return prescription.getArticle().getSellingPrice().toString();
 	}
 
 	public String getDeliveryDate() {
@@ -54,7 +53,7 @@ public final class MedicationData {
 	}
 
 	public String getDose() {
-		return prescription.getDosis();
+		return prescription.getDosageInstruction();
 	}
 
 	public String[] getDoseArray() {
@@ -62,28 +61,24 @@ public final class MedicationData {
 	}
 
 	public String getDosageInstructions() {
-		return prescription.getBemerkung();
+		return prescription.getRemark();
 	}
 
 	public String getPrescriptionDate() {
-		String date = PersistentObject.checkNull(prescription.get(Prescription.FLD_DATE_FROM));
-		if (!date.isEmpty()) {
-			TimeTool timetool = new TimeTool(date);
-			return timetool.toString(TimeTool.DATE_GER);
-		}
-		return "";
+		return prescription.getDateFrom() != null
+				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom())
+				: "";
 	}
 
 	public String getPrescriptionAuthor() {
-		String authorId = PersistentObject.checkNull(prescription.get(Prescription.FLD_PRESCRIPTOR));
-		Anwender author = Anwender.load(authorId);
-		return author.getLabel(true);
+		return prescription.getPrescriptor() != null ? prescription.getPrescriptor().getLabel()
+				: "";
 	}
 
 	public String getResponsiblePharmacist() {
 		String docName = PreferenceConstants.MEDICATION_LABEL;
-		Settings settingsStore = SettingsProvider.getStore(docName);
-		return settingsStore.get(PreferenceConstants.getDocPreferenceConstant(docName, 13), "");
+		IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
+		return settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 13));
 	}
 
 	public String getMedicationType() {

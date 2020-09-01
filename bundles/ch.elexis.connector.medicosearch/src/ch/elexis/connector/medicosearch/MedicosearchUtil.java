@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.connector.medicosearch.ui.MedicosearchPreferences;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 
@@ -65,7 +64,6 @@ public class MedicosearchUtil {
 		if (cfgSetting == null || !cfgSetting.equals(cfgFile.getAbsolutePath())) {
 			ConfigServiceHolder.setGlobal(MedicosearchPreferences.CFG_MEDICOSEARCH_CONFIG,
 				cfgFile.getAbsolutePath());
-			CoreHub.globalCfg.flush();
 		}
 	}
 	

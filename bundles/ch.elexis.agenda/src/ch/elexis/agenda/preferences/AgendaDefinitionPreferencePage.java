@@ -272,7 +272,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 			ConfigServiceHolder.setGlobal(key, areaType.name() + "/" + value);
 			break;
 		default:
-			CoreHub.globalCfg.remove(key);
+			ConfigServiceHolder.setGlobal(key, null);
 		}
 	}
 	
@@ -290,7 +290,6 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 		CoreHub.localCfg.set(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
 			btnAvoidDoubleBooking.getSelection());
 		CoreHub.localCfg.flush();
-		CoreHub.globalCfg.flush();
 		
 		super.performApply();
 	}

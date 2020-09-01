@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class PhMPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -320,8 +319,6 @@ public class PhMPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		String strCfg = this.createCFGString();
 		
 		ConfigServiceHolder.setGlobal(Constants.CFG_PHM_PHY, strCfg.toString());
-		CoreHub.globalCfg.flush();
-		
 	}
 	
 	

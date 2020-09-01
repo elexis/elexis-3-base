@@ -4,12 +4,12 @@ import org.jdom.Element;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
@@ -45,7 +45,7 @@ public class XMLExporterInsurance {
 				(!caseNumber.matches("[0-9]{9}")) && // auch bis 31.12.1999 gültige Nummer //$NON-NLS-1$
 				(!caseNumber.matches("[0-9]{6}"))) { // Nummer für Abklärungsmassnahmen //$NON-NLS-1$
 				/* die spinnen, die Bürokraten */
-				if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)) {
+				if (ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)) {
 					invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
 						Messages.XMLExporter_IVCaseNumberInvalid);
 				} else {
@@ -57,7 +57,7 @@ public class XMLExporterInsurance {
 			addSSNAttribute(element, patient, coverage, invoice, false);
 			String nif = TarmedRequirements.getNIF(mandator.getBiller()).replaceAll("[^0-9]", //$NON-NLS-1$
 				StringConstants.EMPTY);
-			if (CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
+			if (ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
 				&& (!nif.matches("[0-9]{1,7}"))) { //$NON-NLS-1$
 				invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
 					Messages.XMLExporter_NIFInvalid);
@@ -117,7 +117,7 @@ public class XMLExporterInsurance {
 				.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		}
 		boolean ahvValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!isOptional && ((CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
+		if (!isOptional && ((ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
 			&& !ahvValid))) {
 			invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
 				Messages.XMLExporter_AHVInvalid);

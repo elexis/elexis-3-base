@@ -34,16 +34,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.befunde.Messwert;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.data.CstGroup;
 import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.data.CstProimmun;
 import ch.gpb.elexis.cst.preferences.CstPreference;
-import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.view.CstProfileEditor;
 import ch.rgw.tools.StringTool;
 
@@ -212,7 +212,7 @@ public class CstService {
     }
 
     public static String generateFilename(Patient p) {
-	String filePrefix = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_FILEPREFIX, null);
+	String filePrefix = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_FILEPREFIX, null);
 	if (filePrefix == null) {
 	    filePrefix = "PREFIX-NOT-DEFINED-YET";
 	}
@@ -225,7 +225,7 @@ public class CstService {
 	result.append(p.getName().substring(0, 1));
 	result.append(".-");
 
-	String fileFormat = CoreHub.userCfg.get(CstPreference.CST_IDENTIFIER_FILEFORMAT, null);
+	String fileFormat = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_FILEFORMAT, null);
 
 	Date date = new Date();
 	DateFormat df;

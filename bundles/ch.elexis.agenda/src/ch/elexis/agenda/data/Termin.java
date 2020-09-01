@@ -206,20 +206,20 @@ public class Termin extends PersistentObject
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8")); //$NON-NLS-1$
 			j.execScript(bais, true, false);
-			CoreHub.userCfg.set(PreferenceConstants.AG_SHOWDELETED + "_default", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+			ConfigServiceHolder.setUser(PreferenceConstants.AG_SHOWDELETED + "_default", "0"); //$NON-NLS-1$ //$NON-NLS-2$
 			ConfigServiceHolder.setGlobal(PreferenceConstants.AG_TERMINTYPEN + "_default", //$NON-NLS-1$
 				Messages.Termin_freeLockedNormalExtraVisit);
 			ConfigServiceHolder.setGlobal(PreferenceConstants.AG_TERMINSTATUS + "_default", //$NON-NLS-1$
 				Messages.Termin_plannedHereFinishedMissed);
-			CoreHub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Termin.typFrei(),
+			ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + Termin.typFrei(),
 				"icons/gruen.png"); //$NON-NLS-1$
-			CoreHub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Termin.typReserviert(),
+			ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + Termin.typReserviert(),
 				"icons/einbahn.png"); //$NON-NLS-1$
-			CoreHub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_normal,
+			ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_normal,
 				"icons/kons.ico"); //$NON-NLS-2$
-			CoreHub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_extra,
+			ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_extra,
 				"icons/blaulicht.ico"); //$NON-NLS-2$
-			CoreHub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_visit,
+			ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_visit,
 				"icons/ambulanz.ico"); //$NON-NLS-2$
 			new ACLContributor().initializeDefaults(CoreHub.acl);
 		} catch (Exception ex) {

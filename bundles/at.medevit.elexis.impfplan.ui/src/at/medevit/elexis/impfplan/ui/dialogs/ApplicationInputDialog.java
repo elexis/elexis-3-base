@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.IArticle;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Patient;
 
 public class ApplicationInputDialog extends TitleAreaDialog {
@@ -33,7 +33,7 @@ public class ApplicationInputDialog extends TitleAreaDialog {
 	
 	public ApplicationInputDialog(Shell parentShell, IArticle article){
 		super(parentShell);
-		showSideOption = CoreHub.userCfg.get(PreferencePage.VAC_SHOW_SIDE, false);
+		showSideOption = ConfigServiceHolder.getUser(PreferencePage.VAC_SHOW_SIDE, false);
 		art = Optional.ofNullable(article);
 	}
 	
@@ -83,7 +83,7 @@ public class ApplicationInputDialog extends TitleAreaDialog {
 			btnRight = new Button(containerSide, SWT.RADIO);
 			btnRight.setText("rechts");
 			
-			if (DEF_SIDE.equals(CoreHub.userCfg.get(PreferencePage.VAC_DEFAULT_SIDE, DEF_SIDE))) {
+			if (DEF_SIDE.equals(ConfigServiceHolder.getUser(PreferencePage.VAC_DEFAULT_SIDE, DEF_SIDE))) {
 				btnLeft.setSelection(true);
 			} else {
 				btnRight.setSelection(true);

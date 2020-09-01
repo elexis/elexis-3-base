@@ -31,6 +31,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -74,7 +75,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 			Label lab = new Label(top, SWT.NONE);
 			lab.setText(typ[i]);
 			String coldesc =
-					CoreHub.userCfg.get(PreferenceConstants.AG_TYPCOLOR_PREFIX + typ[i], "FFFFFF"); //$NON-NLS-1$
+					ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + typ[i], "FFFFFF"); //$NON-NLS-1$
 			Color background = UiDesk.getColorFromRGB(coldesc);
 			lab.setBackground(background);
 			GridData gd = new GridData(GridData.FILL_BOTH);
@@ -88,7 +89,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 					RGB selected = cd.open();
 					String symbolic = UiDesk.createColor(selected);
 					l.setBackground(UiDesk.getColorFromRGB(symbolic));
-					CoreHub.userCfg.set(PreferenceConstants.AG_TYPCOLOR_PREFIX + l.getText(), symbolic);
+					ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + l.getText(), symbolic);
 				}
 				
 			});
@@ -109,7 +110,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 			lab.setText(status[i]);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			lab.setLayoutData(gd);
-			lab.setBackground(UiDesk.getColorFromRGB(CoreHub.userCfg.get(
+			lab.setBackground(UiDesk.getColorFromRGB(ConfigServiceHolder.getUser(
 				PreferenceConstants.AG_STATCOLOR_PREFIX + status[i], "FFFFFF"))); //$NON-NLS-1$
 			lab.addMouseListener(new MouseAdapter() {
 				
@@ -120,7 +121,7 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 					RGB selected = cd.open();
 					String symbolic = UiDesk.createColor(selected);
 					l.setBackground(UiDesk.getColorFromRGB(symbolic));
-					CoreHub.userCfg.set(PreferenceConstants.AG_STATCOLOR_PREFIX + l.getText(), symbolic);
+					ConfigServiceHolder.setUser(PreferenceConstants.AG_STATCOLOR_PREFIX + l.getText(), symbolic);
 				}
 				
 			});

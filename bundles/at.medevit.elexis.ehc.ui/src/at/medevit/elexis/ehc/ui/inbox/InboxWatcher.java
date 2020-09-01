@@ -42,6 +42,7 @@ import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.Messages;
 import ch.elexis.data.Mandant;
@@ -203,7 +204,7 @@ public class InboxWatcher {
 		
 		@Override
 		public void runInUi(ElexisEvent ev){
-			activeInboxString = CoreHub.userCfg.get(PreferencePage.EHC_INPUTDIR,
+			activeInboxString = ConfigServiceHolder.getUser(PreferencePage.EHC_INPUTDIR,
 				PreferencePage.getDefaultInputDir());
 			executor.execute(new DirectoryInitializer());
 			if (watchKeys.get(activeInboxString) == null) {

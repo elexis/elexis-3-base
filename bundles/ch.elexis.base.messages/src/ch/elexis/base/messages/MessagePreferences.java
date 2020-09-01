@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav";
@@ -30,9 +31,9 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	
 	public MessagePreferences(){
 		super(Messages.Prefs_Messages);
-		soundOn = CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_ON, true);
-		soundFilePath = CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
-		answerAutoclear = CoreHub.userCfg.get(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false);
+		soundOn = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true);
+		soundFilePath = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
+		answerAutoclear = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false);
 	}
 	
 	@Override
@@ -99,25 +100,25 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	
 	@Override
 	protected void performDefaults(){
-		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_ON, true);
-		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
-		CoreHub.userCfg.set(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false);
+		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_ON, true);
+		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH);
+		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, false);
 		
 		btnAnswerAutoclear.setSelection(false);
 		btnSoundOn.setSelection(true);
 		btnBrowse.setEnabled(true);
 		txtSoundFilePath.setEnabled(true);
 		txtSoundFilePath
-			.setText(CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH));
+			.setText(ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH, DEF_SOUND_PATH));
 			
 		super.performDefaults();
 	}
 	
 	@Override
 	public boolean performOk(){
-		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_ON, btnSoundOn.getSelection());
-		CoreHub.userCfg.set(Preferences.USR_MESSAGES_SOUND_PATH, txtSoundFilePath.getText());
-		CoreHub.userCfg.set(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR,
+		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_ON, btnSoundOn.getSelection());
+		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_PATH, txtSoundFilePath.getText());
+		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR,
 			btnAnswerAutoclear.getSelection());
 		CoreHub.userCfg.flush();
 		return super.performOk();

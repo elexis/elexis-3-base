@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class WebLinkElementUtil {
 	private static final String CFG_WEBLINK = "elexis.weblink";
@@ -82,7 +83,7 @@ public class WebLinkElementUtil {
 	}
 	
 	private static List<String> loadIds(){
-		String allIds = CoreHub.userCfg.get(CFG_WEBLINK_IDS, "");
+		String allIds = ConfigServiceHolder.getUser(CFG_WEBLINK_IDS, "");
 		String[] ids = allIds.split(ID_DELIMITER_ESCAPED);
 		ArrayList<String> ret = new ArrayList<String>();
 		for (String id : ids) {
@@ -97,14 +98,14 @@ public class WebLinkElementUtil {
 		StringBuilder sb = new StringBuilder();
 		
 		if (ids.isEmpty()) {
-			CoreHub.userCfg.set(CFG_WEBLINK_IDS, "");
+			ConfigServiceHolder.setUser(CFG_WEBLINK_IDS, "");
 		} else {
 			for (String string : ids) {
 				sb.append(string);
 				sb.append(ID_DELIMITER);
 			}
 			sb.setLength(sb.length() - ID_DELIMITER.length());
-			CoreHub.userCfg.set(CFG_WEBLINK_IDS, sb.toString());
+			ConfigServiceHolder.setUser(CFG_WEBLINK_IDS, sb.toString());
 		}
 	}
 	

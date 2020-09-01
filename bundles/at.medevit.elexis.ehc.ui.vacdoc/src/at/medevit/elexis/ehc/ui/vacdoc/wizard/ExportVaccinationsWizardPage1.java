@@ -43,6 +43,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -156,7 +157,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		try {
 			Patient elexisPatient = ElexisEventDispatcher.getSelectedPatient();
 			Mandant elexisMandant = ElexisEventDispatcher.getSelectedMandator();
-			String outputDir = CoreHub.userCfg.get(PreferencePage.EHC_OUTPUTDIR,
+			String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 				PreferencePage.getDefaultOutputDir());
 			VacdocService service = VacdocServiceComponent.getService();
 			

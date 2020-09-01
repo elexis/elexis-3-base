@@ -26,10 +26,12 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.test.TestData;
 import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
@@ -438,6 +440,7 @@ public class XMLExporterTest {
 	
 	@Test
 	public void erroneous44_2Test() throws IOException, JDOMException{
+		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true);
 		XMLExporter exporter = new XMLExporter();
 		// error in sequence of invoice:tiers_garant
 		IInvoice dummyInvoice = CoreModelServiceHolder.get().create(IInvoice.class);
@@ -447,6 +450,7 @@ public class XMLExporterTest {
 		dummyInvoice = CoreModelServiceHolder.get().create(IInvoice.class);
 		exporter.checkXML(TestData.loadXml("/rsc/noerroneous44_2.xml"), null, dummyInvoice, true);
 		assertTrue(dummyInvoice.getState() == null);
+		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}
 	
 	@Test

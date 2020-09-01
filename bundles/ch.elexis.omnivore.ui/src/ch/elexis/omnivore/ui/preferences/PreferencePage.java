@@ -54,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
@@ -415,11 +416,11 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		
 		btnSaveColumnWidths = new Button(getFieldEditorParent(), SWT.CHECK);
 		btnSaveColumnWidths.setText("Spaltenbreite speichern (für Ihren Benutzer)");
-		btnSaveColumnWidths.setSelection(CoreHub.userCfg.get(PreferencePage.SAVE_COLUM_WIDTH, false));
+		btnSaveColumnWidths.setSelection(ConfigServiceHolder.getUser(PreferencePage.SAVE_COLUM_WIDTH, false));
 		
 		btnSaveSortDirection = new Button(getFieldEditorParent(), SWT.CHECK);
 		btnSaveSortDirection.setText("Sortierung speichern (für Ihren Benutzer)");
-		btnSaveSortDirection.setSelection(CoreHub.userCfg.get(PreferencePage.SAVE_SORT_DIRECTION,
+		btnSaveSortDirection.setSelection(ConfigServiceHolder.getUser(PreferencePage.SAVE_SORT_DIRECTION,
 			false));
 		
 		return c;
@@ -448,8 +449,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	
 	@Override
 	protected void performApply(){
-		CoreHub.userCfg.set(PreferencePage.SAVE_COLUM_WIDTH, btnSaveColumnWidths.getSelection());
-		CoreHub.userCfg.set(PreferencePage.SAVE_SORT_DIRECTION, btnSaveSortDirection.getSelection());
+		ConfigServiceHolder.setUser(PreferencePage.SAVE_COLUM_WIDTH, btnSaveColumnWidths.getSelection());
+		ConfigServiceHolder.setUser(PreferencePage.SAVE_SORT_DIRECTION, btnSaveSortDirection.getSelection());
 		CoreHub.userCfg.flush();
 		CoreHub.localCfg.flush();
 		super.performApply();

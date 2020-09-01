@@ -39,6 +39,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Mandant;
 
@@ -150,7 +151,7 @@ public class OutboxView extends ViewPart {
 		getSite().setSelectionProvider(viewer);
 		
 		setAutoSelectPatientState(
-			CoreHub.userCfg.get(Preferences.OUTBOX_PATIENT_AUTOSELECT, false));
+			ConfigServiceHolder.getUser(Preferences.OUTBOX_PATIENT_AUTOSELECT, false));
 	}
 	
 	public void setAutoSelectPatientState(boolean value){
@@ -158,7 +159,7 @@ public class OutboxView extends ViewPart {
 		ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service.getCommand(AutoActivePatientHandler.CMD_ID);
 		command.getState(AutoActivePatientHandler.STATE_ID).setValue(value);
-		CoreHub.userCfg.set(Preferences.OUTBOX_PATIENT_AUTOSELECT, value);
+		ConfigServiceHolder.setUser(Preferences.OUTBOX_PATIENT_AUTOSELECT, value);
 	}
 	
 	private void addFilterActions(ToolBarManager menuManager){

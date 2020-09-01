@@ -19,6 +19,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -35,20 +36,20 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	}
 	
 	public static void initDirectories(){
-		if (CoreHub.userCfg.get(EHC_OUTPUTDIR, "notset").equals("notset")) {
+		if (ConfigServiceHolder.getUser(EHC_OUTPUTDIR, "notset").equals("notset")) {
 			File outputDir = new File(getDefaultOutputDir());
 			if (!outputDir.exists()) {
 				outputDir.mkdirs();
 			}
-			CoreHub.userCfg.set(EHC_OUTPUTDIR, getDefaultOutputDir());
+			ConfigServiceHolder.setUser(EHC_OUTPUTDIR, getDefaultOutputDir());
 		}
 		
-		if (CoreHub.userCfg.get(EHC_INPUTDIR, "notset").equals("notset")) {
+		if (ConfigServiceHolder.getUser(EHC_INPUTDIR, "notset").equals("notset")) {
 			File inputDir = new File(getDefaultInputDir());
 			if (!inputDir.exists()) {
 				inputDir.mkdirs();
 			}
-			CoreHub.userCfg.set(EHC_INPUTDIR, getDefaultInputDir());
+			ConfigServiceHolder.setUser(EHC_INPUTDIR, getDefaultInputDir());
 		}
 	}
 	

@@ -11,6 +11,7 @@ import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Fall.Tiers;
@@ -34,9 +35,11 @@ public class XMLExporterTiersTest {
 		assertEquals(Tiers.PAYANT, TP_GV.getTiersType());
 		ICoverage coverage =
 			CoreModelServiceHolder.get().load(TP_GV.getId(), ICoverage.class).get();
+		IPatient patient = coverage.getPatient();
+		CoreModelServiceHolder.get().refresh(patient, true);
 		IContact guarantor = XMLExporterUtil.getGuarantor(
 			XMLExporter.TIERS_PAYANT,
-			coverage.getPatient(), coverage);
+			patient, coverage);
 		assertEquals(legalGuardian, NoPoUtil.loadAsPersistentObject(guarantor));
 		
 		// TP ohne gesetzlichen Vertreter -> Patient
@@ -45,8 +48,10 @@ public class XMLExporterTiersTest {
 		TP_NOGV.setGarant(insurer);
 		assertEquals(Tiers.PAYANT, TP_NOGV.getTiersType());
 		coverage = CoreModelServiceHolder.get().load(TP_NOGV.getId(), ICoverage.class).get();
+		patient = coverage.getPatient();
+		CoreModelServiceHolder.get().refresh(patient, true);
 		guarantor =
-			XMLExporterUtil.getGuarantor(XMLExporter.TIERS_PAYANT, coverage.getPatient(),
+			XMLExporterUtil.getGuarantor(XMLExporter.TIERS_PAYANT, patient,
 			coverage);
 		assertEquals(TP_NOGV.getPatient(), NoPoUtil.loadAsPersistentObject(guarantor));
 		

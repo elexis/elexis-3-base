@@ -76,6 +76,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -110,14 +111,14 @@ public class TerminDialog extends TitleAreaDialog {
 	DatePicker dp;
 	TimeInput tiVon;
 	TimeInput tiBis;
-	int ts = CoreHub.userCfg.get("agenda/dayView/Start", 7); //$NON-NLS-1$
-	int te = CoreHub.userCfg.get("agenda/dayView/End", 19); //$NON-NLS-1$
+	int ts = ConfigServiceHolder.getUser("agenda/dayView/Start", 7); //$NON-NLS-1$
+	int te = ConfigServiceHolder.getUser("agenda/dayView/End", 19); //$NON-NLS-1$
 	int tagStart = ts * 60; // 7 Uhr
 	int tagEnd = te * 60;
 	int[] rasterValues = new int[] {
 		5, 10, 15, 30
 	};
-	int rasterIndex = CoreHub.userCfg.get("agenda/dayView/raster", 3); //$NON-NLS-1$
+	int rasterIndex = ConfigServiceHolder.getUser("agenda/dayView/raster", 3); //$NON-NLS-1$
 	Hashtable<String, String> tMap;
 	double minutes;
 	double pixelPerMinute;
@@ -725,7 +726,7 @@ public class TerminDialog extends TitleAreaDialog {
 				public void mouseDown(final MouseEvent e){
 					if (e.y > sep + 2) {
 						rasterIndex = (rasterIndex >= rasterValues.length) ? 0 : rasterIndex + 1;
-						CoreHub.userCfg.set("agenda/dayView/raster", rasterIndex); //$NON-NLS-1$
+						ConfigServiceHolder.setUser("agenda/dayView/raster", rasterIndex); //$NON-NLS-1$
 						redraw();
 					} else {
 						// super.mouseDown(e);
@@ -806,7 +807,7 @@ public class TerminDialog extends TitleAreaDialog {
 			g.drawLine(0, sep, d.x, sep);
 			if (rasterIndex >= rasterValues.length) {
 				rasterIndex = 0;
-				CoreHub.userCfg.set("agenda/dayView/raster", rasterIndex); //$NON-NLS-1$
+				ConfigServiceHolder.setUser("agenda/dayView/raster", rasterIndex); //$NON-NLS-1$
 			}
 			double chunkwidth = rasterValues[rasterIndex] * pixelPerMinute;
 			int chunksPerHour = 60 / rasterValues[rasterIndex];

@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Query;
@@ -46,7 +47,7 @@ public class MsgHeartListener implements HeartListener {
 					UiDesk.getDisplay().asyncExec(new Runnable() {
 						public void run(){
 							bSkip = true;
-							if (CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_ON, true)) {
+							if (ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true)) {
 								playSound();
 							}
 							new MsgDetailDialog(Hub.getActiveShell(), res.get(0)).open();
@@ -71,7 +72,7 @@ public class MsgHeartListener implements HeartListener {
 		try {
 			AudioInputStream audioInStream;
 			String soundFilePath =
-				CoreHub.userCfg.get(Preferences.USR_MESSAGES_SOUND_PATH,
+				ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH,
 					MessagePreferences.DEF_SOUND_PATH);
 			
 			// create an audioinputstream from sound url

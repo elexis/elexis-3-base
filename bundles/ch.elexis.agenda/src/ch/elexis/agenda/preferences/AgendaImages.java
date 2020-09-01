@@ -35,6 +35,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.PlatformHelper;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.rgw.io.FileTool;
@@ -87,7 +88,7 @@ public class AgendaImages extends PreferencePage implements IWorkbenchPreference
 								}
 							}
 							String t = (String) ((Button) e.getSource()).getData();
-							CoreHub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + t,
+							ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + t,
 								"icons/" + dest.getName()); //$NON-NLS-1$
 						}
 					} catch (Exception ex) {

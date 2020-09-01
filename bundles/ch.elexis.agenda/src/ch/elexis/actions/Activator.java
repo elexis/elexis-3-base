@@ -101,7 +101,7 @@ public class Activator extends AbstractUIPlugin {
 	
 	public void setActResource(final String resname){
 		actResource = resname;
-		CoreHub.userCfg.set(PreferenceConstants.AG_BEREICH, resname);
+		ConfigServiceHolder.setUser(PreferenceConstants.AG_BEREICH, resname);
 		UiDesk.asyncExec(new Runnable() {
 			@Override
 			public void run(){

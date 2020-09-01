@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.data.Anwender;
 import ch.gpb.elexis.cst.Messages;
@@ -45,19 +46,19 @@ public class CstPreference extends FieldEditorPreferencePage implements IWorkben
     }
 
     public static void initIdentifiers() {
-	if (CoreHub.userCfg.get(CST_IDENTIFIER_OMNIVORE, "notset").equals("notset")) {
-	    CoreHub.userCfg.set(CST_IDENTIFIER_OMNIVORE, getDefaultIdentifierOmnivore());
+	if (ConfigServiceHolder.getUser(CST_IDENTIFIER_OMNIVORE, "notset").equals("notset")) {
+	    ConfigServiceHolder.setUser(CST_IDENTIFIER_OMNIVORE, getDefaultIdentifierOmnivore());
 	}
 
-	if (CoreHub.userCfg.get(CST_IDENTIFIER_BRIEFE, "notset").equals("notset")) {
-	    CoreHub.userCfg.set(CST_IDENTIFIER_BRIEFE, getDefaultIdentifierBriefe());
+	if (ConfigServiceHolder.getUser(CST_IDENTIFIER_BRIEFE, "notset").equals("notset")) {
+	    ConfigServiceHolder.setUser(CST_IDENTIFIER_BRIEFE, getDefaultIdentifierBriefe());
 	}
 
-	if (CoreHub.userCfg.get(CST_IDENTIFIER_FILEPREFIX, "notset").equals("notset")) {
-	    CoreHub.userCfg.set(CST_IDENTIFIER_FILEPREFIX, getDefaultFilePrefix());
+	if (ConfigServiceHolder.getUser(CST_IDENTIFIER_FILEPREFIX, "notset").equals("notset")) {
+	    ConfigServiceHolder.setUser(CST_IDENTIFIER_FILEPREFIX, getDefaultFilePrefix());
 	}
-	if (CoreHub.userCfg.get(CST_IDENTIFIER_FILEFORMAT, "notset").equals("notset")) {
-	    CoreHub.userCfg.set(CST_IDENTIFIER_FILEFORMAT, getDefaultFileFormat());
+	if (ConfigServiceHolder.getUser(CST_IDENTIFIER_FILEFORMAT, "notset").equals("notset")) {
+	    ConfigServiceHolder.setUser(CST_IDENTIFIER_FILEFORMAT, getDefaultFileFormat());
 	}
 
     }

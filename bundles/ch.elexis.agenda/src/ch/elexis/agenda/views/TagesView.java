@@ -41,7 +41,7 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.DateSelectorDialog;
 import ch.elexis.core.ui.icons.Images;
@@ -201,7 +201,7 @@ public class TagesView extends BaseAgendaView {
 				}
 				
 				// show reason if its configured
-				if (CoreHub.userCfg.get(PreferenceConstants.AG_SHOW_REASON, false)) {
+				if (ConfigServiceHolder.getUser(PreferenceConstants.AG_SHOW_REASON, false)) {
 					if (p instanceof Termin) {
 						String grund = ((Termin) p).getGrund();
 						if (!StringTool.isNothing(grund)) {

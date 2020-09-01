@@ -396,7 +396,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	
 	private int getRasterStartTime(){
 		try {
-			//@REF CoreHub.userCfg.get("agenda/dayView/Start", 7);
+			//@REF ConfigServiceHolder.getUser("agenda/dayView/Start", 7);
 			return Integer.parseInt(
 				ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/Start", "7"));
 		} catch (NumberFormatException e) {
@@ -406,7 +406,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	
 	private int getRasterEndTime(){
 		try {
-			//@REF CoreHub.userCfg.get("agenda/dayView/End", 19);
+			//@REF ConfigServiceHolder.getUser("agenda/dayView/End", 19);
 			return Integer.parseInt(
 				ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/End", "19"));
 		} catch (NumberFormatException e) {
@@ -417,7 +417,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	
 	private int getRasterIndex(){
 		try {
-			//@REF CoreHub.userCfg.get("agenda/dayView/raster", 3)
+			//@REF ConfigServiceHolder.getUser("agenda/dayView/raster", 3)
 			return Integer.parseInt(
 				ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/raster", "3"));
 		} catch (NumberFormatException e) {
@@ -426,7 +426,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 	
 	private void setRasterIndex(int rasterIndex){
-		//@REF CoreHub.userCfg.set("agenda/dayView/raster", rasterIndex); //$NON-NLS-1$
+		//@REF ConfigServiceHolder.setUser("agenda/dayView/raster", rasterIndex); //$NON-NLS-1$
 		ContextServiceHolder.get().getActiveUserContact().ifPresent(c -> ConfigServiceHolder.get()
 			.set(c, "agenda/dayView/raster", String.valueOf(rasterIndex)));
 	}
@@ -476,7 +476,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	private Color getTypColor(IAppointment p){
 		
 		//@REF String coldesc =
-		//			CoreHub.userCfg.get(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "FFFFFF"); //$NON-NLS-1$
+		//			ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "FFFFFF"); //$NON-NLS-1$
 		//		return UiDesk.getColorFromRGB(coldesc);
 
 		String cfgName = "agenda/farben/typ/";

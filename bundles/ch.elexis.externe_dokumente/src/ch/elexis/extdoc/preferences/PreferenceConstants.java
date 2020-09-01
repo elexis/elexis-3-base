@@ -14,6 +14,7 @@
 package ch.elexis.extdoc.preferences;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class PreferenceConstants {
 	// retour kompatibel
@@ -70,7 +71,7 @@ public class PreferenceConstants {
 	
 	private static void ensureValueLoaded(){
 		if (selected == -1)
-			selected = Integer.parseInt(CoreHub.userCfg.get(PreferenceConstants.SELECTED_PATHS, "0")); //$NON-NLS-1$	
+			selected = Integer.parseInt(ConfigServiceHolder.getUser(PreferenceConstants.SELECTED_PATHS, "0")); //$NON-NLS-1$	
 	}
 	
 	/***
@@ -90,7 +91,7 @@ public class PreferenceConstants {
 	
 	public static void saveSelected(){
 		ensureValueLoaded();
-		CoreHub.userCfg.set(PreferenceConstants.SELECTED_PATHS, Integer.toString(selected));
+		ConfigServiceHolder.setUser(PreferenceConstants.SELECTED_PATHS, Integer.toString(selected));
 		
 	}
 	

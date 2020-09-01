@@ -28,8 +28,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import at.medevit.elexis.gdt.defaultfilecp.FileCommPartner;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class GDTPreferencePageFileTransfer extends PreferencePage
 		implements IWorkbenchPreferencePage {
@@ -85,7 +85,7 @@ public class GDTPreferencePageFileTransfer extends PreferencePage
 		ScrolledComposite scrolledComposite){
 		FileCommPartner fileCommPartner = new FileCommPartner(id);
 		if (name != null) {
-			fileCommPartner.getSettings().set(fileCommPartner.getFileTransferName(), name);
+			fileCommPartner.getSettings().setValue(fileCommPartner.getFileTransferName(), name);
 		}
 		fileCommPartnerComposites
 			.add(new FileCommPartnerComposite(this, scrolledComposite, editorParent,
@@ -109,9 +109,6 @@ public class GDTPreferencePageFileTransfer extends PreferencePage
 		for (FileCommPartnerComposite fileCommPartnerComposite : fileCommPartnerComposites) {
 			fileCommPartnerComposite.save();
 		}
-		CoreHub.userCfg.flush();
-		CoreHub.globalCfg.flush();
-		CoreHub.localCfg.flush();
 		return super.performOk();
 	}
 	
@@ -119,8 +116,7 @@ public class GDTPreferencePageFileTransfer extends PreferencePage
 	 * Initialize the preferference page.
 	 */
 	public void init(IWorkbench workbench){
-		setPreferenceStore(
-			new SettingsPreferenceStore(FileCommPartner.isFileTransferGlobalConfigured()
-					? CoreHub.globalCfg : CoreHub.localCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(
+			FileCommPartner.isFileTransferGlobalConfigured() ? Scope.GLOBAL : Scope.LOCAL));
 	}
 }

@@ -13,6 +13,7 @@
 package ch.elexis.labor.viollier.v2.data;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
 import ch.rgw.io.Settings;
 
@@ -24,7 +25,6 @@ public class ViollierLaborImportSettings {
 		"ch.elexis.laborimport.viollier.v2.ViollierLaborImportSettings"; //$NON-NLS-1$
 	public static final String cfgBase = "ch/elexis/laborimport/viollier/v2/ViollierLaborImport"; //$NON-NLS-1$
 	
-	Settings globalCfg = CoreHub.globalCfg; // Settings: DB für alle PCs und Mandanten
 	Settings machineCfg = CoreHub.localCfg; // Settings: lokal auf dem PC (Windows: Registry)
 	Settings mandantCfg = CoreHub.mandantCfg; // Settings: DB für einen Mandanten
 	
@@ -485,16 +485,16 @@ public class ViollierLaborImportSettings {
 		globalDocumentCategory = null;
 		
 		// Globale Settings
-		globalJMedTransferJar = globalCfg.get(cfgJMedTransferJar, ""); //$NON-NLS-1$
-		globalJMedTransferParam = globalCfg.get(cfgJMedTransferParam, ""); //$NON-NLS-1$
-		globalDirDownload = globalCfg.get(cfgDirDownload, ""); //$NON-NLS-1$
-		globalDirArchive = globalCfg.get(cfgDirArchive, ""); //$NON-NLS-1$
-		globalDirError = globalCfg.get(cfgDirError, ""); //$NON-NLS-1$
-		temp = globalCfg.get(cfgArchivePurgeInterval, ""); //$NON-NLS-1$
+		globalJMedTransferJar = ConfigServiceHolder.getGlobal(cfgJMedTransferJar, ""); //$NON-NLS-1$
+		globalJMedTransferParam = ConfigServiceHolder.getGlobal(cfgJMedTransferParam, ""); //$NON-NLS-1$
+		globalDirDownload = ConfigServiceHolder.getGlobal(cfgDirDownload, ""); //$NON-NLS-1$
+		globalDirArchive = ConfigServiceHolder.getGlobal(cfgDirArchive, ""); //$NON-NLS-1$
+		globalDirError = ConfigServiceHolder.getGlobal(cfgDirError, ""); //$NON-NLS-1$
+		temp = ConfigServiceHolder.getGlobal(cfgArchivePurgeInterval, ""); //$NON-NLS-1$
 		try {
 			globalArchivePurgeInterval = Integer.parseInt(temp);
 		} catch (Exception e) {}
-		globalDocumentCategory = globalCfg.get(cfgDocumentCategory, ""); //$NON-NLS-1$
+		globalDocumentCategory = ConfigServiceHolder.getGlobal(cfgDocumentCategory, ""); //$NON-NLS-1$
 		
 		// Mandanten Settings
 		settingText = mandantCfg.get(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
@@ -521,14 +521,13 @@ public class ViollierLaborImportSettings {
 	public void saveSettings(){
 		
 		// Globale Settings
-		globalCfg.set(cfgJMedTransferJar, globalJMedTransferJar);
-		globalCfg.set(cfgJMedTransferParam, globalJMedTransferParam);
-		globalCfg.set(cfgDirDownload, globalDirDownload);
-		globalCfg.set(cfgDirArchive, globalDirArchive);
-		globalCfg.set(cfgDirError, globalDirError);
-		globalCfg.set(cfgArchivePurgeInterval, globalArchivePurgeInterval);
-		globalCfg.set(cfgDocumentCategory, globalDocumentCategory);
-		globalCfg.flush();
+		ConfigServiceHolder.setGlobal(cfgJMedTransferJar, globalJMedTransferJar);
+		ConfigServiceHolder.setGlobal(cfgJMedTransferParam, globalJMedTransferParam);
+		ConfigServiceHolder.setGlobal(cfgDirDownload, globalDirDownload);
+		ConfigServiceHolder.setGlobal(cfgDirArchive, globalDirArchive);
+		ConfigServiceHolder.setGlobal(cfgDirError, globalDirError);
+		ConfigServiceHolder.setGlobal(cfgArchivePurgeInterval, globalArchivePurgeInterval);
+		ConfigServiceHolder.setGlobal(cfgDocumentCategory, globalDocumentCategory);
 		
 		// Mandanten Settings
 		mandantCfg.set(cfgMandantUseGlobalSettings, mandantUseGlobalSettings.toString());

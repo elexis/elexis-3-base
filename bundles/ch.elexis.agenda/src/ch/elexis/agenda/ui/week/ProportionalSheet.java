@@ -36,7 +36,6 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.BaseView;
 import ch.elexis.agenda.ui.IAgendaLayout;
 import ch.elexis.agenda.ui.TerminLabel;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Query;
@@ -75,8 +74,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			@Override
 			public void mouseDoubleClick(MouseEvent e){
 				String startOfDayTimeInMinutes =
-					CoreHub.globalCfg
-						.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+					ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT,
+						"0000");
 				int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 				int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 				

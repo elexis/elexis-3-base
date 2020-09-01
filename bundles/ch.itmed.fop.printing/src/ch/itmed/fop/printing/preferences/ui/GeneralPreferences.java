@@ -13,6 +13,7 @@ package ch.itmed.fop.printing.preferences.ui;
 
 import java.util.function.Consumer;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -31,10 +32,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.resources.Messages;
-import ch.rgw.io.Settings;
 
 public final class GeneralPreferences extends PreferencePage implements IWorkbenchPreferencePage {
 	private String[] tableCols = { Messages.GeneralPreferences_Document, Messages.GeneralPreferences_Printer,
@@ -94,29 +96,32 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 
 	private static void updateTableRow(int rowIndex, String docName) {
 		TableItem item = table.getItem(rowIndex);
-		Settings settingsStore;
+		IPreferenceStore settingsStore;
 
 		if (CoreHub.localCfg.get(PreferenceConstants.getDocPreferenceConstant(docName, 12), true)) {
-			settingsStore = CoreHub.globalCfg;
+			settingsStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
 		} else {
-			settingsStore = CoreHub.localCfg;
+			settingsStore = new ConfigServicePreferenceStore(Scope.LOCAL);
 		}
 
-		item.setText(1, settingsStore.get(PreferenceConstants.getDocPreferenceConstant(docName, 0), ""));
+		item.setText(1,
+			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0)));
 
-		if (settingsStore.get(PreferenceConstants.getDocPreferenceConstant(docName, 4), false)) {
+		if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 4))) {
 			item.setText(2, Messages.GeneralPreferences_Custom);
 		} else {
-			item.setText(2, settingsStore.get(PreferenceConstants.getDocPreferenceConstant(docName, 3), ""));
+			item.setText(2,
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 3)));
 		}
 
-		if (settingsStore.get(PreferenceConstants.getDocPreferenceConstant(docName, 2), false)) {
+		if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 2))) {
 			item.setText(3, Messages.GeneralPreferences_Custom);
 		} else {
 			item.setText(3, Messages.GeneralPreferences_Default);
 		}
 
-		if (settingsStore.get(PreferenceConstants.getDocPreferenceConstant(docName, 7), "0").equals("90")) {
+		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7))
+			.equals("90")) {
 			item.setText(4, Messages.GeneralPreferences_OrientationPortrait);
 		} else {
 			item.setText(4, Messages.GeneralPreferences_OrientationLandscape);
@@ -134,29 +139,32 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 		@Override
 		public void accept(String s) {
 			TableItem item = new TableItem(table, SWT.NONE);
-			Settings settingsStore;
+			IPreferenceStore settingsStore;
 			if (CoreHub.localCfg.get(PreferenceConstants.getDocPreferenceConstant(s, 12), true)) {
-				settingsStore = CoreHub.globalCfg;
+				settingsStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
 			} else {
-				settingsStore = CoreHub.localCfg;
+				settingsStore = new ConfigServicePreferenceStore(Scope.LOCAL);
 			}
 
 			item.setText(0, Messages.getDocumentName(table.getItemCount() - 1));
-			item.setText(1, settingsStore.get(PreferenceConstants.getDocPreferenceConstant(s, 0), ""));
+			item.setText(1,
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 0)));
 
-			if (settingsStore.get(PreferenceConstants.getDocPreferenceConstant(s, 4), false)) {
+			if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(s, 4))) {
 				item.setText(2, Messages.GeneralPreferences_Custom);
 			} else {
-				item.setText(2, settingsStore.get(PreferenceConstants.getDocPreferenceConstant(s, 3), ""));
+				item.setText(2,
+					settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 3)));
 			}
 
-			if (settingsStore.get(PreferenceConstants.getDocPreferenceConstant(s, 2), false)) {
+			if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(s, 2))) {
 				item.setText(3, Messages.GeneralPreferences_Custom);
 			} else {
 				item.setText(3, Messages.GeneralPreferences_Default);
 			}
 
-			if (settingsStore.get(PreferenceConstants.getDocPreferenceConstant(s, 7), "").equals("90")) {
+			if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 7))
+				.equals("90")) {
 				item.setText(4, Messages.GeneralPreferences_OrientationPortrait);
 			} else {
 				item.setText(4, Messages.GeneralPreferences_OrientationLandscape);

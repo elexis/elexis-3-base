@@ -1,11 +1,13 @@
 package at.medevit.elexis.gdt.defaultfilecp;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.activator.CoreHubHelper;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
-import ch.rgw.io.Settings;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class FileCommPartner {
 	
@@ -29,7 +31,7 @@ public class FileCommPartner {
 	public static final String COMM_PARTNER_SEPERATOR = ",;,";
 	
 	private String id;
-	private final SettingsPreferenceStore preferenceStore;
+	private final ConfigServicePreferenceStore preferenceStore;
 	
 	public FileCommPartner(){
 		this(DEFAULT_COMM_PARTNER_ID);
@@ -39,8 +41,8 @@ public class FileCommPartner {
 	public FileCommPartner(String id){
 		this.id = id;
 		preferenceStore =
-			new SettingsPreferenceStore(FileCommPartner.isFileTransferGlobalConfigured()
-					? CoreHub.globalCfg : CoreHub.localCfg);
+			new ConfigServicePreferenceStore(
+				FileCommPartner.isFileTransferGlobalConfigured() ? Scope.GLOBAL : Scope.LOCAL);
 		
 		// in the past v3.1 the default key was locally configured as an other key
 		// we need to transfer the old key to the new one
@@ -125,8 +127,7 @@ public class FileCommPartner {
 	
 	public static String[] getAllFileCommPartnersArray(){
 		if (isFileTransferGlobalConfigured()) {
-			return CoreHub.globalCfg
-				.get(FileCommPartner.CFG_GDT_FILETRANSFER_IDS,
+			return ConfigServiceHolder.getGlobal(FileCommPartner.CFG_GDT_FILETRANSFER_IDS,
 					FileCommPartner.DEFAULT_COMM_PARTNER_ID)
 				.split(FileCommPartner.COMM_PARTNER_SEPERATOR);
 		} else {
@@ -137,7 +138,7 @@ public class FileCommPartner {
 		}
 	}
 	
-	public Settings getSettings(){
-		return preferenceStore.getBase();
+	public IPreferenceStore getSettings(){
+		return preferenceStore;
 	}
 }

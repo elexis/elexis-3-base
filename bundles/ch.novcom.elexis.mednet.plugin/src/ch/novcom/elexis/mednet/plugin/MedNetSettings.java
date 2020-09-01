@@ -17,11 +17,11 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.rgw.io.Settings;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 
 /**
@@ -36,8 +36,6 @@ public class MedNetSettings {
 	public static final String cfgBase = "ch/novcom/elexis/mednet/plugin"; //$NON-NLS-1$
 	public static final int DEFAULT_ARCHIVEPURGEINTERVAL = 60;
 	public static final int DEFAULT_DBVERSION = 0;
-	
-	Settings configuration = CoreHub.globalCfg; // Settings: DB for all PCs
 	
 	// Globale Einstellungen
 	public static final String cfgExePath = cfgBase + "/exe"; //$NON-NLS-1$
@@ -158,7 +156,7 @@ public class MedNetSettings {
 		String logPrefix = "loadSettings() - ";//$NON-NLS-1$
 		
 		// Global Settings
-		String exePathString = configuration.get(cfgExePath, "");
+		String exePathString = ConfigServiceHolder.getGlobal(cfgExePath, "");
 		if(	exePathString != null && 
 			!exePathString.isEmpty()	) {
 			exePath = Paths.get(exePathString); 
@@ -169,7 +167,8 @@ public class MedNetSettings {
 			}
 		}
 		
-		String cfgFormsArchivePurgeIntervalString = configuration.get(cfgFormsArchivePurgeInterval, ""); //$NON-NLS-1$
+		String cfgFormsArchivePurgeIntervalString =
+			ConfigServiceHolder.getGlobal(cfgFormsArchivePurgeInterval, ""); //$NON-NLS-1$
 		if(	cfgFormsArchivePurgeIntervalString != null && 
 				!cfgFormsArchivePurgeIntervalString.isEmpty()	) {
 			try {
@@ -183,7 +182,7 @@ public class MedNetSettings {
 			archivePurgeInterval = MedNetSettings.DEFAULT_ARCHIVEPURGEINTERVAL ;
 		}
 		
-		String cfgDBVersionString = configuration.get(cfgDBVersion, ""); //$NON-NLS-1$
+		String cfgDBVersionString = ConfigServiceHolder.getGlobal(cfgDBVersion, ""); //$NON-NLS-1$
 		if(	cfgDBVersionString != null && 
 				!cfgDBVersionString.isEmpty()	) {
 			try {
@@ -206,12 +205,9 @@ public class MedNetSettings {
 		
 		// Global Settings
 		if(exePath != null) {
-			configuration.set(cfgExePath, exePath.toString());
+			ConfigServiceHolder.setGlobal(cfgExePath, exePath.toString());
 		}
-		configuration.set(cfgFormsArchivePurgeInterval, archivePurgeInterval);
-		configuration.set(cfgDBVersion, dbVersion);
-		
-		configuration.flush();
+		ConfigServiceHolder.setGlobal(cfgFormsArchivePurgeInterval, archivePurgeInterval);
+		ConfigServiceHolder.setGlobal(cfgDBVersion, dbVersion);
 	}
-	
 }

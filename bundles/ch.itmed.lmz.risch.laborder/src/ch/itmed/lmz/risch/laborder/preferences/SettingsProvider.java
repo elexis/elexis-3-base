@@ -11,22 +11,25 @@
 
 package ch.itmed.lmz.risch.laborder.preferences;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import ch.elexis.core.data.activator.CoreHub;
-import ch.rgw.io.Settings;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public final class SettingsProvider {
-	public static Settings getSettings() {
+	public static IPreferenceStore getSettings(){
 		String currentPreferences = CoreHub.localCfg.get(PreferenceConstants.SETTINGS_PROVIDER, "aktueller Benutzer");
 
 		if (currentPreferences.equals("aktueller Benutzer")) {
-			return CoreHub.userCfg;
+			return new ConfigServicePreferenceStore(Scope.USER);
 		}
 		if (currentPreferences.equals("aktueller Mandant")) {
-			return CoreHub.mandantCfg;
+			return new ConfigServicePreferenceStore(Scope.MANDATOR);
 		}
 		if (currentPreferences.equals("Global")) {
-			return CoreHub.globalCfg;
+			return new ConfigServicePreferenceStore(Scope.GLOBAL);
 		}
-		return CoreHub.userCfg;
+		return new ConfigServicePreferenceStore(Scope.USER);
 	}
 }

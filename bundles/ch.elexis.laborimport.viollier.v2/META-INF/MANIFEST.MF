@@ -17,3 +17,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.labor.viollier.v2.ViollierActivator
 Export-Package: ch.elexis.laborimport.viollier.v2.data
 Bundle-Vendor: medshare.net
+Import-Package: ch.elexis.core.services.holder

@@ -5,7 +5,6 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
@@ -27,11 +26,5 @@ public class JodRestConverterPage extends FieldEditorPreferencePage
 		StringFieldEditor jodRestBasPath = new StringFieldEditor("jodrestconverter/basepath",
 			"JODconverter REST URL", getFieldEditorParent());
 		addField(jodRestBasPath);
-	}
-	
-	@Override
-	public boolean performOk(){
-		CoreHub.globalCfg.flush();
-		return super.performOk();
 	}
 }

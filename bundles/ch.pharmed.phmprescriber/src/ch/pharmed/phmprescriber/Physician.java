@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.pharmedsolutions.www.apothekenservice.Apotheken;
 import ch.pharmedsolutions.www.apothekenservice.ApothekenPortType;
@@ -323,8 +322,6 @@ public class Physician {
 			ConfigServiceHolder.setGlobal(Constants.CFG_PHM_LASTREQUEST,
 				now.toString(TimeTool.FULL_MYSQL));
 			ConfigServiceHolder.setGlobal(Constants.CFG_PHM_SHOPS,this.createCFGStringShops(hmShops));
-			CoreHub.globalCfg.flush();
-			
          } catch (Exception ex) {
              
              System.out.println( "Exception: " + ex);

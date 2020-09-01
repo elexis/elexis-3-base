@@ -73,7 +73,7 @@ public class GdtView extends ViewPart {
 		for (String id : FileCommPartner.getAllFileCommPartnersArray()) {
 			FileCommPartner fileCommPartner = new FileCommPartner(id);
 			String fileCommPartnerName =
-				fileCommPartner.getSettings().get(fileCommPartner.getFileTransferName(), "");
+				fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName());
 			
 			String lastExaminationId = getLastExaminationId(fileCommPartner);
 			
@@ -214,10 +214,9 @@ public class GdtView extends ViewPart {
 	public void setFocus(){}
 	
 	private String getLabel(FileCommPartner fileCommPartner){
-		return fileCommPartner.getSettings().get(fileCommPartner.getFileTransferName(), "") + " ("
-			+ fileCommPartner.getSettings().get(fileCommPartner.getFileTransferDirectory(), "")
+		return fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName()) + " ("
+			+ fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferDirectory())
 			+ ")";
-		
 	}
 	
 	private void openPatientNotSelectedDialog(){

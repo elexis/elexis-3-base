@@ -20,6 +20,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.laborimport.hl7.command.ImportFileRunnable;
 import ch.elexis.laborimport.hl7.universal.Preferences;
 import ch.rgw.tools.Result;
@@ -61,7 +62,8 @@ public class AutomaticImportService {
 		}
 		
 		private boolean isElexisRunning(){
-			return CoreHub.globalCfg != null && ElexisEventDispatcher.getSelectedMandator() != null;
+			return ConfigServiceHolder.isPresent()
+				&& ElexisEventDispatcher.getSelectedMandator() != null;
 		}
 		
 		private boolean shouldImport(File dir){

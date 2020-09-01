@@ -12,10 +12,11 @@
  *******************************************************************************/
 package net.medshare.connector.viollier.data;
 
-import net.medshare.connector.viollier.Messages;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
 import ch.rgw.io.Settings;
+import net.medshare.connector.viollier.Messages;
 
 /**
  * Klasse zum Verwalten der Einstellungen zum Viollier Connector Plugin
@@ -24,7 +25,6 @@ public class ViollierConnectorSettings {
 	public static final String PLUGIN_ID = "net.medshare.connector.data.ViollierConnectorSettings"; //$NON-NLS-1$
 	public static final String cfgBase = "viollier/portal"; //$NON-NLS-1$
 	
-	Settings globalCfg = CoreHub.globalCfg; // Settings: DB für alle PCs und Mandanten
 	Settings machineCfg = CoreHub.localCfg; // Settings: lokal auf dem PC (Windows: Registry)
 	Settings mandantCfg = CoreHub.mandantCfg; // Settings: DB für einen Mandanten
 	
@@ -262,14 +262,16 @@ public class ViollierConnectorSettings {
 		String settingText;
 		
 		// Globale Settings
-		globalLoginUrl = globalCfg.get(cfgLoginUrl, Messages.DefaultSetting_LoginUrl);
-		globalConsultItUrl = globalCfg.get(cfgConsultItUrl, Messages.DefaultSetting_ConsultItUrl);
-		globalOrderItUrl = globalCfg.get(cfgOrderItUrl, Messages.DefaultSetting_OrderItUrl);
-		globalUserName = globalCfg.get(cfgUserName, "");
-		globalUserPassword = globalCfg.get(cfgUserPassword, "");
-		globalViollierClientId = globalCfg.get(cfgViollierClientId, "");
+		globalLoginUrl = ConfigServiceHolder.getGlobal(cfgLoginUrl, Messages.DefaultSetting_LoginUrl);
+		globalConsultItUrl =
+			ConfigServiceHolder.getGlobal(cfgConsultItUrl, Messages.DefaultSetting_ConsultItUrl);
+		globalOrderItUrl =
+			ConfigServiceHolder.getGlobal(cfgOrderItUrl, Messages.DefaultSetting_OrderItUrl);
+		globalUserName = ConfigServiceHolder.getGlobal(cfgUserName, "");
+		globalUserPassword = ConfigServiceHolder.getGlobal(cfgUserPassword, "");
+		globalViollierClientId = ConfigServiceHolder.getGlobal(cfgViollierClientId, "");
 		globalPreferedPresentation = false;
-		settingText = globalCfg.get(cfgCumulativePresentation, "1");
+		settingText = ConfigServiceHolder.getGlobal(cfgCumulativePresentation, "1");
 		if (settingText.equals("1"))
 			globalPreferedPresentation = true;
 		
@@ -295,14 +297,13 @@ public class ViollierConnectorSettings {
 	public void saveSettings(){
 		
 		// Globale Settings
-		globalCfg.set(cfgLoginUrl, globalLoginUrl);
-		globalCfg.set(cfgConsultItUrl, globalConsultItUrl);
-		globalCfg.set(cfgOrderItUrl, globalOrderItUrl);
-		globalCfg.set(cfgUserName, globalUserName);
-		globalCfg.set(cfgUserPassword, globalUserPassword);
-		globalCfg.set(cfgViollierClientId, globalViollierClientId);
-		globalCfg.set(cfgCumulativePresentation, globalPreferedPresentation);
-		globalCfg.flush();
+		ConfigServiceHolder.setGlobal(cfgLoginUrl, globalLoginUrl);
+		ConfigServiceHolder.setGlobal(cfgConsultItUrl, globalConsultItUrl);
+		ConfigServiceHolder.setGlobal(cfgOrderItUrl, globalOrderItUrl);
+		ConfigServiceHolder.setGlobal(cfgUserName, globalUserName);
+		ConfigServiceHolder.setGlobal(cfgUserPassword, globalUserPassword);
+		ConfigServiceHolder.setGlobal(cfgViollierClientId, globalViollierClientId);
+		ConfigServiceHolder.setGlobal(cfgCumulativePresentation, globalPreferedPresentation);
 		
 		// Mandanten Settings
 		mandantCfg.set(cfgMandantUseGlobalSettings, mandantUseGlobalSettings.toString());

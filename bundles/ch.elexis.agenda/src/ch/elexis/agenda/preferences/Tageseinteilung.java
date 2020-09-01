@@ -46,7 +46,6 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.agenda.util.TermineLockedTimesUpdater;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -350,7 +349,6 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		
 		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, sodt.getText());
 		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, eodt.getText());
-		CoreHub.globalCfg.flush();
 	}
 	
 	public void init(IWorkbench workbench){

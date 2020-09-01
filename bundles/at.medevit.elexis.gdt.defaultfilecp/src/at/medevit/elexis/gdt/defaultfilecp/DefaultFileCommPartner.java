@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.gdt.constants.Feld8402Constants;
@@ -44,22 +45,23 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	@Override
 	public String getLabel(){
 		return defaultFileCommPartner.getSettings()
-			.get(defaultFileCommPartner.getFileTransferName(), "") + " ("
+			.getString(defaultFileCommPartner.getFileTransferName()) + " ("
 			+ defaultFileCommPartner.getSettings()
-				.get(defaultFileCommPartner.getFileTransferDirectory(), "")
+				.getString(defaultFileCommPartner.getFileTransferDirectory())
 			+ ")";
 	}
 		
 	@Override
 	public String getIDReceiver(){
-		return defaultFileCommPartner.getSettings().get(
-				defaultFileCommPartner.getFileTransferIdReceiver(), "MEDICALDEVICE");
+		return StringUtils.defaultIfBlank(defaultFileCommPartner.getSettings()
+			.getString(
+			defaultFileCommPartner.getFileTransferIdReceiver()), "MEDICALDEVICE");
 	}
 	
 	@Override
 	public String getShortIDReceiver(){
-		return defaultFileCommPartner.getSettings().get(
-				defaultFileCommPartner.getFileTransferShortIdReceiver(), "MDEV");
+		return StringUtils.defaultIfBlank(defaultFileCommPartner.getSettings()
+			.getString(defaultFileCommPartner.getFileTransferShortIdReceiver()), "MDEV");
 	}
 	
 	@Override
@@ -79,38 +81,37 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 	
 	@Override
 	public String getRequiredFileType(){
-		return defaultFileCommPartner.getSettings().get(
-			defaultFileCommPartner.getFileTransferUsedType(),
+		return StringUtils.defaultIfBlank(
+			defaultFileCommPartner.getSettings()
+				.getString(defaultFileCommPartner.getFileTransferUsedType()),
 			GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND);
 	}
 	
 	@Override
 	public String getIncomingDirectory(){
-		return defaultFileCommPartner.getSettings().get(
-			defaultFileCommPartner.getFileTransferInDirectory(),
-			"");
+		return defaultFileCommPartner.getSettings()
+			.getString(defaultFileCommPartner.getFileTransferInDirectory());
 	}
 	
 	@Override
 	public String getOutgoingDirectory(){
-		return defaultFileCommPartner.getSettings().get(
-			defaultFileCommPartner.getFileTransferOutDirectory(),
-			"");
+		return defaultFileCommPartner.getSettings()
+			.getString(defaultFileCommPartner.getFileTransferOutDirectory());
 	}
 	
 	@Override
 	public int getIncomingDefaultCharset(){
-		String charset =
-			defaultFileCommPartner.getSettings().get(GDTPreferenceConstants.CFG_GDT_CHARSET,
-					GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING);
+		String charset = StringUtils.defaultIfBlank(
+			defaultFileCommPartner.getSettings().getString(GDTPreferenceConstants.CFG_GDT_CHARSET),
+			GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING);
 		return GDTConstants.getCharsetIntByString(charset);
 	}
 	
 	@Override
 	public int getOutgoingDefaultCharset(){
-		String charset =
-			defaultFileCommPartner.getSettings().get(GDTPreferenceConstants.CFG_GDT_CHARSET,
-					GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING);
+		String charset = StringUtils.defaultIfBlank(
+			defaultFileCommPartner.getSettings().getString(GDTPreferenceConstants.CFG_GDT_CHARSET),
+			GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING);
 		return GDTConstants.getCharsetIntByString(charset);
 	}
 	
@@ -119,15 +120,15 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 		String executable = null;
 		if (handlerType == HandlerProgramType.VIEWER) {
 			executable = defaultFileCommPartner.getSettings()
-				.get(defaultFileCommPartner.getFileTransferViewerExecuteable(), null);
+				.getString(defaultFileCommPartner.getFileTransferViewerExecuteable());
 		} else {
 			executable = defaultFileCommPartner.getSettings()
-				.get(defaultFileCommPartner.getFileTransferExecuteable(), null);
+				.getString(defaultFileCommPartner.getFileTransferExecuteable());
 		}
 		LoggerFactory.getLogger(getClass())
 			.info("Find external handler [" + executable + "] of [" + defaultFileCommPartner.getId()
 				+ "] in [" + defaultFileCommPartner.getSettings().getClass().getSimpleName() + "]");
-		if (executable != null) {
+		if (StringUtils.isNotBlank(executable)) {
 			File execFile = new File(executable);
 			if (execFile.canExecute()) {
 				return executable;
@@ -177,22 +178,22 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					
 					@Override
 					public String getShortIDReceiver() {
-						return defaultFileCommPartner.getSettings()
-							.get(fileCommPartner.getFileTransferShortIdReceiver(), "MDEV");
+						return StringUtils.defaultIfBlank(defaultFileCommPartner.getSettings()
+							.getString(fileCommPartner.getFileTransferShortIdReceiver()), "MDEV");
 					}
 					
 					@Override
 					public String getRequiredFileType() {
-						return defaultFileCommPartner.getSettings().get(
-							fileCommPartner.getFileTransferUsedType(),
+						return StringUtils.defaultIfBlank(
+							defaultFileCommPartner.getSettings()
+								.getString(fileCommPartner.getFileTransferUsedType()),
 							GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND);
 					}
 					
 					@Override
 					public String getOutgoingDirectory() {
-						return defaultFileCommPartner.getSettings().get(
-							fileCommPartner.getFileTransferOutDirectory(),
-							"");
+						return defaultFileCommPartner.getSettings()
+							.getString(fileCommPartner.getFileTransferOutDirectory());
 					}
 					
 					@Override
@@ -203,17 +204,17 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					@Override
 					public String getLabel() {
 						return defaultFileCommPartner.getSettings()
-							.get(fileCommPartner.getFileTransferName(), "")
+							.getString(fileCommPartner.getFileTransferName())
 							+ " ("
 							+ defaultFileCommPartner.getSettings()
-									.get(fileCommPartner.getFileTransferDirectory(), "") + ")";
+								.getString(fileCommPartner.getFileTransferDirectory())
+							+ ")";
 					}
 					
 					@Override
 					public String getIncomingDirectory() {
-						return defaultFileCommPartner.getSettings().get(
-							fileCommPartner.getFileTransferInDirectory(),
-							"");
+						return defaultFileCommPartner.getSettings()
+							.getString(fileCommPartner.getFileTransferInDirectory());
 					}
 					
 					@Override
@@ -223,8 +224,9 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					
 					@Override
 					public String getIDReceiver() {
-						return defaultFileCommPartner.getSettings()
-							.get(fileCommPartner.getFileTransferIdReceiver(), "MEDICALDEVICE");
+						return StringUtils.defaultIfBlank(defaultFileCommPartner.getSettings()
+							.getString(fileCommPartner.getFileTransferIdReceiver()),
+							"MEDICALDEVICE");
 					}
 					
 					@Override
@@ -237,16 +239,16 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 						String executable = null;
 						if (handlerType == HandlerProgramType.VIEWER) {
 							executable = defaultFileCommPartner.getSettings()
-									.get(fileCommPartner.getFileTransferViewerExecuteable(), null);
+								.getString(fileCommPartner.getFileTransferViewerExecuteable());
 						} else {
 							executable = defaultFileCommPartner.getSettings()
-								.get(fileCommPartner.getFileTransferExecuteable(), null);
+								.getString(fileCommPartner.getFileTransferExecuteable());
 						}
 						LoggerFactory.getLogger(getClass())
 								.info("Find external handler [" + executable + "] of [" + fileCommPartner.getId()
 										+ "] in [" + defaultFileCommPartner.getSettings().getClass().getSimpleName()
 										+ "]");
-						if (executable != null) {
+						if (StringUtils.isNotBlank(executable)) {
 							File execFile = new File(executable);
 							if (execFile.canExecute()) {
 								return executable;

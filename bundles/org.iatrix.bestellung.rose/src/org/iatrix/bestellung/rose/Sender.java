@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
@@ -174,8 +173,9 @@ public class Sender implements IDataSender {
 			throw new XChangeException("Die Bestellung ist leer.");
 		}
 		
-		String clientNrRose = CoreHub.globalCfg
-			.get(Constants.CFG_ROSE_CLIENT_NUMBER, Constants.DEFAULT_ROSE_CLIENT_NUMBER).trim();
+		String clientNrRose = ConfigServiceHolder
+			.getGlobal(Constants.CFG_ROSE_CLIENT_NUMBER, Constants.DEFAULT_ROSE_CLIENT_NUMBER)
+			.trim();
 		
 		if (StringTool.isNothing(clientNrRose)) {
 			throw new XChangeException(

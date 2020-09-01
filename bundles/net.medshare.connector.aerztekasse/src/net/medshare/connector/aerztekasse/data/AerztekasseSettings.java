@@ -13,6 +13,7 @@
 package net.medshare.connector.aerztekasse.data;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
 import ch.rgw.io.Settings;
 
@@ -20,7 +21,6 @@ public class AerztekasseSettings {
 	public static final String PLUGIN_ID = "net.medshare.connector.aerztekasse"; //$NON-NLS-1$
 	public static final String cfgBase = "net/medshare/connector/finance/aerztekasse"; //$NON-NLS-1$
 	
-	Settings globalCfg = CoreHub.globalCfg; // Settings: DB für alle PCs und Mandanten
 	Settings machineCfg = CoreHub.localCfg; // Settings: lokal auf dem PC (Windows: Registry)
 	Settings mandantCfg = CoreHub.mandantCfg; // Settings: DB für einen Mandanten
 	
@@ -146,9 +146,9 @@ public class AerztekasseSettings {
 		globalUrl = null;
 		
 		// Globale Settings
-		globalUsername = globalCfg.get(cfgUsername, ""); //$NON-NLS-1$
-		globalPassword = globalCfg.get(cfgPassword, ""); //$NON-NLS-1$
-		globalUrl = globalCfg.get(cfgUrl, ""); //$NON-NLS-1$
+		globalUsername = ConfigServiceHolder.getGlobal(cfgUsername, ""); //$NON-NLS-1$
+		globalPassword = ConfigServiceHolder.getGlobal(cfgPassword, ""); //$NON-NLS-1$
+		globalUrl = ConfigServiceHolder.getGlobal(cfgUrl, ""); //$NON-NLS-1$
 		
 		// Mandanten Settings
 		settingText = mandantCfg.get(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
@@ -165,10 +165,9 @@ public class AerztekasseSettings {
 	public void saveSettings(){
 		
 		// Globale Settings
-		globalCfg.set(cfgUsername, globalUsername);
-		globalCfg.set(cfgPassword, globalPassword);
-		globalCfg.set(cfgUrl, globalUrl);
-		globalCfg.flush();
+		ConfigServiceHolder.setGlobal(cfgUsername, globalUsername);
+		ConfigServiceHolder.setGlobal(cfgPassword, globalPassword);
+		ConfigServiceHolder.setGlobal(cfgUrl, globalUrl);
 		
 		// Mandanten Settings
 		mandantCfg.set(cfgMandantUseGlobalSettings, mandantUseGlobalSettings.toString());

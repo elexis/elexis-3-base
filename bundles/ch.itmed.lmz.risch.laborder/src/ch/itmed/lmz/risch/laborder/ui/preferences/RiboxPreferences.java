@@ -11,6 +11,7 @@
 
 package ch.itmed.lmz.risch.laborder.ui.preferences;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,12 +28,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.itmed.lmz.risch.laborder.preferences.PreferenceConstants;
-import ch.rgw.io.Settings;
 
 public final class RiboxPreferences extends PreferencePage implements IWorkbenchPreferencePage {
-	private Settings settingsProvider = CoreHub.userCfg;
+	private IPreferenceStore settingsProvider = new ConfigServicePreferenceStore(Scope.USER);
 	private Combo settingsProviderCombo;
 	private Text clientCertPath;
 	private Text certPassword;
@@ -50,7 +52,7 @@ public final class RiboxPreferences extends PreferencePage implements IWorkbench
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(4, false));
 
-		settingsProvider = CoreHub.mandantCfg;
+		settingsProvider = new ConfigServicePreferenceStore(Scope.MANDATOR);
 
 		Label description = new Label(composite, SWT.NONE);
 		description.setText("Spezifizieren Sie die Einstellungen für das Login am LabOrder Portal.");
@@ -88,7 +90,7 @@ public final class RiboxPreferences extends PreferencePage implements IWorkbench
 		new Label(composite, SWT.NONE);
 		clientCertPath = new Text(composite, SWT.BORDER);
 		clientCertPath.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-		clientCertPath.setText(settingsProvider.get(PreferenceConstants.CLIENT_CERTIFICATE, ""));
+		clientCertPath.setText(settingsProvider.getString(PreferenceConstants.CLIENT_CERTIFICATE));
 
 		Button clientCertFileDialog = new Button(composite, SWT.PUSH);
 		clientCertFileDialog.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -114,12 +116,12 @@ public final class RiboxPreferences extends PreferencePage implements IWorkbench
 		new Label(composite, SWT.NONE).setText("Privater Schlüssel:");
 		certPassword = new Text(composite, SWT.PASSWORD | SWT.BORDER);
 		certPassword.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		certPassword.setText(settingsProvider.get(PreferenceConstants.CERTIFICATE_PASSWORD, ""));
+		certPassword.setText(settingsProvider.getString(PreferenceConstants.CERTIFICATE_PASSWORD));
 
 		new Label(composite, SWT.NONE).setText("Ribox IP/DNS:");
 		riboxIP = new Text(composite, SWT.BORDER);
 		riboxIP.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		riboxIP.setText(settingsProvider.get(PreferenceConstants.RIBOX_IP, ""));
+		riboxIP.setText(settingsProvider.getString(PreferenceConstants.RIBOX_IP));
 
 		return composite;
 	}
@@ -127,17 +129,17 @@ public final class RiboxPreferences extends PreferencePage implements IWorkbench
 	@Override
 	public boolean performOk() {
 		CoreHub.localCfg.set(PreferenceConstants.SETTINGS_PROVIDER, settingsProviderCombo.getText());
-		settingsProvider.set(PreferenceConstants.CLIENT_CERTIFICATE, clientCertPath.getText());
-		settingsProvider.set(PreferenceConstants.CERTIFICATE_PASSWORD, certPassword.getText());
-		settingsProvider.set(PreferenceConstants.RIBOX_IP, riboxIP.getText());
+		settingsProvider.setValue(PreferenceConstants.CLIENT_CERTIFICATE, clientCertPath.getText());
+		settingsProvider.setValue(PreferenceConstants.CERTIFICATE_PASSWORD, certPassword.getText());
+		settingsProvider.setValue(PreferenceConstants.RIBOX_IP, riboxIP.getText());
 
 		return super.performOk();
 	}
 
 	private void updateFields() {
-		clientCertPath.setText(settingsProvider.get(PreferenceConstants.CLIENT_CERTIFICATE, ""));
-		certPassword.setText(settingsProvider.get(PreferenceConstants.CERTIFICATE_PASSWORD, ""));
-		riboxIP.setText(settingsProvider.get(PreferenceConstants.RIBOX_IP, ""));
+		clientCertPath.setText(settingsProvider.getString(PreferenceConstants.CLIENT_CERTIFICATE));
+		certPassword.setText(settingsProvider.getString(PreferenceConstants.CERTIFICATE_PASSWORD));
+		riboxIP.setText(settingsProvider.getString(PreferenceConstants.RIBOX_IP));
 	}
 
 	public int setComboSelection(Combo combo, String[] items, String item) {
@@ -150,14 +152,11 @@ public final class RiboxPreferences extends PreferencePage implements IWorkbench
 
 	public void setSettingsProvider() {
 		if (settingsProviderCombo.getText().equals("aktueller Benutzer")) {
-			settingsProvider.flush();
-			settingsProvider = CoreHub.userCfg;
+			settingsProvider = new ConfigServicePreferenceStore(Scope.USER);
 		} else if (settingsProviderCombo.getText().equals("aktueller Mandant")) {
-			settingsProvider.flush();
-			settingsProvider = CoreHub.mandantCfg;
+			settingsProvider = new ConfigServicePreferenceStore(Scope.MANDATOR);
 		} else if (settingsProviderCombo.getText().equals("Global")) {
-			settingsProvider.flush();
-			settingsProvider = CoreHub.globalCfg;
+			settingsProvider = new ConfigServicePreferenceStore(Scope.GLOBAL);
 		}
 	}
 

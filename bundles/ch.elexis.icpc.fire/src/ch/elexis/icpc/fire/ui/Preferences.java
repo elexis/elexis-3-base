@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.DateTimeFieldEditor;
@@ -100,7 +99,6 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	@Override
 	public void performApply(){
 		super.performApply();
-		CoreHub.globalCfg.flush();
 	}
 	
 }

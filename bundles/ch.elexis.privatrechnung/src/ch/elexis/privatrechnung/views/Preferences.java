@@ -18,20 +18,16 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.KontaktFieldEditor;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
-import ch.rgw.io.Settings;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
-	Settings cfg;
-	
 	public Preferences(){
 		super(GRID);
-		// cfg=ConfigServiceHolder.getGlobalBranch(PreferenceConstants.cfgBase, true);
-		cfg = CoreHub.globalCfg;
-		setPreferenceStore(new SettingsPreferenceStore(cfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 	}
 	
 	@Override

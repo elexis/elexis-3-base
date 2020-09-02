@@ -129,9 +129,10 @@ public class Termin extends PersistentObject
 																										// //$NON-NLS-4$
 				FLD_LINKGROUP, FLD_STATUSHIST, FLD_PRIORITY); // $NON-NLS-1$
 		TimeTool.setDefaultResolution(60000);
-		TerminTypes = ConfigServiceHolder.getGlobalStringArray(PreferenceConstants.AG_TERMINTYPEN);
-		TerminStatus = ConfigServiceHolder.getGlobalStringArray(PreferenceConstants.AG_TERMINSTATUS);
-		TerminBereiche = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
+		TerminTypes = CoreHub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
+		TerminStatus = CoreHub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
+		TerminBereiche = CoreHub.globalCfg
+			.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 		if ((TerminTypes == null) || (TerminTypes.length < 3)) {
 			TerminTypes = new String[] { Messages.Termin_range_free, Messages.Termin_range_locked,
 					Messages.Termin_normalAppointment };

@@ -31,7 +31,8 @@ public class RosePreferences extends FieldEditorPreferencePage implements IWorkb
 			getFieldEditorParent()));
 		addField(new StringFieldEditor(Constants.CFG_ASAS_PROXY_PORT, "HIN-Client Port",
 			getFieldEditorParent()));
-		addField(new KontaktFieldEditor(CoreHub.globalCfg, Constants.CFG_ROSE_SUPPLIER,
+		addField(new KontaktFieldEditor(new ConfigServicePreferenceStore(Scope.GLOBAL),
+			Constants.CFG_ROSE_SUPPLIER,
 			"Lieferant", getFieldEditorParent()));
 	}
 	

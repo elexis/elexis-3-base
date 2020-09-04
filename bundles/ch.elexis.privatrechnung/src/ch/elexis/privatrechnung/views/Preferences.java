@@ -36,7 +36,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.cfgTemplateBill, "Vorlage ohne ESR",
 			getFieldEditorParent()));
-		addField(new KontaktFieldEditor(CoreHub.globalCfg, PreferenceConstants.cfgBank, "Bank",
+		addField(new KontaktFieldEditor(new ConfigServicePreferenceStore(Scope.GLOBAL),
+			PreferenceConstants.cfgBank, "Bank",
 			getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.esrIdentity, "ESR-Teilnehmernummer",
 			getFieldEditorParent()));

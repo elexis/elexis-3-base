@@ -25,6 +25,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.berchtold.emanuel.privatrechnung.data.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.Hub;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.preferences.inputs.ComboFieldEditor;
 import ch.elexis.core.ui.preferences.inputs.KontaktFieldEditor;
@@ -75,7 +77,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			new IntegerFieldEditor(PreferenceConstants.cfgTemplateBill2Height,
 				"Verfügbare Höhe Folgeseiten (cm)", getFieldEditorParent());
 		kfBank =
-			new KontaktFieldEditor(CoreHub.localCfg, PreferenceConstants.cfgBank, "Bank",
+			new KontaktFieldEditor(new ConfigServicePreferenceStore(Scope.LOCAL),
+				PreferenceConstants.cfgBank, "Bank",
 				getFieldEditorParent());
 		sfESRNr =
 			new StringFieldEditor(PreferenceConstants.esrIdentity, "ESR-Teilnehmernummer",

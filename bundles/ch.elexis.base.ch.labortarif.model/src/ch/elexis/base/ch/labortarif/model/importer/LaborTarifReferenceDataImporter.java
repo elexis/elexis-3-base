@@ -297,6 +297,7 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		LocalDate defaultValidFrom = LocalDate.of(1970, 1, 1);
 		List<ILaborLeistung> entries = modelService.getQuery(ILaborLeistung.class).execute();
 		
+		List<ILaborLeistung> oldEntriesToSave = new ArrayList<ILaborLeistung>();
 		for (ILaborLeistung entry : entries) {
 			if (entry.getValidFrom() == null) {
 				// old entry with no valid from
@@ -305,8 +306,10 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 			} else if (entry.getValidTo() == null && !entry.getValidFrom().equals(validFrom)) {
 				// old entry not closed yet
 				modelService.setEntityProperty(FLD_GUELTIGBIS, validFrom.minusDays(1), entry);
+				oldEntriesToSave.add(entry);
 			}
 		}
+		modelService.save(oldEntriesToSave);
 	}
 	
 	private String convertCodeString(String code){

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,8 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
+import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
+import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
@@ -178,6 +181,15 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 	
 	@Override
 	public int getCurrentVersion(){
-		return -1;
+		List<IPhysioLeistung> physioLeistungen =
+			ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class).execute();
+		if (physioLeistungen.isEmpty()) {
+			return -1;
+		}
+		
+		LocalDate validFrom = physioLeistungen.get(0).getValidFrom();
+		DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyMMdd");
+		int version = Integer.valueOf(ofPattern.format(validFrom));
+		return version;
 	}
 }

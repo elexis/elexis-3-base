@@ -224,7 +224,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 	private void makeActions(){
 		addAction = new RestrictedAction(ACLContributor.BOOKING, "Einnahme") {
 			{
-				setImageDescriptor(Images.IMG_ADDITEM.getImageDescriptor());
+				setImageDescriptor(Images.IMG_ADD.getImageDescriptor());
 				setToolTipText("Einnahme verbuchen");
 			}
 			

@@ -47,7 +47,6 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.model.agenda.Area;
-import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -207,7 +206,8 @@ public class SideBarComposite extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				if (e.getSource() instanceof Button) {
-					RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(null);
+					RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
+						AppointmentServiceHolder.get().createAppointmentSeries());
 					dlg.open();
 				}
 			}

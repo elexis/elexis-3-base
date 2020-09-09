@@ -6,6 +6,7 @@ import org.eclipse.swt.browser.BrowserFunction;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
@@ -30,7 +31,8 @@ public class DoubleClickFunction extends BrowserFunction {
 				public void lockAcquired(){
 					// TerminDialog.setActResource(termin.getBereich());
 					if (termin.isRecurring()) {
-						RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(termin);
+						RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
+							AppointmentServiceHolder.get().getAppointmentSeries(termin).get());
 						dlg.open();
 					} else {
 						AppointmentDialog dlg = new AppointmentDialog(termin);

@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.dialog;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -45,7 +46,6 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IAppointmentSeries;
 import ch.elexis.core.model.IContact;
-import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.agenda.EndingType;
 import ch.elexis.core.model.agenda.SeriesType;
 import ch.elexis.core.services.IQuery;
@@ -80,6 +80,10 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 	private IAppointmentSeries appointment;
 	
 	private boolean noedit;
+	
+	private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmm");
+	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+	private DecimalFormat decimalFormat = new DecimalFormat("00");
 	
 	public RecurringAppointmentDialog(IAppointmentSeries appointment){
 		super(Display.getDefault().getActiveShell());
@@ -343,30 +347,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		Optional<IContact> c = getAppointmentContact();
 		String currentSearchText = txtContactSearch.getText();
 		if (c.isPresent() && c.get().getLabel().equals(currentSearchText)) {
-			StringBuilder b = new StringBuilder();
-			b.append(c.get().getDescription1());
-			b.append(" ");
-			b.append(c.get().getDescription2());
-			b.append(" ");
-			b.append(Optional.ofNullable(c.get().getDescription3()).orElse(""));
-			
-			if (c.get().isPatient()) {
-				
-				IPatient p =
-					CoreModelServiceHolder.get().load(c.get().getId(), IPatient.class).get();
-				if (p.getDateOfBirth() != null) {
-					b.append("\n");
-					b.append(p.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-				}
-			}
-			b.append("\n");
-			b.append(Optional.ofNullable(c.get().getMobile()).filter(i -> i != null && !i.isEmpty())
-				.map(i -> "\n" + i).orElse(""));
-			b.append(Optional.ofNullable(c.get().getPhone1()).filter(i -> i != null && !i.isEmpty())
-				.map(i -> "\n" + i).orElse(""));
-			b.append(Optional.ofNullable(c.get().getPhone2()).filter(i -> i != null && !i.isEmpty())
-				.map(i -> "\n" + i).orElse(""));
-			txtContactSearch.setText(b.toString());
+			txtContactSearch.setText(c.get().getLabel());
 		}
 	}
 	
@@ -389,7 +370,11 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		} else {
 			setTitle("Kein Kontakt ausgewählt.");
 		}
-		txtContactSearch.setText(appointment.getSubjectOrPatient());
+		if (appointment.getContact() != null) {
+			txtContactSearch.setText(appointment.getContact().getLabel());
+		} else {
+			txtContactSearch.setText(appointment.getSubjectOrPatient());
+		}
 		comboSchedule.setText(appointment.getSchedule());
 		//
 		switch (appointment.getSeriesType()) {
@@ -490,13 +475,6 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 			PojoProperties.value("seriesEndDate").observe(appointment);
 		bindingContext.bindValue(observeSelectionDateEndsOnObserveWidget,
 			endsOnDateSerienTerminObserveValue, dateTarget2model, dateModel2target);
-		//
-		IObservableValue observeTextTxtEndsAfterNOccurencesObserveWidget =
-			WidgetProperties.text(SWT.Modify).observe(txtEndsAfterNOccurences);
-		IObservableValue endsAfterNDatesSerienTerminObserveValue =
-			PojoProperties.value("endingPatternString").observe(appointment);
-		bindingContext.bindValue(observeTextTxtEndsAfterNOccurencesObserveWidget,
-			endsAfterNDatesSerienTerminObserveValue, null, null);
 		
 		return bindingContext;
 	}
@@ -528,13 +506,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void buttonPressed(int buttonId){
-		// set data to model
-		if (txtDataIsMatchingContact()) {
-			appointment.setSubjectOrPatient(((IContact) txtContactSearch.getData()).getId());
-		} else if (StringUtils.isNotBlank(txtContactSearch.getText())) {
-			appointment.setSubjectOrPatient(txtContactSearch.getText());
-		}
-		
+		updateModel();
 		super.buttonPressed(buttonId);
 		switch (buttonId) {
 		case IDialogConstants.OK_ID:
@@ -553,6 +525,58 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 			break;
 		}
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+	}
+	
+	private void updateModel(){
+		// set data to model
+		if (txtDataIsMatchingContact()) {
+			appointment.setSubjectOrPatient(((IContact) txtContactSearch.getData()).getId());
+		} else if (StringUtils.isNotBlank(txtContactSearch.getText())) {
+			appointment.setSubjectOrPatient(txtContactSearch.getText());
+		}
+		// set series pattern
+		switch (appointment.getSeriesType()) {
+		case DAILY:
+			switch (appointment.getEndingType()) {
+			case AFTER_N_OCCURENCES:
+				appointment.setSeriesPatternString(txtEndsAfterNOccurences.getText());
+				break;
+			case ON_SPECIFIC_DATE:
+				appointment
+					.setSeriesPatternString(dateFormatter.format(appointment.getSeriesEndDate()));
+				break;
+			}
+			break;
+		case WEEKLY:
+			StringBuilder sb = new StringBuilder();
+			sb.append(wsc.getTxtWeekDistance().getText() + ",");
+			for (int i = 1; i < 8; i++) {
+				if (wsc.getWeekdays()[i].getSelection()) {
+					sb.append(i);
+				}
+			}
+			appointment.setSeriesPatternString(sb.toString());
+			break;
+		case MONTHLY:
+			appointment.setSeriesPatternString(msc.getDay() + "");
+			break;
+		case YEARLY:
+			appointment.setSeriesPatternString(
+				decimalFormat.format(ysc.getDay()) + decimalFormat.format(ysc.getMonth()));
+			break;
+		default:
+			break;
+		}
+		// set ending pattern
+		switch (appointment.getEndingType()) {
+		case AFTER_N_OCCURENCES:
+			appointment.setEndingPatternString(txtEndsAfterNOccurences.getText());
+			break;
+		case ON_SPECIFIC_DATE:
+			appointment
+				.setEndingPatternString(dateFormatter.format(appointment.getSeriesEndDate()));
+			break;
+		}
 	}
 	
 	private boolean txtDataIsMatchingContact(){

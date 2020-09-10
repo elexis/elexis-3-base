@@ -17,13 +17,11 @@ import javax.inject.Named;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
-import org.eclipse.core.databinding.conversion.NumberToStringConverter;
-import org.eclipse.core.databinding.conversion.StringToNumberConverter;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -44,6 +42,8 @@ import at.medevit.ch.artikelstamm.ui.DetailComposite;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.databinding.SavingUpdateValueStrategy;
+import ch.elexis.core.ui.util.ZeroDefaultIntegerStringConverter;
+import ch.elexis.core.ui.util.ZeroDefaultStringIntegerConverter;
 import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.elexis.core.ui.views.controls.StockDetailComposite;
 
@@ -184,16 +184,19 @@ public class DetailDisplay implements IDetailDisplay {
 		GridData gd_txtStkProPack = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_txtStkProPack.widthHint = 40;
 		txtStkProPack.setLayoutData(gd_txtStkProPack);
-		IObservableValue propertyStkProPack = PojoProperties
-			.value(IArtikelstammItem.class, "packageSize", Integer.class)
-			.observeDetail(item);
-		IObservableValue targetStkProPack =
+		txtStkProPack.addVerifyListener(e -> {
+			if (!checkInput(e.text))
+				e.doit = false;
+		});
+		IObservableValue<Integer> propertyStkProPack = PojoProperties
+			.value(IArtikelstammItem.class, "packageSize", Integer.class).observeDetail(item);
+		IObservableValue<String> targetStkProPack =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProPack);
 		bindingContext.bindValue(targetStkProPack, propertyStkProPack,
 			new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(), item)
-				.setAutoSave(true).setConverter(StringToNumberConverter.toInteger(false)),
+				.setAutoSave(true).setConverter(new ZeroDefaultIntegerStringConverter()),
 			new UpdateValueStrategy<Integer, String>()
-				.setConverter(NumberToStringConverter.fromInteger(false)));
+				.setConverter(new ZeroDefaultStringIntegerConverter()));
 		
 		// Stk. pro Abgabe
 		Label lblStkProAbgabe = new Label(grpLagerhaltung, SWT.NONE);
@@ -208,15 +211,32 @@ public class DetailDisplay implements IDetailDisplay {
 		gd_txtStkProAbgabe.widthHint = 40;
 		txtStkProAbgabe.setLayoutData(gd_txtStkProAbgabe);
 		txtStkProAbgabe.setToolTipText(tooltip);
-		IObservableValue propertyStkProAbgabe = PojoProperties
+		txtStkProAbgabe.addVerifyListener(e -> {
+			if (!checkInput(e.text)) {
+				e.doit = false;
+			}
+
+		});
+		IObservableValue<Integer> propertyStkProAbgabe = PojoProperties
 			.value(IArtikelstammItem.class, "sellingSize", Integer.class).observeDetail(item);
-		IObservableValue targetStkProAbgabe =
+		IObservableValue<String> targetStkProAbgabe =
 			WidgetProperties.text(SWT.Modify).observe(txtStkProAbgabe);
 		
 		bindingContext.bindValue(targetStkProAbgabe, propertyStkProAbgabe,
-			new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(),
-				item).setAutoSave(true).setConverter(StringToNumberConverter.toInteger(false)),
+			new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(), item)
+				.setAutoSave(true).setConverter(new ZeroDefaultIntegerStringConverter()),
 			new UpdateValueStrategy<Integer, String>()
-				.setConverter(NumberToStringConverter.fromInteger(false)));
+				.setConverter(new ZeroDefaultStringIntegerConverter()));
 	}
+	
+	private boolean checkInput(String inInput){
+		int inputLength = inInput.length();
+		for (int i = 0; i < inputLength; i++) {
+			char key = inInput.charAt(i);
+			if (!Character.isDigit(key) && !Character.isISOControl(key))
+				return false;
+		}
+		return true;
+	}
+	
 }

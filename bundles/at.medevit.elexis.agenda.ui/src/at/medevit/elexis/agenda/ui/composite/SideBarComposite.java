@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
+import at.medevit.elexis.agenda.ui.function.LoadEventTimeSpan;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
@@ -77,6 +79,8 @@ public class SideBarComposite extends Composite {
 	@Inject
 	private IEventBroker eventBroker;
 
+	private DateTime calendar;
+	
 	public SideBarComposite(Composite parent, int style){
 		this(parent, false, style);
 	}
@@ -106,7 +110,7 @@ public class SideBarComposite extends Composite {
 		menuManager.createControl(this)
 			.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
-		DateTime calendar = new DateTime(this, SWT.CALENDAR);
+		calendar = new DateTime(this, SWT.CALENDAR);
 		calendar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -264,6 +268,24 @@ public class SideBarComposite extends Composite {
 		}
 		
 		hideContent();
+	}
+	
+	@Inject
+	@org.eclipse.e4.core.di.annotations.Optional
+	public void loadDate(
+		@UIEventTopic(ElexisEventTopics.BASE + "agenda/loadtimespan") LoadEventTimeSpan timespan){
+		if (timespan != null && calendar != null && !calendar.isDisposed()) {
+			if (!LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay())
+				.equals(timespan.getFrom())) {
+				if (agendaComposite instanceof WeekComposite && timespan.isWeek()) {
+					calendar.setDate(timespan.getFrom().getYear(),
+						timespan.getFrom().getMonthValue() - 1, timespan.getFrom().getDayOfMonth());
+				} else if (agendaComposite instanceof ParallelComposite && timespan.isDay()) {
+					calendar.setDate(timespan.getFrom().getYear(),
+						timespan.getFrom().getMonthValue() - 1, timespan.getFrom().getDayOfMonth());
+				}
+			}
+		}
 	}
 	
 	private void hideContent(){

@@ -25,6 +25,7 @@ import com.google.gson.GsonBuilder;
 
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.model.Event;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPeriod;
@@ -181,6 +182,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 					.map(IUser::getAssignedContact).orElse(null);
 				currentTimeSpan =
 					new TimeSpan(getDateArg(arguments[0]), getDateArg(arguments[1]), userContact);
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.BASE + "agenda/loadtimespan",
+					new LoadEventTimeSpan(currentTimeSpan.startDate, currentTimeSpan.endDate));
 				long currentLastUpdate =
 					CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
 				if (knownLastUpdate == 0) {

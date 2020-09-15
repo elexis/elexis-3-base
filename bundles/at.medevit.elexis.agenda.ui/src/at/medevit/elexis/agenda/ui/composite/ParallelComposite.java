@@ -39,7 +39,7 @@ import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import ch.elexis.core.model.IUser;
-import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
 	private List<String> selectedResources = new ArrayList<>();
@@ -58,9 +58,6 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	private DayClickFunction dayClickFunction;
 	
 	private ESelectionService selectionService;
-	
-	@Inject
-	private IConfigService configService;
 	
 	@Inject
 	void user(@Optional IUser user) {
@@ -130,8 +127,9 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 			@Override
 			public void completed(ProgressEvent event){
 				String dayStartsAt =
-					configService.get("agenda/beginnStundeTagesdarstellung", "0000");
-				String dayEndsAt = configService.get("agenda/endStundeTagesdarstellung", "2359");
+					ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung", "0000");
+				String dayEndsAt =
+					ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359");
 				uiSynchronize.asyncExec(() -> {
 					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
 					

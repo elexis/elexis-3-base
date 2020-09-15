@@ -19,5 +19,6 @@ Require-Bundle: ch.elexis.core.ui;bundle-version="3.8.0",
  ch.elexis.fop_wrapper;bundle-version="3.2.0"
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.services.holder,
+ org.apache.commons.lang;version="2.6.0",
  org.eclipse.e4.ui.workbench
 Service-Component: OSGI-INF/ch.itmed.fop.printing.startup.StartupHandler.xml

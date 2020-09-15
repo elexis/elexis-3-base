@@ -13,12 +13,15 @@ package ch.itmed.fop.printing.data;
 
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.agenda.AreaType;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.PersistentObject;
 import ch.itmed.fop.printing.resources.Messages;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -35,8 +38,17 @@ public final class AppointmentData {
 	public void load() throws NullPointerException {
 		appointment = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		if (appointment == null) {
-			SWTHelper.showInfo(Messages.Info_NoAppointment_Title, Messages.Info_NoAppointment_Message);
-			throw new NullPointerException("No appointment selected");
+			ContextServiceHolder.get().getTyped(IAppointment.class).ifPresent(iAppointment -> {
+				PersistentObject po = NoPoUtil.loadAsPersistentObject(iAppointment);
+				if(po instanceof Termin) {
+					appointment = (Termin) po;						
+				}
+			});
+			if (appointment == null) {
+				SWTHelper.showInfo(Messages.Info_NoAppointment_Title,
+					Messages.Info_NoAppointment_Message);
+				throw new NullPointerException("No appointment selected");
+			}
 		}		
 	}
 

@@ -127,6 +127,11 @@
                defaultHandler="ch.elexis.agenda.commands.PrintAppointmentLabelHandler"
                id="ch.elexis.agenda.commands.printAppointmentLabel"
                name="%PrintAppointmentLabel">
+            <commandParameter
+                  id="ch.elexis.agenda.param.appointmentids"
+                  name="appointmentids"
+                  optional="false">
+            </commandParameter>
          </command>
       </extension>
       <extension

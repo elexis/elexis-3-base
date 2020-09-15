@@ -11,8 +11,13 @@
 
 package ch.itmed.fop.printing.data;
 
+import java.util.Optional;
+
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Messages;
 import ch.elexis.data.Patient;
@@ -34,7 +39,17 @@ public class PatientData {
 	public void loadFromAgenda() throws NullPointerException {
 		Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		if (t == null) {
-			throw new NullPointerException("No appointment selected");
+			Optional<IAppointment> iAppointment =
+				ContextServiceHolder.get().getTyped(IAppointment.class);
+			if (iAppointment.isPresent()) {
+				PersistentObject po = NoPoUtil.loadAsPersistentObject(iAppointment.get());
+				if (po instanceof Termin) {
+					t = (Termin) po;
+				}
+			}
+			if (t == null) {
+				throw new NullPointerException("No appointment selected");
+			}
 		}
 
 		String pid = t.getKontakt().getId();

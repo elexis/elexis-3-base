@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -56,10 +59,12 @@ import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 
+@SuppressWarnings("restriction")
 public class AppointmentDetailComposite extends Composite {
 	
 	private IAppointment appointment;
@@ -69,6 +74,12 @@ public class AppointmentDetailComposite extends Composite {
 	
 	@Inject
 	private IConfigService configService;
+	
+	@Inject
+	private ECommandService commandService;
+	
+	@Inject
+	private EHandlerService handlerService;
 	
 	private CDateTime txtDateFrom;
 	private CDateTime txtDateFromDrop;
@@ -245,6 +256,7 @@ public class AppointmentDetailComposite extends Composite {
 				Object sel = event.getStructuredSelection().getFirstElement();
 				if (dayBar != null && sel instanceof IAppointment && !sel.equals(appointment)) {
 					reloadAppointment((IAppointment) sel);
+					ContextServiceHolder.get().getRootContext().setTyped(sel);
 				}
 			}
 		});
@@ -285,7 +297,18 @@ public class AppointmentDetailComposite extends Composite {
 		btnPrint.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				//TODO 
+				getAppointmentContact().ifPresent(contact -> {
+					List<IAppointment> appointments = loadAppointments(contact).stream()
+						.sorted(Comparator.comparing(IAppointment::getStartTime).reversed())
+						.collect(Collectors.toList());
+					
+					ParameterizedCommand command = commandService.createCommand(
+						"ch.elexis.agenda.commands.printAppointmentLabel",
+						Collections.singletonMap("ch.elexis.agenda.param.appointmentids",
+							appointments.stream().map(t -> t.getId())
+								.collect(Collectors.joining(","))));
+					handlerService.executeHandler(command);
+				});
 			}
 		});
 		Group compTimeSelektor = new Group(container, SWT.SHADOW_ETCHED_IN);
@@ -416,20 +439,27 @@ public class AppointmentDetailComposite extends Composite {
 		return Optional.ofNullable(appointment.getContact());
 	}
 	
-	private void loadAppointmentsForPatient(){
-		getAppointmentContact().ifPresent(contact -> {
+	private List<IAppointment> loadAppointments(IContact contact){
+		if (contact != null) {
 			IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
 			query.and("patId", COMPARATOR.EQUALS, contact.getId());
 			query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now());
-			List<IAppointment> input = query.execute().stream()
-					.sorted(Comparator.comparing(IAppointment::getStartTime)
-						.reversed())
+			return query.execute();
+		}
+		return Collections.emptyList();
+	}
+	
+	private void loadAppointmentsForPatient(){
+		getAppointmentContact().ifPresent(contact -> {
+			List<IAppointment> input = loadAppointments(contact).stream()
+				.sorted(Comparator.comparing(IAppointment::getStartTime).reversed())
 				.collect(Collectors.toList());
 			appointmentsViewer.setInput(input);
 			if (appointment != null && !appointment
 				.equals(appointmentsViewer.getStructuredSelection().getFirstElement())) {
 				appointmentsViewer.setSelection(new StructuredSelection(appointment));
 			}
+			appointmentsViewer.refresh();
 		});
 	}
 	

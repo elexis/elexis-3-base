@@ -15,6 +15,7 @@ package ch.elexis.dialogs;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.Category;
@@ -63,7 +64,6 @@ import com.tiff.common.ui.datepicker.DatePicker;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
-import ch.elexis.agenda.commands.PrintAppointmentLabelHandler;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.data.Termin.Free;
@@ -91,6 +91,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Dialog zur Eingabe eines oder mehrerer Termine in die Agenda.
@@ -389,8 +390,11 @@ public class TerminDialog extends TitleAreaDialog {
 				}
 
 				try {
-					PrintAppointmentLabelHandler.setTermine(lTermine);
-					cmd.executeWithChecks(new ExecutionEvent());
+					ExecutionEvent ee = new ExecutionEvent(cmd,
+						Collections.singletonMap("ch.elexis.agenda.param.appointmentids",
+							lTermine.stream().map(t -> t.getId()).collect(Collectors.joining(","))),
+						null, null);
+					cmd.executeWithChecks(ee);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 					logger.error("Failed to execute command ch.elexis.agenda.commands.printAppointmentLabel", ex);
@@ -928,6 +932,7 @@ public class TerminDialog extends TitleAreaDialog {
 						
 					}
 				});
+				actTermin = clonedTermin;
 			}
 			
 			actTermin.set(new String[] {

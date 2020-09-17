@@ -27,6 +27,7 @@ import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
@@ -475,11 +476,11 @@ public class TestData {
 						}
 					}
 				}
-				
 			}
-			Result<Rechnung> result = Rechnung.build(Collections.singletonList(kons));
+			Result<IInvoice> result = InvoiceServiceHolder.get().invoice(
+				NoPoUtil.loadAsIdentifiable(Collections.singletonList(kons), IEncounter.class));
 			assertTrue(result.toString(), result.isOK());
-			Rechnung ret = result.get();
+			Rechnung ret = Rechnung.load(result.get().getId());
 			
 			// add prepaid according to rsc/*.xml
 			if (rechnungNr.equals(EXISTING_4_2_RNR)) {

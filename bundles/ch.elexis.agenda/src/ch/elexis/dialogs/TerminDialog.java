@@ -918,31 +918,19 @@ public class TerminDialog extends TitleAreaDialog {
 		}
 		lTerminListe.add(actTermin.getLabel());
 		lTermine.add(actTermin);
-		final Termin lockTermin = actTermin;
-		AcquireLockBlockingUi.aquireAndRun(lockTermin, new ILockHandler() {
-			
-			@Override
-			public void lockFailed(){
-				// do nothing
-			}
-			
-			@Override
-			public void lockAcquired(){
-				if (actKontakt != null) {
-					lockTermin.setKontakt(actKontakt);
-				} else {
-					lockTermin.set("Wer", tName.getText()); //$NON-NLS-1$
-				}
-				lockTermin.setGrund(tGrund.getText());
-				lockTermin.set(Termin.FLD_CREATOR,
-					ElexisEventDispatcher.getSelected(User.class).getLabel());
-				
-				if (bLocked.getSelection()) {
-					lockTermin.setFlag(Termin.SW_LOCKED);
-				}
-				ElexisEventDispatcher.reload(Termin.class);
-			}
-		});
+		
+		if (actKontakt != null) {
+			actTermin.setKontakt(actKontakt);
+		} else {
+			actTermin.set("Wer", tName.getText()); //$NON-NLS-1$
+		}
+		actTermin.setGrund(tGrund.getText());
+		actTermin.set(Termin.FLD_CREATOR,
+			ElexisEventDispatcher.getSelected(User.class).getLabel());
+		if (bLocked.getSelection()) {
+			actTermin.setFlag(Termin.SW_LOCKED);
+		}
+		
 		dayBar.recalc();
 		actPlannable = actTermin;
 		setEnablement();

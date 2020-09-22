@@ -2,7 +2,11 @@ package at.medevit.elexis.outbox.ui.part;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.commands.Command;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -36,12 +40,10 @@ import at.medevit.elexis.outbox.ui.part.provider.OutboxElementLabelProvider;
 import at.medevit.elexis.outbox.ui.part.provider.OutboxElementUiExtension;
 import at.medevit.elexis.outbox.ui.part.provider.OutboxViewerComparator;
 import at.medevit.elexis.outbox.ui.preferences.Preferences;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.data.Mandant;
 
 public class OutboxView extends ViewPart {
 	
@@ -52,15 +54,29 @@ public class OutboxView extends ViewPart {
 	
 	private OutboxElementViewerFilter filter = new OutboxElementViewerFilter();
 	
-	private ElexisUiEventListenerImpl mandantChanged =
-		new ElexisUiEventListenerImpl(Mandant.class, ElexisEvent.EVENT_MANDATOR_CHANGED) {
-			@Override
-			public void runInUi(ElexisEvent ev){
-				reload();
-			}
-		};
 	private OutboxElementContentProvider contentProvider;
 	private boolean setAutoSelectPatient;
+	
+	@Optional
+	@Inject
+	void mandatorChanged(IMandator mandator){
+		Display.getDefault().asyncExec(() -> {
+			reload();
+		});
+	}
+	
+	@Optional
+	@Inject
+	void updateOutboxElement(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IOutboxElement element){
+		contentProvider.refreshElement(element);
+		PatientOutboxElements patientElements =
+			contentProvider.getPatientOutboxElements(element);
+		if (patientElements != null) {
+			viewer.refresh(patientElements);
+		} else {
+			viewer.refresh();
+		}
+	}
 	
 	@Override
 	public void createPartControl(Composite parent){
@@ -111,6 +127,7 @@ public class OutboxView extends ViewPart {
 				if (selectedObj instanceof IOutboxElement) {
 					OutboxElementUiExtension extension = new OutboxElementUiExtension();
 					extension.fireDoubleClicked((IOutboxElement) selectedObj);
+					updateOutboxElement((IOutboxElement) selectedObj);
 				}
 			}
 		});
@@ -136,8 +153,7 @@ public class OutboxView extends ViewPart {
 		OutboxServiceComponent.get().addUpdateListener(element -> {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run(){
-					contentProvider.refreshElement(element);
-					viewer.refresh();
+					updateOutboxElement(element);
 				}
 			});
 		});
@@ -149,7 +165,6 @@ public class OutboxView extends ViewPart {
 		viewer.getTree().setMenu(menu);
 		getSite().registerContextMenu(ctxtMenuManager, viewer);
 		
-		ElexisEventDispatcher.getInstance().addListeners(mandantChanged);
 		getSite().setSelectionProvider(viewer);
 		
 		setAutoSelectPatientState(
@@ -247,12 +262,6 @@ public class OutboxView extends ViewPart {
 		viewer.setInput(getOpenOutboxElements(null));
 		reloadPending = false;
 		viewer.refresh();
-	}
-	
-	@Override
-	public void dispose(){
-		ElexisEventDispatcher.getInstance().removeListeners(mandantChanged);
-		super.dispose();
 	}
 	
 	public TreeViewer getTreeViewer(){

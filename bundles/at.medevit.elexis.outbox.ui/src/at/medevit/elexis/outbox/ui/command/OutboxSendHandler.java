@@ -33,8 +33,10 @@ import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
 import at.medevit.elexis.outbox.ui.part.model.PatientOutboxElements;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.Patient;
 
 public class OutboxSendHandler extends AbstractHandler implements IHandler {
@@ -70,6 +72,8 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 			String patientId = patientIds.stream().findFirst().orElse(null);
 			sendOutboxElements(event, patientId != null ? Patient.load(patientId) : null,
 				iOutboxElements);
+			iOutboxElements.stream().forEach(
+				e -> ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, e));
 		}
 		return null;
 	}

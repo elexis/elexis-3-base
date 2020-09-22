@@ -38,4 +38,8 @@ public class PatientOutboxElements {
 		}
 		return patient.getLabel();
 	}
+	
+	public Long getHighestLastupdate(){
+		return elements.stream().mapToLong(e -> e.getLastupdate()).max().orElse(0L);
+	}
 }

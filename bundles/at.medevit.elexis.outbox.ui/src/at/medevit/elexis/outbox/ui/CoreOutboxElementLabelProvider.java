@@ -2,10 +2,12 @@ package at.medevit.elexis.outbox.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.Command;
@@ -14,6 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -24,22 +27,28 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.model.OutboxElementType;
+import at.medevit.elexis.outbox.ui.filter.NotSentOutboxFilter;
 import at.medevit.elexis.outbox.ui.part.provider.IOutboxElementUiProvider;
 import ch.elexis.core.mail.MailMessage;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.TaskException;
+import ch.elexis.core.tasks.model.ITask;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider {
 	
 	private CoreLabelProvider labelProvider;
 	
+	private CoreColorProvider colorProvider;
+	
 	private Map<String, IIdentifiedRunnable> identifiedRunnablesMap;
 	
 	public CoreOutboxElementLabelProvider(){
 		labelProvider = new CoreLabelProvider();
+		colorProvider = new CoreColorProvider();
 		
 		identifiedRunnablesMap = buildIdentifiedRunnablesMap();
 	}
@@ -56,14 +65,12 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 	
 	@Override
 	public ImageDescriptor getFilterImage(){
-		// TODO Auto-generated method stub
-		return null;
+		return Images.IMG_MAIL_SEND.getImageDescriptor();
 	}
 	
 	@Override
 	public ViewerFilter getFilter(){
-		// TODO Auto-generated method stub
-		return null;
+		return new NotSentOutboxFilter();
 	}
 	
 	@Override
@@ -73,8 +80,7 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 	
 	@Override
 	public IColorProvider getColorProvider(){
-		// TODO Auto-generated method stub
-		return null;
+		return colorProvider;
 	}
 	
 	@Override
@@ -135,6 +141,23 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 		}
 	}
 	
+	class CoreColorProvider implements IColorProvider {
+		
+		@Override
+		public Color getForeground(Object element){
+			return null;
+		}
+		
+		@Override
+		public Color getBackground(Object element){
+			if (((IOutboxElement) element).getState() == State.SENT) {
+				return CoreUiUtil.getColorForString("d3d3d3");
+			}
+			return null;
+		}
+		
+	}
+	
 	class CoreLabelProvider extends LabelProvider {
 		private Image taskImage;
 		
@@ -155,7 +178,14 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 			StringBuilder sb = new StringBuilder();
 			IIdentifiedRunnable ir =
 				identifiedRunnablesMap.get(taskDescriptor.getIdentifiedRunnableId());
-			sb.append(ir.getLocalizedDescription());
+			Optional<ITask> execution =
+				TaskServiceComponent.get().findLatestExecution(taskDescriptor);
+			if (execution.isPresent()) {
+				sb.append("versendet am " + execution.get().getFinishedAt()
+					.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+			} else {
+				sb.append(ir.getLocalizedDescription());
+			}
 			if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) {
 				MailMessage msg =
 					MailMessage.fromJson(taskDescriptor.getRunContext().get("message"));

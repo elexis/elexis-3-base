@@ -25,7 +25,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 
 import at.medevit.elexis.outbox.model.IOutboxElement;
-import at.medevit.elexis.outbox.model.IOutboxElementService;
+import at.medevit.elexis.outbox.model.IOutboxElementService.State;
 import at.medevit.elexis.outbox.ui.OutboxServiceComponent;
 import at.medevit.elexis.outbox.ui.command.AutoActivePatientHandler;
 import at.medevit.elexis.outbox.ui.part.action.OutboxFilterAction;
@@ -34,8 +34,8 @@ import at.medevit.elexis.outbox.ui.part.provider.IOutboxElementUiProvider;
 import at.medevit.elexis.outbox.ui.part.provider.OutboxElementContentProvider;
 import at.medevit.elexis.outbox.ui.part.provider.OutboxElementLabelProvider;
 import at.medevit.elexis.outbox.ui.part.provider.OutboxElementUiExtension;
+import at.medevit.elexis.outbox.ui.part.provider.OutboxViewerComparator;
 import at.medevit.elexis.outbox.ui.preferences.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
@@ -101,6 +101,8 @@ public class OutboxView extends ViewPart {
 		viewer.setContentProvider(contentProvider);
 		
 		viewer.setLabelProvider(new OutboxElementLabelProvider());
+		
+		viewer.setComparator(new OutboxViewerComparator());
 		
 		viewer.addDoubleClickListener(event -> {
 			StructuredSelection selection = (StructuredSelection) viewer.getSelection();
@@ -185,10 +187,10 @@ public class OutboxView extends ViewPart {
 		}
 	}
 	
-	private List<IOutboxElement> getOpenOutboxElements(){
+	private List<IOutboxElement> getOpenOutboxElements(State state){
 		List<IOutboxElement> openElements = OutboxServiceComponent.get().getOutboxElements(
 			ContextServiceHolder.get().getActiveMandator().orElse(null), null,
-			IOutboxElementService.State.NEW);
+			state);
 		return openElements;
 	}
 	
@@ -242,7 +244,7 @@ public class OutboxView extends ViewPart {
 			return;
 		}
 		
-		viewer.setInput(getOpenOutboxElements());
+		viewer.setInput(getOpenOutboxElements(null));
 		reloadPending = false;
 		viewer.refresh();
 	}

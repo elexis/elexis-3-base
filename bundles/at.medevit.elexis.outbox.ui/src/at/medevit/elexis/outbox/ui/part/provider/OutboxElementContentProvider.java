@@ -71,16 +71,13 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 		PatientOutboxElements patientOutboxElements = map.get(patient);
 		// remove seen and add unseen
 		if (patientOutboxElements != null) {
-			if (outboxElement.getState() == State.SENT) {
+			IMandator activeMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
+			if (outboxElement.isDeleted()) {
 				patientOutboxElements.removeElement(outboxElement);
+			} else if (outboxElement.getMandator().equals(activeMandant)) {
+				patientOutboxElements.addElement(outboxElement);
 			} else {
-				IMandator activeMandant =
-					ContextServiceHolder.get().getActiveMandator().orElse(null);
-				if (outboxElement.getMandator().equals(activeMandant)) {
-					patientOutboxElements.addElement(outboxElement);
-				} else {
-					patientOutboxElements.removeElement(outboxElement);
-				}
+				patientOutboxElements.removeElement(outboxElement);
 			}
 		} else if (outboxElement.getState() == State.NEW) {
 			patientOutboxElements = new PatientOutboxElements(patient);
@@ -98,5 +95,14 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 				items.remove(patientOutboxElements);
 			}
 		}
+	}
+	
+	public PatientOutboxElements getPatientOutboxElements(Object selectedObj){
+		if (selectedObj instanceof IOutboxElement) {
+			return map.get(((IOutboxElement) selectedObj).getPatient());
+		} else if (selectedObj instanceof PatientOutboxElements) {
+			return (PatientOutboxElements) selectedObj;
+		}
+		return null;
 	}
 }

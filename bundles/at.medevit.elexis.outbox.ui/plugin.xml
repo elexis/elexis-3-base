@@ -8,6 +8,7 @@
             class="at.medevit.elexis.outbox.ui.part.OutboxView"
             icon="rsc/img/outbox_into.png"
             id="at.medevit.elexis.outbox.ui.view"
+            inject="true"
             name="%view.name"
             restorable="true">
       </view>

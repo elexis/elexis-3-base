@@ -42,4 +42,12 @@ public class PatientOutboxElements {
 	public Long getHighestLastupdate(){
 		return elements.stream().mapToLong(e -> e.getLastupdate()).max().orElse(0L);
 	}
+	
+	public void clear(){
+		elements = new HashSet<IOutboxElement>();
+	}
+	
+	public boolean isEmpty(){
+		return elements.isEmpty();
+	}
 }

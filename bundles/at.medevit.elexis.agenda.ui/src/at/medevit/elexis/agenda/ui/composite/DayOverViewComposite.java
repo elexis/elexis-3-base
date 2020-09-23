@@ -438,7 +438,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		
 		if (collision) {
 			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY)); //$NON-NLS-1$
-			msg += "\t" + " - Termin kollision!";
+			msg += "\t" + " - Terminkollision!";
 		}
 		
 		getShell().getDisplay().asyncExec(new Runnable() {

@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -258,10 +259,12 @@ public class OutboxView extends ViewPart {
 			reloadPending = true;
 			return;
 		}
+		TreePath[] expanded = viewer.getExpandedTreePaths();
 		
 		viewer.setInput(getOpenOutboxElements(null));
 		reloadPending = false;
 		viewer.refresh();
+		viewer.setExpandedTreePaths(expanded);
 	}
 	
 	public TreeViewer getTreeViewer(){

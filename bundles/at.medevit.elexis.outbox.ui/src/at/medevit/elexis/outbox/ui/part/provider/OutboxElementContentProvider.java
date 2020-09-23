@@ -3,7 +3,9 @@ package at.medevit.elexis.outbox.ui.part.provider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -52,7 +54,7 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 		if (newInput instanceof List<?>) {
 			List<IOutboxElement> input = (List<IOutboxElement>) newInput;
 			// refresh map and list
-			map.clear();
+			map.values().forEach(p -> p.clear());
 			for (IOutboxElement outboxElement : input) {
 				IPatient patient = outboxElement.getPatient();
 				PatientOutboxElements patientOutbox = map.get(patient);
@@ -61,6 +63,13 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 					map.put(patient, patientOutbox);
 				}
 				patientOutbox.addElement(outboxElement);
+			}
+			// remove empty PatientOutboxElements
+			Iterator<Entry<IPatient, PatientOutboxElements>> iter = map.entrySet().iterator();
+			while (iter.hasNext()) {
+				if (iter.next().getValue().isEmpty()) {
+					iter.remove();
+				}
 			}
 			items = new ArrayList<>(map.values());
 		}

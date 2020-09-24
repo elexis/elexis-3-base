@@ -18,12 +18,12 @@
       <command
             defaultHandler="at.medevit.elexis.ehc.ui.handler.CreateDocumentHandler"
             id="at.medevit.elexis.ehc.ui.createDocument"
-            name="%name.command.Create">
+            name="%command.name.Create">
       </command>
       <command
             defaultHandler="at.medevit.elexis.ehc.ui.handler.ImportDocumentHandler"
             id="at.medevit.elexis.ehc.ui.importDocument"
-            name="%name.command.Import">
+            name="%command.name.Import">
       </command>
    </extension>
    <extension
@@ -44,7 +44,7 @@
          <command
                commandId="at.medevit.elexis.ehc.ui.importDocument"
                icon="icons/ehc.jpg"
-               label="%name.command.Import"
+               label="%command.label.Import"
                style="push">
          </command>
       </menuContribution>

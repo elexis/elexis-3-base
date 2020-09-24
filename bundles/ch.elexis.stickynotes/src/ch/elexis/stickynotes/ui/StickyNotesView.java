@@ -30,7 +30,8 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.text.EnhancedTextField;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
@@ -43,7 +44,7 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 	EnhancedTextField etf;
 	Patient actPatient;
 	StickyNote actNote;
-	SettingsPreferenceStore prefs;
+	ConfigServicePreferenceStore prefs;
 	
 	private final ElexisUiEventListenerImpl eeli_pat =
 		new ElexisUiEventListenerImpl(Patient.class) {
@@ -62,14 +63,14 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 		
 		@Override
 		public void catchElexisEvent(ElexisEvent ev){
-			prefs = new SettingsPreferenceStore(CoreHub.userCfg);
+			prefs = new ConfigServicePreferenceStore(Scope.USER);
 		}
 		
 	};
 	
 	@Override
 	public void createPartControl(Composite parent){
-		prefs = new SettingsPreferenceStore(CoreHub.userCfg);
+		prefs = new ConfigServicePreferenceStore(Scope.USER);
 		form = UiDesk.getToolkit().createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();

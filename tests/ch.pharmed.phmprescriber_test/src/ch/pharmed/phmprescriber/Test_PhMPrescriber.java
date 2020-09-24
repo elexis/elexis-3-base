@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Patient;
@@ -131,12 +130,10 @@ public class Test_PhMPrescriber {
 				
 		//Check WS for checking available shops
 		ConfigServiceHolder.setGlobal(Constants.CFG_PHM_LASTREQUEST,"");
-		CoreHub.globalCfg.flush();
 				
 		assertEquals(false, phys.hasShops());
 		
 		ConfigServiceHolder.setGlobal(Constants.CFG_PHM_LASTREQUEST,"");
-		CoreHub.globalCfg.flush();
 				
 		phys.setZsrid("W 0192.59");
 		assertEquals(true, phys.hasShops());

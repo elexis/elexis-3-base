@@ -18,12 +18,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.agenda.Messages;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class AgendaAnzeige extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
-	SettingsPreferenceStore prefs = new SettingsPreferenceStore(CoreHub.userCfg);
+	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.USER);
 	
 	public AgendaAnzeige(){
 		super(GRID);
@@ -47,7 +47,6 @@ public class AgendaAnzeige extends FieldEditorPreferencePage implements IWorkben
 	
 	@Override
 	public boolean performOk(){
-		prefs.flush();
 		return super.performOk();
 	}
 	

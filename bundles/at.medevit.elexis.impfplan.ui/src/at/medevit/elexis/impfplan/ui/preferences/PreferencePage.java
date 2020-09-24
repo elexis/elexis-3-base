@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.impfplan.ui.VaccinationView;
 import at.medevit.elexis.impfplan.ui.handlers.ImportLegacyVaccinationsHandler;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -55,7 +55,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	
 	@Override
 	public void init(IWorkbench workbench){
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.userCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
 	}
 	
 	@Override
@@ -137,8 +137,6 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	
 	@Override
 	public boolean performOk(){
-		CoreHub.userCfg.flush();
-		
 		VaccinationView vaccView =
 			(VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.findView(VaccinationView.PART_ID);

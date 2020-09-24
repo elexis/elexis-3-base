@@ -20,7 +20,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
@@ -29,7 +30,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	
 	@Override
 	public void init(IWorkbench workbench){
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.userCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
 		setDescription("e-Health Connector Einstellungen");
 		
 		initDirectories();

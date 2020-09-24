@@ -33,19 +33,19 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
 public class AgendaImages extends PreferencePage implements IWorkbenchPreferencePage {
-	private SettingsPreferenceStore prefs;
+	private ConfigServicePreferenceStore prefs;
 	
 	public AgendaImages(){
-		prefs = new SettingsPreferenceStore(CoreHub.userCfg);
+		prefs = new ConfigServicePreferenceStore(Scope.USER);
 		setPreferenceStore(prefs);
 		setDescription(Messages.AgendaImages_imagesForAgenda);
 	}

@@ -25,3 +25,4 @@ Export-Package: at.medevit.elexis.ehc.ui.extension,
  at.medevit.elexis.ehc.ui.views
 Service-Component: OSGI-INF/services.xml
 Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin

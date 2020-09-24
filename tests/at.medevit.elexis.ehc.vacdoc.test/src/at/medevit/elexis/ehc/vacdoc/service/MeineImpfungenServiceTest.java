@@ -16,8 +16,8 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
 import at.medevit.elexis.ehc.vacdoc.test.AllTests;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -48,9 +48,9 @@ public class MeineImpfungenServiceTest {
 		if (ahvNumber == null || ahvNumber.isEmpty()) {
 			addAHVNumber(patient, 1);
 		}
-		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PATH,
+		ConfigServiceHolder.setMandator(MeineImpfungenService.CONFIG_KEYSTORE_PATH,
 			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PATH));
-		CoreHub.mandantCfg.set(MeineImpfungenService.CONFIG_KEYSTORE_PASS,
+		ConfigServiceHolder.setMandator(MeineImpfungenService.CONFIG_KEYSTORE_PASS,
 			System.getProperty(MeineImpfungenService.CONFIG_KEYSTORE_PASS));
 		
 		Mandant mandator = ElexisEventDispatcher.getSelectedMandator();

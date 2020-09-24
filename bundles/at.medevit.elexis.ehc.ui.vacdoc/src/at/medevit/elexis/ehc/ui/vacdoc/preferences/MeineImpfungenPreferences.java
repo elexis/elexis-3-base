@@ -11,8 +11,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder;
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.PasswordFieldEditor;
 
 public class MeineImpfungenPreferences extends FieldEditorPreferencePage
@@ -20,7 +20,7 @@ public class MeineImpfungenPreferences extends FieldEditorPreferencePage
 	
 	@Override
 	public void init(IWorkbench workbench){
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.mandantCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
 		setDescription("Mandanten spezifische Einstellungen für meineimpfungen.");
 	}
 	

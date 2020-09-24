@@ -10,7 +10,6 @@
  ******************************************************************************/
 package at.medevit.elexis.weblinks.model;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class WebLinkElement {
@@ -55,12 +54,10 @@ public class WebLinkElement {
 	public void save(){
 		ConfigServiceHolder.setUser(WebLinkElementUtil.getTextConfig(id), text);
 		ConfigServiceHolder.setUser(WebLinkElementUtil.getLinkConfig(id), link);
-		CoreHub.userCfg.flush();
 	}
 	
 	public void delete(){
-		CoreHub.userCfg.remove(WebLinkElementUtil.getTextConfig(id));
-		CoreHub.userCfg.remove(WebLinkElementUtil.getLinkConfig(id));
-		CoreHub.userCfg.flush();
+		ConfigServiceHolder.setUser(WebLinkElementUtil.getTextConfig(id), null);
+		ConfigServiceHolder.setUser(WebLinkElementUtil.getLinkConfig(id), null);
 	}
 }

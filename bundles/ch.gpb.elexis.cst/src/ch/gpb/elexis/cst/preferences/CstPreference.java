@@ -27,7 +27,8 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.data.Anwender;
 import ch.gpb.elexis.cst.Messages;
 
@@ -40,7 +41,7 @@ public class CstPreference extends FieldEditorPreferencePage implements IWorkben
 
     public CstPreference() {
 	super(Messages.Cst_Preference_Einstellungen, GRID);
-	setPreferenceStore(new SettingsPreferenceStore(CoreHub.userCfg));
+	setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
 
 	initIdentifiers();
     }

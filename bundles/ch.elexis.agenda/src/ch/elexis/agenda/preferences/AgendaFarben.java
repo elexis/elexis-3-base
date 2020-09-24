@@ -30,21 +30,21 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class AgendaFarben extends PreferencePage implements IWorkbenchPreferencePage {
-	private SettingsPreferenceStore prefs;
+	private ConfigServicePreferenceStore prefs;
 	private int typCols, typRows, statusCols;
 	
 	// private ColorCellEditor[] editors;
 	// private String[] columnProperties;
 	
 	public AgendaFarben(){
-		prefs = new SettingsPreferenceStore(CoreHub.userCfg);
+		prefs = new ConfigServicePreferenceStore(Scope.USER);
 		setPreferenceStore(prefs);
 		setDescription(Messages.AgendaFarben_colorSettings);
 	}

@@ -451,7 +451,6 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	protected void performApply(){
 		ConfigServiceHolder.setUser(PreferencePage.SAVE_COLUM_WIDTH, btnSaveColumnWidths.getSelection());
 		ConfigServiceHolder.setUser(PreferencePage.SAVE_SORT_DIRECTION, btnSaveSortDirection.getSelection());
-		CoreHub.userCfg.flush();
 		CoreHub.localCfg.flush();
 		super.performApply();
 	}

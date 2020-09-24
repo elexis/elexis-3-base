@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import at.medevit.elexis.inbox.core.ui.LabResultLabelProvider;
 import at.medevit.elexis.inbox.core.ui.LabResultLabelProvider.LabelFields;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 
@@ -158,7 +157,6 @@ public class InboxPreferences extends PreferencePage implements IWorkbenchPrefer
 		ConfigServiceHolder.setUser(INBOX_LABRESULT_LBL_AVAILABLE, getListAsString(lvAvailable.getList()
 			.getItems()));
 		
-		CoreHub.userCfg.flush();
 		loadChoosenLabel();
 		return super.performOk();
 	}

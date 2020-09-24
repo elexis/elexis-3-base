@@ -17,7 +17,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
@@ -120,7 +119,6 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_PATH, txtSoundFilePath.getText());
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR,
 			btnAnswerAutoclear.getSelection());
-		CoreHub.userCfg.flush();
 		return super.performOk();
 	}
 }

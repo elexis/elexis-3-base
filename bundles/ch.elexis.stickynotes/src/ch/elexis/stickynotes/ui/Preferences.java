@@ -18,8 +18,8 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.stickynotes.Messages;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -29,7 +29,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	public Preferences(){
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.userCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
 	}
 	
 	public void init(IWorkbench workbench){

@@ -958,6 +958,8 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin.setFlag(Termin.SW_LOCKED);
 		}
 		
+		ElexisEventDispatcher.reload(Termin.class);
+		
 		dayBar.recalc();
 		actPlannable = actTermin;
 		setEnablement();

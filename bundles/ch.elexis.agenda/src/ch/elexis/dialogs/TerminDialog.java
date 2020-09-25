@@ -887,15 +887,13 @@ public class TerminDialog extends TitleAreaDialog {
 		String status = cbStatus.getItem(cbStatus.getSelectionIndex());
 		String priority = bEmergency.getSelection() ? "1" : "0";
 		Termin actTermin = null;
+		LockResponse createAcquireLock = null;
 		if (actPlannable instanceof Termin.Free) {
 			actTermin = new Termin(agenda.getActResource(),
 				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status,
 				priority);
 			// should never fail, object was just created
-			LockResponse acquireLock = CoreHub.getLocalLockService().acquireLock(actTermin);
-			if (!acquireLock.isOk()) {
-				log.error("Illegal state - should not happen: " + acquireLock.getStatus());
-			}
+			createAcquireLock = CoreHub.getLocalLockService().acquireLock(actTermin);
 		} else {
 			actTermin = (Termin) actPlannable;
 			if (bMulti) {
@@ -941,6 +939,10 @@ public class TerminDialog extends TitleAreaDialog {
 		dayBar.recalc();
 		actPlannable = actTermin;
 		setEnablement();
+		
+		if(createAcquireLock != null && createAcquireLock.isOk()) {
+			CoreHub.getLocalLockService().releaseLock(createAcquireLock.getLockInfo());
+		}
 	}
 	
 	/**

@@ -69,6 +69,7 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.lock.types.LockResponse;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -887,10 +888,14 @@ public class TerminDialog extends TitleAreaDialog {
 		String priority = bEmergency.getSelection() ? "1" : "0";
 		Termin actTermin = null;
 		if (actPlannable instanceof Termin.Free) {
-			Termin newTermin = new Termin(agenda.getActResource(),
+			actTermin = new Termin(agenda.getActResource(),
 				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status,
 				priority);
-			actTermin = newTermin;
+			// should never fail, object was just created
+			LockResponse acquireLock = CoreHub.getLocalLockService().acquireLock(actTermin);
+			if (!acquireLock.isOk()) {
+				log.error("Illegal state - should not happen: " + acquireLock.getStatus());
+			}
 		} else {
 			actTermin = (Termin) actPlannable;
 			if (bMulti) {

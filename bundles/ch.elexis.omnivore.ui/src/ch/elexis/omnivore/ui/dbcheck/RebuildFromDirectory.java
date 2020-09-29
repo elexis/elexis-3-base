@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.INativeQuery;
 import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQueryCursor;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
@@ -161,9 +163,15 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 				pm.beginTask("Überprüfen aller Omnivore Einträge", IProgressMonitor.UNKNOWN);
 				IQuery<IDocumentHandle> queryAll =
 					OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-				List<IDocumentHandle> invalidEntries = queryAll.executeAsStream()
-					.filter(dh -> !dh.isCategory() && isMissingEntry(dh))
-					.collect(Collectors.toList());
+				List<IDocumentHandle> invalidEntries = new ArrayList<IDocumentHandle>();
+				try (IQueryCursor<IDocumentHandle> all = queryAll.executeAsCursor()) {
+					while (all.hasNext()) {
+						IDocumentHandle dh = all.next();
+						if (!dh.isCategory() && isMissingEntry(dh)) {
+							invalidEntries.add(dh);
+						}
+					}
+				}
 				if (!invalidEntries.isEmpty()) {
 					writeCsv(invalidEntries, importDir);
 				}

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class WsClientConfig {
 	
@@ -41,14 +42,14 @@ public class WsClientConfig {
 
 	public static String getP12Path() {
 		if (CoreHub.mandantCfg != null) {
-			return CoreHub.mandantCfg.get(USR_DEFDOCBOXP12PATH, "");
+			return ConfigServiceHolder.getMandator(USR_DEFDOCBOXP12PATH, "");
 		}
 		return "";
 	}
 	
 	public static String getP12Password(){
 		if (CoreHub.mandantCfg != null) {
-			return CoreHub.mandantCfg.get(USR_DEFDOCBOXP12PASSWORD, "");
+			return ConfigServiceHolder.getMandator(USR_DEFDOCBOXP12PASSWORD, "");
 		}
 		return "";
 	}
@@ -87,7 +88,8 @@ public class WsClientConfig {
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 			docboxSha1SecretKey = bufferedReader.readLine();
 		} catch (Exception e) {
-			docboxSha1SecretKey = WsClientUtil.getSHA1(CoreHub.mandantCfg.get(USR_SECRETKEY, ""));
+			docboxSha1SecretKey =
+				WsClientUtil.getSHA1(ConfigServiceHolder.getMandator(USR_SECRETKEY, ""));
 		}
 		return docboxSha1SecretKey;
 	}
@@ -97,7 +99,7 @@ public class WsClientConfig {
 	}
 	
 	private static String getDocboxLoginID(boolean prefixed){
-		String loginId = CoreHub.mandantCfg.get(USR_DEFDOCBXLOGINID, "");//$NON-NLS-1$
+		String loginId = ConfigServiceHolder.getMandator(USR_DEFDOCBXLOGINID, "");//$NON-NLS-1$
 		if (!prefixed && loginId.startsWith(TESTLOGINIDPREFIX)) {
 			loginId = loginId.substring(TESTLOGINIDPREFIX.length());
 		}
@@ -105,7 +107,7 @@ public class WsClientConfig {
 	}
 	
 	public static String getSha1DocboxPassword(){
-		String sha1Password = CoreHub.mandantCfg.get(USR_DEFDOCBOXPASSWORD, "");//$NON-NLS-1$
+		String sha1Password = ConfigServiceHolder.getMandator(USR_DEFDOCBOXPASSWORD, "");//$NON-NLS-1$
 		return sha1Password;
 	}
 }

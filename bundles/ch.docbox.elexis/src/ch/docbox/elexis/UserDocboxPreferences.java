@@ -16,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.InvalidKeyException;
+import java.util.Optional;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -46,13 +48,17 @@ import ch.docbox.ws.cdachservices.CDACHServices_Service;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.docbox.ws.client.WsClientConfig;
 import ch.elexis.docbox.ws.client.WsClientUtil;
-import ch.rgw.io.Settings;
 import ch.swissmedicalsuite.HCardBrowser;
 
 /**
@@ -168,7 +174,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	
 	public UserDocboxPreferences(){
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.mandantCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
 		setDescription(Messages.UserDocboxPreferences_Description);
 		bereiche = Termin.TerminBereiche;
 	}
@@ -271,11 +277,11 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 				String sha1Password =
 					(passwordFieldEditor.getStringValue().equals(oldSha1Password) ? oldSha1Password
 							: CDACHServicesClient.getSHA1(passwordFieldEditor.getStringValue()));
-				CoreHub.mandantCfg.set(WsClientConfig.USR_DEFDOCBXLOGINID,
+				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID,
 					loginIdFieldEditor.getStringValue());
-				CoreHub.mandantCfg.set(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
+				ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
 				if (showSha1SecretKey && secretkeyFieldEditor != null) {
-					CoreHub.mandantCfg.set(WsClientConfig.USR_SECRETKEY,
+					ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
 						secretkeyFieldEditor.getStringValue());
 				}
 				setUseHCard(buttonUseHCard.getSelection());
@@ -435,7 +441,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static String getDocboxLoginID(boolean prefixed){
-		String loginId = CoreHub.mandantCfg.get(WsClientConfig.USR_DEFDOCBXLOGINID, "");//$NON-NLS-1$
+		String loginId = ConfigServiceHolder.getMandator(WsClientConfig.USR_DEFDOCBXLOGINID, "");//$NON-NLS-1$
 		if (!prefixed && loginId.startsWith(WsClientConfig.TESTLOGINIDPREFIX)) {
 			loginId = loginId.substring(WsClientConfig.TESTLOGINIDPREFIX.length());
 		}
@@ -443,7 +449,8 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static String getSha1DocboxPassword(){
-		String sha1Password = CoreHub.mandantCfg.get(WsClientConfig.USR_DEFDOCBOXPASSWORD, "");//$NON-NLS-1$
+		String sha1Password =
+			ConfigServiceHolder.getMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, "");//$NON-NLS-1$
 		return sha1Password;
 	}
 	
@@ -467,26 +474,27 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 			docboxSha1SecretKey = bufferedReader.readLine();
 		} catch (Exception e) {
 			docboxSha1SecretKey =
-				CDACHServicesClient.getSHA1(CoreHub.mandantCfg
-					.get(WsClientConfig.USR_SECRETKEY, ""));
+				CDACHServicesClient
+					.getSHA1(ConfigServiceHolder.getMandator(WsClientConfig.USR_SECRETKEY, ""));
 			showSha1SecretKey = true;
 		}
 		return docboxSha1SecretKey;
 	}
 	
 	public static String getPathFiles(){
-		return CoreHub.mandantCfg.get(USR_DEFDOCBOXPATHFILES, "");//$NON-NLS-1$
+		return ConfigServiceHolder.getMandator(USR_DEFDOCBOXPATHFILES, "");//$NON-NLS-1$
 	}
 	
 	public static String getPathHCardAPI(){
-		return CoreHub.mandantCfg.get(USR_DEFDOCBOXPATHHCARDAPI, "");//$NON-NLS-1$
+		return ConfigServiceHolder.getMandator(USR_DEFDOCBOXPATHHCARDAPI, "");//$NON-NLS-1$
 	}
 	
 	public static boolean getAgendaSettingsPerUser(){
-		if (CoreHub.getLoggedInContact() == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getLoggedInContact() == null
+			|| !ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return false;
 		}
-		boolean value = CoreHub.mandantCfg.get(USR_AGENDASETTINGSPERUSER, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean value = ConfigServiceHolder.getMandator(USR_AGENDASETTINGSPERUSER, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
 		return value;
 	}
 	
@@ -527,7 +535,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	private void setAgendaSettingsPerUser(boolean value){
-		CoreHub.mandantCfg.set(USR_AGENDASETTINGSPERUSER, (value ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
+		ConfigServiceHolder.setMandator(USR_AGENDASETTINGSPERUSER, (value ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override
@@ -537,13 +545,15 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 		String sha1Password =
 			(passwordFieldEditor.getStringValue().equals(oldSha1Password) ? oldSha1Password
 					: CDACHServicesClient.getSHA1(passwordFieldEditor.getStringValue()));
-		CoreHub.mandantCfg.set(WsClientConfig.USR_DEFDOCBXLOGINID,
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID,
 			loginIdFieldEditor.getStringValue());
-		CoreHub.mandantCfg.set(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
-		CoreHub.mandantCfg.set(USR_DEFDOCBOXPATHFILES, directoryFieldEditor.getStringValue());
-		CoreHub.mandantCfg.set(USR_DEFDOCBOXPATHHCARDAPI, directoryhCardEditor.getStringValue());
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, sha1Password);
+		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHFILES,
+			directoryFieldEditor.getStringValue());
+		ConfigServiceHolder.setMandator(USR_DEFDOCBOXPATHHCARDAPI,
+			directoryhCardEditor.getStringValue());
 		if (showSha1SecretKey) {
-			CoreHub.mandantCfg.set(WsClientConfig.USR_SECRETKEY,
+			ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY,
 				secretkeyFieldEditor.getStringValue());
 		}
 		
@@ -595,9 +605,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	public boolean performCancel(){
 		super.performCancel();
 		
-		CoreHub.mandantCfg.set(WsClientConfig.USR_DEFDOCBXLOGINID, oldLoginId);
-		CoreHub.mandantCfg.set(WsClientConfig.USR_DEFDOCBOXPASSWORD, oldSha1Password);
-		CoreHub.mandantCfg.set(WsClientConfig.USR_SECRETKEY, oldSecretKey);
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBXLOGINID, oldLoginId);
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, oldSha1Password);
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_SECRETKEY, oldSecretKey);
 		setUseHCard(oldUseHCard);
 		setUseProxy(oldUseProxy);
 		setProxyHost(oldProxyHost);
@@ -643,77 +653,85 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 		
 	}
 	
-	public static Settings getSettingsForUser(){
+	public static IPreferenceStore getSettingsForUser(){
 		// if anwender is also mandant the settings preferences get a hickup, therefore we return
 		// the mandantcfg
-		if (CoreHub.getLoggedInContact().getId().equals(CoreHub.actMandant.getId())) {
-			return CoreHub.mandantCfg;
+		Optional<IMandator> activeMandator = ContextServiceHolder.get().getActiveMandator();
+		Optional<IContact> activeUserContact = ContextServiceHolder.get().getActiveUserContact();
+		if (activeUserContact.isPresent() && activeMandator.isPresent()
+			&& activeUserContact.get().getId().equals(activeMandator.get().getId())) {
+			return new ConfigServicePreferenceStore(Scope.MANDATOR);
 		}
-		Settings settings = getAgendaSettingsPerUser() ? CoreHub.userCfg : CoreHub.mandantCfg;
+		IPreferenceStore settings =
+			getAgendaSettingsPerUser() ? new ConfigServicePreferenceStore(Scope.USER)
+					: new ConfigServicePreferenceStore(Scope.MANDATOR);
 		return settings;
 	}
 	
 	public static boolean isAppointmentsEmergencyService(){
-		if (CoreHub.getLoggedInContact() == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getLoggedInContact() == null
+			|| !ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return false;
 		}
-		return getSettingsForUser().get(USR_GETAPPOINTMENTSEMERGENCYSERVICE, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
+		return getSettingsForUser().getBoolean(USR_GETAPPOINTMENTSEMERGENCYSERVICE);
 	}
 	
 	public static void setAppointmentsEmergencyService(boolean appointmentsEmergencyService){
-		getSettingsForUser().set(USR_GETAPPOINTMENTSEMERGENCYSERVICE,
-			(appointmentsEmergencyService ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
+		getSettingsForUser().setValue(USR_GETAPPOINTMENTSEMERGENCYSERVICE,
+			(appointmentsEmergencyService));
 	}
 	
 	public static boolean isAppointmentsPharmaVisits(){
-		if (CoreHub.getLoggedInContact() == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getLoggedInContact() == null
+			|| !ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return false;
 		}
-		return getSettingsForUser().get(USR_GETAPPOINTMENTSPHARMAVISITS, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
+		return getSettingsForUser().getBoolean(USR_GETAPPOINTMENTSPHARMAVISITS);
 	}
 	
 	public static void setAppointmentsPharmaVisits(boolean appointmentsPharmaVisits){
-		getSettingsForUser().set(USR_GETAPPOINTMENTSPHARMAVISITS,
-			(appointmentsPharmaVisits ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
+		getSettingsForUser().setValue(USR_GETAPPOINTMENTSPHARMAVISITS, (appointmentsPharmaVisits)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean isAppointmentsTerminvereinbarung(){
-		if (CoreHub.getLoggedInContact() == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getLoggedInContact() == null
+			|| !ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return false;
 		}
-		return getSettingsForUser().get(USR_GETAPPOINTMENTSTERMINVEREINBARUNG, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
+		return getSettingsForUser().getBoolean(USR_GETAPPOINTMENTSTERMINVEREINBARUNG); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static void setAppointmentsTerminvereinbarung(boolean appointmentsTerminvereinbarung){
-		getSettingsForUser().set(USR_GETAPPOINTMENTSTERMINVEREINBARUNG,
-			(appointmentsTerminvereinbarung ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
+		getSettingsForUser().setValue(USR_GETAPPOINTMENTSTERMINVEREINBARUNG,
+			(appointmentsTerminvereinbarung)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static String getAppointmentsBereich(){
-		if (CoreHub.getLoggedInContact() == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getLoggedInContact() == null
+			|| !ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return ""; //$NON-NLS-1$
 		}
-		return getSettingsForUser().get(USR_APPOINTMENTSBEREICH, ""); //$NON-NLS-1$ //$NON-NLS-2$
+		return getSettingsForUser().getString(USR_APPOINTMENTSBEREICH); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static void setAppointmentsBereich(String appointmentsBereich){
-		getSettingsForUser().set(USR_APPOINTMENTSBEREICH, appointmentsBereich); //$NON-NLS-1$ //$NON-NLS-2$
+		getSettingsForUser().setValue(USR_APPOINTMENTSBEREICH, appointmentsBereich); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean useHCard(){
-		return CoreHub.mandantCfg.get(USR_USEHCARD, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
+		return ConfigServiceHolder.getMandator(USR_USEHCARD, false); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static void setUseHCard(boolean useHCard){
-		CoreHub.mandantCfg.set(USR_USEHCARD, (useHCard ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
+		ConfigServiceHolder.setMandator(USR_USEHCARD, useHCard); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean useProxy(){
-		return CoreHub.mandantCfg.get(USR_USEPROXY, "0").equals("1"); //$NON-NLS-1$ //$NON-NLS-2$
+		return ConfigServiceHolder.getMandator(USR_USEPROXY, false); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static void setUseProxy(boolean useHCard){
-		CoreHub.mandantCfg.set(USR_USEPROXY, (useHCard ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
+		ConfigServiceHolder.setMandator(USR_USEPROXY, useHCard); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static synchronized CDACHServices getPort(){
@@ -747,25 +765,27 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	public static String getProxyHost(){
-		if (CoreHub.getLoggedInContact() == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getLoggedInContact() == null
+			|| !ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return ""; //$NON-NLS-1$
 		}
-		return CoreHub.mandantCfg.get(USR_PROXYHOST, ""); //$NON-NLS-1$ //$NON-NLS-2$
+		return ConfigServiceHolder.getMandator(USR_PROXYHOST, ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static void setProxyHost(String proxyHost){
-		CoreHub.mandantCfg.set(USR_PROXYHOST, proxyHost); //$NON-NLS-1$ //$NON-NLS-2$
+		ConfigServiceHolder.setMandator(USR_PROXYHOST, proxyHost); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static String getProxyPort(){
-		if (CoreHub.getLoggedInContact() == null || CoreHub.mandantCfg == null) {
+		if (CoreHub.getLoggedInContact() == null
+			|| !ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return ""; //$NON-NLS-1$
 		}
-		return CoreHub.mandantCfg.get(USR_PROXYPORT, ""); //$NON-NLS-1$ //$NON-NLS-2$
+		return ConfigServiceHolder.getMandator(USR_PROXYPORT, ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static void setProxyPort(String proxyPort){
-		CoreHub.mandantCfg.set(USR_PROXYPORT, proxyPort); //$NON-NLS-1$ //$NON-NLS-2$
+		ConfigServiceHolder.setMandator(USR_PROXYPORT, proxyPort); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 }

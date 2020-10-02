@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.docbox.ws.client.WsClientConfig;
 
 public class CertificateConfigDialog extends Dialog {
@@ -77,8 +77,10 @@ public class CertificateConfigDialog extends Dialog {
 	}
 	
 	private void toConfig(){
-		CoreHub.mandantCfg.set(WsClientConfig.USR_DEFDOCBOXP12PATH, certFileText.getText());
-		CoreHub.mandantCfg.set(WsClientConfig.USR_DEFDOCBOXP12PASSWORD, certPass.getText());
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXP12PATH,
+			certFileText.getText());
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXP12PASSWORD,
+			certPass.getText());
 	}
 	
 	@Override

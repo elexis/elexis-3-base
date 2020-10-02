@@ -7,8 +7,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.MultilineFieldEditor;
 
 /**
@@ -17,7 +18,7 @@ import ch.elexis.core.ui.preferences.inputs.MultilineFieldEditor;
  * @author Antoine Kaufmann
  */
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	private static SettingsPreferenceStore store;
+	private static ConfigServicePreferenceStore store;
 	public static final String CFG_EVLISTE = "hilotec/kgview/einnahmevorschriften";
 	public static final String CFG_FLORDZ = "hilotec/kgview/ordnungszahlfavliste";
 	public static final String CFG_MK_INCSTOP = "hilotec/kgview/mkincludestopdate";
@@ -27,7 +28,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String CFG_AKG_SCROLLDIST_DOWN = "hilotec/kgview/archivkgscrolldistdown";
 	
 	static {
-		store = new SettingsPreferenceStore(CoreHub.mandantCfg);
+		store = new ConfigServicePreferenceStore(Scope.MANDATOR);
 		
 		// Standardwerte setzten
 		store.setDefault(CFG_FLORDZ, false);
@@ -68,7 +69,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	 * @return Konfigurierte Einnahmevorschriften im aktuellen Mandant.
 	 */
 	public static String[] getEinnahmevorschriften(){
-		String s = CoreHub.mandantCfg.get(CFG_EVLISTE, "");
+		String s = ConfigServiceHolder.getMandator(CFG_EVLISTE, "");
 		return s.split(",");
 	}
 	
@@ -76,7 +77,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	 * @return
 	 */
 	public static boolean getOrdnungszahlInFML(){
-		boolean oz = CoreHub.mandantCfg.get(CFG_FLORDZ, false);
+		boolean oz = ConfigServiceHolder.getMandator(CFG_FLORDZ, false);
 		return oz;
 	}
 	

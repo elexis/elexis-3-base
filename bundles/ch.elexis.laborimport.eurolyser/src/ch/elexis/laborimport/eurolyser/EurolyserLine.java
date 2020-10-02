@@ -9,13 +9,13 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
 import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
 import ch.elexis.core.model.ILabItem;
 import ch.elexis.core.model.ILaboratory;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.laboratory.dialogs.LabItemSelektor;
@@ -120,7 +120,7 @@ public class EurolyserLine {
 	 */
 	public boolean isRelevant(){
 		String confMandantId =
-			CoreHub.mandantCfg.get(EurolyserImporter.CONFIG_IMPORT_MANDANTONLY, "").trim();
+			ConfigServiceHolder.getMandator(EurolyserImporter.CONFIG_IMPORT_MANDANTONLY, "").trim();
 		if (!confMandantId.isEmpty()) {
 			return confMandantId.equalsIgnoreCase(mandantId);
 		}

@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import ch.elexis.befunde.Messwert;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.StringTool;
 
 public class MesswertUtil {
@@ -79,8 +80,8 @@ public class MesswertUtil {
 	 */
 	public static List<MesswertFieldMapping> getMappings(){
 		List<MesswertFieldMapping> ret = new ArrayList<MesswertFieldMapping>();
-		if (CoreHub.mandantCfg != null) {
-			String mapping = CoreHub.mandantCfg.get(MAPPING_CONFIG, "");
+		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
+			String mapping = ConfigServiceHolder.getMandator(MAPPING_CONFIG, "");
 			String[] mappings = mapping.split(Messwert.SETUP_SEPARATOR);
 			for (String string : mappings) {
 				MesswertFieldMapping createdMapping = MesswertFieldMapping.createFromString(string);
@@ -132,7 +133,7 @@ public class MesswertUtil {
 	 * @param mappings
 	 */
 	public static void saveMappings(List<MesswertFieldMapping> mappings){
-		if (CoreHub.mandantCfg != null) {
+		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			StringBuilder sb = new StringBuilder();
 			for (MesswertFieldMapping befundFieldMapping : mappings) {
 				if (sb.length() > 0) {
@@ -140,7 +141,7 @@ public class MesswertUtil {
 				}
 				sb.append(befundFieldMapping.exportToString());
 			}
-			CoreHub.mandantCfg.set(MAPPING_CONFIG, sb.toString());
+			ConfigServiceHolder.setMandator(MAPPING_CONFIG, sb.toString());
 		} else {
 			throw new IllegalStateException("No mandant config available");
 		}

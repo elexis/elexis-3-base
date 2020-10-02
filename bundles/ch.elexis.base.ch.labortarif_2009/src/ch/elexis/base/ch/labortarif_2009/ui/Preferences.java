@@ -35,7 +35,6 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
@@ -48,7 +47,6 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	public static final String OPTIMIZE_ADDITION_INITDEADLINE = "30.06.2013"; //$NON-NLS-1$
 	
 	int langdef = 0;
-	Settings cfg = CoreHub.mandantCfg;
 	LinkedList<Button> buttons = new LinkedList<Button>();
 	
 	public Preferences(){
@@ -75,7 +73,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		group.setText(Messages.Preferences_specialities);
 		group.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		group.setLayout(new GridLayout());
-		String[] olddef = cfg.getStringArray(FACHDEF);
+		String[] olddef = ConfigServiceHolder.getMandatorAsList(FACHDEF).toArray(new String[0]);
 		if(specs!=null) {
 			for (Fachspec spec : specs) {
 				Button b = new Button(group, SWT.CHECK);
@@ -113,15 +111,14 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	}
 	
 	@Override
-	protected void performApply(){
+	public boolean performOk(){
 		LinkedList<String> bb = new LinkedList<String>();
 		for (Button b : buttons) {
 			if (b.getSelection()) {
 				bb.add(((Integer) b.getData(SPECNUM)).toString());
 			}
 		}
-		CoreHub.mandantCfg.set(FACHDEF, StringTool.join(bb, StringConstants.COMMA));
-		super.performApply();
+		ConfigServiceHolder.setMandator(FACHDEF, StringTool.join(bb, StringConstants.COMMA));
+		return super.performOk();
 	}
-	
 }

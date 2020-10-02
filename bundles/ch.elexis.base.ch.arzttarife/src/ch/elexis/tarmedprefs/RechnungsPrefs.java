@@ -60,6 +60,7 @@ import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktExtDialog;
@@ -396,11 +397,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				CoreHub.mandantCfg.set(PREF_ADDCHILDREN, bAddChildren.getSelection());
+				ConfigServiceHolder.setMandator(PREF_ADDCHILDREN, bAddChildren.getSelection());
 			}
 			
 		});
-		bAddChildren.setSelection(CoreHub.mandantCfg.get(PREF_ADDCHILDREN, false));
+		bAddChildren.setSelection(ConfigServiceHolder.getMandator(PREF_ADDCHILDREN, false));
 		cbMands.select(0);
 		setMandant((Mandant) hMandanten.get(cbMands.getItem(0)));
 		return ret;

@@ -22,7 +22,6 @@ public class AerztekasseSettings {
 	public static final String cfgBase = "net/medshare/connector/finance/aerztekasse"; //$NON-NLS-1$
 	
 	Settings machineCfg = CoreHub.localCfg; // Settings: lokal auf dem PC (Windows: Registry)
-	Settings mandantCfg = CoreHub.mandantCfg; // Settings: DB für einen Mandanten
 	
 	Mandant mandant;
 	
@@ -151,10 +150,10 @@ public class AerztekasseSettings {
 		globalUrl = ConfigServiceHolder.getGlobal(cfgUrl, ""); //$NON-NLS-1$
 		
 		// Mandanten Settings
-		settingText = mandantCfg.get(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
+		settingText = ConfigServiceHolder.getMandator(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
 		mandantUseGlobalSettings = Boolean.parseBoolean(settingText);
-		mandantUsername = mandantCfg.get(cfgUsername, ""); //$NON-NLS-1$
-		mandantPassword = mandantCfg.get(cfgPassword, ""); //$NON-NLS-1$
+		mandantUsername = ConfigServiceHolder.getMandator(cfgUsername, ""); //$NON-NLS-1$
+		mandantPassword = ConfigServiceHolder.getMandator(cfgPassword, ""); //$NON-NLS-1$
 		
 		// Machine Settings
 		settingText = machineCfg.get(cfgMachineUseGlobalSettings, "true"); //$NON-NLS-1$
@@ -170,10 +169,10 @@ public class AerztekasseSettings {
 		ConfigServiceHolder.setGlobal(cfgUrl, globalUrl);
 		
 		// Mandanten Settings
-		mandantCfg.set(cfgMandantUseGlobalSettings, mandantUseGlobalSettings.toString());
-		mandantCfg.set(cfgUsername, mandantUsername);
-		mandantCfg.set(cfgPassword, mandantPassword);
-		mandantCfg.flush();
+		ConfigServiceHolder.setMandator(cfgMandantUseGlobalSettings,
+			mandantUseGlobalSettings.toString());
+		ConfigServiceHolder.setMandator(cfgUsername, mandantUsername);
+		ConfigServiceHolder.setMandator(cfgPassword, mandantPassword);
 		
 		// Machine Settings
 		machineCfg.set(cfgMachineUseGlobalSettings, machineUseGlobalSettings.toString());

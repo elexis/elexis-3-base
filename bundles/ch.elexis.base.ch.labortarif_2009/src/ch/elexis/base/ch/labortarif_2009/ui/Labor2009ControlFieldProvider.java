@@ -176,13 +176,15 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 	
 	private void refreshViewer(){
 		// update the view async
-		if (viewer != null) {
+		if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
 			viewer.getControl().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run(){
-					viewer.getControl().setRedraw(false);
-					viewer.refresh();
-					viewer.getControl().setRedraw(true);
+					if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
+						viewer.getControl().setRedraw(false);
+						viewer.refresh();
+						viewer.getControl().setRedraw(true);
+					}
 				}
 			});
 		}

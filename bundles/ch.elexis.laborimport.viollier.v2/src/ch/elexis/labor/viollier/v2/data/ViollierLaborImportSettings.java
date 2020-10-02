@@ -26,7 +26,6 @@ public class ViollierLaborImportSettings {
 	public static final String cfgBase = "ch/elexis/laborimport/viollier/v2/ViollierLaborImport"; //$NON-NLS-1$
 	
 	Settings machineCfg = CoreHub.localCfg; // Settings: lokal auf dem PC (Windows: Registry)
-	Settings mandantCfg = CoreHub.mandantCfg; // Settings: DB für einen Mandanten
 	
 	Mandant mandant;
 	
@@ -497,9 +496,9 @@ public class ViollierLaborImportSettings {
 		globalDocumentCategory = ConfigServiceHolder.getGlobal(cfgDocumentCategory, ""); //$NON-NLS-1$
 		
 		// Mandanten Settings
-		settingText = mandantCfg.get(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
+		settingText = ConfigServiceHolder.getMandator(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
 		mandantUseGlobalSettings = Boolean.parseBoolean(settingText);
-		mandantDocumentCategory = mandantCfg.get(cfgDocumentCategory, ""); //$NON-NLS-1$
+		mandantDocumentCategory = ConfigServiceHolder.getMandator(cfgDocumentCategory, ""); //$NON-NLS-1$
 		
 		// Machine Settings
 		settingText = machineCfg.get(cfgMachineUseGlobalSettings, "true"); //$NON-NLS-1$
@@ -530,9 +529,9 @@ public class ViollierLaborImportSettings {
 		ConfigServiceHolder.setGlobal(cfgDocumentCategory, globalDocumentCategory);
 		
 		// Mandanten Settings
-		mandantCfg.set(cfgMandantUseGlobalSettings, mandantUseGlobalSettings.toString());
-		mandantCfg.set(cfgDocumentCategory, mandantDocumentCategory);
-		mandantCfg.flush();
+		ConfigServiceHolder.setMandator(cfgMandantUseGlobalSettings,
+			mandantUseGlobalSettings.toString());
+		ConfigServiceHolder.setMandator(cfgDocumentCategory, mandantDocumentCategory);
 		
 		// Machine Settings
 		machineCfg.set(cfgMachineUseGlobalSettings, machineUseGlobalSettings.toString());

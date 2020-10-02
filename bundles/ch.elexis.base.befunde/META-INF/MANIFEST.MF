@@ -13,6 +13,7 @@ Created-By: Buildr
 Import-Package: ch.elexis.core.findings.util,
  ch.elexis.core.findings.util.commands,
  ch.elexis.core.findings.util.model,
+ ch.elexis.core.services.holder,
  ch.elexis.core.ui.actions,
  ch.elexis.core.ui.icons,
  ch.elexis.core.ui.text,

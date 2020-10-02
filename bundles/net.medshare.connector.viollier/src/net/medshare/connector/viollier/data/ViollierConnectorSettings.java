@@ -26,7 +26,6 @@ public class ViollierConnectorSettings {
 	public static final String cfgBase = "viollier/portal"; //$NON-NLS-1$
 	
 	Settings machineCfg = CoreHub.localCfg; // Settings: lokal auf dem PC (Windows: Registry)
-	Settings mandantCfg = CoreHub.mandantCfg; // Settings: DB für einen Mandanten
 	
 	Mandant mandant;
 	
@@ -276,11 +275,11 @@ public class ViollierConnectorSettings {
 			globalPreferedPresentation = true;
 		
 		// Mandanten Settings
-		settingText = mandantCfg.get(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
+		settingText = ConfigServiceHolder.getMandator(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
 		mandantUseGlobalSettings = Boolean.parseBoolean(settingText);
-		mandantUserName = mandantCfg.get(cfgUserName, "");
-		mandantUserPassword = mandantCfg.get(cfgUserPassword, "");
-		mandantViollierClientId = mandantCfg.get(cfgViollierClientId, "");
+		mandantUserName = ConfigServiceHolder.getMandator(cfgUserName, "");
+		mandantUserPassword = ConfigServiceHolder.getMandator(cfgUserPassword, "");
+		mandantViollierClientId = ConfigServiceHolder.getMandator(cfgViollierClientId, "");
 		
 		// Machine Settings
 		settingText = machineCfg.get(cfgMachineUseGlobalSettings, "true"); //$NON-NLS-1$
@@ -306,11 +305,11 @@ public class ViollierConnectorSettings {
 		ConfigServiceHolder.setGlobal(cfgCumulativePresentation, globalPreferedPresentation);
 		
 		// Mandanten Settings
-		mandantCfg.set(cfgMandantUseGlobalSettings, mandantUseGlobalSettings.toString());
-		mandantCfg.set(cfgUserName, mandantUserName);
-		mandantCfg.set(cfgUserPassword, mandantUserPassword);
-		mandantCfg.set(cfgViollierClientId, mandantViollierClientId);
-		mandantCfg.flush();
+		ConfigServiceHolder.setMandator(cfgMandantUseGlobalSettings,
+			mandantUseGlobalSettings.toString());
+		ConfigServiceHolder.setMandator(cfgUserName, mandantUserName);
+		ConfigServiceHolder.setMandator(cfgUserPassword, mandantUserPassword);
+		ConfigServiceHolder.setMandator(cfgViollierClientId, mandantViollierClientId);
 		
 		// Machine Settings
 		machineCfg.set(cfgMachineUseGlobalSettings, machineUseGlobalSettings.toString());

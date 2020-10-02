@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class WsClientConfig {
 	
@@ -20,35 +20,35 @@ public class WsClientConfig {
 	public static final String USR_DEFDOCBOXP12PASSWORD = "docbox/p12password"; //$NON-NLS-1$
 
 	public static String getUsername(){
-		if (CoreHub.mandantCfg != null) {
+		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return getDocboxLoginID(false);
 		}
 		return "";
 	}
 	
 	public static String getPassword(){
-		if (CoreHub.mandantCfg != null) {
+		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return getSha1DocboxPassword();
 		}
 		return "";
 	}
 	
 	public static String getSecretkey(){
-		if (CoreHub.mandantCfg != null) {
+		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return getSha1DocboxSecretKey();
 		}
 		return "";
 	}
 
 	public static String getP12Path() {
-		if (CoreHub.mandantCfg != null) {
+		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return ConfigServiceHolder.getMandator(USR_DEFDOCBOXP12PATH, "");
 		}
 		return "";
 	}
 	
 	public static String getP12Password(){
-		if (CoreHub.mandantCfg != null) {
+		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return ConfigServiceHolder.getMandator(USR_DEFDOCBOXP12PASSWORD, "");
 		}
 		return "";

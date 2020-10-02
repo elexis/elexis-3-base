@@ -5,15 +5,15 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.laborimport.eurolyser.EurolyserImporter;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public PreferencePage(){
 		super(GRID);
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.mandantCfg));
+		setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
 	}
 	
 	@Override

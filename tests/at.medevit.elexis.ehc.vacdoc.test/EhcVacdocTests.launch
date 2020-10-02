@@ -215,7 +215,6 @@
 <setEntry value="ch.elexis.core.model@default:default"/>
 <setEntry value="ch.elexis.core.services.test@default:false"/>
 <setEntry value="ch.elexis.core.services@default:default"/>
-<setEntry value="ch.elexis.core.test.context@default:false"/>
 <setEntry value="ch.elexis.core.test@default:default"/>
 <setEntry value="ch.elexis.core.ui.contacts@default:default"/>
 <setEntry value="ch.elexis.core.ui.icons@default:default"/>

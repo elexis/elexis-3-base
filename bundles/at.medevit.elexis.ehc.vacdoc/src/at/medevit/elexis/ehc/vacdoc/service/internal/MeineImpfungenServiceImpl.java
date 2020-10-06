@@ -65,8 +65,8 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.ISSLStoreService;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
@@ -103,33 +103,20 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MeineImpfungenServiceImpl.class);
 	
+	@Reference
 	private VacdocService vacdocService;
 	
+	@Reference
 	private ISSLStoreService sslStoreService;
+	
+	@Reference
+	private IConfigService configService;
 	
 	private ElexisEventListener mandantListener;
 	
 	private Optional<KeyStore> currentTrustStore = Optional.empty();
 	
 	private Optional<KeyStore> currentKeyStore = Optional.empty();
-	
-	@Reference
-	public void setVacdocService(VacdocService vacdocService){
-		this.vacdocService = vacdocService;
-	}
-	
-	public void unsetVacdocService(VacdocService vacdocService){
-		this.vacdocService = null;
-	}
-	
-	@Reference
-	public void setSSLService(ISSLStoreService sslStoreService){
-		this.sslStoreService = sslStoreService;
-	}
-	
-	public void unsetSSLService(ISSLStoreService sslStoreService){
-		this.sslStoreService = null;
-	}
 	
 	@Activate
 	public void activate(){
@@ -191,7 +178,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private String getAtnaUrl(){
 		if (ENDPOINT_PRODUCTIV
-			.equals(ConfigServiceHolder.getMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			.equals(configService.getActiveMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
 			return PRODUCTIV_ATNA_URL;
 		}
 		return TEST_ATNA_URL;
@@ -199,7 +186,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private String getXdsRepositoryUrl(){
 		if (ENDPOINT_PRODUCTIV
-			.equals(ConfigServiceHolder.getMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			.equals(configService.getActiveMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
 			return PRODUCTIV_XDS_REPOSITORY_URL;
 		}
 		return TEST_XDS_REPOSITORY_URL;
@@ -207,7 +194,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private String getXdsRegistryUrl(){
 		if (ENDPOINT_PRODUCTIV
-			.equals(ConfigServiceHolder.getMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			.equals(configService.getActiveMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
 			return PRODUCTIV_XDS_REGISTRY_URL;
 		}
 		return TEST_XDS_REGISTRY_URL;
@@ -215,7 +202,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	
 	private String getPdqUrl(){
 		if (ENDPOINT_PRODUCTIV
-			.equals(ConfigServiceHolder.getMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			.equals(configService.getActiveMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
 			return PRODUCTIV_PDQ_REQUEST_URL;
 		}
 		return TEST_PDQ_REQUEST_URL;
@@ -225,10 +212,10 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	public synchronized boolean updateConfiguration(){
 		affinityDomain = null;
 		// read the configuration
-		String endpoint = ConfigServiceHolder.getMandator(CONFIG_ENDPOINT, ENDPOINT_TEST);
+		String endpoint = configService.getActiveMandator(CONFIG_ENDPOINT, ENDPOINT_TEST);
 		
-		String keystorePath = ConfigServiceHolder.getMandator(CONFIG_KEYSTORE_PATH, null);
-		String keystorePass = ConfigServiceHolder.getMandator(CONFIG_KEYSTORE_PASS, null);
+		String keystorePath = configService.getActiveMandator(CONFIG_KEYSTORE_PATH, null);
+		String keystorePass = configService.getActiveMandator(CONFIG_KEYSTORE_PASS, null);
 		
 		if (keystorePass != null && keystorePath != null) {
 			try {
@@ -403,7 +390,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	@Override
 	public String getBaseUrl(){
 		if (ENDPOINT_PRODUCTIV
-			.equals(ConfigServiceHolder.getMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
+			.equals(configService.getActiveMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
 			return "https://meineimpfungen.ch/";
 		}
 		return "https://test.meineimpfungen.ch/";

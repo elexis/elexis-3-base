@@ -32,7 +32,6 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Query;
@@ -227,15 +226,18 @@ public final class Plannables {
 			return new ArrayList<IPlannable>();
 		}
 		
-		Query<Termin> qbe = new Query<Termin>(Termin.class);
+		Query<Termin> qbe = new Query<Termin>(Termin.class, Termin.TABLENAME, false, new String[] {
+			Termin.FLD_TAG, Termin.FLD_BEGINN, Termin.FLD_DAUER, Termin.FLD_LASTEDIT,
+			Termin.FLD_BEREICH
+		});
 		String day = date.toString(TimeTool.DATE_COMPACT);
-		qbe.add("Tag", "=", day);
+		qbe.add(Termin.FLD_TAG, Query.EQUALS, day);
 		qbe.and();
 		
-		qbe.add("BeiWem", "=", bereich);
+		qbe.add(Termin.FLD_BEREICH, Query.EQUALS, bereich);
 		if (ConfigServiceHolder.getUser(PreferenceConstants.AG_SHOWDELETED, "0").equals("0")) {
 			qbe.and();
-			qbe.add("deleted", "=", "0");
+			qbe.add(Termin.FLD_DELETED, Query.EQUALS, "0");
 		}
 		List list = qbe.execute();
 		if (list == null) {

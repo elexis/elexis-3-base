@@ -47,6 +47,7 @@
    </plugins>
 
    <features>
+      <feature id="ch.elexis.jre.feature" installMode="root"/>
       <feature id="at.gruber.elexis.mythic22.feature" installMode="root"/>
       <feature id="at.medevit.elexis.agenda.feature" installMode="root"/>
       <feature id="at.medevit.elexis.bluemedication.feature" installMode="root"/>
@@ -83,9 +84,9 @@
       <feature id="ch.elexis.core.application.feature" installMode="root"/>
       <feature id="ch.elexis.core.common.feature" installMode="root"/>
       <feature id="ch.elexis.core.logging.feature" installMode="root"/>
-      <feature id="ch.elexis.core.persistence.feature" installMode="root"/>
       <feature id="ch.elexis.core.ui.feature" installMode="root"/>
       <feature id="ch.elexis.core.ui.p2.feature" installMode="root"/>
+      <feature id="ch.elexis.core.persistence.feature" installMode="root"/>
       <feature id="ch.elexis.externe_dokumente.feature" installMode="root"/>
       <feature id="ch.elexis.fop_wrapper.feature" installMode="root"/>
       <feature id="ch.elexis.global_inbox.feature" installMode="root"/>
@@ -147,7 +148,6 @@
       <feature id="ch.elexis.core.tasks.feature" installMode="root"/>
       <feature id="ch.elexis.core.ui.chromium.feature" installMode="root"/>
       <feature id="ch.elexis.core.ui.eenv.feature" installMode="root"/>
-      <feature id="ch.elexis.jre.feature" installMode="root"/>
    </features>
 
    <configurations>
@@ -157,10 +157,11 @@
       <plugin id="ch.elexis.core.ui.p2" autoStart="true" startLevel="4" />
       <plugin id="ch.qos.logback.classic" autoStart="true" startLevel="2" />
       <plugin id="ch.qos.logback.core" autoStart="true" startLevel="2" />
-      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2" />
+      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.console" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="4" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.gemini.jpa" autoStart="true" startLevel="3" />
@@ -173,9 +174,9 @@
    </configurations>
 
    <repositories>
-      <repository location="http://https://download.elexis.info/elexis/3.8/p2/elexis-3-base" enabled="true" />
-      <repository location="http://https://download.elexis.info/elexis/3.8/p2/elexis-3-core" enabled="true" />
-      <repository location="http://https://download.elexis.info/elexis/3.8/p2/elexis.3.gpl" enabled="true" />
+      <repository location="https://download.elexis.info/elexis/3.8/p2/elexis-3-base" enabled="true" />
+      <repository location="https://download.elexis.info/elexis/3.8/p2/elexis-3-core" enabled="true" />
+      <repository location="https://download.elexis.info/elexis/3.8/p2/elexis.3.gpl" enabled="true" />
    </repositories>
 
    <preferencesInfo>

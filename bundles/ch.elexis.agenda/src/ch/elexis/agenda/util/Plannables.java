@@ -13,9 +13,18 @@
 package ch.elexis.agenda.util;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +33,8 @@ import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Query;
-import ch.rgw.tools.Log;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -218,16 +225,17 @@ public final class Plannables {
 		if (StringTool.isNothing(bereich)) {
 			return new ArrayList<IPlannable>();
 		}
-		
-		Query<Termin> qbe = new Query<Termin>(Termin.class);
+		Query<Termin> qbe = new Query<Termin>(Termin.class, Termin.TABLENAME, false,
+				new String[] { Termin.FLD_TAG, Termin.FLD_BEGINN, Termin.FLD_DAUER, Termin.FLD_LASTEDIT,
+						Termin.FLD_BEREICH });
 		String day = date.toString(TimeTool.DATE_COMPACT);
-		qbe.add("Tag", "=", day);
+		qbe.add(Termin.FLD_TAG, Query.EQUALS, day);
 		qbe.and();
 		
-		qbe.add("BeiWem", "=", bereich);
+		qbe.add(Termin.FLD_BEREICH, Query.EQUALS, bereich);
 		if (CoreHub.userCfg.get(PreferenceConstants.AG_SHOWDELETED, "0").equals("0")) {
 			qbe.and();
-			qbe.add("deleted", "=", "0");
+			qbe.add(Termin.FLD_DELETED, Query.EQUALS, "0");
 		}
 		List list = qbe.execute();
 		if (list == null) {

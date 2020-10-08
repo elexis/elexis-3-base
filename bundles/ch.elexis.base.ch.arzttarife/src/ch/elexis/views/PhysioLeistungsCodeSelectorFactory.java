@@ -121,7 +121,8 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 	
 	@Override
 	public void dispose(){
-		ElexisEventDispatcher.getInstance().removeListeners(updateListener);
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override

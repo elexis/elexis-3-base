@@ -762,12 +762,11 @@ public class TerminDialog extends TitleAreaDialog {
 		public Point computeSize(final int wHint, final int hHint, final boolean changed){
 			return new Point(getParent().getSize().x, 40);
 		}
-		
+
 		/**
 		 * Tagesbalken zeichnen
 		 */
 		public void paintControl(final PaintEvent pe){
-			recalc();
 			GC g = pe.gc;
 			Color def = g.getBackground();
 			// Balken zeichnen

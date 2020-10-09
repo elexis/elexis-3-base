@@ -16,4 +16,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: medshare.net
 Import-Package: ch.elexis.core.services.holder,
+ org.apache.commons.lang;version="2.6.0",
  org.slf4j

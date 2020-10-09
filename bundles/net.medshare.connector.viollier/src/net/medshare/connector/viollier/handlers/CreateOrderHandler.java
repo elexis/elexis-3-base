@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -19,6 +20,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.constants.Elexis;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.data.Anschrift;
@@ -81,13 +83,8 @@ public class CreateOrderHandler extends AbstractHandler {
 			ort = tempAdr.getOrt();
 			land = tempAdr.getLand();
 			
-			socialSecurityNumber = patient.getXid(DOMAIN_AHV);
-			Fall currentFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-			if (currentFall != null && socialSecurityNumber.length() == 0)
-				socialSecurityNumber = currentFall.getRequiredString("AHV-Nummer");
-			// falls Covercard-Fall
-			if (currentFall != null)
-				insuranceCardNumber = currentFall.getRequiredString("Versicherten-Nummer");
+			socialSecurityNumber = getSocialSecuritNumber(patient);
+			insuranceCardNumber = getInsuranceCardNumber(patient);
 		}
 		
 		// URL zum Direktaufruf von OrderIT
@@ -126,14 +123,17 @@ public class CreateOrderHandler extends AbstractHandler {
 				httpsUrl += URLEncoder.encode("&city=" + ort, "UTF-8");
 				httpsUrl += URLEncoder.encode("&country=" + land, "UTF-8");
 				httpsUrl += URLEncoder.encode("&patientReference=" + patient.getPatCode(), "UTF-8");
-				if (socialSecurityNumber.length() > 0) {
+				if (StringUtils.isNotBlank(socialSecurityNumber)) {
 					httpsUrl +=
 						URLEncoder.encode("&socialSecurityNumber=" + socialSecurityNumber, "UTF-8");
 				}
-				if (insuranceCardNumber.length() > 0) {
+				if (StringUtils.isNotBlank(insuranceCardNumber)) {
 					httpsUrl +=
 						URLEncoder.encode("&insuranceCardNumber=" + insuranceCardNumber, "UTF-8");
 				}
+				httpsUrl += URLEncoder.encode("&senderName=elexis.info", "UTF-8");
+				httpsUrl += URLEncoder.encode(
+					"&senderSoftware=" + getSenderSoftware(), "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e1) {
 			log.error("Enoding not supported", e1);
@@ -150,6 +150,58 @@ public class CreateOrderHandler extends AbstractHandler {
 		return null;
 	}
 	
+	/**
+	 * Get name with version, without qualifier etc.
+	 * 
+	 * @return
+	 */
+	private String getSenderSoftware(){
+		StringBuilder sb = new StringBuilder();
+		if (Elexis.APPLICATION_NAME.contains(" ")) {
+			sb.append(Elexis.APPLICATION_NAME.split(" ")[0]);
+		} else {
+			sb.append(Elexis.APPLICATION_NAME);
+		}
+		sb.append(" ");
+		String[] parts = Elexis.VERSION.split("\\.");
+		if(parts.length > 3) {
+			sb.append(parts[0]).append(".").append(parts[1]).append(".").append(parts[2]);
+		} else {
+			sb.append(Elexis.VERSION);
+		}
+		return sb.toString();
+	}
+	
+	private String getInsuranceCardNumber(Patient patient){
+		String ret = "";
+		for (Fall fall : patient.getFaelle()) {
+			if (fall.isOpen()) {
+				if (StringUtils.isNotBlank((String) fall.getExtInfoStoredObjectByKey("VEKANr"))) {
+					ret = fall.getRequiredString("VEKANr");
+					break;
+				}
+				if (StringUtils.isNotBlank(fall.getRequiredString("Versicherten-Nummer"))) {
+					ret = fall.getRequiredString("Versicherten-Nummer");
+					break;
+				}
+			}
+		}
+		return ret;
+	}
+
+	private String getSocialSecuritNumber(Patient patient){
+		String ret = patient.getXid(DOMAIN_AHV);
+		if(StringUtils.isBlank(ret)) {
+			for (Fall fall : patient.getFaelle()) {
+				if (fall.isOpen() && StringUtils.isNotBlank(fall.getRequiredString("AHV-Nummer"))) {
+					ret = fall.getRequiredString("AHV-Nummer");
+					break;
+				}
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * retrieve a value of m, f or x for the service; as we have some uncertainty about the actual
 	 * contents of the db

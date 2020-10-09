@@ -9,8 +9,7 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: at.medevit.elexis.ehc.core;bundle-version="3.0.0",
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.rgw.utility
-Service-Component: OSGI-INF/ehcservice.xml,
- OSGI-INF/at.medevit.elexis.ehc.docbox.service.DocboxService.xml
+Service-Component: OSGI-INF/at.medevit.elexis.ehc.docbox.service.DocboxService.xml
 Export-Package: at.medevit.elexis.ehc.docbox.service
 Import-Package: ch.elexis.docbox.ws.client,
  org.osgi.service.component.annotations;version="1.2.0",

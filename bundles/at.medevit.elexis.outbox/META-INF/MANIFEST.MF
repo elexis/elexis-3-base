@@ -9,8 +9,7 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.2.0",
  ch.elexis.core;bundle-version="3.9.0",
  ch.elexis.core.jpa;bundle-version="1.0.0",
  ch.elexis.core.jpa.entities;bundle-version="1.0.0"
-Service-Component: OSGI-INF/outboxService.xml,
- OSGI-INF/at.medevit.elexis.outbox.model.impl.DocumentStoreServiceHolder.xml,
+Service-Component: OSGI-INF/at.medevit.elexis.outbox.model.impl.DocumentStoreServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.outbox.model.impl.OutboxElementService.xml,
  OSGI-INF/at.medevit.elexis.outbox.model.impl.OutboxModelService.xml,
  OSGI-INF/at.medevit.elexis.outbox.model.impl.ModelUtil.xml

@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.IDocumentStore;
 
 @Component(service = {})
 public class StartupComponent {
@@ -18,7 +19,7 @@ public class StartupComponent {
 	
 	// The shared instance
 	private static StartupComponent INSTANCE;
-	private InboxContentProvider contentProvider = new InboxContentProvider();
+	private InboxContentProvider contentProvider;
 	
 	// wait for needed services
 	@Reference
@@ -27,9 +28,8 @@ public class StartupComponent {
 	@Reference
 	private IContextService contextService;
 	
-	public StartupComponent(){
-		INSTANCE = this;
-	}
+	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
+	private IDocumentStore documentStore;
 	
 	public InboxContentProvider getContentProvider(){
 		return contentProvider;
@@ -58,6 +58,9 @@ public class StartupComponent {
 	
 	@Activate
 	public void activate(){
+		INSTANCE = this;
+		contentProvider = new InboxContentProvider();
+		
 		String giDirSetting = configServgice.getLocal(Preferences.PREF_DIR, "NOTSET");
 		if ("NOTSET".equals(giDirSetting)) {
 			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox");

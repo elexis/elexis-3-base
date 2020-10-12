@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.io.FileUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -145,7 +147,12 @@ public class InboxElementService implements IInboxElementService {
 	
 	@Override
 	public void activateProviders(){
-		LoggerFactory.getLogger(getClass()).info("Activating all ElementProviders");
-		ElementsProviderExtension.activateAll();
+		// async activation as element provider bundles may have dependency on IInboxElementService
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.execute(() -> {
+			LoggerFactory.getLogger(getClass()).info("Activating all ElementProviders");
+			ElementsProviderExtension.activateAll();
+		});
+		executor.shutdown();
 	}
 }

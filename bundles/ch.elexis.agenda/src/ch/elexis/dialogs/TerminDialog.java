@@ -231,6 +231,7 @@ public class TerminDialog extends TitleAreaDialog {
 				slider.set();
 			}
 		});
+		niDauer.setMinMaxInc(1, 1440, 5);
 		tiBis = new TimeInput(topCenter, Messages.TerminDialog_endTime);
 		tiBis.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 		tiBis.addListener(new TimeInputListener() {

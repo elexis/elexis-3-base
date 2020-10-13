@@ -206,6 +206,7 @@ public class TerminDialog extends TitleAreaDialog {
 			public void widgetSelected(final SelectionEvent e){
 				// actDate.setTime(dp.getDate());
 				agenda.setActDate(new TimeTool(dp.getDate().getTime()));
+				dayBar.recalc();
 				dayBar.redraw();
 				slider.set();
 			}
@@ -314,6 +315,7 @@ public class TerminDialog extends TitleAreaDialog {
 					((Termin) actPlannable).delete();
 					ElexisEventDispatcher.reload(Termin.class);
 					dayBar.recalc();
+					dayBar.redraw();
 					setEnablement();
 				}
 				super.widgetSelected(e);
@@ -559,6 +561,7 @@ public class TerminDialog extends TitleAreaDialog {
 		setTitleImage(Images.IMG_LOGO.getImage());
 		getShell().setText(Messages.TerminDialog_termin);
 		dayBar.recalc();
+		dayBar.redraw();
 		if (actPlannable instanceof Termin) {
 			lTerminListe.add(((Termin) actPlannable).getLabel());
 			lTermine.add((Termin) actPlannable);
@@ -614,7 +617,9 @@ public class TerminDialog extends TitleAreaDialog {
 			niDauer.getControl().setSelection(actPlannable.getDurationInMinutes());
 			bEmergency.setSelection(StringUtils.equals(actTermin.get(Termin.FLD_PRIORITY), "1"));
 		}
+		dayBar.recalc();
 		dayBar.redraw();
+
 		slider.set();
 	}
 	
@@ -937,6 +942,7 @@ public class TerminDialog extends TitleAreaDialog {
 		ElexisEventDispatcher.reload(Termin.class);
 		
 		dayBar.recalc();
+		dayBar.redraw();
 		actPlannable = actTermin;
 		setEnablement();
 		

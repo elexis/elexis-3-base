@@ -258,6 +258,9 @@
    <feature id="at.medevit.elexis.documents.converter.feature">
       <category name="documentmanagement"/>
    </feature>
+   <feature id="ch.elexis.base.solr.feature">
+      <category name="divers"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

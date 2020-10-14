@@ -23,6 +23,8 @@
     <module>ch.elexis.importer.aeskulap.core</module>
     <module>ch.elexis.importer.aeskulap.ui</module>
     <module>at.gruber.elexis.mythic22</module>
+    <module>org.apache.solr</module>
+    <module>ch.elexis.base.solr</module>
     <module>at.medevit.ch.artikelstamm.elexis.common</module>
     <module>at.medevit.ch.artikelstamm.elexis.open</module>
     <!-- ???

@@ -40,6 +40,7 @@
     <module>ch.elexis.base.konsextension.bildanzeige.feature</module>
     <module>ch.elexis.base.konsextension.privatnotizen.feature</module>
     <module>ch.elexis.base.messages.feature</module>
+    <module>ch.elexis.base.solr.feature</module>
     <module>ch.elexis.base.textplugin.feature</module>
     <module>ch.elexis.buchhaltung.basis.feature</module>
     <module>ch.elexis.connect.afinion.feature</module>

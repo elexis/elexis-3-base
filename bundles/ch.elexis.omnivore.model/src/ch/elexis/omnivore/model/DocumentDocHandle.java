@@ -185,7 +185,11 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public InputStream getContent(){
-		return new ByteArrayInputStream(getContents());
+		byte[] contents = getContents();
+		if(contents != null) {
+			return new ByteArrayInputStream(contents);
+		}
+		return null;
 	}
 	
 	@Override

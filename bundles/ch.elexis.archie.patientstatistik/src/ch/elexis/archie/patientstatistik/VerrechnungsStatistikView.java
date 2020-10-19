@@ -74,17 +74,20 @@ public class VerrechnungsStatistikView extends ViewPart implements IActivationLi
 		
 		@Override
 		public void runInUi(ElexisEvent ev){
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				Patient pat = (Patient) ev.getObject();
-				form.setText(pat.getLabel());
-				recalc();
-			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-				form.setText(Messages.VerrechnungsStatistikView_NoPatientSelected);
-				
+			if (form != null && !form.isDisposed()) {
+				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+					Patient pat = (Patient) ev.getObject();
+					if (pat != null) {
+						form.setText(pat.getLabel());
+					} else {
+						form.setText(Messages.VerrechnungsStatistikView_NoPatientSelected);
+					}
+					recalc();
+				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+					form.setText(Messages.VerrechnungsStatistikView_NoPatientSelected);
+				}
 			}
-			
 		}
-		
 	};
 	
 	/**

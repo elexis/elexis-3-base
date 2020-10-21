@@ -12,6 +12,8 @@
 package ch.novcom.elexis.mednet.plugin;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.osgi.service.component.annotations.Component;
@@ -27,19 +29,29 @@ import org.slf4j.LoggerFactory;
 @Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class StartupHandler implements EventHandler {
 	
+	private ExecutorService executor;
+	
 	/**
 	 * Logger used to log all activities of the module
 	 */
-	private final static Logger LOGGER = LoggerFactory.getLogger(StartupHandler.class);
+	private final static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
+	
+	public StartupHandler(){
+		executor = Executors.newSingleThreadExecutor();
+	}
 	
 	@Override
 	public void handleEvent(Event event){
+		logger.info("APPLICATION STARTUP COMPLETE");
 		String logPrefix = "earlyStartup() - ";//$NON-NLS-1$
-		
-		try {
-			new FormWatcher().processEvents();
-		} catch (IOException e) {
-			LOGGER.error(logPrefix+"IOException initializing FormWatcher",e);//$NON-NLS-1$
-		}
+		// do not block event handling, execute in different thread
+		executor.execute(() -> {
+			try {
+				new FormWatcher().processEvents();
+			} catch (IOException e) {
+				logger.error(logPrefix + "IOException initializing FormWatcher", e);//$NON-NLS-1$
+			}
+		});
+		executor.shutdown();
 	}
 }

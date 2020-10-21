@@ -100,6 +100,7 @@ public class StartupHandler implements EventHandler {
 	
 	@Override
 	public void handleEvent(Event event){
+		logger.info("APPLICATION STARTUP COMPLETE");
 		elexisEventListenerImpl =
 			new ElexisEventListenerImpl(BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE) {
 				public void run(ElexisEvent ev){

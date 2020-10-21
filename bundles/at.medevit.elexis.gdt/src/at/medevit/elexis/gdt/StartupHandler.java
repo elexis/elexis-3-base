@@ -35,6 +35,7 @@ public class StartupHandler implements EventHandler {
 	
 	@Override
 	public void handleEvent(Event event){
+		logger.info("APPLICATION STARTUP COMPLETE");
 		List<IGDTCommunicationPartner> lp = GDTCommPartnerCollector.getRegisteredCommPartners();
 		if (lp == null) {
 			logger.info("There are no registered communication partners");

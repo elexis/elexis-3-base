@@ -23,6 +23,7 @@ public class StartupHandler implements EventHandler {
 	
 	@Override
 	public void handleEvent(Event event){
+		logger.info("APPLICATION STARTUP COMPLETE");
 		ICommandService commandService =
 			(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		boolean settings = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_AUTOSTART, false);

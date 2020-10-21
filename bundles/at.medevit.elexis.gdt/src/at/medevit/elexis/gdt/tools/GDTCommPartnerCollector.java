@@ -67,7 +67,10 @@ public class GDTCommPartnerCollector {
 					final Object o = e.createExecutableExtension("interface");
 					if (o instanceof IGDTCommunicationPartner) {
 						IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
-						if(cp.getIncomingDirectory().equalsIgnoreCase(incomingDirectory)) return cp;
+						if (cp != null && cp.getIncomingDirectory() != null
+							&& cp.getIncomingDirectory().equalsIgnoreCase(incomingDirectory)) {
+							return cp;
+						}
 					}
 					if (o instanceof IGDTCommunicationPartnerProvider) {
 						LinkedList<IGDTCommunicationPartner> childPartners = new LinkedList<IGDTCommunicationPartner>();

@@ -6,6 +6,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
+import org.slf4j.LoggerFactory;
 
 import ch.medshare.mediport.gui.ShowErrorInvoices;
 import ch.medshare.mediport.util.MediPortHelper;
@@ -15,6 +16,7 @@ public class StartupHandler implements EventHandler {
 	
 	@Override
 	public void handleEvent(Event event){
+		LoggerFactory.getLogger(getClass()).info("APPLICATION STARTUP COMPLETE");
 		int count = MediPortHelper.getReturnFiles();
 		if (count > 0) {
 			Display.getDefault().asyncExec(new Runnable() {

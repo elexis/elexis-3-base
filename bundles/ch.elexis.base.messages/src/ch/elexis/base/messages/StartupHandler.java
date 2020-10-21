@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 
@@ -17,6 +18,7 @@ public class StartupHandler implements EventHandler {
 	
 	@Override
 	public void handleEvent(Event event){
+		LoggerFactory.getLogger(getClass()).info("APPLICATION STARTUP COMPLETE");
 		heartListener = new MsgHeartListener();
 		CoreHub.heart.addListener(heartListener);
 	}

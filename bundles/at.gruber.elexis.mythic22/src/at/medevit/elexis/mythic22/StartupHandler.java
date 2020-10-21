@@ -31,6 +31,7 @@ public class StartupHandler implements EventHandler {
 	
 	@Override
 	public void handleEvent(Event event){
+		logger.info("APPLICATION STARTUP COMPLETE");
 		boolean autostart = CoreHub.localCfg.get(Preferences.CFG_AUTOSTART, false);
 		
 		if (autostart) {

@@ -14,6 +14,8 @@ package at.medevit.elexis.gdt;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.osgi.service.component.annotations.Component;
@@ -33,25 +35,36 @@ public class StartupHandler implements EventHandler {
 	
 	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
 	
+	private ExecutorService executor;
+	
+	public StartupHandler(){
+		executor = Executors.newSingleThreadExecutor();
+	}
+	
 	@Override
 	public void handleEvent(Event event){
 		logger.info("APPLICATION STARTUP COMPLETE");
-		List<IGDTCommunicationPartner> lp = GDTCommPartnerCollector.getRegisteredCommPartners();
-		if (lp == null) {
-			logger.info("There are no registered communication partners");
-			return;
-		}
-		for (IGDTCommunicationPartner igdtCommunicationPartner : lp) {
-			if (igdtCommunicationPartner.getConnectionType() == SystemConstants.FILE_COMMUNICATION) {
-				String incomingDirString = igdtCommunicationPartner.getIncomingDirectory();
-				logger.info("Found directory " + incomingDirString + "to watch by comm partner "
-					+ igdtCommunicationPartner.getLabel());
-				File incomingDir = null;
-				if (incomingDirString != null)
-					incomingDir = new File(incomingDirString);
-				if (incomingDir != null && incomingDir.isDirectory())
-					DirectoryWatcher.getInstance().addDirectoryToWatch(incomingDir);
+		// do not block event handling, execute in different thread
+		executor.execute(() -> {
+			List<IGDTCommunicationPartner> lp = GDTCommPartnerCollector.getRegisteredCommPartners();
+			if (lp == null) {
+				logger.info("There are no registered communication partners");
+				return;
 			}
-		}
+			for (IGDTCommunicationPartner igdtCommunicationPartner : lp) {
+				if (igdtCommunicationPartner
+					.getConnectionType() == SystemConstants.FILE_COMMUNICATION) {
+					String incomingDirString = igdtCommunicationPartner.getIncomingDirectory();
+					logger.info("Found directory " + incomingDirString + "to watch by comm partner "
+						+ igdtCommunicationPartner.getLabel());
+					File incomingDir = null;
+					if (incomingDirString != null)
+						incomingDir = new File(incomingDirString);
+					if (incomingDir != null && incomingDir.isDirectory())
+						DirectoryWatcher.getInstance().addDirectoryToWatch(incomingDir);
+				}
+			}
+		});
+		executor.shutdown();
 	}
 }

@@ -28,7 +28,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class PandemieLeistung extends VerrechenbarAdapter {
-	private static final String VALUE_VERSION = "VERSION";
+	public static final String VALUE_VERSION = "VERSION";
 	public static final String VERSION = "0.0.1";
 	public static final String TABLENAME = "CH_ELEXIS_ARZTTARIFE_CH_PANDEMIC";
 	public static final String CODESYSTEMNAME = "Pandemie";

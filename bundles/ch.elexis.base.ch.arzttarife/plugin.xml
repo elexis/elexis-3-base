@@ -131,5 +131,12 @@
             MaintenanceCode="ch.elexis.base.ch.arzttarife.ui.dbcheck.UpdateTarmedInBlock">
       </ExternalMaintenance>
    </extension>
+   <extension
+         point="ch.elexis.core.data.VerrechnungscodeAdjuster">
+      <adjuster
+            class="ch.elexis.views.PandemicVerrechnetAdjuster"
+            id="ch.elexis.base.ch.arzttarife.pandemic.adjuster">
+      </adjuster>
+   </extension>
 
 </plugin>

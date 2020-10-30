@@ -50,13 +50,14 @@ public class PandemicControlFieldProvider implements ControlFieldProvider {
 	private String newKonsTime;
 	private TimeTool konsTime = new TimeTool();
 	
+	private ReloadEventListener reloadListener = new ReloadEventListener();
 	private UpdateDateEventListener updateDateListener = new UpdateDateEventListener();
 	private ValidDateViewerFilter filter;
 	
 	public PandemicControlFieldProvider(final CommonViewer viewer){
 		commonViewer = viewer;
 		filter = new ValidDateViewerFilter();
-		ElexisEventDispatcher.getInstance().addListeners(updateDateListener);
+		ElexisEventDispatcher.getInstance().addListeners(updateDateListener, reloadListener);
 	}
 	
 	private class ValidDateViewerFilter extends ViewerFilter {
@@ -92,6 +93,17 @@ public class PandemicControlFieldProvider implements ControlFieldProvider {
 		
 		public void setSearchText(String txt){
 			this.searchString = txt;
+		}
+	}
+	
+	private class ReloadEventListener extends ElexisEventListenerImpl {
+		public ReloadEventListener(){
+			super(PandemieLeistung.class, ElexisEvent.EVENT_RELOAD);
+		}
+		
+		@Override
+		public void catchElexisEvent(ElexisEvent ev){
+			refreshViewer();
 		}
 	}
 	

@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
@@ -78,6 +80,8 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 			if (newVersion != null) {
 				PandemieLeistung.setCurrentCodeVersion(newVersion);
 			}
+			ElexisEventDispatcher.getInstance()
+				.fire(new ElexisEvent(null, PandemieLeistung.class, ElexisEvent.EVENT_RELOAD));
 		}
 		
 		return ret;

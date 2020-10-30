@@ -38,5 +38,6 @@ Import-Package: org.apache.commons.lang,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.service.TarmedCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.service.ComplementaryCodeElementService.xml,
- OSGI-INF/ch.elexis.base.ch.arzttarife.service.PhysioCodeElementService.xml
+ OSGI-INF/ch.elexis.base.ch.arzttarife.service.PhysioCodeElementService.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.service.PandemieCodeElementService.xml
 Bundle-ActivationPolicy: lazy

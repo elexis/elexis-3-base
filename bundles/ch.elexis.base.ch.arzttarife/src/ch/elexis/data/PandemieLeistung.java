@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import ch.elexis.core.data.interfaces.IFall;
 import ch.elexis.core.data.interfaces.IOptifier;
 import ch.elexis.core.data.interfaces.IVerrechenbar;
-import ch.elexis.core.ui.optifier.NoObligationOptifier;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -47,7 +46,7 @@ public class PandemieLeistung extends VerrechenbarAdapter {
 	public static final String FLD_CENTS = "cents";
 	public static final String FLD_DESCRIPTION = "description";
 	
-	private static IOptifier noObligationOptifier = new NoObligationOptifier();
+	private static IOptifier defaultOptifier = new DefaultOptifier();
 	
 	// @formatter:off
 	private static final String createDB = 
@@ -159,7 +158,7 @@ public class PandemieLeistung extends VerrechenbarAdapter {
 	
 	@Override
 	public IOptifier getOptifier(){
-		return noObligationOptifier;
+		return defaultOptifier;
 	}
 	
 	@Override

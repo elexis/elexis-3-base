@@ -29,6 +29,6 @@ jobs:
     - name: Build with Maven
       run: xvfb-run mvn -V clean verify  -Dtycho.localArtifacts=ignore
       env:
-        LANG: de_CH.UTF-8
+        LANG: de_CH
         LANGUAGE: de_CH:de
-        LC_ALL: de_CH.UTF-8
+        LC_ALL: de_CH

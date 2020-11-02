@@ -19,8 +19,9 @@ jobs:
       with:
         java-version: 8
     - run: sudo apt-get install xvfb
-    - run: sudo locale-gen de_CH
-    - run: sudo update-locale LANG=de_CH
+    - run: sudo locale-gen de_CH.UTF-8
+    - run: sudo dpkg-reconfigure locales
+    - run: sudo update-locale LANG=de_CH.UTF-8
     - name: Cache local Maven repository
       uses: actions/cache@v2
       with:

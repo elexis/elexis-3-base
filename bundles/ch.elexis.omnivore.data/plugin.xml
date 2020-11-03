@@ -21,4 +21,10 @@
             name="Omnivore">
       </category>
    </extension>
+      <extension
+            point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
+         <ExternalMaintenance
+               MaintenanceCode="ch.elexis.omnivore.data.dbcheck.FixOrDeleteInvalidDocHandles">
+         </ExternalMaintenance>
+      </extension>
 </plugin>

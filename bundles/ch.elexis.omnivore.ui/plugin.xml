@@ -59,5 +59,8 @@
       <ExternalMaintenance
             MaintenanceCode="ch.elexis.omnivore.ui.dbcheck.RebuildFromDirectory">
       </ExternalMaintenance>
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.omnivore.ui.dbcheck.FixOrDeleteInvalidDocHandles">
+      </ExternalMaintenance>
    </extension>
 </plugin>

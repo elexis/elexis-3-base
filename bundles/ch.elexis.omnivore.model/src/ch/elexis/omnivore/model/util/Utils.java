@@ -13,11 +13,13 @@
 
 package ch.elexis.omnivore.model.util;
 
+import java.io.File;
 import java.util.List;
 
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.omnivore.model.DocumentDocHandle;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.model.service.OmnivoreModelServiceHolder;
 
@@ -28,5 +30,13 @@ public class Utils {
 		query.and("category", COMPARATOR.EQUALS, dh.getTitle());
 		query.and("kontakt", COMPARATOR.EQUALS, pat);
 		return query.execute();
+	}
+	
+	public static File getStorageFile(IDocumentHandle docHandle, boolean force){
+		if (docHandle instanceof DocumentDocHandle) {
+			DocumentDocHandle impl = (DocumentDocHandle) docHandle;
+			return impl.getStorageFile(force);
+		}
+		return null;
 	}
 }

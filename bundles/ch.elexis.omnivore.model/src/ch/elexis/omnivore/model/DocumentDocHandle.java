@@ -235,7 +235,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		return ret;
 	}
 	
-	private File getStorageFile(boolean force){
+	public File getStorageFile(boolean force){
 		if (force || Preferences.storeInFilesystem()) {
 			String pathname = Preferences.getBasepath();
 			if (pathname != null) {

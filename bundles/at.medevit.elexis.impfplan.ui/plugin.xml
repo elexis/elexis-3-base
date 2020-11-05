@@ -6,7 +6,7 @@
       <view
             allowMultiple="false"
             class="at.medevit.elexis.impfplan.ui.VaccinationView"
-            icon="icon://IMG_SYRINGE"
+            icon="icon://IMG_SYRINGE/icon.png"
             id="at.medevit.elexis.impfplan.ui.ImpfplanViewPart"
             name="%vaccPlanViewPartName"
             restorable="true">
@@ -55,7 +55,7 @@
             locationURI="toolbar:at.medevit.elexis.impfplan.ui.ImpfplanViewPart">
        <command
                commandId="at.medevit.elexis.impfplan.ui.view.vaccinationHeader"
-               icon="icon://IMG_FILTER"
+               icon="icon://IMG_FILTER/icon.png"
                id="filterMenuContribution"
                style="pulldown"
                tooltip="Darstellung der Impfungen definieren">

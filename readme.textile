@@ -30,7 +30,7 @@ You need Java 1.8+. Maven >= 3.3. Then you should be able to generate a p2 updat
 Remarks:
 * -V: emits version of Java, Maven, GUI-Toolkit, Architecture. Handy when you ask a problem
 * clean: Build everything from scratch
-* verify: Compile, test and build a P2-site including products. But does NOT install maven artefacts
+* verify: Compile, test and build a P2-site. But does NOT install maven artefacts
 * -Dtycho.localArtifacts=ignore: Do not use any locally built maven artefacts
 * -Dmaven.test.skip=true: Skip unit tests (Use it only if you want to speed up the build)
 * Jenkins-CI job copIES the generated the *p2site\target\repository to a subdirectory reachable under  http://download.elexis.info/elexis/<branch-name>/p2/elexis-3-base

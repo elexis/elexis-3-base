@@ -183,13 +183,14 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 	public int getCurrentVersion(){
 		List<IPhysioLeistung> physioLeistungen =
 			ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class).execute();
-		if (physioLeistungen.isEmpty()) {
-			return -1;
+		if (!physioLeistungen.isEmpty()) {
+			LocalDate validFrom = physioLeistungen.get(0).getValidFrom();
+			if (validFrom != null) {
+				DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyMMdd");
+				int version = Integer.valueOf(ofPattern.format(validFrom));
+				return version;
+			}
 		}
-		
-		LocalDate validFrom = physioLeistungen.get(0).getValidFrom();
-		DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyMMdd");
-		int version = Integer.valueOf(ofPattern.format(validFrom));
-		return version;
+		return -1;
 	}
 }

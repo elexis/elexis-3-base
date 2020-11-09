@@ -160,8 +160,8 @@ public class GlobalInboxEntryDetailPart {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(),
-					Kontakt.class, Messages.HL7_SelectPatient, Messages.HL7_SelectPatient,
-					Patient.DEFAULT_SORT);
+					Kontakt.class, Messages.KontaktSelectionComposite_title,
+					Messages.KontaktSelectionComposite_message, Patient.DEFAULT_SORT);
 				if (kontaktSelektor.open() == KontaktSelektor.OK) {
 					Kontakt contact = (Kontakt) kontaktSelektor.getSelection();
 					IContact iContact = contact.toIContact();

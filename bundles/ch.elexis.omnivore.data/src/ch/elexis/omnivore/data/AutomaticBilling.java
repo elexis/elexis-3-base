@@ -19,6 +19,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.builder.ICoverageBuilder;
@@ -30,7 +31,6 @@ import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.core.ui.views.Messages;
 import ch.elexis.omnivore.PreferenceConstants;
-import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.Result;
 
 public class AutomaticBilling {
@@ -45,9 +45,9 @@ public class AutomaticBilling {
 	private static Executor executor = Executors.newSingleThreadExecutor();
 	
 	private IPatient patient;
-	private IDocumentHandle docHandle;
+	private IDocument docHandle;
 	
-	public AutomaticBilling(IDocumentHandle docHandle){
+	public AutomaticBilling(IDocument docHandle){
 		this.patient = docHandle.getPatient();
 		this.docHandle = docHandle;
 	}

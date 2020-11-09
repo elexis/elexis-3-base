@@ -2,18 +2,34 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Global Inbox
 Bundle-SymbolicName: ch.elexis.global_inbox;singleton:=true
-Bundle-Version: 3.0.0.qualifier
-Bundle-Vendor: weirich@elexis.ch
+Bundle-Version: 3.8.0.qualifier
+Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: org.eclipse.jface,
+ org.eclipse.ui.workbench,
+ org.eclipse.e4.ui.services,
  org.eclipse.core.runtime,
- ch.rgw.utility;bundle-version="2.0.0",
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="3.8.0",
  ch.elexis.core.ui,
  ch.elexis.core.data,
- ch.elexis.core;bundle-version="3.0.0",
- ch.elexis.core.ui.icons
+ ch.elexis.core.documents;bundle-version="3.8.0",
+ ch.elexis.core.ui.documents;bundle-version="3.8.0",
+ ch.elexis.core.ui.icons,
+ org.eclipse.nebula.widgets.cdatetime;bundle-version="1.5.0",
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.ui.model.workbench;bundle-version="2.1.700.v20200113-1422",
+ org.eclipse.e4.core.commands,
+ ch.elexis.core.findings,
+ org.eclipse.e4.ui.di,
+ ch.elexis.omnivore.data,
+ at.medevit.elexis.inbox
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.commons.io,
+Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
+ javax.inject;version="1.0.0",
+ org.apache.commons.io,
+ org.eclipse.e4.core.di.annotations;version="1.6.0",
  org.eclipse.e4.ui.workbench
-Service-Component: OSGI-INF/ch.elexis.global_inbox.StartupComponent.xml
+Service-Component: OSGI-INF/ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory.xml
+Bundle-ActivationPolicy: lazy

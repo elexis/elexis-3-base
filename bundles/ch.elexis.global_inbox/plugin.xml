@@ -11,14 +11,11 @@
       </page>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            category="ch.elexis.textKategorie"
-            class="ch.elexis.global_inbox.InboxView"
-            icon="icons/inbox.jpg"
-            id="ch.elexis.global_inbox.view"
-            name="%Eingangsfach"
-            restorable="true">
-      </view>
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            apply="always"
+            uri="fragment.e4xmi">
+      </fragment>
    </extension>
 </plugin>

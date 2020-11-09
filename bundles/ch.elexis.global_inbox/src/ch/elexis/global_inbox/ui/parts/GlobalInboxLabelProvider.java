@@ -1,4 +1,4 @@
-package ch.elexis.global_inbox;
+package ch.elexis.global_inbox.ui.parts;
 
 import java.io.File;
 
@@ -6,11 +6,10 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-public class InboxLabelProvider extends LabelProvider implements ITableLabelProvider {
-	
-	public InboxLabelProvider(){
-		
-	}
+import ch.elexis.global_inbox.model.GlobalInboxEntry;
+import ch.elexis.global_inbox.ui.GlobalInboxUtil;
+
+public class GlobalInboxLabelProvider extends LabelProvider implements ITableLabelProvider {
 	
 	@Override
 	public Image getColumnImage(Object element, int columnIndex){
@@ -19,10 +18,11 @@ public class InboxLabelProvider extends LabelProvider implements ITableLabelProv
 	
 	@Override
 	public String getColumnText(Object element, int columnIndex){
-		if (element instanceof File) {
-			File file = (File) element;
+		if (element instanceof GlobalInboxEntry) {
+			GlobalInboxEntry gie = (GlobalInboxEntry) element;
+			File file = gie.getMainFile();
 			if (columnIndex == 0) {
-				return StartupComponent.getInstance().getCategory(file);
+				return GlobalInboxUtil.getCategory(file);
 			} else {
 				return file.getName();
 			}

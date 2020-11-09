@@ -34,14 +34,18 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.documents.composites.CategorySelectionEditComposite;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.viewers.IdentifiableLabelProvider;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Patient;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 
@@ -124,6 +128,21 @@ public class GlobalInboxEntryDetailPart {
 		
 		Link linkPatient = new Link(parent, SWT.None);
 		linkPatient.setText("<a>Patient</a>");
+		linkPatient.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(),
+					Patient.class, Messages.HL7_SelectPatient, Messages.HL7_SelectPatient,
+					Patient.DEFAULT_SORT);
+				if (kontaktSelektor.open() == KontaktSelektor.OK) {
+					Patient patient = (Patient) kontaktSelektor.getSelection();
+					IPatient iPatient = patient.toIPatient();
+					cvPatient.add(iPatient);
+					cvPatient.setSelection(new StructuredSelection(iPatient));
+					globalInboxEntry.setPatient(iPatient);
+				}
+			}
+		});
 		
 		cvPatient = new ComboViewer(parent, SWT.NONE);
 		cvPatient.setContentProvider(ArrayContentProvider.getInstance());
@@ -137,6 +156,21 @@ public class GlobalInboxEntryDetailPart {
 		
 		Link linkSender = new Link(parent, SWT.None);
 		linkSender.setText("<a>Absender</a>");
+		linkSender.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(),
+					Kontakt.class, Messages.HL7_SelectPatient, Messages.HL7_SelectPatient,
+					Patient.DEFAULT_SORT);
+				if (kontaktSelektor.open() == KontaktSelektor.OK) {
+					Kontakt contact = (Kontakt) kontaktSelektor.getSelection();
+					IContact iContact = contact.toIContact();
+					cvSender.add(iContact);
+					cvSender.setSelection(new StructuredSelection(iContact));
+					globalInboxEntry.setSenderId(iContact.getId());
+				}
+			}
+		});
 		
 		cvSender = new ComboViewer(parent, SWT.NONE);
 		cvSender.setContentProvider(ArrayContentProvider.getInstance());

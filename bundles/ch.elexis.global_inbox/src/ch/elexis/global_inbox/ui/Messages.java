@@ -1,9 +1,9 @@
-package ch.elexis.global_inbox;
+package ch.elexis.global_inbox.ui;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.global_inbox.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "ch.elexis.global_inbox.ui.messages"; //$NON-NLS-1$
 	public static String Activator_noInbox;
 	public static String InboxContentProvider_noInboxDefined;
 	public static String InboxContentProvider_thereIsNoDocumentManagerHere;

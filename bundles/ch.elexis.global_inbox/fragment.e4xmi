@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_ysaOMB81Eeu6CfM6mOBDOA">
+  <imports xsi:type="commands:BindingContext" xmi:id="_S_nJoB9TEeu6CfM6mOBDOA" elementId="org.eclipse.ui.contexts.dialogAndWindow"/>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Evq_UB82Eeu6CfM6mOBDOA" featurename="commands" parentElementId="xpath:/">
+    <elements xsi:type="commands:Command" xmi:id="_GDzgsB82Eeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.command.globalinboxentryview" commandName="%command.view.label" description="%command.view.description"/>
+    <elements xsi:type="commands:Command" xmi:id="_En60sB86Eeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.command.globalinboxentrydelete" commandName="%command.delete.label" description="%command.delete.description"/>
+    <elements xsi:type="commands:Command" xmi:id="_y_cogB9BEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.command.globalinboxentryimport" commandName="%command.import.label" description="%command.import.description"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ONkdIB82Eeu6CfM6mOBDOA" featurename="handlers" parentElementId="xpath:/">
+    <elements xsi:type="commands:Handler" xmi:id="_Ptzg0B82Eeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handler.globalinboxentryview" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.GlobalInboxEntryViewHandler" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_Anj9oB86Eeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handler.globalinboxentrydelete" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.GlobalInboxEntryDeleteHandler" command="_En60sB86Eeu6CfM6mOBDOA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_1o1FkB9BEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handler.globalinboxentryimport" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.GlobalInboxEntryImportHandler" command="_y_cogB9BEeu6CfM6mOBDOA"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6C9CUB9TEeu6CfM6mOBDOA" featurename="bindingTables" parentElementId="xpath:/">
+    <elements xsi:type="commands:BindingTable" xmi:id="_FtNC8B9UEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.bindingtable.global_inbox" bindingContext="_S_nJoB9TEeu6CfM6mOBDOA">
+      <bindings xmi:id="_VDqPkB9UEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.keybinding.view" keySequence="M1+V" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_RYPCgB9bEeu6CfM6mOBDOA" featurename="descriptors" parentElementId="xpath:/">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_xV8qYB9dEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.partdescriptor.overview" label="%part.label" iconURI="platform:/plugin/ch.elexis.global_inbox/icons/inbox.jpg" category="Dokumente" closeable="true" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.parts.GlobalInboxPart">
+      <tags>View</tags>
+      <menus xsi:type="menu:PopupMenu" xmi:id="_aXPWIB9hEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.popupmenu.globalinboxentries">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_GsdYIB9iEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.commandimportlabel" label="" iconURI="icon://IMG_OK" command="_y_cogB9BEeu6CfM6mOBDOA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_J93zoB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.1" iconURI="icon://IMG_EYE_WO_SHADOW" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_Od9ToB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.directmenuitem.0" iconURI="icon://IMG_REFRESH" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.GlobalInboxPartReloadHandler"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_KuitgB9iEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.menuseparator.0"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_CpRkoB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.0" iconURI="icon://IMG_DELETE" command="_En60sB86Eeu6CfM6mOBDOA"/>
+      </menus>
+      <toolbar xmi:id="_EeXFsB9eEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.toolbar.0">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_vIX4MB9gEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.commandimportlabel" label="" iconURI="icon://IMG_OK" tooltip="%command.import.description" command="_y_cogB9BEeu6CfM6mOBDOA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_MXx5AB9eEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.commandviewlabel" label="" iconURI="icon://IMG_EYE_WO_SHADOW" tooltip="%command.view.description" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_TlvUgB9eEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.commanddeletelabel" label="" iconURI="icon://IMG_DELETE" tooltip="%command.delete.description" command="_En60sB86Eeu6CfM6mOBDOA"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_4PtFkB9fEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.directtoolitem.0" iconURI="icon://IMG_REFRESH" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.GlobalInboxPartReloadHandler"/>
+      </toolbar>
+    </elements>
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_SjWKwB9bEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.partdescriptor.detailpart" label="%detailpart.label" iconURI="platform:/plugin/ch.elexis.global_inbox/icons/inbox.jpg" category="Dokumente" closeable="true" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.parts.GlobalInboxEntryDetailPart">
+      <tags>View</tags>
+      <toolbar xmi:id="_DOX58B9dEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.toolbar.1">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_aW-psB9cEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.view" accessibilityPhrase="" label="" iconURI="icon://IMG_EYE_WO_SHADOW" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
+      </toolbar>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>

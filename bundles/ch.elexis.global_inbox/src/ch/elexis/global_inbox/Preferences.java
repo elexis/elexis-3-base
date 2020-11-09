@@ -8,11 +8,14 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.elexis.global_inbox.ui.Messages;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	
 	public static final String PREFERENCE_BRANCH = "plugins/global_inbox/"; //$NON-NLS-1$
 	public static final String PREF_DIR = PREFERENCE_BRANCH + "dir"; //$NON-NLS-1$
 	public static final String PREF_AUTOBILLING = PREFERENCE_BRANCH + "autobilling"; //$NON-NLS-1$
+	public static final String PREF_INFO_IN_INBOX = PREFERENCE_BRANCH + "infoToInbox"; //$NON-NLS-1$
 	public static final String PREF_DIR_DEFAULT = "";
 	
 	public Preferences(){
@@ -22,13 +25,16 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected void createFieldEditors(){
-		DirectoryFieldEditor dirFieldEditor =
-			new DirectoryFieldEditor(PREF_DIR, Messages.Preferences_directory,
-				getFieldEditorParent());
+		DirectoryFieldEditor dirFieldEditor = new DirectoryFieldEditor(PREF_DIR,
+			Messages.Preferences_directory, getFieldEditorParent());
 		
 		BooleanFieldEditor bAutomaticBilling = new BooleanFieldEditor(PREF_AUTOBILLING,
 			"Automatische Verrechnung bei import", getFieldEditorParent());
 		addField(bAutomaticBilling);
+		
+		BooleanFieldEditor bInfoToInbox = new BooleanFieldEditor(PREF_INFO_IN_INBOX,
+			"Vorselektion Info am Stammarzt", getFieldEditorParent());
+		addField(bInfoToInbox);
 		
 		dirFieldEditor.getTextControl(getFieldEditorParent()).setEditable(false);
 		addField(dirFieldEditor);

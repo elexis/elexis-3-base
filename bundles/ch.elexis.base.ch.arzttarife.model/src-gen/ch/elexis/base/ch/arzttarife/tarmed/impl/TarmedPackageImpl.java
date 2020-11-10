@@ -15,6 +15,8 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
+import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
+import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
@@ -161,18 +163,22 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		ComplementaryPackageImpl theComplementaryPackage = (ComplementaryPackageImpl)(registeredPackage instanceof ComplementaryPackageImpl ? registeredPackage : ComplementaryPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(RfePackage.eNS_URI);
 		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PandemiePackage.eNS_URI);
+		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theTarmedPackage.createPackageContents();
 		thePhysioPackage.createPackageContents();
 		theComplementaryPackage.createPackageContents();
 		theRfePackage.createPackageContents();
+		thePandemiePackage.createPackageContents();
 
 		// Initialize created meta-data
 		theTarmedPackage.initializePackageContents();
 		thePhysioPackage.initializePackageContents();
 		theComplementaryPackage.initializePackageContents();
 		theRfePackage.initializePackageContents();
+		thePandemiePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theTarmedPackage.freeze();

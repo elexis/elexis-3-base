@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -167,7 +168,7 @@ public class GlobalInboxEntryDetailPart {
 					IContact iContact = contact.toIContact();
 					cvSender.add(iContact);
 					cvSender.setSelection(new StructuredSelection(iContact));
-					globalInboxEntry.setSenderId(iContact.getId());
+					globalInboxEntry.setSender(iContact);
 				}
 			}
 		});
@@ -179,7 +180,7 @@ public class GlobalInboxEntryDetailPart {
 		ccvSender.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		cvSender.addSelectionChangedListener(sc -> {
 			IContact sender = (IContact) cvSender.getStructuredSelection().getFirstElement();
-			globalInboxEntry.setSenderId(sender != null ? sender.getId() : null);
+			globalInboxEntry.setSender(sender);
 		});
 		
 		label = new Label(parent, SWT.None);
@@ -259,33 +260,56 @@ public class GlobalInboxEntryDetailPart {
 		
 		txtTitle.setText(globalInboxEntry.getTitle());
 		csec.setCategoryByName(globalInboxEntry.getCategory());
-		archivingDate.setSelection(new Date());
 		txtKeywords.setText(
 			globalInboxEntry.getKeywords() != null ? this.globalInboxEntry.getKeywords() : "");
 		btnInfoTo.setSelection(globalInboxEntry.isSendInfoTo());
 		
-		List<LocalDate> creationDateCandidates = globalInboxEntry.getCreationDateCandidates();
-		if (!creationDateCandidates.isEmpty()) {
-			LocalDate _creationDateCandidate = creationDateCandidates.get(0);
-			Date creationDateCandidate = Date.from(
-				_creationDateCandidate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-			creationDate.setSelection(creationDateCandidate);
+		Date selectedArchivingDate = globalInboxEntry.getArchivingDate();
+		if (selectedArchivingDate != null) {
+			archivingDate.setSelection(selectedArchivingDate);
+		} else {
+			archivingDate.setSelection(new Date());
 		}
 		
+		Date selectedCreationDate = globalInboxEntry.getCreationDate();
+		if (selectedCreationDate != null) {
+			creationDate.setSelection(selectedCreationDate);
+		} else {
+			List<LocalDate> creationDateCandidates = globalInboxEntry.getCreationDateCandidates();
+			if (!creationDateCandidates.isEmpty()) {
+				LocalDate _creationDateCandidate = creationDateCandidates.get(0);
+				Date creationDateCandidate = Date.from(_creationDateCandidate.atStartOfDay()
+					.atZone(ZoneId.systemDefault()).toInstant());
+				creationDate.setSelection(creationDateCandidate);
+			}
+		}
+		
+		IPatient selectedPatient = globalInboxEntry.getPatient();
 		List<IPatient> patientCandidates = globalInboxEntry.getPatientCandidates();
+		if (selectedPatient != null) {
+			patientCandidates.add(selectedPatient);
+		}
 		cvPatient.setInput(patientCandidates);
-		if (!patientCandidates.isEmpty()) {
+		if (selectedPatient == null && !patientCandidates.isEmpty()) {
 			cvPatient.setSelection(new StructuredSelection(patientCandidates.get(0)));
 		} else {
-			cvPatient.setSelection(null);
+			ISelection selection =
+				(selectedPatient != null) ? new StructuredSelection(selectedPatient) : null;
+			cvPatient.setSelection(selection);
 		}
 		
+		IContact selectedSender = globalInboxEntry.getSender();
 		List<IContact> senderCandidates = globalInboxEntry.getSenderCandidates();
+		if (selectedSender != null) {
+			senderCandidates.add(selectedSender);
+		}
 		cvSender.setInput(senderCandidates);
-		if (!senderCandidates.isEmpty()) {
+		if (selectedSender == null && !senderCandidates.isEmpty()) {
 			cvSender.setSelection(new StructuredSelection(senderCandidates.get(0)));
 		} else {
-			cvSender.setSelection(null);
+			ISelection selection =
+				(selectedSender != null) ? new StructuredSelection(selectedSender) : null;
+			cvSender.setSelection(selection);
 		}
 	}
 	
@@ -305,7 +329,7 @@ public class GlobalInboxEntryDetailPart {
 				SWTHelper.showError("Could not import", "Patient or category value is missing");
 			}
 			
-			// TODO send reload to main part
+			setGlobalInboxEntry(null);
 		}
 	}
 	

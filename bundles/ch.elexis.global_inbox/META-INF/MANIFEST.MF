@@ -25,7 +25,8 @@ Require-Bundle: org.eclipse.jface,
  ch.elexis.core.findings,
  org.eclipse.e4.ui.di,
  ch.elexis.omnivore.data,
- at.medevit.elexis.inbox
+ at.medevit.elexis.inbox,
+ org.eclipse.e4.core.services
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",

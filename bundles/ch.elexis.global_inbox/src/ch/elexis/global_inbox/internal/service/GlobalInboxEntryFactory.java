@@ -38,7 +38,7 @@ public class GlobalInboxEntryFactory {
 	private static List<Function> extensionFileHandlers = new ArrayList<Function>();
 	
 	@Activate
-	public void activate() {
+	public void activate(){
 		String giDirSetting = configService.getLocal(Preferences.PREF_DIR, "NOTSET");
 		if ("NOTSET".equals(giDirSetting)) {
 			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox");
@@ -76,23 +76,27 @@ public class GlobalInboxEntryFactory {
 	@SuppressWarnings("unchecked")
 	public static GlobalInboxEntry createEntry(File mainFile, File[] extensionFiles){
 		
-		GlobalInboxEntry gie = new GlobalInboxEntry(mainFile, extensionFiles);
+		GlobalInboxEntry globalInboxEntry = new GlobalInboxEntry(mainFile, extensionFiles);
 		String category = GlobalInboxUtil.getCategory(mainFile);
-		gie.setCategory(category);
-		gie.setSendInfoTo(configService.getLocal(Preferences.PREF_INFO_IN_INBOX, false));
+		globalInboxEntry.setCategory(category);
+		globalInboxEntry
+			.setSendInfoTo(configService.getLocal(Preferences.PREF_INFO_IN_INBOX, false));
+		return globalInboxEntry;
 		
+	}
+	
+	public static GlobalInboxEntry populateExtensionInformation(GlobalInboxEntry globalInboxEntry){
+		File[] extensionFiles = globalInboxEntry.getExtensionFiles();
 		for (File file : extensionFiles) {
 			String absolutePath = file.getAbsolutePath();
 			for (Function handler : extensionFileHandlers) {
 				Map<String, Object> result = (Map<String, Object>) handler.apply(absolutePath);
 				if (result != null) {
-					integrateAdditionalInformation(result, gie);
+					integrateAdditionalInformation(result, globalInboxEntry);
 				}
 			}
 		}
-		
-		return gie;
-		
+		return globalInboxEntry;
 	}
 	
 	private static void integrateAdditionalInformation(Map<String, Object> result,

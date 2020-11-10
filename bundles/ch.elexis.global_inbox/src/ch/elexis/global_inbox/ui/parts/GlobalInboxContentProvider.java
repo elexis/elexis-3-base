@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -34,6 +35,7 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 	
 	private Logger log;
 	private List<GlobalInboxEntry> entries;
+	private List<GlobalInboxEntry> loadJobList;
 	private GlobalInboxPart view;
 	private LoadJob loader;
 	private GlobalInboxUtil giutil;
@@ -50,7 +52,8 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 	public GlobalInboxContentProvider(GlobalInboxPart view){
 		this.view = view;
 		log = LoggerFactory.getLogger(getClass());
-		entries = new ArrayList<GlobalInboxEntry>();
+		entries = new ArrayList<>();
+		loadJobList = new ArrayList<>();
 		loader = new LoadJob();
 		loader.schedule(1000);
 		giutil = new GlobalInboxUtil();
@@ -59,55 +62,6 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 	@Override
 	public Object[] getElements(Object inputElement){
 		return entries == null ? null : entries.toArray();
-	}
-	
-	private void addFilesInDirRecursive(File dir){
-		List<String> allFilesInDir = new ArrayList<>();
-		
-		for (File file : dir.listFiles()) {
-			if (file.isDirectory()) {
-				addFilesInDirRecursive(file);
-			} else {
-				// match patient prefix auto import pattern
-				Matcher matcher = PATIENT_MATCH_PATTERN.matcher(file.getName());
-				if (matcher.matches()) {
-					String patientNo = matcher.group(1);
-					String fileName = matcher.group(2);
-					String tryImportForPatient =
-						giutil.tryImportForPatient(file, patientNo, fileName);
-					if (tryImportForPatient != null) {
-						// TODO does this match the up-until-now behavior?
-						log.info("Auto imported file [{}], document id is [{}]", file,
-							tryImportForPatient);
-						continue;
-					}
-				}
-				
-				allFilesInDir.add(file.getAbsolutePath());
-			}
-		}
-		
-		// extension file names are always longer than the orig filenames
-		// so in order to identify them beforehand we sort the filenames by length
-		allFilesInDir.sort(Comparator.comparingInt(String::length));
-		
-		List<File> extensionFiles = new ArrayList<File>();
-		for (String string : allFilesInDir) {
-			File file = new File(string);
-			if (extensionFiles.contains(file)) {
-				continue;
-			}
-			
-			// are there extension-files to this file?
-			// e.g. orig file: scan.pdf, ext file: scan.pdf.edam.xml
-			File[] _extensionFiles = dir.listFiles((_dir, _name) -> _name.startsWith(file.getName())
-				&& !Objects.equals(_name, file.getName()));
-			extensionFiles.addAll(Arrays.asList(_extensionFiles));
-			GlobalInboxEntry globalInboxEntry =
-				GlobalInboxEntryFactory.createEntry(file, _extensionFiles);
-			//			GlobalInboxEntry globalInboxEntry = new GlobalInboxEntry(file, _extensionFiles);
-			entries.add(globalInboxEntry);
-		}
 	}
 	
 	class LoadJob extends Job {
@@ -155,8 +109,10 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 					}
 				}
 				
-				entries.clear();
+//				entries.clear();
+				loadJobList.clear();
 				addFilesInDirRecursive(dir);
+				filterAndPopulate();
 				if (view != null) {
 					view.reload();
 				}
@@ -174,5 +130,77 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 				.ifPresent(localDocumentLock -> localDocumentLock.unlock());
 			return Status.OK_STATUS;
 		}
+		
+		private void filterAndPopulate(){
+			for (Iterator<GlobalInboxEntry> iterator = entries.iterator(); iterator.hasNext();) {
+				GlobalInboxEntry gie = iterator.next();
+				if (!loadJobList.contains(gie)) {
+					iterator.remove();
+				}
+			}
+			
+			for (GlobalInboxEntry gie : loadJobList) {
+				if (!entries.contains(gie)) {
+					gie = GlobalInboxEntryFactory.populateExtensionInformation(gie);
+					entries.add(gie);
+				}
+			}
+		}
+		
+		private void addFilesInDirRecursive(File dir){
+			List<String> allFilesInDirRecursive = new ArrayList<>();
+			
+			for (File file : dir.listFiles()) {
+				if (file.isDirectory()) {
+					addFilesInDirRecursive(file);
+				} else {
+					// match patient prefix auto import pattern
+					Matcher matcher = PATIENT_MATCH_PATTERN.matcher(file.getName());
+					if (matcher.matches()) {
+						String patientNo = matcher.group(1);
+						String fileName = matcher.group(2);
+						String tryImportForPatient =
+							giutil.tryImportForPatient(file, patientNo, fileName);
+						if (tryImportForPatient != null) {
+							// TODO does this match the up-until-now behavior?
+							log.info("Auto imported file [{}], document id is [{}]", file,
+								tryImportForPatient);
+							continue;
+						}
+					}
+					
+					allFilesInDirRecursive.add(file.getAbsolutePath());
+				}
+			}
+			
+			// extension file names are always longer than the orig filenames
+			// so in order to identify them beforehand we sort the filenames by length
+			allFilesInDirRecursive.sort(Comparator.comparingInt(String::length));
+			
+			List<File> extensionFiles = new ArrayList<File>();
+			for (String string : allFilesInDirRecursive) {
+				File file = new File(string);
+				if (extensionFiles.contains(file)) {
+					continue;
+				}
+				
+				// are there extension-files to this file?
+				// e.g. orig file: scan.pdf, ext file: scan.pdf.edam.xml
+				File[] _extensionFiles =
+					dir.listFiles((_dir, _name) -> _name.startsWith(file.getName())
+						&& !Objects.equals(_name, file.getName()));
+				extensionFiles.addAll(Arrays.asList(_extensionFiles));
+				GlobalInboxEntry globalInboxEntry =
+					GlobalInboxEntryFactory.createEntry(file, _extensionFiles);
+				loadJobList.add(globalInboxEntry);
+			}
+		}
+	}
+	
+	void destroy(){
+		giutil = null;
+		entries = null;
+		loader.cancel();
+		loader = null;
 	}
 }

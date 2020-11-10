@@ -116,5 +116,15 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//rfe/IReasonForEncounter/text"/>
       </genClasses>
     </nestedGenPackages>
+    <nestedGenPackages prefix="Pandemie" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//pandemie">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//pandemie/IPandemieLeistung">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//pandemie/IPandemieLeistung/description"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//pandemie/IPandemieLeistung/chapter"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//pandemie/IPandemieLeistung/cents"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//pandemie/IPandemieLeistung/validFrom"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//pandemie/IPandemieLeistung/validTo"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//pandemie/IPandemieLeistung/taxpoints"/>
+      </genClasses>
+    </nestedGenPackages>
   </genPackages>
 </genmodel:GenModel>

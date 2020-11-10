@@ -12,6 +12,7 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,7 @@ import ch.elexis.core.documents.DocumentStore;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.findings.IDocumentReference;
 import ch.elexis.core.findings.IFindingsService;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -28,6 +30,8 @@ import ch.elexis.core.services.IContextService;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
+import ch.elexis.global_inbox.ui.Constants;
+import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 import ch.elexis.omnivore.data.AutomaticBilling;
 
 public class GlobalInboxEntryImportHandler {
@@ -45,7 +49,8 @@ public class GlobalInboxEntryImportHandler {
 	
 	@Execute
 	public void execute(
-		@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry){
+		@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
+		IEventBroker eventBroker){
 		
 		String title = globalInboxEntry.getTitle();
 		IPatient patient = globalInboxEntry.getPatient();
@@ -53,7 +58,7 @@ public class GlobalInboxEntryImportHandler {
 			patient = contextService.getActivePatient().orElse(null);
 		}
 		String category = globalInboxEntry.getCategory();
-		String senderId = globalInboxEntry.getSenderId();
+		IContact sender = globalInboxEntry.getSender();
 		
 		File mainFile = globalInboxEntry.getMainFile();
 		IDocument document =
@@ -64,13 +69,24 @@ public class GlobalInboxEntryImportHandler {
 		} catch (IOException | ElexisException e) {
 			LoggerFactory.getLogger(getClass()).warn("Import error", e);
 			SWTHelper.showError("Import error", e.getMessage());
+			documentStore.removeDocument(document);
+			return;
 		}
 		
 		IDocumentReference documentReference = findingService.create(IDocumentReference.class);
 		documentReference.setPatientId(patient.getId());
-		documentReference.setAuthorId(senderId);
+		documentReference.setAuthorId(sender != null ? sender.getId() : null);
 		documentReference.setDocument(document);
-		findingService.saveFinding(documentReference);
+		boolean success = findingService.saveFinding(documentReference);
+		if (!success) {
+			LoggerFactory.getLogger(getClass())
+				.warn("Import error - could not save documentReference");
+			SWTHelper.showError("Import error", "Could not save documentReference");
+			documentStore.removeDocument(document);
+			return;
+		}
+		
+		new GlobalInboxUtil().removeFiles(globalInboxEntry);
 		
 		boolean automaticBilling = configService.getLocal(Preferences.PREF_AUTOBILLING, false);
 		if (automaticBilling && AutomaticBilling.isEnabled()) {
@@ -85,6 +101,7 @@ public class GlobalInboxEntryImportHandler {
 			}
 		}
 		
+		eventBroker.send(Constants.EVENT_UI_REMOVE_AND_SELECT_NEXT, globalInboxEntry);
 	}
 	
 	@CanExecute

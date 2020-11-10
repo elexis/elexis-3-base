@@ -14,7 +14,7 @@ public class GlobalInboxEntry {
 	
 	private String title;
 	private IPatient patient;
-	private String senderId;
+	private IContact sender;
 	private String category;
 	private String keywords;
 	private Date creationDate;
@@ -71,24 +71,18 @@ public class GlobalInboxEntry {
 		this.patient = patient;
 	}
 	
-	
-	/**
-	 * The {@link IContact#getId()} of the sender this document originated from
-	 * 
-	 * @return
-	 */
-	public String getSenderId(){
-		return senderId;
+	public IContact getSender(){
+		return sender;
 	}
 	
-	public void setSenderId(String senderId){
-		this.senderId = senderId;
+	public void setSender(IContact sender){
+		this.sender = sender;
 	}
 	
 	public void setCreationDate(Date creationDate){
 		this.creationDate = creationDate;
 	}
-
+	
 	public Date getCreationDate(){
 		return creationDate;
 	}
@@ -172,6 +166,32 @@ public class GlobalInboxEntry {
 	
 	public void setSenderCandidates(List<IContact> senderCandidates){
 		this.senderCandidates = senderCandidates;
+	}
+	
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+			+ ((mainFile.getAbsolutePath() == null) ? 0 : mainFile.getAbsolutePath().hashCode());
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GlobalInboxEntry other = (GlobalInboxEntry) obj;
+		if (mainFile.getAbsolutePath() == null) {
+			if (other.mainFile.getAbsolutePath() != null)
+				return false;
+		} else if (!mainFile.getAbsolutePath().equals(other.mainFile.getAbsolutePath()))
+			return false;
+		return true;
 	}
 	
 }

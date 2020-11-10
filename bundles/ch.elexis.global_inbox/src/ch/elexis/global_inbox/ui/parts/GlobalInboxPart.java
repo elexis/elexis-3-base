@@ -1,10 +1,13 @@
 package ch.elexis.global_inbox.ui.parts;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.TableViewer;
@@ -18,6 +21,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
+import ch.elexis.global_inbox.ui.Constants;
 import ch.elexis.global_inbox.ui.Messages;
 
 public class GlobalInboxPart {
@@ -41,7 +45,12 @@ public class GlobalInboxPart {
 		for (int i = 0; i < tc.length; i++) {
 			tc[i] = new TableColumn(table, SWT.NONE);
 			tc[i].setText(columnHeaders[i]);
-			tc[i].setWidth(100);
+			if (i == 0) {
+				tc[i].setWidth(100);
+			} else {
+				tc[i].setWidth(250);
+			}
+			
 		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -53,23 +62,38 @@ public class GlobalInboxPart {
 			public int compare(Viewer viewer, Object e1, Object e2){
 				GlobalInboxEntry f1 = (GlobalInboxEntry) e1;
 				GlobalInboxEntry f2 = (GlobalInboxEntry) e2;
-				return f1.getMainFile().getAbsolutePath()
-					.compareTo(f2.getMainFile().getAbsolutePath());
+				return f1.getMainFile().getName().toLowerCase()
+					.compareTo(f2.getMainFile().getName().toLowerCase());
 			}
 		});
 		
 		tv.addSelectionChangedListener(event -> {
-			GlobalInboxEntry globalInboxEntry =  (GlobalInboxEntry) tv.getStructuredSelection().getFirstElement();
+			GlobalInboxEntry globalInboxEntry =
+				(GlobalInboxEntry) tv.getStructuredSelection().getFirstElement();
 			selectionService.setSelection(globalInboxEntry);
 		});
 		
-		//		cp.setView(this);
 		inboxConfigStat = cp.reload();
 		
 		menuService.registerContextMenu(table,
 			"ch.elexis.global_inbox.popupmenu.globalinboxentries");
 		
 		tv.setInput(this);
+	}
+	
+	@Inject
+	@Optional
+	void handleRemoveAndSelectNext(
+		@UIEventTopic(Constants.EVENT_UI_REMOVE_AND_SELECT_NEXT) GlobalInboxEntry gie){
+		
+		int selectionIndex = tv.getTable().getSelectionIndex();
+		tv.remove(gie);
+		tv.getTable().setSelection(selectionIndex);
+	}
+	
+	@PreDestroy
+	public void destroy(){
+		cp.destroy();
 	}
 	
 	@Focus

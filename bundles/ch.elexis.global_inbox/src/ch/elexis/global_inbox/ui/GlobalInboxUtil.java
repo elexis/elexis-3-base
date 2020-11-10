@@ -21,6 +21,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.global_inbox.Preferences;
+import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
@@ -113,6 +114,16 @@ public class GlobalInboxUtil {
 			} else {
 				return "??"; //$NON-NLS-1$
 			}
+		}
+		
+	}
+
+	public void removeFiles(GlobalInboxEntry globalInboxEntry){
+		File mainFile = globalInboxEntry.getMainFile();
+		mainFile.delete();
+		File[] extensionFiles = globalInboxEntry.getExtensionFiles();
+		for (File extensionFile : extensionFiles) {
+			extensionFile.delete();
 		}
 		
 	}

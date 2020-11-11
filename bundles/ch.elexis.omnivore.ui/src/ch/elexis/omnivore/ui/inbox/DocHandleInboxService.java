@@ -23,7 +23,7 @@ public class DocHandleInboxService implements EventHandler {
 	private IInboxElementService service;
 	
 	private void createInboxElement(IDocumentHandle docHandle){
-		if (docHandle != null & !docHandle.isCategory()) {
+		if (docHandle != null && !docHandle.isCategory()) {
 			Optional<IEncounter> encounter = EncounterServiceHolder.get().getLatestEncounter(docHandle.getPatient());
 			IMandator mandator = null;
 			if (encounter.isPresent()) {

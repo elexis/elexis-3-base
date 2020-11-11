@@ -71,6 +71,11 @@ public class PandemieLeistung
 	}
 	
 	@Override
+	public String getCodeSystemCode(){
+		return "351";
+	}
+	
+	@Override
 	public String getCode(){
 		return getEntity().getCode();
 	}

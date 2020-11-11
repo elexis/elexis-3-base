@@ -542,7 +542,12 @@ public class XMLExporterServices {
 							XMLTool.moneyToXmlDouble(billed.getTotal()));
 						XMLExporterUtil.setVatAttribute(billed, billed.getTotal(), el, vatSummer);
 						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
-						el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$
+						// all pandemie are obligations
+						if ("351".equals(codeSystemCode)) {
+							el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
+						} else {
+							el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$
+						}
 						el.setAttribute("external_factor", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
 						
 						el.setAttribute(ATTR_EAN_PROVIDER,

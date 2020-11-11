@@ -15,6 +15,8 @@ package ch.elexis.omnivore.ui.views;
 import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -23,7 +25,9 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -91,6 +95,7 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
+import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
 import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
@@ -136,6 +141,9 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private OmnivoreViewerComparator ovComparator;
 	
 	private IPatient actPatient;
+	
+	@Inject
+	private IEventBroker eventBroker;
 	
 	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this) {
 		@Override
@@ -390,6 +398,19 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setUseHashlookup(true);
+		viewer.addSelectionChangedListener(ev -> {
+			IDocumentHandle docHandle =
+				(IDocumentHandle) ev.getStructuredSelection().getFirstElement();
+			if (docHandle != null && !docHandle.isCategory()) {
+				if (StringUtils.containsIgnoreCase(docHandle.getMimeType(), "pdf")) {
+					try (InputStream content = docHandle.getContent()) {
+						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, content);
+					} catch (IOException e1) {
+						LoggerFactory.getLogger(getClass()).warn("Exception", e1);
+					}
+				}
+			}
+		});
 		makeActions();
 		
 		ovComparator = new OmnivoreViewerComparator();
@@ -502,8 +523,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		String[] usrSortSettings = sortSettings.split(",");
 		
 		if (ConfigServiceHolder.getUser(PreferencePage.SAVE_SORT_DIRECTION, false)) {
-			String sortSet =
-				ConfigServiceHolder.getUser(PreferencePage.USR_SORT_DIRECTION_SETTINGS, sortSettings);
+			String sortSet = ConfigServiceHolder.getUser(PreferencePage.USR_SORT_DIRECTION_SETTINGS,
+				sortSettings);
 			usrSortSettings = sortSet.split(",");
 		}
 		
@@ -540,7 +561,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		TreeColumn[] treeColumns = table.getColumns();
 		String[] userColWidth = colWidth.split(",");
 		if (ConfigServiceHolder.getUser(PreferencePage.SAVE_COLUM_WIDTH, false)) {
-			String ucw = ConfigServiceHolder.getUser(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, colWidth);
+			String ucw =
+				ConfigServiceHolder.getUser(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, colWidth);
 			userColWidth = ucw.split(",");
 		}
 		

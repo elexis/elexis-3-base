@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.model.service;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +19,10 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.entities.PandemieLeistung;
 import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IStoreToStringContribution;
@@ -48,6 +51,8 @@ public class PandemieLeistungCodeElementService
 			em.createNamedQuery("PandemieLeistung.code", PandemieLeistung.class);
 		gtinQuery.setParameter("code", code);
 		List<PandemieLeistung> resultList = gtinQuery.getResultList();
+		resultList =
+			resultList.stream().filter(pl -> isValid(pl, context)).collect(Collectors.toList());
 		if (resultList.size() > 0) {
 			Optional<Identifiable> element = ArzttarifeModelAdapterFactory.getInstance()
 				.getModelAdapter(resultList.get(0), IPandemieLeistung.class, false);
@@ -56,6 +61,35 @@ public class PandemieLeistungCodeElementService
 			}
 		}
 		return Optional.empty();
+	}
+	
+	private boolean isValid(PandemieLeistung pl, Map<Object, Object> context){
+		if (context != null && !context.isEmpty()) {
+			LocalDate validDate = getDate(context);
+			if (pl.getValidFrom() != null) {
+				if (validDate.isBefore(pl.getValidFrom())) {
+					return false;
+				}
+			}
+			if (pl.getValidTo() != null) {
+				if (validDate.isAfter(pl.getValidTo())) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	private LocalDate getDate(Map<Object, Object> context){
+		Object date = context.get(ContextKeys.DATE);
+		if (date instanceof LocalDate) {
+			return (LocalDate) date;
+		}
+		IEncounter encounter = (IEncounter) context.get(ContextKeys.CONSULTATION);
+		if (encounter != null) {
+			return encounter.getDate();
+		}
+		return LocalDate.now();
 	}
 	
 	@Override

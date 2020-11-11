@@ -67,7 +67,7 @@ public class PandemieLeistung
 	
 	@Override
 	public String getCodeSystemName(){
-		return ch.elexis.core.jpa.entities.ComplementaryLeistung.CODESYSTEM_NAME;
+		return ch.elexis.core.jpa.entities.PandemieLeistung.CODESYSTEM_NAME;
 	}
 	
 	@Override

@@ -12,9 +12,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
@@ -26,8 +25,6 @@ import ch.rgw.tools.TimeTool;
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=pandemie")
 public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 		implements IReferenceDataImporter {
-	private static final Logger logger =
-		LoggerFactory.getLogger(PandemieReferenceDataImporter.class);
 	
 	@Override
 	public IStatus performImport(@Nullable IProgressMonitor monitor, InputStream input,
@@ -52,6 +49,8 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 			int count = last - first;
 			if (monitor != null)
 				monitor.beginTask("Pandemie Tarif Import", count);
+			
+			deleteOldEntries();
 			
 			List<Object> imported = new ArrayList<>();
 			
@@ -89,6 +88,11 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 		
 		return ret;
 		
+	}
+	
+	private void deleteOldEntries(){
+		ArzttarifeModelServiceHolder.get().executeNativeUpdate(
+			"DELETE FROM CH_ELEXIS_ARZTTARIFE_CH_PANDEMIC WHERE ID <> 'VERSION'");
 	}
 	
 	private boolean isCents(List<String> line){
@@ -133,7 +137,7 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 			EntityUtil.save(Collections.singletonList(versionEntry));
 			return;
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Version entry");
 	}
 	
 	@Override

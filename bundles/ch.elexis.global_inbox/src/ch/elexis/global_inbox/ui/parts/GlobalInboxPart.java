@@ -1,11 +1,19 @@
 package ch.elexis.global_inbox.ui.parts;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.EMenuService;
@@ -17,8 +25,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.Constants;
@@ -37,7 +47,7 @@ public class GlobalInboxPart {
 	
 	@Inject
 	public GlobalInboxPart(Composite parent, EMenuService menuService,
-		ESelectionService selectionService){
+		ESelectionService selectionService, IEventBroker eventBroker){
 		
 		Table table = new Table(parent, SWT.FULL_SELECTION);
 		tv = new TableViewer(table);
@@ -71,6 +81,19 @@ public class GlobalInboxPart {
 			GlobalInboxEntry globalInboxEntry =
 				(GlobalInboxEntry) tv.getStructuredSelection().getFirstElement();
 			selectionService.setSelection(globalInboxEntry);
+			
+			if (globalInboxEntry != null) {
+				File mainFile = globalInboxEntry.getMainFile();
+				if (mainFile.getName().toLowerCase().endsWith(".pdf")) {
+					try (ByteArrayInputStream byteArrayInputStream =
+						new ByteArrayInputStream(FileUtils.readFileToByteArray(mainFile))) {
+						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF,
+							byteArrayInputStream);
+					} catch (IOException e) {
+						LoggerFactory.getLogger(getClass()).warn("Exception", e);
+					}
+				}
+			}
 		});
 		
 		inboxConfigStat = cp.reload();

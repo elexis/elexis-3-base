@@ -6,7 +6,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -57,8 +56,6 @@ public class GlobalInboxEntryDetailPart {
 	private ECommandService commandService;
 	@Inject
 	private EHandlerService handlerService;
-	@Inject
-	private IConfigService configService;
 	
 	private GlobalInboxEntry globalInboxEntry;
 	
@@ -72,9 +69,9 @@ public class GlobalInboxEntryDetailPart {
 	private Button btnInfoTo;
 	private ComboViewer cvInfoToReceiver;
 	
-	@SuppressWarnings("unchecked")
-	@PostConstruct
-	public void postConstruct(Composite parent){
+	
+	@Inject
+	public GlobalInboxEntryDetailPart(Composite parent, IConfigService configService, EHandlerService handlerService){
 		parent.setLayout(new GridLayout(2, false));
 		
 		Label label = new Label(parent, SWT.None);
@@ -99,6 +96,9 @@ public class GlobalInboxEntryDetailPart {
 		label.setText("Ablagedatum");
 		archivingDate =
 			new CDateTime(parent, CDT.DATE_SHORT | CDT.DROP_DOWN | SWT.BORDER | CDT.TAB_FIELDS);
+		GridData gd_archivingDate = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_archivingDate.widthHint = 100;
+		archivingDate.setLayoutData(gd_archivingDate);
 		archivingDate.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
 				globalInboxEntry.setArchivingDate(archivingDate.getSelection());
@@ -115,6 +115,9 @@ public class GlobalInboxEntryDetailPart {
 		label.setText("Erstelldatum");
 		creationDate =
 			new CDateTime(parent, CDT.DATE_SHORT | CDT.DROP_DOWN | SWT.BORDER | CDT.TAB_FIELDS);
+		GridData gd_creationDate = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_creationDate.widthHint = 100;
+		creationDate.setLayoutData(gd_creationDate);
 		creationDate.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
 				globalInboxEntry.setCreationDate(creationDate.getSelection());

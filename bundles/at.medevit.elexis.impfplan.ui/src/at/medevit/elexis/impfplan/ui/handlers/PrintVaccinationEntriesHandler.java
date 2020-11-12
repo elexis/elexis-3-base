@@ -23,16 +23,15 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -88,14 +87,14 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		try {
 			createPDF(patient, images);
 			images.clear();
-		} catch (COSVisitorException | IOException e) {
+		} catch (IOException e) {
 			MessageEvent.fireError("Fehler beim Erstellen des PDF", e.getMessage(), e);
 		}
 		vcpl.restorePrePrintSettting();
 		return null;
 	}
 	
-	private void createPDF(Patient patient, List<Image> images) throws IOException, COSVisitorException{
+	private void createPDF(Patient patient, List<Image> images) throws IOException {
 		PDDocumentInformation pdi = new PDDocumentInformation();
 		Mandant mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 		pdi.setAuthor(mandant.getName() + " " + mandant.getVorname());
@@ -109,10 +108,10 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		for (Image image : images) {
 			i++;
 			PDPage page = new PDPage();
-			page.setMediaBox(PDPage.PAGE_SIZE_A4);
+			page.setMediaBox(PDRectangle.A4);
 			document.addPage(page);
 			
-			PDRectangle pageSize = page.findMediaBox();
+			PDRectangle pageSize = page.getMediaBox();
 			PDFont font = PDType1Font.HELVETICA_BOLD;
 			
 			PDFont subFont = PDType1Font.HELVETICA;
@@ -133,14 +132,15 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 			contentStream.endText();
 			
 			BufferedImage imageAwt = convertToAWT(image.getImageData());
-			PDXObjectImage pdPixelMap = new PDPixelMap(document, imageAwt);
+			
+			PDImageXObject pdPixelMap = LosslessFactory.createFromImage(document, imageAwt);
 			contentStream.drawXObject(pdPixelMap, 40, 30, pageSize.getWidth() - 80,
 				pageSize.getHeight() - 100);
 			
 			// page numbers
 			contentStream.beginText();
 			contentStream.setFont(subFont, 8);
-			contentStream.moveTextPositionByAmount((PDPage.PAGE_SIZE_A4.getUpperRightX() / 2 - 20), (PDPage.PAGE_SIZE_A4.getLowerLeftY() + 15));
+			contentStream.moveTextPositionByAmount((PDRectangle.A4.getUpperRightX() / 2 - 20), (PDRectangle.A4.getLowerLeftY() + 15));
 			contentStream.drawString("Seite " + i + " von " + images.size());
 			contentStream.endText();
             contentStream.close();

@@ -33,8 +33,8 @@ public class PandemieContentProvider extends CommonViewerContentProvider {
 		encounter.ifPresent(e -> {
 			query.and("validFrom", COMPARATOR.LESS_OR_EQUAL, e.getDate());
 			query.startGroup();
-			query.or("validTo", COMPARATOR.GREATER_OR_EQUAL, e.getDate());
-			query.or("validTo", COMPARATOR.EQUALS, null);
+			query.or("validUntil", COMPARATOR.GREATER_OR_EQUAL, e.getDate());
+			query.or("validUntil", COMPARATOR.EQUALS, null);
 			query.andJoinGroups();
 		});
 		

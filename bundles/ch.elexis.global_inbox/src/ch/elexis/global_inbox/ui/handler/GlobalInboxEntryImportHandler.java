@@ -64,6 +64,7 @@ public class GlobalInboxEntryImportHandler {
 		IDocument document =
 			documentStore.createDocument(null, patient.getId(), mainFile.getName(), category);
 		document.setTitle(title);
+		document.setMimeType(globalInboxEntry.getMimetype());
 		try (InputStream fin = new FileInputStream(mainFile)) {
 			document = documentStore.saveDocument(document, fin);
 		} catch (IOException | ElexisException e) {

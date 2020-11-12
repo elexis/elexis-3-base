@@ -13,6 +13,7 @@ import ch.elexis.core.model.IPatient;
 public class GlobalInboxEntry {
 	
 	private String title;
+	private String mimetype;
 	private IPatient patient;
 	private IContact sender;
 	private String category;
@@ -61,6 +62,14 @@ public class GlobalInboxEntry {
 	
 	public void setTitle(String title){
 		this.title = title;
+	}
+	
+	public void setMimetype(String mimetype){
+		this.mimetype = mimetype;
+	}
+	
+	public String getMimetype(){
+		return mimetype;
 	}
 	
 	public IPatient getPatient(){

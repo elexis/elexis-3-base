@@ -1,6 +1,8 @@
 package ch.elexis.omnivore.data;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Optional;
 
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -8,8 +10,9 @@ import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.constants.ElexisSystemPropertyConstants;
+import ch.elexis.core.model.IUser;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.User;
@@ -25,19 +28,20 @@ public class AbstractPersistentObjectTest {
 	private static Logger log = LoggerFactory.getLogger(AbstractPersistentObjectTest.class);
 	
 	
-	private static void initPO() {
-		if (link != null ) {
+	private static void initPO(){
+		if (link != null) {
 			return;
 		}
-		System.setProperty(ElexisSystemPropertyConstants.RUN_MODE, 
+		System.setProperty(ElexisSystemPropertyConstants.RUN_MODE,
 			ElexisSystemPropertyConstants.RUN_MODE_FROM_SCRATCH);
-		log.debug("AbstractPersistentObjectTest mode {} is {}", ElexisSystemPropertyConstants.RUN_MODE_FROM_SCRATCH,
+		log.debug("AbstractPersistentObjectTest mode {} is {}",
+			ElexisSystemPropertyConstants.RUN_MODE_FROM_SCRATCH,
 			System.getProperty(ElexisSystemPropertyConstants.RUN_MODE));
-		System.setProperty(ElexisSystemPropertyConstants.LOGIN_USERNAME, "007"); 
-		System.setProperty(ElexisSystemPropertyConstants.LOGIN_PASSWORD, "topsecret"); 
+		System.setProperty(ElexisSystemPropertyConstants.LOGIN_USERNAME, "007");
+		System.setProperty(ElexisSystemPropertyConstants.LOGIN_PASSWORD, "topsecret");
 		link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "h2");
 		link = PersistentObject.getDefaultConnection().getJdbcLink();
-		log.debug("AbstractPersistentObjectTest starting link {}", link );
+		log.debug("AbstractPersistentObjectTest starting link {}", link);
 		PersistentObject.connect(link);
 		if (testUserName == null) {
 			testUserName = "ut_user_" + link.DBFlavor;
@@ -46,12 +50,15 @@ public class AbstractPersistentObjectTest {
 		User existingUser = User.load(testUserName);
 		if (!existingUser.exists()) {
 			new Anwender(testUserName, PASSWORD);
-		} 
+		}
 		
-		boolean succ = CoreHub.login(testUserName, PASSWORD.toCharArray());
-		assertTrue(succ);
+		Optional<IUser> dbUser =
+			CoreModelServiceHolder.get().load(existingUser.getId(), IUser.class);
+		IUser login = dbUser.get().login(testUserName, PASSWORD.toCharArray());
+		assertNotNull(login);
 		log.debug("CoreHub.login done link is {}", link);
 	}
+	
 	public AbstractPersistentObjectTest() {
 	}
 	

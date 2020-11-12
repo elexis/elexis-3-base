@@ -1,12 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>ch.elexis.base</groupId>
-    <artifactId>ch.elexis.base.tests</artifactId>
-	<version>3.8.0-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>ch.elexis.base</groupId>
+		<artifactId>ch.elexis.base.tests</artifactId>
+		<version>3.8.0-SNAPSHOT</version>
+	</parent>
   <artifactId>ch.elexis.omnivore.data.tests</artifactId>
   <packaging>eclipse-test-plugin</packaging>
+  <version>3.0.0-SNAPSHOT</version>
   <properties>
     <elexis.run.dbtests>false</elexis.run.dbtests>
   </properties>

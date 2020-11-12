@@ -217,7 +217,7 @@ public class ArtikelstammImporterTest {
 		Optional<ICodeElement> nonPharmaOnlyInFirst =
 			artikelstammCodeElements.loadFromCode(gtinNonPharmaInactiveInSecond);
 		if (isMedindex) {
-			if (nonPharmaOnlyInFirst != null) {
+			if (nonPharmaOnlyInFirst.isPresent()) {
 				log.debug("onlyInFirst {} {} isBlackBoxed {} isDeleted {}  ",
 					((IArtikelstammItem) nonPharmaOnlyInFirst.get()).getText(),
 					((IArtikelstammItem) nonPharmaOnlyInFirst.get()).getPHAR(),

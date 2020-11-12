@@ -320,6 +320,11 @@ public class Utils {
 			if (fileExtension == null) {
 				fileExtension = FileTool.getExtension(documentHandle.getTitle());
 			}
+			
+			if (fileExtension == null && mimeType != null && !mimeType.contains(".")
+				&& !mimeType.contains(".") && !mimeType.contains("/")) {
+				fileExtension = mimeType;
+			}
 		}
 		
 		if (fileExtension == null) {

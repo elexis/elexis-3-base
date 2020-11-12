@@ -11,7 +11,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
@@ -56,14 +55,11 @@ public class QRBillImage {
 			int width = bitMatrix.getWidth();
 			int height = bitMatrix.getHeight();
 			
-			PaletteData paletteData = new PaletteData(new RGB[] {
-				new RGB(0, 0, 0), new RGB(255, 255, 255)
-			});
-			
-			ImageData data = new ImageData(width, height, 1, paletteData);
+			ImageData data =
+				new ImageData(width, height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
-					data.setPixel(x, y, bitMatrix.get(x, y) ? 0 : 1);
+					data.setPixel(x, y, bitMatrix.get(x, y) ? 0x000000 : 0xFFFFFF);
 				}
 			}
 			return Optional.of(new Image(Display.getDefault(), data));

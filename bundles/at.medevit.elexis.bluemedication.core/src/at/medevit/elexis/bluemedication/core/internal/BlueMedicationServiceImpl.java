@@ -548,7 +548,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				return;
 			}
 			if (statusCode == 200) {
-				if (StringUtils.isNotBlank(content) && content.contains("COMPLETED")) {
+				if (content != null && content.contains("COMPLETED")) {
 					logger.info("Finished [" + uploadResult.getId() + "] completed");
 					onSuccess.accept(object);
 				} else {

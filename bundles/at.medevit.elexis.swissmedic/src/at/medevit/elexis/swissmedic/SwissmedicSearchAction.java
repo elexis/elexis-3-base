@@ -26,6 +26,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 
+import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.text.IRichTextDisplay;
@@ -61,9 +62,12 @@ public class SwissmedicSearchAction extends Action implements IKonsExtension, IH
 		if (selectedMedication.isPresent()) {
 			medication = selectedMedication.get();
 			
+			
 			String ean = null;
 			String num = "";
-			if (medication != null) {
+			
+			IArticle article = medication.getArticle();
+			if (article != null) {
 				if (medication.getArticle().isProduct()) {
 					MessageDialog.openInformation(Display.getDefault().getActiveShell(),
 						"Swissmedic",
@@ -82,7 +86,7 @@ public class SwissmedicSearchAction extends Action implements IKonsExtension, IH
 				Program.launch(url);
 			} else {
 				MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Swissmedic",
-					"Für Artikel " + medication.getArticle().getText()
+					"Für Artikel " + (article != null ? article.getLabel() : " NOT_FOUND ")
 						+ " ist keine GTIN hinterlegt. Diese wird für die Suche benötigt.");
 			}
 		} else {

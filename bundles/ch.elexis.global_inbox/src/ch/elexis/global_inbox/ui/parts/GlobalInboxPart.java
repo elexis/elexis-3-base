@@ -84,7 +84,7 @@ public class GlobalInboxPart {
 			
 			if (globalInboxEntry != null) {
 				File mainFile = globalInboxEntry.getMainFile();
-				if (mainFile.getName().toLowerCase().endsWith(".pdf")) {
+				if (globalInboxEntry.getMimetype().toLowerCase().contains("pdf")) {
 					try (ByteArrayInputStream byteArrayInputStream =
 						new ByteArrayInputStream(FileUtils.readFileToByteArray(mainFile))) {
 						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF,

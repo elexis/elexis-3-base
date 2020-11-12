@@ -1,6 +1,8 @@
 package ch.elexis.global_inbox.internal.service;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +79,13 @@ public class GlobalInboxEntryFactory {
 	public static GlobalInboxEntry createEntry(File mainFile, File[] extensionFiles){
 		GlobalInboxEntry globalInboxEntry = new GlobalInboxEntry(mainFile, extensionFiles);
 		String category = GlobalInboxUtil.getCategory(mainFile);
-		String mimeType = FilenameUtils.getExtension(mainFile.getAbsolutePath());
+		String mimeType = null;
+		try {
+			mimeType = Files.probeContentType(mainFile.toPath());
+		} catch (IOException e) {}
+		if (mimeType == null) {
+			mimeType = FilenameUtils.getExtension(mainFile.getAbsolutePath());
+		}
 		globalInboxEntry.setMimetype(mimeType);
 		globalInboxEntry.setCategory(category);
 		globalInboxEntry

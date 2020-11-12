@@ -306,14 +306,18 @@ public class Utils {
 	public static File createTemporaryFile(IDocumentHandle documentHandle, String title){
 		
 		String fileExtension = null;
+		String mimeType = documentHandle.getMimeType();
+		// somewhen we might event feature correct mimetypes in the db ...
+		if("pdf".equalsIgnoreCase(mimeType)) {
+			mimeType = "application/pdf";
+		}
 		try {
-			MimeType docMimeType = new MimeType(documentHandle.getMimeType());
+			MimeType docMimeType = new MimeType(mimeType);
 			fileExtension = MimeTool.getExtension(docMimeType.toString());
 		} catch (MimeTypeParseException mpe) {
-			fileExtension = FileTool.getExtension(documentHandle.getMimeType());
+			fileExtension = FileTool.getExtension(mimeType);
 			
 			if (fileExtension == null) {
-				
 				fileExtension = FileTool.getExtension(documentHandle.getTitle());
 			}
 		}

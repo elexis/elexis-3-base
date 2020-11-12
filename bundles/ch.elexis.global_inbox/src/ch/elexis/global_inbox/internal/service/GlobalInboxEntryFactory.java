@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -73,11 +74,11 @@ public class GlobalInboxEntryFactory {
 		GlobalInboxEntryFactory.extensionFileHandlers.remove(extensionFileHandler);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static GlobalInboxEntry createEntry(File mainFile, File[] extensionFiles){
-		
 		GlobalInboxEntry globalInboxEntry = new GlobalInboxEntry(mainFile, extensionFiles);
 		String category = GlobalInboxUtil.getCategory(mainFile);
+		String mimeType = FilenameUtils.getExtension(mainFile.getAbsolutePath());
+		globalInboxEntry.setMimetype(mimeType);
 		globalInboxEntry.setCategory(category);
 		globalInboxEntry
 			.setSendInfoTo(configService.getLocal(Preferences.PREF_INFO_IN_INBOX, false));
@@ -90,6 +91,7 @@ public class GlobalInboxEntryFactory {
 		for (File file : extensionFiles) {
 			String absolutePath = file.getAbsolutePath();
 			for (Function handler : extensionFileHandlers) {
+				@SuppressWarnings("unchecked")
 				Map<String, Object> result = (Map<String, Object>) handler.apply(absolutePath);
 				if (result != null) {
 					integrateAdditionalInformation(result, globalInboxEntry);

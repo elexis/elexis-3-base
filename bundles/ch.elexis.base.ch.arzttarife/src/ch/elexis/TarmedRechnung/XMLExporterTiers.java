@@ -1,13 +1,16 @@
 package ch.elexis.TarmedRechnung;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 
+import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Fall.Tiers;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
+import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
 
@@ -75,15 +78,27 @@ public class XMLExporterTiers {
 		ret.tiersElement.addContent(biller);
 		
 		Element provider = new Element("provider", XMLExporter.nsinvoice); //$NON-NLS-1$
-		provider.setAttribute(XMLExporter.ATTR_EAN_PARTY,
-			TarmedRequirements.getEAN(mandant));
-		provider.setAttribute(
-			"zsr", TarmedRequirements.getKSK(mandant)); //$NON-NLS-1$
-		spec = mandant.getInfoString(ta.SPEC);
-		if (!spec.equals("")) { //$NON-NLS-1$
-			provider.setAttribute("specialty", spec); //$NON-NLS-1$
+		if (StringUtils.isNotBlank(
+			CoreHub.globalCfg.get(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null))) {
+			Kontakt contact = Kontakt
+				.load(CoreHub.globalCfg.get(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null));
+			provider.setAttribute(XMLExporter.ATTR_EAN_PARTY, TarmedRequirements.getEAN(contact));
+			provider.setAttribute("zsr", TarmedRequirements.getKSK(contact)); //$NON-NLS-1$
+			spec = (String) contact.getExtInfoStoredObjectByKey(ta.SPEC);
+			if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
+				provider.setAttribute("specialty", spec); //$NON-NLS-1$
+			}
+			provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(contact));
+		} else {
+			provider.setAttribute(XMLExporter.ATTR_EAN_PARTY, TarmedRequirements.getEAN(mandant));
+			provider.setAttribute("zsr", TarmedRequirements.getKSK(mandant)); //$NON-NLS-1$
+			spec = (String) mandant.getExtInfoStoredObjectByKey(ta.SPEC);
+			if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
+				provider.setAttribute("specialty", spec); //$NON-NLS-1$
+			}
+			provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant));
 		}
-		provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant));
+		
 		ret.tiersElement.addContent(provider);
 		
 		Element onlineElement = null; // tschaller: see comments in

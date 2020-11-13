@@ -17,6 +17,7 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -27,6 +28,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -57,6 +59,7 @@ import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.base.ch.ebanking.esr.ESR;
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IMandator;
@@ -108,6 +111,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	
 	private ResponsibleComposite responsible;
 	private ComboViewer cvMandantType;
+	private Label lblFixProvider;
 	
 	static TarmedACL ta = TarmedACL.getInstance();
 	
@@ -402,6 +406,47 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			
 		});
 		bAddChildren.setSelection(ConfigServiceHolder.getMandator(PREF_ADDCHILDREN, false));
+		
+		Group gFixProvider = new Group(ret, SWT.NONE);
+		gFixProvider.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gFixProvider.setLayout(new GridLayout(2, false));
+		gFixProvider.setText("Fixer Leistungserbringer (für alle Mandanten)");
+		
+		Hyperlink fixProvider = new Hyperlink(gFixProvider, SWT.NONE);
+		fixProvider.setText("Fixer Leistungserbringer");
+		fixProvider.setForeground(blau);
+		fixProvider.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e){
+				KontaktSelektor ks = new KontaktSelektor(UiDesk.getTopShell(), Kontakt.class,
+					"Kontakt auswählen", "Bitte selektieren Sie den fixen Leistungserbringer",
+					new String[] {});
+				int ret = ks.open();
+				if (ret == Window.OK) {
+					Kontakt k = (Kontakt) ks.getSelection();
+					ConfigServiceHolder.setGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER,
+						(k != null) ? k.getId() : null);
+					String label = (k != null) ? k.getLabel() : "";
+					lblFixProvider.setText(label);
+				} else {
+					ConfigServiceHolder.setGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null);
+					lblFixProvider.setText(StringConstants.EMPTY);
+				}
+				gFixProvider.layout();
+			}
+		});
+		
+		lblFixProvider = new Label(gFixProvider, SWT.NONE);
+		lblFixProvider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+		
+		if (StringUtils.isNotBlank(
+			ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null))) {
+			Kontakt k = Kontakt.load(
+				ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null));
+			String label = (k != null) ? k.getLabel() : "";
+			lblFixProvider.setText(label);
+		}
+		
 		cbMands.select(0);
 		setMandant((Mandant) hMandanten.get(cbMands.getItem(0)));
 		return ret;

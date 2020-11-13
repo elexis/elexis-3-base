@@ -1,5 +1,6 @@
 package ch.elexis.TarmedRechnung;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 
 import ch.elexis.core.model.IContact;
@@ -8,7 +9,10 @@ import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.ICoverageService.Tiers;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
+import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
 
@@ -76,15 +80,27 @@ public class XMLExporterTiers {
 		ret.tiersElement.addContent(biller);
 		
 		Element provider = new Element("provider", XMLExporter.nsinvoice); //$NON-NLS-1$
-		provider.setAttribute(XMLExporter.ATTR_EAN_PARTY,
-			TarmedRequirements.getEAN(mandant));
-		provider.setAttribute(
-			"zsr", TarmedRequirements.getKSK(mandant)); //$NON-NLS-1$
-		spec = (String) mandant.getExtInfo(ta.SPEC);
-		if (!spec.equals("")) { //$NON-NLS-1$
-			provider.setAttribute("specialty", spec); //$NON-NLS-1$
+		if (StringUtils.isNotBlank(
+			ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null))) {
+			IContact contact = CoreModelServiceHolder.get().load(
+				ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null),
+				IContact.class).get();
+			provider.setAttribute(XMLExporter.ATTR_EAN_PARTY, TarmedRequirements.getEAN(contact));
+			provider.setAttribute("zsr", TarmedRequirements.getKSK(contact)); //$NON-NLS-1$
+			spec = (String) contact.getExtInfo(ta.SPEC);
+			if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
+				provider.setAttribute("specialty", spec); //$NON-NLS-1$
+			}
+			provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(contact));
+		} else {
+			provider.setAttribute(XMLExporter.ATTR_EAN_PARTY, TarmedRequirements.getEAN(mandant));
+			provider.setAttribute("zsr", TarmedRequirements.getKSK(mandant)); //$NON-NLS-1$
+			spec = (String) mandant.getExtInfo(ta.SPEC);
+			if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
+				provider.setAttribute("specialty", spec); //$NON-NLS-1$
+			}
+			provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant));
 		}
-		provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant));
 		ret.tiersElement.addContent(provider);
 		
 		Element onlineElement = null; // tschaller: see comments in

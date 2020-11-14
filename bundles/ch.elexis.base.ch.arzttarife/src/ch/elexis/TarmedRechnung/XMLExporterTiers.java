@@ -2,6 +2,8 @@ package ch.elexis.TarmedRechnung;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Fall;
@@ -15,6 +17,9 @@ import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
 
 public class XMLExporterTiers {
+	
+	private static Logger logger = LoggerFactory.getLogger(XMLExporterTiers.class);
+	
 	private Element tiersElement;
 	
 	private String tiers;
@@ -84,6 +89,8 @@ public class XMLExporterTiers {
 				.load(CoreHub.globalCfg.get(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null));
 			provider.setAttribute(XMLExporter.ATTR_EAN_PARTY, TarmedRequirements.getEAN(contact));
 			provider.setAttribute("zsr", TarmedRequirements.getKSK(contact)); //$NON-NLS-1$
+			logger.info("Fixed provider [" + contact.getLabel() + "] ean ["
+				+ TarmedRequirements.getEAN(contact) + "]");
 			spec = (String) contact.getExtInfoStoredObjectByKey(ta.SPEC);
 			if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
 				provider.setAttribute("specialty", spec); //$NON-NLS-1$
@@ -92,6 +99,8 @@ public class XMLExporterTiers {
 		} else {
 			provider.setAttribute(XMLExporter.ATTR_EAN_PARTY, TarmedRequirements.getEAN(mandant));
 			provider.setAttribute("zsr", TarmedRequirements.getKSK(mandant)); //$NON-NLS-1$
+			logger.info("Provider [" + mandant.getLabel() + "] ean ["
+				+ TarmedRequirements.getEAN(mandant) + "]");
 			spec = (String) mandant.getExtInfoStoredObjectByKey(ta.SPEC);
 			if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
 				provider.setAttribute("specialty", spec); //$NON-NLS-1$

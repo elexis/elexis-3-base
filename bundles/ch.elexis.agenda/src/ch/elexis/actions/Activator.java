@@ -23,6 +23,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.interfaces.scripting.Interpreter;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Kontakt;
 import ch.rgw.tools.TimeTool;
@@ -65,6 +66,9 @@ public class Activator extends AbstractUIPlugin {
 		UiDesk.getImageRegistry().put(IMG_HOME, getImageDescriptor("icons/calendar_view_day.png")); //$NON-NLS-1$
 		UiDesk.getImageRegistry().put(IMG_RECURRING_DATE,
 			getImageDescriptor("icons/arrow-repeat.png")); //$NON-NLS-1$
+		
+		// enable scripting access to classes
+		Interpreter.classLoaders.add(Activator.class.getClassLoader());
 	}
 	
 	/**

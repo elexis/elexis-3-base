@@ -1328,10 +1328,10 @@ public class MesswerteView extends ViewPart
 		// TODO
 	}
 	
+	@Optional
 	@Inject
-	public void setFixLayout(MPart part,
-		@Optional @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
-		CoreUiUtil.updateFixLayout(part);
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 	
 	/**

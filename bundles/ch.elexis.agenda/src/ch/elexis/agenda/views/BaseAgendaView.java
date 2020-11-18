@@ -11,6 +11,11 @@
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -63,6 +68,7 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Anwender;
@@ -530,5 +536,11 @@ public abstract class BaseAgendaView extends ViewPart
 		setPartName("Agenda " + bereich);
 		ElexisEventDispatcher.reload(Termin.class);
 		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
+	}
+	
+	@Optional
+	@Inject
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 }

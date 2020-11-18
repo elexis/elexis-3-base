@@ -24,11 +24,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -85,6 +87,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
@@ -96,6 +99,7 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
@@ -835,5 +839,11 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	 */
 	public ImageDescriptor getImageDescriptor(String path){
 		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.omnivoredirect", path); //$NON-NLS-1$
+	}
+	
+	@Optional
+	@Inject
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 }

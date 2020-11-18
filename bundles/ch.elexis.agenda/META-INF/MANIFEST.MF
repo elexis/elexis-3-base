@@ -41,4 +41,7 @@ Export-Package: ch.elexis.agenda.data,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: ch.elexis.core.services.holder,
  com.google.common.cache;version="15.0.0",
+ javax.inject;version="1.0.0",
+ org.eclipse.e4.core.di.annotations;version="1.6.0",
+ org.eclipse.e4.ui.model.application.ui.basic,
  org.slf4j;version="1.6.6"

@@ -68,6 +68,7 @@
 					<testClass>ch.elexis.tasks.integration.test.AllTests</testClass>
 					<showEclipseLog>true</showEclipseLog>
 					<argLine>-Delexis.test.mode=true</argLine>
+        			<trimStackTrace>false</trimStackTrace>
 					<dependencies>
 						<dependency>
 							<type>eclipse-plugin</type>

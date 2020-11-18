@@ -23,7 +23,10 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
  ch.elexis.core.pdfbox;bundle-version="2.0.21"
 Bundle-ClassPath: .
 Import-Package: ch.elexis.core.services.holder,
+ javax.inject;version="1.0.0",
+ org.eclipse.e4.core.di.annotations;version="1.6.0",
+ org.eclipse.e4.ui.model.application.ui.basic,
  org.slf4j
+Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/at.medevit.elexis.impfplan.service.ArtikelstammModelServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.impfplan.ui.billing.VaccinationVerrechnetAdjuster.xml
-Bundle-ActivationPolicy: lazy

@@ -17,6 +17,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -37,7 +42,9 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.Messages;
 import at.medevit.elexis.ehc.ui.util.CDALoader;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class EHealthConnectorView extends ViewPart {
 	public final static String ID = "at.medevit.elexis.eHealthConnectorView";
@@ -142,5 +149,11 @@ public class EHealthConnectorView extends ViewPart {
 	@Override
 	public void setFocus(){
 		txtUrl.setFocus();
+	}
+	
+	@Inject
+	public void setFixLayout(MPart part,
+		@Optional @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+		CoreUiUtil.updateFixLayout(part);
 	}
 }

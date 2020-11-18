@@ -17,6 +17,11 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -36,6 +41,7 @@ import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2019;
 import at.medevit.elexis.impfplan.ui.dialogs.EditVaccinationDialog;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -43,6 +49,7 @@ import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
@@ -247,6 +254,12 @@ public class VaccinationView extends ViewPart {
 	public void dispose(){
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_vacc);
 		super.dispose();
+	}
+	
+	@Inject
+	public void setFixLayout(MPart part,
+		@Optional @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+		CoreUiUtil.updateFixLayout(part);
 	}
 	
 	public static void setVaccinationHeaderDefinition(

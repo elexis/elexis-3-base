@@ -11,7 +11,11 @@ package ch.docbox.elexis;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -46,13 +50,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.docbox.cdach.CdaChXPath;
 import ch.docbox.model.CdaMessage;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -64,6 +68,7 @@ import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
 import ch.elexis.core.ui.exchange.KontaktMatcher.CreateMode;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
@@ -75,7 +80,7 @@ import ch.elexis.data.Query;
 /**
  * Displays the documents downloaded from docbox (doctrans)
  */
-public class DocboxDocumentsView extends ViewPart implements ISaveablePart2, IActivationListener,
+public class DocboxDocumentsView extends ViewPart implements IActivationListener,
 		HeartListener {
 	
 	public static final String ID = "chdocbox.elexis.DocboxDocumentsView";
@@ -540,25 +545,11 @@ public class DocboxDocumentsView extends ViewPart implements ISaveablePart2, IAc
 		tableViewer.refresh();
 	}
 	
-	public int promptToSaveOnClose(){
-		return 0;
+	@Inject
+	public void setFixLayout(MPart part,
+		@Optional @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+		CoreUiUtil.updateFixLayout(part);
 	}
-	
-	public void doSave(IProgressMonitor monitor){}
-	
-	public boolean isDirty(){
-		return false;
-	}
-	
-	public boolean isSaveAsAllowed(){
-		return false;
-	}
-	
-	public boolean isSaveOnCloseNeeded(){
-		return false;
-	}
-	
-	public void doSaveAs(){}
 	
 	public void selectionEvent(PersistentObject obj){
 		if (obj instanceof CdaMessage) {

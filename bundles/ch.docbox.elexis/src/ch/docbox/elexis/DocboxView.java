@@ -12,24 +12,29 @@ package ch.docbox.elexis;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.data.Anwender;
 
 /**
  * Creates a browser view which will sso into docbox and if a hospital application is select patient
  * info from elexis will be filled in
  */
-public class DocboxView extends ViewPart implements ISaveablePart2 {
+public class DocboxView extends ViewPart {
 	
 	public static final String ID = "ch.docbox.elexis.DocboxView";
 	private Browser browser;
@@ -119,27 +124,9 @@ public class DocboxView extends ViewPart implements ISaveablePart2 {
 		
 	}
 	
-	public int promptToSaveOnClose(){
-		return 0;
+	@Inject
+	public void setFixLayout(MPart part,
+		@Optional @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+		CoreUiUtil.updateFixLayout(part);
 	}
-	
-	public void doSave(IProgressMonitor monitor){}
-	
-	public boolean isDirty(){
-		return false;
-	}
-	
-	public boolean isSaveAsAllowed(){
-		return false;
-	}
-	
-	public boolean isSaveOnCloseNeeded(){
-		return false;
-	}
-	
-	public void doSaveAs(){
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

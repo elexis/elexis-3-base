@@ -2,6 +2,7 @@ package at.medevit.elexis.agenda.ui.view;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
@@ -18,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.composite.WeekComposite;
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
@@ -60,5 +62,11 @@ public class WeekView {
 		if (composite != null && !composite.isDisposed()) {
 			composite.setFocus();
 		}
+	}
+	
+	@Optional
+	@Inject
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 }

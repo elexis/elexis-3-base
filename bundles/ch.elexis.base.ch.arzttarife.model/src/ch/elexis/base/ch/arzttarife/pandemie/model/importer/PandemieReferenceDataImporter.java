@@ -145,10 +145,12 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 		PandemieLeistung versionEntry = EntityUtil.load("VERSION", PandemieLeistung.class);
 		if (versionEntry != null) {
 			String chapter = versionEntry.getChapter();
-			try {
-				return Integer.parseInt(((String) chapter).trim());
-			} catch (NumberFormatException e) {
-				// ignore return 0
+			if (chapter != null) {
+				try {
+					return Integer.parseInt(((String) chapter).trim());
+				} catch (NumberFormatException e) {
+					// ignore return 0
+				}
 			}
 		}
 		return 0;

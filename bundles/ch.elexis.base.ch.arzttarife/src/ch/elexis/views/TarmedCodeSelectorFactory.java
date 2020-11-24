@@ -77,23 +77,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		};
 		slp = new TarmedSelectorPanelProvider(cv);
 		
-		slp.addActions(new Action() {
-			
-			@Override
-			public String getToolTipText(){
-				return "Kontext (Konsultation, Fall, etc.) Filter (de)aktivieren";
-			}
-			
-			@Override
-			public ImageDescriptor getImageDescriptor(){
-				return Images.IMG_FILTER.getImageDescriptor();
-			}
-			
-			@Override
-			public void run(){
-				((TarmedSelectorPanelProvider) slp).toggleFilters();
-			}
-		});
+		slp.addActions(new ToggleFiltersAction());
 		
 		MenuManager menu = new MenuManager();
 		menu.add(tvfa);
@@ -120,5 +104,29 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	@Override
 	public String getCodeSystemName(){
 		return "Tarmed"; //$NON-NLS-1$
+	}
+	
+	private class ToggleFiltersAction extends Action {
+		
+		public ToggleFiltersAction(){
+			super("", Action.AS_CHECK_BOX);
+			// initial state, active filters
+			setChecked(true);
+		}
+		
+		@Override
+		public String getToolTipText(){
+			return "Kontext (Konsultation, Fall, etc.) Filter (de)aktivieren";
+		}
+		
+		@Override
+		public ImageDescriptor getImageDescriptor(){
+			return Images.IMG_FILTER.getImageDescriptor();
+		}
+		
+		@Override
+		public void run(){
+			((TarmedSelectorPanelProvider) slp).toggleFilters();
+		}
 	}
 }

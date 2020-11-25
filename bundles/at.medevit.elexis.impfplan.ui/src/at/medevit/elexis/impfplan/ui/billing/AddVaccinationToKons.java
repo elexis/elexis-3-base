@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
 
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.CodeElementServiceHolder;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IArticle;
@@ -22,6 +23,7 @@ import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.text.model.Samdas.Record;
 import ch.elexis.core.ui.dialogs.SelectOrCreateOpenKonsDialog;
@@ -67,9 +69,8 @@ public class AddVaccinationToKons {
 				
 				@Override
 				public void lockAcquired(){
-					Optional<IEncounter> encounter = CoreModelServiceHolder.get().load(actEncounter.getId(), IEncounter.class);
-					if (encounter.isPresent()) {
-						BillingServiceHolder.get().bill(art, encounter.get(), 1);
+					if (actEncounter != null) {
+						BillingServiceHolder.get().bill(art, actEncounter, 1);
 						
 						// update kons. text
 						Samdas samdas = new Samdas(actEncounter.getVersionedEntry().getHead());
@@ -91,10 +92,12 @@ public class AddVaccinationToKons {
 								break;
 							}
 						}
-						IBillable consVerrechenbar = getKonsVerrechenbar(encounter.get());
+						IBillable consVerrechenbar = getKonsVerrechenbar(actEncounter);
 						if (addedCons && (consVerrechenbar != null)) {
-							BillingServiceHolder.get().bill(consVerrechenbar, encounter.get(), 1);
+							BillingServiceHolder.get()
+								.bill(consVerrechenbar, actEncounter, 1);
 						}
+						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, actEncounter);
 					}
 				}
 			});

@@ -111,12 +111,6 @@ public class MockOmnivoreDocumentStore implements IDocumentStore {
 			}
 			
 			@Override
-			public void setStatus(DocumentStatus value){
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
 			public void setPatient(IPatient value){
 				// TODO Auto-generated method stub
 				
@@ -189,12 +183,6 @@ public class MockOmnivoreDocumentStore implements IDocumentStore {
 			}
 			
 			@Override
-			public DocumentStatus getStatus(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
 			public IPatient getPatient(){
 				// TODO Auto-generated method stub
 				return null;
@@ -258,6 +246,18 @@ public class MockOmnivoreDocumentStore implements IDocumentStore {
 			public IContact getAuthor(){
 				// TODO Auto-generated method stub
 				return null;
+			}
+
+			@Override
+			public List<DocumentStatus> getStatus(){
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void setStatus(DocumentStatus status, boolean active){
+				// TODO Auto-generated method stub
+				
 			}
 		};
 	}

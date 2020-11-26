@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -29,6 +30,7 @@ import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.DocumentStatus;
+import ch.elexis.core.types.DocumentStatusMapper;
 import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.model.internal.ModelUtil;
 import ch.elexis.omnivore.model.internal.Preferences;
@@ -63,13 +65,21 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	}
 	
 	@Override
-	public DocumentStatus getStatus(){
-		return DocumentStatus.NEW;
+	public List<DocumentStatus> getStatus(){
+		int status = getEntity().getStatus();
+		return DocumentStatusMapper.map(status);
 	}
 	
 	@Override
-	public void setStatus(DocumentStatus value){
-		// entity does not support status
+	public void setStatus(DocumentStatus status, boolean active){
+		HashSet<DocumentStatus> _statusSet = new HashSet<>(getStatus());
+		if(active) {
+			_statusSet.add(status);
+		} else {
+			_statusSet.remove(status);
+		}
+		int value = DocumentStatusMapper.map(_statusSet);
+		getEntity().setStatus(value);
 	}
 	
 	@Override

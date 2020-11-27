@@ -352,6 +352,9 @@ public class QRBillData {
 	
 	public void setUltmtDbtrStrtNmOrAdrLine1(String ultmtDbtrStrtNmOrAdrLine1)
 		throws QRBillDataException{
+		// clear adr line of not allowed characters
+		ultmtDbtrStrtNmOrAdrLine1 =
+			ultmtDbtrStrtNmOrAdrLine1.replaceAll(notPattern(ultmtDbtrStrtNmOrAdrLine1Pattern), "");
 		if (!ultmtDbtrStrtNmOrAdrLine1.matches(ultmtDbtrStrtNmOrAdrLine1Pattern)) {
 			throw new QRBillDataException(SourceType.DEBITOR,
 				"Invalid value ["
@@ -361,12 +364,19 @@ public class QRBillData {
 		this.ultmtDbtrStrtNmOrAdrLine1 = ultmtDbtrStrtNmOrAdrLine1;
 	}
 	
+	private String notPattern(String pattern){
+		return "[^" + pattern.substring(1);
+	}
+	
 	public String getUltmtDbtrStrtNmOrAdrLine2(){
 		return ultmtDbtrStrtNmOrAdrLine2;
 	}
 	
 	public void setUltmtDbtrStrtNmOrAdrLine2(String ultmtDbtrStrtNmOrAdrLine2)
 		throws QRBillDataException{
+		// clear adr line of not allowed characters
+		ultmtDbtrStrtNmOrAdrLine2 =
+			ultmtDbtrStrtNmOrAdrLine2.replaceAll(notPattern(ultmtDbtrStrtNmOrAdrLine2Pattern), "");
 		if (!ultmtDbtrStrtNmOrAdrLine2.matches(ultmtDbtrStrtNmOrAdrLine2Pattern)) {
 			throw new QRBillDataException(SourceType.DEBITOR,
 				"Invalid value ["

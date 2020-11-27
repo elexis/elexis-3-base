@@ -64,7 +64,6 @@ public class QRBillDataBuilder {
 	}
 	
 	public QRBillDataBuilder reference(String reference){
-		this.referenceType = "QRR";
 		this.reference = reference;
 		return this;
 	}

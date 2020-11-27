@@ -45,7 +45,7 @@ public class QRBillImage {
 	public Optional<Image> getImage(){
 		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
 		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-		hintMap.put(EncodeHintType.QR_VERSION, 25);
+		hintMap.put(EncodeHintType.QR_VERSION, 18);
 		hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 		
 		QRCodeWriter qrCodeWriter = new QRCodeWriter();

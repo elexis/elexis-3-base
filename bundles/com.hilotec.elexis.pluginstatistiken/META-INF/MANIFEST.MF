@@ -13,3 +13,4 @@ Require-Bundle: ch.unibe.iam.scg.archie,
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.data
 Export-Package: com.hilotec.elexis.pluginstatistiken.schnittstelle
+Import-Package: org.eclipse.jface.dialogs

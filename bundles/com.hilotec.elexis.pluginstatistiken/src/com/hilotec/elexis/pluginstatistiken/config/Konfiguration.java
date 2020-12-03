@@ -23,16 +23,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.hilotec.elexis.pluginstatistiken.schnittstelle.IDatenquelle;
+
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.Extensions;
-import ch.elexis.core.ui.util.Log;
-
-import com.hilotec.elexis.pluginstatistiken.schnittstelle.IDatenquelle;
 
 /**
  * Parser fuer die Konfiguration der Abfragen
@@ -55,7 +58,7 @@ public class Konfiguration {
 	
 	public static final String DATASOURCE_EXT = "com.hilotec.elexis.pluginstatistiken.Datenquelle";
 	
-	Log log = Log.get("Messwertstatistiken");
+	Logger log = LoggerFactory.getLogger(getClass());
 	ArrayList<KonfigurationQuery> queries;
 	HashMap<String, IDatenquelle> datenquellen;
 	
@@ -164,7 +167,10 @@ public class Konfiguration {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(), Log.ERRORS);
+			log.error("Einlesen der XML-Datei felgeschlagen: " + e.getMessage());
+			MessageDialog.openError(Display.getDefault().getActiveShell(),
+				"Hilotec Pluginstatistiken Fehler",
+				"Einlesen der XML-Datei felgeschlagen: " + e.getMessage());
 		}
 	}
 	
@@ -175,10 +181,13 @@ public class Konfiguration {
 				dq = (IDatenquelle) ic.createExecutableExtension("class");
 				datenquellen.put(dq.getName(), dq);
 			} catch (CoreException ce) {
-				log.log("Initialisieren der Datenquelle " + ic.getAttribute("name")
-					+ " fehlgeschlagen: " + ce.getMessage(), Log.ERRORS);
+				log.error("Initialisieren der Datenquelle " + ic.getAttribute("name")
+					+ " fehlgeschlagen: " + ce.getMessage());
+				MessageDialog.openError(Display.getDefault().getActiveShell(),
+					"Hilotec Pluginstatistiken Fehler",
+					"Initialisieren der Datenquelle " + ic.getAttribute("name")
+						+ " fehlgeschlagen: " + ce.getMessage());
 			}
-			
 		}
 	}
 	

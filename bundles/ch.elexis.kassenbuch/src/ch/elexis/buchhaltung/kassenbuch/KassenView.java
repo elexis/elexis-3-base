@@ -166,9 +166,9 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 			case 1:
 				return kb.getDate();
 			case 2:
-				return betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : "";
-			case 3:
 				return betrag.isNegative() ? "" : betrag.getAmountAsString();
+			case 3:
+				return betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : "";
 			case 4:
 				return kb.getSaldo().getAmountAsString();
 			case 5:

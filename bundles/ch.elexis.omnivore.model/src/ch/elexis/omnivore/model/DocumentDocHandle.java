@@ -10,10 +10,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -67,12 +69,12 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	@Override
 	public List<DocumentStatus> getStatus(){
 		int status = getEntity().getStatus();
-		return DocumentStatusMapper.map(status);
+		return new ArrayList<>(DocumentStatusMapper.map(status));
 	}
 	
 	@Override
 	public void setStatus(DocumentStatus status, boolean active){
-		HashSet<DocumentStatus> _statusSet = new HashSet<>(getStatus());
+		Set<DocumentStatus> _statusSet = new HashSet<>(getStatus());
 		if(active) {
 			_statusSet.add(status);
 		} else {
@@ -204,6 +206,9 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setContent(InputStream content){
+		setStatus(DocumentStatus.PREPROCESSED, false);
+		setStatus(DocumentStatus.INDEXED, false);
+		
 		try {
 			File file = getStorageFile(false);
 			if (file == null) {

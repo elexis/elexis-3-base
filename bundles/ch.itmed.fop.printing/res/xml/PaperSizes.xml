@@ -27,6 +27,15 @@
         <marginRight>2</marginRight>
     </paperSize>
 
+    <paperSize id="SLP-2RLE">
+        <pageWidth>36</pageWidth>
+        <pageHeight>89</pageHeight>
+        <marginTop>4</marginTop>
+        <marginBottom>4</marginBottom>
+        <marginLeft>2</marginLeft>
+        <marginRight>2</marginRight>
+    </paperSize>
+
     <paperSize id="SLP-MRLB">
         <pageWidth>28</pageWidth>
         <pageHeight>51</pageHeight>

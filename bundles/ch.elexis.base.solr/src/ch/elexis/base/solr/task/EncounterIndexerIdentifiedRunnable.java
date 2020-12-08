@@ -145,6 +145,9 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 		
 		resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_DATA, noIndexed + " indexed / "
 			+ noRemovedFromIndex + " removed from index / " + newestLastUpdate + " LU");
+		if (noIndexed == 0 && noRemovedFromIndex == 0 && failures.size() == 0) {
+			resultMap.put(IIdentifiedRunnable.ReturnParameter.MARKER_DO_NOT_PERSIST, true);
+		}
 		
 		return newestLastUpdate;
 	}

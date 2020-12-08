@@ -83,7 +83,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 						continue;
 					}
 					content = IOUtils.toByteArray(is);
-					if(content == null || content.length == 0) {
+					if (content == null || content.length == 0) {
 						logger.info("IDocument [{}] has no content, skipping", document.getId());
 						failures.add(new SingleIdentifiableTaskResult(id.toString(),
 							"IDocument has no content, skipping"));
@@ -180,6 +180,9 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 			resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_CLASS,
 				SingleIdentifiableTaskResult.class.getName());
 			resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_DATA_LIST, failures);
+		}
+		if (indexedList.size() == 0 && indexRemovedList.size() == 0 && failures.size() == 0) {
+			resultMap.put(IIdentifiedRunnable.ReturnParameter.MARKER_DO_NOT_PERSIST, true);
 		}
 		
 		return resultMap;

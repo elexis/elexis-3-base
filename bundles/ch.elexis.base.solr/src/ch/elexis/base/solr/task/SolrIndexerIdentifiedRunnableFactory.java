@@ -6,45 +6,47 @@ import java.util.List;
 import org.osgi.service.component.ComponentException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.IIdentifiedRunnableFactory;
 import ch.elexis.core.model.tasks.TaskException;
-import ch.elexis.core.services.IEncounterService;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.tasks.model.ITaskService;
 
 @Component
 public class SolrIndexerIdentifiedRunnableFactory implements IIdentifiedRunnableFactory {
 	
-	private IModelService omnivoreModelService;
-	private IModelService coreModelService;
-	@Reference
-	private IEncounterService encounterService;
-	
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
-	private void setModelService(IModelService modelService){
-		coreModelService = modelService;
-	}
+	private IModelService coreModelService;
 	
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.omnivore.data.model)")
-	public void setOmnivoreModelService(IModelService modelService){
-		omnivoreModelService = modelService;
-	}
+	private IModelService omnivoreModelService;
+	
+	@Reference
+	private IConfigService configService;
 	
 	@Override
 	public List<IIdentifiedRunnable> getProvidedRunnables(){
 		List<IIdentifiedRunnable> ret = new ArrayList<>();
-		ret.add(new SolrIndexerIdentifiedRunnable(coreModelService, omnivoreModelService,
-			encounterService));
+		ret.add(new EncounterIndexerIdentifiedRunnable(coreModelService, configService));
+		ret.add(new LetterIndexerIdentifiedRunnable(coreModelService));
+		ret.add(new DocumentIndexerIdentifiedRunnable(omnivoreModelService));
 		return ret;
 	}
 	
 	@Override
 	public void initialize(Object taskService){
 		try {
-			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreate((ITaskService) taskService);
+			SolrIndexerIdentifiedRunnableTaskDescriptor
+				.getOrCreateForEncounter((ITaskService) taskService);
+			SolrIndexerIdentifiedRunnableTaskDescriptor
+				.getOrCreateForLetter((ITaskService) taskService);
+			SolrIndexerIdentifiedRunnableTaskDescriptor
+				.getOrCreateForDocument((ITaskService) taskService);
 		} catch (TaskException e) {
+			LoggerFactory.getLogger(getClass()).error("initialize", e);
 			throw new ComponentException(e);
 		}
 	}

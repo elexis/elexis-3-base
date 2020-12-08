@@ -3,8 +3,8 @@
    <service>
       <provide interface="ch.elexis.core.model.tasks.IIdentifiedRunnableFactory"/>
    </service>
-   <reference bind="setModelService" interface="ch.elexis.core.services.IModelService" name="ModelService" target="(service.model.name=ch.elexis.core.model)"/>
-   <reference bind="setOmnivoreModelService" interface="ch.elexis.core.services.IModelService" name="OmnivoreModelService" target="(service.model.name=ch.elexis.omnivore.data.model)"/>
-   <reference cardinality="1..1" field="encounterService" interface="ch.elexis.core.services.IEncounterService" name="encounterService"/>
+   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
+   <reference cardinality="1..1" field="coreModelService" interface="ch.elexis.core.services.IModelService" name="coreModelService" target="(service.model.name=ch.elexis.core.model)"/>
+   <reference cardinality="1..1" field="omnivoreModelService" interface="ch.elexis.core.services.IModelService" name="omnivoreModelService" target="(service.model.name=ch.elexis.omnivore.data.model)"/>
    <implementation class="ch.elexis.base.solr.task.SolrIndexerIdentifiedRunnableFactory"/>
 </scr:component>

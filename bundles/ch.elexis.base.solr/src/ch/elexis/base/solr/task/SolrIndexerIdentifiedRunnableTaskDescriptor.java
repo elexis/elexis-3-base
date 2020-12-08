@@ -1,13 +1,5 @@
 package ch.elexis.base.solr.task;
 
-import static com.cronutils.model.field.expression.FieldExpressionFactory.always;
-import static com.cronutils.model.field.expression.FieldExpressionFactory.on;
-import static com.cronutils.model.field.expression.FieldExpressionFactory.questionMark;
-
-import com.cronutils.builder.CronBuilder;
-import com.cronutils.model.CronType;
-import com.cronutils.model.definition.CronDefinitionBuilder;
-
 import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
 import ch.elexis.core.tasks.model.ITaskService;
@@ -15,25 +7,60 @@ import ch.elexis.core.tasks.model.TaskTriggerType;
 
 public class SolrIndexerIdentifiedRunnableTaskDescriptor {
 	
-	public static final String SOLR_POPULATE_TASK_DESCRIPTOR_REFERENCE_ID = "solrIndexer";
+	public static final String SOLR_ENCOUNTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID =
+		"solrIndexerEncounters";
+	public static final String SOLR_LETTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID =
+		"solrIndexerLetters";
+	public static final String SOLR_DOCUMENT_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID =
+		"solrIndexerDocuments";
 	
-	public static ITaskDescriptor getOrCreate(ITaskService taskService) throws TaskException{
+	public static ITaskDescriptor getOrCreateForEncounter(ITaskService taskService)
+		throws TaskException{
 		ITaskDescriptor taskDescriptor = taskService
-			.findTaskDescriptorByIdOrReferenceId(SOLR_POPULATE_TASK_DESCRIPTOR_REFERENCE_ID)
+			.findTaskDescriptorByIdOrReferenceId(SOLR_LETTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID)
 			.orElse(null);
 		if (taskDescriptor == null) {
 			taskDescriptor = taskService
-				.createTaskDescriptor(new SolrIndexerIdentifiedRunnable(null, null, null));
-			taskDescriptor.setReferenceId(SOLR_POPULATE_TASK_DESCRIPTOR_REFERENCE_ID);
-			
+				.createTaskDescriptor(new EncounterIndexerIdentifiedRunnable(null, null));
+			taskDescriptor.setReferenceId(SOLR_LETTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID);
 			taskDescriptor.setTriggerType(TaskTriggerType.CRON);
+			// At second :7, every 10 minutes starting at minute :00, of every hour
+			taskDescriptor.setTriggerParameter("cron", "7 0/10 * * * ?");
 			
-			CronBuilder cron =
-				CronBuilder.cron(CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ));
-			String cronString =
-				cron.withSecond(on(0)).withMinute(on(0)).withHour(on(9)).withDoM(questionMark())
-					.withMonth(always()).withDoW(always()).withYear(always()).instance().asString();
-			taskDescriptor.setTriggerParameter("cron", cronString);
+			taskService.saveTaskDescriptor(taskDescriptor);
+		}
+		return taskDescriptor;
+	}
+	
+	public static ITaskDescriptor getOrCreateForLetter(ITaskService taskService)
+		throws TaskException{
+		ITaskDescriptor taskDescriptor = taskService.findTaskDescriptorByIdOrReferenceId(
+			SOLR_ENCOUNTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID).orElse(null);
+		if (taskDescriptor == null) {
+			taskDescriptor =
+				taskService.createTaskDescriptor(new LetterIndexerIdentifiedRunnable(null));
+			taskDescriptor.setReferenceId(SOLR_ENCOUNTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID);
+			taskDescriptor.setTriggerType(TaskTriggerType.CRON);
+			// At second :17, every 10 minutes starting at minute :00, of every hour
+			taskDescriptor.setTriggerParameter("cron", "17 0/10 * * * ?");
+			
+			taskService.saveTaskDescriptor(taskDescriptor);
+		}
+		return taskDescriptor;
+	}
+	
+	public static ITaskDescriptor getOrCreateForDocument(ITaskService taskService)
+		throws TaskException{
+		ITaskDescriptor taskDescriptor = taskService
+			.findTaskDescriptorByIdOrReferenceId(SOLR_DOCUMENT_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID)
+			.orElse(null);
+		if (taskDescriptor == null) {
+			taskDescriptor =
+				taskService.createTaskDescriptor(new DocumentIndexerIdentifiedRunnable(null));
+			taskDescriptor.setReferenceId(SOLR_DOCUMENT_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID);
+			taskDescriptor.setTriggerType(TaskTriggerType.CRON);
+			// At second :27, every 10 minutes starting at minute :00, of every hour
+			taskDescriptor.setTriggerParameter("cron", "27 0/10 * * * ?");
 			
 			taskService.saveTaskDescriptor(taskDescriptor);
 		}

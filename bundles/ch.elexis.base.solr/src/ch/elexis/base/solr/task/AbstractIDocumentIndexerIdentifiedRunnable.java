@@ -83,7 +83,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 						continue;
 					}
 					content = IOUtils.toByteArray(is);
-					if(content == null || content.length == 0) {
+					if (content == null || content.length == 0) {
 						logger.info("IDocument [{}] has no content, skipping", document.getId());
 						failures.add(new SingleIdentifiableTaskResult(id.toString(),
 							"IDocument has no content, skipping"));

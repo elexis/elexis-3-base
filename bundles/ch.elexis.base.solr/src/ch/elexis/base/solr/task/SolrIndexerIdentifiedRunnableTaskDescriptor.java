@@ -17,12 +17,12 @@ public class SolrIndexerIdentifiedRunnableTaskDescriptor {
 	public static ITaskDescriptor getOrCreateForEncounter(ITaskService taskService)
 		throws TaskException{
 		ITaskDescriptor taskDescriptor = taskService
-			.findTaskDescriptorByIdOrReferenceId(SOLR_LETTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID)
+			.findTaskDescriptorByIdOrReferenceId(SOLR_ENCOUNTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID)
 			.orElse(null);
 		if (taskDescriptor == null) {
 			taskDescriptor = taskService
 				.createTaskDescriptor(new EncounterIndexerIdentifiedRunnable(null, null));
-			taskDescriptor.setReferenceId(SOLR_LETTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID);
+			taskDescriptor.setReferenceId(SOLR_ENCOUNTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID);
 			taskDescriptor.setTriggerType(TaskTriggerType.CRON);
 			// At second :7, every 10 minutes starting at minute :00, of every hour
 			taskDescriptor.setTriggerParameter("cron", "7 0/10 * * * ?");
@@ -35,11 +35,11 @@ public class SolrIndexerIdentifiedRunnableTaskDescriptor {
 	public static ITaskDescriptor getOrCreateForLetter(ITaskService taskService)
 		throws TaskException{
 		ITaskDescriptor taskDescriptor = taskService.findTaskDescriptorByIdOrReferenceId(
-			SOLR_ENCOUNTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID).orElse(null);
+			SOLR_LETTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID).orElse(null);
 		if (taskDescriptor == null) {
 			taskDescriptor =
 				taskService.createTaskDescriptor(new LetterIndexerIdentifiedRunnable(null));
-			taskDescriptor.setReferenceId(SOLR_ENCOUNTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID);
+			taskDescriptor.setReferenceId(SOLR_LETTER_INDEXER_TASK_DESCRIPTOR_REFERENCE_ID);
 			taskDescriptor.setTriggerType(TaskTriggerType.CRON);
 			// At second :17, every 10 minutes starting at minute :00, of every hour
 			taskDescriptor.setTriggerParameter("cron", "17 0/10 * * * ?");

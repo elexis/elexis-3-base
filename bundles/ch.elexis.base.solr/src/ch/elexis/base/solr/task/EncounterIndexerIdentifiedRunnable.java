@@ -104,7 +104,7 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 				try {
 					
 					if (encounter.isDeleted()) {
-						SolrDocument document = solr.getById(encounter.getId());
+						SolrDocument document = solr.getById(SolrConstants.CORE_ENCOUNTERS, encounter.getId());
 						if (document != null) {
 							checkResponse(
 								solr.deleteById(SolrConstants.CORE_ENCOUNTERS, encounter.getId()));

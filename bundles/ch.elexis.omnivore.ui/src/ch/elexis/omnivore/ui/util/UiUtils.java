@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
 
@@ -15,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.Messages;
 import ch.elexis.omnivore.data.Preferences;
@@ -26,7 +30,7 @@ import ch.elexis.omnivore.ui.views.FileImportDialog;
 import ch.rgw.tools.ExHandler;
 
 public class UiUtils {
-
+	
 	public static void open(IDocumentHandle handle){
 		try {
 			String ext = StringConstants.SPACE; //""; //$NON-NLS-1$
@@ -56,17 +60,22 @@ public class UiUtils {
 				Messages.DocHandle_pleaseSelectPatient);
 			return null;
 		}
-		File file = new File(f);
-		if (!file.canRead()) {
-			SWTHelper.showError(Messages.DocHandle_cantReadCaption,
-				String.format(Messages.DocHandle_cantReadMessage, f));
-			return null;
-		}
-		
-		// can't import complete directory
-		if (file.isDirectory()) {
-			SWTHelper.showError(Messages.DocHandle_importErrorDirectory,
-				Messages.DocHandle_importErrorDirectoryText);
+		IVirtualFilesystemHandle file;
+		try {
+			file = VirtualFilesystemServiceHolder.get().of(f);
+			if (!file.canRead()) {
+				SWTHelper.showError(Messages.DocHandle_cantReadCaption,
+					String.format(Messages.DocHandle_cantReadMessage, f));
+				return null;
+			}
+			// can't import complete directory
+			if (file.isDirectory()) {
+				SWTHelper.showError(Messages.DocHandle_importErrorDirectory,
+					Messages.DocHandle_importErrorDirectoryText);
+				return null;
+			}
+		} catch (IOException e) {
+			SWTHelper.showError(Messages.DocHandle_importErrorDirectory, e.getMessage());
 			return null;
 		}
 		
@@ -88,7 +97,7 @@ public class UiUtils {
 		
 		IDocumentHandle dh = null;
 		if (fid.open() == Dialog.OK) {
-			try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+			try (InputStream bis = file.openInputStream();
 					ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 				
 				int in;

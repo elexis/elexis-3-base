@@ -14,7 +14,6 @@
 package ch.elexis.omnivore.data;
 
 import static ch.elexis.omnivore.PreferenceConstants.PREFBASE;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.model.IDocumentHandle;
@@ -48,8 +49,9 @@ import ch.rgw.tools.MimeTool;
 public class Utils {
 	private static Logger log = LoggerFactory.getLogger(Utils.class);
 	
-	static public File archiveFile(File file, IDocumentHandle dh){
-		File newFile = null;
+	static public IVirtualFilesystemHandle archiveFile(IVirtualFilesystemHandle file,
+		IDocumentHandle dh){
+		IVirtualFilesystemHandle newFile = null;
 		String SrcPattern = null;
 		String DestDir = null;
 		
@@ -66,9 +68,9 @@ public class Utils {
 							log.debug(
 								"DestDir is empty. No more rules will be evaluated for this file. Returning.");
 						}
-						newFile = new File(DestDir);
+						newFile = VirtualFilesystemServiceHolder.get().of(DestDir);
 						if (newFile.isDirectory()) {
-							newFile = new File(DestDir + File.separatorChar + file.getName());
+							newFile = newFile.subFile(file.getName());
 						}
 						
 						if (newFile.isDirectory()) {
@@ -79,7 +81,7 @@ public class Utils {
 									file.getName()));
 							return null;
 						} else {
-							if (newFile.isFile()) {
+							if (!newFile.isDirectory()) {
 								log.debug("new File {} already exits ; archiveFile not attempted",
 									newFile.getAbsolutePath());
 								SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,
@@ -89,11 +91,11 @@ public class Utils {
 							} else {
 								log.debug("Will move file {} {} to: {} {}", file.getAbsolutePath(),
 									file.exists(), newFile.getAbsolutePath(), newFile.exists());
-								if (Files.move(file.toPath(), newFile.toPath(),
-									REPLACE_EXISTING) != null) {
+								IVirtualFilesystemHandle moveTo = file.moveTo(newFile);
+								if (moveTo != null) {
 									log.debug("Archived incoming file {} to: {}",
 										file.getAbsolutePath(), newFile.getAbsolutePath());
-									return newFile;
+									return moveTo;
 								} else {
 									log.debug("Failed archiveFile incoming file {} to: {}",
 										file.getAbsolutePath(), newFile.getAbsolutePath());
@@ -107,13 +109,17 @@ public class Utils {
 			}
 		} catch (Throwable throwable) {
 			ExHandler.handle(throwable);
-			if (file != null && newFile != null) {
-				log.debug("Exception while moving file {} {} to: {} {}", file.getAbsolutePath(),
-					file.exists(), newFile.getAbsolutePath(), newFile.exists());
-			} else {
-				log.debug("Exception while moving file [{}] {} src {} dest {}",
-					(file != null) ? file.getAbsolutePath() : "null",
-					(file != null) ? file.exists() : "invalid", SrcPattern, DestDir);
+			try {
+				if (file != null && newFile != null) {
+					log.debug("Exception while moving file {} {} to: {} {}", file.getAbsolutePath(),
+						file.exists(), newFile.getAbsolutePath(), newFile.exists());
+				} else {
+					log.debug("Exception while moving file [{}] {} src {} dest {}",
+						(file != null) ? file.getAbsolutePath() : "null",
+						(file != null) ? file.exists() : "invalid", SrcPattern, DestDir);
+				}
+			} catch (IOException e) {
+				log.error("Exception", e);
 			}
 			SWTHelper.showError(Messages.DocHandle_MoveErrorCaption, Messages.DocHandle_MoveError);
 			return null;
@@ -308,7 +314,7 @@ public class Utils {
 		String fileExtension = null;
 		String mimeType = documentHandle.getMimeType();
 		// somewhen we might event feature correct mimetypes in the db ...
-		if("pdf".equalsIgnoreCase(mimeType)) {
+		if ("pdf".equalsIgnoreCase(mimeType)) {
 			mimeType = "application/pdf";
 		}
 		try {
@@ -396,8 +402,8 @@ public class Utils {
 			return false;
 		}
 	}
-
-	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat) {
+	
+	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat){
 		return ch.elexis.omnivore.model.util.Utils.getMembers(dh, pat);
 	}
 }

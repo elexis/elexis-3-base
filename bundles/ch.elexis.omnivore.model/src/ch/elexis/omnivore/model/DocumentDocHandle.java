@@ -1,13 +1,9 @@
 package ch.elexis.omnivore.model;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,6 +26,8 @@ import ch.elexis.core.model.IHistory;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.DocumentStatus;
 import ch.elexis.core.types.DocumentStatusMapper;
@@ -75,7 +73,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	@Override
 	public void setStatus(DocumentStatus status, boolean active){
 		Set<DocumentStatus> _statusSet = new HashSet<>(getStatus());
-		if(active) {
+		if (active) {
 			_statusSet.add(status);
 		} else {
 			_statusSet.remove(status);
@@ -198,7 +196,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	@Override
 	public InputStream getContent(){
 		byte[] contents = getContents();
-		if(contents != null) {
+		if (contents != null) {
 			return new ByteArrayInputStream(contents);
 		}
 		return null;
@@ -210,13 +208,12 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		setStatus(DocumentStatus.INDEXED, false);
 		
 		try {
-			File file = getStorageFile(false);
-			if (file == null) {
+			IVirtualFilesystemHandle vfsHandle = getStorageFile(false);
+			if (vfsHandle == null) {
 				getEntityMarkDirty().setDoc(IOUtils.toByteArray(content));
 			} else {
-				try (BufferedOutputStream bout =
-					new BufferedOutputStream(new FileOutputStream(file))) {
-					bout.write(IOUtils.toByteArray(content));
+				try (OutputStream out = vfsHandle.openOutputStream()) {
+					out.write(IOUtils.toByteArray(content));
 				}
 			}
 		} catch (IOException e) {
@@ -227,10 +224,11 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	private byte[] getContents(){
 		byte[] ret = getEntity().getDoc();
 		if (ret == null) {
-			File file = getStorageFile(true);
-			if (file != null) {
+			
+			IVirtualFilesystemHandle vfsHandle = getStorageFile(true);
+			if (vfsHandle != null) {
 				try {
-					byte[] bytes = Files.readAllBytes(Paths.get(file.toURI()));
+					byte[] bytes = vfsHandle.readAllBytes();
 					// if we stored the file in the file system but decided
 					// later to store it in the
 					// database: copy the file from the file system to the
@@ -250,30 +248,40 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		return ret;
 	}
 	
-	public File getStorageFile(boolean force){
+	public IVirtualFilesystemHandle getStorageFile(boolean force){
 		if (force || Preferences.storeInFilesystem()) {
 			String pathname = Preferences.getBasepath();
 			if (pathname != null) {
-				File dir = new File(pathname);
-				if (dir.isDirectory()) {
-					IPatient patient =
-						ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
-					if (patient != null) {
-						File subdir = new File(dir, patient.getPatientNr());
-						if (!subdir.exists()) {
-							subdir.mkdir();
-						}
-						File file = new File(subdir, getId() + "." + getExtension()); //$NON-NLS-1$
-						return file;
-					} else {
-						if (getEntity().getKontakt() == null) {
-							LoggerFactory.getLogger(getClass())
-								.error("Dochandle [" + getEntity().getId() + "] has no patient");
+				try {
+					IVirtualFilesystemHandle storageDir =
+						VirtualFilesystemServiceHolder.get().of(pathname);
+					if (storageDir.isDirectory()) {
+						IPatient patient =
+							ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
+						if (patient != null) {
+							IVirtualFilesystemHandle patientDir =
+								storageDir.subDir(patient.getPatientNr());
+							if (!patientDir.exists()) {
+								patientDir.mkdir();
+							}
+							IVirtualFilesystemHandle file =
+								patientDir.subFile(getId() + "." + getExtension()); //$NON-NLS-1$
+							return file;
 						} else {
-							LoggerFactory.getLogger(getClass()).error("Contact ["
-								+ getEntity().getKontakt().getId() + "] is not a patient");
+							if (getEntity().getKontakt() == null) {
+								LoggerFactory.getLogger(getClass()).error(
+									"DocHandle [" + getEntity().getId() + "] has no patient");
+							} else {
+								LoggerFactory.getLogger(getClass()).error("Contact ["
+									+ getEntity().getKontakt().getId() + "] is not a patient");
+							}
 						}
 					}
+					
+				} catch (IOException e) {
+					LoggerFactory.getLogger(getClass())
+						.error("DocHandle [" + getEntity().getId() + "] IOException", e);
+					return null;
 				}
 			}
 			if (Preferences.storeInFilesystem()) {
@@ -293,11 +301,12 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	public boolean exportToFileSystem(){
 		byte[] doc = getEntity().getDoc();
 		// return true if doc is already on file system
-		if (doc == null)
+		if (doc == null) {
 			return true;
-		File file = getStorageFile(true);
-		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(file))) {
-			bout.write(doc);
+		}
+		IVirtualFilesystemHandle vfsHandle = getStorageFile(true);
+		try (OutputStream out = vfsHandle.openOutputStream()) {
+			out.write(doc);
 			getEntity().setDoc(null);
 		} catch (IOException ios) {
 			LoggerFactory.getLogger(getClass())
@@ -305,11 +314,6 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			return false;
 		}
 		return true;
-	}
-	
-	@Override
-	public File getAsFile(){
-		return getStorageFile(true);
 	}
 	
 	@Override

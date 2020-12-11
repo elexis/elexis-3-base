@@ -27,13 +27,4 @@ public class Desktop {
 		}
 	}
 	
-	// Test auf Windows
-	public static boolean isWindows(){
-		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		if (os != null && os.startsWith("Windows")) { //$NON-NLS-1$
-			return true;
-		} else {
-			return false;
-		}
-	}
 }

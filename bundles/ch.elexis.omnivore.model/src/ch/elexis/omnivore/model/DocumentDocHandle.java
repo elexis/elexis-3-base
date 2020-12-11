@@ -260,14 +260,12 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 				try {
 					IVirtualFilesystemHandle storageDir =
 						VirtualFilesystemServiceHolder.get().of(pathname);
-					System.out.println("storageDir "+storageDir.getURI());
 					if (storageDir.isDirectory()) {
 						IPatient patient =
 							ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
 						if (patient != null) {
 							IVirtualFilesystemHandle patientDir =
 								storageDir.subDir(patient.getPatientNr());
-							System.out.println("patientDir "+patientDir.getURI());
 							if (!patientDir.exists()) {
 								patientDir.mkdir();
 							}

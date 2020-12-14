@@ -55,6 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditor;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
@@ -81,7 +82,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	private BooleanFieldEditor bStoreFSGlobal;
 	private BooleanFieldEditor bStoreFS;
 	private BooleanFieldEditor bAutomaticBilling;
-	private DirectoryFieldEditor dfStorePath;
+	private URIFieldEditor dfStorePath;
 	
 	private Button btnSaveColumnWidths;
 	private Button btnSaveSortDirection;
@@ -154,6 +155,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			gGeneralOptions));
 		
 		Group gPathForDocs = new Group(gGeneralOptions, SWT.NONE);
+		gPathForDocs.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		gPathForDocs.setLayout(new FillLayout());
 		
 		bStoreFSGlobal = new BooleanFieldEditor(STOREFSGLOBAL,
@@ -177,7 +179,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		Preferences.storeInFilesystem();
 		
 		dfStorePath =
-			new DirectoryFieldEditor(BASEPATH, ch.elexis.omnivore.data.Messages.Preferences_pathForDocs, gPathForDocs);
+			new URIFieldEditor(BASEPATH, ch.elexis.omnivore.data.Messages.Preferences_pathForDocs, gPathForDocs);
 		Preferences.getBasepath();
 		dfStorePath.setEmptyStringAllowed(true);
 		addField(dfStorePath);

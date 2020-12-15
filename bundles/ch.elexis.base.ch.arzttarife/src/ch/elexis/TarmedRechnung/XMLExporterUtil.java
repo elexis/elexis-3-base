@@ -9,13 +9,18 @@ import org.jdom.Element;
 import org.jdom.Verifier;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.Rechnungssteller;
+import ch.elexis.data.RnStatus.REJECTCODE;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Money;
@@ -469,5 +474,22 @@ public class XMLExporterUtil {
 			}
 		}
 		return ret.toString();
+	}
+	
+	public static void addSSNAttribute(Element element, Patient actPatient, Fall actFall,
+		Rechnung rechnung, boolean isOptional){
+		String ahv =
+			TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+		if (ahv.length() == 0) {
+			ahv = actFall.getRequiredString(TarmedRequirements.SSN).replaceAll("[^0-9]", //$NON-NLS-1$
+				StringConstants.EMPTY);
+		}
+		boolean ahvValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!isOptional && ((CoreHub.userCfg.get(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
+			&& !ahvValid))) {
+			rechnung.reject(REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_AHVInvalid);
+		} else if (ahvValid) {
+			element.setAttribute("ssn", ahv); //$NON-NLS-1$
+		}
 	}
 }

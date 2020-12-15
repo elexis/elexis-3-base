@@ -17,7 +17,7 @@ import ch.elexis.core.spotlight.ISpotlightResultEntry.Category;
 
 @Component(service = ISpotlightResultContributor.class)
 public class EncounterSpotlightResultContributor extends AbstractSpotlightResultContributor {
-
+	
 	@Reference
 	private IElexisEnvironmentService elexisEnvironmentService;
 	
@@ -39,7 +39,6 @@ public class EncounterSpotlightResultContributor extends AbstractSpotlightResult
 	protected void handleResponse(ISpotlightResult spotlightResult, QueryResponse response){
 		List<EncounterBean> beans = response.getBeans(EncounterBean.class);
 		for (EncounterBean bean : beans) {
-			System.out.println(bean);
 			spotlightResult.addEntry(Category.ENCOUNTER, bean.getLabel(), bean.getId(), null);
 		}
 	}

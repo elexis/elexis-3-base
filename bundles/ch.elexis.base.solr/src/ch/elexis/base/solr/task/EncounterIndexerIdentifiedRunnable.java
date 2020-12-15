@@ -88,7 +88,7 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 		IQuery<IEncounter> query = coreModelService.getQuery(IEncounter.class, true);
 		query.and(ModelPackage.Literals.IENCOUNTER__COVERAGE, COMPARATOR.NOT_EQUALS, null);
 		if (lastIndexRunLastUpdate != null) {
-			query.and(ModelPackage.Literals.IDENTIFIABLE__LASTUPDATE, COMPARATOR.GREATER_OR_EQUAL,
+			query.and(ModelPackage.Literals.IDENTIFIABLE__LASTUPDATE, COMPARATOR.GREATER,
 				lastIndexRunLastUpdate);
 		}
 		query.orderBy(ModelPackage.Literals.IDENTIFIABLE__LASTUPDATE, ORDER.ASC);
@@ -104,7 +104,8 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 				try {
 					
 					if (encounter.isDeleted()) {
-						SolrDocument document = solr.getById(SolrConstants.CORE_ENCOUNTERS, encounter.getId());
+						SolrDocument document =
+							solr.getById(SolrConstants.CORE_ENCOUNTERS, encounter.getId());
 						if (document != null) {
 							checkResponse(
 								solr.deleteById(SolrConstants.CORE_ENCOUNTERS, encounter.getId()));

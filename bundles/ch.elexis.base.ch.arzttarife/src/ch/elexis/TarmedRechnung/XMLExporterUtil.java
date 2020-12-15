@@ -23,6 +23,7 @@ import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IContact;
@@ -32,12 +33,15 @@ import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.model.format.PostalAddress;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -515,5 +519,24 @@ public class XMLExporterUtil {
 		}
 		ret.getPostalAddress();
 		return ret;
+	}
+	
+	public static void addSSNAttribute(Element element, IPatient actPatient, ICoverage coverage,
+		IInvoice invoice, boolean isOptional){
+		String ahv =
+			TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+		if (ahv.length() == 0) {
+			ahv = CoverageServiceHolder.get().getRequiredString(coverage, TarmedRequirements.SSN)
+				.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+		}
+		boolean ahvValid = ahv.matches("[0-9]{4,10}|[1-9][0-9]{10}|756[0-9]{10}|438[0-9]{10}"); //$NON-NLS-1$
+		if (!isOptional
+			&& ((ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
+				&& !ahvValid))) {
+			invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
+				Messages.XMLExporter_AHVInvalid);
+		} else if (ahvValid) {
+			element.setAttribute("ssn", ahv); //$NON-NLS-1$
+		}
 	}
 }

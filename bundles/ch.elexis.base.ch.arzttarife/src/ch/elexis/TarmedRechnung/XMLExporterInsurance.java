@@ -54,7 +54,7 @@ public class XMLExporterInsurance {
 				}
 			}
 			element.setAttribute(ATTR_CASE_ID, caseNumber);
-			addSSNAttribute(element, patient, coverage, invoice, false);
+			XMLExporterUtil.addSSNAttribute(element, patient, coverage, invoice, false);
 			String nif = TarmedRequirements.getNIF(mandator.getBiller()).replaceAll("[^0-9]", //$NON-NLS-1$
 				StringConstants.EMPTY);
 			if (ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
@@ -65,7 +65,7 @@ public class XMLExporterInsurance {
 				element.setAttribute("nif", nif); //$NON-NLS-1$
 			}
 		} else if (gesetz.equalsIgnoreCase("mvg")) { //$NON-NLS-1$
-			addSSNAttribute(element, patient, coverage, invoice, false);
+			XMLExporterUtil.addSSNAttribute(element, patient, coverage, invoice, false);
 			addInsuredId(element, patient, coverage);
 		} else if (gesetz.equalsIgnoreCase("uvg")) { //$NON-NLS-1$
 			String casenumber = CoverageServiceHolder.get().getRequiredString(coverage,
@@ -77,7 +77,7 @@ public class XMLExporterInsurance {
 			if (!StringTool.isNothing(casenumber)) {
 				element.setAttribute(ATTR_CASE_ID, casenumber);
 			}
-			addSSNAttribute(element, patient, coverage, invoice, true);
+			XMLExporterUtil.addSSNAttribute(element, patient, coverage, invoice, true);
 			addInsuredId(element, patient, coverage);
 		} else {
 			addInsuredId(element, patient, coverage);
@@ -106,23 +106,5 @@ public class XMLExporterInsurance {
 			vnummer = patient.getId();
 		}
 		element.setAttribute("insured_id", vnummer); //$NON-NLS-1$
-	}
-	
-	private static void addSSNAttribute(Element element, IPatient actPatient, ICoverage coverage,
-		IInvoice invoice, boolean isOptional){
-		String ahv =
-			TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
-		if (ahv.length() == 0) {
-			ahv = CoverageServiceHolder.get().getRequiredString(coverage, TarmedRequirements.SSN)
-				.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
-		}
-		boolean ahvValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!isOptional && ((ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
-			&& !ahvValid))) {
-			invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
-				Messages.XMLExporter_AHVInvalid);
-		} else if (ahvValid) {
-			element.setAttribute("ssn", ahv); //$NON-NLS-1$
-		}
 	}
 }

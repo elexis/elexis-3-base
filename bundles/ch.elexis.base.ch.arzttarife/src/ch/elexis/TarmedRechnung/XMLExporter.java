@@ -874,7 +874,6 @@ public class XMLExporter implements IRnOutputter {
 				Messages.XMLExporter_NoPatientText);
 			return null;
 		}
-		XMLExporterUtil.addSSNAttribute(patientElement, patient, coverage, invoice, true);
 		patientElement.setAttribute("gender", patient.getGender().toString().toLowerCase()); //$NON-NLS-1$
 		LocalDateTime dateOfBirth = patient.getDateOfBirth();
 		if (dateOfBirth == null) { // make validator happy if we don't
@@ -893,6 +892,7 @@ public class XMLExporter implements IRnOutputter {
 				XMLExporterUtil.makeTarmedDatum((String) coverage.getExtInfo("VEKAValid")));
 			patientElement.addContent(cardElement);
 		}
+		XMLExporterUtil.addSSNAttribute(patientElement, patient, coverage, invoice, true);
 		return patientElement;
 	}
 	

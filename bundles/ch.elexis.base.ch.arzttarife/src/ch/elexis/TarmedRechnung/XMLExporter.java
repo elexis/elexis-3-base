@@ -853,7 +853,6 @@ public class XMLExporter implements IRnOutputter {
 		if (patient.getGeschlecht().equals(Person.FEMALE)) {
 			gender = "female"; //$NON-NLS-1$
 		}
-		XMLExporterUtil.addSSNAttribute(patientElement, patient, actFall, rn, true);
 		patientElement.setAttribute("gender", gender); //$NON-NLS-1$
 		String gebDat = patient.getGeburtsdatum();
 		if (StringTool.isNothing(gebDat)) { // make validator happy if we don't
@@ -872,6 +871,7 @@ public class XMLExporter implements IRnOutputter {
 					XMLExporterUtil.makeTarmedDatum((String) actFall.getExtInfoStoredObjectByKey("VEKAValid")));
 			patientElement.addContent(cardElement);
 		}
+		XMLExporterUtil.addSSNAttribute(patientElement, patient, actFall, rn, true);
 		return patientElement;
 	}
 

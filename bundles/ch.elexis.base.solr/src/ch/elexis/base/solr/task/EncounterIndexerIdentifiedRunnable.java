@@ -63,10 +63,8 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 			checkResponse(solr.ping(SolrConstants.CORE_ENCOUNTERS));
 			
 			String lastIndexRunLastUpdateString =
-				configService.get(SolrConstants.CONFIG_KEY_LASTINDEXRUN_ENCOUNTER, null);
-			Long lastIndexRunLastUpdate =
-				(lastIndexRunLastUpdateString != null) ? Long.valueOf(lastIndexRunLastUpdateString)
-						: null;
+				configService.get(SolrConstants.CONFIG_KEY_LASTINDEXRUN_ENCOUNTER, "0");
+			Long lastIndexRunLastUpdate = Long.valueOf(lastIndexRunLastUpdateString);
 			
 			long newestLastUpdate =
 				indexEncounters(solr, lastIndexRunLastUpdate, progressMonitor, logger, failures);
@@ -87,16 +85,14 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 		
 		IQuery<IEncounter> query = coreModelService.getQuery(IEncounter.class, true);
 		query.and(ModelPackage.Literals.IENCOUNTER__COVERAGE, COMPARATOR.NOT_EQUALS, null);
-		if (lastIndexRunLastUpdate != null) {
-			query.and(ModelPackage.Literals.IDENTIFIABLE__LASTUPDATE, COMPARATOR.GREATER,
-				lastIndexRunLastUpdate);
-		}
+		query.and(ModelPackage.Literals.IDENTIFIABLE__LASTUPDATE, COMPARATOR.GREATER,
+			lastIndexRunLastUpdate);
 		query.orderBy(ModelPackage.Literals.IDENTIFIABLE__LASTUPDATE, ORDER.ASC);
 		query.limit(100000);
 		
 		int noIndexed = 0;
 		int noRemovedFromIndex = 0;
-		long newestLastUpdate = 0;
+		long newestLastUpdate = lastIndexRunLastUpdate;
 		try (IQueryCursor<IEncounter> encounterCursor = query.executeAsCursor()) {
 			while (encounterCursor.hasNext()) {
 				
@@ -144,8 +140,9 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 		
 		checkResponse(solr.commit(SolrConstants.CORE_ENCOUNTERS));
 		
-		resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_DATA, noIndexed + " indexed / "
-			+ noRemovedFromIndex + " removed from index / " + newestLastUpdate + " LU");
+		resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_DATA,
+			noIndexed + " indexed / " + noRemovedFromIndex + " removed from index. Indexed LU "
+				+ lastIndexRunLastUpdate + " -> " + newestLastUpdate);
 		if (noIndexed == 0 && noRemovedFromIndex == 0 && failures.size() == 0) {
 			resultMap.put(IIdentifiedRunnable.ReturnParameter.MARKER_DO_NOT_PERSIST, true);
 		}

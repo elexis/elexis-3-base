@@ -29,7 +29,7 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 	}
 	
 	public void activate(IElexisEnvironmentService elexisEnvironmentService){
-		client = new HttpSolrClient.Builder(elexisEnvironmentService.getSolrBaseUrl()).build();
+		client = new HttpSolrClient.Builder("https://ee.elexisdemo.ch/solr/").build();
 	}
 	
 	public void deactivate(){
@@ -49,8 +49,9 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 		
 		try {
 			final Map<String, String> queryParamMap = new HashMap<String, String>();
-			// TODO multiple string terms combined with AND
-			queryParamMap.put("q", "text:" + stringTerms.get(0) + "*");
+			String searchString = stringTerms.stream().reduce((u, t) -> u + " AND text:" + t).get();
+			queryParamMap.put("q", "text:" + searchString);
+			queryParamMap.put("sort", "lastupdate desc");
 			queryParamMap.put("rows", "5");
 			MapSolrParams queryParams = new MapSolrParams(queryParamMap);
 			

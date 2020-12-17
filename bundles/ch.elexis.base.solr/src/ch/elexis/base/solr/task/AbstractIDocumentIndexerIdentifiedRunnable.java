@@ -3,6 +3,7 @@ package ch.elexis.base.solr.task;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,7 @@ import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.SingleIdentifiableTaskResult;
 import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.time.TimeUtil;
 import ch.elexis.core.types.DocumentStatus;
 
 public abstract class AbstractIDocumentIndexerIdentifiedRunnable
@@ -124,7 +126,12 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				
 				IDocumentBean documentBean = new IDocumentBean();
 				documentBean.setId(document.getId());
-				documentBean.setLabel(document.getTitle());
+				LocalDate localDate = TimeUtil.toLocalDate(document.getCreated());
+				String date = (localDate != null) ? TimeUtil.formatSafe(localDate) : "??.??.????";
+				String title =
+					StringUtils.isNotBlank(document.getTitle()) ? document.getTitle().trim()
+							: document.getKeywords();
+				documentBean.setLabel(date + " - " + title);
 				documentBean.setPatientId(patientId);
 				documentBean.setLastUpdate(document.getLastupdate());
 				documentBean.setCreationDate(document.getCreated());

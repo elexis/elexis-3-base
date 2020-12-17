@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.eenv.IElexisEnvironmentService;
 import ch.elexis.core.spotlight.ISpotlightResult;
 import ch.elexis.core.spotlight.ISpotlightResultContributor;
+import ch.elexis.core.spotlight.ISpotlightService;
 
 public abstract class AbstractSpotlightResultContributor implements ISpotlightResultContributor {
 	
@@ -48,11 +49,24 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 		Map<String, String> contextParameters){
 		
 		try {
+			StringBuilder qString = new StringBuilder();
 			final Map<String, String> queryParamMap = new HashMap<String, String>();
-			String searchString = stringTerms.stream().reduce((u, t) -> u + " AND text:" + t).get();
-			queryParamMap.put("q", "text:" + searchString);
+			
+			if (contextParameters != null) {
+				String patientId =
+					contextParameters.get(ISpotlightService.CONTEXT_FILTER_PATIENT_ID);
+				if (patientId != null) {
+					qString.append("patient_id:" + patientId + " AND ");
+				}
+			}
+			qString.append(
+				"text:" + stringTerms.stream().reduce((u, t) -> u + " AND text:" + t).get());
+			queryParamMap.put("q", qString.toString());
 			queryParamMap.put("sort", "lastupdate desc");
 			queryParamMap.put("rows", "5");
+			
+			System.out.println(queryParamMap);
+			
 			MapSolrParams queryParams = new MapSolrParams(queryParamMap);
 			
 			QueryResponse response = client.query(CORE, queryParams);

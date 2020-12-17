@@ -192,13 +192,21 @@ public class Messwert extends PersistentObject {
 		
 		if (!setup.exists()) {
 			try {
-				ByteArrayInputStream bais = new ByteArrayInputStream(create.getBytes("UTF-8")); //$NON-NLS-1$
-				if (j.execScript(bais, true, false) == false) {
-					MessageDialog
-						.openError(
-							null,
-							Messages.Messwert_valuesError, Messages.Messwert_couldNotCreateTable); //$NON-NLS-1$ //$NON-NLS-2$
-					return null;
+				if (!PersistentObject.tableExists(TABLENAME)) {
+					ByteArrayInputStream bais = new ByteArrayInputStream(create.getBytes("UTF-8")); //$NON-NLS-1$
+					if (j.execScript(bais, true, false) == false) {
+						MessageDialog.openError(null, Messages.Messwert_valuesError,
+							Messages.Messwert_couldNotCreateTable); //$NON-NLS-1$ //$NON-NLS-2$
+						return null;
+					}
+				} else {
+					ByteArrayInputStream bais =
+						new ByteArrayInputStream(insertSetup.getBytes("UTF-8")); //$NON-NLS-1$
+					if (j.execScript(bais, true, false) == false) {
+						MessageDialog.openError(null, Messages.Messwert_valuesError,
+							Messages.Messwert_couldNotCreateTable); //$NON-NLS-1$ //$NON-NLS-2$
+						return null;
+					}
 				}
 				Map names = setup.getMap(FLD_BEFUNDE);
 				names.put("VERSION", Integer.toString(VERSION)); //$NON-NLS-1$
@@ -329,4 +337,6 @@ public class Messwert extends PersistentObject {
 		"create index idx_elbf2 on " + TABLENAME + "(PatientID);" + //$NON-NLS-1$ //$NON-NLS-2$
 		"insert into " + TABLENAME + " (ID) values ('__SETUP__');"; //$NON-NLS-1$ //$NON-NLS-2$
 	
+	private static final String insertSetup =
+		"insert into " + TABLENAME + " (ID) values ('__SETUP__');"; //$NON-NLS-1$ //$NON-NLS-2$
 }

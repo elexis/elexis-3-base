@@ -48,6 +48,10 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 		List<Number> numericTerms, ISpotlightResult spotlightResult,
 		Map<String, String> contextParameters){
 		
+		if (stringTerms.isEmpty()) {
+			return;
+		}
+		
 		try {
 			StringBuilder qString = new StringBuilder();
 			final Map<String, String> queryParamMap = new HashMap<String, String>();
@@ -62,10 +66,8 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 			qString.append(
 				"text:" + stringTerms.stream().reduce((u, t) -> u + " AND text:" + t).get());
 			queryParamMap.put("q", qString.toString());
-			queryParamMap.put("sort", "lastupdate desc");
+			queryParamMap.put("sort", "cr_date desc");
 			queryParamMap.put("rows", "5");
-			
-			System.out.println(queryParamMap);
 			
 			MapSolrParams queryParams = new MapSolrParams(queryParamMap);
 			

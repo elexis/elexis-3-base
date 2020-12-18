@@ -70,7 +70,7 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 				indexEncounters(solr, lastIndexRunLastUpdate, progressMonitor, logger, failures);
 			
 			configService.set(SolrConstants.CONFIG_KEY_LASTINDEXRUN_ENCOUNTER,
-				Long.toString(newestLastUpdate));
+				Long.toString(newestLastUpdate), false);
 			
 		} catch (IOException | SolrServerException e) {
 			throw new TaskException(TaskException.EXECUTION_ERROR, e);

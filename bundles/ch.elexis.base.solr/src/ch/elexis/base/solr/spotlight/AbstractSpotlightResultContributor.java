@@ -30,7 +30,7 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 	}
 	
 	public void activate(IElexisEnvironmentService elexisEnvironmentService){
-		client = new HttpSolrClient.Builder("https://ee.elexisdemo.ch/solr/").build();
+		client = new HttpSolrClient.Builder(elexisEnvironmentService.getSolrBaseUrl()).build();
 	}
 	
 	public void deactivate(){

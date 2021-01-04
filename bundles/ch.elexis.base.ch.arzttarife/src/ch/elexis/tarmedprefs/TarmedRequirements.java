@@ -15,6 +15,7 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_RECIPIENT_EAN;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,9 +186,9 @@ public class TarmedRequirements {
 		IXid ahv = p.getXid(DOMAIN_AHV);
 		String ret = ahv != null ? ahv.getDomainId() : "";
 		if (ret.length() == 0) {
-			ret = (String) p.getExtInfo(SSN);
+			ret = StringUtils.defaultString((String) p.getExtInfo(SSN));
 			if (ret.length() == 0) {
-				ret = (String) p.getExtInfo(INSURANCE_NUMBER);
+				ret = StringUtils.defaultString((String) p.getExtInfo(INSURANCE_NUMBER));
 			}
 			if (ret.length() > 0) {
 				setAHV(p, ret);

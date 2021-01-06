@@ -79,8 +79,7 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 			exw.setFieldTypes(new Class[] {
 				String.class /* chapter */, String.class /* rev */, String.class /* code */,
 				String.class /* tp */, String.class /* name */, String.class /* lim */,
-				String.class /* fach (2011) comment (2012) */, String.class
-			/* fach (2012) */
+				String.class /* fach (2011) comment (2012) */, String.class	/* fach (2012) */
 			});
 			if (exw.load(input, langdef)) {
 				int first = exw.getFirstRow();
@@ -292,6 +291,11 @@ public class EALReferenceDataImporter extends AbstractReferenceDataImporter {
 	private void fillImportedValues2018(String[] line){
 		importedValues.clear();
 		importedValues.put(Labor2009Tarif.FLD_CHAPTER, StringTool.getSafe(line, 0));
+		if (StringTool.getSafe(line, 6).equals("1")
+			|| StringTool.getSafe(line, 6).equalsIgnoreCase("true")) {
+			importedValues.put(Labor2009Tarif.FLD_CHAPTER,
+				StringTool.getSafe(line, 0) + ", 5.1.2.2.1");
+		}
 		// convert code to nnnn.mm
 		String code = convertCodeString(StringTool.getSafe(line, 1));
 		

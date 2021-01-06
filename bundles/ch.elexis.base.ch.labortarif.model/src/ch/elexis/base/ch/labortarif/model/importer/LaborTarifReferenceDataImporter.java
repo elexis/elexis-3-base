@@ -279,6 +279,11 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 	private void fillImportedValues2018(String[] line){
 		importedValues.clear();
 		importedValues.put(FLD_CHAPTER, StringTool.getSafe(line, 0));
+		if (StringTool.getSafe(line, 6).equals("1")
+			|| StringTool.getSafe(line, 6).equalsIgnoreCase("true")) {
+			importedValues.put(FLD_CHAPTER,
+				StringTool.getSafe(line, 0) + ", 5.1.2.2.1");
+		}
 		// convert code to nnnn.mm
 		String code = convertCodeString(StringTool.getSafe(line, 1));
 		

@@ -13,6 +13,8 @@ public class QRBillData {
 	
 	private static String UMLAUTPATTERN = "\\u00c4\\u00e4\\u00d6\\u00f6\\u00dc\\u00fc";
 	
+	private static String ADDITIONALCHARSPATTERN = "\\.\\-";
+	
 	private String headerQRType;
 	private String headerQRTypePattern = "[\\w]{3}";
 	private String headerVersion;
@@ -26,11 +28,14 @@ public class QRBillData {
 	private String cdtrInfAdrTp;
 	private String cdtrInfAdrTpPattern = "[\\w]{1}";
 	private String cdtrInfName;
-	private String cdtrInfNamePattern = "[\\w " + UMLAUTPATTERN + "]{1,70}";
+	private String cdtrInfNamePattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}";
 	private String cdtrInfStrtNmOrAdrLine1;
-	private String cdtrInfStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + "]{1,70}";
+	private String cdtrInfStrtNmOrAdrLine1Pattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}";
 	private String cdtrInfStrtNmOrAdrLine2;
-	private String cdtrInfStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + "]{1,16}";
+	private String cdtrInfStrtNmOrAdrLine2Pattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,16}";
 	private String cdtrInfPstCd;
 	private String cdtrInfPstCdPattern = "[\\w]{0,16}";
 	private String cdtrInfTwnNm;
@@ -41,11 +46,14 @@ public class QRBillData {
 	private String ultmtCdtrAdrTp;
 	private String ultmtCdtrAdrTpPattern = "[\\w]{1}";
 	private String ultmtCdtrName;
-	private String ultmtCdtrNamePattern = "[\\w " + UMLAUTPATTERN + "]{1,70}";
+	private String ultmtCdtrNamePattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}";
 	private String ultmtCdtrStrtNmOrAdrLine1;
-	private String ultmtCdtrStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + "]{1,70}";
+	private String ultmtCdtrStrtNmOrAdrLine1Pattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}";
 	private String ultmtCdtrStrtNmOrAdrLine2;
-	private String ultmtCdtrStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + "]{1,16}";
+	private String ultmtCdtrStrtNmOrAdrLine2Pattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,16}";
 	private String ultmtCdtrPstCd;
 	private String ultmtCdtrPstCdPattern = "[\\w]{0,16}";
 	private String ultmtCdtrTwnNm;
@@ -61,11 +69,14 @@ public class QRBillData {
 	private String ultmtDbtrAdrTp;
 	private String ultmtDbtrAdrTpPattern = "[\\w]{1}";
 	private String ultmtDbtrName;
-	private String ultmtDbtrNamePattern = "[\\w " + UMLAUTPATTERN + "]{1,70}";
+	private String ultmtDbtrNamePattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}";
 	private String ultmtDbtrStrtNmOrAdrLine1;
-	private String ultmtDbtrStrtNmOrAdrLine1Pattern = "[\\w " + UMLAUTPATTERN + "]{1,70}";
+	private String ultmtDbtrStrtNmOrAdrLine1Pattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,70}";
 	private String ultmtDbtrStrtNmOrAdrLine2;
-	private String ultmtDbtrStrtNmOrAdrLine2Pattern = "[\\w " + UMLAUTPATTERN + "]{1,16}";
+	private String ultmtDbtrStrtNmOrAdrLine2Pattern =
+		"[\\w " + UMLAUTPATTERN + ADDITIONALCHARSPATTERN + "]{1,16}";
 	private String ultmtDbtrPstCd;
 	private String ultmtDbtrPstCdPattern = "[\\w]{0,16}";
 	private String ultmtDbtrTwnNm;

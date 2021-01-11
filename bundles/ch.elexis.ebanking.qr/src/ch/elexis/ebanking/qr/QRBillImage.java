@@ -62,10 +62,52 @@ public class QRBillImage {
 					data.setPixel(x, y, bitMatrix.get(x, y) ? 0x000000 : 0xFFFFFF);
 				}
 			}
+			addCross(data);
 			return Optional.of(new Image(Display.getDefault(), data));
 		} catch (WriterException e) {
 			LoggerFactory.getLogger(getClass()).error("Error creating QR", e);
 			return Optional.empty();
+		}
+	}
+	
+	private int[] emptyRow = {
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF
+	};
+	
+	private int[] fullRow = {
+		0xFFFFFF, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000,
+		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF
+	};
+	private int[] vertRow = {
+		0xFFFFFF, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF, 0xFFFFFF,
+		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF
+	};
+	
+	private int[] horiRow = {
+		0xFFFFFF, 0x000000, 0x000000, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0x000000, 0x000000, 0xFFFFFF
+	};
+	
+	private void addCross(ImageData data){
+		int center = data.width / 2;
+		int start = center - 8;
+		int lineCount = 0;
+		while (lineCount < 16) {
+			if (lineCount == 0 || lineCount == 15) {
+				data.setPixels(start, start + lineCount, 16, emptyRow, 0);
+			} else {
+				if (lineCount < 3 || lineCount > (16 - 4)) {
+					data.setPixels(start, start + lineCount, 16, fullRow, 0);
+				} else {
+					if (lineCount > 6 && lineCount < 9) {
+						data.setPixels(start, start + lineCount, 16, horiRow, 0);
+					} else {
+						data.setPixels(start, start + lineCount, 16, vertRow, 0);
+					}
+				}
+			}
+			lineCount++;
 		}
 	}
 	

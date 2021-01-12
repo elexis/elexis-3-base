@@ -10,6 +10,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.StringTool;
@@ -48,6 +49,7 @@ public class XMLExporterInsurance {
 				if (ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)) {
 					invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
 						Messages.XMLExporter_IVCaseNumberInvalid);
+					CoreModelServiceHolder.get().save(invoice);
 				} else {
 					caseNumber = "123456"; // sometimes it's better to cheat than to fight //$NON-NLS-1$
 					// bureaucrazy

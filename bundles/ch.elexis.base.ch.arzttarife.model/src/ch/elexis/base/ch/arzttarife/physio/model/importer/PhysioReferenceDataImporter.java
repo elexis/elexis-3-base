@@ -23,6 +23,8 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.TimeTool;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=physio")
@@ -181,8 +183,10 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 	
 	@Override
 	public int getCurrentVersion(){
-		List<IPhysioLeistung> physioLeistungen =
-			ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class).execute();
+		IQuery<IPhysioLeistung> query = ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class);
+		query.and("validFrom", COMPARATOR.NOT_EQUALS, null);
+		query.and("validUntil", COMPARATOR.EQUALS, null);
+		List<IPhysioLeistung> physioLeistungen = query.execute();
 		if (!physioLeistungen.isEmpty()) {
 			LocalDate validFrom = physioLeistungen.get(0).getValidFrom();
 			if (validFrom != null) {

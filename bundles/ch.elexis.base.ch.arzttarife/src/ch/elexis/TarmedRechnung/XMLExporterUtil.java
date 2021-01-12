@@ -535,6 +535,7 @@ public class XMLExporterUtil {
 				&& !ahvValid))) {
 			invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
 				Messages.XMLExporter_AHVInvalid);
+			CoreModelServiceHolder.get().save(invoice);
 		} else if (ahvValid) {
 			element.setAttribute("ssn", ahv); //$NON-NLS-1$
 		}

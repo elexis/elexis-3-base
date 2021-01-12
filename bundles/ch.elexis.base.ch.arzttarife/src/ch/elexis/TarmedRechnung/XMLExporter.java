@@ -468,6 +468,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		if (invoice.adjustAmount(xmlBalance.getAmount().roundTo5()) == false) {
 			invoice.reject(InvoiceState.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
+			CoreModelServiceHolder.get().save(invoice);
 		} else if (doVerify) {
 			new Validator().checkBill(this, new Result<IInvoice>());
 		}
@@ -946,6 +947,7 @@ public class XMLExporter implements IRnOutputter {
 				}
 				logger.error(sb.toString());
 				invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR, sb.toString());
+				CoreModelServiceHolder.get().save(invoice);
 				XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
 				File invalidDir = 
 					new File(CoreHub.getWritableUserDir(), "validation_error");

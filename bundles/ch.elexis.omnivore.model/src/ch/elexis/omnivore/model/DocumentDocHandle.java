@@ -239,8 +239,8 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 					
 					return bytes;
 				} catch (Exception ex) {
-					LoggerFactory.getLogger(getClass())
-						.error("Getting content of [" + getId() + "] fails", ex);
+					LoggerFactory.getLogger(getClass()).error("Getting content of [{}] fails [{}]",
+						getId(), vfsHandle, ex);
 					throw new IllegalStateException(ex);
 				}
 			}

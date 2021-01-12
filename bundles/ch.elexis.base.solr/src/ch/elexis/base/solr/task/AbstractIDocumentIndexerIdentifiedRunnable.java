@@ -75,24 +75,6 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 					continue;
 				}
 				
-				// assert has content
-				byte[] content;
-				try (InputStream is = document.getContent()) {
-					if (is == null) {
-						logger.info("IDocument [{}] content is null, skipping", document.getId());
-						failures.add(new SingleIdentifiableTaskResult(id.toString(),
-							"IDocument content is null, skipping"));
-						continue;
-					}
-					content = IOUtils.toByteArray(is);
-					if (content == null || content.length == 0) {
-						logger.info("IDocument [{}] has no content, skipping", document.getId());
-						failures.add(new SingleIdentifiableTaskResult(id.toString(),
-							"IDocument has no content, skipping"));
-						continue;
-					}
-				}
-				
 				// assert has patient
 				String patientId =
 					document.getPatient() != null ? document.getPatient().getId() : null;
@@ -104,15 +86,33 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 					continue;
 				}
 				
-				String[] solrCellData =
-					getUtil().performSolrCellRequest(solr, getSolrCore(), content);
-				if (StringUtils.isEmpty(solrCellData[0])) {
-					// TODO what to do with the metadata?
-					logger.info("IDocument [{}] could not extract textual content, skipping",
-						document.getId());
+				// assert has content
+				byte[] content;
+				try (InputStream is = document.getContent()) {
+					if (is == null) {
+						logger.info("IDocument [{}] content is null, skipping", document.getId());
+						failures.add(new SingleIdentifiableTaskResult(id.toString(),
+							"IDocument content is null, skipping"));
+						continue;
+					}
+					content = IOUtils.toByteArray(is);
+				}
+				
+				String[] solrCellData = null;
+				if (content.length == 0) {
+					logger.info("IDocument [{}] has no content, marking indexed", document.getId());
 					failures.add(new SingleIdentifiableTaskResult(id.toString(),
-						"IDocument could not extract textual content, skipping"));
-					continue;
+						"IDocument has no content, marking indexed "));
+				} else {
+					solrCellData = getUtil().performSolrCellRequest(solr, getSolrCore(), content);
+					if (StringUtils.isEmpty(solrCellData[0])) {
+						// TODO what to do with the metadata?
+						logger.info("IDocument [{}] could not extract textual content, skipping",
+							document.getId());
+						failures.add(new SingleIdentifiableTaskResult(id.toString(),
+							"IDocument could not extract textual content, skipping"));
+						continue;
+					}
 				}
 				
 				document.setStatus(DocumentStatus.INDEXED, true);
@@ -124,30 +124,34 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 					continue;
 				}
 				
-				IDocumentBean documentBean = new IDocumentBean();
-				documentBean.setId(document.getId());
-				LocalDate localDate = TimeUtil.toLocalDate(document.getCreated());
-				String date = (localDate != null) ? TimeUtil.formatSafe(localDate) : "??.??.????";
-				String title =
-					StringUtils.isNotBlank(document.getTitle()) ? document.getTitle().trim()
-							: document.getKeywords();
-				documentBean.setLabel(date + " - " + title);
-				documentBean.setPatientId(patientId);
-				documentBean.setLastUpdate(document.getLastupdate());
-				documentBean.setCreationDate(document.getCreated());
-				documentBean.setContent(solrCellData[0]);
-				
-				try {
-					checkResponse(solr.addBean(getSolrCore(), documentBean));
-					indexedList.add(document);
-				} catch (SolrServerException sse) {
-					logger.warn("IDocument [{}] could not add to solr index", id.toString(), sse);
-					failures.add(new SingleIdentifiableTaskResult(id.toString(),
-						"IDocument could not add to solr index"));
-					// unset the indexed flag
-					document.setStatus(DocumentStatus.INDEXED, false);
-					getModelService().save(document);
-					continue;
+				if (solrCellData != null) {
+					IDocumentBean documentBean = new IDocumentBean();
+					documentBean.setId(document.getId());
+					LocalDate localDate = TimeUtil.toLocalDate(document.getCreated());
+					String date =
+						(localDate != null) ? TimeUtil.formatSafe(localDate) : "??.??.????";
+					String title =
+						StringUtils.isNotBlank(document.getTitle()) ? document.getTitle().trim()
+								: document.getKeywords();
+					documentBean.setLabel(date + " - " + title);
+					documentBean.setPatientId(patientId);
+					documentBean.setLastUpdate(document.getLastupdate());
+					documentBean.setCreationDate(document.getCreated());
+					documentBean.setContent(solrCellData[0]);
+					
+					try {
+						checkResponse(solr.addBean(getSolrCore(), documentBean));
+						indexedList.add(document);
+					} catch (SolrServerException sse) {
+						logger.warn("IDocument [{}] could not add to solr index", id.toString(),
+							sse);
+						failures.add(new SingleIdentifiableTaskResult(id.toString(),
+							"IDocument could not add to solr index"));
+						// unset the indexed flag
+						document.setStatus(DocumentStatus.INDEXED, false);
+						getModelService().save(document);
+						continue;
+					}
 				}
 				
 				if (subMonitor.isCanceled()) {

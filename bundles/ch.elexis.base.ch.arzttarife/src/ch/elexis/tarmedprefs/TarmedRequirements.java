@@ -202,7 +202,13 @@ public class TarmedRequirements {
 	}
 	
 	public static String getGesetz(final ICoverage coverage){
-		return coverage.getBillingSystem().getLaw().name();
+		String ret = coverage.getBillingSystem().getLaw().name();
+		if (ret.equalsIgnoreCase("IV")) {
+			ret = "IVG";
+		} else if (ret.equalsIgnoreCase("MV")) {
+			ret = "MVG";
+		}
+		return ret;
 	}
 	
 	public static String getTCName(IContact mandant){

@@ -28,7 +28,7 @@ public class XMLExporterTiersTest {
 		Organisation insurer = new Organisation("ACME Insurance", "We keep you healthy");
 		
 		// TP mit gesetzlichem Vertreter -> GV
-		Fall TP_GV = szenario.createPatientWithFall("TP", "TP_GV", "1.1.1980", "m", false);
+		Fall TP_GV = szenario.createPatientWithFall("TP", "TP_GV", "1.1.1980", "m", false).get(0);
 		TP_GV.setCostBearer(insurer);
 		TP_GV.setGarant(insurer);
 		TP_GV.getPatient().setLegalGuardian(legalGuardian);
@@ -43,7 +43,8 @@ public class XMLExporterTiersTest {
 		assertEquals(legalGuardian, NoPoUtil.loadAsPersistentObject(guarantor));
 		
 		// TP ohne gesetzlichen Vertreter -> Patient
-		Fall TP_NOGV = szenario.createPatientWithFall("TP", "TP_NOGV", "1.1.1980", "m", false);
+		Fall TP_NOGV =
+			szenario.createPatientWithFall("TP", "TP_NOGV", "1.1.1980", "m", false).get(0);
 		TP_NOGV.setCostBearer(insurer);
 		TP_NOGV.setGarant(insurer);
 		assertEquals(Tiers.PAYANT, TP_NOGV.getTiersType());

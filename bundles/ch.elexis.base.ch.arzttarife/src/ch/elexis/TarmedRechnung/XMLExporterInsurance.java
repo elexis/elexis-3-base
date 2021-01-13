@@ -63,6 +63,7 @@ public class XMLExporterInsurance {
 				&& (!nif.matches("[0-9]{1,7}"))) { //$NON-NLS-1$
 				invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
 					Messages.XMLExporter_NIFInvalid);
+				CoreModelServiceHolder.get().save(invoice);
 			} else {
 				element.setAttribute("nif", nif); //$NON-NLS-1$
 			}

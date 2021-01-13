@@ -26,6 +26,7 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IArticle;
@@ -41,6 +42,7 @@ import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.builder.IArticleBuilder;
+import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -133,6 +135,8 @@ public class TestData {
 		List<IInvoice> invoices = new ArrayList<IInvoice>();
 		
 		TestSzenario() throws IOException{
+			initBillingSystems();
+			
 			createMandanten();
 			
 			// disable strict billing for tests
@@ -143,11 +147,12 @@ public class TestData {
 					ch.elexis.core.constants.Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 			});
 			
-			Fall _fall = createPatientWithFall("Beatrice", "Spitzkiel", "14.04.1957", "w", false);
-			_fall.getPatient().set(Patient.FLD_PHONE1, "555-555 55 55");
+			List<Fall> _fall =
+				createPatientWithFaelle("Beatrice", "Spitzkiel", "14.04.1957", "w", false, false);
+			_fall.get(0).getPatient().set(Patient.FLD_PHONE1, "555-555 55 55");
 			// load and refresh jpa cache after using PO set
-			CoreModelServiceHolder.get().load(_fall.getPatient().getId(), IPatient.class);
-			createPatientWithFall("Karin", "Zirbelkiefer", "24.04.1951", "w", true);
+			CoreModelServiceHolder.get().load(_fall.get(0).getPatient().getId(), IPatient.class);
+			createPatientWithFaelle("Karin", "Zirbelkiefer", "24.04.1951", "w", true, false);
 			
 			createLeistungen();
 			
@@ -201,6 +206,69 @@ public class TestData {
 			}
 			
 			importExistingXml();
+		}
+		
+		private void initBillingSystems(){
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/KVG/name", //$NON-NLS-1$
+				BillingSystem.KVG_NAME);
+			ConfigServiceHolder.setGlobal(
+				Preferences.LEISTUNGSCODES_CFG_KEY + "/KVG/leistungscodes", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_LEISTUNG);
+			ConfigServiceHolder.setGlobal(
+				Preferences.LEISTUNGSCODES_CFG_KEY + "/KVG/standardausgabe", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_DRUCKER);
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/KVG/bedingungen", //$NON-NLS-1$
+				"Versicherungsnummer:T");
+			BillingSystem.setConfigurationValue("KVG", BillingSystem.CFG_BILLINGLAW,
+				BillingLaw.KVG.name());
+			
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/IV/name", //$NON-NLS-1$
+				BillingSystem.IV_NAME);
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/IV/leistungscodes", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_LEISTUNG);
+			ConfigServiceHolder.setGlobal(
+				Preferences.LEISTUNGSCODES_CFG_KEY + "/IV/standardausgabe", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_DRUCKER);
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/IV/bedingungen", //$NON-NLS-1$
+				"Fallnummer:T"); //$NON-NLS-1$
+			BillingSystem.setConfigurationValue("IV", BillingSystem.CFG_BILLINGLAW,
+				BillingLaw.IV.name());
+			
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/MV/name", //$NON-NLS-1$
+				BillingSystem.MV_NAME);
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/MV/leistungscodes", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_LEISTUNG);
+			ConfigServiceHolder.setGlobal(
+				Preferences.LEISTUNGSCODES_CFG_KEY + "/MV/standardausgabe", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_DRUCKER);
+			BillingSystem.setConfigurationValue("MV", BillingSystem.CFG_BILLINGLAW,
+				BillingLaw.MV.name());
+			
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/privat/name", //$NON-NLS-1$
+				BillingSystem.PRIVATE_NAME);
+			ConfigServiceHolder.setGlobal(
+				Preferences.LEISTUNGSCODES_CFG_KEY + "/privat/leistungscodes", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_LEISTUNG);
+			ConfigServiceHolder.setGlobal(
+				Preferences.LEISTUNGSCODES_CFG_KEY + "/privat/standardausgabe", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_DRUCKER);
+			BillingSystem.setConfigurationValue("privat", BillingSystem.CFG_BILLINGLAW,
+				BillingLaw.VVG.name());
+			BillingSystem.setConfigurationValue("privat", BillingSystem.CFG_NOCOSTBEARER,
+				StringConstants.ONE);
+			
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/VVG/name", //$NON-NLS-1$
+				BillingSystem.VVG_NAME);
+			ConfigServiceHolder.setGlobal(
+				Preferences.LEISTUNGSCODES_CFG_KEY + "/VVG/leistungscodes", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_LEISTUNG);
+			ConfigServiceHolder.setGlobal(
+				Preferences.LEISTUNGSCODES_CFG_KEY + "/VVG/standardausgabe", //$NON-NLS-1$
+				BillingSystem.CONST_TARMED_DRUCKER);
+			ConfigServiceHolder.setGlobal(Preferences.LEISTUNGSCODES_CFG_KEY + "/VVG/bedingungen", //$NON-NLS-1$
+				"Versicherungsnummer:T");
+			BillingSystem.setConfigurationValue("VVG", BillingSystem.CFG_BILLINGLAW,
+				BillingLaw.VVG.name());
 		}
 		
 		private IDiagnosis getDiagnosis(){
@@ -347,11 +415,14 @@ public class TestData {
 			
 			mandant.setExtInfoStoredObjectByKey("IBAN", "CH5800791123000889012");
 			
+			TarmedRequirements.setNIF(NoPoUtil.loadAsIdentifiable(mandant, IContact.class).get(),
+				"12345");
+			
 			mandanten.add(mandant);
 			
 			CoreHub.setMandant(mandant);
 			
-			// make sure somains are registered
+			// make sure domains are registered
 			assertTrue(CoreModelServiceHolder.get() != null);
 			Optional<IMandator> mandator =
 				CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class);
@@ -365,6 +436,12 @@ public class TestData {
 			assertEquals(extInfoStoredObjectByKey, extInfo);
 		}
 		
+		public List<Fall> createPatientWithFall(String firstname, String lastname, String birthdate,
+			String gender, boolean addKostentraeger){
+			return createPatientWithFaelle(firstname, lastname, birthdate, gender, addKostentraeger,
+				true);
+		}
+		
 		/**
 		 * 
 		 * @param firstname
@@ -375,24 +452,44 @@ public class TestData {
 		 *            set the cost bearer to the created patient
 		 * @return
 		 */
-		public Fall createPatientWithFall(String firstname, String lastname, String birthdate,
-			String gender, boolean addKostentraeger){
+		public List<Fall> createPatientWithFaelle(String firstname, String lastname,
+			String birthdate,
+			String gender, boolean addKostentraeger, boolean onlyDefault){
 			Patient pat = new Patient(lastname, firstname, birthdate, gender);
 			addNextAHV(pat);
 			patienten.add(pat);
-			
-			// move required fields to non required ... we are testing xml not Rechnung.build
-			moveRequiredToOptional(Fall.getDefaultCaseLaw());
-			
-			Fall fall = pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(),
-				Fall.getDefaultCaseLaw());
-			if (addKostentraeger) {
-				fall.setCostBearer(pat);
+			String[] billingSystems = BillingSystem.getAbrechnungsSysteme();
+			List<Fall> created = new ArrayList<Fall>();
+			if (onlyDefault) {
+				// move required fields to non required ... we are testing xml not Rechnung.build
+				moveRequiredToOptional(Fall.getDefaultCaseLaw());
+				
+				Fall fall = pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(),
+					Fall.getDefaultCaseLaw());
+				if (addKostentraeger) {
+					fall.setCostBearer(pat);
+				}
+				fall.setExtInfoStoredObjectByKey(TarmedRequirements.CASE_NUMBER, "123456");
+				
+				faelle.add(fall);
+				created.add(fall);
+			} else {
+				for (String string : billingSystems) {
+					// move required fields to non required ... we are testing xml not Rechnung.build
+					moveRequiredToOptional(string);
+					
+					Fall fall = pat.neuerFall(Fall.getDefaultCaseLabel(),
+						Fall.getDefaultCaseReason(), string);
+					if (addKostentraeger) {
+						fall.setCostBearer(pat);
+					}
+					fall.setExtInfoStoredObjectByKey(TarmedRequirements.CASE_NUMBER, "123456");
+					
+					faelle.add(fall);
+					created.add(fall);
+				}
 			}
-			fall.setExtInfoStoredObjectByKey(TarmedRequirements.CASE_NUMBER, "123456");
-			
-			faelle.add(fall);
-			return fall;
+			return created;
 		}
 		
 		private void addNextAHV(Patient pat){
@@ -502,6 +599,15 @@ public class TestData {
 			SAXBuilder builder = new SAXBuilder();
 			Document ret = builder.build(new StringReader(text));
 			return ret;
+		}
+	}
+	
+	public static void removeExistingXml(IInvoice invoice){
+		if (invoice.getNumber().length() < 3) {
+			NamedBlob blob = NamedBlob.load(XMLExporter.PREFIX + invoice.getNumber());
+			if (blob.exists()) {
+				blob.delete();
+			}
 		}
 	}
 }

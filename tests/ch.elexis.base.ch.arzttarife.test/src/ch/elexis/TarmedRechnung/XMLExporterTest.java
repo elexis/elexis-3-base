@@ -71,9 +71,11 @@ public class XMLExporterTest {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
+		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true);
 		XMLExporter exporter = new XMLExporter();
 		List<IInvoice> invoices = szenario.getInvoices();
 		for (IInvoice invoice : invoices) {
+			TestData.removeExistingXml(invoice);
 			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
 				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
@@ -107,6 +109,7 @@ public class XMLExporterTest {
 				}
 			}
 		}
+		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}
 	
 	@Test
@@ -115,15 +118,19 @@ public class XMLExporterTest {
 		assertNotNull(szenario);
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
+		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true);
 		XMLExporter exporter = new XMLExporter();
 		List<IInvoice> invoices = szenario.getInvoices();
 		for (IInvoice invoice : invoices) {
+			TestData.removeExistingXml(invoice);
 			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
 				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
 			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
-				fail();
+				fail("Invoice " + invoice.getNumber() + " "
+					+ invoice.getCoverage().getBillingSystem().getName()
+					+ " is defective\n" + invoice.getTrace("Zurückgewiesen").get(0));
 			}
 			// check if the vat is included
 			Element root = result.getRootElement();
@@ -144,6 +151,7 @@ public class XMLExporterTest {
 				}
 			}
 		}
+		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}
 	
 	@Test
@@ -159,7 +167,9 @@ public class XMLExporterTest {
 			assertNotNull(result);
 			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
-				fail();
+				fail("Invoice " + invoice.getNumber() + " "
+					+ invoice.getCoverage().getBillingSystem().getName()
+					+ " is defective");
 			}
 			// check if the amount_obligations amount of the balance element is correct
 			Element root = result.getRootElement();

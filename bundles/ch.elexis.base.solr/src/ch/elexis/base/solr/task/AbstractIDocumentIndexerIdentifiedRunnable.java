@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.Builder;
+import org.apache.solr.common.SolrException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.Logger;
@@ -51,9 +52,9 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				// assert document exists
 				IDocument document = loadDocument(id.toString());
 				if (document == null) {
-					logger.warn("IDocument [{}] is not loadable , skipping", id.toString());
+					logger.warn("[{}] not loadable , skipping", id.toString());
 					failures.add(new SingleIdentifiableTaskResult(id.toString(),
-						"IDocument is not loadable (null), skipping"));
+						"not loadable (null), skipping"));
 					continue;
 				}
 				
@@ -67,10 +68,10 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 						getModelService().save(document);
 						indexRemovedList.add(document);
 					} catch (SolrServerException sse) {
-						logger.warn("IDocument [{}] could not be deleted from solr index",
-							id.toString(), sse);
+						logger.warn("[{}] could not be deleted from solr index", id.toString(),
+							sse);
 						failures.add(new SingleIdentifiableTaskResult(id.toString(),
-							"IDocument could not be deleted from solr index"));
+							"could not be deleted from solr index"));
 					}
 					continue;
 				}
@@ -79,10 +80,9 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				String patientId =
 					document.getPatient() != null ? document.getPatient().getId() : null;
 				if (patientId == null) {
-					logger.warn("IDocument [{}] has no assocatied patient, skipping",
-						id.toString());
+					logger.warn("[{}] no assocatied patient, skipping", id.toString());
 					failures.add(new SingleIdentifiableTaskResult(id.toString(),
-						"IDocument has no assocatied patient, skipping"));
+						"no assocatied patient, skipping"));
 					continue;
 				}
 				
@@ -90,9 +90,9 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				byte[] content;
 				try (InputStream is = document.getContent()) {
 					if (is == null) {
-						logger.info("IDocument [{}] content is null, skipping", document.getId());
+						logger.info("[{}] content is null, skipping", document.getId());
 						failures.add(new SingleIdentifiableTaskResult(id.toString(),
-							"IDocument content is null, skipping"));
+							"content is null, skipping"));
 						continue;
 					}
 					content = IOUtils.toByteArray(is);
@@ -100,27 +100,31 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				
 				String[] solrCellData = null;
 				if (content.length == 0) {
-					logger.info("IDocument [{}] has no content, marking indexed", document.getId());
+					logger.info("[{}] content length is 0, marking indexed", document.getId());
 					failures.add(new SingleIdentifiableTaskResult(id.toString(),
-						"IDocument has no content, marking indexed "));
+						"content length is 0, marking indexed "));
 				} else {
-					solrCellData = getUtil().performSolrCellRequest(solr, getSolrCore(), content);
-					if (StringUtils.isEmpty(solrCellData[0])) {
-						// TODO what to do with the metadata?
-						logger.info("IDocument [{}] could not extract textual content, skipping",
-							document.getId());
-						failures.add(new SingleIdentifiableTaskResult(id.toString(),
-							"IDocument could not extract textual content, skipping"));
-						continue;
+					try {
+						solrCellData =
+							getUtil().performSolrCellRequest(solr, getSolrCore(), content);
+					} catch (SolrException e) {
+						if (e.getMessage().contains("EncryptedDocumentException")) {
+							logger.warn("[{}] " + e.getMessage() + ", marking indexed",
+								document.getId());
+							failures.add(new SingleIdentifiableTaskResult(document.getId(),
+								e.getMessage() + ", marking indexed"));
+						} else {
+							throw e;
+						}
 					}
 				}
 				
 				document.setStatus(DocumentStatus.INDEXED, true);
 				boolean save = getModelService().save(document);
 				if (!save) {
-					logger.warn("IDocument [{}] could not be saved, see logs", id.toString());
+					logger.warn("[{}] could not be saved, see logs", id.toString());
 					failures.add(new SingleIdentifiableTaskResult(id.toString(),
-						"IDocument could not be saved, see logs"));
+						"could not be saved, see logs"));
 					continue;
 				}
 				
@@ -143,11 +147,10 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 						checkResponse(solr.addBean(getSolrCore(), documentBean));
 						indexedList.add(document);
 					} catch (SolrServerException sse) {
-						logger.warn("IDocument [{}] could not add to solr index", id.toString(),
-							sse);
+						logger.warn("[{}] could not add to solr index, unsetting index status",
+							id.toString(), sse);
 						failures.add(new SingleIdentifiableTaskResult(id.toString(),
-							"IDocument could not add to solr index"));
-						// unset the indexed flag
+							"could not add to solr index, unsetting index status"));
 						document.setStatus(DocumentStatus.INDEXED, false);
 						getModelService().save(document);
 						continue;

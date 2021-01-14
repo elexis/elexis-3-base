@@ -73,6 +73,13 @@ public class OmnivoreViewerComparator extends ViewerComparator {
 			break;
 		case 3:
 			if (cat1.equals(cat2) || isFlat) {
+				rc = dh1.getCreated().compareTo(dh2.getCreated());
+			} else {
+				compareCategories = true;
+			}
+			break;
+		case 4:
+			if (cat1.equals(cat2) || isFlat) {
 				String t1 = dh1.getTitle().toLowerCase();
 				String t2 = dh2.getTitle().toLowerCase();
 				rc = t1.compareTo(t2);
@@ -80,7 +87,7 @@ public class OmnivoreViewerComparator extends ViewerComparator {
 				compareCategories = true;
 			}
 			break;
-		case 4:
+		case 5:
 			if (cat1.equals(cat2) || isFlat) {
 				String k1 = dh1.getKeywords().toLowerCase();
 				String k2 = dh2.getKeywords().toLowerCase();

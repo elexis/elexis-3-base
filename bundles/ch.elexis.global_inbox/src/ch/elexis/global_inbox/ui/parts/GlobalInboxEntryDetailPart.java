@@ -1,8 +1,6 @@
 
 package ch.elexis.global_inbox.ui.parts;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -62,16 +60,17 @@ public class GlobalInboxEntryDetailPart {
 	private Text txtTitle;
 	private CategorySelectionEditComposite csec;
 	private CDateTime archivingDate;
-	private CDateTime creationDate;
+	//	private CDateTime creationDate;
+	private MultiDateSelector creationDate;
 	private ComboViewer cvPatient;
 	private ComboViewer cvSender;
 	private Text txtKeywords;
 	private Button btnInfoTo;
 	private ComboViewer cvInfoToReceiver;
 	
-	
 	@Inject
-	public GlobalInboxEntryDetailPart(Composite parent, IConfigService configService, EHandlerService handlerService){
+	public GlobalInboxEntryDetailPart(Composite parent, IConfigService configService,
+		EHandlerService handlerService){
 		parent.setLayout(new GridLayout(2, false));
 		
 		Label label = new Label(parent, SWT.None);
@@ -100,6 +99,7 @@ public class GlobalInboxEntryDetailPart {
 		gd_archivingDate.widthHint = 100;
 		archivingDate.setLayoutData(gd_archivingDate);
 		archivingDate.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e){
 				globalInboxEntry.setArchivingDate(archivingDate.getSelection());
 			};
@@ -113,12 +113,11 @@ public class GlobalInboxEntryDetailPart {
 		
 		label = new Label(parent, SWT.None);
 		label.setText("Erstelldatum");
-		creationDate =
-			new CDateTime(parent, CDT.DATE_SHORT | CDT.DROP_DOWN | SWT.BORDER | CDT.TAB_FIELDS);
-		GridData gd_creationDate = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_creationDate.widthHint = 100;
-		creationDate.setLayoutData(gd_creationDate);
+		creationDate = new MultiDateSelector(parent, SWT.None);
+		GridData gd_multiDateSelector = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		creationDate.setLayoutData(gd_multiDateSelector);
 		creationDate.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e){
 				globalInboxEntry.setCreationDate(creationDate.getSelection());
 			};
@@ -252,8 +251,8 @@ public class GlobalInboxEntryDetailPart {
 	}
 	
 	@Inject
-	public void setGlobalInboxEntry(
-		@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry){
+	public void setGlobalInboxEntry(@Optional @Named(IServiceConstants.ACTIVE_SELECTION)
+	GlobalInboxEntry globalInboxEntry){
 		
 		this.globalInboxEntry = globalInboxEntry;
 		
@@ -274,18 +273,8 @@ public class GlobalInboxEntryDetailPart {
 			archivingDate.setSelection(new Date());
 		}
 		
-		Date selectedCreationDate = globalInboxEntry.getCreationDate();
-		if (selectedCreationDate != null) {
-			creationDate.setSelection(selectedCreationDate);
-		} else {
-			List<LocalDate> creationDateCandidates = globalInboxEntry.getCreationDateCandidates();
-			if (!creationDateCandidates.isEmpty()) {
-				LocalDate _creationDateCandidate = creationDateCandidates.get(0);
-				Date creationDateCandidate = Date.from(_creationDateCandidate.atStartOfDay()
-					.atZone(ZoneId.systemDefault()).toInstant());
-				creationDate.setSelection(creationDateCandidate);
-			}
-		}
+		creationDate.setSelectionOptionsAndDefault(globalInboxEntry.getCreationDateCandidates(),
+			globalInboxEntry.getCreationDate());
 		
 		IPatient selectedPatient = globalInboxEntry.getPatient();
 		List<IPatient> patientCandidates = globalInboxEntry.getPatientCandidates();

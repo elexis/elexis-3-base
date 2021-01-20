@@ -98,7 +98,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		cov.setSelectionChangedListener(selChange);
 		
 		FieldDescriptor<?>[] fields = {
-			new FieldDescriptor<IArtikelstammItem>(DISP_NAME, "dscr", Typ.STRING,
+			new FieldDescriptor<IArtikelstammItem>(DISP_NAME, "ldscr", Typ.STRING,
 				null),
 		};
 		

@@ -39,7 +39,7 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 		controlFieldProvider.setQuery(query);
 		// apply additional filters like atc, mepha, ...
 		applyQueryFilters(query);
-		query.orderBy("dscr", ORDER.ASC);
+		query.orderBy("ldscr", ORDER.ASC);
 		List<?> elements = query.execute();
 		commonViewer.setLimitReached(elements.size() == QUERY_LIMIT, QUERY_LIMIT);
 		if (addAtcElements) {
@@ -104,7 +104,7 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 	
 	private void insertATCCodeValues(List<Object> elements){
 		if (fieldFilterValues != null) {
-			String name = fieldFilterValues.get("dscr");
+			String name = fieldFilterValues.get("ldscr");
 			
 			if (name == null || name.length() < 1)
 				return;

@@ -13,6 +13,7 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -46,6 +47,9 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
+import ch.elexis.global_inbox.ui.parts.contentproposal.TitleContentProposalProvider;
+import ch.elexis.global_inbox.ui.parts.contentproposal.TitleControlContentAdapter;
+import ch.elexis.global_inbox.ui.parts.contentproposal.TitleEntryContentProposal;
 
 @SuppressWarnings("restriction")
 public class GlobalInboxEntryDetailPart {
@@ -60,7 +64,6 @@ public class GlobalInboxEntryDetailPart {
 	private Text txtTitle;
 	private CategorySelectionEditComposite csec;
 	private CDateTime archivingDate;
-	//	private CDateTime creationDate;
 	private MultiDateSelector creationDate;
 	private ComboViewer cvPatient;
 	private ComboViewer cvSender;
@@ -79,6 +82,15 @@ public class GlobalInboxEntryDetailPart {
 		txtTitle = new Text(parent, SWT.BORDER);
 		txtTitle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtTitle.addModifyListener(e -> globalInboxEntry.setTitle(txtTitle.getText()));
+		ContentProposalAdapter titleContentProposalAdapter =
+			new ContentProposalAdapter(txtTitle, new TitleControlContentAdapter(txtTitle),
+				new TitleContentProposalProvider(txtTitle), null, null);
+		titleContentProposalAdapter.addContentProposalListener(proposal -> {
+			TitleEntryContentProposal _proposal = (TitleEntryContentProposal) proposal;
+			txtTitle.setText(_proposal.getTitleEntry().getTitle());
+			csec.setCategoryByName(_proposal.getTitleEntry().getCategoryName());
+			archivingDate.setFocus();
+		});
 		
 		label = new Label(parent, SWT.None);
 		label.setText("Kategorie");

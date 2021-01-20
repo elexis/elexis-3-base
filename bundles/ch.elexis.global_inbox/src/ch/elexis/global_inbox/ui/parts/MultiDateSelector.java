@@ -60,7 +60,7 @@ public class MultiDateSelector extends Composite {
 		
 		optionsComposite = new Composite(this, SWT.EMBEDDED);
 		RowLayout rl_optionsComposite = new RowLayout(SWT.HORIZONTAL);
-		rl_optionsComposite.spacing = 1;
+		rl_optionsComposite.spacing = 3;
 		rl_optionsComposite.marginTop = 0;
 		rl_optionsComposite.marginBottom = 0;
 		rl_optionsComposite.marginRight = 0;

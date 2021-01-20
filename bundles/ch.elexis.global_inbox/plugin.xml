@@ -9,6 +9,12 @@
             id="ch.elexis.global_inbox.Prefs"
             name="Eingangsfach">
       </page>
+      <page
+            category="ch.elexis.preferences.transporters/ch.elexis.global_inbox.Prefs"
+            class="ch.elexis.global_inbox.preferencepage.TitleCompletionPreferencePage"
+            id="ch.elexis.global_inbox.preferencepage.titlecompletion"
+            name="Titel-Vervollständigung">
+      </page>
    </extension>
    <extension
          id="id1"

@@ -17,6 +17,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String PREF_AUTOBILLING = PREFERENCE_BRANCH + "autobilling"; //$NON-NLS-1$
 	public static final String PREF_INFO_IN_INBOX = PREFERENCE_BRANCH + "infoToInbox"; //$NON-NLS-1$
 	public static final String PREF_DIR_DEFAULT = "";
+	public static final String PREF_TITLE_COMPLETION = PREFERENCE_BRANCH+"titleCompletions"; //$NON-NLS-1$
 	
 	public Preferences(){
 		super(GRID);

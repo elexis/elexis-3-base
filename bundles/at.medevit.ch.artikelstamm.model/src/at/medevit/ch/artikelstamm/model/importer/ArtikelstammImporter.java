@@ -158,6 +158,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter
 		subMonitor.subTask("Importiere Artikel");
 		updateOrAddItems(newVersion, importStamm, bPharma, bNonPharma, subMonitor.split(50));
 		
+		EntityUtil.executeUpdate("UPDATE ArtikelstammItem ai SET ai.ldscr=LOWER(ai.dscr)");
+		
 		// update the version number for type importStammType
 		subMonitor.setTaskName("Setze neue Versionsnummer");
 		

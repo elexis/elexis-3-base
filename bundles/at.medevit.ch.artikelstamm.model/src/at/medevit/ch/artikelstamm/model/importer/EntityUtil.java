@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 
@@ -59,6 +60,19 @@ public class EntityUtil {
 				namedQuery.setParameter(property, propertyMap.get(property));
 			}
 			return namedQuery.getResultList();
+		} finally {
+			em.close();
+		}
+	}
+	
+	public static int executeUpdate(String string){
+		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
+		try {
+			em.getTransaction().begin();
+			Query query = em.createQuery(string);
+			int ret = query.executeUpdate();
+			em.getTransaction().commit();
+			return ret;
 		} finally {
 			em.close();
 		}

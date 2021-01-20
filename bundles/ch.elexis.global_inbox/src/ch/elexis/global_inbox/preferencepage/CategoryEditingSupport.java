@@ -20,6 +20,7 @@ public class CategoryEditingSupport extends EditingSupport {
 	private final IDocumentStore omnivoreDocumentStore;
 	
 	private String[] _selectOptions;
+	private List<String> categories;
 	
 	private final String NO_SELECTION = "Keine Kategorie";
 	
@@ -29,15 +30,18 @@ public class CategoryEditingSupport extends EditingSupport {
 		omnivoreDocumentStore = OsgiServiceUtil
 			.getService(IDocumentStore.class, "(storeid=ch.elexis.data.store.omnivore)")
 			.orElse(null);
+		if (omnivoreDocumentStore != null) {
+			categories =
+				omnivoreDocumentStore.getCategories().stream().map(category -> category.getName())
+					.sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+		}
 	}
 	
 	@Override
 	protected CellEditor getCellEditor(Object element){
 		List<String> selectOptions = new ArrayList<>();
 		selectOptions.add(NO_SELECTION);
-		selectOptions.addAll(
-			omnivoreDocumentStore.getCategories().stream().map(category -> category.getName())
-				.sorted(Comparator.naturalOrder()).collect(Collectors.toList()));
+		selectOptions.addAll(categories);
 		_selectOptions = selectOptions.toArray(new String[] {});
 		return new ComboBoxCellEditor(viewer.getTable(), _selectOptions);
 	}
@@ -50,7 +54,7 @@ public class CategoryEditingSupport extends EditingSupport {
 	@Override
 	protected Object getValue(Object element){
 		String categoryName = ((TitleEntry) element).getCategoryName();
-		if(categoryName == null) {
+		if (categoryName == null) {
 			return 0;
 		}
 		return Arrays.binarySearch(_selectOptions, ((TitleEntry) element).getCategoryName());
@@ -65,7 +69,7 @@ public class CategoryEditingSupport extends EditingSupport {
 		} else {
 			((TitleEntry) element).setCategoryName(_value.toString());
 		}
-		
+		viewer.refresh(element);
 	}
 	
 }

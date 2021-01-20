@@ -39,6 +39,7 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.holder.EncounterServiceHolder;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.documents.composites.CategorySelectionEditComposite;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -165,6 +166,20 @@ public class GlobalInboxEntryDetailPart {
 		cvPatient.addSelectionChangedListener(sc -> {
 			IPatient patient = (IPatient) sc.getStructuredSelection().getFirstElement();
 			globalInboxEntry.setPatient(patient);
+			if (patient != null) {
+				IContact familyDoctor = patient.getFamilyDoctor();
+				IMandator mandator;
+				if (familyDoctor != null) {
+					mandator = CoreModelServiceHolder.get()
+						.load(familyDoctor.getId(), IMandator.class).orElse(null);
+				} else {
+					mandator = EncounterServiceHolder.get().getLatestEncounter(patient)
+						.map(enc -> enc.getMandator()).orElse(null);
+				}
+				if (mandator != null) {
+					cvInfoToReceiver.setSelection(new StructuredSelection(mandator));
+				}
+			}
 		});
 		Combo ccvPatient = cvPatient.getCombo();
 		ccvPatient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));

@@ -99,7 +99,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		
 		FieldDescriptor<?>[] fields = {
 			new FieldDescriptor<IArtikelstammItem>(DISP_NAME, "ldscr", Typ.STRING,
-				null),
+				null).ignoreCase(false)
 		};
 		
 		// add keyListener to search field

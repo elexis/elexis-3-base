@@ -101,7 +101,7 @@ public class TitleCompletionPreferencePage extends PreferencePage
 			public void widgetSelected(SelectionEvent e){
 				TitleEntry titleEntry = new TitleEntry();
 				storedCompletions.add(titleEntry);
-				tableViewer.setInput(storedCompletions);
+				tableViewer.add(titleEntry);
 			}
 		});
 		mntmAdd.setText(Messages.Bezugskontakt_Add);
@@ -116,7 +116,7 @@ public class TitleCompletionPreferencePage extends PreferencePage
 				if (selection != null) {
 					storedCompletions.remove(selection);
 				}
-				tableViewer.setInput(storedCompletions);
+				tableViewer.remove(selection);
 			}
 		});
 		mntmDelete.setText(Messages.BriefAuswahlDeleteButtonText);

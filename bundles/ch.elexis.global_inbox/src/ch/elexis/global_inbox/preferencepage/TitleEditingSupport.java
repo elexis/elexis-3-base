@@ -32,6 +32,7 @@ public class TitleEditingSupport extends EditingSupport {
 	@Override
 	protected void setValue(Object element, Object value){
 		((TitleEntry) element).setTitle(value.toString());
+		viewer.refresh(element);
 	}
 	
 }

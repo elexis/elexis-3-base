@@ -9,26 +9,28 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
-import at.medevit.elexis.inbox.model.InboxElement;
-import at.medevit.elexis.inbox.ui.InboxServiceComponent;
+import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
+import at.medevit.elexis.inbox.ui.InboxServiceHolder;
 import at.medevit.elexis.inbox.ui.part.InboxView;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Mandant;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class IgnoreCommand extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		// check all open elements
-		List<InboxElement> openElements =
-			InboxServiceComponent.getService().getInboxElements( ElexisEventDispatcher.getSelectedMandator(), null,
+		List<IInboxElement> openElements =
+			InboxServiceHolder.get().getInboxElements(
+				ContextServiceHolder.get().getActiveMandator().orElse(null), null,
 				IInboxElementService.State.NEW);
 		
-		for (InboxElement ie : openElements) {
+		for (IInboxElement ie : openElements) {
 			ie.setState(State.SEEN);
 		}
+		InboxModelServiceHolder.get().save(openElements);
 		
 		// update view
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);

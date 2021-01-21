@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.program.Program;
 
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 
 public class FileUiProvider implements IInboxElementUiProvider {
@@ -50,7 +50,7 @@ public class FileUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public boolean isProviderFor(InboxElement element){
+	public boolean isProviderFor(IInboxElement element){
 		Object obj = element.getObject();
 		if (obj instanceof Path) {
 			return true;
@@ -59,7 +59,7 @@ public class FileUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public void doubleClicked(InboxElement element){
+	public void doubleClicked(IInboxElement element){
 		Path path = (Path) element.getObject();
 		Program.launch(path.toFile().getAbsolutePath());
 	}

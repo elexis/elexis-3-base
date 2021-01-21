@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.ehc.ui.inbox.filter.EhcDocumentViewerFilter;
 import at.medevit.elexis.ehc.ui.model.EhcDocument;
 import at.medevit.elexis.ehc.ui.views.EHealthConnectorView;
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 
 public class InboxElementUiProvider implements IInboxElementUiProvider {
@@ -62,7 +62,7 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public boolean isProviderFor(InboxElement element){
+	public boolean isProviderFor(IInboxElement element){
 		Object obj = element.getObject();
 		if (obj instanceof EhcDocument) {
 			return true;
@@ -71,7 +71,7 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public void doubleClicked(InboxElement element){
+	public void doubleClicked(IInboxElement element){
 		// open the ehc view and display the ehc document
 		Object obj = element.getObject();
 		if (obj instanceof EhcDocument) {

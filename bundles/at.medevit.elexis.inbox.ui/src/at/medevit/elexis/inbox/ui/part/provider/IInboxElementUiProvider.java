@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 
 public interface IInboxElementUiProvider {
 	/**
@@ -52,12 +52,12 @@ public interface IInboxElementUiProvider {
 	 * @param element
 	 * @return
 	 */
-	public boolean isProviderFor(InboxElement element);
+	public boolean isProviderFor(IInboxElement element);
 	
 	/**
 	 * Method called when element is double clicked.
 	 * 
 	 * @param element
 	 */
-	public void doubleClicked(InboxElement element);
+	public void doubleClicked(IInboxElement element);
 }

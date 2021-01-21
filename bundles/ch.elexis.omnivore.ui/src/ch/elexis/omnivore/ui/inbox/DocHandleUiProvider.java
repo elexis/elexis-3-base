@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.util.UiUtils;
@@ -42,7 +42,7 @@ public class DocHandleUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public boolean isProviderFor(InboxElement element){
+	public boolean isProviderFor(IInboxElement element){
 		Object obj = element.getObject();
 		if (obj instanceof IDocumentHandle) {
 			return true;
@@ -51,7 +51,7 @@ public class DocHandleUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public void doubleClicked(InboxElement element){
+	public void doubleClicked(IInboxElement element){
 		Object obj = element.getObject();
 		if (isProviderFor(element)) {
 			IDocumentHandle document = (IDocumentHandle) obj;

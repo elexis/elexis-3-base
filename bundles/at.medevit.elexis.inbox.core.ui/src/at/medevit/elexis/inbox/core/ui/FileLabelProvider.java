@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import ch.elexis.core.ui.icons.Images;
 
 public class FileLabelProvider extends LabelProvider implements IColorProvider {
@@ -30,7 +30,7 @@ public class FileLabelProvider extends LabelProvider implements IColorProvider {
 	
 	@Override
 	public String getText(Object element){
-		return ((InboxElement) element).getLabel();
+		return ((IInboxElement) element).getLabel();
 	}
 	
 	@Override

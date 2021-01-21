@@ -6,12 +6,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.core.elements.service.ServiceComponent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Kontakt;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.data.LabOrder;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
 
 public class AddLabInboxElement implements Runnable {
 	
@@ -49,29 +53,33 @@ public class AddLabInboxElement implements Runnable {
 				return;
 			}
 		}
+		ILabResult iLabResult = NoPoUtil.loadAsIdentifiable(labResult, ILabResult.class).get();
 		
-		Patient patient = labResult.getPatient();
-		Kontakt doctor = labResult.getPatient().getStammarzt();
-		Mandant assignedMandant = loadAssignedMandant(true);
+		IPatient patient = iLabResult.getPatient();
+		IContact doctor = iLabResult.getPatient().getFamilyDoctor();
+		IMandator assignedMandant =
+			NoPoUtil.loadAsIdentifiable(loadAssignedMandant(true), IMandator.class).orElse(null);
 		
 		// patient has NO stammarzt 
 		if (doctor == null) {
 			if (assignedMandant == null) {
 				// if stammarzt and assigned contact is null use active mandant
-				assignedMandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+				assignedMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 			}
-		} else if ("1".equals(doctor.get(Kontakt.FLD_IS_MANDATOR))) {
+		} else if (doctor.isMandator()) {
 			// stammarzt is defined
 			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
 				+ patient.getLabel() + " for mandant " + doctor.getLabel());
-			ServiceComponent.getService().createInboxElement(patient, doctor, labResult);
+			ServiceComponent.getService().createInboxElement(patient,
+				CoreModelServiceHolder.get().load(doctor.getId(), IMandator.class).get(),
+				iLabResult);
 		}
 		
 		// an assigned contact was found that is different than the stammarzt
 		if (assignedMandant != null && !assignedMandant.equals(doctor)) {
 			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
 				+ patient.getLabel() + " for mandant " + assignedMandant.getLabel());
-			ServiceComponent.getService().createInboxElement(patient, assignedMandant, labResult);
+			ServiceComponent.getService().createInboxElement(patient, assignedMandant, iLabResult);
 		}
 	}
 	

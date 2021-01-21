@@ -21,36 +21,57 @@ import org.apache.commons.io.FileUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import at.medevit.elexis.inbox.model.IInboxUpdateListener;
-import at.medevit.elexis.inbox.model.InboxElement;
 import at.medevit.elexis.inbox.model.InboxElementType;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
+import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
 
 @Component(immediate = true)
 public class InboxElementService implements IInboxElementService {
 	
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.elexis.inbox.model)")
+	private IModelService modelService;
+	
+	@Reference
+	private IStoreToStringService storeToString;
+	
 	HashSet<IInboxUpdateListener> listeners = new HashSet<IInboxUpdateListener>();
 	
 	@Override
-	public void createInboxElement(Patient patient, Kontakt mandant, PersistentObject object){
-		InboxElement element = new InboxElement(patient, mandant, object);
+	public void createInboxElement(IPatient patient, IMandator mandator, Identifiable object){
+		// InboxElement element = new InboxElement(patient, mandant, object);
+		IInboxElement element = modelService.create(IInboxElement.class);
+		element.setPatient(patient);
+		element.setMandator(mandator);
+		storeToString.storeToString(object).ifPresent(sts -> {
+			element.setObject(sts);
+		});
+		element.setState(State.NEW);
+		modelService.save(element);
 		fireUpdate(element);
 	}
 	
 	@Override
-	public void createInboxElement(IPatient patient, IMandator mandant, Identifiable object){
-		InboxElement element = new InboxElement(patient, mandant, object);
+	public void createInboxElement(IPatient patient, IMandator mandator, PersistentObject object){
+		// InboxElement element = new InboxElement(patient, mandant, object);
+		IInboxElement element = modelService.create(IInboxElement.class);
+		element.setPatient(patient);
+		element.setMandator(mandator);
+		element.setObject(object.storeToString());
+		element.setState(State.NEW);
+		modelService.save(element);
 		fireUpdate(element);
 	}
 	
@@ -69,27 +90,28 @@ public class InboxElementService implements IInboxElementService {
 	}
 	
 	@Override
-	public List<InboxElement> getInboxElements(Mandant mandant, Patient patient, State state){
-		Query<InboxElement> qie = new Query<InboxElement>(InboxElement.class);
+	public List<IInboxElement> getInboxElements(IMandator mandant, IPatient patient, State state){
+		IQuery<IInboxElement> query = modelService.getQuery(IInboxElement.class);
 		if (mandant != null) {
-			qie.add(InboxElement.FLD_MANDANT, "=", mandant.getId());
+			query.and("mandant", COMPARATOR.EQUALS, mandant);
 		}
 		if (patient != null) {
-			qie.add(InboxElement.FLD_PATIENT, "=", patient.getId());
+			query.and("patient", COMPARATOR.EQUALS, patient);
 		}
 		if (state != null) {
-			qie.add(InboxElement.FLD_STATE, "=", Integer.toString(state.ordinal()));
+			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal()));
 		}
-		return qie.execute();
+		return query.execute();
 	}
 	
 	@Override
-	public void changeInboxElementState(InboxElement element, State state){
-		element.set(InboxElement.FLD_STATE, Integer.toString(state.ordinal()));
+	public void changeInboxElementState(IInboxElement element, State state){
+		element.setState(state);
+		modelService.save(element);
 		fireUpdate(element);
 	}
 	
-	private void fireUpdate(InboxElement element){
+	private void fireUpdate(IInboxElement element){
 		synchronized (listeners) {
 			for (IInboxUpdateListener listener : listeners) {
 				listener.update(element);
@@ -108,7 +130,8 @@ public class InboxElementService implements IInboxElementService {
 	}
 	
 	@Override
-	public void createInboxElement(Patient patient, Kontakt mandant, String file, boolean copyFile){
+	public void createInboxElement(IPatient patient, IMandator mandant, String file,
+		boolean copyFile){
 		String path = file;
 		if (path != null) {
 			File src = new File(path);
@@ -118,7 +141,7 @@ public class InboxElementService implements IInboxElementService {
 						StringBuilder pathBuilder = new StringBuilder();
 						pathBuilder.append("inbox");
 						pathBuilder.append(File.separator);
-						pathBuilder.append(patient.getPatCode());
+						pathBuilder.append(patient.getPatientNr());
 						pathBuilder.append("_");
 						pathBuilder.append(System.currentTimeMillis());
 						pathBuilder.append("_");
@@ -132,8 +155,13 @@ public class InboxElementService implements IInboxElementService {
 						return;
 					}
 				}
-				InboxElement element =
-					new InboxElement(patient, mandant, InboxElementType.FILE.getPrefix() + path);
+				IInboxElement element = modelService.create(IInboxElement.class);
+				element.setPatient(patient);
+				element.setMandator(mandant);
+				element.setObject(InboxElementType.FILE.getPrefix() + path);
+				element.setState(State.NEW);
+				modelService.save(element);
+				
 				fireUpdate(element);
 			}
 		}

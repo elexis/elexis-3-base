@@ -15,9 +15,6 @@ import java.util.List;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 
 public interface IInboxElementService {
@@ -36,15 +33,7 @@ public interface IInboxElementService {
 	 */
 	public void createInboxElement(IPatient patient, IMandator mandant, Identifiable object);
 	
-	/**
-	 * Create a new InboxElement and tell registered listeners about it.
-	 * 
-	 * @param mandant
-	 * @param patient
-	 * @param object
-	 * @return
-	 */
-	public void createInboxElement(Patient patient, Kontakt mandant, PersistentObject object);
+	public void createInboxElement(IPatient patient, IMandator mandant, PersistentObject object);
 	
 	/**
 	 * Create a new InboxElement and tell registered listeners about it.
@@ -55,7 +44,7 @@ public interface IInboxElementService {
 	 * @param copyFile
 	 * @return
 	 */
-	public void createInboxElement(Patient patient, Kontakt mandant, String file,
+	public void createInboxElement(IPatient patient, IMandator mandant, String file,
 		boolean copyFile);
 	
 	/**
@@ -66,7 +55,7 @@ public interface IInboxElementService {
 	 * @param state
 	 * @return
 	 */
-	public void changeInboxElementState(InboxElement element, State state);
+	public void changeInboxElementState(IInboxElement element, State state);
 
 	/**
 	 * Register a listener to the set of listeners.
@@ -91,7 +80,7 @@ public interface IInboxElementService {
 	 * @param state
 	 * @return list of matching InboxElement objects
 	 */
-	public List<InboxElement> getInboxElements(Mandant mandant, Patient patient, State state);
+	public List<IInboxElement> getInboxElements(IMandator mandant, IPatient patient, State state);
 	
 	/**
 	 * Deactivate all {@link IInboxElementsProvider} implementations. Useful if for some reason no

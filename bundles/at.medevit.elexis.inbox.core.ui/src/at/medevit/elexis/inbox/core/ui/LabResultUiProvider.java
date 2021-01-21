@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import at.medevit.elexis.inbox.core.ui.filter.PathologicInboxFilter;
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.ui.icons.Images;
@@ -61,7 +61,7 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public boolean isProviderFor(InboxElement element){
+	public boolean isProviderFor(IInboxElement element){
 		Object obj = element.getObject();
 		if (obj instanceof LabResult) {
 			return true;
@@ -81,7 +81,7 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public void doubleClicked(InboxElement element){
+	public void doubleClicked(IInboxElement element){
 		// TODO Auto-generated method stub
 		
 	}

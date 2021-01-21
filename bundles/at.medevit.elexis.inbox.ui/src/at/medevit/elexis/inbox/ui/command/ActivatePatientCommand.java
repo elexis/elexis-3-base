@@ -11,6 +11,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import at.medevit.elexis.inbox.ui.part.InboxView;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.data.Patient;
 
 public class ActivatePatientCommand extends AbstractHandler implements IHandler {
 	
@@ -26,7 +28,9 @@ public class ActivatePatientCommand extends AbstractHandler implements IHandler 
 			
 			if (element instanceof PatientInboxElements) {
 				PatientInboxElements patElement = (PatientInboxElements) element;
-				ElexisEventDispatcher.fireSelectionEvent(patElement.getPatient());
+				Patient patient =
+					(Patient) NoPoUtil.loadAsPersistentObject(patElement.getPatient());
+				ElexisEventDispatcher.fireSelectionEvent(patient);
 			}
 		}
 		return null;

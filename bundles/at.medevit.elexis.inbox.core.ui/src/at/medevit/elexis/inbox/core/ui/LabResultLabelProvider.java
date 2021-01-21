@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.inbox.core.ui.preferences.InboxPreferences;
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.core.ui.icons.Images;
@@ -120,7 +120,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 	
 	@Override
 	public String getText(Object element){
-		Object object = ((InboxElement) element).getObject();
+		Object object = ((IInboxElement) element).getObject();
 		if (object instanceof LabResult) {
 			LabResult labResult = (LabResult) object;
 			List<LabelFields> labelFields = InboxPreferences.getChoosenLabel();
@@ -151,13 +151,13 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			}
 			return sb.toString();
 		}
-		return ((InboxElement) element).getLabel();
+		return ((IInboxElement) element).getLabel();
 	}
 	
 	@Override
 	public Color getForeground(Object element){
 		boolean pathologic = false;
-		Object object = ((InboxElement) element).getObject();
+		Object object = ((IInboxElement) element).getObject();
 		if (object instanceof LabResult) {
 			pathologic = ((LabResult) object).isFlag(LabResultConstants.PATHOLOGIC);
 		} else if (object instanceof ILabResult) {

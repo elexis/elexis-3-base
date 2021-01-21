@@ -49,11 +49,11 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
 import at.medevit.elexis.inbox.model.IInboxUpdateListener;
-import at.medevit.elexis.inbox.model.InboxElement;
-import at.medevit.elexis.inbox.ui.InboxServiceComponent;
+import at.medevit.elexis.inbox.ui.InboxServiceHolder;
 import at.medevit.elexis.inbox.ui.command.AutoActivePatientHandler;
 import at.medevit.elexis.inbox.ui.part.action.InboxFilterAction;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
@@ -62,9 +62,11 @@ import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementLabelProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
 import at.medevit.elexis.inbox.ui.preferences.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.data.Mandant;
@@ -138,7 +140,7 @@ public class InboxView extends ViewPart {
 			public void checkStateChanged(CheckStateChangedEvent event){
 				if (event.getElement() instanceof PatientInboxElements) {
 					PatientInboxElements patientInbox = (PatientInboxElements) event.getElement();
-					for (InboxElement inboxElement : patientInbox.getElements()) {
+					for (IInboxElement inboxElement : patientInbox.getElements()) {
 						if (!filter.isActive() || filter.isSelect(inboxElement)) {
 							State newState = toggleInboxElementState(inboxElement);
 							if (newState == State.NEW) {
@@ -150,8 +152,8 @@ public class InboxView extends ViewPart {
 						}
 					}
 					contentProvider.refreshElement(patientInbox);
-				} else if (event.getElement() instanceof InboxElement) {
-					InboxElement inboxElement = (InboxElement) event.getElement();
+				} else if (event.getElement() instanceof IInboxElement) {
+					IInboxElement inboxElement = (IInboxElement) event.getElement();
 					if (!filter.isActive() || filter.isSelect(inboxElement)) {
 						toggleInboxElementState(inboxElement);
 						contentProvider.refreshElement(inboxElement);
@@ -167,9 +169,9 @@ public class InboxView extends ViewPart {
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (!selection.isEmpty()) {
 					Object selectedObj = selection.getFirstElement();
-					if (selectedObj instanceof InboxElement) {
+					if (selectedObj instanceof IInboxElement) {
 						InboxElementUiExtension extension = new InboxElementUiExtension();
-						extension.fireDoubleClicked((InboxElement) selectedObj);
+						extension.fireDoubleClicked((IInboxElement) selectedObj);
 					}
 				}
 			}
@@ -183,12 +185,15 @@ public class InboxView extends ViewPart {
 					if (setAutoSelectPatient) {
 						Object selectedElement =
 							((StructuredSelection) selection).getFirstElement();
-						if (selectedElement instanceof InboxElement) {
+						if (selectedElement instanceof IInboxElement) {
+							Patient patient = (Patient) NoPoUtil.loadAsPersistentObject(
+								((IInboxElement) selectedElement).getPatient());
 							ElexisEventDispatcher
-								.fireSelectionEvent(((InboxElement) selectedElement).getPatient());
+								.fireSelectionEvent(patient);
 						} else if (selectedElement instanceof PatientInboxElements) {
-							ElexisEventDispatcher.fireSelectionEvent(
+							Patient patient = (Patient) NoPoUtil.loadAsPersistentObject(
 								((PatientInboxElements) selectedElement).getPatient());
+							ElexisEventDispatcher.fireSelectionEvent(patient);
 						}
 					}
 				}
@@ -209,12 +214,12 @@ public class InboxView extends ViewPart {
 			public void drop(DropTargetEvent event){
 				if (dropTransferTypes[0].isSupportedType(event.currentDataType)) {
 					String[] files = (String[]) event.data;
-					Patient patient = null;
+					IPatient patient = null;
 					
 					if (event.item != null) {
 						Object data = event.item.getData();
-						if (data instanceof InboxElement) {
-							patient = ((InboxElement) data).getPatient();
+						if (data instanceof IInboxElement) {
+							patient = ((IInboxElement) data).getPatient();
 						}
 						else if (data instanceof PatientInboxElements) {
 							patient = ((PatientInboxElements) data).getPatient();
@@ -223,14 +228,15 @@ public class InboxView extends ViewPart {
 					
 					if (patient == null) {
 						// fallback
-						patient = ElexisEventDispatcher.getSelectedPatient();
+						patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 					}
 					if (patient != null) {
 						if (files != null) {
 							for (String file : files) {
 								try {
-									InboxServiceComponent.getService().createInboxElement(patient,
-										ElexisEventDispatcher.getSelectedMandator(), file, true);
+									InboxServiceHolder.get().createInboxElement(patient,
+										ContextServiceHolder.get().getActiveMandator().orElse(null),
+										file, true);
 								} catch (Exception e) {
 									LoggerFactory.getLogger(InboxView.class).warn("drop error", e);
 								}
@@ -250,8 +256,8 @@ public class InboxView extends ViewPart {
 							
 		addFilterActions(menuManager);
 		
-		InboxServiceComponent.getService().addUpdateListener(new IInboxUpdateListener() {
-			public void update(final InboxElement element){
+		InboxServiceHolder.get().addUpdateListener(new IInboxUpdateListener() {
+			public void update(final IInboxElement element){
 				if (viewer != null && !viewer.getControl().isDisposed()) {
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run(){
@@ -300,7 +306,7 @@ public class InboxView extends ViewPart {
 		menuManager.update(true);
 	}
 	
-	private State toggleInboxElementState(InboxElement inboxElement){
+	private State toggleInboxElementState(IInboxElement inboxElement){
 		if (inboxElement.getState() == State.NEW) {
 			inboxElement.setState(State.SEEN);
 			return State.SEEN;
@@ -320,10 +326,10 @@ public class InboxView extends ViewPart {
 		}
 	}
 	
-	private List<InboxElement> getOpenInboxElements(){
-		List<InboxElement> openElements =
-			InboxServiceComponent.getService().getInboxElements(
-				(Mandant) ElexisEventDispatcher.getSelected(Mandant.class), null,
+	private List<IInboxElement> getOpenInboxElements(){
+		List<IInboxElement> openElements =
+			InboxServiceHolder.get().getInboxElements(
+				ContextServiceHolder.get().getActiveMandator().orElse(null), null,
 				IInboxElementService.State.NEW);
 		return openElements;
 	}

@@ -84,7 +84,6 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
 import ch.elexis.core.ui.exchange.KontaktMatcher.CreateMode;
 import ch.elexis.data.Artikel;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -589,18 +588,17 @@ public class EMediplanServiceImpl implements EMediplanService {
 				&& medication.Patient.patientId != null) {
 				IPatient patient = CoreModelServiceHolder.get()
 					.load(medication.Patient.patientId, IPatient.class).orElse(null);
-				if(patient != null) {
+				if (patient != null) {
 					IBlob blob = CoreModelServiceHolder.get()
-							.load(medication.getNamedBlobId(), IBlob.class).orElse(null);
-						if (blob == null) {
-							blob = CoreModelServiceHolder.get().create(IBlob.class);
-							blob.setId(medication.getNamedBlobId());
-						}
-						blob.setStringContent(medication.chunk);
-						CoreModelServiceHolder.get().save(blob);
-					service.createInboxElement(Patient.load(patient.getId()),
-						Mandant.load(mandant.getId()), NamedBlob.load(blob.getId()));
-						return true;
+						.load(medication.getNamedBlobId(), IBlob.class).orElse(null);
+					if (blob == null) {
+						blob = CoreModelServiceHolder.get().create(IBlob.class);
+						blob.setId(medication.getNamedBlobId());
+					}
+					blob.setStringContent(medication.chunk);
+					CoreModelServiceHolder.get().save(blob);
+					service.createInboxElement(patient, mandant, NamedBlob.load(blob.getId()));
+					return true;
 				}
 			}
 			

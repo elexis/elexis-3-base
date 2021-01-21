@@ -10,22 +10,21 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui;
 
-import at.medevit.elexis.inbox.model.IInboxElementService;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
-public class InboxServiceComponent {
-	private static IInboxElementService service;
+import ch.elexis.core.services.IModelService;
+
+@Component
+public class InboxModelServiceHolder {
+	private static IModelService service;
 	
-	public static IInboxElementService getService(){
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.elexis.inbox.model)")
+	public void setService(IModelService service){
+		InboxModelServiceHolder.service = service;
+	}
+	
+	public static IModelService get(){
 		return service;
-	}
-	
-	public synchronized void setService(IInboxElementService service){
-		InboxServiceComponent.service = service;
-	}
-	
-	public synchronized void unsetService(IInboxElementService service){
-		if (InboxServiceComponent.service == service) {
-			InboxServiceComponent.service = null;
-		}
 	}
 }

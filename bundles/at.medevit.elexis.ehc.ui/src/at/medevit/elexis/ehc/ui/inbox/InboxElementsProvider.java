@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.ehc.ui.model.EhcDocument;
 import at.medevit.elexis.ehc.ui.service.ServiceComponent;
 import at.medevit.elexis.inbox.model.IInboxElementsProvider;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class InboxElementsProvider implements IInboxElementsProvider, InboxListener {
 	
@@ -45,7 +47,8 @@ public class InboxElementsProvider implements IInboxElementsProvider, InboxListe
 	
 	@Override
 	public void documentCreated(EhcDocument document){
-		ServiceComponent.getInboxService().createInboxElement(document.getPatient(),
-			CoreHub.actMandant, document);
+		ServiceComponent.getInboxService().createInboxElement(
+			NoPoUtil.loadAsIdentifiable(document.getPatient(), IPatient.class).orElse(null),
+			ContextServiceHolder.get().getActiveMandator().orElse(null), document);
 	}
 }

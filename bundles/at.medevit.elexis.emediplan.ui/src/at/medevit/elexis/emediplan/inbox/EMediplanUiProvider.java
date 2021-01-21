@@ -7,7 +7,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.elexis.emediplan.StartupHandler;
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import ch.elexis.data.NamedBlob;
 
@@ -44,7 +44,7 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public boolean isProviderFor(InboxElement element){
+	public boolean isProviderFor(IInboxElement element){
 		Object obj = element.getObject();
 		if (obj instanceof NamedBlob && ((NamedBlob) obj).getId().startsWith("Med_")) {
 			
@@ -54,7 +54,7 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 	}
 	
 	@Override
-	public void doubleClicked(InboxElement element){
+	public void doubleClicked(IInboxElement element){
 		Object obj = element.getObject();
 		if (isProviderFor(element)) {
 			NamedBlob document = (NamedBlob) obj;

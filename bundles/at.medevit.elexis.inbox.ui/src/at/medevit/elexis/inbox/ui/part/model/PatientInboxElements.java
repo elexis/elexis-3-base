@@ -14,31 +14,31 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import at.medevit.elexis.inbox.model.InboxElement;
-import ch.elexis.data.Patient;
+import at.medevit.elexis.inbox.model.IInboxElement;
+import ch.elexis.core.model.IPatient;
 
 public class PatientInboxElements {
 	
-	private Patient patient;
-	private HashSet<InboxElement> elements = new HashSet<InboxElement>();
+	private IPatient patient;
+	private HashSet<IInboxElement> elements = new HashSet<IInboxElement>();
 	
-	public PatientInboxElements(Patient patient){
+	public PatientInboxElements(IPatient patient){
 		this.patient = patient;
 	}
 	
-	public List<InboxElement> getElements(){
-		return new ArrayList<InboxElement>(elements);
+	public List<IInboxElement> getElements(){
+		return new ArrayList<IInboxElement>(elements);
 	}
 	
-	public void addElement(InboxElement element){
+	public void addElement(IInboxElement element){
 		elements.add(element);
 	}
 	
-	public void removeElement(InboxElement element){
+	public void removeElement(IInboxElement element){
 		elements.remove(element);
 	}
 	
-	public Patient getPatient(){
+	public IPatient getPatient(){
 		return patient;
 	}
 

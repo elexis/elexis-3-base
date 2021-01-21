@@ -18,16 +18,16 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
-import at.medevit.elexis.inbox.model.InboxElement;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
 
 public class InboxElementContentProvider implements ITreeContentProvider {
 	
-	HashMap<Patient, PatientInboxElements> map = new HashMap<Patient, PatientInboxElements>();
+	HashMap<IPatient, PatientInboxElements> map = new HashMap<IPatient, PatientInboxElements>();
 	private ArrayList<PatientInboxElements> items;
 	
 	public Object[] getElements(Object inputElement){
@@ -60,11 +60,11 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 	@SuppressWarnings("unchecked")
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
 		if (newInput instanceof List<?>) {
-			List<InboxElement> input = (List<InboxElement>) newInput;
+			List<IInboxElement> input = (List<IInboxElement>) newInput;
 			// refresh map and list
 			map.clear();
-			for (InboxElement inboxElement : input) {
-				Patient patient = inboxElement.getPatient();
+			for (IInboxElement inboxElement : input) {
+				IPatient patient = inboxElement.getPatient();
 				PatientInboxElements patientInbox = map.get(patient);
 				if (patientInbox == null) {
 					patientInbox = new PatientInboxElements(patient);
@@ -76,16 +76,17 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 		}
 	}
 	
-	public void refreshElement(InboxElement inboxElement){
-		Patient patient = inboxElement.getPatient();
+	public void refreshElement(IInboxElement inboxElement){
+		IPatient patient = inboxElement.getPatient();
 		PatientInboxElements patientInboxElement = map.get(patient);
 		// remove seen and add unseen
 		if (patientInboxElement != null) {
 			if (inboxElement.getState() == State.SEEN) {
 				patientInboxElement.removeElement(inboxElement);
 			} else {
-				Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();
-				if (inboxElement.getMandant().equals(activeMandant)) {
+				IMandator activeMandant =
+					ContextServiceHolder.get().getActiveMandator().orElse(null);
+				if (inboxElement.getMandator().equals(activeMandant)) {
 					patientInboxElement.addElement(inboxElement);
 				} else {
 					patientInboxElement.removeElement(inboxElement);
@@ -101,8 +102,8 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 		if (patientInbox.getElements().isEmpty()) {
 			items.remove(patientInbox);
 		} else {
-			Mandant activeMandant = ElexisEventDispatcher.getSelectedMandator();
-			Mandant inboxMandant = patientInbox.getElements().get(0).getMandant();
+			IMandator activeMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
+			IMandator inboxMandant = patientInbox.getElements().get(0).getMandator();
 			if (!inboxMandant.equals(activeMandant)) {
 				items.remove(patientInbox);
 			}

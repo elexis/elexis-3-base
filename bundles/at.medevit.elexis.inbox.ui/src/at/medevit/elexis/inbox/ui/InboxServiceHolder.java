@@ -8,8 +8,23 @@
  * Contributors:
  *     T. Huster - initial API and implementation
  *******************************************************************************/
-package at.medevit.elexis.inbox.model;
+package at.medevit.elexis.inbox.ui;
 
-public interface IInboxUpdateListener {
-	public void update(IInboxElement element);
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import at.medevit.elexis.inbox.model.IInboxElementService;
+
+@Component
+public class InboxServiceHolder {
+	private static IInboxElementService service;
+	
+	@Reference
+	public void setService(IInboxElementService service){
+		InboxServiceHolder.service = service;
+	}
+	
+	public static IInboxElementService get(){
+		return service;
+	}
 }

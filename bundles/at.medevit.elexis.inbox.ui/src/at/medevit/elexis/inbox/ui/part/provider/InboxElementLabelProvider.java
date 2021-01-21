@@ -17,11 +17,11 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.types.Gender;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Person;
 
 public class InboxElementLabelProvider extends LabelProvider implements IColorProvider {
 	
@@ -35,12 +35,12 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 	public String getText(Object element){
 		if (element instanceof PatientInboxElements) {
 			return ((PatientInboxElements) element).toString();
-		} else if (element instanceof InboxElement) {
-			String text = extension.getText((InboxElement) element);
+		} else if (element instanceof IInboxElement) {
+			String text = extension.getText((IInboxElement) element);
 			if (text != null) {
 				return text;
 			} else {
-				Object obj = ((InboxElement) element).getObject();
+				Object obj = ((IInboxElement) element).getObject();
 				if(obj != null) {
 					return "unbekannt [" + obj.getClass().getSimpleName() + "]";
 				} else {
@@ -54,9 +54,9 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 	@Override
 	public Image getImage(Object element){
 		if (element instanceof PatientInboxElements) {
-			Patient pat = ((PatientInboxElements) element).getPatient();
+			IPatient pat = ((PatientInboxElements) element).getPatient();
 			if (pat != null) {
-				if (pat.getGeschlecht().equals(Person.MALE)) {
+				if (pat.getGender() == Gender.MALE) {
 					return Images.IMG_MANN.getImage();
 				} else {
 					return Images.IMG_FRAU.getImage();
@@ -64,8 +64,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 			} else {
 				return Images.IMG_QUESTION_MARK.getImage();
 			}
-		} else if (element instanceof InboxElement) {
-			Image image = extension.getImage((InboxElement) element);
+		} else if (element instanceof IInboxElement) {
+			Image image = extension.getImage((IInboxElement) element);
 			if (image != null) {
 				return image;
 			} else {
@@ -76,8 +76,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 	}
 	
 	public Color getForeground(Object element){
-		if (element instanceof InboxElement) {
-			Color color = extension.getForeground((InboxElement) element);
+		if (element instanceof IInboxElement) {
+			Color color = extension.getForeground((IInboxElement) element);
 			if (color != null) {
 				return color;
 			}
@@ -86,8 +86,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 	}
 	
 	public Color getBackground(Object element){
-		if (element instanceof InboxElement) {
-			Color color = extension.getBackground((InboxElement) element);
+		if (element instanceof IInboxElement) {
+			Color color = extension.getBackground((IInboxElement) element);
 			if (color != null) {
 				return color;
 			}

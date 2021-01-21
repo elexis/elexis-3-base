@@ -10,10 +10,13 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.inbox;
 
+import java.util.Optional;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
+import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import ch.elexis.data.NamedBlob;
 
 public class EMediplanViewerFilter extends ViewerFilter {
@@ -26,6 +29,11 @@ public class EMediplanViewerFilter extends ViewerFilter {
 				return true;
 			}
 			return false;
+		} else if (element instanceof PatientInboxElements) {
+			PatientInboxElements patientInbox = (PatientInboxElements) element;
+			Optional<IInboxElement> selectedElement = ((PatientInboxElements) element).getElements()
+				.stream().filter(ie -> select(viewer, patientInbox, ie)).findAny();
+			return selectedElement.isPresent();
 		}
 		return true;
 	}

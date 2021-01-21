@@ -10,9 +10,13 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.service;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import at.medevit.elexis.ehc.core.EhcCoreService;
 import at.medevit.elexis.inbox.model.IInboxElementService;
 
+@Component
 public class ServiceComponent {
 	private static EhcCoreService ehcService;
 	private static IInboxElementService inboxService;
@@ -21,24 +25,14 @@ public class ServiceComponent {
 		return inboxService;
 	}
 	
+	@Reference
 	public synchronized void setEhcService(EhcCoreService service){
 		ServiceComponent.ehcService = service;
 	}
 	
-	public synchronized void unsetEhcService(EhcCoreService service){
-		if (ServiceComponent.ehcService == service) {
-			ServiceComponent.ehcService = null;
-		}
-	}
-	
+	@Reference
 	public synchronized void setInboxService(IInboxElementService service){
 		ServiceComponent.inboxService = service;
-	}
-	
-	public synchronized void unsetInboxService(IInboxElementService service){
-		if (ServiceComponent.inboxService == service) {
-			ServiceComponent.inboxService = null;
-		}
 	}
 	
 	public static EhcCoreService getEhcService(){

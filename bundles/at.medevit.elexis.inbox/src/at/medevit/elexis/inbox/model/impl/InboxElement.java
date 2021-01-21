@@ -2,7 +2,6 @@ package at.medevit.elexis.inbox.model.impl;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -20,6 +19,8 @@ import ch.elexis.core.model.Identifiable;
 public class InboxElement
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.InboxElement>
 		implements IInboxElement {
+	
+	private Identifiable object;
 	
 	public InboxElement(ch.elexis.core.jpa.entities.InboxElement entity){
 		super(entity);
@@ -47,10 +48,11 @@ public class InboxElement
 		if (outboxElementType != null) {
 			switch (outboxElementType) {
 			case DB:
-				Optional<Identifiable> loaded =
-					StoreToStringServiceHolder.get().loadFromString(uri);
-				if (loaded.isPresent()) {
-					return loaded.get();
+				if (object == null && StringUtils.isNotBlank(uri)) {
+					object = StoreToStringServiceHolder.get().loadFromString(uri).orElse(null);
+				}
+				if (object != null) {
+					return object;
 				}
 				break;
 			case FILE:
@@ -97,8 +99,8 @@ public class InboxElement
 	
 	@Override
 	public void setObject(String storeToString){
-		// TODO Auto-generated method stub
-		
+		object = null;
+		getEntityMarkDirty().setObject(storeToString);
 	}
 	
 	@Override

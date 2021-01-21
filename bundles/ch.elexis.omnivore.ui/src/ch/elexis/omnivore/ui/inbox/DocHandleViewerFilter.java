@@ -13,15 +13,15 @@ package ch.elexis.omnivore.ui.inbox;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import ch.elexis.omnivore.model.IDocumentHandle;
 
 public class DocHandleViewerFilter extends ViewerFilter {
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element){
-		if (element instanceof InboxElement) {
-			Object o = ((InboxElement) element).getObject();
+		if (element instanceof IInboxElement) {
+			Object o = ((IInboxElement) element).getObject();
 			if (o instanceof IDocumentHandle) {
 				return true;
 			}	

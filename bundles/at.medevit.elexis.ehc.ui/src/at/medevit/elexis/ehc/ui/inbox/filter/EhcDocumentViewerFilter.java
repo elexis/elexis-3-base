@@ -14,14 +14,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import at.medevit.elexis.ehc.ui.model.EhcDocument;
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 
 public class EhcDocumentViewerFilter extends ViewerFilter {
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element){
-		if (element instanceof InboxElement) {
-			if (((InboxElement) element).getObject() instanceof EhcDocument) {
+		if (element instanceof IInboxElement) {
+			if (((IInboxElement) element).getObject() instanceof EhcDocument) {
 				return true;
 			}
 			return false;

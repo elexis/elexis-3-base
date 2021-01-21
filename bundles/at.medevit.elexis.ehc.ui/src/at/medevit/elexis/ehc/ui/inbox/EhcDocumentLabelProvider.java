@@ -15,12 +15,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.elexis.ehc.ui.model.EhcDocument;
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 
 public class EhcDocumentLabelProvider extends LabelProvider {
 	@Override
 	public String getText(Object element){
-		EhcDocument document = (EhcDocument) ((InboxElement) element).getObject();
+		EhcDocument document = (EhcDocument) ((IInboxElement) element).getObject();
 		return document.getLabel();
 	}
 	

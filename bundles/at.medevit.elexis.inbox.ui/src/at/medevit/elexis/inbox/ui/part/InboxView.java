@@ -23,11 +23,9 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -103,7 +101,7 @@ public class InboxView extends ViewPart {
 		filterComposite.setLayout(new GridLayout(2, false));
 		
 		filterText = new Text(filterComposite, SWT.SEARCH);
-		filterText.setMessage("Filter");
+		filterText.setMessage("Patienten Filter");
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		filterText.setLayoutData(data);
 		filterText.addModifyListener(new ModifyListener() {
@@ -364,18 +362,11 @@ public class InboxView extends ViewPart {
 			if (searchString == null || searchString.length() == 0) {
 				return true;
 			}
-			
-			StructuredViewer sviewer = (StructuredViewer) viewer;
-			ITreeContentProvider provider = (ITreeContentProvider) sviewer.getContentProvider();
-			Object[] children = provider.getChildren(element);
-			if (children != null && children.length > 0) {
-				for (Object child : children) {
-					if (select(viewer, element, child)) {
-						return true;
-					}
-				}
+			if (element instanceof PatientInboxElements) {
+				return isSelect(element);
+			} else {
+				return true;
 			}
-			return isSelect(element);
 		}
 	}
 	

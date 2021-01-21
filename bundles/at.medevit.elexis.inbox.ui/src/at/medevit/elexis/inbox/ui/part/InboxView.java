@@ -122,7 +122,8 @@ public class InboxView extends ViewPart {
 		menuManager.createControl(filterComposite);
 		
 		viewer =
-			new CheckboxTreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			new CheckboxTreeViewer(composite,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.VIRTUAL);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd);
 		

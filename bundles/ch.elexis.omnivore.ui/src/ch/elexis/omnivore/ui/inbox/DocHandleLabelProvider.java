@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import at.medevit.elexis.inbox.model.InboxElement;
+import at.medevit.elexis.inbox.model.IInboxElement;
 import ch.elexis.omnivore.model.IDocumentHandle;
 
 public class DocHandleLabelProvider extends LabelProvider {
@@ -23,7 +23,7 @@ public class DocHandleLabelProvider extends LabelProvider {
 	
 	@Override
 	public String getText(Object element){
-		IDocumentHandle document = (IDocumentHandle) ((InboxElement) element).getObject();
+		IDocumentHandle document = (IDocumentHandle) ((IInboxElement) element).getObject();
 		return document.getTitle() + " vom " + document.getCreated();
 	}
 	

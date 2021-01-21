@@ -15,7 +15,8 @@ Import-Package: ch.elexis.core.model,
  ch.elexis.core.services.holder,
  ch.rgw.io,
  org.slf4j
-Export-Package: at.medevit.elexis.inbox.ui.part.provider
+Export-Package: at.medevit.elexis.inbox.ui.part.model,
+ at.medevit.elexis.inbox.ui.part.provider
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/at.medevit.elexis.inbox.ui.InboxModelServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.inbox.ui.InboxServiceHolder.xml

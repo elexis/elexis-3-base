@@ -38,7 +38,7 @@ public class InboxElement
 	
 	@Override
 	public void setState(State state){
-		getEntityMarkDirty().setState(Integer.toString(State.NEW.ordinal()));
+		getEntityMarkDirty().setState(Integer.toString(state.ordinal()));
 	}
 	
 	@Override

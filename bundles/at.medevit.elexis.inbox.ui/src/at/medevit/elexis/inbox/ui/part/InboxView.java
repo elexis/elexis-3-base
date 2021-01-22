@@ -339,7 +339,7 @@ public class InboxView extends ViewPart {
 		
 		public void setSearchText(String s){
 			// Search must be a substring of the existing value
-			this.searchString = s;
+			this.searchString = s != null ? s.toLowerCase() : s;
 		}
 		
 		public boolean isActive(){
@@ -351,7 +351,7 @@ public class InboxView extends ViewPart {
 		
 		private boolean isSelect(Object leaf){
 			String label = labelProvider.getText(leaf);
-			if (label != null && label.contains(searchString)) {
+			if (label != null && label.toLowerCase().contains(searchString)) {
 				return true;
 			}
 			return false;

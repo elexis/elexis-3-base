@@ -51,6 +51,7 @@ import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
 import at.medevit.elexis.inbox.model.IInboxUpdateListener;
+import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
 import at.medevit.elexis.inbox.ui.InboxServiceHolder;
 import at.medevit.elexis.inbox.ui.command.AutoActivePatientHandler;
 import at.medevit.elexis.inbox.ui.part.action.InboxFilterAction;
@@ -140,23 +141,19 @@ public class InboxView extends ViewPart {
 				if (event.getElement() instanceof PatientInboxElements) {
 					PatientInboxElements patientInbox = (PatientInboxElements) event.getElement();
 					for (IInboxElement inboxElement : patientInbox.getElements()) {
-						if (!filter.isActive() || filter.isSelect(inboxElement)) {
-							State newState = toggleInboxElementState(inboxElement);
-							if (newState == State.NEW) {
-								viewer.setChecked(inboxElement, false);
-							} else {
-								viewer.setChecked(inboxElement, true);
-							}
-							contentProvider.refreshElement(inboxElement);
+						State newState = toggleInboxElementState(inboxElement);
+						if (newState == State.NEW) {
+							viewer.setChecked(inboxElement, false);
+						} else {
+							viewer.setChecked(inboxElement, true);
 						}
+						contentProvider.refreshElement(inboxElement);
 					}
 					contentProvider.refreshElement(patientInbox);
 				} else if (event.getElement() instanceof IInboxElement) {
 					IInboxElement inboxElement = (IInboxElement) event.getElement();
-					if (!filter.isActive() || filter.isSelect(inboxElement)) {
-						toggleInboxElementState(inboxElement);
-						contentProvider.refreshElement(inboxElement);
-					}
+					toggleInboxElementState(inboxElement);
+					contentProvider.refreshElement(inboxElement);
 				}
 				viewer.refresh(false);
 			}
@@ -308,9 +305,11 @@ public class InboxView extends ViewPart {
 	private State toggleInboxElementState(IInboxElement inboxElement){
 		if (inboxElement.getState() == State.NEW) {
 			inboxElement.setState(State.SEEN);
+			InboxModelServiceHolder.get().save(inboxElement);
 			return State.SEEN;
 		} else if (inboxElement.getState() == State.SEEN) {
 			inboxElement.setState(State.NEW);
+			InboxModelServiceHolder.get().save(inboxElement);
 			return State.NEW;
 		}
 		return State.NEW;

@@ -42,9 +42,6 @@
    <feature url="features/com.hilotec.elexis.opendocument.feature_3.7.0.qualifier.jar" id="com.hilotec.elexis.opendocument.feature" version="3.7.0.qualifier">
       <category name="documentmanagement"/>
    </feature>
-   <feature url="features/com.hilotec.elexis.toolbar.feature_3.8.0.qualifier.jar" id="com.hilotec.elexis.toolbar.feature" version="3.8.0.qualifier">
-      <category name="clinicrecordkeeping"/>
-   </feature>
    <feature url="features/org.iatrix.messwerte.feature_3.0.100.qualifier.jar" id="org.iatrix.messwerte.feature" version="3.0.100.qualifier">
       <category name="clinicrecordkeeping"/>
    </feature>

@@ -145,7 +145,6 @@
     <module>com.hilotec.elexis.opendocument2omnivore</module>
     <module>com.hilotec.elexis.pluginstatistiken</module>
     <module>com.hilotec.elexis.stickerprefix</module>
-    <module>com.hilotec.elexis.toolbar</module>
     <module>net.medshare.connector.aerztekasse</module>
     <module>net.medshare.connector.viollier</module>
     <module>org.iatrix.bestellung.rose</module>

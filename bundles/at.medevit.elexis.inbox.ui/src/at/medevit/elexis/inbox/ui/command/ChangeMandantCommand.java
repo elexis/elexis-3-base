@@ -13,6 +13,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
+import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
 import at.medevit.elexis.inbox.ui.dialog.MandantSelectorDialog;
 import at.medevit.elexis.inbox.ui.part.InboxView;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
@@ -42,11 +43,13 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 						if (selObj instanceof IInboxElement) {
 							IInboxElement inboxElement = (IInboxElement) selObj;
 							inboxElement.setMandator(mandant);
+							InboxModelServiceHolder.get().save(inboxElement);
 							refreshView(viewer, inboxElement);
 						} else if (selObj instanceof PatientInboxElements) {
 							PatientInboxElements patInboxElements = (PatientInboxElements) selObj;
 							for (IInboxElement inboxElement : patInboxElements.getElements()) {
 								inboxElement.setMandator(mandant);
+								InboxModelServiceHolder.get().save(inboxElement);
 							}
 							refreshView(viewer, patInboxElements);
 						}

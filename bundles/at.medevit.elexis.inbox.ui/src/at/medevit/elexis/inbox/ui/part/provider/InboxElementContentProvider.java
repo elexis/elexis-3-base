@@ -15,8 +15,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
@@ -28,7 +33,7 @@ import ch.elexis.core.model.IPatient;
 public class InboxElementContentProvider implements ITreeContentProvider {
 	
 	HashMap<IPatient, PatientInboxElements> map = new HashMap<IPatient, PatientInboxElements>();
-	private ArrayList<PatientInboxElements> items;
+	private List<PatientInboxElements> items;
 	
 	public Object[] getElements(Object inputElement){
 		if (items != null) {
@@ -63,16 +68,33 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 			List<IInboxElement> input = (List<IInboxElement>) newInput;
 			// refresh map and list
 			map.clear();
-			for (IInboxElement inboxElement : input) {
-				IPatient patient = inboxElement.getPatient();
-				PatientInboxElements patientInbox = map.get(patient);
-				if (patientInbox == null) {
-					patientInbox = new PatientInboxElements(patient);
-					map.put(patient, patientInbox);
+			items = Collections.emptyList();
+			Display.getDefault().asyncExec(() -> {
+				viewer.refresh();
+			});
+			Job job = new Job("Loading Inbox") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor){
+					monitor.beginTask("Lade Inbox", input.size());
+					for (IInboxElement inboxElement : input) {
+						IPatient patient = inboxElement.getPatient();
+						PatientInboxElements patientInbox = map.get(patient);
+						if (patientInbox == null) {
+							patientInbox = new PatientInboxElements(patient);
+							map.put(patient, patientInbox);
+						}
+						patientInbox.addElement(inboxElement);
+						monitor.worked(1);
+					}
+					items = new ArrayList<PatientInboxElements>(map.values());
+					Display.getDefault().asyncExec(() -> {
+						viewer.refresh();
+					});
+					return Status.OK_STATUS;
 				}
-				patientInbox.addElement(inboxElement);
-			}
-			items = new ArrayList<PatientInboxElements>(map.values());
+				
+			};
+			job.schedule();
 		}
 	}
 	

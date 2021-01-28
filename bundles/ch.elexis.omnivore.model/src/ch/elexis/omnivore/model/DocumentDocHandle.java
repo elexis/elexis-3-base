@@ -271,6 +271,15 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 							}
 							IVirtualFilesystemHandle file =
 								patientDir.subFile(getId() + "." + getExtension()); //$NON-NLS-1$
+							if (!file.exists()) {
+								// check if we can fix this with file without extension #21901
+								IVirtualFilesystemHandle noExtensionFile =
+									patientDir.subFile(getId());
+								if (noExtensionFile.exists()) {
+									noExtensionFile.copyTo(file);
+									noExtensionFile.delete();
+								}
+							}
 							return file;
 						} else {
 							if (getEntity().getKontakt() == null) {

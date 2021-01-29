@@ -112,13 +112,18 @@ public class GlobalInboxEntryFactory {
 	private static void integrateAdditionalInformation(Map<String, Object> result,
 		GlobalInboxEntry gie){
 		
-		Object creationDateCandidates = result.get("creationDateCandidates");
-		if (creationDateCandidates instanceof List) {
+		Object dateTokens = result.get("dateTokens");
+		if (dateTokens instanceof List) {
 			@SuppressWarnings("unchecked")
-			List<LocalDate> candidates = (List<LocalDate>) creationDateCandidates;
-			if (candidates != null && !candidates.isEmpty()) {
-				gie.setCreationDateCandidates(candidates);
+			List<LocalDate> _dateTokens = (List<LocalDate>) dateTokens;
+			if (_dateTokens != null && !_dateTokens.isEmpty()) {
+				gie.setDateTokens(_dateTokens);
 			}
+		}
+		
+		Object object = result.get("creationDateCandidate");
+		if (object instanceof LocalDate) {
+			gie.setCreationDateCandidate((LocalDate) object);
 		}
 		
 		Object patientCandidates = result.get("patientCandidates");

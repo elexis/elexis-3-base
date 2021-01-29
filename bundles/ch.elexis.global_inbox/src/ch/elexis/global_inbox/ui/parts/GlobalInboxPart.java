@@ -2,8 +2,6 @@ package ch.elexis.global_inbox.ui.parts;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.annotation.PreDestroy;
@@ -83,7 +81,7 @@ public class GlobalInboxPart {
 			selectionService.setSelection(globalInboxEntry);
 			
 			if (globalInboxEntry != null) {
-				File mainFile = globalInboxEntry.getMainFile();
+				File mainFile = globalInboxEntry.getPdfPreviewFile();
 				if (globalInboxEntry.getMimetype().toLowerCase().contains("pdf")) {
 					try (ByteArrayInputStream byteArrayInputStream =
 						new ByteArrayInputStream(FileUtils.readFileToByteArray(mainFile))) {

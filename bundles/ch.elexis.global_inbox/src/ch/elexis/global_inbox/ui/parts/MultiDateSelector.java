@@ -2,6 +2,7 @@ package ch.elexis.global_inbox.ui.parts;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class MultiDateSelector extends Composite {
 		return value;
 	}
 	
-	public void setSelectionOptionsAndDefault(List<LocalDate> selectionOption, Date defaultDate){
+	public void setSelectionOptionsAndDefault(List<LocalDate> selectionOptions, Date defaultDate){
 		
 		dateTime.setSelection(null);
 		
@@ -92,7 +93,8 @@ public class MultiDateSelector extends Composite {
 			control.dispose();
 		}
 		
-		for (LocalDate option : selectionOption) {
+		Collections.sort(selectionOptions, Collections.reverseOrder());
+		for (LocalDate option : selectionOptions) {
 			Link dateLink = new Link(optionsComposite, SWT.FLAT);
 			dateLink.setText("<a>" + TimeUtil.formatSafe(option, TimeUtil.DATE_GER_SHORT) + "</a>");
 			dateLink.setData(TimeUtil.toDate(option));
@@ -111,8 +113,8 @@ public class MultiDateSelector extends Composite {
 		if (defaultDate != null) {
 			dateTime.setSelection(defaultDate);
 		} else {
-			if (selectionOption.size() > 0) {
-				dateTime.setSelection(TimeUtil.toDate(selectionOption.get(0)));
+			if (selectionOptions.size() > 0) {
+				dateTime.setSelection(TimeUtil.toDate(selectionOptions.get(0)));
 			}
 		}
 	}

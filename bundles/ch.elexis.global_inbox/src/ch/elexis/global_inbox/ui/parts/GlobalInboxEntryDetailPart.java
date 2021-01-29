@@ -40,6 +40,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.EncounterServiceHolder;
+import ch.elexis.core.time.TimeUtil;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.documents.composites.CategorySelectionEditComposite;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -65,13 +66,14 @@ public class GlobalInboxEntryDetailPart {
 	private Text txtTitle;
 	private CategorySelectionEditComposite csec;
 	private CDateTime archivingDate;
-	private MultiDateSelector creationDate;
+	private MultiDateSelector creationDateSelector;
 	private ComboViewer cvPatient;
 	private ComboViewer cvSender;
 	private Text txtKeywords;
 	private Button btnInfoTo;
 	private ComboViewer cvInfoToReceiver;
 	
+	@SuppressWarnings("unchecked")
 	@Inject
 	public GlobalInboxEntryDetailPart(Composite parent, IConfigService configService,
 		EHandlerService handlerService){
@@ -126,13 +128,13 @@ public class GlobalInboxEntryDetailPart {
 		
 		label = new Label(parent, SWT.None);
 		label.setText("Erstelldatum");
-		creationDate = new MultiDateSelector(parent, SWT.None);
+		creationDateSelector = new MultiDateSelector(parent, SWT.None);
 		GridData gd_multiDateSelector = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		creationDate.setLayoutData(gd_multiDateSelector);
-		creationDate.addSelectionListener(new SelectionAdapter() {
+		creationDateSelector.setLayoutData(gd_multiDateSelector);
+		creationDateSelector.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				globalInboxEntry.setCreationDate(creationDate.getSelection());
+				globalInboxEntry.setCreationDate(creationDateSelector.getSelection());
 			};
 		});
 		
@@ -300,8 +302,12 @@ public class GlobalInboxEntryDetailPart {
 			archivingDate.setSelection(new Date());
 		}
 		
-		creationDate.setSelectionOptionsAndDefault(globalInboxEntry.getCreationDateCandidates(),
-			globalInboxEntry.getCreationDate());
+		Date creationDate = globalInboxEntry.getCreationDate();
+		if (creationDate == null) {
+			creationDate = TimeUtil.toDate(globalInboxEntry.getCreationDateCandidate());
+		}
+		creationDateSelector.setSelectionOptionsAndDefault(globalInboxEntry.getDateTokens(),
+			creationDate);
 		
 		IPatient selectedPatient = globalInboxEntry.getPatient();
 		List<IPatient> patientCandidates = globalInboxEntry.getPatientCandidates();

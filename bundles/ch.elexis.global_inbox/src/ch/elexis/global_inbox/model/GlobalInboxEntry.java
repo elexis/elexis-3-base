@@ -26,7 +26,8 @@ public class GlobalInboxEntry {
 	
 	private List<IPatient> patientCandidates;
 	private List<IContact> senderCandidates;
-	private List<LocalDate> creationDateCandidates;
+	private List<LocalDate> dateTokens;
+	private LocalDate creationDateCandidate;
 	
 	/**
 	 * The main file bound for import
@@ -45,7 +46,7 @@ public class GlobalInboxEntry {
 		this.extensionFiles = extensionFiles;
 		patientCandidates = new ArrayList<IPatient>();
 		senderCandidates = new ArrayList<IContact>();
-		creationDateCandidates = new ArrayList<LocalDate>();
+		dateTokens = new ArrayList<LocalDate>();
 	}
 	
 	public File getMainFile(){
@@ -161,20 +162,28 @@ public class GlobalInboxEntry {
 		return senderCandidates;
 	}
 	
-	public List<LocalDate> getCreationDateCandidates(){
-		return creationDateCandidates;
+	public List<LocalDate> getDateTokens(){
+		return dateTokens;
 	}
 	
 	public void setPatientCandidates(List<IPatient> patientCandidates){
 		this.patientCandidates = patientCandidates;
 	}
 	
-	public void setCreationDateCandidates(List<LocalDate> creationDateCandidates){
-		this.creationDateCandidates = creationDateCandidates;
+	public void setDateTokens(List<LocalDate> dateTokens){
+		this.dateTokens = dateTokens;
 	}
 	
 	public void setSenderCandidates(List<IContact> senderCandidates){
 		this.senderCandidates = senderCandidates;
+	}
+	
+	public void setCreationDateCandidate(LocalDate creationDateCandidate){
+		this.creationDateCandidate = creationDateCandidate;
+	}
+
+	public LocalDate getCreationDateCandidate(){
+		return creationDateCandidate;
 	}
 	
 	@Override
@@ -202,5 +211,20 @@ public class GlobalInboxEntry {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * @return if there is an extension file that ends with .preview.pdf it will be returned, else
+	 *         the main-file is returned
+	 */
+	public File getPdfPreviewFile(){
+		for (File extFile : extensionFiles) {
+			if (extFile.getName().endsWith(".preview.pdf")) {
+				return extFile;
+			}
+		}
+		return getMainFile();
+	}
+
+
 	
 }

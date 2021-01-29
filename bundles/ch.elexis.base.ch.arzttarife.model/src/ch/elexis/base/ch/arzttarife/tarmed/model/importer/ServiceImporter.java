@@ -250,7 +250,7 @@ public class ServiceImporter {
 					
 					// same code (TarmedLeistung) can be imported multiple times, filter out already imported kumulation
 					// .masterCode.masterArt.typ
-					HashMap<String, String> propertyMap = new HashMap<String, String>();
+					HashMap<String, Object> propertyMap = new HashMap<String, Object>();
 					propertyMap.put("masterCode", kumulation.getMasterCode());
 					propertyMap.put("masterArt", kumulation.getMasterArt());
 					propertyMap.put("typ", kumulation.getTyp());

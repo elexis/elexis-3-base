@@ -41,7 +41,8 @@ Import-Package: ch.elexis.core.services.holder,
  org.apache.commons.lang;version="2.6.0",
  org.apache.commons.lang.math;version="2.6.0",
  org.slf4j
-Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.physio.model.importer.PhysioReferenceDataImporter.xml,
+Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.pandemie.model.importer.PandemieReferenceDataImporter.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.physio.model.importer.PhysioReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.PhysioLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder.xml,
@@ -52,7 +53,6 @@ Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.physio.model.importer.P
  OSGI-INF/ch.elexis.base.ch.arzttarife.tarmed.model.importer.KVGTarmedReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.EntityManagerHolder.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ComplementaryLeistungCodeElementService.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.PandemieLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelService.xml,
- OSGI-INF/ch.elexis.base.ch.arzttarife.complementary.model.importer.ComplementaryReferenceDataImporter.xml,
- OSGI-INF/ch.elexis.base.ch.arzttarife.pandemie.model.importer.PandemieReferenceDataImporter.xml,
- OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.PandemieLeistungCodeElementService.xml
+ OSGI-INF/ch.elexis.base.ch.arzttarife.complementary.model.importer.ComplementaryReferenceDataImporter.xml

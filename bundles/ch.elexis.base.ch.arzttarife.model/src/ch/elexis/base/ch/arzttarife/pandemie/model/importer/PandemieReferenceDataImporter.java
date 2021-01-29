@@ -2,9 +2,13 @@ package ch.elexis.base.ch.arzttarife.pandemie.model.importer;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -12,8 +16,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.LoggerFactory;
 
-import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
@@ -41,18 +45,19 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 			String.class /* interpretation */, String.class /* part-og */,
 			Integer.class /* anzahl */, String.class /* kumultation einsch. */,
 			String.class /* kumulation */, String.class /* limitation */,
-			String.class /* tp oder chf */, Double.class /* wert */
+			String.class /* tp oder chf */, Double.class /* wert */, TimeTool.class /* gülti ab */,
+			TimeTool.class /* gülti bis */
 		});
 		if (exw.load(input, 0)) {
 			int first = exw.getFirstRow();
 			int last = exw.getLastRow();
 			int count = last - first;
-			if (monitor != null)
+			if (monitor != null) {
 				monitor.beginTask("Pandemie Tarif Import", count);
-			
-			deleteOldEntries();
+			}
 			
 			List<Object> imported = new ArrayList<>();
+			List<Object> closed = new ArrayList<>();
 			
 			for (int i = 0; i < last; i++) {
 				List<String> line = exw.getRow(i);
@@ -62,22 +67,37 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 					continue;
 				}
 				
-				PandemieLeistung pl = new PandemieLeistung();
-				pl.setPandemic(line.get(1));
-				pl.setChapter(getChapter(line));
-				pl.setCode(line.get(4));
-				pl.setTitle(StringUtils.abbreviate(line.get(5), 255));
-				pl.setValidFrom(getValidFrom(line));
-				pl.setDescription(line.get(6));
-				pl.setOrg(StringUtils.abbreviate(line.get(7).replace("\n", ";").replace("\r", ""), 255));
-				
-				if (isCents(line)) {
-					pl.setCents(getAsCents(line.get(13)));
+				List<PandemieLeistung> existing =
+					getExisting(line.get(1), line.get(4), getValidFrom(line));
+				if (!existing.isEmpty()) {
+					for (PandemieLeistung pandemieLeistung : existing) {
+						if (pandemieLeistung.getValidTo() == null) {
+							pandemieLeistung.setValidTo(getValidTo(line));
+							closed.add(pandemieLeistung);
+						}
+					}
 				} else {
-					pl.setTaxpoints(getAsTaxpoints(line.get(13)));
+					PandemieLeistung pl = new PandemieLeistung();
+					pl.setPandemic(line.get(1));
+					pl.setChapter(getChapter(line));
+					pl.setCode(line.get(4));
+					pl.setTitle(StringUtils.abbreviate(line.get(5), 255));
+					pl.setValidFrom(getValidFrom(line));
+					pl.setDescription(line.get(6));
+					pl.setOrg(StringUtils
+						.abbreviate(line.get(7).replace("\n", ";").replace("\r", ""), 255));
+					
+					if (isCents(line)) {
+						pl.setCents(getAsCents(line.get(13)));
+					} else {
+						pl.setTaxpoints(getAsTaxpoints(line.get(13)));
+					}
+					imported.add(pl);
 				}
-				imported.add(pl);
 			}
+			LoggerFactory.getLogger(getClass())
+				.info("Closing " + closed.size() + " and creating " + imported.size() + " tarifs");
+			EntityUtil.save(closed);
 			EntityUtil.save(imported);
 			monitor.done();
 
@@ -90,9 +110,12 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 		
 	}
 	
-	private void deleteOldEntries(){
-		ArzttarifeModelServiceHolder.get().executeNativeUpdate(
-			"DELETE FROM CH_ELEXIS_ARZTTARIFE_CH_PANDEMIC WHERE ID <> 'VERSION'");
+	private List<PandemieLeistung> getExisting(String pandemic, String code, LocalDate validFrom){
+		Map<String, Object> propertyMap = new LinkedHashMap<String, Object>();
+		propertyMap.put("pandemic", pandemic);
+		propertyMap.put("code", code);
+		propertyMap.put("validFrom", validFrom);
+		return EntityUtil.loadByNamedQuery(propertyMap, PandemieLeistung.class);
 	}
 	
 	private boolean isCents(List<String> line){
@@ -122,8 +145,34 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 		return 0;
 	}
 	
+	private DateTimeFormatter dateTimeFormatter =
+		DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private DateTimeFormatter dateFormatter =
+		DateTimeFormatter.ofPattern("dd.MM.yyyy");
+	
+	private LocalDate getLocalDate(String value){
+		try {
+			if (value.isEmpty()) {
+				return LocalDate.parse("02.11.2020", dateFormatter);
+			} else if (value.length() < 11) {
+				return LocalDate.parse(value, dateFormatter);
+				
+			} else {
+				return LocalDate.parse(value, dateTimeFormatter);
+			}
+		} catch (DateTimeParseException pe) {
+			LoggerFactory.getLogger(getClass())
+				.error("Could not parse as local date [" + value + "]");
+			throw pe;
+		}
+	}
+	
 	private LocalDate getValidFrom(List<String> line){
-		return new TimeTool("02.11.2020").toLocalDate();
+		return getLocalDate((String) line.get(14).trim());
+	}
+	
+	private LocalDate getValidTo(List<String> line){
+		return getLocalDate((String) line.get(15).trim());
 	}
 	
 	private String getChapter(List<String> line){

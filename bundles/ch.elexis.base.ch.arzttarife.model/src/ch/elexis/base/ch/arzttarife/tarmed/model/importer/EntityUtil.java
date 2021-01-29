@@ -44,7 +44,7 @@ public class EntityUtil {
 		}
 	}
 	
-	public static <T> List<T> loadByNamedQuery(Map<String, String> propertyMap,
+	public static <T> List<T> loadByNamedQuery(Map<String, Object> propertyMap,
 		Class<T> clazz){
 		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
 		try {

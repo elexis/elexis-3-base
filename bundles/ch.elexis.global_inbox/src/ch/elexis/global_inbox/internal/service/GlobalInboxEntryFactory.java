@@ -139,6 +139,9 @@ public class GlobalInboxEntryFactory {
 					.map(i -> modelService.load(i.getId(), IPatient.class).orElse(null))
 					.collect(Collectors.toList());
 				gie.setPatientCandidates(patients);
+				if (patients.size() > 0) {
+					gie.setPatient(patients.get(0));
+				}
 			}
 		}
 		

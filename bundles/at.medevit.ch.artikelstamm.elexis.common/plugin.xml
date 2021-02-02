@@ -35,13 +35,4 @@
        </activeWhen>
     </handler>
  </extension>
- <extension
-       point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
-    <ExternalMaintenance
-          MaintenanceCode="at.medevit.ch.artikelstamm.elexis.common.ui.dbcheck.AddMissingVATToVerrechenbarArticles">
-    </ExternalMaintenance>
-    <ExternalMaintenance
-          MaintenanceCode="at.medevit.ch.artikelstamm.elexis.common.ui.dbcheck.FixPrescriptionArtikelstammReferences">
-    </ExternalMaintenance>
- </extension>
 </plugin>

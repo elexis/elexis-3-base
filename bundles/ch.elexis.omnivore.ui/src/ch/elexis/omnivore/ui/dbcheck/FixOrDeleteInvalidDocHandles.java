@@ -41,6 +41,7 @@ public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
 			repairCount = 0;
 			while (cursor.hasNext()) {
 				IDocumentHandle docHandle = cursor.next();
+				logger.info("Loading content of DocHandle [" + docHandle.getId() + "]");
 				InputStream ret = docHandle.getContent();
 				if (ret == null) {
 					IVirtualFilesystemHandle vfsHandle = Utils.getStorageFile(docHandle, true);

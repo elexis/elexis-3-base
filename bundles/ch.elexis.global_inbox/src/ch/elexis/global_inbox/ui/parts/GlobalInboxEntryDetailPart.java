@@ -157,6 +157,7 @@ public class GlobalInboxEntryDetailPart {
 					IPatient iPatient = patient.toIPatient();
 					cvPatient.add(iPatient);
 					cvPatient.setSelection(new StructuredSelection(iPatient));
+					globalInboxEntry.getPatientCandidates().add(iPatient);
 					globalInboxEntry.setPatient(iPatient);
 				}
 			}
@@ -311,9 +312,6 @@ public class GlobalInboxEntryDetailPart {
 		
 		IPatient selectedPatient = globalInboxEntry.getPatient();
 		List<IPatient> patientCandidates = globalInboxEntry.getPatientCandidates();
-		if (selectedPatient != null) {
-			patientCandidates.add(selectedPatient);
-		}
 		cvPatient.setInput(patientCandidates);
 		if (selectedPatient == null && !patientCandidates.isEmpty()) {
 			cvPatient.setSelection(new StructuredSelection(patientCandidates.get(0)));
@@ -350,11 +348,10 @@ public class GlobalInboxEntryDetailPart {
 				.createCommand("ch.elexis.global_inbox.command.globalinboxentryimport");
 			if (handlerService.canExecute(cmd)) {
 				handlerService.executeHandler(cmd);
+				setGlobalInboxEntry(null);
 			} else {
 				SWTHelper.showError("Could not import", "Patient or category value is missing");
 			}
-			
-			setGlobalInboxEntry(null);
 		}
 	}
 	

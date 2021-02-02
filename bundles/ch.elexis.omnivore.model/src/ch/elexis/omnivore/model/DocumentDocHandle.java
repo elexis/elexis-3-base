@@ -224,10 +224,9 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	private byte[] getContents(){
 		byte[] ret = getEntity().getDoc();
 		if (ret == null) {
-			
 			IVirtualFilesystemHandle vfsHandle = getStorageFile(true);
-			if (vfsHandle != null) {
-				try {
+			try {
+				if (vfsHandle != null && vfsHandle.exists()) {
 					byte[] bytes = vfsHandle.readAllBytes();
 					// if we stored the file in the file system but decided
 					// later to store it in the
@@ -238,11 +237,15 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 					}
 					
 					return bytes;
-				} catch (Exception ex) {
-					LoggerFactory.getLogger(getClass()).error("Getting content of [{}] fails [{}]",
-						getId(), vfsHandle, ex);
-					throw new IllegalStateException(ex);
+				} else {
+					LoggerFactory.getLogger(getClass()).error(
+						"Error content of [{}] from [{}] does not exist",
+						getId(), vfsHandle);
 				}
+			} catch (Exception ex) {
+				LoggerFactory.getLogger(getClass()).error("Getting content of [{}] fails [{}]",
+					getId(), vfsHandle, ex);
+				throw new IllegalStateException(ex);
 			}
 		}
 		return ret;

@@ -2,7 +2,6 @@ package ch.elexis.omnivore.ui.dbcheck;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.io.FilenameUtils;
@@ -13,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQueryCursor;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.omnivore.Constants;
@@ -35,34 +35,36 @@ public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
 		query.and("id", COMPARATOR.NOT_EQUALS, "1");
 		query.and(ModelPackage.Literals.IDOCUMENT__MIME_TYPE, COMPARATOR.NOT_EQUALS,
 			Constants.CATEGORY_MIMETYPE);
-		List<IDocumentHandle> allDocHandles = query.execute();
-		pm.beginTask("Bitte warten, Omnivore Eiträge werden geprüft ...", allDocHandles.size());
-		deleteCount = 0;
-		repairCount = 0;
-		for (IDocumentHandle docHandle : allDocHandles) {
-			InputStream ret = docHandle.getContent();
-			if (ret == null) {
-				IVirtualFilesystemHandle vfsHandle = Utils.getStorageFile(docHandle, true);
-				try {
-					if (vfsHandle != null && !vfsHandle.exists()) {
-						// perform lookup in directory with id
-						IVirtualFilesystemHandle directory = vfsHandle.getParent();
-						if (directory != null && directory.exists()) {
-							IVirtualFilesystemHandle[] handles =
-								directory.listHandles(handle -> Objects.equals(
-									FilenameUtils.getBaseName(handle.getName()),
-									docHandle.getId()));
-							if (handles.length > 0) {
-								repair(docHandle, handles[0]);
+		try (IQueryCursor<IDocumentHandle> cursor = query.executeAsCursor()) {
+			pm.beginTask("Bitte warten, Omnivore Eiträge werden geprüft ...", cursor.size());
+			deleteCount = 0;
+			repairCount = 0;
+			while (cursor.hasNext()) {
+				IDocumentHandle docHandle = cursor.next();
+				InputStream ret = docHandle.getContent();
+				if (ret == null) {
+					IVirtualFilesystemHandle vfsHandle = Utils.getStorageFile(docHandle, true);
+					try {
+						if (vfsHandle != null && !vfsHandle.exists()) {
+							// perform lookup in directory with id
+							IVirtualFilesystemHandle directory = vfsHandle.getParent();
+							if (directory != null && directory.exists()) {
+								IVirtualFilesystemHandle[] handles =
+									directory.listHandles(handle -> Objects.equals(
+										FilenameUtils.getBaseName(handle.getName()),
+										docHandle.getId()));
+								if (handles.length > 0) {
+									repair(docHandle, handles[0]);
+								} else {
+									delete(docHandle);
+								}
 							} else {
 								delete(docHandle);
 							}
-						} else {
-							delete(docHandle);
 						}
+					} catch (IOException e) {
+						logger.warn("DocHandle [" + docHandle.getId() + "]", e);
 					}
-				} catch (IOException e) {
-					logger.warn("DocHandle [" + docHandle.getId() + "]", e);
 				}
 			}
 		}

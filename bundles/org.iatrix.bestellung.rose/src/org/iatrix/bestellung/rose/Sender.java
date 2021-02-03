@@ -45,6 +45,7 @@ public class Sender implements IDataSender {
 	
 	private int counter;
 	
+	@Override
 	public boolean canHandle(Class<? extends PersistentObject> clazz){
 		if (clazz.equals(ch.elexis.data.Bestellung.class)) {
 			return true;
@@ -53,6 +54,7 @@ public class Sender implements IDataSender {
 		}
 	}
 	
+	@Override
 	public void finalizeExport() throws XChangeException{
 		if (counter == 0) {
 			log.log("Order contains no articles to order from Rose supplier", Log.INFOS);
@@ -131,6 +133,7 @@ public class Sender implements IDataSender {
 		
 	}
 	
+	@Override
 	public XChangeElement store(Object output) throws XChangeException{
 		if (output instanceof Bestellung) {
 			Bestellung order = (Bestellung) output;
@@ -218,6 +221,8 @@ public class Sender implements IDataSender {
 				String pharmacode = artikel.getPharmaCode();
 				if (pharmacode != null && pharmacode.length() == 6) {
 					pharmacode = "0" + pharmacode;
+				} else {
+					pharmacode = "0000000";
 				}
 				String eanId = artikel.getExt("EAN");
 				if (StringTool.isNothing(eanId)) {

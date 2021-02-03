@@ -42,6 +42,7 @@ public class GDTOutputHandler {
 	
 	public static void handleOutput(GDTSatzNachricht gdtSatzNachricht, IGDTCommunicationPartner cp,
 		HandlerProgramType handlerType){
+		cp.handleOutput(gdtSatzNachricht);
 		int connectionType = cp.getConnectionType();
 		
 		switch (connectionType) {

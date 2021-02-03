@@ -14,6 +14,7 @@ package at.medevit.elexis.gdt.interfaces;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.SystemConstants;
+import at.medevit.elexis.gdt.messages.GDTSatzNachricht;
 
 public interface IGDTCommunicationPartner {
 
@@ -174,4 +175,13 @@ public interface IGDTCommunicationPartner {
 	 */
 	String getShortIDReceiver();
 
+	/**
+	 * Method called before actual output is performed, allowing {@link GDTSatzNachricht}
+	 * modification. If values are added {@link GDTSatzNachricht#setAddAllNotAddedIfSet(boolean)}
+	 * should be called to include additional fields in the message.
+	 * 
+	 * @param gdtSatzNachricht
+	 */
+	default void handleOutput(GDTSatzNachricht gdtSatzNachricht){}
+	
 }

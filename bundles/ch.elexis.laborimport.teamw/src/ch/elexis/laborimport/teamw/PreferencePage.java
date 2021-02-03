@@ -38,10 +38,14 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String FTP_PWD = "teamw/ftp_pwd"; //$NON-NLS-1$
 	public static final String DL_DIR = "teamw/downloaddir"; //$NON-NLS-1$
 	
+	public static final String DOCUMENT_CATEGORY = "teamw/documentcategory";
+	
 	public static final String DEFAULT_FTP_HOST = "195.144.61.180"; //$NON-NLS-1$
 	public static final String DEFAULT_FTP_USER = ""; //$NON-NLS-1$
 	public static final String DEFAULT_FTP_PWD = ""; //$NON-NLS-1$
 	public static final String DEFAULT_DL_DIR = "/tmp/teamw"; //$NON-NLS-1$
+	
+	public static final String DEFAULT_DOCUMENT_CATEGORY = "TeamW Laborbefunde";
 	
 	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 	
@@ -54,6 +58,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		prefs.setDefault(DL_DIR, DEFAULT_DL_DIR); //$NON-NLS-1$
 		prefs.setDefault(BATCH_DATEI, ""); //$NON-NLS-1$
 		prefs.setDefault(BATCH_OR_FTP, FTP); //$NON-NLS-1$
+		
+		prefs.setDefault(DOCUMENT_CATEGORY, DEFAULT_DOCUMENT_CATEGORY); //$NON-NLS-1$
 		
 		setPreferenceStore(prefs);
 		
@@ -85,6 +91,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			Messages.PreferencePage_label_password, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new InexistingDirectoryOKDirectoryFieldEditor(DL_DIR,
 			Messages.PreferencePage_label_download, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new StringFieldEditor(DOCUMENT_CATEGORY,
+			Messages.PreferencePage_labelDocumentCategory, getFieldEditorParent()));
 	}
 	
 	public void init(final IWorkbench workbench){

@@ -30,7 +30,7 @@
         <children xsi:type="menu:HandledToolItem" xmi:id="_vIX4MB9gEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.commandimportlabel" label="" iconURI="icon://IMG_OK" tooltip="%command.import.description" command="_y_cogB9BEeu6CfM6mOBDOA"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_MXx5AB9eEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.commandviewlabel" label="" iconURI="icon://IMG_EYE_WO_SHADOW" tooltip="%command.view.description" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_TlvUgB9eEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.commanddeletelabel" label="" iconURI="icon://IMG_DELETE" tooltip="%command.delete.description" command="_En60sB86Eeu6CfM6mOBDOA"/>
-        <children xsi:type="menu:DirectToolItem" xmi:id="_4PtFkB9fEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.directtoolitem.0" iconURI="icon://IMG_REFRESH" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.AutoSelectPatientHandler"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_4PtFkB9fEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.directtoolitem.0" iconURI="icon://IMG_REFRESH" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.GlobalInboxPartReloadHandler"/>
         <children xsi:type="menu:DirectToolItem" xmi:id="_wb6AsGU9Eeusjqe1zD3WFA" elementId="ch.elexis.global_inbox.directtoolitem.autoSelectPatient" label="" iconURI="icon://IMG_PERSON" tooltip="%command.autoselectpatient.description" type="Check" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.AutoSelectPatientHandler"/>
       </toolbar>
     </elements>

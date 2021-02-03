@@ -14,8 +14,10 @@ package at.medevit.elexis.gdt.messages;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
 
@@ -24,7 +26,11 @@ public class GDTSatzNachricht {
 	final static String CRLF = "\r\n";
 	
 	LinkedList<String> message = null;
-	HashMap<Integer, String> values = new LinkedHashMap<Integer, String>();;
+	HashMap<Integer, String> values = new LinkedHashMap<Integer, String>();
+	
+	boolean addAllNotAddedIfSet = false;
+	HashSet<Integer> added = new HashSet<>();
+	
 	int charCounterSatzLaenge = 0;
 	
 	DecimalFormat threePlaces = new DecimalFormat("000");
@@ -60,6 +66,7 @@ public class GDTSatzNachricht {
 	}
 	
 	protected void addLine(int feldkennung){
+		added.add(feldkennung);
 		addLine(feldkennung+""+values.get(feldkennung));
 	}
 	
@@ -68,8 +75,18 @@ public class GDTSatzNachricht {
 	 * @param feldkennung
 	 */
 	protected void ifSetAddLine(int feldkennung){
+		added.add(feldkennung);
 		if(values.get(feldkennung)!=null) addLine(feldkennung);
 		
+	}
+	
+	protected void addAllNotAddedIfSet(){
+		TreeSet<Integer> sorted = new TreeSet<>(values.keySet());
+		for (Integer feldkennung : sorted) {
+			if (!added.contains(feldkennung)) {
+				ifSetAddLine(feldkennung);
+			}
+		}
 	}
 	
 	protected void createMessage() {
@@ -110,6 +127,9 @@ public class GDTSatzNachricht {
 		if(message == null) {
 			message = new LinkedList<String>();
 			createMessage();
+			if (addAllNotAddedIfSet) {
+				addAllNotAddedIfSet();
+			}
 			finalizeMessage();
 		}
 		return message.toArray(new String[]{});
@@ -119,5 +139,14 @@ public class GDTSatzNachricht {
 		charCounterSatzLaenge+=14;
 		String line = "014"+GDTConstants.FELDKENNUNG_SATZLAENGE+""+fivePlaces.format(charCounterSatzLaenge)+CRLF;
 		message.add(1, line);
+	}
+	
+	/**
+	 * Set true if additional values have been set and should be included in the message.
+	 * 
+	 * @param value
+	 */
+	public void setAddAllNotAddedIfSet(boolean value){
+		this.addAllNotAddedIfSet = value;
 	}
 }

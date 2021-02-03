@@ -48,6 +48,7 @@ public class Messages extends NLS {
   public static String PreferencePage_label_password;
   public static String PreferencePage_label_user;
   public static String PreferencePage_title_description;
+	public static String PreferencePage_labelDocumentCategory;
   static { // load message values from bundle file
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);
   }

@@ -102,7 +102,10 @@ public class Importer extends ImporterPage {
 	private Result<?> importFile(final String filepath){
 		File file = new File(filepath);
 		Result<?> result = mfParser.importFromFile(file,
-			new DefaultImportStrategyFactory().setMoveAfterImport(true),
+			new DefaultImportStrategyFactory()
+				.setPDFImportCategory(ConfigServiceHolder.getGlobal(
+					PreferencePage.DOCUMENT_CATEGORY, PreferencePage.DEFAULT_DOCUMENT_CATEGORY))
+				.setMoveAfterImport(true),
 			hl7parser, new DefaultPersistenceHandler());
 		return result;
 	}
@@ -141,7 +144,8 @@ public class Importer extends ImporterPage {
 					+ " erfolgreich. " + filenameList.length //$NON-NLS-1$
 					+ " Dateien gefunden.", Log.INFOS); //$NON-NLS-1$
 				for (String filename : filenameList) {
-					if (filename.toUpperCase().endsWith("HL7")) { //$NON-NLS-1$
+					if (filename.toUpperCase().endsWith("HL7") //$NON-NLS-1$
+						|| filename.toUpperCase().endsWith("PDF")) { //$NON-NLS-1$
 						ftp.downloadFile(filename, downloadDir + filename);
 						log.log("Datei <" + filename + "> downloaded.", //$NON-NLS-1$ //$NON-NLS-2$
 							Log.INFOS);

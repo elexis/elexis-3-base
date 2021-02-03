@@ -15,17 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IOrder;
+import ch.elexis.core.model.IOrderEntry;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.exchange.ArticleUtil;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.core.ui.exchange.elements.XChangeElement;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.BestellView;
-import ch.elexis.data.Artikel;
-import ch.elexis.data.Bestellung;
-import ch.elexis.data.BestellungEntry;
-import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -135,8 +136,8 @@ public class Sender implements IDataSender {
 	
 	@Override
 	public XChangeElement store(Object output) throws XChangeException{
-		if (output instanceof Bestellung) {
-			Bestellung order = (Bestellung) output;
+		if (output instanceof IOrder) {
+			IOrder order = (IOrder) output;
 			return addOrder(order);
 		} else {
 			// should never happen...
@@ -163,14 +164,14 @@ public class Sender implements IDataSender {
 	 * @return ok on success, error if order is null or order doesn't contain any items or items are
 	 *         not valid
 	 */
-	private XChangeElement addOrder(Bestellung order) throws XChangeException{
+	private XChangeElement addOrder(IOrder order) throws XChangeException{
 		counter = 0;
 		if (order == null) {
 			// order must not be null
 			throw new XChangeException("Die Bestellung ist leer.");
 		}
 		
-		List<BestellungEntry> items = order.getEntries();
+		List<IOrderEntry> items = order.getEntries();
 		if (items == null || items.size() == 0) {
 			// no items
 			throw new XChangeException("Die Bestellung ist leer.");
@@ -187,11 +188,12 @@ public class Sender implements IDataSender {
 		
 		String supplier = ConfigServiceHolder.getGlobal(Constants.CFG_ROSE_SUPPLIER, null);
 		String selDialogTitle = "Kein 'Zur Rose' Lieferant definiert";
-		Kontakt roseSupplier = BestellView.resolveDefaultSupplier(supplier, selDialogTitle);
-		if (roseSupplier == null || !roseSupplier.exists()) {
+		IContact roseSupplier = BestellView.resolveDefaultSupplier(supplier, selDialogTitle);
+		if (roseSupplier == null) {
 			return null;
 		}
 		
+
 		/*
 		 * Example XML:
 		 * 
@@ -213,23 +215,15 @@ public class Sender implements IDataSender {
 			+ " user=\"elexis\" password=\"elexis\"" // must be present or we will have an error
 			+ " deliveryType=\"1\"" + ">" + XML_NEWLINE);
 		
-		for (BestellungEntry item : items) {
-			Artikel artikel = item.getArticle();
-			Kontakt artSupplier = item.getProvider();
+		for (IOrderEntry item : items) {
+			IArticle artikel = item.getArticle();
+			IContact artSupplier = item.getProvider();
 			// only add zurRose line items
 			if (roseSupplier.equals(artSupplier)) {
-				String pharmacode = artikel.getPharmaCode();
-				if (pharmacode != null && pharmacode.length() == 6) {
-					pharmacode = "0" + pharmacode;
-				} else {
-					pharmacode = "0000000";
-				}
-				String eanId = artikel.getExt("EAN");
-				if (StringTool.isNothing(eanId)) {
-					eanId = artikel.getEAN();
-				}
+				String pharmacode = ArticleUtil.getPharmaCode(artikel);
+				String eanId = ArticleUtil.getEan(artikel);
 				String description = artikel.getName();
-				int quantity = item.getCount();
+				int quantity = item.getAmount();
 				
 				if (StringTool.isNothing(pharmacode) || StringTool.isNothing(eanId)
 					|| StringTool.isNothing(description) || quantity < 1) {

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Properties;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.exchange.ArticleUtil;
 import ch.elexis.core.ui.exchange.IDataSender;
 import ch.elexis.core.ui.exchange.XChangeException;
 import ch.elexis.core.ui.exchange.elements.XChangeElement;
@@ -214,14 +215,8 @@ public class Sender implements IDataSender {
 			Kontakt artSupplier = item.getProvider();
 			// only add zurRose line items
 			if (roseSupplier.equals(artSupplier)) {
-				String pharmacode = artikel.getPharmaCode();
-				if (pharmacode != null && pharmacode.length() == 6) {
-					pharmacode = "0" + pharmacode;
-				}
-				String eanId = artikel.getExt("EAN");
-				if (StringTool.isNothing(eanId)) {
-					eanId = artikel.getEAN();
-				}
+				String pharmacode = ArticleUtil.getPharmaCode(artikel);
+				String eanId = ArticleUtil.getEan(artikel);
 				String description = artikel.getName();
 				int quantity = item.getCount();
 				

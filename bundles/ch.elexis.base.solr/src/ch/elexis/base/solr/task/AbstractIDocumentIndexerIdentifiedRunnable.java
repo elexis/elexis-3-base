@@ -114,6 +114,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 							failures.add(new SingleIdentifiableTaskResult(document.getId(),
 								e.getMessage() + ", marking indexed"));
 						} else {
+							logger.error("[{}] " + e.getMessage(), id);
 							throw e;
 						}
 					}

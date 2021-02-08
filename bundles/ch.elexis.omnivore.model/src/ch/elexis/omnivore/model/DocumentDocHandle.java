@@ -206,7 +206,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	public void setContent(InputStream content){
 		setStatus(DocumentStatus.PREPROCESSED, false);
 		setStatus(DocumentStatus.INDEXED, false);
-		
+		setLastchanged(new Date());
 		try {
 			IVirtualFilesystemHandle vfsHandle = getStorageFile(false);
 			if (vfsHandle == null) {

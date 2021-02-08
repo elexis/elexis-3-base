@@ -306,7 +306,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 				}
 				if (to != null) {
 					TimeTool time = new TimeTool(to);
-					query.add(Termin.FLD_TAG, Query.LESS_OR_EQUAL,
+					query.add(Termin.FLD_TAG, Query.LESS,
 						time.toString(TimeTool.DATE_COMPACT));
 				}
 				query.endGroup();

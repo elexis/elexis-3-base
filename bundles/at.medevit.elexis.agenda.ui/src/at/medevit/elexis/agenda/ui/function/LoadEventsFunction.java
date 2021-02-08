@@ -286,7 +286,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 					query.and("tag", COMPARATOR.GREATER_OR_EQUAL, from);
 				}
 				if (to != null) {
-					query.and("tag", COMPARATOR.LESS_OR_EQUAL, to);
+					query.and("tag", COMPARATOR.LESS, to);
 				}
 				query.andJoinGroups();
 				return (List<IPeriod>) (List<?>) query.execute();

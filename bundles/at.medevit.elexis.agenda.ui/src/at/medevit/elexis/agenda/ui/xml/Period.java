@@ -31,7 +31,7 @@ public class Period implements Comparable<Period> {
 		Period ret = new Period();
 		
 		if (iPeriod instanceof IAppointment) {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 			IAppointment termin = (IAppointment) iPeriod;
 			ret.fromDateTime = termin.getStartTime();
 			ret.toDateTime = termin.getEndTime();

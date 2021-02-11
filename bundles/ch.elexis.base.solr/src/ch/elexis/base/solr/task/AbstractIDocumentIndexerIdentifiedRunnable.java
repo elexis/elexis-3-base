@@ -41,6 +41,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 		List<IDocument> indexRemovedList = new ArrayList<IDocument>();
 		
 		Builder solrClientBuilder = super.getSolrClientBuilder();
+		String currentDocumentId = null;
 		try (HttpSolrClient solr = solrClientBuilder.build()) {
 			// is the server alive, else early exit
 			checkResponse(solr.ping(getSolrCore()));
@@ -48,12 +49,13 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 			List<?> docHandles = getDocuments();
 			SubMonitor subMonitor = SubMonitor.convert(progressMonitor, docHandles.size());
 			for (Object id : docHandles) {
+				currentDocumentId = id.toString();
 				subMonitor.worked(1);
 				// assert document exists
-				IDocument document = loadDocument(id.toString());
+				IDocument document = loadDocument(currentDocumentId);
 				if (document == null) {
-					logger.warn("[{}] not loadable , skipping", id.toString());
-					failures.add(new SingleIdentifiableTaskResult(id.toString(),
+					logger.warn("[{}] not loadable , skipping", currentDocumentId);
+					failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 						"not loadable (null), skipping"));
 					continue;
 				}
@@ -63,14 +65,14 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 					.contains(DocumentStatus.INDEXED) && document.isDeleted()) {
 					
 					try {
-						checkResponse(solr.deleteById(getSolrCore(), id.toString()));
+						checkResponse(solr.deleteById(getSolrCore(), currentDocumentId));
 						document.setStatus(DocumentStatus.INDEXED, false);
 						getModelService().save(document);
 						indexRemovedList.add(document);
 					} catch (SolrServerException sse) {
-						logger.warn("[{}] could not be deleted from solr index", id.toString(),
+						logger.warn("[{}] could not be deleted from solr index", currentDocumentId,
 							sse);
-						failures.add(new SingleIdentifiableTaskResult(id.toString(),
+						failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 							"could not be deleted from solr index"));
 					}
 					continue;
@@ -80,8 +82,8 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				String patientId =
 					document.getPatient() != null ? document.getPatient().getId() : null;
 				if (patientId == null) {
-					logger.warn("[{}] no assocatied patient, skipping", id.toString());
-					failures.add(new SingleIdentifiableTaskResult(id.toString(),
+					logger.warn("[{}] no assocatied patient, skipping", currentDocumentId);
+					failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 						"no assocatied patient, skipping"));
 					continue;
 				}
@@ -91,7 +93,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				try (InputStream is = document.getContent()) {
 					if (is == null) {
 						logger.info("[{}] content is null, skipping", document.getId());
-						failures.add(new SingleIdentifiableTaskResult(id.toString(),
+						failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 							"content is null, skipping"));
 						continue;
 					}
@@ -101,7 +103,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				String[] solrCellData = null;
 				if (content.length == 0) {
 					logger.info("[{}] content length is 0, marking indexed", document.getId());
-					failures.add(new SingleIdentifiableTaskResult(id.toString(),
+					failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 						"content length is 0, marking indexed "));
 				} else {
 					try {
@@ -123,8 +125,8 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				document.setStatus(DocumentStatus.INDEXED, true);
 				boolean save = getModelService().save(document);
 				if (!save) {
-					logger.warn("[{}] could not be saved, see logs", id.toString());
-					failures.add(new SingleIdentifiableTaskResult(id.toString(),
+					logger.warn("[{}] could not be saved, see logs", currentDocumentId);
+					failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 						"could not be saved, see logs"));
 					continue;
 				}
@@ -149,8 +151,8 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 						indexedList.add(document);
 					} catch (SolrServerException sse) {
 						logger.warn("[{}] could not add to solr index, unsetting index status",
-							id.toString(), sse);
-						failures.add(new SingleIdentifiableTaskResult(id.toString(),
+							currentDocumentId, sse);
+						failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 							"could not add to solr index, unsetting index status"));
 						document.setStatus(DocumentStatus.INDEXED, false);
 						getModelService().save(document);
@@ -185,7 +187,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 			}
 			
 		} catch (IOException | SolrServerException e) {
-			throw new TaskException(TaskException.EXECUTION_ERROR, e);
+			throw new TaskException(TaskException.EXECUTION_ERROR, currentDocumentId, e);
 		}
 		
 		resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_DATA,

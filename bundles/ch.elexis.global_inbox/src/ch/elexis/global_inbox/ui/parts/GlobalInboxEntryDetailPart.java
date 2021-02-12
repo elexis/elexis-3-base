@@ -103,7 +103,7 @@ public class GlobalInboxEntryDetailPart {
 		csec.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		csec.addSelectionChangeListener(sc -> {
 			ICategory category = (ICategory) sc.getStructuredSelection().getFirstElement();
-			globalInboxEntry.setCategory(category.getName());
+			globalInboxEntry.setCategory(category != null ? category.getName() : null);
 		});
 		
 		label = new Label(parent, SWT.None);

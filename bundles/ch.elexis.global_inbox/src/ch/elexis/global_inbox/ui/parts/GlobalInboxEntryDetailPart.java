@@ -84,7 +84,11 @@ public class GlobalInboxEntryDetailPart {
 		
 		txtTitle = new Text(parent, SWT.BORDER);
 		txtTitle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtTitle.addModifyListener(e -> globalInboxEntry.setTitle(txtTitle.getText()));
+		txtTitle.addModifyListener(e -> {
+			if (globalInboxEntry != null) {
+				globalInboxEntry.setTitle(txtTitle.getText());
+			}
+		});
 		ContentProposalAdapter titleContentProposalAdapter =
 			new ContentProposalAdapter(txtTitle, new TitleControlContentAdapter(txtTitle),
 				new TitleContentProposalProvider(txtTitle), null, null);
@@ -103,7 +107,9 @@ public class GlobalInboxEntryDetailPart {
 		csec.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		csec.addSelectionChangeListener(sc -> {
 			ICategory category = (ICategory) sc.getStructuredSelection().getFirstElement();
-			globalInboxEntry.setCategory(category != null ? category.getName() : null);
+			if (globalInboxEntry != null) {
+				globalInboxEntry.setCategory(category.getName());
+			}
 		});
 		
 		label = new Label(parent, SWT.None);
@@ -116,7 +122,9 @@ public class GlobalInboxEntryDetailPart {
 		archivingDate.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				globalInboxEntry.setArchivingDate(archivingDate.getSelection());
+				if (globalInboxEntry != null) {
+					globalInboxEntry.setArchivingDate(archivingDate.getSelection());
+				}
 			};
 		});
 		
@@ -134,7 +142,9 @@ public class GlobalInboxEntryDetailPart {
 		creationDateSelector.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				globalInboxEntry.setCreationDate(creationDateSelector.getSelection());
+				if (globalInboxEntry != null) {
+					globalInboxEntry.setCreationDate(creationDateSelector.getSelection());
+				}
 			};
 		});
 		
@@ -157,8 +167,10 @@ public class GlobalInboxEntryDetailPart {
 					IPatient iPatient = patient.toIPatient();
 					cvPatient.add(iPatient);
 					cvPatient.setSelection(new StructuredSelection(iPatient));
-					globalInboxEntry.getPatientCandidates().add(iPatient);
-					globalInboxEntry.setPatient(iPatient);
+					if (globalInboxEntry != null) {
+						globalInboxEntry.getPatientCandidates().add(iPatient);
+						globalInboxEntry.setPatient(iPatient);
+					}
 				}
 			}
 		});
@@ -168,7 +180,9 @@ public class GlobalInboxEntryDetailPart {
 		cvPatient.setLabelProvider(new IdentifiableLabelProvider());
 		cvPatient.addSelectionChangedListener(sc -> {
 			IPatient patient = (IPatient) sc.getStructuredSelection().getFirstElement();
-			globalInboxEntry.setPatient(patient);
+			if (globalInboxEntry != null) {
+				globalInboxEntry.setPatient(patient);
+			}
 			if (patient != null) {
 				IContact familyDoctor = patient.getFamilyDoctor();
 				IMandator mandator;
@@ -200,7 +214,9 @@ public class GlobalInboxEntryDetailPart {
 					IContact iContact = contact.toIContact();
 					cvSender.add(iContact);
 					cvSender.setSelection(new StructuredSelection(iContact));
-					globalInboxEntry.setSender(iContact);
+					if (globalInboxEntry != null) {
+						globalInboxEntry.setSender(iContact);
+					}
 				}
 			}
 		});
@@ -212,7 +228,9 @@ public class GlobalInboxEntryDetailPart {
 		ccvSender.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		cvSender.addSelectionChangedListener(sc -> {
 			IContact sender = (IContact) cvSender.getStructuredSelection().getFirstElement();
-			globalInboxEntry.setSender(sender);
+			if (globalInboxEntry != null) {
+				globalInboxEntry.setSender(sender);
+			}
 		});
 		
 		label = new Label(parent, SWT.None);
@@ -222,7 +240,11 @@ public class GlobalInboxEntryDetailPart {
 		GridData gd_txtKeywords = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_txtKeywords.heightHint = 40;
 		txtKeywords.setLayoutData(gd_txtKeywords);
-		txtKeywords.addModifyListener(e -> globalInboxEntry.setKeywords(txtKeywords.getText()));
+		txtKeywords.addModifyListener(e -> {
+			if (globalInboxEntry != null) {
+				globalInboxEntry.setKeywords(txtKeywords.getText());
+			}
+		});
 		
 		label = new Label(parent, SWT.None);
 		label.setText("Info");
@@ -239,7 +261,9 @@ public class GlobalInboxEntryDetailPart {
 		btnInfoTo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				globalInboxEntry.setSendInfoTo(btnInfoTo.getSelection());
+				if (globalInboxEntry != null) {
+					globalInboxEntry.setSendInfoTo(btnInfoTo.getSelection());
+				}
 			}
 		});
 		cvInfoToReceiver = new ComboViewer(infoComposite, SWT.NONE);
@@ -250,8 +274,11 @@ public class GlobalInboxEntryDetailPart {
 		List<IMandator> mandators =
 			CoreModelServiceHolder.get().getQuery(IMandator.class).execute();
 		cvInfoToReceiver.setInput(mandators);
-		cvInfoToReceiver.addSelectionChangedListener(
-			sc -> globalInboxEntry.setInfoTo(sc.getStructuredSelection().toList()));
+		cvInfoToReceiver.addSelectionChangedListener(sc -> {
+			if (globalInboxEntry != null) {
+				globalInboxEntry.setInfoTo(sc.getStructuredSelection().toList());
+			}
+		});
 		
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(2, false));

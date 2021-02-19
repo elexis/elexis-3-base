@@ -14,33 +14,58 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.ehealth_connector.common.mdht.Identificator;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.ehc.ui.vacdoc.composite.VaccinationSelectionDialog;
 import at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder;
 import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 
 public class UploadMeineImpfungenHandler extends AbstractHandler implements IHandler {
 	
-	private Vaccination selectedVacination;
+	private List<Vaccination> selectedVacination;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		try {
 			Patient patient = ElexisEventDispatcher.getSelectedPatient();
-			ISelection selection =
-				HandlerUtil.getActiveSite(event).getSelectionProvider().getSelection();
-			if (selection instanceof StructuredSelection && !selection.isEmpty()) {
-				selectedVacination =
-					(Vaccination) ((StructuredSelection) selection).getFirstElement();
+			
+			String vaccinations =
+				event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.commandParameter.vaccinations"); //$NON-NLS-1$
+			if ("dialog".equals(vaccinations)) {
+				VaccinationSelectionDialog dialog =
+					new VaccinationSelectionDialog(HandlerUtil.getActiveShell(event));
+				Query<Vaccination> qbe = new Query<Vaccination>(Vaccination.class);
+				Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
+				if (selectedPatient != null) {
+					qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, selectedPatient.getId());
+					qbe.orderBy(true, new String[] {
+						Vaccination.FLD_DOA, PersistentObject.FLD_LASTUPDATE
+					});
+					List<Vaccination> patientVaccinations = qbe.execute();
+					dialog.setVaccinations(patientVaccinations);
+				}
+				if (dialog.open() == Window.OK) {
+					selectedVacination = dialog.getSelectedVaccinations();
+				}
+			} else {
+				ISelection selection =
+					HandlerUtil.getActiveSite(event).getSelectionProvider().getSelection();
+				if (selection instanceof StructuredSelection && !selection.isEmpty()) {
+					selectedVacination = Collections.singletonList(
+						(Vaccination) ((StructuredSelection) selection).getFirstElement());
+				}
 			}
-			if (patient != null && selectedVacination != null) {
+			if (patient != null && selectedVacination != null && !selectedVacination.isEmpty()) {
 				ProgressMonitorDialog progress =
 					new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 				try {
@@ -61,7 +86,7 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 									setMeineImpfungenPatientId(document.getPatient(),
 										patients.get(0));
 									VacdocServiceComponent.getService().addVaccinations(document,
-										Collections.singletonList(selectedVacination));
+										selectedVacination);
 									boolean success = MeineImpfungenServiceHolder.getService()
 										.uploadDocument(document);
 									if (!success) {

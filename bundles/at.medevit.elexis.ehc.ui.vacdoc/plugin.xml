@@ -54,6 +54,16 @@
                label="export nach meineimpfungen"
                style="push">
          </command>
+         <command
+               commandId="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen"
+               icon="rsc/meineimpfungenlogo_16x16.png"
+               label="mehrfach export nach meineimpfungen"
+               style="push">
+            <parameter
+                  name="at.medevit.elexis.ehc.ui.vacdoc.commandParameter.vaccinations"
+                  value="dialog">
+            </parameter>
+         </command>
          <separator
                name="at.medevit.elexis.ehc.ui.vacdoc.separator1"
                visible="true">
@@ -95,6 +105,19 @@
                name="temp directory"
                optional="true">
          </commandParameter>
+      </command>
+      <command
+            id="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen"
+            name="upload meineimpfungen">
+         <commandParameter
+               id="at.medevit.elexis.ehc.ui.vacdoc.commandParameter.vaccinations"
+               name="Vaccinations"
+               optional="true">
+         </commandParameter>
+      </command>
+      <command
+            id="at.medevit.elexis.ehc.ui.vacdoc.DownloadMeineImpfungen"
+            name="download meineimpfungen">
       </command>
    </extension>
    <extension

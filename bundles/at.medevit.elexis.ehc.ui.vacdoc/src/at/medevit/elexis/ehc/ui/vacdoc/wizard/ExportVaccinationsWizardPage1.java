@@ -14,31 +14,26 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
+import at.medevit.elexis.ehc.ui.vacdoc.composite.VaccinationSelectionComposite;
 import at.medevit.elexis.ehc.ui.vacdoc.service.OutboxElementServiceHolder;
 import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 import at.medevit.elexis.ehc.ui.vacdoc.wizard.ExportVaccinationsWizard.ExportType;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.outbox.model.OutboxElementType;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.model.IMandator;
@@ -51,11 +46,11 @@ import ch.elexis.data.Query;
 
 public class ExportVaccinationsWizardPage1 extends WizardPage {
 	
-	private TableViewer contentViewer;
-	
 	private Patient selectedPatient;
 	
 	private final ExportType exportType;
+	
+	private VaccinationSelectionComposite composite;
 	
 	protected ExportVaccinationsWizardPage1(String pageName, ExportType exportType){
 		super(pageName);
@@ -65,34 +60,10 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	
 	@Override
 	public void createControl(Composite parent){
-		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite =
+			new VaccinationSelectionComposite(parent, SWT.NULL);
 		
-		contentViewer =
-			new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI);
-		Control control = contentViewer.getControl();
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		gd.heightHint = 300;
-		control.setLayoutData(gd);
-		
-		contentViewer.setContentProvider(new ArrayContentProvider());
-		contentViewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element){
-				if (element instanceof Vaccination) {
-					return ((Vaccination) element).getLabel();
-				}
-				return super.getText(element);
-			}
-			
-			@Override
-			public Image getImage(Object element){
-				return super.getImage(element);
-			}
-		});
-		
-		contentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		composite.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event){
 				getWizard().getContainer().updateButtons();
@@ -119,8 +90,8 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 					Vaccination.FLD_DOA, PersistentObject.FLD_LASTUPDATE
 				});
 				List<Vaccination> vaccinations = qbe.execute();
-				contentViewer.setInput(vaccinations);
-				contentViewer.setSelection(new StructuredSelection(vaccinations), true);
+				composite.setInput(vaccinations);
+				composite.setSelection(new StructuredSelection(vaccinations), true);
 				
 				String ahvNr = selectedPatient.getXid(DOMAIN_AHV);
 				if (ahvNr == null || ahvNr.isEmpty()) {
@@ -134,7 +105,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	
 	@Override
 	public boolean isPageComplete(){
-		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
+		IStructuredSelection contentSelection = (IStructuredSelection) composite.getSelection();
 		String ahvNr = selectedPatient.getXid(DOMAIN_AHV);
 		if (!contentSelection.isEmpty() && ahvNr != null && !ahvNr.isEmpty()) {
 			return true;
@@ -144,7 +115,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	
 	@SuppressWarnings("unchecked")
 	private List<Vaccination> getSelectedVaccinations(){
-		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
+		IStructuredSelection contentSelection = (IStructuredSelection) composite.getSelection();
 		
 		if (!contentSelection.isEmpty()) {
 			return contentSelection.toList();

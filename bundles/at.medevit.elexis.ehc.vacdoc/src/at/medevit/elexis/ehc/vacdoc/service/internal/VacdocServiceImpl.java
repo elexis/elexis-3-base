@@ -114,7 +114,7 @@ public class VacdocServiceImpl implements VacdocService {
 				
 				String identifier = vaccination.get(Vaccination.FLD_EAN);
 				if (identifier != null && !identifier.isEmpty()) {
-					Identificator ean = new Identificator(CodeSystems.GTIN, identifier);
+					Identificator ean = new Identificator("1.3.160", identifier);
 					consumable.setManufacturedProductId(ean);
 				}
 				

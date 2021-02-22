@@ -37,16 +37,19 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		ConverterControllerApi apiInstance = new ConverterControllerApi();
 		apiInstance.getApiClient().setBasePath(getAppBasePath());
 		try {
-			File tempFile = new File(documentStore.saveContentToTempFile(document,
-				getPrefix(document), getExtension(document), true));
-			File converted = apiInstance.convertToUsingParamUsingPOST(tempFile, "pdf", null);
-			tempFile.delete();
-			Path moved = Files.move(converted.toPath(),
-				new File(tempFile.getParentFile(), getPrefix(document) + ".pdf").toPath(),
-				StandardCopyOption.REPLACE_EXISTING);
-			File ret = moved.toFile();
-			ret.deleteOnExit();
-			return Optional.of(ret);
+			String tempFilePath = documentStore.saveContentToTempFile(document, getPrefix(document),
+				getExtension(document), true);
+			if (tempFilePath != null) {
+				File tempFile = new File(tempFilePath);
+				File converted = apiInstance.convertToUsingParamUsingPOST(tempFile, "pdf", null);
+				tempFile.delete();
+				Path moved = Files.move(converted.toPath(),
+					new File(tempFile.getParentFile(), getPrefix(document) + ".pdf").toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
+				File ret = moved.toFile();
+				ret.deleteOnExit();
+				return Optional.of(ret);
+			}
 		} catch (ElexisException | ApiException | IOException e) {
 			if (e instanceof ApiException) {
 				LoggerFactory.getLogger(getClass())

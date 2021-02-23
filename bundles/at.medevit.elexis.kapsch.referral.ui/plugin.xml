@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.PatListView">
+         <command
+               commandId="at.medevit.elexis.kapsch.referral.ui.send"
+               label="Zuweisung"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.kapsch.referral.ui.handler.SendHandler"
+            id="at.medevit.elexis.kapsch.referral.ui.send"
+            name="send patient">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="at.medevit.elexis.kapsch.referral.ui.WorkbenchPreferencePage1"
+            id="at.medevit.elexis.kapsch.referral.ui.page1"
+            name="name">
+      </page>
+   </extension>
+
+</plugin>

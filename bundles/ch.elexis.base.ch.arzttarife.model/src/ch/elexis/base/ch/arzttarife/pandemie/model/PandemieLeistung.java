@@ -16,6 +16,7 @@ import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.types.VatInfo;
 
 public class PandemieLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PandemieLeistung>
@@ -73,6 +74,11 @@ public class PandemieLeistung
 	@Override
 	public String getCodeSystemCode(){
 		return "351";
+	}
+	
+	@Override
+	public VatInfo getVatInfo(){
+		return VatInfo.VAT_NONE;
 	}
 	
 	@Override

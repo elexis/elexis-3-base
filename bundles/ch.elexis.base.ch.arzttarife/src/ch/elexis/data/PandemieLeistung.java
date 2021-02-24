@@ -131,6 +131,11 @@ public class PandemieLeistung extends VerrechenbarAdapter {
 	}
 	
 	@Override
+	public VatInfo getVatInfo(){
+		return VatInfo.VAT_NONE;
+	}
+	
+	@Override
 	public String getLabel(){
 		String[] vals = get(true, FLD_CODE, FLD_TITLE);
 		return new StringBuilder().append(vals[0]).append(" ").append(vals[1]).toString();

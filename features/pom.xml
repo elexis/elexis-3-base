@@ -16,6 +16,7 @@
     <!--
     <module>at.medevit.ch.artikelstamm.medcalendar.feature</module>
 	-->
+	<module>at.medevit.elexis.kapsch.referral.feature</module>
     <module>at.medevit.elexis.agenda.feature</module>
     <module>at.medevit.elexis.cobasmira.feature</module>
     <module>at.medevit.elexis.decision.feature</module>

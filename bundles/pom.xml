@@ -63,6 +63,7 @@
     <module>at.medevit.elexis.swissmedic</module>
     <module>at.medevit.elexis.tarmed.model</module>
     <module>at.medevit.elexis.weblinks</module>
+    <module>at.medevit.elexis.kapsch.referral.ui</module>
     <module>ch.berchtold.privatrechnung</module>
     <module>ch.docbox.elexis</module>
     <module>ch.elexis.agenda</module>

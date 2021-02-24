@@ -12,4 +12,5 @@ Require-Bundle: org.eclipse.ui,
 Service-Component: OSGI-INF/at.medevit.elexis.kapsch.referral.internal.KapschReferralServiceImpl.xml,
  OSGI-INF/at.medevit.elexis.kapsch.referral.internal.KapschReferralServiceHolder.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.services.holder
+Import-Package: ch.elexis.core.services.holder,
+ org.apache.commons.lang;version="2.6.0"

@@ -24,7 +24,9 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.types.Gender;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import ch.elexis.data.Person;
 
 @Component(service = KapschReferralService.class)
 public class KapschReferralServiceImpl implements KapschReferralService {
@@ -122,6 +124,15 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		params.put("eMail", patient.get(Patient.FLD_E_MAIL));
 		params.put("Phone", patient.get(Patient.FLD_PHONE1));
 		params.put("Mobile", patient.get(Patient.FLD_MOBILEPHONE));
+		
+		Mandant mandator = ElexisEventDispatcher.getSelectedMandator();
+		params.put("Referral", mandator.get(Person.NAME) + " " + mandator.get(Person.FIRSTNAME));
+		params.put("ReferralStreet", mandator.getAnschrift().getStrasse());
+		params.put("ReferralPostalCode", mandator.getAnschrift().getPlz());
+		params.put("ReferralCity", mandator.getAnschrift().getOrt());
+		params.put("ReferralId", getGln(mandator));
+		params.put("ReferralEmail", mandator.get(Patient.FLD_E_MAIL));
+		params.put("ReferralPhone", mandator.get(Patient.FLD_PHONE1));
 		
 		Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 		if (fall != null) {

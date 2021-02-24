@@ -8,8 +8,10 @@ Automatic-Module-Name: at.medevit.elexis.kapsch.referral.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.ui,
  ch.elexis.core.data,
- ch.elexis.core.ui
+ ch.elexis.core.ui,
+ ch.rgw.utility
 Service-Component: OSGI-INF/at.medevit.elexis.kapsch.referral.internal.KapschReferralServiceImpl.xml,
  OSGI-INF/at.medevit.elexis.kapsch.referral.internal.KapschReferralServiceHolder.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.services.holder
+Import-Package: org.apache.commons.lang;version="2.6.0",
+ org.osgi.service.component.annotations;version="1.3.0"

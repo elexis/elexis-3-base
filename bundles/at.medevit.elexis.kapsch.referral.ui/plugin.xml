@@ -5,11 +5,12 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:ch.elexis.PatListView">
+            locationURI="toolbar:ch.elexis.BriefAuswahlView">
          <command
                commandId="at.medevit.elexis.kapsch.referral.ui.send"
-               label="Zuweisung"
-               style="push">
+               icon="rsc/document.png"
+               style="push"
+               tooltip="eZuweisung">
          </command>
       </menuContribution>
    </extension>
@@ -24,9 +25,10 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="at.medevit.elexis.kapsch.referral.ui.WorkbenchPreferencePage1"
-            id="at.medevit.elexis.kapsch.referral.ui.page1"
-            name="name">
+            category="ch.elexis.preferences.transporters"
+            class="at.medevit.elexis.kapsch.referral.ui.preferences.KapschReferralPreferences"
+            id="at.medevit.elexis.kapsch.referral.ui.preferences"
+            name="eZuweisung">
       </page>
    </extension>
 

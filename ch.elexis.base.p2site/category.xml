@@ -198,6 +198,9 @@
    <feature url="features/ch.elexis.impfplan.feature_3.0.100.qualifier.jar" id="ch.elexis.impfplan.feature" version="3.0.100.qualifier">
       <category name="clinical_helpers"/>
    </feature>
+   <feature id="at.medevit.elexis.kapsch.referral.feature">
+      <category name="dataexchange"/>
+   </feature>
    <feature url="features/at.medevit.elexis.impfplan.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.impfplan.feature" version="3.0.100.qualifier">
       <category name="clinical_helpers"/>
    </feature>

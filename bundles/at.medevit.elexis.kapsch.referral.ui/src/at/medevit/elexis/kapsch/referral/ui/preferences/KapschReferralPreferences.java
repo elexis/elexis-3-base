@@ -7,15 +7,16 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import at.medevit.elexis.kapsch.referral.KapschReferralService;
-import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
-import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
+import ch.rgw.io.Settings;
 
 public class KapschReferralPreferences extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 	
 	@Override
 	public void init(IWorkbench workbench){
-		setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.userCfg));
 		setDescription("Mandanten spezifische Einstellungen für Kapsch Zuweisungen.");
 	}
 	

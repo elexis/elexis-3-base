@@ -2,15 +2,19 @@ package at.medevit.elexis.kapsch.referral.internal;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
@@ -34,6 +38,7 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 	public Optional<String> getPatientReferralUrl(Patient patient){
 		URL url = getUrl();
 		Map<String, Object> params = getPatientParameterMap(patient);
+		applyMapping("op_klinikseeschau", params);
 		if (params != null) {
 			String getParams = getMapAsGetParams(params);
 			if (getParams != null) {
@@ -49,6 +54,7 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 	public Optional<String> sendPatient(Patient patient){
         URL url = getUrl();
 		Map<String, Object> params = getPatientParameterMap(patient);
+		applyMapping("op_klinikseeschau", params);
 		if (params != null) {
 			byte[] postDataBytes = getMapAsPostData(params);
 			if (postDataBytes != null) {
@@ -73,6 +79,30 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 			}
 		}
 		return Optional.empty();
+	}
+	
+	private void applyMapping(String mappingname, Map<String, Object> params){
+		try (InputStream inStream =
+			getClass().getResourceAsStream("/rsc/mapping/" + mappingname + ".properties")) {
+			if (inStream != null) {
+				Properties keyMapping = new Properties();
+				keyMapping.load(inStream);
+				List<String> paramsKeys = new ArrayList<>(params.keySet());
+				for (String key : paramsKeys) {
+					if (keyMapping.get(key) != null) {
+						Object value = params.get(key);
+						params.remove(key);
+						params.put((String) keyMapping.get(key), value);
+					}
+				}
+			} else {
+				LoggerFactory.getLogger(getClass())
+					.warn("No mapping properties for [" + mappingname + "] found");
+			}
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass())
+				.error("Error loading mapping properties for [" + mappingname + "]", e);
+		}
 	}
 	
 	private byte[] getMapAsPostData(Map<String, Object> params){
@@ -154,11 +184,36 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 				}
 				params.put("EntryReason", fall.getConfiguredBillingSystemLaw().name());
 				if(fall.getConfiguredBillingSystemLaw() == BillingLaw.UVG) {
+					if (params.containsKey("GuarantorName")) {
+						params.put("UvgName", params.get("GuarantorName"));
+					}
 					if(StringUtils.isNotEmpty(fall.getRequiredString("Unfallnummer"))) {
 						params.put("AccidentNr", fall.getRequiredString("Unfallnummer"));
 					}
 					if (StringUtils.isNotEmpty(fall.getInfoString("Unfalldatum"))) {
 						params.put("DateOfAccident", fall.getRequiredString("Unfalldatum"));
+					}
+				}
+				if (fall.getConfiguredBillingSystemLaw() == BillingLaw.KVG) {
+					if (params.containsKey("GuarantorName")) {
+						params.put("KvgName", params.get("GuarantorName"));
+					}
+					if (params.containsKey("InsuranceCardNr")) {
+						params.put("KvgCardNr", params.get("InsuranceCardNr"));
+					}
+					if (StringUtils.isNotBlank(fall.getRequiredString("Versicherungsnummer"))) {
+						params.put("KvgContractNr", fall.getRequiredString("Versicherungsnummer"));
+					}
+				}
+				if (fall.getConfiguredBillingSystemLaw() == BillingLaw.VVG) {
+					if (params.containsKey("GuarantorName")) {
+						params.put("VvgName", params.get("GuarantorName"));
+					}
+					if (params.containsKey("InsuranceCardNr")) {
+						params.put("VvgCardNr", params.get("InsuranceCardNr"));
+					}
+					if (StringUtils.isNotBlank(fall.getRequiredString("Versicherungsnummer"))) {
+						params.put("VvgContractNr", fall.getRequiredString("Versicherungsnummer"));
 					}
 				}
 			}

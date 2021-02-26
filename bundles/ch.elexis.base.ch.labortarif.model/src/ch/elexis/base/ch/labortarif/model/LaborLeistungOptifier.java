@@ -16,7 +16,6 @@ import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.billable.AbstractOptifier;
-import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
@@ -48,15 +47,11 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 	@Override
 	public Result<IBilled> add(ILaborLeistung billable, IEncounter encounter, double amount,
 		boolean save){
-		if (billable instanceof ILaborLeistung && isOptify()) {
-			boolean haveKons = false;
-			
-			// optify including billable
-			IBilled transientBilled =
-				new IBilledBuilder(coreModelService, billable, encounter).build();
+		Result<IBilled> ret = super.add(billable, encounter, amount, save);
+		if (isOptify()) {
 			List<IBilled> list = encounter.getBilled();
-			list.add(transientBilled);
 			
+			boolean haveKons = false;
 			IBilled v470710 = null;
 			IBilled v470720 = null;
 			int z4707 = 0;
@@ -134,7 +129,67 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 				CoreModelServiceHolder.get().save(v470720);
 			}
 		}
-		return super.add(billable, encounter, amount, save);
+		return ret;
+	}
+	
+	@Override
+	public Result<IBilled> remove(IBilled removeBilled, IEncounter encounter){
+		Result<IBilled> ret = super.remove(removeBilled, encounter);
+		List<IBilled> list = encounter.getBilled();
+		
+		boolean haveKons = false;
+		IBilled v470710 = null;
+		IBilled v470720 = null;
+		int z4707 = 0;
+		int z470710 = 0;
+		int z470720 = 0;
+		
+		for (IBilled billed : list) {
+			IBillable existing = billed.getBillable();
+			if (existing instanceof ILaborLeistung) {
+				String existingCode = existing.getCode();
+				if (existingCode.equals("4707.00")) { // Pauschale //$NON-NLS-1$
+					if (z4707 < 1) {
+						z4707 = 1;
+					} else {
+						return new Result<IBilled>(SEVERITY.WARNING, 1,
+							"4707.00 only once per cons", billed, false); //$NON-NLS-1$
+					}
+				} else if (existingCode.equals("4707.10")) { // Fachbereich C //$NON-NLS-1$
+					v470710 = billed;
+				} else if (existingCode.equals("4707.20")) { // Fachbereich //$NON-NLS-1$
+					// nicht-C
+					v470720 = billed;
+				} else if (existingCode.equals("4703.00") || existingCode.equals("4701.00") //$NON-NLS-1$//$NON-NLS-2$
+					|| existingCode.equals("4704.00") || existingCode.equals("4706.00")) { //$NON-NLS-1$ //$NON-NLS-2$
+					continue;
+				} else {
+					ILaborLeistung existingLaborLeistung = (ILaborLeistung) existing;
+					if (!isSchnellAnalyse(existingLaborLeistung)) {
+						if (existingLaborLeistung.getSpeciality().indexOf("C") > -1) { //$NON-NLS-1$
+							z470710 += billed.getAmount();
+						} else {
+							z470720 += billed.getAmount();
+						}
+					}
+				}
+			} else if (existing.getCode().equals("00.0010") //$NON-NLS-1$
+				|| existing.getCode().equals("00.0060")) { // Kons erste 5 Minuten  //$NON-NLS-1$
+				haveKons = true;
+			}
+			
+			if (z470710 == 0 || haveKons == false) {
+				if (v470710 != null) {
+					encounter.removeBilled(v470710);
+				}
+			}
+			if (z470720 == 0 || haveKons == false) {
+				if (v470720 != null) {
+					encounter.removeBilled(v470720);
+				}
+			}
+		}
+		return ret;
 	}
 	
 	@Override

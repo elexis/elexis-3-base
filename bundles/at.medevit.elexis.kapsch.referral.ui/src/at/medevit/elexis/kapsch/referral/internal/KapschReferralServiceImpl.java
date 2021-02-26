@@ -156,7 +156,7 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		params.put("Mobile", patient.get(Patient.FLD_MOBILEPHONE));
 		
 		Mandant mandator = ElexisEventDispatcher.getSelectedMandator();
-		params.put("Referral", mandator.get(Person.NAME) + " " + mandator.get(Person.FIRSTNAME));
+		params.put("Referral", getMandatorName(mandator));
 		params.put("ReferralStreet", mandator.getAnschrift().getStrasse());
 		params.put("ReferralPostalCode", mandator.getAnschrift().getPlz());
 		params.put("ReferralCity", mandator.getAnschrift().getOrt());
@@ -220,6 +220,26 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		}
 		
 		return params;
+	}
+	
+	private Object getMandatorName(Mandant mandator){
+		StringBuilder sb = new StringBuilder();
+		if (StringUtils.isNotBlank(mandator.get(Person.TITLE))) {
+			sb.append(mandator.get(Person.TITLE));
+		}
+		if (StringUtils.isNotBlank(mandator.get(Person.FIRSTNAME))) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(mandator.get(Person.FIRSTNAME));
+		}
+		if (StringUtils.isNotBlank(mandator.get(Person.NAME))) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(mandator.get(Person.NAME));
+		}
+		return sb.toString();
 	}
 	
 	private String getGln(Kontakt contact){

@@ -150,8 +150,9 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 			Optional<ICodeElement> codeElement = laborContribution.get().loadFromCode(code,
 				Collections.singletonMap(ContextKeys.CONSULTATION, encounter));
 			if (codeElement.isPresent()) {
-				return new IBilledBuilder(CoreModelServiceHolder.get(),
-					(ILaborLeistung) codeElement.get(), encounter).build();
+				Result<IBilled> result =
+					super.add((ILaborLeistung) codeElement.get(), encounter, 1.0);
+				return result.get();
 			} else {
 				throw new IllegalStateException("No labor tarif code element [" + code + "] found");
 			}

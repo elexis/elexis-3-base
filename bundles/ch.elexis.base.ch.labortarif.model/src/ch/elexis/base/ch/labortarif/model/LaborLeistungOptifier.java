@@ -177,17 +177,22 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 				|| existing.getCode().equals("00.0060")) { // Kons erste 5 Minuten  //$NON-NLS-1$
 				haveKons = true;
 			}
-			
-			if (z470710 == 0 || haveKons == false) {
-				if (v470710 != null) {
-					encounter.removeBilled(v470710);
-				}
+		}
+		if (z470710 == 0 || haveKons == false) {
+			if (v470710 != null) {
+				encounter.removeBilled(v470710);
 			}
-			if (z470720 == 0 || haveKons == false) {
-				if (v470720 != null) {
-					encounter.removeBilled(v470720);
-				}
+		} else if (z470710 > 0 && v470710 != null && v470710.getAmount() != z470710) {
+			v470710.setAmount(z470710);
+			coreModelService.save(v470710);
+		}
+		if (z470720 == 0 || haveKons == false) {
+			if (v470720 != null) {
+				encounter.removeBilled(v470720);
 			}
+		} else if (z470720 > 0 && v470720 != null && v470720.getAmount() != z470720) {
+			v470720.setAmount(z470720);
+			coreModelService.save(v470720);
 		}
 		return ret;
 	}

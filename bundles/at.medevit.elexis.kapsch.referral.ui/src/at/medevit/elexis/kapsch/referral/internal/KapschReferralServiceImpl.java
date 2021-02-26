@@ -263,7 +263,7 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 	private URL getUrl(){
 		try {
 			String configEndpoint = ConfigServiceHolder.getMandator(
-				KapschReferralService.CONFIG_ENDPOINT, KapschReferralService.ENDPOINT_TEST);
+				KapschReferralService.CONFIG_ENDPOINT, KapschReferralService.ENDPOINT_PRODUCTIV);
 			if (KapschReferralService.ENDPOINT_PRODUCTIV.equals(configEndpoint)) {
 				return new URL("https://referral.kapsch.health/webapp");
 			}

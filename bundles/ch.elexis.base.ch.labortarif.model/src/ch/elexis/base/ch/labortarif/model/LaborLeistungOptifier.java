@@ -38,9 +38,7 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 		Optional<IMandator> activeMandator = ContextServiceHolder.get().getActiveMandator();
 		if(activeMandator.isPresent()) {
 			return ConfigServiceHolder.get().get(activeMandator.get(),
-				ch.elexis.core.constants.Preferences.LEISTUNGSCODES_OPTIFY, true)
-				&& ConfigServiceHolder.get().getLocal(LaborTarifConstants.CFG_OPTIMIZE,
-					true) == false;
+				ch.elexis.core.constants.Preferences.LEISTUNGSCODES_OPTIFY, true);
 		} else {
 			LoggerFactory.getLogger(getClass()).warn("No active Mandator, default is to optify.");
 			return true;
@@ -53,7 +51,12 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 		if (billable instanceof ILaborLeistung && isOptify()) {
 			boolean haveKons = false;
 			
+			// optify including billable
+			IBilled transientBilled =
+				new IBilledBuilder(coreModelService, billable, encounter).build();
 			List<IBilled> list = encounter.getBilled();
+			list.add(transientBilled);
+			
 			IBilled v470710 = null;
 			IBilled v470720 = null;
 			int z4707 = 0;

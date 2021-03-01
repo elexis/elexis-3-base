@@ -60,7 +60,12 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 			
 			for (IBilled billed : list) {
 				IBillable existing = billed.getBillable();
-				if (existing instanceof ILaborLeistung) {
+				if (existing == null) {
+					return new Result<IBilled>(
+						SEVERITY.ERROR, 1, "Could not resolve billable for billed ["
+							+ billed.getId() + "] in encounter [" + encounter.getId() + "]",
+						null, true);
+				} else if (existing instanceof ILaborLeistung) {
 					String existingCode = existing.getCode();
 					if (existingCode.equals("4707.00")) { // Pauschale //$NON-NLS-1$
 						if (z4707 < 1) {

@@ -13,7 +13,7 @@
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6C9CUB9TEeu6CfM6mOBDOA" featurename="bindingTables" parentElementId="xpath:/">
     <elements xsi:type="commands:BindingTable" xmi:id="_FtNC8B9UEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.bindingtable.global_inbox" bindingContext="_S_nJoB9TEeu6CfM6mOBDOA">
-      <bindings xmi:id="_VDqPkB9UEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.keybinding.view" keySequence="M1+V" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
+      <bindings xmi:id="_VDqPkB9UEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.keybinding.view" keySequence="M1+O" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_RYPCgB9bEeu6CfM6mOBDOA" featurename="descriptors" parentElementId="xpath:/">

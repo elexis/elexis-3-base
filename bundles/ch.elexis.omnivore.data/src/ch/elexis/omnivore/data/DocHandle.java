@@ -33,9 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -558,17 +556,15 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	 * @return temporary file
 	 */
 	public File createTemporaryFile(String title){
-		
-		String fileExtension = null;
-		try {
-			MimeType docMimeType = new MimeType(get(FLD_MIMETYPE));
-			fileExtension = MimeTool.getExtension(docMimeType.toString());
-		} catch (MimeTypeParseException mpe) {
-			fileExtension = FileTool.getExtension(get(FLD_MIMETYPE));
-			
-			if (fileExtension == null) {
-				
+		String mimetype = get(FLD_MIMETYPE);
+		String fileExtension = MimeTool.getExtension(mimetype);
+		if (StringUtils.isBlank(fileExtension)) {
+			fileExtension = FileTool.getExtension(mimetype);
+			if (StringUtils.isBlank(fileExtension)) {
 				fileExtension = FileTool.getExtension(get(FLD_TITLE));
+			}
+			if (StringUtils.isBlank(fileExtension) && StringUtils.isNotBlank(mimetype)) {
+				fileExtension = mimetype;
 			}
 		}
 		

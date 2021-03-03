@@ -414,6 +414,10 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 					}
 					File file = new File(subdir, getId() + "." //$NON-NLS-1$
 						+ FileTool.getExtension(get(FLD_MIMETYPE)));
+					if (!file.exists()) {
+						file = new File(subdir, getId() + "." //$NON-NLS-1$
+							+ getFileExtension());
+					}
 					return file;
 				}
 			}
@@ -550,12 +554,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		}
 	}
 	
-	/**
-	 * create a temporary file
-	 * 
-	 * @return temporary file
-	 */
-	public File createTemporaryFile(String title){
+	private String getFileExtension() {
 		String mimetype = get(FLD_MIMETYPE);
 		String fileExtension = MimeTool.getExtension(mimetype);
 		if (StringUtils.isBlank(fileExtension)) {
@@ -567,6 +566,16 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				fileExtension = mimetype;
 			}
 		}
+		return fileExtension;
+	}
+	
+	/**
+	 * create a temporary file
+	 * 
+	 * @return temporary file
+	 */
+	public File createTemporaryFile(String title){
+		String fileExtension = getFileExtension();
 		
 		if (fileExtension == null) {
 			fileExtension = "";

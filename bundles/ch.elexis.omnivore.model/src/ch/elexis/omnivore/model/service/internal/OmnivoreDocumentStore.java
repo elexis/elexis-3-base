@@ -79,7 +79,7 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	@Override
 	public List<ICategory> getCategories(){
 		Stream<?> resultStream = modelService.executeNativeQuery(
-			"select distinct category from CH_ELEXIS_OMNIVORE_DATA where deleted = '0' order by category");
+			"select distinct category from CH_ELEXIS_OMNIVORE_DATA where mimetype='text/category' and deleted = '0' order by category");
 		return resultStream.filter(o -> o instanceof String)
 			.map(o -> new TransientCategory((String) o)).collect(Collectors.toList());
 	}

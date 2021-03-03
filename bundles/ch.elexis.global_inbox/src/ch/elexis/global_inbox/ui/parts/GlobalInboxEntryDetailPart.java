@@ -334,8 +334,10 @@ public class GlobalInboxEntryDetailPart {
 		if (creationDate == null) {
 			creationDate = TimeUtil.toDate(globalInboxEntry.getCreationDateCandidate());
 		}
-		creationDateSelector.setSelectionOptionsAndDefault(globalInboxEntry.getDateTokens(),
-			creationDate);
+		
+		Date creationDatePreselection = creationDateSelector
+			.setSelectionOptionsAndDefault(globalInboxEntry.getDateTokens(), creationDate);
+		globalInboxEntry.setCreationDate(creationDatePreselection);
 		
 		IPatient selectedPatient = globalInboxEntry.getPatient();
 		List<IPatient> patientCandidates = globalInboxEntry.getPatientCandidates();

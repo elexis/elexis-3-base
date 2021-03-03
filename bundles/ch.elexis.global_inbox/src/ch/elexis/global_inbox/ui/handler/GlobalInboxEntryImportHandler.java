@@ -48,9 +48,8 @@ public class GlobalInboxEntryImportHandler {
 	private IInboxElementService inboxElementService;
 	
 	@Execute
-	public void execute(
-		@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
-		IEventBroker eventBroker){
+	public void execute(@Named(IServiceConstants.ACTIVE_SELECTION)
+	GlobalInboxEntry globalInboxEntry, IEventBroker eventBroker){
 		
 		String title = globalInboxEntry.getTitle();
 		IPatient patient = globalInboxEntry.getPatient();
@@ -66,7 +65,9 @@ public class GlobalInboxEntryImportHandler {
 		document.setTitle(title);
 		document.setMimeType(globalInboxEntry.getMimetype());
 		document.setKeywords(globalInboxEntry.getKeywords());
-		document.setCreated(globalInboxEntry.getCreationDate());
+		if (globalInboxEntry.getCreationDate() != null) {
+			document.setCreated(globalInboxEntry.getCreationDate());
+		}
 		try (InputStream fin = new FileInputStream(mainFile)) {
 			document = documentStore.saveDocument(document, fin);
 		} catch (IOException | ElexisException e) {
@@ -108,8 +109,8 @@ public class GlobalInboxEntryImportHandler {
 	}
 	
 	@CanExecute
-	public boolean canExecute(
-		@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry){
+	public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION)
+	GlobalInboxEntry globalInboxEntry){
 		
 		if (globalInboxEntry == null) {
 			return false;

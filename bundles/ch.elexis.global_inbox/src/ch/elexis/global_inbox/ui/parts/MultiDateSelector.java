@@ -84,7 +84,13 @@ public class MultiDateSelector extends Composite {
 		return value;
 	}
 	
-	public void setSelectionOptionsAndDefault(List<LocalDate> selectionOptions, Date defaultDate){
+	/**
+	 * 
+	 * @param selectionOptions
+	 * @param defaultDate
+	 * @return the determined default to for preselection
+	 */
+	public Date setSelectionOptionsAndDefault(List<LocalDate> selectionOptions, Date defaultDate){
 		
 		dateTime.setSelection(null);
 		
@@ -117,6 +123,8 @@ public class MultiDateSelector extends Composite {
 				dateTime.setSelection(TimeUtil.toDate(selectionOptions.get(0)));
 			}
 		}
+		
+		return dateTime.getSelection();
 	}
 	
 }

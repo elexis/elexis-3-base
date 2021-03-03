@@ -66,6 +66,7 @@ public class GlobalInboxEntryImportHandler {
 		document.setTitle(title);
 		document.setMimeType(globalInboxEntry.getMimetype());
 		document.setKeywords(globalInboxEntry.getKeywords());
+		document.setCreated(globalInboxEntry.getCreationDate());
 		try (InputStream fin = new FileInputStream(mainFile)) {
 			document = documentStore.saveDocument(document, fin);
 		} catch (IOException | ElexisException e) {

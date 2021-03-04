@@ -44,4 +44,9 @@ public class DocumentSpotlightResultEntryDetailComposite extends Composite
 	public Category appliedForCategory(){
 		return Category.DOCUMENT;
 	}
+
+	@Override
+	public boolean handleAltKeyPressed(int keyCode){
+		return true;
+	}
 }

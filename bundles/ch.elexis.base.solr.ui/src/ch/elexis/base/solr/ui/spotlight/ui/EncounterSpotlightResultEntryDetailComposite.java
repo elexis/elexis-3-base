@@ -52,4 +52,9 @@ public class EncounterSpotlightResultEntryDetailComposite extends Composite
 	public Category appliedForCategory(){
 		return Category.ENCOUNTER;
 	}
+
+	@Override
+	public boolean handleAltKeyPressed(int keyCode){
+		return true;
+	}
 }

@@ -1,6 +1,7 @@
 
 package ch.elexis.global_inbox.ui.parts;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -314,6 +315,13 @@ public class GlobalInboxEntryDetailPart {
 		this.globalInboxEntry = globalInboxEntry;
 		
 		if (globalInboxEntry == null) {
+			txtTitle.setText("");
+			csec.setCategoryByName(null);
+			archivingDate.setSelection(null);
+			creationDateSelector.setSelectionOptionsAndDefault(Collections.emptyList(), null);
+			cvPatient.setInput(null);
+			cvSender.setInput(null);
+			txtKeywords.setText("");
 			return;
 		}
 		

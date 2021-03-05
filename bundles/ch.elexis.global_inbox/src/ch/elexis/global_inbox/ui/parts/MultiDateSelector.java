@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
 
+import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.time.TimeUtil;
 
 public class MultiDateSelector extends Composite {
@@ -90,7 +91,7 @@ public class MultiDateSelector extends Composite {
 	 * @param defaultDate
 	 * @return the determined default to for preselection
 	 */
-	public Date setSelectionOptionsAndDefault(List<LocalDate> selectionOptions, Date defaultDate){
+	public Date setSelectionOptionsAndDefault(List<LocalDate> selectionOptions, @Nullable Date defaultDate){
 		
 		dateTime.setSelection(null);
 		

@@ -1,5 +1,8 @@
 package ch.elexis.agenda.ui.provider;
 
+import java.time.format.TextStyle;
+import java.util.Locale;
+
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -27,6 +30,11 @@ public class TermineLabelProvider extends LabelProvider implements ITableLabelPr
 			TimeTool tt = new TimeTool();
 			tt.setDate(termin.getDay());
 			sbLabel.append(tt.toString(TimeTool.DATE_GER));
+			String dayShort = tt.toLocalDate().getDayOfWeek().getDisplayName(TextStyle.SHORT,
+				Locale.getDefault());
+			if (dayShort != null) {
+				sbLabel.append(" (" + dayShort + ")");
+			}
 			sbLabel.append(", ");
 			
 			// start time

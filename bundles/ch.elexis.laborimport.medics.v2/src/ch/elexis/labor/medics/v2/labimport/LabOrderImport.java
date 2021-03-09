@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
@@ -54,7 +54,8 @@ public class LabOrderImport extends ImporterPage {
 							IVirtualFilesystemHandle right){
 							String[] leftParts = left.getName().split("_");
 							String[] rightParts = right.getName().split("_");
-							if (leftParts.length > 1 && rightParts.length > 1) {
+							if (leftParts.length > 1 && StringUtils.isNotBlank(leftParts[1])
+								&& rightParts.length > 1 && StringUtils.isNotBlank(rightParts[1])) {
 								return leftParts[1].compareTo(rightParts[1]);
 							}
 							return left.getName().compareTo(right.getName());

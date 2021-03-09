@@ -21,5 +21,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.labor.medics.v2.MedicsActivator
 Bundle-Vendor: medshare.net
 Import-Package: ch.elexis.core.ui.importer.div.importers,
- ch.elexis.core.ui.importer.div.importers.multifile.strategy
+ ch.elexis.core.ui.importer.div.importers.multifile.strategy,
+ org.apache.commons.lang;version="2.6.0"
 

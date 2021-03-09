@@ -12,6 +12,7 @@ package ch.elexis.laborimport.hl7.universal;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -53,7 +54,7 @@ public class Importer extends Action implements IAction {
 			int err = 0;
 			int files = 0;
 			Result<?> r = null;
-			for (String fn : dir.list(new FilenameFilter() {
+			String[] fileNames = dir.list(new FilenameFilter() {
 				
 				public boolean accept(File arg0, String arg1){
 					if (arg1.toLowerCase().endsWith(".hl7")) {
@@ -61,7 +62,9 @@ public class Importer extends Action implements IAction {
 					}
 					return false;
 				}
-			})) {
+			});
+			Arrays.sort(fileNames);
+			for (String fn : fileNames) {
 				files++;
 				File hl7file = new File(dir, fn);
 				r = mfParser.importFromFile(hl7file,

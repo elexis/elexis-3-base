@@ -53,7 +53,6 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -133,7 +132,7 @@ public class AgendaGross extends BaseAgendaView {
 		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
 		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
-		calendar = new DateTime(right, SWT.CALENDAR);
+		calendar = new DateTime(right, SWT.CALENDAR | SWT.CALENDAR_WEEKNUMBERS);
 		calendar.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		calendar.setDate(agenda.getActDate().get(TimeTool.YEAR),
 			agenda.getActDate().get(TimeTool.MONTH),

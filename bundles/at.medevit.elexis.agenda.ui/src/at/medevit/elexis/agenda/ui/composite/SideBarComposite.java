@@ -110,7 +110,7 @@ public class SideBarComposite extends Composite {
 		menuManager.createControl(this)
 			.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
-		calendar = new DateTime(this, SWT.CALENDAR);
+		calendar = new DateTime(this, SWT.CALENDAR | SWT.CALENDAR_WEEKNUMBERS);
 		calendar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){

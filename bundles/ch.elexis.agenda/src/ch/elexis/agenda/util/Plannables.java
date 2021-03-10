@@ -140,7 +140,8 @@ public final class Plannables {
 	/** Die einem Plannable-Typ zugeordnete Farbe holen */
 	public static Color getTypColor(IPlannable p){
 		String coldesc =
-			ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "FFFFFF"); //$NON-NLS-1$
+			ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(),
+				"FFFFFF"); //$NON-NLS-1$
 		return UiDesk.getColorFromRGB(coldesc);
 		/*
 		 * if(p.getType().equals(Termin.typReserviert())){ return
@@ -155,7 +156,8 @@ public final class Plannables {
 	
 	/** Das einem Plannable-Titel zugeordnete Bild holen */
 	public static Image getTypImage(String t){
-		String ipath = ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + t, null);
+		String ipath =
+			ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPIMAGE_PREFIX + t, null);
 		if (!StringTool.isNothing(ipath)) {
 			Image ret = UiDesk.getImage(ipath);
 			if (ret == null) {
@@ -171,11 +173,13 @@ public final class Plannables {
 	public static Color getStatusColor(IPlannable p){
 		if (p.getType().equals(Termin.typReserviert())) {
 			String coldesc =
-				ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "000000"); //$NON-NLS-1$
+				ConfigServiceHolder
+					.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "000000"); //$NON-NLS-1$
 			return UiDesk.getColorFromRGB(coldesc);
 		}
 		String coldesc =
-			ConfigServiceHolder.getUser(PreferenceConstants.AG_STATCOLOR_PREFIX + p.getStatus(), "000000"); //$NON-NLS-1$
+			ConfigServiceHolder
+				.getUserCached(PreferenceConstants.AG_STATCOLOR_PREFIX + p.getStatus(), "000000"); //$NON-NLS-1$
 		return UiDesk.getColorFromRGB(coldesc);
 	}
 	
@@ -235,7 +239,8 @@ public final class Plannables {
 		qbe.and();
 		
 		qbe.add(Termin.FLD_BEREICH, Query.EQUALS, bereich);
-		if (ConfigServiceHolder.getUser(PreferenceConstants.AG_SHOWDELETED, "0").equals("0")) {
+		if (ConfigServiceHolder.getUserCached(PreferenceConstants.AG_SHOWDELETED, "0")
+			.equals("0")) {
 			qbe.and();
 			qbe.add(Termin.FLD_DELETED, Query.EQUALS, "0");
 		}

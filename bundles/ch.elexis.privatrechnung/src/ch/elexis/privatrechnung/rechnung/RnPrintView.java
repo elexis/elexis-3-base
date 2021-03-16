@@ -128,10 +128,10 @@ public class RnPrintView extends ViewPart {
 				pos = tc.getPlugin().insertText(pos, "- " + vv.getText() + "\n", SWT.LEFT);
 				tc.getPlugin().setStyle(SWT.NORMAL);
 				
-				Money preis = vv.getNettoPreis();
+				Money preis = vv.getNettoPreis().roundTo5();
 				int zahl = vv.getZahl();
 				Money subtotal = new Money(preis);
-				subtotal.multiply(zahl);
+				subtotal.multiply(zahl).roundTo5();
 				StringBuilder sb = new StringBuilder();
 				sb.append(zahl).append("\t").append(getVatRate(vv, subtotal, vatSummer))
 					.append("\t").append(preis.getAmountAsString()).append("\t")
@@ -144,7 +144,8 @@ public class RnPrintView extends ViewPart {
 			tc.getPlugin().insertText(
 				pos,
 				"____________________________________________________________________\nTotal:\t\t\t"
-					+ sum.getAmountAsString(), SWT.LEFT);
+					+ sum.roundTo5().getAmountAsString(),
+				SWT.LEFT);
 		
 		// print vat info of whole bill
 		String vatNumber =

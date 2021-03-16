@@ -101,4 +101,9 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 		long runTimeInSeconds = ((currentTime - startTime) / 1000);
 		return runTimeInSeconds >= (maxRunTime + 10);
 	}
+	
+	@Override
+	public boolean isSingleton(){
+		return true;
+	}
 }

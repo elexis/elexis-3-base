@@ -15,64 +15,79 @@
 
 package ch.elexis.agenda.ui;
 
+import java.time.format.TextStyle;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.ui.provider.TerminListSorter;
-import ch.elexis.agenda.ui.provider.TerminListWidgetProvider;
-import ch.elexis.agenda.ui.provider.TermineLabelProvider;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.interfaces.IPersistentObject;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.locks.ILockHandler;
 import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
-import ch.elexis.core.ui.util.viewers.CommonViewer.PoDoubleClickListener;
-import ch.elexis.core.ui.util.viewers.DefaultContentProvider;
+import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
+import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
+import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.dialogs.TerminDialog;
+import ch.rgw.tools.TimeTool;
 
-public class TerminListeView extends ViewPart implements IActivationListener {
+public class TerminListeView extends ViewPart implements IRefreshable {
 	public static final String ID = "ch.elexis.agenda.Terminliste";
 	ScrolledForm form;
 	CommonViewer cv = new CommonViewer();
 	LockRequestingRestrictedAction<Termin> terminAendernAction;
 	
-	private ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
-		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED) {
-		public void runInUi(ElexisEvent ev){
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				updateSelection((Patient) ev.getObject());
-			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-				form.setText(Messages.TerminListView_noPatientSelected);
-			}
-		}
-	};
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 	
-	private ElexisEventListener eeli_term =
-		new ElexisUiEventListenerImpl(Termin.class, ElexisEvent.EVENT_UPDATE) {
-			public void runInUi(ElexisEvent ev){
-				if (cv != null) {
-					cv.notify(CommonViewer.Message.update);
-				}
-			};
-		};
+	@Inject
+	void activePatient(@Optional
+	IPatient patient){
+		Display.getDefault().asyncExec(() -> {
+				updateSelection(patient);
+		});
+	}
+	
+	@Inject
+	@Optional
+	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE)
+	IAppointment appointment){
+		if (cv != null) {
+			cv.notify(CommonViewer.Message.update, appointment);
+		}
+	}
+	
 	
 	public TerminListeView(){
 		terminAendernAction = new LockRequestingRestrictedAction<Termin>(
@@ -84,7 +99,12 @@ public class TerminListeView extends ViewPart implements IActivationListener {
 			
 			@Override
 			public Termin getTargetedObject(){
-				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+				java.util.Optional<IAppointment> appointment =
+					ContextServiceHolder.get().getTyped(IAppointment.class);
+				if (appointment.isPresent()) {
+					return Termin.load(appointment.get().getId());
+				}
+				return null;
 			}
 			
 			@Override
@@ -117,56 +137,102 @@ public class TerminListeView extends ViewPart implements IActivationListener {
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
 		
-		ViewerConfigurer vc = new ViewerConfigurer(new DefaultContentProvider(cv, Termin.class) {
-			@Override
-			public Object[] getElements(Object inputElement){
-				Patient p = ElexisEventDispatcher.getSelectedPatient();
-				Query<Termin> qbe = new Query<Termin>(Termin.class);
-				if (p == null) {
-					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, "--");
-				} else {
-					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, p.getId());
-					qbe.orderBy(false, Termin.FLD_TAG);
+		CommonViewerContentProvider contentProvider =
+			new ch.elexis.core.ui.util.viewers.CommonViewerContentProvider(cv) {
+				
+				private static final int QUERY_LIMIT = 500;
+				
+				@Override
+				public Object[] getElements(final Object inputElement){
+					java.util.Optional<IPatient> actPat =
+						ContextServiceHolder.get().getActivePatient();
+					IQuery<?> query = getBaseQuery();
+					if (actPat.isPresent()) {
+						query.and("patId", COMPARATOR.EQUALS, actPat.get().getId());
+					} else {
+						return new Object[0];
+					}
+					query.orderBy("tag", ORDER.DESC);
+					List<?> elements = query.execute();
+					return elements.toArray(new Object[elements.size()]);
 				}
-				return qbe.execute().toArray();
-			}
-		}, new TermineLabelProvider(), new TerminListWidgetProvider());
-		cv.create(vc, body, SWT.NONE, this);
-		cv.getConfigurer().getContentProvider().startListening();
-		cv.addDoubleClickListener(new PoDoubleClickListener() {
+				
+				@Override
+				protected IQuery<?> getBaseQuery(){
+					IQuery<IAppointment> ret =
+						CoreModelServiceHolder.get().getQuery(IAppointment.class);
+					if (!ignoreLimit) {
+						ret.limit(QUERY_LIMIT);
+					}
+					return ret;
+				}
+				
+			};
+		
+		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new LabelProvider() {
 			@Override
-			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+			public String getText(Object element){
+				if (element instanceof IAppointment) {
+					IAppointment termin = (IAppointment) element;
+					StringBuilder sbLabel = new StringBuilder();
+					// day
+					TimeTool tt = new TimeTool(termin.getStartTime());
+					sbLabel.append(tt.toString(TimeTool.DATE_GER));
+					String dayShort = termin.getStartTime().getDayOfWeek()
+						.getDisplayName(TextStyle.SHORT, Locale.getDefault());
+					if (dayShort != null) {
+						sbLabel.append(" (" + dayShort + ")");
+					}
+					sbLabel.append(", ");
+					
+					// start time
+					sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
+					sbLabel.append(" - ");
+					
+					TimeTool te = new TimeTool(termin.getEndTime());
+					// end time
+					sbLabel.append(te.toString(TimeTool.TIME_SMALL));
+					
+					// type
+					sbLabel.append(" (");
+					sbLabel.append(termin.getType());
+					sbLabel.append(", ");
+					// status
+					sbLabel.append(termin.getState());
+					sbLabel.append("), ");
+					
+					// bereich
+					sbLabel.append(termin.getSchedule());
+					
+					// grund if set
+					if (termin.getReason() != null && !termin.getReason().isEmpty()) {
+						sbLabel.append(" (");
+						sbLabel.append(termin.getReason());
+						sbLabel.append(")");
+					}
+					return sbLabel.toString();
+				}
+				return super.getText(element);
+			}
+		},
+			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE,
+				SWT.V_SCROLL | SWT.FULL_SELECTION, cv));
+		vc.setContentType(ContentType.GENERICOBJECT);
+		cv.create(vc, body, SWT.NONE, this);
+		cv.getViewerWidget().addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event){
 				terminAendernAction.run();
 			}
 		});
 		
-		GlobalEventDispatcher.addActivationListener(this, this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 	
 	@Override
 	public void setFocus(){}
 	
-	public void activation(boolean mode){
-		if (mode) {
-			updateSelection(ElexisEventDispatcher.getSelectedPatient());
-		}
-	}
-	
-	@Override
-	public void dispose(){
-		GlobalEventDispatcher.removeActivationListener(this, this);
-		super.dispose();
-	}
-	
-	public void visible(boolean mode){
-		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_term);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_term);
-		}
-	}
-	
-	private void updateSelection(Patient patient){
+	private void updateSelection(IPatient patient){
 		if (patient == null) {
 			form.setText(Messages.TerminListView_noPatientSelected);
 		} else {
@@ -181,9 +247,28 @@ public class TerminListeView extends ViewPart implements IActivationListener {
 	 * 
 	 * @param sortDirection
 	 */
-	public void sort(int sortDirection){
-		TerminListSorter sorter = new TerminListSorter();
-		sorter.setDirection(sortDirection);
-		cv.getViewerWidget().setSorter(sorter);
+	public void sort(final int sortDirection){
+		cv.getViewerWidget().setComparator(new ViewerComparator() {
+			@Override
+			public int compare(Viewer viewer, Object e1, Object e2){
+				if (e1 instanceof IAppointment && e2 instanceof IAppointment) {
+					int rc = ((IAppointment) e1).getStartTime()
+						.compareTo(((IAppointment) e2).getStartTime());
+					// If descending order, flip the direction
+					if (sortDirection == SWT.DOWN) {
+						rc = -rc;
+					}
+					return rc;
+				}
+				return super.compare(viewer, e1, e2);
+			}
+		});
+	}
+	
+	@Override
+	public void refresh(){
+		if (CoreUiUtil.isActiveControl(form)) {
+			updateSelection(ContextServiceHolder.get().getActivePatient().orElse(null));
+		}
 	}
 }

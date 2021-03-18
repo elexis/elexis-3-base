@@ -122,4 +122,8 @@ public class Hl7ImporterTaskIntegrationTestUtil {
 		return itemGPT;
 	}
 	
+	public IMandator getMandator() {
+		return mandator;
+	}
+	
 }

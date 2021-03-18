@@ -22,7 +22,6 @@ public class AllTests {
 	
 	private static Hl7ImporterTaskIntegrationTestUtil util;
 	
-	
 	@BeforeClass
 	public static void beforeClass(){
 		
@@ -40,22 +39,26 @@ public class AllTests {
 	public static ILaboratory getLaboratory(){
 		return util.getLaboratory();
 	}
-
+	
 	public static ICoverage getCoverage(){
 		return util.getCoverage();
 	}
-
+	
 	public static IPatient getPatient(){
 		return util.getPatient();
 	}
-
+	
 	public static ILabItem getLabItem(){
 		return util.getLabItem();
 	}
-
+	
 	public static ILabItem getLabItemGPT(){
 		return util.getItemGPT();
 		
+	}
+	
+	public static Hl7ImporterTaskIntegrationTestUtil getUtil(){
+		return util;
 	}
 	
 }

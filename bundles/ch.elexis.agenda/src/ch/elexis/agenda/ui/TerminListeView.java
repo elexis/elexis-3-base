@@ -75,7 +75,8 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	void activePatient(@Optional
 	IPatient patient){
 		Display.getDefault().asyncExec(() -> {
-				updateSelection(patient);
+			((CommonViewerContentProvider) cv.getConfigurer().getContentProvider()).init();
+			updateSelection(patient);
 		});
 	}
 	
@@ -140,7 +141,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 		CommonViewerContentProvider contentProvider =
 			new ch.elexis.core.ui.util.viewers.CommonViewerContentProvider(cv) {
 				
-				private static final int QUERY_LIMIT = 500;
+				private static final int QUERY_LIMIT = 50;
 				
 				@Override
 				public Object[] getElements(final Object inputElement){
@@ -154,6 +155,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					}
 					query.orderBy("tag", ORDER.DESC);
 					List<?> elements = query.execute();
+					commonViewer.setLimitReached(elements.size() == QUERY_LIMIT, QUERY_LIMIT);
 					return elements.toArray(new Object[elements.size()]);
 				}
 				
@@ -167,6 +169,11 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					return ret;
 				}
 				
+				@Override
+				public void init(){
+					super.init();
+					setIgnoreLimit(false);
+				}
 			};
 		
 		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new LabelProvider() {

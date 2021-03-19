@@ -22,7 +22,7 @@ import ch.rgw.tools.TimeTool;
 public class Posology {
 	public String DtFrom;
 	public String DtTo;
-	public int CyDu;
+	// public int CyDu; do not write this field to json, as we always use D never TT
 	public int InRes;
 	public List<Float> D;
 	public List<TakingTime> TT;

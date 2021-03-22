@@ -1,8 +1,8 @@
 package at.medevit.elexis.agenda.ui.function;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
+import org.eclipse.swt.chromium.Browser;
+import org.eclipse.swt.chromium.BrowserFunction;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.view.AgendaView;
@@ -16,6 +16,7 @@ public class SwitchFunction extends BrowserFunction {
 		this.part = part;
 	}
 	
+	@Override
 	public Object function(Object[] arguments){
 		if (arguments.length == 1) {
 			String to = (String) arguments[0];

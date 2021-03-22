@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
+import org.eclipse.swt.chromium.Browser;
+import org.eclipse.swt.chromium.BrowserFunction;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;

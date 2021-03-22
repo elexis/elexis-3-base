@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.chromium.Browser;
 
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import ch.elexis.core.model.IAppointment;
@@ -23,6 +23,7 @@ public class DayClickFunction extends AbstractBrowserFunction {
 		super(browser, name);
 	}
 	
+	@Override
 	public Object function(Object[] arguments){
 		IAppointment appointment = null;
 		if (arguments.length == 1) {

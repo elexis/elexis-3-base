@@ -2,8 +2,8 @@ package at.medevit.elexis.agenda.ui.function;
 
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
+import org.eclipse.swt.chromium.Browser;
+import org.eclipse.swt.chromium.BrowserFunction;
 
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
@@ -19,6 +19,7 @@ public class SingleClickFunction extends BrowserFunction {
 		super(browser, name);
 	}
 	
+	@Override
 	public Object function(Object[] arguments){
 		if (arguments.length == 1) {
 			IAppointment termin = CoreModelServiceHolder.get()

@@ -2,7 +2,7 @@ package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDateTime;
 
-import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.chromium.Browser;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
@@ -17,6 +17,7 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 		super(browser, name);
 	}
 	
+	@Override
 	public Object function(Object[] arguments){
 		if (arguments.length == 3) {
 			IAppointment termin = CoreModelServiceHolder.get()

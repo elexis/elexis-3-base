@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
@@ -24,6 +24,7 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 		this.part = part;
 	}
 	
+	@Override
 	public Object function(Object[] arguments){
 		if (arguments.length == 4) {
 			LocalDateTime date = getDateTimeArg(arguments[2]);

@@ -1,7 +1,7 @@
 package at.medevit.elexis.agenda.ui.function;
 
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
+import org.eclipse.swt.chromium.Browser;
+import org.eclipse.swt.chromium.BrowserFunction;
 
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;

@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.eclipse.e4.ui.di.UISynchronize;
-import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,6 +175,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		timer.schedule(new CheckForUpdatesTimerTask(this, uiSynchronize), 10000);
 	}
 	
+	@Override
 	public Object function(Object[] arguments){
 		if (arguments.length == 3) {
 			try {

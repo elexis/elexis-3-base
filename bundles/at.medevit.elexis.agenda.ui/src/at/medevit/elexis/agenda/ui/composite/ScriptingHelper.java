@@ -3,7 +3,7 @@ package at.medevit.elexis.agenda.ui.composite;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.chromium.Browser;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;

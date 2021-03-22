@@ -8,8 +8,8 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
+import org.eclipse.swt.chromium.Browser;
+import org.eclipse.swt.chromium.BrowserFunction;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -34,6 +34,7 @@ public class PdfFunction extends BrowserFunction {
 		CoreUiUtil.injectServices(this, part.getContext());
 	}
 	
+	@Override
 	public Object function(Object[] arguments){
 		partService.showPart(part, PartState.ACTIVATE);
 		callPdf();

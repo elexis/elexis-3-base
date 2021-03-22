@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.databinding,
  org.eclipse.core.databinding.property,
  org.eclipse.core.databinding.beans,
- org.eclipse.e4.core.di
+ org.eclipse.e4.core.di,
+ org.eclipse.swt.chromium
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Multi-Release: true
 Bundle-ActivationPolicy: lazy

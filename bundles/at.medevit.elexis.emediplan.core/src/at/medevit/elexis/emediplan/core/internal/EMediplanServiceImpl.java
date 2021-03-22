@@ -287,6 +287,10 @@ public class EMediplanServiceImpl implements EMediplanService {
 		List<IPrescription> prescriptions, boolean addDesc){
 		Medication medication =
 			Medication.fromPrescriptions(author, patient, prescriptions, addDesc);
+		// TODO remove after verification
+		Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+		logger.info("EMEDIPLAN JSON\n\n" + prettyGson.toJson(medication) + "\n\n");
+		
 		return Optional.ofNullable(gson.toJson(medication));
 	}
 	

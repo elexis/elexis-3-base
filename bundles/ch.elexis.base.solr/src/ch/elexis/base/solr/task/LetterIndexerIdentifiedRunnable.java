@@ -32,7 +32,7 @@ public class LetterIndexerIdentifiedRunnable extends AbstractIDocumentIndexerIde
 	}
 	
 	private final String QUERY =
-		"SELECT ID FROM BRIEFE WHERE !(DOCUMENT_STATUS & 2) ORDER BY lastUpdate DESC LIMIT 1000";
+		"SELECT ID FROM BRIEFE WHERE !(DOCUMENT_STATUS & 2) AND PATIENTID IS NOT NULL ORDER BY lastUpdate DESC LIMIT 1000";
 	
 	@Override
 	protected List<?> getDocuments(){

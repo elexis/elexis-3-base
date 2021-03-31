@@ -82,7 +82,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				String patientId =
 					document.getPatient() != null ? document.getPatient().getId() : null;
 				if (patientId == null) {
-					logger.warn("[{}] no assocatied patient, skipping", currentDocumentId);
+					logger.warn("[{}] no associated patient, skipping", currentDocumentId);
 					failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 						"no assocatied patient, skipping"));
 					continue;

@@ -61,6 +61,7 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 			
 			int closed = 0;
 			int imported = 0;
+			TimeTool now = new TimeTool();
 			
 			for (int i = 0; i < last; i++) {
 				List<String> line = exw.getRow(i);
@@ -91,6 +92,11 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 						pl.set(PandemieLeistung.FLD_CENTS, getAsCents(line.get(13)));
 					} else {
 						pl.set(PandemieLeistung.FLD_TAXPOINTS, getAsTaxpoints(line.get(13)));
+					}
+					// set validto for already closed
+					if (getValidTo(line).isBefore(now)) {
+						pl.set(PandemieLeistung.FLD_VALIDUNTIL,
+							getValidTo(line).toString(TimeTool.DATE_COMPACT));
 					}
 					imported++;
 				}
@@ -170,7 +176,11 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 	}
 	
 	private TimeTool getValidTo(List<String> line){
-		return new TimeTool(getLocalDate((String) line.get(15).trim()));
+		if (StringUtils.isNotBlank(line.get(15).trim())) {
+			return new TimeTool(getLocalDate((String) line.get(15).trim()));
+		} else {
+			return new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
+		}
 	}
 	
 	private String getChapter(List<String> line){

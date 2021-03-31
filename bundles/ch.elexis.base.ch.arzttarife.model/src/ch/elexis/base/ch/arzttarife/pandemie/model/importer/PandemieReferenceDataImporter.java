@@ -58,6 +58,7 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 			
 			List<Object> imported = new ArrayList<>();
 			List<Object> closed = new ArrayList<>();
+			LocalDate now = LocalDate.now();
 			
 			for (int i = 0; i < last; i++) {
 				List<String> line = exw.getRow(i);
@@ -91,6 +92,10 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 						pl.setCents(getAsCents(line.get(13)));
 					} else {
 						pl.setTaxpoints(getAsTaxpoints(line.get(13)));
+					}
+					// set validto for already closed
+					if (getValidTo(line).isBefore(now)) {
+						pl.setValidTo(getValidTo(line));
 					}
 					imported.add(pl);
 				}
@@ -172,7 +177,11 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 	}
 	
 	private LocalDate getValidTo(List<String> line){
-		return getLocalDate((String) line.get(15).trim());
+		if (StringUtils.isNotBlank(line.get(15).trim())) {
+			return getLocalDate((String) line.get(15).trim());
+		} else {
+			return LocalDate.MAX;
+		}
 	}
 	
 	private String getChapter(List<String> line){

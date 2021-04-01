@@ -31,8 +31,11 @@ public class LetterIndexerIdentifiedRunnable extends AbstractIDocumentIndexerIde
 		return DESCRIPTION;
 	}
 	
+	// we load either 
+	// letters that are NOT DELETED, do NOT have DocumentStatus#INDEXED and a PATIENTID -> to add to solr
+	// letters that are DocumentStatus#INDEXED and DELETED -> to remove from solr
 	private final String QUERY =
-		"SELECT ID FROM BRIEFE WHERE !(DOCUMENT_STATUS & 2) AND PATIENTID IS NOT NULL AND PATIENTID <> '' ORDER BY lastUpdate DESC LIMIT 1000";
+		"SELECT ID FROM BRIEFE WHERE (!(DOCUMENT_STATUS & 2) AND DELETED = '0' AND PATIENTID IS NOT NULL AND PATIENTID <> '') OR ((DOCUMENT_STATUS & 2) AND DELETED='1') ORDER BY lastUpdate DESC LIMIT 1000";
 	
 	@Override
 	protected List<?> getDocuments(){

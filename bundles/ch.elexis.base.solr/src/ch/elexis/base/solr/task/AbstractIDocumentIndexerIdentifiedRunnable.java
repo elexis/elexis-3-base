@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient.RemoteSolrException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.Builder;
 import org.apache.solr.common.SolrException;
@@ -150,13 +151,14 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 						checkResponse(solr.addBean(getSolrCore(), documentBean));
 						indexedList.add(document);
 					} catch (SolrServerException sse) {
-						logger.warn("[{}] could not add to solr index, unsetting index status",
-							currentDocumentId, sse);
-						failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
-							"could not add to solr index, unsetting index status"));
-						document.setStatus(DocumentStatus.INDEXED, false);
-						getModelService().save(document);
+						handleWarn(logger, document, currentDocumentId, sse);
 						continue;
+					} catch (RemoteSolrException rse) {
+						if (rse.getMessage().contains("OOXMLParser")) {
+							handleWarn(logger, document, currentDocumentId, rse);
+							continue;
+						}
+						throw rse;
 					}
 				}
 				
@@ -203,6 +205,25 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 		}
 		
 		return resultMap;
+	}
+	
+	/**
+	 * Handle a defect document or another error state, where we don't see a reason to handle this
+	 * document again.
+	 * 
+	 * @param logger
+	 * @param document
+	 * @param currentDocumentId
+	 * @param ex
+	 */
+	private void handleWarn(Logger logger, IDocument document, String currentDocumentId,
+		Exception ex){
+		logger.warn("[{}] could not add to solr index, unsetting index status", currentDocumentId,
+			ex);
+		failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
+			"could not add to solr index, unsetting index status"));
+		document.setStatus(DocumentStatus.INDEXED, false);
+		getModelService().save(document);
 	}
 	
 	protected abstract String getSolrCore();

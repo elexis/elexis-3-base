@@ -17,7 +17,8 @@ Require-Bundle: ch.rgw.utility;bundle-version="2.0.2",
  com.sun.jna;bundle-version="3.0.0",
  ch.elexis.docbox.ws.client,
  ch.elexis.fop.service;bundle-version="3.2.0",
- at.medevit.elexis.ehc.ui;bundle-version="3.0.0"
+ at.medevit.elexis.ehc.ui;bundle-version="3.0.0",
+ org.eclipse.swt.chromium
 Bundle-ClassPath: .,
  rsc/
 Bundle-Localization: plugin

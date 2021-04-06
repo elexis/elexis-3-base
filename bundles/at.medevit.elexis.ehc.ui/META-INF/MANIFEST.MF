@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.jface,
  at.medevit.elexis.inbox;bundle-version="3.0.0",
  at.medevit.elexis.inbox.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0",
- ch.elexis.fop.service;bundle-version="3.2.0"
+ ch.elexis.fop.service;bundle-version="3.2.0",
+ org.eclipse.swt.chromium
 Import-Package: ch.elexis.core.services.holder,
  javax.inject;version="1.0.0",
  org.eclipse.e4.core.di.annotations;version="1.6.0",

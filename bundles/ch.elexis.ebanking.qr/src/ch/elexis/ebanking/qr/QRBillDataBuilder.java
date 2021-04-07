@@ -54,6 +54,7 @@ public class QRBillDataBuilder {
 	
 	public QRBillDataBuilder amount(Money money, String currency) {
 		this.amount = money;
+		this.amount.roundTo5();
 		this.amountCurrency = currency;
 		return this;
 	}

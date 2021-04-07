@@ -191,7 +191,7 @@ public class Tarmed45Exporter {
 			balanceTGType.setAmountPrepaid(invoice.getPayedAmount().doubleValue());
 			balanceTGType.setAmountReminder(invoice.getDemandAmount().doubleValue());
 			balanceTGType.setAmount(invoice.getTotalAmount().doubleValue());
-			balanceTGType.setAmountDue(invoice.getOpenAmount().doubleValue());
+			balanceTGType.setAmountDue(invoice.getOpenAmount().roundTo5().doubleValue());
 			balanceTGType.setAmountObligations(financialInfo.getObligationSum().doubleValue());
 			balanceTGType.setVat(getVat(invoice, financialInfo));
 			
@@ -202,7 +202,7 @@ public class Tarmed45Exporter {
 			balanceTPType.setCurrency(getCurrency(invoice));
 			balanceTPType.setAmountReminder(invoice.getDemandAmount().doubleValue());
 			balanceTPType.setAmount(invoice.getTotalAmount().doubleValue());
-			balanceTPType.setAmountDue(invoice.getOpenAmount().doubleValue());
+			balanceTPType.setAmountDue(invoice.getOpenAmount().roundTo5().doubleValue());
 			balanceTPType.setAmountObligations(financialInfo.getObligationSum().doubleValue());
 			balanceTPType.setVat(getVat(invoice, financialInfo));
 			

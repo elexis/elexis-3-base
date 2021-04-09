@@ -13,6 +13,8 @@ package ch.itmed.fop.printing.xml.elements;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,18 +38,23 @@ public class AppointmentsInformationElement {
 
 		Element p = doc.createElement("AppointmentsInformation");
 
-		Element c = doc.createElement("AgendaArea");
-		c.appendChild(doc.createTextNode(al.get(0).getAgendaArea()));
-		p.appendChild(c);
+		if(!al.isEmpty()) {
+			Element c = doc.createElement("AgendaArea");
+			c.appendChild(doc.createTextNode(al.get(0).getAgendaArea()));
+			p.appendChild(c);
 
-		c = doc.createElement("Appointments");
-		for (AppointmentData ad : al) {
-			Element appointment = doc.createElement("Appointment");
-			appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
-			c.appendChild(appointment);
+			c = doc.createElement("Appointments");
+			for (AppointmentData ad : al) {
+				Element appointment = doc.createElement("Appointment");
+				appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
+				c.appendChild(appointment);
+			}
+			p.appendChild(c);			
+		} else {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+				"Keine Termin Serie", "Keine Termin Serie zum selektierten Patienten gefunden");
 		}
-		p.appendChild(c);
-
+		
 		return p;
 	}
 }

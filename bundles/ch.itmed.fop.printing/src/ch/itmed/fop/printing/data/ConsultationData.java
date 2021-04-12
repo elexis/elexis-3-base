@@ -21,8 +21,11 @@ import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Prescription;
 import ch.itmed.fop.printing.resources.Messages;
 
 public final class ConsultationData {
@@ -60,5 +63,13 @@ public final class ConsultationData {
 				verrechenbar.add(v.getBillable());
 			}
 		}
+	}
+	
+	public List<Prescription> getMedication(){
+		Patient patient = consultation.getFall().getPatient();
+		return patient.getMedication(new EntryType[] {
+			EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
+			EntryType.SYMPTOMATIC_MEDICATION
+		});
 	}
 }

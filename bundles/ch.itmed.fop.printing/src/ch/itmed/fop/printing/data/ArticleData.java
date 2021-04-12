@@ -38,4 +38,8 @@ public final class ArticleData {
 		String currentDate = formatter.format(localDate);
 		return currentDate;
 	}
+	
+	public IArticle getArticle(){
+		return article;
+	}
 }

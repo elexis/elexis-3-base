@@ -314,6 +314,10 @@ public class GlobalInboxEntryDetailPart {
 		
 		this.globalInboxEntry = globalInboxEntry;
 		
+		if (txtTitle == null || txtTitle.isDisposed()) {
+			return;
+		}
+		
 		if (globalInboxEntry == null) {
 			txtTitle.setText("");
 			csec.setCategoryByName(null);

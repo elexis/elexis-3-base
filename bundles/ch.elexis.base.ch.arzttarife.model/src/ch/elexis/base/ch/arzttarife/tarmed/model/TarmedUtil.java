@@ -1,5 +1,9 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
+import java.io.IOException;
+import java.util.Optional;
+import java.util.Properties;
+
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
@@ -7,10 +11,14 @@ import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.PatientConstants;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
 
 public class TarmedUtil {
+	
+	private static Properties increasedTreatment;
 	
 	public static boolean getConfigValue(Class<?> requestor, Class<?> configSource,
 		String parameter, boolean fallback){
@@ -37,5 +45,29 @@ public class TarmedUtil {
 			}
 		}
 		return fallback;
+	}
+	
+	public static Optional<String> getIncreasedTreatmentCode(TarmedLeistung code){
+		if (increasedTreatment == null) {
+			increasedTreatment = new Properties();
+			try {
+				increasedTreatment.load(
+					TarmedUtil.class.getResourceAsStream("/rsc/increasedtreatment.properties"));
+			} catch (IOException e) {
+				LoggerFactory.getLogger(TarmedUtil.class)
+					.error("Loading increasedtreatment.properties failed", e);
+			}
+		}
+		return Optional.ofNullable((String) increasedTreatment.get(code.getCode()));
+	}
+	
+	public static boolean isIncreasedTreatment(IPatient patient){
+		if (patient != null) {
+			Object info = patient.getExtInfo(PatientConstants.FLD_EXTINFO_INCREASEDTREATMENT);
+			if (info instanceof String) {
+				return Boolean.parseBoolean((String) info);
+			}
+		}
+		return false;
 	}
 }

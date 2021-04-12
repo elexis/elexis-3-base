@@ -198,6 +198,18 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 				}
 			}
 		}
+		
+		// replace code with increased treatment code for patients with increased treatment set
+		if (TarmedUtil.isIncreasedTreatment(kons.getPatient())) {
+			Optional<String> increasedCode = TarmedUtil.getIncreasedTreatmentCode(code);
+			if (increasedCode.isPresent()) {
+				TarmedLeistung loaded = getKonsVerrechenbar(increasedCode.get(), kons);
+				if (loaded != null) {
+					code = loaded;
+				}
+			}
+		}
+		
 		newVerrechnet = null;
 		newVerrechnetSide = null;
 		// Korrekter Fall Typ prüfen, und ggf. den code ändern

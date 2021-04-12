@@ -59,7 +59,7 @@
         </command>
         <command defaultHandler="ch.itmed.fop.printing.handlers.AppointmentCardHandler" id="ch.itmed.fop.printing.command.AppointmentCardPrint" name="Termin drucken">
         </command>
-        <command defaultHandler="ch.itmed.fop.printing.handlers.ArticleLabelHandler" id="ch.itmed.fop.printing.command.ArticleLabelPrint" name="Artikel drucken">
+        <command defaultHandler="ch.itmed.fop.printing.handlers.ArticleMedicationLabelsHandler" id="ch.itmed.fop.printing.command.ArticleLabelPrint" name="Artikel drucken">
         </command>
     </extension>
     <extension point="org.eclipse.ui.menus">

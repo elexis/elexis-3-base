@@ -29,6 +29,10 @@ import ch.itmed.fop.printing.resources.Messages;
 public final class MedicationData {
 	private IPrescription prescription;
 
+	public MedicationData(IPrescription prescription){
+		this.prescription = prescription;
+	}
+	
 	public void load() throws NullPointerException {
 		prescription = ContextServiceHolder.get().getTyped(IPrescription.class).orElse(null);
 		if (prescription == null) {

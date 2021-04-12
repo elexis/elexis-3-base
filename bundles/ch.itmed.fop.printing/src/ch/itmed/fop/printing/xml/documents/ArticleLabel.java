@@ -28,16 +28,19 @@ public class ArticleLabel {
 	 * @return The generated XML as an InputStream
 	 */
 	public static InputStream create() throws Exception {
+		return create(true);
+	}
+	
+	public static InputStream create(boolean includeMedication) throws Exception{
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_LABEL);
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
-		Element articles = ArticlesElement.create(doc);
+		Element articles = ArticlesElement.create(doc, includeMedication);
 		page.appendChild(articles);
 
 		return DomDocument.toInputStream(doc);
 	}
-
 }

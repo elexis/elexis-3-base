@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.jpa.entities.Verrechnet;
@@ -358,9 +360,24 @@ public class TarmedLimitation {
 			List<IBilled> all =
 				findVerrechnetByPatientCodeDuringPeriod(kons.getCoverage().getPatient(), code);
 			// filter for matching rechnungssteller
-			all = all.parallelStream()
-				.filter(v -> v.getEncounter().getMandator().getBiller().equals(rechnungssteller))
-				.collect(Collectors.toList());
+			all = all.parallelStream().filter(billed -> {
+				IEncounter encounter = billed.getEncounter();
+				IMandator mandator = null;
+				IContact biller = null;
+				if (encounter != null) {
+					mandator = encounter.getMandator();
+					if (mandator != null) {
+						biller = mandator.getBiller();
+						if (biller != null) {
+							return biller.equals(rechnungssteller);
+						}
+					}
+				}
+				LoggerFactory.getLogger(getClass()).warn(
+					"Missing object in chain for IBilled [{}]: [{}], [{}], [{}]", billed.getId(),
+					encounter, mandator, biller);
+				return false;
+			}).collect(Collectors.toList());
 			all = filterValidCodeForKonsultation(code, kons, all);
 			// now group in time periods since first verrechnet
 			LocalDate konsDate = kons.getDate();

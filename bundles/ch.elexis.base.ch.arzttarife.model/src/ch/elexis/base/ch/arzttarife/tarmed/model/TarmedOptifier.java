@@ -85,6 +85,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	
 	boolean save = true;
 	boolean bOptify = true;
+	boolean bAllowOverrideStrict = false;
 	private IBilled newVerrechnet;
 	private String newVerrechnetSide;
 	
@@ -159,6 +160,9 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		
 		bOptify = TarmedUtil.getConfigValue(getClass(), IMandator.class,
 			Preferences.LEISTUNGSCODES_OPTIFY, true);
+		
+		bAllowOverrideStrict = TarmedUtil.getConfigValue(getClass(), IUser.class,
+			Preferences.LEISTUNGSCODES_ALLOWOVERRIDE_STRICT, false);
 		
 		TarmedLeistung tc = (TarmedLeistung) code;
 		List<IBilled> lst = kons.getBilled();
@@ -560,22 +564,26 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	}
 	
 	private void deleteBilled(IBilled billed){
-		if (save) {
-			CoreModelServiceHolder.get().delete(billed);
-		} else {
-			billed.setDeleted(true);
+		if (!bAllowOverrideStrict) {
+			if (save) {
+				CoreModelServiceHolder.get().delete(billed);
+			} else {
+				billed.setDeleted(true);
+			}
 		}
 	}
 	
 	private void decrementOrDelete(IBilled verrechnet){
-		double zahl = verrechnet.getAmount();
-		if (zahl > 1) {
-			verrechnet.setAmount(zahl - 1);
-			if (save) {
-				CoreModelServiceHolder.get().save(verrechnet);
+		if (!bAllowOverrideStrict) {
+			double zahl = verrechnet.getAmount();
+			if (zahl > 1) {
+				verrechnet.setAmount(zahl - 1);
+				if (save) {
+					CoreModelServiceHolder.get().save(verrechnet);
+				}
+			} else {
+				deleteBilled(verrechnet);
 			}
-		} else {
-			deleteBilled(verrechnet);
 		}
 	}
 	

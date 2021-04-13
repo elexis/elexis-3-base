@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- (c) IT-Med AG 2019; All rights reserved -->
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -9,7 +8,7 @@
 	</xsl:variable>
 	<xsl:variable name="pageHeight">
 		<xsl:value-of select="Page/@pageHeight" />
-	</xsl:variable>
+		</xsl:variable>
 	<xsl:variable name="marginTop">
 		<xsl:value-of select="Page/@marginTop" />
 	</xsl:variable>
@@ -39,8 +38,8 @@
 			</fo:layout-master-set>
 			<fo:page-sequence master-reference="PatientAddressLabel">
 				<fo:flow flow-name="xsl-region-body"
-					reference-orientation="{$textOrientation}">
-					<fo:block-container font="8pt Helvetica"
+				reference-orientation="{$textOrientation}">
+					<fo:block-container font="12pt Helvetica"
 						font-weight="normal">
 						<xsl:apply-templates />
 					</fo:block-container>
@@ -65,12 +64,5 @@
 			&#160;
 			<xsl:value-of select="City" />
 		</fo:block>
-		<!--
-		<xsl:for-each select="CompleteAddress/Part">
-			<fo:block>
-				<xsl:value-of select="." />
-			</fo:block>
-		</xsl:for-each> 
-		 -->
 	</xsl:template>
 </xsl:stylesheet>

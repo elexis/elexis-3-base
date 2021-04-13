@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- (c) IT-Med AG 2019; All rights reserved -->
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -41,7 +40,7 @@
 				master-reference="ContactAddressLabel">
 				<fo:flow flow-name="xsl-region-body"
 					reference-orientation="{$textOrientation}">
-					<fo:block-container font="8pt Helvetica"
+					<fo:block-container font="12pt Helvetica"
 						font-weight="normal">
 						<xsl:apply-templates />
 					</fo:block-container>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- (c) IT-Med AG 2019; All rights reserved -->
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -50,19 +49,21 @@
 	</xsl:template>
 	<xsl:template match="Patient">
 		<fo:block>
-			Patienten Nr.:&#160;
+			Patienten-Nr:&#160;
 			<xsl:value-of select="PID" />
 		</fo:block>
 		<fo:block>
-			Auftrags Nr.:&#160;
+			Auftrags-Nr.:&#160;
 			<xsl:value-of select="OrderNumber" />
 		</fo:block>
 		<fo:block>
 			<xsl:value-of select="FirstName" />
 			&#160;
 			<xsl:value-of select="LastName" />
-		</fo:block>
-		<fo:block>
+			&#160;(
+			<xsl:value-of select="Sex" />
+			)
+			,&#160;
 			<xsl:value-of select="Birthdate" />
 		</fo:block>
 		<fo:block>
@@ -73,36 +74,29 @@
 			&#160;
 			<xsl:value-of select="City" />
 		</fo:block>
-		<xsl:if test="/Page/Patient/Phone1/text()">
-			<fo:block>
-				P:&#160;
+		<fo:block>
+			Tel
+			<xsl:if test="/Page/Patient/Phone1/text()">
+				&#160;P:&#160;
 				<xsl:value-of select="Phone1" />
-			</fo:block>
-		</xsl:if>
-		<xsl:if test="/Page/Patient/Phone2/text()">
-			<fo:block>
-				G:&#160;
-				<xsl:value-of select="Phone2" />
-			</fo:block>
-		</xsl:if>
-		<xsl:if test="/Page/Patient/MobilePhone/text()">
-			<fo:block>
-				Mobil:&#160;
+			</xsl:if>
+			<xsl:if test="/Page/Patient/MobilePhone/text()">
+				&#160;Mobil:&#160;
 				<xsl:value-of select="MobilePhone" />
-			</fo:block>
-		</xsl:if>
+			</xsl:if>
+		</fo:block>
 	</xsl:template>
 	<xsl:template match="Case">
-		<xsl:if test="/Page/Case/InsurancePolicyNumber/text()">
+			<xsl:if test="/Page/Case/CostBearer/text()">
 			<fo:block>
-				Versicherungsnummer:&#160;
-				<xsl:value-of select="InsurancePolicyNumber" />
+			Versicherung:&#160;
+				<xsl:value-of select="CostBearer" />
 			</fo:block>
 		</xsl:if>
-		<xsl:if test="/Page/Case/CostBearer/text()">
+		<xsl:if test="/Page/Case/InsurancePolicyNumber/text()">
 			<fo:block>
-				Versicherung:&#160;
-				<xsl:value-of select="CostBearer" />
+			Nr:&#160;
+				<xsl:value-of select="InsurancePolicyNumber" />
 			</fo:block>
 		</xsl:if>
 	</xsl:template>

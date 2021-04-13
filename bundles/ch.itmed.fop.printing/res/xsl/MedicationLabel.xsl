@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- (c) IT-Med AG 2019; All rights reserved -->
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -56,21 +55,20 @@
 			<xsl:value-of select="/Page/Patient/FirstName" />
 			&#160;
 			<xsl:value-of select="/Page/Patient/LastName" />
+			&#160;(
+			<xsl:value-of select="/Page/Patient/Sex" />
+			)
 			,&#160;
 			<xsl:value-of select="/Page/Patient/Birthdate" />
 		</fo:block>
 	</xsl:template>
 	<xsl:template match="Medication">
-		<fo:block font-size="6pt" font-style="italic">
+		<fo:block font-size="8pt" font-style="italic">
 			<xsl:value-of select="ArticleName" />
 		</fo:block>
 		<fo:block>
 			Abgabedatum:&#160;
 			<xsl:value-of select="DeliveryDate" />
-		</fo:block>
-		<fo:block>
-			Dosis:&#160;
-			<xsl:value-of select="Dose" />
 		</fo:block>
 
 		<fo:table>
@@ -99,6 +97,7 @@
 		</fo:table>
 
 		<fo:block>
+			Einnahmeinstruktionen:&#160;
 			<xsl:value-of select="DosageInstructions" />
 		</fo:block>
 		<fo:block font-weight="bold">
@@ -109,25 +108,5 @@
 			<xsl:value-of select="ResponsiblePharamcist" />
 		</fo:block>
 		<!-- testing -->
-		<fo:block>
-			Einnahmeinstruktionen:&#160;
-			<xsl:value-of select="DosageInstructions" />
-		</fo:block>
-		<fo:block>
-			Datum der Medikation:&#160;
-			<xsl:value-of select="PrescriptionDate" />
-		</fo:block>
-		<fo:block>
-			Author der Medikation:&#160;
-			<xsl:value-of select="PrescriptionAuthor" />
-		</fo:block>
-		<fo:block>
-			Verantwortlicher Apotheker:&#160;
-			<xsl:value-of select="ResponsiblePharmacist" />
-		</fo:block>
-		<fo:block>
-			Medikationstyp:&#160;
-			<xsl:value-of select="MedicationType" />
-		</fo:block>
 	</xsl:template>
 </xsl:stylesheet>

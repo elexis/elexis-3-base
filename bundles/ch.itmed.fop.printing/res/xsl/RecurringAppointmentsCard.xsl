@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- (c) IT-Med AG 2019; All rights reserved -->
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -37,33 +36,20 @@
 					<fo:region-after />
 				</fo:simple-page-master>
 			</fo:layout-master-set>
-			<fo:page-sequence
-				master-reference="RecurringAppointmentsCard">
+			<fo:page-sequence master-reference="RecurringAppointmentsCard">
 				<fo:flow flow-name="xsl-region-body">
-					<!-- Example entries for additional info
-					<fo:block-container font="10pt Helvetica"
-						font-weight="bold">
-						<fo:block>Praxis Name</fo:block>
-					</fo:block-container>
-					<fo:block-container font="8pt Helvetica"
-						font-weight="normal">
-						<fo:block>Zusatzinformation Praxis</fo:block>
-						<fo:block>Strasse 00</fo:block>
-						<fo:block>0000 Ort</fo:block>
-					</fo:block-container>
 					<fo:block-container font="9pt Helvetica"
 						font-weight="bold">
-						<fo:block>041 000 00 00 t</fo:block>
-						<fo:block>041 000 00 00 f</fo:block>
+							<fo:block> Praxisname</fo:block>
+							<fo:block> <xsl:value-of select="mandator" /></fo:block>
+							<fo:block font="8pt Helvetica" font-weight="normal">Strasse_Nr.</fo:block>
+							<fo:block font="8pt Helvetica" font-weight="normal">PLZ_Ort</fo:block>
+							<fo:block font="8pt Helvetica" font-weight="normal">Tel. 044 123 45 56</fo:block>
+							<fo:block font="8pt Helvetica" font-weight="normal">praxisname@mustermail.ch</fo:block>
+					<fo:block>
+						<fo:leader />
+					</fo:block>
 					</fo:block-container>
-					<fo:block-container font="8pt Helvetica"
-						font-weight="normal">
-						<fo:block>email@test.ch</fo:block>
-						<fo:block>
-							<fo:leader />
-						</fo:block>
-					</fo:block-container>
-					-->
 					<xsl:apply-templates select="/Page/Patient" />
 					<xsl:apply-templates
 						select="/Page/AppointmentsInformation" />
@@ -75,40 +61,15 @@
 		<fo:block-container font="7.5pt Helvetica"
 			font-weight="normal">
 			<fo:block>
-				<xsl:value-of select="LastName" />
-			</fo:block>
-			<fo:block>
 				<xsl:value-of select="FirstName" />
-			</fo:block>
-			<fo:block>
+				&#160;
+				<xsl:value-of select="LastName" />
+				&#160;(
+				<xsl:value-of select="Sex" />
+				)
+				,&#160;
 				<xsl:value-of select="Birthdate" />
 			</fo:block>
-			<fo:block>
-				<xsl:value-of select="Street" />
-			</fo:block>
-			<fo:block>
-				<xsl:value-of select="PostalCode" />
-				&#160;
-				<xsl:value-of select="City" />
-			</fo:block>
-			<xsl:if test="/Page/Patient/Phone1/text()">
-				<fo:block>
-					p:&#160;&#160;
-					<xsl:value-of select="Phone1" />
-				</fo:block>
-			</xsl:if>
-			<xsl:if test="/Page/Patient/Phone2/text()">
-				<fo:block>
-					g:&#160;&#160;
-					<xsl:value-of select="Phone2" />
-				</fo:block>
-			</xsl:if>
-			<xsl:if test="/Page/Patient/MobilePhone/text()">
-				<fo:block>
-					m:&#160;&#160;
-					<xsl:value-of select="MobilePhone" />
-				</fo:block>
-			</xsl:if>
 		</fo:block-container>
 	</xsl:template>
 	<xsl:template match="AppointmentsInformation">
@@ -131,7 +92,7 @@
 			<fo:block font="7.5pt Helvetica" font-weight="normal"
 				text-decoration="underline">
 				Ihre nächsten
-				Termin:
+				Termine:
 			</fo:block>
 		</fo:block-container>
 		<fo:block-container font="8pt Helvetica"

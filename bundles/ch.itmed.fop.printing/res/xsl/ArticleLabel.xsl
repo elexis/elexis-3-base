@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- (c) IT-Med AG 2019; All rights reserved -->
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -9,7 +8,7 @@
 	</xsl:variable>
 	<xsl:variable name="pageHeight">
 		<xsl:value-of select="Page/@pageHeight" />
-	</xsl:variable>
+		</xsl:variable>
 	<xsl:variable name="marginTop">
 		<xsl:value-of select="Page/@marginTop" />
 	</xsl:variable>
@@ -32,14 +31,13 @@
 					master-name="ArticleLabel" page-width="{$pageWidth}"
 					page-height="{$pageHeight}" margin-top="{$marginTop}"
 					margin-bottom="{$marginBottom}" margin-left="{$marginLeft}"
-					margin-right="{$marginRight}">
+					margin-right="{$marginRight}" reference-orientation="{$textOrientation}">
 					<fo:region-body />
 					<fo:region-after />
 				</fo:simple-page-master>
 			</fo:layout-master-set>
 			<fo:page-sequence master-reference="ArticleLabel">
-				<fo:flow flow-name="xsl-region-body"
-					reference-orientation="{$textOrientation}">
+				<fo:flow flow-name="xsl-region-body">
 					<fo:block-container font="8pt Helvetica"
 						font-weight="normal" text-align="center">
 						<xsl:apply-templates />
@@ -50,16 +48,20 @@
 	</xsl:template>
 	<xsl:template match="Articles">
 		<xsl:for-each select="Article">
-			<fo:block-container page-break-after="always">
+			<fo:block page-break-before="always">
 				<fo:block>
-					<xsl:value-of select="/Page/Patient/Salutation" />
-					&#160;
 					<xsl:value-of select="/Page/Patient/FirstName" />
 					&#160;
 					<xsl:value-of select="/Page/Patient/LastName" />
+					&#160;(
+					<xsl:value-of select="/Page/Patient/Sex" />
+					)
 					,&#160;
 					<xsl:value-of select="/Page/Patient/Birthdate" />
 				</fo:block>
+				<fo:block font-size="6pt" text-decoration="underline">
+					<xsl:value-of select="/Page/Info/responsibleMedicalPerson" />
+				</fo:block>				
 				<fo:block>
 					<fo:leader />
 				</fo:block>
@@ -74,7 +76,9 @@
 					Preis:&#160;CHF&#160;
 					<xsl:value-of select="Price" />
 				</fo:block>
-			</fo:block-container>
+			</fo:block>
 		</xsl:for-each>
 	</xsl:template>
 </xsl:stylesheet>
+
+

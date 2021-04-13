@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -28,6 +29,7 @@ import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
+import ch.elexis.core.ui.dialogs.ResultDialog;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.core.ui.views.Messages;
 import ch.elexis.omnivore.PreferenceConstants;
@@ -91,19 +93,23 @@ public class AutomaticBilling {
 	
 	private void addBlockToEncounter(ICodeElementBlock block, IEncounter encounter){
 		List<ICodeElement> elements = block.getElements(encounter);
+		StringJoiner notOkResults = new StringJoiner("\n");
 		for (ICodeElement element : elements) {
 			if (element instanceof IBillable) {
 				Result<IBilled> result =
 					BillingServiceHolder.get().bill((IBillable) element, encounter, 1);
 				if (!result.isOK()) {
-					ElexisEventDispatcher.getInstance()
-						.fireMessageEvent(new MessageEvent(MessageType.WARN,
-							Messages.VerrechnungsDisplay_imvalidBilling,
-							patient.getLabel() + "\nDokument import Verrechnung von ["
-								+ element.getCode() + "]\n\n"
-								+ result.toString()));
+					String message = patient.getLabel() + "\nDokument import Verrechnung von ["
+						+ element.getCode() + "]\n\n" + ResultDialog.getResultMessage(result);
+					if (!notOkResults.toString().contains(message)) {
+						notOkResults.add(message);
+					}
 				}
 			}
+		}
+		if (!notOkResults.toString().isEmpty()) {
+			ElexisEventDispatcher.getInstance().fireMessageEvent(new MessageEvent(MessageType.WARN,
+				Messages.VerrechnungsDisplay_imvalidBilling, notOkResults.toString()));
 		}
 	}
 	

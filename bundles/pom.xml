@@ -22,6 +22,7 @@
     <module>ch.elexis.hl7.message.ui</module>
     <module>at.gruber.elexis.mythic22</module>
     <module>at.medevit.atc_codes</module>
+    <module>at.medevit.elexis.corona123</module>
     <module>at.medevit.ch.artikelstamm.elexis.common</module>
     <module>at.medevit.ch.artikelstamm.elexis.open</module>
     <module>at.medevit.ch.artikelstamm.medcalendar</module>

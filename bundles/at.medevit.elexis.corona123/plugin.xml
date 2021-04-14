@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.PatListView">
+         <command
+               commandId="at.medevit.elexis.corona123.openPatientTest"
+               icon="rsc/corona123.png"
+               label="corona123 Test Formular"
+               style="push">
+         </command>
+         <command
+               commandId="at.medevit.elexis.corona123.openPatientVaccination"
+               icon="rsc/corona123.png"
+               label="corona123 Impfung Formular"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.corona123.handler.OpenPatientTestHandler"
+            id="at.medevit.elexis.corona123.openPatientTest"
+            name="Open Patient Test">
+      </command>
+      <command
+            defaultHandler="at.medevit.elexis.corona123.handler.OpenPatientVaccinationHandler"
+            id="at.medevit.elexis.corona123.openPatientVaccination"
+            name="Open Patient Vaccination">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="at.medevit.elexis.corona123.preference.WorkbenchPreferencePage"
+            id="at.medevit.elexis.corona123.preferences"
+            name="corona123">
+      </page>
+   </extension>
+
+</plugin>

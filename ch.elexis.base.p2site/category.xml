@@ -264,6 +264,9 @@
    <feature id="at.medevit.elexis.kapsch.referral.feature">
       <category name="dataexchange"/>
    </feature>
+   <feature id="at.medevit.elexis.corona123.feature">
+      <category name="dataexchange"/>
+   </feature>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

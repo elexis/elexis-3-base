@@ -26,6 +26,7 @@
     <module>org.apache.solr</module>
     <module>ch.elexis.base.solr</module>
     <module>ch.elexis.base.solr.ui</module>
+    <module>at.medevit.elexis.corona123</module>
     <module>at.medevit.ch.artikelstamm.elexis.common</module>
     <module>at.medevit.ch.artikelstamm.elexis.open</module>
     <!-- ???

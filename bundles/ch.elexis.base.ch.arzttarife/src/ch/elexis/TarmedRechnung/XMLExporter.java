@@ -460,6 +460,12 @@ public class XMLExporter implements IRnOutputter {
 		} else {
 			logger.warn("services is null!");
 		}
+		
+		// documents
+		XMLExporterDocuments documents = XMLExporterDocuments.buildDocuments(invoice, this);
+		if(documents != null) {
+			body.addContent(documents.getElement());
+		}
 
 
 		payload.addContent(body);

@@ -37,6 +37,8 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.ICustomService;
 import ch.elexis.core.model.IDiagnosis;
+import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IDocumentLetter;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
@@ -204,6 +206,22 @@ public class TestData {
 					throw new IllegalStateException(result.toString());
 				}
 			}
+			
+			IInvoice invoice = invoices.get(0);
+			IDocument document = CoreModelServiceHolder.get().create(IDocumentLetter.class);
+			document.setPatient(invoice.getCoverage().getPatient());
+			document.setTitle("testDocument");
+			document.setMimeType("application/pdf");
+			
+			try (InputStream resourceAsStream =
+				getClass().getClassLoader().getResourceAsStream("/rsc/testdocument.pdf")) {
+				document.setContent(resourceAsStream);
+			}
+			
+			CoreModelServiceHolder.get().save(document);
+
+			invoice.addAttachment(document);
+			CoreModelServiceHolder.get().save(invoice);
 			
 			importExistingXml();
 		}

@@ -108,6 +108,20 @@ public class XMLExporterTest {
 					fail();
 				}
 			}
+			// if attachment set, is it included?
+			if (invoice.getAttachments().size() > 0) {
+				iter = root.getDescendants(new ElementFilter("documents"));
+				assertTrue(iter.hasNext());
+				Element next = (Element) iter.next();
+				assertEquals("documents", next.getName());
+				assertEquals("1", next.getAttribute("number").getValue());
+				next = (Element) next.getChildren().get(0);
+				assertEquals("document", next.getName());
+				next = (Element) next.getChildren().get(0);
+				assertEquals("base64", next.getName());
+				Object base64Content = next.getContent().get(0);
+				assertNotNull(base64Content);
+			}
 		}
 		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}
@@ -296,6 +310,7 @@ public class XMLExporterTest {
 		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("0.00", due);
 	}
+	
 	
 	@Test
 	public void doReExportExistingPrepaid4Test() throws IOException{

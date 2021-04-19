@@ -730,6 +730,7 @@ public class TerminDialog extends TitleAreaDialog {
 		
 		DayOverview(final Composite parent){
 			super(parent, SWT.NONE);
+			this.setData("org.eclipse.e4.ui.css.CssClassName", "CustomComposite");
 			addPaintListener(this);
 			addMouseListener(new MouseAdapter() {
 				@Override

@@ -40,6 +40,7 @@ public class TimeInput extends Composite {
 	
 	public TimeInput(Composite parent, String lbl){
 		super(parent, SWT.NONE);
+		this.setData("org.eclipse.e4.ui.css.CssClassName", "CustomComposite");
 		listeners = new ArrayList<TimeInputListener>();
 		setLayout(new GridLayout());
 		label = new Label(this, SWT.NONE);

@@ -34,7 +34,7 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 			activeSideBar.ifPresent(sideBar -> {
 				sideBar.setMoveInformation(date, resource);
 				
-				if(SingleSourceUtil.isRap()) {
+				if (SingleSourceUtil.isRap()) {
 					// in Rap Browser Mouse Location is not connected to SWT
 					// hence the menu does not open at the correct location (but would on the last entry
 					// point to the SWT browser widget)
@@ -42,9 +42,12 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 					// relative if sidebar is opened
 					Double argX = (Double) arguments[0];
 					Double argY = (Double) arguments[1];
-					getBrowser().getMenu().setLocation(argX.intValue()+100, argY.intValue());
+					getBrowser().getMenu().setLocation(argX.intValue() + 100, argY.intValue());
 				}
-				getBrowser().getMenu().setVisible(true);
+				if (!getBrowser().getMenu().isVisible()) {
+					getBrowser().getMenu().setVisible(true);
+				}
+				
 			});
 		} else if (arguments.length == 1) {
 			IAppointment termin = CoreModelServiceHolder.get()

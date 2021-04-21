@@ -204,7 +204,7 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 	
 	@Override
 	protected void setPrice(ILaborLeistung billable, IBilled billed){
-		billed.setFactor(getFactor(billed.getEncounter().getDate().toLocalDate()));
+		billed.setFactor(getFactor(billed.getEncounter().getDate()));
 		billed.setPoints(billable.getPoints());
 	}
 	

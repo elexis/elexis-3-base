@@ -58,7 +58,7 @@ public class TarmedLeistungCodeElementService
 		}
 		IEncounter encounter = (IEncounter) context.get(ContextKeys.CONSULTATION);
 		if (encounter != null) {
-			return encounter.getDate().toLocalDate();
+			return encounter.getDate();
 		}
 		return LocalDate.now();
 	}

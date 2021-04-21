@@ -283,7 +283,7 @@ public class XMLExporterServices {
 			for (IEncounter encounter : encounters) {
 				List<IBilled> encounterBilled = encounter.getBilled();
 				// konsultationen list is ordered by date, so we can just compare with previous
-				LocalDate encounterDate = encounter.getDate().toLocalDate();
+				LocalDate encounterDate = encounter.getDate();
 				if (encounterDate.equals(lastEncounterDate)) {
 					session++;
 				} else {
@@ -435,7 +435,7 @@ public class XMLExporterServices {
 						double mult = billed.getFactor();
 						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(billed.getPrice()));
 						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
-						if ("true".equals(billed.getExtInfo(Verrechnet.INDICATED))) {
+						if ("true".equals((String) billed.getExtInfo(Verrechnet.INDICATED))) {
 							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "207");
 						} else {
 							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE,

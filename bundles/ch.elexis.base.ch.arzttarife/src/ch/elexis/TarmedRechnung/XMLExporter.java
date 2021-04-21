@@ -669,7 +669,7 @@ public class XMLExporter implements IRnOutputter {
 				// remove existing patient children
 				ListIterator<Object> iterator = tiersChildren.listIterator();
 				while (iterator.hasNext()) {
-					Object obj = iterator.next();
+					Object obj = (Object) iterator.next();
 					if(obj instanceof Element
 							&& "patient".equals(((Element) obj).getName())) {
 						iterator.remove();
@@ -690,7 +690,7 @@ public class XMLExporter implements IRnOutputter {
 					// remove existing guarantor children
 					ListIterator<Object> iterator = tiersChildren.listIterator();
 					while (iterator.hasNext()) {
-						Object obj = iterator.next();
+						Object obj = (Object) iterator.next();
 						if (obj instanceof Element
 							&& "guarantor".equals(((Element) obj).getName())) {
 							iterator.remove();

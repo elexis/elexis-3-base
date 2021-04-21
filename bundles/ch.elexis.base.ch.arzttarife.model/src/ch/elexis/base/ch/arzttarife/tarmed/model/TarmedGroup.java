@@ -72,7 +72,7 @@ public class TarmedGroup
 		if (encounter == null) {
 			curTimeHelper = LocalDate.now();
 		} else {
-			curTimeHelper = encounter.getDate();
+			curTimeHelper = encounter.getDate().toLocalDate();
 		}
 		return getExclusions(curTimeHelper);
 	}

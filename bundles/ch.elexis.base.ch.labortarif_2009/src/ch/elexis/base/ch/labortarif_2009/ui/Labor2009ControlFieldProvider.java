@@ -41,7 +41,7 @@ public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
 	@Inject
 	public void selectedEncounter(@Optional IEncounter encounter){
 		if (encounter != null) {
-			this.filterDate = encounter.getDate();
+			this.filterDate = encounter.getDate().toLocalDate();
 			fireChangedEvent();
 		} else {
 			this.filterDate = null;

@@ -125,6 +125,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		return null;
 	}
 	
+	@Override
 	public Result<IBilled> add(TarmedLeistung code, IEncounter kons, double amount, boolean save){
 		this.save = save;
 		int amountInt = doubleToInt(amount);
@@ -164,7 +165,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		bAllowOverrideStrict = TarmedUtil.getConfigValue(getClass(), IUser.class,
 			Preferences.LEISTUNGSCODES_ALLOWOVERRIDE_STRICT, false);
 		
-		TarmedLeistung tc = (TarmedLeistung) code;
+		TarmedLeistung tc = code;
 		List<IBilled> lst = kons.getBilled();
 		/*
 		 * TODO Hier checken, ob dieser code mit der Dignität und
@@ -281,7 +282,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 			}
 			// Exclusionen
 			if (bOptify) {
-				TarmedLeistung newTarmed = (TarmedLeistung) code;
+				TarmedLeistung newTarmed = code;
 				for (IBilled v : lst) {
 					if (v.getBillable() instanceof TarmedLeistung) {
 						TarmedLeistung tarmed = (TarmedLeistung) v.getBillable();
@@ -418,7 +419,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 						int alter = p.getAgeInYears();
 						if (alter < 6) {
 							TarmedLeistung tl =
-								(TarmedLeistung) getKonsVerrechenbar("00.0040", kons);
+								getKonsVerrechenbar("00.0040", kons);
 							saveBilled();
 							add(tl, kons);
 						}
@@ -542,7 +543,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		ret.setPoints(code.getAL(kons.getMandator()) + code.getTL());
 		Optional<IBillingSystemFactor> systemFactor = BillingServiceHolder.get()
 			.getBillingSystemFactor(kons.getCoverage().getBillingSystem().getName(),
-				kons.getDate());
+				kons.getDate().toLocalDate());
 		if (systemFactor.isPresent()) {
 			ret.setFactor(systemFactor.get().getFactor());
 		} else {
@@ -641,10 +642,10 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 				}
 			}
 			// group limitations
-			List<String> groups = tarmedLeistung.getServiceGroups(kons.getDate());
+			List<String> groups = tarmedLeistung.getServiceGroups(kons.getDate().toLocalDate());
 			for (String groupName : groups) {
 				Optional<ITarmedGroup> group =
-					TarmedGroup.find(groupName, tarmedLeistung.getLaw(), kons.getDate());
+					TarmedGroup.find(groupName, tarmedLeistung.getLaw(), kons.getDate().toLocalDate());
 				if (group.isPresent()) {
 					limitations = group.get().getLimitations();
 					for (TarmedLimitation tarmedLimitation : limitations) {
@@ -709,7 +710,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	private TarmedLeistung getKonsVerrechenbar(String code, IEncounter kons){
 		if (kons.getCoverage() != null) {
 			String law = kons.getCoverage().getBillingSystem().getLaw().name();
-			return TarmedLeistung.getFromCode(code, kons.getDate(), law);
+			return TarmedLeistung.getFromCode(code, kons.getDate().toLocalDate(), law);
 		}
 		return null;
 	}
@@ -738,7 +739,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		LocalDate konsDate = null;
 		for (IBilled v : lst) {
 			if (konsDate == null) {
-				konsDate = v.getEncounter().getDate();
+				konsDate = v.getEncounter().getDate().toLocalDate();
 			}
 			if (v.getBillable() instanceof TarmedLeistung) {
 				TarmedLeistung tl = (TarmedLeistung) v.getBillable();
@@ -812,7 +813,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		for (TarmedLimitation limit : limits) {
 			if (limit.getLimitationUnit() == LimitationUnit.MAINSERVICE) {
 				// only an integer makes sense here
-				return (int) limit.getAmount();
+				return limit.getAmount();
 			}
 		}
 		// default to unknown
@@ -832,7 +833,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		reductionVerrechnet.setAmount(opVerrechnet.getAmount());
 		reductionVerrechnet.setExtInfo(TL, Double.toString(opVerrechenbar.getTL()));
 		reductionVerrechnet.setExtInfo(AL, Double.toString(0.0));
-		reductionVerrechnet.setPoints((int) Math.round(opVerrechenbar.getTL()));
+		reductionVerrechnet.setPoints(Math.round(opVerrechenbar.getTL()));
 		reductionVerrechnet.setPrimaryScale(-40);
 		reductionVerrechnet.setExtInfo("Bezug", opVerrechenbar.getCode());
 		if (save) {
@@ -1019,7 +1020,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		TimeTool date = new TimeTool(kons.getDate());
 		List<TarmedExclusion> exclusions = tarmed.getExclusions(kons);
 		for (TarmedExclusion tarmedExclusion : exclusions) {
-			if (tarmedExclusion.isMatching(tarmedCode, kons.getDate())) {
+			if (tarmedExclusion.isMatching(tarmedCode, kons.getDate().toLocalDate())) {
 				// exclude only if side matches
 				if (tarmedExclusion.isValidSide() && tarmedCodeVerrechnet != null
 					&& tarmedVerrechnet != null) {
@@ -1046,14 +1047,14 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		}
 		// skip group exclusions check for the same service code
 		if (!tarmedCode.getCode().equals(tarmed.getCode())) {
-			List<String> groups = tarmed.getServiceGroups(kons.getDate());
+			List<String> groups = tarmed.getServiceGroups(kons.getDate().toLocalDate());
 			for (String groupName : groups) {
 				Optional<ITarmedGroup> group =
-					TarmedGroup.find(groupName, tarmed.getLaw(), kons.getDate());
+					TarmedGroup.find(groupName, tarmed.getLaw(), kons.getDate().toLocalDate());
 				if (group.isPresent() && !tarmedCode.getServiceTyp().equals("Z")) {
 					List<TarmedExclusion> groupExclusions = group.get().getExclusions(kons);
 					for (TarmedExclusion tarmedExclusion : groupExclusions) {
-						if (tarmedExclusion.isMatching(tarmedCode, kons.getDate())) {
+						if (tarmedExclusion.isMatching(tarmedCode, kons.getDate().toLocalDate())) {
 							return new Result<IBilled>(Result.SEVERITY.WARNING, EXKLUSION,
 								tarmed.getCode() + " nicht kombinierbar mit " //$NON-NLS-1$
 									+ tarmedExclusion.toString(),
@@ -1063,16 +1064,16 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 				}
 			}
 		}
-		List<String> blocks = tarmed.getServiceBlocks(kons.getDate());
+		List<String> blocks = tarmed.getServiceBlocks(kons.getDate().toLocalDate());
 		for (String blockName : blocks) {
 			if (skipBlockExclusives(blockName)) {
 				continue;
 			}
 			List<TarmedExclusive> exclusives = TarmedKumulation.getExclusives(blockName,
-				TarmedKumulationArt.BLOCK, kons.getDate(), tarmed.getLaw());
+				TarmedKumulationArt.BLOCK, kons.getDate().toLocalDate(), tarmed.getLaw());
 			// currently only test blocks exclusives, exclude hierarchy matches
 			if (canHandleAllExculives(exclusives)
-				&& !isMatchingHierarchy(tarmedCode, tarmed, kons.getDate())
+				&& !isMatchingHierarchy(tarmedCode, tarmed, kons.getDate().toLocalDate())
 				&& !tarmedCode.getServiceTyp().equals("Z")) {
 				boolean included = false;
 				for (TarmedExclusive tarmedExclusive : exclusives) {
@@ -1130,6 +1131,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	 * Entfernung dieses Codes noch konsistent verrechnet wäre und ggf. anpassen oder das Entfernen
 	 * verweigern. Diese Version macht keine Prüfungen, sondern erfüllt nur die Anfrage..
 	 */
+	@Override
 	public Result<IBilled> remove(IBilled code, IEncounter kons){
 		List<IBilled> l = kons.getBilled();
 		l.remove(code);

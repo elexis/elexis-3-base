@@ -46,7 +46,7 @@ public class EncounterBean {
 		}
 		bean.setContent(orig.getHeadVersionInPlaintext());
 		Date cr_date =
-			Date.from(orig.getDate().atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant());
+			Date.from(orig.getDate().atZone(ZoneId.systemDefault()).toInstant());
 		bean.setCr_date(cr_date);
 		return bean;
 	}

@@ -237,7 +237,7 @@ public class PatientenHitlist extends BaseStats {
 		}
 		
 		void addCons(IEncounter encounter){
-			LocalDate encounterDate = encounter.getDate();
+			LocalDate encounterDate = encounter.getDate().toLocalDate();
 			numCons++;
 			List<IBilled> encounterBilled = encounter.getBilled();
 			ICoverage coverage = encounter.getCoverage();

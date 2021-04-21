@@ -59,7 +59,7 @@ public class PrivatRechnungCodeElementServiceContribution
 		}
 		IEncounter encounter = (IEncounter) context.get(ContextKeys.CONSULTATION);
 		if (encounter != null) {
-			return encounter.getDate();
+			return encounter.getDate().toLocalDate();
 		}
 		return LocalDate.now();
 	}

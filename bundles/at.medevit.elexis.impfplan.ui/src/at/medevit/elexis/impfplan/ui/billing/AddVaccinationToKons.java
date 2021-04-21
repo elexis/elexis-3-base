@@ -106,7 +106,7 @@ public class AddVaccinationToKons {
 	}
 	
 	private IBillable getKonsVerrechenbar(IEncounter encounter){
-		LocalDate encounterDate = encounter.getDate();
+		LocalDate encounterDate = encounter.getDate().toLocalDate();
 		if (encounter.getCoverage() != null) {
 			BillingLaw law = encounter.getCoverage().getBillingSystem().getLaw();
 			Optional<ICodeElementServiceContribution> tarmedContribution =

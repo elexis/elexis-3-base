@@ -46,7 +46,7 @@ public class ComplementaryLeistung
 				protected void setPrice(ComplementaryLeistung billable, IBilled billed){
 					Optional<IBillingSystemFactor> billingFactor =
 						BillingServiceHolder.get().getBillingSystemFactor(getCodeSystemName(),
-							billed.getEncounter().getDate());
+							billed.getEncounter().getDate().toLocalDate());
 					if (billingFactor.isPresent()) {
 						billed.setFactor(billingFactor.get().getFactor());
 					} else {

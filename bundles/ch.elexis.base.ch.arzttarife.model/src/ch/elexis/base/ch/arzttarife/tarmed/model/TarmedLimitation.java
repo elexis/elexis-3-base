@@ -380,7 +380,7 @@ public class TarmedLimitation {
 			}).collect(Collectors.toList());
 			all = filterValidCodeForKonsultation(code, kons, all);
 			// now group in time periods since first verrechnet
-			LocalDate konsDate = kons.getDate();
+			LocalDate konsDate = kons.getDate().toLocalDate();
 			List<VerrechnetPeriod> grouped = getGroupedByPeriod(all);
 			// lookup period matching konsDate
 			for (VerrechnetPeriod verrechnetPeriod : grouped) {
@@ -425,7 +425,7 @@ public class TarmedLimitation {
 		private List<IBilled> verrechnete;
 		
 		private VerrechnetPeriod(IBilled verrechnet){
-			start = verrechnet.getEncounter().getDate();
+			start = verrechnet.getEncounter().getDate().toLocalDate();
 			if (limitationUnit == LimitationUnit.WEEK) {
 				end = start.plus(limitationAmount, ChronoUnit.WEEKS);
 			} else if (limitationUnit == LimitationUnit.MONTH) {
@@ -442,7 +442,7 @@ public class TarmedLimitation {
 		}
 		
 		private boolean isInPeriod(IBilled verrechnet){
-			LocalDate matchDate = verrechnet.getEncounter().getDate();
+			LocalDate matchDate = verrechnet.getEncounter().getDate().toLocalDate();
 			return isDateInPeriod(matchDate);
 		}
 		
@@ -539,7 +539,7 @@ public class TarmedLimitation {
 	}
 	
 	private LocalDate getDuringStartDate(IEncounter kons){
-		LocalDate konsDate = kons.getDate();
+		LocalDate konsDate = kons.getDate().toLocalDate();
 		LocalDate ret = null;
 		if (limitationUnit == LimitationUnit.WEEK) {
 			ret = konsDate.minus(limitationAmount, ChronoUnit.WEEKS);
@@ -589,7 +589,7 @@ public class TarmedLimitation {
 		List<IBilled> list){
 		List<IBilled> ret = new ArrayList<>();
 		BillingLaw law = kons.getCoverage().getBillingSystem().getLaw();
-		IBillable validForKons = TarmedLeistung.getFromCode(code, kons.getDate(), law.name());
+		IBillable validForKons = TarmedLeistung.getFromCode(code, kons.getDate().toLocalDate(), law.name());
 		if (validForKons != null) {
 			String matchCode = validForKons.getCode();
 			if (matchCode != null && !matchCode.isEmpty()) {

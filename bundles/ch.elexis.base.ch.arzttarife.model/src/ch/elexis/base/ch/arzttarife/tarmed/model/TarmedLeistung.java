@@ -81,6 +81,7 @@ public class TarmedLeistung
 	 * @return
 	 * @since 3.4
 	 */
+	@Override
 	public int getAL(IMandator mandant){
 		String tp_al = getExtension().getLimits()
 			.get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_TP_AL);
@@ -253,7 +254,7 @@ public class TarmedLeistung
 	}
 	
 	public List<TarmedLimitation> getLimitations(){
-		String lim = (String) getExtension().getLimits().get("limits"); //$NON-NLS-1$
+		String lim = getExtension().getLimits().get("limits"); //$NON-NLS-1$
 		if (lim != null && !lim.isEmpty()) {
 			List<TarmedLimitation> ret = new ArrayList<>();
 			String[] lines = lim.split("#"); //$NON-NLS-1$
@@ -347,7 +348,7 @@ public class TarmedLeistung
 		if (kons == null) {
 			curTimeHelper = LocalDate.now();
 		} else {
-			curTimeHelper = kons.getDate();
+			curTimeHelper = kons.getDate().toLocalDate();
 		}
 		return getExclusions(curTimeHelper);
 	}

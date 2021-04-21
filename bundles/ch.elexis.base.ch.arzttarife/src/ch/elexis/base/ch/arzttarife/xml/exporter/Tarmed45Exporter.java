@@ -598,7 +598,7 @@ public class Tarmed45Exporter {
 		for (IEncounter encounter : encounters) {
 			List<IBilled> encounterBilled = encounter.getBilled();
 			// encounters list is ordered by date, so we can just compare with previous
-			LocalDate encounterDate = encounter.getDate();
+			LocalDate encounterDate = encounter.getDate().toLocalDate();
 			if (encounterDate.equals(lastEncounterDate)) {
 				session++;
 			} else {

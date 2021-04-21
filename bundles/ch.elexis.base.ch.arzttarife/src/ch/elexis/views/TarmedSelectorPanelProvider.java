@@ -89,7 +89,7 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 	}
 	
 	private void updateValidFilter(IEncounter encounter){
-		validDateFilter.setValidDate(encounter.getDate());
+		validDateFilter.setValidDate(encounter.getDate().toLocalDate());
 	}
 	
 	private void updateLawFilter(IEncounter encounter){

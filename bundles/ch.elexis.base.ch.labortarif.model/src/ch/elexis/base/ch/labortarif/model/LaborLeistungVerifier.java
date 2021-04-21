@@ -15,7 +15,7 @@ public class LaborLeistungVerifier implements IBillableVerifier {
 	public Result<IBillable> verifyAdd(IBillable billable, IEncounter encounter, double amount){
 		if (billable instanceof ILaborLeistung) {
 			ILaborLeistung laborLeistung = (ILaborLeistung) billable;
-			LocalDate date = encounter.getDate();
+			LocalDate date = encounter.getDate().toLocalDate();
 			if (laborLeistung.isValidOn(date)) {
 				return Result.OK();
 			} else {

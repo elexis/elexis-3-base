@@ -14,6 +14,7 @@ package ch.elexis.connect.mythic;
 
 import java.util.Collections;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -112,9 +113,17 @@ public class MythicAction extends Action implements ComPortListener {
 		int idx = StringTool.getIndex(results, line[0]);
 		if (idx != -1) {
 			if (line.length > 7) {
+				String ref = "";
+				if (StringUtils.isNotBlank(line[5]) && StringUtils.isNotBlank(line[6])) {
+					ref = line[5] + "-" + line[6];
+				} else if (StringUtils.isNotBlank(line[5])) {
+					ref = ">" + line[5];
+				} else if (StringUtils.isNotBlank(line[6])) {
+					ref = "<" + line[6];
+				}
+				
 				LabItem li = LabImportUtil.getLabItem(line[0], myLab);
 				if (li == null) {
-					String ref = line[5] + "-" + line[6];
 					li = new LabItem(line[0], line[0], myLab, ref, ref, units[idx],
 						LabItemTyp.NUMERIC, "MTH Mythic", "50");
 				}
@@ -126,9 +135,9 @@ public class MythicAction extends Action implements ComPortListener {
 				LabImportUtil lu = new LabImportUtil();
 				TransientLabResult tLabResult =
 					new TransientLabResult.Builder(new ContactBean(actPatient),
-						new ContactBean(myLab), li, line[1]).date(new TimeTool()).comment(comment)
-							.build(lu);
-							
+						new ContactBean(myLab), li, line[1]).date(new TimeTool()).ref(ref)
+							.comment(comment).build(lu);
+				
 				lu.importLabResults(Collections.singletonList(tLabResult),
 					new DefaultLabImportUiHandler());
 			}

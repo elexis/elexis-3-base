@@ -1,7 +1,6 @@
 package ch.elexis.base.ch.ticode;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +43,7 @@ public class CodeElementContribution
 			&& context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
 			return (List<ICodeElement>) (List<?>) Arrays.asList(TessinerCode.getRootNodes());
 		}
-		return Collections.emptyList();
+		return TessinerCode.getLeafNodes();
 	}
 	
 	@Override

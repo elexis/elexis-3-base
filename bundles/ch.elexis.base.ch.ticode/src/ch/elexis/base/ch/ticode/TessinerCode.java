@@ -12,6 +12,7 @@
 
 package ch.elexis.base.ch.ticode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
@@ -21,8 +22,6 @@ import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.model.IXid;
-
-
 
 /**
  * Copy of the ch.elexis.data.TICode class, but without PersistentObject dependencies.
@@ -43,20 +42,24 @@ public class TessinerCode implements IDiagnosisTree {
 		this.text = text;
 	}
 	
+	@Override
 	public String getText(){
 		return text;
 	}
 	
+	@Override
 	public String getCode(){
 		return code;
 	}
 	
+	@Override
 	public String getLabel(){
 		return code + " " + text; //$NON-NLS-1$
 	}
 	
+	@Override
 	public String getCodeSystemName(){
-		return CODESYSTEM_NAME; 
+		return CODESYSTEM_NAME;
 	}
 	
 	public static TessinerCode load(String code){
@@ -97,6 +100,7 @@ public class TessinerCode implements IDiagnosisTree {
 		return Optional.ofNullable(ret);
 	}
 	
+	@Override
 	public TessinerCode getParent(){
 		if (getCode().length() == 1) {
 			return null;
@@ -111,6 +115,7 @@ public class TessinerCode implements IDiagnosisTree {
 		return false;
 	}
 	
+	@Override
 	public List<IDiagnosisTree> getChildren(){
 		if (getCode().length() > 1) {
 			return null;
@@ -259,42 +264,42 @@ public class TessinerCode implements IDiagnosisTree {
 			Messages.TICode_neoplastic, Messages.TICode_professional
 		}
 	};
-
+	
 	@Override
 	public String getId(){
 		return getCode();
 	}
-
+	
 	@Override
 	public boolean addXid(String domain, String id, boolean updateIfExists){
 		throw new UnsupportedOperationException();
 	}
-
+	
 	@Override
 	public IXid getXid(String domain){
 		return null;
 	}
-
+	
 	@Override
 	public Long getLastupdate(){
 		return 0L;
 	}
-
+	
 	@Override
 	public String getDescription(){
 		return getText();
 	}
-
+	
 	@Override
 	public void setDescription(String value){
 		throw new UnsupportedOperationException();
 	}
-
+	
 	@Override
 	public void setCode(String value){
 		throw new UnsupportedOperationException();
 	}
-
+	
 	@Override
 	public void setText(String value){
 		throw new UnsupportedOperationException();
@@ -303,5 +308,21 @@ public class TessinerCode implements IDiagnosisTree {
 	@Override
 	public void setParent(IDiagnosisTree value){
 		throw new UnsupportedOperationException();
+	}
+	
+	private static List<ICodeElement> allLeafNodes;
+	
+	public static List<ICodeElement> getLeafNodes(){
+		if (allLeafNodes == null) {
+			allLeafNodes = new ArrayList<ICodeElement>();
+			for (String[] subArray : ticode) {
+				for (int i = 2; i < subArray.length; i++) {
+					String chapter = subArray[0];
+					String entry = subArray[i];
+					allLeafNodes.add(new TessinerCode(chapter + " " + (i - 1), entry));
+				}
+			}
+		}
+		return allLeafNodes;
 	}
 }

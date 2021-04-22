@@ -75,8 +75,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	void activePatient(@Optional
 	IPatient patient){
 		Display.getDefault().asyncExec(() -> {
-			((CommonViewerContentProvider) cv.getConfigurer().getContentProvider()).init();
-			updateSelection(patient);
+			refresh();
 		});
 	}
 	
@@ -242,6 +241,11 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 		});
 		
 		getSite().getPage().addPartListener(udpateOnVisible);
+	}
+	
+	@Override
+	public void dispose(){
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 	
 	@Override

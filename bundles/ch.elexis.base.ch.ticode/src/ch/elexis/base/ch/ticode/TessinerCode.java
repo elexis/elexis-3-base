@@ -315,12 +315,8 @@ public class TessinerCode implements IDiagnosisTree {
 	public static List<ICodeElement> getLeafNodes(){
 		if (allLeafNodes == null) {
 			allLeafNodes = new ArrayList<ICodeElement>();
-			for (String[] subArray : ticode) {
-				for (int i = 2; i < subArray.length; i++) {
-					String chapter = subArray[0];
-					String entry = subArray[i];
-					allLeafNodes.add(new TessinerCode(chapter + " " + (i - 1), entry));
-				}
+			for (TessinerCode rootNode : getRootNodes()) {
+				allLeafNodes.addAll(rootNode.getChildren());
 			}
 		}
 		return allLeafNodes;

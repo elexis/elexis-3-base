@@ -14,6 +14,7 @@ package ch.elexis.connect.mythic;
 
 import java.util.Collections;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -114,9 +115,17 @@ public class MythicAction extends Action implements ComPortListener {
 		int idx = StringTool.getIndex(results, line[0]);
 		if (idx != -1) {
 			if (line.length > 7) {
+				String ref = "";
+				if (StringUtils.isNotBlank(line[5]) && StringUtils.isNotBlank(line[6])) {
+					ref = line[5] + "-" + line[6];
+				} else if (StringUtils.isNotBlank(line[5])) {
+					ref = ">" + line[5];
+				} else if (StringUtils.isNotBlank(line[6])) {
+					ref = "<" + line[6];
+				}
+				
 				ILabItem li = LabImportUtilHolder.get().getLabItem(line[0], myLab);
 				if (li == null) {
-					String ref = line[5] + "-" + line[6];
 					li = LabImportUtilHolder.get().createLabItem(line[0], line[0], myLab, ref, ref,
 						units[idx], LabItemTyp.NUMERIC, "MTH Mythic", "50");
 				}
@@ -128,9 +137,11 @@ public class MythicAction extends Action implements ComPortListener {
 				IPatient iPatient = CoreModelServiceHolder.get()
 					.load(actPatient.getId(), IPatient.class)
 					.orElse(null);
+				
 				TransientLabResult tLabResult =
 					new TransientLabResult.Builder(iPatient, myLab, li, line[1])
-						.date(new TimeTool()).comment(comment).build(LabImportUtilHolder.get());
+						.date(new TimeTool()).ref(ref).comment(comment)
+						.build(LabImportUtilHolder.get());
 				LabImportUtilHolder.get().importLabResults(Collections.singletonList(tLabResult),
 					new DefaultLabImportUiHandler());
 			}

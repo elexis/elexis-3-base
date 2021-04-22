@@ -183,22 +183,30 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					IAppointment termin = (IAppointment) element;
 					StringBuilder sbLabel = new StringBuilder();
 					// day
-					TimeTool tt = new TimeTool(termin.getStartTime());
-					sbLabel.append(tt.toString(TimeTool.DATE_GER));
-					String dayShort = termin.getStartTime().getDayOfWeek()
-						.getDisplayName(TextStyle.SHORT, Locale.getDefault());
-					if (dayShort != null) {
-						sbLabel.append(" (" + dayShort + ")");
+					if (termin.getStartTime() != null) {
+						TimeTool tt = new TimeTool(termin.getStartTime());
+						sbLabel.append(tt.toString(TimeTool.DATE_GER));
+						String dayShort = termin.getStartTime().getDayOfWeek()
+							.getDisplayName(TextStyle.SHORT, Locale.getDefault());
+						if (dayShort != null) {
+							sbLabel.append(" (" + dayShort + ")");
+						}
+						sbLabel.append(", ");
+						
+						// start time
+						sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
+					} else {
+						sbLabel.append("?");
 					}
-					sbLabel.append(", ");
-					
-					// start time
-					sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
 					sbLabel.append(" - ");
 					
-					TimeTool te = new TimeTool(termin.getEndTime());
-					// end time
-					sbLabel.append(te.toString(TimeTool.TIME_SMALL));
+					if (termin.getEndTime() != null) {
+						TimeTool te = new TimeTool(termin.getEndTime());
+						// end time
+						sbLabel.append(te.toString(TimeTool.TIME_SMALL));
+					} else {
+						sbLabel.append("?");
+					}
 					
 					// type
 					sbLabel.append(" (");

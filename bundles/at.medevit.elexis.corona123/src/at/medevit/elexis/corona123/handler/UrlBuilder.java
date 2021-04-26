@@ -154,8 +154,10 @@ public class UrlBuilder {
 		if (contact.isPerson()) {
 			IPerson person =
 				CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
-			return person.getTitel() + " " + person.getFirstName() + " " + person.getLastName()
-				+ ", " + person.getCity();
+			return StringUtils.defaultString(person.getTitel()) + " "
+				+ StringUtils.defaultString(person.getFirstName()) + " "
+				+ StringUtils.defaultString(person.getLastName())
+				+ ", " + StringUtils.defaultString(person.getCity());
 		} else {
 			return contact.getDescription1();
 		}

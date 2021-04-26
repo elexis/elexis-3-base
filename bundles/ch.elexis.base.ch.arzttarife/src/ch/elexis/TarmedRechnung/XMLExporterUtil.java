@@ -42,6 +42,7 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
+import ch.elexis.core.types.Country;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -150,8 +151,13 @@ public class XMLExporterUtil {
 		Element zip =
 			addElementIfExists(ret, "zip", null, StringTool.limitLength(contact.getZip(), 9), //$NON-NLS-1$
 				"0000"); //$NON-NLS-1$
+		Country country = contact.getCountry();
+		if (Country.NDF == country) {
+			logger.info("IContact [] Country not set, defaulting to CH", contact.getId());
+			country = Country.CH;
+		}
 		setAttributeIfNotEmpty(zip, "countrycode", //$NON-NLS-1$
-			StringTool.limitLength(contact.getCountry().toString(), 3));
+			StringTool.limitLength(country.toString(), 3));
 		addElementIfExists(ret, "city", null, StringTool.limitLength(contact.getCity(), 35), //$NON-NLS-1$
 			Messages.XMLExporter_Unknown);
 		return ret;

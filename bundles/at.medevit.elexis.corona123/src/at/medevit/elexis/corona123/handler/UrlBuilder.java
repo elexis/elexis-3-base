@@ -66,6 +66,9 @@ public class UrlBuilder {
 				parameters += "&generalPractitioner="
 					+ URLEncoder.encode(getContactNameWithTitle(familyDoctor),
 					"UTF-8");
+			} else if (ElexisEventDispatcher.getSelectedMandator() != null) {
+				parameters += "&generalPractitioner=" + URLEncoder.encode(
+					getContactNameWithTitle(ElexisEventDispatcher.getSelectedMandator()), "UTF-8");
 			}
 			
 			String insuranceCardNumber = getInsuranceCardNumber(patient);
@@ -126,6 +129,11 @@ public class UrlBuilder {
 					return (String) activeCoverage
 						.getExtInfoStoredObjectByKey("Versicherten-Nummer");
 				}
+				if (StringUtils.isNotBlank(
+					(String) activeCoverage.getExtInfoStoredObjectByKey("Versicherungsnummer"))) {
+					return (String) activeCoverage
+						.getExtInfoStoredObjectByKey("Versicherungsnummer");
+				}
 			}
 		}
 		for (Fall coverage : patient.getFaelle()) {
@@ -138,6 +146,10 @@ public class UrlBuilder {
 					(String) coverage.getExtInfoStoredObjectByKey("Versicherten-Nummer"))) {
 					return (String) coverage.getExtInfoStoredObjectByKey("Versicherten-Nummer");
 				}
+				if (StringUtils.isNotBlank(
+					(String) coverage.getExtInfoStoredObjectByKey("Versicherungsnummer"))) {
+					return (String) coverage.getExtInfoStoredObjectByKey("Versicherungsnummer");
+				}
 			}
 		}
 		return ret;
@@ -146,7 +158,8 @@ public class UrlBuilder {
 	private static String getContactNameWithTitle(Kontakt familyDoctor){
 		if (familyDoctor.istPerson()) {
 			Person person = Person.load(familyDoctor.getId());
-			return person.get(Person.TITLE) + " " + person.getName();
+			return person.get(Person.TITLE) + " " + person.getVorname() + " " + person.getName()
+				+ ", " + person.getAnschrift().getOrt();
 		} else {
 			return familyDoctor.get(Kontakt.FLD_NAME1);
 		}

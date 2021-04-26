@@ -158,8 +158,10 @@ public class UrlBuilder {
 	private static String getContactNameWithTitle(Kontakt familyDoctor){
 		if (familyDoctor.istPerson()) {
 			Person person = Person.load(familyDoctor.getId());
-			return person.get(Person.TITLE) + " " + person.getVorname() + " " + person.getName()
-				+ ", " + person.getAnschrift().getOrt();
+			return StringUtils.defaultString(person.get(Person.TITLE)) + " "
+				+ StringUtils.defaultString(person.getVorname()) + " "
+				+ StringUtils.defaultString(person.getName())
+				+ ", " + StringUtils.defaultString(person.getAnschrift().getOrt());
 		} else {
 			return familyDoctor.get(Kontakt.FLD_NAME1);
 		}

@@ -63,6 +63,13 @@ public class UrlBuilder {
 				parameters += "&generalPractitioner="
 					+ URLEncoder.encode(getContactNameWithTitle(familyDoctor),
 					"UTF-8");
+			} else if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
+				parameters +=
+					"&generalPractitioner="
+						+ URLEncoder.encode(
+							getContactNameWithTitle(
+								ContextServiceHolder.get().getActiveMandator().get()),
+							"UTF-8");
 			}
 			
 			String insuranceCardNumber = getInsuranceCardNumber(patient);
@@ -144,6 +151,9 @@ public class UrlBuilder {
 				if (StringUtils.isNotBlank((String) coverage.getExtInfo("Versicherten-Nummer"))) {
 					return (String) coverage.getExtInfo("Versicherten-Nummer");
 				}
+				if (StringUtils.isNotBlank((String) coverage.getExtInfo("Versicherungsnummer"))) {
+					return (String) coverage.getExtInfo("Versicherungsnummer");
+				}
 			}
 		}
 		for (ICoverage coverage : patient.getCoverages()) {
@@ -154,6 +164,9 @@ public class UrlBuilder {
 				if (StringUtils.isNotBlank((String) coverage.getExtInfo("Versicherten-Nummer"))) {
 					return (String) coverage.getExtInfo("Versicherten-Nummer");
 				}
+				if (StringUtils.isNotBlank((String) coverage.getExtInfo("Versicherungsnummer"))) {
+					return (String) coverage.getExtInfo("Versicherungsnummer");
+				}
 			}
 		}
 		return ret;
@@ -163,7 +176,8 @@ public class UrlBuilder {
 		if (contact.isPerson()) {
 			IPerson person =
 				CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
-			return person.getTitel() + " " + person.getLastName();
+			return person.getTitel() + " " + person.getFirstName() + " " + person.getLastName()
+				+ ", " + person.getCity();
 		} else {
 			return contact.getDescription1();
 		}

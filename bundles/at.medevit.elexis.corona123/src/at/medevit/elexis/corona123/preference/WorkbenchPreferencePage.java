@@ -22,6 +22,6 @@ public class WorkbenchPreferencePage extends FieldEditorPreferencePage
 	protected void createFieldEditors(){
 		// organization-id
 		addField(new StringFieldEditor(PreferenceConstants.CFG_CORONA123_ORGID,
-			"Corona123 Orgnanistations ID", getFieldEditorParent()));
+			"Corona123 Organisations-ID", getFieldEditorParent()));
 	}
 }

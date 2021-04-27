@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.widgets.Display;
@@ -50,7 +51,9 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 			IAppointment termin = CoreModelServiceHolder.get()
 				.load((String) arguments[0], IAppointment.class).orElse(null);
 			if (selectionProvider != null) {
-				selectionProvider.setSelection(new StructuredSelection(termin));
+				IStructuredSelection selection =
+					termin != null ? new StructuredSelection(termin) : null;
+				selectionProvider.setSelection(selection);
 			}
 			// setting menu visibility needs to be executed in separate
 			// trigger rebuild of menu with new selection by setting visible false first

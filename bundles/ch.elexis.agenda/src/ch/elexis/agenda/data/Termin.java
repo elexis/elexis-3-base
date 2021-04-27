@@ -33,7 +33,9 @@ import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IPeriod;
 import ch.elexis.core.jdt.Nullable;
+import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -346,6 +348,7 @@ public class Termin extends PersistentObject
 		return ret;
 	}
 	
+	@Override
 	public boolean isRecurringDate(){
 		Termin t = load(get(FLD_LINKGROUP));
 		if (t != null && t.exists())
@@ -419,6 +422,7 @@ public class Termin extends PersistentObject
 	 * @deprecated
 	 * @param flag
 	 */
+	@Deprecated
 	public void setFlag(final byte flag){
 		int flags = checkZero(get("flags"));
 		flags |= 1 << flag;
@@ -433,6 +437,7 @@ public class Termin extends PersistentObject
 	 * @deprecated
 	 * @param flag
 	 */
+	@Deprecated
 	public void clrFlag(final byte flag){
 		int flags = checkZero(get("flags"));
 		flags &= ~(1 << flag);
@@ -447,6 +452,7 @@ public class Termin extends PersistentObject
 	 * @deprecated
 	 * @param flag
 	 */
+	@Deprecated
 	public boolean getFlag(final byte flag){
 		int flags = checkZero(get("flags"));
 		return ((flags & (1 << flag)) != 0);
@@ -497,7 +503,7 @@ public class Termin extends PersistentObject
 			List<Termin> linked = getLinked(this);
 			if (confirmed) {
 				// delete whole series
-				for (Termin ae : (List<Termin>) linked) {
+				for (Termin ae : linked) {
 					ae.set(new String[] {
 						FLD_LASTEDIT, FLD_DELETED
 					}, new String[] {
@@ -601,6 +607,7 @@ public class Termin extends PersistentObject
 		return sb.toString();
 	}
 	
+	@Override
 	public boolean isValid(){
 		int l = checkZero(get(FLD_DAUER));
 		if (l <= 0) {
@@ -662,6 +669,7 @@ public class Termin extends PersistentObject
 		return Personalien;
 	}
 	
+	@Override
 	public String getStatus(){
 		return get(FLD_TERMINSTATUS);
 	}
@@ -705,6 +713,7 @@ public class Termin extends PersistentObject
 		return null;
 	}
 	
+	@Override
 	public String getText(){
 		return get(FLD_PATIENT);
 	}
@@ -774,6 +783,7 @@ public class Termin extends PersistentObject
 	}
 	
 	/** standard equals: Gleiche Zeit, gleiche Dauer, gleicher Bereich */
+	@Override
 	public boolean equals(final Object o){
 		if (o instanceof Termin) {
 			return super.isMatching((Termin) o, 0, FLD_TAG, FLD_BEGINN, FLD_DAUER, FLD_BEREICH);
@@ -787,6 +797,7 @@ public class Termin extends PersistentObject
 			FLD_TERMINSTATUS, FLD_CREATOR, FLD_PATIENT);
 	}
 	
+	@Override
 	public TimeTool getStartTime(){
 		String[] res = new String[2];
 		get(new String[] {
@@ -807,6 +818,7 @@ public class Termin extends PersistentObject
 		return new TimeSpan(start, checkZero(res[2]));
 	}
 	
+	@Override
 	public void setStartTime(final TimeTool t){
 		if (checkLock()) {
 			return;
@@ -820,6 +832,7 @@ public class Termin extends PersistentObject
 		}
 	}
 	
+	@Override
 	public void setEndTime(final TimeTool o){
 		if (!checkLock()) {
 			TimeSpan ts = getTimeSpan();
@@ -842,6 +855,7 @@ public class Termin extends PersistentObject
 		}
 	}
 	
+	@Override
 	public String toString(){
 		return toString(2);
 	}
@@ -929,6 +943,7 @@ public class Termin extends PersistentObject
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(final Termin o){
 		TimeSpan t0 = getTimeSpan();
 		TimeSpan t1 = o.getTimeSpan();
@@ -972,30 +987,37 @@ public class Termin extends PersistentObject
 		return sb.toString();
 	}
 	
+	@Override
 	public String getDay(){
 		return get(FLD_TAG);
 	}
 	
+	@Override
 	public int getDurationInMinutes(){
 		return getInt(FLD_DAUER);
 	}
 	
+	@Override
 	public int getStartMinute(){
 		return checkZero(get(FLD_BEGINN));
 	}
 	
+	@Override
 	public String getTitle(){
 		return getPersonalia();
 	}
 	
+	@Override
 	public String getReason(){
 		return getGrund();
 	}
 	
+	@Override
 	public String getType(){
 		return get(FLD_TERMINTYP);
 	}
 	
+	@Override
 	public void setStartMinute(final int min){
 		if (!checkLock()) {
 			set(new String[] {
@@ -1004,6 +1026,7 @@ public class Termin extends PersistentObject
 		}
 	}
 	
+	@Override
 	public void setDurationInMinutes(final int min){
 		if (!checkLock()) {
 			set(new String[] {
@@ -1027,39 +1050,48 @@ public class Termin extends PersistentObject
 			length = l;
 		}
 		
+		@Override
 		public String getDay(){
 			return day;
 		}
 		
+		@Override
 		public int getDurationInMinutes(){
 			return length;
 		}
 		
+		@Override
 		public int getStartMinute(){
 			return start;
 		}
 		
+		@Override
 		public String getStatus(){
 			return Termin.statusLeer();
 		}
 		
+		@Override
 		public String getText(){
 			return StringConstants.EMPTY;
 		}
 		
+		@Override
 		public String getTitle(){
 			// return "-";
 			return String.format(Messages.MinutesFree, length);
 		}
 		
+		@Override
 		public String getType(){
 			return Termin.typFrei();
 		}
 		
+		@Override
 		public void setStartMinute(final int min){
 			start = min;
 		}
 		
+		@Override
 		public void setDurationInMinutes(final int min){
 			length = min;
 		}
@@ -1069,6 +1101,7 @@ public class Termin extends PersistentObject
 			return false;
 		}
 		
+		@Override
 		public String getReason(){
 			return "";
 		}
@@ -1133,5 +1166,17 @@ public class Termin extends PersistentObject
 		ret.addMinutes(checkZero(vals[1]));
 		ret.addMinutes(checkZero(vals[2]));
 		return ret;
+	}
+	
+	/**
+	 * Convenience conversion method, loads object via model service
+	 * 
+	 * @return
+	 * @since 3.8
+	 * @throws IllegalStateException if entity could not be loaded
+	 */
+	public IAppointment toIAppointment() {
+		return CoreModelServiceHolder.get().load(getId(), IAppointment.class, true)
+				.orElseThrow(() -> new IllegalStateException("Could not convert Termin [" + getId() + "]"));
 	}
 }

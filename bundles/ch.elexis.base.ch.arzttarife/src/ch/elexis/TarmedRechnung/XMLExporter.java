@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.xml.transform.Source;
@@ -57,6 +58,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
@@ -86,7 +88,6 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Rechnung;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
@@ -483,17 +484,8 @@ public class XMLExporter implements IRnOutputter {
 		
 		if (invoice.getState() != InvoiceState.DEFECTIVE) {
 			try {
-				StringWriter stringWriter = new StringWriter();
-				XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
-				xout.output(xmlRn, stringWriter);
-				IBlob blob = CoreModelServiceHolder.get()
-					.load(PREFIX + invoice.getNumber(), IBlob.class).orElseGet(() -> {
-						IBlob newBlob = CoreModelServiceHolder.get().create(IBlob.class);
-						newBlob.setId(PREFIX + invoice.getNumber());
-						return newBlob;
-					});
-				blob.setStringContent(stringWriter.toString());
-				CoreModelServiceHolder.get().save(blob);
+				
+				setExistingXml(invoice, xmlRn);
 				if (dest != null) {
 					writeFile(xmlRn, dest);
 				}
@@ -521,13 +513,11 @@ public class XMLExporter implements IRnOutputter {
 		// recreate it. We must, however, reflect changes that happened
 		// since it was output:
 		// Payments, state changes, obligations
-		NamedBlob blob = NamedBlob.load(PREFIX + invoice.getNumber());
-		SAXBuilder builder = new SAXBuilder();
 		// initialize variables
 		coverage = invoice.getCoverage();
 		mandator = invoice.getMandator();
 		try {
-			Document ret = builder.build(new StringReader(blob.getString()));
+			Document ret = getExistingXml(invoice).get();
 			Element root = ret.getRootElement();
 			if (getXmlVersion(root).equals("4.0")) {
 				updateExisting4Xml(root, type, invoice);
@@ -568,10 +558,7 @@ public class XMLExporter implements IRnOutputter {
 					writeFile(ret, dest);
 				}
 			}
-			StringWriter stringWriter = new StringWriter();
-			XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
-			xout.output(ret, stringWriter);
-			blob.putString(stringWriter.toString());
+			setExistingXml(invoice, ret);
 			return ret;
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
@@ -580,6 +567,36 @@ public class XMLExporter implements IRnOutputter {
 			// What should we do -> We create it from scratch
 			return null;
 		}
+	}
+	
+	public Optional<Document> getExistingXml(IInvoice invoice){
+		IBlob blob = CoreModelServiceHolder.get().load(PREFIX + invoice.getNumber(), IBlob.class)
+			.orElse(null);
+		if (blob != null && blob.getStringContent() != null && !blob.getStringContent().isEmpty()) {
+			SAXBuilder builder = new SAXBuilder();
+			try {
+				return Optional.of(builder.build(new StringReader(blob.getStringContent())));
+				
+			} catch (IOException | JDOMException e) {
+				LoggerFactory.getLogger(getClass()).error("Error loadgin existing xml document", e);
+			}
+			
+		}
+		return Optional.empty();
+	}
+	
+	public void setExistingXml(IInvoice invoice, Document document) throws IOException{
+		StringWriter stringWriter = new StringWriter();
+		XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
+		xout.output(document, stringWriter);
+		IBlob blob = CoreModelServiceHolder.get().load(PREFIX + invoice.getNumber(), IBlob.class)
+			.orElseGet(() -> {
+				IBlob newBlob = CoreModelServiceHolder.get().create(IBlob.class);
+				newBlob.setId(PREFIX + invoice.getNumber());
+				return newBlob;
+			});
+		blob.setStringContent(stringWriter.toString());
+		CoreModelServiceHolder.get().save(blob);
 	}
 	
 	private void addReminderEntry(Element root, IInvoice invoice, String reminderLevel){

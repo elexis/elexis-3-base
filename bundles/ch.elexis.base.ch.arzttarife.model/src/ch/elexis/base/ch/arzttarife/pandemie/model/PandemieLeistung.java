@@ -3,6 +3,7 @@ package ch.elexis.base.ch.arzttarife.pandemie.model;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -35,7 +36,7 @@ public class PandemieLeistung
 	@Override
 	public IBillableOptifier<PandemieLeistung> getOptifier(){
 		if (optifier == null) {
-			optifier = new AbstractOptifier<PandemieLeistung>(CoreModelServiceHolder.get()) {
+			optifier = new AbstractOptifier<PandemieLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get().get()) {
 				
 				@Override
 				protected void setPrice(PandemieLeistung billable, IBilled billed){

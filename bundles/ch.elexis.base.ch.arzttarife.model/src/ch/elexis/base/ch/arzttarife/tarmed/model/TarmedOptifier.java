@@ -42,6 +42,7 @@ import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICodeElement;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
@@ -51,6 +52,7 @@ import ch.elexis.core.model.builder.IBilledBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
 import ch.rgw.tools.TimeTool;
@@ -125,6 +127,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		return null;
 	}
 	
+	@Override
 	public Result<IBilled> add(TarmedLeistung code, IEncounter kons, double amount, boolean save){
 		this.save = save;
 		int amountInt = doubleToInt(amount);
@@ -164,7 +167,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		bAllowOverrideStrict = TarmedUtil.getConfigValue(getClass(), IUser.class,
 			Preferences.LEISTUNGSCODES_ALLOWOVERRIDE_STRICT, false);
 		
-		TarmedLeistung tc = (TarmedLeistung) code;
+		TarmedLeistung tc = code;
 		List<IBilled> lst = kons.getBilled();
 		/*
 		 * TODO Hier checken, ob dieser code mit der Dignität und
@@ -281,7 +284,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 			}
 			// Exclusionen
 			if (bOptify) {
-				TarmedLeistung newTarmed = (TarmedLeistung) code;
+				TarmedLeistung newTarmed = code;
 				for (IBilled v : lst) {
 					if (v.getBillable() instanceof TarmedLeistung) {
 						TarmedLeistung tarmed = (TarmedLeistung) v.getBillable();
@@ -418,7 +421,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 						int alter = p.getAgeInYears();
 						if (alter < 6) {
 							TarmedLeistung tl =
-								(TarmedLeistung) getKonsVerrechenbar("00.0040", kons);
+								getKonsVerrechenbar("00.0040", kons);
 							saveBilled();
 							add(tl, kons);
 						}
@@ -538,7 +541,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	}
 	
 	private IBilled initializeBilled(TarmedLeistung code, IEncounter kons){
-		IBilled ret = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons).build();
+		IContact biller = ContextServiceHolder.get().getActiveUserContact().get();
+		IBilled ret = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons, biller).build();
 		ret.setPoints(code.getAL(kons.getMandator()) + code.getTL());
 		Optional<IBillingSystemFactor> systemFactor = BillingServiceHolder.get()
 			.getBillingSystemFactor(kons.getCoverage().getBillingSystem().getName(),
@@ -812,7 +816,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		for (TarmedLimitation limit : limits) {
 			if (limit.getLimitationUnit() == LimitationUnit.MAINSERVICE) {
 				// only an integer makes sense here
-				return (int) limit.getAmount();
+				return limit.getAmount();
 			}
 		}
 		// default to unknown
@@ -832,7 +836,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		reductionVerrechnet.setAmount(opVerrechnet.getAmount());
 		reductionVerrechnet.setExtInfo(TL, Double.toString(opVerrechenbar.getTL()));
 		reductionVerrechnet.setExtInfo(AL, Double.toString(0.0));
-		reductionVerrechnet.setPoints((int) Math.round(opVerrechenbar.getTL()));
+		reductionVerrechnet.setPoints(Math.round(opVerrechenbar.getTL()));
 		reductionVerrechnet.setPrimaryScale(-40);
 		reductionVerrechnet.setExtInfo("Bezug", opVerrechenbar.getCode());
 		if (save) {
@@ -1130,6 +1134,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	 * Entfernung dieses Codes noch konsistent verrechnet wäre und ggf. anpassen oder das Entfernen
 	 * verweigern. Diese Version macht keine Prüfungen, sondern erfüllt nur die Anfrage..
 	 */
+	@Override
 	public Result<IBilled> remove(IBilled code, IEncounter kons){
 		List<IBilled> l = kons.getBilled();
 		l.remove(code);

@@ -13,6 +13,7 @@ import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.VatInfo;
@@ -75,7 +76,8 @@ public class LaborLeistung
 	@Override
 	public synchronized IBillableOptifier<ILaborLeistung> getOptifier(){
 		if (optifier == null) {
-			optifier = new LaborLeistungOptifier(CoreModelServiceHolder.get());
+			optifier =
+				new LaborLeistungOptifier(CoreModelServiceHolder.get(), ContextServiceHolder.get());
 		}
 		return optifier;
 	}

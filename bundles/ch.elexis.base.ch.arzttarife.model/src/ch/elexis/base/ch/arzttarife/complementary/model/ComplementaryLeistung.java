@@ -40,7 +40,7 @@ public class ComplementaryLeistung
 	@Override
 	public IBillableOptifier<ComplementaryLeistung> getOptifier(){
 		if (optifier == null) {
-			optifier = new AbstractOptifier<ComplementaryLeistung>(CoreModelServiceHolder.get()) {
+			optifier = new AbstractOptifier<ComplementaryLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get().get()) {
 				
 				@Override
 				protected void setPrice(ComplementaryLeistung billable, IBilled billed){

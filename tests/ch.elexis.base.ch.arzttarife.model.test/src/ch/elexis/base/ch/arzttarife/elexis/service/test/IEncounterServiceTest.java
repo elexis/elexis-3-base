@@ -12,8 +12,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -35,6 +37,7 @@ import ch.rgw.tools.TimeTool;
 
 public class IEncounterServiceTest {
 	
+	private final IEncounterService encounterService = AllTestsSuite.getEncounterService(); 
 	private final IBillingService billingService = AllTestsSuite.getBillingService();
 	private final IModelService coreModelService = AllTestsSuite.getCoreModelService();
 	
@@ -82,9 +85,22 @@ public class IEncounterServiceTest {
 	}
 	
 	@Test
+	public void addDefaultDiagnosis(){
+		assertEquals(0, encounter.getDiagnoses().size());
+		encounterService.addDefaultDiagnosis(encounter);
+		coreModelService.refresh(encounter);
+		assertEquals(0, encounter.getDiagnoses().size());
+		
+		ConfigServiceHolder.get().get().setActiveUserContact(Preferences.USR_DEFDIAGNOSE,
+			"ch.elexis.data.TICode::U9");
+		encounterService.addDefaultDiagnosis(encounter);
+		coreModelService.refresh(encounter);
+		assertEquals(1, encounter.getDiagnoses().size());
+	}
+	
+	@Test
 	public void testTransferKonsFromKVGToUVGFall_rechargedPrice(){
-		IEncounterService encounterService = OsgiServiceUtil.getService(IEncounterService.class)
-			.orElseThrow(() -> new IllegalStateException());
+
 		
 		ICoverage coverageUVG =
 			new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "UVG")

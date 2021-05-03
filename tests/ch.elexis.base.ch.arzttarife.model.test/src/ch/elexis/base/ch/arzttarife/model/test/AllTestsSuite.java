@@ -31,6 +31,7 @@ import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IElexisDataSource;
 import ch.elexis.core.services.IElexisEntityManager;
+import ch.elexis.core.services.IEncounterService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
@@ -44,6 +45,7 @@ public class AllTestsSuite {
 	private static IModelService modelService;
 	private static IModelService coreModelService;
 	private static IBillingService billingService;
+	private static IEncounterService encounterService;
 	
 	@BeforeClass
 	public static void beforeClass() throws IOException{
@@ -88,6 +90,7 @@ public class AllTestsSuite {
 		billingService = OsgiServiceUtil.getService(IBillingService.class).get();
 		entityManager = OsgiServiceUtil.getService(IElexisEntityManager.class).get();
 		entityManager.getEntityManager(); // initialize the db		
+		encounterService = OsgiServiceUtil.getService(IEncounterService.class).get();
 	}
 	
 	/**
@@ -189,5 +192,9 @@ public class AllTestsSuite {
 	
 	public static IBillingService getBillingService(){
 		return billingService;
+	}
+
+	public static IEncounterService getEncounterService(){
+		return encounterService;
 	}
 }

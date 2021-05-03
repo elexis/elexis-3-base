@@ -19,6 +19,7 @@ import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -29,8 +30,8 @@ import ch.rgw.tools.Result.SEVERITY;
 
 public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 	
-	public LaborLeistungOptifier(IModelService modelService){
-		super(modelService);
+	public LaborLeistungOptifier(IModelService modelService, IContextService contextService){
+		super(modelService, contextService);
 	}
 	
 	private boolean isOptify() {

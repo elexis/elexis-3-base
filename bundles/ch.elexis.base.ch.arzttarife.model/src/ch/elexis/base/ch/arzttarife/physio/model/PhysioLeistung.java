@@ -15,6 +15,7 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 
 public class PhysioLeistung
@@ -34,7 +35,7 @@ public class PhysioLeistung
 	@Override
 	public synchronized IBillableOptifier<PhysioLeistung> getOptifier(){
 		if (optifier == null) {
-			optifier = new AbstractOptifier<PhysioLeistung>(CoreModelServiceHolder.get()) {
+			optifier = new AbstractOptifier<PhysioLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get()) {
 				
 				@Override
 				protected void setPrice(PhysioLeistung billable, IBilled billed){

@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.berchtold.emanuel.privatrechnung.model.IPrivatLeistung;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.jpa.entities.BerchtoldPrivatLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -71,7 +72,7 @@ public class Leistung
 	@Override
 	public IBillableOptifier<IPrivatLeistung> getOptifier(){
 		if (optifier == null) {
-			optifier = new AbstractOptifier<IPrivatLeistung>(CoreModelServiceHolder.get()) {
+			optifier = new AbstractOptifier<IPrivatLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get()) {
 				
 				@Override
 				protected void setPrice(IPrivatLeistung billable, IBilled billed){

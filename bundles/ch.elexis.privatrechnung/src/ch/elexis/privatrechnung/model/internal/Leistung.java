@@ -13,6 +13,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.privatrechnung.model.IPrivatLeistung;
@@ -71,7 +72,7 @@ public class Leistung
 	@Override
 	public IBillableOptifier<IPrivatLeistung> getOptifier(){
 		if (optifier == null) {
-			optifier = new AbstractOptifier<IPrivatLeistung>(CoreModelServiceHolder.get()) {
+			optifier = new AbstractOptifier<IPrivatLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get()) {
 				
 				@Override
 				protected void setPrice(IPrivatLeistung billable, IBilled billed){

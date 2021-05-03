@@ -41,6 +41,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.builder.IBilledBuilder;
@@ -153,8 +154,9 @@ public class TarmedRefcodesDialog extends Dialog {
 					billed.setExtInfo("Bezug", bezug);
 					CoreModelServiceHolder.get().save(billed);
 				} else {
+					IContact biller = ContextServiceHolder.get().getActiveUserContact().get();
 					IBilled copy = new IBilledBuilder(CoreModelServiceHolder.get(),
-						billed.getBillable(), billed.getEncounter()).build();
+						billed.getBillable(), billed.getEncounter(), biller).build();
 					billed.copy(copy);
 					copy.setAmount(amount);
 					billed.setAmount(billed.getAmount() - amount);

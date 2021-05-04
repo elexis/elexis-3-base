@@ -30,6 +30,7 @@ public class OpenPatientVaccinationHandler extends AbstractHandler implements IH
 			String baseUrl = UrlBuilder.getVaccinationBaseUrl();
 			
 			String patientParameters = UrlBuilder.getPatientParameters(patient);
+			patientParameters += UrlBuilder.getVaccinationDefaultParameters();
 			
 			Program.launch(baseUrl + "?" + patientParameters);
 		} else {

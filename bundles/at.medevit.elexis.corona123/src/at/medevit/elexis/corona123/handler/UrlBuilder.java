@@ -100,6 +100,10 @@ public class UrlBuilder {
 			ret += "&hasContactWithVulnerablePeople=" + URLEncoder.encode("false", "UTF-8");
 			ret += "&livesInACommunityFacility=" + URLEncoder.encode("false", "UTF-8");
 			ret += "&wantsVaccinationCertificate=" + URLEncoder.encode("false", "UTF-8");
+			
+			ret += "&hadCovidInTheLast90Days=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&hadCovidVaccination=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&hasCurrentlyColdSymptoms=" + URLEncoder.encode("false", "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			LoggerFactory.getLogger(UrlBuilder.class).error("Error getting patient parameters", e);
 		}

@@ -75,10 +75,28 @@ public class UrlBuilder {
 			if (StringUtils.isNotBlank(insurance)) {
 				parameters += "&healthInsurance=" + URLEncoder.encode(insurance, "UTF-8");
 			}
+			
 		} catch (UnsupportedEncodingException e) {
 			LoggerFactory.getLogger(UrlBuilder.class).error("Error getting patient parameters", e);
 		}
 		return parameters;
+	}
+	
+	public static String getVaccinationDefaultParameters(){
+		String ret = "";
+		try {
+			ret += "&takesAnticoagulants=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&hasAllergies=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&isPregnant=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&isCurrentlyBreastfeeding=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&worksAsMedicalStaff=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&hasContactWithVulnerablePeople=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&livesInACommunityFacility=" + URLEncoder.encode("false", "UTF-8");
+			ret += "&wantsVaccinationCertificate=" + URLEncoder.encode("false", "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			LoggerFactory.getLogger(UrlBuilder.class).error("Error getting patient parameters", e);
+		}
+		return ret;
 	}
 	
 	private static String getInsurance(IPatient patient){

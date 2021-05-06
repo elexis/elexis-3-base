@@ -185,8 +185,12 @@ public class ConsultationTimeStats extends AbstractTimeSeries {
 	}
 
 	private int getMinutes(IEncounter encounter) {
-		return encounter.getBilled().stream().map(b -> b.getBillable()).filter(b -> b instanceof IService)
-				.mapToInt(b -> ((IService) b).getMinutes()).sum();
+		return encounter.getBilled().stream().mapToInt(b -> {
+			if (b.getBillable() instanceof IService) {
+				return (int) (((IService) b.getBillable()).getMinutes() * b.getAmount());
+			}
+			return 0;
+		}).sum();
 	}
 
 	@Override

@@ -525,7 +525,7 @@ public class ArtikelstammItem
 	@Override
 	public boolean isVaccination(){
 		String atcCode = getAtcCode();
-		if (atcCode != null && atcCode.length() > 4) {
+		if (atcCode != null) {
 			if (atcCode.toUpperCase().startsWith("J07")
 				&& !atcCode.toUpperCase().startsWith("J07AX")) {
 				return true;

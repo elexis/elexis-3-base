@@ -20,11 +20,11 @@
     <elements xsi:type="basic:PartDescriptor" xmi:id="_xV8qYB9dEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.partdescriptor.overview" label="%part.label" iconURI="platform:/plugin/ch.elexis.global_inbox/icons/inbox.jpg" category="Dokumente" closeable="true" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.parts.GlobalInboxPart">
       <tags>View</tags>
       <menus xsi:type="menu:PopupMenu" xmi:id="_aXPWIB9hEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.popupmenu.globalinboxentries">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_GsdYIB9iEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.commandimportlabel" label="" iconURI="icon://IMG_OK" command="_y_cogB9BEeu6CfM6mOBDOA"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_J93zoB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.1" iconURI="icon://IMG_EYE_WO_SHADOW" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
-        <children xsi:type="menu:DirectMenuItem" xmi:id="_Od9ToB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.directmenuitem.0" iconURI="icon://IMG_REFRESH" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.GlobalInboxPartReloadHandler"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_GsdYIB9iEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.commandimportlabel" label="%command.import.label" iconURI="icon://IMG_OK" command="_y_cogB9BEeu6CfM6mOBDOA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_J93zoB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.commandviewlabel" label="%command.view.label" iconURI="icon://IMG_EYE_WO_SHADOW" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_Od9ToB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.directmenuitem.commandrefreshlabel" label="%command.refresh.label" iconURI="icon://IMG_REFRESH" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.handler.GlobalInboxPartReloadHandler"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_KuitgB9iEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.menuseparator.0"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_CpRkoB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.0" iconURI="icon://IMG_DELETE" command="_En60sB86Eeu6CfM6mOBDOA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_CpRkoB9kEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledmenuitem.commanddeletelabel" label="%command.delete.label" iconURI="icon://IMG_DELETE" command="_En60sB86Eeu6CfM6mOBDOA"/>
       </menus>
       <toolbar xmi:id="_EeXFsB9eEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.toolbar.0">
         <children xsi:type="menu:HandledToolItem" xmi:id="_vIX4MB9gEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.commandimportlabel" label="" iconURI="icon://IMG_OK" tooltip="%command.import.description" command="_y_cogB9BEeu6CfM6mOBDOA"/>

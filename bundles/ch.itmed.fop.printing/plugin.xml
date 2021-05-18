@@ -61,6 +61,11 @@
         </command>
         <command defaultHandler="ch.itmed.fop.printing.handlers.ArticleMedicationLabelsHandler" id="ch.itmed.fop.printing.command.ArticleLabelPrint" name="Artikel drucken">
         </command>
+        <command
+              defaultHandler="ch.itmed.fop.printing.handlers.SelectedAppointmentCardHandler"
+              id="ch.itmed.fop.printing.command.SelectedAppointmentCardPrint"
+              name="Selektierten Termin drucken">
+        </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
         <menuContribution locationURI="toolbar:ch.elexis.VerrechnungsDisplay">
@@ -90,6 +95,26 @@
         <menuContribution allPopups="false" locationURI="toolbar:at.medevit.elexis.agenda.ui.view.agenda">
             <command commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint" icon="res/icons/appointmentsPrint.png" label="Terminserie drucken" style="push">
             </command>
+        </menuContribution>
+        <menuContribution
+              allPopups="false"
+              locationURI="popup:at.medevit.elexis.agenda.ui.popupmenu.parallel">
+           <command
+                 commandId="ch.itmed.fop.printing.command.SelectedAppointmentCardPrint"
+                 icon="res/icons/appointmentPrint.png"
+                 label="Termin drucken"
+                 style="push">
+           </command>
+        </menuContribution>
+        <menuContribution
+              allPopups="false"
+              locationURI="popup:at.medevit.elexis.agenda.ui.popupmenu.week">
+           <command
+                 commandId="ch.itmed.fop.printing.command.SelectedAppointmentCardPrint"
+                 icon="res/icons/appointmentPrint.png"
+                 label="Termin drucken"
+                 style="push">
+           </command>
         </menuContribution>
 
     </extension>

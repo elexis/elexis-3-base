@@ -13,11 +13,13 @@ package ch.elexis.views;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -60,6 +62,16 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 			lawFilter.setLaw(null);
 			validDateFilter.setValidDate(null);
 			updateDirty(null);
+		}
+	}
+	
+	@Optional
+	@Inject
+	void udpateEncounter(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IEncounter encounter){
+		if (encounter != null) {
+			updateLawFilter(encounter);
+			updateValidFilter(encounter);
+			updateDirty(encounter);
 		}
 	}
 	

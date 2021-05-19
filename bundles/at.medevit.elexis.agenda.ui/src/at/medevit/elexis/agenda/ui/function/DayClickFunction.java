@@ -2,6 +2,7 @@ package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.chromium.Browser;
@@ -29,9 +30,11 @@ public class DayClickFunction extends AbstractBrowserFunction {
 		if (arguments.length == 1) {
 			LocalDateTime date = getDateTimeArg(arguments[0]);
 			if (selectedResources != null && !selectedResources.isEmpty()) {
+				Integer preferredDuration = getPreferredDuration(selectedResources.get(0),
+					AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
 				appointment =
 					new IAppointmentBuilder(CoreModelServiceHolder.get(), selectedResources.get(0),
-					date, date.plusMinutes(30),
+						date, date.plusMinutes(preferredDuration),
 					AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
 					AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
 			} else {
@@ -41,8 +44,10 @@ public class DayClickFunction extends AbstractBrowserFunction {
 		} else if (arguments.length == 2) {
 			LocalDateTime date = getDateTimeArg(arguments[0]);
 			String resource = (String) arguments[1];
+			Integer preferredDuration = getPreferredDuration(resource,
+				AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
 			appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(), resource, date,
-				date.plusMinutes(30),
+				date.plusMinutes(preferredDuration),
 				AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
 				AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
 		}
@@ -54,6 +59,15 @@ public class DayClickFunction extends AbstractBrowserFunction {
 			dlg.open();
 		}
 		return null;
+	}
+	
+	private Integer getPreferredDuration(String areaName, String type){
+		Map<String, Integer> preferredDurations =
+			AppointmentServiceHolder.get().getPreferredDurations(areaName);
+		if (preferredDurations.containsKey(type)) {
+			return preferredDurations.get(type);
+		}
+		return 30;
 	}
 	
 	public void setSelectedResources(List<String> selectedResources){

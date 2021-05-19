@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,6 +60,7 @@ import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -104,27 +106,31 @@ public class AppointmentDetailComposite extends Composite {
 	SelectionAdapter dateTimeSelectionAdapter = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e){
-			Date dateFrom = txtDateFrom.getSelection();
-			Date timeFrom = txtTimeFrom.getSelection();
-			Date timeTo = txtTimeTo.getSelection();
-			int duration = txtDuration.getSelection();
-			LocalDateTime dateTimeFrom =
-				LocalDateTime.of(dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-					timeFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-			LocalDateTime dateTimeEnd =
-				LocalDateTime.of(dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-					timeTo.toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-			
-			if (e.getSource().equals(txtDuration) || e.getSource().equals(txtTimeFrom)) {
-				txtTimeTo.setSelection(Date.from(ZonedDateTime
-					.of(dateTimeFrom.plusMinutes(duration), ZoneId.systemDefault()).toInstant()));
-			} else if (e.getSource().equals(txtTimeTo)) {
-				txtDuration.setSelection((int) dateTimeFrom.until(dateTimeEnd, ChronoUnit.MINUTES));
-			}
-			// apply changes to model
-			dayBar.set();
+			updateDateTimeFields(e.getSource());
 		}
 	};
+	
+	private void updateDateTimeFields(Object source){
+		Date dateFrom = txtDateFrom.getSelection();
+		Date timeFrom = txtTimeFrom.getSelection();
+		Date timeTo = txtTimeTo.getSelection();
+		int duration = txtDuration.getSelection();
+		LocalDateTime dateTimeFrom =
+			LocalDateTime.of(dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+				timeFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+		LocalDateTime dateTimeEnd =
+			LocalDateTime.of(dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+				timeTo.toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+		
+		if (source != null && (source.equals(txtDuration) || source.equals(txtTimeFrom))) {
+			txtTimeTo.setSelection(Date.from(ZonedDateTime
+				.of(dateTimeFrom.plusMinutes(duration), ZoneId.systemDefault()).toInstant()));
+		} else if (source != null && (source.equals(txtTimeTo))) {
+			txtDuration.setSelection((int) dateTimeFrom.until(dateTimeEnd, ChronoUnit.MINUTES));
+		}
+		// apply changes to model
+		dayBar.set();
+	}
 	
 	public AppointmentDetailComposite(Composite parent, int style, IAppointment appointment){
 		super(parent, style);
@@ -349,7 +355,18 @@ public class AppointmentDetailComposite extends Composite {
 		comboType = new Combo(compTypeReason, SWT.DROP_DOWN);
 		comboType.setItems(appointmentService.getTypes()
 			.toArray(new String[appointmentService.getTypes().size()]));
-		
+		comboType.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e){
+				Map<String, Integer> preferredDurations =
+					AppointmentServiceHolder.get().getPreferredDurations(
+						comboArea.getText());
+				String selectedType = comboType.getText();
+				if (preferredDurations.containsKey(selectedType)) {
+					txtDuration.setSelection(preferredDurations.get(selectedType));
+					updateDateTimeFields(txtDuration);
+				}
+			};
+		});
 		gd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd.widthHint = 80;
 		comboType.setLayoutData(gd);

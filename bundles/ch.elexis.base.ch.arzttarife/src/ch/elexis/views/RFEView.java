@@ -67,6 +67,10 @@ public class RFEView extends ViewPart {
 			rfeForKOns = Collections.emptyList();
 		}
 		
+		if(tabs == null) {
+			return;
+		}
+		
 		CTabItem top = tabs.getSelection();
 		if (top != null) {
 			Control c = top.getControl();
@@ -160,13 +164,9 @@ public class RFEView extends ViewPart {
 			
 		});
 		int i = 0;
-		for (String code : ReasonsForEncounter.getCodeToReasonMap().values()) {
+		for (String code : ReasonsForEncounter.getCodeToReasonMap().keySet()) {
 			TableItem longItem = new TableItem(longTable, SWT.NONE);
-			String shortReason = ReasonsForEncounter.getCodeToShortReasonMap().get(code);
-			if (shortReason == null) {
-				shortReason = code + "- Unknown";
-			}
-			longItem.setText(shortReason);
+			longItem.setText(ReasonsForEncounter.getCodeToShortReasonMap().get(code));
 			TableItem mediumItem = new TableItem(mediumTable, SWT.NONE);
 			mediumItem.setText(ReasonsForEncounter.getCodeToReasonMap().get(code));
 			mapCodeToIndex.put(code, i);

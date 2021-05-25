@@ -162,7 +162,11 @@ public class RFEView extends ViewPart {
 		int i = 0;
 		for (String code : ReasonsForEncounter.getCodeToReasonMap().values()) {
 			TableItem longItem = new TableItem(longTable, SWT.NONE);
-			longItem.setText(ReasonsForEncounter.getCodeToShortReasonMap().get(code));
+			String shortReason = ReasonsForEncounter.getCodeToShortReasonMap().get(code);
+			if (shortReason == null) {
+				shortReason = code + "- Unknown";
+			}
+			longItem.setText(shortReason);
 			TableItem mediumItem = new TableItem(mediumTable, SWT.NONE);
 			mediumItem.setText(ReasonsForEncounter.getCodeToReasonMap().get(code));
 			mapCodeToIndex.put(code, i);

@@ -152,143 +152,141 @@ public class DataAccessor implements IDataAccess {
 			List<Messwert> list = qbe.execute();
 			String[][] values;
 			String[] cols = columns.get(data[0]);
-			String[] keys = new String[cols.length];
-			if (dates.equals(ALL)) {
-				values = new String[list.size() + 1][cols.length];
-			} else {
-				values = new String[2][cols.length];
-			}
-			for (int i = 0; i < cols.length; i++) { // Spaltenüberschriften
-				keys[i] = cols[i].split(Messwert.SETUP_CHECKSEPARATOR)[0];
-				values[0][i] = keys[i].split("=")[0]; //$NON-NLS-1$
-			}
-			int i = 1;
-			Messwert mwrt = null;
-			if (dates.equals(ALL)) {
-				for (Messwert m : list) {
-					String date = m.get(Messwert.FLD_DATE);
-					values[i][0] = new TimeTool(date).toString(TimeTool.DATE_GER);
-					Map befs = m.getMap(Messages.DataAccessor_0); //$NON-NLS-1$
-					for (int j = 1; j < cols.length; j++) {
-						String vv = (String) befs.get(keys[j]);
-						values[i][j] = vv;
-						if (values[i][j] == null) {
-							values[i][j] = ""; //$NON-NLS-1$
-						}
-					}
-					i++;
-					if (i > values.length) {
-						break;
-					}
-				}
-				ret = new Result<Object>(values);
-			} else if (dates.equals(LAST)) { //$NON-NLS-1$
-				TimeTool today = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				for (Messwert m : list) {
-					TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
-					if (vgl.isAfter(today)) {
-						today = vgl;
-						mwrt = m;
-					}
-				}
-				if (mwrt == null) {
-					ret =
-						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-							Messages.DataAccessor_notFound, //$NON-NLS-1$
-							params, true);
-				}
-				
-			} else if (dates.equals(FIRST)) { //$NON-NLS-1$
-				TimeTool firstdate = null;
-				
-				if (list.size() > 0) {
-					mwrt = list.get(0);
-					firstdate = new TimeTool(mwrt.get(Messwert.FLD_DATE));
-					for (Messwert m : list) {
-						TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
-						if (vgl.isBefore(firstdate)) {
-							mwrt = m;
-							firstdate = vgl;
-							break;
-						}
-					}
-				}
-				
-				if (mwrt == null) {
-					ret =
-						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-							Messages.DataAccessor_notFound, //$NON-NLS-1$
-							params, true);
-				}
-			} else { // bestimmtes Datum
-				TimeTool find = new TimeTool();
-				if (find.set(params[0]) == false) {
-					ret =
-						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
-							Messages.DataAccessor_dateExpected, //$NON-NLS-1$
-							params, true);
+			if (cols != null) {
+				String[] keys = new String[cols.length];
+				if (dates.equals(ALL)) {
+					values = new String[list.size() + 1][cols.length];
 				} else {
+					values = new String[2][cols.length];
+				}
+				for (int i = 0; i < cols.length; i++) { // Spaltenüberschriften
+					keys[i] = cols[i].split(Messwert.SETUP_CHECKSEPARATOR)[0];
+					values[0][i] = keys[i].split("=")[0]; //$NON-NLS-1$
+				}
+				int i = 1;
+				Messwert mwrt = null;
+				if (dates.equals(ALL)) {
 					for (Messwert m : list) {
-						TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
-						if (vgl.isEqual(find)) {
-							mwrt = m;
+						String date = m.get(Messwert.FLD_DATE);
+						values[i][0] = new TimeTool(date).toString(TimeTool.DATE_GER);
+						Map befs = m.getMap(Messages.DataAccessor_0); //$NON-NLS-1$
+						for (int j = 1; j < cols.length; j++) {
+							String vv = (String) befs.get(keys[j]);
+							values[i][j] = vv;
+							if (values[i][j] == null) {
+								values[i][j] = ""; //$NON-NLS-1$
+							}
+						}
+						i++;
+						if (i > values.length) {
 							break;
 						}
 					}
-					
-					// no entry for this date found - display error with date and descriptor
+					ret = new Result<Object>(values);
+				} else if (dates.equals(LAST)) { //$NON-NLS-1$
+					TimeTool today = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+					for (Messwert m : list) {
+						TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
+						if (vgl.isAfter(today)) {
+							today = vgl;
+							mwrt = m;
+						}
+					}
 					if (mwrt == null) {
 						ret =
 							new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-								descriptor + " [" + find.toString(TimeTool.DATE_GER)
-									+ "] " + Messages.DataAccessor_notFound, //$NON-NLS-1$
+								Messages.DataAccessor_notFound, //$NON-NLS-1$
 								params, true);
 					}
-				}
-			}
-			if (mwrt != null) {
-				values[1][0] = mwrt.get(Messwert.FLD_DATE);
-				Map befs = mwrt.getMap(Messwert.FLD_BEFUNDE);
-				for (int j = 1; j < keys.length; j++) {
-					values[1][j] = (String) befs.get(keys[j]);
-				}
-				// Nachsehen ob Feldnamen angegeben wurden, wenn ja geben wir
-				// nur das gewuenschte Feld zurueck.
-				if (data.length > 1) {
-					String fname = data[1];
-					String num = fname.substring(1);
-					// Bei Feldnamen in der Form Fn benutzen wir n als Index
-					// sonst wird einfach die Spaltenueberschrift benutzt.
-					// F0 entspricht dabei dem Datum
 					
-					if (fname.matches("F[0-9]*")) { //$NON-NLS-1$
-						int index = Integer.parseInt(num);
-						if (index < values[1].length) {
-							ret = new Result<Object>(values[1][index]);
-						} else {
-							ret =
-								new Result<Object>(
-									Result.SEVERITY.ERROR,
-									IDataAccess.INVALID_PARAMETERS,
-									Messages.DataAccessor_invalidFieldIndex, fname, true); //$NON-NLS-1$
-						}
-					} else {
-						for (int j = 0; (j < keys.length) && (ret == null); j++) {
-							if (values[0][j].compareTo(fname) == 0) {
-								ret = new Result<Object>(values[1][j]);
+				} else if (dates.equals(FIRST)) { //$NON-NLS-1$
+					TimeTool firstdate = null;
+					
+					if (list.size() > 0) {
+						mwrt = list.get(0);
+						firstdate = new TimeTool(mwrt.get(Messwert.FLD_DATE));
+						for (Messwert m : list) {
+							TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
+							if (vgl.isBefore(firstdate)) {
+								mwrt = m;
+								firstdate = vgl;
+								break;
 							}
 						}
-						if (ret == null) {
+					}
+					
+					if (mwrt == null) {
+						ret = new Result<Object>(Result.SEVERITY.ERROR,
+							IDataAccess.OBJECT_NOT_FOUND, Messages.DataAccessor_notFound, //$NON-NLS-1$
+							params, true);
+					}
+				} else { // bestimmtes Datum
+					TimeTool find = new TimeTool();
+					if (find.set(params[0]) == false) {
+						ret = new Result<Object>(Result.SEVERITY.ERROR,
+							IDataAccess.INVALID_PARAMETERS, Messages.DataAccessor_dateExpected, //$NON-NLS-1$
+							params, true);
+					} else {
+						for (Messwert m : list) {
+							TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
+							if (vgl.isEqual(find)) {
+								mwrt = m;
+								break;
+							}
+						}
+						
+						// no entry for this date found - display error with date and descriptor
+						if (mwrt == null) {
 							ret =
-								new Result<Object>(
-									Result.SEVERITY.ERROR,
-									IDataAccess.INVALID_PARAMETERS,
-									Messages.DataAccessor_invalidFieldName, fname, true); //$NON-NLS-1$
+								new Result<Object>(Result.SEVERITY.ERROR,
+									IDataAccess.OBJECT_NOT_FOUND,
+									descriptor + " [" + find.toString(TimeTool.DATE_GER) + "] " //$NON-NLS-2$
+										+ Messages.DataAccessor_notFound, params, true);
 						}
 					}
-				} else {
-					ret = new Result<Object>(values);
 				}
+				if (mwrt != null) {
+					values[1][0] = mwrt.get(Messwert.FLD_DATE);
+					Map befs = mwrt.getMap(Messwert.FLD_BEFUNDE);
+					for (int j = 1; j < keys.length; j++) {
+						values[1][j] = (String) befs.get(keys[j]);
+					}
+					// Nachsehen ob Feldnamen angegeben wurden, wenn ja geben wir
+					// nur das gewuenschte Feld zurueck.
+					if (data.length > 1) {
+						String fname = data[1];
+						String num = fname.substring(1);
+						// Bei Feldnamen in der Form Fn benutzen wir n als Index
+						// sonst wird einfach die Spaltenueberschrift benutzt.
+						// F0 entspricht dabei dem Datum
+						
+						if (fname.matches("F[0-9]*")) { //$NON-NLS-1$
+							int index = Integer.parseInt(num);
+							if (index < values[1].length) {
+								ret = new Result<Object>(values[1][index]);
+							} else {
+								ret = new Result<Object>(Result.SEVERITY.ERROR,
+									IDataAccess.INVALID_PARAMETERS,
+									Messages.DataAccessor_invalidFieldIndex, fname, true); //$NON-NLS-1$
+							}
+						} else {
+							for (int j = 0; (j < keys.length) && (ret == null); j++) {
+								if (values[0][j].compareTo(fname) == 0) {
+									ret = new Result<Object>(values[1][j]);
+								}
+							}
+							if (ret == null) {
+								ret = new Result<Object>(Result.SEVERITY.ERROR,
+									IDataAccess.INVALID_PARAMETERS,
+									Messages.DataAccessor_invalidFieldName, fname, true); //$NON-NLS-1$
+							}
+						}
+					} else {
+						ret = new Result<Object>(values);
+					}
+				}
+			} else {
+				ret = new Result<Object>("");
 			}
 		}
 		return ret;

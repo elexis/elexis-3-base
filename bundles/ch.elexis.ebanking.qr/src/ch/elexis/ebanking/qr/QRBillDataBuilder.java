@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.format.AddressFormatUtil;
+import ch.elexis.core.types.Country;
 import ch.elexis.ebanking.qr.QRBillDataException.SourceType;
 import ch.elexis.ebanking.qr.model.QRBillData;
 import ch.rgw.tools.Money;
@@ -66,6 +67,13 @@ public class QRBillDataBuilder {
 	
 	public QRBillDataBuilder reference(String reference){
 		this.reference = reference;
+		if (StringUtils.isNotBlank(reference)) {
+			if (reference.length() == 27) {
+				this.referenceType = "QRR";
+			} else if (reference.length() <= 25) {
+				this.referenceType = "SCOR";
+			}
+		}
 		return this;
 	}
 	
@@ -112,8 +120,12 @@ public class QRBillDataBuilder {
 			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine2",
 				StringUtils.left(contact.getZip().trim() + " " + contact.getCity().trim(), 16));
 			
+			Country country = contact.getCountry();
+			if (Country.NDF == country) {
+				country = Country.CH;
+			}
 			BeanUtils.setProperty(qrBillData, prefix + "Ctry",
-				StringUtils.left(contact.getCountry().name(), 2));
+				StringUtils.left(country.toString(), 2));
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			Throwable cause = e.getCause();
 			if (cause != null && cause instanceof QRBillDataException) {

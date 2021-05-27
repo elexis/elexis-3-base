@@ -68,7 +68,7 @@ public class QRBillDataBuilderTest {
 		assertEquals("Rue du Lac 1268", parts[22]);
 		assertEquals("CH", parts[26]);
 		
-		assertEquals("NON", parts[27]);
+		assertEquals("QRR", parts[27]);
 		assertEquals("977598000000002414281387835", parts[28]);
 		
 		assertEquals("Ähnliche Rechnung #23 oder -23 über +23 mit <23", parts[29]);

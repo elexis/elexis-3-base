@@ -533,4 +533,17 @@ public class ArtikelstammItem
 		}
 		return false;
 	}
+	
+	@Override
+	public String getCodeSystemCode(){
+		String gtin = getGtin();
+		if (gtin != null && gtin.length() > 3) {
+			if (getType() == TYPE.P || isInSLList()) {
+				return "402";
+			} else if (getType() == TYPE.N) {
+				return "406";
+			}
+		}
+		return "999";
+	}
 }

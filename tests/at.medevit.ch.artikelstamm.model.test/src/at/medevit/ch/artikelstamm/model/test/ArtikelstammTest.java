@@ -146,9 +146,12 @@ public class ArtikelstammTest extends AbstractTest {
 	@Test
 	public void billing() throws ParseException{
 		createEncounter();
+		createUserSetActiveInContext();
 		
 		IArtikelstammItem dafalganArticle =
 			modelService.load("0768047505038514989010116", IArtikelstammItem.class).get();
+		assertEquals("402", dafalganArticle.getCodeSystemCode());
+		
 		Result<IBilled> result = dafalganArticle.getOptifier().add(dafalganArticle, encounter, 1.5);
 		assertTrue(result.isOK());
 		assertFalse(encounter.getBilled().isEmpty());

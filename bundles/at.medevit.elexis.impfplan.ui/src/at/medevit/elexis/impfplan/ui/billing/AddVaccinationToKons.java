@@ -79,7 +79,6 @@ public class AddVaccinationToKons {
 						recText += "\nImpfung - " + art.getName();
 						rec.setText(recText);
 						EncounterServiceHolder.get().updateVersionedEntry(actEncounter, samdas);
-						CoreModelServiceHolder.get().save(actEncounter);
 						
 						boolean addedCons = true;
 						List<IBilled> leistungen = actEncounter.getBilled();

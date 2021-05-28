@@ -13,27 +13,26 @@ public class EMediplanServiceHolder {
 	
 	private static EMediplanService eMediplanService;
 	
-	@Reference
 	private static EventAdmin eventAdmin;
 
 	public EMediplanServiceHolder(){
 	}
 	
 	@Reference
-	public void setReference(EMediplanService eMediplanService){
+	public void setEMediplanService(EMediplanService eMediplanService){
 		EMediplanServiceHolder.eMediplanService = eMediplanService;
 	}
 	
-	public void unsetReference(EMediplanService eMediplanService){
+	public void unsetEMediplanService(EMediplanService eMediplanService){
 		EMediplanServiceHolder.eMediplanService = null;
 	}
 	
 	@Reference
-	public void setReference(EventAdmin eventAdmin) {
+	public void setEventAdmin(EventAdmin eventAdmin){
 		EMediplanServiceHolder.eventAdmin = eventAdmin;
 	}
 
-	public void unsetReference(EventAdmin eventAdmin) {
+	public void unsetEventAdmin(EventAdmin eventAdmin){
 		EMediplanServiceHolder.eventAdmin = null;
 	}
 

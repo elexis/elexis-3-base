@@ -63,6 +63,7 @@ public class Messages extends NLS {
 	public static String Preferences_construction_of_temporary_filename;
 	public static String Preferences_DEST_DIR;
 	public static String Preferences_dateModifiable;
+	public static String Preferences_omnivoreShowCreatedInInbox;
 	public static String Preferences_storeInFS;
 	public static String Preferences_MAX_FILENAME_LENGTH;
 	public static String Preferences_pathForDocs;

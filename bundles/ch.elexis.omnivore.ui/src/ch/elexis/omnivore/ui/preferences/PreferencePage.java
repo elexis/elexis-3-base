@@ -79,9 +79,12 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String USR_SORT_DIRECTION_SETTINGS = PREFBASE + "/sortdirection";
 	public static final String SAVE_SORT_DIRECTION = PREFBASE + "/savesortdirection";
 		
+	public static final String GLOBAL_SHOW_CREATED_IN_INBOX = PREFBASE + "showCreatedInInbox";
+	
 	private BooleanFieldEditor bStoreFSGlobal;
 	private BooleanFieldEditor bStoreFS;
 	private BooleanFieldEditor bAutomaticBilling;
+	private BooleanFieldEditor bShowCreatedInInbox;
 	private URIFieldEditor dfStorePath;
 	
 	private Button btnSaveColumnWidths;
@@ -153,6 +156,11 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		
 		addField(new BooleanFieldEditor(DATE_MODIFIABLE, ch.elexis.omnivore.data.Messages.Preferences_dateModifiable,
 			gGeneralOptions));
+		
+		bShowCreatedInInbox = new BooleanFieldEditor(GLOBAL_SHOW_CREATED_IN_INBOX,
+			ch.elexis.omnivore.data.Messages.Preferences_omnivoreShowCreatedInInbox,
+			gGeneralOptions);
+		addField(bShowCreatedInInbox);
 		
 		Group gPathForDocs = new Group(gGeneralOptions, SWT.NONE);
 		gPathForDocs.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -409,8 +417,11 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	protected Control createContents(Composite parent){
 		Control c = super.createContents(parent);
 		// save global setting to global cfg
-		bStoreFSGlobal.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		ConfigServicePreferenceStore globalStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
+		bStoreFSGlobal.setPreferenceStore(globalStore);
 		bStoreFSGlobal.load();
+		bShowCreatedInInbox.setPreferenceStore(globalStore);
+		bShowCreatedInInbox.load();
 		// must be called after createFieldEditors / super.createContents
 		updateFSSettingsStore();
 		

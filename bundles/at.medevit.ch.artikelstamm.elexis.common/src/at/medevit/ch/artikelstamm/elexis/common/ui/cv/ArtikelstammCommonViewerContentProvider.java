@@ -11,6 +11,7 @@ import at.medevit.ch.artikelstamm.elexis.common.service.ATCCodeServiceHolder;
 import at.medevit.ch.artikelstamm.elexis.common.service.ModelServiceHolder;
 import at.medevit.ch.artikelstamm.model.common.preference.PreferenceConstants;
 import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -35,10 +36,19 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 	@Override
 	public Object[] getElements(Object arg0){
 		IQuery<?> query = getBaseQuery();
+		query.startGroup();
 		// apply filters from control field provider
 		controlFieldProvider.setQuery(query);
+		// or match the gtin
+		if (controlFieldProvider.getValues() != null
+			&& controlFieldProvider.getValues().length > 0) {
+			query.or("gtin", COMPARATOR.LIKE, controlFieldProvider.getValues()[0] + "%");
+		}
+		query.startGroup();
 		// apply additional filters like atc, mepha, ...
 		applyQueryFilters(query);
+		query.andJoinGroups();
+		
 		query.orderBy("ldscr", ORDER.ASC);
 		List<?> elements = query.execute();
 		commonViewer.setLimitReached(elements.size() == QUERY_LIMIT, QUERY_LIMIT);

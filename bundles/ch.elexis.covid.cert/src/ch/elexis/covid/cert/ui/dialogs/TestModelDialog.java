@@ -1,7 +1,9 @@
 package ch.elexis.covid.cert.ui.dialogs;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -25,10 +27,8 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.LoggerFactory;
@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.IValueSetService;
 import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.covid.cert.service.rest.model.TestInfo;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
 
 public class TestModelDialog extends Dialog {
@@ -64,29 +65,12 @@ public class TestModelDialog extends Dialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent){
-		getShell().setText("Daten der Impfung");
+		getShell().setText("Daten des Test");
 		parent = (Composite) super.createDialogArea(parent);
 		
-		languageCombo = new ComboViewer(parent, SWT.BORDER);
-		languageCombo.setContentProvider(ArrayContentProvider.getInstance());
-		languageCombo.setInput(new String[] {
-			"DE", "FR", "IT", "RM"
-		});
-		languageCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event){
-				model.setLanguage(
-					((String) event.getStructuredSelection().getFirstElement()).toLowerCase());
-			}
-		});
-		languageCombo.setSelection(new StructuredSelection(model.getLanguage().toUpperCase()));
-		languageCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		languageCombo.getControl().setToolTipText("Sprache");
-		
-		productCombo = new ComboViewer(parent, SWT.BORDER);
-		productCombo.setContentProvider(ArrayContentProvider.getInstance());
-		productCombo.setInput(valueSetService.getValueSet("vaccines-covid-19-names"));
-		productCombo.setLabelProvider(new LabelProvider() {
+		typeCombo = new ComboViewer(parent, SWT.BORDER);
+		typeCombo.setContentProvider(ArrayContentProvider.getInstance());
+		typeCombo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element){
 				if (element instanceof ICoding) {
@@ -95,133 +79,135 @@ public class TestModelDialog extends Dialog {
 				return super.getText(element);
 			}
 		});
-		productCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+		typeCombo.setInput(valueSetService.getValueSet("covid-19-test-type"));
+		typeCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event){
-				model.getVaccinationInfo()[0]
-					.setMedicinalProductCode(
-						((ICoding) event.getStructuredSelection().getFirstElement()).getCode());
-				if (productCombo.getControl().getData("deco") != null) {
-					removeErrorDecoration(productCombo.getControl());
+				String code =
+					((ICoding) typeCombo.getStructuredSelection().getFirstElement()).getCode();
+				model.getTestInfo()[0].setTypeCode(code);
+				if (typeCombo.getControl().getData("deco") != null) {
+					removeErrorDecoration(typeCombo.getControl());
+				}
+				// disable manufacturer if pcr test
+				if ("LP6464-4".equals(code)) {
+					manufacturerCombo.getControl().setEnabled(false);
+					model.getTestInfo()[0].setManufacturerCode(null);
+				} else {
+					model.getTestInfo()[0].setManufacturerCode(null);
+					manufacturerCombo.setSelection(new StructuredSelection());
+					manufacturerCombo.getControl().setEnabled(true);
 				}
 			}
 		});
-		productCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		productCombo.getControl().setToolTipText("Produkt");
+		typeCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		typeCombo.getControl().setToolTipText("Test Typ");
 		
-		Composite dosageComp = new Composite(parent, SWT.NONE);
-		dosageComp.setLayout(new GridLayout(4, false));
-		Label lbl = new Label(dosageComp, SWT.NONE);
-		lbl.setText("Impfung ");
-		dosage = new Text(dosageComp, SWT.BORDER);
-		dosage.addModifyListener(new ModifyListener() {
+		manufacturerCombo = new ComboViewer(parent, SWT.BORDER);
+		manufacturerCombo.setContentProvider(ArrayContentProvider.getInstance());
+		manufacturerCombo.setInput(valueSetService.getValueSet("covid-19-lab-test-manufacturer"));
+		manufacturerCombo.setLabelProvider(new LabelProvider() {
 			@Override
-			public void modifyText(ModifyEvent e){
-				if (StringUtils.isNotBlank(dosage.getText())) {
-					try {
-						model.getVaccinationInfo()[0]
-							.setNumberOfDoses(Integer.parseInt(dosage.getText()));
-						if (dosage.getData("deco") != null) {
-							removeErrorDecoration(dosage);
-						}
-					} catch (NumberFormatException ex) {
-						addErrorDecoration(dosage);
-					}
+			public String getText(Object element){
+				if (element instanceof ICoding) {
+					return ((ICoding) element).getDisplay();
+				}
+				return super.getText(element);
+			}
+		});
+		manufacturerCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				model.getTestInfo()[0].setManufacturerCode(
+					((ICoding) event.getStructuredSelection().getFirstElement()).getCode());
+				if (manufacturerCombo.getControl().getData("deco") != null) {
+					removeErrorDecoration(manufacturerCombo.getControl());
 				}
 			}
 		});
-		lbl = new Label(dosageComp, SWT.NONE);
-		lbl.setText(" von ");
-		dosages = new Text(dosageComp, SWT.BORDER);
-		dosages.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e){
-				if (StringUtils.isNotBlank(dosages.getText())) {
-					try {
-						model.getVaccinationInfo()[0]
-							.setTotalNumberOfDoses(Integer.parseInt(dosages.getText()));
-						if (dosages.getData("deco") != null) {
-							removeErrorDecoration(dosages);
-						}
-					} catch (NumberFormatException ex) {
-						addErrorDecoration(dosages);
-					}
-				}
-			}
-		});
+		manufacturerCombo.getControl()
+			.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		manufacturerCombo.getControl().setToolTipText("Produkt");
 		
-		dateTime =
-			new CDateTime(parent, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
-		dateTime.addSelectionListener(new SelectionAdapter() {
+		sampleDateTime =
+			new CDateTime(parent, CDT.BORDER | CDT.DATE_MEDIUM | CDT.TIME_SHORT | CDT.DROP_DOWN);
+		sampleDateTime.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				Date now = new Date();
-				if (dateTime.getSelection() != null) {
-					Date selection = dateTime.getSelection();
+				if (sampleDateTime.getSelection() != null) {
+					Date selection = sampleDateTime.getSelection();
 					if (selection.before(now)) {
-						model.getVaccinationInfo()[0].setVaccinationDate(
-							new SimpleDateFormat("yyyy-MM-dd").format(selection));
-						removeErrorDecoration(dateTime);
+						model.getTestInfo()[0]
+							.setSampleDateTime(TestInfo.formatter.format(
+								ZonedDateTime.ofInstant(selection.toInstant(), ZoneId.of("Z"))));
+						removeErrorDecoration(sampleDateTime);
 					} else {
-						addErrorDecoration(dateTime);
+						addErrorDecoration(sampleDateTime);
 					}
 				}
 			}
 		});
 		try {
-			dateTime.setSelection(new SimpleDateFormat("yyyy-MM-dd")
-				.parse(model.getVaccinationInfo()[0].getVaccinationDate()));
-		} catch (ParseException e1) {
-			LoggerFactory.getLogger(getClass()).warn("Could not parse date ["
-				+ model.getVaccinationInfo()[0].getVaccinationDate() + "]");
+			sampleDateTime.setSelection(
+				Date.from(LocalDateTime
+					.parse(model.getTestInfo()[0].getSampleDateTime(), TestInfo.formatter)
+					.atZone(ZoneId.systemDefault()).toInstant()));
+		} catch (DateTimeParseException e) {
+			LoggerFactory.getLogger(getClass())
+				.warn("Could not parse date [" + model.getTestInfo()[0].getSampleDateTime() + "]");
 		}
-		dateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		dateTime.setToolTipText("Datum der Impfung");
+		sampleDateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		sampleDateTime.setToolTipText("Datum der Probe");
+		
+		testingCenter = new Text(parent, SWT.BORDER);
+		testingCenter.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e){
+				if (StringUtils.isNotBlank(testingCenter.getText())) {
+					model.getTestInfo()[0].setTestingCentreOrFacility(testingCenter.getText());
+					if (testingCenter.getData("deco") != null) {
+						removeErrorDecoration(testingCenter);
+					}
+				}
+			}
+		});
 		
 		countryCombo = new ComboViewer(parent, SWT.BORDER);
 		countryCombo.setContentProvider(ArrayContentProvider.getInstance());
-		countryCombo.setInput(
-			valueSetService.getValueSet("country-alpha-2-de").stream().map(c -> c.getCode())
-				.collect(Collectors.toList()));
+		countryCombo.setInput(valueSetService.getValueSet("country-alpha-2-de").stream()
+			.map(c -> c.getCode()).collect(Collectors.toList()));
 		countryCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event){
-				model.getVaccinationInfo()[0].setCountryOfVaccination(
+				model.getTestInfo()[0].setMemberStateOfTest(
 					((String) event.getStructuredSelection().getFirstElement()));
 			}
 		});
-		countryCombo.setSelection(
-			new StructuredSelection(model.getVaccinationInfo()[0].getCountryOfVaccination()));
+		countryCombo
+			.setSelection(new StructuredSelection(model.getTestInfo()[0].getMemberStateOfTest()));
 		countryCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		countryCombo.getControl().setToolTipText("Land der Impfung");
+		countryCombo.getControl().setToolTipText("Land des Test");
 		
-		productCombo.getControl().setFocus();
+		typeCombo.getControl().setFocus();
 		return parent;
 	}
 	
 	@Override
 	protected void okPressed(){
-		if (StringUtils.isEmpty(model.getVaccinationInfo()[0].getMedicinalProductCode())) {
-			addErrorDecoration(productCombo.getControl());
-			return;
-		}
-		if (model.getVaccinationInfo()[0].getNumberOfDoses() == null) {
-			addErrorDecoration(dosage);
-			return;
-		}
-		if (model.getVaccinationInfo()[0].getTotalNumberOfDoses() == null) {
-			addErrorDecoration(dosages);
+		if (StringUtils.isEmpty(model.getTestInfo()[0].getTypeCode())) {
+			addErrorDecoration(typeCombo.getControl());
 			return;
 		}
 		try {
-			if (model.getVaccinationInfo()[0].getVaccinationDate() == null
-				|| new SimpleDateFormat("yyyy-MM-dd")
-					.parse(model.getVaccinationInfo()[0].getVaccinationDate()).after(new Date())) {
-				addErrorDecoration(dateTime);
+			if (model.getTestInfo()[0].getSampleDateTime() == null || LocalDateTime
+				.parse(model.getTestInfo()[0].getSampleDateTime(), TestInfo.formatter)
+				.isAfter(LocalDateTime.now())) {
+				addErrorDecoration(sampleDateTime);
 				return;
 			}
-		} catch (ParseException e) {
-			addErrorDecoration(dateTime);
+		} catch (DateTimeParseException e) {
+			addErrorDecoration(sampleDateTime);
 			return;
 		}
 		

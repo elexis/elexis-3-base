@@ -1,6 +1,7 @@
 package ch.elexis.covid.cert.service.rest.model;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -84,7 +85,8 @@ public class TestModel {
 		setOtp(otp);
 		TestInfo testinfo = new TestInfo();
 		// ISO 8601 date incl. time
-		testinfo.setSampleDateTime(LocalDateTime.now().toString());
+		testinfo.setSampleDateTime(
+			TestInfo.formatter.format(LocalDateTime.now().atOffset(ZoneOffset.UTC)));
 		testinfo.setMemberStateOfTest("CH");
 		setTestInfo(new TestInfo[] {
 			testinfo

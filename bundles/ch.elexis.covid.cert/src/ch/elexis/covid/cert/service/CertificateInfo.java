@@ -17,7 +17,7 @@ public class CertificateInfo {
 	private static String EXTINFO_KEY = "ch.elexis.covid.certinfo";
 	
 	public enum Type {
-			VACCINATION("Impfung"), RECOVERY("Genesen"), TEST("Getestet");
+			VACCINATION("Impfung"), RECOVERY("Genesen"), TEST("Test");
 		
 		private String label;
 		

@@ -1,5 +1,7 @@
 package ch.elexis.covid.cert.service.rest.model;
 
+import java.time.format.DateTimeFormatter;
+
 //"typeCode": "LP217198-3",
 //"manufacturerCode": "1065",
 //"sampleDateTime": "2020-09-24T17:29:41Z",
@@ -7,6 +9,10 @@ package ch.elexis.covid.cert.service.rest.model;
 //"memberStateOfTest": "CH"
 
 public class TestInfo {
+	
+	public static DateTimeFormatter formatter =
+		DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	
 	private String typeCode;
 	private String manufacturerCode;
 	private String sampleDateTime;

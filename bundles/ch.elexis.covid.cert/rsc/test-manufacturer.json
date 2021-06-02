@@ -1,0 +1,189 @@
+{
+  "valueSetId": "covid-19-lab-test-manufacturer",
+  "valueSetDate": "2021-04-27",
+  "valueSetValues": {
+    "1232": {
+      "display": "Abbott Rapid Diagnostics",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1304": {
+      "display": "AMEDA Labordiagnostik GmbH",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1065": {
+      "display": "Becton Dickinson",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1331": {
+      "display": "Beijing Lepu Medical Technology Co.",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1484": {
+      "display": "Beijing Wantai Biological Pharmacy Enterprise Co.",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1242": {
+      "display": "Bionote, Inc",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1223": {
+      "display": "BIOSYNEX SWISS SA",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1173": {
+      "display": "CerTest Biotec, S.L.",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1244": {
+      "display": "GenBody, Inc",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1360": {
+      "display": "Guangdong Wesail Biotech Co.",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1363": {
+      "display": "Hangzhou Clongene Biotech Co., Ltd",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1767": {
+      "display": "Healgen Scientific Limited Liability Company",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1333": {
+      "display": "Joinstar Biomedical Technology Co., Ltd)",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1268": {
+      "display": "LumiraDX UK Ltd",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1180": {
+      "display": "MEDsan GmbH",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1481": {
+      "display": "MP Biomedicals Germany GmbH",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1162": {
+      "display": "Nal von minden GmbH",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1271": {
+      "display": "Precision Biosensor, Inc",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1341": {
+      "display": "Qingdao Hightop Biotech Co., Ltd",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1097": {
+      "display": "Quidel Corporation",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1489": {
+      "display": "Safecare Biotech (Hangzhou) Co. Ltd",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "344": {
+      "display": "SD BIOSENSOR Inc",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "345": {
+      "display": "SD BIOSENSOR Inc",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1218": {
+      "display": "Siemens Healthineers",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1278": {
+      "display": "Xiamen Boson Biotech Co. Ltd",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
+    "1343": {
+      "display": "Zhejiang Orient Gene Biotech",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    }
+  }
+}
+

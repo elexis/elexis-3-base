@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="ch.elexis.covid.cert.fragment"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            uri="fragment.e4xmi">
+      </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.covid.cert.ui.preference.PreferencePage"
+            id="ch.elexis.covid.cert.ui.preferences"
+            name="COVID Zert.">
+      </page>
+   </extension>
+
+</plugin>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_uA8UwMHwEeuZNMZqiCK6QA">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_zPmyAMHwEeuZNMZqiCK6QA" featurename="descriptors" parentElementId="xpath:/">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_3W4JYMHwEeuZNMZqiCK6QA" elementId="ch.elexis.covid.cert.partdescriptor.certificates" label="COVID Zert." category="General" closeable="true" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.parts.PatientCertificates">
+      <tags>View</tags>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>

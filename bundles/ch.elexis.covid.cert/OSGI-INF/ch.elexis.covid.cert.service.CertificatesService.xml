@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" activate="activate" name="ch.elexis.covid.cert.service.CertificatesService">
+   <service>
+      <provide interface="ch.elexis.covid.cert.service.CertificatesService"/>
+   </service>
+   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
+   <reference cardinality="1..1" field="omnivoreDocumentStore" interface="ch.elexis.core.services.IDocumentStore" name="omnivoreDocumentStore" target="(storeid=ch.elexis.data.store.omnivore)"/>
+   <implementation class="ch.elexis.covid.cert.service.CertificatesService"/>
+</scr:component>

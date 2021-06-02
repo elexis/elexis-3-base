@@ -267,6 +267,9 @@
    <feature id="at.medevit.elexis.corona123.feature">
       <category name="dataexchange"/>
    </feature>
+   <bundle id="ch.elexis.covid.cert">
+      <category name="libraries"/>
+   </bundle>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

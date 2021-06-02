@@ -4,6 +4,7 @@
    <service>
       <provide interface="org.osgi.service.event.EventHandler"/>
    </service>
+   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
    <reference cardinality="1..1" field="service" interface="at.medevit.elexis.inbox.model.IInboxElementService" name="service"/>
    <implementation class="ch.elexis.omnivore.ui.inbox.DocHandleInboxService"/>
 </scr:component>

@@ -44,6 +44,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IDocument;
@@ -238,19 +239,30 @@ public class PatientCertificates {
 			public void widgetSelected(SelectionEvent e){
 				VaccinationModel model = getVaccinationModel();
 				if (model != null) {
-					Result<String> result = service.createVaccinationCertificate(patient, model);
-					if (result.isOK()) {
-						CertificateInfo newCert = CertificateInfo.of(patient).stream()
-							.filter(c -> c.getUvci().equals(result.get())).findFirst().orElse(null);
-						if (newCert != null) {
-							openCertDocument(newCert);
+					try {
+						Result<String> result =
+							service.createVaccinationCertificate(patient, model);
+						if (result.isOK()) {
+							CertificateInfo newCert = CertificateInfo.of(patient).stream()
+								.filter(c -> c.getUvci().equals(result.get())).findFirst()
+								.orElse(null);
+							if (newCert != null) {
+								openCertDocument(newCert);
+							}
+							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
+								patient);
+						} else {
+							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+								"Es ist folgender Fehler aufgetreten.\n\n"
+									+ result.getMessages().stream().map(m -> m.getText())
+										.collect(Collectors.joining(", ")));
 						}
-						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-							patient);
-					} else {
+					} catch (Exception ex) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-							"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages()
-								.stream().map(m -> m.getText()).collect(Collectors.joining(", ")));
+							"Es ist ein Fehler beim Aufruf der API aufgetreten.");
+						LoggerFactory.getLogger(getClass())
+							.error("Error getting vaccination certificate",
+							ex);
 					}
 				}
 			}
@@ -265,19 +277,28 @@ public class PatientCertificates {
 			public void widgetSelected(SelectionEvent e){
 				TestModel model = getTestModel();
 				if (model != null) {
-					Result<String> result = service.createTestCertificate(patient, model);
-					if (result.isOK()) {
-						CertificateInfo newCert = CertificateInfo.of(patient).stream()
-							.filter(c -> c.getUvci().equals(result.get())).findFirst().orElse(null);
-						if (newCert != null) {
-							openCertDocument(newCert);
+					try {
+						Result<String> result = service.createTestCertificate(patient, model);
+						if (result.isOK()) {
+							CertificateInfo newCert = CertificateInfo.of(patient).stream()
+								.filter(c -> c.getUvci().equals(result.get())).findFirst()
+								.orElse(null);
+							if (newCert != null) {
+								openCertDocument(newCert);
+							}
+							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
+								patient);
+						} else {
+							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+								"Es ist folgender Fehler aufgetreten.\n\n"
+									+ result.getMessages().stream().map(m -> m.getText())
+										.collect(Collectors.joining(", ")));
 						}
-						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-							patient);
-					} else {
+					} catch (Exception ex) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-							"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages()
-								.stream().map(m -> m.getText()).collect(Collectors.joining(", ")));
+							"Es ist ein Fehler beim Aufruf der API aufgetreten.");
+						LoggerFactory.getLogger(getClass()).error("Error getting test certificate",
+							ex);
 					}
 				}
 			}
@@ -290,23 +311,7 @@ public class PatientCertificates {
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				//				TestModel model = getTestModel();
-				//				if (model != null) {
-				//					Result<String> result = service.createTestCertificate(patient, model);
-				//					if (result.isOK()) {
-				//						CertificateInfo newCert = CertificateInfo.of(patient).stream()
-				//							.filter(c -> c.getUvci().equals(result.get())).findFirst().orElse(null);
-				//						if (newCert != null) {
-				//							openCertDocument(newCert);
-				//						}
-				//						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-				//							patient);
-				//					} else {
-				//						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-				//							"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages()
-				//								.stream().map(m -> m.getText()).collect(Collectors.joining(", ")));
-				//					}
-				//				}
+				
 			}
 		});
 		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));

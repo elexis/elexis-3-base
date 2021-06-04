@@ -49,6 +49,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.ILocalDocumentService;
@@ -153,6 +154,10 @@ public class PatientCertificates {
 		patientLabel.getBody().setLayout(new GridLayout(1, true));
 		patientLabel.setText("");
 		
+		Composite btnComposite = new Composite(composite, SWT.NONE);
+		btnComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		btnComposite.setLayout(new GridLayout(3, true));
+		
 		certificatesViewer = new TableViewer(composite, SWT.V_SCROLL);
 		certificatesViewer.setContentProvider(ArrayContentProvider.getInstance());
 		certificatesViewer.setLabelProvider(new LabelProvider() {
@@ -225,8 +230,8 @@ public class PatientCertificates {
 		certificatesViewer.getTable()
 			.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		
-		Button btn = new Button(composite, SWT.PUSH);
-		btn.setImage(Images.IMG_ADD.getImage());
+		Button btn = new Button(btnComposite, SWT.PUSH);
+		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText(CertificateInfo.Type.VACCINATION.getLabel());
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -250,9 +255,10 @@ public class PatientCertificates {
 				}
 			}
 		});
+		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		
-		btn = new Button(composite, SWT.PUSH);
-		btn.setImage(Images.IMG_ADD.getImage());
+		btn = new Button(btnComposite, SWT.PUSH);
+		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText(CertificateInfo.Type.TEST.getLabel());
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -276,10 +282,38 @@ public class PatientCertificates {
 				}
 			}
 		});
+		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		
+		btn = new Button(btnComposite, SWT.PUSH);
+		btn.setImage(Images.IMG_NEW.getImage());
+		btn.setText(CertificateInfo.Type.RECOVERY.getLabel());
+		btn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				//				TestModel model = getTestModel();
+				//				if (model != null) {
+				//					Result<String> result = service.createTestCertificate(patient, model);
+				//					if (result.isOK()) {
+				//						CertificateInfo newCert = CertificateInfo.of(patient).stream()
+				//							.filter(c -> c.getUvci().equals(result.get())).findFirst().orElse(null);
+				//						if (newCert != null) {
+				//							openCertDocument(newCert);
+				//						}
+				//						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
+				//							patient);
+				//					} else {
+				//						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+				//							"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages()
+				//								.stream().map(m -> m.getText()).collect(Collectors.joining(", ")));
+				//					}
+				//				}
+			}
+		});
+		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		
 		Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.heightHint = 10;
+		gd.heightHint = 5;
 		sep.setLayoutData(gd);
 		
 		btnOtp = new Button(composite, SWT.PUSH);
@@ -328,30 +362,30 @@ public class PatientCertificates {
 		setMandator(ContextServiceHolder.get().getActiveMandator().orElse(null));
 	}
 	
+	private void setButtonsEnabled(Composite composite, boolean value){
+		for (Control child : composite.getChildren()) {
+			if (child instanceof Button) {
+				child.setEnabled(value);
+			} else if (child instanceof Composite) {
+				setButtonsEnabled((Composite) child, value);
+			}
+		}
+	}
+	
 	private void setPatient(IPatient patient){
 		this.patient = patient;
 		if (patient != null) {
-			patientLabel.setText("Zertifikate von " + patient.getLabel());
+			patientLabel.setText("Zertifikate von " + PersonFormatUtil.getFullName(patient));
 			patientLabel.layout();
 			
 			certificatesViewer.setInput(CertificateInfo.of(patient));
-			
-			for (Control child : composite.getChildren()) {
-				if (child instanceof Button) {
-					child.setEnabled(true);
-				}
-			}
+			setButtonsEnabled(composite, true);
 		} else {
 			patientLabel.setText("");
 			patientLabel.layout();
 			
 			certificatesViewer.setInput(Collections.emptyList());
-			
-			for (Control child : composite.getChildren()) {
-				if (child instanceof Button) {
-					child.setEnabled(false);
-				}
-			}
+			setButtonsEnabled(composite, false);
 		}
 		certificatesViewer.refresh();
 		Display.getDefault().asyncExec(() -> {

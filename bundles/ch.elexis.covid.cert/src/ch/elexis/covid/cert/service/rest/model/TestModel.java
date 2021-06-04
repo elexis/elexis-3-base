@@ -77,7 +77,7 @@ public class TestModel {
 		this.testInfo = testInfo;
 	}
 	
-	public TestModel initDefault(IPatient patient, String otp2){
+	public TestModel initDefault(IPatient patient, String otp){
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		setName(Name.of(patient));
 		setDateOfBirth(formatter.format(patient.getDateOfBirth()));

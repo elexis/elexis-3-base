@@ -41,8 +41,13 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 		controlFieldProvider.setQuery(query);
 		// or match the gtin
 		if (controlFieldProvider.getValues() != null
-			&& controlFieldProvider.getValues().length > 0) {
-			query.or("gtin", COMPARATOR.LIKE, controlFieldProvider.getValues()[0] + "%");
+				&& controlFieldProvider.getValues().length > 0) {
+			String content = controlFieldProvider.getValues()[0];
+			try {
+				query.or("gtin", COMPARATOR.LIKE, Long.parseLong(content) + "%");
+			} catch (NumberFormatException nfe) {
+				query.or("ldscr", COMPARATOR.LIKE, content.toLowerCase() + "%");
+			}
 		}
 		query.startGroup();
 		// apply additional filters like atc, mepha, ...

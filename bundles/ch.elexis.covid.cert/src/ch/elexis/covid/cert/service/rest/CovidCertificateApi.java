@@ -213,11 +213,11 @@ public class CovidCertificateApi {
 						.getResourceAsStream("/rsc/" + keyProperties.getProperty("testkey"));
 				if(inputStream != null) {
 					String pemString = IOUtils.toString(inputStream, "UTF-8");
+					pemString = pemString.replaceAll("(\\r|\\n|\\r\\n)+", "");
 					String keyString = StringUtils.substringBetween(pemString,
 						"-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----");
 					
-					String privateKeyPEM = keyString.replaceAll(System.lineSeparator(), "");
-					byte[] decoded = Base64.getDecoder().decode(privateKeyPEM);
+					byte[] decoded = Base64.getDecoder().decode(keyString);
 					
 					KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 					PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);

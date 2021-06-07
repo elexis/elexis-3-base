@@ -1,11 +1,14 @@
 package ch.elexis.covid.cert.service.rest.model;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.covid.cert.service.CertificatesService;
 
 //{
 //	  "name": {
@@ -85,9 +88,14 @@ public class TestModel {
 		setOtp(otp);
 		TestInfo testinfo = new TestInfo();
 		// ISO 8601 date incl. time
+		ZonedDateTime zonedNow = LocalDateTime.now().minusMinutes(5).atZone(ZoneId.systemDefault());
+		ZonedDateTime utcDateTime = zonedNow.withZoneSameInstant(ZoneId.of("Z"));
 		testinfo.setSampleDateTime(
-			TestInfo.formatter.format(LocalDateTime.now().atOffset(ZoneOffset.UTC)));
+			TestInfo.formatter
+				.format(utcDateTime));
 		testinfo.setMemberStateOfTest("CH");
+		testinfo.setTestingCentreOrFacility(
+			ConfigServiceHolder.get().get(CertificatesService.CFG_TESTCENTERNAME, ""));
 		setTestInfo(new TestInfo[] {
 			testinfo
 		});

@@ -35,6 +35,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	
 	private ComboViewer modeCombo;
 	
+	private Text testingCenter;
+	
 	private Text otpText;
 	
 	@Inject
@@ -48,12 +50,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	
 	public PreferencePage(String title){
 		super(title);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public PreferencePage(String title, ImageDescriptor image){
 		super(title, image);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -77,14 +77,30 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				service.setMode((Mode) event.getStructuredSelection().getFirstElement());
 			}
 		});
+
+		testingCenter = new Text(ret, SWT.BORDER);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		testingCenter.setLayoutData(gd);
+		testingCenter.setMessage("Test Ort Name (z.B. Praxis Name) max. 50 Zeichen");
+		testingCenter.setToolTipText("Test Ort Name (z.B. Praxis Name) max. 50 Zeichen");
+		testingCenter
+			.setText(ConfigServiceHolder.get().get(CertificatesService.CFG_TESTCENTERNAME, ""));
+		testingCenter.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e){
+				ConfigServiceHolder.get().set(CertificatesService.CFG_TESTCENTERNAME,
+					testingCenter.getText());
+				
+			}
+		});
 		
-		Label lbl = new Label(ret, SWT.SEPARATOR);
+		Label lbl = new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
 		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		
 		textLabel = new Label(ret, SWT.NONE);
 		
 		otpText = new Text(ret, SWT.MULTI | SWT.BORDER | SWT.WRAP);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = 400;
 		otpText.setLayoutData(gd);
 		otpText

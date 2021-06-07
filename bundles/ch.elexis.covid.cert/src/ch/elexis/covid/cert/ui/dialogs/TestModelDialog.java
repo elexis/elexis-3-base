@@ -118,10 +118,13 @@ public class TestModelDialog extends Dialog {
 		manufacturerCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event){
-				model.getTestInfo()[0].setManufacturerCode(
-					((ICoding) event.getStructuredSelection().getFirstElement()).getCode());
-				if (manufacturerCombo.getControl().getData("deco") != null) {
-					removeErrorDecoration(manufacturerCombo.getControl());
+				if (event.getStructuredSelection() != null
+					&& event.getStructuredSelection().getFirstElement() != null) {
+					model.getTestInfo()[0].setManufacturerCode(
+						((ICoding) event.getStructuredSelection().getFirstElement()).getCode());
+					if (manufacturerCombo.getControl().getData("deco") != null) {
+						removeErrorDecoration(manufacturerCombo.getControl());
+					}
 				}
 			}
 		});
@@ -138,9 +141,11 @@ public class TestModelDialog extends Dialog {
 				if (sampleDateTime.getSelection() != null) {
 					Date selection = sampleDateTime.getSelection();
 					if (selection.before(now)) {
-						model.getTestInfo()[0]
-							.setSampleDateTime(TestInfo.formatter.format(
-								ZonedDateTime.ofInstant(selection.toInstant(), ZoneId.of("Z"))));
+						ZonedDateTime zonedSelected = ZonedDateTime.ofInstant(selection.toInstant(), ZoneId.systemDefault());
+						ZonedDateTime utcDateTime = zonedSelected.withZoneSameInstant(ZoneId.of("Z"));
+						model.getTestInfo()[0].setSampleDateTime(
+							TestInfo.formatter
+								.format(utcDateTime));
 						removeErrorDecoration(sampleDateTime);
 					} else {
 						addErrorDecoration(sampleDateTime);
@@ -149,10 +154,9 @@ public class TestModelDialog extends Dialog {
 			}
 		});
 		try {
-			sampleDateTime.setSelection(
-				Date.from(LocalDateTime
-					.parse(model.getTestInfo()[0].getSampleDateTime(), TestInfo.formatter)
-					.atZone(ZoneId.systemDefault()).toInstant()));
+			ZonedDateTime utcDateTime = LocalDateTime.parse(model.getTestInfo()[0].getSampleDateTime(),TestInfo.formatter).atZone(ZoneId.of("Z"));
+			ZonedDateTime localDateTime = utcDateTime.withZoneSameInstant(ZoneId.systemDefault());
+			sampleDateTime.setSelection(Date.from(localDateTime.toInstant()));
 		} catch (DateTimeParseException e) {
 			LoggerFactory.getLogger(getClass())
 				.warn("Could not parse date [" + model.getTestInfo()[0].getSampleDateTime() + "]");
@@ -161,6 +165,10 @@ public class TestModelDialog extends Dialog {
 		sampleDateTime.setToolTipText("Datum der Probe");
 		
 		testingCenter = new Text(parent, SWT.BORDER);
+		testingCenter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		testingCenter.setMessage("Test Ort Name (z.B. Praxis Name) max. 50 Zeichen");
+		testingCenter.setToolTipText("Test Ort Name (z.B. Praxis Name) max. 50 Zeichen");
+		testingCenter.setText(model.getTestInfo()[0].getTestingCentreOrFacility());
 		testingCenter.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e){

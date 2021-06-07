@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
@@ -31,6 +32,8 @@ import ch.rgw.tools.Result.SEVERITY;
 public class CertificatesService {
 	
 	private static String CFG_MODE = "ch.elexis.covid.cert/mode";
+	
+	public static String CFG_TESTCENTERNAME = "ch.elexis.covid.cert/testcentername";
 	
 	public static String CFG_OTP = "ch.elexis.covid.cert/otp";
 	public static String CFG_OTP_TIMESTAMP = "ch.elexis.covid.cert/otptimestamp";
@@ -164,13 +167,14 @@ public class CertificatesService {
 	
 	private String pdfToOmnivore(IPatient patient, Type type, SuccessResponse result)
 		throws ElexisException{
+		ICategory category = omnivoreDocumentStore.createCategory("COVID Zertifikate");
 		byte[] pdfBytes = Base64.decode(result.pdf);
 		IDocument document = 
 			omnivoreDocumentStore.createDocument(patient.getId(),
 				type.getLabel() + " von "
 					+ DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(LocalDateTime.now())
 					+ ".pdf",
-				"COVID Zertifikate");
+				category.getName());
 		omnivoreDocumentStore.saveDocument(document, new ByteArrayInputStream(pdfBytes));
 		return document.getId();
 	}

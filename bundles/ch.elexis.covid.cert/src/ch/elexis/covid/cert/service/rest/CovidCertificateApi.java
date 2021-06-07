@@ -61,6 +61,8 @@ public class CovidCertificateApi {
 	public synchronized Object vaccination(VaccinationModel model){
 		WebTarget target =
 			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/vaccination");
+		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
+		
 		xSignatureClientRequestFilter.setPayload(gson.toJson(model));
 		final Response response =
 			target.request().post(Entity.json(gson.toJson(model)));
@@ -77,6 +79,8 @@ public class CovidCertificateApi {
 	public synchronized Object test(TestModel model){
 		WebTarget target =
 			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/test");
+		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
+		
 		xSignatureClientRequestFilter.setPayload(gson.toJson(model));
 		final Response response = target.request().post(Entity.json(gson.toJson(model)));
 		
@@ -92,6 +96,8 @@ public class CovidCertificateApi {
 	public Object revoke(RevokeModel model){
 		WebTarget target =
 			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/revoke");
+		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
+		
 		xSignatureClientRequestFilter.setPayload(gson.toJson(model));
 		final Response response = target.request().post(Entity.json(gson.toJson(model)));
 		

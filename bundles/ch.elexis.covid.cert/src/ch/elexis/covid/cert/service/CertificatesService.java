@@ -4,9 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
+import org.apache.commons.io.FilenameUtils;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.Base64;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -171,10 +171,9 @@ public class CertificatesService {
 		byte[] pdfBytes = Base64.decode(result.pdf);
 		IDocument document = 
 			omnivoreDocumentStore.createDocument(patient.getId(),
-				type.getLabel() + " von "
-					+ DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(LocalDateTime.now())
-					+ ".pdf",
+				"COVID " + type.getLabel() + " Zertifikat",
 				category.getName());
+		document.setMimeType("pdf");
 		omnivoreDocumentStore.saveDocument(document, new ByteArrayInputStream(pdfBytes));
 		return document.getId();
 	}

@@ -77,7 +77,7 @@ public class XMLExporterTiers {
 		XMLExporterUtil.setAttributeIfNotEmpty(biller, "zsr",
 			TarmedRequirements.getKSK(mandant.getBiller()));
 		String spec = (String) mandant.getBiller().getExtInfo(ta.SPEC);
-		if (!spec.equals("")) { //$NON-NLS-1$
+		if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
 			biller.setAttribute("specialty", spec); //$NON-NLS-1$
 		}
 		biller.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant

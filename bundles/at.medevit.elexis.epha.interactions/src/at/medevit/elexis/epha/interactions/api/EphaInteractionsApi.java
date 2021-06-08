@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import at.medevit.elexis.epha.interactions.api.model.AdviceResponse;
 import at.medevit.elexis.epha.interactions.api.model.Substance;
 
 public class EphaInteractionsApi {
@@ -46,12 +47,12 @@ public class EphaInteractionsApi {
 			LoggerFactory.getLogger(getClass()).error(message);
 			return message;
 		} else {
-			return response.readEntity(String.class);
+			return response.readEntity(AdviceResponse.class);
 		}
 	}
 	
 	private String getBaseUrl(){
-		return "https://api.epha.healthc/";
+		return "https://api.epha.health/";
 	}
 	
 	private Client createJaxrsClient(){

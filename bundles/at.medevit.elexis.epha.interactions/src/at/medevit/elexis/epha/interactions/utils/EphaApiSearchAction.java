@@ -24,12 +24,15 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.epha.interactions.api.EphaInteractionsApi;
+import at.medevit.elexis.epha.interactions.api.model.AdviceResponse;
 import at.medevit.elexis.epha.interactions.api.model.Substance;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
@@ -75,7 +78,29 @@ public class EphaApiSearchAction extends Action implements IKonsExtension, IHand
 				Object ret = interactionsApi
 					.advice(fixMedication.stream().filter(p -> p.getArticle() != null)
 					.map(p -> Substance.of(p.getArticle())).collect(Collectors.toList()));
-				System.out.println(ret);
+				if (ret instanceof AdviceResponse) {
+					if (((AdviceResponse) ret).getData().getSafety() > 80) {
+						MessageDialog.open(MessageDialog.INFORMATION,
+							Display.getDefault().getActiveShell(), "Epha",
+							"Keine relevanten Einschränkung der Medikamentensicherheit",
+							SWT.SHEET);
+					} else if (((AdviceResponse) ret).getData().getSafety() > 60) {
+						if (MessageDialog.open(MessageDialog.WARNING,
+							Display.getDefault().getActiveShell(), "Epha", "Erhöhtes Risiko",
+							SWT.SHEET, "Interaktionen öffnen") == 0) {
+							Program.launch(((AdviceResponse) ret).getData().getLink());
+						}
+					} else {
+						if (MessageDialog.open(MessageDialog.ERROR,
+							Display.getDefault().getActiveShell(), "Epha", "Stark erhöhtes Risiko",
+							SWT.SHEET, "Interaktionen öffnen") == 0) {
+							Program.launch(((AdviceResponse) ret).getData().getLink());
+						}
+					}
+				} else {
+					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+						"Es ist folgender Fehler aufgetreten.\n\n" + ret);
+				}
 			} else {
 				MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Info",
 					"Der Patient hat keine fix Medikation");

@@ -10,7 +10,9 @@
  ******************************************************************************/
 package at.medevit.elexis.epha.interactions.utils;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -25,12 +27,12 @@ import org.eclipse.swt.program.Program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.text.IRichTextDisplay;
 import ch.elexis.core.ui.util.IKonsExtension;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
 
 public class EphaSearchAction extends Action implements IKonsExtension, IHandler {
 	
@@ -57,35 +59,36 @@ public class EphaSearchAction extends Action implements IKonsExtension, IHandler
 	
 	@Override
 	public void run(){
-		StringBuilder sb = new StringBuilder();
-		// get actual fix medication of the patient
-		Patient sp = ElexisEventDispatcher.getSelectedPatient();
-		if(sp==null) return;
-		
-		List<Prescription> medication = sp.getMedication(EntryType.FIXED_MEDICATION);
-		
-		for (Prescription prescription : medication) {
-			if (prescription.getArtikel() == null) {
-				logger.warn("Article of prescription ID=" + prescription.getId() + " not valid");
-				continue;
-			}
-			String ean = prescription.getArtikel().getEAN();
-			
-			if (ean == null || ean.isEmpty() || ean.length() < 9) {
-				logger.warn("Could not get EAN for aritcle with id "
-					+ prescription.getArtikel().getId());
-				continue;
-			}
-			
-			if (sb.length() == 0) {
-				sb.append(ean);
-			} else {
-				sb.append("," + ean);
+		Optional<IPatient> patient = ContextServiceHolder.get().getActivePatient();
+		if (patient.isPresent()) {
+			List<IPrescription> fixMedication =
+				patient.get().getMedication(Arrays.asList(EntryType.FIXED_MEDICATION));
+			if (fixMedication != null && !fixMedication.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				for (IPrescription prescription : fixMedication) {
+					if (prescription.getArticle() == null) {
+						logger.warn(
+							"Article of prescription ID=" + prescription.getId() + " not valid");
+						continue;
+					}
+					String ean = prescription.getArticle().getGtin();
+					
+					if (ean == null || ean.isEmpty() || ean.length() < 9) {
+						logger.warn("Could not get EAN for aritcle with id "
+							+ prescription.getArticle().getId());
+						continue;
+					}
+					
+					if (sb.length() == 0) {
+						sb.append(ean);
+					} else {
+						sb.append("," + ean);
+					}
+				}
+				String url = "https://epha.ch/matrix/visual/gtin:" + sb.toString() + "/"; //$NON-NLS-1$
+				Program.launch(url);
 			}
 		}
-		
-		String url = "https://epha.ch/matrix/visual/gtin:" + sb.toString() + "/"; //$NON-NLS-1$
-		Program.launch(url);
 	}
 	
 	public IAction[] getActions(){

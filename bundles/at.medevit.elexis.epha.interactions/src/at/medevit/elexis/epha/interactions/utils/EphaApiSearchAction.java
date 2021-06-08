@@ -65,39 +65,6 @@ public class EphaApiSearchAction extends Action implements IKonsExtension, IHand
 		return false;
 	}
 	
-	//	@Override
-	//	public void run(){
-	//		StringBuilder sb = new StringBuilder();
-	//		// get actual fix medication of the patient
-	//		Patient sp = ElexisEventDispatcher.getSelectedPatient();
-	//		if(sp==null) return;
-	//		
-	//		List<Prescription> medication = sp.getMedication(EntryType.FIXED_MEDICATION);
-	//		
-	//		for (Prescription prescription : medication) {
-	//			if (prescription.getArtikel() == null) {
-	//				logger.warn("Article of prescription ID=" + prescription.getId() + " not valid");
-	//				continue;
-	//			}
-	//			String ean = prescription.getArtikel().getEAN();
-	//			
-	//			if (ean == null || ean.isEmpty() || ean.length() < 9) {
-	//				logger.warn("Could not get EAN for aritcle with id "
-	//					+ prescription.getArtikel().getId());
-	//				continue;
-	//			}
-	//			
-	//			if (sb.length() == 0) {
-	//				sb.append(ean);
-	//			} else {
-	//				sb.append("," + ean);
-	//			}
-	//		}
-	//		
-	//		String url = "https://epha.ch/matrix/visual/gtin:" + sb.toString() + "/"; //$NON-NLS-1$
-	//		Program.launch(url);
-	//	}
-	
 	@Override
 	public void run(){
 		Optional<IPatient> patient = ContextServiceHolder.get().getActivePatient();

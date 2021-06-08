@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -72,28 +73,32 @@ public class EphaApiSearchAction extends Action implements IKonsExtension, IHand
 	public void run(){
 		Optional<IPatient> patient = ContextServiceHolder.get().getActivePatient();
 		if (patient.isPresent()) {
-			List<IPrescription> fixMedication =
-				patient.get().getMedication(Arrays.asList(EntryType.FIXED_MEDICATION));
-			if (fixMedication != null && !fixMedication.isEmpty()) {
+			List<IPrescription> medication =
+				patient.get().getMedication(
+					Arrays.asList(EntryType.FIXED_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
+			if (medication != null && !medication.isEmpty()) {
 				Object ret = interactionsApi
-					.advice(fixMedication.stream().filter(p -> p.getArticle() != null)
+					.advice(medication.stream().filter(p -> p.getArticle() != null)
 					.map(p -> Substance.of(p.getArticle())).collect(Collectors.toList()));
 				if (ret instanceof AdviceResponse) {
 					if (((AdviceResponse) ret).getData().getSafety() > 80) {
-						MessageDialog.open(MessageDialog.INFORMATION,
+						if (MessageDialog.open(MessageDialog.INFORMATION,
 							Display.getDefault().getActiveShell(), "Epha",
 							"Keine relevanten Einschränkung der Medikamentensicherheit",
-							SWT.SHEET);
+							SWT.SHEET, "Epha Interaktionen öffnen",
+							IDialogConstants.OK_LABEL) == 0) {
+								Program.launch(((AdviceResponse) ret).getData().getLink());
+							}
 					} else if (((AdviceResponse) ret).getData().getSafety() > 60) {
 						if (MessageDialog.open(MessageDialog.WARNING,
 							Display.getDefault().getActiveShell(), "Epha", "Erhöhtes Risiko",
-							SWT.SHEET, "Interaktionen öffnen") == 0) {
+							SWT.SHEET, "Epha Interaktionen öffnen") == 0) {
 							Program.launch(((AdviceResponse) ret).getData().getLink());
 						}
 					} else {
 						if (MessageDialog.open(MessageDialog.ERROR,
 							Display.getDefault().getActiveShell(), "Epha", "Stark erhöhtes Risiko",
-							SWT.SHEET, "Interaktionen öffnen") == 0) {
+							SWT.SHEET, "Epha Interaktionen öffnen") == 0) {
 							Program.launch(((AdviceResponse) ret).getData().getLink());
 						}
 					}

@@ -34,7 +34,7 @@
    <extension
          point="ch.elexis.core.ui.KonsExtension">
       <Link
-            KonsExtension="at.medevit.elexis.epha.interactions.EphaSearchAction"
+            KonsExtension="at.medevit.elexis.epha.interactions.EphaApiSearchAction"
             name="at.medevit.elexis.epha.interactions">
       </Link>
    </extension>
